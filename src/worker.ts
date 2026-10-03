@@ -33,6 +33,11 @@ export function withHeaders(response: Response, url: URL): Response {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+    // Upgrade plain-HTTP page requests on the production domain (HSTS then keeps browsers on HTTPS).
+    if (url.protocol === 'http:' && url.hostname === 'gocore.com.au' && (request.method === 'GET' || request.method === 'HEAD')) {
+      url.protocol = 'https:';
+      return new Response(null, { status: 301, headers: { Location: url.href, 'Cache-Control': 'public, max-age=3600' } });
+    }
     let response: Response;
     if (url.pathname === '/api/chat' || url.pathname === '/api/chat/') response = await handleChat(request, env);
     else if (url.pathname === '/api/contact' || url.pathname === '/api/contact/') response = await handleContact(request, env);

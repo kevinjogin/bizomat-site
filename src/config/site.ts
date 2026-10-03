@@ -7,11 +7,13 @@ export const SITE = {
   ogLocale: 'en_AU',
   country: 'Australia',
   /** Default <title> on the homepage and fallback description everywhere else. */
-  title: 'GoCore | Building useful things around real problems',
+  title: 'GoCore | Engineering, Manufacturing & Operations Support',
   description:
-    'GoCore is a new Australian business exploring products, technology and practical systems, starting with real problems and building carefully.',
-  /** One-line brand statement used in the footer. */
-  statement: 'A new Australian business building useful things around real problems.',
+    'GoCore provides practical CAD, manufacturing, process improvement and engineering project support for businesses in Sydney and across Australia.',
+  /** One-line brand statement used in the footer and structured data. */
+  statement: 'Practical engineering, manufacturing, operations and project support for businesses that need work moved forward.',
+  /** Short descriptor shown under the brand in places like the footer. */
+  tagline: 'Engineering • Manufacturing • Operations',
   /** Public contact email. Leave empty to hide it everywhere until it is set up. */
   email: '',
   /** Optional profiles, e.g. { label: 'LinkedIn', href: 'https://www.linkedin.com/company/…' }. */
@@ -43,6 +45,11 @@ export const SITE = {
     web3formsEndpoint: 'https://api.web3forms.com/submit',
     workerEndpoint: import.meta.env?.PUBLIC_CONTACT_ENDPOINT || '/api/contact',
   },
+  /** Online meeting booking (Google Calendar appointment schedule). Opens in a new tab; nothing is embedded. */
+  booking: {
+    url: 'https://calendar.app.google/SY5FtkX97haPCEh39',
+    label: 'Book a meeting',
+  },
   /** AI assistant (Cloudflare Workers AI). Set to false to remove the chat widget everywhere. */
   assistant: {
     enabled: true,
@@ -54,17 +61,39 @@ export const SITE = {
 } as const;
 
 export const NAV = [
-  { href: '/about/', label: 'About' },
-  { href: '/work/', label: 'Work' },
+  { href: '/', label: 'Home' },
+  { href: '/services/', label: 'Services' },
+  { href: '/how-it-works/', label: 'How It Works' },
+  { href: '/industries/', label: 'Industries' },
   { href: '/insights/', label: 'Insights' },
+  { href: '/about/', label: 'About' },
   { href: '/contact/', label: 'Contact' },
 ] as const;
 
-export const FOOTER_NAV = [
-  ...NAV,
-  { href: '/privacy/', label: 'Privacy' },
-  { href: '/terms/', label: 'Terms' },
-] as const;
+/** Primary call to action in the header and across the site. */
+export const QUOTE_CTA = { href: '/contact/', label: 'Get a Quote' } as const;
+
+export const FOOTER_NAV = {
+  services: [
+    { href: '/services/#engineering-cad', label: 'Engineering & CAD' },
+    { href: '/services/#manufacturing', label: 'Manufacturing Support' },
+    { href: '/services/#operations', label: 'Operations Improvement' },
+    { href: '/services/#project-support', label: 'Project Support' },
+    { href: '/factory-fix/', label: 'Factory Fix' },
+  ],
+  company: [
+    { href: '/how-it-works/', label: 'How It Works' },
+    { href: '/industries/', label: 'Industries' },
+    { href: '/about/', label: 'About' },
+    { href: '/insights/', label: 'Insights' },
+    { href: '/work/', label: 'Initiatives' },
+  ],
+  legal: [
+    { href: '/privacy/', label: 'Privacy' },
+    { href: '/terms/', label: 'Terms' },
+    { href: '/disclaimer/', label: 'Disclaimer' },
+  ],
+} as const;
 
 /** Insights listing settings. */
 export const INSIGHTS = {

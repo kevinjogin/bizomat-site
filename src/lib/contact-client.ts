@@ -1,10 +1,10 @@
 // Browser-side contact submission. Both the contact page and the chat assistant's
 // "leave a message" form call submitContact(); swapping providers never touches the UI.
 import { SITE } from '../config/site.ts';
-import type { ContactInput, ContactResponse } from './contact.ts';
+import { enquirySubject, type ContactInput, type ContactResponse } from './contact.ts';
 
-const SUCCESS = 'Thank you. Your message has been sent and GoCore will reply as soon as possible.';
-const FAILURE = 'Your message could not be sent right now. Please try again in a moment.';
+const SUCCESS = 'Thank you. Your enquiry has been sent and GoCore will reply as soon as possible.';
+const FAILURE = 'Your enquiry could not be sent right now. Please try again in a moment.';
 
 export interface Submission extends ContactInput {
   /** Where the message came from, e.g. "Contact page" or "Website assistant". */
@@ -28,13 +28,15 @@ export async function submitContact(s: Submission): Promise<ContactResponse> {
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
           access_key: web3formsAccessKey,
-          subject: `GoCore enquiry: ${s.subject}`,
+          subject: enquirySubject(s),
           from_name: 'GoCore website',
           replyto: s.email,
           name: s.name,
+          company: s.company || '—',
           email: s.email,
-          organisation: s.organisation || '—',
-          topic: s.subject,
+          phone: s.phone || '—',
+          service: s.service,
+          preferred_contact: s.contactMethod,
           message: s.message,
           source: s.source,
           privacy_acknowledged: s.consent ? 'Yes' : 'No',
@@ -51,6 +53,6 @@ export async function submitContact(s: Submission): Promise<ContactResponse> {
     const body = (await res.json().catch(() => ({ ok: false }))) as ContactResponse;
     return res.ok && body.ok ? { ok: true, message: body.message ?? SUCCESS } : { ok: false, message: body.message ?? FAILURE, errors: body.errors };
   } catch {
-    return { ok: false, message: 'Your message could not be sent. Please check your connection and try again.' };
+    return { ok: false, message: 'Your enquiry could not be sent. Please check your connection and try again.' };
   }
 }

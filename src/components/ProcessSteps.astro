@@ -1,0 +1,35 @@
+---
+// The four-stage engagement process.
+import { PROCESS } from '../data/services.ts';
+---
+
+<ol class="steps">
+  {
+    PROCESS.map((s, i) => (
+      <li class="step">
+        <span class="step__num">{String(i + 1).padStart(2, '0')}</span>
+        <h3 class="step__title">{s.title}</h3>
+        <p class="step__text">{s.text}</p>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line-strong); counter-reset: none; }
+  .step { position: relative; padding: clamp(1.25rem, 2.5vw, 2rem) clamp(1rem, 2vw, 1.75rem) clamp(1.5rem, 3vw, 2.25rem) 0; }
+  .step:not(:first-child) { padding-left: clamp(1rem, 2vw, 1.75rem); border-left: 1px solid var(--line); }
+  .step__num { display: inline-grid; place-items: center; width: 2.25rem; height: 2.25rem; margin-bottom: 1.5rem; border: 1px solid var(--line-strong); border-radius: 50%; font-size: 0.82rem; font-variant-numeric: tabular-nums; color: var(--accent); }
+  .step__title { font-size: var(--step-1); font-weight: 560; letter-spacing: -0.02em; line-height: 1.2; }
+  .step__text { margin: 0.6rem 0 0; color: var(--ink-2); font-size: 0.98rem; line-height: 1.55; }
+  @media (max-width: 960px) {
+    .steps { grid-template-columns: 1fr 1fr; }
+    .step:nth-child(3) { padding-left: 0; border-left: 0; }
+    .step:nth-child(n + 3) { border-top: 1px solid var(--line); }
+  }
+  @media (max-width: 560px) {
+    .steps { grid-template-columns: 1fr; }
+    .step, .step:not(:first-child) { padding-left: 0; border-left: 0; }
+    .step:not(:first-child) { border-top: 1px solid var(--line); }
+  }
+</style>

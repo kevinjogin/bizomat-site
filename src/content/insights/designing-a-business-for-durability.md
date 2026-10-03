@@ -146,7 +146,7 @@ The purpose of the checklist is not to reject every idea that does not score per
 
 ## Why this matters to GoCore
 
-GoCore is at the beginning, exploring products, technology and systems before committing to a direction. Buffett's financial lens is a useful filter for that exploration. It favours ideas that solve lasting problems, earn healthy margins, need modest reinvestment and become more valuable with time. Those are the kinds of ideas worth testing first.
+GoCore now focuses on engineering, manufacturing, operations and project services, and may develop its own products later. Buffett's financial lens remains a useful filter for those future decisions. It favours ideas that solve lasting problems, earn healthy margins, need modest reinvestment and become more valuable with time. Those are the kinds of ideas worth testing first.
 
 ## The series
 

@@ -4,29 +4,49 @@ import Hero from '../../components/Hero.astro';
 import Container from '../../components/Container.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import ContactForm from '../../components/ContactForm.astro';
+import BookingCard from '../../components/BookingCard.astro';
 import { SITE } from '../../config/site.ts';
+import { SERVICE_AREA } from '../../data/services.ts';
 
 const crumbs = [
   { label: 'Home', href: '/' },
   { label: 'Contact', href: '/contact/' },
 ];
-const reasons = ['General enquiries', 'Potential collaborations', 'Ideas worth discussing', 'Supplier and manufacturer discussions', 'Business conversations'];
+const next = [
+  'GoCore reviews your enquiry and replies as soon as possible.',
+  'A short conversation clarifies the problem, the deliverables and any site requirements.',
+  'You receive a written scope and price before substantial work begins.',
+];
 ---
 
 <BaseLayout
-  title="Contact"
-  description="Contact GoCore about collaborations, ideas, supplier and manufacturer discussions, or a general business conversation."
+  title="Get a Quote"
+  description="Request a quote or discuss a project with GoCore: engineering and CAD support, manufacturing support, operations improvement, project support and Factory Fix engagements."
   breadcrumbs={crumbs}
+  canonical="/contact/"
   schema={[{ '@type': 'ContactPage', name: 'Contact GoCore', url: `${SITE.url}/contact/`, about: { '@id': `${SITE.url}/#organization` } }]}
 >
-  <Hero eyebrow="Contact" title="Start a conversation.">
+  <Hero eyebrow="Get a Quote" title="Tell us about the <em>job</em>." lead="Two easy ways to start: send the project details below, or book a meeting to talk it through first.">
     <Breadcrumb items={crumbs} slot="before" />
+    <Fragment slot="actions">
+      <a class="path path--primary" href="#quote-form" data-cta="contact-path-form">
+        <span class="path__label">Send project details</span>
+        <span class="path__hint">Quote form · below</span>
+      </a>
+      <a class="path" href={SITE.booking.url} target="_blank" rel="noopener noreferrer" data-cta="contact-path-meeting">
+        <span class="path__label">{SITE.booking.label} <span aria-hidden="true">↗</span></span>
+        <span class="path__hint">Google Calendar · new tab</span>
+      </a>
+    </Fragment>
   </Hero>
   <Container class="contact-layout">
     <div class="contact-intro">
-      <p class="contact-intro__lead">GoCore is early-stage and open to thoughtful conversations. A short note is enough. You will get a considered reply.</p>
-      <h2 class="contact-intro__heading">Good reasons to get in touch</h2>
-      <ul class="contact-intro__list">{reasons.map((r) => <li>{r}</li>)}</ul>
+      <p class="contact-intro__lead">Describe the problem, drawing or project. A short description is enough to start.</p>
+      <p class="contact-intro__note">Not sure which service you need? Describe the problem and GoCore can help define the scope.</p>
+      <BookingCard class="contact-intro__booking" />
+      <h2 class="contact-intro__heading">What happens next</h2>
+      <ol class="contact-intro__list">{next.map((r) => <li>{r}</li>)}</ol>
+      <p class="contact-intro__area">{SERVICE_AREA}</p>
       {
         SITE.email && (
           <p class="contact-intro__email">
@@ -35,7 +55,8 @@ const reasons = ['General enquiries', 'Potential collaborations', 'Ideas worth d
         )
       }
     </div>
-    <div class="contact-form-wrap">
+    <div class="contact-form-wrap" id="quote-form">
+      <h2 class="contact-form-wrap__title">Request a quote</h2>
       <ContactForm />
     </div>
   </Container>
@@ -44,10 +65,28 @@ const reasons = ['General enquiries', 'Potential collaborations', 'Ideas worth d
 <style>
   :global(.contact-layout) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 3rem 5rem; padding-bottom: var(--space-section); }
   .contact-intro__lead { font-family: var(--font-serif); font-size: var(--step-2); line-height: 1.35; color: var(--ink); max-width: 24ch; }
+  .contact-intro__note { margin-top: 1.25rem; padding: 1rem 1.1rem; border-left: 3px solid var(--brand-orange); background: var(--paper-2); color: var(--ink-2); }
   .contact-intro__heading { margin: 2.5rem 0 1rem; font-size: 0.78rem; font-weight: 560; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
-  .contact-intro__list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
-  .contact-intro__list li { padding: 0.8rem 0; border-bottom: 1px solid var(--line); color: var(--ink-2); }
-  .contact-intro__email { margin-top: 2rem; color: var(--muted); }
+  .contact-intro__list { margin: 0; padding: 0; list-style: none; counter-reset: next; border-top: 1px solid var(--line); }
+  .contact-intro__list li { counter-increment: next; display: grid; grid-template-columns: 2rem 1fr; padding: 0.85rem 0; border-bottom: 1px solid var(--line); color: var(--ink-2); }
+  .contact-intro__list li::before { content: counter(next, decimal-leading-zero); font-size: 0.85rem; color: var(--accent); padding-top: 0.15rem; }
+  .contact-intro__area { margin-top: 1.5rem; color: var(--muted); font-size: 0.92rem; }
+  .contact-intro__email { margin-top: 1rem; color: var(--muted); }
   .contact-form-wrap { padding: clamp(1.5rem, 3.5vw, 2.75rem); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+  .contact-form-wrap { scroll-margin-top: calc(var(--header-h) + 1rem); }
+  .contact-form-wrap__title { margin-bottom: 1.5rem; font-size: var(--step-2); font-weight: 560; letter-spacing: -0.025em; }
+  :global(.contact-intro__booking) { margin-top: 1.75rem; }
+  .path {
+    display: grid; gap: 0.15rem; min-width: 14rem; padding: 0.85rem 1.25rem;
+    border: 1px solid var(--line-strong); border-radius: 14px; color: var(--ink); text-decoration: none;
+    transition: border-color 0.2s var(--ease), background 0.2s var(--ease), color 0.2s var(--ease);
+  }
+  .path:hover { border-color: var(--ink); }
+  .path:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .path--primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .path--primary:hover { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .path__label { font-weight: 580; font-size: 1.02rem; }
+  .path__hint { font-size: 0.8rem; opacity: 0.72; }
+  @media (max-width: 520px) { .path { flex: 1 1 100%; min-width: 0; } }
   @media (max-width: 900px) { :global(.contact-layout) { grid-template-columns: 1fr; } }
 </style>

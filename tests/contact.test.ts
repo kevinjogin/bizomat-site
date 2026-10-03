@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { handleContact, type ContactEnv } from '../src/server/contact/handler.ts';
-import { normalise, validate } from '../src/lib/contact.ts';
+import { enquirySubject, normalise, validate } from '../src/lib/contact.ts';
 
 type Sent = { to: string[]; reply_to: string; subject: string; html: string };
 const sent: Sent[] = [];
@@ -15,9 +15,11 @@ const env: ContactEnv = { MAIL_PROVIDER: 'resend', RESEND_API_KEY: 'test-key', C
 const valid = {
   name: 'Alex Example',
   email: 'alex@example.com',
-  organisation: 'Example Pty Ltd',
-  subject: 'Collaboration',
-  message: 'Hello GoCore, I would like to talk about a possible collaboration.',
+  company: 'Example Pty Ltd',
+  phone: '',
+  service: 'Factory Fix',
+  contactMethod: 'Email',
+  message: 'Hello GoCore, we have a recurring rework problem on one assembly line.',
   consent: 'on',
   startedAt: String(Date.now() - 10_000),
 };
@@ -95,4 +97,23 @@ test('plain HTML form posts (no JavaScript) redirect to result pages', async () 
 test('shared validation matches between browser and server', () => {
   assert.deepEqual(validate(normalise(valid)), {});
   assert.ok(validate(normalise({ ...valid, message: 'http://a http://b http://c http://d and more words' })).message);
+});
+
+test('quote form rules: company required on the page, phone checked, phone needed for phone contact', () => {
+  const base = normalise(valid);
+  assert.deepEqual(validate(base, { requireCompany: true }), {});
+  assert.ok(validate({ ...base, company: '' }, { requireCompany: true }).company);
+  assert.equal(validate({ ...base, company: '' }).company, undefined); // assistant quick message
+  assert.ok(validate({ ...base, phone: 'call me' }).phone);
+  assert.equal(validate({ ...base, phone: '+61 2 9000 0000' }).phone, undefined);
+  assert.ok(validate({ ...base, contactMethod: 'Phone' }).phone);
+  assert.ok(validate({ ...base, service: '' }).service);
+});
+
+test('older field names still work and the subject names the service and company', () => {
+  const legacy = normalise({ ...valid, company: undefined, service: undefined, organisation: 'Legacy Co', subject: 'Other' });
+  assert.equal(legacy.company, 'Legacy Co');
+  assert.equal(legacy.service, 'Other');
+  assert.equal(enquirySubject(normalise(valid)), 'GoCore enquiry: Factory Fix — Example Pty Ltd');
+  assert.equal(normalise({ ...valid, contactMethod: 'Carrier pigeon' }).contactMethod, 'Email');
 });

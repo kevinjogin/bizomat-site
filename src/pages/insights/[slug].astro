@@ -158,8 +158,11 @@ const schema = [
         )
       }
       <div class="explore">
-        <p>Explore more ideas on products, technology and building useful things.</p>
-        <Button href="/insights/" variant="secondary" arrow>Explore more Insights</Button>
+        <p>Need practical engineering, manufacturing or process support? GoCore can help move the work forward.</p>
+        <div class="explore__actions">
+          <Button href="/contact/" arrow data-cta="article-quote">Get a Quote</Button>
+          <Button href="/insights/" variant="secondary">More Insights</Button>
+        </div>
       </div>
     </Container>
   </section>
@@ -198,6 +201,7 @@ const schema = [
   .related__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; }
   .explore { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem 2rem; margin-top: clamp(3rem, 6vw, 4.5rem); padding: clamp(1.5rem, 3vw, 2.25rem); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
   .explore p { margin: 0; font-size: var(--step-1); max-width: 40ch; }
+  .explore__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
   @media (max-width: 900px) { .related__grid { grid-template-columns: 1fr; } }
   @media (max-width: 620px) { .prev-next { grid-template-columns: 1fr; } .prev-next__next { text-align: left; } }
 </style>

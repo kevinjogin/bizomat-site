@@ -72,7 +72,7 @@ content:
         required: true
         description: "Exactly one."
         options:
-          values: [Ideas, Products, Technology, Business]
+          values: [Engineering, Manufacturing, Operations, Projects, Ideas, Products, Technology, Business]
       - name: tags
         label: Tags
         type: select

@@ -1,0 +1,58 @@
+---
+// Decorative CAD-style linework: an original orthographic sketch of a bracket with centrelines,
+// dimensions and a title block. Pure SVG (no inline styles, CSP-safe) and hidden from assistive technology.
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<svg class:list={['tech-drawing', className]} viewBox="0 0 560 420" fill="none" aria-hidden="true" focusable="false">
+  <!-- frame and title block -->
+  <rect class="td-frame" x="8" y="8" width="544" height="404" />
+  <path class="td-frame" d="M352 352h200M352 352v60M452 352v60M352 382h200" />
+  <text class="td-text" x="362" y="372">GOCORE</text>
+  <text class="td-text td-text--muted" x="362" y="401">BRACKET</text>
+  <text class="td-text td-text--muted" x="462" y="372">SCALE 1:2</text>
+  <text class="td-text td-text--muted" x="462" y="401">REV B</text>
+
+  <!-- front view -->
+  <path class="td-line" d="M70 300V120h40v140h150v40Z" />
+  <path class="td-hidden" d="M70 280h190M90 120v180" />
+  <circle class="td-line" cx="210" cy="280" r="9" />
+  <circle class="td-line" cx="90" cy="170" r="9" />
+  <path class="td-centre" d="M190 280h40M210 262v36M70 170h40M90 152v36" />
+
+  <!-- side view -->
+  <path class="td-line" d="M330 300V120h30v150h90v30Z" />
+  <path class="td-hidden" d="M330 270h120" />
+  <path class="td-centre" d="M345 100v220" />
+
+  <!-- dimensions -->
+  <path class="td-dim" d="M70 328h190M70 320v16M260 320v16" />
+  <path class="td-arrow" d="M70 328l9-4v8ZM260 328l-9-4v8Z" />
+  <text class="td-text" x="152" y="322">120</text>
+  <path class="td-dim" d="M42 120v180M34 120h16M34 300h16" />
+  <path class="td-arrow" d="M42 120l-4 9h8ZM42 300l-4-9h8Z" />
+  <text class="td-text" x="18" y="215">110</text>
+  <path class="td-dim" d="M330 92h120M330 84v16M450 84v16" />
+  <path class="td-arrow" d="M330 92l9-4v8ZM450 92l-9-4v8Z" />
+  <text class="td-text" x="378" y="86">75</text>
+
+  <!-- leader and note -->
+  <path class="td-dim" d="M217 273l50-60h60" />
+  <text class="td-text td-text--accent" x="270" y="206">2× Ø10 THRU</text>
+</svg>
+
+<style>
+  .tech-drawing { display: block; width: 100%; height: auto; color: var(--ink); }
+  .td-frame { stroke: var(--line-strong); stroke-width: 1; }
+  .td-line { stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round; }
+  .td-hidden { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 6 4; }
+  .td-centre { stroke: var(--brand-blue); stroke-width: 0.9; stroke-dasharray: 14 4 3 4; opacity: 0.8; }
+  .td-dim { stroke: var(--muted); stroke-width: 0.9; }
+  .td-arrow { fill: var(--muted); }
+  .td-text { fill: var(--ink-2); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; }
+  .td-text--muted { fill: var(--muted); }
+  .td-text--accent { fill: var(--accent); }
+</style>

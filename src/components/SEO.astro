@@ -44,13 +44,21 @@ const siteId = `${SITE.url}/#website`;
 
 const graph: Record<string, unknown>[] = [
   {
-    '@type': 'Organization',
+    // Only facts published on this site: no street address, phone, opening hours, reviews or ratings.
+    '@type': ['Organization', 'ProfessionalService'],
     '@id': orgId,
     name: SITE.name,
     url: `${SITE.url}/`,
     logo: { '@type': 'ImageObject', url: `${SITE.url}${SITE.iconLarge}`, width: 512, height: 512 },
+    image: `${SITE.url}${SITE.ogImage}`,
     description: SITE.statement,
-    address: { '@type': 'PostalAddress', addressCountry: 'AU' },
+    slogan: SITE.tagline,
+    address: { '@type': 'PostalAddress', addressRegion: 'NSW', addressCountry: 'AU' },
+    areaServed: [
+      { '@type': 'State', name: 'New South Wales' },
+      { '@type': 'Country', name: 'Australia' },
+    ],
+    knowsAbout: ['CAD', 'SolidWorks', 'Manufacturing engineering', 'Jigs and fixtures', 'Process improvement', 'Work instructions', 'Engineering project support'],
     ...(SITE.email ? { email: SITE.email } : {}),
     ...(SITE.social.length ? { sameAs: SITE.social.map((s) => s.href) } : {}),
   },

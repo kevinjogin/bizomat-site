@@ -2,22 +2,21 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import Button from '../components/Button.astro';
-import CoreDiagram from '../components/CoreDiagram.astro';
+import TechDrawing from '../components/TechDrawing.astro';
 ---
 
 <BaseLayout title="Page not found" description="The page you were looking for could not be found on the GoCore website." noindex>
-  <Hero eyebrow="404" title="This page has wandered off the core." lead="It may have moved, or the address may be mistyped. These will get you back on track." class="not-found">
+  <Hero eyebrow="404" title="That page isn’t on the drawing." lead="It may have moved, or the address may be mistyped. These will get you back on track." class="not-found">
     <Fragment slot="actions">
       <Button href="/" arrow>Home</Button>
-      <Button href="/insights/" variant="secondary">Insights</Button>
-      <Button href="/search/" variant="secondary">Search</Button>
+      <Button href="/services/" variant="secondary">Services</Button>
+      <Button href="/contact/" variant="secondary">Get a Quote</Button>
     </Fragment>
-    <CoreDiagram class="not-found__diagram" />
+    <TechDrawing class="not-found__drawing" />
   </Hero>
 </BaseLayout>
 
 <style>
   :global(.not-found) { min-height: 70vh; overflow: hidden; }
-  :global(.not-found .container) { position: relative; }
-  :global(.not-found__diagram) { width: min(70vw, 360px); margin: 3rem 0 0 auto; opacity: 0.8; }
+  :global(.not-found__drawing) { max-width: 420px; margin: 3rem 0 0 auto; opacity: 0.85; }
 </style>

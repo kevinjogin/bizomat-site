@@ -52,6 +52,7 @@ export function retrieve(chunks: KnowledgeChunk[], query: string, maxChars: numb
         score += Math.min(3, body.get(t) ?? 0);
       }
       if (c.id.startsWith('faq-')) score *= 1.4; // curated answers first
+      else if (c.id.startsWith('svc-')) score *= 1.6; // service, pricing and process facts outrank articles
       return { c, score };
     })
     .filter((x) => x.score > 0)

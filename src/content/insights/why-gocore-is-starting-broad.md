@@ -1,7 +1,8 @@
 ---
 title: "Why GoCore is starting broad"
-description: "GoCore has not chosen a single product or market yet. That is deliberate. Here is the reasoning, and how the focus is expected to narrow."
+description: "The reasoning behind GoCore's early exploratory phase, and how its focus was expected to narrow. GoCore now focuses on engineering, manufacturing and operations services."
 publishDate: 2026-09-29
+updatedDate: 2026-10-04
 category: "Ideas"
 tags:
   - strategy
@@ -11,6 +12,8 @@ author: "GoCore"
 featured: false
 draft: false
 ---
+
+> **Update, October 2026.** As this article anticipated, GoCore's focus has since narrowed. GoCore now provides engineering and CAD support, manufacturing support, operations improvement and engineering project support; see [Services](/services/). The article is kept as a record of the earlier reasoning.
 
 A common piece of advice for new businesses is to pick a niche and commit to it. It is good advice once you know which niche is worth committing to. GoCore does not know that yet, and pretending otherwise would mean making the most important decision with the least information.
 

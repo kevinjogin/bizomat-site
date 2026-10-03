@@ -9,7 +9,7 @@ interface Props {
 }
 const { mode = 'floating' } = Astro.props;
 const name = SITE.assistant.name;
-const prompts = ['What is GoCore?', 'What are you working on?', 'Do you sell products or services?', 'How can I get in touch?'];
+const prompts = ['What services does GoCore offer?', 'What is a Factory Fix?', 'How does a project work?', 'How do I get a quote?'];
 ---
 
 <div class:list={['assistant', `assistant--${mode}`]} data-assistant data-mode={mode} data-endpoint={SITE.assistant.endpoint}>
@@ -33,6 +33,9 @@ const prompts = ['What is GoCore?', 'What are you working on?', 'Do you sell pro
         {
           mode === 'floating' ? (
             <Fragment>
+              <button class="assistant__icon assistant__expand" type="button" data-assistant-expand aria-pressed="false" aria-label="Expand the assistant" title="Expand">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              </button>
               <a class="assistant__icon" href="/chat/" target="gocore-assistant" data-assistant-popout aria-label="Open the assistant in a new window" title="Pop out">
                 <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 4h6v6M20 4l-8 8M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
               </a>
@@ -51,12 +54,13 @@ const prompts = ['What is GoCore?', 'What are you working on?', 'Do you sell pro
 
     <div class="assistant__log" role="log" aria-live="polite" aria-relevant="additions" tabindex="0" aria-label="Conversation" data-assistant-log>
       <div class="msg msg--assistant">
-        <p>Hello, I’m the {name}. I can answer questions about GoCore using information from this website, or pass a message to the team.</p>
+        <p>Hi — I’m the {name}. I can help you understand GoCore services, how projects work, typical project types and how to request a quote.</p>
       </div>
     </div>
 
     <div class="assistant__prompts" data-assistant-prompts>
       {prompts.map((p) => <button type="button" class="chip" data-prompt={p}>{p}</button>)}
+      <a class="chip chip--link" href="/contact/" data-cta="assistant-quote">Get a quote</a>
       <button type="button" class="chip chip--accent" data-assistant-handoff>Leave a message</button>
     </div>
 
@@ -76,12 +80,12 @@ const prompts = ['What is GoCore?', 'What are you working on?', 'Do you sell pro
 
     <form class="assistant__composer" data-assistant-form>
       <label for={`assistant-input-${mode}`} class="visually-hidden">Ask a question about GoCore</label>
-      <textarea id={`assistant-input-${mode}`} rows="1" maxlength="600" placeholder="Ask about GoCore…" autocomplete="off" data-assistant-input></textarea>
+      <textarea id={`assistant-input-${mode}`} rows="1" maxlength="600" placeholder="Ask about GoCore services…" autocomplete="off" data-assistant-input></textarea>
       <button type="submit" class="assistant__submit" aria-label="Send question">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
       </button>
     </form>
-    <p class="assistant__note">AI answers based on gocore.com.au content and may be imperfect. Please don’t share sensitive information. <a href="/privacy/">Privacy</a></p>
+    <p class="assistant__note">AI answers based on gocore.com.au content and may be imperfect. For pricing, scope or availability, <a href="/contact/" data-cta="assistant-note-quote">request a quote</a>. Please don’t share sensitive information. <a href="/privacy/">Privacy</a></p>
   </section>
 </div>
 
@@ -166,6 +170,16 @@ const prompts = ['What is GoCore?', 'What are you working on?', 'Do you sell pro
       return el;
     };
 
+    // When the assistant cannot answer from approved content, offer a direct route to the team.
+    const UNSURE = /enough approved|don.t have (that|enough)|not able to answer|send the team an enquiry/i;
+    const addContactButton = () => {
+      const el = document.createElement('div');
+      el.className = 'msg msg--action';
+      el.innerHTML = '<a class="msg__button" href="/contact/" data-cta="assistant-contact">Contact GoCore</a>';
+      log.append(el);
+      log.scrollTop = log.scrollHeight;
+    };
+
     const restore = () => {
       state.messages.forEach((m) => addBubble(m.role, m.content));
       prompts.hidden = state.messages.length > 0;
@@ -202,6 +216,7 @@ const prompts = ['What is GoCore?', 'What are you working on?', 'Do you sell pro
         if (data?.ok && data.reply) {
           state.messages.push({ role: 'assistant', content: data.reply });
           addBubble('assistant', data.reply);
+          if (UNSURE.test(data.reply)) addContactButton();
           save();
         } else {
           addBubble(
@@ -219,6 +234,14 @@ const prompts = ['What is GoCore?', 'What are you working on?', 'Do you sell pro
 
     // ----- Events -----
     launcher?.addEventListener('click', () => setOpen(true));
+    const expand = root.querySelector<HTMLButtonElement>('[data-assistant-expand]');
+    expand?.addEventListener('click', () => {
+      const on = !root.classList.contains('is-expanded');
+      root.classList.toggle('is-expanded', on);
+      expand.setAttribute('aria-pressed', String(on));
+      expand.setAttribute('aria-label', on ? 'Restore the assistant size' : 'Expand the assistant');
+      expand.title = on ? 'Restore size' : 'Expand';
+    });
     root.querySelector('[data-assistant-minimise]')?.addEventListener('click', () => setOpen(false));
     root.querySelector('[data-assistant-close-window]')?.addEventListener('click', () => (window.opener ? window.close() : (location.href = '/')));
     root.querySelector<HTMLAnchorElement>('[data-assistant-popout]')?.addEventListener('click', (e) => {
@@ -273,7 +296,7 @@ const prompts = ['What is GoCore?', 'What are you working on?', 'Do you sell pro
       e.preventDefault();
       const data = Object.fromEntries(new FormData(handoff));
       const transcript = state.messages.map((m) => `${m.role === 'user' ? 'Visitor' : 'Assistant'}: ${m.content}`).join('\n');
-      const contact = normalise({ ...data, subject: 'Message via website assistant' });
+      const contact = normalise({ ...data, service: 'Other' });
       const first = Object.values(validate(contact))[0];
       if (first) {
         handoffError.textContent = first;
@@ -366,6 +389,12 @@ const prompts = ['What is GoCore?', 'What are you working on?', 'Do you sell pro
   .chip { min-height: 34px; padding: 0 0.8rem; background: transparent; color: var(--ink-2); border: 1px solid var(--line-strong); border-radius: 999px; font-size: 0.84rem; }
   .chip:hover { border-color: var(--ink); color: var(--ink); }
   .chip--accent { border-color: var(--accent); color: var(--accent); }
+  .chip--link { display: inline-flex; align-items: center; background: var(--ink); color: var(--paper); border-color: var(--ink); text-decoration: none; }
+  .chip--link:hover { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .assistant__log :global(.msg--action) { align-self: flex-start; padding: 0; background: none; }
+  .assistant__log :global(.msg__button) { display: inline-flex; align-items: center; min-height: 36px; padding: 0 0.95rem; background: var(--ink); color: var(--paper); border-radius: 999px; font-weight: 560; text-decoration: none; }
+  .assistant__log :global(.msg__button:hover) { background: var(--accent); color: var(--on-accent); }
+  .assistant--floating.is-expanded .assistant__panel { width: min(760px, calc(100vw - 2rem)); height: min(860px, calc(100dvh - 2rem)); }
 
   .assistant__composer { display: flex; align-items: flex-end; gap: 0.5rem; margin: 0 0.75rem; padding: 0.4rem 0.4rem 0.4rem 0.85rem; border: 1px solid var(--line-strong); border-radius: 14px; background: var(--paper); }
   .assistant__composer[hidden] { display: none; }
@@ -399,6 +428,7 @@ const prompts = ['What is GoCore?', 'What are you working on?', 'Do you sell pro
   @media (max-width: 520px) {
     .assistant--floating .assistant__panel { position: fixed; inset: auto 0 0 0; width: 100%; height: min(88dvh, 680px); border-radius: 16px 16px 0 0; }
     .assistant__launcher span { display: none; }
+    .assistant__expand { display: none; }
     .assistant__launcher { padding: 0; width: 54px; justify-content: center; }
   }
   @media print { .assistant { display: none; } }

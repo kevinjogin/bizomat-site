@@ -11,8 +11,8 @@ Save each article as a NEW Markdown file in src/content/insights/.
 Do not edit, rename or delete any existing file. Do not commit, push or deploy. Leave the new files for review.
 
 ABOUT GOCORE
-- GoCore is a new Australian business exploring products, technology, systems and ideas. Its business model is still evolving.
-- Never say or imply that GoCore offers a service, product or price, or has clients, partners, results or experience, unless the source material explicitly says so.
+- GoCore is an Australian technical-services business providing engineering and CAD support, manufacturing support, operations improvement and engineering project support (including the GoCore Factory Fix), for Sydney and NSW businesses with suitable remote work Australia-wide.
+- Never invent clients, projects, results, statistics or prices, and never describe services or capabilities beyond those on the Services page (src/data/services.ts). Never use or describe information belonging to any employer, client or supplier.
 - These articles also feed the website's AI assistant, so each article must stand alone: define terms the first time they appear, avoid "as mentioned in another article", and keep each section focused under a clear heading.
 
 LENGTH (HARD REQUIREMENT)
@@ -43,7 +43,7 @@ Rules:
 - title: 5–120 characters.
 - description: aim for 120–190 characters; hard limits 50–200 characters or the build fails.
 - publishDate: today's date in Sydney. Never a future date (future-dated posts are hidden from the site).
-- category: exactly one of Ideas, Products, Technology, Business.
+- category: exactly one of Engineering, Manufacturing, Operations, Projects, Ideas, Products, Technology, Business. Prefer the first four for articles on those subjects.
 - tags: 2–5, chosen only from this list: product-development, manufacturing, prototyping, design, automation, ai, systems, operations, strategy, experimentation, customers, validation, process-improvement, finance, sales. Do not invent tags; if one is genuinely needed, recommend it in your report instead.
 - Only add image fields if I supply images: image: "./images/<file-name>" plus a required imageAlt: "<description>", with the file saved in src/content/insights/images/.
 

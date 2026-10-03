@@ -1,0 +1,31 @@
+---
+// Credibility note about licensed professional software, with an unobtrusive trademark acknowledgement.
+// Deliberately no third-party logos: GoCore is not affiliated with or endorsed by these vendors.
+import { SOFTWARE } from '../data/services.ts';
+
+interface Props {
+  headingLevel?: 'h2' | 'h3';
+}
+const { headingLevel = 'h2' } = Astro.props;
+const Heading = headingLevel;
+const points = ['Licensed SolidWorks/CAD software', 'Microsoft Office-compatible deliverables', 'Client-ready drawings and documentation'];
+---
+
+<div class="sw">
+  <div>
+    <Heading class="sw__title">{SOFTWARE.title}</Heading>
+    <p class="sw__text">{SOFTWARE.text}</p>
+  </div>
+  <ul class="sw__points">{points.map((p) => <li>{p}</li>)}</ul>
+  <p class="sw__tm">{SOFTWARE.trademarks}</p>
+</div>
+
+<style>
+  .sw { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 1.5rem 4rem; align-items: start; }
+  .sw__title { font-size: var(--step-2); font-weight: 540; letter-spacing: -0.03em; line-height: 1.12; max-width: 20ch; }
+  .sw__text { margin: 1rem 0 0; color: var(--ink-2); max-width: 58ch; }
+  .sw__points { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line-strong); }
+  .sw__points li { padding: 0.8rem 0; border-bottom: 1px solid var(--line); font-weight: 520; }
+  .sw__tm { grid-column: 1 / -1; margin: 0; font-size: 0.78rem; color: var(--muted); max-width: 90ch; }
+  @media (max-width: 860px) { .sw { grid-template-columns: 1fr; } }
+</style>

@@ -34,3 +34,10 @@ test('hashed assets get long caching; pages.dev is kept out of search engines', 
   const live = await worker.fetch(new Request('https://gocore.com.au/'), env());
   assert.equal(live.headers.get('X-Robots-Tag'), null);
 });
+
+test('plain HTTP page requests on the production domain are upgraded to HTTPS', async () => {
+  const res = await worker.fetch(new Request('http://gocore.com.au/services/?a=1'), env());
+  assert.equal(res.status, 301);
+  assert.equal(res.headers.get('Location'), 'https://gocore.com.au/services/?a=1');
+  assert.equal((await worker.fetch(new Request('https://gocore.com.au/services/'), env())).status, 200);
+});

@@ -2,7 +2,7 @@
 //   resend  → https://resend.com (free tier). Needs RESEND_API_KEY, CONTACT_TO, CONTACT_FROM.
 //   log     → writes the message to the Worker log only. Useful for testing before email is set up.
 // Add another provider by adding a case below; nothing else needs to change.
-import type { ContactInput } from '../../lib/contact.ts';
+import { enquirySubject, type ContactInput } from '../../lib/contact.ts';
 
 export interface MailEnv {
   MAIL_PROVIDER?: 'resend' | 'log' | string;
@@ -17,11 +17,18 @@ const escapeHtml = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', 
 const oneLine = (s: string) => s.replace(/[\r\n]+/g, ' ').trim();
 
 export function composeMessage(input: ContactInput) {
-  const subject = oneLine(`[GoCore] ${input.subject} — ${input.name}${input.organisation ? ` (${input.organisation})` : ''}`).slice(0, 200);
-  const text = `Name: ${input.name}\nEmail: ${input.email}\nOrganisation: ${input.organisation || '—'}\nSubject: ${input.subject}\n\n${input.message}\n`;
+  const subject = oneLine(enquirySubject(input));
+  const rows: Array<[string, string]> = [
+    ['Name', input.name],
+    ['Company', input.company || '—'],
+    ['Email', input.email],
+    ['Phone', input.phone || '—'],
+    ['Service', input.service],
+    ['Preferred contact', input.contactMethod],
+  ];
+  const text = `${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\n\n${input.message}\n`;
   const html =
-    `<p><strong>Name:</strong> ${escapeHtml(input.name)}<br><strong>Email:</strong> ${escapeHtml(input.email)}<br>` +
-    `<strong>Organisation:</strong> ${escapeHtml(input.organisation || '—')}<br><strong>Subject:</strong> ${escapeHtml(input.subject)}</p>` +
+    `<p>${rows.map(([k, v]) => `<strong>${k}:</strong> ${escapeHtml(v)}`).join('<br>')}</p>` +
     `<p>${escapeHtml(input.message).replace(/\n/g, '<br>')}</p>`;
   return { subject, text, html };
 }

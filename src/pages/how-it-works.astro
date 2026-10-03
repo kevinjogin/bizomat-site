@@ -1,0 +1,123 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import Section from '../components/Section.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import Button from '../components/Button.astro';
+import CallToAction from '../components/CallToAction.astro';
+import ProcessSteps from '../components/ProcessSteps.astro';
+import { ENGAGEMENT_MODELS, PRICING_NOTE } from '../data/services.ts';
+
+const crumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'How It Works', href: '/how-it-works/' },
+];
+const defined = [
+  { title: 'Scope', text: 'What is included, and just as importantly, what is not.' },
+  { title: 'Deliverables', text: 'The drawings, documents, models or plans you will receive, and in what formats.' },
+  { title: 'Assumptions', text: 'The information, access and decisions the work depends on.' },
+  { title: 'Timing', text: 'When the work will start, key check-in points and the expected completion.' },
+  { title: 'Commercial terms', text: 'The price or rate, how changes are handled and how invoicing works for that assignment.' },
+];
+const send = [
+  'A short description of the problem or project and what “done” looks like',
+  'Existing drawings, models, photos or documents, if you have them',
+  'Any deadlines, constraints or site requirements',
+  'Whether a site visit is likely to be needed',
+  'Who will make decisions and be the main contact',
+];
+---
+
+<BaseLayout
+  title="How It Works"
+  description="How a GoCore engagement works: tell us the problem, agree a written scope, complete the engineering work, then deliver and close out. Fixed-price, staged or time-based."
+  breadcrumbs={crumbs}
+>
+  <Hero
+    eyebrow="How It Works"
+    title="Clear scope first. Then the <em>work</em>."
+    lead="Every engagement follows the same simple pattern, so you know what you are getting, when, and for what price before substantial work begins."
+  >
+    <Breadcrumb items={crumbs} slot="before" />
+    <Fragment slot="actions">
+      <Button href="/contact/" arrow data-cta="how-hero-quote">Get a Quote</Button>
+    </Fragment>
+  </Hero>
+
+  <Section index="01" label="The process" labelledby="process-title">
+    <h2 id="process-title" class="block-title">Four stages.</h2>
+    <ProcessSteps />
+  </Section>
+
+  <Section index="02" label="Before work begins" tone="alt" labelledby="defined-title">
+    <div class="split">
+      <div class="split__intro">
+        <h2 id="defined-title">What GoCore defines up front.</h2>
+        <p class="muted">After the first discussion, these are confirmed in writing before substantial work starts. Nothing significant should come as a surprise.</p>
+      </div>
+      <dl class="defined">
+        {
+          defined.map((d) => (
+            <div>
+              <dt>{d.title}</dt>
+              <dd>{d.text}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </Section>
+
+  <Section index="03" label="Ways to engage" labelledby="models-title">
+    <h2 id="models-title" class="block-title">Pricing that suits the job.</h2>
+    <ul class="models">
+      {
+        ENGAGEMENT_MODELS.map((m) => (
+          <li>
+            <h3>{m.title}</h3>
+            <p>{m.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="note">
+      For suitable small assignments, a fixed-price proposal is usually the simplest option. Where the problem is not yet clear, a short discovery stage avoids paying for the wrong solution. Payment terms are agreed for each assignment as part of the proposal. {PRICING_NOTE}
+    </p>
+    <Button href="/services/#pricing" variant="text" arrow>See indicative pricing</Button>
+  </Section>
+
+  <Section index="04" label="Getting started" tone="alt" labelledby="send-title">
+    <div class="split">
+      <div class="split__intro">
+        <h2 id="send-title">What to send with an enquiry.</h2>
+        <p class="muted">None of this is essential to start. A short description is enough, and GoCore can help define the scope. Please only share information you are permitted to share.</p>
+      </div>
+      <ul class="send-list">{send.map((s) => <li>{s}</li>)}</ul>
+    </div>
+  </Section>
+
+  <CallToAction title="Ready to describe the job?" text="Send a short description. GoCore will reply to discuss the scope and the best way to price the work." label="Get a Quote" />
+</BaseLayout>
+
+<style>
+  .block-title { margin-bottom: clamp(2rem, 4vw, 3rem); max-width: 20ch; }
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 2.5rem 5rem; }
+  .split__intro h2 { margin-bottom: 1.1rem; max-width: 16ch; }
+  .split__intro p { max-width: 42ch; }
+  @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
+  .defined { margin: 0; border-top: 1px solid var(--line-strong); }
+  .defined div { display: grid; grid-template-columns: 11rem 1fr; gap: 0.25rem 2rem; padding: 1.1rem 0; border-bottom: 1px solid var(--line); }
+  .defined dt { font-weight: 560; }
+  .defined dd { margin: 0; color: var(--ink-2); }
+  @media (max-width: 560px) { .defined div { grid-template-columns: 1fr; } }
+  .models { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line-strong); }
+  .models li { padding: 1.5rem 1.5rem 1.75rem 0; border-bottom: 1px solid var(--line); }
+  .models li:not(:first-child) { padding-left: 1.5rem; border-left: 1px solid var(--line); }
+  .models h3 { font-size: 1.12rem; font-weight: 560; letter-spacing: -0.015em; }
+  .models p { margin: 0.5rem 0 0; color: var(--ink-2); font-size: 0.97rem; line-height: 1.55; }
+  @media (max-width: 960px) { .models { grid-template-columns: 1fr 1fr; } .models li:nth-child(3) { padding-left: 0; border-left: 0; } }
+  @media (max-width: 560px) { .models { grid-template-columns: 1fr; } .models li, .models li:not(:first-child) { padding-left: 0; border-left: 0; } }
+  .note { margin: 2rem 0 1.25rem; max-width: 80ch; color: var(--muted); font-size: 0.95rem; }
+  .send-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line-strong); }
+  .send-list li { padding: 0.95rem 0; border-bottom: 1px solid var(--line); }
+</style>

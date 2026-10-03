@@ -4,6 +4,24 @@
 // cannot fragment into synonyms ("ai", "AI-tools", "artificial-intelligence"…).
 
 export const CATEGORIES = {
+  // Service-aligned categories for engineering and manufacturing articles. A category page and filter
+  // appear only once it has published articles, so empty categories never show.
+  engineering: {
+    name: 'Engineering',
+    description: 'CAD, drawings, documentation and practical engineering.',
+  },
+  manufacturing: {
+    name: 'Manufacturing',
+    description: 'Production, tooling, jigs and fixtures, and manufacturing problem solving.',
+  },
+  operations: {
+    name: 'Operations',
+    description: 'Process improvement, workflow, standardisation and production systems.',
+  },
+  projects: {
+    name: 'Projects',
+    description: 'Scoping, delivering and closing out engineering projects.',
+  },
   ideas: {
     name: 'Ideas',
     description: 'Observations, concepts and exploratory thinking.',

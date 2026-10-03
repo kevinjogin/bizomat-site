@@ -199,4 +199,4 @@ It helps to decide, before testing, what result would end the idea. For example:
 
 A useful product solves a real, specific problem for people who can be reached, clearly better than their current workaround, at a price that sustains a business. Most of the work of deciding whether to build it happens before any design: describing the problem, finding the people who have it, gathering evidence that climbs above opinion, and checking that the economics hold.
 
-GoCore is at the beginning of this process with its own ideas. We will share what we learn as we go, including the ideas we decide not to pursue.
+GoCore applies the same questions to its own future product ideas, and they are a useful check for any business weighing up a new product or improvement before committing time and money to it.
