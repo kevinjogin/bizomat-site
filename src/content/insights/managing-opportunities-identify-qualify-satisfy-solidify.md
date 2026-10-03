@@ -137,6 +137,52 @@ For a founder or small team, the stages are a planning tool as much as a sales m
 5. **Plan the first ninety days after each sale,** including check-ins and a moment to ask for referrals.
 6. **Review monthly** which stage is the bottleneck, and focus improvement there.
 
+## Questions to ask yourself at each stage
+
+A framework is only useful if it changes what you do on a Tuesday afternoon. One way to make the four stages practical is to keep a short set of questions for each, and to ask them honestly before deciding where to spend the next hour.
+
+**Identifying**
+
+- Could I describe my best customer clearly enough that a colleague could recognise one?
+- Where did my last five good customers come from, and am I spending time in those places?
+- How many relevant first conversations did I have this week, and is that enough to sustain the business?
+- Do I prepare before contacting someone new, or do I improvise?
+
+**Qualifying**
+
+- For each open opportunity, do I know what problem the customer is trying to solve, in their words?
+- Do I know who makes the decision, and have I spoken with them?
+- Do I know whether there is budget, and roughly how much?
+- Is there a reason to act now, or would nothing change if they waited six months?
+- Which opportunities am I keeping alive out of hope rather than evidence?
+
+**Satisfying**
+
+- Does my proposal open with the customer's problem, or with my product?
+- Have I addressed the doubts the customer raised, or only the questions they asked?
+- Is the next step clear, small and easy to agree to?
+- If the customer said no tomorrow, would I know why?
+
+**Solidifying**
+
+- What did I promise during the sale, and am I sure it has been delivered?
+- When did I last speak with each important customer about something other than an invoice?
+- Which customers would happily recommend us, and have I asked them?
+- What have recent customers taught us about what the next customer will need?
+
+These questions are deliberately uncomfortable. Most of them expose a gap between what we intend to do and what we actually do. That gap is where improvement happens.
+
+## How the stages change as a business grows
+
+In a very small business, one person usually handles all four stages. The founder finds customers, works out whether they are a fit, wins them and looks after them. The advantage is continuity: nothing is lost between stages. The risk is that the stage the founder enjoys least is quietly neglected. Many technically minded founders, for example, enjoy satisfying (solving the customer's problem) but avoid identifying (reaching out to strangers), which leaves the pipeline empty.
+
+As a business grows, the stages are often split between people or teams. Marketing may take on much of identifying, sales takes qualifying and satisfying, and account management or customer success takes solidifying. Specialisation brings skill and capacity, but it introduces hand-offs, and every hand-off is a place where information and trust can be lost. A customer who explained their needs carefully during qualifying should not have to explain them again after the sale.
+
+Whatever the size of the business, two habits help:
+
+- **Keep shared notes that travel with the customer.** What they need, who decides, what was promised and what worried them.
+- **Review the whole loop together.** Even if different people own different stages, the result depends on all four. A regular review of where opportunities are getting stuck keeps the team focused on the real bottleneck rather than on its own stage in isolation.
+
 ## What follows in this series
 
 The rest of this series looks at each stage in more depth: the importance of business development, why training fades and how to make it stick, the sales funnel, prospecting, planning, first impressions, rapport, qualifying, communication, questioning, listening, how people make decisions, conversion, customer retention, the empathy map, deliberate practice, sales self-management and building a strong sales team.
