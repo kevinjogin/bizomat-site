@@ -1,0 +1,58 @@
+[
+  {
+    "question": "What is GoCore?",
+    "answer": "GoCore is a new Australian business focused on building useful things around real problems. It is early-stage and deliberately broad: it is exploring products, technology, practical systems and ideas before committing to a single direction."
+  },
+  {
+    "question": "What does GoCore sell? Does GoCore offer services?",
+    "answer": "Not yet. GoCore has not launched products or paid services. Its current work is exploring problems, testing ideas and documenting what it learns. Anything new will appear on the Work page first."
+  },
+  {
+    "question": "Why is GoCore so broad?",
+    "answer": "Committing early to the wrong product is expensive. GoCore is spending a deliberate period exploring and testing ideas so the evidence can decide where to focus. The direction will narrow as initiatives prove themselves."
+  },
+  {
+    "question": "What is GoCore exploring?",
+    "answer": "Four areas of interest: products (physical and digital things designed around a real need), technology (software, automation and AI where they genuinely help), systems (the processes and tools behind good work) and ideas (questions worth testing before anything is built). These are areas of interest, not business divisions."
+  },
+  {
+    "question": "What is GoCore working on now?",
+    "answer": "Current initiatives are listed on the Work page at /work/, each with an honest status such as Exploring, Developing or Released."
+  },
+  {
+    "question": "How do I contact GoCore?",
+    "answer": "Use the contact form at /contact/. You can also leave a message directly in this chat window using \"Leave a message\". GoCore reads every message and replies as soon as possible."
+  },
+  {
+    "question": "Who should get in touch?",
+    "answer": "GoCore welcomes general enquiries, potential collaborations, ideas worth discussing, supplier and manufacturer discussions, and business conversations."
+  },
+  {
+    "question": "Can I collaborate with GoCore or pitch an idea?",
+    "answer": "Yes. GoCore is open to collaborations and to hearing ideas. Send a short note through the contact form at /contact/ describing the problem or idea."
+  },
+  {
+    "question": "I am a supplier or manufacturer. Who do I talk to?",
+    "answer": "Please introduce yourself through the contact form at /contact/ and choose \"Supplier or manufacturer\" as the subject. Include what you make and where you are based."
+  },
+  {
+    "question": "Where is GoCore based?",
+    "answer": "GoCore is an Australian business."
+  },
+  {
+    "question": "Is GoCore hiring?",
+    "answer": "There are no open roles at the moment. If you would like to introduce yourself, you are welcome to use the contact form."
+  },
+  {
+    "question": "What are GoCore Insights?",
+    "answer": "Insights is where GoCore publishes its thinking on ideas, products, technology and business. Articles are organised by subject at /insights/, and there is an RSS feed at /rss.xml."
+  },
+  {
+    "question": "How does GoCore handle my personal information?",
+    "answer": "GoCore only uses the details you send to reply to you, and does not sell or share them for marketing. The full privacy policy is at /privacy/."
+  },
+  {
+    "question": "Who are you? Am I talking to a person?",
+    "answer": "I am the GoCore Assistant, an automated helper that answers questions using information published on the GoCore website. For anything I cannot answer, you can leave a message for the GoCore team."
+  }
+]

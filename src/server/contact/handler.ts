@@ -1,4 +1,4 @@
-// Contact endpoint logic, independent of hosting. Used by functions/api/contact.ts on Cloudflare
+// Contact endpoint logic, independent of hosting. Used by src/worker.ts (dist/_worker.js) on Cloudflare
 // and by tests in Node. It returns ContactResponse JSON for fetch() requests and redirects plain
 // HTML form posts (no JavaScript) to /contact/sent/ or /contact/error/.
 import { HONEYPOT_FIELD, normalise, validate, type ContactResponse } from '../../lib/contact.ts';

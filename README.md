@@ -53,10 +53,10 @@ src/
   layouts/      BaseLayout, InsightsIndex, LegalLayout
   lib/          contact.ts (shared validation) · contact-client.ts (form delivery)
   pages/        routes: /, /about/, /work/, /insights/, /contact/, /privacy/, /terms/, /search/, /chat/, 404
-  server/       contact + chat handlers (run as Cloudflare functions, tested in Node)
+  server/       contact + chat handlers (run inside the Cloudflare worker, tested in Node)
+  worker.ts     Cloudflare worker: serves the site, /api/chat and /api/contact (built to dist/_worker.js)
   styles/       global.css (design tokens, typography, prose)
   utils/        content helpers, rehype table wrapper
-functions/api/  Cloudflare Pages Functions: contact.ts, chat.ts
 public/         static files: brand/, favicons, og-default.png, manifest
 brand-source/   original logo artwork (not published)
 scripts/        prepare-brand.mjs, make-brand-images.ps1, postbuild.mjs
@@ -65,6 +65,17 @@ docs/           EDITORIAL_PROMPTS.md: the reusable article-writing prompts
 ```
 
 ## 3. Creating a new Insights post
+
+### Easiest: the online editor (Pages CMS)
+
+1. Go to **https://app.pagescms.org** and sign in with GitHub.
+2. Open the **gocore-website** repository. You will see **Insights**, **Work** and **Assistant FAQ**.
+3. **Insights → Add an entry.** Fill in the title, description, category and tags, then write the article. Images can be uploaded straight into the editor.
+4. Leave **Draft** ticked and save while you are still working. Untick **Draft** and save when it is ready.
+
+Every save is a commit to GitHub. Cloudflare rebuilds and redeploys the site automatically within a few minutes. If a save breaks a content rule (for example a missing tag), the Cloudflare build fails and the live site stays as it was: check **Workers & Pages → throbbing-block-6c61 → Deployments** for the error.
+
+### On your computer
 
 1. Create `src/content/insights/your-post-slug.md` (or `.mdx`). **The file name becomes the permanent URL** `/insights/your-post-slug/`. Dates never appear in URLs.
 2. Add frontmatter (below) with `draft: true`.
@@ -148,7 +159,7 @@ The UI calls `submitContact()` (`src/lib/contact-client.ts`) and never talks to 
 2. Add the variables from [.dev.vars.example](.dev.vars.example) (`MAIL_PROVIDER`, `RESEND_API_KEY`, `CONTACT_TO`, `CONTACT_FROM`) under **Settings → Variables and Secrets**. Store keys as **Secrets**.
 3. Optional rate limiting: create a KV namespace, bind it as `CONTACT_RATE_LIMIT` (see `wrangler.toml`).
 
-The function (`functions/api/contact.ts` → `src/server/contact/`) validates input, checks origin, enforces the honeypot and rate limits, escapes email HTML and blocks header injection. All of this is covered by `tests/contact.test.ts`.
+The endpoint (`src/worker.ts` → `src/server/contact/`) validates input, checks origin, enforces the honeypot and rate limits, escapes email HTML and blocks header injection. All of this is covered by `tests/contact.test.ts`.
 
 ## 9. GoCore Assistant (AI chat)
 
@@ -159,16 +170,16 @@ A receptionist-style chat sits at the bottom right of every page. Visitors can *
 - offers **"Leave a message"**, which sends the visitor's details and the chat transcript through the same contact form system;
 - keeps the conversation in the visitor's browser session only (nothing is stored by GoCore).
 
-**How it works:** each build writes `/assistant-knowledge.json` from the site's published content (drafts are never included). `functions/api/chat.ts` picks the most relevant passages and asks a Workers AI model, with strict grounding rules, to answer.
+**How it works:** each build writes `/assistant-knowledge.json` from the site's published content (drafts are never included). The site worker (`src/worker.ts` → `src/server/chat/`) picks the most relevant passages and asks a Workers AI model, with strict grounding rules, to answer.
 
 **Free usage:** Workers AI is included in the Cloudflare **Workers Free plan** with a daily allocation (no card required). When the allocation is used up for the day, the assistant politely offers "Leave a message" instead. A 3B fallback model keeps cost per question low.
 
 | Setting | Where | Default |
 | --- | --- | --- |
-| AI binding `AI` | `wrangler.toml` (`[ai]`), or Pages → Settings → Bindings → Workers AI | required |
-| `CHAT_MODEL` | Pages environment variable | `@cf/meta/llama-3.1-8b-instruct-fast` |
-| `CHAT_FALLBACK_MODEL` | Pages environment variable | `@cf/meta/llama-3.2-3b-instruct` |
-| `CHAT_RATE_LIMIT_MAX` | Pages environment variable (needs the KV binding) | 40 questions per hour per visitor |
+| AI binding `AI` | `wrangler.toml` (`[ai]`), applied by `npm run deploy` | required |
+| `CHAT_MODEL` | Worker variable (`[vars]` in wrangler.toml) | `@cf/meta/llama-3.1-8b-instruct-fast` |
+| `CHAT_FALLBACK_MODEL` | Worker variable (`[vars]` in wrangler.toml) | `@cf/meta/llama-3.2-3b-instruct` |
+| `CHAT_RATE_LIMIT_MAX` | Worker variable (`[vars]` in wrangler.toml; needs the KV binding) | 40 questions per hour per visitor |
 
 Cloudflare occasionally retires models or moves them to the paid plan. If answers stop, run `npx wrangler ai models`, pick a current free text-generation model, and set it as `CHAT_MODEL`. No code change is needed.
 
@@ -176,36 +187,49 @@ Cloudflare occasionally retires models or moves them to the paid plan. If answer
 
 ## 10. Deploying to Cloudflare
 
-### Recommended: Git integration (auto-deploys on every push)
+The site runs as a **Cloudflare Worker** (`throbbing-block-6c61`, attached to `gocore.com.au`). The Worker serves the static files in `dist/` and runs `src/worker.ts` for `/api/chat` (GoCore Assistant) and `/api/contact`. All settings, including the Workers AI binding and the custom domain, live in [wrangler.toml](wrangler.toml).
 
-1. Push this project to GitHub or GitLab. If it lives in a larger repository, note the folder name (`GoCore`).
-2. Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git** → select the repository.
-3. Build settings:
+### Deploy (recommended)
 
-   | Setting | Value |
-   | --- | --- |
-   | Framework preset | Astro |
-   | Root directory | `GoCore` (or blank if this folder is the repository root) |
-   | Build command | `npm run build` |
-   | Build output directory | `dist` |
-   | Environment variable | `NODE_VERSION` = `22` |
-
-4. **Save and Deploy.** `wrangler.toml` supplies the Workers AI binding. If the dashboard asks, add **Settings → Bindings → Workers AI** with the name `AI`.
-5. **Custom domain:** project → **Custom domains → Set up a domain** → `gocore.com.au`, then `www.gocore.com.au`. Add a Redirect Rule from `www` to the apex domain. HTTPS is automatic.
-
-### Alternative: direct upload from your computer
+One-time setup: sign Wrangler in to your Cloudflare account. A browser window opens; approve the access.
 
 ```bash
 npx wrangler login
-npm run deploy     # verify + build + wrangler pages deploy dist
 ```
 
-Drag-and-drop upload in the dashboard works for the static site, but it does **not** include `functions/`, so the AI assistant would be unavailable (the contact form still works, because Web3Forms runs in the browser).
+Then, every time you want to publish:
+
+```bash
+npm run deploy     # type check + tests + build + checks, then wrangler deploy
+```
+
+`npm run preview` runs the Worker locally (`wrangler dev`), including the assistant, which calls Workers AI remotely.
+
+### Why not drag and drop?
+
+Uploading files in the dashboard creates a Worker with **static assets only**. The website and the Web3Forms contact form work that way, but the Worker never runs `src/worker.ts`, so the **assistant does not work** and adding an AI binding in the dashboard will not change that. Use `npm run deploy` instead. If you ever do drag and drop, upload only the **`dist`** folder (about 110 files), never the whole project (`node_modules` is over 15,000 files).
+
+### Automatic deploys from GitHub (used by the online editor)
+
+Workers & Pages → **throbbing-block-6c61 → Settings → Build → Connect** → GitHub → `jogkev-creator/gocore-website`, branch `main`.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Deploy command | `npx wrangler deploy` |
+| Root directory | `/` (blank) |
+
+Every push to `main`, including every save in Pages CMS, then rebuilds and deploys the site. `npm run deploy` from your computer still works too.
+
+### Renaming the Worker
+
+The Worker name in `wrangler.toml` must match the dashboard. If you rename it (Settings → General), update `name` in `wrangler.toml` before the next deploy, or a second Worker will be created.
 
 ### What Cloudflare serves
 
-- `_headers` (generated by `scripts/postbuild.mjs`): a strict Content-Security-Policy with hashes for every inline script, HSTS, `nosniff`, frame blocking, referrer and permissions policies, long-term caching for hashed assets, and `noindex` on the `*.pages.dev` address so only gocore.com.au is indexed.
-- `404.html` for unknown URLs. Pagefind's search index lives in `/pagefind/`.
+- Static files from `dist/`, with response headers from `dist/_headers` (generated by `scripts/postbuild.mjs`): a strict Content-Security-Policy with hashes for every inline script, HSTS, `nosniff`, frame blocking, referrer and permissions policies, and long-term caching for hashed assets. `dist/404.html` is used for unknown pages.
+- `src/worker.ts` for everything that is not a file: `/api/chat`, `/api/contact` and any other non-file request. It keeps `*.workers.dev` and `*.pages.dev` addresses out of search engines.
+- `dist/_worker.js` is a bundled copy of the same Worker for Cloudflare Pages deployments. `.assetsignore` keeps it out of the public files when deploying as a Worker.
 
 ## 11. Changing branding
 
@@ -243,7 +267,7 @@ Generated automatically on every build:
 
 1. Google Search Console → add `https://gocore.com.au` → verify with a DNS TXT record (added in Cloudflare DNS).
 2. Submit `https://gocore.com.au/sitemap-index.xml`.
-3. Optional analytics: Cloudflare → your Pages project → **Metrics → Web Analytics → Enable** (cookieless; already allowed by the CSP).
+3. Optional analytics: Cloudflare → **Analytics & Logs → Web Analytics → Add a site** → gocore.com.au, then enable automatic setup (cookieless; already allowed by the CSP).
 
 ## 14. Quality checks
 
@@ -255,4 +279,4 @@ Generated automatically on every build:
 - a draft or future-dated entry in the pages, RSS or sitemap
 - missing `sitemap-index.xml`, `rss.xml`, `robots.txt`, `404.html`, search index or assistant knowledge
 
-`npm test` runs 16 tests covering the contact function (validation, honeypot, timing, origin, header injection, rate limiting, no-JS fallback) and the assistant (grounding, retrieval, model fallback, limits, input cleaning).
+`npm test` runs 20 tests covering the contact endpoint (validation, honeypot, timing, origin, header injection, rate limiting, no-JS fallback), the assistant (grounding, retrieval, model fallback, limits, input cleaning) and the site worker (routing, caching and search-engine headers).

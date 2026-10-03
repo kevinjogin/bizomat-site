@@ -4,6 +4,9 @@ import { z } from 'astro/zod';
 import { CATEGORY_NAMES, TAG_SLUGS } from './config/taxonomy.ts';
 import { WORK_STATUSES, WORK_TYPES } from './config/work.ts';
 
+/** Optional fields left blank in the online editor (Pages CMS) arrive as "" or null; treat them as not set. */
+const optional = <T extends z.ZodType>(schema: T) => z.preprocess((v) => (v === '' || v === null ? undefined : v), schema.optional());
+
 /**
  * Insights articles: src/content/insights/<slug>.md or .mdx
  * The file name is the permanent URL: /insights/<slug>/ (no dates in URLs).
@@ -16,15 +19,15 @@ const insights = defineCollection({
         title: z.string().min(5).max(120),
         description: z.string().min(50).max(200),
         publishDate: z.coerce.date(),
-        updatedDate: z.coerce.date().optional(),
+        updatedDate: optional(z.coerce.date()),
         category: z.enum(CATEGORY_NAMES),
         tags: z.array(z.enum(TAG_SLUGS)).min(1).max(5),
         author: z.string().default('GoCore'),
         draft: z.boolean().default(true),
         featured: z.boolean().default(false),
-        image: image().optional(),
-        imageAlt: z.string().optional(),
-        canonicalURL: z.url().optional(),
+        image: optional(image()),
+        imageAlt: optional(z.string()),
+        canonicalURL: optional(z.url()),
       })
       .refine((d) => !d.image || !!d.imageAlt, { message: 'imageAlt is required when image is set', path: ['imageAlt'] })
       .refine((d) => !d.updatedDate || d.updatedDate >= d.publishDate, { message: 'updatedDate must be on or after publishDate', path: ['updatedDate'] })
@@ -46,12 +49,12 @@ const work = defineCollection({
         type: z.enum(WORK_TYPES),
         status: z.enum(WORK_STATUSES),
         date: z.coerce.date(),
-        image: image().optional(),
-        imageAlt: z.string().optional(),
-        gallery: z.array(z.object({ src: image(), alt: z.string(), caption: z.string().optional() })).default([]),
-        relatedInsights: z.array(reference('insights')).default([]),
-        externalUrl: z.url().optional(),
-        detailPage: z.boolean().optional(),
+        image: optional(image()),
+        imageAlt: optional(z.string()),
+        gallery: z.preprocess((v) => v ?? [], z.array(z.object({ src: image(), alt: z.string(), caption: optional(z.string()) }))),
+        relatedInsights: z.preprocess((v) => v ?? [], z.array(reference('insights'))),
+        externalUrl: optional(z.url()),
+        detailPage: optional(z.boolean()),
         featured: z.boolean().default(false),
         draft: z.boolean().default(false),
         order: z.number().default(100),

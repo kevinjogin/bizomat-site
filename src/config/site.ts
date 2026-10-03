@@ -33,7 +33,7 @@ export const SITE = {
   /**
    * Contact form delivery. The UI is identical for both providers.
    *  - 'web3forms': the browser posts straight to Web3Forms (works on day one, no server needed).
-   *  - 'worker':    posts to the Cloudflare function at /api/contact (functions/api/contact.ts),
+   *  - 'worker':    posts to /api/contact, handled by the site's Cloudflare worker (src/worker.ts),
    *                 which sends mail through the provider configured in Cloudflare.
    */
   contact: {

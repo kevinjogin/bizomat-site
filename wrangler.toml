@@ -1,14 +1,34 @@
-# Cloudflare Pages configuration (used by `wrangler pages deploy` and `wrangler pages dev`).
-name = "gocore"
-pages_build_output_dir = "./dist"
-compatibility_date = "2025-09-01"
+# Cloudflare Worker configuration for gocore.com.au.
+# Deploy with:  npm run deploy   (builds, checks, then `wrangler deploy`)
+#
+# The Worker serves the static site from dist/ and runs src/worker.ts for anything that is not
+# a file, which is how /api/chat (GoCore Assistant) and /api/contact work.
 
-# Workers AI for the GoCore Assistant (/api/chat). Workers Free plan: a daily allocation, no card needed.
+# Name of the existing Worker that already serves gocore.com.au. If you rename the Worker in the
+# Cloudflare dashboard, change this to match, or a second Worker will be created.
+name = "throbbing-block-6c61"
+main = "src/worker.ts"
+compatibility_date = "2025-09-01"
+workers_dev = false
+
+routes = [
+  { pattern = "gocore.com.au", custom_domain = true },
+]
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "404-page"
+
+# Workers AI for the GoCore Assistant. Workers Free plan: a daily allocation, no card needed.
 [ai]
 binding = "AI"
 
-# Optional rate limiting for the contact function and the assistant.
-# Create a KV namespace (Workers & Pages → KV), then uncomment and paste its id:
+[observability]
+enabled = true
+
+# Optional rate limiting for the contact endpoint and the assistant.
+# Create a KV namespace (Storage & Databases → KV), then uncomment and paste its id:
 # [[kv_namespaces]]
 # binding = "CONTACT_RATE_LIMIT"
 # id = "<your-kv-namespace-id>"
