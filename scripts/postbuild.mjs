@@ -166,7 +166,8 @@ for (const collection of ['insights', 'work']) {
     const front = fs.readFileSync(path.join(dir, f), 'utf8').match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] ?? '';
     const isDraft = /^draft:\s*true\s*$/m.test(front) || (collection === 'insights' && !/^draft:/m.test(front));
     const date = front.match(/^publishDate:\s*["']?([\d-]+)/m)?.[1];
-    const future = date && new Date(date).getTime() > Date.now();
+    // Publish dates are calendar dates in Sydney, matching isVisible() in src/utils/content.ts.
+    const future = date && date > new Intl.DateTimeFormat('en-CA', { timeZone: 'Australia/Sydney' }).format(new Date());
     if (!isDraft && !future) continue;
     draftCount++;
     const slug = f.replace(/\.mdx?$/, '');

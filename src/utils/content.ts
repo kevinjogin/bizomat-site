@@ -5,9 +5,12 @@ import { CATEGORIES, CATEGORY_SLUGS, TAG_SLUGS, categorySlug, type CategorySlug,
 export type Insight = CollectionEntry<'insights'>;
 export type Work = CollectionEntry<'work'>;
 
+/** Today's calendar date in Sydney (YYYY-MM-DD), so a post dated today is live all day in Australia. */
+const todayInSydney = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Australia/Sydney' }).format(new Date());
+
 /** Drafts and future-dated posts are visible in `astro dev` only, never in a production build. */
 const isVisible = (draft: boolean, date?: Date) =>
-  import.meta.env.DEV || (!draft && (!date || date.getTime() <= Date.now()));
+  import.meta.env.DEV || (!draft && (!date || date.toISOString().slice(0, 10) <= todayInSydney()));
 
 export async function getInsights(): Promise<Insight[]> {
   const all = await getCollection('insights', ({ data }) => isVisible(data.draft, data.publishDate));

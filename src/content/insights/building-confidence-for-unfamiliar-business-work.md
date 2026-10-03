@@ -1,7 +1,7 @@
 ---
 title: "Building confidence for unfamiliar business work"
 description: "Build grounded confidence for unfamiliar responsibilities through realistic goals, focused preparation, useful role models and feedback that improves your next attempt."
-publishDate: 2026-10-03
+publishDate: 2026-10-04
 category: "Business"
 tags:
   - experimentation

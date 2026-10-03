@@ -1,7 +1,7 @@
 ---
 title: "Building professional credibility through everyday actions"
 description: "Build a professional reputation through accurate claims, dependable commitments and honest handling of mistakes, with practical habits for founders and small teams."
-publishDate: 2026-10-03
+publishDate: 2026-10-04
 category: "Business"
 tags:
   - operations
