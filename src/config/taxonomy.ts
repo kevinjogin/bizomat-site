@@ -44,6 +44,7 @@ export const TAGS = {
   validation: 'Validation',
   'process-improvement': 'Process improvement',
   finance: 'Finance',
+  sales: 'Sales',
 } as const;
 
 export type TagSlug = keyof typeof TAGS;

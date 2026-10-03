@@ -97,6 +97,7 @@ content:
             - { name: validation, label: Validation }
             - { name: process-improvement, label: Process improvement }
             - { name: finance, label: Finance }
+            - { name: sales, label: Sales }
       - name: featured
         label: Featured on the Insights page
         type: boolean

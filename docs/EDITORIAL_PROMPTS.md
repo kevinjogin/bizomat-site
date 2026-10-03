@@ -47,7 +47,7 @@ If none fits, recommend a new category but do not create it.
 TAG RULE
 Choose 2 to 5 tags from the controlled vocabulary:
 product-development, manufacturing, prototyping, design, automation, ai, systems, operations,
-strategy, experimentation, customers, validation, process-improvement, finance.
+strategy, experimentation, customers, validation, process-improvement, finance, sales.
 Do not create synonyms. If a genuinely new tag is needed, recommend it separately.
 
 SEO
