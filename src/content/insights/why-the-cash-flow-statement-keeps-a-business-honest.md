@@ -1,16 +1,17 @@
 ---
-title: "Why the cash flow statement keeps a business honest"
-description: "Profit and cash are not the same thing. How the cash flow statement shows what a business really generates, spends and returns, and which patterns signal strength."
+title: Why the cash flow statement keeps a business honest
+description: Profit and cash are not the same thing. How the cash flow statement
+  shows what a business really generates, spends and returns, and which patterns
+  signal strength.
+draft: false
 publishDate: 2026-10-03
-category: "Business"
+category: Business
 tags:
   - finance
   - operations
-author: "GoCore"
 featured: false
-draft: true
+author: GoCore
 ---
-
 A business can report a profit and still run out of money. It happens more often than people expect. Accounting profit includes estimates, timing choices and non-cash items. Cash is simpler: it either arrived or it did not.
 
 The **cash flow statement** tracks the actual movement of money in and out of a business over a period. *Warren Buffett and the Interpretation of Financial Statements* treats it as the place where the claims made on the income statement are tested.
