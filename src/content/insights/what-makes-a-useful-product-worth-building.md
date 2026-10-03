@@ -1,17 +1,17 @@
 ---
-title: "What makes a useful product worth building?"
-description: "A practical way to judge whether a product solves enough of a real problem to justify the time, money and risk of building it."
+title: What makes a useful product worth building?
+description: A practical way to judge whether a product solves enough of a real
+  problem to justify the time, money and risk of building it.
+draft: true
 publishDate: 2026-10-02
-category: "Products"
+category: Products
 tags:
   - product-development
   - validation
   - customers
-author: "GoCore"
 featured: true
-draft: false
+author: GoCore
 ---
-
 Most products that fail were not badly made. They were built well, for a problem that was not quite big enough, or not quite real enough, for the people they were meant to serve.
 
 That is an uncomfortable idea for anyone who enjoys making things. It means the most important product decision often happens before any design work starts: deciding whether the thing deserves to exist at all.
@@ -38,12 +38,14 @@ Once the problem is written down, four questions do most of the work.
 
 **Would they change?** A better solution is not enough on its own. Switching takes time, money, training and trust. A product has to be clearly better than the current workaround by a margin large enough to justify that effort.
 
+
 | Signal | Weaker case | Stronger case |
-| --- | --- | --- |
+| --------------------- | ---------------------------- | ------------------------------------- |
 | Frequency | Occasional or seasonal | Daily or weekly |
 | Severity | Mild inconvenience | Lost time, money, materials or safety |
 | Current workaround | None, or people don't notice | Clumsy, costly or error-prone |
 | Willingness to change | "Nice to have" | Actively looking for something better |
+
 
 No single row decides the answer. A problem that is rare but severe can still justify a product. A problem that is frequent but trivial usually cannot.
 
