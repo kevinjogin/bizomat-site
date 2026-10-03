@@ -1,0 +1,167 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import Section from '../components/Section.astro';
+import Button from '../components/Button.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import WorkCard from '../components/WorkCard.astro';
+import CallToAction from '../components/CallToAction.astro';
+import CoreDiagram from '../components/CoreDiagram.astro';
+import { EXPLORING, PRINCIPLES } from '../data/brand.ts';
+import { getInsights, getWork } from '../utils/content.ts';
+
+const latest = (await getInsights()).slice(0, 3);
+const work = await getWork();
+const selected = (work.some((w) => w.data.featured) ? work.filter((w) => w.data.featured) : work).slice(0, 3);
+---
+
+<BaseLayout>
+  <Hero
+    size="display"
+    class="home-hero"
+    eyebrow="GoCore · Australia"
+    title="Useful things, built from the <em>core</em> of real problems."
+    lead="A new Australian business exploring products, technology and practical systems. Early, deliberately broad, and building carefully."
+  >
+    <Fragment slot="actions">
+      <Button href="/work/" arrow>See the work</Button>
+      <Button href="/insights/" variant="secondary">Read Insights</Button>
+    </Fragment>
+    <CoreDiagram class="home-hero__diagram" />
+  </Hero>
+
+  <Section index="01" label="Positioning" labelledby="positioning-title">
+    <div class="positioning">
+      <h2 id="positioning-title" class="visually-hidden">What GoCore is</h2>
+      <p class="positioning__statement">
+        GoCore is a new Australian business. It starts with problems worth solving rather than a product decided in advance.
+      </p>
+      <div class="positioning__body">
+        <p>
+          Some of what we explore will become products. Some will become tools or systems. Some will simply become better questions. We are early and deliberately broad, and we document the work in public as it develops.
+        </p>
+        <Button href="/about/" variant="text" arrow>Why GoCore exists</Button>
+      </div>
+    </div>
+  </Section>
+
+  <Section index="02" label="What we’re exploring" labelledby="exploring-title">
+    <div class="split">
+      <div class="split__intro">
+        <h2 id="exploring-title">Four areas of interest. No fixed divisions.</h2>
+        <p class="muted">These describe where our attention goes today. They are areas of curiosity, not departments, and they will sharpen as the work does.</p>
+      </div>
+      <ol class="exploring">
+        {
+          EXPLORING.map((item, i) => (
+            <li class="exploring__item">
+              <span class="exploring__num">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="exploring__title">{item.title}</h3>
+              <p class="exploring__text">{item.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </Section>
+
+  {
+    selected.length > 0 && (
+      <Section index="03" label="Selected work" labelledby="work-title">
+        <div class="section-head">
+          <h2 id="work-title">Current initiatives.</h2>
+          <Button href="/work/" variant="text" arrow>All work</Button>
+        </div>
+        <div class="work-list">
+          {selected.map((entry) => (
+            <WorkCard entry={entry} />
+          ))}
+        </div>
+      </Section>
+    )
+  }
+
+  {
+    latest.length > 0 && (
+      <Section index="04" label="Latest Insights" labelledby="insights-title">
+        <div class="section-head">
+          <h2 id="insights-title">Thinking in public.</h2>
+          <Button href="/insights/" variant="text" arrow>All Insights</Button>
+        </div>
+        <div class="insight-grid">
+          {latest.map((post) => (
+            <ArticleCard post={post} />
+          ))}
+        </div>
+      </Section>
+    )
+  }
+
+  <Section index="05" label="How GoCore thinks" tone="alt" labelledby="principles-title">
+    <div class="section-head">
+      <h2 id="principles-title">Principles before products.</h2>
+      <Button href="/about/#principles" variant="text" arrow>More about our approach</Button>
+    </div>
+    <ol class="principles">
+      {
+        PRINCIPLES.map((p, i) => (
+          <li class="principle">
+            <span class="principle__num">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="principle__title">{p.title}</h3>
+            <p class="principle__text">{p.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <CallToAction />
+</BaseLayout>
+
+<style>
+  :global(.home-hero) { position: relative; isolation: isolate; overflow: hidden; padding-block: clamp(4rem, 9vw, 9rem) clamp(4rem, 8vw, 7.5rem) !important; }
+  :global(.home-hero .container) { position: relative; }
+  :global(.home-hero__diagram) { position: absolute; right: -4%; top: 50%; width: min(44vw, 560px); transform: translateY(-50%); z-index: -1; }
+  @media (max-width: 900px) { :global(.home-hero__diagram) { position: static; transform: none; width: min(78vw, 380px); margin: 3rem 0 0 auto; } }
+
+  .positioning { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 2rem 5rem; align-items: end; }
+  .positioning__statement { margin: 0; font-family: var(--font-serif); font-size: var(--step-3); line-height: 1.22; letter-spacing: -0.015em; color: var(--ink); max-width: 26ch; }
+  .positioning__body p { color: var(--ink-2); font-size: var(--step-1); line-height: 1.55; }
+  @media (max-width: 860px) { .positioning { grid-template-columns: 1fr; } }
+
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 2.5rem 5rem; }
+  .split__intro h2 { margin-bottom: 1.25rem; max-width: 14ch; }
+  .split__intro p { max-width: 36ch; }
+  @media (min-width: 861px) { .split__intro { position: sticky; top: calc(var(--header-h) + 2rem); align-self: start; } }
+  @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
+
+  .exploring { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line-strong); }
+  .exploring__item { display: grid; grid-template-columns: 3.5rem minmax(0, 1fr); gap: 0.4rem 1rem; padding: clamp(1.5rem, 3vw, 2.25rem) 0; border-bottom: 1px solid var(--line); }
+  .exploring__num { grid-row: span 2; padding-top: 0.6rem; font-size: 0.85rem; font-variant-numeric: tabular-nums; color: var(--accent); }
+  .exploring__title { font-size: var(--step-3); font-weight: 520; letter-spacing: -0.04em; line-height: 1; }
+  .exploring__text { margin: 0.6rem 0 0; max-width: 46ch; color: var(--ink-2); }
+
+  .section-head { display: flex; justify-content: space-between; align-items: end; gap: 1.5rem; flex-wrap: wrap; margin-bottom: clamp(2rem, 4vw, 3rem); }
+  .section-head h2 { max-width: 16ch; }
+
+  .insight-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.5rem 2rem; }
+  @media (max-width: 960px) { .insight-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) { .insight-grid { grid-template-columns: 1fr; } }
+
+  .principles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line-strong); }
+  .principle { padding: clamp(1.5rem, 3vw, 2.5rem) clamp(1rem, 2.5vw, 2rem) clamp(1.75rem, 3vw, 2.75rem) 0; border-bottom: 1px solid var(--line); }
+  .principle:not(:nth-child(3n + 1)) { padding-left: clamp(1rem, 2.5vw, 2rem); border-left: 1px solid var(--line); }
+  .principle__num { display: block; margin-bottom: 2.5rem; font-size: 0.85rem; font-variant-numeric: tabular-nums; color: var(--accent); }
+  .principle__title { font-size: var(--step-2); font-weight: 530; letter-spacing: -0.03em; line-height: 1.1; }
+  .principle__text { margin: 0.75rem 0 0; color: var(--ink-2); font-family: var(--font-serif); font-size: 1.08rem; line-height: 1.55; }
+  @media (max-width: 960px) {
+    .principles { grid-template-columns: 1fr 1fr; }
+    .principle:not(:nth-child(3n + 1)) { padding-left: 0; border-left: 0; }
+    .principle:nth-child(even) { padding-left: clamp(1rem, 2.5vw, 2rem); border-left: 1px solid var(--line); }
+  }
+  @media (max-width: 600px) {
+    .principles { grid-template-columns: 1fr; }
+    .principle:nth-child(even) { padding-left: 0; border-left: 0; }
+    .principle__num { margin-bottom: 1rem; }
+  }
+</style>

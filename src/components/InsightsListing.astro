@@ -1,0 +1,95 @@
+---
+// Shared listing for /insights/, category pages and tag pages: filters, search, rows and pagination.
+import ArticleCard from './ArticleCard.astro';
+import Pagination from './Pagination.astro';
+import Tag from './Tag.astro';
+import { categoriesWithPosts, categoryUrl, tagsWithPosts, type Insight } from '../utils/content.ts';
+
+interface Props {
+  /** Articles for the current page. */
+  posts: Insight[];
+  /** Every published article (used to decide which filters have enough content). */
+  all: Insight[];
+  page: number;
+  pages: number;
+  base: string;
+  activeCategory?: string;
+  activeTag?: string;
+}
+const { posts, all, page, pages, base, activeCategory, activeTag } = Astro.props;
+const categories = categoriesWithPosts(all);
+const tags = tagsWithPosts(all);
+---
+
+<div class="listing">
+  <div class="listing__tools">
+    {
+      categories.length > 1 && (
+        <nav class="filters" aria-label="Insight categories">
+          <a href="/insights/" aria-current={!activeCategory && !activeTag ? 'page' : undefined}>
+            All <small>{all.length}</small>
+          </a>
+          {categories.map((c) => (
+            <a href={categoryUrl(c.slug)} aria-current={activeCategory === c.slug ? 'page' : undefined}>
+              {c.name} <small>{c.posts.length}</small>
+            </a>
+          ))}
+        </nav>
+      )
+    }
+    <form class="search" action="/search/" method="get" role="search">
+      <label class="visually-hidden" for="insights-search">Search Insights</label>
+      <input id="insights-search" name="q" type="search" placeholder="Search Insights" autocomplete="off" />
+      <button type="submit" aria-label="Search">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"></circle><path d="m20 20-4.6-4.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg>
+      </button>
+    </form>
+  </div>
+
+  {
+    posts.length ? (
+      <div class="listing__rows">
+        {posts.map((post) => (
+          <ArticleCard post={post} variant="row" headingLevel="h2" />
+        ))}
+      </div>
+    ) : (
+      <p class="listing__empty">The first articles are being written. Check back soon, or follow along with the <a href="/rss.xml">RSS feed</a>.</p>
+    )
+  }
+
+  <Pagination page={page} pages={pages} base={base} />
+
+  {
+    tags.length > 0 && (
+      <aside class="listing__tags" aria-labelledby="topics-title">
+        <h2 id="topics-title" class="listing__tags-title">Topics</h2>
+        <div class="listing__tag-list">
+          {tags.map((t) => (
+            <Tag slug={t.slug} link current={activeTag === t.slug} />
+          ))}
+        </div>
+      </aside>
+    )
+  }
+</div>
+
+<style>
+  .listing__tools { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem 2rem; margin-bottom: 1.5rem; }
+  .filters { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .filters a { display: inline-flex; align-items: center; gap: 0.4rem; min-height: 38px; padding: 0 0.95rem; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 0.92rem; color: var(--ink-2); text-decoration: none; }
+  .filters a:hover { border-color: var(--ink); color: var(--ink); }
+  .filters a[aria-current='page'] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .filters small { font-size: 0.78rem; opacity: 0.6; font-variant-numeric: tabular-nums; }
+  .search { display: flex; align-items: center; width: min(100%, 300px); border-bottom: 1px solid var(--line-strong); }
+  .search:focus-within { border-bottom-color: var(--ink); }
+  .search input { flex: 1; min-width: 0; min-height: 42px; padding: 0 0.25rem; background: transparent; border: 0; font-size: 0.98rem; }
+  .search input:focus { outline: none; }
+  .search button { display: grid; place-items: center; width: 40px; height: 40px; padding: 0; background: none; border: 0; color: var(--ink); }
+  .search svg { width: 18px; height: 18px; }
+  .listing__rows { border-bottom: 1px solid var(--line); }
+  .listing__empty { padding: 2.5rem 0; color: var(--muted); border-top: 1px solid var(--line); }
+  .listing__tags { margin-top: clamp(3rem, 6vw, 4.5rem); }
+  .listing__tags-title { margin-bottom: 1rem; font-size: 0.78rem; font-weight: 560; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .listing__tag-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+</style>

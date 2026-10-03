@@ -1,0 +1,18 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# local secrets and Cloudflare state
+.env
+.env.*
+!.env.example
+.dev.vars
+.wrangler/
+
+# logs and OS files
+*.log
+.DS_Store
+Thumbs.db

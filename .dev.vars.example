@@ -1,0 +1,23 @@
+# Contact form configuration. Copy to .dev.vars for local testing with `npx wrangler pages dev`.
+# In production, set these in Cloudflare: Workers & Pages → gocore → Settings → Variables and Secrets.
+# Never commit real values. .dev.vars is ignored by Git.
+
+# "resend" to send email, or "log" to only log submissions while testing.
+MAIL_PROVIDER=log
+
+# Resend (https://resend.com): add as a Secret in Cloudflare, not as plain text.
+RESEND_API_KEY=
+# Where enquiries are delivered (comma-separated for several inboxes).
+CONTACT_TO=
+# Verified sender on your domain, e.g. GoCore website <website@gocore.com.au>
+CONTACT_FROM=
+
+# Optional: restrict which sites may post to the form.
+ALLOWED_ORIGINS=https://gocore.com.au,https://www.gocore.com.au
+
+# Optional rate limit (requires a KV namespace bound as CONTACT_RATE_LIMIT).
+RATE_LIMIT_MAX=5
+RATE_LIMIT_WINDOW=3600
+
+# Optional: point the form at a different Worker URL (build-time variable).
+# PUBLIC_CONTACT_ENDPOINT=https://contact.gocore.com.au/

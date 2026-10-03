@@ -1,0 +1,57 @@
+---
+import type { Insight } from '../utils/content.ts';
+import { insightUrl, readingTime } from '../utils/content.ts';
+import CategoryBadge from './CategoryBadge.astro';
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+  post: Insight;
+  variant?: 'card' | 'row' | 'feature';
+  headingLevel?: 'h2' | 'h3';
+}
+const { post, variant = 'card', headingLevel: H = 'h3' } = Astro.props;
+const minutes = readingTime(post.body);
+---
+
+<article class:list={['article-card', `article-card--${variant}`, { 'is-draft': post.data.draft }]}>
+  <div class="article-card__meta">
+    <CategoryBadge name={post.data.category} />
+    {post.data.draft && <span class="article-card__draft">Draft</span>}
+  </div>
+  <H class="article-card__title">
+    <a href={insightUrl(post)}>{post.data.title}</a>
+  </H>
+  <p class="article-card__desc">{post.data.description}</p>
+  <p class="article-card__foot">
+    <FormattedDate date={post.data.publishDate} style="short" />
+    <span aria-hidden="true">·</span>
+    <span>{minutes} min read</span>
+  </p>
+</article>
+
+<style>
+  .article-card { position: relative; display: flex; flex-direction: column; gap: 0.9rem; padding-top: 1.5rem; border-top: 1px solid var(--line-strong); min-width: 0; }
+  .article-card__meta { display: flex; align-items: center; gap: 0.75rem; }
+  .article-card__draft { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--paper); background: var(--danger); padding: 0.1rem 0.45rem; border-radius: 3px; }
+  .article-card__title { font-size: var(--step-1); line-height: 1.22; letter-spacing: -0.02em; }
+  .article-card__title a { text-decoration: none; background-image: linear-gradient(currentColor, currentColor); background-size: 0 1px; background-repeat: no-repeat; background-position: 0 100%; transition: background-size 0.35s var(--ease), color 0.2s; }
+  .article-card__title a::after { content: ''; position: absolute; inset: 0; }
+  .article-card:hover .article-card__title a { background-size: 100% 1px; }
+  .article-card__desc { margin: 0; color: var(--muted); font-size: 0.98rem; line-height: 1.55; }
+  .article-card__foot { display: flex; gap: 0.5rem; margin: auto 0 0; padding-top: 0.25rem; font-size: 0.86rem; color: var(--muted); }
+  .article-card :global(.category) { position: relative; z-index: 1; }
+
+  .article-card--row { display: grid; grid-template-columns: 10rem minmax(0, 1fr) 9rem; gap: 0.5rem 2rem; align-items: baseline; padding-block: 1.75rem; border-top-color: var(--line); }
+  .article-card--row .article-card__meta { grid-column: 1; grid-row: 1 / span 2; }
+  .article-card--row .article-card__title { grid-column: 2; font-size: var(--step-2); }
+  .article-card--row .article-card__desc { grid-column: 2; max-width: 60ch; }
+  .article-card--row .article-card__foot { grid-column: 3; grid-row: 1; justify-content: flex-end; flex-wrap: wrap; text-align: right; margin: 0; padding: 0; }
+  @media (max-width: 760px) {
+    .article-card--row { grid-template-columns: 1fr; }
+    .article-card--row .article-card__meta, .article-card--row .article-card__title, .article-card--row .article-card__desc, .article-card--row .article-card__foot { grid-column: 1; grid-row: auto; justify-content: flex-start; text-align: left; }
+  }
+
+  .article-card--feature { padding: clamp(1.5rem, 3vw, 2.5rem); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); gap: 1.1rem; }
+  .article-card--feature .article-card__title { font-size: var(--step-3); letter-spacing: -0.03em; line-height: 1.08; }
+  .article-card--feature .article-card__desc { font-family: var(--font-serif); font-size: var(--step-1); color: var(--ink-2); max-width: 52ch; }
+</style>

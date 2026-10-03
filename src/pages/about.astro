@@ -1,0 +1,133 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import Section from '../components/Section.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import CallToAction from '../components/CallToAction.astro';
+import { PRINCIPLES } from '../data/brand.ts';
+
+const crumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'About', href: '/about/' },
+];
+---
+
+<BaseLayout
+  title="About"
+  description="Why GoCore exists, the problems that interest it, how it approaches building useful things, and the principles it works by."
+  breadcrumbs={crumbs}
+>
+  <Hero eyebrow="About GoCore" title="A business built around <em>useful</em>, not around a pitch.">
+    <Breadcrumb items={crumbs} slot="before" />
+  </Hero>
+
+  <Section index="01" label="Opening" labelledby="opening-title">
+    <div class="about-grid">
+      <h2 id="opening-title" class="about-grid__heading">Why GoCore</h2>
+      <div class="prose about-grid__body">
+        <p class="about-lede">
+          Most businesses begin with an answer: a product to sell, a service to offer, a market to win. GoCore is beginning with a question instead. What is genuinely worth building, and for whom?
+        </p>
+        <p>
+          That is not indecision. Committing early to the wrong product is one of the most expensive mistakes a new business can make. A short, deliberate period of exploring, testing and documenting gives GoCore a better chance of building something that lasts.
+        </p>
+        <p>
+          The name says what we care about. Every problem has a core: the part that, once understood, makes the rest of the decisions easier. GoCore exists to find that part and build from it.
+        </p>
+      </div>
+    </div>
+  </Section>
+
+  <Section index="02" label="Problems that interest us" labelledby="problems-title">
+    <div class="about-grid">
+      <h2 id="problems-title" class="about-grid__heading">The kind of problems we look for</h2>
+      <div class="prose about-grid__body">
+        <p>
+          We are drawn to problems that are practical rather than fashionable: things that waste time, money or effort every day, often because nobody has stepped back far enough to fix them properly.
+        </p>
+        <p>
+          They might sit in a physical product, in a piece of software, in a manufacturing or business process, or in the way information moves between people. The common thread is that a careful, well-made solution would make a real difference to the people dealing with them.
+        </p>
+      </div>
+    </div>
+  </Section>
+
+  <Section index="03" label="How we think" labelledby="approach-title">
+    <div class="about-grid">
+      <h2 id="approach-title" class="about-grid__heading">An approach, before a product</h2>
+      <ol class="approach about-grid__body">
+        <li>
+          <h3>Understand</h3>
+          <p>Spend time with the problem itself. Who has it, how often, what it costs them, and what they already do about it.</p>
+        </li>
+        <li>
+          <h3>Simplify</h3>
+          <p>Find the smallest useful version of a solution. Complexity can always be added later; it is much harder to remove.</p>
+        </li>
+        <li>
+          <h3>Test</h3>
+          <p>Put ideas in front of reality early, through prototypes, conversations and small experiments, and record what is learned.</p>
+        </li>
+        <li>
+          <h3>Build and improve</h3>
+          <p>Build carefully once the evidence supports it, then keep improving as people use it.</p>
+        </li>
+      </ol>
+    </div>
+  </Section>
+
+  <Section index="04" label="Principles" id="principles" tone="alt" labelledby="principles-title">
+    <h2 id="principles-title" class="principles-title">Principles we work by</h2>
+    <dl class="principle-list">
+      {
+        PRINCIPLES.map((p, i) => (
+          <div class="principle-row">
+            <dt>
+              <span>{String(i + 1).padStart(2, '0')}</span>
+              {p.title}
+            </dt>
+            <dd>{p.text}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </Section>
+
+  <Section index="05" label="What we’re building toward" labelledby="toward-title">
+    <div class="about-grid">
+      <h2 id="toward-title" class="about-grid__heading">A direction that sharpens with evidence</h2>
+      <div class="prose about-grid__body">
+        <p>
+          GoCore’s direction will become clearer as the work does. It may settle on a particular product, a technology, a set of systems, or a combination we can’t yet predict. We would rather let the evidence decide than force an answer early.
+        </p>
+        <p>
+          What will not change is the standard: useful work, built carefully and described honestly. As initiatives move from idea to reality, you will find them on the <a href="/work/">Work</a> page, and the thinking behind them in <a href="/insights/">Insights</a>.
+        </p>
+      </div>
+    </div>
+  </Section>
+
+  <CallToAction title="Interested in where this goes?" text="If you are working on a related problem, have an idea, or would like to talk about collaborating, GoCore would be glad to hear from you." />
+</BaseLayout>
+
+<style>
+  .about-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 1.5rem 5rem; }
+  .about-grid__heading { font-size: var(--step-3); max-width: 12ch; }
+  @media (min-width: 861px) { .about-grid__heading { position: sticky; top: calc(var(--header-h) + 2rem); align-self: start; } }
+  @media (max-width: 860px) { .about-grid { grid-template-columns: 1fr; } }
+  .about-lede { font-size: 1.25em; line-height: 1.5; color: var(--ink); }
+
+  .approach { margin: 0; padding: 0; list-style: none; counter-reset: step; border-top: 1px solid var(--line-strong); }
+  .approach li { counter-increment: step; display: grid; grid-template-columns: 3.5rem 1fr; gap: 0.25rem 1rem; padding: 1.5rem 0; border-bottom: 1px solid var(--line); }
+  .approach li::before { content: counter(step, decimal-leading-zero); grid-row: span 2; padding-top: 0.35rem; font-size: 0.85rem; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .approach h3 { font-size: var(--step-2); font-weight: 530; letter-spacing: -0.03em; }
+  .approach p { margin: 0.4rem 0 0; color: var(--ink-2); max-width: 52ch; }
+
+  .principles-title { margin-bottom: clamp(2rem, 4vw, 3rem); max-width: 14ch; }
+  .principle-list { margin: 0; border-top: 1px solid var(--line-strong); }
+  .principle-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 0.5rem 5rem; padding: 1.5rem 0; border-bottom: 1px solid var(--line); }
+  .principle-row dt { display: flex; gap: 1rem; font-size: var(--step-2); font-weight: 530; letter-spacing: -0.03em; line-height: 1.15; }
+  .principle-row dt span { flex: none; width: 2.5rem; padding-top: 0.45rem; font-size: 0.85rem; font-weight: 400; letter-spacing: 0; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .principle-row dd { margin: 0; font-family: var(--font-serif); font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
+  @media (max-width: 860px) { .principle-row { grid-template-columns: 1fr; } .principle-row dd { padding-left: 3.5rem; } }
+</style>

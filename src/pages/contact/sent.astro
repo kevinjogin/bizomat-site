@@ -1,0 +1,15 @@
+---
+// Shown after a successful submission when JavaScript is unavailable.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Button from '../../components/Button.astro';
+---
+
+<BaseLayout title="Message sent" description="Thank you for contacting GoCore. Your message has been sent and you will receive a reply as soon as possible." noindex>
+  <Hero eyebrow="Message sent" title="Thank you." lead="Your message has been sent. GoCore will reply as soon as possible.">
+    <Fragment slot="actions">
+      <Button href="/insights/" arrow>Read Insights</Button>
+      <Button href="/" variant="secondary">Back to home</Button>
+    </Fragment>
+  </Hero>
+</BaseLayout>

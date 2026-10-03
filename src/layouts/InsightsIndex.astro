@@ -1,0 +1,57 @@
+---
+// The /insights/ landing page and its paginated continuations (/insights/page/2/ …).
+import BaseLayout from './BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import Container from '../components/Container.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import InsightsListing from '../components/InsightsListing.astro';
+import CallToAction from '../components/CallToAction.astro';
+import { getInsights, paginate } from '../utils/content.ts';
+
+interface Props {
+  page: number;
+}
+const { page } = Astro.props;
+const all = await getInsights();
+const featured = page === 1 ? all.find((p) => p.data.featured) : undefined;
+// The featured article is shown on its own above the list on page 1, not repeated below it.
+const listed = featured ? all.filter((p) => p.id !== featured.id) : all;
+const { items, pages } = paginate(listed, page);
+const crumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Insights', href: '/insights/' },
+  ...(page > 1 ? [{ label: `Page ${page}`, href: `/insights/page/${page}/` }] : []),
+];
+---
+
+<BaseLayout
+  title={page > 1 ? `Insights, page ${page}` : 'Insights'}
+  description="GoCore Insights: practical writing on ideas, products, technology and business, organised by subject rather than by date."
+  breadcrumbs={crumbs}
+>
+  <Hero eyebrow="Insights" title="Notes on building <em>useful</em> things." lead="Practical thinking on ideas, products, technology and business. Organised by subject, so you can find what matters to you.">
+    <Breadcrumb items={crumbs} slot="before" />
+  </Hero>
+  <Container class="insights-body">
+    {
+      featured && (
+        <section class="featured" aria-labelledby="featured-label">
+          <p id="featured-label" class="eyebrow">
+            Featured
+          </p>
+          <ArticleCard post={featured} variant="feature" headingLevel="h2" />
+        </section>
+      )
+    }
+    <h2 class="visually-hidden">All articles</h2>
+    <InsightsListing posts={items} all={all} page={page} pages={pages} base="/insights/" />
+  </Container>
+  <CallToAction title="Have a question worth exploring?" text="Suggestions for topics, corrections and thoughtful disagreement are all welcome." label="Get in touch" />
+</BaseLayout>
+
+<style>
+  :global(.insights-body) { padding-bottom: var(--space-section); }
+  .featured { margin-bottom: clamp(2.5rem, 5vw, 4rem); }
+  .featured .eyebrow { margin-bottom: 1rem; }
+</style>

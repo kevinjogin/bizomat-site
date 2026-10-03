@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Container from '../../components/Container.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import ContactForm from '../../components/ContactForm.astro';
+import { SITE } from '../../config/site.ts';
+
+const crumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Contact', href: '/contact/' },
+];
+const reasons = ['General enquiries', 'Potential collaborations', 'Ideas worth discussing', 'Supplier and manufacturer discussions', 'Business conversations'];
+---
+
+<BaseLayout
+  title="Contact"
+  description="Contact GoCore about collaborations, ideas, supplier and manufacturer discussions, or a general business conversation."
+  breadcrumbs={crumbs}
+  schema={[{ '@type': 'ContactPage', name: 'Contact GoCore', url: `${SITE.url}/contact/`, about: { '@id': `${SITE.url}/#organization` } }]}
+>
+  <Hero eyebrow="Contact" title="Start a conversation.">
+    <Breadcrumb items={crumbs} slot="before" />
+  </Hero>
+  <Container class="contact-layout">
+    <div class="contact-intro">
+      <p class="contact-intro__lead">GoCore is early-stage and open to thoughtful conversations. A short note is enough. You will get a considered reply.</p>
+      <h2 class="contact-intro__heading">Good reasons to get in touch</h2>
+      <ul class="contact-intro__list">{reasons.map((r) => <li>{r}</li>)}</ul>
+      {
+        SITE.email && (
+          <p class="contact-intro__email">
+            Prefer email? <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          </p>
+        )
+      }
+    </div>
+    <div class="contact-form-wrap">
+      <ContactForm />
+    </div>
+  </Container>
+</BaseLayout>
+
+<style>
+  :global(.contact-layout) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 3rem 5rem; padding-bottom: var(--space-section); }
+  .contact-intro__lead { font-family: var(--font-serif); font-size: var(--step-2); line-height: 1.35; color: var(--ink); max-width: 24ch; }
+  .contact-intro__heading { margin: 2.5rem 0 1rem; font-size: 0.78rem; font-weight: 560; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .contact-intro__list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+  .contact-intro__list li { padding: 0.8rem 0; border-bottom: 1px solid var(--line); color: var(--ink-2); }
+  .contact-intro__email { margin-top: 2rem; color: var(--muted); }
+  .contact-form-wrap { padding: clamp(1.5rem, 3.5vw, 2.75rem); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+  @media (max-width: 900px) { :global(.contact-layout) { grid-template-columns: 1fr; } }
+</style>

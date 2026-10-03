@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Section from '../../components/Section.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import CallToAction from '../../components/CallToAction.astro';
+import { WORK_TYPES } from '../../config/work.ts';
+import { getWork } from '../../utils/content.ts';
+
+const work = await getWork();
+// Only show type groups that actually have entries.
+const types = WORK_TYPES.filter((t) => work.some((w) => w.data.type === t));
+const crumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Work', href: '/work/' },
+];
+---
+
+<BaseLayout
+  title="Work"
+  description="Projects, products, experiments and research from GoCore, documented as they move from idea to reality."
+  breadcrumbs={crumbs}
+>
+  <Hero
+    eyebrow="Work"
+    title="Work in progress, <em>documented honestly.</em>"
+    lead="Projects, products, experiments and research appear here as they move past the idea stage, each marked with where it really stands."
+  >
+    <Breadcrumb items={crumbs} slot="before" />
+  </Hero>
+
+  <Section labelledby="work-list-title">
+    <div class="work-head">
+      <h2 id="work-list-title" class="visually-hidden">All work</h2>
+      {
+        types.length > 1 && (
+          <p class="work-types" aria-label="Types of work">
+            {types.map((t) => (
+              <span>
+                {t} <small>{work.filter((w) => w.data.type === t).length}</small>
+              </span>
+            ))}
+          </p>
+        )
+      }
+      <p class="work-count">{work.length} {work.length === 1 ? 'entry' : 'entries'}</p>
+    </div>
+    {
+      work.length ? (
+        <div class="work-list">
+          {work.map((entry) => (
+            <WorkCard entry={entry} />
+          ))}
+        </div>
+      ) : (
+        <p class="muted">The first initiatives will be documented here soon.</p>
+      )
+    }
+    <aside class="work-note">
+      <p class="eyebrow">How to read this page</p>
+      <dl>
+        <div><dt>Exploring</dt><dd>Researching the problem; nothing built yet.</dd></div>
+        <div><dt>Developing</dt><dd>Actively being designed or built.</dd></div>
+        <div><dt>Testing</dt><dd>In the hands of real users or under trial.</dd></div>
+        <div><dt>Released</dt><dd>Available and in use.</dd></div>
+      </dl>
+    </aside>
+  </Section>
+
+  <CallToAction title="Working on something related?" text="GoCore is open to collaborations, supplier and manufacturer conversations, and ideas worth testing." />
+</BaseLayout>
+
+<style>
+  .work-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .work-types { display: flex; flex-wrap: wrap; gap: 1.25rem; margin: 0; font-size: 0.92rem; }
+  .work-types small { color: var(--muted); }
+  .work-count { margin: 0 0 0 auto; font-size: 0.92rem; color: var(--muted); }
+  .work-note { margin-top: clamp(3rem, 6vw, 5rem); padding-top: 2rem; border-top: 1px solid var(--line-strong); }
+  .work-note dl { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.5rem; margin: 1.25rem 0 0; }
+  .work-note dt { font-weight: 560; margin-bottom: 0.3rem; }
+  .work-note dd { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.5; }
+  @media (max-width: 820px) { .work-note dl { grid-template-columns: 1fr 1fr; } }
+</style>

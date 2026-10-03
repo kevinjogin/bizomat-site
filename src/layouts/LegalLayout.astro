@@ -1,0 +1,37 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import Container from '../components/Container.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  updated: Date;
+}
+const { title, description, path, updated } = Astro.props;
+const crumbs = [
+  { label: 'Home', href: '/' },
+  { label: title, href: path },
+];
+---
+
+<BaseLayout title={title} description={description} breadcrumbs={crumbs}>
+  <Hero eyebrow="Legal" title={title}>
+    <Breadcrumb items={crumbs} slot="before" />
+    <p class="legal-updated">Last updated <FormattedDate date={updated} /></p>
+  </Hero>
+  <Container class="legal-body">
+    <div class="prose">
+      <slot />
+    </div>
+  </Container>
+</BaseLayout>
+
+<style>
+  .legal-updated { margin: 1.25rem 0 0; color: var(--muted); font-size: 0.92rem; }
+  :global(.legal-body) { padding-bottom: var(--space-section); }
+  :global(.legal-body .prose) { font-family: var(--font-sans); font-size: var(--step-0); }
+</style>

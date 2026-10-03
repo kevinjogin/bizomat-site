@@ -1,0 +1,26 @@
+---
+interface Props {
+  page: number;
+  pages: number;
+  /** Builds the URL for a given page number. */
+  base: string;
+}
+const { page, pages, base } = Astro.props;
+const url = (n: number) => (n === 1 ? base : `${base}page/${n}/`);
+---
+
+{
+  pages > 1 && (
+    <nav class="pagination" aria-label="Pagination">
+      {page > 1 ? <a href={url(page - 1)} rel="prev">← Newer</a> : <span aria-hidden="true" />}
+      <span class="pagination__status">Page {page} of {pages}</span>
+      {page < pages ? <a href={url(page + 1)} rel="next">Older →</a> : <span aria-hidden="true" />}
+    </nav>
+  )
+}
+
+<style>
+  .pagination { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--line); font-size: 0.95rem; }
+  .pagination a { font-weight: 540; text-decoration: none; }
+  .pagination__status { color: var(--muted); }
+</style>

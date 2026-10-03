@@ -1,0 +1,35 @@
+---
+import Button from './Button.astro';
+import Container from './Container.astro';
+
+interface Props {
+  title?: string;
+  text?: string;
+  href?: string;
+  label?: string;
+}
+const {
+  title = 'Have a problem worth solving, or an idea worth discussing?',
+  text = 'GoCore welcomes conversations with people who are building, making or thinking about useful things.',
+  href = '/contact/',
+  label = 'Start a conversation',
+} = Astro.props;
+---
+
+<section class="cta" aria-labelledby="cta-title">
+  <Container class="cta__inner">
+    <h2 id="cta-title" class="cta__title">{title}</h2>
+    <div class="cta__side">
+      <p>{text}</p>
+      <Button href={href} variant="inverse" arrow>{label}</Button>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .cta { background: var(--inverse-bg); color: var(--inverse-ink); padding-block: clamp(4.5rem, 9vw, 8rem); }
+  :global(.cta__inner) { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 2.5rem 4rem; align-items: end; }
+  .cta__title { font-size: var(--step-4); font-weight: 520; letter-spacing: -0.04em; line-height: 1.02; max-width: 16ch; }
+  .cta__side p { color: var(--inverse-muted); max-width: 38ch; margin-bottom: 1.75rem; font-size: var(--step-1); line-height: 1.45; }
+  @media (max-width: 820px) { :global(.cta__inner) { grid-template-columns: 1fr; } }
+</style>

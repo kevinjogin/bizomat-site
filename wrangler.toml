@@ -1,0 +1,14 @@
+# Cloudflare Pages configuration (used by `wrangler pages deploy` and `wrangler pages dev`).
+name = "gocore"
+pages_build_output_dir = "./dist"
+compatibility_date = "2025-09-01"
+
+# Workers AI for the GoCore Assistant (/api/chat). Workers Free plan: a daily allocation, no card needed.
+[ai]
+binding = "AI"
+
+# Optional rate limiting for the contact function and the assistant.
+# Create a KV namespace (Workers & Pages → KV), then uncomment and paste its id:
+# [[kv_namespaces]]
+# binding = "CONTACT_RATE_LIMIT"
+# id = "<your-kv-namespace-id>"

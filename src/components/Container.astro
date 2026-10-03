@@ -1,0 +1,18 @@
+---
+interface Props {
+  as?: 'div' | 'section' | 'header' | 'footer' | 'article' | 'nav';
+  size?: 'default' | 'narrow' | 'wide';
+  class?: string;
+}
+const { as: Tag = 'div', size = 'default', class: className, ...rest } = Astro.props;
+---
+
+<Tag class:list={['container', `container--${size}`, className]} {...rest}>
+  <slot />
+</Tag>
+
+<style>
+  .container { width: min(var(--max), 100% - 2 * var(--gutter)); margin-inline: auto; }
+  .container--narrow { width: min(760px, 100% - 2 * var(--gutter)); }
+  .container--wide { width: min(1440px, 100% - 2 * var(--gutter)); }
+</style>

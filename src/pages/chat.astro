@@ -1,0 +1,36 @@
+---
+// Pop-out window for the GoCore Assistant. Opened from the floating widget's "pop out" button.
+import '@fontsource-variable/inter-tight';
+import '../styles/global.css';
+import SEO from '../components/SEO.astro';
+import ChatWidget from '../components/ChatWidget.astro';
+---
+
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      (function () {
+        var d = document.documentElement, t = null;
+        try { t = localStorage.getItem('gocore-theme'); } catch (e) {}
+        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        d.dataset.theme = t;
+      })();
+    </script>
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <SEO title="Assistant" description="Ask the GoCore Assistant questions about GoCore, answered from information published on the GoCore website." noindex />
+  </head>
+  <body class="chat-page">
+    <main>
+      <ChatWidget mode="page" />
+    </main>
+  </body>
+</html>
+
+<style>
+  .chat-page { min-height: 100dvh; }
+</style>

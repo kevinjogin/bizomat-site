@@ -1,0 +1,19 @@
+---
+interface Props {
+  status: string;
+}
+const { status } = Astro.props;
+const live = ['Developing', 'Testing', 'Exploring'].includes(status);
+---
+
+<span class:list={['status', { 'status--live': live }]}>{status}</span>
+
+<style>
+  .status { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.2rem 0.6rem; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 0.72rem; font-weight: 580; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); }
+  .status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
+  .status--live::before { background: var(--accent); }
+  @media (prefers-reduced-motion: no-preference) {
+    .status--live::before { animation: pulse 2.4s var(--ease) infinite; }
+  }
+  @keyframes pulse { 50% { opacity: 0.35; } }
+</style>

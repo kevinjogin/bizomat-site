@@ -1,0 +1,24 @@
+---
+// The GoCore wordmark. Files are generated from brand-source/ by `node scripts/prepare-brand.mjs`
+// (WebP with PNG fallback). The artwork reads well on both light and dark backgrounds.
+import { SITE } from '../config/site.ts';
+
+interface Props {
+  class?: string;
+  /** Rendered height in CSS pixels; width follows the artwork's proportions. */
+  height?: number;
+  eager?: boolean;
+}
+const { class: className, height = 30, eager = true } = Astro.props;
+const width = Math.round((SITE.logo.width / SITE.logo.height) * height);
+---
+
+<picture class:list={['logo', className]}>
+  <source srcset={SITE.logo.webp} type="image/webp" />
+  <img src={SITE.logo.png} alt={SITE.name} width={width} height={height} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+</picture>
+
+<style>
+  .logo { display: inline-flex; line-height: 0; }
+  .logo img { display: block; height: auto; max-width: 100%; }
+</style>

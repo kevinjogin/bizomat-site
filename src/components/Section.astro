@@ -1,0 +1,44 @@
+---
+// A page section with an optional editorial side label (e.g. "01 · Exploring").
+import Container from './Container.astro';
+
+interface Props {
+  label?: string;
+  index?: string;
+  id?: string;
+  tone?: 'default' | 'alt' | 'inverse';
+  divider?: boolean;
+  class?: string;
+  labelledby?: string;
+}
+const { label, index, id, tone = 'default', divider = true, class: className, labelledby } = Astro.props;
+---
+
+<section id={id} class:list={['section', `section--${tone}`, { 'section--divider': divider }, className]} aria-labelledby={labelledby}>
+  <Container>
+    {
+      label && (
+        <p class="section__label">
+          {index && <span class="section__index">{index}</span>}
+          <span>{label}</span>
+        </p>
+      )
+    }
+    <slot />
+  </Container>
+</section>
+
+<style>
+  .section { padding-block: var(--space-section); }
+  .section--divider { border-top: 1px solid var(--line); }
+  .section--alt { background: var(--paper-2); }
+  .section--inverse { background: var(--inverse-bg); color: var(--inverse-ink); border-top-color: transparent; }
+  .section__label {
+    display: flex; align-items: center; gap: 0.75rem; margin: 0 0 clamp(2rem, 4vw, 3.5rem);
+    font-size: 0.78rem; font-weight: 560; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+  }
+  .section--inverse .section__label { color: var(--inverse-muted); }
+  .section__index { color: var(--accent); font-variant-numeric: tabular-nums; }
+  .section__label::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  .section--inverse .section__label::after { background: var(--inverse-line); }
+</style>

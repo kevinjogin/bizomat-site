@@ -1,0 +1,17 @@
+---
+import InsightsIndex from '../../../layouts/InsightsIndex.astro';
+import { INSIGHTS } from '../../../config/site.ts';
+import { getInsights } from '../../../utils/content.ts';
+
+// Page 1 is /insights/. Further pages exist only once there are enough articles.
+export async function getStaticPaths() {
+  const all = await getInsights();
+  const listed = all.length - (all.some((p) => p.data.featured) ? 1 : 0);
+  const pages = Math.ceil(listed / INSIGHTS.pageSize);
+  return Array.from({ length: Math.max(0, pages - 1) }, (_, i) => ({ params: { page: String(i + 2) } }));
+}
+
+const page = Number(Astro.params.page);
+---
+
+<InsightsIndex page={page} />

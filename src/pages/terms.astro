@@ -1,0 +1,44 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { SITE } from '../config/site.ts';
+---
+
+<LegalLayout
+  title="Terms"
+  path="/terms/"
+  description="The terms that apply to using the GoCore website, including the use of its content and links to other websites."
+  updated={new Date('2026-10-03')}
+>
+  <p>These terms apply to your use of this website. By using the site, you agree to them. If you do not agree, please do not use the site.</p>
+
+  <h2>About this website</h2>
+  <p>
+    This website is operated by GoCore, a new business based in Australia. It shares information about GoCore, its work and its thinking. It does not offer goods or services for sale.
+  </p>
+
+  <h2>Information only</h2>
+  <p>
+    Content on this site, including Insights articles, is general information. It is not professional, technical, financial or legal advice, and it may not suit your circumstances. Please seek appropriate advice before relying on it. We work to keep content accurate and current but cannot guarantee that it always is.
+  </p>
+
+  <h2>Intellectual property</h2>
+  <p>
+    Unless stated otherwise, the content, design and branding on this website belong to GoCore. You are welcome to share links and to quote short extracts with attribution. Please ask before reproducing substantial parts of the site.
+  </p>
+
+  <h2>Links to other websites</h2>
+  <p>This site may link to websites run by others. We are not responsible for their content, availability or privacy practices.</p>
+
+  <h2>Liability</h2>
+  <p>
+    To the extent permitted by law, GoCore is not liable for any loss arising from your use of this website or reliance on its content. Nothing in these terms excludes rights you may have under the Australian Consumer Law that cannot be excluded.
+  </p>
+
+  <h2>Privacy</h2>
+  <p>Our <a href="/privacy/">privacy policy</a> explains how we handle personal information.</p>
+
+  <h2>Governing law and changes</h2>
+  <p>
+    These terms are governed by the laws of {SITE.jurisdiction}. We may update them from time to time; the date at the top of this page shows when they last changed.
+  </p>
+</LegalLayout>

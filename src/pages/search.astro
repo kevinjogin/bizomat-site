@@ -1,0 +1,116 @@
+---
+// Static full-text search powered by Pagefind. The index is generated at build time into
+// /pagefind/, so no server or database is involved.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import Container from '../components/Container.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+
+const crumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Search', href: '/search/' },
+];
+---
+
+<BaseLayout title="Search" description="Search GoCore Insights and work." noindex breadcrumbs={crumbs}>
+  <Hero eyebrow="Search" title="Search Insights">
+    <Breadcrumb items={crumbs} slot="before" />
+  </Hero>
+  <Container class="search-page">
+    <form class="search-form" role="search" action="/search/" method="get" data-search-form>
+      <label for="q" class="visually-hidden">Search terms</label>
+      <input id="q" name="q" type="search" placeholder="Search by topic, idea or keyword" autocomplete="off" />
+      <button type="submit">Search</button>
+    </form>
+    <p class="search-status" role="status" aria-live="polite" data-search-status></p>
+    <ol class="search-results" data-search-results></ol>
+    <noscript><p class="search-status">Search needs JavaScript. You can browse all articles on the <a href="/insights/">Insights</a> page instead.</p></noscript>
+  </Container>
+</BaseLayout>
+
+<script>
+  type Result = { url: string; meta: { title?: string }; excerpt: string; filters?: { category?: string[] } };
+  type Pagefind = {
+    init: () => Promise<void>;
+    debouncedSearch: (q: string) => Promise<{ results: Array<{ data: () => Promise<Result> }> } | null>;
+  };
+
+  const form = document.querySelector<HTMLFormElement>('[data-search-form]')!;
+  const input = form.querySelector<HTMLInputElement>('input')!;
+  const status = document.querySelector<HTMLElement>('[data-search-status]')!;
+  const list = document.querySelector<HTMLOListElement>('[data-search-results]')!;
+  let pagefind: Pagefind | null = null;
+
+  const escape = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+  // Pagefind excerpts contain only <mark> tags; strip anything else defensively.
+  const safeExcerpt = (s: string) => escape(s.replace(/<(?!\/?mark>)[^>]*>/g, '')).replace(/&lt;(\/?)mark&gt;/g, '<$1mark>');
+
+  async function load(): Promise<Pagefind | null> {
+    if (pagefind) return pagefind;
+    try {
+      const path = '/pagefind/pagefind.js';
+      pagefind = (await import(/* @vite-ignore */ path)) as Pagefind;
+      await pagefind.init();
+      return pagefind;
+    } catch {
+      status.textContent = 'Search is available after the site is built (npm run build). Browse all articles on the Insights page instead.';
+      return null;
+    }
+  }
+
+  async function run(query: string) {
+    const q = query.trim();
+    const url = new URL(location.href);
+    q ? url.searchParams.set('q', q) : url.searchParams.delete('q');
+    history.replaceState(null, '', url);
+    if (!q) {
+      list.innerHTML = '';
+      status.textContent = '';
+      return;
+    }
+    const pf = await load();
+    if (!pf) return;
+    const search = await pf.debouncedSearch(q);
+    if (!search) return; // superseded by a newer query
+    const results = await Promise.all(search.results.slice(0, 20).map((r) => r.data()));
+    status.textContent = `${search.results.length} result${search.results.length === 1 ? '' : 's'} for “${q}”`;
+    list.innerHTML = results
+      .map(
+        (r) => `<li><a href="${escape(r.url)}">
+          ${r.filters?.category?.[0] ? `<span class="search-results__cat">${escape(r.filters.category[0])}</span>` : ''}
+          <strong>${escape(r.meta.title ?? r.url)}</strong>
+          <p>${safeExcerpt(r.excerpt)}</p></a></li>`,
+      )
+      .join('');
+  }
+
+  input.addEventListener('input', () => run(input.value));
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    run(input.value);
+  });
+  const initial = new URLSearchParams(location.search).get('q');
+  if (initial) {
+    input.value = initial;
+    run(initial);
+  }
+  input.focus();
+</script>
+
+<style>
+  :global(.search-page) { padding-bottom: var(--space-section); min-height: 40vh; }
+  .search-form { display: flex; gap: 0.5rem; max-width: 760px; padding-bottom: 0.5rem; border-bottom: 1px solid var(--ink); }
+  .search-form input { flex: 1; min-width: 0; min-height: 56px; padding: 0; background: transparent; border: 0; font-size: var(--step-2); letter-spacing: -0.02em; }
+  .search-form input:focus { outline: none; }
+  .search-form button { padding: 0 1.25rem; background: var(--ink); color: var(--paper); border: 0; border-radius: 999px; font-weight: 540; }
+  .search-form button:hover { background: var(--accent); color: var(--on-accent); }
+  .search-status { margin: 1.5rem 0; color: var(--muted); }
+  .search-results { max-width: 760px; margin: 0; padding: 0; list-style: none; }
+  .search-results :global(li) { border-top: 1px solid var(--line); }
+  .search-results :global(a) { display: block; padding: 1.5rem 0; text-decoration: none; }
+  .search-results :global(strong) { display: block; margin: 0.4rem 0; font-size: var(--step-1); font-weight: 560; letter-spacing: -0.015em; }
+  .search-results :global(a:hover strong) { color: var(--accent); }
+  .search-results :global(p) { margin: 0; color: var(--muted); }
+  .search-results :global(mark) { background: var(--accent-soft); color: var(--ink); padding: 0 0.1em; }
+  .search-results :global(.search-results__cat) { font-size: 0.75rem; font-weight: 580; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+</style>

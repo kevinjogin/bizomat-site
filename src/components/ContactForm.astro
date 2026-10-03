@@ -1,0 +1,173 @@
+---
+// Contact form UI. Delivery is handled by submitContact() (src/lib/contact-client.ts), so the
+// provider (Web3Forms today, a Cloudflare Worker later) can change without touching this component.
+// Without JavaScript the form still posts directly to the configured provider.
+import { SITE } from '../config/site.ts';
+import { CONTACT_LIMITS, HONEYPOT_FIELD, SUBJECTS } from '../lib/contact.ts';
+import Button from './Button.astro';
+
+const L = CONTACT_LIMITS;
+const { provider, web3formsAccessKey, web3formsEndpoint, workerEndpoint } = SITE.contact;
+const action = provider === 'web3forms' ? web3formsEndpoint : workerEndpoint;
+---
+
+<form class="contact-form" action={action} method="post" novalidate data-contact-form data-email={SITE.email}>
+  {
+    provider === 'web3forms' && (
+      <Fragment>
+        <input type="hidden" name="access_key" value={web3formsAccessKey} />
+        <input type="hidden" name="from_name" value="GoCore website" />
+        <input type="hidden" name="redirect" value={new URL('/contact/sent/', SITE.url).href} />
+      </Fragment>
+    )
+  }
+  <div class="contact-form__row">
+    <div class="field">
+      <label for="cf-name">Name</label>
+      <input id="cf-name" name="name" type="text" autocomplete="name" required minlength={L.name.min} maxlength={L.name.max} aria-describedby="cf-name-error" />
+      <p class="field__error" id="cf-name-error" data-error-for="name"></p>
+    </div>
+    <div class="field">
+      <label for="cf-email">Email</label>
+      <input id="cf-email" name="email" type="email" autocomplete="email" inputmode="email" required maxlength={L.email.max} aria-describedby="cf-email-error" />
+      <p class="field__error" id="cf-email-error" data-error-for="email"></p>
+    </div>
+  </div>
+  <div class="contact-form__row">
+    <div class="field">
+      <label for="cf-org">Organisation <span class="field__optional">(optional)</span></label>
+      <input id="cf-org" name="organisation" type="text" autocomplete="organization" maxlength={L.organisation.max} />
+    </div>
+    <div class="field">
+      <label for="cf-subject">Subject</label>
+      <input id="cf-subject" name="subject" type="text" list="cf-subjects" required minlength={L.subject.min} maxlength={L.subject.max} aria-describedby="cf-subject-hint cf-subject-error" />
+      <datalist id="cf-subjects">{SUBJECTS.map((s) => <option value={s} />)}</datalist>
+      <p class="field__hint" id="cf-subject-hint">For example: collaboration, an idea, or a supplier discussion.</p>
+      <p class="field__error" id="cf-subject-error" data-error-for="subject"></p>
+    </div>
+  </div>
+  <div class="field">
+    <label for="cf-message">Message</label>
+    <textarea id="cf-message" name="message" rows="7" required minlength={L.message.min} maxlength={L.message.max} aria-describedby="cf-message-error"></textarea>
+    <p class="field__error" id="cf-message-error" data-error-for="message"></p>
+  </div>
+
+  <div class="contact-form__hp" aria-hidden="true">
+    <label for="cf-hp">Leave this field empty</label>
+    <input id="cf-hp" name={HONEYPOT_FIELD} type="checkbox" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class="field field--check">
+    <input id="cf-consent" name="consent" type="checkbox" required aria-describedby="cf-consent-error" />
+    <label for="cf-consent">
+      I understand GoCore will use these details only to reply to my message, as described in the <a href="/privacy/">privacy policy</a>.
+    </label>
+    <p class="field__error" id="cf-consent-error" data-error-for="consent"></p>
+  </div>
+
+  <div class="contact-form__status" role="status" aria-live="polite" tabindex="-1" data-status></div>
+
+  <div class="contact-form__actions">
+    <Button type="submit" arrow data-submit>Send message</Button>
+  </div>
+</form>
+
+<script>
+  import { HONEYPOT_FIELD, normalise, validate, type ContactErrors } from '../lib/contact.ts';
+  import { submitContact } from '../lib/contact-client.ts';
+
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  if (form) {
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    let startedAt = Date.now();
+    const fallbackEmail = form.dataset.email;
+
+    const showErrors = (errors: ContactErrors) => {
+      form.querySelectorAll<HTMLElement>('[data-error-for]').forEach((el) => {
+        const field = el.dataset.errorFor as keyof ContactErrors;
+        const input = form.elements.namedItem(field) as HTMLInputElement | null;
+        const message = errors[field] ?? '';
+        el.textContent = message;
+        input?.setAttribute('aria-invalid', message ? 'true' : 'false');
+      });
+      const first = Object.keys(errors)[0];
+      if (first) (form.elements.namedItem(first) as HTMLElement | null)?.focus();
+    };
+
+    const setStatus = (kind: 'success' | 'error' | 'pending', text: string) => {
+      status.dataset.kind = kind;
+      status.textContent = text;
+    };
+
+    // Re-validate a field once the visitor has left it, so errors clear as they type.
+    form.addEventListener('focusout', (e) => {
+      const target = e.target as HTMLInputElement;
+      const errorEl = form.querySelector<HTMLElement>(`[data-error-for="${target.name}"]`);
+      if (!errorEl || !errorEl.textContent) return;
+      const errors = validate(normalise(Object.fromEntries(new FormData(form))));
+      errorEl.textContent = errors[target.name as keyof ContactErrors] ?? '';
+      target.setAttribute('aria-invalid', errorEl.textContent ? 'true' : 'false');
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form));
+      const input = normalise(data);
+      const errors = validate(input);
+      showErrors(errors);
+      if (Object.keys(errors).length) {
+        setStatus('error', 'Please check the highlighted fields.');
+        return;
+      }
+      submit.disabled = true;
+      setStatus('pending', 'Sending…');
+      try {
+        const result = await submitContact({ ...input, source: 'Contact page', honeypot: data[HONEYPOT_FIELD] ? 'yes' : '', startedAt });
+        if (result.ok) {
+          form.reset();
+          startedAt = Date.now();
+          setStatus('success', result.message ?? 'Thank you. Your message has been sent.');
+        } else {
+          if (result.errors) showErrors(result.errors);
+          setStatus('error', `${result.message ?? 'Your message could not be sent.'}${fallbackEmail ? ` You can also email ${fallbackEmail}.` : ''}`);
+        }
+      } finally {
+        submit.disabled = false;
+        status.focus();
+      }
+    });
+  }
+</script>
+
+<style>
+  .contact-form { display: grid; gap: 1.5rem; }
+  .contact-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .field { display: grid; gap: 0.45rem; align-content: start; }
+  .field label { font-size: 0.92rem; font-weight: 540; color: var(--ink); }
+  .field__optional, .field__hint { font-weight: 400; color: var(--muted); }
+  .field__hint { margin: 0; font-size: 0.84rem; }
+  .field input[type='text'], .field input[type='email'], .field textarea {
+    width: 100%; min-height: 50px; padding: 0.75rem 0.9rem;
+    background: var(--surface); color: var(--ink); border: 1px solid var(--line-strong); border-radius: var(--radius);
+    font-size: 1rem; line-height: 1.5; transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  }
+  .field textarea { min-height: 180px; resize: vertical; }
+  .field input:hover, .field textarea:hover { border-color: var(--muted); }
+  .field input:focus-visible, .field textarea:focus-visible { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .field [aria-invalid='true'] { border-color: var(--danger); }
+  .field__error { margin: 0; font-size: 0.86rem; color: var(--danger); }
+  .field__error:empty { display: none; }
+  .field--check { grid-template-columns: auto 1fr; column-gap: 0.75rem; align-items: start; }
+  .field--check input { width: 20px; height: 20px; margin: 0.15rem 0 0; accent-color: var(--ink); }
+  .field--check label { font-weight: 400; color: var(--ink-2); line-height: 1.5; }
+  .field--check .field__error { grid-column: 2; }
+  .contact-form__hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  .contact-form__status { padding: 0.9rem 1rem; border-radius: var(--radius); border: 1px solid var(--line); font-size: 0.95rem; }
+  .contact-form__status:empty { display: none; }
+  .contact-form__status:focus { outline: none; }
+  .contact-form__status[data-kind='success'] { border-color: var(--success); color: var(--success); }
+  .contact-form__status[data-kind='error'] { border-color: var(--danger); color: var(--danger); }
+  .contact-form__actions { display: flex; justify-content: flex-start; }
+  @media (max-width: 640px) { .contact-form__row { grid-template-columns: 1fr; } }
+</style>

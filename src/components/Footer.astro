@@ -1,0 +1,54 @@
+---
+import { FOOTER_NAV, SITE } from '../config/site.ts';
+import Container from './Container.astro';
+import Logo from './Logo.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <Container>
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <a href="/" class="site-footer__logo"><Logo height={34} eager={false} /></a>
+        <p>{SITE.statement}</p>
+      </div>
+      <nav class="site-footer__col" aria-label="Footer">
+        <h2 class="site-footer__heading">Site</h2>
+        <ul>{FOOTER_NAV.map((item) => <li><a href={item.href}>{item.label}</a></li>)}</ul>
+      </nav>
+      <div class="site-footer__col">
+        <h2 class="site-footer__heading">Contact</h2>
+        <ul>
+          {SITE.email ? <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li> : <li><a href="/contact/">Send a message</a></li>}
+          {SITE.social.map((s) => <li><a href={s.href} rel="noopener me">{s.label}</a></li>)}
+          <li><a href="/rss.xml">RSS feed</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="site-footer__base">
+      <p>© {year} {SITE.name}. All rights reserved.</p>
+      <p>{SITE.country}</p>
+    </div>
+  </Container>
+</footer>
+
+<style>
+  .site-footer { border-top: 1px solid var(--line); padding-top: clamp(3.5rem, 6vw, 5.5rem); font-size: 0.95rem; }
+  .site-footer__grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 2.5rem; padding-bottom: clamp(3rem, 5vw, 4.5rem); }
+  .site-footer__logo { display: inline-flex; text-decoration: none; border-radius: 4px; }
+  .site-footer__brand p { max-width: 34ch; margin-top: 1.1rem; color: var(--muted); }
+  .site-footer__heading { margin-bottom: 1rem; font-size: 0.78rem; font-weight: 560; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .site-footer ul { display: grid; gap: 0.55rem; margin: 0; padding: 0; list-style: none; }
+  .site-footer ul a { color: var(--ink-2); text-decoration: none; }
+  .site-footer ul a:hover { color: var(--accent); }
+  .site-footer__base {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem 1.5rem;
+    padding-block: 1.5rem 2rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.86rem;
+  }
+  .site-footer__base p { margin: 0; }
+  @media (max-width: 720px) {
+    .site-footer__grid { grid-template-columns: 1fr 1fr; }
+    .site-footer__brand { grid-column: 1 / -1; }
+  }
+</style>
