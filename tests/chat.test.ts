@@ -1,7 +1,7 @@
 // Assistant endpoint tests: request validation, grounding context, fallbacks and limits.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { handleChat, sanitiseHistory, type ChatEnv } from '../src/server/chat/handler.ts';
+import { handleChat, repairLinks, sanitiseHistory, type ChatEnv } from '../src/server/chat/handler.ts';
 import { retrieve, type KnowledgeChunk } from '../src/server/chat/retrieve.ts';
 
 const knowledge: KnowledgeChunk[] = [
@@ -74,4 +74,14 @@ test('history is trimmed, cleaned and must end with the visitor', () => {
   assert.equal(out[0].role, 'user');
   assert.equal(out[0].content.length, 600);
   assert.equal(sanitiseHistory([{ role: 'user', content: 'a' }, { role: 'assistant', content: 'b' }]), null);
+});
+
+test('repairs invented deep links and drops links to unknown pages', () => {
+  const urls = ['/insights/goodwill-in-acquisitions/', '/about/#principles'];
+  assert.equal(repairLinks('See [Goodwill](/insights/goodwill-in-acquisitions/what-goodwill-is).', urls), 'See [Goodwill](/insights/goodwill-in-acquisitions/).');
+  assert.equal(repairLinks('Read [it](/insights/goodwill-in-acquisitions)', urls), 'Read [it](/insights/goodwill-in-acquisitions/)');
+  assert.equal(repairLinks('See [principles](/about/#principles) and [Contact](/contact/)', urls), 'See [principles](/about/#principles) and [Contact](/contact/)');
+  assert.equal(repairLinks('Try [this](/made-up-page/)', urls), 'Try this');
+  assert.equal(repairLinks('An [unknown article](/insights/not-a-real-article/)', urls), 'An [unknown article](/insights/)');
+  assert.equal(repairLinks('External [site](https://example.com) stays', urls), 'External [site](https://example.com) stays');
 });

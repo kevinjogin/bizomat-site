@@ -69,6 +69,25 @@ async function loadKnowledge(request: Request, env: ChatEnv): Promise<KnowledgeC
   return data.chunks;
 }
 
+const SITE_PAGES = ['/', '/about/', '/work/', '/insights/', '/contact/', '/privacy/', '/terms/', '/search/', '/chat/'];
+
+/**
+ * Models sometimes invent deep links (e.g. a section title turned into a path). Keep links to known
+ * pages, repair a link to the longest known page it starts with, and otherwise keep only the label.
+ */
+export function repairLinks(text: string, knownUrls: Iterable<string>): string {
+  const known = new Set([...SITE_PAGES, ...[...knownUrls].map((u) => u.split('#')[0])]);
+  const byLength = [...known].sort((a, b) => b.length - a.length);
+  return text.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (match, label: string, href: string) => {
+    if (!href.startsWith('/')) return match; // external or mailto links are handled by the widget
+    const [path, hash] = href.split('#');
+    const withSlash = path.endsWith('/') ? path : `${path}/`;
+    if (known.has(withSlash)) return `[${label}](${withSlash}${hash ? `#${hash}` : ''})`;
+    const nearest = byLength.find((u) => u !== '/' && withSlash.startsWith(u));
+    return nearest ? `[${label}](${nearest})` : label;
+  });
+}
+
 function json(body: ChatReply, status = 200): Response {
   return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } });
 }
@@ -145,6 +164,7 @@ export async function handleChat(request: Request, env: ChatEnv): Promise<Respon
     return json({ ok: false, error: 'The assistant is busy right now. Please try again shortly, or leave a message for the team.' }, 503);
   }
 
+  text = repairLinks(text, chunks.map((c) => c.url));
   const sources = [...new Map(picked.filter((c) => c.id !== 'core-facts' && text.includes(c.url)).map((c) => [c.url, { title: c.title, url: c.url }])).values()].slice(0, 3);
   return json({ ok: true, reply: text, sources });
 }
