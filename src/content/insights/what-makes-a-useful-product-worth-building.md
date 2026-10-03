@@ -2,7 +2,7 @@
 title: What makes a useful product worth building?
 description: A practical way to judge whether a product solves enough of a real
   problem to justify the time, money and risk of building it.
-draft: false
+draft: true
 publishDate: 2026-10-02
 category: Products
 tags:
