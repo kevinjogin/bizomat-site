@@ -9,7 +9,7 @@ tags:
   - operations
 author: "GoCore"
 featured: false
-draft: true
+draft: false
 ---
 
 Some businesses can grow for years with only modest investment in equipment. Others need to keep buying machinery, vehicles, buildings and systems just to stay where they are. The difference has a large effect on how much money is ever available to the owners.

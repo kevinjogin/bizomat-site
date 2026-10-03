@@ -8,7 +8,7 @@ tags:
   - strategy
 author: "GoCore"
 featured: false
-draft: true
+draft: false
 ---
 
 Identifying an excellent business is only half the problem. The other half is the price. An outstanding company bought at an extreme price can still deliver a poor result for years.

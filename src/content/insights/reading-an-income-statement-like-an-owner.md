@@ -8,7 +8,7 @@ tags:
   - operations
 author: "GoCore"
 featured: false
-draft: true
+draft: false
 ---
 
 An income statement tells you how much a business earned over a period, usually a quarter or a year. Most people read it from the bottom: what was the profit? An owner reads it from the top, because each line answers a different question about how the business works.

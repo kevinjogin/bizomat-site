@@ -9,7 +9,7 @@ tags:
   - strategy
 author: "GoCore"
 featured: false
-draft: true
+draft: false
 ---
 
 If you could look at only one number to judge the strength of a business, gross margin would be a strong candidate.

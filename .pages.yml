@@ -52,8 +52,8 @@ content:
       - name: draft
         label: Draft (hidden from the website)
         type: boolean
-        default: true
-        description: "Untick only after the article has been reviewed. Saving publishes it within a few minutes."
+        default: false
+        description: "Tick to hide the article while you are still working on it. Unticked articles go live within a few minutes of saving."
       - name: publishDate
         label: Publish date
         type: date
@@ -169,7 +169,7 @@ content:
       - name: draft
         label: Draft (hidden from the website)
         type: boolean
-        default: true
+        default: false
       - name: featured
         label: Show in "Selected work" on the homepage
         type: boolean

@@ -10,7 +10,7 @@ tags:
   - validation
 author: "GoCore"
 featured: false
-draft: true
+draft: false
 ---
 
 *Warren Buffett and the Interpretation of Financial Statements* is written for investors. It explains how Buffett reads a company's accounts to find businesses with a durable competitive advantage. But the signals it describes are not arbitrary. Each one is the visible result of decisions someone made about what to sell, to whom, how to make it and how to fund it.

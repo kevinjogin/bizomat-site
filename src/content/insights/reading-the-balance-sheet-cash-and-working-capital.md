@@ -8,7 +8,7 @@ tags:
   - operations
 author: "GoCore"
 featured: false
-draft: true
+draft: false
 ---
 
 The income statement shows what a business earned over a period. The **balance sheet** shows what it owns and owes on a single day. Read across several years, it reveals how a business actually operates, and whether its profits turn into something solid.

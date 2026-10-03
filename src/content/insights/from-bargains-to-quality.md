@@ -8,7 +8,7 @@ tags:
   - finance
 author: "GoCore"
 featured: false
-draft: true
+draft: false
 ---
 
 Warren Buffett learned investing from Benjamin Graham, widely regarded as the father of value investing. He studied under Graham and later worked for him. Yet the approach that made Buffett famous differs from his teacher's in an important way.

@@ -8,7 +8,7 @@ tags:
   - strategy
 author: "GoCore"
 featured: false
-draft: true
+draft: false
 ---
 
 Owners hand a business their money and leave much of its profit inside it. A natural question follows: how well is that money being used?

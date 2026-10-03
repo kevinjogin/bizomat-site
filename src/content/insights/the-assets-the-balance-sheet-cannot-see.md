@@ -9,7 +9,7 @@ tags:
   - customers
 author: "GoCore"
 featured: false
-draft: true
+draft: false
 ---
 
 A balance sheet looks like a complete list of what a business owns. It is not. Some of the most valuable things a company possesses may not appear on it at all.

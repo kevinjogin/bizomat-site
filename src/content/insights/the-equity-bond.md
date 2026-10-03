@@ -8,7 +8,7 @@ tags:
   - strategy
 author: "GoCore"
 featured: false
-draft: true
+draft: false
 ---
 
 Most people value shares by comparing the price with some estimate of what the business is "really worth". *Warren Buffett and the Interpretation of Financial Statements* describes a different way Buffett has framed the question, which the authors call the **equity bond**.

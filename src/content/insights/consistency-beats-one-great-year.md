@@ -8,7 +8,7 @@ tags:
   - validation
 author: "GoCore"
 featured: false
-draft: true
+draft: false
 ---
 
 Business news loves a record result. A company doubles its profit, and the headline writes itself. But a single year, however impressive, is weak evidence about the business behind it.

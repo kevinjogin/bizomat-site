@@ -9,7 +9,7 @@ tags:
   - finance
 author: "GoCore"
 featured: false
-draft: true
+draft: false
 ---
 
 Most businesses earn ordinary profits most of the time. Competition does that. When something is profitable, others notice, copy it, cut prices and spread the profit thinly across everyone.

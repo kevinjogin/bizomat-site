@@ -8,7 +8,7 @@ tags:
   - strategy
 author: "GoCore"
 featured: false
-draft: true
+draft: false
 ---
 
 Every year a profitable business makes a choice. It can pay its profits out to its owners, use them to buy back shares, or keep them and put them back to work. The profits it keeps accumulate on the balance sheet as **retained earnings**.

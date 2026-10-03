@@ -8,7 +8,7 @@ tags:
   - strategy
 author: "GoCore"
 featured: false
-draft: true
+draft: false
 ---
 
 Debt is not automatically bad. Used carefully, it can fund growth that would otherwise take years. But how much a business borrows, and why, often says more about its underlying strength than its profits do.

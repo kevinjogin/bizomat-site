@@ -10,7 +10,7 @@ tags:
   - strategy
 author: "GoCore"
 featured: false
-draft: true
+draft: false
 ---
 
 Think of the products you buy without really deciding. The brand of coffee, soap or chewing gum you reach for automatically. The comparison never quite happens, because the choice was made years ago and has simply been repeated ever since.

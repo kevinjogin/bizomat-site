@@ -8,7 +8,7 @@ tags:
   - strategy
 author: "GoCore"
 featured: false
-draft: true
+draft: false
 ---
 
 When a company has more cash than it needs, it has three broad options: reinvest it, pay it out as dividends, or use it to buy back its own shares. Buybacks have become one of the most common uses of surplus cash among large listed companies, and one of the most debated.

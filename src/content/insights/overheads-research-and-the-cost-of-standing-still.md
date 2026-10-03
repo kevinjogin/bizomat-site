@@ -9,7 +9,7 @@ tags:
   - operations
 author: "GoCore"
 featured: false
-draft: true
+draft: false
 ---
 
 Gross profit is what is left after paying for the product. What happens to it next separates businesses that build wealth from businesses that simply survive.

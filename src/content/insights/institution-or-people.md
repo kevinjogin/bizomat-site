@@ -9,7 +9,7 @@ tags:
   - customers
 author: "GoCore"
 featured: false
-draft: true
+draft: false
 ---
 
 Service businesses can be extraordinarily profitable. They often need little factory equipment, little inventory and little research. But not every service business rewards its owners well. *Warren Buffett and the Interpretation of Financial Statements* draws a distinction that helps explain why: is the business **institution-specific** or **people-specific**?

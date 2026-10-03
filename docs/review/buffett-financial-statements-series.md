@@ -61,4 +61,4 @@ When reviewing, consider adding Markdown links between articles where one refers
 
 ## Publishing
 
-All 19 files have `draft: true`. To publish an article after review, change it to `draft: false` (and optionally set a new `publishDate`). Published articles are automatically added to the site, RSS, sitemap, search and the GoCore Assistant's knowledge.
+Published on 3 October 2026 (`draft: false`). To hide an article again, set `draft: true` or tick **Draft** in Pages CMS. Published articles are automatically added to the site, RSS, sitemap, search and the GoCore Assistant's knowledge.
