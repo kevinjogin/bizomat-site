@@ -13,6 +13,8 @@ export interface Submission extends ContactInput {
   honeypot?: string;
   /** When the visitor started filling in the form (ms since epoch). */
   startedAt?: number;
+  /** hCaptcha token, required by the Web3Forms form settings. */
+  captcha?: string;
 }
 
 export async function submitContact(s: Submission): Promise<ContactResponse> {
@@ -41,6 +43,7 @@ export async function submitContact(s: Submission): Promise<ContactResponse> {
           source: s.source,
           privacy_acknowledged: s.consent ? 'Yes' : 'No',
           botcheck: false,
+          'h-captcha-response': s.captcha ?? '',
         }),
       });
       const body = (await res.json().catch(() => ({}))) as { success?: boolean; message?: string };

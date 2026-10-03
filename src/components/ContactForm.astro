@@ -99,6 +99,13 @@ const action = provider === 'web3forms' ? web3formsEndpoint : workerEndpoint;
     <p class="field__error" id="cf-consent-error" data-error-for="consent"></p>
   </div>
 
+  <div class="field field--captcha">
+    <p class="field__hint">A quick spam check protects this form.</p>
+    <div class="captcha" data-captcha></div>
+    <p class="field__error" data-captcha-error></p>
+  </div>
+  <noscript><p class="field__hint">This form needs JavaScript for its spam check. If it is turned off, please use “Book a meeting” instead.</p></noscript>
+
   <div class="contact-form__status" role="status" aria-live="polite" tabindex="-1" data-status></div>
 
   <div class="contact-form__actions">
@@ -109,13 +116,30 @@ const action = provider === 'web3forms' ? web3formsEndpoint : workerEndpoint;
 <script>
   import { HONEYPOT_FIELD, normalise, validate, type ContactErrors } from '../lib/contact.ts';
   import { submitContact } from '../lib/contact-client.ts';
+  import { mountCaptcha, type Captcha } from '../lib/captcha.ts';
 
   const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
   if (form) {
     const status = form.querySelector<HTMLElement>('[data-status]')!;
     const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
     const select = form.querySelector<HTMLSelectElement>('[data-service-select]');
+    const captchaEl = form.querySelector<HTMLElement>('[data-captcha]')!;
+    const captchaError = form.querySelector<HTMLElement>('[data-captcha-error]')!;
     let startedAt = Date.now();
+
+    // Load the spam check only once the form is nearly in view or the visitor starts typing.
+    let captcha: Promise<Captcha | null> | null = null;
+    const ensureCaptcha = () => (captcha ??= mountCaptcha(captchaEl));
+    form.addEventListener('focusin', ensureCaptcha, { once: true });
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some((en) => en.isIntersecting)) {
+          ensureCaptcha();
+          io.disconnect();
+        }
+      }, { rootMargin: '200px' });
+      io.observe(captchaEl);
+    }
     const fallbackEmail = form.dataset.email;
     const check = (input: ReturnType<typeof normalise>) => validate(input, { requireCompany: true });
 
@@ -166,10 +190,22 @@ const action = provider === 'web3forms' ? web3formsEndpoint : workerEndpoint;
         setStatus('error', 'Please check the highlighted fields.');
         return;
       }
+      const check2 = await ensureCaptcha();
+      const token = check2?.token() ?? '';
+      captchaError.textContent = check2
+        ? token
+          ? ''
+          : 'Please complete the spam check above.'
+        : 'The spam check could not load. Please refresh the page, or use “Book a meeting” instead.';
+      if (!token) {
+        setStatus('error', captchaError.textContent);
+        return;
+      }
       submit.disabled = true;
       setStatus('pending', 'Sending your enquiry…');
       try {
-        const result = await submitContact({ ...input, source: 'Contact page', honeypot: data[HONEYPOT_FIELD] ? 'yes' : '', startedAt });
+        const result = await submitContact({ ...input, source: 'Contact page', honeypot: data[HONEYPOT_FIELD] ? 'yes' : '', startedAt, captcha: token });
+        check2?.reset();
         if (result.ok) {
           form.reset();
           startedAt = Date.now();
@@ -205,6 +241,7 @@ const action = provider === 'web3forms' ? web3formsEndpoint : workerEndpoint;
   .field [aria-invalid='true'] { border-color: var(--danger); }
   .field__error { margin: 0; font-size: 0.86rem; color: var(--danger); }
   .field__error:empty { display: none; }
+  .captcha { min-height: 78px; }
   .field--radios { margin: 0; padding: 0; border: 0; }
   .field--radios legend { margin-bottom: 0.5rem; padding: 0; }
   .radios { display: flex; flex-wrap: wrap; gap: 0.5rem; }

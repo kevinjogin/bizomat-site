@@ -71,6 +71,7 @@ const prompts = ['What services does GoCore offer?', 'What is a Factory Fix?', '
       <label>Message<textarea name="message" rows="3" required maxlength="2000"></textarea></label>
       <input class="assistant__hp" name="botcheck" type="checkbox" tabindex="-1" autocomplete="off" aria-hidden="true" />
       <label class="assistant__consent"><input name="consent" type="checkbox" required /> I agree to GoCore using these details to reply, as set out in the <a href="/privacy/">privacy policy</a>.</label>
+      <div class="assistant__captcha" data-handoff-captcha></div>
       <p class="assistant__handoff-error" role="alert" data-handoff-error></p>
       <div class="assistant__handoff-actions">
         <button type="button" class="assistant__text-btn" data-handoff-cancel>Cancel</button>
@@ -92,6 +93,7 @@ const prompts = ['What services does GoCore offer?', 'What is a Factory Fix?', '
 <script>
   import { normalise, validate } from '../lib/contact.ts';
   import { submitContact } from '../lib/contact-client.ts';
+  import { mountCaptcha, type Captcha } from '../lib/captcha.ts';
 
   type Msg = { role: 'user' | 'assistant'; content: string };
   type State = { open: boolean; messages: Msg[] };
@@ -111,6 +113,8 @@ const prompts = ['What services does GoCore offer?', 'What is a Factory Fix?', '
     const handoffError = root.querySelector<HTMLElement>('[data-handoff-error]')!;
     let busy = false;
     let handoffStarted = 0;
+    let handoffCaptcha: Promise<Captcha | null> | null = null;
+    const ensureHandoffCaptcha = () => (handoffCaptcha ??= mountCaptcha(root.querySelector<HTMLElement>('[data-handoff-captcha]')!));
 
     const load = (): State => {
       try {
@@ -287,6 +291,7 @@ const prompts = ['What services does GoCore offer?', 'What is a Factory Fix?', '
       handoffError.textContent = '';
       if (show) {
         handoffStarted = Date.now();
+        ensureHandoffCaptcha();
         handoff.querySelector<HTMLInputElement>('input[name="name"]')!.focus();
       } else input.focus();
     };
@@ -302,6 +307,14 @@ const prompts = ['What services does GoCore offer?', 'What is a Factory Fix?', '
         handoffError.textContent = first;
         return;
       }
+      const captcha = await ensureHandoffCaptcha();
+      const token = captcha?.token() ?? '';
+      if (!token) {
+        handoffError.textContent = captcha
+          ? 'Please complete the spam check above.'
+          : 'The spam check could not load. Please use the contact page instead.';
+        return;
+      }
       const submit = handoff.querySelector<HTMLButtonElement>('[type="submit"]')!;
       submit.disabled = true;
       handoffError.textContent = '';
@@ -311,7 +324,9 @@ const prompts = ['What services does GoCore offer?', 'What is a Factory Fix?', '
         source: 'Website assistant',
         honeypot: data.botcheck ? 'yes' : '',
         startedAt: handoffStarted,
+        captcha: token,
       });
+      captcha?.reset();
       submit.disabled = false;
       if (result.ok) {
         handoff.reset();
@@ -418,6 +433,7 @@ const prompts = ['What services does GoCore offer?', 'What is a Factory Fix?', '
   .assistant .assistant__consent { display: flex; gap: 0.5rem; align-items: flex-start; font-weight: 400; color: var(--ink-2); line-height: 1.4; }
   .assistant__consent input { margin-top: 0.15rem; accent-color: var(--ink); }
   .assistant__hp { position: absolute; left: -10000px; }
+  .assistant__captcha { min-height: 78px; overflow: hidden; }
   .assistant__handoff-error { margin: 0; color: var(--danger); font-size: 0.82rem; }
   .assistant__handoff-error:empty { display: none; }
   .assistant__handoff-actions { display: flex; justify-content: flex-end; gap: 0.75rem; }
