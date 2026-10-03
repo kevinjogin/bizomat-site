@@ -20,18 +20,36 @@ export const tokenize = (s: string) =>
     .map((w) => w.replace(/(ing|ers|er|es|s)$/, ''))
     .filter((w) => w.length > 2 && !STOP.has(w));
 
+// Tokenising every chunk on every question is the main CPU cost, so each chunk is indexed once
+// and reused while the knowledge file stays cached in the Worker.
+interface ChunkIndex {
+  title: Set<string>;
+  body: Map<string, number>;
+}
+const indexCache = new WeakMap<KnowledgeChunk, ChunkIndex>();
+
+function indexOf(c: KnowledgeChunk): ChunkIndex {
+  let idx = indexCache.get(c);
+  if (!idx) {
+    const body = new Map<string, number>();
+    for (const w of tokenize(c.text)) body.set(w, (body.get(w) ?? 0) + 1);
+    idx = { title: new Set(tokenize(c.title)), body };
+    indexCache.set(c, idx);
+  }
+  return idx;
+}
+
 export function retrieve(chunks: KnowledgeChunk[], query: string, maxChars: number, limit = 7): KnowledgeChunk[] {
   const terms = new Set(tokenize(query));
   const always = chunks.filter((c) => c.id === 'core-facts');
   const scored = chunks
     .filter((c) => c.id !== 'core-facts')
     .map((c) => {
-      const title = tokenize(c.title);
-      const body = tokenize(c.text);
+      const { title, body } = indexOf(c);
       let score = 0;
       for (const t of terms) {
-        if (title.includes(t)) score += 3;
-        score += Math.min(3, body.filter((w) => w === t).length);
+        if (title.has(t)) score += 3;
+        score += Math.min(3, body.get(t) ?? 0);
       }
       if (c.id.startsWith('faq-')) score *= 1.4; // curated answers first
       return { c, score };
