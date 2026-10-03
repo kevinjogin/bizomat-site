@@ -18,8 +18,8 @@ A new business needs a credible home online, a way to publish its thinking, and 
 
 The site is built with Astro and published as static files on Cloudflare's network. Articles are plain Markdown files with structured, validated details: one category, a small set of controlled tags, and publication dates. Categories and tag pages appear automatically once enough articles exist, so the structure grows with the content instead of being designed in advance.
 
-There is no database and no admin login. Publishing is a reviewed change to a file, which rebuilds the site automatically. The contact form is handled by a small, separate function with spam protection.
+There is no database and no login on the website itself. Articles can be edited as files or through an online editor whose sign-in is handled by GitHub; every change is recorded in version history and the site is rebuilt from it. The contact form delivers enquiries through a form-to-email service with spam protection. A small Cloudflare Worker adds security headers and runs the GoCore Assistant, which answers questions using only the site's own published content.
 
 ## Status
 
-In development. The foundation, publishing system and first articles are in place. Next steps are connecting the domain, enabling the contact form and publishing regularly.
+In development. The site is live at gocore.com.au with the contact form, the assistant and more than forty Insights articles. Next steps are automatic deployment from the repository and publishing regularly.
