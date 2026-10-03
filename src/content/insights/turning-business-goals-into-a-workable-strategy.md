@@ -174,4 +174,5 @@ A workable strategy links an honest starting position with a worthwhile outcome,
 Keep the resulting commitments specific enough to use and open enough to revise. The test is whether the plan improves real decisions about customers, priorities and capacity, then changes when the evidence gives you a sound reason to do so.
 
 ---
-*Source: Brian Tracy, Business Strategy (supplied excerpt; publication year not shown). Methods and examples are practical adaptations. Figures in this article are illustrations, not data. This article is general business information.*
+
+*Source: Brian Tracy, Business Strategy. Methods and examples are practical adaptations. Figures in this article are illustrations, not data. This article is general business information.*

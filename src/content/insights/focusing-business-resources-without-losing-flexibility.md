@@ -168,4 +168,5 @@ Focus gives a worthwhile opportunity enough attention to develop. Flexibility pr
 Concentrate on a question or promise you can test properly, then use what you learn to decide the next allocation. When an advantage appears, develop it at a pace the business can support and keep checking the assumptions that made it worth pursuing.
 
 ---
-*Source: Brian Tracy, Business Strategy (supplied excerpt; publication year not shown). Methods and examples are practical adaptations. Figures in this article are illustrations, not data. This article is general business information.*
+
+*Source: Brian Tracy, Business Strategy. Methods and examples are practical adaptations. Figures in this article are illustrations, not data. This article is general business information.*

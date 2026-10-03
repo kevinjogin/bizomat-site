@@ -66,7 +66,7 @@ Share the material early enough for people to read it during their available wor
 
 ## Design a session around decisions
 
-The source recommends several days away from interruptions. That reflects Tracy's preferred planning format, but the underlying requirement for a small business is adequate attention to the decisions being made. A contained issue may be handled through shorter prepared sessions, while a major change can require more time and investigation.
+Tracy recommends several days away from interruptions. That reflects Tracy's preferred planning format, but the underlying requirement for a small business is adequate attention to the decisions being made. A contained issue may be handled through shorter prepared sessions, while a major change can require more time and investigation.
 
 Choose a format that matches the scope. Separate collecting evidence, evaluating alternatives and authorising commitments when combining them would rush the decision. If information is missing, assign the investigation and reconvene instead of trying to resolve an empirical question through repeated opinion.
 
@@ -175,4 +175,5 @@ Involving the right people makes a strategy easier to challenge, authorise and d
 Build the process around clear decisions, then preserve that clarity in everyday work. A useful planning session ends with supported commitments, visible uncertainties and a practical way to review what happens next.
 
 ---
-*Source: Brian Tracy, Business Strategy (supplied excerpt; publication year not shown). Methods and examples are practical adaptations. Figures in this article are illustrations, not data. This article is general business information.*
+
+*Source: Brian Tracy, Business Strategy. Methods and examples are practical adaptations. Figures in this article are illustrations, not data. This article is general business information.*
