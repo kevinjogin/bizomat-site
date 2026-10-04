@@ -1,0 +1,311 @@
+---
+// Homepage hero graphic: GoCore's four services arranged around the GoCore core.
+// A work packet travels clockwise round the orbit (design → make → improve → deliver); each service
+// lights up as the packet passes beneath it. Pure CSS animation (no script), CSP-safe (no inline
+// styles), and fully static when the visitor prefers reduced motion. Each service links to its detail.
+import Logo from './Logo.astro';
+import { SERVICE_GROUPS } from '../data/services.ts';
+
+const META: Record<string, { verb: string; label: string; tags: string }> = {
+  'engineering-cad': { verb: 'Design', label: 'Engineering &amp; CAD', tags: 'CAD · Drawings · DFM' },
+  manufacturing: { verb: 'Make', label: 'Manufacturing Support', tags: 'Jigs · Fixtures · Tooling' },
+  operations: { verb: 'Improve', label: 'Operations Improvement', tags: 'Flow · Waste · Standard work' },
+  'project-support': { verb: 'Deliver', label: 'Engineering Project Support', tags: 'Scope · RFQ · Handover' },
+};
+const nodes = SERVICE_GROUPS.slice(0, 4).map((g, i) => ({ ...g, n: i + 1, ...(META[g.id] ?? { verb: '', label: g.title, tags: '' }) }));
+---
+
+<figure class="smap" aria-labelledby="smap-caption">
+  <figcaption id="smap-caption" class="visually-hidden">GoCore's four services, connected through one core: design, make, improve and deliver.</figcaption>
+  <div class="smap__panel">
+    <div class="smap__orbit" aria-hidden="true">
+      <svg class="smap__track" viewBox="0 0 100 100" focusable="false"><circle cx="50" cy="50" r="49.5" /></svg>
+      <span class="smap__spinner"><span class="smap__tail"></span><span class="smap__packet"></span></span>
+    </div>
+
+    <ol class="smap__list">
+      {
+        nodes.map((node) => (
+          <li class={`smap__node smap__node--${node.n}`}>
+            <a class="smap__link" href={`/services/#${node.id}`}>
+              <span class="smap__head">
+                <span class="smap__num">{String(node.n).padStart(2, '0')}</span>
+                <span class="smap__verb">{node.verb}</span>
+              </span>
+              {node.n === 1 && (
+                <svg class="smap__icon" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+                  <path class="i-line i-draw" d="M7 33V12h8v13h18v8Z" />
+                  <circle class="i-acc" cx="11" cy="29" r="2" />
+                  <circle class="i-acc" cx="28" cy="29" r="2" />
+                  <path class="i-dim" d="M7 7h26M7 4.5v5M33 4.5v5" />
+                  <path class="i-cross" d="M20 16v6M17 19h6" />
+                </svg>
+              )}
+              {node.n === 2 && (
+                <svg class="smap__icon" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+                  <g class="i-gear">
+                    <circle class="i-teeth" cx="20" cy="17" r="9" />
+                    <circle class="i-line" cx="20" cy="17" r="4" />
+                  </g>
+                  <path class="i-line" d="M5 34h30M9 34v-5h5v5M26 34v-5h5v5" />
+                </svg>
+              )}
+              {node.n === 3 && (
+                <svg class="smap__icon" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+                  <rect class="i-line" x="3" y="9" width="8" height="8" rx="1.5" />
+                  <rect class="i-line" x="16" y="9" width="8" height="8" rx="1.5" />
+                  <rect class="i-line" x="29" y="9" width="8" height="8" rx="1.5" />
+                  <path class="i-line" d="M11 13h5M24 13h5" />
+                  <circle class="i-flow" cx="7" cy="13" r="1.8" />
+                  <path class="i-trend" d="M4 34l9-5 7 3 9-8 7 1" />
+                </svg>
+              )}
+              {node.n === 4 && (
+                <svg class="smap__icon" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+                  <path class="i-faint" d="M4 6v29h33" />
+                  <rect class="i-line" x="8" y="9" width="16" height="5" rx="1" />
+                  <rect class="i-line" x="14" y="18" width="16" height="5" rx="1" />
+                  <rect class="i-line" x="20" y="27" width="12" height="5" rx="1" />
+                  <rect class="i-bar i-bar--1" x="8" y="9" width="16" height="5" rx="1" />
+                  <rect class="i-bar i-bar--2" x="14" y="18" width="16" height="5" rx="1" />
+                  <rect class="i-bar i-bar--3" x="20" y="27" width="12" height="5" rx="1" />
+                </svg>
+              )}
+              <span class="smap__title" set:html={node.label} />
+              <span class="smap__tags">{node.tags}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="smap__core" aria-hidden="true">
+      <span class="smap__pulse"></span>
+      <svg class="smap__dial" viewBox="0 0 100 100" focusable="false">
+        <circle class="smap__ticks" cx="50" cy="50" r="46" />
+        <circle class="smap__arc" cx="50" cy="50" r="46" pathLength="100" />
+      </svg>
+      <span class="smap__face"><Logo label="" height={22} class="smap__logo" /><span class="smap__sub">Engineering core</span></span>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .smap {
+    --cycle: 8s;
+    --blue: #1456e8;
+    --orange: #ff6a13;
+    --panel: #ffffff;
+    --tile: rgb(255 255 255 / 0.8);
+    --tile-line: rgb(18 18 17 / 0.1);
+    --grid: rgb(20 86 232 / 0.07);
+    margin: 0;
+    width: 100%;
+    max-width: 540px;
+  }
+  :global(:root[data-theme='dark']) .smap {
+    --blue: #4f95ff;
+    --panel: #131412;
+    --tile: rgb(28 29 27 / 0.82);
+    --tile-line: rgb(238 236 230 / 0.1);
+    --grid: rgb(79 149 255 / 0.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .smap {
+      --blue: #4f95ff;
+      --panel: #131412;
+      --tile: rgb(28 29 27 / 0.82);
+      --tile-line: rgb(238 236 230 / 0.1);
+      --grid: rgb(79 149 255 / 0.08);
+    }
+  }
+
+  /* Panel: a blueprint sheet. */
+  .smap__panel {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    padding: clamp(10px, 2.4%, 14px);
+    border: 1px solid var(--line-strong);
+    border-radius: 20px;
+    background-color: var(--panel);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-position: center;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  /* Orbit: a dashed track and a glowing work packet with a fading tail. */
+  .smap__orbit { position: absolute; inset: 15%; z-index: 0; }
+  .smap__track { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .smap__track circle { fill: none; stroke: var(--blue); stroke-opacity: 0.45; stroke-width: 1.4; stroke-dasharray: 2 6; vector-effect: non-scaling-stroke; }
+  .smap__spinner { position: absolute; inset: 0; transform: rotate(-45deg); }
+  .smap__tail {
+    position: absolute; inset: -2px; border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 0deg 250deg, rgb(255 106 19 / 0) 250deg, rgb(255 106 19 / 0.75) 360deg);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+  }
+  .smap__packet {
+    position: absolute; top: 0; left: 50%;
+    width: 14px; height: 14px; margin: -7px 0 0 -7px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ffd2a8, var(--orange) 55%, #e03a00);
+    box-shadow: 0 0 0 4px rgb(255 106 19 / 0.18), 0 0 22px 6px rgb(255 106 19 / 0.45);
+  }
+
+  /* Four services, clockwise from top left: 01 design, 02 make, 03 improve, 04 deliver. */
+  .smap__list {
+    position: relative; z-index: 1;
+    display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
+    gap: clamp(10px, 4%, 22px);
+    height: 100%; margin: 0; padding: 0; list-style: none;
+  }
+  .smap__node { min-width: 0; min-height: 0; }
+  .smap__node--1 { grid-area: 1 / 1; }
+  .smap__node--2 { grid-area: 1 / 2; }
+  .smap__node--3 { grid-area: 2 / 2; }
+  .smap__node--4 { grid-area: 2 / 1; }
+
+  .smap__link {
+    --d: 0s;
+    position: relative;
+    display: flex; flex-direction: column; gap: 0.35rem;
+    height: 100%;
+    padding: clamp(0.75rem, 5.5%, 1.25rem);
+    border: 1px solid var(--tile-line);
+    border-radius: 14px;
+    background: var(--tile);
+    color: var(--ink);
+    text-decoration: none;
+    overflow: hidden;
+    transition: transform 0.3s var(--ease), border-color 0.3s var(--ease);
+  }
+  .smap__node--2 .smap__link { --d: -6s; }
+  .smap__node--3 .smap__link { --d: -4s; }
+  .smap__node--4 .smap__link { --d: -2s; }
+  /* Keep each tile's content at its outer edges, clear of the core in the middle. */
+  .smap__node--2 .smap__link, .smap__node--3 .smap__link { align-items: flex-end; text-align: right; }
+  .smap__node--1 .smap__link, .smap__node--2 .smap__link { justify-content: flex-start; }
+  .smap__node--1 .smap__title, .smap__node--2 .smap__title { margin-top: auto; }
+  .smap__node--3 .smap__icon, .smap__node--4 .smap__icon { order: 3; margin-top: auto; }
+  .smap__node--3 .smap__title, .smap__node--4 .smap__title { order: 4; }
+  .smap__node--3 .smap__tags, .smap__node--4 .smap__tags { order: 5; }
+
+  /* The highlight that follows the work packet. */
+  .smap__link::before {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: linear-gradient(135deg, var(--orange), rgb(255 106 19 / 0.15) 45%, var(--blue));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .smap__link::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(120% 90% at var(--gx, 0%) var(--gy, 0%), rgb(255 106 19 / 0.14), transparent 60%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .smap__node--2 .smap__link { --gx: 100%; }
+  .smap__node--3 .smap__link { --gx: 100%; --gy: 100%; }
+  .smap__node--4 .smap__link { --gy: 100%; }
+
+  .smap__head { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .smap__num { color: var(--accent); font-weight: 600; }
+  .smap__verb { color: var(--muted); }
+  .smap__icon { width: clamp(30px, 22%, 40px); height: auto; margin-top: 0.35rem; overflow: visible; }
+  .smap__title { max-width: 11ch; font-family: var(--font-display); font-size: clamp(0.92rem, 0.78rem + 0.55vw, 1.12rem); font-weight: 700; font-synthesis: none; line-height: 1.18; letter-spacing: -0.005em; }
+  .smap__tags { max-width: 15ch; font-size: 0.74rem; line-height: 1.35; color: var(--muted); }
+
+  .smap__link:hover, .smap__link:focus-visible { transform: translateY(-2px); border-color: transparent; }
+  .smap__link:hover::before, .smap__link:focus-visible::before, .smap__link:hover::after, .smap__link:focus-visible::after { opacity: 1; }
+  .smap__link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  /* Icons */
+  .i-line { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+  .i-faint { fill: none; stroke: var(--muted); stroke-width: 1.2; stroke-linecap: round; opacity: 0.6; }
+  .i-acc { fill: none; stroke: var(--orange); stroke-width: 1.6; }
+  .i-dim { fill: none; stroke: var(--blue); stroke-width: 1.3; stroke-linecap: round; }
+  .i-cross { fill: none; stroke: var(--blue); stroke-width: 1.2; stroke-linecap: round; opacity: 0.7; }
+  .i-teeth { fill: none; stroke: var(--orange); stroke-width: 4; stroke-dasharray: 3.2 2.45; }
+  .i-gear { transform-box: fill-box; transform-origin: center; }
+  .i-flow { fill: var(--orange); }
+  .i-trend { fill: none; stroke: var(--blue); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .i-bar { fill: var(--orange); transform-box: fill-box; transform-origin: left center; opacity: 0.9; }
+
+  /* The core: the GoCore wordmark inside a turning dial. */
+  .smap__core {
+    position: absolute; z-index: 2; left: 50%; top: 50%;
+    width: clamp(96px, 33%, 176px); aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    display: grid; place-items: center;
+    border-radius: 50%;
+    background: var(--panel);
+    box-shadow: 0 0 0 clamp(6px, 1.8%, 10px) var(--panel), 0 18px 40px -18px rgb(10 59 196 / 0.45);
+  }
+  .smap__dial { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .smap__ticks { fill: none; stroke: var(--line-strong); stroke-width: 3; stroke-dasharray: 0.6 3.2; transform-origin: 50px 50px; }
+  .smap__arc {
+    fill: none; stroke: var(--orange); stroke-width: 2.4; stroke-linecap: round;
+    stroke-dasharray: 18 82; stroke-dashoffset: 9; /* an 18% arc centred on the circle's start point */
+    transform-origin: 50px 50px; transform: rotate(-135deg); /* pointing at service 01, like the packet */
+  }
+  .smap__face {
+    position: relative;
+    display: grid; justify-items: center; gap: 0.3rem;
+    width: 78%; aspect-ratio: 1; align-content: center;
+    border-radius: 50%;
+    border: 1px solid var(--tile-line);
+    background: radial-gradient(circle at 50% 30%, rgb(79 149 255 / 0.12), transparent 70%), var(--panel);
+  }
+  .smap__face :global(.smap__logo) { width: 74%; height: auto; }
+  .smap__sub { font-family: var(--font-mono); font-size: clamp(0.5rem, 0.42rem + 0.3vw, 0.62rem); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .smap__pulse { position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid var(--orange); opacity: 0; }
+
+  /* Small screens: drop the keyword line, keep the essentials. */
+  @media (max-width: 420px) {
+    .smap__tags { display: none; }
+    .smap__head { font-size: 0.64rem; gap: 0.35rem; }
+    .smap__panel { border-radius: 16px; }
+  }
+
+  /* Motion, only for visitors who have not asked for less of it. */
+  @media (prefers-reduced-motion: no-preference) {
+    .smap__spinner { animation: smap-orbit var(--cycle) linear infinite; }
+    .smap__arc { animation: smap-orbit-arc var(--cycle) linear infinite; }
+    .smap__ticks { animation: smap-spin 60s linear infinite; }
+    .smap__pulse { animation: smap-pulse calc(var(--cycle) / 4) ease-out infinite; }
+    .smap__link::before { animation: smap-on var(--cycle) ease-in-out var(--d) infinite; }
+    .smap__link::after { animation: smap-on var(--cycle) ease-in-out var(--d) infinite; }
+    .smap__num { animation: smap-num var(--cycle) ease-in-out var(--d) infinite; }
+    .i-gear { animation: smap-spin 9s linear infinite; }
+    .i-flow { animation: smap-flow 3.2s ease-in-out infinite; }
+    .i-draw { stroke-dasharray: 120; animation: smap-draw var(--cycle) ease-in-out var(--d) infinite; }
+    .i-bar--1 { animation: smap-bar 4s ease-in-out infinite; }
+    .i-bar--2 { animation: smap-bar 4s ease-in-out 0.5s infinite; }
+    .i-bar--3 { animation: smap-bar 4s ease-in-out 1s infinite; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .smap__spinner { display: none; }
+    .smap__num { color: var(--accent); }
+  }
+
+  @keyframes smap-orbit { from { transform: rotate(-45deg); } to { transform: rotate(315deg); } }
+  @keyframes smap-orbit-arc { from { transform: rotate(-135deg); } to { transform: rotate(225deg); } }
+  @keyframes smap-spin { to { transform: rotate(360deg); } }
+  @keyframes smap-pulse { 0% { opacity: 0.55; transform: scale(1); } 100% { opacity: 0; transform: scale(1.32); } }
+  /* Lit while the packet is beneath the tile (from just before it arrives until it leaves). */
+  @keyframes smap-on { 0%, 20% { opacity: 1; } 30%, 88% { opacity: 0; } 100% { opacity: 1; } }
+  @keyframes smap-num { 0%, 20% { color: var(--orange); } 30%, 88% { color: var(--accent); } 100% { color: var(--orange); } }
+  @keyframes smap-draw { 0% { stroke-dashoffset: 0; } 30%, 88% { stroke-dashoffset: 0; } 94% { stroke-dashoffset: 120; } 100% { stroke-dashoffset: 0; } }
+  @keyframes smap-flow { 0% { transform: translateX(0); } 45%, 55% { transform: translateX(13px); } 100% { transform: translateX(26px); opacity: 0; } }
+  @keyframes smap-bar { 0% { transform: scaleX(0.08); } 60%, 100% { transform: scaleX(1); } }
+</style>

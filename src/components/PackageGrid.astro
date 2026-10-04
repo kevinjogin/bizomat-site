@@ -33,7 +33,7 @@ const slugFor = (service: string) => SERVICE_OPTIONS.find((o) => o.value === ser
 <style>
   .packages__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; margin: 0; padding: 0; list-style: none; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
   .package { display: flex; flex-direction: column; gap: 0.5rem; padding: clamp(1.25rem, 2.5vw, 1.75rem); background: var(--surface); }
-  .package__title { font-size: 1.08rem; font-weight: 560; letter-spacing: -0.015em; line-height: 1.25; }
+  .package__title { font-size: 1.08rem; letter-spacing: -0.015em; line-height: 1.25; }
   .package__price { margin: 0; font-size: var(--step-1); font-weight: 560; letter-spacing: -0.02em; color: var(--accent); }
   .package__text { margin: 0; color: var(--ink-2); font-size: 0.95rem; line-height: 1.5; flex: 1; }
   .package__link { margin-top: 0.5rem; font-size: 0.92rem; font-weight: 540; color: var(--ink); text-decoration: none; }

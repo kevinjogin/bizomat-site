@@ -1,6 +1,24 @@
 /* GoCore design system: tokens, base elements, typography and shared utilities.
    Component-specific styles live in each component's <style> block. */
 
+/* ---------- Brand display type ----------
+   GoCore Display: Archivo inclined at 75 degrees, the standard angle for engineering lettering
+   (IS 9609 / ISO 3098). Built by scripts/brand/build_fonts.py; OFL licence in public/fonts/OFL.txt. */
+@font-face {
+  font-family: 'GoCore Display';
+  src: url('/fonts/gocore-display-600.woff2') format('woff2');
+  font-weight: 100 649;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'GoCore Display';
+  src: url('/fonts/gocore-display-700.woff2') format('woff2');
+  font-weight: 650 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ---------- Tokens ---------- */
 :root {
   --paper: #f6f5f1;
@@ -24,6 +42,11 @@
   --danger: #b3261e;
   --success: #1f6b45;
 
+  /* Type system. Stroke weight follows size so every level stays legible: the wordmark is heaviest
+     (stroke about h/3), display and section headings are inclined 600 (about h/5), smaller headings
+     inclined 700 (about h/4.5), and body text is upright Inter Tight 400 (about h/8). Body copy stays
+     upright because sloped running text is slower to read on screen. */
+  --font-display: 'GoCore Display', 'Inter Tight Variable', 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Inter Tight Variable', 'Inter Tight', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-serif: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, 'Times New Roman', serif;
   --font-mono: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', Menlo, Consolas, monospace;
@@ -115,10 +138,20 @@ body {
 main { flex: 1; }
 img, svg, picture, video { display: block; max-width: 100%; }
 img { height: auto; }
-h1, h2, h3, h4 { margin: 0; font-weight: 560; line-height: 1.08; letter-spacing: -0.028em; text-wrap: balance; }
+h1, h2, h3, h4 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-synthesis: none;
+  line-height: 1.08;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
+}
 h1 { font-size: var(--step-4); }
 h2 { font-size: var(--step-3); }
-h3 { font-size: var(--step-1); letter-spacing: -0.015em; line-height: 1.25; }
+h3, h4 { font-weight: 700; }
+h3 { font-size: var(--step-1); letter-spacing: -0.008em; line-height: 1.25; }
+:is(h1, h2, h3, h4) em { font-style: normal; color: var(--accent); }
 p { margin: 0 0 1em; text-wrap: pretty; }
 a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.2em; transition: color 0.2s var(--ease), text-decoration-color 0.2s var(--ease); }
 a:hover { color: var(--accent); }
@@ -160,8 +193,8 @@ time { font-variant-numeric: tabular-nums; }
 }
 .prose > :first-child { margin-top: 0; }
 .prose p, .prose ul, .prose ol, .prose blockquote, .prose pre, .prose figure, .prose .table-wrap { margin: 0 0 1.3em; }
-.prose h2, .prose h3 { font-family: var(--font-sans); color: var(--ink); scroll-margin-top: calc(var(--header-h) + 1.5rem); }
-.prose h2 { font-size: var(--step-2); margin: 2.2em 0 0.7em; letter-spacing: -0.022em; }
+.prose h2, .prose h3 { font-family: var(--font-display); color: var(--ink); scroll-margin-top: calc(var(--header-h) + 1.5rem); }
+.prose h2 { font-size: var(--step-2); margin: 2.2em 0 0.7em; letter-spacing: -0.015em; }
 .prose h3 { font-size: var(--step-1); margin: 1.8em 0 0.5em; }
 .prose strong { color: var(--ink); font-weight: 650; }
 .prose a { color: var(--ink); text-decoration-color: var(--accent); }

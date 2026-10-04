@@ -58,8 +58,8 @@ src/
   styles/       global.css (design tokens, typography, prose)
   utils/        content helpers, rehype table wrapper
 public/         static files: brand/, favicons, og-default.png, manifest
-brand-source/   original logo artwork (not published)
-scripts/        prepare-brand.mjs, make-brand-images.ps1, postbuild.mjs
+brand-source/   brand typeface (Archivo, OFL), generated artwork, legacy logo files (not published)
+scripts/        brand/ (wordmark and heading-font builders), prepare-brand.mjs, postbuild.mjs
 tests/          contact and chat tests (node --test)
 docs/           EDITORIAL_PROMPTS.md: the reusable article-writing prompts
 ```
@@ -233,16 +233,24 @@ The Worker name in `wrangler.toml` must match the dashboard. If you rename it (S
 
 ## 11. Changing branding
 
-- **Logo and icon:** replace `brand-source/gocore-logo-original.png` (wordmark, transparent PNG) and `brand-source/gocore-icon-original.jpg` (square app icon), then run:
+- **Logo:** the logo is a wordmark only: "GoCore" in Archivo at a heavy weight, inclined at 75° like standard engineering lettering (IS 9609 / ISO 3098), with "Go" shaded blue and "Core" shaded orange-red. One version works on light and dark backgrounds. It is drawn as outlines, so no font is needed to display it. The site renders it inline (`src/components/Logo.astro`) from `src/data/logo.json`.
+- **Regenerating brand assets:** `scripts/brand/build_brand.py` holds the wordmark settings (weight, width, angle, colours) and builds `src/data/logo.json` plus the artwork in `brand-source/generated/`. Then `npm run brand` rasterises the favicons, app icons, assistant avatar ("GC" monogram), `public/brand/gocore-logo.(svg|png|webp)` and the social card `public/og-default.png`:
 
   ```bash
+  pip install fonttools uharfbuzz brotli
+  python scripts/brand/build_brand.py
   npm run brand
-  powershell -ExecutionPolicy Bypass -File scripts/make-brand-images.ps1
   ```
+- **Type system:** headings use GoCore Display, Archivo inclined at 75° to match the wordmark. It is built by `python scripts/brand/build_fonts.py` into `public/fonts/` (OFL licence alongside). Stroke weight follows size so every level stays legible:
+  - the wordmark is heaviest (stroke about h/3);
+  - display and section headings are 600 (about h/5);
+  - smaller headings are 700 (about h/4.5);
+  - body text is upright Inter Tight 400 (about h/8), and articles use Source Serif 4.
 
-  The first command cleans the wordmark and creates `public/brand/gocore-logo.(png|webp)`, all favicons and app icons, and the assistant avatar. The second (Windows) regenerates the social card `public/og-default.png`. If the new wordmark's proportions differ, update `SITE.logo.width/height`.
-- **Colours and fonts:** design tokens are at the top of `src/styles/global.css` (`--paper`, `--ink`, `--accent`, `--brand-orange`, `--brand-blue`, light and dark sets). `--accent` is the text-safe orange; `--brand-*` colours are for graphics only.
-- **Fonts:** Inter Tight (interface and headings) and Source Serif 4 (articles), self-hosted via Fontsource. There are no third-party font requests.
+  Body copy stays upright because sloped running text is slower to read on screen. Small uppercase labels also stay upright.
+- **Colours:** design tokens are at the top of `src/styles/global.css` (`--paper`, `--ink`, `--accent`, `--brand-orange`, `--brand-blue`, light and dark sets). `--accent` is the text-safe orange; `--brand-*` colours are for graphics only.
+- **Fonts:** all fonts are self-hosted: GoCore Display in `public/fonts/`, Inter Tight and Source Serif 4 via Fontsource. There are no third-party font requests.
+- **Homepage hero graphic:** `src/components/ServiceMap.astro` shows the four services around the GoCore core, with a CSS-only animation that is switched off for visitors who prefer reduced motion. Its labels come from `src/data/services.ts`.
 
 ## 12. Changing navigation and site details
 

@@ -21,14 +21,16 @@ export const SITE = {
   /** Default social sharing image in /public (1200 × 630). */
   ogImage: '/og-default.png',
   /**
-   * Brand assets, generated from brand-source/ by `node scripts/prepare-brand.mjs`.
-   * The wordmark works on both light and dark backgrounds.
+   * Brand assets. The site draws the wordmark inline (components/Logo.astro); these files are for
+   * places that need an image file. Regenerate with `python scripts/brand/build_brand.py` then
+   * `npm run brand`. The wordmark works on both light and dark backgrounds.
    */
   logo: {
+    svg: '/brand/gocore-logo.svg',
     png: '/brand/gocore-logo.png',
     webp: '/brand/gocore-logo.webp',
-    width: 607,
-    height: 120,
+    width: 1329,
+    height: 240,
   },
   icon: '/brand/gocore-icon-96.png',
   iconLarge: '/brand/gocore-icon-512.png',

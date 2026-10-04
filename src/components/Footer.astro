@@ -10,7 +10,7 @@ const year = new Date().getFullYear();
   <Container>
     <div class="site-footer__grid">
       <div class="site-footer__brand">
-        <a href="/" class="site-footer__logo"><Logo height={34} eager={false} /></a>
+        <a href="/" class="site-footer__logo"><Logo height={34} /></a>
         <p class="site-footer__tagline">{SITE.tagline}</p>
         <p>{SITE.statement}</p>
         <a class="site-footer__cta" href={QUOTE_CTA.href} data-cta="footer-quote">{QUOTE_CTA.label} <span aria-hidden="true">→</span></a>
@@ -52,7 +52,7 @@ const year = new Date().getFullYear();
   .site-footer__brand p:not(.site-footer__tagline) { max-width: 34ch; margin-top: 0.75rem; color: var(--muted); }
   .site-footer__cta { display: inline-flex; gap: 0.4rem; margin-top: 1.25rem; font-weight: 560; color: var(--ink); text-decoration: none; }
   .site-footer__cta:hover { color: var(--accent); }
-  .site-footer__heading { margin-bottom: 1rem; font-size: 0.78rem; font-weight: 560; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .site-footer__heading { font-family: var(--font-sans); margin-bottom: 1rem; font-size: 0.78rem; font-weight: 560; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
   .site-footer ul { display: grid; gap: 0.55rem; margin: 0; padding: 0; list-style: none; }
   .site-footer ul a { color: var(--ink-2); text-decoration: none; }
   .site-footer ul a:hover { color: var(--accent); }

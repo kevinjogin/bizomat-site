@@ -11,7 +11,7 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
 <header class="site-header" data-header>
   <Container class="site-header__inner">
     <a class="site-header__brand" href="/">
-      <Logo class="site-header__logo" />
+      <Logo class="site-header__logo" height={30} />
     </a>
     <nav class="site-nav" aria-label="Main">
       <ul class="site-nav__list" id="site-menu">
@@ -81,7 +81,7 @@ const isCurrent = (href: string) => path === href || (href !== '/' && path.start
   :global(.site-header__inner) { display: flex; align-items: center; gap: 1.5rem; min-height: var(--header-h); }
   .site-header__brand { display: inline-flex; text-decoration: none; margin-right: auto; border-radius: 4px; }
   .site-header__brand:hover { color: inherit; }
-  @media (max-width: 480px) { .site-header__brand :global(img) { height: 26px; width: auto; } }
+  @media (max-width: 480px) { .site-header__brand :global(.logo) { height: 25px; width: auto; } }
   .site-nav__list { display: flex; gap: 0.1rem; margin: 0; padding: 0; list-style: none; }
   .site-nav__list a {
     position: relative; display: block; padding: 0.5rem 0.7rem;

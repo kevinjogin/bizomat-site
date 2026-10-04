@@ -26,9 +26,8 @@ const { eyebrow, title, lead, size = 'page', class: className } = Astro.props;
 <style>
   .hero { padding-block: clamp(3.5rem, 7vw, 7rem) clamp(2.5rem, 5vw, 4.5rem); }
   .hero .eyebrow { margin-bottom: clamp(1.25rem, 2.5vw, 2rem); }
-  .hero__title { max-width: 18ch; font-size: var(--step-4); letter-spacing: -0.035em; }
-  .hero--display .hero__title { max-width: 13ch; font-size: var(--step-5); font-weight: 540; line-height: 0.98; letter-spacing: -0.045em; }
-  .hero__title :global(em) { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.02em; }
+  .hero__title { max-width: 18ch; font-size: var(--step-4); letter-spacing: -0.022em; }
+  .hero--display .hero__title { max-width: 13ch; font-size: var(--step-5); line-height: 1; letter-spacing: -0.025em; }
   .hero__lead { max-width: 46ch; margin: clamp(1.25rem, 2.5vw, 2rem) 0 0; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
   .hero__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: clamp(1.75rem, 3vw, 2.5rem); }
 </style>

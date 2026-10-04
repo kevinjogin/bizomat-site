@@ -1,24 +1,56 @@
 ---
-// The GoCore wordmark. Files are generated from brand-source/ by `node scripts/prepare-brand.mjs`
-// (WebP with PNG fallback). The artwork reads well on both light and dark backgrounds.
-import { SITE } from '../config/site.ts';
+// The GoCore wordmark, drawn inline from src/data/logo.json, which `python scripts/brand/build_brand.py`
+// generates from the brand typeface. "Go" is shaded blue and "Core" orange-red, each with a deeper
+// depth layer; the same colours read on light and dark themes. Inline SVG keeps it sharp at any size.
+import logo from '../data/logo.json';
 
 interface Props {
   class?: string;
   /** Rendered height in CSS pixels; width follows the artwork's proportions. */
   height?: number;
-  eager?: boolean;
+  /** Accessible name. Pass an empty string where the logo is purely decorative. */
+  label?: string;
 }
-const { class: className, height = 30, eager = true } = Astro.props;
-const width = Math.round((SITE.logo.width / SITE.logo.height) * height);
+const { class: className, height = 30, label = 'GoCore' } = Astro.props;
+const width = Math.round((logo.width / logo.height) * height * 10) / 10;
+
+// Gradient ids must be unique when the logo appears more than once on a page.
+const g = globalThis as typeof globalThis & { __gocoreLogoCount?: number };
+g.__gocoreLogoCount = (g.__gocoreLogoCount ?? 0) + 1;
+const id = `gc-logo-${g.__gocoreLogoCount}`;
+const { top, bottom } = logo.gradient;
 ---
 
-<picture class:list={['logo', className]}>
-  <source srcset={SITE.logo.webp} type="image/webp" />
-  <img src={SITE.logo.png} alt={SITE.name} width={width} height={height} loading={eager ? 'eager' : 'lazy'} decoding="async" />
-</picture>
+<svg
+  class:list={['logo', className]}
+  viewBox={`0 0 ${logo.width} ${logo.height}`}
+  width={width}
+  height={height}
+  role={label ? 'img' : undefined}
+  aria-label={label || undefined}
+  aria-hidden={label ? undefined : 'true'}
+  focusable="false"
+>
+  <defs>
+    <linearGradient id={`${id}-go`} x1="0" y1={top} x2="0" y2={bottom} gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color={logo.blue[0]} />
+      <stop offset="0.55" stop-color={logo.blue[1]} />
+      <stop offset="1" stop-color={logo.blue[2]} />
+    </linearGradient>
+    <linearGradient id={`${id}-core`} x1="0" y1={top} x2="0" y2={bottom} gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color={logo.orange[0]} />
+      <stop offset="0.55" stop-color={logo.orange[1]} />
+      <stop offset="1" stop-color={logo.orange[2]} />
+    </linearGradient>
+  </defs>
+  <g transform={`translate(0 ${logo.depth})`}>
+    <path d={logo.go} fill={logo.blueDepth} />
+    <path d={logo.core} fill={logo.orangeDepth} />
+  </g>
+  <path d={logo.go} fill={`url(#${id}-go)`} />
+  <path d={logo.core} fill={`url(#${id}-core)`} />
+</svg>
 
 <style>
-  .logo { display: inline-flex; line-height: 0; }
-  .logo img { display: block; height: auto; max-width: 100%; }
+  .logo { display: block; flex: none; max-width: 100%; }
 </style>
