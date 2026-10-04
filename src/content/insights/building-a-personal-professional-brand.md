@@ -155,7 +155,7 @@ Signs that a personal brand is growing include:
 
 ## Frequently asked questions
 
-**I am not an expert yet. Can I still build a personal brand?** Yes. Share what you are learning, such as projects, courses, questions and insights. Curiosity and progress are attractive, and many people value learning alongside someone at a similar stage.
+**I am not an expert yet. Can I still build a personal brand?** Yes. Share what you are learning, such as projects, courses, questions and insights. Curiosity and progress are attractive, and many people value learning alongside someone at a similar stage. Over time, a visible record of steady learning becomes evidence of exactly the qualities employers and clients look for: initiative, persistence and growth.
 
 **What if I am uncomfortable promoting myself?** Focus on helping others rather than promoting yourself. Share useful information, answer questions and recognise others' work. Visibility follows naturally.
 
