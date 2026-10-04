@@ -98,6 +98,13 @@ content:
             - { name: process-improvement, label: Process improvement }
             - { name: finance, label: Finance }
             - { name: sales, label: Sales }
+            - { name: marketing, label: Marketing }
+            - { name: leadership, label: Leadership }
+            - { name: people, label: People }
+            - { name: startups, label: Startups }
+            - { name: communication, label: Communication }
+            - { name: quality, label: Quality }
+            - { name: projects, label: Projects }
       - name: featured
         label: Featured on the Insights page
         type: boolean

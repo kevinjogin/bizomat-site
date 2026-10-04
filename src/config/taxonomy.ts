@@ -63,6 +63,13 @@ export const TAGS = {
   'process-improvement': 'Process improvement',
   finance: 'Finance',
   sales: 'Sales',
+  marketing: 'Marketing',
+  leadership: 'Leadership',
+  people: 'People',
+  startups: 'Startups',
+  communication: 'Communication',
+  quality: 'Quality',
+  projects: 'Projects',
 } as const;
 
 export type TagSlug = keyof typeof TAGS;
