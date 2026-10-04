@@ -1,5 +1,5 @@
 ---
-title: "Winning market share and building entry barriers: penetration strategies, removing options and objections, and lawful moats"
+title: "Winning market share and building entry barriers: penetration strategies, options and objections, and lawful moats"
 description: "How to grow share in an existing market: ten market-penetration strategies, removing customers' options and objections, and twelve legitimate barriers that protect your position."
 publishDate: 2026-10-04
 category: "Business"

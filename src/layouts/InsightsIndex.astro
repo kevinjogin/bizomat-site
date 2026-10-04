@@ -14,9 +14,11 @@ interface Props {
 }
 const { page } = Astro.props;
 const all = await getInsights();
-const featured = page === 1 ? all.find((p) => p.data.featured) : undefined;
-// The featured article is shown on its own above the list on page 1, not repeated below it.
-const listed = featured ? all.filter((p) => p.id !== featured.id) : all;
+const featuredPost = all.find((p) => p.data.featured);
+// The featured article is shown on its own above the list on page 1 and is left out of the paginated
+// list on every page, so page counts here match getStaticPaths in pages/insights/page/[page].astro.
+const featured = page === 1 ? featuredPost : undefined;
+const listed = featuredPost ? all.filter((p) => p.id !== featuredPost.id) : all;
 const { items, pages } = paginate(listed, page);
 const crumbs = [
   { label: 'Home', href: '/' },
