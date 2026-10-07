@@ -51,7 +51,7 @@ export async function GET() {
 
   chunks.push({
     id: 'core-facts',
-    title: 'About KevOS (core facts)',
+    title: 'About KEVOS (core facts)',
     url: '/about/',
     text: [
       `${SITE.name} (${SITE.url.replace('https://', '')}). ${SITE.tagline}. ${SITE.statement}`,
@@ -59,7 +59,7 @@ export async function GET() {
       `Service area: ${SERVICE_AREA}`,
       `Indicative prices (costs, fees): ${PACKAGES.map((p) => `${p.title} ${p.price}`).join('; ')}; ${FACTORY_FIX.name} ${FACTORY_FIX.price}. ${PRICING_NOTE} Final prices are confirmed in a written quote after scoping.`,
       'Certification: not every assignment includes professional engineering certification, statutory approval or sign-off; regulated or specialist work (for example designs that legally require a registered engineer or certifier) may require appropriately qualified or registered professionals. See /disclaimer/.',
-      'To request a quote or discuss a project, use the form at /contact/ (Get a Quote). Visitors can also book a meeting online: the Book a meeting option on /contact/ opens the KevOS Google Calendar booking page.',
+      'To request a quote or discuss a project, use the form at /contact/ (Get a Quote). Visitors can also book a meeting online: the Book a meeting option on /contact/ opens the KEVOS Google Calendar booking page.',
       `Main pages: ${NAV.map((n) => `${n.label} ${n.href}`).join(', ')}, Factory Fix /factory-fix/, Privacy /privacy/, Terms /terms/, Disclaimer /disclaimer/.`,
       SITE.email ? `Email: ${SITE.email}.` : 'There is no public email address or phone number listed; contact is through /contact/.',
     ].join(' '),
@@ -90,25 +90,25 @@ export async function GET() {
   });
   chunks.push({
     id: 'svc-process',
-    title: 'How a KevOS engagement works',
+    title: 'How a KEVOS engagement works',
     url: '/how-it-works/',
-    text: `${PROCESS.map((p, i) => `Stage ${i + 1}, ${p.title}: ${p.text}`).join(' ')} Before substantial work begins, KevOS defines scope, deliverables, assumptions, timing and commercial terms. Ways to engage: ${ENGAGEMENT_MODELS.map((m) => `${m.title} (${m.text})`).join(' ')} Payment terms are agreed for each assignment.`,
+    text: `${PROCESS.map((p, i) => `Stage ${i + 1}, ${p.title}: ${p.text}`).join(' ')} Before substantial work begins, KEVOS defines scope, deliverables, assumptions, timing and commercial terms. Ways to engage: ${ENGAGEMENT_MODELS.map((m) => `${m.title} (${m.text})`).join(' ')} Payment terms are agreed for each assignment.`,
   });
   chunks.push({
     id: 'svc-industries',
-    title: 'Industries KevOS helps',
+    title: 'Industries KEVOS helps',
     url: '/industries/',
     text: `Capability is problem-based rather than limited to one industry. ${INDUSTRIES.map((i) => `${i.title}: ${i.text}`).join(' ')}`,
   });
   chunks.push({
     id: 'svc-about',
-    title: 'About KevOS and its background',
+    title: 'About KEVOS and its background',
     url: '/about/',
-    text: `KevOS is a professional small technical-services business for defined commercial assignments. It is led by its founder, whose practical background spans ${BACKGROUND.join(', ')}. ${SOFTWARE.text} KevOS is not affiliated with or endorsed by its software vendors. Not every assignment includes professional engineering certification or statutory approval; regulated or specialist work may require appropriately qualified or registered professionals (see /disclaimer/). ${FUTURE.text}`,
+    text: `KEVOS is a professional small technical-services business for defined commercial assignments. It is led by its founder, whose practical background spans ${BACKGROUND.join(', ')}. ${SOFTWARE.text} KEVOS is not affiliated with or endorsed by its software vendors. Not every assignment includes professional engineering certification or statutory approval; regulated or specialist work may require appropriately qualified or registered professionals (see /disclaimer/). ${FUTURE.text}`,
   });
   chunks.push({
     id: 'principles',
-    title: 'KevOS principles',
+    title: 'KEVOS principles',
     url: '/about/#principles',
     text: PRINCIPLES.map((p) => `${p.title}: ${p.text}`).join(' '),
   });
