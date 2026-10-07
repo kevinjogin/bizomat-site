@@ -11,8 +11,10 @@ main = "src/worker.ts"
 compatibility_date = "2025-09-01"
 workers_dev = false
 
+# gocore.com.au already has DNS records. Bind the Worker as a route instead of
+# asking Wrangler to recreate the hostname as a Worker custom domain.
 routes = [
-  { pattern = "gocore.com.au", custom_domain = true },
+  { pattern = "gocore.com.au/*", zone_name = "gocore.com.au" },
 ]
 
 [assets]
