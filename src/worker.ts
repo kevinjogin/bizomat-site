@@ -3,7 +3,7 @@
 //
 // One file handles the whole site, so every deployment method works the same way, including
 // dashboard drag-and-drop (which does not compile a functions/ folder):
-//   /api/chat     → KevOS Assistant (Workers AI)
+//   /api/chat     → KEVOS Assistant (Workers AI)
 //   /api/contact  → optional contact-form backend
 //   everything else → the static site from dist/ (env.ASSETS)
 import { handleChat, type ChatEnv } from './server/chat/handler.ts';
