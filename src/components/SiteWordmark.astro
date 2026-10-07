@@ -14,16 +14,8 @@ const sizeClass = height >= 40 ? 'site-wordmark--footer' : height <= 30 ? 'site-
   aria-hidden={label ? undefined : 'true'}
 >
   <img
-    class="site-wordmark__image site-wordmark__image--light"
+    class="site-wordmark__image"
     src="/brand/kevos-logo-light-full.png"
-    alt=""
-    width="600"
-    height="78"
-    decoding="async"
-  />
-  <img
-    class="site-wordmark__image site-wordmark__image--dark"
-    src="/brand/kevos-logo-dark-full.png"
     alt=""
     width="600"
     height="78"
@@ -45,20 +37,22 @@ const sizeClass = height >= 40 ? 'site-wordmark--footer' : height <= 30 ? 'site-
   .site-wordmark--footer { --wordmark-h: 44px; }
 
   .site-wordmark__image {
-    grid-area: 1 / 1;
     display: block;
     width: auto;
     height: var(--wordmark-h);
     max-width: 100%;
     object-fit: contain;
   }
-  .site-wordmark__image--dark { display: none; }
 
-  :global(:root[data-theme='dark']) .site-wordmark__image--light { display: none; }
-  :global(:root[data-theme='dark']) .site-wordmark__image--dark { display: block; }
+  /* The supplied navy master is the source of truth. In dark mode render it as
+     pure white so the wordmark can never disappear against the dark header. */
+  :global(:root[data-theme='dark']) .site-wordmark__image {
+    filter: brightness(0) invert(1);
+  }
 
   @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .site-wordmark__image--light { display: none; }
-    :global(:root:not([data-theme='light'])) .site-wordmark__image--dark { display: block; }
+    :global(:root:not([data-theme='light'])) .site-wordmark__image {
+      filter: brightness(0) invert(1);
+    }
   }
 </style>
