@@ -65,6 +65,7 @@ export const SITE = {
 export const NAV = [
   { href: '/', label: 'Home' },
   { href: '/services/', label: 'Services' },
+  { href: '/tools/', label: 'Tools' },
   { href: '/how-it-works/', label: 'How It Works' },
   { href: '/industries/', label: 'Industries' },
   { href: '/insights/', label: 'Insights' },
@@ -84,6 +85,7 @@ export const FOOTER_NAV = {
     { href: '/factory-fix/', label: 'Factory Fix' },
   ],
   company: [
+    { href: '/tools/', label: 'Free Tools' },
     { href: '/how-it-works/', label: 'How It Works' },
     { href: '/industries/', label: 'Industries' },
     { href: '/about/', label: 'About' },
