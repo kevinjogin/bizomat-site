@@ -13,47 +13,27 @@ const sizeClass = height <= 22 ? 'logo--compact' : height >= 34 ? 'logo--large' 
   aria-label={label || undefined}
   aria-hidden={label ? undefined : 'true'}
 >
-  <span class="logo__art" aria-hidden="true">
-    <img class="logo__image logo__image--light" src="/brand/kevos-logo-navy-padded.png" alt="" width="432" height="80" decoding="async" />
-    <img class="logo__image logo__image--dark" src="/brand/kevos-logo-white-padded.png" alt="" width="432" height="80" decoding="async" />
-  </span>
+  <img class="logo__image" src="/brand/kevos-logo-navy.png" alt="" width="400" height="52" decoding="async" />
 </span>
 
 <style>
   .logo {
-    --logo-canvas-h: 44px;
+    --logo-h: 30px;
     display: inline-flex;
     align-items: center;
+    height: var(--logo-h);
     max-width: 100%;
-    line-height: 0;
     white-space: nowrap;
+    padding-block: 3px;
+    box-sizing: content-box;
     overflow: visible;
   }
-  .logo--compact { --logo-canvas-h: 36px; }
-  .logo--default { --logo-canvas-h: 44px; }
-  .logo--large { --logo-canvas-h: 50px; }
-
-  .logo__art {
-    display: grid;
-    place-items: center;
-    height: var(--logo-canvas-h);
-    overflow: visible;
-  }
-  .logo__image {
-    grid-area: 1 / 1;
-    display: block;
-    width: auto;
-    height: 100%;
-    max-width: none;
-    object-fit: contain;
-  }
-  .logo__image--dark { display: none; }
-
-  :global(:root[data-theme='dark']) .logo__image--light { display: none; }
-  :global(:root[data-theme='dark']) .logo__image--dark { display: block; }
-
+  .logo--compact { --logo-h: 22px; }
+  .logo--default { --logo-h: 30px; }
+  .logo--large { --logo-h: 34px; }
+  .logo__image { display: block; width: auto; height: 100%; object-fit: contain; }
+  :global(:root[data-theme='dark']) .logo__image { filter: brightness(0) invert(1); }
   @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .logo__image--light { display: none; }
-    :global(:root:not([data-theme='light'])) .logo__image--dark { display: block; }
+    :global(:root:not([data-theme='light'])) .logo__image { filter: brightness(0) invert(1); }
   }
 </style>

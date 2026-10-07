@@ -19,16 +19,16 @@ export const SITE = {
   /** Optional profiles, e.g. { label: 'LinkedIn', href: 'https://www.linkedin.com/company/…' }. */
   social: [] as Array<{ label: string; href: string }>,
   /** Default social sharing image in /public (1200 × 630). */
-  ogImage: '/brand/kevos-logo-navy-padded.png',
+  ogImage: '/brand/kevos-logo-navy.png',
   /**
    * Brand assets supplied for KEVOS. The main wordmark is navy on light backgrounds and is rendered white in dark mode.
    */
   logo: {
-    svg: '/brand/kevos-logo-navy-padded.png',
-    png: '/brand/kevos-logo-navy-padded.png',
-    webp: '/brand/kevos-logo-navy-padded.png',
-    width: 432,
-    height: 80,
+    svg: '/brand/kevos-logo-navy.png',
+    png: '/brand/kevos-logo-navy.png',
+    webp: '/brand/kevos-logo-navy.png',
+    width: 400,
+    height: 52,
   },
   icon: '/brand/kevos-icon.png',
   iconLarge: '/brand/kevos-icon.png',
