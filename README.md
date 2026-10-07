@@ -1,8 +1,8 @@
 # GoCore website
 
-The website for **GoCore** (gocore.com.au): a static Astro site hosted free on Cloudflare Pages, with a structured Insights publishing system, a Web3Forms contact form and an AI receptionist powered by Cloudflare Workers AI.
+The website for **GoCore** (gocore.com.au): a static Astro site served by a Cloudflare Worker, with a structured Insights publishing system, a Web3Forms contact form and an AI receptionist powered by Cloudflare Workers AI.
 
-- **No database, no WordPress, no server to maintain.** Pages are built in advance and served from Cloudflare.
+- **No database, no WordPress, no server to maintain.** Pages are built in advance and served as Worker static assets from Cloudflare.
 - **Publishing is a reviewed file change.** Write Markdown, set `draft: false`, push to Git, and Cloudflare rebuilds the site.
 - **Every build checks itself** for broken links, missing metadata, leaked drafts and security headers.
 
