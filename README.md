@@ -1,6 +1,6 @@
 # KEVOS website
 
-The website for **KEVOS** (gocore.com.au): a static Astro site served by a Cloudflare Worker, with a structured Insights publishing system, a Web3Forms contact form and an AI receptionist powered by Cloudflare Workers AI.
+The website for **KEVOS** (kevos.com): a static Astro site served by a Cloudflare Worker, with a structured Insights publishing system, a Web3Forms contact form and an AI receptionist powered by Cloudflare Workers AI.
 
 - **No database, no WordPress, no server to maintain.** Pages are built in advance and served as Worker static assets from Cloudflare.
 - **Publishing is a reviewed file change.** Write Markdown, set `draft: false`, push to Git, and Cloudflare rebuilds the site.
@@ -18,7 +18,7 @@ The website for **KEVOS** (gocore.com.au): a static Astro site served by a Cloud
 6. [Work entries](#6-work-entries)
 7. [Images](#7-images)
 8. [Contact form](#8-contact-form)
-9. [KEVOS Assistant (AI chat)](#9-gocore-assistant-ai-chat)
+9. [KEVOS Assistant (AI chat)](#9-kevos-assistant-ai-chat)
 10. [Deploying to Cloudflare](#10-deploying-to-cloudflare)
 11. [Changing branding](#11-changing-branding)
 12. [Changing navigation and site details](#12-changing-navigation-and-site-details)
@@ -187,7 +187,7 @@ Cloudflare occasionally retires models or moves them to the paid plan. If answer
 
 ## 10. Deploying to Cloudflare
 
-The site runs as a **Cloudflare Worker** (`throbbing-block-6c61`, attached to `gocore.com.au`). The Worker serves the static files in `dist/` and runs `src/worker.ts` for `/api/chat` (KEVOS Assistant) and `/api/contact`. All settings, including the Workers AI binding and the custom domain, live in [wrangler.toml](wrangler.toml).
+The site runs as a **Cloudflare Worker** (`throbbing-block-6c61`, attached to `kevos.com`). The Worker serves the static files in `dist/` and runs `src/worker.ts` for `/api/chat` (KEVOS Assistant) and `/api/contact`. All settings, including the Workers AI binding and the custom domain, live in [wrangler.toml](wrangler.toml).
 
 ### Deploy (recommended)
 
@@ -273,9 +273,9 @@ Generated automatically on every build:
 
 **After launch:**
 
-1. Google Search Console → add `https://gocore.com.au` → verify with a DNS TXT record (added in Cloudflare DNS).
-2. Submit `https://gocore.com.au/sitemap-index.xml`.
-3. Optional analytics: Cloudflare → **Analytics & Logs → Web Analytics → Add a site** → gocore.com.au, then enable automatic setup (cookieless; already allowed by the CSP).
+1. Google Search Console → add `https://kevos.com` → verify with a DNS TXT record (added in Cloudflare DNS).
+2. Submit `https://kevos.com/sitemap-index.xml`.
+3. Optional analytics: Cloudflare → **Analytics & Logs → Web Analytics → Add a site** → kevos.com, then enable automatic setup (cookieless; already allowed by the CSP).
 
 ## 14. Quality checks
 

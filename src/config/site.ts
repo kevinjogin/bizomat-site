@@ -2,7 +2,7 @@
 
 export const SITE = {
   name: 'KEVOS',
-  url: 'https://gocore.com.au',
+  url: 'https://kevos.com',
   locale: 'en-AU',
   ogLocale: 'en_AU',
   country: 'Australia',

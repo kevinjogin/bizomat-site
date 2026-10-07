@@ -1,5 +1,5 @@
 {
-  "name": "gocore",
+  "name": "kevos",
   "type": "module",
   "version": "1.0.0",
   "private": true,
@@ -33,5 +33,5 @@
     "typescript": "^6.0.3",
     "wrangler": "^4.147.0"
   },
-  "description": "GoCore website: Astro static site served by a Cloudflare Worker."
+  "description": "KEVOS website: Astro static site served by a Cloudflare Worker."
 }

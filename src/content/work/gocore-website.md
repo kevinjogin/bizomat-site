@@ -1,5 +1,5 @@
 ---
-title: "gocore.com.au"
+title: "kevos.com"
 summary: "The KEVOS website and Insights publishing system. A static, Git-based platform designed to grow from ten articles to a thousand without being reorganised."
 type: "Project"
 status: "Developing"
@@ -22,4 +22,4 @@ There is no database and no login on the website itself. Articles can be edited 
 
 ## Status
 
-In development. The site is live at gocore.com.au with the contact form, the assistant and more than forty Insights articles. Next steps are automatic deployment from the repository and publishing regularly.
+In development. The site is live at kevos.com with the contact form, the assistant and the Insights publishing system. Changes are deployed automatically from the repository to Cloudflare.

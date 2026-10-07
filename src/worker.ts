@@ -25,7 +25,7 @@ export function withHeaders(response: Response, url: URL): Response {
   const res = new Response(response.body, response);
   for (const [name, value] of Object.entries(SECURITY_HEADERS)) if (!res.headers.has(name)) res.headers.set(name, value);
   if (url.pathname.startsWith('/_astro/')) res.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
-  // Keep Cloudflare preview addresses out of search engines; gocore.com.au is the canonical domain.
+  // Keep Cloudflare preview addresses out of search engines; kevos.com is the canonical domain.
   if (/\.(pages|workers)\.dev$/.test(url.hostname)) res.headers.set('X-Robots-Tag', 'noindex');
   return res;
 }
@@ -34,7 +34,7 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     // Upgrade plain-HTTP page requests on the production domain (HSTS then keeps browsers on HTTPS).
-    if (url.protocol === 'http:' && url.hostname === 'gocore.com.au' && (request.method === 'GET' || request.method === 'HEAD')) {
+    if (url.protocol === 'http:' && url.hostname === 'kevos.com' && (request.method === 'GET' || request.method === 'HEAD')) {
       url.protocol = 'https:';
       return new Response(null, { status: 301, headers: { Location: url.href, 'Cache-Control': 'public, max-age=3600' } });
     }

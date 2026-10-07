@@ -1,20 +1,20 @@
-# Cloudflare Worker configuration for gocore.com.au.
+# Cloudflare Worker configuration for kevos.com.
 # Deploy with:  npm run deploy   (builds, checks, then `wrangler deploy`)
 #
 # The Worker serves the static site from dist/ and runs src/worker.ts for anything that is not
-# a file, which is how /api/chat (GoCore Assistant) and /api/contact work.
+# a file, which is how /api/chat (KEVOS Assistant) and /api/contact work.
 
-# Name of the existing Worker that already serves gocore.com.au. If you rename the Worker in the
+# Name of the existing Worker that already serves kevos.com. If you rename the Worker in the
 # Cloudflare dashboard, change this to match, or a second Worker will be created.
 name = "throbbing-block-6c61"
 main = "src/worker.ts"
 compatibility_date = "2025-09-01"
 workers_dev = false
 
-# gocore.com.au already has DNS records. Bind the Worker as a route instead of
+# kevos.com already has DNS records. Bind the Worker as a route instead of
 # asking Wrangler to recreate the hostname as a Worker custom domain.
 routes = [
-  { pattern = "gocore.com.au/*", zone_name = "gocore.com.au" },
+  { pattern = "kevos.com/*", zone_name = "kevos.com" },
 ]
 
 [assets]
@@ -22,7 +22,7 @@ directory = "./dist"
 binding = "ASSETS"
 not_found_handling = "404-page"
 
-# Workers AI for the GoCore Assistant. Workers Free plan: a daily allocation, no card needed.
+# Workers AI for the KEVOS Assistant. Workers Free plan: a daily allocation, no card needed.
 [ai]
 binding = "AI"
 

@@ -22,7 +22,7 @@ const props = Astro.props;
     <script is:inline>
       (function () {
         var d = document.documentElement, t = null;
-        try { t = localStorage.getItem('gocore-theme'); } catch (e) {}
+        try { t = localStorage.getItem('kevos-theme'); } catch (e) {}
         if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         d.dataset.theme = t;
       })();
