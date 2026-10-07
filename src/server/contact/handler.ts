@@ -80,5 +80,5 @@ async function processContact(request: Request, env: ContactEnv): Promise<Respon
   if (!result.ok) {
     return respond(request, result.status, { ok: false, message: result.message });
   }
-  return respond(request, 200, { ok: true, message: 'Thank you. Your message has been sent and GoCore will reply as soon as possible.' });
+  return respond(request, 200, { ok: true, message: 'Thank you. Your message has been sent and KevOS will reply as soon as possible.' });
 }
