@@ -1,5 +1,5 @@
 ---
-// KevOS Assistant: floating receptionist chat (bottom-right on every page), with minimise and
+// KEVOS Assistant: floating receptionist chat (bottom-right on every page), with minimise and
 // pop-out. In "page" mode it fills the /chat/ pop-out window instead of floating.
 // Answers come from /api/chat (Cloudflare Workers AI), grounded only in this website's content.
 import { SITE } from '../config/site.ts';
@@ -9,7 +9,7 @@ interface Props {
 }
 const { mode = 'floating' } = Astro.props;
 const name = SITE.assistant.name;
-const prompts = ['What services does KevOS offer?', 'What is a Factory Fix?', 'How does a project work?', 'How do I get a quote?'];
+const prompts = ['What services does KEVOS offer?', 'What is a Factory Fix?', 'How does a project work?', 'How do I get a quote?'];
 ---
 
 <div class:list={['assistant', `assistant--${mode}`]} data-assistant data-mode={mode} data-endpoint={SITE.assistant.endpoint}>
@@ -17,7 +17,7 @@ const prompts = ['What services does KevOS offer?', 'What is a Factory Fix?', 'H
     mode === 'floating' && (
       <button class="assistant__launcher" type="button" aria-expanded="false" aria-controls="assistant-panel" data-assistant-open>
         <img src={SITE.icon} alt="" width="28" height="28" loading="lazy" />
-        <span>Ask KevOS</span>
+        <span>Ask KEVOS</span>
       </button>
     )
   }
@@ -27,7 +27,7 @@ const prompts = ['What services does KevOS offer?', 'What is a Factory Fix?', 'H
       <img class="assistant__avatar" src={SITE.icon} alt="" width="36" height="36" loading="lazy" />
       <div class="assistant__heading">
         {mode === 'page' ? <h1 id="assistant-title">{name}</h1> : <h2 id="assistant-title">{name}</h2>}
-        <p><span class="assistant__dot" aria-hidden="true"></span>Answers from the KevOS website</p>
+        <p><span class="assistant__dot" aria-hidden="true"></span>Answers from the KEVOS website</p>
       </div>
       <div class="assistant__actions">
         {
@@ -54,7 +54,7 @@ const prompts = ['What services does KevOS offer?', 'What is a Factory Fix?', 'H
 
     <div class="assistant__log" role="log" aria-live="polite" aria-relevant="additions" tabindex="0" aria-label="Conversation" data-assistant-log>
       <div class="msg msg--assistant">
-        <p>Hi — I’m the {name}. I can help you understand KevOS services, how projects work, typical project types and how to request a quote.</p>
+        <p>Hi — I’m the {name}. I can help you understand KEVOS services, how projects work, typical project types and how to request a quote.</p>
       </div>
     </div>
 
@@ -65,12 +65,12 @@ const prompts = ['What services does KevOS offer?', 'What is a Factory Fix?', 'H
     </div>
 
     <form class="assistant__handoff" data-assistant-handoff-form hidden novalidate>
-      <p class="assistant__handoff-title">Leave a message for the KevOS team</p>
+      <p class="assistant__handoff-title">Leave a message for the KEVOS team</p>
       <label>Name<input name="name" type="text" autocomplete="name" required maxlength="100" /></label>
       <label>Email<input name="email" type="email" autocomplete="email" required maxlength="200" /></label>
       <label>Message<textarea name="message" rows="3" required maxlength="2000"></textarea></label>
       <input class="assistant__hp" name="botcheck" type="checkbox" tabindex="-1" autocomplete="off" aria-hidden="true" />
-      <label class="assistant__consent"><input name="consent" type="checkbox" required /> I agree to KevOS using these details to reply, as set out in the <a href="/privacy/">privacy policy</a>.</label>
+      <label class="assistant__consent"><input name="consent" type="checkbox" required /> I agree to KEVOS using these details to reply, as set out in the <a href="/privacy/">privacy policy</a>.</label>
       <div class="assistant__captcha" data-handoff-captcha></div>
       <p class="assistant__handoff-error" role="alert" data-handoff-error></p>
       <div class="assistant__handoff-actions">
@@ -80,8 +80,8 @@ const prompts = ['What services does KevOS offer?', 'What is a Factory Fix?', 'H
     </form>
 
     <form class="assistant__composer" data-assistant-form>
-      <label for={`assistant-input-${mode}`} class="visually-hidden">Ask a question about KevOS</label>
-      <textarea id={`assistant-input-${mode}`} rows="1" maxlength="600" placeholder="Ask about KevOS services…" autocomplete="off" data-assistant-input></textarea>
+      <label for={`assistant-input-${mode}`} class="visually-hidden">Ask a question about KEVOS</label>
+      <textarea id={`assistant-input-${mode}`} rows="1" maxlength="600" placeholder="Ask about KEVOS services…" autocomplete="off" data-assistant-input></textarea>
       <button type="submit" class="assistant__submit" aria-label="Send question">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
       </button>
@@ -179,7 +179,7 @@ const prompts = ['What services does KevOS offer?', 'What is a Factory Fix?', 'H
     const addContactButton = () => {
       const el = document.createElement('div');
       el.className = 'msg msg--action';
-      el.innerHTML = '<a class="msg__button" href="/contact/" data-cta="assistant-contact">Contact KevOS</a>';
+      el.innerHTML = '<a class="msg__button" href="/contact/" data-cta="assistant-contact">Contact KEVOS</a>';
       log.append(el);
       log.scrollTop = log.scrollHeight;
     };
@@ -331,7 +331,7 @@ const prompts = ['What services does KevOS offer?', 'What is a Factory Fix?', 'H
       if (result.ok) {
         handoff.reset();
         showHandoff(false);
-        const thanks = 'Thanks. Your message has been passed to the KevOS team, who will reply by email as soon as possible.';
+        const thanks = 'Thanks. Your message has been passed to the KEVOS team, who will reply by email as soon as possible.';
         state.messages.push({ role: 'assistant', content: thanks });
         addBubble('assistant', thanks);
         save();

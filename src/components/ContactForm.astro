@@ -18,8 +18,8 @@ const action = provider === 'web3forms' ? web3formsEndpoint : workerEndpoint;
     provider === 'web3forms' && (
       <Fragment>
         <input type="hidden" name="access_key" value={web3formsAccessKey} />
-        <input type="hidden" name="subject" value="KevOS website enquiry" />
-        <input type="hidden" name="from_name" value="KevOS website" />
+        <input type="hidden" name="subject" value="KEVOS website enquiry" />
+        <input type="hidden" name="from_name" value="KEVOS website" />
         <input type="hidden" name="redirect" value={new URL('/contact/sent/', SITE.url).href} />
       </Fragment>
     )
@@ -54,7 +54,7 @@ const action = provider === 'web3forms' ? web3formsEndpoint : workerEndpoint;
       <option value="">Choose a service…</option>
       {SERVICE_OPTIONS.map((o) => <option value={o.value} data-slug={o.slug}>{o.value}</option>)}
     </select>
-    <p class="field__hint" id="cf-service-hint">Not sure which service you need? Choose “Other”, describe the problem, and KevOS can help define the scope.</p>
+    <p class="field__hint" id="cf-service-hint">Not sure which service you need? Choose “Other”, describe the problem, and KEVOS can help define the scope.</p>
     <p class="field__error" id="cf-service-error" data-error-for="service"></p>
   </div>
   <div class="field">
@@ -68,7 +68,7 @@ const action = provider === 'web3forms' ? web3formsEndpoint : workerEndpoint;
       maxlength={L.message.max}
       aria-describedby="cf-message-hint cf-message-error"
       placeholder="What needs to be done, what is happening now, any deadlines, and whether a site visit may be needed."></textarea>
-    <p class="field__hint" id="cf-message-hint">Drawings, photos or documents can be shared after KevOS replies. Please don’t include confidential information here.</p>
+    <p class="field__hint" id="cf-message-hint">Drawings, photos or documents can be shared after KEVOS replies. Please don’t include confidential information here.</p>
     <p class="field__error" id="cf-message-error" data-error-for="message"></p>
   </div>
   <fieldset class="field field--radios" aria-describedby="cf-method-error">
@@ -94,7 +94,7 @@ const action = provider === 'web3forms' ? web3formsEndpoint : workerEndpoint;
   <div class="field field--check">
     <input id="cf-consent" name="consent" type="checkbox" required aria-describedby="cf-consent-error" />
     <label for="cf-consent">
-      I understand KevOS will use these details only to respond to my enquiry, as described in the <a href="/privacy/">privacy policy</a>.
+      I understand KEVOS will use these details only to respond to my enquiry, as described in the <a href="/privacy/">privacy policy</a>.
     </label>
     <p class="field__error" id="cf-consent-error" data-error-for="consent"></p>
   </div>
