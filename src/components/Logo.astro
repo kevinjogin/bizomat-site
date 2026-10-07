@@ -4,24 +4,24 @@ interface Props {
   height?: number;
   label?: string;
 }
-const { class: className, height = 20, label = 'KEVOS' } = Astro.props;
+const { class: className, height = 22, label = 'KEVOS' } = Astro.props;
 const sizeClass =
   height <= 18
-    ? 'kevos-logo--hero'
-    : height <= 26
-      ? 'kevos-logo--compact'
-      : height >= 38
-        ? 'kevos-logo--large'
-        : 'kevos-logo--default';
+    ? 'logo--hero-small'
+    : height <= 24
+      ? 'logo--hero'
+      : height >= 34
+        ? 'logo--large'
+        : 'logo--default';
 ---
 <span
-  class:list={['kevos-logo', sizeClass, className]}
+  class:list={['logo', sizeClass, className]}
   role={label ? 'img' : undefined}
   aria-label={label || undefined}
   aria-hidden={label ? undefined : 'true'}
 >
   <img
-    class="kevos-logo__image kevos-logo__image--light"
+    class="logo__image logo__image--light"
     src="/brand/kevos-logo-light-full.png"
     alt=""
     width="600"
@@ -29,7 +29,7 @@ const sizeClass =
     decoding="async"
   />
   <img
-    class="kevos-logo__image kevos-logo__image--dark"
+    class="logo__image logo__image--dark"
     src="/brand/kevos-logo-dark-full.png"
     alt=""
     width="600"
@@ -39,8 +39,8 @@ const sizeClass =
 </span>
 
 <style>
-  .kevos-logo {
-    --kevos-logo-height: 30px;
+  .logo {
+    --logo-h: 30px;
     display: inline-grid;
     place-items: center;
     max-width: 100%;
@@ -48,29 +48,29 @@ const sizeClass =
     overflow: visible;
     white-space: nowrap;
   }
-  .kevos-logo--hero { --kevos-logo-height: 18px; }
-  .kevos-logo--compact { --kevos-logo-height: 26px; }
-  .kevos-logo--default { --kevos-logo-height: 30px; }
-  .kevos-logo--large { --kevos-logo-height: 38px; }
 
-  .kevos-logo__image {
+  .logo--hero-small { --logo-h: 18px; }
+  .logo--hero { --logo-h: 22px; }
+  .logo--default { --logo-h: 30px; }
+  .logo--large { --logo-h: 34px; }
+
+  .logo__image {
     grid-area: 1 / 1;
     display: block;
     width: auto;
-    height: var(--kevos-logo-height);
+    height: var(--logo-h);
     max-width: 100%;
     object-fit: contain;
     object-position: center;
   }
-  .kevos-logo__image--dark { display: none; }
 
-  :global(:root[data-theme='dark']) .kevos-logo__image--light { display: none; }
-  :global(:root[data-theme='dark']) .kevos-logo__image--dark { display: block; }
-  :global(:root[data-theme='light']) .kevos-logo__image--light { display: block; }
-  :global(:root[data-theme='light']) .kevos-logo__image--dark { display: none; }
+  .logo__image--dark { display: none; }
+
+  :global(:root[data-theme='dark']) .logo__image--light { display: none; }
+  :global(:root[data-theme='dark']) .logo__image--dark { display: block; }
 
   @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .kevos-logo__image--light { display: none; }
-    :global(:root:not([data-theme='light'])) .kevos-logo__image--dark { display: block; }
+    :global(:root:not([data-theme='light'])) .logo__image--light { display: none; }
+    :global(:root:not([data-theme='light'])) .logo__image--dark { display: block; }
   }
 </style>
