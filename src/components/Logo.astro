@@ -4,21 +4,31 @@ interface Props {
   height?: number;
   label?: string;
 }
-const { class: className, height = 30, label = 'KevOS' } = Astro.props;
-const fontSize = Math.round(height * 0.82);
+const { class: className, height = 30, label = 'KEVOS' } = Astro.props;
+const tile = Math.round(height * 0.96);
+const wordSize = Math.round(height * 0.72);
 ---
 <span
   class:list={['logo', className]}
-  style={`--logo-height:${height}px;--logo-size:${fontSize}px`}
+  style={`--logo-h:${height}px;--tile:${tile}px;--word:${wordSize}px`}
   role={label ? 'img' : undefined}
   aria-label={label || undefined}
   aria-hidden={label ? undefined : 'true'}
 >
-  <span aria-hidden="true"><span class="logo__kev">Kev</span><span class="logo__os">OS</span></span>
+  <span class="logo__mark" aria-hidden="true">
+    <span class="logo__bar logo__bar--amber"></span>
+    <span class="logo__bar logo__bar--blue"></span>
+    <span class="logo__bar logo__bar--teal"></span>
+  </span>
+  <span class="logo__word" aria-hidden="true">KEVOS</span>
 </span>
 
 <style>
-  .logo { display:inline-flex; align-items:center; height:var(--logo-height); max-width:100%; font-family:var(--font-sans); font-size:var(--logo-size); font-weight:760; letter-spacing:-0.055em; line-height:1; white-space:nowrap; }
-  .logo__kev { color:var(--brand-blue, #1a5cf0); }
-  .logo__os { color:var(--brand-orange, #ff6a13); margin-left:.03em; }
+  .logo { display:inline-flex; align-items:center; gap:calc(var(--logo-h) * .22); height:var(--logo-h); max-width:100%; white-space:nowrap; }
+  .logo__mark { position:relative; display:inline-flex; align-items:flex-end; justify-content:center; gap:calc(var(--tile) * .08); width:var(--tile); height:var(--tile); padding:calc(var(--tile) * .18); border-radius:calc(var(--tile) * .18); background:#14202E; box-sizing:border-box; flex:none; }
+  .logo__bar { display:block; width:calc(var(--tile) * .14); border-radius:999px 999px calc(var(--tile) * .025) calc(var(--tile) * .025); }
+  .logo__bar--amber { height:38%; background:#D07A12; }
+  .logo__bar--blue { height:58%; background:#1F5FD1; }
+  .logo__bar--teal { height:80%; background:#009486; }
+  .logo__word { font-family:var(--font-sans); font-size:var(--word); font-weight:800; letter-spacing:.075em; line-height:1; color:var(--ink); }
 </style>
