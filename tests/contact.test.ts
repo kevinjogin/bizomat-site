@@ -19,7 +19,7 @@ const valid = {
   phone: '',
   service: 'Factory Fix',
   contactMethod: 'Email',
-  message: 'Hello GoCore, we have a recurring rework problem on one assembly line.',
+  message: 'Hello KevOS, we have a recurring rework problem on one assembly line.',
   consent: 'on',
   startedAt: String(Date.now() - 10_000),
 };
@@ -35,7 +35,7 @@ function post(fields: Record<string, string>, { json = true, origin = 'https://g
 test('valid enquiry is delivered with reply-to and escaped HTML', async () => {
   const res = await post({ ...valid, message: 'Hi <script>alert(1)</script>, a message long enough to pass.' });
   assert.equal(res.status, 200);
-  assert.deepEqual(await res.json(), { ok: true, message: 'Thank you. Your message has been sent and GoCore will reply as soon as possible.' });
+  assert.deepEqual(await res.json(), { ok: true, message: 'Thank you. Your message has been sent and KevOS will reply as soon as possible.' });
   const last = sent.at(-1)!;
   assert.equal(last.reply_to, 'alex@example.com');
   assert.ok(!last.html.includes('<script>'));
@@ -114,6 +114,6 @@ test('older field names still work and the subject names the service and company
   const legacy = normalise({ ...valid, company: undefined, service: undefined, organisation: 'Legacy Co', subject: 'Other' });
   assert.equal(legacy.company, 'Legacy Co');
   assert.equal(legacy.service, 'Other');
-  assert.equal(enquirySubject(normalise(valid)), 'GoCore enquiry: Factory Fix — Example Pty Ltd');
+  assert.equal(enquirySubject(normalise(valid)), 'KevOS enquiry: Factory Fix — Example Pty Ltd');
   assert.equal(normalise({ ...valid, contactMethod: 'Carrier pigeon' }).contactMethod, 'Email');
 });
