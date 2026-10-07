@@ -19,21 +19,19 @@ export const SITE = {
   /** Optional profiles, e.g. { label: 'LinkedIn', href: 'https://www.linkedin.com/company/…' }. */
   social: [] as Array<{ label: string; href: string }>,
   /** Default social sharing image in /public (1200 × 630). */
-  ogImage: '/og-default.png',
+  ogImage: '/brand/kevos-logo-navy.png',
   /**
-   * Brand assets. The site draws the wordmark inline (components/Logo.astro); these files are for
-   * places that need an image file. Regenerate with `python scripts/brand/build_brand.py` then
-   * `npm run brand`. The wordmark works on both light and dark backgrounds.
+   * Brand assets supplied for KEVOS. The main wordmark is navy on light backgrounds and is rendered white in dark mode.
    */
   logo: {
-    svg: '/brand/kevos-logo.svg',
-    png: '/brand/kevos-logo.svg',
-    webp: '/brand/kevos-logo.svg',
-    width: 420,
-    height: 96,
+    svg: '/brand/kevos-logo-navy.png',
+    png: '/brand/kevos-logo-navy.png',
+    webp: '/brand/kevos-logo-navy.png',
+    width: 400,
+    height: 52,
   },
-  icon: '/brand/kevos-icon.svg',
-  iconLarge: '/brand/kevos-icon.svg',
+  icon: '/brand/kevos-icon.png',
+  iconLarge: '/brand/kevos-icon.png',
   /**
    * Contact form delivery. The UI is identical for both providers.
    *  - 'web3forms': the browser posts straight to Web3Forms (works on day one, no server needed).

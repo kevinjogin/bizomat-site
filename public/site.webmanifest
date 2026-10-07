@@ -1,12 +1,12 @@
 {
-  "name": "KevOS",
-  "short_name": "KevOS",
+  "name": "KEVOS",
+  "short_name": "KEVOS",
   "description": "Engineering, manufacturing, operations and project support.",
   "start_url": "/",
   "display": "browser",
   "background_color": "#f6f5f1",
   "theme_color": "#121211",
   "icons": [
-    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+    { "src": "/brand/kevos-icon.png", "sizes": "128x128", "type": "image/png", "purpose": "any" }
   ]
 }

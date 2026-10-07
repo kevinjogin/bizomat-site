@@ -13,33 +13,24 @@ const sizeClass = height <= 22 ? 'logo--compact' : height >= 34 ? 'logo--large' 
   aria-label={label || undefined}
   aria-hidden={label ? undefined : 'true'}
 >
-  <span class="logo__mark" aria-hidden="true">
-    <span class="logo__bar logo__bar--amber"></span>
-    <span class="logo__bar logo__bar--blue"></span>
-    <span class="logo__bar logo__bar--teal"></span>
-  </span>
-  <span class="logo__word" aria-hidden="true">KEVOS</span>
+  <img class="logo__image" src="/brand/kevos-logo-navy.png" alt="" width="400" height="52" decoding="async" />
 </span>
 
 <style>
   .logo {
     --logo-h: 30px;
-    --tile: 29px;
-    --word: 22px;
-    display:inline-flex;
-    align-items:center;
-    gap:calc(var(--logo-h) * .22);
-    height:var(--logo-h);
-    max-width:100%;
-    white-space:nowrap;
+    display: inline-flex;
+    align-items: center;
+    height: var(--logo-h);
+    max-width: 100%;
+    white-space: nowrap;
   }
-  .logo--compact { --logo-h:22px; --tile:21px; --word:16px; }
-  .logo--default { --logo-h:30px; --tile:29px; --word:22px; }
-  .logo--large { --logo-h:34px; --tile:33px; --word:24px; }
-  .logo__mark { position:relative; display:inline-flex; align-items:flex-end; justify-content:center; gap:calc(var(--tile) * .08); width:var(--tile); height:var(--tile); padding:calc(var(--tile) * .18); border-radius:calc(var(--tile) * .18); background:#14202E; box-sizing:border-box; flex:none; }
-  .logo__bar { display:block; width:calc(var(--tile) * .14); border-radius:999px 999px calc(var(--tile) * .025) calc(var(--tile) * .025); }
-  .logo__bar--amber { height:38%; background:#D07A12; }
-  .logo__bar--blue { height:58%; background:#1F5FD1; }
-  .logo__bar--teal { height:80%; background:#009486; }
-  .logo__word { font-family:var(--font-sans); font-size:var(--word); font-weight:800; letter-spacing:.075em; line-height:1; color:var(--ink); }
+  .logo--compact { --logo-h: 22px; }
+  .logo--default { --logo-h: 30px; }
+  .logo--large { --logo-h: 34px; }
+  .logo__image { display: block; width: auto; height: 100%; object-fit: contain; }
+  :global(:root[data-theme='dark']) .logo__image { filter: brightness(0) invert(1); }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .logo__image { filter: brightness(0) invert(1); }
+  }
 </style>
