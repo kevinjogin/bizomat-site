@@ -1,56 +1,24 @@
 ---
-// The GoCore wordmark, drawn inline from src/data/logo.json, which `python scripts/brand/build_brand.py`
-// generates from the brand typeface. "Go" is shaded blue and "Core" orange-red, each with a deeper
-// depth layer; the same colours read on light and dark themes. Inline SVG keeps it sharp at any size.
-import logo from '../data/logo.json';
-
 interface Props {
   class?: string;
-  /** Rendered height in CSS pixels; width follows the artwork's proportions. */
   height?: number;
-  /** Accessible name. Pass an empty string where the logo is purely decorative. */
   label?: string;
 }
-const { class: className, height = 30, label = 'GoCore' } = Astro.props;
-const width = Math.round((logo.width / logo.height) * height * 10) / 10;
-
-// Gradient ids must be unique when the logo appears more than once on a page.
-const g = globalThis as typeof globalThis & { __gocoreLogoCount?: number };
-g.__gocoreLogoCount = (g.__gocoreLogoCount ?? 0) + 1;
-const id = `gc-logo-${g.__gocoreLogoCount}`;
-const { top, bottom } = logo.gradient;
+const { class: className, height = 30, label = 'KevOS' } = Astro.props;
+const fontSize = Math.round(height * 0.82);
 ---
-
-<svg
+<span
   class:list={['logo', className]}
-  viewBox={`0 0 ${logo.width} ${logo.height}`}
-  width={width}
-  height={height}
+  style={`--logo-height:${height}px;--logo-size:${fontSize}px`}
   role={label ? 'img' : undefined}
   aria-label={label || undefined}
   aria-hidden={label ? undefined : 'true'}
-  focusable="false"
 >
-  <defs>
-    <linearGradient id={`${id}-go`} x1="0" y1={top} x2="0" y2={bottom} gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color={logo.blue[0]} />
-      <stop offset="0.55" stop-color={logo.blue[1]} />
-      <stop offset="1" stop-color={logo.blue[2]} />
-    </linearGradient>
-    <linearGradient id={`${id}-core`} x1="0" y1={top} x2="0" y2={bottom} gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color={logo.orange[0]} />
-      <stop offset="0.55" stop-color={logo.orange[1]} />
-      <stop offset="1" stop-color={logo.orange[2]} />
-    </linearGradient>
-  </defs>
-  <g transform={`translate(0 ${logo.depth})`}>
-    <path d={logo.go} fill={logo.blueDepth} />
-    <path d={logo.core} fill={logo.orangeDepth} />
-  </g>
-  <path d={logo.go} fill={`url(#${id}-go)`} />
-  <path d={logo.core} fill={`url(#${id}-core)`} />
-</svg>
+  <span aria-hidden="true"><span class="logo__kev">Kev</span><span class="logo__os">OS</span></span>
+</span>
 
 <style>
-  .logo { display: block; flex: none; max-width: 100%; }
+  .logo { display:inline-flex; align-items:center; height:var(--logo-height); max-width:100%; font-family:var(--font-sans); font-size:var(--logo-size); font-weight:760; letter-spacing:-0.055em; line-height:1; white-space:nowrap; }
+  .logo__kev { color:var(--brand-blue, #1a5cf0); }
+  .logo__os { color:var(--brand-orange, #ff6a13); margin-left:.03em; }
 </style>
