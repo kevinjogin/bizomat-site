@@ -1,4 +1,4 @@
-// KevOS's commercial offer: services, indicative packages, Factory Fix, engagement process and industries.
+// KEVOS's commercial offer: services, indicative packages, Factory Fix, engagement process and industries.
 // Single source of truth: pages and the website assistant both read from here, so prices and wording
 // only ever need changing in one place.
 
@@ -119,7 +119,7 @@ export const PRICING_NOTE =
   'Pricing is indicative only and depends on scope, complexity, site requirements and deliverables. GST applies where applicable.';
 
 export const FACTORY_FIX = {
-  name: 'KevOS Factory Fix',
+  name: 'KEVOS Factory Fix',
   price: 'From A$990',
   minPrice: 990,
   summary:
@@ -150,7 +150,7 @@ export const PROCESS = [
   },
   {
     title: 'Scope the work',
-    text: 'KevOS defines the scope, deliverables, assumptions, timing and commercial terms in writing before substantial work begins.',
+    text: 'KEVOS defines the scope, deliverables, assumptions, timing and commercial terms in writing before substantial work begins.',
   },
   {
     title: 'Complete the engineering work',
@@ -194,9 +194,9 @@ export const SERVICE_OPTIONS = [
 
 export const SOFTWARE = {
   title: 'Professionally equipped for commercial work',
-  text: 'KevOS uses commercially licensed engineering and productivity software for professional client work, including licensed SolidWorks/CAD software and Microsoft Office productivity tools, to produce client-ready engineering and project documentation.',
+  text: 'KEVOS uses commercially licensed engineering and productivity software for professional client work, including licensed SolidWorks/CAD software and Microsoft Office productivity tools, to produce client-ready engineering and project documentation.',
   trademarks:
-    'SOLIDWORKS is a registered trademark of Dassault Systèmes or its subsidiaries. Microsoft, Microsoft 365 and Office are trademarks of the Microsoft group of companies. KevOS is not affiliated with, endorsed by or a partner of these companies.',
+    'SOLIDWORKS is a registered trademark of Dassault Systèmes or its subsidiaries. Microsoft, Microsoft 365 and Office are trademarks of the Microsoft group of companies. KEVOS is not affiliated with, endorsed by or a partner of these companies.',
 } as const;
 
 export const SERVICE_AREA = 'Sydney and NSW businesses, with suitable remote engineering and documentation support available elsewhere in Australia.';
