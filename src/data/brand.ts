@@ -1,6 +1,6 @@
 // Brand copy shared across pages. Edit here and the homepage, About page and assistant all update.
 
-/** How GoCore works with clients. */
+/** How KevOS works with clients. */
 export const PRINCIPLES = [
   {
     title: 'Understand the real problem first',
@@ -24,7 +24,7 @@ export const PRINCIPLES = [
   },
   {
     title: 'Be honest about limits',
-    text: 'Where certified, registered or specialist input is required, GoCore says so.',
+    text: 'Where certified, registered or specialist input is required, KevOS says so.',
   },
 ] as const;
 
@@ -42,5 +42,5 @@ export const BACKGROUND = [
 /** Longer-term direction. Deliberately secondary to services on the current site. */
 export const FUTURE = {
   title: 'Looking ahead',
-  text: 'Services come first. Over time, GoCore may also develop its own products, software, AI tools and industrial solutions, built on the same practical, problem-first approach. Any such work will be announced when it is ready, not before.',
+  text: 'Services come first. Over time, KevOS may also develop its own products, software, AI tools and industrial solutions, built on the same practical, problem-first approach. Any such work will be announced when it is ready, not before.',
 } as const;
