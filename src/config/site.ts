@@ -88,7 +88,6 @@ export const FOOTER_NAV = {
     { href: '/industries/', label: 'Industries' },
     { href: '/about/', label: 'About' },
     { href: '/insights/', label: 'Insights' },
-    { href: '/work/', label: 'Initiatives' },
   ],
   legal: [
     { href: '/privacy/', label: 'Privacy' },
