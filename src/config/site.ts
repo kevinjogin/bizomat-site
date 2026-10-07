@@ -26,14 +26,14 @@ export const SITE = {
    * `npm run brand`. The wordmark works on both light and dark backgrounds.
    */
   logo: {
-    svg: '/brand/gocore-logo.svg',
-    png: '/brand/gocore-logo.png',
-    webp: '/brand/gocore-logo.webp',
-    width: 1329,
-    height: 240,
+    svg: '/brand/kevos-logo.svg',
+    png: '/brand/kevos-logo.svg',
+    webp: '/brand/kevos-logo.svg',
+    width: 320,
+    height: 80,
   },
-  icon: '/brand/gocore-icon-96.png',
-  iconLarge: '/brand/gocore-icon-512.png',
+  icon: '/brand/kevos-icon.svg',
+  iconLarge: '/brand/kevos-icon.svg',
   /**
    * Contact form delivery. The UI is identical for both providers.
    *  - 'web3forms': the browser posts straight to Web3Forms (works on day one, no server needed).
