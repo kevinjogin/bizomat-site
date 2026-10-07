@@ -45,9 +45,9 @@ export const SITE = {
     web3formsEndpoint: 'https://api.web3forms.com/submit',
     workerEndpoint: import.meta.env?.PUBLIC_CONTACT_ENDPOINT || '/api/contact',
   },
-  /** Online meeting booking (Google Calendar appointment schedule). Opens in a new tab; nothing is embedded. */
+  /** Online meeting booking (Proton Calendar booking page). Opens in a new tab; nothing is embedded. */
   booking: {
-    url: 'https://calendar.app.google/SY5FtkX97haPCEh39',
+    url: 'https://calendar.proton.me/bookings#FcYGYbnLv8TCNp3-nXj2rf9WtxOSYPR6WjrYpmZPKzw=',
     label: 'Book a meeting',
   },
   /** AI assistant (Cloudflare Workers AI). Set to false to remove the chat widget everywhere. */
