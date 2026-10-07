@@ -9,7 +9,7 @@ interface Props {
 }
 const { mode = 'floating' } = Astro.props;
 const name = SITE.assistant.name;
-const prompts = ['What services does KEVOS offer?', 'What is a Factory Fix?', 'How does a project work?', 'How do I get a quote?'];
+const prompts = ['Can KEVOS support my project?', 'I need engineering or CAD support', 'I need manufacturing support', 'I want to improve a process or operation'];
 ---
 
 <div class:list={['assistant', `assistant--${mode}`]} data-assistant data-mode={mode} data-endpoint={SITE.assistant.endpoint}>
@@ -27,7 +27,7 @@ const prompts = ['What services does KEVOS offer?', 'What is a Factory Fix?', 'H
       <img class="assistant__avatar" src={SITE.icon} alt="" width="36" height="36" loading="lazy" />
       <div class="assistant__heading">
         {mode === 'page' ? <h1 id="assistant-title">{name}</h1> : <h2 id="assistant-title">{name}</h2>}
-        <p><span class="assistant__dot" aria-hidden="true"></span>Answers from the KEVOS website</p>
+        <p><span class="assistant__dot" aria-hidden="true"></span>Engineering &amp; project enquiry support</p>
       </div>
       <div class="assistant__actions">
         {
@@ -54,13 +54,14 @@ const prompts = ['What services does KEVOS offer?', 'What is a Factory Fix?', 'H
 
     <div class="assistant__log" role="log" aria-live="polite" aria-relevant="additions" tabindex="0" aria-label="Conversation" data-assistant-log>
       <div class="msg msg--assistant">
-        <p>Hi — I’m the {name}. I can help you understand KEVOS services, how projects work, typical project types and how to request a quote.</p>
+        <p>Welcome to KEVOS. I can help identify the most relevant engineering, manufacturing, operations or project support for your requirement, explain how engagement works, and guide you to the right next step.</p>
       </div>
     </div>
 
     <div class="assistant__prompts" data-assistant-prompts>
       {prompts.map((p) => <button type="button" class="chip" data-prompt={p}>{p}</button>)}
-      <a class="chip chip--link" href="/contact/" data-cta="assistant-quote">Get a quote</a>
+      <a class="chip chip--link" href="/contact/" data-cta="assistant-quote">Request a quote</a>
+      <a class="chip" href={SITE.booking.url} target="_blank" rel="noopener noreferrer" data-cta="assistant-meeting">Book a meeting</a>
       <button type="button" class="chip chip--accent" data-assistant-handoff>Leave a message</button>
     </div>
 
@@ -81,12 +82,12 @@ const prompts = ['What services does KEVOS offer?', 'What is a Factory Fix?', 'H
 
     <form class="assistant__composer" data-assistant-form>
       <label for={`assistant-input-${mode}`} class="visually-hidden">Ask a question about KEVOS</label>
-      <textarea id={`assistant-input-${mode}`} rows="1" maxlength="600" placeholder="Ask about KEVOS services…" autocomplete="off" data-assistant-input></textarea>
+      <textarea id={`assistant-input-${mode}`} rows="1" maxlength="600" placeholder="Describe your requirement or project…" autocomplete="off" data-assistant-input></textarea>
       <button type="submit" class="assistant__submit" aria-label="Send question">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
       </button>
     </form>
-    <p class="assistant__note">AI answers based on gocore.com.au content and may be imperfect. For pricing, scope or availability, <a href="/contact/" data-cta="assistant-note-quote">request a quote</a>. Please don’t share sensitive information. <a href="/privacy/">Privacy</a></p>
+    <p class="assistant__note">AI-assisted guidance based on published KEVOS information. For project scope, pricing or availability, <a href="/contact/" data-cta="assistant-note-quote">request a quote</a>. Please don’t share sensitive information. <a href="/privacy/">Privacy</a></p>
   </section>
 </div>
 
@@ -97,7 +98,7 @@ const prompts = ['What services does KEVOS offer?', 'What is a Factory Fix?', 'H
 
   type Msg = { role: 'user' | 'assistant'; content: string };
   type State = { open: boolean; messages: Msg[] };
-  const KEY = 'gocore-assistant';
+  const KEY = 'kevos-assistant';
 
   const root = document.querySelector<HTMLElement>('[data-assistant]');
   if (root) {
@@ -134,11 +135,11 @@ const prompts = ['What services does KEVOS offer?', 'What is a Factory Fix?', 'H
 
     // Render assistant text safely: escape everything, then allow internal links, bold and bullets.
     const escapeHtml = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
-    const isSafeHref = (h: string) => /^\/(?!\/)[\w\-/#.?=&]*$/.test(h) || /^https:\/\/(www\.)?gocore\.com\.au(\/|$)/.test(h);
+    const isSafeHref = (h: string) => /^\/(?!\/)[\w\-/#.?=&]*$/.test(h) || /^https:\/\/(www\.)?kevos\.com(\/|$)/.test(h);
     const format = (text: string) => {
       const lines = escapeHtml(text)
         .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_m, label, href) => (isSafeHref(href) ? `<a href="${href}">${label}</a>` : label))
-        .replace(/(^|[\s(])(\/(?:about|work|insights|contact|privacy|terms|search)\/[\w\-/]*)/g, '$1<a href="$2">$2</a>')
+        .replace(/(^|[\s(])(\/(?:about|services|factory-fix|how-it-works|industries|tools|insights|contact|privacy|terms|search)\/[\w\-/]*)/g, '$1<a href="$2">$2</a>')
         .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
         .split(/\n+/);
       let html = '';
@@ -250,7 +251,7 @@ const prompts = ['What services does KEVOS offer?', 'What is a Factory Fix?', 'H
     root.querySelector('[data-assistant-close-window]')?.addEventListener('click', () => (window.opener ? window.close() : (location.href = '/')));
     root.querySelector<HTMLAnchorElement>('[data-assistant-popout]')?.addEventListener('click', (e) => {
       save();
-      const win = window.open('/chat/', 'gocore-assistant', 'popup,width=420,height=680');
+      const win = window.open('/chat/', 'kevos-assistant', 'popup,width=420,height=680');
       if (win) {
         e.preventDefault();
         setOpen(false);
@@ -356,7 +357,7 @@ const prompts = ['What services does KEVOS offer?', 'What is a Factory Fix?', 'H
     box-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.45); font-size: 0.95rem; font-weight: 560;
     transition: transform 0.25s var(--ease), background 0.2s var(--ease);
   }
-  .assistant__launcher img { width: 28px; height: 28px; border-radius: 7px; }
+  .assistant__launcher img { width: 28px; height: 28px; padding: 3px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper-2); object-fit: contain; }
   .assistant__launcher:hover { transform: translateY(-2px); }
   .assistant__launcher.is-hidden { display: none; }
 
@@ -373,7 +374,7 @@ const prompts = ['What services does KEVOS offer?', 'What is a Factory Fix?', 'H
   .assistant--page .assistant__panel { width: 100%; height: 100dvh; border: 0; border-radius: 0; box-shadow: none; }
 
   .assistant__header { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 0.85rem 0.85rem 1rem; border-bottom: 1px solid var(--line); }
-  .assistant__avatar { width: 36px; height: 36px; flex: none; border-radius: 9px; }
+  .assistant__avatar { width: 40px; height: 40px; flex: none; padding: 4px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper-2); object-fit: contain; }
   .assistant__heading { flex: 1; min-width: 0; }
   .assistant__heading h1, .assistant__heading h2 { font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
   .assistant__heading p { display: flex; align-items: center; gap: 0.4rem; margin: 0.15rem 0 0; font-size: 0.78rem; color: var(--muted); }
