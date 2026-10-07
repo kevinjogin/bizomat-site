@@ -1,6 +1,6 @@
-# GoCore website
+# KevOS website
 
-The website for **GoCore** (gocore.com.au): a static Astro site served by a Cloudflare Worker, with a structured Insights publishing system, a Web3Forms contact form and an AI receptionist powered by Cloudflare Workers AI.
+The website for **KevOS** (gocore.com.au): a static Astro site served by a Cloudflare Worker, with a structured Insights publishing system, a Web3Forms contact form and an AI receptionist powered by Cloudflare Workers AI.
 
 - **No database, no WordPress, no server to maintain.** Pages are built in advance and served as Worker static assets from Cloudflare.
 - **Publishing is a reviewed file change.** Write Markdown, set `draft: false`, push to Git, and Cloudflare rebuilds the site.
@@ -18,7 +18,7 @@ The website for **GoCore** (gocore.com.au): a static Astro site served by a Clou
 6. [Work entries](#6-work-entries)
 7. [Images](#7-images)
 8. [Contact form](#8-contact-form)
-9. [GoCore Assistant (AI chat)](#9-gocore-assistant-ai-chat)
+9. [KevOS Assistant (AI chat)](#9-gocore-assistant-ai-chat)
 10. [Deploying to Cloudflare](#10-deploying-to-cloudflare)
 11. [Changing branding](#11-changing-branding)
 12. [Changing navigation and site details](#12-changing-navigation-and-site-details)
@@ -99,7 +99,7 @@ category: "Products"                                    # required: exactly one 
 tags:                                                   # required: 1–5 (normally 2–5) from the controlled list
   - product-development
   - validation
-author: "GoCore"                                        # optional, defaults to GoCore
+author: "KevOS"                                        # optional, defaults to KevOS
 featured: false                                         # featured posts get the top slot on /insights/
 draft: true                                             # true = never in production, RSS, sitemap, search or the assistant
 image: ./images/cover.jpg                               # optional, path relative to the post file
@@ -161,14 +161,14 @@ The UI calls `submitContact()` (`src/lib/contact-client.ts`) and never talks to 
 
 The endpoint (`src/worker.ts` → `src/server/contact/`) validates input, checks origin, enforces the honeypot and rate limits, escapes email HTML and blocks header injection. All of this is covered by `tests/contact.test.ts`.
 
-## 9. GoCore Assistant (AI chat)
+## 9. KevOS Assistant (AI chat)
 
 A receptionist-style chat sits at the bottom right of every page. Visitors can **minimise** it or **pop it out** into its own window (`/chat/`). It:
 
-- answers **only** from GoCore's published website content: FAQ, About, Work and Insights;
+- answers **only** from KevOS's published website content: FAQ, About, Work and Insights;
 - refuses unrelated requests, never invents products, prices or promises, and ignores attempts to override its rules;
 - offers **"Leave a message"**, which sends the visitor's details and the chat transcript through the same contact form system;
-- keeps the conversation in the visitor's browser session only (nothing is stored by GoCore).
+- keeps the conversation in the visitor's browser session only (nothing is stored by KevOS).
 
 **How it works:** each build writes `/assistant-knowledge.json` from the site's published content (drafts are never included). The site worker (`src/worker.ts` → `src/server/chat/`) picks the most relevant passages and asks a Workers AI model, with strict grounding rules, to answer.
 
@@ -187,7 +187,7 @@ Cloudflare occasionally retires models or moves them to the paid plan. If answer
 
 ## 10. Deploying to Cloudflare
 
-The site runs as a **Cloudflare Worker** (`throbbing-block-6c61`, attached to `gocore.com.au`). The Worker serves the static files in `dist/` and runs `src/worker.ts` for `/api/chat` (GoCore Assistant) and `/api/contact`. All settings, including the Workers AI binding and the custom domain, live in [wrangler.toml](wrangler.toml).
+The site runs as a **Cloudflare Worker** (`throbbing-block-6c61`, attached to `gocore.com.au`). The Worker serves the static files in `dist/` and runs `src/worker.ts` for `/api/chat` (KevOS Assistant) and `/api/contact`. All settings, including the Workers AI binding and the custom domain, live in [wrangler.toml](wrangler.toml).
 
 ### Deploy (recommended)
 
@@ -233,7 +233,7 @@ The Worker name in `wrangler.toml` must match the dashboard. If you rename it (S
 
 ## 11. Changing branding
 
-- **Logo:** the logo is a wordmark only: "GoCore" in Archivo at a heavy weight, inclined at 75° like standard engineering lettering (IS 9609 / ISO 3098), with "Go" shaded blue and "Core" shaded orange-red. One version works on light and dark backgrounds. It is drawn as outlines, so no font is needed to display it. The site renders it inline (`src/components/Logo.astro`) from `src/data/logo.json`.
+- **Logo:** the logo is a wordmark only: "KevOS" in Archivo at a heavy weight, inclined at 75° like standard engineering lettering (IS 9609 / ISO 3098), with "Go" shaded blue and "Core" shaded orange-red. One version works on light and dark backgrounds. It is drawn as outlines, so no font is needed to display it. The site renders it inline (`src/components/Logo.astro`) from `src/data/logo.json`.
 - **Regenerating brand assets:** `scripts/brand/build_brand.py` holds the wordmark settings (weight, width, angle, colours) and builds `src/data/logo.json` plus the artwork in `brand-source/generated/`. Then `npm run brand` rasterises the favicons, app icons, assistant avatar ("GC" monogram), `public/brand/gocore-logo.(svg|png|webp)` and the social card `public/og-default.png`:
 
   ```bash
@@ -241,7 +241,7 @@ The Worker name in `wrangler.toml` must match the dashboard. If you rename it (S
   python scripts/brand/build_brand.py
   npm run brand
   ```
-- **Type system:** headings use GoCore Display, Archivo inclined at 75° to match the wordmark. It is built by `python scripts/brand/build_fonts.py` into `public/fonts/` (OFL licence alongside). Stroke weight follows size so every level stays legible:
+- **Type system:** headings use KevOS Display, Archivo inclined at 75° to match the wordmark. It is built by `python scripts/brand/build_fonts.py` into `public/fonts/` (OFL licence alongside). Stroke weight follows size so every level stays legible:
   - the wordmark is heaviest (stroke about h/3);
   - display and section headings are 600 (about h/5);
   - smaller headings are 700 (about h/4.5);
@@ -249,8 +249,8 @@ The Worker name in `wrangler.toml` must match the dashboard. If you rename it (S
 
   Body copy stays upright because sloped running text is slower to read on screen. Small uppercase labels also stay upright.
 - **Colours:** design tokens are at the top of `src/styles/global.css` (`--paper`, `--ink`, `--accent`, `--brand-orange`, `--brand-blue`, light and dark sets). `--accent` is the text-safe orange; `--brand-*` colours are for graphics only.
-- **Fonts:** all fonts are self-hosted: GoCore Display in `public/fonts/`, Inter Tight and Source Serif 4 via Fontsource. There are no third-party font requests.
-- **Homepage hero graphic:** `src/components/ServiceMap.astro` shows the four services around the GoCore core, with a CSS-only animation that is switched off for visitors who prefer reduced motion. Its labels come from `src/data/services.ts`.
+- **Fonts:** all fonts are self-hosted: KevOS Display in `public/fonts/`, Inter Tight and Source Serif 4 via Fontsource. There are no third-party font requests.
+- **Homepage hero graphic:** `src/components/ServiceMap.astro` shows the four services around the KevOS core, with a CSS-only animation that is switched off for visitors who prefer reduced motion. Its labels come from `src/data/services.ts`.
 
 ## 12. Changing navigation and site details
 

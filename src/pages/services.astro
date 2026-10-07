@@ -18,7 +18,7 @@ const crumbs = [
 const priced = (min?: number) => (min ? { priceSpecification: { '@type': 'PriceSpecification', minPrice: min, priceCurrency: 'AUD' } } : {});
 const catalog = {
   '@type': 'OfferCatalog',
-  name: 'GoCore services and indicative packages',
+  name: 'KevOS services and indicative packages',
   url: `${SITE.url}/services/`,
   itemListElement: [
     { '@type': 'Offer', name: FACTORY_FIX.name, description: FACTORY_FIX.summary, url: `${SITE.url}/factory-fix/`, ...priced(FACTORY_FIX.minPrice) },
@@ -76,7 +76,7 @@ const catalog = {
   }
 
   <Section index="05" label="Flagship offer" id="factory-fix" labelledby="ff-section-title">
-    <h2 id="ff-section-title" class="visually-hidden">GoCore Factory Fix</h2>
+    <h2 id="ff-section-title" class="visually-hidden">KevOS Factory Fix</h2>
     <FactoryFixFeature headingLevel="h3" />
   </Section>
 
@@ -113,7 +113,7 @@ const catalog = {
     <SoftwareNote headingLevel="h3" />
   </Section>
 
-  <CallToAction title="Not sure which service fits?" text="Describe the problem and GoCore can help define the scope, the deliverables and the best way to price the work." label="Get a Quote" />
+  <CallToAction title="Not sure which service fits?" text="Describe the problem and KevOS can help define the scope, the deliverables and the best way to price the work." label="Get a Quote" />
 </BaseLayout>
 
 <style>

@@ -3,7 +3,7 @@
 import { SITE } from '../config/site.ts';
 import { enquirySubject, type ContactInput, type ContactResponse } from './contact.ts';
 
-const SUCCESS = 'Thank you. Your enquiry has been sent and GoCore will reply as soon as possible.';
+const SUCCESS = 'Thank you. Your enquiry has been sent and KevOS will reply as soon as possible.';
 const FAILURE = 'Your enquiry could not be sent right now. Please try again in a moment.';
 
 export interface Submission extends ContactInput {
@@ -31,7 +31,7 @@ export async function submitContact(s: Submission): Promise<ContactResponse> {
         body: JSON.stringify({
           access_key: web3formsAccessKey,
           subject: enquirySubject(s),
-          from_name: 'GoCore website',
+          from_name: 'KevOS website',
           replyto: s.email,
           name: s.name,
           company: s.company || '—',

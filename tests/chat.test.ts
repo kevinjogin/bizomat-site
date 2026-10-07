@@ -5,8 +5,8 @@ import { handleChat, repairLinks, sanitiseHistory, type ChatEnv } from '../src/s
 import { retrieve, type KnowledgeChunk } from '../src/server/chat/retrieve.ts';
 
 const knowledge: KnowledgeChunk[] = [
-  { id: 'core-facts', title: 'About GoCore (core facts)', url: '/about/', text: 'GoCore is an early-stage Australian business. Contact is through /contact/.' },
-  { id: 'faq-0', title: 'Does GoCore sell products?', url: '/about/', text: 'Not yet. GoCore has not launched products or paid services.' },
+  { id: 'core-facts', title: 'About KevOS (core facts)', url: '/about/', text: 'KevOS is an early-stage Australian business. Contact is through /contact/.' },
+  { id: 'faq-0', title: 'Does KevOS sell products?', url: '/about/', text: 'Not yet. KevOS has not launched products or paid services.' },
   { id: 'faq-1', title: 'I am a supplier or manufacturer', url: '/contact/', text: 'Introduce yourself through the contact form and choose Supplier or manufacturer.' },
   { id: 'insight-db', title: 'Why this website has no database', url: '/insights/why-this-website-has-no-database/', text: 'The site is static and served from Cloudflare.' },
 ];

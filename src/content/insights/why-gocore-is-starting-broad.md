@@ -1,6 +1,6 @@
 ---
-title: "Why GoCore is starting broad"
-description: "The reasoning behind GoCore's early exploratory phase, and how its focus was expected to narrow. GoCore now focuses on engineering, manufacturing and operations services."
+title: "Why KevOS is starting broad"
+description: "The reasoning behind KevOS's early exploratory phase, and how its focus was expected to narrow. KevOS now focuses on engineering, manufacturing and operations services."
 publishDate: 2026-09-29
 updatedDate: 2026-10-04
 category: "Ideas"
@@ -8,30 +8,30 @@ tags:
   - strategy
   - experimentation
   - validation
-author: "GoCore"
+author: "KevOS"
 featured: false
 draft: false
 ---
 
-> **Update, October 2026.** As this article anticipated, GoCore's focus has since narrowed. GoCore now provides engineering and CAD support, manufacturing support, operations improvement and engineering project support; see [Services](/services/). The article is kept as a record of the earlier reasoning.
+> **Update, October 2026.** As this article anticipated, KevOS's focus has since narrowed. KevOS now provides engineering and CAD support, manufacturing support, operations improvement and engineering project support; see [Services](/services/). The article is kept as a record of the earlier reasoning.
 
-A common piece of advice for new businesses is to pick a niche and commit to it. It is good advice once you know which niche is worth committing to. GoCore does not know that yet, and pretending otherwise would mean making the most important decision with the least information.
+A common piece of advice for new businesses is to pick a niche and commit to it. It is good advice once you know which niche is worth committing to. KevOS does not know that yet, and pretending otherwise would mean making the most important decision with the least information.
 
-So GoCore is starting broad, on purpose, for a limited time.
+So KevOS is starting broad, on purpose, for a limited time.
 
-This article explains what that means in practice, why it is a deliberate choice rather than indecision, the risks it carries and how they are managed, how ideas are judged, and how the focus is expected to narrow as evidence accumulates. It is also, in part, a record: if GoCore's direction changes later, this is the reasoning it started from.
+This article explains what that means in practice, why it is a deliberate choice rather than indecision, the risks it carries and how they are managed, how ideas are judged, and how the focus is expected to narrow as evidence accumulates. It is also, in part, a record: if KevOS's direction changes later, this is the reasoning it started from.
 
 ## What "broad" means here
 
 Broad does not mean doing everything. It means keeping several areas open while the evidence comes in: products, technology, practical systems and ideas that might become any of those.
 
-Each area is held to the same standard. Is there a real problem? Do the people who have it care enough to change? Can GoCore build something that is clearly better than what they do now?
+Each area is held to the same standard. Is there a real problem? Do the people who have it care enough to change? Can KevOS build something that is clearly better than what they do now?
 
 The areas that hold up under that scrutiny get more attention. The ones that do not are set aside, and the reasons are written down.
 
 ### The four areas
 
-GoCore's Insights are organised into four categories, which also describe the areas being explored:
+KevOS's Insights are organised into four categories, which also describe the areas being explored:
 
 - **Ideas:** ways of thinking about problems, strategy and opportunity, some of which may become products or systems.
 - **Products:** physical or digital things that could solve a specific problem for specific people.
@@ -58,13 +58,13 @@ The difference in cost is often large. A conversation with someone who has a pro
 
 Decision researchers describe a general tension between **exploring** (trying new options to learn about them) and **exploiting** (committing to the best option known so far). Exploring too little risks settling on a mediocre choice because better ones were never tried. Exploring too much risks never benefiting from anything, because effort is always spread across new options.
 
-Good strategies usually explore more at the beginning, when little is known, and shift towards exploiting as knowledge accumulates. That is the pattern GoCore intends to follow: broad exploration now, narrowing deliberately as evidence shows which directions are strongest.
+Good strategies usually explore more at the beginning, when little is known, and shift towards exploiting as knowledge accumulates. That is the pattern KevOS intends to follow: broad exploration now, narrowing deliberately as evidence shows which directions are strongest.
 
 ## How ideas are judged
 
 Exploring broadly only works if every idea is held to clear, consistent standards. Otherwise, the most exciting idea wins, rather than the best one.
 
-GoCore's Insights set out several of the lenses being used.
+KevOS's Insights set out several of the lenses being used.
 
 **Is the problem real and worth solving?** The questions in [What makes a useful product worth building?](/insights/what-makes-a-useful-product-worth-building/) cover frequency, severity, current workarounds and willingness to change, and they emphasise evidence over enthusiasm.
 
@@ -108,11 +108,11 @@ Some signals suggest an initiative deserves more attention than the others:
 
 When several of these signals appear together, the case for narrowing focus around that initiative becomes strong.
 
-## What GoCore is not doing
+## What KevOS is not doing
 
-Starting broad also means being clear about what GoCore is not doing.
+Starting broad also means being clear about what KevOS is not doing.
 
-GoCore is not presenting ideas as products before they exist. It is not listing services it does not yet offer, and it is not claiming customers, partners or results it has not achieved. The Work page lists only real initiatives, with honest statuses, and the Insights distinguish between summaries of established knowledge and GoCore's own observations.
+KevOS is not presenting ideas as products before they exist. It is not listing services it does not yet offer, and it is not claiming customers, partners or results it has not achieved. The Work page lists only real initiatives, with honest statuses, and the Insights distinguish between summaries of established knowledge and KevOS's own observations.
 
 This restraint is deliberate. A young business can be tempted to look larger and more certain than it is. But credibility built on claims that later prove hollow is fragile, while credibility built on an honest record grows stronger with time.
 
@@ -124,7 +124,7 @@ Starting broad has its own risks, and they deserve honesty.
 
 **Never committing.** Exploration can become a comfortable place to stay, because it postpones the hard work and risk of building. The response is to set decision points: specific moments when each initiative must move forward, pause or stop.
 
-**Lacking a clear story.** A broad business is harder to explain than a focused one. People may reasonably ask what GoCore actually does. The honest answer, for now, is that it is exploring, and the Insights and Work pages show what that exploration looks like.
+**Lacking a clear story.** A broad business is harder to explain than a focused one. People may reasonably ask what KevOS actually does. The honest answer, for now, is that it is exploring, and the Insights and Work pages show what that exploration looks like.
 
 **Shallow expertise.** Depth often comes from focus. The response is to go deep on the specific initiatives that progress, even while the overall business remains broad.
 
@@ -132,12 +132,12 @@ None of these risks is a reason not to explore. Each is a reason to explore with
 
 ## Writing it down
 
-A distinctive part of GoCore's approach is that the reasoning is recorded and, where appropriate, published. These Insights articles serve several purposes:
+A distinctive part of KevOS's approach is that the reasoning is recorded and, where appropriate, published. These Insights articles serve several purposes:
 
 - **They clarify thinking.** Writing an argument down exposes gaps that remain hidden in conversation.
 - **They create a record.** Decisions can be revisited later with the original reasoning in view.
 - **They invite challenge.** Readers who see a flaw in the reasoning can say so.
-- **They build a body of knowledge.** Over time, the articles become a reference for GoCore's own work and, hopefully, useful to others facing similar questions.
+- **They build a body of knowledge.** Over time, the articles become a reference for KevOS's own work and, hopefully, useful to others facing similar questions.
 
 If the direction changes, the record will show why. That is part of the point.
 
@@ -145,7 +145,7 @@ If the direction changes, the record will show why. That is part of the point.
 
 Exploration can feel slow from the outside, and sometimes from the inside too. Weeks spent on conversations and rough prototypes produce no products, no revenue and few visible results. The pressure to "just pick something" is real.
 
-The articles GoCore has published on durable businesses offer some reassurance here. The most valuable businesses are usually built around needs that last and advantages that compound, and those take time to identify and develop. A few months spent choosing well can matter far more over the life of a business than a few months saved by choosing quickly.
+The articles KevOS has published on durable businesses offer some reassurance here. The most valuable businesses are usually built around needs that last and advantages that compound, and those take time to identify and develop. A few months spent choosing well can matter far more over the life of a business than a few months saved by choosing quickly.
 
 Patience does not mean drift, though. Every exploration has a question, a budget and a decision point. When the evidence is clear, the decision is made.
 
@@ -153,7 +153,7 @@ Patience does not mean drift, though. Every exploration has a question, a budget
 
 Starting broad will not suit every founder. Someone with deep experience in a particular industry, a clear view of an unmet need and early customers ready to buy should probably commit. Exploring broadly would only delay them.
 
-But for founders who are genuinely uncertain about where their best opportunity lies, a period of deliberate, disciplined exploration can be valuable. A few principles from GoCore's approach may help:
+But for founders who are genuinely uncertain about where their best opportunity lies, a period of deliberate, disciplined exploration can be valuable. A few principles from KevOS's approach may help:
 
 - **Time-box the exploration.** Decide in advance how long it will last before a direction must be chosen.
 - **Use consistent criteria.** Judge every idea by the same standards.
@@ -164,16 +164,16 @@ But for founders who are genuinely uncertain about where their best opportunity 
 
 ## What this means for readers
 
-For anyone following GoCore, starting broad means a few things in practice.
+For anyone following KevOS, starting broad means a few things in practice.
 
-The Insights will cover a wide range of topics: products, technology, systems, business practice and the ideas behind them. Some articles summarise established knowledge, such as the series on financial statements and on sales practice. Others describe GoCore's own reasoning and, as work progresses, its own experiments.
+The Insights will cover a wide range of topics: products, technology, systems, business practice and the ideas behind them. Some articles summarise established knowledge, such as the series on financial statements and on sales practice. Others describe KevOS's own reasoning and, as work progresses, its own experiments.
 
 The Work page will show initiatives at different stages, with honest statuses, including some that are archived.
 
-And GoCore welcomes conversations. If you face a problem that might be worth solving, or you see a flaw in the reasoning here, the [contact page](/contact/) is the place to say so.
+And KevOS welcomes conversations. If you face a problem that might be worth solving, or you see a flaw in the reasoning here, the [contact page](/contact/) is the place to say so.
 
 ## Bringing it together
 
-GoCore is starting broad because the most important decision, what to focus on, deserves the most information. Exploration is cheaper than building, and it is easier to change direction before large commitments are made.
+KevOS is starting broad because the most important decision, what to focus on, deserves the most information. Exploration is cheaper than building, and it is easier to change direction before large commitments are made.
 
 Starting broad is not a permanent state or an excuse to avoid commitment. It is a deliberate, time-limited phase with clear criteria, visible progress and written reasoning. As evidence accumulates, the focus will narrow, and the record will show how and why.
