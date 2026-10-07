@@ -13,7 +13,7 @@ export const SITE = {
   /** One-line brand statement used in the footer and structured data. */
   statement: 'Practical engineering, manufacturing, operations and project support for businesses that need work moved forward.',
   /** Short descriptor shown under the brand in places like the footer. */
-  tagline: 'Engineering • Manufacturing • Operations',
+  tagline: 'Smarter ways to fix, make & move.',
   /** Public contact email. Leave empty to hide it everywhere until it is set up. */
   email: '',
   /** Optional profiles, e.g. { label: 'LinkedIn', href: 'https://www.linkedin.com/company/…' }. */
@@ -29,8 +29,8 @@ export const SITE = {
     svg: '/brand/kevos-logo.svg',
     png: '/brand/kevos-logo.svg',
     webp: '/brand/kevos-logo.svg',
-    width: 320,
-    height: 80,
+    width: 420,
+    height: 96,
   },
   icon: '/brand/kevos-icon.svg',
   iconLarge: '/brand/kevos-icon.svg',
