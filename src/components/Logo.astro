@@ -4,36 +4,73 @@ interface Props {
   height?: number;
   label?: string;
 }
-const { class: className, height = 30, label = 'KEVOS' } = Astro.props;
-const sizeClass = height <= 22 ? 'logo--compact' : height >= 34 ? 'logo--large' : 'logo--default';
+const { class: className, height = 20, label = 'KEVOS' } = Astro.props;
+const sizeClass =
+  height <= 18
+    ? 'kevos-logo--hero'
+    : height <= 26
+      ? 'kevos-logo--compact'
+      : height >= 38
+        ? 'kevos-logo--large'
+        : 'kevos-logo--default';
 ---
 <span
-  class:list={['logo', sizeClass, className]}
+  class:list={['kevos-logo', sizeClass, className]}
   role={label ? 'img' : undefined}
   aria-label={label || undefined}
   aria-hidden={label ? undefined : 'true'}
 >
-  <img class="logo__image" src="/brand/kevos-logo-safe-v2.png" alt="" width="304" height="38" decoding="async" />
+  <img
+    class="kevos-logo__image kevos-logo__image--light"
+    src="/brand/kevos-logo-light-full.png"
+    alt=""
+    width="600"
+    height="78"
+    decoding="async"
+  />
+  <img
+    class="kevos-logo__image kevos-logo__image--dark"
+    src="/brand/kevos-logo-dark-full.png"
+    alt=""
+    width="600"
+    height="78"
+    decoding="async"
+  />
 </span>
 
 <style>
-  .logo {
-    --logo-h: 30px;
-    display: inline-flex;
-    align-items: center;
-    height: var(--logo-h);
+  .kevos-logo {
+    --kevos-logo-height: 30px;
+    display: inline-grid;
+    place-items: center;
     max-width: 100%;
-    white-space: nowrap;
-    padding-block: 3px;
-    box-sizing: content-box;
+    line-height: 0;
     overflow: visible;
+    white-space: nowrap;
   }
-  .logo--compact { --logo-h: 22px; }
-  .logo--default { --logo-h: 30px; }
-  .logo--large { --logo-h: 34px; }
-  .logo__image { display: block; width: auto; height: 100%; object-fit: contain; }
-  :global(:root[data-theme='dark']) .logo__image { filter: brightness(0) invert(1); }
+  .kevos-logo--hero { --kevos-logo-height: 18px; }
+  .kevos-logo--compact { --kevos-logo-height: 26px; }
+  .kevos-logo--default { --kevos-logo-height: 30px; }
+  .kevos-logo--large { --kevos-logo-height: 38px; }
+
+  .kevos-logo__image {
+    grid-area: 1 / 1;
+    display: block;
+    width: auto;
+    height: var(--kevos-logo-height);
+    max-width: 100%;
+    object-fit: contain;
+    object-position: center;
+  }
+  .kevos-logo__image--dark { display: none; }
+
+  :global(:root[data-theme='dark']) .kevos-logo__image--light { display: none; }
+  :global(:root[data-theme='dark']) .kevos-logo__image--dark { display: block; }
+  :global(:root[data-theme='light']) .kevos-logo__image--light { display: block; }
+  :global(:root[data-theme='light']) .kevos-logo__image--dark { display: none; }
+
   @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .logo__image { filter: brightness(0) invert(1); }
+    :global(:root:not([data-theme='light'])) .kevos-logo__image--light { display: none; }
+    :global(:root:not([data-theme='light'])) .kevos-logo__image--dark { display: block; }
   }
 </style>

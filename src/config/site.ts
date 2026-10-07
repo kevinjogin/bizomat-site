@@ -30,8 +30,8 @@ export const SITE = {
     width: 600,
     height: 78,
   },
-  icon: '/brand/kevos-favicon-k-v3.png',
-  iconLarge: '/brand/kevos-favicon-k-v3.png',
+  icon: '/brand/kevos-favicon-k-v4.png',
+  iconLarge: '/brand/kevos-favicon-k-v4.png',
   /**
    * Contact form delivery. The UI is identical for both providers.
    *  - 'web3forms': the browser posts straight to Web3Forms (works on day one, no server needed).
