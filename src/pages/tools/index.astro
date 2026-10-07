@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
+import '../../styles/tools.css';
 
 const description = 'Free professional decision tools for projects, operations, manufacturing, quoting, money and business. No account or software installation required.';
 ---
@@ -14,72 +15,21 @@ const description = 'Free professional decision tools for projects, operations, 
         <p class="lead">Practical calculators and decision utilities for engineering, manufacturing, projects and business. Free to use, with calculations performed in your browser.</p>
         <div class="tools-meta" aria-label="Tool collection features"><span class="tools-pill free">57 free tools</span><span class="tools-pill">No account</span><span class="tools-pill">Mobile friendly</span><span class="tools-pill">Browser-first calculations</span></div>
         <div class="tools-search"><input id="tool-search" type="search" placeholder="What are you trying to work out?" aria-label="Search GoCore tools" autocomplete="off" /><span class="tools-count" id="tool-count">57 tools</span></div>
-        <div class="chips" aria-label="Filter tools by category"><button class="chip active" type="button" data-cat="All">All</button>
-          <button class="chip" type="button" data-cat="Decide">Decide</button>
-          <button class="chip" type="button" data-cat="Money">Money</button>
-          <button class="chip" type="button" data-cat="Projects">Projects</button>
-          <button class="chip" type="button" data-cat="Operations">Operations</button>
-          <button class="chip" type="button" data-cat="Manufacturing">Manufacturing</button>
-          <button class="chip" type="button" data-cat="Quoting">Quoting</button>
-          <button class="chip" type="button" data-cat="Inventory">Inventory</button>
-          <button class="chip" type="button" data-cat="Improvement">Improvement</button>
-          <button class="chip" type="button" data-cat="Planning">Planning</button>
-          <button class="chip" type="button" data-cat="Business">Business</button>
+        <div class="chips" aria-label="Filter tools by category">
+          <button class="chip active" type="button" data-cat="All">All</button><button class="chip" type="button" data-cat="Decide">Decide</button><button class="chip" type="button" data-cat="Money">Money</button><button class="chip" type="button" data-cat="Projects">Projects</button><button class="chip" type="button" data-cat="Operations">Operations</button><button class="chip" type="button" data-cat="Manufacturing">Manufacturing</button><button class="chip" type="button" data-cat="Quoting">Quoting</button><button class="chip" type="button" data-cat="Inventory">Inventory</button><button class="chip" type="button" data-cat="Improvement">Improvement</button><button class="chip" type="button" data-cat="Planning">Planning</button><button class="chip" type="button" data-cat="Business">Business</button>
         </div>
       </div>
-
-      <div id="tool-directory">
-        <div class="tool-grid" id="tool-grid">
-          <button class="tool-card" type="button" data-tool-id="make-buy" data-category="Decide" data-search="make / buy decide should you make it yourself or outsource it? compare total internal and supplier cost, then see the volume where the decision changes.">
-            <span class="card-top"><span class="category-label">Decide</span><span class="badge">Free</span></span>
-            <h2>Make / Buy</h2><p>Should you make it yourself or outsource it?</p><span class="card-link">Open tool →</span>
-          </button>
-          <button class="tool-card" type="button" data-tool-id="project-gate" data-category="Decide" data-search="projectgate decide is this project worth proceeding with? balance financial value, strategic fit, urgency, risk and resource readiness into a transparent gate score.">
-            <span class="card-top"><span class="category-label">Decide</span><span class="badge">Free</span></span>
-            <h2>ProjectGate</h2><p>Is this project worth proceeding with?</p><span class="card-link">Open tool →</span>
-          </button>
-          <button class="tool-card" type="button" data-tool-id="priority" data-category="Decide" data-search="priority decide what should go first? score work by impact, urgency, risk exposure and effort so competing priorities are easier to discuss.">
-            <span class="card-top"><span class="category-label">Decide</span><span class="badge">Free</span></span>
-            <h2>Priority</h2><p>What should go first?</p><span class="card-link">Open tool →</span>
-          </button>
-          <button class="tool-card" type="button" data-tool-id="option-compare" data-category="Decide" data-search="optioncompare decide which of two options gives the stronger overall outcome? compare value, cost, delivery time and risk across two alternatives.">
-            <span class="card-top"><span class="category-label">Decide</span><span class="badge">Free</span></span>
-            <h2>OptionCompare</h2><p>Which of two options gives the stronger overall outcome?</p><span class="card-link">Open tool →</span>
-          </button>
-          <button class="tool-card" type="button" data-tool-id="change-impact" data-category="Decide" data-search="changeimpact decide how disruptive is this proposed change? turn cost, schedule, risk, quality and expected benefit into a change-impact rating.">
-            <span class="card-top"><span class="category-label">Decide</span><span class="badge">Free</span></span>
-            <h2>ChangeImpact</h2><p>How disruptive is this proposed change?</p><span class="card-link">Open tool →</span>
-          </button>
-          <button class="tool-card" type="button" data-tool-id="risk-score" data-category="Decide" data-search="riskscore decide how serious is this risk? use a classic likelihood × consequence assessment with a clear response band.">
-            <span class="card-top"><span class="category-label">Decide</span><span class="badge">Free</span></span>
-            <h2>RiskScore</h2><p>How serious is this risk?</p><span class="card-link">Open tool →</span>
-          </button>
-          <button class="tool-card" type="button" data-tool-id="roi" data-category="Money" data-search="roi money is this investment financially worthwhile? calculate roi, annual net benefit and simple payback.">
-            <span class="card-top"><span class="category-label">Money</span><span class="badge">Free</span></span>
-            <h2>ROI</h2><p>Is this investment financially worthwhile?</p><span class="card-link">Open tool →</span>
-          </button>
-          <button class="tool-card" type="button" data-tool-id="break-even" data-category="Money" data-search="breakeven money how much must you sell before you break even? calculate contribution per unit and break-even volume / revenue.">
-            <span class="card-top"><span class="category-label">Money</span><span class="badge">Free</span></span>
-            <h2>BreakEven</h2><p>How much must you sell before you break even?</p><span class="card-link">Open tool →</span>
-          </button>
-          <button class="tool-card" type="button" data-tool-id="margin" data-category="Money" data-search="margin money what margin are you actually making? see gross profit, margin and markup from cost and selling price.">
-            <span class="card-top"><span class="category-label">Money</span><span class="badge">Free</span></span>
-            <h2>Margin</h2><p>What margin are you actually making?</p><span class="card-link">Open tool →</span>
-          </button>
-          <button class="tool-card" type="button" data-tool-id="true-cost" data-category="Money" data-search="truecost money what does this work really cost? combine material, labour, overhead and other cost into a realistic unit cost.">
-            <span class="card-top"><span class="category-label">Money</span><span class="badge">Free</span></span>
-            <h2>TrueCost</h2><p>What does this work really cost?</p><span class="card-link">Open tool →</span>
-          </button>
-          <button class="tool-card" type="button" data-tool-id="investment-check" data-category="Money" data-search="investmentcheck money does the investment clear a simple commercial hurdle? compare payback and roi against your minimum acceptable thresholds.">
-            <span class="card-top"><span class="category-label">Money</span><span class="badge">Free</span></span>
-            <h2>InvestmentCheck</h2><p>Does the investment clear a simple commercial hurdle?</p><span class="card-link">Open tool →</span>
-          </button>
-          <button class="tool-card" type="button" data-tool-id="savings-check" data-category="Money" data-search="savingscheck money what is this improvement worth over a year? annualise recurring time or cost savings and subtract implementation cost.">
-            <span class="card-top"><span class="category-label">Money</span><span class="badge">Free</span></span>
-            <h2>SavingsCheck</h2><p>What is this improvement worth over a year?</p><span class="card-link">Open tool →</span>
-          </button>
-          <button class="tool-card" type="button" data-tool-id="project-health" data-category="Projects" data-search="projecthealth projects how healthy is this project right now? combine schedule, cost, scope, risk and resource signals into a project-health score.">
-            <span class="card-top"><span class="category-label">Projects</span><span class="badge">Free</span></span>
-            <h2>ProjectHealth</h2><p>How healthy is this project right now?</p><span class="card-link">Open tool →</span>
-          </button>
-          <button class="
+      <div id="tool-directory"><div class="tool-grid" id="tool-grid"><p class="tools-empty" id="tools-empty" hidden>No matching tool yet. Try another term or category.</p></div></div>
+      <section class="workspace" id="tool-workspace" hidden aria-live="polite">
+        <div class="workspace-head"><div><p class="eyebrow" id="tool-category">Free tool</p><h2 id="tool-name">Tool</h2><p class="lead" id="tool-question"></p><p id="tool-description"></p></div><button class="btn secondary back-button" type="button" id="back-tools">← All tools</button></div>
+        <div class="tool-layout">
+          <form id="tool-form" class="panel" autocomplete="off"></form>
+          <div class="panel sticky"><div id="result" aria-live="polite"></div><div class="tool-actions"><button class="btn secondary" id="copy-result" type="button">Copy result</button><button class="btn secondary" id="print-result" type="button">Print / PDF</button><button class="btn secondary" id="share-tool" type="button">Share tool</button></div><p class="formula-note">GoCore tools are screening and decision-support utilities. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p></div>
+        </div>
+        <aside class="custom-cta"><div><h2>Need a tool for your own calculation?</h2><p>If your business uses a spreadsheet, repeated formula or manual decision process, GoCore can help turn it into a focused browser tool.</p></div><a href="/contact/">Discuss a custom tool →</a></aside>
+      </section>
+    </Container>
+  </section>
+  <script is:inline src="/tools/data-1.js"></script><script is:inline src="/tools/data-2.js"></script><script is:inline src="/tools/data-3.js"></script><script is:inline src="/tools/data-4.js"></script><script is:inline src="/tools/data-5.js"></script><script is:inline src="/tools/data-6.js"></script>
+  <script is:inline src="/tools/core.js"></script><script is:inline src="/tools/calc-1.js"></script><script is:inline src="/tools/calc-2.js"></script><script is:inline src="/tools/calc-3.js"></script><script is:inline src="/tools/calc-4.js"></script><script is:inline src="/tools/calc-5.js"></script><script is:inline src="/tools/calc-6.js"></script><script is:inline src="/tools/ui.js"></script>
+</BaseLayout>
