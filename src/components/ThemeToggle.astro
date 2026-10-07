@@ -17,7 +17,7 @@
   const media = window.matchMedia('(prefers-color-scheme: dark)');
   const stored = () => {
     try {
-      return localStorage.getItem('gocore-theme');
+      return localStorage.getItem('kevos-theme');
     } catch {
       return null;
     }
@@ -34,7 +34,7 @@
       const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
       root.dataset.theme = next;
       try {
-        localStorage.setItem('gocore-theme', next);
+        localStorage.setItem('kevos-theme', next);
       } catch {
         /* storage unavailable (private mode); the choice lasts for this page only */
       }
