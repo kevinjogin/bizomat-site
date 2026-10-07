@@ -1,15 +1,15 @@
 // Site-wide settings. Change branding, navigation and contact details here.
 
 export const SITE = {
-  name: 'GoCore',
+  name: 'KevOS',
   url: 'https://gocore.com.au',
   locale: 'en-AU',
   ogLocale: 'en_AU',
   country: 'Australia',
   /** Default <title> on the homepage and fallback description everywhere else. */
-  title: 'GoCore | Engineering, Manufacturing & Operations Support',
+  title: 'KevOS | Engineering, Manufacturing & Operations Support',
   description:
-    'GoCore provides practical CAD, manufacturing, process improvement and engineering project support for businesses in Sydney and across Australia.',
+    'KevOS provides practical CAD, manufacturing, process improvement and engineering project support for businesses in Sydney and across Australia.',
   /** One-line brand statement used in the footer and structured data. */
   statement: 'Practical engineering, manufacturing, operations and project support for businesses that need work moved forward.',
   /** Short descriptor shown under the brand in places like the footer. */
@@ -55,7 +55,7 @@ export const SITE = {
   /** AI assistant (Cloudflare Workers AI). Set to false to remove the chat widget everywhere. */
   assistant: {
     enabled: true,
-    name: 'GoCore Assistant',
+    name: 'KevOS Assistant',
     endpoint: '/api/chat',
   },
   /** Jurisdiction stated in the Terms page. Confirm before launch. */
