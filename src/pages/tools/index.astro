@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
+import MotionVisual from '../../components/MotionVisual.astro';
 import '../../styles/tools.css';
 
 const description = 'Free professional decision tools for projects, operations, manufacturing, quoting, money and business. No account or software installation required.';
@@ -10,10 +11,15 @@ const description = 'Free professional decision tools for projects, operations, 
   <section class="tools-shell">
     <Container>
       <div class="tools-intro">
+        <div class="tools-intro__story">
+          <div class="tools-intro__copy">
         <p class="eyebrow">KEVOS Tools</p>
         <h1>Tools for better decisions.</h1>
         <p class="lead">Practical calculators and decision utilities for engineering, manufacturing, projects and business. Free to use, with calculations performed in your browser.</p>
         <div class="tools-meta" aria-label="Tool collection features"><span class="tools-pill free">57 free tools + 5 Pro</span><span class="tools-pill">No account</span><span class="tools-pill">Mobile friendly</span><span class="tools-pill">Browser-first calculations</span></div>
+          </div>
+          <div class="tools-intro__visual"><MotionVisual page="tools" priority /></div>
+        </div>
         <div class="tools-search"><input id="tool-search" type="search" placeholder="What are you trying to work out?" aria-label="Search KEVOS tools" autocomplete="off" /><span class="tools-count" id="tool-count">62 tools</span></div>
         <div class="chips" aria-label="Filter tools by category">
           <button class="chip active" type="button" data-cat="All">All</button><button class="chip" type="button" data-cat="Decide">Decide</button><button class="chip" type="button" data-cat="Money">Money</button><button class="chip" type="button" data-cat="Projects">Projects</button><button class="chip" type="button" data-cat="Operations">Operations</button><button class="chip" type="button" data-cat="Manufacturing">Manufacturing</button><button class="chip" type="button" data-cat="Quoting">Quoting</button><button class="chip" type="button" data-cat="Inventory">Inventory</button><button class="chip" type="button" data-cat="Improvement">Improvement</button><button class="chip" type="button" data-cat="Planning">Planning</button><button class="chip" type="button" data-cat="Business">Business</button>

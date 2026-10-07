@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
+import MotionVisual from '../components/MotionVisual.astro';
 import Section from '../components/Section.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import Button from '../components/Button.astro';
@@ -38,6 +39,7 @@ const send = [
     title="Clear scope first. Then the <em>work</em>."
     lead="Every engagement follows the same simple pattern, so you know what you are getting, when, and for what price before substantial work begins."
   >
+    <MotionVisual page="how-it-works" slot="visual" priority />
     <Breadcrumb items={crumbs} slot="before" />
     <Fragment slot="actions">
       <Button href="/contact/" arrow data-cta="how-hero-quote">Get a Quote</Button>

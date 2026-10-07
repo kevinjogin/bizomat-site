@@ -1,5 +1,13 @@
 .tools-shell { padding-block: clamp(2.5rem,6vw,5.5rem) var(--space-section); }
-.tools-intro { max-width:900px; margin-bottom:clamp(2rem,4vw,3.5rem); }
+.tools-intro { max-width:100%; margin-bottom:clamp(2rem,4vw,3.5rem); }
+.tools-intro__story { display:grid; grid-template-columns:minmax(0,1.08fr) minmax(300px,.92fr); gap:clamp(2rem,4vw,4rem); align-items:center; }
+.tools-intro__copy { min-width:0; }
+.tools-intro__visual { width:100%; max-width:500px; justify-self:end; }
+@media (max-width:960px) {
+  .tools-intro__story { grid-template-columns:1fr; }
+  .tools-intro__visual { max-width:540px; justify-self:start; }
+}
+
 .tools-intro h1 { max-width:17ch; margin-top:.6rem; }
 .tools-intro .lead { margin-top:1rem; max-width:58ch; }
 .tools-meta { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.15rem; }

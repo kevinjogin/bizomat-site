@@ -2,6 +2,7 @@
 // The /insights/ landing page and its paginated continuations (/insights/page/2/ …).
 import BaseLayout from './BaseLayout.astro';
 import Hero from '../components/Hero.astro';
+import MotionVisual from '../components/MotionVisual.astro';
 import Container from '../components/Container.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import ArticleCard from '../components/ArticleCard.astro';
@@ -33,6 +34,7 @@ const crumbs = [
   breadcrumbs={crumbs}
 >
   <Hero eyebrow="Insights" title="Practical reading for <em>business</em> owners." lead="Articles on operations, manufacturing, engineering, decision making, finance and business. Organised by subject, so you can find what matters to you.">
+    <MotionVisual page="insights" slot="visual" priority />
     <Breadcrumb items={crumbs} slot="before" />
   </Hero>
   <Container class="insights-body">

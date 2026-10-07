@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hero from '../../components/Hero.astro';
+import MotionVisual from '../../components/MotionVisual.astro';
 import Container from '../../components/Container.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import ContactForm from '../../components/ContactForm.astro';
@@ -27,6 +28,7 @@ const next = [
   schema={[{ '@type': 'ContactPage', name: 'Contact KEVOS', url: `${SITE.url}/contact/`, about: { '@id': `${SITE.url}/#organization` } }]}
 >
   <Hero eyebrow="Get a Quote" title="Tell us about the <em>job</em>." lead="Two easy ways to start: send the project details below, or book a meeting to talk it through first.">
+    <MotionVisual page="contact" slot="visual" priority />
     <Breadcrumb items={crumbs} slot="before" />
     <Fragment slot="actions">
       <a class="path path--primary" href="#quote-form" data-cta="contact-path-form">

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
+import MotionVisual from '../components/MotionVisual.astro';
 import Section from '../components/Section.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import CallToAction from '../components/CallToAction.astro';
@@ -20,6 +21,7 @@ const crumbs = [
   breadcrumbs={crumbs}
 >
   <Hero eyebrow="About KEVOS" title="Practical engineering support, <em>without</em> the overhead.">
+    <MotionVisual page="about" slot="visual" priority />
     <Breadcrumb items={crumbs} slot="before" />
   </Hero>
 

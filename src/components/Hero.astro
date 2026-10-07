@@ -14,12 +14,17 @@ const { eyebrow, title, lead, size = 'page', class: className } = Astro.props;
 
 <header class:list={['hero', `hero--${size}`, className]}>
   <Container>
-    <slot name="before" />
-    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
-    <h1 class="hero__title" set:html={title} />
-    {lead && <p class="hero__lead">{lead}</p>}
-    {Astro.slots.has('actions') && <div class="hero__actions"><slot name="actions" /></div>}
-    <slot />
+    <div class:list={['hero__layout', Astro.slots.has('visual') && 'hero__layout--visual']}>
+      <div class="hero__copy">
+        <slot name="before" />
+        {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+        <h1 class="hero__title" set:html={title} />
+        {lead && <p class="hero__lead">{lead}</p>}
+        {Astro.slots.has('actions') && <div class="hero__actions"><slot name="actions" /></div>}
+        <slot />
+      </div>
+      {Astro.slots.has('visual') && <div class="hero__visual"><slot name="visual" /></div>}
+    </div>
   </Container>
 </header>
 
@@ -30,4 +35,17 @@ const { eyebrow, title, lead, size = 'page', class: className } = Astro.props;
   .hero--display .hero__title { max-width: 13ch; font-size: var(--step-5); line-height: 1; letter-spacing: -0.025em; }
   .hero__lead { max-width: 46ch; margin: clamp(1.25rem, 2.5vw, 2rem) 0 0; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
   .hero__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: clamp(1.75rem, 3vw, 2.5rem); }
+  .hero__copy { min-width: 0; }
+  .hero__layout--visual {
+    display: grid;
+    grid-template-columns: minmax(0, 1.12fr) minmax(300px, .88fr);
+    gap: clamp(2rem, 4vw, 5rem);
+    align-items: center;
+  }
+  .hero__visual { width: 100%; min-width: 0; max-width: 540px; justify-self: end; }
+  @media (max-width: 960px) {
+    .hero__layout--visual { grid-template-columns: 1fr; }
+    .hero__visual { justify-self: start; max-width: min(540px, 100%); }
+  }
+
 </style>

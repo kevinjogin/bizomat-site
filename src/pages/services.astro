@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
+import MotionVisual from '../components/MotionVisual.astro';
 import Section from '../components/Section.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import Button from '../components/Button.astro';
@@ -38,6 +39,7 @@ const catalog = {
     title="Engineering, manufacturing, operations and <em>project</em> support."
     lead="Defined, practical technical work for businesses that need drawings, processes, production problems or projects moved forward, without adding permanent engineering headcount."
   >
+    <MotionVisual page="services" slot="visual" priority />
     <Breadcrumb items={crumbs} slot="before" />
     <Fragment slot="actions">
       <Button href="/contact/" arrow data-cta="services-hero-quote">Get a Quote</Button>

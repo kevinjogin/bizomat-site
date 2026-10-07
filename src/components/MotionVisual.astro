@@ -1,0 +1,142 @@
+---
+/**
+ * KEVOS page-specific visual stories.
+ * Original illustrated frames are static; the HTML/CSS overlays provide graceful
+ * continuous motion without relying on video, script, or external image hosts.
+ */
+type Page = 'home' | 'services' | 'how-it-works' | 'industries' | 'insights' | 'about' | 'contact' | 'tools';
+interface Props {
+  page: Page;
+  priority?: boolean;
+  class?: string;
+}
+const { page, priority = false, class: className } = Astro.props;
+const images: Record<Page, { src: string; alt: string }> = {
+  home: {
+    src: '/visuals/kevos-home.webp',
+    alt: 'KEVOS engineering core connects design and CAD, manufacturing support, operations improvement and engineering project delivery.',
+  },
+  services: {
+    src: '/visuals/kevos-services.webp',
+    alt: 'Four connected KEVOS service capabilities: engineering and CAD, manufacturing support, operations improvement and engineering project support.',
+  },
+  'how-it-works': {
+    src: '/visuals/kevos-how-it-works.webp',
+    alt: 'KEVOS delivery process from initial enquiry through review, scope and execution to handover.',
+  },
+  industries: {
+    src: '/visuals/kevos-industries.webp',
+    alt: 'KEVOS engineering support across building products, manufacturing, fabrication, product development, industrial operations and project delivery.',
+  },
+  insights: {
+    src: '/visuals/kevos-insights.webp',
+    alt: 'KEVOS Insights connects practical articles, guides, case notes, ideas, lessons and analysis.',
+  },
+  about: {
+    src: '/visuals/kevos-about.webp',
+    alt: 'KEVOS is built around practical engineering, manufacturing, project delivery and continuous improvement.',
+  },
+  contact: {
+    src: '/visuals/kevos-contact.webp',
+    alt: 'Connect with KEVOS to request a quote, book a meeting, leave a message or discuss a project.',
+  },
+  tools: {
+    src: '/visuals/kevos-tools.webp',
+    alt: 'KEVOS decision tools for costing, project planning, manufacturing, operations, inventory and improvement analysis.',
+  },
+};
+const image = images[page];
+---
+
+<figure class:list={['motion-art', `motion-art--${page}`, className]}>
+  <img
+    class="motion-art__image"
+    src={image.src}
+    alt={image.alt}
+    width="768"
+    height="768"
+    loading={priority ? 'eager' : 'lazy'}
+    decoding="async"
+  />
+  <span class="motion-art__orbit motion-art__orbit--orange" aria-hidden="true"></span>
+  <span class="motion-art__orbit motion-art__orbit--blue" aria-hidden="true"></span>
+  <span class="motion-art__scanner" aria-hidden="true"></span>
+  <span class="motion-art__corner motion-art__corner--tl" aria-hidden="true"></span>
+  <span class="motion-art__corner motion-art__corner--br" aria-hidden="true"></span>
+</figure>
+
+<style>
+  .motion-art {
+    display: block;
+    position: relative;
+    width: 100%;
+    max-width: 540px;
+    aspect-ratio: 1 / 1;
+    margin: 0;
+    isolation: isolate;
+    overflow: hidden;
+    border: 1px solid rgb(71 127 194 / 0.35);
+    border-radius: clamp(13px, 2vw, 22px);
+    background: #071019;
+    box-shadow: 0 16px 48px rgb(0 0 0 / 0.14);
+  }
+  .motion-art__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform-origin: center;
+    animation: motion-art-breathe 19s ease-in-out infinite alternate;
+  }
+  .motion-art__orbit {
+    position: absolute;
+    inset: 32%;
+    border-radius: 50%;
+    pointer-events: none;
+    background: conic-gradient(from 20deg, transparent 0% 18%, currentColor 20% 23%, transparent 25% 63%, currentColor 66% 68%, transparent 70% 100%);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1px));
+    mix-blend-mode: screen;
+    opacity: .62;
+    animation: motion-art-spin 16s linear infinite;
+  }
+  .motion-art__orbit--orange { color: #ff6a13; filter: drop-shadow(0 0 5px #ff6a13); }
+  .motion-art__orbit--blue { inset: 29.8%; color: #2f85ff; opacity: .38; animation-direction: reverse; animation-duration: 22s; }
+  .motion-art__scanner {
+    position: absolute;
+    inset: -80% -120%;
+    pointer-events: none;
+    background: linear-gradient(100deg, transparent 44%, rgb(67 155 255 / .00) 47%, rgb(67 155 255 / .065) 50%, transparent 53%);
+    mix-blend-mode: screen;
+    transform: translateX(-42%) rotate(-9deg);
+    animation: motion-art-scan 15s ease-in-out infinite;
+  }
+  .motion-art__corner {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+    border-color: #2b83fc;
+    opacity: .75;
+  }
+  .motion-art__corner--tl { top: 12px; left: 12px; border-top: 1px solid; border-left: 1px solid; }
+  .motion-art__corner--br { right: 12px; bottom: 12px; border-bottom: 1px solid; border-right: 1px solid; border-color: #ff6a13; }
+
+  @keyframes motion-art-breathe {
+    from { transform: scale(1); filter: brightness(1); }
+    to { transform: scale(1.012); filter: brightness(1.065); }
+  }
+  @keyframes motion-art-spin { to { transform: rotate(360deg); } }
+  @keyframes motion-art-scan {
+    0%, 15% { transform: translateX(-42%) rotate(-9deg); opacity: 0; }
+    25% { opacity: .7; }
+    60%, 100% { transform: translateX(42%) rotate(-9deg); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .motion-art__image, .motion-art__orbit, .motion-art__scanner {
+      animation: none !important;
+      transform: none !important;
+    }
+    .motion-art__scanner { display: none; }
+  }
+</style>
