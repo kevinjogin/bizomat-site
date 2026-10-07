@@ -19,19 +19,19 @@ export const SITE = {
   /** Optional profiles, e.g. { label: 'LinkedIn', href: 'https://www.linkedin.com/company/…' }. */
   social: [] as Array<{ label: string; href: string }>,
   /** Default social sharing image in /public (1200 × 630). */
-  ogImage: '/brand/kevos-logo-navy.png',
+  ogImage: '/brand/kevos-logo-safe-v2.png',
   /**
    * Brand assets supplied for KEVOS. The main wordmark is navy on light backgrounds and is rendered white in dark mode.
    */
   logo: {
-    svg: '/brand/kevos-logo-navy.png',
-    png: '/brand/kevos-logo-navy.png',
-    webp: '/brand/kevos-logo-navy.png',
-    width: 400,
-    height: 52,
+    svg: '/brand/kevos-logo-safe-v2.png',
+    png: '/brand/kevos-logo-safe-v2.png',
+    webp: '/brand/kevos-logo-safe-v2.png',
+    width: 304,
+    height: 38,
   },
-  icon: '/brand/kevos-icon.png',
-  iconLarge: '/brand/kevos-icon.png',
+  icon: '/brand/kevos-favicon-v2.png',
+  iconLarge: '/brand/kevos-favicon-v2.png',
   /**
    * Contact form delivery. The UI is identical for both providers.
    *  - 'web3forms': the browser posts straight to Web3Forms (works on day one, no server needed).
