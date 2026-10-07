@@ -3,7 +3,7 @@
 Paste everything inside the block into Codex (opened on the `gocore-website` repository), then add your notes, text or file paths under **SOURCE MATERIAL** at the end. Codex writes new article files but does not commit or deploy. When it finishes, hand the result back to Claude to review, verify, commit and publish.
 
 ```text
-You are writing Insights articles for the GoCore website (gocore.com.au). This repository is an Astro site; articles are Markdown files in src/content/insights/.
+You are writing Insights articles for the KevOS website (gocore.com.au). This repository is an Astro site; articles are Markdown files in src/content/insights/.
 
 TASK
 Turn the source material at the end into as many high-quality, standalone Insights articles as it genuinely supports. One clear topic per article. Don't pad thin material and don't split one idea across several thin articles.
@@ -11,7 +11,7 @@ Save each article as a NEW Markdown file in src/content/insights/.
 Do not edit, rename or delete any existing file. Do not commit, push or deploy. Leave the new files for review.
 
 ABOUT GOCORE
-- GoCore is an Australian technical-services business providing engineering and CAD support, manufacturing support, operations improvement and engineering project support (including the GoCore Factory Fix), for Sydney and NSW businesses with suitable remote work Australia-wide.
+- KevOS is an Australian technical-services business providing engineering and CAD support, manufacturing support, operations improvement and engineering project support (including the KevOS Factory Fix), for Sydney and NSW businesses with suitable remote work Australia-wide.
 - Never invent clients, projects, results, statistics or prices, and never describe services or capabilities beyond those on the Services page (src/data/services.ts). Never use or describe information belonging to any employer, client or supplier.
 - These articles also feed the website's AI assistant, so each article must stand alone: define terms the first time they appear, avoid "as mentioned in another article", and keep each section focused under a clear heading.
 
@@ -35,7 +35,7 @@ category: "Business"
 tags:
   - finance
   - strategy
-author: "GoCore"
+author: "KevOS"
 featured: false
 draft: false
 ---
@@ -56,7 +56,7 @@ BODY STRUCTURE
 - Finish with a horizontal rule and one italic source and disclaimer line, for example:
   ---
   *Source: <author>, <title> (<year>). Figures in this article are illustrations, not data. This article is general information, not financial, legal or investment advice.*
-  Keep only the parts of the disclaimer that fit the topic. If the source is my own notes, write "Source: GoCore notes."
+  Keep only the parts of the disclaimer that fit the topic. If the source is my own notes, write "Source: KevOS notes."
 
 INTERNAL LINKS
 - Where genuinely useful, link to 1–3 existing articles using this exact form: [Article title](/insights/<existing-file-name-without-.md>/). The trailing slash is required.
