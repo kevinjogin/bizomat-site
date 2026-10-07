@@ -80,7 +80,7 @@ Using the same lenses for every idea makes comparisons fairer and makes it easie
 
 Broad is a starting position, not a permanent one. As specific initiatives show promise, they will move from exploring to developing and testing, and the business will organise itself around what works.
 
-That progress will be visible. Each initiative on the [Work](/work/) page carries an honest status:
+That progress can still be assessed using clear internal status definitions:
 
 | Status | What it means |
 | --- | --- |
@@ -112,7 +112,7 @@ When several of these signals appear together, the case for narrowing focus arou
 
 Starting broad also means being clear about what KEVOS is not doing.
 
-KEVOS is not presenting ideas as products before they exist. It is not listing services it does not yet offer, and it is not claiming customers, partners or results it has not achieved. The Work page lists only real initiatives, with honest statuses, and the Insights distinguish between summaries of established knowledge and KEVOS's own observations.
+KEVOS is not presenting ideas as products before they exist. It is not listing services it does not yet offer, and it is not claiming customers, partners or results it has not achieved. KEVOS only presents real initiatives as real, and the Insights distinguish between summaries of established knowledge and KEVOS's own observations.
 
 This restraint is deliberate. A young business can be tempted to look larger and more certain than it is. But credibility built on claims that later prove hollow is fragile, while credibility built on an honest record grows stronger with time.
 
@@ -124,7 +124,7 @@ Starting broad has its own risks, and they deserve honesty.
 
 **Never committing.** Exploration can become a comfortable place to stay, because it postpones the hard work and risk of building. The response is to set decision points: specific moments when each initiative must move forward, pause or stop.
 
-**Lacking a clear story.** A broad business is harder to explain than a focused one. People may reasonably ask what KEVOS actually does. The honest answer, for now, is that it is exploring, and the Insights and Work pages show what that exploration looks like.
+**Lacking a clear story.** A broad business is harder to explain than a focused one. People may reasonably ask what KEVOS actually does. The honest answer, for now, is that it is exploring, and the Insights explain what that exploration looks like.
 
 **Shallow expertise.** Depth often comes from focus. The response is to go deep on the specific initiatives that progress, even while the overall business remains broad.
 
@@ -168,7 +168,7 @@ For anyone following KEVOS, starting broad means a few things in practice.
 
 The Insights will cover a wide range of topics: products, technology, systems, business practice and the ideas behind them. Some articles summarise established knowledge, such as the series on financial statements and on sales practice. Others describe KEVOS's own reasoning and, as work progresses, its own experiments.
 
-The Work page will show initiatives at different stages, with honest statuses, including some that are archived.
+Where useful, the Insights will document initiatives and lessons as they develop.
 
 And KEVOS welcomes conversations. If you face a problem that might be worth solving, or you see a flaw in the reasoning here, the [contact page](/contact/) is the place to say so.
 
