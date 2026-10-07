@@ -55,6 +55,7 @@ export const SITE = {
     enabled: true,
     name: 'KEVOS Assistant',
     endpoint: '/api/chat',
+    icon: '/brand/kevos-assistant-icon.png',
   },
   /** Jurisdiction stated in the Terms page. Confirm before launch. */
   jurisdiction: 'New South Wales, Australia',

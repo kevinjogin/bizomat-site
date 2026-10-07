@@ -16,7 +16,7 @@ const prompts = ['Can KEVOS support my project?', 'I need engineering or CAD sup
   {
     mode === 'floating' && (
       <button class="assistant__launcher" type="button" aria-expanded="false" aria-controls="assistant-panel" data-assistant-open>
-        <img src={SITE.icon} alt="" width="28" height="28" loading="lazy" />
+        <img src={SITE.assistant.icon} alt="" width="28" height="28" loading="lazy" />
         <span>Ask KEVOS</span>
       </button>
     )
@@ -24,7 +24,7 @@ const prompts = ['Can KEVOS support my project?', 'I need engineering or CAD sup
 
   <section class="assistant__panel" id="assistant-panel" role="dialog" aria-modal="false" aria-labelledby="assistant-title" hidden={mode === 'floating'} data-assistant-panel>
     <header class="assistant__header">
-      <img class="assistant__avatar" src={SITE.icon} alt="" width="36" height="36" loading="lazy" />
+      <img class="assistant__avatar" src={SITE.assistant.icon} alt="" width="36" height="36" loading="lazy" />
       <div class="assistant__heading">
         {mode === 'page' ? <h1 id="assistant-title">{name}</h1> : <h2 id="assistant-title">{name}</h2>}
         <p><span class="assistant__dot" aria-hidden="true"></span>Engineering &amp; project enquiry support</p>
@@ -357,7 +357,7 @@ const prompts = ['Can KEVOS support my project?', 'I need engineering or CAD sup
     box-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.45); font-size: 0.95rem; font-weight: 560;
     transition: transform 0.25s var(--ease), background 0.2s var(--ease);
   }
-  .assistant__launcher img { width: 28px; height: 28px; padding: 3px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper-2); object-fit: contain; }
+  .assistant__launcher img { width: 32px; height: 32px; padding: 0; border: 0; border-radius: 8px; background: transparent; object-fit: contain; }
   .assistant__launcher:hover { transform: translateY(-2px); }
   .assistant__launcher.is-hidden { display: none; }
 
@@ -374,7 +374,7 @@ const prompts = ['Can KEVOS support my project?', 'I need engineering or CAD sup
   .assistant--page .assistant__panel { width: 100%; height: 100dvh; border: 0; border-radius: 0; box-shadow: none; }
 
   .assistant__header { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 0.85rem 0.85rem 1rem; border-bottom: 1px solid var(--line); }
-  .assistant__avatar { width: 40px; height: 40px; flex: none; padding: 4px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper-2); object-fit: contain; }
+  .assistant__avatar { width: 46px; height: 46px; flex: none; padding: 0; border: 0; border-radius: 10px; background: transparent; object-fit: contain; }
   .assistant__heading { flex: 1; min-width: 0; }
   .assistant__heading h1, .assistant__heading h2 { font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
   .assistant__heading p { display: flex; align-items: center; gap: 0.4rem; margin: 0.15rem 0 0; font-size: 0.78rem; color: var(--muted); }
