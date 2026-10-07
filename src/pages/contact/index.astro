@@ -13,7 +13,7 @@ const crumbs = [
   { label: 'Contact', href: '/contact/' },
 ];
 const next = [
-  'GoCore reviews your enquiry and replies as soon as possible.',
+  'KevOS reviews your enquiry and replies as soon as possible.',
   'A short conversation clarifies the problem, the deliverables and any site requirements.',
   'You receive a written scope and price before substantial work begins.',
 ];
@@ -21,10 +21,10 @@ const next = [
 
 <BaseLayout
   title="Get a Quote"
-  description="Request a quote or discuss a project with GoCore: engineering and CAD support, manufacturing support, operations improvement, project support and Factory Fix engagements."
+  description="Request a quote or discuss a project with KevOS: engineering and CAD support, manufacturing support, operations improvement, project support and Factory Fix engagements."
   breadcrumbs={crumbs}
   canonical="/contact/"
-  schema={[{ '@type': 'ContactPage', name: 'Contact GoCore', url: `${SITE.url}/contact/`, about: { '@id': `${SITE.url}/#organization` } }]}
+  schema={[{ '@type': 'ContactPage', name: 'Contact KevOS', url: `${SITE.url}/contact/`, about: { '@id': `${SITE.url}/#organization` } }]}
 >
   <Hero eyebrow="Get a Quote" title="Tell us about the <em>job</em>." lead="Two easy ways to start: send the project details below, or book a meeting to talk it through first.">
     <Breadcrumb items={crumbs} slot="before" />
@@ -42,7 +42,7 @@ const next = [
   <Container class="contact-layout">
     <div class="contact-intro">
       <p class="contact-intro__lead">Describe the problem, drawing or project. A short description is enough to start.</p>
-      <p class="contact-intro__note">Not sure which service you need? Describe the problem and GoCore can help define the scope.</p>
+      <p class="contact-intro__note">Not sure which service you need? Describe the problem and KevOS can help define the scope.</p>
       <BookingCard class="contact-intro__booking" />
       <h2 class="contact-intro__heading">What happens next</h2>
       <ol class="contact-intro__list">{next.map((r) => <li>{r}</li>)}</ol>
