@@ -1,0 +1,64 @@
+---
+interface Props {
+  class?: string;
+  height?: number;
+  label?: string;
+}
+const { class: className, height = 36, label = 'KEVOS' } = Astro.props;
+const sizeClass = height >= 40 ? 'site-wordmark--footer' : height <= 30 ? 'site-wordmark--compact' : 'site-wordmark--header';
+---
+<span
+  class:list={['site-wordmark', sizeClass, className]}
+  role={label ? 'img' : undefined}
+  aria-label={label || undefined}
+  aria-hidden={label ? undefined : 'true'}
+>
+  <img
+    class="site-wordmark__image site-wordmark__image--light"
+    src="/brand/kevos-logo-light-full.png"
+    alt=""
+    width="600"
+    height="78"
+    decoding="async"
+  />
+  <img
+    class="site-wordmark__image site-wordmark__image--dark"
+    src="/brand/kevos-logo-dark-full.png"
+    alt=""
+    width="600"
+    height="78"
+    decoding="async"
+  />
+</span>
+
+<style>
+  .site-wordmark {
+    --wordmark-h: 36px;
+    display: inline-grid;
+    align-items: center;
+    line-height: 0;
+    overflow: visible;
+    max-width: 100%;
+  }
+  .site-wordmark--compact { --wordmark-h: 28px; }
+  .site-wordmark--header { --wordmark-h: 36px; }
+  .site-wordmark--footer { --wordmark-h: 44px; }
+
+  .site-wordmark__image {
+    grid-area: 1 / 1;
+    display: block;
+    width: auto;
+    height: var(--wordmark-h);
+    max-width: 100%;
+    object-fit: contain;
+  }
+  .site-wordmark__image--dark { display: none; }
+
+  :global(:root[data-theme='dark']) .site-wordmark__image--light { display: none; }
+  :global(:root[data-theme='dark']) .site-wordmark__image--dark { display: block; }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .site-wordmark__image--light { display: none; }
+    :global(:root:not([data-theme='light'])) .site-wordmark__image--dark { display: block; }
+  }
+</style>
