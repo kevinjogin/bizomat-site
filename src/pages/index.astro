@@ -6,7 +6,6 @@ import Button from '../components/Button.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import CallToAction from '../components/CallToAction.astro';
 import ServiceMap from '../components/ServiceMap.astro';
-import MotionVisual from '../components/MotionVisual.astro';
 import FactoryFixFeature from '../components/FactoryFixFeature.astro';
 import PackageGrid from '../components/PackageGrid.astro';
 import ProcessSteps from '../components/ProcessSteps.astro';
@@ -45,20 +44,6 @@ const serviceSchema = {
         <ul class="home-hero__caps" aria-label="Capabilities">{capabilities.map((c) => <li>{c}</li>)}</ul>
       </div>
       <div class="home-hero__visual"><ServiceMap /></div>
-    </Container>
-  </section>
-
-  <section class="home-story" aria-labelledby="home-story-title">
-    <Container class="home-story__inner">
-      <div class="home-story__copy">
-        <p class="eyebrow">The KEVOS engineering core</p>
-        <h2 id="home-story-title">One connected path from technical problem to practical result.</h2>
-        <p>Design, make, improve and deliver are not isolated tasks. See how drawings, production know-how, process improvement and project coordination connect around one clearly defined outcome.</p>
-        <Button href="/how-it-works/" variant="text" arrow>Explore how KEVOS works</Button>
-      </div>
-      <div class="home-story__visual">
-        <MotionVisual page="home" />
-      </div>
     </Container>
   </section>
 
@@ -164,12 +149,6 @@ const serviceSchema = {
 </BaseLayout>
 
 <style>
-  .home-story { padding-block: clamp(2.5rem, 5vw, 4.5rem); border-block: 1px solid var(--line); background: var(--paper-2); }
-  :global(.home-story__inner) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(290px, .9fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; }
-  .home-story__copy h2 { max-width: 17ch; margin: 1rem 0 1.2rem; font-size: clamp(1.9rem, 3vw, 3rem); line-height: 1.12; letter-spacing: -.025em; }
-  .home-story__copy > p:not(.eyebrow) { max-width: 53ch; color: var(--ink-2); line-height: 1.65; margin-bottom: 1.8rem; }
-  .home-story__visual { width: 100%; max-width: 500px; justify-self: end; }
-  @media (max-width: 920px) { :global(.home-story__inner) { grid-template-columns: 1fr; } .home-story__visual { justify-self: start; } }
 
   .home-hero { padding-block: clamp(3.5rem, 7vw, 7rem) clamp(3.5rem, 6vw, 6rem); }
   :global(.home-hero__inner) { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr); gap: 3rem 4rem; align-items: center; }

@@ -277,6 +277,37 @@ const nodes = SERVICE_GROUPS.slice(0, 4).map((g, i) => ({ ...g, n: i + 1, ...(ME
     .smap__panel { border-radius: 16px; }
   }
 
+  /* Progress indicators amplify the existing four-stage visual story without
+     changing its geometry or any card positions. */
+  .smap__head::after {
+    content: '';
+    width: clamp(14px, 22%, 35px);
+    height: 2px;
+    flex: none;
+    border-radius: 20px;
+    background: linear-gradient(90deg, var(--blue), var(--orange));
+    transform-origin: left center;
+    opacity: .35;
+  }
+  .smap__core::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border: 1px dashed var(--blue);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: .22;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .smap__head::after { animation: smap-stage-meter var(--cycle) ease-in-out var(--d) infinite; }
+    .smap__core::after { animation: smap-spin 28s linear infinite; }
+  }
+  @keyframes smap-stage-meter {
+    0%, 21% { opacity: 1; transform: scaleX(1); }
+    32%, 87% { opacity: .24; transform: scaleX(.28); }
+    100% { opacity: 1; transform: scaleX(1); }
+  }
+
   /* Motion, only for visitors who have not asked for less of it. */
   @media (prefers-reduced-motion: no-preference) {
     .smap__spinner { animation: smap-orbit var(--cycle) linear infinite; }

@@ -1,142 +1,335 @@
 ---
 /**
- * KEVOS page-specific visual stories.
- * Original illustrated frames are static; the HTML/CSS overlays provide graceful
- * continuous motion without relying on video, script, or external image hosts.
+ * True KEVOS motion scenes: responsive SVG geometry, real moving signals,
+ * sequentially highlighted steps and live interface details. No flat illustrations.
+ * Zero runtime dependencies. All motion stops for reduced-motion visitors.
  */
-type Page = 'home' | 'services' | 'how-it-works' | 'industries' | 'insights' | 'about' | 'contact' | 'tools';
-interface Props {
-  page: Page;
-  priority?: boolean;
-  class?: string;
-}
-const { page, priority = false, class: className } = Astro.props;
-const images: Record<Page, { src: string; alt: string }> = {
-  home: {
-    src: '/visuals/kevos-home.webp',
-    alt: 'KEVOS engineering core connects design and CAD, manufacturing support, operations improvement and engineering project delivery.',
-  },
+type Page = 'services' | 'how-it-works' | 'industries' | 'insights' | 'about' | 'contact' | 'tools';
+interface Props { page: Page; priority?: boolean; class?: string; }
+type Node = { x: number; y: number; first: string; second?: string; sub: string; glyph?: string };
+type Scene = { eyebrow: string; footer: string; alt: string; center: string; route: string; nodes: Node[] };
+const { page, class: className } = Astro.props;
+const shapes = {
+  drafting: 'M0 13V-12H14V0H26V13Z M4 -16H24 M4 -20V-12 M24 -20V-12',
+  manufacture: 'M2 12H26 M6 12V4H12V12 M18 12V4H24V12 M14 -17A11 11 0 1 1 13.9 -17 M14 -11A5 5 0 1 1 13.9 -11',
+  ops: 'M0 10L7 4L13 8L21 -4L27 -2 M0 -10H8V-2H0Z M10 -10H18V-2H10Z',
+  delivery: 'M0 12V-18H26 M4 -12H16 M4 -4H22 M4 4H15 M4 12H26',
+  building: 'M0 12V-11L12 -20L25 -11V12 M6 12V0H19V12',
+  fabrication: 'M0 11L14 -15L28 11 M4 11H24 M14 -15V11',
+  product: 'M0 -14L14 -21L28 -14V7L14 15L0 7Z M14 -21V0L28 7 M14 0L0 7 M14 0V15',
+  inventory: 'M0 -8L14 -17L28 -8V9L14 17L0 9Z M0 -8L14 1L28 -8 M14 1V17',
+  analysis: 'M0 12V-16 M0 12H28 M4 5L11 -5L17 0L25 -14',
+  insight: 'M0 -18H21L28 -11V17H0Z M5 -8H19 M5 0H23 M5 8H19',
+  principles: 'M14 -19L26 -12V1C26 10 20 15 14 19C8 15 2 10 2 1V-12Z M8 1L12 5L21 -5',
+};
+const scenes: Record<Exclude<Page,'how-it-works'|'contact'|'tools'>,Scene> = {
   services: {
-    src: '/visuals/kevos-services.webp',
-    alt: 'Four connected KEVOS service capabilities: engineering and CAD, manufacturing support, operations improvement and engineering project support.',
-  },
-  'how-it-works': {
-    src: '/visuals/kevos-how-it-works.webp',
-    alt: 'KEVOS delivery process from initial enquiry through review, scope and execution to handover.',
+    eyebrow:'04 CONNECTED CAPABILITIES', center:'SERVICE CORE',
+    footer:'DESIGN  /  MAKE  /  IMPROVE  /  DELIVER',
+    alt:'Animated network connecting KEVOS Engineering and CAD, Manufacturing Support, Operations Improvement and Engineering Project Support.',
+    route:'M106 171 Q270 65 434 171 Q505 270 434 372 Q270 476 106 372 Q35 270 106 171',
+    nodes:[
+      {x:106,y:171,first:'Engineering',second:'& CAD',sub:'DRAWINGS / DFM',glyph:shapes.drafting},
+      {x:434,y:171,first:'Manufacturing',second:'Support',sub:'JIGS / TOOLING',glyph:shapes.manufacture},
+      {x:434,y:372,first:'Operations',second:'Improvement',sub:'FLOW / QUALITY',glyph:shapes.ops},
+      {x:106,y:372,first:'Project',second:'Support',sub:'SCOPE / HANDOVER',glyph:shapes.delivery}
+    ]
   },
   industries: {
-    src: '/visuals/kevos-industries.webp',
-    alt: 'KEVOS engineering support across building products, manufacturing, fabrication, product development, industrial operations and project delivery.',
+    eyebrow:'SECTORS & SOLUTIONS',center:'INDUSTRY FIT',
+    footer:'SHARED PROBLEMS  /  PRACTICAL SOLUTIONS',
+    alt:'Animated industry network connecting building products, fabrication, manufacturers, OEMs, industrial operations and product development to KEVOS.',
+    route:'M106 149 Q270 65 434 149 L434 270 L434 391 Q270 468 106 391 L106 270 Z',
+    nodes:[
+      {x:106,y:149,first:'Building',second:'Products',sub:'COMPONENTS',glyph:shapes.building},
+      {x:434,y:149,first:'Manufacturing',sub:'PRODUCTION',glyph:shapes.manufacture},
+      {x:434,y:270,first:'Fabrication',sub:'WORKHOLDING',glyph:shapes.fabrication},
+      {x:434,y:391,first:'OEM & Product',sub:'DEVELOPMENT',glyph:shapes.product},
+      {x:106,y:391,first:'Industrial',second:'Operations',sub:'PROCESS FLOW',glyph:shapes.ops},
+      {x:106,y:270,first:'Assembly',second:'Systems',sub:'CONSISTENCY',glyph:shapes.inventory}
+    ]
   },
   insights: {
-    src: '/visuals/kevos-insights.webp',
-    alt: 'KEVOS Insights connects practical articles, guides, case notes, ideas, lessons and analysis.',
+    eyebrow:'PRACTICAL KNOWLEDGE SYSTEM',center:'INSIGHTS',
+    footer:'OBSERVE  /  LEARN  /  APPLY',
+    alt:'Animated knowledge network connecting KEVOS practical articles, improvement guides, technical observations and business analysis.',
+    route:'M106 170 Q270 65 434 170 Q505 270 434 370 Q270 477 106 370 Q35 270 106 170',
+    nodes:[
+      {x:106,y:170,first:'Practical',second:'Articles',sub:'KNOWLEDGE',glyph:shapes.insight},
+      {x:434,y:170,first:'Engineering',second:'Guides',sub:'METHODS',glyph:shapes.drafting},
+      {x:434,y:370,first:'Analysis',second:'& Ideas',sub:'DECISIONS',glyph:shapes.analysis},
+      {x:106,y:370,first:'Improvement',second:'Lessons',sub:'APPLICATION',glyph:shapes.ops}
+    ]
   },
   about: {
-    src: '/visuals/kevos-about.webp',
-    alt: 'KEVOS is built around practical engineering, manufacturing, project delivery and continuous improvement.',
+    eyebrow:'BUILT ON PRACTICAL EXPERIENCE',center:'CAPABILITY',
+    footer:'ENGINEERING THINKING  /  REAL-WORLD DELIVERY',
+    alt:'Animated KEVOS capability network linking hands-on tooling, engineering, operations and project delivery experience.',
+    route:'M106 170 Q270 65 434 170 Q505 270 434 370 Q270 477 106 370 Q35 270 106 170',
+    nodes:[
+      {x:106,y:170,first:'Toolmaking',sub:'FOUNDATION',glyph:shapes.manufacture},
+      {x:434,y:170,first:'Engineering',second:'& Design',sub:'TECHNICAL',glyph:shapes.drafting},
+      {x:434,y:370,first:'Operations',sub:'IMPROVEMENT',glyph:shapes.ops},
+      {x:106,y:370,first:'Project',second:'Delivery',sub:'EXECUTION',glyph:shapes.delivery}
+    ]
+  }
+};
+const radialScene = page in scenes ? scenes[page as keyof typeof scenes] : null;
+const copy = {
+  'how-it-works': {
+    eyebrow:'A DEFINED DELIVERY PROCESS',footer:'FROM ENQUIRY TO HANDOVER',
+    alt:'Animated five-stage KEVOS project pathway from enquiry through review, scope and execution to handover.'
   },
   contact: {
-    src: '/visuals/kevos-contact.webp',
-    alt: 'Connect with KEVOS to request a quote, book a meeting, leave a message or discuss a project.',
+    eyebrow:'START THE RIGHT CONVERSATION',footer:'CLEAR ENQUIRY  /  CLEAR NEXT STEP',
+    alt:'Animated contact routes for requesting a quote, booking a meeting or sending a message, converging on KEVOS.'
   },
   tools: {
-    src: '/visuals/kevos-tools.webp',
-    alt: 'KEVOS decision tools for costing, project planning, manufacturing, operations, inventory and improvement analysis.',
-  },
+    eyebrow:'PRACTICAL DECISION SUPPORT',footer:'INPUT  →  ANALYSE  →  RESULT',
+    alt:'Animated KEVOS tools interface transforming project, manufacturing and business inputs into useful decisions.'
+  }
 };
-const image = images[page];
+const info = radialScene || copy[page as keyof typeof copy];
+const id = `ms-${page}`;
 ---
 
-<figure class:list={['motion-art', `motion-art--${page}`, className]}>
-  <img
-    class="motion-art__image"
-    src={image.src}
-    alt={image.alt}
-    width="768"
-    height="768"
-    loading={priority ? 'eager' : 'lazy'}
-    decoding="async"
-  />
-  <span class="motion-art__orbit motion-art__orbit--orange" aria-hidden="true"></span>
-  <span class="motion-art__orbit motion-art__orbit--blue" aria-hidden="true"></span>
-  <span class="motion-art__scanner" aria-hidden="true"></span>
-  <span class="motion-art__corner motion-art__corner--tl" aria-hidden="true"></span>
-  <span class="motion-art__corner motion-art__corner--br" aria-hidden="true"></span>
+<figure class:list={['ms', `ms--${page}`, className]} role="img" aria-labelledby={`${id}-description`}>
+  <figcaption id={`${id}-description`} class="visually-hidden">{info.alt}</figcaption>
+  <svg class="ms__svg" viewBox="0 0 540 540" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+    <defs>
+      <pattern id={`${id}-grid`} width="27" height="27" patternUnits="userSpaceOnUse">
+        <path d="M27 0H0V27" fill="none" stroke="#26496d" stroke-width=".55" opacity=".5" />
+      </pattern>
+      <radialGradient id={`${id}-halo`}>
+        <stop offset="0" stop-color="#2e65b9" stop-opacity=".23"/>
+        <stop offset=".55" stop-color="#0f2240" stop-opacity=".08"/>
+        <stop offset="1" stop-color="#080e16" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id={`${id}-flow`} x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#2d8aff"/>
+        <stop offset=".65" stop-color="#ff6a13"/>
+        <stop offset="1" stop-color="#ffa65f"/>
+      </linearGradient>
+    </defs>
+    <rect width="540" height="540" fill="#090f18" rx="18"/>
+    <rect x="0" y="0" width="540" height="540" fill={`url(#${id}-grid)`} rx="18"/>
+    <circle cx="270" cy="270" r="255" fill={`url(#${id}-halo)`}/>
+    <path class="ms__corner" d="M22 65V22H65 M475 22H518V65 M22 475V518H65 M475 518H518V475"/>
+    <text x="28" y="46" class="ms__eyebrow">{info.eyebrow}</text>
+    <text x="512" y="47" text-anchor="end" class="ms__live">● SYSTEM ACTIVE</text>
+    <path d="M27 68H513" class="ms__rule"/>
+    <path d="M27 474H513" class="ms__rule"/>
+    <text x="28" y="502" class="ms__foot">{info.footer}</text>
+    <text x="512" y="502" text-anchor="end" class="ms__foot ms__foot--blue">KEVOS / 01</text>
+
+    {radialScene && (
+      <g class="ms__radial">
+        {radialScene.nodes.map(node => (
+          <path class="ms__spoke" d={`M270 271 L${node.x} ${node.y}`} />
+        ))}
+        <path d={radialScene.route} class="ms__route"/>
+        <path d={radialScene.route} class="ms__stream"/>
+        <circle class="ms__packet" r="6" cx="0" cy="0">
+          <animateMotion dur="12s" path={radialScene.route} repeatCount="indefinite"/>
+        </circle>
+        {radialScene.nodes.map((node,i) => (
+          <g class:list={['ms__station',`ms__station--${i+1}`]} transform={`translate(${node.x} ${node.y})`}>
+            <rect x="-80" y="-43" width="160" height="86" rx="12" class="ms__tile"/>
+            <rect x="-80" y="-43" width="160" height="86" rx="12" class="ms__tile-active"/>
+            <text x="-66" y="-23" class="ms__ordinal">{String(i+1).padStart(2,'0')}</text>
+            {node.glyph && <path d={node.glyph} transform="translate(35 -14) scale(.85)" class="ms__glyph"/>}
+            <text x="-66" y={node.second ? '0' : '9'} class="ms__node-title">{node.first}</text>
+            {node.second && <text x="-66" y="18" class="ms__node-title">{node.second}</text>}
+            <text x="-66" y="33" class="ms__node-sub">{node.sub}</text>
+          </g>
+        ))}
+        <circle cx="270" cy="271" r="94" class="ms__hub-outline"/>
+        <circle cx="270" cy="271" r="87" class="ms__hub-ticks"/>
+        <circle cx="270" cy="271" r="81" class="ms__hub-fill"/>
+        <g class="ms__ring">
+          <circle cx="270" cy="271" r="88" class="ms__arc ms__arc--orange"/>
+          <circle cx="270" cy="271" r="88" class="ms__arc ms__arc--blue"/>
+        </g>
+        <circle cx="270" cy="271" r="61" class="ms__hub-inner"/>
+        <text x="270" y="262" text-anchor="middle" class="ms__brand">KEVOS</text>
+        <text x="270" y="283" text-anchor="middle" class="ms__hub-caption">{radialScene.center}</text>
+        <circle class="ms__center-pulse" cx="270" cy="271" r="70"/>
+      </g>
+    )}
+
+    {page === 'how-it-works' && (
+      <g class="ms__timeline">
+        <path class="ms__route" d="M90 192H270H450Q490 295 365 375H175"/>
+        <path class="ms__stream" d="M90 192H270H450Q490 295 365 375H175"/>
+        <circle class="ms__packet" r="6" cx="0" cy="0"><animateMotion dur="12s" path="M90 192H270H450Q490 295 365 375H175" repeatCount="indefinite"/></circle>
+        {[
+          {x:90,y:192,one:'Enquire',two:'TELL US THE NEED'},
+          {x:270,y:192,one:'Review',two:'UNDERSTAND'},
+          {x:450,y:192,one:'Scope',two:'DEFINE OUTPUT'},
+          {x:365,y:375,one:'Execute',two:'DO THE WORK'},
+          {x:175,y:375,one:'Handover',two:'CLOSE OUT'}
+        ].map((node,i)=>(
+          <g class:list={['ms__stage',`ms__station--${i+1}`]} transform={`translate(${node.x} ${node.y})`}>
+            <rect x="-66" y="-55" width="132" height="110" rx="13" class="ms__tile"/>
+            <rect x="-66" y="-55" width="132" height="110" rx="13" class="ms__tile-active"/>
+            <circle cx="-40" cy="-28" r="15" class="ms__step-number"/>
+            <text x="-40" y="-24" text-anchor="middle" class="ms__step-digit">{String(i+1).padStart(2,'0')}</text>
+            <text x="-50" y="12" class="ms__stage-title">{node.one}</text>
+            <text x="-50" y="35" class="ms__stage-sub">{node.two}</text>
+          </g>
+        ))}
+        <text x="270" y="280" class="ms__middle-caption" text-anchor="middle">CLEAR SCOPE</text>
+        <path class="ms__middle-rule" d="M218 297H322"/>
+        <text x="270" y="317" class="ms__tiny" text-anchor="middle">DEFINED DELIVERABLES</text>
+      </g>
+    )}
+
+    {page === 'contact' && (
+      <g class="ms__contact">
+        <path class="ms__route" d="M200 171C286 171 304 260 399 260M200 278H399M200 384C286 384 304 296 399 296"/>
+        <path class="ms__stream" d="M200 171C286 171 304 260 399 260M200 278H399M200 384C286 384 304 296 399 296"/>
+        <circle class="ms__packet" cx="0" cy="0" r="6"><animateMotion dur="10s" path="M200 171C286 171 304 260 399 260" repeatCount="indefinite"/></circle>
+        <circle class="ms__packet ms__packet--secondary" cx="0" cy="0" r="5"><animateMotion dur="10s" path="M200 384C286 384 304 296 399 296" repeatCount="indefinite"/></circle>
+        {[
+          {y:171,a:'Request a',b:'Quote',c:'SCOPE & PRICING'},
+          {y:278,a:'Book a',b:'Meeting',c:'DISCUSS THE BRIEF'},
+          {y:384,a:'Send a',b:'Message',c:'START A CONVERSATION'}
+        ].map((n,i)=>(
+          <g class:list={['ms__contact-card',`ms__station--${i+1}`]} transform={`translate(119 ${n.y})`}>
+            <rect x="-89" y="-39" width="178" height="78" rx="12" class="ms__tile"/>
+            <rect x="-89" y="-39" width="178" height="78" rx="12" class="ms__tile-active"/>
+            <text x="-75" y="-20" class="ms__ordinal">{String(i+1).padStart(2,'0')}</text>
+            <text x="-75" y="1" class="ms__node-title">{n.a}</text>
+            <text x="-75" y="18" class="ms__node-title">{n.b}</text>
+            <text x="-75" y="32" class="ms__node-sub">{n.c}</text>
+          </g>
+        ))}
+        <circle cx="412" cy="278" r="85" class="ms__hub-fill"/>
+        <circle cx="412" cy="278" r="92" class="ms__hub-outline"/>
+        <g class="ms__ring"><circle cx="412" cy="278" r="94" class="ms__arc ms__arc--orange"/></g>
+        <circle cx="412" cy="278" r="66" class="ms__hub-inner"/>
+        <text x="412" y="267" text-anchor="middle" class="ms__brand">KEVOS</text>
+        <text x="412" y="293" text-anchor="middle" class="ms__hub-caption">ENQUIRIES</text>
+        <text x="412" y="313" text-anchor="middle" class="ms__tiny">NEXT STEP →</text>
+      </g>
+    )}
+
+    {page === 'tools' && (
+      <g class="ms__tools">
+        <path class="ms__route" d="M90 225H270H450"/>
+        <path class="ms__stream" d="M90 225H270H450"/>
+        <circle class="ms__packet" cx="0" cy="0" r="7"><animateMotion path="M90 225H270H450" dur="5s" repeatCount="indefinite"/></circle>
+        {[
+          {x:90,one:'INPUT',two:'THE NUMBERS'},
+          {x:270,one:'ANALYSE',two:'CALCULATE'},
+          {x:450,one:'RESULT',two:'NEXT DECISION'}
+        ].map((n,i)=>(
+          <g class:list={['ms__tools-core',`ms__station--${i+1}`]} transform={`translate(${n.x} 225)`}>
+            <rect x="-67" y="-62" width="134" height="124" rx="15" class="ms__tile"/>
+            <rect x="-67" y="-62" width="134" height="124" rx="15" class="ms__tile-active"/>
+            <text x="-52" y="-37" class="ms__ordinal">{String(i+1).padStart(2,'0')}</text>
+            <text x="-52" y="-10" class="ms__node-title ms__tools-title">{n.one}</text>
+            <text x="-52" y="11" class="ms__stage-sub">{n.two}</text>
+            <g class="ms__data-bars">
+              <rect x="-52" y="24" width="102" height="5" rx="3" class="ms__bar-track"/>
+              <rect x="-52" y="24" width="70" height="5" rx="3" class="ms__bar ms__bar--1"/>
+              <rect x="-52" y="37" width="102" height="5" rx="3" class="ms__bar-track"/>
+              <rect x="-52" y="37" width="90" height="5" rx="3" class="ms__bar ms__bar--2"/>
+            </g>
+          </g>
+        ))}
+        {[
+          {x:90,y:360,a:'COSTING'}, {x:270,y:360,a:'PLANNING'}, {x:450,y:360,a:'MANUFACTURING'},
+          {x:90,y:418,a:'OPERATIONS'}, {x:270,y:418,a:'INVENTORY'}, {x:450,y:418,a:'IMPROVEMENT'}
+        ].map((n,i)=>(
+          <g class:list={['ms__tool-chip',`ms__station--${i+1}`]} transform={`translate(${n.x} ${n.y})`}>
+            <rect x="-75" y="-20" width="150" height="40" rx="9" class="ms__tile"/>
+            <rect x="-75" y="-20" width="150" height="40" rx="9" class="ms__tile-active"/>
+            <circle cx="-57" cy="0" r="4" class="ms__beacon"/>
+            <text x="-43" y="4" class="ms__chip-label">{n.a}</text>
+          </g>
+        ))}
+      </g>
+    )}
+  </svg>
 </figure>
 
 <style>
-  .motion-art {
-    display: block;
-    position: relative;
-    width: 100%;
-    max-width: 540px;
-    aspect-ratio: 1 / 1;
-    margin: 0;
-    isolation: isolate;
-    overflow: hidden;
-    border: 1px solid rgb(71 127 194 / 0.35);
-    border-radius: clamp(13px, 2vw, 22px);
-    background: #071019;
-    box-shadow: 0 16px 48px rgb(0 0 0 / 0.14);
+  .ms {
+    display:block;
+    position:relative;
+    margin:0;
+    width:100%;
+    max-width:540px;
+    aspect-ratio:1/1;
+    overflow:hidden;
+    isolation:isolate;
+    border:1px solid #315071;
+    border-radius:18px;
+    background:#090f18;
+    box-shadow:0 16px 48px rgb(0 0 0 / .17), 0 0 0 1px rgb(32 116 238 / .06) inset;
   }
-  .motion-art__image {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    transform-origin: center;
-    animation: motion-art-breathe 19s ease-in-out infinite alternate;
+  .ms__svg { display:block; width:100%; height:100%; overflow:hidden; font-family:'Inter Tight',Inter,Arial,sans-serif; }
+  .ms__corner { fill:none;stroke:#3779bf;stroke-width:1.2;opacity:.7; }
+  .ms__eyebrow, .ms__foot, .ms__live, .ms__ordinal, .ms__node-sub, .ms__hub-caption,
+  .ms__stage-sub, .ms__tiny, .ms__chip-label {
+    font-family:ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.08em;
   }
-  .motion-art__orbit {
-    position: absolute;
-    inset: 32%;
-    border-radius: 50%;
-    pointer-events: none;
-    background: conic-gradient(from 20deg, transparent 0% 18%, currentColor 20% 23%, transparent 25% 63%, currentColor 66% 68%, transparent 70% 100%);
-    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1px));
-    mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1px));
-    mix-blend-mode: screen;
-    opacity: .62;
-    animation: motion-art-spin 16s linear infinite;
-  }
-  .motion-art__orbit--orange { color: #ff6a13; filter: drop-shadow(0 0 5px #ff6a13); }
-  .motion-art__orbit--blue { inset: 29.8%; color: #2f85ff; opacity: .38; animation-direction: reverse; animation-duration: 22s; }
-  .motion-art__scanner {
-    position: absolute;
-    inset: -80% -120%;
-    pointer-events: none;
-    background: linear-gradient(100deg, transparent 44%, rgb(67 155 255 / .00) 47%, rgb(67 155 255 / .065) 50%, transparent 53%);
-    mix-blend-mode: screen;
-    transform: translateX(-42%) rotate(-9deg);
-    animation: motion-art-scan 15s ease-in-out infinite;
-  }
-  .motion-art__corner {
-    position: absolute;
-    width: 18px;
-    height: 18px;
-    pointer-events: none;
-    border-color: #2b83fc;
-    opacity: .75;
-  }
-  .motion-art__corner--tl { top: 12px; left: 12px; border-top: 1px solid; border-left: 1px solid; }
-  .motion-art__corner--br { right: 12px; bottom: 12px; border-bottom: 1px solid; border-right: 1px solid; border-color: #ff6a13; }
-
-  @keyframes motion-art-breathe {
-    from { transform: scale(1); filter: brightness(1); }
-    to { transform: scale(1.012); filter: brightness(1.065); }
-  }
-  @keyframes motion-art-spin { to { transform: rotate(360deg); } }
-  @keyframes motion-art-scan {
-    0%, 15% { transform: translateX(-42%) rotate(-9deg); opacity: 0; }
-    25% { opacity: .7; }
-    60%, 100% { transform: translateX(42%) rotate(-9deg); opacity: 0; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .motion-art__image, .motion-art__orbit, .motion-art__scanner {
-      animation: none !important;
-      transform: none !important;
-    }
-    .motion-art__scanner { display: none; }
+  .ms__eyebrow { fill:#e4edf8;font-size:11px;font-weight:600; }
+  .ms__live { fill:#74c4fc;font-size:9px;letter-spacing:.08em; }
+  .ms__rule {fill:none;stroke:#30577c;stroke-width:1;opacity:.72;}
+  .ms__foot { fill:#9faec2;font-size:9.5px; }
+  .ms__foot--blue { fill:#448deb; }
+  .ms__route { fill:none;stroke:#356a9d;stroke-width:2;stroke-opacity:.57;stroke-linecap:round; }
+  .ms__stream { fill:none;stroke:#ff7b2b;stroke-width:3;stroke-linecap:round;stroke-dasharray:6 17;opacity:.8;animation:ms-flow 1.55s linear infinite;}
+  .ms__spoke { stroke:#3478bd;stroke-dasharray:3 7;stroke-width:1.7;opacity:.5;}
+  .ms__packet { fill:#ff963c;stroke:#ffe8cc;stroke-width:1.5;filter:drop-shadow(0 0 7px #ff650b); }
+  .ms__packet--secondary {fill:#3993ff;stroke:#c5e4ff;filter:drop-shadow(0 0 6px #2d8aff);}
+  .ms__tile {fill:#121d2b;stroke:#3c5368;stroke-width:1.2;}
+  .ms__tile-active {fill:transparent;stroke:#ff7826;stroke-width:2;opacity:0;animation:ms-highlight 12s ease-in-out infinite;}
+  .ms__station--1 { --ms-delay:0s; } .ms__station--2 {--ms-delay:2s;}
+  .ms__station--3 {--ms-delay:4s;} .ms__station--4 {--ms-delay:6s;}
+  .ms__station--5 {--ms-delay:8s;} .ms__station--6 {--ms-delay:10s;}
+  .ms__station .ms__tile-active, .ms__stage .ms__tile-active, .ms__contact-card .ms__tile-active,
+  .ms__tools-core .ms__tile-active,.ms__tool-chip .ms__tile-active { animation-delay:var(--ms-delay); }
+  .ms__ordinal { fill:#ff863b;font-size:11px;font-weight:700; }
+  .ms__glyph { fill:none;stroke:#57a6ff;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round; }
+  .ms__node-title { fill:#edf4ff;font-size:15px;font-weight:650;letter-spacing:-.012em; }
+  .ms__node-sub { fill:#9db2ca;font-size:8.5px; }
+  .ms__hub-outline {fill:none;stroke:#2e6fba;stroke-width:1.3;opacity:.65;}
+  .ms__hub-ticks {fill:none;stroke:#6da7e5;stroke-width:3;stroke-dasharray:1 10;opacity:.4;}
+  .ms__hub-fill {fill:#0c1724;stroke:#294b76;stroke-width:1.5;}
+  .ms__hub-inner {fill:#0a1220;stroke:#344f6c;stroke-width:1.2;}
+  .ms__ring {transform-origin:270px 271px;animation:ms-spin 18s linear infinite;}
+  .ms--contact .ms__ring { transform-origin:412px 278px; }
+  .ms__arc {fill:none;stroke-width:3;stroke-linecap:round;stroke-dasharray:115 500;}
+  .ms__arc--orange {stroke:#ff7a23;filter:drop-shadow(0 0 4px #ff7925);}
+  .ms__arc--blue {stroke:#358dff;stroke-dasharray:45 510;stroke-dashoffset:280;}
+  .ms__brand {fill:#f4f8ff;font-size:25px;font-weight:800;letter-spacing:.13em;}
+  .ms__hub-caption {fill:#91b9e6;font-size:9px;}
+  .ms__center-pulse {fill:none;stroke:#ff7a23;stroke-width:1.5;animation:ms-pulse 4s ease-out infinite;transform-origin:270px 271px;}
+  .ms__step-number {fill:#1c3554;stroke:#448ada;stroke-width:1.3;}
+  .ms__step-digit {fill:#fca76c;font-size:11px;font-weight:700;}
+  .ms__stage-title {fill:#edf4ff;font-weight:700;font-size:17px;}
+  .ms__stage-sub {fill:#9bb1c9;font-size:9px;}
+  .ms__middle-caption {fill:#dfe9fc;font-weight:700;font-size:17px;letter-spacing:.06em;}
+  .ms__middle-rule {stroke:#ff7e24;stroke-width:2;}
+  .ms__tiny {fill:#9cb5d3;font-size:9px;}
+  .ms__tools-title {font-size:15px;}
+  .ms__bar-track {fill:#23405a;}
+  .ms__bar {fill:#ff782c;transform-box:fill-box;transform-origin:left center;animation:ms-bar 3.2s ease-in-out infinite alternate;}
+  .ms__bar--2 {fill:#398ffc;animation-delay:.7s;}
+  .ms__beacon {fill:#ff8c36;animation:ms-beacon 3s ease-in-out infinite;}
+  .ms__chip-label {fill:#d7e7fd;font-size:10px;font-weight:700;}
+  @keyframes ms-flow {to{stroke-dashoffset:-46;}}
+  @keyframes ms-highlight {0%,16%{opacity:1;fill:rgb(255 106 19 / .055);}24%,100%{opacity:0;fill:transparent;}}
+  @keyframes ms-spin {to{transform:rotate(360deg);}}
+  @keyframes ms-pulse {0%{opacity:.65;transform:scale(.87);}100%{opacity:0;transform:scale(1.3);}}
+  @keyframes ms-bar {from{transform:scaleX(.22);}to{transform:scaleX(1);}}
+  @keyframes ms-beacon {0%,100%{opacity:.35;}50%{opacity:1;}}
+  @media (prefers-reduced-motion:reduce) {
+    .ms__stream,.ms__tile-active,.ms__ring,.ms__center-pulse,.ms__bar,.ms__beacon {animation:none!important;}
+    .ms__packet {display:none;}
+    .ms__tile-active {opacity:.25;}
   }
 </style>
