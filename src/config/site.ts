@@ -69,11 +69,10 @@ export const NAV = [
   { href: '/industries/', label: 'Industries' },
   { href: '/insights/', label: 'Insights' },
   { href: '/about/', label: 'About' },
-  { href: '/contact/', label: 'Contact' },
 ] as const;
 
 /** Primary call to action in the header and across the site. */
-export const QUOTE_CTA = { href: '/contact/', label: 'Get a Quote' } as const;
+export const QUOTE_CTA = { href: '/contact/', label: 'Discuss Your Requirements' } as const;
 
 export const FOOTER_NAV = {
   services: [
