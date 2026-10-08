@@ -1,0 +1,39 @@
+name: Verify KEVOS site
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install pinned dependencies
+        run: npm ci
+      - name: Check, test and build site
+        run: npm run verify
+      - name: Check approved KEVOS branding in the compiled homepage
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'KEVOS' dist/index.html
+          grep -q 'kevos-wordmark-orange-light.svg' dist/index.html
+          grep -q 'Discuss Your Requirements' dist/index.html
+          if grep -qi '<title>GoCore\|GoCore Assistant\|GoCore Factory Fix' dist/index.html; then
+            echo "::error::Old GoCore branding found in the compiled KEVOS homepage"
+            exit 1
+          fi
+          test -s dist/brand/kevos-favicon-k-orange-192.png
+          test -s dist/brand/kevos-favicon-k-orange-512.png
