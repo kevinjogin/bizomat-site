@@ -8,7 +8,6 @@ import { SERVICE_GROUPS } from '../data/services.ts';
 
 interface Props { variant?: 'services' | 'insights' | 'about'; }
 const { variant = 'services' } = Astro.props;
-const TileTag = variant === 'services' ? 'a' : 'div';
 
 const META: Record<string, { verb: string; label: string; tags: string }> = {
   'engineering-cad': { verb: 'Design', label: 'Engineering &amp; CAD', tags: 'CAD · Drawings · DFM' },
@@ -54,7 +53,7 @@ const description = variant === 'services'
       {
         nodes.map((node) => (
           <li class={`smap__node smap__node--${node.n}`}>
-            <TileTag class="smap__link" href={variant === 'services' ? node.href : undefined}>
+            <a class="smap__link" href={node.href}>
               <span class="smap__head">
                 <span class="smap__num">{String(node.n).padStart(2, '0')}</span>
                 <span class="smap__verb">{node.verb}</span>
@@ -112,7 +111,7 @@ const description = variant === 'services'
               )}
               <span class="smap__title" set:html={node.label} />
               <span class="smap__tags">{node.tags}</span>
-            </TileTag>
+            </a>
           </li>
         ))
       }
