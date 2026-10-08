@@ -19,4 +19,4 @@ jobs:
       - name: Install
         run: npm ci
       - name: Build and verify
-        run: npm run build
+        run: npm run verify
