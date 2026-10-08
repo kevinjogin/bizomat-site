@@ -22,7 +22,7 @@ const insights = defineCollection({
         updatedDate: optional(z.coerce.date()),
         category: z.enum(CATEGORY_NAMES),
         tags: z.array(z.enum(TAG_SLUGS)).min(1).max(5),
-        author: z.string().default('GoCore'),
+        author: z.string().default('KEVOS'),
         draft: z.boolean().default(false), // published unless explicitly marked as a draft
         featured: z.boolean().default(false),
         image: optional(image()),

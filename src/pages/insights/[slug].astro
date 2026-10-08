@@ -6,13 +6,12 @@ import Container from '../../components/Container.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import CategoryBadge from '../../components/CategoryBadge.astro';
 import Tag from '../../components/Tag.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import Button from '../../components/Button.astro';
 import { INSIGHTS, SITE } from '../../config/site.ts';
 import { categorySlug } from '../../config/taxonomy.ts';
-import { categoriesWithPosts, getInsights, insightUrl, readingTime, relatedInsights, tagsWithPosts, type Insight } from '../../utils/content.ts';
+import { categoriesWithPosts, getInsights, insightUrl, readingTime, relatedInsights, tagsWithPosts, insightAuthor, type Insight } from '../../utils/content.ts';
 
 export async function getStaticPaths() {
   const posts = await getInsights();
@@ -33,6 +32,7 @@ const { post, newer, older, all } = Astro.props;
 const { Content, headings } = await render(post);
 const { title, description, publishDate, updatedDate, category, tags, author, image, imageAlt, canonicalURL, draft } = post.data;
 const minutes = readingTime(post.body);
+const displayAuthor = insightAuthor(author);
 const showToc = headings.filter((h) => h.depth === 2).length >= INSIGHTS.minHeadingsForToc;
 const related = relatedInsights(post, all);
 const linkedTags = new Set(tagsWithPosts(all).map((t) => t.slug));
@@ -54,7 +54,7 @@ const schema = [
     description,
     datePublished: publishDate.toISOString(),
     dateModified: (updatedDate ?? publishDate).toISOString(),
-    author: author === SITE.name ? { '@id': `${SITE.url}/#organization` } : { '@type': 'Person', name: author },
+    author: displayAuthor === SITE.name ? { '@id': `${SITE.url}/#organization` } : { '@type': 'Person', name: displayAuthor },
     publisher: { '@id': `${SITE.url}/#organization` },
     mainEntityOfPage: url,
     articleSection: category,
@@ -92,9 +92,7 @@ const schema = [
         <h1 class="article__title">{title}</h1>
         <p class="article__description">{description}</p>
         <dl class="article__meta" data-pagefind-ignore>
-          <div><dt>By</dt><dd>{author}</dd></div>
-          <div><dt>Published</dt><dd><FormattedDate date={publishDate} /></dd></div>
-          {updatedDate && <div><dt>Updated</dt><dd><FormattedDate date={updatedDate} /></dd></div>}
+          <div><dt>Author</dt><dd>{displayAuthor}</dd></div>
           <div><dt>Reading time</dt><dd>{minutes} min</dd></div>
         </dl>
       </Container>

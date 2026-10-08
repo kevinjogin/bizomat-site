@@ -1,7 +1,7 @@
 import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
 import { SITE } from '../config/site.ts';
-import { getInsights, insightUrl } from '../utils/content.ts';
+import { getInsights, insightUrl, insightAuthor } from '../utils/content.ts';
 
 export async function GET(context: APIContext) {
   const posts = await getInsights();
@@ -16,7 +16,7 @@ export async function GET(context: APIContext) {
       pubDate: post.data.publishDate,
       link: insightUrl(post),
       categories: [post.data.category, ...post.data.tags],
-      author: post.data.author,
+      author: insightAuthor(post.data.author),
     })),
     customData: `<language>en-au</language>`,
   });

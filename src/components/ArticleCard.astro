@@ -2,7 +2,6 @@
 import type { Insight } from '../utils/content.ts';
 import { insightUrl, readingTime } from '../utils/content.ts';
 import CategoryBadge from './CategoryBadge.astro';
-import FormattedDate from './FormattedDate.astro';
 
 interface Props {
   post: Insight;
@@ -22,11 +21,7 @@ const minutes = readingTime(post.body);
     <a href={insightUrl(post)}>{post.data.title}</a>
   </H>
   <p class="article-card__desc">{post.data.description}</p>
-  <p class="article-card__foot">
-    <FormattedDate date={post.data.publishDate} style="short" />
-    <span aria-hidden="true">·</span>
-    <span>{minutes} min read</span>
-  </p>
+  <p class="article-card__foot" aria-label={`Reading time: ${minutes} minutes`}>{minutes} min read</p>
 </article>
 
 <style>
@@ -41,7 +36,7 @@ const minutes = readingTime(post.body);
   .article-card__foot { display: flex; gap: 0.5rem; margin: auto 0 0; padding-top: 0.25rem; font-size: 0.86rem; color: var(--muted); }
   .article-card :global(.category) { position: relative; z-index: 1; }
 
-  .article-card--row { display: grid; grid-template-columns: 10rem minmax(0, 1fr) 9rem; gap: 0.5rem 2rem; align-items: baseline; padding-block: 1.75rem; border-top-color: var(--line); }
+  .article-card--row { display: grid; grid-template-columns: 10rem minmax(0, 1fr) 7.5rem; gap: 0.5rem 2rem; align-items: baseline; padding-block: 1.75rem; border-top-color: var(--line); }
   .article-card--row .article-card__meta { grid-column: 1; grid-row: 1 / span 2; }
   .article-card--row .article-card__title { grid-column: 2; font-size: var(--step-2); }
   .article-card--row .article-card__desc { grid-column: 2; max-width: 60ch; }

@@ -1,5 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { INSIGHTS } from '../config/site.ts';
+import { INSIGHTS, SITE } from '../config/site.ts';
 import { CATEGORIES, CATEGORY_SLUGS, TAG_SLUGS, categorySlug, type CategorySlug, type TagSlug } from '../config/taxonomy.ts';
 
 export type Insight = CollectionEntry<'insights'>;
@@ -33,6 +33,9 @@ export function readingTime(body = ''): number {
     .filter(Boolean).length;
   return Math.max(1, Math.round(words / INSIGHTS.wordsPerMinute));
 }
+
+/** Previous brand bylines are consistently attributed to the same organisation under its current name. */
+export const insightAuthor = (author: string): string => author.trim().toLowerCase() === 'gocore' ? SITE.name : author;
 
 export const insightUrl = (entry: Insight) => `/insights/${entry.id}/`;
 export const categoryUrl = (slug: CategorySlug) => `/insights/category/${slug}/`;
