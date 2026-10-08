@@ -95,7 +95,7 @@ Earned value becomes more useful when it sits alongside other measures, so a gre
 
 The [reports that change decisions](/insights/reports-that-change-decisions/) article covers building reports around forecasts and decisions rather than status colours.
 
-## Is it worth the effort?
+## When it is worth the effort
 
 Running earned value properly takes effort: defined packages, budgets by package, cost coding and regular measurement. It is most valuable on jobs that are large relative to the business, can be broken into clear packages, and where losing visibility would be expensive. For small, short or exploratory jobs, a simpler comparison of milestones and spending may be enough. Some contracts, particularly in government and defence work, require formal earned value reporting; Standards Australia publishes AS 4817 on earned value performance measurement, and any contractual requirement should be checked against the current edition.
 
