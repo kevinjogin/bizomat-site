@@ -93,30 +93,30 @@ const nodes = SERVICE_GROUPS.slice(0, 4).map((g, i) => ({ ...g, n: i + 1, ...(ME
 <style>
   .smap {
     --cycle: 8s;
-    --blue: #1456e8;
+    --blue: #ff6a13;
     --orange: #ff6a13;
     --panel: #ffffff;
     --tile: rgb(255 255 255 / 0.8);
     --tile-line: rgb(18 18 17 / 0.1);
-    --grid: rgb(20 86 232 / 0.07);
+    --grid: rgb(255 106 19 / 0.07);
     margin: 0;
     width: 100%;
     max-width: 540px;
   }
   :global(:root[data-theme='dark']) .smap {
-    --blue: #4f95ff;
+    --blue: #ff8c47;
     --panel: #131412;
     --tile: rgb(28 29 27 / 0.82);
     --tile-line: rgb(238 236 230 / 0.1);
-    --grid: rgb(79 149 255 / 0.08);
+    --grid: rgb(255 140 71 / 0.08);
   }
   @media (prefers-color-scheme: dark) {
     :global(:root:not([data-theme='light'])) .smap {
-      --blue: #4f95ff;
+      --blue: #ff8c47;
       --panel: #131412;
       --tile: rgb(28 29 27 / 0.82);
       --tile-line: rgb(238 236 230 / 0.1);
-      --grid: rgb(79 149 255 / 0.08);
+      --grid: rgb(255 140 71 / 0.08);
     }
   }
 
@@ -249,7 +249,7 @@ const nodes = SERVICE_GROUPS.slice(0, 4).map((g, i) => ({ ...g, n: i + 1, ...(ME
     display: grid; place-items: center;
     border-radius: 50%;
     background: var(--panel);
-    box-shadow: 0 0 0 clamp(6px, 1.8%, 10px) var(--panel), 0 18px 40px -18px rgb(10 59 196 / 0.45);
+    box-shadow: 0 0 0 clamp(6px, 1.8%, 10px) var(--panel), 0 18px 40px -18px rgb(194 65 12 / 0.22);
   }
   .smap__dial { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
   .smap__ticks { fill: none; stroke: var(--line-strong); stroke-width: 3; stroke-dasharray: 0.6 3.2; transform-origin: 50px 50px; }
@@ -264,7 +264,7 @@ const nodes = SERVICE_GROUPS.slice(0, 4).map((g, i) => ({ ...g, n: i + 1, ...(ME
     width: 78%; aspect-ratio: 1; align-content: center;
     border-radius: 50%;
     border: 1px solid var(--tile-line);
-    background: radial-gradient(circle at 50% 30%, rgb(79 149 255 / 0.12), transparent 70%), var(--panel);
+    background: radial-gradient(circle at 50% 30%, rgb(255 106 19 / 0.12), transparent 70%), var(--panel);
   }
   .smap__face :global(.smap__logo) { width: 74%; height: auto; }
   .smap__sub { font-family: var(--font-mono); font-size: clamp(0.5rem, 0.42rem + 0.3vw, 0.62rem); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
