@@ -146,6 +146,7 @@ At the four-month check, paper sheets reappear from one van. A new technician ha
 - Benefits going to one group while another carries the effort.
 - Pilots that never become standard practice.
 - Old habits returning after support ends.
+- Customers still using the old channel months after the new one opened.
 
 ## Common mistakes
 
