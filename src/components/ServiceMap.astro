@@ -33,7 +33,7 @@ const otherNodes = {
     { n: 4, verb: 'Deliver', label: 'Project Delivery', tags: 'Scope · Handover' },
   ],
 };
-const nodes = variant === 'services' ? serviceNodes : otherNodes[variant];
+const nodes = variant === 'services' ? serviceNodes : otherNodes[variant].map((node) => ({ ...node, href: undefined }));
 const subtitle = variant === 'services' ? 'Engineering core' : variant === 'insights' ? 'Knowledge core' : 'Capability core';
 const description = variant === 'services'
   ? 'KEVOS engineering services connected through design, make, improve and deliver.'
