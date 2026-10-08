@@ -233,24 +233,16 @@ The Worker name in `wrangler.toml` must match the dashboard. If you rename it (S
 
 ## 11. Changing branding
 
-- **Logo:** the logo is a wordmark only: "KEVOS" in Archivo at a heavy weight, inclined at 75° like standard engineering lettering (IS 9609 / ISO 3098), with "Go" shaded blue and "Core" shaded orange-red. One version works on light and dark backgrounds. It is drawn as outlines, so no font is needed to display it. The site renders it inline (`src/components/Logo.astro`) from `src/data/logo.json`.
-- **Regenerating brand assets:** `scripts/brand/build_brand.py` holds the wordmark settings (weight, width, angle, colours) and builds `src/data/logo.json` plus the artwork in `brand-source/generated/`. Then `npm run brand` rasterises the favicons, app icons, assistant avatar ("GC" monogram), `public/brand/gocore-logo.(svg|png|webp)` and the social card `public/og-default.png`:
+**Current approved identity: KEVOS orange.** The former GoCore/GC art generator and its blue logo are retired; do not run `python scripts/brand/build_brand.py` on the production website.
 
-  ```bash
-  pip install fonttools uharfbuzz brotli
-  python scripts/brand/build_brand.py
-  npm run brand
-  ```
-- **Type system:** headings use KEVOS Display, Archivo inclined at 75° to match the wordmark. It is built by `python scripts/brand/build_fonts.py` into `public/fonts/` (OFL licence alongside). Stroke weight follows size so every level stays legible:
-  - the wordmark is heaviest (stroke about h/3);
-  - display and section headings are 600 (about h/5);
-  - smaller headings are 700 (about h/4.5);
-  - body text is upright Inter Tight 400 (about h/8), and articles use Source Serif 4.
+- **Wordmark:** the approved orange vector logos are `public/brand/kevos-wordmark-orange-light.svg` and `public/brand/kevos-wordmark-orange-dark.svg`. The site's `SiteWordmark.astro` and `Logo.astro` use these exact files; the primary identity is not reconstructed from a text font.
+- **Favicons, app icons, assistant K:** the master angular orange K is `public/brand/kevos-chat-k-mark.svg`. `npm run brand` safely regenerates `public/brand/kevos-favicon-k-orange.svg`, the PNG sizes and `public/favicon.ico` using `scripts/build-kevos-icons.mjs`. The normal production build also does this before Astro runs.
+- **Legacy safety:** `scripts/prepare-brand.mjs` is a compatibility shim for previous build setups; it now calls the KEVOS icon builder rather than generating GoCore artwork. Old `brand-source/generated/gocore-*` files are legacy records, not the live KEVOS identity.
+- **Type system:** self-hosted KEVOS Display (Oxanium-based) is used for major headings. Body copy stays readable with Inter Tight and articles use Source Serif 4. The approved KEVOS orange logo itself uses fixed SVG paths.
+- **Colours:** `src/styles/global.css` contains the light/dark colour tokens. All blue legacy brand accents are replaced with the approved KEVOS orange.
+- **Motion:** `src/components/ServiceMap.astro` is the shared four-square Home/Services/Insights/About orbit. `src/components/MotionVisual.astro` contains the purpose-specific Industries/How It Works/Tools/Contact diagrams. Every animation respects reduced-motion preferences.
 
-  Body copy stays upright because sloped running text is slower to read on screen. Small uppercase labels also stay upright.
-- **Colours:** design tokens are at the top of `src/styles/global.css` (`--paper`, `--ink`, `--accent`, `--brand-orange`, `--brand-blue`, light and dark sets). `--accent` is the text-safe orange; `--brand-*` colours are for graphics only.
-- **Fonts:** all fonts are self-hosted: KEVOS Display in `public/fonts/`, Inter Tight and Source Serif 4 via Fontsource. There are no third-party font requests.
-- **Homepage hero graphic:** `src/components/ServiceMap.astro` shows the four services around the KEVOS core, with a CSS-only animation that is switched off for visitors who prefer reduced motion. Its labels come from `src/data/services.ts`.
+If the website unexpectedly displays GoCore, **do not roll back GitHub**: confirm the Cloudflare Worker `throbbing-block-6c61` has a successful build from the latest `main` commit and that `kevos.com/*` routes to that deployment.
 
 ## 12. Changing navigation and site details
 
