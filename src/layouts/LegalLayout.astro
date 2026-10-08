@@ -33,5 +33,11 @@ const crumbs = [
 <style>
   .legal-updated { margin: 1.25rem 0 0; color: var(--muted); font-size: 0.92rem; }
   :global(.legal-body) { padding-bottom: var(--space-section); }
-  :global(.legal-body .prose) { font-family: var(--font-sans); font-size: var(--step-0); }
+  /* Legal documents use the full shared container, aligned with the site header. */
+  :global(.legal-body .prose) {
+    width: 100%;
+    max-width: none;
+    font-family: var(--font-sans);
+    font-size: var(--step-0);
+  }
 </style>
