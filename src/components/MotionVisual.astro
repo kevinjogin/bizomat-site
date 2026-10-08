@@ -67,7 +67,7 @@ const scene = !sharedOrbit ? copy[page as keyof typeof copy] : null;
     <div class="mv__panel">
       <div class="mv__top" aria-hidden="true">
         <span class="mv__eyebrow">{scene?.eyebrow}</span>
-        <span class="mv__top-mark"><span></span><span></span><span></span></span>
+        <span class="mv__top-brand"><Logo label="" height={14} /></span>
       </div>
 
       {page === 'industries' && (
@@ -221,9 +221,8 @@ const scene = !sharedOrbit ? copy[page as keyof typeof copy] : null;
   }
   .mv__top{top:5%;}
   .mv__bottom{bottom:4.3%;}
-  .mv__top-mark{display:inline-flex;align-items:center;gap:3px;}
-  .mv__top-mark span{display:block;width:16px;height:2px;background:var(--m-orange);opacity:.35;}
-  .mv__top-mark span:first-child{opacity:.95;}
+  .mv__top-brand{display:inline-flex;align-items:center;flex:none;max-width:30%;}
+  .mv__top-brand :global(.logo){max-width:100%;}
   .mv__bottom-line{display:block;width:18%;height:1px;background:var(--m-orange);opacity:.7;}
   .mv__content{position:absolute;inset:13.5% 4.2% 12%;z-index:2;}
   .mv__num{font-family:var(--font-mono);font-size:.68rem;font-weight:650;letter-spacing:.06em;color:var(--m-orange);}
