@@ -98,12 +98,12 @@ const id = `ms-${page}`;
   <svg class="ms__svg" viewBox="0 0 540 540" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
     <defs>
       <pattern id={`${id}-grid`} width="27" height="27" patternUnits="userSpaceOnUse">
-        <path d="M27 0H0V27" fill="none" stroke="#26496d" stroke-width=".55" opacity=".5" />
+        <path class="ms__grid-path" d="M27 0H0V27" fill="none" stroke-width=".65" />
       </pattern>
       <radialGradient id={`${id}-halo`}>
-        <stop offset="0" stop-color="#2e65b9" stop-opacity=".23"/>
-        <stop offset=".55" stop-color="#0f2240" stop-opacity=".08"/>
-        <stop offset="1" stop-color="#080e16" stop-opacity="0"/>
+        <stop class="ms__halo-start" offset="0"/>
+        <stop class="ms__halo-middle" offset=".55"/>
+        <stop class="ms__halo-end" offset="1"/>
       </radialGradient>
       <linearGradient id={`${id}-flow`} x1="0" y1="0" x2="1" y2="1">
         <stop offset="0" stop-color="#2d8aff"/>
@@ -111,16 +111,14 @@ const id = `ms-${page}`;
         <stop offset="1" stop-color="#ffa65f"/>
       </linearGradient>
     </defs>
-    <rect width="540" height="540" fill="#090f18" rx="18"/>
+    <rect class="ms__background" width="540" height="540" rx="18"/>
     <rect x="0" y="0" width="540" height="540" fill={`url(#${id}-grid)`} rx="18"/>
     <circle cx="270" cy="270" r="255" fill={`url(#${id}-halo)`}/>
     <path class="ms__corner" d="M22 65V22H65 M475 22H518V65 M22 475V518H65 M475 518H518V475"/>
     <text x="28" y="46" class="ms__eyebrow">{info.eyebrow}</text>
-    <text x="512" y="47" text-anchor="end" class="ms__live">● SYSTEM ACTIVE</text>
     <path d="M27 68H513" class="ms__rule"/>
     <path d="M27 474H513" class="ms__rule"/>
     <text x="28" y="502" class="ms__foot">{info.footer}</text>
-    <text x="512" y="502" text-anchor="end" class="ms__foot ms__foot--blue">KEVOS / 01</text>
 
     {radialScene && (
       <g class="ms__radial">
@@ -256,6 +254,29 @@ const id = `ms-${page}`;
 
 <style>
   .ms {
+
+    --ms-bg:#ffffff;
+    --ms-grid:rgb(20 86 232 / .14);
+    --ms-border:#d0d9e5;
+    --ms-halo:#b0c9f2;
+    --ms-grid-strong:#4777b4;
+    --ms-ink:#171c24;
+    --ms-muted:#59616e;
+    --ms-blue:#1456e8;
+    --ms-orange:#ff6a13;
+    --ms-orange-light:#e35b0d;
+    --ms-ordinal:#a83f00;
+    --ms-rule:#d0d9e5;
+    --ms-track:#3579cc;
+    --ms-tile:#ffffff;
+    --ms-tile-edge:#c5d1df;
+    --ms-hub:#f5f8fe;
+    --ms-hub-inner:#ffffff;
+    --ms-step:#eaf1ff;
+    --ms-bar-track:#d5e1f1;
+    --ms-packet-outline:#fff1e5;
+    --ms-packet-outline-blue:#e5f0ff;
+    --ms-highlight:rgb(255 106 19 / .07);
     display:block;
     position:relative;
     margin:0;
@@ -264,65 +285,121 @@ const id = `ms-${page}`;
     aspect-ratio:1/1;
     overflow:hidden;
     isolation:isolate;
-    border:1px solid #315071;
+    border:1px solid var(--ms-border);
     border-radius:18px;
-    background:#090f18;
+    background:var(--ms-bg);
     box-shadow:0 16px 48px rgb(0 0 0 / .17), 0 0 0 1px rgb(32 116 238 / .06) inset;
   }
+  /* Matching the blueprint-sheet palette used by the homepage ServiceMap. */
+
+  /* Exact same system-theme contract as the header, footer and homepage visual. */
+  :global(:root[data-theme='dark']) .ms {
+    --ms-bg:#131412;
+    --ms-grid:rgb(79 149 255 / .15);
+    --ms-border:#44484c;
+    --ms-halo:#2e65b9;
+    --ms-grid-strong:#4283c3;
+    --ms-ink:#f1efea;
+    --ms-muted:#aab3bd;
+    --ms-blue:#4f95ff;
+    --ms-orange:#ff6a13;
+    --ms-orange-light:#ff963c;
+    --ms-ordinal:#ffab7a;
+    --ms-rule:#39424e;
+    --ms-track:#478ac5;
+    --ms-tile:#1c1d1b;
+    --ms-tile-edge:#51565b;
+    --ms-hub:#181c21;
+    --ms-hub-inner:#131718;
+    --ms-step:#263447;
+    --ms-bar-track:#33475d;
+    --ms-packet-outline:#ffe8cc;
+    --ms-packet-outline-blue:#d7edff;
+    --ms-highlight:rgb(255 106 19 / .09);
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme])) .ms {
+    --ms-bg:#131412;
+    --ms-grid:rgb(79 149 255 / .15);
+    --ms-border:#44484c;
+    --ms-halo:#2e65b9;
+    --ms-grid-strong:#4283c3;
+    --ms-ink:#f1efea;
+    --ms-muted:#aab3bd;
+    --ms-blue:#4f95ff;
+    --ms-orange:#ff6a13;
+    --ms-orange-light:#ff963c;
+    --ms-ordinal:#ffab7a;
+    --ms-rule:#39424e;
+    --ms-track:#478ac5;
+    --ms-tile:#1c1d1b;
+    --ms-tile-edge:#51565b;
+    --ms-hub:#181c21;
+    --ms-hub-inner:#131718;
+    --ms-step:#263447;
+    --ms-bar-track:#33475d;
+    --ms-packet-outline:#ffe8cc;
+    --ms-packet-outline-blue:#d7edff;
+    --ms-highlight:rgb(255 106 19 / .09);
+    }
+  }
+  .ms__background { fill:var(--ms-bg); }
+  .ms__grid-path { stroke:var(--ms-grid); }
+  .ms__halo-start { stop-color:var(--ms-halo); stop-opacity:.27; }
+  .ms__halo-middle { stop-color:var(--ms-halo); stop-opacity:.06; }
+  .ms__halo-end { stop-color:var(--ms-bg); stop-opacity:0; }
   .ms__svg { display:block; width:100%; height:100%; overflow:hidden; font-family:'Inter Tight',Inter,Arial,sans-serif; }
-  .ms__corner { fill:none;stroke:#3779bf;stroke-width:1.2;opacity:.7; }
-  .ms__eyebrow, .ms__foot, .ms__live, .ms__ordinal, .ms__node-sub, .ms__hub-caption,
+  .ms__corner { fill:none;stroke:var(--ms-grid-strong);stroke-width:1.2;opacity:.7; }
+  .ms__eyebrow, .ms__foot, .ms__ordinal, .ms__node-sub, .ms__hub-caption,
   .ms__stage-sub, .ms__tiny, .ms__chip-label {
     font-family:ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.08em;
   }
-  .ms__eyebrow { fill:#e4edf8;font-size:11px;font-weight:600; }
-  .ms__live { fill:#74c4fc;font-size:9px;letter-spacing:.08em; }
-  .ms__rule {fill:none;stroke:#30577c;stroke-width:1;opacity:.72;}
-  .ms__foot { fill:#9faec2;font-size:9.5px; }
-  .ms__foot--blue { fill:#448deb; }
-  .ms__route { fill:none;stroke:#356a9d;stroke-width:2;stroke-opacity:.57;stroke-linecap:round; }
-  .ms__stream { fill:none;stroke:#ff7b2b;stroke-width:3;stroke-linecap:round;stroke-dasharray:6 17;opacity:.8;animation:ms-flow 1.55s linear infinite;}
-  .ms__spoke { stroke:#3478bd;stroke-dasharray:3 7;stroke-width:1.7;opacity:.5;}
-  .ms__packet { fill:#ff963c;stroke:#ffe8cc;stroke-width:1.5;filter:drop-shadow(0 0 7px #ff650b); }
-  .ms__packet--secondary {fill:#3993ff;stroke:#c5e4ff;filter:drop-shadow(0 0 6px #2d8aff);}
-  .ms__tile {fill:#121d2b;stroke:#3c5368;stroke-width:1.2;}
-  .ms__tile-active {fill:transparent;stroke:#ff7826;stroke-width:2;opacity:0;animation:ms-highlight 12s ease-in-out infinite;}
+  .ms__eyebrow { fill:var(--ms-ink);font-size:11px;font-weight:600; }
+  .ms__rule {fill:none;stroke:var(--ms-rule);stroke-width:1;opacity:.72;}
+  .ms__foot { fill:var(--ms-muted);font-size:9.5px; }
+  .ms__route { fill:none;stroke:var(--ms-track);stroke-width:2;stroke-opacity:.57;stroke-linecap:round; }
+  .ms__stream { fill:none;stroke:var(--ms-orange);stroke-width:3;stroke-linecap:round;stroke-dasharray:6 17;opacity:.8;animation:ms-flow 1.55s linear infinite;}
+  .ms__spoke { stroke:var(--ms-blue);stroke-dasharray:3 7;stroke-width:1.7;opacity:.5;}
+  .ms__packet { fill:var(--ms-orange-light);stroke:var(--ms-packet-outline);stroke-width:1.5;filter:drop-shadow(0 0 7px var(--ms-orange)); }
+  .ms__packet--secondary {fill:var(--ms-blue);stroke:var(--ms-packet-outline-blue);filter:drop-shadow(0 0 6px var(--ms-blue));}
+  .ms__tile {fill:var(--ms-tile);stroke:var(--ms-tile-edge);stroke-width:1.2;}
+  .ms__tile-active {fill:transparent;stroke:var(--ms-orange);stroke-width:2;opacity:0;animation:ms-highlight 12s ease-in-out infinite;}
   .ms__station--1 { --ms-delay:0s; } .ms__station--2 {--ms-delay:2s;}
   .ms__station--3 {--ms-delay:4s;} .ms__station--4 {--ms-delay:6s;}
   .ms__station--5 {--ms-delay:8s;} .ms__station--6 {--ms-delay:10s;}
   .ms__station .ms__tile-active, .ms__stage .ms__tile-active, .ms__contact-card .ms__tile-active,
   .ms__tools-core .ms__tile-active,.ms__tool-chip .ms__tile-active { animation-delay:var(--ms-delay); }
-  .ms__ordinal { fill:#ff863b;font-size:11px;font-weight:700; }
-  .ms__glyph { fill:none;stroke:#57a6ff;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round; }
-  .ms__node-title { fill:#edf4ff;font-size:15px;font-weight:650;letter-spacing:-.012em; }
-  .ms__node-sub { fill:#9db2ca;font-size:8.5px; }
-  .ms__hub-outline {fill:none;stroke:#2e6fba;stroke-width:1.3;opacity:.65;}
-  .ms__hub-ticks {fill:none;stroke:#6da7e5;stroke-width:3;stroke-dasharray:1 10;opacity:.4;}
-  .ms__hub-fill {fill:#0c1724;stroke:#294b76;stroke-width:1.5;}
-  .ms__hub-inner {fill:#0a1220;stroke:#344f6c;stroke-width:1.2;}
+  .ms__ordinal { fill:var(--ms-ordinal);font-size:11px;font-weight:700; }
+  .ms__glyph { fill:none;stroke:var(--ms-blue);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round; }
+  .ms__node-title { fill:var(--ms-ink);font-size:15px;font-weight:650;letter-spacing:-.012em; }
+  .ms__node-sub { fill:var(--ms-muted);font-size:8.5px; }
+  .ms__hub-outline {fill:none;stroke:var(--ms-grid-strong);stroke-width:1.3;opacity:.65;}
+  .ms__hub-ticks {fill:none;stroke:var(--ms-blue);stroke-width:3;stroke-dasharray:1 10;opacity:.4;}
+  .ms__hub-fill {fill:var(--ms-hub);stroke:var(--ms-grid-strong);stroke-width:1.5;}
+  .ms__hub-inner {fill:var(--ms-hub-inner);stroke:var(--ms-tile-edge);stroke-width:1.2;}
   .ms__ring {transform-origin:270px 271px;animation:ms-spin 18s linear infinite;}
   .ms--contact .ms__ring { transform-origin:412px 278px; }
   .ms__arc {fill:none;stroke-width:3;stroke-linecap:round;stroke-dasharray:115 500;}
-  .ms__arc--orange {stroke:#ff7a23;filter:drop-shadow(0 0 4px #ff7925);}
-  .ms__arc--blue {stroke:#358dff;stroke-dasharray:45 510;stroke-dashoffset:280;}
-  .ms__brand {fill:#f4f8ff;font-size:25px;font-weight:800;letter-spacing:.13em;}
-  .ms__hub-caption {fill:#91b9e6;font-size:9px;}
-  .ms__center-pulse {fill:none;stroke:#ff7a23;stroke-width:1.5;animation:ms-pulse 4s ease-out infinite;transform-origin:270px 271px;}
-  .ms__step-number {fill:#1c3554;stroke:#448ada;stroke-width:1.3;}
-  .ms__step-digit {fill:#fca76c;font-size:11px;font-weight:700;}
-  .ms__stage-title {fill:#edf4ff;font-weight:700;font-size:17px;}
-  .ms__stage-sub {fill:#9bb1c9;font-size:9px;}
-  .ms__middle-caption {fill:#dfe9fc;font-weight:700;font-size:17px;letter-spacing:.06em;}
-  .ms__middle-rule {stroke:#ff7e24;stroke-width:2;}
-  .ms__tiny {fill:#9cb5d3;font-size:9px;}
+  .ms__arc--orange {stroke:var(--ms-orange);filter:drop-shadow(0 0 4px var(--ms-orange));}
+  .ms__arc--blue {stroke:var(--ms-blue);stroke-dasharray:45 510;stroke-dashoffset:280;}
+  .ms__brand {fill:var(--ms-ink);font-size:25px;font-weight:800;letter-spacing:.13em;}
+  .ms__hub-caption {fill:var(--ms-muted);font-size:9px;}
+  .ms__center-pulse {fill:none;stroke:var(--ms-orange);stroke-width:1.5;animation:ms-pulse 4s ease-out infinite;transform-origin:270px 271px;}
+  .ms__step-number {fill:var(--ms-step);stroke:var(--ms-blue);stroke-width:1.3;}
+  .ms__step-digit {fill:var(--ms-ordinal);font-size:11px;font-weight:700;}
+  .ms__stage-title {fill:var(--ms-ink);font-weight:700;font-size:17px;}
+  .ms__stage-sub {fill:var(--ms-muted);font-size:9px;}
+  .ms__middle-caption {fill:var(--ms-ink);font-weight:700;font-size:17px;letter-spacing:.06em;}
+  .ms__middle-rule {stroke:var(--ms-orange);stroke-width:2;}
+  .ms__tiny {fill:var(--ms-muted);font-size:9px;}
   .ms__tools-title {font-size:15px;}
-  .ms__bar-track {fill:#23405a;}
-  .ms__bar {fill:#ff782c;transform-box:fill-box;transform-origin:left center;animation:ms-bar 3.2s ease-in-out infinite alternate;}
-  .ms__bar--2 {fill:#398ffc;animation-delay:.7s;}
-  .ms__beacon {fill:#ff8c36;animation:ms-beacon 3s ease-in-out infinite;}
-  .ms__chip-label {fill:#d7e7fd;font-size:10px;font-weight:700;}
+  .ms__bar-track {fill:var(--ms-bar-track);}
+  .ms__bar {fill:var(--ms-orange);transform-box:fill-box;transform-origin:left center;animation:ms-bar 3.2s ease-in-out infinite alternate;}
+  .ms__bar--2 {fill:var(--ms-blue);animation-delay:.7s;}
+  .ms__beacon {fill:var(--ms-orange);animation:ms-beacon 3s ease-in-out infinite;}
+  .ms__chip-label {fill:var(--ms-ink);font-size:10px;font-weight:700;}
   @keyframes ms-flow {to{stroke-dashoffset:-46;}}
-  @keyframes ms-highlight {0%,16%{opacity:1;fill:rgb(255 106 19 / .055);}24%,100%{opacity:0;fill:transparent;}}
+  @keyframes ms-highlight {0%,16%{opacity:1;fill:var(--ms-highlight);}24%,100%{opacity:0;fill:transparent;}}
   @keyframes ms-spin {to{transform:rotate(360deg);}}
   @keyframes ms-pulse {0%{opacity:.65;transform:scale(.87);}100%{opacity:0;transform:scale(1.3);}}
   @keyframes ms-bar {from{transform:scaleX(.22);}to{transform:scaleX(1);}}

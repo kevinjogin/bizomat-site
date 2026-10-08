@@ -34,3 +34,18 @@ test('home keeps its existing Engineering Core diagram rather than another flat 
   assert.match(graphic, /smap__head::after/);
   assert.match(graphic, /smap-orbit/);
 });
+
+test('all KEVOS motion scenes use the same accessible light and dark palette as the homepage', () => {
+  const scene = read('src/components/MotionVisual.astro');
+  assert.match(scene, /--ms-bg:#ffffff/);
+  assert.match(scene, /--ms-bg:#131412/);
+  assert.match(scene, /--ms-blue:#1456e8/);
+  assert.match(scene, /--ms-blue:#4f95ff/);
+  assert.match(scene, /--ms-orange:#ff6a13/);
+  assert.match(scene, /:global\(:root\[data-theme='dark'\]\) \.ms/);
+  assert.match(scene, /\.ms__background \{ fill:var\(--ms-bg\)/);
+  assert.match(scene, /\.ms__grid-path \{ stroke:var\(--ms-grid\)/);
+  assert.match(scene, /ms__halo-start/);
+  assert.doesNotMatch(scene, /KEVOS \/ 01|SYSTEM ACTIVE/);
+  assert.doesNotMatch(scene, /<rect[^>]+fill="#090f18"/);
+});
