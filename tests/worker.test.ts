@@ -8,13 +8,13 @@ const env = (): Env => ({
 });
 
 test('static requests are served from the site assets', async () => {
-  const res = await worker.fetch(new Request('https://gocore.com.au/about/'), env());
+  const res = await worker.fetch(new Request('https://kevos.com/about/'), env());
   assert.equal(await res.text(), 'asset:/about/');
 });
 
 test('/api/chat reaches the assistant (503 until the AI binding is added)', async () => {
   const res = await worker.fetch(
-    new Request('https://gocore.com.au/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: [{ role: 'user', content: 'Hi' }] }) }),
+    new Request('https://kevos.com/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: [{ role: 'user', content: 'Hi' }] }) }),
     env(),
   );
   assert.equal(res.status, 503);
@@ -22,22 +22,22 @@ test('/api/chat reaches the assistant (503 until the AI binding is added)', asyn
 });
 
 test('/api/contact reaches the contact handler; unknown API paths 404', async () => {
-  assert.equal((await worker.fetch(new Request('https://gocore.com.au/api/contact'), env())).status, 405);
-  assert.equal((await worker.fetch(new Request('https://gocore.com.au/api/other'), env())).status, 404);
+  assert.equal((await worker.fetch(new Request('https://kevos.com/api/contact'), env())).status, 405);
+  assert.equal((await worker.fetch(new Request('https://kevos.com/api/other'), env())).status, 404);
 });
 
 test('hashed assets get long caching; pages.dev is kept out of search engines', async () => {
-  const asset = await worker.fetch(new Request('https://gocore.com.au/_astro/site.abc123.css'), env());
+  const asset = await worker.fetch(new Request('https://kevos.com/_astro/site.abc123.css'), env());
   assert.match(asset.headers.get('Cache-Control') ?? '', /immutable/);
   const preview = await worker.fetch(new Request('https://gocore.pages.dev/'), env());
   assert.equal(preview.headers.get('X-Robots-Tag'), 'noindex');
-  const live = await worker.fetch(new Request('https://gocore.com.au/'), env());
+  const live = await worker.fetch(new Request('https://kevos.com/'), env());
   assert.equal(live.headers.get('X-Robots-Tag'), null);
 });
 
 test('plain HTTP page requests on the production domain are upgraded to HTTPS', async () => {
-  const res = await worker.fetch(new Request('http://gocore.com.au/services/?a=1'), env());
+  const res = await worker.fetch(new Request('http://kevos.com/services/?a=1'), env());
   assert.equal(res.status, 301);
-  assert.equal(res.headers.get('Location'), 'https://gocore.com.au/services/?a=1');
-  assert.equal((await worker.fetch(new Request('https://gocore.com.au/services/'), env())).status, 200);
+  assert.equal(res.headers.get('Location'), 'https://kevos.com/services/?a=1');
+  assert.equal((await worker.fetch(new Request('https://kevos.com/services/'), env())).status, 200);
 });
