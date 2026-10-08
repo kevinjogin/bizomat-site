@@ -1,21 +1,14 @@
-/* GoCore design system: tokens, base elements, typography and shared utilities.
+/* KEVOS design system: tokens, base elements, typography and shared utilities.
    Component-specific styles live in each component's <style> block. */
 
-/* ---------- Brand display type ----------
-   GoCore Display: Archivo inclined at 75 degrees, the standard angle for engineering lettering
-   (IS 9609 / ISO 3098). Built by scripts/brand/build_fonts.py; OFL licence in public/fonts/OFL.txt. */
+/* Oxanium is a self-hosted, open-licensed display typeface with angular geometry
+   informed by the KEVOS wordmark. The bespoke logo itself remains unchanged.
+   SIL Open Font License: /fonts/OFL-Oxanium.txt */
 @font-face {
-  font-family: 'GoCore Display';
-  src: url('/fonts/gocore-display-600.woff2') format('woff2');
-  font-weight: 100 649;
+  font-family: 'KEVOS Display';
+  src: url('/fonts/oxanium-variable.ttf') format('truetype');
   font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'GoCore Display';
-  src: url('/fonts/gocore-display-700.woff2') format('woff2');
-  font-weight: 650 1000;
-  font-style: normal;
+  font-weight: 200 800;
   font-display: swap;
 }
 
@@ -42,11 +35,9 @@
   --danger: #b3261e;
   --success: #1f6b45;
 
-  /* Type system. Stroke weight follows size so every level stays legible: the wordmark is heaviest
-     (stroke about h/3), display and section headings are inclined 600 (about h/5), smaller headings
-     inclined 700 (about h/4.5), and body text is upright Inter Tight 400 (about h/8). Body copy stays
-     upright because sloped running text is slower to read on screen. */
-  --font-display: 'GoCore Display', 'Inter Tight Variable', 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
+  /* KEVOS heading hierarchy uses the angular display family; body copy remains
+     upright Inter Tight for comfortable professional reading. */
+  --font-display: 'KEVOS Display', 'Inter Tight Variable', 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Inter Tight Variable', 'Inter Tight', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-serif: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, 'Times New Roman', serif;
   --font-mono: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', Menlo, Consolas, monospace;
@@ -138,22 +129,25 @@ body {
 main { flex: 1; }
 img, svg, picture, video { display: block; max-width: 100%; }
 img { height: auto; }
-h1, h2, h3, h4 {
+/* All heading levels use the same angular KEVOS display family. The explicit
+   font-family priority also covers heading-specific Astro component styles
+   (such as article cards, section titles and footer headings). */
+h1, h2, h3, h4, h5, h6 {
   margin: 0;
-  font-family: var(--font-display);
-  font-weight: 600;
+  font-family: var(--font-display) !important;
+  font-weight: 650;
   font-synthesis: none;
-  line-height: 1.08;
-  letter-spacing: -0.018em;
+  line-height: 1.12;
+  letter-spacing: -0.014em;
   text-wrap: balance;
 }
 h1 { font-size: var(--step-4); }
 h2 { font-size: var(--step-3); }
-h3, h4 { font-weight: 700; }
-h3 { font-size: var(--step-1); letter-spacing: -0.008em; line-height: 1.25; }
+h3, h4, h5, h6 { font-weight: 700; }
+h3 { font-size: var(--step-1); line-height: 1.25; }
 :is(h1, h2, h3, h4) em { font-style: normal; color: var(--accent); }
 /* The inclined display face is wide: on very narrow screens let long words hyphenate rather than overflow. */
-@media (max-width: 480px) { h1, h2, h3 { hyphens: auto; overflow-wrap: break-word; } }
+@media (max-width: 480px) { h1, h2, h3, h4, h5, h6 { hyphens: auto; overflow-wrap: break-word; } }
 p { margin: 0 0 1em; text-wrap: pretty; }
 a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.2em; transition: color 0.2s var(--ease), text-decoration-color 0.2s var(--ease); }
 a:hover { color: var(--accent); }
