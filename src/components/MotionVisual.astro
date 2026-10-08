@@ -97,8 +97,8 @@ const id = `ms-${page}`;
   <figcaption id={`${id}-description`} class="visually-hidden">{info.alt}</figcaption>
   <svg class="ms__svg" viewBox="0 0 540 540" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
     <defs>
-      <pattern id={`${id}-grid`} width="27" height="27" patternUnits="userSpaceOnUse">
-        <path class="ms__grid-path" d="M27 0H0V27" fill="none" stroke-width=".65" />
+      <pattern id={`${id}-grid`} width="24" height="24" patternUnits="userSpaceOnUse">
+        <path class="ms__grid-path" d="M24 0H0V24" fill="none" stroke-width=".65" />
       </pattern>
       <radialGradient id={`${id}-halo`}>
         <stop class="ms__halo-start" offset="0"/>
@@ -106,13 +106,13 @@ const id = `ms-${page}`;
         <stop class="ms__halo-end" offset="1"/>
       </radialGradient>
       <linearGradient id={`${id}-flow`} x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#2d8aff"/>
+        <stop offset="0" stop-color="#c2410c"/>
         <stop offset=".65" stop-color="#ff6a13"/>
         <stop offset="1" stop-color="#ffa65f"/>
       </linearGradient>
     </defs>
-    <rect class="ms__background" width="540" height="540" rx="18"/>
-    <rect x="0" y="0" width="540" height="540" fill={`url(#${id}-grid)`} rx="18"/>
+    <rect class="ms__background" width="540" height="540" rx="20"/>
+    <rect x="0" y="0" width="540" height="540" fill={`url(#${id}-grid)`} rx="20"/>
     <circle cx="270" cy="270" r="255" fill={`url(#${id}-halo)`}/>
     <path class="ms__corner" d="M22 65V22H65 M475 22H518V65 M22 475V518H65 M475 518H518V475"/>
     <text x="28" y="46" class="ms__eyebrow">{info.eyebrow}</text>
@@ -128,12 +128,12 @@ const id = `ms-${page}`;
         <path d={radialScene.route} class="ms__route"/>
         <path d={radialScene.route} class="ms__stream"/>
         <circle class="ms__packet" r="6" cx="0" cy="0">
-          <animateMotion dur="12s" path={radialScene.route} repeatCount="indefinite"/>
+          <animateMotion dur={page === 'industries' ? '12s' : '8s'} path={radialScene.route} repeatCount="indefinite"/>
         </circle>
         {radialScene.nodes.map((node,i) => (
           <g class:list={['ms__station',`ms__station--${i+1}`]} transform={`translate(${node.x} ${node.y})`}>
-            <rect x="-80" y="-43" width="160" height="86" rx="12" class="ms__tile"/>
-            <rect x="-80" y="-43" width="160" height="86" rx="12" class="ms__tile-active"/>
+            <rect x="-80" y="-43" width="160" height="86" rx="14" class="ms__tile"/>
+            <rect x="-80" y="-43" width="160" height="86" rx="14" class="ms__tile-active"/>
             <text x="-66" y="-23" class="ms__ordinal">{String(i+1).padStart(2,'0')}</text>
             {node.glyph && <path d={node.glyph} transform="translate(35 -14) scale(.85)" class="ms__glyph"/>}
             <text x="-66" y={node.second ? '0' : '9'} class="ms__node-title">{node.first}</text>
@@ -146,10 +146,11 @@ const id = `ms-${page}`;
         <circle cx="270" cy="271" r="81" class="ms__hub-fill"/>
         <g class="ms__ring">
           <circle cx="270" cy="271" r="88" class="ms__arc ms__arc--orange"/>
-          <circle cx="270" cy="271" r="88" class="ms__arc ms__arc--blue"/>
+          <circle cx="270" cy="271" r="88" class="ms__arc ms__arc--secondary"/>
         </g>
         <circle cx="270" cy="271" r="61" class="ms__hub-inner"/>
-        <text x="270" y="262" text-anchor="middle" class="ms__brand">KEVOS</text>
+        <image class="ms__brandmark ms__brandmark--light" x="210" y="249" width="120" height="27" href="/brand/kevos-wordmark-orange-light.svg" preserveAspectRatio="xMidYMid meet"/>
+        <image class="ms__brandmark ms__brandmark--dark" x="210" y="249" width="120" height="27" href="/brand/kevos-wordmark-orange-dark.svg" preserveAspectRatio="xMidYMid meet"/>
         <text x="270" y="283" text-anchor="middle" class="ms__hub-caption">{radialScene.center}</text>
         <circle class="ms__center-pulse" cx="270" cy="271" r="70"/>
       </g>
@@ -168,8 +169,8 @@ const id = `ms-${page}`;
           {x:175,y:375,one:'Handover',two:'CLOSE OUT'}
         ].map((node,i)=>(
           <g class:list={['ms__stage',`ms__station--${i+1}`]} transform={`translate(${node.x} ${node.y})`}>
-            <rect x="-66" y="-55" width="132" height="110" rx="13" class="ms__tile"/>
-            <rect x="-66" y="-55" width="132" height="110" rx="13" class="ms__tile-active"/>
+            <rect x="-66" y="-55" width="132" height="110" rx="14" class="ms__tile"/>
+            <rect x="-66" y="-55" width="132" height="110" rx="14" class="ms__tile-active"/>
             <circle cx="-40" cy="-28" r="15" class="ms__step-number"/>
             <text x="-40" y="-24" text-anchor="middle" class="ms__step-digit">{String(i+1).padStart(2,'0')}</text>
             <text x="-50" y="12" class="ms__stage-title">{node.one}</text>
@@ -194,8 +195,8 @@ const id = `ms-${page}`;
           {y:384,a:'Send a',b:'Message',c:'START A CONVERSATION'}
         ].map((n,i)=>(
           <g class:list={['ms__contact-card',`ms__station--${i+1}`]} transform={`translate(119 ${n.y})`}>
-            <rect x="-89" y="-39" width="178" height="78" rx="12" class="ms__tile"/>
-            <rect x="-89" y="-39" width="178" height="78" rx="12" class="ms__tile-active"/>
+            <rect x="-89" y="-39" width="178" height="78" rx="14" class="ms__tile"/>
+            <rect x="-89" y="-39" width="178" height="78" rx="14" class="ms__tile-active"/>
             <text x="-75" y="-20" class="ms__ordinal">{String(i+1).padStart(2,'0')}</text>
             <text x="-75" y="1" class="ms__node-title">{n.a}</text>
             <text x="-75" y="18" class="ms__node-title">{n.b}</text>
@@ -206,7 +207,8 @@ const id = `ms-${page}`;
         <circle cx="412" cy="278" r="92" class="ms__hub-outline"/>
         <g class="ms__ring"><circle cx="412" cy="278" r="94" class="ms__arc ms__arc--orange"/></g>
         <circle cx="412" cy="278" r="66" class="ms__hub-inner"/>
-        <text x="412" y="267" text-anchor="middle" class="ms__brand">KEVOS</text>
+        <image class="ms__brandmark ms__brandmark--light" x="355" y="255" width="114" height="26" href="/brand/kevos-wordmark-orange-light.svg" preserveAspectRatio="xMidYMid meet"/>
+        <image class="ms__brandmark ms__brandmark--dark" x="355" y="255" width="114" height="26" href="/brand/kevos-wordmark-orange-dark.svg" preserveAspectRatio="xMidYMid meet"/>
         <text x="412" y="293" text-anchor="middle" class="ms__hub-caption">ENQUIRIES</text>
         <text x="412" y="313" text-anchor="middle" class="ms__tiny">NEXT STEP →</text>
       </g>
@@ -223,8 +225,8 @@ const id = `ms-${page}`;
           {x:450,one:'RESULT',two:'NEXT DECISION'}
         ].map((n,i)=>(
           <g class:list={['ms__tools-core',`ms__station--${i+1}`]} transform={`translate(${n.x} 225)`}>
-            <rect x="-67" y="-62" width="134" height="124" rx="15" class="ms__tile"/>
-            <rect x="-67" y="-62" width="134" height="124" rx="15" class="ms__tile-active"/>
+            <rect x="-67" y="-62" width="134" height="124" rx="14" class="ms__tile"/>
+            <rect x="-67" y="-62" width="134" height="124" rx="14" class="ms__tile-active"/>
             <text x="-52" y="-37" class="ms__ordinal">{String(i+1).padStart(2,'0')}</text>
             <text x="-52" y="-10" class="ms__node-title ms__tools-title">{n.one}</text>
             <text x="-52" y="11" class="ms__stage-sub">{n.two}</text>
@@ -253,30 +255,32 @@ const id = `ms-${page}`;
 </figure>
 
 <style>
+  /* The secondary pages share the homepage's orange grid, neutral tiles,
+     20px square-panel geometry, orange signal and eight-second orbit cadence. */
   .ms {
-
+    --ms-cycle:12s;
     --ms-bg:#ffffff;
-    --ms-grid:rgb(20 86 232 / .14);
-    --ms-border:#d0d9e5;
-    --ms-halo:#b0c9f2;
-    --ms-grid-strong:#4777b4;
-    --ms-ink:#171c24;
-    --ms-muted:#59616e;
-    --ms-blue:#1456e8;
+    --ms-grid:rgb(255 106 19 / .07);
+    --ms-border:rgb(18 18 17 / .20);
+    --ms-halo:#ffbf92;
+    --ms-grid-strong:#d67943;
+    --ms-ink:#121211;
+    --ms-muted:#67645d;
+    --ms-line:#c2410c;
     --ms-orange:#ff6a13;
-    --ms-orange-light:#e35b0d;
-    --ms-ordinal:#a83f00;
-    --ms-rule:#d0d9e5;
-    --ms-track:#3579cc;
+    --ms-orange-light:#d84a0b;
+    --ms-ordinal:#c2410c;
+    --ms-rule:rgb(18 18 17 / .12);
+    --ms-track:#e98d57;
     --ms-tile:#ffffff;
-    --ms-tile-edge:#c5d1df;
-    --ms-hub:#f5f8fe;
+    --ms-tile-edge:rgb(18 18 17 / .13);
+    --ms-hub:#fff9f5;
     --ms-hub-inner:#ffffff;
-    --ms-step:#eaf1ff;
-    --ms-bar-track:#d5e1f1;
+    --ms-step:#fff2e9;
+    --ms-bar-track:#f0e4dd;
     --ms-packet-outline:#fff1e5;
-    --ms-packet-outline-blue:#e5f0ff;
-    --ms-highlight:rgb(255 106 19 / .07);
+    --ms-packet-outline-secondary:#fff1e5;
+    --ms-highlight:rgb(255 106 19 / .08);
     display:block;
     position:relative;
     margin:0;
@@ -286,70 +290,72 @@ const id = `ms-${page}`;
     overflow:hidden;
     isolation:isolate;
     border:1px solid var(--ms-border);
-    border-radius:18px;
+    border-radius:20px;
     background:var(--ms-bg);
-    box-shadow:0 16px 48px rgb(0 0 0 / .17), 0 0 0 1px rgb(32 116 238 / .06) inset;
+    box-shadow:0 12px 30px rgb(18 18 17 / .055);
   }
-  /* Matching the blueprint-sheet palette used by the homepage ServiceMap. */
+  .ms--services,.ms--insights,.ms--about { --ms-cycle:8s; }
 
-  /* Exact same system-theme contract as the header, footer and homepage visual. */
+  /* Light/dark follows the same theme contract as the homepage animation. */
   :global(:root[data-theme='dark']) .ms {
     --ms-bg:#131412;
-    --ms-grid:rgb(79 149 255 / .15);
-    --ms-border:#44484c;
-    --ms-halo:#2e65b9;
-    --ms-grid-strong:#4283c3;
+    --ms-grid:rgb(255 140 71 / .08);
+    --ms-border:rgb(238 236 230 / .23);
+    --ms-halo:#813714;
+    --ms-grid-strong:#d47743;
     --ms-ink:#f1efea;
-    --ms-muted:#aab3bd;
-    --ms-blue:#4f95ff;
-    --ms-orange:#ff6a13;
-    --ms-orange-light:#ff963c;
-    --ms-ordinal:#ffab7a;
-    --ms-rule:#39424e;
-    --ms-track:#478ac5;
+    --ms-muted:#aaa49b;
+    --ms-line:#ff8c47;
+    --ms-orange:#ff8c47;
+    --ms-orange-light:#ffb077;
+    --ms-ordinal:#ffad78;
+    --ms-rule:rgb(238 236 230 / .12);
+    --ms-track:#bb714a;
     --ms-tile:#1c1d1b;
-    --ms-tile-edge:#51565b;
-    --ms-hub:#181c21;
-    --ms-hub-inner:#131718;
-    --ms-step:#263447;
-    --ms-bar-track:#33475d;
-    --ms-packet-outline:#ffe8cc;
-    --ms-packet-outline-blue:#d7edff;
-    --ms-highlight:rgb(255 106 19 / .09);
+    --ms-tile-edge:rgb(238 236 230 / .14);
+    --ms-hub:#1d1b19;
+    --ms-hub-inner:#131412;
+    --ms-step:#38251e;
+    --ms-bar-track:#463029;
+    --ms-packet-outline:#58301e;
+    --ms-packet-outline-secondary:#58301e;
+    --ms-highlight:rgb(255 140 71 / .09);
+    box-shadow:0 12px 32px rgb(0 0 0 / .17);
   }
   @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme])) .ms {
-    --ms-bg:#131412;
-    --ms-grid:rgb(79 149 255 / .15);
-    --ms-border:#44484c;
-    --ms-halo:#2e65b9;
-    --ms-grid-strong:#4283c3;
-    --ms-ink:#f1efea;
-    --ms-muted:#aab3bd;
-    --ms-blue:#4f95ff;
-    --ms-orange:#ff6a13;
-    --ms-orange-light:#ff963c;
-    --ms-ordinal:#ffab7a;
-    --ms-rule:#39424e;
-    --ms-track:#478ac5;
-    --ms-tile:#1c1d1b;
-    --ms-tile-edge:#51565b;
-    --ms-hub:#181c21;
-    --ms-hub-inner:#131718;
-    --ms-step:#263447;
-    --ms-bar-track:#33475d;
-    --ms-packet-outline:#ffe8cc;
-    --ms-packet-outline-blue:#d7edff;
-    --ms-highlight:rgb(255 106 19 / .09);
+    :global(:root:not([data-theme='light'])) .ms {
+      --ms-bg:#131412;
+      --ms-grid:rgb(255 140 71 / .08);
+      --ms-border:rgb(238 236 230 / .23);
+      --ms-halo:#813714;
+      --ms-grid-strong:#d47743;
+      --ms-ink:#f1efea;
+      --ms-muted:#aaa49b;
+      --ms-line:#ff8c47;
+      --ms-orange:#ff8c47;
+      --ms-orange-light:#ffb077;
+      --ms-ordinal:#ffad78;
+      --ms-rule:rgb(238 236 230 / .12);
+      --ms-track:#bb714a;
+      --ms-tile:#1c1d1b;
+      --ms-tile-edge:rgb(238 236 230 / .14);
+      --ms-hub:#1d1b19;
+      --ms-hub-inner:#131412;
+      --ms-step:#38251e;
+      --ms-bar-track:#463029;
+      --ms-packet-outline:#58301e;
+      --ms-packet-outline-secondary:#58301e;
+      --ms-highlight:rgb(255 140 71 / .09);
+      box-shadow:0 12px 32px rgb(0 0 0 / .17);
     }
   }
   .ms__background { fill:var(--ms-bg); }
   .ms__grid-path { stroke:var(--ms-grid); }
-  .ms__halo-start { stop-color:var(--ms-halo); stop-opacity:.27; }
-  .ms__halo-middle { stop-color:var(--ms-halo); stop-opacity:.06; }
+  .ms__halo-start { stop-color:var(--ms-halo); stop-opacity:.18; }
+  .ms__halo-middle { stop-color:var(--ms-halo); stop-opacity:.04; }
   .ms__halo-end { stop-color:var(--ms-bg); stop-opacity:0; }
   .ms__svg { display:block; width:100%; height:100%; overflow:hidden; font-family:'Inter Tight',Inter,Arial,sans-serif; }
-  .ms__corner { fill:none;stroke:var(--ms-grid-strong);stroke-width:1.2;opacity:.7; }
+  .ms__corner { fill:none;stroke:var(--ms-grid-strong);stroke-width:1;opacity:.32; }
   .ms__eyebrow, .ms__foot, .ms__ordinal, .ms__node-sub, .ms__hub-caption,
   .ms__stage-sub, .ms__tiny, .ms__chip-label {
     font-family:ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.08em;
@@ -358,34 +364,42 @@ const id = `ms-${page}`;
   .ms__rule {fill:none;stroke:var(--ms-rule);stroke-width:1;opacity:.72;}
   .ms__foot { fill:var(--ms-muted);font-size:9.5px; }
   .ms__route { fill:none;stroke:var(--ms-track);stroke-width:2;stroke-opacity:.57;stroke-linecap:round; }
-  .ms__stream { fill:none;stroke:var(--ms-orange);stroke-width:3;stroke-linecap:round;stroke-dasharray:6 17;opacity:.8;animation:ms-flow 1.55s linear infinite;}
-  .ms__spoke { stroke:var(--ms-blue);stroke-dasharray:3 7;stroke-width:1.7;opacity:.5;}
+  .ms__stream { fill:none;stroke:var(--ms-orange);stroke-width:2.5;stroke-linecap:round;stroke-dasharray:5 16;opacity:.7;animation:ms-flow 1.8s linear infinite;}
+  .ms__spoke { stroke:var(--ms-line);stroke-dasharray:3 7;stroke-width:1.7;opacity:.5;}
   .ms__packet { fill:var(--ms-orange-light);stroke:var(--ms-packet-outline);stroke-width:1.5;filter:drop-shadow(0 0 7px var(--ms-orange)); }
-  .ms__packet--secondary {fill:var(--ms-blue);stroke:var(--ms-packet-outline-blue);filter:drop-shadow(0 0 6px var(--ms-blue));}
+  .ms__packet--secondary {fill:var(--ms-orange-light);stroke:var(--ms-packet-outline-secondary);filter:drop-shadow(0 0 6px var(--ms-orange));}
   .ms__tile {fill:var(--ms-tile);stroke:var(--ms-tile-edge);stroke-width:1.2;}
-  .ms__tile-active {fill:transparent;stroke:var(--ms-orange);stroke-width:2;opacity:0;animation:ms-highlight 12s ease-in-out infinite;}
+  .ms__tile-active {fill:transparent;stroke:var(--ms-orange);stroke-width:1.7;opacity:0;animation:ms-highlight var(--ms-cycle) ease-in-out infinite;}
   .ms__station--1 { --ms-delay:0s; } .ms__station--2 {--ms-delay:2s;}
   .ms__station--3 {--ms-delay:4s;} .ms__station--4 {--ms-delay:6s;}
   .ms__station--5 {--ms-delay:8s;} .ms__station--6 {--ms-delay:10s;}
   .ms__station .ms__tile-active, .ms__stage .ms__tile-active, .ms__contact-card .ms__tile-active,
   .ms__tools-core .ms__tile-active,.ms__tool-chip .ms__tile-active { animation-delay:var(--ms-delay); }
   .ms__ordinal { fill:var(--ms-ordinal);font-size:11px;font-weight:700; }
-  .ms__glyph { fill:none;stroke:var(--ms-blue);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round; }
+  .ms__glyph { fill:none;stroke:var(--ms-line);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round; }
   .ms__node-title { fill:var(--ms-ink);font-size:15px;font-weight:650;letter-spacing:-.012em; }
   .ms__node-sub { fill:var(--ms-muted);font-size:8.5px; }
-  .ms__hub-outline {fill:none;stroke:var(--ms-grid-strong);stroke-width:1.3;opacity:.65;}
-  .ms__hub-ticks {fill:none;stroke:var(--ms-blue);stroke-width:3;stroke-dasharray:1 10;opacity:.4;}
-  .ms__hub-fill {fill:var(--ms-hub);stroke:var(--ms-grid-strong);stroke-width:1.5;}
+  .ms__hub-outline {fill:none;stroke:var(--ms-grid-strong);stroke-width:1.1;opacity:.4;}
+  .ms__hub-ticks {fill:none;stroke:var(--ms-line);stroke-width:3;stroke-dasharray:1 10;opacity:.4;}
+  .ms__hub-fill {fill:var(--ms-hub);stroke:var(--ms-grid-strong);stroke-width:1;}
   .ms__hub-inner {fill:var(--ms-hub-inner);stroke:var(--ms-tile-edge);stroke-width:1.2;}
-  .ms__ring {transform-origin:270px 271px;animation:ms-spin 18s linear infinite;}
+  .ms__ring {transform-origin:270px 271px;animation:ms-spin 28s linear infinite;}
   .ms--contact .ms__ring { transform-origin:412px 278px; }
   .ms__arc {fill:none;stroke-width:3;stroke-linecap:round;stroke-dasharray:115 500;}
   .ms__arc--orange {stroke:var(--ms-orange);filter:drop-shadow(0 0 4px var(--ms-orange));}
-  .ms__arc--blue {stroke:var(--ms-blue);stroke-dasharray:45 510;stroke-dashoffset:280;}
-  .ms__brand {fill:var(--ms-ink);font-size:25px;font-weight:800;letter-spacing:.13em;}
+  .ms__arc--secondary {stroke:var(--ms-line);stroke-dasharray:34 521;stroke-dashoffset:280;opacity:.44;}
+  /* Render the actual approved orange SVG wordmark—not a font imitation. */
+  .ms__brandmark { pointer-events:none; }
+  .ms__brandmark--dark { display:none; }
+  :global(:root[data-theme='dark']) .ms__brandmark--light { display:none; }
+  :global(:root[data-theme='dark']) .ms__brandmark--dark { display:block; }
+  @media (prefers-color-scheme:dark) {
+    :global(:root:not([data-theme='light'])) .ms__brandmark--light { display:none; }
+    :global(:root:not([data-theme='light'])) .ms__brandmark--dark { display:block; }
+  }
   .ms__hub-caption {fill:var(--ms-muted);font-size:9px;}
   .ms__center-pulse {fill:none;stroke:var(--ms-orange);stroke-width:1.5;animation:ms-pulse 4s ease-out infinite;transform-origin:270px 271px;}
-  .ms__step-number {fill:var(--ms-step);stroke:var(--ms-blue);stroke-width:1.3;}
+  .ms__step-number {fill:var(--ms-step);stroke:var(--ms-line);stroke-width:1.3;}
   .ms__step-digit {fill:var(--ms-ordinal);font-size:11px;font-weight:700;}
   .ms__stage-title {fill:var(--ms-ink);font-weight:700;font-size:17px;}
   .ms__stage-sub {fill:var(--ms-muted);font-size:9px;}
@@ -395,7 +409,7 @@ const id = `ms-${page}`;
   .ms__tools-title {font-size:15px;}
   .ms__bar-track {fill:var(--ms-bar-track);}
   .ms__bar {fill:var(--ms-orange);transform-box:fill-box;transform-origin:left center;animation:ms-bar 3.2s ease-in-out infinite alternate;}
-  .ms__bar--2 {fill:var(--ms-blue);animation-delay:.7s;}
+  .ms__bar--2 {fill:var(--ms-orange-light);animation-delay:.7s;}
   .ms__beacon {fill:var(--ms-orange);animation:ms-beacon 3s ease-in-out infinite;}
   .ms__chip-label {fill:var(--ms-ink);font-size:10px;font-weight:700;}
   @keyframes ms-flow {to{stroke-dashoffset:-46;}}
