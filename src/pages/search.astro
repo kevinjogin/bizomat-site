@@ -1,6 +1,11 @@
 ---
 // Static full-text search powered by Pagefind. The index is generated at build time into
 // /pagefind/, so no server or database is involved.
+//
+// The search script is an inline module on purpose. When Astro bundles a small script it inlines it into
+// the page, and a dynamic import() inside it is wrapped in Vite's preload helper whose __VITE_PRELOAD__
+// placeholder is never filled in. That threw at runtime, so search always fell back to its error message in
+// production. An inline module is emitted verbatim, so the browser imports /pagefind/pagefind.js directly.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import Container from '../components/Container.astro';
@@ -26,76 +31,69 @@ const crumbs = [
     <ol class="search-results" data-search-results></ol>
     <noscript><p class="search-status">Search needs JavaScript. You can browse all articles on the <a href="/insights/">Insights</a> page instead.</p></noscript>
   </Container>
+  <script is:inline type="module">
+    const form = document.querySelector('[data-search-form]');
+    const input = form.querySelector('input');
+    const status = document.querySelector('[data-search-status]');
+    const list = document.querySelector('[data-search-results]');
+    let pagefind = null;
+
+    const escape = (s) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+    // Pagefind excerpts contain only <mark> tags; strip anything else defensively.
+    const safeExcerpt = (s) => escape(s.replace(/<(?!\/?mark>)[^>]*>/g, '')).replace(/&lt;(\/?)mark&gt;/g, '<$1mark>');
+
+    async function load() {
+      if (pagefind) return pagefind;
+      try {
+        pagefind = await import('/pagefind/pagefind.js');
+        await pagefind.init();
+        return pagefind;
+      } catch {
+        pagefind = null;
+        status.textContent = 'Search could not be loaded. Browse all articles on the Insights page instead.';
+        return null;
+      }
+    }
+
+    async function run(query) {
+      const q = query.trim();
+      const url = new URL(location.href);
+      q ? url.searchParams.set('q', q) : url.searchParams.delete('q');
+      history.replaceState(null, '', url);
+      if (!q) {
+        list.innerHTML = '';
+        status.textContent = '';
+        return;
+      }
+      const pf = await load();
+      if (!pf) return;
+      const search = await pf.debouncedSearch(q);
+      if (!search) return; // superseded by a newer query
+      const results = await Promise.all(search.results.slice(0, 20).map((r) => r.data()));
+      status.textContent = `${search.results.length} result${search.results.length === 1 ? '' : 's'} for “${q}”`;
+      list.innerHTML = results
+        .map(
+          (r) => `<li><a href="${escape(r.url)}">
+            ${r.filters?.category?.[0] ? `<span class="search-results__cat">${escape(r.filters.category[0])}</span>` : ''}
+            <strong>${escape(r.meta.title ?? r.url)}</strong>
+            <p>${safeExcerpt(r.excerpt)}</p></a></li>`,
+        )
+        .join('');
+    }
+
+    input.addEventListener('input', () => run(input.value));
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      run(input.value);
+    });
+    const initial = new URLSearchParams(location.search).get('q');
+    if (initial) {
+      input.value = initial;
+      run(initial);
+    }
+    input.focus();
+  </script>
 </BaseLayout>
-
-<script>
-  type Result = { url: string; meta: { title?: string }; excerpt: string; filters?: { category?: string[] } };
-  type Pagefind = {
-    init: () => Promise<void>;
-    debouncedSearch: (q: string) => Promise<{ results: Array<{ data: () => Promise<Result> }> } | null>;
-  };
-
-  const form = document.querySelector<HTMLFormElement>('[data-search-form]')!;
-  const input = form.querySelector<HTMLInputElement>('input')!;
-  const status = document.querySelector<HTMLElement>('[data-search-status]')!;
-  const list = document.querySelector<HTMLOListElement>('[data-search-results]')!;
-  let pagefind: Pagefind | null = null;
-
-  const escape = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
-  // Pagefind excerpts contain only <mark> tags; strip anything else defensively.
-  const safeExcerpt = (s: string) => escape(s.replace(/<(?!\/?mark>)[^>]*>/g, '')).replace(/&lt;(\/?)mark&gt;/g, '<$1mark>');
-
-  async function load(): Promise<Pagefind | null> {
-    if (pagefind) return pagefind;
-    try {
-      const path = '/pagefind/pagefind.js';
-      pagefind = (await import(/* @vite-ignore */ path)) as Pagefind;
-      await pagefind.init();
-      return pagefind;
-    } catch {
-      status.textContent = 'Search is available after the site is built (npm run build). Browse all articles on the Insights page instead.';
-      return null;
-    }
-  }
-
-  async function run(query: string) {
-    const q = query.trim();
-    const url = new URL(location.href);
-    q ? url.searchParams.set('q', q) : url.searchParams.delete('q');
-    history.replaceState(null, '', url);
-    if (!q) {
-      list.innerHTML = '';
-      status.textContent = '';
-      return;
-    }
-    const pf = await load();
-    if (!pf) return;
-    const search = await pf.debouncedSearch(q);
-    if (!search) return; // superseded by a newer query
-    const results = await Promise.all(search.results.slice(0, 20).map((r) => r.data()));
-    status.textContent = `${search.results.length} result${search.results.length === 1 ? '' : 's'} for “${q}”`;
-    list.innerHTML = results
-      .map(
-        (r) => `<li><a href="${escape(r.url)}">
-          ${r.filters?.category?.[0] ? `<span class="search-results__cat">${escape(r.filters.category[0])}</span>` : ''}
-          <strong>${escape(r.meta.title ?? r.url)}</strong>
-          <p>${safeExcerpt(r.excerpt)}</p></a></li>`,
-      )
-      .join('');
-  }
-
-  input.addEventListener('input', () => run(input.value));
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    run(input.value);
-  });
-  const initial = new URLSearchParams(location.search).get('q');
-  if (initial) {
-    input.value = initial;
-    run(initial);
-  }
-  input.focus();
-</script>
 
 <style>
   :global(.search-page) { padding-bottom: var(--space-section); min-height: 40vh; }

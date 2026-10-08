@@ -37,6 +37,9 @@ for (const file of html) {
   }
   for (const m of doc.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)) styleHashes.add(sha256(m[1]));
   if (/<[a-z][^>]*\sstyle="/i.test(doc)) problems.push(`${rel(file)}: inline style attribute (blocked by CSP; move it to CSS)`);
+  // An inlined bundled script whose dynamic import() kept Vite's unfilled preload placeholder throws at runtime
+  // (this silently broke search once); such scripts must be is:inline modules instead.
+  if (doc.includes('__VITE_PRELOAD__')) problems.push(`${rel(file)}: inline script contains an unresolved __VITE_PRELOAD__ placeholder`);
 }
 
 // External form endpoints: Web3Forms (the default contact provider) and an optional external Worker.
