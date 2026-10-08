@@ -15,21 +15,23 @@ const props = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en-AU">
+<html lang="en-AU" data-theme="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0f0f0e" />
     <script is:inline>
+      // KEVOS opens in the dark theme. Light applies only when the visitor switches to it,
+      // and only for the current browser session (sessionStorage), never permanently.
       (function () {
-        var d = document.documentElement, t = null;
-        try { t = localStorage.getItem('kevos-theme'); } catch (e) {}
-        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var d = document.documentElement, t = 'dark';
+        try { if (sessionStorage.getItem('kevos-theme') === 'light') t = 'light'; } catch (e) {}
+        try { localStorage.removeItem('kevos-theme'); } catch (e) {}
         d.dataset.theme = t;
+        if (t === 'light') { var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', '#f6f5f1'); }
       })();
     </script>
-    <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#f6f5f1" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0f0f0e" media="(prefers-color-scheme: dark)" />
     <link rel="preload" href={interTight} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/oxanium-variable.ttf" as="font" type="font/ttf" crossorigin />
     <link rel="icon" href="/brand/kevos-favicon-k-orange.svg" type="image/svg+xml" />

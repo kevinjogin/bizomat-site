@@ -1,5 +1,6 @@
 ---
-// Light/dark switch. The initial theme is applied before first paint by the inline script in BaseLayout.
+// Light/dark switch. The site opens in the dark theme (set in BaseLayout before first paint). Switching to light
+// lasts only for the current browser session (sessionStorage); a new session opens in dark again.
 ---
 
 <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch colour theme">
@@ -14,14 +15,6 @@
 
 <script>
   const root = document.documentElement;
-  const media = window.matchMedia('(prefers-color-scheme: dark)');
-  const stored = () => {
-    try {
-      return localStorage.getItem('kevos-theme');
-    } catch {
-      return null;
-    }
-  };
   const label = () => {
     const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
     document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((b) => {
@@ -34,20 +27,14 @@
       const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
       root.dataset.theme = next;
       try {
-        localStorage.setItem('kevos-theme', next);
+        sessionStorage.setItem('kevos-theme', next);
       } catch {
-        /* storage unavailable (private mode); the choice lasts for this page only */
+        /* storage unavailable; the choice lasts for this page only */
       }
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#0f0f0e' : '#f6f5f1');
       label();
     }),
   );
-  // Follow the operating system until the visitor makes a choice.
-  media.addEventListener('change', (e) => {
-    if (!stored()) {
-      root.dataset.theme = e.matches ? 'dark' : 'light';
-      label();
-    }
-  });
   label();
 </script>
 
