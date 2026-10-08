@@ -1,4 +1,4 @@
-# Pages CMS (https://app.pagescms.org): the online editor for gocore.com.au.
+# Pages CMS (https://app.pagescms.org): the online editor for kevos.com (KEVOS).
 # Sign in with GitHub, open this repository, and edit content in forms. Every save is a Git
 # commit to `main`, and Cloudflare rebuilds and redeploys the site automatically.
 #
@@ -112,7 +112,7 @@ content:
       - name: author
         label: Author
         type: string
-        default: GoCore
+        default: KEVOS
       - name: image
         label: Cover image (optional)
         type: image
