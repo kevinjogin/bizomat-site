@@ -22,9 +22,9 @@
   --muted: #67645d;
   --line: rgb(18 18 17 / 0.1);
   --line-strong: rgb(18 18 17 / 0.22);
-  /* Brand colours from the GoCore logo. --accent is the text-safe orange; --brand-* are for graphics. */
+  /* Unified KEVOS orange branding; --accent provides accessible text contrast. */
   --brand-orange: #ff6a13;
-  --brand-blue: #1456e8;
+  --brand-blue: #ff6a13;
   --accent: #c2410c;
   --accent-soft: rgb(255 106 19 / 0.12);
   --inverse-bg: #121211;
