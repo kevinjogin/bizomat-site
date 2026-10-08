@@ -5,13 +5,16 @@ import { join } from 'node:path';
 
 const read = (path: string) => readFileSync(join(process.cwd(), path), 'utf8');
 
-test('KEVOS inner-page visuals are native animated SVG, not flattened image cards', () => {
-  const scene = read('src/components/MotionVisual.astro');
-  assert.match(scene, /<svg\b/);
-  assert.match(scene, /<animateMotion\b/);
-  assert.match(scene, /ms__stream/);
-  assert.match(scene, /prefers-reduced-motion:reduce/);
-  assert.doesNotMatch(scene, /<img\b|\/visuals\/kevos-/);
+test('all seven KEVOS pages use a purpose-built responsive motion scene', () => {
+  const motion = read('src/components/MotionVisual.astro');
+  const orbit = read('src/components/ServiceMap.astro');
+  assert.match(motion, /<ServiceMap variant=/);
+  assert.match(motion, /<figure class:list=/);
+  assert.match(motion, /<svg\b/);
+  assert.match(motion, /prefers-reduced-motion: reduce/);
+  assert.match(orbit, /prefers-reduced-motion: reduce/);
+  assert.doesNotMatch(motion, /<img\b|\/visuals\/kevos-/);
+
   const pages: Record<string, string> = {
     services: 'src/pages/services.astro',
     'how-it-works': 'src/pages/how-it-works.astro',
@@ -22,30 +25,48 @@ test('KEVOS inner-page visuals are native animated SVG, not flattened image card
     tools: 'src/pages/tools/index.astro',
   };
   for (const [name, path] of Object.entries(pages)) {
-    assert.ok(read(path).includes(`<MotionVisual page="${name}"`), `${path} uses the native ${name} scene`);
+    assert.ok(read(path).includes('<MotionVisual page="' + name + '"'), path + ' uses the ' + name + ' scene');
   }
 });
 
-test('home keeps its existing Engineering Core diagram rather than another flat infographic', () => {
+test('home, services, insights and about share the genuine four-square KEVOS orbit', () => {
   const home = read('src/pages/index.astro');
-  const graphic = read('src/components/ServiceMap.astro');
+  const orbit = read('src/components/ServiceMap.astro');
+  const motion = read('src/components/MotionVisual.astro');
   assert.match(home, /<ServiceMap\s*\/>/);
-  assert.doesNotMatch(home, /<MotionVisual page="home"/);
-  assert.match(graphic, /smap__head::after/);
-  assert.match(graphic, /smap-orbit/);
+  assert.match(motion, /page === 'services' \|\| page === 'insights' \|\| page === 'about'/);
+  assert.match(orbit, /--cycle: 8s/);
+  assert.match(orbit, /smap__spinner/);
+  assert.match(orbit, /smap__head::after/);
+  assert.match(orbit, /smap-orbit/);
+  assert.match(orbit, /<Logo/);
+  assert.match(orbit, /variant === 'services'/);
+  assert.match(orbit, /insights: \[/);
+  assert.match(orbit, /about: \[/);
 });
 
-test('all KEVOS motion scenes use the same accessible light and dark palette as the homepage', () => {
-  const scene = read('src/components/MotionVisual.astro');
-  assert.match(scene, /--ms-bg:#ffffff/);
-  assert.match(scene, /--ms-bg:#131412/);
-  assert.match(scene, /--ms-blue:#1456e8/);
-  assert.match(scene, /--ms-blue:#4f95ff/);
-  assert.match(scene, /--ms-orange:#ff6a13/);
-  assert.match(scene, /:global\(:root\[data-theme='dark'\]\) \.ms/);
-  assert.match(scene, /\.ms__background \{ fill:var\(--ms-bg\)/);
-  assert.match(scene, /\.ms__grid-path \{ stroke:var\(--ms-grid\)/);
-  assert.match(scene, /ms__halo-start/);
-  assert.doesNotMatch(scene, /KEVOS \/ 01|SYSTEM ACTIVE/);
-  assert.doesNotMatch(scene, /<rect[^>]+fill="#090f18"/);
+test('other KEVOS scenes have distinct content for industries, process, tools and contact', () => {
+  const motion = read('src/components/MotionVisual.astro');
+  assert.match(motion, /INDUSTRIES\.slice\(0, 6\)/);
+  assert.match(motion, /PROCESS\.map/);
+  assert.match(motion, /mv__sectors/);
+  assert.match(motion, /mv__pathway/);
+  assert.match(motion, /mv__tool-scene/);
+  assert.match(motion, /mv__contact-scene/);
+  assert.match(motion, /<Logo label=""/);
+});
+
+test('all motion panels share orange branding, neutral grids and both accessible themes', () => {
+  const motion = read('src/components/MotionVisual.astro');
+  const orbit = read('src/components/ServiceMap.astro');
+  assert.match(motion, /--m-panel:#ffffff/);
+  assert.match(motion, /--m-panel:#131412/);
+  assert.match(motion, /--m-orange:#c2410c/);
+  assert.match(motion, /--m-orange:#ff8c47/);
+  assert.match(motion, /:root\[data-theme='dark'\]/);
+  assert.match(motion, /border-radius:20px/);
+  assert.match(motion, /border-radius:14px/);
+  assert.match(orbit, /--grid: rgb\(255 106 19 \/ 0\.07\)/);
+  assert.doesNotMatch(motion, /#1456e8|#4f95ff|#2d8aff|<text[^>]*>KEVOS<\/text>/i);
+  assert.doesNotMatch(motion, /KEVOS \/ 01|SYSTEM ACTIVE/);
 });
