@@ -84,7 +84,7 @@ ${Object.entries(securityHeaders).map(([k, v]) => `  ${k}: ${v}`).join('\n')}
 /pagefind/*
   Cache-Control: public, max-age=3600
 
-# Keep the *.pages.dev address out of search engines; gocore.com.au is the canonical domain.
+# Keep the *.pages.dev address out of search engines; kevos.com is the canonical domain.
 https://:project.pages.dev/*
   X-Robots-Tag: noindex
 `,
