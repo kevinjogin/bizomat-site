@@ -7,7 +7,7 @@ const read = (path: string) => readFileSync(path, 'utf8');
 test('Insight cards and article pages show timeless editorial metadata without visible dates', () => {
   const card = read('src/components/ArticleCard.astro');
   const article = read('src/pages/insights/[slug].astro');
-  assert.doesNotMatch(card, /<FormattedDate\b|Published<\/|Updated<\/);
+  assert.doesNotMatch(card, /<FormattedDate\b|Published|Updated/);
   assert.doesNotMatch(article, /<FormattedDate\b|<dt>Published<\/dt>|<dt>Updated<\/dt>/);
   assert.match(card, /min read/);
   assert.match(article, /<dt>Author<\/dt>/);
