@@ -61,7 +61,7 @@ Header: Home, Services, Tools, How It Works, Industries, Insights, About, plus t
 - **Favicon and app icons:** orange angular K. Master `public/brand/kevos-chat-k-mark.svg`; `scripts/build-kevos-icons.mjs` generates `kevos-favicon-k-orange.svg`, PNG sizes 32/180/192/512 and `favicon.ico`.
 - **Colours:** `--brand-orange: #ff6a13`; light-theme accent `#c2410c`; dark-theme accent `#ff7a29` (`src/styles/global.css`). No blue brand accents.
 - **Typography:** KEVOS Display (Oxanium-based, self-hosted) for H1–H6; Inter Tight for body; Source Serif 4 for article prose.
-- **Themes:** light and dark, toggled by `ThemeToggle.astro`, stored in `localStorage` key `kevos-theme`.
+- **Themes (owner decision, 8 Oct 2026):** the site always opens in the **dark** theme (`<html data-theme="dark">` in `BaseLayout.astro` and `pages/chat.astro`, so it is dark even without JavaScript). The visitor can switch to light with `ThemeToggle.astro`; that choice is kept in `sessionStorage` key `kevos-theme` for the current browser session only, and any old `localStorage` value is removed. The operating-system preference is not followed. Covered by `tests/theme-default.test.ts`.
 - **Motion:** `ServiceMap.astro` is the shared four-square orbit with orange core on Home, Services, Insights and About. `MotionVisual.astro` holds the purpose-built Industries, How It Works, Tools and Contact diagrams. All respect reduced-motion preferences.
 - **Legal pages:** Privacy, Terms and Disclaimer use `LegalLayout` aligned to the shared full-width header container.
 
