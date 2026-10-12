@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+import { primaryGuide } from '../../data/library.ts';
+---
+<BaseLayout
+  title="Resources — Insights & Library"
+  description="Explore KEVOS Resources: practical Insights articles and a growing Library of free, original books and educational guides."
+  breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Resources', href: '/resources/' }]}
+>
+  <section class="resources-hero">
+    <Container>
+      <p class="eyebrow">KEVOS / Resources</p>
+      <h1>Practical knowledge, <em>easy to explore.</em></h1>
+      <p class="lead">Read focused Insights on engineering, operations, technology and business, or explore structured books and guides in the KEVOS Library.</p>
+    </Container>
+  </section>
+  <section class="resources-content" aria-label="Resources">
+    <Container>
+      <div class="resources-grid">
+        <article class="resources-card">
+          <span class="resources-number">01 / ARTICLES</span>
+          <h2>Insights</h2>
+          <p>Standalone articles with useful ideas, explanations and practical approaches to engineering, manufacturing, operations, projects and business.</p>
+          <a href="/insights/" class="resources-card__link">Browse Insights <span aria-hidden="true">↗</span></a>
+        </article>
+        <article class="resources-card resources-card--library">
+          <span class="resources-number">02 / BOOKS</span>
+          <h2>Library</h2>
+          <p>Original KEVOS books with covers, short chapters, worked examples and quick-reference material. Start with <strong>{primaryGuide.title}</strong>.</p>
+          <a href="/library/" class="resources-card__link">Open Library <span aria-hidden="true">↗</span></a>
+        </article>
+      </div>
+      <div class="resources-feature">
+        <img src={primaryGuide.cover} alt={`Cover of ${primaryGuide.title}`} width="900" height="1200" loading="lazy" />
+        <div>
+          <p class="eyebrow">Featured KEVOS Book</p>
+          <h2>{primaryGuide.title}</h2>
+          <p>{primaryGuide.description}</p>
+          <a href={`/library/${primaryGuide.slug}/`}>Read the book <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>
+<style>
+  .resources-hero { padding: clamp(3.5rem, 7vw, 6.5rem) 0; border-bottom: 1px solid var(--line); }
+  .resources-hero h1 { max-width: 20ch; margin: 1rem 0 1.5rem; }
+  .resources-hero .lead { max-width: 64ch; }
+  .resources-content { padding: clamp(2.5rem, 5vw, 5rem) 0 var(--space-section); }
+  .resources-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+  .resources-card { padding: clamp(1.4rem, 3vw, 2.5rem); border: 1px solid var(--line-strong); background: var(--surface); display: flex; flex-direction: column; min-height: 270px; }
+  .resources-number { color: var(--accent); font-size: .77rem; letter-spacing: .1em; font-weight: 650; }
+  .resources-card h2 { font-size: var(--step-2); margin: 1.25rem 0 1rem; }
+  .resources-card p { max-width: 60ch; font-size: .98rem; color: var(--ink-2); }
+  .resources-card__link { color: var(--accent); text-decoration: none; font-weight: 650; margin-top: auto; padding-top: 1.8rem; }
+  .resources-feature { display: grid; grid-template-columns: 135px minmax(0, 1fr); align-items: center; gap: clamp(1.5rem, 3vw, 3rem); margin-top: clamp(3rem, 7vw, 5rem); padding-top: 2.4rem; border-top: 1px solid var(--line); }
+  .resources-feature img { width: 100%; height: auto; box-shadow: 0 10px 30px rgb(0 0 0 / .16); }
+  .resources-feature h2 { font-size: var(--step-2); margin: .75rem 0 1rem; }
+  .resources-feature p:not(.eyebrow) { color: var(--ink-2); max-width: 60ch; }
+  .resources-feature a { color: var(--accent); font-weight: 650; text-decoration: none; }
+  @media (max-width: 650px) {
+    .resources-grid { grid-template-columns: 1fr; }
+    .resources-card { min-height: 230px; }
+    .resources-feature { grid-template-columns: 90px minmax(0, 1fr); }
+  }
+</style>

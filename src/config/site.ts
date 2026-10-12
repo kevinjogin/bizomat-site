@@ -65,6 +65,13 @@ export const NAV = [
   { href: '/', label: 'Overview' },
 ] as const;
 
+/** One Resources menu, collecting knowledge rather than cluttering the main navigation. */
+export const RESOURCES_NAV = [
+  { href: '/resources/', label: 'All Resources', description: 'Explore KEVOS knowledge' },
+  { href: '/insights/', label: 'Insights', description: 'Articles and practical ideas' },
+  { href: '/library/', label: 'Library', description: 'Books and reading guides' },
+] as const;
+
 /** Primary call to action in the header and across the site. */
 export const QUOTE_CTA = { href: '/contact/', label: 'Discuss Your Requirements' } as const;
 

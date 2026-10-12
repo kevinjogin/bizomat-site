@@ -1,47 +1,100 @@
 ---
-import { NAV, QUOTE_CTA } from '../config/site.ts';
+import { NAV, RESOURCES_NAV, QUOTE_CTA } from '../config/site.ts';
 import Container from './Container.astro';
 import SiteWordmark from './SiteWordmark.astro';
 import ThemeToggle from './ThemeToggle.astro';
-const path=Astro.url.pathname;
-const isCurrent=(href:string)=>path===href;
+
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => path === href;
+const isResourceCurrent = RESOURCES_NAV.some(({ href }) => path === href || path.startsWith(href));
 ---
 <header class="site-header" data-header>
   <Container class="site-header__inner">
-    <a class="site-header__brand" href="/" aria-label="KEVOS home"><SiteWordmark class="site-header__logo" height={36}/></a>
+    <a class="site-header__brand" href="/" aria-label="KEVOS home">
+      <SiteWordmark class="site-header__logo" height={36} />
+    </a>
+
     <nav class="site-nav" aria-label="Main">
       <ul class="site-nav__list">
-        {NAV.map(item=><li><a href={item.href} aria-current={isCurrent(item.href)?'page':undefined}>{item.label}</a></li>)}
+        {NAV.map((item) => (
+          <li><a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a></li>
+        ))}
+        <li class="site-nav__resources">
+          <details class="resources-dropdown" data-resources-dropdown>
+            <summary class:list={['resources-toggle', { 'is-current': isResourceCurrent }]}>
+              Resources <span class="resources-chevron" aria-hidden="true">⌄</span>
+            </summary>
+            <ul class="resources-dropdown__menu" aria-label="Resources links">
+              {RESOURCES_NAV.map((item) => (
+                <li>
+                  <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                    <span class="resources-item__title">{item.label}</span>
+                    <span class="resources-item__description">{item.description}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </details>
+        </li>
       </ul>
     </nav>
+
     <div class="site-header__tools">
-      <ThemeToggle/>
-      <a class="header-cta" href={QUOTE_CTA.href} data-cta="header-quote"><span>{QUOTE_CTA.label}</span><span aria-hidden="true">↗</span></a>
+      <ThemeToggle />
+      <a class="header-cta" href={QUOTE_CTA.href} data-cta="header-quote">
+        <span>{QUOTE_CTA.label}</span><span aria-hidden="true">↗</span>
+      </a>
     </div>
   </Container>
 </header>
 <script>
-  const header=document.querySelector<HTMLElement>('[data-header]');
-  const update=()=>header?.classList.toggle('is-scrolled',window.scrollY>8);
-  window.addEventListener('scroll',update,{passive:true});update();
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const dropdown = header?.querySelector<HTMLDetailsElement>('[data-resources-dropdown]');
+  const update = () => header?.classList.toggle('is-scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+
+  // Native details/summary supports mouse, touch and keyboard without JS.
+  document.addEventListener('click', (event) => {
+    if (dropdown?.open && event.target instanceof Node && !dropdown.contains(event.target)) dropdown.open = false;
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && dropdown?.open) {
+      dropdown.open = false;
+      dropdown.querySelector<HTMLElement>('summary')?.focus();
+    }
+  });
 </script>
 <style>
-  .site-header{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:1px solid transparent;transition:border-color .25s var(--ease)}
-  .site-header.is-scrolled{border-bottom-color:var(--line)}
-  :global(.site-header__inner){display:flex;align-items:center;gap:clamp(.45rem,1.8vw,1.5rem);min-height:var(--header-h)}
-  .site-header__brand{display:inline-flex;align-items:center;margin-right:auto;min-width:0;max-width:100%;overflow:visible;text-decoration:none}
-  .site-header__brand:hover{color:inherit}
-  .site-nav__list{display:flex;gap:.2rem;list-style:none;padding:0;margin:0}
-  .site-nav__list a{display:block;padding:.5rem .7rem;text-decoration:none;font-size:.95rem;font-weight:560;color:var(--ink-2)}
-  .site-nav__list a:hover,.site-nav__list a[aria-current='page']{color:var(--accent)}
-  .site-header__tools{display:flex;align-items:center;gap:.5rem}
-  .header-cta{display:inline-flex;align-items:center;justify-content:space-between;gap:1rem;min-height:46px;padding:0 1.3rem;background:var(--ink);color:var(--paper);border:1px solid var(--ink);border-radius:999px;text-decoration:none;font-weight:640;font-size:.9rem;white-space:nowrap}
-  .header-cta:hover{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
-  @media(max-width:700px){.header-cta{display:none}}
-  @media(max-width:480px){
-    .site-header__brand{max-width:150px}
-    .site-header__brand :global(.site-wordmark){--wordmark-h:26px}
-    .site-nav__list a{padding:.4rem .2rem;font-size:.85rem}
-    .site-header__tools{gap:.15rem}
+  .site-header { position: sticky; top: 0; z-index: 50; background: var(--paper); border-bottom: 1px solid transparent; transition: border-color .25s var(--ease); }
+  .site-header.is-scrolled { border-bottom-color: var(--line); }
+  :global(.site-header__inner) { display: flex; align-items: center; gap: clamp(.45rem, 1.8vw, 1.5rem); min-height: var(--header-h); }
+  .site-header__brand { display: inline-flex; align-items: center; margin-right: auto; min-width: 0; max-width: 100%; overflow: visible; text-decoration: none; }
+  .site-header__brand:hover { color: inherit; }
+  .site-nav__list { display: flex; align-items: center; gap: .2rem; list-style: none; padding: 0; margin: 0; }
+  .site-nav__list > li > a, .resources-toggle { display: flex; align-items: center; gap: .35rem; padding: .5rem .7rem; text-decoration: none; font-size: .95rem; font-weight: 560; color: var(--ink-2); }
+  .site-nav__list > li > a:hover, .site-nav__list > li > a[aria-current='page'], .resources-toggle:hover, .resources-toggle.is-current { color: var(--accent); }
+  .resources-dropdown { position: relative; }
+  .resources-toggle { list-style: none; cursor: pointer; user-select: none; }
+  .resources-toggle::-webkit-details-marker { display: none; }
+  .resources-chevron { display: inline-block; font-size: 1.1em; line-height: 1; transition: transform .16s var(--ease); }
+  .resources-dropdown[open] .resources-chevron { transform: rotate(180deg); }
+  .resources-dropdown__menu { position: absolute; right: 0; top: calc(100% + .65rem); width: min(290px, calc(100vw - 2rem)); padding: .5rem; margin: 0; list-style: none; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 6px; box-shadow: 0 18px 40px rgb(0 0 0 / .17); z-index: 60; }
+  .resources-dropdown__menu::before { content: ''; position: absolute; inset: -.7rem 0 auto; height: .7rem; }
+  .resources-dropdown__menu a { display: grid; gap: .1rem; padding: .78rem .9rem; text-decoration: none; color: var(--ink); border-radius: 3px; }
+  .resources-dropdown__menu a:hover, .resources-dropdown__menu a:focus-visible, .resources-dropdown__menu a[aria-current='page'] { background: var(--accent-soft); color: var(--accent); }
+  .resources-item__title { font-weight: 650; font-size: .94rem; }
+  .resources-item__description { color: var(--muted); font-size: .8rem; }
+  .site-header__tools { display: flex; align-items: center; gap: .5rem; }
+  .header-cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 46px; padding: 0 1.3rem; background: var(--ink); color: var(--paper); border: 1px solid var(--ink); border-radius: 999px; text-decoration: none; font-weight: 640; font-size: .9rem; white-space: nowrap; }
+  .header-cta:hover { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  @media (max-width: 700px) { .header-cta { display: none; } }
+  @media (max-width: 480px) {
+    .site-header__brand { max-width: 128px; }
+    .site-header__brand :global(.site-wordmark) { --wordmark-h: 24px; }
+    .site-nav__list > li > a, .resources-toggle { padding: .4rem .25rem; font-size: .83rem; }
+    .site-header__tools { gap: .15rem; }
+    .resources-dropdown__menu { right: -45px; }
   }
+  @media (prefers-reduced-motion: reduce) { .resources-chevron { transition: none; } }
 </style>
