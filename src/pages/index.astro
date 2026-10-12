@@ -3,214 +3,229 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
 import Button from '../components/Button.astro';
-import ArticleCard from '../components/ArticleCard.astro';
 import CallToAction from '../components/CallToAction.astro';
-import ServiceMap from '../components/ServiceMap.astro';
 import FactoryFixFeature from '../components/FactoryFixFeature.astro';
 import PackageGrid from '../components/PackageGrid.astro';
 import ProcessSteps from '../components/ProcessSteps.astro';
 import SoftwareNote from '../components/SoftwareNote.astro';
-import { SERVICE_GROUPS, INDUSTRIES, SERVICE_AREA } from '../data/services.ts';
+import ServiceMap from '../components/ServiceMap.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import { SERVICE_GROUPS, ENGAGEMENT_MODELS, INDUSTRIES, SERVICE_AREA, PRICING_NOTE, FACTORY_FIX, PACKAGES } from '../data/services.ts';
 import { BACKGROUND, PRINCIPLES } from '../data/brand.ts';
 import { SITE } from '../config/site.ts';
 import { getInsights } from '../utils/content.ts';
+import { primaryGuide } from '../data/library.ts';
 
-const latest = (await getInsights()).slice(0, 3);
-const capabilities = ['CAD & SolidWorks', 'Manufacturing Support', 'Process Improvement', 'Project Delivery'];
-const serviceSchema = {
-  '@type': 'ItemList',
-  name: 'KEVOS services',
-  itemListElement: SERVICE_GROUPS.map((g, i) => ({
-    '@type': 'ListItem',
-    position: i + 1,
-    item: { '@type': 'Service', name: g.title, description: g.short, url: `${SITE.url}/services/#${g.id}`, provider: { '@id': `${SITE.url}/#organization` } },
-  })),
-};
+const latest=(await getInsights()).slice(0,3);
+const problems=[
+  { title:'Documentation gaps',text:'Out-of-date or missing drawings that leave production relying on memory or constant clarification.' },
+  { title:'Unstable processes',text:'Jobs that run differently depending on who is working, leading to rework or inconsistent quality.' },
+  { title:'Production bottlenecks',text:'A single process, approval or machine holding up the rest of the operation.' },
+  { title:'Setup and handling waste',text:'Time lost to repeated setups, double handling or poor workholding.' },
+  { title:'Projects without bandwidth',text:'Technical improvements that matter but lack enough engineering time to get moving.' },
+  { title:'Knowledge held by one person',text:'Critical know-how that should be captured in clear procedures and work instructions.' },
+];
+const defined=[
+  {title:'Scope',text:'What is included and what is outside the agreed assignment.'},
+  {title:'Deliverables',text:'The models, drawings, documents or plans you will receive and their formats.'},
+  {title:'Assumptions',text:'The information, site access and decisions the work relies on.'},
+  {title:'Timing',text:'Starting points, check-ins and expected completion.'},
+  {title:'Commercial terms',text:'Price or rate, how variations are handled and invoicing arrangements.'},
+];
+const inquiry=[
+  'A short explanation of the problem or project and the result you want',
+  'Any available drawings, models, photos or relevant documents',
+  'Important deadlines, site constraints and access considerations',
+  'Whether the work is expected to need a site visit',
+  'Who will be the main point of contact',
+];
+const navigable=[
+  {id:'services',label:'Services'},
+  {id:'factory-fix',label:'Factory Fix'},
+  {id:'pricing',label:'Pricing'},
+  {id:'how-it-works',label:'How it works'},
+  {id:'industries',label:'Industries'},
+  {id:'about',label:'About'},
+  {id:'resources',label:'Resources'},
+];
 ---
-
-<BaseLayout description={SITE.description} schema={[serviceSchema]}>
-  <section class="home-hero" aria-labelledby="home-title">
+<BaseLayout
+  description="One place to explore KEVOS engineering, manufacturing, operations and project support: services, indicative pricing, how it works, industries, experience, tools and library."
+>
+  <section class="home-hero" id="overview" aria-labelledby="home-title">
     <Container class="home-hero__inner">
       <div class="home-hero__copy">
-        <p class="eyebrow">KEVOS · Engineering • Manufacturing • Operations</p>
-        <h1 id="home-title" class="home-hero__title">Engineering support that gets manufacturing work <em>moving</em>.</h1>
-        <p class="home-hero__lead">
-          Practical CAD, manufacturing, process-improvement and project support for businesses that need engineering capability without adding unnecessary permanent overhead.
-        </p>
+        <p class="eyebrow">KEVOS · Engineering / Manufacturing / Operations</p>
+        <h1 id="home-title">Engineering support that gets manufacturing work <em>moving</em>.</h1>
+        <p class="home-hero__lead">Practical CAD, tooling, manufacturing, process-improvement and project support. Explore what KEVOS does, how the work is delivered and who it can help — all on one page.</p>
         <div class="home-hero__actions">
-          <Button href="/contact/" arrow data-cta="hero-quote">Get a Quote</Button>
-          <Button href="/services/" variant="secondary" data-cta="hero-services">View Services</Button>
+          <Button href="/contact/" arrow data-cta="hero-quote">Discuss Your Requirements</Button>
+          <Button href="#services" variant="secondary">Explore KEVOS</Button>
         </div>
-        <ul class="home-hero__caps" aria-label="Capabilities">{capabilities.map((c) => <li>{c}</li>)}</ul>
+        <p class="hero-area">{SERVICE_AREA}</p>
       </div>
       <div class="home-hero__visual"><ServiceMap /></div>
     </Container>
   </section>
 
-  <Section index="01" label="Services" labelledby="services-title">
-    <div class="section-head">
-      <h2 id="services-title">Four ways KEVOS moves work forward.</h2>
-      <Button href="/services/" variant="text" arrow>All services</Button>
-    </div>
-    <ul class="service-grid">
-      {
-        SERVICE_GROUPS.map((g, i) => (
-          <li class="service-card">
-            <span class="service-card__num">{String(i + 1).padStart(2, '0')}</span>
-            <h3 class="service-card__title"><a href={`/services/#${g.id}`}>{g.title}</a></h3>
-            <p class="service-card__text">{g.short}</p>
-          </li>
-        ))
-      }
-    </ul>
-  </Section>
+  <nav class="section-navigation" aria-label="Explore KEVOS page sections">
+    <Container>
+      <ul>{navigable.map(item=><li><a href={`#${item.id}`}>{item.label}</a></li>)}</ul>
+    </Container>
+  </nav>
 
-  <Section index="02" label="Factory Fix" tone="alt" labelledby="factory-fix-title">
-    <h2 id="factory-fix-title" class="visually-hidden">KEVOS Factory Fix</h2>
-    <FactoryFixFeature headingLevel="h3" />
-  </Section>
-
-  <Section index="03" label="Indicative pricing" labelledby="pricing-title">
+  <Section index="01" label="Services" id="services" labelledby="services-title">
     <div class="section-head">
       <div>
-        <h2 id="pricing-title">Defined work, quoted clearly.</h2>
-        <p class="section-head__lead">Typical starting points for common jobs. Every assignment is scoped and confirmed in writing before work begins.</p>
+        <h2 id="services-title">One partner for practical engineering work.</h2>
+        <p class="section-intro">From design and technical documentation to production improvement and project delivery, services are tailored to the work rather than a rigid package.</p>
       </div>
-      <Button href="/services/#pricing" variant="text" arrow>See all packages</Button>
     </div>
-    <PackageGrid limit={4} />
+    <div class="service-grid">
+      {SERVICE_GROUPS.map((g,i)=><article class="service-card" id={g.id}>
+        <div class="service-card__heading"><span>{String(i+1).padStart(2,'0')}</span><h3>{g.title}</h3></div>
+        <p class="service-card__summary">{g.summary}</p>
+        <details class="service-card__details">
+          <summary>See capabilities and deliverables <span aria-hidden="true">↗</span></summary>
+          <div class="service-card__expansion">
+            <h4>Typical work</h4>
+            <ul>{g.items.map(item=><li>{item}</li>)}</ul>
+            <h4>What you receive</h4>
+            <ul>{g.deliverables.map(item=><li>{item}</li>)}</ul>
+          </div>
+        </details>
+        <a class="service-card__cta" href={`/contact/?service=${g.id}`}>Ask about this service <span aria-hidden="true">→</span></a>
+      </article>)}
+    </div>
   </Section>
 
-  <Section index="04" label="How it works" labelledby="process-title">
+  <Section index="02" label="Factory Fix" tone="alt" id="factory-fix" labelledby="factory-title">
+    <h2 id="factory-title" class="visually-hidden">KEVOS Factory Fix</h2>
+    <FactoryFixFeature headingLevel="h3"/>
+  </Section>
+
+  <Section index="03" label="Indicative pricing" id="pricing" labelledby="pricing-title">
+    <div class="section-head"><div><h2 id="pricing-title">Defined work, quoted clearly.</h2><p class="section-intro">Starting prices are a guide, not an online purchase. Scope and deliverables are agreed before work begins.</p></div></div>
+    <PackageGrid/>
+  </Section>
+
+  <Section index="04" label="How it works" tone="alt" id="how-it-works" labelledby="process-title">
     <div class="section-head">
-      <h2 id="process-title">A simple, scoped process.</h2>
-      <Button href="/how-it-works/" variant="text" arrow>How engagements work</Button>
+      <div><h2 id="process-title">Clear scope first. Then the work.</h2><p class="section-intro">Every engagement follows a straightforward process so the scope, timing and costs are discussed before substantial work begins.</p></div>
     </div>
-    <ProcessSteps />
+    <ProcessSteps/>
+    <div class="subsection">
+      <h3>What is confirmed before work begins</h3>
+      <div class="information-grid">{defined.map(d=><div class="information-item"><h4>{d.title}</h4><p>{d.text}</p></div>)}</div>
+    </div>
+    <div class="subsection">
+      <h3>Ways to engage</h3>
+      <div class="information-grid">{ENGAGEMENT_MODELS.map(m=><div class="information-item"><h4>{m.title}</h4><p>{m.text}</p></div>)}</div>
+      <p class="fineprint">{PRICING_NOTE}</p>
+    </div>
+    <div class="subsection">
+      <div class="subsection__heading"><h3>What to send with an enquiry</h3><p>A short description is enough to start; only share material you have permission to provide.</p></div>
+      <ul class="enquiry-list">{inquiry.map(s=><li>{s}</li>)}</ul>
+      <Button href="/contact/" arrow>Discuss Your Requirements</Button>
+    </div>
   </Section>
 
-  <Section index="05" label="Who KEVOS helps" tone="alt" labelledby="industries-title">
-    <div class="split">
-      <div class="split__intro">
-        <h2 id="industries-title">Built for businesses that make things.</h2>
-        <p class="muted">Capability is problem-based rather than tied to one industry. {SERVICE_AREA}</p>
-        <Button href="/industries/" variant="text" arrow>Industries</Button>
+  <Section index="05" label="Industries" id="industries" labelledby="industries-title">
+    <div class="section-head">
+      <div><h2 id="industries-title">For businesses that make things.</h2><p class="section-intro">KEVOS focuses on the manufacturing problem, not just the industry label. Similar design, documentation and process challenges appear in many production environments.</p></div>
+    </div>
+    <div class="industry-grid">{INDUSTRIES.map(ind=><article class="industry-card"><h3>{ind.title}</h3><p>{ind.text}</p></article>)}</div>
+    <div class="subsection">
+      <h3>The problems matter more than the sector</h3>
+      <div class="information-grid">{problems.map(p=><div class="information-item"><h4>{p.title}</h4><p>{p.text}</p></div>)}</div>
+      <p class="fineprint">{SERVICE_AREA}</p>
+    </div>
+  </Section>
+
+  <Section index="06" label="About KEVOS" tone="alt" id="about" labelledby="about-title">
+    <div class="about-grid">
+      <div>
+        <h2 id="about-title">Practical expertise, from the floor up.</h2>
+        <p class="section-intro">KEVOS is a small engineering-led business set up for defined technical assignments without the overhead of another permanent engineering position.</p>
+        <p class="muted">Its founder's background runs from making components through design, product development, operations improvement and project delivery. That helps connect drawings, tooling, processes, people and documentation.</p>
+        <ul class="background-list">{BACKGROUND.map(b=><li>{b}</li>)}</ul>
       </div>
-      <ul class="industry-list">{INDUSTRIES.map((ind) => <li>{ind.title}</li>)}</ul>
-    </div>
-  </Section>
-
-  <Section index="06" label="Why KEVOS" labelledby="why-title">
-    <div class="split">
-      <div class="split__intro">
-        <h2 id="why-title">Hands-on, engineering-led and commercially aware.</h2>
-        <p class="muted">KEVOS is a professional small technical-services business. Its founder’s practical background spans:</p>
-        <ul class="background-list">{BACKGROUND.map((b) => <li>{b}</li>)}</ul>
-        <Button href="/about/" variant="text" arrow>About KEVOS</Button>
+      <div class="principles">
+        {PRINCIPLES.map((p,i)=><div class="principle">
+          <span>{String(i+1).padStart(2,'0')}</span><div><h3>{p.title}</h3><p>{p.text}</p></div>
+        </div>)}
       </div>
-      <ol class="principles">
-        {
-          PRINCIPLES.slice(0, 4).map((p, i) => (
-            <li class="principle">
-              <span class="principle__num">{String(i + 1).padStart(2, '0')}</span>
-              <h3 class="principle__title">{p.title}</h3>
-              <p class="principle__text">{p.text}</p>
-            </li>
-          ))
-        }
-      </ol>
     </div>
-    <div class="sw-wrap">
-      <SoftwareNote headingLevel="h3" />
-    </div>
+    <div class="software"><SoftwareNote headingLevel="h3"/></div>
+    <p class="fineprint">Client drawings, data and information are used only for agreed work. Some statutory approvals or professional certification require appropriately qualified specialists. KEVOS does not share confidential information from previous employers, clients or suppliers. <a href="/disclaimer/">Read the disclaimer</a>.</p>
   </Section>
 
-  {
-    latest.length > 0 && (
-      <Section index="07" label="Insights" labelledby="insights-title">
-        <div class="section-head">
-          <h2 id="insights-title">Practical reading for business owners.</h2>
-          <Button href="/insights/" variant="text" arrow>All Insights</Button>
-        </div>
-        <div class="insight-grid">
-          {latest.map((post) => (
-            <ArticleCard post={post} />
-          ))}
-        </div>
-      </Section>
-    )
-  }
+  <Section index="07" label="Knowledge & resources" id="resources" labelledby="resources-title">
+    <div class="section-head"><div><h2 id="resources-title">Explore ideas, tools and books.</h2><p class="section-intro">Beyond services, KEVOS publishes practical resources for learning, making and decision-making.</p></div></div>
+    <div class="resource-grid">
+      <article class="resource resource--book"><img src={primaryGuide.cover} width="900" height="1200" loading="lazy" alt="Cover of the KEVOS guide Read the Numbers, Understand the Business" /><div><p class="eyebrow">Library · {primaryGuide.chapters.length} chapters</p><h3><a href={`/library/${primaryGuide.slug}/`}>{primaryGuide.title}</a></h3><p>{primaryGuide.description}</p><a href="/library/">Browse KEVOS Library →</a></div></article>
+      <article class="resource"><p class="eyebrow">Tools</p><h3><a href="/tools/">Calculators and decision tools</a></h3><p>Practical browser-based tools for manufacturing, estimating, operations, engineering and other business decisions.</p><a href="/tools/">Explore tools →</a></article>
+      <article class="resource"><p class="eyebrow">Insights</p><h3><a href="/insights/">Articles and practical ideas</a></h3><p>Read focused articles on engineering, systems, products, manufacturing and business improvement.</p><a href="/insights/">Explore insights →</a></article>
+    </div>
+    {latest.length>0&&<div class="latest-insights"><div class="section-head"><h3>Recent insights</h3><a href="/insights/">All insights →</a></div><div class="insight-grid">{latest.map(post=><ArticleCard post={post}/>)}</div></div>}
+  </Section>
 
-  <CallToAction
-    title="Have a job that needs moving forward?"
-    text="Describe the problem, the drawing or the project. KEVOS will help define the scope and come back with a clear proposal."
-    label="Get a Quote"
-  />
+  <CallToAction title="Have work that needs moving forward?" text="Describe the drawing, project, manufacturing process or technical problem. KEVOS can help define a practical scope and an appropriate next step." label="Discuss Your Requirements"/>
 </BaseLayout>
 
 <style>
-
-  .home-hero { padding-block: clamp(3.5rem, 7vw, 7rem) clamp(3.5rem, 6vw, 6rem); }
-  :global(.home-hero__inner) { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr); gap: 3rem 4rem; align-items: center; }
-  .home-hero .eyebrow { margin-bottom: clamp(1.25rem, 2.5vw, 1.75rem); }
-  .home-hero__title { max-width: 16ch; font-size: clamp(2.1rem, 1.3rem + 3.8vw, 4.6rem); line-height: 1.02; letter-spacing: -0.025em; }
-  .home-hero__lead { max-width: 50ch; margin: clamp(1.25rem, 2.5vw, 1.75rem) 0 0; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
-  .home-hero__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: clamp(1.75rem, 3vw, 2.5rem); }
-  .home-hero__caps { display: flex; flex-wrap: wrap; gap: 0.4rem 0; margin: 2rem 0 0; padding: 0; list-style: none; font-size: 0.9rem; font-weight: 520; color: var(--ink-2); }
-  .home-hero__caps li:not(:last-child)::after { content: '•'; margin: 0 0.7rem; color: var(--accent); }
-  .home-hero__visual { display: flex; justify-content: flex-end; }
-  @media (max-width: 960px) {
-    :global(.home-hero__inner) { grid-template-columns: 1fr; }
-    .home-hero__visual { justify-content: flex-start; }
-  }
-
-  .section-head { display: flex; justify-content: space-between; align-items: end; gap: 1.5rem; flex-wrap: wrap; margin-bottom: clamp(2rem, 4vw, 3rem); }
-  .section-head h2 { max-width: 20ch; }
-  .section-head__lead { margin: 0.9rem 0 0; color: var(--ink-2); max-width: 56ch; }
-
-  .service-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line-strong); }
-  .service-card { position: relative; padding: clamp(1.5rem, 3vw, 2.25rem) clamp(1rem, 2vw, 1.75rem) clamp(1.5rem, 3vw, 2.25rem) 0; border-bottom: 1px solid var(--line); }
-  .service-card:not(:first-child) { padding-left: clamp(1rem, 2vw, 1.75rem); border-left: 1px solid var(--line); }
-  .service-card__num { display: block; margin-bottom: 2rem; font-size: 0.85rem; font-variant-numeric: tabular-nums; color: var(--accent); }
-  .service-card__title { font-size: var(--step-1); letter-spacing: -0.02em; line-height: 1.2; }
-  .service-card__title a { color: inherit; text-decoration: none; }
-  .service-card__title a::after { content: ''; position: absolute; inset: 0; }
-  .service-card:hover .service-card__title a { color: var(--accent); }
-  .service-card:focus-within { outline: 2px solid var(--accent); outline-offset: -2px; }
-  .service-card__title a:focus-visible { outline: none; }
-  .service-card__text { margin: 0.75rem 0 0; color: var(--ink-2); font-size: 0.98rem; line-height: 1.55; }
-  @media (max-width: 960px) {
-    .service-grid { grid-template-columns: 1fr 1fr; }
-    .service-card:nth-child(3) { padding-left: 0; border-left: 0; }
-  }
-  @media (max-width: 560px) {
-    .service-grid { grid-template-columns: 1fr; }
-    .service-card, .service-card:not(:first-child) { padding-left: 0; border-left: 0; }
-    .service-card__num { margin-bottom: 0.75rem; }
-  }
-
-  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 2.5rem 5rem; }
-  .split__intro h2 { margin-bottom: 1.1rem; max-width: 16ch; }
-  .split__intro p { max-width: 42ch; }
-  @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
-
-  .industry-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0 2rem; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line-strong); align-self: start; }
-  .industry-list li { padding: 0.95rem 0; border-bottom: 1px solid var(--line); font-weight: 520; }
-  @media (max-width: 560px) { .industry-list { grid-template-columns: 1fr; } }
-
-  .background-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 1.5rem; padding: 0; list-style: none; }
-  .background-list li { padding: 0.35rem 0.75rem; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 0.88rem; color: var(--ink-2); }
-
-  .principles { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line-strong); align-self: start; }
-  .principle { padding: 1.5rem 1.5rem 1.75rem 0; border-bottom: 1px solid var(--line); }
-  .principle:nth-child(even) { padding-left: 1.5rem; border-left: 1px solid var(--line); }
-  .principle__num { display: block; margin-bottom: 1rem; font-size: 0.85rem; color: var(--accent); font-variant-numeric: tabular-nums; }
-  .principle__title { font-size: 1.12rem; letter-spacing: -0.015em; }
-  .principle__text { margin: 0.5rem 0 0; color: var(--ink-2); font-size: 0.97rem; line-height: 1.55; }
-  @media (max-width: 560px) { .principles { grid-template-columns: 1fr; } .principle:nth-child(even) { padding-left: 0; border-left: 0; } }
-  .sw-wrap { margin-top: clamp(3rem, 6vw, 4.5rem); padding-top: clamp(2rem, 4vw, 3rem); border-top: 1px solid var(--line); }
-
-  .insight-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.5rem 2rem; }
-  @media (max-width: 960px) { .insight-grid { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 640px) { .insight-grid { grid-template-columns: 1fr; } }
+  :global(#overview), :global(#services), :global(#how-it-works), :global(#industries), :global(#about), :global(#factory-fix), :global(#pricing), :global(#resources), :global(#engineering-cad), :global(#manufacturing), :global(#operations), :global(#project-support) { scroll-margin-top:calc(var(--header-h) + 4.2rem); }
+  .home-hero{padding:clamp(3rem,6vw,6.5rem) 0}
+  :global(.home-hero__inner){display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.9fr);gap:3rem 4rem;align-items:center}
+  .home-hero__copy h1{margin:1rem 0 1.5rem;max-width:16ch;font-size:clamp(2.2rem,4.7vw,4.8rem);line-height:1.03}
+  .home-hero__lead{font-size:var(--step-1);line-height:1.5;max-width:48ch;color:var(--ink-2)}
+  .home-hero__actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:2rem}
+  .home-hero__visual{min-width:0}
+  .hero-area{font-size:.89rem;color:var(--muted);margin:2rem 0 0}
+  .section-navigation{position:sticky;top:var(--header-h);z-index:19;background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line-strong)}
+  .section-navigation ul{display:flex;gap:clamp(1rem,2.5vw,2.2rem);align-items:center;overflow-x:auto;scrollbar-width:thin;list-style:none;padding:.85rem 0;margin:0}
+  .section-navigation a{white-space:nowrap;font-size:.83rem;font-weight:560;color:var(--ink-2);text-decoration:none}
+  .section-navigation a:hover{color:var(--accent)}
+  .section-head{display:flex;align-items:end;justify-content:space-between;gap:1rem;margin-bottom:2.2rem}
+  .section-head h2{max-width:24ch}
+  .section-intro{margin:1rem 0 0;max-width:74ch;font-size:var(--step-1);color:var(--ink-2)}
+  .service-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;border:1px solid var(--line);background:var(--line)}
+  .service-card{display:flex;flex-direction:column;gap:.75rem;background:var(--surface);padding:clamp(1.4rem,3vw,2.5rem)}
+  .service-card__heading{display:grid;gap:.9rem}.service-card__heading span{color:var(--accent);font-size:.85rem}
+  .service-card__heading h3{max-width:22ch}.service-card__summary{color:var(--ink-2);font-size:.97rem;max-width:64ch}
+  .service-card__details{border-top:1px solid var(--line);padding-top:.8rem;margin-top:auto}
+  .service-card__details summary{cursor:pointer;font-weight:570;color:var(--ink);font-size:.89rem}
+  .service-card__details summary span{color:var(--accent)}
+  .service-card__expansion{padding:1.2rem 0 .4rem}.service-card__expansion h4{font-size:1rem;margin:1.2rem 0 .5rem}
+  .service-card__expansion ul{columns:2;margin:0;padding-left:1.2rem;font-size:.9rem;color:var(--ink-2)}
+  .service-card__expansion li{break-inside:avoid;margin-bottom:.35rem}
+  .service-card__cta{color:var(--accent);font-size:.91rem;margin-top:.8rem;text-decoration:none}
+  .subsection{padding-top:3rem;margin-top:3.5rem;border-top:1px solid var(--line)}
+  .subsection h3{font-size:var(--step-2);margin-bottom:1.5rem}
+  .subsection__heading p{max-width:65ch;color:var(--muted)}
+  .information-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+  .information-item{border-top:1px solid var(--line-strong);padding-top:1.2rem}
+  .information-item h4{font-size:1rem;margin-bottom:.55rem}.information-item p{color:var(--ink-2);font-size:.94rem}
+  .enquiry-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem 2rem;padding:0;list-style:none;margin:1.5rem 0}
+  .enquiry-list li{border-left:2px solid var(--accent);padding-left:1rem;color:var(--ink-2)}
+  .fineprint{color:var(--muted);font-size:.88rem;margin:1.75rem 0 0}
+  .industry-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+  .industry-card{background:var(--surface);padding:1.5rem}.industry-card h3{font-size:1.08rem}.industry-card p{font-size:.91rem;margin:.65rem 0 0;color:var(--ink-2)}
+  .about-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1fr);gap:3rem 5rem}
+  .about-grid h2{max-width:18ch}.background-list{display:flex;gap:.55rem;flex-wrap:wrap;list-style:none;padding:0;margin:1.5rem 0}
+  .background-list li{border:1px solid var(--line-strong);padding:.36rem .7rem;font-size:.84rem}
+  .principles{border-top:1px solid var(--line-strong)}
+  .principle{display:grid;grid-template-columns:2rem 1fr;gap:1rem;padding:1.2rem 0;border-bottom:1px solid var(--line)}
+  .principle>span{color:var(--accent);font-size:.86rem}.principle h3{font-size:1.05rem}.principle p{font-size:.93rem;color:var(--ink-2);margin:.4rem 0 0}
+  .software{padding:2.5rem 0 0;border-top:1px solid var(--line);margin-top:3rem}
+  .resource-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+  .resource{border:1px solid var(--line);padding:1.5rem;display:flex;flex-direction:column;gap:.7rem}
+  .resource h3{font-size:var(--step-1)}.resource h3 a{text-decoration:none}.resource p:not(.eyebrow){font-size:.94rem;color:var(--ink-2)}.resource>a,.resource>div>a{color:var(--accent);text-decoration:none;font-size:.9rem;margin-top:auto}
+  .resource--book{display:grid;grid-template-columns:75px 1fr;gap:1rem;grid-column:span 1}
+  .resource--book img{width:75px;height:auto}.resource--book div{display:flex;flex-direction:column;gap:.5rem}
+  .latest-insights{margin-top:4rem}.latest-insights .section-head h3{font-size:var(--step-2)}
+  .insight-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem}
+  @media(max-width:1050px){.information-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.industry-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.resource-grid{grid-template-columns:1fr 1fr}.resource--book{grid-column:span 2}.about-grid{gap:2.5rem}}
+  @media(max-width:860px){:global(.home-hero__inner){grid-template-columns:1fr}.home-hero__visual{max-width:580px}.about-grid{grid-template-columns:1fr}}
+  @media(max-width:640px){.service-grid,.information-grid,.industry-grid,.enquiry-list,.insight-grid,.resource-grid{grid-template-columns:1fr}.resource--book{grid-column:auto}.service-card__expansion ul{columns:1}.section-navigation{top:var(--header-h)}}
 </style>
