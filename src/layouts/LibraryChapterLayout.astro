@@ -28,7 +28,7 @@ const description=`Chapter ${number} of ${guide.chapters.length} in ${guide.titl
           <p class="eyebrow">Chapter {String(number).padStart(2,'0')} / {guide.chapters.length}</p>
           <h1>{current.title}</h1>
           <p class="reading-book">From <a href={`/library/${guide.slug}/`}>{guide.title}</a></p>
-          <div class="reading-progress" aria-label={`Chapter ${number} of ${guide.chapters.length}`}><span></span></div>
+          <progress class="reading-progress" value={number} max={guide.chapters.length} aria-label={`Chapter ${number} of ${guide.chapters.length}`}></progress>
         </header>
         <div class="chapter-content" data-font-size="normal"><div class="prose"><slot /></div></div>
       </article>
