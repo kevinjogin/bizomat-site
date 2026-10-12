@@ -68,6 +68,7 @@ export const NAV = [
   { href: '/how-it-works/', label: 'How It Works' },
   { href: '/industries/', label: 'Industries' },
   { href: '/insights/', label: 'Insights' },
+  { href: '/library/', label: 'Library' },
   { href: '/about/', label: 'About' },
 ] as const;
 
@@ -88,6 +89,7 @@ export const FOOTER_NAV = {
     { href: '/industries/', label: 'Industries' },
     { href: '/about/', label: 'About' },
     { href: '/insights/', label: 'Insights' },
+    { href: '/library/', label: 'Library' },
   ],
   legal: [
     { href: '/privacy/', label: 'Privacy' },

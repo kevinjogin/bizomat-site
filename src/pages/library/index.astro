@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+import { LIBRARY_GUIDES } from '../../data/library.ts';
+---
+<BaseLayout title="Library — Practical Books & Guides" description="Read concise, original KEVOS Books guides with dedicated chapters, quick references, and useful real-world examples." breadcrumbs={[{label:'Home',href:'/'},{label:'Library',href:'/library/'}]}>
+  <section class="library-heading">
+    <Container>
+      <p class="eyebrow">KEVOS / Knowledge Library</p>
+      <h1>Practical knowledge, <em>made readable.</em></h1>
+      <p class="lead">Original guides with clear chapters, worked examples and quick references. Choose a book, read at your own pace, and return to any chapter whenever you need it.</p>
+    </Container>
+  </section>
+  <section class="library-collection">
+    <Container>
+      <div class="collection-title"><h2>Books & Guides</h2><span>{LIBRARY_GUIDES.length} publication</span></div>
+      <div class="books-grid">
+        {LIBRARY_GUIDES.map((guide) => <article class="book-card">
+          <a class="book-cover" href={`/library/${guide.slug}/`} aria-label={`Read ${guide.title}`}>
+            <img src={guide.cover} alt={`KEVOS Books cover: ${guide.title}`} width="900" height="1200" loading="lazy"/>
+          </a>
+          <div class="book-details">
+            <p class="book-category">{guide.category} · {guide.minutes} min read</p>
+            <h3><a href={`/library/${guide.slug}/`}>{guide.title}</a></h3>
+            <p class="book-subtitle">{guide.subtitle}</p>
+            <p class="book-description">{guide.description}</p>
+            <div class="book-bottom"><span>{guide.chapters.length} chapters</span><a href={`/library/${guide.slug}/`}>Open book <span aria-hidden="true">→</span></a></div>
+          </div>
+        </article>)}
+      </div>
+    </Container>
+  </section>
+</BaseLayout>
+<style>
+  .library-heading{padding:clamp(3.4rem,7vw,6.4rem) 0 clamp(2rem,4vw,3rem);border-bottom:1px solid var(--line)}
+  .library-heading h1{max-width:16ch;margin:1rem 0 1.4rem}.library-heading .lead{max-width:66ch}
+  .library-collection{padding:clamp(2.5rem,6vw,5rem) 0 var(--space-section)}
+  .collection-title{display:flex;justify-content:space-between;align-items:end;border-bottom:1px solid var(--line-strong);padding-bottom:1.25rem;margin-bottom:2rem}
+  .collection-title h2{font-size:var(--step-2)}.collection-title span{color:var(--muted);font-size:.9rem}
+  .books-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,470px),1fr));gap:2rem}
+  .book-card{display:grid;grid-template-columns:minmax(128px,36%) 1fr;gap:clamp(1rem,3vw,2rem);padding:1.25rem;border:1px solid var(--line);background:var(--surface)}
+  .book-cover{display:block;align-self:start}.book-cover img{width:100%;height:auto;box-shadow:0 12px 32px rgb(0 0 0 / .16)}
+  .book-details{display:flex;flex-direction:column;min-width:0}
+  .book-category{font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+  .book-details h3{margin:.65rem 0 .5rem;font-size:clamp(1.13rem,2vw,1.6rem)}.book-details h3 a{text-decoration:none}
+  .book-subtitle{font-family:var(--font-serif);color:var(--ink-2)}.book-description{font-size:.92rem;color:var(--muted)}
+  .book-bottom{display:flex;justify-content:space-between;gap:.75rem;align-items:center;margin-top:auto;padding-top:1.5rem;font-size:.84rem;border-top:1px solid var(--line)}
+  .book-bottom a{color:var(--accent);font-weight:650}
+  @media(max-width:500px){.book-card{grid-template-columns:110px 1fr;padding:.85rem}.book-description{display:none}}
+</style>

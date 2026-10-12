@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import { primaryGuide as guide, chapterHref } from '../../../data/library.ts';
+const canonical = `/library/${guide.slug}/`;
+const schema=[{
+  '@type':'Book',name:guide.title,alternativeHeadline:guide.subtitle,
+  description:guide.description,inLanguage:'en-AU',publisher:{'@id':'https://kevos.com/#organization'},
+  url:`https://kevos.com${canonical}`,isAccessibleForFree:true,
+  numberOfPages:undefined
+}];
+---
+<BaseLayout title={guide.title} description={guide.description} image={guide.cover} imageAlt={`Original KEVOS Books cover for ${guide.title}`} canonical={canonical}
+  breadcrumbs={[{label:'Home',href:'/'},{label:'Library',href:'/library/'},{label:guide.title,href:canonical}]} schema={schema}>
+  <section class="book-hero">
+    <Container>
+      <nav aria-label="Breadcrumb" class="breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/library/">Library</a><span aria-hidden="true">/</span><span>Book</span></nav>
+      <div class="book-intro">
+        <img src={guide.cover} width="900" height="1200" alt={`KEVOS Books cover: ${guide.title}`} class="book-art"/>
+        <div class="book-intro-copy">
+          <p class="eyebrow">KEVOS Books · {guide.category}</p>
+          <h1>{guide.title}</h1>
+          <p class="subtitle">{guide.subtitle}</p>
+          <p class="summary">{guide.description}</p>
+          <div class="meta"><span>{guide.chapters.length} chapters</span><span>About {guide.minutes} min</span><span>Free to read</span></div>
+          <a class="start-btn" href={chapterHref(guide.chapters[0].slug)}>Start reading <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </Container>
+  </section>
+  <section class="chapter-list">
+    <Container size="narrow">
+      <p class="eyebrow">Inside this book</p>
+      <h2>Chapters</h2>
+      <ol>{guide.chapters.map(ch=><li><a href={chapterHref(ch.slug)}><span class="chapter-no">{String(ch.number).padStart(2,'0')}</span><span>{ch.title}</span><span aria-hidden="true">↗</span></a></li>)}</ol>
+      <aside class="notice"><strong>About this publication.</strong> An original KEVOS educational guide using fictional examples, developed to help readers understand company financial statements. It is not an authorised adaptation or endorsement by the authors of any book consulted as background research. General education only, not financial advice.</aside>
+      <a class="library-back" href="/library/">← Explore all guides</a>
+    </Container>
+  </section>
+</BaseLayout>
+<style>
+  .book-hero{padding:2.2rem 0 clamp(3rem,7vw,6rem);border-bottom:1px solid var(--line)}
+  .breadcrumbs{display:flex;gap:.75rem;color:var(--muted);font-size:.82rem;margin-bottom:clamp(2rem,5vw,4rem)}.breadcrumbs a{text-decoration:none}
+  .book-intro{display:grid;grid-template-columns:minmax(180px,285px) minmax(0,1fr);gap:clamp(2rem,6vw,6rem);align-items:center}
+  .book-art{width:100%;box-shadow:0 22px 70px rgb(0 0 0 / .22)}
+  .book-intro h1{margin:1rem 0 1.25rem;max-width:16ch;font-size:clamp(2.2rem,5vw,4.5rem)}
+  .subtitle{font-family:var(--font-serif);font-size:clamp(1.15rem,2vw,1.55rem);color:var(--ink-2)}
+  .summary{margin:1.4rem 0;max-width:60ch;color:var(--muted)}
+  .meta{display:flex;flex-wrap:wrap;gap:.6rem;font-size:.8rem;color:var(--ink-2);margin-bottom:2rem}.meta span{border:1px solid var(--line-strong);padding:.35rem .7rem}
+  .start-btn{display:inline-flex;align-items:center;justify-content:space-between;gap:2rem;background:var(--accent);padding:.8rem 1.3rem;color:var(--on-accent);text-decoration:none;font-weight:660}
+  .start-btn:hover{color:var(--on-accent);filter:brightness(1.1)}
+  .chapter-list{padding:clamp(3rem,7vw,6rem) 0 var(--space-section)}.chapter-list h2{font-size:var(--step-3);margin:.7rem 0 2rem}
+  .chapter-list ol{list-style:none;margin:0;padding:0;border-top:1px solid var(--line-strong)}
+  .chapter-list li a{display:grid;grid-template-columns:2.8rem 1fr 1rem;gap:1rem;padding:1.15rem .2rem;border-bottom:1px solid var(--line);align-items:center;text-decoration:none}
+  .chapter-list li a:hover{color:var(--accent)}.chapter-no{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.86rem}
+  .notice{border-left:3px solid var(--accent);background:var(--paper-2);padding:1.25rem;margin:3rem 0 2rem;font-size:.92rem;color:var(--ink-2)}
+  .library-back{font-size:.9rem;color:var(--accent)}
+  @media(max-width:720px){.book-intro{grid-template-columns:1fr}.book-art{max-width:210px}.book-intro h1{font-size:var(--step-3)}}
+</style>
