@@ -31,7 +31,7 @@ const nodes=Array.from({length:9},(_,i)=>({x:45+((hash+i*97)%268),y:300+((hash+i
 const bars=Array.from({length:6},(_,i)=>({x:43+i*46,height:35+((hash+i*31)%100)}));
 const mode=category==='Engineering'?'engineering':category==='Manufacturing'?'manufacturing':category==='Operations'?'operations':category==='Projects'?'projects':category==='Technology'?'technology':category==='Business'||category==='Finance & Business'?'business':category==='Products'?'products':'ideas';
 ---
-<svg class="animated-cover" style={`--reados-duration:${duration}s`} viewBox="0 0 360 490" role="img" aria-label={`Animated ReadOS cover: ${title}`} xmlns="http://www.w3.org/2000/svg">
+<svg class:list={["animated-cover", `reados-speed-${hash%4}`]} viewBox="0 0 360 490" role="img" aria-label={`Animated ReadOS cover: ${title}`} xmlns="http://www.w3.org/2000/svg">
  <defs>
   <linearGradient id={`${id}-bg`} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color={palette[0]}/><stop offset="1" stop-color={palette[1]}/></linearGradient>
   <linearGradient id={`${id}-beam`} x1="0" x2="1"><stop stop-color={palette[2]} stop-opacity="0"/><stop offset=".5" stop-color={palette[2]} stop-opacity=".4"/><stop offset="1" stop-color={palette[2]} stop-opacity="0"/></linearGradient>
@@ -63,6 +63,7 @@ const mode=category==='Engineering'?'engineering':category==='Manufacturing'?'ma
  </g>
 </svg>
 <style>
+.reados-speed-0{--reados-duration:9s}.reados-speed-1{--reados-duration:11s}.reados-speed-2{--reados-duration:13s}.reados-speed-3{--reados-duration:15s}
 .animated-cover{display:block;width:100%;height:auto;aspect-ratio:360/490;border-radius:4px;box-shadow:0 12px 28px rgb(0 0 0 / .18)}
 .motif--slow{transform-origin:50% 77%;animation:reados-breathe var(--reados-duration) ease-in-out infinite alternate}
 .motif--float{animation:reados-float calc(var(--reados-duration) * .8) ease-in-out infinite alternate}
