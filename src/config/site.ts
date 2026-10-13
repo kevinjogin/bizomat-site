@@ -62,17 +62,14 @@ export const SITE = {
 } as const;
 
 export const NAV = [
-  { href: '/', label: 'Overview' },
+  { href: '/', label: 'KevOS' },
+  { href: '/tools/', label: 'ToolOS' },
+  { href: '/reados/', label: 'ReadOS' },
 ] as const;
 
-/** One Resources menu, collecting knowledge rather than cluttering the main navigation. */
-export const RESOURCES_NAV = [
-  { href: '/resources/', label: 'All Resources', description: 'Explore KEVOS knowledge' },
-  { href: '/reados/', label: 'ReadOS', description: 'Books and chapter-based reading' },
-] as const;
 
 /** Primary call to action in the header and across the site. */
-export const QUOTE_CTA = { href: '/contact/', label: 'Discuss Your Requirements' } as const;
+export const QUOTE_CTA = { href: '/contact/', label: 'ConnectOS' } as const;
 
 export const FOOTER_NAV = {
   services: [
@@ -83,11 +80,13 @@ export const FOOTER_NAV = {
     { href: '/factory-fix/', label: 'Factory Fix' },
   ],
   company: [
-    { href: '/tools/', label: 'Free Tools' },
+    { href: '/', label: 'KevOS' },
+    { href: '/tools/', label: 'ToolOS' },
     { href: '/#how-it-works', label: 'How It Works' },
     { href: '/#industries', label: 'Industries' },
     { href: '/#about', label: 'About' },
     { href: '/reados/', label: 'ReadOS' },
+    { href: '/contact/', label: 'ConnectOS' },
   ],
   legal: [
     { href: '/privacy/', label: 'Privacy' },

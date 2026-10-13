@@ -18,7 +18,7 @@ const totalChapters = books.reduce((n,book)=>n+book.chapters.length,0);
   </section>
   <section id="books" class="reados-books" aria-label="ReadOS books">
     <Container>
-      <div class="section-head"><h2>Books & guides</h2><span>{books.length+LIBRARY_GUIDES.length} publications · {totalChapters} chapters from Insights</span></div>
+      <div class="section-head"><h2>Books & guides</h2><span>{books.length+LIBRARY_GUIDES.length} publications · {totalChapters} chapters</span></div>
       <div class="book-grid">
         {LIBRARY_GUIDES.map((guide) => <article class="book">
           <a href={`/library/${guide.slug}/`} aria-label={`Read ${guide.title}`}><img src={guide.cover} alt={`Book cover: ${guide.title}`} loading="lazy" width="900" height="1200" /></a>
@@ -39,7 +39,7 @@ const totalChapters = books.reduce((n,book)=>n+book.chapters.length,0);
           <a class="reados-link" href={readosCollectionHref(book)}>Open book →</a>
         </article>)}
       </div>
-      <p class="migration-note">These are topic-organised reading collections using complete source articles as chapters. Original Insights pages and earlier ReadOS volumes remain accessible, preserving existing links.</p>
+      <p class="migration-note">These are topic-organised reading collections using complete source articles as chapters. Earlier publication addresses remain accessible, preserving existing links.</p>
     </Container>
   </section>
 </BaseLayout>

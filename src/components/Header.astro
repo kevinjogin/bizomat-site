@@ -1,12 +1,12 @@
 ---
-import { NAV, RESOURCES_NAV, QUOTE_CTA } from '../config/site.ts';
+import { NAV, QUOTE_CTA } from '../config/site.ts';
 import Container from './Container.astro';
 import SiteWordmark from './SiteWordmark.astro';
 import ThemeToggle from './ThemeToggle.astro';
 
 const path = Astro.url.pathname;
 const isCurrent = (href: string) => path === href;
-const isResourceCurrent = RESOURCES_NAV.some(({ href }) => path === href || path.startsWith(href));
+
 ---
 <header class="site-header" data-header>
   <Container class="site-header__inner">
@@ -19,23 +19,6 @@ const isResourceCurrent = RESOURCES_NAV.some(({ href }) => path === href || path
         {NAV.map((item) => (
           <li><a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a></li>
         ))}
-        <li class="site-nav__resources">
-          <details class="resources-dropdown" data-resources-dropdown>
-            <summary class:list={['resources-toggle', { 'is-current': isResourceCurrent }]}>
-              Resources <span class="resources-chevron" aria-hidden="true">⌄</span>
-            </summary>
-            <ul class="resources-dropdown__menu" aria-label="Resources links">
-              {RESOURCES_NAV.map((item) => (
-                <li>
-                  <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
-                    <span class="resources-item__title">{item.label}</span>
-                    <span class="resources-item__description">{item.description}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </details>
-        </li>
       </ul>
     </nav>
 
@@ -49,21 +32,10 @@ const isResourceCurrent = RESOURCES_NAV.some(({ href }) => path === href || path
 </header>
 <script>
   const header = document.querySelector<HTMLElement>('[data-header]');
-  const dropdown = header?.querySelector<HTMLDetailsElement>('[data-resources-dropdown]');
   const update = () => header?.classList.toggle('is-scrolled', window.scrollY > 8);
   window.addEventListener('scroll', update, { passive: true });
   update();
 
-  // Native details/summary supports mouse, touch and keyboard without JS.
-  document.addEventListener('click', (event) => {
-    if (dropdown?.open && event.target instanceof Node && !dropdown.contains(event.target)) dropdown.open = false;
-  });
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && dropdown?.open) {
-      dropdown.open = false;
-      dropdown.querySelector<HTMLElement>('summary')?.focus();
-    }
-  });
 </script>
 <style>
   .site-header { position: sticky; top: 0; z-index: 50; background: var(--paper); border-bottom: 1px solid transparent; transition: border-color .25s var(--ease); }

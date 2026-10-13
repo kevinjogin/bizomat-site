@@ -11,7 +11,7 @@ import { SERVICE_AREA } from '../../data/services.ts';
 
 const crumbs = [
   { label: 'Home', href: '/' },
-  { label: 'Contact', href: '/contact/' },
+  { label: 'ConnectOS', href: '/contact/' },
 ];
 const next = [
   'KEVOS reviews your enquiry and replies as soon as possible.',
@@ -21,13 +21,13 @@ const next = [
 ---
 
 <BaseLayout
-  title="Get a Quote"
+  title="ConnectOS — Contact KEVOS"
   description="Request a quote or discuss a project with KEVOS: engineering and CAD support, manufacturing support, operations improvement, project support and Factory Fix engagements."
   breadcrumbs={crumbs}
   canonical="/contact/"
   schema={[{ '@type': 'ContactPage', name: 'Contact KEVOS', url: `${SITE.url}/contact/`, about: { '@id': `${SITE.url}/#organization` } }]}
 >
-  <Hero eyebrow="Get a Quote" title="Tell us about the <em>job</em>." lead="Two easy ways to start: send the project details below, or book a meeting to talk it through first.">
+  <Hero eyebrow="ConnectOS / Get in touch" title="Tell us about the <em>job</em>." lead="Two easy ways to start: send the project details below, or book a meeting to talk it through first.">
     <MotionVisual page="contact" slot="visual" priority />
     <Breadcrumb items={crumbs} slot="before" />
     <Fragment slot="actions">
