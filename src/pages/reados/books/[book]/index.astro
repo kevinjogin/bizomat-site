@@ -12,7 +12,7 @@ interface Props { book: ReadOSBook }
 const { book } = Astro.props;
 const href = readosBookHref(book);
 ---
-<BaseLayout title={`${book.title} — ReadOS`} description={book.description}
+<BaseLayout title={`${book.title} — ReadOS`} description={`${book.description} Read the full KEVOS collection in structured chapters.`}
   breadcrumbs={[{label:'Home',href:'/'},{label:'ReadOS',href:'/reados/'},{label:book.title,href}]}>
   <section class="heading"><Container size="narrow">
     <p class="eyebrow">ReadOS / {book.category}</p>
