@@ -1,0 +1,75 @@
+---
+interface Props { title:string; category:string; slug:string; subtitle?:string; compact?:boolean }
+const {title,category,slug,subtitle,compact=false}=Astro.props;
+const palettes:Record<string,[string,string,string]>={
+ Engineering:['#102b41','#2e8cb9','#9adff5'],
+ Manufacturing:['#31251f','#d97138','#ffd29b'],
+ Operations:['#12362e','#2f9972','#a3f0c8'],
+ Projects:['#272344','#7f69d2','#d8cbff'],
+ Technology:['#10213e','#347bd5','#a8d6ff'],
+ Business:['#382c1f','#c38e36','#ffdb8a'],
+ Products:['#18383f','#3ca0b2','#b2f3ec'],
+ Ideas:['#302344','#9566c1','#f0c9fa'],
+ 'Finance & Business':['#382c1f','#c38e36','#ffdb8a']
+};
+const palette=palettes[category]??palettes.Business;
+const hash=[...slug].reduce((a,c)=>(Math.imul(a,33)+c.charCodeAt(0))>>>0,5381);
+const variant=hash%3;
+const duration=9+(hash%8);
+const id='reados-'+slug.replace(/[^a-z0-9-]/gi,'-');
+const chunks:string[]=[];
+const words=title.split(/\s+/);
+let current='';
+for(const word of words){
+ if((current+' '+word).trim().length>19&&current){chunks.push(current);current=word;}
+ else current=(current+' '+word).trim();
+}
+if(current)chunks.push(current);
+const titleLines=chunks.slice(0,6);
+const displaySize=titleLines.length>=5?22:26;
+const nodes=Array.from({length:9},(_,i)=>({x:45+((hash+i*97)%268),y:300+((hash+i*53)%144)}));
+const bars=Array.from({length:6},(_,i)=>({x:43+i*46,height:35+((hash+i*31)%100)}));
+const mode=category==='Engineering'?'engineering':category==='Manufacturing'?'manufacturing':category==='Operations'?'operations':category==='Projects'?'projects':category==='Technology'?'technology':category==='Business'||category==='Finance & Business'?'business':category==='Products'?'products':'ideas';
+---
+<svg class:list={["animated-cover", `reados-speed-${hash%4}`]} viewBox="0 0 360 490" role="img" aria-label={`Animated ReadOS cover: ${title}`} xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id={`${id}-bg`} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color={palette[0]}/><stop offset="1" stop-color={palette[1]}/></linearGradient>
+  <linearGradient id={`${id}-beam`} x1="0" x2="1"><stop stop-color={palette[2]} stop-opacity="0"/><stop offset=".5" stop-color={palette[2]} stop-opacity=".4"/><stop offset="1" stop-color={palette[2]} stop-opacity="0"/></linearGradient>
+  <clipPath id={`${id}-clip`}><rect width="360" height="490" rx="4"/></clipPath>
+ </defs>
+ <g clip-path={`url(#${id}-clip)`}>
+  <rect width="360" height="490" fill={`url(#${id}-bg)`}/>
+  <path d={variant===0?'M-40 320 L400 230 L400 510 L-40 510Z':variant===1?'M-30 230 L350 335 L350 500 L-30 500Z':'M-30 315 Q180 190 390 320 L390 500 L-30 500Z'} fill="#06111c" opacity=".62"/>
+  <g class="motif motif--slow" fill="none" stroke={palette[2]} opacity=".55" stroke-width="2">
+   {mode==='engineering'&&<>{Array.from({length:5},(_,i)=><circle cx="183" cy="378" r={26+i*20}/>)}<path d="M55 378H311 M183 270V483"/></>}
+   {mode==='manufacturing'&&<>{Array.from({length:5},(_,i)=><path d={`M${48+i*54} 295v142h36v-90h-36`}/>)}<path d="M39 451H322" stroke-dasharray="8 8"/></>}
+   {mode==='operations'&&<>{[0,1,2].map(i=><path d={`M40 ${317+i*60} H150 Q176 ${317+i*60} 176 ${342+i*40} H318`}/>)}{[0,1,2].map(i=><circle cx={176+i*54} cy={345+i*43} r="13"/>)}</>}
+   {mode==='projects'&&<>{bars.map(b=><rect x={b.x} y={455-b.height} width="29" height={b.height} rx="3"/>)}<path d="M40 320H315" stroke-dasharray="6 8"/></>}
+   {mode==='technology'&&<>{nodes.map((n,i)=><circle cx={n.x} cy={n.y} r="7"/>)}{nodes.slice(1).map((n,i)=><path d={`M${nodes[i].x} ${nodes[i].y} L${n.x} ${n.y}`}/>)}</>}
+   {mode==='business'&&<>{bars.map(b=><rect x={b.x} y={455-b.height} width="29" height={b.height} rx="2"/>)}<path d="M40 410 L108 385 L168 395 L236 330 L314 300" stroke-width="4"/></>}
+   {mode==='products'&&<><path d="M100 370l76-44 76 44v82l-76 43-76-43z M100 370l76 45 76-45 M176 415v80"/><circle cx="176" cy="371" r="85" stroke-dasharray="9 12"/></>}
+   {mode==='ideas'&&<>{Array.from({length:6},(_,i)=><circle cx="179" cy="385" r={24+i*23}/>)}<path d="M179 292v-33 M179 476v-26 M84 385H58 M300 385h-26"/></>}
+  </g>
+  <g class="motif--float" fill={palette[2]} opacity=".75">{nodes.slice(0,6).map((n,i)=><circle cx={n.x} cy={n.y} r={2+i%3}/>)}</g>
+  <rect class="scan" x="-220" y="230" width="145" height="260" fill={`url(#${id}-beam)`} opacity=".6"/>
+  <rect x="18" y="78" width="324" height={Math.min(241,48+titleLines.length*38)} fill="#091522" opacity=".92" rx="4"/>
+  <path d="M25 43H335" stroke={palette[2]} opacity=".8"/>
+  <text x="25" y="30" fill="#ffffff" font-family="Arial,sans-serif" font-weight="700" font-size="16" letter-spacing="2">KEVOS / READOS</text>
+  <text x="25" y="67" fill={palette[2]} font-family="Arial,sans-serif" font-size="13" letter-spacing="2">{category.toUpperCase()}</text>
+  {titleLines.map((line,i)=><text x="30" y={120+i*38} fill="#ffffff" font-family="Arial,sans-serif" font-size={displaySize} font-weight="700">{line}</text>)}
+  {subtitle&&!compact&&<text x="27" y="445" fill="#ffffff" font-size="12" font-family="Arial,sans-serif">{subtitle.slice(0,38)}</text>}
+  <path d="M25 456H335" stroke={palette[2]} opacity=".8"/>
+  <text x="25" y="478" fill="#ffffff" font-family="Arial,sans-serif" font-size="12" letter-spacing="2">READOS COLLECTION</text>
+ </g>
+</svg>
+<style>
+.reados-speed-0{--reados-duration:9s}.reados-speed-1{--reados-duration:11s}.reados-speed-2{--reados-duration:13s}.reados-speed-3{--reados-duration:15s}
+.animated-cover{display:block;width:100%;height:auto;aspect-ratio:360/490;border-radius:4px;box-shadow:0 12px 28px rgb(0 0 0 / .18)}
+.motif--slow{transform-origin:50% 77%;animation:reados-breathe var(--reados-duration) ease-in-out infinite alternate}
+.motif--float{animation:reados-float calc(var(--reados-duration) * .8) ease-in-out infinite alternate}
+.scan{animation:reados-scan calc(var(--reados-duration) * 1.4) linear infinite}
+@keyframes reados-breathe{from{transform:scale(.97) rotate(-2deg);opacity:.4}to{transform:scale(1.04) rotate(2deg);opacity:.8}}
+@keyframes reados-float{from{transform:translateY(8px);opacity:.3}to{transform:translateY(-10px);opacity:.8}}
+@keyframes reados-scan{from{transform:translateX(-160px)}to{transform:translateX(730px)}}
+@media(prefers-reduced-motion:reduce){.animated-cover *{animation:none!important}}
+</style>

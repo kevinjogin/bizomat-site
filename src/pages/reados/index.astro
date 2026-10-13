@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
-import ReadOSCover from '../../components/ReadOSCover.astro';
+import ReadOSAnimatedCover from '../../components/ReadOSAnimatedCover.astro';
 import { LIBRARY_GUIDES } from '../../data/library.ts';
 import { getInsights } from '../../utils/content.ts';
 import { buildReadOSCollections, readosCollectionHref } from '../../utils/reados-collections.ts';
@@ -41,14 +41,14 @@ const totalChapters=books.reduce((n,book)=>n+book.chapters.length,0)+LIBRARY_GUI
         <div class="category-heading"><div><p class="eyebrow">READOS / {c.name.toUpperCase()}</p><h2>{c.name}</h2><p>{c.description}</p></div><span class="count">{selected.length+featured.length} publications</span></div>
         <div class="cover-grid">
           {featured.map(guide=><article class="cover-card">
-            <a class="cover-link" href={`/library/${guide.slug}/`} aria-label={`Read ${guide.title}`}><img src={guide.cover} alt={`Cover of ${guide.title}`} loading="lazy" width="900" height="1200" /></a>
+            <a class="cover-link" href={`/library/${guide.slug}/`} aria-label={`Read ${guide.title}`}><ReadOSAnimatedCover title={guide.title} category={guide.category} slug={guide.slug} compact/></a>
             <p class="card-type">{guide.category} · {guide.chapters.length} chapters</p>
             <h3><a href={`/library/${guide.slug}/`}>{guide.title}</a></h3>
             <p class="desc">{guide.description}</p>
             <a class="open" href={`/library/${guide.slug}/`}>Open guide →</a>
           </article>)}
           {selected.map(book=><article class="cover-card">
-            <a class="cover-link" href={readosCollectionHref(book)} aria-label={`Read ${book.title}`}><ReadOSCover title={book.title} category={book.category} slug={book.slug}/></a>
+            <a class="cover-link" href={readosCollectionHref(book)} aria-label={`Read ${book.title}`}><ReadOSAnimatedCover title={book.title} category={book.category} slug={book.slug} compact/></a>
             <p class="card-type">{book.category} · {book.chapters.length} chapters</p>
             <h3><a href={readosCollectionHref(book)}>{book.title}</a></h3>
             <p class="desc">{book.description}</p>
