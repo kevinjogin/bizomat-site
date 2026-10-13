@@ -1,6 +1,6 @@
 ---
-interface Props { title:string; category:string; slug:string; subtitle?:string; compact?:boolean }
-const {title,category,slug,subtitle,compact=false}=Astro.props;
+interface Props { title:string; category:string; slug:string; subtitle?:string; compact?:boolean; motif?:'category'|'opportunity-path'; publicationLabel?:string }
+const {title,category,slug,subtitle,compact=false,motif='category',publicationLabel='READOS COLLECTION'}=Astro.props;
 const palettes:Record<string,[string,string,string]>={
  Engineering:['#102b41','#2e8cb9','#9adff5'],
  Manufacturing:['#31251f','#d97138','#ffd29b'],
@@ -46,7 +46,8 @@ const mode=category==='Engineering'?'engineering':category==='Manufacturing'?'ma
    {mode==='operations'&&<>{[0,1,2].map(i=><path d={`M40 ${317+i*60} H150 Q176 ${317+i*60} 176 ${342+i*40} H318`}/>)}{[0,1,2].map(i=><circle cx={176+i*54} cy={345+i*43} r="13"/>)}</>}
    {mode==='projects'&&<>{bars.map(b=><rect x={b.x} y={455-b.height} width="29" height={b.height} rx="3"/>)}<path d="M40 320H315" stroke-dasharray="6 8"/></>}
    {mode==='technology'&&<>{nodes.map((n,i)=><circle cx={n.x} cy={n.y} r="7"/>)}{nodes.slice(1).map((n,i)=><path d={`M${nodes[i].x} ${nodes[i].y} L${n.x} ${n.y}`}/>)}</>}
-   {mode==='business'&&<>{bars.map(b=><rect x={b.x} y={455-b.height} width="29" height={b.height} rx="2"/>)}<path d="M40 410 L108 385 L168 395 L236 330 L314 300" stroke-width="4"/></>}
+   {mode==='business'&&motif==='category'&&<>{bars.map(b=><rect x={b.x} y={455-b.height} width="29" height={b.height} rx="2"/>)}<path d="M40 410 L108 385 L168 395 L236 330 L314 300" stroke-width="4"/></>}
+   {motif==='opportunity-path'&&<><path d="M48 418H120V360H205V303H305" stroke-width="3"/><path d="M48 444H317M48 280V444" opacity=".5"/>{[[48,418],[120,360],[205,303],[305,303]].map(([x,y])=><g><circle cx={x} cy={y} r="15" fill="#382c1f"/><path d={`M${x-6} ${y}l4 5 8-10`} stroke-width="3"/></g>)}<path d="M60 325H90M147 413H180M245 378H280" stroke-dasharray="4 5"/></>}
    {mode==='products'&&<><path d="M100 370l76-44 76 44v82l-76 43-76-43z M100 370l76 45 76-45 M176 415v80"/><circle cx="176" cy="371" r="85" stroke-dasharray="9 12"/></>}
    {mode==='ideas'&&<>{Array.from({length:6},(_,i)=><circle cx="179" cy="385" r={24+i*23}/>)}<path d="M179 292v-33 M179 476v-26 M84 385H58 M300 385h-26"/></>}
   </g>
@@ -59,7 +60,7 @@ const mode=category==='Engineering'?'engineering':category==='Manufacturing'?'ma
   {titleLines.map((line,i)=><text x="30" y={120+i*38} fill="#ffffff" font-family="Arial,sans-serif" font-size={displaySize} font-weight="700">{line}</text>)}
   {subtitle&&!compact&&<text x="27" y="445" fill="#ffffff" font-size="12" font-family="Arial,sans-serif">{subtitle.slice(0,38)}</text>}
   <path d="M25 456H335" stroke={palette[2]} opacity=".8"/>
-  <text x="25" y="478" fill="#ffffff" font-family="Arial,sans-serif" font-size="12" letter-spacing="2">READOS COLLECTION</text>
+  <text x="25" y="478" fill="#ffffff" font-family="Arial,sans-serif" font-size="12" letter-spacing="2">{publicationLabel}</text>
  </g>
 </svg>
 <style>
