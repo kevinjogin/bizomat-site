@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+import { LIBRARY_GUIDES } from '../../data/library.ts';
+import { getInsights } from '../../utils/content.ts';
+import { buildReadOSBooks, readosBookHref } from '../../utils/reados.ts';
+const books = buildReadOSBooks(await getInsights());
+const totalChapters = books.reduce((n,book)=>n+book.chapters.length,0);
+---
+<BaseLayout title="ReadOS — The KEVOS Reading Library" description="Read practical KEVOS books and structured guides on engineering, manufacturing, technology, operations and business." breadcrumbs={[{label:'Home',href:'/'},{label:'ReadOS',href:'/reados/'}]}>
+  <section class="reados-hero">
+    <Container>
+      <p class="eyebrow">KEVOS / READOS</p>
+      <h1>Knowledge worth <em>reading.</em></h1>
+      <p class="lead">Practical books and readable guides, organised by subject and chapter. Read at your own pace and pick up wherever you left off.</p>
+      <a class="reados-link" href="#books">Explore books <span aria-hidden="true">→</span></a>
+    </Container>
+  </section>
+  <section id="books" class="reados-books" aria-label="ReadOS books">
+    <Container>
+      <div class="section-head"><h2>Books & guides</h2><span>{books.length+LIBRARY_GUIDES.length} publications · {totalChapters} chapters from Insights</span></div>
+      <div class="book-grid">
+        {LIBRARY_GUIDES.map((guide) => <article class="book">
+          <a href={`/library/${guide.slug}/`} aria-label={`Read ${guide.title}`}><img src={guide.cover} alt={`Book cover: ${guide.title}`} loading="lazy" width="900" height="1200" /></a>
+          <div>
+            <p class="eyebrow">{guide.category} · {guide.chapters.length} chapters</p>
+            <h3><a href={`/library/${guide.slug}/`}>{guide.title}</a></h3>
+            <p>{guide.description}</p>
+            <a class="reados-link" href={`/library/${guide.slug}/`}>Read book <span aria-hidden="true">→</span></a>
+          </div>
+        </article>)}
+      </div>
+      <div class="reados-volumes" aria-label="ReadOS subject books">
+        {books.map(book=><article class="reados-volume">
+          <p class="eyebrow">{book.category} · {book.chapters.length} chapters</p>
+          <h3><a href={readosBookHref(book)}>{book.title}</a></h3>
+          <p>{book.description}</p>
+          <span>About {book.minutes} minutes</span>
+          <a class="reados-link" href={readosBookHref(book)}>Open book →</a>
+        </article>)}
+      </div>
+      <p class="migration-note">ReadOS is being introduced in stages. Existing Insights and Library links remain available while content is carefully organised into books.</p>
+    </Container>
+  </section>
+</BaseLayout>
+<style>
+  .reados-hero{padding:clamp(3.5rem,8vw,7rem) 0;border-bottom:1px solid var(--line)}
+  .reados-hero h1{max-width:18ch;margin:1rem 0 1.25rem}
+  .reados-hero .lead{max-width:65ch}
+  .reados-link{display:inline-block;margin-top:1rem;color:var(--accent);font-weight:650;text-decoration:none}
+  .reados-books{padding:clamp(2.5rem,6vw,5rem) 0 var(--space-section)}
+  .section-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;border-bottom:1px solid var(--line-strong);padding-bottom:1rem;margin-bottom:2rem}
+  .section-head span{font-size:.9rem;color:var(--muted)}
+  .book-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:1.5rem}
+  .book{display:grid;grid-template-columns:minmax(110px,34%) 1fr;gap:1.5rem;padding:1.25rem;border:1px solid var(--line);background:var(--surface)}
+  .book img{width:100%;height:auto;box-shadow:0 10px 30px rgb(0 0 0 / .16)}
+  .book h3{margin:.6rem 0;font-size:var(--step-1)}
+  .book h3 a{text-decoration:none}
+  .book p:not(.eyebrow){font-size:.93rem;color:var(--muted)}
+  .migration-note{max-width:75ch;color:var(--muted);font-size:.9rem;margin-top:2rem}
+  @media(max-width:550px){.book{gap:1rem;padding:.85rem}}
+.reados-volumes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:1rem;margin-top:3rem}
+.reados-volume{border:1px solid var(--line);background:var(--surface);padding:1.4rem;display:flex;flex-direction:column}
+.reados-volume h3{margin:.65rem 0;font-size:var(--step-1)}
+.reados-volume h3 a{text-decoration:none}
+.reados-volume p:not(.eyebrow),.reados-volume span{color:var(--muted);font-size:.9rem}
+.reados-volume .reados-link{margin-top:auto;padding-top:1rem}
+</style>
