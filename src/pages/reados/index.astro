@@ -3,8 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
 import { LIBRARY_GUIDES } from '../../data/library.ts';
 import { getInsights } from '../../utils/content.ts';
-import { buildReadOSBooks, readosBookHref } from '../../utils/reados.ts';
-const books = buildReadOSBooks(await getInsights());
+import { buildReadOSCollections, readosCollectionHref } from '../../utils/reados-collections.ts';
+const books = buildReadOSCollections(await getInsights());
 const totalChapters = books.reduce((n,book)=>n+book.chapters.length,0);
 ---
 <BaseLayout title="ReadOS — The KEVOS Reading Library" description="Read practical KEVOS books and structured guides on engineering, manufacturing, technology, operations and business." breadcrumbs={[{label:'Home',href:'/'},{label:'ReadOS',href:'/reados/'}]}>
@@ -33,13 +33,13 @@ const totalChapters = books.reduce((n,book)=>n+book.chapters.length,0);
       <div class="reados-volumes" aria-label="ReadOS subject books">
         {books.map(book=><article class="reados-volume">
           <p class="eyebrow">{book.category} · {book.chapters.length} chapters</p>
-          <h3><a href={readosBookHref(book)}>{book.title}</a></h3>
+          <h3><a href={readosCollectionHref(book)}>{book.title}</a></h3>
           <p>{book.description}</p>
           <span>About {book.minutes} minutes</span>
-          <a class="reados-link" href={readosBookHref(book)}>Open book →</a>
+          <a class="reados-link" href={readosCollectionHref(book)}>Open book →</a>
         </article>)}
       </div>
-      <p class="migration-note">ReadOS is being introduced in stages. Existing Insights and Library links remain available while content is carefully organised into books.</p>
+      <p class="migration-note">These are topic-organised reading collections using complete source articles as chapters. Original Insights pages and earlier ReadOS volumes remain accessible, preserving existing links.</p>
     </Container>
   </section>
 </BaseLayout>
