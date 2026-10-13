@@ -26,6 +26,11 @@ not_found_handling = "404-page"
 [ai]
 binding = "AI"
 
+# Workers Builds uses `wrangler preview` for feature branches.
+# Preview bindings are explicit; production settings above remain unchanged.
+[previews.ai]
+binding = "AI"
+
 [observability]
 enabled = true
 
