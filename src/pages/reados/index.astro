@@ -5,7 +5,9 @@ import ReadOSAnimatedCover from '../../components/ReadOSAnimatedCover.astro';
 import { LIBRARY_GUIDES } from '../../data/library.ts';
 import { getInsights } from '../../utils/content.ts';
 import { buildReadOSCollections, readosCollectionHref } from '../../utils/reados-collections.ts';
+import { getPublications, publicationHref, publicationChapterHref } from '../../utils/publications.ts';
 const books=buildReadOSCollections(await getInsights());
+const publications=await getPublications();
 const categories=[
   {name:'Engineering',slug:'engineering',description:'Design, CAD and practical engineering methods'},
   {name:'Manufacturing',slug:'manufacturing',description:'Tooling, factory production and quality'},
@@ -16,8 +18,8 @@ const categories=[
   {name:'Products',slug:'products',description:'Product development, validation and launches'},
   {name:'Ideas',slug:'ideas',description:'Innovation, exploration and practical concepts'}
 ];
-const count=books.length+LIBRARY_GUIDES.length;
-const totalChapters=books.reduce((n,book)=>n+book.chapters.length,0)+LIBRARY_GUIDES.reduce((n,g)=>n+g.chapters.length,0);
+const count=books.length+LIBRARY_GUIDES.length+publications.length;
+const totalChapters=books.reduce((n,book)=>n+book.chapters.length,0)+LIBRARY_GUIDES.reduce((n,g)=>n+g.chapters.length,0)+publications.reduce((n,p)=>n+p.chapters.length,0);
 ---
 <BaseLayout title="ReadOS — Books & Guides by Topic" description="Browse KEVOS ReadOS books by Engineering, Manufacturing, Operations, Projects, Technology, Business, Products and Ideas.">
   <section class="reados-hero"><Container>
@@ -36,10 +38,18 @@ const totalChapters=books.reduce((n,book)=>n+book.chapters.length,0)+LIBRARY_GUI
     {categories.map(c=>{
       const selected=books.filter(book=>book.category===c.name);
       const featured=c.name==='Business'?LIBRARY_GUIDES:[];
-      if(!selected.length&&!featured.length)return null;
+      const authored=publications.filter(p=>p.book.data.category===c.name);
+      if(!selected.length&&!featured.length&&!authored.length)return null;
       return <section class="category" id={c.slug}>
-        <div class="category-heading"><div><p class="eyebrow">READOS / {c.name.toUpperCase()}</p><h2>{c.name}</h2><p>{c.description}</p></div><span class="count">{selected.length+featured.length} publications</span></div>
+        <div class="category-heading"><div><p class="eyebrow">READOS / {c.name.toUpperCase()}</p><h2>{c.name}</h2><p>{c.description}</p></div><span class="count">{selected.length+featured.length+authored.length} publications</span></div>
         <div class="cover-grid">
+          {authored.map(({book,chapters})=><article class="cover-card">
+            <a class="cover-link" href={publicationHref(book.id)} aria-label={`Read ${book.data.title}`}><ReadOSAnimatedCover title={book.data.title} category={book.data.category} slug={book.id} motif={book.data.coverVariant} publicationLabel="KEVOS ORIGINAL BOOK" compact/></a>
+            <p class="card-type">Authored book · {chapters.length} chapters</p>
+            <h3><a href={publicationHref(book.id)}>{book.data.title}</a></h3>
+            <p class="desc">{book.data.description}</p>
+            <a class="open" href={publicationChapterHref(book.id,chapters[0].data.chapterSlug)}>Start reading →</a>
+          </article>)}
           {featured.map(guide=><article class="cover-card">
             <a class="cover-link" href={`/library/${guide.slug}/`} aria-label={`Read ${guide.title}`}><ReadOSAnimatedCover title={guide.title} category={guide.category} slug={guide.slug} compact/></a>
             <p class="card-type">{guide.category} · {guide.chapters.length} chapters</p>

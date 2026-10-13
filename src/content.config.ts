@@ -62,4 +62,28 @@ const work = defineCollection({
       .refine((d) => !d.image || !!d.imageAlt, { message: 'imageAlt is required when image is set', path: ['imageAlt'] }),
 });
 
-export const collections = { insights, work };
+const publications = defineCollection({
+  loader: glob({ pattern: '*/book.md', base: './src/content/reados-publications', generateId: ({ entry }) => entry.split('/')[0] }),
+  schema: z.object({
+    title: z.string().min(5).max(100), subtitle: z.string().min(10).max(160),
+    description: z.string().min(50).max(200), category: z.enum(CATEGORY_NAMES),
+    tags: z.array(z.enum(TAG_SLUGS)).min(1).max(5),
+    author: z.literal('KEVOS'), publisher: z.literal('KEVOS ReadOS'), language: z.literal('en-AU'),
+    status: z.enum(['draft', 'published']).default('draft'), publishDate: z.coerce.date(),
+    edition: z.string().min(1), level: z.string().min(3), audience: z.string().min(30), referencesChecked: z.coerce.date(),
+    outcomes: z.array(z.string().min(15)).min(3),
+    coverVariant: z.enum(['category', 'opportunity-path']).default('category'),
+    references: z.array(z.object({ title: z.string(), creator: z.string(), year: z.string(), url: z.url().optional(), note: z.string() })).min(1),
+    related: z.array(z.object({ title: z.string(), href: z.string().startsWith('/') })).default([]),
+  }),
+});
+const publicationChapters = defineCollection({
+  loader: glob({ pattern: '*/chapters/*.md', base: './src/content/reados-publications' }),
+  schema: z.object({
+    book: reference('publications'), chapterSlug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    order: z.number().int().positive(), title: z.string().min(5).max(120),
+    description: z.string().min(50).max(200), draft: z.boolean().default(true),
+  }),
+});
+
+export const collections = { insights, work, publications, publicationChapters };

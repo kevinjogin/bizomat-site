@@ -1,0 +1,43 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import ReadOSAnimatedCover from '../../../../components/ReadOSAnimatedCover.astro';
+import { getPublications, publicationHref, publicationChapterHref } from '../../../../utils/publications.ts';
+import { SITE } from '../../../../config/site.ts';
+export async function getStaticPaths() {
+  return (await getPublications()).map(publication => ({ params: { book: publication.book.id }, props: { publication } }));
+}
+const { publication } = Astro.props;
+const { book, chapters, minutes } = publication;
+const { Content } = await render(book);
+const href = publicationHref(book.id);
+const schema = { '@type': 'Book', '@id': new URL(href, SITE.url).href + '#book', name: book.data.title, description: book.data.description,
+  author: { '@id': SITE.url + '/#organization' }, publisher: { '@type': 'Organization', name: book.data.publisher },
+  inLanguage: book.data.language, bookEdition: book.data.edition, datePublished: book.data.publishDate.toISOString().slice(0, 10),
+  url: new URL(href, SITE.url).href, isAccessibleForFree: true,
+  hasPart: chapters.map(ch => ({ '@type': 'Chapter', name: ch.data.title, position: ch.data.order, url: new URL(publicationChapterHref(book.id, ch.data.chapterSlug), SITE.url).href })) };
+---
+<BaseLayout title={`${book.data.title} — ReadOS`} description={book.data.description} canonical={href} schema={[schema]}
+  breadcrumbs={[{label:'ReadOS',href:'/reados/'},{label:book.data.title,href}]}>
+  <Container>
+    <nav class="publication-crumb" aria-label="Publication navigation"><a href="/reados/">← ReadOS</a><a href={`/reados/#${book.data.category.toLowerCase()}`}>{book.data.category}</a></nav>
+    <section class="publication-hero">
+      <div><p class="eyebrow">{book.data.category} / Authored KEVOS book</p>
+        {book.data.status === 'draft' && <p>Draft preview · not published</p>}
+        <h1>{book.data.title}</h1><p class="subtitle">{book.data.subtitle}</p><p class="lead">{book.data.description}</p>
+        <p class="meta">{book.data.publisher} · {chapters.length} chapters · About {minutes} minutes · {book.data.level}</p>
+        <a class="start" href={publicationChapterHref(book.id,chapters[0].data.chapterSlug)}>Start reading →</a>
+      </div>
+      <div class="publication-cover"><ReadOSAnimatedCover title={book.data.title} category={book.data.category} slug={book.id} motif={book.data.coverVariant} publicationLabel="KEVOS ORIGINAL BOOK" /></div>
+    </section>
+    <section class="book-about prose" aria-label="About this book" data-pagefind-body data-pagefind-filter={`category:${book.data.category}`}><Content /></section>
+    <section class="book-audience"><h2>Who this book is for</h2><p>{book.data.audience}</p><h2>What you will learn</h2><ul>{book.data.outcomes.map(outcome=><li>{outcome}</li>)}</ul></section>
+    <section class="book-contents" aria-labelledby="contents"><h2 id="contents">Contents</h2><ol>{chapters.map(ch=><li><a href={publicationChapterHref(book.id,ch.data.chapterSlug)}><span>{String(ch.data.order).padStart(2,'0')}</span><div><strong>{ch.data.title}</strong><p>{ch.data.description}</p></div></a></li>)}</ol></section>
+    <section class="book-references" aria-labelledby="references"><h2 id="references">References and source notes</h2><p>The manuscript and worked examples are original KEVOS writing. References inform particular concepts; their authors do not endorse this book. Web references were consulted on {book.data.referencesChecked.toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric',timeZone:'Australia/Sydney'})}.</p><ul>{book.data.references.map(ref=><li><strong>{ref.creator}.</strong> {ref.url?<a href={ref.url}>{ref.title}</a>:<em>{ref.title}</em>} ({ref.year}). <span>{ref.note}</span></li>)}</ul></section>
+    {book.data.related.length>0&&<section class="book-related"><h2>Continue exploring</h2><ul>{book.data.related.map(item=><li><a href={item.href}>{item.title}</a></li>)}</ul></section>}
+  </Container>
+</BaseLayout>
+<style>
+.publication-crumb{display:flex;gap:1.5rem;margin:1.5rem 0;font-size:.85rem}.publication-hero{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:clamp(2rem,6vw,6rem);align-items:center;padding:2rem 0 4rem}.publication-hero h1{font-size:clamp(2.5rem,5.5vw,5rem);line-height:1.08;max-width:15ch}.subtitle{font-size:var(--step-1);color:var(--ink-2);max-width:45ch}.publication-cover{max-width:330px;width:100%;justify-self:center}.meta{font-size:.85rem;color:var(--muted)}.start{display:inline-block;margin-top:1rem;padding:.85rem 1.2rem;background:var(--ink);color:var(--paper);border-radius:2rem;text-decoration:none;font-weight:650}.book-about,.book-audience{max-width:var(--measure)}.book-audience,.book-contents,.book-references,.book-related{padding:2.5rem 0;border-top:1px solid var(--line)}.book-contents ol{list-style:none;padding:0;max-width:950px}.book-contents a{display:flex;gap:1rem;padding:1rem 0;text-decoration:none;border-bottom:1px solid var(--line)}.book-contents a>span{color:var(--accent);font-size:.85rem;padding-top:.15rem}.book-contents p{font-size:.9rem;color:var(--muted);margin:.4rem 0}.book-references{max-width:900px;font-size:.9rem}.book-references li{margin:1rem 0}.book-references span{color:var(--muted)}.book-related{margin-bottom:3rem}@media(max-width:650px){.publication-hero{grid-template-columns:1fr}.publication-cover{max-width:250px}.publication-hero h1{font-size:2.65rem}}
+</style>
