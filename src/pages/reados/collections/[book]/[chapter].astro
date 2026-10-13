@@ -1,0 +1,50 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Container from '../../../../components/Container.astro';
+import { getInsights, readingTime, type Insight } from '../../../../utils/content.ts';
+import { buildReadOSCollections, readosCollectionHref, readosCollectionChapterHref, type ReadOSCollection } from '../../../../utils/reados-collections.ts';
+
+export async function getStaticPaths() {
+  const books = buildReadOSCollections(await getInsights());
+  return books.flatMap(book => book.chapters.map((chapter,index)=>({
+    params:{book:book.slug,chapter:chapter.id},
+    props:{book,chapter,index}
+  })));
+}
+interface Props { book:ReadOSCollection;chapter:Insight;index:number }
+const {book,chapter,index}=Astro.props;
+const {Content}=await render(chapter);
+const previous=index>0?book.chapters[index-1]:undefined;
+const next=index+1<book.chapters.length?book.chapters[index+1]:undefined;
+const href=readosCollectionChapterHref(book,chapter);
+---
+<BaseLayout title={`${chapter.data.title} — ${book.title} | ReadOS`} description={chapter.data.description}
+  breadcrumbs={[{label:'Home',href:'/'},{label:'ReadOS',href:'/reados/'},{label:book.title,href:readosCollectionHref(book)},{label:chapter.data.title,href}]}>
+  <article data-pagefind-body>
+    <header class="reading-head"><Container size="narrow">
+      <p class="eyebrow">READOS / {book.category} / CHAPTER {index+1}</p>
+      <h1>{chapter.data.title}</h1>
+      <p class="intro">{chapter.data.description}</p>
+      <p class="meta">{readingTime(chapter.body)} min read · Chapter {index+1} of {book.chapters.length}</p>
+      <label class="progress-label" for="chapter-progress">Book progress</label>
+      <progress id="chapter-progress" value={index+1} max={book.chapters.length}>{index+1} of {book.chapters.length}</progress>
+    </Container></header>
+    <Container size="narrow"><div class="prose reading-copy"><Content /></div>
+    <nav class="reader-navigation" aria-label="Chapter navigation">
+      {previous?<a rel="prev" href={readosCollectionChapterHref(book,previous)}>← Previous chapter<span>{previous.data.title}</span></a>:<a href={readosCollectionHref(book)}>← Contents</a>}
+      {next?<a rel="next" href={readosCollectionChapterHref(book,next)}>Next chapter →<span>{next.data.title}</span></a>:<a href={readosCollectionHref(book)}>Back to contents →</a>}
+    </nav>
+    <p class="origin">Originally published in KEVOS Insights. <a href={`/insights/${chapter.id}/`}>View original article</a>.</p>
+    </Container>
+  </article>
+</BaseLayout>
+<style>
+.reading-head{padding:clamp(2.8rem,6vw,5rem) 0 2.5rem;border-bottom:1px solid var(--line);margin-bottom:2.5rem}
+.reading-head h1{margin:1rem 0;max-width:24ch}.intro{font-family:var(--font-serif);font-size:var(--step-1);color:var(--ink-2)}.meta,.progress-label{color:var(--muted);font-size:.82rem}
+.progress-label{display:block;margin-top:1rem}progress{display:block;width:100%;height:.4rem;accent-color:var(--accent);margin-top:.5rem}
+.reading-copy{padding-bottom:3rem}.reader-navigation{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;border-top:1px solid var(--line);padding:1.5rem 0}
+.reader-navigation a{display:block;text-decoration:none;color:var(--accent);font-weight:650}.reader-navigation a:last-child{text-align:right}
+.reader-navigation span{display:block;color:var(--ink-2);font-weight:400;font-size:.85rem;margin-top:.5rem}.origin{color:var(--muted);font-size:.83rem;margin:1rem 0 4rem}
+@media(max-width:600px){.reader-navigation{grid-template-columns:1fr}.reader-navigation a:last-child{text-align:left}}
+</style>
