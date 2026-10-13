@@ -68,8 +68,7 @@ export const NAV = [
 /** One Resources menu, collecting knowledge rather than cluttering the main navigation. */
 export const RESOURCES_NAV = [
   { href: '/resources/', label: 'All Resources', description: 'Explore KEVOS knowledge' },
-  { href: '/insights/', label: 'Insights', description: 'Articles and practical ideas' },
-  { href: '/library/', label: 'Library', description: 'Books and reading guides' },
+  { href: '/reados/', label: 'ReadOS', description: 'Books and chapter-based reading' },
 ] as const;
 
 /** Primary call to action in the header and across the site. */
@@ -88,8 +87,7 @@ export const FOOTER_NAV = {
     { href: '/#how-it-works', label: 'How It Works' },
     { href: '/#industries', label: 'Industries' },
     { href: '/#about', label: 'About' },
-    { href: '/insights/', label: 'Insights' },
-    { href: '/library/', label: 'Library' },
+    { href: '/reados/', label: 'ReadOS' },
   ],
   legal: [
     { href: '/privacy/', label: 'Privacy' },
