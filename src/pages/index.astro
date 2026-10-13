@@ -9,14 +9,11 @@ import PackageGrid from '../components/PackageGrid.astro';
 import ProcessSteps from '../components/ProcessSteps.astro';
 import SoftwareNote from '../components/SoftwareNote.astro';
 import ServiceMap from '../components/ServiceMap.astro';
-import ArticleCard from '../components/ArticleCard.astro';
 import { SERVICE_GROUPS, ENGAGEMENT_MODELS, INDUSTRIES, SERVICE_AREA, PRICING_NOTE, FACTORY_FIX, PACKAGES } from '../data/services.ts';
 import { BACKGROUND, PRINCIPLES } from '../data/brand.ts';
 import { SITE } from '../config/site.ts';
-import { getInsights } from '../utils/content.ts';
 import { primaryGuide } from '../data/library.ts';
 
-const latest=(await getInsights()).slice(0,3);
 const problems=[
   { title:'Documentation gaps',text:'Out-of-date or missing drawings that leave production relying on memory or constant clarification.' },
   { title:'Unstable processes',text:'Jobs that run differently depending on who is working, leading to rework or inconsistent quality.' },
@@ -161,16 +158,14 @@ const navigable=[
   </Section>
 
   <Section index="07" label="ReadOS knowledge" id="resources" labelledby="resources-title">
-    <div class="section-head"><div><h2 id="resources-title">Explore ideas, tools and books.</h2><p class="section-intro">Beyond services, KEVOS publishes practical resources for learning, making and decision-making.</p></div></div>
+    <div class="section-head"><div><h2 id="resources-title">Explore ideas, tools and books.</h2><p class="section-intro">Discover ReadOS books and practical tools for learning, making and decision-making.</p></div></div>
     <div class="resource-grid">
-      <article class="resource resource--book"><img src={primaryGuide.cover} width="900" height="1200" loading="lazy" alt="Cover of the KEVOS guide Read the Numbers, Understand the Business" /><div><p class="eyebrow">ReadOS · {primaryGuide.chapters.length} chapters</p><h3><a href={`/library/${primaryGuide.slug}/`}>{primaryGuide.title}</a></h3><p>{primaryGuide.description}</p><a href="/reados/">Explore ReadOS →</a></div></article>
+      <article class="resource resource--book"><img src={primaryGuide.cover} width="900" height="1200" loading="lazy" alt="Cover of the KEVOS guide Read the Numbers, Understand the Business" /><div><p class="eyebrow">ReadOS · {primaryGuide.chapters.length} chapters</p><h3><a href="/reados/">{primaryGuide.title}</a></h3><p>{primaryGuide.description}</p><a href="/reados/">Explore ReadOS →</a></div></article>
       <article class="resource"><p class="eyebrow">Tools</p><h3><a href="/tools/">Calculators and decision tools</a></h3><p>Practical browser-based tools for manufacturing, estimating, operations, engineering and other business decisions.</p><a href="/tools/">Explore tools →</a></article>
-      <article class="resource"><p class="eyebrow">ReadOS</p><h3><a href="/reados/">Articles and practical ideas</a></h3><p>Read focused articles on engineering, systems, products, manufacturing and business improvement.</p><a href="/insights/">Explore ReadOS →</a></article>
     </div>
-    {latest.length>0&&<div class="latest-insights"><div class="section-head"><h3>ReadOS reading</h3><a href="/insights/">All books →</a></div><div class="insight-grid">{latest.map(post=><ArticleCard post={post}/>)}</div></div>}
   </Section>
 
-  <CallToAction title="Have work that needs moving forward?" text="Describe the drawing, project, manufacturing process or technical problem. KEVOS can help define a practical scope and an appropriate next step." label="Discuss Your Requirements"/>
+  <CallToAction title="Have work that needs moving forward?" text="Describe the drawing, project, manufacturing process or technical problem. KEVOS can help define a practical scope and an appropriate next step." label="ConnectOS"/>
 </BaseLayout>
 
 <style>
