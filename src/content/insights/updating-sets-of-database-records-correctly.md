@@ -112,7 +112,7 @@ Check the semantics before using a count as an acceptance condition. Two affecte
 
 Where supported, returning affected identifiers and relevant values can make verification more direct. Keep the returned information proportionate and avoid unnecessarily exposing confidential fields in logs. For large changes, a durable summary plus controlled detailed evidence may be more manageable than returning every column to a client.
 
-Check unaffected records as well. A missing filter can change additional rows whose values happen to remain numerically equal under some transformations. Negative evidence—records outside the agreed population retaining their original values—is an important part of a bulk-change test.
+Check unaffected records as well. A missing filter can change additional rows whose values happen to remain numerically equal under some transformations. A bulk-change test must also confirm that records outside the agreed population retain their original values.
 
 ## Preserve application state and derived data coherently
 

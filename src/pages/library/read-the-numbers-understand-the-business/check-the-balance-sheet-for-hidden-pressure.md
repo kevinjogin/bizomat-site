@@ -32,7 +32,7 @@ Debt-to-equity ratios are useful but can be distorted by share buybacks, account
 
 Goodwill and some intangible assets can be valuable, yet their recorded accounting amounts may not be recoverable in a difficult market. Tangible equipment also may be worth much less in a forced sale than it cost to acquire.
 
-A resilient balance sheet is one that provides options under stress—not simply one with a large asset total.
+A resilient balance sheet gives a business options under stress. A large asset total alone does not show whether those options exist.
 
 ### Key takeaway
 

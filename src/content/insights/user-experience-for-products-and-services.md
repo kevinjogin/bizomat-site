@@ -186,7 +186,7 @@ Measure before and after each change, so you know what worked.
 
 ## Summary
 
-User experience is how easy and pleasant it is for people to use your products, services and processes. Make experiences seamless, easy and repeatable. Remove features and steps users do not need, design from research rather than opinion, and offer trials. Apply UX thinking to shops, phone services, online channels and business-to-business processes such as quoting, ordering and support. Map the customer journey, find and remove friction, test with real users and keep improving. Customers who get used to an easy experience rarely want to leave it.
+User experience is how easy and pleasant it is for people to use your products, services and processes. Make each step clear, remove dead ends and give people a consistent experience when they return. Remove features and steps users do not need, design from research rather than opinion, and offer trials. Apply UX thinking to shops, phone services, online channels and business-to-business processes such as quoting, ordering and support. Map the customer journey, find and remove friction, test with real users and keep improving. Customers who get used to an easy experience rarely want to leave it.
 
 ---
 

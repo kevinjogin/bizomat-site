@@ -39,12 +39,13 @@ const year = new Date().getFullYear();
       <nav aria-label="Legal">
         <ul class="site-footer__legal">{FOOTER_NAV.legal.map((item) => <li><a href={item.href}>{item.label}</a></li>)}</ul>
       </nav>
-      <p>Serving Sydney &amp; NSW · remote support Australia-wide</p>
+      <p>Serving Sydney and NSW, with remote support across Australia</p>
     </div>
   </Container>
 </footer>
 
 <style>
+  .site-footer :is(ul a, .site-footer__cta) { text-transform: uppercase; }
   .site-footer { border-top: 1px solid var(--line); padding-top: clamp(3.5rem, 6vw, 5.5rem); font-size: 0.95rem; }
   .site-footer__grid { display: grid; grid-template-columns: minmax(0, 1.8fr) repeat(3, minmax(0, 1fr)); gap: 2.5rem; padding-bottom: clamp(3rem, 5vw, 4.5rem); }
   .site-footer__logo { display: inline-flex; align-items: center; text-decoration: none; border-radius: 4px; overflow: visible; max-width: 100%; }

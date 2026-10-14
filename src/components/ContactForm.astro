@@ -51,7 +51,7 @@ const action = provider === 'web3forms' ? web3formsEndpoint : workerEndpoint;
   <div class="field">
     <label for="cf-service">Service required</label>
     <select id="cf-service" name="service" required aria-describedby="cf-service-hint cf-service-error" data-service-select>
-      <option value="">Choose a service…</option>
+      <option value="">Choose a service</option>
       {SERVICE_OPTIONS.map((o) => <option value={o.value} data-slug={o.slug}>{o.value}</option>)}
     </select>
     <p class="field__hint" id="cf-service-hint">Not sure which service you need? Choose “Other”, describe the problem, and KEVOS can help define the scope.</p>
@@ -202,7 +202,7 @@ const action = provider === 'web3forms' ? web3formsEndpoint : workerEndpoint;
         return;
       }
       submit.disabled = true;
-      setStatus('pending', 'Sending your enquiry…');
+      setStatus('pending', 'Sending your enquiry');
       try {
         const result = await submitContact({ ...input, source: 'Contact page', honeypot: data[HONEYPOT_FIELD] ? 'yes' : '', startedAt, captcha: token });
         check2?.reset();

@@ -91,7 +91,7 @@ Younger customers expect to engage on their own terms: on any device, at any tim
 
 **Implications**:
 
-- Offer seamless options across physical and digital channels.
+- Let customers move between your shop, website and support team without repeating information.
 - Make processes simple, with minimal forms, quick payment and clear delivery information.
 - Provide support through the channels customers prefer.
 
@@ -198,7 +198,7 @@ Within a year, younger customers make up a much larger share of sales, the shop'
 
 ## Summary
 
-Younger customers are digital-first and mobile-first, resistant to hard selling, quick to filter content, attentive to values, responsive to relevant content and conversation, and they expect flexibility, honesty and transparency. Market to them with short, authentic, visual content on the right platforms, genuine values, tailored messages, two-way conversation, seamless channels and candour about mistakes. These principles increasingly apply to all customers, and to younger business buyers and employees too.
+Younger customers are digital-first and mobile-first, resistant to hard selling, quick to filter content, attentive to values, responsive to relevant content and conversation, and they expect flexibility, honesty and transparency. Market to them with short, authentic, visual content on the right platforms, genuine values, tailored messages, two-way conversation, consistent service across channels and candour about mistakes. These principles increasingly apply to all customers, and to younger business buyers and employees too.
 
 ---
 

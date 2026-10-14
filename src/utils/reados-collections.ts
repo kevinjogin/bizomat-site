@@ -30,7 +30,7 @@ const SUBJECTS:Subject[] = [
   {slug:'exploring-and-testing-ideas',title:'Exploring and Testing Ideas',category:'ideas',description:'Testing assumptions, assessing opportunities and developing practical new ideas.',pattern:/idea|experiment|test|hypothes|opportun|innov|learn|research|concept|explor|future/i,tags:['experimentation']},
 ];
 const MAX_CHAPTERS=24;
-const fallback=(category:string)=>({slug:`${category}-practical-perspectives`,title:`${CATEGORIES[category as keyof typeof CATEGORIES].name}: Practical Perspectives`,description:`Collected applied topics and case studies in ${CATEGORIES[category as keyof typeof CATEGORIES].name.toLowerCase()}.`,category,pattern:/$^/} as Subject);
+const fallback=(category:string)=>({slug:`${category}-practical-perspectives`,title:`Practical Perspectives on ${CATEGORIES[category as keyof typeof CATEGORIES].name}`,description:`Collected applied topics and case studies in ${CATEGORIES[category as keyof typeof CATEGORIES].name.toLowerCase()}.`,category,pattern:/$^/} as Subject);
 const sortChapters=(a:Insight,b:Insight)=>a.data.title.localeCompare(b.data.title,'en-AU')||a.id.localeCompare(b.id);
 export function buildReadOSCollections(posts:Insight[]):ReadOSCollection[] {
   const groups=new Map<string,{subject:Subject;chapters:Insight[]}>();
@@ -49,7 +49,7 @@ export function buildReadOSCollections(posts:Insight[]):ReadOSCollection[] {
       const contents=chapters.slice(i*MAX_CHAPTERS,(i+1)*MAX_CHAPTERS);
       books.push({
         slug:volumes===1?subject.slug:`${subject.slug}-part-${String(i+1).padStart(2,'0')}`,
-        title:volumes===1?subject.title:`${subject.title} — Part ${i+1}`,
+        title:volumes===1?subject.title:`${subject.title} (Part ${i+1})`,
         category:CATEGORIES[subject.category as keyof typeof CATEGORIES].name,
         description:subject.description,
         chapters:contents,minutes:contents.reduce((n,p)=>n+readingTime(p.body),0),

@@ -7,13 +7,13 @@ export const SITE = {
   ogLocale: 'en_AU',
   country: 'Australia',
   /** Default <title> on the homepage and fallback description everywhere else. */
-  title: 'KEVOS | Engineering, Manufacturing & Operations Support',
+  title: 'KEVOS | Engineering, Manufacturing and Operations Support',
   description:
     'KEVOS provides practical CAD, manufacturing, process improvement and engineering project support for businesses in Sydney and across Australia.',
   /** One-line brand statement used in the footer and structured data. */
-  statement: 'Practical engineering, manufacturing, operations and project support for businesses that need work moved forward.',
+  statement: 'Practical engineering, manufacturing, operations and project support for businesses with work to deliver.',
   /** Short descriptor shown under the brand in places like the footer. */
-  tagline: 'Smarter ways to fix, make & move.',
+  tagline: 'Practical help to design, make and improve.',
   /** Public contact email. Leave empty to hide it everywhere until it is set up. */
   email: '',
   /** Optional profiles, e.g. { label: 'LinkedIn', href: 'https://www.linkedin.com/company/…' }. */
@@ -73,7 +73,7 @@ export const QUOTE_CTA = { href: '/contact/', label: 'ConnectOS' } as const;
 
 export const FOOTER_NAV = {
   services: [
-    { href: '/#engineering-cad', label: 'Engineering & CAD' },
+    { href: '/#engineering-cad', label: 'Engineering and CAD' },
     { href: '/#manufacturing', label: 'Manufacturing Support' },
     { href: '/#operations', label: 'Operations Improvement' },
     { href: '/#project-support', label: 'Project Support' },

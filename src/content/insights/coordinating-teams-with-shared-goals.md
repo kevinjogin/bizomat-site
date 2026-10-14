@@ -99,7 +99,7 @@ Protocols that work reasonably well across many situations are often more valuab
 
 ### Improve one part at a time, but check the whole
 
-Iterated best response shows that improving each part given the others is useful, but it can get stuck. Occasionally reviewing the whole system, and considering changes that require several parts to shift together, can unlock improvements that local refinement misses.
+Iterated best response shows that improving each part given the others is useful, but it can get stuck. Occasionally reviewing the whole system, and considering changes that require several parts to shift together, can reveal improvements that changes within one team would miss.
 
 ## When to communicate
 

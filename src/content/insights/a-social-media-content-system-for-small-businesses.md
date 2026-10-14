@@ -122,7 +122,7 @@ Customers increasingly use social media to ask questions, praise or complain. Re
 - For complex issues, move the conversation to a private channel, such as a direct message, phone or email, and follow through.
 - Feed recurring issues back to the relevant team.
 
-Customers who feel heard often become advocates. Some companies have dramatically improved customer satisfaction simply by creating a small team empowered to respond quickly and resolve problems raised on social media.
+Give the people handling social media clear authority to resolve routine problems and a way to escalate others. Customers should know who is handling their concern and when to expect a reply.
 
 ## Measuring results: awareness, engagement and return
 

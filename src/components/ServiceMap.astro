@@ -10,7 +10,7 @@ interface Props { variant?: 'services' | 'insights' | 'about'; }
 const { variant = 'services' } = Astro.props;
 
 const META: Record<string, { verb: string; label: string; tags: string }> = {
-  'engineering-cad': { verb: 'Design', label: 'Engineering &amp; CAD', tags: 'CAD · Drawings · DFM' },
+  'engineering-cad': { verb: 'Design', label: 'Engineering and CAD', tags: 'CAD · Drawings · DFM' },
   manufacturing: { verb: 'Make', label: 'Manufacturing Support', tags: 'Jigs · Fixtures · Tooling' },
   operations: { verb: 'Improve', label: 'Operations Improvement', tags: 'Flow · Waste · Standard work' },
   'project-support': { verb: 'Deliver', label: 'Engineering Project Support', tags: 'Scope · RFQ · Handover' },
@@ -22,12 +22,12 @@ const otherNodes = {
   insights: [
     { n: 1, verb: 'Explore', label: 'Practical Articles', tags: 'Ideas · Context · Methods' },
     { n: 2, verb: 'Learn', label: 'Engineering Guides', tags: 'Principles · Application' },
-    { n: 3, verb: 'Decide', label: 'Analysis &amp; Ideas', tags: 'Evidence · Decisions' },
+    { n: 3, verb: 'Decide', label: 'Analysis and Ideas', tags: 'Evidence · Decisions' },
     { n: 4, verb: 'Apply', label: 'Improvement Lessons', tags: 'Learning · Outcomes' },
   ],
   about: [
     { n: 1, verb: 'Build', label: 'Toolmaking', tags: 'Hands-on foundation' },
-    { n: 2, verb: 'Design', label: 'Engineering &amp; Design', tags: 'Technical capability' },
+    { n: 2, verb: 'Design', label: 'Engineering and Design', tags: 'Technical capability' },
     { n: 3, verb: 'Improve', label: 'Operations', tags: 'Process · Production' },
     { n: 4, verb: 'Deliver', label: 'Project Delivery', tags: 'Scope · Handover' },
   ],

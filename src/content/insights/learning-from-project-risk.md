@@ -123,7 +123,7 @@ These ideas do not make risk management pointless. They call for humility and fo
 - **Preserve flexibility**: options to change suppliers, methods, sequence or scope.
 - **Stress test plans** against severe scenarios, asking what would happen if several things went wrong together.
 - **Avoid single points of failure** in suppliers, people and systems.
-- **Watch for weak signals** and empower people to act on them.
+- **Watch for weak signals** and give people the authority to act on them.
 - **Build response capability**, such as crisis management arrangements, rather than only planning for specific events.
 - **Be wary of false precision** in models and forecasts.
 

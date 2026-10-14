@@ -39,7 +39,7 @@ Check for irregular gains or losses. A company may report attractive net earning
 
 ## An important caution about research and development
 
-Research spending is not inherently a weakness. In technology, pharmaceuticals and specialist engineering, continued investment can be necessary to sustain a competitive advantage. The right question is whether that spending produces lasting economic returns—not whether it can be eliminated.
+Research spending is not inherently a weakness. In technology, pharmaceuticals and specialist engineering, continued investment can be necessary to sustain a competitive advantage. Assess whether that spending produces lasting economic returns before considering whether to cut it.
 
 ### Key takeaway
 
