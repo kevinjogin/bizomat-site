@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - systems
   - design
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -189,4 +189,4 @@ Bills of materials and other hierarchies are central to manufacturing and operat
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general manufacturing systems, product data management and database design practice. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on general manufacturing systems, product data management and database design practice. The worked example is illustrative. This article is general information.*

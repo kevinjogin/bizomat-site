@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -196,4 +196,4 @@ Good crisis responses come from systems, not heroes: a shared definition of the 
 
 ---
 
-*Source: KEVOS notes, drawing on project leadership teaching material on crisis leadership, charismatic leadership, ethics and trust, including the Apollo 13 mission as an illustration of crisis problem-solving. Examples in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes, drawing on project leadership teaching material on crisis leadership, charismatic leadership, ethics and trust, including the Apollo 13 mission as an illustration of crisis problem-solving. Examples in this article are illustrations. This article is general information, not legal advice.*

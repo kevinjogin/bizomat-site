@@ -51,7 +51,7 @@ export async function GET() {
 
   chunks.push({
     id: 'core-facts',
-    title: 'About KEVOS (core facts)',
+    title: 'About KEVOS® (core facts)',
     url: '/about/',
     text: [
       `${SITE.name} (${SITE.url.replace('https://', '')}). ${SITE.tagline}. ${SITE.statement}`,
@@ -59,13 +59,19 @@ export async function GET() {
       `Service area: ${SERVICE_AREA}`,
       `Indicative prices (costs, fees): ${PACKAGES.map((p) => `${p.title} ${p.price}`).join('; ')}; ${FACTORY_FIX.name} ${FACTORY_FIX.price}. ${PRICING_NOTE} Final prices are confirmed in a written quote after scoping.`,
       'Certification: not every assignment includes professional engineering certification, statutory approval or sign-off; regulated or specialist work (for example designs that legally require a registered engineer or certifier) may require appropriately qualified or registered professionals. See /disclaimer/.',
-      'To request a quote or discuss a project, use the form at /contact/ (Get a Quote). Visitors can also book a meeting online: the Book a meeting option on /contact/ opens the KEVOS Google Calendar booking page.',
+      'To request a quote or discuss a project, use the form at /contact/ (REACHOS). Visitors can also book a meeting online: the Book a meeting option on /contact/ opens the KEVOS® Proton Calendar booking page.',
       `Main pages: ${NAV.map((n) => `${n.label} ${n.href}`).join(', ')}, Factory Fix /factory-fix/, Privacy /privacy/, Terms /terms/, Disclaimer /disclaimer/.`,
       SITE.email ? `Email: ${SITE.email}.` : 'There is no public email address or phone number listed; contact is through /contact/.',
     ].join(' '),
   });
 
   FAQ.forEach((f, i) => chunks.push({ id: `faq-${i}`, title: f.q, url: '/contact/', text: `${f.q} ${f.a}` }));
+  chunks.push({
+    id: 'brand-registration',
+    title: `${SITE.name} brand and Australian trade mark`,
+    url: '/terms/',
+    text: `${SITE.name} is Australian word trade mark ${SITE.tradeMark.number}, registered in class ${SITE.tradeMark.class} for the services listed by IP Australia. Registered from ${SITE.tradeMark.registeredFrom}; entered on the register ${SITE.tradeMark.enteredOnRegister}. This is brand registration, not an engineering licence or government endorsement. READOS is the books and guides area at /reados/. WORKOS contains calculators at /tools/. REACHOS is the enquiry and booking area at /contact/. No separate registrations are claimed for these area names.`,
+  });
 
   // Services, pricing and process: the receptionist's most important facts, boosted in retrieval (svc- ids).
   SERVICE_GROUPS.forEach((g) =>
@@ -90,25 +96,25 @@ export async function GET() {
   });
   chunks.push({
     id: 'svc-process',
-    title: 'How a KEVOS engagement works',
+    title: 'How a KEVOS® engagement works',
     url: '/how-it-works/',
-    text: `${PROCESS.map((p, i) => `Stage ${i + 1}, ${p.title}: ${p.text}`).join(' ')} Before substantial work begins, KEVOS defines scope, deliverables, assumptions, timing and commercial terms. Ways to engage: ${ENGAGEMENT_MODELS.map((m) => `${m.title} (${m.text})`).join(' ')} Payment terms are agreed for each assignment.`,
+    text: `${PROCESS.map((p, i) => `Stage ${i + 1}, ${p.title}: ${p.text}`).join(' ')} Before substantial work begins, KEVOS® defines scope, deliverables, assumptions, timing and commercial terms. Ways to engage: ${ENGAGEMENT_MODELS.map((m) => `${m.title} (${m.text})`).join(' ')} Payment terms are agreed for each assignment.`,
   });
   chunks.push({
     id: 'svc-industries',
-    title: 'Industries KEVOS helps',
+    title: 'Industries KEVOS® helps',
     url: '/industries/',
     text: `Capability is problem-based rather than limited to one industry. ${INDUSTRIES.map((i) => `${i.title}: ${i.text}`).join(' ')}`,
   });
   chunks.push({
     id: 'svc-about',
-    title: 'About KEVOS and its background',
+    title: 'About KEVOS® and its background',
     url: '/about/',
-    text: `KEVOS is a professional small technical-services business for defined commercial assignments. It is led by its founder, whose practical background spans ${BACKGROUND.join(', ')}. ${SOFTWARE.text} KEVOS is not affiliated with or endorsed by its software vendors. Not every assignment includes professional engineering certification or statutory approval; regulated or specialist work may require appropriately qualified or registered professionals (see /disclaimer/). ${FUTURE.text}`,
+    text: `KEVOS® is a professional small technical-services business for defined commercial assignments. It is led by its founder, whose practical background spans ${BACKGROUND.join(', ')}. ${SOFTWARE.text} KEVOS® is not affiliated with or endorsed by its software vendors. Not every assignment includes professional engineering certification or statutory approval; regulated or specialist work may require appropriately qualified or registered professionals (see /disclaimer/). ${FUTURE.text}`,
   });
   chunks.push({
     id: 'principles',
-    title: 'KEVOS principles',
+    title: 'KEVOS® principles',
     url: '/about/#principles',
     text: PRINCIPLES.map((p) => `${p.title}: ${p.text}`).join(' '),
   });

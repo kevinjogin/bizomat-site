@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - finance
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -171,4 +171,4 @@ Transferring a risk changes who is obliged to pay, not whether the business feel
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on contract risk allocation, privity of contract and supply-chain recovery, and on industry commentary about collaborative and fixed-price contracting on large construction programmes. Examples and figures in this article are illustrations. This article is general information, not legal, financial or insurance advice.*
+*Source: KEVOS® notes, drawing on teaching material on contract risk allocation, privity of contract and supply-chain recovery, and on industry commentary about collaborative and fixed-price contracting on large construction programmes. Examples and figures in this article are illustrations. This article is general information, not legal, financial or insurance advice.*

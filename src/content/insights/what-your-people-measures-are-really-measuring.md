@@ -7,7 +7,7 @@ tags:
   - operations
   - systems
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -168,4 +168,4 @@ People measures cost more than they appear to and act as instructions whether or
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on workforce metrics, risk registers and appraisal, leadership assessment and performance systems, and on ideas associated with W. E. Deming, P. Crosby and C. Goodhart. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes, drawing on teaching material on workforce metrics, risk registers and appraisal, leadership assessment and performance systems, and on ideas associated with W. E. Deming, P. Crosby and C. Goodhart. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

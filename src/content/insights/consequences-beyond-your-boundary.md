@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -189,4 +189,4 @@ The boundary a business controls is smaller than the area its decisions affect. 
 
 ---
 
-*Source: KEVOS notes, drawing on published research by Lu and colleagues (2017) on pollution, development and public health and by Zhu, Gan, Liu and Yan (2017) on investment and regional emissions, Journal of Cleaner Production, and teaching material on strategic environmental assessment and on environmental assessment as part of project design. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes, drawing on published research by Lu and colleagues (2017) on pollution, development and public health and by Zhu, Gan, Liu and Yan (2017) on investment and regional emissions, Journal of Cleaner Production, and teaching material on strategic environmental assessment and on environmental assessment as part of project design. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -189,4 +189,4 @@ Project tools and risk templates carry assumptions about the work they were desi
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on the history and assumptions of project management tools and on P. J. DiMaggio and W. W. Powell's 1983 work on institutional isomorphism. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on teaching material on the history and assumptions of project management tools and on P. J. DiMaggio and W. W. Powell's 1983 work on institutional isomorphism. Examples and figures in this article are illustrations.*

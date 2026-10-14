@@ -19,8 +19,8 @@ const previous=index>0?book.chapters[index-1]:undefined;
 const next=index+1<book.chapters.length?book.chapters[index+1]:undefined;
 const href=readosChapterHref(book,chapter);
 ---
-<BaseLayout title={`${chapter.data.title} (${book.title}) | ReadOS`} description={chapter.data.description}
-  breadcrumbs={[{label:'Home',href:'/'},{label:'ReadOS',href:'/reados/'},{label:book.title,href:readosBookHref(book)},{label:chapter.data.title,href}]}>
+<BaseLayout title={`${chapter.data.title} (${book.title}) | READOS`} description={chapter.data.description}
+  breadcrumbs={[{label:'Home',href:'/'},{label:'READOS',href:'/reados/'},{label:book.title,href:readosBookHref(book)},{label:chapter.data.title,href}]}>
   <article data-pagefind-body>
     <header class="reading-head"><Container size="narrow">
       <p class="eyebrow">READOS / {book.category} / CHAPTER {index+1}</p>
@@ -35,7 +35,7 @@ const href=readosChapterHref(book,chapter);
       {previous?<a rel="prev" href={readosChapterHref(book,previous)}>← Previous chapter<span>{previous.data.title}</span></a>:<a href={readosBookHref(book)}>← Contents</a>}
       {next?<a rel="next" href={readosChapterHref(book,next)}>Next chapter →<span>{next.data.title}</span></a>:<a href={readosBookHref(book)}>Back to contents →</a>}
     </nav>
-    <p class="origin">Originally published in KEVOS Insights. <a href={`/insights/${chapter.id}/`}>View original article</a>.</p>
+    <p class="origin">Originally published in KEVOS® Insights. <a href={`/insights/${chapter.id}/`}>View original article</a>.</p>
     </Container>
   </article>
 </BaseLayout>

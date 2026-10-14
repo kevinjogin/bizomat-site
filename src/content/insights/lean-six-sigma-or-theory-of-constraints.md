@@ -7,7 +7,7 @@ tags:
   - process-improvement
   - operations
   - quality
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -166,4 +166,4 @@ Lean, Six Sigma and the theory of constraints are not competing beliefs but diff
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS operational excellence handbooks on selecting Lean, Six Sigma and constraint-based improvement and on Lean Six Sigma cost and quality improvement. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® operational excellence handbooks on selecting Lean, Six Sigma and constraint-based improvement and on Lean Six Sigma cost and quality improvement. The worked example is illustrative. This article is general information.*

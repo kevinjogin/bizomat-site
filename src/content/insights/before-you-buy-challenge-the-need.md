@@ -7,7 +7,7 @@ tags:
   - finance
   - operations
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -186,4 +186,4 @@ The best purchasing decisions start with a better first question. Not "which sup
 
 ---
 
-*Source: KEVOS notes, drawing on sustainable procurement teaching material and general principles of capital and operating expenditure. Examples and figures in this article are illustrations. This article is general information, not financial or tax advice.*
+*Source: KEVOS® notes, drawing on sustainable procurement teaching material and general principles of capital and operating expenditure. Examples and figures in this article are illustrations. This article is general information, not financial or tax advice.*

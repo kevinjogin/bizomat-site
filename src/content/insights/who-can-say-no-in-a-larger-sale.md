@@ -7,7 +7,7 @@ tags:
   - sales
   - customers
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -160,4 +160,4 @@ Larger organisations buy through groups. Many people can approve; a few can refu
 
 ---
 
-*Source: KEVOS notes, drawing on F. E. Webster and Y. Wind's 1972 work on organisational buying behaviour and the buying centre. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes, drawing on F. E. Webster and Y. Wind's 1972 work on organisational buying behaviour and the buying centre. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - finance
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -186,4 +186,4 @@ Strategy is enforced not only by approving the right work but by withdrawing res
 
 ---
 
-*Source: KEVOS notes, drawing on research by B. N. Unger, A. Kock, H. G. Gemünden and D. Jonas on project termination quality and portfolio strategic fit, and teaching material on program closure. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on research by B. N. Unger, A. Kock, H. G. Gemünden and D. Jonas on project termination quality and portfolio strategic fit, and teaching material on program closure. Examples and figures in this article are illustrations.*

@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - systems
   - quality
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---

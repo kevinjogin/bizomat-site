@@ -8,7 +8,7 @@ tags:
   - manufacturing
   - strategy
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -176,4 +176,4 @@ Sustainability and cost targets are easy to add to a scorecard and hard to build
 
 ---
 
-*Source: KEVOS notes, drawing on the sand-cone model of cumulative manufacturing capability and S. Gold, R. Schodl and G. Reiner, "Cumulative manufacturing capabilities in Europe: integrating sustainability into the sand cone model", Journal of Cleaner Production (2017). Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on the sand-cone model of cumulative manufacturing capability and S. Gold, R. Schodl and G. Reiner, "Cumulative manufacturing capabilities in Europe: integrating sustainability into the sand cone model", Journal of Cleaner Production (2017). Examples and figures in this article are illustrations.*

@@ -7,7 +7,7 @@ tags:
   - projects
   - leadership
   - quality
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -180,4 +180,4 @@ Project risk management improves only when organisations learn. Capture specific
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS project risk management study material on lessons learned and project risk audits, risk culture and the no-blame organisation, risk maturity models, the limitations of common practice and black swans and the limits of prediction, together with established project risk practice. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® project risk management study material on lessons learned and project risk audits, risk culture and the no-blame organisation, risk maturity models, the limitations of common practice and black swans and the limits of prediction, together with established project risk practice. The worked example is illustrative. This article is general information.*

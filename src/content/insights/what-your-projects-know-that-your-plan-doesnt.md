@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -163,4 +163,4 @@ Initiatives do more than carry out plans. They test them, with real money and re
 
 ---
 
-*Source: KEVOS notes, drawing on P. W. G. Morris and A. Jamieson, "Moving from corporate strategy to project strategy", Project Management Journal (2005). Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on P. W. G. Morris and A. Jamieson, "Moving from corporate strategy to project strategy", Project Management Journal (2005). Examples and figures in this article are illustrations.*

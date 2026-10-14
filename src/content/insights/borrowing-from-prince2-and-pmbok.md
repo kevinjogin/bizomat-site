@@ -7,7 +7,7 @@ tags:
   - operations
   - process-improvement
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -170,4 +170,4 @@ Formal project methods hold ideas that suit any business. From PRINCE2, borrow t
 
 ---
 
-*Source: KEVOS notes, drawing on earlier KEVOS handbooks comparing the PMBOK Guide and PRINCE2, covering PRINCE2's principles, themes, processes and tailoring, and the PMBOK Guide's principles and performance domains. Examples in this article are illustrations. This article is general information and is not affiliated with or endorsed by the owners of PRINCE2 or the PMBOK Guide.*
+*Source: KEVOS® notes, drawing on earlier KEVOS® handbooks comparing the PMBOK Guide and PRINCE2, covering PRINCE2's principles, themes, processes and tailoring, and the PMBOK Guide's principles and performance domains. Examples in this article are illustrations. This article is general information and is not affiliated with or endorsed by the owners of PRINCE2 or the PMBOK Guide.*

@@ -7,7 +7,7 @@ tags:
   - systems
   - validation
   - design
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -141,4 +141,4 @@ The lasting design principle is to assign each kind of input a role. Values are 
 
 ---
 
-*Source basis: original KEVOS editorial explanation informed by the Selection Factory discussion in the supplied Data Access Patterns (2003). Current defensive guidance and the Python database API are linked where used. Examples are illustrative and do not describe a deployed KEVOS system.*
+*Source basis: original KEVOS® editorial explanation informed by the Selection Factory discussion in the supplied Data Access Patterns (2003). Current defensive guidance and the Python database API are linked where used. Examples are illustrative and do not describe a deployed KEVOS® system.*

@@ -7,7 +7,7 @@ tags:
   - systems
   - customers
   - people
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -180,4 +180,4 @@ Privacy by design means building respect for personal information into databases
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general privacy and information management practice and publicly available guidance on the Australian Privacy Principles. Privacy obligations are summarised for orientation and are changing; seek legal advice for your circumstances. The worked example is illustrative. This article provides general information and does not constitute legal advice.*
+*Source: KEVOS® editorial notes, drawing on general privacy and information management practice and publicly available guidance on the Australian Privacy Principles. Privacy obligations are summarised for orientation and are changing; seek legal advice for your circumstances. The worked example is illustrative. This article provides general information and does not constitute legal advice.*

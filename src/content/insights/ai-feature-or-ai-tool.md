@@ -8,7 +8,7 @@ tags:
   - product-development
   - finance
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -151,4 +151,4 @@ AI inside what you sell and AI inside how you work are different assets on diffe
 
 ---
 
-*Source: KEVOS notes, drawing on Eliyahu Goldratt's theory of constraints. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes, drawing on Eliyahu Goldratt's theory of constraints. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

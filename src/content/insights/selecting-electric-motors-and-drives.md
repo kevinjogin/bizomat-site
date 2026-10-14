@@ -7,7 +7,7 @@ tags:
   - design
   - operations
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -161,4 +161,4 @@ Motor selection is an engineering and energy decision. Understand the load's tor
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS engineering handbooks on electric motor selection, electric motors, and electric motor types, performance, standards and selection, together with established electrical and mechanical practice. The worked example is illustrative. This article is general information; electrical work must be carried out by licensed electricians.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® engineering handbooks on electric motor selection, electric motors, and electric motor types, performance, standards and selection, together with established electrical and mechanical practice. The worked example is illustrative. This article is general information; electrical work must be carried out by licensed electricians.*

@@ -6,7 +6,7 @@ category: "Projects"
 tags:
   - projects
   - product-development
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -171,4 +171,4 @@ There is no single best way to deliver a project. Predictive approaches suit sta
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS project management study material on development approaches and life cycles, agile and hybrid delivery, tailoring and managing uncertainty in modern projects. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® project management study material on development approaches and life cycles, agile and hybrid delivery, tailoring and managing uncertainty in modern projects. The worked example is illustrative. This article is general information.*

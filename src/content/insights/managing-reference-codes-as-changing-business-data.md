@@ -7,7 +7,7 @@ tags:
   - systems
   - quality
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---

@@ -7,7 +7,7 @@ tags:
   - systems
   - validation
   - quality
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---

@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - validation
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -163,4 +163,4 @@ A few good parts do not prove a process is ready to scale. Readiness rests on a 
 
 ---
 
-*Source: KEVOS notes. Figures in this article are illustrations, not data. Check current industry and customer-specific requirements for any formal approval process.*
+*Source: KEVOS® notes. Figures in this article are illustrations, not data. Check current industry and customer-specific requirements for any formal approval process.*

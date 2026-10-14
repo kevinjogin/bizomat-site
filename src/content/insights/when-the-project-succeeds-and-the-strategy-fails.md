@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - finance
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -173,4 +173,4 @@ Delivery discipline answers whether a commitment was carried out well. Strategy 
 
 ---
 
-*Source: KEVOS notes, drawing on EY guidance on project portfolio management and the distinction between outputs, outcomes and benefits described by Williams and Parr. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on EY guidance on project portfolio management and the distinction between outputs, outcomes and benefits described by Williams and Parr. Examples and figures in this article are illustrations.*

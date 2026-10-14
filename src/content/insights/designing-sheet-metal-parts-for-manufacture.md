@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - design
   - product-development
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -181,4 +181,4 @@ Sheet metal parts are economical when they are designed for the way they are mad
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS manufacturing handbooks on sheet metal working and presses, press tools, punches and dies, process selection for press work, and sheet metal design in CAD, together with established fabrication practice. The worked example is illustrative. This article is general information; confirm minimum dimensions with your fabricator.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® manufacturing handbooks on sheet metal working and presses, press tools, punches and dies, process selection for press work, and sheet metal design in CAD, together with established fabrication practice. The worked example is illustrative. This article is general information; confirm minimum dimensions with your fabricator.*

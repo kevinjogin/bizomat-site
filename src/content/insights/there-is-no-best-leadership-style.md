@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -203,4 +203,4 @@ There is no single best leadership style, because leadership is an intervention 
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on contingency and situational leadership, path-goal theory, leadership behaviour categories, and transformational and transactional leadership. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on teaching material on contingency and situational leadership, path-goal theory, leadership behaviour categories, and transformational and transactional leadership. Examples and figures in this article are illustrations.*

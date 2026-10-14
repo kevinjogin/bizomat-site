@@ -7,7 +7,7 @@ tags:
   - process-improvement
   - manufacturing
   - validation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -188,4 +188,4 @@ Recurring problems survive quick fixes because nobody checks the cause. DMAIC mo
 
 ---
 
-*Source: KEVOS notes, drawing on earlier KEVOS manufacturing handbooks on the DMAIC phases, voice of the customer and critical-to-quality characteristics, and structured root-cause problem solving. Examples and figures in this article are illustrations. This article is general information.*
+*Source: KEVOS® notes, drawing on earlier KEVOS® manufacturing handbooks on the DMAIC phases, voice of the customer and critical-to-quality characteristics, and structured root-cause problem solving. Examples and figures in this article are illustrations. This article is general information.*

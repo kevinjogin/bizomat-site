@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -203,4 +203,4 @@ An environmental footprint makes an invisible consequence visible, but its value
 
 ---
 
-*Source: KEVOS notes, drawing on J. Withgott and S. Brennan's textbook treatment of institutional sustainability, and published research on dairy farm water use, urban road carbon footprints and cropping practices. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on J. Withgott and S. Brennan's textbook treatment of institutional sustainability, and published research on dairy farm water use, urban road carbon footprints and cropping practices. Examples and figures in this article are illustrations.*

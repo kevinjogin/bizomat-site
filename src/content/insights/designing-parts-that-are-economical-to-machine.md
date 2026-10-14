@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - design
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -173,4 +173,4 @@ Machining cost is largely set at the design stage. Fewer set-ups, internal radii
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS engineering handbooks on machining economics, estimating speeds and machining power, tool wear, cutting tools, CNC programming and machining materials, together with established machining practice. The worked example is illustrative. This article is general information; confirm capabilities and rates with your machine shop.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® engineering handbooks on machining economics, estimating speeds and machining power, tool wear, cutting tools, CNC programming and machining materials, together with established machining practice. The worked example is illustrative. This article is general information; confirm capabilities and rates with your machine shop.*

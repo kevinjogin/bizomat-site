@@ -23,7 +23,7 @@ Avoid promising an outcome you cannot control. You can commit to preparing a cle
 
 ## Introduce the case
 
-Fieldnote Studio is a fictional two-person business that helps small service firms organise customer-facing information. Its proposed package includes a structured interview, a rewrite of one service information pack and a short handover session. The package is an educational example, not a KEVOS service offer.
+Fieldnote Studio is a fictional two-person business that helps small service firms organise customer-facing information. Its proposed package includes a structured interview, a rewrite of one service information pack and a short handover session. The package is an educational example, not a KEVOS® service offer.
 
 One prospective customer wants a pack updated before a planned service launch. Another wants a complete online store, payment system and brand redesign within the same budget. Both enquiries contain possible revenue. Only the first sits near Fieldnote's current delivery capability.
 

@@ -7,7 +7,7 @@ tags:
   - process-improvement
   - operations
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -180,4 +180,4 @@ A review that cannot ask why is a discussion, not a diagnosis. Start with a spec
 
 ---
 
-*Source: KEVOS notes, drawing on J. S. Busby, "An assessment of post-project reviews", Project Management Journal (1999), and teaching material on single-loop and double-loop learning. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on J. S. Busby, "An assessment of post-project reviews", Project Management Journal (1999), and teaching material on single-loop and double-loop learning. Examples and figures in this article are illustrations.*

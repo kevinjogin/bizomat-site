@@ -7,7 +7,7 @@ tags:
   - sales
   - strategy
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -179,4 +179,4 @@ Ownership is not a feeling created by daily use. It is a register entry and a cl
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

@@ -7,7 +7,7 @@ tags:
   - strategy
   - systems
   - finance
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -187,4 +187,4 @@ A model gives the best answer to the question it was given; people decide whethe
 
 ---
 
-*Source: KEVOS notes, drawing on published research including Su, Shi and Dou (2017) and Amani and colleagues (2017) on multi-objective optimisation, M. Martinsuo (2013) on project portfolio management in practice, A. Guitarte (2015) on portfolio prioritisation, and M. Martinsuo and C. P. Killen (2014) on strategic value in project portfolios. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on published research including Su, Shi and Dou (2017) and Amani and colleagues (2017) on multi-objective optimisation, M. Martinsuo (2013) on project portfolio management in practice, A. Guitarte (2015) on portfolio prioritisation, and M. Martinsuo and C. P. Killen (2014) on strategic value in project portfolios. Examples and figures in this article are illustrations.*

@@ -7,7 +7,7 @@ tags:
   - marketing
   - sales
   - customers
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -198,4 +198,4 @@ Clear, consistent product photographs help industrial customers understand, comp
 
 ---
 
-*Source: KEVOS editorial notes, drawing on established product photography and lighting practice. The worked example and its costs are illustrative. This article is general information; consumer law questions should be referred to the ACCC or a legal adviser.*
+*Source: KEVOS® editorial notes, drawing on established product photography and lighting practice. The worked example and its costs are illustrative. This article is general information; consumer law questions should be referred to the ACCC or a legal adviser.*

@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - finance
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -169,4 +169,4 @@ Supervision detects failure after it happens. Incentive design changes the odds 
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations. This article is general information, not legal or financial advice.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations. This article is general information, not legal or financial advice.*

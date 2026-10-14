@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - finance
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -171,4 +171,4 @@ The end of a contract is not housekeeping. Know which pathway applies, whether c
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on discharge of contracts by performance, agreement, frustration and breach, and on negotiated exits. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes, drawing on teaching material on discharge of contracts by performance, agreement, frustration and breach, and on negotiated exits. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

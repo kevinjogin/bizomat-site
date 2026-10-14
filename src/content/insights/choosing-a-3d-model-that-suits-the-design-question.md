@@ -7,7 +7,7 @@ tags:
   - design
   - prototyping
   - product-development
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---

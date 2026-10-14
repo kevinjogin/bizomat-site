@@ -8,7 +8,7 @@ tags:
   - design
   - product-development
   - validation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -185,4 +185,4 @@ The measures a business chooses before design determine which forms of value it 
 
 ---
 
-*Source: KEVOS notes, drawing on published research on multi-dimensional value in resource recovery, integrated assessment of recycled aggregate concrete and sustainability indices in process design. Figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on published research on multi-dimensional value in resource recovery, integrated assessment of recycled aggregate concrete and sustainability indices in process design. Figures in this article are illustrations.*

@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -171,4 +171,4 @@ Moving from specialist to leader is a change of profession, not a bigger version
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on technical, human and conceptual skills (after R. L. Katz), the transition from technical expert to project manager, project manager career models (K. Bredin and J. Söderlund, 2013), boundaryless careers and leadership capability. Examples and figures in this article are illustrations. This article is general information.*
+*Source: KEVOS® notes, drawing on teaching material on technical, human and conceptual skills (after R. L. Katz), the transition from technical expert to project manager, project manager career models (K. Bredin and J. Söderlund, 2013), boundaryless careers and leadership capability. Examples and figures in this article are illustrations. This article is general information.*

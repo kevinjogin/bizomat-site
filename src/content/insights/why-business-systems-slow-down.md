@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -212,4 +212,4 @@ Business systems slow down for identifiable reasons: missing indexes, inefficien
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general database administration and information technology practice. Figures in the worked example are illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on general database administration and information technology practice. Figures in the worked example are illustrative. This article is general information.*

@@ -6,7 +6,7 @@ category: "Projects"
 tags:
   - projects
   - quality
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -168,4 +168,4 @@ Quality on a project is decided long before handover. Agree customer expectation
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS project management handbooks on planning project quality, project quality assurance and control, product quality and acceptance control, and the PRINCE2 quality theme. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® project management handbooks on planning project quality, project quality assurance and control, product quality and acceptance control, and the PRINCE2 quality theme. The worked example is illustrative. This article is general information.*

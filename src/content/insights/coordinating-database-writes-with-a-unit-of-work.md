@@ -7,7 +7,7 @@ tags:
   - systems
   - design
   - validation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -132,4 +132,4 @@ A well-designed unit of work gives pending changes one place to be coordinated. 
 
 ---
 
-*Source basis: original KEVOS editorial analysis of Update Factory and Transaction discussions in the supplied Data Access Patterns (2003). The linked pattern catalogue and persistence documentation verify terminology. The order scenario and failure analysis are illustrative.*
+*Source basis: original KEVOS® editorial analysis of Update Factory and Transaction discussions in the supplied Data Access Patterns (2003). The linked pattern catalogue and persistence documentation verify terminology. The order scenario and failure analysis are illustrative.*

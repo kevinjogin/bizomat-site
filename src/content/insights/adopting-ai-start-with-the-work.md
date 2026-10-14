@@ -8,7 +8,7 @@ tags:
   - operations
   - strategy
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -179,4 +179,4 @@ Adopting AI requires decisions about how people will work as well as which techn
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations. This article is general information, not legal or employment advice.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations. This article is general information, not legal or employment advice.*

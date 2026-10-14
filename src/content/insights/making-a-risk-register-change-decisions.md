@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -201,4 +201,4 @@ A risk register is useful as a common record, but its value depends on the syste
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on risk identification, triggers and contingency planning, the bow-tie method of barrier analysis and James Reason's Swiss cheese model of accident causation. Examples in this article are illustrations. This article is general information, not legal or safety advice.*
+*Source: KEVOS® notes, drawing on teaching material on risk identification, triggers and contingency planning, the bow-tie method of barrier analysis and James Reason's Swiss cheese model of accident causation. Examples in this article are illustrations. This article is general information, not legal or safety advice.*

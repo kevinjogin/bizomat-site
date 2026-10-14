@@ -7,7 +7,7 @@ tags:
   - operations
   - process-improvement
   - manufacturing
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -185,4 +185,4 @@ A productive warehouse is not one where everyone is busy, but one where stock fl
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS operational excellence handbooks on lean warehousing and material-flow design and on demand segmentation and inventory planning, together with established warehouse practice. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® operational excellence handbooks on lean warehousing and material-flow design and on demand segmentation and inventory planning, together with established warehouse practice. The worked example is illustrative. This article is general information.*

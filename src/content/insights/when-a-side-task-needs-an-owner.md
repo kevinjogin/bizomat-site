@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -164,4 +164,4 @@ The way a business classifies its work quietly decides what gets an owner, a bud
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on project management knowledge areas and the Project Management Institute's 2013 addition of stakeholder management as a separate knowledge area. Examples in this article are illustrations. This article is general information.*
+*Source: KEVOS® notes, drawing on teaching material on project management knowledge areas and the Project Management Institute's 2013 addition of stakeholder management as a separate knowledge area. Examples in this article are illustrations. This article is general information.*

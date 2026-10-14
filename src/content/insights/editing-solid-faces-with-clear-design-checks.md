@@ -7,7 +7,7 @@ tags:
   - design
   - validation
   - prototyping
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---

@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - product-development
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -200,4 +200,4 @@ Dividing work makes projects manageable. Integration makes the divided work usef
 
 ---
 
-*Source: KEVOS notes, drawing on Andrew Davies, report on systems integration in complex projects for the Association for Project Management (2019). Examples in this article are illustrations.*
+*Source: KEVOS® notes, drawing on Andrew Davies, report on systems integration in complex projects for the Association for Project Management (2019). Examples in this article are illustrations.*

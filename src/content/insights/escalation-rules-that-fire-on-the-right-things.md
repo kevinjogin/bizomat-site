@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -178,4 +178,4 @@ Escalation rules usually fire on the size of one problem against a budget or dat
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on tolerances, management by exception and program governance, and on G. J. Rankins' comparison of two project management methods and their approaches to stages and delegated authority. Examples and figures in this article are illustrations. This article is general information.*
+*Source: KEVOS® notes, drawing on teaching material on tolerances, management by exception and program governance, and on G. J. Rankins' comparison of two project management methods and their approaches to stages and delegated authority. Examples and figures in this article are illustrations. This article is general information.*

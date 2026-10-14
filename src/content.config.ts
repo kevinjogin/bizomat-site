@@ -22,7 +22,7 @@ const insights = defineCollection({
         updatedDate: optional(z.coerce.date()),
         category: z.enum(CATEGORY_NAMES),
         tags: z.array(z.enum(TAG_SLUGS)).min(1).max(5),
-        author: z.string().default('KEVOS'),
+        author: z.string().default('KEVOS®'),
         draft: z.boolean().default(false), // published unless explicitly marked as a draft
         featured: z.boolean().default(false),
         image: optional(image()),
@@ -68,7 +68,7 @@ const publications = defineCollection({
     title: z.string().min(5).max(100), subtitle: z.string().min(10).max(160),
     description: z.string().min(50).max(200), category: z.enum(CATEGORY_NAMES),
     tags: z.array(z.enum(TAG_SLUGS)).min(1).max(5),
-    author: z.literal('KEVOS'), publisher: z.literal('KEVOS ReadOS'), language: z.literal('en-AU'),
+    author: z.literal('KEVOS®'), publisher: z.literal('KEVOS® READOS'), language: z.literal('en-AU'),
     status: z.enum(['draft', 'published']).default('draft'), publishDate: z.coerce.date(),
     edition: z.string().min(1), level: z.string().min(3), audience: z.string().min(30), referencesChecked: z.coerce.date(),
     outcomes: z.array(z.string().min(15)).min(3),

@@ -7,7 +7,7 @@ tags:
   - systems
   - quality
   - validation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -213,4 +213,4 @@ Data-heavy business systems fail in predictable places: calculations, rounding, 
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general software testing and business systems implementation practice. Tax rounding is mentioned for illustration; check current Australian Taxation Office guidance. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on general software testing and business systems implementation practice. Tax rounding is mentioned for illustration; check current Australian Taxation Office guidance. The worked example is illustrative. This article is general information.*

@@ -7,7 +7,7 @@ tags:
   - finance
   - strategy
   - validation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -176,4 +176,4 @@ Decide whether an investment creates value before deciding how to fund it, and p
 
 ---
 
-*Source: KEVOS notes, drawing on T. Arnold and T. Nixon (2011) on investment value and financing, the Australian Government's Handbook of Cost-Benefit Analysis (2006), and I. P. Sudiana's 2010 study of cost-benefit analysis in public decision-making. Examples and figures in this article are illustrations. This article is general information, not financial advice.*
+*Source: KEVOS® notes, drawing on T. Arnold and T. Nixon (2011) on investment value and financing, the Australian Government's Handbook of Cost-Benefit Analysis (2006), and I. P. Sudiana's 2010 study of cost-benefit analysis in public decision-making. Examples and figures in this article are illustrations. This article is general information, not financial advice.*

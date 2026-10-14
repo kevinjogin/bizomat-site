@@ -7,7 +7,7 @@ tags:
   - operations
   - process-improvement
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -161,4 +161,4 @@ Deciding which failures to explain by how much damage they caused lets chance ch
 
 ---
 
-*Source: KEVOS notes, drawing on J. S. Busby, "An assessment of post-project reviews", Project Management Journal (1999), and on published accounts of the 1999 loss of the Mars Climate Orbiter. Examples and figures in this article are illustrations. This article is general information.*
+*Source: KEVOS® notes, drawing on J. S. Busby, "An assessment of post-project reviews", Project Management Journal (1999), and on published accounts of the 1999 loss of the Mars Climate Orbiter. Examples and figures in this article are illustrations. This article is general information.*

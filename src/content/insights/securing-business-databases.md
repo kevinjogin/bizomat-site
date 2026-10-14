@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - quality
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -208,4 +208,4 @@ Databases hold the information attackers want, so securing them is central to pr
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general information security and database administration practice. Legal obligations are summarised for orientation; seek advice for your circumstances. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on general information security and database administration practice. Legal obligations are summarised for orientation; seek advice for your circumstances. The worked example is illustrative. This article is general information.*

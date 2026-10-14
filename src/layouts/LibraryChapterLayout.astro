@@ -5,7 +5,7 @@ import { primaryGuide as guide, chapterHref } from '../data/library.ts';
 const { frontmatter }=Astro.props;
 const number=Number(frontmatter.chapterNumber);
 const current=guide.chapters[number-1];
-if(!current)throw new Error('Invalid KEVOS Library chapter');
+if(!current)throw new Error('Invalid KEVOS® Library chapter');
 const previous=guide.chapters[number-2],next=guide.chapters[number];
 const currentURL=chapterHref(current.slug);
 const description=`Chapter ${number} of ${guide.chapters.length} in ${guide.title}. Learn ${current.title.toLowerCase()} with clear explanations and quick references.`;

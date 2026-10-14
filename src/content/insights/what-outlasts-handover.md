@@ -7,7 +7,7 @@ tags:
   - operations
   - systems
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -192,4 +192,4 @@ A project ends at handover, but what it creates keeps producing risks, costs and
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on defects, latent defects and contract closure, and on environmental project management material on lifecycle accountability after project handover. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes, drawing on teaching material on defects, latent defects and contract closure, and on environmental project management material on lifecycle accountability after project handover. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

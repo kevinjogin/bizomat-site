@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - finance
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -164,4 +164,4 @@ A business pays for the whole interval from decision to first revenue, whether o
 
 ---
 
-*Source: KEVOS notes, drawing on Kul Uppal, writing on project cycle time in Cost Engineering (2002), and Nick Lavingia, writing on front-end loading in Cost Engineering (2003). Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on Kul Uppal, writing on project cycle time in Cost Engineering (2002), and Nick Lavingia, writing on front-end loading in Cost Engineering (2003). Examples and figures in this article are illustrations.*

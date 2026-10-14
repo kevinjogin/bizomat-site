@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -182,4 +182,4 @@ Documents that govern a business say what it must do, what it must not do and wh
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations. This article is general information, not legal advice; confirm how any lease, approval or contract clause applies to your situation before relying on it.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations. This article is general information, not legal advice; confirm how any lease, approval or contract clause applies to your situation before relying on it.*

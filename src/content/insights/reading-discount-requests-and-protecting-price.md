@@ -8,7 +8,7 @@ tags:
   - finance
   - customers
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -177,4 +177,4 @@ A discount request is accurate information about your competitive position, from
 
 ---
 
-*Source: KEVOS notes, drawing on general pricing practice and Michael Porter's work on competitive strategy. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes, drawing on general pricing practice and Michael Porter's work on competitive strategy. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

@@ -7,7 +7,7 @@ tags:
   - sales
   - strategy
   - customers
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -192,4 +192,4 @@ A tender response should reduce the buyer's uncertainty. Decide deliberately whe
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations. This article is general information, not legal or procurement advice.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations. This article is general information, not legal or procurement advice.*

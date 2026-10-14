@@ -7,7 +7,7 @@ tags:
   - ai
   - strategy
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -178,4 +178,4 @@ AI use cases pay when they are found and defined with discipline. Start from bus
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS AI academy lessons on starting with the business problem, stakeholder interviews and workshops, current and future state design, functional and non-functional requirements, constraints and assumptions, data and AI readiness, use case scoring, and options analysis and decision papers, together with established practice. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® AI academy lessons on starting with the business problem, stakeholder interviews and workshops, current and future state design, functional and non-functional requirements, constraints and assumptions, data and AI readiness, use case scoring, and options analysis and decision papers, together with established practice. The worked example is illustrative. This article is general information.*

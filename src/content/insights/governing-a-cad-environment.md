@@ -7,7 +7,7 @@ tags:
   - design
   - systems
   - quality
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -155,4 +155,4 @@ A CAD environment rarely fails in one event; it decays through small, unrecorded
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS CAD administration handbooks on governance and standards registers, standard library governance, deployment and settings governance, and upgrade planning and version compatibility. The guidance is written to apply to 3D CAD and data management systems generally. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® CAD administration handbooks on governance and standards registers, standard library governance, deployment and settings governance, and upgrade planning and version compatibility. The guidance is written to apply to 3D CAD and data management systems generally. The worked example is illustrative. This article is general information.*

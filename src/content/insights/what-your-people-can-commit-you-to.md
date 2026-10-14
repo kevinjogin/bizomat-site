@@ -7,7 +7,7 @@ tags:
   - operations
   - systems
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -161,4 +161,4 @@ Approval limits control spending, but obligations are created by what people say
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on delegation of authority, commercial commitment and risk appetite and tolerance. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes, drawing on teaching material on delegation of authority, commercial commitment and risk appetite and tolerance. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

@@ -7,7 +7,7 @@ tags:
   - systems
   - projects
   - quality
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -196,4 +196,4 @@ Data migration decides whether a new system starts with trusted information or i
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general information systems implementation and data migration practice. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on general information systems implementation and data migration practice. The worked example is illustrative. This article is general information.*

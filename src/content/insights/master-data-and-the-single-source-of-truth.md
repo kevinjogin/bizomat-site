@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - quality
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -189,4 +189,4 @@ Master data, the records of items, customers, suppliers and other core things, d
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general information management and business systems practice. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on general information management and business systems practice. The worked example is illustrative. This article is general information.*

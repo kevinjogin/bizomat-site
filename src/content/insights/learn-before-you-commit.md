@@ -7,7 +7,7 @@ tags:
   - strategy
   - validation
   - experimentation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -176,4 +176,4 @@ Information is worth gathering only if it could change a significant decision in
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on decision analysis, the value of information and the declining ability to influence projects over their life. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on teaching material on decision analysis, the value of information and the declining ability to influence projects over their life. Examples and figures in this article are illustrations.*

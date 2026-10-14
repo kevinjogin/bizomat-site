@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -219,4 +219,4 @@ A contract should be judged by whether it can govern the relationship it covers,
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material comparing short-form services agreements, supply agreements and long-term whole-of-life project agreements. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes, drawing on teaching material comparing short-form services agreements, supply agreements and long-term whole-of-life project agreements. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

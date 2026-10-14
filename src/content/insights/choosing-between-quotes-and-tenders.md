@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - finance
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -191,4 +191,4 @@ The decision about which supplier to choose is largely made when the business de
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material and public procurement guidance on tender evaluation planning, weighted criteria, decision rules, alternative tenders and whole-of-life value. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on teaching material and public procurement guidance on tender evaluation planning, weighted criteria, decision rules, alternative tenders and whole-of-life value. Examples and figures in this article are illustrations.*

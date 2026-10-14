@@ -8,7 +8,7 @@ tags:
   - process-improvement
   - systems
   - manufacturing
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -172,4 +172,4 @@ Capacity is partly a property of equipment and partly a property of how that equ
 
 ---
 
-*Source: KEVOS notes, drawing on published engineering research on load switching, refinery scheduling, wastewater aeration, groundwater treatment and resource-efficient manufacturing scheduling. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on published engineering research on load switching, refinery scheduling, wastewater aeration, groundwater treatment and resource-efficient manufacturing scheduling. Examples and figures in this article are illustrations.*

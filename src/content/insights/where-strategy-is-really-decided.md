@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -180,4 +180,4 @@ A strategy is not tested by how inspiring it sounds but by whether it constrains
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on strategy as a system of choices and on reversibility as a basis for decision governance. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on teaching material on strategy as a system of choices and on reversibility as a basis for decision governance. Examples and figures in this article are illustrations.*

@@ -1,5 +1,5 @@
 ---
-// Homepage hero graphic: KEVOS's four services arranged around the KEVOS core.
+// Homepage hero graphic: KEVOS®'s four services arranged around the KEVOS® core.
 // A work packet travels clockwise round the orbit (design → make → improve → deliver); each service
 // lights up as the packet passes beneath it. Pure CSS animation (no script), CSP-safe (no inline
 // styles), and fully static when the visitor prefers reduced motion. Each service links to its detail.
@@ -35,10 +35,10 @@ const otherNodes = {
 const nodes = variant === 'services' ? serviceNodes : otherNodes[variant].map((node) => ({ ...node, href: undefined }));
 const subtitle = variant === 'services' ? 'Engineering core' : variant === 'insights' ? 'Knowledge core' : 'Capability core';
 const description = variant === 'services'
-  ? 'KEVOS engineering services connected through design, make, improve and deliver.'
+  ? 'KEVOS® engineering services connected through design, make, improve and deliver.'
   : variant === 'insights'
-    ? 'KEVOS knowledge: practical articles, engineering guides, analysis and improvement lessons.'
-    : 'KEVOS capability: toolmaking, engineering design, operations and project delivery.';
+    ? 'KEVOS® knowledge: practical articles, engineering guides, analysis and improvement lessons.'
+    : 'KEVOS® capability: toolmaking, engineering design, operations and project delivery.';
 ---
 
 <figure class:list={['smap', `smap--${variant}`]} aria-labelledby="smap-caption">
@@ -279,7 +279,7 @@ const description = variant === 'services'
   .i-trend { fill: none; stroke: var(--blue); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
   .i-bar { fill: var(--orange); transform-box: fill-box; transform-origin: left center; opacity: 0.9; }
 
-  /* The core: the KEVOS wordmark inside a turning dial. */
+  /* The core: the KEVOS® wordmark inside a turning dial. */
   .smap__core {
     position: absolute; z-index: 2; left: 50%; top: 50%;
     width: clamp(96px, 33%, 176px); aspect-ratio: 1;

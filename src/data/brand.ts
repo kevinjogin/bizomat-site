@@ -1,6 +1,6 @@
 // Brand copy shared across pages. Edit here and the homepage, About page and assistant all update.
 
-/** How KEVOS works with clients. */
+/** How KEVOS® works with clients. */
 export const PRINCIPLES = [
   {
     title: 'Understand the real problem first',
@@ -24,7 +24,7 @@ export const PRINCIPLES = [
   },
   {
     title: 'Be honest about limits',
-    text: 'Where certified, registered or specialist input is required, KEVOS says so.',
+    text: 'Where certified, registered or specialist input is required, KEVOS® says so.',
   },
 ] as const;
 
@@ -42,5 +42,5 @@ export const BACKGROUND = [
 /** Longer-term direction. Deliberately secondary to services on the current site. */
 export const FUTURE = {
   title: 'Looking ahead',
-  text: 'Services come first. Over time, KEVOS may also develop its own products, software, AI tools and industrial solutions, built on the same practical, problem-first approach. Any such work will be announced when it is ready, not before.',
+  text: 'Services come first. Over time, KEVOS® may also develop its own products, software, AI tools and industrial solutions, built on the same practical, problem-first approach. Any such work will be announced when it is ready, not before.',
 } as const;

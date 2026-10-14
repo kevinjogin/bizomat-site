@@ -4,7 +4,7 @@ interface Props {
   height?: number;
   label?: string;
 }
-const { class: className, height = 36, label = 'KEVOS' } = Astro.props;
+const { class: className, height = 36, label = 'KEVOS®' } = Astro.props;
 const sizeClass = height >= 40 ? 'site-wordmark--footer' : height <= 30 ? 'site-wordmark--compact' : 'site-wordmark--header';
 ---
 <span
@@ -54,7 +54,7 @@ const sizeClass = height >= 40 ? 'site-wordmark--footer' : height <= 30 ? 'site-
 
   /* The supplied navy master is the source of truth. In dark mode render it as
      pure white so the wordmark can never disappear against the dark header. */
-  /* KEVOS orange wordmark, with accessible contrast for each theme. */
+  /* KEVOS® orange wordmark, with accessible contrast for each theme. */
   .site-wordmark__image--dark { display: none; }
   :global(:root[data-theme='dark']) .site-wordmark__image--light { display: none; }
   :global(:root[data-theme='dark']) .site-wordmark__image--dark { display: block; }

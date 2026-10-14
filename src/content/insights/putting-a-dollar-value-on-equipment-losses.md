@@ -8,7 +8,7 @@ tags:
   - manufacturing
   - finance
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -181,4 +181,4 @@ OEE is most useful as a way of seeing where productive capacity is lost, not as 
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations.*

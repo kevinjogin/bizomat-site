@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -166,4 +166,4 @@ A business can afford its projects and still be unable to deliver them. Count al
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on portfolio capacity and capability management, project human resource planning and an EY paper on portfolio management challenges. Examples and figures in this article are illustrations. This article is general information.*
+*Source: KEVOS® notes, drawing on teaching material on portfolio capacity and capability management, project human resource planning and an EY paper on portfolio management challenges. Examples and figures in this article are illustrations. This article is general information.*

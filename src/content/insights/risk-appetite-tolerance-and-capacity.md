@@ -7,7 +7,7 @@ tags:
   - strategy
   - finance
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -178,4 +178,4 @@ Willingness to take risk and capacity to survive it are different things. Work o
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on portfolio risk management and risk response strategies, and on L. Rittenberg and F. Martens, Understanding and Communicating Risk Appetite, Committee of Sponsoring Organizations of the Treadway Commission (2012). Examples and figures in this article are illustrations. This article is general information, not financial, legal or safety advice.*
+*Source: KEVOS® notes, drawing on teaching material on portfolio risk management and risk response strategies, and on L. Rittenberg and F. Martens, Understanding and Communicating Risk Appetite, Committee of Sponsoring Organizations of the Treadway Commission (2012). Examples and figures in this article are illustrations. This article is general information, not financial, legal or safety advice.*

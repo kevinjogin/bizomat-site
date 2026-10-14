@@ -7,7 +7,7 @@ tags:
   - strategy
   - manufacturing
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -169,4 +169,4 @@ Outsourcing and reliance on key people both transfer capability, and capability 
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on contract manufacturing, intellectual property, confidentiality and restraint of trade, and on the treatment of internally generated intangibles under AASB 138. Examples in this article are illustrations. This article is general information, not legal or accounting advice.*
+*Source: KEVOS® notes, drawing on teaching material on contract manufacturing, intellectual property, confidentiality and restraint of trade, and on the treatment of internally generated intangibles under AASB 138. Examples in this article are illustrations. This article is general information, not legal or accounting advice.*

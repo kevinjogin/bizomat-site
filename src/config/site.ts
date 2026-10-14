@@ -1,15 +1,22 @@
 // Site-wide settings. Change branding, navigation and contact details here.
 
 export const SITE = {
-  name: 'KEVOS',
+  name: 'KEVOS®',
+  tradeMark: {
+    number: '2469816',
+    class: 42,
+    registeredFrom: '29 July 2024',
+    enteredOnRegister: '7 March 2025',
+    record: 'https://search.ipaustralia.gov.au/trademarks/search/view/2469816',
+  },
   url: 'https://kevos.com',
   locale: 'en-AU',
   ogLocale: 'en_AU',
   country: 'Australia',
   /** Default <title> on the homepage and fallback description everywhere else. */
-  title: 'KEVOS | Engineering, Manufacturing and Operations Support',
+  title: 'KEVOS® | Engineering, Manufacturing and Operations Support',
   description:
-    'KEVOS provides practical CAD, manufacturing, process improvement and engineering project support for businesses in Sydney and across Australia.',
+    'KEVOS® provides practical CAD, manufacturing, process improvement and engineering project support for businesses in Sydney and across Australia.',
   /** One-line brand statement used in the footer and structured data. */
   statement: 'Practical engineering, manufacturing, operations and project support for businesses with work to deliver.',
   /** Short descriptor shown under the brand in places like the footer. */
@@ -21,7 +28,7 @@ export const SITE = {
   /** Default social sharing image in /public (1200 × 630). */
   ogImage: '/brand/kevos-social-orange.png',
   /**
-   * Orange KEVOS wordmark, retaining the approved angular letterforms.
+   * Orange KEVOS® wordmark, retaining the approved angular letterforms.
    * The header, footer and Engineering Core also use a matching brighter dark-theme SVG.
    */
   logo: {
@@ -54,7 +61,7 @@ export const SITE = {
   /** AI assistant (Cloudflare Workers AI). Set to false to remove the chat widget everywhere. */
   assistant: {
     enabled: true,
-    name: 'KEVOS Assistant',
+    name: 'KEVOS® Assistant',
     endpoint: '/api/chat',
   },
   /** Jurisdiction stated in the Terms page. Confirm before launch. */
@@ -62,14 +69,14 @@ export const SITE = {
 } as const;
 
 export const NAV = [
-  { href: '/', label: 'KevOS' },
-  { href: '/tools/', label: 'ToolOS' },
-  { href: '/reados/', label: 'ReadOS' },
+  { href: '/', label: 'KEVOS®' },
+  { href: '/tools/', label: 'WORKOS' },
+  { href: '/reados/', label: 'READOS' },
 ] as const;
 
 
 /** Primary call to action in the header and across the site. */
-export const QUOTE_CTA = { href: '/contact/', label: 'ConnectOS' } as const;
+export const QUOTE_CTA = { href: '/contact/', label: 'REACHOS' } as const;
 
 export const FOOTER_NAV = {
   services: [
@@ -80,13 +87,13 @@ export const FOOTER_NAV = {
     { href: '/factory-fix/', label: 'Factory Fix' },
   ],
   company: [
-    { href: '/', label: 'KevOS' },
-    { href: '/tools/', label: 'ToolOS' },
+    { href: '/', label: 'KEVOS®' },
+    { href: '/tools/', label: 'WORKOS' },
     { href: '/#how-it-works', label: 'How It Works' },
     { href: '/#industries', label: 'Industries' },
     { href: '/#about', label: 'About' },
-    { href: '/reados/', label: 'ReadOS' },
-    { href: '/contact/', label: 'ConnectOS' },
+    { href: '/reados/', label: 'READOS' },
+    { href: '/contact/', label: 'REACHOS' },
   ],
   legal: [
     { href: '/privacy/', label: 'Privacy' },

@@ -7,7 +7,7 @@ tags:
   - operations
   - systems
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -170,4 +170,4 @@ Slow-building risks rarely produce the clear signal that triggers action, so the
 
 ---
 
-*Source: KEVOS notes, drawing on J. Zuo, R. Rameezdeen, M. Hagger, Z. Zhou and Z. Ding, "Dust pollution control on construction sites: awareness and self-responsibility of managers", Journal of Cleaner Production (2017), and on teaching material on environmental and operational risk. Examples and figures in this article are illustrations. This article is general information, not safety advice.*
+*Source: KEVOS® notes, drawing on J. Zuo, R. Rameezdeen, M. Hagger, Z. Zhou and Z. Ding, "Dust pollution control on construction sites: awareness and self-responsibility of managers", Journal of Cleaner Production (2017), and on teaching material on environmental and operational risk. Examples and figures in this article are illustrations. This article is general information, not safety advice.*

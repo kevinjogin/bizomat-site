@@ -7,7 +7,7 @@ tags:
   - ai
   - systems
   - quality
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -185,4 +185,4 @@ AI systems need the same security foundations as any software, plus defences aga
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS AI academy lessons on authentication and least privilege, encryption and secrets, logging and isolation, direct and indirect prompt injection, retrieval poisoning, data leakage and excessive agency, insecure tool execution, fairness, privacy, human oversight and AI risk governance, together with established security practice. The worked example is illustrative. This article is general information, not security or legal advice.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® AI academy lessons on authentication and least privilege, encryption and secrets, logging and isolation, direct and indirect prompt injection, retrieval poisoning, data leakage and excessive agency, insecure tool execution, fairness, privacy, human oversight and AI risk governance, together with established security practice. The worked example is illustrative. This article is general information, not security or legal advice.*

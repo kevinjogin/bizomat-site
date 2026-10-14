@@ -8,7 +8,7 @@ tags:
   - product-development
   - manufacturing
   - customers
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -199,4 +199,4 @@ Sustainability is credible when it changes how a business works. It shapes produ
 
 ---
 
-*Source: KEVOS notes. Figures in this article are illustrations, not data. This article is general information, not legal advice.*
+*Source: KEVOS® notes. Figures in this article are illustrations, not data. This article is general information, not legal advice.*

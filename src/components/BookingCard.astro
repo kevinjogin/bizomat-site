@@ -1,6 +1,6 @@
 ---
-// "Book a meeting" option: links to KEVOS's Proton Calendar booking page in a new tab.
-// Deliberately a link rather than an embed, so no third-party scripts or cookies load on KEVOS pages.
+// "Book a meeting" option: links to KEVOS®'s Proton Calendar booking page in a new tab.
+// Deliberately a link rather than an embed, so no third-party scripts or cookies load on KEVOS® pages.
 import { SITE } from '../config/site.ts';
 
 interface Props {
@@ -20,7 +20,7 @@ const { url } = SITE.booking;
   </div>
   <div class="booking__body">
     <h2 class="booking__title">Book a meeting</h2>
-    <p class="booking__text">Prefer to talk it through? Choose a time that suits you from KEVOS’s calendar and discuss the job before sending details.</p>
+    <p class="booking__text">Prefer to talk it through? Choose a time that suits you from KEVOS®’s calendar and discuss the job before sending details.</p>
     <a class="booking__button" href={url} target="_blank" rel="noopener noreferrer" data-cta="book-meeting">
       Choose a time
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 16 16 8M10 8h6v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>

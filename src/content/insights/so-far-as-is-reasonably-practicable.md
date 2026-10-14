@@ -7,7 +7,7 @@ tags:
   - operations
   - people
   - leadership
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -186,4 +186,4 @@ This is an illustrative example. It shows a way of reasoning, not a legal determ
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS handbooks on risk escalation, delegation and ALARP, inherent, current and residual risk, risk controls and defence in depth, and integrated safety and productivity improvement, with reference to the structure of the model Work Health and Safety laws. The worked example is illustrative. This article is general information and does not constitute legal or safety advice.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® handbooks on risk escalation, delegation and ALARP, inherent, current and residual risk, risk controls and defence in depth, and integrated safety and productivity improvement, with reference to the structure of the model Work Health and Safety laws. The worked example is illustrative. This article is general information and does not constitute legal or safety advice.*

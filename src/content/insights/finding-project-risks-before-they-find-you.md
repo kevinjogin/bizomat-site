@@ -6,7 +6,7 @@ category: "Projects"
 tags:
   - projects
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -179,4 +179,4 @@ You cannot manage a risk nobody has identified, and the risks that hurt most usu
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS project risk management handbooks on risk identification workshops and methods, risk breakdown structures and risk statements, environmental scanning and cognitive bias in risk decisions. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® project risk management handbooks on risk identification workshops and methods, risk breakdown structures and risk statements, environmental scanning and cognitive bias in risk decisions. The worked example is illustrative. This article is general information.*

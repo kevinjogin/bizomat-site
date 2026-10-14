@@ -6,7 +6,7 @@ category: "Business"
 tags:
   - finance
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -188,4 +188,4 @@ A strategic investor can solve today's constraint while rewriting tomorrow's cho
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations. This article is general information, not legal, tax or financial advice.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations. This article is general information, not legal, tax or financial advice.*

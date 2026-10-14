@@ -7,7 +7,7 @@ tags:
   - design
   - product-development
   - validation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---

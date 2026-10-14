@@ -7,7 +7,7 @@ tags:
   - strategy
   - validation
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -175,4 +175,4 @@ When data is thin, estimates rest on judgement, and judgement is easily distorte
 
 ---
 
-*Source: KEVOS notes, drawing on earlier KEVOS handbooks on duration and cost estimating worksheets, bases of estimates and the Delphi method in practice. Examples and figures in this article are illustrations. This article is general information.*
+*Source: KEVOS® notes, drawing on earlier KEVOS® handbooks on duration and cost estimating worksheets, bases of estimates and the Delphi method in practice. Examples and figures in this article are illustrations. This article is general information.*

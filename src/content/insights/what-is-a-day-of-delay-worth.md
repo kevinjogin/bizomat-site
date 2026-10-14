@@ -7,7 +7,7 @@ tags:
   - finance
   - operations
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -157,4 +157,4 @@ A business that cannot price a day is not really managing the trade-off between 
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations. This article is general information, not financial or legal advice.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations. This article is general information, not financial or legal advice.*

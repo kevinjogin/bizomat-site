@@ -7,7 +7,7 @@ tags:
   - projects
   - quality
   - design
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -197,4 +197,4 @@ Building regulation in Australia combines state legislation, the National Constr
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS study material on Australian building regulation and the National Construction Code, construction documentation, building products, fire testing and fire resistance levels, buildings in bushfire-prone areas, structural standards and building services, together with general knowledge of Australian building practice. The worked example is illustrative. This article is general information; seek advice from registered building surveyors or certifiers.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® study material on Australian building regulation and the National Construction Code, construction documentation, building products, fire testing and fire resistance levels, buildings in bushfire-prone areas, structural standards and building services, together with general knowledge of Australian building practice. The worked example is illustrative. This article is general information; seek advice from registered building surveyors or certifiers.*

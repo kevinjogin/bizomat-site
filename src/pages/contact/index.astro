@@ -11,23 +11,23 @@ import { SERVICE_AREA } from '../../data/services.ts';
 
 const crumbs = [
   { label: 'Home', href: '/' },
-  { label: 'ConnectOS', href: '/contact/' },
+  { label: 'REACHOS', href: '/contact/' },
 ];
 const next = [
-  'KEVOS reviews your enquiry and replies as soon as possible.',
+  'KEVOS® reviews your enquiry and replies as soon as possible.',
   'A short conversation clarifies the problem, the deliverables and any site requirements.',
   'You receive a written scope and price before substantial work begins.',
 ];
 ---
 
 <BaseLayout
-  title="Contact KEVOS through ConnectOS"
-  description="Request a quote or discuss your project with KEVOS. Get help with engineering and CAD, manufacturing, operations improvement, project delivery or Factory Fix."
+  title="Contact KEVOS® through REACHOS"
+  description="Request a quote or discuss your project with KEVOS®. Get help with engineering and CAD, manufacturing, operations improvement, project delivery or Factory Fix."
   breadcrumbs={crumbs}
   canonical="/contact/"
-  schema={[{ '@type': 'ContactPage', name: 'Contact KEVOS', url: `${SITE.url}/contact/`, about: { '@id': `${SITE.url}/#organization` } }]}
+  schema={[{ '@type': 'ContactPage', name: 'Contact KEVOS®', url: `${SITE.url}/contact/`, about: { '@id': `${SITE.url}/#organization` } }]}
 >
-  <Hero eyebrow="ConnectOS enquiries" title="Tell us about the <em>job</em>." lead="Send your project details using the form below, or book a meeting if you would like to talk it through first.">
+  <Hero eyebrow="REACHOS enquiries" title="Tell us about the <em>job</em>." lead="Send your project details using the form below, or book a meeting if you would like to talk it through first.">
     <MotionVisual page="contact" slot="visual" priority />
     <Breadcrumb items={crumbs} slot="before" />
     <Fragment slot="actions">
@@ -44,7 +44,7 @@ const next = [
   <Container class="contact-layout">
     <div class="contact-intro">
       <p class="contact-intro__lead">Describe the problem, drawing or project. A short description is enough to start.</p>
-      <p class="contact-intro__note">Not sure which service you need? Describe the problem and KEVOS can help define the scope.</p>
+      <p class="contact-intro__note">Not sure which service you need? Describe the problem and KEVOS® can help define the scope.</p>
       <BookingCard class="contact-intro__booking" />
       <h2 class="contact-intro__heading">What happens next</h2>
       <ol class="contact-intro__list">{next.map((r) => <li>{r}</li>)}</ol>

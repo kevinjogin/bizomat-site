@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - validation
   - customers
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -165,4 +165,4 @@ PPAP is a structured argument that you can make the customer's part consistently
 
 ---
 
-*Source: KEVOS notes, drawing on earlier KEVOS manufacturing handbooks on PPAP submission assessment, including the part submission warrant, control plans, special characteristics, measurement systems analysis, checking aids, customer-specific requirements and engineering change approval. Examples and figures in this article are illustrations. This article is general information; always follow your customer's requirements and the edition of the PPAP manual they specify.*
+*Source: KEVOS® notes, drawing on earlier KEVOS® manufacturing handbooks on PPAP submission assessment, including the part submission warrant, control plans, special characteristics, measurement systems analysis, checking aids, customer-specific requirements and engineering change approval. Examples and figures in this article are illustrations. This article is general information; always follow your customer's requirements and the edition of the PPAP manual they specify.*

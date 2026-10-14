@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - process-improvement
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -172,4 +172,4 @@ Lead time is mostly waiting, and waiting is mostly a result of how work is organ
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS manufacturing handbooks on lead-time reduction, one-piece flow and pull, cellular manufacturing and labour productivity, and the eight wastes of lean manufacturing. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® manufacturing handbooks on lead-time reduction, one-piece flow and pull, cellular manufacturing and labour productivity, and the eight wastes of lean manufacturing. The worked example is illustrative. This article is general information.*

@@ -7,7 +7,7 @@ tags:
   - operations
   - finance
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -185,4 +185,4 @@ Energy waste in business premises usually sits in a few predictable places: base
 
 ---
 
-*Source: KEVOS notes, drawing on earlier KEVOS building engineering handbooks on low-energy cooling and passive design, green building performance and psychrometrics for HVAC design. Examples and figures in this article are illustrations. This article is general information and does not replace advice from licensed trades or qualified engineers.*
+*Source: KEVOS® notes, drawing on earlier KEVOS® building engineering handbooks on low-energy cooling and passive design, green building performance and psychrometrics for HVAC design. Examples and figures in this article are illustrations. This article is general information and does not replace advice from licensed trades or qualified engineers.*

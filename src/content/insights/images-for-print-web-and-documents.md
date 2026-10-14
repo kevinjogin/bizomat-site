@@ -7,7 +7,7 @@ tags:
   - marketing
   - communication
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -179,4 +179,4 @@ Images work well everywhere when they are prepared for each use from good master
 
 ---
 
-*Source: KEVOS editorial notes, drawing on established digital imaging, web publishing and print production practice. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on established digital imaging, web publishing and print production practice. The worked example is illustrative. This article is general information.*

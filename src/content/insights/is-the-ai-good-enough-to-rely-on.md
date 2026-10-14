@@ -8,7 +8,7 @@ tags:
   - validation
   - systems
   - experimentation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -186,4 +186,4 @@ AI should earn reliance through evidence. Measure the current process first, wei
 
 ---
 
-*Source: KEVOS notes, drawing on M. Brittain, L. Alvarez, K. Breeden and I. Jessen, "AAM-Gym: Artificial Intelligence Testbed for Advanced Air Mobility" (2022). Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes, drawing on M. Brittain, L. Alvarez, K. Breeden and I. Jessen, "AAM-Gym: Artificial Intelligence Testbed for Advanced Air Mobility" (2022). Examples and figures in this article are illustrations. This article is general information, not legal advice.*

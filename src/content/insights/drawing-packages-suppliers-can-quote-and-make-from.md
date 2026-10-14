@@ -7,7 +7,7 @@ tags:
   - design
   - manufacturing
   - communication
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -181,4 +181,4 @@ A documentation package is the contract between designer and supplier. Make it c
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS engineering handbooks on technical drawing principles, drafting practices, engineering drawings and drafting standards in CAD, detail drafting, symbols and abbreviations, and measuring units and conversions, together with established engineering documentation practice. The worked example is illustrative. This article is general information; follow the AS 1100 series and industry requirements.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® engineering handbooks on technical drawing principles, drafting practices, engineering drawings and drafting standards in CAD, detail drafting, symbols and abbreviations, and measuring units and conversions, together with established engineering documentation practice. The worked example is illustrative. This article is general information; follow the AS 1100 series and industry requirements.*

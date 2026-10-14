@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - manufacturing
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -178,4 +178,4 @@ Supplier relationships sit on a spectrum. At one end, efficient transactions are
 
 ---
 
-*Source: KEVOS notes, drawing on general procurement practice, including Peter Kraljic's 1983 purchasing portfolio approach. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on general procurement practice, including Peter Kraljic's 1983 purchasing portfolio approach. Examples and figures in this article are illustrations.*

@@ -7,7 +7,7 @@ tags:
   - operations
   - systems
   - validation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -176,4 +176,4 @@ Commitments do not create value when they are written. They create value when th
 
 ---
 
-*Source: KEVOS notes, drawing on Australian transport agency environmental assessment guidance and field handbooks, and environmental regulator risk guidance. Specific requirements vary by jurisdiction and change over time. Examples and figures in this article are illustrations. This article is general information, not legal or environmental advice.*
+*Source: KEVOS® notes, drawing on Australian transport agency environmental assessment guidance and field handbooks, and environmental regulator risk guidance. Specific requirements vary by jurisdiction and change over time. Examples and figures in this article are illustrations. This article is general information, not legal or environmental advice.*

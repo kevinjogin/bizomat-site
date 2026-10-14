@@ -7,7 +7,7 @@ tags:
   - customers
   - strategy
   - product-development
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -182,4 +182,4 @@ Customers are participants in an exchange that can create profit, volume, stabil
 
 ---
 
-*Source: KEVOS notes, drawing on M. Voss and A. Kock (2013) on relationship value and project portfolio success, and M. Voss (2012) on integrating customer relationship management with project portfolio management. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on M. Voss and A. Kock (2013) on relationship value and project portfolio success, and M. Voss (2012) on integrating customer relationship management with project portfolio management. Examples and figures in this article are illustrations.*

@@ -7,7 +7,7 @@ tags:
   - strategy
   - finance
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -166,4 +166,4 @@ A cascade is a translation, and every translation loses something. Write down wh
 
 ---
 
-*Source: KEVOS notes, drawing on a 2013 Harvard Business Review study evaluating chief executives over their full tenure and on teaching material on cascading strategic goals. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on a 2013 Harvard Business Review study evaluating chief executives over their full tenure and on teaching material on cascading strategic goals. Examples and figures in this article are illustrations.*

@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - validation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -175,4 +175,4 @@ A risk score is a useful way to sort a long list, but it carries assumptions. Mu
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on qualitative risk assessment and risk matrices, and on M. Martinsuo, T. Korhonen and T. Laine, "Identifying, framing and managing uncertainties in project portfolios", International Journal of Project Management (2014). Examples and figures in this article are illustrations. This article is general information, not financial, legal or insurance advice.*
+*Source: KEVOS® notes, drawing on teaching material on qualitative risk assessment and risk matrices, and on M. Martinsuo, T. Korhonen and T. Laine, "Identifying, framing and managing uncertainties in project portfolios", International Journal of Project Management (2014). Examples and figures in this article are illustrations. This article is general information, not financial, legal or insurance advice.*

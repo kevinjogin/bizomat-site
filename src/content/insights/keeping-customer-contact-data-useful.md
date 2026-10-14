@@ -7,7 +7,7 @@ tags:
   - customers
   - sales
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -188,4 +188,4 @@ Customer contact data decays constantly, so its quality depends on structure, st
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general customer relationship management, marketing operations and data management practice. Legal requirements are summarised for orientation; check current guidance from the relevant regulators and seek advice where needed. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on general customer relationship management, marketing operations and data management practice. Legal requirements are summarised for orientation; check current guidance from the relevant regulators and seek advice where needed. The worked example is illustrative. This article is general information.*

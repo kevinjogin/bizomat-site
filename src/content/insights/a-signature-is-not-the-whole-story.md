@@ -7,7 +7,7 @@ tags:
   - sales
   - customers
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -196,4 +196,4 @@ A signature records that a document was signed, not that the decision behind it 
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on vitiating factors in contract law, including duress, undue influence, mistake, misrepresentation and unconscionable conduct. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes, drawing on teaching material on vitiating factors in contract law, including duress, undue influence, mistake, misrepresentation and unconscionable conduct. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

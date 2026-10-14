@@ -4,7 +4,7 @@ interface Props {
   height?: number;
   label?: string;
 }
-const { class: className, height = 22, label = 'KEVOS' } = Astro.props;
+const { class: className, height = 22, label = 'KEVOS®' } = Astro.props;
 const sizeClass =
   height <= 18
     ? 'logo--hero-small'
@@ -63,7 +63,7 @@ const sizeClass =
     object-position: center;
   }
 
-  /* KEVOS orange wordmark, with accessible contrast for each theme. */
+  /* KEVOS® orange wordmark, with accessible contrast for each theme. */
   .logo__image--dark { display: none; }
   :global(:root[data-theme='dark']) .logo__image--light { display: none; }
   :global(:root[data-theme='dark']) .logo__image--dark { display: block; }

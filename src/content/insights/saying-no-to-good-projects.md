@@ -7,7 +7,7 @@ tags:
   - strategy
   - finance
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -174,4 +174,4 @@ Most proposals look good on their own; the hard part is choosing between them. T
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on capital budgeting, project selection, portfolio balance and risk-informed selection, the Australian Government's 2006 Handbook of Cost-Benefit Analysis, and P. W. G. Morris and A. Jamieson (2005) on portfolio management practice. Examples and figures in this article are illustrations. This article is general information.*
+*Source: KEVOS® notes, drawing on teaching material on capital budgeting, project selection, portfolio balance and risk-informed selection, the Australian Government's 2006 Handbook of Cost-Benefit Analysis, and P. W. G. Morris and A. Jamieson (2005) on portfolio management practice. Examples and figures in this article are illustrations. This article is general information.*

@@ -7,7 +7,7 @@ tags:
   - systems
   - automation
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -203,4 +203,4 @@ Business systems need to share data, and the way they do so determines whether i
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general business systems integration practice. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on general business systems integration practice. The worked example is illustrative. This article is general information.*

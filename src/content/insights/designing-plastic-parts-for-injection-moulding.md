@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - design
   - product-development
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -207,4 +207,4 @@ Injection moulded parts are economical when they are designed for the process. R
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS engineering handbooks on plastics, injection moulding and mould design from CAD models, and mould flow analysis, together with established moulding practice. The worked example is illustrative. This article is general information; confirm design limits with your material supplier and moulder.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® engineering handbooks on plastics, injection moulding and mould design from CAD models, and mould flow analysis, together with established moulding practice. The worked example is illustrative. This article is general information; confirm design limits with your material supplier and moulder.*

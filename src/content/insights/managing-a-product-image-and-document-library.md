@@ -7,7 +7,7 @@ tags:
   - marketing
   - systems
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -196,4 +196,4 @@ A product image and document library turns scattered files into business assets 
 
 ---
 
-*Source: KEVOS editorial notes on managing product images and technical documents in small and medium businesses, drawing on general digital asset and document management practice. Information about copyright and permissions is general and not legal advice. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes on managing product images and technical documents in small and medium businesses, drawing on general digital asset and document management practice. Information about copyright and permissions is general and not legal advice. The worked example is illustrative. This article is general information.*

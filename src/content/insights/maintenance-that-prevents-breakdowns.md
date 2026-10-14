@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - operations
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -175,4 +175,4 @@ Breakdowns cost more than planned repairs, but maintaining everything heavily wa
 
 ---
 
-*Source: KEVOS notes, drawing on earlier KEVOS engineering handbooks on maintenance excellence, total productive maintenance and reliability-centred maintenance, and on overall equipment effectiveness and loss analysis. Examples and figures in this article are illustrations. This article is general information.*
+*Source: KEVOS® notes, drawing on earlier KEVOS® engineering handbooks on maintenance excellence, total productive maintenance and reliability-centred maintenance, and on overall equipment effectiveness and loss analysis. Examples and figures in this article are illustrations. This article is general information.*

@@ -7,7 +7,7 @@ tags:
   - operations
   - design
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -172,4 +172,4 @@ Risk responses come in two families: those that make an event less likely and th
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on risk response strategies, the hierarchy of control measures used in Australian work health and safety regulation and environmental risk assessment practice. Examples and figures in this article are illustrations. This article is general information, not legal, safety or insurance advice.*
+*Source: KEVOS® notes, drawing on teaching material on risk response strategies, the hierarchy of control measures used in Australian work health and safety regulation and environmental risk assessment practice. Examples and figures in this article are illustrations. This article is general information, not legal, safety or insurance advice.*
