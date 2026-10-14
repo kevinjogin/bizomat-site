@@ -7,7 +7,7 @@ tags:
   - projects
   - finance
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -179,4 +179,4 @@ Alliance contracting can deliver uncertain, complex projects well by integrating
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS corporate articles on alliance procurement, interactive partner selection and alliance commercial frameworks, together with general knowledge of Australian alliance contracting practice. The worked example is illustrative. This article is general information; consult current national and state alliance contracting guidelines for specific projects.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® corporate articles on alliance procurement, interactive partner selection and alliance commercial frameworks, together with general knowledge of Australian alliance contracting practice. The worked example is illustrative. This article is general information; consult current national and state alliance contracting guidelines for specific projects.*

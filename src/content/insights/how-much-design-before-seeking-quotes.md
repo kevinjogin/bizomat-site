@@ -8,7 +8,7 @@ tags:
   - operations
   - product-development
   - sales
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -196,4 +196,4 @@ Design readiness is not a percentage-complete question. It is a judgement about 
 
 ---
 
-*Source: KEVOS notes. Examples in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes. Examples in this article are illustrations. This article is general information, not legal advice.*

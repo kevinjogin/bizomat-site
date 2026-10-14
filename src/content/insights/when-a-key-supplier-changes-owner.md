@@ -6,7 +6,7 @@ category: "Business"
 tags:
   - operations
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -168,4 +168,4 @@ A contract binds a company, not the capability its people and owners currently p
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on contract assignment, novation and vicarious performance, and supplier dependency. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes, drawing on teaching material on contract assignment, novation and vicarious performance, and supplier dependency. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

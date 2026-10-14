@@ -1,4 +1,4 @@
-/** Original KEVOS Books guide metadata. Published chapters are static Astro Markdown pages. */
+/** Original KEVOS® Books guide metadata. Published chapters are static Astro Markdown pages. */
 export const LIBRARY_GUIDES = [
   {
     slug: 'read-the-numbers-understand-the-business',
@@ -7,7 +7,7 @@ export const LIBRARY_GUIDES = [
     description: 'An approachable, practical guide to reading financial statements, interpreting cash flow, assessing business quality, and asking better valuation questions.',
     category: 'Finance and Business',
     minutes: 16,
-    publisher: 'KEVOS Books',
+    publisher: 'KEVOS® Books',
     cover: '/library/read-the-numbers-understand-the-business/cover.svg',
     chapters: [
     {

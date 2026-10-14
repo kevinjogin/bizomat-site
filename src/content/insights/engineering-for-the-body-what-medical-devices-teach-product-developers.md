@@ -7,7 +7,7 @@ tags:
   - product-development
   - quality
   - design
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -169,4 +169,4 @@ Medical devices were engineered under constraints that few other products face: 
 
 ---
 
-*Source: KEVOS editorial notes, drawing on an earlier KEVOS engineering history series on biomedical engineering, life-sustaining machines and medical imaging, together with established histories of medicine and technology. Regulatory information is general and summarised for orientation; check current Therapeutic Goods Administration guidance and seek regulatory advice for specific products. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on an earlier KEVOS® engineering history series on biomedical engineering, life-sustaining machines and medical imaging, together with established histories of medicine and technology. Regulatory information is general and summarised for orientation; check current Therapeutic Goods Administration guidance and seek regulatory advice for specific products. The worked example is illustrative. This article is general information.*

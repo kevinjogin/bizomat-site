@@ -7,7 +7,7 @@ tags:
   - finance
   - operations
   - sales
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -190,4 +190,4 @@ A good estimate is not a number produced by a template. It is a model of how the
 
 ---
 
-*Source: KEVOS notes, drawing on a 2018 master's thesis by Azadi Fırat Kaya on project costing in a localisation services company. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on a 2018 master's thesis by Azadi Fırat Kaya on project costing in a localisation services company. Examples and figures in this article are illustrations.*

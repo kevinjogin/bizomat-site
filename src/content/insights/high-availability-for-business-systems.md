@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - finance
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -218,4 +218,4 @@ High availability keeps critical systems running through component failures, usi
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general IT infrastructure and service management practice. Figures in the worked example are illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on general IT infrastructure and service management practice. Figures in the worked example are illustrative. This article is general information.*

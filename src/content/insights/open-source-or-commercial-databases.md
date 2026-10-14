@@ -7,7 +7,7 @@ tags:
   - systems
   - finance
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -184,4 +184,4 @@ Open-source and commercial databases are both capable of running critical busine
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general information technology and software licensing practice. Product facts are summarised for orientation and licence terms change; check current terms with vendors and obtain legal advice where needed. Costs in the worked example are illustrative assumptions. This article is general information, not legal advice.*
+*Source: KEVOS® editorial notes, drawing on general information technology and software licensing practice. Product facts are summarised for orientation and licence terms change; check current terms with vendors and obtain legal advice where needed. Costs in the worked example are illustrative assumptions. This article is general information, not legal advice.*

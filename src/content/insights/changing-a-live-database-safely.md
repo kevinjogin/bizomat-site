@@ -7,7 +7,7 @@ tags:
   - systems
   - projects
   - quality
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -215,4 +215,4 @@ Databases must change as businesses change, but data is harder to put back than 
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general software engineering, database administration and change management practice. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on general software engineering, database administration and change management practice. The worked example is illustrative. This article is general information.*

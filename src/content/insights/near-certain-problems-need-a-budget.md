@@ -7,7 +7,7 @@ tags:
   - finance
   - strategy
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -152,4 +152,4 @@ The boundary between risks and issues is necessary, but the usual arrangement se
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations.*

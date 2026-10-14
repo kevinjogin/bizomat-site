@@ -8,7 +8,7 @@ tags:
   - systems
   - strategy
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -166,4 +166,4 @@ Machines already make decisions in most businesses. The question is whether thos
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations. This article is general information, not legal or privacy advice.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations. This article is general information, not legal or privacy advice.*

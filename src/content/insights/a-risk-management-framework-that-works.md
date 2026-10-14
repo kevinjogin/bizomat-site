@@ -7,7 +7,7 @@ tags:
   - strategy
   - leadership
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -192,4 +192,4 @@ A risk register is a record; a framework is a way of running the business. ISO 3
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS risk management handbooks on ISO 31000 for project risk management, establishing risk context and criteria, risk policy, governance and accountability, and risk maturity assessment. The worked example is illustrative. This article is general information and does not constitute legal or governance advice.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® risk management handbooks on ISO 31000 for project risk management, establishing risk context and criteria, risk policy, governance and accountability, and risk maturity assessment. The worked example is illustrative. This article is general information and does not constitute legal or governance advice.*

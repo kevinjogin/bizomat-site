@@ -7,7 +7,7 @@ tags:
   - operations
   - process-improvement
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -167,4 +167,4 @@ Controls are easy to add and almost never removed, so they accumulate, unowned a
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on risk treatment, control registers and the secondary risks created by risk responses. Examples and figures in this article are illustrations. This article is general information, not legal, safety or insurance advice.*
+*Source: KEVOS® notes, drawing on teaching material on risk treatment, control registers and the secondary risks created by risk responses. Examples and figures in this article are illustrations. This article is general information, not legal, safety or insurance advice.*

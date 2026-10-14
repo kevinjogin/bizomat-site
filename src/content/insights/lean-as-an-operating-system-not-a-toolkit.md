@@ -8,7 +8,7 @@ tags:
   - process-improvement
   - systems
   - manufacturing
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -204,4 +204,4 @@ Lean creates lasting value when its methods reinforce one way of running work. S
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations.*

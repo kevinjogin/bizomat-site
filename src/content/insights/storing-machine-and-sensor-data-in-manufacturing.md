@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - automation
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -203,4 +203,4 @@ Machine and sensor data can reveal how a factory really performs, but only if it
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general industrial automation, manufacturing systems and data management practice. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on general industrial automation, manufacturing systems and data management practice. The worked example is illustrative. This article is general information.*

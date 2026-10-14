@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - customers
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -164,4 +164,4 @@ Breadth arrives one reasonable decision at a time and leaves only by deliberate 
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on portfolio breadth, executive attention and generic strategies, including M. E. Porter's account of cost leadership, differentiation and focus. Examples and figures in this article are illustrations. This article is general information.*
+*Source: KEVOS® notes, drawing on teaching material on portfolio breadth, executive attention and generic strategies, including M. E. Porter's account of cost leadership, differentiation and focus. Examples and figures in this article are illustrations. This article is general information.*

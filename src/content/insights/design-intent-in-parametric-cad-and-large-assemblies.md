@@ -7,7 +7,7 @@ tags:
   - design
   - systems
   - product-development
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -172,4 +172,4 @@ Parametric CAD saves time only when models are built to change the way the desig
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS engineering handbooks on parametric 3D CAD design intent, sketching and part modelling, assembly fundamentals, top-down assembly design, large CAD assemblies, multibody parts, data exchange and CAD analysis tools, together with established CAD practice. The worked example is illustrative. This article is general information; refer to software documentation for specific commands.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® engineering handbooks on parametric 3D CAD design intent, sketching and part modelling, assembly fundamentals, top-down assembly design, large CAD assemblies, multibody parts, data exchange and CAD analysis tools, together with established CAD practice. The worked example is illustrative. This article is general information; refer to software documentation for specific commands.*

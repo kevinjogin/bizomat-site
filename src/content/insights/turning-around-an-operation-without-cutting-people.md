@@ -7,7 +7,7 @@ tags:
   - operations
   - process-improvement
   - leadership
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -183,4 +183,4 @@ When an operation is struggling, reducing the workforce is the obvious lever and
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS operational excellence handbooks on operational turnaround without workforce reduction, including improvement governance, prioritisation and defect reduction. Identifying details from the source cases have been removed. The worked example is illustrative. This article is general information and does not constitute legal or employment advice.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® operational excellence handbooks on operational turnaround without workforce reduction, including improvement governance, prioritisation and defect reduction. Identifying details from the source cases have been removed. The worked example is illustrative. This article is general information and does not constitute legal or employment advice.*

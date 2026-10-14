@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -179,4 +179,4 @@ Many project failures are set up before delivery begins. Treat the team as a tem
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on project team development, team stages and the concerns of staff seconded to projects. Examples and figures in this article are illustrations. This article is general information.*
+*Source: KEVOS® notes, drawing on teaching material on project team development, team stages and the concerns of staff seconded to projects. Examples and figures in this article are illustrations. This article is general information.*

@@ -7,7 +7,7 @@ tags:
   - design
   - manufacturing
   - quality
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -168,4 +168,4 @@ Bolted joints stay tight when they are clamped firmly and consistently. Treat pr
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS machine design handbooks on bolted joint design, preload and torque, fastener selection and washer function, together with established fastening practice. The worked example is illustrative. This article is general information and does not replace design to the applicable standards by qualified engineers.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® machine design handbooks on bolted joint design, preload and torque, fastener selection and washer function, together with established fastening practice. The worked example is illustrative. This article is general information and does not replace design to the applicable standards by qualified engineers.*

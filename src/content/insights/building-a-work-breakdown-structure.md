@@ -6,7 +6,7 @@ category: "Projects"
 tags:
   - projects
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -180,4 +180,4 @@ A work breakdown structure turns a project's goal into a complete set of defined
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS project management handbooks on work breakdown structures, product-based planning and stage plans, and PRINCE2-style product-based planning and work packages. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® project management handbooks on work breakdown structures, product-based planning and stage plans, and PRINCE2-style product-based planning and work packages. The worked example is illustrative. This article is general information.*

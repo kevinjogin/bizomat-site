@@ -7,7 +7,7 @@ tags:
   - systems
   - design
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -182,4 +182,4 @@ Different kinds of database suit different data and workloads: relational databa
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general database systems principles and industry practice. Product names are examples only. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on general database systems principles and industry practice. Product names are examples only. The worked example is illustrative. This article is general information.*

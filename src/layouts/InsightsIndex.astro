@@ -30,10 +30,10 @@ const crumbs = [
 
 <BaseLayout
   title={page > 1 ? `Insights, page ${page}` : 'Insights'}
-  description="KEVOS Insights: practical articles on operations, manufacturing, engineering, decision making, finance and business, organised by subject."
+  description="KEVOS® Insights: practical articles on operations, manufacturing, engineering, decision making, finance and business, organised by subject."
   breadcrumbs={crumbs}
 >
-  <Hero eyebrow="KEVOS Insights" title="Practical insight for <em>better decisions</em>." lead="Perspectives on engineering, manufacturing, operations and business, organised by topic to help you evaluate challenges, understand methods and make informed decisions.">
+  <Hero eyebrow="KEVOS® Insights" title="Practical insight for <em>better decisions</em>." lead="Perspectives on engineering, manufacturing, operations and business, organised by topic to help you evaluate challenges, understand methods and make informed decisions.">
     <MotionVisual page="insights" slot="visual" priority />
     <Breadcrumb items={crumbs} slot="before" />
   </Hero>
@@ -51,7 +51,7 @@ const crumbs = [
     <h2 class="visually-hidden">All articles</h2>
     <InsightsListing posts={items} all={all} page={page} pages={pages} base="/insights/" />
   </Container>
-  <CallToAction title="Need help applying this in your business?" text="KEVOS provides practical engineering, manufacturing, operations and project support. Describe the problem and get a clear proposal." label="Get a Quote" />
+  <CallToAction title="Need help applying this in your business?" text="KEVOS® provides practical engineering, manufacturing, operations and project support. Describe the problem and get a clear proposal." label="Get a Quote" />
 </BaseLayout>
 
 <style>

@@ -7,7 +7,7 @@ tags:
   - operations
   - finance
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -172,4 +172,4 @@ How a business pays and recognises people is its real statement of what a team i
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on work groups and work teams, team rewards and team effectiveness. Examples and figures in this article are illustrations. This article is general information, not employment or legal advice.*
+*Source: KEVOS® notes, drawing on teaching material on work groups and work teams, team rewards and team effectiveness. Examples and figures in this article are illustrations. This article is general information, not employment or legal advice.*

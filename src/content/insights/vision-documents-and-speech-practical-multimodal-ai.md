@@ -7,7 +7,7 @@ tags:
   - ai
   - operations
   - automation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -172,4 +172,4 @@ Multimodal AI can read documents, understand images and transcribe speech well e
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS AI academy lessons on multimodal systems, OCR and document extraction, image understanding, visual question answering, speech recognition, text-to-speech, audio workflows, multimodal embeddings and retrieval, engineering and manufacturing use cases and computer vision deployment, together with established AI practice. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® AI academy lessons on multimodal systems, OCR and document extraction, image understanding, visual question answering, speech recognition, text-to-speech, audio workflows, multimodal embeddings and retrieval, engineering and manufacturing use cases and computer vision deployment, together with established AI practice. The worked example is illustrative. This article is general information.*

@@ -22,12 +22,12 @@ test('publication dates remain accurate in structured metadata and RSS', () => {
   assert.match(feed, /pubDate: post\.data\.publishDate/);
 });
 
-test('KEVOS byline and category metadata use the current corporate identity', () => {
+test('KEVOS® byline and category metadata use the current corporate identity', () => {
   const schema = read('src/content.config.ts');
   const util = read('src/utils/content.ts');
   const article = read('src/pages/insights/[slug].astro');
   const feed = read('src/pages/rss.xml.ts');
-  assert.match(schema, /author: z\.string\(\)\.default\('KEVOS'\)/);
+  assert.match(schema, /author: z\.string\(\)\.default\('KEVOS®'\)/);
   assert.match(util, /export const insightAuthor/);
   assert.match(article, /const displayAuthor = insightAuthor\(author\)/);
   assert.match(feed, /author: insightAuthor\(post\.data\.author\)/);

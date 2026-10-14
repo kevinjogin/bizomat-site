@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -161,4 +161,4 @@ A business always makes decisions on a picture assembled from what people choose
 
 ---
 
-*Source: KEVOS notes, drawing on general management research including Edgar Schein's work on organisational culture and Irving Janis's work on group decision-making. Examples and figures in this article are illustrations. This article is general information, not legal or employment advice.*
+*Source: KEVOS® notes, drawing on general management research including Edgar Schein's work on organisational culture and Irving Janis's work on group decision-making. Examples and figures in this article are illustrations. This article is general information, not legal or employment advice.*

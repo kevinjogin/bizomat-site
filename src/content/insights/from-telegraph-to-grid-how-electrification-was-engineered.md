@@ -7,7 +7,7 @@ tags:
   - systems
   - strategy
   - product-development
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -152,4 +152,4 @@ Electrification turned laboratory discoveries into the infrastructure of modern 
 
 ---
 
-*Source: KEVOS editorial notes, drawing on an earlier KEVOS engineering history series on telegraphy, electric lighting, alternating current and electricity grids, together with established histories of technology. The worked example is illustrative. This article is general information; electrical work must be carried out by licensed electricians.*
+*Source: KEVOS® editorial notes, drawing on an earlier KEVOS® engineering history series on telegraphy, electric lighting, alternating current and electricity grids, together with established histories of technology. The worked example is illustrative. This article is general information; electrical work must be carried out by licensed electricians.*

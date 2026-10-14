@@ -1,5 +1,5 @@
 ---
-// KEVOS Assistant: floating receptionist chat (bottom-right on every page), with minimise and
+// KEVOS® Assistant: floating receptionist chat (bottom-right on every page), with minimise and
 // pop-out. In "page" mode it fills the /chat/ pop-out window instead of floating.
 // Answers come from /api/chat (Cloudflare Workers AI), grounded only in this website's content.
 import { SITE } from '../config/site.ts';
@@ -9,17 +9,17 @@ interface Props {
 }
 const { mode = 'floating' } = Astro.props;
 const name = SITE.assistant.name;
-// Dedicated, crisp KEVOS K mark for small assistant avatars (independent of favicon).
+// Dedicated, crisp KEVOS® K mark for small assistant avatars (independent of favicon).
 const chatIcon = '/brand/kevos-chat-k-mark.svg?v=orange-1';
-const prompts = ['Can KEVOS support my project?', 'I need engineering or CAD support', 'I need manufacturing support', 'I want to improve a process or operation'];
+const prompts = ['Can KEVOS® support my project?', 'I need engineering or CAD support', 'I need manufacturing support', 'I want to improve a process or operation'];
 ---
 
 <div class:list={['assistant', `assistant--${mode}`]} data-assistant data-mode={mode} data-endpoint={SITE.assistant.endpoint}>
   {
     mode === 'floating' && (
-      <button class="assistant__launcher" type="button" aria-label="Ask KEVOS" aria-expanded="false" aria-controls="assistant-panel" data-assistant-open>
+      <button class="assistant__launcher" type="button" aria-label="Ask KEVOS®" aria-expanded="false" aria-controls="assistant-panel" data-assistant-open>
         <img src={chatIcon} alt="" width="34" height="34" decoding="async" />
-        <span>Ask KEVOS</span>
+        <span>Ask KEVOS®</span>
       </button>
     )
   }
@@ -56,7 +56,7 @@ const prompts = ['Can KEVOS support my project?', 'I need engineering or CAD sup
 
     <div class="assistant__log" role="log" aria-live="polite" aria-relevant="additions" tabindex="0" aria-label="Conversation" data-assistant-log>
       <div class="msg msg--assistant">
-        <p>Welcome to KEVOS. I can help identify the most relevant engineering, manufacturing, operations or project support for your requirement, explain how engagement works, and guide you to the right next step.</p>
+        <p>Welcome to KEVOS®. I can help identify the most relevant engineering, manufacturing, operations or project support for your requirement, explain how engagement works, and guide you to the right next step.</p>
       </div>
     </div>
 
@@ -68,12 +68,12 @@ const prompts = ['Can KEVOS support my project?', 'I need engineering or CAD sup
     </div>
 
     <form class="assistant__handoff" data-assistant-handoff-form hidden novalidate>
-      <p class="assistant__handoff-title">Leave a message for the KEVOS team</p>
+      <p class="assistant__handoff-title">Leave a message for the KEVOS® team</p>
       <label>Name<input name="name" type="text" autocomplete="name" required maxlength="100" /></label>
       <label>Email<input name="email" type="email" autocomplete="email" required maxlength="200" /></label>
       <label>Message<textarea name="message" rows="3" required maxlength="2000"></textarea></label>
       <input class="assistant__hp" name="botcheck" type="checkbox" tabindex="-1" autocomplete="off" aria-hidden="true" />
-      <label class="assistant__consent"><input name="consent" type="checkbox" required /> I agree to KEVOS using these details to reply, as set out in the <a href="/privacy/">privacy policy</a>.</label>
+      <label class="assistant__consent"><input name="consent" type="checkbox" required /> I agree to KEVOS® using these details to reply, as set out in the <a href="/privacy/">privacy policy</a>.</label>
       <div class="assistant__captcha" data-handoff-captcha></div>
       <p class="assistant__handoff-error" role="alert" data-handoff-error></p>
       <div class="assistant__handoff-actions">
@@ -83,13 +83,13 @@ const prompts = ['Can KEVOS support my project?', 'I need engineering or CAD sup
     </form>
 
     <form class="assistant__composer" data-assistant-form>
-      <label for={`assistant-input-${mode}`} class="visually-hidden">Ask a question about KEVOS</label>
+      <label for={`assistant-input-${mode}`} class="visually-hidden">Ask a question about KEVOS®</label>
       <textarea id={`assistant-input-${mode}`} rows="1" maxlength="600" placeholder="Describe your requirement or project" autocomplete="off" data-assistant-input></textarea>
       <button type="submit" class="assistant__submit" aria-label="Send question">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
       </button>
     </form>
-    <p class="assistant__note">AI-assisted guidance based on published KEVOS information. For project scope, pricing or availability, <a href="/contact/" data-cta="assistant-note-quote">request a quote</a>. Please don’t share sensitive information. <a href="/privacy/">Privacy</a></p>
+    <p class="assistant__note">AI-assisted guidance based on published KEVOS® information. For project scope, pricing or availability, <a href="/contact/" data-cta="assistant-note-quote">request a quote</a>. Please don’t share sensitive information. <a href="/privacy/">Privacy</a></p>
   </section>
 </div>
 
@@ -182,7 +182,7 @@ const prompts = ['Can KEVOS support my project?', 'I need engineering or CAD sup
     const addContactButton = () => {
       const el = document.createElement('div');
       el.className = 'msg msg--action';
-      el.innerHTML = '<a class="msg__button" href="/contact/" data-cta="assistant-contact">Contact KEVOS</a>';
+      el.innerHTML = '<a class="msg__button" href="/contact/" data-cta="assistant-contact">Contact KEVOS®</a>';
       log.append(el);
       log.scrollTop = log.scrollHeight;
     };
@@ -334,7 +334,7 @@ const prompts = ['Can KEVOS support my project?', 'I need engineering or CAD sup
       if (result.ok) {
         handoff.reset();
         showHandoff(false);
-        const thanks = 'Thanks. Your message has been passed to the KEVOS team, who will reply by email as soon as possible.';
+        const thanks = 'Thanks. Your message has been passed to the KEVOS® team, who will reply by email as soon as possible.';
         state.messages.push({ role: 'assistant', content: thanks });
         addBubble('assistant', thanks);
         save();

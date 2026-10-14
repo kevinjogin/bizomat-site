@@ -7,7 +7,7 @@ tags:
   - customers
   - sales
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -178,4 +178,4 @@ A satisfaction score describes the difference between two extremes. Most of the 
 
 ---
 
-*Source: KEVOS notes. The Net Promoter Score was developed by Fred Reichheld. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes. The Net Promoter Score was developed by Fred Reichheld. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

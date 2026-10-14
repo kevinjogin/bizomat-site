@@ -7,7 +7,7 @@ tags:
   - systems
   - experimentation
   - validation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -161,4 +161,4 @@ Good test data is intentionally ordinary in some places and deliberately awkward
 
 ---
 
-*Source basis: original KEVOS analysis of database regression testing, migration validation and environment setup in the supplied Refactoring Databases: Evolutionary Database Design. The linked DbUnit documentation supports the setup-versus-expected-data distinction. The query fixture and all business records are illustrative.*
+*Source basis: original KEVOS® analysis of database regression testing, migration validation and environment setup in the supplied Refactoring Databases: Evolutionary Database Design. The linked DbUnit documentation supports the setup-versus-expected-data distinction. The query fixture and all business records are illustrative.*

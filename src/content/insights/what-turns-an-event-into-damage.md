@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -168,4 +168,4 @@ Risk is what might happen; vulnerability is what allows it to cause damage. Look
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on project feasibility and points of vulnerability, climate vulnerability (exposure, sensitivity and adaptive capacity), and J. Teller and A. Kock, "An empirical investigation on how portfolio risk management influences project portfolio success", International Journal of Project Management (2013). Examples in this article are illustrations. This article is general information.*
+*Source: KEVOS® notes, drawing on teaching material on project feasibility and points of vulnerability, climate vulnerability (exposure, sensitivity and adaptive capacity), and J. Teller and A. Kock, "An empirical investigation on how portfolio risk management influences project portfolio success", International Journal of Project Management (2013). Examples in this article are illustrations. This article is general information.*

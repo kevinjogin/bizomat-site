@@ -7,7 +7,7 @@ tags:
   - quality
   - manufacturing
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -199,4 +199,4 @@ A control chart answers a simple question every production team faces: has somet
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS manufacturing handbooks on the DMAIC control phase, process capability and manufacturing data analysis. The worked example is illustrative. This article is general information; follow your customers' specific quality requirements.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® manufacturing handbooks on the DMAIC control phase, process capability and manufacturing data analysis. The worked example is illustrative. This article is general information; follow your customers' specific quality requirements.*

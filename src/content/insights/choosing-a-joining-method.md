@@ -7,7 +7,7 @@ tags:
   - design
   - manufacturing
   - product-development
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -154,4 +154,4 @@ There is no universally best joining method. Bolting gives serviceability, weldi
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS engineering handbooks on adhesives and sealants, rivets and riveted joints, soldering and brazing, welded joint design and mechanical joint and fastener selection. The worked example is illustrative. This article is general information and does not replace design to the applicable standards by qualified engineers.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® engineering handbooks on adhesives and sealants, rivets and riveted joints, soldering and brazing, welded joint design and mechanical joint and fastener selection. The worked example is illustrative. This article is general information and does not replace design to the applicable standards by qualified engineers.*

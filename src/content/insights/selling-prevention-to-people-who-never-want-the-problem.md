@@ -8,7 +8,7 @@ tags:
   - strategy
   - sales
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -192,4 +192,4 @@ Customers in trouble are easy to see. Customers determined to stay out of troubl
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations. Requirements such as food safety rules vary by jurisdiction and business type; check the current rules that apply.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations. Requirements such as food safety rules vary by jurisdiction and business type; check the current rules that apply.*

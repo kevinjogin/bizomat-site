@@ -7,7 +7,7 @@ tags:
   - projects
   - sales
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -162,4 +162,4 @@ Contracts are formed by offer and acceptance, supported by consideration and an 
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS procurement and contract management study material on contract formation, consideration and promissory estoppel, intention to create legal relations, the contents of a contract, privity, collateral contracts and novation, and exclusion clauses, together with general knowledge of Australian contract law. The worked example is illustrative. This article is general information, not legal advice.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® procurement and contract management study material on contract formation, consideration and promissory estoppel, intention to create legal relations, the contents of a contract, privity, collateral contracts and novation, and exclusion clauses, together with general knowledge of Australian contract law. The worked example is illustrative. This article is general information, not legal advice.*

@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - quality
   - design
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -160,4 +160,4 @@ Consistent welding comes from a system around skilled people. Choose the right p
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS engineering handbooks on welding processes, consumables and parameter control, welded joint design and failure prevention, and material testing and verification of weld quality. The worked example is illustrative. This article is general information; follow the applicable welding standards and have welded connections designed by qualified engineers.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® engineering handbooks on welding processes, consumables and parameter control, welded joint design and failure prevention, and material testing and verification of weld quality. The worked example is illustrative. This article is general information; follow the applicable welding standards and have welded connections designed by qualified engineers.*

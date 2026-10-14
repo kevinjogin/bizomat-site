@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -202,4 +202,4 @@ Good teams make poor decisions when agreement comes more easily than evidence. T
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on team decision processes, groupthink, conflict handling styles and leading project teams. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on teaching material on team decision processes, groupthink, conflict handling styles and leading project teams. Examples and figures in this article are illustrations.*

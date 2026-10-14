@@ -7,7 +7,7 @@ tags:
   - systems
   - communication
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -140,4 +140,4 @@ Clocks, telephones, broadcasting, television and radar each began with a device 
 
 ---
 
-*Source: KEVOS editorial notes, drawing on an earlier KEVOS engineering history series on public timekeeping, telephony, broadcasting, television and radar, together with established histories of technology and Australian communications. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on an earlier KEVOS® engineering history series on public timekeeping, telephony, broadcasting, television and radar, together with established histories of technology and Australian communications. The worked example is illustrative. This article is general information.*

@@ -6,7 +6,7 @@ category: "Business"
 tags:
   - operations
   - finance
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -168,4 +168,4 @@ Every job has a duration at which it costs least, set by the balance between ris
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on time-cost trade-offs, schedule compression and indirect cost allocation. Examples and figures in this article are illustrations. This article is general information.*
+*Source: KEVOS® notes, drawing on teaching material on time-cost trade-offs, schedule compression and indirect cost allocation. Examples and figures in this article are illustrations. This article is general information.*

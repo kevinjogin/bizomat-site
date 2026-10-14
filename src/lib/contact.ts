@@ -96,4 +96,4 @@ export function validate(input: ContactInput, { requireCompany = false }: Valida
 
 /** One-line summary used as the email subject. */
 export const enquirySubject = (input: ContactInput) =>
-  `KEVOS enquiry: ${input.service || 'General'} — ${input.company || input.name}`.replace(/[\r\n]+/g, ' ').slice(0, 200);
+  `KEVOS® enquiry: ${input.service || 'General'} — ${input.company || input.name}`.replace(/[\r\n]+/g, ' ').slice(0, 200);

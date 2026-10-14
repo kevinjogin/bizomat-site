@@ -7,7 +7,7 @@ tags:
   - finance
   - strategy
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -159,4 +159,4 @@ A risk register without prices is a shopping list with the amounts removed. Trea
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations, not actuarial estimates. This article is general information, not legal, insurance or safety advice.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations, not actuarial estimates. This article is general information, not legal, insurance or safety advice.*

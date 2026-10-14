@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -169,4 +169,4 @@ A contract creates obligations; managing it turns them into a working relationsh
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on contract management, mobilisation, contract administration and document control under standard construction and services contracts, and on M. Greer's project management principles in the Handbook of Human Performance Technology (1999). Examples in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes, drawing on teaching material on contract management, mobilisation, contract administration and document control under standard construction and services contracts, and on M. Greer's project management principles in the Handbook of Human Performance Technology (1999). Examples in this article are illustrations. This article is general information, not legal advice.*

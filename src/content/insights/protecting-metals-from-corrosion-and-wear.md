@@ -7,7 +7,7 @@ tags:
   - design
   - quality
   - manufacturing
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -156,4 +156,4 @@ Corrosion and wear are surface problems with known causes and remedies. Classify
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS engineering handbooks on metal surface treatment, conversion coatings and plating, and on hardfacing, thermal spraying and surface rebuilding, together with established corrosion and surface engineering practice. The worked example is illustrative. This article is general information; follow the relevant standards and coating manufacturers' advice.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® engineering handbooks on metal surface treatment, conversion coatings and plating, and on hardfacing, thermal spraying and surface rebuilding, together with established corrosion and surface engineering practice. The worked example is illustrative. This article is general information; follow the relevant standards and coating manufacturers' advice.*

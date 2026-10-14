@@ -7,7 +7,7 @@ tags:
   - finance
   - validation
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -182,4 +182,4 @@ NPV is valuable because it forces costs and benefits at different times onto a c
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on the time value of money and capital budgeting, and on T. Arnold and T. Nixon, "Measuring Investment Value: Free Cash Flow, Net Present Value, and Economic Value Added", in H. K. Baker and P. English (eds), Capital Budgeting Valuation (2011). Examples and figures in this article are illustrations. This article is general information, not financial advice.*
+*Source: KEVOS® notes, drawing on teaching material on the time value of money and capital budgeting, and on T. Arnold and T. Nixon, "Measuring Investment Value: Free Cash Flow, Net Present Value, and Economic Value Added", in H. K. Baker and P. English (eds), Capital Budgeting Valuation (2011). Examples and figures in this article are illustrations. This article is general information, not financial advice.*

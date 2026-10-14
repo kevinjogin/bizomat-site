@@ -8,7 +8,7 @@ tags:
   - experimentation
   - systems
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -186,4 +186,4 @@ A best result is evidence of possibility. Readiness is evidence of dependability
 
 ---
 
-*Source: KEVOS notes, drawing on published process-engineering research on catalyst stability, water treatment media and biological treatment systems. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on published process-engineering research on catalyst stability, water treatment media and biological treatment systems. Examples and figures in this article are illustrations.*

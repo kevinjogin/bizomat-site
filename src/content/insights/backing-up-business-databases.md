@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - quality
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -198,4 +198,4 @@ Backups exist to make restores possible within targets the business has chosen. 
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general information technology, database administration and cyber security practice. Costs and timings in the worked example are illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on general information technology, database administration and cyber security practice. Costs and timings in the worked example are illustrative. This article is general information.*

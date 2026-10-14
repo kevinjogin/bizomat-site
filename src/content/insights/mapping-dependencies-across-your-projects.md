@@ -7,7 +7,7 @@ tags:
   - systems
   - strategy
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -198,4 +198,4 @@ Complexity is often less visible than workload because it lives between projects
 
 ---
 
-*Source: KEVOS notes, drawing on published engineering-systems research on structural complexity and modularity by Oehmen and colleagues, and a 2017 review of project complexity by San Cristóbal. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on published engineering-systems research on structural complexity and modularity by Oehmen and colleagues, and a 2017 review of project complexity by San Cristóbal. Examples and figures in this article are illustrations.*

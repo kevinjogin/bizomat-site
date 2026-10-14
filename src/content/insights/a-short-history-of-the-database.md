@@ -6,7 +6,7 @@ category: "Ideas"
 tags:
   - systems
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -150,4 +150,4 @@ Databases evolved from punched cards and tape to disks, hierarchical and network
 
 ---
 
-*Source: KEVOS editorial notes, drawing on established histories of computing and database systems. Dates are widely cited approximations. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on established histories of computing and database systems. Dates are widely cited approximations. The worked example is illustrative. This article is general information.*

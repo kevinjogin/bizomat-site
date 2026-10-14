@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - projects
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -168,4 +168,4 @@ Containerisation and the critical path method changed the world economy and proj
 
 ---
 
-*Source: KEVOS editorial notes, drawing on an earlier KEVOS engineering history series on containerisation, motorway networks and critical path scheduling, and on the history of project management, together with established histories of technology and logistics. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on an earlier KEVOS® engineering history series on containerisation, motorway networks and critical path scheduling, and on the history of project management, together with established histories of technology and logistics. The worked example is illustrative. This article is general information.*

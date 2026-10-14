@@ -7,7 +7,7 @@ tags:
   - design
   - manufacturing
   - validation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---

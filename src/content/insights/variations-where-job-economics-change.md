@@ -7,7 +7,7 @@ tags:
   - operations
   - finance
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -187,4 +187,4 @@ Variations are where the economics of a job quietly change. Classify each reques
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on change control, configuration management and variations under standard construction contracts. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes, drawing on teaching material on change control, configuration management and variations under standard construction contracts. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

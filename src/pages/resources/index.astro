@@ -4,25 +4,25 @@ import Container from '../../components/Container.astro';
 import { primaryGuide } from '../../data/library.ts';
 ---
 <BaseLayout
-  title="KEVOS books and tools"
-  description="Read KEVOS books by topic and use practical tools for engineering, operations and business decisions."
-  breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'ReadOS', href: '/reados/' }]}
+  title="KEVOS® books and tools"
+  description="Read KEVOS® books by topic and use practical tools for engineering, operations and business decisions."
+  breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'READOS', href: '/reados/' }]}
 >
   <section class="resources-hero">
     <Container>
-      <p class="eyebrow">KEVOS resources</p>
+      <p class="eyebrow">KEVOS® resources</p>
       <h1>Practical knowledge, <em>easy to explore.</em></h1>
-      <p class="lead">Explore ReadOS books organised into chapters, or use practical engineering and manufacturing tools.</p>
+      <p class="lead">Explore READOS books organised into chapters, or use practical engineering and manufacturing tools.</p>
     </Container>
   </section>
-  <section class="resources-content" aria-label="ReadOS and Tools">
+  <section class="resources-content" aria-label="READOS and Tools">
     <Container>
       <div class="resources-grid">
         <article class="resources-card">
           <span class="resources-number">01 / BOOKS</span>
-          <h2>ReadOS</h2>
-          <p>Read KEVOS articles in books organised by subject, with each article available as a chapter.</p>
-          <a href="/reados/" class="resources-card__link">Explore ReadOS <span aria-hidden="true">↗</span></a>
+          <h2>READOS</h2>
+          <p>Read KEVOS® articles in books organised by subject, with each article available as a chapter.</p>
+          <a href="/reados/" class="resources-card__link">Explore READOS <span aria-hidden="true">↗</span></a>
         </article>
         <article class="resources-card resources-card--library">
           <span class="resources-number">02 / TOOLS</span>
@@ -34,7 +34,7 @@ import { primaryGuide } from '../../data/library.ts';
       <div class="resources-feature">
         <img src={primaryGuide.cover} alt={`Cover of ${primaryGuide.title}`} width="900" height="1200" loading="lazy" />
         <div>
-          <p class="eyebrow">Featured KEVOS Book</p>
+          <p class="eyebrow">Featured KEVOS® Book</p>
           <h2>{primaryGuide.title}</h2>
           <p>{primaryGuide.description}</p>
           <a href={`/reados/`}>Read the book <span aria-hidden="true">→</span></a>

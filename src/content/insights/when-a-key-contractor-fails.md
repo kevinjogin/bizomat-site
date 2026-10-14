@@ -7,7 +7,7 @@ tags:
   - operations
   - finance
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -190,4 +190,4 @@ Security can soften the financial blow when a contractor fails, but it cannot fi
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on contract administration, performance security, default and insolvency provisions in standard construction contracts, and on published commentary on conditional and unconditional performance bonds. Examples and figures in this article are illustrations. This article is general information, not legal or financial advice.*
+*Source: KEVOS® notes, drawing on teaching material on contract administration, performance security, default and insolvency provisions in standard construction contracts, and on published commentary on conditional and unconditional performance bonds. Examples and figures in this article are illustrations. This article is general information, not legal or financial advice.*

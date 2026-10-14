@@ -7,7 +7,7 @@ tags:
   - systems
   - validation
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---

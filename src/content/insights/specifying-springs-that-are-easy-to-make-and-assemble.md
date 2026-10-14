@@ -7,7 +7,7 @@ tags:
   - design
   - manufacturing
   - product-development
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -169,4 +169,4 @@ Springs reward a little engineering. Calculate rate from the required loads, str
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS engineering handbooks on helical spring design, spring materials, design stresses and fatigue, disc springs, and spring design for assembly, together with established spring engineering practice. The worked example is illustrative. This article is general information; use spring makers' design data for specific applications.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® engineering handbooks on helical spring design, spring materials, design stresses and fatigue, disc springs, and spring design for assembly, together with established spring engineering practice. The worked example is illustrative. This article is general information; use spring makers' design data for specific applications.*

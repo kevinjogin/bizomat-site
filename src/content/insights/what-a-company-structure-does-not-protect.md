@@ -7,7 +7,7 @@ tags:
   - finance
   - strategy
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -175,4 +175,4 @@ A company structure decides who is reached first when something goes wrong, not 
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on corporate structure, guarantees and risk allocation. This article is general information, not legal, tax or financial advice. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on teaching material on corporate structure, guarantees and risk allocation. This article is general information, not legal, tax or financial advice. Examples and figures in this article are illustrations.*

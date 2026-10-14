@@ -23,18 +23,18 @@ const categories=[
 const count=books.length+LIBRARY_GUIDES.length+publications.length;
 const totalChapters=books.reduce((n,book)=>n+book.chapters.length,0)+LIBRARY_GUIDES.reduce((n,g)=>n+g.chapters.length,0)+publications.reduce((n,p)=>n+p.chapters.length,0);
 ---
-<BaseLayout title="ReadOS books and guides by topic" description="Browse KEVOS ReadOS books by Engineering, Manufacturing, Operations, Projects, Technology, Business, Products and Ideas.">
-  <Hero eyebrow="KEVOS READOS" title="Books and guides, <em>organised by topic.</em>" lead="Choose a subject, find a book and read at your own pace. Explore practical guides to engineering, technology and business, one chapter at a time.">
+<BaseLayout title="READOS books and guides by topic" description="Browse KEVOS® READOS books by Engineering, Manufacturing, Operations, Projects, Technology, Business, Products and Ideas.">
+  <Hero eyebrow="KEVOS® READOS" title="Books and guides, <em>organised by topic.</em>" lead="Choose a subject, find a book and read at your own pace. Explore practical guides to engineering, technology and business, one chapter at a time.">
     <div class="reados-summary"><span><strong>{count}</strong> books and guides</span><span><strong>{totalChapters}</strong> chapters</span><span><strong>{categories.length}</strong> subjects</span></div>
     <MotionVisual page="reados" slot="visual" />
   </Hero>
   <section class="topics"><Container>
     <h2>Browse by topic</h2>
-    <nav class="topic-links" aria-label="ReadOS subjects">
+    <nav class="topic-links" aria-label="READOS subjects">
       {categories.map(c=><a href={`#${c.slug}`}>{c.name} <span aria-hidden="true">↗</span></a>)}
     </nav>
   </Container></section>
-  <section class="collections" aria-label="ReadOS book categories"><Container>
+  <section class="collections" aria-label="READOS book categories"><Container>
     {categories.map(c=>{
       const selected=books.filter(book=>book.category===c.name);
       const featured=c.name==='Business'?LIBRARY_GUIDES:[];
@@ -44,7 +44,7 @@ const totalChapters=books.reduce((n,book)=>n+book.chapters.length,0)+LIBRARY_GUI
         <div class="category-heading"><div><p class="eyebrow">READOS {c.name.toUpperCase()}</p><h2>{c.name}</h2><p>{c.description}</p></div><span class="count">{selected.length+featured.length+authored.length} publications</span></div>
         <div class="cover-grid">
           {authored.map(({book,chapters})=><article class="cover-card">
-            <a class="cover-link" href={publicationHref(book.id)} aria-label={`Read ${book.data.title}`}><ReadOSAnimatedCover title={book.data.title} category={book.data.category} slug={book.id} motif={book.data.coverVariant} publicationLabel="KEVOS ORIGINAL BOOK" compact/></a>
+            <a class="cover-link" href={publicationHref(book.id)} aria-label={`Read ${book.data.title}`}><ReadOSAnimatedCover title={book.data.title} category={book.data.category} slug={book.id} motif={book.data.coverVariant} publicationLabel="KEVOS® ORIGINAL BOOK" compact/></a>
             <p class="card-type">Authored book · {chapters.length} chapters</p>
             <h3><a href={publicationHref(book.id)}>{book.data.title}</a></h3>
             <p class="desc">{book.data.description}</p>
@@ -67,7 +67,7 @@ const totalChapters=books.reduce((n,book)=>n+book.chapters.length,0)+LIBRARY_GUI
         </div>
       </section>;
     })}
-    <p class="note">Each collection brings together complete KEVOS articles as chapters. You can still read the articles at their original links.</p>
+    <p class="note">Each collection brings together complete KEVOS® articles as chapters. You can still read the articles at their original links.</p>
   </Container></section>
 </BaseLayout>
 <style>

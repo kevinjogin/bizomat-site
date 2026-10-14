@@ -7,7 +7,7 @@ tags:
   - product-development
   - manufacturing
   - projects
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -191,4 +191,4 @@ The months between design approval and first stock decide whether a product laun
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS product development handbooks on tooling quotation and approval schedules, off-tool testing and correction schedules, production readiness and launch schedules, and special characteristic traceability across APQP documents. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® product development handbooks on tooling quotation and approval schedules, off-tool testing and correction schedules, production readiness and launch schedules, and special characteristic traceability across APQP documents. The worked example is illustrative. This article is general information.*

@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -174,4 +174,4 @@ Spreadsheets are outstanding tools for analysis and small-scale work, but fragil
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general database and information systems practice. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on general database and information systems practice. The worked example is illustrative. This article is general information.*

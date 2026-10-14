@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -206,4 +206,4 @@ Contract problems are easier to resolve when they are framed as precise question
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on the IRAC method of legal problem solving and on the legal environment of projects. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes, drawing on teaching material on the IRAC method of legal problem solving and on the legal environment of projects. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

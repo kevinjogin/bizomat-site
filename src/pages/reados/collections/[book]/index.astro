@@ -13,10 +13,10 @@ interface Props { book: ReadOSCollection }
 const { book } = Astro.props;
 const href = readosCollectionHref(book);
 ---
-<BaseLayout title={`${book.title} (ReadOS)`} description={`${book.description} Read the full KEVOS collection in structured chapters.`}
-  breadcrumbs={[{label:'Home',href:'/'},{label:'ReadOS',href:'/reados/'},{label:book.title,href}]}>
+<BaseLayout title={`${book.title} (READOS)`} description={`${book.description} Read the full KEVOS® collection in structured chapters.`}
+  breadcrumbs={[{label:'Home',href:'/'},{label:'READOS',href:'/reados/'},{label:book.title,href}]}>
   <section class="heading"><Container size="narrow"><div class="book-intro"><div class="book-copy">
-    <p class="eyebrow">ReadOS / {book.category}</p>
+    <p class="eyebrow">READOS / {book.category}</p>
     <h1>{book.title}</h1>
     <p class="lead">{book.description}</p>
     <p class="metadata">{book.chapters.length} chapters · About {book.minutes} minutes · Free to read</p>
@@ -30,7 +30,7 @@ const href = readosCollectionHref(book);
         <span><strong>{chapter.data.title}</strong><small>{chapter.data.description}</small></span>
         <span aria-hidden="true">↗</span>
       </a></li>)}</ol>
-    <p class="note">All chapters preserve the original KEVOS Insights content. These topic-based reading collections are organised alphabetically; chapters may be read in any order.</p>
+    <p class="note">All chapters preserve the original KEVOS® Insights content. These topic-based reading collections are organised alphabetically; chapters may be read in any order.</p>
     <a href="/reados/">← All books</a>
   </Container></section>
 </BaseLayout>

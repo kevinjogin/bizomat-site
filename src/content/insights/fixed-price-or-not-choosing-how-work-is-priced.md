@@ -7,7 +7,7 @@ tags:
   - finance
   - operations
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -211,4 +211,4 @@ Delivery model and pricing method are separate decisions. Decide who designs, bu
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material distinguishing delivery models from contract pricing types and on the continuing preference for lump-sum fixed-price contracting. Examples and figures in this article are illustrations. This article is general information, not legal or financial advice.*
+*Source: KEVOS® notes, drawing on teaching material distinguishing delivery models from contract pricing types and on the continuing preference for lump-sum fixed-price contracting. Examples and figures in this article are illustrations. This article is general information, not legal or financial advice.*

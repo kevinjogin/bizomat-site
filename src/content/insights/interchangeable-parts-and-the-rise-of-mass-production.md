@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - quality
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -151,4 +151,4 @@ Mass production grew from a modest-sounding idea: make parts to a tolerance rath
 
 ---
 
-*Source: KEVOS editorial notes, drawing on an earlier KEVOS engineering history series on interchangeable manufacture and mass production, together with established histories of technology. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on an earlier KEVOS® engineering history series on interchangeable manufacture and mass production, together with established histories of technology. The worked example is illustrative. This article is general information.*

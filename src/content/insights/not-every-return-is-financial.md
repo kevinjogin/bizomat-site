@@ -7,7 +7,7 @@ tags:
   - strategy
   - finance
   - customers
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -168,4 +168,4 @@ Financial return is essential where money must earn a return, but it is not a co
 
 ---
 
-*Source: KEVOS notes, drawing on C. Huth (2020) on supporter investment in European football clubs, G. Davison and colleagues (2020) on returns from health-focused housing interventions, and Australian transport impact assessment practice. Examples and figures in this article are illustrations. This article is general information, not financial advice.*
+*Source: KEVOS® notes, drawing on C. Huth (2020) on supporter investment in European football clubs, G. Davison and colleagues (2020) on returns from health-focused housing interventions, and Australian transport impact assessment practice. Examples and figures in this article are illustrations. This article is general information, not financial advice.*

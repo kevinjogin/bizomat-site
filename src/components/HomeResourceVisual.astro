@@ -1,5 +1,5 @@
 ---
-interface Props { kind: 'reados' | 'toolos'; }
+interface Props { kind: 'reados' | 'workos'; }
 const { kind } = Astro.props;
 const reading = kind === 'reados';
 ---
@@ -7,8 +7,8 @@ const reading = kind === 'reados';
 <figure class:list={['resource-visual', `resource-visual--${kind}`]}>
   <figcaption class="sr-only">{reading
     ? 'READOS. Find a subject, open a book and follow its chapters. Animated pages turn in an open book.'
-    : 'TOOLOS. Adjust inputs, calculate and compare options. Animated controls feed a calculation and comparison chart.'}</figcaption>
-  <div class="resource-visual__heading" aria-hidden="true"><strong>{reading ? 'READOS' : 'TOOLOS'}</strong><span>{reading ? 'Make time for an idea' : 'Work through a decision'}</span></div>
+    : 'WORKOS. Adjust inputs, calculate and compare options. Animated controls feed a calculation and comparison chart.'}</figcaption>
+  <div class="resource-visual__heading" aria-hidden="true"><strong>{reading ? 'READOS' : 'WORKOS'}</strong><span>{reading ? 'Make time for an idea' : 'Work through a decision'}</span></div>
   <svg viewBox="0 0 600 320" fill="none" aria-hidden="true" focusable="false">
     <defs>
       <pattern id={`resource-grid-${kind}`} width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" class="grid-line" /></pattern>

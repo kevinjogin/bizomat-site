@@ -7,7 +7,7 @@ tags:
   - quality
   - manufacturing
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -191,4 +191,4 @@ A process FMEA earns its place when it changes the process. Analyse each step as
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS manufacturing handbooks on FMEA for manufacturing risk analysis, PPAP PFMEA assessment and control plan assessment. The worked example is illustrative. This article is general information; follow your customers' specific FMEA and control plan requirements.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® manufacturing handbooks on FMEA for manufacturing risk analysis, PPAP PFMEA assessment and control plan assessment. The worked example is illustrative. This article is general information; follow your customers' specific FMEA and control plan requirements.*

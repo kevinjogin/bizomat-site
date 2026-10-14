@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---

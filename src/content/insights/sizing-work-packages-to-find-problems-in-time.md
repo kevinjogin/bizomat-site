@@ -7,7 +7,7 @@ tags:
   - operations
   - systems
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -161,4 +161,4 @@ How finely work is broken down decides both what control costs and how late prob
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations. Rules of thumb for package size vary between industries and organisations.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations. Rules of thumb for package size vary between industries and organisations.*

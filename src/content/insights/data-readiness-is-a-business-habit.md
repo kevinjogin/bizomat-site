@@ -8,7 +8,7 @@ tags:
   - systems
   - operations
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -188,4 +188,4 @@ Data readiness is not a gate that IT opens once. It is a business habit of produ
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations. This article is general information, not legal or privacy advice.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations. This article is general information, not legal or privacy advice.*

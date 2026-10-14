@@ -7,7 +7,7 @@ tags:
   - operations
   - systems
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -179,4 +179,4 @@ A report is valuable only if it changes understanding or action. Build reports a
 
 ---
 
-*Source: KEVOS notes, drawing on C. P. Killen, "Evaluation of project interdependency visualizations through decision scenario experimentation", International Journal of Project Management (2013), and teaching material on executive and portfolio reporting. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on C. P. Killen, "Evaluation of project interdependency visualizations through decision scenario experimentation", International Journal of Project Management (2013), and teaching material on executive and portfolio reporting. Examples and figures in this article are illustrations.*

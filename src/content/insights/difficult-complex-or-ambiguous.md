@@ -7,7 +7,7 @@ tags:
   - strategy
   - systems
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -183,4 +183,4 @@ Not all hard problems are alike. Predictable but difficult work rewards careful 
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material and published reviews of project complexity, including the Cynefin framework, Stacey's agreement and certainty matrix and research distinguishing uncertainty from ambiguity. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on teaching material and published reviews of project complexity, including the Cynefin framework, Stacey's agreement and certainty matrix and research distinguishing uncertainty from ambiguity. Examples and figures in this article are illustrations.*

@@ -7,7 +7,7 @@ tags:
   - systems
   - strategy
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -218,4 +218,4 @@ Better data, tools and skills change more than how fast work gets done. They cha
 
 ---
 
-*Source: KEVOS notes, drawing on an action-research study in the maritime industry by A. Pagoropoulos, A. Maier and T. C. McAloone (2017) on digital capabilities and product-service systems. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on an action-research study in the maritime industry by A. Pagoropoulos, A. Maier and T. C. McAloone (2017) on digital capabilities and product-service systems. Examples and figures in this article are illustrations.*

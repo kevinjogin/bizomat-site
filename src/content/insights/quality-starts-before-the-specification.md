@@ -8,7 +8,7 @@ tags:
   - design
   - product-development
   - process-improvement
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -169,4 +169,4 @@ A business gets the quality its instruments can detect. If its only instruments 
 
 ---
 
-*Source: KEVOS notes, drawing on G. Winch, A. Usmani and A. Edkins, "Towards total project quality: a gap analysis approach", Construction Management and Economics (1998). Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes, drawing on G. Winch, A. Usmani and A. Edkins, "Towards total project quality: a gap analysis approach", Construction Management and Economics (1998). Examples and figures in this article are illustrations.*

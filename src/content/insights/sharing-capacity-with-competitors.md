@@ -7,7 +7,7 @@ tags:
   - strategy
   - finance
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -167,4 +167,4 @@ Exclusivity is a wasting asset. The capital that buys it is not. Test how long e
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations. This article is general information, not legal or financial advice.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations. This article is general information, not legal or financial advice.*

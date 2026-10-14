@@ -8,7 +8,7 @@ tags:
   - strategy
   - finance
   - manufacturing
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -190,4 +190,4 @@ A purchase is not complete when the equipment arrives. It succeeds when the busi
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations, not quotes. This article is general information, not legal or electrical advice.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations, not quotes. This article is general information, not legal or electrical advice.*

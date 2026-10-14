@@ -7,7 +7,7 @@ tags:
   - systems
   - design
   - experimentation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---

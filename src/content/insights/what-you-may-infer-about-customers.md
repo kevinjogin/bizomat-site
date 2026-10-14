@@ -8,7 +8,7 @@ tags:
   - ai
   - strategy
   - finance
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -158,4 +158,4 @@ The limit on using customer data is no longer what a business can discover. It i
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations. This article is general information, not legal or privacy advice.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations. This article is general information, not legal or privacy advice.*

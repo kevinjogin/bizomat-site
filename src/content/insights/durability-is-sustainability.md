@@ -8,7 +8,7 @@ tags:
   - product-development
   - manufacturing
   - validation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -192,4 +192,4 @@ A product that fails early wastes materials, energy and money twice. Durability 
 
 ---
 
-*Source: KEVOS notes, drawing on published engineering research on dynamic loading and life-cycle assessment of structural materials. Figures in this article are illustrations, not data.*
+*Source: KEVOS® notes, drawing on published engineering research on dynamic loading and life-cycle assessment of structural materials. Figures in this article are illustrations, not data.*

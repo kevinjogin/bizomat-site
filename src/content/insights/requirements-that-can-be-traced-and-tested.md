@@ -7,7 +7,7 @@ tags:
   - projects
   - systems
   - validation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -172,4 +172,4 @@ Clear requirements are among the cheapest forms of project insurance. Start from
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS project management study material on business analysis domains, needs assessment, requirements traceability and solution evaluation, and requirements management plans. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® project management study material on business analysis domains, needs assessment, requirements traceability and solution evaluation, and requirements management plans. The worked example is illustrative. This article is general information.*

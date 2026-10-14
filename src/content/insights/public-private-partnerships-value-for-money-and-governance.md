@@ -7,7 +7,7 @@ tags:
   - strategy
   - finance
   - projects
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -189,4 +189,4 @@ A PPP is a long-term business model for delivering infrastructure and services, 
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS corporate articles on PPP business models, suitability testing, the public sector comparator, value for money over the lifecycle and long-term contract governance, together with general knowledge of Australian PPP policy. The worked example is illustrative. This article is general information; check current national and state PPP guidelines for specific projects.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® corporate articles on PPP business models, suitability testing, the public sector comparator, value for money over the lifecycle and long-term contract governance, together with general knowledge of Australian PPP policy. The worked example is illustrative. This article is general information; check current national and state PPP guidelines for specific projects.*

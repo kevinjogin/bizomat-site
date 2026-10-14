@@ -8,7 +8,7 @@ tags:
   - manufacturing
   - strategy
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -196,4 +196,4 @@ A purchase only creates value once the item is working. Treat the journey from s
 
 ---
 
-*Source: KEVOS notes. Figures in this article are illustrations, not data. This article is general information, not financial or legal advice.*
+*Source: KEVOS® notes. Figures in this article are illustrations, not data. This article is general information, not financial or legal advice.*

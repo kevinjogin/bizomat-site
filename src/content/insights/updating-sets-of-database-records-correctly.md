@@ -7,7 +7,7 @@ tags:
   - systems
   - quality
   - validation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -154,4 +154,4 @@ A well-designed set update expresses one clear business change. Its selected pop
 
 ---
 
-*Source basis: original KEVOS analysis of Updating Is Set-at-a-Time in the supplied Database in Depth. SQL implementation details were checked against the linked PostgreSQL documentation. The stock settings, quantities and acceptance scenarios are illustrative; engine-specific behaviour must be tested in the target environment.*
+*Source basis: original KEVOS® analysis of Updating Is Set-at-a-Time in the supplied Database in Depth. SQL implementation details were checked against the linked PostgreSQL documentation. The stock settings, quantities and acceptance scenarios are illustrative; engine-specific behaviour must be tested in the target environment.*

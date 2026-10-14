@@ -14,10 +14,10 @@ const href=publicationChapterHref(book.id,chapter.data.chapterSlug);
 const previous=chapters[index-1],next=chapters[index+1];
 ---
 <BaseLayout title={`${chapter.data.title} (${book.data.title})`} description={chapter.data.description} canonical={href}
- breadcrumbs={[{label:'ReadOS',href:'/reados/'},{label:book.data.title,href:publicationHref(book.id)},{label:chapter.data.title,href}]}
+ breadcrumbs={[{label:'READOS',href:'/reados/'},{label:book.data.title,href:publicationHref(book.id)},{label:chapter.data.title,href}]}
  schema={[{'@type':'Chapter',name:chapter.data.title,position:chapter.data.order,description:chapter.data.description,inLanguage:book.data.language,url:new URL(href,SITE.url).href,isPartOf:{'@type':'Book','@id':new URL(publicationHref(book.id),SITE.url).href+'#book',name:book.data.title},author:{'@id':SITE.url+'/#organization'}}]}>
  <Container size="narrow" class="authored-reader">
-  <nav class="reader-nav" aria-label="Book navigation"><a href={publicationHref(book.id)}>← Book contents</a><a href="/reados/">ReadOS</a></nav>
+  <nav class="reader-nav" aria-label="Book navigation"><a href={publicationHref(book.id)}>← Book contents</a><a href="/reados/">READOS</a></nav>
   <div class="reader-controls"><label for="authored-chapter">Chapter</label><select id="authored-chapter" aria-label="Go to chapter">{chapters.map(ch=><option value={publicationChapterHref(book.id,ch.data.chapterSlug)} selected={ch.id===chapter.id}>{ch.data.order}. {ch.data.title}</option>)}</select><button type="button" data-reading-size aria-pressed="false">Larger text</button></div>
   <article data-pagefind-body data-pagefind-filter={`category:${book.data.category}`}>
    <header class="reader-heading"><p class="eyebrow"><a href={publicationHref(book.id)}>{book.data.title}</a></p><p>Chapter {index+1} of {chapters.length} · {readingTime(chapter.body)} min read</p>{(book.data.status==='draft'||chapter.data.draft)&&<p>Draft preview · not published</p>}<h1>{chapter.data.title}</h1><p class="chapter-description">{chapter.data.description}</p><progress value={index+1} max={chapters.length} aria-label={`Chapter ${index+1} of ${chapters.length}`}></progress></header>

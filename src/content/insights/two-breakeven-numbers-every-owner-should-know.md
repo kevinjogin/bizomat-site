@@ -7,7 +7,7 @@ tags:
   - finance
   - strategy
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -179,4 +179,4 @@ Two simple numbers carry a great deal of information. The monthly revenue floor,
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on breakeven analysis, contribution margin and rent-versus-lease decisions. Examples and figures in this article are illustrations. This article is general information, not financial or legal advice.*
+*Source: KEVOS® notes, drawing on teaching material on breakeven analysis, contribution margin and rent-versus-lease decisions. Examples and figures in this article are illustrations. This article is general information, not financial or legal advice.*

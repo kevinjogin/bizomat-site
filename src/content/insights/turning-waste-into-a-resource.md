@@ -8,7 +8,7 @@ tags:
   - process-improvement
   - strategy
   - manufacturing
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -210,4 +210,4 @@ Waste becomes a resource only when a process can reliably extract usable value a
 
 ---
 
-*Source: KEVOS notes, drawing on published cleaner-production research on recovering value from residues. Figures in this article are illustrations, not data. This article is general information, not environmental or legal advice.*
+*Source: KEVOS® notes, drawing on published cleaner-production research on recovering value from residues. Figures in this article are illustrations, not data. This article is general information, not environmental or legal advice.*

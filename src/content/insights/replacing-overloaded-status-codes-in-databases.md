@@ -7,7 +7,7 @@ tags:
   - systems
   - design
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -141,4 +141,4 @@ The objective is an explicit model of business facts. Keep mutually exclusive li
 
 ---
 
-*Source basis: original KEVOS editorial analysis prompted by Replace Type Code With Property Flags in the supplied Refactoring Databases: Evolutionary Database Design (2006). The workshop model and migration examples are hypothetical. Historical performance claims and product-specific migration scripts are not adopted as general recommendations.*
+*Source basis: original KEVOS® editorial analysis prompted by Replace Type Code With Property Flags in the supplied Refactoring Databases: Evolutionary Database Design (2006). The workshop model and migration examples are hypothetical. Historical performance claims and product-specific migration scripts are not adopted as general recommendations.*

@@ -7,7 +7,7 @@ tags:
   - ai
   - systems
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -199,4 +199,4 @@ Retrieval-augmented generation lets language models answer from a business's own
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS AI academy lessons on retrieval-augmented generation, including ingestion, parsing, chunking, metadata, embeddings, lexical, semantic and hybrid search, reranking, access control, citations and evaluation, together with established AI practice. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® AI academy lessons on retrieval-augmented generation, including ingestion, parsing, chunking, metadata, embeddings, lexical, semantic and hybrid search, reranking, access control, citations and evaluation, together with established AI practice. The worked example is illustrative. This article is general information.*

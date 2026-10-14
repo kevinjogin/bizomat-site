@@ -6,7 +6,7 @@ category: "Business"
 tags:
   - finance
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -163,4 +163,4 @@ A business structure decides ownership, control, personal exposure, money flows,
 
 ---
 
-*Source: KEVOS notes, drawing on earlier KEVOS handbooks on Australian business structures and asset protection, and guidance published by ASIC, the ATO and business.gov.au. Examples in this article are illustrations. This article is general information, not legal, tax or financial advice.*
+*Source: KEVOS® notes, drawing on earlier KEVOS® handbooks on Australian business structures and asset protection, and guidance published by ASIC, the ATO and business.gov.au. Examples in this article are illustrations. This article is general information, not legal, tax or financial advice.*

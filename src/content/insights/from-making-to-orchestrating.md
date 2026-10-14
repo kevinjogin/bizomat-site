@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - manufacturing
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -163,4 +163,4 @@ The shift from making to orchestrating is rarely a single decision. It is a sequ
 
 ---
 
-*Source: KEVOS notes, drawing on a 2005 report in The Economist on project-based companies and Nick Lavingia's 2003 article in Cost Engineering. Historical company figures are as reported at the time. Examples in this article are illustrations.*
+*Source: KEVOS® notes, drawing on a 2005 report in The Economist on project-based companies and Nick Lavingia's 2003 article in Cost Engineering. Historical company figures are as reported at the time. Examples in this article are illustrations.*

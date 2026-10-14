@@ -7,7 +7,7 @@ tags:
   - quality
   - customers
   - experimentation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -182,4 +182,4 @@ Counts and categories underpin many business decisions, from supplier selection 
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general statistical and quality management practice. The worked example is illustrative, and its calculations are rounded. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on general statistical and quality management practice. The worked example is illustrative, and its calculations are rounded. This article is general information.*

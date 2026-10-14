@@ -6,7 +6,7 @@ category: "Business"
 tags:
   - strategy
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -176,4 +176,4 @@ Confidence is easy to display and hard to check; competence shows itself in how 
 
 ---
 
-*Source: KEVOS notes, drawing on I. L. Janis and L. Mann's work on decision-making under stress and E. H. Schein's distinction between the expert model and process consultation. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes, drawing on I. L. Janis and L. Mann's work on decision-making under stress and E. H. Schein's distinction between the expert model and process consultation. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

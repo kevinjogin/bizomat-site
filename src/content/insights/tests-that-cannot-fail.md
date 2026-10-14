@@ -7,7 +7,7 @@ tags:
   - validation
   - ai
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -153,4 +153,4 @@ A check that passes whether or not the problem exists tells you nothing, yet it 
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on cyber security guidance for business, AI fairness auditing and proxy variables, and automated decision-making governance. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: KEVOS® notes, drawing on teaching material on cyber security guidance for business, AI fairness auditing and proxy variables, and automated decision-making governance. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

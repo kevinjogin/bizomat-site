@@ -7,7 +7,7 @@ tags:
   - quality
   - manufacturing
   - validation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -173,4 +173,4 @@ Every quality decision trusts a measurement, so the measurement deserves the sam
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS manufacturing handbooks on PPAP measurement systems analysis, measuring instruments and inspection methods, and production gauging and inspection practice. The worked example is illustrative. This article is general information; follow your customers' specific MSA requirements.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® manufacturing handbooks on PPAP measurement systems analysis, measuring instruments and inspection methods, and production gauging and inspection practice. The worked example is illustrative. This article is general information; follow your customers' specific MSA requirements.*

@@ -7,7 +7,7 @@ tags:
   - systems
   - projects
   - validation
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---

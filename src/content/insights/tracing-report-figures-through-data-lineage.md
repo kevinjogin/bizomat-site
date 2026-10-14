@@ -7,7 +7,7 @@ tags:
   - systems
   - quality
   - communication
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -154,4 +154,4 @@ A report becomes more trustworthy when a reasonable question leads to a checkabl
 
 ---
 
-*Source basis: original KEVOS editorial explanation drawing on Metadata Categories and Metadata Sources in the supplied Data Strategy (2005). The linked OpenLineage specification verifies the distinction between datasets, jobs and runs. The production example and all quantities are hypothetical.*
+*Source basis: original KEVOS® editorial explanation drawing on Metadata Categories and Metadata Sources in the supplied Data Strategy (2005). The linked OpenLineage specification verifies the distinction between datasets, jobs and runs. The production example and all quantities are hypothetical.*

@@ -8,7 +8,7 @@ tags:
   - design
   - finance
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -196,4 +196,4 @@ Value engineering is not a polite word for cost cutting. It is a disciplined cha
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations.*

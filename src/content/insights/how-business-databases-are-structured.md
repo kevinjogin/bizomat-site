@@ -7,7 +7,7 @@ tags:
   - systems
   - design
   - operations
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -190,4 +190,4 @@ Relational databases organise business information as tables of entities, identi
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general relational database principles and information systems practice. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on general relational database principles and information systems practice. The worked example is illustrative. This article is general information.*

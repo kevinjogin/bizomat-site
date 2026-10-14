@@ -7,7 +7,7 @@ tags:
   - finance
   - sales
   - customers
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -179,4 +179,4 @@ In a long contract, someone has to carry the risk of costs that neither party co
 
 ---
 
-*Source: KEVOS notes on economic price adjustment in long-duration contracts. Examples and figures in this article are illustrations. This article is general information and does not constitute legal or financial advice.*
+*Source: KEVOS® notes on economic price adjustment in long-duration contracts. Examples and figures in this article are illustrations. This article is general information and does not constitute legal or financial advice.*

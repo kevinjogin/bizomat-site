@@ -7,7 +7,7 @@ tags:
   - finance
   - operations
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -174,4 +174,4 @@ Liability caps and exclusion clauses are not fine print. They are decisions abou
 
 ---
 
-*Source: KEVOS notes, drawing on teaching material on exclusion and limitation clauses, contract insurance requirements and contract administration. Examples and figures in this article are illustrations. This article is general information, not legal, financial or insurance advice.*
+*Source: KEVOS® notes, drawing on teaching material on exclusion and limitation clauses, contract insurance requirements and contract administration. Examples and figures in this article are illustrations. This article is general information, not legal, financial or insurance advice.*

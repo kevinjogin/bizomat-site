@@ -7,7 +7,7 @@ tags:
   - design
   - operations
   - quality
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -156,4 +156,4 @@ Belt and chain drives last when they are chosen, sized and maintained properly. 
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS engineering handbooks on belt drives and pulleys, vee and wedge belt drive design, flexible belts and sheaves, industrial chain drives and roller chain drive selection, together with established power transmission practice. The worked example is illustrative. This article is general information; use manufacturers' selection data for specific designs.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® engineering handbooks on belt drives and pulleys, vee and wedge belt drive design, flexible belts and sheaves, industrial chain drives and roller chain drive selection, together with established power transmission practice. The worked example is illustrative. This article is general information; use manufacturers' selection data for specific designs.*

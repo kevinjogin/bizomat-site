@@ -7,7 +7,7 @@ tags:
   - operations
   - finance
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -193,4 +193,4 @@ Standing offers and schedule-of-rates agreements work when they standardise recu
 
 ---
 
-*Source: KEVOS notes. Examples and figures in this article are illustrations, not market rates. This article is general information, not legal or procurement advice.*
+*Source: KEVOS® notes. Examples and figures in this article are illustrations, not market rates. This article is general information, not legal or procurement advice.*

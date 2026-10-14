@@ -7,7 +7,7 @@ tags:
   - design
   - operations
   - quality
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -163,4 +163,4 @@ Shafts, hub connections, couplings and alignment are simple parts of a machine t
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS engineering handbooks on shafts, keys, circlips and seals, splines and serrations, shaft couplings and clutches, shaft coupling selection, shaft alignment and O-ring selection, together with established machine design and maintenance practice. The worked example is illustrative. This article is general information; use recognised standards and manufacturers' data for critical designs.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® engineering handbooks on shafts, keys, circlips and seals, splines and serrations, shaft couplings and clutches, shaft coupling selection, shaft alignment and O-ring selection, together with established machine design and maintenance practice. The worked example is illustrative. This article is general information; use recognised standards and manufacturers' data for critical designs.*

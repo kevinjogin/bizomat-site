@@ -7,7 +7,7 @@ tags:
   - operations
   - validation
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -163,4 +163,4 @@ The most important property of a reporting system is how quickly it would tell y
 
 ---
 
-*Source: KEVOS notes, drawing on J. Portny's guidance on monitoring work under uncertainty, environmental impact assessment and risk guidance on monitoring and audit, and G. Winch, A. Usmani and A. Edkins (1998), Construction Management and Economics, on the client's line of visibility. Examples and figures in this article are illustrations. This article is general information.*
+*Source: KEVOS® notes, drawing on J. Portny's guidance on monitoring work under uncertainty, environmental impact assessment and risk guidance on monitoring and audit, and G. Winch, A. Usmani and A. Edkins (1998), Construction Management and Economics, on the client's line of visibility. Examples and figures in this article are illustrations. This article is general information.*

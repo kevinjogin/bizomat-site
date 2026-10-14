@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -194,4 +194,4 @@ Legacy Access databases often support important processes long after their autho
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general database administration and business systems practice. Product details are summarised for orientation; check current Microsoft documentation for your versions. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on general database administration and business systems practice. Product details are summarised for orientation; check current Microsoft documentation for your versions. The worked example is illustrative. This article is general information.*

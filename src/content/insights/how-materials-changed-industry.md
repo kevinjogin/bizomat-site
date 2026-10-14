@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - design
   - strategy
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -156,4 +156,4 @@ Coke iron, bulk steel, aluminium, plastics and engineered timber transformed wha
 
 ---
 
-*Source: KEVOS editorial notes, drawing on an earlier KEVOS engineering history series on iron, steel, modern materials and engineered timber, together with established histories of technology. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on an earlier KEVOS® engineering history series on iron, steel, modern materials and engineered timber, together with established histories of technology. The worked example is illustrative. This article is general information.*

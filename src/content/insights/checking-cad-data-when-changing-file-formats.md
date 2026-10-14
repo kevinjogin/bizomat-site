@@ -7,7 +7,7 @@ tags:
   - design
   - validation
   - systems
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---

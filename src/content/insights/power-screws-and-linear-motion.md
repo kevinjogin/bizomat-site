@@ -7,7 +7,7 @@ tags:
   - design
   - automation
   - manufacturing
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -174,4 +174,4 @@ Linear motion is a system of drive, guidance, motor and control. Sliding screws 
 
 ---
 
-*Source: KEVOS editorial notes, drawing on earlier KEVOS engineering handbooks on power screw design, Acme and trapezoidal power threads, ball and Acme leadscrews, cams and cam-follower design, motion control systems, and couplings, clutches and brakes, together with established machine design practice. The worked example is illustrative. This article is general information; use manufacturers' sizing data for specific designs.*
+*Source: KEVOS® editorial notes, drawing on earlier KEVOS® engineering handbooks on power screw design, Acme and trapezoidal power threads, ball and Acme leadscrews, cams and cam-follower design, motion control systems, and couplings, clutches and brakes, together with established machine design practice. The worked example is illustrative. This article is general information; use manufacturers' sizing data for specific designs.*

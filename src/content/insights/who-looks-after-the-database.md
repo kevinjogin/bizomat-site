@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - people
-author: "KEVOS"
+author: "KEVOS®"
 featured: false
 draft: false
 ---
@@ -228,4 +228,4 @@ Databases need routine care, even in businesses without a database administrator
 
 ---
 
-*Source: KEVOS editorial notes, drawing on general database administration and IT service management practice. The worked example is illustrative. This article is general information.*
+*Source: KEVOS® editorial notes, drawing on general database administration and IT service management practice. The worked example is illustrative. This article is general information.*
