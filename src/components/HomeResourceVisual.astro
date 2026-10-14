@@ -1,0 +1,92 @@
+---
+interface Props { kind: 'reados' | 'toolos'; }
+const { kind } = Astro.props;
+const reading = kind === 'reados';
+---
+
+<figure class:list={['resource-visual', `resource-visual--${kind}`]}>
+  <figcaption class="sr-only">{reading
+    ? 'READOS. Find a subject, open a book and follow its chapters. Animated pages turn in an open book.'
+    : 'TOOLOS. Adjust inputs, calculate and compare options. Animated controls feed a calculation and comparison chart.'}</figcaption>
+  <div class="resource-visual__heading" aria-hidden="true"><strong>{reading ? 'READOS' : 'TOOLOS'}</strong><span>{reading ? 'Make time for an idea' : 'Work through a decision'}</span></div>
+  <svg viewBox="0 0 600 320" fill="none" aria-hidden="true" focusable="false">
+    <defs>
+      <pattern id={`resource-grid-${kind}`} width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" class="grid-line" /></pattern>
+    </defs>
+    <rect width="600" height="320" fill={`url(#resource-grid-${kind})`} />
+    {reading ? <>
+      <path d="M62 240V87Q62 70 79 70H166" class="route" />
+      <g class="book-spines">
+        <rect x="43" y="116" width="29" height="124" rx="5" class="panel" />
+        <rect x="80" y="100" width="29" height="140" rx="5" class="panel accent-outline" />
+        <rect x="117" y="128" width="29" height="112" rx="5" class="panel" />
+        <path d="M51 137H64M51 220H64M88 121H101M88 220H101M125 149H138M125 220H138" class="accent-stroke" />
+      </g>
+      <g class="open-book">
+        <path d="M180 88Q242 63 302 92Q362 63 424 88V242Q362 220 302 249Q242 220 180 242Z" class="book-shadow" />
+        <path d="M174 75Q238 51 302 80Q366 51 430 75V229Q366 205 302 235Q238 205 174 229Z" class="panel accent-outline" />
+        <path d="M302 80V235" class="accent-stroke" />
+        <path d="M194 102Q238 88 280 105M194 121Q238 107 280 124M194 140Q238 126 280 143M194 159Q238 145 263 158" class="page-lines" />
+        <path d="M324 104Q366 87 409 102M324 123Q366 106 409 121M324 142Q366 125 409 140M324 161Q366 144 390 155" class="page-lines" />
+        <path d="M332 69V115L344 105L356 112V63" class="bookmark" />
+        <g class="turning-page">
+          <path d="M302 80Q366 51 430 75V229Q366 205 302 235Z" class="panel accent-outline" />
+          <path d="M324 104Q366 87 409 102M324 123Q366 106 409 121M324 142Q366 125 409 140" class="page-lines" />
+        </g>
+      </g>
+      <path d="M449 158H479V90H542" class="route" />
+      <g class="chapter-tabs">
+        <rect x="466" y="118" width="91" height="37" rx="6" class="panel" /><text x="484" y="143">01</text><path d="M516 136H542" class="page-lines" />
+        <rect x="466" y="166" width="91" height="37" rx="6" class="panel active-chapter" /><text x="484" y="191" class="accent-text">02</text><path d="M516 184H542" class="accent-stroke" />
+        <rect x="466" y="214" width="91" height="37" rx="6" class="panel" /><text x="484" y="239">03</text><path d="M516 232H542" class="page-lines" />
+      </g>
+      <text x="43" y="288" class="stage">FIND</text><text x="274" y="288" class="stage">READ</text><text x="485" y="288" class="stage">APPLY</text>
+    </> : <>
+      <rect x="38" y="63" width="154" height="185" rx="12" class="panel" />
+      <path d="M60 106H171M60 155H171M60 204H171" class="control-track" />
+      <path d="M60 106H126M60 155H98M60 204H145" class="accent-stroke" />
+      <g class="slider-one"><circle cx="126" cy="106" r="8" class="control-knob" /></g>
+      <g class="slider-two"><circle cx="98" cy="155" r="8" class="control-knob" /></g>
+      <g class="slider-three"><circle cx="145" cy="204" r="8" class="control-knob" /></g>
+      <path d="M193 155H241M359 155H407" class="route tool-flow" />
+      <g class="calculation-core">
+        <path d="M300 91L355 123V187L300 219L245 187V123Z" class="panel accent-outline" />
+        <circle cx="300" cy="155" r="42" class="core-ring" />
+        <path d="M275 142H292M283.5 133.5V150.5M309 140H326M275 169L288 182M288 169L275 182M309 170H326M309 179H326" class="math-symbols" />
+      </g>
+      <rect x="408" y="63" width="154" height="185" rx="12" class="panel" />
+      <path d="M429 89V224H544" class="control-track" />
+      <rect x="445" y="158" width="20" height="65" rx="3" class="chart-bar bar-one" />
+      <rect x="480" y="124" width="20" height="99" rx="3" class="chart-bar bar-two" />
+      <rect x="515" y="91" width="20" height="132" rx="3" class="chart-bar bar-three" />
+      <path d="M443 135L478 102L515 71" class="comparison-line" />
+      <text x="83" y="288" class="stage">INPUT</text><text x="241" y="288" class="stage">CALCULATE</text><text x="439" y="288" class="stage">COMPARE</text>
+    </>}
+  </svg>
+</figure>
+
+<style>
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .resource-visual{margin:0;border-bottom:1px solid var(--line);background:var(--paper-2);overflow:hidden}
+  .resource-visual__heading{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1.1rem 1.5rem 0;color:var(--muted);font-size:.78rem}
+  .resource-visual__heading strong{font-family:var(--font-display);font-size:1rem;letter-spacing:.12em;color:var(--accent)}
+  svg{display:block;width:100%;height:auto}svg text{fill:var(--ink-2);font-family:var(--font-mono);font-size:19px}.stage{font-size:17px;letter-spacing:1.5px}
+  .grid-line{stroke:var(--line);stroke-width:.7}.panel{fill:var(--surface);stroke:var(--line-strong);stroke-width:1.5}
+  .accent-outline{stroke:var(--accent)}.accent-stroke{stroke:var(--accent);stroke-width:2;stroke-linecap:round}.accent-text{fill:var(--accent)}
+  .route{stroke:var(--accent);stroke-width:1.5;stroke-dasharray:3 7;opacity:.65}.page-lines{stroke:var(--muted);stroke-width:2;stroke-linecap:round}
+  .book-shadow{fill:var(--accent-soft);stroke:var(--line-strong)}.bookmark{fill:var(--accent);opacity:.85}
+  .turning-page{transform-origin:302px 155px;animation:resource-page 9s ease-in-out infinite}.active-chapter{stroke:var(--accent);animation:resource-highlight 9s ease-in-out infinite}
+  .control-track{stroke:var(--line-strong);stroke-width:2}.control-knob{fill:var(--accent);stroke:var(--surface);stroke-width:3}
+  .slider-one{animation:resource-slide 9s ease-in-out infinite}.slider-two{animation:resource-slide 9s ease-in-out -3s infinite;animation-direction:reverse}.slider-three{animation:resource-slide 9s ease-in-out -6s infinite}
+  .math-symbols{stroke:var(--ink);stroke-width:2.5;stroke-linecap:round}.core-ring{stroke:var(--accent);stroke-width:1;stroke-dasharray:3 8;transform-origin:300px 155px;animation:resource-ring 24s linear infinite}
+  .chart-bar{fill:var(--accent);transform-box:fill-box;transform-origin:center bottom;animation:resource-bar 9s ease-in-out infinite}.bar-one{opacity:.4}.bar-two{opacity:.65;animation-delay:.3s}.bar-three{animation-delay:.6s}
+  .comparison-line{stroke:var(--ink-2);stroke-width:1.5;stroke-dasharray:3 5}.tool-flow{animation:resource-flow 3s linear infinite}
+  @keyframes resource-page{0%,20%,85%,100%{transform:scaleX(1);opacity:.95}45%,60%{transform:scaleX(-.94);opacity:.8}}
+  @keyframes resource-highlight{0%,25%,85%,100%{fill:var(--surface)}45%,65%{fill:var(--accent-soft)}}
+  @keyframes resource-slide{0%,15%,85%,100%{transform:translateX(0)}40%,60%{transform:translateX(-22px)}}
+  @keyframes resource-ring{to{transform:rotate(360deg)}}
+  @keyframes resource-bar{0%,15%,85%,100%{transform:scaleY(1)}40%,60%{transform:scaleY(.65)}}
+  @keyframes resource-flow{to{stroke-dashoffset:-30}}
+  @media(prefers-reduced-motion:reduce){.resource-visual *{animation:none!important}.turning-page{display:none}.route{stroke-dasharray:none}}
+  @media(max-width:400px){.resource-visual__heading{padding:1rem 1rem 0;font-size:.7rem;gap:.5rem}}
+</style>

@@ -9,6 +9,7 @@ import PackageGrid from '../components/PackageGrid.astro';
 import ProcessSteps from '../components/ProcessSteps.astro';
 import SoftwareNote from '../components/SoftwareNote.astro';
 import ServiceMap from '../components/ServiceMap.astro';
+import HomeResourceVisual from '../components/HomeResourceVisual.astro';
 import { SERVICE_GROUPS, ENGAGEMENT_MODELS, INDUSTRIES, SERVICE_AREA, PRICING_NOTE, FACTORY_FIX, PACKAGES } from '../data/services.ts';
 import { BACKGROUND, PRINCIPLES } from '../data/brand.ts';
 import { SITE } from '../config/site.ts';
@@ -160,8 +161,8 @@ const navigable=[
   <Section index="07" label="ReadOS knowledge" id="resources" labelledby="resources-title">
     <div class="section-head"><div><h2 id="resources-title">Explore ideas, tools and books.</h2><p class="section-intro">Discover ReadOS books and practical tools for learning, making and decision-making.</p></div></div>
     <div class="resource-grid">
-      <article class="resource resource--book"><img src={primaryGuide.cover} width="900" height="1200" loading="lazy" alt="Cover of the KEVOS guide Read the Numbers, Understand the Business" /><div><p class="eyebrow">ReadOS · {primaryGuide.chapters.length} chapters</p><h3><a href="/reados/">{primaryGuide.title}</a></h3><p>{primaryGuide.description}</p><a href="/reados/">Explore ReadOS →</a></div></article>
-      <article class="resource"><p class="eyebrow">Tools</p><h3><a href="/tools/">Calculators and decision tools</a></h3><p>Practical browser-based tools for manufacturing, estimating, operations, engineering and other business decisions.</p><a href="/tools/">Explore tools →</a></article>
+      <article class="resource"><HomeResourceVisual kind="reados" /><div class="resource__body"><p class="eyebrow">READOS · {primaryGuide.chapters.length} chapters</p><h3><a href="/reados/">{primaryGuide.title}</a></h3><p>{primaryGuide.description}</p><a href="/reados/">Explore READOS →</a></div></article>
+      <article class="resource"><HomeResourceVisual kind="toolos" /><div class="resource__body"><p class="eyebrow">TOOLOS</p><h3><a href="/tools/">Calculators and decision tools</a></h3><p>Practical browser-based tools for manufacturing, estimating, operations, engineering and other business decisions.</p><a href="/tools/">Explore TOOLOS →</a></div></article>
     </div>
   </Section>
 
@@ -213,14 +214,13 @@ const navigable=[
   .principle{display:grid;grid-template-columns:2rem 1fr;gap:1rem;padding:1.2rem 0;border-bottom:1px solid var(--line)}
   .principle>span{color:var(--accent);font-size:.86rem}.principle h3{font-size:1.05rem}.principle p{font-size:.93rem;color:var(--ink-2);margin:.4rem 0 0}
   .software{padding:2.5rem 0 0;border-top:1px solid var(--line);margin-top:3rem}
-  .resource-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
-  .resource{border:1px solid var(--line);padding:1.5rem;display:flex;flex-direction:column;gap:.7rem}
-  .resource h3{font-size:var(--step-1)}.resource h3 a{text-decoration:none}.resource p:not(.eyebrow){font-size:.94rem;color:var(--ink-2)}.resource>a,.resource>div>a{color:var(--accent);text-decoration:none;font-size:.9rem;margin-top:auto}
-  .resource--book{display:grid;grid-template-columns:75px 1fr;gap:1rem;grid-column:span 1}
-  .resource--book img{width:75px;height:auto}.resource--book div{display:flex;flex-direction:column;gap:.5rem}
+  .resource-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+  .resource{border:1px solid var(--line);display:flex;flex-direction:column;min-width:0}
+  .resource__body{padding:1.5rem;display:flex;flex-direction:column;gap:.7rem;flex:1}
+  .resource h3{font-size:var(--step-1)}.resource h3 a{text-decoration:none}.resource p:not(.eyebrow){font-size:.94rem;color:var(--ink-2)}.resource__body>a{color:var(--accent);text-decoration:none;font-size:.9rem;margin-top:auto;padding-top:.6rem}
   .latest-insights{margin-top:4rem}.latest-insights .section-head h3{font-size:var(--step-2)}
   .insight-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem}
-  @media(max-width:1050px){.information-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.industry-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.resource-grid{grid-template-columns:1fr 1fr}.resource--book{grid-column:span 2}.about-grid{gap:2.5rem}}
+  @media(max-width:1050px){.information-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.industry-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.about-grid{gap:2.5rem}}
   @media(max-width:860px){:global(.home-hero__inner){grid-template-columns:1fr}.home-hero__visual{max-width:580px}.about-grid{grid-template-columns:1fr}}
-  @media(max-width:640px){.service-grid,.information-grid,.industry-grid,.enquiry-list,.insight-grid,.resource-grid{grid-template-columns:1fr}.resource--book{grid-column:auto}.service-card__expansion ul{columns:1}.section-navigation{top:var(--header-h)}}
+  @media(max-width:640px){.service-grid,.information-grid,.industry-grid,.enquiry-list,.insight-grid,.resource-grid{grid-template-columns:1fr}.service-card__expansion ul{columns:1}.section-navigation{top:var(--header-h)}}
 </style>
