@@ -175,7 +175,7 @@ The articles on [data readiness](/insights/data-readiness-is-a-business-habit/),
 
 ## Bringing it together
 
-AI adoption is a decision about how the business will work, not just about which technology to buy. Start with specific workflows and baselines, match tasks to the strengths of people and AI, choose use cases as deliberate bets on value, readiness, consequence, learning and reversibility, and redesign tasks before changing roles. Keep accountability with people, design oversight around consequences and protect confidential information. Fewer, clearer experiments with real owners will teach a business more than many scattered pilots.
+Adopting AI requires decisions about how people will work as well as which technology to buy. Start with specific workflows and baselines, match tasks to the strengths of people and AI, choose use cases as deliberate bets on value, readiness, consequence, learning and reversibility, and redesign tasks before changing roles. Keep accountability with people, design oversight around consequences and protect confidential information. Fewer, clearer experiments with real owners will teach a business more than many scattered pilots.
 
 ---
 

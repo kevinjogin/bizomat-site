@@ -5,7 +5,7 @@ export const LIBRARY_GUIDES = [
     title: 'Read the Numbers, Understand the Business',
     subtitle: 'A Practical Introduction to Company Financial Statements',
     description: 'An approachable, practical guide to reading financial statements, interpreting cash flow, assessing business quality, and asking better valuation questions.',
-    category: 'Finance & Business',
+    category: 'Finance and Business',
     minutes: 16,
     publisher: 'KEVOS Books',
     cover: '/library/read-the-numbers-understand-the-business/cover.svg',

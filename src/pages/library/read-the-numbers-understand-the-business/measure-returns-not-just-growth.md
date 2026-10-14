@@ -34,7 +34,7 @@ Growth that consumes capital at poor returns can make a business bigger without 
 
 ### Key takeaway
 
-**The strongest businesses do not merely grow—they use capital productively and maintain that performance without excessive risk.**
+**Look for businesses that use capital productively and maintain that performance as they grow, without taking excessive risk.**
 
 ### Quick reference
 

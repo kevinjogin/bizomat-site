@@ -139,7 +139,7 @@ For a small business, begin with one number that regularly differs between scree
 
 Then select the simplest mechanism that meets those requirements. A direct expression may remove unnecessary stored state. A maintained summary may improve a measured bottleneck. A frozen result may preserve an agreement. Each is defensible when its purpose and maintenance contract are clear.
 
-A database should be able to explain both why a number has its value and why it changes—or does not change—when its inputs evolve. That explanation is what turns a convenient calculated column into a reliable part of the business record.
+A database should make it possible to explain how a number was calculated and whether a change in its inputs should change the result. That explanation helps people check and rely on the business record.
 
 ---
 

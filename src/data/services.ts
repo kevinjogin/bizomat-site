@@ -14,7 +14,7 @@ export interface ServiceGroup {
 export const SERVICE_GROUPS: ServiceGroup[] = [
   {
     id: 'engineering-cad',
-    title: 'Engineering & CAD Support',
+    title: 'Engineering and CAD Support',
     short: 'CAD, SolidWorks, drawing updates, production documentation and design-for-manufacture support.',
     summary:
       'Clear, accurate engineering documentation that production, suppliers and customers can work from. Suited to backlogs of drawing changes, products that need proper documentation, or designs that need to be made easier to manufacture.',
@@ -105,11 +105,11 @@ export interface ServicePackage {
 }
 
 export const PACKAGES: ServicePackage[] = [
-  { title: 'Drawing / CAD Update', price: 'From A$250', minPrice: 250, service: 'Engineering / CAD', description: 'Revisions, updates or clean-up of existing models and drawings.' },
+  { title: 'Drawing and CAD Update', price: 'From A$250', minPrice: 250, service: 'Engineering / CAD', description: 'Revisions, updates or clean-up of existing models and drawings.' },
   { title: 'Manufacturing Documentation Package', price: 'From A$600', minPrice: 600, service: 'Manufacturing Support', description: 'Drawings and documentation prepared so a part or assembly can be made consistently.' },
-  { title: 'SOP / Work Instruction Package', price: 'From A$350', minPrice: 350, service: 'Operations Improvement', description: 'Clear, usable standard operating procedures or work instructions for a defined task.' },
+  { title: 'Procedures and Work Instructions', price: 'From A$350', minPrice: 350, service: 'Operations Improvement', description: 'Clear, usable standard operating procedures or work instructions for a defined task.' },
   { title: 'Process Improvement Review', price: 'From A$750', minPrice: 750, service: 'Operations Improvement', description: 'A structured review of a process, with findings and practical recommendations.' },
-  { title: 'Jig / Fixture Concept Package', price: 'From A$700', minPrice: 700, service: 'Manufacturing Support', description: 'Concept design for a jig or fixture to improve repeatability, speed or safety.' },
+  { title: 'Jig or Fixture Concept Package', price: 'From A$700', minPrice: 700, service: 'Manufacturing Support', description: 'Concept design for a jig or fixture to improve repeatability, speed or safety.' },
   { title: 'Engineering Support Day', price: 'From approx. A$750', minPrice: 750, service: 'Engineering / CAD', description: 'A day of engineering, CAD, documentation or improvement support on agreed tasks.' },
   { title: 'Small Engineering Improvement Project', price: 'Quoted to scope', service: 'Project Support', description: 'A defined improvement project, scoped and quoted before work begins.' },
   { title: 'Ongoing Technical Support', price: 'Monthly retainer available', service: 'Ongoing Support', description: 'Regular engineering and documentation support on an agreed monthly basis.' },

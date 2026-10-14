@@ -66,7 +66,7 @@ Asking for firm quotes before the business is ready seems to save time. Often th
 
 ## The cost of never deciding
 
-The opposite risk is **permanent discovery**: continuing to gather information because learning feels safer than deciding. More meetings, more demonstrations, another round of questions. Each step feels prudent, but market information is only valuable when it helps the business make a decision. If nobody can say what decision the next round of information will unlock, it is probably time to move on.
+The opposite risk is **permanent discovery**: continuing to gather information because learning feels safer than deciding. More meetings, more demonstrations, another round of questions. Each step feels prudent, but market information is only valuable when it helps the business make a decision. If nobody can say what decision the next round of information will help them make, it is probably time to move on.
 
 The practical threshold is not perfect knowledge. It is **decision sufficiency**: enough understanding to ask the next question responsibly. Each stage should reduce a specific uncertainty and end with a clear decision to proceed, change the requirement or stop.
 

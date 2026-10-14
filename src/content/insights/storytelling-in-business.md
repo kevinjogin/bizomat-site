@@ -66,7 +66,7 @@ Jennifer Aaker and Andy Smith's book *The Dragonfly Effect* (2010) describes fou
 1. **Focus**: have a clear, specific goal. What do you want the story to achieve?
 2. **Grab attention**: make the story stand out through surprise, visuals, emotion or relevance.
 3. **Engage**: create a personal connection so the audience cares and relates.
-4. **Take action**: empower the audience to do something, whether buying, enquiring, sharing, joining or changing behaviour.
+4. **Take action**: give the audience a clear next step, whether buying, enquiring, sharing, joining or changing behaviour.
 
 **An example:** a tea brand in India wanted a distinct voice in a crowded category dominated by established brands (focus). It built a long-running campaign around civic awakening, encouraging people to vote, question bureaucracy and support women's rights (attention). The issues resonated with millions who wanted change, and people shared their own stories on social media (engagement). The campaign built strong brand recall and affection (action).
 

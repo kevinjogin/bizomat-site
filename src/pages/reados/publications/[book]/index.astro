@@ -18,7 +18,7 @@ const schema = { '@type': 'Book', '@id': new URL(href, SITE.url).href + '#book',
   url: new URL(href, SITE.url).href, isAccessibleForFree: true,
   hasPart: chapters.map(ch => ({ '@type': 'Chapter', name: ch.data.title, position: ch.data.order, url: new URL(publicationChapterHref(book.id, ch.data.chapterSlug), SITE.url).href })) };
 ---
-<BaseLayout title={`${book.data.title} — ReadOS`} description={book.data.description} canonical={href} schema={[schema]}
+<BaseLayout title={`${book.data.title} (ReadOS)`} description={book.data.description} canonical={href} schema={[schema]}
   breadcrumbs={[{label:'ReadOS',href:'/reados/'},{label:book.data.title,href}]}>
   <Container>
     <nav class="publication-crumb" aria-label="Publication navigation"><a href="/reados/">← ReadOS</a><a href={`/reados/#${book.data.category.toLowerCase()}`}>{book.data.category}</a></nav>

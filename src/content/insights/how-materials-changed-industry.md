@@ -152,7 +152,7 @@ This is an illustrative example. A manufacturer of food processing equipment use
 
 ## Bringing it together
 
-Coke iron, bulk steel, aluminium, plastics and engineered timber transformed what engineers could build because new processes made them cheaper and their properties reliable. Their history shows that substitutions are often forced, that process innovation creates markets, that outsiders can unlock change, that impurities and chemistry matter and that new materials bring new risks. For manufacturers today, the practical lessons are to manage material risks, qualify substitutes, specify materials precisely and weigh recyclability and carbon alongside cost and performance.
+Coke iron, bulk steel, aluminium, plastics and engineered timber transformed what engineers could build because new processes made them cheaper and their properties reliable. Their history shows that substitutions are often forced, that process innovation creates markets, that people outside an industry can introduce useful changes, that impurities and chemistry matter and that new materials bring new risks. For manufacturers today, the practical lessons are to manage material risks, qualify substitutes, specify materials precisely and weigh recyclability and carbon alongside cost and performance.
 
 ---
 

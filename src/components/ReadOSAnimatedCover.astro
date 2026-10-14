@@ -10,7 +10,7 @@ const palettes:Record<string,[string,string,string]>={
  Business:['#382c1f','#c38e36','#ffdb8a'],
  Products:['#18383f','#3ca0b2','#b2f3ec'],
  Ideas:['#302344','#9566c1','#f0c9fa'],
- 'Finance & Business':['#382c1f','#c38e36','#ffdb8a']
+ 'Finance and Business':['#382c1f','#c38e36','#ffdb8a']
 };
 const palette=palettes[category]??palettes.Business;
 const hash=[...slug].reduce((a,c)=>(Math.imul(a,33)+c.charCodeAt(0))>>>0,5381);
@@ -29,7 +29,7 @@ const titleLines=chunks.slice(0,6);
 const displaySize=titleLines.length>=5?22:26;
 const nodes=Array.from({length:9},(_,i)=>({x:45+((hash+i*97)%268),y:300+((hash+i*53)%144)}));
 const bars=Array.from({length:6},(_,i)=>({x:43+i*46,height:35+((hash+i*31)%100)}));
-const mode=category==='Engineering'?'engineering':category==='Manufacturing'?'manufacturing':category==='Operations'?'operations':category==='Projects'?'projects':category==='Technology'?'technology':category==='Business'||category==='Finance & Business'?'business':category==='Products'?'products':'ideas';
+const mode=category==='Engineering'?'engineering':category==='Manufacturing'?'manufacturing':category==='Operations'?'operations':category==='Projects'?'projects':category==='Technology'?'technology':category==='Business'||category==='Finance and Business'?'business':category==='Products'?'products':'ideas';
 ---
 <svg class:list={["animated-cover", `reados-speed-${hash%4}`]} viewBox="0 0 360 490" role="img" aria-label={`Animated ReadOS cover: ${title}`} xmlns="http://www.w3.org/2000/svg">
  <defs>

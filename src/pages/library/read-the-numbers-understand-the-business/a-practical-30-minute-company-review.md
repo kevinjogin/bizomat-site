@@ -53,5 +53,5 @@ One warning sign may have a reasonable explanation. Several warnings together de
 
 **A good first-pass review turns financial statements into a few testable questions about quality, resilience, cash generation and price.**
 
-This guide is designed to help you ask those questions—not to replace full financial analysis, professional advice or the company's primary disclosures.
+Use this guide to frame your questions. Full financial analysis, professional advice and the company's primary disclosures remain essential.
 ---

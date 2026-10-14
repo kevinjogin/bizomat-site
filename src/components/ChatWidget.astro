@@ -17,7 +17,7 @@ const prompts = ['Can KEVOS support my project?', 'I need engineering or CAD sup
 <div class:list={['assistant', `assistant--${mode}`]} data-assistant data-mode={mode} data-endpoint={SITE.assistant.endpoint}>
   {
     mode === 'floating' && (
-      <button class="assistant__launcher" type="button" aria-expanded="false" aria-controls="assistant-panel" data-assistant-open>
+      <button class="assistant__launcher" type="button" aria-label="Ask KEVOS" aria-expanded="false" aria-controls="assistant-panel" data-assistant-open>
         <img src={chatIcon} alt="" width="34" height="34" decoding="async" />
         <span>Ask KEVOS</span>
       </button>
@@ -29,7 +29,7 @@ const prompts = ['Can KEVOS support my project?', 'I need engineering or CAD sup
       <img class="assistant__avatar" src={chatIcon} alt="" width="46" height="46" decoding="async" />
       <div class="assistant__heading">
         {mode === 'page' ? <h1 id="assistant-title">{name}</h1> : <h2 id="assistant-title">{name}</h2>}
-        <p><span class="assistant__dot" aria-hidden="true"></span>Engineering &amp; project enquiry support</p>
+        <p><span class="assistant__dot" aria-hidden="true"></span>Engineering and project enquiries</p>
       </div>
       <div class="assistant__actions">
         {
@@ -84,7 +84,7 @@ const prompts = ['Can KEVOS support my project?', 'I need engineering or CAD sup
 
     <form class="assistant__composer" data-assistant-form>
       <label for={`assistant-input-${mode}`} class="visually-hidden">Ask a question about KEVOS</label>
-      <textarea id={`assistant-input-${mode}`} rows="1" maxlength="600" placeholder="Describe your requirement or project…" autocomplete="off" data-assistant-input></textarea>
+      <textarea id={`assistant-input-${mode}`} rows="1" maxlength="600" placeholder="Describe your requirement or project" autocomplete="off" data-assistant-input></textarea>
       <button type="submit" class="assistant__submit" aria-label="Send question">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
       </button>

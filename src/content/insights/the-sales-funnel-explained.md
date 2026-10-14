@@ -99,7 +99,7 @@ A word of caution: funnel numbers are easy to inflate. Adding every business car
 
 The single most useful improvement most businesses can make to their funnel is to define each stage by what must be true for an opportunity to be there, rather than by how hopeful everyone feels. Clear entry and exit criteria make the numbers meaningful and the forecasts more reliable.
 
-| Stage | An opportunity belongs here when… | It moves on when… |
+| Stage | Evidence needed to enter | Evidence needed to move on |
 | --- | --- | --- |
 | Identified | We have a named person or organisation who matches our ideal customer description | We have had a real conversation about their situation |
 | Qualified | A need is confirmed in their words, we know who decides, and timing and budget are plausible | They have asked for, or agreed to receive, a proposal |

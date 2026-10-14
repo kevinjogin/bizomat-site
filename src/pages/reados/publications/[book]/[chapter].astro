@@ -13,7 +13,7 @@ const {Content}=await render(chapter);
 const href=publicationChapterHref(book.id,chapter.data.chapterSlug);
 const previous=chapters[index-1],next=chapters[index+1];
 ---
-<BaseLayout title={`${chapter.data.title} — ${book.data.title}`} description={chapter.data.description} canonical={href}
+<BaseLayout title={`${chapter.data.title} (${book.data.title})`} description={chapter.data.description} canonical={href}
  breadcrumbs={[{label:'ReadOS',href:'/reados/'},{label:book.data.title,href:publicationHref(book.id)},{label:chapter.data.title,href}]}
  schema={[{'@type':'Chapter',name:chapter.data.title,position:chapter.data.order,description:chapter.data.description,inLanguage:book.data.language,url:new URL(href,SITE.url).href,isPartOf:{'@type':'Book','@id':new URL(publicationHref(book.id),SITE.url).href+'#book',name:book.data.title},author:{'@id':SITE.url+'/#organization'}}]}>
  <Container size="narrow" class="authored-reader">

@@ -10,7 +10,7 @@ const previous=guide.chapters[number-2],next=guide.chapters[number];
 const currentURL=chapterHref(current.slug);
 const description=`Chapter ${number} of ${guide.chapters.length} in ${guide.title}. Learn ${current.title.toLowerCase()} with clear explanations and quick references.`;
 ---
-<BaseLayout title={`${current.title} — ${guide.title}`} description={description} canonical={currentURL}
+<BaseLayout title={`${current.title} (${guide.title})`} description={description} canonical={currentURL}
   breadcrumbs={[{label:'Home',href:'/'},{label:'Library',href:'/library/'},{label:guide.title,href:`/library/${guide.slug}/`},{label:current.title,href:currentURL}]}
   schema={[{'@type':'Article',headline:current.title,description,author:{'@id':'https://kevos.com/#organization'},publisher:{'@id':'https://kevos.com/#organization'},isPartOf:{'@type':'Book',name:guide.title,url:`https://kevos.com/library/${guide.slug}/`}}]}>
   <div class="reading-shell" data-library-reader>

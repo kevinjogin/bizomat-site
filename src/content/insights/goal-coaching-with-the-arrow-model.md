@@ -73,7 +73,7 @@ The DILO usually reveals far more wasted time than people expect, and it provide
 
 ### Identify your signature strengths
 
-Understanding your weaknesses is important, but so is understanding your strengths. **Signature strengths**, a concept from positive psychology associated with Martin Seligman and Christopher Peterson, are the strengths that feel most natural and energising to you. Knowing them builds confidence and helps you choose strategies that play to them. Many people have strengths they rarely use at work. Identifying them can unlock untapped potential.
+Understanding your weaknesses is important, but so is understanding your strengths. **Signature strengths**, a concept from positive psychology associated with Martin Seligman and Christopher Peterson, are the strengths that feel most natural and energising to you. Knowing them builds confidence and helps you choose strategies that play to them. People may have strengths they rarely use at work. Naming those strengths helps them find tasks where they can put them to use.
 
 ## R: Reflection
 
@@ -121,7 +121,7 @@ Big goals usually need help. Identify the people around you who are capable, com
 
 ### Set your top three priorities
 
-From your top drivers, choose the three priorities that will make the biggest difference: your game-changers.
+From your main drivers, choose three priorities where a change would make the biggest difference.
 
 ### Design an ideal day
 

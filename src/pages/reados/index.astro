@@ -2,6 +2,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
 import ReadOSAnimatedCover from '../../components/ReadOSAnimatedCover.astro';
+import Hero from '../../components/Hero.astro';
+import MotionVisual from '../../components/MotionVisual.astro';
 import { LIBRARY_GUIDES } from '../../data/library.ts';
 import { getInsights } from '../../utils/content.ts';
 import { buildReadOSCollections, readosCollectionHref } from '../../utils/reados-collections.ts';
@@ -21,13 +23,11 @@ const categories=[
 const count=books.length+LIBRARY_GUIDES.length+publications.length;
 const totalChapters=books.reduce((n,book)=>n+book.chapters.length,0)+LIBRARY_GUIDES.reduce((n,g)=>n+g.chapters.length,0)+publications.reduce((n,p)=>n+p.chapters.length,0);
 ---
-<BaseLayout title="ReadOS — Books & Guides by Topic" description="Browse KEVOS ReadOS books by Engineering, Manufacturing, Operations, Projects, Technology, Business, Products and Ideas.">
-  <section class="reados-hero"><Container>
-    <p class="eyebrow">KEVOS / READOS</p>
-    <h1>Books and guides, <em>organised by topic.</em></h1>
-    <p class="lead">Explore practical knowledge in focused reading collections. Choose a subject, open a book and move through its chapters at your own pace.</p>
-    <div class="reados-summary"><span><strong>{count}</strong> books & guides</span><span><strong>{totalChapters}</strong> chapters</span><span><strong>{categories.length}</strong> subjects</span></div>
-  </Container></section>
+<BaseLayout title="ReadOS books and guides by topic" description="Browse KEVOS ReadOS books by Engineering, Manufacturing, Operations, Projects, Technology, Business, Products and Ideas.">
+  <Hero eyebrow="KEVOS READOS" title="Books and guides, <em>organised by topic.</em>" lead="Choose a subject, find a book and read at your own pace. Explore practical guides to engineering, technology and business, one chapter at a time.">
+    <div class="reados-summary"><span><strong>{count}</strong> books and guides</span><span><strong>{totalChapters}</strong> chapters</span><span><strong>{categories.length}</strong> subjects</span></div>
+    <MotionVisual page="reados" slot="visual" />
+  </Hero>
   <section class="topics"><Container>
     <h2>Browse by topic</h2>
     <nav class="topic-links" aria-label="ReadOS subjects">
@@ -41,7 +41,7 @@ const totalChapters=books.reduce((n,book)=>n+book.chapters.length,0)+LIBRARY_GUI
       const authored=publications.filter(p=>p.book.data.category===c.name);
       if(!selected.length&&!featured.length&&!authored.length)return null;
       return <section class="category" id={c.slug}>
-        <div class="category-heading"><div><p class="eyebrow">READOS / {c.name.toUpperCase()}</p><h2>{c.name}</h2><p>{c.description}</p></div><span class="count">{selected.length+featured.length+authored.length} publications</span></div>
+        <div class="category-heading"><div><p class="eyebrow">READOS {c.name.toUpperCase()}</p><h2>{c.name}</h2><p>{c.description}</p></div><span class="count">{selected.length+featured.length+authored.length} publications</span></div>
         <div class="cover-grid">
           {authored.map(({book,chapters})=><article class="cover-card">
             <a class="cover-link" href={publicationHref(book.id)} aria-label={`Read ${book.data.title}`}><ReadOSAnimatedCover title={book.data.title} category={book.data.category} slug={book.id} motif={book.data.coverVariant} publicationLabel="KEVOS ORIGINAL BOOK" compact/></a>
@@ -67,12 +67,10 @@ const totalChapters=books.reduce((n,book)=>n+book.chapters.length,0)+LIBRARY_GUI
         </div>
       </section>;
     })}
-    <p class="note">ReadOS collections retain the full original knowledge articles as chapters. Original publication links remain available.</p>
+    <p class="note">Each collection brings together complete KEVOS articles as chapters. You can still read the articles at their original links.</p>
   </Container></section>
 </BaseLayout>
 <style>
-.reados-hero{padding:clamp(3rem,7vw,6rem) 0;border-bottom:1px solid var(--line)}
-.reados-hero h1{max-width:20ch;margin:1rem 0}.reados-hero .lead{max-width:65ch}
 .reados-summary{display:flex;flex-wrap:wrap;gap:1.2rem;margin-top:2.2rem;color:var(--muted);font-size:.93rem}.reados-summary strong{color:var(--ink);font-size:1.4rem}
 .topics{padding:2.5rem 0;border-bottom:1px solid var(--line)}.topics h2{font-size:var(--step-2);margin-bottom:1.3rem}
 .topic-links{display:flex;flex-wrap:wrap;gap:.6rem}.topic-links a{border:1px solid var(--line-strong);padding:.7rem 1rem;text-decoration:none;background:var(--surface);font-weight:600}.topic-links a:hover{color:var(--accent);border-color:var(--accent)}

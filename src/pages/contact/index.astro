@@ -21,23 +21,23 @@ const next = [
 ---
 
 <BaseLayout
-  title="ConnectOS — Contact KEVOS"
-  description="Request a quote or discuss a project with KEVOS: engineering and CAD support, manufacturing support, operations improvement, project support and Factory Fix engagements."
+  title="Contact KEVOS through ConnectOS"
+  description="Request a quote or discuss your project with KEVOS. Get help with engineering and CAD, manufacturing, operations improvement, project delivery or Factory Fix."
   breadcrumbs={crumbs}
   canonical="/contact/"
   schema={[{ '@type': 'ContactPage', name: 'Contact KEVOS', url: `${SITE.url}/contact/`, about: { '@id': `${SITE.url}/#organization` } }]}
 >
-  <Hero eyebrow="ConnectOS / Get in touch" title="Tell us about the <em>job</em>." lead="Two easy ways to start: send the project details below, or book a meeting to talk it through first.">
+  <Hero eyebrow="ConnectOS enquiries" title="Tell us about the <em>job</em>." lead="Send your project details using the form below, or book a meeting if you would like to talk it through first.">
     <MotionVisual page="contact" slot="visual" priority />
     <Breadcrumb items={crumbs} slot="before" />
     <Fragment slot="actions">
       <a class="path path--primary" href="#quote-form" data-cta="contact-path-form">
         <span class="path__label">Send project details</span>
-        <span class="path__hint">Quote form · below</span>
+        <span class="path__hint">Use the form below</span>
       </a>
       <a class="path" href={SITE.booking.url} target="_blank" rel="noopener noreferrer" data-cta="contact-path-meeting">
         <span class="path__label">{SITE.booking.label} <span aria-hidden="true">↗</span></span>
-        <span class="path__hint">Proton Calendar · new tab</span>
+        <span class="path__hint">Opens Proton Calendar in a new tab</span>
       </a>
     </Fragment>
   </Hero>
