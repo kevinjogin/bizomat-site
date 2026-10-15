@@ -1,11 +1,13 @@
 /**
  * KEVOS® proof of work: the engineering record behind KEVOS®, shown on the homepage (/#work).
- * Reworded from the published project records at kevos.ghost.io (tag: kevos-work), newest first.
- * Organisation names identify where the work took place; status states honestly how far each project went.
- * Nothing here may be invented: facts, figures and organisation details come from those records,
- * plus widely known public descriptions of the named organisations.
+ * Reworded from the published project records at kevos.ghost.io (tag: kevos-work) and, for the capital
+ * projects, the founder's professional record, newest first. Organisation names identify where the work
+ * took place; status states honestly how far each project went. Nothing here may be invented, and
+ * commercial figures are not shown.
  */
-export type ProjectSector = 'operations' | 'machines' | 'plant' | 'civil' | 'product' | 'defence' | 'heavy';
+export type ProjectSector = 'capital' | 'operations' | 'machines' | 'plant' | 'civil' | 'product' | 'defence' | 'heavy';
+/** Branded illustration used where no project image can be shown (src/components/WorkIllustration.astro). */
+export type ProjectIllustration = 'jig-stripping' | 'louvre-lines' | 'powdercoat';
 export type ProjectStatus = 'delivered' | 'design' | 'paused';
 export type ProjectService = 'engineering-cad' | 'manufacturing' | 'operations' | 'project-support';
 
@@ -15,6 +17,8 @@ export type Project = {
   headline: string;
   /** Describes the project image (public/proof-of-work, built by scripts/build-work-visuals.mjs). */
   visualAlt: string;
+  /** Illustrative KEVOS visual shown instead of a converted project image. */
+  illustration?: ProjectIllustration;
   /** Plain descriptive project name. */
   title: string;
   client: string;
@@ -43,6 +47,7 @@ export type Project = {
 };
 
 export const PROJECT_SECTORS: { id: ProjectSector; label: string }[] = [
+  { id: 'capital', label: 'Capital projects' },
   { id: 'heavy', label: 'Heavy industry and mining' },
   { id: 'machines', label: 'Machines and automation' },
   { id: 'plant', label: 'Plant and facilities' },
@@ -65,8 +70,9 @@ export const PROJECTS: Project[] = [
     visualAlt: 'Abstract illustration of open pages and flowing lines, representing coordinated project information',
     headline: 'When every project needs the same toolroom',
     title: 'Multi-project engineering coordination',
-    client: 'Manufacturing business',
-    about: 'Manufacturer running capital, tooling, maintenance and improvement projects in parallel.',
+    client: 'Building-hardware manufacturer',
+    about: 'Australian building-hardware manufacturer running capital, tooling, maintenance and improvement projects in parallel.',
+    location: 'Sydney, NSW',
     industry: 'Manufacturing operations',
     sector: 'operations',
     years: '2026',
@@ -83,7 +89,7 @@ export const PROJECTS: Project[] = [
       { title: 'Projects closed properly', text: 'Closure confirmed scope, outstanding actions, final costs, documentation, training and handover to the operating team, with brief lessons learned for future estimates.' },
     ],
     deliverables: ['Project register: status, owner, risk and next action', 'Priority and resource-conflict coordination', 'Cost tracking against approved allocations', 'Make-or-buy and outsourcing input', 'Contractor and supplier coordination', 'Management updates and escalations', 'Project handover and closure records'],
-    outcome: 'Clearer delivery visibility across a growing mix of engineering, tooling, maintenance and improvement work, and a better basis for deciding where resources went. One capital project, a jig-stripping facility, closed very close to its approved allocation of about A$120,000.',
+    outcome: 'Clearer delivery visibility across a growing mix of engineering, tooling, maintenance and improvement work, and a better basis for deciding where resources went. Capital work, including the dual-line jig-stripping facility, was tracked through to close-out against its approved budget.',
     value: 'Reporting moved from explaining delays after the fact to asking for the decisions that prevent them.',
     relevantIf: ['Several engineering projects compete for the same people, contractors or shutdown windows', 'Management keeps asking what is blocked and what it is costing', 'Projects drift without a clear owner or a proper close-out'],
     service: 'project-support',
@@ -117,6 +123,100 @@ export const PROJECTS: Project[] = [
     relevantIf: ['Critical parts or tooling exist only as physical samples or in someone’s head', 'A repetitive manual task is limiting output or consistency', 'You want an automation idea assessed before committing capital'],
     service: 'manufacturing',
     skills: ['Reverse engineering', 'Automation concepts', 'Manufacturing drawings', 'Process improvement'],
+  },
+  {
+    id: 'jig-stripping-facility',
+    visualAlt: 'Illustration of two ultrasonic stripping tanks served by an overhead gantry hoist',
+    illustration: 'jig-stripping',
+    headline: 'Two ultrasonic stripping lines, delivered under budget',
+    title: 'Dual-line ultrasonic jig-stripping facility',
+    client: 'Building-hardware manufacturer',
+    about: 'Australian building-hardware manufacturer with in-house coating operations.',
+    location: 'Sydney, NSW',
+    industry: 'Building-hardware manufacturing',
+    sector: 'capital',
+    years: '2024–2026',
+    role: 'Operations Excellence Engineer, capital project coordination',
+    status: 'delivered',
+    statusLabel: 'Delivered under budget',
+    summary: 'A capital installation of two ultrasonic stripping and wash lines, with gantries, hoists and segregated chemical transfer, taken from contractor scopes to handover.',
+    brief: 'Production jigs collect coating build-up and must be stripped clean to stay in service. The business invested in a dedicated facility: two ultrasonic stripping and wash lines, lifting equipment to move jig loads between tanks, and chemical transfer that keeps incompatible chemistries apart. It had to be installed safely around live production, through specialist trades, within an approved capital budget.',
+    approach: [
+      { title: 'Scopes before quotes', text: 'Contractor scopes were defined for the tanks, lifting equipment, chemical transfer and services, so quotations could be compared like for like.' },
+      { title: 'Options tested on paper', text: 'Pump options for chemical transfer were assessed for duty, safety and maintenance before selection.' },
+      { title: 'Segregation and lifting designed in', text: 'Chemical-transfer systems were kept segregated, and gantries and hoists were specified to move jig loads safely between stripping and wash stages.' },
+      { title: 'Specialist trades coordinated', text: 'Mechanical, electrical, plumbing and specialist installers were sequenced around production, with hoist safety requirements built into commissioning.' },
+      { title: 'Cost visible to the executive', text: 'Committed and forecast cost were reported to the executive team throughout, so every decision was made with the budget in view.' },
+    ],
+    deliverables: ['Contractor scopes of work', 'Quotation comparison and supplier selection', 'Pump option assessment', 'Segregated chemical-transfer arrangement', 'Gantry and hoist integration', 'Trade and installation coordination', 'Commissioning and hoist-safety requirements', 'Executive cost reporting', 'Operational handover'],
+    outcome: 'Two ultrasonic stripping and wash lines were installed, commissioned and handed over to production, and the project was completed under its approved budget.',
+    value: 'Clear scopes and visible cost let a multi-trade capital project finish under budget, without surprises.',
+    relevantIf: ['You are installing process equipment that needs several specialist trades', 'Contractor scopes must be written so quotes can be compared fairly', 'Management wants cost visibility before the invoices arrive'],
+    service: 'project-support',
+    note: 'Commercial figures are not shown. Investment decisions and approvals sat with management.',
+    skills: ['Capital project delivery', 'Contractor scoping', 'Chemical transfer', 'Executive cost reporting'],
+  },
+  {
+    id: 'louvre-manufacturing-lines',
+    visualAlt: 'Illustration of single and double louvre production lines feeding a finished louvre panel',
+    illustration: 'louvre-lines',
+    headline: 'Two louvre production lines, from layout to handover',
+    title: 'Single- and double-louvre manufacturing lines',
+    client: 'Building-hardware manufacturer',
+    about: 'Australian building-hardware manufacturer with in-house coating operations.',
+    location: 'Sydney, NSW',
+    industry: 'Building-hardware manufacturing',
+    sector: 'capital',
+    years: '2024–2026',
+    role: 'Operations Excellence Engineer, capital project coordination',
+    status: 'delivered',
+    statusLabel: 'Handed over to production',
+    summary: 'New single- and double-louvre production lines taken through layout, equipment, contractor works, trials and qualification to a production handover with standard work in place.',
+    brief: 'Bringing louvre manufacturing into production meant more than installing equipment. The lines needed a workable layout, coordinated contractor works, trials and qualification, and the business systems, standard work and trained operators to run them well from the first shift.',
+    approach: [
+      { title: 'Layout and equipment', text: 'Line layouts and equipment were coordinated for single- and double-louvre production, with contractor works scheduled around the factory.' },
+      { title: 'Trials and qualification', text: 'The lines were trialled and qualified against controlled equipment-qualification documents and machine instructions before release.' },
+      { title: 'Systems ready on day one', text: 'ERP parts, kit and routing requirements were defined for the systems team, so orders, materials and costs flowed from the first production run.' },
+      { title: 'Lean from the start', text: 'Standard work, operator training, Kanban and value-stream mapping were introduced with the lines, and product costing was supported with time-study data.' },
+    ],
+    deliverables: ['Line layout and equipment coordination', 'Contractor works coordination', 'Trials and equipment qualification', 'Controlled machine instructions', 'ERP parts, kit and routing requirements', 'Standard work and operator training', 'Kanban and value-stream mapping', 'Product costing support', 'Operational handover'],
+    outcome: 'Both louvre lines were qualified and handed over to production with standard work, trained operators and system data in place.',
+    value: 'Lines that start with standard work, trained people and correct system data reach stable output sooner.',
+    relevantIf: ['You are introducing a new product line or production cell', 'New equipment is in, but routings, training and standard work lag behind', 'You want Lean practices built in from day one'],
+    service: 'project-support',
+    skills: ['Production line setup', 'Equipment qualification', 'ERP routing', 'Lean implementation'],
+  },
+  {
+    id: 'custom-colour-powdercoating',
+    visualAlt: 'Illustration of jigged parts moving through a powder spray booth and curing oven',
+    illustration: 'powdercoat',
+    headline: 'Custom colours on glass-filled plastic, proven for production',
+    title: 'Custom-colour powdercoating of glass-filled plastic',
+    client: 'Building-hardware manufacturer',
+    about: 'Australian building-hardware manufacturer with in-house coating operations.',
+    location: 'Sydney, NSW',
+    industry: 'Building-hardware manufacturing',
+    sector: 'capital',
+    years: '2024–2026',
+    role: 'Operations Excellence Engineer, process development',
+    status: 'delivered',
+    statusLabel: 'Process validated',
+    summary: 'Specialised process development to powdercoat a Tier 1 range of glass-filled plastic parts in custom colours, from first trials to a validated production finish.',
+    brief: 'Powdercoating glass-filled plastic in custom colours is not routine: the substrate, the finish and the jigging all have to be proven. A Tier 1 product range needed a repeatable process, a large set of purpose-made production jigs and clear project governance, delivered with internal resources.',
+    approach: [
+      { title: 'Coating trials', text: 'Trials established how the glass-filled plastic substrate accepted custom-colour finishes.' },
+      { title: 'Parameters locked in', text: 'Operating parameters were set up and documented so the finish could be repeated run after run.' },
+      { title: 'Finish validated', text: 'Finish quality was validated against the requirements of the Tier 1 range before release.' },
+      { title: 'Jigs at production scale', text: 'A large set of purpose-made production jigs was coordinated so parts could be coated consistently at volume.' },
+      { title: 'Governed with internal resources', text: 'The project ran with internal teams under clear governance, and in-house labour stayed well inside the project allocation.' },
+    ],
+    deliverables: ['Coating trial plan and results', 'Operating-parameter setup', 'Finish validation', 'Production jig program', 'Internal resource planning', 'Project governance and reporting'],
+    outcome: 'A validated custom-colour powdercoating process for the Tier 1 range, delivered with in-house labour well inside its project allocation.',
+    value: 'A proven, documented process turns a difficult finish into a repeatable product offer.',
+    relevantIf: ['A new coating or finishing process must be proven before launch', 'Parts need purpose-made jigs at production scale', 'A process change has to run on internal resources with clear governance'],
+    service: 'manufacturing',
+    note: 'Commercial figures and customer details are not shown.',
+    skills: ['Process development', 'Powder coating', 'Production jigs', 'Project governance'],
   },
   {
     id: 'residential-girraween',

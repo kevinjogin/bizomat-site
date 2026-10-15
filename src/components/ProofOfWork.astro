@@ -28,7 +28,7 @@ const latest = PROJECTS[0].years.slice(-4);
       <li class="work-card" data-sector={p.sector}>
         <article aria-labelledby={`work-${p.id}`}>
           <div class="work-card__top">
-            <WorkVisual id={p.id} alt={p.visualAlt} />
+            <WorkVisual id={p.id} alt={p.visualAlt} illustration={p.illustration} />
             <div class="work-card__lead">
               <p class="work-card__meta"><span>{p.years}</span><span>{sectorLabel[p.sector]}</span></p>
               <h3 id={`work-${p.id}`}>{p.headline}</h3>
@@ -46,7 +46,7 @@ const latest = PROJECTS[0].years.slice(-4);
             <summary><span>Read the full case study</span></summary>
             <div class="case__body">
               <div class="case__main">
-                <WorkVisual id={p.id} alt={p.visualAlt} size="large" caption="Image from the published project record, converted to KEVOS® colours." />
+                <WorkVisual id={p.id} alt={p.visualAlt} size="large" illustration={p.illustration} caption={p.illustration ? 'Illustrative KEVOS® visual. Not an image of the actual project.' : 'Image from the published project record, converted to KEVOS® colours.'} />
                 <section>
                   <h4>The brief</h4>
                   <p>{p.brief}</p>
@@ -105,7 +105,7 @@ const latest = PROJECTS[0].years.slice(-4);
     <a class="case__button" href="/contact/">Start with REACHOS <span aria-hidden="true">→</span></a>
   </div>
 
-  <p class="work-note">Organisation names show where the work took place and do not imply endorsement of KEVOS®. Organisation descriptions are general background. Engineering calculations, certification and statutory approvals remained with the responsible engineers and authorities. Projects that ended at concept or design stage are labelled that way. Only information already published in the KEVOS® project records is shown.</p>
+  <p class="work-note">Organisation names show where the work took place and do not imply endorsement of KEVOS®. Organisation descriptions are general background. Engineering calculations, certification and statutory approvals remained with the responsible engineers and authorities. Projects that ended at concept or design stage are labelled that way, and visuals marked “Illustrative” are not images of the actual project. Commercial figures and client-confidential information are not shown.</p>
 </div>
 
 <script>
@@ -125,7 +125,9 @@ const latest = PROJECTS[0].years.slice(-4);
       matches.forEach((card, i) => { card.hidden = i >= limit; });
       if (more) more.hidden = limit >= matches.length;
       const active = buttons.find((b) => b.dataset.sector === sector);
-      if (count) count.textContent = `Showing ${Math.min(limit, matches.length)} of ${matches.length} ${sector === 'all' ? 'projects' : `${active?.dataset.label ?? ''} projects`}`;
+      const label = active?.dataset.label ?? '';
+      const noun = sector === 'all' ? 'projects' : label.endsWith('projects') ? label : `${label} projects`;
+      if (count) count.textContent = `Showing ${Math.min(limit, matches.length)} of ${matches.length} ${noun}`;
       buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sector === sector)));
     };
     if (filter) filter.hidden = false;

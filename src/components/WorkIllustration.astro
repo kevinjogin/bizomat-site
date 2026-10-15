@@ -1,0 +1,148 @@
+---
+// Branded, animated KEVOS illustrations for projects that have no shareable project image.
+// They are illustrative only and are labelled that way wherever they appear (see WorkVisual.astro).
+import type { ProjectIllustration } from '../data/projects.ts';
+interface Props { kind: ProjectIllustration; uid: string }
+const { kind, uid } = Astro.props;
+const train = (count: number, gap: number, start: number) => Array.from({ length: count }, (_, i) => start + i * gap);
+---
+{kind === 'jig-stripping' && (
+  <svg class="wi" viewBox="0 0 320 200" aria-hidden="true" focusable="false">
+    <text class="wi-tag" x="28" y="22">DUAL-LINE ULTRASONIC STRIPPING</text>
+    <path class="wi-grey" d="M10 172H310" />
+    <path class="wi-orange wi-thick" d="M24 172V36M296 172V36M16 36H304" />
+    <path class="wi-grey" d="M24 58l16-22M296 58l-16-22" />
+    <rect class="wi-well" x="40" y="100" width="100" height="70" />
+    <rect class="wi-well" x="180" y="100" width="100" height="70" />
+    {[90, 230].map((cx) => [0, 1, 2].map((k) => <path class:list={['wi-orange', 'wi-wave', `wi-d${k + 1}`]} d={`M${cx - 22 + k * 4} ${164 - k * 10}Q${cx} ${154 - k * 10} ${cx + 22 - k * 4} ${164 - k * 10}`} />))}
+    <g class="wi-hoist-x">
+      <rect class="wi-fill-orange" x="80" y="31" width="20" height="10" rx="1.5" />
+      <rect class="wi-fill-orange wi-cable" x="89.4" y="41" width="1.2" height="31" />
+      <g class="wi-hoist-y">
+        <path class="wi-orange" d="M70 72H110M76 72V80M86 72V80M94 72V80M104 72V80" />
+        {[76, 86, 94, 104].map((x) => <rect class="wi-part" x={x - 3} y="80" width="6" height="11" rx="1" />)}
+      </g>
+    </g>
+    <rect class="wi-liquid" x="40" y="116" width="100" height="54" />
+    <rect class="wi-liquid" x="180" y="116" width="100" height="54" />
+    <path class="wi-orange wi-thin" d="M40 116q12.5-3 25 0t25 0 25 0 25 0M180 116q12.5-3 25 0t25 0 25 0 25 0" />
+    <rect class="wi-orange" x="40" y="100" width="100" height="70" />
+    <rect class="wi-orange" x="180" y="100" width="100" height="70" />
+    <text class="wi-label" x="90" y="164" text-anchor="middle">STRIP</text>
+    <text class="wi-label" x="230" y="164" text-anchor="middle">WASH</text>
+    <path class="wi-orange wi-flow" d="M58 170V184H124" />
+    <path class="wi-grey wi-flow wi-flow--slow" d="M262 170V184H196" />
+    <circle class="wi-orange" cx="130" cy="184" r="6" />
+    <circle class="wi-grey" cx="190" cy="184" r="6" />
+    <text class="wi-label" x="160" y="197" text-anchor="middle">SEGREGATED TRANSFER</text>
+  </svg>
+)}
+
+{kind === 'louvre-lines' && (
+  <svg class="wi" viewBox="0 0 320 200" aria-hidden="true" focusable="false">
+    <defs>
+      <clipPath id={`${uid}-belt-a`}><rect x="24" y="56" width="226" height="22" /></clipPath>
+      <clipPath id={`${uid}-belt-b`}><rect x="24" y="124" width="226" height="22" /></clipPath>
+    </defs>
+    <text class="wi-tag" x="28" y="22">SINGLE + DOUBLE LOUVRE LINES</text>
+    <path class="wi-orange wi-flow" d="M248 40V32H36V40" />
+    <path class="wi-orange" d="M32 36l4 5 4-5" />
+    <text class="wi-label" x="142" y="45" text-anchor="middle">KANBAN PULL</text>
+    {[78, 146].map((y) => <rect class="wi-belt" x="24" y={y} width="226" height="8" />)}
+    <g clip-path={`url(#${uid}-belt-a)`}>
+      <g class="wi-convey">{train(10, 28, -28).map((x) => <path class="wi-fill-orange" d={`M${x} 78l6-12h4l-6 12z`} />)}</g>
+    </g>
+    <g clip-path={`url(#${uid}-belt-b)`}>
+      <g class="wi-convey wi-convey--slow">{train(10, 28, -28).map((x) => <path class="wi-fill-orange" d={`M${x} 146l6-12h4l-6 12zM${x + 8} 146l6-12h4l-6 12z`} />)}</g>
+    </g>
+    {[50, 105, 160, 215].map((x, i) => [52, 120].map((y) => (
+      <g>
+        <rect class="wi-station" x={x - 16} y={y} width="32" height="24" />
+        <text class="wi-label" x={x} y={y + 15} text-anchor="middle">{`0${i + 1}`}</text>
+      </g>
+    )))}
+    <text class="wi-label" x="26" y="100">SINGLE</text>
+    <text class="wi-label" x="26" y="168">DOUBLE</text>
+    <rect class="wi-orange" x="262" y="44" width="44" height="124" />
+    {Array.from({ length: 9 }, (_, i) => <rect class:list={['wi-fill-orange', 'wi-slat', `wi-d${(i % 3) + 1}`]} x="266" y={54 + i * 12.5} width="36" height="3" />)}
+    <path class="wi-orange wi-check" d="M252 186l5 5 10-11" />
+    <text class="wi-label" x="270" y="190">QUALIFIED</text>
+  </svg>
+)}
+
+{kind === 'powdercoat' && (
+  <svg class="wi" viewBox="0 0 320 200" aria-hidden="true" focusable="false">
+    <defs>
+      <clipPath id={`${uid}-raw`}><rect x="0" y="36" width="140" height="70" /></clipPath>
+      <clipPath id={`${uid}-coated`}><rect x="140" y="36" width="180" height="70" /></clipPath>
+    </defs>
+    <text class="wi-tag" x="28" y="22">CUSTOM-COLOUR POWDERCOAT</text>
+    <path class="wi-orange wi-thick" d="M0 40H320" />
+    <g clip-path={`url(#${uid}-raw)`}>
+      <g class="wi-convey wi-convey--hang">{train(10, 40, -40).map((x) => <g><path class="wi-grey" d={`M${x} 40V70M${x - 8} 70H${x + 8}`} /><rect class="wi-part" x={x - 7} y="72" width="14" height="22" rx="2" /></g>)}</g>
+    </g>
+    <g clip-path={`url(#${uid}-coated)`}>
+      <g class="wi-convey wi-convey--hang">{train(10, 40, -40).map((x) => <g><path class="wi-grey" d={`M${x} 40V70M${x - 8} 70H${x + 8}`} /><rect class="wi-fill-orange" x={x - 7} y="72" width="14" height="22" rx="2" /></g>)}</g>
+    </g>
+    <rect class="wi-booth" x="108" y="52" width="64" height="100" />
+    <path class="wi-grey" d="M114 120h12l4-4h6v10h-6l-4-4" />
+    {[0, 1, 2, 3, 4, 5].map((k) => <circle class:list={['wi-fill-orange', 'wi-spray', `wi-d${(k % 3) + 1}`]} cx="138" cy={112 + (k % 3) * 8} r={1.4 + (k % 2) * 0.6} />)}
+    <rect class="wi-oven" x="204" y="52" width="80" height="100" />
+    {[222, 244, 266].map((x, k) => <path class:list={['wi-orange', 'wi-heat', `wi-d${k + 1}`]} d={`M${x} 140q-5-8 0-16t0-16 0-16`} />)}
+    <text class="wi-label" x="140" y="164" text-anchor="middle">SPRAY</text>
+    <text class="wi-label" x="244" y="164" text-anchor="middle">CURE</text>
+    <path class="wi-grey" d="M10 172H310" />
+    {['#ff6a13', '#f6efe6', '#9c9385', '#c2410c'].map((colour, i) => <rect class="wi-swatch" x={24 + i * 13} y="180" width="10" height="10" fill={colour} />)}
+    <text class="wi-label" x="80" y="189">CUSTOM COLOUR</text>
+  </svg>
+)}
+
+<style>
+  .wi{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .wi-tag{fill:#9c9385;font-family:var(--font-mono);font-size:7px;letter-spacing:.14em}
+  .wi-label{fill:#9c9385;font-family:var(--font-mono);font-size:6.5px;letter-spacing:.1em}
+  .wi-orange{fill:none;stroke:#ff6a13;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+  .wi-grey{fill:none;stroke:#9c9385;stroke-width:1.2;stroke-linejoin:round;stroke-linecap:round}
+  .wi-thick{stroke-width:2.6}
+  .wi-thin{stroke-width:1;opacity:.7}
+  .wi-fill-orange{fill:#ff6a13}
+  .wi-well{fill:#181715}
+  .wi-liquid{fill:rgb(255 106 19 / .14)}
+  .wi-part{fill:#2c2a27;stroke:#9c9385;stroke-width:.8}
+  .wi-belt{fill:#2c2a27;stroke:#9c9385;stroke-width:.8}
+  .wi-station{fill:#1c1b19;stroke:#9c9385;stroke-width:1}
+  .wi-booth{fill:#1c1b19;stroke:#ff6a13;stroke-width:1.6}
+  .wi-oven{fill:#1c1b19;stroke:#9c9385;stroke-width:1.2}
+  .wi-swatch{stroke:#0f0f0e;stroke-width:.8}
+
+  .wi-hoist-x{animation:wi-hoist-x 12s ease-in-out infinite}
+  .wi-hoist-y{animation:wi-hoist-y 12s ease-in-out infinite}
+  .wi-cable{transform-box:fill-box;transform-origin:50% 0;animation:wi-cable 12s ease-in-out infinite}
+  .wi-wave{animation:wi-pulse 1.8s ease-out infinite}
+  .wi-flow{stroke-dasharray:4 5;animation:wi-flow 1.2s linear infinite}
+  .wi-flow--slow{animation-duration:2s}
+  .wi-convey{animation:wi-convey 2.6s linear infinite}
+  .wi-convey--slow{animation-duration:3.4s}
+  .wi-convey--hang{animation-name:wi-hang;animation-duration:3.2s}
+  .wi-slat{transform-box:fill-box;transform-origin:center;animation:wi-slat 3s ease-in-out infinite alternate}
+  .wi-check{stroke-dasharray:30;animation:wi-check 4s ease-in-out infinite}
+  .wi-spray{animation:wi-spray 1.4s ease-out infinite}
+  .wi-heat{animation:wi-heat 2.4s ease-in-out infinite}
+  .wi-d1{animation-delay:-.4s}
+  .wi-d2{animation-delay:-.9s}
+  .wi-d3{animation-delay:-1.4s}
+  :global(.work-visual.is-idle) .wi *{animation-play-state:paused}
+
+  @keyframes wi-hoist-x{0%,45%{transform:translateX(0)}60%,88%{transform:translateX(140px)}100%{transform:translateX(0)}}
+  @keyframes wi-hoist-y{0%,10%{transform:translateY(0)}25%,35%{transform:translateY(55px)}45%,60%{transform:translateY(0)}70%,80%{transform:translateY(55px)}88%,100%{transform:translateY(0)}}
+  @keyframes wi-cable{0%,10%{transform:scaleY(1)}25%,35%{transform:scaleY(2.77)}45%,60%{transform:scaleY(1)}70%,80%{transform:scaleY(2.77)}88%,100%{transform:scaleY(1)}}
+  @keyframes wi-pulse{0%{opacity:.1}40%{opacity:.9}100%{opacity:.1}}
+  @keyframes wi-flow{to{stroke-dashoffset:-18}}
+  @keyframes wi-convey{to{transform:translateX(28px)}}
+  @keyframes wi-hang{to{transform:translateX(40px)}}
+  @keyframes wi-slat{from{transform:rotate(0deg)}to{transform:rotate(28deg)}}
+  @keyframes wi-check{0%,20%{stroke-dashoffset:30}50%,90%{stroke-dashoffset:0}100%{stroke-dashoffset:30}}
+  @keyframes wi-spray{0%{transform:translate(0,0);opacity:0}20%{opacity:1}100%{transform:translate(26px,-6px);opacity:0}}
+  @keyframes wi-heat{0%{transform:translateY(6px);opacity:0}40%{opacity:.9}100%{transform:translateY(-14px);opacity:0}}
+  @media (prefers-reduced-motion: reduce){ .wi *{animation:none !important} }
+</style>

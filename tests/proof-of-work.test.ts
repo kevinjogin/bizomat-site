@@ -5,8 +5,9 @@ import { NAMED_ORGANISATIONS, PROJECTS, PROJECT_SECTORS, PROJECT_SERVICES, proje
 
 const read = (path: string) => readFileSync(path, 'utf8');
 
-test('the proof of work keeps all 27 published project records, newest first', () => {
-  assert.equal(PROJECTS.length, 27);
+test('the proof of work keeps all 27 published project records and the 3 capital projects, newest first', () => {
+  assert.equal(PROJECTS.length, 30);
+  assert.equal(PROJECTS.filter((p) => p.sector === 'capital').length, 3);
   assert.equal(new Set(PROJECTS.map((p) => p.id)).size, PROJECTS.length, 'ids are unique');
   const start = (p: (typeof PROJECTS)[number]) => Number(p.years.slice(0, 4));
   for (let i = 1; i < PROJECTS.length; i++) assert.ok(start(PROJECTS[i - 1]) >= start(PROJECTS[i]), `${PROJECTS[i].id} is in date order`);
@@ -23,6 +24,7 @@ test('every case study is complete, written in the KEVOS voice and leads to an e
     const copy = [p.headline, p.summary, p.brief, p.outcome, p.value, p.note ?? '', ...p.relevantIf, ...p.approach.flatMap((a) => [a.title, a.text])].join(' ');
     assert.doesNotMatch(copy, /(I|my|me|I've|I'm)/, `${p.id} has no first-person copy`);
     assert.doesNotMatch(copy, /GoCore/i);
+    assert.doesNotMatch(`${copy} ${p.deliverables.join(' ')}`, /A\$|\$\s?\d|\d+k/, `${p.id} shows no commercial figures`);
     assert.ok(PROJECT_SERVICES[p.service], `${p.id} links to a KEVOS service`);
     assert.equal(projectEnquiryHref(p), `/contact/?service=${p.service}&project=${encodeURIComponent(p.title)}`);
   }
@@ -46,9 +48,15 @@ test('every project has its KEVOS-coloured animated visual', () => {
   const dimensions = JSON.parse(read('src/data/work-visuals.json')) as Record<string, [number, number]>;
   for (const p of PROJECTS) {
     assert.ok(p.visualAlt.trim().length > 10, `${p.id} describes its image`);
+    if (p.illustration) {
+      assert.match(read('src/components/WorkIllustration.astro'), new RegExp(`kind === '${p.illustration}'`), `${p.id} has its illustration`);
+      continue;
+    }
     assert.ok(dimensions[p.id], `${p.id} has visual dimensions`);
     for (const layer of ['base', 'lines']) for (const width of [480, 960]) assert.ok(existsSync(`public/proof-of-work/${p.id}-${layer}-${width}.webp`), `${p.id} ${layer} ${width}`);
   }
+  assert.match(read('src/components/ProofOfWork.astro'), /Not an image of the actual project/, 'illustrations are labelled as illustrative');
+  assert.match(read('src/components/WorkVisual.astro'), /Illustrative/);
   const visual = read('src/components/WorkVisual.astro');
   assert.match(visual, /prefers-reduced-motion: reduce/);
   assert.doesNotMatch(visual, /\sstyle=/);

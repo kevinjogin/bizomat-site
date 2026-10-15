@@ -1,9 +1,12 @@
 ---
 // Animated KEVOS-coloured project visual: a charcoal duotone base with orange linework that scans
 // across it. Both layers are built from the project-record image by scripts/build-work-visuals.mjs.
+// Projects without a shareable image use a branded illustration, labelled as illustrative.
+import WorkIllustration from './WorkIllustration.astro';
 import dimensions from '../data/work-visuals.json';
-interface Props { id: string; alt: string; size?: 'card' | 'large'; caption?: string }
-const { id, alt, size = 'card', caption } = Astro.props;
+import type { ProjectIllustration } from '../data/projects.ts';
+interface Props { id: string; alt: string; size?: 'card' | 'large'; caption?: string; illustration?: ProjectIllustration }
+const { id, alt, size = 'card', caption, illustration } = Astro.props;
 const [width, height] = (dimensions as Record<string, number[]>)[id] ?? [960, 600];
 const src = (layer: 'base' | 'lines') => ({
   src: `/proof-of-work/${id}-${layer}-480.webp`,
@@ -13,10 +16,17 @@ const sizes = size === 'card' ? '(max-width: 640px) 92vw, (max-width: 1050px) 13
 ---
 <figure class:list={['work-visual', `work-visual--${size}`]} data-work-visual>
   <div class="work-visual__frame">
-    <div class="work-visual__stage">
-      <img class="work-visual__base" {...src('base')} sizes={sizes} width={width} height={height} alt={alt} loading="lazy" decoding="async" />
-      <img class="work-visual__lines" {...src('lines')} sizes={sizes} width={width} height={height} alt="" aria-hidden="true" loading="lazy" decoding="async" />
-    </div>
+    {illustration ? (
+      <div class="work-visual__art" role="img" aria-label={`${alt} (illustrative, not an image of the actual project)`}>
+        <WorkIllustration kind={illustration} uid={`wi-${id}-${size}`} />
+        <span class="work-visual__badge" aria-hidden="true">Illustrative</span>
+      </div>
+    ) : (
+      <div class="work-visual__stage">
+        <img class="work-visual__base" {...src('base')} sizes={sizes} width={width} height={height} alt={alt} loading="lazy" decoding="async" />
+        <img class="work-visual__lines" {...src('lines')} sizes={sizes} width={width} height={height} alt="" aria-hidden="true" loading="lazy" decoding="async" />
+      </div>
+    )}
     <span class="work-visual__grid" aria-hidden="true"></span>
     <span class="work-visual__scan" aria-hidden="true"></span>
   </div>
@@ -42,6 +52,8 @@ const sizes = size === 'card' ? '(max-width: 640px) 92vw, (max-width: 1050px) 13
   .work-visual__frame::after{right:6px;bottom:6px;border-left:0;border-top:0}
   .work-visual__stage{position:absolute;inset:0;animation:work-drift 18s ease-in-out infinite alternate}
   .work-visual__stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+  .work-visual__art{position:absolute;inset:0}
+  .work-visual__badge{position:absolute;z-index:4;right:8px;top:7px;padding:.12rem .4rem;font-family:var(--font-sans);font-size:.6rem;font-weight:650;letter-spacing:.1em;text-transform:uppercase;color:#0f0f0e;background:#9c9385}
   .work-visual__lines{clip-path:inset(0 100% 0 0);animation:work-reveal 9s cubic-bezier(.55,.05,.3,1) infinite}
   .work-visual__grid{position:absolute;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgb(255 255 255 / .04) 1px,transparent 1px),linear-gradient(90deg,rgb(255 255 255 / .04) 1px,transparent 1px);background-size:24px 24px}
   .work-visual__scan{position:absolute;z-index:2;top:0;bottom:0;left:0;width:2px;background:var(--brand-orange);box-shadow:0 0 14px 3px rgb(255 106 19 / .5);animation:work-scan 9s cubic-bezier(.55,.05,.3,1) infinite;pointer-events:none}
