@@ -1,0 +1,166 @@
+// Original icon set drawn to sit where SOLIDWORKS users expect each command.
+// 24x24 viewBox. Palette: grey body, yellow = new geometry, blue = sketch, red = remove.
+
+const G = '#8c96a0', GD = '#5d6670', Y = '#f2c230', YD = '#c8961e', B = '#2a6fd6', R = '#d9372b', K = '#333', GR = '#2f9e44';
+
+const box = (fill = G) => `<path d="M4 9l8-4 8 4v8l-8 4-8-4z" fill="${fill}" stroke="${GD}" stroke-width=".8"/><path d="M4 9l8 4 8-4M12 13v8" fill="none" stroke="${GD}" stroke-width=".8"/>`;
+
+const P = {
+  new: `<path d="M6 3h8l4 4v14H6z" fill="#fff" stroke="${GD}"/><path d="M14 3v4h4" fill="none" stroke="${GD}"/>`,
+  open: `<path d="M3 7h6l2 2h10v10H3z" fill="${Y}" stroke="${YD}"/>`,
+  save: `<path d="M4 4h13l3 3v13H4z" fill="${B}"/><path d="M7 4h9v5H7z" fill="#fff"/><path d="M7 13h10v7H7z" fill="#dfe8f5"/>`,
+  print: `<path d="M7 3h10v5H7z" fill="#fff" stroke="${GD}"/><path d="M4 8h16v8H4z" fill="${G}"/><path d="M7 13h10v8H7z" fill="#fff" stroke="${GD}"/>`,
+  undo: `<path d="M9 7L4 11l5 4" fill="none" stroke="${B}" stroke-width="2"/><path d="M4 11h10a5 5 0 010 10h-3" fill="none" stroke="${B}" stroke-width="2"/>`,
+  redo: `<path d="M15 7l5 4-5 4" fill="none" stroke="${B}" stroke-width="2"/><path d="M20 11H10a5 5 0 000 10h3" fill="none" stroke="${B}" stroke-width="2"/>`,
+  select: `<path d="M6 3l12 10h-6l3 7-2 1-3-7-4 4z" fill="#fff" stroke="${K}" stroke-width="1.2"/>`,
+  rebuild: `<rect x="8" y="2" width="8" height="20" rx="3" fill="${K}"/><circle cx="12" cy="6.5" r="2" fill="${R}"/><circle cx="12" cy="12" r="2" fill="${Y}"/><circle cx="12" cy="17.5" r="2" fill="${GR}"/>`,
+  options: `<circle cx="12" cy="12" r="4" fill="none" stroke="${GD}" stroke-width="2"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M5 19l3-3M16 8l3-3" stroke="${GD}" stroke-width="2"/>`,
+  props: `<path d="M5 3h14v18H5z" fill="#fff" stroke="${GD}"/><path d="M8 8h8M8 12h8M8 16h5" stroke="${B}"/>`,
+
+  // Features
+  extrude: `${box(G)}<path d="M12 1v8" stroke="${Y}" stroke-width="2.4"/><path d="M8.5 4.5L12 1l3.5 3.5" fill="none" stroke="${YD}" stroke-width="1.6"/>`,
+  revolve: `<path d="M6 20V5h5l2 4h3v11z" fill="${G}" stroke="${GD}"/><path d="M3 12a9 4 0 0018 0" fill="none" stroke="${Y}" stroke-width="2"/><path d="M19 9l2 3-3 1" fill="none" stroke="${YD}" stroke-width="1.5"/><path d="M6 2v20" stroke="${K}" stroke-dasharray="3 1.5 1 1.5"/>`,
+  sweep: `<path d="M3 18c6 0 6-12 18-12" fill="none" stroke="${G}" stroke-width="6"/><path d="M3 18c6 0 6-12 18-12" fill="none" stroke="${Y}" stroke-width="1" stroke-dasharray="2 2"/>`,
+  loft: `<path d="M4 18h8l4-12h4" fill="none" stroke="${GD}"/><path d="M4 18l6-12h10l-8 12z" fill="${G}" stroke="${GD}"/><path d="M10 6h10" stroke="${Y}" stroke-width="2"/>`,
+  boundary: `<path d="M4 18c4-10 12-10 16-12v10c-4 2-12 2-16 2z" fill="${G}" stroke="${GD}"/>`,
+  cut: `${box(G)}<path d="M9 9l3-1.5 3 1.5-3 1.5z" fill="${R}"/><path d="M12 10v-9" stroke="${R}" stroke-width="2"/><path d="M8.5 4.5L12 8l3.5-3.5" fill="none" stroke="${R}" stroke-width="1.6"/>`,
+  revcut: `<path d="M5 20V4h14v16z" fill="${G}" stroke="${GD}"/><path d="M12 6h5v5h-5z" fill="#fff" stroke="${R}"/><path d="M3 15a9 4 0 0018 0" fill="none" stroke="${R}" stroke-width="2"/>`,
+  sweepcut: `<path d="M4 4h16v16H4z" fill="${G}"/><path d="M3 18c6 0 6-12 18-12" fill="none" stroke="#fff" stroke-width="4"/><path d="M3 18c6 0 6-12 18-12" fill="none" stroke="${R}" stroke-width="1"/>`,
+  loftcut: `<path d="M4 4h16v16H4z" fill="${G}"/><path d="M6 17l4-10h8l-6 10z" fill="#fff" stroke="${R}"/>`,
+  hole: `${box(G)}<ellipse cx="12" cy="9" rx="3.4" ry="1.7" fill="#333"/><path d="M8.6 9v6M15.4 9v6" stroke="${K}" stroke-dasharray="1.5 1"/>`,
+  fillet: `<path d="M4 20V4h6v6c0 3 2 4 4 4h6v6z" fill="${G}" stroke="${GD}"/><path d="M10 9c0 4 2 5 5 5" fill="none" stroke="${Y}" stroke-width="2.5"/>`,
+  chamfer: `<path d="M4 20V4h6v4l6 6h4v6z" fill="${G}" stroke="${GD}"/><path d="M10 8l6 6" stroke="${Y}" stroke-width="2.5"/>`,
+  linpattern: `<path d="M3 15h5v5H3zM10 15h5v5h-5zM17 15h5v5h-5z" fill="${G}" stroke="${GD}"/><path d="M3 15l2-2h5l-2 2M10 15l2-2h5l-2 2M17 15l2-2h4" fill="${Y}" stroke="${YD}" stroke-width=".6"/><path d="M3 8h18" stroke="${B}" stroke-width="1.5"/><path d="M18 5l3 3-3 3" fill="none" stroke="${B}" stroke-width="1.5"/>`,
+  circpattern: `<circle cx="12" cy="12" r="8" fill="none" stroke="${B}" stroke-dasharray="2 2"/><path d="M10 2h4v4h-4zM18 10h4v4h-4zM10 18h4v4h-4zM2 10h4v4H2z" fill="${Y}" stroke="${YD}"/>`,
+  rib: `<path d="M3 20h18v-3H3zM6 17V6h3v11z" fill="${G}" stroke="${GD}"/><path d="M9 17l9-0V14L9 9z" fill="${Y}" stroke="${YD}"/>`,
+  draft: `<path d="M5 20l3-16h8l3 16z" fill="${G}" stroke="${GD}"/><path d="M8 4l-3 16" stroke="${Y}" stroke-width="2"/>`,
+  shell: `<path d="M4 9l8-4 8 4v8l-8 4-8-4z" fill="${G}" stroke="${GD}" stroke-width=".8"/><path d="M6.5 9.2l5.5-2.7 5.5 2.7-5.5 2.7z" fill="#555"/><path d="M12 11.9v7" stroke="${GD}" stroke-width=".8"/>`,
+  wrap: `<path d="M5 6h14v12H5z" fill="${G}" stroke="${GD}"/><path d="M8 9h8v6H8z" fill="none" stroke="${Y}" stroke-width="1.6"/>`,
+  intersect: `<circle cx="9" cy="12" r="6" fill="${G}" stroke="${GD}" opacity=".9"/><circle cx="15" cy="12" r="6" fill="${G}" stroke="${GD}" opacity=".9"/><path d="M12 7a6 6 0 010 10 6 6 0 010-10z" fill="${Y}"/>`,
+  mirror: `<path d="M12 2v20" stroke="${B}" stroke-width="1.4" stroke-dasharray="3 1.5"/><path d="M3 8h6v8H3z" fill="${G}" stroke="${GD}"/><path d="M15 8h6v8h-6z" fill="${Y}" stroke="${YD}"/>`,
+  refgeom: `<path d="M2 15l6-9h14l-6 9z" fill="#cfe0f5" stroke="${B}"/><path d="M12 3v18" stroke="${K}" stroke-dasharray="3 1.5 1 1.5"/>`,
+  plane: `<path d="M2 16l6-10h14l-6 10z" fill="#cfe0f5" stroke="${B}"/>`,
+  curves: `<path d="M3 18c4-14 8 6 18-12" fill="none" stroke="${B}" stroke-width="2"/>`,
+  instant3d: `${box(G)}<path d="M12 3l3 3h-2v4h-2V6H9z" fill="#3a9a3a"/>`,
+  material: `<path d="M3 15l9-5 9 5-9 5z" fill="#b0b8c0" stroke="${GD}"/><path d="M3 15v3l9 5 9-5v-3" fill="#8c96a0" stroke="${GD}"/><path d="M8 5l4-2 4 2-4 2z" fill="${Y}"/>`,
+
+  // Sketch
+  sketch: `<path d="M2 17l5-8h15l-5 8z" fill="#e3edf9" stroke="${B}"/><path d="M14 3l4 4-7 7-4 1 1-4z" fill="${Y}" stroke="${YD}"/>`,
+  exitsketch: `<path d="M2 17l5-8h15l-5 8z" fill="#e3edf9" stroke="${B}"/><path d="M8 9l3 3 6-7" fill="none" stroke="${GR}" stroke-width="2.4"/>`,
+  smartdim: `<path d="M4 6v12M20 6v12" stroke="${K}"/><path d="M4 12h16" stroke="${B}" stroke-width="1.4"/><path d="M4 12l3-2v4zM20 12l-3-2v4z" fill="${B}"/><path d="M14 3l4 4-6 6-3 1 1-3z" fill="${Y}" stroke="${YD}" stroke-width=".7"/>`,
+  line: `<path d="M4 19L19 5" stroke="${B}" stroke-width="2"/><rect x="2" y="17" width="4" height="4" fill="#fff" stroke="${K}"/><rect x="17" y="3" width="4" height="4" fill="#fff" stroke="${K}"/>`,
+  centerline: `<path d="M4 19L19 5" stroke="${B}" stroke-width="1.6" stroke-dasharray="5 2 1.5 2"/>`,
+  rectangle: `<path d="M4 6h16v12H4z" fill="none" stroke="${B}" stroke-width="2"/><rect x="2" y="4" width="4" height="4" fill="#fff" stroke="${K}"/><rect x="18" y="16" width="4" height="4" fill="#fff" stroke="${K}"/>`,
+  centerrect: `<path d="M4 6h16v12H4z" fill="none" stroke="${B}" stroke-width="2"/><path d="M4 6l16 12M20 6L4 18" stroke="${B}" stroke-width=".8" stroke-dasharray="2 1"/><circle cx="12" cy="12" r="1.6" fill="${K}"/>`,
+  slot: `<path d="M8 7h8a5 5 0 010 10H8A5 5 0 018 7z" fill="none" stroke="${B}" stroke-width="2"/><path d="M8 12h8" stroke="${B}" stroke-dasharray="2 1"/>`,
+  circle: `<circle cx="12" cy="12" r="8" fill="none" stroke="${B}" stroke-width="2"/><path d="M12 12l6-5" stroke="${K}" stroke-dasharray="2 1"/><circle cx="12" cy="12" r="1.5" fill="${K}"/>`,
+  arc: `<path d="M5 17A9 9 0 0119 10" fill="none" stroke="${B}" stroke-width="2"/><circle cx="12" cy="17" r="1.5" fill="${K}"/><path d="M12 17L5 17M12 17l7-7" stroke="${K}" stroke-dasharray="2 1"/>`,
+  threeptarc: `<path d="M4 18A10 10 0 0120 18" fill="none" stroke="${B}" stroke-width="2"/><rect x="2" y="16" width="4" height="4" fill="#fff" stroke="${K}"/><rect x="18" y="16" width="4" height="4" fill="#fff" stroke="${K}"/><rect x="10" y="6" width="4" height="4" fill="#fff" stroke="${K}"/>`,
+  tangentarc: `<path d="M3 18h9a6 6 0 006-6V5" fill="none" stroke="${B}" stroke-width="2"/>`,
+  polygon: `<path d="M12 3l8 5v8l-8 5-8-5V8z" fill="none" stroke="${B}" stroke-width="2"/>`,
+  spline: `<path d="M3 17c3-12 7 4 10-4s5-6 8-6" fill="none" stroke="${B}" stroke-width="2"/>`,
+  ellipse: `<ellipse cx="12" cy="12" rx="9" ry="5.5" fill="none" stroke="${B}" stroke-width="2"/>`,
+  sketchfillet: `<path d="M4 4v10a6 6 0 006 6h10" fill="none" stroke="${B}" stroke-width="2"/><path d="M4 4v16h16" fill="none" stroke="${K}" stroke-dasharray="2 1.5"/>`,
+  text: `<path d="M5 5h14M12 5v15" stroke="${B}" stroke-width="2.4"/>`,
+  point: `<circle cx="12" cy="12" r="3" fill="${B}"/><path d="M12 4v4M12 16v4M4 12h4M16 12h4" stroke="${K}"/>`,
+  trim: `<path d="M3 12h18M12 3v18" stroke="${B}" stroke-width="2"/><path d="M14 14l6 6M20 14l-6 6" stroke="${R}" stroke-width="1.6"/><circle cx="6" cy="18" r="2" fill="none" stroke="${K}"/><circle cx="10" cy="20" r="2" fill="none" stroke="${K}"/>`,
+  extend: `<path d="M3 18h10" stroke="${B}" stroke-width="2"/><path d="M13 18h6" stroke="${B}" stroke-dasharray="2 1.5" stroke-width="2"/><path d="M20 4v18" stroke="${K}" stroke-width="1.5"/>`,
+  convert: `${box(G)}<path d="M4 9l8-4 8 4" fill="none" stroke="${B}" stroke-width="2"/>`,
+  offset: `<path d="M4 20V10a6 6 0 016-6h10" fill="none" stroke="${B}" stroke-width="2"/><path d="M9 20v-9a2 2 0 012-2h9" fill="none" stroke="${B}" stroke-width="1.4" stroke-dasharray="2.5 1.5"/>`,
+  sketchmirror: `<path d="M12 2v20" stroke="${K}" stroke-dasharray="3 1.5 1 1.5"/><path d="M3 18l6-12" stroke="${B}" stroke-width="2"/><path d="M21 18l-6-12" stroke="${B}" stroke-width="2"/>`,
+  sketchpattern: `<circle cx="5" cy="12" r="2.5" fill="none" stroke="${B}" stroke-width="1.6"/><circle cx="12" cy="12" r="2.5" fill="none" stroke="${B}" stroke-width="1.6"/><circle cx="19" cy="12" r="2.5" fill="none" stroke="${B}" stroke-width="1.6"/>`,
+  move: `<path d="M12 2v20M2 12h20" stroke="${B}" stroke-width="1.6"/><path d="M12 2l-3 3h6zM12 22l-3-3h6zM2 12l3-3v6zM22 12l-3-3v6z" fill="${B}"/>`,
+  relations: `<path d="M3 4h7v7H3z" fill="#e7f5e7" stroke="${GR}"/><path d="M5 7.5h3" stroke="${GR}" stroke-width="1.6"/><path d="M14 13h7v7h-7z" fill="#e7f5e7" stroke="${GR}"/><path d="M17.5 14.5v4" stroke="${GR}" stroke-width="1.6"/><path d="M10 7c5 0 7 2 7 6" fill="none" stroke="${K}" stroke-dasharray="2 1"/>`,
+  addrelation: `<path d="M3 4h9v9H3z" fill="#e7f5e7" stroke="${GR}"/><path d="M5 8.5h5" stroke="${GR}" stroke-width="1.6"/><path d="M17 13v8M13 17h8" stroke="${GR}" stroke-width="2.4"/>`,
+  repair: `<path d="M3 20l8-8" stroke="${B}" stroke-width="2"/><path d="M13 3a5 5 0 016 6l-3 1-4-4z" fill="${G}" stroke="${GD}"/>`,
+  quicksnaps: `<rect x="4" y="4" width="16" height="16" fill="none" stroke="${B}" stroke-width="1.6"/><circle cx="20" cy="4" r="3" fill="${Y}" stroke="${YD}"/>`,
+  rapidsketch: `<path d="M2 17l5-8h15l-5 8z" fill="#e3edf9" stroke="${B}"/><path d="M13 3l-3 6h4l-3 6" fill="none" stroke="${Y}" stroke-width="2"/>`,
+  instant2d: `<path d="M4 18h16" stroke="${B}" stroke-width="1.6"/><path d="M4 18l3-2v4zM20 18l-3-2v4z" fill="${B}"/><path d="M12 4l3 3h-2v5h-2V7H9z" fill="#3a9a3a"/>`,
+  shadedsketch: `<path d="M4 6h16v12H4z" fill="#cfe0f5" stroke="${B}" stroke-width="1.6"/>`,
+
+  // Evaluate
+  measure: `<path d="M3 15l12-12 6 6-12 12z" fill="${Y}" stroke="${YD}"/><path d="M7 11l2 2M10 8l2 2M13 5l2 2" stroke="${K}"/>`,
+  massprops: `<path d="M6 21l2-11h8l2 11z" fill="${G}" stroke="${GD}"/><circle cx="12" cy="6" r="3" fill="none" stroke="${GD}" stroke-width="2"/>`,
+  section: `${box(G)}<path d="M2 13h20" stroke="${R}" stroke-width="1.6"/>`,
+  check: `<path d="M4 13l5 5 11-12" fill="none" stroke="${GR}" stroke-width="3"/>`,
+  interference: `<path d="M3 6h10v10H3z" fill="${G}" stroke="${GD}"/><path d="M10 9h11v11H10z" fill="${G}" stroke="${GD}" opacity=".85"/><path d="M10 9h3v7h-3z" fill="${R}"/>`,
+  stats: `<path d="M4 20V10h3v10zM10 20V4h3v16zM16 20v-7h3v7z" fill="${B}"/>`,
+  dfm: `<path d="M5 3h14v18H5z" fill="#fff" stroke="${GD}"/><path d="M8 9l2 2 4-4M8 15l2 2 4-4" fill="none" stroke="${GR}" stroke-width="1.6"/>`,
+  ai: `<path d="M12 2l2.2 6.3L20.5 10l-6.3 2.2L12 18.5l-2.2-6.3L3.5 10l6.3-1.7z" fill="#7b5cff"/><path d="M19 15l.9 2.3 2.1.7-2.1.8L19 21l-.9-2.2-2.1-.8 2.1-.7z" fill="#b39cff"/>`,
+
+  // Heads-up view toolbar
+  zoomfit: `<path d="M3 8V3h5M16 3h5v5M21 16v5h-5M8 21H3v-5" fill="none" stroke="${K}" stroke-width="1.8"/><path d="M8 8h8v8H8z" fill="${G}"/>`,
+  zoomarea: `<circle cx="10" cy="10" r="6" fill="none" stroke="${K}" stroke-width="1.8"/><path d="M14.5 14.5l6 6" stroke="${K}" stroke-width="2.4"/><path d="M7 10h6M10 7v6" stroke="${B}"/>`,
+  prevview: `<path d="M10 6L4 12l6 6" fill="none" stroke="${B}" stroke-width="2"/><path d="M5 12h9a6 6 0 016 6" fill="none" stroke="${B}" stroke-width="2"/>`,
+  sectionview: `<path d="M4 9l8-4 8 4v8l-8 4-8-4z" fill="${G}" stroke="${GD}" stroke-width=".8"/><path d="M2 11l10 5 10-5" fill="none" stroke="#3a7bd5" stroke-width="2"/>`,
+  vieworient: `<path d="M4 9l8-4 8 4v8l-8 4-8-4z" fill="#dfe8f5" stroke="${B}"/><path d="M4 9l8 4 8-4M12 13v8" fill="none" stroke="${B}"/><path d="M12 13l8-4v8l-8 4z" fill="${B}" opacity=".5"/>`,
+  displaystyle: `<path d="M4 9l8-4 8 4v8l-8 4-8-4z" fill="${G}" stroke="${K}" stroke-width="1.2"/><path d="M4 9l8 4 8-4M12 13v8" fill="none" stroke="${K}" stroke-width="1.2"/>`,
+  hideshow: `<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" fill="#fff" stroke="${K}"/><circle cx="12" cy="12" r="3.5" fill="${B}"/>`,
+  appearance: `<circle cx="12" cy="12" r="9" fill="#e9b949"/><circle cx="8" cy="9" r="2" fill="${R}"/><circle cx="13" cy="7" r="2" fill="${B}"/><circle cx="16" cy="12" r="2" fill="${GR}"/><circle cx="10" cy="15" r="2.5" fill="#fff"/>`,
+  scene: `<path d="M3 18h18L12 6z" fill="#cfe0f5" stroke="${B}"/><circle cx="18" cy="6" r="3" fill="${Y}"/>`,
+  viewsettings: `<path d="M3 5h18v12H3z" fill="#fff" stroke="${K}"/><path d="M9 21h6M12 17v4" stroke="${K}"/>`,
+  normalto: `<path d="M2 17l5-8h15l-5 8z" fill="#cfe0f5" stroke="${B}"/><path d="M12 13V2" stroke="${K}" stroke-width="1.6"/><path d="M9 5l3-3 3 3" fill="none" stroke="${K}" stroke-width="1.6"/>`,
+  iso: `${box('#dfe8f5')}`,
+  front: `<path d="M5 5h14v14H5z" fill="#cfe0f5" stroke="${B}" stroke-width="1.6"/><text x="12" y="16" font-size="9" text-anchor="middle" fill="${B}" font-family="Arial">F</text>`,
+  top: `<path d="M2 16l6-8h14l-6 8z" fill="#cfe0f5" stroke="${B}" stroke-width="1.4"/>`,
+  right: `<path d="M8 3l8 3v15l-8-3z" fill="#cfe0f5" stroke="${B}" stroke-width="1.4"/>`,
+
+  // FeatureManager tree
+  part: `<path d="M4 9l8-4 8 4v8l-8 4-8-4z" fill="#f2c230" stroke="${YD}" stroke-width=".8"/><path d="M4 9l8 4 8-4M12 13v8" fill="none" stroke="${YD}" stroke-width=".8"/>`,
+  history: `<circle cx="12" cy="12" r="8" fill="#fff" stroke="${GD}"/><path d="M12 7v5l3 3" fill="none" stroke="${GD}" stroke-width="1.6"/>`,
+  sensor: `<path d="M12 3a6 6 0 016 6c0 4-6 12-6 12S6 13 6 9a6 6 0 016-6z" fill="#e8b4d8" stroke="#a04c8c"/>`,
+  annotations: `<path d="M4 4h16v12H9l-5 4z" fill="#fff" stroke="${Y}"/><path d="M7 8h10M7 11h7" stroke="${YD}"/>`,
+  bodies: `<path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" fill="none" stroke="${GD}"/><path d="M13 13h7v7h-7z" fill="${G}"/>`,
+  origin: `<path d="M12 12V3M12 12h9" stroke="${B}" stroke-width="1.8"/><path d="M12 3l-2 3h4zM21 12l-3-2v4z" fill="${B}"/><circle cx="12" cy="12" r="2" fill="#fff" stroke="${B}"/>`,
+  plane_t: `<path d="M2 16l6-10h14l-6 10z" fill="#d7e6f7" stroke="${B}"/>`,
+  sketch_t: `<path d="M2 17l5-8h15l-5 8z" fill="#fff" stroke="${B}"/><path d="M8 15l4-4 3 2 3-4" fill="none" stroke="${B}" stroke-width="1.4"/>`,
+  error: `<circle cx="12" cy="12" r="9" fill="${R}"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" stroke-width="2.4"/>`,
+  warning: `<path d="M12 3l10 18H2z" fill="${Y}" stroke="${YD}"/><path d="M12 9v6M12 17v2" stroke="${K}" stroke-width="2"/>`,
+  feature_mgr: `<path d="M4 4h6v4H4zM8 10h6v4H8zM8 16h6v4H8z" fill="#fff" stroke="${GD}"/><path d="M6 8v10h2M6 12h2" fill="none" stroke="${GD}"/>`,
+  property_mgr: `<path d="M4 3h16v18H4z" fill="#fff" stroke="${GD}"/><path d="M7 7h10M7 11h10M7 15h6" stroke="${GD}"/>`,
+  config_mgr: `<path d="M4 6h16M4 12h16M4 18h16" stroke="${GD}" stroke-width="2"/><circle cx="8" cy="6" r="2" fill="${B}"/><circle cx="15" cy="12" r="2" fill="${B}"/><circle cx="10" cy="18" r="2" fill="${B}"/>`,
+  dimxpert: `<path d="M4 18h16M4 14v8M20 14v8" stroke="${GD}"/><path d="M6 4h12v6H6z" fill="#fff" stroke="${B}"/>`,
+  display_mgr: `<circle cx="12" cy="12" r="8" fill="none" stroke="${GD}"/><path d="M12 4a8 8 0 010 16z" fill="${B}"/>`,
+
+  // Task pane
+  resources: `<path d="M4 20V8l8-5 8 5v12z" fill="#fff" stroke="${R}"/><path d="M9 20v-6h6v6" fill="none" stroke="${R}"/>`,
+  library: `<path d="M4 4h4v16H4zM9 4h4v16H9zM14 6l4-1 3 15-4 1z" fill="#fff" stroke="${GD}"/>`,
+  explorer: `<path d="M3 7h6l2 2h10v10H3z" fill="${Y}" stroke="${YD}"/>`,
+  palette: `<path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4z" fill="#fff" stroke="${GD}"/>`,
+  custprops: `<path d="M5 3h14v18H5z" fill="#fff" stroke="${GD}"/><path d="M8 7h8M8 11h8M8 15h8" stroke="${GD}"/>`,
+
+  // PropertyManager
+  ok: `<path d="M4 13l5 5 11-12" fill="none" stroke="${GR}" stroke-width="3.2"/>`,
+  cancel: `<path d="M5 5l14 14M19 5L5 19" stroke="${R}" stroke-width="3.2"/>`,
+  pin: `<path d="M9 3h6l-1 6 3 3H7l3-3z" fill="${G}" stroke="${GD}"/><path d="M12 12v9" stroke="${GD}" stroke-width="1.6"/>`,
+  eye: `<path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12z" fill="#fff" stroke="${K}"/><circle cx="12" cy="12" r="3" fill="${K}"/>`,
+  reverse: `<path d="M7 4v16M17 20V4" stroke="${K}" stroke-width="1.6"/><path d="M4 7l3-3 3 3M14 17l3 3 3-3" fill="none" stroke="${K}" stroke-width="1.6"/>`,
+  depth: `<path d="M5 4h14M5 20h14" stroke="${K}" stroke-width="1.5"/><path d="M12 5v14" stroke="${B}" stroke-width="1.5"/><path d="M9 8l3-3 3 3M9 16l3 3 3-3" fill="none" stroke="${B}" stroke-width="1.5"/>`,
+  angle_i: `<path d="M4 20h16M4 20L16 6" stroke="${K}" stroke-width="1.6"/><path d="M11 20a7 7 0 00-2-5" fill="none" stroke="${B}" stroke-width="1.6"/>`,
+  radius_i: `<path d="M4 20V4h4v6c0 3 3 6 6 6h6v4z" fill="${G}"/><path d="M8 10c0 3 3 6 6 6" fill="none" stroke="${B}" stroke-width="2"/><text x="17" y="9" font-size="8" fill="${K}" font-family="Arial">R</text>`,
+  count_i: `<path d="M3 8h4v8H3zM10 8h4v8h-4zM17 8h4v8h-4z" fill="${Y}" stroke="${YD}"/><text x="12" y="6" font-size="6" text-anchor="middle" fill="${K}" font-family="Arial">#</text>`,
+  spacing_i: `<path d="M5 6v12M19 6v12" stroke="${K}"/><path d="M5 12h14" stroke="${B}" stroke-width="1.5"/><path d="M5 12l3-2v4zM19 12l-3-2v4z" fill="${B}"/>`,
+  thick_i: `<path d="M4 6h16v4H4zM4 14h16v4H4z" fill="${G}" stroke="${GD}"/><path d="M12 10v4" stroke="${B}" stroke-width="1.6"/>`,
+
+  // relations glyphs
+  r_horizontal: `<path d="M5 12h14" stroke="${K}" stroke-width="2.4"/>`,
+  r_vertical: `<path d="M12 5v14" stroke="${K}" stroke-width="2.4"/>`,
+  r_coincident: `<circle cx="9" cy="12" r="4.5" fill="none" stroke="${K}" stroke-width="1.6"/><circle cx="15" cy="12" r="4.5" fill="none" stroke="${K}" stroke-width="1.6"/>`,
+  r_parallel: `<path d="M8 19L12 5M13 19l4-14" stroke="${K}" stroke-width="2"/>`,
+  r_perpendicular: `<path d="M5 19h14M12 19V5" stroke="${K}" stroke-width="2"/>`,
+  r_tangent: `<circle cx="12" cy="14" r="5" fill="none" stroke="${K}" stroke-width="1.6"/><path d="M3 9h18" stroke="${K}" stroke-width="2"/>`,
+  r_concentric: `<circle cx="12" cy="12" r="7" fill="none" stroke="${K}" stroke-width="1.6"/><circle cx="12" cy="12" r="3" fill="none" stroke="${K}" stroke-width="1.6"/>`,
+  r_equal: `<path d="M5 9h14M5 15h14" stroke="${K}" stroke-width="2.4"/>`,
+  r_collinear: `<path d="M3 12h7M14 12h7" stroke="${K}" stroke-width="2.4"/>`,
+  r_midpoint: `<path d="M3 15h18" stroke="${K}" stroke-width="2"/><path d="M12 15l-4-7h8z" fill="${K}"/>`,
+  r_symmetric: `<path d="M12 3v18" stroke="${K}" stroke-dasharray="3 1.5"/><path d="M4 12l4-4v8zM20 12l-4-4v8z" fill="${K}"/>`,
+  r_fix: `<path d="M6 18L18 6M6 6l12 12" stroke="${K}" stroke-width="1.4"/><path d="M4 20h16" stroke="${K}" stroke-width="2"/><path d="M6 20l-2 2M10 20l-2 2M14 20l-2 2M18 20l-2 2" stroke="${K}"/>`,
+  r_merge: `<circle cx="12" cy="12" r="5" fill="${K}"/>`,
+};
+
+export function icon(name, size = 24) {
+  const body = P[name] || P.props;
+  return `<svg class="ic" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`;
+}
+
+export const hasIcon = (name) => name in P;

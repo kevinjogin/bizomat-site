@@ -1,0 +1,325 @@
+// Feature commands: each opens a PropertyManager laid out like the SOLIDWORKS one,
+// previews live through the build123d backend, and commits a feature to the tree.
+
+export const FEATURE_META = {
+  extrude: { icon: 'extrude', base: 'Boss-Extrude', title: 'Boss-Extrude' },
+  cut: { icon: 'cut', base: 'Cut-Extrude', title: 'Cut-Extrude' },
+  revolve: { icon: 'revolve', base: 'Revolve', title: 'Revolve' },
+  revcut: { icon: 'revcut', base: 'Cut-Revolve', title: 'Cut-Revolve' },
+  fillet: { icon: 'fillet', base: 'Fillet', title: 'Fillet' },
+  chamfer: { icon: 'chamfer', base: 'Chamfer', title: 'Chamfer' },
+  shell: { icon: 'shell', base: 'Shell', title: 'Shell' },
+  mirror: { icon: 'mirror', base: 'Mirror', title: 'Mirror' },
+  linear_pattern: { icon: 'linpattern', base: 'LPattern', title: 'Linear Pattern' },
+  circular_pattern: { icon: 'circpattern', base: 'CirPattern', title: 'Circular Pattern' },
+  plane: { icon: 'plane', base: 'Plane', title: 'Plane' },
+  sketch: { icon: 'sketch_t', base: 'Sketch', title: 'Sketch' },
+};
+
+export function featureIcon(f) {
+  if (f.type === 'extrude') return f.op === 'cut' ? 'cut' : 'extrude';
+  if (f.type === 'revolve') return f.op === 'cut' ? 'revcut' : 'revolve';
+  if (f.type === 'sketch') return 'sketch_t';
+  if (f.type === 'linear_pattern') return 'linpattern';
+  if (f.type === 'circular_pattern') return 'circpattern';
+  return FEATURE_META[f.type]?.icon || 'props';
+}
+
+export function metaKey(f) {
+  if (f.type === 'extrude' && f.op === 'cut') return 'cut';
+  if (f.type === 'revolve' && f.op === 'cut') return 'revcut';
+  return f.type;
+}
+
+export function nextName(doc, base) {
+  let n = 0;
+  const re = new RegExp('^' + base.replace(/[-]/g, '\\-') + '(\\d+)$');
+  for (const f of doc.features) { const m = re.exec(f.name || ''); if (m) n = Math.max(n, +m[1]); }
+  return base + (n + 1);
+}
+
+const END_OPTS = [['blind', 'Blind'], ['through_all', 'Through All'], ['up_to_next', 'Up To Next'], ['midplane', 'Mid Plane']];
+const fmt = (v) => (Math.round(v * 1000) / 1000).toString();
+const v3s = (p) => `(${p.map((x) => fmt(x)).join(', ')})`;
+
+// ---------------------------------------------------------------------------------------------
+// state f is the feature JSON being edited. Each builder returns a PM spec plus onPick(pick).
+
+function sketchName(app, id) { const s = app.featureById(id); return s ? s.name : id; }
+
+function extrudeSpec(app, f, cut) {
+  const dir1Rows = [
+    { type: 'select', options: END_OPTS, get: () => f.end || 'blind', set: (v) => { f.end = v; },
+      before: [{ icon: 'reverse', title: 'Reverse Direction', get: () => !!f.reverse, toggle: () => { f.reverse = !f.reverse; } }] },
+    { type: 'number', icon: 'depth', tip: 'Depth', get: () => f.depth, set: (v) => { f.depth = v; }, min: 0.0001, visible: () => (f.end || 'blind') === 'blind' || f.end === 'midplane' },
+    { type: 'iconbtns', buttons: [{ icon: 'draft', title: 'Draft On/Off', get: () => !!f.draftOn, toggle: () => { f.draftOn = !f.draftOn; if (!f.draftOn) f.draft = 0; else f.draft = f.draft || 5; } }], label: 'Draft On/Off', visible: () => f.end !== 'up_to_next' },
+    { type: 'number', icon: 'angle_i', unit: 'deg', get: () => f.draft || 0, set: (v) => { f.draft = v; }, min: 0, max: 89, visible: () => !!f.draftOn },
+    { type: 'check', label: 'Draft outward', get: () => !!f.draft_outward, set: (v) => { f.draft_outward = v; }, visible: () => !!f.draftOn },
+    { type: 'check', label: 'Flip side to cut', get: () => !!f.flip_side, set: (v) => { f.flip_side = v; }, visible: () => cut },
+    { type: 'check', label: 'Merge result', get: () => f.merge !== false, set: (v) => { f.merge = v; }, visible: () => !cut },
+  ];
+  return {
+    sections: [
+      { title: 'From', rows: [
+        { type: 'select', options: [['sketch', 'Sketch Plane']], get: () => 'sketch', set: () => {} },
+        { type: 'selbox', id: 'sketch', placeholder: 'Select a sketch or a plane', items: () => (f.sketch ? [f.sketch] : []), label: (id) => sketchName(app, id), remove: () => { f.sketch = null; }, kinds: ['sketch', 'plane', 'face'] },
+      ] },
+      { title: 'Direction 1', rows: dir1Rows },
+      { title: 'Direction 2', checkbox: { get: () => !!f.dir2, set: (v) => { f.dir2 = v ? { end: 'blind', depth: f.depth } : null; } }, visible: () => f.end !== 'midplane', rows: [
+        { type: 'select', options: END_OPTS.slice(0, 2), get: () => f.dir2?.end || 'blind', set: (v) => { f.dir2.end = v; } },
+        { type: 'number', icon: 'depth', get: () => f.dir2?.depth ?? 10, set: (v) => { f.dir2.depth = v; }, min: 0.0001, visible: () => f.dir2 && f.dir2.end === 'blind' },
+      ] },
+      { title: 'Thin Feature', checkbox: { get: () => false, set: () => app.toast('Thin Feature is not available yet.') }, rows: [] },
+      { title: 'Selected Contours', collapsed: true, rows: [{ type: 'text', text: 'All closed contours of the sketch are used.' }] },
+    ],
+    okEnabled: () => !!f.sketch,
+    onPick(p) {
+      if (p.kind === 'sketch') { f.sketch = p.id; return true; }
+      if (p.kind === 'plane' || (p.kind === 'face' && p.data && p.data.plane)) { app.sketchForFeature(p, cut ? 'cut' : 'extrude'); return 'handled'; }
+      return false;
+    },
+  };
+}
+
+function revolveSpec(app, f, cut) {
+  const autoAxis = () => {
+    const sk = app.featureById(f.sketch);
+    if (!sk || f.axis) return;
+    const cls = sk.entities.filter((e) => e.type === 'line' && e.construction);
+    if (cls.length === 1) f.axis = cls[0].id;
+  };
+  autoAxis();
+  return {
+    sections: [
+      { title: 'Axis of Revolution', rows: [
+        { type: 'selbox', id: 'axis', placeholder: 'Select a centerline or line', items: () => (f.axis ? [f.axis] : []), label: (id) => `Line@${sketchName(app, f.sketch)} (${id})`, remove: () => { f.axis = null; }, kinds: ['sketchline'] },
+      ] },
+      { title: 'Direction 1', rows: [
+        { type: 'select', options: [['blind', 'Blind'], ['midplane', 'Mid-Plane']], get: () => f.end || 'blind', set: (v) => { f.end = v; },
+          before: [{ icon: 'reverse', title: 'Reverse Direction', get: () => !!f.reverse, toggle: () => { f.reverse = !f.reverse; } }] },
+        { type: 'number', icon: 'angle_i', unit: 'deg', get: () => f.angle, set: (v) => { f.angle = v; }, min: 0.001, max: 360 },
+      ] },
+      { title: 'Selected Contours', collapsed: true, rows: [
+        { type: 'selbox', id: 'sketch', color: 2, placeholder: 'Select a sketch', items: () => (f.sketch ? [f.sketch] : []), label: (id) => sketchName(app, id), remove: () => { f.sketch = null; f.axis = null; }, kinds: ['sketch'] },
+      ] },
+    ],
+    okEnabled: () => !!f.sketch && !!f.axis,
+    onPick(p) {
+      if (p.kind === 'sketchline' && (!f.sketch || p.sketch === f.sketch)) { f.sketch = p.sketch; f.axis = p.id; return true; }
+      if (p.kind === 'sketch') { f.sketch = p.id; f.axis = null; autoAxis(); return true; }
+      if (p.kind === 'plane' || (p.kind === 'face' && p.data && p.data.plane)) { app.sketchForFeature(p, cut ? 'revcut' : 'revolve'); return 'handled'; }
+      return false;
+    },
+    showSketch: () => f.sketch,
+  };
+}
+
+const edgeLabel = (e, i) => `Edge<${i + 1}>`;
+
+function filletSpec(app, f, chamfer) {
+  const rows = chamfer ? [
+    { type: 'radio', name: 'chtype', options: [['angle_distance', 'Angle Distance'], ['distance_distance', 'Distance Distance']], get: () => f.mode || 'angle_distance', set: (v) => { f.mode = v; } },
+  ] : [
+    { type: 'radio', name: 'ftype', options: [['constant', 'Constant Size Fillet']], get: () => 'constant', set: () => {} },
+  ];
+  const params = chamfer ? [
+    { type: 'number', icon: 'depth', tip: 'Distance', get: () => f.distance, set: (v) => { f.distance = v; }, min: 0.0001 },
+    { type: 'number', icon: 'angle_i', unit: 'deg', get: () => f.angle ?? 45, set: (v) => { f.angle = v; }, min: 0.1, max: 89.9, visible: () => (f.mode || 'angle_distance') === 'angle_distance' },
+    { type: 'number', icon: 'depth', tip: 'Distance 2', get: () => f.distance2 ?? f.distance, set: (v) => { f.distance2 = v; }, min: 0.0001, visible: () => f.mode === 'distance_distance' },
+  ] : [
+    { type: 'select', options: [['symmetric', 'Symmetric']], get: () => 'symmetric', set: () => {} },
+    { type: 'number', icon: 'radius_i', tip: 'Radius', get: () => f.radius, set: (v) => { f.radius = v; }, min: 0.0001 },
+  ];
+  return {
+    tabs: ['Manual', 'FilletXpert'],
+    sections: [
+      { title: chamfer ? 'Chamfer Type' : 'Fillet Type', rows },
+      { title: chamfer ? 'Items To Chamfer' : 'Items To Fillet', rows: [
+        { type: 'selbox', id: 'edges', placeholder: 'Select edges or faces', items: () => f.edges, label: edgeLabel, remove: (i) => f.edges.splice(i, 1), kinds: ['edge', 'face'] },
+        { type: 'check', label: 'Tangent propagation', get: () => f.tangent !== false, set: (v) => { f.tangent = v; } },
+        { type: 'check', label: 'Full preview', get: () => true, set: () => {} },
+      ] },
+      { title: chamfer ? 'Chamfer Parameters' : 'Fillet Parameters', rows: params },
+    ],
+    okEnabled: () => f.edges.length > 0,
+    onPick(p) {
+      const add = (ed) => {
+        const i = f.edges.findIndex((x) => Math.hypot(...x.mid.map((c, k) => c - ed.mid[k])) < 1e-6);
+        if (i >= 0) f.edges.splice(i, 1); else f.edges.push({ mid: ed.mid });
+      };
+      if (p.kind === 'edge') { add(p.data); return true; }
+      if (p.kind === 'face') { for (const ei of p.data.edges || []) { const ed = app.edgeData(ei); if (ed) add(ed); } return true; }
+      return false;
+    },
+    selectedKeys: () => app.edgeKeysFor(f.edges),
+  };
+}
+
+function shellSpec(app, f) {
+  return {
+    sections: [
+      { title: 'Parameters', rows: [
+        { type: 'number', icon: 'thick_i', tip: 'Thickness', get: () => f.thickness, set: (v) => { f.thickness = v; }, min: 0.0001 },
+        { type: 'selbox', id: 'faces', placeholder: 'Faces to Remove', items: () => f.faces, label: (x, i) => `Face<${i + 1}>`, remove: (i) => f.faces.splice(i, 1), kinds: ['face'] },
+        { type: 'check', label: 'Shell outward', get: () => !!f.outward, set: (v) => { f.outward = v; } },
+        { type: 'check', label: 'Show preview', get: () => true, set: () => {} },
+      ] },
+      { title: 'Multi-thickness Settings', collapsed: true, rows: [{ type: 'text', text: 'Not available yet.' }] },
+    ],
+    okEnabled: () => true,
+    onPick(p) {
+      if (p.kind !== 'face') return false;
+      const c = p.data.center, n = p.data.normal;
+      const i = f.faces.findIndex((x) => Math.hypot(...x.center.map((v, k) => v - c[k])) < 1e-6);
+      if (i >= 0) f.faces.splice(i, 1); else f.faces.push({ center: c, ...(n ? { normal: n } : {}) });
+      return true;
+    },
+    selectedKeys: () => app.faceKeysFor(f.faces),
+  };
+}
+
+function planeLabel(app, spec) {
+  if (!spec) return '';
+  if (spec.ref) return app.featureById(spec.ref)?.name || spec.ref;
+  return 'Face ' + v3s(spec.origin);
+}
+
+function planeFromPick(app, p) {
+  if (p.kind === 'plane') return { ref: p.id };
+  if (p.kind === 'face' && p.data.plane) { const pl = p.data.plane; return { type: 'face', origin: pl.origin, normal: pl.normal, xdir: pl.xdir }; }
+  return null;
+}
+
+function featureListRows(app, f, kinds = ['extrude', 'revolve']) {
+  return { type: 'selbox', id: 'features', color: 2, placeholder: 'Select features in the tree', items: () => f.features, label: (id) => app.featureById(id)?.name || id, remove: (i) => f.features.splice(i, 1), kinds: ['feature'], accepts: kinds };
+}
+
+function mirrorSpec(app, f) {
+  return {
+    sections: [
+      { title: 'Mirror Face/Plane', rows: [{ type: 'selbox', id: 'plane', placeholder: 'Select a plane or planar face', items: () => (f.plane ? [f.plane] : []), label: (s) => planeLabel(app, s), remove: () => { f.plane = null; }, kinds: ['plane', 'face'] }] },
+      { title: 'Features to Mirror', rows: [featureListRows(app, f), { type: 'text', text: 'Leave empty to mirror the whole body.' }] },
+    ],
+    okEnabled: () => !!f.plane,
+    onPick(p) {
+      if (p.kind === 'feature') { const ff = app.featureById(p.id); if (ff && (ff.type === 'extrude' || ff.type === 'revolve') && !f.features.includes(p.id)) { f.features.push(p.id); return true; } return false; }
+      const pl = planeFromPick(app, p);
+      if (pl) { f.plane = pl; return true; }
+      return false;
+    },
+  };
+}
+
+function directionLabel(d) { return typeof d === 'string' ? `${d} axis` : d.edge ? 'Edge ' + v3s(d.edge.mid) : 'Direction'; }
+
+function linPatternSpec(app, f) {
+  return {
+    sections: [
+      { title: 'Direction 1', rows: [
+        { type: 'select', options: [['X', 'X axis'], ['Y', 'Y axis'], ['Z', 'Z axis'], ['edge', 'Edge (select)']], get: () => (typeof f.direction === 'string' ? f.direction : 'edge'), set: (v) => { if (v !== 'edge') f.direction = v; else app.pm.activeSelbox = 'dir'; },
+          before: [{ icon: 'reverse', title: 'Reverse Direction', get: () => !!f.reverse, toggle: () => { f.reverse = !f.reverse; } }] },
+        { type: 'selbox', id: 'dir', placeholder: 'Pattern Direction', items: () => [f.direction], label: directionLabel, remove: () => { f.direction = 'X'; }, kinds: ['edge'] },
+        { type: 'number', icon: 'spacing_i', tip: 'Spacing', get: () => f.spacing, set: (v) => { f.spacing = v; }, min: 0.0001 },
+        { type: 'number', icon: 'count_i', unit: '', int: true, tip: 'Number of Instances', get: () => f.count, set: (v) => { f.count = v; }, min: 1, max: 500 },
+      ] },
+      { title: 'Direction 2', checkbox: { get: () => !!f.direction2, set: (v) => { f.direction2 = v ? 'Z' : null; f.count2 = f.count2 || 2; f.spacing2 = f.spacing2 || f.spacing; } }, rows: [
+        { type: 'select', options: [['X', 'X axis'], ['Y', 'Y axis'], ['Z', 'Z axis']], get: () => (typeof f.direction2 === 'string' ? f.direction2 : 'Z'), set: (v) => { f.direction2 = v; } },
+        { type: 'number', icon: 'spacing_i', get: () => f.spacing2 ?? 10, set: (v) => { f.spacing2 = v; }, min: 0.0001 },
+        { type: 'number', icon: 'count_i', unit: '', int: true, get: () => f.count2 ?? 2, set: (v) => { f.count2 = v; }, min: 1, max: 500 },
+      ] },
+      { title: 'Features and Faces', rows: [featureListRows(app, f)] },
+    ],
+    activeSelbox: 'features',
+    okEnabled: () => f.features.length > 0,
+    onPick(p) {
+      if (p.kind === 'edge' && app.pm.activeSelbox === 'dir') { if (p.data.type === 'line') { f.direction = { edge: { mid: p.data.mid } }; app.pm.activeSelbox = 'features'; return true; } return false; }
+      if (p.kind === 'feature') { const ff = app.featureById(p.id); if (ff && (ff.type === 'extrude' || ff.type === 'revolve') && !f.features.includes(p.id)) { f.features.push(p.id); return true; } }
+      return false;
+    },
+  };
+}
+
+function circPatternSpec(app, f) {
+  return {
+    sections: [
+      { title: 'Direction 1', rows: [
+        { type: 'select', options: [['X', 'X axis'], ['Y', 'Y axis'], ['Z', 'Z axis']], get: () => (typeof f.axis === 'string' ? f.axis : 'Y'), set: (v) => { f.axis = v; } },
+        { type: 'radio', name: 'cpeq', options: [['eq', 'Equal spacing'], ['inst', 'Instance spacing']], get: () => (f.equal_spacing !== false ? 'eq' : 'inst'), set: (v) => { f.equal_spacing = v === 'eq'; } },
+        { type: 'number', icon: 'angle_i', unit: 'deg', get: () => (f.equal_spacing !== false ? f.angle : f.step ?? 30), set: (v) => { if (f.equal_spacing !== false) f.angle = v; else f.step = v; }, min: 0.001, max: 360 },
+        { type: 'number', icon: 'count_i', unit: '', int: true, get: () => f.count, set: (v) => { f.count = v; }, min: 1, max: 500 },
+      ] },
+      { title: 'Features and Faces', rows: [featureListRows(app, f)] },
+    ],
+    activeSelbox: 'features',
+    okEnabled: () => f.features.length > 0,
+    onPick(p) {
+      if (p.kind === 'feature') { const ff = app.featureById(p.id); if (ff && (ff.type === 'extrude' || ff.type === 'revolve') && !f.features.includes(p.id)) { f.features.push(p.id); return true; } }
+      return false;
+    },
+  };
+}
+
+function planeSpec(app, f) {
+  return {
+    sections: [
+      { title: 'First Reference', rows: [
+        { type: 'selbox', id: 'base', placeholder: 'Select a plane or planar face', items: () => (f.base ? [f.base] : []), label: (s) => planeLabel(app, s), remove: () => { f.base = null; }, kinds: ['plane', 'face'] },
+        { type: 'number', icon: 'depth', tip: 'Offset distance', get: () => f.offset, set: (v) => { f.offset = v; }, min: 0 },
+        { type: 'check', label: 'Flip offset', get: () => !!f.flip, set: (v) => { f.flip = v; } },
+      ] },
+    ],
+    okEnabled: () => !!f.base,
+    onPick(p) { const pl = planeFromPick(app, p); if (pl) { f.base = pl; return true; } return false; },
+  };
+}
+
+// ---------------------------------------------------------------------------------------------
+
+export function defaultsFor(key, app) {
+  const sel = app.selection;
+  const selSketch = sel.find((s) => s.kind === 'sketch')?.id || app.lastSketchId();
+  switch (key) {
+    case 'extrude': return { type: 'extrude', op: 'boss', sketch: selSketch, end: 'blind', depth: 10, merge: true };
+    case 'cut': return { type: 'extrude', op: 'cut', sketch: selSketch, end: 'blind', depth: 10, reverse: app.featureById(selSketch)?.plane?.type === 'face' };
+    case 'revolve': return { type: 'revolve', op: 'boss', sketch: selSketch, angle: 360, end: 'blind' };
+    case 'revcut': return { type: 'revolve', op: 'cut', sketch: selSketch, angle: 360, end: 'blind' };
+    case 'fillet': return { type: 'fillet', radius: 2, edges: sel.filter((s) => s.kind === 'edge').map((s) => ({ mid: s.data.mid })) };
+    case 'chamfer': return { type: 'chamfer', distance: 1, angle: 45, mode: 'angle_distance', edges: sel.filter((s) => s.kind === 'edge').map((s) => ({ mid: s.data.mid })) };
+    case 'shell': return { type: 'shell', thickness: 1, faces: sel.filter((s) => s.kind === 'face').map((s) => ({ center: s.data.center, ...(s.data.normal ? { normal: s.data.normal } : {}) })) };
+    case 'mirror': return { type: 'mirror', plane: null, features: sel.filter((s) => s.kind === 'feature').map((s) => s.id) };
+    case 'linear_pattern': return { type: 'linear_pattern', features: sel.filter((s) => s.kind === 'feature').map((s) => s.id), direction: 'X', count: 3, spacing: 20 };
+    case 'circular_pattern': return { type: 'circular_pattern', features: sel.filter((s) => s.kind === 'feature').map((s) => s.id), axis: 'Y', count: 4, angle: 360, equal_spacing: true };
+    case 'plane': return { type: 'plane', base: (() => { const p = sel.find((s) => s.kind === 'plane' || (s.kind === 'face' && s.data.plane)); return p ? planeFromPick(app, p) : null; })(), offset: 10 };
+    default: return null;
+  }
+}
+
+export function buildSpec(key, app, f) {
+  switch (key) {
+    case 'extrude': return extrudeSpec(app, f, false);
+    case 'cut': return extrudeSpec(app, f, true);
+    case 'revolve': return revolveSpec(app, f, false);
+    case 'revcut': return revolveSpec(app, f, true);
+    case 'fillet': return filletSpec(app, f, false);
+    case 'chamfer': return filletSpec(app, f, true);
+    case 'shell': return shellSpec(app, f);
+    case 'mirror': return mirrorSpec(app, f);
+    case 'linear_pattern': return linPatternSpec(app, f);
+    case 'circular_pattern': return circPatternSpec(app, f);
+    case 'plane': return planeSpec(app, f);
+    default: return null;
+  }
+}
+
+// Plain-language summary of a feature, used by the AI pane and tooltips.
+export function describeFeature(f, app) {
+  switch (f.type) {
+    case 'sketch': return `${f.name}: ${f.entities.filter((e) => e.type !== 'point').length} entities, ${f.constraints.length} relations/dimensions`;
+    case 'extrude': return `${f.name}: ${f.op === 'cut' ? 'cut' : 'extrude'} ${sketchName(app, f.sketch)} ${f.end === 'through_all' ? 'through all' : fmt(f.depth || 0) + ' mm'}`;
+    case 'revolve': return `${f.name}: revolve ${sketchName(app, f.sketch)} ${fmt(f.angle)}°`;
+    case 'fillet': return `${f.name}: R${fmt(f.radius)} on ${f.edges.length} edge(s)`;
+    case 'chamfer': return `${f.name}: ${fmt(f.distance)} mm on ${f.edges.length} edge(s)`;
+    case 'shell': return `${f.name}: ${fmt(f.thickness)} mm, ${f.faces.length} face(s) removed`;
+    default: return f.name;
+  }
+}

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>OpenSketch</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/app.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 9l8-4 8 4v8l-8 4-8-4z' fill='%23d9372b'/%3E%3C/svg%3E">
+</head>
+<body>
+<div id="app">
+  <header id="titlebar">
+    <div class="brand"><span class="logo">OS</span><span class="brand-text"><b>OPEN</b>SKETCH</span></div>
+    <div id="menu-flyout" class="menu-flyout" title="Menu">&#9656;</div>
+    <nav id="menubar" class="menubar hidden"></nav>
+    <div id="quickaccess" class="quickaccess"></div>
+    <div id="doctitle" class="doctitle">Part1 *</div>
+    <div class="search"><input id="cmdsearch" placeholder="Search Commands" autocomplete="off"><div id="cmdsearch-results" class="search-results hidden"></div></div>
+    <div class="title-help" title="Help">?</div>
+  </header>
+
+  <section id="cmdmgr">
+    <div id="ribbon" class="ribbon"></div>
+    <div id="cmdtabs" class="cmdtabs"></div>
+  </section>
+
+  <main id="main">
+    <aside id="leftpanel">
+      <div id="mgrtabs" class="mgrtabs"></div>
+      <div id="featuremgr" class="panel-body">
+        <div class="tree-filter"><input id="treefilter" placeholder="&#x1F50D;&#xFE0E; Filter" autocomplete="off"></div>
+        <div id="tree" class="tree" tabindex="0"></div>
+      </div>
+      <div id="propmgr" class="panel-body hidden"></div>
+    </aside>
+    <div id="splitter" class="splitter"></div>
+
+    <section id="graphics">
+      <div id="viewport"></div>
+      <div id="labels" class="labels"></div>
+      <div id="flyout-tree" class="flyout-tree hidden"></div>
+      <div id="breadcrumbs" class="breadcrumbs"></div>
+      <div id="headsup" class="headsup"></div>
+      <div id="confirmcorner" class="confirmcorner hidden"></div>
+      <div id="sketchcursor" class="sketchcursor hidden"></div>
+      <div id="contexttb" class="contexttb hidden"></div>
+      <div id="shortcutbar" class="shortcutbar hidden"></div>
+      <div id="selbox" class="selbox hidden"></div>
+      <div id="viewcube" class="viewcube-pop hidden"></div>
+      <div id="doctabs" class="doctabs">
+        <span class="doctab active">Model</span><span class="doctab">3D Views</span><span class="doctab">Motion Study 1</span>
+      </div>
+      <div id="toast" class="toast hidden"></div>
+    </section>
+
+    <aside id="taskpane">
+      <div id="taskpanel" class="taskpanel hidden"></div>
+      <div id="taskstrip" class="taskstrip"></div>
+    </aside>
+  </main>
+
+  <footer id="statusbar">
+    <span id="sb-product">OpenSketch Premium 2026</span>
+    <span id="sb-msg" class="sb-msg"></span>
+    <span class="sb-spacer"></span>
+    <span id="sb-coords" class="sb-cell"></span>
+    <span id="sb-defined" class="sb-cell"></span>
+    <span id="sb-editing" class="sb-cell">Editing Part</span>
+    <span id="sb-units" class="sb-cell sb-units" title="Unit system">MMGS &#9662;</span>
+    <span id="sb-help" class="sb-cell sb-help" title="Help">?</span>
+  </footer>
+</div>
+
+<div id="contextmenu" class="contextmenu hidden"></div>
+<div id="modal-layer"></div>
+<input id="fileinput" type="file" accept=".osk,.json" class="hidden">
+
+<script type="importmap">{ "imports": { "three": "./vendor/three.module.js" } }</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

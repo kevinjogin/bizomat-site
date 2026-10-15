@@ -1,0 +1,236 @@
+// PropertyManager: the left-panel form every command opens (green check / red X, rollouts,
+// pink selection boxes). Specs are plain objects; values live in the caller's state.
+
+import { icon } from '../icons.js';
+
+const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+
+export function evalExpr(s) {
+  // numbers with optional math and units: "25*2", "1in", "=10+5"
+  let t = String(s).trim().replace(/^=/, '');
+  const inch = /in(ch)?$/.test(t); t = t.replace(/(mm|in|inch|deg|°)$/i, '');
+  if (!/^[0-9+\-*/().\s eE]+$/.test(t)) return NaN;
+  try { const v = Function('"use strict";return (' + t + ')')(); return inch ? v * 25.4 : +v; } catch (_) { return NaN; }
+}
+
+export class PropertyManager {
+  constructor(container, app) {
+    this.root = container;
+    this.app = app;
+    this.spec = null;
+    this.activeSelbox = null;
+  }
+
+  get isOpen() { return !!this.spec; }
+
+  open(spec) {
+    this.spec = spec;
+    this.collapsed = new Set(spec.sections.filter((s) => s.collapsed).map((s) => s.title));
+    const firstSel = this.findSelboxes()[0];
+    this.activeSelbox = spec.activeSelbox || (firstSel ? firstSel.id : null);
+    this.render();
+    this.app.showPanel('pm');
+  }
+
+  close() {
+    this.spec = null;
+    this.activeSelbox = null;
+    this.root.innerHTML = '';
+    this.app.showPanel('tree');
+  }
+
+  findSelboxes() {
+    const out = [];
+    const walk = (rows) => rows.forEach((r) => { if (r.type === 'selbox') out.push(r); if (r.children) walk(r.children); });
+    if (this.spec) this.spec.sections.forEach((s) => walk(s.rows || []));
+    return out;
+  }
+
+  activeSelboxSpec() { return this.findSelboxes().find((s) => s.id === this.activeSelbox) || null; }
+
+  changed(rerender = false) {
+    if (this.spec?.onChange) this.spec.onChange();
+    if (rerender) this.render();
+  }
+
+  render() {
+    const s = this.spec;
+    if (!s) return;
+    const root = this.root;
+    const scroll = root.scrollTop;
+    root.innerHTML = '';
+    const pm = el('div', 'pm');
+    const title = el('div', 'pm-title', `${icon(s.icon || 'props', 20)}<span>${s.title}</span><span class="pm-help" title="Help">?</span>`);
+    pm.appendChild(title);
+    const acts = el('div', 'pm-actions');
+    const ok = el('div', 'pm-act' + (s.okEnabled && !s.okEnabled() ? ' disabled' : ''), icon('ok', 20)); ok.title = 'OK';
+    ok.onclick = () => this.app.pmOk();
+    acts.appendChild(ok);
+    if (!s.noCancel) { const cancel = el('div', 'pm-act', icon('cancel', 20)); cancel.title = 'Cancel'; cancel.onclick = () => this.app.pmCancel(); acts.appendChild(cancel); }
+    if (s.preview !== undefined) {
+      const pv = el('div', 'pm-act' + (s.preview ? ' on' : ''), icon('eye', 20)); pv.title = 'Detailed Preview';
+      pv.onclick = () => { s.preview = !s.preview; this.changed(true); };
+      acts.appendChild(pv);
+    }
+    const pin = el('div', 'pm-act' + (s.pinned ? ' on' : ''), icon('pin', 20)); pin.title = 'Keep Visible';
+    pin.onclick = () => { s.pinned = !s.pinned; this.render(); };
+    acts.appendChild(pin);
+    pm.appendChild(acts);
+    const msg = typeof s.message === 'function' ? s.message() : s.message;
+    if (msg) pm.appendChild(el('div', 'pm-msg' + (s.messageError ? ' err' : ''), msg));
+    if (s.error) pm.appendChild(el('div', 'pm-msg err', s.error));
+    for (const sec of s.sections) {
+      if (sec.visible && !sec.visible()) continue;
+      const box = el('div', 'pm-sec');
+      const isCol = this.collapsed.has(sec.title);
+      const checked = sec.checkbox ? !!sec.checkbox.get() : true;
+      if (isCol || (sec.checkbox && !checked)) box.classList.add('collapsed');
+      const h = el('div', 'pm-sec-h');
+      if (sec.checkbox) {
+        const cb = el('input'); cb.type = 'checkbox'; cb.checked = checked;
+        cb.onclick = (e) => { e.stopPropagation(); sec.checkbox.set(cb.checked); this.changed(true); };
+        h.appendChild(cb);
+      }
+      h.appendChild(el('span', null, sec.title));
+      h.appendChild(el('span', 'chev', isCol ? '&#9660;' : '&#9650;'));
+      h.onclick = () => { if (this.collapsed.has(sec.title)) this.collapsed.delete(sec.title); else this.collapsed.add(sec.title); this.render(); };
+      box.appendChild(h);
+      const body = el('div', 'pm-sec-b');
+      for (const r of sec.rows || []) this.renderRow(body, r);
+      box.appendChild(body);
+      pm.appendChild(box);
+    }
+    root.appendChild(pm);
+    root.scrollTop = scroll;
+  }
+
+  renderRow(parent, r) {
+    if (r.visible && !r.visible()) return;
+    const row = el('div', 'pm-row');
+    switch (r.type) {
+      case 'number': {
+        if (r.icon) { const i = el('span', null, icon(r.icon, 18)); i.title = r.tip || ''; row.appendChild(i); }
+        if (r.label) row.appendChild(el('label', null, r.label));
+        const wrap = el('div', 'pm-num');
+        const inp = el('input'); inp.type = 'text';
+        const unit = r.unit ?? 'mm';
+        const show = () => { const v = r.get(); inp.value = (Number.isFinite(v) ? +(+v).toFixed(4) : v) + (unit ? unit : ''); };
+        show();
+        const commit = () => {
+          const v = evalExpr(inp.value);
+          if (Number.isFinite(v) && (r.min === undefined || v >= r.min) && (r.max === undefined || v <= r.max)) { r.set(r.int ? Math.round(v) : v); this.changed(!!r.rerender); }
+          show();
+        };
+        inp.addEventListener('change', commit);
+        inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); commit(); } e.stopPropagation(); });
+        inp.addEventListener('wheel', (e) => { if (document.activeElement !== inp) return; e.preventDefault(); const st = r.step || (unit === 'deg' ? 1 : 1); r.set(r.get() + (e.deltaY < 0 ? st : -st)); show(); this.changed(); });
+        wrap.appendChild(inp);
+        const spin = el('div', 'pm-spin', '<span>&#9650;</span><span>&#9660;</span>');
+        const st = r.step || 1;
+        spin.children[0].onclick = () => { const v = r.get() + st; if (r.max === undefined || v <= r.max) { r.set(v); show(); this.changed(!!r.rerender); } };
+        spin.children[1].onclick = () => { const v = r.get() - st; if (r.min === undefined || v >= r.min) { r.set(v); show(); this.changed(!!r.rerender); } };
+        wrap.appendChild(spin);
+        row.appendChild(wrap);
+        if (r.after) for (const a of r.after) this.renderInline(row, a);
+        break;
+      }
+      case 'select': {
+        if (r.before) for (const a of r.before) this.renderInline(row, a);
+        if (r.icon) row.appendChild(el('span', null, icon(r.icon, 18)));
+        if (r.label) row.appendChild(el('label', null, r.label));
+        const sel = el('select', 'grow');
+        for (const [v, l] of r.options) { const o = el('option', null, l); o.value = v; sel.appendChild(o); }
+        sel.value = r.get();
+        sel.onchange = () => { r.set(sel.value); this.changed(true); };
+        row.appendChild(sel);
+        break;
+      }
+      case 'check': {
+        const lab = el('label', 'pm-radio');
+        const cb = el('input'); cb.type = 'checkbox'; cb.checked = !!r.get();
+        cb.onchange = () => { r.set(cb.checked); this.changed(true); };
+        lab.appendChild(cb); lab.appendChild(el('span', null, r.label));
+        row.appendChild(lab);
+        break;
+      }
+      case 'radio': {
+        const wrap = el('div', null); wrap.style.display = 'flex'; wrap.style.flexDirection = 'column'; wrap.style.gap = '3px';
+        for (const [v, l] of r.options) {
+          const lab = el('label', 'pm-radio');
+          const rb = el('input'); rb.type = 'radio'; rb.name = r.name || 'rb'; rb.checked = r.get() === v;
+          rb.onchange = () => { r.set(v); this.changed(true); };
+          lab.appendChild(rb); lab.appendChild(el('span', null, l));
+          wrap.appendChild(lab);
+        }
+        row.appendChild(wrap);
+        break;
+      }
+      case 'selbox': {
+        if (r.icon) row.appendChild(el('span', null, icon(r.icon, 18)));
+        const box = el('div', 'pm-selbox' + (r.color === 2 ? ' b2' : '') + (this.activeSelbox === r.id ? ' active' : ''));
+        const items = r.items();
+        if (!items.length && r.placeholder) box.appendChild(el('div', 'pm-note', r.placeholder));
+        items.forEach((it, i) => {
+          const si = el('div', 'si', `<span>${r.label(it, i)}</span><span class="x" title="Remove">&times;</span>`);
+          si.querySelector('.x').onclick = (e) => { e.stopPropagation(); r.remove(i); this.changed(true); };
+          si.onmouseenter = () => r.hover && r.hover(it);
+          si.onmouseleave = () => r.hover && r.hover(null);
+          box.appendChild(si);
+        });
+        box.onclick = () => { this.activeSelbox = r.id; this.render(); };
+        row.appendChild(box);
+        break;
+      }
+      case 'iconbtns': {
+        for (const a of r.buttons) this.renderInline(row, a);
+        if (r.label) row.appendChild(el('span', null, r.label));
+        break;
+      }
+      case 'text': row.appendChild(el('div', 'pm-note', typeof r.text === 'function' ? r.text() : r.text)); break;
+      case 'value': row.appendChild(el('span', null, r.label)); row.appendChild(el('span', 'grow', `<b>${r.get()}</b>`)); break;
+      case 'relbuttons': {
+        const wrap = el('div', 'pm-relbtns grow');
+        const list = r.items();
+        if (!list.length) wrap.appendChild(el('div', 'pm-note', r.empty || 'No relations apply.'));
+        for (const it of list) {
+          const b = el('div', 'pm-relbtn', `${icon(it.icon, 16)}<span>${it.label}</span>`);
+          b.onclick = () => it.run();
+          wrap.appendChild(b);
+        }
+        row.appendChild(wrap);
+        break;
+      }
+      case 'list': {
+        const wrap = el('div', 'pm-list grow');
+        const list = r.items();
+        if (!list.length) wrap.appendChild(el('div', 'pm-note', '&nbsp;' + (r.empty || '')));
+        for (const it of list) {
+          const li = el('div', 'li' + (it.selected ? ' sel' : '') + (it.over ? ' over' : ''), `${it.icon ? icon(it.icon, 16) : ''}<span>${it.label}</span>`);
+          li.onclick = () => it.select && it.select();
+          wrap.appendChild(li);
+        }
+        row.appendChild(wrap);
+        if (r.after) { const col = el('div'); for (const a of r.after) this.renderInline(col, a); row.appendChild(col); }
+        break;
+      }
+      case 'buttons': {
+        for (const b of r.buttons) {
+          const bt = el('button', 'btn' + (b.primary ? ' primary' : ''), b.label);
+          bt.onclick = () => b.run();
+          row.appendChild(bt);
+        }
+        break;
+      }
+      case 'custom': r.render(row); break;
+      default: break;
+    }
+    parent.appendChild(row);
+  }
+
+  renderInline(row, a) {
+    const b = el('div', 'pm-iconbtn' + (a.get && a.get() ? ' on' : ''), icon(a.icon, 18));
+    b.title = a.title || '';
+    b.onclick = () => { a.toggle(); this.changed(true); };
+    row.appendChild(b);
+  }
+}
