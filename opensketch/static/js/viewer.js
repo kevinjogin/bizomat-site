@@ -4,6 +4,11 @@
 import * as THREE from 'three';
 
 const V = (a) => new THREE.Vector3(a[0], a[1], a[2]);
+const mix = (a, b, t) => {
+  const ca = new THREE.Color(a), cb = new THREE.Color(b);
+  return ca.lerp(cb, t).getHex();
+};
+export const matOf = (m) => new THREE.Matrix4().set(...m); // row-major 16 numbers
 
 export const COLORS = {
   body: 0xc4cad2,
@@ -87,7 +92,10 @@ export class Viewer {
     this.sketchGroup = new THREE.Group(); // sketcher draws here, in plane-local coords
     this.sketchGroup.matrixAutoUpdate = false;
     this.otherSketches = new THREE.Group();
-    this.scene.add(this.planesGroup, this.bodyGroup, this.toolGroup, this.otherSketches, this.sketchGroup, this.overlayGroup);
+    this.liveGroup = new THREE.Group(); // AI live build: parts being built, components flying in
+    this.scene.add(this.planesGroup, this.bodyGroup, this.toolGroup, this.otherSketches, this.sketchGroup, this.overlayGroup, this.liveGroup);
+    this.partGeo = new Map(); // part id -> {key, faces, edges} shared by every component of that part
+    this.compGroups = new Map();
 
     this.displayStyle = 'shadedEdges';
     this.faceObjs = []; this.edgeObjs = [];
@@ -224,7 +232,7 @@ export class Viewer {
 
   sceneBox() {
     const box = new THREE.Box3();
-    for (const g of [this.bodyGroup, this.toolGroup, this.sketchGroup, this.otherSketches]) {
+    for (const g of [this.bodyGroup, this.toolGroup, this.sketchGroup, this.otherSketches, this.liveGroup]) {
       g.updateMatrixWorld(true);
       g.traverse((o) => { if ((o.isMesh || o.isLine) && o.visible && !o.userData.noFit) box.expandByObject(o); });
     }
@@ -297,11 +305,13 @@ export class Viewer {
         const box = this.sceneBox();
         this.pivot = box.isEmpty() ? null : box.getCenter(new THREE.Vector3());
         drag = { x: e.clientX, y: e.clientY, mode: e.ctrlKey ? 'pan' : e.shiftKey ? 'zoom' : 'rotate', zy: e.offsetY, zx: e.offsetX };
+        this.lastUserNav = performance.now();
         c.setPointerCapture(e.pointerId);
       }
     });
     c.addEventListener('pointermove', (e) => {
       if (!drag) return;
+      this.lastUserNav = performance.now();
       const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
       drag.x = e.clientX; drag.y = e.clientY;
       if (drag.mode === 'rotate') this.rotateBy(dx * 0.008, dy * 0.008);
@@ -313,6 +323,7 @@ export class Viewer {
     c.addEventListener('pointercancel', end);
     c.addEventListener('wheel', (e) => {
       e.preventDefault();
+      this.lastUserNav = performance.now();
       // SOLIDWORKS default: roll the wheel toward you to zoom in.
       const dir = this.reverseWheel ? -1 : 1;
       this.zoomAt(Math.exp(-dir * Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY), 120) * 0.0018 * (e.deltaMode ? 30 : 1)), e.offsetX, e.offsetY);
@@ -419,7 +430,7 @@ export class Viewer {
   clearGroup(g) {
     for (const o of [...g.children]) {
       g.remove(o);
-      o.traverse((x) => { if (x.geometry) x.geometry.dispose(); if (x.material) (Array.isArray(x.material) ? x.material : [x.material]).forEach((m) => m.dispose()); });
+      o.traverse((x) => { if (x.geometry && !x.geometry.userData.shared) x.geometry.dispose(); if (x.material) (Array.isArray(x.material) ? x.material : [x.material]).forEach((m) => m.dispose()); });
     }
   }
 
@@ -560,8 +571,10 @@ export class Viewer {
     const style = this.displayStyle;
     for (const f of this.faceObjs) {
       const k = 'face:' + f.userData.id;
+      const ck = f.userData.comp ? 'comp:' + f.userData.comp : null;
       const base = style === 'hlr' ? 0xffffff : f.userData.baseColor;
-      const c = this.selected.has(k) ? 0x6aa8ff : this.hoverKey === k ? 0xffc27a : this.extraHighlights.has(k) ? 0xc8d8ff : base;
+      const c = this.selected.has(k) ? 0x6aa8ff : this.hoverKey === k ? 0xffc27a : this.extraHighlights.has(k) ? 0xc8d8ff
+        : ck && this.selected.has(ck) ? mix(base, 0x2a8cff, 0.45) : ck && this.hoverKey === ck ? mix(base, 0xff8c00, 0.35) : base;
       f.material.color.setHex(c);
     }
     for (const e of this.edgeObjs) {
@@ -572,5 +585,117 @@ export class Viewer {
       e.material.depthTest = c === COLORS.edge && style !== 'wireframe';
     }
     this.requestRender();
+  }
+
+  // ------------------------------------------------------------------ assemblies
+  // Geometry of a part, built once and shared by every component that uses it.
+  partGeometry(pid, key, body) {
+    const hit = this.partGeo.get(pid);
+    if (hit && hit.key === key) return hit;
+    if (!body) return hit || null;
+    const faces = body.faces.map((f) => {
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(f.positions, 3));
+      geo.setIndex(f.indices);
+      geo.computeVertexNormals();
+      geo.userData.shared = true;
+      return { geo, data: f };
+    });
+    const edges = body.edges.map((e) => {
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(e.points, 3));
+      geo.userData.shared = true;
+      return { geo, data: e };
+    });
+    const pg = { key, faces, edges, body };
+    this.partGeo.set(pid, pg);
+    return pg;
+  }
+
+  // One group per component (matrix = component placement). Faces carry ids "c2/5" so picking,
+  // highlighting and display styles work as for a part.
+  componentGroup(pg, opts) {
+    const g = new THREE.Group();
+    g.matrixAutoUpdate = false;
+    const faces = [], edges = [];
+    for (const f of pg.faces) {
+      const m = new THREE.Mesh(f.geo, this.faceMaterial(opts.color, opts.opacity < 1 ? { transparent: true, opacity: opts.opacity, depthWrite: opts.opacity > 0.6 } : {}));
+      m.userData = { kind: 'face', id: `${opts.id}/${f.data.id}`, comp: opts.id, data: f.data, baseColor: opts.color };
+      g.add(m); faces.push(m);
+    }
+    for (const e of pg.edges) {
+      const l = new THREE.Line(e.geo, new THREE.LineBasicMaterial({ color: COLORS.edge, transparent: opts.opacity < 1, opacity: Math.min(1, opts.opacity + 0.2) }));
+      l.userData = { kind: 'edge', id: `${opts.id}/${e.data.id}`, comp: opts.id, data: e.data };
+      l.renderOrder = 2;
+      g.add(l); edges.push(l);
+    }
+    g.userData = { comp: opts.id, faces, edges };
+    return g;
+  }
+
+  // comps: [{id, part, key, matrix, color, hidden, opacity}], bodies: {part id: mesh or undefined}
+  setAssembly(comps, bodies = {}) {
+    this.clearGroup(this.bodyGroup);
+    this.faceObjs = []; this.edgeObjs = []; this.hiddenEdgeObjs = [];
+    this.bodyData = null;
+    this.compGroups = new Map();
+    for (const c of comps) {
+      const pg = this.partGeometry(c.part, c.key, bodies[c.part]);
+      if (!pg || c.hidden) continue;
+      const g = this.componentGroup(pg, { id: c.id, color: c.color ?? COLORS.body, opacity: c.opacity ?? 1 });
+      g.matrix.copy(matOf(c.matrix));
+      g.matrixWorldNeedsUpdate = true;
+      this.bodyGroup.add(g);
+      this.compGroups.set(c.id, g);
+      this.faceObjs.push(...g.userData.faces);
+      this.edgeObjs.push(...g.userData.edges);
+    }
+    this.applyDisplayStyle();
+    this.refreshHighlights();
+  }
+
+  // Tween groups to new matrices. items: [{group, to: Matrix4, via?: Matrix4, from?: Matrix4}]
+  tweenGroups(items, dur = 700) {
+    const parts = items.map((it) => {
+      const keys = [it.from || it.group.matrix.clone(), ...(it.via ? [it.via] : []), it.to].map((m) => {
+        const p = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3();
+        m.decompose(p, q, s);
+        return { p, q, s };
+      });
+      return { g: it.group, keys };
+    });
+    const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    return new Promise((resolve) => {
+      const t0 = performance.now();
+      const p = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3();
+      const frame = () => {
+        const u = dur <= 0 ? 1 : Math.min(1, (performance.now() - t0) / dur);
+        for (const { g, keys } of parts) {
+          const segs = keys.length - 1;
+          const x = ease(u) * segs, i = Math.min(segs - 1, Math.floor(x)), f = x - i;
+          const a = keys[i], b = keys[i + 1];
+          p.lerpVectors(a.p, b.p, f); q.slerpQuaternions(a.q, b.q, f); s.lerpVectors(a.s, b.s, f);
+          g.matrix.compose(p, q, s);
+          g.matrixWorldNeedsUpdate = true;
+        }
+        this.requestRender();
+        if (u < 1) requestAnimationFrame(frame); else resolve();
+      };
+      frame();
+    });
+  }
+
+  // Fit the camera to a box only if the user has not been navigating in the last few seconds.
+  followBox(box, animate = true) {
+    if (!box || box.isEmpty()) return;
+    if (this.lastUserNav && performance.now() - this.lastUserNav < 4000) return;
+    const c = box.getCenter(new THREE.Vector3());
+    const inv = this.quat.clone().invert();
+    const pts = [];
+    for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) pts.push(new THREE.Vector3(x, y, z).sub(c).applyQuaternion(inv));
+    const w = Math.max(...pts.map((pp) => pp.x)) - Math.min(...pts.map((pp) => pp.x));
+    const h = Math.max(...pts.map((pp) => pp.y)) - Math.min(...pts.map((pp) => pp.y));
+    const vh = Math.max(h, w * this.h / this.w, 1) * 1.3;
+    this.setView(this.quat, c, vh, animate);
   }
 }

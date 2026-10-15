@@ -1,17 +1,19 @@
-"""FastAPI server: serves the SOLIDWORKS-style web UI and the build123d regen API."""
+"""FastAPI server: serves the SOLIDWORKS-style web UI, the build123d regen API for parts and
+assemblies, and the streaming AI endpoint."""
 
 from __future__ import annotations
 
+import json
 import os
 import tempfile
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import ai, geometry
+from . import ai, assembly, geometry
 
 STATIC = Path(__file__).parent / "static"
 
@@ -21,22 +23,35 @@ app = FastAPI(title="OpenSketch")
 class RegenRequest(BaseModel):
     doc: dict
     preview: dict | None = None
+    known: dict | None = None  # assembly: part id -> mesh key the client already has
 
 
 class AIRequest(BaseModel):
     doc: dict
     prompt: str
     conversation: str | None = None
+    demo: bool | str = False  # True or "press": hand press assembly, "part": L bracket
 
 
 @app.post("/api/regen")
 def api_regen(req: RegenRequest):
+    if assembly.is_assembly(req.doc):
+        return assembly.regen_assembly(req.doc, req.known)
     return geometry.regen_result(req.doc, req.preview)
 
 
 @app.post("/api/mass")
 def api_mass(req: RegenRequest):
+    if assembly.is_assembly(req.doc):
+        return assembly.mass_properties(req.doc)
     return geometry.mass_properties(req.doc)
+
+
+@app.post("/api/interference")
+def api_interference(req: RegenRequest):
+    if not assembly.is_assembly(req.doc):
+        raise HTTPException(400, "Interference Detection works on assemblies")
+    return assembly.interference(req.doc)
 
 
 @app.post("/api/export/{fmt}")
@@ -46,10 +61,13 @@ def api_export(fmt: str, req: RegenRequest):
     fd, path = tempfile.mkstemp(suffix=f".{fmt}")
     os.close(fd)
     try:
-        geometry.export(req.doc, fmt, path)
-    except geometry.FeatureError as exc:
+        if assembly.is_assembly(req.doc):
+            assembly.export(req.doc, fmt, path)
+        else:
+            geometry.export(req.doc, fmt, path)
+    except (geometry.FeatureError, assembly.AssemblyError) as exc:
         raise HTTPException(400, str(exc)) from exc
-    name = (req.doc.get("name") or "Part1") + (".step" if fmt == "step" else ".stl")
+    name = (req.doc.get("name") or ("Assem1" if assembly.is_assembly(req.doc) else "Part1")) + (".step" if fmt == "step" else ".stl")
     return FileResponse(path, filename=name, media_type="application/octet-stream")
 
 
@@ -61,9 +79,21 @@ def api_ai(req: AIRequest):
         return JSONResponse({"error": str(exc)}, status_code=503)
 
 
+@app.post("/api/ai/stream")
+def api_ai_stream(req: AIRequest):
+    """Newline-delimited JSON events while the AI designs (see ai.run_stream)."""
+    def gen():
+        try:
+            for ev in ai.run_stream(req.doc, req.prompt, req.conversation, demo=req.demo):
+                yield json.dumps(ev, separators=(",", ":")) + "\n"
+        except Exception as exc:  # never leave the client hanging
+            yield json.dumps({"ev": "error", "message": f"Server error: {exc}"}) + "\n"
+    return StreamingResponse(gen(), media_type="application/x-ndjson", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
 @app.get("/api/ai/status")
 def api_ai_status():
-    return {"available": ai.available()}
+    return {"available": ai.available() or ai.demo_enabled(), "demo": ai.demo_enabled()}
 
 
 @app.get("/")

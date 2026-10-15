@@ -94,3 +94,96 @@ unknowns, and reports degrees of freedom, per-entity defined state and over-defi
 Edge references are `{"mid": [x,y,z]}`, the point at the middle of the edge. Face references are
 `{"center": [x,y,z], "normal": [x,y,z]}`. They are matched to the nearest edge or face on rebuild.
 This is simple and works for most edits; it is not yet full topological naming.
+
+# Assembly document
+
+An assembly is also one JSON object, saved as `.osk`. It carries its parts inside it, so one file
+holds the whole product. Parts are ordinary part documents (above); components are placed copies
+of a part; mates position the components, as in SOLIDWORKS.
+
+```json
+{
+  "version": 1,
+  "type": "assembly",
+  "name": "Assem1",
+  "units": "mm",
+  "parts": {
+    "base": { "name": "Base", "features": [ ... ], "appearance": "#8a96a3", "material": {...} },
+    "pin":  { "name": "Pin",  "features": [ ... ] }
+  },
+  "components": [
+    {"id": "c1", "part": "base", "name": "Base<1>", "fixed": true, "position": [0, 0, 0], "rotation": [0, 0, 0]},
+    {"id": "c2", "part": "pin",  "name": "Pin<1>", "position": [0, 40, 0], "rotation": [0, 0, 0]}
+  ],
+  "mates": [
+    {"id": "m1", "name": "Concentric1", "type": "concentric",
+     "refs": [{"component": "c1", "axis": {"point": [0, 0, 0], "dir": [0, 1, 0]}},
+              {"component": "c2", "axis": {"point": [0, 0, 0], "dir": [0, 1, 0]}}]},
+    {"id": "m2", "name": "Coincident1", "type": "coincident", "align": "anti",
+     "refs": [{"component": "c1", "plane": {"point": [0, 20, 0], "normal": [0, 1, 0]}},
+              {"component": "c2", "plane": {"point": [0, 0, 0], "normal": [0, -1, 0]}}]}
+  ],
+  "sequence": ["c1", "c2"],
+  "seq": 3
+}
+```
+
+A part document may carry `"type": "part"`; a document without `type` is a part.
+
+## Components
+
+- `part`: key into `parts`. Several components can use the same part (instances `<1>`, `<2>`).
+- `position` (mm) and `rotation` (degrees) place the part's origin in the assembly. The rotation is
+  applied about the assembly X axis, then Y, then Z (fixed axes): R = Rz * Ry * Rx.
+- `fixed`: the component does not move (SOLIDWORKS "(f)"). If no component is fixed, the first one is.
+- `hidden`, `suppressed` as for features. A suppressed component and its mates are ignored.
+- The mate solver writes the solved `position` and `rotation` back, so the file always shows where
+  every component sits. Positions given by hand or by the AI are the starting guess; unmated
+  directions keep them.
+
+## Mate references
+
+Every reference names a `component` and one geometric entity, in that component's **part**
+coordinates (the coordinates used while modelling the part):
+
+| entity | form | from a face pick |
+|---|---|---|
+| plane | `"plane": {"point": [x,y,z], "normal": [x,y,z]}` | planar face: center and outward normal |
+| axis | `"axis": {"point": [x,y,z], "dir": [x,y,z]}` | cylindrical or conical face: its axis |
+| point | `"point": [x,y,z]` | vertex or sketch point |
+| named | `"ref": "Front Plane" / "Top Plane" / "Right Plane" / "Origin" / "X axis" / "Y axis" / "Z axis"` | the part's own reference geometry |
+
+A reference without `component` (for example `{"ref": "Top Plane"}`) is the assembly's own reference
+geometry, which is fixed.
+
+When a part changes, plane and axis references follow their face: on rebuild each one is matched to
+the nearest face of the rebuilt part with the same direction (within 20% of the part size) and the
+stored point is updated. Like edge and face references in parts, this is geometric matching, not
+full topological naming.
+
+## Mates
+
+| type | references | meaning |
+|---|---|---|
+| `coincident` | plane-plane, plane-point, point-point, axis-axis, axis-plane, axis-point | entities lie on each other. Plane-plane uses `align`. |
+| `concentric` | axis-axis | axes collinear |
+| `parallel` | plane or axis, plane or axis | directions parallel (`align` optional) |
+| `perpendicular` | plane or axis, plane or axis | directions perpendicular |
+| `distance` | plane-plane, plane-point, point-point, axis-axis | `value` mm apart; plane-plane also parallel |
+| `angle` | plane or axis, plane or axis | `value` degrees between directions |
+| `lock` | any two references on two components | the second component keeps its current pose relative to the first; the pose is stored in `pose` |
+
+- `align`: `"anti"` (normals face each other, SOLIDWORKS "Anti-Aligned", the default for touching
+  faces), `"aligned"`, or `"auto"` (whichever is closer when the mate is solved; the default).
+- `flip`: for `distance`, measure to the other side.
+- `suppressed`: the mate is ignored.
+
+The solver is a damped least-squares (Levenberg-Marquardt) solve over the six degrees of freedom of
+every free component. It moves components as little as possible. Each mate reports `ok` or `error`
+(cannot be satisfied together with the others, like an over-defining mate in SOLIDWORKS).
+
+## Sequence
+
+`sequence` lists component ids in the order they were assembled (insertion order if absent).
+The Motion Study tab replays this order: each component flies in from an exploded position and
+settles onto its mates. The AI fills it as it assembles.

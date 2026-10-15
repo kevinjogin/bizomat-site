@@ -142,6 +142,22 @@ const P = {
   spacing_i: `<path d="M5 6v12M19 6v12" stroke="${K}"/><path d="M5 12h14" stroke="${B}" stroke-width="1.5"/><path d="M5 12l3-2v4zM19 12l-3-2v4z" fill="${B}"/>`,
   thick_i: `<path d="M4 6h16v4H4zM4 14h16v4H4z" fill="${G}" stroke="${GD}"/><path d="M12 10v4" stroke="${B}" stroke-width="1.6"/>`,
 
+  // Assemblies
+  assembly: `<path d="M3 11l5-2.5 5 2.5v6l-5 2.5-5-2.5z" fill="#f2c230" stroke="${YD}" stroke-width=".8"/><path d="M11 6l5-2.5 5 2.5v6l-5 2.5-5-2.5z" fill="${G}" stroke="${GD}" stroke-width=".8"/><path d="M11 6l5 2.5 5-2.5M16 8.5v6" fill="none" stroke="${GD}" stroke-width=".8"/>`,
+  component: `<path d="M4 9l8-4 8 4v8l-8 4-8-4z" fill="${G}" stroke="${GD}" stroke-width=".8"/><path d="M4 9l8 4 8-4M12 13v8" fill="none" stroke="${GD}" stroke-width=".8"/>`,
+  insertcomp: `<path d="M4 11l7-3.5 7 3.5v7l-7 3.5-7-3.5z" fill="${G}" stroke="${GD}" stroke-width=".8"/><path d="M4 11l7 3.5 7-3.5M11 14.5v7" fill="none" stroke="${GD}" stroke-width=".8"/><circle cx="18" cy="6" r="5" fill="${GR}"/><path d="M18 3v6M15 6h6" stroke="#fff" stroke-width="1.8"/>`,
+  newpart: `<path d="M4 11l7-3.5 7 3.5v7l-7 3.5-7-3.5z" fill="#f2c230" stroke="${YD}" stroke-width=".8"/><path d="M4 11l7 3.5 7-3.5M11 14.5v7" fill="none" stroke="${YD}" stroke-width=".8"/><path d="M15 2h6v6" fill="none" stroke="${B}" stroke-width="1.6"/><path d="M21 2l-6 6" stroke="${B}" stroke-width="1.6"/>`,
+  mate: `<path d="M3 4h8v7H3z" fill="${G}" stroke="${GD}"/><path d="M13 13h8v7h-8z" fill="${Y}" stroke="${YD}"/><path d="M11 7.5h3.5v5.5" fill="none" stroke="${B}" stroke-width="1.6"/><path d="M12.5 11l2 2.5 2-2.5" fill="none" stroke="${B}" stroke-width="1.6"/>`,
+  mates: `<path d="M4 6h7v6H4z" fill="${G}" stroke="${GD}"/><path d="M13 12h7v6h-7z" fill="${G}" stroke="${GD}"/><path d="M11 9h2v3" fill="none" stroke="${K}" stroke-width="1.4"/>`,
+  movecomp: `<path d="M5 10l7-3.5 7 3.5v7l-7 3.5-7-3.5z" fill="${G}" stroke="${GD}" stroke-width=".8"/><path d="M12 1v6M9 3.5L12 1l3 2.5M1 13h5M3.5 10.5L1 13l2.5 2.5M23 13h-5M20.5 10.5L23 13l-2.5 2.5" fill="none" stroke="${B}" stroke-width="1.5"/>`,
+  fix: `<path d="M4 9l8-4 8 4v8l-8 4-8-4z" fill="${G}" stroke="${GD}" stroke-width=".8"/><rect x="8" y="10" width="8" height="7" rx="1" fill="${K}"/><path d="M9.5 10V8a2.5 2.5 0 015 0v2" fill="none" stroke="${K}" stroke-width="1.5"/>`,
+  playback: `<rect x="2" y="4" width="20" height="16" rx="2" fill="#fff" stroke="${GD}"/><path d="M10 8v8l6-4z" fill="${GR}"/>`,
+  returnasm: `<path d="M10 6L4 11l6 5" fill="none" stroke="${B}" stroke-width="2"/><path d="M4 11h9a6 6 0 016 6v2" fill="none" stroke="${B}" stroke-width="2"/>`,
+  m_distance: `<path d="M5 4v16M19 4v16" stroke="${K}" stroke-width="1.6"/><path d="M5 12h14" stroke="${B}" stroke-width="1.5"/><path d="M5 12l3-2v4zM19 12l-3-2v4z" fill="${B}"/>`,
+  m_angle: `<path d="M4 19h16M4 19L16 6" stroke="${K}" stroke-width="1.8"/><path d="M11 19a7 7 0 00-2-5" fill="none" stroke="${B}" stroke-width="1.5"/>`,
+  m_lock: `<rect x="6" y="11" width="12" height="9" rx="1.5" fill="${K}"/><path d="M8.5 11V8a3.5 3.5 0 017 0v3" fill="none" stroke="${K}" stroke-width="1.8"/>`,
+  ai_stop: `<rect x="6" y="6" width="12" height="12" rx="1.5" fill="${R}"/>`,
+
   // relations glyphs
   r_horizontal: `<path d="M5 12h14" stroke="${K}" stroke-width="2.4"/>`,
   r_vertical: `<path d="M12 5v14" stroke="${K}" stroke-width="2.4"/>`,

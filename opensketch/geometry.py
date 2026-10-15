@@ -565,6 +565,14 @@ def mesh_shape(shape, scale=None) -> dict:
             pl = Plane(f)
             info["plane"] = plane_dict(Plane(origin=f.center(), x_dir=pl.x_dir, z_dir=f.normal_at()))
             info["normal"] = vlist(f.normal_at())
+        elif f.geom_type in (GeomType.CYLINDER, GeomType.CONE):
+            try:
+                ax = f.axis_of_rotation
+                info["axis"] = {"point": vlist(ax.position), "dir": vlist(ax.direction)}
+                if f.geom_type == GeomType.CYLINDER:
+                    info["radius"] = round(f.radius, 6)
+            except Exception:
+                pass
         faces.append(info)
     edges = []
     for i, e in enumerate(shape.edges()):

@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "opensketch"
-version = "0.1.0"
+version = "0.2.0"
 description = "SOLIDWORKS-style parametric CAD on build123d, with an AI copilot"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["build123d>=0.9", "fastapi>=0.110", "uvicorn>=0.29", "pydantic>=2"]
+dependencies = ["build123d>=0.9", "fastapi>=0.110", "uvicorn>=0.29", "pydantic>=2", "numpy>=1.24"]
 
 [project.optional-dependencies]
 ai = ["anthropic>=1.0"]
