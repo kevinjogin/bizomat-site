@@ -1,0 +1,270 @@
+"""STEP import, and the "imported" and "standard" feature bodies.
+
+An imported solid is stored inside the document as BREP text (zlib + base64), so an .osk file stays
+self-contained. SOLIDWORKS calls this an "Imported" base feature: you keep modelling on top of it.
+
+A STEP with one solid becomes a part. A STEP with several solids becomes an assembly: one part per
+distinct shape (identical shapes share a part, like instances), one component per solid at its STEP
+position. Like SOLIDWORKS importing a STEP assembly, no mates come in; Add Mates (AI) or the Mate
+command adds them.
+"""
+
+from __future__ import annotations
+
+import base64
+import hashlib
+import os
+import re
+import tempfile
+import zlib
+from collections import OrderedDict
+
+import numpy as np
+
+from . import geometry
+
+NATIVE_SOLIDWORKS = (".sldprt", ".sldasm", ".slddrw")
+
+
+class ImportError_(Exception):
+    pass
+
+
+# ----------------------------------------------------------------------------- BREP blobs
+
+def encode_shape(shape) -> str:
+    from build123d import export_brep
+    fd, path = tempfile.mkstemp(suffix=".brep")
+    os.close(fd)
+    try:
+        export_brep(shape, path)
+        raw = open(path, "rb").read()
+    finally:
+        os.unlink(path)
+    return base64.b64encode(zlib.compress(raw, 6)).decode("ascii")
+
+
+_decoded: "OrderedDict[str, object]" = OrderedDict()
+
+
+def decode_shape(data: str):
+    key = hashlib.sha1(data.encode("ascii")).hexdigest()
+    hit = _decoded.get(key)
+    if hit is not None:
+        _decoded.move_to_end(key)
+        return hit
+    from build123d import import_brep
+    raw = zlib.decompress(base64.b64decode(data))
+    fd, path = tempfile.mkstemp(suffix=".brep")
+    os.close(fd)
+    try:
+        open(path, "wb").write(raw)
+        shape = import_brep(path)
+    finally:
+        os.unlink(path)
+    solid = geometry.solid_of(shape) if shape is not None else None
+    if solid is None:
+        raise geometry.FeatureError("The imported data has no solid")
+    _decoded[key] = solid
+    while len(_decoded) > 48:
+        _decoded.popitem(last=False)
+    return solid
+
+
+# ----------------------------------------------------------------------------- STEP
+
+def _read_step(data: bytes):
+    from build123d import import_step
+    fd, path = tempfile.mkstemp(suffix=".step")
+    os.close(fd)
+    try:
+        open(path, "wb").write(data)
+        return import_step(path)
+    finally:
+        os.unlink(path)
+
+
+def _leaves(shape, out):
+    from build123d import Solid
+    kids = list(getattr(shape, "children", ()) or ())
+    if isinstance(shape, Solid) or not kids:
+        out.append(shape)
+        return
+    for k in kids:
+        _leaves(k, out)
+
+
+def _signature(solid) -> tuple:
+    bb = solid.bounding_box()
+    dims = sorted(round(v, 3) for v in (bb.size.X, bb.size.Y, bb.size.Z))
+    return (round(solid.volume, 2), round(solid.area, 2), len(solid.faces()), len(solid.edges()), tuple(dims))
+
+
+def _clean_name(label: str | None, fallback: str) -> str:
+    s = (label or "").strip()
+    s = re.sub(r"\s+", " ", s)
+    return s[:60] or fallback
+
+
+def _slug(name: str, used: set) -> str:
+    base = re.sub(r"[^a-z0-9]+", "", name.lower())[:24] or "part"
+    if base[0].isdigit():
+        base = "p" + base
+    s, k = base, 2
+    while s in used:
+        s, k = f"{base}{k}", k + 1
+    used.add(s)
+    return s
+
+
+def import_part_feature(solid, name: str, source: str) -> dict:
+    return {"id": "imp1", "type": "import", "name": "Imported1", "format": "brep",
+            "data": encode_shape(solid), "source": source, "label": name}
+
+
+def import_step(data: bytes, filename: str = "model.step") -> dict:
+    """Return a part or assembly document for a STEP file."""
+    ext = os.path.splitext(filename)[1].lower()
+    if ext in NATIVE_SOLIDWORKS:
+        raise ImportError_(
+            "SOLIDWORKS files (.sldprt, .sldasm) are a closed format that only SOLIDWORKS can read. "
+            "In SOLIDWORKS use File > Save As > STEP AP214 (*.step), then open the STEP file here.")
+    if ext not in (".step", ".stp", ""):
+        raise ImportError_(f"Cannot import {ext} files. Use STEP (.step or .stp).")
+    try:
+        root = _read_step(data)
+    except Exception as exc:  # OCC reader errors
+        raise ImportError_(f"Could not read the STEP file: {exc}") from exc
+    stem = os.path.splitext(os.path.basename(filename))[0] or "Imported"
+    solids = list(root.solids()) if root is not None else []
+    if not solids:
+        raise ImportError_("The STEP file has no solid bodies (surfaces and wireframes are not supported yet).")
+    leaves = []
+    _leaves(root, leaves)
+    labels = [getattr(l, "label", "") for l in leaves] if len(leaves) == len(solids) else [""] * len(solids)
+    if len(solids) == 1:
+        s = solids[0]
+        name = _clean_name(labels[0] or getattr(root, "label", ""), stem)
+        return {"version": 1, "type": "part", "name": name, "units": "mm",
+                "features": [import_part_feature(s, name, os.path.basename(filename))], "rollback": None, "seq": 10}
+    from . import assembly
+    from build123d import Location
+    asm = assembly.new_assembly(_clean_name(getattr(root, "label", ""), stem))
+    groups: list[tuple[tuple, str]] = []
+    used: set = set()
+    counts: dict[str, int] = {}
+    for i, s in enumerate(solids):
+        sig = _signature(s.located(Location()))
+        pid = next((p for g, p in groups if g == sig), None)
+        name = _clean_name(labels[i], f"Body{i + 1}")
+        if pid is None:
+            pid = _slug(name, used)
+            groups.append((sig, pid))
+            local = s.located(Location())
+            asm["parts"][pid] = {"version": 1, "type": "part", "name": name, "units": "mm",
+                                 "features": [import_part_feature(local, name, os.path.basename(filename))],
+                                 "rollback": None, "seq": 10}
+        counts[pid] = counts.get(pid, 0) + 1
+        R, t = _matrix(s.location)
+        cid = f"c{i + 1}"
+        comp = {"id": cid, "part": pid, "name": f"{asm['parts'][pid]['name']}<{counts[pid]}>",
+                "position": [round(float(v), 6) for v in t], "rotation": assembly.euler_of(R)}
+        if i == 0:
+            comp["fixed"] = True
+        asm["components"].append(comp)
+        asm["sequence"].append(cid)
+    asm["seq"] = len(solids) + 1
+    asm["source"] = os.path.basename(filename)
+    return asm
+
+
+def _matrix(loc):
+    trsf = loc.wrapped.Transformation()
+    R = np.array([[trsf.Value(r, c) for c in (1, 2, 3)] for r in (1, 2, 3)])
+    t = np.array([trsf.Value(r, 4) for r in (1, 2, 3)])
+    return R, t
+
+
+# ----------------------------------------------------------------------------- standard parts (Toolbox)
+
+STANDARD = {
+    # kind: (module, class, required args, description)
+    "socket_head_cap_screw": ("bd_warehouse.fastener", "SocketHeadCapScrew", ("size", "length"), "ISO 4762 socket head cap screw"),
+    "hex_head_screw": ("bd_warehouse.fastener", "HexHeadScrew", ("size", "length"), "ISO 4014 hex head screw"),
+    "counter_sunk_screw": ("bd_warehouse.fastener", "CounterSunkScrew", ("size", "length"), "ISO 10642 countersunk screw"),
+    "button_head_screw": ("bd_warehouse.fastener", "ButtonHeadScrew", ("size", "length"), "ISO 7380 button head screw"),
+    "set_screw": ("bd_warehouse.fastener", "SetScrew", ("size", "length"), "ISO 4026 set screw"),
+    "hex_nut": ("bd_warehouse.fastener", "HexNut", ("size",), "ISO 4032 hex nut"),
+    "plain_washer": ("bd_warehouse.fastener", "PlainWasher", ("size",), "ISO 7089 plain washer"),
+    "ball_bearing": ("bd_warehouse.bearing", "SingleRowDeepGrooveBallBearing", ("size",), "Deep groove ball bearing (SKT), size bore-OD-width"),
+}
+DEFAULT_TYPE = {
+    "SocketHeadCapScrew": "iso4762", "HexHeadScrew": "iso4014", "CounterSunkScrew": "iso10642",
+    "ButtonHeadScrew": "iso7380_1", "SetScrew": "iso4026", "HexNut": "iso4032", "PlainWasher": "iso7089",
+    "SingleRowDeepGrooveBallBearing": "SKT",
+}
+
+_std_cache: "OrderedDict[str, object]" = OrderedDict()
+
+
+def standard_catalog() -> dict:
+    """Kinds and their available sizes."""
+    import importlib
+    out = {}
+    for kind, (mod, cls, req, desc) in STANDARD.items():
+        try:
+            C = getattr(importlib.import_module(mod), cls)
+            sizes = list(C.sizes(DEFAULT_TYPE[cls]))
+        except Exception:
+            continue
+        out[kind] = {"description": desc, "args": list(req), "sizes": sizes}
+    return out
+
+
+def build_standard(feat: dict):
+    """Solid for a standard (Toolbox) part. Screws run down -Z from the head's underside at Z=0 in
+    bd_warehouse; OpenSketch turns them so the axis is Y (up, as SOLIDWORKS) with the head on top."""
+    import importlib
+    from build123d import Axis
+    kind = feat.get("kind")
+    if kind not in STANDARD:
+        raise geometry.FeatureError(f"Unknown standard part kind {kind!r}")
+    mod, cls, req, _ = STANDARD[kind]
+    args = {k: feat.get(k) for k in req}
+    key = repr((kind, sorted(args.items())))
+    hit = _std_cache.get(key)
+    if hit is not None:
+        return hit
+    C = getattr(importlib.import_module(mod), cls)
+    try:
+        if cls == "SingleRowDeepGrooveBallBearing":
+            s = C(str(args["size"]), DEFAULT_TYPE[cls])
+        elif "length" in req:
+            s = C(str(args["size"]), float(args["length"]), DEFAULT_TYPE[cls], simple=True)
+        else:
+            s = C(str(args["size"]), DEFAULT_TYPE[cls], simple=True)
+    except Exception as exc:
+        raise geometry.FeatureError(f"Standard part {kind} {args}: {exc}") from exc
+    shape = geometry.solid_of(s)
+    if shape is None:
+        from build123d import Compound
+        shape = Compound(children=list(s.solids()))
+    shape = shape.rotate(Axis.X, -90)  # Z axis -> Y axis: shank along -Y, head above Y=0
+    _std_cache[key] = shape
+    while len(_std_cache) > 64:
+        _std_cache.popitem(last=False)
+    return shape
+
+
+def standard_part_doc(kind: str, **args) -> dict:
+    mod, cls, req, desc = STANDARD[kind]
+    size = args.get("size")
+    name = {"socket_head_cap_screw": "Socket Head Cap Screw", "hex_head_screw": "Hex Head Screw",
+            "counter_sunk_screw": "Countersunk Screw", "button_head_screw": "Button Head Screw",
+            "set_screw": "Set Screw", "hex_nut": "Hex Nut", "plain_washer": "Washer",
+            "ball_bearing": "Ball Bearing"}[kind]
+    label = f"{name} {size}" + (f"x{args['length']:g}" if "length" in args and args["length"] else "")
+    feat = {"id": "std1", "type": "standard", "name": "Toolbox1", "kind": kind, **{k: args[k] for k in req}}
+    return {"version": 1, "type": "part", "name": label, "units": "mm", "features": [feat], "rollback": None,
+            "seq": 10, "appearance": "#9aa3ad", "material": {"name": "AISI 304", "density": 8.0e-6},
+            "standard": {"kind": kind, "description": desc, **{k: args[k] for k in req}}}

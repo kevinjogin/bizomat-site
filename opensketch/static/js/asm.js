@@ -18,8 +18,10 @@ export const MATE_TYPES = [
   ['distance', 'Distance', 'm_distance'],
   ['angle', 'Angle', 'm_angle'],
 ];
-export const mateIcon = (t) => (MATE_TYPES.find((m) => m[0] === t) || [0, 0, 'mate'])[2];
-const mateLabel = (t) => (MATE_TYPES.find((m) => m[0] === t) || [0, t])[1];
+export const ADV_MATES = [['limit_distance', 'Limit Distance', 'm_limit'], ['limit_angle', 'Limit Angle', 'm_limit']];
+const ALL_MATES = [...MATE_TYPES, ...ADV_MATES, ['hinge', 'Hinge', 'hinge']];
+export const mateIcon = (t) => (ALL_MATES.find((m) => m[0] === t) || [0, 0, 'mate'])[2];
+const mateLabel = (t) => ({ limit_distance: 'LimitDistance', limit_angle: 'LimitAngle' }[t] || (ALL_MATES.find((m) => m[0] === t) || [0, t])[1]);
 
 export function newAssembly(name = 'Assem1') {
   return { version: 1, type: 'assembly', name, units: 'mm', parts: {}, components: [], mates: [], sequence: [], seq: 1 };
@@ -169,7 +171,7 @@ export class AssemblyMode {
       const state = m.suppressed ? 'suppressed' : s?.state === 'error' ? 'error' : 'ok';
       const names = (m.refs || []).map((r) => (r.component ? this.comp(r.component)?.name : r.ref) || '?');
       const n = node({ id: m.id, kind: 'mate', name: `${esc(m.name)} (${esc(names.join(','))})`, ic: mateIcon(m.type), depth: 2,
-        cls: `${state}${proposed.has(m.id) ? ' proposed' : ''}`, badge: state === 'error' ? tree.badgeIcon('error') : '', onDbl: () => this.matePM(m) });
+        cls: `${state}${proposed.has(m.id) ? ' proposed' : ''}`, badge: state === 'error' ? tree.badgeIcon('error') : '', onDbl: () => (m.type === 'hinge' ? this.hingePM(m) : this.matePM(m)) });
       if (n && s?.message) n.title = s.message;
     }
   }
@@ -214,7 +216,9 @@ export class AssemblyMode {
     app.setSelection([it]);
     if (it.kind === 'component' && !app.proposal) {
       // left-drag moves an under-defined component; mates keep holding (SOLIDWORKS drag)
-      this.drag = { id: it.id, x: e.offsetX, y: e.offsetY, cx: e.clientX, cy: e.clientY, point: p.point.clone(), moved: false };
+      const g = app.viewer.compGroups.get(it.id);
+      const local = g ? p.point.clone().applyMatrix4(g.matrix.clone().invert()).toArray() : [0, 0, 0];
+      this.drag = { id: it.id, x: e.offsetX, y: e.offsetY, cx: e.clientX, cy: e.clientY, point: p.point.clone(), local, moved: false };
       app.viewer.canvas.setPointerCapture(e.pointerId);
     } else app.showContextToolbar(it, e.clientX, e.clientY);
   }
@@ -225,23 +229,41 @@ export class AssemblyMode {
     this.drag = null;
     if (!d.moved) { this.app.showContextToolbar({ kind: 'component', id: d.id }, d.cx, d.cy); return; }
     clearTimeout(this.dragTimer);
-    const pos = this.dragPos(d, e);
-    this.app.commit('Move Component', () => {
-      const c = this.app.doc.components.find((x) => x.id === d.id);
-      c.position = pos;
-    });
+    const finish = async () => {
+      const res = await this.solveDrag(d, e);
+      if (!res) { this.regen(); return; }
+      // everything the drag moved (a linkage moves together) is written back as one undo step
+      this.app.commit('Move Component', () => {
+        for (const c of res.components) {
+          const dc = this.app.doc.components.find((x) => x.id === c.id);
+          if (dc && !dc.suppressed) { dc.position = c.position; dc.rotation = c.rotation; }
+        }
+      });
+    };
+    finish();
   }
 
-  dragPos(d, e) {
+  // Cursor target on the plane through the grabbed point, facing the screen.
+  dragTarget(d, e) {
     const v = this.app.viewer;
     const n = new THREE.Vector3(0, 0, 1).applyQuaternion(v.quat);
     const x = new THREE.Vector3(1, 0, 0).applyQuaternion(v.quat);
     const y = n.clone().cross(x);
     const frame = { origin: d.point.toArray(), normal: n.toArray(), xdir: x.toArray(), ydir: y.toArray() };
-    const a = v.screenToPlane(d.x, d.y, frame).world, b = v.screenToPlane(e.offsetX, e.offsetY, frame).world;
-    const c = this.app.doc.components.find((cc) => cc.id === d.id);
-    const p0 = d.start || (d.start = [...(c.position || [0, 0, 0])]);
-    return p0.map((v0, i) => +(v0 + b.getComponent(i) - a.getComponent(i)).toFixed(4));
+    return v.screenToPlane(e.offsetX, e.offsetY, frame).world.toArray();
+  }
+
+  // Solve with the grabbed point pulled toward the cursor; mates keep holding, so a hinge turns and
+  // a slider slides (SOLIDWORKS drag). Latest request wins.
+  async solveDrag(d, e) {
+    const app = this.app;
+    const doc = app.cleanDoc(app.doc);
+    const seq = (this.dragSeq = (this.dragSeq || 0) + 1);
+    let res;
+    try { res = await app.api('/api/regen', { doc, known: this.knownKeys(), drag: { component: d.id, point: d.local, target: this.dragTarget(d, e) } }); } catch (_) { return null; }
+    if (seq !== this.dragSeq && this.drag) return null;
+    this.draw(res, doc);
+    return res;
   }
 
   dragMove(e) {
@@ -256,17 +278,10 @@ export class AssemblyMode {
       if (this.resComp(d.id)?.state === 'full') { this.drag = null; app.status(`${c.name} is fully defined by its mates and cannot move.`); return; }
       app.status('Dragging ' + c.name + '. Mates keep holding.');
     }
-    const pos = this.dragPos(d, e);
     clearTimeout(this.dragTimer);
-    // preview: solve with the dragged position as the starting guess (throttled)
     const now = performance.now();
-    const go = () => {
-      this.lastDragSolve = performance.now();
-      const doc = app.cleanDoc(app.doc);
-      doc.components.find((cc) => cc.id === d.id).position = pos;
-      this.regen(false, doc);
-    };
-    if (!this.lastDragSolve || now - this.lastDragSolve > 90) go(); else this.dragTimer = setTimeout(go, 90);
+    const go = () => { this.lastDragSolve = performance.now(); if (this.drag === d) this.solveDrag(d, e); };
+    if (!this.lastDragSolve || now - this.lastDragSolve > 60) go(); else this.dragTimer = setTimeout(go, 60);
   }
 
   contextToolbar(item) {
@@ -282,7 +297,7 @@ export class AssemblyMode {
     if (item.kind === 'mate') {
       const m = this.mate(item.id);
       if (m) {
-        tb.push({ icon: mateIcon(m.type), title: 'Edit Feature', run: () => this.matePM(m) });
+        tb.push({ icon: mateIcon(m.type), title: 'Edit Feature', run: () => (m.type === 'hinge' ? this.hingePM(m) : this.matePM(m)) });
         tb.push({ icon: 'rebuild', title: m.suppressed ? 'Unsuppress' : 'Suppress', run: () => this.suppressMate(m.id, !m.suppressed) });
       }
     }
@@ -303,7 +318,7 @@ export class AssemblyMode {
       items.push('-', { label: 'Delete', key: 'Del', run: () => this.deleteItems([c.id], []) });
     } else if (item?.kind === 'mate') {
       const m = this.mate(item.id);
-      items.push({ label: 'Edit Feature', icon: mateIcon(m.type), run: () => this.matePM(m) });
+      items.push({ label: 'Edit Feature', icon: mateIcon(m.type), run: () => (m.type === 'hinge' ? this.hingePM(m) : this.matePM(m)) });
       items.push({ label: m.suppressed ? 'Unsuppress' : 'Suppress', run: () => this.suppressMate(m.id, !m.suppressed) });
       items.push({ label: 'Rename', key: 'F2', run: () => this.app.tree.rename(m.id) });
       items.push('-', { label: 'Delete', key: 'Del', run: () => this.deleteItems([], [m.id]) });
@@ -313,6 +328,28 @@ export class AssemblyMode {
       items.push({ label: 'Assembly Playback', icon: 'playback', run: () => this.playSequence() });
     }
     return items;
+  }
+
+  tabHide(x, y, show) {
+    const app = this.app, v = app.viewer;
+    if (!show) {
+      const it = this.pickToItem(app.pickAt(x, y));
+      if (it?.kind !== 'component') return;
+      app.status(`${this.comp(it.id)?.name} hidden. Shift+Tab over it shows it again.`);
+      return this.setHidden(it.id, true);
+    }
+    // Shift+Tab: the nearest hidden component whose box the cursor ray passes through
+    const ray = v.rayAt(x, y).ray;
+    let best = null;
+    for (const c of this.doc.components) {
+      if (!c.hidden || c.suppressed) continue;
+      const rc = this.resComp(c.id), pb = this.res?.parts?.[c.part]?.bbox;
+      if (!rc || !pb) continue;
+      const box = new THREE.Box3(new THREE.Vector3(...pb[0]), new THREE.Vector3(...pb[1])).applyMatrix4(matOf(rc.matrix));
+      const hit = ray.intersectBox(box, new THREE.Vector3());
+      if (hit) { const d = hit.distanceTo(ray.origin); if (!best || d < best.d) best = { d, id: c.id }; }
+    }
+    if (best) { this.setHidden(best.id, false); app.status(`${this.comp(best.id)?.name} shown`); }
   }
 
   // ------------------------------------------------------------------ edits
@@ -361,20 +398,8 @@ export class AssemblyMode {
     const doc = app.doc;
     const state = { picked: null };
     const pickFile = () => {
-      const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.osk,.json';
-      inp.onchange = async () => {
-        const f = inp.files[0]; if (!f) return;
-        try {
-          const d = JSON.parse(await f.text());
-          if (isAssembly(d)) throw new Error('Sub-assemblies are not supported yet. Pick a part file.');
-          if (!Array.isArray(d.features)) throw new Error('Not an OpenSketch part');
-          const base = (d.name || f.name.replace(/\.[^.]+$/, '')).toLowerCase().replace(/[^a-z0-9]+/g, '') || 'part';
-          let pid = base, k = 2;
-          while (doc.parts[pid]) pid = base + k++;
-          app.commit('Insert ' + (d.name || pid), () => { doc.parts[pid] = { ...d, type: 'part', rollback: null }; this.addComponent(pid); });
-          app.closeCommand();
-        } catch (err) { message('Insert Components', 'Could not insert: ' + esc(err.message)); }
-      };
+      const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.osk,.json,.step,.stp,.sldprt,.sldasm';
+      inp.onchange = () => { if (inp.files[0]) { app.closeCommand(); this.insertFile(inp.files[0]); } };
       inp.click();
     };
     const spec = {
@@ -397,7 +422,40 @@ export class AssemblyMode {
     app.pm.open(spec);
   }
 
-  addComponent(pid, position = null) {
+  // Insert a part file (.osk or STEP) into this assembly. A STEP assembly is flattened in: its parts
+  // and components come in at their STEP positions relative to each other, placed beside the assembly.
+  async insertFile(file) {
+    const app = this.app;
+    const doc = app.doc;
+    try {
+      const d = app.isImportable(file) ? await app.importFile(file) : JSON.parse(await file.text());
+      if (isAssembly(d)) {
+        const map = {};
+        const bb = this.res?.bbox;
+        const dx = bb ? bb[1][0] + 40 : 0;
+        app.commit('Insert ' + d.name, () => {
+          for (const [pid, p] of Object.entries(d.parts)) {
+            let k = pid, n = 2;
+            while (doc.parts[k]) k = pid + n++;
+            map[pid] = k; doc.parts[k] = p;
+          }
+          for (const c of d.components) {
+            const pos = [c.position[0] + dx, c.position[1], c.position[2]];
+            this.addComponent(map[c.part], pos, c.rotation);
+          }
+        });
+        app.status(`Inserted ${d.components.length} components from ${file.name}. Add mates with Mate, or OpenSketch AI > Add Mates.`);
+        return;
+      }
+      if (!Array.isArray(d.features)) throw new Error('Not an OpenSketch part');
+      const base = (d.name || file.name.replace(/\.[^.]+$/, '')).toLowerCase().replace(/[^a-z0-9]+/g, '') || 'part';
+      let pid = base, k = 2;
+      while (doc.parts[pid]) pid = base + k++;
+      app.commit('Insert ' + (d.name || pid), () => { doc.parts[pid] = { ...d, type: 'part', rollback: null }; this.addComponent(pid); });
+    } catch (err) { message('Insert Components', 'Could not insert: ' + esc(err.message)); }
+  }
+
+  addComponent(pid, position = null, rotation = null) {
     const doc = this.app.doc;
     const id = this.uid('c');
     const n = 1 + doc.components.filter((c) => c.part === pid).length;
@@ -408,7 +466,7 @@ export class AssemblyMode {
       const w = pb ? pb[1][0] - pb[0][0] : 50;
       pos = bb ? [+(bb[1][0] + w * 0.8 + 20).toFixed(3), 0, 0] : [0, 0, 0];
     }
-    const comp = { id, part: pid, name: `${doc.parts[pid]?.name || pid}<${n}>`, position: pos, rotation: [0, 0, 0] };
+    const comp = { id, part: pid, name: `${doc.parts[pid]?.name || pid}<${n}>`, position: pos, rotation: rotation || [0, 0, 0] };
     if (!doc.components.length) comp.fixed = true;
     doc.components.push(comp);
     (doc.sequence = doc.sequence || []).push(id);
@@ -480,6 +538,15 @@ export class AssemblyMode {
           { type: 'check', label: 'Flip dimension', visible: () => m.type === 'distance', get: () => !!m.flip, set: (v) => { m.flip = v; } },
           { type: 'number', label: 'Angle', icon: 'm_angle', unit: 'deg', min: 0, max: 180, visible: () => m.type === 'angle', get: () => m.value ?? 90, set: (v) => { m.value = v; } },
         ] },
+        { title: 'Advanced Mates', collapsed: !existing || !/^limit/.test(m.type), rows: [
+          { type: 'radio', name: 'matetype2', options: ADV_MATES.map(([v, l]) => [v, l]), get: () => m.type, set: (v) => { m.type = v; typed = true; if (m.min === undefined) { m.min = 0; m.max = v === 'limit_angle' ? 90 : 50; } } },
+          { type: 'number', label: 'Maximum', unit: () => (m.type === 'limit_angle' ? 'deg' : 'mm'), visible: () => /^limit/.test(m.type), get: () => m.max ?? 50, set: (v) => { m.max = v; } },
+          { type: 'number', label: 'Minimum', unit: () => (m.type === 'limit_angle' ? 'deg' : 'mm'), visible: () => /^limit/.test(m.type), get: () => m.min ?? 0, set: (v) => { m.min = v; } },
+        ] },
+        { title: 'Mechanical Mates', collapsed: true, rows: [
+          { type: 'buttons', buttons: [{ label: 'Hinge...', run: () => { app.closeCommand(); this.hingePM(); } }] },
+          { type: 'text', text: 'Hinge: two parts turn about a shared axis, optionally between angle limits.' },
+        ] },
         { title: 'Mate alignment', visible: showAlign, rows: [
           { type: 'radio', name: 'matealign', options: [['anti', 'Anti-Aligned'], ['aligned', 'Aligned']], get: () => (m.align === 'aligned' ? 'aligned' : 'anti'), set: (v) => { m.align = v; } },
         ] },
@@ -507,6 +574,7 @@ export class AssemblyMode {
         const id = existing ? existing.id : this.uid('m');
         const mm = { ...clone(m), id, name };
         if (mm.type !== 'distance' && mm.type !== 'angle') delete mm.value;
+        if (!/^limit/.test(mm.type)) { delete mm.min; delete mm.max; }
         if (mm.type !== 'lock') delete mm.pose;
         if (existing && existing.type !== mm.type) mm.name = this.nextMateName(mm.type);
         app.commit(existing ? 'Edit ' + name : name, () => {
@@ -525,6 +593,75 @@ export class AssemblyMode {
       for (const s of app.selection) if (s.kind === 'face') app.cmd.onPick({ kind: 'face', id: s.id, data: s.data });
     }
     app.setSelection([]);
+  }
+
+  // Hinge (SOLIDWORKS Mechanical Mates): Concentric selections, Coincident selections, optional
+  // angle limits measured between two more faces.
+  hingePM(existing = null) {
+    const app = this.app;
+    if (app.cmd) app.pmCancel();
+    const doc = app.doc;
+    const m = existing ? clone(existing) : { type: 'hinge', refs: [], planes: [], angle_refs: [] };
+    m.planes = m.planes || []; m.angle_refs = m.angle_refs || [];
+    const lab = { refs: [], planes: [], angle_refs: [] };
+    const nm = (r) => (r.component ? esc(this.comp(r.component)?.name) : esc(r.ref));
+    for (const k of Object.keys(lab)) lab[k] = (m[k] || []).map(nm);
+    const box = (id, key, ph, kind) => ({ type: 'selbox', id, icon: key === 'refs' ? 'r_concentric' : key === 'planes' ? 'r_coincident' : 'm_angle', placeholder: ph, kinds: [kind],
+      items: () => lab[key], label: (l) => l, remove: (i) => { lab[key].splice(i, 1); m[key].splice(i, 1); } });
+    let limits = existing ? m.angle_min !== undefined || m.angle_max !== undefined : false;
+    const spec = {
+      title: existing ? m.name : 'Hinge', icon: 'hinge',
+      message: () => (m.refs.length < 2 ? 'Select the two cylindrical faces that share the hinge axis.' : null),
+      activeSelbox: 'h_refs',
+      sections: [
+        { title: 'Mate Selections', rows: [
+          { type: 'text', text: 'Concentric Selections' }, box('h_refs', 'refs', 'Two cylindrical faces', 'axis'),
+          { type: 'text', text: 'Coincident Selections (optional)' }, box('h_planes', 'planes', 'Two planar faces', 'plane'),
+        ] },
+        { title: 'Specify angle limits', checkbox: { get: () => limits, set: (v) => { limits = v; } }, rows: [
+          box('h_angle', 'angle_refs', 'Two faces to measure the angle between', 'plane'),
+          { type: 'number', label: 'Maximum', unit: 'deg', min: 0, max: 180, get: () => m.angle_max ?? 110, set: (v) => { m.angle_max = v; } },
+          { type: 'number', label: 'Minimum', unit: 'deg', min: 0, max: 180, get: () => m.angle_min ?? 0, set: (v) => { m.angle_min = v; } },
+        ] },
+      ],
+      okEnabled: () => m.refs.length === 2 && (m.planes.length === 0 || m.planes.length === 2) && (!limits || m.angle_refs.length === 2),
+      onChange: () => this.previewMate(this.cleanHinge(m, limits), existing),
+    };
+    app.cmd = {
+      key: 'hinge',
+      onPick: (p) => {
+        const r = this.refOfPick(p);
+        if (!r) return 'handled';
+        const box = app.pm.activeSelbox;
+        const key = box === 'h_planes' ? 'planes' : box === 'h_angle' ? 'angle_refs' : 'refs';
+        const want = key === 'refs' ? 'axis' : 'plane';
+        if ((r.kind || (r.ref.ref ? 'plane' : '')) !== want) { app.toast(key === 'refs' ? 'Pick a cylindrical face.' : 'Pick a planar face.'); return 'handled'; }
+        if (m[key].length >= 2) { m[key] = []; lab[key] = []; }
+        m[key].push(r.ref); lab[key].push(r.label);
+        if (m[key].length === 2) app.pm.activeSelbox = key === 'refs' ? 'h_planes' : key === 'planes' && limits ? 'h_angle' : app.pm.activeSelbox;
+        app.pm.render();
+        this.previewMate(this.cleanHinge(m, limits), existing);
+        return true;
+      },
+      onOk: () => {
+        if (!spec.okEnabled()) return false;
+        const mm = { ...this.cleanHinge(m, limits), id: existing ? existing.id : this.uid('m'), name: existing ? m.name : this.nextMateName('hinge') };
+        app.commit(existing ? 'Edit ' + mm.name : mm.name, () => {
+          if (existing) { const i = doc.mates.findIndex((x) => x.id === existing.id); doc.mates[i] = mm; } else doc.mates.push(mm);
+        });
+        return undefined;
+      },
+      onCancel: () => { this.regen(); },
+    };
+    app.pm.open(spec);
+    app.setSelection([]);
+  }
+
+  cleanHinge(m, limits) {
+    const mm = clone(m);
+    if (mm.planes?.length !== 2) delete mm.planes;
+    if (!limits || mm.angle_refs?.length !== 2) { delete mm.angle_refs; delete mm.angle_min; delete mm.angle_max; } else { mm.angle_min = mm.angle_min ?? 0; mm.angle_max = mm.angle_max ?? 110; }
+    return mm;
   }
 
   nextMateName(type) {

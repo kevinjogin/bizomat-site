@@ -63,7 +63,7 @@ export class Viewer {
   constructor(container, labels) {
     this.el = container;
     this.labels = labels;
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true, stencil: true });
     this.renderer.setPixelRatio(window.devicePixelRatio || 1);
     this.renderer.setClearColor(0x000000, 0);
     this.renderer.localClippingEnabled = true;
@@ -93,6 +93,9 @@ export class Viewer {
     this.sketchGroup.matrixAutoUpdate = false;
     this.otherSketches = new THREE.Group();
     this.liveGroup = new THREE.Group(); // AI live build: parts being built, components flying in
+    this.capGroup = new THREE.Group();  // section view: the filled cut face
+    this.capMeshes = [];
+    this.scene.add(this.capGroup);
     this.scene.add(this.planesGroup, this.bodyGroup, this.toolGroup, this.otherSketches, this.sketchGroup, this.overlayGroup, this.liveGroup);
     this.partGeo = new Map(); // part id -> {key, faces, edges} shared by every component of that part
     this.compGroups = new Map();
@@ -475,6 +478,7 @@ export class Viewer {
     }
     this.applyDisplayStyle();
     this.refreshHighlights();
+    if (this.clipPlane) this.rebuildCaps();
   }
 
   setTool(mesh, color = COLORS.tool) {
@@ -522,8 +526,46 @@ export class Viewer {
       const n = V(frame.normal).negate();
       this.clipPlane = new THREE.Plane(n, -n.dot(V(frame.origin)));
     }
+    this.sectionFrame = frame || null;
     for (const o of [...this.faceObjs, ...this.edgeObjs]) o.material.clippingPlanes = this.clipPlane ? [this.clipPlane] : [];
+    this.rebuildCaps();
     this.requestRender();
+  }
+
+  // Filled section faces (stencil capping): every visible face mesh gets two stencil copies next to
+  // it (so they follow component moves), then one plane is drawn where the stencil says "inside".
+  rebuildCaps() {
+    for (const m of this.capMeshes) { m.parent?.remove(m); m.material.dispose(); }
+    this.capMeshes = [];
+    this.clearGroup(this.capGroup);
+    if (!this.clipPlane) return;
+    const planes = [this.clipPlane];
+    for (const f of this.faceObjs) {
+      if (!f.visible || !f.parent) continue;
+      for (const [side, op] of [[THREE.BackSide, THREE.IncrementWrapStencilOp], [THREE.FrontSide, THREE.DecrementWrapStencilOp]]) {
+        const mat = new THREE.MeshBasicMaterial({ side, clippingPlanes: planes, depthWrite: false, depthTest: false, colorWrite: false,
+          stencilWrite: true, stencilFunc: THREE.AlwaysStencilFunc, stencilFail: op, stencilZFail: op, stencilZPass: op });
+        const m = new THREE.Mesh(f.geometry, mat);
+        m.matrixAutoUpdate = false; m.matrix.copy(f.matrix);
+        m.renderOrder = 5; m.userData.noFit = true; m.raycast = () => {};
+        f.parent.add(m);
+        this.capMeshes.push(m);
+      }
+    }
+    const box = this.sceneBox();
+    const size = box.isEmpty() ? 500 : box.getSize(new THREE.Vector3()).length() * 1.5;
+    const cap = new THREE.Mesh(new THREE.PlaneGeometry(size, size), new THREE.MeshStandardMaterial({
+      color: 0xd98c3c, metalness: 0, roughness: 0.8, side: THREE.DoubleSide,
+      stencilWrite: true, stencilRef: 0, stencilFunc: THREE.NotEqualStencilFunc,
+      stencilFail: THREE.ReplaceStencilOp, stencilZFail: THREE.ReplaceStencilOp, stencilZPass: THREE.ReplaceStencilOp }));
+    const n = this.clipPlane.normal.clone();
+    const p = n.clone().multiplyScalar(-this.clipPlane.constant);
+    const c = box.isEmpty() ? p : this.clipPlane.projectPoint(box.getCenter(new THREE.Vector3()), new THREE.Vector3());
+    cap.position.copy(c);
+    cap.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), n);
+    cap.renderOrder = 6; cap.userData.noFit = true; cap.raycast = () => {};
+    cap.onAfterRender = (r) => r.clearStencil();
+    this.capGroup.add(cap);
   }
 
   // ------------------------------------------------------------------ picking
@@ -650,8 +692,11 @@ export class Viewer {
       this.faceObjs.push(...g.userData.faces);
       this.edgeObjs.push(...g.userData.edges);
     }
+    for (const o of [...this.faceObjs, ...this.edgeObjs]) o.material.clippingPlanes = this.clipPlane ? [this.clipPlane] : [];
     this.applyDisplayStyle();
     this.refreshHighlights();
+    this.bodyGroup.updateMatrixWorld(true);
+    if (this.clipPlane) this.rebuildCaps();
   }
 
   // Tween groups to new matrices. items: [{group, to: Matrix4, via?: Matrix4, from?: Matrix4}]

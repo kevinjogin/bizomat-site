@@ -123,6 +123,29 @@ Assembly workflow (one tool call per step, so the user can follow it):
 4. check_interference at the end, fix real clashes (holes too small, parts overlapping).
 The create_part result lists the part's planar faces and cylinder axes; use them for mate references.
 
+Motion: mates leave real freedom, so components can be dragged like in SOLIDWORKS. For a lid, door or
+arm use a hinge mate: {{"type": "hinge", "refs": [axisA, axisB], "planes": [planeA, planeB] (optional,
+stops it sliding along the axis), "angle_refs": [planeA, planeB], "angle_min": 0, "angle_max": 110
+(optional limits, the angle between those two faces)}}. For travel limits use limit_distance
+({{"refs": [planeA, planeB], "min", "max"}}) or limit_angle ({{"refs": [a, b], "min", "max"}}).
+
+Standard and bought parts: for ISO screws, nuts, washers and ball bearings call standard_part (a
+real model made to size; its axis is the part Y axis, the head sits above Y = 0 and the shank runs
+down -Y, so mate the head's underside: plane point [0,0,0] normal [0,-1,0], axis Y). For anything
+else that is normally bought (gas springs, motors, linear guides, hinges, handles, casters) call
+request_part_file with a McMaster-Carr part number when you know one: the user is asked to download
+its STEP and drop it in. Model a simple placeholder of the right envelope with the same part_id in the
+same turn so the assembly can continue; the user's STEP replaces it later.
+
+Imported geometry: parts imported from STEP have an "import" feature whose data is omitted here; its
+"summary" gives the bounding box, volume, planar faces and cylinders. You can add features on top of
+it (cuts, fillets, shells) with propose_features mode "append" (keep the import feature). To rebuild
+it as an editable feature tree, propose_features mode "replace" with sketches and extrudes that
+recreate the same solid; the report compares your result with the imported body (volume only in
+yours, only in the import): get both near zero. Assemblies imported from STEP have no mates: call
+find_mate_candidates, then add the mates a designer would (shafts concentric with their holes,
+faces that sit on each other coincident), leaving hinges and slides free where the product moves.
+
 Before each tool call, write one short sentence telling the user what you are about to do
 ("Base plate, 400 x 300 x 25 mm with four column holes."). When everything rebuilds cleanly,
 finish with one or two short sentences about what you built. No emojis.
@@ -180,6 +203,27 @@ TOOLS = [
     {"name": "check_interference",
      "description": "Check every pair of components for overlapping volume.",
      "input_schema": {"type": "object", "properties": {}}},
+    {"name": "find_mate_candidates",
+     "description": ("List likely mates in the assembly from its geometry: coaxial cylinders (shafts in holes) "
+                     "and opposite planar faces lying on each other. References are ready for add_mate."),
+     "input_schema": {"type": "object", "properties": {}}},
+    {"name": "standard_part",
+     "description": ("Create a standard part (Toolbox) made to size: ISO screws, nuts, washers, ball bearings. "
+                     "Then insert_component it like any part."),
+     "input_schema": {"type": "object", "properties": {
+         "part_id": {"type": "string"},
+         "kind": {"type": "string", "enum": ["socket_head_cap_screw", "hex_head_screw", "counter_sunk_screw",
+                                             "button_head_screw", "set_screw", "hex_nut", "plain_washer", "ball_bearing"]},
+         "size": {"type": "string", "description": "e.g. 'M6-1' for screws, nuts, washers; 'M8-22-7' (bore-OD-width) for bearings"},
+         "length": {"type": "number", "description": "screw length in mm"}}, "required": ["part_id", "kind", "size"]}},
+    {"name": "request_part_file",
+     "description": ("Ask the user to download a bought part's STEP (for example from McMaster-Carr) and drop it in. "
+                     "Also create a placeholder part with the same part_id so the assembly can go on."),
+     "input_schema": {"type": "object", "properties": {
+         "part_id": {"type": "string"},
+         "description": {"type": "string", "description": "What the part is, with key sizes"},
+         "mcmaster_part_number": {"type": "string"},
+         "url": {"type": "string", "description": "Product page, if known"}}, "required": ["part_id", "description"]}},
 ]
 
 MATERIALS = {
@@ -247,6 +291,80 @@ def _geometry_summary(solid, limit: int = 24) -> dict:
             continue
     pl = sorted(planes.values(), key=lambda x: -x["area"])[:limit]
     return {"planar_faces": pl, "cylinders": list(axes.values())[:limit]}
+
+
+def _import_feats(doc: dict):
+    """Yield (part document, feature) for every import feature in a part or assembly."""
+    if assembly.is_assembly(doc):
+        for p in (doc.get("parts") or {}).values():
+            for f in p.get("features", []):
+                if f.get("type") == "import":
+                    yield p, f
+    else:
+        for f in doc.get("features", []):
+            if f.get("type") == "import":
+                yield doc, f
+
+
+def model_view(doc: dict) -> dict:
+    """The document as Claude sees it: imported bodies summarised instead of their BREP data."""
+    from . import importer
+    view = copy.deepcopy(doc)
+    for part, f in _import_feats(view):
+        data = f.get("data") or ""
+        try:
+            solid = importer.decode_shape(data)
+            bb = solid.bounding_box()
+            summ = {"bbox_min": geometry.vlist(bb.min), "bbox_max": geometry.vlist(bb.max), "volume": round(solid.volume, 2),
+                    **_geometry_summary(solid)}
+        except Exception as exc:
+            summ = {"error": str(exc)}
+        f["data"] = f"<omitted: {len(data) // 1024} KB of BREP>"
+        f["summary"] = summ
+    return view
+
+
+def restore_blobs(doc: dict, *sources: dict) -> dict:
+    """Put back the BREP data of import features Claude echoed without it (matched by id, within the
+    same part)."""
+    known = {}
+    for src in sources:
+        if assembly.is_assembly(src):
+            for pid, p in (src.get("parts") or {}).items():
+                for f in p.get("features", []):
+                    if f.get("type") == "import" and str(f.get("data", "")).strip() and not str(f["data"]).startswith("<omitted"):
+                        known[(pid, f["id"])] = f["data"]
+                        known.setdefault((None, f["id"]), f["data"])
+        else:
+            for f in src.get("features", []):
+                if f.get("type") == "import" and f.get("data") and not str(f["data"]).startswith("<omitted"):
+                    known[(None, f["id"])] = f["data"]
+    parts = (doc.get("parts") or {}).items() if assembly.is_assembly(doc) else [(None, doc)]
+    for pid, p in parts:
+        for f in p.get("features", []):
+            if f.get("type") == "import" and (not f.get("data") or str(f["data"]).startswith("<omitted")):
+                data = known.get((pid, f["id"])) or known.get((None, f["id"]))
+                if data:
+                    f["data"] = data
+                f.pop("summary", None)
+    return doc
+
+
+def compare_with_import(original: dict, new_part) -> dict | None:
+    """When a part that was an imported body is rebuilt as features: volume only in the new features,
+    only in the import."""
+    from . import importer
+    feats = [f for f in original.get("features", []) if f.get("type") == "import"]
+    if not feats or new_part is None:
+        return None
+    try:
+        src = importer.decode_shape(feats[0]["data"])
+        only_new = (new_part - src)
+        only_src = (src - new_part)
+        v = lambda s: round(sum(x.volume for x in s.solids()), 3) if s is not None else 0.0  # noqa: E731
+        return {"import_volume": round(src.volume, 3), "only_in_features": v(only_new), "only_in_import": v(only_src)}
+    except Exception as exc:
+        return {"error": f"Could not compare: {exc}"}
 
 
 def _working_assembly(doc: dict) -> dict:
@@ -383,8 +501,14 @@ class Session:
     def propose_features(self, inp: dict) -> tuple[str, bool, list]:
         if assembly.is_assembly(self.work):
             return "This is an assembly. Use create_part to change a part, insert_component and add_mate to place it.", False, []
-        cand = _apply(self.work, inp)
-        report, clean = _rebuild_report(cand)
+        cand = restore_blobs(_apply(self.work, inp), self.work, self.doc)
+        st, _ = geometry.regen(cand)
+        rep, clean = _part_report(st)
+        if not any(f.get("type") == "import" for f in cand.get("features", [])):
+            cmp = compare_with_import(self.doc if not assembly.is_assembly(self.doc) else {}, st.part)
+            if cmp:
+                rep["compared_with_import"] = cmp
+        report = json.dumps(rep)
         self.work = cand
         self.summary = inp.get("summary", "")
         self.steps.append({"summary": self.summary, "clean": clean})
@@ -411,6 +535,8 @@ class Session:
         part = {"version": 1, "type": "part", "name": inp.get("name") or pid, "units": "mm", "features": feats,
                 "rollback": None, "seq": 1000}
         old = asm["parts"].get(pid)
+        if old:
+            restore_blobs({"type": "assembly", "parts": {pid: part}}, {"type": "assembly", "parts": {pid: old}})
         part["appearance"] = inp.get("appearance") or (old or {}).get("appearance") or PALETTE[len(asm["parts"]) % len(PALETTE)]
         mat = inp.get("material")
         if mat:
@@ -512,10 +638,59 @@ class Session:
         ev = {"ev": "interference", "items": [{"a": i["a"], "b": i["b"], "volume": i["volume"], "mesh": i["mesh"]} for i in r["interferences"]]}
         return json.dumps(rep), not r["interferences"], [ev]
 
+    def find_mate_candidates(self, inp: dict) -> tuple[str, bool, list]:
+        if not assembly.is_assembly(self.work):
+            return "Not an assembly.", True, []
+        cands = assembly.mate_candidates(self.work)
+        return json.dumps({"candidates": cands, "note": "Pick the mates a designer would use; leave hinges and slides free."}), True, []
+
+    def standard_part(self, inp: dict) -> tuple[str, bool, list]:
+        from . import importer
+        asm = self._asm()
+        kind = inp.get("kind")
+        if kind not in importer.STANDARD:
+            return f"Unknown kind {kind!r}", False, []
+        args = {"size": inp.get("size")}
+        if "length" in importer.STANDARD[kind][2]:
+            args["length"] = float(inp.get("length") or 10)
+        part = importer.standard_part_doc(kind, **args)
+        try:
+            st, _ = geometry.regen(part)
+        except Exception as exc:
+            return f"Could not make {kind} {args}: {exc}. Sizes: {importer.standard_catalog().get(kind, {}).get('sizes', [])[:40]}", False, []
+        if st.part is None:
+            return f"Could not make {kind} {args}: {st.status}", False, []
+        pid = str(inp.get("part_id") or kind)
+        asm["parts"][pid] = part
+        rep, clean = _part_report(st)
+        rep.update(_geometry_summary(st.part))
+        rep["part_id"] = pid
+        self.summary = f"Toolbox {part['name']}"
+        self.steps.append({"summary": self.summary, "clean": clean})
+        bb = st.part.bounding_box()
+        ev = [{"ev": "build_start", "tool": "standard_part", "index": None, "key": f"std-{pid}-{uuid.uuid4().hex[:6]}",
+               "part": pid, "name": part["name"], "appearance": part.get("appearance")}]
+        ev.append({**ev[0], "ev": "build_step", "n": 1, "feature": {"id": "std1", "name": "Toolbox1", "type": "standard"},
+                   "state": "ok", "body": geometry.mesh_shape(st.part), "bbox": [geometry.vlist(bb.min), geometry.vlist(bb.max)]})
+        if any(c.get("part") == pid for c in asm.get("components", [])):
+            ev.append(self._solve_event({"kind": "part", "part": pid})[1])
+        return json.dumps(rep), clean, ev
+
+    def request_part_file(self, inp: dict) -> tuple[str, bool, list]:
+        num = (inp.get("mcmaster_part_number") or "").strip()
+        url = inp.get("url") or (f"https://www.mcmaster.com/{num}/" if num else "")
+        ev = {"ev": "request_file", "part": inp.get("part_id"), "description": inp.get("description", ""),
+              "mcmaster": num, "url": url}
+        self.requests = getattr(self, "requests", []) + [ev]
+        return ("The user has been asked to download the STEP and drop it in; it will replace part "
+                f"{inp.get('part_id')!r} later. Create a placeholder with create_part using that part_id now."), True, [ev]
+
     def apply(self, name: str, inp: dict):
         fn = {"propose_features": self.propose_features, "create_part": self.create_part,
               "insert_component": self.insert_component, "add_mate": self.add_mate,
-              "delete_items": self.delete_items, "check_interference": self.check_interference}.get(name)
+              "delete_items": self.delete_items, "check_interference": self.check_interference,
+              "find_mate_candidates": self.find_mate_candidates, "standard_part": self.standard_part,
+              "request_part_file": self.request_part_file}.get(name)
         if fn is None:
             return f"Unknown tool {name}", False, []
         return fn(inp or {})
@@ -623,7 +798,7 @@ def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool
     messages = _conversations.setdefault(conv_id, [])
     kind = "assembly" if assembly.is_assembly(doc) else "part"
     messages.append({"role": "user", "content": (
-        f"Current {kind} document:\n```json\n{json.dumps(doc)}\n```\n\nRequest: {prompt}")})
+        f"Current {kind} document:\n```json\n{json.dumps(model_view(doc))}\n```\n\nRequest: {prompt}")})
     session = Session(doc)
     yield {"ev": "start", "conversation": conv_id, "kind": kind, "demo": demo}
     thinking = {"type": "adaptive", "display": "summarized"}
@@ -697,7 +872,8 @@ def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool
             text = "".join(b.text for b in resp.content if b.type == "text").strip()
             changed = session.work != session.doc
             yield {"ev": "done", "conversation": conv_id, "reply": text or session.summary,
-                   "proposal": session.work if changed else None, "summary": session.summary, "steps": session.steps}
+                   "proposal": session.work if changed else None, "summary": session.summary, "steps": session.steps,
+                   "requests": getattr(session, "requests", [])}
             return
         results = []
         for u in uses:

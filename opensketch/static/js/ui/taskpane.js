@@ -24,6 +24,9 @@ const TOOL_META = {
   add_mate: { title: 'Adding mate', icon: 'mate' },
   delete_items: { title: 'Deleting items', icon: 'cancel' },
   check_interference: { title: 'Checking interference', icon: 'interference' },
+  find_mate_candidates: { title: 'Looking for mates in the geometry', icon: 'mate' },
+  standard_part: { title: 'Toolbox part', icon: 'toolbox' },
+  request_part_file: { title: 'Asking for a bought part', icon: 'open' },
 };
 const featureIconFor = (f) => { try { return featureIcon(f); } catch (_) { return 'feature'; } };
 const mateIconFor = (t) => mateIcon(t);
@@ -70,6 +73,7 @@ export class TaskPane {
     if (p.id === 'resources') return this.renderResources(body);
     if (p.id === 'appearance') return this.renderAppearance(body);
     if (p.id === 'custprops') return this.renderProps(body);
+    if (p.id === 'library') return this.app.toolbox.render(body);
     body.appendChild(h('div', 'pm-note', 'Not available yet in this version.'));
   }
 
@@ -136,6 +140,21 @@ export class TaskPane {
         if (m.assembly) { const pb = h('button', 'btn ai-inline', `${icon('playback', 12)}<span>Replay</span>`); pb.title = 'Replay the assembly order'; pb.onclick = () => this.app.asm.playSequence(); btns.append(pb); }
         el.appendChild(btns);
       } else el.appendChild(h('div', 'pm-note', m.state === 'accepted' ? 'Accepted' : 'Rejected'));
+    } else if (m.role === 'request') {
+      el = h('div', 'ai-request');
+      el.innerHTML = `<div class="ah">${icon('open', 14)}<b>Bought part: ${esc(m.description)}</b></div>` +
+        (m.url ? `<div>1. Open <a href="${esc(m.url)}" target="_blank" rel="noopener">${m.mcmaster ? 'McMaster-Carr ' + esc(m.mcmaster) : esc(m.url)}</a> and download the 3D STEP file.</div>` : '<div>1. Download a STEP file of this part from its supplier.</div>') +
+        `<div>2. Drop it here or choose it. It replaces the placeholder <code>${esc(m.part)}</code>.</div>`;
+      if (m.done) el.appendChild(h('div', 'pm-note', 'Replaced with ' + esc(m.done)));
+      else {
+        const b = h('button', 'btn', 'Choose STEP file...');
+        const pick = (file) => this.app.replacePartFromFile(m.part, file).then((ok) => { if (ok) { m.done = file.name; this.refresh(m); } });
+        b.onclick = () => { const i = document.createElement('input'); i.type = 'file'; i.accept = '.step,.stp'; i.onchange = () => i.files[0] && pick(i.files[0]); i.click(); };
+        el.addEventListener('dragover', (e) => { e.preventDefault(); el.classList.add('drop'); });
+        el.addEventListener('dragleave', () => el.classList.remove('drop'));
+        el.addEventListener('drop', (e) => { e.preventDefault(); e.stopPropagation(); el.classList.remove('drop'); const f = e.dataTransfer?.files?.[0]; if (f) pick(f); });
+        el.appendChild(b);
+      }
     } else if (m.role === 'thinking') {
       el = h('div', 'ai-think' + (m.open ? ' open' : ''));
       const head = h('div', 'th', `${m.live ? '<span class="spinner"></span>' : icon('ai', 12)}<span>${m.live ? 'Thinking' : 'Thought'}</span><span class="chev">${m.open ? '&#9650;' : '&#9660;'}</span>`);
@@ -358,6 +377,12 @@ export class TaskPane {
         break;
       }
       case 'proposal': S.proposal = ev.doc; break;
+      case 'request_file': {
+        const a = S.acts.get(ev.index);
+        if (a) { a.title = 'Asked for ' + (ev.mcmaster ? 'McMaster ' + ev.mcmaster : 'a STEP file'); a.state = 'done'; this.refresh(a); }
+        this.add({ role: 'request', ...ev });
+        break;
+      }
       case 'note': break;
       case 'done': S.done = ev; break;
       case 'error': S.error = ev.message; break;

@@ -14,6 +14,8 @@ export const FEATURE_META = {
   circular_pattern: { icon: 'circpattern', base: 'CirPattern', title: 'Circular Pattern' },
   plane: { icon: 'plane', base: 'Plane', title: 'Plane' },
   sketch: { icon: 'sketch_t', base: 'Sketch', title: 'Sketch' },
+  import: { icon: 'imported', base: 'Imported', title: 'Imported' },
+  standard: { icon: 'toolbox', base: 'Toolbox', title: 'Toolbox Part' },
 };
 
 export function featureIcon(f) {
@@ -320,6 +322,8 @@ export function describeFeature(f, app) {
     case 'fillet': return `${f.name}: R${fmt(f.radius)} on ${f.edges.length} edge(s)`;
     case 'chamfer': return `${f.name}: ${fmt(f.distance)} mm on ${f.edges.length} edge(s)`;
     case 'shell': return `${f.name}: ${fmt(f.thickness)} mm, ${f.faces.length} face(s) removed`;
+    case 'import': return `${f.name}: imported body${f.source ? ' from ' + f.source : ''}`;
+    case 'standard': return `${f.name}: ${f.kind.replace(/_/g, ' ')} ${f.size}${f.length ? ' x ' + fmt(f.length) : ''}`;
     default: return f.name;
   }
 }

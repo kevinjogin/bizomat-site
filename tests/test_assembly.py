@@ -121,3 +121,78 @@ def test_mates_follow_faces_when_a_part_changes():
     res = A.regen_assembly(d)
     assert abs(next(c for c in res["components"] if c["id"] == "c2")["position"][1] - 16) < 1e-4
     assert res["updates"]["m2"]["refs"][0]["plane"]["point"][1] == 16
+
+
+def hinge_doc():
+    """A base block and a lid hinged on a pin axis along X at the back top edge."""
+    base = {"name": "Base", "features": [rect_sketch("s1", "Top Plane", 100, 60), {"id": "e1", "type": "extrude", "name": "B", "sketch": "s1", "depth": 20}]}
+    lid = {"name": "Lid", "features": [rect_sketch("s1", "Top Plane", 100, 60, 0, -30), {"id": "e1", "type": "extrude", "name": "B", "sketch": "s1", "depth": 5}]}
+    # lid local: x -50..50, y 0..5, z 0..60 (sketch y -> world -z, centred at sketch y=-30 => z in 0..60)
+    return {"type": "assembly", "parts": {"base": base, "lid": lid},
+            "components": [{"id": "c1", "part": "base", "name": "Base<1>", "fixed": True, "position": [0, 0, 0], "rotation": [0, 0, 0]},
+                           {"id": "c2", "part": "lid", "name": "Lid<1>", "position": [0, 20, -30], "rotation": [0, 0, 0]}],
+            "mates": [{"id": "m1", "name": "Hinge1", "type": "hinge",
+                       "refs": [{"component": "c1", "axis": {"point": [0, 20, -30], "dir": [1, 0, 0]}},
+                                {"component": "c2", "axis": {"point": [0, 0, 0], "dir": [1, 0, 0]}}],
+                       "planes": [{"component": "c1", "plane": {"point": [50, 10, 0], "normal": [1, 0, 0]}},
+                                  {"component": "c2", "plane": {"point": [50, 2.5, 30], "normal": [1, 0, 0]}}],
+                       "align": "aligned"}]}
+
+
+def test_hinge_turns_when_dragged():
+    d = hinge_doc()
+    res = A.regen_assembly(d)
+    lid = next(c for c in res["components"] if c["id"] == "c2")
+    assert lid["state"] == "under" and lid["dof"] == 1 and res["mates"][0]["state"] == "ok"
+    # grab the lid's front edge (local z=60) and pull it straight up: the lid must swing about the hinge
+    d = A.apply_solution(d, res)
+    res = A.regen_assembly(d, drag={"component": "c2", "point": [0, 5, 60], "target": [0, 80, 0]})
+    lid = next(c for c in res["components"] if c["id"] == "c2")
+    assert np.allclose(lid["position"], [0, 20, -30], atol=1e-4)  # stays on the hinge axis
+    R = np.array(lid["matrix"]).reshape(4, 4)[:3, :3]
+    front = R @ np.array([0, 5, 60.0]) + np.array(lid["position"])
+    assert front[1] > 50  # swung up
+    assert all(m["state"] == "ok" for m in res["mates"])
+
+
+def test_hinge_angle_limit():
+    d = hinge_doc()
+    m = d["mates"][0]
+    m["angle_refs"] = [{"component": "c1", "plane": {"point": [0, 20, 0], "normal": [0, 1, 0]}},
+                       {"component": "c2", "plane": {"point": [0, 5, 30], "normal": [0, 1, 0]}}]
+    m["angle_min"], m["angle_max"] = 0, 110
+    res = A.regen_assembly(d, drag={"component": "c2", "point": [0, 5, 60], "target": [0, 0, -200]})  # pull it right over
+    lid = next(c for c in res["components"] if c["id"] == "c2")
+    R = np.array(lid["matrix"]).reshape(4, 4)[:3, :3]
+    ang = np.degrees(np.arccos(np.clip(R[:, 1] @ np.array([0, 1, 0]), -1, 1)))
+    assert ang <= 110.5 and ang > 60, ang
+
+
+def test_slider_and_limit_distance():
+    d = asm_doc()  # pin concentric in the plate hole, free to slide and spin
+    d["mates"] = d["mates"][:1] + [{"id": "m3", "type": "limit_distance", "min": 0, "max": 25,
+                                     "refs": [{"component": "c1", "plane": {"point": [0, 10, 0], "normal": [0, 1, 0]}},
+                                              {"component": "c2", "plane": {"point": [0, 0, 0], "normal": [0, 1, 0]}}],
+                                     "align": "aligned"}]
+    d["components"][1].update(position=[0, 15, 0], rotation=[0, 0, 0])
+    res = A.regen_assembly(d, drag={"component": "c2", "point": [0, 0, 0], "target": [30, 300, 0]})
+    pin = next(c for c in res["components"] if c["id"] == "c2")
+    assert abs(pin["position"][0]) < 1e-4 and abs(pin["position"][2]) < 1e-4  # still in the hole
+    assert pin["position"][1] == pytest.approx(35, abs=1e-3)  # stopped by the limit (10 + 25)
+
+
+def test_mate_candidates_for_unmated_assembly():
+    d = asm_doc()
+    d["mates"] = []
+    d["components"][1].update(position=[0, 10, 0], rotation=[0, 0, 0])  # pin standing in the hole, sitting on the plate top
+    cands = A.mate_candidates(d)
+    kinds = {c["type"] for c in cands}
+    assert "concentric" in kinds and "coincident" in kinds
+    conc = next(c for c in cands if c["type"] == "concentric")
+    assert conc["radii"] == [5.0, 5.0]
+    # using the suggested mates places the pin, leaving it free to spin
+    d["mates"] = [{"id": "m1", **{k: v for k, v in conc.items() if k in ("type", "refs")}}]
+    d["components"][1].update(position=[3, 30, 2])
+    res = A.regen_assembly(d)
+    pin = next(c for c in res["components"] if c["id"] == "c2")
+    assert abs(pin["position"][0]) < 1e-4 and abs(pin["position"][2]) < 1e-4

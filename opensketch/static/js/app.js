@@ -16,9 +16,12 @@ import { FEATURE_META, buildSpec, defaultsFor, nextName, metaKey, featureIcon } 
 import { icon } from './icons.js';
 import { AssemblyMode, isAssembly, newAssembly, hexColor } from './asm.js';
 import { LivePlayer } from './live.js';
+import { Toolbox } from './toolbox.js';
+import { SectionView } from './section.js';
 
 const $ = (id) => document.getElementById(id);
 const clone = (o) => JSON.parse(JSON.stringify(o));
+const esc = (t) => String(t ?? '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 const STD_PLANES = ['Front Plane', 'Top Plane', 'Right Plane'];
 const AUTOSAVE = 'opensketch.autosave.v1';
 
@@ -65,6 +68,8 @@ class App {
     this.taskpane = new TaskPane(this);
     this.asm = new AssemblyMode(this);
     this.live = new LivePlayer(this);
+    this.toolbox = new Toolbox(this);
+    this.section = new SectionView(this);
     this.docStack = []; // Open Part from an assembly: the assembly waits here
     this.forConstruction = false;
     this.polygonSides = 6;
@@ -80,6 +85,7 @@ class App {
     $('sb-units').onclick = (e) => contextMenu(e.clientX, e.clientY - 120, [{ head: 'Unit system' }, { label: 'MMGS (millimeter, gram, second)', run: () => {} }]);
     this.restore();
     this.bindDocTabs();
+    this.bindDrop();
     this.updateDocChrome();
     this.regen().then(() => this.viewer.zoomToFit(false));
     this.api('/api/ai/status', null, 'GET').then((r) => { this.aiAvailable = !!r.available; this.aiDemo = !!r.demo; }).catch(() => { this.aiAvailable = false; });
@@ -741,6 +747,8 @@ class App {
     const f = this.featureById(id);
     if (!f) return;
     if (f.type === 'sketch') return this.editSketch(id);
+    if (f.type === 'import') { message('Imported1', 'An imported body has no feature history to edit. Add features on top of it (cuts, fillets, shells), or ask OpenSketch AI to Rebuild as Features.'); return; }
+    if (f.type === 'standard') return this.toolbox.editPM(f);
     this.featureCommand(metaKey(f), f);
   }
 
@@ -1131,26 +1139,7 @@ class App {
     ] });
   }
 
-  sectionPM() {
-    if (this.viewer.clipPlane && !this.cmd) { this.viewer.setSection(null); this.ribbon.render(); return; }
-    let plane = 'Front Plane', off = 0, flip = false;
-    const apply = () => {
-      const fr = STD_FRAMES[plane];
-      const n = fr.normal.map((v) => (flip ? -v : v));
-      const box = this.result?.bbox; const c = box ? box[0].map((v, i) => (v + box[1][i]) / 2) : [0, 0, 0];
-      const o = fr.normal.map((v, i) => v * (c[0] * fr.normal[0] + c[1] * fr.normal[1] + c[2] * fr.normal[2]) + v * off);
-      void o;
-      const origin = c.map((v, i) => v + fr.normal[i] * off);
-      this.viewer.setSection({ origin, normal: n });
-    };
-    this.cmd = { onOk: () => { this.ribbon.render(); }, onCancel: () => { this.viewer.setSection(null); this.ribbon.render(); } };
-    this.pm.open({ title: 'Section View', icon: 'sectionview', okEnabled: () => true, onChange: apply, sections: [{ title: 'Section 1', rows: [
-      { type: 'select', options: STD_PLANES.map((p) => [p, p]), get: () => plane, set: (v) => { plane = v; } },
-      { type: 'number', icon: 'depth', get: () => off, set: (v) => { off = v; } },
-      { type: 'check', label: 'Flip side to view', get: () => flip, set: (v) => { flip = v; } },
-    ] }] });
-    apply();
-  }
+  sectionPM() { this.section.toggle(); }
 
   checkModel() {
     if (this.isAsm) {
@@ -1198,10 +1187,24 @@ class App {
 
   openFile() { $('fileinput').value = ''; $('fileinput').click(); }
 
+  // STEP (and a clear message for SOLIDWORKS files) -> part or assembly document, via the server.
+  async importFile(file) {
+    const buf = new Uint8Array(await file.arrayBuffer());
+    let bin = '';
+    for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000));
+    this.status(`Importing ${file.name}...`);
+    const r = await fetch('/api/import', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ filename: file.name, data: btoa(bin) }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || j.error) throw new Error(j.error || j.detail || r.statusText);
+    return j.doc;
+  }
+
+  isImportable(file) { return /\.(step|stp|sldprt|sldasm)$/i.test(file?.name || ''); }
+
   async loadFile(file) {
     if (!file) return;
     try {
-      const d = JSON.parse(await file.text());
+      const d = this.isImportable(file) ? await this.importFile(file) : JSON.parse(await file.text());
       if (!Array.isArray(d.features) && !isAssembly(d)) throw new Error('Not an OpenSketch part or assembly');
       this.hideContextToolbar();
       if (this.mode === 'sketch') this.exitSketch({ silent: true });
@@ -1216,7 +1219,34 @@ class App {
       this.viewer.setBody(null);
       await this.regen();
       this.viewer.zoomToFit();
+      if (this.isImportable(file)) this.status(isAssembly(d) ? `Imported ${d.components.length} components. Add mates with Mate, or OpenSketch AI > Add Mates.` : 'Imported as Imported1. Add features on top, or ask the AI to rebuild it as features.');
     } catch (err) { message('Open', 'Could not open the file: ' + err.message); }
+  }
+
+  // Replace a part (an AI placeholder) with a downloaded STEP. Works on a pending proposal or the doc.
+  async replacePartFromFile(pid, file) {
+    let d;
+    try { d = await this.importFile(file); } catch (err) { message('Import', esc(err.message)); return false; }
+    if (isAssembly(d)) { message('Import', 'That STEP has several bodies. Pick a single-part STEP to replace the placeholder.'); return false; }
+    const target = this.proposal || this.doc;
+    if (!isAssembly(target) || !target.parts[pid]) { message('Import', `Part ${esc(pid)} is not in this assembly any more.`); return false; }
+    const apply = (doc) => { const old = doc.parts[pid]; doc.parts[pid] = { ...d, name: d.name || old.name, appearance: old.appearance }; };
+    if (this.proposal) { apply(this.proposal); await this.regen(); } else this.commit('Replace ' + pid, () => apply(this.doc));
+    this.status(`Replaced ${pid} with ${file.name}. Check its mates: the new faces may sit differently.`);
+    return true;
+  }
+
+  // Drop a file on the graphics area: STEP or .osk. In an assembly it is inserted, otherwise opened.
+  bindDrop() {
+    const g = $('graphics');
+    g.addEventListener('dragover', (e) => { e.preventDefault(); g.classList.add('dropping'); });
+    g.addEventListener('dragleave', () => g.classList.remove('dropping'));
+    g.addEventListener('drop', (e) => {
+      e.preventDefault(); g.classList.remove('dropping');
+      const f = e.dataTransfer?.files?.[0];
+      if (!f) return;
+      if (this.isAsm && !this.proposal) this.asm.insertFile(f); else this.loadFile(f);
+    });
   }
 
   download(blob, name) {
@@ -1293,14 +1323,14 @@ class App {
 
   shortcutsDialog() {
     const rows = [['Middle drag', 'Rotate'], ['Ctrl + Middle drag', 'Pan'], ['Shift + Middle drag', 'Zoom'], ['Alt + Left drag', 'Rotate (trackpad)'], ['Wheel', 'Zoom at cursor'],
-      ['Space', 'View Orientation'], ['Ctrl+1 ... Ctrl+7', 'Front, Back, Left, Right, Top, Bottom, Isometric'], ['Ctrl+8', 'Normal To'], ['F', 'Zoom to Fit'], ['Z / Shift+Z', 'Zoom out / in'],
+      ['Space', 'View Orientation'], ['Tab / Shift+Tab', 'Hide / show the component under the cursor'], ['Ctrl+1 ... Ctrl+7', 'Front, Back, Left, Right, Top, Bottom, Isometric'], ['Ctrl+8', 'Normal To'], ['F', 'Zoom to Fit'], ['Z / Shift+Z', 'Zoom out / in'],
       ['Arrows', 'Rotate 15 deg'], ['Shift+Arrows', 'Rotate 90 deg'], ['Alt+Left/Right', 'Roll'], ['Ctrl+Arrows', 'Pan'],
       ['Ctrl+Z / Ctrl+Y', 'Undo / Redo'], ['Ctrl+B', 'Rebuild'], ['Ctrl+S / Ctrl+O / Ctrl+N', 'Save / Open / New'], ['Enter', 'Repeat last command'], ['S', 'Shortcut toolbar'], ['Esc', 'Cancel / clear selection'], ['Delete', 'Delete selection'],
       ['L, C, R, D', 'Line, Circle, Rectangle, Smart Dimension (in a sketch)'], ['Ctrl+L', 'OpenSketch AI']];
     message('Keyboard Shortcuts', `<table class="kbd-table">${rows.map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join('')}</table>`);
   }
 
-  aboutDialog() { message('About OpenSketch', 'OpenSketch 0.2<br>Parametric parts and assemblies on build123d (OpenCascade), with an AI design copilot that builds in front of you.<br>Interface modelled on the SOLIDWORKS workflow. Not affiliated with Dassault Systemes.'); }
+  aboutDialog() { message('About OpenSketch', 'OpenSketch 0.3<br>Parametric parts and assemblies on build123d (OpenCascade), with an AI design copilot that builds in front of you.<br>Interface modelled on the SOLIDWORKS workflow. Not affiliated with Dassault Systemes.'); }
 
   // ------------------------------------------------------------------ AI proposals
   openTask(id) { this.taskpane.show(id); }
@@ -1503,6 +1533,18 @@ class App {
     el.classList.remove('hidden');
   }
 
+  // SOLIDWORKS: Tab hides the component (or body) under the cursor, Shift+Tab shows hidden ones there.
+  tabHide(mouse, show) {
+    const r = this.canvasRect();
+    const x = mouse.x - r.left, y = mouse.y - r.top;
+    if (x < 0 || y < 0 || x > r.width || y > r.height) return;
+    if (this.isAsm) return this.asm.tabHide(x, y, show);
+    if (this.mode === 'sketch') return;
+    if (show) { if (this.bodyHidden) { this.bodyHidden = false; this.viewer.bodyGroup.visible = true; this.viewer.requestRender(); this.status('Body shown'); } return; }
+    const p = this.pickAt(x, y);
+    if (p && (p.kind === 'face' || p.kind === 'edge')) { this.bodyHidden = true; this.viewer.bodyGroup.visible = false; this.viewer.requestRender(); this.status('Body hidden. Shift+Tab over it shows it again.'); }
+  }
+
   bindKeys() {
     let mouse = { x: 300, y: 300 };
     window.addEventListener('pointermove', (e) => { mouse = { x: e.clientX, y: e.clientY }; });
@@ -1531,6 +1573,7 @@ class App {
       if (k === 'Delete' || k === 'Backspace') { e.preventDefault(); return this.deleteSelection(); }
       if (k === 'Enter') { if (this.pm.isOpen && (this.cmd || this.mode === 'sketch')) return this.pmOk(); if (this.lastCommand) return this.commands[this.lastCommand].run(); }
       if (k === ' ') { e.preventDefault(); return this.orientationPopup(); }
+      if (k === 'Tab') { e.preventDefault(); return this.tabHide(mouse, e.shiftKey); }
       if (ctrl || e.altKey) return;
       if (k === 'f' || k === 'F') return v.zoomToFit();
       if (k === 'z') return v.zoomAt(1.25, v.w / 2, v.h / 2);
