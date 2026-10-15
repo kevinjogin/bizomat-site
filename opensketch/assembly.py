@@ -387,7 +387,7 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
             if m["type"] == "hinge" and mm.get("planes"):
                 pa, pb = ref_world(mm["planes"][0], poses), ref_world(mm["planes"][1], poses)
                 mm["_plane_align"] = _resolve_align({"align": m.get("align")}, pa, pb)
-            align = _resolve_align(m, a, b) if m["type"] in ("coincident", "distance", "parallel") else "anti"
+            align = _resolve_align(m, a, b) if m["type"] in ("coincident", "distance", "parallel", "limit_distance") else "anti"
             if m["type"] in ("coincident", "distance") and (m.get("align") or "auto") == "auto" and a[2] is not None and b[2] is not None:
                 updates.setdefault(m["id"], {})["align"] = align
             if m["type"] == "lock":
