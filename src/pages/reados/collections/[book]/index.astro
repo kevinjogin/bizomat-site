@@ -20,7 +20,7 @@ const href = readosCollectionHref(book);
     <h1>{book.title}</h1>
     <p class="lead">{book.description}</p>
     <p class="metadata">{book.chapters.length} chapters · About {book.minutes} minutes · Free to read</p>
-    <a class="start" href={readosCollectionChapterHref(book,book.chapters[0])}>Start reading →</a></div><div class="book-art"><ReadOSAnimatedCover title={book.title} category={book.category} slug={book.slug}/></div></div>
+    <a class="start" href={readosCollectionChapterHref(book,book.chapters[0])}>Start reading →</a></div><div class="book-art"><ReadOSAnimatedCover title={book.title} category={book.category} slug={book.slug} chapters={book.chapters.length}/></div></div>
   </Container></section>
   <section class="contents"><Container size="narrow">
     <h2>Contents</h2>

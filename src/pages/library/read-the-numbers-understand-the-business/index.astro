@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
+import ReadOSAnimatedCover from '../../../components/ReadOSAnimatedCover.astro';
 import { primaryGuide as guide, chapterHref } from '../../../data/library.ts';
 const canonical = `/library/${guide.slug}/`;
 const schema=[{
@@ -16,7 +17,7 @@ const schema=[{
     <Container>
       <nav aria-label="Breadcrumb" class="breadcrumbs"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/library/">Library</a><span aria-hidden="true">/</span><span>Book</span></nav>
       <div class="book-intro">
-        <img src={guide.cover} width="900" height="1200" alt={`KEVOS® Books cover: ${guide.title}`} class="book-art"/>
+        <div class="book-art"><ReadOSAnimatedCover title={guide.title} category={guide.category} slug={guide.slug} publicationLabel="READOS GUIDE" chapters={guide.chapters.length} /></div>
         <div class="book-intro-copy">
           <p class="eyebrow">KEVOS® Books · {guide.category}</p>
           <h1>{guide.title}</h1>
@@ -42,7 +43,7 @@ const schema=[{
   .book-hero{padding:2.2rem 0 clamp(3rem,7vw,6rem);border-bottom:1px solid var(--line)}
   .breadcrumbs{display:flex;gap:.75rem;color:var(--muted);font-size:.82rem;margin-bottom:clamp(2rem,5vw,4rem)}.breadcrumbs a{text-decoration:none}
   .book-intro{display:grid;grid-template-columns:minmax(180px,285px) minmax(0,1fr);gap:clamp(2rem,6vw,6rem);align-items:center}
-  .book-art{width:100%;box-shadow:0 22px 70px rgb(0 0 0 / .22)}
+  .book-art{width:100%}
   .book-intro h1{margin:1rem 0 1.25rem;max-width:16ch;font-size:clamp(2.2rem,5vw,4.5rem)}
   .subtitle{font-family:var(--font-serif);font-size:clamp(1.15rem,2vw,1.55rem);color:var(--ink-2)}
   .summary{margin:1.4rem 0;max-width:60ch;color:var(--muted)}

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
+import ReadOSAnimatedCover from '../../components/ReadOSAnimatedCover.astro';
 import { LIBRARY_GUIDES } from '../../data/library.ts';
 ---
 <BaseLayout title="KEVOS® Library of practical books and guides" description="Read original KEVOS® guides with clear chapters, worked examples and quick references. Choose a book and work through it at your own pace." breadcrumbs={[{label:'Home',href:'/'},{label:'Library',href:'/library/'}]}>
@@ -17,7 +18,7 @@ import { LIBRARY_GUIDES } from '../../data/library.ts';
       <div class="books-grid">
         {LIBRARY_GUIDES.map((guide) => <article class="book-card">
           <a class="book-cover" href={`/library/${guide.slug}/`} aria-label={`Read ${guide.title}`}>
-            <img src={guide.cover} alt={`Cover of ${guide.title}`} width="900" height="1200" loading="lazy"/>
+            <ReadOSAnimatedCover title={guide.title} category={guide.category} slug={guide.slug} publicationLabel="READOS GUIDE" chapters={guide.chapters.length} />
           </a>
           <div class="book-details">
             <p class="book-category">{guide.category} · {guide.minutes} min read</p>
@@ -39,7 +40,7 @@ import { LIBRARY_GUIDES } from '../../data/library.ts';
   .collection-title h2{font-size:var(--step-2)}.collection-title span{color:var(--muted);font-size:.9rem}
   .books-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,470px),1fr));gap:2rem}
   .book-card{display:grid;grid-template-columns:minmax(128px,36%) 1fr;gap:clamp(1rem,3vw,2rem);padding:1.25rem;border:1px solid var(--line);background:var(--surface)}
-  .book-cover{display:block;align-self:start}.book-cover img{width:100%;height:auto;box-shadow:0 12px 32px rgb(0 0 0 / .16)}
+  .book-cover{display:block;align-self:start}
   .book-details{display:flex;flex-direction:column;min-width:0}
   .book-category{font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
   .book-details h3{margin:.65rem 0 .5rem;font-size:clamp(1.13rem,2vw,1.6rem)}.book-details h3 a{text-decoration:none}
