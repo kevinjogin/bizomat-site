@@ -10,7 +10,8 @@ export function buildCommands(app) {
     new: { label: 'New', icon: 'new', tip: 'Creates a new document (Ctrl+N)', run: () => app.newDoc() },
     open: { label: 'Open', icon: 'open', tip: 'Opens an existing document (Ctrl+O)', run: () => app.openFile() },
     save: { label: 'Save', icon: 'save', tip: 'Saves the active document (Ctrl+S)', run: () => app.saveFile() },
-    saveas: { label: 'Save As', icon: 'save', tip: 'Saves the document as .osk, STEP or STL', run: () => app.saveAs() },
+    saveas: { label: 'Save As', icon: 'save', tip: 'Saves the document as .osk, STEP, STL or a SOLIDWORKS macro', run: () => app.saveAs() },
+    sldmacro: { label: 'Export SOLIDWORKS Macro', icon: 'save', tip: 'Writes a SOLIDWORKS macro (.bas) that rebuilds the part, or the parts and the mated assembly, in SOLIDWORKS', run: () => app.exportMacro() },
     print: { label: 'Print', icon: 'print', tip: 'Prints the graphics area', run: () => window.print() },
     undo: { label: 'Undo', icon: 'undo', tip: 'Undo the last action (Ctrl+Z)', run: () => app.undo() },
     redo: { label: 'Redo', icon: 'redo', tip: 'Redo the last undone action (Ctrl+Y)', run: () => app.redo() },
@@ -144,7 +145,7 @@ export const ASM_TABS = [
 export const QUICK = ['new', 'open', 'save', 'print', 'undo', 'redo', 'select', 'rebuild', 'fileprops', 'options'];
 
 export const MENUS = [
-  { name: 'File', items: ['new', 'open', 'save', 'saveas', '-', 'print', '-', 'fileprops'] },
+  { name: 'File', items: ['new', 'open', 'save', 'saveas', 'sldmacro', '-', 'print', '-', 'fileprops'] },
   { name: 'Edit', items: ['undo', 'redo', '-', 'rebuild', '-', { label: 'Delete', run: (app) => app.deleteSelection(), key: 'Del' }, { label: 'Suppress', run: (app) => app.suppressSelection(true) }, { label: 'Unsuppress', run: (app) => app.suppressSelection(false) }] },
   { name: 'View', items: [{ label: 'Planes', run: (app) => app.toggleView('planes') }, { label: 'Origins', run: (app) => app.toggleView('origins') }, { label: 'Sketches', run: (app) => app.toggleView('sketches') }, { label: 'Sketch Relations', run: (app) => app.toggleView('relations') }, '-', { label: 'Zoom to Fit', run: (app) => app.viewer.zoomToFit(), key: 'F' }] },
   { name: 'Insert', items: ['insertcomp', 'newpart', 'mate', '-', 'extrude', 'revolve', 'cut', 'revcut', '-', 'fillet', 'chamfer', 'shell', '-', 'linpattern', 'circpattern', 'mirror', '-', 'plane', '-', 'sketch'] },

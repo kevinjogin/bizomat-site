@@ -14,8 +14,11 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 import base64
+import threading
+import time
+import uuid
 
-from . import ai, assembly, geometry, importer
+from . import ai, assembly, geometry, importer, sldexport
 
 STATIC = Path(__file__).parent / "static"
 
@@ -113,6 +116,61 @@ def api_export(fmt: str, req: RegenRequest):
         raise HTTPException(400, str(exc)) from exc
     name = (req.doc.get("name") or ("Assem1" if assembly.is_assembly(req.doc) else "Part1")) + (".step" if fmt == "step" else ".stl")
     return FileResponse(path, filename=name, media_type="application/octet-stream")
+
+
+class MacroRequest(BaseModel):
+    doc: dict
+    verify: bool = True
+    name: str | None = None
+
+
+_macro_jobs: dict = {}
+
+
+@app.get("/api/export/sldmacro/toolchain")
+def api_macro_toolchain():
+    tc = sldexport.toolchain()
+    return {"features": tc["ok"], "have": tc["have"], "missing": tc["missing"]}
+
+
+@app.post("/api/export/sldmacro/start")
+def api_macro_start(req: MacroRequest):
+    """Start writing a SOLIDWORKS macro (a background job: checking the macro takes a minute or more)."""
+    jid = uuid.uuid4().hex[:12]
+    fd, path = tempfile.mkstemp(suffix=".zip")
+    os.close(fd)
+    job = {"state": "running", "log": [], "report": None, "zip": path, "started": time.time(),
+           "name": (req.name or req.doc.get("name") or "OpenSketch")}
+    _macro_jobs[jid] = job
+    for k in [k for k, v in _macro_jobs.items() if time.time() - v["started"] > 6 * 3600]:
+        _macro_jobs.pop(k, None)
+
+    def work():
+        try:
+            job["report"] = sldexport.export(req.doc, path, name=req.name, verify=req.verify, log=job["log"].append)
+            job["state"] = "done"
+        except Exception as exc:
+            job["state"] = "error"
+            job["error"] = f"{type(exc).__name__}: {exc}"
+    threading.Thread(target=work, daemon=True).start()
+    return {"job": jid}
+
+
+@app.get("/api/export/sldmacro/{jid}")
+def api_macro_status(jid: str):
+    job = _macro_jobs.get(jid)
+    if job is None:
+        raise HTTPException(404, "No such export")
+    return {k: job.get(k) for k in ("state", "log", "report", "error")} | {"seconds": round(time.time() - job["started"])}
+
+
+@app.get("/api/export/sldmacro/{jid}/zip")
+def api_macro_zip(jid: str):
+    job = _macro_jobs.get(jid)
+    if job is None or job["state"] != "done":
+        raise HTTPException(404, "Not ready")
+    name = "".join(c if c.isalnum() or c in "-_" else "_" for c in job["name"]) or "OpenSketch"
+    return FileResponse(job["zip"], filename=f"{name}_SOLIDWORKS_macro.zip", media_type="application/zip")
 
 
 @app.post("/api/ai")

@@ -6,7 +6,13 @@ real, editable features into the same tree you edit by hand. Think "Cursor for h
 
 ![The AI assembling a hand press, live](docs/img/live-build.png)
 
-Version 0.3 adds **STEP import** (parts and assemblies, then keep editing by hand or with the AI),
+Version 0.4 adds **SOLIDWORKS macro export** (File > Export SOLIDWORKS Macro): one VBA macro that
+rebuilds each part in SOLIDWORKS as native, fully defined features, then inserts the components where
+OpenSketch has them and adds the mates one by one, keeping a mate only if SOLIDWORKS makes it without
+moving anything. Parts it cannot rebuild as features go in as STEP imports, so the assembly is always
+complete. The macro is checked before you get it (see "SOLIDWORKS macro export" below).
+
+Version 0.3 added **STEP import** (parts and assemblies, then keep editing by hand or with the AI),
 **mates that move like SOLIDWORKS** (drag a hinged lid open, Hinge and limit mates), a **Toolbox** of
 standard screws, nuts, washers and bearings, **Tab / Shift+Tab** hide and show, and a **Section View**
 with a draggable arrow and filled cut faces.
@@ -131,6 +137,35 @@ Task Pane on the right, status bar with Under/Fully/Over Defined and "Editing Sk
   with relations and dimensions, components with real mates. Quick actions: Explain Model / Assembly,
   Fix Errors, Fix Mates, Fully Define.
 
+## SOLIDWORKS macro export
+
+![Export SOLIDWORKS Macro on the demo press](docs/img/sldmacro.png)
+
+File > Save As > SOLIDWORKS Macro (or File > Export SOLIDWORKS Macro) writes a zip: `<Name>.bas`,
+`steps/` for parts sent as STEP, and `REPORT.md`. In SOLIDWORKS 2022: Tools > Macro > New, save it
+in the unzipped folder, paste the `.bas` and press F5. Parts and the assembly are saved in
+`Documents\OpenSketch\<Name>`; the log goes to `%TEMP%\<Name>_log.txt`.
+
+- **Parts as features.** Extrudes and cuts along one direction (blind, through all, mid plane, two
+  directions, draft), with lines and arcs in their sketches, then fillets and 45 degree chamfers, and
+  linear / circular patterns and mirrors of extrudes, are rebuilt by the sldmacro engine
+  (`opensketch/vendor/sldmacro`): every sketch fully defined by relations and dimensions, every
+  feature measured after it is made and redone if SOLIDWORKS read a flag the other way.
+- **Parts as STEP.** Revolves, shells, features in a second direction, imported bodies and Toolbox
+  parts go in as STEP imports. The report says which and why.
+- **Assembly.** Components start where OpenSketch's solver put them. Coincident, concentric,
+  parallel, perpendicular, distance, angle, lock, hinge (concentric + coincident + angle limits) and
+  limit mates are added on the same faces, planes and axes. Axes with no round face get a reference
+  axis (two standard planes, or a straight edge).
+- **Checks before you get it.** Each part's features are compared with the OpenSketch solid; the
+  engine checks every sketch with a solver, runs the macro against mock SOLIDWORKS objects (about 50
+  scenarios) and parses it with a VBA grammar; an assembly stand-in runs the mate code against mocks
+  that hold the parts' real faces (9 scenarios). Nothing here runs SOLIDWORKS itself: send back the
+  log after the first run.
+- The checks need a toolchain (LibreOffice, Java, a sketch solver). Codespaces installs it in the
+  background the first time; locally run `bash opensketch/vendor/sldmacro/scripts/setup_env.sh`.
+  Without it every part goes as STEP and the report says which checks did not run.
+
 ## Mouse and keys
 
 Middle drag rotates, Ctrl + middle pans, Shift + middle zooms, wheel zooms at the cursor
@@ -145,11 +180,15 @@ opensketch/
   geometry.py        feature-tree regen with build123d, tessellation, mass props, export
   assembly.py        assemblies: part cache, mate solver, interference, export
   server.py          FastAPI: /api/regen (parts and assemblies), /api/mass, /api/interference,
-                     /api/export, /api/ai/stream (newline-delimited JSON events)
+                     /api/export, /api/export/sldmacro (background job), /api/ai/stream (NDJSON events)
   ai.py              streaming Claude tool loop: propose_features, create_part, insert_component,
                      add_mate, delete_items, check_interference; rebuilds each feature as it arrives
   demo.py            recorded sessions (hand press, L bracket) for "Watch a demo" and tests
   importer.py        STEP import (parts, assemblies), embedded BREP bodies, Toolbox parts (bd_warehouse)
+  sldexport.py       SOLIDWORKS macro export: part -> engine recipe, assembly data, checks, zip
+  sldexport_vba.py   the VBA OpenSketch adds to the macro (STEP import, saving, components, mates)
+  sldexport_standin.py, sldexport_mock/   assembly stand-in (LibreOffice Basic mocks of SOLIDWORKS)
+  vendor/sldmacro/   the sldmacro engine (vendored, unchanged; see PROVENANCE.md)
   static/
     index.html, css/app.css
     js/app.js        controller: modes, selection, commands, PropertyManager flow, undo
@@ -170,13 +209,15 @@ so the UI, the AI and files share one format.
 ## Tests
 
 ```bash
-pytest -q                                  # regen, previews, mate solver, streaming AI (fake client), demos
+pytest -q                                  # regen, previews, mate solver, streaming AI (fake client), demos,
+                                           # macro export (engine and stand-in tests skip without the toolchain)
 node --test tests/js/solver.test.mjs       # sketch solver
 ```
 
 ## Roadmap
 
-1. SOLIDWORKS macro export of parts and mated assemblies (next, v0.4).
+1. Run the exported macros in SOLIDWORKS and fix what the logs show; then revolves and holes across
+   the main direction as features instead of STEP.
 2. Assemblies: tangent, width and symmetric mates, gear and slot mates, sub-assemblies, exploded
    views, mate references picked from vertices and circular edges.
 3. Remaining part features: Hole Wizard, Swept / Lofted, Draft, Rib, Instant3D drag handles,

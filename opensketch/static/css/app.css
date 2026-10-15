@@ -363,3 +363,15 @@ input, select, button { font: inherit; color: inherit; }
 .ai-request.drop { outline: 2px dashed #3c6fd1; }
 .ai-request .btn { align-self: flex-start; }
 .sec-slider { width: 100%; }
+
+/* Export SOLIDWORKS Macro dialog */
+.dlg.macro { width: 520px; }
+.macro-dlg .macro-log { font: 11px/1.4 Consolas, monospace; background: #f4f6f8; border: 1px solid #d5dbe1; padding: 6px 8px; margin: 8px 0; min-height: 60px; white-space: pre-wrap; color: #33404d; }
+.macro-dlg table.macro-parts { width: 100%; border-collapse: collapse; margin-bottom: 6px; font-size: 12px; }
+.macro-dlg table.macro-parts td { border-bottom: 1px solid #e3e7eb; padding: 3px 4px; vertical-align: top; }
+.macro-dlg table.macro-parts td.why { color: #66727e; font-size: 11px; }
+.macro-dlg ul.macro-checks { margin: 6px 0; padding-left: 18px; font-size: 12px; }
+.macro-dlg b.ok { color: #1c7c35; }
+.macro-dlg b.bad { color: #c22; }
+.dlg-f .btn:disabled { opacity: 0.45; cursor: default; }
+.macro-dlg .macro-full { display: block; margin: 8px 0; font-size: 12px; line-height: 1.4; }

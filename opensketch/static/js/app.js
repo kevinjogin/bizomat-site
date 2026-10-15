@@ -1269,6 +1269,7 @@ class App {
       { label: this.isAsm ? 'OpenSketch Assembly (*.osk)' : 'OpenSketch Part (*.osk)', primary: true, run: () => this.saveFile() },
       { label: 'STEP AP214 (*.step)', run: () => { this.exportAs('step'); } },
       { label: 'STL (*.stl)', run: () => { this.exportAs('stl'); } },
+      { label: 'SOLIDWORKS Macro (*.bas)', run: () => { this.exportMacro(); } },
       { label: 'Cancel' },
     ] });
   }
@@ -1279,6 +1280,64 @@ class App {
       if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.detail || r.statusText); }
       this.download(await r.blob(), `${this.doc.name}.${fmtName}`);
     } catch (err) { message('Export', String(err.message || err)); }
+  }
+
+  // SOLIDWORKS macro: a background job on the server (the macro is checked before it is handed over).
+  exportMacro() {
+    if (this.proposal) { this.toast('Accept or reject the AI proposal first.'); return; }
+    const doc = this.rootDoc();
+    const asm = doc.type === 'assembly';
+    const body = document.createElement('div');
+    body.className = 'macro-dlg';
+    body.innerHTML = `<div class="pm-note">Writes a macro that rebuilds ${asm ? 'every part as SOLIDWORKS features, then the assembly with its mates' : 'the part as SOLIDWORKS features'}. Parts the macro cannot build as features are sent as STEP files it imports.</div>
+      <label class="pm-radio macro-full"><input type="checkbox" checked> Full checks: every sketch solved, about 50 SOLIDWORKS scenarios run against the macro and the result rebuilt. Takes several minutes${asm ? ' (up to 10 for a large assembly)' : ''}. Without it: grammar, names${asm ? ' and the assembly stand-in' : ''} only, about a minute.</label>
+      <div class="macro-log hidden"></div><div class="macro-sum"></div>`;
+    const log = body.querySelector('.macro-log');
+    const sum = body.querySelector('.macro-sum');
+    const full = body.querySelector('.macro-full input');
+    let stop = false;
+    let jid = null;
+    let started = false;
+    const go = async () => {
+      started = true;
+      btn.textContent = 'Download';
+      btn.disabled = true;
+      full.disabled = true;
+      log.classList.remove('hidden');
+      try {
+        const r = await this.api('/api/export/sldmacro/start', { doc, verify: full.checked });
+        jid = r.job;
+        for (;;) {
+          await new Promise((ok) => setTimeout(ok, 1000));
+          if (stop) return;
+          const st = await this.api('/api/export/sldmacro/' + jid, null, 'GET');
+          log.textContent = (st.log || []).slice(-6).join('\n') + (st.state === 'running' ? `\n(${st.seconds} s)` : '');
+          if (st.state === 'error') { sum.innerHTML = `<div class="ai-msg err">${esc(st.error || 'The export failed')}</div>`; return; }
+          if (st.state === 'done') {
+            sum.innerHTML = macroSummary(st.report);
+            body.dataset.done = '1';
+            btn.disabled = false;
+            this.status('SOLIDWORKS macro ready: ' + st.report.name + '.bas');
+            return;
+          }
+        }
+      } catch (err) { sum.innerHTML = `<div class="ai-msg err">${esc(String(err.message || err))}</div>`; }
+    };
+    const dl = dialog({ title: 'Export SOLIDWORKS Macro', body, cls: 'macro', buttons: [
+      { label: 'Write Macro', primary: true, run: () => {
+        if (!started) { go(); return false; }
+        if (jid && body.dataset.done) this.download2(`/api/export/sldmacro/${jid}/zip`);
+        return false;
+      } },
+      { label: 'Close', run: () => { stop = true; } },
+    ], onClose: () => { stop = true; } });
+    const btn = dl.el.querySelector('.dlg-f .btn.primary');
+  }
+
+  download2(url) {
+    const a = document.createElement('a');
+    a.href = url; a.download = '';
+    document.body.appendChild(a); a.click(); a.remove();
   }
 
   materialDialog() {
@@ -1330,7 +1389,7 @@ class App {
     message('Keyboard Shortcuts', `<table class="kbd-table">${rows.map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join('')}</table>`);
   }
 
-  aboutDialog() { message('About OpenSketch', 'OpenSketch 0.3<br>Parametric parts and assemblies on build123d (OpenCascade), with an AI design copilot that builds in front of you.<br>Interface modelled on the SOLIDWORKS workflow. Not affiliated with Dassault Systemes.'); }
+  aboutDialog() { message('About OpenSketch', 'OpenSketch 0.4<br>Parametric parts and assemblies on build123d (OpenCascade), with an AI design copilot that builds in front of you. Exports SOLIDWORKS macros that rebuild parts and mated assemblies.<br>Interface modelled on the SOLIDWORKS workflow. Not affiliated with Dassault Systemes.'); }
 
   // ------------------------------------------------------------------ AI proposals
   openTask(id) { this.taskpane.show(id); }
@@ -1588,3 +1647,21 @@ class App {
 }
 
 window.addEventListener('DOMContentLoaded', () => { window.app = new App(); });
+
+
+// What the export made, in a few lines: parts (features or STEP), mates, checks.
+export function macroSummary(rep) {
+  const rows = rep.parts.map((p) => `<tr><td>${esc(p.title)}</td><td>${p.mode === 'features' ? `${p.features} feature${p.features === 1 ? '' : 's'}` : 'STEP import'}</td><td class="why">${esc(p.mode === 'features' ? '' : p.why)}</td></tr>`).join('');
+  const ck = rep.checks || {};
+  const line = (label, v) => `<li>${label}: <b class="${v === true ? 'ok' : v === false ? 'bad' : ''}">${v === true ? 'pass' : v === false ? 'fail' : 'not run'}</b></li>`;
+  const fin = ck.final || {};
+  let engine = ck.engine_ok;
+  if (!engine && ck.engine_ok_except_known) engine = true;
+  const items = [];
+  if (rep.parts.some((p) => p.mode === 'features')) items.push(line('Feature macro (sketches, stand-in, grammar)', ck.engine ? engine : null));
+  items.push(line('Final file (grammar, names)', fin.grammar?.ok === false || fin.names?.ok === false ? false : fin.grammar?.ok ?? null));
+  if (rep.assembly) items.push(line(`Assembly stand-in (${esc(ck.assembly_standin?.summary || '')})`, ck.assembly_standin?.ok ?? null));
+  const mates = rep.assembly ? `<div>${rep.mates.exported} mates go to SOLIDWORKS${rep.mates.skipped.length ? `; ${rep.mates.skipped.length} left out (see REPORT.md)` : ''}.</div>` : '';
+  return `<table class="macro-parts">${rows}</table>${mates}<ul class="macro-checks">${items.join('')}</ul>
+    <div class="pm-note">Not yet run in SOLIDWORKS. Unzip, then Tools &gt; Macro &gt; New, save it in the unzipped folder, paste ${esc(rep.name)}.bas and press F5. REPORT.md has the details.</div>`;
+}
