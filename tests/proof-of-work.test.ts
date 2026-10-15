@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { NAMED_ORGANISATIONS, PROJECTS, PROJECT_SECTORS } from '../src/data/projects.ts';
+import { NAMED_ORGANISATIONS, PROJECTS, PROJECT_SECTORS, PROJECT_SERVICES, projectEnquiryHref } from '../src/data/projects.ts';
 
 const read = (path: string) => readFileSync(path, 'utf8');
 
@@ -14,14 +14,20 @@ test('the proof of work keeps all 27 published project records, newest first', (
   for (const org of NAMED_ORGANISATIONS) assert.ok(PROJECTS.some((p) => p.client.startsWith(org)), `${org} appears in a project`);
 });
 
-test('every project record is complete and written in the KEVOS voice', () => {
+test('every case study is complete, written in the KEVOS voice and leads to an enquiry', () => {
   for (const p of PROJECTS) {
-    for (const field of ['title', 'client', 'industry', 'years', 'role', 'statusLabel', 'summary', 'challenge', 'outcome'] as const) assert.ok(p[field].trim().length > 2, `${p.id}.${field}`);
-    assert.ok(p.contribution.length >= 3 && p.skills.length >= 3, `${p.id} lists its work and capabilities`);
-    const copy = [p.summary, p.challenge, p.outcome, ...p.contribution].join(' ');
-    assert.doesNotMatch(copy, /\b(I|my|me|I've|I'm)\b/, `${p.id} has no first-person copy`);
+    for (const field of ['headline', 'title', 'client', 'about', 'industry', 'years', 'role', 'statusLabel', 'summary', 'brief', 'outcome', 'value'] as const) assert.ok(p[field].trim().length > 2, `${p.id}.${field}`);
+    assert.ok(p.approach.length >= 4, `${p.id} explains its approach`);
+    assert.ok(p.deliverables.length >= 6, `${p.id} lists its deliverables`);
+    assert.ok(p.relevantIf.length >= 2 && p.skills.length >= 3, `${p.id} lists when it is relevant and its capabilities`);
+    const copy = [p.headline, p.summary, p.brief, p.outcome, p.value, p.note ?? '', ...p.relevantIf, ...p.approach.flatMap((a) => [a.title, a.text])].join(' ');
+    assert.doesNotMatch(copy, /(I|my|me|I've|I'm)/, `${p.id} has no first-person copy`);
     assert.doesNotMatch(copy, /GoCore/i);
+    assert.ok(PROJECT_SERVICES[p.service], `${p.id} links to a KEVOS service`);
+    assert.equal(projectEnquiryHref(p), `/contact/?service=${p.service}&project=${encodeURIComponent(p.title)}`);
   }
+  const form = read('src/components/ContactForm.astro');
+  assert.match(form, /get\('project'\)/, 'the contact form starts the enquiry from the project name');
 });
 
 test('the homepage shows the proof of work as a section with its own navigation link', () => {

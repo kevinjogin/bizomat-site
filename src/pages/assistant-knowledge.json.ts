@@ -137,7 +137,7 @@ export async function GET() {
       id: `project-${p.id}`,
       title: `Proof of work: ${p.title}`,
       url: '/#work',
-      text: `${p.title} (${p.years}; ${p.client}; ${p.industry}). Role: ${p.role}. Status: ${p.statusLabel}. ${p.summary} ${p.challenge} The work: ${p.contribution.join('; ')}. Outcome: ${p.outcome}`,
+      text: `${p.title}: ${p.headline} (${p.years}; ${p.client}, ${p.about} ${p.industry}${p.location ? `, ${p.location}` : ''}). Role: ${p.role}. Status: ${p.statusLabel}. ${p.brief} Approach: ${p.approach.map((a) => `${a.title}: ${a.text}`).join(' ')} Outcome: ${p.outcome} ${p.note ?? ''}`,
     });
   }
 

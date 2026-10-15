@@ -149,6 +149,10 @@ const action = provider === 'web3forms' ? web3formsEndpoint : workerEndpoint;
       const match = Array.from(select.options).find((o) => o.dataset.slug === wanted);
       if (match) select.value = match.value;
     }
+    // Start the description from ?project=<title>, e.g. "Discuss a similar project" links in the proof of work.
+    const project = new URLSearchParams(location.search).get('project')?.trim().slice(0, 120);
+    const description = form.querySelector<HTMLTextAreaElement>('#cf-message');
+    if (project && description && !description.value) description.value = `I am interested in support similar to the "${project}" project.\n\n`;
 
     const showErrors = (errors: ContactErrors) => {
       form.querySelectorAll<HTMLElement>('[data-error-for]').forEach((el) => {
