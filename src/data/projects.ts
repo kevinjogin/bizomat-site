@@ -13,6 +13,8 @@ export type Project = {
   id: string;
   /** Short expert headline shown on the card. */
   headline: string;
+  /** Describes the project image (public/proof-of-work, built by scripts/build-work-visuals.mjs). */
+  visualAlt: string;
   /** Plain descriptive project name. */
   title: string;
   client: string;
@@ -60,6 +62,7 @@ export const PROJECT_SERVICES: Record<ProjectService, string> = {
 export const PROJECTS: Project[] = [
   {
     id: 'multi-project-coordination',
+    visualAlt: 'Abstract illustration of open pages and flowing lines, representing coordinated project information',
     headline: 'When every project needs the same toolroom',
     title: 'Multi-project engineering coordination',
     client: 'Manufacturing business',
@@ -89,6 +92,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'blow-moulding-tooling',
+    visualAlt: 'Blow-moulded bottles and containers of the kind produced by the process',
     headline: 'Capturing critical tooling knowledge before it walks out the door',
     title: 'Reverse engineering and automation for blow-moulding tooling',
     client: 'Australian manufacturer',
@@ -116,6 +120,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'residential-girraween',
+    visualAlt: 'Single-storey brick home typical of the Girraween residential development',
     headline: 'One drawing package a builder could build from',
     title: 'Residential development documentation',
     client: 'Residential builder',
@@ -145,6 +150,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'plant-access-control',
+    visualAlt: '3D model of the boom gate and access-control layout',
     headline: 'Separating people from forklifts on a busy plant floor',
     title: 'Plant access control and traffic separation',
     client: 'Pet food manufacturer',
@@ -172,6 +178,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'stainless-maintenance-platform',
+    visualAlt: '3D model of the modular stainless-steel maintenance platforms',
     headline: 'Safe maintenance access, designed for a hygiene-critical floor',
     title: 'Stainless-steel maintenance access platform',
     client: 'Food manufacturer',
@@ -199,6 +206,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'bin-collection-system',
+    visualAlt: 'Plan, elevation and 3D view drawings of the bin collection structure',
     headline: 'Heavy-duty bin handling, designed to grow with production',
     title: 'Bin collection and materials-handling structure',
     client: 'Food manufacturer',
@@ -226,6 +234,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'hopper-access-redesign',
+    visualAlt: '3D model of the modular hopper cover with access panels',
     headline: 'Designing the hazard out of hopper maintenance',
     title: 'Hopper maintenance access and safety redesign',
     client: 'Food manufacturer',
@@ -253,6 +262,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'liquip-plant-layout',
+    visualAlt: 'Liquip International facility entrance and signage',
     headline: 'Re-planning a working factory for a hydrogen-ready future',
     title: 'Plant layout and hydrogen-readiness planning',
     client: 'Liquip International',
@@ -281,6 +291,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'percussive-therapy-device',
+    visualAlt: 'Percussive therapy device with interchangeable attachments',
     headline: 'Designing a therapy device to cost less to make',
     title: 'Percussive therapy device',
     client: 'Sydney-based physiotherapist',
@@ -309,6 +320,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'smithfield-carpark',
+    visualAlt: 'Concept site plan of the carpark redesign with circulation and parking layout',
     headline: 'Rethinking a constrained carpark around people, not just bays',
     title: 'Smithfield carpark concept redesign',
     client: 'EPTEC (project interface)',
@@ -338,6 +350,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'residential-cdc',
+    visualAlt: 'Ground and first floor plans for the residential extension',
     headline: 'A home extension documented for the CDC fast-track pathway',
     title: 'Residential extension and deck for CDC approval',
     client: 'Private residential client',
@@ -367,6 +380,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'paint-line-trolley',
+    visualAlt: '3D model of the welded RHS steel paint-line trolley on castors',
     headline: 'Moving awkward defence components through a tight paint line',
     title: 'Horizontal paint-line trolley',
     client: 'EPTEC',
@@ -395,6 +409,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'modular-painting-girder',
+    visualAlt: '3D model of the modular girder support frame on castors',
     headline: 'One modular support system instead of a fixture for every part',
     title: 'Modular girder system for painting large components',
     client: 'Defence manufacturing environment',
@@ -423,6 +438,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'currency-sanitiser',
+    visualAlt: 'Compact banknote and coin sanitising machine',
     headline: 'Two kinds of currency, two mechanisms, one compact machine',
     title: 'Banknote and coin sanitising machine',
     client: 'Wink Solutions',
@@ -450,6 +466,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'cowpasture-bridge',
+    visualAlt: 'The bridge viaduct and its piers',
     headline: 'Mapping a bridge’s defects so repairs land in the right place',
     title: 'Macarthur Cowpasture bridge defect survey and repairs',
     client: 'EPTEC (project interface)',
@@ -479,6 +496,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'alexandria-bridge',
+    visualAlt: 'Site plan drawing for the bridge repair works',
     headline: 'Turning bridge repair requirements into traceable drawings',
     title: 'Alexandria bridge concrete and reinforcement repairs',
     client: 'EPTEC (project interface)',
@@ -508,6 +526,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'telescopic-buoy',
+    visualAlt: 'Concept renders of the telescopic buoy retracted and extended',
     headline: 'A buoy that rises with the water, with no power needed',
     title: 'Self-adjusting telescopic navigation buoy',
     client: 'Marine product concept',
@@ -536,6 +555,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'robohelix-coiling-machine',
+    visualAlt: 'Render of the RoboHelix precision coiling machine',
     headline: 'From evolving concept to a machine that makes coils',
     title: 'Precision helical coiling machine',
     client: 'RoboHelix Manufacturing',
@@ -563,6 +583,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'train-cabin-kitchen',
+    visualAlt: 'Illustration of a train in motion',
     headline: 'Fitting a working kitchen into a train cabin',
     title: 'Train cabin kitchen systems integration',
     client: 'Velocity Melbourne Trains',
@@ -592,6 +613,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'oconnell-st-mezzanine',
+    visualAlt: 'Drawing sheet with 3D views and parts list for the mezzanine structure',
     headline: 'A high-load mezzanine designed into an existing Sydney building',
     title: 'Commercial mezzanine level',
     client: '6 O’Connell St, Sydney',
@@ -621,6 +643,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'oventus-mouthpieces',
+    visualAlt: 'Patient-specific oral sleep apnoea device',
     headline: 'Mass customisation: a different device for every patient',
     title: 'Patient-specific sleep apnoea mouthpieces',
     client: 'Oventus',
@@ -649,6 +672,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'mogul-line-machinery',
+    visualAlt: '3D model of a mogul production line with depositing machinery',
     headline: 'Depositing machines built for 35–40 trays a minute',
     title: 'Mogul line depositing machinery',
     client: 'NID Pty Ltd (engineering partner)',
@@ -676,6 +700,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'orica-bulk-master',
+    visualAlt: 'Orica Bulk Master mobile manufacturing truck',
     headline: 'Packing a mobile manufacturing plant onto a truck',
     title: 'Bulk Master Series 7 mobile manufacturing unit',
     client: 'Orica',
@@ -704,6 +729,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'whyalla-blast-furnace',
+    visualAlt: '3D plant model of the blast furnace and surrounding structures',
     headline: 'Step-by-step sequences for a blast furnace shutdown',
     title: 'Blast furnace shutdown maintenance documentation',
     client: 'OneSteel Whyalla',
@@ -733,6 +759,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'bluescope-coke-plant-5',
+    visualAlt: 'Annotated view of a steelworks with stacks, conveyors and gas-cleaning plant',
     headline: 'Making structure and pipework share a crowded coke plant',
     title: 'Coke Plant No. 5 structural and piping coordination',
     client: 'BlueScope Steel',
@@ -761,6 +788,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'nepean-bulk-handling',
+    visualAlt: 'Elevated conveyor gallery on a bulk-materials site',
     headline: 'Conveyors, chutes and crushers designed as one system',
     title: 'Conveyor, transfer chute and crushing plant design',
     client: 'NEPEAN Conveyors',
@@ -789,6 +817,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'bluescope-coke-plant-6',
+    visualAlt: 'Large ducting and plant structures inside a coke plant',
     headline: 'Maintenance drawings that work around an operating steelworks',
     title: 'Coke Plant No. 6 maintenance and upgrade documentation',
     client: 'BlueScope Steel',

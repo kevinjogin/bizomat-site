@@ -1,6 +1,7 @@
 ---
 // Homepage proof of work: sector filters and expandable case studies (data in src/data/projects.ts).
 // Without JavaScript every project is listed; with it, the list starts at nine and can be filtered.
+import WorkVisual from './WorkVisual.astro';
 import { NAMED_ORGANISATIONS, PROJECTS, PROJECT_SECTORS, PROJECT_SERVICES, projectEnquiryHref } from '../data/projects.ts';
 const INITIAL = 9;
 const sectorLabel = Object.fromEntries(PROJECT_SECTORS.map((s) => [s.id, s.label]));
@@ -27,6 +28,7 @@ const latest = PROJECTS[0].years.slice(-4);
       <li class="work-card" data-sector={p.sector}>
         <article aria-labelledby={`work-${p.id}`}>
           <div class="work-card__top">
+            <WorkVisual id={p.id} alt={p.visualAlt} />
             <div class="work-card__lead">
               <p class="work-card__meta"><span>{p.years}</span><span>{sectorLabel[p.sector]}</span></p>
               <h3 id={`work-${p.id}`}>{p.headline}</h3>
@@ -44,6 +46,7 @@ const latest = PROJECTS[0].years.slice(-4);
             <summary><span>Read the full case study</span></summary>
             <div class="case__body">
               <div class="case__main">
+                <WorkVisual id={p.id} alt={p.visualAlt} size="large" caption="Image from the published project record, converted to KEVOS® colours." />
                 <section>
                   <h4>The brief</h4>
                   <p>{p.brief}</p>
@@ -155,7 +158,7 @@ const latest = PROJECTS[0].years.slice(-4);
   .work-card{background:var(--surface);min-width:0}
   .work-card[hidden]{display:none}
   .work-card article{padding:clamp(1.3rem,2.6vw,2rem)}
-  .work-card__top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,15rem);gap:1rem 2.5rem;align-items:start}
+  .work-card__top{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr) minmax(0,13rem);gap:1rem 2rem;align-items:start}
   .work-card__meta{display:flex;flex-wrap:wrap;gap:.4rem 1rem;margin:0 0 .55rem;font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
   .work-card__meta span:first-child{color:var(--accent);font-weight:650}
   .work-card h3{font-size:clamp(1.18rem,2vw,1.45rem);line-height:1.25;margin:0;max-width:34ch}
@@ -178,7 +181,7 @@ const latest = PROJECTS[0].years.slice(-4);
   .case[open] summary span::after{content:' (close)';color:var(--muted);font-weight:500}
   .case__body{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:2rem 3rem;margin-top:1.4rem}
   .case h4{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 .6rem}
-  .case__main section+section{margin-top:1.6rem}
+  .case__main section{margin-top:1.6rem}
   .case__main p{margin:0;color:var(--ink-2);font-size:.95rem;line-height:1.65}
   .case__steps{counter-reset:step;list-style:none;padding:0;margin:0;display:grid;gap:.9rem}
   .case__steps li{counter-increment:step;display:grid;grid-template-columns:2rem 1fr;gap:0 .8rem}
@@ -212,5 +215,7 @@ const latest = PROJECTS[0].years.slice(-4);
   .work-invite .case__button{flex:none}
   .work-note{color:var(--muted);font-size:.86rem;margin:1.75rem 0 0;max-width:90ch}
   @media(max-width:1050px){.work-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media(max-width:860px){.work-card__top,.case__body{grid-template-columns:1fr}.work-invite{flex-direction:column;align-items:flex-start}}
+  @media(max-width:1050px){.work-card__top{grid-template-columns:minmax(0,13rem) minmax(0,1fr)}.work-card__aside{grid-column:2}}
+  @media(max-width:860px){.case__body{grid-template-columns:1fr}.work-invite{flex-direction:column;align-items:flex-start}}
+  @media(max-width:640px){.work-card__top{grid-template-columns:1fr}.work-card__aside{grid-column:auto}}
 </style>

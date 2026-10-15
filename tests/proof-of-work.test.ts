@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { NAMED_ORGANISATIONS, PROJECTS, PROJECT_SECTORS, PROJECT_SERVICES, projectEnquiryHref } from '../src/data/projects.ts';
 
 const read = (path: string) => readFileSync(path, 'utf8');
@@ -40,4 +40,16 @@ test('the homepage shows the proof of work as a section with its own navigation 
   const component = read('src/components/ProofOfWork.astro');
   assert.doesNotMatch(component, /\sstyle=/);
   assert.match(component, /aria-pressed/);
+});
+
+test('every project has its KEVOS-coloured animated visual', () => {
+  const dimensions = JSON.parse(read('src/data/work-visuals.json')) as Record<string, [number, number]>;
+  for (const p of PROJECTS) {
+    assert.ok(p.visualAlt.trim().length > 10, `${p.id} describes its image`);
+    assert.ok(dimensions[p.id], `${p.id} has visual dimensions`);
+    for (const layer of ['base', 'lines']) for (const width of [480, 960]) assert.ok(existsSync(`public/proof-of-work/${p.id}-${layer}-${width}.webp`), `${p.id} ${layer} ${width}`);
+  }
+  const visual = read('src/components/WorkVisual.astro');
+  assert.match(visual, /prefers-reduced-motion: reduce/);
+  assert.doesNotMatch(visual, /\sstyle=/);
 });
