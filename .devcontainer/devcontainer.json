@@ -12,8 +12,7 @@
     "8000": { "label": "OpenSketch", "onAutoForward": "openBrowser" }
   },
   "customizations": {
-    "codespaces": { "openFiles": ["README.md"] },
-    "vscode": { "extensions": ["ms-python.python"] }
+    "codespaces": { "openFiles": ["README.md"] }
   },
   "secrets": {
     "ANTHROPIC_API_KEY": {
