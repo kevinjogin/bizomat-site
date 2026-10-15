@@ -14,7 +14,7 @@ export class FeatureTree {
     this.filter.addEventListener('input', () => this.render());
     this.filter.addEventListener('keydown', (e) => e.stopPropagation());
     this.el.addEventListener('keydown', (e) => {
-      if (e.key === 'F2') { const s = this.app.selection.find((x) => x.kind === 'feature' || x.kind === 'sketch'); if (s) { e.preventDefault(); this.rename(s.id); } }
+      if (e.key === 'F2') { const s = this.app.selection.find((x) => ['feature', 'sketch', 'component', 'mate'].includes(x.kind)); if (s) { e.preventDefault(); this.rename(s.id); } }
     });
   }
 
@@ -25,18 +25,21 @@ export class FeatureTree {
     return m;
   }
 
+  badgeIcon(name) { return icon(name, 13); }
+  featureIcon(f) { return featureIcon(f); }
+
   render() {
-    const app = this.app, doc = app.doc;
+    const app = this.app, doc = app.shownDoc;
     const status = app.statusById || {};
     const q = this.filter.value.trim().toLowerCase();
     const selKeys = new Set(app.selection.map((s) => `${s.kind}:${s.id}`));
     this.el.innerHTML = '';
-    const node = ({ id, kind, name, ic, depth = 0, twisty = null, cls = '', badge = '', onDbl = null, data = null }) => {
+    const node = ({ id, kind, name, ic, depth = 0, twisty = null, cls = '', badge = '', onDbl = null, data = null, onTwisty = null }) => {
       if (q && !name.toLowerCase().includes(q)) return null;
       const n = h('div', 'tn ' + cls + (selKeys.has(`${kind}:${id}`) ? ' selected' : ''));
       n.style.paddingLeft = 4 + depth * 14 + 'px';
       const tw = h('span', 'tw', twisty === null ? '' : twisty ? '&#9660;' : '&#9654;');
-      if (twisty !== null) tw.onclick = (e) => { e.stopPropagation(); this.expanded.has(id) ? this.expanded.delete(id) : this.expanded.add(id); this.render(); };
+      if (twisty !== null) tw.onclick = (e) => { e.stopPropagation(); if (onTwisty) return onTwisty(); this.expanded.has(id) ? this.expanded.delete(id) : this.expanded.add(id); this.render(); };
       n.appendChild(tw);
       n.insertAdjacentHTML('beforeend', icon(ic, 16));
       const nm = h('span', 'nm', name); n.appendChild(nm);
@@ -50,6 +53,7 @@ export class FeatureTree {
       this.el.appendChild(n);
       return n;
     };
+    if (app.isAsm) return app.asm.renderTree(this, node);
     const bodies = app.result?.body?.faces?.length ? 1 : 0;
     node({ id: 'root', kind: 'root', name: `${doc.name} (Default&lt;&lt;Default&gt;_Display State 1&gt;)`, ic: 'part', cls: 'root' });
     node({ id: 'history', kind: 'folder', name: 'History', ic: 'history', depth: 1, twisty: false });
@@ -126,7 +130,7 @@ export class FeatureTree {
   }
 
   rename(id) {
-    const f = this.app.featureById(id);
+    const f = this.app.isAsm ? (this.app.asm.comp(id) || this.app.asm.mate(id)) : this.app.featureById(id);
     const row = this.el.querySelector(`[data-key$=":${CSS.escape(id)}"] .nm`);
     if (!f || !row) return;
     row.contentEditable = 'true'; row.classList.add('rename');
@@ -137,7 +141,7 @@ export class FeatureTree {
     const done = (ok) => {
       row.contentEditable = 'false';
       const v = row.textContent.trim();
-      if (ok && v && v !== f.name) this.app.commit('Rename', () => { this.app.featureById(id).name = v; }, false);
+      if (ok && v && v !== f.name) this.app.commit('Rename', () => { const t = this.app.isAsm ? (this.app.doc.components.find((c) => c.id === id) || this.app.doc.mates.find((m) => m.id === id)) : this.app.featureById(id); t.name = v; }, false);
       else this.render();
     };
     row.onkeydown = (e) => { e.stopPropagation(); if (e.key === 'Enter') { e.preventDefault(); done(true); } if (e.key === 'Escape') done(false); };

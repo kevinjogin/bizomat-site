@@ -1,0 +1,23 @@
+{
+  "name": "OpenSketch",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": { "version": "lts" }
+  },
+  "hostRequirements": { "cpus": 2, "memory": "8gb" },
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "postAttachCommand": "bash .devcontainer/start.sh",
+  "forwardPorts": [8000],
+  "portsAttributes": {
+    "8000": { "label": "OpenSketch", "onAutoForward": "openBrowser" }
+  },
+  "customizations": {
+    "codespaces": { "openFiles": ["README.md"] }
+  },
+  "secrets": {
+    "ANTHROPIC_API_KEY": {
+      "description": "Optional. Turns on the OpenSketch AI copilot.",
+      "documentationUrl": "https://console.anthropic.com/settings/keys"
+    }
+  }
+}

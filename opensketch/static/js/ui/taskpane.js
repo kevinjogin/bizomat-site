@@ -1,7 +1,8 @@
 // Task Pane (right): OpenSketch AI copilot, resources, appearances, custom properties.
 
 import { icon } from '../icons.js';
-import { describeFeature } from '../features.js';
+import { describeFeature, featureIcon } from '../features.js';
+import { mateIcon } from '../asm.js';
 
 const h = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
@@ -15,6 +16,17 @@ const PANES = [
   { id: 'appearance', icon: 'appearance', title: 'Appearances, Scenes, and Decals' },
   { id: 'custprops', icon: 'custprops', title: 'Custom Properties' },
 ];
+
+const TOOL_META = {
+  propose_features: { title: 'Writing features', icon: 'feature' },
+  create_part: { title: 'Building part', icon: 'part' },
+  insert_component: { title: 'Inserting component', icon: 'insertcomp' },
+  add_mate: { title: 'Adding mate', icon: 'mate' },
+  delete_items: { title: 'Deleting items', icon: 'cancel' },
+  check_interference: { title: 'Checking interference', icon: 'interference' },
+};
+const featureIconFor = (f) => { try { return featureIcon(f); } catch (_) { return 'feature'; } };
+const mateIconFor = (t) => mateIcon(t);
 
 const COLORS = ['#b9c0c8', '#d0d4d8', '#8a96a3', '#3c4650', '#c8a050', '#b87333', '#d9372b', '#2f7fd8', '#2f9e44', '#f2c230', '#ffffff', '#202020'];
 
@@ -62,68 +74,294 @@ export class TaskPane {
   }
 
   // ---------------------------------------------------------------- AI
+  // The chat streams: thinking summary, a sentence per step, and an activity row per tool call
+  // (features ticking off as they are rebuilt, components inserted, mates solved).
   renderAI(body) {
     const logEl = h('div', 'ai-log');
+    this.logEl = logEl;
+    this.bodyEl = body;
     body.appendChild(logEl);
     if (!this.log.length) {
-      logEl.appendChild(h('div', 'ai-msg bot', 'Describe a part or a change. I build it as real features in the tree (sketches with relations and dimensions, extrudes, fillets) so you can edit everything afterwards. Proposals show in purple until you accept them.'));
+      logEl.appendChild(h('div', 'ai-msg bot', 'Describe a part, a change, or a whole product. I build parts as real features (sketches with relations and dimensions, extrudes, fillets). For products with several pieces I build an assembly: each part, then the components and mates. You watch it being built in the graphics area. Proposals show in purple until you accept them.'));
       const ex = h('div', 'ai-examples');
-      for (const t of ['A 60 x 40 x 10 mm plate with four 5 mm corner holes, 6 mm from the edges', 'A flanged bushing: 30 mm OD, 12 mm bore, 25 mm long, 45 mm flange 5 mm thick', 'Add 2 mm fillets to all vertical edges', 'Shell the part to 2 mm, open at the top']) {
-        const s = h('span', null, esc(t)); s.onclick = () => { this.input.value = t; this.input.focus(); }; ex.appendChild(s);
+      for (const t of ['A 60 x 40 x 10 mm plate with four 5 mm corner holes, 6 mm from the edges', 'A flanged bushing: 30 mm OD, 12 mm bore, 25 mm long, 45 mm flange 5 mm thick',
+        'A hand press assembly: base plate, four guide columns, a crown, a sliding platen and a cylinder', 'A pillow block bearing housing with a 20 mm shaft, as an assembly', 'Add 2 mm fillets to all vertical edges']) {
+        const sp = h('span', null, esc(t)); sp.onclick = () => { this.input.value = t; this.input.focus(); }; ex.appendChild(sp);
       }
       logEl.appendChild(ex);
-      if (this.app.aiAvailable === false) logEl.appendChild(h('div', 'ai-msg err', 'The AI is offline. Start the server with ANTHROPIC_API_KEY set to use it.'));
+      if (this.app.aiAvailable === false || this.app.aiDemo) {
+        const off = h('div', 'ai-msg ' + (this.app.aiDemo ? 'bot' : 'err'), this.app.aiDemo ? 'Demo mode: requests play a recorded session.' : 'The AI is offline. Start the server with ANTHROPIC_API_KEY set to use it.');
+        logEl.appendChild(off);
+      }
+      const demo = h('button', 'btn ai-demo', `${icon('playback', 14)} Watch a demo: AI builds a hand press assembly`);
+      demo.onclick = () => this.send('Build a hand press assembly (demo)', { demo: true });
+      logEl.appendChild(demo);
     }
-    for (const m of this.log) {
-      if (m.role === 'proposal') {
-        const box = h('div', 'ai-proposal');
-        box.innerHTML = `<b>${esc(m.summary || 'Proposed change')}</b><div class="feats">${m.features.map((f) => '&bull; ' + esc(f)).join('<br>')}</div>`;
-        if (m.state === 'pending') {
-          const btns = h('div', 'btns');
-          const ok = h('button', 'btn primary', 'Accept'); ok.onclick = () => { this.app.acceptProposal(); m.state = 'accepted'; this.render(); };
-          const no = h('button', 'btn danger', 'Reject'); no.onclick = () => { this.app.rejectProposal(); m.state = 'rejected'; this.render(); };
-          btns.append(ok, no); box.appendChild(btns);
-        } else box.appendChild(h('div', 'pm-note', m.state === 'accepted' ? 'Accepted' : 'Rejected'));
-        logEl.appendChild(box);
-      } else logEl.appendChild(h('div', 'ai-msg ' + (m.role === 'user' ? 'user' : m.role === 'error' ? 'err' : 'bot'), esc(m.text)));
-    }
-    if (this.busy) logEl.appendChild(h('div', 'ai-msg bot', '<span class="spinner"></span> Designing and rebuilding...'));
+    for (const m of this.log) logEl.appendChild(this.entryEl(m));
     const inp = h('div', 'ai-input');
     const ta = h('textarea'); ta.placeholder = 'Describe the part or the change...';
     ta.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); this.send(); } });
+    if (this.draft) ta.value = this.draft;
+    ta.oninput = () => { this.draft = ta.value; };
     this.input = ta;
     const row = h('div', 'row');
-    row.appendChild(h('span', 'hint', 'Ctrl+Enter to send'));
-    const reset = h('button', 'btn', 'New chat'); reset.onclick = () => { this.log = []; this.conversation = null; this.render(); };
-    const send = h('button', 'btn primary', 'Send'); send.onclick = () => this.send();
+    row.appendChild(h('span', 'hint', this.busy ? 'Building... you can rotate and zoom the view' : 'Ctrl+Enter to send'));
+    const reset = h('button', 'btn', 'New chat'); reset.onclick = () => { if (this.busy) return; this.log = []; this.conversation = null; this.render(); };
+    reset.disabled = this.busy;
+    const send = this.busy ? h('button', 'btn danger', `${icon('ai_stop', 12)} Stop`) : h('button', 'btn primary', 'Send');
+    send.onclick = () => (this.busy ? this.stop() : this.send());
     row.append(reset, send);
     inp.append(ta, row);
     this.panel.appendChild(inp);
-    body.scrollTop = body.scrollHeight;
-    setTimeout(() => ta.focus(), 0);
+    this.scroll(true);
+    if (!this.busy) setTimeout(() => ta.focus(), 0);
   }
 
-  async send(text) {
+  scroll(force = false) {
+    const b = this.bodyEl;
+    if (!b) return;
+    if (force || b.scrollHeight - b.scrollTop - b.clientHeight < 120) b.scrollTop = b.scrollHeight;
+  }
+
+  entryEl(m) {
+    let el;
+    if (m.role === 'proposal') {
+      el = h('div', 'ai-proposal');
+      el.innerHTML = `<b>${esc(m.summary || 'Proposed change')}</b><div class="feats">${m.features.map((f) => '&bull; ' + esc(f)).join('<br>')}</div>`;
+      if (m.state === 'pending') {
+        const btns = h('div', 'btns');
+        const ok = h('button', 'btn primary', 'Accept'); ok.onclick = () => { this.app.acceptProposal(); m.state = 'accepted'; this.render(); };
+        const no = h('button', 'btn danger', 'Reject'); no.onclick = () => { this.app.rejectProposal(); m.state = 'rejected'; this.render(); };
+        btns.append(ok, no);
+        if (m.assembly) { const pb = h('button', 'btn ai-inline', `${icon('playback', 12)}<span>Replay</span>`); pb.title = 'Replay the assembly order'; pb.onclick = () => this.app.asm.playSequence(); btns.append(pb); }
+        el.appendChild(btns);
+      } else el.appendChild(h('div', 'pm-note', m.state === 'accepted' ? 'Accepted' : 'Rejected'));
+    } else if (m.role === 'thinking') {
+      el = h('div', 'ai-think' + (m.open ? ' open' : ''));
+      const head = h('div', 'th', `${m.live ? '<span class="spinner"></span>' : icon('ai', 12)}<span>${m.live ? 'Thinking' : 'Thought'}</span><span class="chev">${m.open ? '&#9650;' : '&#9660;'}</span>`);
+      head.onclick = () => { m.open = !m.open; this.refresh(m); };
+      const txt = h('div', 'tx'); txt.textContent = m.text;
+      el.append(head, txt);
+    } else if (m.role === 'activity') {
+      el = h('div', 'ai-act ' + (m.state || 'running'));
+      const st = m.state === 'running' ? '<span class="spinner"></span>' : m.state === 'error' ? icon('error', 13) : icon('ok', 13);
+      el.innerHTML = `<div class="ah">${st}${icon(m.icon || 'ai', 14)}<b>${esc(m.title)}</b>${m.detail ? `<span class="ad">${esc(m.detail)}</span>` : ''}</div>`;
+      if (m.items?.length) {
+        const list = h('div', 'ai-steps');
+        for (const it of m.items) list.appendChild(h('span', 'st ' + (it.state || 'ok'), `${icon(it.icon || 'feature', 12)}${esc(it.label)}`));
+        el.appendChild(list);
+      }
+    } else {
+      el = h('div', 'ai-msg ' + (m.role === 'user' ? 'user' : m.role === 'error' ? 'err' : 'bot'));
+      el.textContent = m.text;
+      if (m.live) el.classList.add('live');
+    }
+    m.el = el;
+    return el;
+  }
+
+  // Re-draw one chat entry in place (keeps the input box and scroll position).
+  refresh(m) {
+    if (!m.el || !m.el.isConnected) return;
+    const old = m.el;
+    old.replaceWith(this.entryEl(m));
+    this.scroll();
+  }
+
+  add(m) {
+    this.log.push(m);
+    if (this.open === 'ai' && this.logEl) { this.logEl.appendChild(this.entryEl(m)); this.scroll(); }
+    return m;
+  }
+
+  stop() {
+    if (this.abort) this.abort.abort();
+  }
+
+  async send(text, opts = {}) {
     const prompt = (text ?? this.input?.value ?? '').trim();
     if (!prompt || this.busy) return;
+    const app = this.app;
+    if (app.mode === 'sketch') app.exitSketch();
+    if (app.proposal) app.rejectProposal(true);
     this.show('ai');
+    if (text === undefined && this.input) { this.input.value = ''; this.draft = ''; }
+    this.busy = true;
     this.log.push({ role: 'user', text: prompt });
-    this.busy = true; this.render();
+    this.render();
+    const ctl = new AbortController();
+    this.abort = ctl;
+    const before = app.cleanDoc();
+    const S = { text: null, think: null, acts: new Map(), proposal: null, done: null, error: null };
     try {
-      const res = await this.app.api('/api/ai', { doc: this.app.cleanDoc(), prompt, conversation: this.conversation });
-      if (res.error) throw new Error(res.error);
-      this.conversation = res.conversation;
-      if (res.reply) this.log.push({ role: 'bot', text: res.reply });
-      if (res.proposal) {
-        const before = new Set(this.app.doc.features.map((f) => JSON.stringify(f)));
-        const changed = res.proposal.features.filter((f) => !before.has(JSON.stringify(f)));
-        this.log.push({ role: 'proposal', summary: res.summary, features: changed.map((f) => describeFeature(f, this.app)), state: 'pending' });
-        this.app.showProposal(res.proposal, changed.map((f) => f.id));
+      const r = await fetch('/api/ai/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: ctl.signal,
+        body: JSON.stringify({ doc: before, prompt, conversation: this.conversation, demo: opts.demo || false }) });
+      if (!r.ok || !r.body) throw new Error(`Server error ${r.status}`);
+      const reader = r.body.getReader();
+      const dec = new TextDecoder();
+      let buf = '';
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buf += dec.decode(value, { stream: true });
+        let i;
+        while ((i = buf.indexOf('\n')) >= 0) {
+          const line = buf.slice(0, i).trim(); buf = buf.slice(i + 1);
+          if (line) this.onEvent(JSON.parse(line), S);
+        }
       }
+      if (buf.trim()) this.onEvent(JSON.parse(buf), S);
     } catch (err) {
-      this.log.push({ role: 'error', text: String(err.message || err) });
-    } finally {
-      this.busy = false; this.render();
+      S.error = ctl.signal.aborted ? 'Stopped.' : String(err.message || err);
+    }
+    // close any open entries
+    if (S.text) { S.text.live = false; this.refresh(S.text); }
+    if (S.think) { S.think.live = false; S.think.open = false; this.refresh(S.think); }
+    for (const a of S.acts.values()) if (a.state === 'running') { a.state = S.error ? 'error' : 'done'; this.refresh(a); }
+    if (S.error) {
+      app.live.stop();
+      this.add({ role: 'error', text: S.error });
+      if (S.proposal && ctl.signal.aborted) this.add({ role: 'bot', text: 'The partial result was discarded.' });
+    } else if (S.done) {
+      const d = S.done;
+      this.conversation = d.conversation || this.conversation;
+      await app.live.finish();
+      if (d.proposal) await this.showResult(d, before); // drawn under the live view, then revealed
+      else if (d.reply && !(S.lastText && S.lastText.trim() === d.reply.trim())) this.add({ role: 'bot', text: d.reply });
+      app.live.stop();
+      if (d.proposal) app.viewer.followBox(app.viewer.sceneBox());
+    } else app.live.stop();
+    this.busy = false;
+    this.abort = null;
+    this.render();
+  }
+
+  showResult(d, before) {
+    const app = this.app;
+    const p = d.proposal;
+    let ids, lines, assembly = false;
+    if (p.type === 'assembly') {
+      assembly = true;
+      const old = before.type === 'assembly' ? before : { parts: {}, components: [], mates: [] };
+      const oldC = new Set(old.components.map((c) => JSON.stringify([c.id, c.part])));
+      const oldM = new Set(old.mates.map((m) => JSON.stringify(m)));
+      const newC = p.components.filter((c) => !oldC.has(JSON.stringify([c.id, c.part])));
+      const newM = p.mates.filter((m) => !oldM.has(JSON.stringify({ ...m, align: m.align })));
+      const changedParts = Object.entries(p.parts).filter(([k, v]) => JSON.stringify(v) !== JSON.stringify(old.parts[k])).map(([, v]) => v.name);
+      ids = [...newC.map((c) => c.id), ...newM.map((m) => m.id)];
+      lines = [
+        ...(changedParts.length ? [`Parts: ${changedParts.join(', ')}`] : []),
+        ...(newC.length ? [`Components: ${newC.map((c) => c.name).join(', ')}`] : []),
+        ...(newM.length ? [`Mates: ${newM.length}`] : []),
+      ];
+      if (!ids.length) ids = p.components.map((c) => c.id);
+    } else {
+      const prev = new Set((before.features || []).map((f) => JSON.stringify(f)));
+      const changed = p.features.filter((f) => !prev.has(JSON.stringify(f)));
+      ids = changed.map((f) => f.id);
+      lines = changed.map((f) => describeFeature(f, this.app));
+    }
+    if (d.reply && !(this.lastStreamed && this.lastStreamed.trim() === d.reply.trim())) this.add({ role: 'bot', text: d.reply });
+    this.add({ role: 'proposal', summary: assembly ? `Assembly: ${p.name}` : d.summary, features: lines, state: 'pending', assembly });
+    return app.showProposal(p, ids, false);
+  }
+
+  onEvent(ev, S) {
+    const app = this.app;
+    const endText = () => { if (S.text) { S.text.live = false; this.refresh(S.text); S.text = null; } };
+    const endThink = () => { if (S.think) { S.think.live = false; S.think.open = false; this.refresh(S.think); S.think = null; } };
+    switch (ev.ev) {
+      case 'start':
+        this.conversation = ev.conversation;
+        app.live.start(ev);
+        break;
+      case 'thinking_start':
+        endText();
+        S.think = this.add({ role: 'thinking', text: '', live: true, open: true });
+        app.live.hint('Thinking...');
+        break;
+      case 'thinking':
+        if (!S.think) S.think = this.add({ role: 'thinking', text: '', live: true, open: true });
+        S.think.text += ev.delta;
+        if (S.think.el) { S.think.el.querySelector('.tx').textContent = S.think.text; this.scroll(); }
+        break;
+      case 'text':
+        endThink();
+        if (!S.text) S.text = this.add({ role: 'bot', text: '', live: true });
+        S.text.text += ev.delta;
+        S.lastText = S.text.text; this.lastStreamed = S.text.text;
+        if (S.text.el) { S.text.el.textContent = S.text.text; this.scroll(); }
+        break;
+      case 'tool_start': {
+        endText(); endThink();
+        const meta = TOOL_META[ev.tool] || { title: ev.tool, icon: 'ai' };
+        const a = this.add({ role: 'activity', title: meta.title, icon: meta.icon, items: [], state: 'running', tool: ev.tool });
+        S.acts.set(ev.index, a);
+        S.cur = a;
+        app.live.hint(meta.title + '...');
+        break;
+      }
+      case 'build_start': {
+        const a = S.acts.get(ev.index);
+        if (a && ev.name) { a.title = `Building ${ev.name}`; this.refresh(a); }
+        app.live.push(ev);
+        break;
+      }
+      case 'build_step': {
+        const a = S.acts.get(ev.index);
+        if (a && ev.feature) { a.items.push({ label: ev.feature.name || ev.feature.type, icon: featureIconFor(ev.feature), state: ev.state }); this.refresh(a); }
+        app.live.push(ev);
+        break;
+      }
+      case 'tool_progress': {
+        const a = S.acts.get(ev.index);
+        if (a) { a.detail = ev.names.slice(-3).join(' '); this.refresh(a); }
+        break;
+      }
+      case 'tool_done': {
+        const a = S.acts.get(ev.index);
+        if (a) {
+          if (a.state === 'running') a.state = ev.clean ? 'done' : 'error';
+          if (ev.tool === 'delete_items' && ev.summary) a.title = 'Deleted items';
+          if (!ev.clean && ev.summary?.startsWith('Could not')) a.detail = ev.summary;
+          this.refresh(a);
+        }
+        break;
+      }
+      case 'assembly': {
+        const act = ev.action || {};
+        const a = S.acts.get(ev.index);
+        const names = Object.fromEntries(ev.doc.components.map((c) => [c.id, c.name]));
+        if (a && act.kind === 'mate') {
+          const m = ev.doc.mates.find((x) => x.id === act.mate);
+          const st = ev.result.mates.find((x) => x.id === act.mate);
+          a.title = `${m?.name}: ${(m?.refs || []).map((r) => names[r.component] || r.ref).join(' to ')}`;
+          a.icon = mateIconFor(m?.type);
+          a.detail = '';
+          if (st?.state === 'error') { a.state = 'error'; a.detail = st.message; }
+          this.refresh(a);
+        } else if (a && act.kind === 'insert') {
+          const c = ev.doc.components.find((x) => x.id === act.component);
+          const rc = ev.result.components.find((x) => x.id === act.component);
+          a.title = `${act.new === false ? 'Moved' : 'Inserted'} ${c?.name || act.component}`; a.icon = 'insertcomp';
+          a.detail = rc?.state === 'fixed' ? 'fixed' : '';
+          this.refresh(a);
+        }
+        S.proposal = ev.doc;
+        app.live.push(ev);
+        break;
+      }
+      case 'interference': {
+        const a = S.acts.get(ev.index);
+        if (a) { a.title = ev.items.length ? `${ev.items.length} interference(s) found` : 'No interferences'; a.state = ev.items.length ? 'error' : 'done'; this.refresh(a); }
+        app.live.push(ev);
+        break;
+      }
+      case 'proposal': S.proposal = ev.doc; break;
+      case 'note': break;
+      case 'done': S.done = ev; break;
+      case 'error': S.error = ev.message; break;
+      default: break;
     }
   }
 

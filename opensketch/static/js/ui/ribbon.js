@@ -1,7 +1,7 @@
 // CommandManager (ribbon), quick access toolbar, menus and command search.
 
 import { icon } from '../icons.js';
-import { TABS, QUICK, MENUS } from '../commands.js';
+import { TABS, ASM_TABS, QUICK, MENUS } from '../commands.js';
 import { contextMenu } from './dialogs.js';
 
 const val = (v) => (typeof v === 'function' ? v() : v);
@@ -42,8 +42,11 @@ export class Ribbon {
     this.render();
   }
 
+  get tabs_() { return this.app.isAsm ? ASM_TABS : TABS; }
+
   render() {
-    const tab = TABS.find((t) => t.name === this.tab) || TABS[0];
+    const tabs = this.tabs_;
+    const tab = tabs.find((t) => t.name === this.tab) || tabs[0];
     this.ribbon.innerHTML = '';
     for (const it of tab.items) {
       if (it === '|') { this.ribbon.appendChild(h('div', 'rb-sep')); continue; }
@@ -83,8 +86,8 @@ export class Ribbon {
       }
     }
     this.tabs.innerHTML = '';
-    for (const t of TABS) {
-      const e = h('div', 'cmdtab' + (t.name === this.tab ? ' active' : ''), t.name);
+    for (const t of tabs) {
+      const e = h('div', 'cmdtab' + (t.name === tab.name ? ' active' : ''), t.name);
       e.onclick = () => this.setTab(t.name);
       this.tabs.appendChild(e);
     }
@@ -129,7 +132,7 @@ export class Ribbon {
     const inp = document.getElementById('cmdsearch');
     const res = document.getElementById('cmdsearch-results');
     let items = [], idx = 0;
-    const where = (id) => { for (const t of TABS) if (JSON.stringify(t.items).includes(`"${id}"`)) return t.name; return ''; };
+    const where = (id) => { for (const t of [...TABS, ...ASM_TABS]) if (JSON.stringify(t.items).includes(`"${id}"`)) return t.name; return ''; };
     const show = () => {
       const q = inp.value.trim().toLowerCase();
       if (!q) { res.classList.add('hidden'); return; }
