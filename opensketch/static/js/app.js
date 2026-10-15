@@ -14,6 +14,8 @@ import { TaskPane } from './ui/taskpane.js';
 import { buildCommands } from './commands.js';
 import { FEATURE_META, buildSpec, defaultsFor, nextName, metaKey, featureIcon } from './features.js';
 import { icon } from './icons.js';
+import { AssemblyMode, isAssembly, newAssembly, hexColor } from './asm.js';
+import { LivePlayer } from './live.js';
 
 const $ = (id) => document.getElementById(id);
 const clone = (o) => JSON.parse(JSON.stringify(o));
@@ -61,6 +63,9 @@ class App {
     this.ribbon = new Ribbon(this);
     this.tree = new FeatureTree(this);
     this.taskpane = new TaskPane(this);
+    this.asm = new AssemblyMode(this);
+    this.live = new LivePlayer(this);
+    this.docStack = []; // Open Part from an assembly: the assembly waits here
     this.forConstruction = false;
     this.polygonSides = 6;
     this.filletRadius = 5;
@@ -74,23 +79,26 @@ class App {
     $('sb-help').onclick = () => this.shortcutsDialog();
     $('sb-units').onclick = (e) => contextMenu(e.clientX, e.clientY - 120, [{ head: 'Unit system' }, { label: 'MMGS (millimeter, gram, second)', run: () => {} }]);
     this.restore();
+    this.bindDocTabs();
+    this.updateDocChrome();
     this.regen().then(() => this.viewer.zoomToFit(false));
-    this.api('/api/ai/status', null, 'GET').then((r) => { this.aiAvailable = !!r.available; }).catch(() => { this.aiAvailable = false; });
+    this.api('/api/ai/status', null, 'GET').then((r) => { this.aiAvailable = !!r.available; this.aiDemo = !!r.demo; }).catch(() => { this.aiAvailable = false; });
     this.status('Ready. Select a plane and click Sketch to start.');
   }
 
   // ------------------------------------------------------------------ document
   get shownDoc() { return this.proposal || this.doc; }
-  featureById(id) { return this.shownDoc.features.find((f) => f.id === id) || null; }
+  get isAsm() { return isAssembly(this.shownDoc); }
+  featureById(id) { return (this.shownDoc.features || []).find((f) => f.id === id) || null; }
   lastSketchId() {
-    const abs = new Set(this.doc.features.filter((f) => f.sketch).map((f) => f.sketch));
-    const s = [...this.doc.features].reverse().find((f) => f.type === 'sketch' && !abs.has(f.id));
+    const abs = new Set((this.doc.features || []).filter((f) => f.sketch).map((f) => f.sketch));
+    const s = [...(this.doc.features || [])].reverse().find((f) => f.type === 'sketch' && !abs.has(f.id));
     return s ? s.id : null;
   }
 
   uid(p) {
     const used = new Set();
-    for (const f of this.doc.features) { used.add(f.id); for (const e of f.entities || []) used.add(e.id); for (const c of f.constraints || []) used.add(c.id); }
+    for (const f of this.doc.features || []) { used.add(f.id); for (const e of f.entities || []) used.add(e.id); for (const c of f.constraints || []) used.add(c.id); }
     let id;
     do { id = p + (this.doc.seq++); } while (used.has(id));
     return id;
@@ -144,17 +152,63 @@ class App {
 
   docChanged() {
     this.dirty = true;
-    $('doctitle').textContent = `${this.doc.name} *`;
-    try { localStorage.setItem(AUTOSAVE, JSON.stringify(this.cleanDoc())); } catch (_) { /* storage unavailable */ }
+    this.autosave();
+    this.updateDocChrome();
     this.tree.render();
+  }
+
+  // The document as saved: when a part is open from its assembly, the assembly with that part in it.
+  rootDoc() {
+    if (!this.docStack.length) return this.cleanDoc();
+    const root = this.cleanDoc(this.docStack[0].doc);
+    let cur = root;
+    this.docStack.forEach((f, i) => {
+      const inner = i + 1 < this.docStack.length ? this.cleanDoc(this.docStack[i + 1].doc) : { ...this.cleanDoc(), type: 'part' };
+      cur.parts[f.pid] = inner;
+      cur = inner;
+    });
+    return root;
+  }
+
+  autosave() {
+    try { localStorage.setItem(AUTOSAVE, JSON.stringify(this.rootDoc())); } catch (_) { /* storage unavailable */ }
   }
 
   restore() {
     try {
       const s = localStorage.getItem(AUTOSAVE);
-      if (s) { const d = JSON.parse(s); if (d && Array.isArray(d.features)) this.doc = d; }
+      if (s) { const d = JSON.parse(s); if (d && (Array.isArray(d.features) || isAssembly(d))) this.doc = d; }
     } catch (_) { /* ignore */ }
-    $('doctitle').textContent = this.doc.name;
+  }
+
+  // Title, status bar and the "editing part in assembly" bar.
+  updateDocChrome() {
+    const f = this.docStack[this.docStack.length - 1];
+    const root = this.docStack.length ? this.docStack[0].doc : this.doc;
+    $('doctitle').textContent = f ? `${this.doc.name} (${f.comp} in ${root.name})${this.dirty ? ' *' : ''}` : `${this.doc.name}${this.dirty ? ' *' : ''}`;
+    $('sb-editing').textContent = this.isAsm ? 'Editing Assembly' : f ? 'Editing Part in Assembly' : 'Editing Part';
+    const bar = $('editbar');
+    if (f) {
+      bar.innerHTML = `${icon('part', 16)}<span>Editing <b>${this.doc.name}</b> from <b>${root.name}</b></span>`;
+      const b = document.createElement('button'); b.className = 'btn primary'; b.innerHTML = `${icon('returnasm', 14)} Return to Assembly`;
+      b.onclick = () => this.asm.returnToAssembly();
+      bar.appendChild(b);
+    }
+    bar.classList.toggle('hidden', !f);
+    this.ribbon?.render();
+  }
+
+  bindDocTabs() {
+    const tabs = [...document.querySelectorAll('#doctabs .doctab')];
+    tabs.forEach((t, i) => {
+      t.onclick = () => {
+        tabs.forEach((x) => x.classList.toggle('active', x === t));
+        if (i === 2) {
+          if (!this.isAsm) { this.toast('Motion Study replays an assembly. Open or create an assembly first.'); tabs[0].click(); return; }
+          this.asm.playSequence().then(() => tabs[0].classList.add('active'), () => {}).finally(() => tabs[2].classList.remove('active'));
+        } else if (i === 1) { this.toast('3D Views are not available yet.'); tabs[0].click(); }
+      };
+    });
   }
 
   async api(url, body, method = 'POST') {
@@ -180,6 +234,7 @@ class App {
   }
 
   async regen(announce = false) {
+    if (this.isAsm) return this.asm.regen(announce);
     const seq = ++this.regenSeq;
     let res;
     try { res = await this.api('/api/regen', { doc: this.docForRegen() }); } catch (err) { this.toast('Rebuild failed: ' + err.message); return; }
@@ -189,6 +244,7 @@ class App {
   }
 
   applyResult(res) {
+    this.asm.res = null;
     this.result = res;
     this.statusById = Object.fromEntries(res.status.map((s) => [s.id, s]));
     this.viewer.setTool(null);
@@ -221,14 +277,14 @@ class App {
     return { origin: spec.origin, xdir: spec.xdir, ydir: [y.x, y.y, y.z], normal: spec.normal };
   }
 
-  absorbed() { return new Set(this.shownDoc.features.filter((f) => (f.type === 'extrude' || f.type === 'revolve') && f.sketch).map((f) => f.sketch)); }
+  absorbed() { return new Set((this.shownDoc.features || []).filter((f) => (f.type === 'extrude' || f.type === 'revolve') && f.sketch).map((f) => f.sketch)); }
 
   sketchVisible(f) {
     if (this.mode === 'sketch' && f.id === this.sketcher.skId) return false;
     if (f.shown) return true;
     if (f.hidden || !this.view.sketches) return false;
-    const rb = this.shownDoc.rollback ?? this.shownDoc.features.length;
-    if (this.shownDoc.features.indexOf(f) >= rb) return false;
+    const rb = this.shownDoc.rollback ?? (this.shownDoc.features || []).length;
+    if ((this.shownDoc.features || []).indexOf(f) >= rb) return false;
     if (this.cmd?.spec?.showSketch && this.cmd.spec.showSketch() === f.id) return true;
     return !this.absorbed().has(f.id);
   }
@@ -236,9 +292,10 @@ class App {
   drawSketches() {
     const g = this.viewer.otherSketches;
     this.viewer.clearGroup(g);
+    if (this.isAsm) { this.viewer.requestRender(); return; }
     this.sketchPx = this.viewer.pxSize;
     const selIds = new Set(this.selection.filter((s) => s.kind === 'sketch').map((s) => s.id));
-    for (const f of this.shownDoc.features) {
+    for (const f of (this.shownDoc.features || [])) {
       if (f.type !== 'sketch' || !this.sketchVisible(f)) continue;
       const fr = this.sketchFrame(f.id);
       if (!fr) continue;
@@ -267,7 +324,7 @@ class App {
     for (const p of STD_PLANES) {
       list.push({ id: p, name: p, frame: STD_FRAMES[p], size, visible: this.view.planes || sel.has(p) || this.hoverPlane === p || pickPlanes, state: sel.has(p) ? 'sel' : this.hoverPlane === p ? 'hl' : 'normal' });
     }
-    for (const f of this.shownDoc.features) {
+    for (const f of (this.shownDoc.features || [])) {
       if (f.type !== 'plane') continue;
       const fr = this.result?.planes?.[f.id];
       if (!fr) continue;
@@ -285,7 +342,7 @@ class App {
   }
 
   refreshSelectionDisplay() {
-    const keys = this.selection.filter((s) => s.kind === 'face' || s.kind === 'edge').map((s) => `${s.kind}:${s.id}`);
+    const keys = this.selection.filter((s) => s.kind === 'face' || s.kind === 'edge' || s.kind === 'component').map((s) => (s.kind === 'component' ? `comp:${s.id}` : `${s.kind}:${s.id}`));
     const extra = this.cmd?.spec?.selectedKeys ? this.cmd.spec.selectedKeys() : [];
     this.viewer.setSelectedKeys([...keys, ...extra]);
     this.updatePlanes();
@@ -340,10 +397,12 @@ class App {
       if (this.zoomBox) { this.finishZoomArea(); return; }
       if (e.button === 2 && down?.right && Math.hypot(e.offsetX - down.x, e.offsetY - down.y) < 4) this.canvasContext(e);
       if (this.mode === 'sketch' && !this.cmd?.modelPick && e.button === 0) this.sketcher.pointerUp(e.offsetX, e.offsetY, e);
+      if (this.isAsm && e.button === 0) this.asm.pointerUp(e);
       down = null;
     });
     c.addEventListener('dblclick', (e) => {
       if (this.mode === 'sketch') { if (!this.sketcher.dblClick()) this.sketchDblClick(e); return; }
+      if (this.isAsm) { const it = this.asm.pickToItem(this.pickAt(e.offsetX, e.offsetY)); if (it?.kind === 'component' && !this.cmd) this.asm.openPart(it.id); return; }
       const p = this.pickAt(e.offsetX, e.offsetY);
       if (p && p.kind === 'sketch') this.editSketch(p.id);
     });
@@ -357,7 +416,7 @@ class App {
 
   pickSketchEntity(x, y) {
     let best = null;
-    for (const f of this.shownDoc.features) {
+    for (const f of (this.shownDoc.features || [])) {
       if (f.type !== 'sketch' || !this.sketchVisible(f)) continue;
       const fr = this.sketchFrame(f.id);
       if (!fr) continue;
@@ -384,6 +443,8 @@ class App {
   }
 
   partMove(e) {
+    if (this.live.active) return;
+    if (this.isAsm) return this.asm.pointerMove(e);
     const p = this.pickAt(e.offsetX, e.offsetY);
     this.viewer.setHover(p && (p.kind === 'face' || p.kind === 'edge') ? p : null);
     const hs = p && (p.kind === 'sketch' || p.kind === 'sketchline') ? (p.sketch || p.id) : null;
@@ -394,6 +455,8 @@ class App {
   }
 
   partDown(e) {
+    if (this.live.active) return;
+    if (this.isAsm) return this.asm.pointerDown(e);
     const p = this.pickAt(e.offsetX, e.offsetY);
     if (this.cmd) {
       if (p && this.routePick(p)) return;
@@ -429,6 +492,8 @@ class App {
       if (this.sketcher.sel.size) { items.push({ label: 'Delete', key: 'Del', run: () => this.sketcher.deleteSelection() }); items.push({ label: 'Construction Geometry', run: () => this.sketcher.toggleConstruction([...this.sketcher.sel]) }); items.push('-'); }
       items.push({ label: 'Exit Sketch', icon: 'exitsketch', run: () => this.exitSketch() });
       items.push({ label: 'Exit Sketch Without Saving', icon: 'cancel', run: () => this.discardSketch() });
+    } else if (this.isAsm) {
+      return this.asm.canvasContext(e);
     } else {
       const p = this.pickAt(e.offsetX, e.offsetY);
       if (p) {
@@ -447,7 +512,9 @@ class App {
 
   // ------------------------------------------------------------------ context toolbar
   showContextToolbar(item, x, y) {
-    const tb = [];
+    const tb = this.isAsm ? this.asm.contextToolbar(item) : [];
+    if (this.isAsm && item.kind === 'plane') tb.push({ icon: 'normalto', title: 'Normal To', run: () => this.viewer.normalTo(this.planeFrame(item.id)) });
+    if (this.isAsm) return this.renderContextToolbar(tb, x, y);
     if (item.kind === 'plane' || (item.kind === 'face' && item.data?.plane)) {
       tb.push({ icon: 'sketch', title: 'Sketch', run: () => this.sketchOn(item) });
       tb.push({ icon: 'normalto', title: 'Normal To', run: () => this.viewer.normalTo(item.kind === 'plane' ? this.planeFrame(item.id) : frameForFace(item.data.normal, item.data.center)) });
@@ -468,6 +535,10 @@ class App {
       tb.push({ icon: 'fillet', title: 'Fillet', run: () => this.featureCommand('fillet') });
       tb.push({ icon: 'chamfer', title: 'Chamfer', run: () => this.featureCommand('chamfer') });
     }
+    this.renderContextToolbar(tb, x, y);
+  }
+
+  renderContextToolbar(tb, x, y) {
     if (!tb.length) return;
     const el = $('contexttb');
     el.innerHTML = '';
@@ -491,13 +562,14 @@ class App {
       if (this.routePick(p)) return;
     }
     if (this.mode === 'sketch') return;
+    const r = row.getBoundingClientRect(); // before the tree re-renders and the row is replaced
     const key = `${item.kind}:${item.id}`;
     if (e.ctrlKey || e.shiftKey) {
       const has = this.selection.some((s) => `${s.kind}:${s.id}` === key);
       this.setSelection(has ? this.selection.filter((s) => `${s.kind}:${s.id}` !== key) : [...this.selection, item]);
     } else this.setSelection([item]);
-    const r = row.getBoundingClientRect();
-    this.showContextToolbar(item, r.right - 40, r.bottom + 46);
+    const gr = $('graphics').getBoundingClientRect();
+    this.showContextToolbar(item, Math.max(r.right - 40, gr.left + 8), r.bottom + 46);
   }
 
   treeHover(item) {
@@ -509,6 +581,12 @@ class App {
 
   treeContext(item, e) {
     const items = [];
+    if (this.isAsm) {
+      if (item.kind === 'plane') items.push({ label: 'Normal To', icon: 'normalto', run: () => this.viewer.normalTo(this.planeFrame(item.id)) }, { label: this.view.planes ? 'Hide Planes' : 'Show Planes', icon: 'hideshow', run: () => this.toggleView('planes') });
+      else items.push(...this.asm.contextMenuItems(item));
+      if (items.length) contextMenu(e.clientX, e.clientY, items);
+      return;
+    }
     const f = item.kind !== 'plane' || !STD_PLANES.includes(item.id) ? this.featureById(item.id) : null;
     if (item.kind === 'plane') {
       items.push({ label: 'Sketch', icon: 'sketch', run: () => this.sketchOn({ kind: 'plane', id: item.id }) });
@@ -582,6 +660,7 @@ class App {
 
   deleteSelection() {
     if (this.mode === 'sketch') return this.sketcher.deleteSelection();
+    if (this.isAsm) return this.asm.deleteSelection();
     const s = this.selection.find((x) => (x.kind === 'feature' || x.kind === 'sketch' || x.kind === 'plane') && !STD_PLANES.includes(x.id));
     if (s) this.deleteFeature(s.id);
   }
@@ -620,6 +699,7 @@ class App {
 
   // ------------------------------------------------------------------ feature commands
   featureCommand(key, existing = null) {
+    if (this.isAsm) { this.toast('Features are added in a part. Select a component and click Open Part.'); return; }
     if (this.mode === 'sketch') {
       const sid = this.sketcher.skId;
       this.exitSketch();
@@ -724,6 +804,7 @@ class App {
 
   // ------------------------------------------------------------------ sketch mode
   sketchCommand() {
+    if (this.isAsm) { this.toast('Sketches are drawn in a part. Select a component and click Open Part.'); return; }
     if (this.mode === 'sketch') return this.exitSketch();
     const s = this.selection.find((x) => x.kind === 'plane' || (x.kind === 'face' && x.data?.plane) || x.kind === 'sketch');
     if (s) { if (s.kind === 'sketch') return this.editSketch(s.id); return this.sketchOn(s); }
@@ -1005,6 +1086,7 @@ class App {
 
   // ------------------------------------------------------------------ evaluate
   async massProperties() {
+    if (this.isAsm) return this.asm.massProperties();
     let r;
     try { r = await this.api('/api/mass', { doc: this.cleanDoc() }); } catch (err) { this.toast(String(err)); return; }
     if (r.error) { message('Mass Properties', r.error); return; }
@@ -1071,6 +1153,12 @@ class App {
   }
 
   checkModel() {
+    if (this.isAsm) {
+      const bad = (this.asm.res?.mates || []).filter((m) => m.state === 'error').map((m) => `${icon('error', 14)} <b>${this.asm.mate(m.id)?.name}</b>: ${m.message}`);
+      const badp = Object.entries(this.asm.res?.parts || {}).flatMap(([pid, p]) => p.status.filter((s) => s.state === 'error').map((s) => `${icon('error', 14)} <b>${this.asm.partName(pid)}</b>: ${s.message}`));
+      message(bad.length || badp.length ? 'What\'s Wrong' : 'Check Entity', [...badp, ...bad].join('<br>') || 'No errors found. All mates are satisfied.');
+      return;
+    }
     const errs = (this.result?.status || []).filter((s) => s.state === 'error' || s.state === 'warning');
     if (!errs.length) { message('Check Entity', 'No errors found. The model rebuilds cleanly.'); return; }
     message('What\'s Wrong', errs.map((s) => `${icon(s.state === 'error' ? 'error' : 'warning', 14)} <b>${this.featureById(s.id)?.name || s.id}</b>: ${s.message}`).join('<br>'));
@@ -1080,24 +1168,32 @@ class App {
     const t0 = performance.now();
     await this.regen();
     const dt = performance.now() - t0;
-    message('Performance Evaluation', `Features: ${this.doc.features.length}<br>Full rebuild (including transfer): ${fmt(dt, 0)} ms`);
+    message('Performance Evaluation', `${this.isAsm ? 'Components: ' + this.doc.components.length : 'Features: ' + this.doc.features.length}<br>Full rebuild (including transfer): ${fmt(dt, 0)} ms`);
   }
 
   // ------------------------------------------------------------------ files
   newDoc() {
-    const go = () => {
+    const go = (kind) => {
+      this.hideContextToolbar();
       if (this.mode === 'sketch') this.exitSketch({ silent: true });
       this.closeCommand();
+      if (this.docStack.length) { this.doc = this.cleanDoc(this.docStack[0].doc); this.undoStack = this.docStack[0].undo; this.redoStack = this.docStack[0].redo; this.docStack = []; }
       this.pushUndo('New');
-      this.doc = newDoc();
+      this.doc = kind === 'assembly' ? newAssembly() : newDoc();
       this.proposal = null;
       this.docChanged();
-      $('doctitle').textContent = this.doc.name;
+      this.dirty = false; this.updateDocChrome();
+      this.ribbon.setTab(kind === 'assembly' ? 'Assembly' : 'Features');
       this.setSelection([]);
-      this.regen().then(() => { this.viewer.standardView('trimetric'); this.viewer.zoomToFit(); });
+      this.viewer.setBody(null);
+      this.regen().then(() => { this.viewer.standardView('trimetric'); this.viewer.zoomToFit(); if (kind === 'assembly') this.asm.insertPM(); });
     };
-    if (this.doc.features.length) dialog({ title: 'New', body: 'Start a new part? The current part stays in Undo history; save it first if you want to keep it.', buttons: [{ label: 'New Part', primary: true, run: go }, { label: 'Cancel' }] });
-    else go();
+    const body = document.createElement('div');
+    body.className = 'newdoc';
+    body.innerHTML = `<div class="nd" data-k="part">${icon('part', 48)}<b>Part</b><span>a 3D representation of a single design component</span></div>
+      <div class="nd" data-k="assembly">${icon('assembly', 48)}<b>Assembly</b><span>a 3D arrangement of parts and other assemblies</span></div>`;
+    const dlg = dialog({ title: 'New OpenSketch Document', body, buttons: [{ label: 'Cancel' }] });
+    body.querySelectorAll('.nd').forEach((n) => { n.onclick = () => { dlg.close(); go(n.dataset.k); }; });
   }
 
   openFile() { $('fileinput').value = ''; $('fileinput').click(); }
@@ -1106,13 +1202,18 @@ class App {
     if (!file) return;
     try {
       const d = JSON.parse(await file.text());
-      if (!Array.isArray(d.features)) throw new Error('Not an OpenSketch part');
+      if (!Array.isArray(d.features) && !isAssembly(d)) throw new Error('Not an OpenSketch part or assembly');
+      this.hideContextToolbar();
       if (this.mode === 'sketch') this.exitSketch({ silent: true });
       this.closeCommand();
+      if (this.docStack.length) { this.doc = this.cleanDoc(this.docStack[0].doc); this.undoStack = this.docStack[0].undo; this.redoStack = this.docStack[0].redo; this.docStack = []; }
       this.pushUndo('Open');
       this.doc = d; this.doc.seq = this.doc.seq || 1000;
+      this.proposal = null;
       this.docChanged();
-      $('doctitle').textContent = d.name;
+      this.dirty = false; this.updateDocChrome();
+      this.ribbon.setTab(isAssembly(d) ? 'Assembly' : 'Features');
+      this.viewer.setBody(null);
       await this.regen();
       this.viewer.zoomToFit();
     } catch (err) { message('Open', 'Could not open the file: ' + err.message); }
@@ -1126,14 +1227,16 @@ class App {
   }
 
   saveFile() {
-    this.download(new Blob([JSON.stringify(this.cleanDoc(), null, 1)], { type: 'application/json' }), `${this.doc.name}.osk`);
-    $('doctitle').textContent = this.doc.name;
-    this.status('Saved ' + this.doc.name + '.osk');
+    const d = this.rootDoc();
+    this.download(new Blob([JSON.stringify(d, null, 1)], { type: 'application/json' }), `${d.name}.osk`);
+    this.dirty = false;
+    this.updateDocChrome();
+    this.status('Saved ' + d.name + '.osk');
   }
 
   saveAs() {
     dialog({ title: 'Save As', body: '<div>Choose a file type:</div>', buttons: [
-      { label: 'OpenSketch Part (*.osk)', primary: true, run: () => this.saveFile() },
+      { label: this.isAsm ? 'OpenSketch Assembly (*.osk)' : 'OpenSketch Part (*.osk)', primary: true, run: () => this.saveFile() },
       { label: 'STEP AP214 (*.step)', run: () => { this.exportAs('step'); } },
       { label: 'STL (*.stl)', run: () => { this.exportAs('stl'); } },
       { label: 'Cancel' },
@@ -1162,6 +1265,14 @@ class App {
   }
 
   setAppearance(hex) {
+    if (this.isAsm) {
+      const comps = this.selection.filter((s) => s.kind === 'component').map((s) => this.asm.comp(s.id)).filter(Boolean);
+      if (!comps.length) { this.toast('Select a component first. Its part takes the colour.'); return; }
+      for (const c of comps) this.doc.parts[c.part].appearance = hex;
+      this.docChanged();
+      this.asm.draw();
+      return;
+    }
     this.doc.appearance = hex;
     this.docChanged();
     for (const f of this.viewer.faceObjs) f.userData.baseColor = this.bodyColor();
@@ -1189,29 +1300,33 @@ class App {
     message('Keyboard Shortcuts', `<table class="kbd-table">${rows.map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join('')}</table>`);
   }
 
-  aboutDialog() { message('About OpenSketch', 'OpenSketch 0.1<br>Parametric part modelling on build123d (OpenCascade), with an AI design copilot.<br>Interface modelled on the SOLIDWORKS workflow. Not affiliated with Dassault Systemes.'); }
+  aboutDialog() { message('About OpenSketch', 'OpenSketch 0.2<br>Parametric parts and assemblies on build123d (OpenCascade), with an AI design copilot that builds in front of you.<br>Interface modelled on the SOLIDWORKS workflow. Not affiliated with Dassault Systemes.'); }
 
   // ------------------------------------------------------------------ AI proposals
   openTask(id) { this.taskpane.show(id); }
   aiQuick(prompt) { this.taskpane.send(prompt); }
 
-  async showProposal(doc, ids) {
+  async showProposal(doc, ids, fit = true) {
     if (this.mode === 'sketch') this.exitSketch();
     this.closeCommand();
     this.proposal = doc;
     this.proposedIds = ids;
+    if (this.isAsm) { this.viewer.setBody(null); this.ribbon.setTab('Assembly'); } else this.viewer.setAssembly([], {});
+    this.updateDocChrome();
     await this.regen();
-    this.viewer.zoomToFit();
+    if (fit) this.viewer.zoomToFit();
   }
 
   acceptProposal() {
     const p = this.proposal;
     if (!p) return;
+    const wasAsm = this.isAsm;
     this.proposal = null;
     this.pushUndo('AI change');
     this.doc = { ...p, seq: Math.max(this.doc.seq || 1, p.seq || 1) };
     this.proposedIds = [];
     this.docChanged();
+    if (wasAsm) this.ribbon.setTab('Assembly');
     this.regen();
   }
 
@@ -1219,6 +1334,8 @@ class App {
     if (!this.proposal) return;
     this.proposal = null; this.proposedIds = [];
     for (const m of this.taskpane.log) if (m.state === 'pending') m.state = 'rejected';
+    this.updateDocChrome();
+    if (!this.isAsm) this.viewer.setAssembly([], {});
     if (!silent) { this.regen(); this.taskpane.render(); }
   }
 
@@ -1370,7 +1487,7 @@ class App {
 
   shortcutBar(x, y) {
     const el = $('shortcutbar');
-    const ids = this.mode === 'sketch'
+    const ids = this.isAsm ? ['insertcomp', 'mate', 'fixfloat', 'interference', 'playback', 'openpart', 'massprops', 'ai'] : this.mode === 'sketch'
       ? ['line', 'centerline', 'rectangle', 'centerrect', 'circle', 'arc', 'threeptarc', 'tangentarc', 'slot', 'polygon', 'point', 'smartdim', 'trim', 'sketchfillet', 'offset', 'convert', 'sketchmirror', 'addrelation']
       : ['sketch', 'extrude', 'cut', 'revolve', 'revcut', 'fillet', 'chamfer', 'shell', 'linpattern', 'circpattern', 'mirror', 'plane', 'measure', 'massprops', 'section', 'ai'];
     el.innerHTML = '';

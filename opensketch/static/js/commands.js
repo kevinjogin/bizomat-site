@@ -85,6 +85,19 @@ export function buildCommands(app) {
     check: { label: 'Check', icon: 'check', tip: 'Checks the model for rebuild errors.', run: () => app.checkModel() },
     stats: { label: 'Performance Evaluation', icon: 'stats', tip: 'Shows rebuild time per feature.', run: () => app.statsDialog() },
 
+    // assembly
+    insertcomp: { label: 'Insert Components', icon: 'insertcomp', tip: 'Adds an existing part to the assembly.', run: () => app.asm.insertPM() },
+    newpart: { label: 'New Part', icon: 'newpart', tip: 'Creates a new part in the assembly and opens it for editing.', run: () => app.asm.newPart() },
+    mate: { label: 'Mate', icon: 'mate', tip: 'Positions two components relative to each other.', run: () => app.asm.matePM() },
+    movecomp: { label: 'Move Component', icon: 'movecomp', tip: 'Drag an under-defined component in the graphics area. Mates keep holding.', run: () => app.toast('Drag an under-defined component with the left mouse button. Mates keep holding.') },
+    fixfloat: { label: 'Fix / Float', icon: 'fix', tip: 'Fixes the selected component in place, or lets it move again.', run: () => { const s = app.selection.find((x) => x.kind === 'component'); if (!s) return app.toast('Select a component first.'); const c = app.asm.comp(s.id); app.asm.setFixed(c.id, !c.fixed); } },
+    hidecomp: { label: 'Hide/Show Components', icon: 'hideshow', tip: 'Hides or shows the selected components.', run: () => { const s = app.selection.filter((x) => x.kind === 'component'); if (!s.length) return app.toast('Select a component first.'); for (const x of s) app.asm.setHidden(x.id, !app.asm.comp(x.id).hidden); } },
+    interference: { label: 'Interference Detection', icon: 'interference', tip: 'Finds overlapping volume between components.', run: () => app.asm.interferencePM() },
+    playback: { label: 'Assembly Playback', icon: 'playback', tip: 'Replays the assembly order: each component flies in and settles onto its mates (Motion Study).', run: () => app.asm.playSequence() },
+    openpart: { label: 'Open Part', icon: 'open', tip: 'Opens the selected component\'s part for editing. Return to the assembly when done.', run: () => { const s = app.selection.find((x) => x.kind === 'component'); if (!s) return app.toast('Select a component first.'); app.asm.openPart(s.id); } },
+    asmexplain: { label: 'Explain Assembly', icon: 'ai', tip: 'Asks the AI to explain the assembly and how it moves.', run: () => app.aiQuick('Explain this assembly: the parts, how they are mated and which components can still move. Do not change it.') },
+    asmfix: { label: 'Fix Mates', icon: 'mate', tip: 'Asks the AI to fix mate errors and interferences.', run: () => app.aiQuick('Fix the mate errors and any interferences in this assembly with minimal changes.') },
+
     // AI add-in
     ai: { label: 'OpenSketch AI', icon: 'ai', tip: 'Describe a part or a change, the AI proposes features you can accept or reject (Ctrl+L).', run: () => app.openTask('ai') },
     aiexplain: { label: 'Explain Model', icon: 'ai', tip: 'Asks the AI to explain the feature tree.', run: () => app.aiQuick('Explain this part and its design intent in a few sentences. Do not change it.') },
@@ -114,13 +127,24 @@ export const TABS = [
   { name: 'OpenSketch AI', items: [{ big: 'ai' }, { big: 'aiexplain' }, { big: 'aifix' }, { big: 'aidefine' }] },
 ];
 
+// Assembly documents get the SOLIDWORKS assembly CommandManager.
+export const ASM_TABS = [
+  { name: 'Assembly', items: [
+    { big: 'insertcomp', fly: ['insertcomp', 'newpart'] }, { big: 'mate' }, '|',
+    { big: 'movecomp' }, { col: ['fixfloat', 'hidecomp', 'openpart'] }, '|',
+    { big: 'interference' }, { big: 'playback' },
+  ] },
+  { name: 'Evaluate', items: [{ big: 'interference' }, { big: 'massprops' }, { big: 'section' }, { big: 'check' }, { big: 'stats' }] },
+  { name: 'OpenSketch AI', items: [{ big: 'ai' }, { big: 'asmexplain' }, { big: 'asmfix' }] },
+];
+
 export const QUICK = ['new', 'open', 'save', 'print', 'undo', 'redo', 'select', 'rebuild', 'fileprops', 'options'];
 
 export const MENUS = [
   { name: 'File', items: ['new', 'open', 'save', 'saveas', '-', 'print', '-', 'fileprops'] },
   { name: 'Edit', items: ['undo', 'redo', '-', 'rebuild', '-', { label: 'Delete', run: (app) => app.deleteSelection(), key: 'Del' }, { label: 'Suppress', run: (app) => app.suppressSelection(true) }, { label: 'Unsuppress', run: (app) => app.suppressSelection(false) }] },
   { name: 'View', items: [{ label: 'Planes', run: (app) => app.toggleView('planes') }, { label: 'Origins', run: (app) => app.toggleView('origins') }, { label: 'Sketches', run: (app) => app.toggleView('sketches') }, { label: 'Sketch Relations', run: (app) => app.toggleView('relations') }, '-', { label: 'Zoom to Fit', run: (app) => app.viewer.zoomToFit(), key: 'F' }] },
-  { name: 'Insert', items: ['extrude', 'revolve', 'cut', 'revcut', '-', 'fillet', 'chamfer', 'shell', '-', 'linpattern', 'circpattern', 'mirror', '-', 'plane', '-', 'sketch'] },
+  { name: 'Insert', items: ['insertcomp', 'newpart', 'mate', '-', 'extrude', 'revolve', 'cut', 'revcut', '-', 'fillet', 'chamfer', 'shell', '-', 'linpattern', 'circpattern', 'mirror', '-', 'plane', '-', 'sketch'] },
   { name: 'Tools', items: ['line', 'centerline', 'rectangle', 'circle', 'arc', 'slot', 'polygon', 'point', '-', 'smartdim', 'addrelation', 'relations', '-', 'trim', 'convert', 'offset', 'sketchmirror', 'sketchfillet', '-', 'measure', 'massprops', '-', 'options'] },
   { name: 'Window', items: [{ label: 'Part1', run: () => {} }] },
   { name: 'Help', items: [{ label: 'Keyboard Shortcuts', run: (app) => app.shortcutsDialog() }, { label: 'About OpenSketch', run: (app) => app.aboutDialog() }] },
