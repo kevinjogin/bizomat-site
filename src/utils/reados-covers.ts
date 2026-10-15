@@ -52,6 +52,11 @@ export const TOPIC_COVERS: Record<string, Look> = {
   'starting-and-running-a-business': { motif: 'venture', tone: 'paper' },
   'business-processes-and-decisions': { motif: 'decision', tone: 'carbon' },
   'exploring-and-testing-ideas': { motif: 'experiment', tone: 'paper' },
+  'commercial-law-and-contracts': { motif: 'compass', tone: 'paper' },
+  'engineering-history': { motif: 'factory', tone: 'ember' },
+  'machining-and-metal-parts': { motif: 'gauge', tone: 'paper' },
+  'machine-elements-and-mechanical-design': { motif: 'exploded', tone: 'paper' },
+  'fluids-hvac-and-building-services': { motif: 'network', tone: 'graphite' },
 };
 
 /** Category illustrations, used by each category's Practical Perspectives book and its archive volumes. */
