@@ -29,6 +29,7 @@ Phase 1, part files, is done:
 | Features | Extrude boss/cut (blind, through all, up to next, mid plane, direction 2, draft), revolve boss/cut, fillet, chamfer, shell, mirror, linear and circular pattern, reference plane. Live previews; edit, suppress, rollback, delete, rename, undo/redo. |
 | Evaluate / files | Mass properties with materials, measure, section view, check; save/open .osk, STEP/STL export, browser autosave. |
 | AI | `ai.py` tool loop with Claude (`claude-opus-5-5`, server-side fallback "default"); proposal shown in purple, Accept/Reject. Needs ANTHROPIC_API_KEY. |
+| Try it | GitHub Codespaces: `.devcontainer/` (Python 3.12 image, OpenCascade system libs, `setup.sh` installs `.[ai,dev]`, `start.sh` serves on port 8000 and the browser opens automatically). README badge links to it. Tested in the same base image: setup, start, pytest, part rebuild. |
 | Tests | 7 pytest (regen, sketch-on-face tracking, previews, AI loop with fake client), 7 node solver tests. UI flows checked with Playwright: sketch + dimension + extrude, sketch on face + cut + fillet, revolve + sketch fillet + edit + undo, trim + rollback + save/open. |
 
 ## Known limits
@@ -37,6 +38,14 @@ Phase 1, part files, is done:
 - Not yet built: assemblies and mates (next phase), Hole Wizard, sweep, loft, draft feature, rib,
   splines, ellipses, text, Instant3D, equations, configurations, drawings.
 - The AI path has been tested with a fake client only; not yet run against the live API.
+
+## Architecture direction (under evaluation)
+
+Geometry may move from Python (server) to OpenCascade in the browser (WASM, likely replicad) so the
+app runs as a plain web page with near-zero server cost. Before assemblies: a 2-3 day spike porting
+extrude, cut, fillet and shell, compared against Python on a 30-feature part. Go if browser rebuilds
+are within about 2x of Python and fillets do not fail more often; otherwise stay server-side.
+The .osk JSON format stays the contract either way.
 
 ## Next phase
 

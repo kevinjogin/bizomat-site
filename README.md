@@ -9,7 +9,20 @@ real, editable features into the same tree you edit by hand. Think "Cursor for h
 This first version covers **part files**: sketches and features. Assemblies with SOLIDWORKS-style
 mates come next (see Roadmap).
 
-## Run it
+## Try it in the browser
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/yuanzhengyang98/opensketch?quickstart=1)
+
+Click the badge, then **Create codespace**. GitHub sets up a cloud machine and OpenSketch opens in
+a new browser tab. The first launch takes about 3 to 5 minutes; later launches take seconds. If the
+tab does not open, go to the **Ports** tab and click the globe next to port 8000.
+
+For the AI copilot, add `ANTHROPIC_API_KEY` as a Codespaces secret
+(GitHub > Settings > Codespaces > Secrets) before you create the codespace.
+
+Stop the codespace when you are done (it also stops itself after 30 idle minutes).
+
+## Run it locally
 
 ```bash
 pip install -e .            # build123d, fastapi, uvicorn
