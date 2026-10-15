@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { COLORS, matOf } from './viewer.js';
 import { dialog, message, contextMenu } from './ui/dialogs.js';
 import { fmt } from './sketch/geom2d.js';
+import { regenLocal } from './asmsolver.js';
 
 const clone = (o) => JSON.parse(JSON.stringify(o));
 const esc = (s) => String(s ?? '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
@@ -66,17 +67,44 @@ export class AssemblyMode {
   }
 
   // ------------------------------------------------------------------ rebuild
+  // Mates are solved here in the browser (asmsolver.js) whenever no part has changed since the
+  // server last built the parts: dragging, adding or editing mates, Fix/Float, suppress, previews.
+  // The server (build123d) is asked only when a part changes: it rebuilds the part, sends its mesh
+  // and moves mate references onto the rebuilt faces.
+  partText(p) { return JSON.stringify(p, (k, v) => (k.startsWith('_') ? undefined : v)); }
+
+  canSolveLocally(doc) {
+    const info = this.partsInfo, built = this.builtParts;
+    if (!info || !built) return false;
+    const pids = Object.keys(doc.parts || {});
+    if (pids.length !== Object.keys(built).length) return false;
+    const v = this.app.viewer;
+    return pids.every((pid) => built[pid] === this.partText(doc.parts[pid]) && info[pid] && v.partGeo.get(pid)?.key === info[pid].key);
+  }
+
+  remember(res, doc) {
+    // the parts the server just built, so later solves can stay in the browser
+    this.partsInfo = Object.fromEntries(Object.entries(res.parts || {}).map(([pid, p]) => { const { body, ...rest } = p; return [pid, rest]; }));
+    this.builtParts = Object.fromEntries(Object.entries(doc.parts || {}).map(([pid, p]) => [pid, this.partText(p)]));
+  }
+
   async regen(announce = false, docOverride = null) {
     const app = this.app;
     const seq = ++app.regenSeq;
     const doc = app.cleanDoc(docOverride || app.shownDoc);
     let res;
-    try { res = await app.api('/api/regen', { doc, known: this.knownKeys() }); } catch (err) { app.toast('Rebuild failed: ' + err.message); return null; }
-    if (seq !== app.regenSeq) return null;
-    // a mesh we thought we had is gone (cache replaced): ask again without the shortcut
-    if (res.components.some((c) => !app.viewer.partGeo.get(c.part) && !res.parts[c.part]?.body && res.parts[c.part])) {
-      for (const pid of Object.keys(res.parts)) app.viewer.partGeo.delete(pid);
-      return this.regen(announce, docOverride);
+    if (this.canSolveLocally(doc)) {
+      try { res = regenLocal(doc, this.partsInfo); } catch (err) { console.error(err); res = null; }
+    }
+    if (!res) {
+      try { res = await app.api('/api/regen', { doc, known: this.knownKeys() }); } catch (err) { app.toast('Rebuild failed: ' + err.message); return null; }
+      if (seq !== app.regenSeq) return null;
+      // a mesh we thought we had is gone (cache replaced): ask again without the shortcut
+      if (res.components.some((c) => !app.viewer.partGeo.get(c.part) && !res.parts[c.part]?.body && res.parts[c.part])) {
+        for (const pid of Object.keys(res.parts)) app.viewer.partGeo.delete(pid);
+        return this.regen(announce, docOverride);
+      }
+      this.remember(res, doc);
     }
     if (docOverride) { this.draw(res, docOverride); return res; }
     this.apply(res);
@@ -257,27 +285,39 @@ export class AssemblyMode {
   }
 
   // Solve with the grabbed point pulled toward the cursor; mates keep holding, so a hinge turns and
-  // a slider slides (SOLIDWORKS drag). One request at a time, always for the newest mouse position,
-  // and each starts from the pose the last one found, so the solver only has a small step to make.
-  // (Firing a request per mouse move let them pile up on the server and the view fell behind.)
+  // a slider slides (SOLIDWORKS drag). Solved in the browser once per animation frame for the newest
+  // mouse position, each frame starting from the pose the last one found. If parts have changed
+  // since the server last built them, the same loop asks the server, one request at a time.
+  dragSolve(d, at, res) {
+    d.solvedAt = at;
+    if (!res?.components) return;
+    d.res = res;
+    for (const c of res.components) {
+      const dc = d.doc.components.find((x) => x.id === c.id);
+      if (dc && !dc.suppressed) { dc.position = c.position; dc.rotation = c.rotation; }
+    }
+    this.draw(res, d.doc);
+  }
+
   pumpDrag(d) {
     if (d.flight) return d.flight;
+    const drag = (at) => ({ component: d.id, point: d.local, target: this.dragTarget(d, at) });
+    if (this.canSolveLocally(d.doc)) {
+      d.flight = new Promise((resolve) => requestAnimationFrame(() => {
+        const at = d.at;
+        try { this.dragSolve(d, at, regenLocal(d.doc, this.partsInfo, drag(at))); } catch (err) { console.error(err); d.solvedAt = at; }
+        d.flight = null;
+        resolve();
+      }));
+      return d.flight;
+    }
     d.flight = (async () => {
-      const app = this.app;
       while (d.at && d.solvedAt !== d.at) {
         const at = d.at;
         let res;
-        try {
-          res = await app.api('/api/regen', { doc: d.doc, known: this.knownKeys(), drag: { component: d.id, point: d.local, target: this.dragTarget(d, at) } });
-        } catch (_) { break; }
-        d.solvedAt = at;
+        try { res = await this.app.api('/api/regen', { doc: d.doc, known: this.knownKeys(), drag: drag(at) }); } catch (_) { break; }
+        this.dragSolve(d, at, res);
         if (!res?.components) break;
-        d.res = res;
-        for (const c of res.components) {
-          const dc = d.doc.components.find((x) => x.id === c.id);
-          if (dc && !dc.suppressed) { dc.position = c.position; dc.rotation = c.rotation; }
-        }
-        this.draw(res, d.doc);
       }
       d.flight = null;
     })();
