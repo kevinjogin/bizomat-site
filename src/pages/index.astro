@@ -10,6 +10,8 @@ import ProcessSteps from '../components/ProcessSteps.astro';
 import SoftwareNote from '../components/SoftwareNote.astro';
 import ServiceMap from '../components/ServiceMap.astro';
 import HomeResourceVisual from '../components/HomeResourceVisual.astro';
+import ProofOfWork from '../components/ProofOfWork.astro';
+import { PROJECTS } from '../data/projects.ts';
 import { SERVICE_GROUPS, ENGAGEMENT_MODELS, INDUSTRIES, SERVICE_AREA, PRICING_NOTE, FACTORY_FIX, PACKAGES } from '../data/services.ts';
 import { BACKGROUND, PRINCIPLES } from '../data/brand.ts';
 import { SITE } from '../config/site.ts';
@@ -45,6 +47,7 @@ const navigable=[
   {id:'industries',label:'Industries'},
   {id:'about',label:'About'},
   {id:'resources',label:'Resources'},
+  {id:'work',label:'Proof of work'},
 ];
 ---
 <BaseLayout
@@ -147,6 +150,7 @@ const navigable=[
         <p class="section-intro">KEVOS® is a small engineering-led business set up for defined technical assignments without the overhead of another permanent engineering position.</p>
         <p class="muted">Its founder's background runs from making components through design, product development, operations improvement and project delivery. That helps connect drawings, tooling, processes, people and documentation.</p>
         <ul class="background-list">{BACKGROUND.map(b=><li>{b}</li>)}</ul>
+        <a class="about-link" href="#work">See {PROJECTS.length} projects in the proof of work →</a>
       </div>
       <div class="principles">
         {PRINCIPLES.map((p,i)=><div class="principle">
@@ -166,11 +170,16 @@ const navigable=[
     </div>
   </Section>
 
+  <Section index="08" label="Proof of work" tone="alt" id="work" labelledby="work-title">
+    <div class="section-head"><div><h2 id="work-title">Proof of work: {PROJECTS.length} engineering projects since 2010.</h2><p class="section-intro">The engineering record behind KEVOS®. These projects were delivered by its founder in employed, contract and consulting roles across steel and mining, special-purpose machinery, medical products, food manufacturing, defence, infrastructure and operations. Each record shows where the work happened, the role, what was delivered and how far the project went.</p></div></div>
+    <ProofOfWork />
+  </Section>
+
   <CallToAction title="Have work that needs moving forward?" text="Describe the drawing, project, manufacturing process or technical problem. KEVOS® can help define a practical scope and an appropriate next step." label="REACHOS"/>
 </BaseLayout>
 
 <style>
-  :global(#overview), :global(#services), :global(#how-it-works), :global(#industries), :global(#about), :global(#factory-fix), :global(#pricing), :global(#resources), :global(#engineering-cad), :global(#manufacturing), :global(#operations), :global(#project-support) { scroll-margin-top:calc(var(--header-h) + 4.2rem); }
+  :global(#overview), :global(#services), :global(#how-it-works), :global(#industries), :global(#about), :global(#factory-fix), :global(#pricing), :global(#resources), :global(#work), :global(#engineering-cad), :global(#manufacturing), :global(#operations), :global(#project-support) { scroll-margin-top:calc(var(--header-h) + 4.2rem); }
   .home-hero{padding:clamp(3rem,6vw,6.5rem) 0}
   :global(.home-hero__inner){display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.9fr);gap:3rem 4rem;align-items:center}
   .home-hero__copy h1{margin:1rem 0 1.5rem;max-width:16ch;font-size:clamp(2.2rem,4.7vw,4.8rem);line-height:1.03}
@@ -210,6 +219,7 @@ const navigable=[
   .about-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1fr);gap:3rem 5rem}
   .about-grid h2{max-width:18ch}.background-list{display:flex;gap:.55rem;flex-wrap:wrap;list-style:none;padding:0;margin:1.5rem 0}
   .background-list li{border:1px solid var(--line-strong);padding:.36rem .7rem;font-size:.84rem}
+  .about-link{color:var(--accent);font-weight:600;font-size:.92rem;text-decoration:none}.about-link:hover{text-decoration:underline}
   .principles{border-top:1px solid var(--line-strong)}
   .principle{display:grid;grid-template-columns:2rem 1fr;gap:1rem;padding:1.2rem 0;border-bottom:1px solid var(--line)}
   .principle>span{color:var(--accent);font-size:.86rem}.principle h3{font-size:1.05rem}.principle p{font-size:.93rem;color:var(--ink-2);margin:.4rem 0 0}

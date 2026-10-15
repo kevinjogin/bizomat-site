@@ -91,6 +91,7 @@ export const FOOTER_NAV = {
     { href: '/tools/', label: 'WORKOS' },
     { href: '/#how-it-works', label: 'How It Works' },
     { href: '/#industries', label: 'Industries' },
+    { href: '/#work', label: 'Proof of Work' },
     { href: '/#about', label: 'About' },
     { href: '/reados/', label: 'READOS' },
     { href: '/contact/', label: 'REACHOS' },

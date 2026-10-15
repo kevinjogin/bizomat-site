@@ -1,0 +1,128 @@
+---
+// Homepage proof of work: sector filters and expandable project records (data in src/data/projects.ts).
+// Without JavaScript every project is listed; with it, the list starts at nine and can be filtered.
+import { NAMED_ORGANISATIONS, PROJECTS, PROJECT_SECTORS } from '../data/projects.ts';
+const INITIAL = 9;
+const sectorLabel = Object.fromEntries(PROJECT_SECTORS.map((s) => [s.id, s.label]));
+const sectors = PROJECT_SECTORS.map((s) => ({ ...s, count: PROJECTS.filter((p) => p.sector === s.id).length }));
+const earliest = PROJECTS[PROJECTS.length - 1].years.slice(0, 4);
+const latest = PROJECTS[0].years.slice(-4);
+---
+<div class="work" data-work data-initial={INITIAL}>
+  <dl class="work-stats">
+    <div><dt>Project records</dt><dd>{PROJECTS.length}</dd></div>
+    <div><dt>Years</dt><dd>{earliest}–{latest}</dd></div>
+    <div><dt>Sectors</dt><dd>{sectors.length}</dd></div>
+    <div><dt>Named organisations</dt><dd>{NAMED_ORGANISATIONS.length}</dd></div>
+  </dl>
+
+  <div class="work-filter" role="group" aria-label="Filter projects by sector" data-work-filter hidden>
+    <button type="button" data-sector="all" data-label="projects" aria-pressed="true">All <span>{PROJECTS.length}</span></button>
+    {sectors.map((s) => <button type="button" data-sector={s.id} data-label={s.label.toLowerCase()} aria-pressed="false">{s.label} <span>{s.count}</span></button>)}
+  </div>
+  <p class="work-count" aria-live="polite" data-work-count></p>
+
+  <ol class="work-grid">
+    {PROJECTS.map((p) => (
+      <li class="work-card" data-sector={p.sector}>
+        <article aria-labelledby={`work-${p.id}`}>
+          <p class="work-card__meta"><span>{p.years}</span><span>{sectorLabel[p.sector]}</span></p>
+          <h3 id={`work-${p.id}`}>{p.title}</h3>
+          <p class="work-card__client">{p.client} <span>· {p.industry}</span></p>
+          <p class="work-card__summary">{p.summary}</p>
+          <ul class="work-card__skills" aria-label="Capabilities">{p.skills.map((s) => <li>{s}</li>)}</ul>
+          <p class:list={['work-status', `work-status--${p.status}`]}>{p.statusLabel}</p>
+          <details class="work-card__details">
+            <summary>Role, scope and outcome</summary>
+            <dl>
+              <dt>Role</dt><dd>{p.role}</dd>
+              <dt>The challenge</dt><dd>{p.challenge}</dd>
+              <dt>The work</dt><dd><ul>{p.contribution.map((c) => <li>{c}</li>)}</ul></dd>
+              <dt>Outcome</dt><dd>{p.outcome}</dd>
+            </dl>
+          </details>
+        </article>
+      </li>
+    ))}
+  </ol>
+  <button class="work-more" type="button" data-work-more hidden>Show all {PROJECTS.length} projects</button>
+
+  <p class="work-note">Organisation names show where the work took place and do not imply endorsement of KEVOS®. Engineering calculations, certification and statutory approvals remained with the responsible engineers and authorities. Projects that ended at concept or design stage are labelled that way. Only information already published in the KEVOS® project records is shown.</p>
+</div>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>('[data-work]')) {
+    const cards = [...root.querySelectorAll<HTMLElement>('.work-card')];
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-work-filter] button')];
+    const filter = root.querySelector<HTMLElement>('[data-work-filter]');
+    const more = root.querySelector<HTMLButtonElement>('[data-work-more]');
+    const count = root.querySelector<HTMLElement>('[data-work-count]');
+    const initial = Number(root.dataset.initial) || 9;
+    let sector = 'all';
+    let expanded = false;
+    const render = () => {
+      const matches = cards.filter((card) => sector === 'all' || card.dataset.sector === sector);
+      const limit = sector === 'all' && !expanded ? initial : matches.length;
+      cards.forEach((card) => { card.hidden = true; });
+      matches.forEach((card, i) => { card.hidden = i >= limit; });
+      if (more) more.hidden = limit >= matches.length;
+      const active = buttons.find((b) => b.dataset.sector === sector);
+      if (count) count.textContent = `Showing ${Math.min(limit, matches.length)} of ${matches.length} ${sector === 'all' ? 'projects' : `${active?.dataset.label ?? ''} projects`}`;
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sector === sector)));
+    };
+    if (filter) filter.hidden = false;
+    buttons.forEach((b) => b.addEventListener('click', () => { sector = b.dataset.sector ?? 'all'; render(); }));
+    more?.addEventListener('click', () => {
+      expanded = true;
+      render();
+      cards[initial]?.querySelector<HTMLElement>('summary')?.focus();
+    });
+    render();
+  }
+</script>
+
+<style>
+  .work-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;margin:0 0 2rem;background:var(--line);border:1px solid var(--line)}
+  .work-stats div{background:var(--surface);padding:1.1rem 1.25rem}
+  .work-stats dt{font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .work-stats dd{margin:.35rem 0 0;font-family:var(--font-display);font-size:clamp(1.5rem,3vw,2.2rem);font-weight:700;color:var(--ink);line-height:1.1}
+  .work-filter{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.9rem}
+  .work-filter[hidden]{display:none}
+  .work-filter button{font:inherit;font-size:.84rem;font-weight:600;color:var(--ink-2);background:var(--surface);border:1px solid var(--line-strong);padding:.5rem .85rem;cursor:pointer;display:inline-flex;gap:.45rem;align-items:center}
+  .work-filter button span{color:var(--muted);font-weight:500}
+  .work-filter button:hover{border-color:var(--accent);color:var(--accent)}
+  .work-filter button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+  .work-filter button[aria-pressed="true"] span{color:var(--accent)}
+  .work-filter button:focus-visible,.work-more:focus-visible,.work-card__details summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .work-count{font-size:.85rem;color:var(--muted);margin:0 0 1.2rem;min-height:1.2em}
+  .work-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;padding:0;margin:0;list-style:none;background:var(--line);border:1px solid var(--line)}
+  .work-card{display:flex;background:var(--surface);min-width:0}
+  .work-card[hidden]{display:none}
+  .work-card article{display:flex;flex-direction:column;gap:.65rem;padding:clamp(1.25rem,2.4vw,1.75rem);width:100%}
+  .work-card__meta{display:flex;justify-content:space-between;gap:.75rem;margin:0;font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .work-card__meta span:first-child{color:var(--accent);font-weight:650}
+  .work-card h3{font-size:1.12rem;line-height:1.3;margin:.2rem 0 0}
+  .work-card__client{margin:0;font-size:.88rem;font-weight:600;color:var(--ink)}
+  .work-card__client span{font-weight:400;color:var(--muted)}
+  .work-card__summary{margin:0;font-size:.92rem;color:var(--ink-2)}
+  .work-card__skills{display:flex;flex-wrap:wrap;gap:.35rem;list-style:none;padding:0;margin:.2rem 0 0}
+  .work-card__skills li{border:1px solid var(--line-strong);padding:.2rem .5rem;font-size:.74rem;color:var(--ink-2)}
+  .work-status{margin:.3rem 0 0;align-self:flex-start;font-size:.75rem;font-weight:650;letter-spacing:.04em;padding:.22rem .55rem;border:1px solid var(--line-strong);color:var(--ink-2)}
+  .work-status--delivered{border-color:var(--accent);color:var(--accent)}
+  .work-status--paused{border-style:dashed;color:var(--muted)}
+  .work-card__details{margin-top:auto;border-top:1px solid var(--line);padding-top:.8rem}
+  .work-card__details summary{cursor:pointer;font-size:.86rem;font-weight:600;color:var(--ink)}
+  .work-card__details summary::marker{color:var(--accent)}
+  .work-card__details dl{margin:.9rem 0 .2rem;font-size:.88rem}
+  .work-card__details dt{font-weight:650;color:var(--ink);margin-top:.8rem}
+  .work-card__details dt:first-child{margin-top:0}
+  .work-card__details dd{margin:.25rem 0 0;color:var(--ink-2)}
+  .work-card__details ul{margin:0;padding-left:1.1rem}
+  .work-card__details li{margin-bottom:.25rem}
+  .work-more{display:block;margin:1.5rem auto 0;font:inherit;font-size:.9rem;font-weight:650;color:var(--ink);background:transparent;border:1px solid var(--line-strong);padding:.75rem 1.4rem;cursor:pointer}
+  .work-more:hover{border-color:var(--accent);color:var(--accent)}
+  .work-more[hidden]{display:none}
+  .work-note{color:var(--muted);font-size:.86rem;margin:1.75rem 0 0;max-width:90ch}
+  @media(max-width:1050px){.work-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.work-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:640px){.work-grid{grid-template-columns:1fr}}
+</style>

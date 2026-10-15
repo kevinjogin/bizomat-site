@@ -5,6 +5,7 @@ import { SITE, NAV } from '../config/site.ts';
 import { CATEGORIES } from '../config/taxonomy.ts';
 import { BACKGROUND, FUTURE, PRINCIPLES } from '../data/brand.ts';
 import { FAQ } from '../data/faq.ts';
+import { PROJECTS } from '../data/projects.ts';
 import {
   ENGAGEMENT_MODELS,
   FACTORY_FIX,
@@ -124,6 +125,21 @@ export async function GET() {
     url: '/insights/',
     text: Object.values(CATEGORIES).map((c) => `${c.name}: ${c.description}`).join(' '),
   });
+
+  chunks.push({
+    id: 'proof-of-work',
+    title: 'KEVOS® proof of work',
+    url: '/#work',
+    text: `The KEVOS® homepage lists ${PROJECTS.length} projects from 2010 to 2026 that make up the engineering record behind KEVOS®. They were delivered by its founder in employed, contract and consulting roles, not as KEVOS® engagements for those organisations, and organisation names do not imply endorsement. Sectors: steel and mining, machines and automation, plant and facilities, civil and structural, defence and transport, product development and operations. Some projects ended at concept or design stage and are labelled that way.`,
+  });
+  for (const p of PROJECTS) {
+    chunks.push({
+      id: `project-${p.id}`,
+      title: `Proof of work: ${p.title}`,
+      url: '/#work',
+      text: `${p.title} (${p.years}; ${p.client}; ${p.industry}). Role: ${p.role}. Status: ${p.statusLabel}. ${p.summary} ${p.challenge} The work: ${p.contribution.join('; ')}. Outcome: ${p.outcome}`,
+    });
+  }
 
   for (const w of await getWork()) {
     const url = hasWorkDetail(w) ? `/work/${w.id}/` : '/work/';
