@@ -6,7 +6,12 @@ real, editable features into the same tree you edit by hand. Think "Cursor for h
 
 ![The AI assembling a hand press, live](docs/img/live-build.png)
 
-Version 0.2 adds **assemblies** (components, SOLIDWORKS-style mates, a mate solver, interference
+Version 0.3 adds **STEP import** (parts and assemblies, then keep editing by hand or with the AI),
+**mates that move like SOLIDWORKS** (drag a hinged lid open, Hinge and limit mates), a **Toolbox** of
+standard screws, nuts, washers and bearings, **Tab / Shift+Tab** hide and show, and a **Section View**
+with a draggable arrow and filled cut faces.
+
+Version 0.2 added **assemblies** (components, SOLIDWORKS-style mates, a mate solver, interference
 detection) and an AI that **builds in front of you**: each part grows feature by feature while
 Claude writes it, then the components fly in and settle onto their mates.
 
@@ -93,6 +98,25 @@ Task Pane on the right, status bar with Under/Fully/Over Defined and "Editing Sk
 - Interference Detection lists overlapping pairs with their volume and shows the clash in red.
 - STEP / STL export of the whole assembly, mass properties with each part's own material.
 
+**Import and Toolbox**
+- Open or drop a STEP file. One body becomes a part with an `Imported1` feature you can keep adding
+  cuts, fillets and shells to. Several bodies become an assembly, identical bodies sharing one part.
+  OpenSketch AI > **Rebuild as Features** turns an imported body into an editable feature tree and
+  checks the volume against the import; **Add Mates** mates an imported assembly from its geometry.
+- SOLIDWORKS files (.sldprt, .sldasm) are a closed format: save them as STEP in SOLIDWORKS first.
+- Toolbox (Design Library pane, or Assembly > Toolbox): ISO screws, nuts, washers and ball bearings,
+  made to size. The AI uses it too, and for bought parts it gives you the McMaster-Carr number to
+  download; drop the STEP on its card and it replaces the placeholder.
+
+**Motion and viewing**
+- Drag any component by any point: it follows the mouse within its mates, so a hinge turns and a
+  slider slides. Hinge mate (Mechanical Mates), Limit Distance and Limit Angle (Advanced Mates).
+- Tab hides the component under the cursor, Shift+Tab shows hidden ones there.
+- Section View: Front / Top / Right or a picked face, offset slider, X / Y rotation, a blue arrow to
+  drag in the graphics area, filled cut faces. Works in parts and assemblies.
+
+![Section View on a hinged box](docs/img/section.png)
+
 **AI copilot** (Task Pane, or Ctrl+L)
 - Describe a part, a change, or a whole product. For one piece, Claude writes features in the
   [document format](docs/DOCUMENT.md). For a product with several pieces, Claude builds an assembly
@@ -125,11 +149,14 @@ opensketch/
   ai.py              streaming Claude tool loop: propose_features, create_part, insert_component,
                      add_mate, delete_items, check_interference; rebuilds each feature as it arrives
   demo.py            recorded sessions (hand press, L bracket) for "Watch a demo" and tests
+  importer.py        STEP import (parts, assemblies), embedded BREP bodies, Toolbox parts (bd_warehouse)
   static/
     index.html, css/app.css
     js/app.js        controller: modes, selection, commands, PropertyManager flow, undo
     js/asm.js        assembly mode: tree, Mate PM, drag, Open Part, playback, interference
     js/live.js       live build view: shelf, sketch-then-grow, fly-in, mate slides, pacing
+    js/section.js    Section View: plane, offset, rotations, drag arrow (caps drawn in viewer.js)
+    js/toolbox.js    Toolbox pane and editing Toolbox parts
     js/viewer.js     three.js graphics area (orthographic, SOLIDWORKS mouse, components, tweens)
     js/sketch/       solver.js (constraint solver), sketcher.js (tools), draw.js, geom2d.js
     js/ui/           ribbon.js, tree.js, pm.js, dialogs.js, taskpane.js
@@ -149,12 +176,13 @@ node --test tests/js/solver.test.mjs       # sketch solver
 
 ## Roadmap
 
-1. Assemblies, next steps: tangent, width and symmetric mates, mechanical mates (gear, slot, hinge),
-   sub-assemblies, exploded views, mate references picked from vertices and circular edges.
-2. Remaining part features: Hole Wizard, Swept / Lofted, Draft, Rib, Instant3D drag handles,
+1. SOLIDWORKS macro export of parts and mated assemblies (next, v0.4).
+2. Assemblies: tangent, width and symmetric mates, gear and slot mates, sub-assemblies, exploded
+   views, mate references picked from vertices and circular edges.
+3. Remaining part features: Hole Wizard, Swept / Lofted, Draft, Rib, Instant3D drag handles,
    splines, sketch text, equations and global variables, configurations.
-3. Stronger topological naming for fillet/chamfer edge references.
-4. Drawings.
+4. Stronger topological naming for fillet/chamfer edge references.
+5. Drawings.
 
 SOLIDWORKS is a trademark of Dassault Systemes. OpenSketch is not affiliated with it; the icons
 are original drawings.

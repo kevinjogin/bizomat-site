@@ -13,7 +13,9 @@ from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import ai, assembly, geometry
+import base64
+
+from . import ai, assembly, geometry, importer
 
 STATIC = Path(__file__).parent / "static"
 
@@ -24,6 +26,7 @@ class RegenRequest(BaseModel):
     doc: dict
     preview: dict | None = None
     known: dict | None = None  # assembly: part id -> mesh key the client already has
+    drag: dict | None = None   # assembly: {component, point, target} to drag a component within its mates
 
 
 class AIRequest(BaseModel):
@@ -36,7 +39,7 @@ class AIRequest(BaseModel):
 @app.post("/api/regen")
 def api_regen(req: RegenRequest):
     if assembly.is_assembly(req.doc):
-        return assembly.regen_assembly(req.doc, req.known)
+        return assembly.regen_assembly(req.doc, req.known, drag=req.drag)
     return geometry.regen_result(req.doc, req.preview)
 
 
@@ -52,6 +55,47 @@ def api_interference(req: RegenRequest):
     if not assembly.is_assembly(req.doc):
         raise HTTPException(400, "Interference Detection works on assemblies")
     return assembly.interference(req.doc)
+
+
+class ImportRequest(BaseModel):
+    filename: str
+    data: str  # base64 file content
+
+
+@app.post("/api/import")
+def api_import(req: ImportRequest):
+    """STEP -> part or assembly document. SOLIDWORKS files get a clear message."""
+    try:
+        raw = base64.b64decode(req.data)
+        return {"doc": importer.import_step(raw, req.filename)}
+    except importer.ImportError_ as exc:
+        return JSONResponse({"error": str(exc)}, status_code=422)
+
+
+@app.get("/api/toolbox")
+def api_toolbox():
+    return importer.standard_catalog()
+
+
+class ToolboxRequest(BaseModel):
+    kind: str
+    size: str
+    length: float | None = None
+
+
+@app.post("/api/toolbox/part")
+def api_toolbox_part(req: ToolboxRequest):
+    if req.kind not in importer.STANDARD:
+        raise HTTPException(400, "Unknown kind")
+    args = {"size": req.size}
+    if "length" in importer.STANDARD[req.kind][2]:
+        args["length"] = req.length or 10
+    doc = importer.standard_part_doc(req.kind, **args)
+    try:
+        geometry.regen(doc)
+    except Exception as exc:  # bad size
+        raise HTTPException(400, str(exc)) from exc
+    return {"doc": doc}
 
 
 @app.post("/api/export/{fmt}")

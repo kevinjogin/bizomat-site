@@ -27,7 +27,9 @@ NAMED = {
     "Z axis": ("axis", (0, 0, 0), (0, 0, 1)),
 }
 
-MATE_TYPES = ("coincident", "concentric", "parallel", "perpendicular", "distance", "angle", "lock")
+MATE_TYPES = ("coincident", "concentric", "parallel", "perpendicular", "distance", "angle", "lock",
+              "hinge", "limit_distance", "limit_angle")
+REF_KEYS = ("refs", "planes", "angle_refs")  # every reference list a mate may carry
 
 
 class AssemblyError(Exception):
@@ -235,13 +237,16 @@ def _resolve_align(m: dict, a, b) -> str:
 
 
 def mate_residual(m: dict, poses: dict, L: float, align: str) -> np.ndarray:
+    if m["type"] == "_goal":
+        P = poses[m["component"]]
+        return (P.R @ m["point"] + P.t - m["target"]) * m.get("weight", 1e-2)
     a = ref_world(m["refs"][0], poses)
     b = ref_world(m["refs"][1], poses)
     t = m["type"]
     ka, kb = a[0], b[0]
     # order pairs so the "bigger" entity comes first where it matters
     order = {"plane": 0, "axis": 1, "point": 2}
-    if order[ka] > order[kb] and t != "lock":
+    if order[ka] > order[kb] and t not in ("lock", "hinge"):
         a, b = b, a
         ka, kb = kb, ka
     pa, da = a[1], a[2]
@@ -251,6 +256,34 @@ def mate_residual(m: dict, poses: dict, L: float, align: str) -> np.ndarray:
     def dir_match():
         return (da - sgn * db) * L
 
+    if t == "_goal":  # drag: pull a point of a component toward the cursor (soft)
+        P = poses[m["component"]]
+        return (P.R @ m["point"] + P.t - m["target"]) * m.get("weight", 1e-2)
+    if t == "hinge":
+        out = [mate_residual({"type": "concentric", "refs": m["refs"]}, poses, L, align)]
+        if m.get("planes"):
+            out.append(mate_residual({"type": "coincident", "refs": m["planes"]}, poses, L, m.get("_plane_align", "anti")))
+        if m.get("angle_refs") and (m.get("angle_min") is not None or m.get("angle_max") is not None):
+            out.append(mate_residual({"type": "limit_angle", "refs": m["angle_refs"], "min": m.get("angle_min"),
+                                      "max": m.get("angle_max")}, poses, L, align))
+        return np.concatenate(out)
+    if t == "limit_angle":
+        if da is None or db is None:
+            raise AssemblyError("Angle limits need planes or axes")
+        ang = math.degrees(math.acos(max(-1.0, min(1.0, float(da @ db)))))
+        lo, hi = m.get("min"), m.get("max")
+        over = (max(0.0, ang - hi) if hi is not None else 0.0) + (max(0.0, lo - ang) if lo is not None else 0.0)
+        return np.array([math.radians(over) * L])
+    if t == "limit_distance":
+        lo, hi = m.get("min"), m.get("max")
+        if ka == "plane" and kb == "plane":
+            v = float((pb - pa) @ da)
+            par = dir_match()
+        else:
+            v = float(np.linalg.norm(pb - pa))
+            par = np.zeros(0)
+        over = (max(0.0, v - hi) if hi is not None else 0.0) + (max(0.0, lo - v) if lo is not None else 0.0)
+        return np.concatenate([par, [over]])
     if t == "lock":
         rel = m.get("_pose")
         ca, cb = m["refs"][0].get("component"), m["refs"][1].get("component")
@@ -302,10 +335,13 @@ def mate_residual(m: dict, poses: dict, L: float, align: str) -> np.ndarray:
 
 # ----------------------------------------------------------------------------- solver
 
-def solve(asm: dict, size: float = 100.0, solids: dict | None = None) -> dict:
+def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict | None = None) -> dict:
     """Solve the mates. Returns {poses, mates: {id: {state, message, residual}}, comp_state, updates}.
 
-    `solids` (component id -> rebuilt part solid) lets references follow their faces."""
+    `solids` (component id -> rebuilt part solid) lets references follow their faces.
+    `drag` = {"component", "point" (part coordinates), "target" (assembly coordinates)}: the component
+    is pulled so that point follows the cursor while every mate keeps holding, the way SOLIDWORKS
+    drags a component (a hinge turns, a slider slides)."""
     comps = [c for c in asm.get("components", []) if not c.get("suppressed")]
     ids = {c["id"] for c in comps}
     poses = {c["id"]: Pose.of(c) for c in comps}
@@ -324,20 +360,33 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None) -> dict:
                 raise AssemblyError(f"Unknown mate type {m.get('type')!r}")
             if len(refs) != 2:
                 raise AssemblyError("A mate needs two references")
+            mm = dict(m)
+            all_cs = []
+            for key in REF_KEYS:
+                lst = m.get(key)
+                if not lst:
+                    continue
+                if len(lst) != 2:
+                    raise AssemblyError(f"{key} needs two references")
+                for r in lst:
+                    if r.get("component") is not None and r.get("component") not in ids:
+                        raise AssemblyError(f"Component {r.get('component')} is missing or suppressed")
+                if solids:
+                    moved = [refind(r, solids.get(r.get("component"))) for r in lst]
+                    if any(moved):
+                        lst = [n or r for n, r in zip(moved, lst)]
+                        updates.setdefault(m["id"], {})[key] = lst
+                mm[key] = lst
+                all_cs += [r.get("component") for r in lst]
+            refs = mm["refs"]
             cs = [r.get("component") for r in refs]
-            for c in cs:
-                if c is not None and c not in ids:
-                    raise AssemblyError(f"Component {c} is missing or suppressed")
             if cs[0] is not None and cs[0] == cs[1]:
                 raise AssemblyError("Both references are on the same component")
-            if solids:
-                moved = [refind(r, solids.get(r.get("component"))) for r in refs]
-                if any(moved):
-                    refs = [n or r for n, r in zip(moved, refs)]
-                    updates.setdefault(m["id"], {})["refs"] = refs
+            cs = list(dict.fromkeys(all_cs))
             a, b = ref_world(refs[0], poses), ref_world(refs[1], poses)
-            mm = dict(m)
-            mm["refs"] = refs
+            if m["type"] == "hinge" and mm.get("planes"):
+                pa, pb = ref_world(mm["planes"][0], poses), ref_world(mm["planes"][1], poses)
+                mm["_plane_align"] = _resolve_align({"align": m.get("align")}, pa, pb)
             align = _resolve_align(m, a, b) if m["type"] in ("coincident", "distance", "parallel") else "anti"
             if m["type"] in ("coincident", "distance") and (m.get("align") or "auto") == "auto" and a[2] is not None and b[2] is not None:
                 updates.setdefault(m["id"], {})["align"] = align
@@ -355,7 +404,13 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None) -> dict:
             report[m["id"]] = {"state": "ok"}
         except AssemblyError as exc:
             report[m["id"]] = {"state": "error", "message": str(exc)}
-    free = sorted({c for _, _, cs in mates for c in cs if c not in fixed}, key=lambda c: [x["id"] for x in comps].index(c))
+    hard = list(mates)
+    if drag and drag.get("component") in ids and drag["component"] not in fixed:
+        goal = {"type": "_goal", "id": "_goal", "component": drag["component"],
+                "point": np.array(drag["point"], float), "target": np.array(drag["target"], float), "weight": 1e-2}
+        mates = hard + [(goal, "anti", [drag["component"]])]
+    order_ids = [x["id"] for x in comps]
+    free = sorted({c for _, _, cs in mates for c in cs if c not in fixed}, key=lambda c: order_ids.index(c))
     idx = {c: i for i, c in enumerate(free)}
     n = 6 * len(free)
 
@@ -411,34 +466,50 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None) -> dict:
 
     tol = max(1e-6 * L, 1e-7)
     iters = 0
-    if n and mates:
+
+    def run_lm(P):
+        nonlocal iters
         lam = 1e-3
-        r = stack(residuals(poses))
+        r = stack(residuals(P))
         cost = float(r @ r)
-        for iters in range(1, 200):
+        for it in range(1, 200):
+            iters += 1
             if math.sqrt(cost) < tol * 0.01:
                 break
-            J = jacobian(poses, r)
+            J = jacobian(P, r)
             A = J.T @ J
             g = J.T @ r
             improved = False
+            dx = np.zeros(n)
             for _ in range(12):
                 try:
                     dx = -np.linalg.solve(A + lam * np.eye(n), g)
                 except np.linalg.LinAlgError:
                     lam *= 10
                     continue
-                Q = step(poses, dx)
+                Q = step(P, dx)
                 r2 = stack(residuals(Q))
                 c2 = float(r2 @ r2)
                 if c2 < cost:
-                    poses, r, cost = Q, r2, c2
+                    P, r, cost = Q, r2, c2
                     lam = max(lam / 5, 1e-12)
                     improved = True
                     break
                 lam *= 10
             if not improved or float(np.linalg.norm(dx)) < 1e-12 * L:
                 break
+        return P
+
+    if n and mates:
+        poses = run_lm(poses)
+        if len(mates) != len(hard):
+            # dragging: the cursor pull was soft; now make every mate exact again, moving as little as possible
+            mates = hard
+            by_comp.update({c: [k for k, (_, _, cs) in enumerate(mates) if c in cs] for c in free})
+            sizes2 = [len(x) for x in residuals(poses)]
+            offs = np.concatenate([[0], np.cumsum(sizes2)]).astype(int) if sizes2 else np.array([0])
+            if mates:
+                poses = run_lm(poses)
     # per-mate result
     final = residuals(poses)
     for (m, al, cs), rk in zip(mates, final):
@@ -480,7 +551,7 @@ def part_of(asm: dict, comp: dict) -> dict:
     return p
 
 
-def regen_assembly(asm: dict, known: dict | None = None, solve_mates: bool = True) -> dict:
+def regen_assembly(asm: dict, known: dict | None = None, solve_mates: bool = True, drag: dict | None = None) -> dict:
     """Rebuild parts, solve mates, return what the UI draws.
 
     `known` maps part id -> cache key the client already holds; those meshes are not resent."""
@@ -496,7 +567,7 @@ def regen_assembly(asm: dict, known: dict | None = None, solve_mates: bool = Tru
         parts_out[pid] = info
     size = _size(asm, built)
     solids = {c["id"]: built[c["part"]]["solid"] for c in asm.get("components", []) if c.get("part") in built}
-    sol = solve(asm, size, solids) if solve_mates else {"poses": {c["id"]: Pose.of(c) for c in asm.get("components", [])},
+    sol = solve(asm, size, solids, drag) if solve_mates else {"poses": {c["id"]: Pose.of(c) for c in asm.get("components", [])},
                                                 "mates": {}, "comp_state": {}, "dof": {}, "updates": {}, "fixed": set()}
     comps_out = []
     lo, hi = np.full(3, np.inf), np.full(3, -np.inf)
@@ -637,3 +708,74 @@ def part_as_assembly(part: dict, name: str = "Assem1") -> dict:
 
 def new_assembly(name: str = "Assem1") -> dict:
     return {"version": 1, "type": "assembly", "name": name, "units": "mm", "parts": {}, "components": [], "mates": [], "sequence": [], "seq": 1}
+
+
+# ----------------------------------------------------------------------------- mate candidates (imported assemblies)
+
+def mate_candidates(asm: dict, limit: int = 80) -> list[dict]:
+    """Geometric hints for mating an assembly that came in without mates (a STEP): shafts in holes
+    (coaxial cylinders) and faces lying on each other (opposite, coplanar, overlapping planar faces).
+    References are in each component's part coordinates, ready for add_mate."""
+    from build123d import GeomType
+    built = {pid: build_part(p) for pid, p in asm.get("parts", {}).items()}
+    comps = [c for c in asm.get("components", []) if not c.get("suppressed") and built.get(c.get("part"), {}).get("solid") is not None]
+    sol = solve(asm, _size(asm, built))
+    size = _size(asm, built)
+    tol = max(0.02, 1e-4 * size)
+    info = {}
+    for c in comps:
+        solid = built[c["part"]]["solid"]
+        P = sol["poses"][c["id"]]
+        cyl, pl = [], []
+        for f in solid.faces():
+            try:
+                if f.geom_type in (GeomType.CYLINDER, GeomType.CONE):
+                    ax = f.axis_of_rotation
+                    p0, d0 = np.array(geometry.vlist(ax.position)), np.array(geometry.vlist(ax.direction))
+                    cyl.append({"p": p0, "d": d0, "P": P.R @ p0 + P.t, "D": P.R @ d0,
+                                "r": round(f.radius, 4) if f.geom_type == GeomType.CYLINDER else None})
+                elif f.geom_type == GeomType.PLANE:
+                    n0 = np.array(geometry.vlist(f.normal_at()))
+                    c0 = np.array(geometry.vlist(f.center()))
+                    bb = f.bounding_box()
+                    corners = np.array([[x, y, z] for x in (bb.min.X, bb.max.X) for y in (bb.min.Y, bb.max.Y) for z in (bb.min.Z, bb.max.Z)])
+                    W = corners @ P.R.T + P.t
+                    pl.append({"p": c0, "n": n0, "P": P.R @ c0 + P.t, "N": P.R @ n0, "lo": W.min(0), "hi": W.max(0), "area": f.area})
+            except Exception:
+                continue
+        info[c["id"]] = (cyl, pl)
+    out = []
+    names = {c["id"]: c.get("name", c["id"]) for c in comps}
+    seen = set()
+    for i, a in enumerate(comps):
+        for b in comps[i + 1:]:
+            ca, pa = info[a["id"]]
+            cb, pb = info[b["id"]]
+            for x in ca:
+                for y in cb:
+                    if np.linalg.norm(np.cross(x["D"], y["D"])) > 1e-3:
+                        continue
+                    if np.linalg.norm(np.cross(y["P"] - x["P"], x["D"])) > tol:
+                        continue
+                    key = ("c", a["id"], b["id"], x.get("r"), y.get("r"))
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    out.append({"type": "concentric", "components": [names[a["id"]], names[b["id"]]],
+                                "radii": [x.get("r"), y.get("r")],
+                                "refs": [{"component": a["id"], "axis": {"point": [_clean(v, 4) for v in x["p"]], "dir": [_clean(v, 5) for v in x["d"]]}},
+                                         {"component": b["id"], "axis": {"point": [_clean(v, 4) for v in y["p"]], "dir": [_clean(v, 5) for v in y["d"]]}}]})
+            for x in pa:
+                for y in pb:
+                    if float(x["N"] @ y["N"]) > -0.9999:
+                        continue
+                    if abs(float((y["P"] - x["P"]) @ x["N"])) > tol:
+                        continue
+                    if np.any(x["hi"] + tol < y["lo"]) or np.any(y["hi"] + tol < x["lo"]):
+                        continue
+                    out.append({"type": "coincident", "align": "anti", "components": [names[a["id"]], names[b["id"]]],
+                                "areas": [round(x["area"], 1), round(y["area"], 1)],
+                                "refs": [{"component": a["id"], "plane": {"point": [_clean(v, 4) for v in x["p"]], "normal": [_clean(v, 5) for v in x["n"]]}},
+                                         {"component": b["id"], "plane": {"point": [_clean(v, 4) for v in y["p"]], "normal": [_clean(v, 5) for v in y["n"]]}}]})
+    out.sort(key=lambda m: (m["components"], m["type"] != "concentric", -max(m.get("areas") or [0])))
+    return out[:limit]

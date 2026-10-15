@@ -113,7 +113,7 @@ export class PropertyManager {
         if (r.label) row.appendChild(el('label', null, r.label));
         const wrap = el('div', 'pm-num');
         const inp = el('input'); inp.type = 'text';
-        const unit = r.unit ?? 'mm';
+        const unit = typeof r.unit === 'function' ? r.unit() : (r.unit ?? 'mm');
         const show = () => { const v = r.get(); inp.value = (Number.isFinite(v) ? +(+v).toFixed(4) : v) + (unit ? unit : ''); };
         show();
         const commit = () => {

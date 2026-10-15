@@ -95,7 +95,10 @@ export function buildCommands(app) {
     interference: { label: 'Interference Detection', icon: 'interference', tip: 'Finds overlapping volume between components.', run: () => app.asm.interferencePM() },
     playback: { label: 'Assembly Playback', icon: 'playback', tip: 'Replays the assembly order: each component flies in and settles onto its mates (Motion Study).', run: () => app.asm.playSequence() },
     openpart: { label: 'Open Part', icon: 'open', tip: 'Opens the selected component\'s part for editing. Return to the assembly when done.', run: () => { const s = app.selection.find((x) => x.kind === 'component'); if (!s) return app.toast('Select a component first.'); app.asm.openPart(s.id); } },
+    toolbox: { label: 'Toolbox', icon: 'toolbox', tip: 'Standard screws, nuts, washers and bearings, made to size.', run: () => app.openTask('library') },
     asmexplain: { label: 'Explain Assembly', icon: 'ai', tip: 'Asks the AI to explain the assembly and how it moves.', run: () => app.aiQuick('Explain this assembly: the parts, how they are mated and which components can still move. Do not change it.') },
+    aimates: { label: 'Add Mates', icon: 'mate', tip: 'Asks the AI to mate an imported assembly from its geometry, leaving hinges and slides free.', run: () => app.aiQuick('This assembly has components without enough mates (for example it was imported from STEP). Call find_mate_candidates, then add the mates a designer would use so every part sits where it is now. Leave hinges, slides and wheels free to move where the product moves. Do not move or change parts.') },
+    airebuild: { label: 'Rebuild as Features', icon: 'imported', tip: 'Asks the AI to rebuild an imported body as an editable feature tree.', run: () => app.aiQuick('Rebuild the imported body (the import feature) as an editable feature tree: sketches with relations and dimensions, extrudes, cuts, revolves, fillets. Use propose_features mode replace without the import feature, and get the comparison with the import as close to zero as you can. Tell me what you could not match.') },
     asmfix: { label: 'Fix Mates', icon: 'mate', tip: 'Asks the AI to fix mate errors and interferences.', run: () => app.aiQuick('Fix the mate errors and any interferences in this assembly with minimal changes.') },
 
     // AI add-in
@@ -124,7 +127,7 @@ export const TABS = [
     { big: 'relations', fly: ['relations', 'addrelation'] }, { big: 'repair' }, { big: 'quicksnaps' }, { big: 'rapidsketch' }, { big: 'instant2d' }, { big: 'shadedsketch' },
   ] },
   { name: 'Evaluate', items: [{ big: 'measure' }, { big: 'massprops' }, { big: 'section' }, { big: 'check' }, { big: 'stats' }] },
-  { name: 'OpenSketch AI', items: [{ big: 'ai' }, { big: 'aiexplain' }, { big: 'aifix' }, { big: 'aidefine' }] },
+  { name: 'OpenSketch AI', items: [{ big: 'ai' }, { big: 'airebuild' }, { big: 'aiexplain' }, { big: 'aifix' }, { big: 'aidefine' }] },
 ];
 
 // Assembly documents get the SOLIDWORKS assembly CommandManager.
@@ -132,10 +135,10 @@ export const ASM_TABS = [
   { name: 'Assembly', items: [
     { big: 'insertcomp', fly: ['insertcomp', 'newpart'] }, { big: 'mate' }, '|',
     { big: 'movecomp' }, { col: ['fixfloat', 'hidecomp', 'openpart'] }, '|',
-    { big: 'interference' }, { big: 'playback' },
+    { big: 'interference' }, { big: 'playback' }, '|', { big: 'toolbox' },
   ] },
   { name: 'Evaluate', items: [{ big: 'interference' }, { big: 'massprops' }, { big: 'section' }, { big: 'check' }, { big: 'stats' }] },
-  { name: 'OpenSketch AI', items: [{ big: 'ai' }, { big: 'asmexplain' }, { big: 'asmfix' }] },
+  { name: 'OpenSketch AI', items: [{ big: 'ai' }, { big: 'aimates' }, { big: 'asmexplain' }, { big: 'asmfix' }] },
 ];
 
 export const QUICK = ['new', 'open', 'save', 'print', 'undo', 'redo', 'select', 'rebuild', 'fileprops', 'options'];

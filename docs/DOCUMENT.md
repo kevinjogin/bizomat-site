@@ -90,6 +90,8 @@ unknowns, and reports degrees of freedom, per-entity defined state and over-defi
 | `mirror` | `plane` (plane ref), `features` (ids; empty = whole body) |
 | `linear_pattern` | `features`, `direction` (`X`/`Y`/`Z` or `{"edge": ref}`), `count`, `spacing`, `reverse`, optional `direction2`, `count2`, `spacing2` |
 | `circular_pattern` | `features`, `axis` (`X`/`Y`/`Z`), `count`, `angle`, `equal_spacing`, `step` |
+| `import` | `format` `"brep"`, `data` (BREP text, zlib-compressed, base64), `source` (file name), `label`. An imported body (SOLIDWORKS "Imported1"); later features build on it. |
+| `standard` | `kind` (`socket_head_cap_screw`, `hex_head_screw`, `counter_sunk_screw`, `button_head_screw`, `set_screw`, `hex_nut`, `plain_washer`, `ball_bearing`), `size` (`M6-1`; bearings `M8-22-7`), `length` (screws). A Toolbox part made to size (bd_warehouse). Axis along the part Y axis, head above Y = 0, shank down -Y. |
 
 Edge references are `{"mid": [x,y,z]}`, the point at the middle of the edge. Face references are
 `{"center": [x,y,z], "normal": [x,y,z]}`. They are matched to the nearest edge or face on rebuild.
@@ -172,6 +174,9 @@ full topological naming.
 | `distance` | plane-plane, plane-point, point-point, axis-axis | `value` mm apart; plane-plane also parallel |
 | `angle` | plane or axis, plane or axis | `value` degrees between directions |
 | `lock` | any two references on two components | the second component keeps its current pose relative to the first; the pose is stored in `pose` |
+| `hinge` | `refs`: two axes; optional `planes`: two planes (coincident, stops sliding); optional `angle_refs`: two planes or axes with `angle_min` / `angle_max` (degrees) | SOLIDWORKS Hinge mechanical mate: one rotation left, optionally limited |
+| `limit_distance` | plane-plane (also kept parallel), or point-point | distance between `min` and `max` mm |
+| `limit_angle` | plane or axis, plane or axis | angle between `min` and `max` degrees |
 
 - `align`: `"anti"` (normals face each other, SOLIDWORKS "Anti-Aligned", the default for touching
   faces), `"aligned"`, or `"auto"` (whichever is closer when the mate is solved; the default).
@@ -179,7 +184,11 @@ full topological naming.
 - `suppressed`: the mate is ignored.
 
 The solver is a damped least-squares (Levenberg-Marquardt) solve over the six degrees of freedom of
-every free component. It moves components as little as possible. Each mate reports `ok` or `error`
+every free component. It moves components as little as possible. Limits only act when exceeded.
+
+Dragging: `/api/regen` takes `drag` = `{"component", "point" (part coordinates), "target" (assembly
+coordinates)}`. The solver first pulls that point toward the target softly with every mate in place,
+then makes every mate exact again. So a hinged lid swings, a slider slides, a linkage follows. Each mate reports `ok` or `error`
 (cannot be satisfied together with the others, like an over-defining mate in SOLIDWORKS).
 
 ## Sequence
@@ -187,3 +196,15 @@ every free component. It moves components as little as possible. Each mate repor
 `sequence` lists component ids in the order they were assembled (insertion order if absent).
 The Motion Study tab replays this order: each component flies in from an exploded position and
 settles onto its mates. The AI fills it as it assembles.
+
+# Import
+
+`POST /api/import` with a STEP file returns a document. One solid: a part with an `import` feature.
+Several solids: an assembly with one part per distinct shape (same volume, area, face and edge count
+and size are taken as the same part, so instances share it) and one component per solid at its STEP
+position, the first one fixed, no mates (as SOLIDWORKS does with STEP). SOLIDWORKS files (.sldprt,
+.sldasm) are refused with a message to save them as STEP first: the format is closed.
+
+The AI never receives the BREP data: it gets the import feature with `data` omitted and a `summary`
+(bounding box, volume, planar faces, cylinders). When it echoes the feature back, the data is restored
+by feature id.

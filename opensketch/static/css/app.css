@@ -350,3 +350,16 @@ input, select, button { font: inherit; color: inherit; }
 @keyframes blink { 50% { opacity: 0; } }
 @keyframes popin { from { transform: scale(.6); opacity: 0; } to { transform: none; opacity: 1; } }
 .btn.ai-inline { display: inline-flex; align-items: center; gap: 4px; }
+#graphics.dropping { outline: 3px dashed #3c6fd1; outline-offset: -6px; }
+.tbx { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.tbx-list { border: 1px solid var(--border-l); max-height: 220px; overflow: auto; }
+.tbx-list .li { display: flex; align-items: center; gap: 6px; padding: 3px 6px; cursor: pointer; }
+.tbx-list .li:hover { background: var(--hover); }
+.tbx-list .li.sel { background: var(--select); }
+.tbx .pm-row { display: flex; align-items: center; gap: 6px; }
+.tbx .pm-row label { width: 54px; }
+.ai-request { border: 1px solid #e3c766; background: #fffbe8; border-radius: 4px; padding: 6px 8px; display: flex; flex-direction: column; gap: 4px; font-size: 11.5px; }
+.ai-request .ah { display: flex; align-items: center; gap: 5px; }
+.ai-request.drop { outline: 2px dashed #3c6fd1; }
+.ai-request .btn { align-self: flex-start; }
+.sec-slider { width: 100%; }

@@ -39,7 +39,7 @@ STD_PLANES: dict[str, Plane] = {
 
 FEATURE_TYPES = (
     "sketch", "plane", "extrude", "revolve", "fillet", "chamfer", "shell",
-    "mirror", "linear_pattern", "circular_pattern",
+    "mirror", "linear_pattern", "circular_pattern", "import", "standard",
 )
 
 
@@ -391,6 +391,12 @@ def direction_of(spec, st: RegenState) -> Vector:
 
 def regen_feature(feat: dict, st: RegenState):
     t = feat["type"]
+    if t in ("import", "standard"):
+        from . import importer
+        body = importer.decode_shape(feat["data"]) if t == "import" else importer.build_standard(feat)
+        st.tools[feat["id"]] = (body, "boss")
+        st.part = apply_op(st.part, body, "boss")
+        return body
     if t == "plane":
         st.planes[feat["id"]] = plane_feature(feat, st)
         return None
