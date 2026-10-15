@@ -17,7 +17,6 @@ const GHOST = 'https://storage.ghost.io/c/44/71/4471838a-eccc-421f-9561-a58d1fb5
 
 /** Project id (src/data/projects.ts) → featured image path in the Ghost record. */
 const SOURCES = {
-  'multi-project-coordination': '2026/09/Publication.png',
   'blow-moulding-tooling': '2026/04/how-to-mold-plastic-bottles2.webp',
   'residential-girraween': '2026/04/5-Mardi-St-Girraween-New-South-Wales.jpg',
   'plant-access-control': '2026/04/Boom-Gate-Design-Project-----Case-Study.webp',

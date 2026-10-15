@@ -5,9 +5,11 @@ import { NAMED_ORGANISATIONS, PROJECTS, PROJECT_SECTORS, PROJECT_SERVICES, proje
 
 const read = (path: string) => readFileSync(path, 'utf8');
 
-test('the proof of work keeps all 27 published project records and the 3 capital projects, newest first', () => {
-  assert.equal(PROJECTS.length, 30);
+test('the proof of work keeps 26 published project records and the 3 capital projects, newest first', () => {
+  assert.equal(PROJECTS.length, 29);
   assert.equal(PROJECTS.filter((p) => p.sector === 'capital').length, 3);
+  assert.ok(!PROJECTS.some((p) => p.id === 'multi-project-coordination'), 'multi-project coordination is part of the capital projects');
+  assert.ok(PROJECTS.filter((p) => p.sector === 'capital').every((p) => /toolroom/.test(p.brief)), 'each capital project covers the shared-toolroom coordination');
   assert.equal(new Set(PROJECTS.map((p) => p.id)).size, PROJECTS.length, 'ids are unique');
   const start = (p: (typeof PROJECTS)[number]) => Number(p.years.slice(0, 4));
   for (let i = 1; i < PROJECTS.length; i++) assert.ok(start(PROJECTS[i - 1]) >= start(PROJECTS[i]), `${PROJECTS[i].id} is in date order`);
