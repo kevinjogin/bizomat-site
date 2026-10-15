@@ -171,8 +171,14 @@ def ref_local(ref: dict) -> tuple[str, np.ndarray, np.ndarray | None]:
     raise AssemblyError("A mate reference needs plane, axis, point or ref")
 
 
+def _cross(a, b) -> np.ndarray:
+    """np.cross for 3-vectors without its axis handling (it dominates the solver's time)."""
+    return np.array([a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]])
+
+
 def ref_world(ref: dict, poses: dict) -> tuple[str, np.ndarray, np.ndarray | None]:
-    k, p, d = ref_local(ref)
+    loc = ref.get("_l")  # parsed once per solve (see solve)
+    k, p, d = loc if loc is not None else ref_local(ref)
     cid = ref.get("component")
     if cid is None:
         return k, p, d
@@ -299,19 +305,19 @@ def mate_residual(m: dict, poses: dict, L: float, align: str) -> np.ndarray:
         if ka == "plane" and kb == "point":
             return np.array([np.dot(pb - pa, da)])
         if ka == "axis" and kb == "axis":
-            return np.concatenate([np.cross(da, db) * L, np.cross(pb - pa, da)])
+            return np.concatenate([_cross(da, db) * L, _cross(pb - pa, da)])
         if ka == "axis" and kb == "point":
-            return np.cross(pb - pa, da)
+            return _cross(pb - pa, da)
         return pb - pa
     if t == "concentric":
         if ka != "axis" or kb != "axis":
             raise AssemblyError("Concentric needs two axes (cylindrical faces)")
-        return np.concatenate([np.cross(da, db) * L, np.cross(pb - pa, da)])
+        return np.concatenate([_cross(da, db) * L, _cross(pb - pa, da)])
     if t in ("parallel", "perpendicular", "angle"):
         if da is None or db is None:
             raise AssemblyError(f"{t.capitalize()} needs planes or axes")
         if t == "parallel":
-            return dir_match() if m.get("align") in ("anti", "aligned") else np.cross(da, db) * L
+            return dir_match() if m.get("align") in ("anti", "aligned") else _cross(da, db) * L
         if t == "perpendicular":
             return np.array([np.dot(da, db) * L])
         ang = math.radians(float(m.get("value", 90)))
@@ -323,11 +329,11 @@ def mate_residual(m: dict, poses: dict, L: float, align: str) -> np.ndarray:
         if ka == "plane" and kb == "point":
             return np.array([np.dot(pb - pa, da) - v])
         if ka == "axis" and kb == "axis":
-            return np.concatenate([np.cross(da, db) * L, [np.linalg.norm(np.cross(pb - pa, da)) - abs(v)]])
+            return np.concatenate([_cross(da, db) * L, [np.linalg.norm(_cross(pb - pa, da)) - abs(v)]])
         if ka == "point" and kb == "point":
             return np.array([np.linalg.norm(pb - pa) - abs(v)])
         if ka == "axis" and kb == "point":
-            return np.array([np.linalg.norm(np.cross(pb - pa, da)) - abs(v)])
+            return np.array([np.linalg.norm(_cross(pb - pa, da)) - abs(v)])
         if ka == "plane" and kb == "axis":
             return np.array([np.dot(db, da) * L, np.dot(pb - pa, da) - v])
     raise AssemblyError(f"Unknown mate type {t!r}")
@@ -345,9 +351,9 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
     comps = [c for c in asm.get("components", []) if not c.get("suppressed")]
     ids = {c["id"] for c in comps}
     poses = {c["id"]: Pose.of(c) for c in comps}
+    # only components the user fixed are fixed; with none fixed everything floats (SOLIDWORKS allows
+    # that). The solver moves components as little as possible, so nothing drifts.
     fixed = {c["id"] for c in comps if c.get("fixed")}
-    if not fixed and comps:
-        fixed.add(comps[0]["id"])
     L = max(size, 1.0)
     mates, report, updates = [], {}, {}
     for m in asm.get("mates", []):
@@ -376,7 +382,7 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
                     if any(moved):
                         lst = [n or r for n, r in zip(moved, lst)]
                         updates.setdefault(m["id"], {})[key] = lst
-                mm[key] = lst
+                mm[key] = [{**r, "_l": ref_local(r)} for r in lst]  # parsed once, not per residual
                 all_cs += [r.get("component") for r in lst]
             refs = mm["refs"]
             cs = [r.get("component") for r in refs]
@@ -405,29 +411,64 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
         except AssemblyError as exc:
             report[m["id"]] = {"state": "error", "message": str(exc)}
     hard = list(mates)
-    if drag and drag.get("component") in ids and drag["component"] not in fixed:
-        goal = {"type": "_goal", "id": "_goal", "component": drag["component"],
-                "point": np.array(drag["point"], float), "target": np.array(drag["target"], float), "weight": 1e-2}
-        mates = hard + [(goal, "anti", [drag["component"]])]
     order_ids = [x["id"] for x in comps]
-    free = sorted({c for _, _, cs in mates for c in cs if c not in fixed}, key=lambda c: order_ids.index(c))
+    tol = max(1e-6 * L, 1e-7)
+    iters = 0
+
+    # Drag: only the components linked to the dragged one (through mates, not through fixed
+    # components) can move, so the rest of the assembly costs nothing.
+    goal = None
+    active = hard
+    if drag and drag.get("component") in ids and drag["component"] not in fixed:
+        g = drag["component"]
+        group, grew = {g}, True
+        while grew:
+            grew = False
+            for _, _, cs in hard:
+                if group.intersection(cs):
+                    for c in cs:
+                        if c not in fixed and c not in group:
+                            group.add(c)
+                            grew = True
+        active = [x for x in hard if group.intersection(x[2])]
+        goal = ({"type": "_goal", "id": "_goal", "component": g, "point": np.array(drag["point"], float),
+                 "target": np.array(drag["target"], float), "weight": 1.0}, "anti", [g])
+    free = sorted({c for _, _, cs in active for c in cs if c not in fixed} | ({goal[0]["component"]} if goal else set()),
+                  key=lambda c: order_ids.index(c))
     idx = {c: i for i, c in enumerate(free)}
     n = 6 * len(free)
 
-    def residuals(P, subset=None):
-        out = []
-        for k, (m, al, cs) in enumerate(mates):
-            if subset is not None and k not in subset:
-                continue
-            out.append(mate_residual(m, P, L, al))
-        return out
+    class System:
+        """Residuals and finite-difference Jacobian of a list of mates over the free components."""
 
-    def stack(parts):
-        return np.concatenate(parts) if parts else np.zeros(0)
+        def __init__(self, ms):
+            self.ms = ms
+            self.by_comp = {c: [k for k, (_, _, cs) in enumerate(ms) if c in cs] for c in free}
 
-    by_comp = {c: [k for k, (_, _, cs) in enumerate(mates) if c in cs] for c in free}
-    sizes = [len(r) for r in residuals(poses)]
-    offs = np.concatenate([[0], np.cumsum(sizes)]).astype(int) if sizes else np.array([0])
+        def parts(self, P, subset=None):
+            return [mate_residual(m, P, L, al) for k, (m, al, _) in enumerate(self.ms) if subset is None or k in subset]
+
+        def res(self, P):
+            r = self.parts(P)
+            self.offs = np.concatenate([[0], np.cumsum([len(x) for x in r])]).astype(int)
+            return np.concatenate(r) if r else np.zeros(0)
+
+        def jac(self, P, r0):
+            offs = self.offs
+            J = np.zeros((len(r0), n))
+            h = 1e-6 * L
+            for c in free:
+                ks = self.by_comp[c]
+                if not ks:
+                    continue
+                base = [r0[offs[k]:offs[k + 1]] for k in ks]
+                kset = set(ks)
+                for j in range(6):
+                    rr = self.parts(perturbed(P, c, j, h), kset)
+                    col = 6 * idx[c] + j
+                    for k, rk, bk in zip(ks, rr, base):
+                        J[offs[k]:offs[k + 1], col] = (rk - bk) / h
+            return J
 
     def perturbed(P, c, j, h):
         Q = dict(P)
@@ -442,53 +483,39 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
             Q[c] = Pose(expm(w) @ p.R, p.t)
         return Q
 
-    def jacobian(P, r0):
-        J = np.zeros((len(r0), n))
-        h = 1e-6 * L
-        for c in free:
-            ks = by_comp[c]
-            base = [r0[offs[k]:offs[k + 1]] for k in ks]
-            for j in range(6):
-                Q = perturbed(P, c, j, h)
-                rr = residuals(Q, set(ks))
-                col = 6 * idx[c] + j
-                for k, rk, bk in zip(ks, rr, base):
-                    J[offs[k]:offs[k + 1], col] = (rk - bk) / h
-        return J
-
     def step(P, dx):
         Q = dict(P)
         for c in free:
             v = dx[6 * idx[c]: 6 * idx[c] + 6]
+            if not v.any():
+                continue
             p = P[c]
             Q[c] = Pose(orthonormal(expm(v[3:] / L) @ p.R), p.t + v[:3])
         return Q
 
-    tol = max(1e-6 * L, 1e-7)
-    iters = 0
-
-    def run_lm(P):
+    def run_lm(P, sys_):
+        """Make every mate hold, moving the free components as little as possible."""
         nonlocal iters
         lam = 1e-3
-        r = stack(residuals(P))
+        r = sys_.res(P)
         cost = float(r @ r)
-        for it in range(1, 200):
+        for _ in range(1, 200):
             iters += 1
             if math.sqrt(cost) < tol * 0.01:
                 break
-            J = jacobian(P, r)
+            J = sys_.jac(P, r)
             A = J.T @ J
-            g = J.T @ r
+            gr = J.T @ r
             improved = False
             dx = np.zeros(n)
             for _ in range(12):
                 try:
-                    dx = -np.linalg.solve(A + lam * np.eye(n), g)
+                    dx = -np.linalg.solve(A + lam * np.eye(n), gr)
                 except np.linalg.LinAlgError:
                     lam *= 10
                     continue
                 Q = step(P, dx)
-                r2 = stack(residuals(Q))
+                r2 = sys_.res(Q)
                 c2 = float(r2 @ r2)
                 if c2 < cost:
                     P, r, cost = Q, r2, c2
@@ -498,47 +525,97 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
                 lam *= 10
             if not improved or float(np.linalg.norm(dx)) < 1e-12 * L:
                 break
+        sys_.res(P)
         return P
 
-    if n and mates:
-        poses = run_lm(poses)
-        if len(mates) != len(hard):
-            # dragging: the cursor pull was soft; now make every mate exact again, moving as little as possible
-            mates = hard
-            by_comp.update({c: [k for k, (_, _, cs) in enumerate(mates) if c in cs] for c in free})
-            sizes2 = [len(x) for x in residuals(poses)]
-            offs = np.concatenate([[0], np.cumsum(sizes2)]).astype(int) if sizes2 else np.array([0])
-            if mates:
-                poses = run_lm(poses)
+    # Rotations cost more than moves when the cursor can be followed either way, so a free part
+    # slides with the cursor instead of tumbling; a hinge still turns (it has no other way).
+    D = np.tile([1.0, 1.0, 1.0, 0.005, 0.005, 0.005], len(free))
+
+    def run_drag(P, sys_, nh):
+        """Constrained Gauss-Newton: each step keeps the mates (linearised) and moves the grabbed
+        point as close to the cursor as they allow, with the smallest motion."""
+        nonlocal iters
+        for _ in range(40):
+            iters += 1
+            r = sys_.res(P)
+            J = sys_.jac(P, r) * D
+            rm, rg, Jm, Jg = r[:nh], r[nh:], J[:nh], J[nh:]
+            if nh:
+                U, sv, Vt = np.linalg.svd(Jm, full_matrices=True)
+                rank = int(np.sum(sv > 1e-8 * max(1.0, sv[0] if len(sv) else 1.0)))
+                y = -(Vt[:rank].T @ ((U[:, :rank].T @ rm) / sv[:rank]))
+                N = Vt[rank:].T
+            else:
+                y, N = np.zeros(n), np.eye(n)
+            if N.shape[1]:
+                z = np.linalg.lstsq(Jg @ N, -(Jg @ y + rg), rcond=1e-9)[0]
+                y = y + N @ z
+            dx = D * y
+            scale = 1.0  # trust region: no single step turns more than ~20 deg or moves more than L/5
+            for c in free:
+                v = dx[6 * idx[c]: 6 * idx[c] + 6]
+                tn, rn = float(np.linalg.norm(v[:3])), float(np.linalg.norm(v[3:])) / L
+                if tn > 0.2 * L:
+                    scale = min(scale, 0.2 * L / tn)
+                if rn > 0.35:
+                    scale = min(scale, 0.35 / rn)
+            # When the cursor is off the path the mates allow (a hinge point can only reach a circle),
+            # plain Gauss-Newton only creeps toward the closest point. Try longer strides along the
+            # same step and keep the best (residual evaluations are cheap next to a Jacobian).
+            best, bestc = None, None
+            for a in (1.0, 0.6, 2.0, 4.0):  # 0.6 damps a step that overshoots back and forth
+                if a > 1 and scale < 1:
+                    break
+                Q = step(P, dx * scale * a)
+                rq = sys_.res(Q)
+                cq = float(rq[nh:] @ rq[nh:]) + 100.0 * float(rq[:nh] @ rq[:nh])
+                if bestc is None or cq < bestc:
+                    best, bestc = Q, cq
+                elif a > 2:
+                    break
+            P = best
+            if float(np.linalg.norm(dx)) < 5e-4 * L and float(np.linalg.norm(rm)) < tol:  # the cursor is not that exact; run_lm makes the mates exact
+                break
+        return P
+
+    if n and (active or goal):
+        if goal:
+            poses = run_drag(poses, System(active + [goal]), int(sum(len(x) for x in System(active).parts(poses))))
+        if active:
+            poses = run_lm(poses, System(active))  # make every mate exact
     # per-mate result
-    final = residuals(poses)
-    for (m, al, cs), rk in zip(mates, final):
+    whole = System(hard)
+    final = whole.parts(poses)
+    for (m, al, cs), rk in zip(hard, final):
         err = float(np.max(np.abs(rk))) if len(rk) else 0.0
         rep = report[m["id"]]
         rep["residual"] = err
         if err > max(1e-3, 1e-5 * L):
             rep["state"] = "error"
             rep["message"] = "This mate cannot be satisfied with the other mates (over defining or conflicting)."
-    # degrees of freedom left per component (SOLIDWORKS "(-)" under defined)
-    comp_state = {}
-    for c in comps:
-        cid = c["id"]
-        comp_state[cid] = "fixed" if cid in fixed else "under"
-    if n:
-        r = stack(final)
-        J = jacobian(poses, r) if len(r) else np.zeros((0, n))
+    # degrees of freedom left per component (SOLIDWORKS "(-)" under defined). Every component that
+    # is neither fixed nor in a mate keeps all 6.
+    comp_state = {c["id"]: "fixed" if c["id"] in fixed else "under" for c in comps}
+    dofs = {}
+    mated = sorted({c for _, _, cs in hard for c in cs if c not in fixed}, key=lambda c: order_ids.index(c))
+    if mated and not goal:  # drag frames only draw; the rebuild after the drag reports the states
+        free = mated
+        idx = {c: i for i, c in enumerate(free)}
+        n = 6 * len(free)
+        whole = System(hard)
+        r = whole.res(poses)
+        J = whole.jac(poses, r) if len(r) else np.zeros((0, n))
         if J.shape[0]:
-            _, s, vt = np.linalg.svd(J, full_matrices=True)
-            rank = int(np.sum(s > 1e-6 * max(1.0, s[0] if len(s) else 1.0)))
+            _, sv, vt = np.linalg.svd(J, full_matrices=True)
+            rank = int(np.sum(sv > 1e-6 * max(1.0, sv[0] if len(sv) else 1.0)))
             null = vt[rank:]
         else:
             null = np.eye(n)
         for c in free:
             blk = null[:, 6 * idx[c]: 6 * idx[c] + 6] if null.size else np.zeros((0, 6))
             comp_state[c] = "full" if (blk.size == 0 or float(np.max(np.abs(blk))) < 1e-6) else "under"
-        dofs = {c: int(np.linalg.matrix_rank(null[:, 6 * idx[c]: 6 * idx[c] + 6], tol=1e-6)) if null.size else 0 for c in free}
-    else:
-        dofs = {}
+            dofs[c] = int(np.linalg.matrix_rank(blk, tol=1e-6)) if blk.size else 0
     return {"poses": poses, "mates": report, "comp_state": comp_state, "dof": dofs, "updates": updates, "iterations": iters, "fixed": fixed}
 
 

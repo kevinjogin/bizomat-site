@@ -137,7 +137,9 @@ A part document may carry `"type": "part"`; a document without `type` is a part.
 - `part`: key into `parts`. Several components can use the same part (instances `<1>`, `<2>`).
 - `position` (mm) and `rotation` (degrees) place the part's origin in the assembly. The rotation is
   applied about the assembly X axis, then Y, then Z (fixed axes): R = Rz * Ry * Rx.
-- `fixed`: the component does not move (SOLIDWORKS "(f)"). If no component is fixed, the first one is.
+- `fixed`: the component does not move (SOLIDWORKS "(f)"). Only components with `fixed: true` are fixed; with
+  none fixed, every component floats (the solver still moves them as little as possible). New assemblies,
+  STEP imports and the AI fix the first component.
 - `hidden`, `suppressed` as for features. A suppressed component and its mates are ignored.
 - The mate solver writes the solved `position` and `rotation` back, so the file always shows where
   every component sits. Positions given by hand or by the AI are the starting guess; unmated

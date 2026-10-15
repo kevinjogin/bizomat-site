@@ -196,3 +196,54 @@ def test_mate_candidates_for_unmated_assembly():
     res = A.regen_assembly(d)
     pin = next(c for c in res["components"] if c["id"] == "c2")
     assert abs(pin["position"][0]) < 1e-4 and abs(pin["position"][2]) < 1e-4
+
+
+def comp_of(res, cid):
+    return next(c for c in res["components"] if c["id"] == cid)
+
+
+def test_float_really_floats():
+    # nothing fixed: no component is silently fixed, and dragging one carries the mated one along
+    d = A.apply_solution(asm_doc(), A.regen_assembly(asm_doc()))
+    del d["components"][0]["fixed"]
+    res = A.regen_assembly(d)
+    assert comp_of(res, "c1")["state"] == "under" and comp_of(res, "c2")["state"] == "under"
+    assert np.allclose(comp_of(res, "c2")["position"], [0, 0, 0], atol=1e-4)  # nothing drifts when floated
+    res = A.regen_assembly(d, drag={"component": "c1", "point": [40, 5, 30], "target": [140, 5, 30]})
+    plate_, pin_ = comp_of(res, "c1"), comp_of(res, "c2")
+    assert plate_["position"][0] > 90
+    assert np.allclose(pin_["position"], plate_["position"], atol=1e-3)  # the pin stays in the hole
+    assert np.allclose(plate_["rotation"], [0, 0, 0], atol=1e-2)  # slides, does not tumble
+    assert all(m["state"] == "ok" for m in res["mates"])
+
+
+def chain_doc():
+    """Plate fixed; a block lying on it (free to slide and turn in its plane); a pin in the block's hole."""
+    block = {"name": "Block", "features": [rect_sketch("s1", "Top Plane", 40, 40), {"id": "e1", "type": "extrude", "name": "B", "sketch": "s1", "depth": 10}]}
+    return {"type": "assembly", "parts": {"plate": plate(), "block": block, "pin": pin()},
+            "components": [{"id": "c1", "part": "plate", "name": "Plate<1>", "fixed": True, "position": [0, 0, 0], "rotation": [0, 0, 0]},
+                           {"id": "c2", "part": "block", "name": "Block<1>", "position": [100, 10, 0], "rotation": [0, 0, 0]},
+                           {"id": "c3", "part": "pin", "name": "Pin<1>", "position": [100, 20, 0], "rotation": [0, 0, 0]}],
+            "mates": [{"id": "m1", "type": "coincident", "align": "anti",
+                       "refs": [{"component": "c1", "plane": {"point": [0, 10, 0], "normal": [0, 1, 0]}},
+                                {"component": "c2", "plane": {"point": [0, 0, 0], "normal": [0, -1, 0]}}]},
+                      {"id": "m2", "type": "concentric", "refs": [{"component": "c2", "axis": {"point": [10, 0, 0], "dir": [0, 1, 0]}},
+                                                                {"component": "c3", "ref": "Y axis"}]}]}
+
+
+def test_mated_parts_follow_a_drag():
+    d = A.apply_solution(chain_doc(), A.regen_assembly(chain_doc()))
+    pin0 = np.array(comp_of(A.regen_assembly(d), "c3")["position"])
+    # pull the block sideways: the pin rides along in its hole
+    res = A.regen_assembly(d, drag={"component": "c2", "point": [-20, 5, 0], "target": [80, 15, 60]})
+    blk, pin_ = comp_of(res, "c2"), comp_of(res, "c3")
+    R = np.array(blk["matrix"]).reshape(4, 4)[:3, :3]
+    hole = R @ np.array([10, 0, 0]) + np.array(blk["position"])
+    assert np.linalg.norm(np.array(pin_["position"])[[0, 2]] - hole[[0, 2]]) < 1e-3
+    assert np.linalg.norm(np.array(pin_["position"]) - pin0) > 20
+    assert abs(blk["position"][1] - 10) < 1e-4  # still on the plate
+    # pull the pin sideways: the block follows it across the plate
+    res = A.regen_assembly(d, drag={"component": "c3", "point": [0, 20, 0], "target": [110, 20, 80]})
+    blk, pin_ = comp_of(res, "c2"), comp_of(res, "c3")
+    assert np.linalg.norm(np.array(blk["position"]) - [100, 10, 0]) > 40
+    assert all(m["state"] == "ok" for m in res["mates"])

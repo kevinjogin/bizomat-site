@@ -228,9 +228,12 @@ export class AssemblyMode {
     if (!d) return;
     this.drag = null;
     if (!d.moved) { this.app.showContextToolbar({ kind: 'component', id: d.id }, d.cx, d.cy); return; }
-    clearTimeout(this.dragTimer);
+    d.at = { x: e.offsetX, y: e.offsetY };
     const finish = async () => {
-      const res = await this.solveDrag(d, e);
+      // let the request in flight land, then solve once more for where the mouse was let go
+      while (d.flight) await d.flight;
+      if (d.solvedAt !== d.at) await this.pumpDrag(d);
+      const res = d.res;
       if (!res) { this.regen(); return; }
       // everything the drag moved (a linkage moves together) is written back as one undo step
       this.app.commit('Move Component', () => {
@@ -244,26 +247,41 @@ export class AssemblyMode {
   }
 
   // Cursor target on the plane through the grabbed point, facing the screen.
-  dragTarget(d, e) {
+  dragTarget(d, at) {
     const v = this.app.viewer;
     const n = new THREE.Vector3(0, 0, 1).applyQuaternion(v.quat);
     const x = new THREE.Vector3(1, 0, 0).applyQuaternion(v.quat);
     const y = n.clone().cross(x);
     const frame = { origin: d.point.toArray(), normal: n.toArray(), xdir: x.toArray(), ydir: y.toArray() };
-    return v.screenToPlane(e.offsetX, e.offsetY, frame).world.toArray();
+    return v.screenToPlane(at.x, at.y, frame).world.toArray();
   }
 
   // Solve with the grabbed point pulled toward the cursor; mates keep holding, so a hinge turns and
-  // a slider slides (SOLIDWORKS drag). Latest request wins.
-  async solveDrag(d, e) {
-    const app = this.app;
-    const doc = app.cleanDoc(app.doc);
-    const seq = (this.dragSeq = (this.dragSeq || 0) + 1);
-    let res;
-    try { res = await app.api('/api/regen', { doc, known: this.knownKeys(), drag: { component: d.id, point: d.local, target: this.dragTarget(d, e) } }); } catch (_) { return null; }
-    if (seq !== this.dragSeq && this.drag) return null;
-    this.draw(res, doc);
-    return res;
+  // a slider slides (SOLIDWORKS drag). One request at a time, always for the newest mouse position,
+  // and each starts from the pose the last one found, so the solver only has a small step to make.
+  // (Firing a request per mouse move let them pile up on the server and the view fell behind.)
+  pumpDrag(d) {
+    if (d.flight) return d.flight;
+    d.flight = (async () => {
+      const app = this.app;
+      while (d.at && d.solvedAt !== d.at) {
+        const at = d.at;
+        let res;
+        try {
+          res = await app.api('/api/regen', { doc: d.doc, known: this.knownKeys(), drag: { component: d.id, point: d.local, target: this.dragTarget(d, at) } });
+        } catch (_) { break; }
+        d.solvedAt = at;
+        if (!res?.components) break;
+        d.res = res;
+        for (const c of res.components) {
+          const dc = d.doc.components.find((x) => x.id === c.id);
+          if (dc && !dc.suppressed) { dc.position = c.position; dc.rotation = c.rotation; }
+        }
+        this.draw(res, d.doc);
+      }
+      d.flight = null;
+    })();
+    return d.flight;
   }
 
   dragMove(e) {
@@ -274,14 +292,13 @@ export class AssemblyMode {
     if (!d.moved) {
       d.moved = true;
       app.hideContextToolbar();
-      if (c.fixed || this.resComp(d.id)?.state === 'fixed') { this.drag = null; app.status(`${c.name} is fixed. Right-click it and choose Float to move it.`); return; }
+      if (c.fixed) { this.drag = null; app.status(`${c.name} is fixed. Right-click it and choose Float to move it.`); return; }
       if (this.resComp(d.id)?.state === 'full') { this.drag = null; app.status(`${c.name} is fully defined by its mates and cannot move.`); return; }
       app.status('Dragging ' + c.name + '. Mates keep holding.');
+      d.doc = app.cleanDoc(app.doc);
     }
-    clearTimeout(this.dragTimer);
-    const now = performance.now();
-    const go = () => { this.lastDragSolve = performance.now(); if (this.drag === d) this.solveDrag(d, e); };
-    if (!this.lastDragSolve || now - this.lastDragSolve > 60) go(); else this.dragTimer = setTimeout(go, 60);
+    d.at = { x: e.offsetX, y: e.offsetY };
+    this.pumpDrag(d);
   }
 
   contextToolbar(item) {
