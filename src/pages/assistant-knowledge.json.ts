@@ -130,14 +130,14 @@ export async function GET() {
     id: 'proof-of-work',
     title: 'KEVOS® proof of work',
     url: '/#work',
-    text: `The KEVOS® homepage lists ${PROJECTS.length} projects from 2010 to 2026 that make up the engineering record behind KEVOS®. They were delivered by its founder in employed, contract and consulting roles, not as KEVOS® engagements for those organisations, and organisation names do not imply endorsement. Sectors: steel and mining, machines and automation, plant and facilities, civil and structural, defence and transport, product development and operations. Some projects ended at concept or design stage and are labelled that way.`,
+    text: `The KEVOS® homepage lists ${PROJECTS.length} projects from 2010 to 2026 that make up the engineering record behind KEVOS®. They were delivered by its founder in employed, contract and consulting roles, not as KEVOS® engagements for those organisations, and organisation names do not imply endorsement. Sectors: capital projects, window and door hardware, heavy industry and mining, machines and automation, plant and facilities, civil and structural, defence and transport, and product development. The Alchin Long Group projects (window and door hardware product development, May 2018 to October 2024, and capital projects as Operations Excellence Engineer from November 2024) are the founder's employment experience, not KEVOS® client work. Some projects ended at concept or design stage, and some product-development schedules end at customer approval; both are labelled that way. Each case study can be opened directly at /#case-<id>.`,
   });
   for (const p of PROJECTS) {
     chunks.push({
       id: `project-${p.id}`,
       title: `Proof of work: ${p.title}`,
-      url: '/#work',
-      text: `${p.title}: ${p.headline} (${p.years}; ${p.client}, ${p.about} ${p.industry}${p.location ? `, ${p.location}` : ''}). Role: ${p.role}. Status: ${p.statusLabel}. ${p.brief} Approach: ${p.approach.map((a) => `${a.title}: ${a.text}`).join(' ')} Outcome: ${p.outcome} ${p.note ?? ''}`,
+      url: `/#case-${p.id}`,
+      text: `${p.title}: ${p.headline} (${p.years}; ${p.client}${p.customer ? `, for ${p.customer}` : ''}, ${p.about} ${p.industry}${p.location ? `, ${p.location}` : ''}). ${p.employment ?? ''} Role: ${p.role}. Status: ${p.statusLabel}. ${p.brief} Approach: ${p.approach.map((a) => `${a.title}: ${a.text}`).join(' ')}${p.path ? ` Development path: ${p.path.map((s) => `${s.stage} (${s.period}): ${s.detail}`).join('; ')}.` : ''} Outcome: ${p.outcome} ${p.note ?? ''}`,
     });
   }
 

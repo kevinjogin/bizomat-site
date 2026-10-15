@@ -1,14 +1,19 @@
 /**
- * KEVOS® proof of work: the engineering record behind KEVOS®, shown on the homepage (/#work).
- * Reworded from the published project records at kevos.ghost.io (tag: kevos-work) and, for the capital
- * projects, the founder's professional record, newest first. Organisation names identify where the work
- * took place; status states honestly how far each project went. Nothing here may be invented, and
- * commercial figures are not shown.
+ * KEVOS® proof of work: the engineering record behind KEVOS®, shown on the homepage (/#work), newest first.
+ * Reworded from the published project records at kevos.ghost.io (tag: kevos-work) and, for Alchin Long Group,
+ * from the founder's resume and project schedules (names approved for publication by the founder, 16 Oct 2026).
+ * Organisation names identify where the work took place; status states honestly how far each project went,
+ * and a schedule's last recorded stage is never upgraded. Nothing here may be invented. Commercial figures,
+ * internal project numbers, people's names, supplier details, drawings and CAD are not shown.
+ * Each case study can be linked to directly at /#case-<id>.
  */
-export type ProjectSector = 'capital' | 'machines' | 'plant' | 'civil' | 'product' | 'defence' | 'heavy';
+export type ProjectSector = 'capital' | 'hardware' | 'machines' | 'plant' | 'civil' | 'product' | 'defence' | 'heavy';
 /** Branded illustration used where no project image can be shown (src/components/WorkIllustration.astro). */
-export type ProjectIllustration = 'jig-stripping' | 'louvre-lines' | 'powdercoat';
-export type ProjectStatus = 'delivered' | 'design' | 'paused';
+export type ProjectIllustration =
+  | 'jig-stripping' | 'louvre-lines' | 'powdercoat'
+  | 'chainwinder' | 'program-lanes' | 'housing-retool' | 'base-retool' | 'side-latch' | 'keeper' | 'roller' | 'push-lock' | 'lift-handle' | 'lock-handle';
+/** delivered: completed or released; approved: the schedule ends at customer approval; design: ended at design stage. */
+export type ProjectStatus = 'delivered' | 'approved' | 'design' | 'paused';
 export type ProjectService = 'engineering-cad' | 'manufacturing' | 'operations' | 'project-support';
 
 export type Project = {
@@ -19,9 +24,15 @@ export type Project = {
   visualAlt: string;
   /** Illustrative KEVOS visual shown instead of a converted project image. */
   illustration?: ProjectIllustration;
+  /** Overrides the label printed on the illustration, e.g. to name the product. */
+  illustrationTag?: string;
+  /** Included in the Featured filter. */
+  featured?: boolean;
   /** Plain descriptive project name. */
   title: string;
   client: string;
+  /** The customer or product range the work was for, where it differs from the organisation. */
+  customer?: string;
   /** What the organisation does, from the project record or well-known public information. */
   about: string;
   location?: string;
@@ -44,10 +55,22 @@ export type Project = {
   /** Responsibility boundary, where the record states one. */
   note?: string;
   skills: string[];
+  /** Work done for an employer is the founder's track record, not KEVOS® client work; this says so. */
+  employment?: string;
+  objectives?: string[];
+  /** What the founder contributed in the role. */
+  contribution?: string[];
+  /** Stages with dates, from the project schedule. */
+  path?: { stage: string; period: string; detail: string }[];
+  challenges?: { problem: string; response: string }[];
+  validation?: string;
+  /** Ids of related case studies. */
+  related?: string[];
 };
 
 export const PROJECT_SECTORS: { id: ProjectSector; label: string }[] = [
   { id: 'capital', label: 'Capital projects' },
+  { id: 'hardware', label: 'Window and door hardware' },
   { id: 'heavy', label: 'Heavy industry and mining' },
   { id: 'machines', label: 'Machines and automation' },
   { id: 'plant', label: 'Plant and facilities' },
@@ -63,38 +86,67 @@ export const PROJECT_SERVICES: Record<ProjectService, string> = {
   'project-support': 'Engineering Project Support',
 };
 
+const ALG_ABOUT = 'Australian window- and door-hardware business, home of the Doric range, with product development, toolroom, coating and assembly operations.';
+
+const OPS_EMPLOYMENT = 'Experience of the founder of KEVOS®, gained while employed by Alchin Long Group as Operations Excellence Engineer (from November 2024). It is professional track record, not a KEVOS® client engagement.';
+
+/** Shared facts for the founder's product-development role at Alchin Long Group (resume and project schedules). */
+const PRODUCT_DEVELOPMENT = {
+  client: 'Alchin Long Group',
+  about: ALG_ABOUT,
+  location: 'Sydney, NSW',
+  industry: 'Window and door hardware',
+  sector: 'hardware',
+  role: 'Design Drafter and Product Development',
+  employment: 'Product-development experience of the founder of KEVOS®, gained while employed by Alchin Long Group as Design Drafter and Product Development (May 2018 to October 2024). It is professional track record, not a KEVOS® client engagement.',
+  contribution: [
+    'Rapid CAD modelling and 3D-printed prototypes',
+    'Detailed CAD models and CNC working prototypes',
+    'Technical drawings and bills of materials',
+    'Tooling quotations and tooling coordination',
+    'Off-tool sample testing and tooling corrections',
+    'Production BOMs, kits and first-stock checks',
+  ],
+  note: 'In the company’s development process, briefs, prototype approval and customer approval sat with product management; quotation review, ordering and freight sat with supply; and final testing was shared with quality. Dates come from the project schedule. Drawings, CAD models, tooling details, supplier information and internal project records are not shown.',
+} satisfies Partial<Project>;
+
+/** For programs whose schedule ends at customer approval, where production release is not claimed. */
+const APPROVAL_CONTRIBUTION = [...PRODUCT_DEVELOPMENT.contribution.slice(0, 5), 'Final testing and samples for customer approval'];
+
 export const PROJECTS: Project[] = [
   {
     id: 'jig-stripping-facility',
     visualAlt: 'Illustration of two ultrasonic stripping tanks served by an overhead gantry hoist',
     illustration: 'jig-stripping',
-    headline: 'Two ultrasonic stripping lines, delivered under budget',
+    featured: true,
+    headline: 'Two ultrasonic stripping lines, from contractor scopes to handover',
     title: 'Dual-line ultrasonic jig-stripping facility',
-    client: 'Building-hardware manufacturer',
-    about: 'Australian building-hardware manufacturer with in-house coating operations.',
+    client: 'Alchin Long Group',
+    about: ALG_ABOUT,
     location: 'Sydney, NSW',
     industry: 'Building-hardware manufacturing',
     sector: 'capital',
     years: '2026',
     role: 'Operations Excellence Engineer, capital project coordination',
     status: 'delivered',
-    statusLabel: 'Delivered under budget',
+    statusLabel: 'Commissioned and handed over',
     summary: 'A capital installation of two ultrasonic stripping and wash lines, with gantries, hoists and segregated chemical transfer, taken from contractor scopes to handover.',
     brief: 'Production jigs collect coating build-up and must be stripped clean to stay in service. The business invested in a dedicated facility: two ultrasonic stripping and wash lines, lifting equipment to move jig loads between tanks, and chemical transfer that keeps incompatible chemistries apart. It had to be installed safely around live production, through specialist trades, within an approved capital budget, while other capital, tooling and maintenance work drew on the same toolroom, contractors and production windows.',
     approach: [
-      { title: 'Scopes before quotes', text: 'Contractor scopes were defined for the tanks, lifting equipment, chemical transfer and services, so quotations could be compared like for like.' },
-      { title: 'Options tested on paper', text: 'Pump options for chemical transfer were assessed for duty, safety and maintenance before selection.' },
-      { title: 'Segregation and lifting designed in', text: 'Chemical-transfer systems were kept segregated, and gantries and hoists were specified to move jig loads safely between stripping and wash stages.' },
-      { title: 'Specialist trades coordinated', text: 'Mechanical, electrical, plumbing and specialist installers were sequenced around production, with hoist safety requirements built into commissioning.' },
+      { title: 'Scopes before quotes', text: 'Contractor scopes were defined for the stripping and pressure-wash tanks, the gantry, hoists and trolleys, chemical transfer and services, so quotations could be compared like for like.' },
+      { title: 'Options tested on paper', text: 'Pump options for chemical transfer were assessed for duty, safety and maintenance, and air-operated double-diaphragm (AODD) pumps were procured for the duty.' },
+      { title: 'Segregation and lifting designed in', text: 'Chemical transfer was kept segregated, chemical containers were given bunded storage, and the gantry, hoists and trolleys were specified to move jig loads safely between the stripping and wash stages.' },
+      { title: 'Specialist trades coordinated', text: 'Electrical work for the tanks and hoists, pneumatic and plumbing modifications and specialist installers were sequenced around production. Hoist limit switches, wiring and strikers were installed so hoist travel was controlled before commissioning.' },
       { title: 'When every project needs the same toolroom', text: 'The facility sat in one register with the other active capital, tooling and maintenance work, each tracked by owner, stage, cost, main risk, dependencies and next action. Clashes over trades, contractors and production windows were raised early with costed options, so management could set priorities on safety, production impact and urgency.' },
       { title: 'Cost visible to the executive', text: 'Approved allocation was compared with committed, actual and forecast cost and reported to the executive team, because a raised purchase order is future spend before any invoice arrives.' },
     ],
-    deliverables: ['Contractor scopes of work', 'Quotation comparison and supplier selection', 'Pump option assessment', 'Segregated chemical-transfer arrangement', 'Gantry and hoist integration', 'Trade and installation coordination', 'Commissioning and hoist-safety requirements', 'Project register and priority coordination', 'Executive cost reporting', 'Operational handover'],
-    outcome: 'Two ultrasonic stripping and wash lines were installed, commissioned and handed over to production, and the project was completed under its approved budget.',
-    value: 'Clear scopes and visible cost let a multi-trade capital project finish under budget, without surprises.',
+    deliverables: ['Contractor scopes of work', 'Quotation comparison and supplier selection', 'Pump option assessment', 'Segregated chemical-transfer arrangement', 'Gantry, hoist and trolley integration', 'Bunded chemical storage', 'Trade and installation coordination', 'Hoist limit switches and commissioning requirements', 'Project register and priority coordination', 'Executive cost reporting', 'Operational handover'],
+    outcome: 'Two ultrasonic stripping and wash lines were installed, commissioned and handed over to production, with cost reported against the approved allocation throughout.',
+    value: 'Clear scopes and visible cost keep a multi-trade capital project under control from the first quote to handover.',
     relevantIf: ['You are installing process equipment that needs several specialist trades', 'Contractor scopes must be written so quotes can be compared fairly', 'Management wants cost visibility before the invoices arrive'],
     service: 'project-support',
     note: 'Commercial figures are not shown. Investment decisions and approvals sat with management.',
+    employment: OPS_EMPLOYMENT,
     skills: ['Capital project delivery', 'Contractor scoping', 'Chemical transfer', 'Executive cost reporting'],
   },
   {
@@ -103,8 +155,8 @@ export const PROJECTS: Project[] = [
     illustration: 'powdercoat',
     headline: 'Custom colours on glass-filled plastic, proven for production',
     title: 'Custom-colour powdercoating of glass-filled plastic',
-    client: 'Building-hardware manufacturer',
-    about: 'Australian building-hardware manufacturer with in-house coating operations.',
+    client: 'Alchin Long Group',
+    about: ALG_ABOUT,
     location: 'Sydney, NSW',
     industry: 'Building-hardware manufacturing',
     sector: 'capital',
@@ -118,7 +170,7 @@ export const PROJECTS: Project[] = [
       { title: 'Coating trials', text: 'Trials established how the glass-filled plastic substrate accepted custom-colour finishes.' },
       { title: 'Parameters locked in', text: 'Operating parameters were set up and documented so the finish could be repeated run after run.' },
       { title: 'Finish validated', text: 'Finish quality was validated against the requirements of the Tier 1 range before release.' },
-      { title: 'Jigs at production scale', text: 'A large set of purpose-made production jigs was coordinated so parts could be coated consistently at volume.' },
+      { title: 'Jigs at production scale', text: 'Around 350 purpose-made production jigs were coordinated so parts could be coated consistently at volume.' },
       { title: 'Make or buy, decided on the schedule', text: 'Where repeat jigs could be made externally while internal development continued, the schedule benefit was set against the extra unit cost so management could decide quickly.' },
       { title: 'Governed with internal resources', text: 'The project ran with internal teams under clear governance, with short updates on status, cost position, the main risk and any decision needed. In-house labour stayed well inside the project allocation.' },
     ],
@@ -128,16 +180,18 @@ export const PROJECTS: Project[] = [
     relevantIf: ['A new coating or finishing process must be proven before launch', 'Parts need purpose-made jigs at production scale', 'A process change has to run on internal resources with clear governance'],
     service: 'manufacturing',
     note: 'Commercial figures and customer details are not shown.',
+    employment: OPS_EMPLOYMENT,
     skills: ['Process development', 'Powder coating', 'Production jigs', 'Project governance'],
   },
   {
     id: 'louvre-manufacturing-lines',
     visualAlt: 'Illustration of single and double louvre production lines feeding a finished louvre panel',
     illustration: 'louvre-lines',
+    featured: true,
     headline: 'Two louvre production lines, from layout to handover',
     title: 'Single- and double-louvre manufacturing lines',
-    client: 'Building-hardware manufacturer',
-    about: 'Australian building-hardware manufacturer with in-house coating operations.',
+    client: 'Alchin Long Group',
+    about: ALG_ABOUT,
     location: 'Sydney, NSW',
     industry: 'Building-hardware manufacturing',
     sector: 'capital',
@@ -160,7 +214,86 @@ export const PROJECTS: Project[] = [
     value: 'Lines that start with standard work, trained people and correct system data reach stable output sooner.',
     relevantIf: ['You are introducing a new product line or production cell', 'New equipment is in, but routings, training and standard work lag behind', 'You want Lean practices built in from day one'],
     service: 'project-support',
+    employment: OPS_EMPLOYMENT,
     skills: ['Production line setup', 'Equipment qualification', 'ERP routing', 'Lean implementation'],
+  },
+  {
+    id: 'dn450-base-retool',
+    visualAlt: 'Illustration of a two-part tool producing a chainwinder base that is gauged and fed into a test, correct and re-test loop',
+    illustration: 'base-retool',
+    headline: 'Retooling the base of a twin chainwinder, proven over two test rounds',
+    title: 'Doric DN450 twin chainwinder base retool',
+    customer: 'Doric',
+    ...PRODUCT_DEVELOPMENT,
+    years: '2024',
+    status: 'approved',
+    statusLabel: 'Customer approved',
+    summary: 'A retool of the base of the existing Doric DN450 twin chainwinder: design update, new tooling, and two rounds of off-tool testing either side of a tooling correction, approved by the customer in November 2024.',
+    brief: 'The DN450 twin chainwinder was already an established product. This work covered its base: the part was updated where needed and retooled, and the new tool had to produce bases that fitted the assembly and matched the approved design. It was a retool of one component, not the design of the whole DN450.',
+    objectives: ['Update the base design for the new tool', 'Prove the change in CAD, a working prototype and drawings before tooling', 'Test off-tool bases, correct the tool and test again', 'Reach customer approval on the new tool'],
+    approach: [
+      { title: 'Design and prototype', text: 'A detailed CAD model and CNC working prototype were completed in January 2024, with technical drawings and the BOM in February.' },
+      { title: 'Tooling approved', text: 'The tooling quotation was reviewed and the tooling and testing plan approved in March 2024.' },
+      { title: 'A new tool', text: 'The new tool was made between March and August 2024, and the production meeting followed in September.' },
+      { title: 'Test, correct, re-test', text: 'Off-tool bases were tested in September, the tool was corrected through to mid-October, and a second round of off-tool testing followed.' },
+      { title: 'Final testing and approval', text: 'Final testing was completed in early November, and the customer approved the retooled base in November 2024.' },
+    ],
+    path: [
+      { stage: 'Design', period: 'Jan–Mar 2024', detail: 'CAD model and CNC prototype, drawings and BOM, tooling quotation and plan approved' },
+      { stage: 'Tooling', period: 'Mar–Aug 2024', detail: 'New tool made; production meeting in September' },
+      { stage: 'Test and correct', period: 'Sep–Oct 2024', detail: 'Off-tool testing, tooling corrections, second off-tool round' },
+      { stage: 'Approval', period: 'Nov 2024', detail: 'Final testing and customer approval' },
+    ],
+    challenges: [
+      { problem: 'The first off-tool bases needed correction.', response: 'The tool was corrected and a second round of off-tool testing was run before final testing, so approval rested on parts from the corrected tool.' },
+    ],
+    validation: 'Two rounds of off-tool testing either side of the tooling correction, then final testing before customer approval in November 2024.',
+    deliverables: ['Base design update in CAD', 'CNC working prototype', 'Technical drawings and BOM', 'Tooling quotation and testing plan', 'Tooling coordination', 'Two rounds of off-tool testing', 'Tooling corrections', 'Final testing for customer approval'],
+    contribution: APPROVAL_CONTRIBUTION,
+    outcome: 'The retooled DN450 base was approved by the customer in November 2024. The project schedule ends at customer approval, so production release is not claimed here.',
+    value: 'Re-testing after every tool correction is the difference between a fixed tool and a hopeful one.',
+    relevantIf: ['A part in an existing product needs new or replacement tooling', 'Tool corrections have to be proven before production', 'You want one component retooled without redesigning the whole product'],
+    service: 'manufacturing',
+    skills: ['Retooling', 'Tooling coordination', 'Off-tool testing', 'Design for manufacture'],
+    related: ['dn400-housing-upgrade', 'ds1w-chainwinder'],
+  },
+  {
+    id: 'dn400-housing-upgrade',
+    visualAlt: 'Illustration of a two-part tool producing a twin chainwinder housing that is gauged and fed into an inspection and correction loop',
+    illustration: 'housing-retool',
+    headline: 'An existing twin chainwinder housing, improved and retooled in four months',
+    title: 'DN400 twin chainwinder housing upgrade',
+    ...PRODUCT_DEVELOPMENT,
+    years: '2024',
+    status: 'approved',
+    statusLabel: 'Customer approved',
+    summary: 'An engineering improvement to the housing of an existing twin chainwinder: new tooling, off-tool inspection with extra test samples, tooling corrections and customer approval in July 2024.',
+    brief: 'Improving a product already in the market is different from designing a new one. The change has to suit the existing assembly, and the tooling has to deliver it consistently. For the DN400 twin chainwinder housing, the design stages were already recorded as complete when the tracked program began in March 2024, so the work concentrated on tooling, inspection, testing and corrections.',
+    objectives: ['Carry the housing improvement into production tooling', 'Inspect off-tool parts and test enough samples to judge them', 'Correct the tooling and complete final testing', 'Reach customer approval for the improved housing'],
+    approach: [
+      { title: 'Ready for tooling', text: 'The concept, development and tooling-quotation stages were recorded as complete when the program began in March 2024, and the tooling and testing plan was approved straight away.' },
+      { title: 'New tooling', text: 'Tooling was made between March and May 2024.' },
+      { title: 'Inspection and more samples', text: 'Off-tool parts were inspected in May and June 2024, and additional samples were requested for testing.' },
+      { title: 'Corrections and approval', text: 'After off-tool testing in June, the tooling was corrected in July, and final testing and customer approval were completed in late July 2024.' },
+    ],
+    path: [
+      { stage: 'Design', period: 'Recorded Mar 2024', detail: 'Concept, development and tooling-quotation stages complete; tooling plan approved' },
+      { stage: 'Tooling', period: 'Mar–May 2024', detail: 'Tooling made' },
+      { stage: 'Inspect and test', period: 'May–Jun 2024', detail: 'Off-tool inspection, extra samples requested, testing' },
+      { stage: 'Correct and approve', period: 'Jul 2024', detail: 'Tooling corrections, final testing, customer approval' },
+    ],
+    challenges: [
+      { problem: 'Too few samples to judge the first off-tool parts.', response: 'Additional samples were requested before testing, so the corrections that followed were based on a larger set of parts.' },
+    ],
+    validation: 'Off-tool inspection, testing on additional samples, tooling corrections and final testing before customer approval in July 2024.',
+    deliverables: ['Housing design change', 'Tooling and testing plan', 'Tooling coordination', 'Off-tool inspection', 'Additional test samples', 'Off-tool testing', 'Tooling corrections', 'Final testing for customer approval'],
+    contribution: APPROVAL_CONTRIBUTION,
+    outcome: 'The improved DN400 housing was approved by the customer in July 2024. The project schedule ends at customer approval, so production release is not claimed here.',
+    value: 'Testing enough off-tool samples before correcting a tool avoids chasing the variation of a single part.',
+    relevantIf: ['An existing product needs an improvement without a full redevelopment', 'Off-tool parts vary and you need a sound sample before correcting', 'You need tooling changes coordinated through to approval'],
+    service: 'manufacturing',
+    skills: ['Product improvement', 'Tooling coordination', 'Off-tool inspection', 'Design for manufacture'],
+    related: ['dn450-base-retool', 'ds1w-chainwinder'],
   },
   {
     id: 'residential-girraween',
@@ -509,6 +642,132 @@ export const PROJECTS: Project[] = [
     skills: ['Modular equipment', 'Large-component handling', 'Operator-centred design', 'Workflow improvement'],
   },
   {
+    id: 'bradnams-chainwinder',
+    visualAlt: 'Illustration of an awning window being opened by a chainwinder, with the product-development stages beneath',
+    illustration: 'chainwinder',
+    illustrationTag: 'BRADNAM’S CHAINWINDER',
+    headline: 'A chainwinder held for a shared design change, then approved on a new tool',
+    title: 'Bradnam’s chainwinder',
+    customer: 'Bradnam’s',
+    ...PRODUCT_DEVELOPMENT,
+    years: '2021–2024',
+    status: 'approved',
+    statusLabel: 'Customer approved',
+    summary: 'A chainwinder for Bradnam’s, refined through two prototype reviews, held while a related Doric chainwinder was modified, then completed on a new tool and approved by the customer in November 2024.',
+    brief: 'Bradnam’s needed a chainwinder for its windows. The concept was approved quickly and two working prototypes were reviewed in 2022, but the program shared a design dependency with the Doric DS1W chainwinder: its tooling and testing could not be finished until the DS1W cover modifications were complete. When they were, a new tool was ordered, and the product was tested and approved on it.',
+    objectives: ['Develop a chainwinder for Bradnam’s windows', 'Refine it through two prototype reviews', 'Carry the shared DS1W design change into the tooling', 'Reach customer approval on production tooling'],
+    approach: [
+      { title: 'Concept approved fast', text: 'The brief, rapid CAD models, 3D-printed prototypes and prototype approval were completed between December 2021 and January 2022.' },
+      { title: 'Two prototype reviews', text: 'A detailed CAD model and CNC working prototype were reviewed in April 2022, and a second prototype in June and July 2022.' },
+      { title: 'Tooling package', text: 'The tooling quotation was reviewed and the tooling and testing plan approved in July 2023, with drawings and the BOM completed by September.' },
+      { title: 'Held for a shared change', text: 'Completion of tooling and testing was held until the DS1W cover modifications were finished in August 2024.' },
+      { title: 'New tool and approval', text: 'A new tool was ordered and made between August and October 2024, followed by final testing, customer approval in November 2024 and a further round of off-tool testing.' },
+    ],
+    path: [
+      { stage: 'Concept', period: 'Dec 2021–Jan 2022', detail: 'Brief, rapid CAD, 3D-printed prototypes, prototype approval' },
+      { stage: 'Development', period: 'Feb 2022–Jul 2023', detail: 'CNC working prototype, two prototype reviews, CAD approval and supplier selection' },
+      { stage: 'Tooling quotation', period: 'Apr–Sep 2023', detail: 'Quotation and review, tooling and testing plan approved, drawings and BOM' },
+      { stage: 'Tooling and testing', period: 'Jul 2023–Nov 2024', detail: 'Tooling, off-tool testing, hold for DS1W cover changes, new tool, final testing, customer approval' },
+    ],
+    challenges: [
+      { problem: 'A dependency on another product’s design change.', response: 'The remaining tooling work was sequenced behind the DS1W cover modifications, and a new tool was ordered once they were complete.' },
+      { problem: 'Feedback from the first working prototype.', response: 'A second prototype was built and reviewed within weeks, before the tooling package was approved.' },
+    ],
+    validation: 'Two prototype reviews, off-tool sample testing on the original tool, then final testing on the new tool before customer approval in November 2024.',
+    deliverables: ['Rapid CAD and 3D-printed prototypes', 'CNC working prototypes (two reviews)', 'Technical drawings and BOM', 'Tooling quotation and testing plan', 'Off-tool sample testing', 'Design change carried into a new tool', 'Final testing', 'Samples for customer approval'],
+    contribution: APPROVAL_CONTRIBUTION,
+    outcome: 'Bradnam’s approved the chainwinder in November 2024. The project schedule ends at customer approval and the production meeting, so production release is not claimed here.',
+    value: 'Related products move faster when a shared design change is sequenced deliberately instead of worked around.',
+    relevantIf: ['Several of your products share parts or design decisions', 'A design change has forced new tooling', 'You need a product taken from prototype review to customer approval'],
+    service: 'engineering-cad',
+    skills: ['Mechanism design', 'Dependency management', 'Tooling and OTS', 'Customer approval'],
+    related: ['ds1w-chainwinder', 'r56-chainwinder'],
+  },
+  {
+    id: 'r56-chainwinder',
+    visualAlt: 'Illustration of three chainwinder programs on a timeline, with the R5.6 program waiting on two holds before approval',
+    illustration: 'program-lanes',
+    headline: 'One chainwinder, two dependencies, approved once both were settled',
+    title: 'R5.6 chainwinder',
+    ...PRODUCT_DEVELOPMENT,
+    years: '2021–2024',
+    status: 'approved',
+    statusLabel: 'Customer approved',
+    summary: 'A chainwinder for the R5.6 program, prototyped and tooled in 2021–2023, held until the DS1W cover changes and the Bradnam’s program were complete, then corrected, tested and approved by the customer in November 2024.',
+    brief: 'The R5.6 chainwinder was developed alongside other chainwinder programs that shared design decisions. Its tooling was made by April 2023, but its schedule records two holds: first until the DS1W cover modifications and the Bradnam’s program were complete, then until the DS1W cover modifications were finished. Only then could the final tooling corrections, testing and customer approval go ahead.',
+    objectives: ['Develop a chainwinder for the R5.6 program', 'Reach CAD approval through a working prototype and customer review', 'Coordinate tooling with the related DS1W and Bradnam’s programs', 'Complete corrections, testing and customer approval'],
+    approach: [
+      { title: 'Concept', text: 'The brief, rapid CAD models, 3D-printed prototypes and prototype approval were completed between June and July 2021.' },
+      { title: 'Working prototype and customer review', text: 'Detailed CAD and the CNC working prototype were developed through to July 2022, followed by customer review and CAD approval in August 2022.' },
+      { title: 'Tooling package', text: 'Drawings, the BOM and the tooling quotation were completed and approved between April and June 2022, and tooling was made by April 2023.' },
+      { title: 'First off-tool round', text: 'Off-tool samples were tested between April and June 2023.' },
+      { title: 'Sequenced behind related programs', text: 'The remaining work was held until the DS1W cover modifications and the Bradnam’s program were complete. Tooling corrections followed from August to October 2024.' },
+      { title: 'Approval', text: 'A second round of off-tool testing, final testing and customer approval were completed in November 2024.' },
+    ],
+    path: [
+      { stage: 'Concept', period: 'Jun–Jul 2021', detail: 'Brief, rapid CAD, 3D-printed prototypes, prototype approval' },
+      { stage: 'Development', period: 'Jul 2021–Aug 2022', detail: 'Detailed CAD, CNC working prototype, customer review, CAD approval' },
+      { stage: 'Tooling quotation', period: 'Apr–Jun 2022', detail: 'Drawings and BOM, quotation, review and approval' },
+      { stage: 'Tooling and testing', period: 'Jul 2022–Nov 2024', detail: 'Tooling, off-tool testing, holds for DS1W and Bradnam’s, corrections, second off-tool round, final testing, customer approval' },
+    ],
+    challenges: [
+      { problem: 'Two overlapping holds on related programs.', response: 'The schedule kept both dependencies visible, and tooling corrections started as soon as the DS1W cover changes were complete.' },
+    ],
+    validation: 'Customer review of the working prototype, two rounds of off-tool testing around the tooling corrections, and final testing before customer approval in November 2024.',
+    deliverables: ['Rapid CAD and 3D-printed prototypes', 'CNC working prototype', 'Technical drawings and BOM', 'Tooling quotation package', 'Two rounds of off-tool testing', 'Tooling corrections', 'Final testing', 'Samples for customer approval'],
+    contribution: APPROVAL_CONTRIBUTION,
+    outcome: 'The customer approved the R5.6 chainwinder in November 2024. The project schedule ends at customer approval, so production release is not claimed here.',
+    value: 'Making the dependencies between products visible is what lets related programs finish in the right order.',
+    relevantIf: ['Your products share components and one change ripples into others', 'A program is on hold and needs a clear restart plan', 'Tooling corrections must wait for a design decision elsewhere'],
+    service: 'engineering-cad',
+    skills: ['Mechanism design', 'Dependency management', 'Tooling and OTS', 'Customer approval'],
+    related: ['ds1w-chainwinder', 'bradnams-chainwinder'],
+  },
+  {
+    id: 'wideline-ascend-push-lock',
+    visualAlt: 'Illustration of a double-hung window closing and a push lock on the meeting rail engaging its keeper',
+    illustration: 'push-lock',
+    featured: true,
+    headline: 'A double-hung push lock that waited for its customer, then went to production',
+    title: 'Wideline Ascend double-hung push lock',
+    customer: 'Wideline',
+    ...PRODUCT_DEVELOPMENT,
+    years: '2021–2024',
+    status: 'delivered',
+    statusLabel: 'Released to production',
+    summary: 'A push lock for Wideline’s Ascend double-hung window, developed through a customer hold and two prototype rounds, then tooled, tested and released to production in 2024.',
+    brief: 'A double-hung push lock has to fit within the sash and meeting-rail profiles, work at the press of a button and hold the window closed. Wideline needed one for its Ascend double-hung window. The concept prototype was approved in mid-2021, but development then waited more than a year for Wideline’s confirmation, and a second prototype was needed before the customer approved the design.',
+    objectives: ['Package a push lock within the double-hung sash and meeting rail', 'Validate it with the customer through prototype rounds', 'Tool, test and correct the lock to customer approval', 'Release it to production with documentation in place'],
+    approach: [
+      { title: 'Concept approved', text: 'The brief, rapid CAD models and 3D-printed prototypes were tested, and the prototype was approved between April and June 2021.' },
+      { title: 'Holding for the customer', text: 'Development paused from October 2021 to November 2022 while Wideline confirmed the program. Detailed CAD and the CNC working prototype were completed once it resumed.' },
+      { title: 'Two customer reviews', text: 'The customer reviewed the first working prototype in April 2023. A second prototype followed in mid-2023 and was approved in October 2023, with CAD approval and supplier selection straight after.' },
+      { title: 'Tooling package', text: 'Technical drawings and the BOM were prepared in June 2023, and the tooling quotation was reviewed and approved in October 2023.' },
+      { title: 'Tooling and testing', text: 'Tooling was made between October 2023 and April 2024. Off-tool samples were tested and corrected, and final testing and customer approval were completed in May 2024.' },
+      { title: 'Production release', text: 'BOMs, kits and a quality-control document were finalised, production ran through June 2024, and the first stock was checked in July 2024.' },
+    ],
+    path: [
+      { stage: 'Concept', period: 'Apr–Jun 2021', detail: 'Brief, rapid CAD, 3D-printed testing, prototype approval' },
+      { stage: 'Customer hold', period: 'Oct 2021–Nov 2022', detail: 'Waiting for Wideline’s confirmation' },
+      { stage: 'Development', period: 'Sep 2021–Oct 2023', detail: 'CNC working prototype, customer review, second prototype, customer approval' },
+      { stage: 'Tooling quotation', period: 'May–Oct 2023', detail: 'Drawings and BOM, quotation, review and approval' },
+      { stage: 'Tooling and testing', period: 'Oct 2023–May 2024', detail: 'Tooling, off-tool testing, corrections, final testing, customer approval' },
+      { stage: 'Production', period: 'May–Jul 2024', detail: 'BOMs and kits, quality-control document, production, first stock checked' },
+    ],
+    challenges: [
+      { problem: 'More than a year waiting for customer confirmation.', response: 'The program held at an approved concept, then moved into detailed design and a working prototype once Wideline confirmed.' },
+      { problem: 'Feedback on the first working prototype.', response: 'A second prototype was built and approved before tooling began.' },
+    ],
+    validation: 'Two customer prototype reviews, off-tool sample testing, tooling corrections and final testing before customer approval in May 2024.',
+    deliverables: ['Rapid CAD and 3D-printed prototypes', 'CNC working prototypes (two rounds)', 'Technical drawings and BOM', 'Tooling quotation package', 'Off-tool sample testing and tooling corrections', 'Final testing', 'Production BOMs and kits', 'Quality-control document'],
+    outcome: 'Wideline approved the push lock in May 2024. It was released to production, and the first stock was checked in July 2024.',
+    value: 'When a customer pauses a program, keeping the approved concept intact means it can restart without starting over.',
+    relevantIf: ['A customer program has stalled and needs to restart cleanly', 'You need a lock or latch packaged into an existing window profile', 'Customer validation has to happen before tooling is committed'],
+    service: 'engineering-cad',
+    skills: ['Lock design', 'Customer validation', 'Tooling and OTS', 'Production release'],
+    related: ['bradnams-dh-lift-handle'],
+  },
+  {
     id: 'currency-sanitiser',
     visualAlt: 'Compact banknote and coin sanitising machine',
     headline: 'Two kinds of currency, two mechanisms, one compact machine',
@@ -565,6 +824,89 @@ export const PROJECTS: Project[] = [
     service: 'engineering-cad',
     note: 'Engineering assessment, structural certification and approval remained with the authorised engineers.',
     skills: ['Defect mapping', 'Repair coordination', 'Project closeout', 'Quality assurance'],
+  },
+  {
+    id: 'ds776-ds777-lock-handles',
+    visualAlt: 'Illustration of a lock handle turning on its backplate beside an exploded view of generic handle parts',
+    illustration: 'lock-handle',
+    headline: 'A MKII lock handle, approved on its second prototype',
+    title: 'DS776 and DS777 MKII lock handles',
+    ...PRODUCT_DEVELOPMENT,
+    years: '2020–2023',
+    status: 'delivered',
+    statusLabel: 'Released to production',
+    summary: 'A MKII revision of the DS776 and DS777 lock handles, developed through two prototype rounds with customer review, then tooled, corrected and released to production in 2023.',
+    brief: 'Revising an established product means every change has to earn its place and be proven before it reaches the customer. The DS776 and DS777 lock handles were revised through a long brief and concept stage, then two prototype rounds reviewed with the customer, before tooling, off-tool testing and corrections. The schedule ran tooling preparation alongside the final prototype rounds to keep the program moving.',
+    objectives: ['Define the MKII revision and test it early with 3D-printed models', 'Reach customer approval through prototype review', 'Tool the revised parts and correct them against off-tool samples', 'Release the revised handles with production documentation in place'],
+    approach: [
+      { title: 'Brief to concept', text: 'The brief was defined, then rapid CAD models and 3D-printed parts were tested until the prototype was approved in February 2023.' },
+      { title: 'First prototype, customer review', text: 'A detailed CAD model and CNC working prototype went to the customer for review in March 2023.' },
+      { title: 'Second prototype, approved', text: 'The feedback went into a second prototype, which the customer approved in early April 2023, followed by CAD approval and supplier selection.' },
+      { title: 'Tooling in parallel', text: 'Drawings, the BOM and the tooling quotation were completed in December 2022, so tooling could proceed alongside the prototype rounds.' },
+      { title: 'Corrections and final testing', text: 'Off-tool samples were tested in March 2023 and the tooling was corrected through to June, with final testing and customer approval in July.' },
+      { title: 'Release', text: 'BOMs, kits and a quality-control document were finalised, production ran in September 2023, and the first stock was checked in October.' },
+    ],
+    path: [
+      { stage: 'Concept', period: 'May 2020–Feb 2023', detail: 'Brief, rapid CAD, 3D-printed testing, prototype approval' },
+      { stage: 'Tooling quotation', period: 'Dec 2022', detail: 'Drawings and BOM, quotation and review' },
+      { stage: 'Development', period: 'Feb–Apr 2023', detail: 'CNC working prototype, customer review, second prototype, customer approval' },
+      { stage: 'Tooling and testing', period: 'Dec 2022–Jul 2023', detail: 'Tooling, off-tool testing, corrections to June, final testing, customer approval' },
+      { stage: 'Production', period: 'Jul–Oct 2023', detail: 'BOMs and kits, quality-control document, production, first stock checked' },
+    ],
+    challenges: [
+      { problem: 'Customer feedback on the first prototype.', response: 'The changes were built into a second prototype within weeks, and that prototype was approved.' },
+      { problem: 'Keeping tooling on schedule while the design was being confirmed.', response: 'Tooling preparation ran in parallel with the prototype rounds, and the off-tool corrections that followed were closed out before final testing.' },
+    ],
+    validation: 'Two prototype rounds with customer review, off-tool sample testing, tooling corrections and final testing before customer approval in July 2023.',
+    deliverables: ['Rapid CAD models and 3D-printed parts', 'CNC working prototypes (two rounds)', 'Technical drawings and BOM', 'Tooling quotation package', 'Off-tool sample testing and tooling corrections', 'Final testing', 'Production BOMs and kits', 'Quality-control document'],
+    outcome: 'The MKII handles were approved by the customer in July 2023, went into production in September and reached stock in October 2023.',
+    value: 'Acting on customer feedback while the part is still a prototype costs far less than changing a tool.',
+    relevantIf: ['You are revising an existing product into a MKII', 'Customer feedback needs to reach the design before tooling is cut', 'You need drawings, BOMs and tooling packages that suppliers can quote and build to'],
+    service: 'engineering-cad',
+    skills: ['Product revision', 'Customer prototype review', 'Tooling and OTS', 'Production release'],
+    related: ['bradnams-dh-lift-handle', 'wideline-ascend-push-lock'],
+  },
+  {
+    id: 'bradnams-dh-lift-handle',
+    visualAlt: 'Illustration of the lower sash of a double-hung window being raised by its lift handle, with an enlarged handle section',
+    illustration: 'lift-handle',
+    featured: true,
+    headline: 'The handle that lifts the sash, designed, tooled and released for Bradnam’s',
+    title: 'Bradnam’s double-hung lift handle',
+    customer: 'Bradnam’s',
+    ...PRODUCT_DEVELOPMENT,
+    years: '2020–2022',
+    status: 'delivered',
+    statusLabel: 'Released to production',
+    summary: 'A lift handle for Bradnam’s double-hung windows, taken from brief and 3D-printed prototypes through tooling, an extended correction period and final testing to production in 2022.',
+    brief: 'On a double-hung window the lift handle is how people raise the lower sash, so it has to be comfortable to grip, sit neatly on the sash and suit the window profile it is made for. Bradnam’s needed a handle that met those requirements and could be produced consistently from tooling. The program moved quickly through concept and prototypes in 2020, then needed a longer period of tooling corrections and final testing before customer approval.',
+    objectives: ['Develop a lift handle to suit the Bradnam’s double-hung window', 'Prove the design with 3D-printed and CNC prototypes before tooling', 'Correct the tooling until off-tool parts matched the design', 'Release to production with BOMs, kits and a quality-control document'],
+    approach: [
+      { title: 'Concept in weeks', text: 'The brief, rapid CAD models, 3D-printed prototypes and prototype approval were completed between July and early August 2020.' },
+      { title: 'Working prototype', text: 'A detailed CAD model and CNC working prototype were reviewed, and CAD approval and supplier selection followed in October 2020.' },
+      { title: 'Tooling package', text: 'Technical drawings and the BOM supported a tooling quotation, which was reviewed and approved in early 2021, and the tooling was made by May 2021.' },
+      { title: 'Off-tool testing', text: 'The first off-tool samples were tested in mid-2021, and tooling corrections continued from October 2021 to May 2022.' },
+      { title: 'Final testing and approval', text: 'Final testing with gauges ran in early 2022, and the customer approved the handle in May 2022.' },
+      { title: 'Release', text: 'BOMs, kits and a quality-control document were finalised in June 2022, production followed, and the first stock was checked in October 2022.' },
+    ],
+    path: [
+      { stage: 'Concept', period: 'Jul–Aug 2020', detail: 'Brief, rapid CAD, 3D-printed prototypes, prototype approval' },
+      { stage: 'Development', period: 'Aug–Oct 2020', detail: 'Detailed CAD, CNC working prototype, review, CAD approval' },
+      { stage: 'Tooling quotation', period: 'Oct 2020–Mar 2021', detail: 'Drawings and BOM, quotation, review and approval' },
+      { stage: 'Tooling and testing', period: 'Mar 2021–Jun 2022', detail: 'Tooling, off-tool testing, corrections Oct 2021 to May 2022, final testing, customer approval' },
+      { stage: 'Production', period: 'Jun–Oct 2022', detail: 'BOMs and kits, quality-control document, production, first stock checked' },
+    ],
+    challenges: [
+      { problem: 'Off-tool parts needed more correction than first planned.', response: 'An earlier schedule aimed for stock in February 2022. Tooling corrections ran until May 2022 instead, and the release dates were re-planned around them.' },
+    ],
+    validation: 'CNC prototype review before CAD approval, off-tool sample testing, tooling corrections and final testing with gauges before customer approval in May 2022.',
+    deliverables: ['Rapid CAD and 3D-printed prototypes', 'CNC working prototype', 'Technical drawings and BOM', 'Tooling quotation package', 'Off-tool sample testing', 'Tooling corrections', 'Final testing with gauges', 'Production BOMs, kits and quality-control document'],
+    outcome: 'Bradnam’s approved the lift handle in May 2022. It was released to production, and the first stock was checked in October 2022.',
+    value: 'Re-planning around real off-tool results, rather than the original dates, keeps a part from reaching customers before it is right.',
+    relevantIf: ['You need a handle, latch or similar part designed to suit an existing window or door system', 'Off-tool samples are close but not yet right', 'You want prototypes in hand before committing to tooling'],
+    service: 'engineering-cad',
+    skills: ['Window hardware design', 'Prototype testing', 'Tooling corrections', 'Production release'],
+    related: ['wideline-ascend-push-lock', 'bradnams-chainwinder'],
   },
   {
     id: 'alexandria-bridge',
@@ -624,6 +966,169 @@ export const PROJECTS: Project[] = [
     service: 'engineering-cad',
     note: 'Detailed buoyancy, stability and environmental testing would be needed before any prototype.',
     skills: ['Concept engineering', 'Passive mechanisms', 'Marine design', 'Simplification'],
+  },
+  {
+    id: 'ds1w-chainwinder',
+    visualAlt: 'Illustration of an awning window being opened by a chainwinder, with the product-development stages beneath',
+    illustration: 'chainwinder',
+    illustrationTag: 'DS1W CHAINWINDER',
+    featured: true,
+    headline: 'Five years from brief to stock: a chainwinder seen all the way through',
+    title: 'Doric DS1W chainwinder',
+    customer: 'Doric',
+    ...PRODUCT_DEVELOPMENT,
+    years: '2019–2024',
+    status: 'delivered',
+    statusLabel: 'Released to production',
+    summary: 'A Doric chainwinder for awning windows, taken from design brief and 3D-printed prototypes through a long project hold, tooling, off-tool testing and an extended correction loop to production release in 2024.',
+    brief: 'A chainwinder is the handle-operated mechanism that drives a chain to push an awning sash open and draw it closed. It has to operate smoothly, hold the sash securely and suit the window it is made for, and every part has to come off production tooling consistently. The DS1W began in mid-2019, was placed on hold from early 2020 to late 2021, and then had to be restarted, tooled, tested and corrected before release. Its cover design also became a dependency for other chainwinder programs running at the same time.',
+    objectives: ['Turn the design brief into a working chainwinder, proven first with 3D-printed and CNC prototypes', 'Release drawings, a BOM and a tooling package that suppliers could quote against', 'Get the off-tool parts right through testing and tooling corrections', 'Hand production a controlled product: BOMs, kits and a quality-control document'],
+    approach: [
+      { title: 'Rapid concepts', text: 'The brief was turned into CAD concepts and 3D-printed prototypes within weeks, so the mechanism could be handled and tested before tooling was committed.' },
+      { title: 'A working prototype', text: 'A detailed CAD model and a first CNC-machined working prototype followed, and the design was reviewed before CAD approval and supplier selection in September 2019.' },
+      { title: 'Restarting after the hold', text: 'Drawings and BOM work carried across a project hold that ran from March 2020 to late 2021. The program then resumed at the tooling-quotation stage, and tooling went ahead.' },
+      { title: 'Off-tool testing and corrections', text: 'Off-tool samples were tested through the first half of 2023, and the tooling was corrected over the following months until final testing with gauges in May 2024.' },
+      { title: 'A change other programs waited for', text: 'Modifications to the DS1W cover were a dependency for other chainwinders in development. The Bradnam’s and R5.6 chainwinder schedules were held until the DS1W cover changes were complete.' },
+      { title: 'Production release', text: 'Production preparation ran alongside the final corrections: BOMs and kits were finalised and a quality-control document was written. After customer approval in June 2024, the first production stock was received and checked.' },
+    ],
+    path: [
+      { stage: 'Concept', period: 'Jun–Jul 2019', detail: 'Design brief, rapid CAD, 3D-printed prototypes, prototype approval' },
+      { stage: 'Development', period: 'Jul–Sep 2019', detail: 'Detailed CAD, first CNC working prototype, review, CAD approval and supplier selection' },
+      { stage: 'Tooling quotation', period: 'Sep 2019–Mar 2022', detail: 'Drawings and BOM; project on hold Mar 2020 to late 2021; quotation review and approval' },
+      { stage: 'Tooling and testing', period: 'Sep 2021–Jun 2024', detail: 'Tooling, off-tool testing in 2023, corrections to May 2024, final testing, customer approval' },
+      { stage: 'Production', period: 'Aug 2023–Jun 2024', detail: 'BOMs and kits, quality-control document, production, first stock checked' },
+    ],
+    challenges: [
+      { problem: 'A hold of almost two years in the middle of development.', response: 'The program resumed at the tooling-quotation stage with its drawings and BOM intact, rather than going back to concept.' },
+      { problem: 'A long tooling-correction loop after the first off-tool samples.', response: 'Samples were tested, the tooling was corrected and parts were re-checked until final testing with gauges was completed in May 2024.' },
+      { problem: 'Other chainwinder programs depended on the DS1W cover changes.', response: 'Their schedules were sequenced behind the DS1W cover modifications, so the shared change was resolved before their tooling work continued.' },
+    ],
+    validation: 'Stage gates throughout: 3D-printed and CNC prototypes were reviewed before CAD approval, off-tool samples were tested before and after tooling corrections, and final testing with gauges was completed before customer approval and release.',
+    deliverables: ['Concept CAD and 3D-printed prototypes', 'Detailed CAD model and CNC working prototype', 'Technical drawings and BOM', 'Tooling quotation package', 'Off-tool sample testing and tooling corrections', 'Final testing with gauges', 'Production BOMs and kits', 'Quality-control document', 'First production stock check'],
+    outcome: 'The DS1W was released to production. Customer approval was recorded in June 2024, and the first production stock was received and checked the same month.',
+    value: 'Long programs fail at the hand-offs. Keeping drawings, tooling and testing under control through a hold and a long correction loop is what got this product into production.',
+    relevantIf: ['You have a product stuck between prototype and production tooling', 'Off-tool samples keep failing and the corrections are not converging', 'Several related products depend on one design change'],
+    service: 'engineering-cad',
+    skills: ['Mechanism design', 'Prototype testing', 'Tooling and OTS', 'Production release'],
+    related: ['bradnams-chainwinder', 'r56-chainwinder', 'dn450-base-retool'],
+  },
+  {
+    id: 'aws-756-side-latch-keeper',
+    visualAlt: 'Illustration of a sliding sash closing so that its side latch bolt engages a keeper on the frame',
+    illustration: 'side-latch',
+    headline: 'A keeper made to fit, approved within six months of the brief',
+    title: 'AWS 756 side latch keeper',
+    customer: 'AWS',
+    ...PRODUCT_DEVELOPMENT,
+    years: '2019–2021',
+    status: 'delivered',
+    statusLabel: 'Released to production',
+    summary: 'A keeper for an AWS side latch, developed from brief to customer approval in six months, then released to production with BOMs, kits and a quality-control document.',
+    brief: 'A keeper only works if the latch finds it every time. It has to suit the latch it receives and the frame it is fixed to, and it has to come off production tooling consistently. The AWS 756 side latch keeper had to do both. Development, tooling and testing were completed by April 2020, and production preparation followed later that year.',
+    objectives: ['Develop a keeper to suit the side latch and its frame', 'Prove the fit with 3D-printed and CNC prototypes', 'Tool, test and correct the keeper to customer approval', 'Release it to production with controlled documentation'],
+    approach: [
+      { title: 'Brief and rapid prototypes', text: 'The brief, rapid CAD models and 3D-printed test parts were completed between November and early December 2019.' },
+      { title: 'Tooling package early', text: 'Technical drawings, the BOM and the tooling quotation were prepared in parallel and approved in December 2019, so tooling could start straight away.' },
+      { title: 'Working prototype', text: 'A detailed CAD model and CNC working prototype were reviewed, with CAD approval and supplier selection in early January 2020.' },
+      { title: 'Off-tool testing and corrections', text: 'Off-tool samples were tested in March 2020, the tooling was corrected, and final testing with gauges was completed in April.' },
+      { title: 'Customer approval', text: 'The customer approved the keeper at the end of April 2020.' },
+      { title: 'Production release', text: 'BOMs and kits were finalised, production ran from December 2020, and a quality-control document was completed before the first stock was checked in March 2021.' },
+    ],
+    path: [
+      { stage: 'Concept', period: 'Oct–Dec 2019', detail: 'Brief, rapid CAD, 3D-printed testing, prototype approval' },
+      { stage: 'Tooling quotation', period: 'Nov–Dec 2019', detail: 'Drawings and BOM, quotation, approval' },
+      { stage: 'Development', period: 'Dec 2019–Jan 2020', detail: 'Detailed CAD, CNC working prototype, review, CAD approval' },
+      { stage: 'Tooling and testing', period: 'Dec 2019–Apr 2020', detail: 'Tooling, off-tool testing, corrections, final testing, customer approval' },
+      { stage: 'Production', period: 'Oct 2020–Mar 2021', detail: 'BOMs and kits, production, quality-control document, first stock checked' },
+    ],
+    challenges: [
+      { problem: 'Getting to an approved part quickly.', response: 'The tooling package was prepared alongside the prototypes instead of after them, so tooling started in December 2019.' },
+    ],
+    validation: 'CNC prototype review, off-tool sample testing, tooling corrections and final testing with gauges before customer approval in April 2020.',
+    deliverables: ['Rapid CAD and 3D-printed test parts', 'CNC working prototype', 'Technical drawings and BOM', 'Tooling quotation package', 'Off-tool sample testing and tooling corrections', 'Final testing with gauges', 'Production BOMs and kits', 'Quality-control document'],
+    outcome: 'AWS approved the keeper in April 2020, and it was released to production, with the first stock checked in March 2021.',
+    value: 'Preparing the tooling package alongside the prototypes shortens the path from brief to an approved part.',
+    relevantIf: ['You need a component designed to suit an existing latch, lock or frame', 'You want tooling started without waiting for every prototype round to finish', 'Interface fit is the main risk in your part'],
+    service: 'engineering-cad',
+    skills: ['Interface design', 'Design for manufacture', 'Tooling and OTS', 'Production release'],
+    related: ['ds209-nz-keeper'],
+  },
+  {
+    id: 'dr2210-roller',
+    visualAlt: 'Illustration of a sliding panel running on two rollers along a track, with the load path shown',
+    illustration: 'roller',
+    headline: 'A roller taken from concept to stock in fourteen months',
+    title: 'DR2210 roller',
+    ...PRODUCT_DEVELOPMENT,
+    years: '2019–2020',
+    status: 'delivered',
+    statusLabel: 'Released to production',
+    summary: 'A roller for a sliding system, developed from brief and prototypes through tooling and off-tool testing to production release in December 2020.',
+    brief: 'A roller carries the weight of a sliding panel along its track, so its geometry, its fit in the mating profiles and its assembly all decide how the panel runs. The DR2210 had to be designed to suit its sliding system and made consistently from production tooling.',
+    objectives: ['Design a roller to suit its sliding system and mating profiles', 'Prove it with 3D-printed and CNC prototypes', 'Tool, test and correct it through to customer approval', 'Release it to production with documentation in place'],
+    approach: [
+      { title: 'Concept and prototypes', text: 'The brief, rapid CAD models and 3D-printed test parts were completed in November and early December 2019, followed by a detailed CAD model and CNC working prototype.' },
+      { title: 'Review and approval', text: 'The first prototype was reviewed, and CAD approval and supplier selection were completed in January 2020.' },
+      { title: 'Tooling package', text: 'Technical drawings and the BOM were prepared in July 2020, and the tooling quotation was reviewed and approved in August.' },
+      { title: 'Tooling, testing and corrections', text: 'Tooling was made from late August, corrections were made in October, and final testing and customer approval were completed in November 2020.' },
+      { title: 'Production in parallel', text: 'BOMs, kits and a quality-control document were prepared while the tooling was finalised, so production and first stock followed in December 2020.' },
+    ],
+    path: [
+      { stage: 'Concept', period: 'Oct–Dec 2019', detail: 'Brief, rapid CAD, 3D-printed testing, prototype approval' },
+      { stage: 'Development', period: 'Dec 2019–Jan 2020', detail: 'Detailed CAD, CNC working prototype, review, CAD approval' },
+      { stage: 'Tooling quotation', period: 'Jul–Aug 2020', detail: 'Drawings and BOM, quotation, review and approval' },
+      { stage: 'Tooling and testing', period: 'Aug–Dec 2020', detail: 'Tooling, corrections in October, final testing, customer approval in November, off-tool testing' },
+      { stage: 'Production', period: 'Sep–Dec 2020', detail: 'BOMs and kits, quality-control document, production, first stock checked' },
+    ],
+    challenges: [
+      { problem: 'A six-month gap between design approval and the tooling package.', response: 'Once the tooling package was underway, tooling, testing and production preparation were overlapped, with checks kept between them, so the roller still reached stock by December 2020.' },
+    ],
+    validation: 'CNC prototype review, off-tool sample testing, tooling corrections and final testing before customer approval in November 2020.',
+    deliverables: ['Rapid CAD and 3D-printed test parts', 'CNC working prototype', 'Technical drawings and BOM', 'Tooling quotation package', 'Off-tool sample testing and tooling corrections', 'Final testing', 'Production BOMs and kits', 'Quality-control document'],
+    outcome: 'The DR2210 was approved by the customer in November 2020 and released to production, with the first stock checked in December 2020.',
+    value: 'Overlapping tooling, testing and production preparation, with clear checks between them, keeps a program on time without skipping a step.',
+    relevantIf: ['You need a roller, wheel or carriage designed to suit an existing track', 'Your product has to fit mating profiles you cannot change', 'You want production documentation ready when the tooling is approved'],
+    service: 'engineering-cad',
+    skills: ['Component design', 'CAD assemblies', 'Tooling and OTS', 'Production release'],
+  },
+  {
+    id: 'ds209-nz-keeper',
+    visualAlt: 'Illustration of a hook bolt swinging into a keeper on a frame, with the alignment window marked',
+    illustration: 'keeper',
+    headline: 'Brief to stock in eight months for the New Zealand market',
+    title: 'Doric NZ DS209 keeper',
+    customer: 'Doric NZ',
+    ...PRODUCT_DEVELOPMENT,
+    years: '2019–2020',
+    status: 'delivered',
+    statusLabel: 'Released to production',
+    summary: 'A keeper for the Doric New Zealand range, developed, tooled, tested and released to production between May 2019 and January 2020.',
+    brief: 'A keeper has to line up with the locking element it receives, hold it securely and come off tooling consistently. The DS209 was needed for the Doric New Zealand range. Tooling started almost as soon as the prototype was approved, so the whole lifecycle from brief to stock took about eight months.',
+    objectives: ['Develop a keeper to suit the New Zealand application', 'Move from brief to tooling quickly, with prototypes reviewed on the way', 'Tool, test and correct it to customer approval', 'Release it with production documentation'],
+    approach: [
+      { title: 'A fast concept', text: 'The brief, rapid CAD model, 3D-printed test part and prototype approval were completed in one week in May 2019.' },
+      { title: 'Tooling started early', text: 'Drawings, the BOM and the tooling quotation were completed in May, and tooling began while the CNC working prototype was still being reviewed.' },
+      { title: 'Off-tool testing', text: 'Off-tool samples were tested in September 2019, corrected and given final testing with gauges.' },
+      { title: 'Approval and release', text: 'The customer approved the keeper in October 2019. BOMs, kits and a quality-control document were then finalised, production ran through to December, and the first stock was checked in January 2020.' },
+    ],
+    path: [
+      { stage: 'Concept', period: 'May 2019', detail: 'Brief, rapid CAD, 3D-printed test part and prototype approval in one week' },
+      { stage: 'Tooling quotation', period: 'May 2019', detail: 'Drawings and BOM, quotation and approval' },
+      { stage: 'Development', period: 'May–Jun 2019', detail: 'Detailed CAD, CNC working prototype, review, CAD approval' },
+      { stage: 'Tooling and testing', period: 'May–Oct 2019', detail: 'Tooling, off-tool testing in September, corrections, final testing, customer approval' },
+      { stage: 'Production', period: 'Oct 2019–Jan 2020', detail: 'BOMs and kits, quality-control document, production, first stock checked' },
+    ],
+    challenges: [
+      { problem: 'A short program with tooling started early.', response: 'Prototype review and tooling ran in parallel, and the off-tool test and correction round in September confirmed the part before approval.' },
+    ],
+    validation: 'CNC prototype review, off-tool sample testing, tooling corrections and final testing with gauges before customer approval in October 2019.',
+    deliverables: ['Rapid CAD and 3D-printed test part', 'CNC working prototype', 'Technical drawings and BOM', 'Tooling quotation package', 'Off-tool sample testing and tooling corrections', 'Final testing with gauges', 'Production BOMs and kits', 'Quality-control document'],
+    outcome: 'The DS209 keeper was approved in October 2019 and released to production, with the first stock checked in January 2020, about eight months after the brief.',
+    value: 'Running tooling in parallel with prototype review is how a straightforward part reaches stock in months rather than years.',
+    relevantIf: ['You need a variant of a product adapted for another market or system', 'A simple component is taking far longer than it should to reach production', 'You want prototype review and tooling coordinated in parallel'],
+    service: 'engineering-cad',
+    skills: ['Interface design', 'Rapid prototyping', 'Tooling and OTS', 'Production release'],
+    related: ['aws-756-side-latch-keeper'],
   },
   {
     id: 'robohelix-coiling-machine',
@@ -773,6 +1278,7 @@ export const PROJECTS: Project[] = [
   {
     id: 'orica-bulk-master',
     visualAlt: 'Orica Bulk Master mobile manufacturing truck',
+    featured: true,
     headline: 'Packing a mobile manufacturing plant onto a truck',
     title: 'Bulk Master Series 7 mobile manufacturing unit',
     client: 'Orica',
@@ -890,6 +1396,7 @@ export const PROJECTS: Project[] = [
   {
     id: 'bluescope-coke-plant-6',
     visualAlt: 'Large ducting and plant structures inside a coke plant',
+    featured: true,
     headline: 'Maintenance drawings that work around an operating steelworks',
     title: 'Coke Plant No. 6 maintenance and upgrade documentation',
     client: 'BlueScope Steel',
@@ -919,7 +1426,7 @@ export const PROJECTS: Project[] = [
 ];
 
 /** Named organisations (excluding generic descriptions such as "Food manufacturer"). */
-export const NAMED_ORGANISATIONS = ['BlueScope Steel', 'NEPEAN Conveyors', 'OneSteel Whyalla', 'Orica', 'NID Pty Ltd', 'Oventus', 'Velocity Melbourne Trains', 'RoboHelix Manufacturing', 'EPTEC', 'Wink Solutions', 'Liquip International'];
+export const NAMED_ORGANISATIONS = ['Alchin Long Group', 'Doric', 'Bradnam’s', 'Wideline', 'AWS', 'BlueScope Steel', 'NEPEAN Conveyors', 'OneSteel Whyalla', 'Orica', 'NID Pty Ltd', 'Oventus', 'Velocity Melbourne Trains', 'RoboHelix Manufacturing', 'EPTEC', 'Wink Solutions', 'Liquip International'];
 
 /** Contact link that preselects the related service and names the project in the enquiry. */
 export const projectEnquiryHref = (p: Project) => `/contact/?service=${p.service}&project=${encodeURIComponent(p.title)}`;

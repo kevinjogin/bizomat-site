@@ -5,8 +5,8 @@
 import WorkIllustration from './WorkIllustration.astro';
 import dimensions from '../data/work-visuals.json';
 import type { ProjectIllustration } from '../data/projects.ts';
-interface Props { id: string; alt: string; size?: 'card' | 'large'; caption?: string; illustration?: ProjectIllustration }
-const { id, alt, size = 'card', caption, illustration } = Astro.props;
+interface Props { id: string; alt: string; size?: 'card' | 'large'; caption?: string; illustration?: ProjectIllustration; tag?: string; final?: string }
+const { id, alt, size = 'card', caption, illustration, tag, final } = Astro.props;
 const [width, height] = (dimensions as Record<string, number[]>)[id] ?? [960, 600];
 const src = (layer: 'base' | 'lines') => ({
   src: `/proof-of-work/${id}-${layer}-480.webp`,
@@ -18,7 +18,7 @@ const sizes = size === 'card' ? '(max-width: 640px) 92vw, (max-width: 1050px) 13
   <div class="work-visual__frame">
     {illustration ? (
       <div class="work-visual__art" role="img" aria-label={`${alt} (illustrative, not an image of the actual project)`}>
-        <WorkIllustration kind={illustration} uid={`wi-${id}-${size}`} />
+        <WorkIllustration kind={illustration} uid={`wi-${id}-${size}`} tag={tag} final={final} />
         <span class="work-visual__badge" aria-hidden="true">Illustrative</span>
       </div>
     ) : (

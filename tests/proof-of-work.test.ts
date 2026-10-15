@@ -5,16 +5,35 @@ import { NAMED_ORGANISATIONS, PROJECTS, PROJECT_SECTORS, PROJECT_SERVICES, proje
 
 const read = (path: string) => readFileSync(path, 'utf8');
 
-test('the proof of work keeps 26 published project records and the 3 capital projects, newest first', () => {
-  assert.equal(PROJECTS.length, 29);
+test('the proof of work keeps every published record, the 3 capital projects and the 11 hardware programs, newest first', () => {
+  assert.equal(PROJECTS.length, 40);
   assert.equal(PROJECTS.filter((p) => p.sector === 'capital').length, 3);
+  assert.equal(PROJECTS.filter((p) => p.sector === 'hardware').length, 11);
   assert.ok(!PROJECTS.some((p) => p.id === 'multi-project-coordination'), 'multi-project coordination is part of the capital projects');
   assert.ok(PROJECTS.filter((p) => p.sector === 'capital').every((p) => /toolroom/.test(p.brief)), 'each capital project covers the shared-toolroom coordination');
   assert.equal(new Set(PROJECTS.map((p) => p.id)).size, PROJECTS.length, 'ids are unique');
   const start = (p: (typeof PROJECTS)[number]) => Number(p.years.slice(0, 4));
   for (let i = 1; i < PROJECTS.length; i++) assert.ok(start(PROJECTS[i - 1]) >= start(PROJECTS[i]), `${PROJECTS[i].id} is in date order`);
   for (const sector of PROJECT_SECTORS) assert.ok(PROJECTS.some((p) => p.sector === sector.id), `${sector.label} has projects`);
-  for (const org of NAMED_ORGANISATIONS) assert.ok(PROJECTS.some((p) => p.client.startsWith(org)), `${org} appears in a project`);
+  for (const org of NAMED_ORGANISATIONS) assert.ok(PROJECTS.some((p) => p.client.startsWith(org) || p.customer?.startsWith(org)), `${org} appears in a project`);
+  const ids = new Set(PROJECTS.map((p) => p.id));
+  for (const p of PROJECTS) for (const id of p.related ?? []) assert.ok(ids.has(id) && id !== p.id, `${p.id} links to related case study ${id}`);
+  assert.ok(PROJECTS.filter((p) => p.featured).length >= 6, 'enough featured projects');
+});
+
+test('employer work is attributed as track record, and statuses never claim more than the schedule records', () => {
+  for (const p of PROJECTS.filter((x) => x.client === 'Alchin Long Group')) {
+    assert.match(p.employment ?? '', /founder of KEVOS®.*employed by Alchin Long Group.*not a KEVOS® client engagement/, `${p.id} states its employment context`);
+    assert.doesNotMatch(JSON.stringify(p), /AZ[DT]\d|31-JS|\bpatent|\binvent|under budget|\d+ ?days? to/i, `${p.id} leaks nothing internal`);
+  }
+  for (const p of PROJECTS.filter((x) => x.sector === 'hardware')) {
+    assert.ok(p.path && p.path.length >= 4 && p.objectives && p.challenges && p.validation && p.contribution, `${p.id} has the full case-study structure`);
+    if (p.status === 'approved') {
+      assert.equal(p.statusLabel, 'Customer approved');
+      assert.match(p.outcome, /production release is not claimed/, `${p.id} does not claim production`);
+    } else assert.equal(p.statusLabel, 'Released to production');
+  }
+  for (const held of ['abh', 'friction', 'dh60', 'ds2400', 'ds10', 'paraflow', 'link-arm', 'laser']) assert.ok(!PROJECTS.some((p) => p.id.includes(held)), `${held} stays a private draft`);
 });
 
 test('every case study is complete, written in the KEVOS voice and leads to an enquiry', () => {
@@ -44,6 +63,9 @@ test('the homepage shows the proof of work as a section with its own navigation 
   const component = read('src/components/ProofOfWork.astro');
   assert.doesNotMatch(component, /\sstyle=/);
   assert.match(component, /aria-pressed/);
+  assert.match(component, /id=\{`case-\$\{p\.id\}`\}/, 'every case study has a deep-link anchor');
+  assert.match(component, /type="search"/, 'the work can be searched');
+  assert.match(component, /hashchange/, 'deep links open the case study');
 });
 
 test('every project has its KEVOS-coloured animated visual', () => {
@@ -52,6 +74,7 @@ test('every project has its KEVOS-coloured animated visual', () => {
     assert.ok(p.visualAlt.trim().length > 10, `${p.id} describes its image`);
     if (p.illustration) {
       assert.match(read('src/components/WorkIllustration.astro'), new RegExp(`kind === '${p.illustration}'`), `${p.id} has its illustration`);
+      assert.match(read('src/components/ProofOfWork.astro'), /Not an image of the actual project/, `${p.id} illustration is labelled`);
       continue;
     }
     assert.ok(dimensions[p.id], `${p.id} has visual dimensions`);
