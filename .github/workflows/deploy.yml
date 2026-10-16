@@ -19,7 +19,7 @@ jobs:
     env:
       FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
       APP: ${{ vars.FLY_APP || 'opensketch-yz' }}
-      ORG: ${{ vars.FLY_ORG || 'yuanzheng-yang' }}
+      ORG: ${{ vars.FLY_ORG || 'personal' }}
       REGION: syd
     steps:
       - name: Check setup
