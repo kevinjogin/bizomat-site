@@ -141,6 +141,8 @@ def body_topology(part, kind: str = "both", near: list | None = None, limit: int
         for i in pick(edges, lambda e: e.position_at(0.5)):
             fs = edge_faces.get(i, [])
             row = _edge_info(i, edges[i], fs)
+            if len(fs) == 1:
+                row["seam"] = True  # where a closed surface (a hole, a shaft) meets itself: not an edge to round
             if len(fs) == 2:
                 a = _face_angle(edges[i], faces[fs[0]], faces[fs[1]])
                 if a is not None:

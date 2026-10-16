@@ -17,6 +17,7 @@ from build123d import (
     Edge,
     Face,
     GeomType,
+    Kind,
     Location,
     Part,
     Plane,
@@ -475,11 +476,23 @@ def _regen_feature(feat: dict, st: RegenState):
     if t == "shell":
         faces, missing = find_faces(st.part, feat.get("faces", []))
         th = float(feat.get("thickness", 1))
-        try:
-            amt = th if feat.get("outward") else -th
-            st.part = solid_of(offset(st.part, amount=amt, openings=faces))
-        except Exception as exc:
-            raise FeatureError("Failed to shell the body (thickness too large?)") from exc
+        amt = th if feat.get("outward") else -th
+        before = st.part.volume
+        result = None
+        # OpenCascade sometimes fails with one corner join and works with the other, and sometimes hands
+        # back the body unchanged without an error: try both, and only accept a body that really changed.
+        for kind in (Kind.ARC, Kind.INTERSECTION):
+            try:
+                r = solid_of(offset(st.part, amount=amt, openings=faces, kind=kind))
+            except Exception:
+                continue
+            if r is not None and abs(r.volume - before) > max(1e-9, 1e-9 * abs(before)):
+                result = r
+                break
+        if result is None:
+            raise FeatureError("Failed to shell the body. Try a thinner wall, shelling before the fillets, "
+                               "or removing a different face.")
+        st.part = result
         return f"{missing} face reference(s) missing" if missing else None
     if t == "mirror":
         pl = resolve_plane(feat.get("plane"), st, diagnostics)

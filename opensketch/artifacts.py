@@ -190,10 +190,15 @@ def export_record(rec: dict, fmt: str, part_id: str | None = None) -> dict:
     return dict(publish(rec, raw, fmt, doc.get("name") or rec["name"], part_id), **report)
 
 
-def preview_record(rec: dict, view: str, width: int, height: int, part_id: str | None = None) -> tuple[dict, bytes]:
+def preview_record(rec: dict, view: str, width: int, height: int, part_id: str | None = None,
+                   camera: dict | None = None, section: dict | None = None) -> tuple[dict, bytes]:
     from .preview import render_preview
     doc = select_document(rec["doc"], part_id)
     report = validate_geometry(doc)
-    raw = render_preview(doc, view=view, width=width, height=height)
+    cam = {k: v for k, v in (camera or {}).items() if k in ("yaw", "pitch", "target", "view_width") and v is not None}
+    raw = render_preview(doc, view=view, width=width, height=height, section=section, **cam)
+    extra = {"camera": cam} if cam else {}
+    if section:
+        extra["section"] = section
     return (dict(publish(rec, raw, "png", doc.get("name") or rec["name"], part_id),
-                 view=view, width=width, height=height, **report), raw)
+                 view=view, width=width, height=height, **extra, **report), raw)

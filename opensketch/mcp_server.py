@@ -17,6 +17,7 @@ import binascii
 import json
 import re
 import inspect
+from pathlib import Path
 from typing import Annotated, Any, Literal
 
 import anyio
@@ -125,11 +126,23 @@ async def _apply(doc_id: str, tool: str, **inp) -> str:
 
 # ----------------------------------------------------------------------------- documents
 
+SKILL_DIR = Path(__file__).resolve().parent.parent / "skills" / "opensketch-cad"
+
+
+def _skill_reference() -> str:
+    """The opensketch-cad skill's reference (planes, argument shapes, errors and fixes, red flags), so a
+    connector without the skill installed gets the same guidance."""
+    try:
+        return "\n\n" + (SKILL_DIR / "reference.md").read_text()
+    except OSError:
+        return ""
+
+
 @mcp.tool()
 def get_modelling_guide() -> str:
-    """The OpenSketch document format, feature types, assembly workflow and design rules. Read it once
-    before your first change."""
-    return MCP_PREFACE + ai.SYSTEM
+    """The OpenSketch document format, feature types, assembly workflow, design rules, plane tables, errors
+    and their fixes. Read it once before your first change."""
+    return MCP_PREFACE + ai.SYSTEM + _skill_reference()
 
 
 @mcp.tool()
@@ -292,15 +305,26 @@ async def export_document(doc_id: str, format: Literal["osk", "step", "stl"], pa
 
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
 async def preview_document(doc_id: str, view: Literal["isometric", "top", "front", "right"] = "isometric",
-                           width: int = 960, height: int = 720, part_id: str | None = None) -> CallToolResult:
+                           width: int = 960, height: int = 720, part_id: str | None = None,
+                           yaw: Annotated[float | None, Field(description="Degrees about +Y from the front (+Z) toward the right (+X); with pitch, replaces view")] = None,
+                           pitch: Annotated[float | None, Field(description="Degrees the eye is above the XZ plane (-90..90; 90 = top)")] = None,
+                           target: Annotated[list[float] | None, Field(description="[x,y,z] mm to centre on (close-ups)")] = None,
+                           view_width: Annotated[float | None, Field(description="Width shown, in mm (zoom); default fits the model")] = None,
+                           section: Annotated[dict | None, Field(description='{"point": [x,y,z], "normal": [x,y,z]}: cut the model and remove the normal\'s side; cut faces are orange')] = None
+                           ) -> CallToolResult:
     """Render a PNG of saved geometry without a browser. Returns the image directly for inspection,
-    plus an immutable PNG download_url valid for one hour. Views: isometric, top, front, right. Dimensions
-    128..1600 pixels. Optional part_id previews an assembly part in local coordinates. No document edits."""
+    plus an immutable PNG download_url valid for one hour. Views: isometric, top, front, right, or any
+    direction with yaw/pitch (yaw 0 pitch 0 = front, yaw 90 = right, pitch 90 = top, yaw 45 pitch 35 =
+    isometric). target + view_width give a close-up (e.g. view_width 20 around a boss). section cuts the
+    model to look inside (wall thickness, a bore, a snap fit). Dimensions 128..1600 pixels. Optional
+    part_id previews an assembly part in local coordinates. No document edits."""
     try:
         if not 128 <= width <= 1600 or not 128 <= height <= 1600:
             raise artifacts.ArtifactError("Preview dimensions must be between 128 and 1600 pixels.")
         rec = store.get(doc_id)
-        result, raw = await anyio.to_thread.run_sync(artifacts.preview_record, rec, view, width, height, part_id)
+        camera = {"yaw": yaw, "pitch": pitch, "target": target, "view_width": view_width}
+        result, raw = await anyio.to_thread.run_sync(artifacts.preview_record, rec, view, width, height, part_id,
+                                                     camera, section)
         result["open"] = _link(doc_id)
         return CallToolResult(content=[TextContent(type="text", text=json.dumps(result)),
                                        ImageContent(type="image", data=base64.b64encode(raw).decode(), mime_type="image/png")],
@@ -616,7 +640,7 @@ async def body_topology(doc_id: str, part_id: str | None = None,
     """Faces and edges of a part's body, to pick them by point instead of guessing. Faces: type, area, centre,
     an on-face point, normal (planes), axis and radius (cylinders, cones), and `ref`. Edges: type, midpoint,
     start, end, length, direction or centre and radius, the two faces it joins, face_angle_deg (90 = square
-    corner, 0 = smooth) and `ref`. Pass an edge's `ref` as-is in fillet / chamfer edges and a face's `ref`
+    corner, 0 = smooth), seam (where a hole or shaft surface meets itself: never fillet it) and `ref`. Pass an edge's `ref` as-is in fillet / chamfer edges and a face's `ref`
     in shell / draft faces. Use near=[x,y,z] to get the items around a spot. Assembly parts are in part
     coordinates (give part_id)."""
     try:

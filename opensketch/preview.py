@@ -31,13 +31,45 @@ def _color(value):
     return np.array([int(value[i:i + 2], 16) for i in (1, 3, 5)], dtype=float)
 
 
-def _meshes(doc):
-    """Yield visible meshes, their solved transforms, and appearance colours."""
+CUT_COLOR = np.array([214.0, 134.0, 60.0])  # section faces, like SOLIDWORKS section caps
+
+
+def _section_mesh(solid, matrix, section):
+    """The solid with everything on the section normal's side removed, meshed (cut faces are real faces)."""
+    from build123d import Keep, Plane
+    inv = np.linalg.inv(matrix)
+    p = inv[:3, :3] @ np.array(section["point"], float) + inv[:3, 3]
+    n = inv[:3, :3] @ np.array(section["normal"], float)
+    kept = solid.split(Plane(origin=tuple(p), z_dir=tuple(n)), keep=Keep.BOTTOM)
+    if kept is None or not getattr(kept, "volume", 0):
+        return {"faces": [], "edges": []}, (p, n / np.linalg.norm(n))
+    return geometry.mesh_shape(kept), (p, n / np.linalg.norm(n))
+
+
+def _check_section(section):
+    if section is None:
+        return None
+    try:
+        pt, nm = [float(x) for x in section["point"]], [float(x) for x in section["normal"]]
+    except (KeyError, TypeError, ValueError):
+        raise ValueError('section must be {"point": [x, y, z], "normal": [x, y, z]}') from None
+    if len(pt) != 3 or len(nm) != 3 or not np.all(np.isfinite(pt + nm)) or np.linalg.norm(nm) < 1e-9:
+        raise ValueError('section must be {"point": [x, y, z], "normal": [x, y, z]} with a non-zero normal')
+    return {"point": pt, "normal": nm}
+
+
+def _meshes(doc, section=None):
+    """Yield visible meshes, their solved transforms, appearance colours and the local cut plane (if any)."""
     if not assembly.is_assembly(doc):
         result = geometry.regen_result(doc)
         if any(s["state"] == "error" for s in result["status"]):
             raise ValueError("Fix feature errors before rendering a preview")
-        yield result["body"], np.eye(4), _color(doc.get("appearance"))
+        if section:
+            st, _ = geometry.regen(doc)
+            body, cut = _section_mesh(st.part, np.eye(4), section)
+            yield body, np.eye(4), _color(doc.get("appearance")), cut
+            return
+        yield result["body"], np.eye(4), _color(doc.get("appearance")), None
         return
     result = assembly.regen_assembly(doc)
     if any(m["state"] == "error" for m in result["mates"]):
@@ -55,7 +87,13 @@ def _meshes(doc):
         if not part["body"]["faces"]:
             raise ValueError(f"Component {c['id']} has no solid body")
         if not original.get("hidden"):
-            yield part["body"], np.array(c["matrix"]).reshape(4, 4), _color(part.get("appearance"))
+            matrix = np.array(c["matrix"]).reshape(4, 4)
+            if section:
+                solid = assembly.build_part(assembly.part_of(doc, original))["solid"]
+                body, cut = _section_mesh(solid, matrix, section)
+                yield body, matrix, _color(part.get("appearance")), cut
+            else:
+                yield part["body"], matrix, _color(part.get("appearance")), None
 
 
 def _png(rgb):
@@ -69,34 +107,60 @@ def _png(rgb):
             + chunk(b"IDAT", zlib.compress(rows)) + chunk(b"IEND", b""))
 
 
-def render_preview(doc: dict, view: str = "isometric", width: int = 960, height: int = 720) -> bytes:
+def camera_direction(yaw: float, pitch: float) -> np.ndarray:
+    """Unit vector from the target toward the eye. yaw (deg) turns about +Y from the front (+Z) toward the
+    right (+X); pitch (deg) lifts the eye above the XZ plane. yaw 0, pitch 0 = Front; yaw 90 = Right;
+    pitch 90 = Top; yaw 45, pitch 35.26 = isometric."""
+    y, p = np.radians(yaw), np.radians(pitch)
+    return np.array([np.sin(y) * np.cos(p), np.sin(p), np.cos(y) * np.cos(p)])
+
+
+def render_preview(doc: dict, view: str = "isometric", width: int = 960, height: int = 720,
+                   yaw: float | None = None, pitch: float | None = None, target: list | None = None,
+                   view_width: float | None = None, section: dict | None = None) -> bytes:
     """Render a part or solved assembly to PNG without changing its document.
 
     Views use OpenSketch's Y-up convention. Hidden/suppressed components are not
-    drawn. Bounds are fitted to the visible geometry with an eight percent margin.
+    drawn. Bounds are fitted to the visible geometry with an eight percent margin,
+    unless target / view_width ask for a close-up. yaw and pitch (degrees) give any
+    direction. section {point, normal} cuts the solids and removes the normal's side;
+    cut faces are drawn in orange.
     """
     if view not in VIEWS:
         raise ValueError("View must be isometric, top, front or right")
     if any(isinstance(v, bool) or not isinstance(v, int) or not 128 <= v <= 1600 for v in (width, height)):
         raise ValueError("Preview width and height must be integers from 128 to 1600")
+    section = _check_section(section)
+    if view_width is not None and not (isinstance(view_width, (int, float)) and 0 < view_width < 1e6):
+        raise ValueError("view_width is the width shown, in mm, more than 0")
+    if target is not None and not (isinstance(target, list) and len(target) == 3 and all(isinstance(v, (int, float)) for v in target)):
+        raise ValueError("target must be [x, y, z]")
     direction, up = (np.array(v, dtype=float) for v in VIEWS[view])
+    if yaw is not None or pitch is not None:
+        pitch = float(pitch or 0)
+        if not -90 <= pitch <= 90:
+            raise ValueError("pitch must be from -90 to 90 degrees")
+        direction = camera_direction(float(yaw or 0), pitch)
+        up = np.array([0.0, 1.0, 0.0]) if abs(pitch) < 89.9 else np.array([0.0, 0.0, -np.sign(pitch)])
     direction /= np.linalg.norm(direction)
     right = np.cross(up, direction)
     right /= np.linalg.norm(right)
     up = np.cross(direction, right)
     camera = np.array([right, up, direction]).T
     faces, edges = [], []
-    for mesh, matrix, color in _meshes(doc):
+    for mesh, matrix, color, cut in _meshes(doc, section):
         def world(points):
             return np.array(points, dtype=float).reshape(-1, 3) @ matrix[:3, :3].T + matrix[:3, 3]
         for face in mesh["faces"]:
+            local = np.array(face["positions"], dtype=float).reshape(-1, 3)
             vertices = world(face["positions"])
             indices = np.array(face["indices"], dtype=int).reshape(-1, 3)
+            on_cut = cut is not None and len(local) and np.all(np.abs((local - cut[0]) @ cut[1]) < 1e-4 * max(1.0, float(np.ptp(local))))
             if len(indices):
-                faces.append((vertices, indices, color))
+                faces.append((vertices, indices, CUT_COLOR if on_cut else color))
         edges.extend(world(edge["points"]) for edge in mesh["edges"])
     if not faces:
-        raise ValueError("No visible solid body to preview")
+        raise ValueError("No visible solid body to preview" + (" (the section removes all of it)" if section else ""))
     if sum(len(indices) for _, indices, _ in faces) > 250_000:
         raise ValueError("Preview exceeds 250,000 triangles; select a smaller part")
     vertices = np.concatenate([v for v, _, _ in faces])
@@ -108,6 +172,10 @@ def render_preview(doc: dict, view: str = "isometric", width: int = 960, height:
     span = np.maximum(hi[:2] - lo[:2], 1e-9)
     scale = min(width * 0.84 / span[0], height * 0.84 / span[1])
     middle = (lo[:2] + hi[:2]) / 2
+    if target is not None:  # close-up: centre the view on the target point
+        middle = ((np.array(target, dtype=float) - center) @ camera)[:2]
+    if view_width is not None:
+        scale = width / float(view_width)
 
     def project(points):
         p = (points - center) @ camera
