@@ -4,14 +4,17 @@ import Hero from '../components/Hero.astro';
 import Container from '../components/Container.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import FormattedDate from '../components/FormattedDate.astro';
+import LegalArt, { type LegalScene } from '../components/LegalArt.astro';
 
 interface Props {
   title: string;
   description: string;
   path: string;
   updated: Date;
+  /** Purpose-built animated scene shown beside the title. */
+  scene?: LegalScene;
 }
-const { title, description, path, updated } = Astro.props;
+const { title, description, path, updated, scene } = Astro.props;
 const crumbs = [
   { label: 'Home', href: '/' },
   { label: title, href: path },
@@ -20,6 +23,7 @@ const crumbs = [
 
 <BaseLayout title={title} description={description} breadcrumbs={crumbs}>
   <Hero eyebrow="Legal" title={title}>
+    {scene && <LegalArt scene={scene} slot="visual" />}
     <Breadcrumb items={crumbs} slot="before" />
     <p class="legal-updated">Last updated <FormattedDate date={updated} /></p>
   </Hero>

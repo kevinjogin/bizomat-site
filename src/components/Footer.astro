@@ -36,7 +36,7 @@ const year = new Date().getFullYear();
     </div>
     <div class="site-footer__base">
       <p>© {year} {SITE.name}. All rights reserved.</p>
-      <p>{SITE.name} is a registered Australian trade mark. <a href={SITE.tradeMark.record}>No. {SITE.tradeMark.number}</a>.</p>
+      <p>{SITE.name} is a registered Australian trade mark. <a href={SITE.tradeMark.record} target="_blank" rel="noopener noreferrer" data-cta="footer-trade-mark">No. {SITE.tradeMark.number}<span class="visually-hidden"> (IP Australia record, opens in a new tab)</span></a>.</p>
       <nav aria-label="Legal">
         <ul class="site-footer__legal">{FOOTER_NAV.legal.map((item) => <li><a href={item.href}>{item.label}</a></li>)}</ul>
       </nav>

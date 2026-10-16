@@ -1,0 +1,391 @@
+---
+/**
+ * Hero illustrations for the legal pages, one purpose-built scene each, in the KEVOS® blueprint-panel style:
+ *   privacy    → COLLECT → PROTECT → USE → RETAIN: an enquiry travels through an encrypted channel to the inbox,
+ *                is used only to respond, and is kept only as long as useful.
+ *   terms      → ENQUIRE → SCOPE → AGREE → YOUR RIGHTS: website terms are a guide, the written scope is checked
+ *                off, signed and stamped, and consumer-law rights stay in place.
+ *   disclaimer → INFORMATION → SCOPE → SPECIALISTS → YOUR RIGHTS: website content is general information, the
+ *                agreed scope draws the boundary, regulated work goes to registered professionals.
+ * Pure SVG and CSS on one 16-second timeline: no scripts, images or libraries. With reduced motion, every stage
+ * is shown at once as a still.
+ */
+import Logo from './Logo.astro';
+
+export type LegalScene = 'privacy' | 'terms' | 'disclaimer';
+interface Props {
+  scene: LegalScene;
+}
+const { scene } = Astro.props;
+
+const meta = {
+  privacy: {
+    label: 'KEVOS® PRIVACY',
+    stages: ['Collect', 'Protect', 'Use', 'Retain'],
+    caption:
+      'Illustration: an enquiry form is filled in, travels through an encrypted connection to the KEVOS® inbox, is used only to respond (not sold, not added to a mailing list, no tracking cookies), and is kept only as long as it is useful, with the right to ask for access, correction or deletion.',
+  },
+  terms: {
+    label: 'KEVOS® TERMS',
+    stages: ['Enquire', 'Scope', 'Agree', 'Your rights'],
+    caption:
+      'Illustration: the website terms are a guide and an enquiry creates no obligation; a written scope covering scope, deliverables, assumptions and commercial terms is checked off, signed and stamped as agreed in writing; and Australian Consumer Law rights stay in place.',
+  },
+  disclaimer: {
+    label: 'KEVOS® DISCLAIMER',
+    stages: ['Information', 'Scope', 'Specialists', 'Your rights'],
+    caption:
+      'Illustration: READOS, WORKOS and Insights content is general information; an agreed scope draws the boundary around KEVOS® services; certification, statutory approvals and licensed trades go to registered professionals; and Australian Consumer Law rights are not excluded.',
+  },
+}[scene];
+
+const rows = [
+  { y: 82, label: 'SCOPE', w: 104 },
+  { y: 110, label: 'DELIVERABLES', w: 88 },
+  { y: 138, label: 'ASSUMPTIONS', w: 96 },
+  { y: 166, label: 'COMMERCIAL TERMS', w: 80 },
+];
+const inScope = [
+  { x: 32, y: 152, t: 'CAD & DRAWINGS' },
+  { x: 144, y: 152, t: 'DOCUMENTATION' },
+  { x: 32, y: 190, t: 'PROCESS REVIEW' },
+  { x: 144, y: 190, t: 'PROJECT SUPPORT' },
+];
+const specialists = ['ENGINEERING CERTIFICATION', 'STATUTORY APPROVALS', 'LICENSED TRADES'];
+const promises = [
+  { x: 20, w: 70, t: 'NOT SOLD' },
+  { x: 96, w: 100, t: 'NO MAILING LIST' },
+  { x: 202, w: 122, t: 'NO TRACKING COOKIES' },
+];
+---
+
+<figure class:list={['lg', `lg--${scene}`]} aria-labelledby={`lg-caption-${scene}`}>
+  <figcaption id={`lg-caption-${scene}`} class="visually-hidden">{meta.caption}</figcaption>
+  <div class="lg__panel">
+    <div class="lg__top" aria-hidden="true">
+      <span>{meta.label}</span>
+      <span class="lg__brand"><Logo label="" height={14} /></span>
+    </div>
+
+    <svg class="lg__svg" viewBox="0 0 480 270" aria-hidden="true" focusable="false">
+      <defs>
+        <marker id={`lg-arrow-${scene}`} viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0 0 8 4 0 8z" class="lg-fill-o" />
+        </marker>
+      </defs>
+
+      {
+        scene === 'privacy' && (
+          <Fragment>
+            <g class="lg-in1">
+              <rect x="20" y="20" width="132" height="168" rx="5" class="lg-card" />
+              <text x="32" y="40" class="lg-t lg-t--o">01 · ENQUIRY</text>
+              <text x="32" y="62" class="lg-t">NAME</text>
+              <rect x="32" y="67" width="108" height="13" rx="2" class="lg-field" />
+              <rect x="35" y="71" width="60" height="5" class="lg-grow lg-grow--1" />
+              <text x="32" y="96" class="lg-t">EMAIL</text>
+              <rect x="32" y="101" width="108" height="13" rx="2" class="lg-field" />
+              <rect x="35" y="105" width="78" height="5" class="lg-grow lg-grow--2" />
+              <text x="32" y="130" class="lg-t">PROJECT DETAILS</text>
+              <rect x="32" y="135" width="108" height="40" rx="2" class="lg-field" />
+              <rect x="35" y="140" width="96" height="4" class="lg-grow lg-grow--3" />
+              <rect x="35" y="148" width="84" height="4" class="lg-grow lg-grow--4" />
+              <rect x="35" y="156" width="64" height="4" class="lg-grow lg-grow--5" />
+            </g>
+            <g class="lg-in2">
+              <path d="M152 98H334" class="lg-channel" />
+              <rect x="222" y="90" width="36" height="28" rx="4" class="lg-lock" />
+              <path d="M230 90v-8a10 10 0 0 1 20 0v8" class="lg-shackle" />
+              <circle cx="240" cy="101" r="3" class="lg-fill-o" />
+              <path d="M240 103v6" class="lg-key" />
+              <text x="240" y="136" class="lg-t lg-t--o" text-anchor="middle">02 · ENCRYPTED IN TRANSIT</text>
+            </g>
+            <rect x="152" y="94" width="8" height="8" rx="1.5" class="lg-packet" />
+            <g class="lg-in3">
+              <rect x="334" y="20" width="126" height="132" rx="5" class="lg-card" />
+              <text x="346" y="40" class="lg-t lg-t--o">03 · KEVOS® INBOX</text>
+              <rect x="364" y="52" width="66" height="44" rx="3" class="lg-env" />
+              <path d="M364 54l33 24 33-24" class="lg-thin" />
+              <text x="397" y="116" class="lg-t lg-t--b" text-anchor="middle">USED ONLY TO</text>
+              <text x="397" y="128" class="lg-t lg-t--b" text-anchor="middle">RESPOND</text>
+            </g>
+            {promises.map((p, i) => (
+              <g class:list={['lg-in3', `lg-d${i + 1}`]}>
+                <rect x={p.x} y="204" width={p.w} height="20" rx="10" class="lg-pill" />
+                <path d={`M${p.x + 9} 214l3 3 5-6`} class="lg-tick-static" />
+                <text x={p.x + 22} y="217" class="lg-t lg-t--b">{p.t}</text>
+              </g>
+            ))}
+            <g class="lg-in4">
+              <circle cx="397" cy="196" r="24" class="lg-thin" />
+              <circle cx="397" cy="196" r="20" class="lg-arc lg-draw4" pathLength="1" />
+              <path d="M397 196V182M397 196l9 6" class="lg-hand" />
+              <text x="397" y="240" class="lg-t lg-t--o" text-anchor="middle">04 · KEPT ONLY AS</text>
+              <text x="397" y="252" class="lg-t lg-t--o" text-anchor="middle">LONG AS USEFUL</text>
+              <rect x="20" y="236" width="178" height="20" rx="10" class="lg-pill lg-pill--o" />
+              <text x="109" y="249" class="lg-t lg-t--b" text-anchor="middle">ASK TO ACCESS, CORRECT, DELETE</text>
+            </g>
+          </Fragment>
+        )
+      }
+
+      {
+        scene === 'terms' && (
+          <Fragment>
+            <g class="lg-in1">
+              <path d="M20 28H112L130 46V196H20Z" class="lg-card" />
+              <path d="M112 28V46H130" class="lg-thin" />
+              <text x="32" y="58" class="lg-t lg-t--o">01 · WEBSITE TERMS</text>
+              {[70, 80, 90, 104, 114, 124, 138, 148].map((y, i) => <rect x="32" y={y} width={[86, 72, 80, 84, 66, 78, 70, 58][i]} height="3" class="lg-bar" />)}
+              <text x="32" y="170" class="lg-t lg-t--b">GUIDE ONLY,</text>
+              <text x="32" y="182" class="lg-t lg-t--b">NOT AN OFFER</text>
+            </g>
+            <g class="lg-in1 lg-d2">
+              <rect x="20" y="208" width="110" height="20" rx="10" class="lg-pill" />
+              <text x="75" y="221" class="lg-t lg-t--b" text-anchor="middle">NO OBLIGATION</text>
+            </g>
+            <path d="M136 112H160" class="lg-vec lg-in2" marker-end={`url(#lg-arrow-${scene})`} />
+            <g class="lg-in2">
+              <rect x="168" y="16" width="172" height="236" rx="4" class="lg-card" />
+              <rect x="180" y="28" width="54" height="5" class="lg-fill-o" />
+              <text x="180" y="52" class="lg-t lg-t--b lg-t--lg">02 · WRITTEN SCOPE</text>
+            </g>
+            {rows.map((r, i) => (
+              <g class="lg-in2">
+                <rect x="180" y={r.y - 9} width="12" height="12" rx="2" class="lg-box" />
+                <path d={`M182.5 ${r.y - 3} l3 3 5-6`} class:list={['lg-tick', `lg-tick--${i + 1}`]} pathLength="1" />
+                <text x="200" y={r.y + 0.5} class="lg-t lg-t--b">{r.label}</text>
+                <rect x="200" y={r.y + 6} width={r.w} height="3" class="lg-bar" />
+              </g>
+            ))}
+            <g class="lg-in3">
+              <path d="M180 216H328" class="lg-thin" />
+              <text x="180" y="234" class="lg-t">SIGNED · AGREED IN WRITING</text>
+            </g>
+            <path d="M186 210c6-14 12 4 18-6s8 12 16 0 10 8 18-3 8 9 14 2 6 4 12 0" class="lg-sign lg-draw3" pathLength="1" />
+            <g class="lg-stamp">
+              <g transform="rotate(-10 406 84)">
+                <circle cx="406" cy="84" r="42" class="lg-seal" />
+                <circle cx="406" cy="84" r="35" class="lg-seal lg-seal--in" />
+                <text x="406" y="84" class="lg-t lg-t--o lg-t--lg" text-anchor="middle">AGREED</text>
+                <text x="406" y="96" class="lg-t lg-t--o" text-anchor="middle">IN WRITING</text>
+              </g>
+              <text x="406" y="141" class="lg-t lg-t--o" text-anchor="middle">03 · AGREED IN WRITING</text>
+            </g>
+            <g class="lg-in4">
+              <path d="M406 150l26 9v17c0 18-12 28-26 34-14-6-26-16-26-34v-17Z" class="lg-shield" />
+              <path d="M395 180l7 7 13-14" class="lg-check-o lg-draw4" pathLength="1" />
+              <text x="406" y="232" class="lg-t lg-t--o" text-anchor="middle">04 · YOUR ACL RIGHTS</text>
+              <text x="406" y="244" class="lg-t lg-t--o" text-anchor="middle">STAY IN PLACE</text>
+            </g>
+          </Fragment>
+        )
+      }
+
+      {
+        scene === 'disclaimer' && (
+          <Fragment>
+            <g class="lg-in1">
+              <text x="20" y="22" class="lg-t lg-t--o">01 · GENERAL INFORMATION</text>
+              <rect x="20" y="32" width="44" height="44" rx="4" class="lg-card" />
+              <path d="M42 46c-4-3-8-3-12-2v22c4-1 8-1 12 2 4-3 8-3 12-2V44c-4-1-8-1-12 2Zm0 0v22" class="lg-icon" />
+              <rect x="74" y="32" width="44" height="44" rx="4" class="lg-card" />
+              <rect x="86" y="40" width="20" height="28" rx="2" class="lg-icon" />
+              <path d="M89 44h14v6H89ZM90 56h2M95 56h2M100 56h2M90 62h2M95 62h2M100 62h2" class="lg-icon" />
+              <rect x="128" y="32" width="44" height="44" rx="4" class="lg-card" />
+              <path d="M138 44h24M138 51h24M138 58h18M138 65h12" class="lg-icon" />
+              <text x="42" y="90" class="lg-t" text-anchor="middle">READOS</text>
+              <text x="96" y="90" class="lg-t" text-anchor="middle">WORKOS</text>
+              <text x="150" y="90" class="lg-t" text-anchor="middle">INSIGHTS</text>
+              <circle cx="196" cy="54" r="12" class="lg-info" />
+              <path d="M196 51v9" class="lg-info-i" />
+              <circle cx="196" cy="47" r="1.4" class="lg-dot-w" />
+            </g>
+            <rect x="20" y="106" width="236" height="150" rx="8" class="lg-boundary lg-in2" />
+            <g class="lg-in2">
+              <text x="32" y="128" class="lg-t lg-t--o">02 · AGREED SCOPE</text>
+              <text x="32" y="240" class="lg-t">THE WRITTEN SCOPE DEFINES WHAT IS INCLUDED</text>
+            </g>
+            {inScope.map((c, i) => (
+              <g class:list={['lg-in2', `lg-d${i + 1}`]}>
+                <rect x={c.x} y={c.y - 14} width="104" height="30" rx="4" class="lg-chip" />
+                <text x={c.x + 52} y={c.y + 4} class="lg-t lg-t--b" text-anchor="middle">{c.t}</text>
+              </g>
+            ))}
+            <g class="lg-in3">
+              <text x="290" y="22" class="lg-t lg-t--o">03 · SPECIALIST WORK</text>
+              <path d="M256 150C276 150 272 72 288 72" class="lg-handoff" />
+              <path d="M375 136V154" class="lg-vec" marker-end={`url(#lg-arrow-${scene})`} />
+              <rect x="290" y="160" width="170" height="30" rx="15" class="lg-pill lg-pill--o" />
+              <text x="375" y="179" class="lg-t lg-t--b" text-anchor="middle">REGISTERED PROFESSIONALS</text>
+            </g>
+            {specialists.map((t, i) => (
+              <g class:list={['lg-in3', `lg-d${i + 1}`]}>
+                <rect x="290" y={32 + i * 34} width="170" height="26" rx="4" class="lg-chip lg-chip--out" />
+                <text x="375" y={49 + i * 34} class="lg-t lg-t--b" text-anchor="middle">{t}</text>
+              </g>
+            ))}
+            <g class="lg-in4">
+              <path d="M306 214l13 4.5v8.5c0 9-6 14-13 17-7-3-13-8-13-17v-8.5Z" class="lg-shield" />
+              <path d="M300.5 229l4 4 7-7.5" class="lg-check-o lg-draw4" pathLength="1" />
+              <text x="328" y="226" class="lg-t lg-t--o">04 · YOUR ACL RIGHTS</text>
+              <text x="328" y="238" class="lg-t lg-t--b">ARE NOT EXCLUDED</text>
+            </g>
+          </Fragment>
+        )
+      }
+    </svg>
+
+    <div class="lg__bottom">
+      <ol class="lg__rail">
+        {meta.stages.map((s, i) => (
+          <li class:list={['lg__stage', `lg__stage--${i + 1}`]}><span class="lg__dot" aria-hidden="true"></span><span>{String(i + 1).padStart(2, '0')} {s}</span></li>
+        ))}
+      </ol>
+      <span class="lg__progress" aria-hidden="true"><span></span></span>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .lg {
+    --l-panel: #ffffff;
+    --l-card: rgb(255 255 255 / 0.94);
+    --l-line: rgb(18 18 17 / 0.16);
+    --l-line-strong: rgb(18 18 17 / 0.4);
+    --l-grid: rgb(255 106 19 / 0.075);
+    --l-ink: #121211;
+    --l-muted: #67645d;
+    --l-orange: #c2410c;
+    --l-soft: rgb(255 106 19 / 0.1);
+    --l-bar: rgb(18 18 17 / 0.22);
+    --cycle: 16s;
+    display: block; margin: 0; width: 100%; max-width: 560px; color: var(--l-ink);
+  }
+  :global(:root[data-theme='dark']) .lg {
+    --l-panel: #131412;
+    --l-card: rgb(28 29 27 / 0.94);
+    --l-line: rgb(238 236 230 / 0.18);
+    --l-line-strong: rgb(238 236 230 / 0.44);
+    --l-grid: rgb(255 140 71 / 0.08);
+    --l-ink: #f1efea;
+    --l-muted: #a9a49c;
+    --l-orange: #ff8c47;
+    --l-soft: rgb(255 140 71 / 0.12);
+    --l-bar: rgb(238 236 230 / 0.26);
+  }
+  .lg__panel {
+    position: relative; display: flex; flex-direction: column; gap: 0.5rem; width: 100%; container-type: inline-size;
+    padding: clamp(0.85rem, 2.6vw, 1.25rem); border: 1px solid var(--l-line); border-radius: 20px; overflow: hidden;
+    background-color: var(--l-panel);
+    background-image: linear-gradient(var(--l-grid) 1px, transparent 1px), linear-gradient(90deg, var(--l-grid) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .lg__top, .lg__rail {
+    font-family: var(--font-mono); font-size: clamp(0.56rem, 0.42rem + 0.4vw, 0.7rem); font-weight: 550; letter-spacing: 0.08em; color: var(--l-muted);
+  }
+  .lg__top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .lg__brand { display: inline-flex; flex: none; max-width: 30%; }
+  .lg__svg { width: 100%; height: auto; overflow: visible; }
+
+  /* Drawing primitives */
+  .lg-t { font-family: var(--font-mono); font-size: 7.4px; letter-spacing: 0.06em; fill: var(--l-muted); }
+  .lg-t--b { fill: var(--l-ink); font-weight: 600; }
+  .lg-t--o { fill: var(--l-orange); font-weight: 650; }
+  .lg-t--lg { font-size: 9px; letter-spacing: 0.07em; }
+  .lg-fill-o { fill: var(--l-orange); }
+  .lg-thin { fill: none; stroke: var(--l-line-strong); stroke-width: 0.9; }
+  .lg-card { fill: var(--l-card); stroke: var(--l-ink); stroke-width: 1.2; stroke-linejoin: round; }
+  .lg-field { fill: none; stroke: var(--l-line-strong); stroke-width: 0.9; }
+  .lg-grow { fill: var(--l-orange); opacity: 0.75; transform-box: fill-box; transform-origin: left center; }
+  .lg-bar { fill: var(--l-bar); }
+  .lg-channel { fill: none; stroke: var(--l-orange); stroke-width: 1.3; stroke-dasharray: 6 4; }
+  .lg-lock { fill: var(--l-soft); stroke: var(--l-orange); stroke-width: 1.4; }
+  .lg-shackle { fill: none; stroke: var(--l-orange); stroke-width: 2.2; stroke-linecap: round; transform-box: fill-box; }
+  .lg-key { fill: none; stroke: var(--l-orange); stroke-width: 2; stroke-linecap: round; }
+  .lg-packet { fill: var(--l-orange); opacity: 0; }
+  .lg-env { fill: var(--l-soft); stroke: var(--l-ink); stroke-width: 1.2; }
+  .lg-pill { fill: var(--l-card); stroke: var(--l-line-strong); stroke-width: 1; }
+  .lg-pill--o { fill: var(--l-soft); stroke: var(--l-orange); stroke-width: 1.2; }
+  .lg-tick-static { fill: none; stroke: var(--l-orange); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .lg-arc { fill: none; stroke: var(--l-orange); stroke-width: 2.2; transform: rotate(-90deg); transform-box: fill-box; transform-origin: center; }
+  .lg-hand { fill: none; stroke: var(--l-ink); stroke-width: 1.6; stroke-linecap: round; }
+  .lg-vec { fill: none; stroke: var(--l-orange); stroke-width: 1.4; }
+  .lg-box { fill: var(--l-soft); stroke: var(--l-orange); stroke-width: 1.1; }
+  .lg-tick, .lg-check-o { fill: none; stroke: var(--l-orange); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .lg-sign { fill: none; stroke: var(--l-ink); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .lg-seal { fill: var(--l-soft); stroke: var(--l-orange); stroke-width: 1.6; }
+  .lg-seal--in { fill: none; stroke-dasharray: 3 3; }
+  .lg-stamp { transform-box: fill-box; transform-origin: center; }
+  .lg-shield { fill: var(--l-soft); stroke: var(--l-orange); stroke-width: 1.4; stroke-linejoin: round; }
+  .lg-icon { fill: none; stroke: var(--l-ink); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+  .lg-info { fill: var(--l-orange); }
+  .lg-info-i { fill: none; stroke: var(--l-panel); stroke-width: 2; stroke-linecap: round; }
+  .lg-dot-w { fill: var(--l-panel); }
+  .lg-boundary { fill: none; stroke: var(--l-orange); stroke-width: 1.3; stroke-dasharray: 7 4; }
+  .lg-chip { fill: var(--l-card); stroke: var(--l-ink); stroke-width: 1.1; }
+  .lg-chip--out { stroke: var(--l-orange); stroke-dasharray: 4 3; fill: var(--l-soft); }
+  .lg-handoff { fill: none; stroke: var(--l-orange); stroke-width: 1.1; stroke-dasharray: 3 3; }
+
+  /* Stage rail */
+  .lg__bottom { display: grid; gap: 0.55rem; }
+  .lg__rail { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.35rem 0.9rem; margin: 0; padding: 0; list-style: none; }
+  .lg__stage { display: flex; align-items: center; gap: 0.4rem; color: var(--l-ink); text-transform: uppercase; white-space: nowrap; }
+  .lg__dot { flex: none; width: 0.55rem; height: 0.55rem; border: 1px solid var(--l-orange); border-radius: 50%; background: var(--l-orange); }
+  .lg__progress { display: block; height: 2px; background: var(--l-line); border-radius: 2px; overflow: hidden; }
+  .lg__progress span { display: block; height: 100%; width: 100%; background: var(--l-orange); transform-origin: left; }
+  @container (max-width: 440px) {
+    .lg__rail { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  /* Motion: one calm 16-second sequence in four stages, only without a reduced-motion preference. */
+  @media (prefers-reduced-motion: no-preference) {
+    .lg-in1 { animation: lg-in1 var(--cycle) ease-in-out infinite both; }
+    .lg-in2 { animation: lg-in2 var(--cycle) ease-in-out infinite both; }
+    .lg-in3 { animation: lg-in3 var(--cycle) ease-in-out infinite both; }
+    .lg-in4 { animation: lg-in4 var(--cycle) ease-in-out infinite both; }
+    .lg-d1 { animation-delay: 0.2s; }
+    .lg-d2 { animation-delay: 0.45s; }
+    .lg-d3 { animation-delay: 0.7s; }
+    .lg-d4 { animation-delay: 0.95s; }
+    .lg-grow { animation: lg-grow var(--cycle) ease-out infinite both; }
+    .lg-grow--2 { animation-delay: 0.4s; }
+    .lg-grow--3 { animation-delay: 0.8s; }
+    .lg-grow--4 { animation-delay: 1s; }
+    .lg-grow--5 { animation-delay: 1.2s; }
+    .lg-draw3 { stroke-dasharray: 1; animation: lg-draw3 var(--cycle) ease-in-out infinite; }
+    .lg-draw4 { stroke-dasharray: 1; animation: lg-draw4 var(--cycle) ease-in-out infinite; }
+    .lg-tick { stroke-dasharray: 1; animation: lg-tick var(--cycle) ease-out infinite both; }
+    .lg-tick--2 { animation-delay: 0.45s; }
+    .lg-tick--3 { animation-delay: 0.9s; }
+    .lg-tick--4 { animation-delay: 1.35s; }
+    .lg-packet { animation: lg-packet var(--cycle) ease-in-out infinite; }
+    .lg-shackle { animation: lg-shackle var(--cycle) ease-in-out infinite; }
+    .lg-stamp { animation: lg-stamp var(--cycle) cubic-bezier(0.22, 0.61, 0.36, 1) infinite; }
+    .lg__stage { animation: lg-stage var(--cycle) linear infinite; }
+    .lg__stage .lg__dot { animation: lg-dot var(--cycle) linear infinite; }
+    .lg__stage--2, .lg__stage--2 .lg__dot { animation-delay: -12s; }
+    .lg__stage--3, .lg__stage--3 .lg__dot { animation-delay: -8s; }
+    .lg__stage--4, .lg__stage--4 .lg__dot { animation-delay: -4s; }
+    .lg__progress span { animation: lg-progress var(--cycle) linear infinite; }
+  }
+  @keyframes lg-in1 { 0% { opacity: 0; } 4%, 96% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes lg-in2 { 0%, 24% { opacity: 0; } 29%, 96% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes lg-in3 { 0%, 49% { opacity: 0; } 54%, 96% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes lg-in4 { 0%, 74% { opacity: 0; } 79%, 96% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes lg-grow { 0%, 4% { transform: scaleX(0); } 15%, 96% { transform: scaleX(1); } 100% { transform: scaleX(0); } }
+  @keyframes lg-draw3 { 0%, 52% { stroke-dashoffset: 1; } 64%, 96% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 1; } }
+  @keyframes lg-draw4 { 0%, 77% { stroke-dashoffset: 1; } 90%, 96% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 1; } }
+  @keyframes lg-tick { 0%, 30% { stroke-dashoffset: 1; } 35%, 96% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 1; } }
+  @keyframes lg-packet {
+    0%, 27% { opacity: 0; transform: translateX(0); }
+    29% { opacity: 1; transform: translateX(0); }
+    46% { opacity: 1; transform: translateX(170px); }
+    48%, 100% { opacity: 0; transform: translateX(170px); }
+  }
+  @keyframes lg-shackle { 0%, 33% { transform: translateY(-6px); } 38%, 96% { transform: translateY(0); } 100% { transform: translateY(-6px); } }
+  @keyframes lg-stamp { 0%, 50% { opacity: 0; transform: scale(1.35); } 55%, 96% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.35); } }
+  @keyframes lg-stage { 0%, 24% { color: var(--l-ink); } 25%, 100% { color: var(--l-muted); } }
+  @keyframes lg-dot { 0%, 24% { background: var(--l-orange); } 25%, 100% { background: transparent; } }
+  @keyframes lg-progress { 0% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+</style>
