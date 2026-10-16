@@ -15,9 +15,10 @@ ARG OPENSKETCH_VERSION=dev
 ENV PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1 \
     OPENSKETCH_DATA=/data OPENSKETCH_VERSION=${OPENSKETCH_VERSION}
 
-# OpenCascade (build123d) needs these X/GL libraries even without a screen
+# OpenCascade (build123d) needs these X/GL libraries even without a screen; node runs the browser's sketch
+# solver for MCP inspect_design (sketch degrees of freedom)
 RUN apt-get update -qq \
- && apt-get install -y -qq --no-install-recommends libgl1 libglu1-mesa libxrender1 libxext6 libx11-6 \
+ && apt-get install -y -qq --no-install-recommends libgl1 libglu1-mesa libxrender1 libxext6 libx11-6 nodejs \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

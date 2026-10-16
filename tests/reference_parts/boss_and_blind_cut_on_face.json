@@ -1,0 +1,218 @@
+{
+ "name": "boss_and_blind_cut_on_face",
+ "description": "Base 50x50x10, a 10x10x15 boss on its top, a blind 4 mm pocket r 5.",
+ "derivation": "Base + boss (x,y 10..20, z 10..25) - cylinder r 5 depth 4 at (35, 35), z 6..10.",
+ "features": [
+  {
+   "id": "s1",
+   "type": "sketch",
+   "name": "s1",
+   "plane": {
+    "ref": "Front Plane"
+   },
+   "entities": [
+    {
+     "id": "s1a",
+     "type": "point",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "id": "s1b",
+     "type": "point",
+     "x": 50,
+     "y": 0
+    },
+    {
+     "id": "s1c",
+     "type": "point",
+     "x": 50,
+     "y": 50
+    },
+    {
+     "id": "s1d",
+     "type": "point",
+     "x": 0,
+     "y": 50
+    },
+    {
+     "id": "s1L0",
+     "type": "line",
+     "p1": "s1a",
+     "p2": "s1b"
+    },
+    {
+     "id": "s1L1",
+     "type": "line",
+     "p1": "s1b",
+     "p2": "s1c"
+    },
+    {
+     "id": "s1L2",
+     "type": "line",
+     "p1": "s1c",
+     "p2": "s1d"
+    },
+    {
+     "id": "s1L3",
+     "type": "line",
+     "p1": "s1d",
+     "p2": "s1a"
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "e1",
+   "type": "extrude",
+   "sketch": "s1",
+   "depth": 10
+  },
+  {
+   "id": "s2",
+   "type": "sketch",
+   "name": "s2",
+   "plane": {
+    "type": "fixed",
+    "origin": [
+     0,
+     0,
+     10
+    ],
+    "normal": [
+     0,
+     0,
+     1
+    ],
+    "xdir": [
+     1,
+     0,
+     0
+    ]
+   },
+   "entities": [
+    {
+     "id": "s2a",
+     "type": "point",
+     "x": 10,
+     "y": 10
+    },
+    {
+     "id": "s2b",
+     "type": "point",
+     "x": 20,
+     "y": 10
+    },
+    {
+     "id": "s2c",
+     "type": "point",
+     "x": 20,
+     "y": 20
+    },
+    {
+     "id": "s2d",
+     "type": "point",
+     "x": 10,
+     "y": 20
+    },
+    {
+     "id": "s2L0",
+     "type": "line",
+     "p1": "s2a",
+     "p2": "s2b"
+    },
+    {
+     "id": "s2L1",
+     "type": "line",
+     "p1": "s2b",
+     "p2": "s2c"
+    },
+    {
+     "id": "s2L2",
+     "type": "line",
+     "p1": "s2c",
+     "p2": "s2d"
+    },
+    {
+     "id": "s2L3",
+     "type": "line",
+     "p1": "s2d",
+     "p2": "s2a"
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "e2",
+   "type": "extrude",
+   "sketch": "s2",
+   "depth": 15
+  },
+  {
+   "id": "s3",
+   "type": "sketch",
+   "name": "s3",
+   "plane": {
+    "type": "fixed",
+    "origin": [
+     0,
+     0,
+     10
+    ],
+    "normal": [
+     0,
+     0,
+     1
+    ],
+    "xdir": [
+     1,
+     0,
+     0
+    ]
+   },
+   "entities": [
+    {
+     "id": "s3cp",
+     "type": "point",
+     "x": 35,
+     "y": 35
+    },
+    {
+     "id": "s3c",
+     "type": "circle",
+     "center": "s3cp",
+     "r": 5
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "e3",
+   "type": "extrude",
+   "sketch": "s3",
+   "op": "cut",
+   "depth": 4,
+   "reverse": true
+  }
+ ],
+ "expect": {
+  "volume_mm3": 26185.840735,
+  "center_of_mass": [
+   24.307198,
+   24.307198,
+   5.680044
+  ],
+  "bbox": {
+   "min": [
+    0,
+    0,
+    0
+   ],
+   "max": [
+    50,
+    50,
+    25
+   ]
+  }
+ }
+}

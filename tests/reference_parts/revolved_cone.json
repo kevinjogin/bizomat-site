@@ -1,0 +1,88 @@
+{
+ "name": "revolved_cone",
+ "description": "Right triangle (base r 10, height 30) revolved about its vertical edge.",
+ "derivation": "Cone: V = pi r^2 h / 3; centre of mass h/4 above the base.",
+ "features": [
+  {
+   "id": "s1",
+   "type": "sketch",
+   "name": "s1",
+   "plane": {
+    "ref": "Front Plane"
+   },
+   "entities": [
+    {
+     "id": "s1p0",
+     "type": "point",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "id": "s1p1",
+     "type": "point",
+     "x": 10,
+     "y": 0
+    },
+    {
+     "id": "s1p2",
+     "type": "point",
+     "x": 0,
+     "y": 30
+    },
+    {
+     "id": "s1l0",
+     "type": "line",
+     "p1": "s1p0",
+     "p2": "s1p1"
+    },
+    {
+     "id": "s1l1",
+     "type": "line",
+     "p1": "s1p1",
+     "p2": "s1p2"
+    },
+    {
+     "id": "s1l2",
+     "type": "line",
+     "p1": "s1p2",
+     "p2": "s1p0"
+    },
+    {
+     "id": "s1ax",
+     "type": "line",
+     "p1": "s1p2",
+     "p2": "s1p0",
+     "construction": true
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "r1",
+   "type": "revolve",
+   "sketch": "s1",
+   "axis": "s1ax",
+   "angle": 360
+  }
+ ],
+ "expect": {
+  "volume_mm3": 3141.592654,
+  "center_of_mass": [
+   0.0,
+   7.5,
+   0.0
+  ],
+  "bbox": {
+   "min": [
+    -10,
+    0,
+    -10
+   ],
+   "max": [
+    10,
+    30,
+    10
+   ]
+  }
+ }
+}

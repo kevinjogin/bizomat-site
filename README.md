@@ -59,6 +59,18 @@ the server can import source CAD, build the model, return a PNG for inspection, 
   an artifact-specific download link valid for one hour. Exporting an assembly part uses its local
   coordinates. Downloads and previews do not change the document or create history versions.
 
+For reliable building, Claude also gets three tools borrowed from
+[SolidCraft](https://github.com/bherbruck/solidcraft):
+
+- `batch(doc_id, steps, summary?, stop_on_warnings?, dry_run?)`: several modelling steps as one change.
+  If a step is refused, adds a rebuild error or a failing mate, nothing is saved and the reply names the
+  step and why. On success it is one version and one undo. `dry_run` checks without saving.
+- `body_topology(doc_id, part_id?, kind?, near?, limit?)`: every face and edge with points, normals,
+  axes, radii and the faces each edge joins, plus the `ref` to pass to fillet, chamfer, shell or draft.
+- `inspect_design(doc_id, part_id?, sketches?)`: per-feature state and volume change, the body's volume,
+  area, centre of mass and bounding box, and each sketch's degrees of freedom; for assemblies, mate and
+  component states and the under-defined components.
+
 STEP, STL and PNG generation reject active feature or mate errors; native `.osk` backups remain
 available for documents needing repair. Warnings remain visible in the result. Rebuild reports
 distinguish `rebuilt` (no errors) from `clean` (no errors or warnings), and include resolved sketch
@@ -274,6 +286,7 @@ opensketch/
   eagle.py           EAGLE XML PCB import with editable outline/thickness/holes and source metadata
   preview.py         browser-free orthographic PNG renderer with depth buffer and bounded raster work
   artifacts.py       immutable MCP exports and previews, signed expiring download links
+  inspection.py      MCP body_topology and inspect_design (sketch DOF via js/sketch/solve_cli.mjs)
   sldexport.py       SOLIDWORKS macro export: part -> engine recipe, assembly data, checks, zip
   sldexport_vba.py   the VBA OpenSketch adds to the macro (STEP import, saving, components, mates)
   sldexport_standin.py, sldexport_mock/   assembly stand-in (LibreOffice Basic mocks of SOLIDWORKS)
@@ -299,7 +312,9 @@ so the UI, the AI and files share one format.
 
 ```bash
 pytest -q                                  # regen, previews, mate solver, streaming AI (fake client), demos,
-                                           # macro export (engine and stand-in tests skip without the toolchain)
+                                           # macro export (engine and stand-in tests skip without the toolchain),
+                                           # reference parts (tests/reference_parts: hand-worked volume,
+                                           # centre of mass and bounding box for 14 parts)
 node --test tests/js/solver.test.mjs       # sketch solver
 ```
 

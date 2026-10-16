@@ -25,7 +25,9 @@ from mcp.server.streamable_http_manager import StreamableHTTPASGIApp
 from mcp.server.transport_security import TransportSecuritySettings
 from mcp.types import CallToolResult, ImageContent, TextContent, ToolAnnotations
 
-from . import ai, artifacts, assembly, auth, features, geometry, importer, store
+from pydantic import Field
+
+from . import ai, artifacts, assembly, auth, features, geometry, importer, inspection, store
 
 INSTRUCTIONS = """OpenSketch is a parametric CAD app that works like SOLIDWORKS. You build real feature trees
 (sketches with relations and dimensions, extrudes, revolves, fillets...) and assemblies with mates, in
@@ -34,7 +36,8 @@ Call get_modelling_guide once before your first change: it has the document form
 and the rules (off-the-shelf parts first). Then: list_documents or create_document, get_document to read
 one, and the modelling tools, which all take doc_id (add_<feature> tools such as add_draft or add_fillet add
 one feature; propose_features writes many at once). Every change is saved immediately (undo_last_change
-goes back). Work in the background by default: no browser is needed to model, import, inspect a PNG
+goes back). For more than two changes use batch: the steps run as one change and nothing is saved if a step fails.
+Pick edges and faces with body_topology (pass their `ref`), and check results with inspect_design. Work in the background by default: no browser is needed to model, import, inspect a PNG
 preview, or export CAD. Use import_document for source files, preview_document for visual review and
 export_document for .osk, STEP and STL downloads. Open the app only when the user asks or would benefit
 from interactive inspection. After building, give the user the document's link from the tool result."""
@@ -50,6 +53,17 @@ Download URLs are read-only, artifact-specific links valid for one hour; they ne
 credential. Fetch them before expiry or call the tool again. Native .osk exports preserve the source
 even if it needs repair; STEP/STL/PNG are refused when active geometry or mates fail to rebuild.
 When done, give the user the "open" link from the last tool result and any requested download links.
+
+Predict, then measure:
+- Before each stage, work out the volume and bounding box you expect (a box minus its holes is simple
+  arithmetic). After it, compare with the batch result or inspect_design. A difference means a wrong plane,
+  direction or depth: fix it now, not three features later.
+- Build in stages with batch (one to four features each), not one call per feature and not the whole part
+  at once. A failed batch saves nothing; read `failed`, fix that step, send the batch again.
+- A cut with volume_change_mm3 = 0 missed the body. A boss that adds nothing is buried inside it.
+- Fillets, chamfers, shells and drafts: call body_topology (near the spot) and pass the `ref` of the edges or
+  faces you want. Do not guess midpoints. face_angle_deg 0 means the edge is already smooth.
+- Fillet last: after holes, ribs and shells, small radii first.
 
 """
 
@@ -79,21 +93,26 @@ def _result(rec: dict, report: Any = None, clean: bool | None = None, changed: b
     return json.dumps(out)
 
 
+def _save_session(rec: dict, sess: "ai.Session", summary: str) -> tuple[dict, bool]:
+    """Save the session's work as one new version (if anything changed). Returns (record, changed)."""
+    if assembly.is_assembly(sess.work) and not assembly.is_assembly(rec["doc"]):
+        sess.work["name"] = rec["name"]  # the document keeps its name when it becomes an assembly
+    reqs = list(rec.get("requests") or [])
+    for r in getattr(sess, "requests", []):
+        item = {k: r.get(k) for k in ("part", "description", "mcmaster", "url")}
+        reqs = [q for q in reqs if q.get("part") != item["part"]] + [item]
+    changed = sess.work != rec["doc"] or reqs != (rec.get("requests") or [])
+    if changed:
+        rec = store.save(rec["id"], sess.work, "claude", summary, requests=reqs)
+    return rec, changed
+
+
 def _apply_sync(doc_id: str, tool: str, inp: dict) -> str:
     with store.lock(doc_id):
         rec = store.get(doc_id)
         sess = ai.Session(rec["doc"])
         report, clean, _ = sess.apply(tool, {k: v for k, v in inp.items() if v is not None})
-        if assembly.is_assembly(sess.work) and not assembly.is_assembly(rec["doc"]):
-            sess.work["name"] = rec["name"]  # the document keeps its name when it becomes an assembly
-        reqs = list(rec.get("requests") or [])
-        for r in getattr(sess, "requests", []):
-            item = {k: r.get(k) for k in ("part", "description", "mcmaster", "url")}
-            reqs = [q for q in reqs if q.get("part") != item["part"]] + [item]
-        changed = sess.work != rec["doc"] or reqs != (rec.get("requests") or [])
-        if changed:
-            rec = store.save(doc_id, sess.work, "claude", sess.summary or tool.replace("_", " ").capitalize(),
-                             requests=reqs)
+        rec, changed = _save_session(rec, sess, sess.summary or tool.replace("_", " ").capitalize())
         return _result(rec, report, clean, changed)
 
 
@@ -400,6 +419,203 @@ async def request_part_file(doc_id: str, part_id: str, description: str, mcmaste
     create_part (the right envelope) so the assembly can go on."""
     return await _apply(doc_id, "request_part_file", part_id=part_id, description=description,
                         mcmaster_part_number=mcmaster_part_number, url=url)
+
+
+# ----------------------------------------------------------------------------- batch, topology, inspect
+# Borrowed from SolidCraft (bherbruck/solidcraft): a batch that rolls back as a whole, a topology
+# readout that names edges and faces by points, and a numeric inspect.
+
+BATCH_TOOLS = ("propose_features", "create_part", "insert_component", "add_mate", "delete_items", "standard_part",
+               "request_part_file", "check_interference", "find_mate_candidates")
+MAX_BATCH_STEPS = 100
+
+
+def _batch_tool_ok(name: str) -> bool:
+    return name in BATCH_TOOLS or features.type_for_tool(name) is not None
+
+
+def _problem_keys(rep: Any, kind: str) -> set[str]:
+    """Identity of each error (kind="errors") or warning in a report, without its message text, so a known
+    problem whose wording changes is not counted as new."""
+    if not isinstance(rep, dict):
+        return set()
+    keys = set()
+    for e in rep.get(kind) or []:
+        ident = {k: e.get(k) for k in ("part", "id", "mate", "component", "code") if e.get(k) is not None}
+        keys.add(json.dumps(ident or e, sort_keys=True, default=str))
+    return keys
+
+
+def _baseline(doc: dict) -> dict:
+    try:
+        if assembly.is_assembly(doc):
+            return ai._asm_report(doc, assembly.regen_assembly(doc))
+        if doc.get("features"):
+            return ai._part_report(geometry.regen(doc)[0])[0]
+    except Exception:
+        pass
+    return {}
+
+
+def _compact(rep: Any) -> Any:
+    """The parts of a step report worth seeing in a batch result (the last step gets the full report)."""
+    if not isinstance(rep, dict):
+        return rep
+    keep = ("rebuilt", "clean", "errors", "warnings", "input_problems", "feature", "part_id", "volume", "bbox_min",
+            "bbox_max", "this_mate", "interferences")
+    out = {k: rep[k] for k in keep if k in rep}
+    if "errors" in out:  # status rows carry diagnostics; the id and message are enough here
+        out["errors"] = [{k: e[k] for k in ("part", "id", "mate", "component", "message") if k in e} for e in out["errors"]]
+    return out
+
+
+def _batch_sync(doc_id: str, steps: list[dict], summary: str, stop_on_warnings: bool, dry_run: bool) -> CallToolResult:
+    def reply(body: dict, error: bool) -> CallToolResult:
+        return CallToolResult(content=[TextContent(type="text", text=json.dumps(body))], is_error=error)
+
+    if not steps:
+        return reply({"ok": False, "error": "steps is empty."}, True)
+    if len(steps) > MAX_BATCH_STEPS:
+        return reply({"ok": False, "error": f"At most {MAX_BATCH_STEPS} steps per batch."}, True)
+    for i, s in enumerate(steps):
+        name = s.get("tool") if isinstance(s, dict) else None
+        if not isinstance(name, str) or not _batch_tool_ok(name):
+            return reply({"ok": False, "completed": 0, "failed": {"index": i, "tool": name,
+                          "error": f"Not a modelling tool. Use one of {', '.join(BATCH_TOOLS)} or an add_<feature> tool."},
+                          "rolled_back": True}, True)
+        if not isinstance(s.get("args", {}), dict):
+            return reply({"ok": False, "completed": 0, "failed": {"index": i, "tool": name,
+                          "error": "args must be an object."}, "rolled_back": True}, True)
+
+    with store.lock(doc_id):
+        rec = store.get(doc_id)
+        sess = ai.Session(rec["doc"])
+        base = _baseline(rec["doc"])
+        known_err, known_warn = _problem_keys(base, "errors"), _problem_keys(base, "warnings")
+        results = []
+        for i, s in enumerate(steps):
+            name = s["tool"]
+            args = {k: v for k, v in (s.get("args") or {}).items() if v is not None and k != "doc_id"}
+            try:
+                report, clean, _ = sess.apply(name, args)
+            except Exception as exc:  # a crash in one step must not leave half a batch saved
+                report, clean = f"{type(exc).__name__}: {exc}", False
+            try:
+                rep = json.loads(report) if isinstance(report, str) else report
+            except ValueError:
+                rep = report
+            why = None
+            if not isinstance(rep, dict):
+                if not clean:
+                    why = str(rep)  # tools answer plain text when they refuse ("Unknown part ...")
+            else:
+                new_err = _problem_keys(rep, "errors") - known_err
+                new_warn = _problem_keys(rep, "warnings") - known_warn
+                if rep.get("input_problems"):
+                    why = "Input problems: " + "; ".join(map(str, rep["input_problems"]))
+                elif new_err:
+                    msgs = [e.get("message") or json.dumps(e) for e in rep.get("errors", [])
+                            if _problem_keys({"errors": [e]}, "errors") & new_err]
+                    why = "Rebuild errors: " + "; ".join(map(str, msgs))
+                elif stop_on_warnings and new_warn:
+                    msgs = [w.get("message") for w in rep.get("warnings", []) if _problem_keys({"warnings": [w]}, "warnings") & new_warn]
+                    why = "Warnings (stop_on_warnings): " + "; ".join(map(str, msgs))
+                if not why:
+                    known_err |= _problem_keys(rep, "errors")
+                    known_warn |= _problem_keys(rep, "warnings")
+            if why:
+                return reply({"ok": False, "completed": i, "failed": {"index": i, "tool": name, "error": why,
+                                                                       "report": _compact(rep)},
+                              "rolled_back": True, "results": results,
+                              "note": f"Nothing was saved: the document is still version {rec['version']}. "
+                                      "Fix that step and send the whole batch again."}, True)
+            results.append({"index": i, "tool": name, "clean": clean, "summary": sess.summary,
+                            "report": _compact(rep) if i < len(steps) - 1 else rep})
+        if dry_run:
+            return reply({"ok": True, "dry_run": True, "completed": len(steps), "results": results,
+                          "note": f"Dry run: nothing saved, the document is still version {rec['version']}."}, False)
+        rec, changed = _save_session(rec, sess, summary or f"{len(steps)} steps")
+        body = json.loads(_result(rec, None, all(r["clean"] for r in results), changed))
+        return reply(dict(body, ok=True, completed=len(steps), results=results), False)
+
+
+@mcp.tool()
+async def batch(doc_id: str, steps: Annotated[list[dict], Field(description=(
+                    'Steps in order, each {"tool": "<modelling tool>", "args": {...}} with the same args as that tool, '
+                    'without doc_id. Tools: propose_features, create_part, insert_component, add_mate, delete_items, '
+                    'standard_part, request_part_file, check_interference, find_mate_candidates, add_<feature>.'))],
+                summary: str = "", stop_on_warnings: bool = False, dry_run: bool = False) -> CallToolResult:
+    """Run several modelling steps as ONE change. If any step fails (a refused input, a new rebuild error, a
+    failing mate, or with stop_on_warnings a new warning), nothing is saved and the reply says which step
+    failed and why; already existing problems do not count. On success the whole batch is one version (one
+    undo). dry_run=true checks the batch without saving. Prefer this for anything over two steps: build a
+    part in stages of a few features, checking volume and bounding box in the results after each stage."""
+    try:
+        return await anyio.to_thread.run_sync(_batch_sync, doc_id, steps, summary, stop_on_warnings, dry_run)
+    except store.NotFound:
+        return CallToolResult(content=[TextContent(type="text", text=f"No document {doc_id!r}.")], is_error=True)
+
+
+def _part_doc(doc: dict, part_id: str | None) -> dict:
+    if assembly.is_assembly(doc):
+        parts = doc.get("parts") or {}
+        if part_id not in parts:
+            raise ValueError(f"This is an assembly: give part_id, one of {sorted(parts)}." if not part_id
+                             else f"Unknown part {part_id!r}; parts: {sorted(parts)}.")
+        return parts[part_id]
+    return doc
+
+
+def _topology_sync(doc_id, part_id, kind, near, limit) -> str:
+    rec = store.get(doc_id)
+    part = _part_doc(rec["doc"], part_id)
+    st, _ = geometry.regen(part)
+    out = inspection.body_topology(st.part, kind, near, limit)
+    out.update(doc_id=doc_id, version=rec["version"], **({"part_id": part_id} if part_id else {}))
+    if assembly.is_assembly(rec["doc"]):
+        out["coordinates"] = "part (local)"
+    return json.dumps(out)
+
+
+@mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
+async def body_topology(doc_id: str, part_id: str | None = None,
+                        kind: Literal["both", "faces", "edges"] = "both",
+                        near: Annotated[list[float] | None, Field(description="[x,y,z] mm: list the faces and edges nearest this point first")] = None,
+                        limit: Annotated[int, Field(ge=1, le=500)] = 60) -> str:
+    """Faces and edges of a part's body, to pick them by point instead of guessing. Faces: type, area, centre,
+    an on-face point, normal (planes), axis and radius (cylinders, cones), and `ref`. Edges: type, midpoint,
+    start, end, length, direction or centre and radius, the two faces it joins, face_angle_deg (90 = square
+    corner, 0 = smooth) and `ref`. Pass an edge's `ref` as-is in fillet / chamfer edges and a face's `ref`
+    in shell / draft faces. Use near=[x,y,z] to get the items around a spot. Assembly parts are in part
+    coordinates (give part_id)."""
+    try:
+        return await anyio.to_thread.run_sync(_topology_sync, doc_id, part_id, kind, near, limit)
+    except store.NotFound:
+        return f"No document {doc_id!r}."
+    except ValueError as exc:
+        return json.dumps({"error": str(exc)})
+
+
+def _inspect_sync(doc_id, part_id, sketches) -> str:
+    rec = store.get(doc_id)
+    out = inspection.inspect_design(rec["doc"], part_id, sketches)
+    out.update(doc_id=doc_id, version=rec["version"])
+    return json.dumps(out)
+
+
+@mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
+async def inspect_design(doc_id: str, part_id: str | None = None, sketches: bool = True) -> str:
+    """Numbers to check the model against what you meant, in one call. Part: rebuild state of every feature
+    (with its volume change), the body's volume, area, centre of mass, bounding box and size, face and edge
+    counts, mass when a material is set, and each sketch's degrees of freedom (dof, status under / fully /
+    over, conflicting relations, under-defined curves). Assembly: component and mate states, free DOF,
+    under-defined components and each part's body numbers; give part_id for one part with its sketches.
+    Work out the volume and bounding box you expect before building, then compare. A cut whose volume
+    change is 0 missed the body."""
+    try:
+        return await anyio.to_thread.run_sync(_inspect_sync, doc_id, part_id, sketches)
+    except store.NotFound:
+        return f"No document {doc_id!r}."
 
 
 # ----------------------------------------------------------------------------- feature commands (registry)

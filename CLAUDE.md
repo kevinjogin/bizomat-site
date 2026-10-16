@@ -28,9 +28,45 @@ assemblies only when a part changes.
   API key, use the demo sessions (`demo: true` / `"part"` on /api/ai/stream, or
   `OPENSKETCH_AI_DEMO=1`) to exercise the live build path end to end.
 - Any new AI tool must stream: emit events from `Session` in ai.py and play them in live.js.
+- A new modelling tool on `ai.Session` also goes in `mcp_server.BATCH_TOOLS` (add_<feature> tools are
+  allowed automatically). A geometry change must keep `tests/test_reference_parts.py` passing; never
+  "fix" a reference number to match OpenSketch, work it out by hand.
 - No emojis in UI text. Plain language, short sentences.
 
-## Current state (2026-10-17, v0.4 + mate solver in the browser + feature registry)
+## Current state (2026-10-17, v0.4 + mate solver in the browser + feature registry + SolidCraft borrowings)
+
+SolidCraft borrowings (2026-10-17): ideas from bherbruck/solidcraft (Rust CAD with an MCP; read as a
+reference, not forked: OpenSketch keeps build123d/OpenCascade and its SOLIDWORKS UI). Three MCP tools, now 32:
+`batch(doc_id, steps[{tool, args}], summary, stop_on_warnings, dry_run)` (`mcp_server._batch_sync`): one
+`ai.Session` runs every step under the doc lock; a step fails on a plain-text refusal, `input_problems`,
+an exception, or an error (and with stop_on_warnings a warning) whose identity (part/id/mate/component/code,
+not message) was not in the document before (`_baseline`) or an earlier step; then nothing is saved and the
+reply is `isError` with `{ok: false, completed, failed {index, tool, error, report}, rolled_back, results,
+note}`. Success: one version (one undo) with `_save_session` (shared with `_apply_sync`), compact per-step
+reports, full report for the last. Allowed tools: `BATCH_TOOLS` + `add_<feature>`; max 100 steps; dry_run
+saves nothing. `body_topology(doc_id, part_id, kind, near, limit)` and `inspect_design(doc_id, part_id,
+sketches)` (both read-only, `inspection.py`). Topology: face index/type/area/center/`point` (on-face,
+checked with `is_inside`, a centre can sit in a hole)/normal/axis/radius/`ref` {center, normal}; edge
+index/type/mid/start/end/length/dir or center+radius/faces it joins/`face_angle_deg`/`ref` {mid}. Indices =
+`faces()`/`edges()` order (same as `mesh_shape`, the browser's ids). `ref`s are exactly what
+`find_faces`/`find_edges` match. Inspect (part): rebuilt/clean/errors/warnings, timeline (state,
+volume_change_mm3), body (volume, area, CoM, bbox+size, counts, face_types, mass_g with a material),
+sketches (curves, relations, dimensions, regions, and from the browser solver dof/status/conflicts/under).
+Sketch DOF runs `static/js/sketch/solve_cli.mjs` (imports `solver.js`, so server and page agree) with node;
+without node it says so in `sketch_note`. The Docker image now installs `nodejs`. Inspect (assembly):
+components, mates, `under_defined`, each part's body; part_id gives one part with sketches. MCP guide
+(`MCP_PREFACE`) gained "Predict, then measure" (from SolidCraft's skills): expected volume/bbox before each
+stage, batches of 1-4 features, 0 volume change = missed cut, refs from body_topology, fillets last.
+Reference parts: `tests/reference_parts/recipes.py` writes 14 JSON recipes (block, off-centre hole, tube,
+cone, fillets, chamfer, shell, mid plane, draft frustum, linear/circular pattern, mirror, boss + blind cut
+on a face, Right Plane boss) with volume, CoM and bbox from closed-form formulas (never from an OpenSketch
+run); `tests/test_reference_parts.py` rebuilds them (volume 1e-6 relative, CoM/bbox 2e-3 mm) and checks the
+JSON matches recipes.py. Change a recipe: run `python -m tests.reference_parts.recipes`.
+Tests: `tests/test_mcp_inspect.py` (10, real MCP client: one version per batch with stage volumes, rollback
+names the step and leaves the doc untouched, non-modelling tool and refused input refused, dry run,
+existing errors ignored, stop_on_warnings on a missed cut, a topology `ref` drives a fillet whose volume
+matches r^2(1-pi/4)L and a shell, on-face points with a hole, part inspect numbers + over/under sketches,
+assembly inspect). 168 pytest + 7 node.
 
 Feature registry (2026-10-17): one command list for the user, the AI and MCP. `opensketch/features/`
 (`__init__.py`: `Param` kinds length/angle/number/int/bool/string/enum/plane/faces/edges/sketch/
@@ -124,7 +160,11 @@ Phase 1 (part files), phase 2 (assemblies + live AI build), phase 3 (import, mot
   relation: its expectation is wrong (it only moves a sketch on an Equal relation); the export marks
   this as a known stand-in fault. To fix in the engine (cad-review-loop), not here.
 
-- Edge/face references are matched by midpoint/center, not full topological naming.
+- Edge/face references are matched by midpoint/center, not full topological naming. body_topology
+  indices are list order and change when the body changes; pass `ref`, never the index.
+- Sketch DOF in inspect_design needs node on the server (installed in the Docker image; the devcontainer
+  has it). The Fly image with node has not been deployed and checked yet.
+- batch runs on the server only (MCP). The in-app copilot still applies tools one at a time.
 - Mate references (plane / axis / point) are stored as geometry in part coordinates and re-matched to
   the nearest face after part edits; not topological. Mate picks: planar faces, cylindrical/conical
   faces, straight edges, the three assembly planes. No vertex or circular-edge picks yet.
@@ -149,6 +189,18 @@ are within about 2x of Python and fillets do not fail more often; otherwise stay
 The .osk JSON format stays the contract either way.
 
 ## Next phase
+
+Further SolidCraft ideas, ranked (from its docs/mcp.md, skills/, crates/doc/src/naming.rs):
+a. Persistent face/edge names by how they were made (`F2:top`, `F3:blend:<edge>`, edges as `faceA|faceB`),
+   so fillet picks survive upstream edits. Biggest step past midpoint matching.
+b. Named parameters with units and expressions (`w/2 - wall`) in any numeric field, plus a set_parameter
+   that reports what rebuilt and what now fails.
+c. A two-item `measure` (min distance, axis-to-axis distance, angle, hole diameter, slot width).
+d. A dry run for delete_items listing what goes with it and what would fail.
+e. A Claude skill shipped with the MCP: argument shapes, plane tables, error-to-fix table, red flags.
+f. preview_document with an explicit camera (target, yaw, pitch, distance) and a section crop.
+g. Parameter-sweep tests (each driving dimension to both ends and back, no errors, volumes as computed)
+   and an action matrix (every fillet/chamfer/shell on every edge/face of real parts, ratcheted baseline).
 
 0. Run an exported macro in SOLIDWORKS 2022 (press demo first) and fix what the log shows; then
    revolves and cross holes as features where the engine allows.

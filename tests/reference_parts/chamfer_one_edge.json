@@ -1,0 +1,106 @@
+{
+ "name": "chamfer_one_edge",
+ "description": "Block 40x30x20, one Z edge chamfered 3 mm x 45 deg.",
+ "derivation": "Removes a triangular prism 0.5*3*3*20 whose centroid is 1 mm in from each face.",
+ "features": [
+  {
+   "id": "s1",
+   "type": "sketch",
+   "name": "s1",
+   "plane": {
+    "ref": "Front Plane"
+   },
+   "entities": [
+    {
+     "id": "s1a",
+     "type": "point",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "id": "s1b",
+     "type": "point",
+     "x": 40,
+     "y": 0
+    },
+    {
+     "id": "s1c",
+     "type": "point",
+     "x": 40,
+     "y": 30
+    },
+    {
+     "id": "s1d",
+     "type": "point",
+     "x": 0,
+     "y": 30
+    },
+    {
+     "id": "s1L0",
+     "type": "line",
+     "p1": "s1a",
+     "p2": "s1b"
+    },
+    {
+     "id": "s1L1",
+     "type": "line",
+     "p1": "s1b",
+     "p2": "s1c"
+    },
+    {
+     "id": "s1L2",
+     "type": "line",
+     "p1": "s1c",
+     "p2": "s1d"
+    },
+    {
+     "id": "s1L3",
+     "type": "line",
+     "p1": "s1d",
+     "p2": "s1a"
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "e1",
+   "type": "extrude",
+   "sketch": "s1",
+   "depth": 20
+  },
+  {
+   "id": "c1",
+   "type": "chamfer",
+   "distance": 3,
+   "edges": [
+    {
+     "mid": [
+      40,
+      30,
+      10
+     ]
+    }
+   ]
+  }
+ ],
+ "expect": {
+  "volume_mm3": 23910.0,
+  "center_of_mass": [
+   19.928482,
+   14.947302,
+   10.0
+  ],
+  "bbox": {
+   "min": [
+    0,
+    0,
+    0
+   ],
+   "max": [
+    40,
+    30,
+    20
+   ]
+  }
+ }
+}
