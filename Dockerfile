@@ -23,7 +23,7 @@ RUN apt-get update -qq \
 WORKDIR /app
 # dependencies first, so code changes rebuild fast
 COPY pyproject.toml README.md ./
-RUN mkdir -p opensketch && touch opensketch/__init__.py && pip install -q ".[ai]" && pip uninstall -y -q opensketch
+RUN mkdir -p opensketch/features && touch opensketch/__init__.py opensketch/features/__init__.py && pip install -q ".[ai]" && pip uninstall -y -q opensketch
 COPY opensketch ./opensketch
 # run from the source folder (python -m opensketch in /app), so the web page files are used as they are
 RUN python -c "import build123d, opensketch.server; print('OpenSketch ready')"
