@@ -1,0 +1,33 @@
+# Fly.io: OpenSketch in Sydney, 2 GB, stopped when idle (woken by the next request, a few seconds).
+# Deployed by .github/workflows/deploy.yml on every push to main once FLY_API_TOKEN is set in the repo's
+# secrets; the app name can be changed with the repository variable FLY_APP (it must be unique on Fly).
+
+app = "opensketch-yz"
+primary_region = "syd"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  OPENSKETCH_DATA = "/data"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [http_service.concurrency]
+    type = "requests"
+    soft_limit = 50
+    hard_limit = 100
+
+[[vm]]
+  size = "shared-cpu-2x"
+  memory = "2gb"
+
+# the documents (and their versions); one machine, since a volume belongs to one machine
+[mounts]
+  source = "opensketch_data"
+  destination = "/data"

@@ -1,0 +1,71 @@
+# Deploys OpenSketch to Fly.io on every push to main. Does nothing until the repository has a
+# FLY_API_TOKEN secret (Fly dashboard > Tokens > create an org token). OPENSKETCH_PASSWORD (required, so
+# the public site is never open) and ANTHROPIC_API_KEY (optional, for the built-in AI chat) are passed to
+# Fly from the repository's secrets. The first run creates the app and its storage volume.
+name: Deploy to Fly.io
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-fly
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      APP: ${{ vars.FLY_APP || 'opensketch-yz' }}
+      REGION: syd
+    steps:
+      - name: Check setup
+        id: setup
+        env:
+          PASSWORD: ${{ secrets.OPENSKETCH_PASSWORD }}
+        run: |
+          if [ -z "$FLY_API_TOKEN" ]; then
+            echo "No FLY_API_TOKEN secret yet: not deploying (OpenSketch still runs in Codespaces)."
+            echo "go=no" >> "$GITHUB_OUTPUT"
+          elif [ -z "$PASSWORD" ]; then
+            echo "::error::Add the OPENSKETCH_PASSWORD secret first, so the public site is not open to everyone."
+            exit 1
+          else
+            echo "go=yes" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.setup.outputs.go == 'yes'
+
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+        if: steps.setup.outputs.go == 'yes'
+
+      - name: Create the app and its volume (first run only)
+        if: steps.setup.outputs.go == 'yes'
+        run: |
+          if ! flyctl status --app "$APP" >/dev/null 2>&1; then
+            flyctl apps create "$APP" --org personal
+          fi
+          if [ "$(flyctl volumes list --app "$APP" --json | jq 'map(select(.name == "opensketch_data")) | length')" = "0" ]; then
+            flyctl volumes create opensketch_data --app "$APP" --region "$REGION" --size 1 --yes
+          fi
+
+      - name: Pass secrets to Fly
+        if: steps.setup.outputs.go == 'yes'
+        env:
+          PASSWORD: ${{ secrets.OPENSKETCH_PASSWORD }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          args=("OPENSKETCH_PASSWORD=$PASSWORD")
+          [ -n "$ANTHROPIC_API_KEY" ] && args+=("ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY")
+          flyctl secrets set --app "$APP" --stage "${args[@]}"
+
+      - name: Deploy
+        if: steps.setup.outputs.go == 'yes'
+        run: |
+          flyctl deploy --app "$APP" --remote-only --ha=false \
+            --build-arg OPENSKETCH_VERSION="${GITHUB_SHA::7}" \
+            --env OPENSKETCH_PUBLIC_URL="https://$APP.fly.dev"
+          echo "OpenSketch is live at https://$APP.fly.dev" >> "$GITHUB_STEP_SUMMARY"

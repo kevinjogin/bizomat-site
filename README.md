@@ -70,6 +70,28 @@ the model you have open with Claude.
 The codespace has to be running for Claude to reach it: it stops after 30 idle minutes, so open it
 before you use Claude with it.
 
+## Host it on Fly.io (optional, when you need it)
+
+The codespace is free but only reachable while it is open. To have OpenSketch always reachable at a fixed
+address (for example so Claude can use it any time), host it on Fly.io: about US$3 to 8 a month for one
+person, because the server stops when idle and wakes on the next request (the first one after a break
+takes a few seconds). Everything is set up already; it is all browser steps:
+
+1. Sign up at fly.io and add a card.
+2. In the Fly dashboard, open Tokens and create an organization token for your personal organization.
+   Copy it.
+3. On GitHub, in this repository: Settings > Secrets and variables > Actions > New repository secret.
+   Add `FLY_API_TOKEN` (the token), `OPENSKETCH_PASSWORD` (required: the site is public) and, for the
+   built-in AI chat, `ANTHROPIC_API_KEY`.
+4. Open the Actions tab, choose Deploy to Fly.io, Run workflow. The first run creates the app and its
+   storage and takes about 10 minutes; after that every push to main deploys by itself.
+5. OpenSketch is then at `https://opensketch-yz.fly.dev`. If Fly says the name is taken, add a repository
+   variable `FLY_APP` (same Settings page, Variables tab) with another name, and run it again.
+6. In that OpenSketch, use Connect Claude and update the connector in Claude with the new address.
+
+The Fly server and the codespace are separate: models saved on one are not on the other (move one with
+Save As > OpenSketch file, then Open and Save to Server).
+
 ## Run it locally
 
 ```bash
