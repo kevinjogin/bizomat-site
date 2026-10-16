@@ -100,6 +100,7 @@ class App {
     this.regen().then(() => this.viewer.zoomToFit(false));
     this.api('/api/ai/status', null, 'GET').then((r) => { this.aiAvailable = !!r.available; this.aiDemo = !!r.demo; }).catch(() => { this.aiAvailable = false; });
     this.status('Ready. Select a plane and click Sketch to start.');
+    this.watchActivity();
     this.watchVersion();
     const docId = new URLSearchParams(location.search).get('doc');
     if (docId) this.server.open(docId); // a link from Claude, or a reload of a server document
@@ -110,6 +111,7 @@ class App {
   watchVersion() {
     let first = null;
     const check = async () => {
+      if (!this.isActive()) { this.lastIdleSeen = true; return; } // let a hosted server sleep while nobody is looking
       let v;
       try { v = await (await fetch('/api/version', { cache: 'no-store' })).json(); } catch (_) { return; } // restarting
       if (first === null) first = v.version;
@@ -117,7 +119,28 @@ class App {
     };
     check();
     setInterval(check, 30000);
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
+    this.versionCheck = check;
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) this.markActive(); });
+  }
+
+  // The page talks to the server in the background (Claude's changes, update check) only while it is
+  // in use: visible and touched in the last 15 minutes. A hosted server (Fly.io) stops when no requests
+  // arrive, so an idle tab costs nothing; coming back catches up at once.
+  watchActivity() {
+    this.idleMs = 15 * 60 * 1000;
+    this.lastActivity = Date.now();
+    let last = 0;
+    const mark = () => { const t = Date.now(); if (t - last > 1000) { last = t; this.markActive(); } };
+    for (const ev of ['pointerdown', 'pointermove', 'keydown', 'wheel', 'touchstart']) window.addEventListener(ev, mark, { passive: true, capture: true });
+  }
+
+  isActive() { return !document.hidden && Date.now() - (this.lastActivity || 0) < (this.idleMs || 900000); }
+
+  markActive() {
+    const wasIdle = Date.now() - (this.lastActivity || 0) >= (this.idleMs || 900000) || this.lastIdleSeen; // a check was skipped
+    this.lastActivity = Date.now();
+    this.lastIdleSeen = false;
+    if (wasIdle) { this.server?.poll(); this.versionCheck?.(); }
   }
 
   showUpdateBar(updated, note) {

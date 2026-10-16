@@ -32,7 +32,6 @@ export class ServerDocs {
     this.pushing = null;
     this.pollTimer = null;
     this.shownRequests = new Set();
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) this.poll(); });
   }
 
   get linked() { return !!this.link; }
@@ -121,7 +120,8 @@ export class ServerDocs {
 
   async poll() {
     const L = this.link;
-    if (!L || document.hidden || this.polling || this.pushing) return;
+    if (!L || this.polling || this.pushing) return;
+    if (!(this.app.isActive ? this.app.isActive() : !document.hidden)) { this.app.lastIdleSeen = true; return; } // idle: let the server sleep
     this.polling = true;
     try {
       const h = await this.req('GET', `/api/docs/${L.id}/head`);

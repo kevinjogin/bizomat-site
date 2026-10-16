@@ -19,6 +19,7 @@ jobs:
     env:
       FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
       APP: ${{ vars.FLY_APP || 'opensketch-yz' }}
+      ORG: ${{ vars.FLY_ORG || 'yuanzheng-yang' }}
       REGION: syd
     steps:
       - name: Check setup
@@ -46,7 +47,7 @@ jobs:
         if: steps.setup.outputs.go == 'yes'
         run: |
           if ! flyctl status --app "$APP" >/dev/null 2>&1; then
-            flyctl apps create "$APP" --org personal
+            flyctl apps create "$APP" --org "$ORG"
           fi
           if [ "$(flyctl volumes list --app "$APP" --json | jq 'map(select(.name == "opensketch_data")) | length')" = "0" ]; then
             flyctl volumes create opensketch_data --app "$APP" --region "$REGION" --size 1 --yes
