@@ -414,7 +414,7 @@ def translate_part(doc: dict, key: str) -> Recipe:
         if t in ("fillet", "chamfer"):
             if frame is None:
                 raise Unsupported("a fillet or chamfer before any extrude")
-            edges, _ = geometry.find_edges(st.part, f.get("edges", []))
+            edges, _ = geometry.find_edges(st.part, f.get("edges", []), st.namer)
             groups = []
             for e in edges:
                 pts = [frame.to_sw(geometry.vlist(e @ s)) for s in (0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875)]

@@ -178,6 +178,24 @@ of a part; mates position the components, as in SOLIDWORKS.
 
 A part document may carry `"type": "part"`; a document without `type` is a part.
 
+## Face and edge references
+
+Fillet / chamfer `edges`, shell / draft `faces` and pattern `direction` edges are references:
+
+```json
+{"name": "e1:end|e1:side:s1L1", "mid": [80, 30, 10]}
+{"name": "e1:end", "center": [40, 30, 10], "normal": [0, 0, 1]}
+```
+
+`name` is the persistent name (`opensketch/naming.py`): a face is named after how it was made
+(`<feature>:side:<sketch curve>`, `:start`, `:end`, `:end2`, `<seed face>@<pattern>#<copy>`,
+`<fillet>:blend:<edge>`, `<chamfer>:bevel:<edge>`, `<shell>:inner:<face>`, `<draft>:drafted:<face>`,
+`<feature>:new:<k>`), keeping that name while later features cut into it; pieces of a split face add
+`#[<faces around it>]` or `~k`. An edge is its two faces, sorted: `<face A>|<face B>` (`<face>|seam`).
+The name is tried first; `mid` (the edge point at parameter 0.5) or `center`/`normal` is the fallback,
+with a `name_not_found` warning when a name no longer exists. Either part alone is valid; older files
+have only the point. The browser adds names to its picks when a feature is accepted (`/api/name_refs`).
+
 ## Parameters and equations
 
 SOLIDWORKS Tools > Equations (`opensketch/params.py`). A part may have global variables, and any

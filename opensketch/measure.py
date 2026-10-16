@@ -44,26 +44,27 @@ def _type(s) -> str:
 # ----------------------------------------------------------------------------- picking
 
 def _solid_for(doc: dict, pick: dict, part_id: str | None):
-    """(solid in the coordinates the answer uses, label) for one pick."""
+    """(rebuilt part state, location to place it or None) for one pick. The state carries the namer."""
+    loc = None
     if assembly.is_assembly(doc):
         cid = pick.get("component")
         if cid:
             comp = next((c for c in doc.get("components", []) if c["id"] == cid), None)
             if comp is None:
                 raise MeasureError(f"Unknown component {cid!r}.")
-            solid = assembly.build_part(assembly.part_of(doc, comp))["solid"]
-            if solid is None:
-                raise MeasureError(f"Component {cid!r} has no solid body.")
-            return solid, assembly.location_of(assembly.Pose.of(comp)), cid
-        pid = pick.get("part_id") or part_id
-        if pid not in (doc.get("parts") or {}):
-            raise MeasureError("In an assembly give each pick a component (world coordinates) or give part_id.")
-        solid = assembly.build_part(doc["parts"][pid])["solid"]
-        return solid, None, pid
-    st, _ = geometry.regen(doc)
+            part_doc = assembly.part_of(doc, comp)
+            loc = assembly.location_of(assembly.Pose.of(comp))
+        else:
+            pid = pick.get("part_id") or part_id
+            if pid not in (doc.get("parts") or {}):
+                raise MeasureError("In an assembly give each pick a component (world coordinates) or give part_id.")
+            part_doc = doc["parts"][pid]
+    else:
+        part_doc = doc
+    st, _ = geometry.regen(part_doc)
     if st.part is None:
         raise MeasureError("The part has no solid body yet.")
-    return st.part, None, None
+    return st, loc
 
 
 def resolve(doc: dict, pick: dict, part_id: str | None = None):
@@ -77,22 +78,24 @@ def resolve(doc: dict, pick: dict, part_id: str | None = None):
             raise MeasureError("point must be [x, y, z].")
         v = Vertex(*map(float, p))
         if pick.get("component"):
-            _, loc, _ = _solid_for(doc, pick, part_id)
+            _, loc = _solid_for(doc, pick, part_id)
             v = v.moved(loc)
         return v
-    solid, loc, _ = _solid_for(doc, pick, part_id)
+    st, loc = _solid_for(doc, pick, part_id)
+    solid, namer = st.part, st.namer
     if "name" in pick:
-        from . import naming
-        shape = naming.find(solid, doc if not assembly.is_assembly(doc) else None, pick["name"], pick, part_id)
-        if shape is None:
-            raise MeasureError(f"No face or edge named {pick['name']!r}.")
+        name = pick["name"]
+        hit = namer.resolve_edges(solid, name) if "|" in name else namer.resolve_faces(solid, name)
+        if not hit:
+            raise MeasureError(f"No face or edge named {name!r}. Use body_topology for names.")
+        shape = hit[0]
     elif "face" in pick:
-        found, _ = geometry.find_faces(solid, [pick["face"]])
+        found, _ = geometry.find_faces(solid, [pick["face"]], namer)
         if not found:
             raise MeasureError(f"No face at {pick['face']}. Use body_topology for refs.")
         shape = found[0]
     elif "edge" in pick:
-        found, _ = geometry.find_edges(solid, [pick["edge"]])
+        found, _ = geometry.find_edges(solid, [pick["edge"]], namer)
         if not found:
             raise MeasureError(f"No edge at {pick['edge']}. Use body_topology for refs.")
         shape = found[0]

@@ -70,6 +70,16 @@ For reliable building, Claude also gets three tools borrowed from
 - `inspect_design(doc_id, part_id?, sketches?)`: per-feature state and volume change, the body's volume,
   area, centre of mass and bounding box, and each sketch's degrees of freedom; for assemblies, mate and
   component states and the under-defined components.
+- `measure_items(doc_id, a, b?)`: like Evaluate > Measure. Sizes, hole diameters and slot widths on a
+  face, minimum distance, axis-to-axis distance, angles; between components in assembly coordinates.
+- `set_parameter` / `set_equation`: global variables and equations (Tools > Equations), with sketches
+  re-solved when a dimension changes. The browser has the same Equations dialog.
+- `delete_items(..., dry_run)`: what a deletion takes with it and what it would break, before deleting.
+- `preview_document` also takes `yaw`/`pitch`, a close-up (`target`, `view_width`) and a `section` cut.
+
+Faces and edges have persistent names (`e1:end|e1:side:s1L1`), so a fillet stays on its edge when the
+part changes size. `skills/opensketch-cad/` is a Claude skill for working this way (predict, build a
+stage, measure); `get_modelling_guide` returns its reference tables too.
 
 STEP, STL and PNG generation reject active feature or mate errors; native `.osk` backups remain
 available for documents needing repair. Warnings remain visible in the result. Rebuild reports
@@ -287,6 +297,10 @@ opensketch/
   preview.py         browser-free orthographic PNG renderer with depth buffer and bounded raster work
   artifacts.py       immutable MCP exports and previews, signed expiring download links
   inspection.py      MCP body_topology and inspect_design (sketch DOF via js/sketch/solve_cli.mjs)
+  measure.py         Measure one or two picks (sizes, holes, slots, distances, angles)
+  params.py          global variables and equations (safe expression evaluator, sketch re-solve)
+  naming.py          persistent face and edge names (how each face was made)
+  edits.py           deleting features: what goes with them and what would break
   sldexport.py       SOLIDWORKS macro export: part -> engine recipe, assembly data, checks, zip
   sldexport_vba.py   the VBA OpenSketch adds to the macro (STEP import, saving, components, mates)
   sldexport_standin.py, sldexport_mock/   assembly stand-in (LibreOffice Basic mocks of SOLIDWORKS)
@@ -314,7 +328,9 @@ so the UI, the AI and files share one format.
 pytest -q                                  # regen, previews, mate solver, streaming AI (fake client), demos,
                                            # macro export (engine and stand-in tests skip without the toolchain),
                                            # reference parts (tests/reference_parts: hand-worked volume,
-                                           # centre of mass and bounding box for 14 parts)
+                                           # centre of mass and bounding box for 14 parts), parameter
+                                           # sweeps, and the action matrix (fillet/chamfer/shell/draft on
+                                           # every edge and face of 20 parts against a saved baseline)
 node --test tests/js/solver.test.mjs       # sketch solver
 ```
 
@@ -324,9 +340,9 @@ node --test tests/js/solver.test.mjs       # sketch solver
    the main direction as features instead of STEP.
 2. Assemblies: tangent, width and symmetric mates, gear and slot mates, sub-assemblies, exploded
    views, mate references picked from vertices and circular edges.
-3. Remaining part features: Hole Wizard, Swept / Lofted, Draft, Rib, Instant3D drag handles,
-   splines, sketch text, equations and global variables, configurations.
-4. Stronger topological naming for fillet/chamfer edge references.
+3. Remaining part features: Hole Wizard, Swept / Lofted, Rib, Instant3D drag handles,
+   splines, sketch text, configurations.
+4. Persistent names from OpenCascade history (exact, instead of matched by geometry).
 5. Drawings.
 
 SOLIDWORKS is a trademark of Dassault Systemes. OpenSketch is not affiliated with it; the icons

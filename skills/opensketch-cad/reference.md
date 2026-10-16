@@ -28,7 +28,7 @@ feature `{"ref": "<plane feature id>"}`, a face that follows edits `{"type": "fa
 | set_equation | feature (id or name), field ("depth", "dir2.depth", or a sketch dimension "D1"), expression |
 | body_topology | part_id, kind faces/edges/both, near [x,y,z], limit |
 | inspect_design | part_id, sketches |
-| measure_items | a, b: {"face": ref} / {"edge": ref} / {"point": [x,y,z]}, plus "component" in assemblies |
+| measure_items | a, b: {"face": ref} / {"edge": ref} / {"name": "<face or edge name>"} / {"point": [x,y,z]}, plus "component" in assemblies |
 | preview_document | view, or yaw + pitch (deg); target [x,y,z] + view_width (mm) for close-ups; section {"point", "normal"} |
 
 Feature fields: extrude {sketch, op boss/cut, end blind/through_all/midplane/up_to_next, depth, reverse,
@@ -37,6 +37,14 @@ edges}; chamfer {distance, edges}; shell {thickness, faces}; mirror {plane, feat
 {features, direction X/Y/Z, count, spacing}; circular_pattern {features, axis X/Y/Z, count}; draft
 {neutral_plane, faces, angle}; plane {base, offset}. Sketch: entities point {x, y} / line {p1, p2} /
 circle {center, r} / arc {center, start, end, counter-clockwise}; constraints as in the guide.
+
+## Names
+
+Faces: `<feature>:side:<sketch curve>`, `<feature>:start` (on the sketch plane), `<feature>:end`,
+`<feature>:end2` (second direction), `<seed face>@<pattern>#<copy>`, `<fillet>:blend:<edge>`,
+`<chamfer>:bevel:<edge>`, `<shell>:inner:<face>`, `<draft>:drafted:<face>`, `<feature>:new:<k>`
+(not exact: avoid relying on it). A face split in pieces gets `#[<faces around it>]` or `~k`. Edges:
+`<face A>|<face B>` sorted, `<face>|seam`. A face that a later feature cuts into keeps its name.
 
 ## Errors and what to do
 
@@ -49,6 +57,7 @@ circle {center, r} / arc {center, start, end, counter-clockwise}; constraints as
 | Merged boss added no material (warning) | boss buried in the body | check its plane and direction |
 | The operation removed the whole body | cut larger than the part | check sketch size and plane |
 | N edge reference(s) missing | a guessed or stale edge ref | body_topology near the spot, use its `ref` |
+| No edge named 'x'; used its position (warning) | an upstream change removed or renamed that face | body_topology again; pick the edge by its new name |
 | Failed to create fillet (radius too large?) | radius bigger than a neighbouring face | smaller radius, or fillet before the feature that thins it |
 | Failed to shell the body | thickness too large, or fillets smaller than the wall | thinner wall, or shell before small fillets |
 | Plane reference 'x' not found | ref names a feature that does not exist | use a plane feature id or a named plane |

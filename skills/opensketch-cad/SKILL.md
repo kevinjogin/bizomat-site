@@ -29,9 +29,13 @@ fixes and traps are in reference.md (the same text comes back from get_modelling
 ## Picking faces and edges
 
 Never guess a midpoint. Call body_topology with near=[x, y, z] around the spot and pass the item's `ref`
-unchanged in fillet / chamfer `edges` or shell / draft `faces`. face_angle_deg 90 is a sharp corner, 0
-is already smooth (do not fillet it). Refs are re-matched after edits, so re-read the topology after a
-change that moves faces.
+unchanged in fillet / chamfer `edges` or shell / draft `faces`. Each ref carries a persistent name made
+from how the face was built (`e1:end` = the far cap of extrude e1, `e1:side:s1L1` = the side made by
+sketch line s1L1, `e2:side:s2c@lp#3` = copy 3 of a patterned hole; an edge is `<face A>|<face B>`). The
+name is tried first, so the pick stays on the same edge when the part changes size; the point is the
+fallback. face_angle_deg 90 is a sharp corner, 0 is already smooth, and `seam` edges are where a hole or
+shaft surface meets itself: do not fillet those. A warning name_not_found means the named face is gone
+(an upstream feature changed what it makes): re-read the topology and pick again.
 
 ## Design intent
 

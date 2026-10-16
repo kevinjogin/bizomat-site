@@ -113,11 +113,19 @@ def _face_angle(e, fa, fb) -> float | None:
         return None
 
 
-def body_topology(part, kind: str = "both", near: list | None = None, limit: int = 60) -> dict:
-    """Faces and edges of a solid. near=[x,y,z] sorts them nearest first; limit caps each list."""
+def body_topology(part, kind: str = "both", near: list | None = None, limit: int = 60, namer=None) -> dict:
+    """Faces and edges of a solid. near=[x,y,z] sorts them nearest first; limit caps each list. With the
+    rebuild's namer, every face and edge also gets its persistent name (naming.py), carried in `ref`."""
     if part is None:
         return {"error": "No solid body: build a feature first."}
     faces, edges = part.faces(), part.edges()
+    fnames = enames = fexact = None
+    if namer is not None:
+        from .naming import edge_names
+        nfaces, nnames, nexact = namer.current(part)
+        if len(nfaces) == len(faces):
+            fnames, fexact = nnames, nexact
+            enames = edge_names(part, nfaces, nnames)
     edge_index = {hash(e): i for i, e in enumerate(edges)}
     edge_faces: dict[int, list[int]] = {}
     for fi, f in enumerate(faces):
@@ -136,11 +144,20 @@ def body_topology(part, kind: str = "both", near: list | None = None, limit: int
 
     if kind in ("both", "faces"):
         out["faces"] = [_face_info(i, faces[i]) for i in pick(faces, _face_point)]
+        if fnames:
+            for row in out["faces"]:
+                row["name"] = fnames[row["index"]]
+                row["ref"] = {"name": fnames[row["index"]], **row["ref"]}
+                if not fexact[row["index"]]:
+                    row["name_exact"] = False
     if kind in ("both", "edges"):
         rows = []
         for i in pick(edges, lambda e: e.position_at(0.5)):
             fs = edge_faces.get(i, [])
             row = _edge_info(i, edges[i], fs)
+            if enames:
+                row["name"] = enames[i]
+                row["ref"] = {"name": enames[i], **row["ref"]}
             if len(fs) == 1:
                 row["seam"] = True  # where a closed surface (a hole, a shaft) meets itself: not an edge to round
             if len(fs) == 2:

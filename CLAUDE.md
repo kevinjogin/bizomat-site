@@ -33,7 +33,79 @@ assemblies only when a part changes.
   "fix" a reference number to match OpenSketch, work it out by hand.
 - No emojis in UI text. Plain language, short sentences.
 
-## Current state (2026-10-17, v0.4 + mate solver in the browser + feature registry + SolidCraft borrowings)
+## Current state (2026-10-17, v0.4 + mate solver in the browser + feature registry + SolidCraft borrowings 1 and 2)
+
+SolidCraft borrowings, part 2 (2026-10-17): MCP now 35 tools. Seven more ideas, all in:
+- Persistent names (`naming.py`): `regen` makes `st.namer = Namer()` and records each feature that changed the
+  body (`record`: before/after, its tool from `st.tools`, pattern/mirror copies from `st.instances` = [(moved
+  tool, op, seed id, label)], sketch edges and plane). Names are worked out lazily (`current(part)`) and only
+  for the body after the last recorded step: per face, an on-face point (`inspection._face_point`) on a face
+  of the body before -> inherit; on the feature's tool -> role (`_tool_names`: `side:<sketch entity>` when
+  the entity's edge midpoint lies on it, caps `start` (on the sketch plane) / `end` / `end2` by sign along the
+  normal and `reverse`, else `face:<i>`); on a pattern copy -> `<seed id>:<role>@<pattern id>#<label>`;
+  else fillet `blend` / chamfer `bevel` + nearest picked edge's name, shell `inner` / draft `drafted` +
+  nearest parallel old face, else `<fid>:new:<k>` (exact false). Inheritance uses raw names; `_split`
+  adds `#[unique neighbour names]` or `~k` for pieces. `edge_names`: sorted pair `A|B`, `A|seam`, `~k` for
+  duplicates. `find_edges` / `find_faces(part, refs, namer)` try `name` first, then `mid` / `center`;
+  a name that is gone adds a `name_not_found` warning (via `namer.notes`, collected in `rebuild_feature`).
+  Callers pass `st.namer`: fillet, chamfer, shell, pattern direction edge, draft, sldexport, measure.
+  `body_topology(..., namer)` adds `name` (and `name_exact: false`) and puts it in each `ref`. Browser:
+  `commitFeature` posts the feature and the part rolled back to it to `/api/name_refs`
+  (`naming.annotate`) when it has edge/face picks, so hand picks store `{name, mid}`. Naming costs about
+  one rebuild (measured on the 20-part corpus), so interactive rebuilds do not name. Checked in Chromium:
+  a PM fillet stores `e1:end|e1:side:s1L1` and stays on that edge when the length variable goes 80 -> 140
+  (volume change -51.50 = 4(1-pi/4)60).
+- Global variables and equations (`params.py`): `parameters` [{name, expression, unit, comment}], feature
+  `eq` {field path: expr}, sketch dimension `eq`. Driven numbers stay stored; `geometry.regen` runs
+  `params.evaluate` first when `has_equations` (st.params report, st.evaluated doc; a feature with an
+  equation problem gets an error status and is skipped). Expression evaluator is an AST whitelist
+  (numbers, + - * / ^ %, names, pi, abs min max sqrt round floor ceil, trig in degrees, unit suffixes;
+  exponent <= 64; no attributes or other calls). Variables in dependency order with cycle detection;
+  reserved words refused. Registry checks on results (int whole, min/max). Sketch dimensions that changed
+  re-solve with `solve_cli.mjs` (`entities: true`; LRU cache of 64); over-defined or unsolved -> error.
+  `Session.settle_equations` stores computed numbers after every tool; tools `set_parameter` (remove refuses
+  while used unless force) and `set_equation` (feature field or sketch dimension id/name; empty removes)
+  in `ai.TOOLS`, MCP and `BATCH_TOOLS`; reports `parameters`, `equations`, `recomputed`, `now_failing`.
+  inspect_design lists parameters and equations. Browser: Tools > Equations (`app.equationsDialog`, SW
+  "Equations, Global Variables, and Dimensions": Global Variables and Equations tables, values from
+  `/api/params` as you type, red problems, OK refused until clean, one undo step); `/api/regen` returns
+  `equations` {recomputed, features} and `applyResult` copies those numbers (outside sketch mode, no undo
+  step). Checked in Chromium: variable 120 drives D1 and depth = length / 6, bad name stays red, undo.
+- Measure (`measure.py`, MCP `measure_items`): picks {face|edge|name|point} (+ component for assembly
+  world coordinates, part_id otherwise; mixing refused). One item: area, type, normal, size, `openings`
+  of a planar face (round: diameter, center; slot: width, center_distance, overall_length, centers;
+  other: bbox), cylinder diameter/axis/`hole`/length, edge length/diameter/arc angle. Two items:
+  min_distance + from/to/delta (`distance_to_with_closest_points`), touching, center_distance and
+  axis_angle_deg for axes (cylinders, cones, circles, lines), angle_deg / plane_distance for planes,
+  axis_to_plane angle/distance.
+- Delete dry run (`edits.plan_delete`): references = any string field equal to another feature id;
+  cascade: a feature whose `sketch` goes, a pattern/mirror left with no seeds (others trimmed); absorbed =
+  sketches only deleted features used (`delete_absorbed`); would_fail / would_warn = new rebuild errors
+  / warnings. `Session.delete_items` handles `features` (+ part_id) and `dry_run` (assemblies: mates that
+  would fail, under-defined after); real deletes report `deleted`. `/api/delete_plan` drives the browser's
+  Confirm Delete (also deleted, patterns kept, absorbed checkbox, dependent items that will show errors +
+  Delete child features; rollback bar moves by the number removed before it). Checked in Chromium.
+- Preview camera and section (`preview.py`): `yaw`/`pitch` (deg; `camera_direction`), `target` +
+  `view_width` (mm) close-ups, `section` {point, normal}: each solid is split by OpenCascade
+  (`Solid.split`, Keep.BOTTOM, plane moved into part coordinates per component) and faces on the cut plane
+  are drawn orange. MCP preview_document passes them through `artifacts.preview_record(camera, section)`.
+- Skill: `skills/opensketch-cad/` (SKILL.md: predict, stage with batch, measure, names, design intent;
+  reference.md: plane table, argument shapes, names, error-to-fix table, red flags). `get_modelling_guide`
+  appends reference.md (`SKILL_DIR`; the Dockerfile copies `skills/`). Also saved in yuanzhengyang98/skills
+  (copy; this repo is the source).
+- Sweeps and action matrix: `tests/test_sweeps.py` (plate variables to both ends and back: no errors,
+  dof 0 for sketches with equations, hand volumes, exact return; traps: 0 or negative dimension, fractional
+  or 0 count, 0 depth all fail loudly), `tests/test_naming.py` (open box sweep with the shell opening picked
+  by name). `tests/action_matrix.py` (fillet, chamfer r 1, shell 0.8, draft 2 deg on every non-seam,
+  non-smooth edge and planar face of the 14 reference parts + demo bracket + 5 press parts, judged by
+  status, validity and volume) with baseline `tests/action_matrix.json` (fillet 327/327, chamfer 327/327,
+  shell 115/130, draft 75/76); `tests/test_action_matrix.py` fails if anything that worked stops;
+  `python -m tests.action_matrix --update` raises it. body_topology marks `seam` edges.
+- Fix found by the matrix: OpenCascade returned some shells unchanged without an error, and they passed as
+  ok. Shell now tries Kind.ARC then Kind.INTERSECTION and accepts only a body whose volume changed, else
+  "Failed to shell the body. Try a thinner wall, shelling before the fillets, or removing a different face."
+  (the cone shell now works with INTERSECTION; the 15 that still fail are refused loudly).
+Tests: 227 pytest (2 need the macro toolchain) + 7 node.
 
 SolidCraft borrowings (2026-10-17): ideas from bherbruck/solidcraft (Rust CAD with an MCP; read as a
 reference, not forked: OpenSketch keeps build123d/OpenCascade and its SOLIDWORKS UI). Three MCP tools, now 32:
@@ -160,8 +232,17 @@ Phase 1 (part files), phase 2 (assemblies + live AI build), phase 3 (import, mot
   relation: its expectation is wrong (it only moves a sketch on an Equal relation); the export marks
   this as a known stand-in fault. To fix in the engine (cad-review-loop), not here.
 
-- Edge/face references are matched by midpoint/center, not full topological naming. body_topology
-  indices are list order and change when the body changes; pass `ref`, never the index.
+- Persistent names are matched by geometry at each step (an on-face point on the old face or the tool),
+  not taken from OpenCascade's operation history: a face that a later feature makes coincide with an old
+  one inherits the old name, and `new:<k>` names (anything not recognised) can change. body_topology
+  indices are list order and change when the body changes; pass `ref` (name + point), never the index.
+- The browser stores names for picks on OK, but Edit Feature highlights picks by their stored point, which
+  is stale after the part changes size (the feature itself follows the name).
+- Equations: per part only (no assembly-level variables); the sketch Modify box does not create equations
+  (use Tools > Equations); dimension references by name ("D1@Sketch1") inside expressions are not
+  supported, only global variables.
+- 15 shells and 1 draft in the action matrix fail in OpenCascade (side faces next to fillets, removing an
+  already open top, a cone base); they now error instead of passing silently.
 - Sketch DOF in inspect_design needs node on the server (Docker image: Debian nodejs 20, deployed to Fly
   2026-10-17; the devcontainer has it). Not yet called through the real Claude connector.
 - batch runs on the server only (MCP). The in-app copilot still applies tools one at a time.
@@ -190,17 +271,9 @@ The .osk JSON format stays the contract either way.
 
 ## Next phase
 
-Further SolidCraft ideas, ranked (from its docs/mcp.md, skills/, crates/doc/src/naming.rs):
-a. Persistent face/edge names by how they were made (`F2:top`, `F3:blend:<edge>`, edges as `faceA|faceB`),
-   so fillet picks survive upstream edits. Biggest step past midpoint matching.
-b. Named parameters with units and expressions (`w/2 - wall`) in any numeric field, plus a set_parameter
-   that reports what rebuilt and what now fails.
-c. A two-item `measure` (min distance, axis-to-axis distance, angle, hole diameter, slot width).
-d. A dry run for delete_items listing what goes with it and what would fail.
-e. A Claude skill shipped with the MCP: argument shapes, plane tables, error-to-fix table, red flags.
-f. preview_document with an explicit camera (target, yaw, pitch, distance) and a section crop.
-g. Parameter-sweep tests (each driving dimension to both ends and back, no errors, volumes as computed)
-   and an action matrix (every fillet/chamfer/shell on every edge/face of real parts, ratcheted baseline).
+SolidCraft ideas a-g are done (see Current state). Still open from it: exact names from OpenCascade
+history (BRepAlgoAPI Modified/Generated) instead of geometric matching; a replayable script export of the
+timeline; a hostile-parameters fuzz test over every tool.
 
 0. Run an exported macro in SOLIDWORKS 2022 (press demo first) and fix what the log shows; then
    revolves and cross holes as features where the engine allows.

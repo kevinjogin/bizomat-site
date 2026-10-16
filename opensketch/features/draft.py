@@ -12,7 +12,7 @@ def build(feat: dict, st, diagnostics: dict):
 
     if st.part is None:
         raise FeatureError("No body to draft")
-    faces, missing = find_faces(st.part, feat.get("faces") or [])
+    faces, missing = find_faces(st.part, feat.get("faces") or [], st.namer)
     if not faces:
         raise FeatureError("Select faces to draft")
     pl = resolve_plane(feat.get("neutral_plane"), st, diagnostics)

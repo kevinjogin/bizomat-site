@@ -95,6 +95,18 @@ def api_params(req: ParamsRequest):
             "recomputed": rep["recomputed"], "features": new.get("features", [])}
 
 
+class NameRefsRequest(BaseModel):
+    doc: dict          # the part as it stands before the feature (its rollback bar just above it)
+    feature: dict
+
+
+@app.post("/api/name_refs")
+def api_name_refs(req: NameRefsRequest):
+    """Add persistent names to a feature's face and edge picks (naming.annotate), so they survive edits."""
+    from . import naming
+    return {"feature": naming.annotate(req.doc, req.feature)}
+
+
 class DeletePlanRequest(BaseModel):
     doc: dict
     features: list[str]

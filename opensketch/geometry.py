@@ -59,6 +59,8 @@ class RegenState:
     diagnostics: dict = field(default_factory=dict)  # feature id -> measured geometry + warnings
     params: dict | None = None  # params.evaluate report when the part has variables or equations
     evaluated: dict | None = None  # the part with equation results, when params is set
+    instances: dict = field(default_factory=dict)  # pattern/mirror id -> [(moved tool, op, seed id, label)]
+    namer: Any = None  # naming.Namer: persistent face and edge names, worked out on request
 
 
 # ----------------------------------------------------------------------------- helpers
@@ -271,14 +273,40 @@ def sketch_profiles(edges: list[Edge], pl: Plane) -> list[Face]:
 
 # ----------------------------------------------------------------------------- refs
 
-def find_edges(part, refs: list[dict]) -> tuple[list[Edge], int]:
-    """Edge refs are {"mid": [x,y,z]} (point at parameter 0.5). Returns matches, missing count."""
+def _by_name(namer, part, ref: dict, kind: str):
+    """Shapes a ref's persistent name points at (naming.py), or None when it has no name or no match."""
+    name = ref.get("name") if isinstance(ref, dict) else None
+    if not name or namer is None:
+        return None
+    try:
+        hit = namer.resolve_edges(part, name) if kind == "edge" else namer.resolve_faces(part, name)
+    except Exception:
+        hit = []
+    if not hit:
+        namer.notes.append(f"No {kind} named {name!r}; used its position instead." if ref.get("mid" if kind == "edge" else "center")
+                           else f"No {kind} named {name!r}.")
+        return None
+    return hit
+
+
+def find_edges(part, refs: list[dict], namer=None) -> tuple[list[Edge], int]:
+    """Edge refs are {"name": persistent name} and/or {"mid": [x,y,z]} (point at parameter 0.5). The name is
+    tried first (it survives upstream edits), the midpoint second. Returns matches, missing count."""
     if part is None:
         raise FeatureError("No body to modify")
     edges = part.edges()
     tol = scale_of(part) * 0.02
     found, missing = [], 0
     for r in refs:
+        named = _by_name(namer, part, r, "edge")
+        if named:
+            for e in named:
+                if not any(e.is_same(x) for x in found):
+                    found.append(e)
+            continue
+        if not isinstance(r, dict) or "mid" not in r:
+            missing += 1
+            continue
         m = v3(r["mid"])
         best, bestd = None, None
         for e in edges:
@@ -293,13 +321,21 @@ def find_edges(part, refs: list[dict]) -> tuple[list[Edge], int]:
     return found, missing
 
 
-def find_faces(part, refs: list[dict]) -> tuple[list[Face], int]:
+def find_faces(part, refs: list[dict], namer=None) -> tuple[list[Face], int]:
+    """Face refs are {"name": persistent name} and/or {"center": [x,y,z], "normal": [x,y,z]}; name first."""
     if part is None:
         raise FeatureError("No body to modify")
     faces = part.faces()
     tol = scale_of(part) * 0.05
     found, missing = [], 0
     for r in refs:
+        named = _by_name(namer, part, r, "face")
+        if named:
+            found.extend(f for f in named if not any(f.is_same(x) for x in found))
+            continue
+        if not isinstance(r, dict) or "center" not in r:
+            missing += 1
+            continue
         c = v3(r["center"])
         n = v3(r["normal"]) if r.get("normal") else None
         best, bestd = None, None
@@ -414,7 +450,7 @@ def direction_of(spec, st: RegenState) -> Vector:
     if isinstance(spec, dict) and "vector" in spec:
         return v3(spec["vector"]).normalized()
     if isinstance(spec, dict) and "edge" in spec:
-        es, _ = find_edges(st.part, [spec["edge"]])
+        es, _ = find_edges(st.part, [spec["edge"]], st.namer)
         if es and es[0].geom_type == GeomType.LINE:
             return (es[0].position_at(1) - es[0].position_at(0)).normalized()
     raise FeatureError("Select a linear edge or axis for the direction")
@@ -451,7 +487,7 @@ def _regen_feature(feat: dict, st: RegenState):
         st.part = apply_op(st.part, tool, op, feat.get("merge", True))
         return tool
     if t == "fillet":
-        edges, missing = find_edges(st.part, feat.get("edges", []))
+        edges, missing = find_edges(st.part, feat.get("edges", []), st.namer)
         if not edges:
             raise FeatureError("Select edges to fillet")
         r = float(feat.get("radius", 1))
@@ -461,7 +497,7 @@ def _regen_feature(feat: dict, st: RegenState):
             raise FeatureError(f"Failed to create fillet (radius {r} too large?)") from exc
         return f"{missing} edge reference(s) missing" if missing else None
     if t == "chamfer":
-        edges, missing = find_edges(st.part, feat.get("edges", []))
+        edges, missing = find_edges(st.part, feat.get("edges", []), st.namer)
         if not edges:
             raise FeatureError("Select edges to chamfer")
         d1 = float(feat.get("distance", 1))
@@ -474,7 +510,7 @@ def _regen_feature(feat: dict, st: RegenState):
             raise FeatureError("Failed to create chamfer") from exc
         return f"{missing} edge reference(s) missing" if missing else None
     if t == "shell":
-        faces, missing = find_faces(st.part, feat.get("faces", []))
+        faces, missing = find_faces(st.part, feat.get("faces", []), st.namer)
         th = float(feat.get("thickness", 1))
         amt = th if feat.get("outward") else -th
         before = st.part.volume
@@ -497,8 +533,10 @@ def _regen_feature(feat: dict, st: RegenState):
     if t == "mirror":
         pl = resolve_plane(feat.get("plane"), st, diagnostics)
         if feat.get("features"):
-            for tool, op in pattern_seed_tools(feat, st):
-                st.part = apply_op(st.part, mirror(tool, about=pl), op)
+            for (tool, op), sid in zip(pattern_seed_tools(feat, st), feat["features"]):
+                copy = mirror(tool, about=pl)
+                st.instances.setdefault(feat["id"], []).append((copy, op, sid, "m"))
+                st.part = apply_op(st.part, copy, op)
         else:
             if st.part is None:
                 raise FeatureError("No body to mirror")
@@ -516,8 +554,10 @@ def _regen_feature(feat: dict, st: RegenState):
                 if i == 0 and j == 0:
                     continue
                 off = d * (sp * i) + (dv2 * (sp2 * j) if dv2 is not None else Vector())
-                for tool, op in seeds:
-                    st.part = apply_op(st.part, tool.moved(Location(off)), op)
+                for (tool, op), sid in zip(seeds, feat["features"]):
+                    copy = tool.moved(Location(off))
+                    st.instances.setdefault(feat["id"], []).append((copy, op, sid, f"{i + 1}" + (f".{j + 1}" if dv2 is not None else "")))
+                    st.part = apply_op(st.part, copy, op)
         return None
     if t == "circular_pattern":
         seeds = pattern_seed_tools(feat, st)
@@ -531,8 +571,10 @@ def _regen_feature(feat: dict, st: RegenState):
         step = total / n if feat.get("equal_spacing", True) and abs(total - 360) < 1e-9 else (
             total / max(n - 1, 1) if feat.get("equal_spacing", True) else float(feat.get("step", 90)))
         for i in range(1, n):
-            for tool, op in seeds:
-                st.part = apply_op(st.part, tool.rotate(axis, step * i), op)
+            for (tool, op), sid in zip(seeds, feat["features"]):
+                copy = tool.rotate(axis, step * i)
+                st.instances.setdefault(feat["id"], []).append((copy, op, sid, f"{i + 1}"))
+                st.part = apply_op(st.part, copy, op)
         return None
     from . import features as registry
     ft = registry.get(t)
@@ -597,6 +639,9 @@ def rebuild_feature(feat: dict, st: RegenState) -> tuple[Any, dict]:
     warnings = list(diagnostics.get("warnings", []))
     if isinstance(result, str):
         warnings.append({"code": "missing_reference", "message": result})
+    if st.namer is not None and st.namer.notes:
+        warnings.extend({"code": "name_not_found", "message": m} for m in st.namer.notes)
+        st.namer.notes.clear()
     status = {"id": feat["id"], "state": "error" if error else "warning" if warnings else "ok",
               "diagnostics": {k: v for k, v in diagnostics.items() if k != "warnings"}}
     if warnings:
@@ -610,8 +655,8 @@ def rebuild_feature(feat: dict, st: RegenState) -> tuple[Any, dict]:
 def regen(doc: dict, preview: dict | None = None) -> tuple[RegenState, Any]:
     """Rebuild the tree up to the rollback bar. With `preview`, the tentative feature is
     evaluated after the rolled-back state and its tool body is returned (not applied)."""
-    st = RegenState()
-    from . import params
+    from . import naming, params
+    st = RegenState(namer=naming.Namer())
     if params.has_equations(doc):
         doc, st.params = params.evaluate(doc)  # equations drive the numbers before anything is built
         st.evaluated = doc
@@ -632,7 +677,9 @@ def regen(doc: dict, preview: dict | None = None) -> tuple[RegenState, Any]:
             st.status.append({"id": f["id"], "state": "error", "message": f"Equation: {eq_problems[f['id']]}",
                               "diagnostics": {}})
             continue
+        before = st.part
         rebuild_feature(f, st)
+        st.namer.record(f, before, st)
     tool = None
     if preview is not None:
         before = st.part

@@ -878,8 +878,15 @@ class App {
     clearTimeout(this.previewTimer);
     await this.runPreview();
     if (cmd.lastError) { this.pm.spec.error = cmd.lastError; this.pm.render(); this.toast('Rebuild error: ' + cmd.lastError); return; }
-    const f = this.cleanDoc(cmd.f);
+    let f = this.cleanDoc(cmd.f);
     if (!f.draftOn) delete f.draft;
+    if (f.edges?.length || f.faces?.length || f.direction?.edge || f.direction2?.edge) {
+      // store each pick's persistent name with its point, so the pick stays put when earlier features change
+      const before = this.cleanDoc(this.doc);
+      const at = cmd.existing ? before.features.findIndex((x) => x.id === cmd.existing.id) : (before.rollback ?? before.features.length);
+      before.rollback = at;
+      try { f = (await this.api('/api/name_refs', { doc: before, feature: f })).feature; } catch (_) { /* keep the points */ }
+    }
     this.commit(cmd.existing ? 'Edit ' + f.name : f.name, () => {
       if (cmd.existing) { const i = this.doc.features.findIndex((x) => x.id === cmd.existing.id); this.doc.features[i] = f; }
       else this.insertFeature(f);

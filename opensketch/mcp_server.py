@@ -63,7 +63,11 @@ Predict, then measure:
   at once. A failed batch saves nothing; read `failed`, fix that step, send the batch again.
 - A cut with volume_change_mm3 = 0 missed the body. A boss that adds nothing is buried inside it.
 - Fillets, chamfers, shells and drafts: call body_topology (near the spot) and pass the `ref` of the edges or
-  faces you want. Do not guess midpoints. face_angle_deg 0 means the edge is already smooth.
+  faces you want. Do not guess midpoints. Refs carry persistent names (e1:end|e1:side:s1L1), so picks
+  stay put when the part changes size. face_angle_deg 0 means already smooth; never fillet a seam edge.
+- Use measure_items for hole sizes, spacing, walls and gaps; preview_document with yaw/pitch and a section
+  to look inside. Set global variables (set_parameter) for the numbers a designer would change.
+- Delete with delete_items dry_run first.
 - Fillet last: after holes, ribs and shells, small radii first.
 
 """
@@ -625,7 +629,7 @@ def _topology_sync(doc_id, part_id, kind, near, limit) -> str:
     rec = store.get(doc_id)
     part = _part_doc(rec["doc"], part_id)
     st, _ = geometry.regen(part)
-    out = inspection.body_topology(st.part, kind, near, limit)
+    out = inspection.body_topology(st.part, kind, near, limit, st.namer)
     out.update(doc_id=doc_id, version=rec["version"], **({"part_id": part_id} if part_id else {}))
     if assembly.is_assembly(rec["doc"]):
         out["coordinates"] = "part (local)"
@@ -637,7 +641,10 @@ async def body_topology(doc_id: str, part_id: str | None = None,
                         kind: Literal["both", "faces", "edges"] = "both",
                         near: Annotated[list[float] | None, Field(description="[x,y,z] mm: list the faces and edges nearest this point first")] = None,
                         limit: Annotated[int, Field(ge=1, le=500)] = 60) -> str:
-    """Faces and edges of a part's body, to pick them by point instead of guessing. Faces: type, area, centre,
+    """Faces and edges of a part's body, to pick them by name instead of guessing. Every face and edge has a
+    persistent `name` from how it was made (e1:side:s1L2 = the side of extrude e1 made by sketch curve s1L2;
+    e1:end, e1:start; f1:blend:<edge>; edges are "<face A>|<face B>"), so a fillet on an edge stays on it
+    when the part changes size. Faces: type, area, centre,
     an on-face point, normal (planes), axis and radius (cylinders, cones), and `ref`. Edges: type, midpoint,
     start, end, length, direction or centre and radius, the two faces it joins, face_angle_deg (90 = square
     corner, 0 = smooth), seam (where a hole or shaft surface meets itself: never fillet it) and `ref`. Pass an edge's `ref` as-is in fillet / chamfer edges and a face's `ref`
