@@ -48,6 +48,24 @@ OpenSketch is also an MCP server, so Claude (in claude.ai, the desktop app or Cl
 parts and assemblies in it while you watch them appear in the browser. It uses your Claude plan, not
 your Anthropic API key.
 
+MCP work runs in the background by default. A browser is optional for interactive editing;
+the server can import source CAD, build the model, return a PNG for inspection, and export files:
+
+- `import_document(filename, data, name?)`: base64 file bytes, up to 32 MiB, into a new document.
+  Supports `.osk`, `.json`, STEP, EAGLE XML `.brd`, and ZIPs containing one STEP or board file.
+- `preview_document(doc_id, view?, width?, height?, part_id?)`: a PNG image returned directly in the
+  tool result. Isometric, top, front and right views work without a browser or graphics driver.
+- `export_document(doc_id, format, part_id?)`: `.osk`, STEP or STL, with source version, SHA-256 and
+  an artifact-specific download link valid for one hour. Exporting an assembly part uses its local
+  coordinates. Downloads and previews do not change the document or create history versions.
+
+STEP, STL and PNG generation reject active feature or mate errors; native `.osk` backups remain
+available for documents needing repair. Warnings remain visible in the result. Rebuild reports
+distinguish `rebuilt` (no errors) from `clean` (no errors or warnings), and include resolved sketch
+planes, feature bounds and material changes. Use a `fixed` coordinate plane or offset datum when
+a computed pocket or pin height must stay exact; `face` planes deliberately follow nearby faces.
+See the [plane contract](docs/DOCUMENT.md#conventions).
+
 1. **Set a password.** On GitHub: Settings > Codespaces > Secrets > New secret, name
    `OPENSKETCH_PASSWORD`, give this repository access. Restart the codespace once so it picks it up.
    Without a password, anyone with the address could use your OpenSketch.
@@ -99,6 +117,7 @@ pip install -e .            # build123d, fastapi, uvicorn
 pip install -e ".[ai]"      # optional: the AI copilot (anthropic SDK)
 export ANTHROPIC_API_KEY=... # optional
 python -m opensketch         # opens http://127.0.0.1:8000
+python -m opensketch --no-browser # background server for MCP, no browser launch
 OPENSKETCH_AI_DEMO=1 python -m opensketch   # every AI request plays the recorded demo
 ```
 
@@ -160,6 +179,11 @@ Task Pane on the right, status bar with Under/Fully/Over Defined and "Editing Sk
 - STEP / STL export of the whole assembly, mass properties with each part's own material.
 
 **Import and Toolbox**
+- Open an EAGLE XML `.brd`, including the official Arduino UNO CAD ZIP, as an editable PCB outline,
+  thickness extrusion and mechanical-hole cuts. Signed arcs and the board's layer stack are used;
+  missing stack data is reported with a 1.6 mm default. Component placements and 2D package data
+  are preserved as metadata. Component bodies, copper traces and plated pad/via drills are not
+  generated. Archives with several supported models ask you to select a file explicitly.
 - Open or drop a STEP file, or the .zip a supplier like McMaster-Carr sends it in. One body becomes a part with an `Imported1` feature you can keep adding
   cuts, fillets and shells to. Several bodies become an assembly, identical bodies sharing one part.
   OpenSketch AI > **Rebuild as Features** turns an imported body into an editable feature tree and
@@ -247,6 +271,9 @@ opensketch/
                      add_mate, delete_items, check_interference; rebuilds each feature as it arrives
   demo.py            recorded sessions (hand press, L bracket) for "Watch a demo" and tests
   importer.py        STEP import (parts, assemblies), embedded BREP bodies, Toolbox parts (bd_warehouse)
+  eagle.py           EAGLE XML PCB import with editable outline/thickness/holes and source metadata
+  preview.py         browser-free orthographic PNG renderer with depth buffer and bounded raster work
+  artifacts.py       immutable MCP exports and previews, signed expiring download links
   sldexport.py       SOLIDWORKS macro export: part -> engine recipe, assembly data, checks, zip
   sldexport_vba.py   the VBA OpenSketch adds to the macro (STEP import, saving, components, mates)
   sldexport_standin.py, sldexport_mock/   assembly stand-in (LibreOffice Basic mocks of SOLIDWORKS)

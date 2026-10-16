@@ -55,6 +55,7 @@ class RegenState:
     sketch_edges: dict = field(default_factory=dict)  # sketch id -> {entity id: Edge}
     tools: dict = field(default_factory=dict)    # feature id -> (tool solid, op)
     status: list = field(default_factory=list)
+    diagnostics: dict = field(default_factory=dict)  # feature id -> measured geometry + warnings
 
 
 # ----------------------------------------------------------------------------- helpers
@@ -94,20 +95,28 @@ def scale_of(part) -> float:
 
 # ----------------------------------------------------------------------------- planes
 
-def resolve_plane(spec: dict, st: RegenState) -> Plane:
-    """Plane spec: {"ref": "Front Plane" | "<feature id>"} or a face plane
-    {"type": "face", "origin", "normal", "xdir"} (re-found on the current solid)."""
+def resolve_plane(spec: dict, st: RegenState, diagnostics: dict | None = None) -> Plane:
+    """Resolve a datum, fixed coordinate plane, or face attachment (which follows edits)."""
     if spec is None:
         raise FeatureError("No sketch plane")
     ref = spec.get("ref")
     if ref:
         if ref in STD_PLANES:
-            return STD_PLANES[ref]
-        if ref in st.planes:
-            return st.planes[ref]
-        raise FeatureError(f"Plane reference '{ref}' not found")
+            pl = STD_PLANES[ref]
+        elif ref in st.planes:
+            pl = st.planes[ref]
+        else:
+            raise FeatureError(f"Plane reference '{ref}' not found")
+        if diagnostics is not None:
+            diagnostics.update(requested_plane=dict(spec), resolved_plane=plane_dict(pl))
+        return pl
+    mode = spec.get("type", "fixed")
+    if mode not in ("face", "fixed"):
+        raise FeatureError(f"Unknown plane type '{mode}'; use 'face' or 'fixed'")
     o, n, x = v3(spec["origin"]), v3(spec["normal"]).normalized(), v3(spec["xdir"]).normalized()
-    if spec.get("type") == "face" and st.part is not None:
+    requested_origin = o
+    best = None
+    if mode == "face" and st.part is not None:
         # Re-find the face: same normal, nearest to the stored origin. Follows depth changes.
         best, bestd = None, None
         for f in st.part.faces():
@@ -121,15 +130,36 @@ def resolve_plane(spec: dict, st: RegenState) -> Plane:
                 best, bestd = f, d
         if best is not None:
             o = o + n * (best.center() - o).dot(n)
-    return Plane(origin=o, x_dir=x, z_dir=n)
+    pl = Plane(origin=o, x_dir=x, z_dir=n)
+    if diagnostics is not None:
+        diagnostics.update(requested_plane=dict(spec), resolved_plane=plane_dict(pl))
+        shift = (o - requested_origin).length
+        diagnostics["plane_resolution"] = {"mode": mode, "shift_mm": round(shift, 9)}
+        if mode == "face":
+            diagnostics["plane_resolution"]["matched_face"] = best is not None
+            if best is None:
+                diagnostics.setdefault("warnings", []).append({
+                    "code": "face_plane_unmatched",
+                    "message": "No face matches the requested plane normal; using its stored coordinates.",
+                })
+            elif shift > 1e-6:
+                diagnostics.setdefault("warnings", []).append({
+                    "code": "face_plane_moved",
+                    "message": (f"Face attachment moved the sketch plane {shift:.6g} mm from "
+                                f"{vlist(requested_origin)} to {vlist(o)}. Use a fixed plane for an exact coordinate."),
+                })
+    return pl
 
 
-def plane_feature(feat: dict, st: RegenState) -> Plane:
-    base = resolve_plane(feat.get("base") or {"ref": "Front Plane"}, st)
+def plane_feature(feat: dict, st: RegenState, diagnostics: dict | None = None) -> Plane:
+    base = resolve_plane(feat.get("base") or {"ref": "Front Plane"}, st, diagnostics)
     off = float(feat.get("offset", 0.0)) * (-1 if feat.get("flip") else 1)
     pl = Plane(origin=base.origin + base.z_dir * off, x_dir=base.x_dir, z_dir=base.z_dir)
     if feat.get("flip"):
         pl = Plane(origin=pl.origin, x_dir=pl.x_dir, z_dir=-pl.z_dir)
+    if diagnostics is not None:
+        diagnostics["resolved_base_plane"] = diagnostics["resolved_plane"]
+        diagnostics["resolved_plane"] = plane_dict(pl)
     return pl
 
 
@@ -389,8 +419,9 @@ def direction_of(spec, st: RegenState) -> Vector:
 
 # ----------------------------------------------------------------------------- regen
 
-def regen_feature(feat: dict, st: RegenState):
+def _regen_feature(feat: dict, st: RegenState):
     t = feat["type"]
+    diagnostics = st.diagnostics[feat["id"]]
     if t in ("import", "standard"):
         from . import importer
         body = importer.decode_shape(feat["data"]) if t == "import" else importer.build_standard(feat)
@@ -398,10 +429,10 @@ def regen_feature(feat: dict, st: RegenState):
         st.part = apply_op(st.part, body, "boss")
         return body
     if t == "plane":
-        st.planes[feat["id"]] = plane_feature(feat, st)
+        st.planes[feat["id"]] = plane_feature(feat, st, diagnostics)
         return None
     if t == "sketch":
-        pl = resolve_plane(feat.get("plane"), st)
+        pl = resolve_plane(feat.get("plane"), st, diagnostics)
         st.planes[feat["id"]] = pl
         st.sketch_edges[feat["id"]] = sketch_geometry(feat, pl, include_construction=True)
         prof_edges = list(sketch_geometry(feat, pl).values())
@@ -449,7 +480,7 @@ def regen_feature(feat: dict, st: RegenState):
             raise FeatureError("Failed to shell the body (thickness too large?)") from exc
         return f"{missing} face reference(s) missing" if missing else None
     if t == "mirror":
-        pl = resolve_plane(feat.get("plane"), st)
+        pl = resolve_plane(feat.get("plane"), st, diagnostics)
         if feat.get("features"):
             for tool, op in pattern_seed_tools(feat, st):
                 st.part = apply_op(st.part, mirror(tool, about=pl), op)
@@ -491,6 +522,72 @@ def regen_feature(feat: dict, st: RegenState):
     raise FeatureError(f"Unknown feature type '{t}'")
 
 
+def shape_bounds(shape) -> list | None:
+    if shape is None:
+        return None
+    bb = shape.bounding_box()
+    return [vlist(bb.min), vlist(bb.max)]
+
+
+def regen_feature(feat: dict, st: RegenState):
+    """Build one feature, preserving its tool return value and recording measured diagnostics."""
+    diagnostics = st.diagnostics[feat["id"]] = {}
+    before = st.part
+    before_volume = before.volume if before is not None else 0.0
+    result = _regen_feature(feat, st)
+    diagnostics["result_bbox"] = shape_bounds(st.part)
+    if feat["type"] not in ("sketch", "plane") and st.part is not None:
+        delta = st.part.volume - before_volume
+        diagnostics["volume_change_mm3"] = round(delta, 9)
+    if feat["id"] in st.tools:
+        tool, op = st.tools[feat["id"]]
+        diagnostics["tool_bbox"] = shape_bounds(tool)
+        diagnostics["tool_volume_mm3"] = round(tool.volume, 9)
+        if feat["type"] in ("extrude", "revolve"):
+            diagnostics["resolved_plane"] = plane_dict(st.planes[feat["sketch"]])
+            tolerance = max(1e-7, abs(before_volume) * 1e-10)
+            if before is not None and abs(delta) <= tolerance and (op == "cut" or feat.get("merge", True)):
+                diagnostics.setdefault("warnings", []).append({
+                    "code": "no_material_removed" if op == "cut" else "no_material_added",
+                    "message": ("Cut removed no material; check its plane, direction and depth." if op == "cut"
+                                else "Merged boss added no material; its tool may be buried inside the existing body."),
+                })
+        if feat["type"] == "extrude":
+            pl = st.planes[feat["sketch"]]
+            bb = pl.to_local_coords(tool).bounding_box()
+            diagnostics["extrusion"] = {
+                "end": feat.get("end", "blind"), "requested_depth_mm": float(feat.get("depth", 10)),
+                "reverse": bool(feat.get("reverse")),
+                "normal_range_mm": [round(bb.min.Z, 9), round(bb.max.Z, 9)],
+            }
+            if feat.get("dir2"):
+                diagnostics["extrusion"]["direction2"] = dict(feat["dir2"])
+    return result
+
+
+def rebuild_feature(feat: dict, st: RegenState) -> tuple[Any, dict]:
+    """Shared full/live rebuild path: warnings do not turn valid geometry into an error."""
+    result, error = None, None
+    try:
+        result = regen_feature(feat, st)
+    except FeatureError as exc:
+        error = str(exc)
+    except Exception as exc:
+        error = f"Rebuild error: {exc}"
+    diagnostics = st.diagnostics.get(feat["id"], {})
+    warnings = list(diagnostics.get("warnings", []))
+    if isinstance(result, str):
+        warnings.append({"code": "missing_reference", "message": result})
+    status = {"id": feat["id"], "state": "error" if error else "warning" if warnings else "ok",
+              "diagnostics": {k: v for k, v in diagnostics.items() if k != "warnings"}}
+    if warnings:
+        status["warnings"] = warnings
+    if error or warnings:
+        status["message"] = error or " ".join(w["message"] for w in warnings)
+    st.status.append(status)
+    return result, status
+
+
 def regen(doc: dict, preview: dict | None = None) -> tuple[RegenState, Any]:
     """Rebuild the tree up to the rollback bar. With `preview`, the tentative feature is
     evaluated after the rolled-back state and its tool body is returned (not applied)."""
@@ -507,26 +604,16 @@ def regen(doc: dict, preview: dict | None = None) -> tuple[RegenState, Any]:
         if f.get("suppressed"):
             st.status.append({"id": f["id"], "state": "suppressed"})
             continue
-        try:
-            warn = regen_feature(f, st)
-            st.status.append({"id": f["id"], "state": "warning" if isinstance(warn, str) else "ok",
-                              **({"message": warn} if isinstance(warn, str) else {})})
-        except FeatureError as exc:
-            st.status.append({"id": f["id"], "state": "error", "message": str(exc)})
-        except Exception as exc:  # OCC failures
-            st.status.append({"id": f["id"], "state": "error", "message": f"Rebuild error: {exc}"})
+        rebuild_feature(f, st)
     tool = None
     if preview is not None:
         before = st.part
-        try:
-            tool = regen_feature(preview, st)
-            if isinstance(tool, str) or tool is None:
-                tool = None
-            st.status.append({"id": preview.get("id", "preview"), "state": "ok", "preview": True})
-        except Exception as exc:
+        tool, status = rebuild_feature({"id": "preview", **preview}, st)
+        status["preview"] = True
+        if isinstance(tool, str):
+            tool = None
+        if status["state"] == "error":
             st.part = before
-            st.status.append({"id": preview.get("id", "preview"), "state": "error", "preview": True,
-                              "message": str(exc)})
         if preview.get("type") in ("extrude", "revolve"):
             st.part = before  # SOLIDWORKS shows the body as it was plus a yellow tool preview
         elif before is not None and st.part is not None and st.part is not before:

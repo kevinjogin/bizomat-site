@@ -25,7 +25,7 @@ from contextlib import asynccontextmanager
 
 from starlette.routing import Route
 
-from . import ai, assembly, auth, geometry, importer, mcp_server, sldexport, store
+from . import ai, artifacts, assembly, auth, geometry, importer, mcp_server, sldexport, store
 
 STATIC = Path(__file__).parent / "static"
 
@@ -96,7 +96,7 @@ class ImportRequest(BaseModel):
 def _import_reply(raw: bytes, filename: str):
     """Every failure comes back as JSON {error} with a readable message, never a bare 500."""
     try:
-        return {"doc": importer.import_step(raw, filename)}
+        return {"doc": importer.import_file(raw, filename)}
     except importer.ImportError_ as exc:
         return JSONResponse({"error": str(exc)}, status_code=422)
     except Exception as exc:  # anything else the reader or the assembly step throws
@@ -314,6 +314,18 @@ def api_connect(request: Request):
     base = auth.public_url(dict(request.headers))
     return {"mcp_url": f"{base}/mcp/{auth.mcp_token()}", "password_set": bool(auth.password()),
             "codespace": bool(os.environ.get("CODESPACE_NAME")), "app_url": base}
+
+
+@app.get("/mcp/artifacts/{artifact_id}/{filename}")
+def api_artifact(artifact_id: str, filename: str, expires: str = "", signature: str = ""):
+    """Artifact-scoped signed capability: no login cookie or document/MCP credential in the URL."""
+    try:
+        path, info = artifacts.resolve(artifact_id, filename, expires, signature)
+    except artifacts.ArtifactError:
+        raise HTTPException(404, "No such artifact") from None
+    return FileResponse(path, filename=info["filename"], media_type=info["media_type"],
+                        headers={"Cache-Control": "no-store", "Referrer-Policy": "no-referrer",
+                                 "X-Content-Type-Options": "nosniff", "Content-Security-Policy": "sandbox"})
 
 
 # MCP (Streamable HTTP): the token in the path is the key; routed before the static files.

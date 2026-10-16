@@ -24,6 +24,24 @@ and saved to disk, so a part made by hand and a part made by the AI are the same
 Every feature has `id` (unique), `type`, `name` (SOLIDWORKS style: Sketch1, Boss-Extrude1...),
 and optionally `suppressed`, `hidden`, `shown`.
 
+## EAGLE board import metadata
+
+An imported EAGLE XML `.brd` is an ordinary editable part: layer 20 perimeter sketches,
+board extrusion, and mechanical hole cuts. It may also carry a `pcb` object containing
+`format: "eagle-xml"`, `source`, `eagle_version`, `coordinates`, `thickness`, `outline`,
+`holes`, `components`, `packages`, and `limitations`. Geometry remains in `features`;
+metadata does not silently create component solids or constrain later edits.
+
+`thickness` records `value` (mm), `source`, and any available `layer_setup`, `copper_mm`
+and `isolation_mm`. `holes` records EAGLE XY centres, drill diameter, and source.
+`components` preserves the name, value, library/package identifiers, EAGLE XY position,
+rotation, mirrored/spin flags, side and 3D board-plane position. `packages` preserves
+2D package geometry and pad records as tagged attributes/children. EAGLE XY maps to
+OpenSketch `[x, height, -y]`; component heights are not inferred from silkscreen.
+
+The `limitations` list distinguishes exact board geometry from unmodelled components
+and reports a default thickness when the file has no usable stackup.
+
 ## Conventions
 
 Units are millimetres and degrees. Y is up, as in SOLIDWORKS.
@@ -39,7 +57,25 @@ A plane reference is one of:
 - `{"ref": "Front Plane"}` (or Top / Right), or `{"ref": "<plane or sketch feature id>"}`
 - a planar face: `{"type": "face", "origin": [x,y,z], "normal": [x,y,z], "xdir": [x,y,z]}`.
   The origin is the part origin projected onto the face. On rebuild the face is found again
-  (same normal, nearest face), so the sketch follows if an earlier depth changes.
+  (same normal, nearest face), so the sketch follows if an earlier depth changes. The stored origin
+  is an attachment hint, not a fixed height. The rebuild reports the requested and resolved plane,
+  and warns if reattachment moves it or no matching face exists.
+- a fixed coordinate plane: `{"type": "fixed", "origin": [x,y,z], "normal": [x,y,z], "xdir": [x,y,z]}`.
+  It stays at the supplied origin even if nearby faces move. Use this for computed enclosure floor,
+  pocket, or pin heights. A `plane` feature offset from a named plane is another fixed datum option.
+  Existing explicit coordinate planes without a `type` retain this fixed behavior.
+
+Rebuild statuses include `diagnostics`: requested/resolved planes for sketch and reference-plane
+features; `tool_bbox` and `result_bbox` in part coordinates; and signed `volume_change_mm3` for solid
+operations. Extrudes also report the actual tool `normal_range_mm` relative to the resolved sketch
+plane and requested end/depth settings. A cut that removes no material or a merged boss that adds
+no material raises a warning, even when the CAD operation succeeds. These bounds and volumes
+describe the generated geometry; they do not assert a design's intended dimensions or clearances.
+AI/MCP part reports separate `errors` and `warnings`: `rebuilt` means no rebuild errors; `clean`
+means no rebuild errors or warnings. A successful rebuild can therefore have `rebuilt: true` and
+`clean: false`. Both full rebuilds and streamed feature steps use the same diagnostics.
+Assembly reports aggregate all part, mate, and component errors/warnings, including after inserting,
+mating, or deleting a component. A successful individual operation does not clear existing warnings.
 
 ## Sketch
 

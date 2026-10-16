@@ -1,4 +1,4 @@
-"""STEP import, and the "imported" and "standard" feature bodies.
+"""STEP/EAGLE dispatch, and the "imported" and "standard" feature bodies.
 
 An imported solid is stored inside the document as BREP text (zlib + base64), so an .osk file stays
 self-contained. SOLIDWORKS calls this an "Imported" base feature: you keep modelling on top of it.
@@ -8,7 +8,7 @@ distinct shape (identical shapes share a part, like instances), one component pe
 position. Like SOLIDWORKS importing a STEP assembly, no mates come in; Add Mates (AI) or the Mate
 command adds them.
 
-A .zip (how McMaster-Carr and most suppliers ship CAD) is opened and the STEP inside is imported.
+A .zip imports exactly one supported CAD file. EAGLE board geometry is handled by eagle.py.
 """
 
 from __future__ import annotations
@@ -126,26 +126,59 @@ def import_part_feature(solid, name: str, source: str) -> dict:
             "data": encode_shape(solid), "source": source, "label": name}
 
 
-def _from_zip(data: bytes, filename: str) -> tuple[bytes, str]:
-    """The one STEP file inside a zip, as (bytes, its name)."""
+MAX_ARCHIVE_FILE_BYTES = 64 * 1024 * 1024
+
+
+def _from_zip(data: bytes, filename: str, *, include_eagle=False) -> tuple[bytes, str]:
+    """Read exactly one supported CAD file; never silently choose between models."""
     try:
         zf = zipfile.ZipFile(io.BytesIO(data))
     except zipfile.BadZipFile as exc:
         raise ImportError_(f"{filename} is not a readable zip file.") from exc
-    names = [n for n in zf.namelist() if not n.endswith("/") and not os.path.basename(n).startswith(".")
-             and not n.startswith("__MACOSX/")]
-    steps = [n for n in names if os.path.splitext(n)[1].lower() in (".step", ".stp")]
-    if len(steps) == 1:
-        return zf.read(steps[0]), os.path.basename(steps[0])
-    if len(steps) > 1:
-        listed = ", ".join(os.path.basename(n) for n in steps[:6]) + (" ..." if len(steps) > 6 else "")
-        raise ImportError_(f"{filename} holds {len(steps)} STEP files ({listed}). Unzip it and open the one you want.")
-    native = [n for n in names if os.path.splitext(n)[1].lower() in NATIVE_SOLIDWORKS]
-    if native:
-        raise ImportError_(
-            f"{filename} only holds SOLIDWORKS files ({os.path.basename(native[0])}). Download the STEP version "
-            "instead, or in SOLIDWORKS use File > Save As > STEP AP214 (*.step).")
-    raise ImportError_(f"{filename} has no STEP file inside (.step or .stp).")
+    with zf:
+        if len(zf.infolist()) > 2000:
+            raise ImportError_(f"{filename} has too many archive entries. Unzip it and open one CAD file.")
+        entries = [i for i in zf.infolist() if not i.is_dir()
+                   and not any(p.startswith(".") or p == "__MACOSX" for p in i.filename.split("/"))]
+        extensions = (".step", ".stp", ".brd") if include_eagle else (".step", ".stp")
+        models = [i for i in entries if os.path.splitext(i.filename)[1].lower() in extensions]
+        if len(models) == 1:
+            entry = models[0]
+            if entry.file_size > MAX_ARCHIVE_FILE_BYTES:
+                raise ImportError_("The CAD file inside the archive exceeds the 64 MiB import limit.")
+            try:
+                with zf.open(entry) as stream:
+                    raw = stream.read(MAX_ARCHIVE_FILE_BYTES + 1)
+            except (zipfile.BadZipFile, RuntimeError, NotImplementedError) as exc:
+                raise ImportError_(f"Could not read the CAD file inside {filename}: {exc}") from exc
+            if len(raw) > MAX_ARCHIVE_FILE_BYTES:
+                raise ImportError_("The CAD file inside the archive exceeds the 64 MiB import limit.")
+            return raw, os.path.basename(entry.filename)
+        if len(models) > 1:
+            listed = ", ".join(os.path.basename(i.filename) for i in models[:6]) + (" ..." if len(models) > 6 else "")
+            kind = "STEP" if all(os.path.splitext(i.filename)[1].lower() in (".step", ".stp") for i in models) else "supported CAD"
+            raise ImportError_(f"{filename} holds {len(models)} {kind} files ({listed}). Unzip it and open the one you want.")
+        native = [i for i in entries if os.path.splitext(i.filename)[1].lower() in NATIVE_SOLIDWORKS]
+        if native:
+            raise ImportError_(
+                f"{filename} only holds SOLIDWORKS files ({os.path.basename(native[0].filename)}). Download the STEP version "
+                "instead, or in SOLIDWORKS use File > Save As > STEP AP214 (*.step).")
+        suffix = " or an EAGLE board (.brd)" if include_eagle else ""
+        raise ImportError_(f"{filename} has no STEP file inside (.step or .stp){suffix}.")
+
+
+def import_file(data: bytes, filename: str = "model.step") -> dict:
+    """Import STEP, an EAGLE XML board, or a ZIP containing exactly one of those."""
+    ext = os.path.splitext(filename)[1].lower()
+    if ext == ".zip":
+        data, filename = _from_zip(data, filename, include_eagle=True)
+        ext = os.path.splitext(filename)[1].lower()
+    if ext == ".brd":
+        from .eagle import import_eagle
+        return import_eagle(data, filename)
+    if ext in (".step", ".stp", "") or ext in NATIVE_SOLIDWORKS:
+        return import_step(data, filename)
+    raise ImportError_(f"Cannot import {ext} files. Use STEP (.step or .stp), EAGLE XML (.brd), or a .zip holding one.")
 
 
 def import_step(data: bytes, filename: str = "model.step") -> dict:
