@@ -18,13 +18,26 @@ export const FEATURE_META = {
   standard: { icon: 'toolbox', base: 'Toolbox', title: 'Toolbox Part' },
 };
 
+// The feature registry from the server (opensketch/features): types without a hand-written
+// PropertyManager below get a generated one, plus ribbon commands and defaults.
+async function loadSpecs() {
+  try { const r = await fetch('/api/features'); return r.ok ? await r.json() : {}; } catch (_) { return {}; }
+}
+export const SPECS = await loadSpecs();
+
+export function metaFor(key) {
+  if (FEATURE_META[key]) return FEATURE_META[key];
+  const s = SPECS[key];
+  return s ? { icon: s.icon, base: s.base, title: s.title } : { icon: 'props', base: key, title: key };
+}
+
 export function featureIcon(f) {
   if (f.type === 'extrude') return f.op === 'cut' ? 'cut' : 'extrude';
   if (f.type === 'revolve') return f.op === 'cut' ? 'revcut' : 'revolve';
   if (f.type === 'sketch') return 'sketch_t';
   if (f.type === 'linear_pattern') return 'linpattern';
   if (f.type === 'circular_pattern') return 'circpattern';
-  return FEATURE_META[f.type]?.icon || 'props';
+  return FEATURE_META[f.type]?.icon || SPECS[f.type]?.icon || 'props';
 }
 
 export function metaKey(f) {
@@ -276,6 +289,114 @@ function planeSpec(app, f) {
 }
 
 // ---------------------------------------------------------------------------------------------
+// Generated PropertyManager for registry features (ui: "generated"): one row per parameter, grouped
+// into the parameter's section, selection boxes routed by kind.
+
+const SEL_KINDS = { plane: ['plane', 'face'], faces: ['face'], edges: ['edge', 'face'], features: ['feature'], sketch: ['sketch'] };
+const isEmpty = (v) => v == null || v === '' || (Array.isArray(v) && !v.length);
+
+function paramShown(spec, f, p) {
+  if (!p.when) return true;
+  return Object.entries(p.when).every(([k, want]) => {
+    const q = spec.params.find((x) => x.name === k);
+    const have = f[k] ?? q?.default;
+    return Array.isArray(want) ? want.includes(have) : have === want;
+  });
+}
+
+function toggleFace(list, d) {
+  const c = d.center, n = d.normal;
+  const i = list.findIndex((x) => Math.hypot(...x.center.map((v, k) => v - c[k])) < 1e-6);
+  if (i >= 0) list.splice(i, 1); else list.push({ center: c, ...(n ? { normal: n } : {}) });
+}
+
+function toggleEdge(list, ed) {
+  const i = list.findIndex((x) => Math.hypot(...x.mid.map((c, k) => c - ed.mid[k])) < 1e-6);
+  if (i >= 0) list.splice(i, 1); else list.push({ mid: ed.mid });
+}
+
+function paramRow(app, spec, f, p) {
+  const visible = () => paramShown(spec, f, p);
+  const get = () => f[p.name] ?? p.default;
+  const set = (v) => { f[p.name] = v; };
+  const tip = p.label || p.doc || p.name;
+  const list = () => (f[p.name] = f[p.name] || []);
+  switch (p.kind) {
+    case 'length': case 'number': case 'angle': case 'int':
+      return { type: 'number', icon: p.icon || (p.kind === 'angle' ? 'angle_i' : p.kind === 'int' ? 'count_i' : 'depth'), tip,
+        unit: p.kind === 'angle' ? 'deg' : p.kind === 'length' ? 'mm' : '', int: p.kind === 'int',
+        get: () => get() ?? 0, set, min: p.min ?? undefined, max: p.max ?? undefined, visible };
+    case 'bool':
+      if (p.widget === 'toggle' && p.icon) return { type: 'iconbtns', buttons: [{ icon: p.icon, title: tip, get: () => !!get(), toggle: () => set(!get()) }], label: p.label || '', visible };
+      return { type: 'check', label: tip, get: () => !!get(), set, visible };
+    case 'enum':
+      return p.widget === 'radio'
+        ? { type: 'radio', name: `${spec.type}-${p.name}`, options: p.options, get, set, visible }
+        : { type: 'select', options: p.options, get, set, visible, icon: p.icon || undefined };
+    case 'axis':
+      return { type: 'select', options: [['X', 'X axis'], ['Y', 'Y axis'], ['Z', 'Z axis']], get, set, visible };
+    case 'plane':
+      return { type: 'selbox', id: p.name, placeholder: p.label || 'Select a plane or planar face', items: () => (f[p.name] ? [f[p.name]] : []), label: (x) => planeLabel(app, x), remove: () => { f[p.name] = null; }, kinds: SEL_KINDS.plane, visible };
+    case 'faces':
+      return { type: 'selbox', id: p.name, placeholder: p.label || 'Select faces', items: list, label: (x, i) => `Face<${i + 1}>`, remove: (i) => list().splice(i, 1), kinds: SEL_KINDS.faces, visible };
+    case 'edges':
+      return { type: 'selbox', id: p.name, placeholder: p.label || 'Select edges or faces', items: list, label: edgeLabel, remove: (i) => list().splice(i, 1), kinds: SEL_KINDS.edges, visible };
+    case 'features':
+      return { type: 'selbox', id: p.name, color: 2, placeholder: p.label || 'Select features in the tree', items: list, label: (id) => app.featureById(id)?.name || id, remove: (i) => list().splice(i, 1), kinds: SEL_KINDS.features, visible };
+    case 'sketch':
+      return { type: 'selbox', id: p.name, placeholder: p.label || 'Select a sketch', items: () => (f[p.name] ? [f[p.name]] : []), label: (id) => sketchName(app, id), remove: () => { f[p.name] = null; }, kinds: SEL_KINDS.sketch, visible };
+    default:
+      return null; // string, direction, object, sketch_line: set by the AI or a hand-written PropertyManager
+  }
+}
+
+function generatedSpec(app, spec, f) {
+  const sections = [];
+  const bySec = {};
+  for (const p of spec.params) {
+    const row = paramRow(app, spec, f, p);
+    if (!row) continue;
+    const t = p.section || spec.title;
+    if (!bySec[t]) { bySec[t] = { title: t, rows: [] }; sections.push(bySec[t]); }
+    bySec[t].rows.push(row);
+  }
+  const selParams = () => spec.params.filter((p) => SEL_KINDS[p.kind] && paramShown(spec, f, p));
+  const accepts = (p, pick) => SEL_KINDS[p.kind].includes(pick.kind) && (p.kind !== 'plane' || pick.kind === 'plane' || !!pick.data?.plane);
+  return {
+    sections,
+    okEnabled: () => spec.params.every((p) => !p.required || !paramShown(spec, f, p) || !isEmpty(f[p.name])),
+    onPick(pick) {
+      const ps = selParams().filter((p) => accepts(p, pick));
+      const p = ps.find((q) => q.name === app.pm.activeSelbox) || ps.find((q) => isEmpty(f[q.name])) || ps[0];
+      if (!p) return false;
+      if (p.kind === 'plane') f[p.name] = planeFromPick(app, pick);
+      else if (p.kind === 'sketch') f[p.name] = pick.id;
+      else if (p.kind === 'features') { const l = (f[p.name] = f[p.name] || []); if (!l.includes(pick.id)) l.push(pick.id); }
+      else if (p.kind === 'faces') toggleFace((f[p.name] = f[p.name] || []), pick.data);
+      else if (pick.kind === 'edge') toggleEdge((f[p.name] = f[p.name] || []), pick.data);
+      else for (const ei of pick.data.edges || []) { const ed = app.edgeData(ei); if (ed) toggleEdge((f[p.name] = f[p.name] || []), ed); }
+      // a filled single selection hands over to the next empty box, as in SOLIDWORKS
+      if (p.kind === 'plane' || p.kind === 'sketch') { const next = selParams().find((q) => q !== p && isEmpty(f[q.name])); if (next) app.pm.activeSelbox = next.name; }
+      return true;
+    },
+    selectedKeys: () => spec.params.flatMap((p) => (p.kind === 'faces' ? app.faceKeysFor(f[p.name] || []) : p.kind === 'edges' ? app.edgeKeysFor(f[p.name] || []) : [])),
+  };
+}
+
+function generatedDefaults(app, spec) {
+  const sel = app.selection;
+  const f = { type: spec.type, ...JSON.parse(JSON.stringify(spec.keys || {})) };
+  const hasFaces = spec.params.some((p) => p.kind === 'faces');
+  for (const p of spec.params) {
+    if (p.default != null) f[p.name] = JSON.parse(JSON.stringify(p.default));
+    if (p.kind === 'faces') f[p.name] = sel.filter((s) => s.kind === 'face').map((s) => ({ center: s.data.center, ...(s.data.normal ? { normal: s.data.normal } : {}) }));
+    else if (p.kind === 'edges') f[p.name] = sel.filter((s) => s.kind === 'edge').map((s) => ({ mid: s.data.mid }));
+    else if (p.kind === 'features') f[p.name] = sel.filter((s) => s.kind === 'feature').map((s) => s.id);
+    else if (p.kind === 'sketch') f[p.name] = sel.find((s) => s.kind === 'sketch')?.id || app.lastSketchId();
+    else if (p.kind === 'plane') { const s = sel.find((x) => x.kind === 'plane' || (!hasFaces && x.kind === 'face' && x.data.plane)); f[p.name] = s ? planeFromPick(app, s) : null; }
+  }
+  return f;
+}
 
 export function defaultsFor(key, app) {
   const sel = app.selection;
@@ -292,7 +413,7 @@ export function defaultsFor(key, app) {
     case 'linear_pattern': return { type: 'linear_pattern', features: sel.filter((s) => s.kind === 'feature').map((s) => s.id), direction: 'X', count: 3, spacing: 20 };
     case 'circular_pattern': return { type: 'circular_pattern', features: sel.filter((s) => s.kind === 'feature').map((s) => s.id), axis: 'Y', count: 4, angle: 360, equal_spacing: true };
     case 'plane': return { type: 'plane', base: (() => { const p = sel.find((s) => s.kind === 'plane' || (s.kind === 'face' && s.data.plane)); return p ? planeFromPick(app, p) : null; })(), offset: 10 };
-    default: return null;
+    default: return SPECS[key] ? generatedDefaults(app, SPECS[key]) : null;
   }
 }
 
@@ -309,7 +430,7 @@ export function buildSpec(key, app, f) {
     case 'linear_pattern': return linPatternSpec(app, f);
     case 'circular_pattern': return circPatternSpec(app, f);
     case 'plane': return planeSpec(app, f);
-    default: return null;
+    default: return SPECS[key] ? generatedSpec(app, SPECS[key], f) : null;
   }
 }
 
@@ -324,6 +445,17 @@ export function describeFeature(f, app) {
     case 'shell': return `${f.name}: ${fmt(f.thickness)} mm, ${f.faces.length} face(s) removed`;
     case 'import': return `${f.name}: imported body${f.source ? ' from ' + f.source : ''}`;
     case 'standard': return `${f.name}: ${f.kind.replace(/_/g, ' ')} ${f.size}${f.length ? ' x ' + fmt(f.length) : ''}`;
-    default: return f.name;
+    default: {
+      const spec = SPECS[f.type];
+      if (!spec) return f.name;
+      const bits = spec.params.filter((p) => paramShown(spec, f, p) && f[p.name] != null).map((p) => {
+        const v = f[p.name];
+        if (p.kind === 'angle') return `${fmt(v)}°`;
+        if (p.kind === 'length') return `${fmt(v)} mm`;
+        if (Array.isArray(v) && v.length) return `${v.length} ${p.kind === 'features' ? 'feature' : p.kind.replace(/s$/, '')}(s)`;
+        return null;
+      }).filter(Boolean);
+      return `${f.name}: ${spec.title.toLowerCase()}${bits.length ? ' ' + bits.join(', ') : ''}`;
+    }
   }
 }

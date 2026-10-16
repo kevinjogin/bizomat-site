@@ -25,7 +25,7 @@ from contextlib import asynccontextmanager
 
 from starlette.routing import Route
 
-from . import ai, artifacts, assembly, auth, geometry, importer, mcp_server, sldexport, store
+from . import ai, artifacts, assembly, auth, features, geometry, importer, mcp_server, sldexport, store
 
 STATIC = Path(__file__).parent / "static"
 
@@ -120,6 +120,12 @@ async def api_import_raw(request: Request, filename: str = "model.step"):
         except OSError:
             return JSONResponse({"error": "The upload arrived damaged. Try again."}, status_code=400)
     return await run_in_threadpool(_import_reply, body, filename)
+
+
+@app.get("/api/features")
+def api_features():
+    """The feature registry: the browser builds ribbon buttons, PropertyManagers and defaults from it."""
+    return features.public()
 
 
 @app.get("/api/toolbox")

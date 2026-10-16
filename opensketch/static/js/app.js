@@ -12,7 +12,7 @@ import { Ribbon } from './ui/ribbon.js';
 import { FeatureTree } from './ui/tree.js';
 import { TaskPane } from './ui/taskpane.js';
 import { buildCommands } from './commands.js';
-import { FEATURE_META, buildSpec, defaultsFor, nextName, metaKey, featureIcon } from './features.js';
+import { SPECS, metaFor, buildSpec, defaultsFor, nextName, metaKey, featureIcon } from './features.js';
 import { icon } from './icons.js';
 import { AssemblyMode, isAssembly, newAssembly, hexColor } from './asm.js';
 import { LivePlayer } from './live.js';
@@ -786,7 +786,7 @@ class App {
       if (['extrude', 'cut', 'revolve', 'revcut'].includes(key)) this.selection = [{ kind: 'sketch', id: sid }];
     }
     if (this.cmd) this.pmCancel();
-    const meta = FEATURE_META[key];
+    const meta = metaFor(key);
     const f = existing ? clone(existing) : defaultsFor(key, this);
     if (!existing) { f.id = this.uid('f'); f.name = nextName(this.doc, meta.base); }
     const spec = buildSpec(key, this, f);
@@ -805,7 +805,7 @@ class App {
       plane: 'Select a plane or planar face and set the offset.',
     };
     this.pm.open({ title: existing ? f.name : meta.title, icon: meta.icon, sections: spec.sections, okEnabled: spec.okEnabled, activeSelbox: spec.activeSelbox,
-      message: () => (spec.okEnabled() ? null : msgs[key]), onChange: () => { this.refreshSelectionDisplay(); this.schedulePreview(); } });
+      message: () => (spec.okEnabled() ? null : msgs[key] || SPECS[key]?.message), onChange: () => { this.refreshSelectionDisplay(); this.schedulePreview(); } });
     this.setSelection([]);
     // Looking straight at the sketch? Turn to trimetric so the preview reads in 3D (as SOLIDWORKS does).
     const sid = f.sketch;
@@ -1773,7 +1773,10 @@ class App {
   }
 }
 
-window.addEventListener('DOMContentLoaded', () => { window.app = new App(); });
+// features.js waits for the feature registry (top-level await), so the page may have finished parsing
+// before this module runs.
+const start = () => { window.app = new App(); };
+if (document.readyState === 'loading') window.addEventListener('DOMContentLoaded', start); else start();
 
 
 // What the export made, in a few lines: parts (features or STEP), mates, checks.

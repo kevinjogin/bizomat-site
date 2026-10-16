@@ -519,6 +519,10 @@ def _regen_feature(feat: dict, st: RegenState):
             for tool, op in seeds:
                 st.part = apply_op(st.part, tool.rotate(axis, step * i), op)
         return None
+    from . import features as registry
+    ft = registry.get(t)
+    if ft is not None and ft.build is not None:
+        return ft.build(feat, st, diagnostics)
     raise FeatureError(f"Unknown feature type '{t}'")
 
 

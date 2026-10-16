@@ -130,8 +130,14 @@ unknowns, and reports degrees of freedom, per-entity defined state and over-defi
 | `mirror` | `plane` (plane ref), `features` (ids; empty = whole body) |
 | `linear_pattern` | `features`, `direction` (`X`/`Y`/`Z` or `{"edge": ref}`), `count`, `spacing`, `reverse`, optional `direction2`, `count2`, `spacing2` |
 | `circular_pattern` | `features`, `axis` (`X`/`Y`/`Z`), `count`, `angle`, `equal_spacing`, `step` |
+| `draft` | `neutral_plane` (plane ref or planar face), `faces` (faces to draft), `angle` (deg, default 1), `reverse` (flip the pull direction). Neutral plane draft: a positive angle narrows the part along the neutral plane's normal. |
 | `import` | `format` `"brep"`, `data` (BREP text, zlib-compressed, base64), `source` (file name), `label`. An imported body (SOLIDWORKS "Imported1"); later features build on it. |
 | `standard` | `kind` (`socket_head_cap_screw`, `hex_head_screw`, `counter_sunk_screw`, `button_head_screw`, `set_screw`, `hex_nut`, `plain_washer`, `ball_bearing`), `size` (`M6-1`; bearings `M8-22-7`), `length` (screws). A Toolbox part made to size (bd_warehouse). Axis along the part Y axis, head above Y = 0, shank down -Y. |
+
+Every feature type except `sketch`, `import` and `standard` is described once in the feature registry
+(`opensketch/features/`): its fields, kinds, defaults and limits there are the authority for this table.
+The registry drives the PropertyManager, the ribbon, the AI's `add_<type>` tools and help text, the
+MCP tools and input checks.
 
 Edge references are `{"mid": [x,y,z]}`, the point at the middle of the edge. Face references are
 `{"center": [x,y,z], "normal": [x,y,z]}`. They are matched to the nearest edge or face on rebuild.

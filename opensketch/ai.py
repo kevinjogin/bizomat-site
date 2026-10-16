@@ -25,7 +25,7 @@ import re
 import uuid
 from typing import Iterator
 
-from . import assembly, geometry
+from . import assembly, features, geometry
 
 MODEL = "claude-opus-5-5"
 MAX_ROUNDS = 40
@@ -81,18 +81,10 @@ clearances, manufacturability or physical fit.
     dimensions: {"id","type":"distance","refs":[a,b],"value","orient":"aligned"|"horizontal"|"vertical"}
     (a line alone = its length), {"id","type":"diameter"|"radius","refs":[circle|arc],"value"},
     {"id","type":"angle","refs":[line,line],"value"}. Give dimensions a "name" like "D1".
-- plane: {"type":"plane","base":<plane>,"offset":mm}
-- extrude: {"type":"extrude","sketch":<sketch id>,"op":"boss"|"cut","end":"blind"|"through_all"|"midplane"|"up_to_next",
-  "depth":mm,"reverse":bool,"draft":deg,"dir2":{"end","depth"} or null}. Boss extrudes along the sketch
-  plane normal; use "reverse": true for the other way. A cut sketched on a top face needs "reverse": true
-  to go into the material.
-- revolve: {"type":"revolve","sketch","axis":<line id in that sketch>,"angle":deg,"op":"boss"|"cut"}
-- fillet: {"type":"fillet","radius","edges":[{"mid":[x,y,z]}]} (edge picked by its midpoint, part coordinates)
-- chamfer: {"type":"chamfer","distance","edges":[...]}
-- shell: {"type":"shell","thickness","faces":[{"center":[x,y,z],"normal":[x,y,z]}]} (faces removed)
-- mirror: {"type":"mirror","plane":<plane>,"features":[ids]} (omit features to mirror the body)
-- linear_pattern: {"type":"linear_pattern","features":[ids],"direction":"X"|"Y"|"Z","count","spacing"}
-- circular_pattern: {"type":"circular_pattern","features":[ids],"axis":"X"|"Y"|"Z","count","angle":360}
+Feature commands (the same list as the app's CommandManager; each also has an add_<type> tool that adds one
+feature). [edges] = [{"mid": [x,y,z]}] (an edge picked by its midpoint), [faces] = [{"center": [x,y,z],
+"normal": [x,y,z]}] (a face picked by its centre and outward normal), both in part coordinates; <plane> as above.
+""" + features.help_text() + """
 
 Every feature has a unique "id" and a SOLIDWORKS-style "name" (Sketch1, Boss-Extrude1, Cut-Extrude1,
 Fillet1, ...). Point coordinates must already satisfy the constraints (the app re-solves them, but start
@@ -261,7 +253,7 @@ TOOLS = [
          "description": {"type": "string", "description": "What the part is, with key sizes"},
          "mcmaster_part_number": {"type": "string"},
          "url": {"type": "string", "description": "Product page (for example one found with web_search)"}}, "required": ["part_id", "description"]}},
-]
+] + features.ai_tools()  # add_<type> for every feature command in the registry (opensketch/features)
 
 # Anthropic server tools: the API runs them, nothing to execute here. The basic versions call the
 # tools directly (no code-execution filtering), which keeps the stream simple for the first live runs.
@@ -328,6 +320,24 @@ def _part_report(st) -> tuple[dict, bool]:
     else:
         rep["body"] = "none"
     return rep, rep["clean"]
+
+
+def _input_problems(rep: dict, feats: list) -> bool:
+    """Check features against the registry; problems go in the report. True when there are none."""
+    problems = [p for f in feats for p in features.validate(f)]
+    if problems:
+        rep["input_problems"] = problems
+        rep["clean"] = False
+    return not problems
+
+
+def _next_feature_name(feats: list, base: str) -> str:
+    n = 0
+    for f in feats:
+        m = re.fullmatch(re.escape(base) + r"(\d+)", f.get("name") or "")
+        if m:
+            n = max(n, int(m.group(1)))
+    return f"{base}{n + 1}"
 
 
 def _geometry_summary(solid, limit: int = 24) -> dict:
@@ -586,6 +596,7 @@ class Session:
         cand = restore_blobs(_apply(self.work, inp), self.work, self.doc)
         st, _ = geometry.regen(cand)
         rep, clean = _part_report(st)
+        clean = _input_problems(rep, inp.get("features") or []) and clean
         if not any(f.get("type") == "import" for f in cand.get("features", [])):
             cmp = compare_with_import(self.doc if not assembly.is_assembly(self.doc) else {}, st.part)
             if cmp:
@@ -627,6 +638,7 @@ class Session:
             part["material"] = old["material"]
         st, _ = geometry.regen(part)
         rep, clean = _part_report(st)
+        clean = _input_problems(rep, feats) and clean
         if st.part is not None:
             rep.update(_geometry_summary(st.part))
         asm["parts"][pid] = part
@@ -769,7 +781,55 @@ class Session:
         return ("The user has been asked to download the STEP and drop it in; it will replace part "
                 f"{inp.get('part_id')!r} later. Create a placeholder with create_part using that part_id now."), True, [ev]
 
+    def add_feature(self, ft, inp: dict) -> tuple[str, bool, list]:
+        """add_<type>: one registry feature appended to the open part (or to part_id in an assembly)."""
+        feat = features.new_feature(ft, inp)
+        problems = features.validate(feat)
+        if problems:
+            return "Not added: " + "; ".join(problems), False, []
+        pid = inp.get("part_id")
+        if assembly.is_assembly(self.work):
+            if pid not in self.work["parts"]:
+                return (f"This is an assembly: give part_id, one of {sorted(self.work['parts'])}." if not pid
+                        else f"Unknown part {pid!r}; parts: {sorted(self.work['parts'])}."), False, []
+            part = self.work["parts"][pid]
+        else:
+            pid = None
+            part = self.work
+        feats = part.setdefault("features", [])
+        ids = {f.get("id") for f in feats}
+        n = len(feats) + 1
+        while f"f{n}" in ids:
+            n += 1
+        feat = {"id": f"f{n}", "name": inp.get("name") or _next_feature_name(feats, ft.base), **feat}
+        rb = part.get("rollback")
+        base = feats[:rb] if rb is not None else feats
+        builder = LiveBuilder(base)
+        step = builder.add(feat)
+        part["features"] = [*base, feat, *feats[len(base):]]
+        if rb is not None:
+            part["rollback"] = rb + 1
+        rep, clean = _part_report(builder.st)
+        rep["feature"] = {"id": feat["id"], "name": feat["name"], "state": step.get("state")}
+        if pid:
+            rep["part_id"] = pid
+        self.summary = f"{feat['name']}" + (f" on {part.get('name', pid)}" if pid else "")
+        self.steps.append({"summary": self.summary, "clean": clean})
+        key = f"add-{feat['id']}-{uuid.uuid4().hex[:6]}"
+        events = [{"ev": "build_start", "tool": f"add_{ft.type}", "index": None, "key": key, "part": pid,
+                   "name": part.get("name") if pid else None, "appearance": part.get("appearance") if pid else None,
+                   "mode": "asm" if pid else "part"},
+                  {"ev": "build_step", "index": None, "key": key, "n": 1, **step}]
+        if pid and any(c.get("part") == pid for c in self.work.get("components", [])):
+            events.append(self._solve_event({"kind": "part", "part": pid})[1])
+        else:
+            events.append({"ev": "proposal", "doc": self.work, "summary": self.summary})
+        return json.dumps(rep), clean, events
+
     def apply(self, name: str, inp: dict):
+        ft = features.type_for_tool(name)
+        if ft is not None and name != "add_mate":
+            return self.add_feature(ft, inp or {})
         fn = {"propose_features": self.propose_features, "create_part": self.create_part,
               "insert_component": self.insert_component, "add_mate": self.add_mate,
               "delete_items": self.delete_items, "check_interference": self.check_interference,

@@ -16,7 +16,8 @@ import base64
 import binascii
 import json
 import re
-from typing import Any, Literal
+import inspect
+from typing import Annotated, Any, Literal
 
 import anyio
 from mcp.server.mcpserver import MCPServer
@@ -24,14 +25,15 @@ from mcp.server.streamable_http_manager import StreamableHTTPASGIApp
 from mcp.server.transport_security import TransportSecuritySettings
 from mcp.types import CallToolResult, ImageContent, TextContent, ToolAnnotations
 
-from . import ai, artifacts, assembly, auth, geometry, importer, store
+from . import ai, artifacts, assembly, auth, features, geometry, importer, store
 
 INSTRUCTIONS = """OpenSketch is a parametric CAD app that works like SOLIDWORKS. You build real feature trees
 (sketches with relations and dimensions, extrudes, revolves, fillets...) and assemblies with mates, in
 documents the user has open in their browser: every change you make appears there within a second or two.
 Call get_modelling_guide once before your first change: it has the document format, the assembly workflow
 and the rules (off-the-shelf parts first). Then: list_documents or create_document, get_document to read
-one, and the modelling tools, which all take doc_id. Every change is saved immediately (undo_last_change
+one, and the modelling tools, which all take doc_id (add_<feature> tools such as add_draft or add_fillet add
+one feature; propose_features writes many at once). Every change is saved immediately (undo_last_change
 goes back). Work in the background by default: no browser is needed to model, import, inspect a PNG
 preview, or export CAD. Use import_document for source files, preview_document for visual review and
 export_document for .osk, STEP and STL downloads. Open the app only when the user asks or would benefit
@@ -398,6 +400,69 @@ async def request_part_file(doc_id: str, part_id: str, description: str, mcmaste
     create_part (the right envelope) so the assembly can go on."""
     return await _apply(doc_id, "request_part_file", part_id=part_id, description=description,
                         mcmaster_part_number=mcmaster_part_number, url=url)
+
+
+# ----------------------------------------------------------------------------- feature commands (registry)
+
+def _py_type(p) -> Any:
+    k = p.kind
+    if k in ("length", "angle", "number"):
+        return float
+    if k == "int":
+        return int
+    if k == "bool":
+        return bool
+    if k in ("string", "sketch", "sketch_line"):
+        return str
+    if k == "enum":
+        return Literal[tuple(o[0] for o in p.options)]
+    if k in ("axis", "direction"):
+        return str | dict
+    if k in ("faces", "edges"):
+        return list[dict]
+    if k == "features":
+        return list[str]
+    return dict
+
+
+def _feature_tool(ft):
+    """An MCP tool add_<type>(doc_id, <required params>, part_id, name, <optional params>) for one feature type."""
+    from pydantic import Field
+
+    name = features.tool_name(ft)
+    P = inspect.Parameter
+    params = [P("doc_id", P.POSITIONAL_OR_KEYWORD, annotation=str)]
+    hints: dict = {"doc_id": str, "return": str}
+    for p in ft.params:
+        if p.required:
+            t = Annotated[_py_type(p), Field(description=features.describe_param(p))]
+            params.append(P(p.name, P.POSITIONAL_OR_KEYWORD, annotation=t))
+            hints[p.name] = t
+    for extra, doc in (("part_id", "Assembly documents: the part to add the feature to."),
+                       ("name", f"Optional tree name (default {ft.base}N).")):
+        t = Annotated[str | None, Field(description=doc)]
+        params.append(P(extra, P.POSITIONAL_OR_KEYWORD, annotation=t, default=None))
+        hints[extra] = t
+    for p in ft.params:
+        if not p.required:
+            t = Annotated[_py_type(p) | None, Field(description=features.describe_param(p))]
+            params.append(P(p.name, P.POSITIONAL_OR_KEYWORD, annotation=t, default=None))
+            hints[p.name] = t
+
+    async def tool(**kw) -> str:
+        doc_id = kw.pop("doc_id")
+        return await _apply(doc_id, name, **kw)
+
+    tool.__name__ = name
+    tool.__signature__ = inspect.Signature(params, return_annotation=str)
+    tool.__annotations__ = hints
+    tool.__doc__ = features.tool_description(ft)
+    return tool
+
+
+for _ft in features.REGISTRY.values():
+    if _ft.tool:
+        mcp.add_tool(_feature_tool(_ft), name=features.tool_name(_ft), description=features.tool_description(_ft))
 
 
 # ----------------------------------------------------------------------------- HTTP

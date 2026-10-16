@@ -1,4 +1,8 @@
 // Command registry and CommandManager layout (tab by tab, in SOLIDWORKS order).
+// Feature commands from the server's feature registry (SPECS) are added here too: a registered
+// feature replaces its 'not available yet' placeholder and joins the Insert menu.
+
+import { SPECS } from './features.js';
 
 export function buildCommands(app) {
   const sk = () => app.sketcher;
@@ -111,6 +115,10 @@ export function buildCommands(app) {
     aifix: { label: 'Fix Errors', icon: 'rebuild', tip: 'Asks the AI to fix rebuild errors.', run: () => app.aiQuick('Fix the rebuild errors in this part with minimal changes.') },
     aidefine: { label: 'Fully Define', icon: 'smartdim', tip: 'Asks the AI to add relations and dimensions so every sketch is fully defined.', run: () => app.aiQuick('Add relations and dimensions so every sketch is fully defined, keeping the current geometry.') },
   };
+  for (const spec of Object.values(SPECS)) {
+    if (spec.ui !== 'generated') continue; // hand-written commands above
+    C[spec.command] = { label: spec.label, icon: spec.icon, tip: spec.summary, run: () => app.featureCommand(spec.type) };
+  }
   for (const [id, c] of Object.entries(C)) c.id = id;
   return C;
 }
@@ -156,3 +164,14 @@ export const MENUS = [
   { name: 'Window', items: [{ label: 'Part1', run: () => {} }] },
   { name: 'Help', items: [{ label: 'Keyboard Shortcuts', run: (app) => app.shortcutsDialog() }, { label: 'About OpenSketch', run: (app) => app.aboutDialog() }] },
 ];
+
+// Registered features that have no place in the layout yet go next to Shell (ribbon) and after Shell
+// (Insert menu).
+for (const spec of Object.values(SPECS)) {
+  if (spec.ui !== 'generated') continue;
+  const id = spec.command;
+  const placed = JSON.stringify(TABS[0].items).includes(`"${id}"`);
+  if (!placed) TABS[0].items.splice(TABS[0].items.findIndex((it) => it.big === 'refgeom') - 1, 0, { big: id });
+  const ins = MENUS.find((m) => m.name === 'Insert').items;
+  if (!ins.includes(id)) ins.splice(ins.indexOf('shell') + 1, 0, id);
+}

@@ -161,7 +161,7 @@ export class LivePlayer {
   item(ev) {
     let it = this.items.get(ev.key);
     if (!it) {
-      const mode = ev.tool === 'propose_features' || (!ev.tool && !this.asmMode) ? 'part' : 'asm';
+      const mode = ev.mode || (ev.tool === 'propose_features' || (!ev.tool && !this.asmMode) ? 'part' : 'asm');
       // a new attempt at the same part replaces the earlier one
       for (const [k, o] of this.items) {
         if ((mode === 'part' && o.mode === 'part') || (mode === 'asm' && ev.part && o.pid === ev.part)) {

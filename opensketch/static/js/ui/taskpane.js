@@ -1,7 +1,7 @@
 // Task Pane (right): OpenSketch AI copilot, resources, appearances, custom properties.
 
 import { icon } from '../icons.js';
-import { describeFeature, featureIcon } from '../features.js';
+import { describeFeature, featureIcon, SPECS } from '../features.js';
 import { mateIcon } from '../asm.js';
 
 const h = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
@@ -29,6 +29,11 @@ const TOOL_META = {
   request_part_file: { title: 'Asking for a bought part', icon: 'open' },
   web_search: { title: 'Searching the web', icon: 'web' },
   web_fetch: { title: 'Reading a page', icon: 'page' },
+};
+// add_<type> tools come from the feature registry: "Adding Draft".
+const toolMetaFromRegistry = (name) => {
+  const spec = Object.values(SPECS).find((sp) => sp.tool === name);
+  return spec ? { title: `Adding ${spec.title}`, icon: spec.icon } : null;
 };
 // Links from the web are untrusted: only http(s) becomes a link.
 const safeUrl = (u) => { try { const x = new URL(u); return /^https?:$/.test(x.protocol) ? x.href : null; } catch (_) { return null; } };
@@ -334,7 +339,7 @@ export class TaskPane {
         break;
       case 'tool_start': {
         endText(); endThink();
-        const meta = TOOL_META[ev.tool] || { title: ev.tool, icon: 'ai' };
+        const meta = TOOL_META[ev.tool] || toolMetaFromRegistry(ev.tool) || { title: ev.tool, icon: 'ai' };
         const a = this.add({ role: 'activity', title: meta.title, icon: meta.icon, items: [], state: 'running', tool: ev.tool });
         S.acts.set(ev.index, a);
         S.cur = a;
