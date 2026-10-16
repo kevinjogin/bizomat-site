@@ -418,7 +418,10 @@ def _working_assembly(doc: dict) -> dict:
         return copy.deepcopy(doc)
     if doc.get("features"):
         return assembly.part_as_assembly(doc)
-    return assembly.new_assembly()
+    asm = assembly.new_assembly()
+    if doc.get("name") and not re.fullmatch(r"Part\d*", doc["name"]):
+        asm["name"] = doc["name"]  # a named empty document (e.g. MCP create_document) keeps its name
+    return asm
 
 
 def _asm_report(asm: dict, res: dict) -> dict:

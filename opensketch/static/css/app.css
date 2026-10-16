@@ -388,3 +388,17 @@ input, select, button { font: inherit; color: inherit; }
   border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,.12); font-size: 12px; }
 .update-bar.note { border-color: #f0d28a; border-left-color: #c8961e; }
 .update-bar .btn { flex: none; }
+
+/* server documents and Connect Claude */
+.srv-dlg { width: min(520px, calc(100vw - 32px)); }
+.srv-list { display: flex; flex-direction: column; gap: 4px; max-height: 360px; overflow: auto; min-width: min(420px, calc(100vw - 64px)); }
+.srv-row { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; padding: 6px 8px; border: 1px solid #e3e3e3; border-radius: 4px; background: #fff; cursor: pointer; font: inherit; }
+.srv-row:hover { border-color: #9cc0ea; background: #f4f8fd; }
+.srv-row.cur { border-color: #0a64c8; }
+.srv-row span { color: var(--muted); font-size: 11px; }
+.srv-connect p { margin: 0 0 8px; }
+.srv-connect ol { margin: 6px 0; padding-left: 18px; }
+.srv-connect li { margin: 3px 0; }
+.srv-warn { border: 1px solid #f0d28a; border-left: 3px solid #c8961e; background: #fffbf0; padding: 6px 8px; border-radius: 4px; margin: 6px 0; font-size: 12px; }
+.srv-url { display: flex; gap: 6px; margin: 4px 0; }
+.srv-url input { flex: 1; min-width: 0; font: 11.5px ui-monospace, monospace; padding: 4px 6px; border: 1px solid #c5cad0; border-radius: 3px; }

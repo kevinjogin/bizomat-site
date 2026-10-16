@@ -18,6 +18,7 @@ import { AssemblyMode, isAssembly, newAssembly, hexColor } from './asm.js';
 import { LivePlayer } from './live.js';
 import { Toolbox } from './toolbox.js';
 import { SectionView } from './section.js';
+import { ServerDocs } from './serverdocs.js';
 
 const $ = (id) => document.getElementById(id);
 const clone = (o) => JSON.parse(JSON.stringify(o));
@@ -74,6 +75,7 @@ class App {
     this.ribbon = new Ribbon(this);
     this.tree = new FeatureTree(this);
     this.taskpane = new TaskPane(this);
+    this.server = new ServerDocs(this);
     this.asm = new AssemblyMode(this);
     this.live = new LivePlayer(this);
     this.toolbox = new Toolbox(this);
@@ -99,6 +101,8 @@ class App {
     this.api('/api/ai/status', null, 'GET').then((r) => { this.aiAvailable = !!r.available; this.aiDemo = !!r.demo; }).catch(() => { this.aiAvailable = false; });
     this.status('Ready. Select a plane and click Sketch to start.');
     this.watchVersion();
+    const docId = new URLSearchParams(location.search).get('doc');
+    if (docId) this.server.open(docId); // a link from Claude, or a reload of a server document
   }
 
   // The codespace pulls each push to main and restarts the server (.devcontainer/run.sh). When the
@@ -204,6 +208,7 @@ class App {
   docChanged() {
     this.dirty = true;
     this.autosave();
+    this.server?.changed(); // a server document: save the edit back (debounced)
     this.updateDocChrome();
     this.tree.render();
   }
@@ -236,7 +241,8 @@ class App {
   updateDocChrome() {
     const f = this.docStack[this.docStack.length - 1];
     const root = this.docStack.length ? this.docStack[0].doc : this.doc;
-    $('doctitle').textContent = f ? `${this.doc.name} (${f.comp} in ${root.name})${this.dirty ? ' *' : ''}` : `${this.doc.name}${this.dirty ? ' *' : ''}`;
+    $('doctitle').textContent = (f ? `${this.doc.name} (${f.comp} in ${root.name})${this.dirty ? ' *' : ''}` : `${this.doc.name}${this.dirty ? ' *' : ''}`)
+      + (this.server?.linked ? ' - on server, shared with Claude' : '');
     $('sb-editing').textContent = this.isAsm ? 'Editing Assembly' : f ? 'Editing Part in Assembly' : 'Editing Part';
     const bar = $('editbar');
     if (f) {
@@ -1208,6 +1214,7 @@ class App {
   // ------------------------------------------------------------------ files
   newDoc() {
     const go = (kind) => {
+      this.server.unlink();
       this.hideContextToolbar();
       if (this.mode === 'sketch') this.exitSketch({ silent: true });
       this.closeCommand();
@@ -1273,6 +1280,7 @@ class App {
     try {
       const d = await this.readDocFile(file);
       if (!Array.isArray(d.features) && !isAssembly(d)) throw new Error('Not an OpenSketch part or assembly');
+      this.server.unlink(); // a file from disk is a new document, not the server one
       this.hideContextToolbar();
       if (this.mode === 'sketch') this.exitSketch({ silent: true });
       this.closeCommand();
@@ -1298,6 +1306,7 @@ class App {
     const target = this.proposal || this.doc;
     if (!isAssembly(target) || !target.parts[pid]) { message('Import', `Part ${esc(pid)} is not in this assembly any more.`); return false; }
     const apply = (doc) => { const old = doc.parts[pid]; doc.parts[pid] = { ...d, name: d.name || old.name, appearance: old.appearance }; };
+    this.server.partReplaced(pid);
     if (this.proposal) { apply(this.proposal); await this.regen(); } else this.commit('Replace ' + pid, () => apply(this.doc));
     this.status(`Replaced ${pid} with ${file.name}. Check its mates: the new faces may sit differently.`);
     return true;
@@ -1324,6 +1333,12 @@ class App {
   }
 
   saveFile() {
+    if (this.server.linked) { // a server document saves itself; Save just does it now
+      this.server.flush();
+      this.dirty = false; this.updateDocChrome();
+      this.status('Saved on the server. Save As > OpenSketch file downloads a copy.');
+      return;
+    }
     const d = this.rootDoc();
     this.download(new Blob([JSON.stringify(d, null, 1)], { type: 'application/json' }), `${d.name}.osk`);
     this.dirty = false;
@@ -1331,9 +1346,17 @@ class App {
     this.status('Saved ' + d.name + '.osk');
   }
 
+  downloadOsk() {
+    const d = this.rootDoc();
+    this.download(new Blob([JSON.stringify(d, null, 1)], { type: 'application/json' }), `${d.name}.osk`);
+    if (!this.server.linked) { this.dirty = false; this.updateDocChrome(); }
+    this.status('Saved ' + d.name + '.osk');
+  }
+
   saveAs() {
     dialog({ title: 'Save As', body: '<div>Choose a file type:</div>', buttons: [
-      { label: this.isAsm ? 'OpenSketch Assembly (*.osk)' : 'OpenSketch Part (*.osk)', primary: true, run: () => this.saveFile() },
+      { label: this.isAsm ? 'OpenSketch Assembly (*.osk)' : 'OpenSketch Part (*.osk)', primary: true, run: () => this.downloadOsk() },
+      { label: this.server.linked ? 'New copy on the server' : 'On the server (shared with Claude)', run: () => { this.server.saveAsNew(); } },
       { label: 'STEP AP214 (*.step)', run: () => { this.exportAs('step'); } },
       { label: 'STL (*.stl)', run: () => { this.exportAs('stl'); } },
       { label: 'SOLIDWORKS Macro (*.bas)', run: () => { this.exportMacro(); } },

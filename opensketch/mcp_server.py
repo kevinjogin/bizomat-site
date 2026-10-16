@@ -69,6 +69,8 @@ def _apply_sync(doc_id: str, tool: str, inp: dict) -> str:
         rec = store.get(doc_id)
         sess = ai.Session(rec["doc"])
         report, clean, _ = sess.apply(tool, {k: v for k, v in inp.items() if v is not None})
+        if assembly.is_assembly(sess.work) and not assembly.is_assembly(rec["doc"]):
+            sess.work["name"] = rec["name"]  # the document keeps its name when it becomes an assembly
         reqs = list(rec.get("requests") or [])
         for r in getattr(sess, "requests", []):
             item = {k: r.get(k) for k in ("part", "description", "mcmaster", "url")}

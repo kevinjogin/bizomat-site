@@ -42,6 +42,34 @@ The codespace keeps itself up to date: about once a minute it checks GitHub, pul
 (your model is kept). There is no need to restart or recreate the codespace after an update. It skips
 updating, and says why, if files were edited inside the codespace.
 
+## Use it from Claude (MCP)
+
+OpenSketch is also an MCP server, so Claude (in claude.ai, the desktop app or Claude Code) can build
+parts and assemblies in it while you watch them appear in the browser. It uses your Claude plan, not
+your Anthropic API key.
+
+1. **Set a password.** On GitHub: Settings > Codespaces > Secrets > New secret, name
+   `OPENSKETCH_PASSWORD`, give this repository access. Restart the codespace once so it picks it up.
+   Without a password, anyone with the address could use your OpenSketch.
+2. **Make the port public.** In the codespace, open the Ports tab, right-click port 8000, Port
+   Visibility > Public. Claude cannot reach a private port. (Sign in with the password when the page
+   asks.)
+3. **Copy the address.** In OpenSketch: OpenSketch AI tab > Connect Claude (or File > Connect Claude),
+   then Copy. The address contains the key; keep it private.
+4. **Add it to Claude.** In Claude: Customize > Connectors > Add custom connector. Name it OpenSketch,
+   paste the address as the server URL, choose No sign-in, Add.
+5. **Use it.** In a chat, turn OpenSketch on (+ > Connectors) and ask, for example: "In OpenSketch,
+   design a wall bracket for a 20 kg shelf using off-the-shelf screws." Open the link Claude gives you.
+
+The model updates in the page within a second or two of each change Claude makes, and your own edits in
+the page are saved back so Claude sees them. If you both change it at once, the page asks which version
+to keep. The server keeps the last 50 versions of each document (Claude can undo or restore them), in
+`~/opensketch-data` in the codespace. File > Open from Server lists them; File > Save to Server shares
+the model you have open with Claude.
+
+The codespace has to be running for Claude to reach it: it stops after 30 idle minutes, so open it
+before you use Claude with it.
+
 ## Run it locally
 
 ```bash

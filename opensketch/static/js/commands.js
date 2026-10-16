@@ -18,6 +18,9 @@ export function buildCommands(app) {
     select: { label: 'Select', icon: 'select', tip: 'Selects sketch entities, edges, faces and planes', run: () => app.selectTool() },
     rebuild: { label: 'Rebuild', icon: 'rebuild', tip: 'Rebuilds the part (Ctrl+B)', run: () => app.regen(true) },
     fileprops: { label: 'File Properties', icon: 'props', tip: 'Summary and custom properties', run: () => app.openTask('custprops') },
+    serveropen: { label: 'Open from Server', icon: 'open', tip: 'Opens a document stored on the OpenSketch server, such as one Claude built. Claude\'s later changes appear live.', run: () => app.server.openDialog() },
+    serversave: { label: 'Save to Server', icon: 'save', tip: 'Stores this document on the OpenSketch server so Claude can work on it with you.', run: () => app.server.saveAsNew() },
+    connectclaude: { label: 'Connect Claude', icon: 'ai', tip: 'Use OpenSketch from the Claude app: shows the connector address to add in Claude.', run: () => app.server.connectDialog() },
     options: { label: 'Options', icon: 'options', tip: 'System options and document properties', run: () => app.optionsDialog() },
 
     // features
@@ -128,7 +131,7 @@ export const TABS = [
     { big: 'relations', fly: ['relations', 'addrelation'] }, { big: 'repair' }, { big: 'quicksnaps' }, { big: 'rapidsketch' }, { big: 'instant2d' }, { big: 'shadedsketch' },
   ] },
   { name: 'Evaluate', items: [{ big: 'measure' }, { big: 'massprops' }, { big: 'section' }, { big: 'check' }, { big: 'stats' }] },
-  { name: 'OpenSketch AI', items: [{ big: 'ai' }, { big: 'airebuild' }, { big: 'aiexplain' }, { big: 'aifix' }, { big: 'aidefine' }] },
+  { name: 'OpenSketch AI', items: [{ big: 'ai' }, { big: 'airebuild' }, { big: 'aiexplain' }, { big: 'aifix' }, { big: 'aidefine' }, '|', { big: 'connectclaude' }] },
 ];
 
 // Assembly documents get the SOLIDWORKS assembly CommandManager.
@@ -139,13 +142,13 @@ export const ASM_TABS = [
     { big: 'interference' }, { big: 'playback' }, '|', { big: 'toolbox' },
   ] },
   { name: 'Evaluate', items: [{ big: 'interference' }, { big: 'massprops' }, { big: 'section' }, { big: 'check' }, { big: 'stats' }] },
-  { name: 'OpenSketch AI', items: [{ big: 'ai' }, { big: 'aimates' }, { big: 'asmexplain' }, { big: 'asmfix' }] },
+  { name: 'OpenSketch AI', items: [{ big: 'ai' }, { big: 'aimates' }, { big: 'asmexplain' }, { big: 'asmfix' }, '|', { big: 'connectclaude' }] },
 ];
 
 export const QUICK = ['new', 'open', 'save', 'print', 'undo', 'redo', 'select', 'rebuild', 'fileprops', 'options'];
 
 export const MENUS = [
-  { name: 'File', items: ['new', 'open', 'save', 'saveas', 'sldmacro', '-', 'print', '-', 'fileprops'] },
+  { name: 'File', items: ['new', 'open', 'serveropen', 'save', 'saveas', 'serversave', 'sldmacro', '-', 'connectclaude', '-', 'print', '-', 'fileprops'] },
   { name: 'Edit', items: ['undo', 'redo', '-', 'rebuild', '-', { label: 'Delete', run: (app) => app.deleteSelection(), key: 'Del' }, { label: 'Suppress', run: (app) => app.suppressSelection(true) }, { label: 'Unsuppress', run: (app) => app.suppressSelection(false) }] },
   { name: 'View', items: [{ label: 'Planes', run: (app) => app.toggleView('planes') }, { label: 'Origins', run: (app) => app.toggleView('origins') }, { label: 'Sketches', run: (app) => app.toggleView('sketches') }, { label: 'Sketch Relations', run: (app) => app.toggleView('relations') }, '-', { label: 'Zoom to Fit', run: (app) => app.viewer.zoomToFit(), key: 'F' }] },
   { name: 'Insert', items: ['insertcomp', 'newpart', 'mate', '-', 'extrude', 'revolve', 'cut', 'revcut', '-', 'fillet', 'chamfer', 'shell', '-', 'linpattern', 'circpattern', 'mirror', '-', 'plane', '-', 'sketch'] },
