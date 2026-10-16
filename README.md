@@ -143,6 +143,11 @@ Task Pane on the right, status bar with Under/Fully/Over Defined and "Editing Sk
   degrees-of-freedom and redundancy analysis.
 - Trim (to closest), Sketch Fillet (keeps a virtual sharp), Convert Entities, Offset Entities,
   Mirror Entities, Repair Sketch.
+- Offset Entities accepts lines, arcs and circles, including converted outlines. Select curves
+  before or after opening the command, set Distance, and inspect the preview before accepting.
+  Select chain follows connected endpoints; turn it off for individual curves. Reverse switches
+  sides (closed contours expand by default). Invalid or collapsed offsets show an error. Results
+  are editable sketch copies; there is no persistent offset-distance relation to the source.
 
 **Features**
 - Extruded Boss/Base and Extruded Cut: Blind, Through All, Up To Next, Mid Plane, Direction 2,

@@ -17,7 +17,7 @@ assemblies only when a part changes.
   Change the format there first, then geometry.py / assembly.py, solver.js, features.js / asm.js and
   the AI system prompt in ai.py.
 - Test before committing: `pytest -q` (includes the JS/Python mate solver parity test, needs node) and
-  `node --test tests/js/solver.test.mjs`; drive real UI
+  `node --test tests/js/*.test.mjs`; drive real UI
   flows with Playwright (Chromium is preinstalled in the cloud container) for UI changes. Without an
   API key, use the demo sessions (`demo: true` / `"part"` on /api/ai/stream, or
   `OPENSKETCH_AI_DEMO=1`) to exercise the live build path end to end.
@@ -25,6 +25,25 @@ assemblies only when a part changes.
 - No emojis in UI text. Plain language, short sentences.
 
 ## Current state (2026-10-16, v0.4 + mate solver in the browser)
+
+Sketch Offset Entities (2026-10-16): selection stays in the active command instead of replacing its
+PropertyManager with Arc/Line properties. Both preselection and command-first selection work;
+window selection ignores included points/relations, and picking does not drag source geometry.
+Hidden On Edge references are excluded; model-edge preselection/highlighting is cleared or suppressed
+while this sketch-only command is active, preserving the separate Convert Entities workflow.
+`sketch/offset.js` plans analytic line/arc/circle offsets, joins coincident converted endpoints,
+expands chains by default, preserves construction flags, and rejects branches, overlaps,
+intersections and collapsed/reversed results. `offset-command.js` owns Distance/Reverse/Select chain,
+inline validation and a non-mutating dashed preview. Field feedback updates in place so committing
+Distance on blur does not swallow a click on OK. Cancel, command replacement and sketch exit clear
+the preview. `offset-apply.js` builds a detached candidate; solving must succeed before one undoable
+commit. Output is ordinary editable geometry (arc/circle centers remain shared), without a persistent
+offset-distance relation or schema changes. Removed the old partial polygon constraints, which
+only drove one side's distance. Tests: 44 Node tests (37 new offset regressions), 137 pytest passed,
+2 macro-toolchain tests skipped. Real browser checks: converted rounded slot, both selection orders,
+2 mm outward/inward, chain toggle, collapse feedback, window selection, command replacement,
+direct Distance-to-OK click, Cancel and one-step Undo. Saved geometry matches the expected radii
+and spacing, preserves source entities, and extrudes as a closed ring with analytic volume.
 
 Background CAD workflow (2026-10-16): MCP now has 19 tools, including `import_document`,
 `export_document`, and `preview_document`. Source imports create a new server document (base64,

@@ -3,6 +3,7 @@
 import * as THREE from 'three';
 import { Viewer, STD_FRAMES, COLORS, viewQuat } from './viewer.js';
 import { Sketcher, TOOL_INFO } from './sketch/sketcher.js';
+import { startOffset } from './sketch/offset-command.js';
 import { drawInactiveSketch, pointsOf, entityPolyline } from './sketch/draw.js';
 import { solveSketch } from './sketch/solver.js';
 import { projSeg, fmt } from './sketch/geom2d.js';
@@ -973,6 +974,7 @@ class App {
     dialog({ title: 'OpenSketch', body: 'Discard all changes made to the sketch and exit?', buttons: [
       { label: 'Discard Changes and Exit', primary: true, run: () => {
         const snap = ctx.snapshot;
+        this.closeCommand();
         this.sketcher.end(); this.mode = 'part';
         this.doc = JSON.parse(snap);
         if (ctx.isNew) this.undoStack.pop();
@@ -1019,6 +1021,7 @@ class App {
 
   onSketchSelection() {
     if (this.mode !== 'sketch' || this.sketcher.tool) return;
+    if (this.cmd) { this.cmd.onSketchSelection?.(); return; }
     const sk = this.sketcher, ids = [...sk.sel];
     if (!ids.length) { if (this.pm.isOpen && !this.cmd) this.pm.close(); return; }
     const skf = sk.sk;
@@ -1108,6 +1111,7 @@ class App {
 
   convertEntities() {
     if (this.mode !== 'sketch') { this.toast('Edit a sketch, then select model edges or faces to convert.'); return; }
+    if (this.cmd) this.closeCommand();
     // edges selected first (click them in the sketch): convert at once, like SOLIDWORKS
     const pre = [...this.sketcher.modelSel.values()].filter((p) => p.kind === 'edge' && p.data).map((p) => p.data);
     if (pre.length) {
@@ -1128,18 +1132,12 @@ class App {
   }
 
   offsetEntities() {
-    if (this.mode !== 'sketch') { this.toast('Edit a sketch and select entities to offset.'); return; }
-    let d = 5, rev = false;
-    this.cmd = { onOk: () => this.sketcher.offsetSelection(rev ? -d : d) };
-    this.pm.open({ title: 'Offset Entities', icon: 'offset', okEnabled: () => true, sections: [{ title: 'Parameters', rows: [
-      { type: 'number', icon: 'depth', get: () => d, set: (v) => { d = v; }, min: 0.0001 },
-      { type: 'check', label: 'Reverse', get: () => rev, set: (v) => { rev = v; } },
-      { type: 'text', text: 'Select circles or a closed chain of lines in the sketch, then click OK.' },
-    ] }] });
+    startOffset(this);
   }
 
   relationsPM() {
     if (this.mode !== 'sketch') { this.toast('Edit a sketch to display its relations.'); return; }
+    if (this.cmd) this.closeCommand();
     const sk = this.sketcher;
     let chosen = null;
     this.cmd = { onOk: () => {} };
