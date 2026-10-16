@@ -24,7 +24,7 @@ export class Ribbon {
   setTab(name) { this.tab = name; this.render(); }
 
   tip(c) {
-    return `${val(c.label)}\n${c.tip || ''}`;
+    return `${val(c.label)}\n${c.disabled ? 'Not available in this version. ' : ''}${c.tip || ''}`;
   }
 
   button(id, cls) {
@@ -37,6 +37,8 @@ export class Ribbon {
 
   run(id) {
     const c = this.C[id];
+    if (!c) return;
+    if (c.disabled) { this.app.toast(`${val(c.label)} is not available in this version.`); return; }
     this.app.lastCommand = id;
     c.run();
     this.render();
@@ -140,7 +142,8 @@ export class Ribbon {
       idx = 0;
       res.innerHTML = '';
       items.forEach((c, i) => {
-        const r = h('div', 'sr' + (i === idx ? ' active' : ''), `${icon(val(c.icon), 18)}<span>${val(c.label)}</span><span class="where">${where(c.id)}</span>`);
+        const r = h('div', 'sr' + (i === idx ? ' active' : ''), `${icon(val(c.icon), 18)}<span>${val(c.label)}</span><span class="where">${c.disabled ? 'Not available' : where(c.id)}</span>`);
+        r.setAttribute('aria-disabled', String(!!c.disabled));
         r.onmousedown = (e) => { e.preventDefault(); inp.value = ''; res.classList.add('hidden'); this.run(c.id); };
         res.appendChild(r);
       });

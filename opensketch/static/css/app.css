@@ -381,3 +381,7 @@ input, select, button { font: inherit; color: inherit; }
 .macro-dlg b.bad { color: #c22; }
 .dlg-f .btn:disabled { opacity: 0.45; cursor: default; }
 .macro-dlg .macro-full { display: block; margin: 8px 0; font-size: 12px; line-height: 1.4; }
+
+/* Native buttons keep PropertyManager actions keyboard reachable. */
+button.pm-act { padding: 0; background: transparent; font: inherit; }
+button.pm-act:focus-visible { outline: 2px solid #2467b2; outline-offset: 2px; }

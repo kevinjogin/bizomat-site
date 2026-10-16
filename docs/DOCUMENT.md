@@ -84,6 +84,9 @@ unknowns, and reports degrees of freedom, per-entity defined state and over-defi
 | `plane` | `base` (plane ref), `offset`, `flip` |
 | `extrude` | `sketch`, `op` `boss`/`cut`, `end` `blind`/`through_all`/`midplane`/`up_to_next`, `depth`, `reverse`, `draft`, `draft_outward`, `dir2` `{end, depth}`, `merge`, `flip_side` |
 | `revolve` | `sketch`, `axis` (line id in that sketch), `angle`, `op`, `end` `blind`/`midplane`, `reverse` |
+| `sweep` | `sketch` (one closed profile), `path` (a different sketch with one connected path), `op` `boss`/`cut`, `merge` |
+| `loft` | `profiles` (at least two different sketch ids, in section order; one closed contour each, without holes), `ruled`, `op` `boss`/`cut`, `merge` |
+| `hole` | `plane` (plane ref), `x`, `y` (position in that plane), `diameter`, `end` `blind`/`through_all`, `depth`, `reverse`, `style` `simple`/`counterbore`/`countersink`, `bore_diameter`, `bore_depth`, `sink_diameter`, `sink_angle` (included angle, degrees) |
 | `fillet` | `radius`, `edges` |
 | `chamfer` | `distance`, `mode` `angle_distance`/`distance_distance`, `angle`, `distance2`, `edges` |
 | `shell` | `thickness`, `faces` (removed), `outward` |
@@ -96,6 +99,16 @@ unknowns, and reports degrees of freedom, per-entity defined state and over-defi
 Edge references are `{"mid": [x,y,z]}`, the point at the middle of the edge. Face references are
 `{"center": [x,y,z], "normal": [x,y,z]}`. They are matched to the nearest edge or face on rebuild.
 This is simple and works for most edits; it is not yet full topological naming.
+
+Sweep uses all non-construction edges of its path sketch. Loft section order is significant;
+guide curves and inner contours are not supported. Hole Wizard creates a dimensioned, flat-bottom
+hole, counterbore or countersink at a plane coordinate. Hole depth follows the plane normal, or its
+opposite when `reverse` is true. Through-all is directional. These are explicit dimensions, not
+a fastener-standard or thread database. Hole features can be mirrored and patterned. The new
+features use STEP fallback in SOLIDWORKS macro export.
+
+Exports reject active rebuild errors rather than writing the last successfully rebuilt solid.
+Suppressed and rolled-back features are intentionally excluded, as in the viewport.
 
 # Assembly document
 

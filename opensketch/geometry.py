@@ -24,9 +24,11 @@ from build123d import (
     Vector,
     Wire,
     extrude,
+    loft,
     mirror,
     offset,
     revolve,
+    sweep,
 )
 from build123d.build_enums import AngularDirection, Until
 
@@ -39,7 +41,7 @@ STD_PLANES: dict[str, Plane] = {
 
 FEATURE_TYPES = (
     "sketch", "plane", "extrude", "revolve", "fillet", "chamfer", "shell",
-    "mirror", "linear_pattern", "circular_pattern", "import", "standard",
+    "mirror", "linear_pattern", "circular_pattern", "import", "standard", "sweep", "loft", "hole",
 )
 
 
@@ -53,6 +55,7 @@ class RegenState:
     planes: dict = field(default_factory=dict)   # feature id -> Plane (sketches and ref planes)
     profiles: dict = field(default_factory=dict) # sketch id -> list[Face]
     sketch_edges: dict = field(default_factory=dict)  # sketch id -> {entity id: Edge}
+    path_edges: dict = field(default_factory=dict)    # sketch id -> non-construction edges
     tools: dict = field(default_factory=dict)    # feature id -> (tool solid, op)
     status: list = field(default_factory=list)
 
@@ -318,6 +321,8 @@ def extrude_tool(feat: dict, st: RegenState):
     big = scale_of(st.part) * 4 + 1000
 
     def one(direction, end, depth, draft):
+        if end == "up_to_next" and st.part is None:
+            raise FeatureError("Up To Next needs an existing body")
         if end == "through_all":
             depth = big
         if depth is None or depth <= 0:
@@ -374,6 +379,84 @@ def pattern_seed_tools(feat: dict, st: RegenState):
     return seeds
 
 
+def single_profile(sketch, st: RegenState):
+    faces = st.profiles.get(sketch)
+    if isinstance(faces, FeatureError):
+        raise faces
+    if not faces or len(faces) != 1:
+        raise FeatureError("Select a sketch with one closed profile")
+    return faces[0]
+
+
+def sweep_tool(feat: dict, st: RegenState):
+    profile = single_profile(feat.get("sketch"), st)
+    path_id = feat.get("path")
+    if path_id == feat.get("sketch"):
+        raise FeatureError("Select a different sketch for the sweep path")
+    # Construction edges are present in sketch_edges for revolve axes; omit them here.
+    edges = st.path_edges.get(path_id, [])
+    wires = Wire.combine(edges, tol=1e-6) if edges else []
+    if len(wires) != 1:
+        raise FeatureError("The sweep path must be one connected chain of non-construction edges")
+    return sweep(profile, path=wires[0])
+
+
+def loft_tool(feat: dict, st: RegenState):
+    ids = feat.get("profiles", [])
+    if len(ids) < 2 or len(set(ids)) != len(ids):
+        raise FeatureError("Select at least two different sketches in section order")
+    faces = [single_profile(sid, st) for sid in ids]
+    if any(f.inner_wires() for f in faces):
+        raise FeatureError("Loft sections with inner contours are not supported; loft the outside, then cut the inside")
+    return loft(faces, ruled=bool(feat.get("ruled")))
+
+
+def hole_tool(feat: dict, st: RegenState):
+    if st.part is None:
+        raise FeatureError("Create a solid body before adding a hole")
+    pl = resolve_plane(feat.get("plane"), st)
+    origin = pl.origin + pl.x_dir * float(feat.get("x", 0)) + pl.y_dir * float(feat.get("y", 0))
+    normal = pl.z_dir * (-1 if feat.get("reverse") else 1)
+    axis_plane = Plane(origin=origin, x_dir=pl.x_dir, z_dir=normal)
+    diameter = float(feat.get("diameter", 0))
+    depth = float(feat.get("depth", 10))
+    if not math.isfinite(diameter) or diameter <= 0:
+        raise FeatureError("Hole diameter must be greater than 0")
+    if feat.get("end", "blind") == "through_all":
+        bb = st.part.bounding_box()
+        corners = [Vector(x, y, z) for x in (bb.min.X, bb.max.X)
+                   for y in (bb.min.Y, bb.max.Y) for z in (bb.min.Z, bb.max.Z)]
+        depth = max((p - origin).dot(normal) for p in corners) + 1
+    elif feat.get("end", "blind") != "blind":
+        raise FeatureError("Hole end condition must be Blind or Through All")
+    if not math.isfinite(depth) or depth <= 0:
+        raise FeatureError("Hole depth must be greater than 0; check its direction")
+    radius = diameter / 2
+    tool = Solid.make_cylinder(radius, depth, axis_plane)
+    style = feat.get("style", "simple")
+    if style == "counterbore":
+        outer = float(feat.get("bore_diameter", 0)) / 2
+        recess = float(feat.get("bore_depth", 0))
+        if not all(math.isfinite(v) for v in (outer, recess)) or outer <= radius or not 0 < recess <= depth:
+            raise FeatureError("Counterbore diameter must exceed the hole diameter and its depth must fit within the hole")
+        tool = tool + Solid.make_cylinder(outer, recess, axis_plane)
+    elif style == "countersink":
+        outer = float(feat.get("sink_diameter", 0)) / 2
+        angle = float(feat.get("sink_angle", 90))
+        if not all(math.isfinite(v) for v in (outer, angle)) or outer <= radius or not 0 < angle < 180:
+            raise FeatureError("Countersink diameter must exceed the hole diameter; included angle must be between 0 and 180 degrees")
+        recess = (outer - radius) / math.tan(math.radians(angle / 2))
+        if recess > depth:
+            raise FeatureError("Countersink is deeper than the hole")
+        tool = tool + Solid.make_cone(outer, radius, recess, axis_plane)
+    elif style != "simple":
+        raise FeatureError("Unknown hole style")
+    common = st.part & tool
+    if common is None or common.volume <= 1e-9:
+        raise FeatureError("The hole does not intersect the body; check its position and direction")
+    return tool
+
+
 def direction_of(spec, st: RegenState) -> Vector:
     """Direction spec: "X"/"Y"/"Z", {"edge": {"mid": [...]}} or {"vector": [...]}."""
     if isinstance(spec, str):
@@ -405,6 +488,7 @@ def regen_feature(feat: dict, st: RegenState):
         st.planes[feat["id"]] = pl
         st.sketch_edges[feat["id"]] = sketch_geometry(feat, pl, include_construction=True)
         prof_edges = list(sketch_geometry(feat, pl).values())
+        st.path_edges[feat["id"]] = prof_edges
         try:
             st.profiles[feat["id"]] = sketch_profiles(prof_edges, pl) if prof_edges else FeatureError("Sketch is empty")
         except FeatureError as exc:
@@ -415,6 +499,15 @@ def regen_feature(feat: dict, st: RegenState):
         op = feat.get("op", "boss")
         st.tools[feat["id"]] = (tool, op)
         st.part = apply_op(st.part, tool, op, feat.get("merge", True))
+        return tool
+    if t in ("sweep", "loft", "hole"):
+        tool = {"sweep": sweep_tool, "loft": loft_tool, "hole": hole_tool}[t](feat, st)
+        if tool is None or not tool.solids() or not tool.is_valid:
+            raise FeatureError("The feature did not produce a valid solid")
+        op = "cut" if t == "hole" else feat.get("op", "boss")
+        after = apply_op(st.part, tool, op, feat.get("merge", True))
+        st.tools[feat["id"]] = (tool, op)
+        st.part = after
         return tool
     if t == "fillet":
         edges, missing = find_edges(st.part, feat.get("edges", []))
@@ -527,7 +620,7 @@ def regen(doc: dict, preview: dict | None = None) -> tuple[RegenState, Any]:
             st.part = before
             st.status.append({"id": preview.get("id", "preview"), "state": "error", "preview": True,
                               "message": str(exc)})
-        if preview.get("type") in ("extrude", "revolve"):
+        if preview.get("type") in ("extrude", "revolve", "sweep", "loft", "hole"):
             st.part = before  # SOLIDWORKS shows the body as it was plus a yellow tool preview
         elif before is not None and st.part is not None and st.part is not before:
             tool = changed_faces(before, st.part)
@@ -625,6 +718,7 @@ def mass_properties(doc: dict) -> dict:
 def export(doc: dict, fmt: str, path: str) -> None:
     from build123d import export_step, export_stl
     st, _ = regen(doc)
+    require_clean(st.status, doc.get("name", "Part"))
     if st.part is None:
         raise FeatureError("No solid body to export")
     if fmt == "step":
@@ -633,3 +727,9 @@ def export(doc: dict, fmt: str, path: str) -> None:
         export_stl(st.part, path)
     else:
         raise FeatureError(f"Unknown export format {fmt}")
+
+
+def require_clean(status: list[dict], name: str = "Part") -> None:
+    bad = next((s for s in status if s.get("state") == "error"), None)
+    if bad:
+        raise FeatureError(f"Cannot export {name}: feature {bad['id']} failed: {bad.get('message', 'Rebuild error')}")

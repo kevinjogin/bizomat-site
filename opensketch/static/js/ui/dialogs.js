@@ -21,7 +21,10 @@ export function dialog({ title, body, buttons = [], x, y, modal = true, cls = ''
   if (!modal) back.style.pointerEvents = 'none';
   const dlg = h('div', 'dlg ' + cls);
   dlg.style.pointerEvents = 'auto';
-  const head = h('div', 'dlg-h', `<span>${title}</span><span class="x" title="Close">&#x2715;</span>`);
+  const head = h('div', 'dlg-h', '<span></span><span class="x" title="Close">&#x2715;</span>');
+  head.firstElementChild.textContent = title;
+  dlg.setAttribute('role', 'dialog'); dlg.setAttribute('aria-label', title);
+  if (modal) dlg.setAttribute('aria-modal', 'true');
   const b = h('div', 'dlg-b');
   if (typeof body === 'string') b.innerHTML = body; else b.appendChild(body);
   dlg.append(head, b);
@@ -62,7 +65,8 @@ export function modifyBox({ value, name, unit = 'mm', x, y, onApply, onPreview, 
   const row = h('div', 'mod-val');
   const inp = h('input'); inp.value = (+(+value).toFixed(6)) + unit;
   row.appendChild(inp);
-  body.append(tb, row, h('div', 'mod-name', name));
+  const caption = h('div', 'mod-name'); caption.textContent = name;
+  body.append(tb, row, caption);
   const d = dialog({ title: 'Modify', body, x, y, modal: false, cls: 'modify', onClose: () => { if (!done) onCancel && onCancel(); } });
   let done = false;
   const parse = () => evalExpr(inp.value);
@@ -90,7 +94,7 @@ export function contextMenu(x, y, items, toolbar = null) {
   }
   for (const it of items) {
     if (it === '-') { m.appendChild(h('div', 'cm-sep')); continue; }
-    if (it.head) { m.appendChild(h('div', 'cm-head', it.head)); continue; }
+    if (it.head) { const head = h('div', 'cm-head'); head.textContent = it.head; m.appendChild(head); continue; }
     const row = h('div', 'cm' + (it.disabled ? ' disabled' : ''), `${it.icon ? icon(it.icon, 16) : '<span class="sp"></span>'}<span>${it.label}</span>${it.key ? `<span class="key">${it.key}</span>` : ''}`);
     if (!it.disabled) row.onclick = () => { closeMenus(); it.run(); };
     m.appendChild(row);

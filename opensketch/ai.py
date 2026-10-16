@@ -21,6 +21,7 @@ from __future__ import annotations
 import copy
 import itertools
 import json
+import math
 import re
 import uuid
 from typing import Iterator
@@ -80,6 +81,14 @@ or a planar face {"type": "face", "origin": [x,y,z], "normal": [x,y,z], "xdir": 
   plane normal; use "reverse": true for the other way. A cut sketched on a top face needs "reverse": true
   to go into the material.
 - revolve: {"type":"revolve","sketch","axis":<line id in that sketch>,"angle":deg,"op":"boss"|"cut"}
+- sweep: {"type":"sweep","sketch":<closed profile sketch>,"path":<different path sketch>,"op":"boss"|"cut"}
+  The path is one connected non-construction chain. Use one closed profile region.
+- loft: {"type":"loft","profiles":[<sketch ids in section order>],"ruled":bool,"op":"boss"|"cut"}
+  At least two distinct sketches, one closed contour per sketch, no inner contours or guide curves.
+- hole: {"type":"hole","plane":<plane>,"x":mm,"y":mm,"diameter":mm,"end":"blind"|"through_all",
+  "depth":mm,"reverse":bool,"style":"simple"|"counterbore"|"countersink","bore_diameter":mm,
+  "bore_depth":mm,"sink_diameter":mm,"sink_angle":degrees}. Flat-bottom, explicitly dimensioned holes;
+  no thread or standards database. Holes on outer faces usually need reverse:true to cut inward.
 - fillet: {"type":"fillet","radius","edges":[{"mid":[x,y,z]}]} (edge picked by its midpoint, part coordinates)
 - chamfer: {"type":"chamfer","distance","edges":[...]}
 - shell: {"type":"shell","thickness","faces":[{"center":[x,y,z],"normal":[x,y,z]}]} (faces removed)
@@ -120,7 +129,8 @@ Assembly workflow (one tool call per step, so the user can follow it):
      {{"component": id, "point": [x,y,z]}}
      {{"component": id, "ref": "Front Plane"|"Top Plane"|"Right Plane"|"Origin"|"X axis"|"Y axis"|"Z axis"}}
    Mate types: coincident, concentric, parallel, perpendicular, distance (value mm), angle (value deg),
-   lock. For two touching faces use coincident with "align": "anti" (normals facing each other).
+   lock, limit_distance (min/max mm), limit_angle (min/max degrees), hinge (axis refs plus optional
+   planes, angle_refs, angle_min/angle_max). For two touching faces use coincident with "align": "anti".
    Leave a rotation or slide free when the real product moves (a piston slides, a wheel spins).
 4. check_interference at the end, fix real clashes (holes too small, parts overlapping).
 The create_part result lists the part's planar faces and cylinder axes; use them for mate references.
@@ -217,6 +227,13 @@ TOOLS = [
          "type": {"type": "string", "enum": list(assembly.MATE_TYPES)},
          "refs": {"type": "array", "items": _REF, "minItems": 2, "maxItems": 2},
          "value": {"type": "number", "description": "distance in mm or angle in degrees"},
+         "min": {"type": "number", "description": "Lower distance or angle limit"},
+         "max": {"type": "number", "description": "Upper distance or angle limit"},
+         "planes": {"type": "array", "items": _REF, "minItems": 2, "maxItems": 2,
+                    "description": "Optional coincident planes that prevent a hinge sliding along its axis"},
+         "angle_refs": {"type": "array", "items": _REF, "minItems": 2, "maxItems": 2},
+         "angle_min": {"type": "number"},
+         "angle_max": {"type": "number"},
          "align": {"type": "string", "enum": ["anti", "aligned", "auto"]},
          "flip": {"type": "boolean"}}, "required": ["type", "refs"]}},
     {"name": "delete_items",
@@ -633,8 +650,15 @@ class Session:
         return json.dumps(_asm_report(asm, res)), True, [ev]
 
     def add_mate(self, inp: dict) -> tuple[str, bool, list]:
-        asm = self._asm()
         t = inp.get("type")
+        if t not in assembly.MATE_TYPES:
+            return f"Unknown mate type {t!r}", False, []
+        limit_keys = ("min", "max") if t in ("limit_distance", "limit_angle") else ("angle_min", "angle_max") if t == "hinge" and inp.get("angle_refs") else None
+        if limit_keys:
+            low, high = (inp.get(k) for k in limit_keys)
+            if not all(isinstance(v, (int, float)) and math.isfinite(v) for v in (low, high)) or low > high:
+                return f"Provide finite {limit_keys[0]} and {limit_keys[1]}, with the lower limit first.", False, []
+        asm = self._asm()
         mid = f"m{asm.get('seq', 1)}"
         while any(m["id"] == mid for m in asm["mates"]):
             asm["seq"] = asm.get("seq", 1) + 1
@@ -642,7 +666,7 @@ class Session:
         asm["seq"] = asm.get("seq", 1) + 1
         mate = {"id": mid, "name": _next_name([m.get("name", "") for m in asm["mates"]], str(t).capitalize()), "type": t,
                 "refs": inp.get("refs") or []}
-        for k in ("value", "align", "flip"):
+        for k in ("value", "align", "flip", "min", "max", "planes", "angle_refs", "angle_min", "angle_max"):
             if k in inp:
                 mate[k] = inp[k]
         asm["mates"].append(mate)
@@ -661,7 +685,8 @@ class Session:
         parts = set(inp.get("parts") or [])
         comps |= {c["id"] for c in asm["components"] if c.get("part") in parts}
         mates = set(inp.get("mates") or [])
-        mates |= {m["id"] for m in asm["mates"] if any(r.get("component") in comps for r in m.get("refs", []))}
+        mates |= {m["id"] for m in asm["mates"] if any(r.get("component") in comps
+                  for key in assembly.REF_KEYS for r in m.get(key, []))}
         asm["components"] = [c for c in asm["components"] if c["id"] not in comps]
         asm["mates"] = [m for m in asm["mates"] if m["id"] not in mates]
         asm["sequence"] = [c for c in asm.get("sequence", []) if c not in comps]

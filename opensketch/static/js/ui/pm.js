@@ -2,13 +2,14 @@
 // pink selection boxes). Specs are plain objects; values live in the caller's state.
 
 import { icon } from '../icons.js';
+import { escapeHtml } from '../model-utils.js';
 
 const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 
 export function evalExpr(s) {
   // numbers with optional math and units: "25*2", "1in", "=10+5"
   let t = String(s).trim().replace(/^=/, '');
-  const inch = /in(ch)?$/.test(t); t = t.replace(/(mm|in|inch|deg|°)$/i, '');
+  const inch = /in(ch)?$/i.test(t); t = t.replace(/(mm|in|inch|deg|°)$/i, '');
   if (!/^[0-9+\-*/().\s eE]+$/.test(t)) return NaN;
   try { const v = Function('"use strict";return (' + t + ')')(); return inch ? v * 25.4 : +v; } catch (_) { return NaN; }
 }
@@ -60,13 +61,13 @@ export class PropertyManager {
     const scroll = root.scrollTop;
     root.innerHTML = '';
     const pm = el('div', 'pm');
-    const title = el('div', 'pm-title', `${icon(s.icon || 'props', 20)}<span>${s.title}</span><span class="pm-help" title="Help">?</span>`);
+    const title = el('div', 'pm-title', `${icon(s.icon || 'props', 20)}<span>${escapeHtml(s.title)}</span><span class="pm-help" title="Help">?</span>`);
     pm.appendChild(title);
     const acts = el('div', 'pm-actions');
-    const ok = el('div', 'pm-act' + (s.okEnabled && !s.okEnabled() ? ' disabled' : ''), icon('ok', 20)); ok.title = 'OK';
+    const ok = el('button', 'pm-act' + (s.okEnabled && !s.okEnabled() ? ' disabled' : ''), icon('ok', 20)); ok.title = 'OK'; ok.setAttribute('aria-label', 'OK'); ok.disabled = !!(s.okEnabled && !s.okEnabled());
     ok.onclick = () => this.app.pmOk();
     acts.appendChild(ok);
-    if (!s.noCancel) { const cancel = el('div', 'pm-act', icon('cancel', 20)); cancel.title = 'Cancel'; cancel.onclick = () => this.app.pmCancel(); acts.appendChild(cancel); }
+    if (!s.noCancel) { const cancel = el('button', 'pm-act', icon('cancel', 20)); cancel.title = 'Cancel'; cancel.setAttribute('aria-label', 'Cancel'); cancel.onclick = () => this.app.pmCancel(); acts.appendChild(cancel); }
     if (s.preview !== undefined) {
       const pv = el('div', 'pm-act' + (s.preview ? ' on' : ''), icon('eye', 20)); pv.title = 'Detailed Preview';
       pv.onclick = () => { s.preview = !s.preview; this.changed(true); };
@@ -78,7 +79,7 @@ export class PropertyManager {
     pm.appendChild(acts);
     const msg = typeof s.message === 'function' ? s.message() : s.message;
     if (msg) pm.appendChild(el('div', 'pm-msg' + (s.messageError ? ' err' : ''), msg));
-    if (s.error) pm.appendChild(el('div', 'pm-msg err', s.error));
+    if (s.error) pm.appendChild(el('div', 'pm-msg err', escapeHtml(s.error)));
     for (const sec of s.sections) {
       if (sec.visible && !sec.visible()) continue;
       const box = el('div', 'pm-sec');
@@ -91,7 +92,7 @@ export class PropertyManager {
         cb.onclick = (e) => { e.stopPropagation(); sec.checkbox.set(cb.checked); this.changed(true); };
         h.appendChild(cb);
       }
-      h.appendChild(el('span', null, sec.title));
+      h.appendChild(el('span', null, escapeHtml(sec.title)));
       h.appendChild(el('span', 'chev', isCol ? '&#9660;' : '&#9650;'));
       h.onclick = () => { if (this.collapsed.has(sec.title)) this.collapsed.delete(sec.title); else this.collapsed.add(sec.title); this.render(); };
       box.appendChild(h);
@@ -113,6 +114,7 @@ export class PropertyManager {
         if (r.label) row.appendChild(el('label', null, r.label));
         const wrap = el('div', 'pm-num');
         const inp = el('input'); inp.type = 'text';
+        inp.setAttribute('aria-label', r.label || r.tip || r.icon || 'Value');
         const unit = typeof r.unit === 'function' ? r.unit() : (r.unit ?? 'mm');
         const show = () => { const v = r.get(); inp.value = (Number.isFinite(v) ? +(+v).toFixed(4) : v) + (unit ? unit : ''); };
         show();
@@ -123,7 +125,7 @@ export class PropertyManager {
         };
         inp.addEventListener('change', commit);
         inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); commit(); } e.stopPropagation(); });
-        inp.addEventListener('wheel', (e) => { if (document.activeElement !== inp) return; e.preventDefault(); const st = r.step || (unit === 'deg' ? 1 : 1); r.set(r.get() + (e.deltaY < 0 ? st : -st)); show(); this.changed(); });
+        inp.addEventListener('wheel', (e) => { if (document.activeElement !== inp) return; e.preventDefault(); const st = r.step || 1; const v = r.get() + (e.deltaY < 0 ? st : -st); if (Number.isFinite(v) && (r.min === undefined || v >= r.min) && (r.max === undefined || v <= r.max)) { r.set(r.int ? Math.round(v) : v); show(); this.changed(!!r.rerender); } });
         wrap.appendChild(inp);
         const spin = el('div', 'pm-spin', '<span>&#9650;</span><span>&#9660;</span>');
         const st = r.step || 1;
@@ -139,6 +141,7 @@ export class PropertyManager {
         if (r.icon) row.appendChild(el('span', null, icon(r.icon, 18)));
         if (r.label) row.appendChild(el('label', null, r.label));
         const sel = el('select', 'grow');
+        sel.setAttribute('aria-label', r.label || r.tip || 'Option');
         for (const [v, l] of r.options) { const o = el('option', null, l); o.value = v; sel.appendChild(o); }
         sel.value = r.get();
         sel.onchange = () => { r.set(sel.value); this.changed(true); };
@@ -187,7 +190,7 @@ export class PropertyManager {
         break;
       }
       case 'text': row.appendChild(el('div', 'pm-note', typeof r.text === 'function' ? r.text() : r.text)); break;
-      case 'value': row.appendChild(el('span', null, r.label)); row.appendChild(el('span', 'grow', `<b>${r.get()}</b>`)); break;
+      case 'value': row.appendChild(el('span', null, r.label)); row.appendChild(el('span', 'grow', `<b>${escapeHtml(r.get())}</b>`)); break;
       case 'relbuttons': {
         const wrap = el('div', 'pm-relbtns grow');
         const list = r.items();
