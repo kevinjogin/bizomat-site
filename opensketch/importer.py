@@ -7,6 +7,8 @@ A STEP with one solid becomes a part. A STEP with several solids becomes an asse
 distinct shape (identical shapes share a part, like instances), one component per solid at its STEP
 position. Like SOLIDWORKS importing a STEP assembly, no mates come in; Add Mates (AI) or the Mate
 command adds them.
+
+A .zip (how McMaster-Carr and most suppliers ship CAD) is opened and the STEP inside is imported.
 """
 
 from __future__ import annotations
@@ -15,7 +17,9 @@ import base64
 import hashlib
 import os
 import re
+import io
 import tempfile
+import zipfile
 import zlib
 from collections import OrderedDict
 
@@ -122,19 +126,44 @@ def import_part_feature(solid, name: str, source: str) -> dict:
             "data": encode_shape(solid), "source": source, "label": name}
 
 
+def _from_zip(data: bytes, filename: str) -> tuple[bytes, str]:
+    """The one STEP file inside a zip, as (bytes, its name)."""
+    try:
+        zf = zipfile.ZipFile(io.BytesIO(data))
+    except zipfile.BadZipFile as exc:
+        raise ImportError_(f"{filename} is not a readable zip file.") from exc
+    names = [n for n in zf.namelist() if not n.endswith("/") and not os.path.basename(n).startswith(".")
+             and not n.startswith("__MACOSX/")]
+    steps = [n for n in names if os.path.splitext(n)[1].lower() in (".step", ".stp")]
+    if len(steps) == 1:
+        return zf.read(steps[0]), os.path.basename(steps[0])
+    if len(steps) > 1:
+        listed = ", ".join(os.path.basename(n) for n in steps[:6]) + (" ..." if len(steps) > 6 else "")
+        raise ImportError_(f"{filename} holds {len(steps)} STEP files ({listed}). Unzip it and open the one you want.")
+    native = [n for n in names if os.path.splitext(n)[1].lower() in NATIVE_SOLIDWORKS]
+    if native:
+        raise ImportError_(
+            f"{filename} only holds SOLIDWORKS files ({os.path.basename(native[0])}). Download the STEP version "
+            "instead, or in SOLIDWORKS use File > Save As > STEP AP214 (*.step).")
+    raise ImportError_(f"{filename} has no STEP file inside (.step or .stp).")
+
+
 def import_step(data: bytes, filename: str = "model.step") -> dict:
-    """Return a part or assembly document for a STEP file."""
+    """Return a part or assembly document for a STEP file, or a zip holding one."""
     ext = os.path.splitext(filename)[1].lower()
+    if ext == ".zip":
+        data, filename = _from_zip(data, filename)
+        ext = os.path.splitext(filename)[1].lower()
     if ext in NATIVE_SOLIDWORKS:
         raise ImportError_(
             "SOLIDWORKS files (.sldprt, .sldasm) are a closed format that only SOLIDWORKS can read. "
             "In SOLIDWORKS use File > Save As > STEP AP214 (*.step), then open the STEP file here.")
     if ext not in (".step", ".stp", ""):
-        raise ImportError_(f"Cannot import {ext} files. Use STEP (.step or .stp).")
+        raise ImportError_(f"Cannot import {ext} files. Use STEP (.step or .stp), or a .zip holding one.")
     try:
         root = _read_step(data)
     except Exception as exc:  # OCC reader errors
-        raise ImportError_(f"Could not read the STEP file: {exc}") from exc
+        raise ImportError_(f"Could not read the STEP file: {str(exc).strip() or type(exc).__name__}. Try exporting it again as STEP AP214.") from exc
     stem = os.path.splitext(os.path.basename(filename))[0] or "Imported"
     solids = list(root.solids()) if root is not None else []
     if not solids:

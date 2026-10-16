@@ -12,7 +12,7 @@ dependencies = ["build123d>=0.9", "fastapi>=0.110", "uvicorn>=0.29", "pydantic>=
 
 [project.optional-dependencies]
 ai = ["anthropic>=1.0"]
-dev = ["pytest>=8"]
+dev = ["pytest>=8", "httpx>=0.27"]
 
 [project.scripts]
 opensketch = "opensketch.__main__:main"

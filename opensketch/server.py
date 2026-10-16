@@ -8,12 +8,14 @@ import os
 import tempfile
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 import base64
+import gzip
 import threading
 import time
 import uuid
@@ -65,14 +67,33 @@ class ImportRequest(BaseModel):
     data: str  # base64 file content
 
 
-@app.post("/api/import")
-def api_import(req: ImportRequest):
-    """STEP -> part or assembly document. SOLIDWORKS files get a clear message."""
+def _import_reply(raw: bytes, filename: str):
+    """Every failure comes back as JSON {error} with a readable message, never a bare 500."""
     try:
-        raw = base64.b64decode(req.data)
-        return {"doc": importer.import_step(raw, req.filename)}
+        return {"doc": importer.import_step(raw, filename)}
     except importer.ImportError_ as exc:
         return JSONResponse({"error": str(exc)}, status_code=422)
+    except Exception as exc:  # anything else the reader or the assembly step throws
+        return JSONResponse({"error": f"Could not import {filename}: {str(exc).strip() or type(exc).__name__}"}, status_code=422)
+
+
+@app.post("/api/import")
+def api_import(req: ImportRequest):
+    """STEP -> part or assembly document (base64 in JSON; kept for old clients and scripts)."""
+    return _import_reply(base64.b64decode(req.data), req.filename)
+
+
+@app.post("/api/import/raw")
+async def api_import_raw(request: Request, filename: str = "model.step"):
+    """STEP -> part or assembly document. The body is the file's bytes, gzipped by the browser when
+    the X-OpenSketch-Gzip header is 1 (a 14 MB STEP becomes ~3 MB, small enough for the Codespaces tunnel)."""
+    body = await request.body()
+    if request.headers.get("x-opensketch-gzip") == "1":
+        try:
+            body = gzip.decompress(body)
+        except OSError:
+            return JSONResponse({"error": "The upload arrived damaged. Try again."}, status_code=400)
+    return await run_in_threadpool(_import_reply, body, filename)
 
 
 @app.get("/api/toolbox")

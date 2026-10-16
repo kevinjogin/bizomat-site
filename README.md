@@ -105,7 +105,7 @@ Task Pane on the right, status bar with Under/Fully/Over Defined and "Editing Sk
 - STEP / STL export of the whole assembly, mass properties with each part's own material.
 
 **Import and Toolbox**
-- Open or drop a STEP file. One body becomes a part with an `Imported1` feature you can keep adding
+- Open or drop a STEP file, or the .zip a supplier like McMaster-Carr sends it in. One body becomes a part with an `Imported1` feature you can keep adding
   cuts, fillets and shells to. Several bodies become an assembly, identical bodies sharing one part.
   OpenSketch AI > **Rebuild as Features** turns an imported body into an editable feature tree and
   checks the volume against the import; **Add Mates** mates an imported assembly from its geometry.

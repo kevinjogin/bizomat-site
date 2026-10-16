@@ -23,6 +23,14 @@ const $ = (id) => document.getElementById(id);
 const clone = (o) => JSON.parse(JSON.stringify(o));
 const esc = (t) => String(t ?? '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 const STD_PLANES = ['Front Plane', 'Top Plane', 'Right Plane'];
+const MB = (n) => (n / 1e6).toFixed(1) + ' MB';
+// When the upload never reached OpenSketch (the reply is not ours), say what the status means.
+function importFailText(status, size) {
+  if (status === 413) return `The upload (${MB(size)}) was too big for the connection to the server.`;
+  if (status === 502 || status === 503 || status === 504) return 'The connection to the server gave up before the import finished. Try again; if it keeps failing, the file may be too big for the Codespaces connection.';
+  if (status === 401 || status === 403) return 'The server refused the upload (signed out of the Codespace?). Reload the page and try again.';
+  return `The server did not answer properly (HTTP ${status || 'no status'}). Reload the page and try again.`;
+}
 const AUTOSAVE = 'opensketch.autosave.v1';
 
 const MATERIALS = [
@@ -1188,23 +1196,45 @@ class App {
   openFile() { $('fileinput').value = ''; $('fileinput').click(); }
 
   // STEP (and a clear message for SOLIDWORKS files) -> part or assembly document, via the server.
+  // The file goes up as raw bytes, gzipped when the browser can (STEP is text: about 5x smaller),
+  // so large files fit through the Codespaces tunnel. Errors always say something.
   async importFile(file) {
-    const buf = new Uint8Array(await file.arrayBuffer());
-    let bin = '';
-    for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000));
     this.status(`Importing ${file.name}...`);
-    const r = await fetch('/api/import', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ filename: file.name, data: btoa(bin) }) });
+    let body = file, gz = false;
+    if (typeof CompressionStream === 'function' && !/\.zip$/i.test(file.name)) {  // a zip is already compressed
+      try { body = await new Response(file.stream().pipeThrough(new CompressionStream('gzip'))).blob(); gz = true; } catch { body = file; }
+    }
+    const headers = { 'Content-Type': 'application/octet-stream' };
+    if (gz) headers['X-OpenSketch-Gzip'] = '1';
+    let r;
+    try {
+      r = await fetch('/api/import/raw?filename=' + encodeURIComponent(file.name), { method: 'POST', headers, body });
+    } catch {
+      throw new Error('The connection to the OpenSketch server dropped during the upload. Check the server is still running, then try again.');
+    }
     const j = await r.json().catch(() => ({}));
-    if (!r.ok || j.error) throw new Error(j.error || j.detail || r.statusText);
-    return j.doc;
+    if (r.ok && j.doc) return j.doc;
+    throw new Error(j.error || j.detail || importFailText(r.status, body.size));
   }
 
-  isImportable(file) { return /\.(step|stp|sldprt|sldasm)$/i.test(file?.name || ''); }
+  isImportable(file) { return /\.(step|stp|zip|sldprt|sldasm)$/i.test(file?.name || ''); }
+
+  // Any file the user opens, drops or inserts -> part or assembly document, with a plain message
+  // for files OpenSketch cannot read (instead of a JSON parser error).
+  async readDocFile(file) {
+    if (this.isImportable(file)) return this.importFile(file);
+    const name = file?.name || 'the file';
+    if (!/\.(osk|json)$/i.test(name)) {
+      const ext = (name.match(/\.[^.]+$/) || [''])[0];
+      throw new Error(`OpenSketch cannot open ${ext ? ext + ' files' : name}. Use STEP (.step, .stp, or a .zip holding one) or an OpenSketch file (.osk).`);
+    }
+    try { return JSON.parse(await file.text()); } catch { throw new Error(`${name} is not a valid OpenSketch file.`); }
+  }
 
   async loadFile(file) {
     if (!file) return;
     try {
-      const d = this.isImportable(file) ? await this.importFile(file) : JSON.parse(await file.text());
+      const d = await this.readDocFile(file);
       if (!Array.isArray(d.features) && !isAssembly(d)) throw new Error('Not an OpenSketch part or assembly');
       this.hideContextToolbar();
       if (this.mode === 'sketch') this.exitSketch({ silent: true });

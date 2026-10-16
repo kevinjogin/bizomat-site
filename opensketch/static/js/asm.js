@@ -455,7 +455,7 @@ export class AssemblyMode {
     const doc = app.doc;
     const state = { picked: null };
     const pickFile = () => {
-      const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.osk,.json,.step,.stp,.sldprt,.sldasm';
+      const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.osk,.json,.step,.stp,.zip,.sldprt,.sldasm';
       inp.onchange = () => { if (inp.files[0]) { app.closeCommand(); this.insertFile(inp.files[0]); } };
       inp.click();
     };
@@ -485,7 +485,7 @@ export class AssemblyMode {
     const app = this.app;
     const doc = app.doc;
     try {
-      const d = app.isImportable(file) ? await app.importFile(file) : JSON.parse(await file.text());
+      const d = await app.readDocFile(file);
       if (isAssembly(d)) {
         const map = {};
         const bb = this.res?.bbox;
