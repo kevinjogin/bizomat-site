@@ -1,0 +1,302 @@
+---
+/**
+ * Engineering Problem Assessment hero illustration: PROBLEM → ANALYSIS → OPTIONS → RECOMMENDATION.
+ * A welded bracket that does not locate on its mounting plate is analysed against datums and a position
+ * tolerance, three improvement options appear, the part locates, and a one-page report gives the next step.
+ * Pure SVG and CSS on one 16-second timeline: no scripts, images or libraries. Without motion (reduced-motion
+ * preference) every stage is shown at once as a static composite.
+ */
+import Logo from '../Logo.astro';
+
+const stages = ['Problem', 'Analysis', 'Options', 'Recommendation'];
+---
+
+<figure class="ha" aria-labelledby="ha-caption">
+  <figcaption id="ha-caption" class="visually-hidden">
+    Illustration: a bracket that does not locate on its mounting plate is analysed with datums, centre lines and a position tolerance;
+    three improvement options appear; the bracket locates; and a one-page assessment report shows a recommended next step.
+  </figcaption>
+  <div class="ha__panel">
+    <div class="ha__top" aria-hidden="true">
+      <span>ENGINEERING PROBLEM ASSESSMENT</span>
+      <span class="ha__brand"><Logo label="" height={14} /></span>
+    </div>
+
+    <svg class="ha__svg" viewBox="0 0 480 372" aria-hidden="true" focusable="false">
+      <defs>
+        <marker id="ha-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0 0 8 4 0 8z" class="ha-fill-ink" />
+        </marker>
+        <marker id="ha-arrow-o" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0 0 8 4 0 8z" class="ha-fill-orange" />
+        </marker>
+      </defs>
+
+      <!-- 01 PROBLEM label -->
+      <g class="ha-warn">
+        <text x="48" y="104" class="ha-t ha-t--o">01 · PART DOES NOT LOCATE</text>
+      </g>
+
+      <!-- Mounting plate with its two holes -->
+      <rect x="48" y="148" width="232" height="124" rx="6" class="ha-plate" />
+      <circle cx="100" cy="210" r="10" class="ha-hole" />
+      <circle cx="228" cy="210" r="10" class="ha-hole" />
+
+      <!-- Analysis: centre lines, datums, dimension and position tolerance -->
+      <g class="ha-analysis">
+        <path d="M34 210H294" class="ha-centre" />
+        <path d="M100 134V286M228 134V286" class="ha-centre" />
+        <path d="M100 132H228" class="ha-dim ha-draw" pathLength="1" marker-start="url(#ha-arrow)" marker-end="url(#ha-arrow)" />
+        <path d="M100 140V126M228 140V126" class="ha-thin" />
+        <text x="164" y="124" class="ha-t" text-anchor="middle">POSITION FROM A | B</text>
+        <!-- Datum A on the left edge, datum B on the bottom edge -->
+        <path d="M48 244 40 238V250Z" class="ha-fill-ink" />
+        <path d="M40 244H34" class="ha-thin" />
+        <rect x="16" y="236" width="18" height="16" class="ha-box" />
+        <text x="25" y="248" class="ha-t ha-t--b" text-anchor="middle">A</text>
+        <path d="M200 272 194 280H206Z" class="ha-fill-ink" />
+        <path d="M200 280V286" class="ha-thin" />
+        <rect x="191" y="286" width="18" height="16" class="ha-box" />
+        <text x="200" y="298" class="ha-t ha-t--b" text-anchor="middle">B</text>
+        <!-- Feature control frame: position, Ø0.2 at MMC, datums A and B -->
+        <g class="ha-fcf">
+          <rect x="48" y="286" width="20" height="16" class="ha-box" />
+          <circle cx="58" cy="294" r="4.2" class="ha-thin" />
+          <path d="M52 294H64M58 288V300" class="ha-thin" />
+          <rect x="68" y="286" width="44" height="16" class="ha-box" />
+          <text x="85" y="298" class="ha-t ha-t--b" text-anchor="middle">Ø0.2</text>
+          <circle cx="103" cy="294" r="4.4" class="ha-thin" />
+          <text x="103" y="296.2" class="ha-t ha-t--b ha-t--xs" text-anchor="middle">M</text>
+          <rect x="112" y="286" width="18" height="16" class="ha-box" />
+          <text x="121" y="298" class="ha-t ha-t--b" text-anchor="middle">A</text>
+          <rect x="130" y="286" width="18" height="16" class="ha-box" />
+          <text x="139" y="298" class="ha-t ha-t--b" text-anchor="middle">B</text>
+        </g>
+        <!-- Measurement ring at the interface -->
+        <circle cx="228" cy="210" r="26" class="ha-ring" />
+        <path d="M228 178V184M228 236V242M196 210H202M254 210H260" class="ha-tick" />
+      </g>
+
+      <!-- Target position of the bracket (where it should locate) -->
+      <g class="ha-ghost">
+        <rect x="62" y="174" width="204" height="72" rx="4" class="ha-dash" />
+      </g>
+
+      <!-- The welded bracket: misaligned until an option is applied -->
+      <g class="ha-part">
+        <rect x="62" y="174" width="204" height="72" rx="4" class="ha-body" />
+        <path d="M62 232H266" class="ha-thin" />
+        <path d="M156 174v-6h16v6" class="ha-weld" />
+        <circle cx="100" cy="210" r="7" class="ha-bore" />
+        <circle cx="228" cy="210" r="7" class="ha-bore" />
+      </g>
+
+      <!-- Offset between the bracket hole and the plate hole -->
+      <g class="ha-offset">
+        <path d="M228 210 236.5 199" class="ha-vec" marker-end="url(#ha-arrow-o)" />
+        <text x="262" y="246" class="ha-t ha-t--o">Δ OFFSET</text>
+      </g>
+
+      <!-- Warning at the interface -->
+      <g class="ha-warn">
+        <path d="M270 152 283 174H257Z" class="ha-warnmark" />
+        <path d="M270 160V167M270 170.5V171" class="ha-warnbang" />
+        <path d="M262 176 244 196" class="ha-thin" />
+      </g>
+
+      <!-- 03 OPTIONS -->
+      <text x="48" y="326" class="ha-t ha-t--o ha-optlabel">03 · OPTIONS</text>
+      <g class="ha-opt ha-opt--1">
+        <rect x="48" y="334" width="84" height="26" rx="3" class="ha-chip" />
+        <text x="90" y="351" class="ha-t ha-t--b" text-anchor="middle">A · PIN FIXTURE</text>
+      </g>
+      <g class="ha-opt ha-opt--2 ha-opt--rec">
+        <rect x="136" y="334" width="84" height="26" rx="3" class="ha-chip ha-chip--rec" />
+        <text x="178" y="351" class="ha-t ha-t--b" text-anchor="middle">B · DATUM + SLOT</text>
+      </g>
+      <g class="ha-opt ha-opt--3">
+        <rect x="224" y="334" width="84" height="26" rx="3" class="ha-chip" />
+        <text x="266" y="351" class="ha-t ha-t--b" text-anchor="middle">C · DRILL LATER</text>
+      </g>
+
+      <!-- 04 RECOMMENDATION: one-page report -->
+      <g class="ha-report">
+        <path d="M326 88H444L464 108V352H326Z" class="ha-sheet" />
+        <path d="M444 88V108H464" class="ha-thin" />
+        <rect x="338" y="102" width="56" height="5" class="ha-fill-orange" />
+        <text x="338" y="124" class="ha-t ha-t--b ha-t--lg">ASSESSMENT</text>
+        <text x="338" y="136" class="ha-t">REF · SAMPLE</text>
+        <path d="M338 144H452" class="ha-thin" />
+        <text x="338" y="158" class="ha-t">PROBLEM</text>
+        <rect x="338" y="163" width="110" height="4" class="ha-rbar ha-rbar--1" />
+        <rect x="338" y="171" width="84" height="4" class="ha-rbar ha-rbar--2" />
+        <text x="338" y="190" class="ha-t">FINDINGS</text>
+        <rect x="338" y="195" width="104" height="4" class="ha-rbar ha-rbar--3" />
+        <rect x="338" y="203" width="92" height="4" class="ha-rbar ha-rbar--4" />
+        <text x="338" y="222" class="ha-t">OPTIONS</text>
+        <text x="338" y="235" class="ha-t ha-t--b">A</text>
+        <rect x="350" y="231" width="80" height="4" class="ha-rbar ha-rbar--5" />
+        <text x="338" y="246" class="ha-t ha-t--o">B</text>
+        <rect x="350" y="242" width="92" height="4" class="ha-rbar ha-rbar--o ha-rbar--6" />
+        <text x="338" y="257" class="ha-t ha-t--b">C</text>
+        <rect x="350" y="253" width="70" height="4" class="ha-rbar ha-rbar--7" />
+        <rect x="338" y="268" width="114" height="36" rx="3" class="ha-next" />
+        <path d="M345 287 350 292 359 281" class="ha-check ha-draw-check" pathLength="1" />
+        <text x="366" y="284" class="ha-t ha-t--b">NEXT STEP</text>
+        <text x="366" y="296" class="ha-t">MEASURE, THEN B</text>
+        <path d="M338 322H452" class="ha-thin" />
+        <text x="338" y="338" class="ha-t">KEVOS · kevos.com</text>
+      </g>
+    </svg>
+
+    <div class="ha__bottom">
+      <ol class="ha__rail">
+        {stages.map((s, i) => (
+          <li class:list={['ha__stage', `ha__stage--${i + 1}`]}><span class="ha__dot" aria-hidden="true"></span><span>{String(i + 1).padStart(2, '0')} {s}</span></li>
+        ))}
+      </ol>
+      <span class="ha__progress" aria-hidden="true"><span></span></span>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .ha {
+    --a-panel: #ffffff;
+    --a-card: rgb(255 255 255 / 0.94);
+    --a-line: rgb(18 18 17 / 0.16);
+    --a-line-strong: rgb(18 18 17 / 0.4);
+    --a-grid: rgb(255 106 19 / 0.075);
+    --a-ink: #121211;
+    --a-muted: #67645d;
+    --a-orange: #c2410c;
+    --a-soft: rgb(255 106 19 / 0.1);
+    --a-part: rgb(18 18 17 / 0.05);
+    --cycle: 16s;
+    display: block; margin: 0; width: 100%; max-width: 560px; color: var(--a-ink);
+  }
+  :global(:root[data-theme='dark']) .ha {
+    --a-panel: #131412;
+    --a-card: rgb(28 29 27 / 0.94);
+    --a-line: rgb(238 236 230 / 0.18);
+    --a-line-strong: rgb(238 236 230 / 0.44);
+    --a-grid: rgb(255 140 71 / 0.08);
+    --a-ink: #f1efea;
+    --a-muted: #a9a49c;
+    --a-orange: #ff8c47;
+    --a-soft: rgb(255 140 71 / 0.12);
+    --a-part: rgb(238 236 230 / 0.07);
+  }
+  .ha__panel {
+    position: relative; display: flex; flex-direction: column; gap: 0.4rem; width: 100%;
+    padding: clamp(0.85rem, 2.6vw, 1.25rem); border: 1px solid var(--a-line); border-radius: 20px; overflow: hidden;
+    background-color: var(--a-panel);
+    background-image: linear-gradient(var(--a-grid) 1px, transparent 1px), linear-gradient(90deg, var(--a-grid) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .ha__top, .ha__rail {
+    font-family: var(--font-mono); font-size: clamp(0.56rem, 0.42rem + 0.4vw, 0.7rem); font-weight: 550; letter-spacing: 0.08em; color: var(--a-muted);
+  }
+  .ha__top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .ha__brand { display: inline-flex; flex: none; max-width: 30%; }
+  .ha__svg { width: 100%; height: auto; overflow: visible; }
+
+  /* Drawing primitives */
+  .ha-t { font-family: var(--font-mono); font-size: 7.4px; letter-spacing: 0.06em; fill: var(--a-muted); }
+  .ha-t--b { fill: var(--a-ink); font-weight: 600; }
+  .ha-t--o { fill: var(--a-orange); font-weight: 650; }
+  .ha-t--lg { font-size: 9.6px; letter-spacing: 0.08em; }
+  .ha-t--xs { font-size: 5.6px; letter-spacing: 0; }
+  .ha-fill-ink { fill: var(--a-ink); }
+  .ha-fill-orange { fill: var(--a-orange); }
+  .ha-plate { fill: var(--a-card); stroke: var(--a-line-strong); stroke-width: 1.2; }
+  .ha-hole { fill: var(--a-panel); stroke: var(--a-line-strong); stroke-width: 1.2; }
+  .ha-body { fill: var(--a-part); stroke: var(--a-ink); stroke-width: 1.6; }
+  .ha-bore { fill: none; stroke: var(--a-orange); stroke-width: 1.6; }
+  .ha-weld { fill: none; stroke: var(--a-ink); stroke-width: 1.2; stroke-linejoin: round; }
+  .ha-thin { fill: none; stroke: var(--a-line-strong); stroke-width: 0.9; }
+  .ha-centre { fill: none; stroke: var(--a-muted); stroke-width: 0.8; stroke-dasharray: 14 3 2 3; opacity: 0.85; }
+  .ha-dim { fill: none; stroke: var(--a-ink); stroke-width: 0.9; }
+  .ha-box { fill: var(--a-card); stroke: var(--a-ink); stroke-width: 0.9; }
+  .ha-ring { fill: none; stroke: var(--a-orange); stroke-width: 1.1; stroke-dasharray: 4 3; }
+  .ha-tick { fill: none; stroke: var(--a-orange); stroke-width: 1.1; }
+  .ha-dash { fill: none; stroke: var(--a-orange); stroke-width: 1; stroke-dasharray: 5 4; opacity: 0.75; }
+  .ha-vec { fill: none; stroke: var(--a-orange); stroke-width: 1.4; }
+  .ha-warnmark { fill: var(--a-soft); stroke: var(--a-orange); stroke-width: 1.3; stroke-linejoin: round; }
+  .ha-warnbang { fill: none; stroke: var(--a-orange); stroke-width: 1.8; stroke-linecap: round; }
+  .ha-chip { fill: var(--a-card); stroke: var(--a-line-strong); stroke-width: 1; }
+  .ha-chip--rec { fill: var(--a-soft); stroke: var(--a-orange); stroke-width: 1.4; }
+  .ha-sheet { fill: var(--a-card); stroke: var(--a-ink); stroke-width: 1.2; stroke-linejoin: round; }
+  .ha-rbar { fill: var(--a-line-strong); }
+  .ha-rbar--o { fill: var(--a-orange); }
+  .ha-next { fill: var(--a-soft); stroke: var(--a-orange); stroke-width: 1.1; }
+  .ha-check { fill: none; stroke: var(--a-orange); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* The bracket sits slightly displaced and rotated: the problem being assessed. */
+  .ha-part { transform-box: fill-box; transform-origin: center; transform: translate(10px, -8px) rotate(-3.5deg); }
+
+  /* Stage rail */
+  .ha__bottom { display: grid; gap: 0.55rem; }
+  .ha__rail { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.35rem 0.9rem; margin: 0; padding: 0; list-style: none; }
+  .ha__stage { display: flex; align-items: center; gap: 0.4rem; color: var(--a-ink); text-transform: uppercase; white-space: nowrap; }
+  .ha__dot { flex: none; width: 0.55rem; height: 0.55rem; border: 1px solid var(--a-orange); border-radius: 50%; background: var(--a-orange); }
+  .ha__progress { display: block; height: 2px; background: var(--a-line); border-radius: 2px; overflow: hidden; }
+  .ha__progress span { display: block; height: 100%; width: 100%; background: var(--a-orange); transform-origin: left; }
+  /* Four stages fit on one line only when the panel is wide enough; otherwise use two rows. */
+  .ha__panel { container-type: inline-size; }
+  @container (max-width: 440px) {
+    .ha__rail { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  /* Motion: one calm 16-second sequence, only for visitors who have not asked for reduced motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    .ha-warn { animation: ha-warn var(--cycle) ease-in-out infinite; }
+    .ha-analysis { animation: ha-analysis var(--cycle) ease-in-out infinite; }
+    .ha-draw { stroke-dasharray: 1; animation: ha-draw var(--cycle) ease-in-out infinite; }
+    .ha-ghost { animation: ha-ghost var(--cycle) ease-in-out infinite; }
+    .ha-offset { animation: ha-offset var(--cycle) ease-in-out infinite; }
+    .ha-part { animation: ha-part var(--cycle) cubic-bezier(0.22, 0.61, 0.36, 1) infinite; }
+    .ha-optlabel { animation: ha-opt var(--cycle) ease-in-out infinite; }
+    .ha-opt { transform-box: fill-box; animation: ha-opt var(--cycle) ease-in-out infinite both; }
+    .ha-opt--2 { animation-delay: 0.35s; }
+    .ha-opt--3 { animation-delay: 0.7s; }
+    .ha-chip--rec { animation: ha-rec var(--cycle) ease-in-out infinite; }
+    .ha-report { animation: ha-report var(--cycle) cubic-bezier(0.22, 0.61, 0.36, 1) infinite; }
+    .ha-rbar { transform-box: fill-box; transform-origin: left center; animation: ha-bar var(--cycle) ease-out infinite both; }
+    .ha-rbar--2 { animation-delay: 0.1s; }
+    .ha-rbar--3 { animation-delay: 0.2s; }
+    .ha-rbar--4 { animation-delay: 0.3s; }
+    .ha-rbar--5 { animation-delay: 0.4s; }
+    .ha-rbar--6 { animation-delay: 0.5s; }
+    .ha-rbar--7 { animation-delay: 0.6s; }
+    .ha-draw-check { stroke-dasharray: 1; animation: ha-check var(--cycle) ease-out infinite; }
+    .ha__stage { animation: ha-stage var(--cycle) linear infinite; }
+    .ha__stage .ha__dot { animation: ha-dot var(--cycle) linear infinite; }
+    .ha__stage--2, .ha__stage--2 .ha__dot { animation-delay: -12s; }
+    .ha__stage--3, .ha__stage--3 .ha__dot { animation-delay: -8s; }
+    .ha__stage--4, .ha__stage--4 .ha__dot { animation-delay: -4s; }
+    .ha__progress span { animation: ha-progress var(--cycle) linear infinite; }
+  }
+  @keyframes ha-warn { 0%, 44% { opacity: 1; } 50%, 96% { opacity: 0; } 100% { opacity: 1; } }
+  @keyframes ha-analysis { 0%, 21% { opacity: 0; } 28%, 95% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes ha-draw { 0%, 24% { stroke-dashoffset: 1; } 36%, 95% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 1; } }
+  @keyframes ha-ghost { 0%, 29% { opacity: 0; } 35%, 95% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes ha-offset { 0%, 27% { opacity: 0; } 32%, 55% { opacity: 1; } 60%, 100% { opacity: 0; } }
+  @keyframes ha-part {
+    0%, 56% { transform: translate(10px, -8px) rotate(-3.5deg); }
+    66%, 95% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(10px, -8px) rotate(-3.5deg); }
+  }
+  @keyframes ha-opt { 0%, 48% { opacity: 0; transform: translateY(6px); } 54%, 95% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(6px); } }
+  @keyframes ha-rec {
+    0%, 60% { fill: var(--a-card); stroke: var(--a-line-strong); }
+    66%, 95% { fill: var(--a-soft); stroke: var(--a-orange); }
+    100% { fill: var(--a-card); stroke: var(--a-line-strong); }
+  }
+  @keyframes ha-report { 0%, 72% { opacity: 0; transform: translateX(14px); } 78%, 96% { opacity: 1; transform: translateX(0); } 100% { opacity: 0; transform: translateX(14px); } }
+  @keyframes ha-bar { 0%, 76% { transform: scaleX(0); } 84%, 96% { transform: scaleX(1); } 100% { transform: scaleX(0); } }
+  @keyframes ha-check { 0%, 84% { stroke-dashoffset: 1; } 90%, 96% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 1; } }
+  @keyframes ha-stage { 0%, 24% { color: var(--a-ink); } 25%, 100% { color: var(--a-muted); } }
+  @keyframes ha-dot { 0%, 24% { background: var(--a-orange); } 25%, 100% { background: transparent; } }
+  @keyframes ha-progress { 0% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+</style>

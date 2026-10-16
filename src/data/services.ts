@@ -116,7 +116,7 @@ export const PACKAGES: ServicePackage[] = [
 ];
 
 export const PRICING_NOTE =
-  'Pricing is indicative only and depends on scope, complexity, site requirements and deliverables. GST applies where applicable.';
+  'Package pricing is indicative only and depends on scope, complexity, site requirements and deliverables. The Engineering Problem Assessment is a fixed A$195 for one defined problem. GST applies where applicable.';
 
 export const FACTORY_FIX = {
   name: 'KEVOS® Factory Fix',

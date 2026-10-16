@@ -1,6 +1,7 @@
 ---
 // Indicative service packages with "from" pricing and the mandatory pricing note.
 import { PACKAGES, PRICING_NOTE, SERVICE_OPTIONS } from '../data/services.ts';
+import { ASSESSMENT } from '../config/assessment.ts';
 
 interface Props {
   /** Show only the first n packages (homepage preview). */
@@ -12,6 +13,13 @@ const slugFor = (service: string) => SERVICE_OPTIONS.find((o) => o.value === ser
 ---
 
 <div class="packages">
+  <a class="packages__fixed" href={`${ASSESSMENT.path}#included`} data-cta="package-assessment">
+    <span class="packages__fixed-tag">Fixed price</span>
+    <span class="packages__fixed-title">{ASSESSMENT.shortName}</span>
+    <span class="packages__fixed-price">{ASSESSMENT.priceLabel}</span>
+    <span class="packages__fixed-text">One defined problem: a 30-minute remote discussion, a preliminary review, up to three options and a one-page PDF.</span>
+    <span class="packages__fixed-link">See what you receive <span aria-hidden="true">→</span></span>
+  </a>
   <ul class="packages__grid">
     {
       items.map((p) => (
@@ -31,6 +39,18 @@ const slugFor = (service: string) => SERVICE_OPTIONS.find((o) => o.value === ser
 </div>
 
 <style>
+  .packages__fixed {
+    display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: 'tag title price' 'text text link'; gap: 0.4rem 1.5rem; align-items: baseline;
+    margin-bottom: 1rem; padding: clamp(1.1rem, 2.5vw, 1.5rem) clamp(1.25rem, 2.5vw, 1.75rem); background: var(--surface); color: var(--ink); text-decoration: none;
+    border: 1px solid var(--line-strong); border-left: 4px solid var(--brand-orange); border-radius: var(--radius); transition: border-color 0.2s var(--ease);
+  }
+  .packages__fixed:hover { border-color: var(--accent); color: var(--ink); }
+  .packages__fixed-tag { grid-area: tag; font-size: 0.74rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+  .packages__fixed-title { grid-area: title; font-family: var(--font-display); font-weight: 700; font-size: 1.12rem; }
+  .packages__fixed-price { grid-area: price; font-family: var(--font-display); font-weight: 700; font-size: var(--step-2); color: var(--accent); }
+  .packages__fixed-text { grid-area: text; color: var(--ink-2); font-size: 0.95rem; }
+  .packages__fixed-link { grid-area: link; font-size: 0.92rem; font-weight: 540; white-space: nowrap; }
+  @media (max-width: 700px) { .packages__fixed { grid-template-columns: 1fr auto; grid-template-areas: 'tag price' 'title title' 'text text' 'link link'; } }
   .packages__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; margin: 0; padding: 0; list-style: none; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
   .package { display: flex; flex-direction: column; gap: 0.5rem; padding: clamp(1.25rem, 2.5vw, 1.75rem); background: var(--surface); }
   .package__title { font-size: 1.08rem; letter-spacing: -0.015em; line-height: 1.25; }

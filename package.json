@@ -15,7 +15,9 @@
     "verify": "npm run check && npm test && npm run build",
     "deploy": "npm run verify && npx wrangler deploy",
     "brand": "node scripts/build-kevos-icons.mjs",
-    "reading-time": "node scripts/reading-time.mjs"
+    "reading-time": "node scripts/reading-time.mjs",
+    "assessment:assets": "python scripts/assessment/qr.py && node scripts/assessment/marketing.mjs && node scripts/assessment/report.mjs",
+    "assessment:report": "node scripts/assessment/report.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.1",

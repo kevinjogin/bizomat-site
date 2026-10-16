@@ -35,20 +35,32 @@ export function composeMessage(input: ContactInput) {
 
 const NOT_CONFIGURED: MailResult = { ok: false, status: 503, message: 'The contact form is not connected yet. Please try again soon.' };
 
+export interface Email {
+  subject: string;
+  text: string;
+  html: string;
+  /** Reply-To address, usually the enquirer. */
+  replyTo?: string;
+}
+
 export async function sendMail(env: MailEnv, input: ContactInput): Promise<MailResult> {
-  const { subject, text, html } = composeMessage(input);
+  return sendEmail(env, { ...composeMessage(input), replyTo: input.email });
+}
+
+/** Deliver an already-composed message to KEVOS®'s inbox through the configured provider. */
+export async function sendEmail(env: MailEnv, { subject, text, html, replyTo }: Email): Promise<MailResult> {
   switch (env.MAIL_PROVIDER) {
     case 'resend': {
       if (!env.RESEND_API_KEY || !env.CONTACT_TO || !env.CONTACT_FROM) return NOT_CONFIGURED;
       const res = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from: env.CONTACT_FROM, to: env.CONTACT_TO.split(',').map((s) => s.trim()), reply_to: input.email, subject, text, html }),
+        body: JSON.stringify({ from: env.CONTACT_FROM, to: env.CONTACT_TO.split(',').map((s) => s.trim()), ...(replyTo ? { reply_to: replyTo } : {}), subject, text, html }),
       }).catch(() => null);
       return res?.ok ? { ok: true } : { ok: false, status: 502, message: 'Your message could not be delivered right now. Please try again later.' };
     }
     case 'log':
-      console.log(JSON.stringify({ contact: { subject, from: input.email, length: input.message.length } }));
+      console.log(JSON.stringify({ contact: { subject, from: replyTo ?? '', length: text.length } }));
       return { ok: true };
     default:
       return NOT_CONFIGURED;

@@ -1,0 +1,68 @@
+---
+// The A$195 Engineering Problem Assessment, presented as an introductory fixed-scope offer on the
+// homepage, Services, Factory Fix and REACHOS pages. All wording comes from src/config/assessment.ts.
+import Button from '../Button.astro';
+import AssessmentIcon from './AssessmentIcon.astro';
+import { ASSESSMENT, INCLUSIONS } from '../../config/assessment.ts';
+
+interface Props {
+  headingLevel?: 'h2' | 'h3';
+  id?: string;
+  compact?: boolean;
+}
+const { headingLevel = 'h3', id, compact = false } = Astro.props;
+const Heading = headingLevel;
+const icons = ['understand', 'discussion', 'review', 'options', 'report'] as const;
+---
+
+<div class:list={['af-feature', { 'af-feature--compact': compact }]} id={id}>
+  <div class="af-feature__main">
+    <p class="af-feature__eyebrow">Introductory fixed-scope service</p>
+    <Heading class="af-feature__title">{ASSESSMENT.shortName}</Heading>
+    <p class="af-feature__price"><span>{ASSESSMENT.priceLabel}</span> {ASSESSMENT.priceCaption}</p>
+    <p class="af-feature__summary">{ASSESSMENT.summary}</p>
+    <div class="af-feature__actions">
+      <Button href={`${ASSESSMENT.path}#request`} arrow data-cta="assessment-feature-request">Request an Assessment</Button>
+      <Button href={`${ASSESSMENT.path}#included`} variant="secondary">See What You Receive</Button>
+    </div>
+    <p class="af-feature__terms">One defined problem, assessed remotely. Payment is requested only after the scope is confirmed. {ASSESSMENT.gstNote}</p>
+  </div>
+  {
+    !compact && (
+      <ol class="af-feature__list">
+        {INCLUSIONS.map((item, i) => (
+          <li>
+            <span class="af-feature__icon">
+              <AssessmentIcon name={icons[i]} />
+            </span>
+            <span class="af-feature__num">{item.number}</span>
+            <span class="af-feature__item">{item.title}</span>
+          </li>
+        ))}
+      </ol>
+    )
+  }
+</div>
+
+<style>
+  .af-feature {
+    display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 2rem 4rem; align-items: center;
+    padding: clamp(1.75rem, 4vw, 3.25rem); border: 1px solid var(--line-strong); border-radius: var(--radius);
+    background: var(--surface); position: relative; overflow: hidden; scroll-margin-top: calc(var(--header-h) + 4.2rem);
+  }
+  .af-feature::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 4px; background: var(--brand-orange); }
+  .af-feature--compact { grid-template-columns: 1fr; }
+  .af-feature__eyebrow { margin: 0 0 0.75rem; font-size: 0.78rem; font-weight: 560; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+  .af-feature__title { font-size: var(--step-3); letter-spacing: -0.018em; line-height: 1.05; }
+  .af-feature__price { margin: 0.9rem 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 0.75rem; color: var(--muted); font-size: 0.95rem; }
+  .af-feature__price span { font-family: var(--font-display); font-size: var(--step-3); font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
+  .af-feature__summary { margin: 1rem 0 0; max-width: 56ch; color: var(--ink-2); font-size: var(--step-1); line-height: 1.5; }
+  .af-feature__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.75rem; }
+  .af-feature__terms { margin: 1rem 0 0; font-size: 0.88rem; color: var(--muted); max-width: 70ch; }
+  .af-feature__list { display: grid; gap: 0.55rem; margin: 0; padding: 0; list-style: none; }
+  .af-feature__list li { display: grid; grid-template-columns: 2.6rem 2rem 1fr; align-items: center; gap: 0.6rem; padding: 0.6rem 0.75rem; border: 1px solid var(--line); border-radius: 10px; background: var(--paper-2); }
+  .af-feature__icon { display: block; width: 2.6rem; color: var(--ink); }
+  .af-feature__num { font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent); }
+  .af-feature__item { font-weight: 580; color: var(--ink); }
+  @media (max-width: 860px) { .af-feature { grid-template-columns: 1fr; } }
+</style>

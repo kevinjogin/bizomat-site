@@ -5,6 +5,7 @@ import Section from '../components/Section.astro';
 import Button from '../components/Button.astro';
 import CallToAction from '../components/CallToAction.astro';
 import FactoryFixFeature from '../components/FactoryFixFeature.astro';
+import AssessmentFeature from '../components/assessment/AssessmentFeature.astro';
 import PackageGrid from '../components/PackageGrid.astro';
 import ProcessSteps from '../components/ProcessSteps.astro';
 import SoftwareNote from '../components/SoftwareNote.astro';
@@ -41,6 +42,7 @@ const inquiry=[
 ];
 const navigable=[
   {id:'services',label:'Services'},
+  {id:'assessment',label:'A$195 Assessment'},
   {id:'factory-fix',label:'Factory Fix'},
   {id:'pricing',label:'Pricing'},
   {id:'how-it-works',label:'How it works'},
@@ -100,9 +102,10 @@ const navigable=[
     </div>
   </Section>
 
-  <Section index="02" label="Factory Fix" tone="alt" id="factory-fix" labelledby="factory-title">
-    <h2 id="factory-title" class="visually-hidden">KEVOS® Factory Fix</h2>
-    <FactoryFixFeature headingLevel="h3"/>
+  <Section index="02" label="Fixed-scope offers" tone="alt" id="factory-fix" labelledby="factory-title">
+    <h2 id="factory-title" class="visually-hidden">KEVOS® Engineering Problem Assessment and Factory Fix</h2>
+    <AssessmentFeature headingLevel="h3" id="assessment"/>
+    <div class="offer-gap"><FactoryFixFeature headingLevel="h3"/></div>
   </Section>
 
   <Section index="03" label="Indicative pricing" id="pricing" labelledby="pricing-title">
@@ -179,7 +182,8 @@ const navigable=[
 </BaseLayout>
 
 <style>
-  :global(#overview), :global(#services), :global(#how-it-works), :global(#industries), :global(#about), :global(#factory-fix), :global(#pricing), :global(#resources), :global(#work), :global(#engineering-cad), :global(#manufacturing), :global(#operations), :global(#project-support) { scroll-margin-top:calc(var(--header-h) + 4.2rem); }
+  :global(#overview), :global(#assessment), :global(#services), :global(#how-it-works), :global(#industries), :global(#about), :global(#factory-fix), :global(#pricing), :global(#resources), :global(#work), :global(#engineering-cad), :global(#manufacturing), :global(#operations), :global(#project-support) { scroll-margin-top:calc(var(--header-h) + 4.2rem); }
+  .offer-gap{margin-top:1.25rem}
   .home-hero{padding:clamp(3rem,6vw,6.5rem) 0}
   :global(.home-hero__inner){display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.9fr);gap:3rem 4rem;align-items:center}
   .home-hero__copy h1{margin:1rem 0 1.5rem;max-width:16ch;font-size:clamp(2.2rem,4.7vw,4.8rem);line-height:1.03}

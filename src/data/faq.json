@@ -17,7 +17,19 @@
   },
   {
     "question": "How much does KEVOS® charge?",
-    "answer": "Indicative starting points for common packages are listed on the Services page at /services/#pricing, and the KEVOS® Factory Fix starts from A$990. Small improvement projects are quoted to scope and monthly retainers are available. Pricing is indicative only and depends on scope, complexity, site requirements and deliverables. GST applies where applicable. A written quote confirms the final price before work begins."
+    "answer": "Indicative starting points for common packages are listed on the Services page at /services/#pricing, the Engineering Problem Assessment is a fixed A$195 for one defined problem (see /assessment/), and the KEVOS® Factory Fix starts from A$990. Small improvement projects are quoted to scope and monthly retainers are available. Pricing is indicative only and depends on scope, complexity, site requirements and deliverables. GST applies where applicable. A written quote confirms the final price before work begins."
+  },
+  {
+    "question": "What is the KEVOS® Engineering Problem Assessment?",
+    "answer": "A fixed-price A$195 remote assessment of one defined engineering or manufacturing problem. It includes a review of the problem, up to 30 minutes of remote technical discussion, a preliminary review of a limited amount of drawings, photographs or process information you supply, up to three practical improvement options where the evidence permits, and a one-page PDF recommendation. It is preliminary: it does not guarantee root-cause identification or a solution, and it is not certification or design sign-off. Site visits, CAD modelling, drawings, prototypes, testing and implementation are not included. See /assessment/."
+  },
+  {
+    "question": "How do I pay for and book the A$195 assessment?",
+    "answer": "Start with the enquiry form at /assessment/#request. No payment is taken on the website. KEVOS® first checks whether the problem suits the assessment; if it does, KEVOS® confirms the scope in writing and sends payment instructions. After payment is verified, you receive instructions to book a 30-minute remote meeting, and the booking is confirmed only when the calendar confirmation arrives. GST applies where applicable and the exact amount payable is confirmed in writing before you pay."
+  },
+  {
+    "question": "Should I choose the assessment or a Factory Fix?",
+    "answer": "Choose the A$195 Engineering Problem Assessment when you want an engineering view of one defined problem, its possible causes, up to three options and a recommended next step before committing to more. Choose the KEVOS® Factory Fix (from A$990) when the problem is known to be worth solving now and needs current-state analysis and a prioritised action plan. If you already know exactly what you need, request a quote at /contact/."
   },
   {
     "question": "What is the KEVOS® Factory Fix?",

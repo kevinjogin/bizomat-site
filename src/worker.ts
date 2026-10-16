@@ -5,14 +5,18 @@
 // dashboard drag-and-drop (which does not compile a functions/ folder):
 //   /api/chat     → KEVOS® Assistant (Workers AI)
 //   /api/contact  → optional contact-form backend
+//   /api/assessment                → Engineering Problem Assessment enquiries (server-side validation)
+//   /api/assessment/stripe-webhook → optional Stripe payment verification (signature-checked)
 //   everything else → the static site from dist/ (env.ASSETS)
 import { handleChat, type ChatEnv } from './server/chat/handler.ts';
 import { handleContact, type ContactEnv } from './server/contact/handler.ts';
+import { handleAssessment } from './server/assessment/handler.ts';
+import { handleStripeWebhook, type StripeEnv } from './server/assessment/stripe.ts';
 
 interface AssetsBinding {
   fetch(input: Request | string | URL): Promise<Response>;
 }
-export interface Env extends ChatEnv, ContactEnv {
+export interface Env extends ChatEnv, ContactEnv, StripeEnv {
   ASSETS: AssetsBinding;
 }
 
@@ -41,6 +45,8 @@ export default {
     let response: Response;
     if (url.pathname === '/api/chat' || url.pathname === '/api/chat/') response = await handleChat(request, env);
     else if (url.pathname === '/api/contact' || url.pathname === '/api/contact/') response = await handleContact(request, env);
+    else if (url.pathname === '/api/assessment' || url.pathname === '/api/assessment/') response = await handleAssessment(request, env);
+    else if (url.pathname === '/api/assessment/stripe-webhook') response = await handleStripeWebhook(request, env);
     else if (url.pathname.startsWith('/api/')) response = new Response('Not found', { status: 404 });
     else response = await env.ASSETS.fetch(request);
     return withHeaders(response, url);

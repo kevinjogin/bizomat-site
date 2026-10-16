@@ -7,10 +7,12 @@ import Breadcrumb from '../components/Breadcrumb.astro';
 import Button from '../components/Button.astro';
 import CallToAction from '../components/CallToAction.astro';
 import FactoryFixFeature from '../components/FactoryFixFeature.astro';
+import AssessmentFeature from '../components/assessment/AssessmentFeature.astro';
 import PackageGrid from '../components/PackageGrid.astro';
 import SoftwareNote from '../components/SoftwareNote.astro';
 import { SERVICE_GROUPS, PACKAGES, FACTORY_FIX, ENGAGEMENT_MODELS, SERVICE_AREA } from '../data/services.ts';
 import { SITE } from '../config/site.ts';
+import { ASSESSMENT } from '../config/assessment.ts';
 
 const crumbs = [
   { label: 'Home', href: '/' },
@@ -22,6 +24,7 @@ const catalog = {
   name: 'KEVOS® services and indicative packages',
   url: `${SITE.url}/services/`,
   itemListElement: [
+    { '@type': 'Offer', name: ASSESSMENT.name, description: ASSESSMENT.summary, url: `${SITE.url}${ASSESSMENT.path}`, price: ASSESSMENT.price.toFixed(2), priceCurrency: ASSESSMENT.currency },
     { '@type': 'Offer', name: FACTORY_FIX.name, description: FACTORY_FIX.summary, url: `${SITE.url}/factory-fix/`, ...priced(FACTORY_FIX.minPrice) },
     ...PACKAGES.map((p) => ({ '@type': 'Offer', name: p.title, description: p.description, ...priced(p.minPrice) })),
   ],
@@ -50,6 +53,7 @@ const catalog = {
   <nav class="service-jump" aria-label="Service groups">
     <ul>
       {SERVICE_GROUPS.map((g) => <li><a href={`#${g.id}`}>{g.title}</a></li>)}
+      <li><a href="#assessment">A$195 Assessment</a></li>
       <li><a href="#factory-fix">Factory Fix</a></li>
       <li><a href="#pricing">Pricing</a></li>
     </ul>
@@ -77,8 +81,10 @@ const catalog = {
     ))
   }
 
-  <Section index="05" label="Flagship offer" id="factory-fix" labelledby="ff-section-title">
-    <h2 id="ff-section-title" class="visually-hidden">KEVOS® Factory Fix</h2>
+  <Section index="05" label="Fixed-scope offers" id="factory-fix" labelledby="ff-section-title">
+    <h2 id="ff-section-title" class="visually-hidden">KEVOS® Engineering Problem Assessment and Factory Fix</h2>
+    <AssessmentFeature headingLevel="h3" id="assessment" />
+    <p class="offer-note">Start with the {ASSESSMENT.priceLabel} assessment when you need an engineering view of one problem and a clear next step. Choose a Factory Fix when the problem is known to be worth solving now. <a href={`${ASSESSMENT.path}#choose`}>Compare the two</a>.</p>
     <FactoryFixFeature headingLevel="h3" />
   </Section>
 
@@ -147,5 +153,7 @@ const catalog = {
   .models p { margin: 0.5rem 0 0; color: var(--ink-2); font-size: 0.97rem; line-height: 1.55; }
   @media (max-width: 960px) { .models { grid-template-columns: 1fr 1fr; } .models li:nth-child(3) { padding-left: 0; border-left: 0; } }
   @media (max-width: 560px) { .models { grid-template-columns: 1fr; } .models li, .models li:not(:first-child) { padding-left: 0; border-left: 0; } }
+  .offer-note { margin: 1.5rem 0; max-width: 80ch; color: var(--ink-2); }
+  .offer-note a { color: var(--ink); text-decoration-color: var(--accent); }
   .scope-note { margin: 2rem 0 0; max-width: 80ch; color: var(--muted); font-size: 0.95rem; }
 </style>

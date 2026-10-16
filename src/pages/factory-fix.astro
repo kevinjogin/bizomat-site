@@ -7,6 +7,8 @@ import Button from '../components/Button.astro';
 import CallToAction from '../components/CallToAction.astro';
 import { FACTORY_FIX, PRICING_NOTE } from '../data/services.ts';
 import { SITE } from '../config/site.ts';
+import { ASSESSMENT, CHOOSING } from '../config/assessment.ts';
+import AssessmentFeature from '../components/assessment/AssessmentFeature.astro';
 
 const crumbs = [
   { label: 'Home', href: '/' },
@@ -23,6 +25,7 @@ const faq = [
   { q: 'What does “from A$990” cover?', a: 'It is the starting point for a single, well-defined problem. Larger, less defined or multi-site problems are quoted to scope. The final price is confirmed before any work begins.' },
   { q: 'Is the implementation included?', a: 'The Factory Fix produces a clear action plan and, where agreed, one supporting document. Implementation support can be quoted separately if you would like help carrying out the plan.' },
   { q: 'Do I need to share confidential information?', a: 'Only what is needed to understand the problem. If you need a confidentiality agreement before sharing drawings or information, say so in your enquiry.' },
+  { q: 'Should I start with the A$195 Engineering Problem Assessment?', a: 'Choose the assessment when you want an engineering view of one defined problem, its likely causes, up to three options and a recommended next step, before committing to more. Choose a Factory Fix when the problem is known to be worth solving now and needs current-state analysis and an action plan. The Factory Fix price and scope are unchanged.' },
   { q: 'Does it include engineering certification?', a: 'No. A Factory Fix is practical improvement and documentation work. Work that requires statutory approval or certification by a registered professional engineer is outside its scope.' },
 ];
 const offer = {
@@ -89,7 +92,23 @@ const offer = {
     <p class="terms">{FACTORY_FIX.terms} {PRICING_NOTE}</p>
   </Section>
 
-  <Section index="04" label="Questions" tone="alt" labelledby="faq-title">
+  <Section index="04" label="Start smaller?" id="assessment" labelledby="choose-title">
+    <div class="split">
+      <div class="split__intro">
+        <h2 id="choose-title">Not sure yet? Start with a {ASSESSMENT.priceLabel} assessment.</h2>
+        <p class="muted">A Factory Fix stays the right choice when a problem clearly needs solving now. When you first need an engineering view, the fixed-price assessment is the smaller step.</p>
+      </div>
+      <div>
+        <h3 class="docs-title">Choose the assessment when</h3>
+        <ul class="check-list">{CHOOSING.assessment.map((c) => <li>{c}</li>)}</ul>
+        <h3 class="docs-title">Choose a Factory Fix when</h3>
+        <ul class="check-list">{CHOOSING.factoryFix.map((c) => <li>{c}</li>)}</ul>
+      </div>
+    </div>
+    <div class="ff-assessment"><AssessmentFeature headingLevel="h3" compact /></div>
+  </Section>
+
+  <Section index="05" label="Questions" tone="alt" labelledby="faq-title">
     <h2 id="faq-title" class="how-title">Factory Fix questions.</h2>
     <dl class="faq">
       {
@@ -126,6 +145,7 @@ const offer = {
   .ff-steps p { margin: 0.5rem 0 0; color: var(--ink-2); font-size: 0.97rem; line-height: 1.55; }
   @media (max-width: 960px) { .ff-steps { grid-template-columns: 1fr 1fr; } .ff-steps li:nth-child(3) { padding-left: 0; border-left: 0; } .ff-steps li:nth-child(n + 3) { border-top: 1px solid var(--line); } }
   @media (max-width: 560px) { .ff-steps { grid-template-columns: 1fr; } .ff-steps li, .ff-steps li:not(:first-child) { padding-left: 0; border-left: 0; } .ff-steps li:not(:first-child) { border-top: 1px solid var(--line); } }
+  .ff-assessment { margin-top: 2.5rem; }
   .terms { margin: 2rem 0 0; max-width: 80ch; color: var(--muted); font-size: 0.95rem; }
   .faq { margin: 0; border-top: 1px solid var(--line-strong); }
   .faq div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 0.5rem 4rem; padding: 1.4rem 0; border-bottom: 1px solid var(--line); }

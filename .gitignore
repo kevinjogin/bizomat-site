@@ -19,3 +19,6 @@ Thumbs.db
 
 # local upload bundles
 *.zip
+
+# real assessment data and reports (customer information): never commit
+assessment-private/

@@ -20,13 +20,14 @@ async function hash(value: string): Promise<string> {
   return Array.from(new Uint8Array(digest).slice(0, 12), (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-export async function checkRateLimit(env: RateLimitEnv, ip: string): Promise<boolean> {
+/** `scope` keeps separate counters per form, e.g. 'contact' and 'assessment'. */
+export async function checkRateLimit(env: RateLimitEnv, ip: string, scope = 'contact'): Promise<boolean> {
   const kv = env.CONTACT_RATE_LIMIT;
   if (!kv) return true;
   const max = Number(env.RATE_LIMIT_MAX ?? 5);
   const window = Number(env.RATE_LIMIT_WINDOW ?? 3600);
   const bucket = Math.floor(Date.now() / 1000 / window);
-  const key = `contact:${await hash(ip)}:${bucket}`;
+  const key = `${scope}:${await hash(ip)}:${bucket}`;
   const count = Number((await kv.get(key)) ?? 0);
   if (count >= max) return false;
   await kv.put(key, String(count + 1), { expirationTtl: Math.max(60, window * 2) });

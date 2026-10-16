@@ -1,0 +1,43 @@
+---
+// Line illustrations for the assessment page: the eight example problem types and the five inclusions.
+// Drawn on a 64-unit grid in the current text colour, with orange marking the engineering detail.
+interface Props {
+  name: keyof typeof ICONS;
+  class?: string;
+}
+
+const ICONS = {
+  // Example problems
+  alignment:
+    '<rect x="8" y="36" width="48" height="16" rx="2"/><circle cx="20" cy="44" r="3"/><circle cx="44" cy="44" r="3"/><path d="M13 22 54 19 55 31 14 34Z"/><circle cx="24.5" cy="27.4" r="2.6"/><circle cx="48.3" cy="25.6" r="2.6"/><path class="a" stroke-dasharray="3 2.5" d="M20 12v46M44 12v46"/>',
+  fixture:
+    '<rect x="8" y="46" width="48" height="8" rx="1.5"/><rect x="18" y="30" width="26" height="16" rx="1.5"/><path class="a" d="M13 46V33M49 46V37"/><path d="M38 30v-7h14v23"/><path class="a" d="M33 23h10"/>',
+  process:
+    '<rect x="4" y="26" width="14" height="12" rx="2"/><rect class="a" x="25" y="21" width="14" height="22" rx="2"/><rect x="46" y="26" width="14" height="12" rx="2"/><path d="M18 32h7M39 32h7M22 29l3 3-3 3M43 29l3 3-3 3"/><path class="a" d="M28 50h8M30 54h4"/>',
+  modification:
+    '<path d="M8 46V20h20l6 8h22v18Z"/><path d="M8 52h48"/><circle class="a" cx="31" cy="24" r="8" stroke-dasharray="3 2"/><path class="a" d="M50 6l7 12H43Z"/>',
+  cad:
+    '<rect x="6" y="10" width="52" height="44" rx="1.5"/><path d="M38 44h20M38 44v10M47 44v10"/><rect x="12" y="17" width="16" height="13"/><rect x="34" y="17" width="10" height="13"/><path class="a" d="M12 37h16M12 35v4M28 35v4"/>',
+  dfm:
+    '<path d="M6 46h52v10H6Z"/><path d="M20 46v-6h16v6"/><rect x="24" y="10" width="8" height="20" rx="1"/><path d="M26 30v8M30 30v8"/><path class="a" d="M18 16a10 4 0 0 0 20 0"/><path class="a" d="M42 40l4-3M44 44l5-1"/>',
+  documentation:
+    '<path d="M12 14v44h28"/><path d="M16 8h24l8 8v36H16Z"/><path d="M40 8v8h8"/><path class="a" d="M21 24l2 2 4-4M21 34l2 2 4-4"/><path d="M30 25h12M30 35h12M21 44h21"/>',
+  manual:
+    '<path class="a" d="M48 24a17 17 0 0 0-29-5M16 40a17 17 0 0 0 29 5"/><path class="a" d="M18 12v7h7M46 52v-7h-7"/><path d="M28 22h8v5h-8zM30 27v13l2 3 2-3V27"/>',
+  // Inclusions
+  understand: '<rect x="6" y="30" width="30" height="20" rx="2"/><circle cx="14" cy="40" r="3"/><circle class="a" cx="36" cy="26" r="12"/><path class="a" d="M45 35l11 11"/>',
+  discussion: '<circle cx="32" cy="32" r="20"/><path class="a" d="M32 12a20 20 0 0 1 0 40"/><path d="M32 20v12l8 5"/>',
+  review: '<rect x="6" y="12" width="30" height="24" rx="1.5"/><path d="M10 31l7-8 6 6 4-4 6 6"/><rect x="24" y="26" width="34" height="28" rx="1.5"/><path class="a" d="M30 34h14M30 40h22M30 46h10"/>',
+  options: '<circle cx="11" cy="32" r="4"/><path d="M15 32h9"/><path class="a" d="M24 32c9 0 9-16 19-16M24 32h19M24 32c9 0 9 16 19 16"/><circle cx="47" cy="16" r="4"/><circle class="a" cx="47" cy="32" r="4"/><circle cx="47" cy="48" r="4"/>',
+  report: '<path d="M16 6h24l8 8v44H16Z"/><path d="M40 6v8h8"/><path d="M22 22h20M22 28h20M22 34h13"/><rect class="a" x="22" y="42" width="20" height="9" rx="1"/><path class="a" d="M26 46.5l2 2 4-4"/>',
+} as const;
+
+const { name, class: className } = Astro.props;
+---
+
+<svg class:list={['ai', className]} viewBox="0 0 64 64" aria-hidden="true" focusable="false" set:html={ICONS[name]} />
+
+<style>
+  .ai { width: 100%; height: auto; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .ai :global(.a) { stroke: var(--accent); }
+</style>

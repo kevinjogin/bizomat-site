@@ -1,0 +1,139 @@
+---
+// Interactive preview of the one-page PDF, using the clearly marked fictional sample in SAMPLE_REPORT.
+// Choosing a section in the index highlights it on the page. Without JavaScript the full page still shows.
+import Logo from '../Logo.astro';
+import { ASSETS, SAMPLE_REPORT as R } from '../../config/assessment.ts';
+
+const sections = [
+  { id: 'problem', label: 'Problem description' },
+  { id: 'supplied', label: 'Information supplied' },
+  { id: 'observations', label: 'Preliminary observations' },
+  { id: 'factors', label: 'Possible contributing factors' },
+  { id: 'options', label: 'Improvement options' },
+  { id: 'next', label: 'Recommended next step' },
+  { id: 'verification', label: 'Additional verification needed' },
+  { id: 'assumptions', label: 'Assumptions and limitations' },
+];
+---
+
+<div class="rp" data-report-preview>
+  <div class="rp__side">
+    <p class="rp__side-title" id="rp-index-title">What the one-page PDF covers</p>
+    <ol class="rp__index" aria-labelledby="rp-index-title">
+      {
+        sections.map((s, i) => (
+          <li>
+            <button type="button" class="rp__jump" data-target={`rp-${s.id}`} aria-controls={`rp-${s.id}`} aria-pressed="false">
+              <span>{String(i + 1).padStart(2, '0')}</span>
+              {s.label}
+            </button>
+          </li>
+        ))
+      }
+    </ol>
+    <div class="rp__downloads">
+      <a class="rp__download" href={ASSETS.sampleReport} download data-cta="assessment-sample-pdf">
+        Download the sample report <span class="rp__meta">PDF</span>
+      </a>
+      <a class="rp__download" href={ASSETS.brochure} download data-cta="assessment-brochure">
+        Download the service brochure <span class="rp__meta">PDF</span>
+      </a>
+    </div>
+  </div>
+
+  <article class="rp__paper" aria-label="Sample one-page assessment report (fictional)">
+    <p class="rp__stamp">Sample · fictional example</p>
+    <header class="rp__head">
+      <span class="rp__logo"><Logo label="" height={18} /></span>
+      <p class="rp__doc-title">Engineering Problem Assessment</p>
+    </header>
+    <dl class="rp__meta-grid">
+      <div><dt>Reference</dt><dd>{R.reference}</dd></div>
+      <div><dt>Customer</dt><dd>{R.customer}</dd></div>
+      <div><dt>Date</dt><dd>{R.date}</dd></div>
+    </dl>
+    <section class="rp__sec" id="rp-problem"><h4>Problem description</h4><p>{R.problem}</p></section>
+    <section class="rp__sec" id="rp-supplied"><h4>Information supplied</h4><ul>{R.supplied.map((s) => <li>{s}</li>)}</ul></section>
+    <section class="rp__sec" id="rp-observations"><h4>Preliminary observations</h4><ul>{R.observations.map((s) => <li>{s}</li>)}</ul></section>
+    <section class="rp__sec" id="rp-factors"><h4>Possible contributing factors</h4><ul>{R.factors.map((s) => <li>{s}</li>)}</ul></section>
+    <section class="rp__sec" id="rp-options">
+      <h4>Improvement options</h4>
+      <ol class="rp__options">{R.options.map((o) => <li><strong>{o.title}.</strong> {o.text}</li>)}</ol>
+    </section>
+    <section class="rp__sec rp__sec--next" id="rp-next"><h4>Recommended next step</h4><p>{R.nextStep}</p></section>
+    <section class="rp__sec" id="rp-verification"><h4>Additional verification needed</h4><ul>{R.verification.map((s) => <li>{s}</li>)}</ul></section>
+    <section class="rp__sec" id="rp-assumptions"><h4>Assumptions and limitations</h4><ul>{R.assumptions.map((s) => <li>{s}</li>)}</ul></section>
+    <p class="rp__follow"><strong>Possible follow-on work:</strong> {R.followOn}</p>
+    <footer class="rp__foot"><span>KEVOS® | kevos.com</span><span>Sample only. Not client work.</span></footer>
+  </article>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-report-preview]');
+  if (root) {
+    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-target]'));
+    buttons.forEach((button) =>
+      button.addEventListener('click', () => {
+        const target = root.querySelector<HTMLElement>(`#${button.dataset.target}`);
+        root.querySelectorAll('.rp__sec.is-active').forEach((el) => el.classList.remove('is-active'));
+        buttons.forEach((b) => b.setAttribute('aria-pressed', b === button ? 'true' : 'false'));
+        if (!target) return;
+        target.classList.add('is-active');
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (window.matchMedia('(max-width: 900px)').matches) target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+      }),
+    );
+  }
+</script>
+
+<style>
+  .rp { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: start; }
+  .rp__side { position: sticky; top: calc(var(--header-h) + 1.5rem); }
+  .rp__side-title { margin: 0 0 0.9rem; font-size: 0.78rem; font-weight: 560; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .rp__index { display: grid; gap: 0.3rem; margin: 0; padding: 0; list-style: none; }
+  .rp__jump {
+    display: grid; grid-template-columns: 2rem 1fr; width: 100%; padding: 0.55rem 0.75rem; text-align: left;
+    background: transparent; border: 1px solid transparent; border-radius: 8px; color: var(--ink-2); font-size: 0.95rem;
+  }
+  .rp__jump span { font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent); padding-top: 0.12rem; }
+  .rp__jump:hover { border-color: var(--line-strong); color: var(--ink); }
+  .rp__jump[aria-pressed='true'] { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
+  .rp__downloads { display: grid; gap: 0.6rem; margin-top: 1.5rem; }
+  .rp__download {
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.85rem 1rem;
+    border: 1px solid var(--line-strong); border-radius: 10px; text-decoration: none; font-weight: 560; color: var(--ink);
+  }
+  .rp__download:hover { border-color: var(--accent); color: var(--accent); }
+  .rp__meta { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); }
+
+  /* The page itself is always paper-white, like the PDF, in both themes. */
+  .rp__paper {
+    --p-ink: #121211; --p-muted: #5d5a53; --p-line: rgb(18 18 17 / 0.14); --p-accent: #c2410c; --p-soft: rgb(255 106 19 / 0.1);
+    position: relative; padding: clamp(1.25rem, 3.5vw, 2.5rem); background: #ffffff; color: var(--p-ink);
+    border-radius: 6px; border-top: 6px solid var(--brand-orange); box-shadow: 0 30px 70px rgb(0 0 0 / 0.28); font-size: 0.9rem; line-height: 1.5; overflow: hidden;
+  }
+  .rp__stamp {
+    position: absolute; top: 1.1rem; right: -2.6rem; margin: 0; padding: 0.3rem 3rem; transform: rotate(35deg);
+    background: var(--p-accent); color: #fff; font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .rp__head { display: flex; align-items: center; gap: 1rem; padding-bottom: 0.9rem; border-bottom: 1px solid var(--p-line); }
+  .rp__logo { display: inline-flex; flex: none; }
+  .rp__doc-title { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(0.95rem, 0.8rem + 0.6vw, 1.25rem); letter-spacing: 0.02em; text-transform: uppercase; color: var(--p-ink); }
+  .rp__meta-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; margin: 1rem 0 0.5rem; }
+  .rp__meta-grid dt { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--p-muted); }
+  .rp__meta-grid dd { margin: 0; font-weight: 600; font-size: 0.85rem; }
+  .rp__sec { margin-top: 0.85rem; padding: 0.5rem 0.65rem; border-radius: 4px; border-left: 2px solid transparent; transition: background 0.25s var(--ease), border-color 0.25s var(--ease); scroll-margin-top: calc(var(--header-h) + 2rem); }
+  .rp__sec.is-active { background: var(--p-soft); border-left-color: var(--p-accent); }
+  .rp__sec h4 { margin: 0 0 0.3rem; font-family: var(--font-sans) !important; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--p-accent); }
+  .rp__sec p, .rp__sec ul, .rp__sec ol { margin: 0; color: var(--p-ink); }
+  .rp__sec ul, .rp__options { padding-left: 1.1rem; }
+  .rp__sec li { margin-bottom: 0.15rem; }
+  .rp__sec--next { background: var(--p-soft); border-left-color: var(--p-accent); }
+  .rp__follow { margin: 1rem 0 0; font-size: 0.85rem; }
+  .rp__foot { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.25rem; padding-top: 0.75rem; border-top: 1px solid var(--p-line); font-size: 0.72rem; color: var(--p-muted); letter-spacing: 0.04em; }
+  @media (max-width: 900px) {
+    .rp { grid-template-columns: 1fr; }
+    .rp__side { position: static; }
+  }
+  @media (max-width: 520px) { .rp__meta-grid { grid-template-columns: 1fr; } }
+</style>

@@ -84,6 +84,7 @@ export const FOOTER_NAV = {
     { href: '/#manufacturing', label: 'Manufacturing Support' },
     { href: '/#operations', label: 'Operations Improvement' },
     { href: '/#project-support', label: 'Project Support' },
+    { href: '/assessment/', label: 'A$195 Problem Assessment' },
     { href: '/factory-fix/', label: 'Factory Fix' },
   ],
   company: [

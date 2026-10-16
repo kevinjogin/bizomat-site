@@ -2,13 +2,14 @@
 import LegalLayout from '../layouts/LegalLayout.astro';
 import { SITE } from '../config/site.ts';
 import TradeMarkNotice from '../components/TradeMarkNotice.astro';
+import { ASSESSMENT, CONDITIONS, EXCLUSIONS } from '../config/assessment.ts';
 ---
 
 <LegalLayout
   title="Terms"
   path="/terms/"
   description="The terms that apply to using the KEVOS® website, including the use of its content and links to other websites."
-  updated={new Date('2026-10-15')}
+  updated={new Date('2026-10-16')}
 >
   <p>These terms apply to your use of this website. By using the site, you agree to them. If you do not agree, please do not use the site.</p>
 
@@ -21,6 +22,13 @@ import TradeMarkNotice from '../components/TradeMarkNotice.astro';
   <p>
     Service descriptions and indicative prices on this website are a guide only and are not an offer. Each assignment is provided under a scope, deliverables, assumptions and commercial terms agreed in writing before the work begins, and those agreed terms apply to the work. GST applies where applicable. Sending an enquiry does not create an obligation for you or for KEVOS®.
   </p>
+
+  <h2 id="assessment">{ASSESSMENT.shortName}</h2>
+  <p>
+    The {ASSESSMENT.name} is a fixed-price service ({ASSESSMENT.priceLabel}) for one defined problem. The following conditions apply to it, in addition to the rest of these terms. {ASSESSMENT.gstNote}
+  </p>
+  <ul>{CONDITIONS.map((c) => <li><strong>{c.title}.</strong> {c.text}</li>)}</ul>
+  <p>The assessment does not include: {EXCLUSIONS.join(', ').toLowerCase()}. A booking exists only once the calendar confirmation has been received.</p>
 
   <h2>Information only</h2>
   <p>

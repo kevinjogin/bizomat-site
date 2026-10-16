@@ -8,6 +8,7 @@ import ContactForm from '../../components/ContactForm.astro';
 import BookingCard from '../../components/BookingCard.astro';
 import { SITE } from '../../config/site.ts';
 import { SERVICE_AREA } from '../../data/services.ts';
+import { ASSESSMENT } from '../../config/assessment.ts';
 
 const crumbs = [
   { label: 'Home', href: '/' },
@@ -35,6 +36,10 @@ const next = [
         <span class="path__label">Send project details</span>
         <span class="path__hint">Use the form below</span>
       </a>
+      <a class="path" href={`${ASSESSMENT.path}#request`} data-cta="contact-path-assessment">
+        <span class="path__label">{ASSESSMENT.priceLabel} problem assessment</span>
+        <span class="path__hint">One defined problem, fixed price</span>
+      </a>
       <a class="path" href={SITE.booking.url} target="_blank" rel="noopener noreferrer" data-cta="contact-path-meeting">
         <span class="path__label">{SITE.booking.label} <span aria-hidden="true">↗</span></span>
         <span class="path__hint">Opens Proton Calendar in a new tab</span>
@@ -45,6 +50,9 @@ const next = [
     <div class="contact-intro">
       <p class="contact-intro__lead">Describe the problem, drawing or project. A short description is enough to start.</p>
       <p class="contact-intro__note">Not sure which service you need? Describe the problem and KEVOS® can help define the scope.</p>
+      <p class="contact-intro__assessment">
+        <strong>One defined engineering problem?</strong> The <a href={ASSESSMENT.path}>{ASSESSMENT.shortName}</a> is a fixed {ASSESSMENT.priceLabel} remote review with a one-page written recommendation. Use its <a href={`${ASSESSMENT.path}#request`}>assessment enquiry form</a>.
+      </p>
       <BookingCard class="contact-intro__booking" />
       <h2 class="contact-intro__heading">What happens next</h2>
       <ol class="contact-intro__list">{next.map((r) => <li>{r}</li>)}</ol>
@@ -68,6 +76,8 @@ const next = [
   :global(.contact-layout) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 3rem 5rem; padding-bottom: var(--space-section); }
   .contact-intro__lead { font-family: var(--font-serif); font-size: var(--step-2); line-height: 1.35; color: var(--ink); max-width: 24ch; }
   .contact-intro__note { margin-top: 1.25rem; padding: 1rem 1.1rem; border-left: 3px solid var(--brand-orange); background: var(--paper-2); color: var(--ink-2); }
+  .contact-intro__assessment { margin-top: 1rem; padding: 1rem 1.1rem; border: 1px solid var(--line-strong); border-radius: var(--radius); color: var(--ink-2); font-size: 0.95rem; }
+  .contact-intro__assessment a { color: var(--ink); text-decoration-color: var(--accent); }
   .contact-intro__heading { margin: 2.5rem 0 1rem; font-size: 0.78rem; font-weight: 560; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
   .contact-intro__list { margin: 0; padding: 0; list-style: none; counter-reset: next; border-top: 1px solid var(--line); }
   .contact-intro__list li { counter-increment: next; display: grid; grid-template-columns: 2rem 1fr; padding: 0.85rem 0; border-bottom: 1px solid var(--line); color: var(--ink-2); }

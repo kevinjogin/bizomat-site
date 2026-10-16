@@ -6,7 +6,7 @@ import { SITE } from './src/config/site.ts';
 import rehypeWrapTables from './src/utils/rehype-wrap-tables.ts';
 
 // Utility pages that should never appear in search results or the sitemap.
-const EXCLUDE_FROM_SITEMAP = ['/search/', '/chat/', '/contact/sent/', '/contact/error/'];
+const EXCLUDE_FROM_SITEMAP = ['/search/', '/chat/', '/contact/sent/', '/contact/error/', '/assessment/received/'];
 
 export default defineConfig({
   site: SITE.url,

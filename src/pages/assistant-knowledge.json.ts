@@ -18,6 +18,7 @@ import {
   SOFTWARE,
 } from '../data/services.ts';
 import { getInsights, getWork, hasWorkDetail, insightUrl } from '../utils/content.ts';
+import { ASSESSMENT, CONDITIONS, EXAMPLES, EXCLUSIONS, INCLUSIONS, JOURNEY } from '../config/assessment.ts';
 
 export interface KnowledgeChunk {
   id: string;
@@ -56,9 +57,9 @@ export async function GET() {
     url: '/about/',
     text: [
       `${SITE.name} (${SITE.url.replace('https://', '')}). ${SITE.tagline}. ${SITE.statement}`,
-      `Services: ${SERVICE_GROUPS.map((g) => g.title).join(', ')}, plus the ${FACTORY_FIX.name} (${FACTORY_FIX.price}).`,
+      `Services: ${SERVICE_GROUPS.map((g) => g.title).join(', ')}, plus the ${ASSESSMENT.name} (${ASSESSMENT.priceLabel} fixed, ${ASSESSMENT.path}) and the ${FACTORY_FIX.name} (${FACTORY_FIX.price}).`,
       `Service area: ${SERVICE_AREA}`,
-      `Indicative prices (costs, fees): ${PACKAGES.map((p) => `${p.title} ${p.price}`).join('; ')}; ${FACTORY_FIX.name} ${FACTORY_FIX.price}. ${PRICING_NOTE} Final prices are confirmed in a written quote after scoping.`,
+      `Indicative prices (costs, fees): ${ASSESSMENT.name} ${ASSESSMENT.priceLabel} fixed for one defined problem; ${PACKAGES.map((p) => `${p.title} ${p.price}`).join('; ')}; ${FACTORY_FIX.name} ${FACTORY_FIX.price}. ${PRICING_NOTE} Final prices are confirmed in a written quote after scoping.`,
       'Certification: not every assignment includes professional engineering certification, statutory approval or sign-off; regulated or specialist work (for example designs that legally require a registered engineer or certifier) may require appropriately qualified or registered professionals. See /disclaimer/.',
       'To request a quote or discuss a project, use the form at /contact/ (REACHOS). Visitors can also book a meeting online: the Book a meeting option on /contact/ opens the KEVOS® Proton Calendar booking page.',
       `Main pages: ${NAV.map((n) => `${n.label} ${n.href}`).join(', ')}, Factory Fix /factory-fix/, Privacy /privacy/, Terms /terms/, Disclaimer /disclaimer/.`,
@@ -94,6 +95,21 @@ export async function GET() {
     title: `${FACTORY_FIX.name} (${FACTORY_FIX.price})`,
     url: '/factory-fix/',
     text: `${FACTORY_FIX.name}, ${FACTORY_FIX.price}. ${FACTORY_FIX.summary} Possible deliverables: ${FACTORY_FIX.deliverables.join(', ')}. Supporting documents may include: ${FACTORY_FIX.documents.join(', ')}. Good candidates: ${FACTORY_FIX.examples.join('; ')}. ${FACTORY_FIX.terms} Implementation support can be quoted separately. A Factory Fix does not include statutory engineering certification. Enquire at /contact/?service=factory-fix.`,
+  });
+  chunks.push({
+    id: 'svc-assessment',
+    title: `${ASSESSMENT.name} (${ASSESSMENT.priceLabel})`,
+    url: ASSESSMENT.path,
+    text: [
+      `${ASSESSMENT.name}: ${ASSESSMENT.priceLabel}, ${ASSESSMENT.priceCaption.toLowerCase()} for one defined engineering or manufacturing problem. ${ASSESSMENT.summary}`,
+      `Included: ${INCLUSIONS.map((i) => `${i.title} (${i.text}${i.points ? ` ${i.points.join(', ')}` : ''})`).join('; ')}.`,
+      `Not included: ${EXCLUSIONS.join(', ')}. Further engineering services require separate scoping and a written quote.`,
+      `Examples of suitable problems (examples, not guaranteed outcomes): ${EXAMPLES.map((e) => e.title).join(', ')}.`,
+      `How it works: ${JOURNEY.flatMap((p) => p.steps).map((s) => `${Number(s.number)}. ${s.title}: ${s.text}`).join(' ')}`,
+      `Conditions: ${CONDITIONS.map((c) => `${c.title}: ${c.text}`).join(' ')} ${ASSESSMENT.gstNote}`,
+      'Payment is never taken on the website and only requested after KEVOS® confirms suitability and scope in writing. A meeting is only booked after payment is verified, and a booking is confirmed only by the calendar confirmation. The assessment is preliminary: it does not guarantee root-cause identification, savings or a solution, and it is not certification or regulated design sign-off.',
+      `Request an assessment with the form at ${ASSESSMENT.path}#request. A one-page brochure and a fictional sample report can be downloaded from ${ASSESSMENT.path}.`,
+    ].join(' '),
   });
   chunks.push({
     id: 'svc-process',
