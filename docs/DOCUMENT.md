@@ -178,6 +178,35 @@ of a part; mates position the components, as in SOLIDWORKS.
 
 A part document may carry `"type": "part"`; a document without `type` is a part.
 
+## Parameters and equations
+
+SOLIDWORKS Tools > Equations (`opensketch/params.py`). A part may have global variables, and any
+number in a feature or any sketch dimension may be driven by an equation:
+
+```json
+{
+  "parameters": [{"name": "length", "expression": "120", "unit": "mm", "comment": "80 to 200"},
+                 {"name": "wall", "expression": "length / 40", "unit": "mm"}],
+  "features": [
+    {"id": "s1", "type": "sketch", "constraints": [
+      {"id": "D1", "name": "D1", "type": "distance", "refs": ["l1"], "value": 120, "eq": "length"}]},
+    {"id": "e1", "type": "extrude", "sketch": "s1", "depth": 3, "eq": {"depth": "wall", "dir2.depth": "wall / 2"}}
+  ]
+}
+```
+
+- `parameters`: name (a letter or `_`, then letters, digits, `_`; not a function or unit name), expression
+  (a number or an equation of other variables), unit (`mm`, `deg` or empty), comment.
+- `eq` on a feature: field path to expression; a nested field uses a dot (`dir2.depth`).
+- `eq` on a sketch dimension (`distance`, `diameter`, `radius`, `angle`; not `driven`).
+- Expressions: numbers, `+ - * / ^ %`, parentheses, variables, `pi`, `abs min max sqrt round floor ceil`,
+  `sin cos tan asin acos atan atan2` in degrees, unit suffixes `mm cm m in deg rad` (lengths in mm, angles
+  in degrees). Nothing else is evaluated.
+- Driven fields keep their current number, so every reader sees a plain document. A rebuild first
+  recomputes the numbers; a sketch whose dimension changed is re-solved with the browser's solver
+  (`solver.js`, run by node on the server). Registry limits apply: an `int` field must come out whole,
+  `min`/`max` hold. A failing equation turns its feature red with the reason.
+
 ## Components
 
 - `part`: key into `parts`. Several components can use the same part (instances `<1>`, `<2>`).

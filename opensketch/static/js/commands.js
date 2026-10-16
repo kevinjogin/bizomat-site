@@ -88,6 +88,7 @@ export function buildCommands(app) {
 
     // evaluate
     measure: { label: 'Measure', icon: 'measure', tip: 'Calculates distance, length, area and angle.', run: () => app.measurePM() },
+    equations: { label: 'Equations...', icon: 'options', tip: 'Manages global variables and the equations that drive dimensions.', run: () => app.equationsDialog() },
     massprops: { label: 'Mass Properties', icon: 'massprops', tip: 'Displays the mass properties of the model.', run: () => app.massProperties() },
     section: { label: 'Section View', icon: 'sectionview', tip: 'Displays a cutaway of the part using a plane.', run: () => app.sectionPM(), active: () => !!app.viewer.clipPlane },
     check: { label: 'Check', icon: 'check', tip: 'Checks the model for rebuild errors.', run: () => app.checkModel() },
@@ -160,7 +161,7 @@ export const MENUS = [
   { name: 'Edit', items: ['undo', 'redo', '-', 'rebuild', '-', { label: 'Delete', run: (app) => app.deleteSelection(), key: 'Del' }, { label: 'Suppress', run: (app) => app.suppressSelection(true) }, { label: 'Unsuppress', run: (app) => app.suppressSelection(false) }] },
   { name: 'View', items: [{ label: 'Planes', run: (app) => app.toggleView('planes') }, { label: 'Origins', run: (app) => app.toggleView('origins') }, { label: 'Sketches', run: (app) => app.toggleView('sketches') }, { label: 'Sketch Relations', run: (app) => app.toggleView('relations') }, '-', { label: 'Zoom to Fit', run: (app) => app.viewer.zoomToFit(), key: 'F' }] },
   { name: 'Insert', items: ['insertcomp', 'newpart', 'mate', '-', 'extrude', 'revolve', 'cut', 'revcut', '-', 'fillet', 'chamfer', 'shell', '-', 'linpattern', 'circpattern', 'mirror', '-', 'plane', '-', 'sketch'] },
-  { name: 'Tools', items: ['line', 'centerline', 'rectangle', 'circle', 'arc', 'slot', 'polygon', 'point', '-', 'smartdim', 'addrelation', 'relations', '-', 'trim', 'convert', 'offset', 'sketchmirror', 'sketchfillet', '-', 'measure', 'massprops', '-', 'options'] },
+  { name: 'Tools', items: ['line', 'centerline', 'rectangle', 'circle', 'arc', 'slot', 'polygon', 'point', '-', 'smartdim', 'addrelation', 'relations', '-', 'trim', 'convert', 'offset', 'sketchmirror', 'sketchfillet', '-', 'equations', '-', 'measure', 'massprops', '-', 'options'] },
   { name: 'Window', items: [{ label: 'Part1', run: () => {} }] },
   { name: 'Help', items: [{ label: 'Keyboard Shortcuts', run: (app) => app.shortcutsDialog() }, { label: 'About OpenSketch', run: (app) => app.aboutDialog() }] },
 ];

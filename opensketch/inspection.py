@@ -155,15 +155,17 @@ def body_topology(part, kind: str = "both", near: list | None = None, limit: int
 
 # ----------------------------------------------------------------------------- sketches
 
-def solve_sketches(sketches: list[dict]) -> tuple[dict, str | None]:
-    """{sketch id: {dof, status, solved, conflicts, under}} from the browser solver, or ({}, reason)."""
+def solve_sketches(sketches: list[dict], entities: bool = False) -> tuple[dict, str | None]:
+    """{sketch id: {dof, status, solved, conflicts, under}} from the browser solver, or ({}, reason).
+    entities=True also returns each sketch's solved entities."""
     if not sketches:
         return {}, None
     node = shutil.which("node")
     if not node:
         return {}, "Sketch degrees of freedom need node, which is not installed on this server."
     payload = json.dumps({"sketches": [{"id": s["id"], "entities": s.get("entities", []),
-                                        "constraints": s.get("constraints", [])} for s in sketches]})
+                                        "constraints": s.get("constraints", [])} for s in sketches],
+                          "entities": entities})
     try:
         r = subprocess.run([node, str(SOLVE_CLI)], input=payload, capture_output=True, text=True, timeout=30)
         if r.returncode != 0:
@@ -235,6 +237,10 @@ def inspect_part(part_doc: dict, sketches: bool = True) -> dict:
            "body": _body(st.part, part_doc.get("material"))}
     if part_doc.get("rollback") is not None:
         out["rollback_at"] = part_doc["rollback"]
+    from . import params
+    if params.has_equations(part_doc):
+        out["parameters"] = params.table(part_doc)
+        out["equations"] = params.equations(part_doc)
     if sketches:
         out["sketches"], note = _sketch_rows(part_doc, st)
         if note:

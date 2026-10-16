@@ -402,3 +402,17 @@ input, select, button { font: inherit; color: inherit; }
 .srv-warn { border: 1px solid #f0d28a; border-left: 3px solid #c8961e; background: #fffbf0; padding: 6px 8px; border-radius: 4px; margin: 6px 0; font-size: 12px; }
 .srv-url { display: flex; gap: 6px; margin: 4px 0; }
 .srv-url input { flex: 1; min-width: 0; font: 11.5px ui-monospace, monospace; padding: 4px 6px; border: 1px solid #c5cad0; border-radius: 3px; }
+
+/* Equations dialog */
+.eqdialog { min-width: 680px; }
+.eqt { border-collapse: collapse; width: 100%; font-size: 12px; }
+.eqt th { text-align: left; font-weight: normal; color: #555; border-bottom: 1px solid #c8c8c8; padding: 3px 4px; }
+.eqt td { padding: 2px 4px; vertical-align: middle; }
+.eqt input { width: 100%; box-sizing: border-box; height: 22px; border: 1px solid #c8c8c8; padding: 0 4px; font: inherit; }
+.eqt select { height: 22px; font: inherit; }
+.eqsec td { font-weight: 600; padding-top: 8px; border-bottom: 1px solid #e0e0e0; }
+.eqval { min-width: 90px; color: #333; }
+.eqbad { color: var(--sw-red); }
+.eqadd { color: #0a64c8; cursor: pointer; }
+.eqx { cursor: pointer; color: #777; }
+.eqfoot { margin-top: 8px; color: #666; font-size: 11px; }

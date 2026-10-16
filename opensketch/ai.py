@@ -130,6 +130,12 @@ stops it sliding along the axis), "angle_refs": [planeA, planeB], "angle_min": 0
 (optional limits, the angle between those two faces)}}. For travel limits use limit_distance
 ({{"refs": [planeA, planeB], "min", "max"}}) or limit_angle ({{"refs": [a, b], "min", "max"}}).
 
+Design intent: give each part a few global variables for the numbers a designer would change (length,
+width, wall, hole size, count) with set_parameter (comment = sensible range), and drive dimensions with
+them: "eq": {{"depth": "wall * 5"}} on a feature, "eq": "length" on a sketch dimension, or set_equation.
+Fully define sketches that carry equations (relations plus dimensions) so they re-solve correctly. A
+count must come out as a whole number. Changing a variable rebuilds everything that uses it.
+
 Off-the-shelf first. Design like a product engineer who keeps custom parts to a minimum: they cost
 tooling, drawings and lead time; bought parts are cheap, proven and in stock. For every piece ask
 first: can this be bought?
@@ -224,11 +230,39 @@ TOOLS = [
          "min": {"type": "number", "description": "limit_distance / limit_angle"},
          "max": {"type": "number", "description": "limit_distance / limit_angle"}}, "required": ["type", "refs"]}},
     {"name": "delete_items",
-     "description": "Delete components, mates or parts from the assembly by id.",
+     "description": ("Delete components, mates or parts from the assembly, or features from a part, by id. Features: "
+                     "what depends on them goes too (an extrude with its sketch, an emptied pattern; sketches only "
+                     "they used unless delete_absorbed is false); features that would break stay and show the error. "
+                     "dry_run: report deleted_with_it / absorbed / would_fail without deleting."),
      "input_schema": {"type": "object", "properties": {
          "components": {"type": "array", "items": {"type": "string"}},
          "mates": {"type": "array", "items": {"type": "string"}},
-         "parts": {"type": "array", "items": {"type": "string"}}}}},
+         "parts": {"type": "array", "items": {"type": "string"}},
+         "features": {"type": "array", "items": {"type": "string"}, "description": "Part feature ids"},
+         "part_id": {"type": "string", "description": "Assembly: the part the features are in"},
+         "delete_absorbed": {"type": "boolean"},
+         "dry_run": {"type": "boolean"}}}},
+    {"name": "set_parameter",
+     "description": ("Create, change or remove a global variable (SOLIDWORKS Equations > Global Variables) of a part. "
+                     "expression: a number or an equation using other variables, e.g. \"2\", \"wall * 2\", "
+                     "\"length / 2 - 6\", \"1in\". Every equation using it is recomputed and the part rebuilt; the "
+                     "result lists the variables with values, what was recomputed and anything now failing."),
+     "input_schema": {"type": "object", "properties": {
+         "name": {"type": "string"}, "expression": {"type": "string"},
+         "unit": {"type": "string", "description": "mm (default), deg, or empty for a plain number"},
+         "comment": {"type": "string", "description": "What it is and its sensible range"},
+         "part_id": {"type": "string", "description": "Assembly: the part"},
+         "remove": {"type": "boolean"}, "force": {"type": "boolean", "description": "Remove even if used"}},
+         "required": ["name"]}},
+    {"name": "set_equation",
+     "description": ("Drive a number with an equation: a feature field (\"depth\", \"radius\", \"count\", "
+                     "\"dir2.depth\") or a sketch dimension (its id or name, e.g. \"D1\"). expression uses global "
+                     "variables, e.g. \"wall * 5\"; empty removes the equation and keeps the current value."),
+     "input_schema": {"type": "object", "properties": {
+         "feature": {"type": "string", "description": "Feature or sketch id or name"},
+         "field": {"type": "string"}, "expression": {"type": "string"},
+         "part_id": {"type": "string", "description": "Assembly: the part"}},
+         "required": ["feature", "field"]}},
     {"name": "check_interference",
      "description": "Check every pair of components for overlapping volume.",
      "input_schema": {"type": "object", "properties": {}}},
@@ -709,13 +743,187 @@ class Session:
         rep["this_mate"] = {"id": mid, **state}
         return json.dumps(rep), clean, [ev]
 
+    # -- global variables and equations (params.py)
+    def _target_part(self, pid):
+        if assembly.is_assembly(self.work):
+            if pid not in self.work.get("parts", {}):
+                return None, f"Give part_id, one of {sorted(self.work.get('parts', {}))}."
+            return self.work["parts"][pid], None
+        return self.work, None
+
+    def _params_result(self, part: dict, pid, before: dict, summary: str) -> tuple[str, bool, list]:
+        from . import params
+        new, prep = params.evaluate(part)
+        part["features"] = new["features"]
+        st, _ = geometry.regen(part)
+        rep, clean = _part_report(st)
+        now = {s["id"]: s.get("message") for s in st.status if s["state"] == "error"}
+        rep["parameters"] = params.table(part)
+        rep["equations"] = params.equations(part)
+        rep["recomputed"] = prep.get("recomputed", [])
+        rep["now_failing"] = [{"id": k, "message": v} for k, v in now.items() if k not in before]
+        if pid:
+            rep["part_id"] = pid
+        self.summary = summary
+        self.steps.append({"summary": summary, "clean": clean})
+        if pid and any(c.get("part") == pid for c in self.work.get("components", [])):
+            return json.dumps(rep), clean and not rep["now_failing"], [self._solve_event({"kind": "part", "part": pid})[1]]
+        return json.dumps(rep), clean and not rep["now_failing"], [{"ev": "proposal", "doc": self.work, "summary": summary}]
+
+    @staticmethod
+    def _errors(part: dict) -> dict:
+        st, _ = geometry.regen(part)
+        return {s["id"]: s.get("message") for s in st.status if s["state"] == "error"}
+
+    def set_parameter(self, inp: dict) -> tuple[str, bool, list]:
+        from . import params
+        part, err = self._target_part(inp.get("part_id"))
+        if err:
+            return err, False, []
+        name = inp.get("name")
+        if not isinstance(name, str) or not params.NAME.match(name) or name in params.RESERVED:
+            return "name must be a letter or _ followed by letters, digits or _ (not a function or unit name).", False, []
+        before = self._errors(part)
+        rows = part.setdefault("parameters", [])
+        row = next((r for r in rows if r.get("name") == name), None)
+        if inp.get("remove"):
+            if row is None:
+                return f"No variable {name!r}.", False, []
+            users = [r for r in params.table(part) if r["name"] == name][0]["used_by"]
+            if users and not inp.get("force"):
+                return (f"{name!r} is used by {', '.join(users)}. Change those first, or pass force=true "
+                        "(they will show an error)."), False, []
+            rows.remove(row)
+            if not rows:
+                part.pop("parameters", None)
+            return self._params_result(part, inp.get("part_id"), before, f"Removed variable {name}")
+        expr = inp.get("expression")
+        if expr is None:
+            return "Give expression (a number such as \"2\" or an equation such as \"wall * 2\").", False, []
+        expr = str(expr).strip().lstrip("=").strip()
+        trial = [r for r in rows if r.get("name") != name] + [{"name": name, "expression": expr}]
+        _, problems = params.variables({"parameters": trial})
+        if name in problems:
+            return f"Not set: {problems[name]}", False, []
+        if row is None:
+            row = {"name": name}
+            rows.append(row)
+        row["expression"] = expr
+        for k in ("unit", "comment"):
+            if inp.get(k) is not None:
+                row[k] = inp[k]
+        row.setdefault("unit", "mm")
+        return self._params_result(part, inp.get("part_id"), before, f"{name} = {expr}")
+
+    def set_equation(self, inp: dict) -> tuple[str, bool, list]:
+        from . import params
+        part, err = self._target_part(inp.get("part_id"))
+        if err:
+            return err, False, []
+        key, field = inp.get("feature"), inp.get("field")
+        feat = next((f for f in part.get("features", []) if key in (f.get("id"), f.get("name"))), None)
+        if feat is None:
+            return f"No feature {key!r}; features: {[f.get('id') for f in part.get('features', [])]}.", False, []
+        expr = inp.get("expression")
+        expr = str(expr).strip().lstrip("=").strip() if expr not in (None, "") else None
+        before = self._errors(part)
+        label = feat.get("name") or feat["id"]
+        if feat.get("type") == "sketch":
+            c = next((c for c in feat.get("constraints", []) if field in (c.get("id"), c.get("name"))), None)
+            if c is None or c.get("type") not in params.DIMENSIONS:
+                dims = [c.get("name") or c.get("id") for c in feat.get("constraints", []) if c.get("type") in params.DIMENSIONS]
+                return f"No dimension {field!r} in {label}; dimensions: {dims}.", False, []
+            if c.get("driven"):
+                return f"{field} is a driven (reference) dimension; it cannot take an equation.", False, []
+            if expr is None:
+                c.pop("eq", None)
+            else:
+                c["eq"] = expr
+        else:
+            obj, k = params._get(feat, field)
+            if obj is None or not isinstance(obj.get(k), (int, float)) or isinstance(obj.get(k), bool):
+                nums = [k2 for k2, v in feat.items() if isinstance(v, (int, float)) and not isinstance(v, bool)]
+                return f"{label} has no number {field!r}; numbers: {nums}.", False, []
+            eqs = feat.setdefault("eq", {})
+            if expr is None:
+                eqs.pop(field, None)
+                if not eqs:
+                    feat.pop("eq")
+            else:
+                eqs[field] = expr
+        if expr is not None:
+            values, _ = params.variables(part)
+            try:
+                params.evaluate_expr(expr, values)
+            except params.ExprError as exc:
+                return f"Not set: {exc}", False, []
+        summary = f"{field}@{label} = {expr}" if expr else f"Removed equation on {field}@{label}"
+        return self._params_result(part, inp.get("part_id"), before, summary)
+
+    def delete_features(self, inp: dict) -> tuple[str, bool, list]:
+        """Part features (part document, or part_id in an assembly), with SOLIDWORKS-style cascade."""
+        from . import edits
+        pid = inp.get("part_id")
+        if assembly.is_assembly(self.work):
+            if pid not in self.work.get("parts", {}):
+                return f"Give part_id, one of {sorted(self.work.get('parts', {}))}.", False, []
+            part = self.work["parts"][pid]
+        else:
+            part = self.work
+        plan = edits.plan_delete(part, list(inp.get("features") or []), inp.get("delete_absorbed", True) is not False)
+        if "error" in plan:
+            return plan["error"], False, []
+        new = plan.pop("part")
+        if inp.get("dry_run"):
+            plan["dry_run"] = True
+            plan["note"] = "Nothing deleted. Call again without dry_run to delete."
+            return json.dumps(plan), not plan["would_fail"], []
+        st, _ = geometry.regen(new)
+        rep, clean = _part_report(st)
+        rep["deletion"] = plan
+        gone = len(plan["deleted"]) + len(plan["deleted_with_it"]) + len(plan["absorbed"])
+        self.summary = f"Deleted {gone} feature{'s' if gone != 1 else ''}" + (f" from {part.get('name', pid)}" if pid else "")
+        self.steps.append({"summary": self.summary, "clean": clean})
+        if pid:
+            self.work["parts"][pid] = new
+            if any(c.get("part") == pid for c in self.work.get("components", [])):
+                return json.dumps(rep), clean, [self._solve_event({"kind": "part", "part": pid})[1]]
+        else:
+            self.work = new
+        return json.dumps(rep), clean, [{"ev": "proposal", "doc": self.work, "summary": self.summary}]
+
     def delete_items(self, inp: dict) -> tuple[str, bool, list]:
+        if inp.get("features"):
+            if any(inp.get(k) for k in ("components", "mates", "parts")):
+                return "Delete features in one call and components, mates or parts in another.", False, []
+            return self.delete_features(inp)
+        if not assembly.is_assembly(self.work):
+            return "This is a part: give features (ids) to delete.", False, []
+        if inp.get("dry_run"):
+            before = assembly.regen_assembly(self.work)
+            saved = self.work
+            self.work = copy.deepcopy(saved)
+            try:
+                report, _, _ = self.delete_items({k: v for k, v in inp.items() if k != "dry_run"})
+            finally:
+                self.work = saved
+            if not report.startswith("{"):
+                return report, False, []
+            after = json.loads(report)
+            bad = {m["id"] for m in before["mates"] if m["state"] == "error"}
+            plan = {"dry_run": True, "deleted": after.get("deleted", {}),
+                    "would_fail": [m for m in after.get("mates", []) if m["state"] == "error" and m["id"] not in bad],
+                    "under_defined_after": [c["id"] for c in after.get("components", [])
+                                            if c["state"] not in ("fixed", "full")],
+                    "note": "Nothing deleted. Call again without dry_run to delete."}
+            return json.dumps(plan), not plan["would_fail"], []
         asm = self._asm()
         comps = set(inp.get("components") or [])
         parts = set(inp.get("parts") or [])
         comps |= {c["id"] for c in asm["components"] if c.get("part") in parts}
         mates = set(inp.get("mates") or [])
-        mates |= {m["id"] for m in asm["mates"] if any(r.get("component") in comps for r in m.get("refs", []))}
+        mates |= {m["id"] for m in asm["mates"]
+                  if any(r.get("component") in comps for k in ("refs", "planes", "angle_refs") for r in m.get(k) or [])}
         asm["components"] = [c for c in asm["components"] if c["id"] not in comps]
         asm["mates"] = [m for m in asm["mates"] if m["id"] not in mates]
         asm["sequence"] = [c for c in asm.get("sequence", []) if c not in comps]
@@ -723,6 +931,8 @@ class Session:
             asm["parts"].pop(p, None)
         res, ev = self._solve_event({"kind": "delete", "components": sorted(comps), "mates": sorted(mates)})
         rep = _asm_report(asm, res)
+        rep["deleted"] = {"components": sorted(comps), "mates": sorted(mates), "parts": sorted(parts)}
+        self.summary = "Deleted " + ", ".join(f"{len(v)} {k}" for k, v in rep["deleted"].items() if v)
         return json.dumps(rep), rep["clean"], [ev]
 
     def check_interference(self, inp: dict) -> tuple[str, bool, list]:
@@ -829,15 +1039,29 @@ class Session:
     def apply(self, name: str, inp: dict):
         ft = features.type_for_tool(name)
         if ft is not None and name != "add_mate":
-            return self.add_feature(ft, inp or {})
+            out = self.add_feature(ft, inp or {})
+            self.settle_equations()
+            return out
         fn = {"propose_features": self.propose_features, "create_part": self.create_part,
               "insert_component": self.insert_component, "add_mate": self.add_mate,
               "delete_items": self.delete_items, "check_interference": self.check_interference,
               "find_mate_candidates": self.find_mate_candidates, "standard_part": self.standard_part,
-              "request_part_file": self.request_part_file}.get(name)
+              "request_part_file": self.request_part_file, "set_parameter": self.set_parameter,
+              "set_equation": self.set_equation}.get(name)
         if fn is None:
             return f"Unknown tool {name}", False, []
-        return fn(inp or {})
+        out = fn(inp or {})
+        self.settle_equations()
+        return out
+
+    def settle_equations(self) -> None:
+        """Store the numbers the equations give (and re-solved sketches), so the document shows what is built."""
+        from . import params
+        parts = list(self.work.get("parts", {}).values()) if assembly.is_assembly(self.work) else [self.work]
+        for part in parts:
+            if params.has_equations(part):
+                new, _ = params.evaluate(part)
+                part["features"] = new["features"]
 
 
 # ----------------------------------------------------------------------------- streaming loop

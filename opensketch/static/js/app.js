@@ -326,6 +326,12 @@ class App {
   applyResult(res) {
     this.asm.res = null;
     this.result = res;
+    if (res.equations && this.mode !== 'sketch' && !this.proposal) {
+      // numbers driven by equations: show what was built (no undo step; the equation owns the value)
+      for (const [id, f] of Object.entries(res.equations.features)) { const mine = this.featureById(id); if (mine) Object.assign(mine, f); }
+      const r = res.equations.recomputed[0];
+      this.status(`Driven by an equation: ${r.field}@${this.featureById(r.feature)?.name || r.feature} = ${+(+r.new).toFixed(6)}`);
+    }
     this.statusById = Object.fromEntries(res.status.map((s) => [s.id, s]));
     this.viewer.setTool(null);
     this.viewer.setBody(res.body, this.proposal ? { color: COLORS.proposal } : { color: this.bodyColor() });
@@ -711,26 +717,38 @@ class App {
 
   suppressSelection(on) { for (const s of this.selection) if (s.kind === 'feature' || s.kind === 'sketch') this.suppress(s.id, on); }
 
-  deleteFeature(id) {
+  // Confirm Delete: the server works out what goes with the feature and what would break (edits.plan_delete),
+  // the same rules Claude's delete_items uses. Children that would only break stay unless "Delete child
+  // features" is ticked, as in SOLIDWORKS.
+  async deleteFeature(id) {
     const f = this.featureById(id);
     if (!f) return;
-    const deps = this.doc.features.filter((x) => x.sketch === id || (x.features || []).includes(id) || x.plane?.ref === id || x.base?.ref === id);
-    const absorbed = f.sketch ? this.doc.features.filter((x) => x.id === f.sketch && !this.doc.features.some((y) => y !== f && y.sketch === x.id)) : [];
+    const names = (ids) => ids.map((x) => this.featureById(x)?.name || x).join(', ');
+    const plan = async (ids, absorbed) => this.api('/api/delete_plan', { doc: this.cleanDoc(this.doc), features: ids, delete_absorbed: absorbed });
+    let first;
+    try { first = await plan([id], true); } catch (err) { this.status(`Cannot delete: ${err.message}`); return; }
+    const kids = first.would_fail.map((x) => x.id);
     const body = document.createElement('div');
-    body.innerHTML = `<div>Delete <b>${f.name}</b>?</div>` + (deps.length ? `<div style="margin-top:6px">Dependent items: ${deps.map((d) => d.name).join(', ')}</div>` : '') +
-      (absorbed.length ? `<label style="display:block;margin-top:8px"><input type="checkbox" id="delabs" checked> Delete absorbed features (${absorbed.map((a) => a.name).join(', ')})</label>` : '') +
-      `<label style="display:block;margin-top:4px"><input type="checkbox" id="delchild" ${deps.length ? 'checked' : ''}> Delete child features</label>`;
+    body.innerHTML = `<div>Delete <b>${f.name}</b>?</div>` +
+      (first.deleted_with_it.length ? `<div style="margin-top:6px">Also deleted (they need it): ${names(first.deleted_with_it)}</div>` : '') +
+      (first.patterns_trimmed.length ? `<div style="margin-top:6px">Patterns that keep their other features: ${names(first.patterns_trimmed.map((x) => x.id))}</div>` : '') +
+      (first.absorbed.length ? `<label style="display:block;margin-top:8px"><input type="checkbox" id="delabs" checked> Delete absorbed features (${names(first.absorbed)})</label>` : '') +
+      (kids.length ? `<div style="margin-top:6px">Dependent items that will show errors: ${names(kids)}</div>` +
+        `<label style="display:block;margin-top:4px"><input type="checkbox" id="delchild"> Delete child features</label>` : '');
     dialog({ title: 'Confirm Delete', body, buttons: [
-      { label: 'Yes', primary: true, run: () => {
-        const delAbs = body.querySelector('#delabs')?.checked, delChild = body.querySelector('#delchild')?.checked;
-        const kill = new Set([id]);
-        if (delAbs) absorbed.forEach((a) => kill.add(a.id));
-        if (delChild) deps.forEach((d) => kill.add(d.id));
+      { label: 'Yes', primary: true, run: async () => {
+        const delAbs = body.querySelector('#delabs')?.checked ?? true, delChild = body.querySelector('#delchild')?.checked;
+        let p = first;
+        if (!delAbs || delChild) {
+          try { p = await plan(delChild ? [id, ...kids] : [id], delAbs); } catch (err) { this.status(`Cannot delete: ${err.message}`); return; }
+        }
+        const kill = new Set([...p.deleted, ...p.deleted_with_it, ...p.absorbed]);
+        const trim = new Map(p.patterns_trimmed.map((x) => [x.id, x.keeps]));
         this.commit('Delete', () => {
-          const idx = this.doc.features.findIndex((x) => x.id === id);
+          const rb = this.doc.rollback;
+          if (rb !== null && rb !== undefined) this.doc.rollback = rb - this.doc.features.slice(0, rb).filter((x) => kill.has(x.id)).length;
           this.doc.features = this.doc.features.filter((x) => !kill.has(x.id));
-          if (this.doc.rollback !== null && this.doc.rollback !== undefined && idx < this.doc.rollback) this.doc.rollback = Math.max(0, this.doc.rollback - 1);
-          for (const x of this.doc.features) if (x.features) x.features = x.features.filter((y) => !kill.has(y));
+          for (const x of this.doc.features) if (trim.has(x.id)) x.features = trim.get(x.id);
         });
         this.setSelection([]);
       } },
@@ -1175,6 +1193,106 @@ class App {
   }
 
   // ------------------------------------------------------------------ evaluate
+  // Tools > Equations (SOLIDWORKS "Equations, Global Variables, and Dimensions"): global variables and the
+  // equations on feature fields and sketch dimensions. Values come from the server (params.py), as you type.
+  equationsDialog() {
+    if (this.isAsm) { this.toast('Open a part to edit its equations.'); return; }
+    const esc = (t) => String(t ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const dims = ['distance', 'diameter', 'radius', 'angle'];
+    const targets = [];
+    for (const f of this.doc.features) {
+      if (f.type === 'sketch') {
+        for (const c of f.constraints || []) if (dims.includes(c.type) && !c.driven) targets.push({ key: `${f.id}|${c.id}`, label: `${c.name || c.id}@${f.name}`, feature: f.id, cid: c.id, eq: c.eq });
+      } else {
+        const add = (obj, path) => { for (const [k, v] of Object.entries(obj || {})) { if (k === 'eq' || k === 'rollback') continue; if (typeof v === 'number') targets.push({ key: `${f.id}|${path}${k}`, label: `${path}${k}@${f.name}`, feature: f.id, field: `${path}${k}`, eq: (f.eq || {})[`${path}${k}`] }); else if (v && typeof v === 'object' && !Array.isArray(v) && !path) add(v, `${k}.`); } };
+        add(f, '');
+      }
+    }
+    const vars = (this.doc.parameters || []).map((p) => ({ ...p }));
+    const eqs = targets.filter((t) => t.eq).map((t) => ({ key: t.key, expr: t.eq }));
+    const body = document.createElement('div');
+    body.className = 'eqdlg';
+    let last = null;
+    const draft = () => {
+      const d = this.cleanDoc(this.doc);
+      d.parameters = vars.filter((v) => v.name).map((v) => ({ name: v.name.trim(), expression: String(v.expression ?? ''), unit: v.unit || 'mm', ...(v.comment ? { comment: v.comment } : {}) }));
+      if (!d.parameters.length) delete d.parameters;
+      for (const f of d.features) { delete f.eq; for (const c of f.constraints || []) delete c.eq; }
+      for (const e of eqs) {
+        const t = targets.find((x) => x.key === e.key); if (!t || !String(e.expr).trim()) continue;
+        const f = d.features.find((x) => x.id === t.feature);
+        const ex = String(e.expr).trim().replace(/^=/, '');
+        if (t.cid) f.constraints.find((c) => c.id === t.cid).eq = ex; else (f.eq ||= {})[t.field] = ex;
+      }
+      return d;
+    };
+    const render = () => {
+      const vrow = (v, i) => {
+        const row = last?.parameters?.find((r) => r.name === v.name);
+        const val = row?.problem ? `<span class="eqbad">${esc(row.problem)}</span>` : row?.value != null ? +(+row.value).toFixed(6) : '';
+        return `<tr><td><input data-v="${i}" data-k="name" value="${esc(v.name)}" placeholder="Name"></td><td><input data-v="${i}" data-k="expression" value="${esc(v.expression)}" placeholder="Value or equation"></td>` +
+          `<td class="eqval">${val}</td><td><input data-v="${i}" data-k="comment" value="${esc(v.comment)}" placeholder="Comments"></td><td><span class="eqx" data-dv="${i}" title="Delete">&#x2715;</span></td></tr>`;
+      };
+      const erow = (e, i) => {
+        const t = targets.find((x) => x.key === e.key);
+        const r = last?.equations?.find((x) => `${x.feature}|${x.constraint || x.field}` === e.key);
+        const prob = t && last?.problems?.[t.feature];
+        const val = prob ? `<span class="eqbad">${esc(prob)}</span>` : r ? +(+r.value).toFixed(6) : '';
+        return `<tr><td>"${esc(t?.label)}"</td><td><input data-e="${i}" value="${esc(e.expr)}" placeholder="= equation"></td><td class="eqval">${val}</td><td></td><td><span class="eqx" data-de="${i}" title="Delete">&#x2715;</span></td></tr>`;
+      };
+      const free = targets.filter((t) => !eqs.some((e) => e.key === t.key));
+      body.innerHTML = `<table class="eqt"><thead><tr><th>Name</th><th>Value / Equation</th><th>Evaluates to</th><th>Comments</th><th></th></tr></thead><tbody>` +
+        `<tr class="eqsec"><td colspan="5">Global Variables</td></tr>${vars.map(vrow).join('')}<tr><td colspan="5"><span class="eqadd" data-add="var">Add global variable</span></td></tr>` +
+        `<tr class="eqsec"><td colspan="5">Equations</td></tr>${eqs.map(erow).join('')}` +
+        `<tr><td colspan="5"><select data-add="eq"><option value="">Add equation to a dimension...</option>${free.map((t) => `<option value="${esc(t.key)}">${esc(t.label)}</option>`).join('')}</select></td></tr></tbody></table>` +
+        `<div class="eqfoot">Units: mm, cm, m, in, deg, rad. Functions: abs, min, max, sqrt, round, floor, ceil, sin, cos, tan (degrees).</div>`;
+      body.querySelectorAll('input[data-v]').forEach((inp) => { inp.oninput = () => { vars[+inp.dataset.v][inp.dataset.k] = inp.value; refresh(); }; });
+      body.querySelectorAll('input[data-e]').forEach((inp) => { inp.oninput = () => { eqs[+inp.dataset.e].expr = inp.value; refresh(); }; });
+      body.querySelectorAll('[data-dv]').forEach((x) => { x.onclick = () => { vars.splice(+x.dataset.dv, 1); refresh(true); }; });
+      body.querySelectorAll('[data-de]').forEach((x) => { x.onclick = () => { eqs.splice(+x.dataset.de, 1); refresh(true); }; });
+      body.querySelector('[data-add=var]').onclick = () => { vars.push({ name: '', expression: '', unit: 'mm' }); render(); body.querySelector(`input[data-v="${vars.length - 1}"][data-k=name]`).focus(); };
+      body.querySelector('select[data-add=eq]').onchange = (ev) => { if (!ev.target.value) return; eqs.push({ key: ev.target.value, expr: '' }); render(); body.querySelector(`input[data-e="${eqs.length - 1}"]`).focus(); };
+    };
+    let timer = null, seq = 0;
+    const evaluate = async () => { const my = ++seq; try { const r = await this.api('/api/params', { doc: draft() }); if (my === seq) last = r; } catch (err) { last = { error: err.message }; } return last; };
+    const refresh = (now = false) => {
+      clearTimeout(timer);
+      timer = setTimeout(async () => {
+        await evaluate();
+        // keep typing focus: update only the value cells unless rows changed
+        const focus = document.activeElement; const sel = focus?.dataset ? { ...focus.dataset } : null; const pos = focus?.selectionStart;
+        render();
+        if (sel) { const q = Object.entries(sel).map(([k, v]) => `[data-${k}="${v}"]`).join(''); const el = q && body.querySelector('input' + q); if (el) { el.focus(); if (pos != null) el.setSelectionRange(pos, pos); } }
+      }, now ? 0 : 250);
+    };
+    const bad = (r) => r.error || (r.parameters || []).some((p) => p.problem) || Object.keys(r.problems || {}).length ||
+      eqs.some((e) => !String(e.expr).trim()) || vars.some((v) => !v.name || !String(v.expression ?? '').trim());
+    const d = dialog({ title: 'Equations, Global Variables, and Dimensions', body, cls: 'eqdialog', buttons: [
+      { label: 'OK', primary: true, run: () => {
+        (async () => {
+          clearTimeout(timer);
+          const r = await evaluate();
+          if (bad(r)) { render(); this.status('Fix the items in red (or empty rows) first.'); return; }
+          const dd = draft();
+          this.commit('Equations', () => {
+            this.doc.parameters = dd.parameters; if (!dd.parameters) delete this.doc.parameters;
+            const byId = Object.fromEntries(r.features.map((f) => [f.id, f]));
+            for (const f of this.doc.features) {
+              const n = byId[f.id]; if (!n) continue;
+              delete f.eq; for (const c of f.constraints || []) delete c.eq;
+              Object.assign(f, n);
+            }
+          });
+          d.close();
+        })();
+        return false;
+      } },
+      { label: 'Cancel' },
+    ] });
+    render();
+    refresh(true);
+  }
+
   async massProperties() {
     if (this.isAsm) return this.asm.massProperties();
     let r;

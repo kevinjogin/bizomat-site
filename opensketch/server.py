@@ -74,6 +74,43 @@ def api_regen(req: RegenRequest):
     return geometry.regen_result(req.doc, req.preview)
 
 
+class ParamsRequest(BaseModel):
+    doc: dict
+    expression: str | None = None
+
+
+@app.post("/api/params")
+def api_params(req: ParamsRequest):
+    """Equations dialog: variables with values and problems, every equation, and the part with the numbers the
+    equations give (sketches re-solved). With `expression`: its value, or an error."""
+    from . import params
+    if req.expression is not None:
+        values, _ = params.variables(req.doc)
+        try:
+            return {"value": params.evaluate_expr(req.expression, values)}
+        except params.ExprError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+    new, rep = params.evaluate(req.doc)
+    return {"parameters": params.table(new), "equations": params.equations(new), "problems": rep["problems"],
+            "recomputed": rep["recomputed"], "features": new.get("features", [])}
+
+
+class DeletePlanRequest(BaseModel):
+    doc: dict
+    features: list[str]
+    delete_absorbed: bool = True
+
+
+@app.post("/api/delete_plan")
+def api_delete_plan(req: DeletePlanRequest):
+    """What deleting these part features takes with it and breaks (edits.plan_delete), plus the new part."""
+    from . import edits
+    plan = edits.plan_delete(req.doc, req.features, req.delete_absorbed)
+    if "error" in plan:
+        return JSONResponse({"error": plan["error"]}, status_code=400)
+    return plan
+
+
 @app.post("/api/mass")
 def api_mass(req: RegenRequest):
     if assembly.is_assembly(req.doc):

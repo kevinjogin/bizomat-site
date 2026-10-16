@@ -56,6 +56,8 @@ class RegenState:
     tools: dict = field(default_factory=dict)    # feature id -> (tool solid, op)
     status: list = field(default_factory=list)
     diagnostics: dict = field(default_factory=dict)  # feature id -> measured geometry + warnings
+    params: dict | None = None  # params.evaluate report when the part has variables or equations
+    evaluated: dict | None = None  # the part with equation results, when params is set
 
 
 # ----------------------------------------------------------------------------- helpers
@@ -596,6 +598,11 @@ def regen(doc: dict, preview: dict | None = None) -> tuple[RegenState, Any]:
     """Rebuild the tree up to the rollback bar. With `preview`, the tentative feature is
     evaluated after the rolled-back state and its tool body is returned (not applied)."""
     st = RegenState()
+    from . import params
+    if params.has_equations(doc):
+        doc, st.params = params.evaluate(doc)  # equations drive the numbers before anything is built
+        st.evaluated = doc
+    eq_problems = (st.params or {}).get("problems", {})
     feats = doc.get("features", [])
     rb = doc.get("rollback")
     stop = len(feats) if rb is None else int(rb)
@@ -607,6 +614,10 @@ def regen(doc: dict, preview: dict | None = None) -> tuple[RegenState, Any]:
             continue
         if f.get("suppressed"):
             st.status.append({"id": f["id"], "state": "suppressed"})
+            continue
+        if f["id"] in eq_problems:
+            st.status.append({"id": f["id"], "state": "error", "message": f"Equation: {eq_problems[f['id']]}",
+                              "diagnostics": {}})
             continue
         rebuild_feature(f, st)
     tool = None
@@ -693,6 +704,11 @@ def regen_result(doc: dict, preview: dict | None = None) -> dict:
     if part is not None:
         bb = part.bounding_box()
         out["bbox"] = [vlist(bb.min), vlist(bb.max)]
+    if st.params and st.params.get("recomputed"):
+        # numbers the equations changed: the browser copies these features so it shows what was built
+        ids = {r["feature"] for r in st.params["recomputed"]}
+        out["equations"] = {"recomputed": st.params["recomputed"],
+                            "features": {f["id"]: f for f in st.evaluated.get("features", []) if f["id"] in ids}}
     return out
 
 

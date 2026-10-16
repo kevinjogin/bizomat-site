@@ -27,7 +27,7 @@ from mcp.types import CallToolResult, ImageContent, TextContent, ToolAnnotations
 
 from pydantic import Field
 
-from . import ai, artifacts, assembly, auth, features, geometry, importer, inspection, store
+from . import ai, artifacts, assembly, auth, features, geometry, importer, inspection, measure, store
 
 INSTRUCTIONS = """OpenSketch is a parametric CAD app that works like SOLIDWORKS. You build real feature trees
 (sketches with relations and dimensions, extrudes, revolves, fillets...) and assemblies with mates, in
@@ -385,9 +385,40 @@ async def add_mate(doc_id: str, type: MateType, refs: list[dict], value: float |
 
 @mcp.tool()
 async def delete_items(doc_id: str, components: list[str] | None = None, mates: list[str] | None = None,
-                       parts: list[str] | None = None) -> str:
-    """Delete components, mates or parts from an assembly by id (mates on deleted components go too)."""
-    return await _apply(doc_id, "delete_items", components=components, mates=mates, parts=parts)
+                       parts: list[str] | None = None, features: list[str] | None = None, part_id: str | None = None,
+                       delete_absorbed: bool | None = None, dry_run: bool | None = None) -> str:
+    """Delete components, mates or parts from an assembly (mates on deleted components go too), or features
+    from a part (part_id in an assembly). Features take their dependants with them, as in SOLIDWORKS: an
+    extrude whose sketch goes, a pattern left with nothing to copy, and sketches only they used (unless
+    delete_absorbed is false). Features that would break (a sketch on a deleted plane, a fillet whose edge
+    is gone) stay and show the error. dry_run=true reports deleted_with_it, absorbed, patterns_trimmed,
+    would_fail and would_warn (assemblies: mates that would fail) and deletes nothing. Dry-run first."""
+    return await _apply(doc_id, "delete_items", components=components, mates=mates, parts=parts, features=features,
+                        part_id=part_id, delete_absorbed=delete_absorbed, dry_run=dry_run)
+
+
+@mcp.tool()
+async def set_parameter(doc_id: str, name: str, expression: str | None = None, unit: str | None = None,
+                        comment: str | None = None, part_id: str | None = None, remove: bool | None = None,
+                        force: bool | None = None) -> str:
+    """Create, change or remove a global variable of a part (SOLIDWORKS Equations > Global Variables).
+    expression: a number or an equation using other variables ("2", "wall * 2", "length / 2 - 6", "1in";
+    units mm cm m in deg rad; functions abs min max sqrt round floor ceil sin cos tan in degrees). Every
+    equation using it is recomputed (sketches re-solved) and the part rebuilt. The result has the variables
+    with values and where each is used, `recomputed` (field, old, new) and `now_failing`. Put the sensible
+    range in comment. Use variables for the few numbers a designer would change (wall, length, hole size)."""
+    return await _apply(doc_id, "set_parameter", name=name, expression=expression, unit=unit, comment=comment,
+                        part_id=part_id, remove=remove, force=force)
+
+
+@mcp.tool()
+async def set_equation(doc_id: str, feature: str, field: str, expression: str | None = None,
+                       part_id: str | None = None) -> str:
+    """Drive one number with an equation of global variables: a feature field by name ("depth", "radius",
+    "count", "spacing", "dir2.depth") or a sketch dimension by its id or name ("D1"). Empty expression
+    removes the equation and keeps the current value. Equations can also be written directly in features:
+    "eq": {"depth": "wall * 5"} on a feature, "eq": "width" on a sketch dimension."""
+    return await _apply(doc_id, "set_equation", feature=feature, field=field, expression=expression, part_id=part_id)
 
 
 @mcp.tool()
@@ -426,7 +457,7 @@ async def request_part_file(doc_id: str, part_id: str, description: str, mcmaste
 # readout that names edges and faces by points, and a numeric inspect.
 
 BATCH_TOOLS = ("propose_features", "create_part", "insert_component", "add_mate", "delete_items", "standard_part",
-               "request_part_file", "check_interference", "find_mate_candidates")
+               "request_part_file", "check_interference", "find_mate_candidates", "set_parameter", "set_equation")
 MAX_BATCH_STEPS = 100
 
 
@@ -614,6 +645,36 @@ async def inspect_design(doc_id: str, part_id: str | None = None, sketches: bool
     change is 0 missed the body."""
     try:
         return await anyio.to_thread.run_sync(_inspect_sync, doc_id, part_id, sketches)
+    except store.NotFound:
+        return f"No document {doc_id!r}."
+
+
+def _measure_sync(doc_id, a, b, part_id) -> str:
+    rec = store.get(doc_id)
+    try:
+        out = measure.measure(rec["doc"], a, b, part_id)
+    except (measure.MeasureError, geometry.FeatureError) as exc:
+        return json.dumps({"error": str(exc)})
+    out.update(doc_id=doc_id, version=rec["version"])
+    return json.dumps(out)
+
+
+_PICK = ('{"face": ref} | {"edge": ref} | {"point": [x,y,z]} | {"name": "<face or edge name>"}, refs and names as '
+         'body_topology gives them; in an assembly add "component": "<id>" for assembly coordinates')
+
+
+@mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
+async def measure_items(doc_id: str, a: Annotated[dict, Field(description=_PICK)],
+                        b: Annotated[dict | None, Field(description="Optional second item, same form")] = None,
+                        part_id: str | None = None) -> str:
+    """Measure like SOLIDWORKS Evaluate > Measure. One item: area, length, diameter, axis, normal, whether a
+    cylinder is a hole, and for a planar face the round holes and slots through it (diameter, width,
+    centre distance, overall length, centres). Two items: min_distance with the closest points and delta,
+    center_distance between axes (holes, shafts, circular edges), axis_angle_deg, angle_deg and
+    plane_distance for planes, axis_to_plane distance. Use it to check positions, gaps and hole sizes that
+    volume and centre of mass cannot show, e.g. the clearance between two components."""
+    try:
+        return await anyio.to_thread.run_sync(_measure_sync, doc_id, a, b, part_id)
     except store.NotFound:
         return f"No document {doc_id!r}."
 

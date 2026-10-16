@@ -1,6 +1,7 @@
 // Runs the browser's sketch solver for the server (inspect_design): reads
 // {"sketches": [{id, entities, constraints}, ...]} on stdin and prints
-// {"<sketch id>": {dof, status, solved, conflicts, under}} on stdout.
+// {"<sketch id>": {dof, status, solved, conflicts, under}} on stdout. With "entities": true each result also
+// has the solved entities (used when an equation changes a sketch dimension on the server).
 // The same solver.js the browser uses, so the server never disagrees with the page.
 import { solveSketch } from './solver.js';
 
@@ -9,7 +10,8 @@ process.stdin.setEncoding('utf8');
 process.stdin.on('data', (c) => { raw += c; });
 process.stdin.on('end', () => {
   const out = {};
-  for (const s of JSON.parse(raw).sketches || []) {
+  const req = JSON.parse(raw);
+  for (const s of req.sketches || []) {
     const sketch = { entities: structuredClone(s.entities || []), constraints: structuredClone(s.constraints || []) };
     try {
       const r = solveSketch(sketch);
@@ -20,6 +22,7 @@ process.stdin.on('end', () => {
       }
       out[s.id] = { dof: r.dof, status: r.status, solved: r.ok, conflicts: [...r.conflicts], under };
       if (r.error) out[s.id].error = r.error;
+      if (req.entities) out[s.id].entities = sketch.entities;
     } catch (err) {
       out[s.id] = { error: String(err) };
     }
