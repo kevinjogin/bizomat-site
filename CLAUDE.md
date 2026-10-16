@@ -162,8 +162,8 @@ Phase 1 (part files), phase 2 (assemblies + live AI build), phase 3 (import, mot
 
 - Edge/face references are matched by midpoint/center, not full topological naming. body_topology
   indices are list order and change when the body changes; pass `ref`, never the index.
-- Sketch DOF in inspect_design needs node on the server (installed in the Docker image; the devcontainer
-  has it). The Fly image with node has not been deployed and checked yet.
+- Sketch DOF in inspect_design needs node on the server (Docker image: Debian nodejs 20, deployed to Fly
+  2026-10-17; the devcontainer has it). Not yet called through the real Claude connector.
 - batch runs on the server only (MCP). The in-app copilot still applies tools one at a time.
 - Mate references (plane / axis / point) are stored as geometry in part coordinates and re-matched to
   the nearest face after part edits; not topological. Mate picks: planar faces, cylindrical/conical
