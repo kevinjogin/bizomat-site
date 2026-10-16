@@ -3,8 +3,24 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
 import MotionVisual from '../../components/MotionVisual.astro';
 import '../../styles/tools.css';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { runInNewContext } from 'node:vm';
 
-const description = 'Use WORKOS by KEVOS® to compare costs, plan capacity, prepare quotes and assess projects. Calculations run in your browser without an account or installation.';
+// Tool data, calculations and guides are plain browser scripts in public/tools/ (see tests/tools-calculators.test.ts).
+// The directory cards are also rendered here at build time so the tool names are crawlable and indexed by site search.
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business'];
+const sandbox: { window: Record<string, any> } = { window: {} };
+for (const kind of ['data', 'guides']) {
+  for (const f of FILES) runInNewContext(readFileSync(join(process.cwd(), 'public', 'tools', `${kind}-${f}.js`), 'utf8'), sandbox);
+}
+const tools: Array<Record<string, any>> = sandbox.window.GOCORE_TOOLS;
+const guides: Record<string, any> = sandbox.window.WORKOS_GUIDES;
+const searchText = (t: Record<string, any>) => [t.name, t.category, t.question, t.description, ...(t.keywords || []), ...(guides[t.id]?.uses || []), ...(guides[t.id]?.users || [])].join(' ').toLowerCase();
+const TOOL_COUNT = tools.length;
+const CATEGORIES = ['Decide', 'Money', 'Projects', 'Operations', 'Manufacturing', 'Engineering', 'Quoting', 'Inventory', 'Improvement', 'Planning', 'Business'];
+const description =
+  'KEVOS® WORKOS engineering, manufacturing, operations and commercial decision tools with feasibility checks, sensitivity analysis and exportable decision reports.';
 ---
 
 <BaseLayout title="WORKOS calculators and decision tools" description={description} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'WORKOS', href: '/tools/' }]}>
@@ -13,30 +29,45 @@ const description = 'Use WORKOS by KEVOS® to compare costs, plan capacity, prep
       <div class="tools-intro">
         <div class="tools-intro__story">
           <div class="tools-intro__copy">
-        <p class="eyebrow">KEVOS® WORKOS</p>
-        <h1>Tools for better decisions.</h1>
-        <p class="lead">Compare costs, check capacity and work through project decisions. These engineering and business calculators run in your browser and are free to use.</p>
-        <div class="tools-meta" aria-label="Tool collection features"><span class="tools-pill free">57 free tools and 5 Pro</span><span class="tools-pill">No account</span><span class="tools-pill">Mobile friendly</span><span class="tools-pill">Calculate in your browser</span></div>
+            <p class="eyebrow">KEVOS® WORKOS</p>
+            <h1>Tools for better decisions.</h1>
+            <p class="lead">Engineering, manufacturing, operations and commercial decision tools. Each one explains its method, checks feasibility, tests sensitivity and produces a decision report you can share.</p>
+            <div class="tools-meta" aria-label="Tool collection features"><span class="tools-pill">{TOOL_COUNT} decision tools</span><span class="tools-pill">Decision reports</span><span class="tools-pill">Sensitivity analysis</span><span class="tools-pill">No account</span><span class="tools-pill">Runs in your browser</span></div>
           </div>
           <div class="tools-intro__visual"><MotionVisual page="tools" priority /></div>
         </div>
-        <div class="tools-search"><input id="tool-search" type="search" placeholder="What are you trying to work out?" aria-label="Search WORKOS tools" autocomplete="off" /><span class="tools-count" id="tool-count">62 tools</span></div>
+        <div class="tools-search"><input id="tool-search" type="search" placeholder="What are you trying to work out?" aria-label="Search WORKOS tools" autocomplete="off" /><span class="tools-count" id="tool-count">{TOOL_COUNT} tools</span></div>
         <div class="chips" aria-label="Filter tools by category">
-          <button class="chip active" type="button" data-cat="All">All</button><button class="chip" type="button" data-cat="Decide">Decide</button><button class="chip" type="button" data-cat="Money">Money</button><button class="chip" type="button" data-cat="Projects">Projects</button><button class="chip" type="button" data-cat="Operations">Operations</button><button class="chip" type="button" data-cat="Manufacturing">Manufacturing</button><button class="chip" type="button" data-cat="Quoting">Quoting</button><button class="chip" type="button" data-cat="Inventory">Inventory</button><button class="chip" type="button" data-cat="Improvement">Improvement</button><button class="chip" type="button" data-cat="Planning">Planning</button><button class="chip" type="button" data-cat="Business">Business</button>
+          <button class="chip active" type="button" data-cat="All" aria-pressed="true">All</button>{CATEGORIES.map((c) => <button class="chip" type="button" data-cat={c} aria-pressed="false">{c}</button>)}
         </div>
       </div>
-      <section class="featured-tools" aria-labelledby="featured-tools-title"><div class="featured-head"><div><p class="eyebrow">WORKOS Pro</p><h2 id="featured-tools-title">Work through the costs and trade-offs.</h2><p>Compare production costs, sourcing options, equipment effectiveness, capacity and improvement savings. Report features are planned for a later release.</p></div><span class="pro-label">5 Pro tools</span></div><div class="featured-grid" id="featured-grid"></div></section>
-      <div id="tool-directory"><div class="tool-grid" id="tool-grid"><p class="tools-empty" id="tools-empty" hidden>No matching tool yet. Try another term or category.</p></div></div>
-      <section class="workspace" id="tool-workspace" hidden aria-live="polite">
-        <div class="workspace-head"><div><p class="eyebrow" id="tool-category">Free tool</p><h2 id="tool-name">Tool</h2><p class="lead" id="tool-question"></p><p id="tool-description"></p></div><button class="btn secondary back-button" type="button" id="back-tools">← All tools</button></div>
+      <div id="tool-directory"><div class="tool-grid" id="tool-grid">{tools.map((t) => <a class="tool-card" href={`/tools/?tool=${t.id}`} data-tool-id={t.id} data-category={t.category} data-search={searchText(t)}><span class="card-top"><span class="category-label">{t.category}</span></span><h2>{t.name}</h2><p>{t.question}</p><span class="card-link">Open tool →</span></a>)}<p class="tools-empty" id="tools-empty" hidden>No matching tool yet. Try another term or category.</p></div></div>
+      <section class="workspace" id="tool-workspace" hidden>
+        <div class="workspace-head"><div><p class="eyebrow" id="tool-category">KEVOS® WORKOS</p><h2 id="tool-name">Tool</h2><p class="lead" id="tool-question"></p><p id="tool-description"></p></div><button class="btn secondary back-button" type="button" id="back-tools">← All tools</button></div>
         <div class="tool-layout">
           <form id="tool-form" class="panel" autocomplete="off"></form>
-          <div class="panel sticky"><div id="result" aria-live="polite"></div><div class="tool-actions"><button class="btn secondary" id="copy-result" type="button">Copy result</button><button class="btn secondary" id="print-result" type="button">Print or save as PDF</button><button class="btn secondary" id="share-tool" type="button">Share tool</button></div><p class="formula-note">WORKOS tools are screening and decision-support utilities. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p></div>
+          <div class="panel sticky">
+            <div id="result" aria-live="polite"></div>
+            <div class="tool-actions">
+              <button class="btn" id="download-report" type="button">Download report</button>
+              <button class="btn secondary" id="print-result" type="button">Print or save as PDF</button>
+              <button class="btn secondary" id="copy-result" type="button">Copy summary</button>
+              <button class="btn secondary" id="share-tool" type="button">Share with inputs</button>
+            </div>
+            <p class="tool-flash" id="tool-flash" role="status"></p>
+            <p class="formula-note">WORKOS tools are screening and decision-support utilities. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p>
+          </div>
         </div>
+        <div class="tool-analysis" id="tool-analysis"></div>
+        <div class="tool-guide" id="tool-guide"></div>
         <aside class="custom-cta"><div><h2>Need a tool for your own calculation?</h2><p>If your business uses a spreadsheet, repeated formula or manual decision process, KEVOS® can help turn it into a focused browser tool.</p></div><a href="/contact/">Discuss a custom tool →</a></aside>
       </section>
     </Container>
   </section>
-  <script is:inline src="/tools/data-1.js"></script><script is:inline src="/tools/data-2.js"></script><script is:inline src="/tools/data-3.js"></script><script is:inline src="/tools/data-4.js"></script><script is:inline src="/tools/data-5.js"></script><script is:inline src="/tools/data-6.js"></script><script is:inline src="/tools/data-7.js"></script>
-  <script is:inline src="/tools/core.js"></script><script is:inline src="/tools/calc-1.js"></script><script is:inline src="/tools/calc-2.js"></script><script is:inline src="/tools/calc-3.js"></script><script is:inline src="/tools/calc-4.js"></script><script is:inline src="/tools/calc-5.js"></script><script is:inline src="/tools/calc-6.js"></script><script is:inline src="/tools/calc-7.js"></script><script is:inline src="/tools/ui.js"></script>
+  <div class="print-report" id="print-report" hidden></div>
+  {FILES.map((f) => <script is:inline src={`/tools/data-${f}.js`}></script>)}
+  {FILES.map((f) => <script is:inline src={`/tools/guides-${f}.js`}></script>)}
+  <script is:inline src="/tools/core.js"></script>
+  {FILES.map((f) => <script is:inline src={`/tools/calc-${f}.js`}></script>)}
+  <script is:inline src="/tools/ui.js"></script>
 </BaseLayout>
