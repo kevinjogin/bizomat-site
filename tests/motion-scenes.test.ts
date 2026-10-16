@@ -30,6 +30,17 @@ test('all eight KEVOS pages use a purpose-built responsive motion scene', () => 
   }
 });
 
+test('Factory Fix and the assessment have their own reduced-motion-safe hero scenes', () => {
+  const pages = { 'src/pages/factory-fix.astro': ['FactoryFixArt', 'src/components/FactoryFixArt.astro'], 'src/pages/assessment/index.astro': ['AssessmentHeroArt', 'src/components/assessment/AssessmentHeroArt.astro'] };
+  for (const [page, [name, file]] of Object.entries(pages)) {
+    assert.match(read(page), new RegExp(`<${name}\\b`), `${page} shows ${name}`);
+    const art = read(file);
+    assert.match(art, /<svg\b/);
+    assert.match(art, /prefers-reduced-motion: no-preference/);
+    assert.doesNotMatch(art, /<script|<img\b/);
+  }
+});
+
 test('home, services, insights and about share the genuine four-square KEVOS orbit', () => {
   const home = read('src/pages/index.astro');
   const orbit = read('src/components/ServiceMap.astro');

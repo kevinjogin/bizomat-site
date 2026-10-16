@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
+import FactoryFixArt from '../components/FactoryFixArt.astro';
 import Section from '../components/Section.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import Button from '../components/Button.astro';
@@ -45,6 +46,7 @@ const offer = {
   schema={[offer]}
 >
   <Hero eyebrow="KEVOS® Factory Fix · From A$990" title="One problem. A <em>practical</em> plan to fix it." lead={FACTORY_FIX.summary}>
+    <FactoryFixArt slot="visual" />
     <Breadcrumb items={crumbs} slot="before" />
     <Fragment slot="actions">
       <Button href="/contact/?service=factory-fix" arrow data-cta="factory-fix-hero">Discuss a Factory Fix</Button>
