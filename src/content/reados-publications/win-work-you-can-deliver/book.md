@@ -65,10 +65,10 @@ references:
     url: "https://www.cyber.gov.au/sites/default/files/2025-03/Small%20business%20cybersecurity%20guide%20%28January%202025%29.pdf"
     note: "Further reading for protecting the simple business records described in Chapter 10."
 related:
-  - title: "Sales, Marketing and Customer Decisions — Part 1"
-    href: "/reados/collections/sales-marketing-and-customers-part-01/"
-  - title: "Operations and Workflow Systems"
-    href: "/reados/collections/operations-and-workflow/"
+  - title: "Selling and Business Development"
+    href: "/reados/collections/selling-and-business-development/"
+  - title: "Business Systems and Operating Rhythm"
+    href: "/reados/collections/business-systems-and-operating-rhythm/"
   - title: "Read the Numbers, Understand the Business"
     href: "/library/read-the-numbers-understand-the-business/"
 ---

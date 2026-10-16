@@ -46,7 +46,7 @@ test('no two covers in the catalogue are the same', () => {
 });
 
 test('parts of a series keep their illustration but change colourway', () => {
-  const tones = [1, 2, 3, 4].map((p) => coverSpec({ slug: `strategy-and-competitive-advantage-part-0${p}`, title: 'x', category: 'Business' }));
+  const tones = [1, 2, 3, 4].map((p) => coverSpec({ slug: `competitive-strategy-and-positioning-part-0${p}`, title: 'x', category: 'Business' }));
   assert.equal(new Set(tones.map((t) => t.motif)).size, 1);
   assert.equal(new Set(tones.map((t) => t.tone)).size, 4);
   assert.equal(tones[1].series, 'PART 02');

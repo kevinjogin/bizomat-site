@@ -14,7 +14,11 @@ export type CoverMotif =
   | 'launch' | 'exploded'
   | 'shield' | 'ledger' | 'contour' | 'funnel' | 'team' | 'venture' | 'decision' | 'compass'
   | 'experiment' | 'orbit'
-  | 'lens' | 'pathway';
+  | 'lens' | 'pathway'
+  | 'holdings' | 'cashflow' | 'breakeven' | 'bubbles' | 'scales' | 'tender' | 'supply' | 'estimate' | 'gates' | 'handover'
+  | 'expansion' | 'megaphone' | 'dialogue' | 'summit' | 'ladder' | 'streak' | 'leaf' | 'archive'
+  | 'join' | 'locks' | 'cube' | 'solid' | 'search' | 'crane' | 'geartrain' | 'pump' | 'lathe' | 'barcode' | 'specsheet'
+  | 'waterwheel' | 'pylon' | 'mind' | 'triangle' | 'code';
 
 export type Shape =
   | { t: 'path'; d: string; c?: string; len?: boolean }
@@ -33,33 +37,58 @@ export const COVER_TONES: readonly CoverTone[] = ['graphite', 'ember', 'paper', 
 
 /** One illustration per READOS subject (keys match the subject slugs in reados-collections.ts). */
 export const TOPIC_COVERS: Record<string, Look> = {
-  'databases-and-data-models': { motif: 'database', tone: 'paper' },
-  'ai-and-machine-learning': { motif: 'neural', tone: 'graphite' },
-  'digital-systems-and-integration': { motif: 'integration', tone: 'ember' },
-  'product-design-and-cad': { motif: 'drawing', tone: 'graphite' },
-  'engineering-practice': { motif: 'beam', tone: 'carbon' },
-  'tooling-and-fixtures': { motif: 'fixture', tone: 'graphite' },
-  'production-and-quality': { motif: 'production', tone: 'ember' },
-  'lean-and-continuous-improvement': { motif: 'cycle', tone: 'graphite' },
-  'operations-and-workflow': { motif: 'workflow', tone: 'paper' },
+  'reading-financial-statements': { motif: 'ledger', tone: 'paper' },
+  'acquisitions-groups-and-investment-accounting': { motif: 'holdings', tone: 'graphite' },
+  'investment-appraisal-and-business-cases': { motif: 'cashflow', tone: 'ember' },
+  'valuing-time-delay-and-uncertainty': { motif: 'decision', tone: 'carbon' },
+  'pricing-margins-and-profitability': { motif: 'breakeven', tone: 'paper' },
+  'booms-bubbles-and-business-cycles': { motif: 'bubbles', tone: 'graphite' },
+  'starting-funding-and-structuring-a-business': { motif: 'venture', tone: 'paper' },
+  'commercial-law-and-contracts': { motif: 'scales', tone: 'carbon' },
+  'procurement-and-tendering': { motif: 'tender', tone: 'ember' },
+  'suppliers-contractors-and-government-work': { motif: 'supply', tone: 'graphite' },
+  'project-estimates-schedules-and-costs': { motif: 'estimate', tone: 'paper' },
+  'project-sponsors-governance-and-decisions': { motif: 'gates', tone: 'carbon' },
+  'from-approval-to-benefits': { motif: 'handover', tone: 'ember' },
+  'competitive-strategy-and-positioning': { motif: 'contour', tone: 'carbon' },
+  'growth-business-models-and-new-markets': { motif: 'expansion', tone: 'ember' },
+  'selling-and-business-development': { motif: 'funnel', tone: 'graphite' },
+  'marketing-brands-and-customer-experience': { motif: 'megaphone', tone: 'paper' },
+  'communication-and-professional-presence': { motif: 'dialogue', tone: 'graphite' },
+  'leading-people-and-change': { motif: 'summit', tone: 'ember' },
+  'teams-incentives-and-performance': { motif: 'team', tone: 'paper' },
+  'careers-confidence-and-personal-effectiveness': { motif: 'ladder', tone: 'carbon' },
+  'work-habits-that-stick': { motif: 'streak', tone: 'ember' },
+  'risk-controls-and-assurance': { motif: 'shield', tone: 'ember' },
+  'sustainability-and-environmental-management': { motif: 'leaf', tone: 'paper' },
+  'business-systems-and-operating-rhythm': { motif: 'workflow', tone: 'graphite' },
+  'records-business-data-and-learning': { motif: 'archive', tone: 'carbon' },
+  'database-foundations-for-business': { motif: 'database', tone: 'paper' },
+  'sql-queries-and-data-correctness': { motif: 'join', tone: 'graphite' },
+  'database-performance-concurrency-and-change': { motif: 'locks', tone: 'carbon' },
+  'reporting-history-and-analytical-data': { motif: 'cube', tone: 'ember' },
+  'cad-drafting-and-drawing-standards': { motif: 'drawing', tone: 'graphite' },
+  'cad-modelling-and-design-intent': { motif: 'solid', tone: 'paper' },
+  'ai-in-business-practice': { motif: 'neural', tone: 'graphite' },
+  'decision-making-machines': { motif: 'search', tone: 'carbon' },
+  'business-systems-security-and-it-decisions': { motif: 'integration', tone: 'ember' },
   'project-planning-and-control': { motif: 'gantt', tone: 'graphite' },
+  'project-delivery-procurement-and-governance': { motif: 'crane', tone: 'ember' },
+  'machine-elements-and-mechanical-design': { motif: 'geartrain', tone: 'graphite' },
+  'fluids-hvac-and-building-services': { motif: 'pump', tone: 'paper' },
+  'engineering-design-practice': { motif: 'beam', tone: 'carbon' },
+  'machining-and-metal-parts': { motif: 'lathe', tone: 'carbon' },
+  'manufacturing-quality': { motif: 'production', tone: 'ember' },
+  'manufacturing-operations-and-design-for-manufacture': { motif: 'fixture', tone: 'graphite' },
+  'lean-and-continuous-improvement': { motif: 'cycle', tone: 'graphite' },
+  'operational-data-records-and-controls': { motif: 'barcode', tone: 'paper' },
   'product-development-and-launch': { motif: 'launch', tone: 'ember' },
-  'risk-compliance-and-governance': { motif: 'shield', tone: 'ember' },
-  'finance-and-financial-statements': { motif: 'ledger', tone: 'paper' },
-  'strategy-and-competitive-advantage': { motif: 'contour', tone: 'carbon' },
-  'sales-marketing-and-customers': { motif: 'funnel', tone: 'graphite' },
-  'leading-people-and-teams': { motif: 'team', tone: 'graphite' },
-  'starting-and-running-a-business': { motif: 'venture', tone: 'paper' },
-  'business-processes-and-decisions': { motif: 'decision', tone: 'carbon' },
-  'exploring-and-testing-ideas': { motif: 'experiment', tone: 'paper' },
-  'commercial-law-and-contracts': { motif: 'compass', tone: 'paper' },
-  'engineering-history': { motif: 'factory', tone: 'ember' },
-  'machining-and-metal-parts': { motif: 'gauge', tone: 'paper' },
-  'machine-elements-and-mechanical-design': { motif: 'exploded', tone: 'paper' },
-  'fluids-hvac-and-building-services': { motif: 'network', tone: 'graphite' },
+  'specifications-product-quality-and-sustainability': { motif: 'specsheet', tone: 'graphite' },
+  'engineering-history': { motif: 'waterwheel', tone: 'ember' },
+  'judgement-markets-and-learning': { motif: 'mind', tone: 'carbon' },
 };
 
-/** Category illustrations, used by each category's Practical Perspectives book and its archive volumes. */
+/** Category illustrations, used by each category's Further Reading book and its archive volumes. */
 export const CATEGORY_COVERS: Record<string, Look> = {
   engineering: { motif: 'geometry', tone: 'paper' },
   manufacturing: { motif: 'factory', tone: 'carbon' },
@@ -97,7 +126,7 @@ export function coverSpec({ slug, title, category, motif }: { slug: string; titl
     series = `VOLUME ${pad(n)}`;
   } else {
     const topic = part ? part[1] : slug;
-    const practical = /^([a-z]+)-practical-perspectives$/.exec(topic);
+    const practical = /^([a-z]+)-(?:further-reading|practical-perspectives)$/.exec(topic);
     look = TOPIC_COVERS[topic] ?? (practical && CATEGORY_COVERS[practical[1]]) ?? { motif: fallback.motif, tone: COVER_TONES[seed % COVER_TONES.length] };
     if (part) { n = Number(part[2]); series = `PART ${pad(n)}`; }
   }
@@ -1135,10 +1164,628 @@ function compassRoute({ r }: Ctx): Shape[] {
   return s;
 }
 
+/* ---------- Edited-book illustrations (one per READOS book subject) ---------- */
+
+const arrowHead = (x: number, y: number, dir: 'r' | 'u' | 'd', c = 'la'): Shape =>
+  path(dir === 'r' ? `M${x - 5} ${y - 5}L${x} ${y}L${x - 5} ${y + 5}` : dir === 'u' ? `M${x - 5} ${y + 5}L${x} ${y}L${x + 5} ${y + 5}` : `M${x - 5} ${y - 5}L${x} ${y}L${x + 5} ${y - 5}`, c);
+
+function star(cx: number, cy: number, R: number) {
+  const p = Array.from({ length: 10 }, (_, i) => {
+    const a = -Math.PI / 2 + (i * Math.PI) / 5, rad = i % 2 ? R * 0.45 : R;
+    return [cx + rad * Math.cos(a), cy + rad * Math.sin(a)];
+  });
+  return `${line(p)}Z`;
+}
+
+/** Acquisitions, Groups and Investment Accounting: a parent company, its holdings and the consolidated statement. */
+function holdings({ r }: Ctx): Shape[] {
+  const s: Shape[] = [];
+  const P = [104, 34];
+  const pct = [100, 51 + Math.floor(r() * 25), 15 + Math.floor(r() * 10)];
+  const kids = [[40, 122], [104, 134], [168, 122]];
+  s.push(rect(P[0] - 40, P[1] - 18, 80, 36, 'bxa', 4), rect(P[0] - 26, P[1] - 6, 52, 4, 'fa'), rect(P[0] - 26, P[1] + 3, 34, 3, 'fl'));
+  kids.forEach(([x, y], i) => {
+    const mid = f((P[1] + 18 + y - 16) / 2);
+    s.push(path(`M${P[0]} ${P[1] + 18}V${mid}H${x}V${y - 16}`, i === 0 ? 'la an-flow' : pct[i] > 50 ? 'ln' : 'ln dsh'));
+    s.push(rect(x - 28, y - 16, 56, 32, 'bx', 4), rect(x - 18, y - 5, 36, 3, 'fl'), rect(x - 18, y + 3, between(r, 14, 32), 3, 'fl'));
+    s.push(text(x + 5, mid + 16, `${pct[i]}%`, 'tx'));
+  });
+  s.push(path('M40 140V172H168V140M104 152V172', 'lf'), path('M168 172H252V160', 'la an-flow'), arrowHead(252, 156, 'u'));
+  s.push(rect(222, 30, 64, 122, 'bx', 4), rect(222, 30, 64, 18, 'fa', 4));
+  for (let i = 0; i < 3; i++) s.push(rect(230, 58 + i * 12, between(r, 28, 46), 3, 'fl'));
+  for (let i = 0; i < 4; i++) {
+    const h = 14 + r() * 26;
+    s.push(group(cls('an-grow', dl(i)), [rect(230 + i * 13, 144 - h, 9, h, i === 3 ? 'fa' : 'fl', 1)]));
+  }
+  return s;
+}
+
+/** Investment Appraisal and Business Cases: discounted cash flows and the cumulative line crossing to payback. */
+function cashflow({ r }: Ctx): Shape[] {
+  const s: Shape[] = [];
+  const x0 = 26, axis = 104, n = 6, w = 26, gap = 14;
+  s.push(path(`M${x0 - 8} ${axis}H${x0 + n * (w + gap)}`, 'ln'), path(`M${x0 - 8} 18V196`, 'lf'));
+  const flows = [-(70 + r() * 16)];
+  for (let i = 1; i < n; i++) flows.push(28 + r() * 22);
+  let cum = 0;
+  const pts: number[][] = [];
+  flows.forEach((v, i) => {
+    const x = x0 + i * (w + gap), disc = v > 0 ? v * Math.pow(0.86, i) : v;
+    if (v < 0) s.push(rect(x, axis, w, -v, 'fl', 2));
+    else s.push(rect(x, axis - v, w, v, 'ff', 2), group(cls('an-grow', dl(i)), [rect(x + 4, axis - disc, w - 8, disc, 'fa', 2)]));
+    cum += disc;
+    pts.push([x + w / 2, axis - cum * 0.55]);
+  });
+  s.push(path(line(pts), 'la an-draw', true));
+  const cross = pts.findIndex((p) => p[1] <= axis);
+  if (cross > 0) s.push(circle(pts[cross][0], pts[cross][1], 4, 'bxa'), circle(pts[cross][0], pts[cross][1], 9, 'la an-ripple'));
+  s.push(rect(236, 18, 56, 36, 'bx', 4), text(264, 32, 'NPV', 'tx', 'middle'), text(264, 48, `+${Math.round(cum)}k`, 'txa', 'middle'));
+  return s;
+}
+
+/** Pricing, Margins and Profitability: a price tag, a margin bar and the break-even crossing. */
+function breakeven({ r }: Ctx): Shape[] {
+  const s: Shape[] = [group('an-tilt', [path('M20 40H84L104 62L84 84H20Z', 'bxa'), circle(32, 62, 5, 'fn'), text(64, 68, '$', 'txb', 'middle')])];
+  s.push(rect(20, 112, 84, 14, 'fl', 2), group('an-growx', [rect(20, 112, between(r, 34, 54), 14, 'fa', 2)]), text(20, 144, 'MARGIN', 'tx'));
+  const X0 = 128, Y0 = 186, W = 162, H = 160;
+  s.push(path(`M${X0} ${Y0 - H}V${Y0}H${X0 + W}`, 'ln'));
+  const fixed = Y0 - 40 - r() * 10, vs = 0.45 + r() * 0.1, rs = 0.95;
+  const cost = (x: number) => fixed - (x - X0) * vs, rev = (x: number) => Y0 - (x - X0) * rs;
+  const bx = X0 + (Y0 - fixed) / (rs - vs);
+  s.push(path(`M${X0} ${f(fixed)}H${X0 + W}`, 'lf dsh'), path(`M${X0} ${f(fixed)}L${X0 + W} ${f(cost(X0 + W))}`, 'ln'));
+  s.push(path(`M${f(bx)} ${f(rev(bx))}L${X0 + W} ${f(rev(X0 + W))}L${X0 + W} ${f(cost(X0 + W))}Z`, 'fa o3'));
+  s.push(path(`M${X0} ${Y0}L${X0 + W} ${f(rev(X0 + W))}`, 'la an-draw', true));
+  s.push(path(`M${f(bx)} ${f(rev(bx))}V${Y0}`, 'cl'), circle(bx, rev(bx), 4.5, 'bxa'), circle(bx, rev(bx), 10, 'la an-ripple'));
+  return s;
+}
+
+/** Booms, Bubbles and Business Cycles: a cycle that overshoots its trend, with bubbles rising off the peak. */
+function boomBust({ r }: Ctx): Shape[] {
+  const ph = r();
+  const pts = Array.from({ length: 9 }, (_, i) => [16 + i * 34, 150 - Math.sin(i * 0.9 + ph) * 26 - (i === 5 ? 50 : i === 4 || i === 6 ? 18 : 0) - i * 3]);
+  const s: Shape[] = [path('M16 158L288 124', 'lf dsh'), path(openSmooth(pts), 'ln'), path(openSmooth(pts), 'la an-draw', true)];
+  const peak = pts[5];
+  for (let k = 0; k < 6; k++) s.push(circle(peak[0] - 18 + k * 7 + r() * 6, peak[1] - 4, 3 + r() * 5, cls('ln an-bubble', dl(k))));
+  s.push(path(spark(peak[0] + 4, Math.max(18, peak[1] - 52), 9), 'fa an-pulse'));
+  s.push(path('M16 196H288', 'ln'));
+  for (let i = 0; i < 9; i++) {
+    const h = 4 + r() * 14 + (i === 5 ? 10 : 0);
+    s.push(rect(20 + i * 32, 196 - h, 14, h, i === 5 ? 'fa' : 'fl', 1));
+  }
+  return s;
+}
+
+/** Commercial Law, Contracts and Disputes: balanced scales beside a signed and sealed contract. */
+function scales({ r }: Ctx): Shape[] {
+  const cx = 102;
+  const pan = (x: number, load: boolean): Shape[] => [
+    path(`M${x} 46L${x - 22} 104M${x} 46L${x + 22} 104`, 'lf'), path(`M${x - 28} 104Q${x} 122 ${x + 28} 104Z`, 'bx'),
+    load ? rect(x - 12, 92, 24, 10, 'fa', 2) : circle(x, 98, 6, 'fl'),
+  ];
+  const s: Shape[] = [path(`M${cx} 30V172M${cx - 34} 182H${cx + 34}M${cx - 20} 172H${cx + 20}`, 'ln wide'), circle(cx, 26, 6, 'fa')];
+  s.push(group('an-balance', [path(`M${cx - 72} 46H${cx + 72}`, 'ln xbold'), ...pan(cx - 72, true), ...pan(cx + 72, false)]));
+  const dx = 212, dy = f(between(r, 26, 38));
+  s.push(path(`M${dx} ${dy}H${dx + 56}L${dx + 70} ${dy + 14}V${dy + 142}H${dx}Z`, 'bx'), path(`M${dx + 56} ${dy}V${dy + 14}H${dx + 70}`, 'ln'));
+  for (let i = 0; i < 6; i++) s.push(rect(dx + 10, dy + 26 + i * 14, between(r, 30, 52), 3, i === 0 ? 'fa' : 'fl'));
+  s.push(path(`M${dx + 10} ${dy + 124}c8 -10 14 6 22 -4s10 6 18 -2`, 'la an-draw', true), circle(dx + 56, dy + 118, 9, 'fa'), circle(dx + 56, dy + 118, 14, 'la an-ripple'));
+  return s;
+}
+
+/** Procurement and Tendering: three quotes, their evaluation scores and the selected offer. */
+function tender({ r }: Ctx): Shape[] {
+  const s: Shape[] = [];
+  const win = Math.floor(r() * 3);
+  for (let i = 0; i < 3; i++) {
+    const x = 18 + i * 62, y = 26 + Math.abs(1 - i) * 10;
+    s.push(rect(x, y, 54, 78, i === win ? 'bxa' : 'bx', 4), rect(x + 8, y + 10, 30, 4, i === win ? 'fa' : 'fl'));
+    for (let k = 0; k < 3; k++) s.push(rect(x + 8, y + 22 + k * 10, between(r, 20, 38), 3, 'fl'));
+    s.push(text(x + 27, y + 68, `$${Math.round(between(r, 40, 90))}k`, 'tx', 'middle'));
+  }
+  s.push(path('M18 128V188H200', 'ln'));
+  for (let i = 0; i < 3; i++) {
+    const h = i === win ? 52 : 18 + r() * 24;
+    s.push(group(cls('an-grow', dl(i)), [rect(32 + i * 62, 188 - h, 26, h, i === win ? 'fa' : 'fl', 2)]));
+  }
+  s.push(path(`M${18 + win * 62 + 54} 62Q206 62 218 76`, 'la an-flow'));
+  s.push(circle(252, 92, 32, 'bxa'), path('M237 92l10 11 20-24', 'la xbold an-draw', true), circle(252, 92, 40, 'la an-ripple'));
+  return s;
+}
+
+/** Suppliers, Contractors and Government Work: suppliers linked into a delivery chain that reaches the site. */
+function supply({ r }: Ctx): Shape[] {
+  const s: Shape[] = [];
+  [40, 96, 152].forEach((y, i) => s.push(rect(14, y - 18, 58, 36, i === 1 ? 'bxa' : 'bx', 4), rect(24, y - 6, between(r, 28, 38), 3, 'fl'), rect(24, y + 3, between(r, 18, 32), 3, 'fl')));
+  s.push(path('M72 40C100 40 100 96 122 96M72 152C100 152 100 96 122 96', 'ln'), path('M72 96H122', 'la an-flow'));
+  for (let k = 0; k < 3; k++) s.push(ellipse(136 + k * 16, 96, 11, 7, k % 2 ? 'la' : 'ln'));
+  s.push(path('M118 182H290', 'ln'), path('M118 192H290', 'lf dsh'));
+  s.push(group('an-convey', [rect(122, 154, 34, 22, 'bx', 2), path('M156 160h12l8 9v7h-20z', 'bxa'), circle(132, 178, 5, 'fi'), circle(164, 178, 5, 'fi')]));
+  s.push(path('M222 62L256 40L290 62V132H222Z', 'bx'), rect(234, 78, 14, 14, 'fl'), rect(264, 78, 14, 14, 'fl'), rect(249, 104, 16, 28, 'fa'));
+  s.push(path('M186 96H216', 'la'), arrowHead(216, 96, 'r'));
+  return s;
+}
+
+/** Project Estimates, Schedules and Costs: an S-curve inside its widening uncertainty band, with P10–P90 ranges. */
+function estimate({ r }: Ctx): Shape[] {
+  const X0 = 22, Y0 = 186, W = 192, H = 160;
+  const sc = (t: number) => 1 / (1 + Math.exp(-9 * (t - 0.5)));
+  const mid = Array.from({ length: 11 }, (_, i) => [X0 + (W * i) / 10, Y0 - H * 0.8 * sc(i / 10)]);
+  const up = mid.map(([x, y], i) => [x, y - (i / 10) ** 1.4 * 30]), lo = mid.map(([x, y], i) => [x, Math.min(Y0, y + (i / 10) ** 1.4 * 30)]);
+  const s: Shape[] = [path(`M${X0} ${Y0 - H}V${Y0}H${X0 + W + 8}`, 'ln'), path(`${line(up)}L${[...lo].reverse().map(pt).join('L')}Z`, 'ff')];
+  s.push(path(line(up), 'lf dsh'), path(line(lo), 'lf dsh'), path(line(mid), 'la an-draw', true));
+  const tx = X0 + W * between(r, 0.4, 0.62);
+  s.push(path(`M${f(tx)} ${Y0 - H}V${Y0}`, 'cl'), circle(tx, Y0 - H * 0.8 * sc((tx - X0) / W), 4, 'fa an-pulse'));
+  for (let i = 0; i < 3; i++) {
+    const y = 46 + i * 46, a = 232 + r() * 6, b = a + 30 + r() * 20, m = (a + b) / 2 + between(r, -6, 6);
+    s.push(path(`M${f(a)} ${y}H${f(b)}M${f(a)} ${y - 6}V${y + 6}M${f(b)} ${y - 6}V${y + 6}`, 'ln'), circle(m, y, 4.5, cls('fa an-pulse', dl(i))));
+  }
+  s.push(text(262, 190, 'P10–P90', 'tx', 'middle'));
+  return s;
+}
+
+/** Project Sponsors, Governance and Decisions: stage gates along the route, one opening on a go decision. */
+function gates({ r }: Ctx): Shape[] {
+  const s: Shape[] = [path('M12 150H292', 'ln'), path('M12 150H292', 'la an-flow o5')];
+  const open = 1 + Math.floor(r() * 2);
+  for (let i = 0; i < 4; i++) {
+    const x = 52 + i * 64;
+    s.push(rect(x - 4, 96, 8, 54, 'bx', 2), text(x, 170, `G${i + 1}`, 'tx', 'middle'));
+    if (i < open) s.push(path(`M${x} 100L${x + 24} 64`, 'la xbold'));
+    else if (i === open) s.push(group('an-swing', [path(`M${x} 100H${x + 44}`, 'ln xbold'), rect(x + 14, 97, 8, 6, 'fa')]));
+    else s.push(path(`M${x} 100H${x + 44}`, 'ln xbold'), rect(x + 14, 97, 8, 6, 'fl'));
+  }
+  s.push(...person(between(r, 22, 30), 128, between(r, 14, 16), 'fa'));
+  s.push(path('M262 14L286 38L262 62L238 38Z', 'bxa'), text(262, 42, 'GO', 'txs', 'middle'), path('M262 62V84', 'la an-flow'));
+  return s;
+}
+
+/** From Approval to Benefits: an approved case, the handover key and the benefits curve that follows. */
+function handover({ r }: Ctx): Shape[] {
+  const s: Shape[] = [rect(16, 22, 64, 86, 'bx', 4)];
+  for (let i = 0; i < 4; i++) s.push(rect(26, 34 + i * 11, between(r, 26, 44), 3, i === 0 ? 'fa' : 'fl'));
+  s.push(circle(62, 88, 13, 'bxa'), path('M55 88l5 5 9-10', 'la wide'));
+  s.push(group('an-bob', [circle(116, 64, 12, 'la'), circle(116, 64, 4, 'fn'), path('M128 64H166M154 64v10M162 64v7', 'la wide')]));
+  s.push(path('M196 30L241 12L286 30V108H196Z', 'bx'));
+  for (let i = 0; i < 6; i++) s.push(rect(206 + (i % 3) * 26, 40 + Math.floor(i / 3) * 26, 16, 16, cls(i === 4 ? 'fa' : 'fl', 'an-pulse', dl(i))));
+  s.push(path('M16 192H290', 'ln'), path('M16 130V192', 'lf'));
+  const k = 6 + r() * 3;
+  const pts = Array.from({ length: 9 }, (_, i) => [16 + i * 34, 188 - (i < 3 ? 2 : (i - 2) ** 1.25 * k)]);
+  s.push(path(openSmooth(pts), 'la an-draw', true), path('M118 128V192', 'cl'), text(124, 140, 'HANDOVER', 'tx'));
+  return s;
+}
+
+/** Growth, Business Models and New Markets: a business model canvas feeding widening market rings. */
+function expansion({ r }: Ctx): Shape[] {
+  const gx = 14, gy = 28, gw = 120, gh = 100;
+  const s: Shape[] = [rect(gx, gy, gw, gh, 'bx', 3)];
+  s.push(path(`M${gx + 24} ${gy}V${gy + 70}M${gx + 48} ${gy}V${gy + 70}M${gx + 72} ${gy}V${gy + 70}M${gx + 96} ${gy}V${gy + 70}M${gx} ${gy + 70}H${gx + gw}M${gx + 60} ${gy + 70}V${gy + gh}M${gx + 24} ${gy + 35}H${gx + 48}M${gx + 72} ${gy + 35}H${gx + 96}`, 'lf'));
+  s.push(rect(gx + 49.5, gy + 1.5, 21, 67, 'fa o85', 2), text(gx, 148, 'MODEL', 'tx'), rect(gx, 158, 90, 4, 'fl'), rect(gx, 168, 64, 4, 'fl'));
+  const cx = 214, cy = 112;
+  for (let k = 1; k <= 3; k++) s.push(circle(cx, cy, 22 * k, k === 3 ? 'lf dsh' : 'lf'));
+  s.push(circle(cx, cy, 22, 'la an-ripple'), circle(cx, cy, 10, 'fa'));
+  for (let i = 0; i < 9; i++) {
+    const a = r() * Math.PI * 2, d = 28 + r() * 36;
+    s.push(circle(cx + d * Math.cos(a), cy + d * Math.sin(a), 3, cls(d > 46 ? 'fl' : 'fs', 'an-pulse', dl(i))));
+  }
+  for (const a of [-0.6, 0.3, 1.4]) s.push(path(`M${pt([cx + 24 * Math.cos(a), cy + 24 * Math.sin(a)])}L${pt([cx + 72 * Math.cos(a), cy + 72 * Math.sin(a)])}`, 'la an-flow'));
+  s.push(path('M136 78H164', 'la'), arrowHead(164, 78, 'r'));
+  return s;
+}
+
+/** Marketing, Brands and Customer Experience: a megaphone reaching customers who rate the experience. */
+function megaphone({ r }: Ctx): Shape[] {
+  const s: Shape[] = [group('an-tilt', [path('M40 84H64L126 48V152L64 116H40Z', 'bxa'), rect(28, 86, 12, 28, 'bx', 2), path('M60 116L70 148H84L78 116', 'bx')])];
+  const wo = between(r, -4, 4);
+  for (let k = 0; k < 3; k++) s.push(path(`M${146 + k * 18} ${f(70 - k * 8 + wo)}Q${164 + k * 22} 100 ${146 + k * 18} ${f(130 + k * 8 - wo)}`, cls('la an-pulse', dl(k * 2))));
+  const lit = 3 + Math.floor(r() * 2);
+  for (let i = 0; i < 5; i++) s.push(path(star(178 + i * 26, 182, 10), i < lit ? cls('fa an-pulse', dl(i)) : 'bx'));
+  s.push(rect(224, 18, 66, 42, 'bx', 8), path('M238 60l-4 12 14-12', 'bx'), path('M257 34c-6-7-16 0-8 9l8 7 8-7c8-9-2-16-8-9z', 'fa'));
+  return s;
+}
+
+/** Communication and Professional Presence: two people in conversation, with the voice between them. */
+function dialogue({ r }: Ctx): Shape[] {
+  const s: Shape[] = [...person(54, 160, 30, 'bx'), ...person(250, 160, 30, 'bxa')];
+  s.push(group('an-up', [rect(18, 26, 118, 52, 'bx', 12), path('M48 78l-6 16 22-16', 'bx'), rect(34, 42, between(r, 60, 86), 4, 'fl'), rect(34, 54, between(r, 40, 70), 4, 'fl')]));
+  s.push(group('an-down', [rect(168, 44, 118, 52, 'bxa', 12), path('M252 96l8 16-22-16', 'bxa'), rect(184, 60, between(r, 60, 86), 4, 'fa'), rect(184, 72, between(r, 40, 70), 4, 'fl')]));
+  for (let i = 0; i < 9; i++) {
+    const h = 6 + Math.abs(Math.sin(i * 1.3 + r())) * 34;
+    s.push(group(cls('an-grow', dl(i)), [rect(110 + i * 10, 150 - h / 2, 5, h, i % 3 === 1 ? 'fa' : 'fl', 2)]));
+  }
+  return s;
+}
+
+/** Leading People and Change: a leader setting the route up the slope, with the team following. */
+function summit({ r }: Ctx): Shape[] {
+  const s: Shape[] = [path('M8 196L120 92L168 128L236 42L298 196Z', 'ff'), path('M8 196L120 92L168 128L236 42L298 196', 'ln')];
+  const trail = [[30, 188], [82, 166 + between(r, -5, 5)], [132, 152 + between(r, -5, 5)], [182, 122 + between(r, -5, 5)], [214, 82], [236, 46]];
+  s.push(path(openSmooth(trail), 'ln dsh'), path(openSmooth(trail), 'la an-draw', true));
+  s.push(path('M236 42V8', 'ln wide'), group('an-wave', [path('M236 9h30l-8 8 8 8h-30z', 'fa')]));
+  const ppl = [{ x: 198, y: 106, z: 12, c: 'fa' }, { x: 160, y: 136, z: 10, c: 'bx' }, { x: 120, y: 152, z: 10, c: 'bx' }, { x: 80, y: 166, z: 10, c: between(r, 0, 1) > 0.5 ? 'bxa' : 'bx' }];
+  ppl.forEach((p, i) => s.push(group(cls('an-bob', dl(i)), person(p.x, p.y, p.z, p.c))));
+  return s;
+}
+
+/** Careers, Confidence and Personal Effectiveness: rising steps towards a goal. */
+function ladder({ r }: Ctx): Shape[] {
+  let d = 'M18 190';
+  for (let i = 0; i < 5; i++) d += `H${40 + i * 48}V${190 - (i + 1) * 30}`;
+  d += 'H290V190Z';
+  const s: Shape[] = [path(d, 'ff'), path(d, 'ln')];
+  const at = 1 + Math.floor(r() * 3);
+  s.push(group('an-bob', person(64 + at * 48, 190 - (at + 1) * 30 - 9, 13, 'fa')));
+  s.push(path('M40 150Q120 40 240 30', 'la an-flow o5'));
+  const gx = between(r, 258, 272);
+  s.push(circle(gx, 22, 15, 'bxa'), circle(gx, 22, 8, 'la'), circle(gx, 22, 3, 'fa an-pulse'), circle(gx, 22, 21, 'la an-ripple'));
+  return s;
+}
+
+/** Work Habits That Stick: a month of completed days and the cue, routine and reward loop. */
+function streak({ r }: Ctx): Shape[] {
+  const x0 = 16, y0 = 32, c = 22;
+  const s: Shape[] = [rect(x0 - 6, y0 - 22, 7 * c + 12, 4 * c + 30, 'bx', 4), rect(x0 - 6, y0 - 22, 7 * c + 12, 16, 'fa', 4)];
+  const done = 14 + Math.floor(r() * 8);
+  for (let k = 0; k < 28; k++) {
+    const x = x0 + (k % 7) * c, y = y0 + Math.floor(k / 7) * c;
+    s.push(rect(x + 2, y + 2, c - 4, c - 4, k < done ? 'fl' : 'ff', 3));
+    if (k < done) s.push(path(`M${x + 6} ${y + 11}l4 4 7-8`, cls('la', k === done - 1 && 'an-pulse')));
+  }
+  const cx = 236, cy = 112, R = f(between(r, 40, 46));
+  s.push(circle(cx, cy, R, 'lf'), path(`M${cx} ${cy - R}A${R} ${R} 0 1 1 ${cx - R} ${cy}`, 'la an-draw', true));
+  ['CUE', 'ROUTINE', 'REWARD'].forEach((t, i) => {
+    const a = -Math.PI / 2 + (i * 2 * Math.PI) / 3, x = cx + R * Math.cos(a), y = cy + R * Math.sin(a);
+    s.push(circle(x, y, 7, i === 2 ? 'fa' : 'bx'), text(x, y + (i === 0 ? -12 : 20), t, 'tx', 'middle'));
+  });
+  s.push(text(x0 - 6, 150 + 24, `${done} DAYS`, 'tx'));
+  return s;
+}
+
+/** Sustainability and Environmental Management: a leaf inside a closed loop, beside a turning wind turbine. */
+function leaf({ r }: Ctx): Shape[] {
+  const s: Shape[] = [];
+  const cx = 108, cy = 104, R = 72;
+  for (let k = 0; k < 3; k++) {
+    const a0 = (k * 2 * Math.PI) / 3 + 0.25, a1 = a0 + 1.55;
+    const p0 = [cx + R * Math.cos(a0), cy + R * Math.sin(a0)], p1 = [cx + R * Math.cos(a1), cy + R * Math.sin(a1)];
+    const t = [-Math.sin(a1), Math.cos(a1)], n = [Math.cos(a1), Math.sin(a1)];
+    s.push(path(`M${pt(p0)}A${R} ${R} 0 0 1 ${pt(p1)}`, cls('la wide', k === 0 && 'an-flow')));
+    s.push(path(`M${pt([p1[0] + 7 * n[0], p1[1] + 7 * n[1]])}L${pt([p1[0] + 10 * t[0], p1[1] + 10 * t[1]])}L${pt([p1[0] - 7 * n[0], p1[1] - 7 * n[1]])}`, 'la wide'));
+  }
+  const tilt = between(r, -6, 6);
+  s.push(group(undefined, [path(`M${cx - 30} ${cy + 30}C${cx - 36} ${cy - 30} ${cx + 10} ${cy - 46} ${cx + 34} ${cy - 36}C${cx + 40} ${cy + 6} ${cx + 4} ${cy + 40} ${cx - 30} ${cy + 30}Z`, 'fa'), path(`M${cx - 30} ${cy + 30}Q${cx} ${cy - 2} ${cx + 30} ${cy - 32}`, 'ln')], `rotate(${f(tilt)} ${cx} ${cy})`));
+  const hx = 250, hy = 78;
+  s.push(path(`M${hx} ${hy}L${hx - 6} 192H${hx + 6}Z`, 'bx'), path('M214 192H288', 'ln'));
+  const blades: Shape[] = [circle(hx, hy, 44, 'lf o15')];
+  for (let k = 0; k < 3; k++) {
+    const a = (k * 2 * Math.PI) / 3 - Math.PI / 2, tip = [hx + 42 * Math.cos(a), hy + 42 * Math.sin(a)], side = [hx + 12 * Math.cos(a + 0.5), hy + 12 * Math.sin(a + 0.5)];
+    blades.push(path(`M${hx} ${hy}L${pt(side)}L${pt(tip)}Z`, 'bx'));
+  }
+  s.push(group('an-spin', blades), circle(hx, hy, 5, 'fi'));
+  return s;
+}
+
+/** Records, Business Data and Learning from Results: an open filing drawer, a record timeline and a new insight. */
+function archive({ r }: Ctx): Shape[] {
+  const s: Shape[] = [rect(18, 28, 92, 158, 'bx', 4)];
+  for (let i = 0; i < 3; i++) {
+    const y = 38 + i * 49;
+    if (i === 1) {
+      s.push(rect(40, y, 80, 40, 'bxa', 3), rect(68, y + 16, 24, 6, 'fl', 3));
+      for (let k = 0; k < 4; k++) s.push(rect(46 + k * 18, y - 10, 14, 12, cls(k === 2 ? 'fa' : 'fl', k === 2 && 'an-pulse'), 2));
+    } else s.push(rect(26, y, 76, 40, 'ff', 3), rect(52, y + 16, 24, 6, 'fl', 3));
+  }
+  s.push(path('M150 28V186', 'ln'));
+  for (let i = 0; i < 5; i++) {
+    const y = 38 + i * 34;
+    s.push(circle(150, y, 5, i === 4 ? 'fa' : 'bx'), rect(164, y - 8, i === 0 ? 72 : between(r, 70, 112), 16, i === 4 ? 'bxa' : 'bx', 3), rect(172, y - 2, between(r, 28, 52), 3, 'fl'));
+  }
+  s.push(circle(274, 30, 13, 'bxa'), rect(268, 45, 12, 7, 'bx', 1), path('M274 10v-5M258 18l-4-3M290 18l4-3', 'la an-pulse'));
+  return s;
+}
+
+/** SQL, Queries and Data Correctness: two sets joined on a key, returning checked result rows. */
+function join({ r }: Ctx): Shape[] {
+  const A = [70, 82], B = [126, 82], R = 50;
+  const s: Shape[] = [circle(A[0], A[1], R, 'bx'), circle(B[0], B[1], R, 'bx o85')];
+  const dx = (B[0] - A[0]) / 2, h = Math.sqrt(R * R - dx * dx), mx = (A[0] + B[0]) / 2;
+  s.push(path(`M${mx} ${f(A[1] - h)}A${R} ${R} 0 0 1 ${mx} ${f(A[1] + h)}A${R} ${R} 0 0 1 ${mx} ${f(A[1] - h)}Z`, 'fa o85'));
+  s.push(text(A[0] - 24, A[1] + 5, 'A', 'txb', 'middle'), text(B[0] + 24, B[1] + 5, 'B', 'txb', 'middle'));
+  s.push(rect(18, 152, 168, 28, 'bx', 4), text(28, 170, 'SELECT … JOIN … ON KEY', 'txs'), rect(150 + Math.round(r() * 20), 162, 1.5, 11, 'fi an-blink'));
+  const tx = 206, ty = 26, rows = 5;
+  s.push(rect(tx, ty, 84, 20 + rows * 22, 'bx', 3), rect(tx, ty, 84, 20, 'fa', 3));
+  for (let i = 0; i < rows; i++) {
+    const y = ty + 20 + i * 22;
+    if (i) s.push(path(`M${tx} ${y}H${tx + 84}`, 'lf'));
+    s.push(rect(tx + 10, y + 9, between(r, 26, 44), 4, 'fl'), path(`M${tx + 64} ${y + 11}l4 4 7-8`, cls('la an-pulse', dl(i))));
+  }
+  s.push(path('M178 82H200', 'la an-flow'), arrowHead(200, 82, 'r'));
+  return s;
+}
+
+/** Database Performance, Concurrency and Safe Change: concurrent transactions, the lock they contend for, and the clock. */
+function locks({ r }: Ctx): Shape[] {
+  const s: Shape[] = [];
+  [52, 104, 156].forEach((y, i) => {
+    s.push(path(`M16 ${y}H226`, 'lf'), text(16, y - 12, `T${i + 1}`, 'tx'));
+    let x = 40 + r() * 16;
+    for (let k = 0; k < 3 && x < 196; k++) {
+      const w = 26 + r() * 22;
+      s.push(group(cls('an-growx', dl(i * 3 + k)), [rect(x, y - 9, Math.min(w, 226 - x), 18, k === 1 && i === 1 ? 'fa' : 'fl', 3)]));
+      x += w + 10 + r() * 8;
+    }
+  });
+  s.push(rect(112, 68, 30, 24, 'bxa', 4), path('M118 68v-8a9 9 0 0 1 18 0v8', 'la wide'), circle(127, 80, 3, 'fa'));
+  const cx = 262, cy = 118, R = 28;
+  let ticks = '';
+  for (let k = 0; k < 12; k++) { const a = (k * Math.PI) / 6; ticks += `M${pt([cx + (R - 4) * Math.cos(a), cy + (R - 4) * Math.sin(a)])}L${pt([cx + (R - (k % 3 ? 7 : 10)) * Math.cos(a), cy + (R - (k % 3 ? 7 : 10)) * Math.sin(a)])}`; }
+  s.push(circle(cx, cy, R, 'bx'), rect(cx - 6, cy - R - 8, 12, 7, 'fl', 2), path(ticks, 'ln'), group('an-arm', [path(`M${cx} ${cy}H${cx + R - 8}`, 'la wide')]), circle(cx, cy, 3.5, 'fa'));
+  return s;
+}
+
+/** Reporting, History and Analytical Data: a data cube sliced by time, beside its reports. */
+function cube({ r }: Ctx): Shape[] {
+  const cx = 110, cy = 102, S = 64, w = S * 0.87;
+  const fc = cubeFaces(cx, cy, S);
+  const s: Shape[] = [path(fc.top, 'ff'), path(fc.left, 'bx'), path(fc.right, 'bx')];
+  let g = '';
+  for (let k = 1; k < 3; k++) {
+    const t = k / 3;
+    g += `M${pt([cx - w + w * t, cy - S / 2 + (S / 2) * t])}L${pt([cx - w + w * t, cy + S / 2 + (S / 2) * t])}`;
+    g += `M${pt([cx + w * t, cy - (S / 2) * t])}L${pt([cx + w * t, cy + S - (S / 2) * t])}`;
+    g += `M${pt([cx - w, cy - S / 2 + S * t])}L${pt([cx, cy + S * t])}L${pt([cx + w, cy - S / 2 + S * t])}`;
+  }
+  s.push(path(g, 'lf'));
+  const t0 = Math.floor(r() * 3) / 3, t1 = t0 + 1 / 3;
+  s.push(path(`M${pt([cx + w * t0, cy - (S / 2) * t0])}L${pt([cx + w * t1, cy - (S / 2) * t1])}L${pt([cx + w * t1, cy + S - (S / 2) * t1])}L${pt([cx + w * t0, cy + S - (S / 2) * t0])}Z`, 'fa o85 an-pulse'));
+  s.push(text(cx - w, cy + S / 2 + 28, 'REGION', 'tx'), text(cx + w, cy + S / 2 + 20, 'TIME', 'tx', 'end'), text(cx, cy - S - 8, 'PRODUCT', 'tx', 'middle'));
+  s.push(rect(214, 26, 76, 66, 'bx', 4), path(line(Array.from({ length: 6 }, (_, i) => [224 + i * 11, 80 - i * 7 - r() * 10])), 'la an-draw', true));
+  s.push(rect(214, 108, 76, 72, 'bx', 4));
+  for (let i = 0; i < 4; i++) {
+    const h = 14 + r() * 36;
+    s.push(group(cls('an-grow', dl(i)), [rect(224 + i * 16, 170 - h, 10, h, i === 2 ? 'fa' : 'fl', 1)]));
+  }
+  return s;
+}
+
+/** 3D CAD Modelling and Design Intent: an isometric bracket solid, its view rotation and the model axes. */
+function isoSolid({ r }: Ctx): Shape[] {
+  const iso = (x: number, y: number, z: number) => [150 + (x - y) * 0.87, 118 + (x + y) * 0.5 - z];
+  const P = (pts: number[][]) => `${line(pts.map(([x, y, z]) => iso(x, y, z)))}Z`;
+  const L = 80, W = 50, T = 14, H = 66 + r() * 8;
+  const s: Shape[] = [path(P([[0, 0, T], [L, 0, T], [L, W, T], [0, W, T]]), 'ff')];
+  s.push(path(P([[0, W, 0], [L, W, 0], [L, W, T], [0, W, T]]), 'bx'), path(P([[L, 0, 0], [L, W, 0], [L, W, T], [L, 0, T]]), 'bx'));
+  s.push(path(P([[0, T, T], [L, T, T], [L, T, H], [0, T, H]]), 'bx'), path(P([[0, 0, H], [L, 0, H], [L, T, H], [0, T, H]]), 'ff'), path(P([[L, 0, T], [L, T, T], [L, T, H], [L, 0, H]]), 'bx'));
+  const hc = iso(L / 2, T, (T + H) / 2 + 4);
+  s.push(group(undefined, [ellipse(hc[0], hc[1], 9, 15, 'fn'), ellipse(hc[0], hc[1], 9, 15, 'la')], `rotate(-30 ${f(hc[0])} ${f(hc[1])})`));
+  const e0 = iso(L, W, T), e1 = iso(L, W, 0);
+  s.push(path(`M${pt(e0)}L${pt(e1)}`, 'la an-draw', true));
+  s.push(path('M44 52A112 38 0 0 1 256 52', 'la an-flow'), path('M248 44l8 8-11 3', 'la'));
+  s.push(path('M28 188l22-12M28 188V160M28 188l-20-12', 'ln'), text(54, 178, 'X', 'tx'), text(24, 154, 'Z', 'tx'), text(4, 178, 'Y', 'tx'));
+  return s;
+}
+
+/** Decision-Making Machines: an agent searching a grid world for the goal, with its action values. */
+function search({ r }: Ctx): Shape[] {
+  const c = 24, x0 = 14, y0 = 18, n = 7;
+  let grid = '';
+  for (let i = 0; i <= n; i++) grid += `M${x0 + i * c} ${y0}V${y0 + n * c}M${x0} ${y0 + i * c}H${x0 + n * c}`;
+  const route: number[][] = [[0, n - 1]];
+  while (route.length < 40) {
+    const [i, j] = route[route.length - 1];
+    if (i === n - 1 && j === 0) break;
+    route.push(i < n - 1 && (j === 0 || r() > 0.5) ? [i + 1, j] : [i, j - 1]);
+  }
+  const onRoute = new Set(route.map(([i, j]) => `${i},${j}`));
+  const s: Shape[] = [];
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+    if (onRoute.has(`${i},${j}`)) continue;
+    const v = r();
+    if (v < 0.16) s.push(rect(x0 + i * c + 2, y0 + j * c + 2, c - 4, c - 4, 'fl', 2));
+    else if (v < 0.42) s.push(rect(x0 + i * c + 2, y0 + j * c + 2, c - 4, c - 4, 'ff', 2));
+  }
+  s.unshift(path(grid, 'lf'));
+  const centres = route.map(([i, j]) => [x0 + i * c + c / 2, y0 + j * c + c / 2]);
+  s.push(path(line(centres), 'la an-draw', true));
+  const [sx, sy] = centres[0], [gx, gy] = centres[centres.length - 1];
+  s.push(circle(sx, sy, 7, 'fa'), circle(sx, sy, 12, 'la an-ripple'), path(`M${gx - 4} ${gy + 8}V${gy - 9}l11 4-11 4`, 'la'));
+  ['↑', '→', '↓', '←'].forEach((a, i) => {
+    const h = i === 1 ? 64 : 14 + r() * 34;
+    s.push(group(cls('an-grow', dl(i)), [rect(204 + i * 22, 168 - h, 14, h, i === 1 ? 'fa' : 'fl', 2)]), text(211 + i * 22, 184, a, 'tx', 'middle'));
+  });
+  s.push(path('M198 168H290', 'ln'), text(244, 34, 'VALUE', 'tx', 'middle'));
+  return s;
+}
+
+/** Project Delivery, Procurement and Governance: a tower crane lifting into a rising building frame. */
+function crane({ r }: Ctx): Shape[] {
+  let lattice = '';
+  for (let y = 30; y < 196; y += 16) lattice += `M58 ${y}L74 ${y + 16}M74 ${y}L58 ${y + 16}`;
+  const s: Shape[] = [path('M58 196V30M74 196V30', 'ln'), path(lattice, 'lf'), path('M30 30H288M66 12L58 30M66 12L74 30M66 12L288 30M66 12L30 30', 'ln'), rect(28, 30, 22, 16, 'bx', 2), path('M40 196H92', 'ln wide')];
+  const tx = f(between(r, 120, 150));
+  s.push(group('an-slosh', [rect(tx - 8, 30, 16, 8, 'fa'), path(`M${tx} 38V90`, 'ln'), group('an-bob', [rect(tx - 14, 90, 28, 16, 'bxa', 2)])]));
+  const floors = 3 + Math.floor(r() * 2);
+  for (let i = 0; i < floors; i++) {
+    const y = 196 - (i + 1) * 26;
+    s.push(group(cls('an-build', dl(i)), [path(`M196 ${y + 26}V${y}H284V${y + 26}M226 ${y}V${y + 26}M254 ${y}V${y + 26}`, i === floors - 1 ? 'la' : 'ln'), path(`M196 ${y + 26}L226 ${y}`, 'lf')]));
+  }
+  s.push(path('M290 196H180', 'ln'), path(`M284 ${196 - floors * 26}V${180 - floors * 26}`, 'ln'), path(`M284 ${180 - floors * 26}h-16l5 4-5 4h16`, 'fa'));
+  return s;
+}
+
+/** Machine Elements and Mechanical Design: meshing gears, a shaft in its bearing and a bolted joint. */
+function geartrain({ r }: Ctx): Shape[] {
+  const g1 = [90, 92], g2 = [90 + 84 * Math.cos(-0.35), 92 + 84 * Math.sin(-0.35)];
+  const s: Shape[] = [path(gear(g1[0], g1[1], 56, 48, 18), 'bx an-spin'), circle(g1[0], g1[1], 15, 'fn'), circle(g1[0], g1[1], 15, 'ln'), circle(g1[0], g1[1], 5, 'fa')];
+  s.push(path(gear(g2[0], g2[1], 36, 28, 12), 'bxa an-spin-r'), circle(g2[0], g2[1], 9, 'fn'), circle(g2[0], g2[1], 9, 'ln'), rect(g2[0] - 2, g2[1] - 12, 4, 6, 'fa'));
+  const sy = f(166 + r() * 6);
+  s.push(rect(186, sy - 6, 106, 12, 'bx', 2), rect(212, sy - 22, 26, 44, 'bxa', 3), path(`M216 ${sy - 14}H234M216 ${sy + 14}H234`, 'lf'));
+  for (let k = 0; k < 3; k++) s.push(circle(219 + k * 6, sy - 10, 2.4, cls('fa an-pulse', dl(k))), circle(219 + k * 6, sy + 10, 2.4, cls('fa an-pulse', dl(k + 3))));
+  s.push(rect(10, 170, 18, 24, 'bx', 2), rect(28, 176, 70, 12, 'bx', 1));
+  let thread = '';
+  for (let x = 46; x < 96; x += 6) thread += `M${x} 176l-4 12`;
+  s.push(path(thread, 'lf'), path('M120 182H170', 'cl'));
+  return s;
+}
+
+/** Fluids, HVAC and Building Services: a pump driving a loop through a coil, and a ventilation fan. */
+function pump({ r }: Ctx): Shape[] {
+  const cx = 86, cy = 120;
+  const s: Shape[] = [path(`M16 ${cy}H${cx - 40}`, 'ln wide'), path(`M16 ${cy}H${cx - 40}`, 'la an-flow')];
+  s.push(path(`M${cx + 18} ${cy - 38}V40H196V64`, 'ln wide'), path(`M${cx + 18} ${cy - 38}V40H196V64`, 'la an-flow'));
+  s.push(circle(cx, cy, 42, 'bx'), path(`M${cx + 6} ${cy - 42}h24v18h-24z`, 'bx'));
+  const vanes: Shape[] = [circle(cx, cy, 30, 'lf o15')];
+  for (let k = 0; k < 6; k++) {
+    const a = (k * Math.PI) / 3;
+    vanes.push(path(`M${pt([cx + 8 * Math.cos(a), cy + 8 * Math.sin(a)])}Q${pt([cx + 22 * Math.cos(a + 0.2), cy + 22 * Math.sin(a + 0.2)])} ${pt([cx + 28 * Math.cos(a + 0.7), cy + 28 * Math.sin(a + 0.7)])}`, 'la'));
+  }
+  s.push(group('an-spin', vanes), circle(cx, cy, 6, 'fa'));
+  let coil = 'M196 64';
+  for (let k = 0; k < 5; k++) coil += `h${k % 2 ? -40 : 40}v18`;
+  s.push(path(coil, 'ln'), path(coil, 'la an-flow o5'), path('M196 154V176H16', 'ln'), path('M196 154V176H16', 'la an-flow o5'));
+  const fx = 262, fy = f(46 + r() * 6);
+  const blades: Shape[] = [circle(fx, fy, 24, 'lf o15')];
+  for (let k = 0; k < 4; k++) { const a = (k * Math.PI) / 2; blades.push(path(`M${fx} ${fy}Q${pt([fx + 20 * Math.cos(a + 0.5), fy + 20 * Math.sin(a + 0.5)])} ${pt([fx + 22 * Math.cos(a), fy + 22 * Math.sin(a)])}Z`, 'bx')); }
+  s.push(circle(fx, fy, 27, 'ln'), group('an-spin', blades), circle(fx, fy, 3, 'fi'));
+  for (let k = 0; k < 3; k++) s.push(path(`M${244 + k * 14} 92q6 8 0 16t0 16`, cls('lf an-up', dl(k))));
+  return s;
+}
+
+/** Machining and Metal Parts: a turned part between chuck and tailstock, with the tool cutting and chips flying. */
+function lathe({ r }: Ctx): Shape[] {
+  const s: Shape[] = [rect(10, 40, 44, 122, 'bx', 4), rect(54, 64, 18, 72, 'bx', 3), rect(58, 70, 10, 14, 'fa', 2), rect(58, 116, 10, 14, 'fa', 2)];
+  const step = f(between(r, 130, 160));
+  const prof = `M72 82H${step}V88H226V112H${step}V118H72Z`;
+  s.push(path(prof, 'ff'), path(prof, 'ln'), path('M10 100H292', 'cl'));
+  s.push(path('M90 74A14 30 0 0 1 90 126', 'la an-flow'), arrowHead(90, 126, 'd'));
+  s.push(path('M240 76h40v48h-40z', 'bx'), path('M226 92l14 8-14 8z', 'fl'), path('M280 88h12v24h-12', 'ln'));
+  const tx = f(between(r, 168, 200));
+  s.push(group('an-plunge', [path(`M${tx - 6} 154l4 -34h8l4 34z`, 'fa'), rect(tx - 22, 154, 44, 22, 'bx', 2)]));
+  for (let k = 0; k < 4; k++) s.push(path(`M${tx + 6 + k * 7} ${120 + k * 3}c4 -4 8 0 4 4`, cls('la an-fall', dl(k * 2))));
+  s.push(path('M72 186H226M72 180V192M226 180V192', 'ln'), text(149, 200, `Ø${18 + Math.round(r() * 8)}`, 'tx', 'middle'));
+  return s;
+}
+
+/** Operational Data, Records and Controls: a scanned label resolving to one master record, and a control checklist. */
+function barcode({ r }: Ctx): Shape[] {
+  const s: Shape[] = [rect(14, 26, 142, 92, 'bx', 4)];
+  let x = 26;
+  while (x < 140) { const w = 1 + Math.floor(r() * 4); s.push(rect(x, 38, w, 50, 'fi')); x += w + 1 + Math.floor(r() * 3); }
+  s.push(text(26, 108, '9 312345 67890', 'txs'), rect(124, 97, 22, 15, 'fa o85', 2), text(135, 108, String(Math.floor(r() * 10)), 'txs', 'middle'));
+  s.push(group('an-bob', [path('M18 62H152', 'la wide o85')]));
+  s.push(path('M156 72H174', 'la an-flow'), arrowHead(176, 72, 'r'));
+  s.push(rect(180, 20, 110, 104, 'bxa', 4), rect(180, 20, 110, 18, 'fa', 4));
+  for (let i = 0; i < 4; i++) s.push(rect(190, 48 + i * 18, 26, 4, 'fl'), rect(222, 48 + i * 18, between(r, 30, 58), 4, i === 1 ? 'fa' : 'fl'));
+  for (let i = 0; i < 3; i++) {
+    const y = 138 + i * 20;
+    s.push(rect(14, y, 12, 12, 'bx', 2), rect(34, y + 4, between(r, 80, 140), 4, 'fl'));
+    if (i < 2) s.push(path(`M16 ${y + 6}l3 3 6-7`, cls('la', i === 1 && 'an-pulse')));
+  }
+  return s;
+}
+
+/** Specifications, Product Quality and Sustainability: a dimensioned specification, a test pass and a quality mark. */
+function specsheet({ r }: Ctx): Shape[] {
+  const s: Shape[] = [rect(14, 16, 160, 176, 'bx', 4), rect(14, 16, 160, 20, 'fa', 4)];
+  const bh = f(between(r, 92, 110));
+  const bottle = `M64 ${50}h20v14c14 6 18 16 18 30v${bh - 50}h-56v${-(bh - 50)}c0 -14 4 -24 18 -30z`;
+  s.push(path(bottle, 'ff'), path(bottle, 'la an-draw', true));
+  s.push(path(`M40 ${50}V${50 + bh + 14}M34 ${50}H44M34 ${50 + bh + 14}H44`, 'ln'), text(30, 120, 'H', 'tx', 'end'));
+  s.push(path(`M46 ${f(64 + bh + 14)}H102M46 ${f(58 + bh + 14)}V${f(70 + bh + 14)}M102 ${f(58 + bh + 14)}V${f(70 + bh + 14)}`, 'ln'));
+  for (let i = 0; i < 6; i++) s.push(rect(118, 50 + i * 16, between(r, 26, 46), 3, i === 2 ? 'fa' : 'fl'));
+  s.push(circle(240, 66, 30, 'bxa'), circle(240, 66, 22, 'lf'), path('M226 66l9 10 18-21', 'la xbold an-draw', true));
+  s.push(path('M222 92l-10 34 14-8 8 14 6-34M258 92l10 34-14-8-8 14-6-34', 'bx'));
+  s.push(rect(206, 150, 76, 30, 'bx', 4), text(244, 170, 'PASS', 'txa', 'middle'), circle(244, 165, 22, 'la an-ripple'));
+  return s;
+}
+
+/** How Engineering Shaped Industry: an overshot water wheel driving the mill. */
+function waterwheel({ r }: Ctx): Shape[] {
+  const cx = 104, cy = 112, R = 62;
+  const wheel: Shape[] = [circle(cx, cy, R + 10, 'lf o15'), circle(cx, cy, R, 'ln wide'), circle(cx, cy, R - 12, 'lf')];
+  let spokes = '', paddles = '';
+  for (let k = 0; k < 8; k++) { const a = (k * Math.PI) / 4; spokes += `M${pt([cx + 8 * Math.cos(a), cy + 8 * Math.sin(a)])}L${pt([cx + (R - 12) * Math.cos(a), cy + (R - 12) * Math.sin(a)])}`; }
+  for (let k = 0; k < 16; k++) { const a = (k * Math.PI) / 8; paddles += `M${pt([cx + R * Math.cos(a), cy + R * Math.sin(a)])}L${pt([cx + (R + 9) * Math.cos(a + 0.12), cy + (R + 9) * Math.sin(a + 0.12)])}`; }
+  wheel.push(path(spokes, 'ln'), path(paddles, 'ln wide'));
+  const s: Shape[] = [rect(4, 30, 108, 8, 'bx', 2), group('an-spin', wheel), circle(cx, cy, 8, 'fa')];
+  for (let k = 0; k < 4; k++) s.push(circle(116 + k * 6 + r() * 4, 42 + k * 4, 2.4, cls('fs an-fall', dl(k * 2))));
+  s.push(path('M4 192q12 -6 24 0t24 0t24 0t24 0t24 0t24 0', 'la an-flow'), path(`M${cx} ${cy}H200`, 'ln xbold'));
+  s.push(path('M196 64L240 36L284 64V192H196Z', 'bx'), rect(208, 80, 14, 18, 'fl'), rect(258, 80, 14, 18, 'fl'), rect(232, 150, 18, 42, 'fa'));
+  s.push(path(gear(240, 116, 16, 12, 10), 'bxa an-spin-r'), circle(240, 116, 4, 'fn'));
+  return s;
+}
+
+/** Power, Networks and the Modern Era: a transmission tower carrying power and a mast broadcasting signals. */
+function pylon({ r }: Ctx): Shape[] {
+  const bx = 92;
+  let lat = '';
+  for (let y = 56; y < 190; y += 18) { const w0 = 10 + (y - 40) * 0.2, w1 = 10 + (y - 22) * 0.2; lat += `M${f(bx - w0)} ${y}L${f(bx + w1)} ${y + 18}M${f(bx + w0)} ${y}L${f(bx - w1)} ${y + 18}`; }
+  const s: Shape[] = [path(`M${bx - 4} 20L${bx - 40} 194M${bx + 4} 20L${bx + 40} 194`, 'ln'), path(lat, 'lf'), path(`M${bx - 46} 50H${bx + 46}M${bx - 34} 80H${bx + 34}`, 'ln wide')];
+  const sag = 14 + r() * 10;
+  for (const [y, k] of [[50, 0], [80, 1]] as const) {
+    s.push(path(`M${bx - 46} ${y}Q${bx - 80} ${y + sag} -10 ${y + 4}`, 'ln'), path(`M${bx + 46} ${y}Q${bx + 64} ${y + sag} 170 ${y + 6}`, 'ln'), path(`M${bx + 46} ${y}Q${bx + 64} ${y + sag} 170 ${y + 6}`, cls('la an-flow', dl(k * 3))));
+  }
+  const mx = 236;
+  s.push(path(`M${mx} 64L${mx - 22} 194M${mx} 64L${mx + 22} 194M${mx - 14} 150H${mx + 14}M${mx - 8} 110H${mx + 8}`, 'ln'), circle(mx, 60, 6, 'fa'));
+  for (let k = 0; k < 3; k++) {
+    const rr = 16 + k * 14;
+    s.push(path(`M${pt([mx - rr * 0.7, 60 - rr * 0.7])}A${rr} ${rr} 0 0 1 ${pt([mx + rr * 0.7, 60 - rr * 0.7])}`, cls('la an-pulse', dl(k * 2))));
+  }
+  return s;
+}
+
+/** Judgement, Markets and Learning: a mind weighing a probability distribution, with chance on the table. */
+function mind({ r }: Ctx): Shape[] {
+  const head = 'M70 194V156C42 146 30 118 34 88C38 44 74 20 114 22C158 24 182 56 180 90L192 116L180 122V140C180 152 168 158 154 156L142 154V194';
+  const s: Shape[] = [path(head, 'ff'), path(head, 'ln')];
+  const mu = 108 + between(r, -8, 8), sd = 20 + r() * 6;
+  const bell = Array.from({ length: 25 }, (_, i) => { const x = 56 + i * 4.4; return [x, 120 - 54 * Math.exp(-((x - mu) ** 2) / (2 * sd * sd))]; });
+  s.push(path(`M56 120H162`, 'ln'), path(line(bell), 'la an-draw', true), path(`M${f(mu)} 60V120`, 'cl'));
+  for (let k = 0; k < 3; k++) s.push(path(spark(60 + k * 46, 44 + (k % 2) * 8, 4 + k), cls('fa an-pulse', dl(k * 2))));
+  const die = (x: number, y: number, n: number, c: string): Shape[] => {
+    const pips: Record<number, number[][]> = { 1: [[0, 0]], 2: [[-1, -1], [1, 1]], 3: [[-1, -1], [0, 0], [1, 1]], 4: [[-1, -1], [1, -1], [-1, 1], [1, 1]], 5: [[-1, -1], [1, -1], [0, 0], [-1, 1], [1, 1]], 6: [[-1, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [1, 1]] };
+    return [rect(x - 20, y - 20, 40, 40, c, 8), ...pips[n].map(([a, b]) => circle(x + a * 10, y + b * 10, 3.6, c === 'bxa' ? 'fa' : 'fi'))];
+  };
+  s.push(...die(232, 160, 1 + Math.floor(r() * 6), 'bxa'), group('an-tilt', die(262, 96, 1 + Math.floor(r() * 6), 'bx')));
+  return s;
+}
+
+/** Practical Mathematics for Engineering and Manufacturing: a right triangle, a rule and the relationships between them. */
+function triangle({ r }: Ctx): Shape[] {
+  const ax = 30, ay = 164, b = f(between(r, 120, 150)), h = f(between(r, 90, 112));
+  const s: Shape[] = [path(`M${ax} ${ay}H${ax + b}V${ay - h}Z`, 'ff'), path(`M${ax} ${ay}H${ax + b}V${ay - h}Z`, 'la an-draw', true), path(`M${ax + b - 12} ${ay}V${ay - 12}H${ax + b}`, 'ln')];
+  const ang = Math.atan2(h, b);
+  s.push(path(`M${ax + 30} ${ay}A30 30 0 0 0 ${pt([ax + 30 * Math.cos(ang), ay - 30 * Math.sin(ang)])}`, 'ln'), text(ax + 38, ay - 8, 'θ', 'txs'));
+  s.push(text(ax + b / 2, ay + 16, 'a', 'txs', 'middle'), text(ax + b + 10, ay - h / 2, 'b', 'txs'), text(ax + b / 2 - 12, ay - h / 2 - 10, 'c', 'txs', 'end'));
+  let ticks = '';
+  for (let k = 0; k <= 24; k++) ticks += `M${ax + k * 10} 186V${k % 5 ? 191 : 194}`;
+  s.push(rect(ax - 6, 180, 252, 18, 'bx', 2), path(ticks, 'ln'), group('an-growx', [rect(ax, 182, b, 3, 'fa')]));
+  s.push(rect(202, 22, 92, 30, 'bx', 4), text(248, 42, 'a² + b² = c²', 'txs', 'middle'));
+  const wave = Array.from({ length: 13 }, (_, i) => [204 + i * 7, 106 - Math.sin((i * Math.PI) / 6) * 26]);
+  s.push(path('M204 106H292', 'lf'), path(openSmooth(wave), 'la an-flow'), text(248, 150, 'sin θ', 'tx', 'middle'));
+  return s;
+}
+
+/** Software and Cloud Foundations for Business Leaders: code in an editor, deployed to the cloud along a branch history. */
+function codebase({ r }: Ctx): Shape[] {
+  const s: Shape[] = [rect(14, 28, 172, 152, 'bx', 6), path('M14 48H186', 'lf'), circle(26, 38, 3, 'fa'), circle(36, 38, 3, 'fl'), circle(46, 38, 3, 'fl')];
+  const ind = [0, 1, 2, 2, 1, 2, 3, 1, 0];
+  ind.forEach((k, i) => s.push(rect(24, 58 + i * 13, 8, 4, 'fl'), rect(38 + k * 12, 58 + i * 13, between(r, 30, 96 - k * 12), 4, i === 4 ? 'fa' : 'fl')));
+  s.push(rect(52, 107, 1.5, 10, 'fi an-blink'));
+  s.push(path('M214 72a18 18 0 0 1 4 -35a24 24 0 0 1 45 4a16 16 0 0 1 9 31z', 'bxa'), path('M186 92C204 92 214 84 222 74', 'la an-flow'));
+  const gy = 150;
+  s.push(path(`M204 ${gy}H290M222 ${gy}C234 ${gy} 234 ${gy - 26} 246 ${gy - 26}H266C278 ${gy - 26} 278 ${gy} 290 ${gy}`, 'ln'));
+  const nodes: { x: number; y: number; c: string }[] = [{ x: 204, y: gy, c: 'bx' }, { x: 222, y: gy, c: 'bx' }, { x: 246, y: gy - 26, c: 'bxa' }, { x: 266, y: gy - 26, c: 'bxa' }, { x: 290, y: gy, c: 'fa' }];
+  nodes.forEach((n, i) => s.push(circle(n.x, n.y, 5, cls(n.c, i === 4 && 'an-pulse'))));
+  return s;
+}
+
 const BUILDERS: Record<CoverMotif, (ctx: Ctx) => Shape[]> = {
   database, neural, integration, interface: iface, drawing, beam, geometry, fixture, production, factory,
   cycle, workflow, gauge, gantt, network, launch, exploded, shield, ledger, contour, funnel, team, venture,
   decision, compass, experiment, orbit, lens, pathway,
+  holdings, cashflow, breakeven, bubbles: boomBust, scales, tender, supply, estimate, gates, handover,
+  expansion, megaphone, dialogue, summit, ladder, streak, leaf, archive,
+  join, locks, cube, solid: isoSolid, search, crane, geartrain, pump, lathe, barcode, specsheet,
+  waterwheel, pylon, mind, triangle, code: codebase,
 };
 
 export const COVER_MOTIFS = Object.keys(BUILDERS) as CoverMotif[];
