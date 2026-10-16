@@ -1,6 +1,6 @@
 # Authored ReadOS books
 
-The authored-publication mechanism supplements the existing article collections and finance guide. It does not change their URLs or content. Chapters are independent Markdown documents, not copies of historical Insights.
+The authored-publication mechanism supplements the existing article collections and finance guide. It does not change their URLs or content. Chapters are independent Markdown documents, not copies of READOS book chapters (the former Insights articles).
 
 ## Create an edition
 

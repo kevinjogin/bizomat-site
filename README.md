@@ -1,6 +1,6 @@
 # KEVOS website
 
-The website for **KEVOS** (kevos.com): a static Astro site served by a Cloudflare Worker, with a structured Insights publishing system, a Web3Forms contact form and an AI receptionist powered by Cloudflare Workers AI.
+The website for **KEVOS** (kevos.com): a static Astro site served by a Cloudflare Worker, with the READOS reading library (edited books of Markdown chapters), the WORKOS decision tools, a Web3Forms contact form and an AI receptionist powered by Cloudflare Workers AI.
 
 - **No database, no WordPress, no server to maintain.** Pages are built in advance and served as Worker static assets from Cloudflare.
 - **Publishing is a reviewed file change.** Write Markdown, set `draft: false`, push to Git, and Cloudflare rebuilds the site.
@@ -12,7 +12,7 @@ The website for **KEVOS** (kevos.com): a static Astro site served by a Cloudflar
 
 1. [Local development](#1-local-development)
 2. [Project structure](#2-project-structure)
-3. [Creating a new Insights post](#3-creating-a-new-insights-post)
+3. [Adding a READOS chapter](#3-adding-a-reados-chapter)
 4. [Frontmatter fields](#4-frontmatter-fields)
 5. [Categories and tags](#5-categories-and-tags)
 6. [Work entries](#6-work-entries)
@@ -45,14 +45,14 @@ npm run verify     # type check + tests + build: run this before every push
 
 ```
 src/
-  components/   Header, Footer, Container, Section, Button, ArticleCard, CategoryBadge, Tag, SEO,
+  components/   Header, Footer, Container, Section, Button, SEO, ReadOSAnimatedCover,
                 Breadcrumb, Hero, CallToAction, ContactForm, ChatWidget, Logo, …
   config/       site.ts (name, URL, nav, contact, assistant) · taxonomy.ts (categories, tags) · work.ts
-  content/      insights/*.md(x) and work/*.md: all editable content
+  content/      reados-chapters/*.md(x), reados-publications/ and work/*.md: all editable content
   data/         brand.ts (exploring areas, principles) · faq.ts (assistant FAQ)
-  layouts/      BaseLayout, InsightsIndex, LegalLayout
+  layouts/      BaseLayout, LegalLayout
   lib/          contact.ts (shared validation) · contact-client.ts (form delivery)
-  pages/        routes: /, /about/, /work/, /insights/, /contact/, /privacy/, /terms/, /search/, /chat/, 404
+  pages/        routes: /, /about/, /tools/ (WORKOS), /reados/ (READOS), /contact/, /privacy/, /terms/, /search/, /chat/, 404
   server/       contact + chat handlers (run inside the Cloudflare worker, tested in Node)
   worker.ts     Cloudflare worker: serves the site, /api/chat and /api/contact (built to dist/_worker.js)
   styles/       global.css (design tokens, typography, prose)
@@ -64,24 +64,27 @@ tests/          contact and chat tests (node --test)
 docs/           EDITORIAL_PROMPTS.md: the reusable article-writing prompts
 ```
 
-## 3. Creating a new Insights post
+## 3. Adding a READOS chapter
+
+The former Insights section was retired on 17 October 2026. Its 750 articles are now chapters of the edited READOS books, and every old `/insights/` address redirects to its chapter. Full workflow and rules: [docs/KEVOS_READOS_PUBLISHING.md](docs/KEVOS_READOS_PUBLISHING.md).
 
 ### Easiest: the online editor (Pages CMS)
 
 1. Go to **https://app.pagescms.org** and sign in with GitHub.
-2. Open the **gocore-website** repository. You will see **Insights**, **Work** and **Assistant FAQ**.
-3. **Insights → Add an entry.** Fill in the title, description, category and tags, then write the article. Images can be uploaded straight into the editor.
+2. Open the **gocore-website** repository. You will see **READOS chapters**, **Work** and **Assistant FAQ**.
+3. **READOS chapters → Add an entry.** Fill in the title, description, category and tags, then write the chapter. Images can be uploaded straight into the editor.
 4. Leave **Draft** ticked and save while you are still working. Untick **Draft** and save when it is ready.
 
 Every save is a commit to GitHub. Cloudflare rebuilds and redeploys the site automatically within a few minutes. If a save breaks a content rule (for example a missing tag), the Cloudflare build fails and the live site stays as it was: check **Workers & Pages → throbbing-block-6c61 → Deployments** for the error.
 
 ### On your computer
 
-1. Create `src/content/insights/your-post-slug.md` (or `.mdx`). **The file name becomes the permanent URL** `/insights/your-post-slug/`. Dates never appear in URLs.
+1. Create `src/content/reados-chapters/your-chapter-slug.md` (or `.mdx`). **The file name is the chapter's permanent slug.** Dates never appear in URLs.
 2. Add frontmatter (below) with `draft: true`.
-3. Write the article in Markdown. Use `##` for main sections; a table of contents appears automatically when there are 4 or more.
-4. Run `npm run dev` and review it at its URL.
-5. When it is ready, set `draft: false`, run `npm run verify`, commit and push.
+3. Write the chapter in Markdown. Use `##` for main sections.
+4. Add the slug to the right edited book's `ids` list in `src/utils/reados-collections.ts`; until then it appears in its category's "Further Reading" book. The chapter is read at `/reados/collections/<book>/<slug>/`.
+5. Run `npm run dev` and review it at its URL.
+6. When it is ready, set `draft: false`, run `npm run verify`, commit and push.
 
 For drafting help, use the prompts in [docs/EDITORIAL_PROMPTS.md](docs/EDITORIAL_PROMPTS.md).
 
@@ -100,11 +103,11 @@ tags:                                                   # required: 1–5 (norma
   - product-development
   - validation
 author: "KEVOS"                                        # optional, defaults to KEVOS
-featured: false                                         # featured posts get the top slot on /insights/
+featured: false                                         # reserved; not currently displayed
 draft: true                                             # true = never in production, RSS, sitemap, search or the assistant
 image: ./images/cover.jpg                               # optional, path relative to the post file
 imageAlt: "Describe the image"                          # required when image is set
-canonicalURL: https://example.com/original              # optional, only for articles first published elsewhere
+canonicalURL: https://example.com/original              # optional, only for chapters first published elsewhere
 ---
 ```
 
@@ -114,8 +117,8 @@ The schema (`src/content.config.ts`) rejects unknown categories and tags, missin
 
 **Categories = navigation. Tags = discovery. Dates = chronology. Search = retrieval.**
 
-- **Adding a category:** add it to `CATEGORIES` in `src/config/taxonomy.ts`. Only add one when enough articles justify it. A category page appears automatically once it has a published article. Empty categories never get a page.
-- **Adding a tag:** add it to `TAGS` in the same file, using one canonical lowercase slug (`ai`, never also `AI-tools` or `artificial-intelligence`). A tag page appears once 2 or more articles use it (`INSIGHTS.minPostsForTagPage` in `src/config/site.ts`).
+- **Adding a category:** add it to `CATEGORIES` in `src/config/taxonomy.ts`. Only add one when enough chapters justify it. Each category is a section of `/reados/` with its own edited books.
+- **Adding a tag:** add it to `TAGS` in the same file, using one canonical lowercase slug (`ai`, never also `AI-tools` or `artificial-intelligence`). Tags feed site search, the assistant and the RSS feed.
 - Monthly or yearly archive pages are intentionally not generated.
 
 ## 6. Work entries
@@ -128,7 +131,7 @@ Projects, products, experiments, research and concepts live in `src/content/work
 | `status` | Exploring · Developing · Testing · Released · Completed · Archived |
 | `featured` | Shown in "Selected work" on the homepage |
 | `image`, `gallery` | Optional; optimised automatically |
-| `relatedInsights` | List of Insights slugs to link from the detail page |
+| `relatedChapters` | List of READOS chapter slugs related to the entry |
 | `externalUrl` | Optional outbound link |
 | `detailPage` | A detail page is created when the entry has body text, or when this is `true` |
 
@@ -136,7 +139,7 @@ Only add real work. Never invent projects or results.
 
 ## 7. Images
 
-- **Article and work images:** put them next to the Markdown file (e.g. `src/content/insights/images/`) and reference them relatively. Astro creates AVIF and WebP versions at several sizes, with lazy loading and correct dimensions. Use JPG/PNG originals at least 2000 px wide.
+- **Article and work images:** put them next to the Markdown file (e.g. `src/content/reados-chapters/images/`) and reference them relatively. Astro creates AVIF and WebP versions at several sizes, with lazy loading and correct dimensions. Use JPG/PNG originals at least 2000 px wide.
 - **Inline images in Markdown:** `![Alt text](./images/diagram.png)` (alt text is required).
 - **Social card:** posts with an `image` use it automatically (cropped to 1200×630). Otherwise `public/og-default.png` is used.
 - **Static files** that must keep an exact URL go in `public/`.
@@ -165,7 +168,7 @@ The endpoint (`src/worker.ts` → `src/server/contact/`) validates input, checks
 
 A receptionist-style chat sits at the bottom right of every page. Visitors can **minimise** it or **pop it out** into its own window (`/chat/`). It:
 
-- answers **only** from KEVOS's published website content: FAQ, About, Work and Insights;
+- answers **only** from KEVOS's published website content: FAQ, About, Work and READOS chapters;
 - refuses unrelated requests, never invents products, prices or promises, and ignores attempts to override its rules;
 - offers **"Leave a message"**, which sends the visitor's details and the chat transcript through the same contact form system;
 - keeps the conversation in the visitor's browser session only (nothing is stored by KEVOS).
@@ -240,7 +243,7 @@ The Worker name in `wrangler.toml` must match the dashboard. If you rename it (S
 - **Legacy safety:** `scripts/prepare-brand.mjs` is a compatibility shim for previous build setups; it now calls the KEVOS icon builder rather than generating GoCore artwork. Old `brand-source/generated/gocore-*` files are legacy records, not the live KEVOS identity.
 - **Type system:** self-hosted KEVOS Display (Oxanium-based) is used for major headings. Body copy stays readable with Inter Tight and articles use Source Serif 4. The approved KEVOS orange logo itself uses fixed SVG paths.
 - **Colours:** `src/styles/global.css` contains the light/dark colour tokens. All blue legacy brand accents are replaced with the approved KEVOS orange.
-- **Motion:** `src/components/ServiceMap.astro` is the shared four-square Home/Services/Insights/About orbit. `src/components/MotionVisual.astro` contains the purpose-specific Industries/How It Works/Tools/Contact diagrams. Every animation respects reduced-motion preferences.
+- **Motion:** `src/components/ServiceMap.astro` is the shared four-square Home/Services/About orbit. `src/components/MotionVisual.astro` contains the purpose-specific Industries/How It Works/Tools/Contact diagrams. Every animation respects reduced-motion preferences.
 
 If the website unexpectedly displays GoCore, **do not roll back GitHub**: confirm the Cloudflare Worker `throbbing-block-6c61` has a successful build from the latest `main` commit and that `kevos.com/*` routes to that deployment.
 

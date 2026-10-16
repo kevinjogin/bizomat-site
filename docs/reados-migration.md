@@ -1,5 +1,7 @@
 # ReadOS migration plan — safe implementation
 
+> **Status, 17 October 2026: Insights retired.** All 750 Insights articles are chapters of the 53 edited READOS books (files moved to `src/content/reados-chapters/`); the `/insights/` pages, listings and feed links are removed, and every old Insights URL redirects permanently to its chapter (`public/_redirects` and `src/worker.ts`). The plan below is kept as the historical record. The `/library/` finance guide is unchanged.
+
 ## Goal
 Consolidate the existing /insights/ and /library/ experience into /reados/ without losing content, search visibility, reader links, images, tools, forms, or KEVOS Assistant functionality. GitHub and Cloudflare remain the primary code/hosting platform.
 

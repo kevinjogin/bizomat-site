@@ -1,13 +1,13 @@
-# Codex prompt: write Insights articles from source material
+# Codex prompt: write READOS chapters from source material
 
 Paste everything inside the block into Codex (opened on the `gocore-website` repository, which is the KEVOS website despite its historical name), then add your notes, text or file paths under **SOURCE MATERIAL** at the end. Codex writes new article files but does not commit or deploy. When it finishes, hand the result back to Claude to review, verify, commit and publish.
 
 ```text
-You are writing Insights articles for the KEVOS website (kevos.com). This repository is an Astro site; articles are Markdown files in src/content/insights/.
+You are writing READOS chapters for the KEVOS website (kevos.com). This repository is an Astro site; chapters are Markdown files in src/content/reados-chapters/, grouped into edited books in src/utils/reados-collections.ts.
 
 TASK
-Turn the source material at the end into as many high-quality, standalone Insights articles as it genuinely supports. One clear topic per article. Don't pad thin material and don't split one idea across several thin articles.
-Save each article as a NEW Markdown file in src/content/insights/.
+Turn the source material at the end into as many high-quality, standalone READOS chapters as it genuinely supports. One clear topic per article. Don't pad thin material and don't split one idea across several thin articles.
+Save each article as a NEW Markdown file in src/content/reados-chapters/.
 Do not edit, rename or delete any existing file. Do not commit, push or deploy. Leave the new files for review.
 
 ABOUT KEVOS
@@ -24,7 +24,7 @@ LENGTH (HARD REQUIREMENT)
 
 FILE NAME
 - The file name is the URL slug: lowercase words separated by hyphens, no dates, under about 60 characters, ending in .md (e.g. pricing-a-new-product.md).
-- It must not match any existing file in src/content/insights/.
+- It must not match any existing file in src/content/reados-chapters/.
 
 FRONT MATTER (use exactly this format)
 ---
@@ -45,7 +45,7 @@ Rules:
 - publishDate: today's date in Sydney. Never a future date (future-dated posts are hidden from the site).
 - category: exactly one of Engineering, Manufacturing, Operations, Projects, Ideas, Products, Technology, Business. Prefer the first four for articles on those subjects.
 - tags: 2–5, chosen only from this list: product-development, manufacturing, prototyping, design, automation, ai, systems, operations, strategy, experimentation, customers, validation, process-improvement, finance, sales, marketing, leadership, people, startups, communication, quality, projects. Do not invent tags; if one is genuinely needed, recommend it in your report instead.
-- Only add image fields if I supply images: image: "./images/<file-name>" plus a required imageAlt: "<description>", with the file saved in src/content/insights/images/.
+- Only add image fields if I supply images: image: "./images/<file-name>" plus a required imageAlt: "<description>", with the file saved in src/content/reados-chapters/images/.
 
 BODY STRUCTURE
 - Never use a level-1 heading (a line starting with "# "). The page shows the title as the only H1. Use ## for sections and ### for subsections.
@@ -59,8 +59,8 @@ BODY STRUCTURE
   Keep only the parts of the disclaimer that fit the topic. If the source is my own notes, write "Source: KEVOS notes."
 
 INTERNAL LINKS
-- Where genuinely useful, link to 1–3 existing articles using this exact form: [Article title](/insights/<existing-file-name-without-.md>/). The trailing slash is required.
-- Link only to files that already exist in src/content/insights/ or that you are creating in this task.
+- Where genuinely useful, link to 1–3 existing articles using this exact form: [Chapter title](/reados/collections/<book-slug>/<existing-file-name-without-.md>/), using the book that lists the chapter in src/utils/reados-collections.ts. The trailing slash is required.
+- Link only to files that already exist in src/content/reados-chapters/ or that you are creating in this task.
 - Do not invent external URLs. Include an external link only if it appears in my source material or is an official site you are certain exists.
 
 STYLE
@@ -91,4 +91,4 @@ SOURCE MATERIAL
 
 ## After Codex finishes
 
-Tell Claude, for example: "Codex has added new Insights articles, review and publish them." Claude will check facts, length, front matter and links, run `npm run verify`, then commit, push and deploy.
+Tell Claude, for example: "Codex has added new READOS chapters, review and publish them." Claude will check facts, length, front matter and links, run `npm run verify`, then commit, push and deploy.

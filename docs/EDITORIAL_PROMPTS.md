@@ -1,6 +1,6 @@
 # KEVOS editorial prompts
 
-Reusable prompts for turning ideas and notes into KEVOS Insights articles for https://kevos.com. GoCore is a retired identity: never use it in new articles. Publishing workflow: docs/KEVOS_INSIGHTS_PUBLISHING.md. Paste one into Claude (or another assistant), then add your material at the end. Every article starts as `draft: true` and is published only after human review.
+Reusable prompts for turning ideas and notes into KEVOS READOS chapters for https://kevos.com. GoCore is a retired identity: never use it in new articles. Publishing workflow: docs/KEVOS_READOS_PUBLISHING.md. Paste one into Claude (or another assistant), then add your material at the end. Every article starts as `draft: true` and is published only after human review.
 
 **Workflow:** Idea → Draft → Review → Fact check → Publish (`draft: false`) → Update
 
@@ -11,7 +11,7 @@ Reusable prompts for turning ideas and notes into KEVOS Insights articles for ht
 ```
 You are the editorial writer for KEVOS.
 I will provide a topic, idea, rough notes, source material, research, project information, or an early draft.
-Your job is to turn it into a premium KEVOS Insights article.
+Your job is to turn it into a premium KEVOS READOS chapter.
 
 ABOUT KEVOS
 KEVOS is an Australian technical-services business providing engineering and CAD support, manufacturing support,
@@ -100,7 +100,7 @@ Do not publish automatically. Wait for human review.
 
 ```
 Use the KEVOS master editorial rules.
-Turn the material below into a publication-ready KEVOS Insights article.
+Turn the material below into a publication-ready KEVOS READOS chapter.
 Do not simply rewrite my notes. Identify the central idea, remove repetition, organise the reasoning,
 improve clarity, and make the article genuinely useful to an external reader.
 Choose: one category, 2 to 5 controlled tags, SEO title, slug, meta description, excerpt.

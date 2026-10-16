@@ -12,7 +12,7 @@ The authoritative description of the KEVOS website for future maintainers and AI
 | Production branch | `main` |
 | Framework | Astro (static output) + Cloudflare Worker (`src/worker.ts`) |
 | Hosting | Cloudflare Workers, Worker `throbbing-block-6c61` |
-| Content | `src/content/insights/` (Insights), `src/content/work/` (Work) |
+| Content | `src/content/reados-chapters/` (READOS chapters), `src/content/reados-publications/`, `src/content/work/` (Work) |
 
 ## 2. Verified baseline
 
@@ -24,36 +24,35 @@ The authoritative description of the KEVOS website for future maintainers and AI
 | Live check | `/`, `/insights/`, `/about/`, `/services/`, `/contact/`, `/privacy/`, `/terms/` and `/insights/category/business/` on kevos.com were byte-identical to this build on 8 Oct 2026 |
 | Key asset hashes (first 16 hex) | `brand/kevos-wordmark-orange-light.svg` f3607e97916ae13d · `brand/kevos-wordmark-orange-dark.svg` b5e02ee5e21e8714 · `brand/kevos-favicon-k-orange.svg` and `favicon.svg` ae1232c658ae94be |
 
-Later commits that add Insights will legitimately change article pages, listings, tag and category pages, the homepage article previews, `sitemap-0.xml`, `rss.xml`, the Pagefind index and `assistant-knowledge.json`. They must not change the brand assets, CSS, layouts or non-Insights pages beyond those generated lists.
+(The baseline above predates the retirement of Insights on 17 Oct 2026.) Later commits that add READOS chapters will legitimately change READOS chapter and book pages, the `/reados/` listing, `sitemap-0.xml`, `rss.xml`, the Pagefind index and `assistant-knowledge.json`. They must not change the brand assets, CSS, layouts or non-READOS pages beyond those generated lists.
 
 ## 3. Site architecture
 
 ```
 src/
   pages/        /, /services/, /tools/, /how-it-works/, /industries/, /factory-fix/, /assessment/ (+ received/), /about/,
-                /insights/ (+ page/, category/, tag/, [slug]), /contact/ (+ sent/, error/),
+                /reados/ (+ collections/[book]/[chapter], books/[volume]/[chapter], publications/), /tools/, /contact/ (+ sent/, error/),
                 /privacy/, /terms/, /disclaimer/, /search/, /chat/, 404, rss.xml, robots.txt,
                 assistant-knowledge.json
-  layouts/      BaseLayout (shell, theme, header/footer), InsightsIndex, LegalLayout (full-width legal pages)
+  layouts/      BaseLayout (shell, theme, header/footer), LegalLayout (full-width legal pages)
   components/   Header, Footer, SiteWordmark, Logo, ThemeToggle, ServiceMap (four-square orbit),
-                MotionVisual (purpose-built diagrams), Hero, ArticleCard, InsightsListing,
-                TableOfContents, ContactForm, BookingCard, ChatWidget (KEVOS Assistant), SEO, …
+                MotionVisual (purpose-built diagrams), Hero, ReadOSAnimatedCover, ContactForm, BookingCard, ChatWidget (KEVOS Assistant), SEO, …
   config/       site.ts (SITE, NAV, QUOTE_CTA, footer nav, contact, booking, assistant)
                 taxonomy.ts (categories, tags) · work.ts
   data/         services.ts (Services page source of truth), faq.ts (assistant FAQ), brand.ts
   server/       contact and chat handlers (run in the Worker, tested in Node)
   styles/       global.css (tokens, typography, prose, light/dark themes)
-  worker.ts     Worker entry: static assets, /api/chat, /api/contact, HTTPS and preview-host handling
+  worker.ts     Worker entry: static assets, /api/chat, /api/contact, HTTPS, preview-host handling and the /insights/ redirect fallback
 public/brand/   approved KEVOS logos and icons (plus legacy gocore-* files that are not used)
 scripts/        build-kevos-icons.mjs (icons, runs in every build), postbuild.mjs (quality gate),
                 reading-time.mjs, prepare-brand.mjs (KEVOS shim), brand/ (retired GoCore generators)
-tests/          brand-wordmark, chat, contact, heading-font, insights-editorial, motion-scenes,
+tests/          brand-wordmark, chat, contact, heading-font, reados-chapters, motion-scenes,
                 tools-calculators, worker
 ```
 
 ### Navigation (src/config/site.ts)
 
-Header: Home, Services, Tools, How It Works, Industries, Insights, About, plus the corporate call to action **"Discuss Your Requirements"** → `/contact/`. Footer adds service anchors, Factory Fix, Free Tools, and Privacy, Terms, Disclaimer.
+Header: KEVOS® (home), WORKOS (`/tools/`) and READOS (`/reados/`), plus the **REACHOS** call to action → `/contact/`. Footer adds service anchors, the assessment, Factory Fix, WORKOS, the READOS RSS feed, and Privacy, Terms, Disclaimer.
 
 ## 4. Brand system (frozen)
 
@@ -62,17 +61,18 @@ Header: Home, Services, Tools, How It Works, Industries, Insights, About, plus t
 - **Colours:** `--brand-orange: #ff6a13`; light-theme accent `#c2410c`; dark-theme accent `#ff7a29` (`src/styles/global.css`). No blue brand accents.
 - **Typography:** KEVOS Display (Oxanium-based, self-hosted) for H1–H6; Inter Tight for body; Source Serif 4 for article prose.
 - **Themes (owner decision, 8 Oct 2026):** the site always opens in the **dark** theme (`<html data-theme="dark">` in `BaseLayout.astro` and `pages/chat.astro`, so it is dark even without JavaScript). The visitor can switch to light with `ThemeToggle.astro`; that choice is kept in `sessionStorage` key `kevos-theme` for the current browser session only, and any old `localStorage` value is removed. The operating-system preference is not followed. Covered by `tests/theme-default.test.ts`.
-- **Motion:** `ServiceMap.astro` is the shared four-square orbit with orange core on Home, Services, Insights and About. `MotionVisual.astro` holds the purpose-built Industries, How It Works, Tools and Contact diagrams. `FactoryFixArt.astro` (Factory Fix hero: bottleneck → review → rebalanced flow → action plan) and `assessment/AssessmentHeroArt.astro` (assessment hero) are SVG scenes in the same blueprint-panel style on a 16-second timeline, as is `LegalArt.astro` (one scene each for Privacy, Terms and Disclaimer, chosen by `LegalLayout`'s `scene` prop). All respect reduced-motion preferences; the SVG scenes then show every stage as one still.
+- **Motion:** `ServiceMap.astro` is the shared four-square orbit with orange core on Home, Services and About. `MotionVisual.astro` holds the purpose-built Industries, How It Works, Tools and Contact diagrams. `FactoryFixArt.astro` (Factory Fix hero: bottleneck → review → rebalanced flow → action plan) and `assessment/AssessmentHeroArt.astro` (assessment hero) are SVG scenes in the same blueprint-panel style on a 16-second timeline, as is `LegalArt.astro` (one scene each for Privacy, Terms and Disclaimer, chosen by `LegalLayout`'s `scene` prop). All respect reduced-motion preferences; the SVG scenes then show every stage as one still.
 - **Legal pages:** Privacy, Terms and Disclaimer use `LegalLayout` aligned to the shared full-width header container.
 
 Retired and not to be used: blue GoCore logo, GC favicon, `scripts/brand/build_brand.py`, `brand-source/generated/gocore-*`.
 
-## 5. Insights system
+## 5. READOS chapters (formerly Insights)
 
-- Schema: `src/content.config.ts`. Title 5–120 characters, description 50–200, `publishDate` required (future dates hidden), `category` one of Engineering, Manufacturing, Operations, Projects, Ideas, Products, Technology, Business; 1–5 tags from `src/config/taxonomy.ts`; `author` defaults to KEVOS; `draft` defaults to false.
-- Dates stay in frontmatter, JSON-LD and RSS, but cards and article pages do not display them (evergreen editorial presentation, enforced by `tests/insights-editorial.test.ts`).
-- Older articles carry `author: "GoCore"`; `insightAuthor()` in `src/utils/content.ts` displays these as KEVOS. New articles use `author: "KEVOS"`.
-- Publishing rules and workflow: `docs/KEVOS_INSIGHTS_PUBLISHING.md`.
+- **Insights was retired on 17 Oct 2026.** All 750 articles are chapters of the 53 edited READOS books (`src/utils/reados-collections.ts`), read at `/reados/collections/<book>/<slug>/`; the category volumes at `/reados/books/` point their canonical URL there. Every `/insights/<slug>/` URL redirects permanently (one hop) to its chapter through `public/_redirects`; categories go to `/reados/#<category>`, tags and listing pages to `/reados/`, and `src/worker.ts` handles addresses the rules cannot match exactly. `tests/reados-chapters.test.ts` and `scripts/postbuild.mjs` keep it that way.
+- Schema (`chapters` collection): `src/content.config.ts`. Title 5–120 characters, description 50–200, `publishDate` required (future dates hidden), `category` one of Engineering, Manufacturing, Operations, Projects, Ideas, Products, Technology, Business; 1–5 tags from `src/config/taxonomy.ts`; `author` defaults to KEVOS; `draft` defaults to false.
+- Dates stay in frontmatter, JSON-LD and RSS, but chapter pages do not display them (evergreen editorial presentation).
+- Older chapters carry `author: "GoCore"`; `chapterAuthor()` in `src/utils/content.ts` reports these as KEVOS. New chapters use `author: "KEVOS"`.
+- Publishing rules and workflow: `docs/KEVOS_READOS_PUBLISHING.md`.
 
 ## 6. SEO, search and feeds
 

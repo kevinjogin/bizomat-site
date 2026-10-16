@@ -1,6 +1,6 @@
 # KEVOS website: permanent project instructions
 
-Read this file, `docs/KEVOS_SOURCE_OF_TRUTH.md` and `docs/KEVOS_INSIGHTS_PUBLISHING.md` before any change.
+Read this file, `docs/KEVOS_SOURCE_OF_TRUTH.md` and `docs/KEVOS_READOS_PUBLISHING.md` before any change.
 
 ## Identity
 
@@ -24,9 +24,9 @@ Read this file, `docs/KEVOS_SOURCE_OF_TRUTH.md` and `docs/KEVOS_INSIGHTS_PUBLISH
 
 ## Change control
 
-- A content request changes only `src/content/insights/` (and its images). Never change layouts, components, CSS, logos, favicons, animations, navigation or legal pages as part of a content request. If a website-level change seems necessary, stop and ask.
+- A content request changes only `src/content/reados-chapters/` (and its images) and, to place a chapter in a book, `src/utils/reados-collections.ts`. The Insights section was retired on 17 October 2026; never recreate `/insights/` (its URLs redirect to READOS chapters). Never change layouts, components, CSS, logos, favicons, animations, navigation or legal pages as part of a content request. If a website-level change seems necessary, stop and ask.
 - Stage files by explicit path. Never `git add -A` or `git add .` for a release. Inspect `git diff --cached --stat` before committing.
-- Documentation and project-memory changes go in their own commit, separate from Insights commits.
+- Documentation and project-memory changes go in their own commit, separate from content commits.
 - `npm run build` runs `scripts/build-kevos-icons.mjs`, which rewrites `public/brand/kevos-favicon-k-orange.svg`, `public/brand/kevos-icon.svg`, `public/favicon.svg`, `public/favicon.ico` and creates `public/brand/kevos-favicon-k-orange-*.png`. On Windows these show as modified (line endings, encoder bytes). They are build side-effects: do not commit them; restore with `git restore` after building.
 - Never run `python scripts/brand/build_brand.py` (retired GoCore artwork generator).
 
@@ -41,4 +41,4 @@ npm run deploy      # verify, then wrangler deploy (see deployment rule above)
 
 ## After any production change
 
-Check the public site, not just the build: `https://kevos.com/`, `/services/`, `/insights/`, `/about/` and every new article URL. Confirm the orange KEVOS wordmark, the orange K favicon (`/brand/kevos-favicon-k-orange.svg`), navigation with the "Discuss Your Requirements" button, that a new session opens in the dark theme, and that switching to light lasts only for that session. Compare the active deployment (`npx wrangler deployments list`) with the release commit. Do not report anything as live until its public URL has been checked.
+Check the public site, not just the build: `https://kevos.com/`, `/services/`, `/reados/`, `/about/` and every new chapter URL. Confirm the orange KEVOS wordmark, the orange K favicon (`/brand/kevos-favicon-k-orange.svg`), navigation with the "Discuss Your Requirements" button, that a new session opens in the dark theme, and that switching to light lasts only for that session. Compare the active deployment (`npx wrangler deployments list`) with the release commit. Do not report anything as live until its public URL has been checked.
