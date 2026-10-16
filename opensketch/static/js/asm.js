@@ -455,7 +455,7 @@ export class AssemblyMode {
     const doc = app.doc;
     const state = { picked: null };
     const pickFile = () => {
-      const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.osk,.json,.step,.stp,.zip,.sldprt,.sldasm';
+      const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.osk,.json,.step,.stp,.brd,.zip,.sldprt,.sldasm';
       inp.onchange = () => { if (inp.files[0]) { app.closeCommand(); this.insertFile(inp.files[0]); } };
       inp.click();
     };

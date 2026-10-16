@@ -1262,7 +1262,7 @@ class App {
 
   openFile() { $('fileinput').value = ''; $('fileinput').click(); }
 
-  // STEP (and a clear message for SOLIDWORKS files) -> part or assembly document, via the server.
+  // STEP or EAGLE XML (and a clear message for SOLIDWORKS files) -> document, via the server.
   // The file goes up as raw bytes, gzipped when the browser can (STEP is text: about 5x smaller),
   // so large files fit through the Codespaces tunnel. Errors always say something.
   async importFile(file) {
@@ -1284,7 +1284,7 @@ class App {
     throw new Error(j.error || j.detail || importFailText(r.status, body.size));
   }
 
-  isImportable(file) { return /\.(step|stp|zip|sldprt|sldasm)$/i.test(file?.name || ''); }
+  isImportable(file) { return /\.(step|stp|brd|zip|sldprt|sldasm)$/i.test(file?.name || ''); }
 
   // Any file the user opens, drops or inserts -> part or assembly document, with a plain message
   // for files OpenSketch cannot read (instead of a JSON parser error).
@@ -1293,7 +1293,7 @@ class App {
     const name = file?.name || 'the file';
     if (!/\.(osk|json)$/i.test(name)) {
       const ext = (name.match(/\.[^.]+$/) || [''])[0];
-      throw new Error(`OpenSketch cannot open ${ext ? ext + ' files' : name}. Use STEP (.step, .stp, or a .zip holding one) or an OpenSketch file (.osk).`);
+      throw new Error(`OpenSketch cannot open ${ext ? ext + ' files' : name}. Use STEP (.step, .stp), EAGLE XML (.brd), a .zip holding one CAD file, or an OpenSketch file (.osk).`);
     }
     try { return JSON.parse(await file.text()); } catch { throw new Error(`${name} is not a valid OpenSketch file.`); }
   }
@@ -1317,7 +1317,13 @@ class App {
       this.viewer.setBody(null);
       await this.regen();
       this.viewer.zoomToFit();
-      if (this.isImportable(file)) this.status(isAssembly(d) ? `Imported ${d.components.length} components. Add mates with Mate, or OpenSketch AI > Add Mates.` : 'Imported as Imported1. Add features on top, or ask the AI to rebuild it as features.');
+      if (this.isImportable(file)) {
+        this.status(isAssembly(d)
+          ? `Imported ${d.components.length} components. Add mates with Mate, or OpenSketch AI > Add Mates.`
+          : d.pcb?.format === 'eagle-xml'
+            ? 'Imported PCB as editable outline, thickness and mechanical-hole features.'
+            : 'Imported as Imported1. Add features on top, or ask the AI to rebuild it as features.');
+      }
     } catch (err) { message('Open', 'Could not open the file: ' + err.message); }
   }
 

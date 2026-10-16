@@ -53,6 +53,13 @@ FEATURES_HELP = """Feature types (part coordinates, millimetres, degrees, Y up a
 Planes: {"ref": "Front Plane"} (XY, normal +Z), {"ref": "Top Plane"} (XZ, normal +Y, sketch y = world -Z),
 {"ref": "Right Plane"} (YZ, normal +X, sketch x = world -Z), {"ref": "<plane or sketch feature id>"},
 or a planar face {"type": "face", "origin": [x,y,z], "normal": [x,y,z], "xdir": [x,y,z]}.
+A face plane reattaches to the nearest same-normal face after upstream edits: its origin is a hint,
+not an exact coordinate. Use {"type": "fixed", "origin": [x,y,z], "normal": [x,y,z], "xdir": [x,y,z]}
+for computed heights (enclosure floors, nut pockets, locating pins), or an offset reference plane.
+Inspect requested/resolved planes, per-feature tool/result bounds and extrusion normal ranges in
+the rebuild diagnostics. Face movement and no-material-change warnings require inspection even
+when rebuilt is true. clean means no rebuild errors or warnings; it does not validate dimensions,
+clearances, manufacturability or physical fit.
 
 - sketch: {"type":"sketch","plane":<plane>,"entities":[...],"constraints":[...]}
   entities (2D sketch coordinates):
@@ -299,9 +306,19 @@ def _rebuild_report(doc: dict) -> tuple[str, bool]:
     return json.dumps(rep), clean
 
 
+def _status_report(status: list) -> dict:
+    errors = [s for s in status if s["state"] == "error"]
+    warnings = [{"id": s["id"], **w} for s in status for w in s.get("warnings", [])]
+    # Keep older status producers usable while they migrate to structured warnings.
+    warnings.extend({"id": s["id"], "code": "rebuild_warning", "message": s.get("message", "Rebuild warning")}
+                    for s in status if s["state"] == "warning" and not s.get("warnings"))
+    return {"status": status, "errors": errors, "warnings": warnings,
+            "rebuilt": not errors, "clean": not errors and not warnings}
+
+
 def _part_report(st) -> tuple[dict, bool]:
-    errors = [s for s in st.status if s["state"] in ("error", "warning")]
-    rep = {"status": st.status}
+    rep = _status_report(st.status)
+    rep["planes"] = {k: geometry.plane_dict(v) for k, v in st.planes.items()}
     if st.part is not None:
         bb = st.part.bounding_box()
         rep["bbox_min"] = geometry.vlist(bb.min)
@@ -310,7 +327,7 @@ def _part_report(st) -> tuple[dict, bool]:
         rep["bodies"] = len(st.part.solids())
     else:
         rep["body"] = "none"
-    return rep, not errors
+    return rep, rep["clean"]
 
 
 def _geometry_summary(solid, limit: int = 24) -> dict:
@@ -353,9 +370,21 @@ def _import_feats(doc: dict):
 
 
 def model_view(doc: dict) -> dict:
-    """The document as Claude sees it: imported bodies summarised instead of their BREP data."""
+    """Compact AI-only view: summarize BREP and PCB package geometry without changing the source.
+
+    PCB placements, holes, thickness and limitations stay available for enclosure modelling;
+    full 2D package records remain in the stored document and native export.
+    """
     from . import importer
     view = copy.deepcopy(doc)
+    parts = (view.get("parts") or {}).values() if assembly.is_assembly(view) else (view,)
+    for part in parts:
+        pcb = part.get("pcb")
+        if isinstance(pcb, dict):
+            packages = pcb.get("packages")
+            for package in packages if isinstance(packages, list) else ():
+                if isinstance(package, dict) and isinstance(package.get("geometry"), list):
+                    package["geometry_count"] = len(package.pop("geometry"))
     for part, f in _import_feats(view):
         data = f.get("data") or ""
         try:
@@ -426,12 +455,23 @@ def _working_assembly(doc: dict) -> dict:
 
 def _asm_report(asm: dict, res: dict) -> dict:
     names = {c["id"]: c.get("name") for c in asm.get("components", [])}
+    parts = {k: {**_status_report(v["status"]), "bbox": v["bbox"], "planes": v.get("planes", {})}
+             for k, v in res["parts"].items()}
+    errors = [{"part": pid, **e} for pid, p in parts.items() for e in p["errors"]]
+    warnings = [{"part": pid, **w} for pid, p in parts.items() for w in p["warnings"]]
+    for kind in ("mate", "component"):
+        for item in res[kind + "s"]:
+            if item["state"] == "error":
+                errors.append({kind: item["id"], "message": item.get("message", f"{kind.capitalize()} error")})
+            elif item["state"] == "warning":
+                warnings.append({kind: item["id"], "message": item.get("message", f"{kind.capitalize()} warning")})
     return {
+        "rebuilt": not errors, "clean": not errors and not warnings, "errors": errors, "warnings": warnings,
         "components": [{"id": c["id"], "name": names.get(c["id"]), "part": c["part"], "position": c["position"],
-                        "rotation": c["rotation"], "state": c["state"], "free_dof": c.get("dof")} for c in res["components"]],
+                        "rotation": c["rotation"], "state": c["state"], "free_dof": c.get("dof"),
+                        **({"message": c["message"]} if c.get("message") else {})} for c in res["components"]],
         "mates": [{"id": m["id"], "state": m["state"], **({"message": m["message"]} if m.get("message") else {})} for m in res["mates"]],
-        "parts": {k: {"status": [s for s in v["status"] if s["state"] in ("error", "warning")] or "ok", "bbox": v["bbox"]}
-                  for k, v in res["parts"].items()},
+        "parts": parts,
     }
 
 
@@ -508,20 +548,13 @@ class LiveBuilder:
         for f in base_features:
             if f.get("suppressed"):
                 continue
-            try:
-                geometry.regen_feature(f, self.st)
-            except Exception:
-                pass
+            geometry.rebuild_feature(f, self.st)
 
     def add(self, f: dict) -> dict:
         before = self.st.part
-        ev = {"feature": {k: f.get(k) for k in ("id", "name", "type")}, "state": "ok"}
-        try:
-            warn = geometry.regen_feature(f, self.st)
-            if isinstance(warn, str):
-                ev.update(state="warning", message=warn)
-        except Exception as exc:  # incomplete or wrong feature: show it, keep going
-            ev.update(state="error", message=str(exc))
+        _, status = geometry.rebuild_feature(f, self.st)
+        ev = {"feature": {k: f.get(k) for k in ("id", "name", "type")},
+              **{k: v for k, v in status.items() if k != "id"}}
         if f.get("type") in ("sketch", "plane") and f.get("id") in self.st.planes:
             ev["frame"] = geometry.plane_dict(self.st.planes[f["id"]])
             if f.get("type") == "sketch":
@@ -637,8 +670,9 @@ class Session:
             comp["fixed"] = True
         res, ev = self._solve_event({"kind": "insert", "component": cid, "new": new})
         self.summary = f"Inserted {comp['name']}"
-        self.steps.append({"summary": self.summary, "clean": True})
-        return json.dumps(_asm_report(asm, res)), True, [ev]
+        rep = _asm_report(asm, res)
+        self.steps.append({"summary": self.summary, "clean": rep["clean"]})
+        return json.dumps(rep), rep["clean"], [ev]
 
     def add_mate(self, inp: dict) -> tuple[str, bool, list]:
         asm = self._asm()
@@ -656,10 +690,10 @@ class Session:
         asm["mates"].append(mate)
         res, ev = self._solve_event({"kind": "mate", "mate": mid})
         state = next((m for m in res["mates"] if m["id"] == mid), {})
-        clean = state.get("state") == "ok"
+        rep = _asm_report(self.work, res)
+        clean = rep["clean"]
         self.summary = f"{mate['name']}"
         self.steps.append({"summary": self.summary, "clean": clean})
-        rep = _asm_report(self.work, res)
         rep["this_mate"] = {"id": mid, **state}
         return json.dumps(rep), clean, [ev]
 
@@ -676,7 +710,8 @@ class Session:
         for p in parts:
             asm["parts"].pop(p, None)
         res, ev = self._solve_event({"kind": "delete", "components": sorted(comps), "mates": sorted(mates)})
-        return json.dumps(_asm_report(asm, res)), True, [ev]
+        rep = _asm_report(asm, res)
+        return json.dumps(rep), rep["clean"], [ev]
 
     def check_interference(self, inp: dict) -> tuple[str, bool, list]:
         if not assembly.is_assembly(self.work):

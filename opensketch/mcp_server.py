@@ -12,15 +12,19 @@ follows it, and undo_last_change / restore_version go back.
 
 from __future__ import annotations
 
+import base64
+import binascii
 import json
+import re
 from typing import Any, Literal
 
 import anyio
 from mcp.server.mcpserver import MCPServer
 from mcp.server.streamable_http_manager import StreamableHTTPASGIApp
 from mcp.server.transport_security import TransportSecuritySettings
+from mcp.types import CallToolResult, ImageContent, TextContent, ToolAnnotations
 
-from . import ai, assembly, auth, geometry, store
+from . import ai, artifacts, assembly, auth, geometry, importer, store
 
 INSTRUCTIONS = """OpenSketch is a parametric CAD app that works like SOLIDWORKS. You build real feature trees
 (sketches with relations and dimensions, extrudes, revolves, fillets...) and assemblies with mates, in
@@ -28,13 +32,22 @@ documents the user has open in their browser: every change you make appears ther
 Call get_modelling_guide once before your first change: it has the document format, the assembly workflow
 and the rules (off-the-shelf parts first). Then: list_documents or create_document, get_document to read
 one, and the modelling tools, which all take doc_id. Every change is saved immediately (undo_last_change
-goes back). After building, give the user the document's link from the tool result."""
+goes back). Work in the background by default: no browser is needed to model, import, inspect a PNG
+preview, or export CAD. Use import_document for source files, preview_document for visual review and
+export_document for .osk, STEP and STL downloads. Open the app only when the user asks or would benefit
+from interactive inspection. After building, give the user the document's link from the tool result."""
 
 MCP_PREFACE = """You are working in OpenSketch through MCP tools. Differences from the in-app copilot described
 below: every tool takes a doc_id; there is no Accept/Reject step, each change is saved at once as a new
 version (undo_last_change, list_versions, restore_version go back); the user sees the model update live in
 their browser. Write one short line before each change as usual. Use your own web search if you have it
-for real part sizes and standards. When done, give the user the "open" link from the last tool result.
+for real part sizes and standards. Modelling, imports, previews and exports run on the server without
+opening a browser. Default to background work, use preview_document for visual inspection, and use
+export_document for downloads (optional part_id exports one assembly part in its local coordinates).
+Download URLs are read-only, artifact-specific links valid for one hour; they never contain the MCP
+credential. Fetch them before expiry or call the tool again. Native .osk exports preserve the source
+even if it needs repair; STEP/STL/PNG are refused when active geometry or mates fail to rebuild.
+When done, give the user the "open" link from the last tool result and any requested download links.
 
 """
 
@@ -141,6 +154,139 @@ async def get_document(doc_id: str) -> str:
         return await anyio.to_thread.run_sync(_read_sync, doc_id)
     except store.NotFound:
         return f"No document {doc_id!r}."
+
+
+# These are MCP file operations, not tools offered to the in-app ai.Session. Export and preview do
+# not change the document, so they have no Session/live.js build events. Import creates a new stored
+# document and the browser can follow its returned open link, just like create_document.
+MAX_IMPORT_BYTES = 32 * 1024 * 1024
+
+
+def _native_structure(doc: dict) -> None:
+    """Check the containers read by the UI/model_view, not feature validity or rebuild success.
+
+    Missing sketch references, unsupported feature types and other repairable modelling errors
+    remain importable. A null feature or a scalar part is not a document that those readers can use.
+    """
+    def object_list(value, label, fields=()):
+        if not isinstance(value, list):
+            raise ValueError(f"{label} must be a list.")
+        seen = set()
+        for item in value:
+            if not isinstance(item, dict):
+                raise ValueError(f"Every {label} entry must be an object.")
+            for field in fields:
+                if not isinstance(item.get(field), str) or not item[field]:
+                    raise ValueError(f"Every {label} entry needs a non-empty string {field}.")
+            if "id" in fields:
+                if item["id"] in seen:
+                    raise ValueError(f"{label} IDs must be unique.")
+                seen.add(item["id"])
+        return value
+
+    def metadata(item, label):
+        for field in ("name", "units", "appearance"):
+            if field in item and not isinstance(item[field], str):
+                raise ValueError(f"{label} {field} must be a string.")
+        for field in ("material", "pcb"):
+            if field in item and not isinstance(item[field], dict):
+                raise ValueError(f"{label} {field} must be an object.")
+
+    def part(item, label):
+        if not isinstance(item, dict) or item.get("type", "part") != "part":
+            raise ValueError(f"{label} must be a part document.")
+        metadata(item, label)
+        for feature in object_list(item.get("features"), f"{label} features", ("id", "type")):
+            if feature["type"] == "import" and "data" in feature and not isinstance(feature["data"], str):
+                raise ValueError("Imported feature data must be a base64 string.")
+            if feature["type"] == "sketch":
+                if "entities" in feature:
+                    object_list(feature["entities"], "sketch entities", ("id", "type"))
+                if "constraints" in feature:
+                    object_list(feature["constraints"], "sketch constraints", ("type",))
+
+    if not isinstance(doc, dict) or doc.get("type", "part") not in ("part", "assembly"):
+        raise ValueError("The file must contain an OpenSketch part or assembly document.")
+    if not assembly.is_assembly(doc):
+        part(doc, "Part")
+        return
+    metadata(doc, "Assembly")
+    if not isinstance(doc.get("parts"), dict):
+        raise ValueError("Assembly parts must be an object.")
+    for key, value in doc["parts"].items():
+        part(value, f"Part {key!r}")
+    object_list(doc.get("components"), "assembly components", ("id", "part"))
+    for mate in object_list(doc.get("mates", []), "assembly mates", ("id", "type")):
+        for field in ("refs", "planes", "angle_refs"):
+            if field in mate:
+                object_list(mate[field], f"mate {field}")
+    if "sequence" in doc and (not isinstance(doc["sequence"], list)
+                              or not all(isinstance(item, str) for item in doc["sequence"])):
+        raise ValueError("Assembly sequence must be a list of component IDs.")
+
+
+def _import_sync(filename: str, data: str, name: str | None) -> str:
+    if not re.fullmatch(r"[^/\\\x00-\x1f]{1,255}", filename) or filename in (".", ".."):
+        raise ValueError("Use a filename without directory components.")
+    if len(data) > 4 * ((MAX_IMPORT_BYTES + 2) // 3):
+        raise ValueError("Import is limited to 32 MiB before base64 encoding.")
+    try:
+        raw = base64.b64decode(data, validate=True)
+    except (ValueError, binascii.Error):
+        raise ValueError("data must be valid base64 file content.") from None
+    if not raw or len(raw) > MAX_IMPORT_BYTES:
+        raise ValueError("Import requires a non-empty file of at most 32 MiB.")
+    if filename.lower().endswith((".osk", ".json")):
+        doc = json.loads(raw)
+        _native_structure(doc)
+    else:
+        doc = importer.import_file(raw, filename)
+    rec = store.create(name or doc.get("name") or filename.rsplit(".", 1)[0], doc=doc, by="claude")
+    return _result(rec, report={"source_filename": filename, "size_bytes": len(raw)})
+
+
+@mcp.tool()
+async def import_document(filename: str, data: str, name: str | None = None) -> str:
+    """Import a source file as a NEW stored document; never overwrites existing work. data is base64
+    file bytes, at most 32 MiB decoded. Supports .osk/.json, STEP/.stp, EAGLE XML .brd, or a zip with one
+    supported CAD file. EAGLE supplies PCB geometry, not populated component solids. Runs in background."""
+    try:
+        return await anyio.to_thread.run_sync(_import_sync, filename, data, name)
+    except (ValueError, importer.ImportError_) as exc:
+        return json.dumps({"error": f"Cannot import: {exc}"})
+
+
+@mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
+async def export_document(doc_id: str, format: Literal["osk", "step", "stl"], part_id: str | None = None) -> str:
+    """Export a saved document without a browser or changing its version. Returns an immutable file,
+    source version, SHA-256 and a read-only download_url valid for one hour. Optional part_id exports
+    an assembly part in LOCAL coordinates. STEP/STL refuse failed rebuilds; .osk preserves source."""
+    try:
+        rec = store.get(doc_id)
+        result = await anyio.to_thread.run_sync(artifacts.export_record, rec, format, part_id)
+        return json.dumps(dict(result, open=_link(doc_id)))
+    except (store.NotFound, artifacts.ArtifactError, geometry.FeatureError, assembly.AssemblyError) as exc:
+        return json.dumps({"error": f"Cannot export: {exc}"})
+
+
+@mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
+async def preview_document(doc_id: str, view: Literal["isometric", "top", "front", "right"] = "isometric",
+                           width: int = 960, height: int = 720, part_id: str | None = None) -> CallToolResult:
+    """Render a PNG of saved geometry without a browser. Returns the image directly for inspection,
+    plus an immutable PNG download_url valid for one hour. Views: isometric, top, front, right. Dimensions
+    128..1600 pixels. Optional part_id previews an assembly part in local coordinates. No document edits."""
+    try:
+        if not 128 <= width <= 1600 or not 128 <= height <= 1600:
+            raise artifacts.ArtifactError("Preview dimensions must be between 128 and 1600 pixels.")
+        rec = store.get(doc_id)
+        result, raw = await anyio.to_thread.run_sync(artifacts.preview_record, rec, view, width, height, part_id)
+        result["open"] = _link(doc_id)
+        return CallToolResult(content=[TextContent(type="text", text=json.dumps(result)),
+                                       ImageContent(type="image", data=base64.b64encode(raw).decode(), mime_type="image/png")],
+                              structured_content=result)
+    except (store.NotFound, ValueError, geometry.FeatureError, assembly.AssemblyError) as exc:
+        return CallToolResult(content=[TextContent(type="text", text=json.dumps({"error": f"Cannot preview: {exc}"}))],
+                              is_error=True)
 
 
 @mcp.tool()
@@ -278,15 +424,22 @@ def http_app():
     """The ASGI app for /mcp/<token> (token checked here) and the session manager to run in the lifespan."""
     global _http_app
     if _http_app is None:
-        mcp.streamable_http_app(stateless_http=True, json_response=True,
-                                transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False))
-        inner = StreamableHTTPASGIApp(mcp.session_manager)
-
-        _http_app = _TokenGate(inner)
+        _http_app = _TokenGate(None)
+        _configure_http()
     return _http_app
+
+
+def _configure_http():
+    # The SDK's session manager has a single-use lifespan. Keep the mounted gate stable while
+    # creating a fresh manager for each application startup (including repeated test lifespans).
+    mcp.streamable_http_app(stateless_http=True, json_response=True,
+                            max_request_body_size=4 * ((MAX_IMPORT_BYTES + 2) // 3) + 65536,
+                            transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False))
+    _http_app.inner = StreamableHTTPASGIApp(mcp.session_manager)
 
 
 def lifespan_context():
     """Run the MCP session manager while the server runs."""
     http_app()
+    _configure_http()
     return mcp.session_manager.run()
