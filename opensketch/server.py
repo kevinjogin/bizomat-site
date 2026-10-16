@@ -1,5 +1,6 @@
 """FastAPI server: serves the SOLIDWORKS-style web UI, the build123d regen API for parts and
-assemblies, and the streaming AI endpoint."""
+assemblies, the streaming AI endpoint, documents stored on the server (shared with Claude through the
+MCP endpoint at /mcp/<token>), and the optional password (OPENSKETCH_PASSWORD)."""
 
 from __future__ import annotations
 
@@ -20,7 +21,11 @@ import threading
 import time
 import uuid
 
-from . import ai, assembly, geometry, importer, sldexport
+from contextlib import asynccontextmanager
+
+from starlette.routing import Route
+
+from . import ai, assembly, auth, geometry, importer, mcp_server, sldexport, store
 
 STATIC = Path(__file__).parent / "static"
 
@@ -38,7 +43,14 @@ def _commit() -> str:
 VERSION = _commit()
 UPDATE_NOTE = Path(os.environ.get("OPENSKETCH_UPDATE_NOTE", str(Path.home() / ".opensketch-update-note")))
 
-app = FastAPI(title="OpenSketch")
+@asynccontextmanager
+async def lifespan(_app):
+    async with mcp_server.lifespan_context():
+        yield
+
+
+app = FastAPI(title="OpenSketch", lifespan=lifespan)
+app.add_middleware(auth.PasswordGate)
 
 
 class RegenRequest(BaseModel):
@@ -241,6 +253,72 @@ def api_version():
 @app.get("/api/ai/status")
 def api_ai_status():
     return {"available": ai.available() or ai.demo_enabled(), "demo": ai.demo_enabled()}
+
+
+# ----------------------------------------------------------------------------- server documents
+
+class DocCreate(BaseModel):
+    name: str = "Untitled"
+    doc: dict | None = None
+    kind: str = "part"
+
+
+class DocSave(BaseModel):
+    doc: dict
+    base_version: int | None = None
+    summary: str = ""
+    requests: list | None = None
+
+
+def _found(fn, *a, **k):
+    try:
+        return fn(*a, **k)
+    except store.NotFound:
+        raise HTTPException(404, "No such document") from None
+
+
+@app.get("/api/docs")
+def api_docs():
+    return store.listing()
+
+
+@app.post("/api/docs")
+def api_doc_create(req: DocCreate):
+    return store.create(req.name, req.doc, req.kind if req.kind in ("part", "assembly") else "part", by="you")
+
+
+@app.get("/api/docs/{doc_id}")
+def api_doc(doc_id: str):
+    return _found(store.get, doc_id)
+
+
+@app.get("/api/docs/{doc_id}/head")
+def api_doc_head(doc_id: str):
+    """Polled by the browser to follow changes (small)."""
+    return _found(store.head, doc_id)
+
+
+@app.put("/api/docs/{doc_id}")
+def api_doc_save(doc_id: str, req: DocSave):
+    try:
+        return store.save(doc_id, req.doc, "you", req.summary or "Edited in OpenSketch", req.base_version, req.requests)
+    except store.NotFound:
+        raise HTTPException(404, "No such document") from None
+    except store.Conflict as c:
+        return JSONResponse({"error": "conflict", "current": c.current}, status_code=409)
+
+
+@app.get("/api/connect")
+def api_connect(request: Request):
+    """What the Connect Claude dialog shows."""
+    base = auth.public_url(dict(request.headers))
+    return {"mcp_url": f"{base}/mcp/{auth.mcp_token()}", "password_set": bool(auth.password()),
+            "codespace": bool(os.environ.get("CODESPACE_NAME")), "app_url": base}
+
+
+# MCP (Streamable HTTP): the token in the path is the key; routed before the static files.
+app.router.routes.append(Route("/mcp/{token}", endpoint=mcp_server.http_app(), methods=["GET", "POST", "DELETE"]))
+app.router.routes.append(Route("/mcp/{token}/", endpoint=mcp_server.http_app(), methods=["GET", "POST", "DELETE"]))
 
 
 @app.get("/")

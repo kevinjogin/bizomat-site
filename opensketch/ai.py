@@ -218,7 +218,12 @@ TOOLS = [
          "refs": {"type": "array", "items": _REF, "minItems": 2, "maxItems": 2},
          "value": {"type": "number", "description": "distance in mm or angle in degrees"},
          "align": {"type": "string", "enum": ["anti", "aligned", "auto"]},
-         "flip": {"type": "boolean"}}, "required": ["type", "refs"]}},
+         "flip": {"type": "boolean"},
+         "planes": {"type": "array", "items": _REF, "description": "hinge: two faces kept together (stops sliding)"},
+         "angle_refs": {"type": "array", "items": _REF, "description": "hinge: two faces whose angle is limited"},
+         "angle_min": {"type": "number"}, "angle_max": {"type": "number"},
+         "min": {"type": "number", "description": "limit_distance / limit_angle"},
+         "max": {"type": "number", "description": "limit_distance / limit_angle"}}, "required": ["type", "refs"]}},
     {"name": "delete_items",
      "description": "Delete components, mates or parts from the assembly by id.",
      "input_schema": {"type": "object", "properties": {
@@ -642,8 +647,8 @@ class Session:
         asm["seq"] = asm.get("seq", 1) + 1
         mate = {"id": mid, "name": _next_name([m.get("name", "") for m in asm["mates"]], str(t).capitalize()), "type": t,
                 "refs": inp.get("refs") or []}
-        for k in ("value", "align", "flip"):
-            if k in inp:
+        for k in ("value", "align", "flip", "planes", "angle_refs", "angle_min", "angle_max", "min", "max"):
+            if k in inp:  # hinge: planes / angle_refs / angle_min / angle_max; limit mates: min / max
                 mate[k] = inp[k]
         asm["mates"].append(mate)
         res, ev = self._solve_event({"kind": "mate", "mate": mid})
