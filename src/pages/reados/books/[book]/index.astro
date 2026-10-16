@@ -2,11 +2,11 @@
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import Container from '../../../../components/Container.astro';
 import ReadOSAnimatedCover from '../../../../components/ReadOSAnimatedCover.astro';
-import { getInsights } from '../../../../utils/content.ts';
+import { getChapters } from '../../../../utils/content.ts';
 import { buildReadOSBooks, readosBookHref, readosChapterHref, type ReadOSBook } from '../../../../utils/reados.ts';
 
 export async function getStaticPaths() {
-  const books = buildReadOSBooks(await getInsights());
+  const books = buildReadOSBooks(await getChapters());
   return books.map((book) => ({params:{book:book.slug},props:{book}}));
 }
 interface Props { book: ReadOSBook }
@@ -30,7 +30,7 @@ const href = readosBookHref(book);
         <span><strong>{chapter.data.title}</strong><small>{chapter.data.description}</small></span>
         <span aria-hidden="true">↗</span>
       </a></li>)}</ol>
-    <p class="note">These chapters preserve the full original KEVOS® Insights articles. The reading collection is grouped by subject and presented in alphabetical order; chapter order does not imply a prerequisite learning sequence.</p>
+    <p class="note">The reading collection is grouped by subject and presented in alphabetical order; chapter order does not imply a prerequisite learning sequence.</p>
     <a href="/reados/">← All books</a>
   </Container></section>
 </BaseLayout>

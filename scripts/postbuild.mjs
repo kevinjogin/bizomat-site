@@ -161,25 +161,35 @@ for (const file of html) {
   }
 }
 
-// Drafts and future-dated articles must not reach production.
+// The Insights section is retired (its articles are READOS chapters); /insights/ URLs only redirect.
+if (fs.existsSync(path.join(DIST, 'insights'))) problems.push('Retired /insights/ pages were built; READOS chapters replace them');
+
+// Drafts and future-dated entries must not reach production.
 const rss = fs.existsSync(path.join(DIST, 'rss.xml')) ? fs.readFileSync(path.join(DIST, 'rss.xml'), 'utf8') : '';
 const sitemaps = files.filter((f) => /sitemap-\d+\.xml$/.test(f)).map((f) => fs.readFileSync(f, 'utf8')).join('');
 let draftCount = 0;
-for (const collection of ['insights', 'work']) {
+// READOS chapters are published inside books: /reados/collections/<book>/<slug>/ and /reados/books/<volume>/<slug>/.
+const ROUTES = { 'reados-chapters': ['reados/collections', 'reados/books'], work: ['work'] };
+for (const [collection, routes] of Object.entries(ROUTES)) {
   const dir = path.join(CONTENT, collection);
   if (!fs.existsSync(dir)) continue;
   for (const f of fs.readdirSync(dir).filter((f) => /^[^_].*\.mdx?$/.test(f))) {
     const front = fs.readFileSync(path.join(dir, f), 'utf8').match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] ?? '';
-    const isDraft = /^draft:\s*true\s*$/m.test(front) || (collection === 'insights' && !/^draft:/m.test(front));
+    const isDraft = /^draft:\s*true\s*$/m.test(front) || (collection === 'reados-chapters' && !/^draft:/m.test(front));
     const date = front.match(/^publishDate:\s*["']?([\d-]+)/m)?.[1];
     // Publish dates are calendar dates in Sydney, matching isVisible() in src/utils/content.ts.
     const future = date && date > new Intl.DateTimeFormat('en-CA', { timeZone: 'Australia/Sydney' }).format(new Date());
     if (!isDraft && !future) continue;
     draftCount++;
     const slug = f.replace(/\.mdx?$/, '');
-    const url = `/${collection}/${slug}/`;
-    if (fs.existsSync(path.join(DIST, collection, slug))) problems.push(`Draft or scheduled entry was published: ${url}`);
-    if (rss.includes(url) || sitemaps.includes(url)) problems.push(`Draft or scheduled entry appears in RSS or sitemap: ${url}`);
+    for (const route of routes) {
+      const base = path.join(DIST, route);
+      if (!fs.existsSync(base)) continue;
+      for (const parent of route === 'work' ? [''] : fs.readdirSync(base)) {
+        if (fs.existsSync(path.join(base, parent, slug))) problems.push(`Draft or scheduled entry was published: /${[route, parent, slug].filter(Boolean).join('/')}/`);
+      }
+    }
+    if (rss.includes(`/${slug}/`) || sitemaps.includes(`/${slug}/`)) problems.push(`Draft or scheduled entry appears in RSS or sitemap: ${slug}`);
   }
 }
 

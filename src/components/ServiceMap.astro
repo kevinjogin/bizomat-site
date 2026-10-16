@@ -6,7 +6,7 @@
 import Logo from './Logo.astro';
 import { SERVICE_GROUPS } from '../data/services.ts';
 
-interface Props { variant?: 'services' | 'insights' | 'about'; }
+interface Props { variant?: 'services' | 'about'; }
 const { variant = 'services' } = Astro.props;
 
 const META: Record<string, { verb: string; label: string; tags: string }> = {
@@ -19,12 +19,6 @@ const serviceNodes = SERVICE_GROUPS.slice(0, 4).map((g, i) => ({
   n: i + 1, href: `/services/#${g.id}`, ...(META[g.id] ?? { verb: '', label: g.title, tags: '' }),
 }));
 const otherNodes = {
-  insights: [
-    { n: 1, verb: 'Explore', label: 'Practical Articles', tags: 'Ideas · Context · Methods' },
-    { n: 2, verb: 'Learn', label: 'Engineering Guides', tags: 'Principles · Application' },
-    { n: 3, verb: 'Decide', label: 'Analysis and Ideas', tags: 'Evidence · Decisions' },
-    { n: 4, verb: 'Apply', label: 'Improvement Lessons', tags: 'Learning · Outcomes' },
-  ],
   about: [
     { n: 1, verb: 'Build', label: 'Toolmaking', tags: 'Hands-on foundation' },
     { n: 2, verb: 'Design', label: 'Engineering and Design', tags: 'Technical capability' },
@@ -33,12 +27,10 @@ const otherNodes = {
   ],
 };
 const nodes = variant === 'services' ? serviceNodes : otherNodes[variant].map((node) => ({ ...node, href: undefined }));
-const subtitle = variant === 'services' ? 'Engineering core' : variant === 'insights' ? 'Knowledge core' : 'Capability core';
+const subtitle = variant === 'services' ? 'Engineering core' : 'Capability core';
 const description = variant === 'services'
   ? 'KEVOS® engineering services connected through design, make, improve and deliver.'
-  : variant === 'insights'
-    ? 'KEVOS® knowledge: practical articles, engineering guides, analysis and improvement lessons.'
-    : 'KEVOS® capability: toolmaking, engineering design, operations and project delivery.';
+  : 'KEVOS® capability: toolmaking, engineering design, operations and project delivery.';
 ---
 
 <figure class:list={['smap', `smap--${variant}`]} aria-labelledby="smap-caption">
@@ -99,10 +91,6 @@ const description = variant === 'services'
               )}
               {variant !== 'services' && (
                 <svg class="smap__icon" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
-                  {variant === 'insights' && node.n === 1 && <path class="i-line" d="M10 6h16l5 5v24H10z M26 6v6h5 M15 18h12 M15 24h12 M15 30h8"/>}
-                  {variant === 'insights' && node.n === 2 && <path class="i-line" d="M8 31V12h8v11h15v8Z M8 7h24 M8 5v5 M32 5v5"/>}
-                  {variant === 'insights' && node.n === 3 && <path class="i-line" d="M7 32V9 M7 32h27 M12 26l7-8 6 4 8-11"/>}
-                  {variant === 'insights' && node.n === 4 && <path class="i-line" d="M8 11h24 M8 20h24 M8 29h24 M8 11l4 4 7-8 M8 29l4 4 7-8"/>}
                   {variant === 'about' && node.n === 1 && <><circle class="i-line" cx="20" cy="18" r="10"/><circle class="i-acc" cx="20" cy="18" r="4"/><path class="i-line" d="M20 4v4 M20 28v4 M6 18h4 M30 18h4 M10 8l3 3 M27 25l3 3 M30 8l-3 3 M13 25l-3 3"/></>}
                   {variant === 'about' && node.n === 2 && <path class="i-line" d="M7 33V12h9v12h17v9Z M7 7h26 M7 4v6 M33 4v6"/>}
                   {variant === 'about' && node.n === 3 && <path class="i-line" d="M5 15h7l5-7 8 16 5-7h6 M7 30h27"/>}

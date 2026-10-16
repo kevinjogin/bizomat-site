@@ -17,7 +17,8 @@ import {
   SERVICE_GROUPS,
   SOFTWARE,
 } from '../data/services.ts';
-import { getInsights, getWork, hasWorkDetail, insightUrl } from '../utils/content.ts';
+import { getChapters, getWork, hasWorkDetail } from '../utils/content.ts';
+import { buildReadOSCollections, readosCollectionChapterHref } from '../utils/reados-collections.ts';
 import { ASSESSMENT, CONDITIONS, EXAMPLES, EXCLUSIONS, INCLUSIONS, JOURNEY } from '../config/assessment.ts';
 
 export interface KnowledgeChunk {
@@ -137,8 +138,8 @@ export async function GET() {
   });
   chunks.push({
     id: 'categories',
-    title: 'Insights categories',
-    url: '/insights/',
+    title: 'READOS categories',
+    url: '/reados/',
     text: Object.values(CATEGORIES).map((c) => `${c.name}: ${c.description}`).join(' '),
   });
 
@@ -163,12 +164,15 @@ export async function GET() {
     sections(w.body).forEach((s, i) => chunks.push({ id: `work-${w.id}-${i}`, title: `${w.data.title}: ${s.heading}`, url, text: s.text }));
   }
 
-  for (const post of await getInsights()) {
-    const url = insightUrl(post);
-    chunks.push({ id: `insight-${post.id}`, title: `Insight: ${post.data.title}`, url, text: `${post.data.title}. ${post.data.description} Category: ${post.data.category}.` });
-    sections(post.body).forEach((s, i) =>
-      chunks.push({ id: `insight-${post.id}-${i}`, title: `${post.data.title}${s.heading ? `: ${s.heading}` : ''}`, url, text: s.text.slice(0, 1400) }),
-    );
+  // READOS chapters, linked at their edited-book address.
+  for (const book of buildReadOSCollections(await getChapters())) {
+    for (const post of book.chapters) {
+      const url = readosCollectionChapterHref(book, post);
+      chunks.push({ id: `chapter-${post.id}`, title: `READOS: ${post.data.title}`, url, text: `${post.data.title}. ${post.data.description} Book: ${book.title}. Category: ${post.data.category}.` });
+      sections(post.body).forEach((s, i) =>
+        chunks.push({ id: `chapter-${post.id}-${i}`, title: `${post.data.title}${s.heading ? `: ${s.heading}` : ''}`, url, text: s.text.slice(0, 1400) }),
+      );
+    }
   }
 
   return new Response(JSON.stringify({ generated: new Date().toISOString(), site: SITE.url, chunks }), {

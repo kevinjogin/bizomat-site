@@ -5,10 +5,10 @@ import ReadOSAnimatedCover from '../../components/ReadOSAnimatedCover.astro';
 import Hero from '../../components/Hero.astro';
 import MotionVisual from '../../components/MotionVisual.astro';
 import { LIBRARY_GUIDES } from '../../data/library.ts';
-import { getInsights } from '../../utils/content.ts';
+import { getChapters } from '../../utils/content.ts';
 import { buildReadOSCollections, readosCollectionHref } from '../../utils/reados-collections.ts';
 import { getPublications, publicationHref, publicationChapterHref } from '../../utils/publications.ts';
-const books=buildReadOSCollections(await getInsights());
+const books=buildReadOSCollections(await getChapters());
 const publications=await getPublications();
 const categories=[
   {name:'Engineering',slug:'engineering',description:'Design, CAD and practical engineering methods'},

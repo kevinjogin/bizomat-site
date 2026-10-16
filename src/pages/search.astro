@@ -29,7 +29,7 @@ const crumbs = [
     </form>
     <p class="search-status" role="status" aria-live="polite" data-search-status></p>
     <ol class="search-results" data-search-results></ol>
-    <noscript><p class="search-status">Search needs JavaScript. You can browse all articles on the <a href="/insights/">Insights</a> page instead.</p></noscript>
+    <noscript><p class="search-status">Search needs JavaScript. You can browse every book on the <a href="/reados/">READOS</a> page instead.</p></noscript>
   </Container>
   <script is:inline type="module">
     const form = document.querySelector('[data-search-form]');
@@ -50,7 +50,7 @@ const crumbs = [
         return pagefind;
       } catch {
         pagefind = null;
-        status.textContent = 'Search could not be loaded. Browse all articles on the Insights page instead.';
+        status.textContent = 'Search could not be loaded. Browse every book on the READOS page instead.';
         return null;
       }
     }

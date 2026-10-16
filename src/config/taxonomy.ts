@@ -1,4 +1,4 @@
-// Controlled taxonomy for Insights.
+// Controlled taxonomy for READOS chapters.
 // Categories = navigation (exactly one per article). Tags = discovery (2–5 per article).
 // The content schema rejects any category or tag that is not listed here, so the archive
 // cannot fragment into synonyms ("ai", "AI-tools", "artificial-intelligence"…).

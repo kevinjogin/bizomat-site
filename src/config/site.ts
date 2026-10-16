@@ -104,14 +104,7 @@ export const FOOTER_NAV = {
   ],
 } as const;
 
-/** Insights listing settings. */
-export const INSIGHTS = {
-  pageSize: 12,
-  /** A category page is generated once it has at least this many published articles. */
-  minPostsForCategoryPage: 1,
-  /** A tag page is generated once it has at least this many published articles. */
-  minPostsForTagPage: 2,
-  /** Show a table of contents when an article has at least this many H2 sections. */
-  minHeadingsForToc: 4,
+/** Reading-time estimate for READOS chapters. */
+export const READING = {
   wordsPerMinute: 220,
 } as const;

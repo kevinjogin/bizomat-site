@@ -2,26 +2,30 @@
 import { render } from 'astro:content';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import Container from '../../../../components/Container.astro';
-import { getInsights, readingTime, type Insight } from '../../../../utils/content.ts';
+import { getChapters, readingTime, type Chapter } from '../../../../utils/content.ts';
 import { buildReadOSBooks, readosBookHref, readosChapterHref, type ReadOSBook } from '../../../../utils/reados.ts';
+import { buildReadOSCollections, readosCollectionChapterHref } from '../../../../utils/reados-collections.ts';
 
 export async function getStaticPaths() {
-  const books = buildReadOSBooks(await getInsights());
+  const chapters = await getChapters();
+  const books = buildReadOSBooks(chapters);
+  // The edited READOS book is each chapter's main home; these category volumes point search engines to it.
+  const edited = new Map(buildReadOSCollections(chapters).flatMap((c) => c.chapters.map((ch) => [ch.id, readosCollectionChapterHref(c, ch)] as const)));
   return books.flatMap(book => book.chapters.map((chapter,index)=>({
     params:{book:book.slug,chapter:chapter.id},
-    props:{book,chapter,index}
+    props:{book,chapter,index,canonical:edited.get(chapter.id)}
   })));
 }
-interface Props { book:ReadOSBook;chapter:Insight;index:number }
-const {book,chapter,index}=Astro.props;
+interface Props { book:ReadOSBook;chapter:Chapter;index:number;canonical?:string }
+const {book,chapter,index,canonical}=Astro.props;
 const {Content}=await render(chapter);
 const previous=index>0?book.chapters[index-1]:undefined;
 const next=index+1<book.chapters.length?book.chapters[index+1]:undefined;
 const href=readosChapterHref(book,chapter);
 ---
-<BaseLayout title={`${chapter.data.title} (${book.title}) | READOS`} description={chapter.data.description}
+<BaseLayout title={`${chapter.data.title} (${book.title}) | READOS`} description={chapter.data.description} canonical={canonical}
   breadcrumbs={[{label:'Home',href:'/'},{label:'READOS',href:'/reados/'},{label:book.title,href:readosBookHref(book)},{label:chapter.data.title,href}]}>
-  <article data-pagefind-body>
+  <article>
     <header class="reading-head"><Container size="narrow">
       <p class="eyebrow">READOS / {book.category} / CHAPTER {index+1}</p>
       <h1>{chapter.data.title}</h1>
@@ -35,7 +39,7 @@ const href=readosChapterHref(book,chapter);
       {previous?<a rel="prev" href={readosChapterHref(book,previous)}>← Previous chapter<span>{previous.data.title}</span></a>:<a href={readosBookHref(book)}>← Contents</a>}
       {next?<a rel="next" href={readosChapterHref(book,next)}>Next chapter →<span>{next.data.title}</span></a>:<a href={readosBookHref(book)}>Back to contents →</a>}
     </nav>
-    <p class="origin">Originally published in KEVOS® Insights. <a href={`/insights/${chapter.id}/`}>View original article</a>.</p>
+    <p class="origin">Part of <a href={readosBookHref(book)}>{book.title}</a> in KEVOS® READOS.{canonical && <> Also in its <a href={canonical}>edited READOS book</a>.</>}</p>
     </Container>
   </article>
 </BaseLayout>

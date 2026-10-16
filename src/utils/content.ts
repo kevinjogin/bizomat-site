@@ -1,19 +1,19 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { INSIGHTS, SITE } from '../config/site.ts';
-import { CATEGORIES, CATEGORY_SLUGS, TAG_SLUGS, categorySlug, type CategorySlug, type TagSlug } from '../config/taxonomy.ts';
+import { READING, SITE } from '../config/site.ts';
 
-export type Insight = CollectionEntry<'insights'>;
+export type Chapter = CollectionEntry<'chapters'>;
 export type Work = CollectionEntry<'work'>;
 
-/** Today's calendar date in Sydney (YYYY-MM-DD), so a post dated today is live all day in Australia. */
+/** Today's calendar date in Sydney (YYYY-MM-DD), so a chapter dated today is live all day in Australia. */
 const todayInSydney = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Australia/Sydney' }).format(new Date());
 
-/** Drafts and future-dated posts are visible in `astro dev` only, never in a production build. */
+/** Drafts and future-dated entries are visible in `astro dev` only, never in a production build. */
 const isVisible = (draft: boolean, date?: Date) =>
   import.meta.env.DEV || (!draft && (!date || date.toISOString().slice(0, 10) <= todayInSydney()));
 
-export async function getInsights(): Promise<Insight[]> {
-  const all = await getCollection('insights', ({ data }) => isVisible(data.draft, data.publishDate));
+/** Published READOS chapters, newest first. */
+export async function getChapters(): Promise<Chapter[]> {
+  const all = await getCollection('chapters', ({ data }) => isVisible(data.draft, data.publishDate));
   return all.sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime());
 }
 
@@ -31,56 +31,11 @@ export function readingTime(body = ''): number {
     .replace(/[#>*_`[\]()!-]/g, ' ')
     .split(/\s+/)
     .filter(Boolean).length;
-  return Math.max(1, Math.round(words / INSIGHTS.wordsPerMinute));
+  return Math.max(1, Math.round(words / READING.wordsPerMinute));
 }
 
 /** Previous brand bylines are consistently attributed to the same organisation under its current name. */
-export const insightAuthor = (author: string): string => author.trim().toLowerCase() === 'gocore' ? SITE.name : author;
-
-export const insightUrl = (entry: Insight) => `/insights/${entry.id}/`;
-export const categoryUrl = (slug: CategorySlug) => `/insights/category/${slug}/`;
-export const tagUrl = (slug: string) => `/insights/tag/${slug}/`;
-
-/** Categories that have enough published articles to deserve a page. */
-export function categoriesWithPosts(posts: Insight[]) {
-  return CATEGORY_SLUGS.map((slug) => ({
-    slug,
-    ...CATEGORIES[slug],
-    posts: posts.filter((p) => categorySlug(p.data.category) === slug),
-  })).filter((c) => c.posts.length >= INSIGHTS.minPostsForCategoryPage);
-}
-
-/** Tags that have enough published articles to deserve a page. */
-export function tagsWithPosts(posts: Insight[]) {
-  return TAG_SLUGS.map((slug) => ({ slug, posts: posts.filter((p) => p.data.tags.includes(slug)) })).filter(
-    (t) => t.posts.length >= INSIGHTS.minPostsForTagPage,
-  );
-}
-
-export async function linkableTags(): Promise<Set<TagSlug>> {
-  return new Set(tagsWithPosts(await getInsights()).map((t) => t.slug));
-}
-
-/** Related articles: shared category and tags, newest first. */
-export function relatedInsights(current: Insight, posts: Insight[], limit = 3) {
-  return posts
-    .filter((p) => p.id !== current.id)
-    .map((p) => ({
-      p,
-      score:
-        (p.data.category === current.data.category ? 2 : 0) +
-        p.data.tags.filter((t) => current.data.tags.includes(t)).length,
-    }))
-    .filter((x) => x.score > 0)
-    .sort((a, b) => b.score - a.score || b.p.data.publishDate.getTime() - a.p.data.publishDate.getTime())
-    .slice(0, limit)
-    .map((x) => x.p);
-}
-
-export function paginate<T>(items: T[], page: number, size = INSIGHTS.pageSize) {
-  const pages = Math.max(1, Math.ceil(items.length / size));
-  return { items: items.slice((page - 1) * size, page * size), page, pages };
-}
+export const chapterAuthor = (author: string): string => author.trim().toLowerCase() === 'gocore' ? SITE.name : author;
 
 export const formatDate = (date: Date, style: 'long' | 'short' = 'long') =>
   date.toLocaleDateString('en-AU', { day: 'numeric', month: style === 'long' ? 'long' : 'short', year: 'numeric', timeZone: 'Australia/Sydney' });

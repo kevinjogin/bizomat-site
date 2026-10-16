@@ -8,11 +8,12 @@ import { WORK_STATUSES, WORK_TYPES } from './config/work.ts';
 const optional = <T extends z.ZodType>(schema: T) => z.preprocess((v) => (v === '' || v === null ? undefined : v), schema.optional());
 
 /**
- * Insights articles: src/content/insights/<slug>.md or .mdx
- * The file name is the permanent URL: /insights/<slug>/ (no dates in URLs).
+ * READOS chapters: src/content/reados-chapters/<slug>.md or .mdx
+ * The file name is the chapter's permanent slug. Each chapter belongs to one edited READOS book
+ * (src/utils/reados-collections.ts) and is read at /reados/collections/<book>/<slug>/.
  */
-const insights = defineCollection({
-  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/insights' }),
+const chapters = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/reados-chapters' }),
   schema: ({ image }) =>
     z
       .object({
@@ -52,7 +53,7 @@ const work = defineCollection({
         image: optional(image()),
         imageAlt: optional(z.string()),
         gallery: z.preprocess((v) => v ?? [], z.array(z.object({ src: image(), alt: z.string(), caption: optional(z.string()) }))),
-        relatedInsights: z.preprocess((v) => v ?? [], z.array(reference('insights'))),
+        relatedChapters: z.preprocess((v) => v ?? [], z.array(reference('chapters'))),
         externalUrl: optional(z.url()),
         detailPage: optional(z.boolean()),
         featured: z.boolean().default(false),
@@ -86,4 +87,4 @@ const publicationChapters = defineCollection({
   }),
 });
 
-export const collections = { insights, work, publications, publicationChapters };
+export const collections = { chapters, work, publications, publicationChapters };

@@ -15,7 +15,7 @@ order: 100                  # lower numbers appear first
 #   - src: ./images/detail-1.jpg
 #     alt: "Describe the image"
 #     caption: "Optional caption"
-# relatedInsights:
+# relatedChapters:
 #   - what-makes-a-useful-product-worth-building
 # externalUrl: https://example.com
 # detailPage: true          # force a detail page even without body text

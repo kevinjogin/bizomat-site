@@ -1,7 +1,7 @@
 ---
 /**
  * KEVOS® motion design system.
- * Services / Insights / About share the SAME Home orbit component and geometry.
+ * Services / About share the SAME Home orbit component and geometry.
  * The remaining scenes use purpose-built HTML/CSS layouts within the same
  * blueprint panel, orange palette, square-card radii and reduced-motion contract.
  * No scripts, external assets or fabricated business metrics.
@@ -10,10 +10,10 @@ import ServiceMap from './ServiceMap.astro';
 import Logo from './Logo.astro';
 import { INDUSTRIES, PROCESS } from '../data/services.ts';
 
-type Page = 'services' | 'how-it-works' | 'industries' | 'insights' | 'about' | 'contact' | 'tools' | 'reados';
+type Page = 'services' | 'how-it-works' | 'industries' | 'about' | 'contact' | 'tools' | 'reados';
 interface Props { page: Page; priority?: boolean; class?: string; }
 const { page, class: className } = Astro.props;
-const sharedOrbit = page === 'services' || page === 'insights' || page === 'about';
+const sharedOrbit = page === 'services' || page === 'about';
 
 const sectors = INDUSTRIES.slice(0, 6).map((item, i) => ({
   number: String(i + 1).padStart(2, '0'),
@@ -65,7 +65,7 @@ const scene = !sharedOrbit ? copy[page as keyof typeof copy] : null;
 ---
 
 {sharedOrbit ? (
-  <ServiceMap variant={page as 'services' | 'insights' | 'about'} />
+  <ServiceMap variant={page as 'services' | 'about'} />
 ) : (
   <figure class:list={['mv', 'mv--' + page, className]} aria-labelledby={'mv-caption-' + page}>
     <figcaption id={'mv-caption-' + page} class="visually-hidden">{scene?.description}</figcaption>

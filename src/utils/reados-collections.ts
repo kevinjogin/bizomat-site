@@ -1,14 +1,14 @@
-import type { Insight } from './content.ts';
+import type { Chapter } from './content.ts';
 import { categorySlug, CATEGORIES, CATEGORY_SLUGS } from '../config/taxonomy.ts';
 import { readingTime } from './content.ts';
 
 export type ReadOSCollection = {
   slug:string; title:string; category:string; description:string;
-  chapters:Insight[]; minutes:number; topic:string; volume:number;
+  chapters:Chapter[]; minutes:number; topic:string; volume:number;
 };
 type Subject = { slug:string; title:string; description:string; category:string; ids:string[] };
-/** Edited READOS books. Each book lists its chapters (Insight slugs) in reading order; a book stays within one category.
- *  A newly published Insight appears in its category's "Further Reading" book until it is added to a book here.
+/** Edited READOS books. Each book lists its chapters (file slugs in src/content/reados-chapters/) in reading order; a book stays
+ *  within one category. A newly published chapter appears in its category's "Further Reading" book until it is added to a book here.
  *  Book slugs are permanent URLs: when a book is renamed or chapters move, add the old URLs to public/_redirects. */
 const SUBJECTS:Subject[] = [
   {slug:'reading-financial-statements',title:'Reading Financial Statements',category:'business',description:'The income statement, balance sheet and cash flow statement, read the way an owner or lender reads them.',ids:['reading-an-income-statement-like-an-owner','reading-the-balance-sheet-cash-and-working-capital','why-the-cash-flow-statement-keeps-a-business-honest','depreciation-and-capital-intensity','retained-earnings-the-compounding-engine','return-on-equity-and-leverage','debt-as-a-warning-light','consistency-beats-one-great-year','the-assets-the-balance-sheet-cannot-see','the-equity-bond','keeping-business-records-for-the-long-term']},
@@ -66,10 +66,10 @@ const SUBJECTS:Subject[] = [
   {slug:'judgement-markets-and-learning',title:'Judgement, Markets and Learning',category:'ideas',description:'How people decide under uncertainty, why markets overshoot, how skills are learned and why training fades.',ids:['why-gocore-is-starting-broad','how-people-decide-emotion-and-reason','framing-certainty-and-the-limits-of-rational-choice','thinking-in-probabilities','coordinating-teams-with-shared-goals','a-short-history-of-automated-decision-making','a-short-history-of-the-database','a-short-history-of-bubbles','the-psychology-of-bubbles','this-time-is-different','why-bubble-warnings-come-too-early','from-bargains-to-quality','the-forgetting-curve-and-why-training-fades','good-at-need-to-practise-deliberate-practice','from-training-to-habit-a-personal-action-plan']},
 ];
 const MAX_CHAPTERS=24;
-const fallback=(category:string):Subject=>({slug:`${category}-further-reading`,title:`Further Reading in ${CATEGORIES[category as keyof typeof CATEGORIES].name}`,description:`Recently published ${CATEGORIES[category as keyof typeof CATEGORIES].name.toLowerCase()} articles awaiting a place in an edited book.`,category,ids:[]});
-const sortChapters=(a:Insight,b:Insight)=>a.data.title.localeCompare(b.data.title,'en-AU')||a.id.localeCompare(b.id);
-export function buildReadOSCollections(posts:Insight[]):ReadOSCollection[] {
-  const groups=new Map<string,{subject:Subject;chapters:Insight[]}>();
+const fallback=(category:string):Subject=>({slug:`${category}-further-reading`,title:`Further Reading in ${CATEGORIES[category as keyof typeof CATEGORIES].name}`,description:`Recently published ${CATEGORIES[category as keyof typeof CATEGORIES].name.toLowerCase()} chapters awaiting a place in an edited book.`,category,ids:[]});
+const sortChapters=(a:Chapter,b:Chapter)=>a.data.title.localeCompare(b.data.title,'en-AU')||a.id.localeCompare(b.id);
+export function buildReadOSCollections(posts:Chapter[]):ReadOSCollection[] {
+  const groups=new Map<string,{subject:Subject;chapters:Chapter[]}>();
   for(const post of posts) {
     const category=categorySlug(post.data.category);
     const subject=SUBJECTS.find(s=>s.category===category&&s.ids.includes(post.id))??fallback(category);
@@ -97,4 +97,4 @@ export function buildReadOSCollections(posts:Insight[]):ReadOSCollection[] {
   return books.sort((a,b)=>CATEGORY_SLUGS.indexOf(categorySlug(a.category))-CATEGORY_SLUGS.indexOf(categorySlug(b.category))||a.title.localeCompare(b.title,'en-AU'));
 }
 export const readosCollectionHref=(book:ReadOSCollection)=>`/reados/collections/${book.slug}/`;
-export const readosCollectionChapterHref=(book:ReadOSCollection,chapter:Insight)=>`${readosCollectionHref(book)}${chapter.id}/`;
+export const readosCollectionChapterHref=(book:ReadOSCollection,chapter:Chapter)=>`${readosCollectionHref(book)}${chapter.id}/`;

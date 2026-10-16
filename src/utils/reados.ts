@@ -1,4 +1,4 @@
-import type { Insight } from './content.ts';
+import type { Chapter } from './content.ts';
 import { CATEGORIES, CATEGORY_SLUGS, categorySlug } from '../config/taxonomy.ts';
 import { readingTime } from './content.ts';
 
@@ -9,11 +9,11 @@ export type ReadOSBook = {
   category: string;
   description: string;
   volume: number;
-  chapters: Insight[];
+  chapters: Chapter[];
   minutes: number;
 };
-/** Deterministic catalogue, generated from all visible Insights without rewriting or dropping any article. */
-export function buildReadOSBooks(posts: Insight[]): ReadOSBook[] {
+/** Deterministic category volumes, generated from all published READOS chapters without dropping any. */
+export function buildReadOSBooks(posts: Chapter[]): ReadOSBook[] {
   const books: ReadOSBook[] = [];
   for (const slug of CATEGORY_SLUGS) {
     const ordered = posts.filter((p) => categorySlug(p.data.category) === slug)
@@ -35,4 +35,4 @@ export function buildReadOSBooks(posts: Insight[]): ReadOSBook[] {
   return books;
 }
 export const readosBookHref = (book: ReadOSBook) => `/reados/books/${book.slug}/`;
-export const readosChapterHref = (book: ReadOSBook, chapter: Insight) => `${readosBookHref(book)}${chapter.id}/`;
+export const readosChapterHref = (book: ReadOSBook, chapter: Chapter) => `${readosBookHref(book)}${chapter.id}/`;

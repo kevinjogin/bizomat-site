@@ -8,7 +8,7 @@ const knowledge: KnowledgeChunk[] = [
   { id: 'core-facts', title: 'About KEVOS (core facts)', url: '/about/', text: 'KEVOS is an early-stage Australian business. Contact is through /contact/.' },
   { id: 'faq-0', title: 'Does KEVOS sell products?', url: '/about/', text: 'Not yet. KEVOS has not launched products or paid services.' },
   { id: 'faq-1', title: 'I am a supplier or manufacturer', url: '/contact/', text: 'Introduce yourself through the contact form and choose Supplier or manufacturer.' },
-  { id: 'insight-db', title: 'Why this website has no database', url: '/insights/why-this-website-has-no-database/', text: 'The site is static and served from Cloudflare.' },
+  { id: 'chapter-db', title: 'Why this website has no database', url: '/reados/collections/database-foundations-for-business/why-this-website-has-no-database/', text: 'The site is static and served from Cloudflare.' },
 ];
 
 const assets = { fetch: async () => new Response(JSON.stringify({ chunks: knowledge }), { status: 200 }) };
@@ -77,11 +77,11 @@ test('history is trimmed, cleaned and must end with the visitor', () => {
 });
 
 test('repairs invented deep links and drops links to unknown pages', () => {
-  const urls = ['/insights/goodwill-in-acquisitions/', '/about/#principles'];
-  assert.equal(repairLinks('See [Goodwill](/insights/goodwill-in-acquisitions/what-goodwill-is).', urls), 'See [Goodwill](/insights/goodwill-in-acquisitions/).');
-  assert.equal(repairLinks('Read [it](/insights/goodwill-in-acquisitions)', urls), 'Read [it](/insights/goodwill-in-acquisitions/)');
+  const urls = ['/reados/collections/acquisitions-groups-and-investment-accounting/goodwill-in-acquisitions/', '/about/#principles'];
+  assert.equal(repairLinks('See [Goodwill](/reados/collections/acquisitions-groups-and-investment-accounting/goodwill-in-acquisitions/what-goodwill-is).', urls), 'See [Goodwill](/reados/collections/acquisitions-groups-and-investment-accounting/goodwill-in-acquisitions/).');
+  assert.equal(repairLinks('Read [it](/reados/collections/acquisitions-groups-and-investment-accounting/goodwill-in-acquisitions)', urls), 'Read [it](/reados/collections/acquisitions-groups-and-investment-accounting/goodwill-in-acquisitions/)');
   assert.equal(repairLinks('See [principles](/about/#principles) and [Contact](/contact/)', urls), 'See [principles](/about/#principles) and [Contact](/contact/)');
   assert.equal(repairLinks('Try [this](/made-up-page/)', urls), 'Try this');
-  assert.equal(repairLinks('An [unknown article](/insights/not-a-real-article/)', urls), 'An [unknown article](/insights/)');
+  assert.equal(repairLinks('An [unknown chapter](/reados/collections/not-a-real-book/x/)', urls), 'An [unknown chapter](/reados/)');
   assert.equal(repairLinks('External [site](https://example.com) stays', urls), 'External [site](https://example.com) stays');
 });

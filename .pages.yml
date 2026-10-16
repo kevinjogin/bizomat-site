@@ -5,9 +5,9 @@
 # Keep the category and tag lists below in sync with src/config/taxonomy.ts.
 
 media:
-  - name: insight_images
-    label: Insight images
-    input: src/content/insights/images
+  - name: chapter_images
+    label: READOS chapter images
+    input: src/content/reados-chapters/images
     output: ./images
     categories: [image]
     rename: safe
@@ -19,10 +19,10 @@ media:
     rename: safe
 
 content:
-  - name: insights
-    label: Insights
+  - name: chapters
+    label: READOS chapters
     type: collection
-    path: src/content/insights
+    path: src/content/reados-chapters
     format: yaml-frontmatter
     exclude: [images]
     filename:
@@ -47,13 +47,13 @@ content:
         label: Description
         type: text
         required: true
-        description: "One or two sentences (50–200 characters). Shown on article cards and in Google results."
+        description: "One or two sentences (50–200 characters). Shown in READOS book contents and in Google results."
         options: { minlength: 50, maxlength: 200 }
       - name: draft
         label: Draft (hidden from the website)
         type: boolean
         default: false
-        description: "Tick to hide the article while you are still working on it. Unticked articles go live within a few minutes of saving."
+        description: "Tick to hide the chapter while you are still working on it. Unticked chapters go live within a few minutes of saving, in their category's Further Reading book until added to an edited book in src/utils/reados-collections.ts."
       - name: publishDate
         label: Publish date
         type: date
@@ -64,7 +64,7 @@ content:
         label: Updated date
         type: date
         default: ""
-        description: "Optional. Set when an article is meaningfully revised."
+        description: "Optional. Set when a chapter is meaningfully revised."
         options: { format: yyyy-MM-dd }
       - name: category
         label: Category
@@ -106,7 +106,7 @@ content:
             - { name: quality, label: Quality }
             - { name: projects, label: Projects }
       - name: featured
-        label: Featured on the Insights page
+        label: Featured (reserved)
         type: boolean
         default: false
       - name: author
@@ -117,7 +117,7 @@ content:
         label: Cover image (optional)
         type: image
         description: "JPG or PNG, at least 2000 px wide. Optimised automatically."
-        options: { media: insight_images }
+        options: { media: chapter_images }
       - name: imageAlt
         label: Cover image description (alt text)
         type: string
@@ -125,13 +125,13 @@ content:
       - name: canonicalURL
         label: Original URL (optional)
         type: string
-        description: "Only for articles first published elsewhere."
+        description: "Only for chapters first published elsewhere."
       - name: body
-        label: Article
+        label: Chapter
         type: rich-text
         options:
           format: markdown
-          media: insight_images
+          media: chapter_images
 
   - name: work
     label: Work
@@ -210,8 +210,8 @@ content:
           - name: caption
             label: Caption
             type: string
-      - name: relatedInsights
-        label: Related Insights (file names without .md)
+      - name: relatedChapters
+        label: Related READOS chapters (file names without .md)
         type: string
         list: true
         description: "e.g. why-this-website-has-no-database"

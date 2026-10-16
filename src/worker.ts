@@ -42,6 +42,13 @@ export default {
       url.protocol = 'https:';
       return new Response(null, { status: 301, headers: { Location: url.href, 'Cache-Control': 'public, max-age=3600' } });
     }
+    // The Insights section is retired. public/_redirects sends each /insights/<slug>/ to its READOS chapter;
+    // anything those rules cannot match exactly reaches the Worker: add the missing trailing slash so the
+    // exact rule applies, and send unknown addresses to the READOS library.
+    if (url.pathname === '/insights' || url.pathname.startsWith('/insights/')) {
+      const location = url.pathname.endsWith('/') ? new URL('/reados/', url) : new URL(`${url.pathname}/${url.search}`, url);
+      return withHeaders(new Response(null, { status: 301, headers: { Location: location.href, 'Cache-Control': 'public, max-age=86400' } }), url);
+    }
     let response: Response;
     if (url.pathname === '/api/chat' || url.pathname === '/api/chat/') response = await handleChat(request, env);
     else if (url.pathname === '/api/contact' || url.pathname === '/api/contact/') response = await handleContact(request, env);

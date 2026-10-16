@@ -5,7 +5,7 @@ import { join } from 'node:path';
 
 const read = (path: string) => readFileSync(join(process.cwd(), path), 'utf8');
 
-test('all eight KEVOS pages use a purpose-built responsive motion scene', () => {
+test('all seven KEVOS pages use a purpose-built responsive motion scene', () => {
   const motion = read('src/components/MotionVisual.astro');
   const orbit = read('src/components/ServiceMap.astro');
   assert.match(motion, /<ServiceMap variant=/);
@@ -19,7 +19,6 @@ test('all eight KEVOS pages use a purpose-built responsive motion scene', () => 
     services: 'src/pages/services.astro',
     'how-it-works': 'src/pages/how-it-works.astro',
     industries: 'src/pages/industries.astro',
-    insights: 'src/layouts/InsightsIndex.astro',
     about: 'src/pages/about.astro',
     contact: 'src/pages/contact/index.astro',
     tools: 'src/pages/tools/index.astro',
@@ -58,19 +57,19 @@ test('the footer trade mark record opens in a new tab safely', () => {
   assert.match(footer, /opens in a new tab/);
 });
 
-test('home, services, insights and about share the genuine four-square KEVOS orbit', () => {
+test('home, services and about share the genuine four-square KEVOS orbit', () => {
   const home = read('src/pages/index.astro');
   const orbit = read('src/components/ServiceMap.astro');
   const motion = read('src/components/MotionVisual.astro');
   assert.match(home, /<ServiceMap\s*\/>/);
-  assert.match(motion, /page === 'services' \|\| page === 'insights' \|\| page === 'about'/);
+  assert.match(motion, /page === 'services' \|\| page === 'about'/);
   assert.match(orbit, /--cycle: 8s/);
   assert.match(orbit, /smap__spinner/);
   assert.match(orbit, /smap__head::after/);
   assert.match(orbit, /smap-orbit/);
   assert.match(orbit, /<Logo/);
   assert.match(orbit, /variant === 'services'/);
-  assert.match(orbit, /insights: \[/);
+  assert.doesNotMatch(orbit, /insights/);
   assert.match(orbit, /about: \[/);
 });
 

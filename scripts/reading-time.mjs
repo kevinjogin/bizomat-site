@@ -1,9 +1,9 @@
-// Reading-time check for Insights articles, using the same formula as src/utils/content.ts
-// (220 words per minute, rounded). Target for every article: 10–20 minutes.
+// Reading-time check for READOS chapters, using the same formula as src/utils/content.ts
+// (220 words per minute, rounded). Target for every chapter: 10–20 minutes.
 // Usage: npm run reading-time [-- slug another-slug]
 import fs from 'node:fs';
 
-const dir = new URL('../src/content/insights/', import.meta.url);
+const dir = new URL('../src/content/reados-chapters/', import.meta.url);
 const only = process.argv.slice(2).map((s) => s.replace(/\.md$/, ''));
 const rows = [];
 

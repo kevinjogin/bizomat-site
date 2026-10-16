@@ -141,7 +141,7 @@ const prompts = ['Can KEVOS® support my project?', 'I need engineering or CAD s
     const format = (text: string) => {
       const lines = escapeHtml(text)
         .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_m, label, href) => (isSafeHref(href) ? `<a href="${href}">${label}</a>` : label))
-        .replace(/(^|[\s(])(\/(?:about|services|factory-fix|how-it-works|industries|tools|insights|contact|privacy|terms|search)\/[\w\-/]*)/g, '$1<a href="$2">$2</a>')
+        .replace(/(^|[\s(])(\/(?:about|services|factory-fix|how-it-works|industries|tools|reados|assessment|contact|privacy|terms|search)\/[\w\-/]*)/g, '$1<a href="$2">$2</a>')
         .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
         .split(/\n+/);
       let html = '';
