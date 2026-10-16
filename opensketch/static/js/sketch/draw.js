@@ -89,6 +89,7 @@ export function drawInactiveSketch(group, sk, matrix, px, color = SK.inactive) {
   const b = new Batch(px);
   const P = pointsOf(sk);
   for (const e of sk.entities) {
+    if (e.ref) continue; // hidden model-edge references
     const pl = entityPolyline(e, P);
     if (!pl) continue;
     b.poly(pl, e.construction ? 1.2 : 1.6, color, e.construction ? 'centerline' : null);

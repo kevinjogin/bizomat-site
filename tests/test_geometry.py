@@ -4,6 +4,7 @@ import math
 import pytest
 
 from opensketch.geometry import regen, regen_result, mass_properties
+from opensketch import geometry
 
 
 def rect_sketch(fid, plane, x0, y0, x1, y1, extra=()):
@@ -112,3 +113,22 @@ def test_errors_and_preview():
     doc2["features"].append({"id": "e1", "type": "extrude", "sketch": "s1", "depth": 5})
     mp = mass_properties(doc2)
     assert abs(mp["volume"] - 500) < 1e-6
+
+
+def test_model_edge_references_are_hidden_from_profiles():
+    """A sketch whose point is On Edge of the model keeps a hidden, fixed copy of that edge ("ref": "edge").
+    It must never become part of a profile or of the drawn sketch edges."""
+    from build123d import Plane
+    sk = {"id": "s", "type": "sketch", "plane": {"ref": "Front Plane"}, "entities": [
+        {"id": "r1", "type": "point", "x": -50, "y": -20, "ref": "edge"},
+        {"id": "r2", "type": "point", "x": 50, "y": -20, "ref": "edge"},
+        {"id": "rl", "type": "line", "p1": "r1", "p2": "r2", "construction": True, "ref": "edge", "refKey": "edge:0,0,20"},
+        {"id": "c", "type": "point", "x": 0, "y": -20},
+        {"id": "ci", "type": "circle", "center": "c", "r": 5}],
+        "constraints": [{"id": "k1", "type": "fix", "refs": ["r1"]}, {"id": "k2", "type": "fix", "refs": ["r2"]},
+                        {"id": "k3", "type": "coincident", "refs": ["c", "rl"]}]}
+    assert set(geometry.sketch_geometry(sk, Plane.XY)) == {"ci"}
+    assert set(geometry.sketch_geometry(sk, Plane.XY, include_construction=True)) == {"ci"}
+    doc = {"name": "P", "features": [sk, {"id": "e", "type": "extrude", "sketch": "s", "op": "boss", "end": "blind", "depth": 3}]}
+    st, _ = geometry.regen(doc)
+    assert st.part.volume == pytest.approx(3.14159265 * 25 * 3, rel=1e-4)

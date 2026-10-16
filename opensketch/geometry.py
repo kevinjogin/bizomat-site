@@ -181,8 +181,8 @@ def sketch_geometry(feat: dict, pl: Plane, include_construction=False):
         t = e["type"]
         if t == "point":
             continue
-        if e.get("construction") and not include_construction:
-            continue
+        if e.get("ref") or (e.get("construction") and not include_construction):
+            continue  # "ref": hidden copy of a model edge that On Edge relations attach to
         if t == "line":
             a, b = P(e["p1"]), P(e["p2"])
             if (a - b).length < 1e-9:

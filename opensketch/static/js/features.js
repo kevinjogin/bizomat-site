@@ -87,7 +87,7 @@ function revolveSpec(app, f, cut) {
   const autoAxis = () => {
     const sk = app.featureById(f.sketch);
     if (!sk || f.axis) return;
-    const cls = sk.entities.filter((e) => e.type === 'line' && e.construction);
+    const cls = sk.entities.filter((e) => e.type === 'line' && e.construction && !e.ref);
     if (cls.length === 1) f.axis = cls[0].id;
   };
   autoAxis();

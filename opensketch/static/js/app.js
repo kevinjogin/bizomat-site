@@ -1108,6 +1108,14 @@ class App {
 
   convertEntities() {
     if (this.mode !== 'sketch') { this.toast('Edit a sketch, then select model edges or faces to convert.'); return; }
+    // edges selected first (click them in the sketch): convert at once, like SOLIDWORKS
+    const pre = [...this.sketcher.modelSel.values()].filter((p) => p.kind === 'edge' && p.data).map((p) => p.data);
+    if (pre.length) {
+      this.sketcher.convertEdges(pre);
+      this.sketcher.clearModelSel();
+      this.status(`Converted ${pre.length} edge${pre.length === 1 ? '' : 's'} into the sketch.`);
+      return;
+    }
     const picks = [];
     this.cmd = { modelPick: true,
       onPick: (p) => { if (p.kind === 'edge') { picks.push(p.data); return true; } if (p.kind === 'face') { for (const ei of p.data.edges || []) { const e = this.edgeData(ei); if (e) picks.push(e); } return true; } return false; },

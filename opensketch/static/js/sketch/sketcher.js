@@ -40,6 +40,7 @@ export class Sketcher {
     this.tool = null;
     this.showRelations = true;
     this.labelEls = new Map();
+    this.modelSel = new Map(); // model edges picked in sketch mode (for Convert Entities), key -> viewer pick
     this.glyphEls = [];
     this.lastPx = 0;
     this.viewer.afterRender.push(() => {
@@ -64,6 +65,7 @@ export class Sketcher {
     this.viewer.sketchOrigin.visible = true;
     this.viewer.originObj.visible = false;
     this.sel.clear(); this.hover = null; this.tool = null;
+    this.modelSel.clear(); this._me = null;
     this.solve();
     this.render();
   }
@@ -71,6 +73,7 @@ export class Sketcher {
   end() {
     this.active = false;
     this.tool = null;
+    this.clearModelSel();
     this.viewer.clearGroup(this.viewer.sketchGroup);
     this.viewer.sketchOrigin.visible = false;
     this.viewer.originObj.visible = true;
@@ -90,6 +93,8 @@ export class Sketcher {
   pt(id) { const e = this.ent(id); return [e.x, e.y]; }
   P() { return pointsOf(this.sk); }
 
+  // Reference geometry: hidden, fixed copies of model edges that "On Edge" relations attach to.
+  // They are construction (never part of a profile), not drawn and not pickable; unused ones are removed.
   addPoint(u, v, extra = {}) { const id = this.uid('p'); this.sk.entities.push({ id, type: 'point', x: u, y: v, ...extra }); return id; }
   addEnt(e) { e.id = e.id || this.uid(e.type[0]); this.sk.entities.push(e); return e.id; }
   addCon(type, refs, extra = {}) {
@@ -106,6 +111,7 @@ export class Sketcher {
   edit(label, fn) {
     this.app.pushUndo(label);
     fn();
+    this.pruneRefs();
     this.solve();
     this.app.docChanged();
     this.render();
@@ -133,9 +139,10 @@ export class Sketcher {
     let best = null;
     const consider = (id, d, kind) => { if (skip.has(id)) return; if (!best || d < best.d - 1e-12 || (kind === 'point' && best.kind !== 'point' && d < tolP)) best = { id, d, kind }; };
     if (!skip.has('origin') && dist(q, [0, 0]) < tolP) consider('origin', dist(q, [0, 0]), 'point');
-    for (const e of sk.entities) if (e.type === 'point' && dist(q, P.get(e.id)) < tolP) consider(e.id, dist(q, P.get(e.id)), 'point');
+    for (const e of sk.entities) if (e.type === 'point' && !e.ref && dist(q, P.get(e.id)) < tolP) consider(e.id, dist(q, P.get(e.id)), 'point');
     if (best && best.kind === 'point') return best;
     for (const e of sk.entities) {
+      if (e.ref) continue;
       if (e.type === 'line') { const r = projSeg(q, P.get(e.p1), P.get(e.p2)); if (r.d < tolC) consider(e.id, r.d, 'curve'); }
       else if (e.type === 'circle') { const d = Math.abs(dist(q, P.get(e.center)) - e.r); if (d < tolC) consider(e.id, d, 'curve'); }
       else if (e.type === 'arc') {
@@ -153,22 +160,37 @@ export class Sketcher {
     const skipPts = opts.skipPts || new Set();
     // 1. existing points
     let bestP = null;
-    const pts = [['origin', [0, 0]], ...sk.entities.filter((e) => e.type === 'point').map((e) => [e.id, P.get(e.id)])];
+    const pts = [['origin', [0, 0]], ...sk.entities.filter((e) => e.type === 'point' && !e.ref).map((e) => [e.id, P.get(e.id)])];
     for (const [id, p] of pts) {
       if (skipPts.has(id)) continue;
       const d = dist(q, p);
       if (d < tolP && (!bestP || d < bestP.d)) bestP = { id, p, d };
     }
     if (bestP) return { p: bestP.p.slice(), pointId: bestP.id, glyph: 'r_coincident', guides: [] };
+    // 1b. model vertices and arc centres (edges of the part lying in the sketch plane)
+    const ME = opts.noModel ? [] : this.modelEdges();
+    let bestV = null;
+    for (const me of ME) {
+      for (const [p, kind] of me.snaps) {
+        const d = dist(q, p);
+        if (d < tolP && (!bestV || d < bestV.d)) bestV = { p, d, kind, me };
+      }
+    }
+    if (bestV) return { p: bestV.p.slice(), model: { kind: bestV.kind, edge: bestV.me, p: bestV.p }, glyph: 'r_coincident', guides: [] };
     // 2. midpoints and curves
     for (const e of sk.entities) {
-      if (e.type !== 'line') continue;
+      if (e.type !== 'line' || e.ref) continue;
       const m = mul(add(P.get(e.p1), P.get(e.p2)), 0.5);
       if (dist(q, m) < tolP * 0.8) return { p: m, midOf: e.id, glyph: 'r_midpoint', guides: [] };
     }
+    for (const me of ME) {
+      if (me.type !== 'line') continue;
+      const m = mul(add(me.a, me.b), 0.5);
+      if (dist(q, m) < tolP * 0.8) return { p: m, model: { kind: 'mid', edge: me }, glyph: 'r_midpoint', guides: [] };
+    }
     let bestC = null;
     for (const e of sk.entities) {
-      if (opts.skipEnts && opts.skipEnts.has(e.id)) continue;
+      if (e.ref || (opts.skipEnts && opts.skipEnts.has(e.id))) continue;
       let pr = null;
       if (e.type === 'line') { const r = projSeg(q, P.get(e.p1), P.get(e.p2)); pr = { p: r.p, d: r.d }; }
       else if (e.type === 'circle' || e.type === 'arc') {
@@ -178,6 +200,14 @@ export class Sketcher {
         pr = { p: pp, d: dist(q, pp) };
       }
       if (pr && pr.d < tolC && (!bestC || pr.d < bestC.d)) bestC = { ...pr, id: e.id };
+    }
+    let bestM = null;
+    for (const me of ME) {
+      const pr = this.nearestOnModel(me, q);
+      if (pr && pr.d < tolC && (!bestM || pr.d < bestM.d)) bestM = { ...pr, me };
+    }
+    if (bestM && (!bestC || bestM.d < bestC.d)) {
+      return { p: bestM.p, model: { kind: 'curve', edge: bestM.me }, glyph: bestM.me.linkable ? 'r_coincident' : null, guides: [] };
     }
     if (bestC) return { p: bestC.p, onEnt: bestC.id, glyph: 'r_coincident', guides: [] };
     // 3. horizontal / vertical inference from the previous point
@@ -200,10 +230,124 @@ export class Sketcher {
   pointFor(s, extra = {}) {
     if (s.pointId && s.pointId !== 'origin') return s.pointId;
     const id = this.addPoint(s.p[0], s.p[1], extra);
+    if (s.model) { this.linkModel(id, s.model); return id; }
     if (s.pointId === 'origin') this.addCon('coincident', [id, 'origin']);
     else if (s.onEnt) this.addCon('coincident', [id, s.onEnt]);
     else if (s.midOf) this.addCon('midpoint', [id, s.midOf]);
     return id;
+  }
+
+  // ------------------------------------------------------------------ model edges in the sketch plane
+  // Edges of the part that lie in the sketch plane (e.g. the outline of the face sketched on), in sketch
+  // coordinates. They are snap targets like sketch geometry; snapping to one adds an On Edge relation.
+  modelEdges() {
+    const bd = this.viewer.bodyData;
+    if (!bd || !bd.edges || !this.frame) return [];
+    if (this._me && this._me.bd === bd && this._me.frame === this.frame) return this._me.list;
+    const f = this.frame, o = f.origin, xd = f.xdir, yd = f.ydir;
+    const n = [xd[1] * yd[2] - xd[2] * yd[1], xd[2] * yd[0] - xd[0] * yd[2], xd[0] * yd[1] - xd[1] * yd[0]];
+    const tol = 1e-3;
+    const list = [];
+    for (const ed of bd.edges) {
+      const raw = ed.points || [], m = raw.length / 3;
+      if (m < 2) continue;
+      const pts = [];
+      let inPlane = true;
+      for (let i = 0; i < m; i++) {
+        const v = [raw[i * 3] - o[0], raw[i * 3 + 1] - o[1], raw[i * 3 + 2] - o[2]];
+        if (Math.abs(v[0] * n[0] + v[1] * n[1] + v[2] * n[2]) > tol) { inPlane = false; break; }
+        pts.push([v[0] * xd[0] + v[1] * xd[1] + v[2] * xd[2], v[0] * yd[0] + v[1] * yd[1] + v[2] * yd[2]]);
+      }
+      if (!inPlane) continue;
+      const a = pts[0], b = pts[pts.length - 1];
+      const me = { id: ed.id, type: ed.type, pts, a, b, key: 'edge:' + (ed.mid || []).map((x) => (+x).toFixed(4)).join(','), snaps: [] };
+      if (ed.type === 'line') { me.linkable = true; me.snaps.push([a, 'vertex'], [b, 'vertex']); }
+      else if (ed.type === 'circle' && pts.length >= 3) {
+        const cc = circle3(a, pts[Math.floor(pts.length / 3)], pts[Math.floor((2 * pts.length) / 3)]);
+        if (cc) {
+          me.c = cc.c; me.r = cc.r; me.closed = dist(a, b) < 1e-6; me.linkable = true;
+          if (!me.closed) {
+            const mid = pts[Math.floor(pts.length / 2)];
+            me.ccw = inArc(ang(sub(mid, cc.c)), ang(sub(a, cc.c)), ang(sub(b, cc.c)));
+            me.snaps.push([a, 'vertex'], [b, 'vertex']);
+          }
+          me.snaps.push([cc.c, 'center']);
+        }
+      } else if (dist(a, b) > 1e-6) me.snaps.push([a, 'vertex'], [b, 'vertex']);
+      list.push(me);
+    }
+    this._me = { bd, frame: this.frame, list };
+    return list;
+  }
+
+  nearestOnModel(me, q) {
+    if (me.type === 'line') { const r = projSeg(q, me.a, me.b); return { p: r.p, d: r.d }; }
+    if (me.c) {
+      const u = norm(sub(q, me.c)), p = add(me.c, mul(u, me.r));
+      if (!me.closed) {
+        const s = ang(sub(me.a, me.c)), t = ang(sub(me.b, me.c));
+        if (!(me.ccw ? inArc(ang(u), s, t) : inArc(ang(u), t, s))) return null;
+      }
+      return { p, d: dist(q, p) };
+    }
+    let best = null;
+    for (let i = 0; i + 1 < me.pts.length; i++) { const r = projSeg(q, me.pts[i], me.pts[i + 1]); if (!best || r.d < best.d) best = { p: r.p, d: r.d }; }
+    return best;
+  }
+
+  // A fixed, hidden reference point (reused when one is already there).
+  refPoint(p) {
+    const ex = this.sk.entities.find((e) => e.ref && e.type === 'point' && Math.hypot(e.x - p[0], e.y - p[1]) < 1e-7);
+    if (ex) return ex.id;
+    const id = this.addPoint(p[0], p[1], { ref: 'edge' });
+    this.addCon('fix', [id]);
+    return id;
+  }
+
+  // The hidden reference copy of a model edge (one per edge).
+  refEdge(me) {
+    const ex = this.sk.entities.find((e) => e.ref && e.refKey === me.key && e.type !== 'point');
+    if (ex) return ex.id;
+    const base = { construction: true, ref: 'edge', refKey: me.key };
+    if (me.type === 'line') return this.addEnt({ type: 'line', p1: this.refPoint(me.a), p2: this.refPoint(me.b), ...base });
+    if (me.c && me.closed) { const id = this.addEnt({ type: 'circle', center: this.refPoint(me.c), r: me.r, ...base }); this.addCon('fix', [id]); return id; }
+    if (me.c) {
+      const s = this.refPoint(me.ccw ? me.a : me.b), e = this.refPoint(me.ccw ? me.b : me.a);
+      return this.addEnt({ type: 'arc', center: this.refPoint(me.c), start: s, end: e, ...base });
+    }
+    return null;
+  }
+
+  linkModel(pid, m) {
+    if (m.kind === 'vertex' || m.kind === 'center') { this.addCon('coincident', [pid, this.refPoint(m.p)]); return; }
+    if (!m.edge.linkable) return; // a spline edge: the point lands on it but gets no relation
+    const re = this.refEdge(m.edge);
+    if (re) this.addCon(m.kind === 'mid' ? 'midpoint' : 'coincident', [pid, re]);
+  }
+
+  // Drop reference geometry nothing refers to any more (its own fix relations do not count).
+  pruneRefs() {
+    const sk = this.sk;
+    if (!sk || !sk.entities.some((e) => e.ref)) return;
+    const used = new Set();
+    for (const c of sk.constraints) if (c.type !== 'fix') for (const r of c.refs) used.add(r);
+    const keep = new Set();
+    for (const e of sk.entities) {
+      if (!e.ref || e.type === 'point' || !used.has(e.id)) continue;
+      keep.add(e.id);
+      for (const k of ['p1', 'p2', 'center', 'start', 'end']) if (e[k]) keep.add(e[k]);
+    }
+    for (const e of sk.entities) if (e.ref && e.type === 'point' && used.has(e.id)) keep.add(e.id);
+    const drop = new Set(sk.entities.filter((e) => e.ref && !keep.has(e.id)).map((e) => e.id));
+    if (!drop.size) return;
+    sk.entities = sk.entities.filter((e) => !drop.has(e.id));
+    sk.constraints = sk.constraints.filter((c) => !c.refs.some((r) => drop.has(r)));
+  }
+
+  clearModelSel() {
+    if (!this.modelSel.size) return;
+    this.modelSel.clear();
+    this.viewer.setSelectedKeys([]);
   }
 
   // ------------------------------------------------------------------ tools
@@ -225,7 +369,7 @@ export class Sketcher {
     }
     if (this.tool && this.tool.name === 'smartdim' && this.tool.picks.length) { this.tool.picks = []; this.tool.preview = null; this.render(); return true; }
     if (this.tool) { this.setTool(null); return true; }
-    if (this.sel.size) { this.sel.clear(); this.app.onSketchSelection(); this.render(); return true; }
+    if (this.sel.size || this.modelSel.size) { this.sel.clear(); this.clearModelSel(); this.app.onSketchSelection(); this.render(); return true; }
     return false;
   }
 
@@ -239,6 +383,8 @@ export class Sketcher {
     if (!t) {
       const h = this.hitTest(q);
       this.setHover(h ? h.id : null);
+      const mp = h ? null : this.viewer.pick(x, y, { edges: true, faces: false });
+      this.viewer.setHover(mp && mp.kind === 'edge' ? mp : null); // model edges highlight, ready to select
       return;
     }
     if (t.name === 'smartdim') { this.dimMove(q, x, y); return; }
@@ -476,7 +622,18 @@ export class Sketcher {
   selectDown(x, y, q, e) {
     const h = this.hitTest(q);
     if (!h) {
-      if (!e.ctrlKey && !e.shiftKey) { this.sel.clear(); this.app.onSketchSelection(); }
+      const mp = this.viewer.pick(x, y, { edges: true, faces: false });
+      if (mp && mp.kind === 'edge') { // a model edge: select it (for Convert Entities), like SOLIDWORKS
+        const k = this.viewer.key(mp);
+        if (e.ctrlKey || e.shiftKey) { this.modelSel.has(k) ? this.modelSel.delete(k) : this.modelSel.set(k, mp); }
+        else { this.sel.clear(); this.modelSel.clear(); this.modelSel.set(k, mp); this.app.onSketchSelection(); }
+        this.viewer.setSelectedKeys([...this.modelSel.keys()]);
+        const n = this.modelSel.size;
+        this.app.status(`${n} model edge${n === 1 ? '' : 's'} selected. Convert Entities projects ${n === 1 ? 'it' : 'them'} into the sketch.`);
+        this.render();
+        return;
+      }
+      if (!e.ctrlKey && !e.shiftKey) { this.sel.clear(); this.clearModelSel(); this.app.onSketchSelection(); }
       this.box = { x0: x, y0: y, x1: x, y1: y };
       this.render();
       return;
@@ -520,6 +677,7 @@ export class Sketcher {
     const inside = (p) => { const s = this.toScreen(p); return s.x >= xa && s.x <= xb && s.y >= ya && s.y <= yb; };
     const P = this.P();
     for (const en of this.sk.entities) {
+      if (en.ref) continue;
       let pts;
       if (en.type === 'point') pts = [P.get(en.id)];
       else pts = entityPolyline(en, P);
@@ -711,7 +869,7 @@ export class Sketcher {
     const h = this.hitTest(q);
     if (!h || h.kind !== 'curve') return;
     const sk = this.sk, P = this.P(), e = this.ent(h.id);
-    const others = sk.entities.filter((o) => o.id !== e.id && o.type !== 'point');
+    const others = sk.entities.filter((o) => o.id !== e.id && o.type !== 'point' && !o.ref);
     const ints = [];
     const pushInts = (pts, o) => pts.forEach((p) => ints.push({ p, by: o.id }));
     const curveOf = (o) => (o.type === 'circle' ? { c: P.get(o.center), r: o.r } : { c: P.get(o.center), r: dist(P.get(o.center), P.get(o.start)) });
@@ -729,7 +887,7 @@ export class Sketcher {
     }
     // Intersection at an existing point: reuse it (no extra coincident relation)
     const ptAt = (p, by) => {
-      const ex = sk.entities.find((x) => x.type === 'point' && Math.hypot(x.x - p[0], x.y - p[1]) < 1e-7);
+      const ex = sk.entities.find((x) => x.type === 'point' && !x.ref && Math.hypot(x.x - p[0], x.y - p[1]) < 1e-7);
       if (ex) return ex.id;
       const id = this.addPoint(...p);
       this.addCon('coincident', [id, by]);
@@ -814,7 +972,7 @@ export class Sketcher {
     sk.constraints = sk.constraints.filter((c) => !(c.refs.length === 1 && c.refs[0] === e.id && c.type === 'distance'));
   }
 
-  removeEntity(id) { this.sel = new Set([id]); const sk = this.sk; sk.constraints = sk.constraints.filter((c) => !c.refs.includes(id)); sk.entities = sk.entities.filter((e) => e.id !== id); const used = new Set(); for (const e of sk.entities) for (const k of ['p1', 'p2', 'center', 'start', 'end']) if (e[k]) used.add(e[k]); sk.entities = sk.entities.filter((e) => e.type !== 'point' || e.standalone || used.has(e.id)); const alive = new Set(['origin', ...sk.entities.map((e) => e.id)]); sk.constraints = sk.constraints.filter((c) => c.refs.every((r) => alive.has(r))); this.sel.clear(); }
+  removeEntity(id) { this.sel = new Set([id]); const sk = this.sk; sk.constraints = sk.constraints.filter((c) => !c.refs.includes(id)); sk.entities = sk.entities.filter((e) => e.id !== id); const used = new Set(); for (const e of sk.entities) for (const k of ['p1', 'p2', 'center', 'start', 'end']) if (e[k]) used.add(e[k]); sk.entities = sk.entities.filter((e) => e.type !== 'point' || e.standalone || used.has(e.id)); const alive = new Set(['origin', ...sk.entities.map((e) => e.id)]); sk.constraints = sk.constraints.filter((c) => c.refs.every((r) => alive.has(r))); this.pruneRefs(); this.sel.clear(); }
 
   // ------------------------------------------------------------------ sketch fillet
   filletAt(q) {
@@ -885,7 +1043,7 @@ export class Sketcher {
   }
 
   findOrAddPoint(p) {
-    const ex = this.sk.entities.find((e) => e.type === 'point' && Math.hypot(e.x - p[0], e.y - p[1]) < 1e-6);
+    const ex = this.sk.entities.find((e) => e.type === 'point' && !e.ref && Math.hypot(e.x - p[0], e.y - p[1]) < 1e-6);
     return ex ? ex.id : this.addPoint(p[0], p[1]);
   }
 
@@ -978,14 +1136,14 @@ export class Sketcher {
     if (!sk) return;
     const P = this.P();
     for (const e of sk.entities) {
-      if (e.type === 'point') continue;
+      if (e.type === 'point' || e.ref) continue;
       const pl = entityPolyline(e, P);
       if (!pl) continue;
       const w = this.sel.has(e.id) || this.hover === e.id ? 2.6 : 1.8;
       b.poly(pl, w, this.colorOf(e.id, e.construction ? null : null), e.construction ? 'centerline' : null);
     }
     for (const e of sk.entities) {
-      if (e.type !== 'point') continue;
+      if (e.type !== 'point' || e.ref) continue;
       const used = this.pointUsed(e.id);
       if (!used && !e.standalone) continue;
       const big = this.sel.has(e.id) || this.hover === e.id;
@@ -1008,7 +1166,11 @@ export class Sketcher {
     }
     const s = t.cur, c = SK.preview;
     for (const g of s.guides || []) b.poly([g[0], g[1]], 1, 0x3a7ad8, 'dashed', 0);
-    if (s.pointId || s.onEnt || s.midOf) b.square(s.p, 7, 0xffa500, 2);
+    if (s.model) { // the model edge it will land on, highlighted like SOLIDWORKS
+      if (s.model.kind === 'curve' || s.model.kind === 'mid') b.poly(s.model.edge.pts, 2.6, SK.hl, null, 1);
+      else if (s.model.kind === 'center' && s.model.edge.c) b.poly(arcPoints(s.model.edge.c, s.model.edge.r, 0, 2 * Math.PI, 72), 1.4, SK.hl, 'dashed', 1);
+    }
+    if (s.pointId || s.onEnt || s.midOf || s.model) b.square(s.p, 7, 0xffa500, 2);
     if (t.stage === 0) return;
     const p0 = t.pts[0].p;
     const cons = t.name === 'centerline' || this.app.forConstruction ? 'centerline' : null;
@@ -1219,8 +1381,10 @@ export class Sketcher {
       return null;
     };
     const stack = new Map();
+    const isRef = (id) => sk.entities.some((x) => x.id === id && x.ref);
     for (const c of sk.constraints) {
       if (DIM_TYPES.has(c.type)) continue;
+      if (c.type === 'fix' && isRef(c.refs[0])) continue;
       const g = 'r_' + c.type;
       const refs = c.type === 'coincident' || c.type === 'midpoint' ? [c.refs[0]] : c.type === 'symmetric' ? c.refs.slice(0, 2) : c.refs;
       for (const id of refs) {
@@ -1231,7 +1395,7 @@ export class Sketcher {
         const over = this.state?.conflicts.has(c.id);
         el.className = 'relglyph' + (this.sel.has(c.id) ? ' sel' : '') + (over ? ' over' : '');
         el.innerHTML = icon(g, 13);
-        el.title = c.type[0].toUpperCase() + c.type.slice(1);
+        el.title = c.type === 'coincident' && isRef(c.refs[1]) ? 'On Edge' : c.type[0].toUpperCase() + c.type.slice(1);
         el.addEventListener('pointerdown', (e) => {
           e.stopPropagation(); e.preventDefault();
           if (!e.ctrlKey) this.sel.clear();

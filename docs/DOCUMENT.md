@@ -99,6 +99,10 @@ mating, or deleting a component. A successful individual operation does not clea
 - Lines that share a point id are connected (SOLIDWORKS "Merge").
 - Arcs run counter-clockwise from `start` to `end`.
 - Construction geometry (centerlines) is ignored for profiles; a centerline is the usual revolve axis.
+- `"ref": "edge"` marks hidden reference geometry: a fixed, construction copy of a model edge that lies in
+  the sketch plane (with `"refKey"` naming the edge by its midpoint), plus its fixed endpoints. A point
+  snapped onto a model edge is `coincident` (or `midpoint`) with it, which SOLIDWORKS shows as On Edge.
+  References are never drawn, picked or used for profiles, and are dropped once nothing refers to them.
 - Closed loops become regions; loops inside loops become holes (even/odd nesting).
 
 Relations: `coincident` (point-point, point on line, point on circle/arc), `horizontal`, `vertical`
