@@ -98,6 +98,43 @@ class App {
     this.regen().then(() => this.viewer.zoomToFit(false));
     this.api('/api/ai/status', null, 'GET').then((r) => { this.aiAvailable = !!r.available; this.aiDemo = !!r.demo; }).catch(() => { this.aiAvailable = false; });
     this.status('Ready. Select a plane and click Sketch to start.');
+    this.watchVersion();
+  }
+
+  // The codespace pulls each push to main and restarts the server (.devcontainer/run.sh). When the
+  // server's version changes, offer a reload; the work in progress is kept by autosave.
+  watchVersion() {
+    let first = null;
+    const check = async () => {
+      let v;
+      try { v = await (await fetch('/api/version', { cache: 'no-store' })).json(); } catch (_) { return; } // restarting
+      if (first === null) first = v.version;
+      this.showUpdateBar(v.version !== first, v.note || '');
+    };
+    check();
+    setInterval(check, 30000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
+  }
+
+  showUpdateBar(updated, note) {
+    let bar = $('updatebar');
+    if (!updated && !note) { if (bar) bar.remove(); return; }
+    const key = (updated ? 'u' : '') + note;
+    if (bar && bar.dataset.key === key) return;
+    if (bar && bar.dataset.key === 'dismissed:' + key) return;
+    if (!bar) { bar = document.createElement('div'); bar.id = 'updatebar'; $('graphics').appendChild(bar); }
+    bar.dataset.key = key;
+    bar.className = updated ? 'update-bar' : 'update-bar note';
+    bar.innerHTML = `<span>${esc(updated ? 'OpenSketch was updated. Reload to use the new version. Your model is kept.' + (note ? ' ' + note : '') : note)}</span>`;
+    if (updated) {
+      const b = document.createElement('button'); b.className = 'btn primary'; b.textContent = 'Reload';
+      b.onclick = () => { this.autosave(); location.reload(); };
+      bar.appendChild(b);
+    }
+    const x = document.createElement('button'); x.className = 'btn'; x.textContent = 'Later'; x.title = 'Hide this message';
+    x.onclick = () => { bar.dataset.key = 'dismissed:' + key; bar.style.display = 'none'; };
+    bar.appendChild(x);
+    bar.style.display = '';
   }
 
   // ------------------------------------------------------------------ document

@@ -24,6 +24,20 @@ from . import ai, assembly, geometry, importer, sldexport
 
 STATIC = Path(__file__).parent / "static"
 
+
+def _commit() -> str:
+    """The git commit this server runs (OPENSKETCH_VERSION when there is no git, e.g. a Docker image)."""
+    import subprocess
+    try:
+        return subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=Path(__file__).parent, capture_output=True,
+                              text=True, timeout=5).stdout.strip() or os.environ.get("OPENSKETCH_VERSION", "dev")
+    except Exception:
+        return os.environ.get("OPENSKETCH_VERSION", "dev")
+
+
+VERSION = _commit()
+UPDATE_NOTE = Path(os.environ.get("OPENSKETCH_UPDATE_NOTE", str(Path.home() / ".opensketch-update-note")))
+
 app = FastAPI(title="OpenSketch")
 
 
@@ -212,6 +226,16 @@ def api_ai_stream(req: AIRequest):
         except Exception as exc:  # never leave the client hanging
             yield json.dumps({"ev": "error", "message": f"Server error: {exc}"}) + "\n"
     return StreamingResponse(gen(), media_type="application/x-ndjson", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+@app.get("/api/version")
+def api_version():
+    """The running version; the page polls it to offer a reload after the codespace updates itself."""
+    try:
+        note = UPDATE_NOTE.read_text().strip()
+    except OSError:
+        note = ""
+    return {"version": VERSION, "note": note}
 
 
 @app.get("/api/ai/status")

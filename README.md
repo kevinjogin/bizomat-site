@@ -37,6 +37,11 @@ For the AI copilot, add `ANTHROPIC_API_KEY` as a Codespaces secret
 
 Stop the codespace when you are done (it also stops itself after 30 idle minutes).
 
+The codespace keeps itself up to date: about once a minute it checks GitHub, pulls any new version of
+`main` and restarts OpenSketch. The open tab then shows "OpenSketch was updated" with a Reload button
+(your model is kept). There is no need to restart or recreate the codespace after an update. It skips
+updating, and says why, if files were edited inside the codespace.
+
 ## Run it locally
 
 ```bash

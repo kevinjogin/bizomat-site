@@ -381,3 +381,10 @@ input, select, button { font: inherit; color: inherit; }
 .macro-dlg b.bad { color: #c22; }
 .dlg-f .btn:disabled { opacity: 0.45; cursor: default; }
 .macro-dlg .macro-full { display: block; margin: 8px 0; font-size: 12px; line-height: 1.4; }
+
+/* codespace self-update: shown when the server restarted on a new version */
+.update-bar { position: absolute; top: 44px; left: 50%; transform: translateX(-50%); z-index: 30; display: flex; align-items: center; gap: 8px;
+  max-width: calc(100% - 32px); padding: 6px 8px 6px 12px; background: #fff; border: 1px solid #c9b8ff; border-left: 3px solid #7b5cff;
+  border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,.12); font-size: 12px; }
+.update-bar.note { border-color: #f0d28a; border-left-color: #c8961e; }
+.update-bar .btn { flex: none; }

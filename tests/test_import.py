@@ -145,3 +145,13 @@ def test_old_json_route_still_works(client, tmp_path):
     data = step_bytes(Box(10, 10, 10), tmp_path)
     r = client.post("/api/import", json={"filename": "b.step", "data": base64.b64encode(data).decode()})
     assert r.status_code == 200 and r.json()["doc"]["type"] == "part"
+
+
+def test_version_endpoint_reports_commit_and_update_note(client, tmp_path, monkeypatch):
+    """The page polls /api/version: a new version means the codespace updated itself (.devcontainer/run.sh)."""
+    note = tmp_path / "note"
+    monkeypatch.setattr(server, "UPDATE_NOTE", note)
+    r = client.get("/api/version").json()
+    assert r["version"] and r["note"] == ""
+    note.write_text("Not updated: files in this codespace were edited.\n")
+    assert client.get("/api/version").json()["note"].startswith("Not updated")
