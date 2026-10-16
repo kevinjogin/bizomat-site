@@ -30,7 +30,7 @@ Later commits that add Insights will legitimately change article pages, listings
 
 ```
 src/
-  pages/        /, /services/, /tools/, /how-it-works/, /industries/, /factory-fix/, /about/,
+  pages/        /, /services/, /tools/, /how-it-works/, /industries/, /factory-fix/, /assessment/ (+ received/), /about/,
                 /insights/ (+ page/, category/, tag/, [slug]), /contact/ (+ sent/, error/),
                 /privacy/, /terms/, /disclaimer/, /search/, /chat/, 404, rss.xml, robots.txt,
                 assistant-knowledge.json
@@ -82,6 +82,7 @@ Per-page titles, descriptions and canonical URLs on `https://kevos.com`; Open Gr
 
 - Contact and quotation forms post to Web3Forms (public access key in `site.ts`) with hCaptcha and spam checks; no-JS fallback to `/contact/sent/`.
 - Booking link: Proton Calendar booking page (`SITE.booking`).
+- Engineering Problem Assessment (A$195, `/assessment/`, added 16 Oct 2026): content in `src/config/assessment.ts`; enquiries use the same provider as REACHOS (Web3Forms + hCaptcha); Worker endpoints `/api/assessment` (server-side validation, used when the provider is `worker`) and `/api/assessment/stripe-webhook` (signature-verified, disabled until `STRIPE_WEBHOOK_SECRET` is set). No payment is taken on the site. Operations, configuration and owner approvals: `docs/assessment/README.md`.
 - KEVOS Assistant: `ChatWidget.astro` + `/chat/` pop-out; answers only from `assistant-knowledge.json` (built from published content) via Workers AI binding `AI`.
 
 ## 8. Deployment and CI
