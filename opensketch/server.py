@@ -38,7 +38,7 @@ class AIRequest(BaseModel):
     doc: dict
     prompt: str
     conversation: str | None = None
-    demo: bool | str = False  # True or "press": hand press assembly, "part": L bracket
+    demo: bool | str = False  # True or "press": hand press assembly, "part": L bracket, "web": web search + Toolbox screw
 
 
 @app.post("/api/regen")

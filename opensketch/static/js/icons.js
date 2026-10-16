@@ -86,6 +86,8 @@ const P = {
   interference: `<path d="M3 6h10v10H3z" fill="${G}" stroke="${GD}"/><path d="M10 9h11v11H10z" fill="${G}" stroke="${GD}" opacity=".85"/><path d="M10 9h3v7h-3z" fill="${R}"/>`,
   stats: `<path d="M4 20V10h3v10zM10 20V4h3v16zM16 20v-7h3v7z" fill="${B}"/>`,
   dfm: `<path d="M5 3h14v18H5z" fill="#fff" stroke="${GD}"/><path d="M8 9l2 2 4-4M8 15l2 2 4-4" fill="none" stroke="${GR}" stroke-width="1.6"/>`,
+  web: `<circle cx="12" cy="12" r="8.5" fill="#e6f0fb" stroke="${B}" stroke-width="1.3"/><path d="M3.5 12h17M12 3.5c-3 3-3 14 0 17M12 3.5c3 3 3 14 0 17" fill="none" stroke="${B}" stroke-width="1.1"/>`,
+  page: `<path d="M6 3h8l4 4v14H6z" fill="#fff" stroke="${B}"/><path d="M14 3v4h4" fill="none" stroke="${B}"/><path d="M8.5 11h7M8.5 14h7M8.5 17h5" stroke="${B}" stroke-width="1"/>`,
   ai: `<path d="M12 2l2.2 6.3L20.5 10l-6.3 2.2L12 18.5l-2.2-6.3L3.5 10l6.3-1.7z" fill="#7b5cff"/><path d="M19 15l.9 2.3 2.1.7-2.1.8L19 21l-.9-2.2-2.1-.8 2.1-.7z" fill="#b39cff"/>`,
 
   // Heads-up view toolbar

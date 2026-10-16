@@ -177,6 +177,27 @@ def part_script():
     ]
 
 
+_DIN912 = "https://www.example-fasteners.com/iso-4762-socket-head-cap-screws"
+_M5_PDF = "https://www.example-fasteners.com/datasheets/iso4762-m5.pdf"
+
+
+def web_script():
+    """Looks up a screw on the web, then uses the off-the-shelf part (tests the web search UI)."""
+    return [
+        ("A wall bracket needs screws: look up the M5 socket head cap screw sizes before choosing the hole.",
+         "Checking the M5 socket head cap screw sizes first.",
+         [("@web_search", {"query": "ISO 4762 M5 socket head cap screw head diameter clearance hole"},
+           [{"title": "ISO 4762 socket head cap screws - sizes", "url": _DIN912},
+            {"title": "Clearance hole chart (ISO 273)", "url": "https://www.example-fasteners.com/iso-273-clearance-holes"}]),
+          ("@web_fetch", {"url": _M5_PDF}, [{"title": "ISO 4762 M5 datasheet", "url": _M5_PDF}]),
+          ("standard_part", {"part_id": "m5x16", "kind": "socket_head_cap_screw", "size": "M5-0.8", "length": 16})]),
+        (None, ("An M5 socket head cap screw has an 8.5 mm head and needs a 5.5 mm clearance hole (normal fit), "
+                "so the bracket holes are 5.5 mm. Bought: M5 x 16 screws. Custom: none yet.",
+                [{"type": "web_search_result_location", "url": _DIN912, "title": "ISO 4762 socket head cap screws - sizes",
+                  "cited_text": "M5: head diameter 8.5 mm"}]), []),
+    ]
+
+
 # ----------------------------------------------------------------------------- fake streaming client
 
 class _Stream:
@@ -201,7 +222,7 @@ class _Stream:
 
 class DemoMessages:
     def __init__(self, speed: float = 1.0, scenario: str = "press"):
-        self.rounds = part_script() if scenario == "part" else script()
+        self.rounds = {"part": part_script, "web": web_script}.get(scenario, script)()
         self.speed = speed
         self.n = 0
 
@@ -219,14 +240,41 @@ class DemoMessages:
                 events.append((NS(type="content_block_delta", index=i, delta=NS(type="thinking_delta", thinking=w)), 0.03))
             events.append((NS(type="content_block_stop", index=i), 0))
             i += 1
+        cites = None
+        if isinstance(text, tuple):
+            text, cites = text
         if text:
-            content.append(NS(type="text", text=text))
+            content.append(NS(type="text", text=text, citations=cites))
             events.append((NS(type="content_block_start", index=i, content_block=NS(type="text", text="")), 0.1))
             for w in _chunks(text, 6):
                 events.append((NS(type="content_block_delta", index=i, delta=NS(type="text_delta", text=w)), 0.025))
             events.append((NS(type="content_block_stop", index=i), 0))
             i += 1
-        for k, (name, inp) in enumerate(calls):
+        client_calls = 0
+        for k, call in enumerate(calls):
+            name, inp = call[0], call[1]
+            if name.startswith("@"):  # an Anthropic server tool: the block, a pause, then its result
+                name = name[1:]
+                sid = f"srvtoolu_demo_{self.n}_{k}"
+                content.append(NS(type="server_tool_use", id=sid, name=name, input=inp))
+                events.append((NS(type="content_block_start", index=i, content_block=NS(type="server_tool_use", id=sid, name=name, input={})), 0.15))
+                events.append((NS(type="content_block_delta", index=i, delta=NS(type="input_json_delta", partial_json=json.dumps(inp))), 0.05))
+                events.append((NS(type="content_block_stop", index=i), 0))
+                i += 1
+                if name == "web_search":
+                    res = NS(type="web_search_tool_result", tool_use_id=sid,
+                             content=[NS(type="web_search_result", encrypted_content="demo", page_age=None, **r) for r in call[2]])
+                else:
+                    r = call[2][0]
+                    res = NS(type="web_fetch_tool_result", tool_use_id=sid, content=NS(
+                        type="web_fetch_result", url=r["url"], retrieved_at="2026-10-16T00:00:00Z",
+                        content=NS(type="document", title=r["title"], source=NS(type="text", media_type="text/plain", data="..."))))
+                content.append(res)
+                events.append((NS(type="content_block_start", index=i, content_block=res), 0.8))
+                events.append((NS(type="content_block_stop", index=i), 0))
+                i += 1
+                continue
+            client_calls += 1
             b = NS(type="tool_use", id=f"demo_{self.n}_{k}", name=name, input=inp)
             content.append(b)
             events.append((NS(type="content_block_start", index=i, content_block=NS(type="tool_use", id=b.id, name=name, input={})), 0.15))
@@ -234,7 +282,7 @@ class DemoMessages:
                 events.append((NS(type="content_block_delta", index=i, delta=NS(type="input_json_delta", partial_json=w)), 0.03))
             events.append((NS(type="content_block_stop", index=i), 0))
             i += 1
-        resp = NS(content=content, stop_reason="tool_use" if calls else "end_turn")
+        resp = NS(content=content, stop_reason="tool_use" if client_calls else "end_turn")
         return _Stream(resp, events, self.speed)
 
 

@@ -27,6 +27,16 @@ const TOOL_META = {
   find_mate_candidates: { title: 'Looking for mates in the geometry', icon: 'mate' },
   standard_part: { title: 'Toolbox part', icon: 'toolbox' },
   request_part_file: { title: 'Asking for a bought part', icon: 'open' },
+  web_search: { title: 'Searching the web', icon: 'web' },
+  web_fetch: { title: 'Reading a page', icon: 'page' },
+};
+// Links from the web are untrusted: only http(s) becomes a link.
+const safeUrl = (u) => { try { const x = new URL(u); return /^https?:$/.test(x.protocol) ? x.href : null; } catch (_) { return null; } };
+const hostOf = (u) => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch (_) { return String(u || ''); } };
+const WEB_ERRORS = {
+  max_uses_exceeded: 'limit for this request reached', too_many_requests: 'too many requests, try again soon',
+  url_not_accessible: 'page could not be reached', url_not_allowed: 'site not allowed', url_not_in_prior_context: 'link not found in the conversation',
+  unsupported_content_type: 'page type not supported', query_too_long: 'search too long', unavailable: 'search service unavailable',
 };
 const featureIconFor = (f) => { try { return featureIcon(f); } catch (_) { return 'feature'; } };
 const mateIconFor = (t) => mateIcon(t);
@@ -149,11 +159,21 @@ export class TaskPane {
       else {
         const b = h('button', 'btn', 'Choose STEP file...');
         const pick = (file) => this.app.replacePartFromFile(m.part, file).then((ok) => { if (ok) { m.done = file.name; this.refresh(m); } });
-        b.onclick = () => { const i = document.createElement('input'); i.type = 'file'; i.accept = '.step,.stp'; i.onchange = () => i.files[0] && pick(i.files[0]); i.click(); };
+        b.onclick = () => { const i = document.createElement('input'); i.type = 'file'; i.accept = '.step,.stp,.zip'; i.onchange = () => i.files[0] && pick(i.files[0]); i.click(); };
         el.addEventListener('dragover', (e) => { e.preventDefault(); el.classList.add('drop'); });
         el.addEventListener('dragleave', () => el.classList.remove('drop'));
         el.addEventListener('drop', (e) => { e.preventDefault(); e.stopPropagation(); el.classList.remove('drop'); const f = e.dataTransfer?.files?.[0]; if (f) pick(f); });
         el.appendChild(b);
+      }
+    } else if (m.role === 'sources') {
+      el = h('div', 'ai-sources');
+      el.appendChild(h('div', 'sh', 'Sources'));
+      for (const it of m.items) {
+        const url = safeUrl(it.url);
+        if (!url) continue;
+        const a = h('a', '', `${esc(it.title || url)}<span class="host">${esc(hostOf(url))}</span>`);
+        a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+        el.appendChild(a);
       }
     } else if (m.role === 'thinking') {
       el = h('div', 'ai-think' + (m.open ? ' open' : ''));
@@ -247,6 +267,7 @@ export class TaskPane {
       await app.live.finish();
       if (d.proposal) await this.showResult(d, before); // drawn under the live view, then revealed
       else if (d.reply && !(S.lastText && S.lastText.trim() === d.reply.trim())) this.add({ role: 'bot', text: d.reply });
+      if (d.sources?.length) this.add({ role: 'sources', items: d.sources });
       app.live.stop();
       if (d.proposal) app.viewer.followBox(app.viewer.sceneBox());
     } else app.live.stop();
@@ -381,6 +402,28 @@ export class TaskPane {
         const a = S.acts.get(ev.index);
         if (a) { a.title = 'Asked for ' + (ev.mcmaster ? 'McMaster ' + ev.mcmaster : 'a STEP file'); a.state = 'done'; this.refresh(a); }
         this.add({ role: 'request', ...ev });
+        break;
+      }
+      case 'web_query': {
+        const a = S.acts.get(ev.index);
+        if (a) { a.detail = ev.query || (ev.url ? hostOf(ev.url) + new URL(ev.url, 'http://x').pathname.replace(/\/$/, '') : ''); this.refresh(a); }
+        app.live.hint(ev.tool === 'web_fetch' ? 'Reading a page...' : 'Searching the web...');
+        break;
+      }
+      case 'web_result': {
+        const a = S.acts.get(ev.index);
+        if (!a) break;
+        const fetch = ev.tool === 'web_fetch';
+        if (ev.error) {
+          a.state = 'error';
+          a.title = (fetch ? 'Could not read the page: ' : 'Search failed: ') + (WEB_ERRORS[ev.error] || ev.error.replace(/_/g, ' '));
+        } else {
+          a.state = 'done';
+          a.title = fetch ? 'Read a page' : `Searched the web: ${ev.results.length} result${ev.results.length === 1 ? '' : 's'}`;
+          if (fetch && ev.results[0]) a.detail = ev.results[0].title;
+          else a.items = ev.results.slice(0, 5).map((r) => ({ label: r.title.length > 48 ? r.title.slice(0, 47) + '...' : r.title, icon: 'page' }));
+        }
+        this.refresh(a);
         break;
       }
       case 'note': break;

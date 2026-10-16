@@ -133,6 +133,13 @@ Task Pane on the right, status bar with Under/Fully/Over Defined and "Editing Sk
   assembly: the sketch appears in blue, then the new material grows out of the sketch plane. Each
   inserted component flies from the shelf to its place, and each mate slides the components into
   position. You can rotate and zoom while it works; Stop cancels.
+- Off-the-shelf first: Claude uses standard and bought parts wherever it can (Toolbox screws, nuts,
+  washers and bearings; catalogue parts such as motors, hinges and gas springs with a real part
+  number for you to download) and only designs custom parts for what is specific to your product.
+- Web: Claude can search the web and read pages and PDFs (datasheets, standards, part sizes). Each
+  search shows as a row in the chat and the sources are listed under the reply. Searches cost
+  US$10 per 1,000 on your Anthropic account, at most 5 per request. Set `OPENSKETCH_AI_WEB=0` to
+  turn it off.
 - The result shows in purple until you Accept or Reject it. Everything stays editable: sketches come
   with relations and dimensions, components with real mates. Quick actions: Explain Model / Assembly,
   Fix Errors, Fix Mates, Fully Define.
