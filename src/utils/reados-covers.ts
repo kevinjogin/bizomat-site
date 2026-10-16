@@ -85,6 +85,10 @@ export const TOPIC_COVERS: Record<string, Look> = {
   'product-development-and-launch': { motif: 'launch', tone: 'ember' },
   'specifications-product-quality-and-sustainability': { motif: 'specsheet', tone: 'graphite' },
   'engineering-history': { motif: 'waterwheel', tone: 'ember' },
+  'engineering-history-modern-era': { motif: 'pylon', tone: 'graphite' },
+  'research-and-evidence-for-better-decisions': { motif: 'experiment', tone: 'paper' },
+  'practical-mathematics-for-engineering': { motif: 'triangle', tone: 'ember' },
+  'software-and-cloud-foundations': { motif: 'code', tone: 'graphite' },
   'judgement-markets-and-learning': { motif: 'mind', tone: 'carbon' },
 };
 
