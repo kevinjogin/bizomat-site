@@ -168,6 +168,13 @@ takes a few seconds). Everything is set up already; it is all browser steps:
    variable `FLY_APP` (same Settings page, Variables tab) with another name, and run it again.
 6. In that OpenSketch, use Connect Claude and update the connector in Claude with the new address.
 
+Your own domain (optional): in the Fly dashboard open the app, Certificates, Add certificate, and enter a
+subdomain such as `cad.example.com`. Add the CNAME record Fly shows at your domain's DNS provider (plus the
+`_acme-challenge` CNAME if it asks). When the certificate shows Issued, add a repository variable `PUBLIC_URL`
+= `https://cad.example.com` (Settings > Secrets and variables > Actions > Variables) and run the Deploy
+workflow once, so share links and Claude's connector address use the new domain. The `.fly.dev` address keeps
+working.
+
 The Fly server and the codespace are separate: models saved on one are not on the other (move one with
 Save As > OpenSketch file, then Open and Save to Server).
 

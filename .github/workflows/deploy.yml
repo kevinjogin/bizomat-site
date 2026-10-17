@@ -21,6 +21,7 @@ jobs:
       APP: ${{ vars.FLY_APP || 'opensketch-yz' }}
       ORG: ${{ vars.FLY_ORG || 'personal' }}
       REGION: syd
+      PUBLIC_URL: ${{ vars.PUBLIC_URL }}  # e.g. https://cad.example.com once its certificate is issued
     steps:
       - name: Check setup
         id: setup
@@ -68,5 +69,5 @@ jobs:
         run: |
           flyctl deploy --app "$APP" --remote-only --ha=false \
             --build-arg OPENSKETCH_VERSION="${GITHUB_SHA::7}" \
-            --env OPENSKETCH_PUBLIC_URL="https://$APP.fly.dev"
-          echo "OpenSketch is live at https://$APP.fly.dev" >> "$GITHUB_STEP_SUMMARY"
+            --env OPENSKETCH_PUBLIC_URL="${PUBLIC_URL:-https://$APP.fly.dev}"
+          echo "OpenSketch is live at ${PUBLIC_URL:-https://$APP.fly.dev}" >> "$GITHUB_STEP_SUMMARY"
