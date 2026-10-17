@@ -312,3 +312,82 @@ def press_doc(motion: bool = True) -> dict:
                    refs=[_plane("c6", 0, -1), _plane("c8", 20, 1)], align="anti")
         tip.pop("value", None)
     return doc
+
+
+def _box(sid, x0, y0, x1, y1, plane="Front Plane"):
+    """A rectangle sketch from (x0, y0) to (x1, y1), fully defined."""
+    pts = [("a", x0, y0), ("b", x1, y0), ("c", x1, y1), ("d", x0, y1)]
+    ents = [{"id": f"{sid}p{i}", "type": "point", "x": x, "y": y} for i, x, y in pts]
+    ents += [{"id": f"{sid}l{k}", "type": "line", "p1": f"{sid}p{pts[k][0]}", "p2": f"{sid}p{pts[(k + 1) % 4][0]}"} for k in range(4)]
+    cons = [{"id": f"{sid}k1", "type": "horizontal", "refs": [f"{sid}l0"]}, {"id": f"{sid}k2", "type": "horizontal", "refs": [f"{sid}l2"]},
+            {"id": f"{sid}k3", "type": "vertical", "refs": [f"{sid}l1"]}, {"id": f"{sid}k4", "type": "vertical", "refs": [f"{sid}l3"]},
+            {"id": f"{sid}d1", "type": "distance", "refs": [f"{sid}l0"], "value": x1 - x0, "name": "D1"},
+            {"id": f"{sid}d2", "type": "distance", "refs": [f"{sid}l1"], "value": y1 - y0, "name": "D2"}]
+    return _sketch(sid, "Sketch" + sid[1:], (ents, cons), plane)
+
+
+LOCK_ARM = 20.0      # lever pivot to pin centre, mm
+LOCK_PIN_R = 3.0     # pin radius
+LOCK_PICKUP = 15.0   # lever turn (deg) before the pin reaches the tongue
+LOCK_RUN = 0.01      # running clearance between pin and tongue, mm
+
+
+def lock_law(step: float = 2.5) -> list[list[float]]:
+    """Tongue position (its back face from the pivot, mm) against the hinge angle (deg; 90 = lever
+    closed): a dwell, then the pin pushes the face (x = arm sin(turn) + pin radius + clearance)."""
+    import math
+    rest = LOCK_ARM * math.sin(math.radians(LOCK_PICKUP)) + LOCK_PIN_R + LOCK_RUN
+    law = [[90.0, round(rest, 6)]]
+    turn = LOCK_PICKUP
+    while turn <= 60 + 1e-9:
+        law.append([90.0 + turn, round(LOCK_ARM * math.sin(math.radians(turn)) + LOCK_PIN_R + LOCK_RUN, 6)])
+        turn += step
+    return law
+
+
+def lock_doc() -> dict:
+    """A lever that throws a lock tongue: the lever turns 0-60 deg on the case; its pin picks the tongue
+    up after 15 deg (a dwell) and pushes it out. The tongue follows a coupler mate (a motion law), and a
+    contact says the pin must touch the tongue from 15 to 60 deg."""
+    def pl(c, point, normal):
+        return {"component": c, "plane": {"point": list(point), "normal": list(normal)}}
+
+    lever = [_box("s1", -5, -26, 5, 5),
+             {"id": "e1", "type": "extrude", "name": "Arm", "sketch": "s1", "depth": 5},
+             _sketch("s2", "Sketch2", _circle("s2", LOCK_PIN_R, 0, -LOCK_ARM), "Front Plane"),
+             {"id": "e2", "type": "extrude", "name": "Pin", "sketch": "s2", "depth": 5.5, "reverse": True}]
+    lever[2]["constraints"] = [c for c in lever[2]["constraints"] if c["type"] != "coincident"]
+    rest = lock_law()[0][1]
+    parts = {
+        "case": {"name": "Case", "appearance": "#9aa3ad", "features": [
+            _box("s1", -40, -45, 110, 30), {"id": "e1", "type": "extrude", "name": "Plate", "sketch": "s1", "depth": 5},
+            {**_box("s2", 20, -33, 110, -27), "plane": {"type": "fixed", "origin": [0, 0, 5], "normal": [0, 0, 1], "xdir": [1, 0, 0]}},
+            {"id": "e2", "type": "extrude", "name": "Guide", "sketch": "s2", "depth": 5}]},
+        "lever": {"name": "Lever", "appearance": "#c8742c", "features": lever},
+        "tongue": {"name": "Tongue", "appearance": "#4f7fb0", "features": [_box("s1", 0, -27, 45, -5),
+                   {"id": "e1", "type": "extrude", "name": "Bolt", "sketch": "s1", "depth": 5}]},
+    }
+    comps = [
+        {"id": "c1", "part": "case", "name": "Case<1>", "fixed": True, "position": [0, 0, 0], "rotation": [0, 0, 0]},
+        {"id": "c2", "part": "lever", "name": "Lever<1>", "position": [0, 0, 10.5], "rotation": [0, 0, 0]},
+        {"id": "c3", "part": "tongue", "name": "Tongue<1>", "position": [rest, 0, 5], "rotation": [0, 0, 0]},
+    ]
+    turn = [pl("c1", (0, 0, 0), (1, 0, 0)), pl("c2", (0, 0, 0), (0, 1, 0))]  # 90 deg with the lever closed
+    mates = [
+        {"id": "m1", "name": "Lever pivot", "type": "hinge",
+         "refs": [{"component": "c1", "axis": {"point": [0, 0, 0], "dir": [0, 0, 1]}},
+                  {"component": "c2", "axis": {"point": [0, 0, 0], "dir": [0, 0, 1]}}],
+         "planes": [pl("c1", (0, 0, 5), (0, 0, 1)), pl("c2", (0, -LOCK_ARM, -5.5), (0, 0, -1))], "align": "anti",
+         "angle_refs": turn, "angle_min": 90, "angle_max": 150},
+        {"id": "m2", "name": "Tongue on case", "type": "coincident", "align": "anti",
+         "refs": [pl("c1", (0, 0, 5), (0, 0, 1)), pl("c3", (0, 0, 0), (0, 0, -1))]},
+        {"id": "m3", "name": "Tongue on guide", "type": "coincident", "align": "anti",
+         "refs": [pl("c1", (60, -27, 7.5), (0, 1, 0)), pl("c3", (20, -27, 2.5), (0, -1, 0))]},
+        {"id": "m4", "name": "Lever throws tongue", "type": "coupler",
+         "input_refs": turn, "input": "angle",
+         "refs": [pl("c1", (0, 0, 0), (1, 0, 0)), pl("c3", (0, -16, 2.5), (-1, 0, 0))], "output": "distance",
+         "law": lock_law()},
+    ]
+    contacts = [{"id": "k1", "name": "Pin on tongue", "a": "c2", "b": "c3", "joint": "m1", "from": 90 + LOCK_PICKUP, "to": 150}]
+    return {"version": 1, "type": "assembly", "name": "Lever Lock", "units": "mm", "parts": parts,
+            "components": comps, "mates": mates, "contacts": contacts, "sequence": ["c1", "c2", "c3"], "seq": 10}

@@ -241,7 +241,9 @@ class PasswordGate:
         path = scope.get("path", "")
         if path in ("/login", "/setup", "/reset", "/logout") or path.startswith("/join/"):
             return await self._page(path, scope, receive, send)
-        if path.startswith("/mcp/") or path.startswith("/review/"):  # their tokens are the keys
+        # /mcp/ and /review/: their tokens are the keys. GET /api/features: the command list (no document
+        # data), which the read-only review app loads too.
+        if path.startswith("/mcp/") or path.startswith("/review/") or (path == "/api/features" and scope.get("method") == "GET"):
             return await self.app(scope, receive, send)
         m = mode()
         user = current_user(scope)

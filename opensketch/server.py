@@ -12,7 +12,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
-from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.background import BackgroundTask
 from pydantic import BaseModel
@@ -528,17 +528,56 @@ def api_review_delete(token: str):
     return {"deleted": token}
 
 
-@app.get("/review/{token}")
-def review_page(token: str):
-    """A published review: frozen HTML, no login (the token is the key), not indexed, no referrer."""
+_REVIEW_HEADERS = {"Cache-Control": "private, max-age=300", "Referrer-Policy": "no-referrer",
+                   "X-Content-Type-Options": "nosniff", "X-Robots-Tag": "noindex, nofollow", "X-Frame-Options": "SAMEORIGIN"}
+_REVIEW_ASSETS = ("css/", "js/", "vendor/")
+
+
+class CheckRequest(BaseModel):
+    doc: dict
+
+
+@app.post("/api/review/check")
+async def api_review_check(req: CheckRequest):
+    """Motion Review in the app: errors, clashes through each joint's travel, gaps, contacts."""
     from . import review
-    p = review.html_path(token)
+    try:
+        return await run_in_threadpool(review.checks, req.doc)
+    except (review.ReviewError, assembly.AssemblyError, geometry.FeatureError) as exc:
+        return JSONResponse({"error": str(exc)}, status_code=400)
+
+
+@app.get("/review/{token}/data")
+def review_data(token: str):
+    """The snapshot the read-only app loads (gzipped JSON)."""
+    from . import review
+    p = review.data_path(token)
     if p is None:
         raise HTTPException(404, "No such review. It may have been deleted.")
-    return FileResponse(p, media_type="text/html; charset=utf-8",
-                        headers={"Cache-Control": "private, max-age=300", "Referrer-Policy": "no-referrer",
-                                 "X-Content-Type-Options": "nosniff", "X-Robots-Tag": "noindex, nofollow",
-                                 "X-Frame-Options": "SAMEORIGIN"})
+    return FileResponse(p, media_type="application/json", headers={**_REVIEW_HEADERS, "Content-Encoding": "gzip"})
+
+
+@app.get("/review/{token}")
+def review_page(token: str):
+    """A published review: the app, read-only, no login (the token is the key), not indexed, no referrer."""
+    from . import review
+    if review.data_path(token):
+        return HTMLResponse(review.viewer_page(token, STATIC), headers=_REVIEW_HEADERS)
+    p = review.html_path(token)  # published before the app viewer
+    if p is None:
+        raise HTTPException(404, "No such review. It may have been deleted.")
+    return FileResponse(p, media_type="text/html; charset=utf-8", headers=_REVIEW_HEADERS)
+
+
+@app.get("/review/{asset:path}")
+def review_asset(asset: str):
+    """The app's own files for the review viewer (its relative paths resolve under /review/)."""
+    if not asset.startswith(_REVIEW_ASSETS):
+        raise HTTPException(404)
+    p = (STATIC / asset).resolve()
+    if not p.is_file() or STATIC.resolve() not in p.parents:
+        raise HTTPException(404)
+    return FileResponse(p)
 
 
 # MCP (Streamable HTTP): the token in the path is the key; routed before the static files.

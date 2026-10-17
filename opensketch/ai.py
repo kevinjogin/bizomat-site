@@ -131,6 +131,15 @@ arm use a hinge mate: {{"type": "hinge", "refs": [axisA, axisB], "planes": [plan
 stops it sliding along the axis), "angle_refs": [planeA, planeB], "angle_min": 0, "angle_max": 110
 (optional limits, the angle between those two faces)}}. For travel limits use limit_distance
 ({{"refs": [planeA, planeB], "min", "max"}}) or limit_angle ({{"refs": [a, b], "min", "max"}}).
+When one part drives another through contact (a lever throws a lock tongue, a cam lifts a follower, a
+button pushes a latch), give the driven part its own guide mates, then a coupler mate: {{"type":
+"coupler", "input_refs": [a, b], "input": "angle"|"distance" (the driver's measure, e.g. the hinge's
+angle_refs), "refs": [c, d], "output": "angle"|"distance" (the driven measure), "law": [[driver, driven],
+...] (driver increasing; flat = dwell, ends hold) or "ratio" + "offset"}}. Work the law out from the
+geometry (pin radius, arm length, pickup angle). Then add_contact for the faces that must touch over that
+range, and publish_review: its contact check says if the law and the shapes agree (a gap = law too far,
+a clash = too short). A coupler cannot latch: a tongue that stays out when the lever returns is its own
+joint.
 
 Design intent: give each part a few global variables for the numbers a designer would change (length,
 width, wall, hole size, count) with set_parameter (comment = sensible range), and drive dimensions with
@@ -239,7 +248,25 @@ TOOLS = [
                         "description": "hinge: two faces whose angle is limited"},
          "angle_min": {"type": "number"}, "angle_max": {"type": "number"},
          "min": {"type": "number", "description": "limit_distance / limit_angle"},
-         "max": {"type": "number", "description": "limit_distance / limit_angle"}}, "required": ["type", "refs"]}},
+         "max": {"type": "number", "description": "limit_distance / limit_angle"},
+         "input_refs": {"type": "array", "items": _REF, "minItems": 2, "maxItems": 2,
+                        "description": "coupler: the driver pair (refs is the driven pair)"},
+         "input": {"type": "string", "enum": ["angle", "distance"], "description": "coupler: driver measure"},
+         "output": {"type": "string", "enum": ["angle", "distance"], "description": "coupler: driven measure"},
+         "law": {"type": "array", "items": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+                 "description": "coupler: [driver, driven] points, driver increasing"},
+         "ratio": {"type": "number", "description": "coupler without a law: driven = offset + ratio * driver"},
+         "offset": {"type": "number"},
+         "name": {"type": "string"}}, "required": ["type", "refs"]}},
+    {"name": "add_contact",
+     "description": ("Declare that two components must touch (a pin on a tongue, a cam on its follower), checked by "
+                     "the review through a joint's travel (joint = mate id, from / to in its units) or at rest. "
+                     "remove: the contact id to delete."),
+     "input_schema": {"type": "object", "properties": {
+         "a": {"type": "string", "description": "component id"}, "b": {"type": "string", "description": "component id"},
+         "joint": {"type": "string", "description": "mate id of the hinge or limit mate that moves them"},
+         "from": {"type": "number"}, "to": {"type": "number"}, "name": {"type": "string"},
+         "remove": {"type": "string"}}}},
     {"name": "delete_items",
      "description": ("Delete components, mates or parts from the assembly, or features from a part, by id. Features: "
                      "what depends on them goes too (an extrude with its sketch, an emptied pattern; sketches only "
@@ -735,6 +762,15 @@ class Session:
         t = inp.get("type")
         if t not in assembly.MATE_TYPES:
             return f"Unknown mate type {t!r}", False, []
+        if t == "coupler":
+            if len(inp.get("input_refs") or []) != 2:
+                return "A coupler needs input_refs: the two references whose angle or distance drives it.", False, []
+            if inp.get("law") is None and inp.get("ratio") is None:
+                return "A coupler needs a law ([[driver, driven], ...]) or a ratio.", False, []
+            try:
+                assembly.coupler_law(inp)
+            except assembly.AssemblyError as exc:
+                return f"Coupler: {exc}.", False, []
         limit_keys = ("min", "max") if t in ("limit_distance", "limit_angle") else ("angle_min", "angle_max") if t == "hinge" and inp.get("angle_refs") else None
         if limit_keys:
             low, high = (inp.get(k) for k in limit_keys)
@@ -746,9 +782,10 @@ class Session:
             asm["seq"] = asm.get("seq", 1) + 1
             mid = f"m{asm['seq']}"
         asm["seq"] = asm.get("seq", 1) + 1
-        mate = {"id": mid, "name": _next_name([m.get("name", "") for m in asm["mates"]], str(t).capitalize()), "type": t,
-                "refs": inp.get("refs") or []}
-        for k in ("value", "align", "flip", "planes", "angle_refs", "angle_min", "angle_max", "min", "max"):
+        mate = {"id": mid, "name": inp.get("name") or _next_name([m.get("name", "") for m in asm["mates"]], str(t).capitalize()),
+                "type": t, "refs": inp.get("refs") or []}
+        for k in ("value", "align", "flip", "planes", "angle_refs", "angle_min", "angle_max", "min", "max",
+                  "input_refs", "input", "output", "law", "ratio", "offset"):
             if k in inp:  # hinge: planes / angle_refs / angle_min / angle_max; limit mates: min / max
                 mate[k] = inp[k]
         asm["mates"].append(mate)
@@ -760,6 +797,41 @@ class Session:
         self.steps.append({"summary": self.summary, "clean": clean})
         rep["this_mate"] = {"id": mid, **state}
         return json.dumps(rep), clean, [ev]
+
+    def add_contact(self, inp: dict) -> tuple[str, bool, list]:
+        """A should-touch check (docs/DOCUMENT.md Contacts): stored on the assembly, read by the review."""
+        if not assembly.is_assembly(self.work):
+            return "Contacts are between components: this document is a part.", False, []
+        asm = self.work
+        lst = asm.setdefault("contacts", [])
+        if inp.get("remove"):
+            if not any(k["id"] == inp["remove"] for k in lst):
+                return f"No contact {inp['remove']!r}.", False, []
+            asm["contacts"] = [k for k in lst if k["id"] != inp["remove"]]
+            self.summary = f"Removed contact {inp['remove']}"
+            self.steps.append({"summary": self.summary, "clean": True})
+            return json.dumps({"contacts": asm["contacts"]}), True, [{"ev": "proposal", "doc": self.work, "summary": self.summary}]
+        ids = {c["id"] for c in asm.get("components", [])}
+        a, b = inp.get("a"), inp.get("b")
+        if a not in ids or b not in ids or a == b:
+            return f"a and b must be two different component ids, from {sorted(ids)}.", False, []
+        if inp.get("joint") is not None and not any(m["id"] == inp["joint"] for m in asm.get("mates", [])):
+            return f"No mate {inp['joint']!r} to use as the joint.", False, []
+        lo, hi = inp.get("from"), inp.get("to")
+        if lo is not None and hi is not None and lo > hi:
+            return "from must not be above to.", False, []
+        n = 1
+        while any(k["id"] == f"k{n}" for k in lst):
+            n += 1
+        k = {"id": f"k{n}", "name": inp.get("name") or f"Contact{n}", "a": a, "b": b}
+        for key in ("joint", "from", "to"):
+            if inp.get(key) is not None:
+                k[key] = inp[key]
+        lst.append(k)
+        self.summary = f"Contact {k['name']}"
+        self.steps.append({"summary": self.summary, "clean": True})
+        return (json.dumps({"contact": k, "note": "Checked by publish_review (contacts in its checks)."}), True,
+                [{"ev": "proposal", "doc": self.work, "summary": self.summary}])
 
     # -- global variables and equations (params.py)
     def _target_part(self, pid):
@@ -944,6 +1016,13 @@ class Session:
                   for key in assembly.REF_KEYS for r in m.get(key, []))}
         asm["components"] = [c for c in asm["components"] if c["id"] not in comps]
         asm["mates"] = [m for m in asm["mates"] if m["id"] not in mates]
+        if asm.get("contacts"):  # a contact goes with either component; its joint just stops being checked
+            asm["contacts"] = [k for k in asm["contacts"] if k.get("a") not in comps and k.get("b") not in comps
+                               and k.get("of") not in mates]
+            for k in asm["contacts"]:
+                if k.get("joint") in mates:
+                    for key in ("joint", "from", "to"):
+                        k.pop(key, None)
         asm["sequence"] = [c for c in asm.get("sequence", []) if c not in comps]
         for p in parts:
             asm["parts"].pop(p, None)
@@ -1065,7 +1144,7 @@ class Session:
               "delete_items": self.delete_items, "check_interference": self.check_interference,
               "find_mate_candidates": self.find_mate_candidates, "standard_part": self.standard_part,
               "request_part_file": self.request_part_file, "set_parameter": self.set_parameter,
-              "set_equation": self.set_equation}.get(name)
+              "set_equation": self.set_equation, "add_contact": self.add_contact}.get(name)
         if fn is None:
             return f"Unknown tool {name}", False, []
         out = fn(inp or {})

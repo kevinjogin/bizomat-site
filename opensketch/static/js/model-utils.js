@@ -34,7 +34,7 @@ export function removeFeatures(doc, removed) {
 }
 
 export function mateReferences(mate) {
-  return ['refs', 'planes', 'angle_refs'].flatMap((key) => mate[key] || []);
+  return ['refs', 'planes', 'angle_refs', 'input_refs'].flatMap((key) => mate[key] || []);
 }
 
 // Viewer picks retain part-local geometry for mates. Measurements require assembly coordinates.

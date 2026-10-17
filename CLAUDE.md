@@ -37,7 +37,7 @@ assemblies only when a part changes.
   "fix" a reference number to match OpenSketch, work it out by hand.
 - No emojis in UI text. Plain language, short sentences.
 
-## Current state (2026-10-18, v0.5: accounts, Figma look, Design panel, Ask AI on a selection)
+## Current state (2026-10-18, v0.5: accounts, Figma look, Design panel, Ask AI on a selection; coupler mate, Motion Review)
 
 Accounts (2026-10-18): `accounts.py` (users.json: scrypt-hashed passwords, owner/member roles, single-use
 7-day invites stored as SHA-256; sessions.json: SHA-256 of random cookie tokens, 90 days, removed on sign out,
@@ -93,35 +93,59 @@ each); the system prompt's "Selection" paragraph says to change only what the re
 shows "About: ..." under the user's message. Tests: `tests/test_design.py` (3: face owners on the bracket,
 the route, the note reaching the conversation). 275 pytest (2 need the macro toolchain) + 59 node.
 
-## Earlier state (2026-10-17, v0.4 + mate solver in the browser + feature registry + SolidCraft borrowings 1 and 2)
 
-Review pages (2026-10-18, after YZ's Lavilock review artifacts): `review.py` + `templates/review.html`.
-`build(rec, compare, title, notes, history)`: assembly (a part is wrapped as one fixed component) rebuilt and
-`apply_solution` (mate refs on rebuilt faces); parts packed by `pack_mesh` (one geometry per part, int16 x
-per-part scale `s`, uint16/32 indices, edge segments, base64); components at rest; sliders = `joints()`
-(hinge with angle_refs and both angle limits, limit_distance, limit_angle with min < max): the mate's limits
-pinned (`_pin`: min = max) at STEPS = 24 values, solved with `assembly.solve` warm-started outward from
-the rest value both ways; `reached` re-measured with the solver's own conventions (`_measure`); frames hold
-only components whose pose really changes (1 micron / 1e-5 rad: solver noise left guide columns "moving");
-checks: rebuild and mate errors, clashes at rest (every pair) and on every 4th pose of each joint (pairs
-with a moving part; CLASH_MM3 = 0.01, smaller is touching), smallest non-zero gap of the moving parts, poses
-where mates failed. compare: parts changed by `part_key` (note from `_feature_changes`), the old version's
-changed parts at their old poses (ghost), version summaries between. `page()` puts the data in a JSON
-script tag (escaped `</`) in the YZ Default template: three.js r128 + OrbitControls (cdnjs / jsdelivr),
-sliders interpolate (lerp + slerp) between solved frames, joints that share moving parts reset each other,
-views, Changes in black, Previous version ghost, Part colours, Edges, per-part show/hide, What changed,
-Checks, Parts table; all text set with textContent. Stored: `<data>/reviews/<token>.html` +
-`reviews.json`; `publish()` (token_urlsafe(24)), `listing`, `delete`, `html_path` (token regex). Routes:
-POST/GET /api/reviews, DELETE /api/reviews/{token} (login), GET /review/{token} (public: PasswordGate
-exempts /review/; noindex, no-referrer, nosniff), GET /api/docs/{id}/versions; links use the request's
-address in the app (`_base`) and `auth.public_url()` for MCP (OPENSKETCH_PUBLIC_URL on Fly). MCP
-`publish_review(doc_id, compare_version, title, notes)` (now 39 tools) returns url + a checks summary.
-App: File > Publish Review... (`serverdocs.publishDialog`: saves to the server first if needed, title,
-compare-with list, notes, result with Copy / Open, earlier reviews of the document). `demo.press_doc()` =
-the demo press with the platen on a limit_distance 110-300 mm (a top stop above 110 hits the rod: the
-review's check found it). Checked in Chromium: publish from the app with a password set, link opened logged
-out at phone size, slider moves the changed platen, no page errors; press review ~130 KB, built in ~2 s.
-Tests: `tests/test_review.py` (7). 266 pytest + 59 node.
+Coupler mate, contacts and Motion Review (2026-10-18; YZ: "drive a lever and the lock tongue moves", and the
+review should be OpenSketch, not a separate page):
+- `coupler` mate (docs/DOCUMENT.md, Mates > Coupler): `input_refs` + `input` (angle | distance) drive `refs` +
+  `output` through `law` [[driver, driven], ...] (np.interp: straight between points, ends held; flat = dwell)
+  or `ratio` + `offset`. Residual = driven - law(driver) (angle residual in rad x L). `coupler_measure`: angle
+  = acos of directions (as limit_angle), distance = plane-plane / plane-point signed along the first plane,
+  axis-x perpendicular, point-point straight. Both solvers (`assembly.py` coupler_measure / coupler_law,
+  `asmsolver.js` couplerMeasure / couplerLaw / measurePair); `input_refs` is in REF_KEYS (and
+  `mateReferences`), so drags, delete cascades and the review's moving set follow it. Parity: 5 coupler cases
+  (bad start, pinned, ratio, bad law + bad measure messages, lever drag pushes the tongue). No latch state.
+- `contacts` on the assembly [{id, name, a, b, joint?, from?, to?, of?}]: two components that must touch
+  (gap <= CONTACT_MM 0.05 mm) through `joint`'s travel between from/to, or at rest; checked by the review only.
+  `of` = the coupler whose PM made it. Deleting a component drops its contacts; deleting the joint mate makes
+  it an at-rest check; deleting the `of` mate drops it (ai.delete_items and asm.deleteItems).
+- AI / MCP: add_mate takes input_refs/input/output/law/ratio/offset/name (bad laws refused before solving);
+  new tool `add_contact` (a, b, joint, from/to (MCP from_value/to_value), name, remove) in ai.TOOLS, MCP and
+  BATCH_TOOLS; system prompt "When one part drives another through contact"; MCP now 40 tools.
+- Coupler PM (`asm.couplerPM`, Mate PM > Mechanical Mates > Coupler..., Assembly ribbon Mate flyout, Insert >
+  Coupler): Driver / Driven selection boxes with measure and current value (`measurePair`), Motion Law (table
+  with editable points, Add Current Position, Add Point, an SVG chart with the driver's current value, or
+  Ratio / Offset), Contact Check section (driver part, driven part, joint, from/to). Edit routes through
+  `asm.editMate`. Icons coupler, contact, motionreview.
+- Motion Review (`static/js/review.js`, Evaluate tab after Interference, Tools menu): PM with a slider + Play per
+  joint (`asm.joints`: hinge with angle limits, limit mates with min < max), solved by `regenLocal` with that
+  mate pinned, warm-started from the last pose in `this.work` (the document is not changed; closing redraws
+  it); a part changed since the server build -> one `asm.regen` first. Checks: POST `/api/review/check`
+  {doc} -> `review.checks` (build without bodies); items are clickable (go to the pose, the two parts red via
+  `asm.colorOverride`); "model changed since these checks" note. Share section opens Publish Review.
+- Share links: `review.publish` stores `<data>/reviews/<token>.json.gz` (build with bodies: `doc` = the solved
+  assembly with every part reduced to name/appearance/material and no features or parameters, `result` =
+  the /api/regen answer with all meshes, joints, checks, parts, mate_changes, changes, old ghost bodies).
+  GET /review/<token> = static/index.html with `window.OPENSKETCH_REVIEW` + noindex; its relative files load
+  from GET /review/{css,js,vendor}/... (`review_asset`, inside STATIC only); GET /review/<token>/data =
+  the gz file with Content-Encoding gzip. PasswordGate exempts /review/ and GET /api/features. The app in
+  review mode (`app.reviewMode`): no restore/autosave (never touches the visitor's own work), no server
+  calls (asm.regen returns null instead of /api/regen), CommandManager/menus/task pane hidden
+  (`body.review-mode`), Motion Review PM open with Review notes, Joints, Checks, What Changed (parts and
+  mates, changed parts in black, previous version ghost). Phone (<= 760 px): graphics 58vh, PM below, page
+  scrolls. Reviews published before this (`<token>.html`) are still served. Snapshot: press 33 KB, lock 5 KB (gz).
+- `demo.lock_doc()`: case + guide, lever (hinge 90-150 deg measured case +X to lever +Y, so acos never
+  sits at 0), tongue on the guide, coupler with `lock_law()` (dwell to 15 deg, then arm 20 sin + pin 3 +
+  0.01 clearance every 2.5 deg), contact Pin on tongue 105-150. Review: tongue 8.19 -> 20.33 mm, touching
+  (gap <= 0.01), no clash; law +0.3 -> apart at all 18 poses (0.31 mm), law -0.3 -> lever/tongue clash.
+- Checked in Chromium: Coupler PM edit (20 law rows, chart, contact section, OK stores the law), Motion
+  Review from the Evaluate tab (checks, slider to 135 deg moves the tongue to 17.15, Play, doc unchanged
+  after closing), a clashing law listed and clicked (pose 121.3 deg, both parts red), Publish Review with
+  compare, the link logged out at 390 px (notes, joint, checks, What Changed with "Lever throws tongue:
+  changed", tap on the slider moves the tongue) and at desktop size, visitor's autosave untouched, no page
+  errors. Rebased on v0.5 (accounts, Figma look): review mode skips the account fetch and hides the avatar; the
+  flows re-run with account sign-in. Tests: `tests/test_review.py` (9). 277 pytest (2 skipped) + 59 node.
+
+## Earlier state (2026-10-17, v0.4 + mate solver in the browser + feature registry + SolidCraft borrowings 1 and 2)
 
 Merged 2026-10-17: PR #7 (Offset Entities, see "Sketch Offset Entities") and PR #5 (review fixes + sweep, loft,
 Hole Wizard; see "Review fixes"). Merge decisions: sweep / loft / hole are registered in
@@ -391,10 +415,14 @@ See `docs/CODE_REVIEW_2026-10-16.md` for reproductions, new-feature usage and UX
 - Sketch DOF in inspect_design needs node on the server (Docker image: Debian nodejs 20, deployed to Fly
   2026-10-17; the devcontainer has it). Not yet called through the real Claude connector.
 - batch runs on the server only (MCP). The in-app copilot still applies tools one at a time.
-- Review pages: joints are moved one at a time (solved per joint; two joints moving the same parts reset
-  each other); only hinge/limit mates with both limits get a slider; no DFM section (no DFM checks in
-  OpenSketch); clash checks on 7 poses per joint, so a clash shorter than ~1/6 of the travel can be missed;
-  the page needs cdnjs and jsdelivr for three.js; published reviews are never removed automatically.
+- Motion Review: checks solve each joint alone (others at rest); the app's sliders move one joint at a time
+  from where the others are. Only hinge/limit mates with both limits are joints. Clash checks on 7 poses per
+  joint (a clash shorter than ~1/6 of the travel can be missed); contacts on every pose in range. Contacts
+  are whole-component distances (the nearest feature counts, not a named face). The share link loads
+  three.js from the app's own vendor copy; published reviews are never removed automatically.
+- Coupler: a function of the driver's position (no hysteresis, latch or spring return); angle measures are
+  0-180 deg unsigned (choose angle refs so the travel does not cross 0 or 180); no gear / rack / screw /
+  cam mates as such (a coupler with a ratio or table covers gear, rack and screw ratios).
 - Mate references (plane / axis / point) are stored as geometry in part coordinates and re-matched to
   the nearest face after part edits; not topological. Mate picks: planar faces, cylindrical/conical
   faces, straight edges, the three assembly planes. No vertex or circular-edge picks yet.

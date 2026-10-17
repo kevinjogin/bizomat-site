@@ -25,7 +25,7 @@ export function buildCommands(app) {
     fileprops: { label: 'File Properties', icon: 'props', tip: 'Summary and custom properties', run: () => app.openTask('custprops') },
     serveropen: { label: 'Open from Server', icon: 'open', tip: 'Opens a document stored on the OpenSketch server, such as one Claude built. Claude\'s later changes appear live.', run: () => app.server.openDialog() },
     serversave: { label: 'Save to Server', icon: 'save', tip: 'Stores this document on the OpenSketch server so Claude can work on it with you.', run: () => app.server.saveAsNew() },
-    publishreview: { label: 'Publish Review...', icon: 'save', tip: 'Publishes a page of this version to send or open on a phone: the model, joint sliders, what changed and the checks.', run: () => app.server.publishDialog() },
+    publishreview: { label: 'Publish Review...', icon: 'save', tip: 'Publishes a read-only link to this version, to send or open on a phone: the model in OpenSketch, its joints, what changed and the checks.', run: () => app.server.publishDialog() },
     connectclaude: { label: 'Connect Claude', icon: 'ai', tip: 'Use OpenSketch from the Claude app: shows the connector address to add in Claude.', run: () => app.server.connectDialog() },
     options: { label: 'Options', icon: 'options', tip: 'System options and document properties', run: () => app.optionsDialog() },
 
@@ -104,6 +104,8 @@ export function buildCommands(app) {
     fixfloat: { label: 'Fix / Float', icon: 'fix', tip: 'Fixes the selected component in place, or lets it move again.', run: () => { const s = app.selection.find((x) => x.kind === 'component'); if (!s) return app.toast('Select a component first.'); const c = app.asm.comp(s.id); app.asm.setFixed(c.id, !c.fixed); } },
     hidecomp: { label: 'Hide/Show Components', icon: 'hideshow', tip: 'Hides or shows the selected components.', run: () => { const s = app.selection.filter((x) => x.kind === 'component'); if (!s.length) return app.toast('Select a component first.'); for (const x of s) app.asm.setHidden(x.id, !app.asm.comp(x.id).hidden); } },
     interference: { label: 'Interference Detection', icon: 'interference', tip: 'Finds overlapping volume between components.', run: () => app.asm.interferencePM() },
+    motionreview: { label: 'Motion Review', icon: 'motionreview', tip: 'Drives each joint through its travel and checks for clashes, gaps and contacts that must touch.', run: () => app.review.open() },
+    coupler: { label: 'Coupler', icon: 'coupler', tip: 'Mechanical mate: one part drives another by a motion law (a lever throws a tongue, a cam lifts a follower).', run: () => app.asm.couplerPM() },
     playback: { label: 'Assembly Playback', icon: 'playback', tip: 'Replays the assembly order: each component flies in and settles onto its mates (Motion Study).', run: () => app.asm.playSequence() },
     openpart: { label: 'Open Part', icon: 'open', tip: 'Opens the selected component\'s part for editing. Return to the assembly when done.', run: () => { const s = app.selection.find((x) => x.kind === 'component'); if (!s) return app.toast('Select a component first.'); app.asm.openPart(s.id); } },
     toolbox: { label: 'Toolbox', icon: 'toolbox', tip: 'Standard screws, nuts, washers and bearings, made to size.', run: () => app.openTask('library') },
@@ -148,11 +150,11 @@ export const TABS = [
 // Assembly documents get the SOLIDWORKS assembly CommandManager.
 export const ASM_TABS = [
   { name: 'Assembly', items: [
-    { big: 'insertcomp', fly: ['insertcomp', 'newpart'] }, { big: 'mate' }, '|',
+    { big: 'insertcomp', fly: ['insertcomp', 'newpart'] }, { big: 'mate', fly: ['mate', 'coupler'] }, '|',
     { big: 'movecomp' }, { col: ['fixfloat', 'hidecomp', 'openpart'] }, '|',
     { big: 'interference' }, { big: 'playback' }, '|', { big: 'toolbox' },
   ] },
-  { name: 'Evaluate', items: [{ big: 'interference' }, { big: 'massprops' }, { big: 'section' }, { big: 'check' }, { big: 'stats' }] },
+  { name: 'Evaluate', items: [{ big: 'interference' }, { big: 'motionreview' }, { big: 'massprops' }, { big: 'section' }, { big: 'check' }, { big: 'stats' }] },
   { name: 'OpenSketch AI', items: [{ big: 'ai' }, { big: 'aimates' }, { big: 'asmexplain' }, { big: 'asmfix' }, '|', { big: 'connectclaude' }] },
 ];
 
@@ -162,8 +164,8 @@ export const MENUS = [
   { name: 'File', items: ['new', 'open', 'serveropen', 'save', 'saveas', 'serversave', 'sldmacro', '-', 'publishreview', 'connectclaude', '-', 'print', '-', 'fileprops'] },
   { name: 'Edit', items: ['undo', 'redo', '-', 'rebuild', '-', { label: 'Delete', run: (app) => app.deleteSelection(), key: 'Del' }, { label: 'Suppress', run: (app) => app.suppressSelection(true) }, { label: 'Unsuppress', run: (app) => app.suppressSelection(false) }] },
   { name: 'View', items: [{ label: 'Planes', run: (app) => app.toggleView('planes') }, { label: 'Origins', run: (app) => app.toggleView('origins') }, { label: 'Sketches', run: (app) => app.toggleView('sketches') }, { label: 'Sketch Relations', run: (app) => app.toggleView('relations') }, '-', { label: 'Zoom to Fit', run: (app) => app.viewer.zoomToFit(), key: 'F' }, '-', { label: SKIN === 'figma' ? 'Classic Look (SOLIDWORKS colours)' : 'Figma Look', run: () => setSkin(SKIN === 'figma' ? 'classic' : 'figma') }] },
-  { name: 'Insert', items: ['insertcomp', 'newpart', 'mate', '-', 'extrude', 'revolve', 'cut', 'revcut', '-', 'fillet', 'chamfer', 'shell', '-', 'linpattern', 'circpattern', 'mirror', '-', 'plane', '-', 'sketch'] },
-  { name: 'Tools', items: ['line', 'centerline', 'rectangle', 'circle', 'arc', 'slot', 'polygon', 'point', '-', 'smartdim', 'addrelation', 'relations', '-', 'trim', 'convert', 'offset', 'sketchmirror', 'sketchfillet', '-', 'equations', '-', 'measure', 'massprops', '-', 'options'] },
+  { name: 'Insert', items: ['insertcomp', 'newpart', 'mate', 'coupler', '-', 'extrude', 'revolve', 'cut', 'revcut', '-', 'fillet', 'chamfer', 'shell', '-', 'linpattern', 'circpattern', 'mirror', '-', 'plane', '-', 'sketch'] },
+  { name: 'Tools', items: ['line', 'centerline', 'rectangle', 'circle', 'arc', 'slot', 'polygon', 'point', '-', 'smartdim', 'addrelation', 'relations', '-', 'trim', 'convert', 'offset', 'sketchmirror', 'sketchfillet', '-', 'equations', '-', 'measure', 'massprops', 'motionreview', '-', 'options'] },
   { name: 'Window', items: [{ label: 'Part1', run: () => {} }] },
   { name: 'Help', items: [{ label: 'Keyboard Shortcuts', run: (app) => app.shortcutsDialog() }, { label: 'About OpenSketch', run: (app) => app.aboutDialog() }] },
 ];

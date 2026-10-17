@@ -16,8 +16,8 @@ const NAMED = {
   'Z axis': ['axis', [0, 0, 0], [0, 0, 1]],
 };
 const MATE_TYPES = new Set(['coincident', 'concentric', 'parallel', 'perpendicular', 'distance', 'angle', 'lock',
-  'hinge', 'limit_distance', 'limit_angle']);
-const REF_KEYS = ['refs', 'planes', 'angle_refs'];
+  'hinge', 'limit_distance', 'limit_angle', 'coupler']);
+const REF_KEYS = ['refs', 'planes', 'angle_refs', 'input_refs'];
 
 class AssemblyError extends Error {}
 
@@ -194,10 +194,70 @@ function resolveAlign(m, a, b) {
 
 const ORDER = { plane: 0, axis: 1, point: 2 };
 
+/** A coupler's driver or driven value (assembly.py coupler_measure). */
+export function couplerMeasure(kind, a, b) {
+  if (kind === 'angle') {
+    if (!a[2] || !b[2]) throw new AssemblyError('An angle needs planes or axes');
+    return (Math.acos(Math.max(-1, Math.min(1, dot(a[2], b[2])))) * 180) / Math.PI;
+  }
+  if (kind !== 'distance') throw new AssemblyError(`Unknown coupler measure '${kind}'`);
+  if (ORDER[a[0]] > ORDER[b[0]]) [a, b] = [b, a];
+  const d = sub(b[1], a[1]);
+  if (a[0] === 'plane' && (b[0] === 'plane' || b[0] === 'point')) return dot(d, a[2]);
+  if (a[0] === 'plane') throw new AssemblyError('A distance from a plane needs a plane or a point');
+  if (a[0] === 'axis') return norm(cross(d, a[2]));
+  return norm(d);
+}
+
+/** The current angle (deg) or distance (mm) between two references, with the components where they are now. */
+export function measurePair(kind, refs, components) {
+  try {
+    const poses = Object.fromEntries((components || []).map((c) => [c.id, Pose.of(c)]));
+    if (!refs || refs.length !== 2 || refs.some((r) => r.component != null && !poses[r.component])) return null;
+    return couplerMeasure(kind, refWorld(refs[0], poses), refWorld(refs[1], poses));
+  } catch (err) {
+    if (err instanceof AssemblyError) return null;
+    throw err;
+  }
+}
+
+/** The coupler's motion law driver -> driven (assembly.py coupler_law; np.interp holds the ends). */
+export function couplerLaw(m) {
+  const law = m.law;
+  if (law && law.length) {
+    const pts = law.map((p) => (Array.isArray(p) && p.length === 2 && p[0] != null && p[1] != null ? [Number(p[0]), Number(p[1])] : [NaN, NaN]));
+    if (pts.some((p) => Number.isNaN(p[0]) || Number.isNaN(p[1]))) throw new AssemblyError('law needs [driver, driven] number pairs');
+    if (pts.length < 2 || pts.some((p) => !Number.isFinite(p[0]) || !Number.isFinite(p[1]))) {
+      throw new AssemblyError('law needs at least two [driver, driven] points');
+    }
+    for (let i = 1; i < pts.length; i++) if (pts[i][0] <= pts[i - 1][0]) throw new AssemblyError('law driver values must increase');
+    return (v) => {
+      if (v <= pts[0][0]) return pts[0][1];
+      const n = pts.length;
+      if (v >= pts[n - 1][0]) return pts[n - 1][1];
+      let i = 1;
+      while (pts[i][0] < v) i++;
+      const [x0, y0] = pts[i - 1], [x1, y1] = pts[i];
+      return y0 + ((v - x0) * (y1 - y0)) / (x1 - x0);
+    };
+  }
+  if (m.ratio == null) throw new AssemblyError('A coupler needs a law or a ratio');
+  const r = Number(m.ratio), o = Number(m.offset || 0);
+  return (v) => o + r * v;
+}
+
 function mateResidual(m, poses, L, align) {
   if (m.type === '_goal') {
     const P = poses[m.component];
     return mul(sub(add(mv(P.R, m.point), P.t), m.target), m.weight ?? 1e-2);
+  }
+  if (m.type === 'coupler') {
+    if (!m.input_refs || m.input_refs.length !== 2) throw new AssemblyError('A coupler needs two driver references (input_refs)');
+    const x = couplerMeasure(m.input || 'distance', refWorld(m.input_refs[0], poses), refWorld(m.input_refs[1], poses));
+    const out = m.output || 'distance';
+    const y = couplerMeasure(out, refWorld(m.refs[0], poses), refWorld(m.refs[1], poses));
+    const e = y - (m._law || couplerLaw(m))(x);
+    return [out === 'angle' ? ((e * Math.PI) / 180) * L : e];
   }
   let a = refWorld(m.refs[0], poses), b = refWorld(m.refs[1], poses);
   const t = m.type;
@@ -323,6 +383,7 @@ export function solve(asm, size = 100, drag = null) {
         }
         mmate._pose = rel;
       }
+      if (m.type === 'coupler') mmate._law = couplerLaw(m);
       mateResidual(mmate, poses, L, align); // validates the reference kinds
       hard.push([mmate, align, cs.filter((c) => c !== null)]);
       report[m.id] = { state: 'ok' };

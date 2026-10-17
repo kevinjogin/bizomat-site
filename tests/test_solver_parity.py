@@ -75,6 +75,28 @@ def floated(d):
     return d
 
 
+def lock_cases():
+    from opensketch import demo
+    d = demo.lock_doc()
+    d["components"][2]["position"] = [30, 4, 5]  # tongue far from where the law puts it
+    pinned = copy.deepcopy(d)
+    pinned["mates"][0]["angle_min"] = pinned["mates"][0]["angle_max"] = 125
+    ratio = copy.deepcopy(pinned)
+    ratio["mates"][3].pop("law")
+    ratio["mates"][3].update(ratio=0.4, offset=-30)
+    bad = copy.deepcopy(d)
+    bad["mates"][3]["law"] = [[90, 8], [90, 9]]
+    bad["mates"].append({**copy.deepcopy(d["mates"][3]), "id": "m9", "input": "speed"})
+    solved = A.apply_solution(demo.lock_doc(), A.regen_assembly(demo.lock_doc()))
+    return [
+        ("coupler: tongue from a bad start", d, None),
+        ("coupler: lever pinned at 125", pinned, None),
+        ("coupler: ratio", ratio, None),
+        ("coupler: bad law and measure", bad, None),
+        ("coupler: drag the lever", solved, {"component": "c2", "point": [0, -20, -2], "target": [15, -12, 8]}),
+    ]
+
+
 def cases():
     p = press()
     by = {c["id"]: c for c in p["components"]}
@@ -101,7 +123,7 @@ def cases():
                                         "target": [45 * math.cos(0.3), 400, 45 * math.sin(0.3)]}),
         ("press: slide the platen", p_nomate, {"component": "c8", "point": [0, 0, 0], "target": list(np.array(by["c8"]["position"]) + [0, -60, 0])}),
         ("press floated: drag the base", floated(p), {"component": "c1", "point": [100, 10, 50], "target": [130, 10, 50]}),
-    ]
+    ] + lock_cases()
     return out
 
 

@@ -285,6 +285,7 @@ full topological naming.
 | `hinge` | `refs`: two axes; optional `planes`: two planes (coincident, stops sliding); optional `angle_refs`: two planes or axes with `angle_min` / `angle_max` (degrees) | SOLIDWORKS Hinge mechanical mate: one rotation left, optionally limited |
 | `limit_distance` | plane-plane (also kept parallel), or point-point | distance between `min` and `max` mm |
 | `limit_angle` | plane or axis, plane or axis | angle between `min` and `max` degrees |
+| `coupler` | `input_refs`: the driver pair; `refs`: the driven pair (each pair: two references, usually on different components) | SOLIDWORKS Linear/Linear Coupler, generalised to a motion law: the driven measure follows the driver measure. See below. |
 
 - `align`: `"anti"` (normals face each other, SOLIDWORKS "Anti-Aligned", the default for touching
   faces), `"aligned"`, or `"auto"` (whichever is closer when the mate is solved; the default).
@@ -298,6 +299,38 @@ Dragging: `/api/regen` takes `drag` = `{"component", "point" (part coordinates),
 coordinates)}`. The solver first pulls that point toward the target softly with every mate in place,
 then makes every mate exact again. So a hinged lid swings, a slider slides, a linkage follows. Each mate reports `ok` or `error`
 (cannot be satisfied together with the others, like an over-defining mate in SOLIDWORKS).
+
+### Coupler (motion law)
+
+```json
+{"id": "m7", "name": "Lever drives tongue", "type": "coupler",
+ "input_refs": [{"component": "c1", "plane": {...}}, {"component": "c2", "plane": {...}}], "input": "angle",
+ "refs": [{"component": "c1", "plane": {...}}, {"component": "c3", "plane": {...}}], "output": "distance",
+ "law": [[0, 0], [15, 0], [60, 18]]}
+```
+
+- `input` / `output`: `"angle"` (degrees between the two directions, 0 to 180, as `limit_angle`) or
+  `"distance"` (mm: plane-plane and plane-point signed along the first plane's normal, axis-point and
+  axis-axis the distance from the axis, point-point straight-line).
+- `law`: points `[driver value, driven value]` with driver values strictly increasing. Between points
+  the driven value is interpolated in a straight line; outside them it holds the end value. A flat
+  stretch is a dwell (the lever moves, the tongue waits), a steeper stretch a faster pickup.
+- Instead of `law`: `ratio` and `offset` (driven = offset + ratio x driver), SOLIDWORKS's linear coupler.
+- The driven part still needs its own mates (for a slide: coincident faces), leaving the one freedom the
+  coupler takes. A coupler is a function of the driver's position, so it cannot hold a latch state
+  (a tongue that stays out when the lever returns): model that position as its own joint.
+
+## Contacts (should touch)
+
+```json
+"contacts": [{"id": "k1", "name": "Shoe on tongue", "a": "c2", "b": "c3", "joint": "m5", "from": 15, "to": 60}]
+```
+
+Two components that must touch (gap at most 0.05 mm, no overlap). The review checks it at rest, and
+through `joint`'s travel between `from` and `to` (that joint's units) when `joint` is given. Nothing in
+the solver uses it: it is a check that the motion law matches the shapes. `of`: the coupler mate that
+made it (the Coupler PropertyManager's Contact Check); it goes when that mate or either component is
+deleted.
 
 ## Sequence
 

@@ -15,7 +15,7 @@ export class Account {
     this.app = app;
     this.el = document.getElementById('account');
     this.info = null;
-    if (!this.el) return;
+    if (!this.el || typeof window.OPENSKETCH_REVIEW === 'string') return; // a shared review link has no account
     this.load();
   }
 

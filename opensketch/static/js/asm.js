@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { COLORS, matOf } from './viewer.js';
 import { dialog, message, contextMenu } from './ui/dialogs.js';
 import { fmt } from './sketch/geom2d.js';
-import { regenLocal } from './asmsolver.js';
+import { regenLocal, measurePair, couplerLaw } from './asmsolver.js';
 import { mateReferences, featureSketchIds, escapeHtml as esc } from './model-utils.js';
 
 const clone = (o) => JSON.parse(JSON.stringify(o));
@@ -20,7 +20,7 @@ export const MATE_TYPES = [
   ['angle', 'Angle', 'm_angle'],
 ];
 export const ADV_MATES = [['limit_distance', 'Limit Distance', 'm_limit'], ['limit_angle', 'Limit Angle', 'm_limit']];
-const ALL_MATES = [...MATE_TYPES, ...ADV_MATES, ['hinge', 'Hinge', 'hinge']];
+const ALL_MATES = [...MATE_TYPES, ...ADV_MATES, ['hinge', 'Hinge', 'hinge'], ['coupler', 'Coupler', 'coupler']];
 export const mateIcon = (t) => (ALL_MATES.find((m) => m[0] === t) || [0, 0, 'mate'])[2];
 const mateLabel = (t) => ({ limit_distance: 'LimitDistance', limit_angle: 'LimitAngle' }[t] || (ALL_MATES.find((m) => m[0] === t) || [0, t])[1]);
 
@@ -96,6 +96,7 @@ export class AssemblyMode {
     if (this.canSolveLocally(doc)) {
       try { res = regenLocal(doc, this.partsInfo); } catch (err) { console.error(err); res = null; }
     }
+    if (!res && app.reviewMode) return null; // a shared review has no server to rebuild parts
     if (!res) {
       try { res = await app.api('/api/regen', { doc, known: this.knownKeys() }); } catch (err) { app.toast('Rebuild failed: ' + err.message); return null; }
       if (seq !== app.regenSeq) return null;
@@ -156,6 +157,8 @@ export class AssemblyMode {
       const part = doc.parts?.[c.part] || {};
       let color = hexColor(part.appearance);
       if (proposal && (!proposedComps.size || proposedComps.has(c.id))) color = tint(color);
+      const over = this.colorOverride?.(c);
+      if (over != null) color = over;
       const transparent = this.transparent?.has(c.id);
       return { id: c.id, part: c.part, key: res.parts[c.part]?.key, matrix: c.matrix, color, hidden: dc.hidden || dc.suppressed, opacity: transparent ? 0.25 : 1 };
     });
@@ -199,7 +202,7 @@ export class AssemblyMode {
       const state = m.suppressed ? 'suppressed' : s?.state === 'error' ? 'error' : 'ok';
       const names = (m.refs || []).map((r) => (r.component ? this.comp(r.component)?.name : r.ref) || '?');
       const n = node({ id: m.id, kind: 'mate', name: `${m.name} (${names.join(',')})`, ic: mateIcon(m.type), depth: 2,
-        cls: `${state}${proposed.has(m.id) ? ' proposed' : ''}`, badge: state === 'error' ? tree.badgeIcon('error') : '', onDbl: () => (m.type === 'hinge' ? this.hingePM(m) : this.matePM(m)) });
+        cls: `${state}${proposed.has(m.id) ? ' proposed' : ''}`, badge: state === 'error' ? tree.badgeIcon('error') : '', onDbl: () => this.editMate(m) });
       if (n && s?.message) n.title = s.message;
     }
   }
@@ -354,7 +357,7 @@ export class AssemblyMode {
     if (item.kind === 'mate') {
       const m = this.mate(item.id);
       if (m) {
-        tb.push({ icon: mateIcon(m.type), title: 'Edit Feature', run: () => (m.type === 'hinge' ? this.hingePM(m) : this.matePM(m)) });
+        tb.push({ icon: mateIcon(m.type), title: 'Edit Feature', run: () => this.editMate(m) });
         tb.push({ icon: 'rebuild', title: m.suppressed ? 'Unsuppress' : 'Suppress', run: () => this.suppressMate(m.id, !m.suppressed) });
       }
     }
@@ -375,7 +378,7 @@ export class AssemblyMode {
       items.push('-', { label: 'Delete', key: 'Del', run: () => this.deleteItems([c.id], []) });
     } else if (item?.kind === 'mate') {
       const m = this.mate(item.id);
-      items.push({ label: 'Edit Feature', icon: mateIcon(m.type), run: () => (m.type === 'hinge' ? this.hingePM(m) : this.matePM(m)) });
+      items.push({ label: 'Edit Feature', icon: mateIcon(m.type), run: () => this.editMate(m) });
       items.push({ label: m.suppressed ? 'Unsuppress' : 'Suppress', run: () => this.suppressMate(m.id, !m.suppressed) });
       items.push({ label: 'Rename', key: 'F2', run: () => this.app.tree.rename(m.id) });
       items.push('-', { label: 'Delete', key: 'Del', run: () => this.deleteItems([], [m.id]) });
@@ -433,6 +436,11 @@ export class AssemblyMode {
       doc.components = doc.components.filter((c) => !comps.has(c.id));
       doc.mates = doc.mates.filter((m) => !mates.has(m.id));
       doc.sequence = (doc.sequence || []).filter((c) => !comps.has(c));
+      if (doc.contacts) {
+        doc.contacts = doc.contacts.filter((k) => !comps.has(k.a) && !comps.has(k.b) && !mates.has(k.of));
+        for (const k of doc.contacts) if (mates.has(k.joint)) { delete k.joint; delete k.from; delete k.to; }
+        if (!doc.contacts.length) delete doc.contacts;
+      }
       const used = new Set(doc.components.map((c) => c.part));
       for (const pid of Object.keys(doc.parts)) if (!used.has(pid) && compIds.length) delete doc.parts[pid];
       this.app.selection = [];
@@ -601,8 +609,10 @@ export class AssemblyMode {
           { type: 'number', label: 'Minimum', unit: () => (m.type === 'limit_angle' ? 'deg' : 'mm'), visible: () => /^limit/.test(m.type), get: () => m.min ?? 0, set: (v) => { m.min = v; } },
         ] },
         { title: 'Mechanical Mates', collapsed: true, rows: [
-          { type: 'buttons', buttons: [{ label: 'Hinge...', run: () => { app.closeCommand(); this.hingePM(); } }] },
+          { type: 'buttons', buttons: [{ label: 'Hinge...', run: () => { app.closeCommand(); this.hingePM(); } },
+            { label: 'Coupler...', run: () => { app.closeCommand(); this.couplerPM(); } }] },
           { type: 'text', text: 'Hinge: two parts turn about a shared axis, optionally between angle limits.' },
+          { type: 'text', text: 'Coupler: one part drives another by a motion law (a lever throws a tongue).' },
         ] },
         { title: 'Mate alignment', visible: showAlign, rows: [
           { type: 'radio', name: 'matealign', options: [['anti', 'Anti-Aligned'], ['aligned', 'Aligned']], get: () => (m.align === 'aligned' ? 'aligned' : 'anti'), set: (v) => { m.align = v; } },
@@ -712,6 +722,222 @@ export class AssemblyMode {
     };
     app.pm.open(spec);
     app.setSelection([]);
+  }
+
+  editMate(m) {
+    if (m.type === 'hinge') return this.hingePM(m);
+    if (m.type === 'coupler') return this.couplerPM(m);
+    return this.matePM(m);
+  }
+
+  /** Mates with a travel (what Motion Review drives): hinge with angle limits, limit mates with min < max. */
+  joints(doc = this.app.doc) {
+    return (doc.mates || []).filter((m) => !m.suppressed && (
+      (m.type === 'hinge' && m.angle_refs?.length === 2 && m.angle_min != null && m.angle_max != null && m.angle_max > m.angle_min) ||
+      ((m.type === 'limit_distance' || m.type === 'limit_angle') && m.min != null && m.max != null && m.max > m.min)));
+  }
+
+  // Coupler (Mechanical Mates; SOLIDWORKS's Linear/Linear Coupler with a motion law): the driven pair's
+  // angle or distance follows the driver pair's through a table (dwell, pickup) or a ratio.
+  couplerPM(existing = null) {
+    const app = this.app;
+    if (app.cmd) app.pmCancel();
+    const doc = app.doc;
+    const m = existing ? clone(existing) : { type: 'coupler', input_refs: [], input: 'angle', refs: [], output: 'distance', law: [] };
+    m.input_refs = m.input_refs || []; m.refs = m.refs || [];
+    let mode = m.law && m.law.length ? 'table' : m.ratio != null ? 'ratio' : 'table';
+    if (!m.law || !m.law.length) m.law = [];
+    const nm = (r) => (r.component ? esc(this.comp(r.component)?.name) : esc(r.ref));
+    const lab = { input_refs: m.input_refs.map(nm), refs: m.refs.map(nm) };
+    const oldContact = existing ? (doc.contacts || []).find((k) => k.of === existing.id) : null;
+    const contact = oldContact ? clone(oldContact) : { joint: '', a: '', b: '', from: null, to: null };
+    let checkContact = !!oldContact;
+    const unit = (k) => (k === 'angle' ? 'deg' : 'mm');
+    const now = (key, kind) => measurePair(kind, m[key], doc.components);
+    const fmtv = (v, k) => (v == null ? '-' : `${fmt(v, 2)} ${unit(k)}`);
+    const own = (key) => {
+      const a = new Set((m.input_refs || []).map((r) => r.component).filter(Boolean));
+      const b = new Set((m.refs || []).map((r) => r.component).filter(Boolean));
+      const mine = [...(key === 'input_refs' ? a : b)].filter((c) => !(key === 'input_refs' ? b : a).has(c));
+      return mine[0] || '';
+    };
+    const fillContact = () => {
+      if (!contact.a) contact.a = own('input_refs');
+      if (!contact.b) contact.b = own('refs');
+      const js = this.joints();
+      if (!contact.joint && js.length) {
+        const j = js.find((x) => mateReferences(x).some((r) => r.component === contact.a)) || js[0];
+        contact.joint = j.id;
+      }
+    };
+    const lawProblem = () => {
+      if (mode === 'ratio') return Number.isFinite(m.ratio) ? null : 'Enter a ratio.';
+      try { couplerLaw({ law: m.law }); return null; } catch (err) { return err.message[0].toUpperCase() + err.message.slice(1) + '.'; }
+    };
+    const box = (id, key, ph) => ({ type: 'selbox', id, icon: key === 'input_refs' ? 'm_angle' : 'm_distance', placeholder: ph,
+      items: () => lab[key], label: (l) => l, remove: (i) => { lab[key].splice(i, 1); m[key].splice(i, 1); } });
+    const lawTable = {
+      type: 'custom', render: (row) => {
+        row.style.flexDirection = 'column'; row.style.alignItems = 'stretch';
+        const t = document.createElement('table'); t.className = 'pm-law';
+        const head = t.insertRow();
+        for (const h of [`Driver (${unit(m.input)})`, `Driven (${unit(m.output)})`, '']) { const th = document.createElement('th'); th.textContent = h; head.appendChild(th); }
+        m.law.forEach((pt, i) => {
+          const tr = t.insertRow();
+          for (const j of [0, 1]) {
+            const inp = document.createElement('input'); inp.type = 'text'; inp.value = String(+(+pt[j]).toFixed(4));
+            inp.setAttribute('aria-label', `${j ? 'Driven' : 'Driver'} ${i + 1}`);
+            inp.onkeydown = (e) => e.stopPropagation();
+            inp.onchange = () => { const v = Number(inp.value); if (Number.isFinite(v)) pt[j] = v; app.pm.changed(true); };
+            tr.insertCell().appendChild(inp);
+          }
+          const x = document.createElement('span'); x.className = 'x'; x.textContent = '×'; x.title = 'Remove point';
+          x.onclick = () => { m.law.splice(i, 1); app.pm.changed(true); };
+          tr.insertCell().appendChild(x);
+        });
+        row.appendChild(t);
+        const plot = this.lawPlot(m.law, now('input_refs', m.input));
+        if (plot) row.appendChild(plot);
+      },
+    };
+    const spec = {
+      title: existing ? m.name : 'Coupler', icon: 'coupler',
+      message: () => (m.input_refs.length < 2 ? 'Select the two faces whose angle or distance drives the motion (the lever and the case).'
+        : m.refs.length < 2 ? 'Select the two faces whose angle or distance follows (the tongue and the case).' : null),
+      activeSelbox: m.input_refs.length < 2 ? 'c_in' : 'c_out',
+      sections: [
+        { title: 'Mate Selections', rows: [
+          { type: 'text', text: 'Driver' }, box('c_in', 'input_refs', 'Two faces: the driving angle or distance'),
+          { type: 'select', label: 'Measure', options: [['angle', 'Angle'], ['distance', 'Distance']], get: () => m.input, set: (v) => { m.input = v; } },
+          { type: 'value', label: 'Now', get: () => fmtv(now('input_refs', m.input), m.input) },
+          { type: 'text', text: 'Driven' }, box('c_out', 'refs', 'Two faces: the angle or distance that follows'),
+          { type: 'select', label: 'Measure', options: [['angle', 'Angle'], ['distance', 'Distance']], get: () => m.output, set: (v) => { m.output = v; } },
+          { type: 'value', label: 'Now', get: () => fmtv(now('refs', m.output), m.output) },
+        ] },
+        { title: 'Motion Law', rows: [
+          { type: 'radio', name: 'lawmode', options: [['table', 'Table (dwell, pickup)'], ['ratio', 'Ratio']], get: () => mode, set: (v) => { mode = v; if (v === 'ratio' && m.ratio == null) { m.ratio = 1; m.offset = 0; } } },
+          { ...lawTable, visible: () => mode === 'table' },
+          { type: 'buttons', visible: () => mode === 'table', buttons: [{ label: 'Add Current Position', run: () => {
+            const x = now('input_refs', m.input), y = now('refs', m.output);
+            if (x == null || y == null) { app.toast('Select the driver and driven faces first.'); return; }
+            m.law = m.law.filter((p) => Math.abs(p[0] - x) > 1e-6);
+            m.law.push([+x.toFixed(4), +y.toFixed(4)]); m.law.sort((a, b) => a[0] - b[0]); app.pm.changed(true);
+          } }, { label: 'Add Point', run: () => {
+            const last = m.law[m.law.length - 1];
+            m.law.push(last ? [last[0] + 10, last[1]] : [0, 0]); app.pm.changed(true);
+          } }] },
+          { type: 'text', visible: () => mode === 'table', text: 'Driven value is interpolated between points and held past the ends. A flat stretch is a dwell.' },
+          { type: 'number', label: 'Ratio', unit: '', visible: () => mode === 'ratio', get: () => m.ratio ?? 1, set: (v) => { m.ratio = v; } },
+          { type: 'number', label: 'Offset', unit: () => unit(m.output), visible: () => mode === 'ratio', get: () => m.offset ?? 0, set: (v) => { m.offset = v; } },
+          { type: 'text', visible: () => !!lawProblem() && m.refs.length === 2, text: () => esc(lawProblem() || '') },
+        ] },
+        { title: 'Contact Check', checkbox: { get: () => checkContact, set: (v) => { checkContact = v; if (v) fillContact(); } }, rows: [
+          { type: 'text', text: 'Motion Review reports where these two components stop touching.' },
+          { type: 'select', label: 'Driver part', options: () => [], get: () => contact.a, set: (v) => { contact.a = v; } },
+          { type: 'select', label: 'Driven part', options: () => [], get: () => contact.b, set: (v) => { contact.b = v; } },
+          { type: 'select', label: 'Joint', options: () => [], get: () => contact.joint, set: (v) => { contact.joint = v; } },
+          { type: 'number', label: 'From', unit: () => this.jointUnit(contact.joint), get: () => contact.from ?? this.jointRange(contact.joint)[0], set: (v) => { contact.from = v; } },
+          { type: 'number', label: 'To', unit: () => this.jointUnit(contact.joint), get: () => contact.to ?? this.jointRange(contact.joint)[1], set: (v) => { contact.to = v; } },
+        ] },
+      ],
+      okEnabled: () => m.input_refs.length === 2 && m.refs.length === 2 && !lawProblem(),
+      onChange: () => { if (spec.okEnabled()) this.previewMate(this.cleanCoupler(m, mode), existing); },
+    };
+    // option lists change with the document, so they are filled at render time
+    const sec = spec.sections[2].rows;
+    const compOpts = () => doc.components.map((c) => [c.id, esc(c.name || c.id)]);
+    sec[1].options = compOpts(); sec[2].options = compOpts();
+    sec[3].options = this.joints().map((j) => [j.id, esc(j.name || j.id)]);
+    if (!sec[3].options.length) sec[3].options = [['', 'No joint (checked at rest)']];
+    app.cmd = {
+      key: 'coupler',
+      onPick: (p) => {
+        const r = this.refOfPick(p);
+        if (!r) return 'handled';
+        const key = app.pm.activeSelbox === 'c_out' ? 'refs' : 'input_refs';
+        if (m[key].length >= 2) { m[key] = []; lab[key] = []; }
+        m[key].push(r.ref); lab[key].push(r.label);
+        if (key === 'input_refs' && m.input_refs.length === 2) {
+          app.pm.activeSelbox = 'c_out';
+          const kinds = m.input_refs.map((x) => (x.axis ? 'axis' : 'plane'));
+          if (kinds.includes('axis')) m.input = 'distance';
+        }
+        if (key === 'refs' && m.refs.length === 2 && !m.law.length) {
+          const x = now('input_refs', m.input), y = now('refs', m.output);
+          if (x != null && y != null) m.law = [[+x.toFixed(4), +y.toFixed(4)]];
+        }
+        app.pm.render();
+        return true;
+      },
+      onOk: () => {
+        if (!spec.okEnabled()) return false;
+        const id = existing ? existing.id : this.uid('m');
+        const mm = { ...this.cleanCoupler(m, mode), id, name: existing ? m.name : this.nextMateName('coupler') };
+        app.commit(existing ? 'Edit ' + mm.name : mm.name, () => {
+          if (existing) { const i = doc.mates.findIndex((x) => x.id === existing.id); doc.mates[i] = mm; } else doc.mates.push(mm);
+          doc.contacts = (doc.contacts || []).filter((k) => k.of !== id);
+          if (checkContact && contact.a && contact.b && contact.a !== contact.b) {
+            const k = { id: oldContact?.id || this.contactId(), name: `${this.comp(contact.a)?.name || contact.a} on ${this.comp(contact.b)?.name || contact.b}`, a: contact.a, b: contact.b, of: id };
+            if (contact.joint) { k.joint = contact.joint; k.from = contact.from ?? this.jointRange(contact.joint)[0]; k.to = contact.to ?? this.jointRange(contact.joint)[1]; }
+            doc.contacts.push(k);
+          }
+          if (!doc.contacts.length) delete doc.contacts;
+        });
+        return undefined;
+      },
+      onCancel: () => { this.regen(); },
+    };
+    app.pm.open(spec);
+    app.setSelection([]);
+  }
+
+  cleanCoupler(m, mode) {
+    const mm = clone(m);
+    if (mode === 'ratio') delete mm.law; else { delete mm.ratio; delete mm.offset; mm.law = [...mm.law].sort((a, b) => a[0] - b[0]); }
+    return mm;
+  }
+
+  contactId() {
+    const ids = new Set((this.app.doc.contacts || []).map((k) => k.id));
+    let n = 1;
+    while (ids.has('k' + n)) n++;
+    return 'k' + n;
+  }
+
+  jointUnit(id) {
+    const j = this.mate(id);
+    return !j ? '' : j.type === 'limit_distance' ? 'mm' : 'deg';
+  }
+
+  jointRange(id) {
+    const j = this.mate(id);
+    if (!j) return [0, 0];
+    return j.type === 'hinge' ? [j.angle_min, j.angle_max] : [j.min, j.max];
+  }
+
+  /** A small chart of the law, with the driver's current value marked. */
+  lawPlot(law, xNow) {
+    if (!law || law.length < 2) return null;
+    const W = 220, H = 90, pad = 6;
+    const xs = law.map((p) => p[0]), ys = law.map((p) => p[1]);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    if (!(x1 > x0)) return null;
+    const X = (v) => pad + ((v - x0) / (x1 - x0)) * (W - 2 * pad);
+    const Y = (v) => H - pad - (y1 > y0 ? ((v - y0) / (y1 - y0)) * (H - 2 * pad) : (H - 2 * pad) / 2);
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('class', 'pm-lawplot');
+    const path = document.createElementNS(ns, 'polyline');
+    path.setAttribute('points', law.map((p) => `${X(p[0]).toFixed(1)},${Y(p[1]).toFixed(1)}`).join(' '));
+    path.setAttribute('fill', 'none'); path.setAttribute('stroke', '#2a6fd6'); path.setAttribute('stroke-width', '1.5');
+    svg.appendChild(path);
+    if (xNow != null && xNow >= x0 && xNow <= x1) {
+      const ln = document.createElementNS(ns, 'line');
+      ln.setAttribute('x1', X(xNow)); ln.setAttribute('x2', X(xNow)); ln.setAttribute('y1', 0); ln.setAttribute('y2', H);
+      ln.setAttribute('stroke', '#d9372b'); ln.setAttribute('stroke-dasharray', '3 2');
+      svg.appendChild(ln);
+    }
+    return svg;
   }
 
   cleanHinge(m, limits) {

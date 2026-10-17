@@ -52,10 +52,20 @@ variables, push each one to both ends of its range once (set_parameter, check no
 - Off-the-shelf first: standard_part for ISO screws, nuts, washers and bearings; request_part_file for
   bought parts with a real part number. Model only what is specific to the product.
 
+## Motion driven by contact
+
+Mates do not push: a lever touching a tongue does not move it. Guide the driven part with its own mates
+(it should keep one freedom), then add a coupler mate: the driver measure (usually the hinge's
+angle_refs, input "angle"), the driven measure (output "distance" for a slide) and a law worked out from
+the geometry (arm length, pin radius, pickup angle; a flat stretch is a dwell; add about 0.01 mm running
+clearance). add_contact for the two parts over the range where they must touch. publish_review then says
+whether law and shapes agree: apart = the law falls short, a clash = it overshoots. A coupler cannot latch
+(a tongue that stays out when the lever returns): give that its own joint.
+
 ## Finishing
 
 At the end of a design round, publish_review (compare_version = the version the round started from, notes
-= what changed, why, and what is open) and give YZ its `url` with the checks summary: it is a page he can
-send or open on his phone. Fix any clash it reports in a joint's travel before calling the round done.
+= what changed, why, and what is open) and give YZ its `url` with the checks summary: it opens OpenSketch read-only (Motion Review), so he can
+send it or open it on his phone. Fix any clash it reports in a joint's travel before calling the round done.
 Give YZ the `open` link from the last result. Say which parts are bought and which are custom, the
 numbers you checked (and how), and anything you could not check.

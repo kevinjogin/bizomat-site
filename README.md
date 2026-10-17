@@ -77,10 +77,13 @@ For reliable building, Claude also gets three tools borrowed from
 - `delete_items(..., dry_run)`: what a deletion takes with it and what it would break, before deleting.
 - `preview_document` also takes `yaw`/`pitch`, a close-up (`target`, `view_width`) and a `section` cut.
 
-- `publish_review(doc_id, compare_version?, title?, notes?)`: a frozen review page with a share link that
-  works without the password: the model, a slider for each joint with travel (solved poses), what changed
-  since an earlier version, clash and gap checks through the travel, and a parts table. In the app:
-  File > Publish Review.
+- `publish_review(doc_id, compare_version?, title?, notes?)`: a read-only share link that works without
+  the password. It opens OpenSketch itself on a frozen copy (shapes, not the feature history) with Motion
+  Review: a slider for each joint with travel, solved live, what changed since an earlier version, and
+  the checks (clashes and gaps through the travel, contacts that stop touching). Works on a phone. In the
+  app: File > Publish Review.
+- `add_contact(doc_id, a, b, joint?, from_value?, to_value?)`: two components that must touch over a
+  joint's travel; the review checks it.
 
 Faces and edges have persistent names (`e1:end|e1:side:s1L1`), so a fillet stays on its edge when the
 part changes size. `skills/opensketch-cad/` is a Claude skill for working this way (predict, build a
@@ -264,6 +267,14 @@ Task Pane on the right, status bar with Under/Fully/Over Defined and "Editing Sk
 **Motion and viewing**
 - Drag any component by any point: it follows the mouse within its mates, so a hinge turns and a
   slider slides. Hinge mate (Mechanical Mates), Limit Distance and Limit Angle (Advanced Mates).
+- Coupler mate (Mechanical Mates): one part drives another by a motion law, a table of driver and
+  driven values (a dwell, then a pickup) or a ratio. Turn a lever and its lock tongue follows. Its
+  PropertyManager shows the law as a chart, adds the current position as a point, and can add a
+  Contact Check (the two parts must touch over part of the travel).
+- Evaluate > Motion Review: a slider and Play for each joint with travel, solved in the browser, and
+  checks from the server: clashes and the smallest gap through each joint's travel, joints that do not
+  reach their limits, contacts that stop touching. Click a problem to go to that pose with the two
+  parts in red. Publish Review shares the same view read-only.
 - Tab hides the component under the cursor, Shift+Tab shows hidden ones there.
 - Section View: Front / Top / Right or a picked face, offset slider, X / Y rotation, a blue arrow to
   drag in the graphics area, filled cut faces. Works in parts and assemblies.

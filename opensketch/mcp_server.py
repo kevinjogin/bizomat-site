@@ -73,7 +73,7 @@ Predict, then measure:
 """
 
 MateType = Literal["coincident", "concentric", "parallel", "perpendicular", "distance", "angle", "lock",
-                   "hinge", "limit_distance", "limit_angle"]
+                   "hinge", "limit_distance", "limit_angle", "coupler"]
 StdKind = Literal["socket_head_cap_screw", "hex_head_screw", "counter_sunk_screw", "button_head_screw",
                   "set_screw", "hex_nut", "plain_washer", "ball_bearing"]
 
@@ -255,7 +255,7 @@ def _native_structure(doc: dict) -> None:
         part(value, f"Part {key!r}")
     object_list(doc.get("components"), "assembly components", ("id", "part"))
     for mate in object_list(doc.get("mates", []), "assembly mates", ("id", "type")):
-        for field in ("refs", "planes", "angle_refs"):
+        for field in ("refs", "planes", "angle_refs", "input_refs"):
             if field in mate:
                 object_list(mate[field], f"mate {field}")
     if "sequence" in doc and (not isinstance(doc["sequence"], list)
@@ -401,14 +401,31 @@ async def add_mate(doc_id: str, type: MateType, refs: list[dict], value: float |
                    align: Literal["anti", "aligned", "auto"] | None = None, flip: bool | None = None,
                    planes: list[dict] | None = None, angle_refs: list[dict] | None = None,
                    angle_min: float | None = None, angle_max: float | None = None,
-                   min: float | None = None, max: float | None = None) -> str:
+                   min: float | None = None, max: float | None = None,
+                   input_refs: list[dict] | None = None, input: Literal["angle", "distance"] | None = None,
+                   output: Literal["angle", "distance"] | None = None, law: list[list[float]] | None = None,
+                   ratio: float | None = None, offset: float | None = None, name: str | None = None) -> str:
     """Add a mate between two components and re-solve. refs: two references in each component's part
     coordinates, e.g. {"component": "c1", "plane": {"point": [x,y,z], "normal": [x,y,z]}}, {"component":
     "c2", "axis": {"point": [...], "dir": [...]}}, or {"component": "c1", "ref": "Top Plane"}. value: mm or
     degrees for distance / angle. hinge: refs = two axes, planes = two faces that stay together,
-    angle_refs + angle_min / angle_max = travel limits. limit_distance / limit_angle: refs + min / max."""
+    angle_refs + angle_min / angle_max = travel limits. limit_distance / limit_angle: refs + min / max.
+    coupler (one part drives another): input_refs + input = the driver's angle or distance, refs + output =
+    the driven one, law = [[driver, driven], ...] (driver increasing; flat = dwell) or ratio + offset."""
     return await _apply(doc_id, "add_mate", type=type, refs=refs, value=value, align=align, flip=flip, planes=planes,
-                        angle_refs=angle_refs, angle_min=angle_min, angle_max=angle_max, min=min, max=max)
+                        angle_refs=angle_refs, angle_min=angle_min, angle_max=angle_max, min=min, max=max,
+                        input_refs=input_refs, input=input, output=output, law=law, ratio=ratio, offset=offset, name=name)
+
+
+@mcp.tool()
+async def add_contact(doc_id: str, a: str | None = None, b: str | None = None, joint: str | None = None,
+                      from_value: float | None = None, to_value: float | None = None, name: str | None = None,
+                      remove: str | None = None) -> str:
+    """Declare that components a and b must touch (a pin on a tongue, a cam on its follower). The review
+    checks it through joint's travel (a hinge or limit mate id) between from_value and to_value (that
+    joint's units), or at rest without a joint. remove: delete that contact id."""
+    return await _apply(doc_id, "add_contact", a=a, b=b, joint=joint, name=name, remove=remove,
+                        **{"from": from_value, "to": to_value})
 
 
 @mcp.tool()
@@ -485,7 +502,8 @@ async def request_part_file(doc_id: str, part_id: str, description: str, mcmaste
 # readout that names edges and faces by points, and a numeric inspect.
 
 BATCH_TOOLS = ("propose_features", "create_part", "insert_component", "add_mate", "delete_items", "standard_part",
-               "request_part_file", "check_interference", "find_mate_candidates", "set_parameter", "set_equation")
+               "request_part_file", "check_interference", "find_mate_candidates", "set_parameter", "set_equation",
+               "add_contact")
 MAX_BATCH_STEPS = 100
 
 
@@ -697,13 +715,14 @@ async def publish_review(doc_id: str,
                          compare_version: Annotated[int | None, Field(description="An earlier version to compare with: changed parts in black, the old version as a ghost, the change list")] = None,
                          title: str | None = None,
                          notes: Annotated[str | None, Field(description="What the reader should know, plain text; blank lines between paragraphs. Say what changed and why, what is open.")] = None) -> str:
-    """Publish a frozen review page of the document's current version and return its share link (`url`):
-    the 3D model to turn and zoom, a slider for every joint with travel (hinge with angle limits,
-    limit_distance, limit_angle) moving the parts through solved poses, show/hide by part, and a record:
-    what changed since compare_version, checks (rebuild and mate errors, clashes as shown and through each
-    joint's travel, smallest gap, how far each joint reaches) and a parts table. The link works without
-    the OpenSketch password, so YZ can send it or open it on a phone; it does not change when the model
-    does. Use it at the end of a design round; give YZ the url and the checks summary."""
+    """Publish a read-only link to the document's current version and return it (`url`): OpenSketch opens
+    on it with Motion Review, the 3D model, a slider for every joint with travel (hinge with angle limits,
+    limit_distance, limit_angle; couplers make driven parts follow), solved live, and a record: what
+    changed since compare_version (parts and mates), checks (rebuild and mate errors, clashes as shown and
+    through each joint's travel, smallest gap, how far each joint reaches, contacts that stop touching).
+    It shares shapes, not the feature history. The link works without the OpenSketch password, so YZ can
+    send it or open it on a phone; it does not change when the model does. Use it at the end of a design
+    round; give YZ the url and the checks summary."""
     try:
         return await anyio.to_thread.run_sync(_review_sync, doc_id, compare_version, title, notes)
     except store.NotFound:

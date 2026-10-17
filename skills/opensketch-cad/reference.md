@@ -29,7 +29,9 @@ feature `{"ref": "<plane feature id>"}`, a face that follows edits `{"type": "fa
 | body_topology | part_id, kind faces/edges/both, near [x,y,z], limit |
 | inspect_design | part_id, sketches |
 | measure_items | a, b: {"face": ref} / {"edge": ref} / {"name": "<face or edge name>"} / {"point": [x,y,z]}, plus "component" in assemblies |
-| publish_review | compare_version, title, notes; returns url (no password needed) and checks {errors, clashes_as_shown, joints: reached, clashes, smallest_gap_mm} |
+| add_mate (coupler) | type "coupler", input_refs + input "angle"/"distance" (driver), refs + output (driven), law [[driver, driven], ...] (driver increasing, flat = dwell, ends hold) or ratio + offset |
+| add_contact | a, b (component ids), joint (hinge or limit mate id), from / to (that joint's units), name; remove: contact id |
+| publish_review | compare_version, title, notes; returns url (no password needed) and checks {errors, clashes_as_shown, joints: reached, clashes, smallest_gap_mm; contacts: checked, apart, largest_gap_mm} |
 | preview_document | view, or yaw + pitch (deg); target [x,y,z] + view_width (mm) for close-ups; section {"point", "normal"} |
 
 Feature fields: extrude {sketch, op boss/cut, end blind/through_all/midplane/up_to_next, depth, reverse,
@@ -70,6 +72,9 @@ Faces: `<feature>:side:<sketch curve>`, `<feature>:start` (on the sketch plane),
 | Equation: count must be a whole number | the equation gives a fraction | round() or change the variable |
 | Equation: ... has a problem | a variable is unknown or circular | fix the variable in set_parameter |
 | Sketch: the sketch cannot take these dimensions | a dimension driven by an equation over-defines or breaks the sketch | inspect_design sketches: check status and conflicts |
+| Coupler: law driver values must increase | law points out of order or repeated | sort by driver value; one point per value |
+| Contact apart at N poses (review) | the coupler law leaves the driven part short of the driver | raise the driven values (or the pickup) to match the geometry |
+| Clash in a joint's travel with a coupler | the law pushes the driven part into the driver | lower the driven values; add a small running clearance |
 | This mate cannot be satisfied with the other mates | over defined or conflicting mates | delete or loosen one; check align |
 | batch failed at step N | that step's error (in `failed.error`) | fix that step, resend the whole batch |
 
@@ -84,6 +89,7 @@ Faces: `<feature>:side:<sketch curve>`, `<feature>:start` (on the sketch plane),
 | "I'll add fillets as I go" | fillets last, small radii first |
 | "The count is length / pitch" | a count must be whole: round() it |
 | "I'll just delete it" | delete_items dry_run first |
+| "The lever pushes the tongue, so they move together" | the solver has no contact: coupler mate with a law worked out from the shapes, add_contact, then publish_review |
 | "I'll model this screw / bearing / hinge" | standard_part or request_part_file |
 | "The sketch rebuilds, so it is fine" | inspect_design: sketches carrying equations should have dof 0 |
 

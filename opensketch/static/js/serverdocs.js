@@ -278,8 +278,9 @@ export class ServerDocs {
       `<li class="srv-row"><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a><span>Version ${r.version}${r.compare ? ' vs ' + r.compare : ''}, ${ago(r.created)}</span></li>`).join('')}</ul>` : '';
     const body = document.createElement('div');
     body.className = 'srv-connect';
-    body.innerHTML = `<p>A page of version ${this.link.version} to send or open on a phone: the model, a slider for each joint with travel,
-      what changed and the checks. It does not need your password and does not change when the model does.</p>
+    body.innerHTML = `<p>A read-only link to version ${this.link.version}, to send or open on a phone. It opens in OpenSketch with
+      Motion Review: the joints, what changed and the checks. It shares the shapes, not the feature history, needs no password and
+      does not change when the model does.</p>
       <label class="pubrow">Title <input id="pub-title" value="${esc((this.link.name || 'Review'))}"></label>
       <label class="pubrow">Compare with <select id="pub-compare"><option value="">Nothing (no comparison)</option>${opts}</select></label>
       <label class="pubrow pubcol">Notes <textarea id="pub-notes" rows="4" placeholder="What changed and why, what is still open."></textarea></label>
@@ -298,6 +299,7 @@ export class ServerDocs {
             bits.push(c.errors ? `${c.errors} rebuild or mate error(s)` : 'no errors');
             bits.push(c.clashes_as_shown ? `${c.clashes_as_shown} clash(es) as shown` : 'no clashes as shown');
             for (const j of c.joints) bits.push(`${esc(j.name)}: ${j.clashes ? j.clashes + ' clash(es) in its travel' : 'clear through its travel'}`);
+            for (const k of c.contacts || []) bits.push(`${esc(k.name)}: ${k.apart ? `apart at ${k.apart} pose(s)` : 'touching'}`);
             out.innerHTML = `<p>Published. ${bits.join('; ')}.</p>
               <div class="srv-url"><input id="pub-url" readonly value="${esc(r.url)}"><button class="btn" id="pub-copy">Copy</button><a class="btn" href="${esc(r.url)}" target="_blank" rel="noopener">Open</a></div>
               <p class="pm-note">Anyone with the link can view it. Delete it from this list later if needed.</p>`;

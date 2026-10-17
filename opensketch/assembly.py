@@ -28,8 +28,8 @@ NAMED = {
 }
 
 MATE_TYPES = ("coincident", "concentric", "parallel", "perpendicular", "distance", "angle", "lock",
-              "hinge", "limit_distance", "limit_angle")
-REF_KEYS = ("refs", "planes", "angle_refs")  # every reference list a mate may carry
+              "hinge", "limit_distance", "limit_angle", "coupler")
+REF_KEYS = ("refs", "planes", "angle_refs", "input_refs")  # every reference list a mate may carry
 
 
 class AssemblyError(Exception):
@@ -242,10 +242,62 @@ def _resolve_align(m: dict, a, b) -> str:
     return "anti" if float(np.dot(a[2], b[2])) < 0 else "aligned"
 
 
+def coupler_measure(kind: str, a, b) -> float:
+    """A coupler's driver or driven value: degrees between directions, or mm (docs/DOCUMENT.md)."""
+    if kind == "angle":
+        if a[2] is None or b[2] is None:
+            raise AssemblyError("An angle needs planes or axes")
+        return math.degrees(math.acos(max(-1.0, min(1.0, float(a[2] @ b[2])))))
+    if kind != "distance":
+        raise AssemblyError(f"Unknown coupler measure {kind!r}")
+    order = {"plane": 0, "axis": 1, "point": 2}
+    if order[a[0]] > order[b[0]]:
+        a, b = b, a
+    d = b[1] - a[1]
+    if a[0] == "plane" and b[0] in ("plane", "point"):
+        return float(d @ a[2])
+    if a[0] == "plane":
+        raise AssemblyError("A distance from a plane needs a plane or a point")
+    if a[0] == "axis":
+        return float(np.linalg.norm(_cross(d, a[2])))
+    return float(np.linalg.norm(d))
+
+
+def coupler_law(m: dict):
+    """The coupler's motion law as a function driver -> driven, checked."""
+    law = m.get("law")
+    if law:
+        try:
+            pts = [(float(x), float(y)) for x, y in law]
+        except (TypeError, ValueError):
+            raise AssemblyError("law needs [driver, driven] number pairs") from None
+        if len(pts) < 2 or any(not (math.isfinite(x) and math.isfinite(y)) for x, y in pts):
+            raise AssemblyError("law needs at least two [driver, driven] points")
+        if any(b[0] <= a[0] for a, b in zip(pts, pts[1:])):
+            raise AssemblyError("law driver values must increase")
+        xs = [p[0] for p in pts]
+        ys = [p[1] for p in pts]
+        return lambda v: float(np.interp(v, xs, ys))
+    ratio = m.get("ratio")
+    if ratio is None:
+        raise AssemblyError("A coupler needs a law or a ratio")
+    r, o = float(ratio), float(m.get("offset") or 0)
+    return lambda v: o + r * v
+
+
 def mate_residual(m: dict, poses: dict, L: float, align: str) -> np.ndarray:
     if m["type"] == "_goal":
         P = poses[m["component"]]
         return (P.R @ m["point"] + P.t - m["target"]) * m.get("weight", 1e-2)
+    if m["type"] == "coupler":
+        if not m.get("input_refs") or len(m["input_refs"]) != 2:
+            raise AssemblyError("A coupler needs two driver references (input_refs)")
+        x = coupler_measure(m.get("input") or "distance", *(ref_world(r, poses) for r in m["input_refs"]))
+        out = m.get("output") or "distance"
+        y = coupler_measure(out, *(ref_world(r, poses) for r in m["refs"]))
+        f = m.get("_law") or coupler_law(m)
+        e = y - f(x)
+        return np.array([math.radians(e) * L if out == "angle" else e])
     a = ref_world(m["refs"][0], poses)
     b = ref_world(m["refs"][1], poses)
     t = m["type"]
@@ -405,6 +457,8 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
                     rel = (PA.R.T @ PB.R, PA.R.T @ (PB.t - PA.t))
                     updates.setdefault(m["id"], {})["pose"] = {"position": [_clean(v) for v in rel[1]], "rotation": euler_of(rel[0])}
                 mm["_pose"] = rel
+            if m["type"] == "coupler":
+                mm["_law"] = coupler_law(m)
             mate_residual(mm, poses, L, align)  # validates the reference kinds
             mates.append((mm, align, [c for c in cs if c is not None]))
             report[m["id"]] = {"state": "ok"}

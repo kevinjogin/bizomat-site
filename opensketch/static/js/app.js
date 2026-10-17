@@ -22,6 +22,7 @@ import { SectionView } from './section.js';
 import { ServerDocs } from './serverdocs.js';
 import { Account } from './account.js';
 import { DesignPanel } from './design.js';
+import { MotionReview } from './review.js';
 import { escapeHtml as esc, featureSketchIds, dependentFeatureIds, removeFeatures, measurementData } from './model-utils.js';
 
 const $ = (id) => document.getElementById(id);
@@ -85,6 +86,8 @@ export class App {
     this.live = new LivePlayer(this);
     this.toolbox = new Toolbox(this);
     this.section = new SectionView(this);
+    this.review = new MotionReview(this);
+    this.reviewMode = typeof window.OPENSKETCH_REVIEW === 'string'; // a shared review link: read-only, no server
     this.docStack = []; // Open Part from an assembly: the assembly waits here
     this.forConstruction = false;
     this.polygonSides = 6;
@@ -98,8 +101,13 @@ export class App {
     $('fileinput').addEventListener('change', (e) => this.loadFile(e.target.files[0]));
     $('sb-help').onclick = () => this.shortcutsDialog();
     $('sb-units').onclick = (e) => contextMenu(e.clientX, e.clientY - 120, [{ head: 'Unit system' }, { label: 'MMGS (millimeter, gram, second)', run: () => {} }]);
-    this.restore();
     this.bindDocTabs();
+    if (this.reviewMode) {
+      this.review.loadShared(window.OPENSKETCH_REVIEW);
+      this.status('Read-only review. Drag to rotate, scroll to zoom; move the joints in Motion Review.');
+      return;
+    }
+    this.restore();
     this.bindDrop();
     this.updateDocChrome();
     this.regen().then(() => this.viewer.zoomToFit(false));
@@ -256,6 +264,7 @@ export class App {
   }
 
   autosave() {
+    if (this.reviewMode) return; // never overwrite the visitor's own work with a shared review
     try { localStorage.setItem(AUTOSAVE, JSON.stringify(this.rootDoc())); } catch (_) { /* storage unavailable */ }
   }
 
