@@ -941,6 +941,7 @@ def export(doc: dict, out_zip: str, name: str | None = None, verify: bool = True
     for idx, (pid, p) in enumerate(parts.items(), 1):
         key = _slug(p.get("name") or pid, used)
         b = assembly.build_part(p)
+        geometry.require_clean(b["status"], p.get("name") or pid)
         solid = b["solid"]
         entry = {"pid": pid, "key": key, "title": _title(p.get("name") or pid), "index": idx, "solid": solid,
                  "frame": Frame.identity(), "mode": "step", "why": "", "features": 0}

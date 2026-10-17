@@ -6,9 +6,9 @@ import { COLORS, matOf } from './viewer.js';
 import { dialog, message, contextMenu } from './ui/dialogs.js';
 import { fmt } from './sketch/geom2d.js';
 import { regenLocal } from './asmsolver.js';
+import { mateReferences, featureSketchIds, escapeHtml as esc } from './model-utils.js';
 
 const clone = (o) => JSON.parse(JSON.stringify(o));
-const esc = (s) => String(s ?? '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 
 export const MATE_TYPES = [
   ['coincident', 'Coincident', 'r_coincident'],
@@ -170,7 +170,7 @@ export class AssemblyMode {
   renderTree(tree, node) {
     const app = this.app, doc = this.doc;
     const st = app.statusById || {};
-    node({ id: 'root', kind: 'root', name: `${esc(doc.name)} (Default&lt;Display State-1&gt;)`, ic: 'assembly', cls: 'root' });
+    node({ id: 'root', kind: 'root', name: `${doc.name} (Default<Display State-1>)`, ic: 'assembly', cls: 'root' });
     node({ id: 'history', kind: 'folder', name: 'History', ic: 'history', depth: 1, twisty: false });
     node({ id: 'sensors', kind: 'folder', name: 'Sensors', ic: 'sensor', depth: 1 });
     node({ id: 'annotations', kind: 'folder', name: 'Annotations', ic: 'annotations', depth: 1, twisty: false });
@@ -182,14 +182,14 @@ export class AssemblyMode {
       const prefix = c.suppressed ? '' : c.fixed || s?.state === 'fixed' ? '(f) ' : s?.state === 'under' ? '(-) ' : '';
       const state = c.suppressed ? 'suppressed' : s?.state === 'error' ? 'error' : 'ok';
       const open = this.expandedComps.has(c.id);
-      const n = node({ id: c.id, kind: 'component', name: prefix + esc(c.name), ic: 'part', depth: 1, twisty: open,
+      const n = node({ id: c.id, kind: 'component', name: prefix + c.name, ic: 'part', depth: 1, twisty: open,
         cls: `${state}${c.hidden ? ' hiddencomp' : ''}${proposed.has(c.id) ? ' proposed' : ''}`,
         badge: state === 'error' ? tree.badgeIcon('error') : '', onDbl: () => this.openPart(c.id), onTwisty: () => { open ? this.expandedComps.delete(c.id) : this.expandedComps.add(c.id); tree.render(); } });
       if (n && s?.message) n.title = s.message;
       if (n && s?.state === 'under') n.title = `${s.dof} degree${s.dof === 1 ? '' : 's'} of freedom left`;
       if (open) for (const f of doc.parts[c.part]?.features || []) {
-        if (f.type === 'sketch' && (doc.parts[c.part].features.some((x) => x.sketch === f.id))) continue;
-        node({ id: `${c.id}:${f.id}`, kind: 'compfeature', name: esc(f.name), ic: tree.featureIcon(f), depth: 2, onDbl: () => this.openPart(c.id) });
+        if (f.type === 'sketch' && doc.parts[c.part].features.some((x) => featureSketchIds(x).includes(f.id))) continue;
+        node({ id: `${c.id}:${f.id}`, kind: 'compfeature', name: f.name, ic: tree.featureIcon(f), depth: 2, onDbl: () => this.openPart(c.id) });
       }
     }
     const mates = doc.mates || [];
@@ -198,7 +198,7 @@ export class AssemblyMode {
       const s = st[m.id];
       const state = m.suppressed ? 'suppressed' : s?.state === 'error' ? 'error' : 'ok';
       const names = (m.refs || []).map((r) => (r.component ? this.comp(r.component)?.name : r.ref) || '?');
-      const n = node({ id: m.id, kind: 'mate', name: `${esc(m.name)} (${esc(names.join(','))})`, ic: mateIcon(m.type), depth: 2,
+      const n = node({ id: m.id, kind: 'mate', name: `${m.name} (${names.join(',')})`, ic: mateIcon(m.type), depth: 2,
         cls: `${state}${proposed.has(m.id) ? ' proposed' : ''}`, badge: state === 'error' ? tree.badgeIcon('error') : '', onDbl: () => (m.type === 'hinge' ? this.hingePM(m) : this.matePM(m)) });
       if (n && s?.message) n.title = s.message;
     }
@@ -427,7 +427,7 @@ export class AssemblyMode {
     const doc = this.app.doc;
     const comps = new Set(compIds);
     const mates = new Set(mateIds);
-    for (const m of doc.mates) if ((m.refs || []).some((r) => comps.has(r.component))) mates.add(m.id);
+    for (const m of doc.mates) if (mateReferences(m).some((r) => comps.has(r.component))) mates.add(m.id);
     const names = [...[...comps].map((c) => this.comp(c)?.name), ...[...mates].map((m) => this.mate(m)?.name)].filter(Boolean);
     const go = () => this.app.commit('Delete', () => {
       doc.components = doc.components.filter((c) => !comps.has(c.id));

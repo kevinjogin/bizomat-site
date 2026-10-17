@@ -20,10 +20,10 @@ import { LivePlayer } from './live.js';
 import { Toolbox } from './toolbox.js';
 import { SectionView } from './section.js';
 import { ServerDocs } from './serverdocs.js';
+import { escapeHtml as esc, featureSketchIds, dependentFeatureIds, removeFeatures, measurementData } from './model-utils.js';
 
 const $ = (id) => document.getElementById(id);
 const clone = (o) => JSON.parse(JSON.stringify(o));
-const esc = (t) => String(t ?? '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 const STD_PLANES = ['Front Plane', 'Top Plane', 'Right Plane'];
 const MB = (n) => (n / 1e6).toFixed(1) + ' MB';
 // When the upload never reached OpenSketch (the reply is not ours), say what the status means.
@@ -57,7 +57,7 @@ function frameForFace(normal, center) {
   return { origin: r(o), xdir: r(x), ydir: r(y), normal: r(n) };
 }
 
-class App {
+export class App {
   constructor() {
     this.doc = newDoc();
     this.undoStack = []; this.redoStack = [];
@@ -170,7 +170,7 @@ class App {
   get isAsm() { return isAssembly(this.shownDoc); }
   featureById(id) { return (this.shownDoc.features || []).find((f) => f.id === id) || null; }
   lastSketchId() {
-    const abs = new Set((this.doc.features || []).filter((f) => f.sketch).map((f) => f.sketch));
+    const abs = this.absorbed();
     const s = [...(this.doc.features || [])].reverse().find((f) => f.type === 'sketch' && !abs.has(f.id));
     return s ? s.id : null;
   }
@@ -270,7 +270,7 @@ class App {
     $('sb-editing').textContent = this.isAsm ? 'Editing Assembly' : f ? 'Editing Part in Assembly' : 'Editing Part';
     const bar = $('editbar');
     if (f) {
-      bar.innerHTML = `${icon('part', 16)}<span>Editing <b>${this.doc.name}</b> from <b>${root.name}</b></span>`;
+      bar.innerHTML = `${icon('part', 16)}<span>Editing <b>${esc(this.doc.name)}</b> from <b>${esc(root.name)}</b></span>`;
       const b = document.createElement('button'); b.className = 'btn primary'; b.innerHTML = `${icon('returnasm', 14)} Return to Assembly`;
       b.onclick = () => this.asm.returnToAssembly();
       bar.appendChild(b);
@@ -364,7 +364,7 @@ class App {
     return { origin: spec.origin, xdir: spec.xdir, ydir: [y.x, y.y, y.z], normal: spec.normal };
   }
 
-  absorbed() { return new Set((this.shownDoc.features || []).filter((f) => (f.type === 'extrude' || f.type === 'revolve') && f.sketch).map((f) => f.sketch)); }
+  absorbed() { return new Set((this.shownDoc.features || []).flatMap(featureSketchIds)); }
 
   sketchVisible(f) {
     if (this.mode === 'sketch' && f.id === this.sketcher.skId) return false;
@@ -724,13 +724,13 @@ class App {
   async deleteFeature(id) {
     const f = this.featureById(id);
     if (!f) return;
-    const names = (ids) => ids.map((x) => this.featureById(x)?.name || x).join(', ');
+    const names = (ids) => ids.map((x) => esc(this.featureById(x)?.name || x)).join(', ');
     const plan = async (ids, absorbed) => this.api('/api/delete_plan', { doc: this.cleanDoc(this.doc), features: ids, delete_absorbed: absorbed });
     let first;
     try { first = await plan([id], true); } catch (err) { this.status(`Cannot delete: ${err.message}`); return; }
     const kids = first.would_fail.map((x) => x.id);
     const body = document.createElement('div');
-    body.innerHTML = `<div>Delete <b>${f.name}</b>?</div>` +
+    body.innerHTML = `<div>Delete <b>${esc(f.name)}</b>?</div>` +
       (first.deleted_with_it.length ? `<div style="margin-top:6px">Also deleted (they need it): ${names(first.deleted_with_it)}</div>` : '') +
       (first.patterns_trimmed.length ? `<div style="margin-top:6px">Patterns that keep their other features: ${names(first.patterns_trimmed.map((x) => x.id))}</div>` : '') +
       (first.absorbed.length ? `<label style="display:block;margin-top:8px"><input type="checkbox" id="delabs" checked> Delete absorbed features (${names(first.absorbed)})</label>` : '') +
@@ -772,6 +772,7 @@ class App {
   }
 
   closeCommand() {
+    if (this.cmd) this.cmd.cancelled = true;
     if (this.cmd && this.cmd.onClose) this.cmd.onClose();
     this.cmd = null;
     clearTimeout(this.previewTimer);
@@ -784,6 +785,7 @@ class App {
     const cmd = this.cmd;
     if (this.mode === 'sketch' && !cmd) { this.sketcher.setTool(null); this.sketcher.sel.clear(); this.onSketchSelection(); this.sketcher.render(); return; }
     if (!cmd) return this.pm.close();
+    if (this.pm.spec?.okEnabled && !this.pm.spec.okEnabled()) { this.toast('Complete the required selections first.'); return; }
     if (cmd.onOk) { const keep = cmd.onOk(); if (keep === false) return; this.closeCommand(); return; }
     if (cmd.spec) return this.commitFeature();
   }
@@ -802,7 +804,7 @@ class App {
     if (this.mode === 'sketch') {
       const sid = this.sketcher.skId;
       this.exitSketch();
-      if (['extrude', 'cut', 'revolve', 'revcut'].includes(key)) this.selection = [{ kind: 'sketch', id: sid }];
+      if (['extrude', 'cut', 'revolve', 'revcut', 'sweep', 'sweepcut', 'loft', 'loftcut'].includes(key)) this.selection = [{ kind: 'sketch', id: sid }];
     }
     if (this.cmd) this.pmCancel();
     const meta = metaFor(key);
@@ -822,6 +824,11 @@ class App {
       linear_pattern: 'Select features to pattern and a direction.',
       circular_pattern: 'Select features to pattern and an axis.',
       plane: 'Select a plane or planar face and set the offset.',
+      sweep: 'Select a closed profile sketch and a separate path sketch.',
+      sweepcut: 'Select a closed profile sketch and a separate path sketch.',
+      loft: 'Select at least two closed sketches in section order.',
+      loftcut: 'Select at least two closed sketches in section order.',
+      hole: 'Select a plane or planar face, then set the hole dimensions and position.',
     };
     this.pm.open({ title: existing ? f.name : meta.title, icon: meta.icon, sections: spec.sections, okEnabled: spec.okEnabled, activeSelbox: spec.activeSelbox,
       message: () => (spec.okEnabled() ? null : msgs[key] || SPECS[key]?.message), onChange: () => { this.refreshSelectionDisplay(); this.schedulePreview(); } });
@@ -846,23 +853,26 @@ class App {
   }
 
   schedulePreview(delay = 120) {
+    if (this.cmd?.spec) this.cmd.previewVersion = (this.cmd.previewVersion || 0) + 1;
     clearTimeout(this.previewTimer);
     this.previewTimer = setTimeout(() => this.runPreview(), delay);
   }
 
   async runPreview() {
     const cmd = this.cmd;
-    if (!cmd || !cmd.spec) return;
+    if (!cmd || !cmd.spec || cmd.cancelled) return false;
+    const version = cmd.previewVersion || 0;
     this.drawSketches();
-    if (!cmd.spec.okEnabled()) { this.viewer.setTool(null); return; }
+    if (!cmd.spec.okEnabled()) { this.viewer.setTool(null); return false; }
     const f = this.cleanDoc(cmd.f);
     if (f.draftOn === false) delete f.draft;
     const doc = this.docForRegen();
     if (cmd.existing) { const i = doc.features.findIndex((x) => x.id === cmd.existing.id); f._index = i; }
     const seq = ++this.regenSeq;
     let res;
-    try { res = await this.api('/api/regen', { doc, preview: f }); } catch (err) { this.toast(String(err)); return; }
-    if (seq !== this.regenSeq || this.cmd !== cmd) return;
+    try { res = await this.api('/api/regen', { doc, preview: f }); } catch (err) { this.toast('Preview failed: ' + err.message); return false; }
+    if (seq !== this.regenSeq || this.cmd !== cmd || cmd.cancelled || version !== (cmd.previewVersion || 0)) return false;
+    if (!Array.isArray(res.status) || !res.body) { this.toast('The server did not return a valid preview.'); return false; }
     this.result = { ...this.result, planes: { ...(this.result?.planes || {}), ...res.planes } };
     this.viewer.setBody(res.body, { color: this.bodyColor() });
     this.viewer.setTool(res.tool);
@@ -871,22 +881,28 @@ class App {
     this.pm.spec.error = cmd.lastError;
     this.pm.render();
     this.refreshSelectionDisplay();
+    return !!pv && !cmd.lastError;
   }
 
   async commitFeature() {
     const cmd = this.cmd;
+    if (!cmd?.spec || cmd.committing) return;
     if (!cmd.spec.okEnabled()) { this.toast('Complete the required selections first.'); return; }
     clearTimeout(this.previewTimer);
-    await this.runPreview();
-    if (cmd.lastError) { this.pm.spec.error = cmd.lastError; this.pm.render(); this.toast('Rebuild error: ' + cmd.lastError); return; }
+    cmd.committing = true;
+    let valid;
+    try { valid = await this.runPreview(); } finally { cmd.committing = false; }
+    if (this.cmd !== cmd || cmd.cancelled) return;
+    if (!valid) { if (cmd.lastError) { this.pm.spec.error = cmd.lastError; this.pm.render(); this.toast('Rebuild error: ' + cmd.lastError); } return; }
     let f = this.cleanDoc(cmd.f);
-    if (!f.draftOn) delete f.draft;
+    if (f.draftOn === false) delete f.draft;
     if (f.edges?.length || f.faces?.length || f.direction?.edge || f.direction2?.edge) {
       // store each pick's persistent name with its point, so the pick stays put when earlier features change
       const before = this.cleanDoc(this.doc);
       const at = cmd.existing ? before.features.findIndex((x) => x.id === cmd.existing.id) : (before.rollback ?? before.features.length);
       before.rollback = at;
       try { f = (await this.api('/api/name_refs', { doc: before, feature: f })).feature; } catch (_) { /* keep the points */ }
+      if (this.cmd !== cmd || cmd.cancelled) return;
     }
     this.commit(cmd.existing ? 'Edit ' + f.name : f.name, () => {
       if (cmd.existing) { const i = this.doc.features.findIndex((x) => x.id === cmd.existing.id); this.doc.features[i] = f; }
@@ -932,11 +948,12 @@ class App {
     else { frame = frameForFace(p.data.normal, p.data.center); spec = { type: 'face', origin: frame.origin, normal: frame.normal, xdir: frame.xdir }; }
     if (!frame) return;
     const before = JSON.stringify(this.cleanDoc());
+    const history = { undo: [...this.undoStack], redo: [...this.redoStack] };
     const f = { id: this.uid('s'), type: 'sketch', name: nextName(this.doc, 'Sketch'), plane: spec, entities: [], constraints: [] };
     this.pushUndo('Sketch');
     this.insertFeature(f);
     this.docChanged();
-    this.enterSketch(f, frame, { isNew: true, snapshot: before, pendingFeature });
+    this.enterSketch(f, frame, { isNew: true, snapshot: before, pendingFeature, ...history });
     this.viewer.normalTo(frame);
   }
 
@@ -952,7 +969,7 @@ class App {
 
   enterSketch(f, frame, opts) {
     this.mode = 'sketch';
-    this.sketchCtx = opts;
+    this.sketchCtx = { ...opts, undo: opts.undo || [...this.undoStack], redo: opts.redo || [...this.redoStack] };
     this.setSelection([]);
     this.hideContextToolbar();
     this.sketcher.showRelations = this.view.relations;
@@ -981,8 +998,8 @@ class App {
     this.updateBreadcrumbs();
     const f = this.featureById(id);
     if (f && ctx.isNew && !f.entities.length && !opts.keep) {
-      this.doc.features = this.doc.features.filter((x) => x.id !== id);
-      this.undoStack.pop();
+      this.doc = JSON.parse(ctx.snapshot);
+      this.undoStack = ctx.undo; this.redoStack = ctx.redo;
       this.docChanged();
     }
     this.ribbon.render();
@@ -1002,7 +1019,7 @@ class App {
         this.closeCommand();
         this.sketcher.end(); this.mode = 'part';
         this.doc = JSON.parse(snap);
-        if (ctx.isNew) this.undoStack.pop();
+        this.undoStack = ctx.undo; this.redoStack = ctx.redo;
         this.docChanged();
         this.updateConfirmCorner(); this.updateBreadcrumbs();
         $('sb-editing').textContent = 'Editing Part'; $('sb-defined').textContent = '';
@@ -1168,7 +1185,7 @@ class App {
     this.cmd = { onOk: () => {} };
     const render = () => this.pm.render();
     this.pm.open({ title: 'Display/Delete Relations', icon: 'relations', okEnabled: () => true, sections: [{ title: 'Relations', rows: [
-      { type: 'list', items: () => sk.sk.constraints.map((c) => ({ label: `${c.name ? c.name + ' ' : ''}${c.type} (${c.refs.join(', ')})`, icon: c.type in { distance: 1, diameter: 1, radius: 1, angle: 1 } ? 'smartdim' : 'r_' + c.type, selected: chosen === c.id, over: sk.state?.conflicts.has(c.id), select: () => { chosen = c.id; sk.sel = new Set([c.id]); sk.render(); render(); } })), empty: 'No relations' },
+      { type: 'list', items: () => sk.sk.constraints.map((c) => ({ label: esc(`${c.name ? c.name + ' ' : ''}${c.type} (${c.refs.join(', ')})`), icon: c.type in { distance: 1, diameter: 1, radius: 1, angle: 1 } ? 'smartdim' : 'r_' + c.type, selected: chosen === c.id, over: sk.state?.conflicts.has(c.id), select: () => { chosen = c.id; sk.sel = new Set([c.id]); sk.render(); render(); } })), empty: 'No relations' },
       { type: 'buttons', buttons: [{ label: 'Delete', run: () => { if (chosen) { sk.sel = new Set([chosen]); sk.deleteSelection(); chosen = null; render(); } } }, { label: 'Delete All', run: () => { sk.edit('Delete all relations', () => { sk.sk.constraints = []; }); render(); } }] },
     ] }] });
   }
@@ -1302,11 +1319,11 @@ class App {
     if (this.isAsm) return this.asm.massProperties();
     let r;
     try { r = await this.api('/api/mass', { doc: this.cleanDoc() }); } catch (err) { this.toast(String(err)); return; }
-    if (r.error) { message('Mass Properties', r.error); return; }
+    if (r.error) { message('Mass Properties', esc(r.error)); return; }
     const m = this.doc.material;
     const g = (v) => fmt(v * 1000, 2);
     message('Mass Properties', `<table class="mass-table">
-      <tr><td>Material</td><td>${m?.name || 'not specified (density 1000 kg/m^3)'}</td></tr>
+      <tr><td>Material</td><td>${esc(m?.name || 'not specified (density 1000 kg/m^3)')}</td></tr>
       <tr><td>Density</td><td>${fmt(r.density * 1e9, 1)} kg/m^3</td></tr>
       <tr><td>Mass</td><td>${g(r.mass)} grams</td></tr>
       <tr><td>Volume</td><td>${fmt(r.volume, 2)} mm^3</td></tr>
@@ -1337,7 +1354,11 @@ class App {
       }
       return out.join('<br>');
     };
-    this.cmd = { onPick: (p) => { if (p.kind !== 'edge' && p.kind !== 'face') return false; const i = picks.findIndex((x) => x.kind === p.kind && x.id === p.id); if (i >= 0) picks.splice(i, 1); else picks.push(p); this.viewer.setSelectedKeys(picks.map((x) => `${x.kind}:${x.id}`)); return true; }, onOk: () => {} };
+    this.closeCommand();
+    this.cmd = { onPick: (p) => { if (p.kind !== 'edge' && p.kind !== 'face') return false; const i = picks.findIndex((x) => x.kind === p.kind && x.id === p.id); if (i >= 0) picks.splice(i, 1); else {
+      const matrix = this.isAsm ? this.asm.resComp(String(p.id).split('/')[0])?.matrix : null;
+      picks.push({ ...p, data: measurementData(p.data, matrix) });
+    } this.viewer.setSelectedKeys(picks.map((x) => `${x.kind}:${x.id}`)); return true; }, onOk: () => {} };
     this.pm.open({ title: 'Measure', icon: 'measure', okEnabled: () => true, noCancel: true, sections: [
       { title: 'Selections', rows: [{ type: 'selbox', id: 'm', placeholder: 'Select edges or faces', items: () => picks, label: (p, i) => `${p.kind === 'edge' ? 'Edge' : 'Face'}<${i + 1}>`, remove: (i) => picks.splice(i, 1), kinds: ['edge', 'face'] }] },
       { title: 'Results', rows: [{ type: 'custom', render: (row) => { row.innerHTML = `<div>${result()}</div>`; } }] },
@@ -1348,14 +1369,14 @@ class App {
 
   checkModel() {
     if (this.isAsm) {
-      const bad = (this.asm.res?.mates || []).filter((m) => m.state === 'error').map((m) => `${icon('error', 14)} <b>${this.asm.mate(m.id)?.name}</b>: ${m.message}`);
-      const badp = Object.entries(this.asm.res?.parts || {}).flatMap(([pid, p]) => p.status.filter((s) => s.state === 'error').map((s) => `${icon('error', 14)} <b>${this.asm.partName(pid)}</b>: ${s.message}`));
+      const bad = (this.asm.res?.mates || []).filter((m) => m.state === 'error').map((m) => `${icon('error', 14)} <b>${esc(this.asm.mate(m.id)?.name)}</b>: ${esc(m.message)}`);
+      const badp = Object.entries(this.asm.res?.parts || {}).flatMap(([pid, p]) => p.status.filter((s) => s.state === 'error').map((s) => `${icon('error', 14)} <b>${esc(this.asm.partName(pid))}</b>: ${esc(s.message)}`));
       message(bad.length || badp.length ? 'What\'s Wrong' : 'Check Entity', [...badp, ...bad].join('<br>') || 'No errors found. All mates are satisfied.');
       return;
     }
     const errs = (this.result?.status || []).filter((s) => s.state === 'error' || s.state === 'warning');
     if (!errs.length) { message('Check Entity', 'No errors found. The model rebuilds cleanly.'); return; }
-    message('What\'s Wrong', errs.map((s) => `${icon(s.state === 'error' ? 'error' : 'warning', 14)} <b>${this.featureById(s.id)?.name || s.id}</b>: ${s.message}`).join('<br>'));
+    message('What\'s Wrong', errs.map((s) => `${icon(s.state === 'error' ? 'error' : 'warning', 14)} <b>${esc(this.featureById(s.id)?.name || s.id)}</b>: ${esc(s.message)}`).join('<br>'));
   }
 
   async statsDialog() {
@@ -1455,7 +1476,7 @@ class App {
             ? 'Imported PCB as editable outline, thickness and mechanical-hole features.'
             : 'Imported as Imported1. Add features on top, or ask the AI to rebuild it as features.');
       }
-    } catch (err) { message('Open', 'Could not open the file: ' + err.message); }
+    } catch (err) { message('Open', 'Could not open the file: ' + esc(err.message)); }
   }
 
   // Replace a part (an AI placeholder) with a downloaded STEP. Works on a pending proposal or the doc.
@@ -1529,7 +1550,7 @@ class App {
       const r = await fetch('/api/export/' + fmtName, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ doc: this.cleanDoc() }) });
       if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.detail || r.statusText); }
       this.download(await r.blob(), `${this.doc.name}.${fmtName}`);
-    } catch (err) { message('Export', String(err.message || err)); }
+    } catch (err) { message('Export', esc(err.message || err)); }
   }
 
   // SOLIDWORKS macro: a background job on the server (the macro is checked before it is handed over).
@@ -1735,7 +1756,7 @@ class App {
 
   updateBreadcrumbs() {
     const el = $('breadcrumbs');
-    el.innerHTML = `<span class="bc">${icon('part', 14)}${this.doc.name}</span>` + (this.mode === 'sketch' ? `<span class="bc">${icon('sketch_t', 14)}${this.sketcher.sk?.name || ''}</span>` : '');
+    el.innerHTML = `<span class="bc">${icon('part', 14)}${esc(this.doc.name)}</span>` + (this.mode === 'sketch' ? `<span class="bc">${icon('sketch_t', 14)}${esc(this.sketcher.sk?.name || '')}</span>` : '');
   }
 
   buildMgrTabs() {
@@ -1898,7 +1919,8 @@ class App {
 
 // features.js waits for the feature registry (top-level await), so the page may have finished parsing
 // before this module runs.
-const start = () => { window.app = new App(); };
+// Only on the real page: tests import this module into a bare DOM to use App's methods without a viewport.
+const start = () => { if (document.getElementById('viewport')) window.app = new App(); };
 if (document.readyState === 'loading') window.addEventListener('DOMContentLoaded', start); else start();
 
 

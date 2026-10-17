@@ -3,9 +3,9 @@
 import { icon } from '../icons.js';
 import { describeFeature, featureIcon, SPECS } from '../features.js';
 import { mateIcon } from '../asm.js';
+import { escapeHtml as esc, safeUrl } from '../model-utils.js';
 
 const h = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
-const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 
 const PANES = [
   { id: 'ai', icon: 'ai', title: 'OpenSketch AI' },
@@ -36,7 +36,6 @@ const toolMetaFromRegistry = (name) => {
   return spec ? { title: `Adding ${spec.title}`, icon: spec.icon } : null;
 };
 // Links from the web are untrusted: only http(s) becomes a link.
-const safeUrl = (u) => { try { const x = new URL(u); return /^https?:$/.test(x.protocol) ? x.href : null; } catch (_) { return null; } };
 const hostOf = (u) => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch (_) { return String(u || ''); } };
 const WEB_ERRORS = {
   max_uses_exceeded: 'limit for this request reached', too_many_requests: 'too many requests, try again soon',
@@ -157,8 +156,9 @@ export class TaskPane {
       } else el.appendChild(h('div', 'pm-note', m.state === 'accepted' ? 'Accepted' : 'Rejected'));
     } else if (m.role === 'request') {
       el = h('div', 'ai-request');
+      const url = safeUrl(m.url);
       el.innerHTML = `<div class="ah">${icon('open', 14)}<b>Bought part: ${esc(m.description)}</b></div>` +
-        (m.url ? `<div>1. Open <a href="${esc(m.url)}" target="_blank" rel="noopener">${m.mcmaster ? 'McMaster-Carr ' + esc(m.mcmaster) : esc(m.url)}</a> and download the 3D STEP file.</div>` : '<div>1. Download a STEP file of this part from its supplier.</div>') +
+        (url ? `<div>1. Open <a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${m.mcmaster ? 'McMaster-Carr ' + esc(m.mcmaster) : esc(url)}</a> and download the 3D STEP file.</div>` : '<div>1. Download a STEP file of this part from its supplier.</div>') +
         `<div>2. Drop it here or choose it. It replaces the placeholder <code>${esc(m.part)}</code>.</div>`;
       if (m.done) el.appendChild(h('div', 'pm-note', 'Replaced with ' + esc(m.done)));
       else {

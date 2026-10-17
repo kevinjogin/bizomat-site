@@ -35,7 +35,10 @@ Feature fields: extrude {sketch, op boss/cut, end blind/through_all/midplane/up_
 draft, dir2 {end, depth}}; revolve {sketch, axis (a line id in that sketch), angle}; fillet {radius,
 edges}; chamfer {distance, edges}; shell {thickness, faces}; mirror {plane, features}; linear_pattern
 {features, direction X/Y/Z, count, spacing}; circular_pattern {features, axis X/Y/Z, count}; draft
-{neutral_plane, faces, angle}; plane {base, offset}. Sketch: entities point {x, y} / line {p1, p2} /
+{neutral_plane, faces, angle}; plane {base, offset}; sweep {sketch (closed profile), path (another sketch:
+one connected chain), op}; loft {profiles [sketch ids in order, one closed contour each], ruled, op}; hole
+{plane, x, y, diameter, end blind/through_all, depth, reverse, style simple/counterbore/countersink,
+bore_diameter, bore_depth, sink_diameter, sink_angle} (holes on outer faces usually need reverse: true). Sketch: entities point {x, y} / line {p1, p2} /
 circle {center, r} / arc {center, start, end, counter-clockwise}; constraints as in the guide.
 
 ## Names

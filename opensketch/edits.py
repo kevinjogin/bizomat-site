@@ -44,6 +44,13 @@ def references(feat: dict, ids: set[str]) -> set[str]:
     return {s for s in _strings(feat) if s in ids and s != feat.get("id")}
 
 
+def sketch_ids(feat: dict) -> list[str]:
+    """Sketches a feature consumes (it cannot exist without them): extrude/revolve/sweep sketch, sweep path,
+    loft profiles. Same rule as featureSketchIds in static/js/model-utils.js."""
+    ids = [feat.get("sketch"), feat.get("path")] + list(feat.get("profiles") or [])
+    return [i for i in ids if isinstance(i, str)]
+
+
 def _problems(doc: dict) -> tuple[dict, dict]:
     st, _ = geometry.regen(doc)
     errs = {s["id"]: s.get("message", "error") for s in st.status if s["state"] == "error"}
@@ -68,7 +75,7 @@ def plan_delete(part: dict, ids: list[str], delete_absorbed: bool = True) -> dic
             fid = f["id"]
             if fid in gone:
                 continue
-            if f.get("sketch") in gone:
+            if any(i in gone for i in sketch_ids(f)):
                 gone.add(fid)
                 with_it.append(fid)
                 changed = True

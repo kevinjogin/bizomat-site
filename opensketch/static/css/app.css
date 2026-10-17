@@ -416,3 +416,7 @@ input, select, button { font: inherit; color: inherit; }
 .eqadd { color: #0a64c8; cursor: pointer; }
 .eqx { cursor: pointer; color: #777; }
 .eqfoot { margin-top: 8px; color: #666; font-size: 11px; }
+
+/* Native buttons keep PropertyManager actions keyboard reachable. */
+button.pm-act { padding: 0; background: transparent; font: inherit; }
+button.pm-act:focus-visible { outline: 2px solid #2467b2; outline-offset: 2px; }

@@ -5,6 +5,7 @@ MCP endpoint at /mcp/<token>), and the optional password (OPENSKETCH_PASSWORD)."
 from __future__ import annotations
 
 import json
+import math
 import os
 import tempfile
 from pathlib import Path
@@ -13,10 +14,13 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.background import BackgroundTask
 from pydantic import BaseModel
 
 import base64
+import binascii
 import gzip
+import zlib
 import threading
 import time
 import uuid
@@ -155,7 +159,11 @@ def _import_reply(raw: bytes, filename: str):
 @app.post("/api/import")
 def api_import(req: ImportRequest):
     """STEP -> part or assembly document (base64 in JSON; kept for old clients and scripts)."""
-    return _import_reply(base64.b64decode(req.data), req.filename)
+    try:
+        raw = base64.b64decode(req.data, validate=True)
+    except (binascii.Error, ValueError):
+        return JSONResponse({"error": "The upload is not valid base64. Try uploading the file again."}, status_code=400)
+    return _import_reply(raw, req.filename)
 
 
 @app.post("/api/import/raw")
@@ -166,7 +174,7 @@ async def api_import_raw(request: Request, filename: str = "model.step"):
     if request.headers.get("x-opensketch-gzip") == "1":
         try:
             body = gzip.decompress(body)
-        except OSError:
+        except (OSError, EOFError, zlib.error):
             return JSONResponse({"error": "The upload arrived damaged. Try again."}, status_code=400)
     return await run_in_threadpool(_import_reply, body, filename)
 
@@ -194,10 +202,15 @@ def api_toolbox_part(req: ToolboxRequest):
         raise HTTPException(400, "Unknown kind")
     args = {"size": req.size}
     if "length" in importer.STANDARD[req.kind][2]:
-        args["length"] = req.length or 10
+        if req.length is not None and (not math.isfinite(req.length) or req.length <= 0):
+            raise HTTPException(400, "Length must be greater than 0")
+        args["length"] = req.length if req.length is not None else 10
     doc = importer.standard_part_doc(req.kind, **args)
     try:
-        geometry.regen(doc)
+        st, _ = geometry.regen(doc)
+        bad = next((s for s in st.status if s.get("state") == "error"), None)
+        if bad or st.part is None:
+            raise ValueError(bad.get("message") if bad else "The selected size did not produce a solid body")
     except Exception as exc:  # bad size
         raise HTTPException(400, str(exc)) from exc
     return {"doc": doc}
@@ -215,9 +228,14 @@ def api_export(fmt: str, req: RegenRequest):
         else:
             geometry.export(req.doc, fmt, path)
     except (geometry.FeatureError, assembly.AssemblyError) as exc:
+        Path(path).unlink(missing_ok=True)
         raise HTTPException(400, str(exc)) from exc
+    except Exception:
+        Path(path).unlink(missing_ok=True)
+        raise
     name = (req.doc.get("name") or ("Assem1" if assembly.is_assembly(req.doc) else "Part1")) + (".step" if fmt == "step" else ".stl")
-    return FileResponse(path, filename=name, media_type="application/octet-stream")
+    return FileResponse(path, filename=name, media_type="application/octet-stream",
+                        background=BackgroundTask(Path(path).unlink, missing_ok=True))
 
 
 class MacroRequest(BaseModel):
@@ -245,7 +263,10 @@ def api_macro_start(req: MacroRequest):
            "name": (req.name or req.doc.get("name") or "OpenSketch")}
     _macro_jobs[jid] = job
     for k in [k for k, v in _macro_jobs.items() if time.time() - v["started"] > 6 * 3600]:
-        _macro_jobs.pop(k, None)
+        old = _macro_jobs[k]
+        if old["state"] != "running":
+            _macro_jobs.pop(k, None)
+            Path(old["zip"]).unlink(missing_ok=True)
 
     def work():
         try:

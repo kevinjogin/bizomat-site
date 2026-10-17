@@ -175,6 +175,10 @@ Task Pane on the right, status bar with Under/Fully/Over Defined and "Editing Sk
 - Extruded Boss/Base and Extruded Cut: Blind, Through All, Up To Next, Mid Plane, Direction 2,
   draft, flip side to cut, merge result. Start from a sketch or pick a plane inside the command.
 - Revolved Boss/Base and Revolved Cut (auto-picks the only centerline).
+- Swept Boss/Base and Swept Cut: one closed profile sketch and a separate connected path sketch.
+- Lofted Boss/Base and Lofted Cut: two or more ordered closed sections; optional ruled surfaces.
+- Hole Wizard: explicitly dimensioned simple, counterbore and countersink holes; Blind or Through All,
+  plane/face selection, X/Y position and reverse direction. No threads or fastener-standard presets.
 - Fillet, Chamfer (angle-distance, distance-distance), Shell, Mirror, Linear Pattern,
   Circular Pattern, Reference Plane.
 - Live yellow previews computed by build123d; edit feature, edit sketch, suppress, rollback,
@@ -183,6 +187,8 @@ Task Pane on the right, status bar with Under/Fully/Over Defined and "Editing Sk
 **Evaluate and files**
 - Mass Properties (with material), Measure, Section View, Check (What's Wrong).
 - Save / Open `.osk` (JSON), export STEP and STL, autosave in the browser.
+- Exports reject active feature rebuild errors instead of silently exporting an incomplete body.
+  Suppressed and rolled-back features remain intentionally excluded.
 
 **Assemblies** (File > New > Assembly, or ask the AI for a multi-part product)
 
@@ -264,7 +270,7 @@ in the unzipped folder, paste the `.bas` and press F5. Parts and the assembly ar
   linear / circular patterns and mirrors of extrudes, are rebuilt by the sldmacro engine
   (`opensketch/vendor/sldmacro`): every sketch fully defined by relations and dimensions, every
   feature measured after it is made and redone if SOLIDWORKS read a flag the other way.
-- **Parts as STEP.** Revolves, shells, features in a second direction, imported bodies and Toolbox
+- **Parts as STEP.** Revolves, sweeps, lofts, Hole Wizard features, shells, features in a second direction, imported bodies and Toolbox
   parts go in as STEP imports. The report says which and why.
 - **Assembly.** Components start where OpenSketch's solver put them. Coincident, concentric,
   parallel, perpendicular, distance, angle, lock, hinge (concentric + coincident + angle limits) and
@@ -336,8 +342,12 @@ pytest -q                                  # regen, previews, mate solver, strea
                                            # centre of mass and bounding box for 14 parts), parameter
                                            # sweeps, and the action matrix (fillet/chamfer/shell/draft on
                                            # every edge and face of 20 parts against a saved baseline)
-node --test tests/js/solver.test.mjs       # sketch solver
+npm ci                                    # dev-only DOM test dependency; Node >=20.6
+npm test                                  # sketch solver, offset, document history, command and DOM regressions
 ```
+
+The [2026-10-16 review](docs/CODE_REVIEW_2026-10-16.md) records reproduced bugs, fixes,
+new-feature usage, UX recommendations and validation limits.
 
 ## Roadmap
 
@@ -345,8 +355,8 @@ node --test tests/js/solver.test.mjs       # sketch solver
    the main direction as features instead of STEP.
 2. Assemblies: tangent, width and symmetric mates, gear and slot mates, sub-assemblies, exploded
    views, mate references picked from vertices and circular edges.
-3. Remaining part features: Hole Wizard, Swept / Lofted, Rib, Instant3D drag handles,
-   splines, sketch text, configurations.
+3. Remaining part features: hole threads and standard presets, sweep/loft guide curves and advanced
+   controls, Rib, Instant3D drag handles, splines, sketch text, configurations.
 4. Persistent names from OpenCascade history (exact, instead of matched by geometry).
 5. Drawings.
 

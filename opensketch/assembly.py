@@ -701,7 +701,7 @@ def _size(asm, built) -> float:
 
 # ----------------------------------------------------------------------------- shapes, checks, files
 
-def placed_solids(asm: dict) -> list[tuple[dict, object]]:
+def placed_solids(asm: dict, strict: bool = False) -> list[tuple[dict, object]]:
     built = {pid: build_part(p) for pid, p in asm.get("parts", {}).items()}
     solids = {c["id"]: built[c["part"]]["solid"] for c in asm.get("components", []) if c.get("part") in built}
     sol = solve(asm, _size(asm, built), solids)
@@ -710,7 +710,11 @@ def placed_solids(asm: dict) -> list[tuple[dict, object]]:
         if c.get("suppressed"):
             continue
         b = build_part(part_of(asm, c))
+        if strict:
+            geometry.require_clean(b["status"], c.get("name") or c["id"])
         if b["solid"] is None:
+            if strict:
+                raise AssemblyError(f"Cannot export {c.get('name') or c['id']}: no solid body")
             continue
         out.append((c, b["solid"].moved(location_of(sol["poses"][c["id"]]))))
     return out
@@ -756,7 +760,7 @@ def mass_properties(asm: dict) -> dict:
 def export(asm: dict, fmt: str, path: str) -> None:
     from build123d import Compound, export_step, export_stl
     shapes = []
-    for c, s in placed_solids(asm):
+    for c, s in placed_solids(asm, strict=True):
         s.label = c.get("name") or c["id"]
         shapes.append(s)
     if not shapes:

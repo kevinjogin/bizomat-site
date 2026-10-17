@@ -2,6 +2,7 @@
 
 import { icon } from '../icons.js';
 import { featureIcon } from '../features.js';
+import { featureSketchIds } from '../model-utils.js';
 
 const h = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 
@@ -21,7 +22,7 @@ export class FeatureTree {
   // which feature absorbs each sketch (first consumer)
   absorbers(doc) {
     const m = new Map();
-    for (const f of doc.features) if ((f.type === 'extrude' || f.type === 'revolve') && f.sketch && !m.has(f.sketch)) m.set(f.sketch, f.id);
+    for (const f of doc.features) for (const sid of featureSketchIds(f)) if (!m.has(sid)) m.set(sid, f.id);
     return m;
   }
 
@@ -35,6 +36,7 @@ export class FeatureTree {
     const selKeys = new Set(app.selection.map((s) => `${s.kind}:${s.id}`));
     this.el.innerHTML = '';
     const node = ({ id, kind, name, ic, depth = 0, twisty = null, cls = '', badge = '', onDbl = null, data = null, onTwisty = null }) => {
+      name = String(name ?? id);
       if (q && !name.toLowerCase().includes(q)) return null;
       const n = h('div', 'tn ' + cls + (selKeys.has(`${kind}:${id}`) ? ' selected' : ''));
       n.style.paddingLeft = 4 + depth * 14 + 'px';
@@ -42,7 +44,7 @@ export class FeatureTree {
       if (twisty !== null) tw.onclick = (e) => { e.stopPropagation(); if (onTwisty) return onTwisty(); this.expanded.has(id) ? this.expanded.delete(id) : this.expanded.add(id); this.render(); };
       n.appendChild(tw);
       n.insertAdjacentHTML('beforeend', icon(ic, 16));
-      const nm = h('span', 'nm', name); n.appendChild(nm);
+      const nm = h('span', 'nm'); nm.textContent = name; n.appendChild(nm);
       if (badge) n.appendChild(h('span', 'badge', badge));
       n.onclick = (e) => app.treeClick({ kind, id, data }, e, n);
       n.ondblclick = (e) => { e.stopPropagation(); if (onDbl) onDbl(); };
@@ -55,12 +57,12 @@ export class FeatureTree {
     };
     if (app.isAsm) return app.asm.renderTree(this, node);
     const bodies = app.result?.body?.faces?.length ? 1 : 0;
-    node({ id: 'root', kind: 'root', name: `${doc.name} (Default&lt;&lt;Default&gt;_Display State 1&gt;)`, ic: 'part', cls: 'root' });
+    node({ id: 'root', kind: 'root', name: `${doc.name} (Default<<Default>_Display State 1>)`, ic: 'part', cls: 'root' });
     node({ id: 'history', kind: 'folder', name: 'History', ic: 'history', depth: 1, twisty: false });
     node({ id: 'sensors', kind: 'folder', name: 'Sensors', ic: 'sensor', depth: 1 });
     node({ id: 'annotations', kind: 'folder', name: 'Annotations', ic: 'annotations', depth: 1, twisty: false });
     node({ id: 'bodies', kind: 'folder', name: `Solid Bodies(${bodies})`, ic: 'bodies', depth: 1, twisty: false });
-    node({ id: 'material', kind: 'material', name: doc.material?.name ? doc.material.name : 'Material &lt;not specified&gt;', ic: 'material', depth: 1, onDbl: () => app.materialDialog() });
+    node({ id: 'material', kind: 'material', name: doc.material?.name ? doc.material.name : 'Material <not specified>', ic: 'material', depth: 1, onDbl: () => app.materialDialog() });
     for (const p of ['Front Plane', 'Top Plane', 'Right Plane']) node({ id: p, kind: 'plane', name: p, ic: 'plane_t', depth: 1 });
     node({ id: 'origin', kind: 'origin', name: 'Origin', ic: 'origin', depth: 1 });
 

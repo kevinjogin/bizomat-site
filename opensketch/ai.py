@@ -21,6 +21,7 @@ from __future__ import annotations
 import copy
 import itertools
 import json
+import math
 import re
 import uuid
 from typing import Iterator
@@ -119,7 +120,8 @@ Assembly workflow (one tool call per step, so the user can follow it):
      {{"component": id, "point": [x,y,z]}}
      {{"component": id, "ref": "Front Plane"|"Top Plane"|"Right Plane"|"Origin"|"X axis"|"Y axis"|"Z axis"}}
    Mate types: coincident, concentric, parallel, perpendicular, distance (value mm), angle (value deg),
-   lock. For two touching faces use coincident with "align": "anti" (normals facing each other).
+   lock, limit_distance (min/max mm), limit_angle (min/max degrees), hinge (axis refs plus optional
+   planes, angle_refs, angle_min/angle_max). For two touching faces use coincident with "align": "anti".
    Leave a rotation or slide free when the real product moves (a piston slides, a wheel spins).
 4. check_interference at the end, fix real clashes (holes too small, parts overlapping).
 The create_part result lists the part's planar faces and cylinder axes; use them for mate references.
@@ -224,8 +226,10 @@ TOOLS = [
          "value": {"type": "number", "description": "distance in mm or angle in degrees"},
          "align": {"type": "string", "enum": ["anti", "aligned", "auto"]},
          "flip": {"type": "boolean"},
-         "planes": {"type": "array", "items": _REF, "description": "hinge: two faces kept together (stops sliding)"},
-         "angle_refs": {"type": "array", "items": _REF, "description": "hinge: two faces whose angle is limited"},
+         "planes": {"type": "array", "items": _REF, "minItems": 2, "maxItems": 2,
+                    "description": "hinge: two faces kept together (stops sliding)"},
+         "angle_refs": {"type": "array", "items": _REF, "minItems": 2, "maxItems": 2,
+                        "description": "hinge: two faces whose angle is limited"},
          "angle_min": {"type": "number"}, "angle_max": {"type": "number"},
          "min": {"type": "number", "description": "limit_distance / limit_angle"},
          "max": {"type": "number", "description": "limit_distance / limit_angle"}}, "required": ["type", "refs"]}},
@@ -721,8 +725,15 @@ class Session:
         return json.dumps(rep), rep["clean"], [ev]
 
     def add_mate(self, inp: dict) -> tuple[str, bool, list]:
-        asm = self._asm()
         t = inp.get("type")
+        if t not in assembly.MATE_TYPES:
+            return f"Unknown mate type {t!r}", False, []
+        limit_keys = ("min", "max") if t in ("limit_distance", "limit_angle") else ("angle_min", "angle_max") if t == "hinge" and inp.get("angle_refs") else None
+        if limit_keys:
+            low, high = (inp.get(k) for k in limit_keys)
+            if not all(isinstance(v, (int, float)) and math.isfinite(v) for v in (low, high)) or low > high:
+                return f"Provide finite {limit_keys[0]} and {limit_keys[1]}, with the lower limit first.", False, []
+        asm = self._asm()
         mid = f"m{asm.get('seq', 1)}"
         while any(m["id"] == mid for m in asm["mates"]):
             asm["seq"] = asm.get("seq", 1) + 1
@@ -922,8 +933,8 @@ class Session:
         parts = set(inp.get("parts") or [])
         comps |= {c["id"] for c in asm["components"] if c.get("part") in parts}
         mates = set(inp.get("mates") or [])
-        mates |= {m["id"] for m in asm["mates"]
-                  if any(r.get("component") in comps for k in ("refs", "planes", "angle_refs") for r in m.get(k) or [])}
+        mates |= {m["id"] for m in asm["mates"] if any(r.get("component") in comps
+                  for key in assembly.REF_KEYS for r in m.get(key, []))}
         asm["components"] = [c for c in asm["components"] if c["id"] not in comps]
         asm["mates"] = [m for m in asm["mates"] if m["id"] not in mates]
         asm["sequence"] = [c for c in asm.get("sequence", []) if c not in comps]

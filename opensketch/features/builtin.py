@@ -47,6 +47,50 @@ register(FeatureType(
     ]))
 
 register(FeatureType(
+    "sweep", "Sweep", "Sweep", "sweep", "Sweeps one closed sketch profile along a path drawn in another sketch.",
+    ui="custom", label="Swept Boss/Base",
+    notes="The path is one connected chain of non-construction curves. No guide curves or twist.",
+    params=[
+        Param("sketch", "sketch", "The closed profile sketch", required=True),
+        Param("path", "sketch", "A different sketch holding the path", required=True),
+        Param("op", "enum", "boss adds material, cut removes it", default="boss", options=OP),
+        Param("merge", "bool", "Boss: merge with the existing body", default=True),
+    ]))
+
+register(FeatureType(
+    "loft", "Loft", "Loft", "loft", "Adds or removes material between two or more closed profiles, in order.",
+    ui="custom", label="Lofted Boss/Base",
+    notes="One closed contour per sketch, no inner contours or guide curves: loft the outside, then cut the inside.",
+    params=[
+        Param("profiles", "features", "Profile sketch ids in section order (at least two different sketches)", required=True),
+        Param("ruled", "bool", "Straight (ruled) sections instead of smooth", default=False),
+        Param("op", "enum", "boss adds material, cut removes it", default="boss", options=OP),
+        Param("merge", "bool", "Boss: merge with the existing body", default=True),
+    ]))
+
+register(FeatureType(
+    "hole", "Hole", "Hole", "hole", "Hole Wizard: a simple, counterbore or countersink hole with explicit dimensions.",
+    ui="custom", label="Hole Wizard",
+    notes=("x and y are the position in the plane's own coordinates. Holes on outer faces usually need "
+           '"reverse": true to cut into the material. Flat bottom; no threads or standard sizes; one position '
+           "per feature (pattern it for more)."),
+    params=[
+        Param("plane", "plane", "The plane or planar face the hole starts on", required=True),
+        Param("x", "length", "Position along the plane's x direction", default=0),
+        Param("y", "length", "Position along the plane's y direction", default=0),
+        Param("diameter", "length", "Hole diameter", required=True, min=0.0001),
+        Param("end", "enum", "End condition", default="blind", options=[("blind", "Blind"), ("through_all", "Through All")]),
+        Param("depth", "length", "Depth", default=10, min=0.0001, when={"end": ["blind"]}),
+        Param("reverse", "bool", "Go the other way along the plane normal", default=False),
+        Param("style", "enum", "Hole type", default="simple",
+              options=[("simple", "Simple"), ("counterbore", "Counterbore"), ("countersink", "Countersink")]),
+        Param("bore_diameter", "length", "Counterbore diameter (more than the hole)", min=0.0001, when={"style": ["counterbore"]}),
+        Param("bore_depth", "length", "Counterbore depth", min=0.0001, when={"style": ["counterbore"]}),
+        Param("sink_diameter", "length", "Countersink diameter (more than the hole)", min=0.0001, when={"style": ["countersink"]}),
+        Param("sink_angle", "angle", "Countersink included angle", default=90, min=1, max=179, when={"style": ["countersink"]}),
+    ]))
+
+register(FeatureType(
     "fillet", "Fillet", "Fillet", "fillet", "Rounds edges with a constant radius.", ui="custom",
     params=[
         Param("radius", "length", "Radius", default=2, min=0.0001),
