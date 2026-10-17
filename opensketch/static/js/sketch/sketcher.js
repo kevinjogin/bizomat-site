@@ -3,6 +3,8 @@
 
 import * as THREE from 'three';
 import { solveSketch, measure } from './solver.js';
+import { planOffset } from './offset.js';
+import { buildOffsetSketch } from './offset-apply.js';
 import { Batch, SK, pointsOf, entityPolyline } from './draw.js';
 import {
   dist, sub, add, mul, dot, cross, len, norm, perp, ang, projSeg, projLine, inArc, wrap2pi,
@@ -52,6 +54,7 @@ export class Sketcher {
 
   // ------------------------------------------------------------------ lifecycle
   begin(sk, frame) {
+    this.offsetPreview = null;
     this.active = true;
     this.skId = sk.id;
     this.frame = frame;
@@ -71,6 +74,7 @@ export class Sketcher {
   }
 
   end() {
+    this.offsetPreview = null;
     this.active = false;
     this.tool = null;
     this.clearModelSel();
@@ -383,7 +387,7 @@ export class Sketcher {
     if (!t) {
       const h = this.hitTest(q);
       this.setHover(h ? h.id : null);
-      const mp = h ? null : this.viewer.pick(x, y, { edges: true, faces: false });
+      const mp = h || this.app.cmd?.sketchSelectionOnly ? null : this.viewer.pick(x, y, { edges: true, faces: false });
       this.viewer.setHover(mp && mp.kind === 'edge' ? mp : null); // model edges highlight, ready to select
       return;
     }
@@ -622,7 +626,7 @@ export class Sketcher {
   selectDown(x, y, q, e) {
     const h = this.hitTest(q);
     if (!h) {
-      const mp = this.viewer.pick(x, y, { edges: true, faces: false });
+      const mp = this.app.cmd?.sketchSelectionOnly ? null : this.viewer.pick(x, y, { edges: true, faces: false });
       if (mp && mp.kind === 'edge') { // a model edge: select it (for Convert Entities), like SOLIDWORKS
         const k = this.viewer.key(mp);
         if (e.ctrlKey || e.shiftKey) { this.modelSel.has(k) ? this.modelSel.delete(k) : this.modelSel.set(k, mp); }
@@ -641,7 +645,7 @@ export class Sketcher {
     if (e.ctrlKey || e.shiftKey) { this.sel.has(h.id) ? this.sel.delete(h.id) : this.sel.add(h.id); }
     else if (!this.sel.has(h.id)) { this.sel.clear(); this.sel.add(h.id); }
     this.app.onSketchSelection();
-    if (h.id !== 'origin') this.drag = { id: h.id, q0: q, x0: x, y0: y, started: false, snapshot: JSON.stringify(this.sk.entities) };
+    if (h.id !== 'origin' && !this.app.cmd?.sketchSelectionOnly) this.drag = { id: h.id, q0: q, x0: x, y0: y, started: false, snapshot: JSON.stringify(this.sk.entities) };
     this.render();
   }
 
@@ -1074,46 +1078,47 @@ export class Sketcher {
     });
   }
 
-  offsetSelection(d) {
-    const ids = [...this.sel];
-    const es = ids.map((id) => this.ent(id)).filter((e) => e && (e.type === 'circle' || e.type === 'line'));
-    if (!es.length) { this.app.toast('Select circles or a closed chain of lines to offset.'); return; }
-    const P = this.P();
-    this.edit('Offset Entities', () => {
-      for (const c of es.filter((e) => e.type === 'circle')) {
-        const nid = this.addEnt({ type: 'circle', center: c.center, r: Math.max(c.r + d, 1e-3) });
-        void nid;
-      }
-      const lines = es.filter((e) => e.type === 'line');
-      if (lines.length >= 3) {
-        // closed chain: walk it
-        const order = [lines[0]]; const used = new Set([lines[0].id]); let cur = lines[0].p2;
-        while (order.length < lines.length) {
-          const nx = lines.find((l) => !used.has(l.id) && (l.p1 === cur || l.p2 === cur));
-          if (!nx) break;
-          used.add(nx.id); order.push(nx); cur = nx.p1 === cur ? nx.p2 : nx.p1;
-        }
-        if (order.length !== lines.length) return;
-        // chain vertices in order
-        const verts = []; let p = order[0].p1;
-        for (const l of order) { verts.push(P.get(p)); p = l.p1 === p ? l.p2 : l.p1; }
-        let area = 0; for (let i = 0; i < verts.length; i++) area += cross(verts[i], verts[(i + 1) % verts.length]);
-        const s = area > 0 ? 1 : -1; // positive d = outward
-        const offL = verts.map((v, i) => { const w = verts[(i + 1) % verts.length]; const nrm = mul(perp(norm(sub(w, v))), -s * d); return [add(v, nrm), add(w, nrm)]; });
-        const pts = offL.map((l, i) => {
-          const prev = offL[(i - 1 + offL.length) % offL.length];
-          const r = sub(prev[1], prev[0]), q = sub(l[1], l[0]); const den = cross(r, q);
-          if (Math.abs(den) < 1e-12) return l[0];
-          const t = cross(sub(l[0], prev[0]), q) / den; return add(prev[0], mul(r, t));
-        });
-        const pids = pts.map((pp) => this.addPoint(...pp));
-        pids.forEach((id, i) => {
-          const nl = this.addEnt({ type: 'line', p1: id, p2: pids[(i + 1) % pids.length] });
-          this.addCon('parallel', [order[i].id, nl]);
-        });
-        this.addCon('distance', [order[0].id, this.sk.entities[this.sk.entities.length - pids.length].id], { value: Math.abs(d), name: this.nextDimName(), label: mul(add(...offL[0]), 0.5) });
-      }
+  prepareOffset(d, options = {}) {
+    // Window selection includes endpoints and relation glyphs as well as curves.
+    const curves = [...this.sel].filter((id) => {
+      const entity = this.ent(id);
+      return entity && !entity.ref && ['line', 'arc', 'circle'].includes(entity.type);
     });
+    return planOffset(this.sk, curves, d, options);
+  }
+
+  offsetSelection(d, options = {}) {
+    try {
+      const plan = this.prepareOffset(d, options);
+      const used = new Set();
+      for (const f of this.app.doc.features) {
+        used.add(f.id);
+        for (const e of f.entities || []) used.add(e.id);
+        for (const c of f.constraints || []) used.add(c.id);
+      }
+      let seq = this.app.doc.seq;
+      const uid = (prefix) => {
+        let id;
+        do { id = prefix + seq++; } while (used.has(id));
+        used.add(id); return id;
+      };
+      const candidate = buildOffsetSketch(this.sk, plan, uid);
+      const solved = solveSketch(candidate.sketch);
+      if (!solved.ok) throw new Error('The offset could not be solved. Reduce the distance or change the selection.');
+      this.app.pushUndo('Offset Entities');
+      this.sk.entities = candidate.sketch.entities;
+      this.sk.constraints = candidate.sketch.constraints;
+      this.app.doc.seq = seq;
+      this.offsetPreview = null;
+      this.sel = new Set(candidate.ids);
+      this.solve();
+      this.app.docChanged();
+      this.render();
+      return true;
+    } catch (error) {
+      this.app.toast(error.message || 'The selected entities could not be offset.');
+      return false;
+    }
   }
 
   // ------------------------------------------------------------------ rendering
@@ -1150,6 +1155,14 @@ export class Sketcher {
       b.square([e.x, e.y], big ? 7 : e.virtualSharp ? 4 : 5, this.colorOf(e.id));
     }
     if (this.hover === 'origin' || this.sel.has('origin')) b.square([0, 0], 8, this.colorOf('origin'));
+    for (const curve of this.offsetPreview?.curves || []) {
+      let points;
+      if (curve.type === 'line') points = [curve.p1, curve.p2];
+      else if (curve.type === 'circle') points = arcPoints(curve.center, curve.r, 0, 2 * Math.PI);
+      else points = arcPoints(curve.center, dist(curve.center, curve.start),
+        ang(sub(curve.start, curve.center)), ang(sub(curve.end, curve.center)));
+      b.poly(points, 2.5, 0xe6a100, 'dashed', 1);
+    }
     this.renderTool(b, P);
     this.renderDims(b, P);
     b.build(v.sketchGroup);

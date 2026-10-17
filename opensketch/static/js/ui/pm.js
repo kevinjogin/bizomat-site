@@ -19,6 +19,7 @@ export class PropertyManager {
     this.app = app;
     this.spec = null;
     this.activeSelbox = null;
+    this.feedbackUpdates = [];
   }
 
   get isOpen() { return !!this.spec; }
@@ -35,6 +36,7 @@ export class PropertyManager {
   close() {
     this.spec = null;
     this.activeSelbox = null;
+    this.feedbackUpdates = [];
     this.root.innerHTML = '';
     this.app.showPanel('tree');
   }
@@ -53,9 +55,16 @@ export class PropertyManager {
     if (rerender) this.render();
   }
 
+  // Keep inputs and action buttons mounted while a committed field value
+  // updates validation. Replacing them during blur can swallow the next click.
+  refreshFeedback() {
+    for (const update of this.feedbackUpdates) update();
+  }
+
   render() {
     const s = this.spec;
     if (!s) return;
+    this.feedbackUpdates = [];
     const root = this.root;
     const scroll = root.scrollTop;
     root.innerHTML = '';
@@ -64,6 +73,7 @@ export class PropertyManager {
     pm.appendChild(title);
     const acts = el('div', 'pm-actions');
     const ok = el('div', 'pm-act' + (s.okEnabled && !s.okEnabled() ? ' disabled' : ''), icon('ok', 20)); ok.title = 'OK';
+    this.feedbackUpdates.push(() => ok.classList.toggle('disabled', !!s.okEnabled && !s.okEnabled()));
     ok.onclick = () => this.app.pmOk();
     acts.appendChild(ok);
     if (!s.noCancel) { const cancel = el('div', 'pm-act', icon('cancel', 20)); cancel.title = 'Cancel'; cancel.onclick = () => this.app.pmCancel(); acts.appendChild(cancel); }
@@ -78,7 +88,9 @@ export class PropertyManager {
     pm.appendChild(acts);
     const msg = typeof s.message === 'function' ? s.message() : s.message;
     if (msg) pm.appendChild(el('div', 'pm-msg' + (s.messageError ? ' err' : ''), msg));
-    if (s.error) pm.appendChild(el('div', 'pm-msg err', s.error));
+    const error = el('div', 'pm-msg err');
+    const updateError = () => { error.innerHTML = s.error || ''; error.hidden = !s.error; };
+    updateError(); this.feedbackUpdates.push(updateError); pm.appendChild(error);
     for (const sec of s.sections) {
       if (sec.visible && !sec.visible()) continue;
       const box = el('div', 'pm-sec');
@@ -187,7 +199,13 @@ export class PropertyManager {
         break;
       }
       case 'text': row.appendChild(el('div', 'pm-note', typeof r.text === 'function' ? r.text() : r.text)); break;
-      case 'value': row.appendChild(el('span', null, r.label)); row.appendChild(el('span', 'grow', `<b>${r.get()}</b>`)); break;
+      case 'value': {
+        row.appendChild(el('span', null, r.label));
+        const value = el('span', 'grow');
+        const update = () => { value.innerHTML = `<b>${r.get()}</b>`; };
+        update(); this.feedbackUpdates.push(update); row.appendChild(value);
+        break;
+      }
       case 'relbuttons': {
         const wrap = el('div', 'pm-relbtns grow');
         const list = r.items();
