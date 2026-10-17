@@ -567,3 +567,5 @@ body.dp-scrubbing, body.dp-scrubbing * { cursor: ew-resize !important; }
 .ai-selchip .x:hover { background: rgba(0, 0, 0, .08); }
 .ai-about { margin-top: 4px; font-size: 10.5px; color: var(--muted); }
 
+
+.btn.ai-demo { height: auto; min-height: 28px; padding: 5px 12px 5px 9px; text-align: left; white-space: normal; line-height: 1.3; }

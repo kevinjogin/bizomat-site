@@ -110,10 +110,10 @@ export class TaskPane {
       }
       logEl.appendChild(ex);
       if (this.app.aiAvailable === false || this.app.aiDemo) {
-        const off = h('div', 'ai-msg ' + (this.app.aiDemo ? 'bot' : 'err'), this.app.aiDemo ? 'Demo mode: requests play a recorded session.' : 'The AI is offline. Start the server with ANTHROPIC_API_KEY set to use it.');
+        const off = h('div', 'ai-msg ' + (this.app.aiDemo ? 'bot' : 'err'), this.app.aiDemo ? 'Demo mode: requests play a recorded session.' : 'The AI is off on this server: it has no Anthropic API key. To turn it on, add an ANTHROPIC_API_KEY secret in the GitHub repository (Settings > Secrets and variables > Actions) and run the Deploy workflow. The demo below works without it.');
         logEl.appendChild(off);
       }
-      const demo = h('button', 'btn ai-demo', `${icon('playback', 14)} Watch a demo: AI builds a hand press assembly`);
+      const demo = h('button', 'btn ai-demo', `${icon('playback', 14)}<span>Watch a demo: the AI builds a hand press</span>`);
       demo.onclick = () => this.send('Build a hand press assembly (demo)', { demo: true });
       logEl.appendChild(demo);
     }

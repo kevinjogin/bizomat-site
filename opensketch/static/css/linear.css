@@ -401,3 +401,5 @@
 .skin-linear .mr-check.bad { background: var(--err-bg); }
 .skin-linear .mr-check.bad .mr-mark { color: var(--red); }
 .skin-linear body.review-mode #leftpanel { border-top-color: var(--line); }
+.skin-linear .btn.ai-demo { height: auto; min-height: 30px; gap: 8px; }
+.skin-linear .ai-msg.err a, .skin-linear .ai-msg.err { line-height: 1.45; }
