@@ -132,6 +132,28 @@ proves you own the server. After that everyone signs in with their own email and
 - Claude's connector address does not change when you add accounts. Published review links still work
   without signing in.
 
+## Your own AI key
+
+Account menu (top right) > AI model and key. Pick a provider (Anthropic Claude, OpenAI, Google Gemini,
+OpenRouter for many other models, or any OpenAI-compatible address), paste your API key, press Check key to
+list the models it can use, choose one and Save. The key is stored encrypted on your account and used only for
+your requests; the app never shows it again (only its last four characters). Web search and page reading work
+with Claude only. If the server has its own `ANTHROPIC_API_KEY`, people without a key of their own use that
+one (set `OPENSKETCH_SHARE_SERVER_KEY=0` to stop sharing it).
+
+## Sign in with Google (optional)
+
+1. In Google Cloud Console (console.cloud.google.com): APIs & Services > OAuth consent screen: set it up as
+   External with your app name and email. Then Credentials > Create credentials > OAuth client ID >
+   Web application. Under Authorized redirect URIs add `https://opensketch-yz.fly.dev/auth/google/callback`
+   (and `https://<your domain>/auth/google/callback` if you use one). Create, then copy the Client ID and
+   Client secret.
+2. On GitHub, add two repository secrets: `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`. Run the Deploy
+   workflow.
+3. The sign-in page now has Continue with Google. Your own account links itself the first time you use it
+   (same email). New people need an invite link (Join with Google), unless you turn on "Anyone can create an
+   account" in the avatar menu > People on this server.
+
 ## Design panel and Ask AI
 
 Click a face, a feature, a sketch, a component or a mate and the Design panel (right) shows the numbers that

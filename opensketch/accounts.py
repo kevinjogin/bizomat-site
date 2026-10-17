@@ -69,7 +69,8 @@ def _sha(token: str) -> str:
 
 
 def public(u: dict) -> dict:
-    return {"id": u["id"], "email": u["email"], "name": u["name"], "role": u["role"], "created": u.get("created")}
+    return {"id": u["id"], "email": u["email"], "name": u["name"], "role": u["role"], "created": u.get("created"),
+            "google": bool(u.get("google")), "has_password": bool(u.get("hash"))}
 
 
 def any_users() -> bool:
@@ -84,22 +85,26 @@ def get(user_id: str) -> dict | None:
     return next((public(u) for u in _users()["users"] if u["id"] == user_id), None)
 
 
-def _check_new(email: str, name: str, password: str, data: dict) -> tuple[str, str]:
+def _check_new(email: str, name: str, password: str | None, data: dict) -> tuple[str, str]:
     email = (email or "").strip().lower()
     name = (name or "").strip()[:60]
     if not EMAIL_RE.match(email) or len(email) > 200:
         raise AccountError("Enter a valid email address.")
-    if len(password or "") < MIN_PASSWORD:
+    if password is not None and len(password or "") < MIN_PASSWORD:
         raise AccountError(f"Use a password of at least {MIN_PASSWORD} characters.")
     if any(u["email"] == email for u in data["users"]):
         raise AccountError("There is already an account with this email.")
     return email, name or email.split("@")[0]
 
 
-def _new_user(email: str, name: str, password: str, role: str) -> dict:
+def _new_user(email: str, name: str, password: str | None, role: str, google: str | None = None) -> dict:
+    """A password of None (Google sign-up) stores no usable password until the person sets one."""
     salt = secrets.token_bytes(16)
-    return {"id": uuid.uuid4().hex[:12], "email": email, "name": name, "role": role,
-            "salt": salt.hex(), "hash": _hash(password, salt), "created": int(time.time())}
+    u = {"id": uuid.uuid4().hex[:12], "email": email, "name": name, "role": role,
+         "salt": salt.hex(), "hash": _hash(password, salt) if password else "", "created": int(time.time())}
+    if google:
+        u["google"] = google
+    return u
 
 
 def create_owner(email: str, name: str, password: str) -> dict:
@@ -119,7 +124,7 @@ def verify(email: str, password: str) -> dict | None:
     email = (email or "").strip().lower()
     for u in _users()["users"]:
         if u["email"] == email:
-            ok = hmac.compare_digest(_hash(password or "", bytes.fromhex(u["salt"])), u["hash"])
+            ok = bool(u["hash"]) and hmac.compare_digest(_hash(password or "", bytes.fromhex(u["salt"])), u["hash"])
             return public(u) if ok else None
     _hash(password or "", b"0" * 16)  # same time whether or not the email exists
     return None
@@ -135,7 +140,7 @@ def set_password(user_id: str, new: str, current: str | None = None) -> None:
         u = next((x for x in data["users"] if x["id"] == user_id), None)
         if u is None:
             raise AccountError("No such account.")
-        if current is not None and not hmac.compare_digest(_hash(current, bytes.fromhex(u["salt"])), u["hash"]):
+        if current is not None and u["hash"] and not hmac.compare_digest(_hash(current, bytes.fromhex(u["salt"])), u["hash"]):
             raise AccountError("The current password is wrong.")
         salt = secrets.token_bytes(16)
         u["salt"], u["hash"] = salt.hex(), _hash(new, salt)
@@ -194,7 +199,7 @@ def invite_valid(token: str) -> bool:
     return any(hmac.compare_digest(i["hash"], h) and i["expires"] > now for i in _users()["invites"])
 
 
-def accept_invite(token: str, email: str, name: str, password: str) -> dict:
+def accept_invite(token: str, email: str, name: str, password: str | None, google: str | None = None) -> dict:
     with _lock:
         data = _users()
         now = int(time.time())
@@ -203,7 +208,7 @@ def accept_invite(token: str, email: str, name: str, password: str) -> dict:
         if inv is None:
             raise AccountError("This invite link has expired or was already used. Ask for a new one.")
         email, name = _check_new(email, name, password, data)
-        u = _new_user(email, name, password, "member")
+        u = _new_user(email, name, password, "member", google)
         data["users"].append(u)
         data["invites"] = [i for i in data["invites"] if i is not inv]
         _write("users.json", data)
@@ -249,3 +254,46 @@ def end_sessions(user_id: str) -> None:
         kept = {k: v for k, v in s.items() if v["user"] != user_id}
         if len(kept) != len(s):
             _write("sessions.json", kept)
+
+
+# ---------------------------------------------------------------- sign-up and Google
+
+def settings() -> dict:
+    return {"open_signup": bool(_users().get("settings", {}).get("open_signup"))}
+
+
+def set_open_signup(on: bool) -> dict:
+    with _lock:
+        data = _users()
+        data.setdefault("settings", {})["open_signup"] = bool(on)
+        _write("users.json", data)
+    return settings()
+
+
+def sign_up(email: str, name: str, password: str | None, google: str | None = None) -> dict:
+    """A new member without an invite: only when the owner turned on open sign-up."""
+    with _lock:
+        data = _users()
+        if not data["users"]:
+            raise AccountError("Create the owner account first.")
+        if not data.get("settings", {}).get("open_signup"):
+            raise AccountError("This server is invite-only. Ask the owner for an invite link.")
+        email, name = _check_new(email, name, password, data)
+        u = _new_user(email, name, password, "member", google)
+        data["users"].append(u)
+        _write("users.json", data)
+        return public(u)
+
+
+def google_user(sub: str, email: str, verified: bool) -> dict | None:
+    """The account for a Google sign-in: already linked to this Google id, or (verified email) the account with
+    that email, which gets linked. None when there is no such account."""
+    with _lock:
+        data = _users()
+        u = next((x for x in data["users"] if x.get("google") == sub), None)
+        if u is None and verified:
+            u = next((x for x in data["users"] if x["email"] == (email or "").strip().lower()), None)
+            if u is not None:
+                u["google"] = sub
+                _write("users.json", data)
+        return public(u) if u else None

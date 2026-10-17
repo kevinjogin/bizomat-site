@@ -110,7 +110,13 @@ export class TaskPane {
       }
       logEl.appendChild(ex);
       if (this.app.aiAvailable === false || this.app.aiDemo) {
-        const off = h('div', 'ai-msg ' + (this.app.aiDemo ? 'bot' : 'err'), this.app.aiDemo ? 'Demo mode: requests play a recorded session.' : 'The AI is off on this server: it has no Anthropic API key. To turn it on, add an ANTHROPIC_API_KEY secret in the GitHub repository (Settings > Secrets and variables > Actions) and run the Deploy workflow. The demo below works without it.');
+        const off = h('div', 'ai-msg ' + (this.app.aiDemo ? 'bot' : 'err'));
+        off.textContent = this.app.aiDemo ? 'Demo mode: requests play a recorded session.' : 'The AI needs an API key. Add your own: Claude, OpenAI, Gemini, OpenRouter or any OpenAI-compatible provider. The demo below works without one.';
+        if (!this.app.aiDemo) {
+          const b = h('button', 'btn primary ai-keybtn', 'Add your API key');
+          b.onclick = () => import('../aikeys.js').then((m) => m.aiKeyDialog(this.app));
+          off.appendChild(b);
+        }
         logEl.appendChild(off);
       }
       const demo = h('button', 'btn ai-demo', `${icon('playback', 14)}<span>Watch a demo: the AI builds a hand press</span>`);
@@ -128,6 +134,15 @@ export class TaskPane {
     this.updateSelChip();
     const row = h('div', 'row');
     row.appendChild(h('span', 'hint', this.busy ? 'Building... you can rotate and zoom the view' : 'Ctrl+Enter to send'));
+    const info = this.app.aiInfo;
+    if (info?.model && !info.demo) {
+      const mr = h('div', 'ai-modelrow');
+      const m = h('a', 'ai-model', `${info.label || 'Model'}: ${info.model}${info.source === 'yours' ? '' : ' (server key)'}`);
+      m.href = '#'; m.title = 'Change the AI model or key';
+      m.onclick = (e) => { e.preventDefault(); import('../aikeys.js').then((mod) => mod.aiKeyDialog(this.app)); };
+      mr.appendChild(m);
+      this.chipHost.appendChild(mr);
+    }
     const reset = h('button', 'btn', 'New chat'); reset.onclick = () => { if (this.busy) return; this.log = []; this.conversation = null; this.render(); };
     reset.disabled = this.busy;
     const send = this.busy ? h('button', 'btn danger', `${icon('ai_stop', 12)} Stop`) : h('button', 'btn primary', 'Send');

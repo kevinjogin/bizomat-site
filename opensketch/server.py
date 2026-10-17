@@ -320,11 +320,15 @@ def api_ai(req: AIRequest):
 
 
 @app.post("/api/ai/stream")
-def api_ai_stream(req: AIRequest):
-    """Newline-delimited JSON events while the AI designs (see ai.run_stream)."""
+def api_ai_stream(req: AIRequest, request: Request):
+    """Newline-delimited JSON events while the AI designs (see ai.run_stream), with the person's own key
+    (aikeys) or the server's."""
+    from . import aikeys
+    cfg = aikeys.effective(getattr(request.state, "user", None))
+
     def gen():
         try:
-            for ev in ai.run_stream(req.doc, req.prompt, req.conversation, demo=req.demo, selection=req.selection):
+            for ev in ai.run_stream(req.doc, req.prompt, req.conversation, demo=req.demo, selection=req.selection, ai_config=cfg):
                 yield json.dumps(ev, separators=(",", ":")) + "\n"
         except Exception as exc:  # never leave the client hanging
             yield json.dumps({"ev": "error", "message": f"Server error: {exc}"}) + "\n"
@@ -342,8 +346,70 @@ def api_version():
 
 
 @app.get("/api/ai/status")
-def api_ai_status():
-    return {"available": ai.available() or ai.demo_enabled(), "demo": ai.demo_enabled()}
+def api_ai_status(request: Request):
+    from . import aikeys, providers
+    cfg = aikeys.effective(getattr(request.state, "user", None))
+    out = {"available": bool(cfg) or ai.demo_enabled(), "demo": ai.demo_enabled(), "source": cfg and cfg["source"]}
+    if cfg:
+        out.update(provider=cfg["provider"], model=cfg["model"], label=providers.PROVIDERS[cfg["provider"]]["label"])
+    return out
+
+
+class AIKeyRequest(BaseModel):
+    provider: str
+    model: str | None = None
+    key: str | None = None
+    base_url: str | None = None
+
+
+@app.get("/api/ai/keys")
+def api_ai_keys(request: Request):
+    """This person's AI settings (never the key itself), the providers, and whether the server has a key."""
+    from . import aikeys, providers
+    return {"settings": aikeys.public(aikeys.owner_id(getattr(request.state, "user", None))),
+            "providers": providers.public_list(), "server_key": aikeys.server_config() is not None}
+
+
+@app.post("/api/ai/keys")
+def api_ai_keys_save(req: AIKeyRequest, request: Request):
+    from . import aikeys
+    try:
+        return {"settings": aikeys.save(aikeys.owner_id(getattr(request.state, "user", None)), req.provider, req.model or "",
+                                        req.key, req.base_url)}
+    except aikeys.KeyError_ as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
+
+
+@app.delete("/api/ai/keys")
+def api_ai_keys_remove(request: Request):
+    from . import aikeys
+    aikeys.remove(aikeys.owner_id(getattr(request.state, "user", None)))
+    return {"settings": None}
+
+
+@app.post("/api/ai/models")
+def api_ai_models(req: AIKeyRequest, request: Request):
+    """Check a key and list the models it can use. Without a key, the stored one (same provider) is used."""
+    from . import aikeys, providers
+    spec = providers.PROVIDERS.get(req.provider)
+    if spec is None:
+        return JSONResponse({"error": "Choose a provider."}, status_code=400)
+    key = (req.key or "").strip()
+    if not key:
+        stored = aikeys.config_for(aikeys.owner_id(getattr(request.state, "user", None)))
+        if not stored or stored["provider"] != req.provider:
+            return JSONResponse({"error": "Paste the API key first."}, status_code=400)
+        key = stored["key"]
+    base = (req.base_url or "").strip().rstrip("/") or spec["base_url"]
+    if not base:
+        return JSONResponse({"error": "Enter the provider's address."}, status_code=400)
+    try:
+        if req.provider == "custom":
+            base = providers.check_base_url(base)
+        models = providers.list_models({"provider": req.provider, "key": key, "base_url": base})
+    except providers.ProviderError as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
+    return {"ok": True, "models": models[:500]}
 
 
 # ----------------------------------------------------------------------------- server documents
@@ -422,7 +488,9 @@ def api_account(request: Request):
     from . import accounts
     u = _user(request)
     m = auth.mode()
-    out = {"mode": m, "user": u, "can_setup": m in ("open", "password"), "reset_with_server_password": bool(auth.password())}
+    from . import oauth
+    out = {"mode": m, "user": u, "can_setup": m in ("open", "password"), "reset_with_server_password": bool(auth.password()),
+           "google": oauth.enabled(), **accounts.settings()}
     if u and u.get("role") == "owner" and m == "accounts":
         out["users"] = accounts.list_users()
         out["pending_invites"] = accounts.pending_invites()
@@ -449,6 +517,18 @@ def api_account_update(req: AccountUpdate, request: Request):
     except accounts.AccountError as e:
         return JSONResponse({"error": str(e)}, status_code=400)
     return {"user": accounts.get(u["id"]), "signed_out": bool(req.new_password)}
+
+
+class AccountSettings(BaseModel):
+    open_signup: bool
+
+
+@app.post("/api/account/settings")
+def api_account_settings(req: AccountSettings, request: Request):
+    """Owner: let anyone create an account (email or Google), or keep the server invite-only."""
+    from . import accounts
+    _owner(request)
+    return accounts.set_open_signup(req.open_signup)
 
 
 @app.post("/api/account/invites")

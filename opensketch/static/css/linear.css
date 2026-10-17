@@ -403,3 +403,13 @@
 .skin-linear body.review-mode #leftpanel { border-top-color: var(--line); }
 .skin-linear .btn.ai-demo { height: auto; min-height: 30px; gap: 8px; }
 .skin-linear .ai-msg.err a, .skin-linear .ai-msg.err { line-height: 1.45; }
+
+/* sketch dimensions: a small backing so the text never sits on the dimension or extension lines */
+.skin-linear .dimlbl { padding: 1px 5px; border-radius: 4px; background: rgba(18, 19, 21, .88); font-weight: 500; font-variant-numeric: tabular-nums; }
+.skin-linear.theme-light .dimlbl { background: rgba(255, 255, 255, .9); }
+.skin-linear .dimlbl.under { color: #9db4ff; }
+.skin-linear.theme-light .dimlbl.under { color: #2f4fd6; }
+.skin-linear .dimlbl.preview { background: transparent; }
+.skin-linear .aik-ok { color: var(--green); }
+.skin-linear .ai-model { color: var(--accent-text); }
+.skin-linear .ai-msg.err .ai-keybtn { margin-top: 10px; }

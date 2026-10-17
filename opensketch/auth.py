@@ -21,7 +21,7 @@ import os
 import secrets
 import asyncio
 from http.cookies import SimpleCookie
-from urllib.parse import parse_qs, quote
+from urllib.parse import parse_qs, quote, urlencode
 
 COOKIE = "opensketch_session"
 ACCOUNT_COOKIE = "opensketch_user"
@@ -135,9 +135,12 @@ button{{margin-top:20px;width:100%;height:34px;border:0;border-radius:6px;backgr
 button:hover{{background:var(--accent-d)}}
 .err{{color:var(--err);background:rgba(235,87,87,.12);border-radius:6px;padding:8px 10px;margin-top:14px;font-size:12px}}
 .note{{color:var(--muted);font-size:12px;margin-top:6px}}
+.gbtn{{display:flex;align-items:center;justify-content:center;gap:10px;height:36px;border-radius:6px;background:#fff;color:#1f1f1f;font-weight:500;text-decoration:none;border:1px solid #dadce0}}
+.gbtn:hover{{background:#f2f2f2;text-decoration:none}}
+.or{{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:11.5px;margin:16px 0 2px}} .or:before,.or:after{{content:"";flex:1;border-top:1px solid var(--line)}}
 .links{{margin-top:16px;display:flex;justify-content:space-between;gap:12px;font-size:12px}} a{{color:var(--link);text-decoration:none}} a:hover{{text-decoration:underline}}
 </style></head><body><form class="card" method="post" action="{action}" autocomplete="on">
-<div class="mark"><i></i>OpenSketch</div><h1>{title}</h1><p class="sub">{sub}</p>
+<div class="mark"><i></i>OpenSketch</div><h1>{title}</h1><p class="sub">{sub}</p>{top}
 <input type="hidden" name="next" value="{next}">{fields}{error}<button type="submit">{button}</button>{links}</form></body></html>"""
 
 
@@ -146,17 +149,46 @@ def _field(name: str, label: str, kind: str = "text", auto: str = "", focus: boo
             f' value="{_esc(value)}"{" autofocus" if focus else ""} required>' + (f'<div class="note">{note}</div>' if note else ""))
 
 
-def _page(title, sub, action, fields, button, nxt="/", error="", links="") -> bytes:
-    return PAGE.format(title=title, sub=sub, action=action, fields="".join(fields), button=button, next=_esc(nxt),
+GOOGLE_G = ('<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.8 6C12.4 13.7 17.7 9.5 24 9.5z"/>'
+            '<path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/>'
+            '<path fill="#FBBC05" d="M10.5 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.8-6C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.8-6z"/>'
+            '<path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.3 0-11.6-4.2-13.5-10l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>')
+
+
+def _google_block(nxt: str = "/", invite: str = "", label: str = "Continue with Google") -> str:
+    from . import oauth
+    if not oauth.enabled():
+        return ""
+    q = urlencode({k: v for k, v in (("next", nxt), ("invite", invite)) if v and v != "/"})
+    return (f'<a class="gbtn" href="/auth/google{"?" + q if q else ""}">{GOOGLE_G}<span>{label}</span></a>'
+            '<div class="or">or with email</div>')
+
+
+def _page(title, sub, action, fields, button, nxt="/", error="", links="", top="") -> bytes:
+    return PAGE.format(title=title, sub=sub, action=action, fields="".join(fields), button=button, next=_esc(nxt), top=top,
                        error=f'<div class="err" role="alert">{_esc(error)}</div>' if error else "", links=links).encode()
 
 
 def _login_page(nxt, error="", email=""):
-    links = '<div class="links">' + ('<a href="/reset">Forgot your password?</a>' if password() else
-                                     '<span class="note">Forgot your password? Ask the owner for a new invite.</span>') + '</div>'
+    from . import accounts
+    forgot = ('<a href="/reset">Forgot your password?</a>' if password() else
+              '<span class="note">Forgot your password? Ask the owner for a new invite.</span>')
+    signup = '<a href="/signup">Create an account</a>' if accounts.settings()["open_signup"] else ""
+    links = f'<div class="links">{forgot}{signup}</div>'
     return _page("Sign in", "Sign in to your OpenSketch account.", "/login",
                  [_field("email", "Email", "email", "username", not email, email),
-                  _field("password", "Password", "password", "current-password", bool(email))], "Sign in", nxt, error, links)
+                  _field("password", "Password", "password", "current-password", bool(email))], "Sign in", nxt, error, links,
+                 _google_block(nxt))
+
+
+def _signup_page(nxt="/", error="", form=None):
+    form = form or {}
+    return _page("Create an account", "Join this OpenSketch server.", "/signup",
+                 [_field("name", "Your name", "text", "name", True, form.get("name", "")),
+                  _field("email", "Email", "email", "username", False, form.get("email", "")),
+                  _field("new_password", "Password", "password", "new-password", note="At least 8 characters.")],
+                 "Create account", nxt, error, '<div class="links"><a href="/login">I already have an account</a></div>',
+                 _google_block(nxt, label="Sign up with Google"))
 
 
 def _setup_page(nxt, error="", form=None):
@@ -177,7 +209,8 @@ def _join_page(token, error="", form=None):
                  f"/join/{quote(token)}", [_field("name", "Your name", "text", "name", True, form.get("name", "")),
                                            _field("email", "Email", "email", "username", False, form.get("email", "")),
                                            _field("new_password", "Password", "password", "new-password", note="At least 8 characters.")],
-                 "Create account", "/", error, '<div class="links"><a href="/login">I already have an account</a></div>')
+                 "Create account", "/", error, '<div class="links"><a href="/login">I already have an account</a></div>',
+                 _google_block("/", token, "Join with Google"))
 
 
 def _reset_page(error="", email=""):
@@ -238,7 +271,7 @@ class PasswordGate:
         if scope["type"] != "http":
             return await self.app(scope, receive, send)
         path = scope.get("path", "")
-        if path in ("/login", "/setup", "/reset", "/logout") or path.startswith("/join/"):
+        if path in ("/login", "/setup", "/reset", "/logout", "/signup") or path.startswith("/join/") or path.startswith("/auth/google"):
             return await self._page(path, scope, receive, send)
         # /mcp/ and /review/: their tokens are the keys. GET /api/features: the command list (no document
         # data), which the read-only review app loads too.
@@ -253,6 +286,9 @@ class PasswordGate:
             nxt = path + ("?" + scope["query_string"].decode() if scope.get("query_string") else "")
             return await _send(send, 303, b"", [(b"location", f"/login?next={quote(nxt)}".encode())])
         return await _send(send, 401, b'{"error":"Sign in to OpenSketch first."}', [(b"content-type", b"application/json")])
+
+    async def _google(self, path, scope, q, go, send):
+        return await _google_flow(path, scope, q, go, send)
 
     async def _page(self, path, scope, receive, send):
         from . import accounts
@@ -270,6 +306,20 @@ class PasswordGate:
             if tok:
                 accounts.end_session(tok)
             return await go("/login" if m != "open" else "/", _clear(ACCOUNT_COOKIE), _clear(COOKIE))
+
+        if path == "/auth/google" or path == "/auth/google/callback":
+            return await self._google(path, scope, q, go, send)
+
+        if path == "/signup":
+            if m != "accounts" or not accounts.settings()["open_signup"]:
+                return await go("/login")
+            if not post:
+                return await _send(send, 200, _signup_page(nxt), HTML)
+            try:
+                u = accounts.sign_up(form.get("email", ""), form.get("name", ""), form.get("new_password", ""))
+            except accounts.AccountError as e:
+                return await _send(send, 400, _signup_page(nxt, str(e), form), HTML)
+            return await go(nxt, _set_account_cookie(scope, accounts.start_session(u["id"])))
 
         if path.startswith("/join/"):
             token = path[len("/join/"):]
@@ -330,6 +380,61 @@ class PasswordGate:
             await asyncio.sleep(1)  # slow down guessing
             return await _send(send, 401, _login_page(nxt, "The email or password is wrong.", form.get("email", "")), HTML)
         return await go(nxt, _set_account_cookie(scope, accounts.start_session(u["id"])))
+
+
+def _request_base(scope) -> str:
+    """This request's own address (scheme + host), so the Google redirect comes back to the same site whose
+    cookies the browser holds (fly.dev or a custom domain)."""
+    h = _headers(scope)
+    host = h.get("x-forwarded-host") or h.get("host") or "127.0.0.1:8000"
+    proto = h.get("x-forwarded-proto") or scope.get("scheme") or "http"
+    return f"{proto}://{host}"
+
+
+async def _google_flow(path, scope, q, go, send):
+    from . import accounts, oauth
+    if not oauth.enabled():
+        return await go("/login")
+    if path == "/auth/google":
+        nxt = _safe_next(q.get("next") or "/")
+        url, cookie = oauth.start(_request_base(scope) + "/auth/google/callback", nxt, q.get("invite", "")[:200])
+        c = f"{oauth.STATE_COOKIE}={cookie}; Path=/auth/google; Max-Age={oauth.STATE_TTL}; HttpOnly; SameSite=Lax{_secure(scope)}"
+        return await go(url, c.encode())
+    clear = f"{oauth.STATE_COOKIE}=; Path=/auth/google; Max-Age=0; HttpOnly; SameSite=Lax".encode()
+    st = oauth.read_state(_cookie(scope, oauth.STATE_COOKIE))
+
+    async def fail(msg, status=400):
+        return await _send(send, status, _login_page((st or {}).get("n", "/"), msg) if mode() == "accounts" else
+                           _setup_page("/", msg), HTML + [(b"set-cookie", clear)])
+
+    if q.get("error"):
+        return await fail("Google sign-in was cancelled.")
+    if not st or not q.get("state") or not hmac.compare_digest(q["state"], st.get("s", "")):
+        return await fail("The Google sign-in expired. Try again.")
+    try:
+        info = await oauth.exchange(q.get("code", ""), st["r"])
+    except ValueError as e:
+        return await fail(str(e))
+    except Exception:
+        return await fail("Could not reach Google. Try again.")
+    if not accounts.any_users():
+        return await fail("Create the owner account first, then sign in with Google.")
+    verified = info.get("email_verified") in (True, "true")
+    u = accounts.google_user(info["sub"], info["email"], verified)
+    if u is None:
+        if not verified:
+            return await fail("Your Google email is not verified.")
+        try:
+            if st.get("i") and accounts.invite_valid(st["i"]):
+                u = accounts.accept_invite(st["i"], info["email"], info.get("name") or "", None, google=info["sub"])
+            else:
+                u = accounts.sign_up(info["email"], info.get("name") or "", None, google=info["sub"])
+        except accounts.AccountError as e:
+            msg = str(e)
+            if "invite-only" in msg:
+                msg = f"There is no account for {info['email']}. This server is invite-only: ask the owner for an invite link."
+            return await fail(msg, 403)
+    return await go(_safe_next(st.get("n") or "/"), _set_account_cookie(scope, accounts.start_session(u["id"])), clear)
 
 
 def _esc(t: str) -> str:

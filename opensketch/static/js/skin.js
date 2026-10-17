@@ -41,3 +41,6 @@ export const VIEW_COLORS = SKIN !== 'linear' ? null : THEME === 'dark'
 export const SKETCH_COLORS = SKIN === 'linear' && THEME === 'dark'
   ? { under: 0x7c9dff, fully: 0xf2f3f5, over: 0xff6369, preview: 0x8fb0ff, construction: 0x9a9fe0, inactive: 0xb4b7be, dim: 0xf2f3f5, sel: 0x8b93ff, hl: 0xffb35c }
   : SKIN === 'linear' ? { sel: 0x5e6ad2 } : null;
+
+// Body colour a sketch is drawn over (dark theme only): the body is mixed toward this while sketching.
+export const SKETCH_BODY_DIM = SKIN === 'linear' && THEME === 'dark' ? 0x0a0b0d : null;

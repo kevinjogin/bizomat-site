@@ -65,7 +65,7 @@ export class App {
     this.doc = newDoc();
     this.undoStack = []; this.redoStack = [];
     this.selection = [];
-    this.mode = 'part';
+    this.mode = 'part'; this.viewer?.setSketchDim?.(false);
     this.cmd = null;
     this.view = { planes: false, origins: true, sketches: true, relations: true };
     this.statusById = {};
@@ -111,7 +111,7 @@ export class App {
     this.bindDrop();
     this.updateDocChrome();
     this.regen().then(() => this.viewer.zoomToFit(false));
-    this.api('/api/ai/status', null, 'GET').then((r) => { this.aiAvailable = !!r.available; this.aiDemo = !!r.demo; }).catch(() => { this.aiAvailable = false; });
+    import('./aikeys.js').then((m) => m.refreshAIStatus(this));
     this.status('Ready. Select a plane and click Sketch to start.');
     this.watchActivity();
     this.watchVersion();
@@ -984,7 +984,7 @@ export class App {
   }
 
   enterSketch(f, frame, opts) {
-    this.mode = 'sketch';
+    this.mode = 'sketch'; this.viewer.setSketchDim?.(true);
     this.sketchCtx = { ...opts, undo: opts.undo || [...this.undoStack], redo: opts.redo || [...this.redoStack] };
     this.setSelection([]);
     this.hideContextToolbar();
@@ -1006,7 +1006,7 @@ export class App {
     const ctx = this.sketchCtx || {};
     if (this.cmd) this.closeCommand();
     this.sketcher.end();
-    this.mode = 'part';
+    this.mode = 'part'; this.viewer?.setSketchDim?.(false);
     if (this.pm.isOpen) this.pm.close();
     this.updateConfirmCorner();
     $('sb-editing').textContent = 'Editing Part';
@@ -1033,7 +1033,7 @@ export class App {
       { label: 'Discard Changes and Exit', primary: true, run: () => {
         const snap = ctx.snapshot;
         this.closeCommand();
-        this.sketcher.end(); this.mode = 'part';
+        this.sketcher.end(); this.mode = 'part'; this.viewer?.setSketchDim?.(false);
         this.doc = JSON.parse(snap);
         this.undoStack = ctx.undo; this.redoStack = ctx.redo;
         this.docChanged();

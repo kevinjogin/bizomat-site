@@ -56,6 +56,45 @@ API: GET/POST /api/account (who, rename, change password), POST /api/account/inv
 Account settings, Invite people (link + Copy), People on this server, look switch, Sign out.
 Tests: `tests/test_accounts.py` (6).
 
+Bring your own key + Google sign-in (2026-10-18, YZ):
+- `aikeys.py`: per-account AI settings in `ai_keys.json` {user id or "local": provider, model, base_url, key
+  (Fernet, secret in `ai_keys.secret` or OPENSKETCH_KEY_SECRET), hint (last 4), updated}; `effective(user)` =
+  own key, else the server's ANTHROPIC_API_KEY (`server_config`, off with OPENSKETCH_SHARE_SERVER_KEY=0), else
+  None. Routes: GET /api/ai/status (per person: available, source yours/server, provider, model, label), GET/POST/
+  DELETE /api/ai/keys (never returns the key), POST /api/ai/models (checks a key by listing its models; stored
+  key if none pasted). Custom addresses must be public https (`providers.check_base_url` refuses private,
+  loopback, link-local hosts: the server makes the calls).
+- `providers.py`: PROVIDERS anthropic / openai / gemini (OpenAI-compatible endpoint) / openrouter / custom.
+  Anthropic = the SDK as before (`adapt_kwargs` drops betas/fallbacks/output_config for models other than
+  claude-opus-5-5). Everything else = `OpenAICompatMessages`: Chat Completions streaming over httpx, request
+  translated (`to_openai_messages`, `to_openai_tools`: server tools dropped), SSE translated back to
+  Anthropic-shaped events (`translate_stream`: text, tool_use + input_json_delta so the live build works,
+  reasoning -> thinking, finish_reason -> stop_reason) and a final message; `plain_blocks` stores replies as
+  dicts so a conversation can switch provider. `ai.run_stream(..., ai_config)`; non-Claude models get no web
+  tools and `NO_WEB_NOTE`; no key -> `NO_KEY` error pointing at the account menu; ProviderError 401/403 -> check
+  the key. Browser: `static/js/aikeys.js` (dialog: provider, key, Check key fills a model list, model, base URL
+  for custom, Remove my key; `refreshAIStatus`), account menu "AI model and key...", AI pane "Add your API key"
+  button and a "Provider: model" line above the input.
+- Google (`oauth.py`, on with GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET, staged to Fly by the deploy workflow):
+  /auth/google -> Google with a random state in a signed 10-minute cookie (Path=/auth/google) and the request's
+  own address as redirect (so fly.dev and a custom domain both work); /auth/google/callback checks the state,
+  swaps the code with Google (client secret, TLS) and reads userinfo. `accounts.google_user`: linked Google id,
+  else the account with the same verified email (linked); else an invite from the start link
+  (`accept_invite(..., google=)`), else `sign_up` when the owner turned on open sign-up; unverified emails never
+  create or link. Google-only accounts have no password (`has_password` false; Account settings offers "Set a
+  password"). Owner setting `open_signup` (users.json settings; POST /api/account/settings; checkbox in People on
+  this server); /signup page (email) when on. Login / join / signup pages show Continue / Join / Sign up with
+  Google when configured.
+- Readability (YZ's screenshot): dark theme sketch dimensions get a backing pill; while a sketch is open the
+  body is mixed 90% toward #0a0b0d (`viewer.setSketchDim`, `skin.SKETCH_BODY_DIM`) so light sketch lines and
+  blue under-defined geometry read clearly on it.
+- Tests: `tests/test_aikeys.py` (6: encrypted per-person storage, server fallback, routes never return the key,
+  message/tool/stream translation, a fake OpenAI-compatible server driving a full copilot session with a
+  streamed propose_features call and live build_steps, provider errors in the chat); `tests/test_accounts.py`
+  +3 (Google links by verified email, forged state, invite-only / invite / open sign-up / email sign-up /
+  unverified refused, nothing before the owner exists). 286 pytest (2 skipped) + 59 node. Checked in Chromium:
+  key dialog (Gemini, saved, status "yours"), AI pane with and without a key, sign-in page with Google.
+
 Linear look (2026-10-18, replaces the same day's Figma look, which YZ did not like; from Linear's "How we
 redesigned the Linear UI" and "Behind the latest design refresh": a few tokens per theme, warm neutral greys,
 dimmed navigation so the content leads, fewer and smaller icons, fewer dividers, compact pill tabs):
@@ -392,6 +431,10 @@ See `docs/CODE_REVIEW_2026-10-16.md` for reproductions, new-feature usage and UX
 
 ## Known limits
 
+- BYOK: only the Anthropic path has web search, thinking display and the server-side fallback; OpenAI-compatible
+  providers get plain function calling (models that cannot call tools will not build). Not tried against the
+  real OpenAI / Gemini / OpenRouter APIs yet (tests use a fake server). Keys saved while signed in with the old
+  server password belong to "local". Google sign-in not yet tried with a real Google client.
 - Accounts: no email sending (invites are links you pass on; a forgotten password is reset with the server
   password), no per-document permissions (everyone signed in sees every server document), no rate limit
   beyond the 1 s delay. Documents still record `by: "you"` / `"claude"`, not the person's name.

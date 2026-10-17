@@ -126,3 +126,79 @@ def test_mcp_and_reviews_ignore_accounts():
                                           "params": {"protocolVersion": "2025-03-26", "capabilities": {}, "clientInfo": {"name": "t", "version": "1"}}}))
         assert r.status_code == 200
         assert anon.get("/review/nonexistenttoken000000000000").status_code == 404  # not a sign-in redirect
+
+
+def _google(monkeypatch, info):
+    from opensketch import oauth
+    monkeypatch.setenv("GOOGLE_CLIENT_ID", "cid.apps.googleusercontent.com")
+    monkeypatch.setenv("GOOGLE_CLIENT_SECRET", "secret")
+
+    async def fake(code, redirect_uri):
+        assert code == "good-code" and redirect_uri.endswith("/auth/google/callback")
+        return info
+    monkeypatch.setattr(oauth, "exchange", fake)
+
+
+def _google_round(c, invite=""):
+    from urllib.parse import parse_qs, urlparse
+    r = c.get("/auth/google" + (f"?invite={invite}" if invite else ""), follow_redirects=False)
+    assert r.status_code == 303 and r.headers["location"].startswith("https://accounts.google.com/")
+    state = parse_qs(urlparse(r.headers["location"]).query)["state"][0]
+    return c.get(f"/auth/google/callback?state={state}&code=good-code", follow_redirects=False)
+
+
+def test_google_sign_in_links_by_verified_email(monkeypatch):
+    c = TestClient(server.app)
+    assert b"Continue with Google" not in c.get("/login").content  # not configured: no button
+    _owner(c)
+    c.get("/logout")
+    _google(monkeypatch, {"sub": "g-1", "email": "YZ@example.com", "email_verified": True, "name": "YZ"})
+    assert b"Continue with Google" in c.get("/login").content
+    r = _google_round(c)
+    assert r.status_code == 303 and r.headers["location"] == "/"
+    me = c.get("/api/account").json()["user"]
+    assert me["email"] == "yz@example.com" and me["google"] and me["role"] == "owner"
+    # a forged state is refused
+    r = c.get("/auth/google/callback?state=nope&code=good-code", follow_redirects=False)
+    assert r.status_code == 400 and b"expired" in r.content
+
+
+def test_google_sign_up_needs_an_invite_or_open_sign_up(monkeypatch):
+    owner = TestClient(server.app)
+    _owner(owner)
+    _google(monkeypatch, {"sub": "g-2", "email": "new@example.com", "email_verified": True, "name": "New Person"})
+    stranger = TestClient(server.app)
+    r = _google_round(stranger)
+    assert r.status_code == 403 and b"invite-only" in r.content
+    token = owner.post("/api/account/invites").json()["url"].split("/join/")[1]
+    assert b"Join with Google" in stranger.get(f"/join/{token}").content
+    r = _google_round(stranger, token)
+    assert r.status_code == 303 and stranger.get("/api/account").json()["user"]["name"] == "New Person"
+    assert not accounts.invite_valid(token)
+    # Google-only accounts have no password until they set one
+    me = stranger.get("/api/account").json()["user"]
+    assert me["has_password"] is False
+    assert stranger.post("/login", data={"email": "new@example.com", "password": ""}, follow_redirects=False).status_code == 401
+    assert stranger.post("/api/account", json={"new_password": "now a password"}).json()["signed_out"]
+    assert stranger.post("/login", data={"email": "new@example.com", "password": "now a password"}, follow_redirects=False).status_code == 303
+    # open sign-up
+    _google(monkeypatch, {"sub": "g-3", "email": "third@example.com", "email_verified": True, "name": "Third"})
+    assert owner.post("/api/account/settings", json={"open_signup": True}).json()["open_signup"] is True
+    assert stranger.post("/api/account/settings", json={"open_signup": False}).status_code == 403  # members cannot
+    third = TestClient(server.app)
+    assert _google_round(third).status_code == 303
+    fourth = TestClient(server.app)
+    assert b"Create an account" in fourth.get("/login").content
+    r = fourth.post("/signup", data={"name": "Four", "email": "four@example.com", "new_password": "fourfourfour"}, follow_redirects=False)
+    assert r.status_code == 303 and fourth.get("/api/account").json()["user"]["role"] == "member"
+    # an unverified Google email never creates or links an account
+    _google(monkeypatch, {"sub": "g-5", "email": "yz@example.com", "email_verified": False, "name": "Fake"})
+    r = _google_round(TestClient(server.app))
+    assert r.status_code == 400 and b"not verified" in r.content
+
+
+def test_google_before_any_account(monkeypatch):
+    _google(monkeypatch, {"sub": "g-9", "email": "a@example.com", "email_verified": True, "name": "A"})
+    r = _google_round(TestClient(server.app))
+    assert r.status_code == 400 and b"owner account first" in r.content
+    assert not accounts.any_users()

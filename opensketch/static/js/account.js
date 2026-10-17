@@ -46,10 +46,12 @@ export class Account {
     if (u && !u.legacy) {
       items.push({ head: `${u.name} - ${u.email}` });
       items.push({ label: 'Account settings...', run: () => this.settings() });
+      items.push({ label: 'AI model and key...', run: () => import('./aikeys.js').then((m) => m.aiKeyDialog(this.app)) });
       if (u.role === 'owner' && m === 'accounts') items.push({ label: 'Invite people...', run: () => this.invite() }, { label: 'People on this server...', run: () => this.people() });
     } else {
       items.push({ head: m === 'open' ? 'Not signed in. Anyone with the address can use this server.' : 'Signed in with the server password.' });
       items.push({ label: 'Create owner account...', run: () => { location.href = '/setup?next=' + encodeURIComponent(location.pathname + location.search); } });
+      items.push({ label: 'AI model and key...', run: () => import('./aikeys.js').then((m) => m.aiKeyDialog(this.app)) });
     }
     items.push('-', { head: 'Theme' }, ...LOOKS.map(([k, t]) => ({ label: t, icon: LOOK === k ? 'ok' : null, run: () => { if (LOOK !== k) setLook(k); } })));
     if (m !== 'open') items.push('-', { label: 'Sign out', run: () => this.signOut() });
@@ -67,18 +69,22 @@ export class Account {
     body.innerHTML = `<label class="acct-l">Name</label><input class="acct-i" name="name" autocomplete="name">
       <label class="acct-l">Email</label><div class="acct-v"></div>
       <div class="acct-sep"></div><div class="acct-sub">Change password</div>
-      <label class="acct-l">Current password</label><input class="acct-i" name="cur" type="password" autocomplete="current-password">
+      <label class="acct-l acct-cur">Current password</label><input class="acct-i acct-cur" name="cur" type="password" autocomplete="current-password">
       <label class="acct-l">New password</label><input class="acct-i" name="new" type="password" autocomplete="new-password">
       <div class="acct-note">At least 8 characters. Changing it signs you out everywhere.</div><div class="acct-err" role="alert"></div>`;
     body.querySelector('[name=name]').value = u.name;
-    body.querySelector('.acct-v').textContent = u.email;
+    if (u.has_password === false) {
+      body.querySelectorAll('.acct-cur').forEach((e) => e.remove());
+      body.querySelector('.acct-sub').textContent = 'Set a password (you sign in with Google now)';
+    }
+    body.querySelector('.acct-v').textContent = u.email + (u.google ? '  (linked to Google)' : '');
     body.querySelectorAll('input').forEach((i) => i.addEventListener('keydown', (e) => e.stopPropagation()));
     const err = body.querySelector('.acct-err');
     const d = dialog({ title: 'Account settings', body, cls: 'acct-dlg', buttons: [
       { label: 'Cancel' },
       { label: 'Save', primary: true, run: () => {
         const name = body.querySelector('[name=name]').value.trim();
-        const cur = body.querySelector('[name=cur]').value, nw = body.querySelector('[name=new]').value;
+        const cur = body.querySelector('[name=cur]')?.value || '', nw = body.querySelector('[name=new]').value;
         const req = {}; if (name && name !== u.name) req.name = name; if (nw) { req.new_password = nw; req.current_password = cur; }
         if (!Object.keys(req).length) return true;
         fetch('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(req) })
@@ -126,6 +132,14 @@ export class Account {
       list.appendChild(row);
     }
     body.appendChild(list);
+    const open = h('label', 'acct-toggle');
+    const cb = h('input'); cb.type = 'checkbox'; cb.checked = !!this.info.open_signup;
+    open.append(cb, h('span', null, this.info.google ? 'Anyone can create an account (email or Google)' : 'Anyone can create an account'));
+    const openNote = h('div', 'acct-note', 'Off: only people with an invite link can join. Turn on only if you want strangers to be able to sign up.');
+    cb.onchange = async () => {
+      try { const r = await (await fetch('/api/account/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ open_signup: cb.checked }) })).json(); this.info.open_signup = r.open_signup; } catch (_) { cb.checked = !cb.checked; }
+    };
+    body.append(open, openNote);
     if (this.info.pending_invites) body.appendChild(h('div', 'acct-note', `${this.info.pending_invites} invite link(s) not used yet.`));
     dialog({ title: 'People on this server', body, cls: 'acct-dlg', buttons: [{ label: 'Invite people...', run: () => { setTimeout(() => this.invite(), 0); } }, { label: 'Done', primary: true }] });
   }

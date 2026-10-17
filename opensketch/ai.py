@@ -1278,6 +1278,12 @@ class _Fake:
         self.__dict__.update(kw)
 
 
+NO_KEY = ("The AI needs an API key. Add your own in the account menu (top right) > AI model and key: "
+          "Claude, OpenAI, Gemini, OpenRouter or any OpenAI-compatible provider.")
+NO_WEB_NOTE = ("\n\nWeb search and page reading are not available with this model: use the numbers you know, say so, "
+               "and ask the user for anything you would have looked up.")
+
+
 def demo_enabled() -> bool:
     import os
     return os.environ.get("OPENSKETCH_AI_DEMO", "") not in ("", "0")
@@ -1304,7 +1310,7 @@ def selection_note(selection: list | None) -> str:
 
 
 def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool | str = False,
-               demo_speed: float = 1.0, selection: list | None = None) -> Iterator[dict]:
+               demo_speed: float = 1.0, selection: list | None = None, ai_config: dict | None = None) -> Iterator[dict]:
     """Yield events while Claude designs. The last event is {"ev": "done", ...} or {"ev": "error", ...}.
 
     With demo=True (or OPENSKETCH_AI_DEMO=1) a scripted session (opensketch/demo.py) is streamed
@@ -1317,11 +1323,18 @@ def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool
     if demo:
         from . import demo as demo_mod
         client = demo_mod.client(demo_speed, demo if isinstance(demo, str) else "press")
-    elif not available() or anthropic is None:
-        yield {"ev": "error", "message": "Set ANTHROPIC_API_KEY to use OpenSketch AI."}
-        return
     else:
-        client = anthropic.Anthropic()
+        from . import providers
+        cfg = ai_config
+        if cfg is None and available():
+            cfg = {"provider": "anthropic", "model": MODEL, "base_url": "", "key": None, "source": "server"}
+        if cfg is None:
+            yield {"ev": "error", "message": NO_KEY}
+            return
+        if cfg["provider"] == "anthropic" and anthropic is None:
+            yield {"ev": "error", "message": "The anthropic package is not installed on this server."}
+            return
+        client = providers.client_for(cfg)
     conv_id = history_id if isinstance(history_id, str) and history_id in _conversations else str(uuid.uuid4())
     messages = _conversations.setdefault(conv_id, [])
     kind = "assembly" if assembly.is_assembly(doc) else "part"
@@ -1333,8 +1346,12 @@ def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool
     yield {"ev": "start", "conversation": conv_id, "kind": kind, "demo": demo}
     thinking = {"type": "adaptive", "display": "summarized"}
     for _ in range(MAX_ROUNDS):
-        kw = dict(model=MODEL, max_tokens=MAX_TOKENS, system=SYSTEM, tools=TOOLS + web_tools(), messages=messages,
+        native = demo or cfg["provider"] == "anthropic"
+        kw = dict(model=MODEL, max_tokens=MAX_TOKENS, system=SYSTEM if native else SYSTEM + NO_WEB_NOTE,
+                  tools=TOOLS + (web_tools() if native else []), messages=messages,
                   output_config={"effort": "high"}, betas=["server-side-fallback-2026-07-01"], fallbacks="default")
+        if not demo:
+            kw = providers.adapt_kwargs(cfg, kw)
         if thinking:
             kw["thinking"] = thinking
         queue: list[dict] = []
@@ -1409,7 +1426,12 @@ def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool
             if anthropic and isinstance(exc, anthropic.BadRequestError) and thinking and ("thinking" in str(exc) or "display" in str(exc)):
                 thinking = None  # older API without summarized thinking: retry without it
                 continue
-            if anthropic and isinstance(exc, anthropic.APIConnectionError):
+            from .providers import ProviderError
+            if isinstance(exc, ProviderError):
+                yield {"ev": "error", "message": str(exc) + (" Check the key in Account > AI model and key." if exc.status in (401, 403) else "")}
+            elif anthropic and isinstance(exc, anthropic.AuthenticationError):
+                yield {"ev": "error", "message": "Anthropic refused the API key. Check it in Account > AI model and key."}
+            elif anthropic and isinstance(exc, anthropic.APIConnectionError):
                 yield {"ev": "error", "message": f"Network error: {exc}"}
             elif anthropic and isinstance(exc, anthropic.APIStatusError):
                 yield {"ev": "error", "message": f"API error {exc.status_code}: {exc.message}"}
@@ -1417,7 +1439,8 @@ def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool
                 yield {"ev": "error", "message": f"AI error: {exc}"}
             return
         resp = result["resp"]
-        messages.append({"role": "assistant", "content": resp.content})
+        from .providers import plain_blocks
+        messages.append({"role": "assistant", "content": plain_blocks(resp.content)})
         _add_sources(sources, cited_sources(resp.content))
         if resp.stop_reason == "pause_turn":
             continue  # a long web search was paused: send the turn back as it is and the API carries on

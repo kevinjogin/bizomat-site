@@ -2,7 +2,7 @@
 // Middle drag rotates, Ctrl+middle pans, Shift+middle zooms, wheel zooms about the cursor.
 
 import * as THREE from 'three';
-import { VIEW_COLORS } from './skin.js';
+import { VIEW_COLORS, SKETCH_BODY_DIM } from './skin.js';
 
 const V = (a) => new THREE.Vector3(a[0], a[1], a[2]);
 const mix = (a, b, t) => {
@@ -509,7 +509,7 @@ export class Viewer {
     for (const f of this.faceObjs) {
       f.visible = s !== 'wireframe';
       const white = s === 'hlr';
-      f.material.color.setHex(white ? 0xffffff : f.userData.baseColor);
+      f.material.color.setHex(white ? 0xffffff : this.baseFor(f));
       f.material.emissive?.setHex(white ? 0xffffff : 0x000000);
       f.material.colorWrite = s !== 'hlv'; // depth only: hides edges behind faces
     }
@@ -609,6 +609,11 @@ export class Viewer {
     this.refreshHighlights();
   }
 
+  // Dark theme: while a sketch is open the body is drawn darker, so light sketch lines and dimensions
+  // read clearly on top of it.
+  baseFor(f) { return this.sketchDim && SKETCH_BODY_DIM != null ? mix(f.userData.baseColor, SKETCH_BODY_DIM, 0.9) : f.userData.baseColor; }
+  setSketchDim(on) { if (!!on === !!this.sketchDim) return; this.sketchDim = !!on; this.refreshHighlights(); }
+
   setSelectedKeys(keys) { this.selected = new Set(keys); this.refreshHighlights(); }
 
   refreshHighlights() {
@@ -616,7 +621,7 @@ export class Viewer {
     for (const f of this.faceObjs) {
       const k = 'face:' + f.userData.id;
       const ck = f.userData.comp ? 'comp:' + f.userData.comp : null;
-      const base = style === 'hlr' ? 0xffffff : f.userData.baseColor;
+      const base = style === 'hlr' ? 0xffffff : this.baseFor(f);
       const c = this.selected.has(k) ? mix(base, COLORS.sel, 0.6) : this.hoverKey === k ? mix(base, COLORS.hl, 0.45) : this.extraHighlights.has(k) ? 0xc8d8ff
         : ck && this.selected.has(ck) ? mix(base, COLORS.sel, 0.45) : ck && this.hoverKey === ck ? mix(base, COLORS.hl, 0.35) : base;
       f.material.color.setHex(c);
