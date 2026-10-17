@@ -187,7 +187,7 @@ const P = {
 
 export function icon(name, size = 24) {
   let body = P[name] || P.props;
-  if (ICON_SWAP) body = body.replace(/#[0-9a-fA-F]{6}\b/g, (c) => ICON_SWAP[c.toLowerCase()] || c);
+  if (ICON_SWAP) body = body.replace(/#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b/g, (c) => ICON_SWAP[c.toLowerCase()] || c);
   return `<svg class="ic" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`;
 }
 

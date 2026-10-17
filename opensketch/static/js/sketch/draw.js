@@ -2,11 +2,13 @@
 
 import * as THREE from 'three';
 import { arcPoints, ang, dist } from './geom2d.js';
+import { SKETCH_COLORS } from '../skin.js';
 
 export const SK = {
   under: 0x0000ff, fully: 0x000000, over: 0xff0000, hl: 0xff8c00, sel: 0x2a8cff,
   construction: 0x5050a0, preview: 0x0050ff, inactive: 0x3c3c3c, dim: 0x000000,
 };
+if (SKETCH_COLORS) Object.assign(SK, SKETCH_COLORS);
 
 const DASH = { centerline: [10, 3, 2, 3], dashed: [5, 3] };
 

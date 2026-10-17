@@ -409,7 +409,7 @@ export class Viewer {
       }
       obj.visible = !!p.visible;
       const st = p.state || 'normal';
-      obj.userData.mesh.material.color.setHex(st === 'sel' ? 0x2a8cff : st === 'hl' ? 0xffa040 : COLORS.plane);
+      obj.userData.mesh.material.color.setHex(st === 'sel' ? COLORS.sel : st === 'hl' ? COLORS.hl : COLORS.plane);
       obj.userData.mesh.material.opacity = st === 'normal' ? 0.16 : 0.3;
       obj.userData.border.material.color.setHex(st === 'sel' ? COLORS.sel : st === 'hl' ? COLORS.hl : COLORS.planeEdge);
       obj.userData.label = p.name;
@@ -617,8 +617,8 @@ export class Viewer {
       const k = 'face:' + f.userData.id;
       const ck = f.userData.comp ? 'comp:' + f.userData.comp : null;
       const base = style === 'hlr' ? 0xffffff : f.userData.baseColor;
-      const c = this.selected.has(k) ? 0x6aa8ff : this.hoverKey === k ? 0xffc27a : this.extraHighlights.has(k) ? 0xc8d8ff
-        : ck && this.selected.has(ck) ? mix(base, 0x2a8cff, 0.45) : ck && this.hoverKey === ck ? mix(base, 0xff8c00, 0.35) : base;
+      const c = this.selected.has(k) ? mix(base, COLORS.sel, 0.6) : this.hoverKey === k ? mix(base, COLORS.hl, 0.45) : this.extraHighlights.has(k) ? 0xc8d8ff
+        : ck && this.selected.has(ck) ? mix(base, COLORS.sel, 0.45) : ck && this.hoverKey === ck ? mix(base, COLORS.hl, 0.35) : base;
       f.material.color.setHex(c);
     }
     for (const e of this.edgeObjs) {

@@ -3,7 +3,7 @@
 
 import { contextMenu, dialog, message } from './ui/dialogs.js';
 import { escapeHtml as esc } from './model-utils.js';
-import { SKIN, setSkin } from './skin.js';
+import { LOOK, LOOKS, setLook } from './skin.js';
 
 const h = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 const COLORS = ['#9747ff', '#0d99ff', '#14ae5c', '#f24822', '#ffa629', '#e0559b', '#1bc4c4'];
@@ -51,7 +51,7 @@ export class Account {
       items.push({ head: m === 'open' ? 'Not signed in. Anyone with the address can use this server.' : 'Signed in with the server password.' });
       items.push({ label: 'Create owner account...', run: () => { location.href = '/setup?next=' + encodeURIComponent(location.pathname + location.search); } });
     }
-    items.push('-', { label: SKIN === 'figma' ? 'Classic look (SOLIDWORKS colours)' : 'Figma look', run: () => setSkin(SKIN === 'figma' ? 'classic' : 'figma') });
+    items.push('-', { head: 'Theme' }, ...LOOKS.map(([k, t]) => ({ label: t, icon: LOOK === k ? 'ok' : null, run: () => { if (LOOK !== k) setLook(k); } })));
     if (m !== 'open') items.push('-', { label: 'Sign out', run: () => this.signOut() });
     contextMenu(Math.max(4, r.right - 260), r.bottom + 6, items.map((it) => (it.head ? { head: it.head } : it)));
   }

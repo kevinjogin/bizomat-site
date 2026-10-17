@@ -144,8 +144,9 @@ x and it stops opening by itself; click its icon to bring it back.
 Ask AI (bottom of the panel, or the AI chat with the "About" chip) sends your request with the selection,
 so "make this 5 mm thicker" or "round these edges" acts on what you picked.
 
-The look follows Figma (neutral greys, Inter, flat icons, dark menus); the layout and every command work
-the SOLIDWORKS way. Avatar menu or View > Classic Look switches back to SOLIDWORKS colours.
+The look follows Linear (dark by default, warm greys, Inter, small monochrome icons, indigo accent, quiet
+side panels so the model leads); the layout and every command work the SOLIDWORKS way. Avatar menu or
+View > Theme: Dark, Light, or Classic (SOLIDWORKS colours). Ctrl+K jumps to command search.
 
 ## Host it on Fly.io (optional, when you need it)
 

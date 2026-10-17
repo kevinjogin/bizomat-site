@@ -1904,6 +1904,7 @@ export class App {
       if (ctrl && k.toLowerCase() === 'o') { e.preventDefault(); return this.openFile(); }
       if (ctrl && k.toLowerCase() === 'n') { e.preventDefault(); return this.newDoc(); }
       if (ctrl && (k.toLowerCase() === 'b' || k.toLowerCase() === 'q')) { e.preventDefault(); return this.regen(true); }
+      if (ctrl && k.toLowerCase() === 'k') { e.preventDefault(); const q = document.getElementById('cmdsearch'); q?.focus(); q?.select(); return; }
       if (ctrl && k.toLowerCase() === 'l') { e.preventDefault(); return this.openTask('ai'); }
       if (ctrl && /^[1-8]$/.test(k)) { e.preventDefault(); return this.orient(['front', 'back', 'left', 'right', 'top', 'bottom', 'isometric', 'normal'][+k - 1]); }
       if (ctrl && k.startsWith('Arrow')) { e.preventDefault(); const d = 40; return v.panBy(k === 'ArrowLeft' ? -d : k === 'ArrowRight' ? d : 0, k === 'ArrowUp' ? -d : k === 'ArrowDown' ? d : 0); }

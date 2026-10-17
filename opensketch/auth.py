@@ -120,23 +120,22 @@ PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=
 <meta name="robots" content="noindex"><title>{title} - OpenSketch</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{{--bg:#f5f5f5;--card:#fff;--line:#e6e6e6;--text:#1e1e1e;--muted:#757575;--accent:#0d99ff;--accent-d:#007be5;--err:#f24822}}
+:root{{--bg:#0c0d0e;--card:#141517;--field:#1d1e21;--line:rgba(255,255,255,.08);--text:#e3e4e8;--muted:#8a8f98;--accent:#5e6ad2;--accent-d:#6b77de;--link:#8b93ff;--err:#eb5757}}
 *{{box-sizing:border-box}}
-body{{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--bg);font:13px/1.45 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}}
-.card{{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:28px;width:min(360px,calc(100vw - 32px));box-shadow:0 1px 3px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.06)}}
-.mark{{display:flex;align-items:center;gap:8px;margin-bottom:20px;font-weight:600;font-size:13px;letter-spacing:-.01em}}
-.mark i{{width:22px;height:22px;border-radius:6px;background:#1e1e1e;display:grid;place-items:center}}
-.mark i:after{{content:"";width:10px;height:10px;border:2px solid #fff;border-radius:2px;transform:rotate(45deg)}}
+body{{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(90% 70% at 50% 0%,#17181c,var(--bg) 70%);font:13px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);-webkit-font-smoothing:antialiased;color-scheme:dark}}
+.card{{background:var(--card);border-radius:12px;padding:28px;width:min(360px,calc(100vw - 32px));box-shadow:0 0 0 1px rgba(255,255,255,.07),0 16px 40px rgba(0,0,0,.5)}}
+.mark{{display:flex;align-items:center;gap:8px;margin-bottom:22px;font-weight:600;font-size:13px;letter-spacing:-.01em}}
+.mark i{{width:20px;height:20px;border-radius:5px;background:linear-gradient(135deg,#8b93ff,#5e6ad2);display:grid;place-items:center}}
+.mark i:after{{content:"";width:8px;height:8px;border:1.6px solid #fff;border-radius:2px;transform:rotate(45deg)}}
 h1{{font-size:18px;font-weight:600;margin:0 0 4px;letter-spacing:-.015em}} p.sub{{color:var(--muted);margin:0 0 20px}}
-label{{display:block;font-size:11px;font-weight:500;color:var(--muted);margin:12px 0 4px}}
-input{{width:100%;height:34px;padding:0 10px;border:1px solid var(--line);border-radius:6px;font:inherit;color:inherit;background:#fff;outline:none;transition:border-color .1s,box-shadow .1s}}
-input:hover{{border-color:#c9c9c9}} input:focus{{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}}
+label{{display:block;font-size:11.5px;font-weight:500;color:var(--muted);margin:12px 0 5px}}
+input{{width:100%;height:34px;padding:0 10px;border:1px solid var(--line);border-radius:6px;font:inherit;color:inherit;background:var(--field);outline:none;transition:border-color .1s}}
+input:hover{{border-color:rgba(255,255,255,.14)}} input:focus{{border-color:var(--accent)}}
 button{{margin-top:20px;width:100%;height:34px;border:0;border-radius:6px;background:var(--accent);color:#fff;font:inherit;font-weight:500;cursor:pointer}}
 button:hover{{background:var(--accent-d)}}
-.err{{color:var(--err);background:#fff1ee;border-radius:6px;padding:8px 10px;margin-top:14px;font-size:12px}}
+.err{{color:var(--err);background:rgba(235,87,87,.12);border-radius:6px;padding:8px 10px;margin-top:14px;font-size:12px}}
 .note{{color:var(--muted);font-size:12px;margin-top:6px}}
-.links{{margin-top:16px;display:flex;justify-content:space-between;gap:12px;font-size:12px}} a{{color:var(--accent);text-decoration:none}} a:hover{{text-decoration:underline}}
-hr{{border:0;border-top:1px solid var(--line);margin:20px 0 4px}}
+.links{{margin-top:16px;display:flex;justify-content:space-between;gap:12px;font-size:12px}} a{{color:var(--link);text-decoration:none}} a:hover{{text-decoration:underline}}
 </style></head><body><form class="card" method="post" action="{action}" autocomplete="on">
 <div class="mark"><i></i>OpenSketch</div><h1>{title}</h1><p class="sub">{sub}</p>
 <input type="hidden" name="next" value="{next}">{fields}{error}<button type="submit">{button}</button>{links}</form></body></html>"""

@@ -13,10 +13,13 @@ assemblies only when a part changes.
 - After completing any phase or significant change, update this file to reflect the current state before committing.
 - Match SOLIDWORKS in layout and behaviour: icon positions, CommandManager order, PropertyManager layout,
   mouse and keyboard behaviour. When in doubt, do what SOLIDWORKS 2024 does. Icons are original.
-- The look is Figma's by default (`css/figma.css`, rules under `.skin-figma`; `skin.js` swaps icon and 3D
-  colours), so OpenSketch does not look like SOLIDWORKS. `app.css` alone is the classic SOLIDWORKS look
-  (`.skin-classic`, View > Classic Look). New UI: style it in app.css with the tokens, and add the Figma
-  version in figma.css. Sketch state colours (blue under, black fully, red over) stay in both.
+- The look is Linear's by default (`css/linear.css`, rules under `.skin-linear` with `.theme-dark` (default)
+  and `.theme-light` token sets; `skin.js` swaps icon, 3D and sketch colours), so OpenSketch does not look
+  like SOLIDWORKS. `app.css` alone is the classic SOLIDWORKS look (`.skin-classic`). Switch: avatar menu or
+  View > Theme. New UI: style it in app.css with the tokens, then add its Linear version in linear.css using
+  the theme tokens (--side, --content, --raised, --field, --line, --text, --text-2, --muted, --accent...),
+  and check it in both themes. Sketch states keep their meaning (blue under, ink fully, red over); in the
+  dark theme the ink is light.
 - New part features go through the feature registry (`opensketch/features/`): one file with a
   `FeatureType` (typed params, sections, defaults, limits) and its `build(feat, st, diagnostics)`,
   imported at the bottom of `features/__init__.py`. That alone gives the ribbon button, a generated
@@ -37,7 +40,7 @@ assemblies only when a part changes.
   "fix" a reference number to match OpenSketch, work it out by hand.
 - No emojis in UI text. Plain language, short sentences.
 
-## Current state (2026-10-18, v0.5: accounts, Figma look, Design panel, Ask AI on a selection; coupler mate, Motion Review)
+## Current state (2026-10-18, v0.5: accounts, Linear look, Design panel, Ask AI on a selection; coupler mate, Motion Review)
 
 Accounts (2026-10-18): `accounts.py` (users.json: scrypt-hashed passwords, owner/member roles, single-use
 7-day invites stored as SHA-256; sessions.json: SHA-256 of random cookie tokens, 90 days, removed on sign out,
@@ -45,7 +48,7 @@ on a password change and when a member is removed). `auth.py` modes: `accounts` 
 `opensketch_user` required), `password` (OPENSKETCH_PASSWORD set, no users: the sign-in page is "Create the owner
 account" with the server password as the key; the old password-only cookie and POST still work until then),
 `open` (neither: as before; the avatar offers Create owner account). Pages served by `PasswordGate`
-(/login, /setup, /join/<token>, /reset (server password resets a forgotten password), /logout), Figma-style,
+(/login, /setup, /join/<token>, /reset (server password resets a forgotten password), /logout), Linear-style (dark),
 no open redirect, 1 s delay on failures, X-Frame-Options DENY. `scope["state"]["user"]` = the person.
 API: GET/POST /api/account (who, rename, change password), POST /api/account/invites, DELETE
 /api/account/users/{id} (owner only). MCP token unchanged (still from the password or the data-folder secret);
@@ -53,15 +56,21 @@ API: GET/POST /api/account (who, rename, change password), POST /api/account/inv
 Account settings, Invite people (link + Copy), People on this server, look switch, Sign out.
 Tests: `tests/test_accounts.py` (6).
 
-Figma look (2026-10-18, YZ: distinguish OpenSketch from SOLIDWORKS without changing layout or flow; from Figma's
-UI3 write-ups: numbers always visible, grouped properties, contextual labels, opt-out to the old UI):
-`css/figma.css` restyles everything under `.skin-figma` (Inter from Google Fonts with system fallback, #f5f5f5
-canvas, white panels, 1px #e6e6e6 hairlines, 5-6px rounded hover states without borders, #0d99ff accent, dark
-context menus with blue hover, dark toasts, white floating toolbars with soft shadows, flat graphics background,
-rollback bar as a blue line with a knob). `skin.js` (`SKIN` from localStorage `opensketch.skin`, set early by an
-inline script in index.html) swaps the icon palette in `icons.icon()` (grey body -> light fill, yellow new
-geometry -> accent, dark strokes) and the viewer COLORS (hover light blue, selection #0d99ff). Classic stays
-one click away (avatar menu, View menu), a reload. Checked in Chromium both looks.
+Linear look (2026-10-18, replaces the same day's Figma look, which YZ did not like; from Linear's "How we
+redesigned the Linear UI" and "Behind the latest design refresh": a few tokens per theme, warm neutral greys,
+dimmed navigation so the content leads, fewer and smaller icons, fewer dividers, compact pill tabs):
+`css/linear.css`. Dark (default) and light token sets; the title bar, ribbon, tree, task pane and status bar
+share the dimmed `--side` colour with no dividers; the graphics area is the raised content card (1px line,
+10px radius, soft radial in dark); pill tabs (CommandManager, Model / Motion Study); popovers and menus on
+`--raised` with a hairline + shadow; quiet fields (`--field`, accent border on focus); indigo #5e6ad2 accent;
+chrome icons monochrome (grayscale filter on strip, quick access, manager tabs, heads-up). `skin.js`: `SKIN`
+linear/classic (an old "figma" choice becomes linear), `THEME` dark/light (`opensketch.theme`), `LOOK`,
+`setLook`, `LOOKS`; per-theme icon palette swap (3- and 6-digit hexes; dark: dark fills, light strokes),
+viewer colours (dark: body #8d9199, edges #16171a, indigo hover/selection) and `SKETCH_COLORS` patched into
+`draw.SK` (dark: under #7c9dff, fully/dimension ink #f2f3f5, over #ff6369). index.html applies `skin-*` and
+`theme-*` before first paint. Ctrl+K focuses command search (hint shown in the box). Sign-in pages are dark
+Linear-style. Shared account / Design panel styles moved into app.css. Checked in Chromium: dark and light
+part view, dark sketch mode (lines and dimensions readable), Design panel scrub flow, theme menu, Ctrl+K.
 
 Design panel (2026-10-18, YZ: "a property window with Figma-like sliders that changes the value in the sketch
 itself"): `static/js/design.js` = Task Pane tab "Design" (first). Opens by itself on selecting a face, feature,
@@ -389,7 +398,8 @@ See `docs/CODE_REVIEW_2026-10-16.md` for reproductions, new-feature usage and UX
 - Design panel: edge picks show the whole part (no edge-to-feature lookup yet); the face lookup costs one
   named rebuild on the server per face clicked; the slider range is fixed when the row is drawn; sketch
   dimensions inside a part opened from an assembly use the same path but were only checked on the press.
-  Figma's dark menus invert icon colours with a CSS filter.
+  Linear look: ribbon feature icons keep a two-tone style (light fill + accent), not Linear's single-stroke
+  icons; chrome icons are greyed with a CSS filter.
 
 - SOLIDWORKS macros: nothing has been run in SOLIDWORKS yet; ask YZ for the log of the first run.
   Assembly-side API calls not confirmed: AddComponent5 + Transform2, AddMate5 (obsolete in 2022) with
