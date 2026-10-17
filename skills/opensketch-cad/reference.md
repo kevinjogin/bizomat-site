@@ -29,6 +29,7 @@ feature `{"ref": "<plane feature id>"}`, a face that follows edits `{"type": "fa
 | body_topology | part_id, kind faces/edges/both, near [x,y,z], limit |
 | inspect_design | part_id, sketches |
 | measure_items | a, b: {"face": ref} / {"edge": ref} / {"name": "<face or edge name>"} / {"point": [x,y,z]}, plus "component" in assemblies |
+| publish_review | compare_version, title, notes; returns url (no password needed) and checks {errors, clashes_as_shown, joints: reached, clashes, smallest_gap_mm} |
 | preview_document | view, or yaw + pitch (deg); target [x,y,z] + view_width (mm) for close-ups; section {"point", "normal"} |
 
 Feature fields: extrude {sketch, op boss/cut, end blind/through_all/midplane/up_to_next, depth, reverse,

@@ -138,6 +138,17 @@ def versions(doc_id: str) -> list[dict]:
     return sorted(out, key=lambda r: -r["version"])
 
 
+def get_version(doc_id: str, version: int) -> dict:
+    """The record as it was at `version` (the current one, or one of the last KEEP kept in history)."""
+    rec = get(doc_id)
+    if int(version) == rec["version"]:
+        return rec
+    p = _path(doc_id).with_suffix("") / f"v{int(version)}.json"
+    if not p.exists():
+        raise NotFound(f"Version {version} of {doc_id} is not kept")
+    return json.loads(p.read_text())
+
+
 def restore(doc_id: str, version: int, by: str) -> dict:
     """Bring back an earlier version (as a new version, so nothing is lost)."""
     with lock(doc_id):

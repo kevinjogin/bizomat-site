@@ -680,6 +680,36 @@ async def inspect_design(doc_id: str, part_id: str | None = None, sketches: bool
         return f"No document {doc_id!r}."
 
 
+def _review_sync(doc_id, compare_version, title, notes) -> str:
+    from . import review
+    try:
+        out = review.publish(doc_id, compare_version, title, notes, by="claude")
+    except store.NotFound:
+        raise
+    except (review.ReviewError, assembly.AssemblyError, geometry.FeatureError) as exc:
+        return json.dumps({"error": f"Cannot publish: {exc}"})
+    out["open"] = _link(doc_id)
+    return json.dumps(out)
+
+
+@mcp.tool()
+async def publish_review(doc_id: str,
+                         compare_version: Annotated[int | None, Field(description="An earlier version to compare with: changed parts in black, the old version as a ghost, the change list")] = None,
+                         title: str | None = None,
+                         notes: Annotated[str | None, Field(description="What the reader should know, plain text; blank lines between paragraphs. Say what changed and why, what is open.")] = None) -> str:
+    """Publish a frozen review page of the document's current version and return its share link (`url`):
+    the 3D model to turn and zoom, a slider for every joint with travel (hinge with angle limits,
+    limit_distance, limit_angle) moving the parts through solved poses, show/hide by part, and a record:
+    what changed since compare_version, checks (rebuild and mate errors, clashes as shown and through each
+    joint's travel, smallest gap, how far each joint reaches) and a parts table. The link works without
+    the OpenSketch password, so YZ can send it or open it on a phone; it does not change when the model
+    does. Use it at the end of a design round; give YZ the url and the checks summary."""
+    try:
+        return await anyio.to_thread.run_sync(_review_sync, doc_id, compare_version, title, notes)
+    except store.NotFound:
+        return f"No document {doc_id!r}."
+
+
 def _measure_sync(doc_id, a, b, part_id) -> str:
     rec = store.get(doc_id)
     try:

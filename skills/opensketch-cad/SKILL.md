@@ -54,5 +54,8 @@ variables, push each one to both ends of its range once (set_parameter, check no
 
 ## Finishing
 
+At the end of a design round, publish_review (compare_version = the version the round started from, notes
+= what changed, why, and what is open) and give YZ its `url` with the checks summary: it is a page he can
+send or open on his phone. Fix any clash it reports in a joint's travel before calling the round done.
 Give YZ the `open` link from the last result. Say which parts are bought and which are custom, the
 numbers you checked (and how), and anything you could not check.

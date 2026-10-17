@@ -420,3 +420,9 @@ input, select, button { font: inherit; color: inherit; }
 /* Native buttons keep PropertyManager actions keyboard reachable. */
 button.pm-act { padding: 0; background: transparent; font: inherit; }
 button.pm-act:focus-visible { outline: 2px solid #2467b2; outline-offset: 2px; }
+
+/* Publish Review dialog */
+.pubrow { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+.pubrow input, .pubrow select { flex: 1; min-width: 0; height: 24px; font: inherit; }
+.pubcol { flex-direction: column; align-items: stretch; }
+.pubcol textarea { font: inherit; resize: vertical; }

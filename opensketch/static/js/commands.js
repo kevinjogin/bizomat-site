@@ -24,6 +24,7 @@ export function buildCommands(app) {
     fileprops: { label: 'File Properties', icon: 'props', tip: 'Summary and custom properties', run: () => app.openTask('custprops') },
     serveropen: { label: 'Open from Server', icon: 'open', tip: 'Opens a document stored on the OpenSketch server, such as one Claude built. Claude\'s later changes appear live.', run: () => app.server.openDialog() },
     serversave: { label: 'Save to Server', icon: 'save', tip: 'Stores this document on the OpenSketch server so Claude can work on it with you.', run: () => app.server.saveAsNew() },
+    publishreview: { label: 'Publish Review...', icon: 'save', tip: 'Publishes a page of this version to send or open on a phone: the model, joint sliders, what changed and the checks.', run: () => app.server.publishDialog() },
     connectclaude: { label: 'Connect Claude', icon: 'ai', tip: 'Use OpenSketch from the Claude app: shows the connector address to add in Claude.', run: () => app.server.connectDialog() },
     options: { label: 'Options', icon: 'options', tip: 'System options and document properties', run: () => app.optionsDialog() },
 
@@ -157,7 +158,7 @@ export const ASM_TABS = [
 export const QUICK = ['new', 'open', 'save', 'print', 'undo', 'redo', 'select', 'rebuild', 'fileprops', 'options'];
 
 export const MENUS = [
-  { name: 'File', items: ['new', 'open', 'serveropen', 'save', 'saveas', 'serversave', 'sldmacro', '-', 'connectclaude', '-', 'print', '-', 'fileprops'] },
+  { name: 'File', items: ['new', 'open', 'serveropen', 'save', 'saveas', 'serversave', 'sldmacro', '-', 'publishreview', 'connectclaude', '-', 'print', '-', 'fileprops'] },
   { name: 'Edit', items: ['undo', 'redo', '-', 'rebuild', '-', { label: 'Delete', run: (app) => app.deleteSelection(), key: 'Del' }, { label: 'Suppress', run: (app) => app.suppressSelection(true) }, { label: 'Unsuppress', run: (app) => app.suppressSelection(false) }] },
   { name: 'View', items: [{ label: 'Planes', run: (app) => app.toggleView('planes') }, { label: 'Origins', run: (app) => app.toggleView('origins') }, { label: 'Sketches', run: (app) => app.toggleView('sketches') }, { label: 'Sketch Relations', run: (app) => app.toggleView('relations') }, '-', { label: 'Zoom to Fit', run: (app) => app.viewer.zoomToFit(), key: 'F' }] },
   { name: 'Insert', items: ['insertcomp', 'newpart', 'mate', '-', 'extrude', 'revolve', 'cut', 'revcut', '-', 'fillet', 'chamfer', 'shell', '-', 'linpattern', 'circpattern', 'mirror', '-', 'plane', '-', 'sketch'] },

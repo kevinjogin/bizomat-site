@@ -257,4 +257,57 @@ export class ServerDocs {
       setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
     };
   }
+
+  // ---------------------------------------------------------------- File > Publish Review
+  // A frozen, shareable page of this version (model, joint sliders, what changed, checks); see review.py.
+  async publishDialog() {
+    const app = this.app;
+    if (!this.link) {
+      const ok = await new Promise((res) => dialog({ title: 'Publish Review', body: '<div style="max-width:380px">A review is made from a document on the server. Save this one to the server first?</div>',
+        buttons: [{ label: 'Save to Server', primary: true, run: () => res(true) }, { label: 'Cancel', run: () => res(false) }], onClose: () => res(false) }));
+      if (!ok) return;
+      try { await this.saveAsNew(); } catch (err) { message('Publish Review', 'Could not save to the server: ' + esc(err.message)); return; }
+    }
+    this.flush?.();
+    let versions = [], earlier = [];
+    try { versions = await this.req('GET', `/api/docs/${encodeURIComponent(this.link.id)}/versions`); } catch (_) { /* no history yet */ }
+    try { earlier = await this.req('GET', `/api/reviews?doc_id=${encodeURIComponent(this.link.id)}`); } catch (_) { /* none */ }
+    const opts = versions.filter((v) => v.version < this.link.version)
+      .map((v) => `<option value="${v.version}">Version ${v.version}: ${esc(v.summary || '')} (${esc(v.by || '')}, ${ago(v.updated)})</option>`).join('');
+    const prev = earlier.length ? `<p class="pm-note" style="margin-top:10px">Published before:</p><ul class="srv-list" style="max-height:140px">${earlier.map((r) =>
+      `<li class="srv-row"><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a><span>Version ${r.version}${r.compare ? ' vs ' + r.compare : ''}, ${ago(r.created)}</span></li>`).join('')}</ul>` : '';
+    const body = document.createElement('div');
+    body.className = 'srv-connect';
+    body.innerHTML = `<p>A page of version ${this.link.version} to send or open on a phone: the model, a slider for each joint with travel,
+      what changed and the checks. It does not need your password and does not change when the model does.</p>
+      <label class="pubrow">Title <input id="pub-title" value="${esc((this.link.name || 'Review'))}"></label>
+      <label class="pubrow">Compare with <select id="pub-compare"><option value="">Nothing (no comparison)</option>${opts}</select></label>
+      <label class="pubrow pubcol">Notes <textarea id="pub-notes" rows="4" placeholder="What changed and why, what is still open."></textarea></label>
+      <div id="pub-result"></div>${prev}`;
+    const d = dialog({ title: 'Publish Review', body, cls: 'srv-dlg', buttons: [
+      { label: 'Publish', primary: true, run: () => {
+        const btn = d.el.querySelector('.dlg-f .btn.primary');
+        const out = body.querySelector('#pub-result');
+        btn.disabled = true; btn.textContent = 'Publishing...';
+        out.innerHTML = '<p class="pm-note">Solving the joints and checking for clashes. This takes a few seconds.</p>';
+        const cmp = body.querySelector('#pub-compare').value;
+        this.req('POST', '/api/reviews', { doc_id: this.link.id, compare_version: cmp ? +cmp : null,
+          title: body.querySelector('#pub-title').value, notes: body.querySelector('#pub-notes').value })
+          .then((r) => {
+            const c = r.checks, bits = [];
+            bits.push(c.errors ? `${c.errors} rebuild or mate error(s)` : 'no errors');
+            bits.push(c.clashes_as_shown ? `${c.clashes_as_shown} clash(es) as shown` : 'no clashes as shown');
+            for (const j of c.joints) bits.push(`${esc(j.name)}: ${j.clashes ? j.clashes + ' clash(es) in its travel' : 'clear through its travel'}`);
+            out.innerHTML = `<p>Published. ${bits.join('; ')}.</p>
+              <div class="srv-url"><input id="pub-url" readonly value="${esc(r.url)}"><button class="btn" id="pub-copy">Copy</button><a class="btn" href="${esc(r.url)}" target="_blank" rel="noopener">Open</a></div>
+              <p class="pm-note">Anyone with the link can view it. Delete it from this list later if needed.</p>`;
+            body.querySelector('#pub-copy').onclick = async () => { try { await navigator.clipboard.writeText(r.url); } catch (_) { body.querySelector('#pub-url').select(); } };
+            btn.textContent = 'Publish again'; btn.disabled = false;
+          })
+          .catch((err) => { out.innerHTML = `<p class="eqbad">Could not publish: ${esc(err.message)}</p>`; btn.textContent = 'Publish'; btn.disabled = false; });
+        return false;
+      } },
+      { label: 'Close' },
+    ] });
+  }
 }

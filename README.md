@@ -77,6 +77,11 @@ For reliable building, Claude also gets three tools borrowed from
 - `delete_items(..., dry_run)`: what a deletion takes with it and what it would break, before deleting.
 - `preview_document` also takes `yaw`/`pitch`, a close-up (`target`, `view_width`) and a `section` cut.
 
+- `publish_review(doc_id, compare_version?, title?, notes?)`: a frozen review page with a share link that
+  works without the password: the model, a slider for each joint with travel (solved poses), what changed
+  since an earlier version, clash and gap checks through the travel, and a parts table. In the app:
+  File > Publish Review.
+
 Faces and edges have persistent names (`e1:end|e1:side:s1L1`), so a fillet stays on its edge when the
 part changes size. `skills/opensketch-cad/` is a Claude skill for working this way (predict, build a
 stage, measure); `get_modelling_guide` returns its reference tables too.
@@ -312,6 +317,8 @@ opensketch/
   params.py          global variables and equations (safe expression evaluator, sketch re-solve)
   naming.py          persistent face and edge names (how each face was made)
   edits.py           deleting features: what goes with them and what would break
+  review.py          review pages: solved joint travel, checks, version compare, share links
+  templates/review.html  the review page (YZ Default design system)
   sldexport.py       SOLIDWORKS macro export: part -> engine recipe, assembly data, checks, zip
   sldexport_vba.py   the VBA OpenSketch adds to the macro (STEP import, saving, components, mates)
   sldexport_standin.py, sldexport_mock/   assembly stand-in (LibreOffice Basic mocks of SOLIDWORKS)

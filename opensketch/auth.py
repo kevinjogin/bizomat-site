@@ -123,7 +123,8 @@ class PasswordGate:
         if path == "/logout":
             return await _send(send, 303, b"", [(b"location", b"/login"),
                                                 (b"set-cookie", f"{COOKIE}=; Path=/; Max-Age=0".encode())])
-        if path.startswith("/mcp/") or logged_in(scope):
+        # /review/<token>: published review pages, read-only, the unguessable token is the key
+        if path.startswith("/mcp/") or path.startswith("/review/") or logged_in(scope):
             return await self.app(scope, receive, send)
         if scope.get("method") == "GET" and not path.startswith("/api/"):
             nxt = path + ("?" + scope["query_string"].decode() if scope.get("query_string") else "")

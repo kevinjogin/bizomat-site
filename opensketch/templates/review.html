@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>{{TITLE}}</title>
+<style>
+/* YZ Default design system: black ink on a white surface, Helvetica, one left-aligned column, square corners,
+   space instead of rules. Layout: title and summary, the model with its controls beneath, then the record. */
+:root {
+  --surface: #ffffff;
+  --ink: #000000;
+  --on-ink: #ffffff;
+  --sans: Helvetica, Arial, "Hiragino Sans", "PingFang SC", "Yu Gothic", "Microsoft YaHei", sans-serif;
+  --space-xs: 4px; --space-sm: 8px; --space-md: 16px; --space-lg: 24px; --space-xl: 48px;
+  --hair: 1px;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--surface); color: var(--ink); margin: 0; }
+body {
+  font-family: var(--sans); font-size: 14px; line-height: 24px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: var(--space-xl);
+}
+main { max-width: 960px; display: flex; flex-direction: column; }
+.col { max-width: 640px; }
+h1 { font-size: 24px; line-height: 32px; font-weight: 700; margin: 0; text-wrap: balance; }
+h2 { font-size: 16px; line-height: 24px; font-weight: 700; margin: var(--space-xl) 0 var(--space-sm); text-wrap: balance; }
+p { margin: 0 0 var(--space-sm); }
+.meta { font-size: 12px; line-height: 20px; margin-top: var(--space-lg); display: flex; flex-direction: column; }
+.lead { font-size: 16px; line-height: 28px; margin-top: var(--space-xl); }
+.lead:empty { display: none; }
+.stage { margin-top: var(--space-xl); position: relative; width: 100%; aspect-ratio: 16 / 10; }
+@media (max-width: 600px) { .stage { aspect-ratio: 1 / 1; } }
+.stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.stage .hint { position: absolute; left: 0; bottom: calc(-1 * var(--space-lg)); font-size: 12px; line-height: 20px; }
+.stage .fail { position: absolute; inset: 0; display: flex; align-items: center; }
+.controls { margin-top: var(--space-xl); display: flex; flex-direction: column; gap: var(--space-lg); }
+.row { display: flex; flex-wrap: wrap; gap: var(--space-sm); align-items: center; }
+.row .label { font-size: 12px; line-height: 20px; min-width: 112px; }
+button {
+  font: inherit; font-size: 14px; line-height: 20px; color: var(--ink); background: var(--surface);
+  border: var(--hair) solid var(--ink); border-radius: 0; padding: 6px var(--space-md); cursor: pointer;
+  transition: background 120ms, color 120ms;
+}
+button:hover, button[aria-pressed="true"] { background: var(--ink); color: var(--on-ink); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.slider { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-sm) var(--space-md); }
+.slider label { font-size: 12px; line-height: 20px; min-width: 112px; }
+.slider input[type=range] { flex: 1 1 220px; min-width: 0; accent-color: var(--ink); }
+.slider output { font-size: 14px; font-variant-numeric: tabular-nums; min-width: 72px; }
+.state { font-size: 14px; line-height: 24px; }
+.state:empty { display: none; }
+ul.list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-sm); }
+ul.list li b { font-weight: 700; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 14px; line-height: 24px; }
+th, td { text-align: left; padding: 0 var(--space-md) 0 0; vertical-align: top; white-space: nowrap; }
+th { font-weight: 400; font-size: 12px; line-height: 20px; }
+td.num, th.num { text-align: right; }
+.small { font-size: 12px; line-height: 20px; }
+[hidden] { display: none !important; }
+@media (prefers-reduced-motion: reduce) { button { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <h1 id="title"></h1>
+  <div class="meta" id="meta"></div>
+  <div class="lead col" id="notes"></div>
+
+  <div class="stage" id="stage"><canvas id="cv" aria-label="3D model"></canvas><div class="hint">Drag to turn. Right-drag or two fingers to pan. Scroll or pinch to zoom.</div></div>
+
+  <div class="controls">
+    <div class="state" id="state" aria-live="polite"></div>
+    <div id="sliders" class="controls" style="margin-top:0"></div>
+    <div class="row">
+      <span class="label">View</span>
+      <button type="button" data-view="iso" aria-pressed="true">Three quarter</button>
+      <button type="button" data-view="front">Front</button>
+      <button type="button" data-view="top">Top</button>
+      <button type="button" data-view="right">Right</button>
+    </div>
+    <div class="row" id="showrow">
+      <span class="label">Show</span>
+      <button type="button" id="tChanged" aria-pressed="true" hidden>Changes in black</button>
+      <button type="button" id="tOld" aria-pressed="false" hidden>Previous version</button>
+      <button type="button" id="tColour" aria-pressed="false">Part colours</button>
+      <button type="button" id="tEdges" aria-pressed="true">Edges</button>
+    </div>
+    <div class="row" id="partrow" hidden><span class="label">Parts</span></div>
+  </div>
+
+  <section class="col" id="secChanged" hidden>
+    <h2>What changed</h2>
+    <ul class="list" id="changed"></ul>
+  </section>
+
+  <section class="col">
+    <h2>Checks</h2>
+    <div id="checks"></div>
+  </section>
+
+  <section class="col">
+    <h2>Parts</h2>
+    <div class="tablewrap"><table id="parts"></table></div>
+  </section>
+
+  <section class="col">
+    <p class="small" id="foot"></p>
+  </section>
+</main>
+
+<script id="review-data" type="application/json">{{DATA}}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function () {
+  const D = JSON.parse(document.getElementById('review-data').textContent);
+  const $ = (id) => document.getElementById(id);
+  const text = (el, t) => { el.textContent = t; return el; };
+  const add = (parent, tag, t) => { const e = document.createElement(tag); if (t !== undefined) e.textContent = t; parent.appendChild(e); return e; };
+  const fmt = (v, u) => (v === null || v === undefined) ? '-' : (Math.abs(v) >= 100 ? v.toFixed(1) : v.toFixed(2)) + (u === '°' ? '°' : ' ' + u);
+  const nameOf = (cid) => D.names[cid] || cid;
+
+  // ---------------------------------------------------------------- record (works even without WebGL)
+  text($('title'), D.title);
+  document.title = D.title;
+  const meta = $('meta');
+  add(meta, 'span', (D.kind === 'part' ? 'Part' : 'Assembly') + ' ' + (D.name || '') + ', version ' + D.version +
+    (D.compare ? ', compared with version ' + D.compare : '') + '.');
+  add(meta, 'span', 'Built in OpenSketch. ' + D.date + '.');
+  if (D.notes) for (const para of String(D.notes).split(/\n\s*\n/)) add($('notes'), 'p', para.trim());
+
+  const changedParts = Object.entries(D.parts).filter(([, p]) => p.changed);
+  if (D.compare) {
+    $('secChanged').hidden = false;
+    const ul = $('changed');
+    for (const c of D.changes || []) { const li = add(ul, 'li'); add(li, 'b', 'Version ' + c.version + '.'); li.append(' ' + (c.summary || 'Changed') + (c.by ? ' (' + c.by + ')' : '')); }
+    for (const [, p] of changedParts) { const li = add(ul, 'li'); add(li, 'b', p.name + '.'); li.append(' ' + p.changed); }
+    if (!ul.children.length) add(ul, 'li', 'No part changed geometry since version ' + D.compare + '.');
+  }
+
+  const ck = D.checks, lines = [];
+  if (ck.errors.length) lines.push('Rebuild or mate errors: ' + ck.errors.join('; ') + '.');
+  else lines.push('Every feature rebuilds and every mate solves.');
+  if (D.components.length > 1) {
+    lines.push(ck.clashes_rest.length ? 'Clashes as shown: ' + ck.clashes_rest.map((c) => nameOf(c.a) + ' with ' + nameOf(c.b) + ' (' + c.volume_mm3.toFixed(2) + ' mm³)').join('; ') + '.'
+      : 'No clashes as shown (' + D.components.length + ' components, every pair).');
+  }
+  for (const j of ck.joints) {
+    const u = j.unit;
+    let s = j.name + ': reaches ' + fmt(j.reached[0], u) + ' to ' + fmt(j.reached[1], u) + '. ' + j.poses_checked + ' poses checked: ';
+    s += j.clashes.length ? j.clashes.map((c) => nameOf(c.a) + ' hits ' + nameOf(c.b) + ' at ' + fmt(c.value, u) + ' (' + c.volume_mm3.toFixed(1) + ' mm³)').join('; ') + '.' : 'no clashes.';
+    if (j.closest) s += ' Smallest gap ' + j.closest.mm.toFixed(2) + ' mm, ' + nameOf(j.closest.a) + ' to ' + nameOf(j.closest.b) + ' at ' + fmt(j.closest.value, u) + '.';
+    if (j.unreached.length) s += ' The mates could not all hold at ' + j.unreached.map((e) => fmt(e.value, u)).join(', ') + '.';
+    lines.push(s);
+  }
+  for (const t of lines) add($('checks'), 'p', t);
+
+  const counts = {};
+  for (const c of D.components) counts[c.part] = (counts[c.part] || 0) + 1;
+  const tb = $('parts');
+  const hr = add(add(tb, 'thead'), 'tr');
+  for (const [t, num] of [['Part', 0], ['Qty', 1], ['Material', 0], ['Volume (cm³)', 1]]) { const th = add(hr, 'th', t); if (num) th.className = 'num'; }
+  const body = add(tb, 'tbody');
+  for (const [pid, p] of Object.entries(D.parts)) {
+    const tr = add(body, 'tr');
+    add(tr, 'td', p.name + (p.changed ? ' (changed)' : ''));
+    add(tr, 'td', String(counts[pid] || 0)).className = 'num';
+    add(tr, 'td', p.material || '-');
+    add(tr, 'td', (p.volume_mm3 / 1000).toFixed(2)).className = 'num';
+  }
+  text($('foot'), 'A fixed record of this version: it does not change when the model does. Joint positions between the ' +
+    (D.sliders[0] ? D.sliders[0].values.length : 0) + ' solved poses per joint are interpolated. Built in ' + D.build_seconds + ' s.');
+
+  // ---------------------------------------------------------------- 3D
+  if (!window.THREE) { add($('stage'), 'div', 'The 3D view needs three.js from cdnjs.cloudflare.com, which did not load.').className = 'fail'; return; }
+  const cv = $('cv'), stage = $('stage');
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true }); }
+  catch (e) { add(stage, 'div', 'This browser cannot show the 3D view (WebGL is off).').className = 'fail'; return; }
+  renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+  renderer.setClearColor(0xffffff, 1);
+  const scene = new THREE.Scene();
+  const cam = new THREE.PerspectiveCamera(30, 1.6, 1, 100000);
+  const ctl = new THREE.OrbitControls(cam, cv);
+  ctl.enableDamping = true;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x9a9a9a, 0.75));
+  const key = new THREE.DirectionalLight(0xffffff, 0.55); key.position.set(-200, 400, 300); scene.add(key);
+  const fill = new THREE.DirectionalLight(0xffffff, 0.3); fill.position.set(250, -150, -300); scene.add(fill);
+
+  function b64(s, T) { const bin = atob(s); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new T(u.buffer); }
+  const geoCache = {};
+  function geometry(m, key) {
+    if (key && geoCache[key]) return geoCache[key];
+    const q = b64(m.p, Int16Array), pos = new Float32Array(q.length);
+    for (let i = 0; i < q.length; i++) pos[i] = q[i] * m.s;
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setIndex(new THREE.BufferAttribute(m.big ? b64(m.i, Uint32Array) : b64(m.i, Uint16Array), 1));
+    g.computeVertexNormals();
+    const eq = b64(m.e, Int16Array), ep = new Float32Array(eq.length);
+    for (let i = 0; i < eq.length; i++) ep[i] = eq[i] * m.s;
+    const eg = new THREE.BufferGeometry(); eg.setAttribute('position', new THREE.BufferAttribute(ep, 3));
+    const out = { g, eg };
+    if (key) geoCache[key] = out;
+    return out;
+  }
+  const lambert = (c) => new THREE.MeshLambertMaterial({ color: c, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
+  const MAT = { plain: lambert(0xf2f2f2), changed: lambert(0x4a4a4a) };
+  const EDGE = new THREE.LineBasicMaterial({ color: 0x000000 });
+  const OLD = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.06, depthWrite: false });
+  const EDGE_OLD = new THREE.LineDashedMaterial({ color: 0x000000, dashSize: 1.2, gapSize: 0.8, transparent: true, opacity: 0.7 });
+  const colourMat = {};
+  const matFor = (p, colour, changes) => {
+    if (changes && p.changed) return MAT.changed;
+    if (colour && p.appearance) return colourMat[p.appearance] || (colourMat[p.appearance] = lambert(new THREE.Color(p.appearance)));
+    return MAT.plain;
+  };
+
+  const setMatrix = (obj, m) => { const M = new THREE.Matrix4().fromArray(m).transpose(); obj.matrixAutoUpdate = false; obj.matrix.copy(M); };
+  const comps = {};
+  for (const c of D.components) {
+    const p = D.parts[c.part];
+    const { g, eg } = geometry(p.mesh, c.part);
+    const grp = new THREE.Group();
+    const mesh = new THREE.Mesh(g, MAT.plain); grp.add(mesh);
+    const edges = new THREE.LineSegments(eg, EDGE); grp.add(edges);
+    setMatrix(grp, c.matrix);
+    grp.visible = !c.hidden;
+    scene.add(grp);
+    comps[c.id] = { c, p, grp, mesh, edges };
+  }
+  const oldObjs = (D.old || []).map((o) => {
+    const { g, eg } = geometry(o.mesh);
+    const grp = new THREE.Group();
+    grp.add(new THREE.Mesh(g, OLD));
+    const l = new THREE.LineSegments(eg, EDGE_OLD); l.computeLineDistances(); grp.add(l);
+    setMatrix(grp, o.matrix); grp.visible = false; scene.add(grp);
+    return grp;
+  });
+
+  // ---------------------------------------------------------------- joints
+  const S = D.sliders.map((s) => ({ s, v: s.rest, frames: s.frames.map((f) => Object.fromEntries(Object.entries(f).map(([k, m]) => {
+    const M = new THREE.Matrix4().fromArray(m).transpose(); const p = new THREE.Vector3(), q = new THREE.Quaternion(), sc = new THREE.Vector3();
+    M.decompose(p, q, sc); return [k, { p, q }];
+  }))) }));
+  function poseAt(st, v) {
+    const vals = st.s.values; let k = 0;
+    while (k < vals.length - 2 && v > vals[k + 1]) k++;
+    const t = Math.min(1, Math.max(0, (v - vals[k]) / ((vals[k + 1] - vals[k]) || 1)));
+    const a = st.frames[k], b = st.frames[k + 1] || a, out = {};
+    for (const cid of Object.keys(a)) {
+      const p = a[cid].p.clone().lerp(b[cid].p, t), q = a[cid].q.clone().slerp(b[cid].q, t);
+      out[cid] = new THREE.Matrix4().compose(p, q, new THREE.Vector3(1, 1, 1));
+    }
+    return out;
+  }
+  function apply() {
+    for (const st of S) {
+      const poses = poseAt(st, st.v);
+      for (const [cid, M] of Object.entries(poses)) if (comps[cid]) comps[cid].grp.matrix.copy(M);
+    }
+    const msgs = S.filter((st) => Math.abs(st.v - st.s.rest) > 1e-6).map((st) => st.s.name + ' at ' + fmt(st.v, st.s.unit) + ' (as built ' + fmt(st.s.rest, st.s.unit) + ')');
+    text($('state'), msgs.length ? msgs.join('. ') + '.' : (S.length ? 'As built.' : ''));
+  }
+  const box = $('sliders');
+  S.forEach((st, i) => {
+    const s = st.s, row = add(box, 'div'); row.className = 'slider';
+    const lab = add(row, 'label', s.name); lab.htmlFor = 'j' + i;
+    const inp = add(row, 'input'); inp.type = 'range'; inp.id = 'j' + i;
+    inp.min = s.min; inp.max = s.max; inp.step = (s.max - s.min) / 500; inp.value = s.rest;
+    const out = add(row, 'output', fmt(s.rest, s.unit));
+    const rest = add(row, 'button', 'As built'); rest.type = 'button';
+    st.inp = inp; st.out = out;
+    const set = (v) => {
+      st.v = v; inp.value = v; out.textContent = fmt(v, s.unit);
+      // joints that move the same parts: the others go back to as built (their poses were solved one joint at a time)
+      for (const o of S) if (o !== st && o.s.moving.some((c) => s.moving.includes(c)) && o.v !== o.s.rest) { o.v = o.s.rest; o.inp.value = o.v; o.out.textContent = fmt(o.v, o.s.unit); }
+      apply();
+    };
+    inp.addEventListener('input', () => set(+inp.value));
+    rest.addEventListener('click', () => set(s.rest));
+  });
+
+  // ---------------------------------------------------------------- show
+  function toggle(id, fn, init, show = true) {
+    const b = $(id); b.hidden = !show;
+    b.addEventListener('click', () => { const on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', String(on)); fn(on); });
+    b.setAttribute('aria-pressed', String(init)); fn(init);
+  }
+  const look = { changes: !!D.compare, colour: false };
+  const restyle = () => { for (const k of Object.values(comps)) k.mesh.material = matFor(k.p, look.colour, look.changes); };
+  toggle('tChanged', (on) => { look.changes = on; restyle(); }, !!D.compare && changedParts.length > 0, !!D.compare && changedParts.length > 0);
+  toggle('tOld', (on) => oldObjs.forEach((o) => o.visible = on), false, oldObjs.length > 0);
+  toggle('tColour', (on) => { look.colour = on; restyle(); }, false, Object.values(D.parts).some((p) => p.appearance));
+  toggle('tEdges', (on) => Object.values(comps).forEach((k) => k.edges.visible = on), true);
+  const byPart = {};
+  for (const k of Object.values(comps)) (byPart[k.c.part] = byPart[k.c.part] || []).push(k);
+  if (Object.keys(byPart).length > 1 && Object.keys(byPart).length <= 16) {
+    const row = $('partrow'); row.hidden = false;
+    for (const [pid, list] of Object.entries(byPart)) {
+      const b = add(row, 'button', D.parts[pid].name); b.type = 'button';
+      const on = list.some((k) => !k.c.hidden); b.setAttribute('aria-pressed', String(on));
+      b.addEventListener('click', () => { const v = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', String(v)); list.forEach((k) => k.grp.visible = v); });
+    }
+  }
+
+  // ---------------------------------------------------------------- views (OpenSketch / SOLIDWORKS: Y up)
+  const bb = D.bbox || [[-50, -50, -50], [50, 50, 50]];
+  const centre = new THREE.Vector3((bb[0][0] + bb[1][0]) / 2, (bb[0][1] + bb[1][1]) / 2, (bb[0][2] + bb[1][2]) / 2);
+  const radius = Math.max(0.5 * Math.hypot(bb[1][0] - bb[0][0], bb[1][1] - bb[0][1], bb[1][2] - bb[0][2]), 1);
+  function view(v) {
+    document.querySelectorAll('[data-view]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === v)));
+    const dir = { iso: [1, 0.8, 1], front: [0, 0, 1], top: [0, 1, 0.0001], right: [1, 0, 0] }[v];
+    const w = new THREE.Vector3(...dir).normalize();
+    // fit the model's bounding sphere: the vertical field of view, or the horizontal one on a narrow screen
+    const half = THREE.MathUtils.degToRad(cam.fov / 2);
+    const d = 1.08 * radius / Math.sin(Math.min(half, Math.atan(Math.tan(half) * cam.aspect)));
+    cam.position.copy(centre).addScaledVector(w, d);
+    cam.up.set(0, 1, 0);
+    cam.near = d / 100; cam.far = d * 20; cam.updateProjectionMatrix();
+    ctl.target.copy(centre); ctl.update();
+  }
+  document.querySelectorAll('[data-view]').forEach((b) => b.addEventListener('click', () => view(b.dataset.view)));
+  function resize() { const w = stage.clientWidth, h = stage.clientHeight; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+  window.addEventListener('resize', resize);
+  resize(); view('iso'); apply();
+  (function loop() { ctl.update(); renderer.render(scene, cam); requestAnimationFrame(loop); })();
+})();
+</script>
+</body>
+</html>

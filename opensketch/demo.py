@@ -292,3 +292,23 @@ def _chunks(s: str, n: int):
 
 def client(speed: float = 1.0, scenario: str = "press"):
     return NS(beta=NS(messages=DemoMessages(speed, scenario)))
+
+
+def press_doc(motion: bool = True) -> dict:
+    """The hand press built by the demo script (no AI). With motion, the platen is not held by the rod tip
+    but slides on the columns between stops, 110 mm (the rod tip) to 300 mm below the crown (a
+    limit_distance). A top stop above 110 would drive the platen into the rod."""
+    from .ai import Session
+    s = Session({"version": 1, "type": "part", "name": "Hand Press", "units": "mm", "features": []})
+    for _thinking, _text, calls in script():
+        for name, args in calls:
+            s.apply(name, args)
+    doc = s.work
+    doc["name"] = "Hand Press"
+    if motion:
+        tip = next(m for m in doc["mates"] if m["type"] == "coincident"
+                   and {r.get("component") for r in m["refs"]} == {"c7", "c8"})
+        tip.update(type="limit_distance", name="Platen travel", min=110, max=300,
+                   refs=[_plane("c6", 0, -1), _plane("c8", 20, 1)], align="anti")
+        tip.pop("value", None)
+    return doc

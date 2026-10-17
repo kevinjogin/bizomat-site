@@ -374,6 +374,12 @@ def api_doc_head(doc_id: str):
     return _found(store.head, doc_id)
 
 
+@app.get("/api/docs/{doc_id}/versions")
+def api_doc_versions(doc_id: str):
+    """Earlier versions still kept (Publish Review's compare list)."""
+    return _found(store.versions, doc_id)
+
+
 @app.put("/api/docs/{doc_id}")
 def api_doc_save(doc_id: str, req: DocSave):
     try:
@@ -402,6 +408,57 @@ def api_artifact(artifact_id: str, filename: str, expires: str = "", signature: 
     return FileResponse(path, filename=info["filename"], media_type=info["media_type"],
                         headers={"Cache-Control": "no-store", "Referrer-Policy": "no-referrer",
                                  "X-Content-Type-Options": "nosniff", "Content-Security-Policy": "sandbox"})
+
+
+class ReviewRequest(BaseModel):
+    doc_id: str
+    compare_version: int | None = None
+    title: str | None = None
+    notes: str | None = None
+
+
+def _base(request: Request) -> str:
+    return auth.public_url({k.lower(): v for k, v in request.headers.items()})
+
+
+@app.post("/api/reviews")
+async def api_review_publish(req: ReviewRequest, request: Request):
+    """Publish a review page of a stored document (File > Publish Review)."""
+    from . import review
+    try:
+        return await run_in_threadpool(review.publish, req.doc_id, req.compare_version, req.title, req.notes, "you",
+                                       _base(request))
+    except store.NotFound:
+        return JSONResponse({"error": "Save the document to the server first (File > Save to Server)."}, status_code=404)
+    except (review.ReviewError, assembly.AssemblyError, geometry.FeatureError) as exc:
+        return JSONResponse({"error": str(exc)}, status_code=400)
+
+
+@app.get("/api/reviews")
+def api_review_list(request: Request, doc_id: str | None = None):
+    from . import review
+    return review.listing(doc_id, _base(request))
+
+
+@app.delete("/api/reviews/{token}")
+def api_review_delete(token: str):
+    from . import review
+    if not review.delete(token):
+        raise HTTPException(404, "No such review")
+    return {"deleted": token}
+
+
+@app.get("/review/{token}")
+def review_page(token: str):
+    """A published review: frozen HTML, no login (the token is the key), not indexed, no referrer."""
+    from . import review
+    p = review.html_path(token)
+    if p is None:
+        raise HTTPException(404, "No such review. It may have been deleted.")
+    return FileResponse(p, media_type="text/html; charset=utf-8",
+                        headers={"Cache-Control": "private, max-age=300", "Referrer-Policy": "no-referrer",
+                                 "X-Content-Type-Options": "nosniff", "X-Robots-Tag": "noindex, nofollow",
+                                 "X-Frame-Options": "SAMEORIGIN"})
 
 
 # MCP (Streamable HTTP): the token in the path is the key; routed before the static files.

@@ -35,6 +35,34 @@ assemblies only when a part changes.
 
 ## Current state (2026-10-17, v0.4 + mate solver in the browser + feature registry + SolidCraft borrowings 1 and 2)
 
+Review pages (2026-10-18, after YZ's Lavilock review artifacts): `review.py` + `templates/review.html`.
+`build(rec, compare, title, notes, history)`: assembly (a part is wrapped as one fixed component) rebuilt and
+`apply_solution` (mate refs on rebuilt faces); parts packed by `pack_mesh` (one geometry per part, int16 x
+per-part scale `s`, uint16/32 indices, edge segments, base64); components at rest; sliders = `joints()`
+(hinge with angle_refs and both angle limits, limit_distance, limit_angle with min < max): the mate's limits
+pinned (`_pin`: min = max) at STEPS = 24 values, solved with `assembly.solve` warm-started outward from
+the rest value both ways; `reached` re-measured with the solver's own conventions (`_measure`); frames hold
+only components whose pose really changes (1 micron / 1e-5 rad: solver noise left guide columns "moving");
+checks: rebuild and mate errors, clashes at rest (every pair) and on every 4th pose of each joint (pairs
+with a moving part; CLASH_MM3 = 0.01, smaller is touching), smallest non-zero gap of the moving parts, poses
+where mates failed. compare: parts changed by `part_key` (note from `_feature_changes`), the old version's
+changed parts at their old poses (ghost), version summaries between. `page()` puts the data in a JSON
+script tag (escaped `</`) in the YZ Default template: three.js r128 + OrbitControls (cdnjs / jsdelivr),
+sliders interpolate (lerp + slerp) between solved frames, joints that share moving parts reset each other,
+views, Changes in black, Previous version ghost, Part colours, Edges, per-part show/hide, What changed,
+Checks, Parts table; all text set with textContent. Stored: `<data>/reviews/<token>.html` +
+`reviews.json`; `publish()` (token_urlsafe(24)), `listing`, `delete`, `html_path` (token regex). Routes:
+POST/GET /api/reviews, DELETE /api/reviews/{token} (login), GET /review/{token} (public: PasswordGate
+exempts /review/; noindex, no-referrer, nosniff), GET /api/docs/{id}/versions; links use the request's
+address in the app (`_base`) and `auth.public_url()` for MCP (OPENSKETCH_PUBLIC_URL on Fly). MCP
+`publish_review(doc_id, compare_version, title, notes)` (now 39 tools) returns url + a checks summary.
+App: File > Publish Review... (`serverdocs.publishDialog`: saves to the server first if needed, title,
+compare-with list, notes, result with Copy / Open, earlier reviews of the document). `demo.press_doc()` =
+the demo press with the platen on a limit_distance 110-300 mm (a top stop above 110 hits the rod: the
+review's check found it). Checked in Chromium: publish from the app with a password set, link opened logged
+out at phone size, slider moves the changed platen, no page errors; press review ~130 KB, built in ~2 s.
+Tests: `tests/test_review.py` (7). 266 pytest + 59 node.
+
 Merged 2026-10-17: PR #7 (Offset Entities, see "Sketch Offset Entities") and PR #5 (review fixes + sweep, loft,
 Hole Wizard; see "Review fixes"). Merge decisions: sweep / loft / hole are registered in
 `features/builtin.py` (`ui="custom"`, PM hand-written in features.js by PR #5, geometry in
@@ -295,6 +323,10 @@ See `docs/CODE_REVIEW_2026-10-16.md` for reproductions, new-feature usage and UX
 - Sketch DOF in inspect_design needs node on the server (Docker image: Debian nodejs 20, deployed to Fly
   2026-10-17; the devcontainer has it). Not yet called through the real Claude connector.
 - batch runs on the server only (MCP). The in-app copilot still applies tools one at a time.
+- Review pages: joints are moved one at a time (solved per joint; two joints moving the same parts reset
+  each other); only hinge/limit mates with both limits get a slider; no DFM section (no DFM checks in
+  OpenSketch); clash checks on 7 poses per joint, so a clash shorter than ~1/6 of the travel can be missed;
+  the page needs cdnjs and jsdelivr for three.js; published reviews are never removed automatically.
 - Mate references (plane / axis / point) are stored as geometry in part coordinates and re-matched to
   the nearest face after part edits; not topological. Mate picks: planar faces, cylindrical/conical
   faces, straight edges, the three assembly planes. No vertex or circular-edge picks yet.
