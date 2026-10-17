@@ -151,7 +151,7 @@ review should be OpenSketch, not a separate page):
   after closing), a clashing law listed and clicked (pose 121.3 deg, both parts red), Publish Review with
   compare, the link logged out at 390 px (notes, joint, checks, What Changed with "Lever throws tongue:
   changed", tap on the slider moves the tongue) and at desktop size, visitor's autosave untouched, no page
-  errors. Rebased on v0.5 (accounts, Figma look): review mode skips the account fetch and hides the avatar; the
+  errors. Rebased on v0.5 (accounts, Figma look, since replaced by the Linear look): review mode skips the account fetch and hides the avatar; the
   flows re-run with account sign-in. Tests: `tests/test_review.py` (9). 277 pytest (2 skipped) + 59 node.
 
 ## Earlier state (2026-10-17, v0.4 + mate solver in the browser + feature registry + SolidCraft borrowings 1 and 2)
