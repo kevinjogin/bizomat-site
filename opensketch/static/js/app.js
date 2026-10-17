@@ -20,6 +20,8 @@ import { LivePlayer } from './live.js';
 import { Toolbox } from './toolbox.js';
 import { SectionView } from './section.js';
 import { ServerDocs } from './serverdocs.js';
+import { Account } from './account.js';
+import { DesignPanel } from './design.js';
 import { escapeHtml as esc, featureSketchIds, dependentFeatureIds, removeFeatures, measurementData } from './model-utils.js';
 
 const $ = (id) => document.getElementById(id);
@@ -75,8 +77,10 @@ export class App {
     this.commands = buildCommands(this);
     this.ribbon = new Ribbon(this);
     this.tree = new FeatureTree(this);
+    this.design = new DesignPanel(this);
     this.taskpane = new TaskPane(this);
     this.server = new ServerDocs(this);
+    this.account = new Account(this);
     this.asm = new AssemblyMode(this);
     this.live = new LivePlayer(this);
     this.toolbox = new Toolbox(this);
@@ -235,6 +239,7 @@ export class App {
     this.server?.changed(); // a server document: save the edit back (debounced)
     this.updateDocChrome();
     this.tree.render();
+    this.design?.refresh();
   }
 
   // The document as saved: when a part is open from its assembly, the assembly with that part in it.
@@ -426,6 +431,8 @@ export class App {
     this.selection = list;
     this.refreshSelectionDisplay();
     this.tree.render();
+    this.design?.onSelection();
+    if (this.taskpane) { this.taskpane.noSelection = false; this.taskpane.updateSelChip(); }
   }
 
   refreshSelectionDisplay() {

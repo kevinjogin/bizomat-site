@@ -8,6 +8,7 @@ import { escapeHtml as esc, safeUrl } from '../model-utils.js';
 const h = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 
 const PANES = [
+  { id: 'design', icon: 'props', title: 'Design' },
   { id: 'ai', icon: 'ai', title: 'OpenSketch AI' },
   { id: 'resources', icon: 'resources', title: 'OpenSketch Resources' },
   { id: 'library', icon: 'library', title: 'Design Library' },
@@ -59,7 +60,7 @@ export class TaskPane {
     for (const p of PANES) {
       const b = h('div', 'ts', icon(p.icon, 20));
       b.title = p.title; b.dataset.id = p.id;
-      b.onclick = () => this.toggle(p.id);
+      b.onclick = () => { if (p.id === 'design') this.app.design?.setAuto(this.open !== 'design'); this.toggle(p.id); };
       this.strip.appendChild(b);
     }
   }
@@ -79,10 +80,11 @@ export class TaskPane {
     if (!p) return;
     this.panel.innerHTML = '';
     const head = h('div', 'tp-head', `${icon(p.icon, 18)}<span>${p.title}</span><span class="pin" title="Close">&#x2715;</span>`);
-    head.querySelector('.pin').onclick = () => this.show(null);
+    head.querySelector('.pin').onclick = () => { if (p.id === 'design') this.app.design?.setAuto(false); this.show(null); };
     this.panel.appendChild(head);
     const body = h('div', 'tp-body');
     this.panel.appendChild(body);
+    if (p.id === 'design') return this.app.design.render(body);
     if (p.id === 'ai') return this.renderAI(body);
     if (p.id === 'resources') return this.renderResources(body);
     if (p.id === 'appearance') return this.renderAppearance(body);
@@ -122,6 +124,8 @@ export class TaskPane {
     if (this.draft) ta.value = this.draft;
     ta.oninput = () => { this.draft = ta.value; };
     this.input = ta;
+    this.chipHost = inp;
+    this.updateSelChip();
     const row = h('div', 'row');
     row.appendChild(h('span', 'hint', this.busy ? 'Building... you can rotate and zoom the view' : 'Ctrl+Enter to send'));
     const reset = h('button', 'btn', 'New chat'); reset.onclick = () => { if (this.busy) return; this.log = []; this.conversation = null; this.render(); };
@@ -133,6 +137,21 @@ export class TaskPane {
     this.panel.appendChild(inp);
     this.scroll(true);
     if (!this.busy) setTimeout(() => ta.focus(), 0);
+  }
+
+  // "About: <selection>" above the AI input: requests go with the selected items (x sends without them).
+  updateSelChip() {
+    const inp = this.chipHost;
+    if (!inp || !inp.isConnected) return;
+    inp.querySelector('.ai-selchip')?.remove();
+    const selItems = this.app.design && !this.noSelection ? this.app.design.describeSelection() : [];
+    if (!selItems.length) return;
+    const chip = h('div', 'ai-selchip');
+    const label = selItems.length === 1 ? (selItems[0].name || (selItems[0].feature_name && `Face of ${selItems[0].feature_name}`) || selItems[0].kind) : `${selItems.length} selected items`;
+    chip.innerHTML = `${icon('select', 12)}<span></span><span class="x" title="Send without the selection" role="button" aria-label="Send without the selection">&#x2715;</span>`;
+    chip.children[1].textContent = 'About: ' + label;
+    chip.querySelector('.x').onclick = () => { this.noSelection = true; this.updateSelChip(); };
+    inp.insertBefore(chip, inp.firstChild);
   }
 
   scroll(force = false) {
@@ -198,6 +217,7 @@ export class TaskPane {
     } else {
       el = h('div', 'ai-msg ' + (m.role === 'user' ? 'user' : m.role === 'error' ? 'err' : 'bot'));
       el.textContent = m.text;
+      if (m.about) { const a = h('div', 'ai-about'); a.textContent = 'About: ' + m.about; el.appendChild(a); }
       if (m.live) el.classList.add('live');
     }
     m.el = el;
@@ -229,9 +249,11 @@ export class TaskPane {
     if (app.mode === 'sketch') app.exitSketch();
     if (app.proposal) app.rejectProposal(true);
     this.show('ai');
+    const selection = opts.selection ?? (text === undefined && !this.noSelection && app.design ? app.design.describeSelection() : null);
+    this.noSelection = false;
     if (text === undefined && this.input) { this.input.value = ''; this.draft = ''; }
     this.busy = true;
-    this.log.push({ role: 'user', text: prompt });
+    this.log.push({ role: 'user', text: prompt, about: selection && selection.length ? selection.map((x) => x.name || (x.feature_name ? 'Face of ' + x.feature_name : x.kind)).join(', ') : '' });
     this.render();
     const ctl = new AbortController();
     this.abort = ctl;
@@ -239,7 +261,7 @@ export class TaskPane {
     const S = { text: null, think: null, acts: new Map(), proposal: null, done: null, error: null };
     try {
       const r = await fetch('/api/ai/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: ctl.signal,
-        body: JSON.stringify({ doc: before, prompt, conversation: this.conversation, demo: opts.demo || false }) });
+        body: JSON.stringify({ doc: before, prompt, conversation: this.conversation, demo: opts.demo || false, selection: selection && selection.length ? selection : null }) });
       if (!r.ok || !r.body) throw new Error(`Server error ${r.status}`);
       const reader = r.body.getReader();
       const dec = new TextDecoder();

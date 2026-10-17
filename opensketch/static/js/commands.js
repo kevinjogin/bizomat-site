@@ -1,4 +1,5 @@
 // Command registry and CommandManager layout (tab by tab, in SOLIDWORKS order).
+import { SKIN, setSkin } from './skin.js';
 // Feature commands from the server's feature registry (SPECS) are added here too: a registered
 // feature replaces its 'not available yet' placeholder and joins the Insert menu.
 
@@ -160,7 +161,7 @@ export const QUICK = ['new', 'open', 'save', 'print', 'undo', 'redo', 'select', 
 export const MENUS = [
   { name: 'File', items: ['new', 'open', 'serveropen', 'save', 'saveas', 'serversave', 'sldmacro', '-', 'publishreview', 'connectclaude', '-', 'print', '-', 'fileprops'] },
   { name: 'Edit', items: ['undo', 'redo', '-', 'rebuild', '-', { label: 'Delete', run: (app) => app.deleteSelection(), key: 'Del' }, { label: 'Suppress', run: (app) => app.suppressSelection(true) }, { label: 'Unsuppress', run: (app) => app.suppressSelection(false) }] },
-  { name: 'View', items: [{ label: 'Planes', run: (app) => app.toggleView('planes') }, { label: 'Origins', run: (app) => app.toggleView('origins') }, { label: 'Sketches', run: (app) => app.toggleView('sketches') }, { label: 'Sketch Relations', run: (app) => app.toggleView('relations') }, '-', { label: 'Zoom to Fit', run: (app) => app.viewer.zoomToFit(), key: 'F' }] },
+  { name: 'View', items: [{ label: 'Planes', run: (app) => app.toggleView('planes') }, { label: 'Origins', run: (app) => app.toggleView('origins') }, { label: 'Sketches', run: (app) => app.toggleView('sketches') }, { label: 'Sketch Relations', run: (app) => app.toggleView('relations') }, '-', { label: 'Zoom to Fit', run: (app) => app.viewer.zoomToFit(), key: 'F' }, '-', { label: SKIN === 'figma' ? 'Classic Look (SOLIDWORKS colours)' : 'Figma Look', run: () => setSkin(SKIN === 'figma' ? 'classic' : 'figma') }] },
   { name: 'Insert', items: ['insertcomp', 'newpart', 'mate', '-', 'extrude', 'revolve', 'cut', 'revcut', '-', 'fillet', 'chamfer', 'shell', '-', 'linpattern', 'circpattern', 'mirror', '-', 'plane', '-', 'sketch'] },
   { name: 'Tools', items: ['line', 'centerline', 'rectangle', 'circle', 'arc', 'slot', 'polygon', 'point', '-', 'smartdim', 'addrelation', 'relations', '-', 'trim', 'convert', 'offset', 'sketchmirror', 'sketchfillet', '-', 'equations', '-', 'measure', 'massprops', '-', 'options'] },
   { name: 'Window', items: [{ label: 'Part1', run: () => {} }] },

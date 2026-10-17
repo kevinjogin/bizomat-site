@@ -373,3 +373,31 @@ def annotate(part_before: dict, feat: dict) -> dict:
         if isinstance(out.get(key), dict) and isinstance(out[key].get("edge"), dict):
             edge_ref(out[key]["edge"])
     return out
+
+
+def face_owner(part_doc: dict, center, normal=None) -> dict:
+    """The feature that made the face at `center` (and the sketch curve its side came from), worked out from
+    the face's persistent name. {feature, role, entity, sketch, name} or {feature: None}."""
+    from . import geometry
+    st, _ = geometry.regen(part_doc)
+    if st.part is None:
+        return {"feature": None}
+    faces, names, _ = st.namer.current(st.part)
+    ref = {"center": list(center)}
+    if normal:
+        ref["normal"] = list(normal)
+    found, _ = geometry.find_faces(st.part, [ref])
+    if len(found) != 1:
+        return {"feature": None}
+    k = next((i for i, f in enumerate(faces) if f.is_same(found[0])), None)
+    if k is None:
+        return {"feature": None}
+    name = names[k]
+    base = name.split("#[")[0].split("~")[0].split("@")[0]
+    fid, _, role = base.partition(":")
+    feats = {f.get("id"): f for f in part_doc.get("features", [])}
+    if fid not in feats:
+        return {"feature": None, "name": name}
+    entity = role[len("side:"):] if role.startswith("side:") else None
+    f = feats[fid]
+    return {"feature": fid, "role": role.split(":")[0] if role else "", "entity": entity, "sketch": f.get("sketch"), "name": name}

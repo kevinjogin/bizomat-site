@@ -35,7 +35,7 @@ input, select, button { font: inherit; color: inherit; }
 #titlebar { display: flex; align-items: center; gap: 6px; background: #fbfbfb; border-bottom: 1px solid var(--border-l); padding: 0 6px; position: relative; z-index: 30; }
 .brand { display: flex; align-items: center; gap: 6px; padding-right: 4px; user-select: none; }
 .logo { background: var(--sw-red); color: #fff; font-weight: 700; font-size: 11px; padding: 2px 4px; border-radius: 2px; letter-spacing: .5px; }
-.brand-text { color: var(--sw-red); font-size: 13px; letter-spacing: .5px; }
+.brand-text { color: var(--sw-red); font-size: 13px; letter-spacing: .5px; text-transform: uppercase; }
 .brand-text b { font-weight: 800; }
 .menu-flyout { cursor: pointer; padding: 2px 6px; color: #444; font-size: 13px; }
 .menu-flyout:hover, .menubar .mi:hover { background: var(--hover); }

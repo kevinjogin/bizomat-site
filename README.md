@@ -97,8 +97,8 @@ See the [plane contract](docs/DOCUMENT.md#conventions).
    `OPENSKETCH_PASSWORD`, give this repository access. Restart the codespace once so it picks it up.
    Without a password, anyone with the address could use your OpenSketch.
 2. **Make the port public.** In the codespace, open the Ports tab, right-click port 8000, Port
-   Visibility > Public. Claude cannot reach a private port. (Sign in with the password when the page
-   asks.)
+   Visibility > Public. Claude cannot reach a private port. (The first visit asks you to create your
+   account, with the password as the key.)
 3. **Copy the address.** In OpenSketch: OpenSketch AI tab > Connect Claude (or File > Connect Claude),
    then Copy. The address contains the key; keep it private.
 4. **Add it to Claude.** In Claude: Customize > Connectors > Add custom connector. Name it OpenSketch,
@@ -115,6 +115,35 @@ the model you have open with Claude.
 The codespace has to be running for Claude to reach it: it stops after 30 idle minutes, so open it
 before you use Claude with it.
 
+## Accounts and sign-in
+
+OpenSketch uses accounts (email and password). The first time you open a server that has
+`OPENSKETCH_PASSWORD` set, it asks you to create the owner account, with that password as the key that
+proves you own the server. After that everyone signs in with their own email and password.
+
+- Your avatar (top right) has Account settings (name, password), Invite people (a link that works once and
+  lasts 7 days), People on this server (remove someone), the look switch and Sign out.
+- Forgot your password? On the sign-in page, Forgot your password? resets it with the server password.
+- A server without `OPENSKETCH_PASSWORD` (a private codespace) stays open until you create an owner account
+  from the avatar menu.
+- Claude's connector address does not change when you add accounts. Published review links still work
+  without signing in.
+
+## Design panel and Ask AI
+
+Click a face, a feature, a sketch, a component or a mate and the Design panel (right) shows the numbers that
+shape it: sketch dimensions, depths, radii, counts, mate distances and global variables. Drag a label left
+or right (Shift faster, Alt finer), drag the slider, or type a value: the sketch dimension itself changes,
+the sketch is re-solved and the model rebuilds as you drag. One change is one undo step. For a face, the
+feature that made it comes first and the numbers that shape that face are marked. Close the panel with its
+x and it stops opening by itself; click its icon to bring it back.
+
+Ask AI (bottom of the panel, or the AI chat with the "About" chip) sends your request with the selection,
+so "make this 5 mm thicker" or "round these edges" acts on what you picked.
+
+The look follows Figma (neutral greys, Inter, flat icons, dark menus); the layout and every command work
+the SOLIDWORKS way. Avatar menu or View > Classic Look switches back to SOLIDWORKS colours.
+
 ## Host it on Fly.io (optional, when you need it)
 
 The codespace is free but only reachable while it is open. To have OpenSketch always reachable at a fixed
@@ -126,7 +155,8 @@ takes a few seconds). Everything is set up already; it is all browser steps:
 2. In the Fly dashboard, open Tokens and create an organization token for your personal organization.
    Copy it.
 3. On GitHub, in this repository: Settings > Secrets and variables > Actions > New repository secret.
-   Add `FLY_API_TOKEN` (the token), `OPENSKETCH_PASSWORD` (required: the site is public) and, for the
+   Add `FLY_API_TOKEN` (the token), `OPENSKETCH_PASSWORD` (required: the key for creating the owner
+   account and resetting passwords) and, for the
    built-in AI chat, `ANTHROPIC_API_KEY`.
 4. Open the Actions tab, choose Deploy to Fly.io, Run workflow. The first run creates the app and its
    storage and takes about 10 minutes; after that every push to main deploys by itself.

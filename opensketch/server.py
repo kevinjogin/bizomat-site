@@ -1,6 +1,6 @@
 """FastAPI server: serves the SOLIDWORKS-style web UI, the build123d regen API for parts and
 assemblies, the streaming AI endpoint, documents stored on the server (shared with Claude through the
-MCP endpoint at /mcp/<token>), and the optional password (OPENSKETCH_PASSWORD)."""
+MCP endpoint at /mcp/<token>), and sign-in (accounts, see auth.py)."""
 
 from __future__ import annotations
 
@@ -69,6 +69,7 @@ class AIRequest(BaseModel):
     prompt: str
     conversation: str | None = None
     demo: bool | str = False  # True or "press": hand press assembly, "part": L bracket, "web": web search + Toolbox screw
+    selection: list[dict] | None = None  # what the user selected (Ask AI on a selection)
 
 
 @app.post("/api/regen")
@@ -109,6 +110,20 @@ def api_name_refs(req: NameRefsRequest):
     """Add persistent names to a feature's face and edge picks (naming.annotate), so they survive edits."""
     from . import naming
     return {"feature": naming.annotate(req.doc, req.feature)}
+
+
+class FaceOwnerRequest(BaseModel):
+    doc: dict
+    center: list[float]
+    normal: list[float] | None = None
+
+
+@app.post("/api/face_owner")
+def api_face_owner(req: FaceOwnerRequest):
+    """Which feature made a face, and from which sketch curve (persistent names, naming.py). Drives the
+    Design panel: click a face, see the numbers that shape it."""
+    from . import naming
+    return naming.face_owner(req.doc, req.center, req.normal)
 
 
 class DeletePlanRequest(BaseModel):
@@ -309,7 +324,7 @@ def api_ai_stream(req: AIRequest):
     """Newline-delimited JSON events while the AI designs (see ai.run_stream)."""
     def gen():
         try:
-            for ev in ai.run_stream(req.doc, req.prompt, req.conversation, demo=req.demo):
+            for ev in ai.run_stream(req.doc, req.prompt, req.conversation, demo=req.demo, selection=req.selection):
                 yield json.dumps(ev, separators=(",", ":")) + "\n"
         except Exception as exc:  # never leave the client hanging
             yield json.dumps({"ev": "error", "message": f"Server error: {exc}"}) + "\n"
@@ -388,6 +403,71 @@ def api_doc_save(doc_id: str, req: DocSave):
         raise HTTPException(404, "No such document") from None
     except store.Conflict as c:
         return JSONResponse({"error": "conflict", "current": c.current}, status_code=409)
+
+
+def _user(request: Request) -> dict | None:
+    return getattr(request.state, "user", None)
+
+
+def _owner(request: Request) -> dict:
+    u = _user(request)
+    if not u or u.get("role") != "owner" or u.get("legacy"):
+        raise HTTPException(403, "Only the owner can do this.")
+    return u
+
+
+@app.get("/api/account")
+def api_account(request: Request):
+    """Who is signed in, for the account menu."""
+    from . import accounts
+    u = _user(request)
+    m = auth.mode()
+    out = {"mode": m, "user": u, "can_setup": m in ("open", "password"), "reset_with_server_password": bool(auth.password())}
+    if u and u.get("role") == "owner" and m == "accounts":
+        out["users"] = accounts.list_users()
+        out["pending_invites"] = accounts.pending_invites()
+    return out
+
+
+class AccountUpdate(BaseModel):
+    name: str | None = None
+    current_password: str | None = None
+    new_password: str | None = None
+
+
+@app.post("/api/account")
+def api_account_update(req: AccountUpdate, request: Request):
+    from . import accounts
+    u = _user(request)
+    if not u or u.get("legacy"):
+        return JSONResponse({"error": "Create an account first."}, status_code=400)
+    try:
+        if req.new_password:
+            accounts.set_password(u["id"], req.new_password, req.current_password or "")
+        if req.name:
+            accounts.rename(u["id"], req.name)
+    except accounts.AccountError as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
+    return {"user": accounts.get(u["id"]), "signed_out": bool(req.new_password)}
+
+
+@app.post("/api/account/invites")
+def api_invite(request: Request):
+    from . import accounts
+    u = _owner(request)
+    token = accounts.create_invite(u["id"])
+    return {"url": f"{_base(request)}/join/{token}", "days": accounts.INVITE_DAYS}
+
+
+@app.delete("/api/account/users/{user_id}")
+def api_remove_user(user_id: str, request: Request):
+    from . import accounts
+    _owner(request)
+    try:
+        accounts.remove(user_id, "")
+    except accounts.AccountError as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
+    return {"removed": user_id}
 
 
 @app.get("/api/connect")

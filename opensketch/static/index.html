@@ -4,19 +4,24 @@
 <meta charset="utf-8">
 <title>OpenSketch</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{document.documentElement.classList.add(localStorage.getItem('opensketch.skin')==='classic'?'skin-classic':'skin-figma')}catch(e){document.documentElement.classList.add('skin-figma')}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="css/app.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 9l8-4 8 4v8l-8 4-8-4z' fill='%23d9372b'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/figma.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 9l8-4 8 4v8l-8 4-8-4z' fill='%231e1e1e'/%3E%3C/svg%3E">
 </head>
 <body>
 <div id="app">
   <header id="titlebar">
-    <div class="brand"><span class="logo">OS</span><span class="brand-text"><b>OPEN</b>SKETCH</span></div>
+    <div class="brand"><span class="logo">OS</span><span class="brand-text"><b>Open</b>Sketch</span></div>
     <div id="menu-flyout" class="menu-flyout" title="Menu">&#9656;</div>
     <nav id="menubar" class="menubar hidden"></nav>
     <div id="quickaccess" class="quickaccess"></div>
     <div id="doctitle" class="doctitle">Part1 *</div>
     <div class="search"><input id="cmdsearch" placeholder="Search Commands" autocomplete="off"><div id="cmdsearch-results" class="search-results hidden"></div></div>
     <div class="title-help" title="Help">?</div>
+    <div id="account" class="account" title="Account"></div>
   </header>
 
   <section id="cmdmgr">

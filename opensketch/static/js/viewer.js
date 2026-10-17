@@ -2,6 +2,7 @@
 // Middle drag rotates, Ctrl+middle pans, Shift+middle zooms, wheel zooms about the cursor.
 
 import * as THREE from 'three';
+import { VIEW_COLORS } from './skin.js';
 
 const V = (a) => new THREE.Vector3(a[0], a[1], a[2]);
 const mix = (a, b, t) => {
@@ -20,6 +21,7 @@ export const COLORS = {
   planeEdge: 0x3a6fb8,
   proposal: 0xa58cff,
 };
+if (VIEW_COLORS) Object.assign(COLORS, VIEW_COLORS);
 
 export const STD_FRAMES = {
   'Front Plane': { origin: [0, 0, 0], xdir: [1, 0, 0], ydir: [0, 1, 0], normal: [0, 0, 1] },
@@ -409,7 +411,7 @@ export class Viewer {
       const st = p.state || 'normal';
       obj.userData.mesh.material.color.setHex(st === 'sel' ? 0x2a8cff : st === 'hl' ? 0xffa040 : COLORS.plane);
       obj.userData.mesh.material.opacity = st === 'normal' ? 0.16 : 0.3;
-      obj.userData.border.material.color.setHex(st === 'sel' ? 0x1060e0 : st === 'hl' ? COLORS.hl : COLORS.planeEdge);
+      obj.userData.border.material.color.setHex(st === 'sel' ? COLORS.sel : st === 'hl' ? COLORS.hl : COLORS.planeEdge);
       obj.userData.label = p.name;
     }
     for (const [id, obj] of this.planeObjs) if (!seen.has(id)) { this.planesGroup.remove(obj); this.planeObjs.delete(id); }

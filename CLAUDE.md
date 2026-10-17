@@ -11,8 +11,12 @@ assemblies only when a part changes.
 ## Rules
 
 - After completing any phase or significant change, update this file to reflect the current state before committing.
-- Match SOLIDWORKS: icon positions, CommandManager order, PropertyManager layout, feedback colours,
+- Match SOLIDWORKS in layout and behaviour: icon positions, CommandManager order, PropertyManager layout,
   mouse and keyboard behaviour. When in doubt, do what SOLIDWORKS 2024 does. Icons are original.
+- The look is Figma's by default (`css/figma.css`, rules under `.skin-figma`; `skin.js` swaps icon and 3D
+  colours), so OpenSketch does not look like SOLIDWORKS. `app.css` alone is the classic SOLIDWORKS look
+  (`.skin-classic`, View > Classic Look). New UI: style it in app.css with the tokens, and add the Figma
+  version in figma.css. Sketch state colours (blue under, black fully, red over) stay in both.
 - New part features go through the feature registry (`opensketch/features/`): one file with a
   `FeatureType` (typed params, sections, defaults, limits) and its `build(feat, st, diagnostics)`,
   imported at the bottom of `features/__init__.py`. That alone gives the ribbon button, a generated
@@ -33,7 +37,63 @@ assemblies only when a part changes.
   "fix" a reference number to match OpenSketch, work it out by hand.
 - No emojis in UI text. Plain language, short sentences.
 
-## Current state (2026-10-17, v0.4 + mate solver in the browser + feature registry + SolidCraft borrowings 1 and 2)
+## Current state (2026-10-18, v0.5: accounts, Figma look, Design panel, Ask AI on a selection)
+
+Accounts (2026-10-18): `accounts.py` (users.json: scrypt-hashed passwords, owner/member roles, single-use
+7-day invites stored as SHA-256; sessions.json: SHA-256 of random cookie tokens, 90 days, removed on sign out,
+on a password change and when a member is removed). `auth.py` modes: `accounts` (any user exists: cookie
+`opensketch_user` required), `password` (OPENSKETCH_PASSWORD set, no users: the sign-in page is "Create the owner
+account" with the server password as the key; the old password-only cookie and POST still work until then),
+`open` (neither: as before; the avatar offers Create owner account). Pages served by `PasswordGate`
+(/login, /setup, /join/<token>, /reset (server password resets a forgotten password), /logout), Figma-style,
+no open redirect, 1 s delay on failures, X-Frame-Options DENY. `scope["state"]["user"]` = the person.
+API: GET/POST /api/account (who, rename, change password), POST /api/account/invites, DELETE
+/api/account/users/{id} (owner only). MCP token unchanged (still from the password or the data-folder secret);
+/review/ and /mcp/ stay outside sign-in. `static/js/account.js`: avatar (initials) in the title bar, dark menu:
+Account settings, Invite people (link + Copy), People on this server, look switch, Sign out.
+Tests: `tests/test_accounts.py` (6).
+
+Figma look (2026-10-18, YZ: distinguish OpenSketch from SOLIDWORKS without changing layout or flow; from Figma's
+UI3 write-ups: numbers always visible, grouped properties, contextual labels, opt-out to the old UI):
+`css/figma.css` restyles everything under `.skin-figma` (Inter from Google Fonts with system fallback, #f5f5f5
+canvas, white panels, 1px #e6e6e6 hairlines, 5-6px rounded hover states without borders, #0d99ff accent, dark
+context menus with blue hover, dark toasts, white floating toolbars with soft shadows, flat graphics background,
+rollback bar as a blue line with a knob). `skin.js` (`SKIN` from localStorage `opensketch.skin`, set early by an
+inline script in index.html) swaps the icon palette in `icons.icon()` (grey body -> light fill, yellow new
+geometry -> accent, dark strokes) and the viewer COLORS (hover light blue, selection #0d99ff). Classic stays
+one click away (avatar menu, View menu), a reload. Checked in Chromium both looks.
+
+Design panel (2026-10-18, YZ: "a property window with Figma-like sliders that changes the value in the sketch
+itself"): `static/js/design.js` = Task Pane tab "Design" (first). Opens by itself on selecting a face, feature,
+sketch, component or mate (not during a command, sketch mode or a live AI build; closing it with x stops that,
+stored in `opensketch.design.auto`). Rows: sketch dimensions (distance/diameter/radius/angle; driven and
+equation-driven shown read-only with fx), registry numeric params of the feature whose `when` matches (plus
+extrude `dir2.depth`), numeric global variables, mate value/min/max/angle limits. Each row: label scrub (pointer
+capture, step per px from the value's size: 0.1 mm for 2-200 mm, Shift x10, Alt x0.1, 0.5 deg for angles),
+range slider (min/max from the registry, else 0 to ~2.5x the value), number field (expressions, units,
+arrow keys). Sketch dimensions are changed on a copy and solved with the browser solver; only a converged,
+not over-defined result is kept (else the row flashes red, nothing changes). One undo step per drag / typed
+value (`begin` pushUndo, `end` docChanged); rebuilds stream one request in flight, newest value wins. Faces:
+`/api/face_owner` (`naming.face_owner`: the face's persistent name -> feature, role start/end/side/blend...,
+the sketch curve of a side face) puts that feature and its sketch first and marks the rows that shape the
+face (dimensions on the curve or its points, or the depth/radius for caps and blends). Because rebuilds
+renumber faces, an edit started on a face selects its feature instead and keeps the face context (`pinned`).
+Assemblies: a component shows its part's features (edits go into `doc.parts[pid]`, `asm.regen` rebuilds that
+part); a mate shows its numbers. Proposal pending / sketch mode / open command: read-only with a note.
+Checked in Chromium: top face of the bracket -> Face of Boss-Extrude1, Depth marked; scrub D2 50 -> 59.5 in
+one undo step with 11 live rebuilds; typed depth 12 then Ctrl+Z; press assembly: component Base Plate D1
+320 -> 340, mate limit max 300 -> 280.
+
+Ask AI on a selection (2026-10-18): the Design panel's Ask box and the AI chat (an "About: ..." chip, x
+to leave it out) send `selection` with /api/ai/stream (`design.describeSelection`: features/sketches by id,
+faces with feature/role/entity/sketch and a `ref` {name, center, normal}, edges with {mid}, components with
+part, mates). `ai.selection_note` appends it to the request as data (20 items, whitelisted keys, 600 chars
+each); the system prompt's "Selection" paragraph says to change only what the request needs on them
+(replace mode with identical other features, refs passed through to fillet/chamfer/shell/draft). The chat
+shows "About: ..." under the user's message. Tests: `tests/test_design.py` (3: face owners on the bracket,
+the route, the note reaching the conversation). 275 pytest (2 need the macro toolchain) + 59 node.
+
+## Earlier state (2026-10-17, v0.4 + mate solver in the browser + feature registry + SolidCraft borrowings 1 and 2)
 
 Review pages (2026-10-18, after YZ's Lavilock review artifacts): `review.py` + `templates/review.html`.
 `build(rec, compare, title, notes, history)`: assembly (a part is wrapped as one fixed component) rebuilt and
@@ -298,6 +358,14 @@ See `docs/CODE_REVIEW_2026-10-16.md` for reproductions, new-feature usage and UX
   SOLIDWORKS macro export uses STEP fallback for parts containing these features.
 
 ## Known limits
+
+- Accounts: no email sending (invites are links you pass on; a forgotten password is reset with the server
+  password), no per-document permissions (everyone signed in sees every server document), no rate limit
+  beyond the 1 s delay. Documents still record `by: "you"` / `"claude"`, not the person's name.
+- Design panel: edge picks show the whole part (no edge-to-feature lookup yet); the face lookup costs one
+  named rebuild on the server per face clicked; the slider range is fixed when the row is drawn; sketch
+  dimensions inside a part opened from an assembly use the same path but were only checked on the press.
+  Figma's dark menus invert icon colours with a CSS filter.
 
 - SOLIDWORKS macros: nothing has been run in SOLIDWORKS yet; ask YZ for the log of the first run.
   Assembly-side API calls not confirmed: AddComponent5 + Transform2, AddMate5 (obsolete in 2022) with

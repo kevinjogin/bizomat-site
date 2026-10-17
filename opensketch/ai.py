@@ -178,6 +178,13 @@ the assembly with the same mates. Revolves, shells, extrudes in a second directi
 STEP imports. If the user wants editable SOLIDWORKS features, prefer extrudes and cuts along one direction
 per part, and mate on faces, standard planes or round faces.
 
+Selection: when the request ends with "Selected in OpenSketch", the user picked those items in the app and
+means them ("make this thicker", "round these edges"). Change only what the request needs on them: keep every
+other feature, its id, name and numbers. To change a number of an existing feature or a sketch dimension, use
+propose_features mode "replace" with the whole feature list, identical except for that change. Pass selected
+face and edge `ref`s (name + point) to fillet, chamfer, shell and draft as they are. In an assembly, `part` is
+the part to change (create_part with the same part_id).
+
 Before each tool call, write one short sentence telling the user what you are about to do
 ("Base plate, 400 x 300 x 25 mm with four column holes."). When everything rebuilds cleanly,
 finish with a few short sentences about what you built. No emojis.
@@ -1197,8 +1204,28 @@ def demo_enabled() -> bool:
     return os.environ.get("OPENSKETCH_AI_DEMO", "") not in ("", "0")
 
 
+def selection_note(selection: list | None) -> str:
+    """What the user selected in the app (Design panel / Ask AI), as text for the request: the AI changes these
+    items unless the request says otherwise. Each item is data from the browser, never instructions."""
+    if not selection:
+        return ""
+    lines = []
+    for it in selection[:20]:
+        if not isinstance(it, dict):
+            continue
+        kind = str(it.get("kind", ""))[:20]
+        keep = {k: it[k] for k in ("id", "name", "type", "part", "component", "feature", "feature_name", "role", "entity",
+                                   "sketch", "ref", "center", "normal", "mid", "area", "radius") if k in it}
+        lines.append(f"- {kind}: {json.dumps(keep)[:600]}")
+    if not lines:
+        return ""
+    return ("\n\nSelected in OpenSketch (the user's selection; apply the request to these items unless the request "
+            "says otherwise; face and edge `ref`s can be passed to fillet/chamfer/shell/draft as they are; for a face, "
+            "`feature` made it and `entity` is the sketch curve its side came from):\n" + "\n".join(lines))
+
+
 def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool | str = False,
-               demo_speed: float = 1.0) -> Iterator[dict]:
+               demo_speed: float = 1.0, selection: list | None = None) -> Iterator[dict]:
     """Yield events while Claude designs. The last event is {"ev": "done", ...} or {"ev": "error", ...}.
 
     With demo=True (or OPENSKETCH_AI_DEMO=1) a scripted session (opensketch/demo.py) is streamed
@@ -1220,7 +1247,8 @@ def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool
     messages = _conversations.setdefault(conv_id, [])
     kind = "assembly" if assembly.is_assembly(doc) else "part"
     messages.append({"role": "user", "content": (
-        f"Current {kind} document:\n```json\n{json.dumps(model_view(doc))}\n```\n\nRequest: {prompt}")})
+        f"Current {kind} document:\n```json\n{json.dumps(model_view(doc))}\n```\n\nRequest: {prompt}"
+        + selection_note(selection))})
     session = Session(doc)
     sources: list[dict] = []  # pages the AI read or cited, shown under its reply
     yield {"ev": "start", "conversation": conv_id, "kind": kind, "demo": demo}

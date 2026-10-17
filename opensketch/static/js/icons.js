@@ -1,4 +1,6 @@
 // Original icon set drawn to sit where SOLIDWORKS users expect each command.
+import { ICON_SWAP } from './skin.js';
+
 // 24x24 viewBox. Palette: grey body, yellow = new geometry, blue = sketch, red = remove.
 
 const G = '#8c96a0', GD = '#5d6670', Y = '#f2c230', YD = '#c8961e', B = '#2a6fd6', R = '#d9372b', K = '#333', GR = '#2f9e44';
@@ -181,7 +183,8 @@ const P = {
 };
 
 export function icon(name, size = 24) {
-  const body = P[name] || P.props;
+  let body = P[name] || P.props;
+  if (ICON_SWAP) body = body.replace(/#[0-9a-fA-F]{6}\b/g, (c) => ICON_SWAP[c.toLowerCase()] || c);
   return `<svg class="ic" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`;
 }
 
