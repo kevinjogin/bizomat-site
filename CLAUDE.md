@@ -177,7 +177,8 @@ with model pictures, a deep audit, "connect Claude, Codex or whatever", a better
   when the server's env sets it). The sign-in pages show Continue with Google (Google's light button) as soon as
   it is saved. Test: tests/test_accounts.py::test_owner_turns_google_on_in_the_app.
   Google Cloud for the live site (2026-10-19, set up for YZ in his account): project "OpenSketch" (opensketch-512019, no
-  organisation), Google Auth Platform External, test user yyz.works@gmail.com, web client "OpenSketch web" with
+  organisation), Google Auth Platform External, published (In production; home page + /privacy on the Branding page,
+  authorized domain opensketch-yz.fly.dev, no logo so no Google review needed), web client "OpenSketch web" with
   redirect https://opensketch-yz.fly.dev/auth/google/callback. YZ pastes the Client ID + secret into the dialog once.
   Public privacy notice at /privacy (`auth.PRIVACY`, served by PasswordGate before any sign-in check; linked from the
   sign-in pages' footer): what the server keeps, the Google data used (name, email, verified, sub, hd) and that it
