@@ -5,7 +5,6 @@
 
 import { contextMenu, dialog, message } from './ui/dialogs.js';
 import { escapeHtml as esc } from './model-utils.js';
-import { LOGO } from './brand.js';
 
 const $ = (id) => document.getElementById(id);
 const h = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
@@ -165,7 +164,7 @@ export class FilesView {
     const el = this.el;
     el.innerHTML = '';
     const top = h('header', 'fv-top');
-    const brand = h('button', 'fv-brand', `${LOGO(22)}<span>OpenSketch</span>`);
+    const brand = h('button', 'fv-brand', 'OpenSketch');
     brand.title = 'Back to the model'; brand.onclick = () => this.backToModel();
     const search = h('label', 'fv-search', `${FI.search}<input type="search" placeholder="Search files" autocomplete="off" spellcheck="false" aria-label="Search files"><kbd>Ctrl K</kbd>`);
     const inp = search.querySelector('input'); inp.value = this.query;

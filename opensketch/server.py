@@ -770,6 +770,45 @@ def api_account_settings(req: AccountSettings, request: Request):
     return accounts.set_open_signup(req.open_signup)
 
 
+def _google_redirect(request: Request) -> str:
+    return auth._request_base(request.scope) + "/auth/google/callback"
+
+
+@app.get("/api/account/google")
+def api_google_get(request: Request):
+    """Owner: Sign in with Google settings (the address to give Google; never the secret)."""
+    from . import oauth
+    _owner(request)
+    return oauth.public(_google_redirect(request))
+
+
+class GoogleSetup(BaseModel):
+    client_id: str
+    client_secret: str
+
+
+@app.post("/api/account/google")
+def api_google_set(req: GoogleSetup, request: Request):
+    """Owner: turn on Sign in with Google with a Web application OAuth client from Google Cloud."""
+    from . import oauth
+    _owner(request)
+    if (oauth.client() or ("", "", ""))[2] == "server":
+        return JSONResponse({"error": "Google sign-in is set on the server (GOOGLE_CLIENT_ID). Change it there."}, status_code=400)
+    try:
+        oauth.save(req.client_id, req.client_secret, _google_redirect(request))
+    except oauth.SetupError as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
+    return oauth.public(_google_redirect(request))
+
+
+@app.delete("/api/account/google")
+def api_google_off(request: Request):
+    from . import oauth
+    _owner(request)
+    oauth.remove()
+    return oauth.public(_google_redirect(request))
+
+
 @app.post("/api/account/invites")
 def api_invite(request: Request):
     from . import accounts

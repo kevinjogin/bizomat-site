@@ -163,16 +163,23 @@ one (set `OPENSKETCH_SHARE_SERVER_KEY=0` to stop sharing it).
 
 ## Sign in with Google (optional)
 
-1. In Google Cloud Console (console.cloud.google.com): APIs & Services > OAuth consent screen: set it up as
-   External with your app name and email. Then Credentials > Create credentials > OAuth client ID >
-   Web application. Under Authorized redirect URIs add `https://opensketch-yz.fly.dev/auth/google/callback`
-   (and `https://<your domain>/auth/google/callback` if you use one). Create, then copy the Client ID and
-   Client secret.
-2. On GitHub, add two repository secrets: `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`. Run the Deploy
-   workflow.
-3. The sign-in page now has Continue with Google. Your own account links itself the first time you use it
-   (same email). New people need an invite link (Join with Google), unless you turn on "Anyone can create an
-   account" in the avatar menu > People on this server.
+Everything happens in the browser. Sign in as the owner, then avatar menu > Sign in with Google. The dialog
+walks you through it and shows the exact address to give Google:
+
+1. Open Google Auth Platform (console.cloud.google.com/auth/overview), pick or create a project, and click
+   Get started if it is new: app name OpenSketch, your email, audience External.
+2. In Audience, click Publish app (OpenSketch only asks for name and email, so Google does not need to review
+   it), or keep it in testing and add yourself as a test user.
+3. In Clients, click Create client, choose Web application, and add the redirect address from the dialog
+   (for example `https://opensketch-yz.fly.dev/auth/google/callback`) under Authorized redirect URIs. Create.
+4. Paste the Client ID and Client secret into the dialog and click Turn on. OpenSketch asks Google whether
+   it knows the client before saving, and keeps the secret encrypted on the server.
+
+The sign-in page then shows Continue with Google. Your own account links itself the first time if it is a
+Gmail address (or a Google Workspace account on its own domain); otherwise sign in with your password. New
+people need an invite link (Join with Google), unless you turn on "Anyone can create an account" in avatar
+menu > People on this server. Server admins can instead set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`
+(the deploy workflow stages them from GitHub secrets of the same names); those win over the app setting.
 
 ## Design panel and Ask AI
 

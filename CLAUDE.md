@@ -40,10 +40,10 @@ assemblies only when a part changes.
   "fix" a reference number to match OpenSketch, work it out by hand.
 - No emojis in UI text. Plain language, short sentences.
 - Brand: names and headings in `--font-display` (Inter Tight, bold, tight tracking), pill buttons (`.btn.fv-pill`)
-  for main calls to action, the LOGO mark from brand.js; new UI styled with the theme tokens and checked in dark,
+  for main calls to action, the text wordmark "OpenSketch" as the logo (no mark or tile; YZ 2026-10-19); new UI styled with the theme tokens and checked in dark,
   light and classic, and at phone width. Motion: `--ease`, 120-220 ms, nothing that blocks input.
 
-## Current state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand)
+## Current state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand, text logo, Google sign-in set up in the app)
 
 v0.6 (2026-10-19, YZ: Stripe-like branding with the current colours, the installable web app, a file portal
 with model pictures, a deep audit, "connect Claude, Codex or whatever", a better bring-your-own-key flow, subtle
@@ -108,8 +108,11 @@ with model pictures, a deep audit, "connect Claude, Codex or whatever", a better
   /favicon.svg, /icons/ through (browsers fetch the manifest without cookies). `AppFiles` sends Cache-Control:
   no-cache for app files (icons a week) so deploys apply at once. Review pages drop the manifest link. Chromium:
   no installability errors, SW controls the page.
-- Brand (`static/css/brand.css`, `static/js/brand.js` LOGO): isometric-cube mark on an indigo tile (title bar,
-  Files, Connect AI, sign-in, favicon, icons); Inter Tight 600-800 for names and headings (tight tracking), Inter
+- Brand (`static/css/brand.css`): the logo is the wordmark "OpenSketch" in Inter Tight 800, -0.04em tracking (title
+  bar `.brand-text`, Files `.fv-brand`, sign-in pages `.brand`; hidden in the title bar on phones). The indigo cube tile
+  was removed on 2026-10-19 (YZ: "keep the text as logo"; brand.js deleted). Favicon and app icons (the places that
+  need a picture) are the wordmark's "O" (glyph outline from Inter Tight 800 as an SVG path, no font needed) in
+  #f2f3f5 on #141517, not blue. Inter Tight 600-800 for names and headings (tight tracking), Inter
   400-700 for the UI; pill calls to action with a sliding arrow; a slow indigo mesh behind the Files header.
   Sign-in pages (`auth.PAGE`): angled indigo-to-pink band, bold pitch on the left, raised card, pill button,
   stacked on phones. Colours unchanged (tokens from linear.css; classic skin gets fallbacks).
@@ -161,6 +164,18 @@ with model pictures, a deep audit, "connect Claude, Codex or whatever", a better
     server sends no message and goes to sign-in on 401 (the AI stream too, and one bad line no longer ends it);
     account settings fetch errors are caught; Remove person asks first; dialog close and PropertyManager help are
     real buttons, the title-bar "?" opens a help menu.
+- Sign in with Google from the app (2026-10-19, YZ: "add sign in with google"): it was built but needed
+  GOOGLE_CLIENT_ID/SECRET as GitHub secrets, which were never set. Now the owner turns it on in the browser:
+  avatar menu > Sign in with Google (also People on this server > Set up). The dialog lists the Google Auth
+  Platform steps (Get started / External, Audience > Publish app, Clients > Create client > Web application) and
+  shows this site's redirect address with Copy (`server._google_redirect` = request base + /auth/google/callback).
+  `oauth.client()` = env GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET ("server", wins), else `google_oauth.json` in the
+  data folder (client_id, secret Fernet-encrypted with the AI-key secret, updated) ("app"). `oauth.save` checks the
+  Client ID suffix and the secret, then asks Google's token endpoint with a made-up code (`check_client`:
+  invalid_client = refused with a plain message; invalid_grant = right; Google unreachable = saved unchecked).
+  Routes (owner only, 403 for members): GET/POST/DELETE /api/account/google (never returns the secret; POST refused
+  when the server's env sets it). The sign-in pages show Continue with Google (Google's light button) as soon as
+  it is saved. Test: tests/test_accounts.py::test_owner_turns_google_on_in_the_app.
 - Tests: `tests/test_files.py` (8: history size cap, per-person files and 404s, rename/duplicate/trash/restore/purge/versions,
   30-day purge, meta-only poll and list, pictures browser + server-drawn + AI redraw + limits, personal MCP
   addresses over JSON-RPC, PWA files public and versioned), `tests/test_hardening.py` (8: safe next, cross-site
@@ -596,7 +611,8 @@ See `docs/CODE_REVIEW_2026-10-16.md` for reproductions, new-feature usage and UX
 - BYOK: only the Anthropic path has web search, thinking display and the server-side fallback; OpenAI-compatible
   providers get plain function calling (models that cannot call tools will not build). Not tried against the
   real OpenAI / Gemini / OpenRouter APIs yet (tests use a fake server). Keys saved while signed in with the old
-  server password belong to "local". Google sign-in not yet tried with a real Google client.
+  server password belong to "local". Google sign-in not yet tried with a real Google client (the in-app setup and
+  the client check are tested against a fake token endpoint).
 - Accounts: no email sending (invites are links you pass on; a forgotten password is reset with the server
   password). Documents are per person (owner only; no sharing between accounts yet). The sign-in rate limit is
   in memory (resets on restart, per machine). Documents still record `by: "you"` / `"claude"`, not the person's name.

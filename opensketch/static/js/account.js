@@ -49,7 +49,8 @@ export class Account {
       items.push({ label: 'Account settings...', run: () => this.settings() });
       items.push({ label: 'Files', run: () => this.app.files?.open() });
       items.push({ label: 'Connect AI...', run: () => this.app.server?.connectDialog() });
-      if (u.role === 'owner' && m === 'accounts') items.push({ label: 'Invite people...', run: () => this.invite() }, { label: 'People on this server...', run: () => this.people() });
+      if (u.role === 'owner' && m === 'accounts') items.push({ label: 'Invite people...', run: () => this.invite() }, { label: 'People on this server...', run: () => this.people() },
+        { label: this.info.google ? 'Sign in with Google: on' : 'Sign in with Google...', run: () => this.google() });
     } else {
       items.push({ head: m === 'open' ? 'Not signed in. Anyone with the address can use this server.' : 'Signed in with the server password.' });
       items.push({ label: 'Create owner account...', run: () => { location.href = '/setup?next=' + encodeURIComponent(location.pathname + location.search); } });
@@ -144,7 +145,70 @@ export class Account {
       try { const r = await (await fetch('/api/account/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ open_signup: cb.checked }) })).json(); this.info.open_signup = r.open_signup; } catch (_) { cb.checked = !cb.checked; }
     };
     body.append(open, openNote);
+    const g = h('div', 'acct-g');
+    g.append(h('span', null, this.info.google ? 'Sign in with Google is on.' : 'Sign in with Google is off.'));
+    const gb = h('button', 'btn', this.info.google ? 'Settings...' : 'Set up...'); gb.onclick = () => setTimeout(() => this.google(), 0);
+    g.appendChild(gb); body.appendChild(g);
     if (this.info.pending_invites) body.appendChild(h('div', 'acct-note', `${this.info.pending_invites} invite link(s) not used yet.`));
     dialog({ title: 'People on this server', body, cls: 'acct-dlg', buttons: [{ label: 'Invite people...', run: () => { setTimeout(() => this.invite(), 0); } }, { label: 'Done', primary: true }] });
+  }
+
+  // Owner: turn on "Continue with Google" by pasting a Web application OAuth client from Google Cloud.
+  async google() {
+    let st;
+    try { st = await (await fetch('/api/account/google', { cache: 'no-store' })).json(); } catch (_) { st = null; }
+    if (!st || st.detail || st.error) { message('Sign in with Google', esc(st?.detail || st?.error || 'Could not reach the server.')); return; }
+    const body = h('div', 'acct acct-google');
+    const status = h('div', 'acct-gstate' + (st.enabled ? ' on' : ''));
+    const setStatus = (s) => {
+      status.className = 'acct-gstate' + (s.enabled ? ' on' : '');
+      status.textContent = s.enabled ? (s.source === 'server' ? 'On. Set on the server, so it is changed there.' : 'On. The sign-in pages show Continue with Google.')
+        : 'Off. People sign in with email and password.';
+    };
+    setStatus(st);
+    body.appendChild(status);
+    const steps = h('ol', 'acct-steps');
+    steps.innerHTML = `<li>Open <a href="https://console.cloud.google.com/auth/overview" target="_blank" rel="noopener">Google Auth Platform</a> and pick or create a project (for example "OpenSketch").
+        If it says it is not set up yet, click <b>Get started</b>: app name OpenSketch, your email, audience <b>External</b>.</li>
+      <li>In <b>Audience</b>, click <b>Publish app</b> so anyone you invite can use it (name and email only, so Google does not need to review it).
+        Or keep it in testing and add yourself under Test users.</li>
+      <li>In <b>Clients</b>, click <b>Create client</b> and choose <b>Web application</b>. Under <b>Authorized redirect URIs</b>, add this address:</li>`;
+    body.appendChild(steps);
+    const row = h('div', 'srv-url'); const uri = h('input'); uri.readOnly = true; uri.value = st.redirect_uri;
+    const copy = h('button', 'btn', 'Copy');
+    copy.onclick = () => { navigator.clipboard?.writeText(st.redirect_uri).then(() => { copy.textContent = 'Copied'; }, () => { uri.select(); }); };
+    row.append(uri, copy); body.appendChild(row);
+    const last = h('ol', 'acct-steps'); last.start = 4;
+    last.innerHTML = '<li>Click <b>Create</b>. Google shows the Client ID and Client secret once: paste both here.</li>';
+    body.appendChild(last);
+    body.insertAdjacentHTML('beforeend', `<label class="acct-l">Client ID</label><input class="acct-i" name="cid" autocomplete="off" spellcheck="false" placeholder="....apps.googleusercontent.com">
+      <label class="acct-l">Client secret</label><input class="acct-i" name="sec" type="password" autocomplete="off" spellcheck="false" placeholder="${st.enabled && st.source === 'app' ? 'Saved. Paste a new one to change it.' : 'GOCSPX-...'}">
+      <div class="acct-note">The secret is stored encrypted on this server and never shown again.</div><div class="acct-err" role="alert"></div>`);
+    const cid = body.querySelector('[name=cid]'), sec = body.querySelector('[name=sec]'), err = body.querySelector('.acct-err');
+    cid.value = st.client_id || '';
+    if (st.source === 'server') { cid.disabled = true; sec.disabled = true; }
+    body.querySelectorAll('input').forEach((i) => i.addEventListener('keydown', (e) => e.stopPropagation()));
+    const call = async (method, payload) => {
+      const r = await fetch('/api/account/google', { method, headers: { 'Content-Type': 'application/json' }, body: payload ? JSON.stringify(payload) : undefined });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error || j.detail || r.statusText || 'Could not save.');
+      return j;
+    };
+    const buttons = [{ label: st.enabled ? 'Done' : 'Cancel' }];
+    if (st.enabled && st.source === 'app') buttons.unshift({ label: 'Turn off', danger: true, run: () => {
+      call('DELETE').then((j) => { setStatus(j); this.info.google = false; cid.value = ''; this.app.toast?.('Sign in with Google is off.'); d.close(); })
+        .catch((e) => { err.textContent = e.message; });
+      return false;
+    } });
+    if (st.source !== 'server') buttons.push({ label: st.enabled ? 'Save' : 'Turn on', primary: true, run: () => {
+      err.textContent = '';
+      if (!cid.value.trim() || !sec.value.trim()) { err.textContent = st.enabled && !sec.value.trim() ? 'Paste the Client secret to change the settings.' : 'Paste the Client ID and the Client secret.'; return false; }
+      call('POST', { client_id: cid.value.trim(), client_secret: sec.value.trim() }).then((j) => {
+        this.info.google = true; d.close();
+        this.app.toast?.('Sign in with Google is on. Sign out to see it on the sign-in page.');
+      }).catch((e) => { err.textContent = e.message; });
+      return false;
+    } });
+    const d = dialog({ title: 'Sign in with Google', body, cls: 'acct-dlg acct-google-dlg', buttons });
   }
 }

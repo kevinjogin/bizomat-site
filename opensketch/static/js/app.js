@@ -24,7 +24,6 @@ import { Account } from './account.js';
 import { DesignPanel } from './design.js';
 import { MotionReview } from './review.js';
 import { FilesView, FI } from './files.js';
-import { LOGO } from './brand.js';
 import { escapeHtml as esc, featureSketchIds, dependentFeatureIds, removeFeatures, measurementData } from './model-utils.js';
 
 const $ = (id) => document.getElementById(id);
@@ -109,7 +108,7 @@ export class App {
     this.bindDocTabs();
     if (this.reviewMode) {
       const b = document.querySelector('#titlebar .brand');
-      if (b) b.innerHTML = `${LOGO(20)}<span class="brand-text">OpenSketch</span>`;
+      if (b) b.innerHTML = '<span class="brand-text">OpenSketch</span>';
       this.review.loadShared(window.OPENSKETCH_REVIEW);
       this.status('Read-only review. Drag to rotate, scroll to zoom; move the joints in Motion Review.');
       return;
@@ -167,11 +166,11 @@ export class App {
     });
   }
 
-  // Title bar: the mark and name open the Files page.
+  // Title bar: the wordmark opens the Files page.
   buildBrand() {
     const b = document.querySelector('#titlebar .brand');
     if (!b) return;
-    b.innerHTML = `${LOGO(20)}<span class="brand-text">OpenSketch</span>`;
+    b.innerHTML = '<span class="brand-text">OpenSketch</span>';
     b.setAttribute('role', 'button'); b.tabIndex = 0; b.title = 'Files (Ctrl+O)';
     b.onclick = () => this.files.open();
     b.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.files.open(); } };

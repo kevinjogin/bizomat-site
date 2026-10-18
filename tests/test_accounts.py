@@ -207,3 +207,60 @@ def test_google_before_any_account(monkeypatch):
     r = _google_round(TestClient(server.app))
     assert r.status_code == 400 and b"owner account first" in r.content
     assert not accounts.any_users()
+
+
+def test_owner_turns_google_on_in_the_app(monkeypatch, tmp_path):
+    """No server settings needed: the owner pastes a Google Cloud client; it is checked, stored encrypted,
+    drives the sign-in button and the redirect to Google, and can be turned off. Members cannot touch it."""
+    import httpx
+    from urllib.parse import parse_qs, urlparse
+    from opensketch import oauth
+    monkeypatch.delenv("GOOGLE_CLIENT_ID", raising=False)
+    monkeypatch.delenv("GOOGLE_CLIENT_SECRET", raising=False)
+    sent = []
+
+    def fake_post(url, data=None, timeout=None):  # Google's token endpoint answering a made-up code
+        sent.append(data)
+        err = "invalid_grant" if data["client_secret"] == "GOCSPX-right-secret" else "invalid_client"
+        return httpx.Response(400 if err == "invalid_grant" else 401, json={"error": err}, request=httpx.Request("POST", url))
+    monkeypatch.setattr(oauth.httpx, "post", fake_post)
+    owner = TestClient(server.app)
+    _owner(owner)
+    st = owner.get("/api/account/google").json()
+    assert st == {"enabled": False, "source": None, "client_id": "", "redirect_uri": "http://testserver/auth/google/callback", "updated": None}
+    cid = "123-abc.apps.googleusercontent.com"
+    assert "ends with" in owner.post("/api/account/google", json={"client_id": "123-abc", "client_secret": "GOCSPX-right-secret"}).json()["error"]
+    assert "Client secret" in owner.post("/api/account/google", json={"client_id": cid, "client_secret": ""}).json()["error"]
+    r = owner.post("/api/account/google", json={"client_id": cid, "client_secret": "GOCSPX-wrong-secret"})
+    assert r.status_code == 400 and "does not accept" in r.json()["error"] and not oauth.enabled()
+    r = owner.post("/api/account/google", json={"client_id": cid, "client_secret": "GOCSPX-right-secret"})
+    assert r.status_code == 200 and r.json()["enabled"] and r.json()["source"] == "app" and r.json()["client_id"] == cid
+    assert sent[-1]["redirect_uri"] == "http://testserver/auth/google/callback"
+    assert "GOCSPX-right-secret" not in (tmp_path / "data" / "google_oauth.json").read_text()  # encrypted
+    assert "GOCSPX" not in owner.get("/api/account/google").text
+    assert owner.get("/api/account").json()["google"] is True
+    anon = TestClient(server.app)
+    assert b"Continue with Google" in anon.get("/login").content
+    loc = anon.get("/auth/google", follow_redirects=False).headers["location"]
+    assert parse_qs(urlparse(loc).query)["client_id"] == [cid]
+    # members cannot read or change it
+    token = owner.post("/api/account/invites").json()["url"].split("/join/")[1]
+    member = TestClient(server.app)
+    member.post(f"/join/{token}", data={"name": "Mei", "email": "mei@example.com", "new_password": "battery staple"})
+    assert member.get("/api/account/google").status_code == 403
+    assert member.post("/api/account/google", json={"client_id": cid, "client_secret": "GOCSPX-right-secret"}).status_code == 403
+    assert member.delete("/api/account/google").status_code == 403
+    # the server's own settings win and cannot be changed from the app
+    monkeypatch.setenv("GOOGLE_CLIENT_ID", "env.apps.googleusercontent.com")
+    monkeypatch.setenv("GOOGLE_CLIENT_SECRET", "env-secret")
+    assert owner.get("/api/account/google").json()["source"] == "server"
+    assert owner.post("/api/account/google", json={"client_id": cid, "client_secret": "GOCSPX-right-secret"}).status_code == 400
+    monkeypatch.delenv("GOOGLE_CLIENT_ID")
+    monkeypatch.delenv("GOOGLE_CLIENT_SECRET")
+    # off again
+    assert owner.delete("/api/account/google").json()["enabled"] is False
+    assert b"Continue with Google" not in anon.get("/login").content
+    assert anon.get("/auth/google", follow_redirects=False).headers["location"] == "/login"
+    # Google unreachable: saved unchecked rather than blocked
+    monkeypatch.setattr(oauth.httpx, "post", lambda *a, **k: (_ for _ in ()).throw(httpx.ConnectError("offline")))
+    assert owner.post("/api/account/google", json={"client_id": cid, "client_secret": "GOCSPX-any-secret"}).json()["enabled"]

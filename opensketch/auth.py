@@ -165,12 +165,6 @@ def logged_in(scope) -> bool:
 
 # ---------------------------------------------------------------- pages
 
-MARK = ('<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="mk" x1="0" y1="0" x2="1" y2="1">'
-        '<stop offset="0" stop-color="#a3aaff"/><stop offset=".5" stop-color="#6670e0"/><stop offset="1" stop-color="#4a51c2"/></linearGradient></defs>'
-        '<rect width="24" height="24" rx="6.6" fill="url(#mk)"/><path d="M12 5.4l5.8 3.3L12 12 6.2 8.7z" fill="#fff" fill-opacity=".3"/>'
-        '<path d="M12 5.4l5.8 3.3v6.6L12 18.6l-5.8-3.3V8.7z" fill="none" stroke="#fff" stroke-width="1.55" stroke-linejoin="round"/>'
-        '<path d="M6.2 8.7L12 12l5.8-3.3M12 12v6.6" fill="none" stroke="#fff" stroke-width="1.55" stroke-linejoin="round" stroke-opacity=".88"/></svg>')
-
 # Sign-in pages: Stripe-like (bold display type, an angled indigo band, a raised card), in OpenSketch's colours.
 PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex"><title>{title} - OpenSketch</title><meta name="theme-color" content="#0c0d0e">
@@ -191,8 +185,7 @@ filter:blur(30px);animation:drift 16s ease-in-out infinite alternate;mix-blend-m
 .band i{{position:absolute;left:0;right:0;bottom:0;height:46%;background:linear-gradient(to bottom,transparent,var(--bg))}}
 @keyframes drift{{to{{transform:translate3d(8%,-6%,0) rotate(8deg)}}}}
 .wrap{{position:relative;z-index:1;min-height:100vh;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,440px);gap:56px;align-items:center;max-width:1080px;margin:0 auto;padding:40px 32px 48px}}
-.brand{{position:absolute;top:28px;left:32px;display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font-family:var(--display);font-weight:750;font-size:19px;letter-spacing:-.03em}}
-.brand svg{{filter:drop-shadow(0 4px 12px rgba(0,0,0,.35))}}
+.brand{{position:absolute;top:26px;left:32px;color:#fff;text-decoration:none;font-family:var(--display);font-weight:800;font-size:21px;letter-spacing:-.04em;line-height:1}}
 .pitch h2{{margin:0 0 16px;font-family:var(--display);font-weight:750;font-size:52px;line-height:1.02;letter-spacing:-.045em;color:#fff;text-wrap:balance}}
 .pitch p{{margin:0 0 26px;color:rgba(255,255,255,.78);font-size:17px;line-height:1.55;max-width:470px;letter-spacing:-.01em}}
 .pitch ul{{list-style:none;margin:0;padding:0;display:grid;gap:12px;color:var(--text2)}}
@@ -220,7 +213,7 @@ button:hover:after{{transform:translateX(3px)}}
 @media (max-width:900px){{.wrap{{grid-template-columns:1fr;gap:28px;padding:96px 20px 64px;max-width:480px}}.pitch h2{{font-size:36px}}.pitch p{{font-size:15px;margin-bottom:0}}.pitch ul{{display:none}}.brand{{left:20px;top:22px}}.card{{padding:26px 22px}}.foot{{left:20px;right:20px}}.band{{height:62vh}}}}
 @media (prefers-reduced-motion:reduce){{*,*:before,*:after{{animation:none!important;transition:none!important}}}}
 </style></head><body><div class="band"><i></i></div>
-<div class="wrap"><a class="brand" href="/">{mark}<span>OpenSketch</span></a>
+<div class="wrap"><a class="brand" href="/">OpenSketch</a>
 <section class="pitch"><h2>CAD that builds while you watch.</h2><p>Sketch, extrude and mate parts the way you already know, or let ChatGPT, Claude or Codex model them in your Files, live.</p>
 <ul><li><span><b>Real feature trees.</b> Sketches, dimensions and mates you can edit.</span></li><li><span><b>Your AI, connected.</b> Works with the AI app you already pay for.</span></li><li><span><b>Nothing to install.</b> Runs in the browser, or install it as an app.</span></li></ul></section>
 <form class="card" method="post" action="{action}" autocomplete="on"><h1>{title}</h1><p class="sub">{sub}</p>{top}
@@ -249,7 +242,7 @@ def _google_block(nxt: str = "/", invite: str = "", label: str = "Continue with 
 
 
 def _page(title, sub, action, fields, button, nxt="/", error="", links="", top="") -> bytes:
-    return PAGE.format(title=title, sub=sub, action=action, fields="".join(fields), button=button, next=_esc(nxt), top=top, mark=MARK,
+    return PAGE.format(title=title, sub=sub, action=action, fields="".join(fields), button=button, next=_esc(nxt), top=top,
                        error=f'<div class="err" role="alert">{_esc(error)}</div>' if error else "", links=links).encode()
 
 

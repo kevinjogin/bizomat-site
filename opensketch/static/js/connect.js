@@ -10,7 +10,6 @@
 // Client steps checked against each vendor's documentation in October 2026.
 
 import { dialog } from './ui/dialogs.js';
-import { LOGO } from './brand.js';
 import { FI } from './files.js';
 import { refreshAIStatus } from './aikeys.js';
 
@@ -339,7 +338,7 @@ export async function connectDialog(app, tab = null) {
   }
   const body = h('div', 'cx');
   const hero = h('div', 'cx-hero');
-  hero.innerHTML = `${LOGO(28)}<div><h2>Connect AI</h2><p>Two ways to design with AI in OpenSketch.</p></div>`;
+  hero.innerHTML = '<div><h2>Connect AI</h2><p>Two ways to design with AI in OpenSketch.</p></div>';
   const tabs = h('div', 'cx-tabs'); tabs.setAttribute('role', 'tablist');
   const tA = h('button', 'cx-tab', `<b>Your AI app</b><span>ChatGPT, Claude, Codex, Cursor...</span>`);
   const tB = h('button', 'cx-tab', `<b>Built-in AI</b><span>Your own API key</span>`);
