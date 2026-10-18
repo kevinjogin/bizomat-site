@@ -264,3 +264,12 @@ def test_owner_turns_google_on_in_the_app(monkeypatch, tmp_path):
     # Google unreachable: saved unchecked rather than blocked
     monkeypatch.setattr(oauth.httpx, "post", lambda *a, **k: (_ for _ in ()).throw(httpx.ConnectError("offline")))
     assert owner.post("/api/account/google", json={"client_id": cid, "client_secret": "GOCSPX-any-secret"}).json()["enabled"]
+
+
+def test_privacy_page_is_public():
+    c = TestClient(server.app)
+    _owner(c)
+    anon = TestClient(server.app)
+    r = anon.get("/privacy", follow_redirects=False)
+    assert r.status_code == 200 and b"Sign in with Google" in r.content and b"not sold" in r.content
+    assert b'href="/privacy"' in anon.get("/login").content

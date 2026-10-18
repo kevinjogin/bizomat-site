@@ -209,7 +209,7 @@ button:hover:after{{transform:translateX(3px)}}
 .gbtn:hover{{background:#f2f2f2;text-decoration:none}}
 .or{{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;margin:18px 0 0}} .or:before,.or:after{{content:"";flex:1;border-top:1px solid var(--line)}}
 .links{{margin-top:18px;display:flex;justify-content:space-between;gap:12px;font-size:13px}} a{{color:var(--link);text-decoration:none}} a:hover{{text-decoration:underline}}
-.foot{{position:absolute;bottom:20px;left:32px;right:32px;display:flex;justify-content:space-between;color:var(--muted);font-size:12px}}
+.foot{{position:absolute;bottom:20px;left:32px;right:32px;display:flex;justify-content:space-between;color:var(--muted);font-size:12px}}.foot a{{color:var(--muted)}}.foot a:hover{{color:var(--text)}}
 @media (max-width:900px){{.wrap{{grid-template-columns:1fr;gap:28px;padding:96px 20px 64px;max-width:480px}}.pitch h2{{font-size:36px}}.pitch p{{font-size:15px;margin-bottom:0}}.pitch ul{{display:none}}.brand{{left:20px;top:22px}}.card{{padding:26px 22px}}.foot{{left:20px;right:20px}}.band{{height:62vh}}}}
 @media (prefers-reduced-motion:reduce){{*,*:before,*:after{{animation:none!important;transition:none!important}}}}
 </style></head><body><div class="band"><i></i></div>
@@ -218,7 +218,71 @@ button:hover:after{{transform:translateX(3px)}}
 <ul><li><span><b>Real feature trees.</b> Sketches, dimensions and mates you can edit.</span></li><li><span><b>Your AI, connected.</b> Works with the AI app you already pay for.</span></li><li><span><b>Nothing to install.</b> Runs in the browser, or install it as an app.</span></li></ul></section>
 <form class="card" method="post" action="{action}" autocomplete="on"><h1>{title}</h1><p class="sub">{sub}</p>{top}
 <input type="hidden" name="next" value="{next}">{fields}{error}<button type="submit">{button}</button>{links}</form></div>
-<div class="foot"><span>OpenSketch</span><span>Parametric CAD with AI</span></div></body></html>"""
+<div class="foot"><span>OpenSketch</span><span>Parametric CAD with AI &nbsp;&middot;&nbsp; <a href="/privacy">Privacy</a></span></div></body></html>"""
+
+
+# Privacy notice: public (Google requires one before a sign-in app can be used by anyone), about this server.
+PRIVACY = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy - OpenSketch</title><meta name="theme-color" content="#0c0d0e"><link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Inter+Tight:wght@600..800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0d0e;--line:rgba(255,255,255,.08);--text:#e3e4e8;--text2:#a3a6ad;--muted:#7a7f88;--link:#8b93ff;--display:"Inter Tight",Inter,system-ui,sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text2);font:15px/1.65 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;color-scheme:dark}
+header{display:flex;justify-content:space-between;align-items:center;max-width:760px;margin:0 auto;padding:26px 24px}
+.brand{color:#fff;text-decoration:none;font-family:var(--display);font-weight:800;font-size:21px;letter-spacing:-.04em}
+header a.back{color:var(--muted);font-size:13px;text-decoration:none}header a.back:hover{color:var(--text)}
+main{max-width:760px;margin:0 auto;padding:24px 24px 80px}
+h1{font-family:var(--display);font-weight:750;font-size:44px;line-height:1.05;letter-spacing:-.04em;color:#fff;margin:24px 0 8px}
+h2{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.02em;color:var(--text);margin:36px 0 8px;padding-top:28px;border-top:1px solid var(--line)}
+p,li{margin:0 0 10px}ul{padding-left:20px;margin:0 0 10px}b{color:var(--text);font-weight:600}a{color:var(--link)}
+.date{color:var(--muted);font-size:13px}
+</style></head><body>
+<header><a class="brand" href="/">OpenSketch</a><a class="back" href="/login">Sign in</a></header>
+<main>
+<h1>Privacy</h1>
+<p class="date">Last updated 19 October 2026</p>
+<p>OpenSketch is a CAD app you use in your browser. This page explains what this OpenSketch server keeps about you,
+why, and who else sees it. In short: only what it needs to sign you in and keep your files. Nothing is sold, used for
+ads, or tracked across other sites.</p>
+
+<h2>What is kept</h2>
+<ul>
+<li><b>Your account:</b> your name, your email address, and either a password (stored only as a one-way hash) or the
+ID of the Google account you sign in with.</li>
+<li><b>Your files:</b> the parts and assemblies you make, their earlier versions, and a small picture of each, so you
+can open them again and see them in Files.</li>
+<li><b>Sign-in sessions:</b> a random token in a cookie, so you stay signed in. A second, short-lived cookie protects
+the Google sign-in step and is removed after it.</li>
+<li><b>AI keys you add:</b> stored encrypted, used only for your own AI requests, and never shown back in full.</li>
+</ul>
+<p>Your browser also keeps an unsaved draft and your display settings in its own storage. They stay on your device.</p>
+
+<h2>Sign in with Google</h2>
+<p>If you choose Continue with Google, Google tells OpenSketch your name, your email address, whether that address is
+verified, your Google account ID and, for work accounts, your organisation's domain. OpenSketch asks for nothing
+else: no access to your Gmail, Drive, contacts or anything in your Google account.</p>
+<p>This information is used only to sign you in, to link the sign-in to your OpenSketch account, and to show your
+name in the app. It is stored with your account on this server. It is not shared with anyone, not sold, not used
+for advertising and not used to train AI models. You can remove the link at any time in your Google account
+settings (Security, Third-party connections).</p>
+
+<h2>AI</h2>
+<p>When you ask the built-in AI to build or change a model, your request and the model you are working on are sent to
+the AI provider you chose (for example Anthropic, OpenAI, Google or OpenRouter), under that provider's own privacy
+terms. If you connect your own AI app (ChatGPT, Claude, Codex and others), that app can read and change your
+OpenSketch files through your personal connection address. Nothing is sent to an AI provider unless you use the AI.</p>
+
+<h2>Who can see your files</h2>
+<p>Only you. The person who runs this server can technically reach the data stored on it, as with any web service.
+Review links you publish can be opened by anyone who has the link.</p>
+
+<h2>Deleting your data</h2>
+<p>Delete files from Files (they stay in the Trash for 30 days, or delete them forever from there). To close your
+account and remove your sign-in details, ask the person who runs this server or who invited you.</p>
+
+<h2>Changes</h2>
+<p>If this page changes, the date at the top changes with it.</p>
+</main></body></html>"""
 
 
 def _field(name: str, label: str, kind: str = "text", auto: str = "", focus: bool = False, value: str = "", note: str = "") -> str:
@@ -403,6 +467,8 @@ class PasswordGate:
         path = scope.get("path", "")
         if scope.get("method") not in ("GET", "HEAD", "OPTIONS") and not path.startswith("/mcp/") and not _same_origin(scope):
             return await _send(send, 403, b'{"error":"This request did not come from OpenSketch."}', [(b"content-type", b"application/json")])
+        if path == "/privacy" and scope.get("method") in ("GET", "HEAD"):
+            return await _send(send, 200, PRIVACY.encode(), [(b"content-type", b"text/html; charset=utf-8"), (b"cache-control", b"no-cache")])
         from . import accounts
         try:
             mode()

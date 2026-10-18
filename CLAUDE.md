@@ -176,6 +176,12 @@ with model pictures, a deep audit, "connect Claude, Codex or whatever", a better
   Routes (owner only, 403 for members): GET/POST/DELETE /api/account/google (never returns the secret; POST refused
   when the server's env sets it). The sign-in pages show Continue with Google (Google's light button) as soon as
   it is saved. Test: tests/test_accounts.py::test_owner_turns_google_on_in_the_app.
+  Google Cloud for the live site (2026-10-19, set up for YZ in his account): project "OpenSketch" (opensketch-512019, no
+  organisation), Google Auth Platform External, test user yyz.works@gmail.com, web client "OpenSketch web" with
+  redirect https://opensketch-yz.fly.dev/auth/google/callback. YZ pastes the Client ID + secret into the dialog once.
+  Public privacy notice at /privacy (`auth.PRIVACY`, served by PasswordGate before any sign-in check; linked from the
+  sign-in pages' footer): what the server keeps, the Google data used (name, email, verified, sub, hd) and that it
+  is not shared, sold or used for ads or AI training; needed before the Google app can be published to everyone.
 - Tests: `tests/test_files.py` (8: history size cap, per-person files and 404s, rename/duplicate/trash/restore/purge/versions,
   30-day purge, meta-only poll and list, pictures browser + server-drawn + AI redraw + limits, personal MCP
   addresses over JSON-RPC, PWA files public and versioned), `tests/test_hardening.py` (8: safe next, cross-site
