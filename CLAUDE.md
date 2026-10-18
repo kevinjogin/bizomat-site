@@ -43,7 +43,32 @@ assemblies only when a part changes.
   for main calls to action, the text wordmark "OpenSketch" as the logo (no mark or tile; YZ 2026-10-19); new UI styled with the theme tokens and checked in dark,
   light and classic, and at phone width. Motion: `--ease`, 120-220 ms, nothing that blocks input.
 
-## Current state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand, text logo, Google sign-in set up in the app)
+## Current state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand, text logo, Google sign-in set up in the app, upload links for big MCP imports)
+
+Upload links for the connector (2026-10-19, YZ: a 6.5 MB named STEP would be ~1.6 million base64 characters inside one
+import_document call, too much for a model to write out exactly): `uploads.py` + MCP tool `request_upload(filename,
+size_bytes?)` (now 41 tools) -> {upload_id, upload_url, method PUT, expires_at, expires_in_seconds 600, max_bytes, how
+(`curl -sS -T 'file' '<url>'`), next}. The client sends the file's raw bytes to `PUT|POST /mcp/uploads/{id}?expires=&signature=`
+(server.py `api_upload`; outside sign-in like /mcp/artifacts, no MCP credential in the link): signature = HMAC keyed by
+`data_secret("upload-link")` + `mcp_token()` over id, owner and expiry (a new server password voids open links); bad
+signature 404, used 409, expired 410; streamed to `<data>/uploads/<id>.part` (claimed with open "xb", so two uploads at once
+-> 409), sha256 on the way; `Content-Encoding: gzip` or `X-OpenSketch-Gzip: 1` unzipped bounded; same 32 MiB cap as base64
+(`mcp_server.MAX_IMPORT_BYTES`, after unzipping; 413); empty or multipart bodies 400; a failed upload leaves the link
+usable. Answer 201 {upload_id, size_bytes, sha256, next}. `import_document(filename?, data?, name?, upload_id?)`: exactly
+one of data / upload_id (data "" beside an upload_id counts as absent, for clients holding the old tool list where data
+was required); filename defaults to the one given to request_upload; `uploads.take` refuses another person's id as
+"Unknown upload_id" (owner = `store.owner_of`), a link with nothing sent yet, an expired or already imported one (names
+the document). After import the bytes are deleted (`mark_imported`). Limits: link 10 min, file kept 30 min (`KEEP`), 4
+open per person (`MAX_PENDING`), 256 MiB reserved server-wide (files held + 32 MiB per open link, `MAX_RESERVED`);
+expired records cleaned on create/import. INSTRUCTIONS, MCP_PREFACE and README say to use it for anything over ~100 KB.
+Tests: `tests/test_uploads.py` (5). Checked against a local server with curl: the 6.58 MB Lavilock O2S6 named STEP raw
+(0.03 s) and gzipped (1.25 MB), then import_document (4.9 s) and get_document (17 parts, clean).
+STEP import fix found on that file: `importer.import_step` merged solids by shape signature alone (volume, area, counts,
+sorted box sizes), which ignores position and handedness, so a mirrored Inside/Outside pair (lever, rotor, spindle) or two
+copies already in world coordinates (identity locations, as FreeCAD and build123d write placed parts) became one part
+shown twice in the first one's place (17 parts -> 14). A solid now joins a part only if that part's shape moved by the
+solid's own location lands on it (`_same_when_placed`: box corners and centre of mass within 1e-3 mm); true instances
+still share. Test: `test_import.py::test_assembly_import_keeps_world_placed_copies_and_mirrors_apart`. 315 pytest (2 skipped) + 62 node.
 
 v0.6 (2026-10-19, YZ: Stripe-like branding with the current colours, the installable web app, a file portal
 with model pictures, a deep audit, "connect Claude, Codex or whatever", a better bring-your-own-key flow, subtle

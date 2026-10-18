@@ -29,7 +29,7 @@ from mcp.types import CallToolResult, ImageContent, TextContent, ToolAnnotations
 
 from pydantic import Field
 
-from . import ai, artifacts, assembly, auth, features, geometry, importer, inspection, measure, store
+from . import ai, artifacts, assembly, auth, features, geometry, importer, inspection, measure, store, uploads
 
 INSTRUCTIONS = """OpenSketch is a parametric CAD app that works like SOLIDWORKS. You build real feature trees
 (sketches with relations and dimensions, extrudes, revolves, fillets...) and assemblies with mates, in
@@ -40,9 +40,11 @@ one, and the modelling tools, which all take doc_id (add_<feature> tools such as
 one feature; propose_features writes many at once). Every change is saved immediately (undo_last_change
 goes back). For more than two changes use batch: the steps run as one change and nothing is saved if a step fails.
 Pick edges and faces with body_topology (pass their `ref`), and check results with inspect_design. Work in the background by default: no browser is needed to model, import, inspect a PNG
-preview, or export CAD. Use import_document for source files, preview_document for visual review and
-export_document for .osk, STEP and STL downloads. Open the app only when the user asks or would benefit
-from interactive inspection. After building, give the user the document's link from the tool result."""
+preview, or export CAD. Use import_document for source files (for anything over about 100 KB, get a link
+with request_upload, PUT the file to it, then import_document with the upload_id instead of base64 data),
+preview_document for visual review and export_document for .osk, STEP and STL downloads. Open the app only
+when the user asks or would benefit from interactive inspection. After building, give the user the
+document's link from the tool result."""
 
 MCP_PREFACE = """You are working in OpenSketch through MCP tools. Differences from the in-app copilot described
 below: every tool takes a doc_id; there is no Accept/Reject step, each change is saved at once as a new
@@ -51,6 +53,8 @@ their browser. Write one short line before each change as usual. Use your own we
 for real part sizes and standards. Modelling, imports, previews and exports run on the server without
 opening a browser. Default to background work, use preview_document for visual inspection, and use
 export_document for downloads (optional part_id exports one assembly part in its local coordinates).
+To import a file bigger than about 100 KB, do not write it out as base64: call request_upload, send the
+file with an HTTP PUT to upload_url (curl -sS -T file.step '<upload_url>'), then import_document(upload_id=...).
 Download URLs are read-only, artifact-specific links valid for one hour; they never contain the MCP
 credential. Fetch them before expiry or call the tool again. Native .osk exports preserve the source
 even if it needs repair; STEP/STL/PNG are refused when active geometry or mates fail to rebuild.
@@ -287,35 +291,84 @@ def _native_structure(doc: dict) -> None:
         raise ValueError("Assembly sequence must be a list of component IDs.")
 
 
-def _import_sync(filename: str, data: str, name: str | None) -> str:
-    if not re.fullmatch(r"[^/\\\x00-\x1f]{1,255}", filename) or filename in (".", ".."):
+def _check_filename(filename: str | None) -> str:
+    if not isinstance(filename, str) or not re.fullmatch(r"[^/\\\x00-\x1f]{1,255}", filename) or filename in (".", ".."):
         raise ValueError("Use a filename without directory components.")
-    if len(data) > 4 * ((MAX_IMPORT_BYTES + 2) // 3):
-        raise ValueError("Import is limited to 32 MiB before base64 encoding.")
-    try:
-        raw = base64.b64decode(data, validate=True)
-    except (ValueError, binascii.Error):
-        raise ValueError("data must be valid base64 file content.") from None
+    return filename
+
+
+def _import_raw(raw: bytes, filename: str, name: str | None, report: dict) -> tuple[dict, dict]:
     if not raw or len(raw) > MAX_IMPORT_BYTES:
         raise ValueError("Import requires a non-empty file of at most 32 MiB.")
     if filename.lower().endswith((".osk", ".json")):
-        doc = json.loads(raw)
+        try:
+            doc = json.loads(raw)
+        except ValueError:
+            raise ValueError("The .osk file is not valid JSON.") from None
         _native_structure(doc)
     else:
         doc = importer.import_file(raw, filename)
     rec = store.create(name or doc.get("name") or filename.rsplit(".", 1)[0], doc=doc, by="claude", owner=store.owner_of(_who()))
-    return _result(rec, report={"source_filename": filename, "size_bytes": len(raw)})
+    return rec, dict({"source_filename": filename, "size_bytes": len(raw)}, **report)
+
+
+def _import_sync(filename: str | None, data: str | None, name: str | None, upload_id: str | None = None) -> str:
+    if upload_id and data == "":
+        data = None  # a client still holding the old tool list (data required) sends data "" with the upload_id
+    if (data is None) == (upload_id is None):
+        raise ValueError("Give either data (base64 file bytes) or upload_id (from request_upload), not both.")
+    if upload_id is not None:
+        raw, meta = uploads.take(upload_id, _who())
+        filename = _check_filename(filename or meta["filename"])
+        rec, report = _import_raw(raw, filename, name, {"upload_id": upload_id, "sha256": meta["sha256"]})
+        uploads.mark_imported(upload_id, rec["id"])
+        return _result(rec, report=report)
+    filename = _check_filename(filename)
+    if len(data) > 4 * ((MAX_IMPORT_BYTES + 2) // 3):
+        raise ValueError("Import is limited to 32 MiB before base64 encoding. Use request_upload for big files.")
+    try:
+        raw = base64.b64decode(data, validate=True)
+    except (ValueError, binascii.Error):
+        raise ValueError("data must be valid base64 file content.") from None
+    rec, report = _import_raw(raw, filename, name, {})
+    return _result(rec, report=report)
 
 
 @mcp.tool()
-async def import_document(filename: str, data: str, name: str | None = None) -> str:
-    """Import a source file as a NEW stored document; never overwrites existing work. data is base64
-    file bytes, at most 32 MiB decoded. Supports .osk/.json, STEP/.stp, EAGLE XML .brd, or a zip with one
-    supported CAD file. EAGLE supplies PCB geometry, not populated component solids. Runs in background."""
+async def import_document(filename: Annotated[str | None, Field(description="e.g. bracket.step; picks the reader. Optional with upload_id (the name given to request_upload)")] = None,
+                          data: Annotated[str | None, Field(description="Base64 file bytes. Only for small files (under ~100 KB); otherwise use upload_id")] = None,
+                          name: str | None = None,
+                          upload_id: Annotated[str | None, Field(description="From request_upload, after the file was sent to its upload_url")] = None) -> str:
+    """Import a source file as a NEW stored document; never overwrites existing work. Give the file either as
+    data (base64, small files only) or as upload_id: call request_upload, send the file's bytes to its
+    upload_url with an HTTP PUT (curl -T file.step '<upload_url>'), then pass the upload_id here. At most
+    32 MiB either way. Supports .osk/.json, STEP/.stp, EAGLE XML .brd, or a zip with one supported CAD file.
+    EAGLE supplies PCB geometry, not populated component solids. Runs in background."""
     try:
-        return await anyio.to_thread.run_sync(_import_sync, filename, data, name)
+        return await anyio.to_thread.run_sync(_import_sync, filename, data, name, upload_id)
     except (ValueError, importer.ImportError_) as exc:
         return json.dumps({"error": f"Cannot import: {exc}"})
+
+
+@mcp.tool()
+def request_upload(filename: Annotated[str, Field(description="The file's name, e.g. assembly.step or model.zip")],
+                   size_bytes: Annotated[int | None, Field(description="Optional: the file size, to refuse a too-big file before sending it")] = None) -> str:
+    """Get a one-time link to send a file to OpenSketch, for import_document(upload_id=...). Use it for any
+    file bigger than about 100 KB instead of base64 data. Send the file's raw bytes as the body of an HTTP
+    PUT (or POST) to upload_url, e.g. curl -sS -T model.step '<upload_url>'; a gzipped body works with the
+    header Content-Encoding: gzip. The link is for this connector's account only, takes one upload, expires
+    after 10 minutes, and carries no other access; the file waits 30 minutes for import_document. Max 32 MiB."""
+    try:
+        out = uploads.create(_who(), filename, MAX_IMPORT_BYTES, size_bytes)
+    except uploads.UploadError as exc:
+        return json.dumps({"error": f"Cannot make an upload link: {exc}"})
+    out["how"] = f"curl -sS -T {_shell_quote(filename)} '{out['upload_url']}'"
+    out["next"] = f'import_document(upload_id="{out["upload_id"]}", name=...)'
+    return json.dumps(out)
+
+
+def _shell_quote(s: str) -> str:
+    return "'" + s.replace("'", "'\\''") + "'"
 
 
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))

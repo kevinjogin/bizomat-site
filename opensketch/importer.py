@@ -104,6 +104,20 @@ def _signature(solid) -> tuple:
     return (round(solid.volume, 2), round(solid.area, 2), len(solid.faces()), len(solid.edges()), tuple(dims))
 
 
+def _same_when_placed(local, solid) -> bool:
+    """True when the part's local shape, moved by this solid's own location, lands where this solid is.
+
+    The signature ignores position and handedness, so on its own it would make a mirrored left/right pair, or two
+    copies whose geometry is already in world coordinates (identity locations, as FreeCAD and build123d write
+    them), one part shown twice in the first one's place."""
+    placed = local.moved(solid.location)
+    a, b = placed.bounding_box(), solid.bounding_box()
+    tol = 1e-3 + 1e-6 * max(b.diagonal, 1.0)
+    corners = [*tuple(a.min), *tuple(a.max)], [*tuple(b.min), *tuple(b.max)]
+    return (all(abs(x - y) <= tol for x, y in zip(*corners))
+            and (placed.center() - solid.center()).length <= tol)
+
+
 def _clean_name(label: str | None, fallback: str) -> str:
     s = (label or "").strip()
     s = re.sub(r"\s+", " ", s)
@@ -212,17 +226,17 @@ def import_step(data: bytes, filename: str = "model.step") -> dict:
     from . import assembly
     from build123d import Location
     asm = assembly.new_assembly(_clean_name(getattr(root, "label", ""), stem))
-    groups: list[tuple[tuple, str]] = []
+    groups: list[tuple[tuple, str, object]] = []
     used: set = set()
     counts: dict[str, int] = {}
     for i, s in enumerate(solids):
-        sig = _signature(s.located(Location()))
-        pid = next((p for g, p in groups if g == sig), None)
+        local = s.located(Location())
+        sig = _signature(local)
+        pid = next((p for g, p, shape in groups if g == sig and _same_when_placed(shape, s)), None)
         name = _clean_name(labels[i], f"Body{i + 1}")
         if pid is None:
             pid = _slug(name, used)
-            groups.append((sig, pid))
-            local = s.located(Location())
+            groups.append((sig, pid, local))
             asm["parts"][pid] = {"version": 1, "type": "part", "name": name, "units": "mm",
                                  "features": [import_part_feature(local, name, os.path.basename(filename))],
                                  "rollback": None, "seq": 10}

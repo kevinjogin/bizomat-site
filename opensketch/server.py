@@ -21,6 +21,7 @@ from pydantic import BaseModel
 import base64
 import binascii
 import gzip
+import hashlib
 import zlib
 import threading
 import time
@@ -30,7 +31,7 @@ from contextlib import asynccontextmanager
 
 from starlette.routing import Route
 
-from . import ai, artifacts, assembly, auth, features, geometry, importer, mcp_server, sldexport, store
+from . import ai, artifacts, assembly, auth, features, geometry, importer, mcp_server, sldexport, store, uploads
 
 STATIC = Path(__file__).parent / "static"
 
@@ -848,6 +849,87 @@ def api_artifact(artifact_id: str, filename: str, expires: str = "", signature: 
     return FileResponse(path, filename=info["filename"], media_type=info["media_type"],
                         headers={"Cache-Control": "no-store", "Referrer-Policy": "no-referrer",
                                  "X-Content-Type-Options": "nosniff", "Content-Security-Policy": "sandbox"})
+
+
+_UPLOAD_HEADERS = {"Cache-Control": "no-store", "Referrer-Policy": "no-referrer", "X-Content-Type-Options": "nosniff"}
+
+
+def _upload_reply(body: dict, status: int = 200) -> JSONResponse:
+    return JSONResponse(body, status_code=status, headers=_UPLOAD_HEADERS)
+
+
+@app.api_route("/mcp/uploads/{upload_id}", methods=["PUT", "POST"])
+async def api_upload(upload_id: str, request: Request, expires: str = "", signature: str = ""):
+    """A file for import_document(upload_id=...), sent to the one-time link from the request_upload MCP tool.
+    The body is the file's bytes (curl -T file '<link>'); Content-Encoding: gzip (or X-OpenSketch-Gzip: 1) is
+    unzipped on the way in, bounded. Same 32 MiB cap as base64 imports. No sign-in: the link is the key."""
+    cap = mcp_server.MAX_IMPORT_BYTES
+    try:
+        uploads.check_link(upload_id, expires, signature)
+    except uploads.UploadError as exc:
+        return _upload_reply({"error": str(exc)}, exc.status)
+    if request.headers.get("content-type", "").lower().startswith("multipart/"):
+        return _upload_reply({"error": "Send the file's bytes as the request body (curl -T file '<link>'), not a form."}, 400)
+    gz = (request.headers.get("content-encoding", "").strip().lower() == "gzip"
+          or request.headers.get("x-opensketch-gzip") == "1")
+    too_big = {"error": f"The file is bigger than {cap // 2**20} MiB, the import limit."}
+    try:
+        declared = int(request.headers.get("content-length", "0") or 0)
+    except ValueError:
+        declared = 0
+    if declared > cap + 2**20:  # a gzip body of incompressible data is a little bigger than the file
+        return _upload_reply(too_big, 413)
+    try:
+        out = uploads.begin(upload_id)
+    except uploads.UploadError as exc:
+        return _upload_reply({"error": str(exc)}, exc.status)
+    digest, size, wire, ok = hashlib.sha256(), 0, 0, False
+    unzip = zlib.decompressobj(16 + zlib.MAX_WBITS) if gz else None
+
+    def keep(data: bytes) -> bool:
+        nonlocal size
+        size += len(data)
+        if size > cap:
+            return False
+        digest.update(data)
+        out.write(data)
+        return True
+
+    try:
+        try:
+            async for chunk in request.stream():
+                wire += len(chunk)
+                if wire > cap + 2**20:
+                    return _upload_reply(too_big, 413)
+                if unzip is None:
+                    if not keep(chunk):
+                        return _upload_reply(too_big, 413)
+                    continue
+                piece = unzip.decompress(chunk, cap - size + 1)  # bounded: a small gzip that unpacks to gigabytes stops here
+                if not keep(piece) or unzip.unconsumed_tail:
+                    return _upload_reply(too_big, 413)
+            if unzip is not None:
+                if not keep(unzip.flush()):
+                    return _upload_reply(too_big, 413)
+                if not unzip.eof or unzip.unused_data:
+                    return _upload_reply({"error": "The gzip body arrived damaged (or holds more than one stream). Send it again."}, 400)
+        except zlib.error:
+            return _upload_reply({"error": "The gzip body arrived damaged. Send it again, or send the file without gzip."}, 400)
+        except Exception:  # the client went away mid-upload
+            return _upload_reply({"error": "The upload did not finish. Send it again."}, 400)
+        if size == 0:
+            return _upload_reply({"error": "The upload is empty. Send the file's bytes as the request body."}, 400)
+        out.close()
+        try:
+            body = uploads.finish(upload_id, size, digest.hexdigest())
+        except uploads.UploadError as exc:
+            return _upload_reply({"error": str(exc)}, exc.status)
+        ok = True
+        return _upload_reply(body, 201)
+    finally:
+        out.close()
+        if not ok:
+            uploads.abort(upload_id)
 
 
 class ReviewRequest(BaseModel):

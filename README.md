@@ -51,8 +51,12 @@ your Anthropic API key.
 MCP work runs in the background by default. A browser is optional for interactive editing;
 the server can import source CAD, build the model, return a PNG for inspection, and export files:
 
-- `import_document(filename, data, name?)`: base64 file bytes, up to 32 MiB, into a new document.
-  Supports `.osk`, `.json`, STEP, EAGLE XML `.brd`, and ZIPs containing one STEP or board file.
+- `import_document(filename?, data? | upload_id?, name?)`: a file, up to 32 MiB, into a new document.
+  Supports `.osk`, `.json`, STEP, EAGLE XML `.brd`, and ZIPs containing one STEP or board file. Small
+  files can go as base64 `data`. For anything bigger, `request_upload(filename, size_bytes?)` gives a
+  one-time link (10 minutes, one upload, your account only); send the file to it with
+  `curl -sS -T model.step '<upload_url>'` (gzip with `Content-Encoding: gzip` if you like), then call
+  `import_document(upload_id=...)`. The file never has to be written out as text.
 - `preview_document(doc_id, view?, width?, height?, part_id?)`: a PNG image returned directly in the
   tool result. Isometric, top, front and right views work without a browser or graphics driver.
 - `export_document(doc_id, format, part_id?)`: `.osk`, STEP or STL, with source version, SHA-256 and

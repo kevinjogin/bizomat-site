@@ -51,6 +51,42 @@ def test_assembly_import_shares_instances(tmp_path):
     assert bb[0][0] == pytest.approx(-40, abs=1e-3)
 
 
+def _world(shape):
+    """The shape's geometry where it is, with no location (as FreeCAD and build123d write placed parts)."""
+    from build123d import Solid
+    from OCP.BRepBuilderAPI import BRepBuilderAPI_Transform
+    t = shape.location.wrapped.Transformation()
+    return Solid(BRepBuilderAPI_Transform(shape.located(Location()).wrapped, t, True).Shape())
+
+
+def test_assembly_import_keeps_world_placed_copies_and_mirrors_apart(tmp_path):
+    """A mirrored left/right pair and two copies of one part placed in world coordinates have the same shape
+    signature; each must stay its own part where it is, not become a second copy of the first."""
+    from build123d import Plane, Pos
+    ell = (Box(30, 10, 10) + Pos(-10, 0, 15) * Box(10, 10, 20)).solids()[0]
+    left = _world(ell.translate((-50, 0, 0)))
+    right = _world(left.mirror(Plane.YZ))
+    pin_a, pin_b = _world(Cylinder(3, 20).translate((0, 30, 0))), _world(Cylinder(3, 20).translate((0, -30, 0)))
+    for s, n in ((left, "Left"), (right, "Right"), (pin_a, "Pin_A"), (pin_b, "Pin_B")):
+        assert s.location.position.length == 0
+        s.label = n
+    doc = importer.import_step(step_bytes(Compound(children=[left, right, pin_a, pin_b], label="Pairs"), tmp_path), "pairs.step")
+    assert len(doc["parts"]) == 4
+    assert [c["name"] for c in doc["components"]] == ["Left<1>", "Right<1>", "Pin_A<1>", "Pin_B<1>"]
+    for comp, src in zip(doc["components"], (left, right, pin_a, pin_b)):
+        solid = assembly.build_part(doc["parts"][comp["part"]])["solid"]
+        assert comp["position"] == pytest.approx([0, 0, 0]) and comp["rotation"] == pytest.approx([0, 0, 0])
+        assert (solid.center() - src.center()).length < 1e-6
+    bb = assembly.regen_assembly(doc)["bbox"]
+    assert bb[0] == pytest.approx([-65, -33, -10], abs=1e-3) and bb[1] == pytest.approx([65, 33, 25], abs=1e-3)
+    # true instances (one shape, several locations) still share one part
+    pin = Cylinder(3, 20)
+    pin.label = "Pin"
+    two = Compound(children=[pin.moved(Location((10, 0, 0))), pin.moved(Location((-10, 0, 0), (0, 0, 45)))], label="Two")
+    doc = importer.import_step(step_bytes(two, tmp_path, "two.step"), "two.step")
+    assert len(doc["parts"]) == 1 and len(doc["components"]) == 2
+
+
 def test_solidworks_files_explain(tmp_path):
     with pytest.raises(importer.ImportError_) as e:
         importer.import_step(b"x", "lid.SLDPRT")
