@@ -42,6 +42,34 @@ assemblies only when a part changes.
 
 ## Current state (2026-10-18, v0.5: accounts, Linear look, Design panel, Ask AI on a selection; coupler mate, Motion Review)
 
+Loading speed (2026-10-18, YZ: "slow to load the model, going back from the part to the assembly or importing,
+and no indicator"): measured on a 4 MB STEP plate (1329 faces, 441 chamfered holes) and a STEP assembly.
+- `geometry.mesh_shape`: one `BRepMesh_IncrementalMesh` pass over the whole body, triangles read straight from
+  each face's triangulation (`_face_triangles`), edge polylines from `BRepAdaptor_Curve` (`_edge_points`;
+  `mid` still `position_at(0.5)`). `Face.tessellate` meshed face by face and its "already meshed" check fails
+  with relative deflection, so every face was meshed again. Bodies with >= `MESH_FINE_FACES` (400) faces use
+  0.35 rad angular deflection instead of 0.2 (about half the triangles; edges stay smooth). Plate: 14.5 s -> 6.6 s cold.
+- `geometry.built(doc)`: (regen state, mesh) cached by `body_key` (content without name/appearance/description/
+  designer/type/seq/material, rollback null = absent), 24 entries. Used by `regen_result` (no preview) and
+  `assembly.build_part`, so the part view and the assembly share builds: Open Part, Return to Assembly after an
+  edit (the part view already built it), Ctrl+B and undo back to a built state are cache hits (plate: 0.37 s warm).
+- `/api/regen` answers with `server.FastJSON` (json.dumps; FastAPI's jsonable_encoder took 0.85 s on a 10 MB mesh).
+  `SelectiveGZip` gzips /api/regen, /api/import, /api/docs, /api/params, /api/interference, /api/toolbox,
+  /api/review/check, /api/reviews, /api/features (>= 4 KB, level 5): the plate's mesh is 10 MB -> 1.5 MB on the wire.
+  /api/ai/stream is not gzipped (events must not be held back).
+- Browser: `app.busy(label, delay)` shows a centred "Loading model... / Rebuilding... / Opening <part>... /
+  Importing <file>... / Updating preview..." pill with a spinner (`#busyind`, styled in app.css and linear.css)
+  when server work takes over 250 ms (imports at once, previews after 400 ms); stacked jobs show the newest.
+  Used by `app.regen(announce, label)`, `asm.regen(announce, docOverride, label)` (server path only),
+  `importFile`, `loadFile`, the feature preview. Open Part shows the part at once from the assembly's mesh
+  (`viewer.partGeo`, when `builtParts` says it is unchanged) and then rebuilds; Return to Assembly draws the
+  assembly at once from the result kept on `docStack` (`res`), the edited part in its old shape until the rebuild.
+- Checked in Chromium: plate STEP import 6.1 s end to end with the indicator, assembly Open Part shows faces in the
+  same frame, return draws 8 components at once, edit + return updates the part, unchanged round trip = 1 request
+  (the part view's status). Tests: `tests/test_loading_speed.py` (4). 290 pytest (2 skipped) + 59 node.
+- Still slow on big models: the browser draws one mesh per face and one line per edge (1329 + 3099 objects on the
+  plate); merging them into one geometry per body with face ranges for picking is the next step if needed.
+
 Accounts (2026-10-18): `accounts.py` (users.json: scrypt-hashed passwords, owner/member roles, single-use
 7-day invites stored as SHA-256; sessions.json: SHA-256 of random cookie tokens, 90 days, removed on sign out,
 on a password change and when a member is removed). `auth.py` modes: `accounts` (any user exists: cookie

@@ -88,7 +88,7 @@ export class AssemblyMode {
     this.builtParts = Object.fromEntries(Object.entries(doc.parts || {}).map(([pid, p]) => [pid, this.partText(p)]));
   }
 
-  async regen(announce = false, docOverride = null) {
+  async regen(announce = false, docOverride = null, label = null) {
     const app = this.app;
     const seq = ++app.regenSeq;
     const doc = app.cleanDoc(docOverride || app.shownDoc);
@@ -97,18 +97,23 @@ export class AssemblyMode {
       try { res = regenLocal(doc, this.partsInfo); } catch (err) { console.error(err); res = null; }
     }
     if (!res && app.reviewMode) return null; // a shared review has no server to rebuild parts
+    let done = () => {};
     if (!res) {
-      try { res = await app.api('/api/regen', { doc, known: this.knownKeys() }); } catch (err) { app.toast('Rebuild failed: ' + err.message); return null; }
-      if (seq !== app.regenSeq) return null;
+      done = app.busy(label || (app.viewer.partGeo.size ? 'Rebuilding assembly' : 'Loading assembly'));
+      try { res = await app.api('/api/regen', { doc, known: this.knownKeys() }); } catch (err) { done(); app.toast('Rebuild failed: ' + err.message); return null; }
+      if (seq !== app.regenSeq) { done(); return null; }
       // a mesh we thought we had is gone (cache replaced): ask again without the shortcut
       if (res.components.some((c) => !app.viewer.partGeo.get(c.part) && !res.parts[c.part]?.body && res.parts[c.part])) {
         for (const pid of Object.keys(res.parts)) app.viewer.partGeo.delete(pid);
-        return this.regen(announce, docOverride);
+        done();
+        return this.regen(announce, docOverride, label);
       }
       this.remember(res, doc);
     }
-    if (docOverride) { this.draw(res, docOverride); return res; }
-    this.apply(res);
+    try {
+      if (docOverride) { this.draw(res, docOverride); return res; }
+      this.apply(res);
+    } finally { done(); }
     if (announce) app.status('Rebuild complete');
     return res;
   }
@@ -1019,7 +1024,7 @@ export class AssemblyMode {
     if (!part) return;
     app.closeCommand();
     app.hideContextToolbar();
-    app.docStack.push({ doc: app.doc, undo: app.undoStack, redo: app.redoStack, pid: c.part, comp: c.name,
+    app.docStack.push({ doc: app.doc, undo: app.undoStack, redo: app.redoStack, pid: c.part, comp: c.name, res: this.res,
       view: { quat: app.viewer.quat.clone(), target: app.viewer.target.clone(), viewH: app.viewer.viewH } });
     app.doc = clone(part);
     app.doc.seq = app.doc.seq || 1000;
@@ -1029,7 +1034,11 @@ export class AssemblyMode {
     app.viewer.setAssembly([], {});
     app.ribbon.setTab('Features');
     app.updateDocChrome();
-    app.regen().then(() => app.viewer.zoomToFit());
+    // The assembly already has this part's mesh: show it at once, then rebuild for the feature states.
+    const pg = app.viewer.partGeo.get(c.part);
+    const shown = pg?.body && this.builtParts?.[c.part] === this.partText(part);
+    if (shown) { app.viewer.setBody(pg.body, { color: app.bodyColor() }); app.viewer.zoomToFit(false); }
+    app.regen(false, `Opening ${part.name || c.name}`).then(() => { if (!shown) app.viewer.zoomToFit(); });
     app.status(`Editing ${part.name}. Click Return to Assembly when done.`);
   }
 
@@ -1048,6 +1057,8 @@ export class AssemblyMode {
     app.updateDocChrome();
     app.viewer.setView(f.view.quat, f.view.target, f.view.viewH, false);
     app.viewer.setBody(null);
+    // Show the assembly as it was at once (an edited part in its old shape) while the server rebuilds the part.
+    if (f.res) this.draw(f.res, f.doc);
     if (JSON.stringify(part) !== JSON.stringify(f.doc.parts[f.pid])) app.commit('Edit ' + (part.name || f.pid), () => { app.doc.parts[f.pid] = part; });
     else app.regen();
   }

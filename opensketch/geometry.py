@@ -7,7 +7,11 @@ and returns the resulting solid plus per-feature status.
 
 from __future__ import annotations
 
+import hashlib
+import json
 import math
+import threading
+from collections import OrderedDict
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -32,6 +36,11 @@ from build123d import (
     sweep,
 )
 from build123d.build_enums import AngularDirection, Until
+from OCP.BRep import BRep_Tool
+from OCP.BRepAdaptor import BRepAdaptor_Curve
+from OCP.BRepMesh import BRepMesh_IncrementalMesh
+from OCP.TopAbs import TopAbs_Orientation
+from OCP.TopLoc import TopLoc_Location
 
 # SOLIDWORKS convention: Y is up. Front = XY, Top = XZ (normal +Y), Right = YZ (normal +X).
 STD_PLANES: dict[str, Plane] = {
@@ -805,21 +814,35 @@ def changed_faces(before, after):
 
 # ----------------------------------------------------------------------------- output
 
+MESH_FINE_FACES = 400
+
+
 def mesh_shape(shape, scale=None) -> dict:
     """Per-face triangles and per-edge polylines, ids are indices into faces()/edges()."""
     if shape is None:
         return {"faces": [], "edges": []}
     scale = scale or scale_of(shape)
     tol = max(scale * 5e-4, 0.005)
-    edge_index = {hash(e): i for i, e in enumerate(shape.edges())}
+    edge_list = shape.edges()
+    edge_index = {hash(e): i for i, e in enumerate(edge_list)}
+    face_list = shape.faces()
+    # Angular deflection: 0.2 rad for ordinary parts; big imported models (hundreds of faces, often many small
+    # holes) get 0.35 rad, which halves their triangles and meshing time. Edges are drawn separately and stay smooth.
+    angle = 0.2 if len(face_list) < MESH_FINE_FACES else 0.35
+    # One mesh pass over the whole shape. Face.tessellate meshes face by face and, because its "already
+    # meshed?" check fails for relative deflection, remeshed every face again: 2.5x slower on big parts.
+    try:
+        BRepMesh_IncrementalMesh(shape.wrapped, tol, True, angle, True)
+    except Exception:
+        pass
     faces = []
-    for i, f in enumerate(shape.faces()):
-        try:
-            verts, tris = f.tessellate(tol, 0.2)
-        except Exception:
+    for i, f in enumerate(face_list):
+        tri = _face_triangles(f, tol, angle)
+        if tri is None:
             continue
-        info = {"id": i, "positions": [c for v in verts for c in (round(v.X, 5), round(v.Y, 5), round(v.Z, 5))],
-                "indices": [k for t in tris for k in t], "type": f.geom_type.name.lower(),
+        positions, indices = tri
+        info = {"id": i, "positions": positions,
+                "indices": indices, "type": f.geom_type.name.lower(),
                 "center": vlist(f.center()), "area": f.area,
                 "edges": [edge_index[hash(e)] for e in f.edges() if hash(e) in edge_index]}
         if f.geom_type == GeomType.PLANE:
@@ -836,21 +859,101 @@ def mesh_shape(shape, scale=None) -> dict:
                 pass
         faces.append(info)
     edges = []
-    for i, e in enumerate(shape.edges()):
-        n = 2 if e.geom_type == GeomType.LINE else max(8, min(96, int(e.length / max(tol * 20, 1e-3)) + 8))
-        pts = [e.position_at(k / (n - 1)) for k in range(n)]
-        edges.append({"id": i, "points": [c for p in pts for c in (round(p.X, 5), round(p.Y, 5), round(p.Z, 5))],
-                      "mid": vlist(e.position_at(0.5)), "type": e.geom_type.name.lower(),
-                      "length": e.length})
+    for i, e in enumerate(edge_list):
+        length = e.length
+        n = 2 if e.geom_type == GeomType.LINE else max(8, min(96, int(length / max(tol * 20, 1e-3)) + 8))
+        edges.append({"id": i, "points": _edge_points(e, n), "mid": vlist(e.position_at(0.5)),
+                      "type": e.geom_type.name.lower(), "length": length})
     return {"faces": faces, "edges": edges}
 
 
+def _face_triangles(f, tol, angle=0.2):
+    """Flat positions and indices of a face's triangulation (made by mesh_shape's single mesh pass)."""
+    loc = TopLoc_Location()
+    poly = BRep_Tool.Triangulation_s(f.wrapped, loc)
+    if poly is None:
+        try:
+            verts, tris = f.tessellate(tol, angle)
+        except Exception:
+            return None
+        return ([c for v in verts for c in (round(v.X, 5), round(v.Y, 5), round(v.Z, 5))],
+                [k for t in tris for k in t])
+    trsf = None if loc.IsIdentity() else loc.Transformation()
+    positions = []
+    add = positions.extend
+    for k in range(1, poly.NbNodes() + 1):
+        p = poly.Node(k)
+        if trsf is not None:
+            p = p.Transformed(trsf)
+        add((round(p.X(), 5), round(p.Y(), 5), round(p.Z(), 5)))
+    reverse = f.wrapped.Orientation() == TopAbs_Orientation.TopAbs_REVERSED
+    indices = []
+    add = indices.extend
+    for t in poly.Triangles():
+        a, b, c = t.Value(1) - 1, t.Value(2) - 1, t.Value(3) - 1
+        add((a, c, b) if reverse else (a, b, c))
+    return positions, indices
+
+
+def _edge_points(e, n):
+    """n points along an edge, evenly spaced in its curve parameter (by length for lines and arcs)."""
+    try:
+        curve = BRepAdaptor_Curve(e.wrapped)
+        u0, u1 = curve.FirstParameter(), curve.LastParameter()
+        out = []
+        for k in range(n):
+            p = curve.Value(u0 + (u1 - u0) * k / (n - 1))
+            out.extend((round(p.X(), 5), round(p.Y(), 5), round(p.Z(), 5)))
+        return out
+    except Exception:
+        pts = [e.position_at(k / (n - 1)) for k in range(n)]
+        return [c for p in pts for c in (round(p.X, 5), round(p.Y, 5), round(p.Z, 5))]
+
+
+# Rebuilt bodies and their meshes, by geometry content. Shared by the part view (/api/regen on a part) and the
+# assembly part cache, so opening a part from an assembly, returning to it unchanged, or rebuilding a part that
+# was just built (Ctrl+B, undo back to it) does not rebuild and re-mesh it again.
+_built: "OrderedDict[str, tuple]" = OrderedDict()
+_built_lock = threading.Lock()
+BUILT_CACHE_SIZE = 24
+NOT_GEOMETRY = ("appearance", "name", "description", "designer", "type", "seq", "material")
+
+
+def body_key(doc: dict) -> str:
+    clean = {k: v for k, v in doc.items() if not str(k).startswith("_") and k not in NOT_GEOMETRY}
+    if clean.get("rollback") is None:
+        clean.pop("rollback", None)
+    return hashlib.sha1(json.dumps(clean, sort_keys=True, default=str).encode()).hexdigest()
+
+
+def built(doc: dict) -> tuple["RegenState", dict]:
+    """(regen state, mesh) of a document, cached by content. Callers must not change what they get."""
+    key = body_key(doc)
+    with _built_lock:
+        hit = _built.get(key)
+        if hit is not None:
+            _built.move_to_end(key)
+            return hit
+    st, _ = regen(doc)
+    out = (st, mesh_shape(st.part))
+    with _built_lock:
+        _built[key] = out
+        while len(_built) > BUILT_CACHE_SIZE:
+            _built.popitem(last=False)
+    return out
+
+
 def regen_result(doc: dict, preview: dict | None = None) -> dict:
-    st, tool = regen(doc, preview)
+    if preview is None:
+        st, body = built(doc)
+        tool = None
+    else:
+        st, tool = regen(doc, preview)
+        body = mesh_shape(st.part)
     part = st.part
     out = {
         "status": st.status,
-        "body": mesh_shape(part),
+        "body": body,
         "planes": {k: plane_dict(v) for k, v in st.planes.items()},
         "tool": mesh_shape(tool, scale_of(part) if part is not None else None) if tool is not None else None,
     }

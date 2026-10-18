@@ -15,6 +15,7 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.background import BackgroundTask
+from starlette.middleware.gzip import GZipMiddleware
 from pydantic import BaseModel
 
 import base64
@@ -53,8 +54,26 @@ async def lifespan(_app):
         yield
 
 
+# Responses that carry meshes or documents are gzipped: a part's mesh JSON shrinks about 6x (10 MB -> 1.5 MB),
+# which is most of the wait on a hosted server. Streams (/api/ai/stream) are left alone so events are not held back.
+GZIP_PATHS = ("/api/regen", "/api/import", "/api/docs", "/api/params", "/api/interference", "/api/toolbox",
+              "/api/review/check", "/api/reviews", "/api/features")
+
+
+class SelectiveGZip:
+    def __init__(self, app):
+        self.app = app
+        self.gzip = GZipMiddleware(app, minimum_size=4096, compresslevel=5)
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] == "http" and scope.get("path", "").startswith(GZIP_PATHS):
+            return await self.gzip(scope, receive, send)
+        return await self.app(scope, receive, send)
+
+
 app = FastAPI(title="OpenSketch", lifespan=lifespan)
 app.add_middleware(auth.PasswordGate)
+app.add_middleware(SelectiveGZip)
 
 
 class RegenRequest(BaseModel):
@@ -72,11 +91,27 @@ class AIRequest(BaseModel):
     selection: list[dict] | None = None  # what the user selected (Ask AI on a selection)
 
 
+def _json_default(o):
+    if isinstance(o, (set, frozenset, tuple)):
+        return list(o)
+    if hasattr(o, "tolist"):  # numpy numbers and arrays
+        return o.tolist()
+    raise TypeError(f"{type(o).__name__} is not JSON serialisable")
+
+
+class FastJSON(JSONResponse):
+    """JSON straight from json.dumps. FastAPI's own path walks every number of a mesh through
+    jsonable_encoder first (0.85 s for a 10 MB part)."""
+
+    def render(self, content) -> bytes:
+        return json.dumps(content, separators=(",", ":"), allow_nan=False, default=_json_default).encode("utf-8")
+
+
 @app.post("/api/regen")
 def api_regen(req: RegenRequest):
     if assembly.is_assembly(req.doc):
-        return assembly.regen_assembly(req.doc, req.known, drag=req.drag)
-    return geometry.regen_result(req.doc, req.preview)
+        return FastJSON(assembly.regen_assembly(req.doc, req.known, drag=req.drag))
+    return FastJSON(geometry.regen_result(req.doc, req.preview))
 
 
 class ParamsRequest(BaseModel):

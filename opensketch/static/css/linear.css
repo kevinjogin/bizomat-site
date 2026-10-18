@@ -241,6 +241,8 @@
 .skin-linear .doctab:hover { background: var(--hover-bg); color: var(--text); }
 .skin-linear .doctab.active { background: var(--raised); color: var(--text); border-color: var(--line); }
 .skin-linear .toast { background: var(--raised); color: var(--text); border-radius: 8px; padding: 8px 14px; bottom: 48px; box-shadow: var(--shadow); }
+.skin-linear .busyind { background: var(--raised); color: var(--text); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); }
+.skin-linear .busy-spin { border-color: var(--line); border-top-color: var(--accent); }
 .skin-linear #graphics.dropping { outline-color: var(--accent); }
 .skin-linear .editbar { background: var(--raised); color: var(--text); border: 0; border-radius: 8px; box-shadow: var(--shadow); padding: 4px 4px 4px 12px; top: 52px; }
 .skin-linear .livecap { background: var(--raised); color: var(--text); border-radius: 8px; bottom: 52px; box-shadow: var(--shadow); }

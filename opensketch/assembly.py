@@ -129,11 +129,11 @@ def build_part(part: dict) -> dict:
     if hit is not None:
         _cache.move_to_end(key)
         return hit
-    st, _ = geometry.regen(part)
+    st, mesh = geometry.built(part)  # shared with the part view, so Open Part / Return to Assembly reuse it
     solid = st.part
     out = {"key": key, "solid": solid, "status": st.status, "planes": {k: geometry.plane_dict(v) for k, v in st.planes.items()}}
     if solid is not None:
-        out["mesh"] = geometry.mesh_shape(solid)
+        out["mesh"] = mesh
         bb = solid.bounding_box()
         out["bbox"] = [geometry.vlist(bb.min), geometry.vlist(bb.max)]
         out["volume"] = solid.volume

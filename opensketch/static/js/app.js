@@ -328,14 +328,41 @@ export class App {
     return d;
   }
 
-  async regen(announce = false) {
-    if (this.isAsm) return this.asm.regen(announce);
+  // label: what the loading indicator says if the server takes a moment ("Opening Bracket")
+  async regen(announce = false, label = null) {
+    if (this.isAsm) return this.asm.regen(announce, null, label);
     const seq = ++this.regenSeq;
+    const done = this.busy(label || (this.viewer.bodyData ? 'Rebuilding' : 'Loading model'));
     let res;
-    try { res = await this.api('/api/regen', { doc: this.docForRegen() }); } catch (err) { this.toast('Rebuild failed: ' + err.message); return; }
-    if (seq !== this.regenSeq) return;
+    try { res = await this.api('/api/regen', { doc: this.docForRegen() }); } catch (err) { done(); this.toast('Rebuild failed: ' + err.message); return; }
+    if (seq !== this.regenSeq) { done(); return; }
     this.applyResult(res);
+    done();
     if (announce) this.status('Rebuild complete');
+  }
+
+  // Loading indicator in the graphics area for server work (rebuilds, imports, previews). It appears only
+  // when the work takes longer than a moment, so quick rebuilds do not flash it. Returns the "done" call.
+  busy(label, delay = 250) {
+    const el = $('busyind');
+    if (!el) return () => {};
+    this.busyJobs = this.busyJobs || [];
+    const job = { label };
+    this.busyJobs.push(job);
+    const show = () => {
+      const top = this.busyJobs[this.busyJobs.length - 1];
+      if (!top) { el.classList.add('hidden'); return; }
+      el.querySelector('.busy-label').textContent = top.label + '...';
+      if (top.shown) el.classList.remove('hidden');
+    };
+    job.timer = setTimeout(() => { job.shown = true; show(); }, delay);
+    return () => {
+      clearTimeout(job.timer);
+      const i = this.busyJobs.indexOf(job);
+      if (i < 0) return;
+      this.busyJobs.splice(i, 1);
+      if (!this.busyJobs.some((j) => j.shown)) el.classList.add('hidden'); else show();
+    };
   }
 
   applyResult(res) {
@@ -886,7 +913,8 @@ export class App {
     if (cmd.existing) { const i = doc.features.findIndex((x) => x.id === cmd.existing.id); f._index = i; }
     const seq = ++this.regenSeq;
     let res;
-    try { res = await this.api('/api/regen', { doc, preview: f }); } catch (err) { this.toast('Preview failed: ' + err.message); return false; }
+    const done = this.busy('Updating preview', 400);
+    try { res = await this.api('/api/regen', { doc, preview: f }); } catch (err) { this.toast('Preview failed: ' + err.message); return false; } finally { done(); }
     if (seq !== this.regenSeq || this.cmd !== cmd || cmd.cancelled || version !== (cmd.previewVersion || 0)) return false;
     if (!Array.isArray(res.status) || !res.body) { this.toast('The server did not return a valid preview.'); return false; }
     this.result = { ...this.result, planes: { ...(this.result?.planes || {}), ...res.planes } };
@@ -1435,6 +1463,11 @@ export class App {
   // so large files fit through the Codespaces tunnel. Errors always say something.
   async importFile(file) {
     this.status(`Importing ${file.name}...`);
+    const done = this.busy(`Importing ${file.name}`, 0);
+    try { return await this.uploadImport(file); } finally { done(); }
+  }
+
+  async uploadImport(file) {
     let body = file, gz = false;
     if (typeof CompressionStream === 'function' && !/\.zip$/i.test(file.name)) {  // a zip is already compressed
       try { body = await new Response(file.stream().pipeThrough(new CompressionStream('gzip'))).blob(); gz = true; } catch { body = file; }
@@ -1483,7 +1516,7 @@ export class App {
       this.dirty = false; this.updateDocChrome();
       this.ribbon.setTab(isAssembly(d) ? 'Assembly' : 'Features');
       this.viewer.setBody(null);
-      await this.regen();
+      await this.regen(false, isAssembly(d) ? `Loading ${d.components.length} components` : 'Loading model');
       this.viewer.zoomToFit();
       if (this.isImportable(file)) {
         this.status(isAssembly(d)
