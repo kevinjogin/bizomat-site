@@ -12,7 +12,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, StreamingResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.background import BackgroundTask
 from starlette.middleware.gzip import GZipMiddleware
@@ -66,7 +66,8 @@ class SelectiveGZip:
         self.gzip = GZipMiddleware(app, minimum_size=4096, compresslevel=5)
 
     async def __call__(self, scope, receive, send):
-        if scope["type"] == "http" and scope.get("path", "").startswith(GZIP_PATHS):
+        path = scope.get("path", "") if scope["type"] == "http" else ""
+        if path.startswith(GZIP_PATHS) and not path.endswith("/thumb"):  # pictures are compressed already
             return await self.gzip(scope, receive, send)
         return await self.app(scope, receive, send)
 
@@ -447,7 +448,7 @@ def api_ai_models(req: AIKeyRequest, request: Request):
     return {"ok": True, "models": models[:500]}
 
 
-# ----------------------------------------------------------------------------- server documents
+# ----------------------------------------------------------------------------- server documents (Files)
 
 class DocCreate(BaseModel):
     name: str = "Untitled"
@@ -462,6 +463,18 @@ class DocSave(BaseModel):
     requests: list | None = None
 
 
+class DocPatch(BaseModel):
+    name: str | None = None
+
+
+class DocCopy(BaseModel):
+    name: str | None = None
+
+
+class VersionRequest(BaseModel):
+    version: int
+
+
 def _found(fn, *a, **k):
     try:
         return fn(*a, **k)
@@ -469,41 +482,196 @@ def _found(fn, *a, **k):
         raise HTTPException(404, "No such document") from None
 
 
+def _doc_meta(doc_id: str, request: Request, trash_ok: bool = False) -> dict:
+    """The document's meta if this person may use it, else 404 (never says whose it is)."""
+    try:
+        m = store.meta(doc_id)
+    except store.NotFound:
+        raise HTTPException(404, "No such document") from None
+    if not store.can_see(m, _user(request)) or (m.get("deleted") and not trash_ok):
+        raise HTTPException(404, "No such document")
+    return m
+
+
+def _card(m: dict) -> dict:
+    """What the Files page shows for a document."""
+    t = m.get("thumb")
+    out = {k: m.get(k) for k in ("id", "name", "kind", "version", "created", "updated", "by", "summary", "deleted",
+                                 "counts", "size")}
+    out["thumb"] = f"/api/docs/{m['id']}/thumb?v={t['version']}-{int(t.get('updated') or 0)}" if t else None
+    out["thumb_stale"] = bool(t) and int(t.get("version") or 0) < int(m["version"])
+    return out
+
+
 @app.get("/api/docs")
-def api_docs():
-    return store.listing()
+def api_docs(request: Request, trash: bool = False):
+    """This person's Files (newest first), or their Trash."""
+    return [_card(m) for m in store.listing(store.visible_to(_user(request)), deleted=trash)]
+
+
+def _free_name(kind: str, user) -> str:
+    """"Part 3", "Assembly 2": the next number not used in this person's Files."""
+    base = "Assembly" if kind == "assembly" else "Part"
+    used = {m["name"] for m in store.listing(store.visible_to(user))}
+    n = 1
+    while f"{base} {n}" in used:
+        n += 1
+    return f"{base} {n}"
 
 
 @app.post("/api/docs")
-def api_doc_create(req: DocCreate):
-    return store.create(req.name, req.doc, req.kind if req.kind in ("part", "assembly") else "part", by="you")
+def api_doc_create(req: DocCreate, request: Request):
+    kind = req.kind if req.kind in ("part", "assembly") else "part"
+    if req.doc is not None:
+        kind = store.kind_of(req.doc)
+    name = (req.name or "").strip()
+    if not name or (req.doc is None and name == "Untitled"):
+        name = _free_name(kind, _user(request))
+    return store.create(name, req.doc, kind, by="you", owner=store.owner_of(_user(request)))
 
 
 @app.get("/api/docs/{doc_id}")
-def api_doc(doc_id: str):
-    return _found(store.get, doc_id)
+def api_doc(doc_id: str, request: Request):
+    m = _doc_meta(doc_id, request)
+    return dict(_found(store.get, doc_id), thumb=m.get("thumb"))
 
 
 @app.get("/api/docs/{doc_id}/head")
-def api_doc_head(doc_id: str):
-    """Polled by the browser to follow changes (small)."""
+def api_doc_head(doc_id: str, request: Request):
+    """Polled by the browser to follow changes (small: read from the meta file, not the model)."""
+    _doc_meta(doc_id, request)
     return _found(store.head, doc_id)
 
 
 @app.get("/api/docs/{doc_id}/versions")
-def api_doc_versions(doc_id: str):
-    """Earlier versions still kept (Publish Review's compare list)."""
+def api_doc_versions(doc_id: str, request: Request):
+    """Earlier versions still kept (version history, Publish Review's compare list)."""
+    _doc_meta(doc_id, request)
     return _found(store.versions, doc_id)
 
 
+@app.post("/api/docs/{doc_id}/restore_version")
+def api_doc_restore_version(doc_id: str, req: VersionRequest, request: Request):
+    _doc_meta(doc_id, request)
+    try:
+        return _card(store.meta(store.restore(doc_id, req.version, "you")["id"]))
+    except store.NotFound:
+        raise HTTPException(404, f"Version {req.version} is not kept any more.") from None
+
+
 @app.put("/api/docs/{doc_id}")
-def api_doc_save(doc_id: str, req: DocSave):
+def api_doc_save(doc_id: str, req: DocSave, request: Request):
+    _doc_meta(doc_id, request)
     try:
         return store.save(doc_id, req.doc, "you", req.summary or "Edited in OpenSketch", req.base_version, req.requests)
     except store.NotFound:
         raise HTTPException(404, "No such document") from None
     except store.Conflict as c:
         return JSONResponse({"error": "conflict", "current": c.current}, status_code=409)
+
+
+@app.patch("/api/docs/{doc_id}")
+def api_doc_patch(doc_id: str, req: DocPatch, request: Request):
+    """Rename."""
+    _doc_meta(doc_id, request)
+    try:
+        if req.name is not None:
+            store.rename(doc_id, req.name)
+    except ValueError as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
+    return _card(store.meta(doc_id))
+
+
+@app.post("/api/docs/{doc_id}/duplicate")
+def api_doc_duplicate(doc_id: str, req: DocCopy, request: Request):
+    _doc_meta(doc_id, request)
+    rec = store.duplicate(doc_id, store.owner_of(_user(request)), "you", req.name)
+    return _card(store.meta(rec["id"]))
+
+
+@app.delete("/api/docs/{doc_id}")
+def api_doc_delete(doc_id: str, request: Request, forever: bool = False):
+    """Move to the Trash; forever=1 removes a document that is already in the Trash."""
+    m = _doc_meta(doc_id, request, trash_ok=True)
+    if forever:
+        if not m.get("deleted"):
+            return JSONResponse({"error": "Move it to the Trash first."}, status_code=400)
+        store.purge(doc_id)
+        return {"deleted": doc_id, "forever": True}
+    return _card(store.trash(doc_id))
+
+
+@app.post("/api/docs/{doc_id}/restore")
+def api_doc_untrash(doc_id: str, request: Request):
+    _doc_meta(doc_id, request, trash_ok=True)
+    return _card(store.untrash(doc_id))
+
+
+THUMB_TYPES = {"image/webp": "webp", "image/png": "png"}
+
+
+@app.put("/api/docs/{doc_id}/thumb")
+async def api_doc_thumb_put(doc_id: str, request: Request, version: int = 0):
+    """A picture of the model from the browser (WebP or PNG, <= 600 KB), for the Files page."""
+    _doc_meta(doc_id, request)
+    ext = THUMB_TYPES.get(request.headers.get("content-type", "").split(";")[0].strip())
+    if ext is None:
+        return JSONResponse({"error": "Send image/webp or image/png."}, status_code=415)
+    body = b""
+    async for chunk in request.stream():
+        body += chunk
+        if len(body) > store.THUMB_MAX:
+            return JSONResponse({"error": "The picture is too big."}, status_code=413)
+    try:
+        entry = store.set_thumb(doc_id, body, ext, version, "browser")
+    except ValueError as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
+    return {"thumb": entry}
+
+
+_thumb_jobs: dict[str, threading.Event] = {}
+_thumb_guard = threading.Lock()
+
+
+def _render_thumb(doc_id: str) -> None:
+    """Draw a picture on the server (a document the AI made, or one never opened in a browser)."""
+    from . import preview
+    rec = store.get(doc_id)
+    png = preview.render_preview(rec["doc"], "isometric", 480, 360, transparent=True)
+    store.set_thumb(doc_id, png, "png", rec["version"], "server")
+
+
+@app.get("/api/docs/{doc_id}/thumb")
+async def api_doc_thumb(doc_id: str, request: Request):
+    """The model's picture. Missing, or older than the model and not drawn by a browser since: drawn here
+    (once at a time per document) and kept. 404 when the model cannot be drawn (empty or failing)."""
+    m = _doc_meta(doc_id, request, trash_ok=True)
+    t = m.get("thumb")
+    if not t or (int(t.get("version") or 0) < int(m["version"]) and (m.get("by") == "claude" or t.get("source") == "server")):
+        with _thumb_guard:
+            ev = _thumb_jobs.get(doc_id)
+            mine = ev is None
+            if mine:
+                ev = _thumb_jobs[doc_id] = threading.Event()
+        try:
+            if mine:
+                try:
+                    await run_in_threadpool(_render_thumb, doc_id)
+                except Exception:  # nothing to draw (empty, failing): keep the old picture if any
+                    pass
+            else:
+                await run_in_threadpool(ev.wait, 30)
+        finally:
+            if mine:
+                ev.set()
+                with _thumb_guard:
+                    _thumb_jobs.pop(doc_id, None)
+    found = store.thumb(doc_id)
+    if not found:
+        raise HTTPException(404, "No picture yet")
+    path, entry = found
+    return FileResponse(path, media_type="image/webp" if entry["ext"] == "webp" else "image/png",
+                        headers={"Cache-Control": "private, max-age=86400"})
 
 
 def _user(request: Request) -> dict | None:
@@ -587,10 +755,12 @@ def api_remove_user(user_id: str, request: Request):
 
 @app.get("/api/connect")
 def api_connect(request: Request):
-    """What the Connect Claude dialog shows."""
+    """What the Connect AI dialog shows: this person's connector address."""
     base = auth.public_url(dict(request.headers))
-    return {"mcp_url": f"{base}/mcp/{auth.mcp_token()}", "password_set": bool(auth.password()),
-            "codespace": bool(os.environ.get("CODESPACE_NAME")), "app_url": base}
+    u = _user(request)
+    return {"mcp_url": f"{base}/mcp/{auth.mcp_token_for(u)}", "password_set": bool(auth.password()),
+            "codespace": bool(os.environ.get("CODESPACE_NAME")), "app_url": base, "accounts": auth.mode() == "accounts",
+            "personal": bool(u and not u.get("legacy") and u.get("role") != "owner")}
 
 
 @app.get("/mcp/artifacts/{artifact_id}/{filename}")
@@ -620,11 +790,12 @@ def _base(request: Request) -> str:
 async def api_review_publish(req: ReviewRequest, request: Request):
     """Publish a review page of a stored document (File > Publish Review)."""
     from . import review
+    _doc_meta(req.doc_id, request)
     try:
         return await run_in_threadpool(review.publish, req.doc_id, req.compare_version, req.title, req.notes, "you",
                                        _base(request))
     except store.NotFound:
-        return JSONResponse({"error": "Save the document to the server first (File > Save to Server)."}, status_code=404)
+        return JSONResponse({"error": "Save the document to the server first (Save it to your Files first: Ctrl+S)."}, status_code=404)
     except (review.ReviewError, assembly.AssemblyError, geometry.FeatureError) as exc:
         return JSONResponse({"error": str(exc)}, status_code=400)
 
@@ -632,12 +803,30 @@ async def api_review_publish(req: ReviewRequest, request: Request):
 @app.get("/api/reviews")
 def api_review_list(request: Request, doc_id: str | None = None):
     from . import review
-    return review.listing(doc_id, _base(request))
+    if doc_id is not None:
+        _doc_meta(doc_id, request)
+    out = []
+    for item in review.listing(doc_id, _base(request)):
+        try:
+            if store.can_see(store.meta(item["doc_id"]), _user(request)):
+                out.append(item)
+        except store.NotFound:
+            if store.can_see({"owner": None}, _user(request)):
+                out.append(item)  # its document is gone: the server owner can still see and delete it
+    return out
 
 
 @app.delete("/api/reviews/{token}")
-def api_review_delete(token: str):
+def api_review_delete(token: str, request: Request):
     from . import review
+    item = next((i for i in review.listing() if i["token"] == token), None)
+    if item is not None:
+        try:
+            visible = store.can_see(store.meta(item["doc_id"]), _user(request))
+        except store.NotFound:
+            visible = store.can_see({"owner": None}, _user(request))
+        if not visible:
+            raise HTTPException(404, "No such review")
     if not review.delete(token):
         raise HTTPException(404, "No such review")
     return {"deleted": token}
@@ -700,9 +889,46 @@ app.router.routes.append(Route("/mcp/{token}", endpoint=mcp_server.http_app(), m
 app.router.routes.append(Route("/mcp/{token}/", endpoint=mcp_server.http_app(), methods=["GET", "POST", "DELETE"]))
 
 
+# ----------------------------------------------------------------------------- installable app (PWA)
+
+NO_CACHE = {"Cache-Control": "no-cache"}
+
+
+def _shell_assets() -> list[str]:
+    """The files the page needs to start, fetched by the service worker when it installs."""
+    out = ["/css/app.css", "/css/linear.css", "/css/brand.css", "/vendor/three.module.js", "/favicon.svg",
+           "/manifest.webmanifest", "/icons/icon-192.png"]
+    out += sorted("/" + p.relative_to(STATIC).as_posix() for p in (STATIC / "js").rglob("*.js"))
+    return out
+
+
+@app.get("/sw.js")
+def service_worker():
+    src = (Path(__file__).parent / "sw.js").read_text()
+    src = src.replace("__VERSION__", VERSION).replace("__ASSETS__", json.dumps(_shell_assets()))
+    return Response(src, media_type="application/javascript",
+                    headers={**NO_CACHE, "Service-Worker-Allowed": "/"})
+
+
+@app.get("/manifest.webmanifest")
+def manifest():
+    return FileResponse(STATIC / "manifest.webmanifest", media_type="application/manifest+json", headers=NO_CACHE)
+
+
 @app.get("/")
 def index():
-    return FileResponse(STATIC / "index.html")
+    return FileResponse(STATIC / "index.html", headers=NO_CACHE)
 
 
-app.mount("/", StaticFiles(directory=STATIC), name="static")
+class AppFiles(StaticFiles):
+    """The app's files, revalidated on every load (an ETag check, usually a 304), so a deploy is picked up
+    at once instead of after a browser's guessed cache lifetime."""
+
+    async def get_response(self, path, scope):
+        res = await super().get_response(path, scope)
+        if res.status_code in (200, 304):
+            res.headers["Cache-Control"] = "public, max-age=604800" if path.startswith("icons/") else "no-cache"
+        return res
+
+
+app.mount("/", AppFiles(directory=STATIC), name="static")

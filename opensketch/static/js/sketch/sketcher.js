@@ -429,8 +429,10 @@ export class Sketcher {
     if (this.drag) return this.dragEnd();
     if (this.box) return this.boxEnd(e);
     const t = this.tool;
-    // click-drag-release draws a single line, like SOLIDWORKS
-    if (t && (t.name === 'line' || t.name === 'centerline') && t.stage === 1 && t.pts.length === 1 && this.downAt && Math.hypot(x - this.downAt.x, y - this.downAt.y) > 6 && t.dragStarted) {
+    // click-drag-release draws one line, rectangle, circle, slot end or polygon, like SOLIDWORKS
+    // (click-click still works: a release near the press point waits for the second click)
+    const dragTools = ['line', 'centerline', 'rectangle', 'centerrect', 'circle', 'polygon'];
+    if (t && dragTools.includes(t.name) && t.stage === 1 && t.pts.length === 1 && this.downAt && Math.hypot(x - this.downAt.x, y - this.downAt.y) > 6 && t.dragStarted) {
       this.toolClick(t.cur || this.snap(this.toLocal(x, y)), e);
       this.tool = { name: t.name, stage: 0, pts: [] };
       this.render();
@@ -469,7 +471,8 @@ export class Sketcher {
         break;
       }
       case 'rectangle': {
-        if (t.stage === 0) { t.pts = [{ p: s.p, snap: s }]; t.stage = 1; return; }
+        if (t.stage === 0) { t.pts = [{ p: s.p, snap: s }]; t.stage = 1; t.dragStarted = true; return; }
+        t.dragStarted = false;
         const a = t.pts[0];
         if (Math.abs(a.p[0] - s.p[0]) < 1e-9 || Math.abs(a.p[1] - s.p[1]) < 1e-9) return;
         this.edit('Rectangle', () => {
@@ -483,7 +486,8 @@ export class Sketcher {
         break;
       }
       case 'centerrect': {
-        if (t.stage === 0) { t.pts = [{ p: s.p, snap: s }]; t.stage = 1; return; }
+        if (t.stage === 0) { t.pts = [{ p: s.p, snap: s }]; t.stage = 1; t.dragStarted = true; return; }
+        t.dragStarted = false;
         const c = t.pts[0].p, d = sub(s.p, c);
         if (Math.abs(d[0]) < 1e-9 || Math.abs(d[1]) < 1e-9) return;
         this.edit('Center Rectangle', () => {
@@ -501,7 +505,8 @@ export class Sketcher {
         break;
       }
       case 'circle': {
-        if (t.stage === 0) { t.pts = [{ p: s.p, snap: s }]; t.stage = 1; return; }
+        if (t.stage === 0) { t.pts = [{ p: s.p, snap: s }]; t.stage = 1; t.dragStarted = true; return; }
+        t.dragStarted = false;
         const r = dist(t.pts[0].p, s.p);
         if (r < 1e-9) return;
         this.edit('Circle', () => {
@@ -513,7 +518,8 @@ export class Sketcher {
         break;
       }
       case 'polygon': {
-        if (t.stage === 0) { t.pts = [{ p: s.p, snap: s }]; t.stage = 1; return; }
+        if (t.stage === 0) { t.pts = [{ p: s.p, snap: s }]; t.stage = 1; t.dragStarted = true; return; }
+        t.dragStarted = false;
         const c = t.pts[0].p, r = dist(c, s.p), n = this.app.polygonSides || 6, a0 = ang(sub(s.p, c));
         if (r < 1e-9) return;
         this.edit('Polygon', () => {

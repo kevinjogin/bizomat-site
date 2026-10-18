@@ -2,7 +2,7 @@
 assemblies in OpenSketch documents, and the user watches them change live in the browser.
 
 Endpoint: /mcp/<token> (Streamable HTTP, stateless, JSON responses), so a server restart after an update
-does not break Claude's connection. The token is the key (see auth.py); the app's Connect Claude
+does not break Claude's connection. The token is the key (see auth.py); the app's Connect AI
 dialog shows the full address.
 
 The modelling tools are the built-in AI's tools (ai.Session), run against a stored document
@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import base64
 import binascii
+import contextvars
 import json
 import re
 import inspect
@@ -79,6 +80,28 @@ StdKind = Literal["socket_head_cap_screw", "hex_head_screw", "counter_sunk_screw
 
 mcp = MCPServer(name="OpenSketch", instructions=INSTRUCTIONS)
 
+# The person whose connector address made this request (auth.resolve_mcp): set by _TokenGate for the
+# request and copied into the tool's task and worker threads. None = a server without accounts.
+_mcp_user: contextvars.ContextVar = contextvars.ContextVar("opensketch_mcp_user", default=None)
+
+
+def _who() -> dict | None:
+    return _mcp_user.get()
+
+
+def _get(doc_id: str) -> dict:
+    """A document this connector may use (its person's Files), else NotFound."""
+    rec = store.get(doc_id)
+    if rec.get("deleted") or not store.can_see(rec, _who()):
+        raise store.NotFound(doc_id)
+    return rec
+
+
+def _check(doc_id: str) -> None:
+    m = store.meta(doc_id)
+    if m.get("deleted") or not store.can_see(m, _who()):
+        raise store.NotFound(doc_id)
+
 
 def _link(doc_id: str) -> str:
     return f"{auth.public_url()}/?doc={doc_id}"
@@ -114,7 +137,7 @@ def _save_session(rec: dict, sess: "ai.Session", summary: str) -> tuple[dict, bo
 
 def _apply_sync(doc_id: str, tool: str, inp: dict) -> str:
     with store.lock(doc_id):
-        rec = store.get(doc_id)
+        rec = _get(doc_id)
         sess = ai.Session(rec["doc"])
         report, clean, _ = sess.apply(tool, {k: v for k, v in inp.items() if v is not None})
         rec, changed = _save_session(rec, sess, sess.summary or tool.replace("_", " ").capitalize())
@@ -152,19 +175,20 @@ def get_modelling_guide() -> str:
 @mcp.tool()
 def list_documents() -> str:
     """Documents on this OpenSketch server, newest first (id, name, part or assembly, version, last change)."""
-    return json.dumps([dict(r, open=_link(r["id"])) for r in store.listing()])
+    keys = ("id", "name", "kind", "version", "updated", "by", "summary")
+    return json.dumps([dict({k: r.get(k) for k in keys}, open=_link(r["id"])) for r in store.listing(store.visible_to(_who()))])
 
 
 @mcp.tool()
 def create_document(name: str, kind: Literal["part", "assembly"] = "part") -> str:
     """Create an empty part or assembly document. A part document becomes an assembly by itself when you
     call create_part on it, so start with "part" unless the product clearly has several pieces."""
-    rec = store.create(name, kind=kind, by="claude")
+    rec = store.create(name, kind=kind, by="claude", owner=store.owner_of(_who()))
     return _result(rec)
 
 
 def _read_sync(doc_id: str) -> str:
-    rec = store.get(doc_id)
+    rec = _get(doc_id)
     doc = rec["doc"]
     out: dict = {"doc_id": doc_id, "name": rec["name"], "version": rec["version"], "open": _link(doc_id),
                  "last_change": {"by": rec.get("by"), "summary": rec.get("summary")},
@@ -279,7 +303,7 @@ def _import_sync(filename: str, data: str, name: str | None) -> str:
         _native_structure(doc)
     else:
         doc = importer.import_file(raw, filename)
-    rec = store.create(name or doc.get("name") or filename.rsplit(".", 1)[0], doc=doc, by="claude")
+    rec = store.create(name or doc.get("name") or filename.rsplit(".", 1)[0], doc=doc, by="claude", owner=store.owner_of(_who()))
     return _result(rec, report={"source_filename": filename, "size_bytes": len(raw)})
 
 
@@ -300,7 +324,7 @@ async def export_document(doc_id: str, format: Literal["osk", "step", "stl"], pa
     source version, SHA-256 and a read-only download_url valid for one hour. Optional part_id exports
     an assembly part in LOCAL coordinates. STEP/STL refuse failed rebuilds; .osk preserves source."""
     try:
-        rec = store.get(doc_id)
+        rec = _get(doc_id)
         result = await anyio.to_thread.run_sync(artifacts.export_record, rec, format, part_id)
         return json.dumps(dict(result, open=_link(doc_id)))
     except (store.NotFound, artifacts.ArtifactError, geometry.FeatureError, assembly.AssemblyError) as exc:
@@ -325,7 +349,7 @@ async def preview_document(doc_id: str, view: Literal["isometric", "top", "front
     try:
         if not 128 <= width <= 1600 or not 128 <= height <= 1600:
             raise artifacts.ArtifactError("Preview dimensions must be between 128 and 1600 pixels.")
-        rec = store.get(doc_id)
+        rec = _get(doc_id)
         camera = {"yaw": yaw, "pitch": pitch, "target": target, "view_width": view_width}
         result, raw = await anyio.to_thread.run_sync(artifacts.preview_record, rec, view, width, height, part_id,
                                                      camera, section)
@@ -343,6 +367,7 @@ def undo_last_change(doc_id: str) -> str:
     """Undo the latest change to the document (whoever made it). Calling it again redoes it; to go back
     further use list_versions and restore_version."""
     try:
+        _check(doc_id)
         return _result(store.undo(doc_id, "claude"))
     except store.NotFound as exc:
         return f"Cannot undo: {exc}"
@@ -352,6 +377,7 @@ def undo_last_change(doc_id: str) -> str:
 def list_versions(doc_id: str) -> str:
     """Earlier versions of a document still kept (the last 50), newest first."""
     try:
+        _check(doc_id)
         return json.dumps(store.versions(doc_id))
     except store.NotFound:
         return f"No document {doc_id!r}."
@@ -361,6 +387,7 @@ def list_versions(doc_id: str) -> str:
 def restore_version(doc_id: str, version: int) -> str:
     """Bring back an earlier version of the document (saved as a new version, so nothing is lost)."""
     try:
+        _check(doc_id)
         return _result(store.restore(doc_id, version, "claude"))
     except store.NotFound as exc:
         return f"Cannot restore: {exc}"
@@ -565,7 +592,7 @@ def _batch_sync(doc_id: str, steps: list[dict], summary: str, stop_on_warnings: 
                           "error": "args must be an object."}, "rolled_back": True}, True)
 
     with store.lock(doc_id):
-        rec = store.get(doc_id)
+        rec = _get(doc_id)
         sess = ai.Session(rec["doc"])
         base = _baseline(rec["doc"])
         known_err, known_warn = _problem_keys(base, "errors"), _problem_keys(base, "warnings")
@@ -644,7 +671,7 @@ def _part_doc(doc: dict, part_id: str | None) -> dict:
 
 
 def _topology_sync(doc_id, part_id, kind, near, limit) -> str:
-    rec = store.get(doc_id)
+    rec = _get(doc_id)
     part = _part_doc(rec["doc"], part_id)
     st, _ = geometry.regen(part)
     out = inspection.body_topology(st.part, kind, near, limit, st.namer)
@@ -677,7 +704,7 @@ async def body_topology(doc_id: str, part_id: str | None = None,
 
 
 def _inspect_sync(doc_id, part_id, sketches) -> str:
-    rec = store.get(doc_id)
+    rec = _get(doc_id)
     out = inspection.inspect_design(rec["doc"], part_id, sketches)
     out.update(doc_id=doc_id, version=rec["version"])
     return json.dumps(out)
@@ -730,7 +757,7 @@ async def publish_review(doc_id: str,
 
 
 def _measure_sync(doc_id, a, b, part_id) -> str:
-    rec = store.get(doc_id)
+    rec = _get(doc_id)
     try:
         out = measure.measure(rec["doc"], a, b, part_id)
     except (measure.MeasureError, geometry.FeatureError) as exc:
@@ -835,11 +862,16 @@ class _TokenGate:
         self.inner = inner
 
     async def __call__(self, scope, receive, send):
-        if not auth.check_token(scope.get("path_params", {}).get("token", "")):
+        ok, user = auth.resolve_mcp(scope.get("path_params", {}).get("token", ""))
+        if not ok:
             await send({"type": "http.response.start", "status": 404, "headers": [(b"content-type", b"text/plain")]})
             await send({"type": "http.response.body", "body": b"Not found"})
             return
-        await self.inner(scope, receive, send)
+        token = _mcp_user.set(user)
+        try:
+            await self.inner(scope, receive, send)
+        finally:
+            _mcp_user.reset(token)
 
 
 def http_app():

@@ -14,18 +14,28 @@ import httpx
 
 DEFAULT_ANTHROPIC_MODEL = "claude-opus-5-5"
 
-# label, base URL, a starting model (the person can type any other; "List models" asks the provider)
+# label, base URL, a starting model (the person can type any other; checking the key lists the rest), where
+# to get a key (text and link), how its keys start (the key dialog recognises a pasted key), short blurb.
 PROVIDERS: dict[str, dict] = {
-    "anthropic": {"label": "Anthropic (Claude)", "base_url": "https://api.anthropic.com", "model": DEFAULT_ANTHROPIC_MODEL,
-                  "keys": "console.anthropic.com > API Keys", "web": True},
-    "openai": {"label": "OpenAI", "base_url": "https://api.openai.com/v1", "model": "",
-               "keys": "platform.openai.com > API keys"},
-    "gemini": {"label": "Google Gemini", "base_url": "https://generativelanguage.googleapis.com/v1beta/openai", "model": "",
-               "keys": "aistudio.google.com > Get API key"},
-    "openrouter": {"label": "OpenRouter (many models)", "base_url": "https://openrouter.ai/api/v1", "model": "",
-                   "keys": "openrouter.ai > Keys"},
-    "custom": {"label": "Other (OpenAI-compatible)", "base_url": "", "model": "", "keys": "your provider's dashboard"},
+    "anthropic": {"label": "Claude", "maker": "Anthropic", "base_url": "https://api.anthropic.com", "model": DEFAULT_ANTHROPIC_MODEL,
+                  "keys": "console.anthropic.com > API Keys", "keys_url": "https://console.anthropic.com/settings/keys",
+                  "prefix": ["sk-ant-"], "web": True, "blurb": "Best results. Searches the web for real part sizes."},
+    "openai": {"label": "OpenAI", "maker": "OpenAI", "base_url": "https://api.openai.com/v1", "model": "",
+               "keys": "platform.openai.com > API keys", "keys_url": "https://platform.openai.com/api-keys",
+               "prefix": ["sk-proj-", "sk-svcacct-", "sk-"], "blurb": "GPT models with an OpenAI API key."},
+    "gemini": {"label": "Gemini", "maker": "Google", "base_url": "https://generativelanguage.googleapis.com/v1beta/openai", "model": "",
+               "keys": "aistudio.google.com > Get API key", "keys_url": "https://aistudio.google.com/apikey",
+               "prefix": ["AIza"], "blurb": "Google's models with an AI Studio key."},
+    "openrouter": {"label": "OpenRouter", "maker": "OpenRouter", "base_url": "https://openrouter.ai/api/v1", "model": "",
+                   "keys": "openrouter.ai > Keys", "keys_url": "https://openrouter.ai/settings/keys",
+                   "prefix": ["sk-or-"], "blurb": "One key for hundreds of models."},
+    "custom": {"label": "Other", "maker": "OpenAI-compatible", "base_url": "", "model": "", "keys": "your provider's dashboard",
+               "keys_url": "", "prefix": [], "blurb": "Groq, Mistral, Together, a server of your own..."},
 }
+
+# Model ids that cannot chat with tools (embeddings, speech, images, moderation...): left out of the model list.
+NOT_CHAT = ("embed", "tts", "whisper", "dall-e", "image", "audio", "realtime", "moderation", "transcribe", "speech",
+            "davinci", "babbage", "search-preview", "computer-use", "aqa", "imagen", "veo", "lyria", "rerank", "guard")
 
 TIMEOUT = httpx.Timeout(600.0, connect=20.0)
 
@@ -37,8 +47,20 @@ class ProviderError(Exception):
 
 
 def public_list() -> list[dict]:
-    return [{"id": k, "label": v["label"], "base_url": v["base_url"], "model": v["model"], "keys": v["keys"],
+    return [{"id": k, "label": v["label"], "maker": v["maker"], "base_url": v["base_url"], "model": v["model"],
+             "keys": v["keys"], "keys_url": v["keys_url"], "prefix": v["prefix"], "blurb": v["blurb"],
              "web": bool(v.get("web"))} for k, v in PROVIDERS.items()]
+
+
+def _natural(s: str):
+    import re
+    return [int(t) if t.isdigit() else t for t in re.split(r"(\d+)", s.lower())]
+
+
+def chat_models(ids: list[str]) -> list[str]:
+    """Models that can chat, newest-looking first (higher version numbers sort first)."""
+    keep = [m for m in ids if not any(w in m.lower() for w in NOT_CHAT)]
+    return sorted(set(keep), key=_natural, reverse=True)
 
 
 # ---------------------------------------------------------------- clients
@@ -299,7 +321,7 @@ def list_models(cfg: dict) -> list[str]:
         mid = _g(m, "id") or _g(m, "name")
         if mid:
             ids.append(str(mid).removeprefix("models/"))
-    return sorted(set(ids))
+    return chat_models(ids)
 
 
 def plain_blocks(content) -> list:

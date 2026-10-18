@@ -176,6 +176,58 @@ export class Viewer {
     for (const f of this.afterRender) f();
   }
 
+  // A picture of the model for the Files page: bodies only (sketches when there is no body), trimetric,
+  // fitted, no selection colours, transparent background. Drawn into a corner of the canvas and copied
+  // out in the same task (preserveDrawingBuffer), then the normal view is drawn again, so it never shows.
+  // Returns a Blob (WebP, or PNG where WebP cannot be written) or null when there is nothing to draw.
+  async snapshot(W = 480, H = 360) {
+    const groups = [this.planesGroup, this.overlayGroup, this.sketchGroup, this.toolGroup, this.liveGroup, this.capGroup, this.otherSketches];
+    const hasBody = this.faceObjs.some((f) => f.visible !== false);
+    const vis = groups.map((g) => g.visible);
+    const saved = { q: this.quat.clone(), t: this.target.clone(), vh: this.viewH, w: this.w, h: this.h, sel: this.selected,
+      hov: this.hoverKey, extra: this.extraHighlights, dim: this.sketchDim, clip: this.renderer.clippingPlanes };
+    groups.forEach((g) => { g.visible = false; });
+    if (!hasBody) this.otherSketches.visible = true;
+    const box = this.sceneBox();
+    if (box.isEmpty()) { groups.forEach((g, i) => { g.visible = vis[i]; }); return null; }
+    this.selected = new Set(); this.hoverKey = null; this.extraHighlights = new Set(); this.sketchDim = false;
+    this.refreshHighlights();
+    let out = null;
+    try {
+      // the largest W:H region that fits the canvas, bottom-left (GL viewport origin)
+      const rw = Math.max(1, Math.min(this.w, this.h * W / H)), rh = rw * H / W;
+      this.quat.copy(viewQuat('trimetric'));
+      const c = box.getCenter(new THREE.Vector3());
+      const inv = this.quat.clone().invert();
+      const pts = [];
+      for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) pts.push(new THREE.Vector3(x, y, z).sub(c).applyQuaternion(inv));
+      const ew = Math.max(...pts.map((p) => p.x)) - Math.min(...pts.map((p) => p.x));
+      const eh = Math.max(...pts.map((p) => p.y)) - Math.min(...pts.map((p) => p.y));
+      this.target.copy(c); this.w = rw; this.h = rh;
+      this.viewH = Math.max(eh, ew * H / W, 1e-3) * 1.18;
+      this.updateCamera();
+      for (const s of this.screenSized) s.obj.scale.setScalar(this.pxSize * s.px);
+      this.renderer.setScissorTest(false);
+      this.renderer.setViewport(0, 0, rw, rh);
+      this.renderer.clear();
+      this.renderer.render(this.scene, this.camera);
+      const dpr = this.renderer.getPixelRatio();
+      const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+      const g2 = cv.getContext('2d');
+      g2.imageSmoothingQuality = 'high';
+      g2.drawImage(this.canvas, 0, this.canvas.height - rh * dpr, rw * dpr, rh * dpr, 0, 0, W, H);
+      out = cv;
+    } finally {
+      Object.assign(this, { viewH: saved.vh, w: saved.w, h: saved.h, selected: saved.sel, hoverKey: saved.hov, extraHighlights: saved.extra, sketchDim: saved.dim });
+      this.quat.copy(saved.q); this.target.copy(saved.t);
+      groups.forEach((g, i) => { g.visible = vis[i]; });
+      this.refreshHighlights();
+      this.render();
+    }
+    const blob = await new Promise((res) => out.toBlob(res, 'image/webp', 0.86));
+    return blob && blob.size ? blob : null;
+  }
+
   // ------------------------------------------------------------------ helpers
   worldToScreen(v) {
     const p = (v.isVector3 ? v.clone() : V(v)).project(this.camera);

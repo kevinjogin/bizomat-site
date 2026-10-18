@@ -25,6 +25,7 @@ from urllib.parse import parse_qs, quote, urlencode
 
 COOKIE = "opensketch_session"
 ACCOUNT_COOKIE = "opensketch_user"
+PUBLIC_FILES = ("/manifest.webmanifest", "/sw.js", "/favicon.svg", "/favicon.ico")
 
 
 def password() -> str:
@@ -55,7 +56,31 @@ def session_value() -> str:
 
 
 def check_token(token: str) -> bool:
-    return bool(token) and hmac.compare_digest(token, mcp_token())
+    return resolve_mcp(token)[0]
+
+
+def mcp_token_for(user: dict | None) -> str:
+    """The connector address key for one person. The server owner (and a server without accounts) keeps the
+    server-wide address, so a connector added before accounts keeps working; every other account gets its own,
+    which only reaches that person's Files."""
+    if user is None or user.get("legacy") or user.get("role") == "owner":
+        return mcp_token()
+    return _mac("mcp:" + user["id"], 32)
+
+
+def resolve_mcp(token: str) -> tuple[bool, dict | None]:
+    """(valid, person) for an MCP address key. The server-wide key acts as the server owner once accounts
+    exist; None as the person means no accounts (everything is shared)."""
+    if not token:
+        return False, None
+    from . import accounts
+    users = accounts.list_users()
+    if hmac.compare_digest(token, mcp_token()):
+        return True, next((u for u in users if u["role"] == "owner"), None)
+    for u in users:
+        if u["role"] != "owner" and hmac.compare_digest(token, _mac("mcp:" + u["id"], 32)):
+            return True, u
+    return False, None
 
 
 def public_url(headers: dict | None = None) -> str:
@@ -116,32 +141,67 @@ def logged_in(scope) -> bool:
 
 # ---------------------------------------------------------------- pages
 
+MARK = ('<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="mk" x1="0" y1="0" x2="1" y2="1">'
+        '<stop offset="0" stop-color="#a3aaff"/><stop offset=".5" stop-color="#6670e0"/><stop offset="1" stop-color="#4a51c2"/></linearGradient></defs>'
+        '<rect width="24" height="24" rx="6.6" fill="url(#mk)"/><path d="M12 5.4l5.8 3.3L12 12 6.2 8.7z" fill="#fff" fill-opacity=".3"/>'
+        '<path d="M12 5.4l5.8 3.3v6.6L12 18.6l-5.8-3.3V8.7z" fill="none" stroke="#fff" stroke-width="1.55" stroke-linejoin="round"/>'
+        '<path d="M6.2 8.7L12 12l5.8-3.3M12 12v6.6" fill="none" stroke="#fff" stroke-width="1.55" stroke-linejoin="round" stroke-opacity=".88"/></svg>')
+
+# Sign-in pages: Stripe-like (bold display type, an angled indigo band, a raised card), in OpenSketch's colours.
 PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex"><title>{title} - OpenSketch</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="robots" content="noindex"><title>{title} - OpenSketch</title><meta name="theme-color" content="#0c0d0e">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="manifest" href="/manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Inter+Tight:wght@600..800&display=swap" rel="stylesheet">
 <style>
-:root{{--bg:#0c0d0e;--card:#141517;--field:#1d1e21;--line:rgba(255,255,255,.08);--text:#e3e4e8;--muted:#8a8f98;--accent:#5e6ad2;--accent-d:#6b77de;--link:#8b93ff;--err:#eb5757}}
+:root{{--bg:#0c0d0e;--card:#141517;--field:#1b1c1f;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.14);--text:#e3e4e8;--text2:#a3a6ad;--muted:#7a7f88;--accent:#5e6ad2;--accent-h:#6b77de;--link:#8b93ff;--err:#eb5757;
+--display:"Inter Tight",Inter,system-ui,-apple-system,"Segoe UI",sans-serif;--ease:cubic-bezier(.16,1,.3,1)}}
 *{{box-sizing:border-box}}
-body{{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(90% 70% at 50% 0%,#17181c,var(--bg) 70%);font:13px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);-webkit-font-smoothing:antialiased;color-scheme:dark}}
-.card{{background:var(--card);border-radius:12px;padding:28px;width:min(360px,calc(100vw - 32px));box-shadow:0 0 0 1px rgba(255,255,255,.07),0 16px 40px rgba(0,0,0,.5)}}
-.mark{{display:flex;align-items:center;gap:8px;margin-bottom:22px;font-weight:600;font-size:13px;letter-spacing:-.01em}}
-.mark i{{width:20px;height:20px;border-radius:5px;background:linear-gradient(135deg,#8b93ff,#5e6ad2);display:grid;place-items:center}}
-.mark i:after{{content:"";width:8px;height:8px;border:1.6px solid #fff;border-radius:2px;transform:rotate(45deg)}}
-h1{{font-size:18px;font-weight:600;margin:0 0 4px;letter-spacing:-.015em}} p.sub{{color:var(--muted);margin:0 0 20px}}
-label{{display:block;font-size:11.5px;font-weight:500;color:var(--muted);margin:12px 0 5px}}
-input{{width:100%;height:34px;padding:0 10px;border:1px solid var(--line);border-radius:6px;font:inherit;color:inherit;background:var(--field);outline:none;transition:border-color .1s}}
-input:hover{{border-color:rgba(255,255,255,.14)}} input:focus{{border-color:var(--accent)}}
-button{{margin-top:20px;width:100%;height:34px;border:0;border-radius:6px;background:var(--accent);color:#fff;font:inherit;font-weight:500;cursor:pointer}}
-button:hover{{background:var(--accent-d)}}
-.err{{color:var(--err);background:rgba(235,87,87,.12);border-radius:6px;padding:8px 10px;margin-top:14px;font-size:12px}}
-.note{{color:var(--muted);font-size:12px;margin-top:6px}}
-.gbtn{{display:flex;align-items:center;justify-content:center;gap:10px;height:36px;border-radius:6px;background:#fff;color:#1f1f1f;font-weight:500;text-decoration:none;border:1px solid #dadce0}}
+html,body{{height:100%}}
+body{{margin:0;min-height:100vh;background:var(--bg);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);-webkit-font-smoothing:antialiased;color-scheme:dark;overflow-x:hidden}}
+.band{{position:fixed;left:-10vw;right:-10vw;top:-38vh;height:78vh;transform:skewY(-9deg);transform-origin:0 0;overflow:hidden;z-index:0;
+background:linear-gradient(100deg,#2a2f7a 0%,#4a51c2 28%,#6670e0 48%,#8b6ad8 66%,#c0569c 86%,#e0559b 100%);opacity:.92}}
+.band:before,.band:after{{content:"";position:absolute;inset:-20%;background:radial-gradient(30% 50% at 20% 60%,rgba(163,170,255,.75),transparent 70%),radial-gradient(28% 45% at 70% 40%,rgba(74,81,194,.8),transparent 70%);
+filter:blur(30px);animation:drift 16s ease-in-out infinite alternate;mix-blend-mode:screen}}
+.band:after{{background:radial-gradient(25% 40% at 80% 70%,rgba(224,85,155,.6),transparent 70%),radial-gradient(30% 40% at 40% 30%,rgba(102,112,224,.7),transparent 70%);animation-duration:22s;animation-direction:alternate-reverse}}
+.band i{{position:absolute;left:0;right:0;bottom:0;height:46%;background:linear-gradient(to bottom,transparent,var(--bg))}}
+@keyframes drift{{to{{transform:translate3d(8%,-6%,0) rotate(8deg)}}}}
+.wrap{{position:relative;z-index:1;min-height:100vh;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,440px);gap:56px;align-items:center;max-width:1080px;margin:0 auto;padding:40px 32px 48px}}
+.brand{{position:absolute;top:28px;left:32px;display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font-family:var(--display);font-weight:750;font-size:19px;letter-spacing:-.03em}}
+.brand svg{{filter:drop-shadow(0 4px 12px rgba(0,0,0,.35))}}
+.pitch h2{{margin:0 0 16px;font-family:var(--display);font-weight:750;font-size:52px;line-height:1.02;letter-spacing:-.045em;color:#fff;text-wrap:balance}}
+.pitch p{{margin:0 0 26px;color:rgba(255,255,255,.78);font-size:17px;line-height:1.55;max-width:470px;letter-spacing:-.01em}}
+.pitch ul{{list-style:none;margin:0;padding:0;display:grid;gap:12px;color:var(--text2)}}
+.pitch li{{display:flex;gap:10px;align-items:flex-start}}
+.pitch li b{{color:var(--text);font-weight:600}}
+.pitch li:before{{content:"";flex:none;width:18px;height:18px;margin-top:2px;border-radius:50%;background:rgba(94,106,210,.22) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='%238b93ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat}}
+.card{{background:var(--card);border-radius:16px;padding:32px;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 30px 60px -12px rgba(0,0,0,.6),0 18px 36px -18px rgba(0,0,0,.5);animation:rise .5s var(--ease)}}
+@keyframes rise{{from{{opacity:0;transform:translateY(10px)}}}}
+h1{{font-family:var(--display);font-size:26px;font-weight:750;margin:0 0 6px;letter-spacing:-.035em;line-height:1.15}} p.sub{{color:var(--text2);margin:0 0 22px}}
+label{{display:block;font-size:12.5px;font-weight:550;color:var(--text2);margin:14px 0 6px}}
+input{{width:100%;height:40px;padding:0 12px;border:1px solid var(--line2);border-radius:8px;font:inherit;color:inherit;background:var(--field);outline:none;transition:border-color .12s,box-shadow .12s}}
+input:hover{{border-color:rgba(255,255,255,.2)}} input:focus{{border-color:var(--accent);box-shadow:0 0 0 3px rgba(94,106,210,.25)}}
+button{{margin-top:22px;width:100%;height:42px;border:0;border-radius:21px;background:var(--accent);color:#fff;font:inherit;font-weight:650;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+box-shadow:0 1px 0 rgba(255,255,255,.15) inset,0 6px 16px -6px rgba(94,106,210,.8);transition:background .12s,transform .12s}}
+button:hover{{background:var(--accent-h)}} button:active{{transform:scale(.985)}}
+button:after{{content:"";width:14px;height:14px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12h13M13 7l5 5-5 5' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;transition:transform .2s var(--ease)}}
+button:hover:after{{transform:translateX(3px)}}
+.err{{color:#ffb4b4;background:rgba(235,87,87,.14);border:1px solid rgba(235,87,87,.3);border-radius:8px;padding:9px 12px;margin-top:16px;font-size:13px}}
+.note{{color:var(--muted);font-size:12.5px;margin-top:6px}}
+.gbtn{{display:flex;align-items:center;justify-content:center;gap:10px;height:42px;border-radius:21px;background:#fff;color:#1f1f1f;font-weight:600;text-decoration:none;border:1px solid #dadce0;transition:background .12s}}
 .gbtn:hover{{background:#f2f2f2;text-decoration:none}}
-.or{{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:11.5px;margin:16px 0 2px}} .or:before,.or:after{{content:"";flex:1;border-top:1px solid var(--line)}}
-.links{{margin-top:16px;display:flex;justify-content:space-between;gap:12px;font-size:12px}} a{{color:var(--link);text-decoration:none}} a:hover{{text-decoration:underline}}
-</style></head><body><form class="card" method="post" action="{action}" autocomplete="on">
-<div class="mark"><i></i>OpenSketch</div><h1>{title}</h1><p class="sub">{sub}</p>{top}
-<input type="hidden" name="next" value="{next}">{fields}{error}<button type="submit">{button}</button>{links}</form></body></html>"""
+.or{{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;margin:18px 0 0}} .or:before,.or:after{{content:"";flex:1;border-top:1px solid var(--line)}}
+.links{{margin-top:18px;display:flex;justify-content:space-between;gap:12px;font-size:13px}} a{{color:var(--link);text-decoration:none}} a:hover{{text-decoration:underline}}
+.foot{{position:absolute;bottom:20px;left:32px;right:32px;display:flex;justify-content:space-between;color:var(--muted);font-size:12px}}
+@media (max-width:900px){{.wrap{{grid-template-columns:1fr;gap:28px;padding:96px 20px 64px;max-width:480px}}.pitch h2{{font-size:36px}}.pitch p{{font-size:15px;margin-bottom:0}}.pitch ul{{display:none}}.brand{{left:20px;top:22px}}.card{{padding:26px 22px}}.foot{{left:20px;right:20px}}.band{{height:62vh}}}}
+@media (prefers-reduced-motion:reduce){{*,*:before,*:after{{animation:none!important;transition:none!important}}}}
+</style></head><body><div class="band"><i></i></div>
+<div class="wrap"><a class="brand" href="/">{mark}<span>OpenSketch</span></a>
+<section class="pitch"><h2>CAD that builds while you watch.</h2><p>Sketch, extrude and mate parts the way you already know, or let ChatGPT, Claude or Codex model them in your Files, live.</p>
+<ul><li><span><b>Real feature trees.</b> Sketches, dimensions and mates you can edit.</span></li><li><span><b>Your AI, connected.</b> Works with the AI app you already pay for.</span></li><li><span><b>Nothing to install.</b> Runs in the browser, or install it as an app.</span></li></ul></section>
+<form class="card" method="post" action="{action}" autocomplete="on"><h1>{title}</h1><p class="sub">{sub}</p>{top}
+<input type="hidden" name="next" value="{next}">{fields}{error}<button type="submit">{button}</button>{links}</form></div>
+<div class="foot"><span>OpenSketch</span><span>Parametric CAD with AI</span></div></body></html>"""
 
 
 def _field(name: str, label: str, kind: str = "text", auto: str = "", focus: bool = False, value: str = "", note: str = "") -> str:
@@ -165,7 +225,7 @@ def _google_block(nxt: str = "/", invite: str = "", label: str = "Continue with 
 
 
 def _page(title, sub, action, fields, button, nxt="/", error="", links="", top="") -> bytes:
-    return PAGE.format(title=title, sub=sub, action=action, fields="".join(fields), button=button, next=_esc(nxt), top=top,
+    return PAGE.format(title=title, sub=sub, action=action, fields="".join(fields), button=button, next=_esc(nxt), top=top, mark=MARK,
                        error=f'<div class="err" role="alert">{_esc(error)}</div>' if error else "", links=links).encode()
 
 
@@ -276,6 +336,9 @@ class PasswordGate:
         # /mcp/ and /review/: their tokens are the keys. GET /api/features: the command list (no document
         # data), which the read-only review app loads too.
         if path.startswith("/mcp/") or path.startswith("/review/") or (path == "/api/features" and scope.get("method") == "GET"):
+            return await self.app(scope, receive, send)
+        # The installable-app files hold no data: browsers fetch the manifest without cookies.
+        if scope.get("method") in ("GET", "HEAD") and (path in PUBLIC_FILES or path.startswith("/icons/")):
             return await self.app(scope, receive, send)
         m = mode()
         user = current_user(scope)

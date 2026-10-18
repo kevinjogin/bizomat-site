@@ -13,8 +13,8 @@ export function buildCommands(app) {
   const C = {
     // quick access
     new: { label: 'New', icon: 'new', tip: 'Creates a new document (Ctrl+N)', run: () => app.newDoc() },
-    open: { label: 'Open', icon: 'open', tip: 'Opens an existing document (Ctrl+O)', run: () => app.openFile() },
-    save: { label: 'Save', icon: 'save', tip: 'Saves the active document (Ctrl+S)', run: () => app.saveFile() },
+    open: { label: 'Open', icon: 'open', tip: 'Your Files: open, upload or start a model (Ctrl+O)', run: () => app.openFile() },
+    save: { label: 'Save', icon: 'save', tip: 'Saves to your Files (Ctrl+S). Files save by themselves after the first save.', run: () => app.saveFile() },
     saveas: { label: 'Save As', icon: 'save', tip: 'Saves the document as .osk, STEP, STL or a SOLIDWORKS macro', run: () => app.saveAs() },
     sldmacro: { label: 'Export SOLIDWORKS Macro', icon: 'save', tip: 'Writes a SOLIDWORKS macro (.bas) that rebuilds the part, or the parts and the mated assembly, in SOLIDWORKS', run: () => app.exportMacro() },
     print: { label: 'Print', icon: 'print', tip: 'Prints the graphics area', run: () => window.print() },
@@ -23,10 +23,11 @@ export function buildCommands(app) {
     select: { label: 'Select', icon: 'select', tip: 'Selects sketch entities, edges, faces and planes', run: () => app.selectTool() },
     rebuild: { label: 'Rebuild', icon: 'rebuild', tip: 'Rebuilds the part (Ctrl+B)', run: () => app.regen(true) },
     fileprops: { label: 'File Properties', icon: 'props', tip: 'Summary and custom properties', run: () => app.openTask('custprops') },
-    serveropen: { label: 'Open from Server', icon: 'open', tip: 'Opens a document stored on the OpenSketch server, such as one Claude built. Claude\'s later changes appear live.', run: () => app.server.openDialog() },
-    serversave: { label: 'Save to Server', icon: 'save', tip: 'Stores this document on the OpenSketch server so Claude can work on it with you.', run: () => app.server.saveAsNew() },
+    serveropen: { label: 'Files...', icon: 'open', tip: 'Your files on this server, with a picture of each. Your AI\'s changes appear live in the one you open.', run: () => app.files.open() },
+    serversave: { label: 'Save a Copy to Files', icon: 'save', tip: 'Stores a copy of this model in your Files.', run: () => (app.server.linked ? app.server.saveAsNew(app.rootDoc().name + ' copy') : app.server.saveDraft()) },
     publishreview: { label: 'Publish Review...', icon: 'save', tip: 'Publishes a read-only link to this version, to send or open on a phone: the model in OpenSketch, its joints, what changed and the checks.', run: () => app.server.publishDialog() },
-    connectclaude: { label: 'Connect Claude', icon: 'ai', tip: 'Use OpenSketch from the Claude app: shows the connector address to add in Claude.', run: () => app.server.connectDialog() },
+    connectclaude: { label: 'Connect AI', icon: 'ai', tip: 'Use ChatGPT, Claude, Codex, Cursor or another AI app with OpenSketch, or add your own API key for the built-in AI.', run: () => app.server.connectDialog() },
+    openlocal: { label: 'Open from Computer...', icon: 'open', tip: 'Opens an OpenSketch, STEP or EAGLE file from your computer into your Files.', run: () => app.openFromComputer() },
     options: { label: 'Options', icon: 'options', tip: 'System options and document properties', run: () => app.optionsDialog() },
 
     // features
@@ -161,7 +162,7 @@ export const ASM_TABS = [
 export const QUICK = ['new', 'open', 'save', 'print', 'undo', 'redo', 'select', 'rebuild', 'fileprops', 'options'];
 
 export const MENUS = [
-  { name: 'File', items: ['new', 'open', 'serveropen', 'save', 'saveas', 'serversave', 'sldmacro', '-', 'publishreview', 'connectclaude', '-', 'print', '-', 'fileprops'] },
+  { name: 'File', items: ['new', 'open', 'openlocal', '-', 'save', 'saveas', 'serversave', 'sldmacro', '-', 'publishreview', 'connectclaude', '-', 'print', '-', 'fileprops'] },
   { name: 'Edit', items: ['undo', 'redo', '-', 'rebuild', '-', { label: 'Delete', run: (app) => app.deleteSelection(), key: 'Del' }, { label: 'Suppress', run: (app) => app.suppressSelection(true) }, { label: 'Unsuppress', run: (app) => app.suppressSelection(false) }] },
   { name: 'View', items: [{ label: 'Planes', run: (app) => app.toggleView('planes') }, { label: 'Origins', run: (app) => app.toggleView('origins') }, { label: 'Sketches', run: (app) => app.toggleView('sketches') }, { label: 'Sketch Relations', run: (app) => app.toggleView('relations') }, '-', { label: 'Zoom to Fit', run: (app) => app.viewer.zoomToFit(), key: 'F' }, '-', ...LOOKS.map(([k, t]) => ({ label: `Theme: ${t}${LOOK === k ? '  (on)' : ''}`, run: () => setLook(k) }))] },
   { name: 'Insert', items: ['insertcomp', 'newpart', 'mate', 'coupler', '-', 'extrude', 'revolve', 'cut', 'revcut', '-', 'fillet', 'chamfer', 'shell', '-', 'linpattern', 'circpattern', 'mirror', '-', 'plane', '-', 'sketch'] },

@@ -102,18 +102,20 @@ See the [plane contract](docs/DOCUMENT.md#conventions).
 2. **Make the port public.** In the codespace, open the Ports tab, right-click port 8000, Port
    Visibility > Public. Claude cannot reach a private port. (The first visit asks you to create your
    account, with the password as the key.)
-3. **Copy the address.** In OpenSketch: OpenSketch AI tab > Connect Claude (or File > Connect Claude),
-   then Copy. The address contains the key; keep it private.
-4. **Add it to Claude.** In Claude: Customize > Connectors > Add custom connector. Name it OpenSketch,
-   paste the address as the server URL, choose No sign-in, Add.
-5. **Use it.** In a chat, turn OpenSketch on (+ > Connectors) and ask, for example: "In OpenSketch,
-   design a wall bracket for a 20 kg shelf using off-the-shelf screws." Open the link Claude gives you.
+3. **Open Connect AI.** In OpenSketch: OpenSketch AI tab > Connect AI (or File > Connect AI). The "Your AI
+   app" tab has the address and the exact steps for ChatGPT, Claude, Claude Code, Codex, Cursor, VS Code,
+   Gemini CLI and any other MCP app (one-click buttons for Cursor and VS Code). The address contains the
+   key; keep it private. Each account gets its own address, which reaches only that person's Files.
+4. **Add it to your AI app.** For example in Claude: Customize > Connectors > Add custom connector, paste
+   the address, choose No sign-in. In ChatGPT (paid plans, developer mode on): chatgpt.com/plugins > + >
+   Add custom MCP server, Server URL, No authentication.
+5. **Use it.** In a chat, turn OpenSketch on and ask, for example: "In OpenSketch, design a wall bracket
+   for a 20 kg shelf using off-the-shelf screws." Open the link it gives you.
 
 The model updates in the page within a second or two of each change Claude makes, and your own edits in
 the page are saved back so Claude sees them. If you both change it at once, the page asks which version
-to keep. The server keeps the last 50 versions of each document (Claude can undo or restore them), in
-`~/opensketch-data` in the codespace. File > Open from Server lists them; File > Save to Server shares
-the model you have open with Claude.
+to keep. The server keeps the last 50 versions of each document (you and your AI can undo or restore them),
+in `~/opensketch-data` in the codespace. The Files page lists them.
 
 The codespace has to be running for Claude to reach it: it stops after 30 idle minutes, so open it
 before you use Claude with it.
@@ -132,11 +134,29 @@ proves you own the server. After that everyone signs in with their own email and
 - Claude's connector address does not change when you add accounts. Published review links still work
   without signing in.
 
+## Files
+
+Everything you save lives in Files (the Files button next to the logo, File > Open or Ctrl+O): a picture of
+each model, search, sort, grid or list, rename (F2), duplicate, download as .osk, version history (restore any
+of the last 50 versions) and a Trash that keeps deleted files for 30 days. New part / New assembly start a file
+straight in Files; Upload (or drag files onto the page) brings in .osk, STEP, EAGLE .brd or a .zip. A file in
+Files saves itself as you work (the title bar shows Saved / Saving); a model that is only in your browser shows
+Draft, and Ctrl+S puts it in Files. Pictures come from your browser when you save; files your AI made without
+a browser get a picture drawn on the server. Each person sees only their own files (the server owner also sees
+files made before accounts existed).
+
+## Install it as an app
+
+OpenSketch is an installable web app: in Chrome or Edge click Install in the address bar (Mac: also Safari >
+File > Add to Dock). It installs for your user only (no admin rights), opens in its own window, starts on the
+model you had open, and opens .osk and STEP files from your computer. Updates arrive by themselves.
+
 ## Your own AI key
 
-Account menu (top right) > AI model and key. Pick a provider (Anthropic Claude, OpenAI, Google Gemini,
-OpenRouter for many other models, or any OpenAI-compatible address), paste your API key, press Check key to
-list the models it can use, choose one and Save. The key is stored encrypted on your account and used only for
+Connect AI > Built-in AI. Pick a provider (Claude, OpenAI, Gemini, OpenRouter for many other models, or any
+OpenAI-compatible address), click Get a key to open the provider's key page, and paste the key: OpenSketch
+recognises the provider from the key, checks it at once and lists the models it can use. Choose one and Save
+and use. The key is stored encrypted on your account and used only for
 your requests; the app never shows it again (only its last four characters). Web search and page reading work
 with Claude only. If the server has its own `ANTHROPIC_API_KEY`, people without a key of their own use that
 one (set `OPENSKETCH_SHARE_SERVER_KEY=0` to stop sharing it).
@@ -188,7 +208,7 @@ takes a few seconds). Everything is set up already; it is all browser steps:
    storage and takes about 10 minutes; after that every push to main deploys by itself.
 5. OpenSketch is then at `https://opensketch-yz.fly.dev`. If Fly says the name is taken, add a repository
    variable `FLY_APP` (same Settings page, Variables tab) with another name, and run it again.
-6. In that OpenSketch, use Connect Claude and update the connector in Claude with the new address.
+6. In that OpenSketch, open Connect AI and update the connector in your AI app with the new address.
 
 Your own domain (optional): in the Fly dashboard open the app, Certificates, Add certificate, and enter a
 subdomain such as `cad.example.com`. Add the CNAME record Fly shows at your domain's DNS provider (plus the
@@ -198,7 +218,7 @@ workflow once, so share links and Claude's connector address use the new domain.
 working.
 
 The Fly server and the codespace are separate: models saved on one are not on the other (move one with
-Save As > OpenSketch file, then Open and Save to Server).
+Files > Download .osk, then Upload on the other).
 
 ## Run it locally
 

@@ -14,6 +14,13 @@ const $ = (id) => document.getElementById(id);
 const esc = (t) => String(t ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const POLL_MS = 1500;
 const PUSH_MS = 1200;
+const THUMB_MS = 20000; // at most one new picture of the model per 20 s while editing
+const LAST = 'opensketch.lastDoc';
+const DRAFT_LINK = 'opensketch.autosave.link';
+const store = {
+  get: (k) => { try { return localStorage.getItem(k); } catch (_) { return null; } },
+  set: (k, v) => { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (_) { /* storage off */ } },
+};
 
 function ago(t) {
   const s = Math.max(0, Date.now() / 1000 - t);
@@ -32,9 +39,23 @@ export class ServerDocs {
     this.pushing = null;
     this.pollTimer = null;
     this.shownRequests = new Set();
+    this.state = 'draft'; // draft | saved | saving | offline | conflict
+    this.thumbTimer = null;
+    this.thumbAt = 0;
+    window.addEventListener('beforeunload', (e) => {
+      if (this.link?.local || this.pushing) { this.flush(); e.preventDefault(); e.returnValue = ''; }
+    });
   }
 
   get linked() { return !!this.link; }
+  static get lastDoc() { return store.get(LAST); }
+  static get draftLink() { return store.get(DRAFT_LINK); }
+
+  setState(st) {
+    if (this.state === st) return;
+    this.state = st;
+    this.app.updateDocChrome();
+  }
 
   async req(method, url, body) {
     const r = await fetch(url, { method, headers: body ? { 'Content-Type': 'application/json' } : {}, body: body ? JSON.stringify(body) : undefined, cache: 'no-store' });
@@ -52,34 +73,143 @@ export class ServerDocs {
       message('Open', `Could not open that document from the server: ${esc(err.message)}`);
       return false;
     }
+    if (this.link && this.link.id !== rec.id) { this.leaveThumb(); this.flush(); clearInterval(this.pollTimer); }
     this.link = { id: rec.id, name: rec.name, version: rec.version, local: false, requests: rec.requests || [] };
     this.shownRequests = new Set();
+    this.state = 'saved';
+    store.set(LAST, rec.id); store.set(DRAFT_LINK, rec.id);
     await this.apply(rec, { fit: true, label: 'Open ' + rec.name });
     this.setUrl(rec.id);
     this.startPolling();
-    if (!quiet) this.app.status(`Opened ${rec.name} from the server. Changes Claude makes appear here; your edits are saved back.`);
+    if (!quiet) this.app.status(`Opened ${rec.name}. Your edits save by themselves; your AI's changes appear here.`);
+    if (!rec.thumb || rec.thumb.version < rec.version || rec.thumb.source !== 'browser') this.scheduleThumb(1500);
     return true;
   }
 
-  // Put the current document on the server (or open it there) and link to it.
-  async saveAsNew() {
+  // A new empty part or assembly in the person's Files, opened.
+  async createAndOpen(kind = 'part') {
+    let rec;
+    try { rec = await this.req('POST', '/api/docs', { name: '', kind }); } catch (err) {
+      message('New', `Could not create it in your Files (${esc(err.message)}). Starting a draft in this browser instead.`);
+      return false;
+    }
+    const ok = await this.open(rec.id, { quiet: true });
+    if (ok) {
+      this.app.ribbon.setTab(kind === 'assembly' ? 'Assembly' : 'Features');
+      this.app.viewer.standardView('trimetric');
+      if (kind === 'assembly') this.app.asm.insertPM();
+      this.app.status(kind === 'assembly' ? `${rec.name} is in your Files. Insert components to start.` : `${rec.name} is in your Files. Select a plane and click Sketch to start.`);
+    }
+    return ok;
+  }
+
+  // Put the current draft in Files under a name the person chooses. Resolves true when saved.
+  saveDraft() {
     const app = this.app;
     const d = app.rootDoc();
-    const rec = await this.req('POST', '/api/docs', { name: d.name || 'Untitled', doc: d });
+    return new Promise((resolve) => {
+      const body = document.createElement('div');
+      body.className = 'save-dlg';
+      body.innerHTML = `<label class="acct-l" for="sv-name">Name</label><input id="sv-name" class="acct-i" autocomplete="off" spellcheck="false">
+        <p class="acct-note">Saved to your Files on this server. From then on it saves by itself, keeps its version history, and your AI can open it.</p><div class="acct-err" role="alert"></div>`;
+      const inp = body.querySelector('input'); inp.value = d.name || 'Untitled';
+      inp.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter') { e.preventDefault(); go(); } });
+      let busy = false;
+      const go = async () => {
+        if (busy) return;
+        const name = inp.value.trim();
+        if (!name) { body.querySelector('.acct-err').textContent = 'Give it a name.'; return; }
+        busy = true;
+        try {
+          if (app.doc.name !== name && !app.docStack.length) app.doc.name = name;
+          await this.saveAsNew(name);
+          dlg.close(); resolve(true);
+        } catch (err) { busy = false; body.querySelector('.acct-err').textContent = 'Could not save: ' + err.message; }
+      };
+      const dlg = dialog({ title: 'Save to Files', body, cls: 'acct-dlg', onClose: () => resolve(false), buttons: [
+        { label: 'Download .osk instead', run: () => { app.downloadOsk(); resolve(false); } },
+        { label: 'Cancel', run: () => resolve(false) },
+        { label: 'Save', primary: true, run: () => { go(); return false; } },
+      ] });
+      setTimeout(() => { inp.focus(); inp.select(); }, 0);
+    });
+  }
+
+  renamedOnServer(rec) {
+    if (!this.link || this.link.id !== rec.id) return;
+    this.link.name = rec.name; this.link.version = rec.version;
+    const root = this.app.docStack.length ? this.app.docStack[0].doc : this.app.doc;
+    root.name = rec.name;
+    this.app.autosave();
+    this.app.updateDocChrome(); this.app.tree?.render();
+  }
+
+  // Leaving a file with a picture still to send: draw it now (the snapshot is taken before the model is
+  // replaced) and send it in the background.
+  leaveThumb() {
+    const L = this.link, app = this.app;
+    if (!L || !this.thumbPending || app.proposal || app.reviewMode) return;
+    this.thumbPending = false;
+    clearTimeout(this.thumbTimer);
+    const version = L.version + (L.local ? 1 : 0);
+    let p;
+    try { p = app.viewer.snapshot(); } catch (_) { return; }
+    p.then((blob) => blob && fetch(`/api/docs/${encodeURIComponent(L.id)}/thumb?version=${version}`, { method: 'PUT', headers: { 'Content-Type': blob.type || 'image/png' }, body: blob }))
+      .catch(() => { /* best effort */ });
+  }
+
+  // ---------------------------------------------------------------- pictures for the Files page
+  scheduleThumb(delay = 800) {
+    if (!this.link) return;
+    this.thumbPending = true;
+    clearTimeout(this.thumbTimer);
+    const wait = Math.max(delay, this.thumbAt + THUMB_MS - Date.now());
+    this.thumbTimer = setTimeout(() => this.uploadThumb(), wait);
+  }
+
+  async uploadThumb() {
+    const L = this.link, app = this.app;
+    if (!L || app.reviewMode) return;
+    if (app.proposal || app.taskpane?.busy || app.live?.active || L.local || this.pushing) { this.scheduleThumb(3000); return; }
+    this.thumbAt = Date.now();
+    this.thumbPending = false;
+    let blob = null;
+    try { blob = await app.viewer.snapshot(); } catch (_) { blob = null; }
+    if (!blob || this.link !== L) return;
+    try {
+      await fetch(`/api/docs/${encodeURIComponent(L.id)}/thumb?version=${L.version}`, { method: 'PUT', headers: { 'Content-Type': blob.type || 'image/png' }, body: blob });
+    } catch (_) { /* the next save tries again */ }
+  }
+
+  // Put the current document on the server (or open it there) and link to it.
+  async saveAsNew(name) {
+    const app = this.app;
+    const d = app.rootDoc();
+    const rec = await this.req('POST', '/api/docs', { name: name || d.name || 'Untitled', doc: d });
     this.link = { id: rec.id, name: rec.name, version: rec.version, local: false, requests: [] };
+    this.state = 'saved';
+    store.set(LAST, rec.id); store.set(DRAFT_LINK, rec.id);
     this.setUrl(rec.id);
     this.startPolling();
     app.dirty = false; app.updateDocChrome();
-    app.status(`Saved ${rec.name} on the server. Claude can now open it (it is in list_documents).`);
+    app.status(`Saved ${rec.name} to your Files. It saves by itself from now on, and your AI can open it.`);
+    this.scheduleThumb(300);
   }
 
-  unlink() {
+  // Stop following the server document. keepAsDraft: the model stays open as an unsaved draft (its file
+  // went to the Trash); otherwise the caller replaces it.
+  unlink({ keepAsDraft = false } = {}) {
     if (!this.link) return;
-    this.flush();
+    if (!keepAsDraft) this.flush();
+    clearTimeout(this.thumbTimer);
+    if (!keepAsDraft) this.leaveThumb();
     this.link = null;
+    this.state = 'draft';
     clearInterval(this.pollTimer); this.pollTimer = null;
     this.hideBar();
     this.setUrl(null);
+    store.set(DRAFT_LINK, null);
+    if (keepAsDraft) { store.set(LAST, null); this.app.dirty = true; }
     this.app.updateDocChrome();
   }
 
@@ -118,10 +248,10 @@ export class ServerDocs {
     this.pollTimer = setInterval(() => this.poll(), POLL_MS);
   }
 
-  async poll() {
+  async poll(force = false) {
     const L = this.link;
     if (!L || this.polling || this.pushing) return;
-    if (!(this.app.isActive ? this.app.isActive() : !document.hidden)) { this.app.lastIdleSeen = true; return; } // idle: let the server sleep
+    if (!force && !(this.app.isActive ? this.app.isActive() : !document.hidden)) { this.app.lastIdleSeen = true; return; } // idle: let the server sleep
     this.polling = true;
     try {
       const h = await this.req('GET', `/api/docs/${L.id}/head`);
@@ -132,10 +262,17 @@ export class ServerDocs {
       }
       const rec = await this.req('GET', `/api/docs/${L.id}`);
       if (this.link !== L) return;
-      const who = rec.by === 'claude' ? 'Claude' : 'Another window';
+      const who = rec.by === 'claude' ? 'Your AI' : 'Another window';
       await this.apply(rec, { label: `${who}: ${rec.summary || 'change'}` });
       this.app.status(`${who}: ${rec.summary || 'changed the model'} (version ${rec.version}). Ctrl+Z undoes it.`);
-    } catch (_) { /* offline or restarting: try again */ } finally { this.polling = false; }
+      if (rec.by === 'claude') this.scheduleThumb(1500);
+      if (this.state === 'offline') this.setState('saved');
+    } catch (err) {
+      if (/No such document/.test(err.message || '') && this.link === L) { // deleted or moved to the Trash elsewhere
+        this.unlink({ keepAsDraft: true });
+        this.app.toast?.('This file was deleted elsewhere. It stays open here as a draft: save it to keep it.', 8000);
+      }
+    } finally { this.polling = false; }
   }
 
   showBar(h) {
@@ -143,9 +280,10 @@ export class ServerDocs {
     if (!bar) { bar = document.createElement('div'); bar.id = 'serverbar'; bar.className = 'update-bar note'; $('graphics').appendChild(bar); }
     if (bar.dataset.v === String(h.version)) return;
     bar.dataset.v = String(h.version);
-    const who = h.by === 'claude' ? 'Claude' : 'Someone';
+    const who = h.by === 'claude' ? 'Your AI' : 'Someone';
+    this.setState('conflict');
     bar.innerHTML = `<span>${esc(who)} changed this model (${esc(h.summary || 'a change')}) while you were editing.</span>`;
-    const take = document.createElement('button'); take.className = 'btn primary'; take.textContent = `Load ${who === 'Claude' ? "Claude's" : 'their'} version`;
+    const take = document.createElement('button'); take.className = 'btn primary'; take.textContent = `Load ${who === 'Your AI' ? "the AI's" : 'their'} version`;
     take.onclick = async () => {
       this.hideBar();
       if (this.app.mode === 'sketch') this.app.exitSketch({ silent: true });
@@ -160,12 +298,13 @@ export class ServerDocs {
     bar.append(take, keep);
   }
 
-  hideBar() { const b = $('serverbar'); if (b) b.remove(); }
+  hideBar() { const b = $('serverbar'); if (b) b.remove(); if (this.state === 'conflict') this.setState(this.link?.local ? 'saving' : 'saved'); }
 
   // ---------------------------------------------------------------- save your edits back
   changed() {
     if (!this.link || this.applying) return;
     this.link.local = true;
+    if (this.state !== 'conflict') this.setState('saving');
     clearTimeout(this.pushTimer);
     this.pushTimer = setTimeout(() => this.push(), PUSH_MS);
   }
@@ -184,11 +323,15 @@ export class ServerDocs {
         if (this.link !== L) return;
         L.version = rec.version; L.name = rec.name;
         if (this.app.undoStack.length === pushedAt && JSON.stringify(this.app.rootDoc()) === JSON.stringify(doc)) L.local = false;
-        this.app.dirty = false; this.app.updateDocChrome();
+        this.app.dirty = false;
+        this.state = L.local ? 'saving' : 'saved';
+        this.app.updateDocChrome();
+        if (!L.local) this.scheduleThumb();
       } catch (err) {
         if (err.message === 'conflict' && err.current) this.showBar(err.current);
-        else this.app.status('Could not save to the server (' + err.message + '). Will try again.');
-        if (err.message !== 'conflict') this.pushTimer = setTimeout(() => this.push(summary), 5000);
+        else if (/No such document/.test(err.message)) { this.unlink({ keepAsDraft: true }); this.app.toast?.('This file is no longer in your Files. It stays open here as a draft: save it to keep it.', 8000); }
+        else { this.setState('offline'); this.app.status('Could not save to the server (' + err.message + '). Trying again.'); }
+        if (err.message !== 'conflict' && this.link === L) this.pushTimer = setTimeout(() => this.push(summary), 5000);
       } finally { this.pushing = null; }
     })();
     return this.pushing;
@@ -215,58 +358,19 @@ export class ServerDocs {
   }
 
   // ---------------------------------------------------------------- dialogs
-  async openDialog() {
-    let list;
-    try { list = await this.req('GET', '/api/docs'); } catch (err) { message('Open from Server', esc(err.message)); return; }
-    const body = document.createElement('div');
-    body.className = 'srv-list';
-    if (!list.length) body.innerHTML = '<div class="pm-note">No documents on the server yet. Ask Claude to create one, or use File > Save to Server.</div>';
-    for (const r of list) {
-      const row = document.createElement('button');
-      row.className = 'srv-row' + (this.link?.id === r.id ? ' cur' : '');
-      row.innerHTML = `<b>${esc(r.name)}</b><span>${r.kind === 'assembly' ? 'Assembly' : 'Part'} - ${esc(r.by === 'claude' ? 'Claude' : 'you')}: ${esc(r.summary || '')} - ${esc(ago(r.updated))}</span>`;
-      row.onclick = () => { close(); this.open(r.id); };
-      body.appendChild(row);
-    }
-    const d = dialog({ title: 'Open from Server', body, buttons: [{ label: 'Cancel' }], cls: 'srv-dlg' });
-    const close = () => d?.close ? d.close() : document.querySelector('.srv-dlg')?.closest('.dlg-back')?.remove();
-  }
+  // File > Open: the Files page (upload from the computer is there too).
+  openDialog() { return this.app.files.open(); }
 
-  async connectDialog() {
-    let c;
-    try { c = await this.req('GET', '/api/connect'); } catch (err) { message('Connect Claude', esc(err.message)); return; }
-    const warn = [];
-    if (!c.password_set) warn.push(`<div class="srv-warn"><b>Set a password first.</b> Anyone with the OpenSketch address could use it, and the AI chat would bill your Anthropic key. ${c.codespace ? 'On GitHub: Settings &gt; Codespaces &gt; Secrets, add <code>OPENSKETCH_PASSWORD</code> for this repository, then restart the codespace.' : 'Set <code>OPENSKETCH_PASSWORD</code> where the server runs, then restart it.'}</div>`);
-    if (c.codespace) warn.push('<div class="srv-warn"><b>Make the port public.</b> In the codespace, open the Ports tab, right-click port 8000, Port Visibility &gt; Public. Claude cannot reach a private port. Keep the codespace open while you use Claude with it.</div>');
-    const body = `<div class="srv-connect">
-      <p>Let Claude build in OpenSketch from the Claude app. You watch the model change here.</p>
-      ${warn.join('')}
-      <ol>
-        <li>In Claude (claude.ai or the desktop app), go to Customize &gt; Connectors and click Add custom connector.</li>
-        <li>Name it <b>OpenSketch</b>, paste this address as the server URL, and choose <b>No sign-in</b>:</li>
-      </ol>
-      <div class="srv-url"><input id="srv-mcp-url" readonly value="${esc(c.mcp_url)}"><button class="btn" id="srv-copy">Copy</button></div>
-      <p class="pm-note">The address is the key: keep it private. Changing the password changes it.</p>
-      <ol start="3"><li>In a chat, turn OpenSketch on (+ &gt; Connectors) and ask, for example: "In OpenSketch, design a wall bracket for a 20 kg shelf with off-the-shelf screws." Open the link Claude gives you to watch it.</li></ol>
-    </div>`;
-    dialog({ title: 'Connect Claude', body, buttons: [{ label: 'Close', primary: true }], cls: 'srv-dlg' });
-    const btn = $('srv-copy'), inp = $('srv-mcp-url');
-    if (btn) btn.onclick = async () => {
-      try { await navigator.clipboard.writeText(inp.value); } catch (_) { inp.select(); document.execCommand?.('copy'); }
-      btn.textContent = 'Copied';
-      setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
-    };
-  }
+  // Connect AI: Claude, ChatGPT, Codex, Cursor... (connect.js)
+  connectDialog(tab) { return import('./connect.js').then((m) => m.connectDialog(this.app, tab)); }
 
   // ---------------------------------------------------------------- File > Publish Review
   // A frozen, shareable page of this version (model, joint sliders, what changed, checks); see review.py.
   async publishDialog() {
     const app = this.app;
     if (!this.link) {
-      const ok = await new Promise((res) => dialog({ title: 'Publish Review', body: '<div style="max-width:380px">A review is made from a document on the server. Save this one to the server first?</div>',
-        buttons: [{ label: 'Save to Server', primary: true, run: () => res(true) }, { label: 'Cancel', run: () => res(false) }], onClose: () => res(false) }));
+      const ok = await this.saveDraft(); // a review is made from a file in Files
       if (!ok) return;
-      try { await this.saveAsNew(); } catch (err) { message('Publish Review', 'Could not save to the server: ' + esc(err.message)); return; }
     }
     this.flush?.();
     let versions = [], earlier = [];

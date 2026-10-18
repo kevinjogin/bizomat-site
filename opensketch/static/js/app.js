@@ -23,6 +23,8 @@ import { ServerDocs } from './serverdocs.js';
 import { Account } from './account.js';
 import { DesignPanel } from './design.js';
 import { MotionReview } from './review.js';
+import { FilesView, FI } from './files.js';
+import { LOGO } from './brand.js';
 import { escapeHtml as esc, featureSketchIds, dependentFeatureIds, removeFeatures, measurementData } from './model-utils.js';
 
 const $ = (id) => document.getElementById(id);
@@ -87,6 +89,7 @@ export class App {
     this.toolbox = new Toolbox(this);
     this.section = new SectionView(this);
     this.review = new MotionReview(this);
+    this.files = new FilesView(this);
     this.reviewMode = typeof window.OPENSKETCH_REVIEW === 'string'; // a shared review link: read-only, no server
     this.docStack = []; // Open Part from an assembly: the assembly waits here
     this.forConstruction = false;
@@ -103,20 +106,111 @@ export class App {
     $('sb-units').onclick = (e) => contextMenu(e.clientX, e.clientY - 120, [{ head: 'Unit system' }, { label: 'MMGS (millimeter, gram, second)', run: () => {} }]);
     this.bindDocTabs();
     if (this.reviewMode) {
+      const b = document.querySelector('#titlebar .brand');
+      if (b) b.innerHTML = `${LOGO(20)}<span class="brand-text">OpenSketch</span>`;
       this.review.loadShared(window.OPENSKETCH_REVIEW);
       this.status('Read-only review. Drag to rotate, scroll to zoom; move the joints in Motion Review.');
       return;
     }
-    this.restore();
+    this.buildBrand();
     this.bindDrop();
-    this.updateDocChrome();
-    this.regen().then(() => this.viewer.zoomToFit(false));
     import('./aikeys.js').then((m) => m.refreshAIStatus(this));
     this.status('Ready. Select a plane and click Sketch to start.');
     this.watchActivity();
     this.watchVersion();
-    const docId = new URLSearchParams(location.search).get('doc');
-    if (docId) this.server.open(docId); // a link from Claude, or a reload of a server document
+    this.startup();
+  }
+
+  // What opens first: a ?doc link (from the AI, or a reload), else the file this browser had open (fresh
+  // from the server), else an unsaved draft kept in this browser, else the Files page.
+  async startup() {
+    const q = new URLSearchParams(location.search);
+    const docId = q.get('doc');
+    const draftLink = ServerDocs.draftLink;
+    const hasDraft = this.restore();
+    this.updateDocChrome();
+    if (docId) {
+      if (!(await this.server.open(docId, { quiet: true }))) { this.regen().then(() => this.viewer.zoomToFit(false)); this.files.open(); }
+    } else if (draftLink) {
+      const ok = await this.server.open(draftLink, { quiet: true }).catch(() => false);
+      if (!ok) {
+        this.regen().then(() => this.viewer.zoomToFit(false));
+        if (hasDraft) { this.dirty = true; this.updateDocChrome(); this.status('Could not reach that file on the server. This is the copy kept in this browser.'); }
+      }
+    } else if (hasDraft) {
+      this.dirty = true;
+      this.updateDocChrome();
+      await this.regen();
+      this.viewer.zoomToFit(false);
+      this.status('Unsaved draft from your last visit. Save it to keep it in your Files (Ctrl+S).');
+    } else {
+      this.regen().then(() => this.viewer.zoomToFit(false));
+      this.files.open();
+    }
+    if (q.get('view') === 'files' && !this.files.isOpen) this.files.open();
+    if (q.get('new') === 'part' || q.get('new') === 'assembly') this.files.newFile(q.get('new'));
+    this.handleLaunchFiles();
+    const u = new URL(location.href);
+    for (const k of ['view', 'new', 'source']) u.searchParams.delete(k);
+    history.replaceState(null, '', u);
+  }
+
+  // Installed app: .osk and STEP files opened with OpenSketch from the computer (File Handling API).
+  handleLaunchFiles() {
+    if (!('launchQueue' in window)) return;
+    window.launchQueue.setConsumer(async (params) => {
+      const files = [];
+      for (const h of params.files || []) { try { files.push(await h.getFile()); } catch (_) { /* no access */ } }
+      if (files.length) this.files.upload(files);
+    });
+  }
+
+  // Title bar: the mark and name open the Files page.
+  buildBrand() {
+    const b = document.querySelector('#titlebar .brand');
+    if (!b) return;
+    b.innerHTML = `${LOGO(20)}<span class="brand-text">OpenSketch</span>`;
+    b.setAttribute('role', 'button'); b.tabIndex = 0; b.title = 'Files (Ctrl+O)';
+    b.onclick = () => this.files.open();
+    b.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.files.open(); } };
+    const fb = document.createElement('button');
+    fb.className = 'tb-files'; fb.innerHTML = `${FI.files}<span>Files</span>`; fb.title = 'Your files (Ctrl+O)';
+    fb.onclick = () => this.files.open();
+    b.after(fb);
+    // phones: the FeatureManager slides over the model
+    const tt = document.createElement('button');
+    tt.className = 'tb-tree'; tt.title = 'FeatureManager'; tt.setAttribute('aria-label', 'Show the FeatureManager');
+    tt.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h13"/></svg>';
+    tt.onclick = () => document.body.classList.toggle('left-open');
+    b.before(tt);
+    $('graphics').addEventListener('pointerdown', () => document.body.classList.remove('left-open'));
+  }
+
+  // A model is on screen (anything to go back to from the Files page).
+  hasModel() { const d = this.rootDoc(); return isAssembly(d) ? (d.components || []).length > 0 || Object.keys(d.parts || {}).length > 0 : (d.features || []).length > 0 || !!this.server.linked; }
+
+  // The open model is an unsaved draft with something in it (not in Files).
+  dirtyDraft() {
+    if (this.server.linked || this.reviewMode) return false;
+    const d = this.rootDoc();
+    return !!this.dirty && (isAssembly(d) ? (d.components || []).length > 0 : (d.features || []).length > 0);
+  }
+
+  // Before something replaces an unsaved draft: offer to save it. Resolves true to go ahead.
+  confirmLeaveDraft() {
+    if (!this.dirtyDraft()) return Promise.resolve(true);
+    const name = this.rootDoc().name || 'Untitled';
+    return new Promise((resolve) => {
+      let answered = false;
+      const done = (v) => { if (!answered) { answered = true; resolve(v); } };
+      dialog({ title: 'Save your draft?', cls: 'acct-dlg', onClose: () => done(false),
+        body: `<p class="fv-p"><b>${esc(name)}</b> is only in this browser. Save it to your Files before you leave it?</p>`,
+        buttons: [
+          { label: "Don't save", run: () => { this.dirty = false; done(true); } },
+          { label: 'Cancel', run: () => done(false) },
+          { label: 'Save to Files', primary: true, run: () => { setTimeout(async () => done(await this.server.saveDraft()), 0); } },
+        ] });
+    });
   }
 
   // The codespace pulls each push to main and restarts the server (.devcontainer/run.sh). When the
@@ -168,7 +262,7 @@ export class App {
     bar.innerHTML = `<span>${esc(updated ? 'OpenSketch was updated. Reload to use the new version. Your model is kept.' + (note ? ' ' + note : '') : note)}</span>`;
     if (updated) {
       const b = document.createElement('button'); b.className = 'btn primary'; b.textContent = 'Reload';
-      b.onclick = () => { this.autosave(); location.reload(); };
+      b.onclick = () => { this.autosaveNow(); location.reload(); };
       bar.appendChild(b);
     }
     const x = document.createElement('button'); x.className = 'btn'; x.textContent = 'Later'; x.title = 'Hide this message';
@@ -263,24 +357,46 @@ export class App {
     return root;
   }
 
+  // The open model is also kept in this browser (offline copy, unsaved drafts). Written at most a few times a
+  // second: serialising a large model on every edit made dragging feel heavy.
   autosave() {
     if (this.reviewMode) return; // never overwrite the visitor's own work with a shared review
-    try { localStorage.setItem(AUTOSAVE, JSON.stringify(this.rootDoc())); } catch (_) { /* storage unavailable */ }
+    if (this._autosaveTimer) return;
+    this._autosaveTimer = setTimeout(() => this.autosaveNow(), 400);
+    if (!this._autosaveBound) {
+      this._autosaveBound = true;
+      const flush = () => { if (this._autosaveTimer) this.autosaveNow(); };
+      window.addEventListener('pagehide', flush);
+      document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); });
+    }
+  }
+
+  autosaveNow() {
+    clearTimeout(this._autosaveTimer); this._autosaveTimer = null;
+    if (this.reviewMode) return;
+    try { localStorage.setItem(AUTOSAVE, JSON.stringify(this.rootDoc())); } catch (_) { /* full or unavailable: Files keeps the record */ }
   }
 
   restore() {
     try {
       const s = localStorage.getItem(AUTOSAVE);
-      if (s) { const d = JSON.parse(s); if (d && (Array.isArray(d.features) || isAssembly(d))) this.doc = d; }
+      if (s) {
+        const d = JSON.parse(s);
+        if (d && (Array.isArray(d.features) || isAssembly(d))) {
+          this.doc = d;
+          return isAssembly(d) ? (d.components || []).length > 0 : d.features.length > 0;
+        }
+      }
     } catch (_) { /* ignore */ }
+    return false;
   }
 
   // Title, status bar and the "editing part in assembly" bar.
   updateDocChrome() {
     const f = this.docStack[this.docStack.length - 1];
     const root = this.docStack.length ? this.docStack[0].doc : this.doc;
-    $('doctitle').textContent = (f ? `${this.doc.name} (${f.comp} in ${root.name})${this.dirty ? ' *' : ''}` : `${this.doc.name}${this.dirty ? ' *' : ''}`)
-      + (this.server?.linked ? ' - on server, shared with Claude' : '');
+    this.renderDocTitle(f, root);
+    this.updateBreadcrumbs();
     $('sb-editing').textContent = this.isAsm ? 'Editing Assembly' : f ? 'Editing Part in Assembly' : 'Editing Part';
     const bar = $('editbar');
     if (f) {
@@ -291,6 +407,61 @@ export class App {
     }
     bar.classList.toggle('hidden', !f);
     this.ribbon?.render();
+  }
+
+  // Title bar centre: the file name (click to rename) and whether it is saved.
+  renderDocTitle(f, root) {
+    const el = $('doctitle');
+    if (!el) return;
+    const sv = this.server;
+    const st = this.reviewMode ? null : !sv?.linked ? 'draft' : sv.state;
+    const label = { draft: 'Draft', saved: 'Saved', saving: 'Saving', offline: 'Offline', conflict: 'Changed elsewhere' }[st] || '';
+    const tip = { draft: 'Only in this browser. Save it to your Files (Ctrl+S).', saved: 'Saved to your Files. Your AI sees this version.', saving: 'Saving to your Files...', offline: 'Cannot reach the server. Your edits are kept and saved when it is back.', conflict: 'The file changed elsewhere. Choose which version to keep.' }[st] || '';
+    const name = f ? `${this.doc.name}` : (root.name || 'Untitled');
+    const ctx = f ? ` in ${root.name}` : '';
+    if (!this._dt) {
+      el.innerHTML = '<button class="dt-name" title="Rename"></button><span class="dt-ctx"></span><button class="dt-state"></button>';
+      this._dt = { name: el.querySelector('.dt-name'), ctx: el.querySelector('.dt-ctx'), state: el.querySelector('.dt-state') };
+      this._dt.name.onclick = () => this.renameDoc();
+      this._dt.state.onclick = () => { if (!this.server.linked) this.server.saveDraft(); else if (this.server.state === 'offline') this.server.flush(); };
+    }
+    this._dt.name.textContent = name;
+    this._dt.ctx.textContent = ctx;
+    this._dt.state.className = 'dt-state ' + (st || 'none');
+    this._dt.state.innerHTML = st === 'draft' ? '<span>Draft</span><b>Save to Files</b>' : `<i></i><span>${label}</span>`;
+    this._dt.state.title = tip;
+    this._dt.state.hidden = !st;
+    document.title = `${name}${st === 'draft' && this.dirty ? ' (draft)' : ''} - OpenSketch`;
+  }
+
+  // Rename the open file (title bar click): on the server when it is in Files.
+  renameDoc() {
+    if (this.reviewMode || this._renaming) return;
+    const btn = this._dt?.name;
+    if (!btn) return;
+    const target = this.docStack.length ? this.doc : (this.docStack[0]?.doc || this.doc);
+    const inp = document.createElement('input');
+    inp.className = 'dt-rename'; inp.value = target.name || ''; inp.setAttribute('aria-label', 'File name');
+    inp.style.width = Math.max(120, btn.offsetWidth + 40) + 'px';
+    btn.replaceWith(inp); inp.focus(); inp.select();
+    this._renaming = true;
+    let done = false;
+    const finish = async (save) => {
+      if (done) return; done = true; this._renaming = false;
+      inp.replaceWith(btn);
+      const v = inp.value.trim().slice(0, 120);
+      if (!save || !v || v === target.name) return;
+      if (this.server.linked && !this.docStack.length) {
+        this.server.flush();
+        try {
+          const r = await this.server.req('PATCH', `/api/docs/${encodeURIComponent(this.server.link.id)}`, { name: v });
+          this.server.renamedOnServer(r);
+        } catch (err) { message('Rename', esc(err.message)); }
+      } else this.commit('Rename', () => { target.name = v; }, false);
+      this.updateDocChrome();
+    };
+    inp.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter') finish(true); if (e.key === 'Escape') finish(false); });
+    inp.addEventListener('blur', () => finish(true));
   }
 
   bindDocTabs() {
@@ -439,6 +610,51 @@ export class App {
 
   afterRender() {
     if (this.sketchPx && Math.abs(this.viewer.pxSize - this.sketchPx) > 1e-9 * this.sketchPx) this.drawSketches();
+    this.updateStartHint();
+  }
+
+  // An empty part or assembly: a small card in the graphics area with the first steps.
+  updateStartHint() {
+    if (this.reviewMode || !this.doc || !$('graphics')) return;
+    const d = this.doc;
+    const asm = isAssembly(d);
+    const empty = asm ? !(d.components || []).length : !(d.features || []).length;
+    const show = empty && this.mode !== 'sketch' && !this.cmd && !this.proposal && !this.taskpane?.busy && !this.live?.active && !(this.docStack || []).length;
+    let el = $('starthint');
+    if (!show) { if (el && !el.classList.contains('hidden')) el.classList.add('hidden'); return; }
+    if (!el) {
+      el = document.createElement('div'); el.id = 'starthint'; el.className = 'starthint hidden';
+      $('graphics').appendChild(el);
+    }
+    const kind = asm ? 'asm' : 'part';
+    if (el.dataset.kind !== kind) {
+      el.dataset.kind = kind;
+      el.innerHTML = '';
+      const card = document.createElement('div'); card.className = 'sh-card';
+      const t = document.createElement('b'); const sub = document.createElement('span');
+      card.append(t, sub);
+      const row = document.createElement('div'); row.className = 'sh-row';
+      const btn = (cls, label, run, html) => { const b = document.createElement('button'); b.className = cls; if (html) b.innerHTML = html; else b.textContent = label; b.onclick = run; return b; };
+      if (asm) {
+        t.textContent = 'Start your assembly';
+        sub.textContent = 'Insert the parts, then mate them. Or let the AI build the whole product.';
+        row.append(btn('btn primary fv-pill', 'Insert components', () => this.asm.insertPM()));
+      } else {
+        t.textContent = 'Start your part';
+        sub.textContent = 'Pick a plane to sketch on, or describe the part and let the AI build it.';
+        const planes = document.createElement('div'); planes.className = 'sh-planes';
+        const P = { 'Front Plane': 'M5 6h14v12H5z', 'Top Plane': 'M3 15l6-6h12l-6 6z', 'Right Plane': 'M8 4l8 3v13l-8-3z' };
+        for (const [id, path] of Object.entries(P)) {
+          planes.append(btn('sh-plane', id, () => this.sketchOn({ kind: 'plane', id }), `<svg viewBox="0 0 24 24" width="22" height="22" fill="rgba(94,106,210,.18)" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="${path}"/></svg><span>${id.replace(' Plane', '')}</span>`));
+        }
+        card.appendChild(planes);
+      }
+      row.append(btn('btn fv-pill', 'Describe it to the AI', () => { this.openTask('ai'); setTimeout(() => this.taskpane.input?.focus(), 50); }));
+      row.append(btn('btn fv-pill sh-up', 'Upload STEP', () => this.openFromComputer()));
+      card.appendChild(row);
+      el.appendChild(card);
+    }
+    el.classList.remove('hidden');
   }
 
   updatePlanes() {
@@ -822,6 +1038,8 @@ export class App {
     if (this.pm.isOpen) this.pm.close();
     this.viewer.setTool(null);
     this.refreshSelectionDisplay();
+    this.design?.refresh(); // its "finish the open command first" note goes with the command
+    this.updateStartHint();
   }
 
   pmOk() {
@@ -1450,13 +1668,21 @@ export class App {
     };
     const body = document.createElement('div');
     body.className = 'newdoc';
-    body.innerHTML = `<div class="nd" data-k="part">${icon('part', 48)}<b>Part</b><span>a 3D representation of a single design component</span></div>
-      <div class="nd" data-k="assembly">${icon('assembly', 48)}<b>Assembly</b><span>a 3D arrangement of parts and other assemblies</span></div>`;
+    body.innerHTML = `<button class="nd" data-k="part">${icon('part', 48)}<b>Part</b><span>a 3D representation of a single design component</span></button>
+      <button class="nd" data-k="assembly">${icon('assembly', 48)}<b>Assembly</b><span>a 3D arrangement of parts and other assemblies</span></button>`;
     const dlg = dialog({ title: 'New OpenSketch Document', body, buttons: [{ label: 'Cancel' }] });
-    body.querySelectorAll('.nd').forEach((n) => { n.onclick = () => { dlg.close(); go(n.dataset.k); }; });
+    body.querySelectorAll('.nd').forEach((n) => {
+      n.onclick = async () => {
+        dlg.close();
+        if (!(await this.confirmLeaveDraft())) return;
+        if (!(await this.server.createAndOpen(n.dataset.k))) go(n.dataset.k); // no server: a draft here
+      };
+    });
+    setTimeout(() => body.querySelector('.nd')?.focus(), 0);
   }
 
-  openFile() { $('fileinput').value = ''; $('fileinput').click(); }
+  openFile() { this.files.open(); }
+  openFromComputer() { $('fileinput').value = ''; $('fileinput').click(); }
 
   // STEP or EAGLE XML (and a clear message for SOLIDWORKS files) -> document, via the server.
   // The file goes up as raw bytes, gzipped when the browser can (STEP is text: about 5x smaller),
@@ -1501,6 +1727,7 @@ export class App {
 
   async loadFile(file) {
     if (!file) return;
+    if (!this.reviewMode) { this.files.upload([file]); return; } // into Files, then opened (asks about a draft first)
     try {
       const d = await this.readDocFile(file);
       if (!Array.isArray(d.features) && !isAssembly(d)) throw new Error('Not an OpenSketch part or assembly');
@@ -1563,17 +1790,15 @@ export class App {
   }
 
   saveFile() {
-    if (this.server.linked) { // a server document saves itself; Save just does it now
+    if (this.reviewMode) return;
+    if (this.server.linked) { // a file in Files saves itself; Save just does it now
       this.server.flush();
+      this.server.scheduleThumb(400);
       this.dirty = false; this.updateDocChrome();
-      this.status('Saved on the server. Save As > OpenSketch file downloads a copy.');
+      this.toast('Saved to your Files.');
       return;
     }
-    const d = this.rootDoc();
-    this.download(new Blob([JSON.stringify(d, null, 1)], { type: 'application/json' }), `${d.name}.osk`);
-    this.dirty = false;
-    this.updateDocChrome();
-    this.status('Saved ' + d.name + '.osk');
+    this.server.saveDraft();
   }
 
   downloadOsk() {
@@ -1584,14 +1809,25 @@ export class App {
   }
 
   saveAs() {
-    dialog({ title: 'Save As', body: '<div>Choose a file type:</div>', buttons: [
-      { label: this.isAsm ? 'OpenSketch Assembly (*.osk)' : 'OpenSketch Part (*.osk)', primary: true, run: () => this.downloadOsk() },
-      { label: this.server.linked ? 'New copy on the server' : 'On the server (shared with Claude)', run: () => { this.server.saveAsNew(); } },
-      { label: 'STEP AP214 (*.step)', run: () => { this.exportAs('step'); } },
-      { label: 'STL (*.stl)', run: () => { this.exportAs('stl'); } },
-      { label: 'SOLIDWORKS Macro (*.bas)', run: () => { this.exportMacro(); } },
-      { label: 'Cancel' },
-    ] });
+    const opts = [
+      { id: 'files', t: this.server.linked ? 'A copy in Files' : 'Save to Files', d: this.server.linked ? 'A new file with this model, opened here.' : 'Saves itself from then on, with version history. Your AI can open it.', run: () => (this.server.linked ? this.server.saveAsNew(`${this.rootDoc().name} copy`) : this.server.saveDraft()) },
+      { id: 'osk', t: this.isAsm ? 'OpenSketch assembly (.osk)' : 'OpenSketch part (.osk)', d: 'Download the full model with its feature tree.', run: () => this.downloadOsk() },
+      { id: 'step', t: 'STEP AP214 (.step)', d: 'For SOLIDWORKS, Fusion, Onshape and most CAD.', run: () => this.exportAs('step') },
+      { id: 'stl', t: 'STL (.stl)', d: 'A mesh for 3D printing.', run: () => this.exportAs('stl') },
+      { id: 'bas', t: 'SOLIDWORKS macro (.bas)', d: 'Rebuilds the parts and mates as native SOLIDWORKS features.', run: () => this.exportMacro() },
+    ];
+    const body = document.createElement('div');
+    body.className = 'saveas';
+    const d = dialog({ title: 'Save As', body, cls: 'saveas-dlg', buttons: [{ label: 'Cancel' }] });
+    for (const o of opts) {
+      const b = document.createElement('button');
+      b.className = 'saveas-opt';
+      b.innerHTML = '<b></b><span></span>';
+      b.children[0].textContent = o.t; b.children[1].textContent = o.d;
+      b.onclick = () => { d.close(); o.run(); };
+      body.appendChild(b);
+    }
+    setTimeout(() => body.querySelector('button')?.focus(), 0);
   }
 
   async exportAs(fmtName) {
@@ -1704,12 +1940,12 @@ export class App {
     const rows = [['Middle drag', 'Rotate'], ['Ctrl + Middle drag', 'Pan'], ['Shift + Middle drag', 'Zoom'], ['Alt + Left drag', 'Rotate (trackpad)'], ['Wheel', 'Zoom at cursor'],
       ['Space', 'View Orientation'], ['Tab / Shift+Tab', 'Hide / show the component under the cursor'], ['Ctrl+1 ... Ctrl+7', 'Front, Back, Left, Right, Top, Bottom, Isometric'], ['Ctrl+8', 'Normal To'], ['F', 'Zoom to Fit'], ['Z / Shift+Z', 'Zoom out / in'],
       ['Arrows', 'Rotate 15 deg'], ['Shift+Arrows', 'Rotate 90 deg'], ['Alt+Left/Right', 'Roll'], ['Ctrl+Arrows', 'Pan'],
-      ['Ctrl+Z / Ctrl+Y', 'Undo / Redo'], ['Ctrl+B', 'Rebuild'], ['Ctrl+S / Ctrl+O / Ctrl+N', 'Save / Open / New'], ['Enter', 'Repeat last command'], ['S', 'Shortcut toolbar'], ['Esc', 'Cancel / clear selection'], ['Delete', 'Delete selection'],
-      ['L, C, R, D', 'Line, Circle, Rectangle, Smart Dimension (in a sketch)'], ['Ctrl+L', 'OpenSketch AI']];
+      ['Ctrl+Z / Ctrl+Y', 'Undo / Redo'], ['Ctrl+B', 'Rebuild'], ['Ctrl+S / Ctrl+O / Ctrl+N', 'Save to Files / Files / New'], ['Enter', 'Repeat last command'], ['S', 'Shortcut toolbar'], ['Esc', 'Cancel / clear selection'], ['Delete', 'Delete selection'],
+      ['L, C, R, D', 'Line, Circle, Rectangle, Smart Dimension (in a sketch)'], ['Ctrl+L', 'OpenSketch AI'], ['Ctrl+K', 'Search commands (search files on the Files page)']];
     message('Keyboard Shortcuts', `<table class="kbd-table">${rows.map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join('')}</table>`);
   }
 
-  aboutDialog() { message('About OpenSketch', 'OpenSketch 0.4<br>Parametric parts and assemblies on build123d (OpenCascade), with an AI design copilot that builds in front of you. Exports SOLIDWORKS macros that rebuild parts and mated assemblies.<br>Interface modelled on the SOLIDWORKS workflow. Not affiliated with Dassault Systemes.'); }
+  aboutDialog() { message('About OpenSketch', 'OpenSketch 0.6<br>Parametric parts and assemblies on build123d (OpenCascade), with an AI design copilot that builds in front of you. Exports SOLIDWORKS macros that rebuild parts and mated assemblies.<br>Interface modelled on the SOLIDWORKS workflow. Not affiliated with Dassault Systemes.'); }
 
   // ------------------------------------------------------------------ AI proposals
   openTask(id) { this.taskpane.show(id); }
@@ -1754,14 +1990,35 @@ export class App {
   statusDefined(text, cls) { const e = $('sb-defined'); e.textContent = text; e.className = 'sb-cell ' + (cls || ''); this.tree.render(); }
   sketchDefinedPrefix(f) {
     if (this.mode === 'sketch' && this.sketcher.skId === f.id) return this.sketcher.state?.status === 'under' ? '(-) ' : this.sketcher.state?.status === 'over' ? '(+) ' : '';
-    try { const s = solveSketch(clone(f)); return s.status === 'under' ? '(-) ' : s.status === 'over' ? '(+) ' : ''; } catch (_) { return ''; }
+    // every tree redraw asks for every sketch: solve each version of a sketch once
+    const key = JSON.stringify(f);
+    this._defCache = this._defCache || new Map();
+    if (this._defCache.has(key)) return this._defCache.get(key);
+    let out = '';
+    try { const s = solveSketch(clone(f)); out = s.status === 'under' ? '(-) ' : s.status === 'over' ? '(+) ' : ''; } catch (_) { out = ''; }
+    if (this._defCache.size > 300) this._defCache.clear();
+    this._defCache.set(key, out);
+    return out;
   }
 
-  toast(msg) {
-    const t = $('toast');
-    t.textContent = msg; t.classList.remove('hidden');
-    clearTimeout(this.toastTimer);
-    this.toastTimer = setTimeout(() => t.classList.add('hidden'), 3200);
+  // Short notes at the bottom centre. ms 0 = until closed. action {label, run}. Returns {close}.
+  toast(msg, ms = 3200, action = null) {
+    let host = $('toasts');
+    if (!host) { host = document.createElement('div'); host.id = 'toasts'; host.setAttribute('role', 'status'); host.setAttribute('aria-live', 'polite'); document.body.appendChild(host); }
+    while (host.children.length > 2) host.firstChild.remove();
+    const t = document.createElement('div');
+    t.className = 'toast2';
+    const span = document.createElement('span'); span.textContent = msg; t.appendChild(span);
+    let timer = null;
+    const close = () => { clearTimeout(timer); t.classList.add('out'); setTimeout(() => t.remove(), 180); };
+    if (action) {
+      const b = document.createElement('button'); b.className = 'toast-act'; b.textContent = action.label;
+      b.onclick = () => { close(); action.run(); };
+      t.appendChild(b);
+    }
+    host.appendChild(t);
+    if (ms) timer = setTimeout(close, ms);
+    return { close };
   }
 
   cursorFeedback(fb) {
@@ -1805,7 +2062,8 @@ export class App {
 
   updateBreadcrumbs() {
     const el = $('breadcrumbs');
-    el.innerHTML = `<span class="bc">${icon('part', 14)}${esc(this.doc.name)}</span>` + (this.mode === 'sketch' ? `<span class="bc">${icon('sketch_t', 14)}${esc(this.sketcher.sk?.name || '')}</span>` : '');
+    if (!el) return;
+    el.innerHTML = `<span class="bc">${icon(isAssembly(this.doc) ? 'assembly' : 'part', 14)}${esc(this.doc.name)}</span>` + (this.mode === 'sketch' ? `<span class="bc">${icon('sketch_t', 14)}${esc(this.sketcher.sk?.name || '')}</span>` : '');
   }
 
   buildMgrTabs() {

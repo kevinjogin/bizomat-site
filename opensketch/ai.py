@@ -1278,8 +1278,8 @@ class _Fake:
         self.__dict__.update(kw)
 
 
-NO_KEY = ("The AI needs an API key. Add your own in the account menu (top right) > AI model and key: "
-          "Claude, OpenAI, Gemini, OpenRouter or any OpenAI-compatible provider.")
+NO_KEY = ("The AI needs an API key. Add yours in Connect AI (OpenSketch AI tab) > Built-in AI: Claude, OpenAI, Gemini, "
+          "OpenRouter or any OpenAI-compatible provider. Or connect ChatGPT, Claude or Codex there and design from that app.")
 NO_WEB_NOTE = ("\n\nWeb search and page reading are not available with this model: use the numbers you know, say so, "
                "and ask the user for anything you would have looked up.")
 
@@ -1428,9 +1428,9 @@ def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool
                 continue
             from .providers import ProviderError
             if isinstance(exc, ProviderError):
-                yield {"ev": "error", "message": str(exc) + (" Check the key in Account > AI model and key." if exc.status in (401, 403) else "")}
+                yield {"ev": "error", "message": str(exc) + (" Check the key in Connect AI (OpenSketch AI tab) > Built-in AI." if exc.status in (401, 403) else "")}
             elif anthropic and isinstance(exc, anthropic.AuthenticationError):
-                yield {"ev": "error", "message": "Anthropic refused the API key. Check it in Account > AI model and key."}
+                yield {"ev": "error", "message": "Anthropic refused the API key. Check it in Connect AI (OpenSketch AI tab) > Built-in AI."}
             elif anthropic and isinstance(exc, anthropic.APIConnectionError):
                 yield {"ev": "error", "message": f"Network error: {exc}"}
             elif anthropic and isinstance(exc, anthropic.APIStatusError):

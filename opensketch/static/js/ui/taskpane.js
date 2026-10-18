@@ -4,6 +4,7 @@ import { icon } from '../icons.js';
 import { describeFeature, featureIcon, SPECS } from '../features.js';
 import { mateIcon } from '../asm.js';
 import { escapeHtml as esc, safeUrl } from '../model-utils.js';
+import { renderMarkdown } from '../md.js';
 
 const h = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 
@@ -12,8 +13,7 @@ const PANES = [
   { id: 'ai', icon: 'ai', title: 'OpenSketch AI' },
   { id: 'resources', icon: 'resources', title: 'OpenSketch Resources' },
   { id: 'library', icon: 'library', title: 'Design Library' },
-  { id: 'explorer', icon: 'explorer', title: 'File Explorer' },
-  { id: 'palette', icon: 'palette', title: 'View Palette' },
+  { id: 'explorer', icon: 'explorer', title: 'Files' },
   { id: 'appearance', icon: 'appearance', title: 'Appearances, Scenes, and Decals' },
   { id: 'custprops', icon: 'custprops', title: 'Custom Properties' },
 ];
@@ -30,6 +30,9 @@ const TOOL_META = {
   request_part_file: { title: 'Asking for a bought part', icon: 'open' },
   web_search: { title: 'Searching the web', icon: 'web' },
   web_fetch: { title: 'Reading a page', icon: 'page' },
+  set_parameter: { title: 'Setting a variable', icon: 'options' },
+  set_equation: { title: 'Writing an equation', icon: 'options' },
+  add_contact: { title: 'Adding a contact check', icon: 'contact' },
 };
 // add_<type> tools come from the feature registry: "Adding Draft".
 const toolMetaFromRegistry = (name) => {
@@ -90,6 +93,7 @@ export class TaskPane {
     if (p.id === 'appearance') return this.renderAppearance(body);
     if (p.id === 'custprops') return this.renderProps(body);
     if (p.id === 'library') return this.app.toolbox.render(body);
+    if (p.id === 'explorer') return this.renderExplorer(body);
     body.appendChild(h('div', 'pm-note', 'Not available yet in this version.'));
   }
 
@@ -111,11 +115,15 @@ export class TaskPane {
       logEl.appendChild(ex);
       if (this.app.aiAvailable === false || this.app.aiDemo) {
         const off = h('div', 'ai-msg ' + (this.app.aiDemo ? 'bot' : 'err'));
-        off.textContent = this.app.aiDemo ? 'Demo mode: requests play a recorded session.' : 'The AI needs an API key. Add your own: Claude, OpenAI, Gemini, OpenRouter or any OpenAI-compatible provider. The demo below works without one.';
+        off.textContent = this.app.aiDemo ? 'Demo mode: requests play a recorded session.' : 'Connect an AI to design here. Use ChatGPT, Claude or Codex that you already have, or add an API key. The demo below works without either.';
         if (!this.app.aiDemo) {
-          const b = h('button', 'btn primary ai-keybtn', 'Add your API key');
-          b.onclick = () => import('../aikeys.js').then((m) => m.aiKeyDialog(this.app));
-          off.appendChild(b);
+          const row = h('div', 'ai-keyrow');
+          const a = h('button', 'btn primary ai-keybtn', 'Add an API key');
+          a.onclick = () => this.app.server.connectDialog('key');
+          const b = h('button', 'btn ai-keybtn', 'Use my AI app');
+          b.onclick = () => this.app.server.connectDialog('app');
+          row.append(a, b);
+          off.appendChild(row);
         }
         logEl.appendChild(off);
       }
@@ -137,9 +145,9 @@ export class TaskPane {
     const info = this.app.aiInfo;
     if (info?.model && !info.demo) {
       const mr = h('div', 'ai-modelrow');
-      const m = h('a', 'ai-model', `${info.label || 'Model'}: ${info.model}${info.source === 'yours' ? '' : ' (server key)'}`);
+      const m = h('a', 'ai-model', esc(`${info.label || 'Model'}: ${info.model}${info.source === 'yours' ? '' : ' (server key)'}`));
       m.href = '#'; m.title = 'Change the AI model or key';
-      m.onclick = (e) => { e.preventDefault(); import('../aikeys.js').then((mod) => mod.aiKeyDialog(this.app)); };
+      m.onclick = (e) => { e.preventDefault(); this.app.server.connectDialog('key'); };
       mr.appendChild(m);
       this.chipHost.appendChild(mr);
     }
@@ -230,8 +238,9 @@ export class TaskPane {
         el.appendChild(list);
       }
     } else {
-      el = h('div', 'ai-msg ' + (m.role === 'user' ? 'user' : m.role === 'error' ? 'err' : 'bot'));
-      el.textContent = m.text;
+      el = h('div', 'ai-msg ' + (m.role === 'user' ? 'user' : m.role === 'error' ? 'err' : 'bot md'));
+      if (m.role === 'user' || m.role === 'error') el.textContent = m.text;
+      else el.innerHTML = renderMarkdown(m.text);
       if (m.about) { const a = h('div', 'ai-about'); a.textContent = 'About: ' + m.about; el.appendChild(a); }
       if (m.live) el.classList.add('live');
     }
@@ -372,7 +381,7 @@ export class TaskPane {
         if (!S.text) S.text = this.add({ role: 'bot', text: '', live: true });
         S.text.text += ev.delta;
         S.lastText = S.text.text; this.lastStreamed = S.text.text;
-        if (S.text.el) { S.text.el.textContent = S.text.text; this.scroll(); }
+        if (S.text.el) { S.text.el.innerHTML = renderMarkdown(S.text.text); this.scroll(); }
         break;
       case 'tool_start': {
         endText(); endThink();
@@ -406,6 +415,7 @@ export class TaskPane {
           if (a.state === 'running') a.state = ev.clean ? 'done' : 'error';
           if (ev.tool === 'delete_items' && ev.summary) a.title = 'Deleted items';
           if (!ev.clean && ev.summary?.startsWith('Could not')) a.detail = ev.summary;
+          else if ((ev.tool === 'set_parameter' || ev.tool === 'set_equation') && ev.summary && ev.summary.length < 70) a.detail = ev.summary;
           this.refresh(a);
         }
         break;
@@ -475,6 +485,41 @@ export class TaskPane {
     }
   }
 
+  // ---------------------------------------------------------------- Files (recent), like SOLIDWORKS' File Explorer
+  async renderExplorer(body) {
+    const app = this.app;
+    const top = h('div', 'tx-top');
+    const all = h('button', 'btn primary', 'Open Files'); all.onclick = () => app.files.open();
+    const up = h('button', 'btn', 'Upload...'); up.onclick = () => app.openFromComputer();
+    top.append(all, up);
+    body.appendChild(top);
+    const list = h('div', 'tx-list');
+    list.appendChild(h('div', 'pm-note', 'Loading...'));
+    body.appendChild(list);
+    let items;
+    try { const r = await fetch('/api/docs', { cache: 'no-store' }); items = r.ok ? await r.json() : []; } catch (_) { items = []; }
+    if (!list.isConnected) return;
+    list.innerHTML = '';
+    if (!items.length) { list.appendChild(h('div', 'pm-note', 'No files yet. Save this model (Ctrl+S) to keep it here.')); return; }
+    for (const f of items.slice(0, 14)) {
+      const row = h('button', 'tx-row' + (app.server.link?.id === f.id ? ' cur' : ''));
+      const th = h('span', 'tx-th');
+      const c = f.counts || {};
+      if (f.thumb || c.features || c.components || c.imported || c.sketches) {
+        const img = document.createElement('img'); img.alt = ''; img.loading = 'lazy'; img.src = f.thumb || `/api/docs/${encodeURIComponent(f.id)}/thumb?v=${f.version}`;
+        img.onerror = () => img.remove();
+        th.appendChild(img);
+      }
+      const tx = h('span', 'tx-t');
+      const b = document.createElement('b'); b.textContent = f.name;
+      const sm = document.createElement('small'); sm.textContent = (f.kind === 'assembly' ? 'Assembly' : 'Part') + (f.by === 'claude' ? ', AI edited' : '');
+      tx.append(b, sm);
+      row.append(th, tx);
+      row.onclick = () => app.files.openFile(f);
+      list.appendChild(row);
+    }
+  }
+
   // ---------------------------------------------------------------- other panes
   renderResources(body) {
     body.innerHTML = `<b>Getting started</b>
@@ -489,9 +534,9 @@ export class TaskPane {
 
   renderAppearance(body) {
     body.appendChild(h('div', null, '<b>Part color</b>'));
-    const grid = h('div'); grid.style.cssText = 'display:grid;grid-template-columns:repeat(6,36px);gap:6px;margin:8px 0';
+    const grid = h('div', 'swatches');
     for (const c of COLORS) {
-      const s = h('div'); s.style.cssText = `height:30px;background:${c};border:1px solid #999;cursor:pointer`;
+      const s = h('button', 'swatch'); s.style.background = c; s.setAttribute('aria-label', 'Colour ' + c);
       s.title = c;
       s.onclick = () => this.app.setAppearance(c);
       grid.appendChild(s);
@@ -502,7 +547,7 @@ export class TaskPane {
     body.appendChild(inp);
     body.appendChild(h('div', null, '<br><b>Scene</b>'));
     for (const [n, bg] of [['Plain White', '#ffffff'], ['Grey Gradient', 'linear-gradient(#f4f4f4,#b8b8b8)'], ['Studio (default)', '']]) {
-      const b = h('button', 'btn', n); b.style.margin = '4px 4px 0 0';
+      const b = h('button', 'btn scene-btn', n);
       b.onclick = () => { document.getElementById('graphics').style.background = bg; };
       body.appendChild(b);
     }
@@ -511,9 +556,9 @@ export class TaskPane {
   renderProps(body) {
     const d = this.app.doc;
     const row = (label, value, set) => {
-      const r = h('div', 'pm-row'); r.style.marginBottom = '6px';
-      r.appendChild(h('label', null, label)).style.width = '90px';
-      const i = h('input'); i.type = 'text'; i.value = value; i.style.cssText = 'flex:1;height:22px;border:1px solid #c8c8c8;padding:0 4px';
+      const r = h('div', 'pm-row cp-row');
+      r.appendChild(h('label', null, label));
+      const i = h('input', 'cp-in'); i.type = 'text'; i.value = value;
       i.addEventListener('keydown', (e) => e.stopPropagation());
       i.onchange = () => set(i.value);
       r.appendChild(i); body.appendChild(r);

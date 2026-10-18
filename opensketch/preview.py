@@ -97,13 +97,13 @@ def _meshes(doc, section=None):
 
 
 def _png(rgb):
-    height, width, _ = rgb.shape
+    height, width, channels = rgb.shape
 
     def chunk(kind, data):
         return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data))
 
     rows = b"".join(b"\x00" + row.tobytes() for row in rgb)
-    return (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0))
+    return (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 6 if channels == 4 else 2, 0, 0, 0))
             + chunk(b"IDAT", zlib.compress(rows)) + chunk(b"IEND", b""))
 
 
@@ -117,14 +117,14 @@ def camera_direction(yaw: float, pitch: float) -> np.ndarray:
 
 def render_preview(doc: dict, view: str = "isometric", width: int = 960, height: int = 720,
                    yaw: float | None = None, pitch: float | None = None, target: list | None = None,
-                   view_width: float | None = None, section: dict | None = None) -> bytes:
+                   view_width: float | None = None, section: dict | None = None, transparent: bool = False) -> bytes:
     """Render a part or solved assembly to PNG without changing its document.
 
     Views use OpenSketch's Y-up convention. Hidden/suppressed components are not
     drawn. Bounds are fitted to the visible geometry with an eight percent margin,
     unless target / view_width ask for a close-up. yaw and pitch (degrees) give any
     direction. section {point, normal} cuts the solids and removes the normal's side;
-    cut faces are drawn in orange.
+    cut faces are drawn in orange. transparent=True gives an RGBA PNG with no background (thumbnails).
     """
     if view not in VIEWS:
         raise ValueError("View must be isometric, top, front or right")
@@ -234,4 +234,7 @@ def render_preview(doc: dict, view: str = "isometric", width: int = 960, height:
             visible = points[:, 2] >= depth[xy[:, 1], xy[:, 0]] - 0.8 / scale
             xy = xy[visible]
             rgb[xy[:, 1], xy[:, 0]] = (55, 66, 76)
+    if transparent:
+        alpha = np.where(np.isfinite(depth), 255, 0).astype(np.uint8)
+        return _png(np.dstack([rgb, alpha]))
     return _png(rgb)

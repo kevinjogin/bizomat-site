@@ -31,7 +31,8 @@ export function dialog({ title, body, buttons = [], x, y, modal = true, cls = ''
   if (buttons.length) {
     const f = h('div', 'dlg-f');
     for (const bt of buttons) {
-      const e = h('button', 'btn' + (bt.primary ? ' primary' : ''), bt.label);
+      const e = h('button', 'btn' + (bt.primary ? ' primary' : '') + (bt.danger ? ' danger' : ''));
+      e.textContent = bt.label;
       e.onclick = () => { if (bt.run && bt.run() === false) return; close(); };
       f.appendChild(e);
     }
@@ -43,10 +44,39 @@ export function dialog({ title, body, buttons = [], x, y, modal = true, cls = ''
   dlg.style.left = Math.max(4, Math.min(window.innerWidth - r.width - 4, x ?? (window.innerWidth - r.width) / 2)) + 'px';
   dlg.style.top = Math.max(4, Math.min(window.innerHeight - r.height - 4, y ?? (window.innerHeight - r.height) / 3)) + 'px';
   makeDraggable(dlg, head);
-  function close() { back.remove(); document.removeEventListener('keydown', key, true); onClose && onClose(); }
-  const key = (e) => { if (e.key === 'Escape') { e.stopPropagation(); close(); } };
+  const before = document.activeElement;
+  let closed = false;
+  function close() {
+    if (closed) return;
+    closed = true;
+    document.removeEventListener('keydown', key, true);
+    back.classList.add('closing');
+    document.body.appendChild(back); // out of the dialog layer at once; it fades out on its own
+    setTimeout(() => back.remove(), 130);
+    if (modal && before && before.isConnected && typeof before.focus === 'function') { try { before.focus({ preventScroll: true }); } catch (_) { /* */ } }
+    onClose && onClose();
+  }
+  // Escape closes the top dialog only; Tab stays inside a modal dialog.
+  const key = (e) => {
+    const top = [...layer().children].filter((c) => !c.classList.contains('closing')).pop();
+    if (top !== back) return;
+    if (e.key === 'Escape') { e.stopPropagation(); close(); return; }
+    if (e.key === 'Tab' && modal) {
+      const f = [...dlg.querySelectorAll('button, [href], input:not([type=hidden]), select, textarea, [tabindex]:not([tabindex="-1"])')].filter((x) => !x.disabled && x.offsetParent !== null);
+      if (!f.length) return;
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); } else if (!dlg.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+    }
+  };
   document.addEventListener('keydown', key, true);
   head.querySelector('.x').onclick = close;
+  head.querySelector('.x').setAttribute('role', 'button');
+  head.querySelector('.x').setAttribute('aria-label', 'Close');
+  if (modal) setTimeout(() => {
+    if (dlg.contains(document.activeElement)) return;
+    const t = dlg.querySelector('input:not([readonly]):not([type=hidden]), textarea, select') || dlg.querySelector('.dlg-f .btn.primary') || dlg.querySelector('button');
+    try { t?.focus({ preventScroll: true }); } catch (_) { /* */ }
+  }, 0);
   return { close, el: dlg, body: b };
 }
 
@@ -82,6 +112,7 @@ export function modifyBox({ value, name, unit = 'mm', x, y, onApply, onPreview, 
 
 let openMenu = null;
 export function closeMenus() { if (openMenu) { openMenu.remove(); openMenu = null; } }
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && openMenu) { e.stopPropagation(); closeMenus(); } }, true);
 
 // items: [{label, icon, run, disabled, key} | '-' | {head}], toolbar: [{icon, title, run}]
 export function contextMenu(x, y, items, toolbar = null) {
@@ -95,7 +126,9 @@ export function contextMenu(x, y, items, toolbar = null) {
   for (const it of items) {
     if (it === '-') { m.appendChild(h('div', 'cm-sep')); continue; }
     if (it.head) { const head = h('div', 'cm-head'); head.textContent = it.head; m.appendChild(head); continue; }
-    const row = h('div', 'cm' + (it.disabled ? ' disabled' : ''), `${it.icon ? icon(it.icon, 16) : '<span class="sp"></span>'}<span>${it.label}</span>${it.key ? `<span class="key">${it.key}</span>` : ''}`);
+    const row = h('div', 'cm' + (it.disabled ? ' disabled' : ''), `${it.icon ? icon(it.icon, 16) : '<span class="sp"></span>'}<span></span>${it.key ? `<span class="key">${it.key}</span>` : ''}`);
+    row.querySelector('span:not(.sp):not(.key)').textContent = it.label;
+    row.setAttribute('role', 'menuitem');
     if (!it.disabled) row.onclick = () => { closeMenus(); it.run(); };
     m.appendChild(row);
   }

@@ -525,6 +525,7 @@ def html_path(token: str) -> Path | None:
 def viewer_page(token: str, static: Path) -> str:
     """The app's index.html, opened read-only on this review (relative asset paths resolve under /review/)."""
     page = (static / "index.html").read_text()
+    page = re.sub(r'<link rel="manifest"[^>]*>\n?', "", page)  # a shared review is not the installable app
     inject = (f'<meta name="robots" content="noindex, nofollow">\n'
               f'<script>window.OPENSKETCH_REVIEW = {json.dumps(token)};</script>\n')
     return page.replace("</head>", inject + "</head>", 1)

@@ -37,21 +37,23 @@ export class Account {
     a.onclick = () => this.menu();
     a.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.menu(); } };
     this.el.appendChild(a);
+    this.app.files?.syncAvatar?.();
   }
 
-  menu() {
-    const r = this.el.getBoundingClientRect();
+  menu(anchor) {
+    const r = (anchor || this.el).getBoundingClientRect();
     const u = this.user, m = this.info?.mode;
     const items = [];
     if (u && !u.legacy) {
       items.push({ head: `${u.name} - ${u.email}` });
       items.push({ label: 'Account settings...', run: () => this.settings() });
-      items.push({ label: 'AI model and key...', run: () => import('./aikeys.js').then((m) => m.aiKeyDialog(this.app)) });
+      items.push({ label: 'Files', run: () => this.app.files?.open() });
+      items.push({ label: 'Connect AI...', run: () => this.app.server?.connectDialog() });
       if (u.role === 'owner' && m === 'accounts') items.push({ label: 'Invite people...', run: () => this.invite() }, { label: 'People on this server...', run: () => this.people() });
     } else {
       items.push({ head: m === 'open' ? 'Not signed in. Anyone with the address can use this server.' : 'Signed in with the server password.' });
       items.push({ label: 'Create owner account...', run: () => { location.href = '/setup?next=' + encodeURIComponent(location.pathname + location.search); } });
-      items.push({ label: 'AI model and key...', run: () => import('./aikeys.js').then((m) => m.aiKeyDialog(this.app)) });
+      items.push({ label: 'Connect AI...', run: () => this.app.server?.connectDialog() });
     }
     items.push('-', { head: 'Theme' }, ...LOOKS.map(([k, t]) => ({ label: t, icon: LOOK === k ? 'ok' : null, run: () => { if (LOOK !== k) setLook(k); } })));
     if (m !== 'open') items.push('-', { label: 'Sign out', run: () => this.signOut() });

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "opensketch"
-version = "0.4.0"
+version = "0.6.0"
 description = "SOLIDWORKS-style parametric CAD on build123d, with an AI copilot"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -21,7 +21,7 @@ opensketch = "opensketch.__main__:main"
 packages = ["opensketch", "opensketch.features"]
 
 [tool.setuptools.package-data]
-opensketch = ["static/*.html", "static/css/*", "static/js/*.js", "static/js/*/*.js", "static/vendor/*", "sldexport_mock/*.bas",
+opensketch = ["static/*.html", "static/*.svg", "static/*.webmanifest", "static/icons/*", "sw.js", "static/css/*", "static/js/*.js", "static/js/*/*.js", "static/vendor/*", "sldexport_mock/*.bas",
               "vendor/sldmacro/*.md", "vendor/sldmacro/engine/*", "vendor/sldmacro/engine/mock/*", "vendor/sldmacro/scripts/*",
               "vendor/sldmacro/reference/*", "vendor/sldmacro/examples/bracket/*", "vendor/sldmacro/examples/bracket/*/*"]
 
