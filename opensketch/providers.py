@@ -255,11 +255,16 @@ class OpenAICompatMessages:
         if tools:
             body["tools"] = tools
         url = cfg["base_url"].rstrip("/") + "/chat/completions"
-        with httpx.Client(timeout=TIMEOUT) as http:
-            with http.stream("POST", url, headers=_headers(cfg), json=body) as r:
+        headers, ext = _headers(cfg), {}
+        if cfg["provider"] == "custom":
+            url, host, ext = pinned(url)
+            headers = {**headers, **host}
+        with httpx.Client(timeout=TIMEOUT, follow_redirects=False) as http:
+            with http.stream("POST", url, headers=headers, json=body, extensions=ext) as r:
                 if r.status_code >= 400:
                     r.read()
-                    raise ProviderError(f"{PROVIDERS[cfg['provider']]['label']} error {r.status_code}: {_error_text(r)}", r.status_code)
+                    detail = "" if cfg["provider"] == "custom" else f": {_error_text(r)}"  # never echo an unknown server's body
+                    raise ProviderError(f"{PROVIDERS[cfg['provider']]['label']} error {r.status_code}{detail}", r.status_code)
                 yield _Stream(r.iter_lines())
 
     def create(self, **kw):  # not used: run_stream always streams with this client
@@ -307,13 +312,19 @@ def list_models(cfg: dict) -> list[str]:
             r = httpx.get("https://api.anthropic.com/v1/models?limit=100", timeout=20,
                           headers={"x-api-key": cfg["key"], "anthropic-version": "2023-06-01"})
         else:
-            r = httpx.get(cfg["base_url"].rstrip("/") + "/models", headers=_headers(cfg), timeout=20)
+            url, headers, ext = cfg["base_url"].rstrip("/") + "/models", _headers(cfg), {}
+            if cfg["provider"] == "custom":
+                url, host, ext = pinned(url)
+                headers = {**headers, **host}
+            with httpx.Client(timeout=20, follow_redirects=False) as http:
+                r = http.get(url, headers=headers, extensions=ext)
     except httpx.HTTPError as exc:
         raise ProviderError(f"Could not reach the provider: {exc}") from None
     if r.status_code == 401 or r.status_code == 403:
         raise ProviderError("The provider refused this key.", r.status_code)
     if r.status_code >= 400:
-        raise ProviderError(f"The provider answered {r.status_code}: {_error_text(r)}", r.status_code)
+        detail = "" if cfg["provider"] == "custom" else f": {_error_text(r)}"
+        raise ProviderError(f"The provider answered {r.status_code}{detail}", r.status_code)
     data = r.json()
     items = data.get("data") if isinstance(data, dict) else data
     ids = []
@@ -329,21 +340,50 @@ def plain_blocks(content) -> list:
     return [b.model_dump() if isinstance(b, _Obj) else b for b in content or []]
 
 
-def check_base_url(url: str) -> str:
-    """A custom provider address must be public https: the server makes the calls, so private and local
-    addresses (cloud metadata, other services on the machine) are refused."""
+def _public_ip(ip) -> bool:
+    """Reachable on the public internet: not private, loopback, link-local, shared (CGNAT), NAT64..."""
+    import ipaddress
+    if ip.version == 6 and ip.ipv4_mapped:
+        ip = ip.ipv4_mapped
+    if not ip.is_global or ip.is_multicast:
+        return False
+    for net in ("64:ff9b::/96", "64:ff9b:1::/48", "2002::/16", "2001::/32"):  # NAT64, 6to4, Teredo can reach inside
+        if ip.version == 6 and ip in ipaddress.ip_network(net):
+            return False
+    return True
+
+
+def resolve_public(host: str, port: int) -> str:
+    """One public address for host, or ProviderError when any address it resolves to is not public."""
     import ipaddress
     import socket
+    try:
+        infos = socket.getaddrinfo(host, port, proto=socket.IPPROTO_TCP)
+    except OSError:
+        raise ProviderError(f"Could not find {host}.") from None
+    addrs = [ipaddress.ip_address(i[4][0].split("%")[0]) for i in infos]
+    if not addrs or not all(_public_ip(ip) for ip in addrs):
+        raise ProviderError("That address is on a private network. Use the provider's public https address.")
+    return str(addrs[0])
+
+
+def check_base_url(url: str) -> str:
+    """A custom provider address must be public https: the server makes the calls, so private and local
+    addresses (cloud metadata, other services on the machine, Fly's private network) are refused."""
     from urllib.parse import urlparse
     u = urlparse((url or "").strip())
-    if u.scheme != "https" or not u.hostname:
+    if u.scheme != "https" or not u.hostname or u.username or u.password:
         raise ProviderError("The provider's address must start with https://.")
-    try:
-        infos = socket.getaddrinfo(u.hostname, u.port or 443, proto=socket.IPPROTO_TCP)
-    except OSError:
-        raise ProviderError(f"Could not find {u.hostname}.") from None
-    for info in infos:
-        ip = ipaddress.ip_address(info[4][0])
-        if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved or ip.is_multicast or ip.is_unspecified:
-            raise ProviderError("That address is on a private network. Use the provider's public https address.")
+    resolve_public(u.hostname, u.port or 443)
     return url.strip().rstrip("/")
+
+
+def pinned(url: str) -> tuple[str, dict, dict]:
+    """For a custom provider: the request URL with the host replaced by an address checked just now, the Host
+    header and the TLS name. Connecting to the checked address (not a fresh lookup) defeats DNS rebinding."""
+    from urllib.parse import urlsplit, urlunsplit
+    check_base_url(url)
+    u = urlsplit(url)
+    ip = resolve_public(u.hostname, u.port or 443)
+    netloc = (f"[{ip}]" if ":" in ip else ip) + (f":{u.port}" if u.port else "")
+    return urlunsplit((u.scheme, netloc, u.path, u.query, "")), {"Host": u.netloc}, {"sni_hostname": u.hostname}

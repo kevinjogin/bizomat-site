@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import hashlib
 import hmac
+import json
 import os
 import secrets
 import asyncio
@@ -47,6 +48,29 @@ def _mac(label: str, n: int) -> str:
     return hmac.new(_base_secret(), label.encode(), hashlib.sha256).hexdigest()[:n]
 
 
+def data_secret(label: str) -> bytes:
+    """A key from a random secret kept in the data folder, never from the server password (a short password
+    must not be guessable offline from a signed link or cookie)."""
+    from . import store
+    p = store.data_dir() / "secret.keys"
+    if not p.exists():
+        tmp = p.with_name(p.name + f".{secrets.token_hex(4)}.tmp")
+        tmp.write_text(secrets.token_hex(32))
+        tmp.chmod(0o600)
+        try:
+            os.link(tmp, p)  # first writer wins
+        except FileExistsError:
+            pass
+        finally:
+            tmp.unlink()
+    return hmac.new(p.read_text().strip().encode(), label.encode(), hashlib.sha256).digest()
+
+
+def _eq(a, b) -> bool:
+    """Constant-time comparison that never raises (non-ASCII text in a URL is just a mismatch)."""
+    return hmac.compare_digest(str(a or "").encode("utf-8", "replace"), str(b or "").encode("utf-8", "replace"))
+
+
 def mcp_token() -> str:
     return os.environ.get("OPENSKETCH_MCP_TOKEN") or _mac("mcp", 32)
 
@@ -75,10 +99,10 @@ def resolve_mcp(token: str) -> tuple[bool, dict | None]:
         return False, None
     from . import accounts
     users = accounts.list_users()
-    if hmac.compare_digest(token, mcp_token()):
+    if _eq(token, mcp_token()):
         return True, next((u for u in users if u["role"] == "owner"), None)
     for u in users:
-        if u["role"] != "owner" and hmac.compare_digest(token, _mac("mcp:" + u["id"], 32)):
+        if u["role"] != "owner" and _eq(token, _mac("mcp:" + u["id"], 32)):
             return True, u
     return False, None
 
@@ -130,7 +154,7 @@ def current_user(scope) -> dict | None:
         return accounts.session_user(_cookie(scope, ACCOUNT_COOKIE))
     if m == "password":
         v = _cookie(scope, COOKIE)
-        if v and hmac.compare_digest(v, session_value()):
+        if v and _eq(v, session_value()):
             return {"id": "server", "email": "", "name": "Server password", "role": "owner", "legacy": True}
     return None
 
@@ -232,7 +256,7 @@ def _page(title, sub, action, fields, button, nxt="/", error="", links="", top="
 def _login_page(nxt, error="", email=""):
     from . import accounts
     forgot = ('<a href="/reset">Forgot your password?</a>' if password() else
-              '<span class="note">Forgot your password? Ask the owner for a new invite.</span>')
+              '<span class="note">Forgot your password? Ask the server owner for help.</span>')
     signup = '<a href="/signup">Create an account</a>' if accounts.settings()["open_signup"] else ""
     links = f'<div class="links">{forgot}{signup}</div>'
     return _page("Sign in", "Sign in to your OpenSketch account.", "/login",
@@ -286,12 +310,20 @@ async def _send(send, status: int, body: bytes, headers: list) -> None:
     await send({"type": "http.response.body", "body": body})
 
 
+TOO_MANY = "Too many tries. Wait a minute, then try again."
 HTML = [(b"content-type", b"text/html; charset=utf-8"), (b"cache-control", b"no-store"),
         (b"x-frame-options", b"DENY"), (b"referrer-policy", b"same-origin")]
 
 
 def _safe_next(n: str) -> str:
-    return n if n.startswith("/") and not n.startswith("//") and "\\" not in n else "/"
+    """Only a path on this site. Browsers drop tabs and newlines from URLs, so "/\t/evil.com" would become
+    "//evil.com": any control character, backslash or second slash refuses it."""
+    from urllib.parse import urlsplit
+    n = n or "/"
+    if any(ord(c) < 0x20 or ord(c) == 0x7F for c in n) or "\\" in n or not n.startswith("/") or n.startswith("//"):
+        return "/"
+    parts = urlsplit(n)
+    return "/" if parts.scheme or parts.netloc else n
 
 
 def _secure(scope) -> str:
@@ -316,6 +348,51 @@ async def _form(receive) -> dict:
     return {k: v[0] for k, v in parse_qs(body.decode(errors="ignore")).items()}
 
 
+# Sign-in guesses: at most LIMIT failures a minute per address and per email, then a short wait.
+LIMIT = 8
+_fails: dict[str, list[float]] = {}
+
+
+def _client(scope) -> str:
+    h = _headers(scope)
+    ip = h.get("fly-client-ip") or (h.get("x-forwarded-for") or "").split(",")[0].strip()
+    return ip or (scope.get("client") or ("?",))[0]
+
+
+def _limited(*keys: str) -> bool:
+    import time
+    now = time.time()
+    for k in keys:
+        recent = [t for t in _fails.get(k, []) if now - t < 60]
+        _fails[k] = recent
+        if len(recent) >= LIMIT:
+            return True
+    return False
+
+
+def _failed(*keys: str) -> None:
+    import time
+    if len(_fails) > 5000:
+        _fails.clear()
+    for k in keys:
+        _fails.setdefault(k, []).append(time.time())
+
+
+def _same_origin(scope) -> bool:
+    """A browser request that changes something must come from this site's own pages (Origin /
+    Sec-Fetch-Site). Requests without those headers (scripts, tests, MCP clients) are not browsers."""
+    h = _headers(scope)
+    site = h.get("sec-fetch-site")
+    if site and site not in ("same-origin", "none"):
+        return False
+    origin = h.get("origin")
+    if origin and origin != "null":
+        from urllib.parse import urlsplit
+        host = h.get("x-forwarded-host") or h.get("host") or ""
+        return urlsplit(origin).netloc.lower() == host.lower()
+    return origin != "null"
+
+
 def _server_password_ok(given: str) -> bool:
     return bool(password()) and hmac.compare_digest((given or "").encode(), password().encode())
 
@@ -331,6 +408,13 @@ class PasswordGate:
         if scope["type"] != "http":
             return await self.app(scope, receive, send)
         path = scope.get("path", "")
+        if scope.get("method") not in ("GET", "HEAD", "OPTIONS") and not path.startswith("/mcp/") and not _same_origin(scope):
+            return await _send(send, 403, b'{"error":"This request did not come from OpenSketch."}', [(b"content-type", b"application/json")])
+        from . import accounts
+        try:
+            mode()
+        except accounts.AccountError as e:  # damaged or missing accounts file: closed, never open
+            return await _send(send, 503, json.dumps({"error": str(e)}).encode(), [(b"content-type", b"application/json")])
         if path in ("/login", "/setup", "/reset", "/logout", "/signup") or path.startswith("/join/") or path.startswith("/auth/google"):
             return await self._page(path, scope, receive, send)
         # /mcp/ and /review/: their tokens are the keys. GET /api/features: the command list (no document
@@ -367,7 +451,7 @@ class PasswordGate:
         if path == "/logout":
             tok = _cookie(scope, ACCOUNT_COOKIE)
             if tok:
-                accounts.end_session(tok)
+                await asyncio.to_thread(accounts.end_session, tok)
             return await go("/login" if m != "open" else "/", _clear(ACCOUNT_COOKIE), _clear(COOKIE))
 
         if path == "/auth/google" or path == "/auth/google/callback":
@@ -379,10 +463,10 @@ class PasswordGate:
             if not post:
                 return await _send(send, 200, _signup_page(nxt), HTML)
             try:
-                u = accounts.sign_up(form.get("email", ""), form.get("name", ""), form.get("new_password", ""))
+                u = await asyncio.to_thread(accounts.sign_up, form.get("email", ""), form.get("name", ""), form.get("new_password", ""))
             except accounts.AccountError as e:
                 return await _send(send, 400, _signup_page(nxt, str(e), form), HTML)
-            return await go(nxt, _set_account_cookie(scope, accounts.start_session(u["id"])))
+            return await go(nxt, _set_account_cookie(scope, await asyncio.to_thread(accounts.start_session, u["id"])))
 
         if path.startswith("/join/"):
             token = path[len("/join/"):]
@@ -391,58 +475,74 @@ class PasswordGate:
                     return await _send(send, 410, _join_page(token, "This invite link has expired or was already used. Ask for a new one."), HTML)
                 return await _send(send, 200, _join_page(token), HTML)
             try:
-                u = accounts.accept_invite(token, form.get("email", ""), form.get("name", ""), form.get("new_password", ""))
+                u = await asyncio.to_thread(accounts.accept_invite, token, form.get("email", ""), form.get("name", ""), form.get("new_password", ""))
             except accounts.AccountError as e:
                 return await _send(send, 400, _join_page(token, str(e), form), HTML)
-            return await go("/", _set_account_cookie(scope, accounts.start_session(u["id"])))
+            return await go("/", _set_account_cookie(scope, await asyncio.to_thread(accounts.start_session, u["id"])))
 
         if path == "/setup":
             if m == "accounts":
                 return await go("/login")
             if not post:
                 return await _send(send, 200, _setup_page(nxt), HTML)
+            ip = "ip:" + _client(scope)
+            if password() and _limited(ip):
+                return await _send(send, 429, _setup_page(nxt, TOO_MANY, form), HTML)
             if password() and not _server_password_ok(form.get("server_password", "")):
+                _failed(ip)
                 await asyncio.sleep(1)
                 return await _send(send, 401, _setup_page(nxt, "The server password is wrong.", form), HTML)
             try:
-                u = accounts.create_owner(form.get("email", ""), form.get("name", ""), form.get("new_password", ""))
+                u = await asyncio.to_thread(accounts.create_owner, form.get("email", ""), form.get("name", ""), form.get("new_password", ""))
             except accounts.AccountError as e:
                 return await _send(send, 400, _setup_page(nxt, str(e), form), HTML)
-            return await go(nxt, _set_account_cookie(scope, accounts.start_session(u["id"])), _clear(COOKIE))
+            return await go(nxt, _set_account_cookie(scope, await asyncio.to_thread(accounts.start_session, u["id"])), _clear(COOKIE))
 
         if path == "/reset":
             if m != "accounts" or not password():
                 return await go("/login")
             if not post:
                 return await _send(send, 200, _reset_page(), HTML)
+            keys = ("ip:" + _client(scope), "email:" + form.get("email", "").strip().lower())
+            if _limited(*keys):
+                return await _send(send, 429, _reset_page(TOO_MANY, form.get("email", "")), HTML)
             u = accounts.find_by_email(form.get("email", ""))
             if not _server_password_ok(form.get("server_password", "")) or u is None:
+                _failed(*keys)
                 await asyncio.sleep(1)
                 return await _send(send, 401, _reset_page("The email or the server password is wrong.", form.get("email", "")), HTML)
             try:
-                accounts.set_password(u["id"], form.get("new_password", ""))
+                await asyncio.to_thread(accounts.set_password, u["id"], form.get("new_password", ""))
             except accounts.AccountError as e:
                 return await _send(send, 400, _reset_page(str(e), form.get("email", "")), HTML)
-            return await go("/", _set_account_cookie(scope, accounts.start_session(u["id"])))
+            return await go("/", _set_account_cookie(scope, await asyncio.to_thread(accounts.start_session, u["id"])))
 
         # /login
         if m == "open":
             return await go("/setup" if not post else "/")
         if m == "password":
             if post and "password" in form and "email" not in form:  # the old password-only sign-in
+                if _limited("ip:" + _client(scope)):
+                    return await _send(send, 429, _setup_page(nxt, TOO_MANY), HTML)
                 if hmac.compare_digest(form["password"].encode(), password().encode()):
                     cookie = f"{COOKIE}={session_value()}; Path=/; Max-Age={90 * 86400}; HttpOnly; SameSite=Lax{_secure(scope)}"
                     return await go(nxt, cookie.encode())
+                _failed("ip:" + _client(scope))
                 await asyncio.sleep(1)
                 return await _send(send, 401, _setup_page(nxt, "Wrong password."), HTML)
             return await _send(send, 200, _setup_page(nxt), HTML)
         if not post:
             return await _send(send, 200, _login_page(nxt), HTML)
-        u = accounts.verify(form.get("email", ""), form.get("password", ""))
+        keys = ("ip:" + _client(scope), "email:" + form.get("email", "").strip().lower())
+        if _limited(*keys):
+            return await _send(send, 429, _login_page(nxt, TOO_MANY, form.get("email", "")), HTML)
+        # scrypt takes ~0.1 s: off the event loop, so a sign-in never stalls everyone else
+        u = await asyncio.to_thread(accounts.verify, form.get("email", ""), form.get("password", ""))
         if u is None:
+            _failed(*keys)
             await asyncio.sleep(1)  # slow down guessing
             return await _send(send, 401, _login_page(nxt, "The email or password is wrong.", form.get("email", "")), HTML)
-        return await go(nxt, _set_account_cookie(scope, accounts.start_session(u["id"])))
+        return await go(nxt, _set_account_cookie(scope, await asyncio.to_thread(accounts.start_session, u["id"])))
 
 
 def _request_base(scope) -> str:
@@ -472,7 +572,7 @@ async def _google_flow(path, scope, q, go, send):
 
     if q.get("error"):
         return await fail("Google sign-in was cancelled.")
-    if not st or not q.get("state") or not hmac.compare_digest(q["state"], st.get("s", "")):
+    if not st or not q.get("state") or not _eq(q["state"], st.get("s", "")):
         return await fail("The Google sign-in expired. Try again.")
     try:
         info = await oauth.exchange(q.get("code", ""), st["r"])
@@ -483,21 +583,26 @@ async def _google_flow(path, scope, q, go, send):
     if not accounts.any_users():
         return await fail("Create the owner account first, then sign in with Google.")
     verified = info.get("email_verified") in (True, "true")
-    u = accounts.google_user(info["sub"], info["email"], verified)
+    domain = (info.get("email") or "").rsplit("@", 1)[-1].lower()
+    managed = domain in ("gmail.com", "googlemail.com") or (info.get("hd") or "").lower() == domain
+    try:
+        u = await asyncio.to_thread(accounts.google_user, info["sub"], info["email"], verified, managed)
+    except accounts.AccountError as e:
+        return await fail(str(e), 403)
     if u is None:
         if not verified:
             return await fail("Your Google email is not verified.")
         try:
             if st.get("i") and accounts.invite_valid(st["i"]):
-                u = accounts.accept_invite(st["i"], info["email"], info.get("name") or "", None, google=info["sub"])
+                u = await asyncio.to_thread(accounts.accept_invite, st["i"], info["email"], info.get("name") or "", None, google=info["sub"])
             else:
-                u = accounts.sign_up(info["email"], info.get("name") or "", None, google=info["sub"])
+                u = await asyncio.to_thread(accounts.sign_up, info["email"], info.get("name") or "", None, google=info["sub"])
         except accounts.AccountError as e:
             msg = str(e)
             if "invite-only" in msg:
                 msg = f"There is no account for {info['email']}. This server is invite-only: ask the owner for an invite link."
             return await fail(msg, 403)
-    return await go(_safe_next(st.get("n") or "/"), _set_account_cookie(scope, accounts.start_session(u["id"])), clear)
+    return await go(_safe_next(st.get("n") or "/"), _set_account_cookie(scope, await asyncio.to_thread(accounts.start_session, u["id"])), clear)
 
 
 def _esc(t: str) -> str:

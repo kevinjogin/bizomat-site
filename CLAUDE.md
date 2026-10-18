@@ -128,9 +128,45 @@ with model pictures, a deep audit, "connect Claude, Codex or whatever", a better
   Old names updated (Connect Claude -> Connect AI, Open/Save to Server -> Files).
 - Live AI checked (server Anthropic key, claude-opus-5-5): plate with four holes built in 50 s, variables +
   equations, clean, accepted; demo press built and accepted; pictures for both.
+- Security and robustness audit (34 findings, fixed unless listed in Known limits):
+  - Sign-in: `auth._safe_next` refuses control characters, backslashes and `//` (browsers drop tabs, so
+    "/\t/evil.com" was an open redirect); rate limit per IP and per email (`LIMIT` 8 failures / 15 min ->
+    429 "Too many tries", no hash tried while limited) on login, reset, setup and the old password form; scrypt
+    and account file work run in `asyncio.to_thread` (the event loop no longer stalls); `_client` uses
+    fly-client-ip / x-forwarded-for.
+  - Cross-site writes: `PasswordGate._same_origin` refuses non-GET/HEAD/OPTIONS requests whose Origin is another
+    site (or "null") or whose Sec-Fetch-Site is cross-site / same-site (403); /mcp/ is exempt (token in path).
+  - Accounts fail closed: `accounts._read` caches by mtime (deep copies) and raises AccountError when users.json is
+    damaged, or missing while `accounts.enabled` exists (written on every save), so a broken file never opens the
+    server; the gate answers 503 JSON. Writes use mkstemp + os.replace (no shared .tmp name).
+  - Google sign-in links a Google login to an existing password account only for gmail.com / googlemail.com or a
+    Workspace domain (`hd` = the email's domain); other addresses get "Sign in with its password" (403).
+  - Secrets: `auth.data_secret(label)` (data/secret.keys, first writer wins via os.link) keys OAuth state and
+    artifact links (artifact key = HMAC(that secret, mcp_token), so a new password still voids old links); every
+    secret compare is `hmac.compare_digest` on bytes (`auth._eq`).
+  - AI keys: `aikeys.effective` gives the server's key to members only when open sign-up is off
+    (OPENSKETCH_SHARE_SERVER_KEY=all to share anyway). Custom provider addresses: `providers.pinned` resolves the
+    host once, refuses non-global addresses (incl. IPv4-mapped, NAT64, 6to4, Teredo, CGNAT, userinfo in the URL)
+    and connects to that IP with the Host header and `sni_hostname` (no DNS rebinding); no redirects; upstream
+    error bodies not echoed for custom addresses. The old /api/ai refuses without a key. Chat histories:
+    `ai._Conversations` LRU, 200 kept.
+  - Server load: /api/import/raw streams with a 128 MB cap (`IMPORT_MAX`) and unzips gzip bounded (a small gzip
+    that unpacks to more is refused, truncated gzip = "arrived damaged"); macro jobs record their owner (status and
+    zip 404 for others) and at most 2 run per person (`MACRO_RUNNING_MAX`, 429); server pictures render at most 2 at
+    a time (`_thumb_slots`); picture uploads checked by Content-Length first; the Trash purge re-checks under the
+    lock; published review links capped at 20 per document (`review.KEEP_PER_DOC`, oldest removed).
+  - MCP: publish_review / list / delete check the document's owner (`_check`).
+  - Browser: live.js captions and relation labels are text, not HTML (XSS); "Load the AI's version" waits for a save
+    in flight; pagehide sends unsent edits with a keepalive PUT (< 60 KB); `app.api` shows the status text when the
+    server sends no message and goes to sign-in on 401 (the AI stream too, and one bad line no longer ends it);
+    account settings fetch errors are caught; Remove person asks first; dialog close and PropertyManager help are
+    real buttons, the title-bar "?" opens a help menu.
 - Tests: `tests/test_files.py` (8: history size cap, per-person files and 404s, rename/duplicate/trash/restore/purge/versions,
   30-day purge, meta-only poll and list, pictures browser + server-drawn + AI redraw + limits, personal MCP
-  addresses over JSON-RPC, PWA files public and versioned), `tests/js/md.test.mjs` (3).
+  addresses over JSON-RPC, PWA files public and versioned), `tests/test_hardening.py` (8: safe next, cross-site
+  writes 403, sign-in limit 429, damaged/missing users.json 503, upload cap + gzip bomb, macro job owners and
+  limit, chat memory LRU, MCP publish_review owner check), `tests/test_aikeys.py` +1 (custom addresses stay
+  public, DNS rebinding), `tests/js/md.test.mjs` (3).
 
 ## Earlier state (2026-10-18, v0.5: accounts, Linear look, Design panel, Ask AI on a selection; coupler mate, Motion Review)
 
@@ -562,8 +598,10 @@ See `docs/CODE_REVIEW_2026-10-16.md` for reproductions, new-feature usage and UX
   real OpenAI / Gemini / OpenRouter APIs yet (tests use a fake server). Keys saved while signed in with the old
   server password belong to "local". Google sign-in not yet tried with a real Google client.
 - Accounts: no email sending (invites are links you pass on; a forgotten password is reset with the server
-  password), no per-document permissions (everyone signed in sees every server document), no rate limit
-  beyond the 1 s delay. Documents still record `by: "you"` / `"claude"`, not the person's name.
+  password). Documents are per person (owner only; no sharing between accounts yet). The sign-in rate limit is
+  in memory (resets on restart, per machine). Documents still record `by: "you"` / `"claude"`, not the person's name.
+- Audit items not done: no Content-Security-Policy header yet (inline scripts in index.html and the review page
+  would need hashes); context menus have no arrow-key navigation; long AI provider errors are shown in full.
 - Design panel: edge picks show the whole part (no edge-to-feature lookup yet); the face lookup costs one
   named rebuild on the server per face clicked; the slider range is fixed when the row is drawn; sketch
   dimensions inside a part opened from an assembly use the same path but were only checked on the press.

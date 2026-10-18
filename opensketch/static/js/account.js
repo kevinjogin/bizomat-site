@@ -95,7 +95,7 @@ export class Account {
             d.close();
             if (j.signed_out) { location.href = '/login'; return; }
             this.info.user = j.user; this.render(); this.app.toast?.('Saved.');
-          });
+          }).catch(() => { err.textContent = 'Could not save. Check your connection and try again.'; });
         return false;
       } }] });
   }
@@ -124,11 +124,13 @@ export class Account {
       row.append(av, who, h('span', 'acct-role', p.role === 'owner' ? 'Owner' : 'Member'));
       if (p.role !== 'owner') {
         const rm = h('button', 'btn', 'Remove');
-        rm.onclick = async () => {
-          const r = await (await fetch('/api/account/users/' + encodeURIComponent(p.id), { method: 'DELETE' })).json();
-          if (r.error) { message('People', esc(r.error)); return; }
-          row.remove();
-        };
+        rm.onclick = () => dialog({ title: 'Remove person', cls: 'acct-dlg', body: `<p class="fv-p">Remove <b>${esc(p.name)}</b> (${esc(p.email)})? They are signed out at once and can no longer sign in. Their files stay on the server.</p>`,
+          buttons: [{ label: 'Cancel' }, { label: 'Remove', primary: true, danger: true, run: () => {
+            fetch('/api/account/users/' + encodeURIComponent(p.id), { method: 'DELETE' }).then((x) => x.json()).then((r) => {
+              if (r.error) { message('People', esc(r.error)); return; }
+              row.remove();
+            }).catch(() => message('People', 'Could not remove them. Check your connection and try again.'));
+          } }] });
         row.appendChild(rm);
       }
       list.appendChild(row);

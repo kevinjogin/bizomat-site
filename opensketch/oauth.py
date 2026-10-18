@@ -37,7 +37,7 @@ def enabled() -> bool:
 
 def _key() -> bytes:
     from . import auth
-    return hmac.new(auth._base_secret(), b"oauth-state", hashlib.sha256).digest()
+    return auth.data_secret("oauth-state")
 
 
 def sign_state(payload: dict) -> str:
@@ -51,7 +51,7 @@ def read_state(cookie: str) -> dict | None:
         raw, mac = cookie.rsplit(".", 1)
     except ValueError:
         return None
-    if not hmac.compare_digest(mac, hmac.new(_key(), raw.encode(), hashlib.sha256).hexdigest()[:32]):
+    if not hmac.compare_digest(str(mac).encode(), hmac.new(_key(), raw.encode(), hashlib.sha256).hexdigest()[:32].encode()):
         return None
     try:
         data = json.loads(base64.urlsafe_b64decode(raw + "=" * (-len(raw) % 4)))

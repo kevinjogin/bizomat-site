@@ -103,6 +103,8 @@ export class App {
     this.viewer.afterRender.push(() => this.afterRender());
     $('fileinput').addEventListener('change', (e) => this.loadFile(e.target.files[0]));
     $('sb-help').onclick = () => this.shortcutsDialog();
+    const th = document.querySelector('#titlebar .title-help');
+    if (th) { th.setAttribute('role', 'button'); th.tabIndex = 0; th.onclick = () => this.helpMenu(th); th.onkeydown = (e) => { if (e.key === 'Enter') this.helpMenu(th); }; }
     $('sb-units').onclick = (e) => contextMenu(e.clientX, e.clientY - 120, [{ head: 'Unit system' }, { label: 'MMGS (millimeter, gram, second)', run: () => {} }]);
     this.bindDocTabs();
     if (this.reviewMode) {
@@ -482,10 +484,11 @@ export class App {
     const ct = r.headers.get('content-type') || '';
     if (ct.includes('json')) {
       const j = await r.json();
-      if (!r.ok && !j.error) throw new Error(j.detail || r.statusText);
+      if (!r.ok && !j.error) throw new Error(j.detail || r.statusText || `HTTP ${r.status}`);
       return j;
     }
-    if (!r.ok) throw new Error(r.statusText);
+    if (r.status === 401) { location.href = '/login?next=' + encodeURIComponent(location.pathname + location.search); throw new Error('Sign in again'); }
+    if (!r.ok) throw new Error(r.statusText || `HTTP ${r.status}`);
     return r;
   }
 
@@ -1333,7 +1336,7 @@ export class App {
     if (cons.length === 1 && ids.length === 1 && ['distance', 'diameter', 'radius', 'angle'].includes(cons[0].type)) return this.dimensionPM(cons[0]);
     const ents = ids.map((id) => sk.ent(id)).filter(Boolean);
     const existing = skf.constraints.filter((c) => !['distance', 'diameter', 'radius', 'angle'].includes(c.type) && (ids.includes(c.id) || c.refs.some((r) => ids.includes(r))));
-    const relLabel = (c) => `${c.type[0].toUpperCase() + c.type.slice(1)}${c.refs.length ? ' (' + c.refs.join(', ') + ')' : ''}`;
+    const relLabel = (c) => esc(`${c.type[0].toUpperCase() + c.type.slice(1)}${c.refs.length ? ' (' + c.refs.join(', ') + ')' : ''}`);
     const one = ents.length === 1 ? ents[0] : null;
     const title = one ? ({ point: 'Point', line: one.construction ? 'Centerline' : 'Line Properties', circle: 'Circle', arc: 'Arc' }[one.type] || 'Properties') : 'Properties';
     const sections = [
@@ -1934,6 +1937,17 @@ export class App {
       this.viewer.reverseWheel = body.querySelector('#opt-wheel').checked;
       this.view.relations = body.querySelector('#opt-rel').checked; this.sketcher.showRelations = this.view.relations; this.sketcher.render();
     } }, { label: 'Cancel' }] });
+  }
+
+  helpMenu(anchor) {
+    const r = anchor.getBoundingClientRect();
+    contextMenu(Math.max(4, r.right - 220), r.bottom + 6, [
+      { label: 'Getting started', run: () => this.openTask('resources') },
+      { label: 'Keyboard shortcuts', run: () => this.shortcutsDialog() },
+      { label: 'Connect AI...', run: () => this.server.connectDialog() },
+      '-',
+      { label: 'About OpenSketch', run: () => this.aboutDialog() },
+    ]);
   }
 
   shortcutsDialog() {

@@ -116,7 +116,11 @@ export class LivePlayer {
   caption(text, sub = '') {
     if (!this.cap) return;
     if (!text) { this.cap.classList.add('hidden'); return; }
-    this.cap.innerHTML = `<span class="spinner"></span><b>${text}</b>${sub ? `<span class="sub">${sub}</span>` : ''}`;
+    // names come from the AI (or a page it read): text only, never HTML
+    this.cap.innerHTML = '<span class="spinner"></span><b></b><span class="sub"></span>';
+    this.cap.querySelector('b').textContent = text;
+    const s = this.cap.querySelector('.sub');
+    if (sub) s.textContent = sub; else s.remove();
     this.cap.classList.remove('hidden');
   }
 

@@ -727,6 +727,7 @@ async def inspect_design(doc_id: str, part_id: str | None = None, sketches: bool
 
 def _review_sync(doc_id, compare_version, title, notes) -> str:
     from . import review
+    _check(doc_id)  # only this connector's person's documents
     try:
         out = review.publish(doc_id, compare_version, title, notes, by="claude")
     except store.NotFound:

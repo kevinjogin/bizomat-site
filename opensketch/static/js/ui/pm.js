@@ -70,7 +70,8 @@ export class PropertyManager {
     const scroll = root.scrollTop;
     root.innerHTML = '';
     const pm = el('div', 'pm');
-    const title = el('div', 'pm-title', `${icon(s.icon || 'props', 20)}<span>${escapeHtml(s.title)}</span><span class="pm-help" title="Help">?</span>`);
+    const title = el('div', 'pm-title', `${icon(s.icon || 'props', 20)}<span>${escapeHtml(s.title)}</span><button class="pm-help" title="Getting started and shortcuts" aria-label="Help">?</button>`);
+    title.querySelector('.pm-help').onclick = () => this.app?.openTask?.('resources');
     pm.appendChild(title);
     const acts = el('div', 'pm-actions');
     // a native button keeps OK keyboard reachable; aria-disabled (not disabled) so a click that commits a field

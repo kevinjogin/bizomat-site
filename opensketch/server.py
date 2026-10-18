@@ -217,15 +217,30 @@ def api_import(req: ImportRequest):
     return _import_reply(raw, req.filename)
 
 
+IMPORT_MAX = 128 * 1024 * 1024  # bytes of CAD data per upload (after unzipping the browser's gzip)
+
+
 @app.post("/api/import/raw")
 async def api_import_raw(request: Request, filename: str = "model.step"):
     """STEP -> part or assembly document. The body is the file's bytes, gzipped by the browser when
     the X-OpenSketch-Gzip header is 1 (a 14 MB STEP becomes ~3 MB, small enough for the Codespaces tunnel)."""
-    body = await request.body()
+    too_big = JSONResponse({"error": f"The file is bigger than {IMPORT_MAX // 2**20} MB. Split it or simplify it first."}, status_code=413)
+    body = bytearray()
+    async for chunk in request.stream():
+        body += chunk
+        if len(body) > IMPORT_MAX:
+            return too_big
+    body = bytes(body)
     if request.headers.get("x-opensketch-gzip") == "1":
-        try:
-            body = gzip.decompress(body)
-        except (OSError, EOFError, zlib.error):
+        try:  # bounded: a small gzip that unpacks to gigabytes is refused, not unpacked
+            d = zlib.decompressobj(16 + zlib.MAX_WBITS)
+            out = d.decompress(body, IMPORT_MAX + 1)
+            if len(out) > IMPORT_MAX or d.unconsumed_tail:
+                return too_big
+            body = out + d.flush()
+            if not d.eof:
+                raise zlib.error("truncated")
+        except zlib.error:
             return JSONResponse({"error": "The upload arrived damaged. Try again."}, status_code=400)
     return await run_in_threadpool(_import_reply, body, filename)
 
@@ -304,13 +319,24 @@ def api_macro_toolchain():
     return {"features": tc["ok"], "have": tc["have"], "missing": tc["missing"]}
 
 
+MACRO_RUNNING_MAX = 2  # macro jobs running at once per person (each can run LibreOffice for minutes)
+
+
+def _who(request: Request) -> str:
+    u = getattr(request.state, "user", None)
+    return u["id"] if u else ""
+
+
 @app.post("/api/export/sldmacro/start")
-def api_macro_start(req: MacroRequest):
+def api_macro_start(req: MacroRequest, request: Request):
     """Start writing a SOLIDWORKS macro (a background job: checking the macro takes a minute or more)."""
+    me = _who(request)
+    if sum(1 for j in _macro_jobs.values() if j["state"] == "running" and j.get("owner") == me) >= MACRO_RUNNING_MAX:
+        return JSONResponse({"error": "Two exports are already running. Wait for one to finish."}, status_code=429)
     jid = uuid.uuid4().hex[:12]
     fd, path = tempfile.mkstemp(suffix=".zip")
     os.close(fd)
-    job = {"state": "running", "log": [], "report": None, "zip": path, "started": time.time(),
+    job = {"state": "running", "log": [], "report": None, "zip": path, "started": time.time(), "owner": me,
            "name": (req.name or req.doc.get("name") or "OpenSketch")}
     _macro_jobs[jid] = job
     for k in [k for k, v in _macro_jobs.items() if time.time() - v["started"] > 6 * 3600]:
@@ -331,24 +357,28 @@ def api_macro_start(req: MacroRequest):
 
 
 @app.get("/api/export/sldmacro/{jid}")
-def api_macro_status(jid: str):
+def api_macro_status(jid: str, request: Request):
     job = _macro_jobs.get(jid)
-    if job is None:
+    if job is None or job.get("owner") != _who(request):
         raise HTTPException(404, "No such export")
     return {k: job.get(k) for k in ("state", "log", "report", "error")} | {"seconds": round(time.time() - job["started"])}
 
 
 @app.get("/api/export/sldmacro/{jid}/zip")
-def api_macro_zip(jid: str):
+def api_macro_zip(jid: str, request: Request):
     job = _macro_jobs.get(jid)
-    if job is None or job["state"] != "done":
+    if job is None or job["state"] != "done" or job.get("owner") != _who(request):
         raise HTTPException(404, "Not ready")
     name = "".join(c if c.isalnum() or c in "-_" else "_" for c in job["name"]) or "OpenSketch"
     return FileResponse(job["zip"], filename=f"{name}_SOLIDWORKS_macro.zip", media_type="application/zip")
 
 
 @app.post("/api/ai")
-def api_ai(req: AIRequest):
+def api_ai(req: AIRequest, request: Request):
+    """Old non-streaming route (scripts): the same person's key as the chat."""
+    from . import aikeys
+    if aikeys.effective(getattr(request.state, "user", None)) is None and not ai.demo_enabled():
+        return JSONResponse({"error": ai.NO_KEY}, status_code=503)
     try:
         return ai.run(req.doc, req.prompt, req.conversation)
     except ai.AIUnavailable as exc:
@@ -617,11 +647,15 @@ async def api_doc_thumb_put(doc_id: str, request: Request, version: int = 0):
     ext = THUMB_TYPES.get(request.headers.get("content-type", "").split(";")[0].strip())
     if ext is None:
         return JSONResponse({"error": "Send image/webp or image/png."}, status_code=415)
-    body = b""
+    too_big = JSONResponse({"error": "The picture is too big."}, status_code=413)
+    if int(request.headers.get("content-length") or 0) > store.THUMB_MAX:
+        return too_big
+    body = bytearray()
     async for chunk in request.stream():
         body += chunk
         if len(body) > store.THUMB_MAX:
-            return JSONResponse({"error": "The picture is too big."}, status_code=413)
+            return too_big
+    body = bytes(body)
     try:
         entry = store.set_thumb(doc_id, body, ext, version, "browser")
     except ValueError as e:
@@ -631,14 +665,16 @@ async def api_doc_thumb_put(doc_id: str, request: Request, version: int = 0):
 
 _thumb_jobs: dict[str, threading.Event] = {}
 _thumb_guard = threading.Lock()
+_thumb_slots = threading.BoundedSemaphore(2)  # server-drawn pictures at once (a Files page asks for many)
 
 
 def _render_thumb(doc_id: str) -> None:
     """Draw a picture on the server (a document the AI made, or one never opened in a browser)."""
     from . import preview
-    rec = store.get(doc_id)
-    png = preview.render_preview(rec["doc"], "isometric", 480, 360, transparent=True)
-    store.set_thumb(doc_id, png, "png", rec["version"], "server")
+    with _thumb_slots:
+        rec = store.get(doc_id)
+        png = preview.render_preview(rec["doc"], "isometric", 480, 360, transparent=True)
+        store.set_thumb(doc_id, png, "png", rec["version"], "server")
 
 
 @app.get("/api/docs/{doc_id}/thumb")

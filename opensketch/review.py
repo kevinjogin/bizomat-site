@@ -477,6 +477,9 @@ def summary(data: dict) -> dict:
             "changed_parts": [p["name"] for p in data["parts"].values() if p.get("changed")]}
 
 
+KEEP_PER_DOC = 20  # published links kept per document (each is a full set of meshes)
+
+
 def publish(doc_id: str, compare_version: int | None = None, title: str | None = None,
             notes: str | None = None, by: str = "you", base: str | None = None) -> dict:
     """Build and store a review of a stored document's current version. Returns its record with `url`."""
@@ -499,7 +502,11 @@ def publish(doc_id: str, compare_version: int | None = None, title: str | None =
             "version": rec["version"], "compare": compare_version, "by": by, "created": time.time(),
             "size_kb": len(raw) // 1024}
     with _lock:
-        _write_index([item] + _index())
+        items = [item] + _index()
+        mine = [i for i in items if i["doc_id"] == doc_id]
+        _write_index(items)
+    for old in mine[KEEP_PER_DOC:]:  # the newest KEEP_PER_DOC links of a document stay; older ones go
+        delete(old["token"])
     return dict(item, url=share_url(token, base), checks=summary(data))
 
 

@@ -105,6 +105,9 @@ def test_openai_compatible_provider_runs_a_copilot_session(monkeypatch):
         seen.append(body)
         assert request.headers["authorization"] == "Bearer sk-fake-1234567890"
         assert request.url.path == "/v1/chat/completions" and body["model"] == "fake-model" and body["stream"]
+        # a custom address is connected by the address checked just now (no second DNS lookup), with its name
+        assert request.url.host == "93.184.215.14" and request.headers["host"] == "llm.example.com"
+        assert request.extensions["sni_hostname"] == "llm.example.com"
         if len(seen) == 1:
             pieces = [args[i:i + 40] for i in range(0, len(args), 40)]
             chunks = [{"choices": [{"delta": {"content": "Base plate first."}}]},
@@ -119,6 +122,7 @@ def test_openai_compatible_provider_runs_a_copilot_session(monkeypatch):
 
     real = httpx.Client
     monkeypatch.setattr(providers.httpx, "Client", lambda **kw: real(transport=httpx.MockTransport(handler), **kw))
+    monkeypatch.setattr(providers, "resolve_public", lambda host, port: "93.184.215.14")
     cfg = {"provider": "custom", "model": "fake-model", "base_url": "https://llm.example.com/v1", "key": "sk-fake-1234567890", "source": "yours"}
     doc = {"version": 1, "name": "Part1", "units": "mm", "features": [], "rollback": None, "seq": 1}
     events = list(ai.run_stream(doc, "An 80 x 50 x 8 plate", ai_config=cfg))
@@ -141,3 +145,18 @@ def test_provider_errors_reach_the_chat(monkeypatch):
     assert events[-1]["ev"] == "error" and "Incorrect API key" in events[-1]["message"] and "Built-in AI" in events[-1]["message"]
     no_key = list(ai.run_stream({"version": 1, "name": "P", "units": "mm", "features": []}, "x"))
     assert no_key[-1]["ev"] == "error" and "API key" in no_key[-1]["message"]
+
+
+def test_custom_addresses_must_stay_public(monkeypatch):
+    for url in ("https://localhost/v1", "https://127.0.0.1/v1", "https://169.254.169.254/latest", "https://[::ffff:127.0.0.1]/",
+                "https://100.64.0.1/v1", "https://[64:ff9b::7f00:1]/v1", "https://[fdaa::3]/v1", "http://api.example.com/v1",
+                "https://user:pw@api.example.com/v1"):
+        with pytest.raises(providers.ProviderError):
+            providers.check_base_url(url)
+    # rebinding: the name was public when saved, private when the request is made
+    answers = iter(["93.184.215.14", "127.0.0.1"])
+    import socket
+    monkeypatch.setattr(socket, "getaddrinfo", lambda host, port, **kw: [(socket.AF_INET, socket.SOCK_STREAM, 6, "", (next(answers), port))])
+    assert providers.check_base_url("https://rebind.example.com/v1") == "https://rebind.example.com/v1"
+    with pytest.raises(providers.ProviderError):
+        providers.pinned("https://rebind.example.com/v1/models")

@@ -67,6 +67,11 @@
 #ribbon::-webkit-scrollbar { display: none; }
 .doctitle { min-width: 0; }
 
+/* close and help are real buttons (keyboard and screen readers) */
+.dlg-h .x, .pm-title .pm-help { border: 0; background: transparent; font: inherit; color: inherit; cursor: pointer; padding: 0; }
+.pm-title .pm-help { margin-left: auto; width: 22px; height: 22px; border-radius: 5px; color: var(--accent-text); }
+.pm-title .pm-help:hover { background: var(--hover-bg); }
+
 /* menus above the Files page and dialogs */
 .contextmenu { z-index: 320 !important; }
 

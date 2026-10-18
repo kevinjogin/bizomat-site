@@ -152,7 +152,12 @@ def test_google_sign_in_links_by_verified_email(monkeypatch):
     assert b"Continue with Google" not in c.get("/login").content  # not configured: no button
     _owner(c)
     c.get("/logout")
-    _google(monkeypatch, {"sub": "g-1", "email": "YZ@example.com", "email_verified": True, "name": "YZ"})
+    # a Google account made for a non-Google address (no hd) cannot take over an account with a password
+    _google(monkeypatch, {"sub": "g-x", "email": "YZ@example.com", "email_verified": True, "name": "Someone"})
+    r = _google_round(c)
+    assert r.status_code == 403 and b"Sign in with its password" in r.content
+    # Gmail or a Workspace account in its own domain (hd) links itself
+    _google(monkeypatch, {"sub": "g-1", "email": "YZ@example.com", "email_verified": True, "name": "YZ", "hd": "example.com"})
     assert b"Continue with Google" in c.get("/login").content
     r = _google_round(c)
     assert r.status_code == 303 and r.headers["location"] == "/"

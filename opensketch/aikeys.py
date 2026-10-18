@@ -138,4 +138,14 @@ def server_config() -> dict | None:
 
 
 def effective(user: dict | None) -> dict | None:
-    return config_for(owner_id(user)) or server_config()
+    """The person's own key, else the server's. With open sign-up on, strangers could sign up and spend the
+    owner's key, so then only the owner uses it (OPENSKETCH_SHARE_SERVER_KEY=all shares it anyway)."""
+    own = config_for(owner_id(user))
+    if own:
+        return own
+    cfg = server_config()
+    if cfg and user and not user.get("legacy") and user.get("role") != "owner" and os.environ.get("OPENSKETCH_SHARE_SERVER_KEY") != "all":
+        from . import accounts
+        if accounts.settings()["open_signup"]:
+            return None
+    return cfg

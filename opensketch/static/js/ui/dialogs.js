@@ -21,7 +21,7 @@ export function dialog({ title, body, buttons = [], x, y, modal = true, cls = ''
   if (!modal) back.style.pointerEvents = 'none';
   const dlg = h('div', 'dlg ' + cls);
   dlg.style.pointerEvents = 'auto';
-  const head = h('div', 'dlg-h', '<span></span><span class="x" title="Close">&#x2715;</span>');
+  const head = h('div', 'dlg-h', '<span></span><button class="x" title="Close" aria-label="Close">&#x2715;</button>');
   head.firstElementChild.textContent = title;
   dlg.setAttribute('role', 'dialog'); dlg.setAttribute('aria-label', title);
   if (modal) dlg.setAttribute('aria-modal', 'true');
@@ -70,8 +70,6 @@ export function dialog({ title, body, buttons = [], x, y, modal = true, cls = ''
   };
   document.addEventListener('keydown', key, true);
   head.querySelector('.x').onclick = close;
-  head.querySelector('.x').setAttribute('role', 'button');
-  head.querySelector('.x').setAttribute('aria-label', 'Close');
   if (modal) setTimeout(() => {
     if (dlg.contains(document.activeElement)) return;
     const t = dlg.querySelector('input:not([readonly]):not([type=hidden]), textarea, select') || dlg.querySelector('.dlg-f .btn.primary') || dlg.querySelector('button');

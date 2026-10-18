@@ -32,7 +32,26 @@ MODEL = "claude-opus-5-5"
 MAX_ROUNDS = 40
 MAX_TOKENS = 32000
 
-_conversations: dict[str, list] = {}
+class _Conversations(dict):
+    """Chat histories by id, newest kept (each holds model JSON): a bounded memory, oldest dropped."""
+    MAX = 200
+
+    def __setitem__(self, k, v):
+        super().pop(k, None)
+        super().__setitem__(k, v)
+        while len(self) > self.MAX:
+            super().pop(next(iter(self)))
+
+    def setdefault(self, k, default=None):
+        if k in self:
+            v = super().pop(k)  # touched: newest again
+            super().__setitem__(k, v)
+            return v
+        self[k] = default
+        return default
+
+
+_conversations: dict[str, list] = _Conversations()
 _live_ids = itertools.count(1)
 
 

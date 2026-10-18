@@ -94,7 +94,10 @@ def _directory() -> Path:
 def _signature(artifact_id: str, filename: str, expires: int) -> str:
     # Domain separation prevents a download signature from being used as any other credential.
     message = f"opensketch-artifact-v1\n{artifact_id}\n{filename}\n{expires}"
-    return hmac.new(auth.mcp_token().encode(), message.encode(), hashlib.sha256).hexdigest()
+    # keyed by the random data-folder secret and the connector address: a new server password still revokes
+    # every link, but a short password cannot be guessed offline from one
+    key = hmac.new(auth.data_secret("artifact-download"), auth.mcp_token().encode(), hashlib.sha256).digest()
+    return hmac.new(key, message.encode(), hashlib.sha256).hexdigest()
 
 
 def _cleanup(directory: Path) -> None:
@@ -158,7 +161,7 @@ def resolve(artifact_id: str, filename: str, expires: str, signature: str) -> tu
         expiry = int(expires)
     except (TypeError, ValueError):
         raise ArtifactError("No such artifact.") from None
-    if expiry <= time.time() or not hmac.compare_digest(signature, _signature(artifact_id, filename, expiry)):
+    if expiry <= time.time() or not hmac.compare_digest(str(signature).encode(), _signature(artifact_id, filename, expiry).encode()):
         raise ArtifactError("No such artifact.")
     path = _directory() / f"{artifact_id}.bin"
     try:

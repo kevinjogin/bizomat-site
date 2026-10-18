@@ -402,8 +402,15 @@ def listing(visible=None, deleted: bool = False) -> list[dict]:
     limit = time.time() - TRASH_DAYS * 86400
     for m in _all_meta():
         if m.get("deleted") and m["deleted"] < limit:
-            purge(m["id"])
-            continue
+            with lock(m["id"]):  # still in the Trash and old (not restored a moment ago)?
+                try:
+                    fresh = meta(m["id"])
+                except NotFound:
+                    continue
+                if fresh.get("deleted") and fresh["deleted"] < limit:
+                    purge(m["id"])
+                    continue
+            m = fresh
         if bool(m.get("deleted")) != deleted:
             continue
         if visible is not None and not visible(m):

@@ -45,6 +45,15 @@ export class ServerDocs {
     window.addEventListener('beforeunload', (e) => {
       if (this.link?.local || this.pushing) { this.flush(); e.preventDefault(); e.returnValue = ''; }
     });
+    // the page is going away with unsent edits: a last save that outlives the page (small models only;
+    // larger ones stay in this browser's copy and the next open asks which version to keep)
+    window.addEventListener('pagehide', () => {
+      const L = this.link;
+      if (!L?.local || this.app.proposal) return;
+      const body = JSON.stringify({ doc: this.app.rootDoc(), base_version: L.version, summary: '', requests: L.requests });
+      if (body.length > 60000) return;
+      try { fetch(`/api/docs/${encodeURIComponent(L.id)}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }); } catch (_) { /* best effort */ }
+    });
   }
 
   get linked() { return !!this.link; }
@@ -285,12 +294,18 @@ export class ServerDocs {
     bar.innerHTML = `<span>${esc(who)} changed this model (${esc(h.summary || 'a change')}) while you were editing.</span>`;
     const take = document.createElement('button'); take.className = 'btn primary'; take.textContent = `Load ${who === 'Your AI' ? "the AI's" : 'their'} version`;
     take.onclick = async () => {
-      this.hideBar();
-      if (this.app.mode === 'sketch') this.app.exitSketch({ silent: true });
-      this.app.closeCommand();
+      take.disabled = true;
       clearTimeout(this.pushTimer);
-      const rec = await this.req('GET', `/api/docs/${this.link.id}`);
-      await this.apply(rec, { label: `${who}: ${rec.summary || 'change'}` });
+      try { await this.pushing; } catch (_) { /* a save in flight finishes (or fails) first */ }
+      if (this.link) this.link.local = false; // their version replaces the local edits
+      clearTimeout(this.pushTimer);
+      try {
+        const rec = await this.req('GET', `/api/docs/${this.link.id}`);
+        this.hideBar();
+        if (this.app.mode === 'sketch') this.app.exitSketch({ silent: true });
+        this.app.closeCommand();
+        await this.apply(rec, { label: `${who}: ${rec.summary || 'change'}` });
+      } catch (err) { take.disabled = false; this.app.toast?.('Could not load it: ' + err.message); }
     };
     const keep = document.createElement('button'); keep.className = 'btn'; keep.textContent = 'Keep mine';
     keep.title = 'Save your version over it. Theirs stays in the version history.';

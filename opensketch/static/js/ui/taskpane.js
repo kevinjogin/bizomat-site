@@ -286,6 +286,7 @@ export class TaskPane {
     try {
       const r = await fetch('/api/ai/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: ctl.signal,
         body: JSON.stringify({ doc: before, prompt, conversation: this.conversation, demo: opts.demo || false, selection: selection && selection.length ? selection : null }) });
+      if (r.status === 401) { location.href = '/login?next=' + encodeURIComponent(location.pathname + location.search); throw new Error('Sign in again.'); }
       if (!r.ok || !r.body) throw new Error(`Server error ${r.status}`);
       const reader = r.body.getReader();
       const dec = new TextDecoder();
@@ -297,10 +298,10 @@ export class TaskPane {
         let i;
         while ((i = buf.indexOf('\n')) >= 0) {
           const line = buf.slice(0, i).trim(); buf = buf.slice(i + 1);
-          if (line) this.onEvent(JSON.parse(line), S);
+          if (line) { let ev = null; try { ev = JSON.parse(line); } catch (_) { /* a damaged line: skip it, keep the rest */ } if (ev) this.onEvent(ev, S); }
         }
       }
-      if (buf.trim()) this.onEvent(JSON.parse(buf), S);
+      if (buf.trim()) { try { this.onEvent(JSON.parse(buf), S); } catch (_) { /* cut off */ } }
     } catch (err) {
       S.error = ctl.signal.aborted ? 'Stopped.' : String(err.message || err);
     }

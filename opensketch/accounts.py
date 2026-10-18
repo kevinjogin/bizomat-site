@@ -13,7 +13,9 @@ from __future__ import annotations
 
 import hashlib
 import hmac
+import copy
 import json
+import tempfile
 import os
 import re
 import secrets
@@ -37,20 +39,48 @@ def _dir():
     return store.data_dir()
 
 
+_cache: dict[str, tuple] = {}  # file -> (mtime_ns, size, parsed): every request reads these
+
+
 def _read(name: str, empty):
+    """The parsed file (a fresh copy, callers may change it), cached until the file changes. A missing file is
+    `empty`; a damaged one raises: users.json must never read as "no accounts" (that would open the server)."""
     p = _dir() / name
     try:
-        return json.loads(p.read_text())
-    except (FileNotFoundError, ValueError):
-        return empty
+        st = p.stat()
+    except FileNotFoundError:
+        if name == "users.json" and (_dir() / "accounts.enabled").exists():
+            raise AccountError("The accounts file is missing. Restore users.json from a backup.") from None
+        return copy.deepcopy(empty)
+    hit = _cache.get(str(p))
+    if hit and hit[0] == st.st_mtime_ns and hit[1] == st.st_size:
+        return copy.deepcopy(hit[2])
+    try:
+        data = json.loads(p.read_text())
+    except ValueError:
+        if name == "users.json":
+            raise AccountError("The accounts file is damaged. Restore users.json from a backup.") from None
+        return copy.deepcopy(empty)  # sessions: everyone signs in again
+    _cache[str(p)] = (st.st_mtime_ns, st.st_size, data)
+    return copy.deepcopy(data)
 
 
 def _write(name: str, data) -> None:
     p = _dir() / name
-    tmp = p.with_suffix(".tmp")
-    tmp.write_text(json.dumps(data, indent=1))
-    os.chmod(tmp, 0o600)
-    tmp.replace(p)
+    fd, tmp = tempfile.mkstemp(prefix=name + ".", suffix=".tmp", dir=p.parent)  # never shared between writers
+    try:
+        with os.fdopen(fd, "w") as f:
+            f.write(json.dumps(data, indent=1))
+        os.chmod(tmp, 0o600)
+        os.replace(tmp, p)
+    except BaseException:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+    if name == "users.json" and data.get("users"):
+        (_dir() / "accounts.enabled").touch()  # from now on a missing users.json fails closed
 
 
 def _users() -> dict:
@@ -285,14 +315,18 @@ def sign_up(email: str, name: str, password: str | None, google: str | None = No
         return public(u)
 
 
-def google_user(sub: str, email: str, verified: bool) -> dict | None:
+def google_user(sub: str, email: str, verified: bool, managed: bool = True) -> dict | None:
     """The account for a Google sign-in: already linked to this Google id, or (verified email) the account with
-    that email, which gets linked. None when there is no such account."""
+    that email, which gets linked. None when there is no such account. managed: the address is run by Google
+    (Gmail, or a Workspace account in its own domain); other addresses can sit on a Google account someone else
+    controls, so they never take over an account that has a password."""
     with _lock:
         data = _users()
         u = next((x for x in data["users"] if x.get("google") == sub), None)
         if u is None and verified:
             u = next((x for x in data["users"] if x["email"] == (email or "").strip().lower()), None)
+            if u is not None and not managed and u.get("hash"):
+                raise AccountError("There is already an account with this email. Sign in with its password.")
             if u is not None:
                 u["google"] = sub
                 _write("users.json", data)
