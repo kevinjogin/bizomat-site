@@ -307,3 +307,38 @@ def test_an_untouched_new_file_can_be_discarded():
     assert c.delete(f"/api/docs/{named['id']}?untouched=1").json() == {"kept": True}
     assert c.delete(f"/api/docs/{used['id']}?untouched=1").json() == {"kept": True}
     assert sorted(f["name"] for f in c.get("/api/docs").json()) == ["Bracket", used["name"]]
+
+
+def test_each_person_has_their_own_room_for_downloads(monkeypatch):
+    monkeypatch.setattr(artifacts, "PERSON_FILES", 2)
+    a = store.create("A", _block(), owner="alice00000001")
+    b = store.create("B", _block(), owner="bob000000001")
+    first = artifacts.export_record(a, "osk")
+    artifacts.export_record(a, "osk")
+    artifacts.export_record(a, "osk")  # Alice's oldest makes room
+    names = {p.stem for p in (store.data_dir() / "artifacts").glob("*.bin")}
+    assert first["artifact_id"] not in names and len(names) == 2
+    artifacts.export_record(b, "osk")  # Bob is not affected by Alice's use
+    assert len(list((store.data_dir() / "artifacts").glob("*.bin"))) == 3
+    # the whole store full of other people's downloads: a preview still comes back, without a link
+    monkeypatch.setattr(artifacts, "MAX_ARTIFACTS", 3)
+    from tests.test_assembly import plate
+    p = store.create("Plate", plate(), owner="carol0000001")
+    result, raw = artifacts.preview_record(p, "isometric", 160, 128)
+    assert raw.startswith(b"\x89PNG") and result["download_url"] is None and "No download link" in result["note"]
+    with pytest.raises(artifacts.ArtifactError, match="store is full"):
+        artifacts.export_record(p, "osk")
+
+
+def test_unused_upload_links_hold_no_room(monkeypatch):
+    with TestClient(server.app) as c:
+        url = f"/mcp/{auth.mcp_token()}"
+        call = lambda **a: json.loads(_rpc(c, url, "tools/call", {"name": "request_upload", "arguments": a})["content"][0]["text"])
+        monkeypatch.setattr(uploads, "MAX_RESERVED", 3000)
+        links = [call(filename="a.step") for _ in range(uploads.MAX_PENDING)]
+        assert all("upload_id" in link for link in links)  # open links promise nothing
+        path = lambda link: link["upload_url"].split("testserver", 1)[1]
+        assert c.put(path(links[0]), content=b"x" * 2000).status_code == 201
+        r = c.put(path(links[1]), content=b"x" * 2000)  # the area holds 3000 bytes: this one does not fit
+        assert r.status_code == 507 and "full" in r.json()["error"]
+        assert c.put(path(links[1]), content=b"x" * 500).status_code == 201  # the link stays usable

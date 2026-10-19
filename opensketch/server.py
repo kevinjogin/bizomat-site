@@ -1229,6 +1229,8 @@ async def api_upload(upload_id: str, request: Request, expires: str = "", signat
         return _upload_reply({"error": str(exc)}, exc.status)
     digest, size, wire, ok = hashlib.sha256(), 0, 0, False
     unzip = zlib.decompressobj(16 + zlib.MAX_WBITS) if gz else None
+    space = uploads.room()  # the upload area's share of the disk, counted as the file arrives
+    full = {"error": "The upload area is full. Try again in a few minutes."}
 
     def keep(data: bytes) -> bool:
         nonlocal size
@@ -1248,10 +1250,14 @@ async def api_upload(upload_id: str, request: Request, expires: str = "", signat
                 if unzip is None:
                     if not keep(chunk):
                         return _upload_reply(too_big, 413)
+                    if size > space:
+                        return _upload_reply(full, 507)
                     continue
                 piece = unzip.decompress(chunk, cap - size + 1)  # bounded: a small gzip that unpacks to gigabytes stops here
                 if not keep(piece) or unzip.unconsumed_tail:
                     return _upload_reply(too_big, 413)
+                if size > space:
+                    return _upload_reply(full, 507)
             if unzip is not None:
                 if not keep(unzip.flush()):
                     return _upload_reply(too_big, 413)
