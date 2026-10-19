@@ -422,7 +422,7 @@ select.cx-model { cursor: pointer; }
   body:not(.review-mode) #leftpanel:has(> #propmgr:not(.hidden)) { transform: none; top: auto; bottom: 0; right: 0; width: auto; height: 44%;
     border-radius: 16px 16px 0 0; box-shadow: 0 -12px 40px rgba(0, 0, 0, .45); }
   /* the file name chip sits below the centred heads-up toolbar instead of under it */
-  .breadcrumbs { top: 48px; }
+  body:not(.review-mode) .breadcrumbs { top: 48px; }
   .banners, .skin-linear .banners { top: 76px; }
   /* the context toolbar of a tree row shows above the drawer it was opened from */
   .contexttb { z-index: 50; }
@@ -437,7 +437,7 @@ select.cx-model { cursor: pointer; }
 @media (pointer: coarse) {
   input:not([type=range], [type=checkbox], [type=radio]), select, textarea { font-size: 16px !important; }
   .cmdtab { min-height: 32px; display: inline-flex; align-items: center; }
-  .cmdtabs { height: auto !important; }
+  .cmdtabs, .skin-linear .cmdtabs { height: auto; }
   .mgrtab { min-width: 36px; min-height: 32px; }
   .qa, .tb-tree, .tb-files { min-width: 32px; min-height: 32px; justify-content: center; }
   .fv-more { width: 36px; height: 36px; }
