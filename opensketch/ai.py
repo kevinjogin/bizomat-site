@@ -440,6 +440,8 @@ def _type_ok(t, v) -> bool:
     if t in ("number", "integer"):
         return (isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
                 and (t == "number" or float(v).is_integer()))
+    if t == "string" and isinstance(v, (int, float)) and not isinstance(v, bool):
+        return True  # an expression or a name written as a bare number ("expression": 2) means the same
     return isinstance(v, _JSON_TYPES[t]) if t in _JSON_TYPES else True
 
 
