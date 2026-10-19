@@ -229,9 +229,11 @@ export class App {
     return !!this.dirty && (isAssembly(d) ? (d.components || []).length > 0 : (d.features || []).length > 0);
   }
 
-  // Before something replaces an unsaved draft: offer to save it. Resolves true to go ahead.
-  confirmLeaveDraft() {
-    if (!this.dirtyDraft()) return Promise.resolve(true);
+  // Before something replaces the open model: an AI change still waiting is accepted or discarded, and an unsaved
+  // draft is offered to Files. Resolves true to go ahead.
+  async confirmLeaveDraft() {
+    if (this.proposal && !(await this.confirmProposal())) return false;
+    if (!this.dirtyDraft()) return true;
     const name = this.rootDoc().name || 'Untitled';
     return new Promise((resolve) => {
       let answered = false, saving = false;
@@ -243,6 +245,20 @@ export class App {
           { label: 'Cancel', run: () => done(false) },
           // the Save to Files dialog answers: saved -> go on to what was asked (open the file, New...)
           { label: 'Save to Files', primary: true, run: () => { saving = true; setTimeout(() => this.server.saveDraft().then(done), 0); } },
+        ] });
+    });
+  }
+
+  confirmProposal() {
+    return new Promise((resolve) => {
+      let answered = false;
+      const done = (v) => { if (!answered) { answered = true; resolve(v); } };
+      dialog({ title: "Keep the AI's change?", cls: 'acct-dlg', onClose: () => done(false),
+        body: `<p class="fv-p">The AI's change to <b>${esc(this.rootDoc().name || 'this model')}</b> is not accepted yet. Accept it before you leave?</p>`,
+        buttons: [
+          { label: 'Discard', run: () => { this.rejectProposal(true); done(true); } },
+          { label: 'Cancel', run: () => done(false) },
+          { label: 'Accept', primary: true, run: () => { this.acceptProposal(); done(true); } },
         ] });
     });
   }
@@ -328,14 +344,14 @@ export class App {
   // Another document takes the editor (a file opened, New, a file from the computer). Undo is per document, as
   // in SOLIDWORKS: the history starts again, so Ctrl+Z can never put the previous model into this one.
   leaveDocument() {
-    if (this.proposal) this.rejectProposal(true);
+    if (this.proposal) this.rejectProposal(true, 'Not applied: another file was opened.');
     this.docStack = [];
     this.undoStack = []; this.redoStack = [];
     this.docEpoch = (this.docEpoch || 0) + 1;
   }
 
   pushUndo(label) {
-    if (this.proposal) this.rejectProposal(true);
+    this.settleProposal();
     this.undoStack.push({ label, json: JSON.stringify(this.cleanDoc()) });
     if (this.undoStack.length > 200) this.undoStack.shift();
     this.redoStack = [];
@@ -1123,6 +1139,7 @@ export class App {
   // ------------------------------------------------------------------ feature commands
   featureCommand(key, existing = null) {
     if (this.isAsm) { this.toast('Features are added in a part. Select a component and click Open Part.'); return; }
+    this.settleProposal(); // new ids and names must not clash with the AI's
     if (this.mode === 'sketch') {
       const sid = this.sketcher.skId;
       this.exitSketch();
@@ -1270,6 +1287,7 @@ export class App {
   }
 
   sketchOn(p, pendingFeature = null) {
+    this.settleProposal(); // before the snapshot that Cancel goes back to
     let spec, frame;
     if (p.kind === 'plane') { spec = { ref: p.id }; frame = this.planeFrame(p.id); }
     else { frame = frameForFace(p.data.normal, p.data.center); spec = { type: 'face', origin: frame.origin, normal: frame.normal, xdir: frame.xdir }; }
@@ -1287,6 +1305,7 @@ export class App {
   editSketch(id) {
     if (this.mode === 'sketch') this.exitSketch();
     if (this.cmd) this.pmCancel();
+    this.settleProposal();
     const f = this.featureById(id);
     if (!f) return;
     const frame = this.sketchFrame(id);
@@ -2059,26 +2078,47 @@ export class App {
     if (fit) this.viewer.zoomToFit();
   }
 
+  // Accept the AI's change (one undo step). Returns false when there is none any more. Edits made while the AI
+  // was building are replaced by its version: a toast says so and Undo brings them back.
   acceptProposal() {
     const p = this.proposal;
-    if (!p) return;
+    if (!p) return false;
     const wasAsm = this.isAsm;
-    this.proposal = null;
+    const replaced = this.proposalBase && this.proposalBase !== JSON.stringify(this.cleanDoc());
+    this.proposal = null; this.proposalBase = null;
     this.pushUndo('AI change');
     this.doc = { ...p, seq: Math.max(this.doc.seq || 1, p.seq || 1) };
     this.proposedIds = [];
+    this.markProposal('accepted');
     this.docChanged();
     if (wasAsm) this.ribbon.setTab('Assembly');
     this.regen();
+    if (replaced) this.toast('The edits you made while the AI was working were replaced by its version.', 8000, { label: 'Undo', run: () => this.undo() });
+    return true;
   }
 
-  rejectProposal(silent = false) {
+  // note: why it was set aside, shown on its chat card instead of "Rejected"
+  rejectProposal(silent = false, note = null) {
     if (!this.proposal) return;
-    this.proposal = null; this.proposedIds = [];
-    for (const m of this.taskpane.log) if (m.state === 'pending') m.state = 'rejected';
+    this.proposal = null; this.proposedIds = []; this.proposalBase = null;
+    this.markProposal('rejected', note);
     this.updateDocChrome();
     if (!this.isAsm) this.viewer.setAssembly([], {});
-    if (!silent) { this.regen(); this.taskpane.render(); }
+    if (!silent) this.regen();
+  }
+
+  // The chat card of the AI change that was waiting says what became of it.
+  markProposal(state, note = null) {
+    let n = 0;
+    for (const m of this.taskpane?.log || []) if (m.role === 'proposal' && m.state === 'pending') { m.state = state; m.note = note; n++; }
+    if (n) this.taskpane.render();
+  }
+
+  // An edit while an AI change waits builds on that change (it is what is on screen, and previews use it), so the
+  // change is accepted first, as its own undo step: never thrown away without a word.
+  settleProposal() {
+    if (!this.proposal) return;
+    if (this.acceptProposal()) this.toast("Kept the AI's change so you can edit it. Ctrl+Z takes it back.", 5000);
   }
 
   // ------------------------------------------------------------------ chrome

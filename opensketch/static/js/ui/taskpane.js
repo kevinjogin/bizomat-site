@@ -174,12 +174,13 @@ export class TaskPane {
       el.innerHTML = `<b>${esc(m.summary || 'Proposed change')}</b><div class="feats">${m.features.map((f) => '&bull; ' + esc(f)).join('<br>')}</div>`;
       if (m.state === 'pending') {
         const btns = h('div', 'btns');
-        const ok = h('button', 'btn primary', 'Accept'); ok.onclick = () => { this.app.acceptProposal(); m.state = 'accepted'; this.render(); };
+        const ok = h('button', 'btn primary', 'Accept');
+        ok.onclick = () => { if (!this.app.acceptProposal()) { m.state = 'rejected'; m.note = 'Nothing to accept: the model changed since.'; } this.render(); };
         const no = h('button', 'btn danger', 'Reject'); no.onclick = () => { this.app.rejectProposal(); m.state = 'rejected'; this.render(); };
         btns.append(ok, no);
         if (m.assembly) { const pb = h('button', 'btn ai-inline', `${icon('playback', 12)}<span>Replay</span>`); pb.title = 'Replay the assembly order'; pb.onclick = () => this.app.asm.playSequence(); btns.append(pb); }
         el.appendChild(btns);
-      } else el.appendChild(h('div', 'pm-note', m.state === 'accepted' ? 'Accepted' : 'Rejected'));
+      } else { const n = h('div', 'pm-note'); n.textContent = m.note || (m.state === 'accepted' ? 'Accepted' : 'Rejected'); el.appendChild(n); }
     } else if (m.role === 'request') {
       el = h('div', 'ai-request');
       const url = safeUrl(m.url);
@@ -266,6 +267,7 @@ export class TaskPane {
     const ctl = new AbortController();
     this.abort = ctl;
     const before = app.cleanDoc();
+    const epoch = app.docEpoch; // the file this request is about (another file opened meanwhile = not applied)
     const S = { text: null, think: null, acts: new Map(), proposal: null, done: null, error: null };
     try {
       const r = await fetch('/api/ai/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: ctl.signal,
@@ -301,6 +303,7 @@ export class TaskPane {
       const d = S.done;
       this.conversation = d.conversation || this.conversation;
       await app.live.finish();
+      if (d.proposal && app.docEpoch !== epoch) { d.proposal = null; this.add({ role: 'bot', text: 'Finished, but another file is open now, so the change was not applied there. Open the file again and ask once more.' }); }
       if (d.proposal) await this.showResult(d, before); // drawn under the live view, then revealed
       else if (d.reply && !(S.lastText && S.lastText.trim() === d.reply.trim())) this.add({ role: 'bot', text: d.reply });
       if (d.sources?.length) this.add({ role: 'sources', items: d.sources });
@@ -339,6 +342,7 @@ export class TaskPane {
     }
     if (d.reply && !(this.lastStreamed && this.lastStreamed.trim() === d.reply.trim())) this.add({ role: 'bot', text: d.reply });
     this.add({ role: 'proposal', summary: assembly ? `Assembly: ${p.name}` : d.summary, features: lines, state: 'pending', assembly });
+    app.proposalBase = JSON.stringify(before); // Accept says so if the model was edited while the AI worked
     return app.showProposal(p, ids, false);
   }
 

@@ -52,7 +52,7 @@ export class ServerDocs {
     // switching tabs or apps (phones may discard a hidden page): send the edits now rather than in a second
     document.addEventListener('visibilitychange', () => { if (document.hidden && this.link?.local) this.flush(); });
     window.addEventListener('beforeunload', (e) => {
-      if (this.link?.local || this.pushing) { this.flush(); e.preventDefault(); e.returnValue = ''; }
+      if (this.link?.local || this.pushing || this.app.proposal) { this.flush(); e.preventDefault(); e.returnValue = ''; } // an AI change waiting is only in this page
     });
     // the page is going away with unsent edits: a last save that outlives the page (small models only;
     // every model's unsent edits also stay in this browser, and opening the file again offers them back)

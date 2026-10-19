@@ -302,3 +302,39 @@ test('moving the open file to the Trash closes it: no draft to save, now or next
   assert.equal(app.restore(), false, 'no draft comes back at the next start');
   stopTimers(app);
 });
+
+test('an edit while an AI change waits keeps that change (accepted first, its own undo step)', async () => {
+  const app = makeApp();
+  app.doc = part('Plate', 1);
+  const card = { role: 'proposal', state: 'pending' };
+  app.taskpane.log = [card];
+  app.proposalBase = JSON.stringify(app.cleanDoc());
+  app.proposal = { ...part('Plate', 1), features: [...part('Plate', 1).features, { id: 'ai1', type: 'plane', name: 'AIPlane' }] };
+  app.commit('Fillet1', () => app.doc.features.push({ id: 'x1', type: 'plane', name: 'Fillet1' }), false);
+  assert.equal(app.proposal, null);
+  assert.deepEqual(app.doc.features.map((f) => f.id), ['f0', 'ai1', 'x1'], 'the edit is on top of the AI change');
+  assert.equal(card.state, 'accepted');
+  assert.match(app.toasts.at(-1), /Kept the AI's change/);
+  app.undo(); app.undo();
+  assert.deepEqual(app.doc.features.map((f) => f.id), ['f0'], 'Ctrl+Z twice goes back to before the AI');
+  stopTimers(app);
+});
+
+test('leaving a model with an AI change waiting asks first; the card says what became of it', async () => {
+  const app = makeApp();
+  app.doc = part('Plate', 1);
+  const card = { role: 'proposal', state: 'pending' };
+  app.taskpane.log = [card];
+  app.proposal = part('Plate', 2);
+  let go = app.confirmLeaveDraft();
+  await tick(); click('Cancel');
+  assert.equal(await go, false);
+  assert.ok(app.proposal, 'still waiting');
+  go = app.confirmLeaveDraft();
+  await tick(); click('Accept');
+  await tick(); click("Don't save"); // an unsaved draft is asked about next
+  assert.equal(await go, true);
+  assert.equal(card.state, 'accepted');
+  assert.equal(app.doc.features.length, 2);
+  stopTimers(app);
+});
