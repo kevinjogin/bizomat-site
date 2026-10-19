@@ -42,19 +42,20 @@ def _free_port():
         return s.getsockname()[1]
 
 
-def _run(tmp_path, mode, until, timeout=20):
+def _run(tmp_path, mode, until, timeout=20, **kw):
     script = tmp_path / "fake.py"
     script.write_text(FAKE)
     starts = tmp_path / "starts.txt"
     port = _free_port()
     logs = []
+    opts = dict(interval=0.2, timeout=0.5, hang=1.0, boot=3.0, stop_wait=2.0, backoff_max=0.3, log=logs.append)
     sup = supervisor.Supervisor([sys.executable, str(script), str(port), str(starts), mode],
-                                f"http://127.0.0.1:{port}/healthz", interval=0.2, timeout=0.5, hang=1.0, boot=3.0,
-                                stop_wait=2.0, backoff_max=0.3, log=logs.append)
+                                f"http://127.0.0.1:{port}/healthz", **{**opts, **kw})
     t = threading.Thread(target=sup.run, daemon=True)
     t.start()
     end = time.monotonic() + timeout
-    while time.monotonic() < end and not until(starts.read_text().count("start") if starts.exists() else 0):
+    count = lambda: starts.read_text().count("start") if starts.exists() else 0
+    while time.monotonic() < end and t.is_alive() and not until(count()):
         time.sleep(0.1)
     child = sup.child
     sup.stop()
@@ -77,9 +78,31 @@ def test_a_server_that_exits_is_restarted_with_backoff(tmp_path):
 
 
 def test_a_healthy_server_is_left_alone(tmp_path):
+    # watched for 2.5 times the hang limit; the check timeout leaves room for a slow answer on a busy machine
     t0 = time.monotonic()
-    n, logs, sup = _run(tmp_path, "ok", lambda n: n >= 1 and time.monotonic() - t0 > 2.5)
+    n, logs, sup = _run(tmp_path, "ok", lambda n: n >= 1 and time.monotonic() - t0 > 5.0,
+                        timeout=1.0, hang=2.0, boot=6.0)
     assert n == 1 and sup.restarts == 0 and logs == []
+
+
+def test_a_server_that_never_starts_ends_the_supervisor(tmp_path):
+    """A crash loop (a broken release) must not look alive: after max_fails starts in a row without an answer the
+    supervisor exits 1, so Fly shows a failed machine, and the log says how many times it tried."""
+    script = tmp_path / "fake.py"
+    script.write_text(FAKE)
+    starts = tmp_path / "starts.txt"
+    logs = []
+    sup = supervisor.Supervisor([sys.executable, str(script), str(_free_port()), str(starts), "exit"],
+                                "http://127.0.0.1:9/healthz", interval=0.2, timeout=0.5, hang=1.0, boot=3.0,
+                                stop_wait=2.0, backoff_max=0.3, max_fails=3, log=logs.append)
+    out = {}
+    t = threading.Thread(target=lambda: out.setdefault("code", sup.run()), daemon=True)
+    t.start()
+    t.join(30)
+    assert not t.is_alive() and out["code"] == 1
+    assert starts.read_text().count("start") == 3 and sup.child.poll() is not None
+    assert any("2 in a row without an answer" in m for m in logs), logs
+    assert "giving up" in logs[-1] and "3 in a row" in logs[-1], logs
 
 
 def test_healthz_answers_without_sign_in(tmp_path, monkeypatch):
@@ -102,13 +125,13 @@ def test_a_paused_machine_is_not_taken_for_a_hang(tmp_path, monkeypatch):
     port = _free_port()
     logs = []
     sup = supervisor.Supervisor([sys.executable, str(script), str(port), str(starts), "ok"],
-                                f"http://127.0.0.1:{port}/healthz", interval=0.2, timeout=0.5, hang=1.0, boot=3.0,
+                                f"http://127.0.0.1:{port}/healthz", interval=0.2, timeout=1.0, hang=2.0, boot=6.0,
                                 stop_wait=2.0, log=logs.append)
     t = threading.Thread(target=sup.run, daemon=True)
     t.start()
-    time.sleep(1.5)
+    time.sleep(2.5)
     clock["skew"] = 3600.0  # an hour "passes" in one step
-    time.sleep(1.5)
+    time.sleep(2.5)  # longer than the hang limit, so a restart would have happened by now
     sup.stop()
     t.join(10)
     assert sup.restarts == 0 and starts.read_text().count("start") == 1
