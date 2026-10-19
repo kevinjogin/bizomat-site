@@ -1,9 +1,15 @@
-# Fly.io: OpenSketch in Sydney, 2 GB, stopped when idle (woken by the next request, a few seconds).
+# Fly.io: OpenSketch in Sydney on one dedicated CPU core with 2 GB, stopped when idle (woken by the next request,
+# a few seconds). performance-1x since 2026-10-19: on shared-cpu-2x a big rebuild or a server-drawn picture used up
+# the burst allowance and the machine dropped to ~6% of a core, so the site froze for 10+ minutes. Billed only while
+# it runs (about US$0.06 an hour in Sydney). Inside, `--supervise` (Dockerfile) restarts the server when it stops
+# answering, since Fly only restarts a machine whose process exits.
 # Deployed by .github/workflows/deploy.yml on every push to main once FLY_API_TOKEN is set in the repo's
 # secrets; the app name can be changed with the repository variable FLY_APP (it must be unique on Fly).
 
 app = "opensketch-yz"
 primary_region = "syd"
+# the supervisor gives the server 8 s to finish open requests before killing it; Fly waits this long for both
+kill_timeout = 15
 
 [build]
   dockerfile = "Dockerfile"
@@ -24,7 +30,7 @@ primary_region = "syd"
     hard_limit = 100
 
 [[vm]]
-  size = "shared-cpu-2x"
+  size = "performance-1x"
   memory = "2gb"
 
 # the documents (and their versions); one machine, since a volume belongs to one machine

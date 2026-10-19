@@ -54,4 +54,6 @@ RUN if [ "$WITH_MACRO" = "1" ]; then \
 # runs as root inside the container: Fly mounts the /data volume owned by root
 RUN mkdir -p /data
 EXPOSE 8080
-CMD ["python", "-m", "opensketch", "--host", "0.0.0.0", "--port", "8080", "--no-browser"]
+# --supervise: a small parent process asks the server for /healthz every 5 s and restarts it when it stops answering
+# for 2 minutes (OPENSKETCH_HANG_SECONDS) or exits; the hung server's thread stacks go to the log first
+CMD ["python", "-m", "opensketch", "--host", "0.0.0.0", "--port", "8080", "--no-browser", "--supervise"]

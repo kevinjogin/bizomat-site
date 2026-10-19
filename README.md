@@ -207,9 +207,11 @@ View > Theme: Dark, Light, or Classic (SOLIDWORKS colours). Ctrl+K jumps to comm
 ## Host it on Fly.io (optional, when you need it)
 
 The codespace is free but only reachable while it is open. To have OpenSketch always reachable at a fixed
-address (for example so Claude can use it any time), host it on Fly.io: about US$3 to 8 a month for one
+address (for example so Claude can use it any time), host it on Fly.io: about US$5 to 15 a month for one
 person, because the server stops when idle and wakes on the next request (the first one after a break
-takes a few seconds). Everything is set up already; it is all browser steps:
+takes a few seconds). It runs on one dedicated CPU core (`performance-1x` in fly.toml, about US$0.06 an hour
+while running); the cheaper shared CPU slows to a crawl on big models. If the server ever stops answering, it
+restarts itself within about two minutes. Everything is set up already; it is all browser steps:
 
 1. Sign up at fly.io and add a card.
 2. In the Fly dashboard, open Tokens and create an organization token for your personal organization.

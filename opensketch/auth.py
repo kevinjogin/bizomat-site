@@ -510,6 +510,8 @@ class PasswordGate:
         path = scope.get("path", "")
         if scope.get("method") not in ("GET", "HEAD", "OPTIONS") and not _machine_path(path) and not _same_origin(scope):
             return await _send(send, 403, b'{"error":"This request did not come from OpenSketch."}', [(b"content-type", b"application/json")])
+        if path == "/healthz" and scope.get("method") in ("GET", "HEAD"):  # the supervisor's check: no data, no sign-in
+            return await self.app(scope, receive, send)
         if path == "/privacy" and scope.get("method") in ("GET", "HEAD"):
             return await _send(send, 200, PRIVACY.encode(), [(b"content-type", b"text/html; charset=utf-8"), (b"cache-control", b"no-cache")])
         from . import accounts

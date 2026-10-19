@@ -402,6 +402,14 @@ def api_ai_stream(req: AIRequest, request: Request):
     return StreamingResponse(gen(), media_type="application/x-ndjson", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
 
+@app.get("/healthz", include_in_schema=False)
+async def healthz():
+    """Asked every few seconds by the supervisor (python -m opensketch --supervise), which restarts the server when
+    this stops answering. It needs the event loop and one free worker thread, like every other request."""
+    await run_in_threadpool(lambda: None)
+    return {"ok": True, "version": VERSION}
+
+
 @app.get("/api/version")
 def api_version():
     """The running version; the page polls it to offer a reload after the codespace updates itself."""
