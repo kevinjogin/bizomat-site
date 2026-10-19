@@ -141,3 +141,32 @@ test('the preview colours each face by what it was recognised as, and Cancel put
   assert.equal(faces[0].userData.baseColor, 7);
   assert.equal(faces[1].userData.baseColor, 7);
 });
+
+test('a status request that fails once does not lose the job; a restarted server says so', async () => {
+  const app = fakeApp({ name: 'Plate', features: [imported], rollback: null });
+  const fw = new FeatureWorks(app);
+  app.result = { changed: [], parts: { part: { message: 'No features recognized.' } }, updates: {} };
+  let fails = 1;
+  const real = app.api.bind(app);
+  app.api = async (url, body, method = 'POST') => {
+    if (method === 'GET' && fails-- > 0) { const e = new Error('The server did not answer'); e.away = true; throw e; }
+    return real(url, body, method);
+  };
+  fw.open();
+  await fw.run();
+  await new Promise((r) => setTimeout(r, 20));
+  assert.equal(fw.st.phase, 'running');
+  assert.match(fw.statusText(), /Waiting for the server/);
+  await new Promise((r) => setTimeout(r, 1400));
+  assert.equal(fw.st.phase, 'done');
+
+  app.api = async (url, body, method = 'POST') => {
+    if (method === 'GET') throw new Error('No such job');
+    return real(url, body, method);
+  };
+  fw.open();
+  await fw.run();
+  await new Promise((r) => setTimeout(r, 20));
+  assert.equal(fw.st.phase, 'error');
+  assert.match(fw.statusText(), /server restarted/);
+});

@@ -2248,15 +2248,28 @@ def _child(out, part, kinds, feature_id, time_limit, skip, beat_path, checkpoint
         out.put(json.dumps({"ok": False, "error": f"{type(exc).__name__}: {exc}"}))
 
 
+RECOGNIZE_JOBS = int(os.environ.get("OPENSKETCH_RECOGNIZE_JOBS", 1))  # parts recognised at once on the whole server
+
+
 def recognize_part_safe(part: dict, kinds=None, feature_id: str | None = None, time_limit: float = TIME_LIMIT,
-                        stop=None, hang: float = HANG_SECONDS) -> dict:
+                        stop=None, hang: float = HANG_SECONDS, on_wait=None) -> dict:
     """recognize_part in a worker process. A worker stuck in one OpenCascade call is killed and the part runs
-    again without that step (it stays in the imported body); a stop request kills the worker at once."""
+    again without that step (it stays in the imported body); a stop request kills the worker at once.
+    At most RECOGNIZE_JOBS parts run at once on the server, whoever asked (the Recognize Features button, Claude,
+    the AI chat): each worker is a 250-450 MB process on a 2 GB machine. Others wait for a place (on_wait())."""
+    from . import cadworker
+    _import_index(part, feature_id)  # plain refusals before starting a process
+    with cadworker.proc_slot("recognize", RECOGNIZE_JOBS, stop=stop, on_wait=on_wait) as got:
+        if not got:
+            return {"ok": False, "part": None, "report": {"recognized": 0, "message": "Stopped.", "notes": []}}
+        return _recognize_part_isolated(part, kinds, feature_id, time_limit, stop, hang)
+
+
+def _recognize_part_isolated(part, kinds, feature_id, time_limit, stop, hang) -> dict:
     import multiprocessing as mp
     import os
     import queue as queue_mod
     import tempfile
-    _import_index(part, feature_id)  # plain refusals before starting a process
     ctx = mp.get_context("spawn")
     skip: list[str] = []
     started = time.monotonic()
@@ -2359,7 +2372,7 @@ def imported_parts(doc: dict) -> list[str]:
 
 
 def recognize_doc(doc: dict, part_id: str | None = None, kinds=None, time_limit: float = TIME_LIMIT,
-                  progress=None, stop=None, isolate: bool = True) -> dict:
+                  progress=None, stop=None, isolate: bool = True, on_wait=None) -> dict:
     """A part or an assembly: recognise one part (`part_id`) or every part that has an imported body.
     Returns {doc (changed copy), parts: {pid: report}, changed: [pids]}. `progress(done, total, name, reports)` is
     called before each part and at the end. Each part runs in a worker process (`isolate`), so a hang in
@@ -2370,7 +2383,8 @@ def recognize_doc(doc: dict, part_id: str | None = None, kinds=None, time_limit:
     tell = progress or (lambda *a: None)
     if not assembly.is_assembly(doc):
         tell(0, 1, doc.get("name") or "Part", reports)
-        r = (recognize_part_safe if isolate else recognize_part)(doc, kinds, time_limit=time_limit, stop=stop)
+        r = (recognize_part_safe(doc, kinds, time_limit=time_limit, stop=stop, on_wait=on_wait) if isolate
+             else recognize_part(doc, kinds, time_limit=time_limit, stop=stop))
         reports["part"] = r["report"]
         if r["ok"]:
             out = {**out, "features": r["part"]["features"], "rollback": r["part"].get("rollback")}
@@ -2386,7 +2400,8 @@ def recognize_doc(doc: dict, part_id: str | None = None, kinds=None, time_limit:
             break
         tell(k, len(ids), parts[pid].get("name") or pid, reports)
         try:
-            r = (recognize_part_safe if isolate else recognize_part)(parts[pid], kinds, time_limit=time_limit, stop=stop)
+            r = (recognize_part_safe(parts[pid], kinds, time_limit=time_limit, stop=stop, on_wait=on_wait) if isolate
+                 else recognize_part(parts[pid], kinds, time_limit=time_limit, stop=stop))
         except RecognizeError as exc:
             reports[pid] = {"recognized": 0, "message": str(exc)}
             continue

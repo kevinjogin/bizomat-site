@@ -4,6 +4,7 @@ MCP endpoint at /mcp/<token>), and sign-in (accounts, see auth.py)."""
 
 from __future__ import annotations
 
+import asyncio
 import json
 import math
 import os
@@ -21,7 +22,6 @@ from pydantic import BaseModel
 import base64
 import binascii
 import gzip
-import queue
 import hashlib
 import zlib
 import threading
@@ -367,9 +367,6 @@ def api_macro_toolchain():
     return {"features": tc["ok"], "have": tc["have"], "missing": tc["missing"]}
 
 
-MACRO_RUNNING_MAX = 2  # macro jobs running at once per person (each can run LibreOffice for minutes)
-
-
 def _who(request: Request) -> str:
     u = getattr(request.state, "user", None)
     return u["id"] if u else ""
@@ -377,10 +374,13 @@ def _who(request: Request) -> str:
 
 @app.post("/api/export/sldmacro/start")
 def api_macro_start(req: MacroRequest, request: Request):
-    """Start writing a SOLIDWORKS macro (a background job: checking the macro takes a minute or more)."""
+    """Start writing a SOLIDWORKS macro (a background job: checking the macro takes a minute or more). One at a
+    time on the server (cadworker.MACRO_JOBS: each runs LibreOffice and a CAD check for minutes)."""
     me = _who(request)
-    if sum(1 for j in _macro_jobs.values() if j["state"] == "running" and j.get("owner") == me) >= MACRO_RUNNING_MAX:
-        return JSONResponse({"error": "Two exports are already running. Wait for one to finish."}, status_code=429)
+    try:
+        ticket = cadworker.MACRO_JOBS.try_take(me)
+    except cadworker.Busy as exc:
+        return JSONResponse({"error": str(exc)}, status_code=exc.status)
     jid = uuid.uuid4().hex[:12]
     fd, path = tempfile.mkstemp(suffix=".zip")
     os.close(fd)
@@ -398,10 +398,16 @@ def api_macro_start(req: MacroRequest, request: Request):
             job["log"].append(payload[0])
         elif kind == "done":
             job["report"], job["state"] = payload, "done"
+        elif job["state"] == "cancelled":
+            pass
         else:
             job["state"], job["error"] = "error", f"{payload[0]}: {payload[1]}"
-    cadworker.start_job(sldexport.export, req.doc, path, name=req.name, verify=req.verify, uses=("log",),
-                        on_event=event, limit=3 * 3600)
+    try:
+        job["handle"] = cadworker.start_job(sldexport.export, req.doc, path, name=req.name, verify=req.verify,
+                                            uses=("log",), on_event=event, limit=3 * 3600, on_end=ticket.release)
+    except BaseException:
+        ticket.release()
+        raise
     return {"job": jid}
 
 
@@ -411,6 +417,19 @@ def api_macro_status(jid: str, request: Request):
     if job is None or job.get("owner") != _who(request):
         raise HTTPException(404, "No such export")
     return {k: job.get(k) for k in ("state", "log", "report", "error")} | {"seconds": round(time.time() - job["started"])}
+
+
+@app.delete("/api/export/sldmacro/{jid}")
+def api_macro_cancel(jid: str, request: Request):
+    """Stop an export (the dialog was closed): the job process ends within a few seconds and frees its place."""
+    job = _macro_jobs.get(jid)
+    if job is None or job.get("owner") != _who(request):
+        raise HTTPException(404, "No such export")
+    if job["state"] == "running":
+        job["state"] = "cancelled"
+        if job.get("handle") is not None:
+            job["handle"].cancel(grace=3)  # the export does not check for a stop: it is ended
+    return {"state": job["state"]}
 
 
 @app.get("/api/export/sldmacro/{jid}/zip")
@@ -429,35 +448,46 @@ class RecognizeRequest(BaseModel):
 
 
 _recognize_jobs: dict = {}
-RECOGNIZE_RUNNING_MAX = 1  # recognition is CPU-heavy: one job per person at a time
+RECOGNIZE_RUNNING_MAX = 1  # recognition is CPU-heavy: one job per person at a time (and recognize.RECOGNIZE_JOBS
+                           # parts at once on the whole server, whoever started them: here, Claude or the AI chat)
 
 
 @app.post("/api/recognize/start")
 def api_recognize_start(req: RecognizeRequest, request: Request):
     """Start feature recognition (FeatureWorks) on a part's or an assembly's imported bodies. A background job:
-    a large part can take a minute or two, an assembly one part after another."""
+    a large part can take a minute or two, an assembly one part after another. If this person's job for the same
+    model is still running (the page lost track of it), its id comes back with resumed: true so the page follows
+    it again."""
     from . import recognize
     me = _who(request)
-    if sum(1 for j in _recognize_jobs.values() if j["state"] in ("running", "cancelling") and j.get("owner") == me) >= RECOGNIZE_RUNNING_MAX:
-        return JSONResponse({"error": "Feature recognition is already running. Wait for it to finish."}, status_code=429)
+    asked = hashlib.sha256(json.dumps([req.doc, req.part_id, req.kinds], sort_keys=True, default=str).encode()).hexdigest()
+    mine = [(k, j) for k, j in _recognize_jobs.items() if j["state"] in ("running", "cancelling") and j.get("owner") == me]
+    if len(mine) >= RECOGNIZE_RUNNING_MAX:
+        k, j = mine[-1]
+        if j["state"] == "running" and j.get("asked") == asked:
+            return {"job": k, "resumed": True}
+        why = ("Feature recognition is still stopping. Try again in a moment." if j["state"] == "cancelling" else
+               "Feature recognition is already running on another model. Wait for it to finish, or stop it there.")
+        return JSONResponse({"error": why}, status_code=429)
     if not recognize.imported_parts(req.doc):
         return JSONResponse({"error": "There is no imported body to recognize."}, status_code=400)
     if req.kinds and set(req.kinds) - set(recognize.KINDS):
         return JSONResponse({"error": f"Feature types are {', '.join(recognize.KINDS)}."}, status_code=400)
     jid = uuid.uuid4().hex[:12]
     job = {"state": "running", "started": time.time(), "owner": me, "done": 0, "total": 0, "current": None,
-           "parts": {}, "result": None}
+           "parts": {}, "result": None, "asked": asked}
     _recognize_jobs[jid] = job
     for k in [k for k, v in _recognize_jobs.items() if v["state"] not in ("running", "cancelling") and time.time() - v["started"] > 3600]:
         _recognize_jobs.pop(k, None)
 
     def progress(done, total, name, reports):
-        job.update(done=done, total=total, current=name, parts=dict(reports))
+        job.update(done=done, total=total, current=name, parts=dict(reports), waiting=False)
 
     def work():  # each part runs in recognize's own spawned worker (recognize_part_safe), so this thread only waits
         try:
             res = recognize.recognize_doc(req.doc, part_id=req.part_id, kinds=req.kinds, progress=progress,
-                                          stop=lambda: job.get("cancel", False))
+                                          stop=lambda: job.get("cancel", False),
+                                          on_wait=lambda: job.update(waiting=True))
             asm = assembly.is_assembly(res["doc"])
             job["result"] = {"changed": res["changed"], "parts": res["parts"],
                              "updates": {pid: {k: (res["doc"]["parts"][pid] if asm else res["doc"]).get(k)
@@ -488,7 +518,7 @@ def api_recognize_status(jid: str, request: Request):
     job = _recognize_jobs.get(jid)
     if job is None or job.get("owner") != _who(request):
         raise HTTPException(404, "No such job")
-    out = {k: job.get(k) for k in ("state", "done", "total", "current", "error")}
+    out = {k: job.get(k) for k in ("state", "done", "total", "current", "error", "waiting")}
     out["seconds"] = round(time.time() - job["started"])
     out["parts"] = {pid: {k: r.get(k) for k in ("name", "message", "exact", "base", "counts", "recognized", "faces")}
                     for pid, r in (job.get("parts") or {}).items()}
@@ -497,49 +527,61 @@ def api_recognize_status(jid: str, request: Request):
     return out
 
 
-@app.post("/api/ai")
-def api_ai(req: AIRequest, request: Request):
-    """Old non-streaming route (scripts): the same person's key as the chat."""
-    from . import aikeys
-    if aikeys.effective(getattr(request.state, "user", None)) is None and not ai.demo_enabled():
-        return JSONResponse({"error": ai.NO_KEY}, status_code=503)
-    try:
-        return ai.run(req.doc, req.prompt, req.conversation)
-    except ai.AIUnavailable as exc:
-        return JSONResponse({"error": str(exc)}, status_code=503)
+AI_PROMPT_MAX = 20000  # characters in one chat message
+AI_SELECTION_MAX = 20  # selected items sent with it (ai.selection_note reads 20)
 
 
 @app.post("/api/ai/stream")
-def api_ai_stream(req: AIRequest, request: Request):
+async def api_ai_stream(req: AIRequest, request: Request):
     """Newline-delimited JSON events while the AI designs (see ai.run_stream), with the person's own key
-    (aikeys) or the server's."""
+    (aikeys) or the server's. Each chat is a process of its own (its builds hold OpenCascade's GIL), so they are
+    rationed (cadworker.AI_JOBS): one per person, OPENSKETCH_AI_JOBS (2) on the server, then a short queue, then
+    a plain "busy" answer (429 for the person's own running chat, 503 for a full server)."""
     from . import aikeys
-    cfg = aikeys.effective(getattr(request.state, "user", None))
     headers = {"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
-    if not cadworker.enabled():
-        def gen():
-            try:
-                for ev in ai.run_stream(req.doc, req.prompt, req.conversation, demo=req.demo, selection=req.selection, ai_config=cfg):
-                    yield json.dumps(ev, separators=(",", ":")) + "\n"
-            except Exception as exc:  # never leave the client hanging
-                yield json.dumps({"ev": "error", "message": f"Server error: {exc}"}) + "\n"
-        return StreamingResponse(gen(), media_type="application/x-ndjson", headers=headers)
+    if len(req.prompt) > AI_PROMPT_MAX:
+        return JSONResponse({"error": f"The message is too long. Keep it under {AI_PROMPT_MAX:,} characters."}, status_code=413)
+    selection = (req.selection or [])[:AI_SELECTION_MAX] or None
+    cfg = await run_in_threadpool(aikeys.effective, getattr(request.state, "user", None))
+    if cfg is None and not (req.demo or ai.demo_enabled()):  # nothing to run: no process for it
+        return StreamingResponse(iter([json.dumps({"ev": "error", "message": ai.NO_KEY}) + "\n"]),
+                                 media_type="application/x-ndjson", headers=headers)
+    me = _who(request)
+    try:
+        cadworker.AI_JOBS.check(me)
+    except cadworker.Busy as exc:
+        return JSONResponse({"error": str(exc)}, status_code=exc.status)
+    known = isinstance(req.conversation, str) and req.conversation in ai._conversations
+    conv = req.conversation if known else None
+    lost = bool(req.conversation) and not known  # the server restarted since: the chat says the AI forgot it
+    loop = asyncio.get_running_loop()
+    events: asyncio.Queue = asyncio.Queue()
 
-    # The chat runs in a process of its own (its builds hold OpenCascade's GIL); its events come back here.
-    events: queue.Queue = queue.Queue()
-    conv = req.conversation if isinstance(req.conversation, str) and req.conversation in ai._conversations else None
-
-    def on_event(kind, payload):
-        events.put((kind, payload))
-    job = cadworker.start_job(cadjobs.ai_stream, req.doc, req.prompt, conv, ai._conversations.get(conv) if conv else None,
-                              req.demo, req.selection, cfg, on_event=on_event, limit=3600)
+    def on_event(kind, payload):  # from the job's reader thread
+        try:
+            loop.call_soon_threadsafe(events.put_nowait, (kind, payload))
+        except RuntimeError:  # the server is stopping
+            pass
 
     async def agen():
+        try:  # waits in the queue here, so a client that leaves while queued never starts a process
+            ticket = await cadworker.AI_JOBS.take(me)
+        except cadworker.Busy as exc:
+            yield json.dumps({"ev": "error", "message": str(exc)}) + "\n"
+            return
+        try:
+            job = cadworker.start_job(cadjobs.ai_stream, req.doc, req.prompt, conv,
+                                      ai._conversations.get(conv) if conv else None, req.demo, selection, cfg,
+                                      lost=lost, on_event=on_event, limit=3600, on_end=ticket.release)
+        except BaseException:
+            ticket.release()
+            raise
         try:
             while True:
-                kind, payload = await run_in_threadpool(events.get)
+                kind, payload = await events.get()
                 if kind == "progress":
-                    yield json.dumps(payload[0], separators=(",", ":"), default=_json_default) + "\n"
+                    line = payload[0]
+                    yield line if isinstance(line, str) else json.dumps(line, separators=(",", ":"), default=_json_default) + "\n"
                 elif kind == "done":
                     if payload.get("conversation") and payload.get("history") is not None:
                         ai._conversations[payload["conversation"]] = payload["history"]
@@ -548,7 +590,10 @@ def api_ai_stream(req: AIRequest, request: Request):
                     yield json.dumps({"ev": "error", "message": f"Server error: {payload[1]}"}) + "\n"
                     return
         finally:
-            job.cancel(grace=10)  # the person pressed Stop or left: end the job (nothing happens if it finished)
+            # The person pressed Stop or left, or the reply is complete: end the job (nothing happens if it has
+            # finished). Its place is free once the process has ended (on_end).
+            ticket.stopping = True
+            job.cancel(grace=10)
     return StreamingResponse(agen(), media_type="application/x-ndjson", headers=headers)
 
 

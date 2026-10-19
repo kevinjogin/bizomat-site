@@ -134,6 +134,8 @@ export class FeatureWorks {
     if (!st) return null;
     if (st.phase === 'running') {
       const p = st.progress;
+      if (st.lost) return 'Waiting for the server...';
+      if (p?.waiting) return 'Waiting for another recognition on the server to finish...';
       if (!p || !p.total) return 'Recognizing features...';
       const of = p.total > 1 ? ` (${Math.min(p.done + 1, p.total)} of ${p.total})` : '';
       return `Recognizing ${esc(p.current || '')}${of}... ${p.seconds || 0} s`;
@@ -236,12 +238,29 @@ export class FeatureWorks {
     } catch (err) { r = { error: err.message }; }
     if (st.token !== token) return;
     if (r.error) { st.phase = 'error'; st.error = r.error; app.pm.render(); return; }
-    st.job = r.job;
+    st.job = r.job; // r.resumed: this person's job was still running on the server; follow it again
+    // A status request that fails (a dropped connection, a server busy for a moment) is tried again for about two
+    // minutes before the job is given up on, so the page never loses track of a job that is still running.
+    let failedSince = null;
     const tick = async () => {
       if (st.token !== token || this.st !== st) return;
       let s;
-      try { s = await app.api(`/api/recognize/${st.job}`, null, 'GET'); } catch (err) { s = { state: 'error', error: err.message }; }
+      try { s = await app.api(`/api/recognize/${st.job}`, null, 'GET'); } catch (err) {
+        if (/no such job/i.test(err.message || '')) s = { state: 'error', error: 'The server restarted, so the job was lost. Click Recognize to run it again.' };
+        else {
+          failedSince ??= Date.now();
+          if (Date.now() - failedSince < 120000) {
+            st.lost = true;
+            app.pm.render();
+            st.timer = setTimeout(tick, Math.min(15000, 1000 + (Date.now() - failedSince) / 4));
+            return;
+          }
+          s = { state: 'error', error: err.message };
+        }
+      }
       if (st.token !== token || this.st !== st) return;
+      failedSince = null;
+      st.lost = false;
       st.progress = s;
       if (s.state === 'running' || s.state === 'cancelling') { app.pm.render(); st.timer = setTimeout(tick, 900); return; }
       if (s.state === 'error') { st.phase = 'error'; st.error = s.error; } else { st.phase = s.state === 'cancelled' ? 'cancelled' : 'done'; st.result = s.result; }
@@ -252,9 +271,11 @@ export class FeatureWorks {
     tick();
   }
 
+  // Stop the server's job. Also after the page lost track of it, as long as the server may still be running it.
   cancel() {
     const st = this.st;
-    if (!st?.job || st.phase !== 'running') return;
+    if (!st?.job) return;
+    if (st.phase !== 'running' && !(st.phase === 'error' && ['running', 'cancelling'].includes(st.progress?.state))) return;
     this.app.api(`/api/recognize/${st.job}`, null, 'DELETE').catch(() => {});
   }
 
@@ -263,7 +284,7 @@ export class FeatureWorks {
     const st = this.st;
     if (!st) return;
     this.uncolour();
-    if (st.phase === 'running') this.cancel();
+    this.cancel();
     st.token = null;
     clearTimeout(st.timer);
     this.st = null;

@@ -3,7 +3,28 @@ Each takes and returns plain data (dicts, lists, bytes) so it can cross the proc
 
 from __future__ import annotations
 
+import json
+
 from . import assembly, geometry, importer
+
+
+def _json_default(o):
+    if isinstance(o, (set, frozenset, tuple)):
+        return list(o)
+    if hasattr(o, "tolist"):  # numpy numbers and arrays
+        return o.tolist()
+    raise TypeError(f"{type(o).__name__} is not JSON serialisable")
+
+
+def to_json(obj) -> bytes:
+    return json.dumps(obj, separators=(",", ":"), allow_nan=False, default=_json_default).encode("utf-8")
+
+
+def json_of(name: str, *args, **kwargs) -> bytes:
+    """One of this module's functions with its answer already as JSON bytes. Meshes are big: encoding them here,
+    in the worker, keeps the web server's event loop free (json.dumps of a 10 MB mesh holds the GIL for ~0.5 s,
+    and unpickling the same mesh as Python lists costs as much again), and bytes cross over as one copy."""
+    return to_json(globals()[name](*args, **kwargs))
 
 
 def regen(doc: dict, preview: dict | None = None, known: dict | None = None, drag: dict | None = None) -> dict:
@@ -86,20 +107,25 @@ def review_publish(doc_id, compare_version, title, notes, by, base) -> dict:
 
 
 def ai_stream(doc: dict, prompt: str, conv_id: str | None, history: list | None, demo, selection, ai_config,
-              progress=None, stop=None) -> dict:
+              progress=None, stop=None, lost: bool = False) -> dict:
     """The in-app AI chat (ai.run_stream) in a process of its own (cadworker.start_job): each event goes out
-    through progress(event); the conversation's history comes in and goes back, because the server keeps it."""
+    through progress(line), already a line of JSON; the conversation's history comes in and goes back, because
+    the server keeps it. `lost`: the browser named a conversation the server no longer has (it restarted), so the
+    start event says resumed: false and the chat tells the person. `stop` also ends a feature recognition the AI
+    started (it can run for minutes without an event)."""
     import pickle
     from . import ai
     if conv_id and history is not None:
         ai._conversations[conv_id] = history
     used = None
-    gen = ai.run_stream(doc, prompt, conv_id, demo=demo, selection=selection, ai_config=ai_config)
+    gen = ai.run_stream(doc, prompt, conv_id, demo=demo, selection=selection, ai_config=ai_config, stop=stop)
     try:
         for ev in gen:
             used = ev.get("conversation") or used
+            if lost and ev.get("ev") == "start":
+                ev = dict(ev, resumed=False)
             if progress:
-                progress(ev)
+                progress(to_json(ev).decode("utf-8") + "\n")
             if stop and stop():
                 break
     finally:

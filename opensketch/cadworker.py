@@ -30,6 +30,7 @@ monkeypatched functions still apply; tests/test_cadworker.py checks the worker p
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import functools
 import importlib
 import multiprocessing as mp
@@ -444,16 +445,182 @@ def shutdown() -> None:
         job.kill()
 
 
+# ---------------------------------------------------------------------------------------------- admission
+# Long jobs are whole processes (~250-300 MB each, ~4 s of CPU to start). Slots says how many may run at once: at most
+# `per_person` for one person and `cap` on the server. A request that finds no free place waits in a short queue
+# (`queue` places, `wait` seconds), then gets a plain "busy" answer.
+
+class Busy(Exception):
+    """No place for this job now. `status`: 429 (this person's own job is still running) or 503 (the server is full)."""
+
+    def __init__(self, message: str, status: int = 503):
+        super().__init__(message)
+        self.status = status
+
+
+class Ticket:
+    def __init__(self, slots: "Slots", person: str):
+        self.slots, self.person = slots, person
+        self.granted = False
+        self.stopping = False  # its job was asked to stop (the person pressed Stop or left)
+        self.done = False
+
+    def release(self) -> None:
+        self.slots.release(self)
+
+
+class Slots:
+    def __init__(self, name: str, cap: int, per_person: int = 1, queue: int = 4, wait: float = 30.0,
+                 busy: str = "The server is busy. Try again in a minute.",
+                 mine: str = "Your earlier request is still running. Wait for it to finish."):
+        self.name, self.cap, self.per_person, self.queue, self.wait = name, max(1, cap), max(1, per_person), queue, wait
+        self.busy_msg, self.mine_msg = busy, mine
+        self._lock = threading.Lock()
+        self._running: list[Ticket] = []
+        self._waiting: list[Ticket] = []
+
+    def running(self, person: str | None = None) -> list[Ticket]:
+        with self._lock:
+            return [t for t in self._running if person is None or t.person == person]
+
+    def _grant(self) -> None:
+        """Give free places to waiters in arrival order (a waiter whose person is at their limit lets later ones by)."""
+        free_mem = None
+        for t in list(self._waiting):
+            if len(self._running) >= self.cap:
+                return
+            if sum(1 for r in self._running if r.person == t.person) >= self.per_person:
+                continue
+            if free_mem is None:
+                free_mem = not (self._running and memory_low())  # the first job always may start
+            if not free_mem:
+                return
+            self._waiting.remove(t)
+            self._running.append(t)
+            t.granted = True
+
+    def check(self, person: str, queue: bool = True) -> None:
+        """Refuse at once when this person's own job is running and still wanted, or (`queue`) the queue is full."""
+        with self._lock:
+            mine = [t for t in self._running if t.person == person]
+            if len(mine) >= self.per_person and not all(t.stopping for t in mine):
+                raise Busy(self.mine_msg, 429)
+            if queue and len(self._waiting) >= self.queue and len(self._running) >= self.cap:
+                raise Busy(self.busy_msg, 503)
+
+    def try_take(self, person: str) -> Ticket:
+        """A place now, or Busy (for jobs started by a plain request: no queue)."""
+        self.check(person, queue=False)
+        t = Ticket(self, person)
+        with self._lock:
+            self._waiting.append(t)
+            self._grant()
+            if not t.granted:
+                self._waiting.remove(t)
+                mine = sum(1 for r in self._running if r.person == person) >= self.per_person
+                raise Busy(self.mine_msg if mine else self.busy_msg, 429 if mine else 503)
+        return t
+
+    async def take(self, person: str, wait: float | None = None) -> Ticket:
+        """Wait (up to `wait` s) for a place; Busy when none came free."""
+        self.check(person)
+        t = Ticket(self, person)
+        with self._lock:
+            self._waiting.append(t)
+            self._grant()
+        end = time.monotonic() + (self.wait if wait is None else wait)
+        try:
+            while not t.granted:
+                if time.monotonic() >= end:
+                    raise Busy(self.busy_msg, 503)
+                await asyncio.sleep(0.25)
+                with self._lock:
+                    self._grant()
+        except BaseException:
+            with self._lock:
+                if t in self._waiting:
+                    self._waiting.remove(t)
+                    self._grant()
+                    raise
+            if t.granted:
+                t.release()
+            raise
+        return t
+
+    def release(self, t: Ticket) -> None:
+        with self._lock:
+            t.done = True
+            if t in self._running:
+                self._running.remove(t)
+            if t in self._waiting:
+                self._waiting.remove(t)
+            self._grant()
+
+
+def _env_int(name: str, default: int) -> int:
+    try:
+        return int(os.environ.get(name, default))
+    except ValueError:
+        return default
+
+
+AI_JOBS = Slots("ai", _env_int("OPENSKETCH_AI_JOBS", 2), per_person=1, queue=_env_int("OPENSKETCH_AI_QUEUE", 4), wait=30.0,
+                busy="The AI is busy with other people's requests. Try again in a minute.",
+                mine="The AI is still answering your previous message. Wait for it, or press Stop first.")
+MACRO_JOBS = Slots("macro", _env_int("OPENSKETCH_MACRO_JOBS", 1), per_person=1, queue=0,
+                   busy="Another SOLIDWORKS macro export is running on the server. Try again in a few minutes.",
+                   mine="Your earlier SOLIDWORKS macro export is still running. Wait for it to finish.")
+
+
+@contextlib.contextmanager
+def proc_slot(name: str, cap: int, stop=None, poll: float = 0.5, on_wait=None):
+    """A place among `cap` across every process of this server (the web server, its workers and jobs), held while
+    the block runs: a lock file per place under <data>/run, so a process that dies frees its place. Waits for a
+    free one (calling on_wait() once); yields False instead when stop() turns true while waiting."""
+    import fcntl
+    from . import store
+    run_dir = store.data_dir() / "run"
+    run_dir.mkdir(parents=True, exist_ok=True)
+    fh = None
+    told = False
+    while fh is None:
+        for i in range(max(1, cap)):
+            f = open(run_dir / f"{name}.{i}.lock", "a+")
+            try:
+                fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                fh = f
+                break
+            except OSError:
+                f.close()
+        if fh is not None:
+            break
+        if stop is not None and stop():
+            yield False
+            return
+        if on_wait is not None and not told:
+            told = True
+            on_wait()
+        time.sleep(poll)
+    try:
+        yield True
+    finally:
+        try:
+            fcntl.flock(fh, fcntl.LOCK_UN)
+        finally:
+            fh.close()
+
+
 # ---------------------------------------------------------------------------------------------- long jobs
 # A job runs fn(*args, **kwargs, progress=..., stop=...) in a process of its own. `progress(*a)` calls come back to
 # on_event("progress", a) in the server; `stop()` is true once cancel() was called. The end arrives as
-# on_event("done", result) or on_event("error", (kind, message)).
+# on_event("done", result) or on_event("error", (kind, message)). `on_end()` runs once the process has ended (a
+# Slots ticket is released there, so a job that was asked to stop keeps its place until it really stopped).
 
 _jobs: set["Job"] = set()
 
 
 def _job_main(path, args, kwargs, conn, stop_ev, nice, uses):
-    _init(nice)
+    _init(nice, oom=800)
 
     def progress(*a):
         try:
@@ -480,10 +647,11 @@ def _job_main(path, args, kwargs, conn, stop_ev, nice, uses):
 
 
 class Job:
-    def __init__(self, fn, args, kwargs, on_event, uses=("progress", "stop"), nice: int = 5, limit: float = 3600):
+    def __init__(self, fn, args, kwargs, on_event, uses=("progress", "stop"), nice: int = 5, limit: float = 3600,
+                 on_end=None):
         self._recv, send = _CTX.Pipe(duplex=False)
         self._stop = _CTX.Event()
-        self.on_event, self.limit = on_event, limit
+        self.on_event, self.limit, self.on_end = on_event, limit, on_end
         self.proc = _CTX.Process(target=_job_main, daemon=False,
                                  args=(f"{fn.__module__}:{fn.__qualname__}", args, dict(kwargs), send, self._stop, nice, tuple(uses)))
         self.proc.start()
@@ -529,7 +697,15 @@ class Job:
                                         + (" (it may have run out of memory)." if code in (-9, 137) else f" (exit code {code}).")))
         finally:
             self.proc.join(timeout=5)
+            if self.proc.is_alive():  # told to stop but still going: it must not keep its place
+                self.kill()
+                self.proc.join(timeout=5)
             _jobs.discard(self)
+            if self.on_end is not None:
+                try:
+                    self.on_end()
+                except Exception:
+                    pass
 
 
 class _ThreadJob:
@@ -543,11 +719,11 @@ class _ThreadJob:
         self._stop.set()
 
 
-def start_job(fn, *args, on_event, uses=("progress", "stop"), limit: float = 3600, **kwargs):
+def start_job(fn, *args, on_event, uses=("progress", "stop"), limit: float = 3600, on_end=None, **kwargs):
     """Start fn in its own process (see above) and return a handle with cancel(). Without workers (tests): a
     thread in this process."""
     if enabled():
-        return Job(fn, args, kwargs, on_event, uses=uses, limit=limit)
+        return Job(fn, args, kwargs, on_event, uses=uses, limit=limit, on_end=on_end)
     stop_flag = threading.Event()
 
     def work():
@@ -562,5 +738,8 @@ def start_job(fn, *args, on_event, uses=("progress", "stop"), limit: float = 360
             on_event("done", fn(*args, **kw))
         except Exception as exc:
             on_event("error", (type(exc).__name__, str(exc)))
+        finally:
+            if on_end is not None:
+                on_end()
     threading.Thread(target=work, daemon=True).start()
     return _ThreadJob(stop_flag)

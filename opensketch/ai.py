@@ -699,6 +699,7 @@ class Session:
         self.sent_keys: dict[str, str] = {}
         self.steps: list = []
         self.summary = ""
+        self.stop = None  # callable: true once the person stopped the chat (see run_stream)
 
     # -- part documents
     def propose_features(self, inp: dict) -> tuple[str, bool, list]:
@@ -1085,7 +1086,7 @@ class Session:
         from . import recognize
         pid = inp.get("part_id") or None
         try:
-            res = recognize.recognize_doc(self.work, part_id=pid, kinds=inp.get("kinds") or None)
+            res = recognize.recognize_doc(self.work, part_id=pid, kinds=inp.get("kinds") or None, stop=self.stop)
         except recognize.RecognizeError as exc:
             return f"Not recognized: {exc}", False, []
         parts = {}
@@ -1387,7 +1388,8 @@ def selection_note(selection: list | None) -> str:
 
 
 def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool | str = False,
-               demo_speed: float = 1.0, selection: list | None = None, ai_config: dict | None = None) -> Iterator[dict]:
+               demo_speed: float = 1.0, selection: list | None = None, ai_config: dict | None = None,
+               stop=None) -> Iterator[dict]:
     """Yield events while Claude designs. The last event is {"ev": "done", ...} or {"ev": "error", ...}.
 
     With demo=True (or OPENSKETCH_AI_DEMO=1) a scripted session (opensketch/demo.py) is streamed
@@ -1419,6 +1421,7 @@ def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool
         f"Current {kind} document:\n```json\n{json.dumps(model_view(doc))}\n```\n\nRequest: {prompt}"
         + selection_note(selection))})
     session = Session(doc)
+    session.stop = stop  # the person pressed Stop: long tools (feature recognition) end at their next check
     sources: list[dict] = []  # pages the AI read or cited, shown under its reply
     yield {"ev": "start", "conversation": conv_id, "kind": kind, "demo": demo}
     thinking = {"type": "adaptive", "display": "summarized"}
@@ -1549,17 +1552,3 @@ def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool
     yield {"ev": "done", "conversation": conv_id, "reply": session.summary or "Stopped after several attempts.",
            "proposal": session.work if session.work != session.doc else None, "summary": session.summary, "steps": session.steps,
            "sources": sources}
-
-
-def run(doc: dict, prompt: str, history_id: str | None = None) -> dict:
-    """Non-streaming wrapper: run the whole loop and return the final result."""
-    if not available():
-        raise AIUnavailable("Set ANTHROPIC_API_KEY to use OpenSketch AI.")
-    last = None
-    for ev in run_stream(doc, prompt, history_id):
-        last = ev
-        if ev["ev"] == "error":
-            raise AIUnavailable(ev["message"])
-    out = dict(last or {})
-    out.pop("ev", None)
-    return out

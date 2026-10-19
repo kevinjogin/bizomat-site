@@ -271,7 +271,11 @@ export class TaskPane {
       const r = await fetch('/api/ai/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: ctl.signal,
         body: JSON.stringify({ doc: before, prompt, conversation: this.conversation, demo: opts.demo || false, selection: selection && selection.length ? selection : null }) });
       if (r.status === 401) { location.href = '/login?next=' + encodeURIComponent(location.pathname + location.search); throw new Error('Sign in again.'); }
-      if (!r.ok || !r.body) throw new Error(`Server error ${r.status}`);
+      if (!r.ok || !r.body) { // a plain reason when the server gave one (busy, still answering, too long)
+        let why = '';
+        try { why = (await r.json()).error || ''; } catch (_) { /* not JSON */ }
+        throw new Error(why || `Server error ${r.status}`);
+      }
       const reader = r.body.getReader();
       const dec = new TextDecoder();
       let buf = '';
@@ -348,6 +352,7 @@ export class TaskPane {
     const endThink = () => { if (S.think) { S.think.live = false; S.think.open = false; this.refresh(S.think); S.think = null; } };
     switch (ev.ev) {
       case 'start':
+        if (ev.resumed === false) this.add({ role: 'bot', text: 'The server restarted, so the AI no longer remembers this chat. It still sees your model as it is now.' });
         this.conversation = ev.conversation;
         app.live.start(ev);
         break;

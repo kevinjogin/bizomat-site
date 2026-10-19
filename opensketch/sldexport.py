@@ -86,9 +86,38 @@ def _run(tc: dict, args: list[str], cwd: str, timeout: int = 1800) -> tuple[int,
     env.update(SLDMACRO_ENGINE=str(ENGINE), SLDMACRO_CAD_PY=tc["cad_py"], SLDMACRO_SLVS_PY=tc["slvs_py"],
                SLDMACRO_SYS_PY=tc["sys_py"], SLDMACRO_JOB=cwd)
     env.pop("PYTHONPATH", None)
-    r = subprocess.run([tc["sys_py"], str(ENGINE / "sldmacro.py"), *args], cwd=cwd, env=env,
-                       capture_output=True, text=True, timeout=timeout)
-    return r.returncode, r.stdout + r.stderr
+    proc = subprocess.Popen([tc["sys_py"], str(ENGINE / "sldmacro.py"), *args], cwd=cwd, env=env,
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    try:
+        out, err = proc.communicate(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        _kill_tree(proc.pid)  # the engine's own children too (LibreOffice, the CAD check), not just the engine
+        proc.kill()
+        proc.communicate()
+        raise
+    return proc.returncode, out + err
+
+
+def _kill_tree(pid: int) -> None:
+    """Kill every process below pid (found through /proc), deepest first."""
+    kids: dict[int, list[int]] = {}
+    for d in Path("/proc").glob("[0-9]*"):
+        try:
+            ppid = int((d / "stat").read_text().rsplit(")", 1)[1].split()[1])
+        except (OSError, ValueError, IndexError):
+            continue
+        kids.setdefault(ppid, []).append(int(d.name))
+    order, todo = [], [pid]
+    while todo:
+        p = todo.pop()
+        for k in kids.get(p, []):
+            order.append(k)
+            todo.append(k)
+    for k in reversed(order):
+        try:
+            os.kill(k, 9)
+        except OSError:
+            pass
 
 
 # ----------------------------------------------------------------------------- numbers and frames
@@ -918,7 +947,17 @@ def _known_standin_fault(job: str) -> str | None:
 
 def export(doc: dict, out_zip: str, name: str | None = None, verify: bool = True, log=print,
            force_step: bool = False) -> dict:
-    """Write the macro and everything that goes with it into a zip. Returns the report."""
+    """Write the macro and everything that goes with it into a zip. Returns the report. The work folder (part
+    STEPs, engine caches) goes away afterwards, also when the export fails (OSK_KEEP_WORK keeps it)."""
+    work = tempfile.mkdtemp(prefix="osk_sldmacro_")
+    try:
+        return _export(work, doc, out_zip, name, verify, log, force_step)
+    finally:
+        if not os.environ.get("OSK_KEEP_WORK"):
+            shutil.rmtree(work, ignore_errors=True)
+
+
+def _export(work: str, doc: dict, out_zip: str, name: str | None, verify: bool, log, force_step: bool) -> dict:
     t0 = time.time()
     is_asm = assembly.is_assembly(doc)
     title = _title(doc.get("name") or ("Assembly" if is_asm else "Part"))
@@ -930,7 +969,6 @@ def export(doc: dict, out_zip: str, name: str | None = None, verify: bool = True
     if is_asm:
         used_pids = {c["part"] for c in doc.get("components", []) if not c.get("suppressed")}
         parts = {pid: p for pid, p in parts.items() if pid in used_pids}
-    work = tempfile.mkdtemp(prefix="osk_sldmacro_")
     job = os.path.join(work, "job")
     for d in ("recipes", "src", "out", "steps"):
         os.makedirs(os.path.join(job, d), exist_ok=True)
@@ -1084,8 +1122,6 @@ def export(doc: dict, out_zip: str, name: str | None = None, verify: bool = True
     report["macro_lines"] = text.count("\n")
     if os.environ.get("OSK_KEEP_WORK"):
         report["work"] = work
-    else:
-        shutil.rmtree(work, ignore_errors=True)
     return report
 
 

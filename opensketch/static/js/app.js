@@ -1880,6 +1880,7 @@ export class App {
       log.classList.remove('hidden');
       try {
         const r = await this.api('/api/export/sldmacro/start', { doc, verify: full.checked });
+        if (r.error) { sum.innerHTML = `<div class="ai-msg err">${esc(r.error)}</div>`; return; } // e.g. another export is running
         jid = r.job;
         for (;;) {
           await new Promise((ok) => setTimeout(ok, 1000));
@@ -1904,7 +1905,10 @@ export class App {
         return false;
       } },
       { label: 'Close', run: () => { stop = true; } },
-    ], onClose: () => { stop = true; } });
+    ], onClose: () => {
+      stop = true;
+      if (jid && !body.dataset.done) this.api('/api/export/sldmacro/' + jid, null, 'DELETE').catch(() => {}); // free the server
+    } });
     const btn = dl.el.querySelector('.dlg-f .btn.primary');
   }
 
