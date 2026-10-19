@@ -50,6 +50,10 @@ class Param:
     section: str | None = None       # PropertyManager rollout title
     when: dict | None = None         # shown (and meaningful) only when other params have these values
     widget: str | None = None        # "radio" for enums shown as radio buttons, "toggle" for icon bools
+    # What a document that leaves the field out builds with, when that is not `default`. Older files were built
+    # with these numbers, so they keep their shape; `default` is what new features are written with (the
+    # PropertyManager, add_<type>, new features in propose_features / create_part), always explicitly.
+    omitted: Any = None
 
     def __post_init__(self):
         if self.kind not in KINDS:
@@ -98,12 +102,33 @@ def get(type_: str) -> FeatureType | None:
     return REGISTRY.get(type_)
 
 
-def default_of(type_: str, name: str):
-    """The registry default of one field of a feature type, or None."""
+def left_out(type_: str, name: str):
+    """What a document that leaves this field out builds with (`omitted`, else `default`), or None."""
     ft = REGISTRY.get(type_)
-    if ft is None:
+    p = next((p for p in ft.params if p.name == name), None) if ft else None
+    if p is None:
         return None
-    return next((p.default for p in ft.params if p.name == name), None)
+    return p.omitted if p.omitted is not None else p.default
+
+
+def with_defaults(feat: dict) -> dict:
+    """A copy of a new feature with every left-out field that has a default written in, so the document carries
+    no implicit numbers (what `omitted` means then only matters for older files)."""
+    ft = REGISTRY.get(feat.get("type")) if isinstance(feat, dict) else None
+    if ft is None or feat.get("type") in OTHER_TYPES:
+        return feat
+    out = dict(feat)
+    if out.get("type") == "chamfer" and out.get("mode") is None and out.get("distance2") is not None:
+        out["mode"] = "distance_distance"  # two distances given: that is what was meant
+    if out.get("type") == "linear_pattern" and out.get("direction2"):  # as the PropertyManager fills direction 2
+        if out.get("count2") is None:
+            out["count2"] = 2
+        if out.get("spacing2") is None:
+            out["spacing2"] = out.get("spacing") if out.get("spacing") is not None else ft.param("spacing").default
+    for p in ft.params:
+        if out.get(p.name) is None and p.default is not None and _active(p, out, ft):
+            out[p.name] = json.loads(json.dumps(p.default))
+    return out
 
 
 def known_types() -> list[str]:
@@ -354,7 +379,8 @@ def public() -> dict:
             "keys": ft.keys, "tool": tool_name(ft) if ft.tool else None,
             "params": [{"name": p.name, "kind": p.kind, "doc": p.doc, "default": p.default, "required": p.required,
                         "min": p.min, "max": p.max, "options": [list(o) for o in p.options] if p.options else None,
-                        "label": p.label, "icon": p.icon, "section": p.section, "when": p.when, "widget": p.widget}
+                        "label": p.label, "icon": p.icon, "section": p.section, "when": p.when, "widget": p.widget,
+                        "omitted": p.omitted}
                        for p in ft.params],
         }
     return out

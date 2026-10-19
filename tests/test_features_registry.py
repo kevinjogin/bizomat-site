@@ -1,6 +1,8 @@
 """The feature registry: one description per feature gives the PropertyManager data, the AI tools and
 help, the MCP tools, input checks and the rebuild (Draft is the first feature added only through it)."""
+import copy
 import json
+import math
 
 import pytest
 from fastapi.testclient import TestClient
@@ -131,3 +133,56 @@ def test_circular_pattern_axis_object_without_origin():
     st, _ = geometry.regen({"features": feats})
     assert all(s["state"] == "ok" for s in st.status)
     assert features.validate({**feats[-1], "axis": {"dir": [0, 0, 0]}})
+
+
+def _block():
+    from tests.test_geometry import rect_sketch
+    return [rect_sketch("s1", {"ref": "Front Plane"}, 0, 0, 60, 40), {"id": "e1", "type": "extrude", "sketch": "s1", "depth": 8}]
+
+
+def _hole():
+    from tests.test_geometry import circle_ent
+    return [{"id": "s2", "type": "sketch", "plane": {"ref": "Front Plane"}, "entities": circle_ent("c", 5, 5, 3), "constraints": []},
+            {"id": "e2", "type": "extrude", "sketch": "s2", "op": "cut", "end": "through_all", "dir2": {"end": "through_all"}}]
+
+
+def test_left_out_fields_build_as_they_always_did():
+    """Saved files must never change shape on reopen: a left-out field means what geometry.py always built with
+    (Param.omitted where that differs from the registry default, which is what new features are written with)."""
+    from opensketch import geometry
+    V0, edge = 60 * 40 * 8, [{"mid": [30, 40, 8]}]
+    hole = math.pi * 9 * 8
+    cases = [
+        ([{"id": "f", "type": "fillet", "edges": edge}], V0 - (1 - math.pi / 4) * 1 * 60),  # radius 1
+        ([{"id": "f", "type": "chamfer", "edges": edge, "distance": 2, "angle": 30}], V0 - 0.5 * 2 * 2 * 60),  # equal distances
+        (_hole() + [{"id": "p", "type": "linear_pattern", "features": ["e2"], "direction": "X"}], V0 - 2 * hole),  # 2 at 10
+        (_hole() + [{"id": "p", "type": "linear_pattern", "features": ["e2"], "direction": "X", "count": 3, "spacing": 15,
+                     "direction2": "Y"}], V0 - 3 * hole),  # count2 1
+    ]
+    for extra, want in cases:
+        st, _ = geometry.regen({"features": _block() + extra})
+        assert all(s["state"] != "error" for s in st.status), st.status
+        assert st.part.volume == pytest.approx(want), extra[-1]
+    st, _ = geometry.regen({"features": [{"id": "pl", "type": "plane", "base": {"ref": "Top Plane"}}]})
+    assert st.planes["pl"].origin.Y == pytest.approx(0)  # offset 0
+
+
+def test_new_features_are_written_with_every_default():
+    from opensketch import ai, features, geometry
+    f = features.with_defaults({"id": "f", "type": "fillet", "edges": [{"mid": [30, 40, 8]}]})
+    assert f["radius"] == 2
+    assert features.with_defaults({"type": "chamfer", "distance": 2, "angle": 30})["mode"] == "angle_distance"
+    assert features.with_defaults({"type": "chamfer", "distance": 2, "distance2": 1})["mode"] == "distance_distance"
+    lp = features.with_defaults({"type": "linear_pattern", "features": ["e2"], "direction2": "Y", "spacing": 15})
+    assert (lp["count"], lp["count2"], lp["spacing2"]) == (3, 2, 15)
+    assert features.with_defaults({"type": "plane", "base": {"ref": "Top Plane"}})["offset"] == 10
+    # propose_features writes the defaults into new features only; what was already in the part is left alone
+    old = {"features": _block() + [{"id": "f0", "name": "Fillet1", "type": "fillet", "edges": [{"mid": [30, 0, 8]}]}]}
+    s = ai.Session(old)
+    s.propose_features({"features": [{"id": "f1", "name": "Fillet2", "type": "fillet", "edges": [{"mid": [30, 40, 8]}]}]})
+    by = {f["id"]: f for f in s.work["features"]}
+    assert "radius" not in by["f0"] and by["f1"]["radius"] == 2
+    s.propose_features({"mode": "replace", "features": copy.deepcopy(s.work["features"])})
+    assert "radius" not in {f["id"]: f for f in s.work["features"]}["f0"]
+    st, _ = geometry.regen(s.work)
+    assert st.part.volume == pytest.approx(60 * 40 * 8 - (1 - math.pi / 4) * 60 - 4 * (1 - math.pi / 4) * 60)

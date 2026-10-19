@@ -79,14 +79,14 @@ class RegenState:
 # ----------------------------------------------------------------------------- helpers
 
 def param(feat: dict, name: str, fallback=None):
-    """A feature's value, or the registry's default when the document leaves it out. The registry (features/)
-    is the authority for defaults, so the PropertyManager, the Design panel, the AI's tools, the SOLIDWORKS
-    add-in and the rebuild agree on what an omitted value means."""
+    """A feature's value, or what the registry says a document that leaves it out means (Param.omitted, else
+    Param.default): the numbers older files were always built with, so they never change shape on reopen.
+    New features are written with every value (features.with_defaults)."""
     v = feat.get(name)
     if v is not None:
         return v
     from . import features as registry
-    d = registry.default_of(feat.get("type"), name)
+    d = registry.left_out(feat.get("type"), name)
     return fallback if d is None else d
 
 
@@ -940,7 +940,7 @@ def _regen_feature(feat: dict, st: RegenState):
         d = direction_of(feat.get("direction", "X"), st) * (-1 if feat.get("reverse") else 1)
         n, sp = int(param(feat, "count", 2)), float(param(feat, "spacing", 10))
         d2 = feat.get("direction2")
-        n2, sp2 = int(param(feat, "count2", 2)), float(param(feat, "spacing2", 10))  # as the PM shows them
+        n2, sp2 = int(param(feat, "count2", 1)), float(param(feat, "spacing2", 10))
         dv2 = direction_of(d2, st) if d2 else None
         _check_instances(n * (n2 if dv2 is not None else 1))
         for (tool, op), sid in zip(seeds, feat["features"]):  # seed by seed, all copies of one in one boolean

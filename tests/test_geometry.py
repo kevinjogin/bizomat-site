@@ -159,28 +159,6 @@ def test_a_grid_pattern_is_one_boolean_per_seed():
     assert any("at most 2000" in m for m in features.validate(feats[-1]))
 
 
-def test_left_out_values_build_with_the_registry_defaults():
-    """What the PropertyManager, the Design panel, add_<type> and the SOLIDWORKS add-in assume a missing value is."""
-    from opensketch import features
-    base = _plate_with_hole()[:2]
-    edge = [{"mid": [100, 5, 0]}]
-    pairs = [
-        ({"id": "f", "type": "fillet", "edges": edge}, {"radius": 2}),
-        ({"id": "f", "type": "chamfer", "edges": edge, "distance": 2, "angle": 30}, {"mode": "angle_distance"}),
-        ({"id": "f", "type": "linear_pattern", "features": ["e2"], "direction": "X"}, {"count": 3, "spacing": 20}),
-    ]
-    for left_out, given in pairs:
-        feats = base + ([] if left_out["type"] != "linear_pattern" else _plate_with_hole()[2:])
-        a, _ = regen({"features": feats + [left_out]})
-        b, _ = regen({"features": feats + [{**left_out, **given}]})
-        ok(a)
-        assert a.part.volume == pytest.approx(b.part.volume), left_out["type"]
-        for k, v in given.items():
-            assert features.default_of(left_out["type"], k) == v
-    a, _ = regen({"features": [{"id": "pl", "type": "plane", "base": {"ref": "Top Plane"}}]})
-    assert a.planes["pl"].origin.Y == pytest.approx(features.default_of("plane", "offset"))
-
-
 def _sk(ents):
     return {"id": "s1", "type": "sketch", "plane": {"ref": "Front Plane"}, "entities": ents, "constraints": []}
 

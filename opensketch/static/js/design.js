@@ -219,10 +219,10 @@ export class DesignPanel {
     const spec = SPECS[f.type];
     if (!spec) return [];
     const out = [];
-    const shown = (p) => !p.when || Object.entries(p.when).every(([k, vals]) => vals.includes(f[k] ?? spec.params.find((q) => q.name === k)?.default));
+    const shown = (p) => !p.when || Object.entries(p.when).every(([k, vals]) => vals.includes(f[k] ?? ((q) => q?.omitted ?? q?.default)(spec.params.find((q) => q.name === k))));
     for (const p of spec.params) {
       if (!NUM_KINDS.has(p.kind) || !shown(p)) continue;
-      const v = f[p.name] ?? p.default;
+      const v = f[p.name] ?? p.omitted ?? p.default; // a left-out field shows what it builds
       if (!Number.isFinite(v)) continue;
       out.push(this.paramRow(f, p, p.name, v));
     }

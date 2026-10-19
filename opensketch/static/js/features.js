@@ -393,7 +393,7 @@ function toggleEdge(list, ed) {
 
 function paramRow(app, spec, f, p) {
   const visible = () => paramShown(spec, f, p);
-  const get = () => f[p.name] ?? p.default;
+  const get = () => f[p.name] ?? p.omitted ?? p.default; // a left-out field shows what it builds
   const set = (v) => { f[p.name] = v; };
   const tip = p.label || p.doc || p.name;
   const list = () => (f[p.name] = f[p.name] || []);

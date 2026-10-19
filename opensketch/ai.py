@@ -427,6 +427,14 @@ def _part_report(st) -> tuple[dict, bool]:
     return rep, rep["clean"]
 
 
+def _new_with_defaults(feats: list, existing: list) -> list:
+    """Features the model writes, with registry defaults written into the new ones (ids not already in the part),
+    so a new document carries no implicit numbers. Features already there are left as they are: a left-out field
+    keeps meaning what it always built (Param.omitted)."""
+    old = {f.get("id") for f in existing or [] if isinstance(f, dict)}
+    return [f if not isinstance(f, dict) or f.get("id") in old else features.with_defaults(f) for f in feats]
+
+
 def _input_problems(rep: dict, feats: list) -> bool:
     """Check features against the registry; problems go in the report. True when there are none."""
     problems = [p for f in feats for p in features.validate(f)]
@@ -704,6 +712,7 @@ class Session:
     def propose_features(self, inp: dict) -> tuple[str, bool, list]:
         if assembly.is_assembly(self.work):
             return "This is an assembly. Use create_part to change a part, insert_component and add_mate to place it.", False, []
+        inp = {**inp, "features": _new_with_defaults(inp.get("features") or [], self.work.get("features"))}
         cand = restore_blobs(_apply(self.work, inp), self.work, self.doc)
         st, _ = geometry.regen(cand)
         rep, clean = _part_report(st)
@@ -735,7 +744,7 @@ class Session:
     def create_part(self, inp: dict) -> tuple[str, bool, list]:
         asm = self._asm()
         pid = str(inp.get("part_id") or f"part{len(asm['parts']) + 1}")
-        feats = inp.get("features") or []
+        feats = _new_with_defaults(inp.get("features") or [], (asm["parts"].get(pid) or {}).get("features"))
         part = {"version": 1, "type": "part", "name": inp.get("name") or pid, "units": "mm", "features": feats,
                 "rollback": None, "seq": 1000}
         old = asm["parts"].get(pid)
@@ -1258,6 +1267,7 @@ class _Live:
         feats = self.scan.feed(partial)
         if self.name in ("propose_features", "create_part"):
             for f in feats:
+                f = _new_with_defaults([f], self._existing())[0]  # built live as it will be stored
                 if self.builder is None:
                     self.builder = LiveBuilder(self._base(f))
                     events.append({"ev": "build_start", "tool": self.name, "index": self.index, "key": self.key,
@@ -1273,6 +1283,15 @@ class _Live:
                 self.names = names
                 events.append({"ev": "tool_progress", "index": self.index, "tool": self.name, "names": names, "chars": self.chars})
         return events
+
+    def _existing(self) -> list:
+        """The features of the part this tool call writes into, as they are now."""
+        work = self.session.work
+        if self.name == "create_part":
+            if not assembly.is_assembly(work):
+                return []
+            return ((work.get("parts") or {}).get(str(self.scan.field("part_id") or "")) or {}).get("features") or []
+        return [] if assembly.is_assembly(work) else work.get("features") or []
 
     def _base(self, first: dict) -> list:
         """Features already in the part before this proposal (append mode)."""
