@@ -400,3 +400,18 @@ def test_unused_upload_links_hold_no_room(monkeypatch):
         r = c.put(path(links[1]), content=b"x" * 2000)  # the area holds 3000 bytes: this one does not fit
         assert r.status_code == 507 and "full" in r.json()["error"]
         assert c.put(path(links[1]), content=b"x" * 500).status_code == 201  # the link stays usable
+
+
+def test_a_save_whose_answer_was_lost_is_known_by_its_id():
+    c = TestClient(server.app)
+    doc_id = c.post("/api/docs", json={"name": "Plate", "doc": _block("Plate")}).json()["id"]
+    edited = lambda n: {**_block("Plate"), "seq": 1000 + n}
+    first = c.put(f"/api/docs/{doc_id}", json={"doc": edited(1), "base_version": 1, "save_id": "a1"}).json()
+    assert first["save_id"] == "a1" and first["version"] == 2
+    # the answer was lost; the browser edits again and sends from version 1: the 409 names its own save
+    r = c.put(f"/api/docs/{doc_id}", json={"doc": edited(2), "base_version": 1, "save_id": "a2"})
+    assert r.status_code == 409 and r.json()["current"]["save_id"] == "a1"
+    # someone else's save carries no id of ours
+    store.save(doc_id, edited(3), "claude", "AI change")
+    r = c.put(f"/api/docs/{doc_id}", json={"doc": edited(4), "base_version": 2, "save_id": "a3"})
+    assert r.status_code == 409 and r.json()["current"]["save_id"] is None

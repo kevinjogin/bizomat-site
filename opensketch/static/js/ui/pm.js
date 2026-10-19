@@ -188,7 +188,15 @@ export class PropertyManager {
           show();
         };
         inp.addEventListener('change', commit);
-        inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); commit(); } e.stopPropagation(); });
+        inp.addEventListener('keydown', (e) => {
+          e.stopPropagation();
+          if (e.key === 'Enter') { e.preventDefault(); commit(); return; }
+          // Up / Down step the value, as the arrows beside the field do
+          if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+          e.preventDefault();
+          const v = r.get() + (e.key === 'ArrowUp' ? 1 : -1) * (r.step || 1);
+          if (Number.isFinite(v) && (r.min === undefined || v >= r.min) && (r.max === undefined || v <= r.max)) { mark(null); r.set(r.int ? Math.round(v) : v); show(); this.changed(!!r.rerender); }
+        });
         inp.addEventListener('wheel', (e) => { if (document.activeElement !== inp) return; e.preventDefault(); const st = r.step || 1; const v = r.get() + (e.deltaY < 0 ? st : -st); if (Number.isFinite(v) && (r.min === undefined || v >= r.min) && (r.max === undefined || v <= r.max)) { r.set(r.int ? Math.round(v) : v); show(); this.changed(!!r.rerender); } });
         wrap.appendChild(inp);
         const spin = el('div', 'pm-spin', '<span>&#9650;</span><span>&#9660;</span>');

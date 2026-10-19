@@ -887,6 +887,7 @@ class DocSave(BaseModel):
     base_version: int | None = None
     summary: str = ""
     requests: list | None = None
+    save_id: str | None = None  # the browser's name for this save: a 409 that carries it is its own save, landed
 
 
 class DocPatch(BaseModel):
@@ -920,7 +921,7 @@ def _bad_doc(doc) -> JSONResponse | None:
     return None
 
 
-SAVED_KEYS = ("id", "name", "version", "updated", "by", "summary")
+SAVED_KEYS = ("id", "name", "version", "updated", "by", "summary", "save_id")
 
 
 def _doc_meta(doc_id: str, request: Request, trash_ok: bool = False) -> dict:
@@ -1019,6 +1020,7 @@ def api_doc_save(doc_id: str, req: DocSave, request: Request):
     req.doc["name"] = m["name"]  # a file is renamed only by PATCH: a save never renames it
     try:
         rec = store.save(doc_id, req.doc, "you", req.summary or "Edited in OpenSketch", req.base_version, req.requests,
+                         save_id=(req.save_id or "")[:64] or None,
                          autosave=not req.summary.strip())
     except store.Damaged:
         raise

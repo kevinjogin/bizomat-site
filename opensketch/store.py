@@ -805,7 +805,7 @@ def _same(rec: dict, doc: dict, requests) -> bool:
 
 
 def save(doc_id: str, doc: dict, by: str, summary: str = "", base_version: int | None = None,
-         requests: list | None = None, autosave: bool = False) -> dict:
+         requests: list | None = None, autosave: bool = False, save_id: str | None = None) -> dict:
     """Store a new version. base_version: refuse if the stored version is not this one. The same content as the
     stored version makes no new version (a retried save, a rename to the same name). autosave: a browser save with
     no summary of its own; autosaves by the same author within AUTOSAVE_RUN seconds keep one version between them."""
@@ -826,6 +826,7 @@ def save(doc_id: str, doc: dict, by: str, summary: str = "", base_version: int |
                    name=name.strip()[:120], autosave=bool(autosave), run_started=rec.get("run_started") if merge else now)
         if requests is not None:
             new["requests"] = requests
+        new["save_id"] = save_id  # who sent this version (the browser's id for its save), so a retry knows its own
         enc = _Encoded(new)
         _check_size(enc)
         snap = None if merge else _Encoded({k: v for k, v in rec.items() if k != "recovered"})

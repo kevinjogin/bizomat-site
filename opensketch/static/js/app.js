@@ -163,6 +163,8 @@ export class App {
     this.updateDocChrome();
     if (docId) {
       const left = ServerDocs.discardedOnLeave(docId); // a reload of an untouched new file: a new one in its place
+      // the old page's discard is often cut off as it unloads: ask again (the server keeps it if it was changed)
+      if (left) await this.server.discardNow(docId);
       if (!(left ? await this.server.createAndOpen(left.kind) : await this.server.open(docId, { quiet: true }))) this.files.open();
     } else {
       if (hasDraft) this.regen().then(() => this.viewer.zoomToFit(false)); // built behind Files, so Keep editing is instant

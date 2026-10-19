@@ -205,6 +205,11 @@ export class ServerDocs {
     return true;
   }
 
+  // The same, from a new page (the old one's keepalive request may not have gone out). Resolves when answered.
+  discardNow(id) {
+    return fetch(`/api/docs/${encodeURIComponent(id)}/discard`, { method: 'POST' }).catch(() => {});
+  }
+
   // This tab left an untouched new file when it went away (a reload): open a new one in its place.
   static discardedOnLeave(id) {
     try {
@@ -489,7 +494,11 @@ export class ServerDocs {
     this.pushing = (async () => {
       try {
         let rec;
-        try { rec = await this.req('PUT', `/api/docs/${L.id}`, { doc, base_version: L.version, summary, requests: L.requests }); } catch (err) {
+        // each save is named, so a 409 that carries one of ours is our own save whose answer was lost
+        const saveId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+        (L.sent ||= []).push(saveId);
+        if (L.sent.length > 20) L.sent.shift();
+        try { rec = await this.req('PUT', `/api/docs/${L.id}`, { doc, base_version: L.version, summary, requests: L.requests, save_id: saveId }); } catch (err) {
           // a save that did reach the server, but whose answer was lost (a restart), comes back as a conflict with
           // this very model: it is saved, not changed elsewhere
           if (err.message !== 'conflict' || !err.current?.doc || !sameModel(err.current.doc, doc)) throw err;
@@ -511,6 +520,11 @@ export class ServerDocs {
       } catch (err) {
         if (this.link !== L) return false; // the file left the editor; its edits stay in this browser (unsent copy)
         if (err.message === 'conflict' && err.current && err.current.version <= L.version) { clearTimeout(this.pushTimer); this.pushTimer = setTimeout(() => this.push(summary), 300); } // our own rename landed first
+        else if (err.message === 'conflict' && err.current?.save_id && L.sent?.includes(err.current.save_id)) {
+          // an earlier save of ours reached the server but its answer was lost: build on it and send what is left
+          L.version = err.current.version;
+          clearTimeout(this.pushTimer); this.pushTimer = setTimeout(() => this.push(summary), 300);
+        }
         else if (err.message === 'conflict' && err.current) this.showBar(err.current);
         else if (/No such document/.test(err.message)) { this.unlink({ keepAsDraft: true }); this.app.toast?.('This file is no longer in your Files. It stays open here as a draft: save it to keep it.', 8000); }
         else { this.setState('offline'); this.app.status('Could not save to the server (' + err.message + '). Trying again.'); }

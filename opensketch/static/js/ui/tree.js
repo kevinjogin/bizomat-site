@@ -263,7 +263,7 @@ export class FeatureTree {
     const f = this.app.isAsm ? (this.app.asm.comp(id) || this.app.asm.mate(id)) : this.app.featureById(id);
     const row = this.el.querySelector(`[data-key$=":${CSS.escape(id)}"] .nm`);
     if (!f || !row) return;
-    row.contentEditable = 'true'; row.classList.add('rename');
+    row.contentEditable = 'true'; row.spellcheck = false; row.classList.add('rename');
     row.textContent = f.name;
     const range = document.createRange(); range.selectNodeContents(row);
     const s = window.getSelection(); s.removeAllRanges(); s.addRange(range);
