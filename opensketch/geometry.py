@@ -123,6 +123,79 @@ def scale_of(part) -> float:
     return max(bb.diagonal, 1.0)
 
 
+def face_contains(face, point, tol: float = 1e-6) -> bool:
+    """Whether a point, projected onto the face's surface, lands on the face (inside or on its boundary).
+    A 2D classifier on the face: much cheaper than Face.is_inside, which builds a 3D solid classifier."""
+    from OCP.BRepClass import BRepClass_FaceClassifier
+    from OCP.TopAbs import TopAbs_IN, TopAbs_ON
+    from OCP.gp import gp_Pnt
+    try:
+        p = point if isinstance(point, Vector) else v3(point)
+        state = BRepClass_FaceClassifier(face.wrapped, gp_Pnt(p.X, p.Y, p.Z), tol).State()
+    except Exception:
+        return False
+    return state in (TopAbs_IN, TopAbs_ON)
+
+
+def on_face_point(f) -> Vector:
+    """A point that is really on the face (a face's centre can sit in a hole or outside a curved face)."""
+    try:
+        c = f.center()
+        if f.geom_type == GeomType.PLANE and face_contains(f, c, 1e-4):
+            return c
+    except Exception:
+        pass
+    for u in (0.5, 0.25, 0.75, 0.1, 0.9):
+        for v in (0.5, 0.25, 0.75, 0.1, 0.9):
+            try:
+                p = f.position_at(u, v)
+                if face_contains(f, p, 1e-4):
+                    return p
+            except Exception:
+                continue
+    return f.edges()[0].position_at(0.5)
+
+
+SAME_PLANE_MM = 1e-6
+
+
+def match_face_plane(faces, n: Vector, o: Vector, at: Vector | None = None, level_first: bool = False):
+    """The planar face a face attachment (or a mate's plane reference) means, among `faces`, as
+    (face, offset along n from o) or (None, None). A face whose plane faces along n and that:
+    1. holds the anchor `at` (a point that was on the picked face): the nearest such along n, so it follows a
+       face that moved with an edit;
+    2. lies at the stored height: keep it there (an unchanged part never moves the plane);
+    3. otherwise the nearest along n (in-plane distance is not a measure of "the same face": a raised boss
+       away from the origin is far from it in plane, the face below it is not).
+    `level_first` tries 2 before 1, for anchors that may not be on the face (a mate reference stored at a
+    face's centre, which for a tray rim lies over the pocket)."""
+    cands = []
+    for f in faces:
+        if f.geom_type != GeomType.PLANE:
+            continue
+        try:
+            fn = f.normal_at()
+            if fn.dot(n) < 0.9999:
+                continue
+            cands.append((f, (f.center() - o).dot(n)))
+        except Exception:
+            continue
+    if not cands:
+        return None, None
+    level = [c for c in cands if abs(c[1]) <= SAME_PLANE_MM]
+    if level and level_first:
+        return level[0][0], 0.0
+    if at is not None:
+        holding = [c for c in cands if face_contains(c[0], at)]
+        if holding:
+            return min(holding, key=lambda c: abs(c[1]))
+    if level:
+        return level[0][0], 0.0
+    best = min(abs(c[1]) for c in cands)
+    near = [c for c in cands if abs(c[1]) <= best + SAME_PLANE_MM]
+    return next((c for c in near if face_contains(c[0], o)), near[0])
+
+
 # ----------------------------------------------------------------------------- planes
 
 def resolve_plane(spec: dict, st: RegenState, diagnostics: dict | None = None) -> Plane:
@@ -147,19 +220,12 @@ def resolve_plane(spec: dict, st: RegenState, diagnostics: dict | None = None) -
     requested_origin = o
     best = None
     if mode == "face" and st.part is not None:
-        # Re-find the face: same normal, nearest to the stored origin. Follows depth changes.
-        best, bestd = None, None
-        for f in st.part.faces():
-            if f.geom_type != GeomType.PLANE:
-                continue
-            fn = f.normal_at()
-            if fn.dot(n) < 0.9999:
-                continue
-            d = f.distance_to(o)
-            if bestd is None or d < bestd:
-                best, bestd = f, d
+        # Re-find the face (match_face_plane): the one holding the stored anchor `at`, else the one at the
+        # stored height, else the nearest along the normal. Follows depth changes.
+        at = spec.get("at")
+        best, off = match_face_plane(st.part.faces(), n, o, v3(at) if at else None)
         if best is not None:
-            o = o + n * (best.center() - o).dot(n)
+            o = o + n * off
     pl = Plane(origin=o, x_dir=x, z_dir=n)
     if diagnostics is not None:
         diagnostics.update(requested_plane=dict(spec), resolved_plane=plane_dict(pl))
@@ -862,6 +928,9 @@ def mesh_shape(shape, scale=None) -> dict:
             pl = Plane(f)
             info["plane"] = plane_dict(Plane(origin=f.center(), x_dir=pl.x_dir, z_dir=f.normal_at()))
             info["normal"] = vlist(f.normal_at())
+            on = _on_face(positions, indices)
+            if on is not None:
+                info["point"] = on  # really on the face (its centre can sit in a hole): anchors for sketches and mates
         elif f.geom_type in (GeomType.CYLINDER, GeomType.CONE):
             try:
                 ax = f.axis_of_rotation
@@ -878,6 +947,22 @@ def mesh_shape(shape, scale=None) -> dict:
         edges.append({"id": i, "points": _edge_points(e, n), "mid": vlist(e.position_at(0.5)),
                       "type": e.geom_type.name.lower(), "length": length})
     return {"faces": faces, "edges": edges}
+
+
+def _on_face(positions, indices):
+    """The centre of the face's largest triangle: a point inside a planar face, whatever its shape."""
+    best, area = None, -1.0
+    for k in range(0, min(len(indices), 3 * 64) - 2, 3):  # any real triangle will do; the largest of a few
+        a, b, c = (positions[3 * indices[k + j]: 3 * indices[k + j] + 3] for j in range(3))
+        u = [b[i] - a[i] for i in range(3)]
+        v = [c[i] - a[i] for i in range(3)]
+        w = (u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0])
+        ar = w[0] * w[0] + w[1] * w[1] + w[2] * w[2]
+        if ar > area:
+            best, area = (a, b, c), ar
+    if best is None:
+        return None
+    return [round((best[0][i] + best[1][i] + best[2][i]) / 3, 6) for i in range(3)]
 
 
 def _face_triangles(f, tol, angle=0.2):

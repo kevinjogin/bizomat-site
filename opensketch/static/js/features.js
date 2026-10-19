@@ -276,7 +276,7 @@ function planeLabel(app, spec) {
 
 function planeFromPick(app, p) {
   if (p.kind === 'plane') return { ref: p.id };
-  if (p.kind === 'face' && p.data.plane) { const pl = p.data.plane; return { type: 'face', origin: pl.origin, normal: pl.normal, xdir: pl.xdir }; }
+  if (p.kind === 'face' && p.data.plane) { const pl = p.data.plane; return { type: 'face', origin: pl.origin, normal: pl.normal, xdir: pl.xdir, ...(p.data.point ? { at: p.data.point } : {}) }; }
   return null;
 }
 

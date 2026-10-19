@@ -43,21 +43,7 @@ def _type(shape) -> str:
 
 def _face_point(f):
     """A point that is really on the face (a face's centre can sit in a hole or outside a curved face)."""
-    try:
-        c = f.center()
-        if f.is_inside(c, tolerance=1e-4):
-            return c
-    except Exception:
-        pass
-    for u in (0.5, 0.25, 0.75, 0.1, 0.9):
-        for v in (0.5, 0.25, 0.75, 0.1, 0.9):
-            try:
-                p = f.position_at(u, v)
-                if f.is_inside(p, tolerance=1e-4):
-                    return p
-            except Exception:
-                continue
-    return f.edges()[0].position_at(0.5)
+    return geometry.on_face_point(f)
 
 
 def _face_info(i: int, f) -> dict:

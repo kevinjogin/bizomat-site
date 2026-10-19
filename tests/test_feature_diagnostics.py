@@ -61,15 +61,16 @@ def test_nut_pocket_face_attachment_moves_2_2_mm_and_fixed_plane_removes_materia
     assert not any(s.get("warnings") for s in fixed.status)
 
 
-def test_buried_pin_is_reported_and_fixed_plane_places_it_above_support():
+def test_pin_on_the_support_top_stays_there_with_a_face_or_fixed_plane():
+    # The face attachment at 8.2 is the support's top. It used to be re-found as the floor at 2.2 (the floor
+    # covers the stored origin, the support top does not), which buried the pin in the support.
     attached, _ = geometry.regen(locating_pin("face"))
     fixed, _ = geometry.regen(locating_pin("fixed"))
     ok(attached)
     ok(fixed)
-    assert warning_codes(attached, "pin_sk") == {"face_plane_moved"}
-    assert warning_codes(attached, "pin") == {"no_material_added"}
-    assert attached.planes["pin_sk"].origin.Z == pytest.approx(2.2)
-    assert attached.part.bounding_box().max.Z == pytest.approx(8.2)
+    assert not any(s.get("warnings") for s in attached.status)
+    assert attached.planes["pin_sk"].origin.Z == pytest.approx(8.2)
+    assert attached.part.volume == pytest.approx(fixed.part.volume)
     diag = status(fixed, "pin")["diagnostics"]
     assert diag["tool_bbox"][0][2] == pytest.approx(8.2)
     assert diag["tool_bbox"][1][2] == pytest.approx(11.2)
@@ -128,7 +129,7 @@ def test_offset_reference_plane_reports_base_and_result():
 
 
 def test_live_builder_full_rebuild_and_ai_report_share_warnings_and_measured_geometry():
-    doc = locating_pin("face")
+    doc = nut_pocket("face")
     st, _ = geometry.regen(doc)
     live = ai.LiveBuilder()
     events = [live.add(copy.deepcopy(f)) for f in doc["features"]]
@@ -139,8 +140,8 @@ def test_live_builder_full_rebuild_and_ai_report_share_warnings_and_measured_geo
     report, clean = ai._part_report(st)
     assert report["rebuilt"] is True and clean is False and report["clean"] is False
     assert report["errors"] == []
-    assert {w["code"] for w in report["warnings"]} == {"face_plane_moved", "no_material_added"}
-    assert report["planes"]["pin_sk"]["origin"] == [0, 0, 2.2]
+    assert {w["code"] for w in report["warnings"]} == {"face_plane_moved", "no_material_removed"}
+    assert report["planes"]["pocket_sk"]["origin"] == [0, 0, 2.2]
     result, clean, _ = ai.Session({"features": []}).propose_features({"features": doc["features"]})
     assert not clean and json.loads(result)["warnings"] == report["warnings"]
 
@@ -167,12 +168,12 @@ def test_preview_reports_no_op_and_preserves_existing_body():
 
 def test_assembly_operations_preserve_part_warnings_until_the_part_is_removed():
     session = ai.Session({"features": []})
-    session.create_part({"part_id": "pin", "features": locating_pin("face")["features"]})
+    session.create_part({"part_id": "pin", "features": nut_pocket("face")["features"]})
     for cid in ("c1", "c2"):
         raw, clean, _ = session.insert_component({"part": "pin", "component_id": cid})
         report = json.loads(raw)
         assert not clean and report["clean"] is False and report["rebuilt"] is True
-        assert {w["code"] for w in report["warnings"]} == {"face_plane_moved", "no_material_added"}
+        assert {w["code"] for w in report["warnings"]} == {"face_plane_moved", "no_material_removed"}
         assert all(w["part"] == "pin" for w in report["warnings"])
     raw, clean, _ = session.add_mate({"type": "lock", "refs": [
         {"component": "c1", "ref": "Origin"}, {"component": "c2", "ref": "Origin"}]})
@@ -201,3 +202,26 @@ def test_assembly_new_successful_mate_does_not_hide_an_existing_mate_error():
     assert any(e.get("mate") == bad for e in report["errors"])
     raw, clean, _ = session.delete_items({"mates": [bad]})
     assert clean and json.loads(raw)["errors"] == []
+
+
+def test_sketch_on_a_raised_face_away_from_the_origin_stays_on_it():
+    """The browser stores a face plane's origin as the part origin projected onto it; the face below a boss
+    covers that point, the boss top does not. The sketch must stay on the boss, and follow it with `at`."""
+    from tests.test_assembly import rect_sketch
+
+    def doc(height, at=None):
+        plane = {"type": "face", "origin": [0, 20, 0], "normal": [0, 1, 0], "xdir": [1, 0, 0], **({"at": at} if at else {})}
+        return {"features": [
+            rect_sketch("s1", "Top Plane", 80, 80), {"id": "e1", "type": "extrude", "sketch": "s1", "depth": 10},
+            rect_sketch("s2", "Top Plane", 20, 20, 30, 0), {"id": "e2", "type": "extrude", "sketch": "s2", "depth": height},
+            {"id": "s3", "type": "sketch", "plane": plane, "constraints": [], "entities": [
+                {"id": "p", "type": "point", "x": 30, "y": 0}, {"id": "c", "type": "circle", "center": "p", "r": 4}]},
+            {"id": "e3", "type": "extrude", "sketch": "s3", "op": "cut", "depth": 5, "reverse": True}]}
+
+    for at in (None, [30, 20, 0]):
+        st, _ = geometry.regen(doc(20, at))
+        assert st.planes["s3"].origin.Y == pytest.approx(20)
+        assert next(s for s in st.status if s["id"] == "s3")["state"] == "ok"
+        assert st.part.volume == pytest.approx(68000 - math.pi * 16 * 5)
+    st, _ = geometry.regen(doc(26, [30, 20, 0]))  # the boss grew: the sketch follows its top
+    assert st.planes["s3"].origin.Y == pytest.approx(26)
