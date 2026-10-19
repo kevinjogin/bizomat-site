@@ -51,7 +51,9 @@ def test_expressions(expr, vals, want):
     assert abs(params.evaluate_expr(expr, vals) - want) < 1e-9
 
 
-@pytest.mark.parametrize("bad", ["__import__('os')", "a.b", "open('x')", "1/0", "2 ** 1000", "[1, 2]", "x if 1 else 2", ""])
+@pytest.mark.parametrize("bad", ["__import__('os')", "a.b", "open('x')", "1/0", "2 ** 1000", "[1, 2]", "x if 1 else 2", "",
+                                 "(-8)^(1/3)", "(-a)^0.5", "floor(1e308*10)", "round(1e308*10)", "ceil(-1e309)", "(1e200)^2",
+                                 "sqrt(-1)", "1e308 * 10"])
 def test_expressions_refused(bad):
     with pytest.raises(params.ExprError):
         params.evaluate_expr(bad, {"a": 1})
@@ -125,3 +127,60 @@ def test_mcp_set_parameter_and_equation(mcp):
     assert {x["name"] for x in ins["parameters"]} == {"length", "width", "thick"} and len(ins["equations"]) == 2
     r = mcp("batch", {"doc_id": doc, "steps": [{"tool": "set_parameter", "args": {"name": "thick", "expression": "-3"}}]})
     assert r["_is_error"] and "at least" in r["failed"]["error"]
+
+
+def test_a_bad_expression_marks_its_feature_and_the_rest_rebuilds():
+    """gap = (w - 40)^0.5 with w = 30 is a complex number in Python: the rebuild used to fail with a TypeError."""
+    doc = part()
+    doc["parameters"].append({"name": "gap", "expression": "(length - 90)^0.5", "unit": "mm"})
+    doc["features"][1]["eq"] = {"depth": "gap"}
+    vol, bad, st = volume(doc)
+    assert bad[0]["id"] == "e1" and "'gap', which has a problem" in bad[0]["message"]  # the later features lose their body
+    assert "fractional power" in params.table(doc)[-1]["problem"]
+    from opensketch import cadjobs
+    assert cadjobs.params(doc) is not None
+
+
+def triangle(third="w"):
+    """Sides 10 and 10 and a third side driven by a variable: 30 cannot be a triangle."""
+    pts = [("a", 0, 0), ("b", 10, 0), ("c", 5, 8.660254)]
+    ents = [{"id": i, "type": "point", "x": x, "y": y} for i, x, y in pts]
+    ents += [{"id": f"l{k}", "type": "line", "p1": pts[k][0], "p2": pts[(k + 1) % 3][0]} for k in range(3)]
+    cons = [{"id": "k", "type": "coincident", "refs": ["a", "origin"]}, {"id": "h", "type": "horizontal", "refs": ["l0"]},
+            {"id": "D1", "name": "D1", "type": "distance", "refs": ["l0"], "value": 10},
+            {"id": "D2", "name": "D2", "type": "distance", "refs": ["l1"], "value": 10},
+            {"id": "D3", "name": "D3", "type": "distance", "refs": ["l2"], "value": 10, "eq": third}]
+    return {"parameters": [{"name": "w", "expression": "10", "unit": "mm"}], "features": [
+        {"id": "s1", "type": "sketch", "plane": {"ref": "Front Plane"}, "entities": ents, "constraints": cons},
+        {"id": "e1", "type": "extrude", "sketch": "s1", "depth": 5}]}
+
+
+def test_a_dimension_the_sketch_cannot_take_is_not_stored_as_built():
+    doc = triangle()
+    doc["parameters"][0]["expression"] = "30"
+    for _ in range(2):  # copy what the browser copies, then rebuild again: still an error, D3 still 10
+        res = geometry.regen_result(doc)
+        assert next(s for s in res["status"] if s["id"] == "s1")["state"] == "error"
+        for f in (res.get("equations") or {}).get("features", {}).values():
+            doc["features"] = [f if g["id"] == f["id"] else g for g in doc["features"]]
+        assert doc["features"][0]["constraints"][4]["value"] == 10
+    doc["parameters"][0]["expression"] = "12"
+    st, _ = geometry.regen(doc)
+    assert all(s["state"] == "ok" for s in st.status)
+    c = next(e for e in st.evaluated["features"][0]["entities"] if e["id"] == "c")
+    assert math.hypot(c["x"], c["y"]) == pytest.approx(12)
+
+
+def test_an_equation_drives_an_angle_past_90_degrees():
+    t = math.radians(30)
+    ents = [{"id": "a", "type": "point", "x": 50, "y": 0}, {"id": "c", "type": "point", "x": 50 * math.cos(t), "y": 50 * math.sin(t)},
+            {"id": "l1", "type": "line", "p1": "origin", "p2": "a"}, {"id": "l2", "type": "line", "p1": "origin", "p2": "c"}]
+    cons = [{"id": "h", "type": "horizontal", "refs": ["l1"]},
+            {"id": "L1", "type": "distance", "refs": ["l1"], "value": 50}, {"id": "L2", "type": "distance", "refs": ["l2"], "value": 50},
+            {"id": "A", "name": "A", "type": "angle", "refs": ["l1", "l2"], "value": 30, "eq": "ang"}]
+    doc = {"parameters": [{"name": "ang", "expression": "150", "unit": "deg"}],
+           "features": [{"id": "s1", "type": "sketch", "plane": {"ref": "Front Plane"}, "entities": ents, "constraints": cons}]}
+    new, report = params.evaluate(doc)
+    assert not report["problems"]
+    c = next(e for e in new["features"][0]["entities"] if e["id"] == "c")
+    assert math.degrees(math.atan2(c["y"], c["x"])) == pytest.approx(150, abs=1e-6)

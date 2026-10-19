@@ -1504,7 +1504,7 @@ export class App {
     this.settleProposal(); // before the snapshot that Cancel goes back to
     let spec, frame;
     if (p.kind === 'plane') { spec = { ref: p.id }; frame = this.planeFrame(p.id); }
-    else { frame = frameForFace(p.data.normal, p.data.center); spec = { type: 'face', origin: frame.origin, normal: frame.normal, xdir: frame.xdir }; }
+    else { frame = frameForFace(p.data.normal, p.data.center); spec = { type: 'face', origin: frame.origin, normal: frame.normal, xdir: frame.xdir, ...(p.data.point ? { at: p.data.point } : {}) }; }
     if (!frame) return;
     const before = JSON.stringify(this.cleanDoc());
     const history = { undo: [...this.undoStack], redo: [...this.redoStack] };

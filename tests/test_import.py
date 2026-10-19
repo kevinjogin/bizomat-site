@@ -191,3 +191,64 @@ def test_version_endpoint_reports_commit_and_update_note(client, tmp_path, monke
     assert r["version"] and r["note"] == ""
     note.write_text("Not updated: files in this codespace were edited.\n")
     assert client.get("/api/version").json()["note"].startswith("Not updated")
+
+
+def test_imported_body_data_is_unzipped_with_a_cap():
+    import base64
+    import zlib
+    from opensketch import geometry, importer
+    bomb = base64.b64encode(zlib.compress(b"\0" * (80 * 1024 * 1024), 9)).decode()  # 80 MB of zeros in ~80 KB
+    with pytest.raises(geometry.FeatureError, match="512 MB"):
+        importer.decode_shape(bomb)
+    with pytest.raises(geometry.FeatureError, match="damaged"):
+        importer.decode_shape("not base64 at all!")
+    with pytest.raises(geometry.FeatureError, match="damaged"):
+        importer.decode_shape(base64.b64encode(b"x" * 100).decode())
+    doc = {"features": [{"id": "i1", "type": "import", "data": bomb}]}
+    st, _ = geometry.regen(doc)
+    assert st.status[0]["state"] == "error" and "512 MB" in st.status[0]["message"]
+    from build123d import Box
+    assert importer.decode_shape(importer.encode_shape(Box(1, 2, 3))).volume == pytest.approx(6)
+
+
+def test_generic_step_labels_use_the_file_name(tmp_path):
+    from build123d import Box, export_step
+    from opensketch import importer
+    box = Box(10, 20, 30)
+    path = tmp_path / "block_10x20x30.step"
+    export_step(box, str(path))
+    assert "COMPOUND" in path.read_text(errors="replace")
+    doc = importer.import_file(path.read_bytes(), "block_10x20x30.step")
+    assert doc["name"] == "block_10x20x30"
+    box.label = "Bracket"
+    export_step(box, str(path))
+    assert importer.import_file(path.read_bytes(), "block_10x20x30.step")["name"] == "Bracket"
+    for label in ("COMPOUND", "Part_1", "Assembly 2", "SHAPE", "Product1"):
+        assert importer._clean_name(label, "file") == "file", label
+
+
+def test_world_placed_copies_of_one_product_share_a_part(tmp_path):
+    """FreeCAD and build123d write copies in world coordinates (identity locations), numbered Screw001...: one
+    part, each component placed by its move. A mirrored copy and a differently named product stay apart."""
+    from build123d import Plane, Pos
+    base = _world(Box(100, 10, 20).translate((0, -5, 0)))
+    base.label = "Base"
+    screws = []
+    for i in range(6):
+        s = _world((Cylinder(2, 10) + Pos(0, 0, 6) * Cylinder(3.5, 2)).translate((-40 + 15 * i, 0, 15)))
+        s.label = f"Screw{i + 1:03d}"
+        screws.append(s)
+    ell = (Box(30, 10, 10) + Pos(-10, 0, 15) * Box(10, 10, 20)).solids()[0]
+    left = _world(ell.translate((-50, 40, 0)))
+    right = _world(left.mirror(Plane.YZ))
+    left.label, right.label = "Lever001", "Lever002"
+    doc = importer.import_step(step_bytes(Compound(children=[base, *screws, left, right], label="Box"), tmp_path), "box.step")
+    assert len(doc["parts"]) == 4  # base, one screw, both levers (a mirror image is not a move)
+    comps = doc["components"]
+    assert len({c["part"] for c in comps[1:7]}) == 1
+    assert [c["name"] for c in comps[1:7]] == [f"Screw001<{k}>" for k in range(1, 7)]
+    res = assembly.regen_assembly(doc)
+    for comp, src in zip(res["components"][1:7], screws):
+        solid = assembly.build_part(doc["parts"][comp["part"]])["solid"].moved(assembly.location_of(assembly.Pose.of(comp)))
+        assert (solid.center() - src.center()).length < 1e-6
+        assert abs(solid.volume - src.volume) < 1e-6

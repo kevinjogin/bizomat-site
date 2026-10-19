@@ -96,7 +96,7 @@ def validate_geometry(doc: dict, export: bool = True) -> dict:
             statuses(result["mates"], "Mate ")
             statuses(result["components"], "Component ")
     else:
-        st, _ = geometry.regen(doc)
+        st = geometry.rebuilt(doc)  # shared with the export that follows (geometry.export)
         statuses(st.status, "Feature ")
         note = geometry.rollback_note(doc, st.part is not None)
         if note and st.part is None:

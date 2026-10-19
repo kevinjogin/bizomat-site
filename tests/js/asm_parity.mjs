@@ -1,10 +1,11 @@
 // Runs the browser mate solver on cases written by tests/test_solver_parity.py and prints its
 // results as JSON, so the test can compare them with assembly.py. Usage: node asm_parity.mjs cases.json
 import { readFileSync } from 'node:fs';
-import { solve } from '../../opensketch/static/js/asmsolver.js';
+import { solve, regenLocal } from '../../opensketch/static/js/asmsolver.js';
 
 const cases = JSON.parse(readFileSync(process.argv[2], 'utf8'));
-const out = cases.map(({ asm, size, drag }) => {
+const out = cases.map(({ asm, size, drag, parts }) => {
+  if (parts) return regenLocal(asm, parts, drag || null); // the whole browser path, sizes worked out here
   const t = performance.now();
   const s = solve(asm, size, drag || null);
   return {

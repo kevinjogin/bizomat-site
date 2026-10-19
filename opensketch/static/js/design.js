@@ -7,7 +7,7 @@
 
 import { icon } from './icons.js';
 import { SPECS, featureIcon } from './features.js';
-import { solveSketch } from './sketch/solver.js';
+import { solveSketch, angleSides } from './sketch/solver.js';
 import { evalExpr } from './ui/pm.js';
 import { featureSketchIds } from './model-utils.js';
 
@@ -281,10 +281,10 @@ export class DesignPanel {
     const spec = SPECS[f.type];
     if (!spec) return [];
     const out = [];
-    const shown = (p) => !p.when || Object.entries(p.when).every(([k, vals]) => vals.includes(f[k] ?? spec.params.find((q) => q.name === k)?.default));
+    const shown = (p) => !p.when || Object.entries(p.when).every(([k, vals]) => vals.includes(f[k] ?? ((q) => q?.omitted ?? q?.default)(spec.params.find((q) => q.name === k))));
     for (const p of spec.params) {
       if (!NUM_KINDS.has(p.kind) || !shown(p)) continue;
-      const v = f[p.name] ?? p.default;
+      const v = f[p.name] ?? p.omitted ?? p.default; // a left-out field shows what it builds
       if (!Number.isFinite(v)) continue;
       out.push(this.paramRow(f, p, p.name, v));
     }
@@ -411,13 +411,14 @@ export class DesignPanel {
 
   // Sketch dimension: solve a copy first; only a solvable result is kept (no broken sketches).
   setDimension(sketch, c, v) {
-    const copy = JSON.parse(JSON.stringify(sketch));
+    const copy = angleSides(JSON.parse(JSON.stringify(sketch))); // an angle keeps its side across 90 degrees
     const cc = copy.constraints.find((x) => x.id === c.id);
     cc.value = v;
     const res = solveSketch(copy);
     if (!res.ok || res.status === 'over') return false;
     sketch.entities = copy.entities;
     c.value = v;
+    if (cc.supplement !== undefined) c.supplement = cc.supplement;
     return true;
   }
 

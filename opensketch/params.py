@@ -71,10 +71,11 @@ def names_in(expr) -> set[str]:
 
 
 def evaluate_expr(expr, values: dict[str, float]) -> float:
-    """Evaluate one expression with the given variable values."""
+    """Evaluate one expression with the given variable values. Every failure is an ExprError with plain
+    words, so a bad expression turns its feature red instead of failing the whole rebuild."""
     try:
         tree = ast.parse(_prepare(expr), mode="eval")
-    except SyntaxError:
+    except (SyntaxError, ValueError, RecursionError, MemoryError):
         raise ExprError(f"Cannot read {expr!r}.") from None
 
     def ev(n):
@@ -96,20 +97,33 @@ def evaluate_expr(expr, values: dict[str, float]) -> float:
             if isinstance(n.op, ast.Pow) and abs(b) > 64:
                 raise ExprError("Exponent is too large.")
             try:
-                return BINOPS[type(n.op)](a, b)
+                v = BINOPS[type(n.op)](a, b)
             except ZeroDivisionError:
                 raise ExprError("Division by zero.") from None
+            except OverflowError:
+                raise ExprError("A number is too large.") from None
+            if isinstance(v, complex):  # Python's power of a negative number to a fraction
+                raise ExprError("A negative number cannot be raised to a fractional power.")
+            return finite(float(v))
         if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id in FUNCS and not n.keywords:
+            args = [ev(a) for a in n.args]
             try:
-                return float(FUNCS[n.func.id](*[ev(a) for a in n.args]))
+                return finite(float(FUNCS[n.func.id](*args)))
+            except OverflowError:
+                raise ExprError(f"{n.func.id}(): the number is too large.") from None
             except (TypeError, ValueError) as exc:
                 raise ExprError(f"{n.func.id}(): {exc}") from None
         raise ExprError(f"Not allowed in an expression: {ast.unparse(n) if hasattr(ast, 'unparse') else type(n).__name__}.")
 
-    v = ev(tree)
-    if not math.isfinite(v):
-        raise ExprError("Result is not a finite number.")
-    return v
+    def finite(v):
+        if not math.isfinite(v):
+            raise ExprError("Result is not a finite number.")
+        return v
+
+    try:
+        return finite(ev(tree))
+    except RecursionError:
+        raise ExprError("Expression is nested too deeply.") from None
 
 
 def variables(part: dict) -> tuple[dict[str, float], dict[str, str]]:
@@ -226,6 +240,7 @@ def evaluate(part: dict) -> tuple[dict, dict]:
     report["variable_problems"] = vproblems
     new = copy.deepcopy(part)
     resolve: list[dict] = []
+    pending: dict[str, list] = {}  # sketch id -> [(dimension, old value, recomputed entry)]
 
     def compute(expr, where):
         try:
@@ -267,9 +282,15 @@ def evaluate(part: dict) -> tuple[dict, dict]:
                     continue
                 old = c.get("value")
                 if not isinstance(old, (int, float)) or abs(float(old) - v) > 1e-9:
+                    if c.get("type") == "angle" and c.get("supplement") is None:
+                        side = _angle_side(f, c)  # which angle the old value meant, before it changes (solver.js)
+                        if side is not None:
+                            c["supplement"] = side
                     c["value"] = v
                     changed = True
-                    report["recomputed"].append({"feature": fid, "field": label, "old": old, "new": round(v, 9)})
+                    entry = {"feature": fid, "field": label, "old": old, "new": round(v, 9)}
+                    report["recomputed"].append(entry)
+                    pending.setdefault(fid, []).append((c, old, entry))
             if changed and fid not in report["problems"]:
                 resolve.append(f)
     if resolve:
@@ -284,7 +305,35 @@ def evaluate(part: dict) -> tuple[dict, dict]:
                 report["problems"][s["id"]] = f"Sketch: {why}."
             else:
                 s["entities"] = r["entities"]
+                continue
+            # Not taken: the sketch keeps the numbers its geometry was built with, so nothing that copies the
+            # evaluated features stores a dimension the geometry does not have (and the next rebuild reports it again).
+            for c, old, entry in pending.get(s["id"], []):
+                if old is None:
+                    c.pop("value", None)
+                else:
+                    c["value"] = old
+                report["recomputed"].remove(entry)
     return new, report
+
+
+def _angle_side(sketch: dict, c: dict) -> bool | None:
+    """Whether an angle dimension's value is the supplement of the angle between its lines' directions
+    (p1 to p2), as solver.js decides for a dimension that does not say."""
+    pts = {"origin": {"x": 0, "y": 0}, **{e.get("id"): e for e in sketch.get("entities") or [] if e.get("type") == "point"}}
+    ents = {e.get("id"): e for e in sketch.get("entities") or []}
+    try:
+        dirs = []
+        for rid in (c.get("refs") or [])[:2]:
+            ln = ents[rid]
+            a, b = pts[ln["p1"]], pts[ln["p2"]]
+            dirs.append((float(b["x"]) - float(a["x"]), float(b["y"]) - float(a["y"])))
+        (ax, ay), (bx, by) = dirs
+        th = abs(math.degrees(math.atan2(ax * by - ay * bx, ax * bx + ay * by)))
+        v = float(c.get("value"))
+    except (KeyError, TypeError, ValueError):
+        return None
+    return abs(v - (180 - th)) < abs(v - th)
 
 
 def table(part: dict) -> list[dict]:

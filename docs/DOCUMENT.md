@@ -57,11 +57,14 @@ Units are millimetres and degrees. Y is up, as in SOLIDWORKS.
 A plane reference is one of:
 
 - `{"ref": "Front Plane"}` (or Top / Right), or `{"ref": "<plane or sketch feature id>"}`
-- a planar face: `{"type": "face", "origin": [x,y,z], "normal": [x,y,z], "xdir": [x,y,z]}`.
-  The origin is the part origin projected onto the face. On rebuild the face is found again
-  (same normal, nearest face), so the sketch follows if an earlier depth changes. The stored origin
-  is an attachment hint, not a fixed height. The rebuild reports the requested and resolved plane,
-  and warns if reattachment moves it or no matching face exists.
+- a planar face: `{"type": "face", "origin": [x,y,z], "normal": [x,y,z], "xdir": [x,y,z], "at": [x,y,z]}`.
+  The origin is the part origin projected onto the face. `at` (optional) is a point on the picked face
+  (the browser stores one; body_topology gives one as a face's `point`). On rebuild the face is found again
+  among the planar faces with the same normal: the one holding `at` (nearest along the normal), else one
+  at the stored height, else the nearest along the normal. So the sketch follows if an earlier depth
+  changes, and a face away from the origin is not mistaken for the face below it that covers the origin.
+  The stored origin is an attachment hint, not a fixed height. The rebuild reports the requested and
+  resolved plane, and warns if reattachment moves it or no matching face exists.
 - a fixed coordinate plane: `{"type": "fixed", "origin": [x,y,z], "normal": [x,y,z], "xdir": [x,y,z]}`.
   It stays at the supplied origin even if nearby faces move. Use this for computed enclosure floor,
   pocket, or pin heights. A `plane` feature offset from a named plane is another fixed datum option.
@@ -105,7 +108,10 @@ mating, or deleting a component. A successful individual operation does not clea
   the sketch plane (with `"refKey"` naming the edge by its midpoint), plus its fixed endpoints. A point
   snapped onto a model edge is `coincident` (or `midpoint`) with it, which SOLIDWORKS shows as On Edge.
   References are never drawn, picked or used for profiles, and are dropped once nothing refers to them.
-- Closed loops become regions; loops inside loops become holes (even/odd nesting).
+- Closed loops become regions; loops inside loops become holes (even/odd nesting). Loops that cross or
+  touch join into the outline of everything they enclose (two overlapping circles make one figure-eight, an
+  overlapping pair of holes one hole), and a line from edge to edge of a region (T-junctions) keeps the
+  whole region. A curve with a free end is an open contour: an error that names the free end.
 
 Relations: `coincident` (point-point, point on line, point on circle/arc), `horizontal`, `vertical`
 (a line, or two points), `parallel`, `perpendicular`, `collinear`, `equal` (lines or radii),
@@ -115,9 +121,17 @@ Relations: `coincident` (point-point, point on line, point on circle/arc), `hori
 Dimensions: `distance` (`refs` a line, two points, point-line or two parallel lines; `orient`
 `aligned` / `horizontal` / `vertical`), `diameter`, `radius`, `angle` (two lines). `value` drives
 the geometry unless `driven: true`. `label` is where the dimension text sits (sketch coordinates).
+An `angle` is measured between the lines' directions (`p1` to `p2`), 0 to 180 degrees; with
+`supplement: true` it is 180 minus that (the other side of the corner). A value can be set across 90
+degrees. An angle without `supplement` gets it from the geometry the first time it is solved (whichever
+side its value is nearer), and keeps it.
 
 The solver (`static/js/sketch/solver.js`) treats every point as (x, y) and every circle radius as
 unknowns, and reports degrees of freedom, per-entity defined state and over-defining relations.
+The browser solves a sketch when it is opened; a rebuild uses the stored points as they are. So points
+must already satisfy the dimensions: a sketch whose stored points miss a dimension by more than 0.001 mm
+(or 0.001 deg), or has an arc whose end is off its circle, rebuilds with a `sketch_not_solved` warning
+that names them.
 
 ## Features
 
@@ -134,7 +148,7 @@ unknowns, and reports degrees of freedom, per-entity defined state and over-defi
 | `shell` | `thickness`, `faces` (removed), `outward` |
 | `mirror` | `plane` (plane ref), `features` (ids; empty = whole body) |
 | `linear_pattern` | `features`, `direction` (`X`/`Y`/`Z` or `{"edge": ref}`), `count`, `spacing`, `reverse`, optional `direction2`, `count2`, `spacing2` |
-| `circular_pattern` | `features`, `axis` (`X`/`Y`/`Z`), `count`, `angle`, `equal_spacing`, `step` |
+| `circular_pattern` | `features`, `axis` (`X`/`Y`/`Z` through the part origin, or `{"origin": [x,y,z], "dir": [x,y,z]}`; origin defaults to the part origin), `count`, `angle`, `equal_spacing`, `step` |
 | `draft` | `neutral_plane` (plane ref or planar face), `faces` (faces to draft), `angle` (deg, default 1), `reverse` (flip the pull direction). Neutral plane draft: a positive angle narrows the part along the neutral plane's normal. |
 | `import` | `format` `"brep"`, `data` (BREP text, zlib-compressed, base64), `source` (file name), `label`. An imported body (SOLIDWORKS "Imported1"); later features build on it. |
 | `standard` | `kind` (`socket_head_cap_screw`, `hex_head_screw`, `counter_sunk_screw`, `button_head_screw`, `set_screw`, `hex_nut`, `plain_washer`, `ball_bearing`), `size` (`M6-1`; bearings `M8-22-7`), `length` (screws). A Toolbox part made to size (bd_warehouse). Axis along the part Y axis, head above Y = 0, shank down -Y. |
@@ -142,7 +156,14 @@ unknowns, and reports degrees of freedom, per-entity defined state and over-defi
 Every feature type except `sketch`, `import` and `standard` is described once in the feature registry
 (`opensketch/features/`): its fields, kinds, defaults and limits there are the authority for this table.
 The registry drives the PropertyManager, the ribbon, the AI's `add_<type>` tools and help text, the
-MCP tools and input checks.
+MCP tools and input checks. A field's `default` is what new features are written with, always explicitly:
+the PropertyManager prefills it, `add_<type>` fills it, and new features in `propose_features` /
+`create_part` get every left-out default written in (a linear pattern with `direction2` also gets `count2` 2
+and `spacing2` = `spacing`; a chamfer with `distance2` but no `mode` gets `distance_distance`). A field left
+out of a document builds as it always has, so saved files never change shape: the registry's `omitted`
+value where that differs from `default` (plane `offset` 0, fillet `radius` 1, chamfer `mode`
+`distance_distance`, i.e. equal distances unless `distance2` is given, linear pattern `count` 2, `spacing`
+10, `count2` 1, `spacing2` 10), else the `default`. A pattern makes at most 2000 instances.
 
 Edge references are `{"mid": [x,y,z]}`, the point at the middle of the edge. Face references are
 `{"center": [x,y,z], "normal": [x,y,z]}`. They are matched to the nearest edge or face on rebuild.
@@ -260,7 +281,7 @@ coordinates (the coordinates used while modelling the part):
 
 | entity | form | from a face pick |
 |---|---|---|
-| plane | `"plane": {"point": [x,y,z], "normal": [x,y,z]}` | planar face: center and outward normal |
+| plane | `"plane": {"point": [x,y,z], "normal": [x,y,z]}` | planar face: a point on it (not its centre, which can lie off a ring-shaped face) and outward normal |
 | axis | `"axis": {"point": [x,y,z], "dir": [x,y,z]}` | cylindrical or conical face: its axis |
 | point | `"point": [x,y,z]` | vertex or sketch point |
 | named | `"ref": "Front Plane" / "Top Plane" / "Right Plane" / "Origin" / "X axis" / "Y axis" / "Z axis"` | the part's own reference geometry |
@@ -269,8 +290,10 @@ A reference without `component` (for example `{"ref": "Top Plane"}`) is the asse
 geometry, which is fixed.
 
 When a part changes, plane and axis references follow their face: on rebuild each one is matched to
-the nearest face of the rebuilt part with the same direction (within 20% of the part size) and the
-stored point is updated. Like edge and face references in parts, this is geometric matching, not
+a face of the rebuilt part with the same direction (within 20% of the part size) and the stored point is
+updated. A plane reference stays put while some face still lies in its plane (so an unchanged part never
+moves its mates); otherwise it goes to the face that holds the stored point, else the nearest along the
+normal. An axis goes to the nearest coaxial cylinder or cone. Like edge and face references in parts, this is geometric matching, not
 full topological naming.
 
 ## Mates
@@ -285,22 +308,33 @@ full topological naming.
 | `angle` | plane or axis, plane or axis | `value` degrees between directions |
 | `lock` | any two references on two components | the second component keeps its current pose relative to the first; the pose is stored in `pose` |
 | `hinge` | `refs`: two axes; optional `planes`: two planes (coincident, stops sliding); optional `angle_refs`: two planes or axes with `angle_min` / `angle_max` (degrees) | SOLIDWORKS Hinge mechanical mate: one rotation left, optionally limited |
-| `limit_distance` | plane-plane (also kept parallel), or point-point | distance between `min` and `max` mm |
+| `limit_distance` | plane-plane (also kept parallel), plane-point, axis-axis, axis-point, point-point | distance between `min` and `max` mm, measured as a coupler's `distance` (below) |
 | `limit_angle` | plane or axis, plane or axis | angle between `min` and `max` degrees |
 | `coupler` | `input_refs`: the driver pair; `refs`: the driven pair (each pair: two references, usually on different components) | SOLIDWORKS Linear/Linear Coupler, generalised to a motion law: the driven measure follows the driver measure. See below. |
 
 - `align`: `"anti"` (normals face each other, SOLIDWORKS "Anti-Aligned", the default for touching
   faces), `"aligned"`, or `"auto"` (whichever is closer when the mate is solved; the default).
 - `flip`: for `distance`, measure to the other side.
-- `suppressed`: the mate is ignored.
+- `suppressed`: the mate is ignored. A mate on a suppressed component is reported `suppressed` too.
+- `value`, `min`, `max`, `angle_min`, `angle_max`, `ratio`, `offset`: numbers; `null` is the same as
+  leaving it out. Anything else makes that mate an error, not the whole assembly.
 
 The solver is a damped least-squares (Levenberg-Marquardt) solve over the six degrees of freedom of
 every free component. It moves components as little as possible. Limits only act when exceeded.
 
 Dragging: `/api/regen` takes `drag` = `{"component", "point" (part coordinates), "target" (assembly
 coordinates)}`. The solver first pulls that point toward the target softly with every mate in place,
-then makes every mate exact again. So a hinged lid swings, a slider slides, a linkage follows. Each mate reports `ok` or `error`
-(cannot be satisfied together with the others, like an over-defining mate in SOLIDWORKS).
+then makes every mate exact again. So a hinged lid swings, a slider slides, a linkage follows. Each mate reports `ok`, `error`
+or `suppressed`.
+
+Over-defining mates (as in SOLIDWORKS): when the mates cannot all hold, the solver adds them again in
+document order, from where the components were, and rejects each mate that cannot hold together with the
+ones before it. Only the rejected mates are errors; the others stay `ok` and the components sit where the
+accepted mates put them (nothing moves to a compromise). A rejected mate's result has
+`"over_defining": true`, `conflicts_with` (ids of the earlier mates it fights: those whose removal would let
+it hold, else every earlier mate on its moving components) and a message such as "Over defines the assembly:
+conflicts with Coincident3." `/api/regen` (and the browser's own solve) also lists their ids in `conflicts`. Drag frames skip this (the
+solve on release does it).
 
 ### Coupler (motion law)
 
@@ -343,9 +377,14 @@ settles onto its mates. The AI fills it as it assembles.
 # Import
 
 `POST /api/import` with a STEP file returns a document. One solid: a part with an `import` feature.
-Several solids: an assembly with one part per distinct shape (same volume, area, face and edge count
-and size are taken as the same part, so instances share it) and one component per solid at its STEP
-position, the first one fixed, no mates (as SOLIDWORKS does with STEP). SOLIDWORKS files (.sldprt,
+Several solids: an assembly with one component per solid at its STEP position, the first one fixed, no
+mates (as SOLIDWORKS does with STEP). Solids share a part when they have the same shape (volume, area,
+face and edge count and size) and either the part's shape moved by the solid's own STEP location lands on
+it (instances of one product), or the solid is the same product (its name without a copy number, such as
+`Screw003`) moved without turning (copies written in world coordinates); the component is then placed by
+that move. A mirror image never shares a part. Generic STEP names (`COMPOUND`, `Part1`, `Solid`, `Body`,
+`Product`, `Assembly`, `Shape`, OpenCascade's translator text) give way to the file name. An `import`
+feature's `data` (zlib + base64 BREP) unpacks to at most 512 MB. SOLIDWORKS files (.sldprt,
 .sldasm) are refused with a message to save them as STEP first: the format is closed.
 
 The AI never receives the BREP data: it gets the import feature with `data` omitted and a `summary`

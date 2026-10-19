@@ -294,7 +294,7 @@ function planeLabel(app, spec) {
 
 function planeFromPick(app, p) {
   if (p.kind === 'plane') return { ref: p.id };
-  if (p.kind === 'face' && p.data.plane) { const pl = p.data.plane; return { type: 'face', origin: pl.origin, normal: pl.normal, xdir: pl.xdir }; }
+  if (p.kind === 'face' && p.data.plane) { const pl = p.data.plane; return { type: 'face', origin: pl.origin, normal: pl.normal, xdir: pl.xdir, ...(p.data.point ? { at: p.data.point } : {}) }; }
   return null;
 }
 
@@ -354,7 +354,7 @@ function circPatternSpec(app, f) {
       { title: 'Direction 1', rows: [
         { type: 'select', options: [['X', 'X axis'], ['Y', 'Y axis'], ['Z', 'Z axis']], get: () => (typeof f.axis === 'string' ? f.axis : 'Y'), set: (v) => { f.axis = v; } },
         { type: 'radio', name: 'cpeq', options: [['eq', 'Equal spacing'], ['inst', 'Instance spacing']], get: () => (f.equal_spacing !== false ? 'eq' : 'inst'), set: (v) => { f.equal_spacing = v === 'eq'; } },
-        { type: 'number', icon: 'angle_i', unit: 'deg', get: () => (f.equal_spacing !== false ? f.angle : f.step ?? 30), set: (v) => { if (f.equal_spacing !== false) f.angle = v; else f.step = v; }, min: 0.001, max: 360 },
+        { type: 'number', icon: 'angle_i', unit: 'deg', get: () => (f.equal_spacing !== false ? f.angle : f.step ?? 90), set: (v) => { if (f.equal_spacing !== false) f.angle = v; else f.step = v; }, min: 0.001, max: 360 },
         { type: 'number', icon: 'count_i', unit: '', int: true, get: () => f.count, set: (v) => { f.count = v; }, min: 1, max: 500 },
       ] },
       { title: 'Features and Faces', rows: [featureListRows(app, f)] },
@@ -411,7 +411,7 @@ function toggleEdge(list, ed) {
 
 function paramRow(app, spec, f, p) {
   const visible = () => paramShown(spec, f, p);
-  const get = () => f[p.name] ?? p.default;
+  const get = () => f[p.name] ?? p.omitted ?? p.default; // a left-out field shows what it builds
   const set = (v) => { f[p.name] = v; };
   const tip = p.label || p.doc || p.name;
   const list = () => (f[p.name] = f[p.name] || []);

@@ -50,6 +50,10 @@ class Param:
     section: str | None = None       # PropertyManager rollout title
     when: dict | None = None         # shown (and meaningful) only when other params have these values
     widget: str | None = None        # "radio" for enums shown as radio buttons, "toggle" for icon bools
+    # What a document that leaves the field out builds with, when that is not `default`. Older files were built
+    # with these numbers, so they keep their shape; `default` is what new features are written with (the
+    # PropertyManager, add_<type>, new features in propose_features / create_part), always explicitly.
+    omitted: Any = None
 
     def __post_init__(self):
         if self.kind not in KINDS:
@@ -96,6 +100,35 @@ def register(ft: FeatureType) -> FeatureType:
 
 def get(type_: str) -> FeatureType | None:
     return REGISTRY.get(type_)
+
+
+def left_out(type_: str, name: str):
+    """What a document that leaves this field out builds with (`omitted`, else `default`), or None."""
+    ft = REGISTRY.get(type_)
+    p = next((p for p in ft.params if p.name == name), None) if ft else None
+    if p is None:
+        return None
+    return p.omitted if p.omitted is not None else p.default
+
+
+def with_defaults(feat: dict) -> dict:
+    """A copy of a new feature with every left-out field that has a default written in, so the document carries
+    no implicit numbers (what `omitted` means then only matters for older files)."""
+    ft = REGISTRY.get(feat.get("type")) if isinstance(feat, dict) else None
+    if ft is None or feat.get("type") in OTHER_TYPES:
+        return feat
+    out = dict(feat)
+    if out.get("type") == "chamfer" and out.get("mode") is None and out.get("distance2") is not None:
+        out["mode"] = "distance_distance"  # two distances given: that is what was meant
+    if out.get("type") == "linear_pattern" and out.get("direction2"):  # as the PropertyManager fills direction 2
+        if out.get("count2") is None:
+            out["count2"] = 2
+        if out.get("spacing2") is None:
+            out["spacing2"] = out.get("spacing") if out.get("spacing") is not None else ft.param("spacing").default
+    for p in ft.params:
+        if out.get(p.name) is None and p.default is not None and _active(p, out, ft):
+            out[p.name] = json.loads(json.dumps(p.default))
+    return out
 
 
 def known_types() -> list[str]:
@@ -197,7 +230,7 @@ def _value_hint(p: Param) -> str:
         return "|".join(json.dumps(o[0]) for o in p.options)
     return {"length": "mm", "angle": "deg", "number": "number", "int": "int", "bool": "bool", "string": "text",
             "plane": "<plane>", "faces": "[faces]", "edges": "[edges]", "sketch": "<sketch id>",
-            "sketch_line": "<line id in that sketch>", "features": "[feature ids]", "axis": '"X"|"Y"|"Z"',
+            "sketch_line": "<line id in that sketch>", "features": "[feature ids]", "axis": '"X"|"Y"|"Z"|{"origin","dir"}',
             "direction": '"X"|"Y"|"Z"|{"edge"}', "object": "{...}"}[k]
 
 
@@ -261,8 +294,9 @@ def check_value(p: Param, v) -> str | None:
         if v not in [o[0] for o in p.options]:
             return "must be one of " + ", ".join(json.dumps(o[0]) for o in p.options)
     elif k == "axis":
-        if not (isinstance(v, str) and v.upper() in ("X", "Y", "Z")) and not (isinstance(v, dict) and _is_v3(v.get("dir"))):
-            return 'must be "X", "Y", "Z" or {"origin": [x,y,z], "dir": [x,y,z]}'
+        if not (isinstance(v, str) and v.upper() in ("X", "Y", "Z")) and not (
+                isinstance(v, dict) and _is_v3(v.get("dir")) and any(v["dir"]) and (v.get("origin") is None or _is_v3(v["origin"]))):
+            return 'must be "X", "Y", "Z" or {"origin": [x,y,z], "dir": [x,y,z]} (origin defaults to the part origin)'
     elif k == "plane":
         if not isinstance(v, dict) or not (v.get("ref") or (_is_v3(v.get("origin")) and _is_v3(v.get("normal")))):
             return "must be " + PLANE_DOC
@@ -311,6 +345,14 @@ def validate(feat: dict) -> list[str]:
         why = check_value(p, v)
         if why:
             out.append(f"{label}: {p.name} {why}")
+    if t in ("linear_pattern", "circular_pattern"):
+        from ..geometry import PATTERN_MAX
+        try:
+            total = int(feat.get("count") or 1) * (int(feat.get("count2") or 2) if t == "linear_pattern" and feat.get("direction2") else 1)
+        except (TypeError, ValueError):
+            total = 0
+        if total > PATTERN_MAX:
+            out.append(f"{label}: makes {total} instances; a pattern can make at most {PATTERN_MAX}")
     return out
 
 
@@ -337,7 +379,8 @@ def public() -> dict:
             "keys": ft.keys, "tool": tool_name(ft) if ft.tool else None,
             "params": [{"name": p.name, "kind": p.kind, "doc": p.doc, "default": p.default, "required": p.required,
                         "min": p.min, "max": p.max, "options": [list(o) for o in p.options] if p.options else None,
-                        "label": p.label, "icon": p.icon, "section": p.section, "when": p.when, "widget": p.widget}
+                        "label": p.label, "icon": p.icon, "section": p.section, "when": p.when, "widget": p.widget,
+                        "omitted": p.omitted}
                        for p in ft.params],
         }
     return out

@@ -83,7 +83,35 @@ def test_distance_and_conflict():
                        "refs": [{"component": "c1", "plane": {"point": [0, 0, 0], "normal": [0, 1, 0]}},
                                 {"component": "c2", "plane": {"point": [0, 0, 0], "normal": [0, 1, 0]}}]})
     res = A.regen_assembly(d)
-    assert any(m["state"] == "error" for m in res["mates"])
+    # like SOLIDWORKS: only the new mate is in error, it names the mate it fights, and nothing moves
+    states = {m["id"]: m for m in res["mates"]}
+    assert states["m1"]["state"] == states["m2"]["state"] == "ok"
+    assert states["m3"]["state"] == "error" and states["m3"]["over_defining"] and states["m3"]["conflicts_with"] == ["m2"]
+    assert states["m3"]["message"] == "Over defines the assembly: conflicts with m2."
+    p = next(c for c in res["components"] if c["id"] == "c2")
+    assert abs(p["position"][1] - 25) < 1e-4 and p["state"] == "under" and p["dof"] == 1
+
+
+def test_suppressed_component_suppresses_its_mates():
+    from opensketch import preview
+    d = asm_doc()
+    d["components"][1]["suppressed"] = True
+    res = A.regen_assembly(d)
+    assert [m["state"] for m in res["mates"]] == ["suppressed", "suppressed"]
+    assert preview.render_preview(d)  # no "fix mate errors" refusal
+    d["mates"][0]["refs"][1]["component"] = "c9"
+    assert A.regen_assembly(d)["mates"][0] == {"id": "m1", "state": "error", "message": "Component c9 is missing"}
+
+
+def test_mate_planes_stay_on_an_unchanged_tray_rim():
+    """A rim's centre lies over the pocket; the pocket floor is nearer to it than the rim's edge. An unchanged
+    part keeps the reference; a taller tray moves a reference stored on the rim with the rim."""
+    from build123d import Align, Box, Pos
+    tray = lambda h: Box(100, h, 100, align=(Align.CENTER, Align.MIN, Align.CENTER)) - Pos(0, h - 2.5, 0) * Box(60, 5, 60)
+    assert A.refind({"component": "c", "plane": {"point": [0, 10, 0], "normal": [0, 1, 0]}}, tray(10)) is None
+    assert A.refind({"component": "c", "plane": {"point": [45, 10, 0], "normal": [0, 1, 0]}}, tray(10)) is None
+    moved = A.refind({"component": "c", "plane": {"point": [45, 10, 0], "normal": [0, 1, 0]}}, tray(12))
+    assert moved["plane"]["point"] == [45, 12, 0]
 
 
 def test_lock_and_interference(tmp_path):

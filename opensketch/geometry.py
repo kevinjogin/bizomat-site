@@ -74,9 +74,22 @@ class RegenState:
     evaluated: dict | None = None  # the part with equation results, when params is set
     instances: dict = field(default_factory=dict)  # pattern/mirror id -> [(moved tool, op, seed id, label)]
     namer: Any = None  # naming.Namer: persistent face and edge names, worked out on request
+    measured: tuple | None = None  # (body, its volume): the last volume worked out, so the next feature reuses it
 
 
 # ----------------------------------------------------------------------------- helpers
+
+def param(feat: dict, name: str, fallback=None):
+    """A feature's value, or what the registry says a document that leaves it out means (Param.omitted, else
+    Param.default): the numbers older files were always built with, so they never change shape on reopen.
+    New features are written with every value (features.with_defaults)."""
+    v = feat.get(name)
+    if v is not None:
+        return v
+    from . import features as registry
+    d = registry.left_out(feat.get("type"), name)
+    return fallback if d is None else d
+
 
 def v3(p) -> Vector:
     return Vector(float(p[0]), float(p[1]), float(p[2]))
@@ -124,6 +137,79 @@ def scale_of(part) -> float:
     return max(bb.diagonal, 1.0)
 
 
+def face_contains(face, point, tol: float = 1e-6) -> bool:
+    """Whether a point, projected onto the face's surface, lands on the face (inside or on its boundary).
+    A 2D classifier on the face: much cheaper than Face.is_inside, which builds a 3D solid classifier."""
+    from OCP.BRepClass import BRepClass_FaceClassifier
+    from OCP.TopAbs import TopAbs_IN, TopAbs_ON
+    from OCP.gp import gp_Pnt
+    try:
+        p = point if isinstance(point, Vector) else v3(point)
+        state = BRepClass_FaceClassifier(face.wrapped, gp_Pnt(p.X, p.Y, p.Z), tol).State()
+    except Exception:
+        return False
+    return state in (TopAbs_IN, TopAbs_ON)
+
+
+def on_face_point(f) -> Vector:
+    """A point that is really on the face (a face's centre can sit in a hole or outside a curved face)."""
+    try:
+        c = f.center()
+        if f.geom_type == GeomType.PLANE and face_contains(f, c, 1e-4):
+            return c
+    except Exception:
+        pass
+    for u in (0.5, 0.25, 0.75, 0.1, 0.9):
+        for v in (0.5, 0.25, 0.75, 0.1, 0.9):
+            try:
+                p = f.position_at(u, v)
+                if face_contains(f, p, 1e-4):
+                    return p
+            except Exception:
+                continue
+    return f.edges()[0].position_at(0.5)
+
+
+SAME_PLANE_MM = 1e-6
+
+
+def match_face_plane(faces, n: Vector, o: Vector, at: Vector | None = None, level_first: bool = False):
+    """The planar face a face attachment (or a mate's plane reference) means, among `faces`, as
+    (face, offset along n from o) or (None, None). A face whose plane faces along n and that:
+    1. holds the anchor `at` (a point that was on the picked face): the nearest such along n, so it follows a
+       face that moved with an edit;
+    2. lies at the stored height: keep it there (an unchanged part never moves the plane);
+    3. otherwise the nearest along n (in-plane distance is not a measure of "the same face": a raised boss
+       away from the origin is far from it in plane, the face below it is not).
+    `level_first` tries 2 before 1, for anchors that may not be on the face (a mate reference stored at a
+    face's centre, which for a tray rim lies over the pocket)."""
+    cands = []
+    for f in faces:
+        if f.geom_type != GeomType.PLANE:
+            continue
+        try:
+            fn = f.normal_at()
+            if fn.dot(n) < 0.9999:
+                continue
+            cands.append((f, (f.center() - o).dot(n)))
+        except Exception:
+            continue
+    if not cands:
+        return None, None
+    level = [c for c in cands if abs(c[1]) <= SAME_PLANE_MM]
+    if level and level_first:
+        return level[0][0], 0.0
+    if at is not None:
+        holding = [c for c in cands if face_contains(c[0], at)]
+        if holding:
+            return min(holding, key=lambda c: abs(c[1]))
+    if level:
+        return level[0][0], 0.0
+    best = min(abs(c[1]) for c in cands)
+    near = [c for c in cands if abs(c[1]) <= best + SAME_PLANE_MM]
+    return next((c for c in near if face_contains(c[0], o)), near[0])
+
+
 # ----------------------------------------------------------------------------- planes
 
 def resolve_plane(spec: dict, st: RegenState, diagnostics: dict | None = None) -> Plane:
@@ -148,19 +234,12 @@ def resolve_plane(spec: dict, st: RegenState, diagnostics: dict | None = None) -
     requested_origin = o
     best = None
     if mode == "face" and st.part is not None:
-        # Re-find the face: same normal, nearest to the stored origin. Follows depth changes.
-        best, bestd = None, None
-        for f in st.part.faces():
-            if f.geom_type != GeomType.PLANE:
-                continue
-            fn = f.normal_at()
-            if fn.dot(n) < 0.9999:
-                continue
-            d = f.distance_to(o)
-            if bestd is None or d < bestd:
-                best, bestd = f, d
+        # Re-find the face (match_face_plane): the one holding the stored anchor `at`, else the one at the
+        # stored height, else the nearest along the normal. Follows depth changes.
+        at = spec.get("at")
+        best, off = match_face_plane(st.part.faces(), n, o, v3(at) if at else None)
         if best is not None:
-            o = o + n * (best.center() - o).dot(n)
+            o = o + n * off
     pl = Plane(origin=o, x_dir=x, z_dir=n)
     if diagnostics is not None:
         diagnostics.update(requested_plane=dict(spec), resolved_plane=plane_dict(pl))
@@ -184,7 +263,7 @@ def resolve_plane(spec: dict, st: RegenState, diagnostics: dict | None = None) -
 
 def plane_feature(feat: dict, st: RegenState, diagnostics: dict | None = None) -> Plane:
     base = resolve_plane(feat.get("base") or {"ref": "Front Plane"}, st, diagnostics)
-    off = float(feat.get("offset", 0.0)) * (-1 if feat.get("flip") else 1)
+    off = float(param(feat, "offset", 0.0)) * (-1 if feat.get("flip") else 1)
     pl = Plane(origin=base.origin + base.z_dir * off, x_dir=base.x_dir, z_dir=base.z_dir)
     if feat.get("flip"):
         pl = Plane(origin=pl.origin, x_dir=pl.x_dir, z_dir=-pl.z_dir)
@@ -254,14 +333,92 @@ def sketch_geometry(feat: dict, pl: Plane, include_construction=False):
     return edges
 
 
+UNSOLVED_MM, UNSOLVED_DEG = 1e-3, 1e-3
+
+
+def unsolved(feat: dict) -> list[str]:
+    """Where a sketch's stored points disagree with its dimensions (measured as solver.js measure() does), and
+    arcs whose end is off their circle. The browser solves a sketch when it is opened; the server builds what is
+    stored, so a sketch written by the AI or a script with points that do not fit its dimensions builds a
+    different part than it says."""
+    ents = {e.get("id"): e for e in feat.get("entities") or [] if isinstance(e, dict)}
+
+    def pt(pid):
+        if pid == "origin":
+            return 0.0, 0.0
+        e = ents[pid]
+        if e.get("type") != "point":
+            return pt(e["center"])
+        return float(e["x"]), float(e["y"])
+
+    def radius(e):
+        if e["type"] == "circle":
+            return float(e["r"])
+        (cx, cy), (sx, sy) = pt(e["center"]), pt(e["start"])
+        return math.hypot(sx - cx, sy - cy)
+
+    def line_dist(q, ln):
+        (ax, ay), (bx, by) = pt(ln["p1"]), pt(ln["p2"])
+        return abs((q[0] - ax) * (by - ay) - (q[1] - ay) * (bx - ax)) / (math.hypot(bx - ax, by - ay) or 1e-12)
+
+    out = []
+    try:
+        for e in ents.values():
+            if e.get("type") == "arc" and not e.get("ref"):
+                (cx, cy), (ex, ey) = pt(e["center"]), pt(e["end"])
+                gap = abs(math.hypot(ex - cx, ey - cy) - radius(e))
+                if gap > UNSOLVED_MM:
+                    out.append(f"arc {e['id']} ends {gap:.4g} mm off its circle")
+        for c in feat.get("constraints") or []:
+            t = c.get("type") if isinstance(c, dict) else None
+            if t not in ("distance", "diameter", "radius", "angle") or c.get("driven") or c.get("value") is None:
+                continue
+            v, refs, label = float(c["value"]), c.get("refs") or [], c.get("name") or c.get("id")
+            get = lambda i: {"type": "point"} if i == "origin" else ents[i]
+            if t in ("diameter", "radius"):
+                m = radius(ents[refs[0]]) * (2 if t == "diameter" else 1)
+            elif t == "angle":
+                l1, l2 = ents[refs[0]], ents[refs[1]]
+                (a1, b1), (a2, b2) = (pt(l1["p1"]), pt(l1["p2"])), (pt(l2["p1"]), pt(l2["p2"]))
+                d1, d2 = (b1[0] - a1[0], b1[1] - a1[1]), (b2[0] - a2[0], b2[1] - a2[1])
+                th = abs(math.degrees(math.atan2(d1[0] * d2[1] - d1[1] * d2[0], d1[0] * d2[0] + d1[1] * d2[1])))
+                sides = [180 - th] if c.get("supplement") else [th] if c.get("supplement") is False else [th, 180 - th]
+                if min(abs(v - s) for s in sides) > UNSOLVED_DEG:
+                    out.append(f"{label} is {v:g} deg but the lines are drawn at {th:.6g} deg")
+                continue
+            else:
+                A, B = (refs + [None])[:2]
+                if len(refs) == 1 and get(A).get("type") == "line":
+                    A, B = get(A)["p1"], get(A)["p2"]
+                ea, eb = get(A), get(B)
+                if ea.get("type") == "line" and eb.get("type") == "line":
+                    m = line_dist(pt(eb["p1"]), ea)
+                elif ea.get("type") == "line":
+                    m = line_dist(pt(B), ea)
+                elif eb.get("type") == "line":
+                    m = line_dist(pt(A), eb)
+                else:
+                    (ax, ay), (bx, by) = pt(A), pt(B)
+                    o = c.get("orient")
+                    m = abs(bx - ax) if o == "horizontal" else abs(by - ay) if o == "vertical" else math.hypot(bx - ax, by - ay)
+            if abs(m - v) > max(UNSOLVED_MM, 1e-9 * abs(v)):
+                out.append(f"{label} is {v:g} mm but the sketch is drawn at {m:.6g} mm")
+    except (KeyError, TypeError, ValueError, IndexError):
+        pass  # a broken reference is reported by the solver and the build, not here
+    return out
+
+
 def sketch_profiles(edges: list[Edge], pl: Plane) -> list[Face]:
-    """Closed contours -> faces with holes (even/odd nesting, like SOLIDWORKS contours)."""
+    """Closed contours -> faces with holes (even/odd nesting, like SOLIDWORKS contours). Contours that cross or
+    touch, and lines that split a region (T-junctions), are first turned into the regions they bound
+    (_merged_contours): overlapping shapes on one level join (two overlapping circles make a figure-eight, never
+    two overlapping solids) and a splitting line keeps the whole region."""
     if not edges:
         raise FeatureError("Sketch is empty")
     wires = Wire.combine(edges, tol=1e-6)
     closed = [w for w in wires if w.is_closed]
-    if len(closed) != len(wires):
-        raise FeatureError("Sketch contains an open contour")
+    if len(closed) != len(wires) or _contours_touch(closed):
+        closed = _merged_contours(edges, pl)
     faces = []
     for w in closed:
         try:
@@ -269,11 +426,14 @@ def sketch_profiles(edges: list[Edge], pl: Plane) -> list[Face]:
         except Exception as exc:  # self-intersecting etc.
             raise FeatureError(f"Cannot make a region from a contour: {exc}") from exc
     order = sorted(range(len(faces)), key=lambda i: -faces[i].area)
+    # Nesting: the smallest earlier (larger) contour whose box holds this one's box and whose face holds a point
+    # of it. Boxes first, so sibling holes in a grid are never classified against each other.
+    boxes = [_box2(w, pl) for w in closed]
     parent = {}
     for idx, i in enumerate(order):
         probe = closed[i].edges()[0].position_at(0.5)
         for j in reversed(order[:idx]):  # smallest enclosing face first
-            if faces[j].is_inside(probe):
+            if _box_holds(boxes[j], boxes[i]) and face_contains(faces[j], probe):
                 parent[i] = j
                 break
     depth = {}
@@ -295,6 +455,117 @@ def sketch_profiles(edges: list[Edge], pl: Plane) -> list[Face]:
             f = f.reversed() if hasattr(f, "reversed") else -f
         out.append(f)
     return out
+
+
+def _box2(shape, pl: Plane):
+    """(xmin, ymin, xmax, ymax) of a planar shape in the sketch plane's coordinates."""
+    bb = pl.to_local_coords(shape).bounding_box()
+    return (bb.min.X, bb.min.Y, bb.max.X, bb.max.Y)
+
+
+def _box_holds(a, b, tol: float = 1e-6) -> bool:
+    return a[0] <= b[0] + tol and a[1] <= b[1] + tol and a[2] >= b[2] - tol and a[3] >= b[3] - tol
+
+
+def _contours_touch(closed: list) -> bool:
+    """Whether any two closed contours cross or touch (boxes first, then the exact distance)."""
+    if len(closed) < 2:
+        return False
+    import numpy as np
+    from OCP.BRepExtrema import BRepExtrema_DistShapeShape
+    boxes = []
+    for w in closed:
+        bb = w.bounding_box()
+        boxes.append((bb.min.X, bb.min.Y, bb.min.Z, bb.max.X, bb.max.Y, bb.max.Z))
+    b = np.array(boxes)
+    tol = 1e-6
+    lo, hi = b[:, :3], b[:, 3:]
+    meet = np.all((lo[:, None, :] <= hi[None, :, :] + tol) & (lo[None, :, :] <= hi[:, None, :] + tol), axis=2)
+    for i, j in zip(*np.nonzero(np.triu(meet, 1))):
+        dist = BRepExtrema_DistShapeShape(closed[i].wrapped, closed[j].wrapped)
+        dist.Perform()
+        if dist.IsDone() and dist.Value() <= 1e-6:
+            return True
+    return False
+
+
+def _merged_contours(edges: list[Edge], pl: Plane) -> list:
+    """Closed contours that no longer touch one another, from sketch curves that cross, touch, branch or meet in
+    T-junctions. The curves are split where they meet; curves with a free end are an open contour (an error
+    that says where); each connected group that is a single loop stays that loop, and a group with branches
+    becomes the outline of every region it encloses."""
+    from OCP.BOPAlgo import BOPAlgo_Builder
+    if len(edges) > 1:
+        gf = BOPAlgo_Builder()
+        for e in edges:
+            gf.AddArgument(e.wrapped)
+        gf.SetRunParallel(False)
+        gf.Perform()
+        if gf.HasErrors():
+            raise FeatureError("Sketch curves cross in a way that cannot be resolved")
+        split = Compound(gf.Shape()).edges()
+    else:
+        split = list(edges)
+    ends: dict[int, list] = {}   # vertex -> edges that end there (a closed curve counts twice)
+    where: dict[int, Vector] = {}
+    for k, e in enumerate(split):
+        for v in (e.vertices() if not e.is_closed else e.vertices() * 2):
+            ends.setdefault(hash(v), []).append(k)
+            where[hash(v)] = Vector(v.X, v.Y, v.Z)
+    free = [h for h, ks in ends.items() if len(ks) == 1]
+    if free:
+        p = pl.to_local_coords(where[free[0]])
+        raise FeatureError(f"Sketch contains an open contour: the curve ending at ({p.X:.6g}, {p.Y:.6g}) "
+                           "is not connected to anything")
+    # connected groups of curves
+    group = list(range(len(split)))
+
+    def root(k):
+        while group[k] != k:
+            group[k] = group[group[k]]
+            k = group[k]
+        return k
+
+    for ks in ends.values():
+        for k in ks[1:]:
+            group[root(k)] = root(ks[0])
+    groups: dict[int, list] = {}
+    for k in range(len(split)):
+        groups.setdefault(root(k), []).append(k)
+    out = []
+    for ks in groups.values():
+        es = [split[k] for k in ks]
+        verts = {hash(v) for k in ks for v in split[k].vertices()}
+        if all(len(ends[h]) == 2 for h in verts):  # one simple loop
+            ws = Wire.combine(es, tol=1e-6)
+            if len(ws) == 1 and ws[0].is_closed:
+                out.append(ws[0])
+                continue
+        out.extend(f.outer_wire() for f in _enclosed(es, pl))
+    return out
+
+
+def _enclosed(edges: list[Edge], pl: Plane) -> list[Face]:
+    """The union of every region a connected group of curves encloses, as faces (no holes)."""
+    from OCP.BRepAlgoAPI import BRepAlgoAPI_Splitter
+    from build123d.topology.shape_core import List_TopoDS_Shape
+    x0, y0, x1, y1 = _box2(Compound(children=edges), pl)
+    size = 4 * max(x1 - x0, y1 - y0, 1.0)
+    centre = pl.from_local_coords(((x0 + x1) / 2, (y0 + y1) / 2))
+    big = Face.make_rect(size, size, Plane(origin=centre, x_dir=pl.x_dir, z_dir=pl.z_dir))
+    args, tools = List_TopoDS_Shape(), List_TopoDS_Shape()
+    args.Append(big.wrapped)
+    for e in edges:
+        tools.Append(e.wrapped)
+    sp = BRepAlgoAPI_Splitter()
+    sp.SetArguments(args)
+    sp.SetTools(tools)
+    sp.Build()
+    inner = [f for f in Compound(sp.Shape()).faces() if _box_holds(_box2(big, pl), _box2(f, pl), -1e-6)]
+    if not inner:
+        raise FeatureError("Sketch curves meet but enclose no region")
+    merged = inner[0].fuse(*inner[1:]) if len(inner) > 1 else inner[0]
+    return list(merged.faces())
 
 
 # ----------------------------------------------------------------------------- refs
@@ -427,7 +698,7 @@ def extrude_tool(feat: dict, st: RegenState):
         return extrude(faces, amount=depth, dir=direction, taper=taper)
 
     end = feat.get("end", "blind")
-    tool = one(normal, end, float(feat.get("depth", 10)), feat.get("draft", 0))
+    tool = one(normal, end, float(param(feat, "depth", 10)), feat.get("draft", 0))
     d2 = feat.get("dir2")
     if d2 and end != "midplane":
         tool = tool + one(-normal, d2.get("end", "blind"), float(d2.get("depth", 10)), d2.get("draft", 0))
@@ -452,7 +723,7 @@ def revolve_tool(feat: dict, st: RegenState):
     p0, p1 = ed.position_at(0), ed.position_at(1)
     d = (p1 - p0).normalized() * (-1 if feat.get("reverse") else 1)
     axis = Axis(p0, d)
-    ang = float(feat.get("angle", 360))
+    ang = float(param(feat, "angle", 360))
     if not 0 < ang <= 360:
         raise FeatureError("Angle must be between 0 and 360 degrees")
     if feat.get("end") == "midplane" and ang < 360:
@@ -511,7 +782,7 @@ def hole_tool(feat: dict, st: RegenState):
     normal = pl.z_dir * (-1 if feat.get("reverse") else 1)
     axis_plane = Plane(origin=origin, x_dir=pl.x_dir, z_dir=normal)
     diameter = float(feat.get("diameter", 0))
-    depth = float(feat.get("depth", 10))
+    depth = float(param(feat, "depth", 10))
     if not math.isfinite(diameter) or diameter <= 0:
         raise FeatureError("Hole diameter must be greater than 0")
     if feat.get("end", "blind") == "through_all":
@@ -534,7 +805,7 @@ def hole_tool(feat: dict, st: RegenState):
         tool = tool + Solid.make_cylinder(outer, recess, axis_plane)
     elif style == "countersink":
         outer = float(feat.get("sink_diameter", 0)) / 2
-        angle = float(feat.get("sink_angle", 90))
+        angle = float(param(feat, "sink_angle", 90))
         if not all(math.isfinite(v) for v in (outer, angle)) or outer <= radius or not 0 < angle < 180:
             raise FeatureError("Countersink diameter must exceed the hole diameter; included angle must be between 0 and 180 degrees")
         recess = (outer - radius) / math.tan(math.radians(angle / 2))
@@ -579,6 +850,13 @@ def _regen_feature(feat: dict, st: RegenState):
     if t == "sketch":
         pl = resolve_plane(feat.get("plane"), st, diagnostics)
         st.planes[feat["id"]] = pl
+        off = unsolved(feat)
+        if off:
+            diagnostics.setdefault("warnings", []).append({
+                "code": "sketch_not_solved",
+                "message": ("The sketch is built from its stored points, which do not match its dimensions: "
+                            + "; ".join(off[:4]) + (f" (and {len(off) - 4} more)" if len(off) > 4 else "")
+                            + ". Open the sketch to solve it, or write points that satisfy the dimensions.")})
         st.sketch_edges[feat["id"]] = sketch_geometry(feat, pl, include_construction=True)
         prof_edges = list(sketch_geometry(feat, pl).values())
         st.path_edges[feat["id"]] = prof_edges
@@ -606,7 +884,7 @@ def _regen_feature(feat: dict, st: RegenState):
         edges, missing = find_edges(st.part, feat.get("edges", []), st.namer)
         if not edges:
             raise FeatureError("Select edges to fillet")
-        r = float(feat.get("radius", 1))
+        r = float(param(feat, "radius", 1))
         try:
             st.part = solid_of(st.part.fillet(r, edges))
         except Exception as exc:
@@ -616,10 +894,10 @@ def _regen_feature(feat: dict, st: RegenState):
         edges, missing = find_edges(st.part, feat.get("edges", []), st.namer)
         if not edges:
             raise FeatureError("Select edges to chamfer")
-        d1 = float(feat.get("distance", 1))
+        d1 = float(param(feat, "distance", 1))
         d2 = feat.get("distance2")
-        if feat.get("mode") == "angle_distance":
-            d2 = d1 * math.tan(math.radians(float(feat.get("angle", 45))))
+        if param(feat, "mode") == "angle_distance":
+            d2 = d1 * math.tan(math.radians(float(param(feat, "angle", 45))))
         try:
             st.part = solid_of(st.part.chamfer(d1, float(d2) if d2 else None, edges))
         except Exception as exc:
@@ -627,7 +905,7 @@ def _regen_feature(feat: dict, st: RegenState):
         return f"{missing} edge reference(s) missing" if missing else None
     if t == "shell":
         faces, missing = find_faces(st.part, feat.get("faces", []), st.namer)
-        th = float(feat.get("thickness", 1))
+        th = float(param(feat, "thickness", 1))
         amt = th if feat.get("outward") else -th
         before = st.part.volume
         result = None
@@ -661,19 +939,22 @@ def _regen_feature(feat: dict, st: RegenState):
     if t == "linear_pattern":
         seeds = pattern_seed_tools(feat, st)
         d = direction_of(feat.get("direction", "X"), st) * (-1 if feat.get("reverse") else 1)
-        n, sp = int(feat.get("count", 2)), float(feat.get("spacing", 10))
+        n, sp = int(param(feat, "count", 2)), float(param(feat, "spacing", 10))
         d2 = feat.get("direction2")
-        n2, sp2 = int(feat.get("count2", 1)), float(feat.get("spacing2", 10))
+        n2, sp2 = int(param(feat, "count2", 1)), float(param(feat, "spacing2", 10))
         dv2 = direction_of(d2, st) if d2 else None
-        for i in range(n):
-            for j in range(n2 if dv2 is not None else 1):
-                if i == 0 and j == 0:
-                    continue
-                off = d * (sp * i) + (dv2 * (sp2 * j) if dv2 is not None else Vector())
-                for (tool, op), sid in zip(seeds, feat["features"]):
+        _check_instances(n * (n2 if dv2 is not None else 1))
+        for (tool, op), sid in zip(seeds, feat["features"]):  # seed by seed, all copies of one in one boolean
+            copies = []
+            for i in range(n):
+                for j in range(n2 if dv2 is not None else 1):
+                    if i == 0 and j == 0:
+                        continue
+                    off = d * (sp * i) + (dv2 * (sp2 * j) if dv2 is not None else Vector())
                     copy = tool.moved(Location(off))
                     st.instances.setdefault(feat["id"], []).append((copy, op, sid, f"{i + 1}" + (f".{j + 1}" if dv2 is not None else "")))
-                    st.part = apply_op(st.part, copy, op)
+                    copies.append(copy)
+            _apply_copies(st, copies, op)
         return None
     if t == "circular_pattern":
         seeds = pattern_seed_tools(feat, st)
@@ -681,22 +962,40 @@ def _regen_feature(feat: dict, st: RegenState):
         if isinstance(ax, str):
             axis = {"X": Axis.X, "Y": Axis.Y, "Z": Axis.Z}[ax.upper()]
         else:
-            axis = Axis(v3(ax["origin"]), v3(ax["dir"]))
-        n = int(feat.get("count", 4))
-        total = float(feat.get("angle", 360))
+            axis = Axis(v3(ax.get("origin") or (0, 0, 0)), v3(ax["dir"]))
+        n = int(param(feat, "count", 4))
+        total = float(param(feat, "angle", 360))
         step = total / n if feat.get("equal_spacing", True) and abs(total - 360) < 1e-9 else (
-            total / max(n - 1, 1) if feat.get("equal_spacing", True) else float(feat.get("step", 90)))
-        for i in range(1, n):
-            for (tool, op), sid in zip(seeds, feat["features"]):
+            total / max(n - 1, 1) if feat.get("equal_spacing", True) else float(param(feat, "step", 90)))
+        _check_instances(n)
+        for (tool, op), sid in zip(seeds, feat["features"]):
+            copies = []
+            for i in range(1, n):
                 copy = tool.rotate(axis, step * i)
                 st.instances.setdefault(feat["id"], []).append((copy, op, sid, f"{i + 1}"))
-                st.part = apply_op(st.part, copy, op)
+                copies.append(copy)
+            _apply_copies(st, copies, op)
         return None
     from . import features as registry
     ft = registry.get(t)
     if ft is not None and ft.build is not None:
         return ft.build(feat, st, diagnostics)
     raise FeatureError(f"Unknown feature type '{t}'")
+
+
+PATTERN_MAX = 2000  # instances of one pattern feature (a 500 x 500 grid would run for many minutes)
+
+
+def _check_instances(total: int) -> None:
+    if total > PATTERN_MAX:
+        raise FeatureError(f"A pattern can make at most {PATTERN_MAX} instances; this one asks for {total}.")
+
+
+def _apply_copies(st: RegenState, copies: list, op: str) -> None:
+    """Every copy of one seed in a single boolean: one cut or fuse with all of them, not one per copy against an
+    ever larger body (225 holes: 0.35 s instead of 10 s)."""
+    if copies:
+        st.part = apply_op(st.part, copies[0] if len(copies) == 1 else Compound(children=copies), op)
 
 
 def shape_bounds(shape) -> list | None:
@@ -706,15 +1005,26 @@ def shape_bounds(shape) -> list | None:
     return [vlist(bb.min), vlist(bb.max)]
 
 
+def _volume(st: RegenState, body) -> float:
+    """A body's volume, worked out once: each feature's body before is the last one's after (OpenCascade does
+    not keep volumes, and one takes ~0.13 s on a 900-face body)."""
+    if st.measured is not None and st.measured[0] is body:
+        return st.measured[1]
+    v = body.volume
+    st.measured = (body, v)
+    return v
+
+
 def regen_feature(feat: dict, st: RegenState):
     """Build one feature, preserving its tool return value and recording measured diagnostics."""
     diagnostics = st.diagnostics[feat["id"]] = {}
     before = st.part
-    before_volume = before.volume if before is not None else 0.0
+    solid = feat["type"] not in ("sketch", "plane")
+    before_volume = _volume(st, before) if solid and before is not None else 0.0
     result = _regen_feature(feat, st)
     diagnostics["result_bbox"] = shape_bounds(st.part)
-    if feat["type"] not in ("sketch", "plane") and st.part is not None:
-        delta = st.part.volume - before_volume
+    if solid and st.part is not None:
+        delta = _volume(st, st.part) - before_volume
         diagnostics["volume_change_mm3"] = round(delta, 9)
     if feat["id"] in st.tools:
         tool, op = st.tools[feat["id"]]
@@ -796,21 +1106,43 @@ def regen(doc: dict, preview: dict | None = None) -> tuple[RegenState, Any]:
         before = st.part
         rebuild_feature(f, st)
         st.namer.record(f, before, st)
-    tool = None
-    if preview is not None:
-        before = st.part
-        tool, status = rebuild_feature({"id": "preview", **preview}, st)
-        status["preview"] = True
-        if isinstance(tool, str):
-            tool = None
-        if status["state"] == "error":
-            st.part = before
-        if preview.get("type") in ("extrude", "revolve", "sweep", "loft", "hole"):
-            st.part = before  # SOLIDWORKS shows the body as it was plus a yellow tool preview
-        elif before is not None and st.part is not None and st.part is not before:
-            tool = changed_faces(before, st.part)
-            st.part = before
+    tool = _preview_on(st, preview) if preview is not None else None
     return st, tool
+
+
+def _preview_on(st: RegenState, preview: dict):
+    """Build a tentative feature on a rebuilt state and return what to draw for it; the state's body stays as
+    it was (SOLIDWORKS shows the body plus a yellow preview)."""
+    before = st.part
+    tool, status = rebuild_feature({"id": "preview", **preview}, st)
+    status["preview"] = True
+    if isinstance(tool, str):
+        tool = None
+    if status["state"] == "error":
+        st.part = before
+    if preview.get("type") in ("extrude", "revolve", "sweep", "loft", "hole"):
+        st.part = before  # SOLIDWORKS shows the body as it was plus a yellow tool preview
+    elif before is not None and st.part is not None and st.part is not before:
+        tool = changed_faces(before, st.part)
+        st.part = before
+    return tool
+
+
+def _preview_state(doc: dict, preview: dict) -> tuple[RegenState, dict, Any]:
+    """(state, body mesh, preview tool) for a PropertyManager preview. The tree above the feature does not change
+    while the PropertyManager is open, so it comes from the build cache (the document rolled back to the
+    feature) and only the tentative feature is built, on a copy of that state."""
+    feats = doc.get("features", [])
+    rb = doc.get("rollback")
+    stop = len(feats) if rb is None else int(rb)
+    if preview.get("_index") is not None:
+        stop = min(stop, int(preview["_index"]))
+    base, body = built({**doc, "rollback": None if stop >= len(feats) else stop})
+    st = RegenState(part=base.part, planes=dict(base.planes), profiles=dict(base.profiles),
+                    sketch_edges=dict(base.sketch_edges), path_edges=dict(base.path_edges), tools=dict(base.tools),
+                    status=list(base.status), diagnostics=dict(base.diagnostics), params=base.params,
+                    evaluated=base.evaluated, instances=dict(base.instances), namer=base.namer, measured=base.measured)
+    return st, body, _preview_on(st, preview)
 
 
 def changed_faces(before, after):
@@ -863,6 +1195,9 @@ def mesh_shape(shape, scale=None) -> dict:
             pl = Plane(f)
             info["plane"] = plane_dict(Plane(origin=f.center(), x_dir=pl.x_dir, z_dir=f.normal_at()))
             info["normal"] = vlist(f.normal_at())
+            on = _on_face(positions, indices)
+            if on is not None:
+                info["point"] = on  # really on the face (its centre can sit in a hole): anchors for sketches and mates
         elif f.geom_type in (GeomType.CYLINDER, GeomType.CONE):
             try:
                 ax = f.axis_of_rotation
@@ -879,6 +1214,22 @@ def mesh_shape(shape, scale=None) -> dict:
         edges.append({"id": i, "points": _edge_points(e, n), "mid": vlist(e.position_at(0.5)),
                       "type": e.geom_type.name.lower(), "length": length})
     return {"faces": faces, "edges": edges}
+
+
+def _on_face(positions, indices):
+    """The centre of the face's largest triangle: a point inside a planar face, whatever its shape."""
+    best, area = None, -1.0
+    for k in range(0, min(len(indices), 3 * 64) - 2, 3):  # any real triangle will do; the largest of a few
+        a, b, c = (positions[3 * indices[k + j]: 3 * indices[k + j] + 3] for j in range(3))
+        u = [b[i] - a[i] for i in range(3)]
+        v = [c[i] - a[i] for i in range(3)]
+        w = (u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0])
+        ar = w[0] * w[0] + w[1] * w[1] + w[2] * w[2]
+        if ar > area:
+            best, area = (a, b, c), ar
+    if best is None:
+        return None
+    return [round((best[0][i] + best[1][i] + best[2][i]) / 3, 6) for i in range(3)]
 
 
 def _face_triangles(f, tol, angle=0.2):
@@ -986,13 +1337,33 @@ def built(doc: dict) -> tuple["RegenState", dict]:
     return out
 
 
+_last_state: tuple | None = None  # (body key, state) of the latest rebuilt() miss
+
+
+def rebuilt(doc: dict) -> RegenState:
+    """The regen state of a document for read-only use (delete plans, measure, inspect, section previews,
+    exports): built()'s cached state when it holds the document, else one rebuild without a mesh, kept for the
+    next caller (a check and the export after it share it). Callers must not change what they get."""
+    global _last_state
+    key = body_key(doc)
+    with _built_lock:
+        hit = _built.get(key)
+    if hit is not None and getattr(hit[0], "namer", None) is not None:
+        return hit[0]
+    last = _last_state
+    if last is not None and last[0] == key:
+        return last[1]
+    st, _ = regen(doc)
+    _last_state = (key, st)
+    return st
+
+
 def regen_result(doc: dict, preview: dict | None = None) -> dict:
     if preview is None:
         st, body = built(doc)
         tool = None
     else:
-        st, tool = regen(doc, preview)
-        body = mesh_shape(st.part)
+        st, body, tool = _preview_state(doc, preview)
     part = st.part
     out = {
         "status": st.status,
@@ -1012,7 +1383,7 @@ def regen_result(doc: dict, preview: dict | None = None) -> dict:
 
 
 def mass_properties(doc: dict) -> dict:
-    st, _ = regen(doc)
+    st = rebuilt(doc)
     part = st.part
     if part is None:
         return {"error": "No solid body"}
@@ -1056,7 +1427,7 @@ def rollback_note(doc: dict, has_body: bool) -> str | None:
 
 def export(doc: dict, fmt: str, path: str) -> None:
     from build123d import export_step, export_stl
-    st, _ = regen(doc)
+    st = rebuilt(doc)
     require_clean(st.status, doc.get("name", "Part"))
     if st.part is None:
         note = rollback_note(doc, False)

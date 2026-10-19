@@ -122,3 +122,58 @@ test('sketch fillet corner with virtual sharp stays consistent', () => {
   assert.notEqual(r.status, 'over', [...r.conflicts].join(','));
   assert.equal(r.dof, 4);
 });
+
+// Two 50 mm lines from the origin: one along x, one at `deg`. As a V (both from the origin) or as a
+// polyline corner (a -> origin -> c), so the stored value is the directional angle or its supplement.
+function vee(deg, corner = false) {
+  const t = (deg * Math.PI) / 180;
+  return {
+    entities: [
+      { id: 'a', type: 'point', x: 50, y: 0 }, { id: 'c', type: 'point', x: 50 * Math.cos(t), y: 50 * Math.sin(t) },
+      { id: 'l1', type: 'line', p1: corner ? 'a' : 'origin', p2: corner ? 'origin' : 'a' }, { id: 'l2', type: 'line', p1: 'origin', p2: 'c' },
+    ],
+    constraints: [
+      { id: 'h', type: 'horizontal', refs: ['l1'] },
+      { id: 'L1', type: 'distance', refs: ['l1'], value: 50 }, { id: 'L2', type: 'distance', refs: ['l2'], value: 50 },
+    ],
+  };
+}
+const lineAngle = (s) => { const c = s.entities.find((e) => e.id === 'c'); return (Math.atan2(c.y, c.x) * 180) / Math.PI; };
+
+test('an angle dimension can be set across 90 degrees, on a V and on a corner', () => {
+  for (const corner of [false, true]) {
+    for (const [from, to] of [[30, 150], [45, 135], [150, 30]]) {
+      const s = vee(from, corner);
+      // the angle between the two lines at the origin; on the corner that is the supplement of the
+      // angle between the lines' directions (a -> origin, origin -> c), as feature recognition writes it
+      const value = from;
+      s.constraints.push({ id: 'A', type: 'angle', refs: ['l1', 'l2'], value, label: [0, 0] });
+      assert.equal(solveSketch(s).status, 'fully');
+      assert.ok(Math.abs(lineAngle(s) - from) < 1e-6, `${corner} ${from} -> ${lineAngle(s)}`);
+      assert.equal(s.constraints[3].supplement, corner); // the side, fixed from the geometry it was drawn with
+      s.constraints[3].value = to;
+      const r = solveSketch(s);
+      assert.ok(r.ok && r.status === 'fully', JSON.stringify(r));
+      assert.ok(Math.abs(Math.abs(lineAngle(s)) - to) < 1e-6, `${corner} ${from} -> ${to}: ${lineAngle(s)}`);
+      assert.ok(Math.abs(measure(s, s.constraints[3]) - s.constraints[3].value) < 1e-6);
+    }
+  }
+});
+
+test('independent parts of a big sketch are solved apart (441 converted circles + a line)', () => {
+  const ents = [], cons = [];
+  for (let i = 0; i < 441; i++) {
+    ents.push({ id: 'p' + i, type: 'point', x: (i % 21) * 10, y: Math.floor(i / 21) * 10 }, { id: 'c' + i, type: 'circle', center: 'p' + i, r: 2 });
+    cons.push({ id: 'f' + i, type: 'fix', refs: ['p' + i] }, { id: 'd' + i, type: 'diameter', refs: ['c' + i], value: 4 });
+  }
+  ents.push({ id: 'a', type: 'point', x: -5, y: -5 }, { id: 'b', type: 'point', x: 50, y: -7 }, { id: 'L', type: 'line', p1: 'a', p2: 'b' });
+  cons.push({ id: 'h', type: 'horizontal', refs: ['L'] }, { id: 'h2', type: 'horizontal', refs: ['a', 'b'] });
+  const t = performance.now();
+  const r = solveSketch({ entities: ents, constraints: cons });
+  assert.ok(performance.now() - t < 1000, `${performance.now() - t} ms`); // 5 to 15 s as one dense problem
+  assert.equal(r.dof, 3); // the line: x, x and y of its ends, the second horizontal is redundant
+  assert.deepEqual([...r.conflicts], ['h2']);
+  assert.equal(r.entityState.get('c7'), 'fully');
+  assert.equal(r.entityState.get('a'), 'over'); // the redundant relation's points
+  assert.ok(Math.abs(ents.find((e) => e.id === 'b').y - ents.find((e) => e.id === 'a').y) < 1e-9);
+});

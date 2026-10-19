@@ -65,7 +65,7 @@ def _meshes(doc, section=None):
         if any(s["state"] == "error" for s in result["status"]):
             raise ValueError("Fix feature errors before rendering a preview")
         if section:
-            st, _ = geometry.regen(doc)
+            st = geometry.rebuilt(doc)  # regen_result just built it
             body, cut = _section_mesh(st.part, np.eye(4), section)
             yield body, np.eye(4), _color(doc.get("appearance")), cut
             return

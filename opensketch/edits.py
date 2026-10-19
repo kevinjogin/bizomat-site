@@ -47,12 +47,12 @@ def references(feat: dict, ids: set[str]) -> set[str]:
 def sketch_ids(feat: dict) -> list[str]:
     """Sketches a feature consumes (it cannot exist without them): extrude/revolve/sweep sketch, sweep path,
     loft profiles. Same rule as featureSketchIds in static/js/model-utils.js."""
-    ids = [feat.get("sketch"), feat.get("path")] + list(feat.get("profiles") or [])
+    ids = [feat.get("sketch"), feat.get("path") if feat.get("type") == "sweep" else None] + list(feat.get("profiles") or [])
     return [i for i in ids if isinstance(i, str)]
 
 
 def _problems(doc: dict) -> tuple[dict, dict]:
-    st, _ = geometry.regen(doc)
+    st = geometry.rebuilt(doc)  # the part as it stands is usually what the browser just built
     errs = {s["id"]: s.get("message", "error") for s in st.status if s["state"] == "error"}
     warns = {s["id"]: s.get("message", "warning") for s in st.status if s["state"] == "warning"}
     return errs, warns
