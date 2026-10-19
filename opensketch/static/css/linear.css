@@ -260,10 +260,11 @@
 .skin-linear .busyind { background: var(--raised); color: var(--text); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); }
 .skin-linear .busy-spin { border-color: var(--line); border-top-color: var(--accent); }
 .skin-linear #graphics.dropping { outline-color: var(--accent); }
-.skin-linear .editbar { background: var(--raised); color: var(--text); border: 0; border-radius: 8px; box-shadow: var(--shadow); padding: 4px 4px 4px 12px; top: 52px; }
+.skin-linear .banners { top: 52px; }
+.skin-linear .editbar { background: var(--raised); color: var(--text); border: 0; border-radius: 8px; box-shadow: var(--shadow); padding: 4px 4px 4px 12px; }
 .skin-linear .livecap { background: var(--raised); color: var(--text); border-radius: 8px; bottom: 52px; box-shadow: var(--shadow); }
 .skin-linear .livecap .sub { color: var(--accent-text); }
-.skin-linear .update-bar { background: var(--raised); color: var(--text); border: 0; border-radius: 8px; box-shadow: var(--shadow); border-left: 3px solid var(--accent); top: 52px; }
+.skin-linear .update-bar { background: var(--raised); color: var(--text); border: 0; border-radius: 8px; box-shadow: var(--shadow); border-left: 3px solid var(--accent); }
 .skin-linear .update-bar.note { border-left-color: var(--yellow); }
 
 /* toolbars and menus: raised popovers with a hairline */

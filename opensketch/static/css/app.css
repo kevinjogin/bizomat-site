@@ -204,7 +204,8 @@ input, select, button { font: inherit; color: inherit; }
 .breadcrumbs .bc .ic { width: 14px; height: 14px; }
 .flyout-tree { position: absolute; left: 8px; top: 30px; width: 220px; background: rgba(255,255,255,.88); border: 1px solid var(--border-l); max-height: 60%; overflow: auto; }
 
-.headsup { position: absolute; top: 4px; left: 50%; transform: translateX(-50%); display: flex; gap: 1px; padding: 2px 4px; background: rgba(250,250,250,.88); border: 1px solid rgba(0,0,0,.12); border-radius: 3px; z-index: 5; }
+/* centred with translate (not transform), so an entrance animation or a phone scale never drops the centring */
+.headsup { position: absolute; top: 4px; left: 50%; translate: -50% 0; display: flex; gap: 1px; padding: 2px 4px; background: rgba(250,250,250,.88); border: 1px solid rgba(0,0,0,.12); border-radius: 3px; z-index: 5; }
 .hu { display: flex; align-items: center; padding: 2px 2px; border: 1px solid transparent; border-radius: 2px; cursor: pointer; position: relative; }
 .hu .ic { width: 20px; height: 20px; }
 .hu .caret { font-size: 7px; margin-left: 1px; color: #444; }
@@ -250,10 +251,9 @@ input, select, button { font: inherit; color: inherit; }
 .doctab.active { background: #fff; color: #000; }
 .toast { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(40,40,40,.88); color: #fff; padding: 6px 12px; border-radius: 3px; z-index: 70; max-width: 70%; }
 /* loading indicator: server rebuilds, imports, previews that take more than a moment */
-.busyind { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 8px; padding: 7px 14px 7px 11px; background: rgba(250,250,250,.94); color: #222; border: 1px solid rgba(0,0,0,.15); border-radius: 3px; box-shadow: 0 2px 8px rgba(0,0,0,.15); z-index: 60; pointer-events: none; font-size: 12px; white-space: nowrap; }
+.busyind { position: absolute; top: 50%; left: 50%; translate: -50% -50%; display: flex; align-items: center; gap: 8px; padding: 7px 14px 7px 11px; background: rgba(250,250,250,.94); color: #222; border: 1px solid rgba(0,0,0,.15); border-radius: 3px; box-shadow: 0 2px 8px rgba(0,0,0,.15); z-index: 60; pointer-events: none; font-size: 12px; white-space: nowrap; }
 .busy-spin { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(0,0,0,.15); border-top-color: #1f6fd1; animation: busyspin .8s linear infinite; flex: none; }
 @keyframes busyspin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .busy-spin { animation-duration: 2.4s; } }
 
 /* ---------------------------------------------------------------- task pane */
 #taskpane { display: flex; background: var(--bg); border-left: 1px solid var(--border); min-height: 0; }
@@ -341,7 +341,12 @@ input, select, button { font: inherit; color: inherit; }
 .kbd-table td:first-child { font-family: Consolas, monospace; color: #0a4fa0; }
 
 /* ---- assemblies */
-.editbar { position: absolute; left: 50%; top: 8px; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; padding: 4px 6px 4px 10px; background: #fffbe8; border: 1px solid #e3c766; border-radius: 3px; box-shadow: 0 1px 4px rgba(0,0,0,.12); z-index: 30; font-size: 12px; }
+/* bars over the graphics area (Return to Assembly, a newer version, another writer's change) stack in one column
+   below the heads-up toolbar instead of covering each other */
+.banners { position: absolute; top: 40px; left: 50%; translate: -50% 0; z-index: 30; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  width: max-content; max-width: calc(100% - 32px); pointer-events: none; }
+.banners > * { pointer-events: auto; max-width: 100%; }
+.editbar { display: flex; align-items: center; gap: 8px; padding: 4px 6px 4px 10px; background: #fffbe8; border: 1px solid #e3c766; border-radius: 3px; box-shadow: 0 1px 4px rgba(0,0,0,.12); font-size: 12px; }
 .editbar .btn { display: inline-flex; align-items: center; gap: 4px; }
 .tn.hiddencomp .ic { opacity: .4; }
 .newdoc { display: flex; gap: 10px; }
@@ -407,8 +412,8 @@ input, select, button { font: inherit; color: inherit; }
 .macro-dlg .macro-full { display: block; margin: 8px 0; font-size: 12px; line-height: 1.4; }
 
 /* codespace self-update: shown when the server restarted on a new version */
-.update-bar { position: absolute; top: 44px; left: 50%; transform: translateX(-50%); z-index: 30; display: flex; align-items: center; gap: 8px;
-  max-width: calc(100% - 32px); padding: 6px 8px 6px 12px; background: #fff; border: 1px solid #c9b8ff; border-left: 3px solid #7b5cff;
+.update-bar { display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px 6px 12px; background: #fff; border: 1px solid #c9b8ff; border-left: 3px solid #7b5cff;
   border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,.12); font-size: 12px; }
 .update-bar.note { border-color: #f0d28a; border-left-color: #c8961e; }
 .update-bar .btn { flex: none; }

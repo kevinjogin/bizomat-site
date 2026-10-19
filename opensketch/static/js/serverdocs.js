@@ -288,7 +288,7 @@ export class ServerDocs {
 
   showBar(h) {
     let bar = $('serverbar');
-    if (!bar) { bar = document.createElement('div'); bar.id = 'serverbar'; bar.className = 'update-bar note'; $('graphics').appendChild(bar); }
+    if (!bar) { bar = document.createElement('div'); bar.id = 'serverbar'; bar.className = 'update-bar note'; ($('banners') || $('graphics')).appendChild(bar); }
     if (bar.dataset.v === String(h.version)) return;
     bar.dataset.v = String(h.version);
     const who = h.by === 'claude' ? 'Your AI' : 'Someone';

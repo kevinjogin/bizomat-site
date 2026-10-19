@@ -265,7 +265,7 @@ export class App {
     const key = (updated ? 'u' : '') + note;
     if (bar && bar.dataset.key === key) return;
     if (bar && bar.dataset.key === 'dismissed:' + key) return;
-    if (!bar) { bar = document.createElement('div'); bar.id = 'updatebar'; $('graphics').appendChild(bar); }
+    if (!bar) { bar = document.createElement('div'); bar.id = 'updatebar'; ($('banners') || $('graphics')).appendChild(bar); }
     bar.dataset.key = key;
     bar.className = updated ? 'update-bar' : 'update-bar note';
     bar.innerHTML = `<span>${esc(updated ? 'OpenSketch was updated. Reload to use the new version. Your model is kept.' + (note ? ' ' + note : '') : note)}</span>`;

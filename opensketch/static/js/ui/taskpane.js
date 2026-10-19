@@ -115,7 +115,12 @@ export class TaskPane {
       off.appendChild(b);
       logEl.appendChild(off);
     }
-    for (const m of this.log) logEl.appendChild(this.entryEl(m));
+    for (const m of this.log) {
+      const seen = !!m.el; // drawn before: no entrance animation again (brand.css .settled)
+      const e = this.entryEl(m);
+      if (seen) e.classList.add('settled');
+      logEl.appendChild(e);
+    }
     const inp = h('div', 'ai-input');
     const ta = h('textarea'); ta.placeholder = 'Describe a part or a change';
     ta.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); this.send(); } });
@@ -236,7 +241,11 @@ export class TaskPane {
   refresh(m) {
     if (!m.el || !m.el.isConnected) return;
     const old = m.el;
-    old.replaceWith(this.entryEl(m));
+    const had = old.querySelectorAll('.ai-steps .st').length;
+    const el = this.entryEl(m);
+    el.classList.add('settled'); // re-drawn while streaming: no entrance again, only new step chips pop in
+    [...el.querySelectorAll('.ai-steps .st')].slice(had).forEach((c) => c.classList.add('new'));
+    old.replaceWith(el);
     this.scroll();
   }
 
