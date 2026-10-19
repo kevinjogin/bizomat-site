@@ -322,42 +322,61 @@ function linsolve(A, b) {
 
 const norm = (r) => Math.sqrt(r.reduce((s, v) => s + v * v, 0));
 
-function newton(eqs, p, w, maxIter = 60) {
-  const n = p.length, m = eqs.length;
+/** Jacobian rows over a few variables only (`vars`, global indices): row i, column k = d eqs[i] / d p[vars[k]]. */
+function localJacobian(eqs, p, col) {
+  const n = col.size;
+  return eqs.map((e) => {
+    const row = new Float64Array(n);
+    for (const j of e.vars) {
+      const h = 1e-7 * Math.max(1, Math.abs(p[j]));
+      const o = p[j];
+      p[j] = o + h; const fp = e.f(p);
+      p[j] = o - h; const fm = e.f(p);
+      p[j] = o;
+      row[col.get(j)] = (fp - fm) / (2 * h);
+    }
+    return row;
+  });
+}
+
+function newton(eqs, p, w, vars, maxIter = 60) {
+  const n = vars.length, m = eqs.length;
   if (!m) return { converged: true, res: 0 };
+  const col = new Map(vars.map((j, k) => [j, k]));
+  const locals = eqs.map((e) => e.vars.map((j) => col.get(j)));
   let r = residuals(eqs, p), rn = norm(r);
   for (let it = 0; it < maxIter && rn > TOL; it++) {
-    const J = jacobian(eqs, p, n);
+    const J = localJacobian(eqs, p, col);
     // (J W^-1 J^T + mu I) y = r ; dx = -W^-1 J^T y
     const A = Array.from({ length: m }, () => new Float64Array(m));
     for (let i = 0; i < m; i++) {
       for (let k = i; k < m; k++) {
         let s = 0;
-        for (const j of eqs[i].vars) s += (J[i][j] * J[k][j]) / w[j];
+        for (const q of locals[i]) s += (J[i][q] * J[k][q]) / w[vars[q]];
         A[i][k] = s; A[k][i] = s;
       }
       A[i][i] += 1e-12 + 1e-10 * A[i][i];
     }
     const y = linsolve(A, Float64Array.from(r));
     const dx = new Float64Array(n);
-    for (let i = 0; i < m; i++) for (const j of eqs[i].vars) dx[j] -= (J[i][j] * y[i]) / w[j];
+    for (let i = 0; i < m; i++) for (const q of locals[i]) dx[q] -= (J[i][q] * y[i]) / w[vars[q]];
     let step = 1, improved = false;
-    const p0 = p.slice();
+    const p0 = vars.map((j) => p[j]);
     for (let ls = 0; ls < 12; ls++) {
-      for (let j = 0; j < n; j++) p[j] = p0[j] + step * dx[j];
+      for (let q = 0; q < n; q++) p[vars[q]] = p0[q] + step * dx[q];
       const r2 = residuals(eqs, p), rn2 = norm(r2);
       if (rn2 < rn || rn2 < TOL) { r = r2; rn = rn2; improved = true; break; }
       step *= 0.5;
     }
-    if (!improved) { for (let j = 0; j < n; j++) p[j] = p0[j]; break; }
+    if (!improved) { for (let q = 0; q < n; q++) p[vars[q]] = p0[q]; break; }
   }
   return { converged: rn < 1e-7, res: rn };
 }
 
-// Row-space analysis by incremental Gram-Schmidt: rank, redundant rows, determined vars.
-function analyse(eqs, p) {
-  const n = p.length;
-  const J = jacobian(eqs, p, n);
+// Row-space analysis by incremental Gram-Schmidt: rank, redundant rows, determined vars (local to `vars`).
+function analyse(eqs, p, vars) {
+  const n = vars.length;
+  const J = localJacobian(eqs, p, new Map(vars.map((j, k) => [j, k])));
   const Q = [];
   const redundant = [];
   J.forEach((row, i) => {
@@ -378,6 +397,23 @@ function analyse(eqs, p) {
   const determined = new Float64Array(n);
   for (const q of Q) for (let j = 0; j < n; j++) determined[j] += q[j] * q[j];
   return { rank: Q.length, redundant, determined: Array.from(determined, (s) => s > 1 - 1e-6) };
+}
+
+/** Independent parts of a sketch: equations that share no variable never affect each other, so each group is
+ * solved and analysed on its own (a sketch of 441 converted circles was one dense 1300-variable problem). */
+function groups(eqs, nvars) {
+  const parent = Array.from({ length: nvars }, (_, i) => i);
+  const find = (x) => { while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; } return x; };
+  for (const e of eqs) for (let k = 1; k < e.vars.length; k++) { const a = find(e.vars[0]), b = find(e.vars[k]); if (a !== b) parent[a] = b; }
+  const byRoot = new Map();
+  eqs.forEach((e, i) => {
+    if (!e.vars.length) { byRoot.set(`none${i}`, { eqs: [i], vars: [] }); return; }
+    const r = find(e.vars[0]);
+    if (!byRoot.has(r)) byRoot.set(r, { eqs: [], vars: [] });
+    byRoot.get(r).eqs.push(i);
+  });
+  for (let j = 0; j < nvars; j++) { const g = byRoot.get(find(j)); if (g) g.vars.push(j); }
+  return [...byRoot.values()];
 }
 
 /**
@@ -401,20 +437,28 @@ export function solveSketch(sketch, opts = {}) {
       p[j] = d.value; w[j] = 1e6;
     }
   }
-  let res = newton(eqs, p, w);
-  if (!res.converged && opts.drag) {
+  const parts = groups(eqs, p.length).map((g) => ({ ...g, list: g.eqs.map((i) => eqs[i]) }));
+  const solveAll = () => parts.reduce((ok, g) => newton(g.list, p, w, g.vars).converged && ok, true);
+  let converged = solveAll();
+  if (!converged && opts.drag) {
     // Dragging into an impossible spot: fall back to solving from the original geometry.
     p.set(backup); w.fill(1);
-    res = newton(eqs, p, w);
-    if (!res.converged) p.set(backup);
+    converged = solveAll();
+    if (!converged) p.set(backup);
   }
+  const res = { converged };
   const conflicts = new Set();
   if (!res.converged) {
     const r = residuals(eqs, p);
     r.forEach((v, i) => { if (Math.abs(v) > 1e-6) conflicts.add(eqs[i].cid); });
   }
-  const an = analyse(eqs, p);
-  for (const i of an.redundant) conflicts.add(eqs[i].cid);
+  const an = { rank: 0, determined: new Array(p.length).fill(false) };
+  for (const g of parts) {
+    const a = analyse(g.list, p, g.vars);
+    an.rank += a.rank;
+    for (const i of a.redundant) conflicts.add(g.list[i].cid);
+    a.determined.forEach((d, q) => { an.determined[g.vars[q]] = d; });
+  }
   // write back
   for (const e of sketch.entities) {
     if (e.type === 'point') { e.x = p[V.idx.get(e.id + '.x')]; e.y = p[V.idx.get(e.id + '.y')]; }

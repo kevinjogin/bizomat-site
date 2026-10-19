@@ -159,3 +159,21 @@ test('an angle dimension can be set across 90 degrees, on a V and on a corner', 
     }
   }
 });
+
+test('independent parts of a big sketch are solved apart (441 converted circles + a line)', () => {
+  const ents = [], cons = [];
+  for (let i = 0; i < 441; i++) {
+    ents.push({ id: 'p' + i, type: 'point', x: (i % 21) * 10, y: Math.floor(i / 21) * 10 }, { id: 'c' + i, type: 'circle', center: 'p' + i, r: 2 });
+    cons.push({ id: 'f' + i, type: 'fix', refs: ['p' + i] }, { id: 'd' + i, type: 'diameter', refs: ['c' + i], value: 4 });
+  }
+  ents.push({ id: 'a', type: 'point', x: -5, y: -5 }, { id: 'b', type: 'point', x: 50, y: -7 }, { id: 'L', type: 'line', p1: 'a', p2: 'b' });
+  cons.push({ id: 'h', type: 'horizontal', refs: ['L'] }, { id: 'h2', type: 'horizontal', refs: ['a', 'b'] });
+  const t = performance.now();
+  const r = solveSketch({ entities: ents, constraints: cons });
+  assert.ok(performance.now() - t < 1000, `${performance.now() - t} ms`); // 5 to 15 s as one dense problem
+  assert.equal(r.dof, 3); // the line: x, x and y of its ends, the second horizontal is redundant
+  assert.deepEqual([...r.conflicts], ['h2']);
+  assert.equal(r.entityState.get('c7'), 'fully');
+  assert.equal(r.entityState.get('a'), 'over'); // the redundant relation's points
+  assert.ok(Math.abs(ents.find((e) => e.id === 'b').y - ents.find((e) => e.id === 'a').y) < 1e-9);
+});
