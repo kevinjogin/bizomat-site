@@ -11,6 +11,10 @@ breaks the file). Instead the client asks for a link, sends the file's bytes to 
 - The upload belongs to the person whose connector asked for it; import_document refuses anyone else's id.
 - The file is capped at the import limit (32 MiB, the same as base64 imports), after unzipping a gzip body.
   It is kept KEEP seconds for import_document and removed once imported.
+- Room: files waiting for import_document take at most MAX_RESERVED on the server, counted as they arrive (`room`),
+  so a link that is never used holds nothing; and nothing is taken when the data disk is nearly full
+  (store.check_disk). The records are shared by the web server and the CAD workers (import_document runs there),
+  so they change under a file lock.
 """
 
 from __future__ import annotations
@@ -20,7 +24,6 @@ import hmac
 import json
 import os
 import re
-import threading
 import time
 import uuid
 from pathlib import Path
@@ -31,8 +34,7 @@ from . import auth, store
 LINK_LIFETIME = 600          # seconds a link takes an upload
 KEEP = 1800                  # seconds an uploaded file waits for import_document
 MAX_PENDING = 4              # links per person waiting for a file or an import
-MAX_RESERVED = 256 * 2**20   # bytes held by uploaded files plus room promised to open links (Fly volume is 1 GB)
-_lock = threading.Lock()
+MAX_RESERVED = 192 * 2**20   # bytes of uploaded files waiting for import_document (Fly volume is 1 GB)
 _ID = re.compile(r"[0-9a-f]{32}")
 _NAME = re.compile(r"[^/\\\x00-\x1f]{1,255}")
 
@@ -105,10 +107,31 @@ def _cleanup(now: float) -> list[dict]:
     return alive
 
 
-def _reserved(alive: list[dict], cap: int) -> int:
-    d = _directory()
-    held = sum(p.stat().st_size for p in d.glob("*.bin"))
-    return held + cap * sum(1 for m in alive if m.get("state") == "waiting")
+def _locked():
+    return store.file_lock(_directory() / ".lock")
+
+
+def _held() -> int:
+    """Bytes the upload area holds now: files waiting for import_document and uploads arriving."""
+    total = 0
+    for p in _directory().iterdir():
+        if p.suffix in (".bin", ".part") and _ID.fullmatch(p.stem):
+            try:
+                total += p.stat().st_size
+            except OSError:
+                pass
+    return total
+
+
+def room() -> int:
+    """Bytes an arriving upload may still take (the upload area's share, and the disk's)."""
+    left = MAX_RESERVED - _held()
+    try:
+        import shutil
+        left = min(left, shutil.disk_usage(store.data_dir()).free - 2 * store.RESERVE)
+    except OSError:
+        pass
+    return max(0, left)
 
 
 def create(user: dict | None, filename: str, cap: int, size_bytes: int | None = None) -> dict:
@@ -119,13 +142,13 @@ def create(user: dict | None, filename: str, cap: int, size_bytes: int | None = 
         raise UploadError(f"The file is {size_bytes} bytes; imports are limited to {cap // 2**20} MiB.")
     owner = _owner(user)
     now = time.time()
-    with _lock:
+    with _locked():
         alive = _cleanup(now)
         mine = [m for m in alive if m.get("owner") == owner and m.get("state") in ("waiting", "received")]
         if len(mine) >= MAX_PENDING:
             raise UploadError(f"You already have {len(mine)} upload links open. Import or let them expire "
                               f"(links last {LINK_LIFETIME // 60} minutes, uploads {KEEP // 60}).")
-        if _reserved(alive, cap) + cap > MAX_RESERVED:
+        if room() < (size_bytes or 1):
             raise UploadError("The upload area is full. Try again in a few minutes.")
         upload_id = uuid.uuid4().hex
         expires = int(now) + LINK_LIFETIME
@@ -171,7 +194,7 @@ def abort(upload_id: str) -> None:
 
 
 def finish(upload_id: str, size: int, sha256: str) -> dict:
-    with _lock:
+    with _locked():
         m = _read(upload_id)
         if m is None or m.get("state") != "waiting":
             abort(upload_id)
@@ -189,7 +212,7 @@ def take(upload_id: str, user: dict | None) -> tuple[bytes, dict]:
     """The uploaded bytes for import_document, if this person's upload is there."""
     if not _ID.fullmatch(upload_id or ""):
         raise UploadError("Unknown upload_id.")
-    with _lock:
+    with _locked():
         _cleanup(time.time())
         m = _read(upload_id)
         if m is None or m.get("owner") != _owner(user):
@@ -211,7 +234,7 @@ def take(upload_id: str, user: dict | None) -> tuple[bytes, dict]:
 
 def mark_imported(upload_id: str, doc_id: str) -> None:
     """Free the bytes; keep the record a while so a second import says where the first one went."""
-    with _lock:
+    with _locked():
         m = _read(upload_id)
         if m is None:
             return

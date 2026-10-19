@@ -1,8 +1,6 @@
 """AI loop test with a fake Anthropic client: proposal -> rebuild report -> final reply."""
 from types import SimpleNamespace as NS
 
-import pytest
-
 from opensketch import ai
 
 
@@ -24,6 +22,13 @@ def plate_features():
             {"id": "e1", "type": "extrude", "name": "Boss-Extrude1", "sketch": "s1", "depth": 8}]
 
 
+def run(doc, prompt):
+    """The whole loop, as the chat runs it (run_stream), down to its last event."""
+    events = list(ai.run_stream(doc, prompt))
+    assert events[-1]["ev"] != "error", events[-1]
+    return events[-1]
+
+
 def test_ai_loop(monkeypatch):
     use = NS(type="tool_use", id="tu1", name="propose_features",
              input={"mode": "replace", "features": plate_features(), "summary": "60 x 40 x 8 plate"})
@@ -33,7 +38,7 @@ def test_ai_loop(monkeypatch):
     monkeypatch.setattr(ai, "available", lambda: True)
     import anthropic
     monkeypatch.setattr(anthropic, "Anthropic", lambda: NS(beta=NS(messages=fake)))
-    out = ai.run({"name": "Part1", "features": []}, "make a plate")
+    out = run({"name": "Part1", "features": []}, "make a plate")
     assert out["proposal"]["features"][1]["depth"] == 8
     assert out["reply"].startswith("Built")
     assert out["steps"] == [{"summary": "60 x 40 x 8 plate", "clean": True}]
@@ -45,5 +50,6 @@ def test_ai_loop(monkeypatch):
 
 def test_ai_unavailable(monkeypatch):
     monkeypatch.setattr(ai, "available", lambda: False)
-    with pytest.raises(ai.AIUnavailable):
-        ai.run({"features": []}, "x")
+    monkeypatch.delenv("OPENSKETCH_AI_DEMO", raising=False)
+    events = list(ai.run_stream({"features": []}, "x"))
+    assert events == [{"ev": "error", "message": ai.NO_KEY}]

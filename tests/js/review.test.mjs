@@ -108,7 +108,7 @@ function previewApp(api) {
     cmd: { f: { id: 'f', name: 'Boss', type: 'extrude', depth: 10, draft: 5 }, spec: { okEnabled: () => true } },
     viewer: { setBody: noop, setTool: noop }, pm: { isOpen: true, spec: {}, render: noop, close() { this.spec = null; } },
     api, drawSketches: noop, refreshSelectionDisplay: noop, bodyColor: () => 0,
-    docChanged: noop, regen: noop, status: noop, toast: noop });
+    docChanged: noop, regen: noop, status: noop, toast: noop, tree: { render: noop } });
   return app;
 }
 const good = { status: [{ id: 'f', preview: true, state: 'ok' }], body: { faces: [] }, planes: {}, tool: null };

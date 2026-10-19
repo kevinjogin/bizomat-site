@@ -210,6 +210,15 @@ export function couplerMeasure(kind, a, b) {
 }
 
 /** The current angle (deg) or distance (mm) between two references, with the components where they are now. */
+/** What a mate holds exactly, for counting degrees of freedom (assembly.py _equalities): a limit's range is not
+ * counted, so a part at a limit's bound stays under defined and can be dragged back into the range. */
+function equalities(m) {
+  if (m.type === 'limit_angle') return null;
+  if (m.type === 'limit_distance') return (m.refs || []).length === 2 && m.refs.every((r) => 'plane' in r) ? { ...m, type: 'parallel' } : null;
+  if (m.type === 'hinge' && ('angle_min' in m || 'angle_max' in m)) { const { angle_min, angle_max, ...rest } = m; return rest; }
+  return m;
+}
+
 export function measurePair(kind, refs, components) {
   try {
     const poses = Object.fromEntries((components || []).map((c) => [c.id, Pose.of(c)]));
@@ -246,6 +255,21 @@ export function couplerLaw(m) {
   return (v) => o + r * v;
 }
 
+const NUMBER_KEYS = ['value', 'min', 'max', 'angle_min', 'angle_max', 'ratio', 'offset'];
+
+/** The mate's numbers; a missing or null one keeps its default, anything else not finite is this mate's error (assembly.py mate_numbers). */
+function mateNumbers(m) {
+  const out = {};
+  for (const k of NUMBER_KEYS) {
+    const v = m[k];
+    if (v === undefined || v === null) continue;
+    const f = typeof v === 'number' || (typeof v === 'string' && v.trim()) || typeof v === 'boolean' ? Number(v) : NaN;
+    if (!Number.isFinite(f)) throw new AssemblyError(`${k} must be a number`);
+    out[k] = f;
+  }
+  return out;
+}
+
 function mateResidual(m, poses, L, align) {
   if (m.type === '_goal') {
     const P = poses[m.component];
@@ -269,8 +293,8 @@ function mateResidual(m, poses, L, align) {
 
   if (t === 'hinge') {
     const out = [...mateResidual({ type: 'concentric', refs: m.refs }, poses, L, align)];
-    if (m.planes) out.push(...mateResidual({ type: 'coincident', refs: m.planes }, poses, L, m._plane_align || 'anti'));
-    if (m.angle_refs && (m.angle_min != null || m.angle_max != null)) {
+    if (m.planes?.length) out.push(...mateResidual({ type: 'coincident', refs: m.planes }, poses, L, m._plane_align || 'anti'));
+    if (m.angle_refs?.length && (m.angle_min != null || m.angle_max != null)) {
       out.push(...mateResidual({ type: 'limit_angle', refs: m.angle_refs, min: m.angle_min, max: m.angle_max }, poses, L, align));
     }
     return out;
@@ -284,9 +308,8 @@ function mateResidual(m, poses, L, align) {
   }
   if (t === 'limit_distance') {
     const lo = m.min, hi = m.max;
-    let v, par = [];
-    if (ka === 'plane' && kb === 'plane') { v = dot(sub(pb, pa), da); par = dirMatch(); }
-    else v = norm(sub(pb, pa));
+    const v = couplerMeasure('distance', a, b); // one distance convention for limits, couplers and the review
+    const par = ka === 'plane' && kb === 'plane' ? dirMatch() : [];
     const over = (hi != null ? Math.max(0, v - hi) : 0) + (lo != null ? Math.max(0, lo - v) : 0);
     return [...par, over];
   }
@@ -341,24 +364,29 @@ function mateResidual(m, poses, L, align) {
 export function solve(asm, size = 100, drag = null) {
   const comps = (asm.components || []).filter((c) => !c.suppressed);
   const ids = new Set(comps.map((c) => c.id));
+  const off = new Set((asm.components || []).filter((c) => c.suppressed).map((c) => c.id));
   let poses = Object.fromEntries(comps.map((c) => [c.id, Pose.of(c)]));
+  const start = { ...poses };
   const fixed = new Set(comps.filter((c) => c.fixed).map((c) => c.id));
   const L = Math.max(size, 1);
   const hard = [], report = {}, updates = {};
   const upd = (id) => (updates[id] = updates[id] || {});
+  const onOff = (m) => REF_KEYS.some((key) => (Array.isArray(m[key]) ? m[key] : []).some((r) => r && typeof r === 'object' && r.component != null && off.has(r.component)));
   for (const m of asm.mates || []) {
-    if (m.suppressed) { report[m.id] = { state: 'suppressed' }; continue; }
+    // a suppressed mate, or one on a suppressed component, is ignored (SOLIDWORKS suppresses it too)
+    if (m.suppressed || onOff(m)) { report[m.id] = { state: 'suppressed' }; continue; }
     try {
       if (!MATE_TYPES.has(m.type)) throw new AssemblyError(`Unknown mate type '${m.type}'`);
       if ((m.refs || []).length !== 2) throw new AssemblyError('A mate needs two references');
-      const mmate = { ...m };
+      const mmate = { ...m, ...mateNumbers(m) };
       let allCs = [];
       for (const key of REF_KEYS) {
         const lst = m[key];
         if (!lst || !lst.length) continue;
         if (lst.length !== 2) throw new AssemblyError(`${key} needs two references`);
         for (const r of lst) {
-          if (r.component != null && !ids.has(r.component)) throw new AssemblyError(`Component ${r.component} is missing or suppressed`);
+          if (!r || typeof r !== 'object') throw new AssemblyError('A mate reference must be an object');
+          if (r.component != null && !ids.has(r.component)) throw new AssemblyError(`Component ${r.component} is missing`);
         }
         mmate[key] = lst.map((r) => ({ ...r, _l: refLocal(r) }));
         allCs = allCs.concat(lst.map((r) => r.component ?? null));
@@ -368,7 +396,7 @@ export function solve(asm, size = 100, drag = null) {
       if (c0 !== null && c0 === c1) throw new AssemblyError('Both references are on the same component');
       const cs = [...new Set(allCs)];
       const a = refWorld(refs[0], poses), b = refWorld(refs[1], poses);
-      if (m.type === 'hinge' && mmate.planes) {
+      if (m.type === 'hinge' && mmate.planes?.length) {
         mmate._plane_align = resolveAlign({ align: m.align }, refWorld(mmate.planes[0], poses), refWorld(mmate.planes[1], poses));
       }
       const align = ['coincident', 'distance', 'parallel', 'limit_distance'].includes(m.type) ? resolveAlign(m, a, b) : 'anti';
@@ -377,19 +405,21 @@ export function solve(asm, size = 100, drag = null) {
         let rel;
         if (m.pose) rel = [rotEuler(m.pose.rotation), (m.pose.position || [0, 0, 0]).map(Number)];
         else {
-          const PA = cs[0] ? poses[cs[0]] : new Pose(), PB = cs[1] ? poses[cs[1]] : new Pose();
+          const PA = c0 ? poses[c0] : new Pose(), PB = c1 ? poses[c1] : new Pose();
           rel = [mm(mT(PA.R), PB.R), mv(mT(PA.R), sub(PB.t, PA.t))];
           upd(m.id).pose = { position: rel[1].map((v) => clean(v)), rotation: eulerOf(rel[0]) };
         }
         mmate._pose = rel;
       }
       if (m.type === 'coupler') mmate._law = couplerLaw(m);
-      mateResidual(mmate, poses, L, align); // validates the reference kinds
+      const r0 = mateResidual(mmate, poses, L, align); // validates the reference kinds
+      if (!r0.every(Number.isFinite)) throw new AssemblyError("This mate's numbers cannot be measured");
       hard.push([mmate, align, cs.filter((c) => c !== null)]);
       report[m.id] = { state: 'ok' };
     } catch (err) {
-      if (!(err instanceof AssemblyError)) throw err;
-      report[m.id] = { state: 'error', message: err.message };
+      if (err instanceof AssemblyError) report[m.id] = { state: 'error', message: err.message };
+      else if (err instanceof TypeError || err instanceof RangeError) report[m.id] = { state: 'error', message: `This mate cannot be read (${err.name}).` }; // malformed data: this mate only
+      else throw err;
     }
   }
   const orderIds = comps.map((c) => c.id);
@@ -556,27 +586,61 @@ export function solve(asm, size = 100, drag = null) {
     }
     if (active.length) poses = runLM(poses, system(active)); // make every mate exact
   }
+  const thr = Math.max(1e-3, 1e-5 * L);
+  const worst = (rk) => (rk.length ? Math.max(...rk.map(Math.abs)) : 0);
+  const held = (rk) => { const e = worst(rk); return Number.isFinite(e) && e <= thr; };
+  const shares = (x, y) => y[2].some((c) => x[2].includes(c) && !fixed.has(c)); // a fixed component carries nothing over
+
+  // A mate that over defines the assembly (assembly.py solve): like SOLIDWORKS, that mate is the one in
+  // error and the others stay solved. When anything fails (not on drag frames), solve again from the
+  // starting poses adding the mates in document order; one that cannot be added is rejected.
+  let accepted = hard;
+  const rejected = {};
+  if (!goal && !system(hard).parts(poses).every(held)) {
+    accepted = [];
+    let P = start;
+    for (const x of hard) {
+      const trial = system([...accepted, x]);
+      const Q = n ? runLM(P, trial) : P;
+      if (trial.parts(Q).every(held)) { accepted = [...accepted, x]; P = Q; continue; }
+      // name the accepted mates it fights: those whose removal lets it hold (else every one it shares a component with)
+      const share = accepted.filter((y) => shares(x, y));
+      const culprits = [];
+      if (n && share.length > 1 && share.length <= 8) {
+        for (const y of share) {
+          const alt = system([...accepted.filter((z) => z !== y), x]);
+          if (alt.parts(runLM(P, alt)).every(held)) culprits.push(y);
+        }
+      }
+      rejected[x[0].id] = (culprits.length ? culprits : share).map((y) => y[0]);
+    }
+    poses = P;
+  }
   // per-mate result
   const final = system(hard).parts(poses);
-  hard.forEach(([m], k) => {
+  hard.forEach(([m, , cs], k) => {
     const rk = final[k];
-    const err = rk.length ? Math.max(...rk.map(Math.abs)) : 0;
+    const err = worst(rk);
     const rep = report[m.id];
-    rep.residual = err;
-    if (err > Math.max(1e-3, 1e-5 * L)) {
+    rep.residual = Number.isFinite(err) ? err : null;
+    if (rejected[m.id]) {
+      Object.assign(rep, { state: 'error', over_defining: true, message: conflictMessage(rejected[m.id], cs, fixed),
+        conflicts_with: rejected[m.id].map((y) => y.id) });
+    } else if (!held(rk)) {
       rep.state = 'error';
       rep.message = 'This mate cannot be satisfied with the other mates (over defining or conflicting).';
     }
   });
-  // degrees of freedom left per component (SOLIDWORKS "(-)" under defined)
+  // degrees of freedom left per component (SOLIDWORKS "(-)" under defined), from the mates that hold
   const compState = Object.fromEntries(comps.map((c) => [c.id, fixed.has(c.id) ? 'fixed' : 'under']));
   const dofs = {};
-  const mated = [...new Set(hard.flatMap((x) => x[2]).filter((c) => !fixed.has(c)))].sort(byOrder);
+  const mated = [...new Set(accepted.flatMap((x) => x[2]).filter((c) => !fixed.has(c)))].sort(byOrder);
   if (mated.length && !goal) { // drag frames only draw; the solve after the drag reports the states
     free = mated;
     idx = Object.fromEntries(free.map((c, i) => [c, i]));
     n = 6 * free.length;
-    const S = system(hard), r = S.res(poses);
+    // limits are inequalities: they never take a degree of freedom (SOLIDWORKS), even at a bound
+    const S = system(accepted.map(([m, al, cs]) => [equalities(m), al, cs]).filter(([e]) => e)), r = S.res(poses);
     let null_;
     if (r.length) {
       const { s, V } = svd(S.jac(poses, r), n);
@@ -591,7 +655,14 @@ export function solve(asm, size = 100, drag = null) {
       dofs[c] = blk.length ? svd(blk, 6).s.filter((x) => x > 1e-6).length : 0;
     }
   }
-  return { poses, mates: report, comp_state: compState, dof: dofs, updates, iterations: iters, fixed };
+  return { poses, mates: report, comp_state: compState, dof: dofs, updates, iterations: iters, fixed, conflicts: Object.keys(rejected) };
+}
+
+/** Why a mate was rejected (assembly.py _conflict_message). */
+function conflictMessage(others, cs, fixed) {
+  if (others.length) return `Over defines the assembly: conflicts with ${others.map((o) => o.name || o.id).join(', ')}.`;
+  if (cs.every((c) => fixed.has(c))) return 'Over defines the assembly: the components it joins are fixed.';
+  return 'This mate cannot be satisfied with the other mates (over defining or conflicting).';
 }
 
 // ------------------------------------------------------------------ regen (no part rebuilds)
@@ -637,7 +708,7 @@ export function regenLocal(asm, parts, drag = null) {
     }
   }
   const out = { type: 'assembly', parts: partsOut, components: comps,
-    mates: (asm.mates || []).map((m) => ({ id: m.id, ...(sol.mates[m.id] || { state: 'ok' }) })), updates: sol.updates, local: true };
+    mates: (asm.mates || []).map((m) => ({ id: m.id, ...(sol.mates[m.id] || { state: 'ok' }) })), updates: sol.updates, conflicts: sol.conflicts, local: true };
   if (lo.every(Number.isFinite)) out.bbox = [lo.map((v) => clean(v)), hi.map((v) => clean(v))];
   return out;
 }

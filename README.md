@@ -118,7 +118,8 @@ See the [plane contract](docs/DOCUMENT.md#conventions).
    only your Files. Account settings > Connected AI apps lists them, with Disconnect. In ChatGPT (paid plans,
    developer mode on): Settings > Apps & Connectors > Create, the address, Authentication OAuth, then sign in.
    Apps that cannot sign in can use your private address instead (Connect AI > "App cannot sign in?"); it
-   contains a key, so keep it private.
+   contains a key, so keep it private. If someone else may have seen it, Account settings > Make a new address
+   (changing your password does that too, and disconnects your AI apps).
 5. **Use it.** In a chat, turn OpenSketch on and ask, for example: "In OpenSketch, design a wall bracket
    for a 20 kg shelf using off-the-shelf screws." Open the link it gives you.
 
@@ -218,13 +219,15 @@ restarts itself within about two minutes. Everything is set up already; it is al
 
 1. Sign up at fly.io and add a card.
 2. In the Fly dashboard, open Tokens and create an organization token for your personal organization.
-   Copy it.
+   Copy it. (After the first deploy, swap it for a deploy token of the app only: the app > Tokens, or
+   `fly tokens create deploy -a opensketch-yz`. The workflow then holds less power over your Fly account.)
 3. On GitHub, in this repository: Settings > Secrets and variables > Actions > New repository secret.
    Add `FLY_API_TOKEN` (the token), `OPENSKETCH_PASSWORD` (required: the key for creating the owner
    account and resetting passwords) and, for the
    built-in AI chat, `ANTHROPIC_API_KEY`.
 4. Open the Actions tab, choose Deploy to Fly.io, Run workflow. The first run creates the app and its
-   storage and takes about 10 minutes; after that every push to main deploys by itself.
+   storage and takes about 10 minutes; after that every push to main deploys by itself once the tests
+   pass (the Tests workflow also runs on pull requests). A deploy that does not come up fails the run.
 5. OpenSketch is then at `https://opensketch-yz.fly.dev`. If Fly says the name is taken, add a repository
    variable `FLY_APP` (same Settings page, Variables tab) with another name, and run it again.
 6. In that OpenSketch, open Connect AI and add the connector (`https://opensketch-yz.fly.dev/mcp`) to your AI app; it signs in once.
@@ -242,8 +245,8 @@ Files > Download .osk, then Upload on the other).
 ## Run it locally
 
 ```bash
-pip install -e .            # build123d, fastapi, uvicorn
-pip install -e ".[ai]"      # optional: the AI copilot (anthropic SDK)
+pip install -r requirements-dev.txt && pip install --no-deps -e .   # the exact versions CI tests and the server runs
+# or, with whatever versions pip picks: pip install -e ".[ai,dev]"
 export ANTHROPIC_API_KEY=... # optional
 python -m opensketch         # opens http://127.0.0.1:8000
 python -m opensketch --no-browser # background server for MCP, no browser launch
@@ -314,7 +317,8 @@ Task Pane on the right, status bar with Under/Fully/Over Defined and "Editing Sk
   slides along its columns.
 - Open Part edits a component's part in place; Return to Assembly brings the change back as one
   undo step, and mates follow the faces that moved.
-- Motion Study 1 (bottom tab) replays the assembly order: each component flies in and settles.
+- Assembly Playback (Assembly tab, or right-click the assembly) replays the assembly order: each component flies in
+  and settles. The Motion Review tab under the graphics area drives each joint through its travel and checks it.
 - Interference Detection lists overlapping pairs with their volume and shows the clash in red.
 - STEP / STL export of the whole assembly, mass properties with each part's own material.
 

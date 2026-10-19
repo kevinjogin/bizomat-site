@@ -187,25 +187,25 @@ def ref_world(ref: dict, poses: dict) -> tuple[str, np.ndarray, np.ndarray | Non
 
 
 def refind(ref: dict, solid) -> dict | None:
-    """Follow a plane or axis reference to the matching face of the rebuilt part (same direction,
-    nearest), so mates stay on their faces when a part changes size. Returns an updated reference,
-    or None when nothing changed. Like part features, this is geometric matching, not topological
-    naming."""
+    """Follow a plane or axis reference to the matching face of the rebuilt part, so mates stay on their
+    faces when a part changes size. Returns an updated reference, or None when nothing changed. Planes
+    (geometry.match_face_plane): a face still in the stored plane keeps it there, so an unchanged part never
+    moves its mates; else the face holding the stored point (a point on the picked face), else the nearest
+    along the normal. Axes: the nearest coaxial cylinder or cone. Like part features, this is geometric
+    matching, not topological naming."""
     if solid is None or ("plane" not in ref and "axis" not in ref):
         return None
     from build123d import GeomType
     _, p, d = ref_local(ref)
     best, bestd = None, None
-    for f in solid.faces():
+    if "plane" in ref:
+        P, N = geometry.v3(p), geometry.v3(d)
+        face, off = geometry.match_face_plane(solid.faces(), N, P, at=P, level_first=True)
+        if face is not None:
+            best, bestd = p + d * off, abs(off)
+    for f in solid.faces() if "axis" in ref else ():
         try:
-            if "plane" in ref and f.geom_type == GeomType.PLANE:
-                n = np.array(geometry.vlist(f.normal_at()))
-                if float(n @ d) < 0.9999:
-                    continue
-                dist = f.distance_to(geometry.v3(p))
-                if bestd is None or dist < bestd:
-                    best, bestd = np.array(geometry.vlist(f.center())), dist
-            elif "axis" in ref and f.geom_type in (GeomType.CYLINDER, GeomType.CONE):
+            if f.geom_type in (GeomType.CYLINDER, GeomType.CONE):
                 ax = f.axis_of_rotation
                 ad = np.array(geometry.vlist(ax.direction))
                 if abs(float(ad @ d)) < 0.9999:
@@ -285,6 +285,35 @@ def coupler_law(m: dict):
     return lambda v: o + r * v
 
 
+NUMBER_KEYS = ("value", "min", "max", "angle_min", "angle_max", "ratio", "offset")  # numbers a mate may carry
+
+
+def mate_numbers(m: dict) -> dict:
+    """The mate's numbers as floats; a missing or null one keeps its default. Anything else that is not a
+    finite number is the mate's own error, never the whole solve's (asmsolver.js mateNumbers does the same)."""
+    out = {}
+    for k in NUMBER_KEYS:
+        v = m.get(k)
+        if v is None:
+            continue
+        try:
+            if isinstance(v, str) and not v.strip():
+                raise ValueError
+            f = float(v)
+        except (TypeError, ValueError):
+            raise AssemblyError(f"{k} must be a number") from None
+        if not math.isfinite(f):
+            raise AssemblyError(f"{k} must be a number")
+        out[k] = f
+    return out
+
+
+def _distance(a, b) -> float:
+    """The distance a limit_distance mate measures: coupler_measure's convention (plane-plane and plane-point
+    along the first plane's normal, axis-x perpendicular to the axis, point-point straight)."""
+    return coupler_measure("distance", a, b)
+
+
 def mate_residual(m: dict, poses: dict, L: float, align: str) -> np.ndarray:
     if m["type"] == "_goal":
         P = poses[m["component"]]
@@ -334,12 +363,8 @@ def mate_residual(m: dict, poses: dict, L: float, align: str) -> np.ndarray:
         return np.array([math.radians(over) * L])
     if t == "limit_distance":
         lo, hi = m.get("min"), m.get("max")
-        if ka == "plane" and kb == "plane":
-            v = float((pb - pa) @ da)
-            par = dir_match()
-        else:
-            v = float(np.linalg.norm(pb - pa))
-            par = np.zeros(0)
+        v = _distance(a, b)
+        par = dir_match() if ka == "plane" and kb == "plane" else np.zeros(0)
         over = (max(0.0, v - hi) if hi is not None else 0.0) + (max(0.0, lo - v) if lo is not None else 0.0)
         return np.concatenate([par, [over]])
     if t == "lock":
@@ -402,14 +427,18 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
     drags a component (a hinge turns, a slider slides)."""
     comps = [c for c in asm.get("components", []) if not c.get("suppressed")]
     ids = {c["id"] for c in comps}
+    off = {c.get("id") for c in asm.get("components", []) if c.get("suppressed")}
     poses = {c["id"]: Pose.of(c) for c in comps}
+    start = dict(poses)
     # only components the user fixed are fixed; with none fixed everything floats (SOLIDWORKS allows
     # that). The solver moves components as little as possible, so nothing drifts.
     fixed = {c["id"] for c in comps if c.get("fixed")}
     L = max(size, 1.0)
     mates, report, updates = [], {}, {}
     for m in asm.get("mates", []):
-        if m.get("suppressed"):
+        # a suppressed mate, or one on a suppressed component, is ignored (SOLIDWORKS suppresses it too)
+        if m.get("suppressed") or any(isinstance(r, dict) and r.get("component") is not None and r.get("component") in off
+                                      for key in REF_KEYS for r in (m.get(key) or [])):
             report[m["id"]] = {"state": "suppressed"}
             continue
         refs = m.get("refs") or []
@@ -418,7 +447,7 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
                 raise AssemblyError(f"Unknown mate type {m.get('type')!r}")
             if len(refs) != 2:
                 raise AssemblyError("A mate needs two references")
-            mm = dict(m)
+            mm = {**{k: v for k, v in m.items() if v is not None or k not in NUMBER_KEYS}, **mate_numbers(m)}
             all_cs = []
             for key in REF_KEYS:
                 lst = m.get(key)
@@ -427,8 +456,10 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
                 if len(lst) != 2:
                     raise AssemblyError(f"{key} needs two references")
                 for r in lst:
+                    if not isinstance(r, dict):
+                        raise AssemblyError("A mate reference must be an object")
                     if r.get("component") is not None and r.get("component") not in ids:
-                        raise AssemblyError(f"Component {r.get('component')} is missing or suppressed")
+                        raise AssemblyError(f"Component {r.get('component')} is missing")
                 if solids:
                     moved = [refind(r, solids.get(r.get("component"))) for r in lst]
                     if any(moved):
@@ -452,18 +483,23 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
                 if m.get("pose"):
                     rel = (rot_euler(m["pose"].get("rotation")), np.array(m["pose"].get("position") or (0, 0, 0), float))
                 else:
-                    PA = poses[cs[0]] if cs[0] else Pose()
-                    PB = poses[cs[1]] if cs[1] else Pose()
+                    ca, cb = (r.get("component") for r in refs)
+                    PA = poses[ca] if ca else Pose()
+                    PB = poses[cb] if cb else Pose()
                     rel = (PA.R.T @ PB.R, PA.R.T @ (PB.t - PA.t))
                     updates.setdefault(m["id"], {})["pose"] = {"position": [_clean(v) for v in rel[1]], "rotation": euler_of(rel[0])}
                 mm["_pose"] = rel
             if m["type"] == "coupler":
                 mm["_law"] = coupler_law(m)
-            mate_residual(mm, poses, L, align)  # validates the reference kinds
+            r0 = mate_residual(mm, poses, L, align)  # validates the reference kinds
+            if not np.all(np.isfinite(r0)):
+                raise AssemblyError("This mate's numbers cannot be measured")
             mates.append((mm, align, [c for c in cs if c is not None]))
             report[m["id"]] = {"state": "ok"}
         except AssemblyError as exc:
             report[m["id"]] = {"state": "error", "message": str(exc)}
+        except (TypeError, ValueError, KeyError, IndexError, AttributeError) as exc:  # malformed data: this mate only
+            report[m["id"]] = {"state": "error", "message": f"This mate cannot be read ({type(exc).__name__})."}
     hard = list(mates)
     order_ids = [x["id"] for x in comps]
     tol = max(1e-6 * L, 1e-7)
@@ -638,26 +674,58 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
             poses = run_drag(poses, System(active + [goal]), int(sum(len(x) for x in System(active).parts(poses))))
         if active:
             poses = run_lm(poses, System(active))  # make every mate exact
+    thr = max(1e-3, 1e-5 * L)
+
+    def held(rk) -> bool:
+        err = float(np.max(np.abs(rk))) if len(rk) else 0.0
+        return math.isfinite(err) and err <= thr
+
+    # A mate that over defines the assembly: like SOLIDWORKS, that mate is the one in error and the others
+    # stay solved. Least squares spreads a conflict over every mate in the loop and leaves a compromise pose,
+    # so when anything fails (not on drag frames: the solve on release does it), solve again from the
+    # starting poses adding the mates in document order; a mate that cannot be added with the ones before
+    # it is rejected and the poses that hold the accepted ones are kept.
+    accepted, rejected = hard, {}
+    if not goal and not all(held(rk) for rk in System(hard).parts(poses)):
+        accepted, P = [], start
+        for x in hard:
+            trial = System(accepted + [x])
+            Q = run_lm(P, trial) if n else P
+            if all(held(rk) for rk in trial.parts(Q)):
+                accepted, P = accepted + [x], Q
+            else:  # name the accepted mates it fights: those whose removal lets it hold (else every one it shares a component with)
+                share = [y for y in accepted if (set(y[2]) & set(x[2])) - fixed]  # a fixed component carries nothing over
+                culprits = []
+                if n and 1 < len(share) <= 8:
+                    for y in share:
+                        alt = System([z for z in accepted if z is not y] + [x])
+                        if all(held(rk) for rk in alt.parts(run_lm(P, alt))):
+                            culprits.append(y)
+                rejected[x[0]["id"]] = [y[0] for y in culprits or share]
+        poses = P
     # per-mate result
-    whole = System(hard)
-    final = whole.parts(poses)
+    final = System(hard).parts(poses)
     for (m, al, cs), rk in zip(hard, final):
         err = float(np.max(np.abs(rk))) if len(rk) else 0.0
         rep = report[m["id"]]
-        rep["residual"] = err
-        if err > max(1e-3, 1e-5 * L):
+        rep["residual"] = err if math.isfinite(err) else None
+        if m["id"] in rejected:
+            rep.update(state="error", over_defining=True, message=_conflict_message(rejected[m["id"]], cs, fixed),
+                       conflicts_with=[y["id"] for y in rejected[m["id"]]])
+        elif not held(rk):
             rep["state"] = "error"
             rep["message"] = "This mate cannot be satisfied with the other mates (over defining or conflicting)."
-    # degrees of freedom left per component (SOLIDWORKS "(-)" under defined). Every component that
-    # is neither fixed nor in a mate keeps all 6.
+    # degrees of freedom left per component (SOLIDWORKS "(-)" under defined), from the mates that hold.
+    # Every component that is neither fixed nor in a mate keeps all 6.
     comp_state = {c["id"]: "fixed" if c["id"] in fixed else "under" for c in comps}
     dofs = {}
-    mated = sorted({c for _, _, cs in hard for c in cs if c not in fixed}, key=lambda c: order_ids.index(c))
+    mated = sorted({c for _, _, cs in accepted for c in cs if c not in fixed}, key=lambda c: order_ids.index(c))
     if mated and not goal:  # drag frames only draw; the rebuild after the drag reports the states
         free = mated
         idx = {c: i for i, c in enumerate(free)}
         n = 6 * len(free)
-        whole = System(hard)
+        # limits are inequalities: they never take a degree of freedom (SOLIDWORKS), even at a bound
+        whole = System([(e, al, cs) for m, al, cs in accepted if (e := _equalities(m)) is not None])
         r = whole.res(poses)
         J = whole.jac(poses, r) if len(r) else np.zeros((0, n))
         if J.shape[0]:
@@ -670,7 +738,31 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
             blk = null[:, 6 * idx[c]: 6 * idx[c] + 6] if null.size else np.zeros((0, 6))
             comp_state[c] = "full" if (blk.size == 0 or float(np.max(np.abs(blk))) < 1e-6) else "under"
             dofs[c] = int(np.linalg.matrix_rank(blk, tol=1e-6)) if blk.size else 0
-    return {"poses": poses, "mates": report, "comp_state": comp_state, "dof": dofs, "updates": updates, "iterations": iters, "fixed": fixed}
+    return {"poses": poses, "mates": report, "comp_state": comp_state, "dof": dofs, "updates": updates, "iterations": iters,
+            "fixed": fixed, "conflicts": [k for k in rejected]}
+
+
+def _equalities(m: dict) -> dict | None:
+    """What a mate holds exactly, for counting degrees of freedom (asmsolver.js equalities): a limit's range is
+    not counted, so a part at a limit's bound stays under defined and can be dragged back into the range."""
+    t = m["type"]
+    if t == "limit_angle":
+        return None
+    if t == "limit_distance":  # two planes stay parallel; the distance between them is free within the range
+        refs = m.get("refs") or []
+        return dict(m, type="parallel") if len(refs) == 2 and all("plane" in r for r in refs) else None
+    if t == "hinge" and ("angle_min" in m or "angle_max" in m):
+        return {k: v for k, v in m.items() if k not in ("angle_min", "angle_max")}
+    return m
+
+
+def _conflict_message(others: list[dict], cs: list, fixed: set) -> str:
+    """Why a mate was rejected (asmsolver.js conflictMessage says the same)."""
+    if others:
+        return "Over defines the assembly: conflicts with " + ", ".join(o.get("name") or o["id"] for o in others) + "."
+    if all(c in fixed for c in cs):
+        return "Over defines the assembly: the components it joins are fixed."
+    return "This mate cannot be satisfied with the other mates (over defining or conflicting)."
 
 
 # ----------------------------------------------------------------------------- regen
@@ -722,7 +814,7 @@ def regen_assembly(asm: dict, known: dict | None = None, solve_mates: bool = Tru
                 lo, hi = np.minimum(lo, w), np.maximum(hi, w)
     out = {"type": "assembly", "parts": parts_out, "components": comps_out,
            "mates": [{"id": m["id"], **sol["mates"].get(m["id"], {"state": "ok"})} for m in asm.get("mates", [])],
-           "updates": {k: v for k, v in sol["updates"].items()}}
+           "updates": {k: v for k, v in sol["updates"].items()}, "conflicts": sol.get("conflicts", [])}
     if np.all(np.isfinite(lo)):
         out["bbox"] = [[_clean(v) for v in lo], [_clean(v) for v in hi]]
     return out
@@ -813,11 +905,14 @@ def placed_solids(asm: dict, strict: bool = False) -> list[tuple[dict, object]]:
 def interference(asm: dict) -> dict:
     items = placed_solids(asm)
     found = []
+    boxes = []  # one box per placed solid (the fast box on big bodies), not two exact ones per pair
+    for _, s in items:
+        bb = geometry.bbox(s)
+        boxes.append((geometry.vlist(bb.min), geometry.vlist(bb.max)))
     for i in range(len(items)):
         for j in range(i + 1, len(items)):
             (ca, a), (cb, b) = items[i], items[j]
-            ba, bb = a.bounding_box(), b.bounding_box()
-            amin, amax, bmin, bmax = (geometry.vlist(v) for v in (ba.min, ba.max, bb.min, bb.max))
+            (amin, amax), (bmin, bmax) = boxes[i], boxes[j]
             if any(amax[k] < bmin[k] or bmax[k] < amin[k] for k in range(3)):
                 continue
             try:
@@ -907,21 +1002,25 @@ def mate_candidates(asm: dict, limit: int = 80) -> list[dict]:
                                 "r": round(f.radius, 4) if f.geom_type == GeomType.CYLINDER else None})
                 elif f.geom_type == GeomType.PLANE:
                     n0 = np.array(geometry.vlist(f.normal_at()))
-                    c0 = np.array(geometry.vlist(f.center()))
-                    bb = f.bounding_box()
+                    c0 = np.array(geometry.vlist(geometry.on_face_point(f)))  # on the face: refind's anchor
+                    bb = f.bounding_box(optimal=False)
                     corners = np.array([[x, y, z] for x in (bb.min.X, bb.max.X) for y in (bb.min.Y, bb.max.Y) for z in (bb.min.Z, bb.max.Z)])
                     W = corners @ P.R.T + P.t
                     pl.append({"p": c0, "n": n0, "P": P.R @ c0 + P.t, "N": P.R @ n0, "lo": W.min(0), "hi": W.max(0), "area": f.area})
             except Exception:
                 continue
-        info[c["id"]] = (cyl, pl)
+        bb = geometry.bbox(solid)
+        W = np.array([[x, y, z] for x in (bb.min.X, bb.max.X) for y in (bb.min.Y, bb.max.Y) for z in (bb.min.Z, bb.max.Z)]) @ P.R.T + P.t
+        info[c["id"]] = (cyl, pl, W.min(0), W.max(0))
     out = []
     names = {c["id"]: c.get("name", c["id"]) for c in comps}
     seen = set()
     for i, a in enumerate(comps):
         for b in comps[i + 1:]:
-            ca, pa = info[a["id"]]
-            cb, pb = info[b["id"]]
+            ca, pa, alo, ahi = info[a["id"]]
+            cb, pb, blo, bhi = info[b["id"]]
+            if np.any(ahi + tol < blo) or np.any(bhi + tol < alo):
+                continue  # boxes apart: no faces of theirs touch (coaxial shafts far apart are not a mate)
             for x in ca:
                 for y in cb:
                     if np.linalg.norm(np.cross(x["D"], y["D"])) > 1e-3:

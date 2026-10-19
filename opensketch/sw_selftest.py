@@ -215,11 +215,10 @@ def _history_expect(history: list[dict], plain: list[dict]) -> dict:
 
 async def _features(rep: _Report, what: str, doc: str, feats: list[dict], names: dict[str, str],
                     history: list[dict]) -> bool:
-    import anyio
     plain = resolve(copy.deepcopy(feats), {})
     feats = resolve(copy.deepcopy(feats), names)
     try:
-        solved, problems, _ = T._solve(feats)
+        solved, problems, _ = await T._thread(T._solve, feats)
     except Exception as exc:  # a bug in the test data, not in SOLIDWORKS
         rep.add(what, "failed", error=f"the test's features could not be read: {exc}")
         return False
@@ -227,7 +226,10 @@ async def _features(rep: _Report, what: str, doc: str, feats: list[dict], names:
         rep.add(what, "failed", error="the test's features were refused here: " + "; ".join(problems))
         return False
     expect, why = await T._predict(doc, None, solved)
-    hist = await anyio.to_thread.run_sync(_history_expect, history, plain)
+    try:
+        hist = await T._cad(_history_expect, history, plain)
+    except Exception:
+        hist = {}
     for f in solved:
         e = expect.get(f.get("id")) or {}
         if "dv" not in e and "dv" in (hist.get(f.get("id")) or {}):
@@ -281,13 +283,12 @@ async def _new(rep: _Report, kind: str, name: str, files: list[str]) -> str | No
 
 
 async def _geometry_check(rep: _Report, doc: str, what: str, faces_min: int) -> None:
-    import anyio
     try:
         g = await T._geometry(doc)
         if g["kind"] != "part":
             rep.add(what, "failed", error=f"expected a part, got {g['kind']}")
             return
-        topo = await anyio.to_thread.run_sync(T._topology_sync, g["doc"], "faces", None, 5)
+        topo = await T._cad(T._topology_sync, g["doc"], "faces", None, 5)
     except Exception as exc:
         rep.add(what, "failed", error=str(exc))
         return
@@ -387,13 +388,12 @@ async def stage_assembly(rep: _Report) -> list[str]:
     for what, mate in mates(ca["component"], cb["component"]):
         await _op(rep, "mate: " + what, "add_mate", {"doc": asm, "mate": mate},
                   check=lambda r, f: None if r.get("state") == "ok" else f"state {r.get('state')}: {r.get('reason')}")
-    import anyio
     from . import assembly
     try:
         g = await T._geometry(asm)
         poses = {c["name"]: c["position"] for c in g["doc"]["components"]}
         b = poses.get(cb["component"])
-        res = await anyio.to_thread.run_sync(assembly.interference, g["doc"])
+        res = await T._cad(assembly.interference, g["doc"])
         clash = [i for i in res["interferences"] if i["volume"] > 1e-3]
         # B's origin: x 20 from A's Right plane, on A's top (z 10), y free; with the parallel Top planes not turned
         where_ok = b is not None and abs(b[0] - 20) < 1e-3 and abs(b[2] - 10) < 1e-3

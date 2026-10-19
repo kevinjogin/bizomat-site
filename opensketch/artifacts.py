@@ -1,7 +1,12 @@
 """Immutable, version-labelled exports for MCP clients, with scoped expiring download links.
 
 Downloads live under /mcp/artifacts so they do not need a browser login cookie. Each link grants
-access to exactly one file for an hour, never access to the document or the MCP endpoint itself.
+access to exactly one file for an hour (a preview PNG for ten minutes: the image itself comes back
+in the tool's answer), never access to the document or the MCP endpoint itself.
+
+Room is shared fairly: each person keeps at most PERSON_FILES files / PERSON_BYTES, and their own oldest
+files make room for a new one; when the whole store is full, previews (anyone's, oldest first) go before
+anything is refused. A preview is never refused for want of room: it comes back without a download link.
 """
 
 from __future__ import annotations
@@ -12,7 +17,6 @@ import hmac
 import json
 import re
 import tempfile
-import threading
 import time
 import uuid
 from pathlib import Path
@@ -21,14 +25,17 @@ from urllib.parse import urlencode
 from . import assembly, auth, geometry, store
 
 LIFETIME = 3600
+PREVIEW_LIFETIME = 600
 MAX_ARTIFACT_BYTES = 128 * 1024 * 1024
-MAX_STORED_BYTES = 512 * 1024 * 1024
+MAX_STORED_BYTES = 256 * 1024 * 1024   # the whole store (the Fly volume is 1 GB and holds the documents too)
 MAX_ARTIFACTS = 128
+PERSON_FILES = 32
+PERSON_BYTES = 128 * 1024 * 1024
 FORMATS = {"osk": "application/json", "step": "model/step", "stl": "model/stl", "png": "image/png",
            # files from SOLIDWORKS (sw_export): Parasolid, IGES, native files, PDF
            "x_t": "model/x-parasolid", "igs": "model/iges", "sldprt": "application/octet-stream",
            "sldasm": "application/octet-stream", "pdf": "application/pdf"}
-_publish_lock = threading.Lock()
+_MISSING = object()
 
 
 class ArtifactError(ValueError):
@@ -89,7 +96,7 @@ def validate_geometry(doc: dict, export: bool = True) -> dict:
             statuses(result["mates"], "Mate ")
             statuses(result["components"], "Component ")
     else:
-        st, _ = geometry.regen(doc)
+        st = geometry.rebuilt(doc)  # shared with the export that follows (geometry.export)
         statuses(st.status, "Feature ")
         note = geometry.rollback_note(doc, st.part is not None)
         if note and st.part is None:
@@ -126,31 +133,81 @@ def _cleanup(directory: Path) -> None:
             continue
         try:
             if json.loads(path.read_text())["expires_at"] < before:
-                path.with_suffix(".bin").unlink(missing_ok=True)
-                path.unlink(missing_ok=True)
+                _drop(directory, path.stem)
         except (OSError, ValueError, KeyError, TypeError):
             continue
 
 
-def publish(rec: dict, raw: bytes, fmt: str, name: str, part_id: str | None = None) -> dict:
+def _drop(directory: Path, artifact_id: str) -> None:
+    (directory / f"{artifact_id}.bin").unlink(missing_ok=True)
+    (directory / f"{artifact_id}.json").unlink(missing_ok=True)
+
+
+def _items(directory: Path) -> list[dict]:
+    """Stored artifacts, oldest first."""
+    out = []
+    for path in directory.glob("*.json"):
+        if not re.fullmatch(r"[0-9a-f]{32}", path.stem):
+            continue
+        try:
+            info = json.loads(path.read_text())
+            size = (directory / f"{path.stem}.bin").stat().st_size
+        except (OSError, ValueError):
+            continue
+        if isinstance(info, dict):
+            out.append(dict(info, _size=size, _id=path.stem))
+    return sorted(out, key=lambda i: i.get("created") or i.get("expires_at") or 0)
+
+
+def _person() -> str | None:
+    """Whose download this is when the caller did not say: the person whose connector is calling (MCP)."""
+    try:
+        from . import mcp_server
+        return store.owner_of(mcp_server._who())
+    except Exception:
+        return None
+
+
+def publish(rec: dict, raw: bytes, fmt: str, name: str, part_id: str | None = None, owner=_MISSING,
+            lifetime: int = LIFETIME) -> dict:
+    """Store a download for one hour (`lifetime`). owner: whose share of the store it counts against (default: the
+    document's owner, else the person calling)."""
     if fmt not in FORMATS or not raw:
         raise ArtifactError("Unsupported or empty artifact.")
     if len(raw) > MAX_ARTIFACT_BYTES:
         raise ArtifactError("The artifact exceeds the 128 MiB download limit.")
-    with _publish_lock:
-        return _publish(rec, raw, fmt, name, part_id)
+    if owner is _MISSING:
+        owner = rec["owner"] if "owner" in rec else _person()
+    try:
+        store.check_disk(len(raw), extra=store.RESERVE)  # downloads never take the last room documents need
+    except store.DiskFull as exc:
+        raise ArtifactError(str(exc)) from None
+    with store.file_lock(_directory() / ".lock"):  # web server and CAD worker processes publish
+        return _publish(rec, raw, fmt, name, part_id, owner, lifetime)
 
 
-def _publish(rec: dict, raw: bytes, fmt: str, name: str, part_id: str | None) -> dict:
+def _publish(rec: dict, raw: bytes, fmt: str, name: str, part_id: str | None, owner, lifetime: int) -> dict:
     directory = _directory()
     _cleanup(directory)
-    existing = list(directory.glob("*.bin"))
-    if len(existing) >= MAX_ARTIFACTS or sum(p.stat().st_size for p in existing) + len(raw) > MAX_STORED_BYTES:
+    items = _items(directory)
+    mine = [i for i in items if i.get("owner") == owner]
+    while mine and (len(mine) >= PERSON_FILES or sum(i["_size"] for i in mine) + len(raw) > PERSON_BYTES):
+        old = mine.pop(0)  # this person's oldest download makes room for their new one
+        _drop(directory, old["_id"])
+        items.remove(old)
+    full = lambda: len(items) >= MAX_ARTIFACTS or sum(i["_size"] for i in items) + len(raw) > MAX_STORED_BYTES
+    for old in [i for i in items if i.get("format") == "png"]:
+        if not full():
+            break
+        _drop(directory, old["_id"])  # previews (their image went back with the answer) before refusing
+        items.remove(old)
+    if full():
         raise ArtifactError("The download store is full. Retry after older links expire (at most 65 minutes).")
     artifact_id = uuid.uuid4().hex
     stem = re.sub(r"[^A-Za-z0-9_-]+", "_", name).strip("_")[:80] or "OpenSketch"
     filename = f"{stem}_v{rec['version']}.{fmt}"
-    expires = int(time.time()) + LIFETIME
+    now = time.time()
+    expires = int(now) + int(lifetime)
     info = {"artifact_id": artifact_id, "doc_id": rec["id"], "version": rec["version"],
             "filename": filename, "format": fmt, "media_type": FORMATS[fmt], "size_bytes": len(raw),
             "sha256": hashlib.sha256(raw).hexdigest(), "expires_at": expires}
@@ -161,9 +218,10 @@ def _publish(rec: dict, raw: bytes, fmt: str, name: str, part_id: str | None) ->
         with payload.open("xb") as out:
             out.write(raw)
         with (directory / f"{artifact_id}.json").open("x") as out:
-            json.dump(info, out)
+            json.dump(dict(info, owner=owner, created=now), out)
     except Exception:
         payload.unlink(missing_ok=True)
+        (directory / f"{artifact_id}.json").unlink(missing_ok=True)
         raise
     query = urlencode({"expires": expires, "signature": _signature(artifact_id, filename, expires)})
     return dict(info, download_url=f"{auth.public_url()}/mcp/artifacts/{artifact_id}/{filename}?{query}")
@@ -221,5 +279,9 @@ def preview_record(rec: dict, view: str, width: int, height: int, part_id: str |
     extra = {"camera": cam} if cam else {}
     if section:
         extra["section"] = section
-    return (dict(publish(rec, raw, "png", doc.get("name") or rec["name"], part_id),
-                 view=view, width=width, height=height, **extra, **report), raw)
+    try:
+        link = publish(rec, raw, "png", doc.get("name") or rec["name"], part_id, lifetime=PREVIEW_LIFETIME)
+    except ArtifactError as exc:  # the image still goes back with the answer; only the link is missing
+        link = {"doc_id": rec["id"], "version": rec["version"], "format": "png", "size_bytes": len(raw),
+                "download_url": None, "note": f"No download link this time: {exc}"}
+    return (dict(link, view=view, width=width, height=height, **extra, **report), raw)

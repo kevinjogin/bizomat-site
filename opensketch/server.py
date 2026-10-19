@@ -4,9 +4,12 @@ MCP endpoint at /mcp/<token>), and sign-in (accounts, see auth.py)."""
 
 from __future__ import annotations
 
+import asyncio
 import json
 import math
 import os
+import posixpath
+import re
 import tempfile
 from pathlib import Path
 
@@ -17,11 +20,12 @@ from fastapi.staticfiles import StaticFiles
 from starlette.background import BackgroundTask
 from starlette.middleware.gzip import GZipMiddleware
 from pydantic import BaseModel
+import anyio
+from starlette.datastructures import Headers
 
 import base64
 import binascii
 import gzip
-import queue
 import hashlib
 import zlib
 import threading
@@ -53,6 +57,7 @@ UPDATE_NOTE = Path(os.environ.get("OPENSKETCH_UPDATE_NOTE", str(Path.home() / ".
 @asynccontextmanager
 async def lifespan(_app):
     _warm_owner()  # CAD runs in worker processes, one per person (cadworker.py): start the owner's now
+    await run_in_threadpool(_hand_over_orphans)
     try:
         async with mcp_server.lifespan_context():
             yield
@@ -66,7 +71,21 @@ def _warm_owner() -> None:
         owner = next((u for u in accounts.list_users() if u.get("role") == "owner"), None)
     except Exception:
         owner = None
+    cadworker.reserve_for(owner["id"] if owner else None)  # newcomers never take the owner's last worker place
     cadworker.lane_for(owner["id"] if owner else None).warm()
+
+
+def _hand_over_orphans() -> None:
+    """Files of accounts removed before their files were handed over go to the server owner's Trash (store.hand_over)."""
+    try:
+        from . import accounts
+        users = accounts.list_users()
+        if users:
+            moved = store.hand_over_orphans({u["id"] for u in users})
+            if moved:
+                print(f"OpenSketch: {moved} file(s) of removed accounts moved to the owner's Trash", flush=True)
+    except Exception as exc:  # never stops the server from starting
+        print(f"OpenSketch: could not check for files of removed accounts: {exc}", flush=True)
 
 
 def _lane(request: Request) -> "cadworker.Lane":
@@ -101,9 +120,133 @@ class SelectiveGZip:
         return await self.app(scope, receive, send)
 
 
+class _BodyTooBig(HTTPException):
+    def __init__(self, cap: int):
+        super().__init__(413, f"This request is too big (more than {cap / 2**20:.0f} MB)." if cap >= 2**20
+                         else "This request is too big.")
+
+
+BODY_MAX = store.DOC_MAX + 4 * 2**20  # a whole document plus the request around it (/api/regen, PUT /api/docs...)
+BODY_SMALL = 64 * 1024                # sign-in forms, OAuth, everything that is not /api/ or /mcp/
+OWN_BODY_LIMIT = ("/api/import/raw", "/mcp/uploads/", "/mcp/sw/file")  # streamed to their own, larger caps
+
+
+class BodyLimit:
+    """Refuses a request body over the size its path allows before anything reads it (sign-in, JSON parsing, the
+    routes): a Content-Length over it gets 413 at once, a body without one is counted as it arrives and stopped at
+    the limit. Without this one anonymous POST of a gigabyte to /oauth/token filled the 2 GB machine's memory."""
+
+    def __init__(self, app):
+        self.app = app
+
+    @staticmethod
+    def cap(path: str) -> int | None:
+        if path.startswith(OWN_BODY_LIMIT):
+            return None
+        return BODY_MAX if path.startswith(("/api/", "/mcp")) else BODY_SMALL
+
+    async def __call__(self, scope, receive, send):
+        cap = self.cap(scope.get("path", "")) if scope["type"] == "http" else None
+        if cap is None:
+            return await self.app(scope, receive, send)
+        try:
+            declared = int(dict(scope.get("headers") or []).get(b"content-length", b"0") or 0)
+        except ValueError:
+            declared = 0
+        if declared > cap:
+            return await self._refuse(send, cap)
+        seen, started = 0, False
+
+        async def limited():
+            nonlocal seen
+            message = await receive()
+            if message["type"] == "http.request":
+                seen += len(message.get("body", b""))
+                if seen > cap:
+                    raise _BodyTooBig(cap)  # FastAPI answers 413; anything else reading the body stops here
+            return message
+
+        async def tracked(message):
+            nonlocal started
+            if message["type"] == "http.response.start":
+                started = True
+            await send(message)
+
+        try:
+            await self.app(scope, limited, tracked)
+        except _BodyTooBig:
+            if started:
+                raise
+            await self._refuse(send, cap)
+
+    @staticmethod
+    async def _refuse(send, cap):
+        exc = _BodyTooBig(cap)
+        body = json.dumps({"error": exc.detail, "detail": exc.detail}).encode()
+        await send({"type": "http.response.start", "status": 413,
+                    "headers": [(b"content-type", b"application/json"), (b"content-length", str(len(body)).encode()),
+                                (b"connection", b"close")]})
+        await send({"type": "http.response.body", "body": body})
+
+
+class RequestLog:
+    """Logs requests that failed on the server (5xx) or took long, with who asked, so a problem on the hosted
+    server leaves a trace (uvicorn's access log is off: one line per request is too much on a small machine).
+    Streams and long polls are left out of the slow ones; paths that carry a secret are cut to their first part."""
+
+    SLOW = 5.0
+    LONG = ("/api/ai/stream", "/mcp/sw/next", "/api/recognize", "/api/export/sldmacro")
+
+    def __init__(self, app):
+        self.app = app
+
+    @staticmethod
+    def _path(path: str) -> str:
+        if path.startswith(("/api/", "/healthz")) or path.count("/") < 2:
+            return path
+        return "/" + path.split("/")[1] + "/..."  # /mcp/<key>, /join/<invite>, /review/<token>...
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
+        t = time.monotonic()
+        status = [0]
+
+        async def send_and_note(msg):
+            if msg["type"] == "http.response.start":
+                status[0] = msg["status"]
+            await send(msg)
+        try:
+            await self.app(scope, receive, send_and_note)
+        except Exception:
+            status[0] = status[0] or 500
+            raise
+        finally:
+            took = time.monotonic() - t
+            path = scope.get("path", "")
+            if status[0] >= 500 or (took > self.SLOW and status[0] and not path.startswith(self.LONG)):
+                user = (scope.get("state") or {}).get("user") if isinstance(scope.get("state"), dict) else None
+                who = f" (person {user['id']})" if isinstance(user, dict) and user.get("id") else ""
+                print(f"OpenSketch request: {scope.get('method')} {self._path(path)} -> {status[0]} in {took:.1f} s{who}",
+                      flush=True)
+
+
 app = FastAPI(title="OpenSketch", lifespan=lifespan)
 app.add_middleware(auth.PasswordGate)
 app.add_middleware(SelectiveGZip)
+app.add_middleware(RequestLog)
+app.add_middleware(BodyLimit)  # outermost: before the sign-in gate reads anything
+
+
+@app.exception_handler(store.StorageError)
+async def _storage_full(_request: Request, exc: store.StorageError):
+    """No room (disk nearly full, the person's Files full, a file too big): a plain message, nothing written."""
+    return JSONResponse({"error": str(exc)}, status_code=exc.status)
+
+
+@app.exception_handler(store.Damaged)
+async def _damaged(_request: Request, exc: store.Damaged):
+    return JSONResponse({"error": str(exc)}, status_code=422)
 
 
 class RegenRequest(BaseModel):
@@ -121,40 +264,53 @@ class AIRequest(BaseModel):
     selection: list[dict] | None = None  # what the user selected (Ask AI on a selection)
 
 
-def _json_default(o):
-    if isinstance(o, (set, frozenset, tuple)):
-        return list(o)
-    if hasattr(o, "tolist"):  # numpy numbers and arrays
-        return o.tolist()
-    raise TypeError(f"{type(o).__name__} is not JSON serialisable")
+_json_default = cadjobs._json_default
 
 
 class FastJSON(JSONResponse):
     """JSON straight from json.dumps. FastAPI's own path walks every number of a mesh through
-    jsonable_encoder first (0.85 s for a 10 MB part)."""
+    jsonable_encoder first (0.85 s for a 10 MB part), on the event loop."""
 
     def render(self, content) -> bytes:
-        return json.dumps(content, separators=(",", ":"), allow_nan=False, default=_json_default).encode("utf-8")
+        return cadjobs.to_json(content)
 
 
-def _light(doc: dict) -> bool:
-    """Nothing heavy to build: a new part, a part with only sketches and planes so far, an empty assembly. These
-    are answered here at once, so a new file never waits behind a big rebuild in the worker."""
+def _json_bytes(body: bytes) -> Response:
+    """JSON the worker already encoded (cadjobs.json_of): nothing big is encoded on the event loop."""
+    return Response(body, media_type="application/json")
+
+
+LIGHT_ITEMS = 30  # sketch entities (spline points count too) a part may have and still be rebuilt in this process
+
+
+def _light(doc: dict, preview: dict | None = None) -> bool:
+    """Nothing heavy to build: a new part, a part with a few sketches and planes so far, an empty assembly. These
+    are answered here at once (~20 ms), so a new file never waits behind a big rebuild in the person's worker.
+    Anything with a preview (an extrude being set up) or a real sketch goes to the worker: OpenCascade holds the
+    GIL, so in this process it would pause every request on the server (a 400-entity sketch took 2.5 s)."""
+    if preview is not None:
+        return False
     if assembly.is_assembly(doc):
         return not doc.get("components") and not doc.get("parts")
     feats = doc.get("features") or []
-    return all(f.get("type") in ("sketch", "plane") for f in feats) and sum(len(f.get("entities") or []) for f in feats) <= 400
+    if not all(isinstance(f, dict) and f.get("type") in ("sketch", "plane") for f in feats):
+        return False
+    items = 0
+    for f in feats:
+        for e in f.get("entities") or []:
+            items += 1 + (len(e.get("points") or []) if isinstance(e, dict) else 0)
+    return items <= LIGHT_ITEMS
 
 
 @app.post("/api/regen")
 async def api_regen(req: RegenRequest, request: Request):
-    if _light(req.doc):
-        return FastJSON(await run_in_threadpool(cadjobs.regen, req.doc, req.preview, req.known, req.drag))
+    if _light(req.doc, req.preview):
+        return _json_bytes(await run_in_threadpool(cadjobs.json_of, "regen", req.doc, req.preview, req.known, req.drag))
     try:
-        res = await _cad(_lane(request), cadjobs.regen, req.doc, req.preview, req.known, req.drag)
+        body = await _cad(_lane(request), cadjobs.json_of, "regen", req.doc, req.preview, req.known, req.drag)
     except cadworker.CadJobError as exc:
         raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
-    return FastJSON(res)
+    return _json_bytes(body)
 
 
 class ParamsRequest(BaseModel):
@@ -236,7 +392,7 @@ async def api_interference(req: RegenRequest, request: Request):
     if not assembly.is_assembly(req.doc):
         raise HTTPException(400, "Interference Detection works on assemblies")
     try:
-        return await _cad(_lane(request), cadjobs.interference, req.doc)
+        return _json_bytes(await _cad(_lane(request), cadjobs.json_of, "interference", req.doc))
     except cadworker.CadJobError as exc:
         raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
 
@@ -246,10 +402,11 @@ class ImportRequest(BaseModel):
     data: str  # base64 file content
 
 
-async def _import_reply(raw: bytes, filename: str, lane):
-    """Every failure comes back as JSON {error} with a readable message, never a bare 500."""
+async def _import_reply(raw, filename: str, lane, path: bool = False):
+    """Every failure comes back as JSON {error} with a readable message, never a bare 500. path: raw is the name of
+    a file holding the bytes (read by the worker)."""
     try:
-        return {"doc": await lane.run(cadjobs.import_file, raw, filename)}
+        return _json_bytes(b'{"doc":' + await lane.run(cadjobs.json_of, "import_path" if path else "import_file", raw, filename) + b"}")
     except cadworker.CadUnavailable as exc:
         return JSONResponse({"error": f"Could not import {filename}: {exc}"}, status_code=503)
     except cadworker.CadJobError as exc:
@@ -275,26 +432,49 @@ IMPORT_MAX = 128 * 1024 * 1024  # bytes of CAD data per upload (after unzipping 
 @app.post("/api/import/raw")
 async def api_import_raw(request: Request, filename: str = "model.step"):
     """STEP -> part or assembly document. The body is the file's bytes, gzipped by the browser when
-    the X-OpenSketch-Gzip header is 1 (a 14 MB STEP becomes ~3 MB, small enough for the Codespaces tunnel)."""
+    the X-OpenSketch-Gzip header is 1 (a 14 MB STEP becomes ~3 MB, small enough for the Codespaces tunnel).
+    The file goes to a temporary file as it arrives (unzipped bounded on the way), and the CAD worker reads it
+    from there, so the web server never holds a copy of it."""
     too_big = JSONResponse({"error": f"The file is bigger than {IMPORT_MAX // 2**20} MB. Split it or simplify it first."}, status_code=413)
-    body = bytearray()
-    async for chunk in request.stream():
-        body += chunk
-        if len(body) > IMPORT_MAX:
+    try:
+        if int(request.headers.get("content-length") or 0) > IMPORT_MAX:
             return too_big
-    body = bytes(body)
-    if request.headers.get("x-opensketch-gzip") == "1":
-        try:  # bounded: a small gzip that unpacks to gigabytes is refused, not unpacked
-            d = zlib.decompressobj(16 + zlib.MAX_WBITS)
-            out = d.decompress(body, IMPORT_MAX + 1)
-            if len(out) > IMPORT_MAX or d.unconsumed_tail:
-                return too_big
-            body = out + d.flush()
-            if not d.eof:
-                raise zlib.error("truncated")
-        except zlib.error:
-            return JSONResponse({"error": "The upload arrived damaged. Try again."}, status_code=400)
-    return await _import_reply(body, filename, _lane(request))
+    except ValueError:
+        pass
+    unzip = zlib.decompressobj(16 + zlib.MAX_WBITS) if request.headers.get("x-opensketch-gzip") == "1" else None
+    fd, tmp = tempfile.mkstemp(prefix="opensketch-import-", suffix=".bin")
+    try:
+        size = wire = 0
+        with os.fdopen(fd, "wb") as out:
+            try:
+                async for chunk in request.stream():
+                    wire += len(chunk)
+                    if wire > IMPORT_MAX:
+                        return too_big
+                    if unzip is not None:  # bounded: a small gzip that unpacks to gigabytes is refused, not unpacked
+                        chunk = unzip.decompress(chunk, IMPORT_MAX - size + 1)
+                        if unzip.unconsumed_tail:
+                            return too_big
+                    size += len(chunk)
+                    if size > IMPORT_MAX:
+                        return too_big
+                    out.write(chunk)
+                if unzip is not None:
+                    rest = unzip.flush()
+                    size += len(rest)
+                    if size > IMPORT_MAX:
+                        return too_big
+                    out.write(rest)
+                    if not unzip.eof:
+                        raise zlib.error("truncated")
+            except zlib.error:
+                return JSONResponse({"error": "The upload arrived damaged. Try again."}, status_code=400)
+        return await _import_reply(tmp, filename, _lane(request), path=True)
+    finally:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
 
 
 @app.get("/api/features")
@@ -366,9 +546,6 @@ def api_macro_toolchain():
     return {"features": tc["ok"], "have": tc["have"], "missing": tc["missing"]}
 
 
-MACRO_RUNNING_MAX = 2  # macro jobs running at once per person (each can run LibreOffice for minutes)
-
-
 def _who(request: Request) -> str:
     u = getattr(request.state, "user", None)
     return u["id"] if u else ""
@@ -376,10 +553,13 @@ def _who(request: Request) -> str:
 
 @app.post("/api/export/sldmacro/start")
 def api_macro_start(req: MacroRequest, request: Request):
-    """Start writing a SOLIDWORKS macro (a background job: checking the macro takes a minute or more)."""
+    """Start writing a SOLIDWORKS macro (a background job: checking the macro takes a minute or more). One at a
+    time on the server (cadworker.MACRO_JOBS: each runs LibreOffice and a CAD check for minutes)."""
     me = _who(request)
-    if sum(1 for j in _macro_jobs.values() if j["state"] == "running" and j.get("owner") == me) >= MACRO_RUNNING_MAX:
-        return JSONResponse({"error": "Two exports are already running. Wait for one to finish."}, status_code=429)
+    try:
+        ticket = cadworker.MACRO_JOBS.try_take(me)
+    except cadworker.Busy as exc:
+        return JSONResponse({"error": str(exc)}, status_code=exc.status)
     jid = uuid.uuid4().hex[:12]
     fd, path = tempfile.mkstemp(suffix=".zip")
     os.close(fd)
@@ -397,10 +577,16 @@ def api_macro_start(req: MacroRequest, request: Request):
             job["log"].append(payload[0])
         elif kind == "done":
             job["report"], job["state"] = payload, "done"
+        elif job["state"] == "cancelled":
+            pass
         else:
             job["state"], job["error"] = "error", f"{payload[0]}: {payload[1]}"
-    cadworker.start_job(sldexport.export, req.doc, path, name=req.name, verify=req.verify, uses=("log",),
-                        on_event=event, limit=3 * 3600)
+    try:
+        job["handle"] = cadworker.start_job(sldexport.export, req.doc, path, name=req.name, verify=req.verify,
+                                            uses=("log",), on_event=event, limit=3 * 3600, on_end=ticket.release)
+    except BaseException:
+        ticket.release()
+        raise
     return {"job": jid}
 
 
@@ -410,6 +596,19 @@ def api_macro_status(jid: str, request: Request):
     if job is None or job.get("owner") != _who(request):
         raise HTTPException(404, "No such export")
     return {k: job.get(k) for k in ("state", "log", "report", "error")} | {"seconds": round(time.time() - job["started"])}
+
+
+@app.delete("/api/export/sldmacro/{jid}")
+def api_macro_cancel(jid: str, request: Request):
+    """Stop an export (the dialog was closed): the job process ends within a few seconds and frees its place."""
+    job = _macro_jobs.get(jid)
+    if job is None or job.get("owner") != _who(request):
+        raise HTTPException(404, "No such export")
+    if job["state"] == "running":
+        job["state"] = "cancelled"
+        if job.get("handle") is not None:
+            job["handle"].cancel(grace=3)  # the export does not check for a stop: it is ended
+    return {"state": job["state"]}
 
 
 @app.get("/api/export/sldmacro/{jid}/zip")
@@ -428,35 +627,46 @@ class RecognizeRequest(BaseModel):
 
 
 _recognize_jobs: dict = {}
-RECOGNIZE_RUNNING_MAX = 1  # recognition is CPU-heavy: one job per person at a time
+RECOGNIZE_RUNNING_MAX = 1  # recognition is CPU-heavy: one job per person at a time (and recognize.RECOGNIZE_JOBS
+                           # parts at once on the whole server, whoever started them: here, Claude or the AI chat)
 
 
 @app.post("/api/recognize/start")
 def api_recognize_start(req: RecognizeRequest, request: Request):
     """Start feature recognition (FeatureWorks) on a part's or an assembly's imported bodies. A background job:
-    a large part can take a minute or two, an assembly one part after another."""
+    a large part can take a minute or two, an assembly one part after another. If this person's job for the same
+    model is still running (the page lost track of it), its id comes back with resumed: true so the page follows
+    it again."""
     from . import recognize
     me = _who(request)
-    if sum(1 for j in _recognize_jobs.values() if j["state"] in ("running", "cancelling") and j.get("owner") == me) >= RECOGNIZE_RUNNING_MAX:
-        return JSONResponse({"error": "Feature recognition is already running. Wait for it to finish."}, status_code=429)
+    asked = hashlib.sha256(json.dumps([req.doc, req.part_id, req.kinds], sort_keys=True, default=str).encode()).hexdigest()
+    mine = [(k, j) for k, j in _recognize_jobs.items() if j["state"] in ("running", "cancelling") and j.get("owner") == me]
+    if len(mine) >= RECOGNIZE_RUNNING_MAX:
+        k, j = mine[-1]
+        if j["state"] == "running" and j.get("asked") == asked:
+            return {"job": k, "resumed": True}
+        why = ("Feature recognition is still stopping. Try again in a moment." if j["state"] == "cancelling" else
+               "Feature recognition is already running on another model. Wait for it to finish, or stop it there.")
+        return JSONResponse({"error": why}, status_code=429)
     if not recognize.imported_parts(req.doc):
         return JSONResponse({"error": "There is no imported body to recognize."}, status_code=400)
     if req.kinds and set(req.kinds) - set(recognize.KINDS):
         return JSONResponse({"error": f"Feature types are {', '.join(recognize.KINDS)}."}, status_code=400)
     jid = uuid.uuid4().hex[:12]
     job = {"state": "running", "started": time.time(), "owner": me, "done": 0, "total": 0, "current": None,
-           "parts": {}, "result": None}
+           "parts": {}, "result": None, "asked": asked}
     _recognize_jobs[jid] = job
     for k in [k for k, v in _recognize_jobs.items() if v["state"] not in ("running", "cancelling") and time.time() - v["started"] > 3600]:
         _recognize_jobs.pop(k, None)
 
     def progress(done, total, name, reports):
-        job.update(done=done, total=total, current=name, parts=dict(reports))
+        job.update(done=done, total=total, current=name, parts=dict(reports), waiting=False)
 
     def work():  # each part runs in recognize's own spawned worker (recognize_part_safe), so this thread only waits
         try:
             res = recognize.recognize_doc(req.doc, part_id=req.part_id, kinds=req.kinds, progress=progress,
-                                          stop=lambda: job.get("cancel", False))
+                                          stop=lambda: job.get("cancel", False),
+                                          on_wait=lambda: job.update(waiting=True))
             asm = assembly.is_assembly(res["doc"])
             job["result"] = {"changed": res["changed"], "parts": res["parts"],
                              "updates": {pid: {k: (res["doc"]["parts"][pid] if asm else res["doc"]).get(k)
@@ -487,7 +697,7 @@ def api_recognize_status(jid: str, request: Request):
     job = _recognize_jobs.get(jid)
     if job is None or job.get("owner") != _who(request):
         raise HTTPException(404, "No such job")
-    out = {k: job.get(k) for k in ("state", "done", "total", "current", "error")}
+    out = {k: job.get(k) for k in ("state", "done", "total", "current", "error", "waiting")}
     out["seconds"] = round(time.time() - job["started"])
     out["parts"] = {pid: {k: r.get(k) for k in ("name", "message", "exact", "base", "counts", "recognized", "faces")}
                     for pid, r in (job.get("parts") or {}).items()}
@@ -496,49 +706,61 @@ def api_recognize_status(jid: str, request: Request):
     return out
 
 
-@app.post("/api/ai")
-def api_ai(req: AIRequest, request: Request):
-    """Old non-streaming route (scripts): the same person's key as the chat."""
-    from . import aikeys
-    if aikeys.effective(getattr(request.state, "user", None)) is None and not ai.demo_enabled():
-        return JSONResponse({"error": ai.NO_KEY}, status_code=503)
-    try:
-        return ai.run(req.doc, req.prompt, req.conversation)
-    except ai.AIUnavailable as exc:
-        return JSONResponse({"error": str(exc)}, status_code=503)
+AI_PROMPT_MAX = 20000  # characters in one chat message
+AI_SELECTION_MAX = 20  # selected items sent with it (ai.selection_note reads 20)
 
 
 @app.post("/api/ai/stream")
-def api_ai_stream(req: AIRequest, request: Request):
+async def api_ai_stream(req: AIRequest, request: Request):
     """Newline-delimited JSON events while the AI designs (see ai.run_stream), with the person's own key
-    (aikeys) or the server's."""
+    (aikeys) or the server's. Each chat is a process of its own (its builds hold OpenCascade's GIL), so they are
+    rationed (cadworker.AI_JOBS): one per person, OPENSKETCH_AI_JOBS (2) on the server, then a short queue, then
+    a plain "busy" answer (429 for the person's own running chat, 503 for a full server)."""
     from . import aikeys
-    cfg = aikeys.effective(getattr(request.state, "user", None))
     headers = {"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
-    if not cadworker.enabled():
-        def gen():
-            try:
-                for ev in ai.run_stream(req.doc, req.prompt, req.conversation, demo=req.demo, selection=req.selection, ai_config=cfg):
-                    yield json.dumps(ev, separators=(",", ":")) + "\n"
-            except Exception as exc:  # never leave the client hanging
-                yield json.dumps({"ev": "error", "message": f"Server error: {exc}"}) + "\n"
-        return StreamingResponse(gen(), media_type="application/x-ndjson", headers=headers)
+    if len(req.prompt) > AI_PROMPT_MAX:
+        return JSONResponse({"error": f"The message is too long. Keep it under {AI_PROMPT_MAX:,} characters."}, status_code=413)
+    selection = (req.selection or [])[:AI_SELECTION_MAX] or None
+    cfg = await run_in_threadpool(aikeys.effective, getattr(request.state, "user", None))
+    if cfg is None and not (req.demo or ai.demo_enabled()):  # nothing to run: no process for it
+        return StreamingResponse(iter([json.dumps({"ev": "error", "message": ai.NO_KEY}) + "\n"]),
+                                 media_type="application/x-ndjson", headers=headers)
+    me = _who(request)
+    try:
+        cadworker.AI_JOBS.check(me)
+    except cadworker.Busy as exc:
+        return JSONResponse({"error": str(exc)}, status_code=exc.status)
+    known = isinstance(req.conversation, str) and req.conversation in ai._conversations
+    conv = req.conversation if known else None
+    lost = bool(req.conversation) and not known  # the server restarted since: the chat says the AI forgot it
+    loop = asyncio.get_running_loop()
+    events: asyncio.Queue = asyncio.Queue()
 
-    # The chat runs in a process of its own (its builds hold OpenCascade's GIL); its events come back here.
-    events: queue.Queue = queue.Queue()
-    conv = req.conversation if isinstance(req.conversation, str) and req.conversation in ai._conversations else None
-
-    def on_event(kind, payload):
-        events.put((kind, payload))
-    job = cadworker.start_job(cadjobs.ai_stream, req.doc, req.prompt, conv, ai._conversations.get(conv) if conv else None,
-                              req.demo, req.selection, cfg, on_event=on_event, limit=3600)
+    def on_event(kind, payload):  # from the job's reader thread
+        try:
+            loop.call_soon_threadsafe(events.put_nowait, (kind, payload))
+        except RuntimeError:  # the server is stopping
+            pass
 
     async def agen():
+        try:  # waits in the queue here, so a client that leaves while queued never starts a process
+            ticket = await cadworker.AI_JOBS.take(me)
+        except cadworker.Busy as exc:
+            yield json.dumps({"ev": "error", "message": str(exc)}) + "\n"
+            return
+        try:
+            job = cadworker.start_job(cadjobs.ai_stream, req.doc, req.prompt, conv,
+                                      ai._conversations.get(conv) if conv else None, req.demo, selection, cfg,
+                                      lost=lost, on_event=on_event, limit=3600, on_end=ticket.release)
+        except BaseException:
+            ticket.release()
+            raise
         try:
             while True:
-                kind, payload = await run_in_threadpool(events.get)
+                kind, payload = await events.get()
                 if kind == "progress":
-                    yield json.dumps(payload[0], separators=(",", ":"), default=_json_default) + "\n"
+                    line = payload[0]
+                    yield line if isinstance(line, str) else json.dumps(line, separators=(",", ":"), default=_json_default) + "\n"
                 elif kind == "done":
                     if payload.get("conversation") and payload.get("history") is not None:
                         ai._conversations[payload["conversation"]] = payload["history"]
@@ -547,7 +769,10 @@ def api_ai_stream(req: AIRequest, request: Request):
                     yield json.dumps({"ev": "error", "message": f"Server error: {payload[1]}"}) + "\n"
                     return
         finally:
-            job.cancel(grace=10)  # the person pressed Stop or left: end the job (nothing happens if it finished)
+            # The person pressed Stop or left, or the reply is complete: end the job (nothing happens if it has
+            # finished). Its place is free once the process has ended (on_end).
+            ticket.stopping = True
+            job.cancel(grace=10)
     return StreamingResponse(agen(), media_type="application/x-ndjson", headers=headers)
 
 
@@ -592,7 +817,7 @@ def api_ai_keys(request: Request):
     from . import aikeys, providers
     u = getattr(request.state, "user", None)
     if u and u.get("role") == "tester":  # early access: the AI is provided; nothing about the key leaves the server
-        cfg = aikeys.early_access_config()
+        cfg = aikeys.effective(u)  # None once the owner turned early access off
         return {"settings": None, "providers": providers.public_list(), "server_key": cfg is not None, "early_access": True}
     return {"settings": aikeys.public(aikeys.owner_id(u)),
             "providers": providers.public_list(), "server_key": aikeys.server_config() is not None}
@@ -636,7 +861,8 @@ def api_ai_models(req: AIKeyRequest, request: Request):
         if not stored or stored["provider"] != req.provider:
             return JSONResponse({"error": "Paste the API key first."}, status_code=400)
         key = stored["key"]
-    base = (req.base_url or "").strip().rstrip("/") or spec["base_url"]
+    # only a custom provider takes an address from the browser; the named ones always use their own
+    base = (req.base_url or "").strip().rstrip("/") if req.provider == "custom" else spec["base_url"]
     if not base:
         return JSONResponse({"error": "Enter the provider's address."}, status_code=400)
     try:
@@ -661,6 +887,7 @@ class DocSave(BaseModel):
     base_version: int | None = None
     summary: str = ""
     requests: list | None = None
+    save_id: str | None = None  # the browser's name for this save: a 409 that carries it is its own save, landed
 
 
 class DocPatch(BaseModel):
@@ -678,8 +905,23 @@ class VersionRequest(BaseModel):
 def _found(fn, *a, **k):
     try:
         return fn(*a, **k)
+    except store.Damaged:
+        raise
     except store.NotFound:
         raise HTTPException(404, "No such document") from None
+
+
+def _bad_doc(doc) -> JSONResponse | None:
+    """The same structure check MCP imports get (store.check_structure): one malformed document must never be
+    stored, where it would break the Files list for everyone."""
+    try:
+        store.check_structure(doc)
+    except ValueError as e:
+        return JSONResponse({"error": f"This is not a document OpenSketch can keep: {e}"}, status_code=400)
+    return None
+
+
+SAVED_KEYS = ("id", "name", "version", "updated", "by", "summary", "save_id")
 
 
 def _doc_meta(doc_id: str, request: Request, trash_ok: bool = False) -> dict:
@@ -698,8 +940,11 @@ def _card(m: dict) -> dict:
     t = m.get("thumb")
     out = {k: m.get(k) for k in ("id", "name", "kind", "version", "created", "updated", "by", "summary", "deleted",
                                  "counts", "size")}
-    out["thumb"] = f"/api/docs/{m['id']}/thumb?v={t['version']}-{int(t.get('updated') or 0)}" if t else None
     out["thumb_stale"] = bool(t) and int(t.get("version") or 0) < int(m["version"])
+    # the address changes with the picture, and with the model while the picture is older than it: a changed
+    # model (the AI's edit) is asked for again instead of shown from the browser's day-long cache
+    out["thumb"] = (f"/api/docs/{m['id']}/thumb?v={t['version']}-{int(t.get('updated') or 0)}"
+                    + (f"-{m['version']}" if out["thumb_stale"] else "")) if t else None
     return out
 
 
@@ -723,17 +968,21 @@ def _free_name(kind: str, user) -> str:
 def api_doc_create(req: DocCreate, request: Request):
     kind = req.kind if req.kind in ("part", "assembly") else "part"
     if req.doc is not None:
+        if (bad := _bad_doc(req.doc)) is not None:
+            return bad
         kind = store.kind_of(req.doc)
     name = (req.name or "").strip()
     if not name or (req.doc is None and name == "Untitled"):
         name = _free_name(kind, _user(request))
-    return store.create(name, req.doc, kind, by="you", owner=store.owner_of(_user(request)))
+    rec = store.create(name, req.doc, kind, by="you", owner=store.owner_of(_user(request)))
+    # a new empty file is opened from this answer (small); a model the browser sent is not sent back
+    return rec if req.doc is None else store.brief(rec)
 
 
 @app.get("/api/docs/{doc_id}")
 def api_doc(doc_id: str, request: Request):
     m = _doc_meta(doc_id, request)
-    return dict(_found(store.get, doc_id), thumb=m.get("thumb"))
+    return FastJSON(dict(_found(store.get, doc_id), thumb=m.get("thumb")))  # encoded here, in the route's thread
 
 
 @app.get("/api/docs/{doc_id}/head")
@@ -761,13 +1010,25 @@ def api_doc_restore_version(doc_id: str, req: VersionRequest, request: Request):
 
 @app.put("/api/docs/{doc_id}")
 def api_doc_save(doc_id: str, req: DocSave, request: Request):
-    _doc_meta(doc_id, request)
+    """The browser's save. No summary = an autosave: autosaves in one run of editing keep one version between them
+    (store.save). Answers only what the browser needs (the version), not the model it just sent."""
+    m = _doc_meta(doc_id, request)
+    if (bad := _bad_doc(req.doc)) is not None:
+        return bad
+    if req.requests is not None and (len(req.requests) > 200 or not all(isinstance(r, dict) for r in req.requests)):
+        return JSONResponse({"error": "requests must be a list of objects."}, status_code=400)
+    req.doc["name"] = m["name"]  # a file is renamed only by PATCH: a save never renames it
     try:
-        return store.save(doc_id, req.doc, "you", req.summary or "Edited in OpenSketch", req.base_version, req.requests)
+        rec = store.save(doc_id, req.doc, "you", req.summary or "Edited in OpenSketch", req.base_version, req.requests,
+                         save_id=(req.save_id or "")[:64] or None,
+                         autosave=not req.summary.strip())
+    except store.Damaged:
+        raise
     except store.NotFound:
         raise HTTPException(404, "No such document") from None
     except store.Conflict as c:
-        return JSONResponse({"error": "conflict", "current": c.current}, status_code=409)
+        return JSONResponse({"error": "conflict", "current": {k: c.current.get(k) for k in SAVED_KEYS}}, status_code=409)
+    return {k: rec.get(k) for k in SAVED_KEYS}
 
 
 @app.patch("/api/docs/{doc_id}")
@@ -782,16 +1043,38 @@ def api_doc_patch(doc_id: str, req: DocPatch, request: Request):
     return _card(store.meta(doc_id))
 
 
+def _copy_name(name: str, user) -> str:
+    """"Copy of X", then "Copy 2 of X"...: the difference stays at the start, where a long name is not cut off."""
+    used = {m["name"] for m in store.listing(store.visible_to(user))}
+    n = 1
+    while True:
+        cand = (("Copy of " if n == 1 else f"Copy {n} of ") + name)[:120].strip()
+        if cand not in used:
+            return cand
+        n += 1
+
+
 @app.post("/api/docs/{doc_id}/duplicate")
 def api_doc_duplicate(doc_id: str, req: DocCopy, request: Request):
-    _doc_meta(doc_id, request)
-    rec = store.duplicate(doc_id, store.owner_of(_user(request)), "you", req.name)
+    m = _doc_meta(doc_id, request)
+    rec = store.duplicate(doc_id, store.owner_of(_user(request)), "you", req.name or _copy_name(m["name"], _user(request)))
     return _card(store.meta(rec["id"]))
+
+
+@app.post("/api/docs/{doc_id}/discard")
+def api_doc_discard(doc_id: str, request: Request):
+    """A file New made and the person left untouched: removed for good (no empty "Part N" files pile up).
+    Anything that was changed, renamed or written by an AI is kept (409)."""
+    _doc_meta(doc_id, request)
+    if store.discard_untouched(doc_id):
+        return {"discarded": doc_id}
+    return JSONResponse({"error": "Kept: it was changed.", "discarded": False}, status_code=409)
 
 
 @app.delete("/api/docs/{doc_id}")
 def api_doc_delete(doc_id: str, request: Request, forever: bool = False):
-    """Move to the Trash; forever=1 removes a document that is already in the Trash."""
+    """Move to the Trash; forever=1 removes a document that is already in the Trash (an untouched new file is
+    removed by POST .../discard)."""
     m = _doc_meta(doc_id, request, trash_ok=True)
     if forever:
         if not m.get("deleted"):
@@ -812,8 +1095,10 @@ THUMB_TYPES = {"image/webp": "webp", "image/png": "png"}
 
 @app.put("/api/docs/{doc_id}/thumb")
 async def api_doc_thumb_put(doc_id: str, request: Request, version: int = 0):
-    """A picture of the model from the browser (WebP or PNG, <= 600 KB), for the Files page."""
-    _doc_meta(doc_id, request)
+    """A picture of the model from the browser (WebP or PNG, <= 600 KB), for the Files page. Store work runs in a
+    thread: it takes the document's lock, which Claude's edits hold while they rebuild (on the event loop that
+    froze the whole server until the edit finished)."""
+    await run_in_threadpool(_doc_meta, doc_id, request)
     ext = THUMB_TYPES.get(request.headers.get("content-type", "").split(";")[0].strip())
     if ext is None:
         return JSONResponse({"error": "Send image/webp or image/png."}, status_code=415)
@@ -827,7 +1112,7 @@ async def api_doc_thumb_put(doc_id: str, request: Request, version: int = 0):
             return too_big
     body = bytes(body)
     try:
-        entry = store.set_thumb(doc_id, body, ext, version, "browser")
+        entry = await run_in_threadpool(store.set_thumb, doc_id, body, ext, version, "browser")
     except ValueError as e:
         return JSONResponse({"error": str(e)}, status_code=400)
     return {"thumb": entry}
@@ -837,11 +1122,12 @@ _thumb_jobs: dict[str, threading.Event] = {}
 _thumb_guard = threading.Lock()
 # Server-drawn pictures are a background nicety and must never starve the server (2026-10-19: Files visits redrew
 # the 19-part Lavilock assembly again and again while YZ worked; on Fly's shared CPU that used up the burst
-# balance and the server stopped answering). One at a time; big models (imported STEP assemblies) are left to the
-# browser, which draws a picture for free when the file is opened; a model that failed to draw is not tried again
-# until it changes.
-_thumb_slots = threading.BoundedSemaphore(1)
+# balance and the server stopped answering). One at a time (the BACKGROUND worker takes calls in turn; a picture
+# that cannot start within THUMB_WAIT seconds is skipped this time, so a Files page full of stale cards never piles
+# up requests); big models (imported STEP assemblies) are left to the browser, which draws a picture for free when
+# the file is opened; a model that failed to draw is not tried again until it changes.
 THUMB_SERVER_MAX = 400 * 1024  # bytes of stored document above which the server does not draw the picture
+THUMB_WAIT = 20.0
 _thumb_failed: dict[str, int] = {}  # document id -> version the server could not draw
 
 
@@ -849,7 +1135,9 @@ async def _render_thumb(doc_id: str) -> None:
     """Draw a picture on the server (a document the AI made, or one never opened in a browser), in the background
     worker so it never holds up a rebuild or the web server."""
     rec = await run_in_threadpool(store.get, doc_id)
-    png = await cadworker.BACKGROUND.run(cadjobs.thumb_png, rec["doc"])
+    png = await cadworker.BACKGROUND.run(cadjobs.thumb_png, rec["doc"], wait=THUMB_WAIT)
+    if png is None:  # nothing solid to draw (sketches only): the browser that opens it draws the sketches
+        raise ValueError("No solid body to draw")
     await run_in_threadpool(store.set_thumb, doc_id, png, "png", rec["version"], "server")
 
 
@@ -857,10 +1145,13 @@ async def _render_thumb(doc_id: str) -> None:
 async def api_doc_thumb(doc_id: str, request: Request):
     """The model's picture. Missing, or older than the model and not drawn by a browser since: drawn here
     (once at a time per document) and kept. 404 when the model cannot be drawn (empty or failing)."""
-    m = _doc_meta(doc_id, request, trash_ok=True)
+    m = await run_in_threadpool(_doc_meta, doc_id, request, True)
     t = m.get("thumb")
     version = int(m["version"])
-    stale = not t or (int(t.get("version") or 0) < version and (m.get("by") == "claude" or t.get("source") == "server"))
+    old = bool(t) and int(t.get("version") or 0) < version
+    # redrawn here when there is none, the AI changed the model, the picture was drawn here, or a browser's
+    # picture is older than the model and nobody has touched it for 2 minutes (a tab closed right after an edit)
+    stale = not t or (old and (m.get("by") == "claude" or t.get("source") == "server" or time.time() - float(m.get("updated") or 0) > 120))
     if stale and (int(m.get("size") or 0) > THUMB_SERVER_MAX or _thumb_failed.get(doc_id) == version):
         stale = False  # the browser that opens it draws it; or it failed at this version already
     if stale:
@@ -874,21 +1165,28 @@ async def api_doc_thumb(doc_id: str, request: Request):
                 try:
                     await _render_thumb(doc_id)
                     _thumb_failed.pop(doc_id, None)
+                except cadworker.CadUnavailable:  # busy, or out of time: try again on a later visit
+                    pass
                 except Exception:  # nothing to draw (empty, failing): keep the old picture if any
                     _thumb_failed[doc_id] = version
-            else:
-                await run_in_threadpool(ev.wait, 30)
+            else:  # someone else is drawing it: wait for that (without holding a thread)
+                for _ in range(120):
+                    if ev.is_set():
+                        break
+                    await asyncio.sleep(0.25)
         finally:
             if mine:
                 ev.set()
                 with _thumb_guard:
                     _thumb_jobs.pop(doc_id, None)
-    found = store.thumb(doc_id)
+    found = await run_in_threadpool(store.thumb, doc_id)
     if not found:
         raise HTTPException(404, "No picture yet")
     path, entry = found
+    # a picture older than the model is not cached: the next visit asks again (it may be redrawn by then)
+    current = int(entry.get("version") or 0) >= version
     return FileResponse(path, media_type="image/webp" if entry["ext"] == "webp" else "image/png",
-                        headers={"Cache-Control": "private, max-age=86400"})
+                        headers={"Cache-Control": "private, max-age=86400" if current else "no-cache"})
 
 
 def _user(request: Request) -> dict | None:
@@ -913,7 +1211,8 @@ def api_account(request: Request):
            "google": oauth.enabled(), **accounts.settings()}
     if u and u.get("role") == "owner" and m == "accounts":
         out["users"] = accounts.list_users()
-        out["pending_invites"] = accounts.pending_invites()
+        out["invites"] = accounts.list_invites()
+        out["pending_invites"] = len(out["invites"])
         out["access"] = dict(accounts.access_settings(), testers=len(accounts.tester_ids()),
                              link=f"{_base(request)}/access")
     return out
@@ -939,6 +1238,26 @@ def api_account_update(req: AccountUpdate, request: Request):
     except accounts.AccountError as e:
         return JSONResponse({"error": str(e)}, status_code=400)
     return {"user": accounts.get(u["id"]), "signed_out": bool(req.new_password)}
+
+
+class KeepWork(BaseModel):
+    name: str | None = None
+    email: str
+    password: str
+
+
+@app.post("/api/account/keep")
+def api_account_keep(req: KeepWork, request: Request):
+    """Early access: the tester adds an email and password to their account, so signing out (or another browser)
+    no longer loses their files. They stay a tester (the access code still decides their AI)."""
+    from . import accounts
+    u = _user(request)
+    if not u or not u.get("tester"):
+        return JSONResponse({"error": "Only early-access accounts need this."}, status_code=400)
+    try:
+        return {"user": accounts.keep_tester(u["id"], req.email, req.name or "", req.password)}
+    except accounts.AccountError as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
 
 
 class AccountSettings(BaseModel):
@@ -973,7 +1292,20 @@ def api_remove_testers(request: Request):
     gone = accounts.remove_testers()
     for uid in gone:
         mcpauth.drop_user(uid)
+        _forget(uid, trash=True)  # their files go to your Trash (kept 30 days), their AI key is deleted
     return {"removed": len(gone)}
+
+
+def _forget(uid: str, trash: bool) -> int:
+    """What a removed account leaves: its saved AI key is deleted, its SOLIDWORKS link closed, its files go to the
+    server owner (store.hand_over)."""
+    from . import aikeys, swbridge
+    for step in (lambda: aikeys.remove(uid), lambda: swbridge.drop(uid, "closed")):
+        try:
+            step()
+        except Exception:
+            pass
+    return store.hand_over(uid, trash=trash)
 
 
 def _google_redirect(request: Request) -> str:
@@ -1015,25 +1347,49 @@ def api_google_off(request: Request):
     return oauth.public(_google_redirect(request))
 
 
+class InviteRequest(BaseModel):
+    note: str | None = None  # who it is for ("for Alex"), shown in People on this server
+
+
 @app.post("/api/account/invites")
-def api_invite(request: Request):
+def api_invite(request: Request, req: InviteRequest | None = None):
     from . import accounts
     u = _owner(request)
-    token = accounts.create_invite(u["id"])
-    return {"url": f"{_base(request)}/join/{token}", "days": accounts.INVITE_DAYS}
+    token = accounts.create_invite(u["id"], (req.note if req else "") or "")
+    return {"url": f"{_base(request)}/join/{token}", "days": accounts.INVITE_DAYS, "invites": accounts.list_invites()}
+
+
+@app.get("/api/account/invites")
+def api_invites(request: Request):
+    """Owner: invite links not used yet (never the links themselves: only their SHA-256 is kept)."""
+    from . import accounts
+    _owner(request)
+    return {"invites": accounts.list_invites()}
+
+
+@app.delete("/api/account/invites/{invite_id}")
+def api_invite_revoke(invite_id: str, request: Request):
+    """Owner: an invite link stops working at once."""
+    from . import accounts
+    _owner(request)
+    if not accounts.revoke_invite(invite_id):
+        raise HTTPException(404, "No such invite. It may have been used or expired.")
+    return {"invites": accounts.list_invites()}
 
 
 @app.delete("/api/account/users/{user_id}")
 def api_remove_user(user_id: str, request: Request):
     from . import accounts
     _owner(request)
+    tester = (accounts.get(user_id) or {}).get("role") == "tester"
     try:
         accounts.remove(user_id, "")
     except accounts.AccountError as e:
         return JSONResponse({"error": str(e)}, status_code=400)
     from . import mcpauth
     mcpauth.drop_user(user_id)  # their connected AI apps stop working too
-    return {"removed": user_id}
+    files = _forget(user_id, trash=tester)  # a member's files move to your Files, a tester's to your Trash
+    return {"removed": user_id, "files": files}
 
 
 @app.get("/api/connect")
@@ -1046,6 +1402,17 @@ def api_connect(request: Request):
             "mcp_url": f"{base}/mcp/{auth.mcp_token_for(u)}", "password_set": bool(auth.password()),
             "codespace": bool(os.environ.get("CODESPACE_NAME")), "app_url": base, "accounts": auth.mode() == "accounts",
             "personal": bool(u and not u.get("legacy") and u.get("role") != "owner")}
+
+
+@app.post("/api/connect/new_address")
+def api_connect_new_address(request: Request):
+    """A new private address (/mcp/<key>) for the signed-in person: the old one stops working at once."""
+    from . import accounts
+    u = _user(request)
+    if not u or u.get("legacy"):
+        return JSONResponse({"error": "Create an account first."}, status_code=400)
+    accounts.new_mcp_address(u["id"])
+    return {"mcp_url": f"{auth.public_url(dict(request.headers))}/mcp/{auth.mcp_token_for(u)}"}
 
 
 @app.get("/mcp/artifacts/{artifact_id}/{filename}")
@@ -1094,6 +1461,8 @@ async def api_upload(upload_id: str, request: Request, expires: str = "", signat
         return _upload_reply({"error": str(exc)}, exc.status)
     digest, size, wire, ok = hashlib.sha256(), 0, 0, False
     unzip = zlib.decompressobj(16 + zlib.MAX_WBITS) if gz else None
+    space = uploads.room()  # the upload area's share of the disk, counted as the file arrives
+    full = {"error": "The upload area is full. Try again in a few minutes."}
 
     def keep(data: bytes) -> bool:
         nonlocal size
@@ -1113,10 +1482,14 @@ async def api_upload(upload_id: str, request: Request, expires: str = "", signat
                 if unzip is None:
                     if not keep(chunk):
                         return _upload_reply(too_big, 413)
+                    if size > space:
+                        return _upload_reply(full, 507)
                     continue
                 piece = unzip.decompress(chunk, cap - size + 1)  # bounded: a small gzip that unpacks to gigabytes stops here
                 if not keep(piece) or unzip.unconsumed_tail:
                     return _upload_reply(too_big, 413)
+                if size > space:
+                    return _upload_reply(full, 507)
             if unzip is not None:
                 if not keep(unzip.flush()):
                     return _upload_reply(too_big, 413)
@@ -1219,15 +1592,21 @@ async def sw_file(request: Request, session: str = "", id: str = "", name: str =
         if len(raw) > cap + 2**20:
             return _sw_error(ValueError("The file is too big (128 MiB at most)."), 413)
     data = bytes(raw)
+    del raw
     if request.headers.get("x-opensketch-gzip") == "1" or request.headers.get("content-encoding", "").lower() == "gzip":
-        unzip = zlib.decompressobj(16 + zlib.MAX_WBITS)
-        try:
-            data = unzip.decompress(data, cap + 1)
-            if len(data) > cap or unzip.unconsumed_tail:
-                return _sw_error(ValueError("The file is too big (128 MiB at most)."), 413)
-            if not unzip.eof:
-                return _sw_error(ValueError("The gzip body arrived damaged."), 400)
-        except zlib.error:
+        def gunzip(body: bytes):  # in a thread: unzipping 100 MB on the event loop stops every request for seconds
+            unzip = zlib.decompressobj(16 + zlib.MAX_WBITS)
+            try:
+                out = unzip.decompress(body, cap + 1)
+            except zlib.error:
+                return None, "damaged"
+            if len(out) > cap or unzip.unconsumed_tail:
+                return None, "big"
+            return (out, None) if unzip.eof else (None, "damaged")
+        data, why = await run_in_threadpool(gunzip, data)
+        if why == "big":
+            return _sw_error(ValueError("The file is too big (128 MiB at most)."), 413)
+        if why:
             return _sw_error(ValueError("The gzip body arrived damaged."), 400)
     try:
         return swbridge.put_file(user, session, id, name, data)
@@ -1300,7 +1679,21 @@ async def api_review_publish(req: ReviewRequest, request: Request):
             return JSONResponse({"error": "Save the document to the server first (Save it to your Files first: Ctrl+S)."}, status_code=404)
         if exc.kind in ("ReviewError", "AssemblyError", "FeatureError"):
             return JSONResponse({"error": exc.message}, status_code=400)
+        if exc.kind in ("DiskFull", "QuotaFull", "TooBig"):
+            return JSONResponse({"error": exc.message}, status_code=507)
         raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
+
+
+def _review_visible(item: dict | None, request: Request) -> bool:
+    """A review is its document's owner's. Its document gone: the owner it was published for (older reviews: the
+    server owner); a link not in the list at all: the server owner only."""
+    user = _user(request)
+    if item is None:
+        return store.can_see({"owner": None}, user)
+    try:
+        return store.can_see(store.meta(item["doc_id"]), user)
+    except store.NotFound:
+        return store.can_see({"owner": item.get("owner")}, user)
 
 
 @app.get("/api/reviews")
@@ -1308,36 +1701,27 @@ def api_review_list(request: Request, doc_id: str | None = None):
     from . import review
     if doc_id is not None:
         _doc_meta(doc_id, request)
-    out = []
-    for item in review.listing(doc_id, _base(request)):
-        try:
-            if store.can_see(store.meta(item["doc_id"]), _user(request)):
-                out.append(item)
-        except store.NotFound:
-            if store.can_see({"owner": None}, _user(request)):
-                out.append(item)  # its document is gone: the server owner can still see and delete it
-    return out
+    return [item for item in review.listing(doc_id, _base(request)) if _review_visible(item, request)]
 
 
 @app.delete("/api/reviews/{token}")
 def api_review_delete(token: str, request: Request):
+    """Unpublish: the link stops working at once."""
     from . import review
     item = next((i for i in review.listing() if i["token"] == token), None)
-    if item is not None:
-        try:
-            visible = store.can_see(store.meta(item["doc_id"]), _user(request))
-        except store.NotFound:
-            visible = store.can_see({"owner": None}, _user(request))
-        if not visible:
-            raise HTTPException(404, "No such review")
-    if not review.delete(token):
+    if not _review_visible(item, request):
         raise HTTPException(404, "No such review")
+    try:
+        if not review.delete(token):
+            raise HTTPException(404, "No such review")
+    except review.ReviewError as e:
+        return JSONResponse({"error": str(e)}, status_code=409)
     return {"deleted": token}
 
 
 _REVIEW_HEADERS = {"Cache-Control": "private, max-age=300", "Referrer-Policy": "no-referrer",
                    "X-Content-Type-Options": "nosniff", "X-Robots-Tag": "noindex, nofollow", "X-Frame-Options": "SAMEORIGIN"}
-_REVIEW_ASSETS = ("css/", "js/", "vendor/")
+_REVIEW_ASSETS = ("css/", "js/", "vendor/", "fonts/")
 
 
 class CheckRequest(BaseModel):
@@ -1371,7 +1755,7 @@ def review_page(token: str):
     """A published review: the app, read-only, no login (the token is the key), not indexed, no referrer."""
     from . import review
     if review.data_path(token):
-        return HTMLResponse(review.viewer_page(token, STATIC), headers=_REVIEW_HEADERS)
+        return HTMLResponse(_preload_modules(review.viewer_page(token, STATIC)), headers=_REVIEW_HEADERS)
     p = review.html_path(token)  # published before the app viewer
     if p is None:
         raise HTTPException(404, "No such review. It may have been deleted.")
@@ -1379,14 +1763,12 @@ def review_page(token: str):
 
 
 @app.get("/review/{asset:path}")
-def review_asset(asset: str):
-    """The app's own files for the review viewer (its relative paths resolve under /review/)."""
+async def review_asset(asset: str, request: Request):
+    """The app's own files for the review viewer (its relative paths resolve under /review/): served like the app's
+    (ETag, gzip), from the static folder only."""
     if not asset.startswith(_REVIEW_ASSETS):
         raise HTTPException(404)
-    p = (STATIC / asset).resolve()
-    if not p.is_file() or STATIC.resolve() not in p.parents:
-        raise HTTPException(404)
-    return FileResponse(p)
+    return await APP_FILES.get_response(asset, request.scope)
 
 
 # ----------------------------------------------------------------------------- AI apps sign in (OAuth for MCP)
@@ -1443,12 +1825,22 @@ async def oauth_register(request: Request):
     return JSONResponse(out, status_code=201, headers=OAUTH_CORS)
 
 
+async def _oauth_client_call(request: Request, fn):
+    """Token and revoke: limited per address; an app's metadata document (client_id = https URL) is read first in
+    mcpauth's own small pool with a deadline, never on a request thread (a slow address cannot use them all up)."""
+    from . import mcpauth
+    if not mcpauth.token_rate_ok(auth._client(request.scope)):
+        raise mcpauth.OAuthError("temporarily_unavailable", "Too many requests from this address. Try again in a minute.", 429)
+    form = await _body_form(request)
+    await mcpauth.ensure_client(form.get("client_id"))
+    return await run_in_threadpool(fn, form, request.headers.get("authorization", ""))
+
+
 @app.post("/oauth/token")
 async def oauth_token(request: Request):
     from . import mcpauth
-    form = await _body_form(request)
     try:
-        out = await run_in_threadpool(mcpauth.token, form, request.headers.get("authorization", ""))
+        out = await _oauth_client_call(request, mcpauth.token)
     except mcpauth.OAuthError as e:
         extra = {"WWW-Authenticate": 'Basic realm="OpenSketch"'} if e.status == 401 else {}
         return JSONResponse(e.body(), status_code=e.status, headers={**OAUTH_CORS, **extra})
@@ -1458,9 +1850,8 @@ async def oauth_token(request: Request):
 @app.post("/oauth/revoke")
 async def oauth_revoke(request: Request):
     from . import mcpauth
-    form = await _body_form(request)
     try:
-        await run_in_threadpool(mcpauth.revoke, form, request.headers.get("authorization", ""))
+        await _oauth_client_call(request, mcpauth.revoke)
     except mcpauth.OAuthError as e:
         return JSONResponse(e.body(), status_code=e.status, headers=OAUTH_CORS)
     return JSONResponse({}, headers=OAUTH_CORS)
@@ -1471,15 +1862,14 @@ def _auth_html(body: bytes, status: int = 200) -> Response:
 
 
 @app.get("/oauth/authorize")
-def oauth_authorize(request: Request):
-    """The consent page an AI app sends the person to (after sign-in, which the gate handles)."""
-    from fastapi.responses import RedirectResponse
+async def oauth_authorize(request: Request):
+    """The consent page an AI app sends the person to (after sign-in, which the gate handles). Every problem is a
+    page here, never a redirect (mcpauth.check_authorize)."""
     from . import mcpauth
     h = _hdrs(request)
     try:
+        await mcpauth.ensure_client(request.query_params.get("client_id"))
         rec, req = mcpauth.check_authorize(dict(request.query_params), h)
-    except mcpauth.RedirectError as e:
-        return RedirectResponse(e.location, status_code=302)
     except mcpauth.OAuthError as e:
         return _auth_html(auth.oauth_problem_page(e.description), 400)
     u = _user(request)
@@ -1496,7 +1886,12 @@ async def oauth_decide(request: Request):
     u = _user(request)
     uid = u["id"] if u else "local"
     req = mcpauth.read_request(form.get("req", ""), uid)
-    if req is None or mcpauth.client(req["client_id"]) is None:
+    if req is not None:
+        try:
+            await mcpauth.ensure_client(req["client_id"])
+        except mcpauth.OAuthError:
+            pass
+    if req is None or mcpauth.client(req["client_id"], fetch=False) is None:
         return _auth_html(auth.oauth_problem_page("This page has expired. Start connecting again from your AI app."), 400)
     iss = mcpauth.base_url(_hdrs(request))
     if form.get("action") == "deny":
@@ -1513,6 +1908,15 @@ def api_apps(request: Request):
     from . import mcpauth
     u = _user(request)
     return {"apps": mcpauth.grants_for(u["id"] if u else "local")}
+
+
+@app.delete("/api/account/apps")
+def api_apps_disconnect_all(request: Request):
+    """Sign every AI app out of this person's account (each has to sign in again)."""
+    from . import mcpauth
+    u = _user(request)
+    mcpauth.drop_user(u["id"] if u else "local")
+    return {"apps": []}
 
 
 @app.delete("/api/account/apps/{grant_id}")
@@ -1539,39 +1943,166 @@ NO_CACHE = {"Cache-Control": "no-cache"}
 
 def _shell_assets() -> list[str]:
     """The files the page needs to start, fetched by the service worker when it installs."""
-    out = ["/css/app.css", "/css/linear.css", "/css/brand.css", "/vendor/three.module.js", "/favicon.svg",
-           "/manifest.webmanifest", "/icons/icon-192.png"]
+    out = ["/css/app.css", "/css/linear.css", "/css/brand.css", *("/" + v for v in _import_map().values()),
+           "/favicon.svg", "/manifest.webmanifest", "/icons/icon-192.png",
+           "/fonts/fonts.css", "/fonts/inter-latin.woff2", "/fonts/inter-tight-latin.woff2"]
     out += sorted("/" + p.relative_to(STATIC).as_posix() for p in (STATIC / "js").rglob("*.js"))
     return out
 
 
+# ----------------------------------------------------------------------------- the app's own files
+# Text files go out gzipped at level 9, compressed once per file version and kept in memory. Fly's proxy compresses
+# what is not compressed yet, but at a fast level: measured on the live site, three.js came back 307 KB (zstd), 337 KB
+# (br) or 418 KB (gzip) against 265 KB from gzip -9, and app.js 43 KB (zstd) against 37 KB. Hosts with no such proxy
+# (Codespaces, plain Docker) sent everything raw: 2.1 MB on a first load.
+GZIP_STATIC = {".js", ".mjs", ".css", ".svg", ".json", ".webmanifest", ".html", ".txt"}
+GZIP_STATIC_MIN = 1024
+_gz_cache: dict[str, tuple[object, bytes]] = {}  # file or page -> (its version, gzipped bytes)
+
+
+def _accepts_gzip(scope) -> bool:
+    for part in Headers(scope=scope).get("accept-encoding", "").split(","):
+        name, _, params = part.partition(";")
+        if name.strip().lower() in ("gzip", "*"):
+            q = params.strip().replace(" ", "")
+            try:
+                return not q.startswith("q=") or float(q[2:]) > 0
+            except ValueError:
+                return False
+    return False
+
+
+def _gzipped(key: str, version, read) -> bytes:
+    hit = _gz_cache.get(key)
+    if hit and hit[0] == version:
+        return hit[1]
+    data = gzip.compress(read(), compresslevel=9, mtime=0)
+    if len(_gz_cache) > 512:  # the app has under 100 text files; this only guards against odd growth
+        _gz_cache.clear()
+    _gz_cache[key] = (version, data)
+    return data
+
+
+def _etag_matches(scope, etag: str) -> bool:
+    tags = Headers(scope=scope).get("if-none-match", "")
+    return etag in [t.strip().removeprefix("W/") for t in tags.split(",")]
+
+
+async def _text_page(scope, body: bytes, media_type: str, headers: dict) -> Response:
+    """A page made here (index, service worker): an ETag (304 when unchanged), gzipped when the browser takes it."""
+    etag = '"' + hashlib.sha256(body).hexdigest()[:24] + '"'
+    h = {**headers, "ETag": etag, "Vary": "Accept-Encoding"}
+    if _etag_matches(scope, etag):
+        return Response(status_code=304, headers=h)
+    if len(body) >= GZIP_STATIC_MIN and scope.get("method") == "GET" and _accepts_gzip(scope):
+        body = await anyio.to_thread.run_sync(_gzipped, "page:" + etag, etag, lambda: body)
+        h.update({"ETag": "W/" + etag, "Content-Encoding": "gzip"})
+    return Response(body, media_type=media_type, headers=h)
+
+
+def _import_map() -> dict[str, str]:
+    """index.html's import map, paths relative to the static folder ({"three": "vendor/three.module.min.js"})."""
+    m = re.search(r'<script type="importmap">(.*?)</script>', (STATIC / "index.html").read_text(), re.S)
+    try:
+        imports = json.loads(m.group(1))["imports"] if m else {}
+    except (ValueError, KeyError):
+        return {}
+    return {k: posixpath.normpath(v.lstrip("/")) for k, v in imports.items() if not v.startswith(("http:", "https:"))}
+
+
+_IMPORT_RE = re.compile(r"""^[ \t]*(?:import|export)\s*(?:[\w$*{},\s]*?\bfrom\s*)?["']([^"']+)["']""", re.M)
+_preloads: tuple[object, list[str]] = (None, [])
+
+
+def _module_graph(entry: str = "js/app.js") -> list[str]:
+    """Every module app.js loads through static imports (relative to the static folder), worked out from the files
+    themselves, so the list cannot drift. The page preloads them all at once instead of finding them one import
+    level at a time (three levels: about two round trips saved on a first load)."""
+    global _preloads
+    files = sorted((STATIC / "js").rglob("*.js"))
+    version = tuple((str(p), p.stat().st_mtime_ns) for p in files) + ((STATIC / "index.html").stat().st_mtime_ns,)
+    if _preloads[0] == version:
+        return _preloads[1]
+    mapped = _import_map()
+    seen, todo = [], [entry]
+    while todo:
+        rel = todo.pop(0)
+        if rel in seen or not (STATIC / rel).is_file():
+            continue
+        seen.append(rel)
+        for spec in _IMPORT_RE.findall((STATIC / rel).read_text()):
+            if spec in mapped:
+                todo.append(mapped[spec])
+            elif spec.startswith("."):
+                todo.append(posixpath.normpath(posixpath.join(posixpath.dirname(rel), spec)))
+    out = sorted((m for m in seen if m != entry), key=lambda m: (not m.startswith("vendor/"), m))  # three.js first
+    _preloads = (version, out)
+    return out
+
+
+def _preload_modules(page: str) -> str:
+    """index.html with a modulepreload link for every module the app loads (after the import map, which must come
+    first) and a preload of /api/features, which features.js awaits before anything runs. Relative links, so the
+    review viewer under /review/ preloads its own copies."""
+    m = re.search(r'<script type="importmap">.*?</script>\n?', page, re.S)
+    if not m:
+        return page
+    links = "".join(f'<link rel="modulepreload" href="{p}">\n' for p in _module_graph())
+    page = page[:m.end()] + links + page[m.end():]
+    return page.replace("</head>", '<link rel="preload" href="/api/features" as="fetch" crossorigin>\n</head>', 1)
+
+
 @app.get("/sw.js")
-def service_worker():
+async def service_worker(request: Request):
     src = (Path(__file__).parent / "sw.js").read_text()
     src = src.replace("__VERSION__", VERSION).replace("__ASSETS__", json.dumps(_shell_assets()))
-    return Response(src, media_type="application/javascript",
-                    headers={**NO_CACHE, "Service-Worker-Allowed": "/"})
+    return await _text_page(request.scope, src.encode(), "application/javascript",
+                            {**NO_CACHE, "Service-Worker-Allowed": "/"})
 
 
 @app.get("/manifest.webmanifest")
-def manifest():
-    return FileResponse(STATIC / "manifest.webmanifest", media_type="application/manifest+json", headers=NO_CACHE)
+async def manifest(request: Request):
+    res = await APP_FILES.get_response("manifest.webmanifest", request.scope)
+    res.headers["Content-Type"] = "application/manifest+json"
+    return res
 
 
 @app.get("/")
-def index():
-    return FileResponse(STATIC / "index.html", headers=NO_CACHE)
+async def index(request: Request):
+    # the page knows its own version, so a tab opened from the service worker's copy sees it is out of date
+    page = (STATIC / "index.html").read_text().replace("__VERSION__", VERSION, 1)
+    page = _preload_modules(page)
+    return await _text_page(request.scope, page.encode(), "text/html; charset=utf-8", NO_CACHE)
 
 
 class AppFiles(StaticFiles):
     """The app's files, revalidated on every load (an ETag check, usually a 304), so a deploy is picked up
-    at once instead of after a browser's guessed cache lifetime."""
+    at once instead of after a browser's guessed cache lifetime. Text files are sent gzipped (see GZIP_STATIC)."""
 
     async def get_response(self, path, scope):
         res = await super().get_response(path, scope)
         if res.status_code in (200, 304):
             res.headers["Cache-Control"] = "public, max-age=604800" if path.startswith("icons/") else "no-cache"
+        if Path(path).suffix in GZIP_STATIC:
+            if res.status_code == 304:
+                res.headers["Vary"] = "Accept-Encoding"
+            elif isinstance(res, FileResponse) and res.status_code == 200:
+                res = await self._gzip(res, scope)
         return res
 
+    @staticmethod
+    async def _gzip(res: FileResponse, scope) -> Response:
+        res.headers["Vary"] = "Accept-Encoding"
+        st = res.stat_result or os.stat(res.path)
+        if (st.st_size < GZIP_STATIC_MIN or scope.get("method") != "GET" or "range" in Headers(scope=scope)
+                or not _accepts_gzip(scope)):
+            return res
+        path = str(res.path)
+        body = await anyio.to_thread.run_sync(_gzipped, path, (st.st_mtime_ns, st.st_size), Path(path).read_bytes)
+        headers = {k: v for k, v in res.headers.items() if k not in ("content-length", "accept-ranges", "etag")}
+        headers.update({"etag": "W/" + res.headers["etag"], "content-encoding": "gzip"})
+        return Response(body, headers=headers)
 
-app.mount("/", AppFiles(directory=STATIC), name="static")
+
+APP_FILES = AppFiles(directory=STATIC)
+app.mount("/", APP_FILES, name="static")

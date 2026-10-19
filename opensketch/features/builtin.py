@@ -11,7 +11,7 @@ register(FeatureType(
     "plane", "Plane", "Plane", "plane", "A reference plane offset from a plane or planar face.", ui="custom",
     params=[
         Param("base", "plane", "The plane or planar face it is offset from", required=True),
-        Param("offset", "length", "Offset distance", default=10, min=0),
+        Param("offset", "length", "Offset distance", default=10, min=0, omitted=0),
         Param("flip", "bool", "Offset to the other side", default=False),
     ]))
 
@@ -93,7 +93,7 @@ register(FeatureType(
 register(FeatureType(
     "fillet", "Fillet", "Fillet", "fillet", "Rounds edges with a constant radius.", ui="custom",
     params=[
-        Param("radius", "length", "Radius", default=2, min=0.0001),
+        Param("radius", "length", "Radius", default=2, min=0.0001, omitted=1),
         Param("edges", "edges", "Edges to round", required=True),
     ]))
 
@@ -102,7 +102,7 @@ register(FeatureType(
     params=[
         Param("distance", "length", "Distance", default=1, min=0.0001),
         Param("edges", "edges", "Edges to bevel", required=True),
-        Param("mode", "enum", "Angle Distance or Distance Distance", default="angle_distance",
+        Param("mode", "enum", "Angle Distance or Distance Distance", default="angle_distance", omitted="distance_distance",
               options=[("angle_distance", "Angle Distance"), ("distance_distance", "Distance Distance")]),
         Param("angle", "angle", "Angle", default=45, min=0.1, max=89.9, when={"mode": "angle_distance"}),
         Param("distance2", "length", "Second distance", min=0.0001, when={"mode": "distance_distance"}),
@@ -129,12 +129,12 @@ register(FeatureType(
     params=[
         Param("features", "features", "Extrude or revolve feature ids", required=True),
         Param("direction", "direction", "Direction 1", default="X"),
-        Param("count", "int", "Number of instances including the original", default=3, min=1, max=500),
-        Param("spacing", "length", "Spacing", default=20, min=0.0001),
+        Param("count", "int", "Number of instances including the original", default=3, min=1, max=500, omitted=2),
+        Param("spacing", "length", "Spacing", default=20, min=0.0001, omitted=10),
         Param("reverse", "bool", "Reverse direction 1"),
         Param("direction2", "direction", "Optional direction 2"),
-        Param("count2", "int", "Instances in direction 2", min=1, max=500),
-        Param("spacing2", "length", "Spacing in direction 2", min=0.0001),
+        Param("count2", "int", "Instances in direction 2", min=1, max=500, omitted=1),
+        Param("spacing2", "length", "Spacing in direction 2", min=0.0001, omitted=10),
     ]))
 
 register(FeatureType(
@@ -146,5 +146,5 @@ register(FeatureType(
         Param("count", "int", "Number of instances including the original", default=4, min=1, max=500),
         Param("angle", "angle", "Total angle", default=360, min=0.001, max=360),
         Param("equal_spacing", "bool", "Spread the instances evenly over the angle", default=True),
-        Param("step", "angle", "Angle between instances", when={"equal_spacing": False}),
+        Param("step", "angle", "Angle between instances", default=90, when={"equal_spacing": False}),
     ]))

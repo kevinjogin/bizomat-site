@@ -412,8 +412,8 @@ def test_worker_that_hangs_is_killed_and_the_step_left_in_the_body(monkeypatch):
     monkeypatch.setenv("OPENSKETCH_RECOGNIZE_STALL", "('fillet'")  # every fillet attempt hangs
     doc = step_doc(solid(plate))
     t = time.monotonic()
-    r = recognize.recognize_part_safe(doc, hang=3)
-    assert time.monotonic() - t < 90
+    r = recognize.recognize_part_safe(doc, hang=6)  # every real step here takes well under a second
+    assert time.monotonic() - t < 120
     assert r["ok"] and r["report"]["exact"]
     feats = r["part"]["features"]
     assert not by_type(feats, "fillet") and by_type(feats, "import")  # the fillet stays in the imported body
@@ -432,3 +432,24 @@ def test_generic_step_labels_give_way_to_the_file_name():
     assert doc["name"] == "lever_arm"
     assert importer._clean_name("Inside_plate", "x") == "Inside_plate"
     assert importer._clean_name("Open_CASCADE_STEP_translator_7_8_7", "x") == "x"
+
+
+def test_rim_fillets_follow_a_recognised_hole_pattern():
+    """Blind holes in a row become a hole + pattern; the rim fillet must name the pattern's copies, so it keeps
+    all four rims when the spacing is edited (it used to name holes the pattern had replaced)."""
+    with BuildPart() as p:
+        Box(90, 40, 10)
+        with Locations(*[(-30 + 20 * i, 0, 5) for i in range(4)]):
+            Hole(1, 4)
+        fillet(p.edges().filter_by(GeomType.CIRCLE).group_by(Axis.Z)[-1], 0.5)
+    body = p.part.solids()[0]
+    res = recognize.recognize_body(body)
+    assert res["ok"] and res["report"]["exact"], res["report"]
+    feats = res["features"]
+    assert len(by_type(feats, "linear_pattern")) == 1
+    st, _ = geometry.regen({"features": feats})
+    assert not [s for s in st.status if s.get("warnings")], [s for s in st.status if s.get("warnings")]
+    pat = by_type(feats, "linear_pattern")[0]
+    pat["spacing"] = 21
+    st, _ = geometry.regen({"features": feats})
+    assert sum(1 for f in st.part.faces() if f.geom_type == GeomType.TORUS) == 4

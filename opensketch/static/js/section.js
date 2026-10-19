@@ -37,11 +37,34 @@ export class SectionView {
     return { origin: o.toArray(), normal: n.toArray() };
   }
 
+  // The viewer moves its one clipping plane in place, and the arrow moves with it: a slider step costs no new
+  // objects. The ribbon (Section View shown pressed) is redrawn only when the section turns on or off.
   apply() {
     const f = this.frame();
+    const was = this.active;
     this.viewer.setSection(f);
-    this.drawHandle(f);
-    this.app.ribbon.render();
+    if (this.handle && this.app.cmd?.key === 'section') this.moveHandle(f); else this.drawHandle(f);
+    if (!was) this.app.ribbon.render();
+  }
+
+  // Offset span that cuts the model: the scene box's corners measured along the offset direction from the base.
+  range() {
+    const b = this.viewer.sceneBox();
+    if (b.isEmpty()) return [-200, 200];
+    const n = V(this.baseNormalWithRotation()), o = V(this.baseFrame().origin);
+    const d = [];
+    for (const x of [b.min.x, b.max.x]) for (const y of [b.min.y, b.max.y]) for (const z of [b.min.z, b.max.z]) d.push(new THREE.Vector3(x, y, z).sub(o).dot(n));
+    const lo = Math.min(...d), hi = Math.max(...d), pad = Math.max((hi - lo) * 0.02, 0.5);
+    return [lo - pad, hi + pad];
+  }
+
+  // Slider and number field follow a drag of the arrow without redrawing the PropertyManager.
+  showOffset() {
+    const root = this.app.pm.root;
+    const num = root?.querySelector('input[type=text][aria-label="Offset Distance"]');
+    if (num) num.value = (+this.s.offset).toFixed(2) + 'mm';
+    const r = root?.querySelector('.sec-slider');
+    if (r) r.value = this.s.offset;
   }
 
   toggle() {
@@ -78,10 +101,6 @@ export class SectionView {
       onOk: () => { this.clearHandle(); app.ribbon.render(); return undefined; },
       onCancel: () => { this.off(); },
     };
-    const range = () => {
-      const b = this.app.viewer.sceneBox();
-      return b.isEmpty() ? 200 : Math.ceil(b.getSize(new THREE.Vector3()).length() / 2);
-    };
     app.pm.open({ title: 'Section View', icon: 'sectionview', okEnabled: () => true, onChange: () => this.apply(),
       message: 'Drag the arrow in the graphics area to move the section. Pick a planar face to section from it.',
       sections: [
@@ -89,8 +108,10 @@ export class SectionView {
           { type: 'select', options: [...STD.map((p) => [p, p]), ...(s.face ? [['face', 'Selected face']] : [])], get: () => (s.face ? 'face' : s.plane), set: (v) => { if (v !== 'face') { s.plane = v; s.face = null; } } },
           { type: 'custom', render: (row) => {
             const r = document.createElement('input'); r.type = 'range'; r.className = 'grow sec-slider';
-            const R = range(); r.min = -R; r.max = R; r.step = R / 200; r.value = s.offset;
-            r.oninput = () => { s.offset = +r.value; this.apply(); const num = row.parentElement?.querySelector('.sec-off input'); if (num) num.value = (+s.offset).toFixed(2) + 'mm'; };
+            r.setAttribute('aria-label', 'Offset slider');
+            const [lo, hi] = this.range();
+            r.min = Math.min(lo, s.offset); r.max = Math.max(hi, s.offset); r.step = (hi - lo) / 400; r.value = s.offset;
+            r.oninput = () => { s.offset = +r.value; this.apply(); this.showOffset(); };
             row.appendChild(r);
           } },
           { type: 'number', icon: 'depth', tip: 'Offset Distance', get: () => s.offset, set: (v) => { s.offset = v; }, step: 1 },
@@ -99,14 +120,12 @@ export class SectionView {
           { type: 'check', label: 'Flip side to view', get: () => s.flip, set: (v) => { s.flip = v; } },
         ] },
       ] });
-    // mark the offset number row so the slider can update it
-    setTimeout(() => { const rows = app.pm.root.querySelectorAll('.pm-row'); if (rows[2]) rows[2].classList.add('sec-off'); }, 0);
     this.apply();
   }
 
   worldNormal(p) {
     const n = V(p.data.normal);
-    const obj = this.viewer.faceObjs.find((o) => o.userData.id === p.id);
+    const obj = p.object; // the drawn body or component the face belongs to
     if (obj) { obj.updateMatrixWorld(true); n.applyMatrix3(new THREE.Matrix3().getNormalMatrix(obj.matrixWorld)).normalize(); }
     return n;
   }
@@ -124,9 +143,6 @@ export class SectionView {
     const v = this.viewer;
     const box = v.sceneBox();
     const size = box.isEmpty() ? 100 : box.getSize(new THREE.Vector3()).length();
-    const n = V(f.normal).negate(); // arrow points to the side that is kept, like SOLIDWORKS
-    const o = V(f.origin);
-    const c = box.isEmpty() ? o : new THREE.Plane(V(f.normal), -V(f.normal).dot(o)).projectPoint(box.getCenter(new THREE.Vector3()), new THREE.Vector3());
     const g = new THREE.Group();
     const L = size * 0.18;
     const mat = new THREE.MeshBasicMaterial({ color: 0x1f6fe0, depthTest: false });
@@ -142,10 +158,20 @@ export class SectionView {
     for (const m of [shaft, head]) { m.userData.sectionHandle = true; m.renderOrder = 30; }
     ring.renderOrder = 30;
     g.traverse((o) => { o.userData.noFit = true; });
-    g.position.copy(c);
-    g.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), n);
     this.handle = g;
     v.overlayGroup.add(g);
+    this.moveHandle(f);
+  }
+
+  moveHandle(f) {
+    const v = this.viewer, g = this.handle;
+    if (!g) return;
+    const box = v.sceneBox();
+    const n = V(f.normal).negate(); // arrow points to the side that is kept, like SOLIDWORKS
+    const o = V(f.origin);
+    const c = box.isEmpty() ? o : new THREE.Plane(V(f.normal), -V(f.normal).dot(o)).projectPoint(box.getCenter(new THREE.Vector3()), new THREE.Vector3());
+    g.position.copy(c);
+    g.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), n);
     v.requestRender();
   }
 
@@ -169,11 +195,12 @@ export class SectionView {
         const dx = ev.offsetX - start.x, dy = ev.offsetY - start.y;
         this.s.offset = +(start.off + (dx * dir.x + dy * dir.y) / len2).toFixed(3);
         this.apply();
-        this.app.pm.render();
+        this.showOffset();
       };
-      const up = () => { c.removeEventListener('pointermove', mv, true); c.removeEventListener('pointerup', up, true); };
+      // a cancelled touch or pen gesture ends the drag too (no sliding on hover afterwards)
+      const up = () => { for (const t of ['pointerup', 'pointercancel', 'lostpointercapture']) c.removeEventListener(t, up, true); c.removeEventListener('pointermove', mv, true); };
       c.addEventListener('pointermove', mv, true);
-      c.addEventListener('pointerup', up, true);
+      for (const t of ['pointerup', 'pointercancel', 'lostpointercapture']) c.addEventListener(t, up, true);
     }, true);
   }
 

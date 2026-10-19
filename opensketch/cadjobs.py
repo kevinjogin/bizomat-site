@@ -3,7 +3,28 @@ Each takes and returns plain data (dicts, lists, bytes) so it can cross the proc
 
 from __future__ import annotations
 
+import json
+
 from . import assembly, geometry, importer
+
+
+def _json_default(o):
+    if isinstance(o, (set, frozenset, tuple)):
+        return list(o)
+    if hasattr(o, "tolist"):  # numpy numbers and arrays
+        return o.tolist()
+    raise TypeError(f"{type(o).__name__} is not JSON serialisable")
+
+
+def to_json(obj) -> bytes:
+    return json.dumps(obj, separators=(",", ":"), allow_nan=False, default=_json_default).encode("utf-8")
+
+
+def json_of(name: str, *args, **kwargs) -> bytes:
+    """One of this module's functions with its answer already as JSON bytes. Meshes are big: encoding them here,
+    in the worker, keeps the web server's event loop free (json.dumps of a 10 MB mesh holds the GIL for ~0.5 s,
+    and unpickling the same mesh as Python lists costs as much again), and bytes cross over as one copy."""
+    return to_json(globals()[name](*args, **kwargs))
 
 
 def regen(doc: dict, preview: dict | None = None, known: dict | None = None, drag: dict | None = None) -> dict:
@@ -60,6 +81,13 @@ def import_file(raw: bytes, filename: str) -> dict:
     return importer.import_file(raw, filename)
 
 
+def import_path(path: str, filename: str) -> dict:
+    """import_file for an upload the web server wrote to a temporary file (it never holds the bytes itself)."""
+    with open(path, "rb") as f:
+        raw = f.read()
+    return importer.import_file(raw, filename)
+
+
 def toolbox_part(kind: str, args: dict) -> dict:
     """A Toolbox part document; ValueError with a plain reason when the size does not make a solid."""
     doc = importer.standard_part_doc(kind, **args)
@@ -70,9 +98,15 @@ def toolbox_part(kind: str, args: dict) -> dict:
     return doc
 
 
-def thumb_png(doc: dict) -> bytes:
+def thumb_png(doc: dict) -> bytes | None:
+    """A Files picture, or None when there is no solid to draw (sketches only: the browser draws those)."""
     from . import preview
-    return preview.render_preview(doc, "isometric", 480, 360, transparent=True)
+    try:
+        return preview.render_preview(doc, "isometric", 480, 360, transparent=True)
+    except ValueError as exc:
+        if str(exc).startswith("No visible solid body"):
+            return None
+        raise
 
 
 def review_checks(doc: dict) -> dict:
@@ -86,20 +120,25 @@ def review_publish(doc_id, compare_version, title, notes, by, base) -> dict:
 
 
 def ai_stream(doc: dict, prompt: str, conv_id: str | None, history: list | None, demo, selection, ai_config,
-              progress=None, stop=None) -> dict:
+              progress=None, stop=None, lost: bool = False) -> dict:
     """The in-app AI chat (ai.run_stream) in a process of its own (cadworker.start_job): each event goes out
-    through progress(event); the conversation's history comes in and goes back, because the server keeps it."""
+    through progress(line), already a line of JSON; the conversation's history comes in and goes back, because
+    the server keeps it. `lost`: the browser named a conversation the server no longer has (it restarted), so the
+    start event says resumed: false and the chat tells the person. `stop` also ends a feature recognition the AI
+    started (it can run for minutes without an event)."""
     import pickle
     from . import ai
     if conv_id and history is not None:
         ai._conversations[conv_id] = history
     used = None
-    gen = ai.run_stream(doc, prompt, conv_id, demo=demo, selection=selection, ai_config=ai_config)
+    gen = ai.run_stream(doc, prompt, conv_id, demo=demo, selection=selection, ai_config=ai_config, stop=stop)
     try:
         for ev in gen:
             used = ev.get("conversation") or used
+            if lost and ev.get("ev") == "start":
+                ev = dict(ev, resumed=False)
             if progress:
-                progress(ev)
+                progress(to_json(ev).decode("utf-8") + "\n")
             if stop and stop():
                 break
     finally:

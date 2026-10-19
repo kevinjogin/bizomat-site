@@ -29,9 +29,9 @@ def _setup_owner_and_member():
     return owner, member
 
 
-def _block():
+def _block(name="Block"):
     from opensketch import demo
-    return {"version": 1, "name": "Block", "units": "mm", "seq": 1000, "rollback": None, "features": demo.bracket_features()}
+    return {"version": 1, "name": name, "units": "mm", "seq": 1000, "rollback": None, "features": demo.bracket_features()}
 
 
 def _png(w=4, h=3):
@@ -73,7 +73,14 @@ def test_rename_duplicate_trash_restore_purge_and_versions():
     assert c.patch(f"/api/docs/{doc_id}", json={"name": "  "}).status_code == 400
     assert c.get(f"/api/docs/{doc_id}").json()["doc"]["name"] == "Base plate"
     copy = c.post(f"/api/docs/{doc_id}/duplicate", json={}).json()
-    assert copy["name"] == "Base plate copy" and copy["version"] == 1 and copy["id"] != doc_id
+    assert copy["name"] == "Copy of Base plate" and copy["version"] == 1 and copy["id"] != doc_id
+    # the difference stays at the start (a long name is cut off at the end), and repeats are numbered there
+    assert c.post(f"/api/docs/{doc_id}/duplicate", json={}).json()["name"] == "Copy 2 of Base plate"
+    long = c.post("/api/docs", json={"name": "L" * 120, "doc": _block()}).json()
+    assert c.post(f"/api/docs/{long['id']}/duplicate", json={}).json()["name"].startswith("Copy of LLL")
+    for f in c.get("/api/docs").json():
+        if f["id"] not in (doc_id, copy["id"]):
+            c.delete(f"/api/docs/{f['id']}"); c.delete(f"/api/docs/{f['id']}?forever=1")
     # Trash: out of the list, into the Trash list, back, then gone for good
     assert c.delete(f"/api/docs/{copy['id']}?forever=1").status_code == 400  # not from the list in one step
     t = c.delete(f"/api/docs/{copy['id']}").json()
@@ -145,11 +152,17 @@ def test_pictures_from_the_browser_and_drawn_on_the_server():
     ok = c.put(f"/api/docs/{doc_id}/thumb?version=1", content=_png(), headers={"Content-Type": "image/png"}).json()
     assert ok["thumb"]["source"] == "browser"
     assert c.get(f"/api/docs/{doc_id}/thumb").content == _png()
-    # you change the model: the browser's picture stays until the browser sends a new one
-    store.save(doc_id, _block(), "you", "Edited")
-    assert c.get(f"/api/docs/{doc_id}/thumb").content == _png()
+    fresh = c.get(f"/api/docs/{doc_id}/thumb")
+    assert fresh.headers["cache-control"] == "private, max-age=86400"
+    # you change the model: the browser's picture stays until the browser sends a new one, but it is not
+    # cached any more and the card asks by the model's version
+    store.save(doc_id, _block("Block 2"), "you", "Edited")
+    older = c.get(f"/api/docs/{doc_id}/thumb")
+    assert older.content == _png() and older.headers["cache-control"] == "no-cache"
+    card = [f for f in c.get("/api/docs").json() if f["id"] == doc_id][0]
+    assert card["thumb_stale"] and card["thumb"].endswith("-2")
     # the AI changes it: the server draws the new version
-    store.save(doc_id, _block(), "claude", "AI change")
+    store.save(doc_id, _block("Block 3"), "claude", "AI change")
     redrawn = c.get(f"/api/docs/{doc_id}/thumb")
     assert redrawn.content != _png() and store.meta(doc_id)["thumb"] == dict(store.meta(doc_id)["thumb"], source="server", version=3)
     # an empty document has no picture
@@ -176,7 +189,7 @@ def test_server_pictures_spare_the_server(monkeypatch):
     doc_id = c.post("/api/docs", json={"name": "Block", "doc": _block()}).json()["id"]
     assert c.get(f"/api/docs/{doc_id}/thumb").status_code == 404 and len(calls) == 1
     assert c.get(f"/api/docs/{doc_id}/thumb").status_code == 404 and len(calls) == 1  # same version: not again
-    store.save(doc_id, _block(), "claude", "AI change")
+    store.save(doc_id, _block("Block 2"), "claude", "AI change")
     assert c.get(f"/api/docs/{doc_id}/thumb").status_code == 404 and len(calls) == 2  # changed: tried again
     # a big model (an imported STEP assembly) is never drawn on the server: the browser draws it when opened
     monkeypatch.setattr(server, "THUMB_SERVER_MAX", 10)
@@ -242,4 +255,79 @@ def test_history_is_capped_by_size(monkeypatch):
     rec = store.create("Big", {"version": 1, "features": [], "name": "Big", "blob": "x" * 1000})
     for i in range(12):
         store.save(rec["id"], {"version": 1, "features": [], "name": "Big", "blob": "y" * 1000 + str(i)}, "you")
-    assert [v["version"] for v in store.versions(rec["id"])] == [12, 11, 10, 9, 8]  # the newest five stay
+    assert [v["version"] for v in store.versions(rec["id"])] == [12, 11]  # as many as fit in HISTORY_MAX
+    monkeypatch.setattr(store, "HISTORY_MAX", 10)
+    store.save(rec["id"], {"version": 1, "features": [], "name": "Big", "blob": "z"}, "you")
+    assert [v["version"] for v in store.versions(rec["id"])] == [13]  # the newest is always kept
+    monkeypatch.setattr(store, "HISTORY_MAX", 10**9)
+    monkeypatch.setattr(store, "KEEP", 3)
+    for i in range(5):
+        store.save(rec["id"], {"version": 1, "features": [], "name": "Big", "n": i}, "claude")
+    assert [v["version"] for v in store.versions(rec["id"])] == [18, 17, 16]  # and at most KEEP
+
+
+
+def test_a_new_file_left_untouched_is_removed_and_anything_else_is_kept(monkeypatch):
+    owner, member = _setup_owner_and_member()
+    new = lambda c: c.post("/api/docs", json={"name": "", "kind": "part"}).json()
+    gone = new(owner)
+    assert owner.post(f"/api/docs/{gone['id']}/discard").json() == {"discarded": gone["id"]}
+    assert not list((store.data_dir() / "docs").glob(f"{gone['id']}*"))
+    assert owner.get(f"/api/docs/{gone['id']}").status_code == 404
+    # edited, renamed, written by the AI, someone else's, in the Trash: all kept
+    edited = new(owner)
+    owner.put(f"/api/docs/{edited['id']}", json={"doc": _block(), "base_version": 1})
+    renamed = new(owner)
+    owner.patch(f"/api/docs/{renamed['id']}", json={"name": "Keep me"})
+    ai = new(owner)
+    store.save(ai["id"], store.empty_doc("x"), "claude", "Looked at it")
+    sketched = new(owner)
+    doc = store.empty_doc("Part 9")
+    doc["features"] = [{"id": "s1", "type": "sketch", "name": "Sketch1", "plane": {"ref": "Front Plane"}, "entities": [], "constraints": []}]
+    store.get(sketched["id"])  # exists
+    rec = store.get(sketched["id"]); rec["doc"] = doc; store._save_files(rec)  # a sketch, still version 1
+    trashed = new(owner)
+    owner.delete(f"/api/docs/{trashed['id']}")
+    for f in (edited, renamed, ai, sketched):
+        assert owner.post(f"/api/docs/{f['id']}/discard").status_code == 409
+        assert owner.get(f"/api/docs/{f['id']}").status_code == 200
+    assert owner.post(f"/api/docs/{trashed['id']}/discard").status_code == 404
+    theirs = new(member)
+    assert owner.post(f"/api/docs/{theirs['id']}/discard").status_code == 404
+    assert member.get(f"/api/docs/{theirs['id']}").status_code == 200
+
+
+def test_a_browser_picture_older_than_an_untouched_model_is_redrawn():
+    c = TestClient(server.app)
+    rec = c.post("/api/docs", json={"name": "Block", "doc": _block()}).json()
+    doc_id = rec["id"]
+    c.put(f"/api/docs/{doc_id}/thumb?version=1", content=_png(), headers={"Content-Type": "image/png"})
+    store.save(doc_id, _block("Block 2"), "you", "Edited")  # the tab closed before it sent the new picture
+    assert c.get(f"/api/docs/{doc_id}/thumb").content == _png()  # still being edited: no redraw yet
+    full = store.get(doc_id)
+    full["updated"] -= 300
+    store._save_files(full)
+    r = c.get(f"/api/docs/{doc_id}/thumb")
+    assert r.content != _png() and r.headers["cache-control"] == "private, max-age=86400"
+    assert store.meta(doc_id)["thumb"]["source"] == "server"
+
+
+def test_a_rename_keeps_the_picture_current():
+    c = TestClient(server.app)
+    rec = c.post("/api/docs", json={"name": "Block", "doc": _block()}).json()
+    doc_id = rec["id"]
+    c.put(f"/api/docs/{doc_id}/thumb?version=1", content=_png(), headers={"Content-Type": "image/png"})
+    assert c.patch(f"/api/docs/{doc_id}", json={"name": "Block renamed"}).json()["version"] == 2
+    t = store.meta(doc_id)["thumb"]
+    assert t["version"] == 2 and t["source"] == "browser"  # the same shape: no server redraw for a name
+
+
+def test_an_untouched_new_file_left_by_a_closed_tab_goes_after_a_day():
+    c = TestClient(server.app)
+    old = c.post("/api/docs", json={"name": "", "kind": "part"}).json()
+    fresh = c.post("/api/docs", json={"name": "", "kind": "part"}).json()
+    rec = store.get(old["id"])
+    rec["updated"] -= store.UNTOUCHED_KEEP + 60
+    store._save_files(rec)
+    ids = [d["id"] for d in c.get("/api/docs").json()]
+    assert old["id"] not in ids and fresh["id"] in ids  # a file just made stays (its tab may still be open)

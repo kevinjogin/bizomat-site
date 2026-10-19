@@ -8,11 +8,11 @@ import { drawInactiveSketch, pointsOf, entityPolyline } from './sketch/draw.js';
 import { solveSketch } from './sketch/solver.js';
 import { projSeg, fmt } from './sketch/geom2d.js';
 import { PropertyManager } from './ui/pm.js';
-import { dialog, message, modifyBox, contextMenu, closeMenus } from './ui/dialogs.js';
+import { dialog, message, modifyBox, contextMenu, closeMenus, modalOpen, asButton } from './ui/dialogs.js';
 import { Ribbon } from './ui/ribbon.js';
 import { FeatureTree } from './ui/tree.js';
 import { TaskPane } from './ui/taskpane.js';
-import { buildCommands } from './commands.js';
+import { buildCommands, placeRegistryCommands } from './commands.js';
 import { SPECS, metaFor, buildSpec, defaultsFor, nextName, metaKey, featureIcon } from './features.js';
 import { icon } from './icons.js';
 import { AssemblyMode, isAssembly, newAssembly, hexColor } from './asm.js';
@@ -20,7 +20,7 @@ import { LivePlayer } from './live.js';
 import { Toolbox } from './toolbox.js';
 import { SectionView } from './section.js';
 import { ServerDocs, LAST_KEYS } from './serverdocs.js';
-import { setScope, skey, adopt } from './scope.js';
+import { setScope, skey, adopt, scopeKnown } from './scope.js';
 import { Account } from './account.js';
 import { DesignPanel } from './design.js';
 import { MotionReview } from './review.js';
@@ -35,11 +35,15 @@ const MB = (n) => (n / 1e6).toFixed(1) + ' MB';
 // When the upload never reached OpenSketch (the reply is not ours), say what the status means.
 function importFailText(status, size) {
   if (status === 413) return `The upload (${MB(size)}) was too big for the connection to the server.`;
-  if (status === 502 || status === 503 || status === 504) return 'The connection to the server gave up before the import finished. Try again; if it keeps failing, the file may be too big for the Codespaces connection.';
-  if (status === 401 || status === 403) return 'The server refused the upload (signed out of the Codespace?). Reload the page and try again.';
+  if (status === 502 || status === 503 || status === 504) return 'The server did not finish the upload. Try again in a minute. If it keeps failing, try a .zip of the file or a smaller file.';
+  if (status === 401 || status === 403) return 'You were signed out. Reload the page, sign in again and try once more.';
   return `The server did not answer properly (HTTP ${status || 'no status'}). Reload the page and try again.`;
 }
 const AUTOSAVE = 'opensketch.autosave.v1';
+const BLOB = '\u0000blob:'; // stands for a big string in undo steps (app.undoJSON)
+const BLOB_MIN = 64 * 1024;
+const UNDO_MAX = 64e6; // characters of undo history kept
+const CACHE_MAX = 60e6; // bytes (about) of rebuilt meshes kept for undo, redo and going back
 
 const MATERIALS = [
   ['ABS', 1.02e-6], ['PC/ABS', 1.15e-6], ['Nylon 6/6', 1.14e-6], ['PLA', 1.24e-6], ['Polypropylene', 0.9e-6],
@@ -102,6 +106,7 @@ export class App {
     this.reviewMode = typeof window.OPENSKETCH_REVIEW === 'string'; // a shared review link: read-only, no server
     this.docStack = []; // Open Part from an assembly: the assembly waits here
     this.forConstruction = false;
+    this.pinnedCmds = new Set(); // PropertyManagers pinned with Keep Visible
     this.polygonSides = 6;
     this.filletRadius = 5;
     // the search boxes are forms of their own (so browsers do not autofill them): Enter never reloads the page
@@ -112,17 +117,24 @@ export class App {
     this.bindKeys();
     this.bindSplitter();
     this.viewer.afterRender.push(() => this.afterRender());
+    window.addEventListener('opensketch:look', () => this.lookChanged());
+    // the feature registry came late (server restarting when the page loaded): add its commands now
+    window.addEventListener('opensketch:registry', () => { Object.assign(this.commands, buildCommands(this)); placeRegistryCommands(); this.ribbon.render(); this.design?.refresh(); });
     $('fileinput').addEventListener('change', (e) => this.loadFile(e.target.files[0]));
     $('sb-help').onclick = () => this.shortcutsDialog();
+    asButton($('sb-help'), 'Keyboard shortcuts');
     const th = document.querySelector('#titlebar .title-help');
-    if (th) { th.setAttribute('role', 'button'); th.tabIndex = 0; th.onclick = () => this.helpMenu(th); th.onkeydown = (e) => { if (e.key === 'Enter') this.helpMenu(th); }; }
-    $('sb-units').onclick = (e) => contextMenu(e.clientX, e.clientY - 120, [{ head: 'Unit system' }, { label: 'MMGS (millimeter, gram, second)', run: () => {} }]);
+    if (th) { asButton(th, 'Help', { popup: true }); th.onclick = (e) => this.helpMenu(th, !e.detail); }
+    // one unit system for now: the menu shows it ticked
+    const units = $('sb-units');
+    asButton(units, 'Unit system: MMGS (millimeter, gram, second)', { popup: true });
+    units.onclick = (e) => { const r = units.getBoundingClientRect(); contextMenu(r.left, r.top - 70, [{ head: 'Unit system' }, { label: 'MMGS (millimeter, gram, second)', role: 'menuitemradio', checked: true, run: () => {} }], null, { keyboard: !e.detail, returnTo: units }); };
     this.bindDocTabs();
     if (this.reviewMode) {
       const b = document.querySelector('#titlebar .brand');
       if (b) b.innerHTML = '<span class="brand-text">OpenSketch</span>';
       this.review.loadShared(window.OPENSKETCH_REVIEW);
-      this.status('Read-only review. Drag to rotate, scroll to zoom; move the joints in Motion Review.');
+      this.status('Read-only review. Drag to rotate; scroll or pinch to zoom; two fingers pan. Move the joints in Motion Review.');
       return;
     }
     this.buildBrand();
@@ -139,22 +151,24 @@ export class App {
   async startup() {
     const q = new URLSearchParams(location.search);
     const docId = q.get('doc');
+    // Signed in: the Files page first (YZ 2026-10-19), drawn at once (its list comes from the server, per person).
+    // The last file is the top card; an unsaved draft is a card too.
+    if (!docId) this.files.open();
     // browser storage is per signed-in person (scope.js); wait briefly for who that is
     const who = await Promise.race([this.account?.ready?.then(() => this.account.user).catch(() => null), new Promise((ok) => setTimeout(() => ok(undefined), 4000))]);
-    const user = who && !who.legacy ? who : null;
-    setScope(user?.id);
-    if (user?.role === 'owner') adopt([AUTOSAVE, ...LAST_KEYS]);
-    const draftLink = ServerDocs.draftLink;
-    const hasDraft = this.restore();
-    if (draftLink && !docId) this.doc = newDoc(); // that copy is a file in Files, not a draft
+    const known = !this.account?.el || (who !== undefined && typeof this.account.info?.mode === 'string');
+    if (known) this.useScope(who); else this.waitForAccount(); // storage stays off until it is known
+    const hasDraft = known && this.restore();
+    if (hasDraft) this.dirty = true; // only in this browser: kept until saved or let go
     this.updateDocChrome();
     if (docId) {
-      if (!(await this.server.open(docId, { quiet: true }))) { this.regen().then(() => this.viewer.zoomToFit(false)); this.files.open(); }
+      const left = ServerDocs.discardedOnLeave(docId); // a reload of an untouched new file: a new one in its place
+      // the old page's discard is often cut off as it unloads: ask again (the server keeps it if it was changed)
+      if (left) await this.server.discardNow(docId);
+      if (!(left ? await this.server.createAndOpen(left.kind) : await this.server.open(docId, { quiet: true }))) this.files.open();
     } else {
-      // Signed in: the Files page first (YZ 2026-10-19). The last file is the top card; an unsaved draft is a card too.
-      if (hasDraft && !draftLink) { this.dirty = true; this.updateDocChrome(); }
-      this.regen().then(() => this.viewer.zoomToFit(false));
-      this.files.open();
+      if (hasDraft) this.regen().then(() => this.viewer.zoomToFit(false)); // built behind Files, so Keep editing is instant
+      if (this.files.isOpen) this.files.renderGrid();
     }
     if (q.get('view') === 'files' && !this.files.isOpen) this.files.open();
     if (q.get('new') === 'part' || q.get('new') === 'assembly') this.files.newFile(q.get('new'));
@@ -162,6 +176,31 @@ export class App {
     const u = new URL(location.href);
     for (const k of ['view', 'new', 'source']) u.searchParams.delete(k);
     history.replaceState(null, '', u);
+  }
+
+  useScope(who) {
+    const user = who && !who.legacy ? who : null;
+    setScope(user?.id);
+    if (user?.role === 'owner') adopt([AUTOSAVE, ...LAST_KEYS]);
+    if (ServerDocs.draftLink) { this.forgetDraft(); this.server.forgetLegacy(); } // an older page kept a file's copy there, not a draft
+  }
+
+  // /api/account was slow or failed at start: keep asking, then turn browser storage on for that person (and
+  // bring in their draft if the editor is still empty).
+  async waitForAccount() {
+    const acct = this.account;
+    try { await acct.ready; } catch (_) { /* asked again below */ }
+    for (const ms of [2000, 5000, 10000, 20000, 30000, 60000]) {
+      if (typeof acct.info?.mode === 'string') break;
+      await new Promise((ok) => setTimeout(ok, ms));
+      await acct.load();
+    }
+    if (typeof acct.info?.mode !== 'string') return; // never known: nothing is kept in this browser this session
+    this.useScope(acct.user);
+    if (!this.server.linked && !this.hasModel() && !this.dirty && this.restore()) {
+      this.dirty = true; this.updateDocChrome(); this.regen();
+      if (this.files.isOpen) this.files.renderGrid();
+    } else this.autosaveNow(); // what was done meanwhile
   }
 
   // Installed app: .osk and STEP files opened with OpenSketch from the computer (File Handling API).
@@ -196,7 +235,7 @@ export class App {
   }
 
   // A model is on screen (anything to go back to from the Files page).
-  hasModel() { const d = this.rootDoc(); return isAssembly(d) ? (d.components || []).length > 0 || Object.keys(d.parts || {}).length > 0 : (d.features || []).length > 0 || !!this.server.linked; }
+  hasModel() { const d = this.rootDoc(); return !!this.server.linked || (isAssembly(d) ? (d.components || []).length > 0 || Object.keys(d.parts || {}).length > 0 : (d.features || []).length > 0); }
 
   // The open model is an unsaved draft with something in it (not in Files).
   dirtyDraft() {
@@ -205,19 +244,36 @@ export class App {
     return !!this.dirty && (isAssembly(d) ? (d.components || []).length > 0 : (d.features || []).length > 0);
   }
 
-  // Before something replaces an unsaved draft: offer to save it. Resolves true to go ahead.
-  confirmLeaveDraft() {
-    if (!this.dirtyDraft()) return Promise.resolve(true);
+  // Before something replaces the open model: an AI change still waiting is accepted or discarded, and an unsaved
+  // draft is offered to Files. Resolves true to go ahead.
+  async confirmLeaveDraft() {
+    if (this.proposal && !(await this.confirmProposal())) return false;
+    if (!this.dirtyDraft()) return true;
     const name = this.rootDoc().name || 'Untitled';
+    return new Promise((resolve) => {
+      let answered = false, saving = false;
+      const done = (v) => { if (!answered) { answered = true; resolve(v); } };
+      dialog({ title: 'Save your draft?', cls: 'acct-dlg', onClose: () => { if (!saving) done(false); },
+        body: `<p class="fv-p"><b>${esc(name)}</b> is only in this browser. Save it to your Files before you leave it?</p>`,
+        buttons: [
+          { label: "Don't save", run: () => { this.dirty = false; this.forgetDraft(); done(true); } },
+          { label: 'Cancel', run: () => done(false) },
+          // the Save to Files dialog answers: saved -> go on to what was asked (open the file, New...)
+          { label: 'Save to Files', primary: true, run: () => { saving = true; setTimeout(() => this.server.saveDraft().then(done), 0); } },
+        ] });
+    });
+  }
+
+  confirmProposal() {
     return new Promise((resolve) => {
       let answered = false;
       const done = (v) => { if (!answered) { answered = true; resolve(v); } };
-      dialog({ title: 'Save your draft?', cls: 'acct-dlg', onClose: () => done(false),
-        body: `<p class="fv-p"><b>${esc(name)}</b> is only in this browser. Save it to your Files before you leave it?</p>`,
+      dialog({ title: "Keep the AI's change?", cls: 'acct-dlg', onClose: () => done(false),
+        body: `<p class="fv-p">The AI's change to <b>${esc(this.rootDoc().name || 'this model')}</b> is not accepted yet. Accept it before you leave?</p>`,
         buttons: [
-          { label: "Don't save", run: () => { this.dirty = false; done(true); } },
+          { label: 'Discard', run: () => { this.rejectProposal(true); done(true); } },
           { label: 'Cancel', run: () => done(false) },
-          { label: 'Save to Files', primary: true, run: () => { setTimeout(async () => done(await this.server.saveDraft()), 0); } },
+          { label: 'Accept', primary: true, run: () => { this.acceptProposal(); done(true); } },
         ] });
     });
   }
@@ -225,12 +281,16 @@ export class App {
   // The codespace pulls each push to main and restarts the server (.devcontainer/run.sh). When the
   // server's version changes, offer a reload; the work in progress is kept by autosave.
   watchVersion() {
-    let first = null;
+    // the page's own version (the server writes it into index.html); a page from the service worker's copy is
+    // older than the server it then reaches, and says so
+    const mine = document.querySelector('meta[name="opensketch-version"]')?.content;
+    let first = mine && !mine.startsWith('__') ? mine : null;
     const check = async () => {
       if (!this.isActive()) { this.lastIdleSeen = true; return; } // let a hosted server sleep while nobody is looking
       let v;
       try { v = await (await fetch('/api/version', { cache: 'no-store' })).json(); } catch (_) { return; } // restarting
       if (first === null) first = v.version;
+      if (v.version !== first) this.regenCache?.clear(); // rebuilds by the new server may differ
       this.showUpdateBar(v.version !== first, v.note || '');
     };
     check();
@@ -265,13 +325,13 @@ export class App {
     const key = (updated ? 'u' : '') + note;
     if (bar && bar.dataset.key === key) return;
     if (bar && bar.dataset.key === 'dismissed:' + key) return;
-    if (!bar) { bar = document.createElement('div'); bar.id = 'updatebar'; $('graphics').appendChild(bar); }
+    if (!bar) { bar = document.createElement('div'); bar.id = 'updatebar'; ($('banners') || $('graphics')).appendChild(bar); }
     bar.dataset.key = key;
     bar.className = updated ? 'update-bar' : 'update-bar note';
     bar.innerHTML = `<span>${esc(updated ? 'OpenSketch was updated. Reload to use the new version. Your model is kept.' + (note ? ' ' + note : '') : note)}</span>`;
     if (updated) {
       const b = document.createElement('button'); b.className = 'btn primary'; b.textContent = 'Reload';
-      b.onclick = () => { this.autosaveNow(); location.reload(); };
+      b.onclick = async () => { b.disabled = true; await this.server?.flush(5000); this.autosaveNow(); location.reload(); };
       bar.appendChild(b);
     }
     const x = document.createElement('button'); x.className = 'btn'; x.textContent = 'Later'; x.title = 'Hide this message';
@@ -300,44 +360,90 @@ export class App {
 
   cleanDoc(d = this.doc) { return JSON.parse(JSON.stringify(d, (k, v) => (k.startsWith('_') ? undefined : v))); }
 
+  // Another document takes the editor (a file opened, New, a file from the computer). Undo is per document, as
+  // in SOLIDWORKS: the history starts again, so Ctrl+Z can never put the previous model into this one.
+  leaveDocument() {
+    if (this.proposal) this.rejectProposal(true, 'Not applied: another file was opened.');
+    if (this.review) { this.review.checks = null; this.review.checkedText = null; this.review.checkError = null; } // checks belong to one file
+    this.docStack = [];
+    this.undoStack = []; this.redoStack = [];
+    this.blobs = null;
+    this.regenCache?.clear();
+    this.docEpoch = (this.docEpoch || 0) + 1;
+  }
+
+  // An undo step: the document as text, in one pass. Big strings that rarely change (an import's BREP) are kept
+  // once and stand in the text as a short token, so 200 steps of an imported model do not hold 200 copies.
+  undoJSON(d = this.doc) {
+    const blobs = this.blobs || (this.blobs = { byText: new Map(), byToken: new Map() });
+    return JSON.stringify(d, (k, v) => {
+      if (k.startsWith('_')) return undefined;
+      if (typeof v !== 'string' || v.length < BLOB_MIN) return v;
+      let t = blobs.byText.get(v);
+      if (!t) { t = BLOB + blobs.byText.size; blobs.byText.set(v, t); blobs.byToken.set(t, v); }
+      return t;
+    });
+  }
+
+  fromUndoJSON(json) {
+    const byToken = this.blobs?.byToken;
+    return JSON.parse(json, byToken ? (k, v) => (typeof v === 'string' && v.startsWith(BLOB) ? byToken.get(v) ?? v : v) : undefined);
+  }
+
   pushUndo(label) {
-    if (this.proposal) this.rejectProposal(true);
-    this.undoStack.push({ label, json: JSON.stringify(this.cleanDoc()) });
-    if (this.undoStack.length > 200) this.undoStack.shift();
+    this.settleProposal();
+    this.undoStack.push({ label, json: this.undoJSON() });
+    // at most 200 steps and UNDO_MAX characters in all (the newest step always stays)
+    let total = 0;
+    for (const u of this.undoStack) total += u.json.length;
+    while (this.undoStack.length > 1 && (this.undoStack.length > 200 || total > UNDO_MAX)) total -= this.undoStack.shift().json.length;
     this.redoStack = [];
   }
 
   restoreJSON(json) {
-    this.doc = JSON.parse(json);
+    this.doc = this.fromUndoJSON(json);
     if (this.mode === 'sketch') {
       if (this.featureById(this.sketcher.skId)) { this.sketcher.sel.clear(); this.sketcher.solve(); this.sketcher.render(); }
       else this.exitSketch({ silent: true });
     }
     this.closeCommand();
+    // a sketch tool stays armed after undo (as in SOLIDWORKS): its PropertyManager comes back, the old size badge goes
+    if (this.mode === 'sketch' && this.sketcher.tool) this.onSketchToolChanged(this.sketcher.tool.name);
+    this.cursorFeedback(null);
     this.setSelection([]);
     this.docChanged();
     this.regen();
   }
 
+  // While the AI builds, the model is its: edits and undo wait (its result is made from the model as it was).
+  aiLocked() {
+    if (!this.taskpane?.busy) return false;
+    this.toast('The AI is building. Press Stop in the AI panel to take over.');
+    return true;
+  }
+
   undo() {
+    if (this.aiLocked()) return;
     if (this.mode === 'sketch' && this.sketcher.tool && this.sketcher.tool.stage > 0) { this.sketcher.cancelTool(); return; }
     const u = this.undoStack.pop();
     if (!u) { this.status('Nothing to undo'); return; }
-    this.redoStack.push({ label: u.label, json: JSON.stringify(this.cleanDoc()) });
+    this.redoStack.push({ label: u.label, json: this.undoJSON() });
     this.restoreJSON(u.json);
     this.status('Undo ' + u.label);
   }
 
   redo() {
+    if (this.aiLocked()) return;
     const r = this.redoStack.pop();
     if (!r) return;
-    this.undoStack.push({ label: r.label, json: JSON.stringify(this.cleanDoc()) });
+    this.undoStack.push({ label: r.label, json: this.undoJSON() });
     this.restoreJSON(r.json);
     this.status('Redo ' + r.label);
   }
 
   // Change the document, then rebuild.
   commit(label, fn, regen = true) {
+    if (this.aiLocked()) return;
     this.pushUndo(label);
     fn();
     this.docChanged();
@@ -380,13 +486,40 @@ export class App {
     }
   }
 
+  // A draft (not in Files) is kept in this browser's draft slot. A file's edits are kept only while the server
+  // does not have them yet (ServerDocs.keepUnsent), so another tab's open file never replaces a draft.
   autosaveNow() {
     clearTimeout(this._autosaveTimer); this._autosaveTimer = null;
-    if (this.reviewMode) return;
-    try { localStorage.setItem(skey(AUTOSAVE), JSON.stringify(this.rootDoc())); } catch (_) { /* full or unavailable: Files keeps the record */ }
+    if (this.reviewMode || !scopeKnown()) return;
+    if (this.server?.linked) { if (this.server.link.local) this.server.keepUnsent(); return; }
+    try { localStorage.setItem(skey(AUTOSAVE), JSON.stringify(this.rootDoc())); } catch (_) { /* full or unavailable */ }
+  }
+
+  // The open file left the editor (moved to the Trash): an empty new part takes its place, with nothing to save.
+  // The Undo toast or Trash > Restore brings the file back.
+  closeFile() {
+    this.server.unlink();
+    this.hideContextToolbar();
+    if (this.mode === 'sketch') this.exitSketch({ silent: true });
+    this.closeCommand();
+    this.leaveDocument();
+    this.doc = newDoc(); this.proposal = null; this.result = null;
+    this.docChanged();
+    this.dirty = false; this.updateDocChrome();
+    this.ribbon.setTab('Features');
+    this.setSelection([]);
+    this.viewer.setBody(null);
+  }
+
+  // The draft slot is let go: saved to Files, "Don't save", or nothing worth keeping.
+  forgetDraft() {
+    clearTimeout(this._autosaveTimer); this._autosaveTimer = null;
+    if (!scopeKnown()) return;
+    try { localStorage.removeItem(skey(AUTOSAVE)); } catch (_) { /* storage off */ }
   }
 
   restore() {
+    if (!scopeKnown()) return false;
     try {
       const s = localStorage.getItem(skey(AUTOSAVE));
       if (s) {
@@ -417,6 +550,7 @@ export class App {
     }
     bar.classList.toggle('hidden', !f);
     this.ribbon?.render();
+    this.taskpane?.docSwitched?.(); // another file: its own AI chat
   }
 
   // Title bar centre: the file name (click to rename) and whether it is saved.
@@ -425,8 +559,9 @@ export class App {
     if (!el) return;
     const sv = this.server;
     const st = this.reviewMode ? null : !sv?.linked ? 'draft' : sv.state;
-    const label = { draft: 'Draft', saved: 'Saved', saving: 'Saving', offline: 'Offline', conflict: 'Changed elsewhere' }[st] || '';
-    const tip = { draft: 'Only in this browser. Save it to your Files (Ctrl+S).', saved: 'Saved to your Files. Your AI sees this version.', saving: 'Saving to your Files...', offline: 'Cannot reach the server. Your edits are kept and saved when it is back.', conflict: 'The file changed elsewhere. Choose which version to keep.' }[st] || '';
+    const label = { draft: 'Draft', saved: 'Saved', saving: 'Saving', offline: 'Offline', conflict: 'Changed elsewhere', refused: 'Not saved' }[st] || '';
+    const tip = { draft: 'Only in this browser. Save it to your Files (Ctrl+S).', saved: 'Saved to your Files. Your AI sees this version.', saving: 'Saving to your Files...', offline: 'Cannot reach the server. Your edits are kept in this browser and saved when it is back.', conflict: 'The file changed elsewhere. Choose which version to keep.',
+      refused: `The server did not take this version: ${sv?.refused || ''} Your edits are kept in this browser. File > Save As > .osk downloads them.` }[st] || '';
     const name = f ? `${this.doc.name}` : (root.name || 'Untitled');
     const ctx = f ? ` in ${root.name}` : '';
     if (!this._dt) {
@@ -441,7 +576,7 @@ export class App {
     this._dt.state.innerHTML = st === 'draft' ? '<span>Draft</span><b>Save to Files</b>' : `<i></i><span>${label}</span>`;
     this._dt.state.title = tip;
     this._dt.state.hidden = !st;
-    document.title = `${name}${st === 'draft' && this.dirty ? ' (draft)' : ''} - OpenSketch`;
+    if (!this.files?.isOpen) document.title = `${name}${st === 'draft' && this.dirty ? ' (draft)' : ''} - OpenSketch`; // Files has its own
   }
 
   // Rename the open file (title bar click): on the server when it is in Files.
@@ -462,7 +597,7 @@ export class App {
       const v = inp.value.trim().slice(0, 120);
       if (!save || !v || v === target.name) return;
       if (this.server.linked && !this.docStack.length) {
-        this.server.flush();
+        await this.server.flush(); // the last edits first, so the rename never meets a save of the old name
         try {
           const r = await this.server.req('PATCH', `/api/docs/${encodeURIComponent(this.server.link.id)}`, { name: v });
           this.server.renamedOnServer(r);
@@ -477,10 +612,15 @@ export class App {
   // Model / Motion Review tabs under the graphics area. Motion Review is the joint review with its
   // share link (review.js); it shows for assemblies only.
   bindDocTabs() {
+    $('doctabs')?.setAttribute('role', 'tablist');
     for (const t of document.querySelectorAll('#doctabs .doctab')) {
+      t.setAttribute('role', 'tab');
       t.onclick = () => {
         if (t.dataset.tab === 'review') { if (this.cmd?.key !== 'motionreview') this.review.open(); }
-        else if (this.cmd?.key === 'motionreview') this.pmCancel();
+        else {
+          this.asm.stopPlayback(); // Model: a playback stops with every part at its place
+          if (this.cmd?.key === 'motionreview') this.pmCancel();
+        }
         this.syncDocTabs();
       };
     }
@@ -490,7 +630,9 @@ export class App {
     const review = this.cmd?.key === 'motionreview';
     for (const t of document.querySelectorAll('#doctabs .doctab')) {
       if (t.dataset.tab === 'review') t.hidden = !this.isAsm;
-      t.classList.toggle('active', (t.dataset.tab === 'review') === review);
+      const on = (t.dataset.tab === 'review') === review;
+      t.classList.toggle('active', on);
+      t.setAttribute('aria-selected', String(on));
     }
   }
 
@@ -500,26 +642,28 @@ export class App {
       r = await fetch(url, method === 'GET' ? {} : { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     } catch (_) { throw serverAway(); } // no answer at all: offline, or the server is starting up
     const ct = r.headers.get('content-type') || '';
+    if (r.status === 401) { location.href = '/login?next=' + encodeURIComponent(location.pathname + location.search); throw new Error('Sign in again'); }
     if ([502, 503, 504].includes(r.status) && !ct.includes('json')) throw serverAway(); // Fly.io: the machine is waking or too busy
     if (ct.includes('json')) {
       const j = await r.json();
-      if (!r.ok && !j.error) throw new Error(j.detail || r.statusText || `HTTP ${r.status}`);
+      if (!r.ok) { const e = new Error(j.error || j.detail || r.statusText || `HTTP ${r.status}`); e.status = r.status; e.body = j; throw e; }
       return j;
     }
-    if (r.status === 401) { location.href = '/login?next=' + encodeURIComponent(location.pathname + location.search); throw new Error('Sign in again'); }
     if (!r.ok) throw new Error(r.statusText || `HTTP ${r.status}`);
     return r;
   }
 
   // A rebuild waits out a server that is starting or busy instead of failing at once (Fly.io wakes a stopped
   // machine in 10-30 s and answers 502 meanwhile). Up to ~75 s; the loading pill says what it is waiting for.
-  async apiPatient(url, body, done) {
+  // stale(): true once a newer request replaced this one, which then stops asking.
+  async apiPatient(url, body, done, stale = null) {
     const waits = [1000, 2000, 4000, 8000, 15000, 15000, 30000];
     for (let i = 0; ; i++) {
       try { return await this.api(url, body); } catch (err) {
         if (!err.away || i >= waits.length) throw err;
         done?.relabel?.('Waiting for the server');
         await new Promise((ok) => setTimeout(ok, waits[i]));
+        if (stale?.()) { const e = new Error('Replaced by a newer rebuild'); e.superseded = true; throw e; }
       }
     }
   }
@@ -539,16 +683,42 @@ export class App {
   }
 
   // label: what the loading indicator says if the server takes a moment ("Opening Bracket")
+  // A part's rebuild. A state this page has built before (undo, redo, leaving a sketch) is drawn at once from
+  // memory; otherwise one request at a time goes to the server: a newer rebuild waits for the one in flight
+  // and only the newest state is sent (the person's CAD worker does one job at a time, so stale ones would
+  // queue there). Ctrl+B (announce) always asks the server.
   async regen(announce = false, label = null) {
     if (this.isAsm) return this.asm.regen(announce, null, label);
     const seq = ++this.regenSeq;
+    let key = JSON.stringify(this.docForRegen());
+    const hit = !announce && this.regenCache?.get(key);
+    if (hit) { this.regenCache.delete(key); this.regenCache.set(key, hit); this.applyResult(hit); return; }
+    while (this.regenFlight) { await this.regenFlight.catch(() => {}); if (seq !== this.regenSeq) return; }
+    const doc = this.docForRegen();
+    key = JSON.stringify(doc);
     const done = this.busy(label || (this.viewer.bodyData ? 'Rebuilding' : 'Loading model'));
+    const flight = this.apiPatient('/api/regen', { doc }, done, () => seq !== this.regenSeq);
+    this.regenFlight = flight;
     let res;
-    try { res = await this.apiPatient('/api/regen', { doc: this.docForRegen() }, done); } catch (err) { done(); this.rebuildFailed(err); return; }
+    try { res = await flight; } catch (err) { done(); if (!err.superseded && seq === this.regenSeq) this.rebuildFailed(err); return; } finally { if (this.regenFlight === flight) this.regenFlight = null; }
+    this.cacheResult(key, res);
     if (seq !== this.regenSeq) { done(); return; }
-    this.applyResult(res);
-    done();
+    try { this.applyResult(res); } finally { done(); }
     if (announce) this.status('Rebuild complete');
+  }
+
+  // Rebuilt results kept by document text (a few, up to CACHE_MAX bytes of mesh), newest last.
+  cacheResult(key, res) {
+    if (!res || !Array.isArray(res.status)) return;
+    const c = this.regenCache || (this.regenCache = new Map());
+    let n = 0;
+    for (const f of res.body?.faces || []) n += (f.positions?.length || 0) + (f.indices?.length || 0);
+    for (const e of res.body?.edges || []) n += e.points?.length || 0;
+    res._bytes = n * 8 + key.length * 2;
+    c.delete(key); c.set(key, res);
+    let total = 0;
+    for (const r of c.values()) total += r._bytes;
+    for (const [k, r] of c) { if (c.size <= 1 || (c.size <= 8 && total <= CACHE_MAX)) break; c.delete(k); total -= r._bytes; }
   }
 
   // Loading indicator in the graphics area for server work (rebuilds, imports, previews). It appears only
@@ -582,7 +752,12 @@ export class App {
     this.result = res;
     if (res.equations && this.mode !== 'sketch' && !this.proposal) {
       // numbers driven by equations: show what was built (no undo step; the equation owns the value)
-      for (const [id, f] of Object.entries(res.equations.features)) { const mine = this.featureById(id); if (mine) Object.assign(mine, f); }
+      let moved = false;
+      for (const [id, f] of Object.entries(res.equations.features)) {
+        const mine = this.featureById(id);
+        if (mine && Object.keys(f).some((k) => JSON.stringify(mine[k]) !== JSON.stringify(f[k]))) { Object.assign(mine, f); moved = true; }
+      }
+      if (moved) this.server?.changed(); // the file keeps the numbers it was built with (else the save state stays on Saving)
       const r = res.equations.recomputed[0];
       this.status(`Driven by an equation: ${r.field}@${this.featureById(r.feature)?.name || r.feature} = ${+(+r.new).toFixed(6)}`);
     }
@@ -654,6 +829,17 @@ export class App {
     this.updateStartHint();
   }
 
+  // View > Theme switched the look without a reload (skin.setLook): the stylesheets and icons follow by
+  // themselves; the 3D view and the sketches take the new palette here. Undo history, an open sketch or
+  // PropertyManager and the AI chat stay as they are.
+  lookChanged() {
+    this.viewer.applyLook();
+    this.updatePlanes();
+    this.drawSketches();
+    if (this.mode === 'sketch') this.sketcher.render();
+    this.viewer.requestRender();
+  }
+
   // No first-steps card: a new part opens straight into the normal interface, as in SOLIDWORKS (YZ 2026-10-19).
   updateStartHint() {
     $('starthint')?.remove();
@@ -690,7 +876,7 @@ export class App {
   }
 
   refreshSelectionDisplay() {
-    const keys = this.selection.filter((s) => s.kind === 'face' || s.kind === 'edge' || s.kind === 'component').map((s) => (s.kind === 'component' ? `comp:${s.id}` : `${s.kind}:${s.id}`));
+    const keys = this.selection.filter((s) => s.kind === 'face' || s.kind === 'edge' || s.kind === 'component').flatMap((s) => (s.kind === 'component' ? [`comp:${s.id}`, ...(s.pick ? [`${s.pick.kind}:${s.pick.id}`] : [])] : [`${s.kind}:${s.id}`]));
     const extra = this.cmd?.spec?.selectedKeys ? this.cmd.spec.selectedKeys() : [];
     this.viewer.setSelectedKeys([...keys, ...extra]);
     this.updatePlanes();
@@ -723,25 +909,44 @@ export class App {
   canvasRect() { return this.viewer.canvas.getBoundingClientRect(); }
 
   bindCanvas() {
-    const c = this.viewer.canvas;
-    let down = null;
+    const c = this.viewer.canvas, v = this.viewer;
+    let down = null, tap = null;
+    // Touch (phones, tablets, review links): one finger turns the view, unless it is drawing in a sketch or dragging
+    // a part; a tap selects when the finger lifts; two fingers pan and zoom and drop any drag a finger started.
+    // In a shared review a plain left mouse drag turns the view too (nothing there is dragged).
+    v.allowTouchRotate = () => !(this.mode === 'sketch' && !this.cmd?.modelPick) && !this.zoomAreaMode && !this.asm.drag;
+    v.onTouchGesture = () => { tap = null; this.cancelCanvasDrags(); };
+    v.leftDragRotates = () => this.reviewMode;
     c.addEventListener('pointerdown', (e) => {
       closeMenus();
       this.hideContextToolbar();
+      if (e.pointerType === 'touch' && !e.isPrimary) return; // a second finger: the view's pinch
       if (e.button !== 0 || e.altKey) { if (e.button === 2) down = { x: e.offsetX, y: e.offsetY, right: true }; return; }
       down = { x: e.offsetX, y: e.offsetY };
       if (this.zoomAreaMode) { this.zoomBox = { x0: e.offsetX, y0: e.offsetY, x1: e.offsetX, y1: e.offsetY }; c.setPointerCapture(e.pointerId); return; }
       if (this.mode === 'sketch' && !this.cmd?.modelPick) { c.setPointerCapture(e.pointerId); this.sketcher.pointerDown(e.offsetX, e.offsetY, e); return; }
+      if (e.pointerType === 'touch') {
+        // a finger on a part in an assembly drags it, as the mouse does; elsewhere it waits to be a tap or a turn
+        if (this.isAsm && !this.cmd && !this.reviewMode && !this.live.active && this.asm.pickToItem(this.pickAt(e.offsetX, e.offsetY))?.kind === 'component') { this.partDown(e); return; }
+        tap = { x: e.offsetX, y: e.offsetY, id: e.pointerId };
+        return;
+      }
       this.partDown(e);
     });
     c.addEventListener('pointermove', (e) => {
       if (this.viewer.isNavigating()) return;
+      if (e.pointerType === 'touch' && this.mode !== 'sketch' && !this.asm.drag && !this.zoomBox) return; // no hover under a finger
       if (this.zoomBox) { this.zoomBox.x1 = e.offsetX; this.zoomBox.y1 = e.offsetY; this.showSelBox(this.zoomBox); return; }
       if (this.ctbAt && Math.hypot(e.clientX - this.ctbAt.x, e.clientY - this.ctbAt.y) > 160) this.hideContextToolbar();
       if (this.mode === 'sketch' && !this.cmd?.modelPick) { this.sketcher.pointerMove(e.offsetX, e.offsetY, e); return; }
       this.partMove(e);
     });
     c.addEventListener('pointerup', (e) => {
+      if (tap && e.pointerId === tap.id) {
+        const t = tap; tap = null;
+        if (Math.hypot(e.offsetX - t.x, e.offsetY - t.y) < 8) this.partDown(e); // a tap, not a turn
+        return;
+      }
       if (this.zoomBox) { this.finishZoomArea(); return; }
       if (e.button === 2 && down?.right && Math.hypot(e.offsetX - down.x, e.offsetY - down.y) < 4) this.canvasContext(e);
       if (this.mode === 'sketch' && !this.cmd?.modelPick && e.button === 0) this.sketcher.pointerUp(e.offsetX, e.offsetY, e);
@@ -755,6 +960,16 @@ export class App {
       if (p && p.kind === 'sketch') this.editSketch(p.id);
     });
     c.addEventListener('pointerleave', () => { this.viewer.setHover(null); this.cursorFeedback(null); $('sb-coords').textContent = ''; });
+    // The browser took the gesture (a touch or pen turned into a scroll) or the capture was lost: end any drag
+    // without committing it. After a normal release there is nothing left to cancel.
+    c.addEventListener('pointercancel', (e) => { if (tap?.id === e.pointerId) tap = null; this.cancelCanvasDrags(); });
+    c.addEventListener('lostpointercapture', () => this.cancelCanvasDrags());
+  }
+
+  cancelCanvasDrags() {
+    this.asm?.cancelDrag();
+    if (this.mode === 'sketch') this.sketcher.cancelDrag?.();
+    if (this.zoomBox) { this.zoomBox = null; this.showSelBox(null); }
   }
 
   sketchDblClick(e) {
@@ -890,7 +1105,8 @@ export class App {
     if (!tb.length) return;
     const el = $('contexttb');
     el.innerHTML = '';
-    for (const t of tb) { const b = document.createElement('div'); b.className = 'ct'; b.title = t.title; b.innerHTML = icon(t.icon, 20); b.onclick = () => { this.hideContextToolbar(); t.run(); }; el.appendChild(b); }
+    el.setAttribute('role', 'toolbar'); el.setAttribute('aria-label', 'Context toolbar');
+    for (const t of tb) { const b = document.createElement('div'); b.className = 'ct'; b.title = t.title; b.innerHTML = icon(t.icon, 20); asButton(b, t.title); b.onclick = () => { this.hideContextToolbar(); t.run(); }; el.appendChild(b); }
     const gr = $('graphics').getBoundingClientRect();
     el.style.left = Math.max(4, Math.min(gr.width - 200, x - gr.left + 12)) + 'px';
     el.style.top = Math.max(4, y - gr.top - 44) + 'px';
@@ -978,21 +1194,40 @@ export class App {
 
   suppress(id, on) { this.commit(on ? 'Suppress' : 'Unsuppress', () => { const f = this.featureById(id); if (on) f.suppressed = true; else delete f.suppressed; }); }
 
-  suppressSelection(on) { for (const s of this.selection) if (s.kind === 'feature' || s.kind === 'sketch') this.suppress(s.id, on); }
+  // Edit > Suppress / Unsuppress: features and sketches in a part, components and mates in an assembly.
+  suppressSelection(on) {
+    const label = on ? 'Suppress' : 'Unsuppress';
+    if (this.isAsm) {
+      const ids = new Set(this.selection.filter((s) => s.kind === 'component' || s.kind === 'mate').map((s) => s.id));
+      if (!ids.size) { this.status(`Select a component or mate to ${label.toLowerCase()}.`); return; }
+      this.commit(label, () => { for (const x of [...(this.doc.components || []), ...(this.doc.mates || [])]) if (ids.has(x.id)) { if (on) x.suppressed = true; else delete x.suppressed; } });
+      return;
+    }
+    const ids = new Set(this.selection.filter((s) => s.kind === 'feature' || s.kind === 'sketch').map((s) => s.id));
+    if (!ids.size) { this.status(`Select a feature to ${label.toLowerCase()}.`); return; }
+    this.commit(label, () => { for (const f of this.doc.features) if (ids.has(f.id)) { if (on) f.suppressed = true; else delete f.suppressed; } });
+  }
 
-  // Confirm Delete: the server works out what goes with the feature and what would break (edits.plan_delete),
+  // Confirm Delete: the server works out what goes with the features and what would break (edits.plan_delete),
   // the same rules Claude's delete_items uses. Children that would only break stay unless "Delete child
-  // features" is ticked, as in SOLIDWORKS.
+  // features" is ticked, as in SOLIDWORKS. One call for everything selected (Ctrl+click several, then Delete).
   async deleteFeature(id) {
-    const f = this.featureById(id);
-    if (!f) return;
+    const want = (Array.isArray(id) ? id : [id]).filter((x) => this.featureById(x));
+    if (!want.length) return;
     const names = (ids) => ids.map((x) => esc(this.featureById(x)?.name || x)).join(', ');
-    const plan = async (ids, absorbed) => this.api('/api/delete_plan', { doc: this.cleanDoc(this.doc), features: ids, delete_absorbed: absorbed });
+    // the server rebuilds the part to see what breaks: a pill says so, and a second Delete waits for it
+    const plan = async (ids, absorbed) => {
+      const done = this.busy('Checking what goes with it', 300);
+      try { return await this.api('/api/delete_plan', { doc: this.cleanDoc(this.doc), features: ids, delete_absorbed: absorbed }); } finally { done(); }
+    };
+    if (this.deleting) return;
+    this.deleting = true;
     let first;
-    try { first = await plan([id], true); } catch (err) { this.status(`Cannot delete: ${err.message}`); return; }
+    try { first = await plan(want, true); } catch (err) { this.toast(`Cannot delete: ${err.message}`, 6000); return; } finally { this.deleting = false; }
+    if (!want.some((x) => this.featureById(x))) return; // gone meanwhile
     const kids = first.would_fail.map((x) => x.id);
     const body = document.createElement('div');
-    body.innerHTML = `<div>Delete <b>${esc(f.name)}</b>?</div>` +
+    body.innerHTML = `<div>Delete <b>${names(want)}</b>?</div>` +
       (first.deleted_with_it.length ? `<div style="margin-top:6px">Also deleted (they need it): ${names(first.deleted_with_it)}</div>` : '') +
       (first.patterns_trimmed.length ? `<div style="margin-top:6px">Patterns that keep their other features: ${names(first.patterns_trimmed.map((x) => x.id))}</div>` : '') +
       (first.absorbed.length ? `<label style="display:block;margin-top:8px"><input type="checkbox" id="delabs" checked> Delete absorbed features (${names(first.absorbed)})</label>` : '') +
@@ -1003,7 +1238,7 @@ export class App {
         const delAbs = body.querySelector('#delabs')?.checked ?? true, delChild = body.querySelector('#delchild')?.checked;
         let p = first;
         if (!delAbs || delChild) {
-          try { p = await plan(delChild ? [id, ...kids] : [id], delAbs); } catch (err) { this.status(`Cannot delete: ${err.message}`); return; }
+          try { p = await plan(delChild ? [...want, ...kids] : want, delAbs); } catch (err) { this.toast(`Cannot delete: ${err.message}`, 6000); return; }
         }
         const kill = new Set([...p.deleted, ...p.deleted_with_it, ...p.absorbed]);
         const trim = new Map(p.patterns_trimmed.map((x) => [x.id, x.keeps]));
@@ -1020,26 +1255,39 @@ export class App {
   }
 
   deleteSelection() {
+    if (this.aiLocked()) return;
     if (this.mode === 'sketch') return this.sketcher.deleteSelection();
     if (this.isAsm) return this.asm.deleteSelection();
-    const s = this.selection.find((x) => (x.kind === 'feature' || x.kind === 'sketch' || x.kind === 'plane') && !STD_PLANES.includes(x.id));
-    if (s) this.deleteFeature(s.id);
+    const ids = this.selection.filter((x) => (x.kind === 'feature' || x.kind === 'sketch' || x.kind === 'plane') && !STD_PLANES.includes(x.id)).map((x) => x.id);
+    if (ids.length) this.deleteFeature([...new Set(ids)]);
+  }
+
+  // Edit > Delete with nothing to delete says so.
+  menuDelete() {
+    const any = this.mode === 'sketch' ? this.sketcher.sel.size > 0 : this.isAsm ? this.selection.some((x) => x.kind === 'component' || x.kind === 'mate')
+      : this.selection.some((x) => (x.kind === 'feature' || x.kind === 'sketch' || x.kind === 'plane') && !STD_PLANES.includes(x.id));
+    if (!any) { this.status('Select what to delete first: a feature or sketch in the tree or the graphics area.'); return; }
+    this.deleteSelection();
   }
 
   // ------------------------------------------------------------------ PropertyManager plumbing
   showPanel(which) {
     $('featuremgr').classList.toggle('hidden', which === 'pm');
     $('propmgr').classList.toggle('hidden', which !== 'pm');
-    [...$('mgrtabs').children].forEach((t, i) => t.classList.toggle('active', (which === 'pm' ? 1 : 0) === i));
+    [...$('mgrtabs').children].forEach((t, i) => { const on = (which === 'pm' ? 1 : 0) === i; t.classList.toggle('active', on); t.setAttribute('aria-selected', String(on)); });
   }
 
-  closeCommand() {
+  // keepPreview: a feature was just committed; its preview stays on screen until the rebuild replaces it
+  // (applyResult clears it), so the model does not flash back to the old body in between.
+  closeCommand({ keepPreview = false } = {}) {
     if (this.cmd) this.cmd.cancelled = true;
-    if (this.cmd && this.cmd.onClose) this.cmd.onClose();
+    // a command that fails to close (its document was replaced under it) must not keep the PropertyManager stuck open
+    if (this.cmd && this.cmd.onClose) { try { this.cmd.onClose(); } catch (err) { console.error(err); } }
     this.cmd = null;
     clearTimeout(this.previewTimer);
+    clearTimeout(this.asm?.previewTimer); // a mate preview still waiting must not draw after the command ends
     if (this.pm.isOpen) this.pm.close();
-    this.viewer.setTool(null);
+    if (!keepPreview) this.viewer.setTool(null);
     this.refreshSelectionDisplay();
     this.design?.refresh(); // its "finish the open command first" note goes with the command
     this.updateStartHint();
@@ -1050,9 +1298,15 @@ export class App {
     const cmd = this.cmd;
     if (this.mode === 'sketch' && !cmd) { this.sketcher.setTool(null); this.sketcher.sel.clear(); this.onSketchSelection(); this.sketcher.render(); return; }
     if (!cmd) return this.pm.close();
+    if (this.pm.badFields?.size) { this.toast('Fix the value shown in red first.'); return; }
     if (this.pm.spec?.okEnabled && !this.pm.spec.okEnabled()) { this.toast('Complete the required selections first.'); return; }
     if (cmd.onOk) { const keep = cmd.onOk(); if (keep === false) return; this.closeCommand(); return; }
-    if (cmd.spec) return this.commitFeature();
+    if (cmd.spec) {
+      const done = this.commitFeature();
+      // Keep Visible: the same command opens again for the next feature once this one is in
+      if (!cmd.existing && this.pinnedCmds?.has(cmd.key)) Promise.resolve(done).then(() => { if (!this.cmd && this.mode !== 'sketch' && this.doc.features?.some((f) => f.id === cmd.f.id)) this.featureCommand(cmd.key); });
+      return done;
+    }
   }
 
   pmCancel() {
@@ -1065,7 +1319,10 @@ export class App {
 
   // ------------------------------------------------------------------ feature commands
   featureCommand(key, existing = null) {
+    if (this.aiLocked()) return;
     if (this.isAsm) { this.toast('Features are added in a part. Select a component and click Open Part.'); return; }
+    this.settleProposal(); // new ids and names must not clash with the AI's
+    this.hideContextToolbar(); // the toolbar of the click that started it would float over the preview
     if (this.mode === 'sketch') {
       const sid = this.sketcher.skId;
       this.exitSketch();
@@ -1096,6 +1353,7 @@ export class App {
       hole: 'Select a plane or planar face, then set the hole dimensions and position.',
     };
     this.pm.open({ title: existing ? f.name : meta.title, icon: meta.icon, sections: spec.sections, okEnabled: spec.okEnabled, activeSelbox: spec.activeSelbox,
+      repeat: !existing, pinned: !!this.pinnedCmds?.has(key), onPin: (on) => { const p = (this.pinnedCmds ||= new Set()); if (on) p.add(key); else p.delete(key); },
       message: () => (spec.okEnabled() ? null : msgs[key] || SPECS[key]?.message), onChange: () => { this.refreshSelectionDisplay(); this.schedulePreview(); } });
     this.setSelection([]);
     // Looking straight at the sketch? Turn to trimetric so the preview reads in 3D (as SOLIDWORKS does).
@@ -1127,10 +1385,26 @@ export class App {
     this.previewTimer = setTimeout(() => this.runPreview(), delay);
   }
 
-  async runPreview() {
+  // The preview of the current parameters is built once. OK reuses it, or waits for the one in flight, instead of
+  // asking the server for the same build again. Resolves true when it built cleanly.
+  runPreview() {
     const cmd = this.cmd;
-    if (!cmd || !cmd.spec || cmd.cancelled) return false;
+    if (!cmd || !cmd.spec || cmd.cancelled) return Promise.resolve(false);
     const version = cmd.previewVersion || 0;
+    const key = `${version}|${this.undoStack.length}`;
+    if (cmd.preview && cmd.preview.key === key && cmd.preview.doc === this.doc) return cmd.preview.promise;
+    const run = { key, doc: this.doc };
+    // 'failed' (no answer) or 'stale' (overtaken by another rebuild) is not worth keeping: the next call asks again
+    run.promise = this.buildPreview(cmd, version).then((r) => {
+      cmd.previewStale = r === 'stale';
+      if (typeof r === 'string' && cmd.preview === run) cmd.preview = null;
+      return r === true;
+    });
+    cmd.preview = run;
+    return run.promise;
+  }
+
+  async buildPreview(cmd, version) {
     this.drawSketches();
     if (!cmd.spec.okEnabled()) { this.viewer.setTool(null); return false; }
     const f = this.cleanDoc(cmd.f);
@@ -1139,10 +1413,17 @@ export class App {
     if (cmd.existing) { const i = doc.features.findIndex((x) => x.id === cmd.existing.id); f._index = i; }
     const seq = ++this.regenSeq;
     let res;
-    const done = this.busy('Updating preview', 400);
-    try { res = await this.api('/api/regen', { doc, preview: f }); } catch (err) { this.toast('Preview failed: ' + err.message); return false; } finally { done(); }
-    if (seq !== this.regenSeq || this.cmd !== cmd || cmd.cancelled || version !== (cmd.previewVersion || 0)) return false;
-    if (!Array.isArray(res.status) || !res.body) { this.toast('The server did not return a valid preview.'); return false; }
+    // one preview request at a time: a newer change waits for the one in flight; only the newest is sent
+    const ticket = this.previewTicket = (this.previewTicket || 0) + 1;
+    while (this.previewFlight) { await this.previewFlight.catch(() => {}); if (ticket !== this.previewTicket) return 'stale'; }
+    if (this.cmd !== cmd || cmd.cancelled) return false;
+    const done = cmd.committing ? () => {} : this.busy('Updating preview', 400); // after OK the "Applying" pill says it
+    const flight = this.api('/api/regen', { doc, preview: f });
+    this.previewFlight = flight;
+    try { res = await flight; } catch (err) { if (this.cmd === cmd && !cmd.cancelled) this.toast('Preview failed: ' + err.message); return 'failed'; } finally { done(); if (this.previewFlight === flight) this.previewFlight = null; }
+    if (this.cmd !== cmd || cmd.cancelled || version !== (cmd.previewVersion || 0)) return false;
+    if (seq !== this.regenSeq) return 'stale';
+    if (!Array.isArray(res.status) || !res.body) { this.toast('The server did not return a valid preview.'); return 'failed'; }
     this.result = { ...this.result, planes: { ...(this.result?.planes || {}), ...res.planes } };
     this.viewer.setBody(res.body, { color: this.bodyColor() });
     this.viewer.setTool(res.tool);
@@ -1160,10 +1441,17 @@ export class App {
     if (!cmd.spec.okEnabled()) { this.toast('Complete the required selections first.'); return; }
     clearTimeout(this.previewTimer);
     cmd.committing = true;
+    this.pm.refreshFeedback?.(); // OK shows that it was pressed
+    const working = this.busy(`Applying ${cmd.f.name || 'the feature'}`, 250);
     let valid;
-    try { valid = await this.runPreview(); } finally { cmd.committing = false; }
-    if (this.cmd !== cmd || cmd.cancelled) return;
-    if (!valid) { if (cmd.lastError) { this.pm.spec.error = cmd.lastError; this.pm.render(); this.toast('Rebuild error: ' + cmd.lastError); } return; }
+    try {
+      const version = cmd.previewVersion || 0;
+      valid = await this.runPreview();
+      // the preview was overtaken by another rebuild: build these parameters once more
+      if (!valid && cmd.previewStale && this.cmd === cmd && !cmd.cancelled && version === (cmd.previewVersion || 0)) valid = await this.runPreview();
+    } finally { cmd.committing = false; }
+    if (this.cmd !== cmd || cmd.cancelled) { working(); return; }
+    if (!valid) { working(); this.pm.refreshFeedback?.(); if (cmd.lastError) { this.pm.spec.error = cmd.lastError; this.pm.render(); this.toast('Rebuild error: ' + cmd.lastError); } return; }
     let f = this.cleanDoc(cmd.f);
     if (f.draftOn === false) delete f.draft;
     if (f.edges?.length || f.faces?.length || f.direction?.edge || f.direction2?.edge) {
@@ -1171,17 +1459,22 @@ export class App {
       const before = this.cleanDoc(this.doc);
       const at = cmd.existing ? before.features.findIndex((x) => x.id === cmd.existing.id) : (before.rollback ?? before.features.length);
       before.rollback = at;
-      try { f = (await this.api('/api/name_refs', { doc: before, feature: f })).feature; } catch (_) { /* keep the points */ }
-      if (this.cmd !== cmd || cmd.cancelled) return;
+      cmd.committing = true; this.pm.refreshFeedback?.();
+      try { f = (await this.api('/api/name_refs', { doc: before, feature: f })).feature; } catch (_) { /* keep the points */ } finally { cmd.committing = false; }
+      if (this.cmd !== cmd || cmd.cancelled) { working(); return; }
     }
     this.commit(cmd.existing ? 'Edit ' + f.name : f.name, () => {
       if (cmd.existing) { const i = this.doc.features.findIndex((x) => x.id === cmd.existing.id); this.doc.features[i] = f; }
       else this.insertFeature(f);
-    });
-    this.cmd = null;
-    this.pm.close();
-    this.viewer.setTool(null);
-    this.status(`${f.name} created`);
+    }, false);
+    // closeCommand redraws the Design panel without its "finish the open command" note; the preview stays on
+    // screen until the rebuild below replaces it
+    this.closeCommand({ keepPreview: true });
+    this.status(cmd.existing ? `${f.name} changed` : `${f.name} created`);
+    try { await this.regen(false, `Applying ${f.name}`); } finally {
+      working();
+      if (!this.cmd?.spec && this.mode !== 'sketch') this.viewer.setTool(null); // a failed rebuild leaves no stale preview
+    }
   }
 
   insertFeature(f) {
@@ -1197,15 +1490,26 @@ export class App {
   }
 
   // ------------------------------------------------------------------ sketch mode
-  sketchCommand() {
+  // tool: a sketch tool clicked with no sketch open (Line, Corner Rectangle...). As in SOLIDWORKS it starts as
+  // soon as the plane is picked; cancelling the plane pick forgets it.
+  sketchCommand(tool = null) {
+    if (this.aiLocked()) return;
     if (this.isAsm) { this.toast('Sketches are drawn in a part. Select a component and click Open Part.'); return; }
     if (this.mode === 'sketch') return this.exitSketch();
     const s = this.selection.find((x) => x.kind === 'plane' || (x.kind === 'face' && x.data?.plane) || x.kind === 'sketch');
     if (s) { if (s.kind === 'sketch') return this.editSketch(s.id); return this.sketchOn(s); }
     if (this.cmd) this.pmCancel();
-    this.cmd = {
+    const cmd = this.cmd = {
       wantsPlanes: true,
-      onPick: (p) => { if (p.kind === 'plane' || (p.kind === 'face' && p.data?.plane)) { setTimeout(() => { this.closeCommand(); this.sketchOn(p); }, 0); return true; } return false; },
+      onPick: (p) => {
+        if (!(p.kind === 'plane' || (p.kind === 'face' && p.data?.plane))) return false;
+        setTimeout(() => {
+          if (this.cmd !== cmd) return; // cancelled meanwhile
+          this.closeCommand(); this.sketchOn(p);
+          if (tool && this.mode === 'sketch') this.sketcher.setTool(tool);
+        }, 0);
+        return true;
+      },
     };
     this.pm.open({ title: 'Edit Sketch', icon: 'sketch', sections: [{ title: 'Message', rows: [{ type: 'text', text: 'Select a plane on which to create a sketch for the entity.' }] }], okEnabled: () => false });
     this.updatePlanes();
@@ -1213,9 +1517,10 @@ export class App {
   }
 
   sketchOn(p, pendingFeature = null) {
+    this.settleProposal(); // before the snapshot that Cancel goes back to
     let spec, frame;
     if (p.kind === 'plane') { spec = { ref: p.id }; frame = this.planeFrame(p.id); }
-    else { frame = frameForFace(p.data.normal, p.data.center); spec = { type: 'face', origin: frame.origin, normal: frame.normal, xdir: frame.xdir }; }
+    else { frame = frameForFace(p.data.normal, p.data.center); spec = { type: 'face', origin: frame.origin, normal: frame.normal, xdir: frame.xdir, ...(p.data.point ? { at: p.data.point } : {}) }; }
     if (!frame) return;
     const before = JSON.stringify(this.cleanDoc());
     const history = { undo: [...this.undoStack], redo: [...this.redoStack] };
@@ -1228,8 +1533,11 @@ export class App {
   }
 
   editSketch(id) {
+    if (this.aiLocked()) return;
+    this.hideContextToolbar();
     if (this.mode === 'sketch') this.exitSketch();
     if (this.cmd) this.pmCancel();
+    this.settleProposal();
     const f = this.featureById(id);
     if (!f) return;
     const frame = this.sketchFrame(id);
@@ -1303,10 +1611,11 @@ export class App {
   }
 
   sketchTool(name) {
+    if (this.isAsm) { this.toast('Sketches are drawn in a part. Select a component and click Open Part.'); return; }
     if (this.mode !== 'sketch') {
       const s = this.selection.find((x) => x.kind === 'plane' || (x.kind === 'face' && x.data?.plane));
       if (s) this.sketchOn(s);
-      else { const sk = this.selection.find((x) => x.kind === 'sketch'); if (sk) this.editSketch(sk.id); else { this.sketchCommand(); this.pendingTool = name; return; } }
+      else { const sk = this.selection.find((x) => x.kind === 'sketch'); if (sk) this.editSketch(sk.id); else { this.sketchCommand(name); return; } }
     }
     if (this.mode !== 'sketch') return;
     if (this.cmd) this.closeCommand();
@@ -1504,7 +1813,7 @@ export class App {
     const eqs = targets.filter((t) => t.eq).map((t) => ({ key: t.key, expr: t.eq }));
     const body = document.createElement('div');
     body.className = 'eqdlg';
-    let last = null;
+    let last = null, tried = false; // tried: OK was refused, so empty rows show in red too
     const draft = () => {
       const d = this.cleanDoc(this.doc);
       d.parameters = vars.filter((v) => v.name).map((v) => ({ name: v.name.trim(), expression: String(v.expression ?? ''), unit: v.unit || 'mm', ...(v.comment ? { comment: v.comment } : {}) }));
@@ -1519,24 +1828,26 @@ export class App {
       return d;
     };
     const render = () => {
+      const empty = (t) => (tried && !String(t ?? '').trim() ? ' aria-invalid="true"' : '');
       const vrow = (v, i) => {
         const row = last?.parameters?.find((r) => r.name === v.name);
         const val = row?.problem ? `<span class="eqbad">${esc(row.problem)}</span>` : row?.value != null ? +(+row.value).toFixed(6) : '';
-        return `<tr><td><input data-v="${i}" data-k="name" value="${esc(v.name)}" placeholder="Name"></td><td><input data-v="${i}" data-k="expression" value="${esc(v.expression)}" placeholder="Value or equation"></td>` +
-          `<td class="eqval">${val}</td><td><input data-v="${i}" data-k="comment" value="${esc(v.comment)}" placeholder="Comments"></td><td><span class="eqx" data-dv="${i}" title="Delete">&#x2715;</span></td></tr>`;
+        return `<tr><td><input data-v="${i}" data-k="name" value="${esc(v.name)}" placeholder="Name" aria-label="Variable name"${empty(v.name)}></td><td><input data-v="${i}" data-k="expression" value="${esc(v.expression)}" placeholder="Value or equation" aria-label="Value or equation"${empty(v.expression)}></td>` +
+          `<td class="eqval">${val}</td><td><input data-v="${i}" data-k="comment" value="${esc(v.comment)}" placeholder="Comments" aria-label="Comments"></td><td><button type="button" class="eqx" data-dv="${i}" title="Delete" aria-label="Delete variable">&#x2715;</button></td></tr>`;
       };
       const erow = (e, i) => {
         const t = targets.find((x) => x.key === e.key);
         const r = last?.equations?.find((x) => `${x.feature}|${x.constraint || x.field}` === e.key);
         const prob = t && last?.problems?.[t.feature];
         const val = prob ? `<span class="eqbad">${esc(prob)}</span>` : r ? +(+r.value).toFixed(6) : '';
-        return `<tr><td>"${esc(t?.label)}"</td><td><input data-e="${i}" value="${esc(e.expr)}" placeholder="= equation"></td><td class="eqval">${val}</td><td></td><td><span class="eqx" data-de="${i}" title="Delete">&#x2715;</span></td></tr>`;
+        return `<tr><td>"${esc(t?.label)}"</td><td><input data-e="${i}" value="${esc(e.expr)}" placeholder="= equation" aria-label="Equation for ${esc(t?.label)}"${empty(e.expr)}></td><td class="eqval">${val}</td><td></td><td><button type="button" class="eqx" data-de="${i}" title="Delete" aria-label="Delete equation">&#x2715;</button></td></tr>`;
       };
       const free = targets.filter((t) => !eqs.some((e) => e.key === t.key));
       body.innerHTML = `<table class="eqt"><thead><tr><th>Name</th><th>Value / Equation</th><th>Evaluates to</th><th>Comments</th><th></th></tr></thead><tbody>` +
-        `<tr class="eqsec"><td colspan="5">Global Variables</td></tr>${vars.map(vrow).join('')}<tr><td colspan="5"><span class="eqadd" data-add="var">Add global variable</span></td></tr>` +
+        `<tr class="eqsec"><td colspan="5">Global Variables</td></tr>${vars.map(vrow).join('')}<tr><td colspan="5"><button type="button" class="eqadd" data-add="var">Add global variable</button></td></tr>` +
         `<tr class="eqsec"><td colspan="5">Equations</td></tr>${eqs.map(erow).join('')}` +
-        `<tr><td colspan="5"><select data-add="eq"><option value="">Add equation to a dimension...</option>${free.map((t) => `<option value="${esc(t.key)}">${esc(t.label)}</option>`).join('')}</select></td></tr></tbody></table>` +
+        `<tr><td colspan="5"><select data-add="eq" aria-label="Add equation to a dimension"><option value="">Add equation to a dimension...</option>${free.map((t) => `<option value="${esc(t.key)}">${esc(t.label)}</option>`).join('')}</select></td></tr></tbody></table>` +
+        `<div class="eqmsg" role="alert">${tried ? esc(why(last)) : ''}</div>` +
         `<div class="eqfoot">Units: mm, cm, m, in, deg, rad. Functions: abs, min, max, sqrt, round, floor, ceil, sin, cos, tan (degrees).</div>`;
       body.querySelectorAll('input[data-v]').forEach((inp) => { inp.oninput = () => { vars[+inp.dataset.v][inp.dataset.k] = inp.value; refresh(); }; });
       body.querySelectorAll('input[data-e]').forEach((inp) => { inp.oninput = () => { eqs[+inp.dataset.e].expr = inp.value; refresh(); }; });
@@ -1551,20 +1862,27 @@ export class App {
       clearTimeout(timer);
       timer = setTimeout(async () => {
         await evaluate();
-        // keep typing focus: update only the value cells unless rows changed
-        const focus = document.activeElement; const sel = focus?.dataset ? { ...focus.dataset } : null; const pos = focus?.selectionStart;
+        // keep the focus (a field, the dimension list or a button) on the same control when the rows are drawn again
+        const focus = document.activeElement; const sel = focus && body.contains(focus) && focus.dataset ? { ...focus.dataset } : null; const pos = focus?.selectionStart;
         render();
-        if (sel) { const q = Object.entries(sel).map(([k, v]) => `[data-${k}="${v}"]`).join(''); const el = q && body.querySelector('input' + q); if (el) { el.focus(); if (pos != null) el.setSelectionRange(pos, pos); } }
+        if (sel) { const q = Object.entries(sel).map(([k, v]) => `[data-${k}="${v}"]`).join(''); const el = q && body.querySelector(q); if (el) { el.focus(); if (pos != null && el.setSelectionRange) el.setSelectionRange(pos, pos); } }
       }, now ? 0 : 250);
     };
     const bad = (r) => r.error || (r.parameters || []).some((p) => p.problem) || Object.keys(r.problems || {}).length ||
       eqs.some((e) => !String(e.expr).trim()) || vars.some((v) => !v.name || !String(v.expression ?? '').trim());
+    // why OK was refused, in the dialog itself
+    const why = (r) => {
+      if (!r) return '';
+      if (r.error) return `Cannot check the equations: ${r.error}`;
+      if (vars.some((v) => !v.name || !String(v.expression ?? '').trim()) || eqs.some((e) => !String(e.expr).trim())) return 'Fill in or delete the empty rows (in red), then click OK.';
+      return bad(r) ? 'Fix the items in red, then click OK.' : '';
+    };
     const d = dialog({ title: 'Equations, Global Variables, and Dimensions', body, cls: 'eqdialog', buttons: [
       { label: 'OK', primary: true, run: () => {
         (async () => {
           clearTimeout(timer);
           const r = await evaluate();
-          if (bad(r)) { render(); this.status('Fix the items in red (or empty rows) first.'); return; }
+          if (bad(r)) { tried = true; render(); body.querySelector('[aria-invalid="true"]')?.focus(); return; }
           const dd = draft();
           this.commit('Equations', () => {
             this.doc.parameters = dd.parameters; if (!dd.parameters) delete this.doc.parameters;
@@ -1587,17 +1905,20 @@ export class App {
 
   async massProperties() {
     if (this.isAsm) return this.asm.massProperties();
+    if (this.massBusy) return;
+    this.massBusy = true;
+    const done = this.busy('Calculating mass properties', 300);
     let r;
-    try { r = await this.api('/api/mass', { doc: this.cleanDoc() }); } catch (err) { this.toast(String(err)); return; }
+    try { r = await this.api('/api/mass', { doc: this.cleanDoc() }); } catch (err) { this.toast('Mass Properties: ' + err.message, 6000); return; } finally { done(); this.massBusy = false; }
     if (r.error) { message('Mass Properties', esc(r.error)); return; }
     const m = this.doc.material;
     const g = (v) => fmt(v * 1000, 2);
     message('Mass Properties', `<table class="mass-table">
-      <tr><td>Material</td><td>${esc(m?.name || 'not specified (density 1000 kg/m^3)')}</td></tr>
-      <tr><td>Density</td><td>${fmt(r.density * 1e9, 1)} kg/m^3</td></tr>
+      <tr><td>Material</td><td>${esc(m?.name || 'not specified (density 1000 kg/m³)')}</td></tr>
+      <tr><td>Density</td><td>${fmt(r.density * 1e9, 1)} kg/m³</td></tr>
       <tr><td>Mass</td><td>${g(r.mass)} grams</td></tr>
-      <tr><td>Volume</td><td>${fmt(r.volume, 2)} mm^3</td></tr>
-      <tr><td>Surface area</td><td>${fmt(r.area, 2)} mm^2</td></tr>
+      <tr><td>Volume</td><td>${fmt(r.volume, 2)} mm³</td></tr>
+      <tr><td>Surface area</td><td>${fmt(r.area, 2)} mm²</td></tr>
       <tr><td>Center of mass</td><td>X = ${fmt(r.center_of_mass[0], 3)}<br>Y = ${fmt(r.center_of_mass[1], 3)}<br>Z = ${fmt(r.center_of_mass[2], 3)}</td></tr>
       <tr><td>Bounding box</td><td>${r.bbox[1].map((v, i) => fmt(v - r.bbox[0][i], 2)).join(' x ')} mm</td></tr>
       <tr><td>Solid bodies</td><td>${r.bodies}</td></tr></table>`);
@@ -1611,7 +1932,7 @@ export class App {
       const out = [];
       const edges = picks.filter((p) => p.kind === 'edge'), faces = picks.filter((p) => p.kind === 'face');
       if (edges.length) out.push(`Length: ${fmt(edges.reduce((s, e) => s + e.data.length, 0), 3)} mm`);
-      if (faces.length) out.push(`Area: ${fmt(faces.reduce((s, f) => s + f.data.area, 0), 3)} mm^2`);
+      if (faces.length) out.push(`Area: ${fmt(faces.reduce((s, f) => s + f.data.area, 0), 3)} mm²`);
       if (faces.length === 2 && faces[0].data.normal && faces[1].data.normal) {
         const [a, b] = faces.map((f) => f.data);
         const dt = a.normal[0] * b.normal[0] + a.normal[1] * b.normal[1] + a.normal[2] * b.normal[2];
@@ -1657,33 +1978,37 @@ export class App {
   }
 
   // ------------------------------------------------------------------ files
+  // A new part or assembly only in this browser (the server could not make the file).
+  startDraft(kind) {
+    this.server.unlink();
+    this.hideContextToolbar();
+    if (this.mode === 'sketch') this.exitSketch({ silent: true });
+    this.closeCommand();
+    this.leaveDocument();
+    this.doc = kind === 'assembly' ? newAssembly() : newDoc();
+    this.proposal = null;
+    this.docChanged();
+    this.dirty = false; this.updateDocChrome();
+    this.ribbon.setTab(kind === 'assembly' ? 'Assembly' : 'Features');
+    this.setSelection([]);
+    this.viewer.setBody(null);
+    this.regen().then(() => { this.viewer.standardView('trimetric'); this.viewer.zoomToFit(); if (kind === 'assembly') this.asm.insertPM(); });
+  }
+
   newDoc() {
-    const go = (kind) => {
-      this.server.unlink();
-      this.hideContextToolbar();
-      if (this.mode === 'sketch') this.exitSketch({ silent: true });
-      this.closeCommand();
-      if (this.docStack.length) { this.doc = this.cleanDoc(this.docStack[0].doc); this.undoStack = this.docStack[0].undo; this.redoStack = this.docStack[0].redo; this.docStack = []; }
-      this.pushUndo('New');
-      this.doc = kind === 'assembly' ? newAssembly() : newDoc();
-      this.proposal = null;
-      this.docChanged();
-      this.dirty = false; this.updateDocChrome();
-      this.ribbon.setTab(kind === 'assembly' ? 'Assembly' : 'Features');
-      this.setSelection([]);
-      this.viewer.setBody(null);
-      this.regen().then(() => { this.viewer.standardView('trimetric'); this.viewer.zoomToFit(); if (kind === 'assembly') this.asm.insertPM(); });
-    };
     const body = document.createElement('div');
     body.className = 'newdoc';
     body.innerHTML = `<button class="nd" data-k="part">${icon('part', 48)}<b>Part</b><span>a 3D representation of a single design component</span></button>
       <button class="nd" data-k="assembly">${icon('assembly', 48)}<b>Assembly</b><span>a 3D arrangement of parts and other assemblies</span></button>`;
     const dlg = dialog({ title: 'New OpenSketch Document', body, buttons: [{ label: 'Cancel' }] });
+    let picked = false; // a double-click on a tile (the SOLIDWORKS habit) makes one document, not two
     body.querySelectorAll('.nd').forEach((n) => {
       n.onclick = async () => {
+        if (picked) return;
+        picked = true;
         dlg.close();
         if (!(await this.confirmLeaveDraft())) return;
-        if (!(await this.server.createAndOpen(n.dataset.k))) go(n.dataset.k); // no server: a draft here
+        if (!(await this.server.createAndOpen(n.dataset.k, { onShown: () => this.files.close() }))) { this.startDraft(n.dataset.k); this.files.close(); } // no server: a draft here
       };
     });
     setTimeout(() => body.querySelector('.nd')?.focus(), 0);
@@ -1743,8 +2068,7 @@ export class App {
       this.hideContextToolbar();
       if (this.mode === 'sketch') this.exitSketch({ silent: true });
       this.closeCommand();
-      if (this.docStack.length) { this.doc = this.cleanDoc(this.docStack[0].doc); this.undoStack = this.docStack[0].undo; this.redoStack = this.docStack[0].redo; this.docStack = []; }
-      this.pushUndo('Open');
+      this.leaveDocument();
       this.doc = d; this.doc.seq = this.doc.seq || 1000;
       this.proposal = null;
       this.docChanged();
@@ -1797,13 +2121,18 @@ export class App {
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   }
 
-  saveFile() {
+  async saveFile() {
     if (this.reviewMode) return;
-    if (this.server.linked) { // a file in Files saves itself; Save just does it now
-      this.server.flush();
-      this.server.scheduleThumb(400);
-      this.dirty = false; this.updateDocChrome();
-      this.toast('Saved to your Files.');
+    if (this.server.linked) { // a file in Files saves itself; Save just does it now, and says what happened
+      const sv = this.server;
+      const ok = await sv.flush();
+      if (!sv.linked) return;
+      sv.scheduleThumb(400);
+      if (ok) { this.dirty = false; this.updateDocChrome(); this.toast('Saved to your Files.'); }
+      else if (this.proposal) this.toast("Not saved yet: accept or reject the AI's change first.", 5000);
+      else if (sv.state === 'conflict') this.toast('Not saved: this file changed elsewhere. Choose which version to keep in the bar above the model.', 7000);
+      else if (sv.state === 'refused') this.toast(`Not saved: ${sv.refused} Your edits are kept in this browser. File > Save As > .osk downloads them.`, 9000);
+      else this.toast('Not saved yet: the server is not answering. Your edits are kept in this browser and saved when it is back.', 7000);
       return;
     }
     this.server.saveDraft();
@@ -1858,11 +2187,14 @@ export class App {
         return;
       }
     }
+    if (this.exporting) { this.toast('An export is already running. It downloads when it is ready.'); return; }
+    this.exporting = true;
+    const done = this.busy(`Exporting ${fmtName.toUpperCase()}`, 0);
     try {
       const r = await fetch('/api/export/' + fmtName, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ doc: this.cleanDoc() }) });
-      if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.detail || r.statusText); }
+      if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.error || j.detail || r.statusText); }
       this.download(await r.blob(), `${this.doc.name}.${fmtName}`);
-    } catch (err) { message('Export', esc(err.message || err)); }
+    } catch (err) { message('Export', esc(err.message || err)); } finally { done(); this.exporting = false; }
   }
 
   // SOLIDWORKS macro: a background job on the server (the macro is checked before it is handed over).
@@ -1889,6 +2221,7 @@ export class App {
       log.classList.remove('hidden');
       try {
         const r = await this.api('/api/export/sldmacro/start', { doc, verify: full.checked });
+        if (r.error) { sum.innerHTML = `<div class="ai-msg err">${esc(r.error)}</div>`; return; } // e.g. another export is running
         jid = r.job;
         for (;;) {
           await new Promise((ok) => setTimeout(ok, 1000));
@@ -1913,8 +2246,30 @@ export class App {
         return false;
       } },
       { label: 'Close', run: () => { stop = true; } },
-    ], onClose: () => { stop = true; } });
+    ], onClose: () => {
+      stop = true;
+      if (jid && !body.dataset.done) this.api('/api/export/sldmacro/' + jid, null, 'DELETE').catch(() => {}); // free the server
+    } });
     const btn = dl.el.querySelector('.dlg-f .btn.primary');
+  }
+
+  // Print (quick access, File menu): the graphics area alone, as it is on screen, with the file's name above it on
+  // a white page. The CSS print rules hide the rest of the window.
+  printGraphics() {
+    let url = null;
+    try { this.viewer.render(); url = this.viewer.canvas.toDataURL('image/png'); } catch (_) { /* no picture: print the page */ }
+    let sheet = $('print-sheet');
+    if (!sheet) { sheet = document.createElement('div'); sheet.id = 'print-sheet'; document.body.appendChild(sheet); }
+    sheet.innerHTML = '<div class="ps-name"></div><img alt="">';
+    const f = this.docStack[this.docStack.length - 1];
+    sheet.querySelector('.ps-name').textContent = f ? `${this.doc.name} in ${this.docStack[0].doc.name}` : (this.doc.name || 'Untitled');
+    const img = sheet.querySelector('img');
+    const clear = () => { window.removeEventListener('afterprint', clear); sheet.innerHTML = ''; };
+    window.addEventListener('afterprint', clear);
+    const go = () => setTimeout(() => window.print(), 0);
+    if (!url) return go();
+    img.onload = go; img.onerror = go;
+    img.src = url;
   }
 
   download2(url) {
@@ -1925,8 +2280,8 @@ export class App {
 
   materialDialog() {
     const body = document.createElement('div');
-    const sel = document.createElement('select'); sel.size = 12; sel.style.width = '260px';
-    for (const [n, d] of MATERIALS) { const o = document.createElement('option'); o.value = n; o.textContent = `${n}  (${fmt(d * 1e9, 0)} kg/m^3)`; sel.appendChild(o); }
+    const sel = document.createElement('select'); sel.size = 12; sel.style.width = '260px'; sel.setAttribute('aria-label', 'Material');
+    for (const [n, d] of MATERIALS) { const o = document.createElement('option'); o.value = n; o.textContent = `${n}  (${fmt(d * 1e9, 0)} kg/m³)`; sel.appendChild(o); }
     sel.value = this.doc.material?.name || 'ABS';
     body.appendChild(sel);
     dialog({ title: 'Material', body, buttons: [
@@ -1963,15 +2318,15 @@ export class App {
     } }, { label: 'Cancel' }] });
   }
 
-  helpMenu(anchor) {
+  helpMenu(anchor, keyboard = false) {
     const r = anchor.getBoundingClientRect();
-    contextMenu(Math.max(4, r.right - 220), r.bottom + 6, [
+    contextMenu(r.right, r.bottom + 6, [
       { label: 'Getting started', run: () => this.openTask('resources') },
       { label: 'Keyboard shortcuts', run: () => this.shortcutsDialog() },
       { label: 'Connect AI...', run: () => this.server.connectDialog() },
       '-',
       { label: 'About OpenSketch', run: () => this.aboutDialog() },
-    ]);
+    ], null, { keyboard, returnTo: anchor, alignRight: true });
   }
 
   shortcutsDialog() {
@@ -2000,32 +2355,61 @@ export class App {
     if (fit) this.viewer.zoomToFit();
   }
 
+  // Accept the AI's change (one undo step). Returns false when there is none any more. Edits made while the AI
+  // was building are replaced by its version: a toast says so and Undo brings them back.
   acceptProposal() {
     const p = this.proposal;
-    if (!p) return;
+    if (!p) return false;
     const wasAsm = this.isAsm;
-    this.proposal = null;
+    const replaced = this.proposalBase && this.proposalBase !== JSON.stringify(this.cleanDoc());
+    this.proposal = null; this.proposalBase = null;
     this.pushUndo('AI change');
     this.doc = { ...p, seq: Math.max(this.doc.seq || 1, p.seq || 1) };
     this.proposedIds = [];
+    this.markProposal('accepted');
     this.docChanged();
     if (wasAsm) this.ribbon.setTab('Assembly');
     this.regen();
+    if (replaced) this.toast('The edits you made while the AI was working were replaced by its version.', 8000, { label: 'Undo', run: () => this.undo() });
+    return true;
   }
 
-  rejectProposal(silent = false) {
+  // note: why it was set aside, shown on its chat card instead of "Rejected"
+  rejectProposal(silent = false, note = null) {
     if (!this.proposal) return;
-    this.proposal = null; this.proposedIds = [];
-    for (const m of this.taskpane.log) if (m.state === 'pending') m.state = 'rejected';
+    this.proposal = null; this.proposedIds = []; this.proposalBase = null;
+    this.markProposal('rejected', note);
     this.updateDocChrome();
     if (!this.isAsm) this.viewer.setAssembly([], {});
-    if (!silent) { this.regen(); this.taskpane.render(); }
+    if (!silent) this.regen();
+  }
+
+  // The chat card of the AI change that was waiting says what became of it.
+  markProposal(state, note = null) {
+    let n = 0;
+    for (const m of this.taskpane?.log || []) if (m.role === 'proposal' && m.state === 'pending') { m.state = state; m.note = note; n++; }
+    if (n) this.taskpane.render();
+  }
+
+  // An edit while an AI change waits builds on that change (it is what is on screen, and previews use it), so the
+  // change is accepted first, as its own undo step: never thrown away without a word.
+  settleProposal() {
+    if (!this.proposal) return;
+    if (this.acceptProposal()) this.toast("Kept the AI's change so you can edit it. Ctrl+Z takes it back.", 5000);
   }
 
   // ------------------------------------------------------------------ chrome
   status(msg) { $('sb-msg').textContent = msg; }
   coords(t) { $('sb-coords').textContent = t; }
-  statusDefined(text, cls) { const e = $('sb-defined'); e.textContent = text; e.className = 'sb-cell ' + (cls || ''); this.tree.render(); }
+  // The sketch's state in the status bar and in its tree row. Sketch drags solve on every move: the tree is drawn
+  // again only when the state changes.
+  statusDefined(text, cls) {
+    const e = $('sb-defined');
+    const c = 'sb-cell ' + (cls || '');
+    if (e.textContent === text && e.className === c) return;
+    e.textContent = text; e.className = c;
+    this.tree.render();
+  }
   sketchDefinedPrefix(f) {
     if (this.mode === 'sketch' && this.sketcher.skId === f.id) return this.sketcher.state?.status === 'under' ? '(-) ' : this.sketcher.state?.status === 'over' ? '(+) ' : '';
     // every tree redraw asks for every sketch: solve each version of a sketch once
@@ -2047,20 +2431,28 @@ export class App {
     const t = document.createElement('div');
     t.className = 'toast2';
     const span = document.createElement('span'); span.textContent = msg; t.appendChild(span);
-    let timer = null;
-    const close = () => { clearTimeout(timer); t.classList.add('out'); setTimeout(() => t.remove(), 180); };
+    let timer = null, closed = false;
+    const close = () => { if (closed) return; closed = true; clearTimeout(timer); t.classList.add('out'); setTimeout(() => t.remove(), 180); };
     if (action) {
       const b = document.createElement('button'); b.className = 'toast-act'; b.textContent = action.label;
       b.onclick = () => { close(); action.run(); };
       t.appendChild(b);
+      if (ms) ms = Math.max(ms, 8000); // time to reach the button
     }
     host.appendChild(t);
+    // the time stops while the pointer or focus is on it (reaching for Undo never loses it)
+    let left = ms, started = Date.now();
+    const pause = () => { if (!ms || closed) return; clearTimeout(timer); timer = null; left -= Date.now() - started; };
+    const resume = () => { if (!ms || closed || t.matches(':hover') || t.contains(document.activeElement)) return; started = Date.now(); clearTimeout(timer); timer = setTimeout(close, Math.max(left, 2000)); };
+    t.addEventListener('mouseenter', pause); t.addEventListener('focusin', pause);
+    t.addEventListener('mouseleave', resume); t.addEventListener('focusout', () => setTimeout(resume, 0));
     if (ms) timer = setTimeout(close, ms);
     return { close };
   }
 
   cursorFeedback(fb) {
     const el = $('sketchcursor');
+    if (!el) return;
     if (!fb || (!fb.glyph && !fb.value)) { el.classList.add('hidden'); return; }
     el.innerHTML = (fb.glyph ? `<span class="glyph">${icon(fb.glyph, 14)}</span>` : '') + (fb.value ? `<span class="val">${fb.value}</span>` : '');
     el.style.left = fb.x + 16 + 'px'; el.style.top = fb.y + 14 + 'px';
@@ -2088,13 +2480,36 @@ export class App {
     v.zoomAt(Math.max(w / v.w, h / v.h), v.w / 2, v.h / 2);
   }
 
+  // Top right of the graphics area (SOLIDWORKS confirmation corner): OK / Cancel for the open PropertyManager
+  // command, Exit Sketch / Discard in a sketch. pm.js calls this whenever the PropertyManager opens, closes or
+  // its OK state changes.
   updateConfirmCorner() {
     const el = $('confirmcorner');
+    if (!el) return;
+    const btn = (title, ic, size, run, off = false) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'cc' + (off ? ' disabled' : '');
+      b.title = title; b.setAttribute('aria-label', title); b.innerHTML = icon(ic, size);
+      // aria-disabled, not disabled: a click that commits a PropertyManager field on blur must still reach OK
+      if (off) b.setAttribute('aria-disabled', 'true');
+      b.onclick = run;
+      return b;
+    };
+    const spec = this.pm?.spec;
+    let key = 'none', items = null;
+    if (this.cmd && spec && !this.reviewMode) {
+      const off = !!spec.okEnabled && !spec.okEnabled();
+      key = `cmd|${off}|${!!spec.noCancel}|${!!this.cmd.committing}`;
+      items = () => [btn('OK', 'ok', 30, () => { const s = this.pm.spec; if (s && !(s.okEnabled && !s.okEnabled())) this.pmOk(); }, off || !!this.cmd.committing),
+        ...(spec.noCancel ? [] : [btn('Cancel', 'cancel', 26, () => this.pmCancel())])];
+    } else if (this.mode === 'sketch') {
+      key = 'sketch';
+      items = () => [btn('Exit Sketch', 'exitsketch', 30, () => this.exitSketch()), btn('Discard changes and exit', 'cancel', 26, () => this.discardSketch())];
+    }
+    if (el.dataset.key === key && key !== 'none') return; // unchanged: keep the buttons (a click may be under way)
+    el.dataset.key = key;
     el.innerHTML = '';
-    if (this.mode !== 'sketch') { el.classList.add('hidden'); return; }
-    const a = document.createElement('div'); a.className = 'cc'; a.title = 'Exit Sketch'; a.innerHTML = icon('exitsketch', 30); a.onclick = () => this.exitSketch();
-    const b = document.createElement('div'); b.className = 'cc'; b.title = 'Discard changes and exit'; b.innerHTML = icon('cancel', 26); b.onclick = () => this.discardSketch();
-    el.append(a, b);
+    if (!items) { el.classList.add('hidden'); return; }
+    el.append(...items());
     el.classList.remove('hidden');
   }
 
@@ -2120,45 +2535,49 @@ export class App {
   buildMgrTabs() {
     const tabs = [['feature_mgr', 'FeatureManager Design Tree', 'tree'], ['property_mgr', 'PropertyManager', 'pm'], ['config_mgr', 'ConfigurationManager', null], ['dimxpert', 'DimXpertManager', null], ['display_mgr', 'DisplayManager', null]];
     const el = $('mgrtabs');
+    el.setAttribute('role', 'tablist'); el.setAttribute('aria-label', 'Managers');
     tabs.forEach(([ic, title, panel], i) => {
-      const t = document.createElement('div'); t.className = 'mgrtab' + (i === 0 ? ' active' : ''); t.title = title; t.innerHTML = icon(ic, 18);
-      t.onclick = () => { if (panel === 'tree') this.showPanel('tree'); else if (panel === 'pm') this.propertyTab(); else this.toast(title + ' is not available yet.'); };
+      const t = document.createElement('div'); t.className = 'mgrtab' + (i === 0 ? ' active' : '') + (panel ? '' : ' disabled'); t.title = panel ? title : `${title}: not available in this version`; t.innerHTML = icon(ic, 18);
+      asButton(t, title, { role: 'tab', pressed: i === 0, disabled: !panel });
+      t.onclick = () => { if (panel === 'tree') this.showPanel('tree'); else if (panel === 'pm') this.propertyTab(); else this.toast(title + ' is not available in this version.'); };
       el.appendChild(t);
     });
   }
 
   buildHeadsUp() {
     const el = $('headsup');
+    el.setAttribute('role', 'toolbar'); el.setAttribute('aria-label', 'View');
     const v = this.viewer;
     const add = (id, ic, title, run, caret = false) => {
       const b = document.createElement('div'); b.className = 'hu'; b.dataset.id = id; b.title = title;
       b.innerHTML = icon(ic, 20) + (caret ? '<span class="caret">&#9660;</span>' : '');
+      asButton(b, title, { popup: caret, pressed: id === 'zoomarea' ? false : undefined });
       b.onclick = (e) => run(b, e);
       el.appendChild(b); return b;
     };
     const sep = () => { const s = document.createElement('div'); s.className = 'hu-sep'; el.appendChild(s); };
-    const fly = (anchor, items) => {
+    const fly = (anchor, items, e) => {
       const r = anchor.getBoundingClientRect();
-      contextMenu(r.left, r.bottom + 2, items);
+      contextMenu(r.left, r.bottom + 2, items, null, { keyboard: !e?.detail, returnTo: anchor });
     };
     add('zoomfit', 'zoomfit', 'Zoom to Fit (F)', () => v.zoomToFit());
-    add('zoomarea', 'zoomarea', 'Zoom to Area', (b) => { this.zoomAreaMode = !this.zoomAreaMode; b.classList.toggle('on', this.zoomAreaMode); });
+    add('zoomarea', 'zoomarea', 'Zoom to Area', (b) => { this.zoomAreaMode = !this.zoomAreaMode; b.classList.toggle('on', this.zoomAreaMode); b.setAttribute('aria-pressed', String(this.zoomAreaMode)); });
     add('prevview', 'prevview', 'Previous View', () => v.previousView());
     sep();
     add('section', 'sectionview', 'Section View', () => this.sectionPM());
     sep();
     add('orient', 'vieworient', 'View Orientation (Spacebar)', (b) => this.orientationPopup(b), true);
-    add('display', 'displaystyle', 'Display Style', (b) => fly(b, [
-      ['shadedEdges', 'Shaded With Edges'], ['shaded', 'Shaded'], ['hlr', 'Hidden Lines Removed'], ['hlv', 'Hidden Lines Visible'], ['wireframe', 'Wireframe']].map(([s, l]) => ({ label: l, icon: 'displaystyle', run: () => v.setDisplayStyle(s) }))), true);
-    add('hideshow', 'hideshow', 'Hide/Show Items', (b) => fly(b, [
-      { label: (this.view.planes ? '✓ ' : '') + 'View Planes', icon: 'plane', run: () => this.toggleView('planes') },
-      { label: (this.view.origins ? '✓ ' : '') + 'View Origins', icon: 'origin', run: () => this.toggleView('origins') },
-      { label: (this.view.sketches ? '✓ ' : '') + 'View Sketches', icon: 'sketch_t', run: () => this.toggleView('sketches') },
-      { label: (this.view.relations ? '✓ ' : '') + 'View Sketch Relations', icon: 'r_coincident', run: () => this.toggleView('relations') },
-    ]), true);
+    add('display', 'displaystyle', 'Display Style', (b, e) => fly(b, [
+      ['shadedEdges', 'Shaded With Edges'], ['shaded', 'Shaded'], ['hlr', 'Hidden Lines Removed'], ['hlv', 'Hidden Lines Visible'], ['wireframe', 'Wireframe']].map(([s, l]) => ({ label: l, icon: 'displaystyle', run: () => v.setDisplayStyle(s) })), e), true);
+    add('hideshow', 'hideshow', 'Hide/Show Items', (b, e) => fly(b, [
+      { label: (this.view.planes ? '✓ ' : '') + 'View Planes', icon: 'plane', role: 'menuitemcheckbox', checked: this.view.planes, run: () => this.toggleView('planes') },
+      { label: (this.view.origins ? '✓ ' : '') + 'View Origins', icon: 'origin', role: 'menuitemcheckbox', checked: this.view.origins, run: () => this.toggleView('origins') },
+      { label: (this.view.sketches ? '✓ ' : '') + 'View Sketches', icon: 'sketch_t', role: 'menuitemcheckbox', checked: this.view.sketches, run: () => this.toggleView('sketches') },
+      { label: (this.view.relations ? '✓ ' : '') + 'View Sketch Relations', icon: 'r_coincident', role: 'menuitemcheckbox', checked: this.view.relations, run: () => this.toggleView('relations') },
+    ], e), true);
     add('appearance', 'appearance', 'Edit Appearance', () => this.openTask('appearance'), true);
     add('scene', 'scene', 'Apply Scene', () => this.openTask('appearance'), true);
-    add('viewsettings', 'viewsettings', 'View Settings', (b) => fly(b, [{ label: 'Reverse mouse wheel zoom', run: () => { v.reverseWheel = !v.reverseWheel; } }]), true);
+    add('viewsettings', 'viewsettings', 'View Settings', (b, e) => fly(b, [{ label: 'Reverse mouse wheel zoom', role: 'menuitemcheckbox', checked: !!v.reverseWheel, run: () => { v.reverseWheel = !v.reverseWheel; } }], e), true);
   }
 
   orientationPopup(anchor) {
@@ -2169,6 +2588,7 @@ export class App {
     const grid = document.createElement('div'); grid.className = 'vo-grid';
     for (const [k, ic, t] of views) {
       const b = document.createElement('div'); b.className = 'fo'; b.title = t; b.innerHTML = icon(ic, 22);
+      asButton(b, t);
       b.onclick = () => { el.classList.add('hidden'); this.orient(k); };
       grid.appendChild(b);
     }
@@ -2213,12 +2633,20 @@ export class App {
       const c = this.commands[id];
       const b = document.createElement('div'); b.className = 'ct'; b.title = typeof c.label === 'function' ? c.label() : c.label;
       b.innerHTML = icon(typeof c.icon === 'function' ? c.icon() : c.icon, 20);
+      asButton(b, b.title);
       b.onclick = () => { el.classList.add('hidden'); this.lastCommand = id; c.run(); this.ribbon.render(); };
       el.appendChild(b);
     }
     const gr = $('graphics').getBoundingClientRect();
     el.style.left = Math.min(gr.width - 180, x - gr.left) + 'px'; el.style.top = Math.min(gr.height - 120, y - gr.top) + 'px';
     el.classList.remove('hidden');
+  }
+
+  // The pointer is over the graphics area itself (not a toolbar or dialog on top of it).
+  overGraphics(mouse) {
+    if (!mouse) return false;
+    const el = document.elementFromPoint?.(mouse.x, mouse.y);
+    return !!el && (el === this.viewer.canvas || !!el.closest?.('#viewport, #labels'));
   }
 
   // SOLIDWORKS: Tab hides the component (or body) under the cursor, Shift+Tab shows hidden ones there.
@@ -2233,13 +2661,60 @@ export class App {
     if (p && (p.kind === 'face' || p.kind === 'edge')) { this.bodyHidden = true; this.viewer.bodyGroup.visible = false; this.viewer.requestRender(); this.status('Body hidden. Shift+Tab over it shows it again.'); }
   }
 
+  // Who gets a key (owner's rule, 2026-10-19). 'model': the focus is on the page, the graphics area or the
+  // FeatureManager tree, so the SOLIDWORKS shortcuts act. 'control': a button, tab or toolbar item of the editor
+  // has the focus (a keyboard user put it there); it keeps Tab, Enter, Space, the arrows and Delete, and only Escape
+  // and the Ctrl shortcuts reach the editor. 'none': a dialog, the Files page, a menu or a text field has the
+  // keyboard, and nothing reaches the model behind it.
+  keyTarget(e) {
+    if (this.files?.isOpen || modalOpen()) return 'none';
+    const t = e.target;
+    if (!t || t === document || t === window || t === document.body || t === document.documentElement) return 'model';
+    if (t === this.viewer?.canvas || t.id === 'tree' || t.id === 'viewport') return 'model';
+    if (t.closest?.('#modal-layer, .dlg, .contextmenu, #files, .search-results')) return 'none';
+    const tag = (t.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'select' || t.isContentEditable) return 'none';
+    return 'control';
+  }
+
+  // Esc: close menus and popups, then cancel the tool, the command or the selection.
+  escapeKey() {
+    closeMenus(); this.hideContextToolbar(); $('shortcutbar')?.classList.add('hidden'); $('viewcube')?.classList.add('hidden');
+    if (this.zoomAreaMode) { this.zoomAreaMode = false; $('headsup')?.querySelector('[data-id=zoomarea]')?.classList.remove('on'); return; }
+    if (this.mode === 'sketch' && !this.cmd) { this.sketcher.cancelTool(); return; }
+    if (this.cmd) return this.pmCancel();
+    return this.setSelection([]);
+  }
+
+  // F10 (Windows, SOLIDWORKS): the menu bar, File first.
+  focusMenubar() {
+    const bar = $('menubar');
+    if (!bar) return;
+    if (bar.classList.contains('hidden')) this.ribbon?.toggleMenubar?.(true);
+    bar.querySelector('.mi')?.focus();
+  }
+
   bindKeys() {
-    let mouse = { x: 300, y: 300 };
+    // Unknown until the pointer moves: a keyboard user's Tab must never hide the model under a stale position.
+    let mouse = null;
     window.addEventListener('pointermove', (e) => { mouse = { x: e.clientX, y: e.clientY }; });
+    document.addEventListener('pointerleave', () => { mouse = null; });
+    // A mouse click on a toolbar button or tab does not leave the keyboard focus on it, so Delete, Enter, Space and
+    // the letters keep acting on the model. Keyboard users who Tab to a button keep their focus there.
+    document.addEventListener('click', (e) => {
+      if (!e.detail) return;
+      const b = e.target?.closest?.('button, [role=button], [role=tab]');
+      if (b && document.activeElement === b && b.closest('#app') && !b.closest('.dlg, .contextmenu')) b.blur();
+    });
     document.addEventListener('keydown', (e) => {
-      const tag = (e.target.tagName || '').toLowerCase();
-      if (tag === 'input' || tag === 'textarea' || tag === 'select' || e.target.isContentEditable) return;
+      const where = this.keyTarget(e);
+      if (where === 'none') return;
       const k = e.key, ctrl = e.ctrlKey || e.metaKey, v = this.viewer;
+      if (k === 'F10' && !ctrl && !e.altKey && !e.shiftKey) { e.preventDefault(); return this.focusMenubar(); }
+      if (where === 'control') {
+        if (k === 'Escape') { e.target.blur?.(); return this.escapeKey(); }
+        if (!ctrl) return;
+      }
       if (ctrl && k.toLowerCase() === 'z') { e.preventDefault(); return this.undo(); }
       if (ctrl && k.toLowerCase() === 'y') { e.preventDefault(); return this.redo(); }
       if (ctrl && k.toLowerCase() === 's') { e.preventDefault(); return this.saveFile(); }
@@ -2251,23 +2726,26 @@ export class App {
       if (ctrl && /^[1-8]$/.test(k)) { e.preventDefault(); return this.orient(['front', 'back', 'left', 'right', 'top', 'bottom', 'isometric', 'normal'][+k - 1]); }
       if (ctrl && k.startsWith('Arrow')) { e.preventDefault(); const d = 40; return v.panBy(k === 'ArrowLeft' ? -d : k === 'ArrowRight' ? d : 0, k === 'ArrowUp' ? -d : k === 'ArrowDown' ? d : 0); }
       if (e.altKey && (k === 'ArrowLeft' || k === 'ArrowRight')) { e.preventDefault(); return v.rollBy((k === 'ArrowLeft' ? 1 : -1) * Math.PI / 12); }
+      if (ctrl) return;
       if (k.startsWith('Arrow')) { e.preventDefault(); const a = (e.shiftKey ? 90 : 15) * Math.PI / 180; return v.rotateBy(k === 'ArrowLeft' ? -a : k === 'ArrowRight' ? a : 0, k === 'ArrowUp' ? -a : k === 'ArrowDown' ? a : 0); }
-      if (k === 'Escape') {
-        closeMenus(); this.hideContextToolbar(); $('shortcutbar').classList.add('hidden'); $('viewcube').classList.add('hidden');
-        if (this.zoomAreaMode) { this.zoomAreaMode = false; $('headsup').querySelector('[data-id=zoomarea]')?.classList.remove('on'); return; }
-        if (this.mode === 'sketch' && !this.cmd) { if (this.sketcher.cancelTool()) return; return; }
-        if (this.cmd) return this.pmCancel();
-        return this.setSelection([]);
-      }
+      if (k === 'Escape') return this.escapeKey();
       if (k === 'Delete' || k === 'Backspace') { e.preventDefault(); return this.deleteSelection(); }
-      if (k === 'Enter') { if (this.pm.isOpen && (this.cmd || this.mode === 'sketch')) return this.pmOk(); if (this.lastCommand) return this.commands[this.lastCommand].run(); }
+      if (k === 'Enter') {
+        if (this.pm.isOpen && (this.cmd || this.mode === 'sketch')) { e.preventDefault(); return this.pmOk(); }
+        if (this.lastCommand) { e.preventDefault(); return this.commands[this.lastCommand].run(); }
+        return;
+      }
       if (k === ' ') { e.preventDefault(); return this.orientationPopup(); }
-      if (k === 'Tab') { e.preventDefault(); return this.tabHide(mouse, e.shiftKey); }
-      if (ctrl || e.altKey) return;
+      // Tab hides what is under the pointer only over the graphics area; anywhere else it moves the focus.
+      if (k === 'Tab') {
+        if (e.target.id === 'tree' || !this.overGraphics(mouse)) return;
+        e.preventDefault(); return this.tabHide(mouse, e.shiftKey);
+      }
+      if (e.altKey) return;
       if (k === 'f' || k === 'F') return v.zoomToFit();
       if (k === 'z') return v.zoomAt(1.25, v.w / 2, v.h / 2);
       if (k === 'Z') return v.zoomAt(0.8, v.w / 2, v.h / 2);
-      if (k === 's') return this.shortcutBar(mouse.x, mouse.y);
+      if (k === 's') return this.shortcutBar(mouse?.x ?? window.innerWidth / 2, mouse?.y ?? window.innerHeight / 2);
       if (this.mode === 'sketch') {
         const map = { l: 'line', c: 'circle', r: 'rectangle', d: 'smartdim', a: 'arc', p: 'point', t: 'trim' };
         if (map[k]) return this.sketchTool(map[k]);

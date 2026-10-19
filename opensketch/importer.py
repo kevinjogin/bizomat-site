@@ -49,21 +49,46 @@ def encode_shape(shape) -> str:
 
 
 _decoded: "OrderedDict[str, object]" = OrderedDict()
+BREP_MAX = 512 * 1024 * 1024        # unzipped BREP text of one imported body (a 128 MB STEP stays well under it)
+BREP_DATA_MAX = 256 * 1024 * 1024   # its base64 text in the document
 
 
 def decode_shape(data: str):
-    key = hashlib.sha1(data.encode("ascii")).hexdigest()
+    if not isinstance(data, str) or len(data) > BREP_DATA_MAX:
+        raise geometry.FeatureError("The imported body's data is missing or too large.")
+    key = hashlib.sha1(data.encode("ascii", "replace")).hexdigest()
     hit = _decoded.get(key)
     if hit is not None:
         _decoded.move_to_end(key)
         return hit
     from build123d import import_brep
-    raw = zlib.decompress(base64.b64decode(data))
-    fd, path = tempfile.mkstemp(suffix=".brep")
-    os.close(fd)
     try:
-        open(path, "wb").write(raw)
+        packed = base64.b64decode(data, validate=True)
+    except ValueError:
+        raise geometry.FeatureError("The imported body's data is damaged.") from None
+    fd, path = tempfile.mkstemp(suffix=".brep")
+    try:
+        # Unzipped in pieces with a cap: the data comes from the document, which anyone editing it controls,
+        # and a few MB of zlib can unpack to gigabytes.
+        z, total = zlib.decompressobj(), 0
+        cap = min(BREP_MAX, max(64 * 1024 * 1024, 200 * len(packed)))  # BREP text packs about 5:1, never 200:1
+        with os.fdopen(fd, "wb") as out:
+            chunk = z.decompress(packed, 1 << 20)
+            while chunk:
+                total += len(chunk)
+                if total > cap:
+                    raise geometry.FeatureError("The imported body's data unpacks to more than the 512 MB limit.")
+                out.write(chunk)
+                chunk = z.decompress(z.unconsumed_tail, 1 << 20) if z.unconsumed_tail else b""
+            rest = z.flush()
+            if total + len(rest) > cap:
+                raise geometry.FeatureError("The imported body's data unpacks to more than the 512 MB limit.")
+            out.write(rest)
+        if not z.eof:
+            raise geometry.FeatureError("The imported body's data is damaged.")
         shape = import_brep(path)
+    except zlib.error:
+        raise geometry.FeatureError("The imported body's data is damaged.") from None
     finally:
         os.unlink(path)
     solid = geometry.solid_of(shape) if shape is not None else None
@@ -118,8 +143,35 @@ def _same_when_placed(local, solid) -> bool:
             and (placed.center() - solid.center()).length <= tol)
 
 
-GENERIC_LABELS = re.compile(r"^(open ?cascade step translator.*|step translator.*|untitled|unnamed|none|solid\d*|part\d*|body\d*)$",
-                            re.IGNORECASE)
+def _moved_copy(local, solid):
+    """The move (a translation after the solid's own location) that puts the part's shape exactly on this solid,
+    or None. Copies written in world coordinates (identity locations: FreeCAD, build123d, many catalogue files)
+    differ from the first copy by a move only; a mirrored copy has the same signature and box but its surface
+    does not land on the other's, so it stays a part of its own. No attempt at rotations: symmetric parts make
+    them ambiguous."""
+    from build123d import Location
+    from .recognize import surfaces_match
+    placed = local.moved(solid.location)
+    delta = solid.center() - placed.center()
+    moved = placed.moved(Location(delta))
+    a, b = moved.bounding_box(), solid.bounding_box()
+    tol = 1e-3 + 1e-6 * max(b.diagonal, 1.0)
+    if not all(abs(x - y) <= tol for x, y in zip([*tuple(a.min), *tuple(a.max)], [*tuple(b.min), *tuple(b.max)])):
+        return None
+    try:
+        return delta if surfaces_match(moved, solid, tol) else None
+    except Exception:
+        return None
+
+
+def _copy_name(label) -> str:
+    """A label without its copy number ("Screw003" -> "screw"): copies of one product share it, while two
+    products that happen to have the same shape ("Pin_A", "Pin_B") keep their own parts, as in SOLIDWORKS."""
+    return re.sub(r"[\s_.\-]*(\(\d+\)|<\d+>|\d+)$", "", str(label or "").strip()).lower()
+
+
+GENERIC_LABELS = re.compile(r"^(open ?cascade step translator.*|step translator.*|untitled|unnamed|none|compound ?\d*|"
+                            r"product ?\d*|assembly ?\d*|assem ?\d*|shape ?\d*|solid ?\d*|part ?\d*|body ?\d*)$", re.IGNORECASE)
 
 
 def _clean_name(label: str | None, fallback: str) -> str:
@@ -233,21 +285,33 @@ def import_step(data: bytes, filename: str = "model.step") -> dict:
     from build123d import Location
     asm = assembly.new_assembly(_clean_name(getattr(root, "label", ""), stem))
     groups: list[tuple[tuple, str, object]] = []
+    first_label: dict[str, str] = {}
     used: set = set()
     counts: dict[str, int] = {}
     for i, s in enumerate(solids):
         local = s.located(Location())
         sig = _signature(local)
         pid = next((p for g, p, shape in groups if g == sig and _same_when_placed(shape, s)), None)
+        shift = None
+        if pid is None:  # the same shape moved (world-placed copies of one product): one part, placed by the move
+            for g, p, shape in groups:
+                if g == sig and _copy_name(labels[i]) == _copy_name(first_label.get(p)):
+                    shift = _moved_copy(shape, s)
+                    if shift is not None:
+                        pid = p
+                        break
         name = _clean_name(labels[i], f"Body{i + 1}")
         if pid is None:
             pid = _slug(name, used)
             groups.append((sig, pid, local))
+            first_label[pid] = labels[i]
             asm["parts"][pid] = {"version": 1, "type": "part", "name": name, "units": "mm",
                                  "features": [import_part_feature(local, name, os.path.basename(filename))],
                                  "rollback": None, "seq": 10}
         counts[pid] = counts.get(pid, 0) + 1
         R, t = _matrix(s.location)
+        if shift is not None:
+            t = t + np.array([shift.X, shift.Y, shift.Z])
         cid = f"c{i + 1}"
         comp = {"id": cid, "part": pid, "name": f"{asm['parts'][pid]['name']}<{counts[pid]}>",
                 "position": [round(float(v), 6) for v in t], "rotation": assembly.euler_of(R)}

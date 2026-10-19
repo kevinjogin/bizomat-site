@@ -407,7 +407,7 @@ def face_owner(part_doc: dict, center, normal=None) -> dict:
     """The feature that made the face at `center` (and the sketch curve its side came from), worked out from
     the face's persistent name. {feature, role, entity, sketch, name} or {feature: None}."""
     from . import geometry
-    st, _ = geometry.regen(part_doc)
+    st = geometry.rebuilt(part_doc)
     if st.part is None:
         return {"feature": None}
     faces, names, _ = st.namer.current(st.part)

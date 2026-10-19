@@ -111,3 +111,18 @@ def test_lavilock_style_import_part_rolled_back_above_its_only_feature(tmp_path)
     d["parts"]["plate"]["rollback"] = None
     A.export(d, "step", str(tmp_path / "x.step"))
     assert json.dumps(A.regen_assembly(d)["parts"]["plate"].get("rolled_back")) == "null"
+
+
+
+def test_solidworks_macro_export_names_the_rolled_back_part(tmp_path):
+    """The macro export used to drop the features below the bar silently, or fail with 'does not rebuild'."""
+    from opensketch import sldexport
+    for at in (0, 3):
+        with pytest.raises(ValueError) as err:
+            sldexport.export(rolled(at), str(tmp_path / "m.zip"), verify=False, log=lambda *a: None, force_step=True)
+        assert "Plate<1>" in str(err.value) and "Roll Part to End" in str(err.value)
+    part = dict(asm_doc()["parts"]["plate"], rollback=0)
+    with pytest.raises(ValueError, match="Rollback to End"):
+        sldexport.export(part, str(tmp_path / "p.zip"), verify=False, log=lambda *a: None, force_step=True)
+    rep = sldexport.export(dict(part, rollback=3), str(tmp_path / "q.zip"), verify=False, log=lambda *a: None, force_step=True)
+    assert any("rolled back" in n for n in rep["notes"])

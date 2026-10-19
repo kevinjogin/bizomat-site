@@ -24,7 +24,6 @@ import gzip
 import copy
 import re
 import secrets
-import threading
 import json
 import math
 import time
@@ -64,12 +63,10 @@ def _measure(m: dict, poses: dict) -> float | None:
         if a[2] is None or b[2] is None:
             return None
         return math.degrees(math.acos(max(-1.0, min(1.0, float(a[2] @ b[2])))))
-    order = {"plane": 0, "axis": 1, "point": 2}
-    if order[a[0]] > order[b[0]]:
-        a, b = b, a
-    if a[0] == "plane" and b[0] == "plane":
-        return float((b[1] - a[1]) @ a[2])
-    return float(np.linalg.norm(b[1] - a[1]))
+    try:
+        return assembly.coupler_measure("distance", a, b)  # the solver's own limit_distance measure
+    except assembly.AssemblyError:
+        return None
 
 
 def _limits(m: dict) -> tuple[float | None, float | None]:
@@ -439,7 +436,6 @@ def _poses(rest: dict, frame: dict) -> dict:
 # reviews.json lists them (doc, versions, title, when).
 
 TOKEN = re.compile(r"[A-Za-z0-9_-]{20,64}")
-_lock = threading.Lock()
 
 
 def _dir() -> Path:
@@ -449,17 +445,32 @@ def _dir() -> Path:
     return d
 
 
-def _index() -> list[dict]:
+def _locked():
+    """reviews.json is changed by the web server (delete) and by CAD worker processes (publish): a file lock."""
+    from . import store
+    return store.file_lock(_dir() / ".lock")
+
+
+def _index(strict: bool = False) -> list[dict]:
+    """The published reviews. A damaged list reads as empty for showing, but is never written over (strict)."""
+    p = _dir() / "reviews.json"
     try:
-        return json.loads((_dir() / "reviews.json").read_text())
+        items = json.loads(p.read_text())
+        if not isinstance(items, list):
+            raise ValueError
+        return [i for i in items if isinstance(i, dict) and isinstance(i.get("token"), str)]
+    except FileNotFoundError:
+        return []
     except (OSError, ValueError):
+        if strict:
+            raise ReviewError("The list of published reviews is damaged, so nothing was changed. "
+                              "Ask the person who runs this server to restore reviews.json.") from None
         return []
 
 
 def _write_index(items: list[dict]) -> None:
-    tmp = _dir() / "reviews.json.tmp"
-    tmp.write_text(json.dumps(items, indent=1))
-    tmp.replace(_dir() / "reviews.json")
+    from . import store
+    store._write_bytes(_dir() / "reviews.json", json.dumps(items, indent=1).encode())
 
 
 def share_url(token: str, base: str | None = None) -> str:
@@ -477,7 +488,8 @@ def summary(data: dict) -> dict:
             "changed_parts": [p["name"] for p in data["parts"].values() if p.get("changed")]}
 
 
-KEEP_PER_DOC = 20  # published links kept per document (each is a full set of meshes)
+KEEP_PER_DOC = 20    # published links kept per document (each is a full set of meshes)
+KEEP_PER_OWNER = 60  # and per account with a storage limit (store.QUOTA: everyone but the server owner)
 
 
 def publish(doc_id: str, compare_version: int | None = None, title: str | None = None,
@@ -492,26 +504,30 @@ def publish(doc_id: str, compare_version: int | None = None, title: str | None =
         try:
             compare = store.get_version(doc_id, int(compare_version))
         except store.NotFound:
-            raise ReviewError(f"Version {compare_version} is not kept (only the last {store.KEEP} are).") from None
+            raise ReviewError(f"Version {compare_version} is not kept any more.") from None
     history = [{"version": rec["version"], "by": rec.get("by"), "summary": rec.get("summary")}] + store.versions(doc_id)
     data = build(rec, compare, title, notes, history)
     token = secrets.token_urlsafe(24)
     raw = gzip.compress(json.dumps(data, separators=(",", ":")).encode(), 6)
-    (_dir() / f"{token}.json.gz").write_bytes(raw)
-    item = {"token": token, "doc_id": doc_id, "name": rec.get("name"), "title": data["title"],
+    store.check_disk(len(raw), extra=store.RESERVE)  # a review link never takes the last room documents need
+    owner = rec.get("owner")
+    item = {"token": token, "doc_id": doc_id, "owner": owner, "name": rec.get("name"), "title": data["title"],
             "version": rec["version"], "compare": compare_version, "by": by, "created": time.time(),
             "size_kb": len(raw) // 1024}
-    with _lock:
-        items = [item] + _index()
-        mine = [i for i in items if i["doc_id"] == doc_id]
+    with _locked():
+        items = [item] + _index(strict=True)
+        store._write_bytes(_dir() / f"{token}.json.gz", raw)
         _write_index(items)
-    for old in mine[KEEP_PER_DOC:]:  # the newest KEEP_PER_DOC links of a document stay; older ones go
+    gone = [i for i in items if i.get("doc_id") == doc_id][KEEP_PER_DOC:]  # a document's newest links stay
+    if store.limits(owner) is not None:
+        gone += [i for i in items if i.get("owner") == owner and owner is not None][KEEP_PER_OWNER:]
+    for old in gone:
         delete(old["token"])
     return dict(item, url=share_url(token, base), checks=summary(data))
 
 
 def listing(doc_id: str | None = None, base: str | None = None) -> list[dict]:
-    return [dict(i, url=share_url(i["token"], base)) for i in _index() if doc_id is None or i["doc_id"] == doc_id]
+    return [dict(i, url=share_url(i["token"], base)) for i in _index() if doc_id is None or i.get("doc_id") == doc_id]
 
 
 def data_path(token: str) -> Path | None:
@@ -540,11 +556,19 @@ def viewer_page(token: str, static: Path) -> str:
 
 def delete(token: str) -> bool:
     paths = [p for p in (data_path(token), html_path(token)) if p]
-    with _lock:
-        items = _index()
+    with _locked():
+        items = _index(strict=True)
         left = [i for i in items if i["token"] != token]
         if len(left) != len(items):
             _write_index(left)
-    for p in paths:
-        p.unlink()
+        for p in paths:
+            p.unlink(missing_ok=True)
     return bool(paths)
+
+
+def delete_for_doc(doc_id: str) -> int:
+    """Unpublish every review of a document (it was deleted for good: its links must stop working too)."""
+    tokens = [i["token"] for i in _index() if i.get("doc_id") == doc_id]
+    for t in tokens:
+        delete(t)
+    return len(tokens)

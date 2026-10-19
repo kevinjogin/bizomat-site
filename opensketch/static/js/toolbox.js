@@ -72,8 +72,11 @@ export class Toolbox {
   async insert(p) {
     const app = this.app;
     if (!isAssembly(app.doc) || app.proposal) { app.toast('Toolbox parts go into assemblies. Start a New Assembly or open one.'); return; }
+    if (this.inserting) return; // one at a time: a second click does not add a second part
+    this.inserting = true;
+    const done = app.busy(`Making ${p.size || 'the'} ${LABEL[p.kind] || 'part'}`, 300);
     let doc;
-    try { doc = await this.partDoc(p); } catch (err) { app.toast(String(err.message || err)); return; }
+    try { doc = await this.partDoc(p); } catch (err) { app.toast(String(err.message || err)); return; } finally { done(); this.inserting = false; }
     const key = `${p.kind}_${p.size}${p.length && doc.standard.length ? '_' + p.length : ''}`.toLowerCase().replace(/[^a-z0-9_]+/g, '');
     app.commit('Insert ' + doc.name, () => {
       if (!app.doc.parts[key]) app.doc.parts[key] = doc;
@@ -89,6 +92,7 @@ export class Toolbox {
     try { cat = await this.load(); } catch (err) { app.toast(err.message); return; }
     const v = cat[f.kind];
     const st = { size: f.size, length: f.length };
+    if (app.cmd) app.pmCancel(); // the open command's own clean-up (preview body, polling) runs first
     app.cmd = { key: 'toolbox', onOk: () => {
       app.commit('Edit ' + f.name, () => {
         const g = app.featureById(f.id);

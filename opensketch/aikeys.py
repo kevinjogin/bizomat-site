@@ -6,7 +6,11 @@ OPENSKETCH_KEY_SECRET); the browser only ever sees the provider, model and the l
 Without an account (a private server with no sign-in) the settings belong to "local".
 
 Which key a request uses: the person's own key; else the server's ANTHROPIC_API_KEY (the owner's, shared with
-everyone signed in) unless OPENSKETCH_SHARE_SERVER_KEY=0; else the AI is off for them.
+everyone signed in) unless OPENSKETCH_SHARE_SERVER_KEY=0; else the AI is off for them. Early-access testers use the
+owner's AI only while the access code is on (turning it off stops their AI).
+
+Only a custom provider takes an address of the person's choosing (checked public, and pinned when used); the named
+providers always use their own address.
 """
 
 from __future__ import annotations
@@ -82,10 +86,10 @@ def save(user_id: str, provider: str, model: str, key: str | None, base_url: str
     model = (model or "").strip()
     if not model:
         raise KeyError_("Enter a model name.")
-    base = (base_url or "").strip().rstrip("/") or spec.get("base_url") or ""
+    base = spec.get("base_url") or ""  # a named provider's own address, whatever the browser sent
     if provider == "custom":
         try:
-            base = providers.check_base_url(base)
+            base = providers.check_base_url((base_url or "").strip().rstrip("/"))
         except providers.ProviderError as e:
             raise KeyError_(str(e)) from None
     with _lock:
@@ -117,13 +121,14 @@ def remove(user_id: str) -> None:
 def config_for(user_id: str) -> dict | None:
     """The full settings, key decrypted, for a request on the server. None when the person has none."""
     rec = _read().get(user_id)
-    if not rec or not rec.get("key"):
+    if not rec or not rec.get("key") or rec.get("provider") not in providers.PROVIDERS:
         return None
     try:
         key = _fernet().decrypt(rec["key"].encode()).decode()
     except Exception:
         return None  # the secret changed: the person has to enter the key again
-    return {"provider": rec["provider"], "model": rec["model"], "base_url": rec.get("base_url") or "", "key": key, "source": "yours"}
+    base = (rec.get("base_url") or "") if rec["provider"] == "custom" else providers.PROVIDERS[rec["provider"]]["base_url"]
+    return {"provider": rec["provider"], "model": rec["model"], "base_url": base, "key": key, "source": "yours"}
 
 
 def early_access_config() -> dict | None:
@@ -133,7 +138,7 @@ def early_access_config() -> dict | None:
     if cfg is None:
         try:
             from . import accounts
-            owner = next((u for u in accounts.list_users() if u.get("role") == "owner"), None)
+            owner = accounts.owner()
         except Exception:
             owner = None
         cfg = (config_for(owner["id"]) if owner else None) or config_for("local")
@@ -154,11 +159,15 @@ def server_config() -> dict | None:
 def effective(user: dict | None) -> dict | None:
     """The person's own key, else the server's. With open sign-up on, strangers could sign up and spend the
     owner's key, so then only the owner and early-access testers use it (OPENSKETCH_SHARE_SERVER_KEY=all shares it
-    anyway)."""
+    anyway). Testers: only while the early-access code is on. None = no AI for this person (ai.run_stream then
+    refuses; it never falls back to the server's key)."""
     own = config_for(owner_id(user))
     if own:
         return own
     if user and user.get("role") == "tester":
+        from . import accounts
+        if accounts.access_code() is None:
+            return None  # the owner turned early access off: their AI stops (their files stay theirs)
         return early_access_config()  # early access (accounts.create_tester): the owner's AI, no limit
     cfg = server_config()
     if cfg and user and not user.get("legacy") and user.get("role") != "owner" and os.environ.get("OPENSKETCH_SHARE_SERVER_KEY") != "all":

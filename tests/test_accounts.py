@@ -301,6 +301,7 @@ def test_early_access_code_skips_sign_up_as_an_internal_tester(monkeypatch):
     assert visitor.get("/access", follow_redirects=False).headers["location"] == "/"  # already in
     # their own Files, and the server's AI key even with open sign-up on (members lose it then)
     doc = visitor.post("/api/docs", json={"name": "", "kind": "part"}).json()
+    assert doc["doc"]["features"] == [] and doc["version"] == 1  # New opens this answer: the whole (empty) record
     assert [d["id"] for d in visitor.get("/api/docs").json()] == [doc["id"]]
     assert owner.get(f"/api/docs/{doc['id']}").status_code == 404
     accounts.set_open_signup(True)
@@ -320,8 +321,16 @@ def test_early_access_code_skips_sign_up_as_an_internal_tester(monkeypatch):
     assert third.post("/access", data={"code": "SHOWCASE-2026"}, follow_redirects=False).status_code == 303
     assert owner.post("/api/account/settings", json={"access_on": False}).json()["access"]["on"] is False
     assert TestClient(server.app).get("/access").status_code == 410
+    # code off: the tester's Connect AI says the AI is not available, not "included"
+    assert visitor.get("/api/ai/keys").json()["server_key"] is False and not visitor.get("/api/ai/status").json()["available"]
+    # removing one tester sends their files to the owner's Trash (as the dialog says), not to the owner's Files
+    t2 = second.get("/api/account").json()["user"]["id"]
+    kept = second.post("/api/docs", json={"name": "Tester bracket", "kind": "part"}).json()
+    assert owner.delete(f"/api/account/users/{t2}").status_code == 200
+    assert kept["id"] not in [d["id"] for d in owner.get("/api/docs").json()]
+    assert kept["id"] in [d["id"] for d in owner.get("/api/docs?trash=1").json()]
     assert visitor.post("/api/account/settings", json={"access_on": True}).status_code == 403  # owner only
-    assert owner.delete("/api/account/testers").json() == {"removed": 3}
+    assert owner.delete("/api/account/testers").json() == {"removed": 2}
     assert visitor.get("/api/docs").status_code == 401  # signed out at once
     assert [u["role"] for u in accounts.list_users()] == ["owner"]
 

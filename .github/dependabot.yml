@@ -1,0 +1,19 @@
+# Keeps the pinned GitHub Actions (commit SHAs) and the Dockerfile's base images (digests) current: one pull request
+# a month per kind, which the Tests workflow checks before anything is merged. Python packages are pinned in
+# requirements.txt and moved by hand (see pyproject.toml).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      images:
+        patterns: ["*"]

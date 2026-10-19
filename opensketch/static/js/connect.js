@@ -111,7 +111,7 @@ function clientPane(c, info) {
     if (typeof s === 'string') li.appendChild(t('span', null, s));
     else {
       if (s.text) li.appendChild(t('span', null, s.text));
-      if (s.copy) { const row = h('div', 'cx-url'); const inp = h('input'); inp.readOnly = true; inp.value = s.copy; inp.onfocus = () => inp.select(); row.append(inp, copyButton(() => s.copy)); li.appendChild(row); }
+      if (s.copy) { const row = h('div', 'cx-url'); const inp = h('input'); inp.readOnly = true; inp.value = s.copy; inp.setAttribute('aria-label', s.label || 'Connector address'); inp.onfocus = () => inp.select(); row.append(inp, copyButton(() => s.copy)); li.appendChild(row); }
       if (s.code) li.appendChild(codeBlock(s.code, s.lang));
       if (!s.text && !s.copy && !s.code) continue;
       if (!s.text) li.classList.add('bare');
@@ -125,9 +125,13 @@ function clientPane(c, info) {
 function appTab(app, info) {
   const wrap = h('div', 'cx-pane');
   const warn = [];
-  if (!info.password_set && !info.accounts) warn.push('This server has no sign-in. Anyone with its address can use it. Set OPENSKETCH_PASSWORD where it runs, then restart it.');
+  const open = !info.password_set && !info.accounts;
+  const local = /^http:\/\/(127\.|localhost)/.test(info.url || info.mcp_url);
+  // one warning, not two in a row, when both apply
+  if (open && local) warn.push('No sign-in, and the address is on this computer: only desktop AI apps here (Claude Code, Codex, Cursor) can connect. To share it, set OPENSKETCH_PASSWORD and restart.');
+  else if (open) warn.push('This server has no sign-in. Anyone with its address can use it. Set OPENSKETCH_PASSWORD where it runs, then restart it.');
   if (info.codespace) warn.push('Codespaces: make port 8000 public (Ports tab, right-click, Port Visibility > Public) or the AI cannot reach it.');
-  if (/^http:\/\/(127\.|localhost)/.test(info.url || info.mcp_url)) warn.push('This address is on your own computer. ChatGPT and Claude on the web cannot reach it; desktop tools like Claude Code, Codex and Cursor can.');
+  if (local && !open) warn.push('This address is on your own computer. ChatGPT and Claude on the web cannot reach it; desktop tools like Claude Code, Codex and Cursor can.');
   for (const w of warn) wrap.appendChild(t('div', 'cx-warn', w));
   const grid = h('div', 'cx-clients'); grid.setAttribute('role', 'tablist');
   const detail = h('div', 'cx-detail');
@@ -148,12 +152,12 @@ function appTab(app, info) {
   wrap.append(grid, detail);
   const keyNote = h('div', 'cx-foot');
   if (info.signin === false) {
-    keyNote.append(t('span', null, 'This server has no sign-in, so anyone with its address can use it.'));
+    if (!open) keyNote.append(t('span', null, 'This server has no sign-in, so anyone with its address can use it.')); // else the warning above says it
   } else {
     const more = t('button', 'cx-link', 'App cannot sign in?');
     const priv = h('div', 'cx-private'); priv.hidden = true;
     priv.append(t('p', null, 'Use this private address instead. Keep it secret: it opens your Files.'));
-    const row = h('div', 'cx-url'); const inp = h('input'); inp.readOnly = true; inp.value = info.mcp_url; inp.onfocus = () => inp.select();
+    const row = h('div', 'cx-url'); const inp = h('input'); inp.readOnly = true; inp.value = info.mcp_url; inp.setAttribute('aria-label', 'Private connector address'); inp.onfocus = () => inp.select();
     row.append(inp, copyButton(() => info.mcp_url)); priv.appendChild(row);
     more.onclick = () => { priv.hidden = !priv.hidden; };
     keyNote.append(more);
@@ -352,15 +356,16 @@ function swTab(sw) {
     const a = h('a', 'btn primary fv-pill', `<span>Download the add-in</span>${FI.arrow}`);
     a.href = '/api/sw/download';
     li(t('span', null, 'On the SOLIDWORKS PC, download and unzip it.'), a);
+    li(t('span', null, 'Run OpenSketchSW.exe > Install for me.'));
+    li(t('span', null, 'In SOLIDWORKS: OpenSketch > Connect. (No menu? Tools > Macro > Run > Documents\\OpenSketch\\OpenSketch.swb)'));
   } else {
-    li(t('span', null, 'The add-in is not on this server yet.'));
+    // no download here, so no steps that cannot be done: the address and key are still shown for an add-in installed before
+    wrap.appendChild(t('p', 'fv-p cx-note', 'The add-in download is not on this server. Ask the owner to deploy it with the SOLIDWORKS build. If the add-in is already installed, connect it with:'));
   }
-  li(t('span', null, 'Run OpenSketchSW.exe > Install for me.'));
-  li(t('span', null, 'In SOLIDWORKS: OpenSketch > Connect. (No menu? Tools > Macro > Run > Documents\\OpenSketch\\OpenSketch.swb)'));
-  const addr = h('div', 'cx-url'); const ai = h('input'); ai.readOnly = true; ai.value = sw.server; ai.onfocus = () => ai.select();
+  const addr = h('div', 'cx-url'); const ai = h('input'); ai.readOnly = true; ai.value = sw.server; ai.setAttribute('aria-label', 'Server address'); ai.onfocus = () => ai.select();
   addr.append(ai, copyButton(() => sw.server));
   li(t('span', null, 'Address:'), addr);
-  const keyRow = h('div', 'cx-url'); const ki = h('input'); ki.readOnly = true; ki.type = 'password'; ki.value = sw.key; ki.onfocus = () => ki.select();
+  const keyRow = h('div', 'cx-url'); const ki = h('input'); ki.readOnly = true; ki.type = 'password'; ki.value = sw.key; ki.setAttribute('aria-label', 'Add-in key'); ki.onfocus = () => ki.select();
   const showBtn = t('button', 'btn', 'Show'); showBtn.onclick = () => { ki.type = ki.type === 'password' ? 'text' : 'password'; showBtn.textContent = ki.type === 'password' ? 'Show' : 'Hide'; };
   keyRow.append(ki, showBtn, copyButton(() => ki.value));
   li(t('span', null, 'Key (keep it private):'), keyRow);
@@ -373,11 +378,16 @@ function swTab(sw) {
   };
   foot.append(t('span', null, 'Log: %LOCALAPPDATA%\\OpenSketch\\SolidWorks\\log.txt'), renew);
   wrap.appendChild(foot);
-  const timer = setInterval(async () => {
-    if (!wrap.isConnected) { clearInterval(timer); return; }
-    try { paint((await json('/api/sw')).status); } catch (_) { /* offline */ }
-  }, 3000);
-  return wrap;
+  // the status is asked for every 3 s while this tab shows (show() starts and stops it)
+  let timer = null;
+  const start = () => {
+    if (timer) return;
+    const tick = async () => { try { paint((await json('/api/sw')).status); } catch (_) { /* offline */ } };
+    tick();
+    timer = setInterval(() => { if (!wrap.isConnected) { stop(); return; } tick(); }, 3000);
+  };
+  const stop = () => { clearInterval(timer); timer = null; };
+  return { el: wrap, start, stop };
 }
 
 // ---------------------------------------------------------------- dialog
@@ -395,24 +405,38 @@ export async function connectDialog(app, tab = null) {
   const tB = h('button', 'cx-tab', '<b>API key</b>');
   const tC = h('button', 'cx-tab', '<b>SOLIDWORKS</b>');
   tabs.append(tA, tB, tC);
+  // tabs: Left / Right move between them, as tabs do; the selected one has the focus when the dialog opens
+  [tA, tB, tC].forEach((tb, i, all) => {
+    tb.setAttribute('role', 'tab'); tb.type = 'button';
+    tb.addEventListener('keydown', (e) => {
+      const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+      if (!d) return;
+      e.preventDefault();
+      const next = all[(i + d + all.length) % all.length];
+      next.click(); next.focus();
+    });
+  });
   const panes = h('div', 'cx-panes');
   body.append(hero, tabs, panes);
-  const d = dialog({ title: 'Connect AI', body, cls: 'cx-dlg', buttons: [] });
+  const d = dialog({ title: 'Connect AI', body, cls: 'cx-dlg', buttons: [], onClose: () => C?.stop() });
   const A = appTab(app, info);
   const B = keyTab(app, keys, () => d.close());
   const C = swTab(sw);
-  const show = (which) => {
+  // focusField: a mouse click on the tab or the dialog opening (keys that move between the tabs keep the focus there)
+  const show = (which, focusField = false) => {
     try { localStorage.setItem('opensketch.connect.tab', which); } catch (_) { /* */ }
     tA.classList.toggle('on', which === 'app'); tB.classList.toggle('on', which === 'key'); tC.classList.toggle('on', which === 'sw');
     tA.setAttribute('aria-selected', which === 'app'); tB.setAttribute('aria-selected', which === 'key'); tC.setAttribute('aria-selected', which === 'sw');
-    panes.innerHTML = ''; panes.appendChild(which === 'app' ? A : which === 'sw' ? C : B.el);
-    if (which === 'key') setTimeout(() => B.focus(), 30);
+    for (const [tb, w] of [[tA, 'app'], [tB, 'key'], [tC, 'sw']]) tb.tabIndex = which === w ? 0 : -1;
+    panes.innerHTML = ''; panes.appendChild(which === 'app' ? A : which === 'sw' ? C.el : B.el);
+    if (which === 'sw') C.start(); else C.stop();
+    if (which === 'key' && focusField) setTimeout(() => B.focus(), 30);
     // keep the dialog on screen as its height changes
     const r = d.el.getBoundingClientRect();
     if (r.bottom > window.innerHeight - 8) d.el.style.top = Math.max(8, window.innerHeight - r.height - 8) + 'px';
   };
-  tA.onclick = () => show('app'); tB.onclick = () => show('key'); tC.onclick = () => show('sw');
+  tA.onclick = () => show('app'); tB.onclick = (e) => show('key', e.detail > 0); tC.onclick = () => show('sw');
   let saved = null; try { saved = localStorage.getItem('opensketch.connect.tab'); } catch (_) { /* */ }
-  show(tab || saved || 'app');
+  show(tab || saved || 'app', true);
   d.el.style.top = Math.max(8, (window.innerHeight - d.el.getBoundingClientRect().height) / 2.6) + 'px';
 }

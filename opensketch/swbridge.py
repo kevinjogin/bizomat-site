@@ -35,8 +35,9 @@ WAIT = 25                       # s a poll is held open
 ALIVE = 70                      # s since the last poll for SOLIDWORKS to count as connected
 DEFAULT_TIMEOUT = 240           # s a tool waits for SOLIDWORKS
 MAX_FILE = 128 * 1024 * 1024    # one uploaded file
-MAX_FILES_PER_CMD = 512 * 1024 * 1024
+MAX_FILES_PER_CMD = 256 * 1024 * 1024  # held in the web server's memory until the tool has them
 BLOB_LIFETIME = 900             # s a file for SOLIDWORKS stays downloadable
+BLOBS_PER_PERSON = 2            # files waiting for SOLIDWORKS per person (the oldest goes first)
 PROTOCOL = 1
 
 _lock = threading.Lock()
@@ -253,12 +254,21 @@ def put_result(user: dict | None, sid: str, body: dict) -> None:
 
 
 def add_blob(user: dict | None, data: bytes, filename: str) -> str:
+    """Keep a file for SOLIDWORKS to fetch (the tool drops it when its command ends). In memory, so few per person."""
     now = time.time()
+    pid = person_id(user)
     for k in [k for k, v in _blobs.items() if v["expires"] < now]:
         _blobs.pop(k, None)
+    mine = [k for k, v in _blobs.items() if v["pid"] == pid]
+    for k in mine[:max(0, len(mine) - BLOBS_PER_PERSON + 1)]:
+        _blobs.pop(k, None)
     bid = secrets.token_hex(16)
-    _blobs[bid] = {"pid": person_id(user), "data": data, "filename": filename, "expires": now + BLOB_LIFETIME}
+    _blobs[bid] = {"pid": pid, "data": data, "filename": filename, "expires": now + BLOB_LIFETIME}
     return bid
+
+
+def drop_blob(bid: str) -> None:
+    _blobs.pop(bid, None)
 
 
 def blob(user: dict | None, bid: str) -> tuple[bytes, str]:
@@ -310,6 +320,7 @@ async def call(user: dict | None, op: str, args: dict | None = None, timeout: fl
     try:
         body, files = await asyncio.wait_for(fut, timeout=timeout)
     except asyncio.TimeoutError:
+        s.files.pop(cid, None)  # files already sent for it would otherwise stay in memory
         if cmd in s.queue:  # never picked up: take it back
             s.queue.remove(cmd)
             s.pending.pop(cid, None)

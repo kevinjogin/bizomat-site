@@ -7,32 +7,33 @@
 // fast, and played quicker when a backlog builds up.
 
 import * as THREE from 'three';
-import { COLORS, matOf } from './viewer.js';
+import { COLORS, matOf, bodyObject, reducedMotion } from './viewer.js';
 import { drawInactiveSketch } from './sketch/draw.js';
 import { hexColor } from './asm.js';
 
 const PALETTE = ['#8a96a3', '#c4cad2', '#5d7fa8', '#b87333', '#3c4650', '#c8a050', '#6f9a6a', '#a86f6f'];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-function meshGroup(mesh, color, opacity = 1) {
-  const g = new THREE.Group();
-  for (const f of mesh.faces) {
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.Float32BufferAttribute(f.positions, 3));
-    geo.setIndex(f.indices);
-    geo.computeVertexNormals();
-    const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color, metalness: 0.05, roughness: 0.5, side: THREE.DoubleSide,
-      transparent: opacity < 1, opacity, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }));
-    g.add(m);
-  }
-  for (const e of mesh.edges) {
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.Float32BufferAttribute(e.points, 3));
-    const l = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: COLORS.edge, transparent: opacity < 1, opacity: Math.min(1, opacity + 0.2) }));
-    l.renderOrder = 2;
-    g.add(l);
-  }
-  return g;
+// one mesh and one set of edge lines per body (not one object per face)
+const meshGroup = (mesh, color, opacity = 1) => bodyObject(mesh, color, { opacity });
+
+// Remove a live object and free what is its own (part meshes shared with the assembly stay).
+function drop(g) {
+  if (!g) return;
+  g.parent?.remove(g);
+  g.traverse((x) => {
+    if (x.geometry && !x.geometry.userData.shared) x.geometry.dispose();
+    if (x.material) for (const m of Array.isArray(x.material) ? x.material : [x.material]) if (!m.userData.keep) m.dispose();
+  });
+}
+
+// How long an event takes to play at full speed (ms), for pacing the queue.
+function playTime(ev) {
+  if (ev.ev === 'build_start') return 150;
+  if (ev.ev === 'build_step') return ev.sketch && ev.frame ? 520 : ev.body ? 830 : 200;
+  if (ev.ev === 'assembly') { const k = ev.action?.kind; return k === 'insert' ? 1570 : k === 'mate' ? 870 : 600; }
+  if (ev.ev === 'interference') return ev.items?.length ? 1400 : 700;
+  return 0;
 }
 
 function setOpacity(g, o) {
@@ -69,6 +70,8 @@ export class LivePlayer {
     this.active = true;
     this.queue = [];
     this.pumping = null;
+    this.hurry = false;
+    this.skipCtl = new AbortController();
     this.items = new Map();      // live index -> {group, pid, name, color, bbox, slot}
     this.shelf = [];             // finished parts waiting beside the assembly, in build order
     this.byPart = new Map();     // part id -> shelf item
@@ -106,6 +109,7 @@ export class LivePlayer {
     this.active = false;
     this.queue = [];
     this.epoch = (this.epoch || 0) + 1;
+    this.skipCtl?.abort();
     v.clearGroup(v.liveGroup);
     v.bodyGroup.visible = true;
     v.otherSketches.visible = true;
@@ -114,6 +118,7 @@ export class LivePlayer {
   }
 
   caption(text, sub = '') {
+    if (text) this.app.status?.(sub ? `${text}: ${sub}` : text); // the status bar tells the same story
     if (!this.cap) return;
     if (!text) { this.cap.classList.add('hidden'); return; }
     // names come from the AI (or a page it read): text only, never HTML
@@ -140,12 +145,34 @@ export class LivePlayer {
     this.pumping = null;
   }
 
-  speed() { const n = this.queue.length; return n > 12 ? 0.25 : n > 6 ? 0.45 : n > 2 ? 0.7 : 1; }
+  // Pacing: the picture keeps up with the chat. What is still queued must play in about 2.5 s (each step at least
+  // a fifth of its length); once the AI has finished (hurryUp), in about 1.5 s.
+  speed() {
+    if (reducedMotion()) return 0.1;
+    const backlog = this.queue.reduce((t, e) => t + playTime(e), 0);
+    return this.hurry ? Math.max(0.15, Math.min(1, 1500 / Math.max(1, backlog))) : Math.max(0.2, Math.min(1, 2500 / Math.max(1, backlog)));
+  }
+
+  hurryUp() { this.hurry = true; }
+
+  // Stop pressed after the AI finished: skip what is left of the picture (the result is shown as usual).
+  skip() {
+    this.queue = [];
+    this.hurry = true;
+    this.skipCtl?.abort();
+  }
+
+  // A pause in the playback that ends early when the playback is skipped.
+  wait(ms) {
+    const sig = this.skipCtl?.signal;
+    if (!sig || sig.aborted) return Promise.resolve();
+    return new Promise((r) => { const t = setTimeout(r, ms); sig.addEventListener('abort', () => { clearTimeout(t); r(); }, { once: true }); });
+  }
 
   // Wait until everything queued has been played.
   async finish() {
     while (this.pumping) await this.pumping;
-    if (this.active) await sleep(350);
+    if (this.active && !this.skipCtl?.signal.aborted) await sleep(reducedMotion() ? 50 : 350);
   }
 
   // Chat-side progress shows in the caption only while the picture has nothing else to play.
@@ -169,7 +196,7 @@ export class LivePlayer {
       // a new attempt at the same part replaces the earlier one
       for (const [k, o] of this.items) {
         if ((mode === 'part' && o.mode === 'part') || (mode === 'asm' && ev.part && o.pid === ev.part)) {
-          this.viewer.liveGroup.remove(o.group);
+          drop(o.group);
           this.items.delete(k);
           this.shelf = this.shelf.filter((x) => x !== o);
         }
@@ -192,7 +219,7 @@ export class LivePlayer {
     if (it.mode === 'part' && this.partBase) { this.viewer.bodyGroup.visible = false; this.partBase = false; }
     it.recognizing = ev.tool === 'recognize_features';
     this.caption(it.mode === 'asm' ? `Building ${it.name || 'part'}` : it.recognizing ? 'Recognizing features' : 'Building features');
-    await sleep(150 * this.speed());
+    await this.wait(150 * this.speed());
   }
 
   async buildStep(ev) {
@@ -208,10 +235,10 @@ export class LivePlayer {
       drawInactiveSketch(it.sketch, ev.sketch, v.frameMatrix(ev.frame), v.pxSize * 1.2, 0x1a5fe0);
       it.frame = ev.frame;
       this.follow(it);
-      await sleep(520 * sp);
+      await this.wait(520 * sp);
       return;
     }
-    if (!ev.body) { await sleep(200 * sp); return; }
+    if (!ev.body) { await this.wait(200 * sp); return; }
     const color = it.mode === 'asm' ? it.color : COLORS.proposal;
     const g = meshGroup(ev.body, color);
     it.group.add(g);
@@ -235,20 +262,20 @@ export class LivePlayer {
           const t = ext * (1 - Math.pow(1 - u, 2)) + 1e-3;
           p1.constant = n.dot(o) + t; p2.constant = -n.dot(o) + t;
           v.requestRender();
-          if (u < 1 && this.active) requestAnimationFrame(step); else resolve();
+          if (u < 1 && this.active && !this.skipCtl?.signal.aborted) requestAnimationFrame(step); else resolve();
         };
         step();
       });
       setClip(g, []);
     } else {
       setOpacity(g, 0.3);
-      for (let k = 1; k <= 6; k++) { setOpacity(g, 0.3 + 0.7 * k / 6); v.requestRender(); await sleep(45 * sp); }
+      for (let k = 1; k <= 6; k++) { setOpacity(g, 0.3 + 0.7 * k / 6); v.requestRender(); await this.wait(45 * sp); }
     }
-    if (old) { it.group.remove(old); old.traverse((x) => { x.geometry?.dispose(); x.material?.dispose?.(); }); }
+    if (old) drop(old);
     if (['extrude', 'revolve'].includes(f.type)) v.clearGroup(it.sketch);
     this.follow(it);
     v.requestRender();
-    await sleep(180 * sp);
+    await this.wait(180 * sp);
   }
 
   // Shelf: parts wait in a row to the right of the assembly, standing on their own Y.
@@ -273,7 +300,7 @@ export class LivePlayer {
         else { it.group.matrixAutoUpdate = false; it.group.matrix.copy(to); it.group.matrixWorldNeedsUpdate = true; }
       }
     }
-    if (moves.length) return this.viewer.tweenGroups(moves, 450 * this.speed());
+    if (moves.length) return this.viewer.tweenGroups(moves, 450 * this.speed(), this.skipCtl?.signal);
     return null;
   }
 
@@ -313,7 +340,7 @@ export class LivePlayer {
       let g = this.comps.get(c.id);
       const pg = v.partGeo.get(c.part);
       if (!pg) continue;
-      if (g && this.compPart.get(c.id) === c.part && g.userData.key !== pg.key) { v.liveGroup.remove(g); g = null; }
+      if (g && this.compPart.get(c.id) === c.part && g.userData.key !== pg.key) { drop(g); g = null; }
       if (!g) {
         g = this.compGroup(c.part, pg, doc.parts?.[c.part]?.appearance);
         g.userData.key = pg.key;
@@ -331,11 +358,11 @@ export class LivePlayer {
       }
       if (!g.matrix.equals(to)) moves.push({ group: g, to, id: c.id });
     }
-    for (const [id, g] of this.comps) if (!res.components.some((c) => c.id === id)) { v.liveGroup.remove(g); this.comps.delete(id); }
+    for (const [id, g] of this.comps) if (!res.components.some((c) => c.id === id)) { drop(g); this.comps.delete(id); }
     if (act.kind === 'insert' && inserted) {
       this.caption(`Inserting ${names[inserted.id] || inserted.id}`);
       setEmissive(inserted.group, 0x1d3f7a);
-      await v.tweenGroups([{ group: inserted.group, from: inserted.from, via: inserted.via, to: inserted.to }, ...moves], 1000 * sp);
+      await v.tweenGroups([{ group: inserted.group, from: inserted.from, via: inserted.via, to: inserted.to }, ...moves], 1000 * sp, this.skipCtl?.signal);
       setEmissive(inserted.group, 0);
       await this.layoutShelf(true);
     } else if (act.kind === 'mate') {
@@ -345,32 +372,32 @@ export class LivePlayer {
       this.caption(`${m?.name || 'Mate'}${st?.state === 'error' ? ' (cannot be satisfied)' : ''}`, who);
       const involved = new Set((m?.refs || []).map((r) => r.component));
       for (const id of involved) { const g = this.comps.get(id); if (g) setEmissive(g, st?.state === 'error' ? 0x7a1d1d : 0x1d5a2a); }
-      if (moves.length) await v.tweenGroups(moves, 750 * sp); else await sleep(380 * sp);
+      if (moves.length) await v.tweenGroups(moves, 750 * sp, this.skipCtl?.signal); else await this.wait(380 * sp);
       for (const id of involved) { const g = this.comps.get(id); if (g) setEmissive(g, 0); }
     } else {
       if (inserted) moves.push(inserted);
-      if (moves.length) await v.tweenGroups(moves, 600 * sp);
+      if (moves.length) await v.tweenGroups(moves, 600 * sp, this.skipCtl?.signal);
     }
     this.follow();
     v.requestRender();
-    await sleep(120 * sp);
+    await this.wait(120 * sp);
   }
 
   async interference(ev) {
     const v = this.viewer;
-    if (!ev.items?.length) { this.caption('No interferences'); await sleep(700 * this.speed()); return; }
+    if (!ev.items?.length) { this.caption('No interferences'); await this.wait(700 * this.speed()); return; }
     this.caption(`${ev.items.length} interference${ev.items.length > 1 ? 's' : ''} found`);
     const g = new THREE.Group();
     for (const it of ev.items) g.add(meshGroup(it.mesh, 0xff2a2a));
     v.liveGroup.add(g);
     v.requestRender();
-    await sleep(1400 * this.speed());
-    v.liveGroup.remove(g);
+    await this.wait(1400 * this.speed());
+    drop(g);
   }
 
   // Assembly done: the shelf goes away.
   clearShelf() {
-    for (const it of this.shelf) this.viewer.liveGroup.remove(it.group);
+    for (const it of this.shelf) drop(it.group);
     this.shelf = [];
   }
 }

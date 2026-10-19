@@ -30,17 +30,51 @@ from . import assembly, features, geometry
 
 MODEL = "claude-opus-5-5"
 MAX_ROUNDS = 40
-MAX_TOKENS = 32000
+MAX_TOKENS = 64000  # streamed, so a long create_part is not cut off (Opus 5.5 allows up to 128K)
+HISTORY_BUDGET = 400_000  # characters of chat history before older turns are compacted (~100K tokens)
+FULL_SNAPSHOT_EVERY = 4   # after this many "what changed" notes, the next turn sends the whole document again
+
+
+def _size_of(v) -> int:
+    """Bytes a chat history takes (pickled: SDK blocks and plain dicts alike)."""
+    import pickle
+    try:
+        return len(pickle.dumps(v, protocol=pickle.HIGHEST_PROTOCOL))
+    except Exception:
+        return len(str(v))
+
+
+class History(list):
+    """One chat's messages for the model, plus the document as the model last saw it (`view`, so the next request
+    can send only what changed) and how many change notes were sent since the last whole snapshot (`notes`)."""
+
+    def __init__(self, *a):
+        super().__init__(*a)
+        self.view = None
+        self.notes = 0
+
 
 class _Conversations(dict):
-    """Chat histories by id, newest kept (each holds model JSON): a bounded memory, oldest dropped."""
+    """Chat histories by id, newest kept: bounded by count and by bytes, oldest dropped first."""
     MAX = 200
+    MAX_BYTES = 48 * 1024 * 1024
+
+    def __init__(self):
+        super().__init__()
+        self._sizes: dict = {}
 
     def __setitem__(self, k, v):
         super().pop(k, None)
         super().__setitem__(k, v)
-        while len(self) > self.MAX:
-            super().pop(next(iter(self)))
+        self._sizes[k] = _size_of(v)
+        while len(self) > self.MAX or (len(self) > 1 and sum(self._sizes.values()) > self.MAX_BYTES):
+            old = next(iter(self))
+            super().pop(old)
+            self._sizes.pop(old, None)
+
+    def pop(self, k, *default):
+        self._sizes.pop(k, None)
+        return super().pop(k, *default)
 
     def setdefault(self, k, default=None):
         if k in self:
@@ -72,9 +106,9 @@ FEATURES_HELP = """Feature types (part coordinates, millimetres, degrees, Y up a
 
 Planes: {"ref": "Front Plane"} (XY, normal +Z), {"ref": "Top Plane"} (XZ, normal +Y, sketch y = world -Z),
 {"ref": "Right Plane"} (YZ, normal +X, sketch x = world -Z), {"ref": "<plane or sketch feature id>"},
-or a planar face {"type": "face", "origin": [x,y,z], "normal": [x,y,z], "xdir": [x,y,z]}.
-A face plane reattaches to the nearest same-normal face after upstream edits: its origin is a hint,
-not an exact coordinate. Use {"type": "fixed", "origin": [x,y,z], "normal": [x,y,z], "xdir": [x,y,z]}
+or a planar face {"type": "face", "origin": [x,y,z], "normal": [x,y,z], "xdir": [x,y,z], "at": [x,y,z]}.
+"at" is a point on that face (body_topology's "point"): the face holding it is found again after upstream
+edits, so give it for any face away from the origin. The origin is a hint, not an exact coordinate. Use {"type": "fixed", "origin": [x,y,z], "normal": [x,y,z], "xdir": [x,y,z]}
 for computed heights (enclosure floors, nut pockets, locating pins), or an offset reference plane.
 Inspect requested/resolved planes, per-feature tool/result bounds and extrusion normal ranges in
 the rebuild diagnostics. Face movement and no-material-change warnings require inspection even
@@ -107,8 +141,8 @@ feature). [edges] = [{"mid": [x,y,z]}] (an edge picked by its midpoint), [faces]
 """ + features.help_text() + """
 
 Every feature has a unique "id" and a SOLIDWORKS-style "name" (Sketch1, Boss-Extrude1, Cut-Extrude1,
-Fillet1, ...). Point coordinates must already satisfy the constraints (the app re-solves them, but start
-close). Prefer few, meaningful features: one sketch per extrude, simple profiles."""
+Fillet1, ...). Point coordinates must already satisfy the dimensions and relations: the rebuild uses them
+as written (a sketch whose points miss its dimensions gets a sketch_not_solved warning). Prefer few, meaningful features: one sketch per extrude, simple profiles."""
 
 SYSTEM = f"""You are the design copilot inside OpenSketch, a parametric CAD app that works like SOLIDWORKS.
 The user watches the viewport while you work: every feature you write is rebuilt and drawn as soon as
@@ -384,6 +418,106 @@ MATERIALS = {
 PALETTE = ["#8a96a3", "#c4cad2", "#5d7fa8", "#b87333", "#3c4650", "#c8a050", "#6f9a6a", "#a86f6f"]
 
 
+# ----------------------------------------------------------------------------- tool input checks
+
+def _is_report(report) -> bool:
+    """A tool's JSON report (it acted, or answered with numbers); tools refuse in plain text."""
+    return isinstance(report, str) and report.lstrip().startswith("{")
+
+
+# Other names callers use for an argument (the MCP add_contact tool says from_value / to_value, because `from` is
+# a Python keyword), mapped to the session's own names before the input is checked.
+ALIASES = {"add_contact": {"from_value": "from", "to_value": "to"}}
+
+_JSON_TYPES = {"string": str, "array": list, "object": dict, "boolean": bool}
+
+
+def tool_schema(name: str) -> dict | None:
+    return next((t["input_schema"] for t in TOOLS if t.get("name") == name), None)
+
+
+def _type_ok(t, v) -> bool:
+    if t in ("number", "integer"):
+        return (isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
+                and (t == "number" or float(v).is_integer()))
+    if t == "string" and isinstance(v, (int, float)) and not isinstance(v, bool):
+        return True  # an expression or a name written as a bare number ("expression": 2) means the same
+    return isinstance(v, _JSON_TYPES[t]) if t in _JSON_TYPES else True
+
+
+def _type_name(t) -> str:
+    return {"integer": "a whole number", "number": "a number", "array": "a list", "object": "an object",
+            "boolean": "true or false"}.get(t, f"a {t}")
+
+
+def input_problem(name: str, inp) -> str | None:
+    """Why a tool input does not fit the tool's schema (None when it does): not an object, unknown or missing
+    arguments, wrong types or values. Streamed tool input is parsed tolerantly, so a garbled call must be caught
+    here, not run. add_<feature> tools only get the name check: the registry checks their values."""
+    if not isinstance(inp, dict):
+        return f"{name}: the input must be a JSON object."
+    schema = tool_schema(name)
+    if schema is None:
+        return None
+    props = schema.get("properties", {})
+    unknown = sorted(k for k in inp if k not in props)
+    if unknown:
+        return (f"{name} does not take {', '.join(unknown)}. Its arguments are: {', '.join(props) or 'none'}. "
+                "Nothing was changed.")
+    if features.type_for_tool(name) is not None:
+        return None
+    missing = [k for k in schema.get("required", []) if inp.get(k) is None]
+    if missing:
+        return f"{name} needs {', '.join(missing)}. Nothing was changed."
+    for k, v in inp.items():
+        p = props[k]
+        if v is None:
+            continue
+        t = p.get("type")
+        if not _type_ok(t, v):
+            return f"{name}: {k} must be {_type_name(t)}. Nothing was changed."
+        if "enum" in p and v not in p["enum"]:
+            return f"{name}: {k} must be one of {', '.join(map(str, p['enum']))}. Nothing was changed."
+        if t == "array":
+            if len(v) < p.get("minItems", 0) or len(v) > p.get("maxItems", len(v)):
+                n = p.get("minItems") if p.get("minItems") == p.get("maxItems") else None
+                return f"{name}: {k} must have {n if n is not None else 'the right number of'} items. Nothing was changed."
+            it = (p.get("items") or {}).get("type")
+            if it and not all(_type_ok(it, x) for x in v):
+                return f"{name}: every item of {k} must be {_type_name(it)}. Nothing was changed."
+    return None
+
+
+def _id_problem(feats, existing=()) -> str | None:
+    """Feature ids must be unique: a repeated id leaves two features answering to it (equations, deletes and the
+    browser's tree all go by id)."""
+    if not isinstance(feats, list):
+        return "features must be a list of feature objects. Nothing was changed."
+    seen, dup = set(existing), []
+    for f in feats:
+        if not isinstance(f, dict) or not isinstance(f.get("id"), str) or not f["id"]:
+            return "Every feature must be an object with a string id. Nothing was changed."
+        if f["id"] in seen:
+            dup.append(f["id"])
+        seen.add(f["id"])
+    if dup:
+        return (f"Feature ids already used: {', '.join(dict.fromkeys(dup))}. Give new features ids of their own "
+                "(mode \"replace\" rewrites the whole tree). Nothing was changed.")
+    return None
+
+
+def _cut_base(ft, feat: dict) -> str:
+    """Tree name base, as the app names it: a cut extrude is Cut-Extrude1, not Boss-Extrude2."""
+    if feat.get("op") == "cut":
+        return {"extrude": "Cut-Extrude", "revolve": "Cut-Revolve", "sweep": "Cut-Sweep", "loft": "Cut-Loft"}.get(ft.type, ft.base)
+    return ft.base
+
+
+def _finite3(v) -> bool:
+    return (isinstance(v, (list, tuple)) and len(v) == 3
+            and all(isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x) for x in v))
+
+
 # ----------------------------------------------------------------------------- helpers
 
 def _apply(doc: dict, inp: dict) -> dict:
@@ -425,6 +559,14 @@ def _part_report(st) -> tuple[dict, bool]:
     else:
         rep["body"] = "none"
     return rep, rep["clean"]
+
+
+def _new_with_defaults(feats: list, existing: list) -> list:
+    """Features the model writes, with registry defaults written into the new ones (ids not already in the part),
+    so a new document carries no implicit numbers. Features already there are left as they are: a left-out field
+    keeps meaning what it always built (Param.omitted)."""
+    old = {f.get("id") for f in existing or [] if isinstance(f, dict)}
+    return [f if not isinstance(f, dict) or f.get("id") in old else features.with_defaults(f) for f in feats]
 
 
 def _input_problems(rep: dict, feats: list) -> bool:
@@ -568,12 +710,17 @@ def _working_assembly(doc: dict) -> dict:
     return asm
 
 
-def _asm_report(asm: dict, res: dict) -> dict:
+def _asm_report(asm: dict, res: dict, detail=None) -> dict:
+    """Rebuild and mate state of an assembly. detail: the parts whose full feature status goes in `parts` (None:
+    all, for get_document); the others get one short line, since tool results stay in the chat history and every
+    part's status in every mate result made them large."""
     names = {c["id"]: c.get("name") for c in asm.get("components", [])}
-    parts = {k: {**_status_report(v["status"]), "bbox": v["bbox"], "planes": v.get("planes", {})}
-             for k, v in res["parts"].items()}
-    errors = [{"part": pid, **e} for pid, p in parts.items() for e in p["errors"]]
-    warnings = [{"part": pid, **w} for pid, p in parts.items() for w in p["warnings"]]
+    full = {k: {**_status_report(v["status"]), "bbox": v["bbox"], "planes": v.get("planes", {})}
+            for k, v in res["parts"].items()}
+    errors = [{"part": pid, **e} for pid, p in full.items() for e in p["errors"]]
+    warnings = [{"part": pid, **w} for pid, p in full.items() for w in p["warnings"]]
+    parts = full if detail is None else {
+        k: p if k in detail else {"bbox": p["bbox"], "rebuilt": p["rebuilt"], "clean": p["clean"]} for k, p in full.items()}
     for pid, v in res["parts"].items():
         if v.get("rolled_back"):
             what = "has no body in the assembly" if not v.get("bbox") else "is missing its features from there down"
@@ -601,6 +748,253 @@ def _next_name(existing: list[str], base: str) -> str:
     while f"{base}{n}" in existing:
         n += 1
     return f"{base}{n}"
+
+
+def light_doc(doc: dict) -> dict:
+    """The document as live events carry it: what the chat and the live view read (names, appearances,
+    components, mates), without the parts' features, whose imported BREP data can be megabytes. The whole
+    document comes once, with "done"."""
+    if assembly.is_assembly(doc):
+        out = {k: v for k, v in doc.items() if k != "parts"}
+        out["parts"] = {pid: {k: p[k] for k in ("name", "appearance") if k in p}
+                        for pid, p in (doc.get("parts") or {}).items()}
+        return out
+    out = {k: v for k, v in doc.items() if k != "features"}
+    out["features"] = [{k: f.get(k) for k in ("id", "name", "type")} for f in doc.get("features", []) if isinstance(f, dict)]
+    return out
+
+
+def _light_result(res: dict) -> dict:
+    """A solved assembly for a live event: meshes (each sent once) and poses, without every part's full status."""
+    out = dict(res)
+    out["parts"] = {pid: {k: v for k, v in p.items() if k not in ("status", "planes")} for pid, p in res["parts"].items()}
+    return out
+
+
+# ----------------------------------------------------------------------------- what the model sees of the document
+
+def _ids(items) -> list | None:
+    """Ids of a list of objects, or None when an item has no id or ids repeat (then it is sent whole)."""
+    if not isinstance(items, list):
+        return None
+    ids = [it.get("id") if isinstance(it, dict) else None for it in items]
+    if any(not isinstance(i, str) for i in ids) or len(set(ids)) != len(ids):
+        return None
+    return ids
+
+
+def _list_delta(old, new) -> dict | None:
+    oi, ni = _ids(old), _ids(new)
+    if oi is None or ni is None:
+        return None
+    before = dict(zip(oi, old))
+    out: dict = {}
+    changed = [it for i, it in zip(ni, new) if before.get(i) != it]
+    removed = [i for i in oi if i not in set(ni)]
+    if changed:
+        out["changed"] = changed
+    if removed:
+        out["removed"] = removed
+    kept = [i for i in oi if i in set(ni)]
+    if ni != kept + [i for i in ni if i not in before]:
+        out["order"] = ni
+    return out
+
+
+def _dict_delta(old: dict, new: dict, lists: tuple, nested: str | None = None) -> dict | None:
+    out: dict = {}
+    for k in sorted(set(old) | set(new)):
+        if k in lists:
+            d = _list_delta(old.get(k) or [], new.get(k) or [])
+            if d is None:
+                if old.get(k) != new.get(k):
+                    out.setdefault("set", {})[k] = new.get(k)
+            elif d:
+                out[k] = d
+        elif k == nested:
+            o, n = old.get(k) or {}, new.get(k) or {}
+            d = {}
+            ch = {pid: p for pid, p in n.items() if o.get(pid) != p}
+            gone = [pid for pid in o if pid not in n]
+            if ch:
+                d["changed"] = ch
+            if gone:
+                d["removed"] = gone
+            if d:
+                out[k] = d
+        elif k not in new:
+            out.setdefault("unset", []).append(k)
+        elif old.get(k) != new[k]:
+            out.setdefault("set", {})[k] = new[k]
+    return out
+
+
+def doc_delta(old: dict | None, new: dict) -> dict | None:
+    """What changed between two model views, by id: {"set": {key: value}, "unset": [keys], "features" |
+    "components" | "mates" | "contacts": {"changed": [whole items], "removed": [ids], "order": [ids]},
+    "parts": {"changed": {part id: whole part}, "removed": [ids]}}. {} when nothing changed; None when the whole
+    document is shorter to send (or the kind changed)."""
+    if not isinstance(old, dict) or assembly.is_assembly(old) != assembly.is_assembly(new):
+        return None
+    if assembly.is_assembly(new):
+        d = _dict_delta(old, new, ("components", "mates", "contacts"), nested="parts")
+    else:
+        d = _dict_delta(old, new, ("features",))
+    if d and len(json.dumps(d)) > 0.6 * len(json.dumps(new)):
+        return None
+    return d
+
+
+def document_message(history: "History", doc: dict, kind: str) -> str:
+    """The document part of a request: the whole model view the first time (and every few turns), else only
+    what changed since the model last saw it, so a long chat does not resend the whole assembly every turn."""
+    view = model_view(doc)
+    delta = doc_delta(history.view, view) if history.view is not None and history.notes < FULL_SNAPSHOT_EVERY else None
+    history.view = view
+    if delta is None:
+        history.notes = 0
+        return f"Current {kind} document:\n```json\n{json.dumps(view)}\n```"
+    history.notes += 1
+    if not delta:
+        return (f"Current {kind} document: the same as in my previous message (if you proposed changes after it, "
+                "they were not accepted).")
+    return (f"Current {kind} document: changed since my previous message (an accepted proposal and/or the user's "
+            "own edits). The changes, by id (changed = new or edited items in full, removed = ids that are gone, "
+            f"order = the new order, set / unset = other fields):\n```json\n{json.dumps(delta)}\n```")
+
+
+# ----------------------------------------------------------------------------- keeping a long chat within bounds
+
+_THINKING = ("thinking", "redacted_thinking")
+_WEB_BLOCKS = ("server_tool_use",) + ("web_search_tool_result", "web_fetch_tool_result")
+
+
+def _block_dict(b) -> dict:
+    if isinstance(b, dict):
+        return b
+    if hasattr(b, "model_dump"):
+        try:
+            return b.model_dump(exclude_none=True)
+        except TypeError:
+            return b.model_dump()
+    return dict(vars(b))
+
+
+def _short_input(inp) -> dict:
+    """An old tool call's input without its bulk: lists of features become a count and their ids."""
+    if not isinstance(inp, dict):
+        return {}
+    out = {}
+    for k, v in inp.items():
+        if k == "features" and isinstance(v, list):
+            ids = [str(f.get("id")) for f in v if isinstance(f, dict)]
+            out[k] = f"[{len(v)} features, omitted from this old call: {', '.join(ids[:30])}]"
+        elif isinstance(v, (list, dict)) and len(json.dumps(v, default=str)) > 400:
+            out[k] = "[omitted from this old call]"
+        else:
+            out[k] = v
+    return out
+
+
+def _short_result(content) -> str:
+    """An old tool result, cut to what still matters later: clean or not, the errors, the key numbers."""
+    if not isinstance(content, str):
+        content = " ".join(_g(x, "text") or "" for x in content) if isinstance(content, list) else str(content)
+    try:
+        rep = json.loads(content)
+    except ValueError:
+        return content[:400]
+    if not isinstance(rep, dict):
+        return content[:400]
+    keep = {k: rep[k] for k in ("clean", "rebuilt", "part_id", "feature", "volume", "bbox_min", "bbox_max", "this_mate",
+                                "interferences", "deleted", "changed") if k in rep}
+    if rep.get("errors"):
+        keep["errors"] = [{k: e[k] for k in ("part", "id", "mate", "component", "message") if k in e}
+                          for e in rep["errors"][:8]]
+    if rep.get("warnings"):
+        keep["warnings"] = len(rep["warnings"])
+    return json.dumps(keep)[:1500] + " (old result, shortened)"
+
+
+def _turn_starts(history: list) -> list[int]:
+    """Indices of the user's requests (not tool results): where each turn begins."""
+    return [i for i, m in enumerate(history) if _g(m, "role") == "user" and isinstance(_g(m, "content"), str)]
+
+
+def compact_history(history: "History", budget: int = HISTORY_BUDGET) -> bool:
+    """Keep a long chat working: when the history passes `budget` characters, earlier turns lose their bulk
+    (document snapshots, the features written in tool calls, full tool results, web pages, thinking), and if that
+    is not enough the oldest turns go. The conversation stays readable: every request, reply and tool call is
+    still there. Editing earlier turns invalidates their thinking blocks, so every thinking block is removed
+    (the API allows dropping them; it does not allow replaying them after an edit). True if anything changed."""
+    if _size_of(list(history)) <= budget:
+        return False
+    starts = _turn_starts(history)
+    last = starts[-1] if starts else len(history)
+    out = []
+    for i, m in enumerate(history):
+        role, content = _g(m, "role"), _g(m, "content")
+        old = i < last
+        if isinstance(content, str):
+            if role == "user" and old and "\n\nRequest: " in content:
+                content = "(Earlier request; its document snapshot is omitted.)\n\nRequest: " + content.split("\n\nRequest: ", 1)[1]
+            out.append({"role": role, "content": content})
+            continue
+        blocks = []
+        for b in content or []:
+            d = _block_dict(b)
+            t = d.get("type")
+            if t in _THINKING or (old and t in _WEB_BLOCKS):
+                continue
+            if t == "text":
+                d = {"type": "text", "text": d.get("text") or ""}  # citations point at web results that may be gone
+            elif old and t == "tool_use":
+                d = {"type": "tool_use", "id": d.get("id"), "name": d.get("name"), "input": _short_input(d.get("input"))}
+            elif old and t == "tool_result":
+                d = {k: v for k, v in d.items() if k in ("type", "tool_use_id", "is_error")}
+                d["content"] = _short_result(_block_dict(b).get("content"))
+            blocks.append(d)
+        if not blocks:
+            blocks = [{"type": "text", "text": "(searched the web)" if role == "assistant" else "(omitted)"}]
+        out.append({"role": role, "content": blocks})
+    while _size_of(out) > budget // 2:  # still too long: drop the oldest turns, keep the last two
+        starts = _turn_starts(out)
+        if len(starts) < 3:
+            break
+        out = out[starts[1]:]
+    history[:] = out
+    history.view = None  # the next request sends the whole document again
+    history.notes = 0
+    return True
+
+
+def strip_thinking(history: list) -> bool:
+    """Remove every thinking block (the recovery the API gives when a history no longer matches the blocks'
+    signatures). True if any was removed."""
+    found = False
+    for i, m in enumerate(history):
+        content = _g(m, "content")
+        if _g(m, "role") != "assistant" or isinstance(content, str):
+            continue
+        keep = [b for b in content or [] if _g(b, "type") not in _THINKING]
+        if len(keep) != len(content or []):
+            found = True
+            history[i] = {"role": "assistant", "content": keep or [{"type": "text", "text": "(thinking)"}]}
+    return found
+
+
+def close_open_calls(history: list) -> None:
+    """A chat stopped while its tools ran ends in tool calls without results, which the API refuses: answer them."""
+    if not history:
+        return
+    last = history[-1]
+    if _g(last, "role") != "assistant":
+        return
+    ids = [_g(b, "id") for b in _g(last, "content") or [] if _g(b, "type") == "tool_use"]
+    if ids:
+        history.append({"role": "user", "content": [
+            {"type": "tool_result", "tool_use_id": i, "is_error": True, "content": "Not run: the user stopped the request."}
+            for i in ids]})
 
 
 class FeatureScanner:
@@ -660,20 +1054,36 @@ class FeatureScanner:
         return m.group(1) if m else None
 
 
+LIVE_MESH_FACES = geometry.MESH_FINE_FACES  # bodies with more faces are not sent to the live view after each step
+
+
 class LiveBuilder:
-    """Rebuilds features one at a time and reports each step for the viewport."""
+    """Rebuilds features one at a time and reports each step for the viewport. Like geometry.regen it records
+    persistent names (so fillets picked by name find their edges) and reports suppressed features."""
 
     def __init__(self, base_features=()):
-        self.st = geometry.RegenState()
+        from . import naming
+        self.st = geometry.RegenState(namer=naming.Namer())
         self.count = 0
+        self.features: list = []   # every feature built, in order (to reuse this build for the same tree)
+        self.mesh, self._meshed = None, None
         for f in base_features:
-            if f.get("suppressed"):
-                continue
-            geometry.rebuild_feature(f, self.st)
+            self._build(f)
+
+    def _build(self, f: dict) -> dict:
+        self.features.append(f)
+        if f.get("suppressed"):
+            status = {"id": f.get("id"), "state": "suppressed"}
+            self.st.status.append(status)
+            return status
+        before = self.st.part
+        _, status = geometry.rebuild_feature(f, self.st)
+        self.st.namer.record(f, before, self.st)
+        return status
 
     def add(self, f: dict) -> dict:
         before = self.st.part
-        _, status = geometry.rebuild_feature(f, self.st)
+        status = self._build(f)
         ev = {"feature": {k: f.get(k) for k in ("id", "name", "type")},
               **{k: v for k, v in status.items() if k != "id"}}
         if f.get("type") in ("sketch", "plane") and f.get("id") in self.st.planes:
@@ -681,11 +1091,30 @@ class LiveBuilder:
             if f.get("type") == "sketch":
                 ev["sketch"] = f
         if self.st.part is not None and self.st.part is not before:
-            ev["body"] = geometry.mesh_shape(self.st.part)
             bb = self.st.part.bounding_box()
             ev["bbox"] = [geometry.vlist(bb.min), geometry.vlist(bb.max)]
+            if len(self.st.part.faces()) <= LIVE_MESH_FACES:
+                ev["body"] = self.mesh = geometry.mesh_shape(self.st.part)
+                self._meshed = self.st.part
+            else:  # a big body (an imported plate): megabytes per step; the result is drawn when it is done
+                ev["body_skipped"] = True
         self.count += 1
         return ev
+
+    def matches(self, part: dict) -> bool:
+        """True when this build is exactly what geometry.regen would make of `part`, so it can be reused."""
+        from . import params
+        return part.get("rollback") is None and not params.has_equations(part) and self.features == part.get("features")
+
+    def remember(self, part: dict) -> None:
+        """Put this build in geometry's build cache under the part's content, so the assembly solve after it
+        (assembly.build_part -> geometry.built) does not build the part again."""
+        mesh = self.mesh if self._meshed is self.st.part and self.st.part is not None else geometry.mesh_shape(self.st.part)
+        key = geometry.body_key(part)
+        with geometry._built_lock:
+            geometry._built[key] = (self.st, mesh)
+            while len(geometry._built) > geometry.BUILT_CACHE_SIZE:
+                geometry._built.popitem(last=False)
 
 
 # ----------------------------------------------------------------------------- session
@@ -699,15 +1128,38 @@ class Session:
         self.sent_keys: dict[str, str] = {}
         self.steps: list = []
         self.summary = ""
+        self.requests: list = []
+        self.prebuilt: LiveBuilder | None = None  # the live build of the tool call being applied (run_stream sets it)
+        self.stop = None  # callable: true once the person stopped the chat (see run_stream)
+
+    def _proposal(self) -> dict:
+        return {"ev": "proposal", "doc": light_doc(self.work), "summary": self.summary}
+
+    def _placed(self, pid) -> bool:
+        return bool(pid) and any(c.get("part") == pid for c in self.work.get("components", []))
+
+    def _build(self, part: dict, placed: bool = False):
+        """The regen state of a part, built once: the live build of this call when it made exactly this tree, else
+        a rebuild (through geometry's cache when an assembly solve will need the same part right after)."""
+        if self.prebuilt is not None and self.prebuilt.matches(part):
+            if placed:
+                self.prebuilt.remember(part)
+            return self.prebuilt.st
+        return geometry.built(part)[0] if placed else geometry.regen(part)[0]
 
     # -- part documents
     def propose_features(self, inp: dict) -> tuple[str, bool, list]:
         if assembly.is_assembly(self.work):
             return "This is an assembly. Use create_part to change a part, insert_component and add_mate to place it.", False, []
+        feats = inp.get("features")
+        why = _id_problem(feats, () if inp.get("mode") == "replace" else [f.get("id") for f in self.work.get("features", [])])
+        if why:
+            return why, False, []
+        inp = {**inp, "features": _new_with_defaults(feats or [], self.work.get("features"))}
         cand = restore_blobs(_apply(self.work, inp), self.work, self.doc)
-        st, _ = geometry.regen(cand)
+        st = self._build(cand)
         rep, clean = _part_report(st)
-        clean = _input_problems(rep, inp.get("features") or []) and clean
+        clean = _input_problems(rep, feats) and clean
         if not any(f.get("type") == "import" for f in cand.get("features", [])):
             cmp = compare_with_import(self.doc if not assembly.is_assembly(self.doc) else {}, st.part)
             if cmp:
@@ -716,7 +1168,7 @@ class Session:
         self.work = cand
         self.summary = inp.get("summary", "")
         self.steps.append({"summary": self.summary, "clean": clean})
-        return report, clean, [{"ev": "proposal", "doc": self.work, "summary": self.summary}]
+        return report, clean, [self._proposal()]
 
     # -- assemblies
     def _asm(self) -> dict:
@@ -730,12 +1182,17 @@ class Session:
         self.work = assembly.apply_solution(asm, res)
         for pid, p in res["parts"].items():
             self.sent_keys[pid] = p["key"]
-        return res, {"ev": "assembly", "doc": self.work, "result": res, "action": action}
+        # meshes go once per part key; the document without its parts' features (the full one comes with "done")
+        return res, {"ev": "assembly", "doc": light_doc(self.work), "result": _light_result(res), "action": action}
 
     def create_part(self, inp: dict) -> tuple[str, bool, list]:
+        feats = inp.get("features") or []
+        why = _id_problem(feats)
+        if why:
+            return why, False, []
         asm = self._asm()
         pid = str(inp.get("part_id") or f"part{len(asm['parts']) + 1}")
-        feats = inp.get("features") or []
+        feats = _new_with_defaults(feats, (asm["parts"].get(pid) or {}).get("features"))
         part = {"version": 1, "type": "part", "name": inp.get("name") or pid, "units": "mm", "features": feats,
                 "rollback": None, "seq": 1000}
         old = asm["parts"].get(pid)
@@ -747,7 +1204,8 @@ class Session:
             part["material"] = {"name": mat, "density": MATERIALS.get(mat.lower(), 7.85e-6)}
         elif old and old.get("material"):
             part["material"] = old["material"]
-        st, _ = geometry.regen(part)
+        placed = self._placed(pid)
+        st = self._build(part, placed)
         rep, clean = _part_report(st)
         clean = _input_problems(rep, feats) and clean
         if st.part is not None:
@@ -756,19 +1214,24 @@ class Session:
         self.summary = f"Part {part['name']}"
         self.steps.append({"summary": self.summary, "clean": clean})
         events = []
-        if any(c.get("part") == pid for c in asm.get("components", [])):
+        if placed:
             _, ev = self._solve_event({"kind": "part", "part": pid})
             events.append(ev)
         else:
-            events.append({"ev": "proposal", "doc": self.work, "summary": self.summary})
+            events.append(self._proposal())
         rep["part_id"] = pid
         return json.dumps(rep), clean, events
 
     def insert_component(self, inp: dict) -> tuple[str, bool, list]:
-        asm = self._asm()
+        for k in ("position", "rotation"):
+            if k in inp and not _finite3(inp[k]):
+                return f"{k} must be three finite numbers, [x, y, z]. Nothing was changed.", False, []
         pid = inp.get("part")
-        if pid not in asm["parts"]:
-            return f"Unknown part {pid!r}. Create it with create_part first.", False, []
+        parts = self.work.get("parts", {}) if assembly.is_assembly(self.work) else {}
+        if pid not in parts:
+            known = f" Parts: {sorted(parts)}." if parts else ""
+            return f"Unknown part {pid!r}. Create it with create_part first.{known}", False, []
+        asm = self._asm()
         cid = str(inp.get("component_id") or f"c{len(asm['components']) + 1}")
         comp = next((c for c in asm["components"] if c["id"] == cid), None)
         new = comp is None
@@ -793,7 +1256,7 @@ class Session:
             comp["fixed"] = True
         res, ev = self._solve_event({"kind": "insert", "component": cid, "new": new})
         self.summary = f"Inserted {comp['name']}"
-        rep = _asm_report(asm, res)
+        rep = _asm_report(asm, res, detail=())
         self.steps.append({"summary": self.summary, "clean": rep["clean"]})
         return json.dumps(rep), rep["clean"], [ev]
 
@@ -801,6 +1264,8 @@ class Session:
         t = inp.get("type")
         if t not in assembly.MATE_TYPES:
             return f"Unknown mate type {t!r}", False, []
+        if not assembly.is_assembly(self.work):
+            return "Mates are between components: this document is a part. Create parts and insert them first.", False, []
         if t == "coupler":
             if len(inp.get("input_refs") or []) != 2:
                 return "A coupler needs input_refs: the two references whose angle or distance drives it.", False, []
@@ -830,7 +1295,7 @@ class Session:
         asm["mates"].append(mate)
         res, ev = self._solve_event({"kind": "mate", "mate": mid})
         state = next((m for m in res["mates"] if m["id"] == mid), {})
-        rep = _asm_report(self.work, res)
+        rep = _asm_report(self.work, res, detail=())
         clean = rep["clean"]
         self.summary = f"{mate['name']}"
         self.steps.append({"summary": self.summary, "clean": clean})
@@ -849,7 +1314,7 @@ class Session:
             asm["contacts"] = [k for k in lst if k["id"] != inp["remove"]]
             self.summary = f"Removed contact {inp['remove']}"
             self.steps.append({"summary": self.summary, "clean": True})
-            return json.dumps({"contacts": asm["contacts"]}), True, [{"ev": "proposal", "doc": self.work, "summary": self.summary}]
+            return json.dumps({"contacts": asm["contacts"]}), True, [self._proposal()]
         ids = {c["id"] for c in asm.get("components", [])}
         a, b = inp.get("a"), inp.get("b")
         if a not in ids or b not in ids or a == b:
@@ -870,7 +1335,7 @@ class Session:
         self.summary = f"Contact {k['name']}"
         self.steps.append({"summary": self.summary, "clean": True})
         return (json.dumps({"contact": k, "note": "Checked by publish_review (contacts in its checks)."}), True,
-                [{"ev": "proposal", "doc": self.work, "summary": self.summary}])
+                [self._proposal()])
 
     # -- global variables and equations (params.py)
     def _target_part(self, pid):
@@ -884,7 +1349,8 @@ class Session:
         from . import params
         new, prep = params.evaluate(part)
         part["features"] = new["features"]
-        st, _ = geometry.regen(part)
+        placed = self._placed(pid)
+        st = self._build(part, placed)
         rep, clean = _part_report(st)
         now = {s["id"]: s.get("message") for s in st.status if s["state"] == "error"}
         rep["parameters"] = params.table(part)
@@ -895,13 +1361,12 @@ class Session:
             rep["part_id"] = pid
         self.summary = summary
         self.steps.append({"summary": summary, "clean": clean})
-        if pid and any(c.get("part") == pid for c in self.work.get("components", [])):
+        if placed:
             return json.dumps(rep), clean and not rep["now_failing"], [self._solve_event({"kind": "part", "part": pid})[1]]
-        return json.dumps(rep), clean and not rep["now_failing"], [{"ev": "proposal", "doc": self.work, "summary": summary}]
+        return json.dumps(rep), clean and not rep["now_failing"], [self._proposal()]
 
-    @staticmethod
-    def _errors(part: dict) -> dict:
-        st, _ = geometry.regen(part)
+    def _errors(self, part: dict, pid=None) -> dict:
+        st = self._build(part, self._placed(pid))
         return {s["id"]: s.get("message") for s in st.status if s["state"] == "error"}
 
     def set_parameter(self, inp: dict) -> tuple[str, bool, list]:
@@ -912,12 +1377,12 @@ class Session:
         name = inp.get("name")
         if not isinstance(name, str) or not params.NAME.match(name) or name in params.RESERVED:
             return "name must be a letter or _ followed by letters, digits or _ (not a function or unit name).", False, []
-        before = self._errors(part)
-        rows = part.setdefault("parameters", [])
+        rows = part.get("parameters") or []
         row = next((r for r in rows if r.get("name") == name), None)
         if inp.get("remove"):
             if row is None:
                 return f"No variable {name!r}.", False, []
+            before = self._errors(part, inp.get("part_id"))
             users = [r for r in params.table(part) if r["name"] == name][0]["used_by"]
             if users and not inp.get("force"):
                 return (f"{name!r} is used by {', '.join(users)}. Change those first, or pass force=true "
@@ -934,6 +1399,8 @@ class Session:
         _, problems = params.variables({"parameters": trial})
         if name in problems:
             return f"Not set: {problems[name]}", False, []
+        before = self._errors(part, inp.get("part_id"))
+        rows = part.setdefault("parameters", rows)
         if row is None:
             row = {"name": name}
             rows.append(row)
@@ -955,7 +1422,12 @@ class Session:
             return f"No feature {key!r}; features: {[f.get('id') for f in part.get('features', [])]}.", False, []
         expr = inp.get("expression")
         expr = str(expr).strip().lstrip("=").strip() if expr not in (None, "") else None
-        before = self._errors(part)
+        if expr is not None:  # checked before anything is written
+            values, _ = params.variables(part)
+            try:
+                params.evaluate_expr(expr, values)
+            except params.ExprError as exc:
+                return f"Not set: {exc}. Nothing was changed.", False, []
         label = feat.get("name") or feat["id"]
         if feat.get("type") == "sketch":
             c = next((c for c in feat.get("constraints", []) if field in (c.get("id"), c.get("name"))), None)
@@ -964,6 +1436,7 @@ class Session:
                 return f"No dimension {field!r} in {label}; dimensions: {dims}.", False, []
             if c.get("driven"):
                 return f"{field} is a driven (reference) dimension; it cannot take an equation.", False, []
+            before = self._errors(part, inp.get("part_id"))
             if expr is None:
                 c.pop("eq", None)
             else:
@@ -973,6 +1446,7 @@ class Session:
             if obj is None or not isinstance(obj.get(k), (int, float)) or isinstance(obj.get(k), bool):
                 nums = [k2 for k2, v in feat.items() if isinstance(v, (int, float)) and not isinstance(v, bool)]
                 return f"{label} has no number {field!r}; numbers: {nums}.", False, []
+            before = self._errors(part, inp.get("part_id"))
             eqs = feat.setdefault("eq", {})
             if expr is None:
                 eqs.pop(field, None)
@@ -980,12 +1454,6 @@ class Session:
                     feat.pop("eq")
             else:
                 eqs[field] = expr
-        if expr is not None:
-            values, _ = params.variables(part)
-            try:
-                params.evaluate_expr(expr, values)
-            except params.ExprError as exc:
-                return f"Not set: {exc}", False, []
         summary = f"{field}@{label} = {expr}" if expr else f"Removed equation on {field}@{label}"
         return self._params_result(part, inp.get("part_id"), before, summary)
 
@@ -1007,19 +1475,21 @@ class Session:
             plan["dry_run"] = True
             plan["note"] = "Nothing deleted. Call again without dry_run to delete."
             return json.dumps(plan), not plan["would_fail"], []
-        st, _ = geometry.regen(new)
+        placed = self._placed(pid)
+        st = self._build(new, placed)
         rep, clean = _part_report(st)
         rep["deletion"] = plan
         gone = len(plan["deleted"]) + len(plan["deleted_with_it"]) + len(plan["absorbed"])
         self.summary = f"Deleted {gone} feature{'s' if gone != 1 else ''}" + (f" from {part.get('name', pid)}" if pid else "")
         self.steps.append({"summary": self.summary, "clean": clean})
         if pid:
+            rep["part_id"] = pid
             self.work["parts"][pid] = new
-            if any(c.get("part") == pid for c in self.work.get("components", [])):
+            if placed:
                 return json.dumps(rep), clean, [self._solve_event({"kind": "part", "part": pid})[1]]
         else:
             self.work = new
-        return json.dumps(rep), clean, [{"ev": "proposal", "doc": self.work, "summary": self.summary}]
+        return json.dumps(rep), clean, [self._proposal()]
 
     def delete_items(self, inp: dict) -> tuple[str, bool, list]:
         if inp.get("features"):
@@ -1066,7 +1536,7 @@ class Session:
         for p in parts:
             asm["parts"].pop(p, None)
         res, ev = self._solve_event({"kind": "delete", "components": sorted(comps), "mates": sorted(mates)})
-        rep = _asm_report(asm, res)
+        rep = _asm_report(asm, res, detail=())
         rep["deleted"] = {"components": sorted(comps), "mates": sorted(mates), "parts": sorted(parts)}
         self.summary = "Deleted " + ", ".join(f"{len(v)} {k}" for k, v in rep["deleted"].items() if v)
         return json.dumps(rep), rep["clean"], [ev]
@@ -1085,7 +1555,7 @@ class Session:
         from . import recognize
         pid = inp.get("part_id") or None
         try:
-            res = recognize.recognize_doc(self.work, part_id=pid, kinds=inp.get("kinds") or None)
+            res = recognize.recognize_doc(self.work, part_id=pid, kinds=inp.get("kinds") or None, stop=self.stop)
         except recognize.RecognizeError as exc:
             return f"Not recognized: {exc}", False, []
         parts = {}
@@ -1115,7 +1585,7 @@ class Session:
                 if f.get("suppressed"):
                     continue
                 events.append({"ev": "build_step", "index": None, "key": key, "n": n, **builder.add(f)})
-            events.append({"ev": "proposal", "doc": self.work, "summary": self.summary})
+            events.append(self._proposal())
         return json.dumps({"changed": res["changed"], "parts": parts}), clean, events
 
     def find_mate_candidates(self, inp: dict) -> tuple[str, bool, list]:
@@ -1126,20 +1596,21 @@ class Session:
 
     def standard_part(self, inp: dict) -> tuple[str, bool, list]:
         from . import importer
-        asm = self._asm()
         kind = inp.get("kind")
         if kind not in importer.STANDARD:
             return f"Unknown kind {kind!r}", False, []
         args = {"size": inp.get("size")}
         if "length" in importer.STANDARD[kind][2]:
             args["length"] = float(inp.get("length") or 10)
-        part = importer.standard_part_doc(kind, **args)
+        sizes = importer.standard_catalog().get(kind, {}).get("sizes", [])[:40]
         try:
+            part = importer.standard_part_doc(kind, **args)
             st, _ = geometry.regen(part)
         except Exception as exc:
-            return f"Could not make {kind} {args}: {exc}. Sizes: {importer.standard_catalog().get(kind, {}).get('sizes', [])[:40]}", False, []
+            return f"Could not make {kind} {args}: {exc}. Sizes: {sizes}", False, []
         if st.part is None:
             return f"Could not make {kind} {args}: {st.status}", False, []
+        asm = self._asm()
         pid = str(inp.get("part_id") or kind)
         asm["parts"][pid] = part
         rep, clean = _part_report(st)
@@ -1157,11 +1628,21 @@ class Session:
         return json.dumps(rep), clean, ev
 
     def request_part_file(self, inp: dict) -> tuple[str, bool, list]:
-        num = (inp.get("mcmaster_part_number") or "").strip()
-        url = inp.get("url") or (f"https://www.mcmaster.com/{num}/" if num else "")
+        raw = str(inp.get("mcmaster_part_number") or "").strip().upper()
+        num = raw if re.fullmatch(r"[0-9A-Z]{3,20}", raw) else ""
+        if raw and not num:
+            return "mcmaster_part_number is letters and digits only, such as 91290A115. Nothing was changed.", False, []
+        page = str(inp.get("url") or "").strip()
+        if page and not re.fullmatch(r"https?://[^\s/?#@]+(/\S*)?", page, re.I):
+            return "url must be an http(s) address of the product page. Nothing was changed.", False, []
+        # A McMaster-Carr number always links to McMaster-Carr: the card says "McMaster-Carr <number>", so its link must
+        # not lead anywhere else (a page the AI read could have suggested another address). Other pages go separately.
+        url = f"https://www.mcmaster.com/{num}/" if num else page
         ev = {"ev": "request_file", "part": inp.get("part_id"), "description": inp.get("description", ""),
               "mcmaster": num, "url": url}
-        self.requests = getattr(self, "requests", []) + [ev]
+        if num and page and page.rstrip("/").lower() != url.rstrip("/").lower():
+            ev["page"] = page
+        self.requests = self.requests + [ev]
         return ("The user has been asked to download the STEP and drop it in; it will replace part "
                 f"{inp.get('part_id')!r} later. Create a placeholder with create_part using that part_id now."), True, [ev]
 
@@ -1185,14 +1666,22 @@ class Session:
         n = len(feats) + 1
         while f"f{n}" in ids:
             n += 1
-        feat = {"id": f"f{n}", "name": inp.get("name") or _next_feature_name(feats, ft.base), **feat}
+        feat = {"id": f"f{n}", "name": inp.get("name") or _next_feature_name(feats, _cut_base(ft, feat)), **feat}
         rb = part.get("rollback")
         base = feats[:rb] if rb is not None else feats
-        builder = LiveBuilder(base)
+        from . import params
+        if params.has_equations(part):  # built with the numbers the equations give, as geometry.regen does
+            base_built = params.evaluate(part)[0]["features"][:len(base)]
+        else:
+            base_built = base
+        builder = LiveBuilder(base_built)
         step = builder.add(feat)
         part["features"] = [*base, feat, *feats[len(base):]]
         if rb is not None:
             part["rollback"] = rb + 1
+        placed = self._placed(pid)
+        if placed and builder.matches(part):
+            builder.remember(part)  # the assembly solve below reuses this build
         rep, clean = _part_report(builder.st)
         rep["feature"] = {"id": feat["id"], "name": feat["name"], "state": step.get("state")}
         if pid:
@@ -1204,30 +1693,54 @@ class Session:
                    "name": part.get("name") if pid else None, "appearance": part.get("appearance") if pid else None,
                    "mode": "asm" if pid else "part"},
                   {"ev": "build_step", "index": None, "key": key, "n": 1, **step}]
-        if pid and any(c.get("part") == pid for c in self.work.get("components", [])):
+        if placed:
             events.append(self._solve_event({"kind": "part", "part": pid})[1])
         else:
-            events.append({"ev": "proposal", "doc": self.work, "summary": self.summary})
+            events.append(self._proposal())
         return json.dumps(rep), clean, events
 
     def apply(self, name: str, inp: dict):
+        """Run one tool. The input is checked against the tool's schema first, and a tool that refuses (a plain-text
+        answer that is not clean) or fails leaves the session exactly as it was: nothing half-done is proposed, or
+        saved by MCP, while the answer says it was refused."""
         ft = features.type_for_tool(name)
         if ft is not None and name != "add_mate":
-            out = self.add_feature(ft, inp or {})
+            fn = lambda i: self.add_feature(ft, i)  # noqa: E731
+        else:
+            fn = {"propose_features": self.propose_features, "create_part": self.create_part,
+                  "insert_component": self.insert_component, "add_mate": self.add_mate,
+                  "delete_items": self.delete_items, "check_interference": self.check_interference,
+                  "find_mate_candidates": self.find_mate_candidates, "standard_part": self.standard_part,
+                  "recognize_features": self.recognize_features,
+                  "request_part_file": self.request_part_file, "set_parameter": self.set_parameter,
+                  "set_equation": self.set_equation, "add_contact": self.add_contact}.get(name)
+        if fn is None:
+            self.prebuilt = None
+            return f"Unknown tool {name}", False, []
+        if inp is None:
+            inp = {}
+        if isinstance(inp, dict):
+            inp = {ALIASES.get(name, {}).get(k, k): v for k, v in inp.items()}
+        why = input_problem(name, inp)
+        if why:
+            self.prebuilt = None
+            return why, False, []
+        saved = (copy.deepcopy(self.work), list(self.requests), list(self.steps), self.summary, dict(self.sent_keys))
+
+        def restore():
+            self.work, self.requests, self.steps, self.summary, self.sent_keys = saved
+        try:
+            out = fn(inp)
+            if not out[1] and not _is_report(out[0]):
+                restore()
+                return out[0], False, []
             self.settle_equations()
             return out
-        fn = {"propose_features": self.propose_features, "create_part": self.create_part,
-              "insert_component": self.insert_component, "add_mate": self.add_mate,
-              "delete_items": self.delete_items, "check_interference": self.check_interference,
-              "find_mate_candidates": self.find_mate_candidates, "standard_part": self.standard_part,
-              "recognize_features": self.recognize_features,
-              "request_part_file": self.request_part_file, "set_parameter": self.set_parameter,
-              "set_equation": self.set_equation, "add_contact": self.add_contact}.get(name)
-        if fn is None:
-            return f"Unknown tool {name}", False, []
-        out = fn(inp or {})
-        self.settle_equations()
-        return out
+        except BaseException:
+            restore()
+            raise
+        finally:
+            self.prebuilt = None
 
     def settle_equations(self) -> None:
         """Store the numbers the equations give (and re-solved sketches), so the document shows what is built."""
@@ -1258,6 +1771,7 @@ class _Live:
         feats = self.scan.feed(partial)
         if self.name in ("propose_features", "create_part"):
             for f in feats:
+                f = _new_with_defaults([f], self._existing())[0]  # built live as it will be stored
                 if self.builder is None:
                     self.builder = LiveBuilder(self._base(f))
                     events.append({"ev": "build_start", "tool": self.name, "index": self.index, "key": self.key,
@@ -1273,6 +1787,15 @@ class _Live:
                 self.names = names
                 events.append({"ev": "tool_progress", "index": self.index, "tool": self.name, "names": names, "chars": self.chars})
         return events
+
+    def _existing(self) -> list:
+        """The features of the part this tool call writes into, as they are now."""
+        work = self.session.work
+        if self.name == "create_part":
+            if not assembly.is_assembly(work):
+                return []
+            return ((work.get("parts") or {}).get(str(self.scan.field("part_id") or "")) or {}).get("features") or []
+        return [] if assembly.is_assembly(work) else work.get("features") or []
 
     def _base(self, first: dict) -> list:
         """Features already in the part before this proposal (append mode)."""
@@ -1386,9 +1909,17 @@ def selection_note(selection: list | None) -> str:
             "`feature` made it and `entity` is the sketch curve its side came from):\n" + "\n".join(lines))
 
 
+SERVER_KEY = object()  # run_stream's default for scripts and tests: the server's own ANTHROPIC_API_KEY
+
+
 def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool | str = False,
-               demo_speed: float = 1.0, selection: list | None = None, ai_config: dict | None = None) -> Iterator[dict]:
+               demo_speed: float = 1.0, selection: list | None = None, ai_config=SERVER_KEY,
+               stop=None) -> Iterator[dict]:
     """Yield events while Claude designs. The last event is {"ev": "done", ...} or {"ev": "error", ...}.
+
+    ai_config: the provider settings to use (aikeys.effective for the signed-in person). None means this person has
+    no AI: never the server's key instead (the server decided they may not use it). Left out (scripts, tests): the
+    server's own key.
 
     With demo=True (or OPENSKETCH_AI_DEMO=1) a scripted session (opensketch/demo.py) is streamed
     through the same code path, so the live view can be tried without an API key."""
@@ -1397,14 +1928,15 @@ def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool
     except ImportError:
         anthropic = None
     demo = demo or demo_enabled()
+    cfg = None
     if demo:
         from . import demo as demo_mod
         client = demo_mod.client(demo_speed, demo if isinstance(demo, str) else "press")
     else:
         from . import providers
         cfg = ai_config
-        if cfg is None and available():
-            cfg = {"provider": "anthropic", "model": MODEL, "base_url": "", "key": None, "source": "server"}
+        if cfg is SERVER_KEY:
+            cfg = {"provider": "anthropic", "model": MODEL, "base_url": "", "key": None, "source": "server"} if available() else None
         if cfg is None:
             yield {"ev": "error", "message": NO_KEY}
             return
@@ -1412,21 +1944,44 @@ def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool
             yield {"ev": "error", "message": "The anthropic package is not installed on this server."}
             return
         client = providers.client_for(cfg)
-    conv_id = history_id if isinstance(history_id, str) and history_id in _conversations else str(uuid.uuid4())
-    messages = _conversations.setdefault(conv_id, [])
+    known = isinstance(history_id, str) and history_id in _conversations
+    lost = isinstance(history_id, str) and bool(history_id) and not known  # e.g. the server restarted after an update
+    conv_id = history_id if known else str(uuid.uuid4())
+    messages = _conversations.setdefault(conv_id, History())
+    if not isinstance(messages, History):
+        messages = History(messages)
+        _conversations[conv_id] = messages
+    close_open_calls(messages)  # a stopped request can leave tool calls without results
+    compact_history(messages)
     kind = "assembly" if assembly.is_assembly(doc) else "part"
     messages.append({"role": "user", "content": (
-        f"Current {kind} document:\n```json\n{json.dumps(model_view(doc))}\n```\n\nRequest: {prompt}"
-        + selection_note(selection))})
+        document_message(messages, doc, kind) + f"\n\nRequest: {prompt}" + selection_note(selection))})
     session = Session(doc)
+    session.stop = stop  # the person pressed Stop: long tools (feature recognition) end at their next check
     sources: list[dict] = []  # pages the AI read or cited, shown under its reply
-    yield {"ev": "start", "conversation": conv_id, "kind": kind, "demo": demo}
+    start = {"ev": "start", "conversation": conv_id, "kind": kind, "demo": demo}
+    if lost:
+        start["history_lost"] = True
+    yield start
     thinking = {"type": "adaptive", "display": "summarized"}
+    try:
+        yield from _rounds(client, cfg, demo, anthropic, messages, session, sources, conv_id, thinking)
+    finally:
+        _conversations[conv_id] = messages  # re-measured: the store is bounded by bytes
+
+
+def _rounds(client, cfg, demo, anthropic, messages, session, sources, conv_id, thinking):
+    from . import providers
+    stripped = False
     for _ in range(MAX_ROUNDS):
         native = demo or cfg["provider"] == "anthropic"
         kw = dict(model=MODEL, max_tokens=MAX_TOKENS, system=SYSTEM if native else SYSTEM + NO_WEB_NOTE,
                   tools=TOOLS + (web_tools() if native else []), messages=messages,
                   output_config={"effort": "high"}, betas=["server-side-fallback-2026-07-01"], fallbacks="default")
+        if native:
+            # The system prompt and tools (~12K tokens) and the conversation so far are the same prefix on every round
+            # of a turn and every turn of a chat: cached, they cost a twentieth of fresh input.
+            kw["cache_control"] = {"type": "ephemeral"}
         if not demo:
             kw = providers.adapt_kwargs(cfg, kw)
         if thinking:
@@ -1500,12 +2055,20 @@ def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool
                 yield queue.pop(0)
         exc = result.get("exc")
         if exc is not None:
+            if (anthropic and isinstance(exc, anthropic.BadRequestError) and "signature" in str(exc) and not stripped
+                    and strip_thinking(messages)):
+                stripped = True  # thinking blocks no longer valid for this history: answer without them, once
+                continue
             if anthropic and isinstance(exc, anthropic.BadRequestError) and thinking and ("thinking" in str(exc) or "display" in str(exc)):
                 thinking = None  # older API without summarized thinking: retry without it
                 continue
             from .providers import ProviderError
             if isinstance(exc, ProviderError):
                 yield {"ev": "error", "message": str(exc) + (" Check the key in Connect AI > API key." if exc.status in (401, 403) else "")}
+            elif "prompt is too long" in str(exc).lower() or "context window" in str(exc).lower():
+                compact_history(messages, budget=0)  # the next message starts from a shortened chat
+                yield {"ev": "error", "message": "This chat got too long for the AI. Send your message again: older "
+                                                 "parts of the chat are now shortened. Or start a new chat."}
             elif anthropic and isinstance(exc, anthropic.AuthenticationError):
                 yield {"ev": "error", "message": "Anthropic refused the API key. Check it in Connect AI > API key."}
             elif anthropic and isinstance(exc, anthropic.APIConnectionError):
@@ -1525,6 +2088,13 @@ def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool
             yield {"ev": "done", "conversation": conv_id, "reply": "The request was declined.", "proposal": None, "steps": session.steps}
             return
         uses = [b for b in resp.content if b.type == "tool_use"]
+        # Tool input streams eagerly and is parsed tolerantly: a call cut off by the output limit still parses (as a
+        # shorter feature list, say), so it must not run. The adapter for other providers marks input it could not
+        # parse at all.
+        cut = resp.stop_reason == "max_tokens" and resp.content and _g(resp.content[-1], "type") == "tool_use"
+        broken = dict(getattr(resp, "invalid_inputs", None) or {})
+        if cut:
+            broken.setdefault(_g(resp.content[-1], "id"), None)
         if not uses:
             text = "".join(b.text for b in resp.content if b.type == "text").strip()
             changed = session.work != session.doc
@@ -1535,11 +2105,25 @@ def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool
         results = []
         for u in uses:
             idx = next((i for i, b in enumerate(resp.content) if b is u), None)
+            if u.id in broken:
+                raw = broken[u.id]
+                why = (f"Not run: this call's input is not valid JSON: {json.dumps({'INVALID_JSON': raw[:2000]})}" if raw is not None
+                       else "Not run: this call was cut off at the output limit before its input was complete. Send less "
+                            "in one call: fewer features per propose_features or create_part (append the rest in a "
+                            "second call), or add_<feature> for single features.")
+                yield {"ev": "tool_done", "index": idx, "tool": u.name, "clean": False,
+                       "summary": "Could not apply: " + ("the input was not valid JSON" if raw is not None else "cut off at the output limit")}
+                results.append({"type": "tool_result", "tool_use_id": u.id, "is_error": True, "content": why})
+                continue
+            live = lives.get(idx)
+            session.prebuilt = live.builder if live is not None else None  # reused when it built exactly this tree
             try:
                 report, clean, events = session.apply(u.name, u.input)
                 for ev in events:
                     yield {**ev, "index": idx}
-                yield {"ev": "tool_done", "index": idx, "tool": u.name, "clean": clean, "summary": session.summary}
+                refused = not clean and not _is_report(report)  # nothing changed: the chat row says why
+                yield {"ev": "tool_done", "index": idx, "tool": u.name, "clean": clean,
+                       "summary": f"Could not apply: {report[:200]}" if refused else session.summary}
                 results.append({"type": "tool_result", "tool_use_id": u.id, "content": report})
             except Exception as exc:  # malformed input
                 yield {"ev": "tool_done", "index": idx, "tool": u.name, "clean": False, "summary": f"Could not apply: {exc}"}
@@ -1549,17 +2133,3 @@ def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool
     yield {"ev": "done", "conversation": conv_id, "reply": session.summary or "Stopped after several attempts.",
            "proposal": session.work if session.work != session.doc else None, "summary": session.summary, "steps": session.steps,
            "sources": sources}
-
-
-def run(doc: dict, prompt: str, history_id: str | None = None) -> dict:
-    """Non-streaming wrapper: run the whole loop and return the final result."""
-    if not available():
-        raise AIUnavailable("Set ANTHROPIC_API_KEY to use OpenSketch AI.")
-    last = None
-    for ev in run_stream(doc, prompt, history_id):
-        last = ev
-        if ev["ev"] == "error":
-            raise AIUnavailable(ev["message"])
-    out = dict(last or {})
-    out.pop("ev", None)
-    return out

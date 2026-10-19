@@ -3,15 +3,38 @@
 
 import { icon } from '../icons.js';
 import { escapeHtml } from '../model-utils.js';
+import { asButton } from './dialogs.js';
 
 const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+const LENGTH = { mm: 1, cm: 10, m: 1000, in: 25.4, inch: 25.4, '"': 25.4 };
+const isAngle = (unit) => unit === 'deg' || unit === '°';
 
-export function evalExpr(s) {
-  // numbers with optional math and units: "25*2", "1in", "=10+5"
-  let t = String(s).trim().replace(/^=/, '');
-  const inch = /in(ch)?$/i.test(t); t = t.replace(/(mm|in|inch|deg|°)$/i, '');
+/** A typed value: numbers with optional math and a unit ("25*2", "1in", "=10+5", "1.5cm"). A decimal comma
+ * counts as a point (2,5 = 2.5). unit is the field's: lengths in mm, angles in deg ('deg' or '°'); leave it out
+ * to accept either. A unit of the wrong kind gives NaN. */
+export function evalExpr(s, unit) {
+  let t = String(s).trim().replace(/^=/, '').replace(/(\d),(\d)/g, '$1.$2');
+  let f = 1;
+  const m = t.match(/(mm|cm|m|inch|in|"|deg|°|rad)\s*$/i);
+  if (m) {
+    const u = m[1].toLowerCase();
+    if (u === 'deg' || u === '°') { if (unit !== undefined && !isAngle(unit)) return NaN; }
+    else if (u === 'rad') { if (!isAngle(unit)) return NaN; f = 180 / Math.PI; }
+    else { if (isAngle(unit)) return NaN; f = LENGTH[u]; }
+    t = t.slice(0, m.index);
+  }
   if (!/^[0-9+\-*/().\s eE]+$/.test(t)) return NaN;
-  try { const v = Function('"use strict";return (' + t + ')')(); return inch ? v * 25.4 : +v; } catch (_) { return NaN; }
+  try { return +Function('"use strict";return (' + t + ')')() * f; } catch (_) { return NaN; }
+}
+
+const num = (v) => +(+v).toFixed(4);
+/** Why a typed value was refused, in plain words (null when it is fine). */
+export function valueProblem(text, { unit = 'mm', min, max } = {}) {
+  const v = evalExpr(text, unit);
+  if (!Number.isFinite(v)) return isAngle(unit) ? 'Type an angle, like 2.5 or 30deg.' : unit === 'mm' ? 'Type a length, like 2.5 or 10mm.' : 'Type a number, like 2.5.';
+  if (min !== undefined && v < min) return `At least ${num(min)}${unit}.`;
+  if (max !== undefined && v > max) return `At most ${num(max)}${unit}.`;
+  return null;
 }
 
 export class PropertyManager {
@@ -40,6 +63,7 @@ export class PropertyManager {
     this.feedbackUpdates = [];
     this.root.innerHTML = '';
     this.app.showPanel('tree');
+    this.app.updateConfirmCorner?.();
   }
 
   findSelboxes() {
@@ -66,6 +90,7 @@ export class PropertyManager {
     const s = this.spec;
     if (!s) return;
     this.feedbackUpdates = [];
+    this.badFields = new Set(); // number fields holding a value they cannot use (shown in red with the reason)
     const root = this.root;
     const scroll = root.scrollTop;
     root.innerHTML = '';
@@ -77,19 +102,30 @@ export class PropertyManager {
     // a native button keeps OK keyboard reachable; aria-disabled (not disabled) so a click that commits a field
     // on blur still reaches OK (Offset Entities Distance -> OK)
     const ok = el('button', 'pm-act' + (s.okEnabled && !s.okEnabled() ? ' disabled' : ''), icon('ok', 20)); ok.title = 'OK'; ok.setAttribute('aria-label', 'OK');
-    const okState = () => { const off = !!s.okEnabled && !s.okEnabled(); ok.classList.toggle('disabled', off); ok.setAttribute('aria-disabled', String(off)); };
+    // OK pressed and the feature is being applied: show it at once (a spinner), and ignore more clicks
+    const okState = () => {
+      const busy = !!this.app?.cmd?.committing, off = (!!s.okEnabled && !s.okEnabled()) || this.badFields.size > 0 || busy;
+      ok.classList.toggle('disabled', off && !busy); ok.classList.toggle('busy', busy);
+      ok.setAttribute('aria-disabled', String(off)); ok.setAttribute('aria-busy', String(busy));
+      this.app?.updateConfirmCorner?.();
+    };
     okState(); this.feedbackUpdates.push(okState);
     ok.onclick = () => { okState(); if (ok.getAttribute('aria-disabled') !== 'true') this.app.pmOk(); };
     acts.appendChild(ok);
     if (!s.noCancel) { const cancel = el('button', 'pm-act', icon('cancel', 20)); cancel.title = 'Cancel'; cancel.setAttribute('aria-label', 'Cancel'); cancel.onclick = () => this.app.pmCancel(); acts.appendChild(cancel); }
     if (s.preview !== undefined) {
-      const pv = el('div', 'pm-act' + (s.preview ? ' on' : ''), icon('eye', 20)); pv.title = 'Detailed Preview';
+      const pv = asButton(el('div', 'pm-act' + (s.preview ? ' on' : ''), icon('eye', 20)), 'Detailed Preview', { pressed: !!s.preview }); pv.title = 'Detailed Preview';
       pv.onclick = () => { s.preview = !s.preview; this.changed(true); };
       acts.appendChild(pv);
     }
-    const pin = el('div', 'pm-act' + (s.pinned ? ' on' : ''), icon('pin', 20)); pin.title = 'Keep Visible';
-    pin.onclick = () => { s.pinned = !s.pinned; this.render(); };
-    acts.appendChild(pin);
+    // Keep Visible (SOLIDWORKS pushpin): after OK the same command opens again for the next one. Only commands
+    // that can start again offer it (s.repeat).
+    if (s.repeat) {
+      const pin = asButton(el('div', 'pm-act' + (s.pinned ? ' on' : ''), icon('pin', 20)), 'Keep Visible', { pressed: !!s.pinned });
+      pin.title = s.pinned ? 'Keep Visible: on. After OK this opens again for the next one.' : 'Keep Visible: open this again after OK';
+      pin.onclick = () => { s.pinned = !s.pinned; s.onPin?.(s.pinned); this.render(); };
+      acts.appendChild(pin);
+    }
     pm.appendChild(acts);
     const msg = typeof s.message === 'function' ? s.message() : s.message;
     if (msg) pm.appendChild(el('div', 'pm-msg' + (s.messageError ? ' err' : ''), msg));
@@ -134,19 +170,39 @@ export class PropertyManager {
         const unit = typeof r.unit === 'function' ? r.unit() : (r.unit ?? 'mm');
         const show = () => { const v = r.get(); inp.value = (Number.isFinite(v) ? +(+v).toFixed(4) : v) + (unit ? unit : ''); };
         show();
+        // A value the field cannot use stays as typed, in red, with the reason under it; OK waits until it is fixed.
+        const err = el('div', 'pm-fielderr'); err.hidden = true; err.id = 'pmerr-' + Math.random().toString(36).slice(2, 8);
+        row._after = err;
+        const mark = (msg) => {
+          err.textContent = msg || ''; err.hidden = !msg;
+          if (msg) { inp.setAttribute('aria-invalid', 'true'); inp.setAttribute('aria-describedby', err.id); this.badFields.add(r); }
+          else { inp.removeAttribute('aria-invalid'); inp.removeAttribute('aria-describedby'); this.badFields.delete(r); }
+          this.refreshFeedback();
+        };
         const commit = () => {
-          const v = evalExpr(inp.value);
-          if (Number.isFinite(v) && (r.min === undefined || v >= r.min) && (r.max === undefined || v <= r.max)) { r.set(r.int ? Math.round(v) : v); this.changed(!!r.rerender); }
+          const why = valueProblem(inp.value, { unit, min: r.min, max: r.max });
+          if (why) { mark(why); return; }
+          mark(null);
+          const v = evalExpr(inp.value, unit);
+          r.set(r.int ? Math.round(v) : v); this.changed(!!r.rerender);
           show();
         };
         inp.addEventListener('change', commit);
-        inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); commit(); } e.stopPropagation(); });
+        inp.addEventListener('keydown', (e) => {
+          e.stopPropagation();
+          if (e.key === 'Enter') { e.preventDefault(); commit(); return; }
+          // Up / Down step the value, as the arrows beside the field do
+          if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+          e.preventDefault();
+          const v = r.get() + (e.key === 'ArrowUp' ? 1 : -1) * (r.step || 1);
+          if (Number.isFinite(v) && (r.min === undefined || v >= r.min) && (r.max === undefined || v <= r.max)) { mark(null); r.set(r.int ? Math.round(v) : v); show(); this.changed(!!r.rerender); }
+        });
         inp.addEventListener('wheel', (e) => { if (document.activeElement !== inp) return; e.preventDefault(); const st = r.step || 1; const v = r.get() + (e.deltaY < 0 ? st : -st); if (Number.isFinite(v) && (r.min === undefined || v >= r.min) && (r.max === undefined || v <= r.max)) { r.set(r.int ? Math.round(v) : v); show(); this.changed(!!r.rerender); } });
         wrap.appendChild(inp);
         const spin = el('div', 'pm-spin', '<span>&#9650;</span><span>&#9660;</span>');
         const st = r.step || 1;
-        spin.children[0].onclick = () => { const v = r.get() + st; if (r.max === undefined || v <= r.max) { r.set(v); show(); this.changed(!!r.rerender); } };
-        spin.children[1].onclick = () => { const v = r.get() - st; if (r.min === undefined || v >= r.min) { r.set(v); show(); this.changed(!!r.rerender); } };
+        spin.children[0].onclick = () => { const v = r.get() + st; if (r.max === undefined || v <= r.max) { mark(null); r.set(v); show(); this.changed(!!r.rerender); } };
+        spin.children[1].onclick = () => { const v = r.get() - st; if (r.min === undefined || v >= r.min) { mark(null); r.set(v); show(); this.changed(!!r.rerender); } };
         wrap.appendChild(spin);
         row.appendChild(wrap);
         if (r.after) for (const a of r.after) this.renderInline(row, a);
@@ -191,7 +247,8 @@ export class PropertyManager {
         if (!items.length && r.placeholder) box.appendChild(el('div', 'pm-note', r.placeholder));
         items.forEach((it, i) => {
           const si = el('div', 'si', `<span>${r.label(it, i)}</span><span class="x" title="Remove">&times;</span>`);
-          si.querySelector('.x').onclick = (e) => { e.stopPropagation(); r.remove(i); this.changed(true); };
+          const x = asButton(si.querySelector('.x'), 'Remove ' + (si.firstChild.textContent || 'item'));
+          x.onclick = (e) => { e.stopPropagation(); r.remove(i); this.changed(true); };
           si.onmouseenter = () => r.hover && r.hover(it);
           si.onmouseleave = () => r.hover && r.hover(null);
           box.appendChild(si);
@@ -219,6 +276,7 @@ export class PropertyManager {
         if (!list.length) wrap.appendChild(el('div', 'pm-note', r.empty || 'No relations apply.'));
         for (const it of list) {
           const b = el('div', 'pm-relbtn', `${icon(it.icon, 16)}<span>${it.label}</span>`);
+          asButton(b, b.textContent);
           b.onclick = () => it.run();
           wrap.appendChild(b);
         }
@@ -250,10 +308,12 @@ export class PropertyManager {
       default: break;
     }
     parent.appendChild(row);
+    if (row._after) parent.appendChild(row._after);
   }
 
   renderInline(row, a) {
     const b = el('div', 'pm-iconbtn' + (a.get && a.get() ? ' on' : ''), icon(a.icon, 18));
+    asButton(b, a.title || a.icon, { pressed: a.get ? !!a.get() : undefined });
     b.title = a.title || '';
     b.onclick = () => { a.toggle(); this.changed(true); };
     row.appendChild(b);

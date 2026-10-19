@@ -1,5 +1,7 @@
 // Original icon set drawn to sit where SOLIDWORKS users expect each command.
 import { ICON_SWAP } from './skin.js';
+// Each icon carries its name (data-i), so a change of look repaints every icon on the page in place.
+
 
 // 24x24 viewBox. Palette: grey body, yellow = new geometry, blue = sketch, red = remove.
 
@@ -11,6 +13,10 @@ const P = {
   new: `<path d="M6 3h8l4 4v14H6z" fill="#fff" stroke="${GD}"/><path d="M14 3v4h4" fill="none" stroke="${GD}"/>`,
   open: `<path d="M3 7h6l2 2h10v10H3z" fill="${Y}" stroke="${YD}"/>`,
   save: `<path d="M4 4h13l3 3v13H4z" fill="${B}"/><path d="M7 4h9v5H7z" fill="#fff"/><path d="M7 13h10v7H7z" fill="#dfe8f5"/>`,
+  saveas: `<path d="M3 3h12l3 3v8H3z" fill="${B}"/><path d="M6 3h7v4H6z" fill="#fff"/><path d="M6 10h8v4H6z" fill="#dfe8f5"/><path d="M12.8 21.2l.8-3 6.6-6.6 2.2 2.2-6.6 6.6z" fill="${Y}" stroke="${YD}" stroke-width=".7"/>`,
+  savecopy: `<path d="M8 2h10l3 3v11H8z" fill="none" stroke="${GD}" stroke-width="1.2"/><path d="M3 7h10l3 3v11H3z" fill="${B}"/><path d="M6 7h6v4H6z" fill="#fff"/><path d="M6 15h7v6H6z" fill="#dfe8f5"/>`,
+  macro: `<path d="M5 3h10l4 4v14H5z" fill="#fff" stroke="${GD}"/><path d="M15 3v4h4" fill="none" stroke="${GD}"/><path d="M10 11l-3 3 3 3M14 11l3 3-3 3" fill="none" stroke="${R}" stroke-width="1.6"/>`,
+  publish: `<path d="M4 9v11h14v-6" fill="none" stroke="${GD}" stroke-width="1.6"/><path d="M11 13l9-9M14 4h6v6" fill="none" stroke="${B}" stroke-width="1.8"/>`,
   print: `<path d="M7 3h10v5H7z" fill="#fff" stroke="${GD}"/><path d="M4 8h16v8H4z" fill="${G}"/><path d="M7 13h10v8H7z" fill="#fff" stroke="${GD}"/>`,
   undo: `<path d="M9 7L4 11l5 4" fill="none" stroke="${B}" stroke-width="2"/><path d="M4 11h10a5 5 0 010 10h-3" fill="none" stroke="${B}" stroke-width="2"/>`,
   redo: `<path d="M15 7l5 4-5 4" fill="none" stroke="${B}" stroke-width="2"/><path d="M20 11H10a5 5 0 000 10h3" fill="none" stroke="${B}" stroke-width="2"/>`,
@@ -91,6 +97,8 @@ const P = {
   web: `<circle cx="12" cy="12" r="8.5" fill="#e6f0fb" stroke="${B}" stroke-width="1.3"/><path d="M3.5 12h17M12 3.5c-3 3-3 14 0 17M12 3.5c3 3 3 14 0 17" fill="none" stroke="${B}" stroke-width="1.1"/>`,
   page: `<path d="M6 3h8l4 4v14H6z" fill="#fff" stroke="${B}"/><path d="M14 3v4h4" fill="none" stroke="${B}"/><path d="M8.5 11h7M8.5 14h7M8.5 17h5" stroke="${B}" stroke-width="1"/>`,
   ai: `<path d="M12 2l2.2 6.3L20.5 10l-6.3 2.2L12 18.5l-2.2-6.3L3.5 10l6.3-1.7z" fill="#7b5cff"/><path d="M19 15l.9 2.3 2.1.7-2.1.8L19 21l-.9-2.2-2.1-.8 2.1-.7z" fill="#b39cff"/>`,
+  aiexplain: `<path d="M3 5h14v10H9l-4 4v-4H3z" fill="#fff" stroke="${GD}"/><path d="M6 9h8M6 12h5" stroke="${GD}"/><path d="M19 2l1 2.6 2.4.9-2.4.9L19 9l-1-2.6-2.4-.9 2.4-.9z" fill="#7b5cff"/>`,
+  connect: `<path d="M8 3v5M14 3v5" stroke="${GD}" stroke-width="1.8" stroke-linecap="round"/><path d="M5 8h12v3a6 6 0 01-12 0z" fill="${G}" stroke="${GD}"/><path d="M11 17v5" stroke="${GD}" stroke-width="1.8"/><path d="M19 13l1 2.6 2.4.9-2.4.9L19 20l-1-2.6-2.4-.9 2.4-.9z" fill="#7b5cff"/>`,
 
   // Heads-up view toolbar
   zoomfit: `<path d="M3 8V3h5M16 3h5v5M21 16v5h-5M8 21H3v-5" fill="none" stroke="${K}" stroke-width="1.8"/><path d="M8 8h8v8H8z" fill="${G}"/>`,
@@ -186,10 +194,22 @@ const P = {
   r_merge: `<circle cx="12" cy="12" r="5" fill="${K}"/>`,
 };
 
+function body(name) {
+  const b = P[name] || P.props;
+  return ICON_SWAP ? b.replace(/#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b/g, (c) => ICON_SWAP[c.toLowerCase()] || c) : b;
+}
+
 export function icon(name, size = 24) {
-  let body = P[name] || P.props;
-  if (ICON_SWAP) body = body.replace(/#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b/g, (c) => ICON_SWAP[c.toLowerCase()] || c);
-  return `<svg class="ic" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`;
+  const n = name in P ? name : 'props';
+  return `<svg class="ic" data-i="${n}" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true">${body(n)}</svg>`;
 }
 
 export const hasIcon = (name) => name in P;
+export const ICON_SOURCES = P; // for tests: every colour an icon uses
+
+// The look changed (skin.setLook): repaint every icon already on the page in the new colours.
+if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+  window.addEventListener('opensketch:look', () => {
+    for (const s of document.querySelectorAll('svg.ic[data-i]')) s.innerHTML = body(s.dataset.i);
+  });
+}

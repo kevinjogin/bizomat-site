@@ -26,6 +26,7 @@ BOOT_SECONDS = 180.0   # never answered this long after starting -> restart
 INTERVAL = 5.0         # seconds between checks
 TIMEOUT = 8.0          # seconds one check may take
 STOP_WAIT = 8.0        # seconds the server gets to stop by itself before it is killed (fly.toml kill_timeout is more)
+MAX_FAILS = 6          # servers in a row that never answered -> the supervisor exits 1, so Fly sees a failed machine
 
 
 def _log(msg: str) -> None:
@@ -35,10 +36,10 @@ def _log(msg: str) -> None:
 class Supervisor:
     def __init__(self, cmd: list[str], url: str, *, interval: float = INTERVAL, timeout: float = TIMEOUT,
                  hang: float = HANG_SECONDS, boot: float = BOOT_SECONDS, stop_wait: float = STOP_WAIT,
-                 dump: float = DUMP_SECONDS, backoff_max: float = 30.0, log=_log):
+                 dump: float = DUMP_SECONDS, backoff_max: float = 30.0, max_fails: int = MAX_FAILS, log=_log):
         self.cmd, self.url = cmd, url
         self.interval, self.timeout, self.hang, self.boot = interval, timeout, hang, boot
-        self.stop_wait, self.backoff_max, self.dump = stop_wait, backoff_max, dump
+        self.stop_wait, self.backoff_max, self.dump, self.max_fails = stop_wait, backoff_max, dump, max_fails
         self.log = log
         self.child: subprocess.Popen | None = None
         self.restarts = 0
@@ -70,8 +71,19 @@ class Supervisor:
             reason, answered = self._watch(started)
             if self._stop.is_set():
                 break
-            self.restarts += 1
+            # A server that crashed or was killed (out of memory) leaves its CAD workers and AI jobs behind in its
+            # process group: end them before the next server starts its own, or memory runs out again.
+            self._kill_group(self.child)
             fails = 0 if answered else fails + 1
+            if fails:
+                reason += f", {fails} in a row without an answer"
+            if self.max_fails and fails >= self.max_fails:
+                # a crash loop (a broken release, a bad setting): stop, so the machine shows as failed in Fly
+                # (which restarts it under its own policy) instead of looking alive while serving nothing
+                self.log(f"{reason}; giving up (exit code 1). The server's own output above says why.")
+                self._end_child()
+                return 1
+            self.restarts += 1
             # a server that dies straight away (a broken deploy) is retried slower and slower, not in a tight loop
             delay = min(self.backoff_max, 2.0 ** fails) if fails else 1.0
             self.log(f"{reason}; starting it again in {delay:g} s (restart {self.restarts})")
