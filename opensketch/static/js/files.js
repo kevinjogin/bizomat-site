@@ -61,7 +61,6 @@ const FILTERS = [
   { id: 'recent', label: 'Recent', icon: 'clock' },
   { id: 'part', label: 'Parts', icon: 'part' },
   { id: 'assembly', label: 'Assemblies', icon: 'assembly' },
-  { id: 'ai', label: 'Edited by AI', icon: 'ai' },
   { id: 'trash', label: 'Trash', icon: 'trash' },
 ];
 const SORTS = { updated: 'Last edited', name: 'Name', created: 'Date created' };
@@ -173,7 +172,6 @@ export class FilesView {
   shown() {
     let list = this.filter === 'trash' ? this.trash : this.items;
     if (this.filter === 'part' || this.filter === 'assembly') list = list.filter((f) => f.kind === this.filter);
-    if (this.filter === 'ai') list = list.filter((f) => f.by === 'claude');
     if (this.filter === 'recent') list = list.filter((f) => Date.now() / 1000 - f.updated < 7 * 86400);
     const q = this.query.trim().toLowerCase();
     if (q) list = list.filter((f) => f.name.toLowerCase().includes(q) || (f.summary || '').toLowerCase().includes(q));
@@ -207,9 +205,7 @@ export class FilesView {
     this.nav = h('nav', 'fv-nav'); this.nav.setAttribute('aria-label', 'Filters');
     const content = h('section', 'fv-content');
     const hero = h('div', 'fv-hero');
-    hero.innerHTML = `<div class="fv-eyebrow">${FI.files}<span>Your workspace</span></div>
-      <h1>Files</h1>
-      <p>Every model you save lives here. Open one to keep working, or let your AI build in it while you watch.</p>`;
+    hero.innerHTML = '<h1>Files</h1>'; // just the title (YZ 2026-10-19: less text)
     const cta = h('div', 'fv-cta');
     const np = h('button', 'btn primary fv-pill', `${FI.plus}<span>New part</span>${FI.arrow}`); np.onclick = () => this.newFile('part');
     const na = h('button', 'btn fv-pill', `${FI.assembly}<span>New assembly</span>`); na.onclick = () => this.newFile('assembly');
@@ -303,7 +299,7 @@ export class FilesView {
       if (this.query) g.appendChild(this.empty('No files match', `Nothing is called "${esc(this.query)}".`, 'Clear search', () => { this.query = ''; this.el.querySelector('.fv-search input').value = ''; this.renderGrid(); }));
       else if (this.filter === 'trash') g.appendChild(this.empty('The Trash is empty', 'Files you delete stay here for 30 days.'));
       else if (this.filter !== 'all') g.appendChild(this.empty('Nothing here yet', 'Files that match this filter show up here.'));
-      else g.appendChild(this.empty('Make your first model', 'Start a part, drop a STEP file here, or ask your AI to build something in OpenSketch.', 'New part', () => this.newFile('part')));
+      else g.appendChild(this.empty('No files yet', '', 'New part', () => this.newFile('part')));
       return;
     }
     list.forEach((f, i) => g.appendChild(this.card(f, i)));
@@ -311,7 +307,7 @@ export class FilesView {
 
   empty(title, text, action, run) {
     const e = h('div', 'fv-empty');
-    e.innerHTML = `<div class="fv-empty-art">${FI.part}</div><h3>${esc(title)}</h3><p>${text}</p>`;
+    e.innerHTML = `<div class="fv-empty-art">${FI.part}</div><h3>${esc(title)}</h3>${text ? `<p>${text}</p>` : ''}`;
     if (action) { const b = h('button', 'btn primary fv-pill', `<span>${esc(action)}</span>`); b.onclick = run; e.appendChild(b); }
     return e;
   }

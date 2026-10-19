@@ -101,8 +101,6 @@ export class FeatureTree {
     const bodies = app.result?.body?.faces?.length ? 1 : 0;
     node({ id: 'root', kind: 'root', name: `${doc.name} (Default<<Default>_Display State 1>)`, ic: 'part', cls: 'root' });
     node({ id: 'history', kind: 'folder', name: 'History', ic: 'history', depth: 1, twisty: false });
-    node({ id: 'sensors', kind: 'folder', name: 'Sensors', ic: 'sensor', depth: 1 });
-    node({ id: 'annotations', kind: 'folder', name: 'Annotations', ic: 'annotations', depth: 1, twisty: false });
     node({ id: 'bodies', kind: 'folder', name: `Solid Bodies(${bodies})`, ic: 'bodies', depth: 1, twisty: false });
     node({ id: 'material', kind: 'material', name: doc.material?.name ? doc.material.name : 'Material <not specified>', ic: 'material', depth: 1, onDbl: () => app.materialDialog() });
     for (const p of ['Front Plane', 'Top Plane', 'Right Plane']) node({ id: p, kind: 'plane', name: p, ic: 'plane_t', depth: 1 });

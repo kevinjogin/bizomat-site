@@ -142,7 +142,7 @@ def test_provider_errors_reach_the_chat(monkeypatch):
         lambda r: httpx.Response(401, json={"error": {"message": "Incorrect API key"}})), **kw))
     cfg = {"provider": "openai", "model": "m", "base_url": "https://api.openai.com/v1", "key": "sk-bad-1234567890", "source": "yours"}
     events = list(ai.run_stream({"version": 1, "name": "P", "units": "mm", "features": []}, "x", ai_config=cfg))
-    assert events[-1]["ev"] == "error" and "Incorrect API key" in events[-1]["message"] and "Built-in AI" in events[-1]["message"]
+    assert events[-1]["ev"] == "error" and "Incorrect API key" in events[-1]["message"] and "Connect AI > API key" in events[-1]["message"]
     no_key = list(ai.run_stream({"version": 1, "name": "P", "units": "mm", "features": []}, "x"))
     assert no_key[-1]["ev"] == "error" and "API key" in no_key[-1]["message"]
 

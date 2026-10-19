@@ -106,35 +106,18 @@ export class TaskPane {
     this.logEl = logEl;
     this.bodyEl = body;
     body.appendChild(logEl);
-    if (!this.log.length) {
-      logEl.appendChild(h('div', 'ai-msg bot', 'Describe a part, a change, or a whole product. I build parts as real features (sketches with relations and dimensions, extrudes, fillets). For products with several pieces I build an assembly: each part, then the components and mates. You watch it being built in the graphics area. Proposals show in purple until you accept them.'));
-      const ex = h('div', 'ai-examples');
-      for (const t of ['A 60 x 40 x 10 mm plate with four 5 mm corner holes, 6 mm from the edges', 'A flanged bushing: 30 mm OD, 12 mm bore, 25 mm long, 45 mm flange 5 mm thick',
-        'A hand press assembly: base plate, four guide columns, a crown, a sliding platen and a cylinder', 'A pillow block bearing housing with a 20 mm shaft, as an assembly', 'Add 2 mm fillets to all vertical edges']) {
-        const sp = h('span', null, esc(t)); sp.onclick = () => { this.input.value = t; this.input.focus(); }; ex.appendChild(sp);
-      }
-      logEl.appendChild(ex);
-      if (this.app.aiAvailable === false || this.app.aiDemo) {
-        const off = h('div', 'ai-msg ' + (this.app.aiDemo ? 'bot' : 'err'));
-        off.textContent = this.app.aiDemo ? 'Demo mode: requests play a recorded session.' : 'Connect an AI to design here. Use ChatGPT, Claude or Codex that you already have, or add an API key. The demo below works without either.';
-        if (!this.app.aiDemo) {
-          const row = h('div', 'ai-keyrow');
-          const a = h('button', 'btn primary ai-keybtn', 'Add an API key');
-          a.onclick = () => this.app.server.connectDialog('key');
-          const b = h('button', 'btn ai-keybtn', 'Use my AI app');
-          b.onclick = () => this.app.server.connectDialog('app');
-          row.append(a, b);
-          off.appendChild(row);
-        }
-        logEl.appendChild(off);
-      }
-      const demo = h('button', 'btn ai-demo', `${icon('playback', 14)}<span>Watch a demo: the AI builds a hand press</span>`);
-      demo.onclick = () => this.send('Build a hand press assembly (demo)', { demo: true });
-      logEl.appendChild(demo);
+    // A plain start (YZ 2026-10-19: no intro, example prompts or demo button). Without an AI, one line and a button.
+    if (!this.log.length && this.app.aiAvailable === false && !this.app.aiDemo) {
+      const off = h('div', 'ai-empty');
+      off.appendChild(h('span', null, 'No AI connected.'));
+      const b = h('button', 'btn primary', 'Connect AI');
+      b.onclick = () => this.app.server.connectDialog();
+      off.appendChild(b);
+      logEl.appendChild(off);
     }
     for (const m of this.log) logEl.appendChild(this.entryEl(m));
     const inp = h('div', 'ai-input');
-    const ta = h('textarea'); ta.placeholder = 'Describe the part or the change...';
+    const ta = h('textarea'); ta.placeholder = 'Describe a part or a change';
     ta.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); this.send(); } });
     if (this.draft) ta.value = this.draft;
     ta.oninput = () => { this.draft = ta.value; };
@@ -142,11 +125,11 @@ export class TaskPane {
     this.chipHost = inp;
     this.updateSelChip();
     const row = h('div', 'row');
-    row.appendChild(h('span', 'hint', this.busy ? 'Building... you can rotate and zoom the view' : 'Ctrl+Enter to send'));
+    row.appendChild(h('span', 'hint', this.busy ? 'Building...' : ''));
     const info = this.app.aiInfo;
-    if (info?.model && !info.demo) {
+    if (info?.model && !info.demo && info.source !== 'early_access') {
       const mr = h('div', 'ai-modelrow');
-      const m = h('a', 'ai-model', esc(`${info.label || 'Model'}: ${info.model}${info.source === 'yours' ? '' : ' (server key)'}`));
+      const m = h('a', 'ai-model', esc(info.model));
       m.href = '#'; m.title = 'Change the AI model or key';
       m.onclick = (e) => { e.preventDefault(); this.app.server.connectDialog('key'); };
       mr.appendChild(m);

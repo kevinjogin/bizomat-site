@@ -646,48 +646,9 @@ export class App {
     this.updateStartHint();
   }
 
-  // An empty part or assembly: a small card in the graphics area with the first steps.
+  // No first-steps card: a new part opens straight into the normal interface, as in SOLIDWORKS (YZ 2026-10-19).
   updateStartHint() {
-    if (this.reviewMode || !this.doc || !$('graphics')) return;
-    const d = this.doc;
-    const asm = isAssembly(d);
-    const empty = asm ? !(d.components || []).length : !(d.features || []).length;
-    const show = empty && this.mode !== 'sketch' && !this.cmd && !this.proposal && !this.taskpane?.busy && !this.live?.active && !(this.docStack || []).length;
-    let el = $('starthint');
-    if (!show) { if (el && !el.classList.contains('hidden')) el.classList.add('hidden'); return; }
-    if (!el) {
-      el = document.createElement('div'); el.id = 'starthint'; el.className = 'starthint hidden';
-      $('graphics').appendChild(el);
-    }
-    const kind = asm ? 'asm' : 'part';
-    if (el.dataset.kind !== kind) {
-      el.dataset.kind = kind;
-      el.innerHTML = '';
-      const card = document.createElement('div'); card.className = 'sh-card';
-      const t = document.createElement('b'); const sub = document.createElement('span');
-      card.append(t, sub);
-      const row = document.createElement('div'); row.className = 'sh-row';
-      const btn = (cls, label, run, html) => { const b = document.createElement('button'); b.className = cls; if (html) b.innerHTML = html; else b.textContent = label; b.onclick = run; return b; };
-      if (asm) {
-        t.textContent = 'Start your assembly';
-        sub.textContent = 'Insert the parts, then mate them. Or let the AI build the whole product.';
-        row.append(btn('btn primary fv-pill', 'Insert components', () => this.asm.insertPM()));
-      } else {
-        t.textContent = 'Start your part';
-        sub.textContent = 'Pick a plane to sketch on, or describe the part and let the AI build it.';
-        const planes = document.createElement('div'); planes.className = 'sh-planes';
-        const P = { 'Front Plane': 'M5 6h14v12H5z', 'Top Plane': 'M3 15l6-6h12l-6 6z', 'Right Plane': 'M8 4l8 3v13l-8-3z' };
-        for (const [id, path] of Object.entries(P)) {
-          planes.append(btn('sh-plane', id, () => this.sketchOn({ kind: 'plane', id }), `<svg viewBox="0 0 24 24" width="22" height="22" fill="rgba(94,106,210,.18)" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="${path}"/></svg><span>${id.replace(' Plane', '')}</span>`));
-        }
-        card.appendChild(planes);
-      }
-      row.append(btn('btn fv-pill', 'Describe it to the AI', () => { this.openTask('ai'); setTimeout(() => this.taskpane.input?.focus(), 50); }));
-      row.append(btn('btn fv-pill sh-up', 'Upload STEP', () => this.openFromComputer()));
-      card.appendChild(row);
-      el.appendChild(card);
-    }
-    el.classList.remove('hidden');
+    $('starthint')?.remove();
   }
 
   updatePlanes() {

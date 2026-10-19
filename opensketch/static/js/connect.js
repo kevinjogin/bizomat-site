@@ -50,74 +50,61 @@ function codeBlock(text, lang = '') {
 // ---------------------------------------------------------------- clients (MCP)
 // Each: name, kind (app | code), mark (two letters on a tile), steps(url, signin) -> [text or {code, lang} or {copy}]
 // signin: this server has sign-in, so the app signs in to OpenSketch once (OAuth, mcpauth.py) and stays connected.
-const SIGNIN = 'Your browser opens OpenSketch: sign in (Google works) and click Allow. You only do this once.';
+const SIGNIN = 'Sign in and click Allow (once).';
+// Kept short on purpose (YZ 2026-10-19: too much text). Each: name, optional one-click link, steps(url, signin).
 const CLIENTS = [
-  { id: 'claude', name: 'Claude', kind: 'app', mark: 'C', color: '#d97757', note: 'Any plan (Free allows one custom connector). Web, desktop and phone.',
+  { id: 'claude', name: 'Claude',
     steps: (u, s) => [
-      'In Claude, open Customize > Connectors and click Add custom connector. (Team and Enterprise: an owner adds it under Organization settings > Connectors.)',
-      { text: 'Name it OpenSketch and paste this address. Leave the advanced settings empty:', copy: u },
-      s ? `Click Connect. ${SIGNIN} Claude stays connected on the web, desktop and phone.` : 'Click Add. This server has no sign-in, so there is nothing else to do.',
-      'In a chat, turn it on under + > Connectors, then ask, for example: "In OpenSketch, design a wall bracket for a 20 kg shelf with off-the-shelf screws."',
+      'Customize > Connectors > Add custom connector.',
+      { text: 'Name it OpenSketch, with this address:', copy: u },
+      s ? `Click Connect. ${SIGNIN}` : 'Click Add.',
     ] },
-  { id: 'chatgpt', name: 'ChatGPT', kind: 'app', mark: 'GPT', color: '#10a37f', note: 'Paid plans with developer mode (Plus, Pro, Business, Enterprise or Edu). Web.',
+  { id: 'chatgpt', name: 'ChatGPT',
     steps: (u, s) => [
-      'In ChatGPT, open Settings > Apps & Connectors > Advanced settings and turn on Developer mode (business workspaces: an admin turns it on).',
-      'Back in Apps & Connectors, click Create (on some accounts: chatgpt.com/plugins > Add custom MCP server).',
-      { text: 'Name it OpenSketch and paste this address as the server URL:', copy: u },
-      s ? `Authentication: OAuth (leave any client ID and secret empty). Click Create. ${SIGNIN}` : 'Authentication: No authentication. Click Create.',
-      'In a chat, click + > More > OpenSketch, then ask for a design. Open the link it gives you to watch the model.',
+      'Settings > Apps & Connectors > Advanced settings: turn on Developer mode.',
+      { text: 'Apps & Connectors > Create. Name it OpenSketch, with this URL:', copy: u },
+      s ? `Authentication: OAuth. Click Create. ${SIGNIN}` : 'Authentication: none. Click Create.',
     ] },
-  { id: 'claudecode', name: 'Claude Code', kind: 'code', mark: '>_', color: '#d97757', note: 'Terminal.',
+  { id: 'claudecode', name: 'Claude Code',
     steps: (u, s) => [
-      'Run this once in a terminal. It adds OpenSketch for all your projects:',
       { code: `claude mcp add --transport http --scope user opensketch ${u}`, lang: 'shell' },
-      s ? `In Claude Code, type /mcp, pick opensketch and choose Authenticate. ${SIGNIN}` : 'Check it with /mcp inside Claude Code.',
+      ...(s ? [`Then /mcp > opensketch > Authenticate. ${SIGNIN}`] : []),
     ] },
-  { id: 'codex', name: 'Codex', kind: 'code', mark: 'Cx', color: '#6b7280', note: 'Codex app, CLI and IDE extension share one setting.',
+  { id: 'codex', name: 'Codex',
     steps: (u, s) => [
-      'In a terminal (or the Codex app: Settings > MCP servers > Add server > Streamable HTTP):',
       { code: `codex mcp add opensketch --url ${u}`, lang: 'shell' },
-      ...(s ? ['Then sign in once:', { code: 'codex mcp login opensketch', lang: 'shell' }, SIGNIN] : []),
-      'Or add this to ~/.codex/config.toml:',
-      { code: `[mcp_servers.opensketch]\nurl = "${u}"`, lang: 'toml' },
+      ...(s ? [{ code: 'codex mcp login opensketch', lang: 'shell' }] : []),
     ] },
-  { id: 'cursor', name: 'Cursor', kind: 'code', mark: 'Cu', color: '#111827', note: 'One click, or your global mcp.json.',
+  { id: 'cursor', name: 'Cursor',
     link: (u) => ({ label: 'Add to Cursor', href: `cursor://anysphere.cursor-deeplink/mcp/install?name=opensketch&config=${encodeURIComponent(btoa(JSON.stringify({ url: u })))}` }),
     steps: (u, s) => [
-      'Click Add to Cursor above, or put this in ~/.cursor/mcp.json:',
-      { code: JSON.stringify({ mcpServers: { opensketch: { url: u } } }, null, 2), lang: 'json' },
-      ...(s ? [`In Cursor Settings > MCP, click the sign-in button next to opensketch. ${SIGNIN}`] : []),
+      ...(s ? [`Then Cursor Settings > MCP > sign in next to opensketch. ${SIGNIN}`] : []),
     ] },
-  { id: 'vscode', name: 'VS Code', kind: 'code', mark: 'VS', color: '#2f80ed', note: 'GitHub Copilot agent mode.',
+  { id: 'vscode', name: 'VS Code',
     link: (u) => ({ label: 'Add to VS Code', href: `vscode:mcp/install?${encodeURIComponent(JSON.stringify({ name: 'opensketch', type: 'http', url: u }))}` }),
     steps: (u, s) => [
-      'Click Add to VS Code above, or run MCP: Add Server from the Command Palette, choose HTTP, paste the address and pick User:',
-      { copy: u },
-      ...(s ? [`When VS Code asks to sign in to opensketch, click Allow. ${SIGNIN}`] : []),
-      'In Copilot Chat, turn its tools on with Configure Tools.',
+      ...(s ? [`When VS Code asks, ${SIGNIN.toLowerCase()}`] : []),
     ] },
-  { id: 'gemini', name: 'Gemini CLI', kind: 'code', mark: 'G', color: '#4285f4', note: 'Terminal.',
+  { id: 'gemini', name: 'Gemini CLI',
     steps: (u, s) => [
-      'Run this once:',
       { code: `gemini mcp add --transport http -s user opensketch ${u}`, lang: 'shell' },
-      ...(s ? ['Then, inside Gemini CLI:', { code: '/mcp auth opensketch', lang: 'shell' }, SIGNIN] : []),
+      ...(s ? [{ code: '/mcp auth opensketch', lang: 'shell' }] : []),
     ] },
-  { id: 'other', name: 'Other', kind: 'code', mark: '+', color: '#5e6ad2', note: 'Any app that supports remote MCP servers.',
+  { id: 'other', name: 'Other',
     steps: (u, s) => [
-      { text: 'Add a remote MCP server (Streamable HTTP) with this address:', copy: u },
-      s ? `Authentication: OAuth. When the app asks, sign in to OpenSketch and click Allow. Apps that cannot sign in can use your private address (below).` : 'Authentication: none.',
+      { text: 'Add a remote MCP server with this address:', copy: u },
+      s ? 'Authentication: OAuth.' : 'Authentication: none.',
     ] },
 ];
 
 function clientPane(c, info) {
   const u = info.url || info.mcp_url;
   const box = h('div', 'cx-client');
-  const head = h('div', 'cx-chead');
-  const title = h('div', 'cx-ctitle');
-  title.append(t('b', null, `Connect ${c.name}`), t('span', null, c.note));
-  head.appendChild(title);
-  if (c.link) { const l = c.link(u); const a = h('a', 'btn primary fv-pill', `<span>${l.label}</span>${FI.arrow}`); a.href = l.href; head.appendChild(a); }
-  box.appendChild(head);
+  if (c.link) {
+    const head = h('div', 'cx-chead');
+    const l = c.link(u); const a = h('a', 'btn primary fv-pill', `<span>${l.label}</span>${FI.arrow}`); a.href = l.href; head.appendChild(a);
+    box.appendChild(head);
+  }
   const ol = h('ol', 'cx-steps');
   for (const s of c.steps(u, info.signin !== false)) {
     const li = document.createElement('li');
@@ -137,9 +124,6 @@ function clientPane(c, info) {
 
 function appTab(app, info) {
   const wrap = h('div', 'cx-pane');
-  const lead = h('p', 'cx-lead');
-  lead.textContent = 'Use the AI you already pay for. It builds in your Files while you watch here. No API key needed.';
-  wrap.appendChild(lead);
   const warn = [];
   if (!info.password_set && !info.accounts) warn.push('This server has no sign-in. Anyone with its address can use it. Set OPENSKETCH_PASSWORD where it runs, then restart it.');
   if (info.codespace) warn.push('Codespaces: make port 8000 public (Ports tab, right-click, Port Visibility > Public) or the AI cannot reach it.');
@@ -156,7 +140,7 @@ function appTab(app, info) {
     detail.appendChild(clientPane(c, info));
   };
   for (const c of CLIENTS) {
-    const b = h('button', 'cx-chip', `<i style="--c:${c.color}">${c.mark}</i><span>${c.name}</span>`);
+    const b = h('button', 'cx-chip', `<span>${c.name}</span>`);
     b.dataset.id = c.id; b.setAttribute('role', 'tab');
     b.onclick = () => pick(c);
     grid.appendChild(b);
@@ -166,10 +150,9 @@ function appTab(app, info) {
   if (info.signin === false) {
     keyNote.append(t('span', null, 'This server has no sign-in, so anyone with its address can use it.'));
   } else {
-    keyNote.append(t('span', null, 'Each app signs in as you and sees only your Files. See or disconnect them in Account settings.'));
-    const more = t('button', 'cx-link', 'App cannot sign in? Use your private address');
+    const more = t('button', 'cx-link', 'App cannot sign in?');
     const priv = h('div', 'cx-private'); priv.hidden = true;
-    priv.append(t('p', null, 'This address works without sign-in. It is a key to your Files: keep it private, and never put it in a shared project.'));
+    priv.append(t('p', null, 'Use this private address instead. Keep it secret: it opens your Files.'));
     const row = h('div', 'cx-url'); const inp = h('input'); inp.readOnly = true; inp.value = info.mcp_url; inp.onfocus = () => inp.select();
     row.append(inp, copyButton(() => info.mcp_url)); priv.appendChild(row);
     more.onclick = () => { priv.hidden = !priv.hidden; };
@@ -208,10 +191,10 @@ function keyTab(app, info, close) {
     status.innerHTML = '';
     const s = app.aiInfo || {};
     let text, cls;
-    if (info.early_access) { text = info.server_key ? 'AI is included with early access. Nothing to set up.' : 'AI is not available on this server right now.'; cls = info.server_key ? 'ok' : 'none'; }
-    else if (cur) { text = `Using your ${providers.find((p) => p.id === cur.provider)?.label || cur.provider} key ending ${cur.hint}, model ${cur.model}.`; cls = 'ok'; }
-    else if (info.server_key) { text = `Using this server's Claude key (${s.model || 'claude'}). Add your own to use your account or another provider.`; cls = 'ok'; }
-    else { text = 'No AI key yet. Add one below, or use an AI app you already have (the other tab).'; cls = 'none'; }
+    if (info.early_access) { text = info.server_key ? 'AI is included with early access.' : 'AI is not available right now.'; cls = info.server_key ? 'ok' : 'none'; }
+    else if (cur) { text = `Your ${providers.find((p) => p.id === cur.provider)?.label || cur.provider} key ${cur.hint}, ${cur.model}`; cls = 'ok'; }
+    else if (info.server_key) { text = `Using the server's key (${s.model || 'claude'})`; cls = 'ok'; }
+    else { text = 'No key yet'; cls = 'none'; }
     status.className = 'cx-status ' + cls;
     status.append(h('i', null, cls === 'ok' ? '<svg viewBox="0 0 16 16" width="12" height="12"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' : ''), t('span', null, text));
     if (cur) {
@@ -222,14 +205,13 @@ function keyTab(app, info, close) {
   };
   drawStatus();
   wrap.appendChild(status);
-  if (info.early_access) return wrap; // testers use the owner's AI: no key form
+  if (info.early_access) return { el: wrap, focus: () => {} }; // testers use the owner's AI: no key form
 
   const cards = h('div', 'cx-provs'); cards.setAttribute('role', 'radiogroup'); cards.setAttribute('aria-label', 'Provider');
   for (const p of providers) {
     const b = h('button', 'cx-prov');
     b.dataset.id = p.id; b.setAttribute('role', 'radio');
-    b.append(t('b', null, p.label), t('span', null, p.blurb));
-    if (p.web) b.appendChild(t('em', null, 'Web search'));
+    b.append(t('b', null, p.label));
     b.onclick = () => { setProv(p.id); key.focus(); };
     cards.appendChild(b);
   }
@@ -240,7 +222,7 @@ function keyTab(app, info, close) {
   step1.innerHTML = '<span class="cx-n">1</span>';
   const getKey = h('a', 'btn', `<span>Get a key</span>${FI.open}`); getKey.target = '_blank'; getKey.rel = 'noopener noreferrer';
   const where = t('span', 'cx-where');
-  step1.append(getKey, where);
+  step1.append(getKey);
 
   const baseRow = h('div', 'cx-row cx-base');
   baseRow.innerHTML = '<span class="cx-n">+</span>';
@@ -265,9 +247,8 @@ function keyTab(app, info, close) {
   const model = h('select', 'acct-i cx-model'); model.setAttribute('aria-label', 'Model');
   const modelText = h('input', 'acct-i cx-model'); modelText.placeholder = 'Model name'; modelText.spellcheck = false; modelText.setAttribute('aria-label', 'Model');
   step3.append(model, modelText);
-  const web = t('div', 'cx-hint');
   const err = t('div', 'acct-err'); err.setAttribute('role', 'alert');
-  form.append(step1, baseRow, step2, step3, web, err);
+  form.append(step1, baseRow, step2, step3, err);
   wrap.appendChild(form);
 
   const spec = () => providers.find((p) => p.id === prov);
@@ -276,7 +257,7 @@ function keyTab(app, info, close) {
     model.innerHTML = '';
     const want = (cur && cur.provider === prov && cur.model) || spec().model || '';
     const ids = [...new Set([...(want ? [want] : []), ...list])];
-    for (const m of ids) { const o = t('option', null, m === spec().model && prov === 'anthropic' ? `${m}  (recommended)` : m); o.value = m; model.appendChild(o); }
+    for (const m of ids) { const o = t('option', null, m); o.value = m; model.appendChild(o); }
     const useSelect = ids.length > 0;
     model.hidden = !useSelect; modelText.hidden = useSelect;
     if (useSelect) model.value = pickFirst && !want ? ids[0] : (want || ids[0]);
@@ -290,9 +271,8 @@ function keyTab(app, info, close) {
     getKey.hidden = !p.keys_url; if (p.keys_url) getKey.href = p.keys_url;
     where.textContent = p.keys_url ? `${p.keys}. Copy the key.` : `Get a key from ${p.keys}.`;
     const same = cur && cur.provider === id;
-    key.placeholder = same ? `Saved key ending ${cur.hint}. Paste a new one to replace it.` : `Paste your ${p.label} key`;
+    key.placeholder = same ? `Saved key ${cur.hint}` : `Paste your ${p.label} key`;
     if (!keepKey) key.value = '';
-    web.textContent = p.web ? 'Claude can search the web and read pages for real part sizes while it designs.' : 'Web search works with Claude only. Other models design without it.';
     verified = !!same; err.textContent = '';
     setBadge(same ? 'ok' : '', same ? 'Saved' : '');
     if (same) fillModels([cur.model], false);
@@ -339,11 +319,11 @@ function keyTab(app, info, close) {
     json('/api/ai/keys', { method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ provider: prov, model: m, key: key.value.trim() || null, base_url: base.value.trim() || null }) })
       .then((r) => { close(); app.toast?.(`AI set to ${spec().label}, ${r.settings.model}.`); refreshAIStatus(app); },
-        (e) => { err.textContent = e.message; saveBtn.disabled = false; saveBtn.textContent = 'Save and use'; });
+        (e) => { err.textContent = e.message; saveBtn.disabled = false; saveBtn.textContent = 'Save'; });
   };
   const foot = h('div', 'cx-actions');
-  const note = t('span', 'cx-fine', 'Stored encrypted on your account and used only for your requests. OpenSketch never shows it again.');
-  const saveBtn = h('button', 'btn primary fv-pill', 'Save and use');
+  const note = t('span', 'cx-fine', 'Stored encrypted.');
+  const saveBtn = h('button', 'btn primary fv-pill', 'Save');
   saveBtn.onclick = save;
   foot.append(note, saveBtn);
   wrap.appendChild(foot);
@@ -354,18 +334,14 @@ function keyTab(app, info, close) {
 // ---------------------------------------------------------------- SOLIDWORKS (the add-in on your PC)
 function swTab(sw) {
   const wrap = h('div', 'cx-pane');
-  const lead = h('p', 'cx-lead');
-  lead.textContent = 'Claude builds native SOLIDWORKS parts and assemblies on your PC, with the AI app you connected above. The add-in connects out to OpenSketch, so the PC needs no admin rights and no open ports.';
-  wrap.appendChild(lead);
   const state = t('div', 'cx-warn', '');
   const paint = (st) => {
     if (st && st.connected) {
       state.className = 'cx-ok';
-      state.textContent = `SOLIDWORKS is connected (${st.machine || 'PC'}, add-in ${st.version || '?'}, ${st.client || ''}).` +
-        (st.working_on ? ` Working on ${st.working_on.op} for ${Math.round(st.working_on.for_s)} s.` : '');
+      state.textContent = `Connected: ${st.machine || 'PC'}` + (st.working_on ? `, working on ${st.working_on.op}` : '');
     } else {
       state.className = 'cx-warn';
-      state.textContent = 'SOLIDWORKS is not connected.' + (st && st.note ? ' ' + st.note : '');
+      state.textContent = 'Not connected' + (st && st.note ? `. ${st.note}` : '');
     }
   };
   paint(sw.status);
@@ -375,28 +351,27 @@ function swTab(sw) {
   if (sw.download) {
     const a = h('a', 'btn primary fv-pill', `<span>Download the add-in</span>${FI.arrow}`);
     a.href = '/api/sw/download';
-    li(t('span', null, 'Download OpenSketch for SOLIDWORKS (one zip) on the PC with SOLIDWORKS 2022 or newer, and unzip it into a folder of your own (Documents is fine).'), a);
+    li(t('span', null, 'On the SOLIDWORKS PC, download and unzip it.'), a);
   } else {
-    li(t('span', null, 'The add-in zip is not on this server yet. Get OpenSketch-SOLIDWORKS.zip from the person who runs it (it is built from solidworks/ in the repository).'));
+    li(t('span', null, 'The add-in is not on this server yet.'));
   }
-  li(t('span', null, 'Double-click OpenSketchSW.exe and click Install for me. No admin rights are needed.'));
-  li(t('span', null, 'Restart SOLIDWORKS and choose OpenSketch > Connect to Claude. If there is no OpenSketch menu (add-ins locked by IT), run the macro instead: Tools > Macro > Run > Documents\\OpenSketch\\OpenSketch.swb. If macros are locked too, click Connect to the open SOLIDWORKS in OpenSketchSW.exe.'));
+  li(t('span', null, 'Run OpenSketchSW.exe > Install for me.'));
+  li(t('span', null, 'In SOLIDWORKS: OpenSketch > Connect. (No menu? Tools > Macro > Run > Documents\\OpenSketch\\OpenSketch.swb)'));
   const addr = h('div', 'cx-url'); const ai = h('input'); ai.readOnly = true; ai.value = sw.server; ai.onfocus = () => ai.select();
   addr.append(ai, copyButton(() => sw.server));
-  li(t('span', null, 'In the window that opens, the OpenSketch address is:'), addr);
+  li(t('span', null, 'Address:'), addr);
   const keyRow = h('div', 'cx-url'); const ki = h('input'); ki.readOnly = true; ki.type = 'password'; ki.value = sw.key; ki.onfocus = () => ki.select();
   const showBtn = t('button', 'btn', 'Show'); showBtn.onclick = () => { ki.type = ki.type === 'password' ? 'text' : 'password'; showBtn.textContent = ki.type === 'password' ? 'Show' : 'Hide'; };
   keyRow.append(ki, showBtn, copyButton(() => ki.value));
-  li(t('span', null, 'and your SOLIDWORKS key. Paste it and click Connect. Keep it private: it lets this server drive your SOLIDWORKS.'), keyRow);
-  li(t('span', null, 'First time on this PC: in Claude (with the OpenSketch connector on), ask "Run the SOLIDWORKS self test, all three stages." It makes test files in Documents\\OpenSketch\\selftest and reports each step. If a step fails, send the report and the log below.'));
-  li(t('span', null, 'Then ask for real work, for example: "In SOLIDWORKS, make a 60 x 40 x 8 mm mounting plate with four M5 clearance holes and 2 mm edge fillets."'));
+  li(t('span', null, 'Key (keep it private):'), keyRow);
+  li(t('span', null, 'First time: ask Claude to "run the SOLIDWORKS self test".'));
   wrap.appendChild(ol);
   const foot = h('div', 'cx-foot');
-  const renew = t('button', 'cx-link', 'Make a new key (the old one stops working)');
+  const renew = t('button', 'cx-link', 'New key');
   renew.onclick = async () => {
     try { const r = await json('/api/sw/key', { method: 'POST' }); ki.value = r.key; paint({ connected: false, note: 'Paste the new key in SOLIDWORKS.' }); } catch (e) { state.textContent = String(e.message || e); }
   };
-  foot.append(t('span', null, 'Logs on the PC: %LOCALAPPDATA%\\OpenSketch\\SolidWorks\\log.txt (the window has Copy log).'), renew);
+  foot.append(t('span', null, 'Log: %LOCALAPPDATA%\\OpenSketch\\SolidWorks\\log.txt'), renew);
   wrap.appendChild(foot);
   const timer = setInterval(async () => {
     if (!wrap.isConnected) { clearInterval(timer); return; }
@@ -414,11 +389,11 @@ export async function connectDialog(app, tab = null) {
   }
   const body = h('div', 'cx');
   const hero = h('div', 'cx-hero');
-  hero.innerHTML = '<div><h2>Connect AI</h2><p>Three ways to design with AI in OpenSketch.</p></div>';
+  hero.innerHTML = '<div><h2>Connect AI</h2></div>';
   const tabs = h('div', 'cx-tabs'); tabs.setAttribute('role', 'tablist');
-  const tA = h('button', 'cx-tab', `<b>Your AI app</b><span>ChatGPT, Claude, Codex, Cursor...</span>`);
-  const tB = h('button', 'cx-tab', `<b>Built-in AI</b><span>Your own API key</span>`);
-  const tC = h('button', 'cx-tab', `<b>SOLIDWORKS</b><span>Claude builds on your PC</span>`);
+  const tA = h('button', 'cx-tab', '<b>AI app</b>');
+  const tB = h('button', 'cx-tab', '<b>API key</b>');
+  const tC = h('button', 'cx-tab', '<b>SOLIDWORKS</b>');
   tabs.append(tA, tB, tC);
   const panes = h('div', 'cx-panes');
   body.append(hero, tabs, panes);

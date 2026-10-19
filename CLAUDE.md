@@ -43,7 +43,26 @@ assemblies only when a part changes.
   for main calls to action, the text wordmark "OpenSketch" as the logo (no mark or tile; YZ 2026-10-19); new UI styled with the theme tokens and checked in dark,
   light and classic, and at phone width. Motion: `--ease`, 120-220 ms, nothing that blocks input.
 
-## Current state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand, text logo, Google sign-in set up in the app, upload links for big MCP imports, SOLIDWORKS add-in, dedicated CPU + self-restarting server, feature recognition, CAD in worker processes, one worker per person, early access code)
+## Current state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand, text logo, Google sign-in set up in the app, upload links for big MCP imports, SOLIDWORKS add-in, dedicated CPU + self-restarting server, feature recognition, CAD in worker processes, one worker per person, early access code, simpler screens)
+
+Simpler screens (2026-10-19, YZ: "too much info, reduce the text, start with a plain screen, go straight into the
+default interface like SOLIDWORKS"):
+- AI panel (`taskpane.renderAI`): no intro, example prompts or demo button; empty until you type. Without an AI, one
+  line "No AI connected." + Connect AI (`.ai-empty`). Placeholder "Describe a part or a change"; no Ctrl+Enter hint
+  (only "Building..." while busy); the model line shows just the model, and nothing for early-access testers.
+  `ai.NO_KEY` is one sentence; key errors point at "Connect AI > API key". The demo stays on the OpenSketch AI tab.
+- Connect AI (`connect.js`): title only; tabs "AI app", "API key", "SOLIDWORKS" (one word each); app tiles are names
+  only (no letter tiles: the brands' logos are not drawn here; official logo files from each company's brand page
+  could be dropped in later); each app's steps cut to two or three short lines; "App cannot sign in?" reveals the
+  private address. API key tab: short status ("No key yet", "Your Claude key ...1234, model"), provider tiles
+  without blurbs, Get a key / key / model rows without notes, "Stored encrypted." + Save. SOLIDWORKS tab: status line,
+  six short steps, the log path and "New key".
+- No "Start your part" card: a new part or assembly opens straight into the normal interface (`updateStartHint`
+  only removes an old card). Status bar: no "OpenSketch Premium 2026". FeatureManager: no Sensors or Annotations
+  rows (part and assembly). Files: no "Edited by AI" filter; the header is just "Files" + the buttons; empty state
+  "No files yet"; `.fv-grid` has 6 px top padding (the sticky bar above hid the cards' top edge and hover lift).
+- Checked in Chromium (dark): a new part with the AI panel open, the three Connect AI tabs, Files with a card, a
+  tester's API key tab, no page errors.
 
 Early access code (2026-10-19, YZ: "people type access20 as a code, skip sign-up, show up as internal tester, use my API,
 unlimited usage; just for showcases"):

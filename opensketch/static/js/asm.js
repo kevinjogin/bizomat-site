@@ -180,8 +180,6 @@ export class AssemblyMode {
     const st = app.statusById || {};
     node({ id: 'root', kind: 'root', name: `${doc.name} (Default<Display State-1>)`, ic: 'assembly', cls: 'root' });
     node({ id: 'history', kind: 'folder', name: 'History', ic: 'history', depth: 1, twisty: false });
-    node({ id: 'sensors', kind: 'folder', name: 'Sensors', ic: 'sensor', depth: 1 });
-    node({ id: 'annotations', kind: 'folder', name: 'Annotations', ic: 'annotations', depth: 1, twisty: false });
     for (const p of ['Front Plane', 'Top Plane', 'Right Plane']) node({ id: p, kind: 'plane', name: p, ic: 'plane_t', depth: 1 });
     node({ id: 'origin', kind: 'origin', name: 'Origin', ic: 'origin', depth: 1 });
     const proposed = new Set(app.proposedIds || []);
