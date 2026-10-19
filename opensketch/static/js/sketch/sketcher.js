@@ -683,6 +683,7 @@ export class Sketcher {
   // and no undo step is left behind; a box selection is dropped.
   cancelDrag() {
     const d = this.drag;
+    if (!d && !this.box) return; // a normal release already ended it
     this.drag = null;
     if (d?.started) {
       this.sk.entities = JSON.parse(d.snapshot);

@@ -426,7 +426,7 @@ export class TaskPane {
       if (S.error) {
         app.live.stop();
         const noKey = /Connect AI/.test(S.error);
-        this.add({ role: 'error', text: S.error, connect: noKey, retry: S.retry || S.error === 'Stopped.' ? { prompt, opts } : null });
+        this.add({ role: 'error', text: S.error, connect: noKey, retry: S.retry || S.error === 'Stopped.' ? { prompt, opts: { ...opts, selection } } : null });
         // the request goes back in the box when nothing came of it, so it is not typed again
         if (!S.proposal && !this.draft && (S.retry || noKey)) this.draft = prompt;
         if (S.proposal && ctl.signal.aborted) this.add({ role: 'bot', text: elsewhere ? 'Another file was opened, so the result was not applied.' : 'The partial result was discarded.' });
