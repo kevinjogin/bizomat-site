@@ -98,9 +98,15 @@ def toolbox_part(kind: str, args: dict) -> dict:
     return doc
 
 
-def thumb_png(doc: dict) -> bytes:
+def thumb_png(doc: dict) -> bytes | None:
+    """A Files picture, or None when there is no solid to draw (sketches only: the browser draws those)."""
     from . import preview
-    return preview.render_preview(doc, "isometric", 480, 360, transparent=True)
+    try:
+        return preview.render_preview(doc, "isometric", 480, 360, transparent=True)
+    except ValueError as exc:
+        if str(exc).startswith("No visible solid body"):
+            return None
+        raise
 
 
 def review_checks(doc: dict) -> dict:

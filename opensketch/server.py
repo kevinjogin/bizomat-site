@@ -1134,6 +1134,8 @@ async def _render_thumb(doc_id: str) -> None:
     worker so it never holds up a rebuild or the web server."""
     rec = await run_in_threadpool(store.get, doc_id)
     png = await cadworker.BACKGROUND.run(cadjobs.thumb_png, rec["doc"], wait=THUMB_WAIT)
+    if png is None:  # nothing solid to draw (sketches only): the browser that opens it draws the sketches
+        raise ValueError("No solid body to draw")
     await run_in_threadpool(store.set_thumb, doc_id, png, "png", rec["version"], "server")
 
 

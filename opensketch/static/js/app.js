@@ -1985,8 +1985,11 @@ export class App {
     body.innerHTML = `<button class="nd" data-k="part">${icon('part', 48)}<b>Part</b><span>a 3D representation of a single design component</span></button>
       <button class="nd" data-k="assembly">${icon('assembly', 48)}<b>Assembly</b><span>a 3D arrangement of parts and other assemblies</span></button>`;
     const dlg = dialog({ title: 'New OpenSketch Document', body, buttons: [{ label: 'Cancel' }] });
+    let picked = false; // a double-click on a tile (the SOLIDWORKS habit) makes one document, not two
     body.querySelectorAll('.nd').forEach((n) => {
       n.onclick = async () => {
+        if (picked) return;
+        picked = true;
         dlg.close();
         if (!(await this.confirmLeaveDraft())) return;
         if (!(await this.server.createAndOpen(n.dataset.k, { onShown: () => this.files.close() }))) { this.startDraft(n.dataset.k); this.files.close(); } // no server: a draft here
