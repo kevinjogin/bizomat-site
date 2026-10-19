@@ -31,3 +31,4 @@ opensketch = ["static/*.html", "static/*.svg", "static/*.webmanifest", "static/i
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = ["slow: end-to-end tests with real worker processes and servers (their own CI job; skip with -m 'not slow')"]

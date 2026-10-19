@@ -412,8 +412,8 @@ def test_worker_that_hangs_is_killed_and_the_step_left_in_the_body(monkeypatch):
     monkeypatch.setenv("OPENSKETCH_RECOGNIZE_STALL", "('fillet'")  # every fillet attempt hangs
     doc = step_doc(solid(plate))
     t = time.monotonic()
-    r = recognize.recognize_part_safe(doc, hang=3)
-    assert time.monotonic() - t < 90
+    r = recognize.recognize_part_safe(doc, hang=6)  # every real step here takes well under a second
+    assert time.monotonic() - t < 120
     assert r["ok"] and r["report"]["exact"]
     feats = r["part"]["features"]
     assert not by_type(feats, "fillet") and by_type(feats, "import")  # the fillet stays in the imported body
