@@ -4,8 +4,8 @@
 //   - follows it: polls /api/docs/<id>/head and loads each new version Claude saves (one undo step),
 //   - saves your edits back about a second after you stop (PUT with the version they were based on),
 //   - shows the bought parts Claude asked for as cards in the OpenSketch AI pane.
-// If Claude and you both changed it, a bar asks which version to keep. Nothing is thrown away: the server
-// keeps the last 50 versions.
+// If Claude and you both changed it, a bar asks which version to keep; the other one stays in the version
+// history (store.py keeps every AI change, restore and rename, and one version per 10 minutes of autosaves).
 
 import { dialog, message } from './ui/dialogs.js';
 import { isAssembly } from './asm.js';
@@ -93,6 +93,8 @@ export class ServerDocs {
     this.setUrl(rec.id);
     this.startPolling();
     if (!quiet) this.app.status(`Opened ${rec.name}. Your edits save by themselves; your AI's changes appear here.`);
+    // store.py could not read the file and served its newest good version; the next save writes over the damaged copy
+    if (rec.recovered) this.app.toast?.(`This file was damaged on the server, so its last good version (version ${rec.recovered.from_version}) opened. Your next change saves over the damaged copy.`, 10000);
     if (!rec.thumb || rec.thumb.version < rec.version || rec.thumb.source !== 'browser') this.scheduleThumb(1500);
     return true;
   }

@@ -523,7 +523,7 @@ export class FilesView {
     const cur = h('div', 'fv-hrow cur', `<span class="v">v${f.version}</span><span class="w"><b>Current version</b><i></i></span><span class="t">${esc(ago(f.updated))}</span>`);
     cur.querySelector('i').textContent = `${f.by === 'claude' ? 'AI' : 'You'}: ${f.summary || ''}`;
     body.appendChild(cur);
-    if (!vs.length) body.appendChild(h('p', 'fv-p', 'No earlier versions yet. Every save keeps one, up to the last 50.'));
+    if (!vs.length) body.appendChild(h('p', 'fv-p', 'No earlier versions yet. One is kept for every AI change and for every 10 minutes of editing.'));
     for (const v of vs) {
       const row = h('div', 'fv-hrow', `<span class="v">v${v.version}</span><span class="w"><b></b><i></i></span><span class="t">${esc(ago(v.updated))}</span>`);
       row.querySelector('b').textContent = v.summary || 'Change';

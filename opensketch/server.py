@@ -106,6 +106,17 @@ app.add_middleware(auth.PasswordGate)
 app.add_middleware(SelectiveGZip)
 
 
+@app.exception_handler(store.StorageError)
+async def _storage_full(_request: Request, exc: store.StorageError):
+    """No room (disk nearly full, the person's Files full, a file too big): a plain message, nothing written."""
+    return JSONResponse({"error": str(exc)}, status_code=exc.status)
+
+
+@app.exception_handler(store.Damaged)
+async def _damaged(_request: Request, exc: store.Damaged):
+    return JSONResponse({"error": str(exc)}, status_code=422)
+
+
 class RegenRequest(BaseModel):
     doc: dict
     preview: dict | None = None
@@ -678,8 +689,23 @@ class VersionRequest(BaseModel):
 def _found(fn, *a, **k):
     try:
         return fn(*a, **k)
+    except store.Damaged:
+        raise
     except store.NotFound:
         raise HTTPException(404, "No such document") from None
+
+
+def _bad_doc(doc) -> JSONResponse | None:
+    """The same structure check MCP imports get (store.check_structure): one malformed document must never be
+    stored, where it would break the Files list for everyone."""
+    try:
+        store.check_structure(doc)
+    except ValueError as e:
+        return JSONResponse({"error": f"This is not a document OpenSketch can keep: {e}"}, status_code=400)
+    return None
+
+
+SAVED_KEYS = ("id", "name", "version", "updated", "by", "summary")
 
 
 def _doc_meta(doc_id: str, request: Request, trash_ok: bool = False) -> dict:
@@ -723,11 +749,13 @@ def _free_name(kind: str, user) -> str:
 def api_doc_create(req: DocCreate, request: Request):
     kind = req.kind if req.kind in ("part", "assembly") else "part"
     if req.doc is not None:
+        if (bad := _bad_doc(req.doc)) is not None:
+            return bad
         kind = store.kind_of(req.doc)
     name = (req.name or "").strip()
     if not name or (req.doc is None and name == "Untitled"):
         name = _free_name(kind, _user(request))
-    return store.create(name, req.doc, kind, by="you", owner=store.owner_of(_user(request)))
+    return store.brief(store.create(name, req.doc, kind, by="you", owner=store.owner_of(_user(request))))
 
 
 @app.get("/api/docs/{doc_id}")
@@ -761,13 +789,23 @@ def api_doc_restore_version(doc_id: str, req: VersionRequest, request: Request):
 
 @app.put("/api/docs/{doc_id}")
 def api_doc_save(doc_id: str, req: DocSave, request: Request):
+    """The browser's save. No summary = an autosave: autosaves in one run of editing keep one version between them
+    (store.save). Answers only what the browser needs (the version), not the model it just sent."""
     _doc_meta(doc_id, request)
+    if (bad := _bad_doc(req.doc)) is not None:
+        return bad
+    if req.requests is not None and (len(req.requests) > 200 or not all(isinstance(r, dict) for r in req.requests)):
+        return JSONResponse({"error": "requests must be a list of objects."}, status_code=400)
     try:
-        return store.save(doc_id, req.doc, "you", req.summary or "Edited in OpenSketch", req.base_version, req.requests)
+        rec = store.save(doc_id, req.doc, "you", req.summary or "Edited in OpenSketch", req.base_version, req.requests,
+                         autosave=not req.summary.strip())
+    except store.Damaged:
+        raise
     except store.NotFound:
         raise HTTPException(404, "No such document") from None
     except store.Conflict as c:
-        return JSONResponse({"error": "conflict", "current": c.current}, status_code=409)
+        return JSONResponse({"error": "conflict", "current": {k: c.current.get(k) for k in SAVED_KEYS}}, status_code=409)
+    return {k: rec.get(k) for k in SAVED_KEYS}
 
 
 @app.patch("/api/docs/{doc_id}")
@@ -790,9 +828,12 @@ def api_doc_duplicate(doc_id: str, req: DocCopy, request: Request):
 
 
 @app.delete("/api/docs/{doc_id}")
-def api_doc_delete(doc_id: str, request: Request, forever: bool = False):
-    """Move to the Trash; forever=1 removes a document that is already in the Trash."""
+def api_doc_delete(doc_id: str, request: Request, forever: bool = False, untouched: bool = False):
+    """Move to the Trash; forever=1 removes a document that is already in the Trash; untouched=1 removes a file New
+    made that is still empty and still named "Part N" / "Assembly N" (leaving it), else keeps it ({"kept": true})."""
     m = _doc_meta(doc_id, request, trash_ok=True)
+    if untouched:
+        return {"deleted": doc_id, "forever": True} if store.discard_if_untouched(doc_id) else {"kept": True}
     if forever:
         if not m.get("deleted"):
             return JSONResponse({"error": "Move it to the Trash first."}, status_code=400)

@@ -256,67 +256,7 @@ async def get_document(doc_id: str) -> str:
 MAX_IMPORT_BYTES = 32 * 1024 * 1024
 
 
-def _native_structure(doc: dict) -> None:
-    """Check the containers read by the UI/model_view, not feature validity or rebuild success.
-
-    Missing sketch references, unsupported feature types and other repairable modelling errors
-    remain importable. A null feature or a scalar part is not a document that those readers can use.
-    """
-    def object_list(value, label, fields=()):
-        if not isinstance(value, list):
-            raise ValueError(f"{label} must be a list.")
-        seen = set()
-        for item in value:
-            if not isinstance(item, dict):
-                raise ValueError(f"Every {label} entry must be an object.")
-            for field in fields:
-                if not isinstance(item.get(field), str) or not item[field]:
-                    raise ValueError(f"Every {label} entry needs a non-empty string {field}.")
-            if "id" in fields:
-                if item["id"] in seen:
-                    raise ValueError(f"{label} IDs must be unique.")
-                seen.add(item["id"])
-        return value
-
-    def metadata(item, label):
-        for field in ("name", "units", "appearance"):
-            if field in item and not isinstance(item[field], str):
-                raise ValueError(f"{label} {field} must be a string.")
-        for field in ("material", "pcb"):
-            if field in item and not isinstance(item[field], dict):
-                raise ValueError(f"{label} {field} must be an object.")
-
-    def part(item, label):
-        if not isinstance(item, dict) or item.get("type", "part") != "part":
-            raise ValueError(f"{label} must be a part document.")
-        metadata(item, label)
-        for feature in object_list(item.get("features"), f"{label} features", ("id", "type")):
-            if feature["type"] == "import" and "data" in feature and not isinstance(feature["data"], str):
-                raise ValueError("Imported feature data must be a base64 string.")
-            if feature["type"] == "sketch":
-                if "entities" in feature:
-                    object_list(feature["entities"], "sketch entities", ("id", "type"))
-                if "constraints" in feature:
-                    object_list(feature["constraints"], "sketch constraints", ("type",))
-
-    if not isinstance(doc, dict) or doc.get("type", "part") not in ("part", "assembly"):
-        raise ValueError("The file must contain an OpenSketch part or assembly document.")
-    if not assembly.is_assembly(doc):
-        part(doc, "Part")
-        return
-    metadata(doc, "Assembly")
-    if not isinstance(doc.get("parts"), dict):
-        raise ValueError("Assembly parts must be an object.")
-    for key, value in doc["parts"].items():
-        part(value, f"Part {key!r}")
-    object_list(doc.get("components"), "assembly components", ("id", "part"))
-    for mate in object_list(doc.get("mates", []), "assembly mates", ("id", "type")):
-        for field in ("refs", "planes", "angle_refs", "input_refs"):
-            if field in mate:
-                object_list(mate[field], f"mate {field}")
-    if "sequence" in doc and (not isinstance(doc["sequence"], list)
-                              or not all(isinstance(item, str) for item in doc["sequence"])):
-        raise ValueError("Assembly sequence must be a list of component IDs.")
+_native_structure = store.check_structure  # the same check the browser's saves get (store.py)
 
 
 def _check_filename(filename: str | None) -> str:

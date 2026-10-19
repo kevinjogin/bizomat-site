@@ -29,9 +29,9 @@ def _setup_owner_and_member():
     return owner, member
 
 
-def _block():
+def _block(name="Block"):
     from opensketch import demo
-    return {"version": 1, "name": "Block", "units": "mm", "seq": 1000, "rollback": None, "features": demo.bracket_features()}
+    return {"version": 1, "name": name, "units": "mm", "seq": 1000, "rollback": None, "features": demo.bracket_features()}
 
 
 def _png(w=4, h=3):
@@ -146,10 +146,10 @@ def test_pictures_from_the_browser_and_drawn_on_the_server():
     assert ok["thumb"]["source"] == "browser"
     assert c.get(f"/api/docs/{doc_id}/thumb").content == _png()
     # you change the model: the browser's picture stays until the browser sends a new one
-    store.save(doc_id, _block(), "you", "Edited")
+    store.save(doc_id, _block("Block 2"), "you", "Edited")
     assert c.get(f"/api/docs/{doc_id}/thumb").content == _png()
     # the AI changes it: the server draws the new version
-    store.save(doc_id, _block(), "claude", "AI change")
+    store.save(doc_id, _block("Block 3"), "claude", "AI change")
     redrawn = c.get(f"/api/docs/{doc_id}/thumb")
     assert redrawn.content != _png() and store.meta(doc_id)["thumb"] == dict(store.meta(doc_id)["thumb"], source="server", version=3)
     # an empty document has no picture
@@ -176,7 +176,7 @@ def test_server_pictures_spare_the_server(monkeypatch):
     doc_id = c.post("/api/docs", json={"name": "Block", "doc": _block()}).json()["id"]
     assert c.get(f"/api/docs/{doc_id}/thumb").status_code == 404 and len(calls) == 1
     assert c.get(f"/api/docs/{doc_id}/thumb").status_code == 404 and len(calls) == 1  # same version: not again
-    store.save(doc_id, _block(), "claude", "AI change")
+    store.save(doc_id, _block("Block 2"), "claude", "AI change")
     assert c.get(f"/api/docs/{doc_id}/thumb").status_code == 404 and len(calls) == 2  # changed: tried again
     # a big model (an imported STEP assembly) is never drawn on the server: the browser draws it when opened
     monkeypatch.setattr(server, "THUMB_SERVER_MAX", 10)
@@ -242,4 +242,12 @@ def test_history_is_capped_by_size(monkeypatch):
     rec = store.create("Big", {"version": 1, "features": [], "name": "Big", "blob": "x" * 1000})
     for i in range(12):
         store.save(rec["id"], {"version": 1, "features": [], "name": "Big", "blob": "y" * 1000 + str(i)}, "you")
-    assert [v["version"] for v in store.versions(rec["id"])] == [12, 11, 10, 9, 8]  # the newest five stay
+    assert [v["version"] for v in store.versions(rec["id"])] == [12, 11]  # as many as fit in HISTORY_MAX
+    monkeypatch.setattr(store, "HISTORY_MAX", 10)
+    store.save(rec["id"], {"version": 1, "features": [], "name": "Big", "blob": "z"}, "you")
+    assert [v["version"] for v in store.versions(rec["id"])] == [13]  # the newest is always kept
+    monkeypatch.setattr(store, "HISTORY_MAX", 10**9)
+    monkeypatch.setattr(store, "KEEP", 3)
+    for i in range(5):
+        store.save(rec["id"], {"version": 1, "features": [], "name": "Big", "n": i}, "claude")
+    assert [v["version"] for v in store.versions(rec["id"])] == [18, 17, 16]  # and at most KEEP
