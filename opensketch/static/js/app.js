@@ -40,6 +40,10 @@ function importFailText(status, size) {
   return `The server did not answer properly (HTTP ${status || 'no status'}). Reload the page and try again.`;
 }
 const AUTOSAVE = 'opensketch.autosave.v1';
+const BLOB = '\u0000blob:'; // stands for a big string in undo steps (app.undoJSON)
+const BLOB_MIN = 64 * 1024;
+const UNDO_MAX = 64e6; // characters of undo history kept
+const CACHE_MAX = 60e6; // bytes (about) of rebuilt meshes kept for undo, redo and going back
 
 const MATERIALS = [
   ['ABS', 1.02e-6], ['PC/ABS', 1.15e-6], ['Nylon 6/6', 1.14e-6], ['PLA', 1.24e-6], ['Polypropylene', 0.9e-6],
@@ -347,18 +351,41 @@ export class App {
     if (this.proposal) this.rejectProposal(true, 'Not applied: another file was opened.');
     this.docStack = [];
     this.undoStack = []; this.redoStack = [];
+    this.blobs = null;
+    this.regenCache?.clear();
     this.docEpoch = (this.docEpoch || 0) + 1;
+  }
+
+  // An undo step: the document as text, in one pass. Big strings that rarely change (an import's BREP) are kept
+  // once and stand in the text as a short token, so 200 steps of an imported model do not hold 200 copies.
+  undoJSON(d = this.doc) {
+    const blobs = this.blobs || (this.blobs = { byText: new Map(), byToken: new Map() });
+    return JSON.stringify(d, (k, v) => {
+      if (k.startsWith('_')) return undefined;
+      if (typeof v !== 'string' || v.length < BLOB_MIN) return v;
+      let t = blobs.byText.get(v);
+      if (!t) { t = BLOB + blobs.byText.size; blobs.byText.set(v, t); blobs.byToken.set(t, v); }
+      return t;
+    });
+  }
+
+  fromUndoJSON(json) {
+    const byToken = this.blobs?.byToken;
+    return JSON.parse(json, byToken ? (k, v) => (typeof v === 'string' && v.startsWith(BLOB) ? byToken.get(v) ?? v : v) : undefined);
   }
 
   pushUndo(label) {
     this.settleProposal();
-    this.undoStack.push({ label, json: JSON.stringify(this.cleanDoc()) });
-    if (this.undoStack.length > 200) this.undoStack.shift();
+    this.undoStack.push({ label, json: this.undoJSON() });
+    // at most 200 steps and UNDO_MAX characters in all (the newest step always stays)
+    let total = 0;
+    for (const u of this.undoStack) total += u.json.length;
+    while (this.undoStack.length > 1 && (this.undoStack.length > 200 || total > UNDO_MAX)) total -= this.undoStack.shift().json.length;
     this.redoStack = [];
   }
 
   restoreJSON(json) {
-    this.doc = JSON.parse(json);
+    this.doc = this.fromUndoJSON(json);
     if (this.mode === 'sketch') {
       if (this.featureById(this.sketcher.skId)) { this.sketcher.sel.clear(); this.sketcher.solve(); this.sketcher.render(); }
       else this.exitSketch({ silent: true });
@@ -373,7 +400,7 @@ export class App {
     if (this.mode === 'sketch' && this.sketcher.tool && this.sketcher.tool.stage > 0) { this.sketcher.cancelTool(); return; }
     const u = this.undoStack.pop();
     if (!u) { this.status('Nothing to undo'); return; }
-    this.redoStack.push({ label: u.label, json: JSON.stringify(this.cleanDoc()) });
+    this.redoStack.push({ label: u.label, json: this.undoJSON() });
     this.restoreJSON(u.json);
     this.status('Undo ' + u.label);
   }
@@ -381,7 +408,7 @@ export class App {
   redo() {
     const r = this.redoStack.pop();
     if (!r) return;
-    this.undoStack.push({ label: r.label, json: JSON.stringify(this.cleanDoc()) });
+    this.undoStack.push({ label: r.label, json: this.undoJSON() });
     this.restoreJSON(r.json);
     this.status('Redo ' + r.label);
   }
@@ -569,26 +596,28 @@ export class App {
       r = await fetch(url, method === 'GET' ? {} : { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     } catch (_) { throw serverAway(); } // no answer at all: offline, or the server is starting up
     const ct = r.headers.get('content-type') || '';
+    if (r.status === 401) { location.href = '/login?next=' + encodeURIComponent(location.pathname + location.search); throw new Error('Sign in again'); }
     if ([502, 503, 504].includes(r.status) && !ct.includes('json')) throw serverAway(); // Fly.io: the machine is waking or too busy
     if (ct.includes('json')) {
       const j = await r.json();
-      if (!r.ok && !j.error) throw new Error(j.detail || r.statusText || `HTTP ${r.status}`);
+      if (!r.ok) { const e = new Error(j.error || j.detail || r.statusText || `HTTP ${r.status}`); e.status = r.status; e.body = j; throw e; }
       return j;
     }
-    if (r.status === 401) { location.href = '/login?next=' + encodeURIComponent(location.pathname + location.search); throw new Error('Sign in again'); }
     if (!r.ok) throw new Error(r.statusText || `HTTP ${r.status}`);
     return r;
   }
 
   // A rebuild waits out a server that is starting or busy instead of failing at once (Fly.io wakes a stopped
   // machine in 10-30 s and answers 502 meanwhile). Up to ~75 s; the loading pill says what it is waiting for.
-  async apiPatient(url, body, done) {
+  // stale(): true once a newer request replaced this one, which then stops asking.
+  async apiPatient(url, body, done, stale = null) {
     const waits = [1000, 2000, 4000, 8000, 15000, 15000, 30000];
     for (let i = 0; ; i++) {
       try { return await this.api(url, body); } catch (err) {
         if (!err.away || i >= waits.length) throw err;
         done?.relabel?.('Waiting for the server');
         await new Promise((ok) => setTimeout(ok, waits[i]));
+        if (stale?.()) { const e = new Error('Replaced by a newer rebuild'); e.superseded = true; throw e; }
       }
     }
   }
@@ -608,16 +637,42 @@ export class App {
   }
 
   // label: what the loading indicator says if the server takes a moment ("Opening Bracket")
+  // A part's rebuild. A state this page has built before (undo, redo, leaving a sketch) is drawn at once from
+  // memory; otherwise one request at a time goes to the server: a newer rebuild waits for the one in flight
+  // and only the newest state is sent (the person's CAD worker does one job at a time, so stale ones would
+  // queue there). Ctrl+B (announce) always asks the server.
   async regen(announce = false, label = null) {
     if (this.isAsm) return this.asm.regen(announce, null, label);
     const seq = ++this.regenSeq;
+    let key = JSON.stringify(this.docForRegen());
+    const hit = !announce && this.regenCache?.get(key);
+    if (hit) { this.regenCache.delete(key); this.regenCache.set(key, hit); this.applyResult(hit); return; }
+    while (this.regenFlight) { await this.regenFlight.catch(() => {}); if (seq !== this.regenSeq) return; }
+    const doc = this.docForRegen();
+    key = JSON.stringify(doc);
     const done = this.busy(label || (this.viewer.bodyData ? 'Rebuilding' : 'Loading model'));
+    const flight = this.apiPatient('/api/regen', { doc }, done, () => seq !== this.regenSeq);
+    this.regenFlight = flight;
     let res;
-    try { res = await this.apiPatient('/api/regen', { doc: this.docForRegen() }, done); } catch (err) { done(); this.rebuildFailed(err); return; }
+    try { res = await flight; } catch (err) { done(); if (!err.superseded && seq === this.regenSeq) this.rebuildFailed(err); return; } finally { if (this.regenFlight === flight) this.regenFlight = null; }
+    this.cacheResult(key, res);
     if (seq !== this.regenSeq) { done(); return; }
-    this.applyResult(res);
-    done();
+    try { this.applyResult(res); } finally { done(); }
     if (announce) this.status('Rebuild complete');
+  }
+
+  // Rebuilt results kept by document text (a few, up to CACHE_MAX bytes of mesh), newest last.
+  cacheResult(key, res) {
+    if (!res || !Array.isArray(res.status)) return;
+    const c = this.regenCache || (this.regenCache = new Map());
+    let n = 0;
+    for (const f of res.body?.faces || []) n += (f.positions?.length || 0) + (f.indices?.length || 0);
+    for (const e of res.body?.edges || []) n += e.points?.length || 0;
+    res._bytes = n * 8 + key.length * 2;
+    c.delete(key); c.set(key, res);
+    let total = 0;
+    for (const r of c.values()) total += r._bytes;
+    for (const [k, r] of c) { if (c.size <= 1 || (c.size <= 8 && total <= CACHE_MAX)) break; c.delete(k); total -= r._bytes; }
   }
 
   // Loading indicator in the graphics area for server work (rebuilds, imports, previews). It appears only
@@ -1061,9 +1116,16 @@ export class App {
     const f = this.featureById(id);
     if (!f) return;
     const names = (ids) => ids.map((x) => esc(this.featureById(x)?.name || x)).join(', ');
-    const plan = async (ids, absorbed) => this.api('/api/delete_plan', { doc: this.cleanDoc(this.doc), features: ids, delete_absorbed: absorbed });
+    // the server rebuilds the part to see what breaks: a pill says so, and a second Delete waits for it
+    const plan = async (ids, absorbed) => {
+      const done = this.busy('Checking what goes with it', 300);
+      try { return await this.api('/api/delete_plan', { doc: this.cleanDoc(this.doc), features: ids, delete_absorbed: absorbed }); } finally { done(); }
+    };
+    if (this.deleting) return;
+    this.deleting = true;
     let first;
-    try { first = await plan([id], true); } catch (err) { this.status(`Cannot delete: ${err.message}`); return; }
+    try { first = await plan([id], true); } catch (err) { this.toast(`Cannot delete ${f.name}: ${err.message}`, 6000); return; } finally { this.deleting = false; }
+    if (!this.featureById(id)) return; // gone meanwhile
     const kids = first.would_fail.map((x) => x.id);
     const body = document.createElement('div');
     body.innerHTML = `<div>Delete <b>${esc(f.name)}</b>?</div>` +
@@ -1077,7 +1139,7 @@ export class App {
         const delAbs = body.querySelector('#delabs')?.checked ?? true, delChild = body.querySelector('#delchild')?.checked;
         let p = first;
         if (!delAbs || delChild) {
-          try { p = await plan(delChild ? [id, ...kids] : [id], delAbs); } catch (err) { this.status(`Cannot delete: ${err.message}`); return; }
+          try { p = await plan(delChild ? [id, ...kids] : [id], delAbs); } catch (err) { this.toast(`Cannot delete ${f.name}: ${err.message}`, 6000); return; }
         }
         const kill = new Set([...p.deleted, ...p.deleted_with_it, ...p.absorbed]);
         const trim = new Map(p.patterns_trimmed.map((x) => [x.id, x.keeps]));
@@ -1204,6 +1266,10 @@ export class App {
   async runPreview() {
     const cmd = this.cmd;
     if (!cmd || !cmd.spec || cmd.cancelled) return false;
+    // one preview request at a time: a newer change waits for the one in flight; only the newest is sent
+    const ticket = this.previewTicket = (this.previewTicket || 0) + 1;
+    while (this.previewFlight) { await this.previewFlight.catch(() => {}); if (ticket !== this.previewTicket) return false; }
+    if (this.cmd !== cmd || cmd.cancelled) return false;
     const version = cmd.previewVersion || 0;
     this.drawSketches();
     if (!cmd.spec.okEnabled()) { this.viewer.setTool(null); return false; }
@@ -1214,7 +1280,9 @@ export class App {
     const seq = ++this.regenSeq;
     let res;
     const done = this.busy('Updating preview', 400);
-    try { res = await this.api('/api/regen', { doc, preview: f }); } catch (err) { this.toast('Preview failed: ' + err.message); return false; } finally { done(); }
+    const flight = this.api('/api/regen', { doc, preview: f });
+    this.previewFlight = flight;
+    try { res = await flight; } catch (err) { if (this.cmd === cmd && !cmd.cancelled) this.toast('Preview failed: ' + err.message); return false; } finally { done(); if (this.previewFlight === flight) this.previewFlight = null; }
     if (seq !== this.regenSeq || this.cmd !== cmd || cmd.cancelled || version !== (cmd.previewVersion || 0)) return false;
     if (!Array.isArray(res.status) || !res.body) { this.toast('The server did not return a valid preview.'); return false; }
     this.result = { ...this.result, planes: { ...(this.result?.planes || {}), ...res.planes } };
@@ -1663,8 +1731,11 @@ export class App {
 
   async massProperties() {
     if (this.isAsm) return this.asm.massProperties();
+    if (this.massBusy) return;
+    this.massBusy = true;
+    const done = this.busy('Calculating mass properties', 300);
     let r;
-    try { r = await this.api('/api/mass', { doc: this.cleanDoc() }); } catch (err) { this.toast(String(err)); return; }
+    try { r = await this.api('/api/mass', { doc: this.cleanDoc() }); } catch (err) { this.toast('Mass Properties: ' + err.message, 6000); return; } finally { done(); this.massBusy = false; }
     if (r.error) { message('Mass Properties', esc(r.error)); return; }
     const m = this.doc.material;
     const g = (v) => fmt(v * 1000, 2);
@@ -1936,11 +2007,14 @@ export class App {
         return;
       }
     }
+    if (this.exporting) { this.toast('An export is already running. It downloads when it is ready.'); return; }
+    this.exporting = true;
+    const done = this.busy(`Exporting ${fmtName.toUpperCase()}`, 0);
     try {
       const r = await fetch('/api/export/' + fmtName, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ doc: this.cleanDoc() }) });
-      if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.detail || r.statusText); }
+      if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.error || j.detail || r.statusText); }
       this.download(await r.blob(), `${this.doc.name}.${fmtName}`);
-    } catch (err) { message('Export', esc(err.message || err)); }
+    } catch (err) { message('Export', esc(err.message || err)); } finally { done(); this.exporting = false; }
   }
 
   // SOLIDWORKS macro: a background job on the server (the macro is checked before it is handed over).

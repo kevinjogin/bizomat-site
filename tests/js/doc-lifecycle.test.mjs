@@ -17,11 +17,16 @@ globalThis.localStorage = {
   removeItem: (k) => { mem.delete(k); }, clear: () => mem.clear(), key: (i) => [...mem.keys()][i] ?? null,
   get length() { return mem.size; },
 };
-globalThis.location = new URL('http://localhost/');
-globalThis.history = { replaceState: (_s, _t, u) => { globalThis.location = new URL(String(u)); } };
+class Loc { // window.location: assigning href navigates (relative addresses too)
+  constructor(u) { this.u = new URL(u); }
+  get href() { return this.u.href; } set href(v) { this.u = new URL(v, this.u); }
+  get pathname() { return this.u.pathname; } get search() { return this.u.search; } toString() { return this.u.href; }
+}
+globalThis.location = new Loc('http://localhost/');
+globalThis.history = { replaceState: (_s, _t, u) => { globalThis.location.href = String(u); } };
 
 // ---------------------------------------------------------------- a fake OpenSketch server
-const server = { docs: new Map(), puts: [], calls: [], hold: null, next: 1 };
+const server = { docs: new Map(), puts: [], calls: [], regens: [], hold: null, next: 1 };
 const part = (name, n = 0) => ({ version: 1, type: 'part', name, units: 'mm', rollback: null, seq: 10,
   features: Array.from({ length: n }, (_, i) => ({ id: 'f' + i, type: 'plane', name: 'Plane' + (i + 1) })) });
 function addDoc(id, doc, extra = {}) {
@@ -37,6 +42,13 @@ globalThis.fetch = async (url, opts = {}) => {
   server.calls.push(`${method} ${u.pathname}`);
   if (server.hold) await server.hold;
   if (server.down) throw new TypeError('Failed to fetch');
+  if (u.pathname === '/api/regen') {
+    server.regens.push(body.doc);
+    if (server.regenHold) await server.regenHold;
+    return reply(200, { status: body.doc.features.map((f) => ({ id: f.id, state: 'ok' })), body: { faces: [{ id: 0, positions: [0, 0, 0], indices: [0] }], edges: [] }, planes: {} });
+  }
+  if (u.pathname === '/api/delete_plan') return reply(400, { error: 'Unknown feature x' });
+  if (u.pathname === '/api/gate') return reply(401, { error: 'Sign in to OpenSketch first.' });
   const m = u.pathname.match(/^\/api\/docs\/([^/]+)(\/(\w+))?$/);
   if (method === 'POST' && u.pathname === '/api/docs') {
     const id = 'n' + server.next++;
@@ -336,5 +348,76 @@ test('leaving a model with an AI change waiting asks first; the card says what b
   assert.equal(await go, true);
   assert.equal(card.state, 'accepted');
   assert.equal(app.doc.features.length, 2);
+  stopTimers(app);
+});
+
+// ---------------------------------------------------------------- rebuilds and undo memory
+function rebuildApp() {
+  const app = makeApp();
+  delete app.regen; // App.prototype.regen, the real one
+  app.applied = [];
+  app.applyResult = function (res) { this.applied.push(res); this.result = res; };
+  app.busy = () => Object.assign(() => {}, { relabel: noop });
+  return app;
+}
+
+test('undo and redo draw states built before at once, without asking the server', async () => {
+  server.regens = [];
+  const app = rebuildApp();
+  app.doc = part('Block', 1);
+  await app.regen();
+  app.commit('Plane2', () => app.doc.features.push({ id: 'p2', type: 'plane', name: 'Plane2' }), false);
+  await app.regen();
+  assert.equal(server.regens.length, 2);
+  app.undo(); await tick();
+  app.redo(); await tick();
+  app.undo(); await tick();
+  assert.equal(server.regens.length, 2, 'no request for states already built');
+  assert.equal(app.applied.length, 5);
+  await app.regen(true); // Ctrl+B still asks
+  assert.equal(server.regens.length, 3);
+  stopTimers(app);
+});
+
+test('quick rebuilds: one request in flight, and only the newest state follows it', async () => {
+  server.regens = [];
+  const app = rebuildApp();
+  app.doc = part('Block', 1);
+  let release;
+  server.regenHold = new Promise((ok) => { release = ok; });
+  const runs = [];
+  for (let i = 2; i <= 6; i++) {
+    app.doc.features.push({ id: 'q' + i, type: 'plane', name: 'Plane' + i });
+    runs.push(app.regen());
+    await tick();
+  }
+  assert.equal(server.regens.length, 1, 'the others wait');
+  server.regenHold = null; release();
+  await Promise.all(runs);
+  assert.equal(server.regens.length, 2, 'the first, then only the newest');
+  assert.equal(server.regens[1].features.length, 6);
+  assert.equal(app.result.status.length, 6, 'the newest state is on screen');
+  stopTimers(app);
+});
+
+test('a JSON error reply is an error (not a result), and 401 goes to sign-in', async () => {
+  const app = makeApp();
+  await assert.rejects(app.api('/api/delete_plan', { doc: {} }), /Unknown feature x/);
+  await assert.rejects(app.api('/api/gate', {}), /Sign in again/);
+  assert.match(String(location.href), /\/login\?next=/);
+  globalThis.location.href = '/';
+  stopTimers(app);
+});
+
+test('undo keeps one copy of an imported body, and the history is capped by size', () => {
+  const app = makeApp();
+  const brep = 'B'.repeat(200 * 1024);
+  app.doc = { ...part('Imported', 0), features: [{ id: 'i', type: 'import', name: 'Imported1', data: brep }] };
+  for (let i = 0; i < 30; i++) app.commit('Plane' + i, () => app.doc.features.push({ id: 'p' + i, type: 'plane', name: 'P' + i }), false);
+  const total = app.undoStack.reduce((n, u) => n + u.json.length, 0);
+  assert.ok(total < 30 * 4096, `undo steps are small (${total} characters for 30 steps)`);
+  for (let i = 0; i < 30; i++) app.undo();
+  assert.equal(app.doc.features.length, 1);
+  assert.equal(app.doc.features[0].data, brep, 'the body comes back whole');
   stopTimers(app);
 });
