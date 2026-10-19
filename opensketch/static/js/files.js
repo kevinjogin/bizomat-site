@@ -257,7 +257,6 @@ export class FilesView {
       b.onclick = () => { this.layout = b.dataset.l; try { localStorage.setItem('opensketch.files.layout', this.layout); } catch (_) { /* */ } lay.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); this.renderGrid(); };
     });
     this.sortEl = sort;
-    this.toolsEl = lay;
     this.barEl = bar;
     bar.append(this.countEl, h('span', 'fv-sp'), sort, lay);
     this.grid = h('div', 'fv-grid');
