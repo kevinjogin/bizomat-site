@@ -29,6 +29,12 @@ export const STD_FRAMES = {
   'Right Plane': { origin: [0, 0, 0], xdir: [0, 0, -1], ydir: [0, 1, 0], normal: [1, 0, 0] },
 };
 
+// How far a placement change moves a part: its pivot's travel (mm) plus its turn (rad, weighted as 10 mm).
+function moveSize(a, b, pivot) {
+  const qa = new THREE.Quaternion().setFromRotationMatrix(a), qb = new THREE.Quaternion().setFromRotationMatrix(b);
+  return pivot.clone().applyMatrix4(a).distanceTo(pivot.clone().applyMatrix4(b)) + qa.angleTo(qb) * 10;
+}
+
 function quatFromBasis(x, y, z) {
   const m = new THREE.Matrix4().makeBasis(x, y, z);
   return new THREE.Quaternion().setFromRotationMatrix(m);
@@ -708,7 +714,9 @@ export class Viewer {
       geo.userData.shared = true;
       return { geo, data: e };
     });
-    const pg = { key, faces, edges, body };
+    const box = new THREE.Box3();
+    for (const f of faces) { f.geo.computeBoundingBox(); box.union(f.geo.boundingBox); }
+    const pg = { key, faces, edges, body, center: box.isEmpty() ? new THREE.Vector3() : box.getCenter(new THREE.Vector3()) };
     this.partGeo.set(pid, pg);
     return pg;
   }
@@ -730,12 +738,17 @@ export class Viewer {
       l.renderOrder = 2;
       g.add(l); edges.push(l);
     }
-    g.userData = { comp: opts.id, faces, edges };
+    g.userData = { comp: opts.id, faces, edges, pivot: pg.center || new THREE.Vector3() };
     return g;
   }
 
   // comps: [{id, part, key, matrix, color, hidden, opacity}], bodies: {part id: mesh or undefined}
-  setAssembly(comps, bodies = {}) {
+  // glide (ms): components that moved since the last draw travel to their new place instead of
+  // jumping, the way SOLIDWORKS brings a part onto its mate.
+  setAssembly(comps, bodies = {}, glide = 0) {
+    const was = new Map([...this.compGroups].map(([id, g]) => [id, g.matrix.clone()]));
+    if (this.glideRun) this.glideRun.stopped = true;
+    this.glideRun = null;
     this.clearGroup(this.bodyGroup);
     this.faceObjs = []; this.edgeObjs = []; this.hiddenEdgeObjs = [];
     this.bodyData = null;
@@ -756,29 +769,58 @@ export class Viewer {
     this.refreshHighlights();
     this.bodyGroup.updateMatrixWorld(true);
     if (this.clipPlane) this.rebuildCaps();
+    if (glide > 0) this.glideFrom(was, glide);
   }
 
-  // Tween groups to new matrices. items: [{group, to: Matrix4, via?: Matrix4, from?: Matrix4}]
-  tweenGroups(items, dur = 700) {
+  glideFrom(was, dur) {
+    const items = [];
+    for (const [id, g] of this.compGroups) {
+      const from = was.get(id);
+      if (!from || moveSize(from, g.matrix, g.userData.pivot) < 1e-3) continue;
+      items.push({ group: g, from, to: g.matrix.clone(), pivot: g.userData.pivot });
+      g.matrix.copy(from);
+      g.matrixWorldNeedsUpdate = true;
+    }
+    if (!items.length) return;
+    const run = { stopped: false };
+    this.glideRun = run;
+    this.tweenGroups(items, dur, run).then(() => {
+      if (this.glideRun !== run) return;
+      this.glideRun = null;
+      this.bodyGroup.updateMatrixWorld(true);
+      if (this.clipPlane) this.rebuildCaps();
+      this.requestRender();
+    });
+  }
+
+  // Tween groups to new matrices. items: [{group, to: Matrix4, via?: Matrix4, from?: Matrix4, pivot?: Vector3}]
+  // The pivot (part coordinates, e.g. the part's centre) travels in a straight line while the part
+  // turns about it, so a part whose origin is far away does not swing round in an arc.
+  // run: {stopped} ends the tween early (a newer draw replaced the groups).
+  tweenGroups(items, dur = 700, run = null) {
     const parts = items.map((it) => {
+      const c = it.pivot || new THREE.Vector3();
       const keys = [it.from || it.group.matrix.clone(), ...(it.via ? [it.via] : []), it.to].map((m) => {
         const p = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3();
         m.decompose(p, q, s);
-        return { p, q, s };
+        return { w: c.clone().applyMatrix4(m), q, s };
       });
-      return { g: it.group, keys };
+      return { g: it.group, c, keys };
     });
     const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
     return new Promise((resolve) => {
       const t0 = performance.now();
-      const p = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3();
+      const p = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3(), w = new THREE.Vector3();
       const frame = () => {
+        if (run?.stopped) { resolve(); return; }
         const u = dur <= 0 ? 1 : Math.min(1, (performance.now() - t0) / dur);
-        for (const { g, keys } of parts) {
+        for (const { g, c, keys } of parts) {
           const segs = keys.length - 1;
           const x = ease(u) * segs, i = Math.min(segs - 1, Math.floor(x)), f = x - i;
           const a = keys[i], b = keys[i + 1];
-          p.lerpVectors(a.p, b.p, f); q.slerpQuaternions(a.q, b.q, f); s.lerpVectors(a.s, b.s, f);
+          w.lerpVectors(a.w, b.w, f); q.slerpQuaternions(a.q, b.q, f); s.lerpVectors(a.s, b.s, f);
+          p.copy(c).multiply(s).applyQuaternion(q);
+          p.subVectors(w, p);
           g.matrix.compose(p, q, s);
           g.matrixWorldNeedsUpdate = true;
         }

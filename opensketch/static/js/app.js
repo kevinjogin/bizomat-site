@@ -406,6 +406,7 @@ export class App {
     const root = this.docStack.length ? this.docStack[0].doc : this.doc;
     this.renderDocTitle(f, root);
     this.updateBreadcrumbs();
+    this.syncDocTabs();
     $('sb-editing').textContent = this.isAsm ? 'Editing Assembly' : f ? 'Editing Part in Assembly' : 'Editing Part';
     const bar = $('editbar');
     if (f) {
@@ -473,17 +474,24 @@ export class App {
     inp.addEventListener('blur', () => finish(true));
   }
 
+  // Model / Motion Review tabs under the graphics area. Motion Review is the joint review with its
+  // share link (review.js); it shows for assemblies only.
   bindDocTabs() {
-    const tabs = [...document.querySelectorAll('#doctabs .doctab')];
-    tabs.forEach((t, i) => {
+    for (const t of document.querySelectorAll('#doctabs .doctab')) {
       t.onclick = () => {
-        tabs.forEach((x) => x.classList.toggle('active', x === t));
-        if (i === 2) {
-          if (!this.isAsm) { this.toast('Motion Study replays an assembly. Open or create an assembly first.'); tabs[0].click(); return; }
-          this.asm.playSequence().then(() => tabs[0].classList.add('active'), () => {}).finally(() => tabs[2].classList.remove('active'));
-        } else if (i === 1) { this.toast('3D Views are not available yet.'); tabs[0].click(); }
+        if (t.dataset.tab === 'review') { if (this.cmd?.key !== 'motionreview') this.review.open(); }
+        else if (this.cmd?.key === 'motionreview') this.pmCancel();
+        this.syncDocTabs();
       };
-    });
+    }
+  }
+
+  syncDocTabs() {
+    const review = this.cmd?.key === 'motionreview';
+    for (const t of document.querySelectorAll('#doctabs .doctab')) {
+      if (t.dataset.tab === 'review') t.hidden = !this.isAsm;
+      t.classList.toggle('active', (t.dataset.tab === 'review') === review);
+    }
   }
 
   async api(url, body, method = 'POST') {
@@ -1035,6 +1043,7 @@ export class App {
     this.refreshSelectionDisplay();
     this.design?.refresh(); // its "finish the open command first" note goes with the command
     this.updateStartHint();
+    this.syncDocTabs();
   }
 
   pmOk() {
