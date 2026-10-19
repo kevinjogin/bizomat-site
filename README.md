@@ -366,6 +366,31 @@ Task Pane on the right, status bar with Under/Fully/Over Defined and "Editing Sk
   with relations and dimensions, components with real mates. Quick actions: Explain Model / Assembly,
   Fix Errors, Fix Mates, Fully Define.
 
+## Use it from SOLIDWORKS (add-in)
+
+Claude can also build in SOLIDWORKS itself: native parts and assemblies in your own files, with fully
+defined sketches, real features and mates. It goes through OpenSketch: Claude (with the OpenSketch
+connector) calls the `sw_` tools, the server queues the work, and a small add-in on the SOLIDWORKS PC
+fetches it over outgoing HTTPS. The PC needs no admin rights and no open ports.
+
+1. In OpenSketch: Connect AI > SOLIDWORKS. Download the add-in (one zip) on the PC with SOLIDWORKS 2022
+   or newer and unzip it into a folder of your own.
+2. Double-click `OpenSketchSW.exe` > Install for me (per-user, no admin).
+3. Restart SOLIDWORKS: OpenSketch > Connect to Claude. If IT locks add-ins, run the macro instead (Tools >
+   Macro > Run > `Documents\OpenSketch\OpenSketch.swb`), or click "Connect to the open SOLIDWORKS" in
+   `OpenSketchSW.exe`. Paste the OpenSketch address and your SOLIDWORKS key from the same dialog.
+4. First time: ask Claude "Run the SOLIDWORKS self test, all three stages." It makes test files in
+   `Documents\OpenSketch\selftest` and reports every step; send back anything that is not ok, with the
+   log (`%LOCALAPPDATA%\OpenSketch\SolidWorks\log.txt`, or Copy log in the add-in's window).
+5. Then: "In SOLIDWORKS, make a 60 x 40 x 8 mm mounting plate with four M5 clearance holes."
+
+Every sketch is solved on the server first (SOLIDWORKS gets exact coordinates, then the relations and
+dimensions), and every feature is built with OpenSketch's kernel on SOLIDWORKS' current body before it is
+made; if SOLIDWORKS reads a direction the other way, the add-in makes it again flipped. Reading (topology,
+measure, preview, interference, mate candidates) runs on the server on a STEP of the current body, cached by
+SOLIDWORKS' update stamp. The add-in source is in `solidworks/` (C#, .NET Framework 4.8; `bash
+solidworks/build.sh test` builds and tests it on Linux or Windows with the .NET 8 SDK).
+
 ## SOLIDWORKS macro export
 
 ![Export SOLIDWORKS Macro on the demo press](docs/img/sldmacro.png)
@@ -424,6 +449,9 @@ opensketch/
   edits.py           deleting features: what goes with them and what would break
   review.py          review pages: solved joint travel, checks, version compare, share links
   templates/review.html  the review page (YZ Default design system)
+  swbridge.py        link to the SOLIDWORKS add-in: per-person key, long-poll command queue, files and blobs
+  sw_tools.py        the sw_ MCP tools (solve and predict here, build in SOLIDWORKS, read back as STEP)
+  sw_selftest.py     sw_selftest: every add-in feature and mate tried in scratch files, step by step
   sldexport.py       SOLIDWORKS macro export: part -> engine recipe, assembly data, checks, zip
   sldexport_vba.py   the VBA OpenSketch adds to the macro (STEP import, saving, components, mates)
   sldexport_standin.py, sldexport_mock/   assembly stand-in (LibreOffice Basic mocks of SOLIDWORKS)

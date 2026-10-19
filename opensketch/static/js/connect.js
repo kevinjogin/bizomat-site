@@ -4,6 +4,8 @@
 //     (the subscription you already pay for; nothing to paste into OpenSketch). The address is the same for
 //     everyone (<site>/mcp): the app signs in to OpenSketch once (OAuth) and sees only that person's Files.
 //     The older private address (/mcp/<key>) stays as a fallback for apps that cannot sign in.
+//  3. "SOLIDWORKS": the same AI app builds in SOLIDWORKS on your PC (sw_ tools) through the OpenSketch add-in,
+//     which connects out to this server with a per-person SOLIDWORKS key (swbridge.py).
 //  2. "Built-in AI": the OpenSketch AI pane with your own API key (Claude, OpenAI, Gemini, OpenRouter or
 //     any OpenAI-compatible provider). The key goes to the server once and is stored encrypted on your
 //     account; the page only ever gets back the provider, model and the last four characters.
@@ -347,36 +349,92 @@ function keyTab(app, info, close) {
   return { el: wrap, focus: () => key.focus() };
 }
 
+// ---------------------------------------------------------------- SOLIDWORKS (the add-in on your PC)
+function swTab(sw) {
+  const wrap = h('div', 'cx-pane');
+  const lead = h('p', 'cx-lead');
+  lead.textContent = 'Claude builds native SOLIDWORKS parts and assemblies on your PC, with the AI app you connected above. The add-in connects out to OpenSketch, so the PC needs no admin rights and no open ports.';
+  wrap.appendChild(lead);
+  const state = t('div', 'cx-warn', '');
+  const paint = (st) => {
+    if (st && st.connected) {
+      state.className = 'cx-ok';
+      state.textContent = `SOLIDWORKS is connected (${st.machine || 'PC'}, add-in ${st.version || '?'}, ${st.client || ''}).` +
+        (st.working_on ? ` Working on ${st.working_on.op} for ${Math.round(st.working_on.for_s)} s.` : '');
+    } else {
+      state.className = 'cx-warn';
+      state.textContent = 'SOLIDWORKS is not connected.' + (st && st.note ? ' ' + st.note : '');
+    }
+  };
+  paint(sw.status);
+  wrap.appendChild(state);
+  const ol = h('ol', 'cx-steps');
+  const li = (...kids) => { const x = document.createElement('li'); x.append(...kids); ol.appendChild(x); return x; };
+  if (sw.download) {
+    const a = h('a', 'btn primary fv-pill', `<span>Download the add-in</span>${FI.arrow}`);
+    a.href = '/api/sw/download';
+    li(t('span', null, 'Download OpenSketch for SOLIDWORKS (one zip) on the PC with SOLIDWORKS 2022 or newer, and unzip it into a folder of your own (Documents is fine).'), a);
+  } else {
+    li(t('span', null, 'The add-in zip is not on this server yet. Get OpenSketch-SOLIDWORKS.zip from the person who runs it (it is built from solidworks/ in the repository).'));
+  }
+  li(t('span', null, 'Double-click OpenSketchSW.exe and click Install for me. No admin rights are needed.'));
+  li(t('span', null, 'Restart SOLIDWORKS and choose OpenSketch > Connect to Claude. If there is no OpenSketch menu (add-ins locked by IT), run the macro instead: Tools > Macro > Run > Documents\\OpenSketch\\OpenSketch.swb. If macros are locked too, click Connect to the open SOLIDWORKS in OpenSketchSW.exe.'));
+  const addr = h('div', 'cx-url'); const ai = h('input'); ai.readOnly = true; ai.value = sw.server; ai.onfocus = () => ai.select();
+  addr.append(ai, copyButton(() => sw.server));
+  li(t('span', null, 'In the window that opens, the OpenSketch address is:'), addr);
+  const keyRow = h('div', 'cx-url'); const ki = h('input'); ki.readOnly = true; ki.type = 'password'; ki.value = sw.key; ki.onfocus = () => ki.select();
+  const showBtn = t('button', 'btn', 'Show'); showBtn.onclick = () => { ki.type = ki.type === 'password' ? 'text' : 'password'; showBtn.textContent = ki.type === 'password' ? 'Show' : 'Hide'; };
+  keyRow.append(ki, showBtn, copyButton(() => ki.value));
+  li(t('span', null, 'and your SOLIDWORKS key. Paste it and click Connect. Keep it private: it lets this server drive your SOLIDWORKS.'), keyRow);
+  li(t('span', null, 'First time on this PC: in Claude (with the OpenSketch connector on), ask "Run the SOLIDWORKS self test, all three stages." It makes test files in Documents\\OpenSketch\\selftest and reports each step. If a step fails, send the report and the log below.'));
+  li(t('span', null, 'Then ask for real work, for example: "In SOLIDWORKS, make a 60 x 40 x 8 mm mounting plate with four M5 clearance holes and 2 mm edge fillets."'));
+  wrap.appendChild(ol);
+  const foot = h('div', 'cx-foot');
+  const renew = t('button', 'cx-link', 'Make a new key (the old one stops working)');
+  renew.onclick = async () => {
+    try { const r = await json('/api/sw/key', { method: 'POST' }); ki.value = r.key; paint({ connected: false, note: 'Paste the new key in SOLIDWORKS.' }); } catch (e) { state.textContent = String(e.message || e); }
+  };
+  foot.append(t('span', null, 'Logs on the PC: %LOCALAPPDATA%\\OpenSketch\\SolidWorks\\log.txt (the window has Copy log).'), renew);
+  wrap.appendChild(foot);
+  const timer = setInterval(async () => {
+    if (!wrap.isConnected) { clearInterval(timer); return; }
+    try { paint((await json('/api/sw')).status); } catch (_) { /* offline */ }
+  }, 3000);
+  return wrap;
+}
+
 // ---------------------------------------------------------------- dialog
 export async function connectDialog(app, tab = null) {
-  let info, keys;
-  try { [info, keys] = await Promise.all([json('/api/connect'), json('/api/ai/keys')]); } catch (e) {
+  let info, keys, sw;
+  try { [info, keys, sw] = await Promise.all([json('/api/connect'), json('/api/ai/keys'), json('/api/sw')]); } catch (e) {
     dialog({ title: 'Connect AI', body: t('div', null, String(e.message || e)), buttons: [{ label: 'OK', primary: true }] });
     return;
   }
   const body = h('div', 'cx');
   const hero = h('div', 'cx-hero');
-  hero.innerHTML = '<div><h2>Connect AI</h2><p>Two ways to design with AI in OpenSketch.</p></div>';
+  hero.innerHTML = '<div><h2>Connect AI</h2><p>Three ways to design with AI in OpenSketch.</p></div>';
   const tabs = h('div', 'cx-tabs'); tabs.setAttribute('role', 'tablist');
   const tA = h('button', 'cx-tab', `<b>Your AI app</b><span>ChatGPT, Claude, Codex, Cursor...</span>`);
   const tB = h('button', 'cx-tab', `<b>Built-in AI</b><span>Your own API key</span>`);
-  tabs.append(tA, tB);
+  const tC = h('button', 'cx-tab', `<b>SOLIDWORKS</b><span>Claude builds on your PC</span>`);
+  tabs.append(tA, tB, tC);
   const panes = h('div', 'cx-panes');
   body.append(hero, tabs, panes);
   const d = dialog({ title: 'Connect AI', body, cls: 'cx-dlg', buttons: [] });
   const A = appTab(app, info);
   const B = keyTab(app, keys, () => d.close());
+  const C = swTab(sw);
   const show = (which) => {
     try { localStorage.setItem('opensketch.connect.tab', which); } catch (_) { /* */ }
-    tA.classList.toggle('on', which === 'app'); tB.classList.toggle('on', which === 'key');
-    tA.setAttribute('aria-selected', which === 'app'); tB.setAttribute('aria-selected', which === 'key');
-    panes.innerHTML = ''; panes.appendChild(which === 'app' ? A : B.el);
+    tA.classList.toggle('on', which === 'app'); tB.classList.toggle('on', which === 'key'); tC.classList.toggle('on', which === 'sw');
+    tA.setAttribute('aria-selected', which === 'app'); tB.setAttribute('aria-selected', which === 'key'); tC.setAttribute('aria-selected', which === 'sw');
+    panes.innerHTML = ''; panes.appendChild(which === 'app' ? A : which === 'sw' ? C : B.el);
     if (which === 'key') setTimeout(() => B.focus(), 30);
     // keep the dialog on screen as its height changes
     const r = d.el.getBoundingClientRect();
     if (r.bottom > window.innerHeight - 8) d.el.style.top = Math.max(8, window.innerHeight - r.height - 8) + 'px';
   };
-  tA.onclick = () => show('app'); tB.onclick = () => show('key');
+  tA.onclick = () => show('app'); tB.onclick = () => show('key'); tC.onclick = () => show('sw');
   let saved = null; try { saved = localStorage.getItem('opensketch.connect.tab'); } catch (_) { /* */ }
   show(tab || saved || 'app');
   d.el.style.top = Math.max(8, (window.innerHeight - d.el.getBoundingClientRect().height) / 2.6) + 'px';

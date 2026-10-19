@@ -8,6 +8,15 @@
 # export sends every part as a STEP file.
 
 ARG BASE=python:3.12-slim
+
+# The SOLIDWORKS add-in (solidworks/): built here so the Connect AI dialog can offer it for download. Best effort:
+# if the .NET build fails, the image still builds and the dialog says the download is not on this server.
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS swaddin
+WORKDIR /src
+COPY solidworks ./solidworks
+RUN mkdir -p /out && (bash solidworks/build.sh && cp -r solidworks/dist/OpenSketch-SOLIDWORKS /out/) \
+    || echo "SOLIDWORKS add-in not built: no download on this server"
+
 FROM ${BASE}
 
 ARG WITH_MACRO=1
@@ -27,6 +36,10 @@ COPY pyproject.toml README.md ./
 RUN mkdir -p opensketch/features && touch opensketch/__init__.py opensketch/features/__init__.py && pip install -q ".[ai]" && pip uninstall -y -q opensketch
 COPY opensketch ./opensketch
 COPY skills ./skills
+COPY --from=swaddin /out /tmp/swaddin
+RUN mkdir -p opensketch/static/downloads && if [ -d /tmp/swaddin/OpenSketch-SOLIDWORKS ]; then \
+      cd /tmp/swaddin && python -m zipfile -c /app/opensketch/static/downloads/OpenSketch-SOLIDWORKS.zip OpenSketch-SOLIDWORKS; \
+    fi; rm -rf /tmp/swaddin
 # run from the source folder (python -m opensketch in /app), so the web page files are used as they are
 RUN python -c "import build123d, opensketch.server; print('OpenSketch ready')"
 

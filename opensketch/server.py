@@ -948,6 +948,141 @@ async def api_upload(upload_id: str, request: Request, expires: str = "", signat
             uploads.abort(upload_id)
 
 
+# ----------------------------------------------------------------------------- SOLIDWORKS add-in link
+# See swbridge.py. The add-in on the user's PC calls these with its SOLIDWORKS key (Authorization: Bearer oss_...);
+# they are outside sign-in like /mcp/ (no cookies; the key is the credential and reaches nothing else).
+
+def _sw_person(request: Request):
+    from . import swbridge
+    authz = request.headers.get("authorization", "")
+    tok = authz[7:].strip() if authz[:7].lower() == "bearer " else ""
+    ok, user = swbridge.resolve(tok)
+    if not ok:
+        if swbridge.retired(tok):
+            raise HTTPException(401, "A new SOLIDWORKS key was made, so this one stopped working. Paste the new key from "
+                                     "OpenSketch > Connect AI > SOLIDWORKS.")
+        raise HTTPException(401, "This SOLIDWORKS key is not valid. Copy the key again from OpenSketch > Connect AI > SOLIDWORKS.")
+    return user
+
+
+def _sw_error(exc: Exception, status: int) -> JSONResponse:
+    body = {"error": str(exc)}
+    if getattr(exc, "reason", None):
+        body["reason"] = exc.reason
+    return JSONResponse(body, status_code=status, headers={"Cache-Control": "no-store"})
+
+
+@app.post("/mcp/sw/hello")
+async def sw_hello(request: Request):
+    from . import swbridge
+    user = _sw_person(request)
+    try:
+        info = await request.json()
+    except ValueError:
+        info = {}
+    return JSONResponse(swbridge.hello(user, info if isinstance(info, dict) else {}), headers={"Cache-Control": "no-store"})
+
+
+@app.get("/mcp/sw/next")
+async def sw_next(request: Request, session: str = "", wait: float = 25):
+    from . import swbridge
+    user = _sw_person(request)
+    try:
+        cmd = await swbridge.next_command(user, session, wait)
+    except swbridge.Gone as exc:
+        return _sw_error(exc, 409)
+    if cmd is None:
+        return Response(status_code=204, headers={"Cache-Control": "no-store"})
+    return JSONResponse(cmd, headers={"Cache-Control": "no-store"})
+
+
+@app.post("/mcp/sw/result")
+async def sw_result(request: Request):
+    from . import swbridge
+    user = _sw_person(request)
+    try:
+        body = await request.json()
+        if not isinstance(body, dict):
+            raise ValueError
+    except ValueError:
+        return _sw_error(ValueError("The result must be a JSON object."), 400)
+    try:
+        swbridge.put_result(user, str(body.get("session", "")), body)
+    except swbridge.Gone as exc:
+        return _sw_error(exc, 409)
+    return {"ok": True}
+
+
+@app.post("/mcp/sw/file")
+async def sw_file(request: Request, session: str = "", id: str = "", name: str = ""):
+    """A file SOLIDWORKS made for a command (STEP, STL, PNG...): the body is its bytes, optionally gzipped
+    (X-OpenSketch-Gzip: 1), unzipped bounded."""
+    from . import swbridge
+    user = _sw_person(request)
+    cap = swbridge.MAX_FILE
+    raw = bytearray()
+    async for chunk in request.stream():
+        raw += chunk
+        if len(raw) > cap + 2**20:
+            return _sw_error(ValueError("The file is too big (128 MiB at most)."), 413)
+    data = bytes(raw)
+    if request.headers.get("x-opensketch-gzip") == "1" or request.headers.get("content-encoding", "").lower() == "gzip":
+        unzip = zlib.decompressobj(16 + zlib.MAX_WBITS)
+        try:
+            data = unzip.decompress(data, cap + 1)
+            if len(data) > cap or unzip.unconsumed_tail:
+                return _sw_error(ValueError("The file is too big (128 MiB at most)."), 413)
+            if not unzip.eof:
+                return _sw_error(ValueError("The gzip body arrived damaged."), 400)
+        except zlib.error:
+            return _sw_error(ValueError("The gzip body arrived damaged."), 400)
+    try:
+        return swbridge.put_file(user, session, id, name, data)
+    except swbridge.Gone as exc:
+        return _sw_error(exc, 409)
+    except swbridge.BridgeError as exc:
+        return _sw_error(exc, 400)
+
+
+@app.get("/mcp/sw/blob/{blob_id}")
+def sw_blob(blob_id: str, request: Request):
+    from . import swbridge
+    user = _sw_person(request)
+    try:
+        data, filename = swbridge.blob(user, blob_id)
+    except swbridge.BridgeError:
+        raise HTTPException(404, "No such file") from None
+    return Response(data, media_type="application/octet-stream",
+                    headers={"Cache-Control": "no-store", "Content-Disposition": f'attachment; filename="{filename}"'})
+
+
+SW_DOWNLOAD = Path(os.environ.get("OPENSKETCH_SW_ZIP", str(Path(__file__).parent / "static" / "downloads" / "OpenSketch-SOLIDWORKS.zip")))
+
+
+@app.get("/api/sw")
+def api_sw(request: Request):
+    """The Connect AI dialog's SOLIDWORKS tab: this person's key, the server address the add-in needs, whether
+    SOLIDWORKS is connected now, and whether the add-in download is on this server."""
+    from . import swbridge
+    u = _user(request)
+    return {"key": swbridge.key_for(u), "server": auth.public_url(dict(request.headers)),
+            "status": swbridge.status(u), "download": SW_DOWNLOAD.is_file()}
+
+
+@app.post("/api/sw/key")
+def api_sw_key(request: Request):
+    from . import swbridge
+    return {"key": swbridge.new_key(_user(request))}
+
+
+@app.get("/api/sw/download")
+def api_sw_download():
+    if not SW_DOWNLOAD.is_file():
+        raise HTTPException(404, "The SOLIDWORKS add-in is not on this server.")
+    return FileResponse(SW_DOWNLOAD, filename="OpenSketch-SOLIDWORKS.zip", media_type="application/zip",
+                        headers={"Cache-Control": "no-cache"})
+
+
 class ReviewRequest(BaseModel):
     doc_id: str
     compare_version: int | None = None

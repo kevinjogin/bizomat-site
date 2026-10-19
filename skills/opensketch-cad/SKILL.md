@@ -1,6 +1,6 @@
 ---
 name: opensketch-cad
-description: Build, check and change parts and assemblies in OpenSketch (YZ's SOLIDWORKS-style CAD) through its MCP tools. Use whenever an OpenSketch tool is available or YZ asks to model, edit, measure or check a part or assembly in OpenSketch.
+description: Build, check and change parts and assemblies in OpenSketch (YZ's SOLIDWORKS-style CAD) through its MCP tools, or in SOLIDWORKS itself through the same connector's sw_ tools. Use whenever an OpenSketch tool is available or YZ asks to model, edit, measure or check a part or assembly in OpenSketch or SOLIDWORKS.
 ---
 
 # OpenSketch CAD
@@ -69,3 +69,23 @@ At the end of a design round, publish_review (compare_version = the version the 
 send it or open it on his phone. Fix any clash it reports in a joint's travel before calling the round done.
 Give YZ the `open` link from the last result. Say which parts are bought and which are custom, the
 numbers you checked (and how), and anything you could not check.
+
+## In SOLIDWORKS (sw_ tools)
+
+The same connector drives SOLIDWORKS 2022 on YZ's PC through the OpenSketch add-in. Use it when YZ says
+SOLIDWORKS; use the plain tools when he says OpenSketch.
+
+- sw_status first. Not connected: tell YZ what it says (open SOLIDWORKS, OpenSketch > Connect to Claude)
+  and stop. sw_get_guide once (the feature format is the same as OpenSketch's).
+- SOLIDWORKS is the master copy and YZ edits it by hand: sw_get_document before changing anything; refer to
+  existing features by their SOLIDWORKS names (Sketch3, Boss-Extrude1), new ones by your own ids.
+- The same loop: predict, sw_batch a stage (all or nothing), check each feature's volume_change_mm3 and
+  bbox against your prediction (the server also predicts each feature with OpenSketch's kernel and the
+  add-in remakes a feature the other way round when SOLIDWORKS read a flag differently; a "warning" with
+  "no way matched the prediction" needs a look). Pick faces with sw_body_topology refs.
+- Fully define sketches: each sketch reports SOLIDWORKS' own state ("fully defined" is the goal).
+- Assemblies: sw_create_document per part, sw_insert_component, sw_add_mate with refs in part coordinates
+  and component = the SOLIDWORKS component name (Bracket-1); sw_check_interference at the end.
+- New files go to Documents\OpenSketch; later changes are not saved until sw_save. Tell YZ what to save.
+- On a new PC, or when YZ asks to test the add-in: sw_selftest stage plate, then shapes, then assembly. Pass
+  on each failed or check step with SOLIDWORKS' reason; YZ sends that and the add-in log to be fixed.

@@ -44,7 +44,11 @@ preview, or export CAD. Use import_document for source files (for anything over 
 with request_upload, PUT the file to it, then import_document with the upload_id instead of base64 data),
 preview_document for visual review and export_document for .osk, STEP and STL downloads. Open the app only
 when the user asks or would benefit from interactive inspection. After building, give the user the
-document's link from the tool result."""
+document's link from the tool result.
+
+SOLIDWORKS: when the user wants the work in SOLIDWORKS itself, use the sw_ tools instead. They build native
+SOLIDWORKS features in the user's own files on their PC, through the OpenSketch add-in. Call sw_status first and
+sw_get_guide once; the feature format is the same."""
 
 MCP_PREFACE = """You are working in OpenSketch through MCP tools. Differences from the in-app copilot described
 below: every tool takes a doc_id; there is no Accept/Reject step, each change is saved at once as a new
@@ -901,6 +905,11 @@ def _feature_tool(ft):
 for _ft in features.REGISTRY.values():
     if _ft.tool:
         mcp.add_tool(_feature_tool(_ft), name=features.tool_name(_ft), description=features.tool_description(_ft))
+
+
+# The sw_ tools: the same work in SOLIDWORKS on the user's PC, through the OpenSketch add-in (sw_tools.py).
+from . import sw_tools  # noqa: E402,F401
+from . import sw_selftest  # noqa: E402,F401
 
 
 # ----------------------------------------------------------------------------- HTTP

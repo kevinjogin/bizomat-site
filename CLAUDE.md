@@ -43,7 +43,51 @@ assemblies only when a part changes.
   for main calls to action, the text wordmark "OpenSketch" as the logo (no mark or tile; YZ 2026-10-19); new UI styled with the theme tokens and checked in dark,
   light and classic, and at phone width. Motion: `--ease`, 120-220 ms, nothing that blocks input.
 
-## Current state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand, text logo, Google sign-in set up in the app, upload links for big MCP imports)
+## Current state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand, text logo, Google sign-in set up in the app, upload links for big MCP imports, SOLIDWORKS add-in)
+
+SOLIDWORKS add-in (2026-10-19, YZ: "a SOLIDWORKS plug-in that does everything OpenSketch does, native to SOLIDWORKS";
+chosen scope: Claude builds in SOLIDWORKS 2022 on his work PC, no admin rights, linked through OpenSketch):
+- Shape: Claude -> OpenSketch connector -> `sw_` MCP tools (65 tools in all, 24 `sw_`) -> `swbridge` queue -> the add-in on
+  the PC long-polls the server over outgoing HTTPS and runs each command in SOLIDWORKS. SOLIDWORKS is the master copy;
+  OpenSketch keeps no document for it.
+- `swbridge.py`: per-person key `oss_...` = HMAC(data secret, person + counter) (`key_for`, `new_key` voids the old one,
+  `resolve`); one Session per person (a new hello replaces the old one; 409 with reason restarted / replaced / closed so the
+  add-in says why); routes in server.py `/mcp/sw/hello`, `GET /mcp/sw/next` (held `WAIT` 25 s), `/mcp/sw/result`,
+  `/mcp/sw/file` (gzip bodies, files attached to a command), `/mcp/sw/blob/{id}` (files sent down, e.g. imports); connected =
+  polled in the last `ALIVE` 70 s; a tool waits `DEFAULT_TIMEOUT` 240 s (more for big ops). Browser: `/api/sw` (status,
+  key, address, download?), `POST /api/sw/key`, `/api/sw/download` (the zip in `static/downloads/`, built by the Dockerfile's
+  `swaddin` stage from `solidworks/`; best effort). Connect AI dialog has a third tab "SOLIDWORKS" (`connect.js swTab`).
+- `sw_tools.py`: sw_status, sw_get_guide (SW_GUIDE + ai.SYSTEM + skill reference), sw_create_document, sw_open_document,
+  sw_save, sw_get_document, sw_add_features, sw_batch (all or nothing; BATCH_OPS), sw_delete_items, sw_undo,
+  sw_set_parameter, sw_set_equation, sw_insert_component, sw_add_mate, sw_body_topology, sw_measure_items,
+  sw_inspect_design, sw_preview, sw_check_interference, sw_find_mate_candidates, sw_export (artifacts.FORMATS gained x_t,
+  igs, sldprt, sldasm, pdf), sw_import, sw_standard_part. Features use OpenSketch's document format: `_solve` checks them
+  with the registry and solves each sketch with the browser solver (over-defined refused before anything is sent);
+  `_predict` rebuilds them with OpenSketch's kernel on SOLIDWORKS' current body (STEP) and sends `expect` {dv, bbox,
+  tool_bbox, plane, range} per feature (`expectations(st)`); features naming SOLIDWORKS features get none. Reading tools
+  run here on a STEP of the body (`_geometry`, cached per person and part by SOLIDWORKS' update stamp).
+- `sw_selftest.py`: `sw_selftest(stage)` plate (every part feature, read back with sketch states, STEP + topology,
+  variable + equation, a batch that must roll back, export, save) / shapes (draft, shell, sweep, loft) / assembly (two
+  blocks, components, coincident + distance + parallel mates, B's pose, interference, export). New files in
+  `Documents\OpenSketch\selftest`; "@id" in the data = the SOLIDWORKS name an earlier step gave id; expectations from the
+  STEP prediction, else from the whole test history built in OpenSketch. Reports ok / check / failed per step with the
+  reason; the first thing to run on the work PC.
+- Add-in (`solidworks/`, C#, .NET Framework 4.8 x64, SOLIDWORKS 2022 interop NuGet 30.5.1 embedded; builds on Linux with
+  the .NET 8 SDK: `bash solidworks/build.sh test`; CI `.github/workflows/solidworks.yml` keeps the zip as an artifact):
+  `src/Core` (Json, Geom, SketchPlan: sketch plan and relations from OpenSketch sketches, BridgeClient: hello / poll /
+  gzip upload / blob / reasons), `src/Addin` (Entry: ISwAddin + menu; Host: one link per SOLIDWORKS, commands run on
+  SOLIDWORKS' thread; ConnectForm; Settings in HKCU\Software\OpenSketch; Log in %LOCALAPPDATA%\OpenSketch\SolidWorks;
+  Commands (dispatch, documents, read), Files (geometry STEP, export, import), Pick (faces/edges by point), Sketches,
+  Features (each feature measured against `expect` and remade flipped, like the macro engine), Edits (delete, undo,
+  variables, equations, batch with Journal rollback), Assembly (components, mates with alignments tried in order)),
+  `src/App` OpenSketchSW.exe (Install for me = per-user COM registration under HKCU\Software\Classes + the add-in key
+  + the launcher macro `Documents\OpenSketch\OpenSketch.swb`; Remove; "Connect to the open SOLIDWORKS" drives it from
+  outside with an OLE message filter). Three ways to start because IT may block per-user add-ins: menu, macro
+  (`OpenSketch.Sw.Launcher.Start`, which first tries `LoadAddIn`), outside exe.
+- Tests: `tests/test_swbridge.py` (3, fake add-in over real uvicorn), `tests/test_sw_selftest.py` (11: the selftest data
+  builds in OpenSketch, passes the send checks, plate sketches fully defined; all three stages pass against SimSW, a
+  stand-in add-in built on OpenSketch's kernel and mate solver; a failing feature is reported and the run goes on),
+  `solidworks/tests` (17 dotnet tests of Core; `e2e_link.py`: the real C# link client against a real server, 7 checks).
 
 Autofill, PropertyManager tab, stalled server (2026-10-19, YZ's screenshots):
 - The FeatureManager tree showed only "yyz.works@gmail.com": Chrome's password manager treats every field outside a
@@ -738,6 +782,14 @@ See `docs/CODE_REVIEW_2026-10-16.md` for reproductions, new-feature usage and UX
   Linear look: ribbon feature icons keep a two-tone style (light fill + accent), not Linear's single-stroke
   icons; chrome icons are greyed with a CSS filter.
 
+- SOLIDWORKS add-in: nothing has run in a real SOLIDWORKS yet (only compiled against the 2022 interop, the link client
+  tested against a real server, the server side against fakes). First run on YZ's PC: sw_selftest plate / shapes /
+  assembly, then fix from its report and the log. Unconfirmed: SOLIDWORKS listing a per-user (HKCU) add-in at all
+  (likely not, hence the macro and outside-exe routes), `.swb` macros running on his install, AddDimension2 taking model
+  coordinates for the text position, obsolete calls kept for 2022 (FeatureFillet3, FeatureLinearPattern5, AddMate5,
+  InsertProtrusionSwept4). Predictions: none for features that name existing SOLIDWORKS features (mirror / pattern of a
+  tree feature), so those are not direction-checked. Coupler mates, contacts and reviews are OpenSketch-only. One
+  SOLIDWORKS link per person (a second PC replaces the first).
 - SOLIDWORKS macros: nothing has been run in SOLIDWORKS yet; ask YZ for the log of the first run.
   Assembly-side API calls not confirmed: AddComponent5 + Transform2, AddMate5 (obsolete in 2022) with
   mark 1, GetCorresponding, GetBodies3, GetSelectedObjectsComponent4, DeSelect2, InsertAxis2,
@@ -804,6 +856,7 @@ SolidCraft ideas a-g are done (see Current state). Still open from it: exact nam
 history (BRepAlgoAPI Modified/Generated) instead of geometric matching; a replayable script export of the
 timeline; a hostile-parameters fuzz test over every tool.
 
+00. SOLIDWORKS add-in on YZ's work PC: install, connect, sw_selftest (three stages), fix from the report and log.
 0. Run an exported macro in SOLIDWORKS 2022 (press demo first) and fix what the log shows; then
    revolves and cross holes as features where the engine allows.
 1. Run the AI against the live API with an assembly prompt and tune the system prompt (mate

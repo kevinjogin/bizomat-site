@@ -5,3 +5,7 @@ tests
 **/__pycache__
 *.pyc
 node_modules
+solidworks/**/bin
+solidworks/**/obj
+solidworks/dist
+solidworks/tests

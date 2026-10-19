@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- OpenSketchSW.exe: installs the add-in for this Windows user (no admin rights), and as a fallback attaches to the
+       running SOLIDWORKS from outside and runs the same link. -->
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>OpenSketchSW</AssemblyName>
+    <RootNamespace>OpenSketch.Sw.App</RootNamespace>
+    <PlatformTarget>x64</PlatformTarget>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <NoWarn>$(NoWarn);NU1701</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net48" Version="1.0.3" PrivateAssets="all" />
+    <PackageReference Include="SolidWorks.Interop.sldworks" Version="30.5.1" GeneratePathProperty="true" ExcludeAssets="all" PrivateAssets="all" />
+    <ProjectReference Include="../Addin/OpenSketch.Sw.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <Target Name="SwInterop" BeforeTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <SwDll Include="$(PkgSolidWorks_Interop_sldworks)/**/SolidWorks.Interop.sldworks.dll" />
+      <Reference Include="@(SwDll)">
+        <EmbedInteropTypes>true</EmbedInteropTypes>
+        <Private>false</Private>
+      </Reference>
+    </ItemGroup>
+  </Target>
+</Project>

@@ -6,3 +6,7 @@ build/
 dist/
 .venv/
 node_modules/
+solidworks/**/bin/
+solidworks/**/obj/
+solidworks/dist/
+opensketch/static/downloads/
