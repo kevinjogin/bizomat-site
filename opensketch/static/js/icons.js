@@ -97,6 +97,8 @@ const P = {
   web: `<circle cx="12" cy="12" r="8.5" fill="#e6f0fb" stroke="${B}" stroke-width="1.3"/><path d="M3.5 12h17M12 3.5c-3 3-3 14 0 17M12 3.5c3 3 3 14 0 17" fill="none" stroke="${B}" stroke-width="1.1"/>`,
   page: `<path d="M6 3h8l4 4v14H6z" fill="#fff" stroke="${B}"/><path d="M14 3v4h4" fill="none" stroke="${B}"/><path d="M8.5 11h7M8.5 14h7M8.5 17h5" stroke="${B}" stroke-width="1"/>`,
   ai: `<path d="M12 2l2.2 6.3L20.5 10l-6.3 2.2L12 18.5l-2.2-6.3L3.5 10l6.3-1.7z" fill="#7b5cff"/><path d="M19 15l.9 2.3 2.1.7-2.1.8L19 21l-.9-2.2-2.1-.8 2.1-.7z" fill="#b39cff"/>`,
+  aiexplain: `<path d="M3 5h14v10H9l-4 4v-4H3z" fill="#fff" stroke="${GD}"/><path d="M6 9h8M6 12h5" stroke="${GD}"/><path d="M19 2l1 2.6 2.4.9-2.4.9L19 9l-1-2.6-2.4-.9 2.4-.9z" fill="#7b5cff"/>`,
+  connect: `<path d="M8 3v5M14 3v5" stroke="${GD}" stroke-width="1.8" stroke-linecap="round"/><path d="M5 8h12v3a6 6 0 01-12 0z" fill="${G}" stroke="${GD}"/><path d="M11 17v5" stroke="${GD}" stroke-width="1.8"/><path d="M19 13l1 2.6 2.4.9-2.4.9L19 20l-1-2.6-2.4-.9 2.4-.9z" fill="#7b5cff"/>`,
 
   // Heads-up view toolbar
   zoomfit: `<path d="M3 8V3h5M16 3h5v5M21 16v5h-5M8 21H3v-5" fill="none" stroke="${K}" stroke-width="1.8"/><path d="M8 8h8v8H8z" fill="${G}"/>`,
