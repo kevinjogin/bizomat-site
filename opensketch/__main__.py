@@ -23,6 +23,8 @@ def main():
         sys.exit(supervisor.main(args.host, args.port))
     if hasattr(signal, "SIGUSR1"):  # kill -USR1 <pid> prints every thread's stack (the supervisor does it before a restart)
         faulthandler.register(signal.SIGUSR1, all_threads=True)
+    from .cadworker import oom_score
+    oom_score(-500)  # out of memory: the kernel takes a CAD worker or job first, not the server everyone uses
     url = f"http://{args.host}:{args.port}/"
     if not args.no_browser:
         threading.Timer(1.0, lambda: webbrowser.open(url)).start()

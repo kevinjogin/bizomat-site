@@ -299,3 +299,19 @@ def test_a_command_nobody_takes_times_out(base, monkeypatch):
 def deque_empty():
     from collections import deque
     return deque()
+
+
+def test_files_for_solidworks_do_not_pile_up_in_the_server(monkeypatch):
+    """Files waiting for SOLIDWORKS live in the web server's memory: none is kept when SOLIDWORKS is not connected,
+    each goes when its command ends, and a person has at most a few waiting."""
+    import anyio
+    from opensketch import sw_tools
+    raw = base64.b64encode(b"ISO-10303-21;" + b"x" * 1000).decode()
+    out = anyio.run(lambda: sw_tools.sw_import(filename="a.step", data=raw))
+    assert out.is_error and "not connected" in out.content[0].text and not swbridge._blobs
+    ids = [swbridge.add_blob(None, b"x" * 10, f"{i}.step") for i in range(5)]
+    assert set(swbridge._blobs) == set(ids[-swbridge.BLOBS_PER_PERSON:])
+    other = swbridge.add_blob({"id": "u2"}, b"y", "b.step")  # someone else's are their own
+    assert other in swbridge._blobs and len(swbridge._blobs) == swbridge.BLOBS_PER_PERSON + 1
+    swbridge.drop_blob(other)
+    assert other not in swbridge._blobs

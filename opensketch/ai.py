@@ -1122,6 +1122,7 @@ class Session:
         self.summary = ""
         self.requests: list = []
         self.prebuilt: LiveBuilder | None = None  # the live build of the tool call being applied (run_stream sets it)
+        self.stop = None  # callable: true once the person stopped the chat (see run_stream)
 
     def _proposal(self) -> dict:
         return {"ev": "proposal", "doc": light_doc(self.work), "summary": self.summary}
@@ -1544,7 +1545,7 @@ class Session:
         from . import recognize
         pid = inp.get("part_id") or None
         try:
-            res = recognize.recognize_doc(self.work, part_id=pid, kinds=inp.get("kinds") or None)
+            res = recognize.recognize_doc(self.work, part_id=pid, kinds=inp.get("kinds") or None, stop=self.stop)
         except recognize.RecognizeError as exc:
             return f"Not recognized: {exc}", False, []
         parts = {}
@@ -1892,7 +1893,8 @@ SERVER_KEY = object()  # run_stream's default for scripts and tests: the server'
 
 
 def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool | str = False,
-               demo_speed: float = 1.0, selection: list | None = None, ai_config=SERVER_KEY) -> Iterator[dict]:
+               demo_speed: float = 1.0, selection: list | None = None, ai_config=SERVER_KEY,
+               stop=None) -> Iterator[dict]:
     """Yield events while Claude designs. The last event is {"ev": "done", ...} or {"ev": "error", ...}.
 
     ai_config: the provider settings to use (aikeys.effective for the signed-in person). None means this person has
@@ -1935,6 +1937,7 @@ def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool
     messages.append({"role": "user", "content": (
         document_message(messages, doc, kind) + f"\n\nRequest: {prompt}" + selection_note(selection))})
     session = Session(doc)
+    session.stop = stop  # the person pressed Stop: long tools (feature recognition) end at their next check
     sources: list[dict] = []  # pages the AI read or cited, shown under its reply
     start = {"ev": "start", "conversation": conv_id, "kind": kind, "demo": demo}
     if lost:
@@ -2110,17 +2113,3 @@ def _rounds(client, cfg, demo, anthropic, messages, session, sources, conv_id, t
     yield {"ev": "done", "conversation": conv_id, "reply": session.summary or "Stopped after several attempts.",
            "proposal": session.work if session.work != session.doc else None, "summary": session.summary, "steps": session.steps,
            "sources": sources}
-
-
-def run(doc: dict, prompt: str, history_id: str | None = None, ai_config=SERVER_KEY) -> dict:
-    """Non-streaming wrapper: run the whole loop and return the final result (ai_config as in run_stream)."""
-    if ai_config is SERVER_KEY and not available():
-        raise AIUnavailable("Set ANTHROPIC_API_KEY to use OpenSketch AI.")
-    last = None
-    for ev in run_stream(doc, prompt, history_id, ai_config=ai_config):
-        last = ev
-        if ev["ev"] == "error":
-            raise AIUnavailable(ev["message"])
-    out = dict(last or {})
-    out.pop("ev", None)
-    return out

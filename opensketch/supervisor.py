@@ -71,6 +71,9 @@ class Supervisor:
             reason, answered = self._watch(started)
             if self._stop.is_set():
                 break
+            # A server that crashed or was killed (out of memory) leaves its CAD workers and AI jobs behind in its
+            # process group: end them before the next server starts its own, or memory runs out again.
+            self._kill_group(self.child)
             fails = 0 if answered else fails + 1
             if fails:
                 reason += f", {fails} in a row without an answer"

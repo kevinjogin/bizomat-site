@@ -302,3 +302,198 @@ def test_routes_use_the_signed_in_persons_worker(tmp_path, monkeypatch):
     me = c.get("/api/account").json()
     assert c.post("/api/regen", json={"doc": block()}).status_code == 200
     assert seen and seen[-1] == (me["user"]["id"] if "user" in me else me["id"], "edit"), (seen, me)
+
+
+# ----------------------------------------------------------------------------- one call at a time per worker
+
+def test_a_queued_calls_limit_counts_only_its_own_run(workers):
+    """A short call queued behind a long one waits its turn: its time limit starts when it starts, and the long call
+    is never killed because of it (before: the queued call timed out after 2 s and killed the running one)."""
+    import asyncio
+    _run(workers.run(_sleep, 0))
+
+    async def both():
+        long = asyncio.ensure_future(workers.run(_sleep, 4, limit=30))
+        await asyncio.sleep(0.5)
+        t = time.monotonic()
+        short = await workers.run(_sleep, 0.1, limit=2, wait=30)
+        return await long, short, time.monotonic() - t
+    long_pid, short_pid, took = _run(both())
+    assert long_pid == short_pid and took > 3  # it waited for the long call, then ran in the same worker
+
+
+def test_a_call_that_cannot_start_in_time_is_refused_without_harm(workers):
+    import asyncio
+    first = _run(workers.run(_sleep, 0))
+
+    async def both():
+        long = asyncio.ensure_future(workers.run(_sleep, 3, limit=30))
+        await asyncio.sleep(0.5)
+        with pytest.raises(cadworker.CadUnavailable) as e:
+            await workers.run(_sleep, 0, wait=0.5)
+        assert "busy" in str(e.value)
+        return await long
+    assert _run(both()) == first  # the running call finished in the same worker
+
+
+def test_the_next_call_waits_for_work_whose_caller_went_away(workers):
+    """A caller that gives up (the browser left) does not free the worker: the work still runs there, so the next
+    call waits for it and still gets its full time limit."""
+    import asyncio
+    _run(workers.run(_sleep, 0))
+
+    async def scenario():
+        gone = asyncio.ensure_future(workers.run(_sleep, 3, limit=30))
+        await asyncio.sleep(0.5)
+        gone.cancel()
+        t = time.monotonic()
+        await workers.run(_sleep, 0, limit=1, wait=30)
+        return time.monotonic() - t
+    assert _run(scenario()) > 2
+
+
+def test_a_worker_that_grew_too_big_is_replaced_after_its_call(workers):
+    first = _run(workers.run(_sleep, 0))
+    workers.max_mb = 1  # every worker is bigger than this
+    assert _run(workers.run(_sleep, 0)) == first  # the call itself is answered
+    workers.max_mb = 10_000
+    assert _run(workers.run(_sleep, 0)) != first
+
+
+def test_an_idle_worker_stops_and_its_place_counts_again(monkeypatch):
+    """A person whose worker stopped when idle starts a new one through the cap, like a newcomer (before: they got
+    their old lane back and started a process without counting, 5 live with a cap of 4)."""
+    monkeypatch.setattr(cadworker, "_lanes", {})
+    monkeypatch.setattr(cadworker, "MAX_LANES", 2)
+    monkeypatch.setattr(cadworker, "_reserved", None)
+    monkeypatch.setattr(cadworker.Lane, "_get", lambda self: self.__dict__.setdefault("_pool", None) or setattr(self, "_pool", object()) or self._pool)
+    stopped = []
+    monkeypatch.setattr(cadworker, "_stop_pool", lambda pool, kill: stopped.append(pool))
+    a = cadworker.lane_for("a")
+    a._get()
+    b = cadworker.lane_for("b")
+    b._get()
+    a._claimed = b._claimed = -1e9
+    c = cadworker.lane_for("c")  # full: c borrows a live worker for this call, and is not given one to keep
+    assert c in (a, b) and "edit:c" not in cadworker._lanes
+    a.idle, a._last = 1, time.monotonic() - 5
+    assert a._idle_check() and not a.live
+    cadworker._forget(a)
+    c2 = cadworker.lane_for("c")  # a's place is free now: c gets its own worker
+    assert c2 not in (a, b)
+    c2._get()
+    again = cadworker.lane_for("a")  # a comes back: no place, so it borrows; the cap holds
+    assert again in (b, c2)
+    assert sum(1 for x in {id(x): x for x in cadworker._lanes.values()}.values() if x.live) == 2
+
+
+def test_the_owner_always_finds_a_place(monkeypatch):
+    monkeypatch.setattr(cadworker, "_lanes", {})
+    monkeypatch.setattr(cadworker, "MAX_LANES", 2)
+    monkeypatch.setattr(cadworker, "_reserved", "owner")
+    a = cadworker.lane_for("a")
+    b = cadworker.lane_for("b")  # the last place is kept for the owner
+    assert b is a
+    owner = cadworker.lane_for("owner")
+    assert owner is not a
+
+
+PARENT = """
+import os, sys, time
+sys.path.insert(0, {root!r})
+os.environ["OPENSKETCH_CAD_WORKERS"] = "1"
+import asyncio
+from opensketch import cadworker
+
+if __name__ == "__main__":
+    lane = cadworker.Lane("orphan-test", limit=60)
+    cadworker.start_job(time.sleep, 600, on_event=lambda kind, payload: None, uses=())
+    print(asyncio.run(lane.run(os.getpid)), flush=True)
+    time.sleep(600)
+"""
+
+
+def test_workers_and_jobs_end_when_the_server_dies(tmp_path):
+    """An OOM kill or crash of the server must not leave its workers and AI jobs running (they hold ~250 MB each,
+    and a chat would keep spending the owner's key)."""
+    import signal
+    script = tmp_path / "parent.py"
+    script.write_text(PARENT.format(root=str(ROOT)))
+    proc = subprocess.Popen([sys.executable, str(script)], stdout=subprocess.PIPE, text=True)
+    worker = int(proc.stdout.readline())
+    kids = [int(p) for p in Path(f"/proc/{proc.pid}/task/{proc.pid}/children").read_text().split()]
+    assert worker in kids and len(kids) >= 2
+    os.kill(proc.pid, signal.SIGKILL)
+    proc.wait()
+    end = time.monotonic() + 15
+    alive = lambda: [k for k in kids if "Z" not in _state(k)]  # noqa: E731
+    while time.monotonic() < end and alive():
+        time.sleep(0.2)
+    left = alive()
+    for k in left:  # never leave them behind, even when the test fails
+        os.kill(k, signal.SIGKILL)
+    assert not left
+
+
+def _state(pid):
+    try:
+        return Path(f"/proc/{pid}/stat").read_text().split(")")[1].split()[0]
+    except OSError:
+        return "Z"
+
+
+def test_the_build_cache_is_bounded_by_size(monkeypatch):
+    """Each cached build keeps bodies and a mesh (~20-30 MB for a 200-face plate); a Design panel drag adds one per
+    step. The cache keeps what fits in OPENSKETCH_BUILT_CACHE_MB, not 24 of anything."""
+    from opensketch import geometry
+    monkeypatch.setattr(geometry, "_built", type(geometry._built)())
+    monkeypatch.setattr(geometry, "_built_bytes", {})
+    monkeypatch.setattr(geometry, "BUILT_CACHE_MB", 25)
+    monkeypatch.setattr(geometry, "_mesh_bytes", lambda mesh: 10 * 2**20)
+    d = block()
+    for depth in (5, 6, 7, 8):
+        d["features"][1]["depth"] = depth
+        geometry.built(d)
+    assert len(geometry._built) == 2  # the two newest
+    assert geometry.built(d) is geometry.built(d)  # still a cache
+
+
+RECOGNIZER = """
+import os, sys, time
+sys.path.insert(0, {root!r})
+os.environ["OPENSKETCH_RECOGNIZE_STALL"] = "('fillet'"  # the worker hangs on its first fillet, like a stuck step
+os.environ["OPENSKETCH_DATA"] = {data!r}
+from opensketch import recognize
+from tests.test_recognize import plate, solid, step_doc
+
+if __name__ == "__main__":
+    print("go", flush=True)
+    recognize.recognize_part_safe(step_doc(solid(plate)), hang=600)
+"""
+
+
+def test_a_recognition_worker_ends_when_whoever_started_it_dies(tmp_path):
+    """The AI chat's job or Claude's CAD worker is killed (Stop, a time limit): the recognition worker it started
+    must not live on with its 250-450 MB (before, it did, for good)."""
+    import signal
+    script = tmp_path / "recognizer.py"
+    script.write_text(RECOGNIZER.format(root=str(ROOT), data=str(tmp_path / "data")))
+    proc = subprocess.Popen([sys.executable, str(script)], stdout=subprocess.PIPE, text=True)
+    assert proc.stdout.readline().strip() == "go"
+    kids = []
+    end = time.monotonic() + 60
+    while time.monotonic() < end and not kids:
+        time.sleep(0.5)
+        kids = [int(p) for p in Path(f"/proc/{proc.pid}/task/{proc.pid}/children").read_text().split()]
+    assert kids
+    time.sleep(3)  # well into its work
+    os.kill(proc.pid, signal.SIGKILL)
+    proc.wait()
+    alive = lambda: [k for k in kids if "Z" not in _state(k)]  # noqa: E731
+    end = time.monotonic() + 15
+    while time.monotonic() < end and alive():
+        time.sleep(0.2)
+    left = alive()
+    for k in left:
+        os.kill(k, signal.SIGKILL)
+    assert not left
