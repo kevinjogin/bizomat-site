@@ -72,9 +72,9 @@ FEATURES_HELP = """Feature types (part coordinates, millimetres, degrees, Y up a
 
 Planes: {"ref": "Front Plane"} (XY, normal +Z), {"ref": "Top Plane"} (XZ, normal +Y, sketch y = world -Z),
 {"ref": "Right Plane"} (YZ, normal +X, sketch x = world -Z), {"ref": "<plane or sketch feature id>"},
-or a planar face {"type": "face", "origin": [x,y,z], "normal": [x,y,z], "xdir": [x,y,z]}.
-A face plane reattaches to the nearest same-normal face after upstream edits: its origin is a hint,
-not an exact coordinate. Use {"type": "fixed", "origin": [x,y,z], "normal": [x,y,z], "xdir": [x,y,z]}
+or a planar face {"type": "face", "origin": [x,y,z], "normal": [x,y,z], "xdir": [x,y,z], "at": [x,y,z]}.
+"at" is a point on that face (body_topology's "point"): the face holding it is found again after upstream
+edits, so give it for any face away from the origin. The origin is a hint, not an exact coordinate. Use {"type": "fixed", "origin": [x,y,z], "normal": [x,y,z], "xdir": [x,y,z]}
 for computed heights (enclosure floors, nut pockets, locating pins), or an offset reference plane.
 Inspect requested/resolved planes, per-feature tool/result bounds and extrusion normal ranges in
 the rebuild diagnostics. Face movement and no-material-change warnings require inspection even
@@ -107,8 +107,8 @@ feature). [edges] = [{"mid": [x,y,z]}] (an edge picked by its midpoint), [faces]
 """ + features.help_text() + """
 
 Every feature has a unique "id" and a SOLIDWORKS-style "name" (Sketch1, Boss-Extrude1, Cut-Extrude1,
-Fillet1, ...). Point coordinates must already satisfy the constraints (the app re-solves them, but start
-close). Prefer few, meaningful features: one sketch per extrude, simple profiles."""
+Fillet1, ...). Point coordinates must already satisfy the dimensions and relations: the rebuild uses them
+as written (a sketch whose points miss its dimensions gets a sketch_not_solved warning). Prefer few, meaningful features: one sketch per extrude, simple profiles."""
 
 SYSTEM = f"""You are the design copilot inside OpenSketch, a parametric CAD app that works like SOLIDWORKS.
 The user watches the viewport while you work: every feature you write is rebuilt and drawn as soon as
