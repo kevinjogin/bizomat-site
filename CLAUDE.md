@@ -114,7 +114,21 @@ chosen scope: Claude builds in SOLIDWORKS 2022 on his work PC, no admin rights, 
   + the launcher macro `Documents\OpenSketch\OpenSketch.swb`; Remove; "Connect to the open SOLIDWORKS" drives it from
   outside with an OLE message filter). Three ways to start because IT may block per-user add-ins: menu, macro
   (`OpenSketch.Sw.Launcher.Start`, which first tries `LoadAddIn`), outside exe.
-- Tests: `tests/test_swbridge.py` (3, fake add-in over real uvicorn), `tests/test_sw_selftest.py` (11: the selftest data
+- API review (independent agent against the interop's signature dump, 2026-10-19) and the fixes made: sketch segments and
+  points are selected with their own Select4 (not IEntity; before, every merge, relation, dimension and revolve axis would
+  have failed); sketch points are read again from their curves after sgMERGEPOINTS (one of the two objects dies); batch
+  rollback puts equations back first and never deletes absorbed sketches (they may be the user's); horizontal / vertical
+  relations and dimensions swap when OpenSketch's u lies along SOLIDWORKS' sketch y and are left out (with a note) when
+  oblique; edges, faces, neutral planes and mate refs are found again on every retry, and a sketch's face plane from its
+  spec; dimension names are `Name@<sketch name>` read after the rename, equations matched with or without `@file`; a
+  hole id stands for all its cuts in mirrors / patterns (and `HoleN.depth` is the hole's own cut); chamfers may add
+  material; hole sketches are all drawn on the start plane before cutting; mid-plane revolve uses SingleDir; the 2020+
+  fillet gets its edges; a reference plane's frame is checked against its corner points (Transform direction unclear);
+  one command at a time (semaphore) and no changes while the user has a sketch open; expressions use arcsin / arccos /
+  atn, trig in degrees (set when no equation uses trig yet), a note when the document is not in mm; a failed sketch is
+  deleted, not left half made; `--attach` ends with its window. Every SelectEntity result that matters is checked.
+- Tests: `tests/test_swbridge.py` (4, fake add-in over real uvicorn; a renewed key says why even when a poll races it),
+  `tests/test_sw_selftest.py` (11: the selftest data
   builds in OpenSketch, passes the send checks, plate sketches fully defined; all three stages pass against SimSW, a
   stand-in add-in built on OpenSketch's kernel and mate solver; a failing feature is reported and the run goes on),
   `solidworks/tests` (17 dotnet tests of Core; `e2e_link.py`: the real C# link client against a real server, 7 checks).
@@ -819,7 +833,10 @@ See `docs/CODE_REVIEW_2026-10-16.md` for reproductions, new-feature usage and UX
   coordinates for the text position, obsolete calls kept for 2022 (FeatureFillet3, FeatureLinearPattern5, AddMate5,
   InsertProtrusionSwept4). Predictions: none for features that name existing SOLIDWORKS features (mirror / pattern of a
   tree feature), so those are not direction-checked. Coupler mates, contacts and reviews are OpenSketch-only. One
-  SOLIDWORKS link per person (a second PC replaces the first).
+  SOLIDWORKS link per person (a second PC replaces the first). Equations are written for all configurations
+  (per-configuration values are lost on a batch rollback). Commands can still arrive while SOLIDWORKS shows a modal
+  dialog (only an open sketch is detected). SOLIDWORKS run as administrator ignores the per-user registration. Plain
+  numbers in equations are in the document's unit (a note says so when it is not mm).
 - SOLIDWORKS macros: nothing has been run in SOLIDWORKS yet; ask YZ for the log of the first run.
   Assembly-side API calls not confirmed: AddComponent5 + Transform2, AddMate5 (obsolete in 2022) with
   mark 1, GetCorresponding, GetBodies3, GetSelectedObjectsComponent4, DeSelect2, InsertAxis2,

@@ -24,8 +24,14 @@ namespace OpenSketch.Sw
             math = (IMathUtility)app.GetMathUtility();
         }
 
+        static readonly HashSet<string> Writes = new HashSet<string>
+        {
+            "add_features", "batch", "insert_component", "add_mate", "delete", "set_parameter", "set_equation", "undo"
+        };
+
         public Dictionary<string, object> Run(string op, Dictionary<string, object> a, ICommandIO io)
         {
+            if (Writes.Contains(op)) NotWhileTheUserEdits();
             using (new Quiet(app))
             {
                 switch (op)
@@ -52,6 +58,32 @@ namespace OpenSketch.Sw
                         throw new UserError($"This add-in does not know the command '{op}'. Update it (OpenSketch > Connect AI > SOLIDWORKS > Download).");
                 }
             }
+        }
+
+        /// <summary>Changes wait while the user is part-way through something in SOLIDWORKS (a sketch open for editing),
+        /// so Claude never builds into it.</summary>
+        void NotWhileTheUserEdits()
+        {
+            IModelDoc2 ad;
+            try
+            {
+                ad = app.ActiveDoc as IModelDoc2;
+            }
+            catch (Exception)
+            {
+                return;
+            }
+            if (ad == null) return;
+            ISketch open = null;
+            try
+            {
+                open = ad.SketchManager?.ActiveSketch as ISketch;
+            }
+            catch (Exception)
+            {
+            }
+            if (open != null)
+                throw new UserError($"A sketch is open for editing in {ad.GetTitle()}. Close it in SOLIDWORKS (exit the sketch), then ask again.");
         }
 
         /// <summary>No dialog boxes that wait for an answer while Claude works (put back afterwards), as the macro

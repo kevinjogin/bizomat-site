@@ -20,7 +20,8 @@ namespace OpenSketch.Sw
 
         public void Equations(IModelDoc2 doc)
         {
-            if (EquationsBefore.Any(e => ReferenceEquals(e.doc, doc))) return;
+            // the first snapshot of a document is the one to go back to (same object, or same file)
+            if (EquationsBefore.Any(e => ReferenceEquals(e.doc, doc) || SamePath(e.doc, doc))) return;
             var em = doc.GetEquationMgr() as IEquationMgr;
             var l = new List<string>();
             if (em != null)
@@ -28,14 +29,43 @@ namespace OpenSketch.Sw
             EquationsBefore.Add((doc, l));
         }
 
-        /// <summary>Removes everything in reverse order. Returns what could not be removed.</summary>
+        static bool SamePath(IModelDoc2 a, IModelDoc2 b)
+        {
+            try
+            {
+                var pa = a.GetPathName();
+                return !string.IsNullOrEmpty(pa) && string.Equals(pa, b.GetPathName(), StringComparison.OrdinalIgnoreCase);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>Puts the equations back first (new ones may name features about to go), then removes features,
+        /// components and mates in reverse order. Returns what could not be removed.</summary>
         public List<string> Rollback()
         {
             var left = new List<string>();
+            foreach (var (doc, eqs) in EquationsBefore)
+            {
+                try
+                {
+                    var em = (IEquationMgr)doc.GetEquationMgr();
+                    for (var k = em.GetCount() - 1; k >= 0; k--) em.Delete(k);
+                    foreach (var e in eqs) Commands.AddEquation(em, e);
+                    doc.ForceRebuild3(false);
+                }
+                catch (Exception ex)
+                {
+                    left.Add("equations: " + ex.Message);
+                }
+            }
             for (var i = Features.Count - 1; i >= 0; i--)
             {
                 var (doc, name) = Features[i];
-                if (!Commands.DeleteFeature(doc, name, true)) left.Add(name);
+                // never the absorbed sketch: it may be the user's own; sketches the batch made are journaled themselves
+                if (!Commands.DeleteFeature(doc, name, false)) left.Add(name);
             }
             for (var i = Components.Count - 1; i >= 0; i--)
             {
@@ -49,20 +79,6 @@ namespace OpenSketch.Sw
                 catch (Exception)
                 {
                     left.Add(name);
-                }
-            }
-            foreach (var (doc, eqs) in EquationsBefore)
-            {
-                try
-                {
-                    var em = (IEquationMgr)doc.GetEquationMgr();
-                    for (var k = em.GetCount() - 1; k >= 0; k--) em.Delete(k);
-                    foreach (var e in eqs) Commands.AddEquation(em, e);
-                    doc.ForceRebuild3(false);
-                }
-                catch (Exception ex)
-                {
-                    left.Add("equations: " + ex.Message);
                 }
             }
             foreach (var d in Features.Select(f => f.doc).Concat(Components.Select(c => c.asm)).Distinct())

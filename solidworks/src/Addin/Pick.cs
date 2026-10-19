@@ -113,6 +113,9 @@ namespace OpenSketch.Sw
             var sm = (ISelectionMgr)m.SelectionManager;
             var sd = sm.CreateSelectData() as ISelectData;
             if (sd != null) sd.Mark = mark;
+            // sketch items have their own Select4 (they are not IEntity); faces, edges and vertices go through IEntity
+            if (entity is ISketchSegment sg) return sg.Select4(append, (SelectData)sd);
+            if (entity is ISketchPoint sp) return sp.Select4(append, (SelectData)sd);
             if (entity is IEntity e) return e.Select4(append, (SelectData)sd);
             if (entity is IFeature f) return f.Select2(append, mark);
             if (entity is IComponent2 c) return c.Select4(append, (SelectData)sd, false);
@@ -171,14 +174,37 @@ namespace OpenSketch.Sw
         {
             if (planeOrFace is IFeature f && f.GetSpecificFeature2() is IRefPlane rp)
             {
+                // the corner points are in model coordinates (m): they say where the plane really is, so they decide
+                // whether Transform maps plane to model or the other way (the help is not clear on it)
+                Vec3? c0 = null, cn = null;
+                if (rp.CornerPoints is double[] cp && cp.Length >= 9)
+                {
+                    var p0 = Vec3.From(cp, 0);
+                    var nn = (Vec3.From(cp, 3) - p0).Cross(Vec3.From(cp, 6) - p0);
+                    if (nn.Length > 1e-12)
+                    {
+                        c0 = p0;
+                        cn = nn.Unit();
+                    }
+                }
                 var xf = rp.Transform as IMathTransform;
                 if (xf != null)
                 {
-                    Vec3 apply(Vec3 p) => Vec3.From((double[])((IMathPoint)((IMathPoint)math.CreatePoint(p.Arr())).MultiplyTransform(xf)).ArrayData);
-                    var o = apply(Vec3.Zero);
-                    var x = apply(Vec3.XAxis) - o;
-                    var z = apply(Vec3.ZAxis) - o;
-                    return new SketchFrame(o * 1000, x, z);
+                    foreach (var t in new[] { xf, xf.Inverse() as IMathTransform })
+                    {
+                        if (t == null) continue;
+                        Vec3 apply(Vec3 p) => Vec3.From((double[])((IMathPoint)((IMathPoint)math.CreatePoint(p.Arr())).MultiplyTransform(t)).ArrayData);
+                        var o = apply(Vec3.Zero);
+                        var x = apply(Vec3.XAxis) - o;
+                        var z = apply(Vec3.ZAxis) - o;
+                        if (c0.HasValue && (Math.Abs((o - c0.Value).Dot(cn.Value)) > 1e-7 || Math.Abs(z.Unit().Dot(cn.Value)) < 0.9999)) continue;
+                        return new SketchFrame(o * 1000, x, z);
+                    }
+                }
+                if (c0.HasValue)
+                {
+                    Log.Write("plane " + f.Name + ": Transform did not match its corner points; using the corners");
+                    return new SketchFrame(c0.Value * 1000, SketchFrame.Perp(cn.Value), cn.Value);
                 }
             }
             if (planeOrFace is IFace2 face)

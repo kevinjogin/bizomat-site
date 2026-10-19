@@ -241,7 +241,12 @@ namespace OpenSketch.Sw.App
             var host = Host.Start(sw, "program");
             if (Settings.Key.StartsWith("oss_")) host.Connect();
             host.ShowWindow();
-            if (standalone) Application.Run();
+            // started on its own (--attach): the program ends when its window is closed, and the link with it
+            if (standalone)
+            {
+                if (host.Window != null) Application.Run(host.Window);
+                host.Stop();
+            }
             return true;
         }
     }

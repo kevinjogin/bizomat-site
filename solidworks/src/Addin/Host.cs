@@ -134,8 +134,26 @@ namespace OpenSketch.Sw
             }
         }
 
+        /// <summary>One command at a time: an old link thread still finishing a command after a reconnect waits here
+        /// instead of running its command inside the other's (SOLIDWORKS pumps messages while it works).</summary>
+        static readonly SemaphoreSlim One = new SemaphoreSlim(1, 1);
+
         /// <summary>Runs a command on SOLIDWORKS' thread and waits for it (the link thread calls this).</summary>
         Dictionary<string, object> RunOnSolidWorks(string op, Dictionary<string, object> args, ICommandIO io)
+        {
+            if (!marshal.InvokeRequired) return RunHere(op, args, io);
+            One.Wait();
+            try
+            {
+                return RunHere(op, args, io);
+            }
+            finally
+            {
+                One.Release();
+            }
+        }
+
+        Dictionary<string, object> RunHere(string op, Dictionary<string, object> args, ICommandIO io)
         {
             Dictionary<string, object> result = null;
             Exception error = null;
@@ -155,6 +173,9 @@ namespace OpenSketch.Sw
             if (error != null) System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(error).Throw();
             return result;
         }
+
+        /// <summary>The OpenSketch window, once shown.</summary>
+        public Form Window => form;
 
         public void ShowWindow()
         {

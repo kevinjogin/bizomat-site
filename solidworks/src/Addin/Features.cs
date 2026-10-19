@@ -26,6 +26,7 @@ namespace OpenSketch.Sw
             public readonly List<(string target, string expr)> Equations = new List<(string, string)>();
             public readonly Dictionary<string, IFeature> Axes = new Dictionary<string, IFeature>();
             public int Holes;
+            public readonly Dictionary<string, List<string>> Multi = new Dictionary<string, List<string>>(); // id -> every feature it became (holes)
         }
 
         Dictionary<string, object> AddFeatures(Dictionary<string, object> a, Journal journal)
@@ -243,7 +244,13 @@ namespace OpenSketch.Sw
                 var std = SketchFrame.StdIndex(r);
                 if (std > 0) return new PlaneTarget { Entity = StdPlane(c.Doc, std), Os = SketchFrame.Std(std) };
                 if (c.Planes.TryGetValue(r, out var pl)) return new PlaneTarget { Entity = pl.f, Os = pl.os };
-                if (c.Sketches.TryGetValue(r, out var sk)) return new PlaneTarget { Entity = sk.PlaneEntity, Os = sk.Os };
+                if (c.Sketches.TryGetValue(r, out var sk))
+                {
+                    // a face may have been rebuilt since: find it again from how it was asked for
+                    if (sk.PlaneEntity is IFace2 && sk.PlaneSpec != null && J.Str(sk.PlaneSpec, "ref") == null)
+                        return ResolvePlane(c, sk.PlaneSpec, predicted);
+                    return new PlaneTarget { Entity = sk.PlaneEntity, Os = sk.Os };
+                }
                 var f = Named(c, r, "plane");
                 if (f.GetTypeName2() == "RefPlane") return new PlaneTarget { Entity = f, Os = FrameOf(f) };
                 if (f.GetTypeName2() == "ProfileFeature")
@@ -337,7 +344,7 @@ namespace OpenSketch.Sw
             {
                 // a plane on the base itself: SOLIDWORKS needs some offset or a coincident plane
                 c.Doc.ClearSelection2(true);
-                SelectEntity(c.Doc, target.Entity, false, 0);
+                if (!SelectEntity(c.Doc, target.Entity, false, 0)) throw new UserError("Could not select the base plane.");
                 pf = c.Doc.FeatureManager.InsertRefPlane((int)swRefPlaneReferenceConstraints_e.swRefPlaneReferenceConstraint_Coincident, 0, 0, 0, 0, 0) as IFeature
                      ?? throw new UserError("SOLIDWORKS did not make the plane.");
                 c.Journal?.Feature(c.Doc, pf.Name);
@@ -508,7 +515,15 @@ namespace OpenSketch.Sw
             var best = Array.IndexOf(scores, scores.Min());
             if (predicted && scores[best] < double.MaxValue)
             {
-                var feat = make(best);
+                IFeature feat = null;
+                try
+                {
+                    feat = make(best);
+                }
+                catch (Exception exn) when (!(exn is UserError))
+                {
+                    tried += $" remaking way {best + 1}: {exn.Message};";
+                }
                 if (feat != null)
                 {
                     row["name"] = feat.Name;
@@ -583,9 +598,10 @@ namespace OpenSketch.Sw
             {
                 var rev = reverse ^ (t == 1);
                 m.ClearSelection2(true);
-                SelectEntity(m, sk.Feature, false, 0);
-                SelectEntity(m, axis, true, AxisMark);
-                var feat = m.FeatureManager.FeatureRevolve2(!mid, true, false, cut, rev, false,
+                if (!SelectEntity(m, sk.Feature, false, 0)) throw new UserError($"Could not select {sk.Name}.");
+                if (!SelectEntity(m, axis, true, AxisMark)) throw new UserError($"Could not select the axis line in {sk.Name}.");
+                // Mid Plane is a Direction 1 end condition: one direction (SingleDir true), as for extrudes
+                var feat = m.FeatureManager.FeatureRevolve2(true, true, false, cut, rev, false,
                                                             (int)(mid ? swEndConditions_e.swEndCondMidPlane : swEndConditions_e.swEndCondBlind),
                                                             (int)swEndConditions_e.swEndCondBlind, Units.Rad(ang), 0, false, false, 0, 0, 0, 0, 0,
                                                             J.Bool(f, "merge", true), true, true) as IFeature;
@@ -652,10 +668,13 @@ namespace OpenSketch.Sw
             if (r <= 0) throw new UserError("radius must be greater than 0.");
             var notes = new List<string>();
             var items = Picks(c, f, false, notes);
+            var calls = 0;
             var none = new double[] { 0 };
             var marks = new[] { 1, 0 };
             IFeature make(int t)
             {
+                // edges found again after a try was made and deleted: old edge objects need not survive a rebuild
+                if (calls++ > 0) items = Picks(c, f, false, null);
                 if (!SelectPicks(c.Doc, items, t < 2 ? marks[t] : 1)) throw new InvalidOperationException("not every edge could be selected");
                 IFeature feat;
                 if (t < 2)
@@ -669,13 +688,14 @@ namespace OpenSketch.Sw
                     if (data == null) return null;
                     data.Initialize((int)swSimpleFilletType_e.swConstRadiusFillet);
                     data.DefaultRadius = r * Units.M;
+                    data.Edges = items.Cast<IEdge>().ToArray();
                     feat = c.Doc.FeatureManager.CreateFeature(data) as IFeature;
                 }
                 c.Doc.ClearSelection2(true);
                 return feat;
             }
             Variants(c, f, row, "fillet", 3, make, null, 0);
-            if (notes.Count > 0) row["notes"] = notes;
+            foreach (var n in notes) Note(row, n);
         }
 
         void Chamfer(Ctx c, Dictionary<string, object> f, Dictionary<string, object> row)
@@ -687,6 +707,7 @@ namespace OpenSketch.Sw
             var d2 = J.Num(f, "distance2", d1);
             var notes = new List<string>();
             var items = Picks(c, f, false, notes);
+            var calls = 0;
             var opts = (int)swFeatureChamferOption_e.swFeatureChamferTangentPropagation;
             var type = (int)(dd ? swChamferType_e.swChamferDistanceDistance : swChamferType_e.swChamferAngleDistance);
             // an unequal chamfer can come out with its two sides swapped: the flip option is the second way to try
@@ -694,6 +715,7 @@ namespace OpenSketch.Sw
             if (dd ? Math.Abs(d1 - d2) > 1e-9 : Math.Abs(ang - 45) > 1e-9) ways.AddRange(new[] { (0, true), (1, true) });
             IFeature make(int t)
             {
+                if (calls++ > 0) items = Picks(c, f, false, null);
                 if (!SelectPicks(c.Doc, items, ways[t].mark)) throw new InvalidOperationException("not every edge could be selected");
                 var o = opts | (ways[t].flip ? (int)swFeatureChamferOption_e.swFeatureChamferFlipDirection : 0);
                 // distance-distance: the help names OtherDist and VertexChamDist1/2; both get the numbers
@@ -702,8 +724,9 @@ namespace OpenSketch.Sw
                 c.Doc.ClearSelection2(true);
                 return feat;
             }
-            Variants(c, f, row, "chamfer", ways.Count, make, null, -1);
-            if (notes.Count > 0) row["notes"] = notes;
+            // either sign: a chamfer on a concave edge adds material (the prediction checks the amount)
+            Variants(c, f, row, "chamfer", ways.Count, make, null, 0);
+            foreach (var n in notes) Note(row, n);
         }
 
         void Shell(Ctx c, Dictionary<string, object> f, Dictionary<string, object> row)
@@ -713,9 +736,11 @@ namespace OpenSketch.Sw
             var outward = J.Bool(f, "outward");
             var notes = new List<string>();
             var items = Picks(c, f, true, notes);
+            var calls = 0;
             var marks = new[] { 1, 0 };
             IFeature make(int t)
             {
+                if (calls++ > 0) items = Picks(c, f, true, null);
                 if (!SelectPicks(c.Doc, items, marks[t])) throw new InvalidOperationException("not every face could be selected");
                 var before = (c.Doc.Extension.GetLastFeatureAdded() as IFeature)?.Name;
                 c.Doc.InsertFeatureShell(th * Units.M, outward);
@@ -724,7 +749,7 @@ namespace OpenSketch.Sw
                 return last != null && last.Name != before ? last : null;
             }
             Variants(c, f, row, "shell", 2, make, null, outward ? 1 : -1);
-            if (notes.Count > 0) row["notes"] = notes;
+            foreach (var n in notes) Note(row, n);
         }
 
         void Draft(Ctx c, Dictionary<string, object> f, Dictionary<string, object> row)
@@ -732,14 +757,19 @@ namespace OpenSketch.Sw
             var ang = J.Num(f, "angle", 1);
             if (!(ang > 0 && ang < 90)) throw new UserError("angle must be between 0 and 90 degrees.");
             var np = J.Obj(f, "neutral_plane") ?? throw new UserError("neutral_plane is missing.");
-            object neutral;
-            if (J.Has(np, "ref") || J.Has(np, "origin")) neutral = ResolvePlane(c, np, null).Entity;
-            else neutral = FindFace(Bodies(c.Doc), np, null);
+            object findNeutral() => J.Has(np, "ref") || J.Has(np, "origin") ? ResolvePlane(c, np, null).Entity : FindFace(Bodies(c.Doc), np, null);
+            var neutral = findNeutral();
             var notes = new List<string>();
             var items = Picks(c, f, true, notes);
+            var calls = 0;
             var flip0 = J.Bool(f, "reverse");
             IFeature make(int t)
             {
+                if (calls++ > 0)
+                {
+                    items = Picks(c, f, true, null);
+                    neutral = findNeutral();
+                }
                 if (!SelectPicks(c.Doc, items, 2, () => SelectEntity(c.Doc, neutral, true, 1)))
                     throw new InvalidOperationException("not every face could be selected");
                 var feat = c.Doc.FeatureManager.InsertMultiFaceDraft(Units.Rad(ang), flip0 ^ (t == 1), false, 0, false, false) as IFeature;
@@ -749,12 +779,29 @@ namespace OpenSketch.Sw
             }
             // which way FlipDir leans the faces depends on the neutral plane's own direction: only the prediction can tell
             Variants(c, f, row, "draft", J.Has(J.Obj(f, "expect"), "dv") ? 2 : 1, make, null, 0);
-            if (notes.Count > 0) row["notes"] = notes;
+            foreach (var n in notes) Note(row, n);
         }
 
         // ------------------------------------------------------------------------- mirror and patterns
 
-        List<IFeature> Seeds(Ctx c, Dictionary<string, object> f) => J.Strs(f, "features").Select(i => Named(c, i, "feature")).ToList();
+        /// <summary>The features to mirror or pattern; a hole stands for all its cuts (Hole1, Hole1-2, ...).</summary>
+        List<IFeature> Seeds(Ctx c, Dictionary<string, object> f)
+        {
+            var o = new List<IFeature>();
+            foreach (var i in J.Strs(f, "features"))
+            {
+                if (c.Multi.TryGetValue(i, out var all))
+                {
+                    o.AddRange(all.Select(n => Named(c, n, "feature")));
+                    continue;
+                }
+                var first = Named(c, i, "feature");
+                o.Add(first);
+                if (System.Text.RegularExpressions.Regex.IsMatch(first.Name, "^Hole\\d+$"))
+                    for (var k = 2; k < 10 && Feature(c.Doc, first.Name + "-" + k) is IFeature more; k++) o.Add(more);
+            }
+            return o;
+        }
 
         void Mirror(Ctx c, Dictionary<string, object> f, Dictionary<string, object> row)
         {
@@ -865,8 +912,8 @@ namespace OpenSketch.Sw
             {
                 var flip = t == 1;
                 m.ClearSelection2(true);
-                SelectEntity(m, d1, false, 1);
-                if (d2 != null) SelectEntity(m, d2, true, 2);
+                if (!SelectEntity(m, d1, false, 1)) throw new UserError("Could not select the pattern direction.");
+                if (d2 != null && !SelectEntity(m, d2, true, 2)) throw new UserError("Could not select the second pattern direction.");
                 foreach (var s in seeds) s.Select2(true, 4);
                 var feat = m.FeatureManager.FeatureLinearPattern5(n1, s1 * Units.M, n2, s2 * Units.M, flip, false, "NULL", "NULL",
                                                                   false, false, false, false, false, false, true, true, false, false, 0, 0, false, false) as IFeature;
@@ -920,7 +967,7 @@ namespace OpenSketch.Sw
             IFeature make(int t)
             {
                 m.ClearSelection2(true);
-                SelectEntity(m, axis, false, 1);
+                if (!SelectEntity(m, axis, false, 1)) throw new UserError("Could not select the pattern axis.");
                 foreach (var sd in seeds) sd.Select2(true, 4);
                 // equal spacing off: Spacing is the angle between neighbouring copies
                 var feat = m.FeatureManager.FeatureCircularPattern5(n, Units.Rad(step), t == 1, "NULL", false, false, false, false,
@@ -956,7 +1003,9 @@ namespace OpenSketch.Sw
                 "constraints", J.L(J.O("id", "dd", "type", "diameter", "refs", J.L("h"), "value", dia),
                                    J.O("id", "dx", "type", "distance", "refs", J.L("c", "origin"), "orient", "horizontal", "value", Math.Abs(x)),
                                    J.O("id", "dy", "type", "distance", "refs", J.L("c", "origin"), "orient", "vertical", "value", Math.Abs(y))));
-            void cutFrom(string sid, double dia, string end, double dep, double draft)
+            // every sketch of the hole is drawn on the start plane before anything is cut, so a later sketch cannot land
+            // on the floor of an earlier cut
+            void sketchFor(string sid, double dia)
             {
                 var skRow = new Dictionary<string, object>();
                 var circ = circle(sid, dia);
@@ -965,6 +1014,11 @@ namespace OpenSketch.Sw
                 var sk = DrawSketch(c, circ, skRow);
                 c.Sketches[sid] = sk;
                 c.Journal?.Feature(c.Doc, sk.Name);
+                if (skRow.TryGetValue("notes", out var sn) && sn is List<string> snl)
+                    foreach (var t in snl) Note(row, t);
+            }
+            void cutFrom(string sid, double dia, string end, double dep, double draft)
+            {
                 var exRow = new Dictionary<string, object>();
                 Extrude(c, J.O("sketch", sid, "op", "cut", "end", end, "depth", dep, "reverse", reverse, "draft", draft), exRow);
                 var feat = Feature(c.Doc, J.Str(exRow, "name"));
@@ -981,12 +1035,15 @@ namespace OpenSketch.Sw
             switch (style)
             {
                 case "simple":
+                    sketchFor($"__hole{n}a", d);
                     cutFrom($"__hole{n}a", d, through ? "through_all" : "blind", depth, 0);
                     break;
                 case "counterbore":
                     var bd = J.Num(f, "bore_diameter");
                     var bdep = J.Num(f, "bore_depth");
                     if (bd <= d || bdep <= 0) throw new UserError("The counterbore needs bore_diameter > diameter and bore_depth > 0.");
+                    sketchFor($"__hole{n}a", bd);
+                    sketchFor($"__hole{n}b", d);
                     cutFrom($"__hole{n}a", bd, "blind", bdep, 0);
                     cutFrom($"__hole{n}b", d, through ? "through_all" : "blind", depth, 0);
                     break;
@@ -995,6 +1052,8 @@ namespace OpenSketch.Sw
                     var sa = J.Num(f, "sink_angle", 90);
                     if (sd <= d || !(sa > 0 && sa < 180)) throw new UserError("The countersink needs sink_diameter > diameter and 0 < sink_angle < 180.");
                     var recess = (sd - d) / 2 / Math.Tan(Units.Rad(sa / 2));
+                    sketchFor($"__hole{n}a", sd);
+                    sketchFor($"__hole{n}b", d);
                     cutFrom($"__hole{n}a", sd, "blind", recess, sa / 2);
                     cutFrom($"__hole{n}b", d, through ? "through_all" : "blind", depth, 0);
                     break;
@@ -1003,7 +1062,11 @@ namespace OpenSketch.Sw
             }
             row["name"] = parts[0];
             row["made_as"] = parts;
-            if (J.Str(f, "id") != null) c.Names[J.Str(f, "id")] = parts[0];
+            if (J.Str(f, "id") != null)
+            {
+                c.Names[J.Str(f, "id")] = parts[0];
+                c.Multi[J.Str(f, "id")] = parts;
+            }
         }
 
         void Sweep(Ctx c, Dictionary<string, object> f, Dictionary<string, object> row)
@@ -1013,8 +1076,8 @@ namespace OpenSketch.Sw
             var path = SketchFor(c, J.Str(f, "path"));
             var cut = J.Str(f, "op", "boss") == "cut";
             m.ClearSelection2(true);
-            SelectEntity(m, prof.Feature, false, 1);
-            SelectEntity(m, path.Feature, true, 4);
+            if (!SelectEntity(m, prof.Feature, false, 1) || !SelectEntity(m, path.Feature, true, 4))
+                throw new UserError($"Could not select {prof.Name} (profile) and {path.Name} (path).");
             IFeature feat;
             if (cut)
                 feat = m.FeatureManager.InsertCutSwept5(false, true, 0, false, false, 0, 0, false, 0, 0, 0, 0, true, true, 0, true, true, true, false, false, 0, 0) as IFeature;
@@ -1037,7 +1100,7 @@ namespace OpenSketch.Sw
             var first = true;
             foreach (var s in sks)
             {
-                SelectEntity(m, s.Feature, !first, 1);
+                if (!SelectEntity(m, s.Feature, !first, 1)) throw new UserError($"Could not select the profile {s.Name}.");
                 first = false;
             }
             IFeature feat;

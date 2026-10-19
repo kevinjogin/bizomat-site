@@ -78,8 +78,16 @@ namespace OpenSketch.Sw
         static int FindEquation(IEquationMgr em, string lhs)
         {
             for (var i = 0; i < em.GetCount(); i++)
-                if (string.Equals(Lhs(em.get_Equation(i)), lhs, StringComparison.OrdinalIgnoreCase)) return i;
+                if (string.Equals(NormDim(Lhs(em.get_Equation(i))), NormDim(lhs), StringComparison.OrdinalIgnoreCase)) return i;
             return -1;
+        }
+
+        /// <summary>"D1@Sketch1@Part1.SLDPRT" and "D1@Sketch1" are the same dimension.</summary>
+        static string NormDim(string name)
+        {
+            if (name == null) return null;
+            var parts = name.Split('@');
+            return parts.Length >= 3 && parts[parts.Length - 1].Contains(".") ? string.Join("@", parts.Take(parts.Length - 1)) : name;
         }
 
         /// <summary>Appends an equation (index -1) in all configurations; Add2 for parts Add3 refuses (made before 2014).</summary>
@@ -100,9 +108,45 @@ namespace OpenSketch.Sw
 
         static readonly HashSet<string> Functions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            "sin", "cos", "tan", "asin", "acos", "atan", "abs", "sqr", "sqrt", "int", "round", "sgn", "log", "exp", "pi",
+            "sin", "cos", "tan", "arcsin", "arccos", "atn", "abs", "sqr", "int", "round", "sgn", "log", "exp", "pi",
             "min", "max", "if", "and", "or", "not", "mm", "cm", "m", "in", "ft", "deg", "rad", "iif"
         };
+
+        /// <summary>OpenSketch function names that SOLIDWORKS spells differently.</summary>
+        static readonly Dictionary<string, string> SwNames = new Dictionary<string, string>
+        {
+            ["sqrt"] = "sqr", ["asin"] = "arcsin", ["acos"] = "arccos", ["atan"] = "atn"
+        };
+
+        static bool HasTrig(string expr) =>
+            expr != null && Regex.IsMatch(expr, "\\b(sin|cos|tan|asin|acos|atan|arcsin|arccos|atn)\\s*\\(", RegexOptions.IgnoreCase);
+
+        /// <summary>OpenSketch's trig is in degrees; SOLIDWORKS follows the document's angular equation units. Degrees
+        /// are set when no equation uses trig yet; otherwise radians refuse rather than change what others mean.</summary>
+        static void DegreesForTrig(IEquationMgr em, string expr)
+        {
+            if (!HasTrig(expr)) return;
+            if (em.AngularEquationUnits == (int)swAngularEquationUnits_e.swAngularEquationUnitsDegrees) return;
+            for (var i = 0; i < em.GetCount(); i++)
+                if (HasTrig(em.get_Equation(i)))
+                    throw new UserError("This document's equations use radians for sin, cos and tan, and other equations already rely on it. " +
+                                        "Write the angle in radians (deg * pi / 180), or switch the equations to degrees in SOLIDWORKS.");
+            em.AngularEquationUnits = (int)swAngularEquationUnits_e.swAngularEquationUnitsDegrees;
+        }
+
+        /// <summary>Plain numbers in SOLIDWORKS equations are in the document's units: say so when that is not mm.</summary>
+        static string UnitsNote(IModelDoc2 m)
+        {
+            try
+            {
+                var u = m.Extension.GetUserPreferenceInteger((int)swUserPreferenceIntegerValue_e.swUnitsLinear, 0);
+                return u == (int)swLengthUnit_e.swMM ? null : "This document is not in millimetres: plain numbers in equations are read in its own length unit. Add mm to a number (10mm) to be sure.";
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
 
         /// <summary>An OpenSketch expression in SOLIDWORKS' form: global variables in quotes, ^ kept, sqrt as sqr.</summary>
         static string SwExpression(string expr, HashSet<string> globals)
@@ -126,8 +170,11 @@ namespace OpenSketch.Sw
                     var j = i;
                     while (j < expr.Length && (char.IsLetterOrDigit(expr[j]) || expr[j] == '_' || expr[j] == '@' || expr[j] == '-' && j + 1 < expr.Length && char.IsLetter(expr[j + 1]) && expr.Substring(i, j - i).Contains("@"))) j++;
                     var word = expr.Substring(i, j - i);
+                    var lw = word.ToLowerInvariant();
                     if (globals.Contains(word) || word.Contains("@")) sb.Append('"').Append(word).Append('"');
-                    else if (word.Equals("sqrt", StringComparison.OrdinalIgnoreCase)) sb.Append("sqr");
+                    else if (SwNames.TryGetValue(lw, out var sw)) sb.Append(sw);
+                    else if (lw == "floor" || lw == "ceil" || lw == "atan2")
+                        throw new UserError($"SOLIDWORKS equations have no {word}(). Use int(), round() or atn() instead.");
                     else sb.Append(word);
                     i = j;
                     continue;
@@ -156,6 +203,7 @@ namespace OpenSketch.Sw
             }
             var expr = J.Str(a, "expression");
             if (string.IsNullOrWhiteSpace(expr)) throw new UserError("Give an expression (a number or an equation of other variables).");
+            DegreesForTrig(em, expr);
             var text = $"\"{name}\" = {SwExpression(expr, Globals(em))}";
             var comment = J.Str(a, "comment");
             if (!string.IsNullOrEmpty(comment)) text += " '" + comment.Replace("'", "");
@@ -170,7 +218,7 @@ namespace OpenSketch.Sw
             var idx = FindEquation(em, name);
             if (r < 0 || idx < 0) throw new UserError($"SOLIDWORKS did not take {text}. Check the expression (SOLIDWORKS equation syntax).");
             return J.O("doc", Ref(m), "variable", name, "equation", em.get_Equation(idx), "value", R(em.get_Value(idx), 6),
-                       "status", em.Status == 0 ? "ok" : "error " + em.Status, "equations", Equations(m));
+                       "status", em.Status == 0 ? "ok" : "error " + em.Status, "equations", Equations(m), "note", UnitsNote(m));
         }
 
         Dictionary<string, object> SetEquation(Dictionary<string, object> a, Journal journal)
@@ -188,6 +236,7 @@ namespace OpenSketch.Sw
                 m.ForceRebuild3(false);
                 return J.O("doc", Ref(m), "removed", dim, "equations", Equations(m));
             }
+            DegreesForTrig(em, expr);
             var text = $"\"{dim}\" = {SwExpression(expr, Globals(em))}";
             if (i >= 0) em.set_Equation(i, text);
             else AddEquation(em, text);
@@ -195,7 +244,7 @@ namespace OpenSketch.Sw
             var idx = FindEquation(em, dim);
             if (idx < 0) throw new UserError($"SOLIDWORKS did not take {text}.");
             return J.O("doc", Ref(m), "equation", em.get_Equation(idx), "value", R(em.get_Value(idx), 6),
-                       "status", em.Status == 0 ? "ok" : "error " + em.Status, "equations", Equations(m));
+                       "status", em.Status == 0 ? "ok" : "error " + em.Status, "equations", Equations(m), "note", UnitsNote(m));
         }
 
         /// <summary>"D1@Sketch1" as is; "Boss-Extrude1.depth" -> that feature's dimension for the field.</summary>
@@ -206,6 +255,12 @@ namespace OpenSketch.Sw
             if (dot <= 0) throw new UserError("target is a dimension (\"D1@Sketch1\") or <feature name>.<field> (\"Boss-Extrude1.depth\").");
             var feat = Feature(m, target.Substring(0, dot)) ?? throw new UserError($"No feature {target.Substring(0, dot)}.");
             var field = target.Substring(dot + 1).ToLowerInvariant();
+            // a counterbore or countersink hole is two cuts: Hole1 is the bore or sink, Hole1-2 the hole itself
+            if (Regex.IsMatch(feat.Name, "^Hole\\d+$") && Feature(m, feat.Name + "-2") is IFeature hole2)
+            {
+                if (field == "depth") feat = hole2;
+                else if (field == "bore_depth") field = "depth";
+            }
             var lin = new List<IDimension>();
             var ang = new List<IDimension>();
             var ints = new List<IDimension>();
@@ -256,7 +311,7 @@ namespace OpenSketch.Sw
                 var all = lin.Concat(ang).Concat(ints).Select(d => $"{d.FullName} = {(d.GetType() == (int)swDimensionParamType_e.swDimensionParamTypeDoubleAngular ? Units.Deg(d.SystemValue) : d.SystemValue * 1000):0.###}");
                 throw new UserError($"No {field} dimension on {feat.Name}. Its dimensions: {string.Join(", ", all)}. Give one of them as target.");
             }
-            return pick.FullName;
+            return pick.Name + "@" + feat.Name;
         }
 
         // ------------------------------------------------------------------------- batch

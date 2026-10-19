@@ -345,7 +345,7 @@ namespace OpenSketch.Sw.Core
                     else pts.Add(Mid(Pts[s.P1], Pts[s.P2]));
                 }
             }
-            if (d.How == "angle" && d.Refs.Count == 2)
+            if (d.How == "angle" && d.Refs.Count == 2 && d.Refs[0].Kind == "seg" && d.Refs[1].Kind == "seg")
             {
                 var a = Segs[SegIndex(d.Refs[0].Id)];
                 var b = Segs[SegIndex(d.Refs[1].Id)];

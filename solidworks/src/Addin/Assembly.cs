@@ -286,8 +286,15 @@ namespace OpenSketch.Sw
                 if (!aligns.Contains(x)) aligns.Add(x);
             if (type == "concentric" || type == "lock") aligns = new List<string> { align };
             var tried = "";
+            var pass = 0;
             foreach (var al in aligns)
             {
+                if (pass++ > 0)
+                {
+                    // faces found again: a deleted try and its rebuild may have replaced the face objects
+                    r0 = Resolve(m, refs[0]);
+                    r1 = Resolve(m, refs[1]);
+                }
                 m.ClearSelection2(true);
                 if (!SelectEntity(m, r0.Entity, false, 1) || !SelectEntity(m, r1.Entity, true, 1))
                     throw new UserError($"Could not select {r0.What} and {r1.What}.");
