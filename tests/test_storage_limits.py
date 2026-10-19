@@ -152,14 +152,15 @@ def test_identical_saves_make_no_version_and_a_retry_is_not_a_conflict():
     doc_id = rec["id"]
     r = c.put(f"/api/docs/{doc_id}", json={"doc": _block("Plate"), "base_version": 1})
     assert r.status_code == 200 and r.json()["version"] == 1  # nothing changed: no new version
-    r = c.put(f"/api/docs/{doc_id}", json={"doc": _block("Plate 2"), "base_version": 1})
+    edited = lambda n: {**_block("Plate"), "seq": 1000 + n}  # a save never renames (PATCH does): change the model
+    r = c.put(f"/api/docs/{doc_id}", json={"doc": edited(1), "base_version": 1})
     assert r.json() == {k: r.json()[k] for k in server.SAVED_KEYS} and r.json()["version"] == 2  # no model sent back
-    retry = c.put(f"/api/docs/{doc_id}", json={"doc": _block("Plate 2"), "base_version": 1})
+    retry = c.put(f"/api/docs/{doc_id}", json={"doc": edited(1), "base_version": 1})
     assert retry.status_code == 200 and retry.json()["version"] == 2  # the same save again: not a conflict
-    stale = c.put(f"/api/docs/{doc_id}", json={"doc": _block("Plate 3"), "base_version": 1})
+    stale = c.put(f"/api/docs/{doc_id}", json={"doc": edited(2), "base_version": 1})
     assert stale.status_code == 409
     assert stale.json()["current"] == {k: stale.json()["current"][k] for k in server.SAVED_KEYS}  # the head only
-    assert c.patch(f"/api/docs/{doc_id}", json={"name": "Plate 2"}).json()["version"] == 2  # same name: no version
+    assert c.patch(f"/api/docs/{doc_id}", json={"name": "Plate"}).json()["version"] == 2  # same name: no version
 
 
 def test_autosaves_in_one_run_keep_one_version(monkeypatch):
@@ -275,7 +276,8 @@ def test_document_size_account_quota_and_disk_reserve(monkeypatch):
     for i in range(5):
         assert owner.post("/api/docs", json={"name": f"O{i}", "doc": _block(f"O{i}")}).status_code == 200
     # older versions of a file make room for its next save before anything is refused
-    assert member.put(f"/api/docs/{a['id']}", json={"doc": _block("A3"), "summary": "Mine"}).status_code == 200
+    a3 = {**_block("A2"), "seq": 2001}  # a save never renames the file (PATCH does): the model changes
+    assert member.put(f"/api/docs/{a['id']}", json={"doc": a3, "summary": "Mine"}).status_code == 200
     assert [v["version"] for v in store.versions(a["id"])] == [2]
     # the number of files is limited too
     monkeypatch.setattr(store, "QUOTA", 10**9)
@@ -286,15 +288,15 @@ def test_document_size_account_quota_and_disk_reserve(monkeypatch):
     # the disk nearly full: document writes stop with a plain message, sign-in still works
     Usage = namedtuple("Usage", "total used free")
     monkeypatch.setattr(store.shutil, "disk_usage", lambda p: Usage(10**9, 10**9 - 2**20, 2**20))
-    r = owner.put(f"/api/docs/{a['id']}", json={"doc": _block("A4"), "summary": "x"})
+    r = owner.put(f"/api/docs/{a['id']}", json={"doc": {**_block("A2"), "seq": 2002}, "summary": "x"})
     assert r.status_code == 404  # not the owner's file
-    r = member.put(f"/api/docs/{a['id']}", json={"doc": _block("A4"), "summary": "x"})
+    r = member.put(f"/api/docs/{a['id']}", json={"doc": {**_block("A2"), "seq": 2002}, "summary": "x"})
     assert r.status_code == 507 and "disk is nearly full" in r.json()["error"]
     again = TestClient(server.app)
     assert again.post("/login", data={"email": "mei@example.com", "password": "battery staple", "next": "/"},
                       follow_redirects=False).status_code in (302, 303)
     assert again.get("/api/docs").status_code == 200
-    assert store.get(a["id"])["doc"]["name"] == "A3"  # nothing half-written
+    assert store.get(a["id"])["doc"]["seq"] == 2001  # nothing half-written
 
 
 # ----------------------------------------------------------------------------- listing reads only yours
@@ -337,18 +339,6 @@ def test_files_of_removed_people_go_to_the_owner():
     with TestClient(server.app):
         pass
     assert "Orphan" in [f["name"] for f in owner.get("/api/docs?trash=1").json()]
-
-
-def test_an_untouched_new_file_can_be_discarded():
-    c = TestClient(server.app)
-    new = c.post("/api/docs", json={"name": "", "kind": "part"}).json()
-    named = c.post("/api/docs", json={"name": "Bracket", "kind": "part"}).json()
-    used = c.post("/api/docs", json={"name": "", "kind": "part"}).json()
-    store.save(used["id"], dict(_block(), name=used["name"]), "you", "Edited")
-    assert c.delete(f"/api/docs/{new['id']}?untouched=1").json() == {"deleted": new["id"], "forever": True}
-    assert c.delete(f"/api/docs/{named['id']}?untouched=1").json() == {"kept": True}
-    assert c.delete(f"/api/docs/{used['id']}?untouched=1").json() == {"kept": True}
-    assert sorted(f["name"] for f in c.get("/api/docs").json()) == ["Bracket", used["name"]]
 
 
 # ----------------------------------------------------------------------------- reviews

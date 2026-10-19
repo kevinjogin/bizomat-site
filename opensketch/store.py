@@ -1002,19 +1002,6 @@ def duplicate(doc_id: str, owner: str | None, by: str = "you", name: str | None 
     return rec
 
 
-def discard_if_untouched(doc_id: str) -> bool:
-    """Remove a file New made and nobody used: still empty (no features, or no parts and components), still named
-    "Part N" / "Assembly N", not in the Trash. True when it was removed."""
-    with lock(doc_id):
-        rec = get(doc_id)
-        doc = rec["doc"]
-        empty = (not doc.get("parts") and not doc.get("components")) if kind_of(doc) == "assembly" else not doc.get("features")
-        if not empty or rec.get("deleted") or not re.fullmatch(r"(Part|Assembly) \d+", rec.get("name") or ""):
-            return False
-        purge(doc_id)
-        return True
-
-
 def hand_over(owner: str, trash: bool = False) -> int:
     """The documents of a removed account go to the server owner (owner None), into the Trash with trash=True
     (removed for good after TRASH_DAYS unless restored). Returns how many."""

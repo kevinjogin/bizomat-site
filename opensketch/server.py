@@ -968,12 +968,10 @@ def api_doc_discard(doc_id: str, request: Request):
 
 
 @app.delete("/api/docs/{doc_id}")
-def api_doc_delete(doc_id: str, request: Request, forever: bool = False, untouched: bool = False):
-    """Move to the Trash; forever=1 removes a document that is already in the Trash; untouched=1 removes a file New
-    made that is still empty and still named "Part N" / "Assembly N" (leaving it), else keeps it ({"kept": true})."""
+def api_doc_delete(doc_id: str, request: Request, forever: bool = False):
+    """Move to the Trash; forever=1 removes a document that is already in the Trash (an untouched new file is
+    removed by POST .../discard)."""
     m = _doc_meta(doc_id, request, trash_ok=True)
-    if untouched:
-        return {"deleted": doc_id, "forever": True} if store.discard_if_untouched(doc_id) else {"kept": True}
     if forever:
         if not m.get("deleted"):
             return JSONResponse({"error": "Move it to the Trash first."}, status_code=400)
