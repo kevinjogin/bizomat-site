@@ -92,6 +92,13 @@ bar in assemblies (as SOLIDWORKS does; SOLIDWORKS gives no sign of it there, Ope
   assembly lists the rolled-back parts and offers Cancel / "Roll to End and Export".
 - Tests: `tests/test_rollback_export.py` (6). Checked in Chromium on YZ's v31 document: tree flag, menu item, dialog, roll +
   export downloads the 6.58 MB STEP, Ctrl+Z puts the bar back. 328 pytest (2 skipped) + 62 node.
+- How a bar ends up at the top by accident (a second part, Outside_back_plate, was found the same way): the rollback bar
+  drag (`tree.dragRollback`) listened on the window without pointer capture, so a release outside the window was lost
+  and the next click anywhere above the tree (ribbon, menus: above every row = index 0) committed "Rollback" to the top.
+  Now: left button only, `setPointerCapture`, pointercancel / lostpointercapture end the drag without a change, a press
+  that moves < 4 px is a click (no change, no undo step), no commit when the bar left the DOM or the index is unchanged.
+  Return to Assembly from a rolled-back part shows a toast naming the feature and Roll Part to End. Checked in Chromium
+  (click, cancelled press + ribbon click, drag to top + Ctrl+Z, drag above the last feature).
 
 Upload links for the connector (2026-10-19, YZ: a 6.5 MB named STEP would be ~1.6 million base64 characters inside one
 import_document call, too much for a model to write out exactly): `uploads.py` + MCP tool `request_upload(filename,

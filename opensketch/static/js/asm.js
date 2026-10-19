@@ -1089,6 +1089,8 @@ export class AssemblyMode {
     if (f.res) this.draw(f.res, f.doc);
     if (JSON.stringify(part) !== JSON.stringify(f.doc.parts[f.pid])) app.commit('Edit ' + (part.name || f.pid), () => { app.doc.parts[f.pid] = part; });
     else app.regen();
+    const rb = rolledBackFeature(part);
+    if (rb) app.toast(`${part.name || f.pid} is rolled back above ${rb.name}, so the assembly shows it that way. Right-click it > Roll Part to End.`);
   }
 
   // ------------------------------------------------------------------ Motion Study: assembly playback

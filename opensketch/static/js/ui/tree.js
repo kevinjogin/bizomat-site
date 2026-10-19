@@ -142,13 +142,22 @@ export class FeatureTree {
     this.filterNote(q);
   }
 
+  // Drag the rollback bar. The pointer is captured, so the release always ends the drag where it happened;
+  // without it a release outside the window was lost and the next click anywhere above the tree (ribbon,
+  // menus) rolled the part back to the top (YZ's Lavilock parts were found rolled back above their first
+  // feature). A press that moves less than a few pixels is a click and changes nothing.
   dragRollback(e, bar) {
+    if (e.button !== 0) return;
     e.preventDefault(); e.stopPropagation();
     bar.classList.add('drag');
     const rows = [...this.el.querySelectorAll('.tn')].filter((r) => /^(feature|sketch|plane):/.test(r.dataset.key) && !['plane:Front Plane', 'plane:Top Plane', 'plane:Right Plane'].includes(r.dataset.key));
     const doc = this.app.doc;
+    const y0 = e.clientY, pid = e.pointerId;
+    try { bar.setPointerCapture(pid); } catch (_) { /* old browser: window listeners below still end it */ }
     let target = null;
     const mv = (ev) => {
+      if (ev.pointerId !== pid) return;
+      if (target === null && Math.abs(ev.clientY - y0) < 4) return;
       // index = number of top-level rows above the cursor
       let n = 0;
       for (const r of rows) { const rr = r.getBoundingClientRect(); if (ev.clientY > rr.top + rr.height / 2) n = r; }
@@ -156,10 +165,14 @@ export class FeatureTree {
       for (const r of rows) r.style.borderBottom = '';
       if (n) n.style.borderBottom = '3px solid #3c6fd1';
     };
-    const up = () => {
+    const end = (commit) => (ev) => {
+      if (ev.pointerId !== pid) return;
       window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', cancel); bar.removeEventListener('lostpointercapture', cancel);
+      try { bar.releasePointerCapture(pid); } catch (_) { /* already released */ }
       bar.classList.remove('drag');
-      if (target === null) return;
+      for (const r of rows) r.style.borderBottom = '';
+      if (!commit || target === null || !this.el.contains(bar)) return;
       let idx = 0;
       if (target) {
         const id = target.dataset.key.split(':').slice(1).join(':');
@@ -169,9 +182,12 @@ export class FeatureTree {
         const abs = this.absorbers(doc);
         for (const [sid, fid] of abs) if (sid === id) idx = doc.features.findIndex((f) => f.id === fid) + 1;
       }
-      this.app.setRollback(idx >= doc.features.length ? null : idx);
+      const next = idx >= doc.features.length ? null : idx;
+      if (next !== (doc.rollback ?? null)) this.app.setRollback(next);
     };
+    const up = end(true), cancel = end(false);
     window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', cancel); bar.addEventListener('lostpointercapture', cancel);
   }
 
   rename(id) {
