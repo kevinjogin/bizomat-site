@@ -489,6 +489,8 @@ def keep_tester(user_id: str, email: str, name: str, password: str | None, googl
         u = next((x for x in data["users"] if x["id"] == user_id), None)
         if u is None or u["role"] != "tester":
             raise AccountError("Only early-access accounts can do this.")
+        if u.get("hash") or u.get("google"):  # changing it needs the current password (Account settings)
+            raise AccountError("Your work is kept already. Change your sign-in in Account settings.")
         if google and any(x.get("google") == google and x["id"] != user_id for x in data["users"]):
             raise AccountError("That Google account already has an OpenSketch account. Your files stay with this one.")
         email, name = _check_new(email, name or u["name"], None if google else (password or ""), data, me=user_id)

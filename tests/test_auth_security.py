@@ -410,6 +410,8 @@ def test_testers_keep_their_work_with_an_email_and_password(monkeypatch):
     me = t.post("/api/account/keep", json={"name": "Sam", "email": "Sam@Example.com", "password": "long enough"}).json()["user"]
     assert me["tester"] and me["has_password"] and me["email"] == "sam@example.com" and me["name"] == "Sam"
     assert owner.post("/api/account/keep", json={"email": "o@example.com", "password": "long enough"}).status_code == 400
+    again = t.post("/api/account/keep", json={"email": "evil@example.com", "password": "taken over"})
+    assert again.status_code == 400 and "kept already" in again.json()["error"]  # no change without the current password
     t.get("/logout")
     back = TestClient(server.app)
     assert back.post("/login", data={"email": "sam@example.com", "password": "long enough"}, follow_redirects=False).status_code == 303
