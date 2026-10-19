@@ -27,7 +27,7 @@ from mcp.server.streamable_http_manager import StreamableHTTPASGIApp
 from mcp.server.transport_security import TransportSecuritySettings
 from mcp.types import CallToolResult, ImageContent, TextContent, ToolAnnotations
 
-from pydantic import Field
+from pydantic import AliasChoices, Field
 
 from . import ai, artifacts, assembly, auth, cadworker, features, geometry, importer, inspection, measure, store, uploads
 
@@ -64,6 +64,10 @@ Download URLs are read-only, artifact-specific links valid for one hour; they ne
 credential. Fetch them before expiry or call the tool again. Native .osk exports preserve the source
 even if it needs repair; STEP/STL/PNG are refused when active geometry or mates fail to rebuild.
 When done, give the user the "open" link from the last tool result and any requested download links.
+The user may edit the same document in the app while you work. Read it again with get_document before rewriting a
+tree, and pass base_version (the version you read) to propose_features mode "replace", create_part and batch: if the
+document changed since, nothing is saved and the reply lists the changes. undo_last_change undoes only your own last
+change unless you name the version; its reply says what it undid.
 
 Predict, then measure:
 - Before each stage, work out the volume and bounding box you expect (a box minus its holes is simple
@@ -84,6 +88,8 @@ Predict, then measure:
 
 MateType = Literal["coincident", "concentric", "parallel", "perpendicular", "distance", "angle", "lock",
                    "hinge", "limit_distance", "limit_angle", "coupler"]
+BASE_VERSION = ("Optional: the document version you read (get_document or the last result). If the document changed since "
+                "(the user edited it), nothing is saved and the reply lists the changes, so your edit never undoes theirs.")
 StdKind = Literal["socket_head_cap_screw", "hex_head_screw", "counter_sunk_screw", "button_head_screw",
                   "set_screw", "hex_nut", "plain_washer", "ball_bearing"]
 
@@ -131,26 +137,65 @@ def _result(rec: dict, report: Any = None, clean: bool | None = None, changed: b
 
 
 def _save_session(rec: dict, sess: "ai.Session", summary: str) -> tuple[dict, bool]:
-    """Save the session's work as one new version (if anything changed). Returns (record, changed)."""
+    """Save the session's work as one new version (if anything changed), only if the document is still the version
+    the work started from (store.Conflict otherwise). Returns (record, changed). The document lock is held for the
+    file writes only, never while CAD runs, so the person's own saves never wait for Claude's work."""
     if assembly.is_assembly(sess.work) and not assembly.is_assembly(rec["doc"]):
         sess.work["name"] = rec["name"]  # the document keeps its name when it becomes an assembly
     reqs = list(rec.get("requests") or [])
     for r in getattr(sess, "requests", []):
-        item = {k: r.get(k) for k in ("part", "description", "mcmaster", "url")}
-        reqs = [q for q in reqs if q.get("part") != item["part"]] + [item]
+        item = {k: r.get(k) for k in ("part", "description", "mcmaster", "url", "page") if r.get(k) is not None}
+        reqs = [q for q in reqs if q.get("part") != item.get("part")] + [item]
     changed = sess.work != rec["doc"] or reqs != (rec.get("requests") or [])
     if changed:
-        rec = store.save(rec["id"], sess.work, "claude", summary, requests=reqs)
+        rec = store.save(rec["id"], sess.work, "claude", summary, base_version=rec["version"], requests=reqs)
     return rec, changed
 
 
-def _apply_sync(doc_id: str, tool: str, inp: dict) -> str:
-    with store.lock(doc_id):
+def _changes_since(rec: dict, version: int) -> list[dict]:
+    """Who changed the document after `version`, newest first."""
+    out = [{"version": rec["version"], "by": rec.get("by"), "summary": rec.get("summary")}]
+    try:
+        out += [v for v in store.versions(rec["id"]) if v["version"] > version]
+    except store.NotFound:
+        pass
+    return [v for v in out if v["version"] > version][:10]
+
+
+def _stale(rec: dict, base_version: int) -> str:
+    who = _changes_since(rec, base_version)
+    return json.dumps({"doc_id": rec["id"], "version": rec["version"], "open": _link(rec["id"]), "changed_since": who,
+                       "error": f"Not applied: the document changed after version {base_version} (now version "
+                                f"{rec['version']}; see changed_since). Read it again with get_document, then send the "
+                                "change again based on what is there now. Nothing was saved."})
+
+
+def _rerun_ok(tool: str, inp: dict) -> bool:
+    """Whether a change computed on an older version may simply be made again on the newer one. Not for whole-tree
+    rewrites (propose_features replace was written from what Claude read) or feature recognition (minutes)."""
+    return not ((tool == "propose_features" and inp.get("mode") == "replace") or tool == "recognize_features")
+
+
+def _apply_sync(doc_id: str, tool: str, inp: dict, base_version: int | None = None) -> str:
+    """One modelling tool on a stored document: read it, run the tool without holding the document's lock, then
+    save under the lock if the document is still that version. If the person (or another call) saved meanwhile,
+    the tool runs once more on the new version, or the answer says what changed."""
+    inp = {k: v for k, v in inp.items() if v is not None}
+    for attempt in (1, 2):
         rec = _get(doc_id)
+        if base_version is not None and rec["version"] != int(base_version):
+            return _stale(rec, int(base_version))
         sess = ai.Session(rec["doc"])
-        report, clean, _ = sess.apply(tool, {k: v for k, v in inp.items() if v is not None})
-        rec, changed = _save_session(rec, sess, sess.summary or tool.replace("_", " ").capitalize())
-        return _result(rec, report, clean, changed)
+        report, clean, _ = sess.apply(tool, inp)
+        if not clean and not ai._is_report(report):  # refused: the session is unchanged, nothing to save
+            return _result(rec, report, clean, changed=False)
+        try:
+            saved, changed = _save_session(rec, sess, sess.summary or tool.replace("_", " ").capitalize())
+        except store.Conflict as exc:
+            if attempt == 1 and _rerun_ok(tool, inp):
+                continue
+            return _stale(exc.current, rec["version"])
+        return _result(saved, report, clean, changed)
 
 
 def _as(user: dict | None, name: str, args: tuple):
@@ -175,12 +220,88 @@ async def _work(fn, *args, limit: float | None = None):
 
 LONG_TOOLS = {"recognize_features": 3600.0}  # seconds a tool may run in its worker (default cadworker.CAD_LIMIT)
 
+# The same change sent twice (a client that timed out on a long call and retried it) is made once: an identical call
+# still running is joined, and one that finished in the last REPEAT_SECONDS is answered from memory while the
+# document is still the version it saved.
+REPEAT_SECONDS = 300
+_running: dict[str, "anyio.Event"] = {}
+_recent: dict[str, tuple[float, Any]] = {}
 
-async def _apply(doc_id: str, tool: str, **inp) -> str:
+
+def _call_key(doc_id: str, tool: str, args: Any) -> str:
+    import hashlib
+    who = store.owner_of(_who())
+    raw = json.dumps([who, doc_id, tool, args], sort_keys=True, default=str)
+    return hashlib.sha256(raw.encode()).hexdigest()
+
+
+def _version_of(result: Any) -> int | None:
+    text = result.content[0].text if isinstance(result, CallToolResult) else result
     try:
-        return await _work(_apply_sync, doc_id, tool, inp, limit=LONG_TOOLS.get(tool))
-    except store.NotFound:
-        return f"No document {doc_id!r}. Use list_documents or create_document."
+        out = json.loads(text)
+    except (ValueError, TypeError, AttributeError, IndexError):
+        return None
+    if not isinstance(out, dict) or out.get("error") or not out.get("ok", True) or out.get("note") == "Nothing changed.":
+        return None  # only saved changes are remembered (a refusal is answered afresh)
+    return out.get("version")
+
+
+def _repeat_note(result: Any, seconds: float) -> Any:
+    note = (f"This exact call was already made {round(seconds)} s ago and saved; it was not made again. Change the "
+            "arguments to make another change.")
+    if isinstance(result, CallToolResult):
+        try:
+            body = json.loads(result.content[0].text)
+            body["note"] = note
+            return CallToolResult(content=[TextContent(type="text", text=json.dumps(body))], is_error=result.is_error)
+        except (ValueError, IndexError, AttributeError):
+            return result
+    try:
+        body = json.loads(result)
+        body["note"] = note
+        return json.dumps(body)
+    except ValueError:
+        return result
+
+
+async def _once(doc_id: str, tool: str, args: Any, run):
+    """Run `run()` unless an identical call is running (wait for it) or just finished on the current version."""
+    import time
+    key = _call_key(doc_id, tool, args)
+    now = time.monotonic()
+    for k, (t, _) in list(_recent.items()):
+        if now - t > REPEAT_SECONDS:
+            _recent.pop(k, None)
+    while key in _running:
+        await _running[key].wait()
+    hit = _recent.get(key)
+    if hit is not None:
+        try:
+            current = store.meta(doc_id).get("version")
+        except store.NotFound:
+            current = None
+        if current is not None and _version_of(hit[1]) == current:
+            return _repeat_note(hit[1], time.monotonic() - hit[0])
+    done = _running[key] = anyio.Event()
+    try:
+        result = await run()
+        if _version_of(result) is not None:
+            _recent[key] = (time.monotonic(), result)
+        return result
+    finally:
+        _running.pop(key, None)
+        done.set()
+
+
+async def _apply(doc_id: str, tool: str, base_version: int | None = None, **inp) -> str:
+    async def run():
+        try:
+            return await _work(_apply_sync, doc_id, tool, inp, base_version, limit=LONG_TOOLS.get(tool))
+        except store.NotFound:
+            return f"No document {doc_id!r}. Use list_documents or create_document."
+    if tool in ("check_interference", "find_mate_candidates"):  # read-only answers: nothing to repeat
+        return await run()
+    return await _once(doc_id, tool, {k: v for k, v in inp.items() if v is not None}, run)
 
 
 # ----------------------------------------------------------------------------- documents
@@ -452,12 +573,35 @@ async def preview_document(doc_id: str, view: Literal["isometric", "top", "front
 
 
 @mcp.tool()
-def undo_last_change(doc_id: str) -> str:
-    """Undo the latest change to the document (whoever made it). Calling it again redoes it; to go back
-    further use list_versions and restore_version."""
+def undo_last_change(doc_id: str,
+                     expected_version: Annotated[int | None, Field(description=(
+                         "The version you mean to undo (the version your change produced). Needed to undo a change "
+                         "the user made in the app"))] = None) -> str:
+    """Undo the latest change to the document, normally your own: if the user has saved a change since (they edit
+    in the app while you work), it is not undone unless you pass that version as expected_version. The reply says
+    which change was undone (version, by, summary). Calling it again redoes it; to go back further use
+    list_versions and restore_version."""
     try:
         _check(doc_id)
-        return _result(store.undo(doc_id, "claude"))
+        with store.lock(doc_id):  # file work only: the newest version cannot change between the check and the undo
+            rec = store.get(doc_id)
+            last = {"version": rec["version"], "by": rec.get("by"), "summary": rec.get("summary")}
+            if expected_version is not None and int(expected_version) != rec["version"]:
+                return json.dumps({"doc_id": doc_id, "version": rec["version"], "last_change": last,
+                                   "error": f"Not undone: the document is at version {rec['version']}, not "
+                                            f"{expected_version} ({last['by']}: {last['summary']}). Use list_versions "
+                                            "and restore_version to go back to a particular version."})
+            if expected_version is None and rec.get("by") != "claude":
+                return json.dumps({"doc_id": doc_id, "version": rec["version"], "last_change": last,
+                                   "error": f"Not undone: the last change (version {rec['version']}) was made by the "
+                                            f"user in the app: {last['summary']}. Undoing it would throw away their "
+                                            "work. To undo your own earlier change, use list_versions and "
+                                            "restore_version; to undo theirs anyway, pass expected_version="
+                                            f"{rec['version']}."})
+            new = store.undo(doc_id, "claude")
+        out = json.loads(_result(new))
+        out["undid"] = last
+        return json.dumps(out)
     except store.NotFound as exc:
         return f"Cannot undo: {exc}"
 
@@ -485,21 +629,25 @@ def restore_version(doc_id: str, version: int) -> str:
 # ----------------------------------------------------------------------------- modelling (ai.Session tools)
 
 @mcp.tool()
-async def propose_features(doc_id: str, mode: Literal["append", "replace"], summary: str, features: list[dict]) -> str:
+async def propose_features(doc_id: str, mode: Literal["append", "replace"], summary: str, features: list[dict],
+                           base_version: Annotated[int | None, Field(description=BASE_VERSION)] = None) -> str:
     """Write features into a part document ("append" adds to the tree, "replace" rewrites it). The part is
     rebuilt and the status of each feature, the bounding box and the volume come back. Part documents
-    only; for assemblies use create_part."""
-    return await _apply(doc_id, "propose_features", mode=mode, summary=summary, features=features)
+    only; for assemblies use create_part. Feature ids must be new in append mode. With "replace", pass
+    base_version so a change the user made meanwhile is not overwritten."""
+    return await _apply(doc_id, "propose_features", base_version=base_version, mode=mode, summary=summary,
+                        features=features)
 
 
 @mcp.tool()
 async def create_part(doc_id: str, part_id: str, name: str, features: list[dict], material: str | None = None,
-                      appearance: str | None = None) -> str:
+                      appearance: str | None = None,
+                      base_version: Annotated[int | None, Field(description=BASE_VERSION)] = None) -> str:
     """Create a part in an assembly (or replace the part with the same part_id). A part document becomes an
     assembly. Returns rebuild status, bounding box, and the part's planar faces and cylinder axes to mate
     to. material e.g. "6061 Alloy", "AISI 304", "ABS"; appearance a hex colour."""
-    return await _apply(doc_id, "create_part", part_id=part_id, name=name, features=features, material=material,
-                        appearance=appearance)
+    return await _apply(doc_id, "create_part", base_version=base_version, part_id=part_id, name=name, features=features,
+                        material=material, appearance=appearance)
 
 
 @mcp.tool()
@@ -535,11 +683,16 @@ async def add_mate(doc_id: str, type: MateType, refs: list[dict], value: float |
 
 @mcp.tool()
 async def add_contact(doc_id: str, a: str | None = None, b: str | None = None, joint: str | None = None,
-                      from_value: float | None = None, to_value: float | None = None, name: str | None = None,
-                      remove: str | None = None) -> str:
+                      from_value: Annotated[float | None, Field(
+                          validation_alias=AliasChoices("from", "from_value"),
+                          description="Start of the range to check, in the joint's units (also accepted as from_value)")] = None,
+                      to_value: Annotated[float | None, Field(
+                          validation_alias=AliasChoices("to", "to_value"),
+                          description="End of the range (also accepted as to_value)")] = None,
+                      name: str | None = None, remove: str | None = None) -> str:
     """Declare that components a and b must touch (a pin on a tongue, a cam on its follower). The review
-    checks it through joint's travel (a hinge or limit mate id) between from_value and to_value (that
-    joint's units), or at rest without a joint. remove: delete that contact id."""
+    checks it through joint's travel (a hinge or limit mate id) between from and to (that joint's units),
+    or at rest without a joint. remove: delete that contact id."""
     return await _apply(doc_id, "add_contact", a=a, b=b, joint=joint, name=name, remove=remove,
                         **{"from": from_value, "to": to_value})
 
@@ -676,7 +829,64 @@ def _compact(rep: Any) -> Any:
     return out
 
 
-def _batch_sync(doc_id: str, steps: list[dict], summary: str, stop_on_warnings: bool, dry_run: bool) -> CallToolResult:
+def _with_part(rep: Any, pid: str | None) -> Any:
+    """Step reports of one part (add_<feature>, create_part, set_parameter on part_id) list its errors without a
+    part; the assembly baseline names the part. Name it here too, so an old error is still known."""
+    if not pid or not isinstance(rep, dict):
+        return rep
+    out = dict(rep)
+    for kind in ("errors", "warnings"):
+        if out.get(kind):
+            out[kind] = [dict(e, part=e.get("part") or pid) if isinstance(e, dict) else e for e in out[kind]]
+    return out
+
+
+def _batch_run(rec: dict, steps: list[dict], stop_on_warnings: bool) -> tuple["ai.Session", list, dict | None]:
+    """Run the steps on the record's document (no lock held). Returns (session, results, failure or None)."""
+    sess = ai.Session(rec["doc"])
+    base = _baseline(rec["doc"])
+    known_err, known_warn = _problem_keys(base, "errors"), _problem_keys(base, "warnings")
+    results = []
+    for i, s in enumerate(steps):
+        name = s["tool"]
+        args = {k: v for k, v in (s.get("args") or {}).items() if v is not None and k != "doc_id"}
+        try:
+            report, clean, _ = sess.apply(name, args)
+        except Exception as exc:  # a crash in one step must not leave half a batch saved
+            report, clean = f"{type(exc).__name__}: {exc}", False
+        try:
+            rep = json.loads(report) if isinstance(report, str) else report
+        except ValueError:
+            rep = report
+        why = None
+        if not isinstance(rep, dict):
+            if not clean:
+                why = str(rep)  # tools answer plain text when they refuse ("Unknown part ...")
+        else:
+            keyed = _with_part(rep, (rep.get("part_id") or args.get("part_id")) if assembly.is_assembly(sess.work) else None)
+            new_err = _problem_keys(keyed, "errors") - known_err
+            new_warn = _problem_keys(keyed, "warnings") - known_warn
+            if rep.get("input_problems"):
+                why = "Input problems: " + "; ".join(map(str, rep["input_problems"]))
+            elif new_err:
+                msgs = [e.get("message") or json.dumps(e) for e in keyed.get("errors", [])
+                        if _problem_keys({"errors": [e]}, "errors") & new_err]
+                why = "Rebuild errors: " + "; ".join(map(str, msgs))
+            elif stop_on_warnings and new_warn:
+                msgs = [w.get("message") for w in keyed.get("warnings", []) if _problem_keys({"warnings": [w]}, "warnings") & new_warn]
+                why = "Warnings (stop_on_warnings): " + "; ".join(map(str, msgs))
+            if not why:
+                known_err |= _problem_keys(keyed, "errors")
+                known_warn |= _problem_keys(keyed, "warnings")
+        if why:
+            return sess, results, {"index": i, "tool": name, "error": why, "report": _compact(rep)}
+        results.append({"index": i, "tool": name, "clean": clean, "summary": sess.summary,
+                        "report": _compact(rep) if i < len(steps) - 1 else rep})
+    return sess, results, None
+
+
+def _batch_sync(doc_id: str, steps: list[dict], summary: str, stop_on_warnings: bool, dry_run: bool,
+                base_version: int | None = None) -> CallToolResult:
     def reply(body: dict, error: bool) -> CallToolResult:
         return CallToolResult(content=[TextContent(type="text", text=json.dumps(body))], is_error=error)
 
@@ -694,55 +904,27 @@ def _batch_sync(doc_id: str, steps: list[dict], summary: str, stop_on_warnings: 
             return reply({"ok": False, "completed": 0, "failed": {"index": i, "tool": name,
                           "error": "args must be an object."}, "rolled_back": True}, True)
 
-    with store.lock(doc_id):
+    rerun = all(_rerun_ok(s["tool"], s.get("args") or {}) for s in steps)
+    for attempt in (1, 2):
         rec = _get(doc_id)
-        sess = ai.Session(rec["doc"])
-        base = _baseline(rec["doc"])
-        known_err, known_warn = _problem_keys(base, "errors"), _problem_keys(base, "warnings")
-        results = []
-        for i, s in enumerate(steps):
-            name = s["tool"]
-            args = {k: v for k, v in (s.get("args") or {}).items() if v is not None and k != "doc_id"}
-            try:
-                report, clean, _ = sess.apply(name, args)
-            except Exception as exc:  # a crash in one step must not leave half a batch saved
-                report, clean = f"{type(exc).__name__}: {exc}", False
-            try:
-                rep = json.loads(report) if isinstance(report, str) else report
-            except ValueError:
-                rep = report
-            why = None
-            if not isinstance(rep, dict):
-                if not clean:
-                    why = str(rep)  # tools answer plain text when they refuse ("Unknown part ...")
-            else:
-                new_err = _problem_keys(rep, "errors") - known_err
-                new_warn = _problem_keys(rep, "warnings") - known_warn
-                if rep.get("input_problems"):
-                    why = "Input problems: " + "; ".join(map(str, rep["input_problems"]))
-                elif new_err:
-                    msgs = [e.get("message") or json.dumps(e) for e in rep.get("errors", [])
-                            if _problem_keys({"errors": [e]}, "errors") & new_err]
-                    why = "Rebuild errors: " + "; ".join(map(str, msgs))
-                elif stop_on_warnings and new_warn:
-                    msgs = [w.get("message") for w in rep.get("warnings", []) if _problem_keys({"warnings": [w]}, "warnings") & new_warn]
-                    why = "Warnings (stop_on_warnings): " + "; ".join(map(str, msgs))
-                if not why:
-                    known_err |= _problem_keys(rep, "errors")
-                    known_warn |= _problem_keys(rep, "warnings")
-            if why:
-                return reply({"ok": False, "completed": i, "failed": {"index": i, "tool": name, "error": why,
-                                                                       "report": _compact(rep)},
-                              "rolled_back": True, "results": results,
-                              "note": f"Nothing was saved: the document is still version {rec['version']}. "
-                                      "Fix that step and send the whole batch again."}, True)
-            results.append({"index": i, "tool": name, "clean": clean, "summary": sess.summary,
-                            "report": _compact(rep) if i < len(steps) - 1 else rep})
+        if base_version is not None and rec["version"] != int(base_version):
+            return reply(dict(json.loads(_stale(rec, int(base_version))), ok=False, rolled_back=True), True)
+        sess, results, failed = _batch_run(rec, steps, stop_on_warnings)
+        if failed:
+            return reply({"ok": False, "completed": failed["index"], "failed": failed,
+                          "rolled_back": True, "results": results,
+                          "note": f"Nothing was saved: the document is still version {rec['version']}. "
+                                  "Fix that step and send the whole batch again."}, True)
         if dry_run:
             return reply({"ok": True, "dry_run": True, "completed": len(steps), "results": results,
                           "note": f"Dry run: nothing saved, the document is still version {rec['version']}."}, False)
-        rec, changed = _save_session(rec, sess, summary or f"{len(steps)} steps")
-        body = json.loads(_result(rec, None, all(r["clean"] for r in results), changed))
+        try:
+            saved, changed = _save_session(rec, sess, summary or f"{len(steps)} steps")
+        except store.Conflict as exc:  # the person saved while the batch ran
+            if attempt == 1 and rerun:
+                continue
+            return reply(dict(json.loads(_stale(exc.current, rec["version"])), ok=False, rolled_back=True), True)
+        body = json.loads(_result(saved, None, all(r["clean"] for r in results), changed))
         return reply(dict(body, ok=True, completed=len(steps), results=results), False)
 
 
@@ -751,16 +933,21 @@ async def batch(doc_id: str, steps: Annotated[list[dict], Field(description=(
                     'Steps in order, each {"tool": "<modelling tool>", "args": {...}} with the same args as that tool, '
                     'without doc_id. Tools: propose_features, create_part, insert_component, add_mate, delete_items, '
                     'standard_part, request_part_file, check_interference, find_mate_candidates, add_<feature>.'))],
-                summary: str = "", stop_on_warnings: bool = False, dry_run: bool = False) -> CallToolResult:
+                summary: str = "", stop_on_warnings: bool = False, dry_run: bool = False,
+                base_version: Annotated[int | None, Field(description=BASE_VERSION)] = None) -> CallToolResult:
     """Run several modelling steps as ONE change. If any step fails (a refused input, a new rebuild error, a
     failing mate, or with stop_on_warnings a new warning), nothing is saved and the reply says which step
     failed and why; already existing problems do not count. On success the whole batch is one version (one
     undo). dry_run=true checks the batch without saving. Prefer this for anything over two steps: build a
     part in stages of a few features, checking volume and bounding box in the results after each stage."""
-    try:
-        return await _work(_batch_sync, doc_id, steps, summary, stop_on_warnings, dry_run, limit=3600)
-    except store.NotFound:
-        return CallToolResult(content=[TextContent(type="text", text=f"No document {doc_id!r}.")], is_error=True)
+    async def run():
+        try:
+            return await _work(_batch_sync, doc_id, steps, summary, stop_on_warnings, dry_run, base_version, limit=3600)
+        except store.NotFound:
+            return CallToolResult(content=[TextContent(type="text", text=f"No document {doc_id!r}.")], is_error=True)
+    if dry_run:
+        return await run()
+    return await _once(doc_id, "batch", [steps, summary, stop_on_warnings, base_version], run)
 
 
 def _part_doc(doc: dict, part_id: str | None) -> dict:
