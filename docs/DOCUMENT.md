@@ -156,7 +156,10 @@ that names them.
 Every feature type except `sketch`, `import` and `standard` is described once in the feature registry
 (`opensketch/features/`): its fields, kinds, defaults and limits there are the authority for this table.
 The registry drives the PropertyManager, the ribbon, the AI's `add_<type>` tools and help text, the
-MCP tools and input checks.
+MCP tools and input checks. A field left out of a document is built with its registry default (for
+example a fillet `radius` 2, a pattern `count` 3 and `spacing` 20, a plane `offset` 10, a chamfer `mode`
+`angle_distance` with `angle` 45), so every reader means the same part. A linear pattern's `count2` and
+`spacing2` are 2 and 10 when `direction2` is given without them. A pattern makes at most 2000 instances.
 
 Edge references are `{"mid": [x,y,z]}`, the point at the middle of the edge. Face references are
 `{"center": [x,y,z], "normal": [x,y,z]}`. They are matched to the nearest edge or face on rebuild.
