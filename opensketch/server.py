@@ -1497,12 +1497,22 @@ async def oauth_register(request: Request):
     return JSONResponse(out, status_code=201, headers=OAUTH_CORS)
 
 
+async def _oauth_client_call(request: Request, fn):
+    """Token and revoke: limited per address; an app's metadata document (client_id = https URL) is read first in
+    mcpauth's own small pool with a deadline, never on a request thread (a slow address cannot use them all up)."""
+    from . import mcpauth
+    if not mcpauth.token_rate_ok(auth._client(request.scope)):
+        raise mcpauth.OAuthError("temporarily_unavailable", "Too many requests from this address. Try again in a minute.", 429)
+    form = await _body_form(request)
+    await mcpauth.ensure_client(form.get("client_id"))
+    return await run_in_threadpool(fn, form, request.headers.get("authorization", ""))
+
+
 @app.post("/oauth/token")
 async def oauth_token(request: Request):
     from . import mcpauth
-    form = await _body_form(request)
     try:
-        out = await run_in_threadpool(mcpauth.token, form, request.headers.get("authorization", ""))
+        out = await _oauth_client_call(request, mcpauth.token)
     except mcpauth.OAuthError as e:
         extra = {"WWW-Authenticate": 'Basic realm="OpenSketch"'} if e.status == 401 else {}
         return JSONResponse(e.body(), status_code=e.status, headers={**OAUTH_CORS, **extra})
@@ -1512,9 +1522,8 @@ async def oauth_token(request: Request):
 @app.post("/oauth/revoke")
 async def oauth_revoke(request: Request):
     from . import mcpauth
-    form = await _body_form(request)
     try:
-        await run_in_threadpool(mcpauth.revoke, form, request.headers.get("authorization", ""))
+        await _oauth_client_call(request, mcpauth.revoke)
     except mcpauth.OAuthError as e:
         return JSONResponse(e.body(), status_code=e.status, headers=OAUTH_CORS)
     return JSONResponse({}, headers=OAUTH_CORS)
@@ -1525,15 +1534,14 @@ def _auth_html(body: bytes, status: int = 200) -> Response:
 
 
 @app.get("/oauth/authorize")
-def oauth_authorize(request: Request):
-    """The consent page an AI app sends the person to (after sign-in, which the gate handles)."""
-    from fastapi.responses import RedirectResponse
+async def oauth_authorize(request: Request):
+    """The consent page an AI app sends the person to (after sign-in, which the gate handles). Every problem is a
+    page here, never a redirect (mcpauth.check_authorize)."""
     from . import mcpauth
     h = _hdrs(request)
     try:
+        await mcpauth.ensure_client(request.query_params.get("client_id"))
         rec, req = mcpauth.check_authorize(dict(request.query_params), h)
-    except mcpauth.RedirectError as e:
-        return RedirectResponse(e.location, status_code=302)
     except mcpauth.OAuthError as e:
         return _auth_html(auth.oauth_problem_page(e.description), 400)
     u = _user(request)
@@ -1550,7 +1558,12 @@ async def oauth_decide(request: Request):
     u = _user(request)
     uid = u["id"] if u else "local"
     req = mcpauth.read_request(form.get("req", ""), uid)
-    if req is None or mcpauth.client(req["client_id"]) is None:
+    if req is not None:
+        try:
+            await mcpauth.ensure_client(req["client_id"])
+        except mcpauth.OAuthError:
+            pass
+    if req is None or mcpauth.client(req["client_id"], fetch=False) is None:
         return _auth_html(auth.oauth_problem_page("This page has expired. Start connecting again from your AI app."), 400)
     iss = mcpauth.base_url(_hdrs(request))
     if form.get("action") == "deny":
