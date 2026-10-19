@@ -1329,15 +1329,21 @@ async def sw_file(request: Request, session: str = "", id: str = "", name: str =
         if len(raw) > cap + 2**20:
             return _sw_error(ValueError("The file is too big (128 MiB at most)."), 413)
     data = bytes(raw)
+    del raw
     if request.headers.get("x-opensketch-gzip") == "1" or request.headers.get("content-encoding", "").lower() == "gzip":
-        unzip = zlib.decompressobj(16 + zlib.MAX_WBITS)
-        try:
-            data = unzip.decompress(data, cap + 1)
-            if len(data) > cap or unzip.unconsumed_tail:
-                return _sw_error(ValueError("The file is too big (128 MiB at most)."), 413)
-            if not unzip.eof:
-                return _sw_error(ValueError("The gzip body arrived damaged."), 400)
-        except zlib.error:
+        def gunzip(body: bytes):  # in a thread: unzipping 100 MB on the event loop stops every request for seconds
+            unzip = zlib.decompressobj(16 + zlib.MAX_WBITS)
+            try:
+                out = unzip.decompress(body, cap + 1)
+            except zlib.error:
+                return None, "damaged"
+            if len(out) > cap or unzip.unconsumed_tail:
+                return None, "big"
+            return (out, None) if unzip.eof else (None, "damaged")
+        data, why = await run_in_threadpool(gunzip, data)
+        if why == "big":
+            return _sw_error(ValueError("The file is too big (128 MiB at most)."), 413)
+        if why:
             return _sw_error(ValueError("The gzip body arrived damaged."), 400)
     try:
         return swbridge.put_file(user, session, id, name, data)

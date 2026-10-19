@@ -11,6 +11,9 @@ the user can edit the same file by hand between calls, and sw_get_document reads
 - Reading: the feature tree, errors, sketches and mates come from SOLIDWORKS itself. Topology, measuring,
   previews, interference and mate candidates run here on the STEP of the current body (cached by SOLIDWORKS'
   update stamp), with OpenSketch's own tested code.
+- All OpenCascade work (reading SOLIDWORKS' STEP, predictions, topology, measuring, previews, interference) runs in
+  the person's "agent" CAD worker (cadworker.lane_for), like the other connector tools: in the web server it would
+  hold the GIL and pause every request on the server. Node (the sketch solver) and big file writes run in threads.
 """
 
 from __future__ import annotations
@@ -27,8 +30,24 @@ import numpy as np
 from mcp.types import CallToolResult, ImageContent, TextContent, ToolAnnotations
 from pydantic import Field
 
-from . import ai, artifacts, assembly, features, importer, inspection, measure, swbridge, uploads
+from . import ai, artifacts, assembly, cadworker, features, importer, inspection, measure, store, swbridge, uploads
 from .mcp_server import MAX_IMPORT_BYTES, StdKind, _check_filename, _who, mcp
+
+
+async def _cad(fn, *args, limit: float | None = None):
+    """fn(*args) in the calling person's agent CAD worker. Exceptions come back as their own types (ValueError,
+    ImportError_, MeasureError...); CadUnavailable when the worker ran out of time, was busy or stopped."""
+    lane = cadworker.lane_for(store.owner_of(_who()), "agent")
+    return await lane.run(fn, *args, limit=limit, raw=True)
+
+
+async def _thread(fn, *args):
+    import anyio
+    return await anyio.to_thread.run_sync(fn, *args)
+
+
+# Errors a geometry tool reports as a plain error result (anything else is a bug and is raised).
+GEOM_ERRORS = (ValueError, importer.ImportError_, cadworker.CadUnavailable, cadworker.CadJobError)
 
 SW_GUIDE = """You are building in SOLIDWORKS 2022 on the user's PC through the OpenSketch add-in. Everything you
 make is a native SOLIDWORKS feature in the user's own file, and the user may change the file by hand between
@@ -205,24 +224,28 @@ async def _predict(doc: str | None, component: str | None, feats: list[dict]) ->
     change, the body's box after it, an extrude's range along its sketch normal and the resolved sketch planes.
     The add-in compares and makes a feature the other way round if SOLIDWORKS read a flag differently (as the macro
     engine does). Features that refer to SOLIDWORKS names get no prediction."""
-    import anyio
-    from . import geometry
     try:
         g = await _geometry(doc, component)
         if g["kind"] != "part":
             return {}, "no prediction for an assembly without component"
         base = [dict(f, id="__body") for f in g["doc"]["features"]]
-    except ValueError as exc:
+    except GEOM_ERRORS as exc:
         if "no solid body" not in str(exc):
             return {}, f"no prediction: {exc}"
         base = []
     pdoc = {"version": 1, "type": "part", "name": "prediction", "units": "mm", "rollback": None,
             "features": base + copy.deepcopy(feats)}
     try:
-        st, _ = await anyio.to_thread.run_sync(geometry.regen, pdoc)
+        return await _cad(_predict_sync, pdoc), None
     except Exception as exc:  # the prediction is a help, never a blocker
         return {}, f"no prediction: {exc}"
-    return expectations(st, {"__body"}), None
+
+
+def _predict_sync(pdoc: dict) -> dict:
+    """In the worker: rebuild the prediction document and say what each new feature should do."""
+    from . import geometry
+    st, _ = geometry.regen(pdoc)
+    return expectations(st, {"__body"})
 
 
 def expectations(st, skip: set = frozenset()) -> dict:
@@ -262,7 +285,7 @@ async def sw_add_features(features: Annotated[list[dict], Field(description="Fea
     body's bounding box. Stops at the first feature that fails and leaves the earlier ones in place (use
     sw_batch to have it all or nothing)."""
     try:
-        feats, problems, notes = _solve(features)
+        feats, problems, notes = await _thread(_solve, features)  # node solves the sketches: not on the event loop
     except Exception as exc:
         return _text({"error": f"Could not read the features: {exc}"}, True)
     if problems:
@@ -313,7 +336,7 @@ async def sw_batch(steps: Annotated[list[dict], Field(description=(
         args.setdefault("doc", doc)
         if tool == "sw_add_features":
             try:
-                feats, problems, n = _solve(args.get("features") or [])
+                feats, problems, n = await _thread(_solve, args.get("features") or [])
             except Exception as exc:
                 problems, feats, n = [f"Could not read the features: {exc}"], [], {}
             if problems:
@@ -426,13 +449,23 @@ async def sw_add_mate(type: MATE_TYPES, refs: list[dict], doc: _DOC = None, valu
 
 _cache: OrderedDict = OrderedDict()
 CACHE = 24
+CACHE_BYTES = 96 * 2**20  # the parts' BREP text kept here (in the web server's memory) between calls
+
+
+def _size(doc: dict) -> int:
+    return sum(len(f.get("data") or "") for f in doc.get("features", []))
 
 
 def _remember(key: tuple, value: dict) -> None:
     _cache[key] = value
     _cache.move_to_end(key)
-    while len(_cache) > CACHE:
+    while len(_cache) > CACHE or (len(_cache) > 1 and sum(_size(v["doc"]) for v in _cache.values()) > CACHE_BYTES):
         _cache.popitem(last=False)
+
+
+def _parts_from_step(items: list[tuple[bytes, str]]) -> list[dict]:
+    """In the worker: SOLIDWORKS' STEP files -> part documents with one imported body each."""
+    return [_part_doc_from_step(raw, title) for raw, title in items]
 
 
 def _part_doc_from_step(raw: bytes, title: str) -> dict:
@@ -462,21 +495,25 @@ async def _geometry(doc: str | None, component: str | None = None) -> dict:
     if err:
         raise ValueError(err)
     parts: dict[str, dict] = {}
+    sent = {key: info for key, info in (res.get("parts") or {}).items() if info.get("file")}
+    for key, info in sent.items():
+        if not files.get(info["file"]):
+            raise ValueError(f"SOLIDWORKS sent no STEP for {info.get('title') or key}.")
+    fresh: dict[str, dict] = {}
+    if sent:  # read in the worker, all in one call
+        docs = await _cad(_parts_from_step, [(files[i["file"]], i.get("title") or "Part") for i in sent.values()])
+        fresh = dict(zip(sent, docs))
+        for key, d in fresh.items():
+            _remember((pid, key), {"stamp": sent[key].get("stamp"), "doc": d})
     for key, info in (res.get("parts") or {}).items():
         ck = (pid, key)
-        fname = info.get("file")
-        if fname:
-            raw = files.get(fname)
-            if not raw:
-                raise ValueError(f"SOLIDWORKS sent no STEP for {info.get('title') or key}.")
-            entry = {"stamp": info.get("stamp"), "doc": _part_doc_from_step(raw, info.get("title") or "Part")}
-            _remember(ck, entry)
+        if key in fresh:
+            parts[key] = fresh[key]
         elif ck in _cache and _cache[ck]["stamp"] == info.get("stamp"):
-            entry = _cache[ck]
+            parts[key] = _cache[ck]["doc"]
             _cache.move_to_end(ck)
         else:
             raise ValueError(f"No geometry for {info.get('title') or key}; try again.")
-        parts[key] = entry["doc"]
     if res.get("kind") != "assembly":
         key = res.get("key")
         if key not in parts:
@@ -519,13 +556,12 @@ async def sw_body_topology(doc: _DOC = None, component: _COMP = None,
     midpoint, ends, length, direction or centre and radius, the faces it joins, face_angle_deg (90 = square
     corner, 0 = smooth), seam, `ref`. Pass a ref as-is in fillet / chamfer edges, shell / draft faces, mate
     planes and axes."""
-    import anyio
     try:
         g = await _geometry(doc, component)
         if g["kind"] != "part":
             return _text({"error": "This is an assembly: give component (its part's faces, in part coordinates)."}, True)
-        out = await anyio.to_thread.run_sync(_topology_sync, g["doc"], kind, near, limit)
-    except (ValueError, importer.ImportError_) as exc:
+        out = await _cad(_topology_sync, g["doc"], kind, near, limit)
+    except GEOM_ERRORS as exc:
         return _text({"error": str(exc)}, True)
     out["coordinates"] = "part" + (f" ({component})" if component else "")
     return _text(out)
@@ -538,11 +574,10 @@ async def sw_measure_items(a: Annotated[dict, Field(description='{"face": ref} |
     """Measure like SOLIDWORKS Evaluate > Measure, on the current geometry: one item gives area, length,
     diameter, axis, normal, hole or not, and the holes and slots through a planar face; two items give the
     minimum distance with its points, centre distance between axes, angles and plane distances."""
-    import anyio
     try:
         g = await _geometry(doc)
-        out = await anyio.to_thread.run_sync(measure.measure, g["doc"], a, b, None)
-    except (ValueError, importer.ImportError_, measure.MeasureError) as exc:
+        out = await _cad(measure.measure, g["doc"], a, b, None)
+    except GEOM_ERRORS + (measure.MeasureError,) as exc:
         return _text({"error": str(exc)}, True)
     return _text(out)
 
@@ -567,7 +602,6 @@ async def sw_preview(doc: _DOC = None, view: Literal["isometric", "top", "front"
                      ) -> CallToolResult:
     """A PNG of the current SOLIDWORKS geometry, returned directly. Rendered here from the body (any view, close-
     ups, a section to look inside), or with screenshot=true the SOLIDWORKS window as the user sees it."""
-    import anyio
     if not 128 <= width <= 1600 or not 128 <= height <= 1600:
         return _text({"error": "width and height must be 128..1600."}, True)
     if screenshot:
@@ -578,16 +612,14 @@ async def sw_preview(doc: _DOC = None, view: Literal["isometric", "top", "front"
     else:
         try:
             g = await _geometry(doc, component)
-            from .preview import render_preview
             cam = {k: v for k, v in {"yaw": yaw, "pitch": pitch, "target": target, "view_width": view_width}.items() if v is not None}
-            raw = await anyio.to_thread.run_sync(lambda: render_preview(g["doc"], view=view, width=width, height=height,
-                                                                        section=section, **cam))
-        except (ValueError, importer.ImportError_) as exc:
+            raw = await _cad(_preview_sync, g["doc"], view, width, height, section, cam)
+        except GEOM_ERRORS as exc:
             return _text({"error": f"Cannot preview: {exc}"}, True)
         res = {"view": view, "width": width, "height": height}
     rec = {"id": "solidworks", "version": 0, "name": "SOLIDWORKS"}
     try:
-        info = artifacts.publish(rec, raw, "png", (res or {}).get("title") or "SOLIDWORKS")
+        info = await _thread(artifacts.publish, rec, raw, "png", (res or {}).get("title") or "SOLIDWORKS")
     except artifacts.ArtifactError:
         info = {}
     meta = dict(res or {}, **{k: info[k] for k in ("download_url", "expires_at") if k in info})
@@ -595,16 +627,20 @@ async def sw_preview(doc: _DOC = None, view: Literal["isometric", "top", "front"
                                    ImageContent(type="image", data=base64.b64encode(raw).decode(), mime_type="image/png")])
 
 
+def _preview_sync(doc: dict, view, width, height, section, cam) -> bytes:
+    from .preview import render_preview
+    return render_preview(doc, view=view, width=width, height=height, section=section, **cam)
+
+
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
 async def sw_check_interference(doc: _DOC = None) -> CallToolResult:
     """Every pair of components in the assembly whose bodies overlap, with the overlap volume (mm3)."""
-    import anyio
     try:
         g = await _geometry(doc)
         if g["kind"] != "assembly":
             return _text({"error": "Interference needs an assembly."}, True)
-        res = await anyio.to_thread.run_sync(assembly.interference, g["doc"])
-    except (ValueError, importer.ImportError_, assembly.AssemblyError) as exc:
+        res = await _cad(assembly.interference, g["doc"])
+    except GEOM_ERRORS + (assembly.AssemblyError,) as exc:
         return _text({"error": str(exc)}, True)
     return _text({"checked": res["checked"], "interferences": [
         {"components": i["names"], "volume_mm3": round(i["volume"], 3)} for i in res["interferences"]]})
@@ -614,13 +650,12 @@ async def sw_check_interference(doc: _DOC = None) -> CallToolResult:
 async def sw_find_mate_candidates(doc: _DOC = None) -> CallToolResult:
     """Likely mates from the assembly's geometry (shafts in holes, faces lying on each other), with references
     ready for sw_add_mate. Useful after inserting parts or importing a STEP assembly."""
-    import anyio
     try:
         g = await _geometry(doc)
         if g["kind"] != "assembly":
             return _text({"error": "Mate candidates need an assembly."}, True)
-        res = await anyio.to_thread.run_sync(assembly.mate_candidates, g["doc"])
-    except (ValueError, importer.ImportError_, assembly.AssemblyError) as exc:
+        res = await _cad(assembly.mate_candidates, g["doc"])
+    except GEOM_ERRORS + (assembly.AssemblyError,) as exc:
         return _text({"error": str(exc)}, True)
     return _text({"candidates": res})
 
@@ -638,7 +673,7 @@ async def sw_export(format: Literal["step", "stl", "x_t", "igs", "sldprt", "slda
         return _text({"error": err or "SOLIDWORKS sent no file."}, True)
     rec = {"id": "solidworks", "version": 0, "name": "SOLIDWORKS"}
     try:
-        info = artifacts.publish(rec, raw, format, (res or {}).get("title") or "SOLIDWORKS")
+        info = await _thread(artifacts.publish, rec, raw, format, (res or {}).get("title") or "SOLIDWORKS")
     except artifacts.ArtifactError as exc:
         return _text({"error": str(exc)}, True)
     return _text(dict(res, **info))
@@ -651,21 +686,29 @@ async def sw_import(filename: Annotated[str | None, Field(description="e.g. brac
                     folder: Annotated[str | None, Field(description="Where to save the SOLIDWORKS files; default Documents\\OpenSketch")] = None) -> CallToolResult:
     """Open a STEP, IGES or Parasolid file in SOLIDWORKS (an assembly if it has several bodies) and save it as
     SOLIDWORKS files. For anything over about 100 KB use request_upload first, as for import_document."""
-    try:
+    who = _who()
+    if not swbridge.status(who).get("connected"):  # before holding the file in memory for SOLIDWORKS
+        return _text({"error": swbridge.NOT_CONNECTED}, True)
+
+    def read():
         if upload_id:
-            raw, meta = uploads.take(upload_id, _who())
-            filename = _check_filename(filename or meta["filename"])
-        else:
-            filename = _check_filename(filename)
-            if not data:
-                raise ValueError("Give data or upload_id.")
-            raw = base64.b64decode(data, validate=True)
+            raw, meta = uploads.take(upload_id, who)
+            return raw, _check_filename(filename or meta["filename"])
+        name = _check_filename(filename)
+        if not data:
+            raise ValueError("Give data or upload_id.")
+        return base64.b64decode(data, validate=True), name
+    try:
+        raw, filename = await _thread(read)
         if not raw or len(raw) > MAX_IMPORT_BYTES:
             raise ValueError("The file must be 1 byte to 32 MiB.")
     except (ValueError, binascii.Error, uploads.UploadError) as exc:
         return _text({"error": f"Cannot import: {exc}"}, True)
-    bid = swbridge.add_blob(_who(), raw, filename)
-    res, _, err = await _run("import", {"filename": filename, "folder": folder}, timeout=600, blobs={"file": bid})
+    bid = swbridge.add_blob(who, raw, filename)
+    try:
+        res, _, err = await _run("import", {"filename": filename, "folder": folder}, timeout=600, blobs={"file": bid})
+    finally:
+        swbridge.drop_blob(bid)  # SOLIDWORKS has it (or will never fetch it): free the memory
     if upload_id and not err:
         uploads.mark_imported(upload_id, "solidworks")
     if err:
@@ -679,27 +722,36 @@ async def sw_standard_part(kind: StdKind, size: str, length: float | None = None
     """An ISO screw, nut, washer or ball bearing made to size and saved as a SOLIDWORKS part (from STEP), ready
     for sw_insert_component. size e.g. "M6-1" (screws, nuts, washers) or "M8-22-7" (bore-OD-width bearings);
     length mm for screws. Axis along the part Y axis, head above Y = 0, shank down -Y."""
-    import anyio
-    from . import geometry
+    if not swbridge.status(_who()).get("connected"):
+        return _text({"error": swbridge.NOT_CONNECTED}, True)
     try:
-        pdoc = importer.standard_part_doc(kind, size=size, **({"length": length} if length else {}))
-        st, _ = await anyio.to_thread.run_sync(geometry.regen, pdoc)
-        if st.part is None:
-            raise ValueError("The part could not be made at that size.")
-        import tempfile
-        from pathlib import Path
-        with tempfile.TemporaryDirectory() as tmp:
-            p = Path(tmp) / "part.step"
-            await anyio.to_thread.run_sync(geometry.export, pdoc, "step", str(p))
-            raw = p.read_bytes()
+        pdoc, raw = await _cad(_standard_step, kind, size, length)
     except (KeyError, ValueError, TypeError) as exc:
         return _text({"error": f"Cannot make that part: {exc}. Sizes: see the OpenSketch Toolbox."}, True)
     except Exception as exc:  # bd_warehouse refuses unknown sizes with its own errors
         return _text({"error": f"Cannot make that part: {exc}"}, True)
     name = pdoc["name"].replace(" ", "_")
     bid = swbridge.add_blob(_who(), raw, name + ".step")
-    res, _, err = await _run("import", {"filename": name + ".step", "folder": folder, "subfolder": "Toolbox",
-                                        "name": pdoc["name"]}, timeout=300, blobs={"file": bid})
+    try:
+        res, _, err = await _run("import", {"filename": name + ".step", "folder": folder, "subfolder": "Toolbox",
+                                            "name": pdoc["name"]}, timeout=300, blobs={"file": bid})
+    finally:
+        swbridge.drop_blob(bid)
     if err:
         return _text(dict(res or {}, error=err), True)
     return _text(dict(res, standard=pdoc.get("standard")))
+
+
+def _standard_step(kind: str, size: str, length: float | None) -> tuple[dict, bytes]:
+    """In the worker: a Toolbox part and its STEP."""
+    import tempfile
+    from pathlib import Path
+    from . import geometry
+    pdoc = importer.standard_part_doc(kind, size=size, **({"length": length} if length else {}))
+    st, _ = geometry.regen(pdoc)
+    if st.part is None:
+        raise ValueError("The part could not be made at that size.")
+    with tempfile.TemporaryDirectory() as tmp:
+        p = Path(tmp) / "part.step"
+        geometry.export(pdoc, "step", str(p))
+        return pdoc, p.read_bytes()
