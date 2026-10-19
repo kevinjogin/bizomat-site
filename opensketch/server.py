@@ -102,9 +102,52 @@ class SelectiveGZip:
         return await self.app(scope, receive, send)
 
 
+class RequestLog:
+    """Logs requests that failed on the server (5xx) or took long, with who asked, so a problem on the hosted
+    server leaves a trace (uvicorn's access log is off: one line per request is too much on a small machine).
+    Streams and long polls are left out of the slow ones; paths that carry a secret are cut to their first part."""
+
+    SLOW = 5.0
+    LONG = ("/api/ai/stream", "/mcp/sw/next", "/api/recognize", "/api/export/sldmacro")
+
+    def __init__(self, app):
+        self.app = app
+
+    @staticmethod
+    def _path(path: str) -> str:
+        if path.startswith(("/api/", "/healthz")) or path.count("/") < 2:
+            return path
+        return "/" + path.split("/")[1] + "/..."  # /mcp/<key>, /join/<invite>, /review/<token>...
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
+        t = time.monotonic()
+        status = [0]
+
+        async def send_and_note(msg):
+            if msg["type"] == "http.response.start":
+                status[0] = msg["status"]
+            await send(msg)
+        try:
+            await self.app(scope, receive, send_and_note)
+        except Exception:
+            status[0] = status[0] or 500
+            raise
+        finally:
+            took = time.monotonic() - t
+            path = scope.get("path", "")
+            if status[0] >= 500 or (took > self.SLOW and status[0] and not path.startswith(self.LONG)):
+                user = (scope.get("state") or {}).get("user") if isinstance(scope.get("state"), dict) else None
+                who = f" (person {user['id']})" if isinstance(user, dict) and user.get("id") else ""
+                print(f"OpenSketch request: {scope.get('method')} {self._path(path)} -> {status[0]} in {took:.1f} s{who}",
+                      flush=True)
+
+
 app = FastAPI(title="OpenSketch", lifespan=lifespan)
 app.add_middleware(auth.PasswordGate)
 app.add_middleware(SelectiveGZip)
+app.add_middleware(RequestLog)
 
 
 class RegenRequest(BaseModel):
@@ -122,40 +165,53 @@ class AIRequest(BaseModel):
     selection: list[dict] | None = None  # what the user selected (Ask AI on a selection)
 
 
-def _json_default(o):
-    if isinstance(o, (set, frozenset, tuple)):
-        return list(o)
-    if hasattr(o, "tolist"):  # numpy numbers and arrays
-        return o.tolist()
-    raise TypeError(f"{type(o).__name__} is not JSON serialisable")
+_json_default = cadjobs._json_default
 
 
 class FastJSON(JSONResponse):
     """JSON straight from json.dumps. FastAPI's own path walks every number of a mesh through
-    jsonable_encoder first (0.85 s for a 10 MB part)."""
+    jsonable_encoder first (0.85 s for a 10 MB part), on the event loop."""
 
     def render(self, content) -> bytes:
-        return json.dumps(content, separators=(",", ":"), allow_nan=False, default=_json_default).encode("utf-8")
+        return cadjobs.to_json(content)
 
 
-def _light(doc: dict) -> bool:
-    """Nothing heavy to build: a new part, a part with only sketches and planes so far, an empty assembly. These
-    are answered here at once, so a new file never waits behind a big rebuild in the worker."""
+def _json_bytes(body: bytes) -> Response:
+    """JSON the worker already encoded (cadjobs.json_of): nothing big is encoded on the event loop."""
+    return Response(body, media_type="application/json")
+
+
+LIGHT_ITEMS = 30  # sketch entities (spline points count too) a part may have and still be rebuilt in this process
+
+
+def _light(doc: dict, preview: dict | None = None) -> bool:
+    """Nothing heavy to build: a new part, a part with a few sketches and planes so far, an empty assembly. These
+    are answered here at once (~20 ms), so a new file never waits behind a big rebuild in the person's worker.
+    Anything with a preview (an extrude being set up) or a real sketch goes to the worker: OpenCascade holds the
+    GIL, so in this process it would pause every request on the server (a 400-entity sketch took 2.5 s)."""
+    if preview is not None:
+        return False
     if assembly.is_assembly(doc):
         return not doc.get("components") and not doc.get("parts")
     feats = doc.get("features") or []
-    return all(f.get("type") in ("sketch", "plane") for f in feats) and sum(len(f.get("entities") or []) for f in feats) <= 400
+    if not all(isinstance(f, dict) and f.get("type") in ("sketch", "plane") for f in feats):
+        return False
+    items = 0
+    for f in feats:
+        for e in f.get("entities") or []:
+            items += 1 + (len(e.get("points") or []) if isinstance(e, dict) else 0)
+    return items <= LIGHT_ITEMS
 
 
 @app.post("/api/regen")
 async def api_regen(req: RegenRequest, request: Request):
-    if _light(req.doc):
-        return FastJSON(await run_in_threadpool(cadjobs.regen, req.doc, req.preview, req.known, req.drag))
+    if _light(req.doc, req.preview):
+        return _json_bytes(await run_in_threadpool(cadjobs.json_of, "regen", req.doc, req.preview, req.known, req.drag))
     try:
-        res = await _cad(_lane(request), cadjobs.regen, req.doc, req.preview, req.known, req.drag)
+        body = await _cad(_lane(request), cadjobs.json_of, "regen", req.doc, req.preview, req.known, req.drag)
     except cadworker.CadJobError as exc:
         raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
-    return FastJSON(res)
+    return _json_bytes(body)
 
 
 class ParamsRequest(BaseModel):
@@ -237,7 +293,7 @@ async def api_interference(req: RegenRequest, request: Request):
     if not assembly.is_assembly(req.doc):
         raise HTTPException(400, "Interference Detection works on assemblies")
     try:
-        return await _cad(_lane(request), cadjobs.interference, req.doc)
+        return _json_bytes(await _cad(_lane(request), cadjobs.json_of, "interference", req.doc))
     except cadworker.CadJobError as exc:
         raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
 
@@ -250,7 +306,7 @@ class ImportRequest(BaseModel):
 async def _import_reply(raw: bytes, filename: str, lane):
     """Every failure comes back as JSON {error} with a readable message, never a bare 500."""
     try:
-        return {"doc": await lane.run(cadjobs.import_file, raw, filename)}
+        return _json_bytes(b'{"doc":' + await lane.run(cadjobs.json_of, "import_file", raw, filename) + b"}")
     except cadworker.CadUnavailable as exc:
         return JSONResponse({"error": f"Could not import {filename}: {exc}"}, status_code=503)
     except cadworker.CadJobError as exc:
@@ -779,7 +835,7 @@ def api_doc_create(req: DocCreate, request: Request):
 @app.get("/api/docs/{doc_id}")
 def api_doc(doc_id: str, request: Request):
     m = _doc_meta(doc_id, request)
-    return dict(_found(store.get, doc_id), thumb=m.get("thumb"))
+    return FastJSON(dict(_found(store.get, doc_id), thumb=m.get("thumb")))  # encoded here, in the route's thread
 
 
 @app.get("/api/docs/{doc_id}/head")
@@ -858,8 +914,10 @@ THUMB_TYPES = {"image/webp": "webp", "image/png": "png"}
 
 @app.put("/api/docs/{doc_id}/thumb")
 async def api_doc_thumb_put(doc_id: str, request: Request, version: int = 0):
-    """A picture of the model from the browser (WebP or PNG, <= 600 KB), for the Files page."""
-    _doc_meta(doc_id, request)
+    """A picture of the model from the browser (WebP or PNG, <= 600 KB), for the Files page. Store work runs in a
+    thread: it takes the document's lock, which Claude's edits hold while they rebuild (on the event loop that
+    froze the whole server until the edit finished)."""
+    await run_in_threadpool(_doc_meta, doc_id, request)
     ext = THUMB_TYPES.get(request.headers.get("content-type", "").split(";")[0].strip())
     if ext is None:
         return JSONResponse({"error": "Send image/webp or image/png."}, status_code=415)
@@ -873,7 +931,7 @@ async def api_doc_thumb_put(doc_id: str, request: Request, version: int = 0):
             return too_big
     body = bytes(body)
     try:
-        entry = store.set_thumb(doc_id, body, ext, version, "browser")
+        entry = await run_in_threadpool(store.set_thumb, doc_id, body, ext, version, "browser")
     except ValueError as e:
         return JSONResponse({"error": str(e)}, status_code=400)
     return {"thumb": entry}
@@ -883,11 +941,12 @@ _thumb_jobs: dict[str, threading.Event] = {}
 _thumb_guard = threading.Lock()
 # Server-drawn pictures are a background nicety and must never starve the server (2026-10-19: Files visits redrew
 # the 19-part Lavilock assembly again and again while YZ worked; on Fly's shared CPU that used up the burst
-# balance and the server stopped answering). One at a time; big models (imported STEP assemblies) are left to the
-# browser, which draws a picture for free when the file is opened; a model that failed to draw is not tried again
-# until it changes.
-_thumb_slots = threading.BoundedSemaphore(1)
+# balance and the server stopped answering). One at a time (the BACKGROUND worker takes calls in turn; a picture
+# that cannot start within THUMB_WAIT seconds is skipped this time, so a Files page full of stale cards never piles
+# up requests); big models (imported STEP assemblies) are left to the browser, which draws a picture for free when
+# the file is opened; a model that failed to draw is not tried again until it changes.
 THUMB_SERVER_MAX = 400 * 1024  # bytes of stored document above which the server does not draw the picture
+THUMB_WAIT = 20.0
 _thumb_failed: dict[str, int] = {}  # document id -> version the server could not draw
 
 
@@ -895,7 +954,7 @@ async def _render_thumb(doc_id: str) -> None:
     """Draw a picture on the server (a document the AI made, or one never opened in a browser), in the background
     worker so it never holds up a rebuild or the web server."""
     rec = await run_in_threadpool(store.get, doc_id)
-    png = await cadworker.BACKGROUND.run(cadjobs.thumb_png, rec["doc"])
+    png = await cadworker.BACKGROUND.run(cadjobs.thumb_png, rec["doc"], wait=THUMB_WAIT)
     await run_in_threadpool(store.set_thumb, doc_id, png, "png", rec["version"], "server")
 
 
@@ -903,7 +962,7 @@ async def _render_thumb(doc_id: str) -> None:
 async def api_doc_thumb(doc_id: str, request: Request):
     """The model's picture. Missing, or older than the model and not drawn by a browser since: drawn here
     (once at a time per document) and kept. 404 when the model cannot be drawn (empty or failing)."""
-    m = _doc_meta(doc_id, request, trash_ok=True)
+    m = await run_in_threadpool(_doc_meta, doc_id, request, True)
     t = m.get("thumb")
     version = int(m["version"])
     stale = not t or (int(t.get("version") or 0) < version and (m.get("by") == "claude" or t.get("source") == "server"))
@@ -920,16 +979,21 @@ async def api_doc_thumb(doc_id: str, request: Request):
                 try:
                     await _render_thumb(doc_id)
                     _thumb_failed.pop(doc_id, None)
+                except cadworker.CadUnavailable:  # busy, or out of time: try again on a later visit
+                    pass
                 except Exception:  # nothing to draw (empty, failing): keep the old picture if any
                     _thumb_failed[doc_id] = version
-            else:
-                await run_in_threadpool(ev.wait, 30)
+            else:  # someone else is drawing it: wait for that (without holding a thread)
+                for _ in range(120):
+                    if ev.is_set():
+                        break
+                    await asyncio.sleep(0.25)
         finally:
             if mine:
                 ev.set()
                 with _thumb_guard:
                     _thumb_jobs.pop(doc_id, None)
-    found = store.thumb(doc_id)
+    found = await run_in_threadpool(store.thumb, doc_id)
     if not found:
         raise HTTPException(404, "No picture yet")
     path, entry = found
