@@ -102,6 +102,7 @@ export class App {
     this.reviewMode = typeof window.OPENSKETCH_REVIEW === 'string'; // a shared review link: read-only, no server
     this.docStack = []; // Open Part from an assembly: the assembly waits here
     this.forConstruction = false;
+    this.pinnedCmds = new Set(); // PropertyManagers pinned with Keep Visible
     this.polygonSides = 6;
     this.filletRadius = 5;
     // the search boxes are forms of their own (so browsers do not autofill them): Enter never reloads the page
@@ -1069,9 +1070,15 @@ export class App {
     const cmd = this.cmd;
     if (this.mode === 'sketch' && !cmd) { this.sketcher.setTool(null); this.sketcher.sel.clear(); this.onSketchSelection(); this.sketcher.render(); return; }
     if (!cmd) return this.pm.close();
+    if (this.pm.badFields?.size) { this.toast('Fix the value shown in red first.'); return; }
     if (this.pm.spec?.okEnabled && !this.pm.spec.okEnabled()) { this.toast('Complete the required selections first.'); return; }
     if (cmd.onOk) { const keep = cmd.onOk(); if (keep === false) return; this.closeCommand(); return; }
-    if (cmd.spec) return this.commitFeature();
+    if (cmd.spec) {
+      const done = this.commitFeature();
+      // Keep Visible: the same command opens again for the next feature once this one is in
+      if (!cmd.existing && this.pinnedCmds?.has(cmd.key)) Promise.resolve(done).then(() => { if (!this.cmd && this.mode !== 'sketch' && this.doc.features?.some((f) => f.id === cmd.f.id)) this.featureCommand(cmd.key); });
+      return done;
+    }
   }
 
   pmCancel() {
@@ -1115,6 +1122,7 @@ export class App {
       hole: 'Select a plane or planar face, then set the hole dimensions and position.',
     };
     this.pm.open({ title: existing ? f.name : meta.title, icon: meta.icon, sections: spec.sections, okEnabled: spec.okEnabled, activeSelbox: spec.activeSelbox,
+      repeat: !existing, pinned: !!this.pinnedCmds?.has(key), onPin: (on) => { const p = (this.pinnedCmds ||= new Set()); if (on) p.add(key); else p.delete(key); },
       message: () => (spec.okEnabled() ? null : msgs[key] || SPECS[key]?.message), onChange: () => { this.refreshSelectionDisplay(); this.schedulePreview(); } });
     this.setSelection([]);
     // Looking straight at the sketch? Turn to trimetric so the preview reads in 3D (as SOLIDWORKS does).
