@@ -209,17 +209,21 @@ def translate_stream(lines, on_event) -> _Obj:
                     on_event(_Obj("content_block_delta", index=calls[k], delta=_Obj("input_json_delta", partial_json=fn["arguments"])))
             if ch.get("finish_reason"):
                 stop = STOP.get(ch["finish_reason"], "end_turn")
+    invalid = {}  # tool call id -> its arguments, when they are not a JSON object: the call must not run
     for k, i in calls.items():
         try:
             blocks[i].input = json.loads(args[k] or "{}")
+            if not isinstance(blocks[i].input, dict):
+                raise ValueError("not an object")
         except ValueError:
             blocks[i].input = {}
+            invalid[blocks[i].id] = args[k]
     for i in range(len(blocks)):
         on_event(_Obj("content_block_stop", index=i))
     if calls and stop == "end_turn":
         stop = "tool_use"
     content = [b for b in blocks if b.type != "thinking"]
-    return _Obj("message", content=content, stop_reason=stop, role="assistant")
+    return _Obj("message", content=content, stop_reason=stop, role="assistant", invalid_inputs=invalid)
 
 
 def _headers(cfg: dict) -> dict:

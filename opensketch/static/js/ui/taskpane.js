@@ -182,9 +182,14 @@ export class TaskPane {
       } else el.appendChild(h('div', 'pm-note', m.state === 'accepted' ? 'Accepted' : 'Rejected'));
     } else if (m.role === 'request') {
       el = h('div', 'ai-request');
-      const url = safeUrl(m.url);
+      // A McMaster-Carr number always links to McMaster-Carr (never to an address the AI was given); other pages show their host.
+      const mc = /^[0-9A-Z]{3,20}$/i.test(m.mcmaster || '') ? m.mcmaster.toUpperCase() : '';
+      const url = mc ? `https://www.mcmaster.com/${mc}/` : safeUrl(m.url);
+      const page = mc ? safeUrl(m.page) : null;
+      const link = (u, text) => `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(text)}</a>`;
       el.innerHTML = `<div class="ah">${icon('open', 14)}<b>Bought part: ${esc(m.description)}</b></div>` +
-        (url ? `<div>1. Open <a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${m.mcmaster ? 'McMaster-Carr ' + esc(m.mcmaster) : esc(url)}</a> and download the 3D STEP file.</div>` : '<div>1. Download a STEP file of this part from its supplier.</div>') +
+        (url ? `<div>1. Open ${mc ? link(url, 'McMaster-Carr ' + mc) : 'the product page on ' + link(url, hostOf(url))} and download the 3D STEP file.</div>` : '<div>1. Download a STEP file of this part from its supplier.</div>') +
+        (page ? `<div>Supplier page: ${link(page, hostOf(page))}</div>` : '') +
         `<div>2. Drop it here or choose it. It replaces the placeholder <code>${esc(m.part)}</code>.</div>`;
       if (m.done) el.appendChild(h('div', 'pm-note', 'Replaced with ' + esc(m.done)));
       else {
@@ -349,6 +354,7 @@ export class TaskPane {
     switch (ev.ev) {
       case 'start':
         this.conversation = ev.conversation;
+        if (ev.history_lost) this.add({ role: 'bot', text: 'The server was updated, so the AI no longer has the earlier messages of this chat. It sees this message and the current model.' });
         app.live.start(ev);
         break;
       case 'thinking_start':

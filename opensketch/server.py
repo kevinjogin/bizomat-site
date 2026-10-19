@@ -530,7 +530,8 @@ def api_ai_stream(req: AIRequest, request: Request):
 
     def on_event(kind, payload):
         events.put((kind, payload))
-    job = cadworker.start_job(cadjobs.ai_stream, req.doc, req.prompt, conv, ai._conversations.get(conv) if conv else None,
+    asked = req.conversation if isinstance(req.conversation, str) else None  # unknown here = lost: the chat says so
+    job = cadworker.start_job(cadjobs.ai_stream, req.doc, req.prompt, asked, ai._conversations.get(conv) if conv else None,
                               req.demo, req.selection, cfg, on_event=on_event, limit=3600)
 
     async def agen():
