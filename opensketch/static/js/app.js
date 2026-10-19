@@ -112,6 +112,7 @@ export class App {
     this.bindKeys();
     this.bindSplitter();
     this.viewer.afterRender.push(() => this.afterRender());
+    window.addEventListener('opensketch:look', () => this.lookChanged());
     $('fileinput').addEventListener('change', (e) => this.loadFile(e.target.files[0]));
     $('sb-help').onclick = () => this.shortcutsDialog();
     const th = document.querySelector('#titlebar .title-help');
@@ -644,6 +645,17 @@ export class App {
   afterRender() {
     if (this.sketchPx && Math.abs(this.viewer.pxSize - this.sketchPx) > 1e-9 * this.sketchPx) this.drawSketches();
     this.updateStartHint();
+  }
+
+  // View > Theme switched the look without a reload (skin.setLook): the stylesheets and icons follow by
+  // themselves; the 3D view and the sketches take the new palette here. Undo history, an open sketch or
+  // PropertyManager and the AI chat stay as they are.
+  lookChanged() {
+    this.viewer.applyLook();
+    this.updatePlanes();
+    this.drawSketches();
+    if (this.mode === 'sketch') this.sketcher.render();
+    this.viewer.requestRender();
   }
 
   // No first-steps card: a new part opens straight into the normal interface, as in SOLIDWORKS (YZ 2026-10-19).

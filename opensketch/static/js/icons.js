@@ -1,5 +1,7 @@
 // Original icon set drawn to sit where SOLIDWORKS users expect each command.
 import { ICON_SWAP } from './skin.js';
+// Each icon carries its name (data-i), so a change of look repaints every icon on the page in place.
+
 
 // 24x24 viewBox. Palette: grey body, yellow = new geometry, blue = sketch, red = remove.
 
@@ -186,10 +188,22 @@ const P = {
   r_merge: `<circle cx="12" cy="12" r="5" fill="${K}"/>`,
 };
 
+function body(name) {
+  const b = P[name] || P.props;
+  return ICON_SWAP ? b.replace(/#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b/g, (c) => ICON_SWAP[c.toLowerCase()] || c) : b;
+}
+
 export function icon(name, size = 24) {
-  let body = P[name] || P.props;
-  if (ICON_SWAP) body = body.replace(/#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b/g, (c) => ICON_SWAP[c.toLowerCase()] || c);
-  return `<svg class="ic" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`;
+  const n = name in P ? name : 'props';
+  return `<svg class="ic" data-i="${n}" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true">${body(n)}</svg>`;
 }
 
 export const hasIcon = (name) => name in P;
+export const ICON_SOURCES = P; // for tests: every colour an icon uses
+
+// The look changed (skin.setLook): repaint every icon already on the page in the new colours.
+if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+  window.addEventListener('opensketch:look', () => {
+    for (const s of document.querySelectorAll('svg.ic[data-i]')) s.innerHTML = body(s.dataset.i);
+  });
+}

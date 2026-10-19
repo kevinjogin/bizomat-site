@@ -4,9 +4,8 @@
 <meta charset="utf-8">
 <title>OpenSketch</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>(function(){var c=document.documentElement.classList,k='linear',t='dark';try{if(localStorage.getItem('opensketch.skin')==='classic'){k='classic';t='light'}else if(localStorage.getItem('opensketch.theme')==='light'){t='light'}}catch(e){}c.add('skin-'+k,'theme-'+t)})()</script>
-<meta name="theme-color" content="#0c0d0e" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#f5f5f6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c0d0e">
+<script>(function(){var c=document.documentElement.classList,k='linear',t='dark';try{if(localStorage.getItem('opensketch.skin')==='classic'){k='classic';t='light'}else if(localStorage.getItem('opensketch.theme')==='light'){t='light'}}catch(e){}c.add('skin-'+k,'theme-'+t);var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',k==='classic'?'#fbfbfb':t==='light'?'#f5f5f6':'#0c0d0e')})()</script>
 <meta name="description" content="OpenSketch: parametric CAD in the browser, with an AI that builds while you watch.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="OpenSketch">
