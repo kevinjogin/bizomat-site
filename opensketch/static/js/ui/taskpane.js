@@ -5,6 +5,7 @@ import { describeFeature, featureIcon, SPECS } from '../features.js';
 import { mateIcon } from '../asm.js';
 import { escapeHtml as esc, safeUrl } from '../model-utils.js';
 import { renderMarkdown } from '../md.js';
+import { asButton } from './dialogs.js';
 
 const h = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 
@@ -61,8 +62,9 @@ export class TaskPane {
     this.log = [];
     this.conversation = null;
     this.busy = false;
+    this.strip.setAttribute('role', 'toolbar'); this.strip.setAttribute('aria-label', 'Task Pane');
     for (const p of PANES) {
-      const b = h('div', 'ts', icon(p.icon, 20));
+      const b = asButton(h('div', 'ts', icon(p.icon, 20)), p.title, { pressed: false });
       b.title = p.title; b.dataset.id = p.id;
       b.onclick = () => { if (p.id === 'design') this.app.design?.setAuto(this.open !== 'design'); this.toggle(p.id); };
       this.strip.appendChild(b);
@@ -73,7 +75,7 @@ export class TaskPane {
 
   show(id) {
     this.open = id;
-    [...this.strip.children].forEach((b) => b.classList.toggle('active', b.dataset.id === id));
+    [...this.strip.children].forEach((b) => { b.classList.toggle('active', b.dataset.id === id); b.setAttribute('aria-pressed', String(b.dataset.id === id)); });
     this.panel.classList.toggle('hidden', !id);
     if (id) this.render();
     this.app.viewer.resize();
@@ -84,7 +86,8 @@ export class TaskPane {
     if (!p) return;
     this.panel.innerHTML = '';
     const head = h('div', 'tp-head', `${icon(p.icon, 18)}<span>${p.title}</span><span class="pin" title="Close">&#x2715;</span>`);
-    head.querySelector('.pin').onclick = () => { if (p.id === 'design') this.app.design?.setAuto(false); this.show(null); };
+    const close = asButton(head.querySelector('.pin'), `Close ${p.title}`);
+    close.onclick = () => { if (p.id === 'design') this.app.design?.setAuto(false); this.show(null); };
     this.panel.appendChild(head);
     const body = h('div', 'tp-body');
     this.panel.appendChild(body);

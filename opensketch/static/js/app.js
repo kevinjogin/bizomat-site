@@ -114,9 +114,13 @@ export class App {
     this.viewer.afterRender.push(() => this.afterRender());
     $('fileinput').addEventListener('change', (e) => this.loadFile(e.target.files[0]));
     $('sb-help').onclick = () => this.shortcutsDialog();
+    asButton($('sb-help'), 'Keyboard shortcuts');
     const th = document.querySelector('#titlebar .title-help');
-    if (th) { th.setAttribute('role', 'button'); th.tabIndex = 0; th.onclick = () => this.helpMenu(th); th.onkeydown = (e) => { if (e.key === 'Enter') this.helpMenu(th); }; }
-    $('sb-units').onclick = (e) => contextMenu(e.clientX, e.clientY - 120, [{ head: 'Unit system' }, { label: 'MMGS (millimeter, gram, second)', run: () => {} }]);
+    if (th) { asButton(th, 'Help', { popup: true }); th.onclick = (e) => this.helpMenu(th, !e.detail); }
+    // one unit system for now: the menu shows it ticked
+    const units = $('sb-units');
+    asButton(units, 'Unit system: MMGS (millimeter, gram, second)', { popup: true });
+    units.onclick = (e) => { const r = units.getBoundingClientRect(); contextMenu(r.left, r.top - 70, [{ head: 'Unit system' }, { label: 'MMGS (millimeter, gram, second)', role: 'menuitemradio', checked: true, run: () => {} }], null, { keyboard: !e.detail, returnTo: units }); };
     this.bindDocTabs();
     if (this.reviewMode) {
       const b = document.querySelector('#titlebar .brand');
@@ -475,13 +479,16 @@ export class App {
 
   bindDocTabs() {
     const tabs = [...document.querySelectorAll('#doctabs .doctab')];
+    $('doctabs')?.setAttribute('role', 'tablist');
     tabs.forEach((t, i) => {
+      asButton(t, t.textContent, { role: 'tab', pressed: i === 0, disabled: i === 1 });
+      if (i === 1) t.title = '3D Views: not available in this version';
       t.onclick = () => {
-        tabs.forEach((x) => x.classList.toggle('active', x === t));
+        tabs.forEach((x) => { x.classList.toggle('active', x === t); x.setAttribute('aria-selected', String(x === t)); });
         if (i === 2) {
           if (!this.isAsm) { this.toast('Motion Study replays an assembly. Open or create an assembly first.'); tabs[0].click(); return; }
           this.asm.playSequence().then(() => tabs[0].classList.add('active'), () => {}).finally(() => tabs[2].classList.remove('active'));
-        } else if (i === 1) { this.toast('3D Views are not available yet.'); tabs[0].click(); }
+        } else if (i === 1) { this.toast('3D Views are not available in this version.'); tabs[0].click(); }
       };
     });
   }
@@ -882,7 +889,8 @@ export class App {
     if (!tb.length) return;
     const el = $('contexttb');
     el.innerHTML = '';
-    for (const t of tb) { const b = document.createElement('div'); b.className = 'ct'; b.title = t.title; b.innerHTML = icon(t.icon, 20); b.onclick = () => { this.hideContextToolbar(); t.run(); }; el.appendChild(b); }
+    el.setAttribute('role', 'toolbar'); el.setAttribute('aria-label', 'Context toolbar');
+    for (const t of tb) { const b = document.createElement('div'); b.className = 'ct'; b.title = t.title; b.innerHTML = icon(t.icon, 20); asButton(b, t.title); b.onclick = () => { this.hideContextToolbar(); t.run(); }; el.appendChild(b); }
     const gr = $('graphics').getBoundingClientRect();
     el.style.left = Math.max(4, Math.min(gr.width - 200, x - gr.left + 12)) + 'px';
     el.style.top = Math.max(4, y - gr.top - 44) + 'px';
@@ -1042,7 +1050,7 @@ export class App {
   showPanel(which) {
     $('featuremgr').classList.toggle('hidden', which === 'pm');
     $('propmgr').classList.toggle('hidden', which !== 'pm');
-    [...$('mgrtabs').children].forEach((t, i) => t.classList.toggle('active', (which === 'pm' ? 1 : 0) === i));
+    [...$('mgrtabs').children].forEach((t, i) => { const on = (which === 'pm' ? 1 : 0) === i; t.classList.toggle('active', on); t.setAttribute('aria-selected', String(on)); });
   }
 
   closeCommand() {
@@ -1314,6 +1322,7 @@ export class App {
   }
 
   sketchTool(name) {
+    if (this.isAsm) { this.toast('Sketches are drawn in a part. Select a component and click Open Part.'); return; }
     if (this.mode !== 'sketch') {
       const s = this.selection.find((x) => x.kind === 'plane' || (x.kind === 'face' && x.data?.plane));
       if (s) this.sketchOn(s);
@@ -1974,15 +1983,15 @@ export class App {
     } }, { label: 'Cancel' }] });
   }
 
-  helpMenu(anchor) {
+  helpMenu(anchor, keyboard = false) {
     const r = anchor.getBoundingClientRect();
-    contextMenu(Math.max(4, r.right - 220), r.bottom + 6, [
+    contextMenu(r.right, r.bottom + 6, [
       { label: 'Getting started', run: () => this.openTask('resources') },
       { label: 'Keyboard shortcuts', run: () => this.shortcutsDialog() },
       { label: 'Connect AI...', run: () => this.server.connectDialog() },
       '-',
       { label: 'About OpenSketch', run: () => this.aboutDialog() },
-    ]);
+    ], null, { keyboard, returnTo: anchor, alignRight: true });
   }
 
   shortcutsDialog() {
@@ -2105,6 +2114,7 @@ export class App {
     if (this.mode !== 'sketch') { el.classList.add('hidden'); return; }
     const a = document.createElement('div'); a.className = 'cc'; a.title = 'Exit Sketch'; a.innerHTML = icon('exitsketch', 30); a.onclick = () => this.exitSketch();
     const b = document.createElement('div'); b.className = 'cc'; b.title = 'Discard changes and exit'; b.innerHTML = icon('cancel', 26); b.onclick = () => this.discardSketch();
+    asButton(a, 'Exit Sketch'); asButton(b, 'Discard changes and exit');
     el.append(a, b);
     el.classList.remove('hidden');
   }
@@ -2131,45 +2141,49 @@ export class App {
   buildMgrTabs() {
     const tabs = [['feature_mgr', 'FeatureManager Design Tree', 'tree'], ['property_mgr', 'PropertyManager', 'pm'], ['config_mgr', 'ConfigurationManager', null], ['dimxpert', 'DimXpertManager', null], ['display_mgr', 'DisplayManager', null]];
     const el = $('mgrtabs');
+    el.setAttribute('role', 'tablist'); el.setAttribute('aria-label', 'Managers');
     tabs.forEach(([ic, title, panel], i) => {
-      const t = document.createElement('div'); t.className = 'mgrtab' + (i === 0 ? ' active' : ''); t.title = title; t.innerHTML = icon(ic, 18);
-      t.onclick = () => { if (panel === 'tree') this.showPanel('tree'); else if (panel === 'pm') this.propertyTab(); else this.toast(title + ' is not available yet.'); };
+      const t = document.createElement('div'); t.className = 'mgrtab' + (i === 0 ? ' active' : '') + (panel ? '' : ' disabled'); t.title = panel ? title : `${title}: not available in this version`; t.innerHTML = icon(ic, 18);
+      asButton(t, title, { role: 'tab', pressed: i === 0, disabled: !panel });
+      t.onclick = () => { if (panel === 'tree') this.showPanel('tree'); else if (panel === 'pm') this.propertyTab(); else this.toast(title + ' is not available in this version.'); };
       el.appendChild(t);
     });
   }
 
   buildHeadsUp() {
     const el = $('headsup');
+    el.setAttribute('role', 'toolbar'); el.setAttribute('aria-label', 'View');
     const v = this.viewer;
     const add = (id, ic, title, run, caret = false) => {
       const b = document.createElement('div'); b.className = 'hu'; b.dataset.id = id; b.title = title;
       b.innerHTML = icon(ic, 20) + (caret ? '<span class="caret">&#9660;</span>' : '');
+      asButton(b, title, { popup: caret, pressed: id === 'zoomarea' ? false : undefined });
       b.onclick = (e) => run(b, e);
       el.appendChild(b); return b;
     };
     const sep = () => { const s = document.createElement('div'); s.className = 'hu-sep'; el.appendChild(s); };
-    const fly = (anchor, items) => {
+    const fly = (anchor, items, e) => {
       const r = anchor.getBoundingClientRect();
-      contextMenu(r.left, r.bottom + 2, items);
+      contextMenu(r.left, r.bottom + 2, items, null, { keyboard: !e?.detail, returnTo: anchor });
     };
     add('zoomfit', 'zoomfit', 'Zoom to Fit (F)', () => v.zoomToFit());
-    add('zoomarea', 'zoomarea', 'Zoom to Area', (b) => { this.zoomAreaMode = !this.zoomAreaMode; b.classList.toggle('on', this.zoomAreaMode); });
+    add('zoomarea', 'zoomarea', 'Zoom to Area', (b) => { this.zoomAreaMode = !this.zoomAreaMode; b.classList.toggle('on', this.zoomAreaMode); b.setAttribute('aria-pressed', String(this.zoomAreaMode)); });
     add('prevview', 'prevview', 'Previous View', () => v.previousView());
     sep();
     add('section', 'sectionview', 'Section View', () => this.sectionPM());
     sep();
     add('orient', 'vieworient', 'View Orientation (Spacebar)', (b) => this.orientationPopup(b), true);
-    add('display', 'displaystyle', 'Display Style', (b) => fly(b, [
-      ['shadedEdges', 'Shaded With Edges'], ['shaded', 'Shaded'], ['hlr', 'Hidden Lines Removed'], ['hlv', 'Hidden Lines Visible'], ['wireframe', 'Wireframe']].map(([s, l]) => ({ label: l, icon: 'displaystyle', run: () => v.setDisplayStyle(s) }))), true);
-    add('hideshow', 'hideshow', 'Hide/Show Items', (b) => fly(b, [
-      { label: (this.view.planes ? '✓ ' : '') + 'View Planes', icon: 'plane', run: () => this.toggleView('planes') },
-      { label: (this.view.origins ? '✓ ' : '') + 'View Origins', icon: 'origin', run: () => this.toggleView('origins') },
-      { label: (this.view.sketches ? '✓ ' : '') + 'View Sketches', icon: 'sketch_t', run: () => this.toggleView('sketches') },
-      { label: (this.view.relations ? '✓ ' : '') + 'View Sketch Relations', icon: 'r_coincident', run: () => this.toggleView('relations') },
-    ]), true);
+    add('display', 'displaystyle', 'Display Style', (b, e) => fly(b, [
+      ['shadedEdges', 'Shaded With Edges'], ['shaded', 'Shaded'], ['hlr', 'Hidden Lines Removed'], ['hlv', 'Hidden Lines Visible'], ['wireframe', 'Wireframe']].map(([s, l]) => ({ label: l, icon: 'displaystyle', run: () => v.setDisplayStyle(s) })), e), true);
+    add('hideshow', 'hideshow', 'Hide/Show Items', (b, e) => fly(b, [
+      { label: (this.view.planes ? '✓ ' : '') + 'View Planes', icon: 'plane', role: 'menuitemcheckbox', checked: this.view.planes, run: () => this.toggleView('planes') },
+      { label: (this.view.origins ? '✓ ' : '') + 'View Origins', icon: 'origin', role: 'menuitemcheckbox', checked: this.view.origins, run: () => this.toggleView('origins') },
+      { label: (this.view.sketches ? '✓ ' : '') + 'View Sketches', icon: 'sketch_t', role: 'menuitemcheckbox', checked: this.view.sketches, run: () => this.toggleView('sketches') },
+      { label: (this.view.relations ? '✓ ' : '') + 'View Sketch Relations', icon: 'r_coincident', role: 'menuitemcheckbox', checked: this.view.relations, run: () => this.toggleView('relations') },
+    ], e), true);
     add('appearance', 'appearance', 'Edit Appearance', () => this.openTask('appearance'), true);
     add('scene', 'scene', 'Apply Scene', () => this.openTask('appearance'), true);
-    add('viewsettings', 'viewsettings', 'View Settings', (b) => fly(b, [{ label: 'Reverse mouse wheel zoom', run: () => { v.reverseWheel = !v.reverseWheel; } }]), true);
+    add('viewsettings', 'viewsettings', 'View Settings', (b, e) => fly(b, [{ label: 'Reverse mouse wheel zoom', role: 'menuitemcheckbox', checked: !!v.reverseWheel, run: () => { v.reverseWheel = !v.reverseWheel; } }], e), true);
   }
 
   orientationPopup(anchor) {
@@ -2180,6 +2194,7 @@ export class App {
     const grid = document.createElement('div'); grid.className = 'vo-grid';
     for (const [k, ic, t] of views) {
       const b = document.createElement('div'); b.className = 'fo'; b.title = t; b.innerHTML = icon(ic, 22);
+      asButton(b, t);
       b.onclick = () => { el.classList.add('hidden'); this.orient(k); };
       grid.appendChild(b);
     }
@@ -2224,6 +2239,7 @@ export class App {
       const c = this.commands[id];
       const b = document.createElement('div'); b.className = 'ct'; b.title = typeof c.label === 'function' ? c.label() : c.label;
       b.innerHTML = icon(typeof c.icon === 'function' ? c.icon() : c.icon, 20);
+      asButton(b, b.title);
       b.onclick = () => { el.classList.add('hidden'); this.lastCommand = id; c.run(); this.ribbon.render(); };
       el.appendChild(b);
     }

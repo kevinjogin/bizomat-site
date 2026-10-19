@@ -37,9 +37,62 @@ export class FeatureTree {
       e.stopPropagation();
       if (e.key === 'Escape' && this.filter.value) { e.preventDefault(); this.clearFilter(); }
     });
-    this.el.addEventListener('keydown', (e) => {
-      if (e.key === 'F2') { const s = this.app.selection.find((x) => ['feature', 'sketch', 'component', 'mate'].includes(x.kind)); if (s) { e.preventDefault(); this.rename(s.id); } }
-    });
+    this.el.setAttribute('role', 'tree');
+    this.el.setAttribute('aria-multiselectable', 'true');
+    if (!this.el.getAttribute('aria-label')) this.el.setAttribute('aria-label', 'FeatureManager design tree');
+    this.el.addEventListener('keydown', (e) => this.onKey(e));
+    // Tab into the tree: the selected row (or the first) is the one the arrow keys start from
+    this.el.addEventListener('focus', () => { if (!this.rowFor(this.cursor)) { this.cursor = (this.el.querySelector('.tn.selected') || this.el.querySelector('.tn'))?.dataset.key; this.markCursor(); } });
+  }
+
+  rowFor(key) { return key ? [...this.el.querySelectorAll('.tn')].find((r) => r.dataset.key === key) || null : null; }
+
+  // The row the arrow keys are on (aria-activedescendant): the tree keeps the focus, rows do not take it.
+  markCursor() {
+    let row = null;
+    for (const r of this.el.querySelectorAll('.tn')) { const on = r.dataset.key === this.cursor; r.classList.toggle('cursor', on); if (on) row = r; }
+    if (row) this.el.setAttribute('aria-activedescendant', row.id); else this.el.removeAttribute('aria-activedescendant');
+    return row;
+  }
+
+  // FeatureManager keys, as in SOLIDWORKS: Up / Down / Home / End move through the rows and select them, Right opens
+  // a folder or feature, Left closes it or goes to its parent, Shift+F10 opens the row's menu, F2 renames. The
+  // arrows never turn the model while the tree has the focus. Delete, Enter, F and the rest go on to the editor.
+  onKey(e) {
+    if (e.target !== this.el || e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key;
+    if (k === 'F2') { const s = this.app.selection.find((x) => ['feature', 'sketch', 'component', 'mate'].includes(x.kind)); if (s) { e.preventDefault(); this.rename(s.id); } return; }
+    const rows = [...this.el.querySelectorAll('.tn')];
+    const cur = rows.findIndex((r) => r.dataset.key === this.cursor);
+    const row = rows[cur];
+    if ((k === 'F10' && e.shiftKey) || k === 'ContextMenu') {
+      if (!row) return;
+      e.preventDefault(); e.stopPropagation();
+      const r = row.getBoundingClientRect();
+      this.app.treeContext(row._item, { clientX: r.left + 24, clientY: r.bottom, preventDefault() {} });
+      return;
+    }
+    if (!['ArrowDown', 'ArrowUp', 'Home', 'End', 'ArrowLeft', 'ArrowRight'].includes(k)) return;
+    e.preventDefault(); e.stopPropagation();
+    if (!rows.length) return;
+    let to = null;
+    if (k === 'ArrowDown') to = rows[Math.min(rows.length - 1, cur + 1)];
+    else if (k === 'ArrowUp') to = rows[Math.max(0, cur < 0 ? 0 : cur - 1)];
+    else if (k === 'Home') to = rows[0];
+    else if (k === 'End') to = rows[rows.length - 1];
+    else if (row && k === 'ArrowRight') { if (row.getAttribute('aria-expanded') === 'false') return row._toggle(); to = rows[cur + 1]; }
+    else if (row && k === 'ArrowLeft') {
+      if (row.getAttribute('aria-expanded') === 'true') return row._toggle();
+      const lvl = +row.getAttribute('aria-level');
+      for (let i = cur - 1; i >= 0; i--) if (+rows[i].getAttribute('aria-level') < lvl) { to = rows[i]; break; }
+    }
+    if (!to) return;
+    this.cursor = to.dataset.key;
+    const item = to._item;
+    // in a command a row is picked only by clicking it; otherwise moving selects, as a click would
+    if (!this.app.cmd && this.app.mode !== 'sketch') this.app.setSelection(item.kind === 'folder' || item.kind === 'root' ? [] : [item]);
+    const now = this.markCursor();
+    now?.scrollIntoView?.({ block: 'nearest' });
   }
 
   clearFilter(focusTree = false) {
@@ -77,18 +130,27 @@ export class FeatureTree {
     const q = this.filter.value.trim().toLowerCase();
     const selKeys = new Set(app.selection.map((s) => `${s.kind}:${s.id}`));
     this.el.innerHTML = '';
-    const node = ({ id, kind, name, ic, depth = 0, twisty = null, cls = '', badge = '', onDbl = null, data = null, onTwisty = null }) => {
+    let rowN = 0;
+    const node = ({ id, kind, name, ic, depth = 0, twisty = null, cls = '', badge = '', onDbl = null, data = null, onTwisty = null, title = '' }) => {
       name = String(name ?? id);
       if (q && !name.toLowerCase().includes(q)) return null;
-      const n = h('div', 'tn ' + cls + (selKeys.has(`${kind}:${id}`) ? ' selected' : ''));
+      const sel = selKeys.has(`${kind}:${id}`);
+      const n = h('div', 'tn ' + cls + (sel ? ' selected' : ''));
       n.style.paddingLeft = 4 + depth * 14 + 'px';
+      n.id = 'tn-' + rowN++;
+      n.setAttribute('role', 'treeitem');
+      n.setAttribute('aria-level', String(depth + 1));
+      n.setAttribute('aria-selected', String(sel));
+      if (title) n.title = title;
       const tw = h('span', 'tw', twisty === null ? '' : twisty ? '&#9660;' : '&#9654;');
-      if (twisty !== null) tw.onclick = (e) => { e.stopPropagation(); if (onTwisty) return onTwisty(); this.expanded.has(id) ? this.expanded.delete(id) : this.expanded.add(id); this.render(); };
+      const toggle = () => { if (onTwisty) return onTwisty(); this.expanded.has(id) ? this.expanded.delete(id) : this.expanded.add(id); this.render(); };
+      if (twisty !== null) { tw.onclick = (e) => { e.stopPropagation(); toggle(); }; n.setAttribute('aria-expanded', String(!!twisty)); n._toggle = toggle; }
       n.appendChild(tw);
       n.insertAdjacentHTML('beforeend', icon(ic, 16));
       const nm = h('span', 'nm'); nm.textContent = name; n.appendChild(nm);
       if (badge) n.appendChild(h('span', 'badge', badge));
-      n.onclick = (e) => app.treeClick({ kind, id, data }, e, n);
+      n._item = { kind, id, data };
+      n.onclick = (e) => { this.cursor = `${kind}:${id}`; app.treeClick({ kind, id, data }, e, n); };
       n.ondblclick = (e) => { e.stopPropagation(); if (onDbl) onDbl(); };
       n.oncontextmenu = (e) => { e.preventDefault(); app.treeContext({ kind, id, data }, e); };
       n.onmouseenter = () => app.treeHover({ kind, id });
@@ -97,11 +159,13 @@ export class FeatureTree {
       this.el.appendChild(n);
       return n;
     };
-    if (app.isAsm) { app.asm.renderTree(this, node); this.filterNote(q); return; }
+    if (app.isAsm) { app.asm.renderTree(this, node); this.filterNote(q); this.markCursor(); return; }
     const bodies = app.result?.body?.faces?.length ? 1 : 0;
-    node({ id: 'root', kind: 'root', name: `${doc.name} (Default<<Default>_Display State 1>)`, ic: 'part', cls: 'root' });
-    node({ id: 'history', kind: 'folder', name: 'History', ic: 'history', depth: 1, twisty: false });
-    node({ id: 'bodies', kind: 'folder', name: `Solid Bodies(${bodies})`, ic: 'bodies', depth: 1, twisty: false });
+    // the configuration is always the default one: it goes in the tooltip, so the part's name is not cut off
+    node({ id: 'root', kind: 'root', name: doc.name, ic: 'part', cls: 'root', title: `${doc.name} (Default<<Default>_Display State 1>)` });
+    node({ id: 'history', kind: 'folder', name: 'History', ic: 'history', depth: 1 });
+    node({ id: 'bodies', kind: 'folder', name: `Solid Bodies(${bodies})`, ic: 'bodies', depth: 1, twisty: bodies ? this.expanded.has('bodies') : null });
+    if (bodies && this.expanded.has('bodies')) node({ id: 'body1', kind: 'folder', name: this.bodyName(doc), ic: 'bodies', depth: 2 });
     node({ id: 'material', kind: 'material', name: doc.material?.name ? doc.material.name : 'Material <not specified>', ic: 'material', depth: 1, onDbl: () => app.materialDialog() });
     for (const p of ['Front Plane', 'Top Plane', 'Right Plane']) node({ id: p, kind: 'plane', name: p, ic: 'plane_t', depth: 1 });
     node({ id: 'origin', kind: 'origin', name: 'Origin', ic: 'origin', depth: 1 });
@@ -138,6 +202,14 @@ export class FeatureTree {
     });
     if (!placedBar) bar();
     this.filterNote(q);
+    this.markCursor();
+  }
+
+  // SOLIDWORKS names a body after the last feature that changed it.
+  bodyName(doc) {
+    const rb = doc.rollback ?? doc.features.length;
+    const f = doc.features.slice(0, rb).filter((x) => !['sketch', 'plane'].includes(x.type) && !x.suppressed && this.app.statusById?.[x.id]?.state !== 'error').pop();
+    return f?.name || 'Body';
   }
 
   // Drag the rollback bar. The pointer is captured, so the release always ends the drag where it happened;

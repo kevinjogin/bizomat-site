@@ -12,16 +12,16 @@ export function buildCommands(app) {
   const soon = (what) => () => app.toast(`${what} is not available yet in this version.`);
   const C = {
     // quick access
-    new: { label: 'New', icon: 'new', tip: 'Creates a new document (Ctrl+N)', run: () => app.newDoc() },
-    open: { label: 'Open', icon: 'open', tip: 'Your Files: open, upload or start a model (Ctrl+O)', run: () => app.openFile() },
-    save: { label: 'Save', icon: 'save', tip: 'Saves to your Files (Ctrl+S). Files save by themselves after the first save.', run: () => app.saveFile() },
+    new: { label: 'New', icon: 'new', key: 'Ctrl+N', tip: 'Creates a new document (Ctrl+N)', run: () => app.newDoc() },
+    open: { label: 'Open', icon: 'open', key: 'Ctrl+O', tip: 'Your Files: open, upload or start a model (Ctrl+O)', run: () => app.openFile() },
+    save: { label: 'Save', icon: 'save', key: 'Ctrl+S', tip: 'Saves to your Files (Ctrl+S). Files save by themselves after the first save.', run: () => app.saveFile() },
     saveas: { label: 'Save As', icon: 'save', tip: 'Saves the document as .osk, STEP, STL or a SOLIDWORKS macro', run: () => app.saveAs() },
     sldmacro: { label: 'Export SOLIDWORKS Macro', icon: 'save', tip: 'Writes a SOLIDWORKS macro (.bas) that rebuilds the part, or the parts and the mated assembly, in SOLIDWORKS', run: () => app.exportMacro() },
     print: { label: 'Print', icon: 'print', tip: 'Prints the graphics area', run: () => window.print() },
     undo: { label: 'Undo', icon: 'undo', tip: 'Undo the last action (Ctrl+Z)', run: () => app.undo() },
     redo: { label: 'Redo', icon: 'redo', tip: 'Redo the last undone action (Ctrl+Y)', run: () => app.redo() },
     select: { label: 'Select', icon: 'select', tip: 'Selects sketch entities, edges, faces and planes', run: () => app.selectTool() },
-    rebuild: { label: 'Rebuild', icon: 'rebuild', tip: 'Rebuilds the part (Ctrl+B)', run: () => app.regen(true) },
+    rebuild: { label: 'Rebuild', icon: 'rebuild', key: 'Ctrl+B', tip: 'Rebuilds the part (Ctrl+B)', run: () => app.regen(true) },
     fileprops: { label: 'File Properties', icon: 'props', tip: 'Summary and custom properties', run: () => app.openTask('custprops') },
     serveropen: { label: 'Files...', icon: 'open', tip: 'Your files on this server, with a picture of each. Your AI\'s changes appear live in the one you open.', run: () => app.files.open() },
     serversave: { label: 'Save a Copy to Files', icon: 'save', tip: 'Stores a copy of this model in your Files.', run: () => (app.server.linked ? app.server.saveAsNew(app.rootDoc().name + ' copy') : app.server.saveDraft()) },
@@ -48,7 +48,6 @@ export function buildCommands(app) {
     circpattern: { label: 'Circular Pattern', icon: 'circpattern', tip: 'Patterns features around an axis.', run: () => app.featureCommand('circular_pattern') },
     mirror: { label: 'Mirror', icon: 'mirror', tip: 'Mirrors features or bodies about a face or plane.', run: () => app.featureCommand('mirror') },
     rib: { label: 'Rib', icon: 'rib', tip: 'Adds a thin-walled support to a solid body.', run: soon('Rib'), disabled: true },
-    draft: { label: 'Draft', icon: 'draft', tip: 'Tapers model faces by a specified angle. Use Draft On/Off in Extrude for now.', run: soon('Draft'), disabled: true },
     shell: { label: 'Shell', icon: 'shell', tip: 'Removes material from a solid body to create a thin-walled feature.', run: () => app.featureCommand('shell') },
     wrap: { label: 'Wrap', icon: 'wrap', tip: 'Wraps a sketch onto a face.', run: soon('Wrap'), disabled: true },
     intersect: { label: 'Intersect', icon: 'intersect', tip: 'Intersects solids, surfaces or planes.', run: soon('Intersect'), disabled: true },
@@ -59,14 +58,14 @@ export function buildCommands(app) {
 
     // sketch
     sketch: { label: () => (inSketch() ? 'Exit Sketch' : 'Sketch'), icon: () => (inSketch() ? 'exitsketch' : 'sketch'), tip: 'Creates a new sketch, or edits an existing sketch.', run: () => (inSketch() ? app.exitSketch() : app.sketchCommand()), active: () => inSketch() },
-    smartdim: { label: 'Smart Dimension', icon: 'smartdim', tip: 'Creates a dimension for one or more selected entities.', ...tool('smartdim'), run: () => app.sketchTool('smartdim') },
-    line: { label: 'Line', icon: 'line', tip: 'Sketches a line.', ...tool('line') },
+    smartdim: { label: 'Smart Dimension', icon: 'smartdim', key: 'D', tip: 'Creates a dimension for one or more selected entities.', ...tool('smartdim'), run: () => app.sketchTool('smartdim') },
+    line: { label: 'Line', icon: 'line', key: 'L', tip: 'Sketches a line.', ...tool('line') },
     centerline: { label: 'Centerline', icon: 'centerline', tip: 'Sketches a centerline.', ...tool('centerline') },
-    rectangle: { label: 'Corner Rectangle', icon: 'rectangle', tip: 'Sketches a rectangle.', ...tool('rectangle') },
+    rectangle: { label: 'Corner Rectangle', icon: 'rectangle', key: 'R', tip: 'Sketches a rectangle.', ...tool('rectangle') },
     centerrect: { label: 'Center Rectangle', icon: 'centerrect', tip: 'Sketches a center rectangle.', ...tool('centerrect') },
     slot: { label: 'Straight Slot', icon: 'slot', tip: 'Sketches a straight slot.', ...tool('slot') },
-    circle: { label: 'Circle', icon: 'circle', tip: 'Sketches a circle. Select the center, then drag to set the radius.', ...tool('circle') },
-    arc: { label: 'Centerpoint Arc', icon: 'arc', tip: 'Sketches a centerpoint arc.', ...tool('arc') },
+    circle: { label: 'Circle', icon: 'circle', key: 'C', tip: 'Sketches a circle. Select the center, then drag to set the radius.', ...tool('circle') },
+    arc: { label: 'Centerpoint Arc', icon: 'arc', key: 'A', tip: 'Sketches a centerpoint arc.', ...tool('arc') },
     threeptarc: { label: '3 Point Arc', icon: 'threeptarc', tip: 'Sketches a 3 point arc.', ...tool('threeptarc') },
     tangentarc: { label: 'Tangent Arc', icon: 'tangentarc', tip: 'Sketches an arc tangent to a sketch entity.', ...tool('tangentarc') },
     polygon: { label: 'Polygon', icon: 'polygon', tip: 'Sketches a polygon.', ...tool('polygon') },
@@ -74,8 +73,8 @@ export function buildCommands(app) {
     ellipse: { label: 'Ellipse', icon: 'ellipse', tip: 'Sketches an ellipse.', run: soon('Ellipse'), disabled: true },
     sketchfillet: { label: 'Sketch Fillet', icon: 'sketchfillet', tip: 'Rounds the corner at the intersection of two sketch entities.', ...tool('sketchfillet') },
     text: { label: 'Text', icon: 'text', tip: 'Sketches text.', run: soon('Sketch text'), disabled: true },
-    point: { label: 'Point', icon: 'point', tip: 'Sketches a point.', ...tool('point') },
-    trim: { label: 'Trim Entities', icon: 'trim', tip: 'Trims a sketch entity to the closest intersection.', ...tool('trim') },
+    point: { label: 'Point', icon: 'point', key: 'P', tip: 'Sketches a point.', ...tool('point') },
+    trim: { label: 'Trim Entities', icon: 'trim', key: 'T', tip: 'Trims a sketch entity to the closest intersection.', ...tool('trim') },
     convert: { label: 'Convert Entities', icon: 'convert', tip: 'Projects selected model edges onto the sketch plane.', run: () => app.convertEntities() },
     offset: { label: 'Offset Entities', icon: 'offset', tip: 'Offsets selected sketch entities by a distance.', run: () => app.offsetEntities() },
     sketchmirror: { label: 'Mirror Entities', icon: 'sketchmirror', tip: 'Mirrors selected entities about a centerline.', run: () => app.sketcher.active ? app.sketcher.mirrorSelection() : app.toast('Edit a sketch first.') },
@@ -117,18 +116,33 @@ export function buildCommands(app) {
     asmfix: { label: 'Fix Mates', icon: 'mate', tip: 'Asks the AI to fix mate errors and interferences.', run: () => app.aiQuick('Fix the mate errors and any interferences in this assembly with minimal changes.') },
 
     // AI add-in
-    ai: { label: 'OpenSketch AI', icon: 'ai', tip: 'Describe a part or a change, the AI proposes features you can accept or reject (Ctrl+L).', run: () => app.openTask('ai') },
+    ai: { label: 'OpenSketch AI', icon: 'ai', key: 'Ctrl+L', tip: 'Describe a part or a change, the AI proposes features you can accept or reject (Ctrl+L).', run: () => app.openTask('ai') },
     aiexplain: { label: 'Explain Model', icon: 'ai', tip: 'Asks the AI to explain the feature tree.', run: () => app.aiQuick('Explain this part and its design intent in a few sentences. Do not change it.') },
     aifix: { label: 'Fix Errors', icon: 'rebuild', tip: 'Asks the AI to fix rebuild errors.', run: () => app.aiQuick('Fix the rebuild errors in this part with minimal changes.') },
     aidefine: { label: 'Fully Define', icon: 'smartdim', tip: 'Asks the AI to add relations and dimensions so every sketch is fully defined.', run: () => app.aiQuick('Add relations and dimensions so every sketch is fully defined, keeping the current geometry.') },
   };
   for (const spec of Object.values(SPECS)) {
     if (spec.ui !== 'generated') continue; // hand-written commands above
-    C[spec.command] = { label: spec.label, icon: spec.icon, tip: spec.summary, run: () => app.featureCommand(spec.type) };
+    C[spec.command] = { label: spec.label, icon: spec.icon, tip: spec.summary, run: () => app.featureCommand(spec.type), doc: 'part' };
   }
+  // Commands that belong to one kind of document. The Insert and Tools menus and command search offer them only
+  // there, as SOLIDWORKS's menus differ between parts and assemblies.
+  for (const id of PART_ONLY) if (C[id]) C[id].doc = 'part';
+  for (const id of ASM_ONLY) if (C[id]) C[id].doc = 'asm';
   for (const [id, c] of Object.entries(C)) c.id = id;
   return C;
 }
+
+const PART_ONLY = ['extrude', 'revolve', 'sweep', 'loft', 'boundary', 'cut', 'hole', 'revcut', 'sweepcut', 'loftcut', 'boundarycut',
+  'fillet', 'chamfer', 'linpattern', 'circpattern', 'mirror', 'rib', 'shell', 'wrap', 'intersect', 'refgeom', 'plane', 'curves', 'instant3d',
+  'sketch', 'smartdim', 'line', 'centerline', 'rectangle', 'centerrect', 'slot', 'circle', 'arc', 'threeptarc', 'tangentarc', 'polygon',
+  'spline', 'ellipse', 'sketchfillet', 'text', 'point', 'trim', 'convert', 'offset', 'sketchmirror', 'sketchpattern', 'move', 'relations',
+  'addrelation', 'repair', 'quicksnaps', 'rapidsketch', 'instant2d', 'shadedsketch', 'equations', 'airebuild', 'aiexplain', 'aifix', 'aidefine'];
+const ASM_ONLY = ['insertcomp', 'newpart', 'mate', 'coupler', 'movecomp', 'fixfloat', 'hidecomp', 'interference', 'motionreview', 'playback',
+  'openpart', 'asmexplain', 'aimates', 'asmfix'];
+
+/** The command belongs in this kind of document (no doc = both). */
+export function availableIn(c, isAsm) { return !!c && (!c.doc || (c.doc === 'asm') === !!isAsm); }
 
 // CommandManager tabs. big = large button, col = stacked small buttons, grid = small icon grid.
 export const TABS = [
@@ -162,13 +176,22 @@ export const ASM_TABS = [
 
 export const QUICK = ['new', 'open', 'save', 'print', 'undo', 'redo', 'select', 'rebuild', 'fileprops', 'options'];
 
+// items: command ids, '-', {head}, or {label, run(app), key, checked(app)}; a function (app) => items is built
+// when the menu opens.
 export const MENUS = [
   { name: 'File', items: ['new', 'open', 'openlocal', '-', 'save', 'saveas', 'serversave', 'sldmacro', '-', 'publishreview', 'connectclaude', '-', 'print', '-', 'fileprops'] },
-  { name: 'Edit', items: ['undo', 'redo', '-', 'rebuild', '-', { label: 'Delete', run: (app) => app.deleteSelection(), key: 'Del' }, { label: 'Suppress', run: (app) => app.suppressSelection(true) }, { label: 'Unsuppress', run: (app) => app.suppressSelection(false) }] },
-  { name: 'View', items: [{ label: 'Planes', run: (app) => app.toggleView('planes') }, { label: 'Origins', run: (app) => app.toggleView('origins') }, { label: 'Sketches', run: (app) => app.toggleView('sketches') }, { label: 'Sketch Relations', run: (app) => app.toggleView('relations') }, '-', { label: 'Zoom to Fit', run: (app) => app.viewer.zoomToFit(), key: 'F' }, '-', ...LOOKS.map(([k, t]) => ({ label: `Theme: ${t}${LOOK === k ? '  (on)' : ''}`, run: () => setLook(k) }))] },
-  { name: 'Insert', items: ['insertcomp', 'newpart', 'mate', 'coupler', '-', 'extrude', 'revolve', 'cut', 'revcut', '-', 'fillet', 'chamfer', 'shell', '-', 'linpattern', 'circpattern', 'mirror', '-', 'plane', '-', 'sketch', '-', { head: 'FeatureWorks' }, 'recognize'] },
+  { name: 'Edit', items: ['undo', 'redo', '-', 'rebuild', '-', { label: 'Delete', run: (app) => app.menuDelete(), key: 'Del' }, { label: 'Suppress', run: (app) => app.suppressSelection(true) }, { label: 'Unsuppress', run: (app) => app.suppressSelection(false) }] },
+  { name: 'View', items: [{ label: 'Planes', checked: (app) => app.view.planes, run: (app) => app.toggleView('planes') }, { label: 'Origins', checked: (app) => app.view.origins, run: (app) => app.toggleView('origins') }, { label: 'Sketches', checked: (app) => app.view.sketches, run: (app) => app.toggleView('sketches') }, { label: 'Sketch Relations', checked: (app) => app.view.relations, run: (app) => app.toggleView('relations') }, '-', { label: 'Zoom to Fit', run: (app) => app.viewer.zoomToFit(), key: 'F' }, '-', { head: 'Theme' }, ...LOOKS.map(([k, t]) => ({ label: t, role: 'menuitemradio', checked: () => LOOK === k, run: () => setLook(k) }))] },
+  { name: 'Insert', items: ['insertcomp', 'newpart', 'mate', 'coupler', '-', 'extrude', 'revolve', 'sweep', 'loft', 'cut', 'revcut', 'sweepcut', 'loftcut', 'hole', '-', 'fillet', 'chamfer', 'shell', '-', 'linpattern', 'circpattern', 'mirror', '-', 'plane', '-', 'sketch', '-', { head: 'FeatureWorks' }, 'recognize'] },
   { name: 'Tools', items: ['line', 'centerline', 'rectangle', 'circle', 'arc', 'slot', 'polygon', 'point', '-', 'smartdim', 'addrelation', 'relations', '-', 'trim', 'convert', 'offset', 'sketchmirror', 'sketchfillet', '-', 'equations', '-', 'measure', 'massprops', 'motionreview', '-', 'options'] },
-  { name: 'Window', items: [{ label: 'Part1', run: () => {} }] },
+  // the open document (and, while a part is open from its assembly, the assembly to go back to)
+  { name: 'Window', items: (app) => {
+    const stack = app.docStack || [];
+    const rows = stack.length
+      ? [{ label: stack[stack.length - 1].doc.name || 'Assembly', role: 'menuitemradio', checked: false, run: () => app.asm.returnToAssembly() }, { label: app.doc.name || 'Part', role: 'menuitemradio', checked: true, run: () => {} }]
+      : [{ label: app.doc.name || 'Untitled', role: 'menuitemradio', checked: true, run: () => {} }];
+    return [...rows, '-', { label: 'Files...', run: () => app.files.open() }];
+  } },
   { name: 'Help', items: [{ label: 'Keyboard Shortcuts', run: (app) => app.shortcutsDialog() }, { label: 'About OpenSketch', run: (app) => app.aboutDialog() }] },
 ];
 

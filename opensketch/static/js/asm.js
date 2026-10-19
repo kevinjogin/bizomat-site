@@ -102,6 +102,7 @@ export class AssemblyMode {
       done = app.busy(label || (app.viewer.partGeo.size ? 'Rebuilding assembly' : 'Loading assembly'));
       try { res = await app.apiPatient('/api/regen', { doc, known: this.knownKeys() }, done); } catch (err) { done(); app.rebuildFailed(err); return null; }
       if (seq !== app.regenSeq) { done(); return null; }
+      if (!Array.isArray(res?.components)) { done(); return null; } // not an assembly's answer (a part was open)
       // a mesh we thought we had is gone (cache replaced): ask again without the shortcut
       if (res.components.some((c) => !app.viewer.partGeo.get(c.part) && !res.parts[c.part]?.body && res.parts[c.part])) {
         for (const pid of Object.keys(res.parts)) app.viewer.partGeo.delete(pid);
@@ -496,7 +497,16 @@ export class AssemblyMode {
   }
 
   // ------------------------------------------------------------------ Insert Components
+  // Assembly commands reached from a part (command search, a shortcut): say where they belong instead of
+  // opening a PropertyManager that cannot work.
+  asmOnly() {
+    if (this.app.isAsm) return true;
+    this.app.toast('Components and mates belong to assemblies. File > New > Assembly.');
+    return false;
+  }
+
   insertPM() {
+    if (!this.asmOnly()) return;
     const app = this.app;
     if (app.cmd) app.pmCancel();
     const doc = app.doc;
@@ -579,6 +589,7 @@ export class AssemblyMode {
   }
 
   newPart() {
+    if (!this.asmOnly()) return;
     const app = this.app;
     const doc = app.doc;
     let k = Object.keys(doc.parts).length + 1;
@@ -617,6 +628,7 @@ export class AssemblyMode {
   }
 
   matePM(existing = null) {
+    if (!this.asmOnly()) return;
     const app = this.app;
     if (app.cmd) app.pmCancel();
     const doc = app.doc;
@@ -704,6 +716,7 @@ export class AssemblyMode {
   // Hinge (SOLIDWORKS Mechanical Mates): Concentric selections, Coincident selections, optional
   // angle limits measured between two more faces.
   hingePM(existing = null) {
+    if (!this.asmOnly()) return;
     const app = this.app;
     if (app.cmd) app.pmCancel();
     const doc = app.doc;
@@ -779,6 +792,7 @@ export class AssemblyMode {
   // Coupler (Mechanical Mates; SOLIDWORKS's Linear/Linear Coupler with a motion law): the driven pair's
   // angle or distance follows the driver pair's through a table (dwell, pickup) or a ratio.
   couplerPM(existing = null) {
+    if (!this.asmOnly()) return;
     const app = this.app;
     if (app.cmd) app.pmCancel();
     const doc = app.doc;
@@ -1011,6 +1025,7 @@ export class AssemblyMode {
 
   // ------------------------------------------------------------------ Interference Detection
   async interferencePM() {
+    if (!this.asmOnly()) return;
     const app = this.app;
     if (app.cmd) app.pmCancel();
     const state = { items: null, sel: -1, busy: true };
@@ -1101,6 +1116,7 @@ export class AssemblyMode {
 
   // ------------------------------------------------------------------ Motion Study: assembly playback
   async playSequence() {
+    if (!this.asmOnly()) return;
     const app = this.app, v = app.viewer;
     if (!this.res) await this.regen();
     if (!this.res || this.playing) return;
