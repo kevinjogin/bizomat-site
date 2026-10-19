@@ -108,7 +108,9 @@ export class ServerDocs {
       store.set(UNSENT + rec.id + OFFER, null);
       app.pushUndo('Unsaved changes from this browser');
       app.doc = { ...u.doc, name: this.link.name };
-      app.docChanged(); // saved now, over the server version (that one stays in the version history)
+      app.docChanged();
+      // a named save, not an autosave, so the version it replaces always stays in the version history
+      clearTimeout(this.pushTimer); this.push('Restored changes from this browser');
       app.regen();
     };
     const when = new Date(u.at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
@@ -539,8 +541,9 @@ export class ServerDocs {
         else if (err.status === 413 || err.status === 507) {
           // the server refuses it for good (file too big, Files full, disk nearly full): say why, keep the copy here,
           // and do not send it again until the model changes
+          const again = this.state === 'refused' && this.refused === err.message; // said already (Ctrl+S says it too)
           this.refused = err.message; this.setState('refused');
-          this.app.toast?.(`Not saved: ${err.message} Your edits are kept in this browser. File > Save As > .osk downloads them.`, 12000);
+          if (!again) this.app.toast?.(`Not saved: ${err.message} Your edits are kept in this browser. File > Save As > .osk downloads them.`, 12000);
           return false;
         }
         else { this.setState('offline'); this.app.status('Could not save to the server (' + err.message + '). Trying again.'); }
