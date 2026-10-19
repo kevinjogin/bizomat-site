@@ -600,3 +600,27 @@ body.dp-scrubbing, body.dp-scrubbing * { cursor: ew-resize !important; }
 .acct-toggle { display: flex; align-items: center; gap: 8px; margin-top: 14px; cursor: pointer; }
 .ai-modelrow { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ai-input .row .btn { white-space: nowrap; }
+
+/* Keyboard (2026-10-19): editor chrome items are role=button / tab / menuitem divs. Classic focus ring here;
+   linear.css has its own. The FeatureManager row the arrow keys are on is marked while the tree has the focus. */
+[role=button]:focus-visible, [role=tab]:focus-visible, [role=menuitem]:focus-visible, .tree:focus-visible { outline: 2px solid #2467b2; outline-offset: -2px; }
+.tree:focus-visible .tn.cursor { outline: 1px dotted #2467b2; outline-offset: -1px; }
+.contextmenu:focus { outline: none; }
+.contextmenu .cm:focus, .contextmenu .cm:focus-visible { outline: none; background: var(--hover); }
+.contextmenu .cm .sp.ck { display: inline-flex; justify-content: center; width: 16px; font-size: 12px; }
+.mgrtab.disabled, .doctab[aria-disabled=true] { opacity: .45; }
+.eqadd, .eqx { background: none; border: 0; padding: 0; font: inherit; }
+.eqt input[aria-invalid=true] { border-color: var(--sw-red); }
+.eqmsg { color: var(--sw-red); margin-top: 6px; }
+.eqmsg:empty { display: none; }
+.pm-num input[aria-invalid=true] { border-color: var(--sw-red); }
+.pm-fielderr { color: var(--sw-red); font-size: 11px; line-height: 1.3; padding: 0 2px 4px 24px; }
+/* toasts stay readable above a modal dialog without covering its buttons */
+body:has(#modal-layer > .dlg-back.modal) #toasts { top: 12px; bottom: auto; flex-direction: column-reverse; }
+@media print {
+  #app, #toasts, #files, #modal-layer, .contextmenu { display: none !important; }
+  #print-sheet { display: block !important; }
+}
+#print-sheet { display: none; }
+#print-sheet img { max-width: 100%; max-height: 92vh; display: block; margin: 0 auto; }
+#print-sheet .ps-name { font: 600 14px/1.3 system-ui, sans-serif; margin: 0 0 8px; color: #000; }

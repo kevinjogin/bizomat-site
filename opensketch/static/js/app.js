@@ -8,7 +8,7 @@ import { drawInactiveSketch, pointsOf, entityPolyline } from './sketch/draw.js';
 import { solveSketch } from './sketch/solver.js';
 import { projSeg, fmt } from './sketch/geom2d.js';
 import { PropertyManager } from './ui/pm.js';
-import { dialog, message, modifyBox, contextMenu, closeMenus } from './ui/dialogs.js';
+import { dialog, message, modifyBox, contextMenu, closeMenus, modalOpen, asButton } from './ui/dialogs.js';
 import { Ribbon } from './ui/ribbon.js';
 import { FeatureTree } from './ui/tree.js';
 import { TaskPane } from './ui/taskpane.js';
@@ -2212,6 +2212,13 @@ export class App {
     el.classList.remove('hidden');
   }
 
+  // The pointer is over the graphics area itself (not a toolbar or dialog on top of it).
+  overGraphics(mouse) {
+    if (!mouse) return false;
+    const el = document.elementFromPoint?.(mouse.x, mouse.y);
+    return !!el && (el === this.viewer.canvas || !!el.closest?.('#viewport, #labels'));
+  }
+
   // SOLIDWORKS: Tab hides the component (or body) under the cursor, Shift+Tab shows hidden ones there.
   tabHide(mouse, show) {
     const r = this.canvasRect();
@@ -2224,13 +2231,60 @@ export class App {
     if (p && (p.kind === 'face' || p.kind === 'edge')) { this.bodyHidden = true; this.viewer.bodyGroup.visible = false; this.viewer.requestRender(); this.status('Body hidden. Shift+Tab over it shows it again.'); }
   }
 
+  // Who gets a key (owner's rule, 2026-10-19). 'model': the focus is on the page, the graphics area or the
+  // FeatureManager tree, so the SOLIDWORKS shortcuts act. 'control': a button, tab or toolbar item of the editor
+  // has the focus (a keyboard user put it there); it keeps Tab, Enter, Space, the arrows and Delete, and only Escape
+  // and the Ctrl shortcuts reach the editor. 'none': a dialog, the Files page, a menu or a text field has the
+  // keyboard, and nothing reaches the model behind it.
+  keyTarget(e) {
+    if (this.files?.isOpen || modalOpen()) return 'none';
+    const t = e.target;
+    if (!t || t === document || t === window || t === document.body || t === document.documentElement) return 'model';
+    if (t === this.viewer?.canvas || t.id === 'tree' || t.id === 'viewport') return 'model';
+    if (t.closest?.('#modal-layer, .dlg, .contextmenu, #files, .search-results')) return 'none';
+    const tag = (t.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'select' || t.isContentEditable) return 'none';
+    return 'control';
+  }
+
+  // Esc: close menus and popups, then cancel the tool, the command or the selection.
+  escapeKey() {
+    closeMenus(); this.hideContextToolbar(); $('shortcutbar')?.classList.add('hidden'); $('viewcube')?.classList.add('hidden');
+    if (this.zoomAreaMode) { this.zoomAreaMode = false; $('headsup')?.querySelector('[data-id=zoomarea]')?.classList.remove('on'); return; }
+    if (this.mode === 'sketch' && !this.cmd) { this.sketcher.cancelTool(); return; }
+    if (this.cmd) return this.pmCancel();
+    return this.setSelection([]);
+  }
+
+  // F10 (Windows, SOLIDWORKS): the menu bar, File first.
+  focusMenubar() {
+    const bar = $('menubar');
+    if (!bar) return;
+    if (bar.classList.contains('hidden')) this.ribbon?.toggleMenubar?.(true);
+    bar.querySelector('.mi')?.focus();
+  }
+
   bindKeys() {
-    let mouse = { x: 300, y: 300 };
+    // Unknown until the pointer moves: a keyboard user's Tab must never hide the model under a stale position.
+    let mouse = null;
     window.addEventListener('pointermove', (e) => { mouse = { x: e.clientX, y: e.clientY }; });
+    document.addEventListener('pointerleave', () => { mouse = null; });
+    // A mouse click on a toolbar button or tab does not leave the keyboard focus on it, so Delete, Enter, Space and
+    // the letters keep acting on the model. Keyboard users who Tab to a button keep their focus there.
+    document.addEventListener('click', (e) => {
+      if (!e.detail) return;
+      const b = e.target?.closest?.('button, [role=button], [role=tab]');
+      if (b && document.activeElement === b && b.closest('#app') && !b.closest('.dlg, .contextmenu')) b.blur();
+    });
     document.addEventListener('keydown', (e) => {
-      const tag = (e.target.tagName || '').toLowerCase();
-      if (tag === 'input' || tag === 'textarea' || tag === 'select' || e.target.isContentEditable) return;
+      const where = this.keyTarget(e);
+      if (where === 'none') return;
       const k = e.key, ctrl = e.ctrlKey || e.metaKey, v = this.viewer;
+      if (k === 'F10' && !ctrl && !e.altKey && !e.shiftKey) { e.preventDefault(); return this.focusMenubar(); }
+      if (where === 'control') {
+        if (k === 'Escape') { e.target.blur?.(); return this.escapeKey(); }
+        if (!ctrl) return;
+      }
       if (ctrl && k.toLowerCase() === 'z') { e.preventDefault(); return this.undo(); }
       if (ctrl && k.toLowerCase() === 'y') { e.preventDefault(); return this.redo(); }
       if (ctrl && k.toLowerCase() === 's') { e.preventDefault(); return this.saveFile(); }
@@ -2242,23 +2296,26 @@ export class App {
       if (ctrl && /^[1-8]$/.test(k)) { e.preventDefault(); return this.orient(['front', 'back', 'left', 'right', 'top', 'bottom', 'isometric', 'normal'][+k - 1]); }
       if (ctrl && k.startsWith('Arrow')) { e.preventDefault(); const d = 40; return v.panBy(k === 'ArrowLeft' ? -d : k === 'ArrowRight' ? d : 0, k === 'ArrowUp' ? -d : k === 'ArrowDown' ? d : 0); }
       if (e.altKey && (k === 'ArrowLeft' || k === 'ArrowRight')) { e.preventDefault(); return v.rollBy((k === 'ArrowLeft' ? 1 : -1) * Math.PI / 12); }
+      if (ctrl) return;
       if (k.startsWith('Arrow')) { e.preventDefault(); const a = (e.shiftKey ? 90 : 15) * Math.PI / 180; return v.rotateBy(k === 'ArrowLeft' ? -a : k === 'ArrowRight' ? a : 0, k === 'ArrowUp' ? -a : k === 'ArrowDown' ? a : 0); }
-      if (k === 'Escape') {
-        closeMenus(); this.hideContextToolbar(); $('shortcutbar').classList.add('hidden'); $('viewcube').classList.add('hidden');
-        if (this.zoomAreaMode) { this.zoomAreaMode = false; $('headsup').querySelector('[data-id=zoomarea]')?.classList.remove('on'); return; }
-        if (this.mode === 'sketch' && !this.cmd) { if (this.sketcher.cancelTool()) return; return; }
-        if (this.cmd) return this.pmCancel();
-        return this.setSelection([]);
-      }
+      if (k === 'Escape') return this.escapeKey();
       if (k === 'Delete' || k === 'Backspace') { e.preventDefault(); return this.deleteSelection(); }
-      if (k === 'Enter') { if (this.pm.isOpen && (this.cmd || this.mode === 'sketch')) return this.pmOk(); if (this.lastCommand) return this.commands[this.lastCommand].run(); }
+      if (k === 'Enter') {
+        if (this.pm.isOpen && (this.cmd || this.mode === 'sketch')) { e.preventDefault(); return this.pmOk(); }
+        if (this.lastCommand) { e.preventDefault(); return this.commands[this.lastCommand].run(); }
+        return;
+      }
       if (k === ' ') { e.preventDefault(); return this.orientationPopup(); }
-      if (k === 'Tab') { e.preventDefault(); return this.tabHide(mouse, e.shiftKey); }
-      if (ctrl || e.altKey) return;
+      // Tab hides what is under the pointer only over the graphics area; anywhere else it moves the focus.
+      if (k === 'Tab') {
+        if (e.target.id === 'tree' || !this.overGraphics(mouse)) return;
+        e.preventDefault(); return this.tabHide(mouse, e.shiftKey);
+      }
+      if (e.altKey) return;
       if (k === 'f' || k === 'F') return v.zoomToFit();
       if (k === 'z') return v.zoomAt(1.25, v.w / 2, v.h / 2);
       if (k === 'Z') return v.zoomAt(0.8, v.w / 2, v.h / 2);
-      if (k === 's') return this.shortcutBar(mouse.x, mouse.y);
+      if (k === 's') return this.shortcutBar(mouse?.x ?? window.innerWidth / 2, mouse?.y ?? window.innerHeight / 2);
       if (this.mode === 'sketch') {
         const map = { l: 'line', c: 'circle', r: 'rectangle', d: 'smartdim', a: 'arc', p: 'point', t: 'trim' };
         if (map[k]) return this.sketchTool(map[k]);

@@ -419,3 +419,14 @@
 .skin-linear .aik-ok { color: var(--green); }
 .skin-linear .ai-model { color: var(--accent-text); }
 .skin-linear .ai-msg.err .ai-keybtn { margin-top: 10px; }
+
+/* Keyboard (2026-10-19) */
+.skin-linear.theme-dark { --danger-fill: #cd3b3b; }
+.skin-linear.theme-light { --danger-fill: #d1343a; }
+.skin-linear .tree:focus-visible { outline: 1px solid var(--line-2); outline-offset: -1px; }
+.skin-linear .tree:focus-visible .tn.cursor { outline: 1px solid var(--accent); outline-offset: -1px; }
+.skin-linear .contextmenu .cm:focus, .skin-linear .contextmenu .cm:focus-visible { outline: none; background: var(--active-bg); }
+.skin-linear .mgrtab.disabled { opacity: .3; }
+.skin-linear .mgrtab.disabled:hover { background: none; }
+.skin-linear .eqx { color: var(--muted); }
+.skin-linear .eqt input[aria-invalid=true], .skin-linear .pm-num input[aria-invalid=true] { border-color: var(--red); }

@@ -345,10 +345,13 @@ export class FilesView {
     if (f.by === 'claude' && !trash) meta.classList.add('by-ai');
     meta.append(nm, sub, sub2);
     const more = h('button', 'fv-more', FI.more); more.setAttribute('aria-label', `Actions for ${f.name}`); more.title = 'Actions';
-    more.onclick = (e) => { e.stopPropagation(); const r = more.getBoundingClientRect(); this.menu(f, r.right - 200, r.bottom + 4); };
+    more.setAttribute('aria-haspopup', 'menu');
+    more.onclick = (e) => { e.stopPropagation(); const r = more.getBoundingClientRect(); this.menu(f, r.right, r.bottom + 4, { keyboard: !e.detail, returnTo: more, alignRight: true }); };
     c.append(th, meta, more);
     c.onclick = () => (trash ? this.menu(f, ...this.menuAt(c)) : this.openFile(f));
     c.onkeydown = (e) => {
+      if (e.target !== c) return; // keys on the card's "..." button are that button's
+      if ((e.key === 'F10' && e.shiftKey) || e.key === 'ContextMenu') { e.preventDefault(); this.menu(f, ...this.menuAt(c), { keyboard: true, returnTo: c }); return; }
       if (e.key === 'Enter') { e.preventDefault(); c.onclick(); }
       if (e.key === 'F2' && !trash) { e.preventDefault(); this.rename(f, nm); }
       if ((e.key === 'Delete' || e.key === 'Backspace') && !trash) { e.preventDefault(); this.trashFile(f); }
@@ -368,13 +371,13 @@ export class FilesView {
 
   menuAt(el) { const r = el.getBoundingClientRect(); return [r.left + 16, r.top + 40]; }
 
-  menu(f, x, y) {
+  menu(f, x, y, opts = {}) {
     if (this.filter === 'trash') {
       contextMenu(x, y, [
         { label: 'Restore', icon: null, run: () => this.untrash(f) },
         '-',
         { label: 'Delete forever...', run: () => this.purge(f) },
-      ]);
+      ], null, opts);
       return;
     }
     contextMenu(x, y, [
@@ -387,7 +390,7 @@ export class FilesView {
       { label: 'Version history...', run: () => this.history(f) },
       '-',
       { label: 'Move to Trash', key: 'Del', run: () => this.trashFile(f) },
-    ]);
+    ], null, opts);
   }
 
   // ---------------------------------------------------------------- actions
