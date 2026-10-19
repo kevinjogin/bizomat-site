@@ -362,7 +362,7 @@ input, select, button { font: inherit; color: inherit; }
 .ai-act.error { border-color: #e7a7a2; background: #fffafa; }
 .ai-act.running { border-color: #c9b8ff; background: #faf8ff; }
 .ai-steps { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
-.ai-steps .st { display: inline-flex; align-items: center; gap: 2px; padding: 0 5px 0 2px; border-radius: 8px; background: #f1f1f4; font-size: 10.5px; animation: popin .25s ease-out; }
+.ai-steps .st { display: inline-flex; align-items: center; gap: 2px; padding: 0 5px 0 2px; border-radius: 8px; background: #f1f1f4; font-size: 10.5px; animation: popin .2s var(--ease, ease-out); }
 .ai-steps .st.error { background: #fde3e1; color: var(--sw-red); }
 .ai-steps .st.warning { background: #fff3d6; }
 .ai-sources { border-left: 2px solid #e3e3e3; padding: 2px 0 2px 8px; font-size: 11.5px; display: flex; flex-direction: column; gap: 2px; }

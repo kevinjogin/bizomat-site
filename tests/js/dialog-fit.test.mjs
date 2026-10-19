@@ -33,14 +33,19 @@ test('dialogs are capped to the window and scroll their body, in every look', ()
 });
 
 test('a menu taller than the space below its anchor starts inside the window', () => {
-  const real = window.HTMLElement.prototype.getBoundingClientRect;
-  window.HTMLElement.prototype.getBoundingClientRect = function () { return { left: 0, top: 0, width: 220, height: 640, right: 220, bottom: 640 }; };
+  // the layout size (the opening animation scales the box on screen for a moment, so that must not be used)
+  const proto = window.HTMLElement.prototype;
+  const saved = ['offsetWidth', 'offsetHeight'].map((k) => [k, Object.getOwnPropertyDescriptor(proto, k)]);
+  Object.defineProperty(proto, 'offsetWidth', { configurable: true, get: () => 220 });
+  Object.defineProperty(proto, 'offsetHeight', { configurable: true, get: () => 640 });
+  proto.getBoundingClientRect = function () { return { left: 0, top: 0, width: 220 * 0.98, height: 640 * 0.98, right: 216, bottom: 627 }; };
   try {
     const m = contextMenu(300, 120, [{ label: 'Line', run() {} }]);
     assert.equal(m.style.top, '4px');
     assert.equal(m.style.left, '166px', 'and its right edge stays inside');
   } finally {
-    window.HTMLElement.prototype.getBoundingClientRect = real;
+    for (const [k, d] of saved) { if (d) Object.defineProperty(proto, k, d); else delete proto[k]; }
+    delete proto.getBoundingClientRect;
     closeMenus();
   }
 });
