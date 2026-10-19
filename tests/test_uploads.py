@@ -166,4 +166,4 @@ def test_expired_uploads_are_cleaned_up(tmp_path, monkeypatch):
         gone = _tool(c, url, "import_document", upload_id=sent["upload_id"])
         assert "expired" in gone["error"]
         assert "expired" in _tool(c, url, "import_document", upload_id=waiting["upload_id"])["error"]
-        assert list((store.data_dir() / "uploads").iterdir()) == []
+        assert [p for p in (store.data_dir() / "uploads").iterdir() if p.name != ".lock"] == []

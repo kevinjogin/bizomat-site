@@ -57,6 +57,7 @@ UPDATE_NOTE = Path(os.environ.get("OPENSKETCH_UPDATE_NOTE", str(Path.home() / ".
 @asynccontextmanager
 async def lifespan(_app):
     _warm_owner()  # CAD runs in worker processes, one per person (cadworker.py): start the owner's now
+    await run_in_threadpool(_hand_over_orphans)
     try:
         async with mcp_server.lifespan_context():
             yield
@@ -71,6 +72,19 @@ def _warm_owner() -> None:
     except Exception:
         owner = None
     cadworker.lane_for(owner["id"] if owner else None).warm()
+
+
+def _hand_over_orphans() -> None:
+    """Files of accounts removed before their files were handed over go to the server owner's Trash (store.hand_over)."""
+    try:
+        from . import accounts
+        users = accounts.list_users()
+        if users:
+            moved = store.hand_over_orphans({u["id"] for u in users})
+            if moved:
+                print(f"OpenSketch: {moved} file(s) of removed accounts moved to the owner's Trash", flush=True)
+    except Exception as exc:  # never stops the server from starting
+        print(f"OpenSketch: could not check for files of removed accounts: {exc}", flush=True)
 
 
 def _lane(request: Request) -> "cadworker.Lane":
@@ -105,9 +119,90 @@ class SelectiveGZip:
         return await self.app(scope, receive, send)
 
 
+class _BodyTooBig(HTTPException):
+    def __init__(self, cap: int):
+        super().__init__(413, f"This request is too big (more than {cap / 2**20:.0f} MB)." if cap >= 2**20
+                         else "This request is too big.")
+
+
+BODY_MAX = store.DOC_MAX + 4 * 2**20  # a whole document plus the request around it (/api/regen, PUT /api/docs...)
+BODY_SMALL = 64 * 1024                # sign-in forms, OAuth, everything that is not /api/ or /mcp/
+OWN_BODY_LIMIT = ("/api/import/raw", "/mcp/uploads/", "/mcp/sw/file")  # streamed to their own, larger caps
+
+
+class BodyLimit:
+    """Refuses a request body over the size its path allows before anything reads it (sign-in, JSON parsing, the
+    routes): a Content-Length over it gets 413 at once, a body without one is counted as it arrives and stopped at
+    the limit. Without this one anonymous POST of a gigabyte to /oauth/token filled the 2 GB machine's memory."""
+
+    def __init__(self, app):
+        self.app = app
+
+    @staticmethod
+    def cap(path: str) -> int | None:
+        if path.startswith(OWN_BODY_LIMIT):
+            return None
+        return BODY_MAX if path.startswith(("/api/", "/mcp")) else BODY_SMALL
+
+    async def __call__(self, scope, receive, send):
+        cap = self.cap(scope.get("path", "")) if scope["type"] == "http" else None
+        if cap is None:
+            return await self.app(scope, receive, send)
+        try:
+            declared = int(dict(scope.get("headers") or []).get(b"content-length", b"0") or 0)
+        except ValueError:
+            declared = 0
+        if declared > cap:
+            return await self._refuse(send, cap)
+        seen, started = 0, False
+
+        async def limited():
+            nonlocal seen
+            message = await receive()
+            if message["type"] == "http.request":
+                seen += len(message.get("body", b""))
+                if seen > cap:
+                    raise _BodyTooBig(cap)  # FastAPI answers 413; anything else reading the body stops here
+            return message
+
+        async def tracked(message):
+            nonlocal started
+            if message["type"] == "http.response.start":
+                started = True
+            await send(message)
+
+        try:
+            await self.app(scope, limited, tracked)
+        except _BodyTooBig:
+            if started:
+                raise
+            await self._refuse(send, cap)
+
+    @staticmethod
+    async def _refuse(send, cap):
+        exc = _BodyTooBig(cap)
+        body = json.dumps({"error": exc.detail, "detail": exc.detail}).encode()
+        await send({"type": "http.response.start", "status": 413,
+                    "headers": [(b"content-type", b"application/json"), (b"content-length", str(len(body)).encode()),
+                                (b"connection", b"close")]})
+        await send({"type": "http.response.body", "body": body})
+
+
 app = FastAPI(title="OpenSketch", lifespan=lifespan)
 app.add_middleware(auth.PasswordGate)
 app.add_middleware(SelectiveGZip)
+app.add_middleware(BodyLimit)  # outermost: before the sign-in gate reads anything
+
+
+@app.exception_handler(store.StorageError)
+async def _storage_full(_request: Request, exc: store.StorageError):
+    """No room (disk nearly full, the person's Files full, a file too big): a plain message, nothing written."""
+    return JSONResponse({"error": str(exc)}, status_code=exc.status)
+
+
+@app.exception_handler(store.Damaged)
+async def _damaged(_request: Request, exc: store.Damaged):
+    return JSONResponse({"error": str(exc)}, status_code=422)
 
 
 class RegenRequest(BaseModel):
@@ -250,10 +345,11 @@ class ImportRequest(BaseModel):
     data: str  # base64 file content
 
 
-async def _import_reply(raw: bytes, filename: str, lane):
-    """Every failure comes back as JSON {error} with a readable message, never a bare 500."""
+async def _import_reply(raw, filename: str, lane, path: bool = False):
+    """Every failure comes back as JSON {error} with a readable message, never a bare 500. path: raw is the name of
+    a file holding the bytes (read by the worker)."""
     try:
-        return {"doc": await lane.run(cadjobs.import_file, raw, filename)}
+        return {"doc": await lane.run(cadjobs.import_path if path else cadjobs.import_file, raw, filename)}
     except cadworker.CadUnavailable as exc:
         return JSONResponse({"error": f"Could not import {filename}: {exc}"}, status_code=503)
     except cadworker.CadJobError as exc:
@@ -279,26 +375,49 @@ IMPORT_MAX = 128 * 1024 * 1024  # bytes of CAD data per upload (after unzipping 
 @app.post("/api/import/raw")
 async def api_import_raw(request: Request, filename: str = "model.step"):
     """STEP -> part or assembly document. The body is the file's bytes, gzipped by the browser when
-    the X-OpenSketch-Gzip header is 1 (a 14 MB STEP becomes ~3 MB, small enough for the Codespaces tunnel)."""
+    the X-OpenSketch-Gzip header is 1 (a 14 MB STEP becomes ~3 MB, small enough for the Codespaces tunnel).
+    The file goes to a temporary file as it arrives (unzipped bounded on the way), and the CAD worker reads it
+    from there, so the web server never holds a copy of it."""
     too_big = JSONResponse({"error": f"The file is bigger than {IMPORT_MAX // 2**20} MB. Split it or simplify it first."}, status_code=413)
-    body = bytearray()
-    async for chunk in request.stream():
-        body += chunk
-        if len(body) > IMPORT_MAX:
+    try:
+        if int(request.headers.get("content-length") or 0) > IMPORT_MAX:
             return too_big
-    body = bytes(body)
-    if request.headers.get("x-opensketch-gzip") == "1":
-        try:  # bounded: a small gzip that unpacks to gigabytes is refused, not unpacked
-            d = zlib.decompressobj(16 + zlib.MAX_WBITS)
-            out = d.decompress(body, IMPORT_MAX + 1)
-            if len(out) > IMPORT_MAX or d.unconsumed_tail:
-                return too_big
-            body = out + d.flush()
-            if not d.eof:
-                raise zlib.error("truncated")
-        except zlib.error:
-            return JSONResponse({"error": "The upload arrived damaged. Try again."}, status_code=400)
-    return await _import_reply(body, filename, _lane(request))
+    except ValueError:
+        pass
+    unzip = zlib.decompressobj(16 + zlib.MAX_WBITS) if request.headers.get("x-opensketch-gzip") == "1" else None
+    fd, tmp = tempfile.mkstemp(prefix="opensketch-import-", suffix=".bin")
+    try:
+        size = wire = 0
+        with os.fdopen(fd, "wb") as out:
+            try:
+                async for chunk in request.stream():
+                    wire += len(chunk)
+                    if wire > IMPORT_MAX:
+                        return too_big
+                    if unzip is not None:  # bounded: a small gzip that unpacks to gigabytes is refused, not unpacked
+                        chunk = unzip.decompress(chunk, IMPORT_MAX - size + 1)
+                        if unzip.unconsumed_tail:
+                            return too_big
+                    size += len(chunk)
+                    if size > IMPORT_MAX:
+                        return too_big
+                    out.write(chunk)
+                if unzip is not None:
+                    rest = unzip.flush()
+                    size += len(rest)
+                    if size > IMPORT_MAX:
+                        return too_big
+                    out.write(rest)
+                    if not unzip.eof:
+                        raise zlib.error("truncated")
+            except zlib.error:
+                return JSONResponse({"error": "The upload arrived damaged. Try again."}, status_code=400)
+        return await _import_reply(tmp, filename, _lane(request), path=True)
+    finally:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
 
 
 @app.get("/api/features")
@@ -685,8 +804,23 @@ class VersionRequest(BaseModel):
 def _found(fn, *a, **k):
     try:
         return fn(*a, **k)
+    except store.Damaged:
+        raise
     except store.NotFound:
         raise HTTPException(404, "No such document") from None
+
+
+def _bad_doc(doc) -> JSONResponse | None:
+    """The same structure check MCP imports get (store.check_structure): one malformed document must never be
+    stored, where it would break the Files list for everyone."""
+    try:
+        store.check_structure(doc)
+    except ValueError as e:
+        return JSONResponse({"error": f"This is not a document OpenSketch can keep: {e}"}, status_code=400)
+    return None
+
+
+SAVED_KEYS = ("id", "name", "version", "updated", "by", "summary")
 
 
 def _doc_meta(doc_id: str, request: Request, trash_ok: bool = False) -> dict:
@@ -733,11 +867,13 @@ def _free_name(kind: str, user) -> str:
 def api_doc_create(req: DocCreate, request: Request):
     kind = req.kind if req.kind in ("part", "assembly") else "part"
     if req.doc is not None:
+        if (bad := _bad_doc(req.doc)) is not None:
+            return bad
         kind = store.kind_of(req.doc)
     name = (req.name or "").strip()
     if not name or (req.doc is None and name == "Untitled"):
         name = _free_name(kind, _user(request))
-    return store.create(name, req.doc, kind, by="you", owner=store.owner_of(_user(request)))
+    return store.brief(store.create(name, req.doc, kind, by="you", owner=store.owner_of(_user(request))))
 
 
 @app.get("/api/docs/{doc_id}")
@@ -771,15 +907,24 @@ def api_doc_restore_version(doc_id: str, req: VersionRequest, request: Request):
 
 @app.put("/api/docs/{doc_id}")
 def api_doc_save(doc_id: str, req: DocSave, request: Request):
+    """The browser's save. No summary = an autosave: autosaves in one run of editing keep one version between them
+    (store.save). Answers only what the browser needs (the version), not the model it just sent."""
     m = _doc_meta(doc_id, request)
-    if isinstance(req.doc, dict):
-        req.doc["name"] = m["name"]  # a file is renamed only by PATCH: a save never renames it
+    if (bad := _bad_doc(req.doc)) is not None:
+        return bad
+    if req.requests is not None and (len(req.requests) > 200 or not all(isinstance(r, dict) for r in req.requests)):
+        return JSONResponse({"error": "requests must be a list of objects."}, status_code=400)
+    req.doc["name"] = m["name"]  # a file is renamed only by PATCH: a save never renames it
     try:
-        return store.save(doc_id, req.doc, "you", req.summary or "Edited in OpenSketch", req.base_version, req.requests)
+        rec = store.save(doc_id, req.doc, "you", req.summary or "Edited in OpenSketch", req.base_version, req.requests,
+                         autosave=not req.summary.strip())
+    except store.Damaged:
+        raise
     except store.NotFound:
         raise HTTPException(404, "No such document") from None
     except store.Conflict as c:
-        return JSONResponse({"error": "conflict", "current": c.current}, status_code=409)
+        return JSONResponse({"error": "conflict", "current": {k: c.current.get(k) for k in SAVED_KEYS}}, status_code=409)
+    return {k: rec.get(k) for k in SAVED_KEYS}
 
 
 @app.patch("/api/docs/{doc_id}")
@@ -823,9 +968,12 @@ def api_doc_discard(doc_id: str, request: Request):
 
 
 @app.delete("/api/docs/{doc_id}")
-def api_doc_delete(doc_id: str, request: Request, forever: bool = False):
-    """Move to the Trash; forever=1 removes a document that is already in the Trash."""
+def api_doc_delete(doc_id: str, request: Request, forever: bool = False, untouched: bool = False):
+    """Move to the Trash; forever=1 removes a document that is already in the Trash; untouched=1 removes a file New
+    made that is still empty and still named "Part N" / "Assembly N" (leaving it), else keeps it ({"kept": true})."""
     m = _doc_meta(doc_id, request, trash_ok=True)
+    if untouched:
+        return {"deleted": doc_id, "forever": True} if store.discard_if_untouched(doc_id) else {"kept": True}
     if forever:
         if not m.get("deleted"):
             return JSONResponse({"error": "Move it to the Trash first."}, status_code=400)
@@ -1032,7 +1180,20 @@ def api_remove_testers(request: Request):
     gone = accounts.remove_testers()
     for uid in gone:
         mcpauth.drop_user(uid)
+        _forget(uid, trash=True)  # their files go to your Trash (kept 30 days), their AI key is deleted
     return {"removed": len(gone)}
+
+
+def _forget(uid: str, trash: bool) -> int:
+    """What a removed account leaves: its saved AI key is deleted, its SOLIDWORKS link closed, its files go to the
+    server owner (store.hand_over)."""
+    from . import aikeys, swbridge
+    for step in (lambda: aikeys.remove(uid), lambda: swbridge.drop(uid, "closed")):
+        try:
+            step()
+        except Exception:
+            pass
+    return store.hand_over(uid, trash=trash)
 
 
 def _google_redirect(request: Request) -> str:
@@ -1114,7 +1275,8 @@ def api_remove_user(user_id: str, request: Request):
         return JSONResponse({"error": str(e)}, status_code=400)
     from . import mcpauth
     mcpauth.drop_user(user_id)  # their connected AI apps stop working too
-    return {"removed": user_id}
+    files = _forget(user_id, trash=False)  # their files move to your Files
+    return {"removed": user_id, "files": files}
 
 
 @app.get("/api/connect")
@@ -1186,6 +1348,8 @@ async def api_upload(upload_id: str, request: Request, expires: str = "", signat
         return _upload_reply({"error": str(exc)}, exc.status)
     digest, size, wire, ok = hashlib.sha256(), 0, 0, False
     unzip = zlib.decompressobj(16 + zlib.MAX_WBITS) if gz else None
+    space = uploads.room()  # the upload area's share of the disk, counted as the file arrives
+    full = {"error": "The upload area is full. Try again in a few minutes."}
 
     def keep(data: bytes) -> bool:
         nonlocal size
@@ -1205,10 +1369,14 @@ async def api_upload(upload_id: str, request: Request, expires: str = "", signat
                 if unzip is None:
                     if not keep(chunk):
                         return _upload_reply(too_big, 413)
+                    if size > space:
+                        return _upload_reply(full, 507)
                     continue
                 piece = unzip.decompress(chunk, cap - size + 1)  # bounded: a small gzip that unpacks to gigabytes stops here
                 if not keep(piece) or unzip.unconsumed_tail:
                     return _upload_reply(too_big, 413)
+                if size > space:
+                    return _upload_reply(full, 507)
             if unzip is not None:
                 if not keep(unzip.flush()):
                     return _upload_reply(too_big, 413)
@@ -1392,7 +1560,21 @@ async def api_review_publish(req: ReviewRequest, request: Request):
             return JSONResponse({"error": "Save the document to the server first (Save it to your Files first: Ctrl+S)."}, status_code=404)
         if exc.kind in ("ReviewError", "AssemblyError", "FeatureError"):
             return JSONResponse({"error": exc.message}, status_code=400)
+        if exc.kind in ("DiskFull", "QuotaFull", "TooBig"):
+            return JSONResponse({"error": exc.message}, status_code=507)
         raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
+
+
+def _review_visible(item: dict | None, request: Request) -> bool:
+    """A review is its document's owner's. Its document gone: the owner it was published for (older reviews: the
+    server owner); a link not in the list at all: the server owner only."""
+    user = _user(request)
+    if item is None:
+        return store.can_see({"owner": None}, user)
+    try:
+        return store.can_see(store.meta(item["doc_id"]), user)
+    except store.NotFound:
+        return store.can_see({"owner": item.get("owner")}, user)
 
 
 @app.get("/api/reviews")
@@ -1400,30 +1582,21 @@ def api_review_list(request: Request, doc_id: str | None = None):
     from . import review
     if doc_id is not None:
         _doc_meta(doc_id, request)
-    out = []
-    for item in review.listing(doc_id, _base(request)):
-        try:
-            if store.can_see(store.meta(item["doc_id"]), _user(request)):
-                out.append(item)
-        except store.NotFound:
-            if store.can_see({"owner": None}, _user(request)):
-                out.append(item)  # its document is gone: the server owner can still see and delete it
-    return out
+    return [item for item in review.listing(doc_id, _base(request)) if _review_visible(item, request)]
 
 
 @app.delete("/api/reviews/{token}")
 def api_review_delete(token: str, request: Request):
+    """Unpublish: the link stops working at once."""
     from . import review
     item = next((i for i in review.listing() if i["token"] == token), None)
-    if item is not None:
-        try:
-            visible = store.can_see(store.meta(item["doc_id"]), _user(request))
-        except store.NotFound:
-            visible = store.can_see({"owner": None}, _user(request))
-        if not visible:
-            raise HTTPException(404, "No such review")
-    if not review.delete(token):
+    if not _review_visible(item, request):
         raise HTTPException(404, "No such review")
+    try:
+        if not review.delete(token):
+            raise HTTPException(404, "No such review")
+    except review.ReviewError as e:
+        return JSONResponse({"error": str(e)}, status_code=409)
     return {"deleted": token}
 
 

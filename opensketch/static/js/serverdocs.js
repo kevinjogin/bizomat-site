@@ -4,8 +4,8 @@
 //   - follows it: polls /api/docs/<id>/head and loads each new version Claude saves (one undo step),
 //   - saves your edits back about a second after you stop (PUT with the version they were based on),
 //   - shows the bought parts Claude asked for as cards in the OpenSketch AI pane.
-// If Claude and you both changed it, a bar asks which version to keep. Nothing is thrown away: the server
-// keeps the last 50 versions.
+// If Claude and you both changed it, a bar asks which version to keep; the other one stays in the version
+// history (store.py keeps every AI change, restore and rename, and one version per 10 minutes of autosaves).
 
 import { dialog, message } from './ui/dialogs.js';
 import { isAssembly } from './asm.js';
@@ -174,6 +174,8 @@ export class ServerDocs {
     this.offerUnsent(rec);
     this.startPolling();
     if (!quiet) this.app.status(`Opened ${rec.name}. Your edits save by themselves; your AI's changes appear here.`);
+    // store.py could not read the file and served its newest good version; the next save writes over the damaged copy
+    if (rec.recovered) this.app.toast?.(`This file was damaged on the server, so its last good version (version ${rec.recovered.from_version}) opened. Your next change saves over the damaged copy.`, 10000);
     if (!rec.thumb || rec.thumb.version < rec.version || rec.thumb.source !== 'browser') this.scheduleThumb(1500);
     return true;
   }
@@ -563,8 +565,8 @@ export class ServerDocs {
     try { earlier = await this.req('GET', `/api/reviews?doc_id=${encodeURIComponent(this.link.id)}`); } catch (_) { /* none */ }
     const opts = versions.filter((v) => v.version < this.link.version)
       .map((v) => `<option value="${v.version}">Version ${v.version}: ${esc(v.summary || '')} (${esc(v.by || '')}, ${ago(v.updated)})</option>`).join('');
-    const prev = earlier.length ? `<p class="pm-note" style="margin-top:10px">Published before:</p><ul class="srv-list" style="max-height:140px">${earlier.map((r) =>
-      `<li class="srv-row"><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a><span>Version ${r.version}${r.compare ? ' vs ' + r.compare : ''}, ${ago(r.created)}</span></li>`).join('')}</ul>` : '';
+    const prev = earlier.length ? `<p class="pm-note pub-prev" style="margin-top:10px">Published before:</p><ul class="srv-list pub-list" style="max-height:140px">${earlier.map((r) =>
+      `<li class="srv-row pubrev" data-token="${esc(r.token)}"><div><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a><span>Version ${r.version}${r.compare ? ' vs ' + r.compare : ''}, ${ago(r.created)}</span></div><button type="button" class="btn pub-del">Delete link</button></li>`).join('')}</ul>` : '';
     const body = document.createElement('div');
     body.className = 'srv-connect';
     body.innerHTML = `<p>A read-only link to version ${this.link.version}, to send or open on a phone. It opens in OpenSketch with
@@ -574,6 +576,23 @@ export class ServerDocs {
       <label class="pubrow">Compare with <select id="pub-compare"><option value="">Nothing (no comparison)</option>${opts}</select></label>
       <label class="pubrow pubcol">Notes <textarea id="pub-notes" rows="4" placeholder="What changed and why, what is still open."></textarea></label>
       <div id="pub-result"></div>${prev}`;
+    // Unpublish: the link stops working at once (DELETE /api/reviews/<token>)
+    const unpublish = (token, gone) => dialog({ title: 'Delete review link', cls: 'fv-dlg',
+      body: '<p class="fv-p">Delete this link? Anyone who has it can no longer open the review.</p>', buttons: [
+        { label: 'Cancel' },
+        { label: 'Delete link', primary: true, danger: true, run: () => {
+          this.req('DELETE', `/api/reviews/${encodeURIComponent(token)}`).then(gone, (err) => message('Delete review link', esc(err.message)));
+        } },
+      ] });
+    body.addEventListener('click', (e) => {
+      const btn = e.target.closest('.pub-del');
+      if (!btn) return;
+      const row = btn.closest('[data-token]');
+      unpublish(row.dataset.token, () => {
+        row.remove();
+        if (!body.querySelector('.pub-list .pubrev')) { body.querySelector('.pub-list')?.remove(); body.querySelector('.pub-prev')?.remove(); }
+      });
+    });
     const d = dialog({ title: 'Publish Review', body, cls: 'srv-dlg', buttons: [
       { label: 'Publish', primary: true, run: () => {
         const btn = d.el.querySelector('.dlg-f .btn.primary');
@@ -590,8 +609,8 @@ export class ServerDocs {
             for (const j of c.joints) bits.push(`${esc(j.name)}: ${j.clashes ? j.clashes + ' clash(es) in its travel' : 'clear through its travel'}`);
             for (const k of c.contacts || []) bits.push(`${esc(k.name)}: ${k.apart ? `apart at ${k.apart} pose(s)` : 'touching'}`);
             out.innerHTML = `<p>Published. ${bits.join('; ')}.</p>
-              <div class="srv-url"><input id="pub-url" readonly value="${esc(r.url)}"><button class="btn" id="pub-copy">Copy</button><a class="btn" href="${esc(r.url)}" target="_blank" rel="noopener">Open</a></div>
-              <p class="pm-note">Anyone with the link can view it. Delete it from this list later if needed.</p>`;
+              <div class="srv-url" data-token="${esc(r.token)}"><input id="pub-url" readonly value="${esc(r.url)}"><button type="button" class="btn" id="pub-copy">Copy</button><a class="btn" href="${esc(r.url)}" target="_blank" rel="noopener">Open</a><button type="button" class="btn pub-del">Delete link</button></div>
+              <p class="pm-note">Anyone with the link can view it until you delete it. Deleting the file for good deletes its links too.</p>`;
             body.querySelector('#pub-copy').onclick = async () => { try { await navigator.clipboard.writeText(r.url); } catch (_) { body.querySelector('#pub-url').select(); } };
             btn.textContent = 'Publish again'; btn.disabled = false;
           })

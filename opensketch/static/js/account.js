@@ -278,7 +278,7 @@ export class Account {
       row.append(av, who, h('span', 'acct-role', p.role === 'owner' ? 'Owner' : p.tester ? 'Internal tester' : 'Member'));
       if (p.role !== 'owner') {
         const rm = h('button', 'btn', 'Remove');
-        rm.onclick = () => dialog({ title: 'Remove person', cls: 'acct-dlg', body: `<p class="fv-p">Remove <b>${esc(p.name)}</b> (${esc(p.tester && !kept(p) ? 'early access' : p.email)})? They are signed out at once and can no longer sign in. Their files stay on the server.</p>`,
+        rm.onclick = () => dialog({ title: 'Remove person', cls: 'acct-dlg', body: `<p class="fv-p">Remove <b>${esc(p.name)}</b> (${esc(p.tester && !kept(p) ? 'early access' : p.email)})? They are signed out at once and can no longer sign in. ${p.tester ? 'Their files move to your Trash.' : 'Their files move to your Files.'}</p>`,
           buttons: [{ label: 'Cancel' }, { label: 'Remove', primary: true, danger: true, run: () => {
             fetch('/api/account/users/' + encodeURIComponent(p.id), { method: 'DELETE' }).then((x) => x.json()).then((r) => {
               if (r.error) { message('People', esc(r.error)); return; }
@@ -334,7 +334,7 @@ export class Account {
       testers.append(h('span', null, `${a.testers} internal tester${a.testers === 1 ? '' : 's'}.`));
       if (a.testers) {
         const rm = h('button', 'btn', 'Remove all testers');
-        rm.onclick = () => dialog({ title: 'Remove all testers', cls: 'acct-dlg', body: `<p class="fv-p">Remove all ${a.testers} internal testers? They are signed out at once. Their files stay on the server.</p>`,
+        rm.onclick = () => dialog({ title: 'Remove all testers', cls: 'acct-dlg', body: `<p class="fv-p">Remove all ${a.testers} internal testers? They are signed out at once. Their files move to your Trash, where they are kept 30 days.</p>`,
           buttons: [{ label: 'Cancel' }, { label: 'Remove all', primary: true, danger: true, run: () => {
             fetch('/api/account/testers', { method: 'DELETE' }).then((x) => x.json()).then((r) => {
               if (r.error || r.detail) { message('People', esc(r.error || r.detail)); return; }

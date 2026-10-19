@@ -60,6 +60,13 @@ def import_file(raw: bytes, filename: str) -> dict:
     return importer.import_file(raw, filename)
 
 
+def import_path(path: str, filename: str) -> dict:
+    """import_file for an upload the web server wrote to a temporary file (it never holds the bytes itself)."""
+    with open(path, "rb") as f:
+        raw = f.read()
+    return importer.import_file(raw, filename)
+
+
 def toolbox_part(kind: str, args: dict) -> dict:
     """A Toolbox part document; ValueError with a plain reason when the size does not make a solid."""
     doc = importer.standard_part_doc(kind, **args)

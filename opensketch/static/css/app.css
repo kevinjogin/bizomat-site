@@ -420,6 +420,17 @@ input, select, button { font: inherit; color: inherit; }
 .srv-connect li { margin: 3px 0; }
 .srv-url { display: flex; gap: 6px; margin: 4px 0; }
 .srv-url input { flex: 1; min-width: 0; font: 11.5px ui-monospace, monospace; padding: 4px 6px; border: 1px solid var(--border); border-radius: 3px; }
+/* Publish Review: earlier links with Delete link */
+.pub-list { padding: 0; margin: 4px 0 0; min-width: 0; }
+.srv-row.pubrev { flex-direction: row; align-items: center; justify-content: space-between; gap: 8px; cursor: default; }
+.srv-row.pubrev:hover { border-color: #e3e3e3; background: #fff; }
+.srv-row.pubrev > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.srv-row.pubrev a { overflow-wrap: anywhere; }
+.pub-del { flex: none; }
+@media (max-width: 760px) {
+  .srv-url[data-token] { flex-wrap: wrap; }
+  .srv-url[data-token] input { flex-basis: 100%; }
+}
 
 /* Equations dialog */
 .eqdialog { min-width: 0; width: min(680px, calc(100vw - 16px)); }
