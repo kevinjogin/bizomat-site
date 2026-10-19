@@ -35,8 +35,8 @@ const MB = (n) => (n / 1e6).toFixed(1) + ' MB';
 // When the upload never reached OpenSketch (the reply is not ours), say what the status means.
 function importFailText(status, size) {
   if (status === 413) return `The upload (${MB(size)}) was too big for the connection to the server.`;
-  if (status === 502 || status === 503 || status === 504) return 'The connection to the server gave up before the import finished. Try again; if it keeps failing, the file may be too big for the Codespaces connection.';
-  if (status === 401 || status === 403) return 'The server refused the upload (signed out of the Codespace?). Reload the page and try again.';
+  if (status === 502 || status === 503 || status === 504) return 'The server did not finish the upload. Try again in a minute. If it keeps failing, try a .zip of the file or a smaller file.';
+  if (status === 401 || status === 403) return 'You were signed out. Reload the page, sign in again and try once more.';
   return `The server did not answer properly (HTTP ${status || 'no status'}). Reload the page and try again.`;
 }
 const AUTOSAVE = 'opensketch.autosave.v1';

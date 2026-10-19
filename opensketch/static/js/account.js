@@ -157,7 +157,7 @@ export class Account {
       row.append(av, who, h('span', 'acct-role', p.role === 'owner' ? 'Owner' : p.tester ? 'Internal tester' : 'Member'));
       if (p.role !== 'owner') {
         const rm = h('button', 'btn', 'Remove');
-        rm.onclick = () => dialog({ title: 'Remove person', cls: 'acct-dlg', body: `<p class="fv-p">Remove <b>${esc(p.name)}</b> (${esc(p.email)})? They are signed out at once and can no longer sign in. Their files stay on the server.</p>`,
+        rm.onclick = () => dialog({ title: 'Remove person', cls: 'acct-dlg', body: `<p class="fv-p">Remove <b>${esc(p.name)}</b> (${esc(p.tester ? 'early access' : p.email)})? They are signed out at once and can no longer sign in. Their files stay on the server.</p>`,
           buttons: [{ label: 'Cancel' }, { label: 'Remove', primary: true, danger: true, run: () => {
             fetch('/api/account/users/' + encodeURIComponent(p.id), { method: 'DELETE' }).then((x) => x.json()).then((r) => {
               if (r.error) { message('People', esc(r.error)); return; }

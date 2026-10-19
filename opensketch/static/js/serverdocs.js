@@ -366,7 +366,7 @@ export class ServerDocs {
       tp.add({ role: 'request', part: r.part, description: r.description, mcmaster: r.mcmaster, url: r.url });
       added++;
     }
-    if (added) { tp.show('ai'); this.app.status(`Claude asked for ${added} bought part${added === 1 ? '' : 's'}: see the OpenSketch AI pane.`); }
+    if (added) { tp.show('ai'); this.app.status(`Your AI asked for ${added} bought part${added === 1 ? '' : 's'}: see the OpenSketch AI pane.`); }
   }
 
   partReplaced(pid) {

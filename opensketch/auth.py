@@ -339,7 +339,8 @@ def _page(title, sub, action, fields, button, nxt="/", error="", links="", top="
 
 def _login_page(nxt, error="", email=""):
     from . import accounts
-    forgot = ('<a href="/reset">Forgot your password?</a>' if password() else
+    forgot = ('<span class="note">Forgot your password? Ask the person who invited you. '
+              '<a href="/reset">Run this server?</a></span>' if password() else
               '<span class="note">Forgot your password? Ask the server owner for help.</span>')
     signup = '<a href="/signup">Create an account</a>' if accounts.settings()["open_signup"] else ""
     links = f'<div class="links">{forgot}{signup}</div>'
@@ -398,7 +399,7 @@ def _join_page(token, error="", form=None):
 
 
 def _reset_page(error="", email=""):
-    return _page("Reset your password", "Use the server password (OPENSKETCH_PASSWORD) to set a new password.", "/reset",
+    return _page("Reset a password", "For the person who runs this server: the server password sets a new password for any account. Everyone else: ask the person who invited you.", "/reset",
                  [_field("email", "Email", "email", "username", True, email),
                   _field("server_password", "Server password", "password", "off"),
                   _field("new_password", "New password", "password", "new-password", note="At least 8 characters.")],
