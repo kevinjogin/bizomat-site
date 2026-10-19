@@ -160,8 +160,7 @@ export class FeatureTree {
       let n = 0;
       for (const r of rows) { const rr = r.getBoundingClientRect(); if (ev.clientY > rr.top + rr.height / 2) n = r; }
       target = n;
-      for (const r of rows) r.style.borderBottom = '';
-      if (n) n.style.borderBottom = '3px solid #3c6fd1';
+      for (const r of rows) r.classList.toggle('rb-drop', r === n); // the drop line (app.css / linear.css)
     };
     const end = (commit) => (ev) => {
       if (ev.pointerId !== pid) return;
@@ -169,7 +168,7 @@ export class FeatureTree {
       window.removeEventListener('pointercancel', cancel); bar.removeEventListener('lostpointercapture', cancel);
       try { bar.releasePointerCapture(pid); } catch (_) { /* already released */ }
       bar.classList.remove('drag');
-      for (const r of rows) r.style.borderBottom = '';
+      for (const r of rows) r.classList.remove('rb-drop');
       if (!commit || target === null || !this.el.contains(bar)) return;
       let idx = 0;
       if (target) {

@@ -121,9 +121,12 @@ input, select, button { font: inherit; color: inherit; }
 .tn.root .nm { font-weight: 600; }
 /* inline rename (F2): a field in the theme's colours, after the state rules so a greyed or red name reads normally */
 .tn .nm.rename { background: var(--field, #fff); color: var(--text); font-style: normal; border: 1px solid var(--accent); padding: 0 2px; outline: none; text-overflow: clip; cursor: text; }
-.rollbar { height: 6px; margin: 2px 6px 2px 14px; background: #3c6fd1; border-top: 2px solid #f2c230; cursor: ns-resize; border-radius: 1px; }
+/* the rollback bar: a thin line with a taller grab band (::after), and no page panning while it is dragged by touch */
+.rollbar { height: 6px; margin: 4px 6px 4px 14px; background: #3c6fd1; border-top: 2px solid #f2c230; cursor: ns-resize; border-radius: 1px; position: relative; touch-action: none; }
+.rollbar::after { content: ""; position: absolute; left: -8px; right: 0; top: -4px; bottom: -4px; }
 .rollbar:hover, .rollbar.drag { background: #2050b8; }
-.rollbar-ghost { height: 3px; margin: 0 6px 0 14px; background: #3c6fd1; opacity: .6; }
+/* where a dragged rollback bar will land */
+.tn.rb-drop { box-shadow: inset 0 -3px 0 #3c6fd1; }
 
 /* PropertyManager */
 .pm { display: flex; flex-direction: column; }

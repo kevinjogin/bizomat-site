@@ -174,10 +174,12 @@
 .skin-linear .tn.proposed .nm { color: var(--accent-text); }
 .skin-linear .tn .nm.rename { background: var(--field); color: var(--text); font-style: normal; border: 1px solid var(--accent); border-radius: 4px; padding: 0 4px; }
 .skin-linear .tn .nm.rename::selection { background: var(--accent-bg); color: var(--text); }
-.skin-linear .rollbar { height: 2px; margin: 6px 6px 6px 14px; background: var(--accent); border: 0; border-radius: 2px; position: relative; }
+.skin-linear .rollbar { height: 2px; margin: 6px 6px 6px 14px; background: var(--accent); border: 0; border-radius: 2px; }
 .skin-linear .rollbar::before { content: ""; position: absolute; left: -4px; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--side); border: 1.5px solid var(--accent); box-sizing: border-box; }
-.skin-linear .rollbar:hover, .skin-linear .rollbar.drag { height: 3px; background: var(--accent-h); }
-.skin-linear .rollbar-ghost { height: 2px; background: var(--accent); opacity: .4; }
+/* the line stays 2 px; the grab band is 14 px (it sits in the bar's own margins, so it takes no clicks from rows) */
+.skin-linear .rollbar::after { top: -6px; bottom: -6px; }
+.skin-linear .rollbar:hover, .skin-linear .rollbar.drag { background: var(--accent-h); box-shadow: 0 0 0 3px var(--accent-bg); }
+.skin-linear .tn.rb-drop { box-shadow: inset 0 -2px 0 var(--accent); }
 
 /* ---------------------------------------------------------------- PropertyManager */
 .skin-linear .pm-title { padding: 10px 12px 4px; font-weight: 600; font-size: 13px; color: var(--text); }
