@@ -301,7 +301,7 @@ input, select, button { font: inherit; color: inherit; }
 .sb-units:hover, .sb-help:hover { background: var(--hover); }
 
 /* ---------------------------------------------------------------- menus & dialogs */
-.contextmenu { position: fixed; min-width: 190px; background: #fbfbfb; border: 1px solid var(--border); box-shadow: 0 4px 14px rgba(0,0,0,.22); padding: 2px 0; z-index: 100; }
+.contextmenu { position: fixed; min-width: 190px; max-height: calc(100vh - 8px); max-height: calc(100dvh - 8px); overflow-y: auto; background: #fbfbfb; border: 1px solid var(--border); box-shadow: 0 4px 14px rgba(0,0,0,.22); padding: 2px 0; z-index: 100; }
 .contextmenu .cm-tb { display: flex; gap: 1px; padding: 2px 4px 3px; border-bottom: 1px solid var(--border-l); }
 .contextmenu .cm-tb .ct { display: flex; padding: 2px; border: 1px solid transparent; cursor: pointer; }
 .contextmenu .cm-tb .ct:hover { background: var(--hover); border-color: var(--hover-b); }
@@ -318,12 +318,14 @@ input, select, button { font: inherit; color: inherit; }
 
 .dlg-back { position: fixed; inset: 0; z-index: 200; }
 .dlg-back.modal { background: rgba(0,0,0,.08); }
-.dlg { position: fixed; background: #f4f4f4; border: 1px solid #9a9a9a; box-shadow: 0 6px 24px rgba(0,0,0,.28); min-width: 260px; }
-.dlg-h { display: flex; align-items: center; height: 26px; padding: 0 4px 0 8px; background: #fff; border-bottom: 1px solid var(--border-l); cursor: move; user-select: none; }
+.dlg { position: fixed; background: #f4f4f4; border: 1px solid #9a9a9a; box-shadow: 0 6px 24px rgba(0,0,0,.28); min-width: min(260px, calc(100vw - 16px));
+  /* never larger than the window: the body scrolls, the title and the buttons stay in view */
+  max-width: calc(100vw - 16px); max-height: calc(100vh - 16px); max-height: calc(100dvh - 16px); display: flex; flex-direction: column; }
+.dlg-h { flex: none; display: flex; align-items: center; height: 26px; padding: 0 4px 0 8px; background: #fff; border-bottom: 1px solid var(--border-l); cursor: move; user-select: none; touch-action: none; }
 .dlg-h .x { margin-left: auto; width: 26px; text-align: center; cursor: pointer; }
 .dlg-h .x:hover { background: #e81123; color: #fff; }
-.dlg-b { padding: 10px; }
-.dlg-f { display: flex; justify-content: flex-end; gap: 6px; padding: 0 10px 10px; }
+.dlg-b { padding: 10px; min-height: 0; overflow: auto; }
+.dlg-f { flex: none; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; padding: 0 10px 10px; }
 .modify { min-width: 0; width: 200px; }
 .modify .dlg-b { padding: 6px; }
 .modify .mod-tb { display: flex; gap: 2px; margin-bottom: 4px; }
@@ -393,7 +395,7 @@ input, select, button { font: inherit; color: inherit; }
 .sec-slider { width: 100%; }
 
 /* Export SOLIDWORKS Macro dialog */
-.dlg.macro { width: 520px; }
+.dlg.macro { width: min(520px, calc(100vw - 16px)); }
 .macro-dlg .macro-log { font: 11px/1.4 Consolas, monospace; background: #f4f6f8; border: 1px solid #d5dbe1; padding: 6px 8px; margin: 8px 0; min-height: 60px; white-space: pre-wrap; color: #33404d; }
 .macro-dlg table.macro-parts { width: 100%; border-collapse: collapse; margin-bottom: 6px; font-size: 12px; }
 .macro-dlg table.macro-parts td { border-bottom: 1px solid #e3e7eb; padding: 3px 4px; vertical-align: top; }
@@ -426,7 +428,7 @@ input, select, button { font: inherit; color: inherit; }
 .srv-url input { flex: 1; min-width: 0; font: 11.5px ui-monospace, monospace; padding: 4px 6px; border: 1px solid var(--border); border-radius: 3px; }
 
 /* Equations dialog */
-.eqdialog { min-width: 680px; }
+.eqdialog { min-width: 0; width: min(680px, calc(100vw - 16px)); }
 .eqt { border-collapse: collapse; width: 100%; font-size: 12px; }
 .eqt th { text-align: left; font-weight: normal; color: #555; border-bottom: 1px solid #c8c8c8; padding: 3px 4px; }
 .eqt td { padding: 2px 4px; vertical-align: middle; }
@@ -522,7 +524,7 @@ body.review-mode .doctitle { flex: 1; text-align: left; }
 .acct-note { color: var(--muted); font-size: 11px; margin-top: 6px; }
 .acct-err { color: var(--sw-red); font-size: 12px; margin-top: 6px; }
 .acct-err:empty { display: none; }
-.acct-people { display: flex; flex-direction: column; gap: 2px; }
+.acct-people { display: flex; flex-direction: column; gap: 2px; max-height: min(320px, 40vh); overflow: auto; }
 .acct-p { display: flex; align-items: center; gap: 10px; padding: 6px 4px; border-radius: 6px; }
 .acct-p:hover { background: var(--hover); }
 .acct-p .avatar { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 600; font-size: 11px; flex: none; }

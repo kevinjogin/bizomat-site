@@ -58,11 +58,23 @@ export function dialog({ title, body, buttons = [], x, y, modal = true, cls = ''
   dlg.style.left = Math.max(4, Math.min(window.innerWidth - r.width - 4, x ?? (window.innerWidth - r.width) / 2)) + 'px';
   dlg.style.top = Math.max(4, Math.min(window.innerHeight - r.height - 4, y ?? (window.innerHeight - r.height) / 3)) + 'px';
   makeDraggable(dlg, head);
+  // Keep it inside the window when its content grows (lists that load late) or the window shrinks (a phone
+  // turned): the stylesheet caps its size, this moves it back so the title and the buttons stay reachable.
+  const clamp = () => {
+    const q = dlg.getBoundingClientRect();
+    const L = Math.max(4, Math.min(window.innerWidth - q.width - 4, q.left)), T = Math.max(4, Math.min(window.innerHeight - q.height - 4, q.top));
+    if (Math.abs(L - q.left) > 0.5) dlg.style.left = L + 'px';
+    if (Math.abs(T - q.top) > 0.5) dlg.style.top = T + 'px';
+  };
+  const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(clamp) : null;
+  ro?.observe(dlg);
+  window.addEventListener('resize', clamp);
   const before = document.activeElement;
   let closed = false;
   function close() {
     if (closed) return;
     closed = true;
+    ro?.disconnect(); window.removeEventListener('resize', clamp);
     document.removeEventListener('keydown', key, true);
     back.classList.add('closing');
     document.body.appendChild(back); // out of the dialog layer at once; it fades out on its own
@@ -146,8 +158,8 @@ export function contextMenu(x, y, items, toolbar = null) {
   }
   document.body.appendChild(m);
   const r = m.getBoundingClientRect();
-  m.style.left = Math.min(x, window.innerWidth - r.width - 4) + 'px';
-  m.style.top = Math.min(y, window.innerHeight - r.height - 4) + 'px';
+  m.style.left = Math.max(4, Math.min(x, window.innerWidth - r.width - 4)) + 'px';
+  m.style.top = Math.max(4, Math.min(y, window.innerHeight - r.height - 4)) + 'px';
   openMenu = m;
   return m;
 }

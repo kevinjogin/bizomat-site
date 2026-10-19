@@ -267,7 +267,7 @@ a.fv-pill { line-height: 34px; }
 .cx-dlg { width: min(680px, calc(100vw - 24px)); }
 .cx-dlg .dlg-h { border-bottom: 0; height: 36px; }
 .cx-dlg .dlg-h > span:first-child { visibility: hidden; }
-.cx-dlg .dlg-b { padding: 0 22px 20px; max-height: calc(100vh - 80px); overflow: auto; }
+.cx-dlg .dlg-b { padding: 0 22px 20px; }
 .cx-hero { display: flex; align-items: center; gap: 14px; margin: 2px 0 16px; }
 .cx-hero h2 { margin: 0; font-family: var(--font-display); font-weight: 750; font-size: 24px; letter-spacing: -.035em; line-height: 1.1; }
 .cx-hero p { margin: 3px 0 0; color: var(--text-2); }
