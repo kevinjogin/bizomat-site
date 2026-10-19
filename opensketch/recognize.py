@@ -57,9 +57,12 @@ class RecognizeError(Exception):
 # cannot interrupt it. Workers announce each risky step here; recognize_part_safe kills a worker stuck on one step
 # and runs the part again without it.
 _beat = None
+_label: str | None = None  # the step announced last
 
 
 def _mark(label: str | None) -> None:
+    global _label
+    _label = label
     if _beat is not None:
         _beat(label)
         stall = os.environ.get("OPENSKETCH_RECOGNIZE_STALL")  # tests: make a worker hang on a step like this one
@@ -280,7 +283,7 @@ class Ctx:
     def same(self, a, b) -> bool:
         """Two solids are the same (equal volume, each one's surface on the other's)."""
         self.checks += 1
-        return same_solid(a, b, self.vtol, self.ltol)[0]
+        return same_solid(a, b, self.vtol, self.ltol, diff=False)[0]
 
     def same_near(self, a, b, region: list) -> bool:
         """The check for one recognised feature: equal volume, and the faces around the change (the faces the
@@ -363,20 +366,34 @@ def surfaces_match(a, b, tol: float, near: list | None = None) -> bool:
     return True
 
 
-def same_solid(a, b, vtol: float, ltol: float) -> tuple[bool, float]:
+def same_solid(a, b, vtol: float, ltol: float, diff: bool = True, skip=()) -> tuple[bool, float]:
     """(same, volume difference). Same means equal volume and every sampled surface point of each solid lying on
     the other (booleans alone are not trusted: between near-identical solids OpenCascade can return empty cuts,
-    which read as a perfect match). The difference is the boolean one when the booleans hold together."""
+    which read as a perfect match). The verdict needs no booleans; only a mismatch's size does (the boolean one,
+    when the booleans hold together), and only when `diff` asks for it. Those booleans are their own step
+    ("diff"), so if OpenCascade hangs on them the worker reruns without them instead of losing the whole part."""
     if a is None or b is None:
         return False, math.inf
     try:
         dv = abs(a.volume - b.volume)
     except Exception:
         return False, math.inf
-    d = diff_volume(a, b)
+
+    def difference():
+        if not diff or "diff" in skip:
+            return math.inf
+        was = _label
+        _mark("diff")
+        try:
+            return diff_volume(a, b)
+        finally:
+            _mark(was)
+
     if dv > vtol:
+        d = difference()
         return False, d if math.isfinite(d) else dv
     if not surfaces_match(a, b, ltol):
+        d = difference()
         return False, d if math.isfinite(d) and d > vtol else max(dv, vtol * 10)
     return True, dv
 
@@ -2026,8 +2043,10 @@ def _recognize_once(body, kinds, existing, time_limit, source, stop, skip, bad: 
         if final is None:
             return None
         feats = [{k: v for k, v in f.items() if not k.startswith("_")} for f in feats]
-        _name_refs(feats)
+        # Patterns first: names given before would point at holes the pattern replaces (a fillet on a row of
+        # hole rims then lost its edges once the spacing was edited).
         feats = _hole_patterns(feats, namer)
+        _name_refs(feats)
         k = 0
         for f in feats:  # number the holes in tree order once patterns have taken their copies
             if f["type"] == "hole" and re.fullmatch(r"Hole\d+", f.get("name", "")):
@@ -2036,9 +2055,10 @@ def _recognize_once(body, kinds, existing, time_limit, source, stop, skip, bad: 
         st, _ = geometry.regen({"features": feats})
         final = geometry.solid_of(st.part) if st.part is not None else None
         errors = [x for x in st.status if x.get("state") == "error"]
-        ok, d = same_solid(final, body, ctx.vtol, ctx.ltol)
+        lost = [x for x in st.status if any(w.get("code") == "name_not_found" for w in x.get("warnings") or [])]
+        ok, d = same_solid(final, body, ctx.vtol, ctx.ltol, skip=ctx.skip)
         return {"feats": feats, "base": base, "problems": problems, "errors": errors, "diff": d,
-                "exact": ok and not errors and not problems}
+                "exact": ok and not errors and not problems and not lost}
 
     base_note = ""
     _mark("base" if chosen is not None else "build")
@@ -2297,7 +2317,7 @@ def recognize_part_safe(part: dict, kinds=None, feature_id: str | None = None, t
                         b = None
                     # One defeature or check that runs on is a hang; building and checking the whole tree may
                     # legitimately take a while on a large body.
-                    limit = hang if b and b.get("label") not in ("base", "build") else max(6 * hang, 120.0)
+                    limit = hang if b and b.get("label") not in ("base", "build", "diff") else max(6 * hang, 120.0)
                     if b and b.get("label") and time.time() - b["t"] > limit:
                         hung = b["label"]
                         break
