@@ -900,7 +900,7 @@ def _trim_history(doc_id: str, entries: list[dict], free_up: int = 0) -> list[di
         if i == 0 or (len(keep) < KEEP and total + n <= HISTORY_MAX):
             keep.append(e)
             total += n
-    freed = 0
+    freed = sum(int(e.get("bytes") or 0) for e in entries) - total  # what the limits above dropped already
     while free_up > freed and keep:
         freed += int(keep.pop().get("bytes") or 0)
     hist = _hist_dir(doc_id)

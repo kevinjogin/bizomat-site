@@ -200,6 +200,16 @@ def test_version_list_reads_its_index_not_the_versions():
     assert (store._hist_dir(rec["id"]) / "versions.json").exists()
 
 
+def test_making_room_counts_what_the_history_limit_already_dropped(monkeypatch):
+    rec = store.create("Plate", _block("Plate"))
+    entries = [{"version": 3, "bytes": 1000}, {"version": 2, "bytes": 1000}]
+    monkeypatch.setattr(store, "HISTORY_MAX", 1500)
+    assert [e["version"] for e in store._trim_history(rec["id"], entries, free_up=500)] == [3]
+    monkeypatch.setattr(store, "HISTORY_MAX", 10**9)
+    assert [e["version"] for e in store._trim_history(rec["id"], entries, free_up=500)] == [3]
+    assert [e["version"] for e in store._trim_history(rec["id"], entries, free_up=1500)] == []
+
+
 # ----------------------------------------------------------------------------- imported geometry stored once
 
 def test_imported_geometry_is_stored_once_for_every_version():
