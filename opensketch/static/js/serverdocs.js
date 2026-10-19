@@ -17,6 +17,7 @@ const POLL_MS = 1500;
 const PUSH_MS = 1200;
 const THUMB_MS = 20000; // at most one new picture of the model per 20 s while editing
 const sleep = (ms) => new Promise((ok) => setTimeout(ok, Math.max(0, ms)));
+const sameModel = (a, b) => JSON.stringify({ ...a, name: '' }) === JSON.stringify({ ...b, name: '' }); // the server keeps the file's name
 const LAST = 'opensketch.lastDoc';
 const DRAFT_LINK = 'opensketch.autosave.link'; // older pages: the browser copy was a file's, not a draft
 const UNSENT = 'opensketch.unsent.'; // + file id: edits the server does not have yet
@@ -95,8 +96,7 @@ export class ServerDocs {
   offerUnsent(rec) {
     const u = this.unsent(rec.id);
     if (!u?.doc || this.link?.id !== rec.id) return;
-    const same = (a, b) => JSON.stringify({ ...a, name: '' }) === JSON.stringify({ ...b, name: '' });
-    if (same(u.doc, rec.doc)) { this.dropUnsent(rec.id); return; }
+    if (sameModel(u.doc, rec.doc)) { this.dropUnsent(rec.id); return; }
     const app = this.app;
     const put = () => {
       if (this.link?.id !== rec.id) return;
@@ -485,7 +485,13 @@ export class ServerDocs {
     const pushedAt = this.app.undoStack.length;
     this.pushing = (async () => {
       try {
-        const rec = await this.req('PUT', `/api/docs/${L.id}`, { doc, base_version: L.version, summary, requests: L.requests });
+        let rec;
+        try { rec = await this.req('PUT', `/api/docs/${L.id}`, { doc, base_version: L.version, summary, requests: L.requests }); } catch (err) {
+          // a save that did reach the server, but whose answer was lost (a restart), comes back as a conflict with
+          // this very model: it is saved, not changed elsewhere
+          if (err.message !== 'conflict' || !err.current?.doc || !sameModel(err.current.doc, doc)) throw err;
+          rec = err.current;
+        }
         L.version = rec.version; L.name = rec.name;
         const sent = JSON.stringify(doc);
         const copy = this.unsent(L.id);

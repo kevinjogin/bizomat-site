@@ -508,3 +508,19 @@ test('Files: search redraws without replaying the entrance; Undo toast goes once
   assert.equal(closed, 1, 'the stale Undo toast closed');
   stopTimers(app);
 });
+
+test('a save whose answer was lost is not taken for a change made elsewhere', async () => {
+  server.docs.clear(); server.puts = []; server.down = false;
+  addDoc('L', part('Lever', 1));
+  const app = makeApp();
+  await app.server.open('L');
+  app.commit('Plane2', () => app.doc.features.push({ id: 'p2', type: 'plane', name: 'Plane2' }), false);
+  // the server stores the save, then the answer is lost
+  const rec = server.docs.get('L');
+  Object.assign(rec, { version: 2, doc: { ...app.rootDoc(), name: 'Lever' } });
+  assert.equal(await app.server.flush(), true);
+  assert.equal(app.server.state, 'saved');
+  assert.equal(app.server.link.version, 2);
+  assert.equal(document.getElementById('serverbar'), null);
+  stopTimers(app);
+});
