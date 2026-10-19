@@ -15,8 +15,9 @@ export class Account {
     this.app = app;
     this.el = document.getElementById('account');
     this.info = null;
+    this.ready = Promise.resolve(null);
     if (!this.el || typeof window.OPENSKETCH_REVIEW === 'string') return; // a shared review link has no account
-    this.load();
+    this.ready = this.load(); // app.startup waits for it: browser storage is per person (scope.js)
   }
 
   async load() {

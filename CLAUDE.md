@@ -55,8 +55,13 @@ unlimited usage; just for showcases"):
 - `auth.py`: `/access` (accounts mode only; 410 page when no code is on; GET shows the form, `?code=` prefills it, an
   already signed-in browser goes straight in; POST rate-limited per IP like sign-in, 1 s delay on a wrong code, then a
   new tester + session cookie -> `next`). Sign-in page shows "Have an early access code?" while a code is on.
-- `aikeys.effective`: a tester without their own key always gets the server's key, even with open sign-up on. No usage
-  limit (YZ's choice): anyone with the code can spend the server's Anthropic key until the code is changed or off.
+- `aikeys.effective`: testers get `aikeys.early_access_config()` = the server's ANTHROPIC_API_KEY, else the key the owner
+  saved in OpenSketch (Connect AI > Built-in AI; the live server has no server key, which is why a tester was first
+  asked for a key), else a "local" key; source "early_access", even with open sign-up on. Nothing about it reaches a
+  tester's browser: `/api/ai/keys` gives them `{settings: null, server_key, early_access: true}` (no hint, no
+  provider settings), `POST /api/ai/keys` and `/api/ai/models` are 403 for them, and the Built-in AI tab says "AI is
+  included with early access" with no key form. No usage limit (YZ's choice): anyone with the code can spend that key
+  until the code is changed or turned off.
 - Server: `/api/account` gives the owner `access` {code, on, source, testers, link}; `POST /api/account/settings`
   takes `access_code` / `access_on` (open_signup now optional); `DELETE /api/account/testers` removes them all (and
   their connected AI apps, `mcpauth.drop_user`). Testers get their own Files and CAD workers like members; their files
@@ -65,8 +70,15 @@ unlimited usage; just for showcases"):
   with the code, a warning about the key, N internal testers, Remove all testers); People rows say Internal tester;
   a tester's avatar menu is "Internal tester N - early access" with Files, Connect AI, Theme, Sign out (no Account
   settings: no email or password to manage).
-- Tests: `tests/test_accounts.py` +2 (the whole flow incl. own Files, server key with open sign-up on, numbering,
-  owner sees/changes/turns off/removes, member cannot change it; guessing limited to 8 then 429). Checked in Chromium:
+- Start-up after sign-in (same day, YZ: "show the file management page by default"; with the code on his own browser the
+  app reopened his last file, which a tester cannot see: "No such document"): `app.startup` opens the Files page
+  unless the address has `?doc=`; browser storage is per person (`static/js/scope.js`: `setScope(user id)` after
+  `account.ready`, keys + "." + id for the autosave copy, `opensketch.lastDoc` and `opensketch.autosave.link`; the
+  owner adopts the old unscoped keys once (`adopt`); others never read them). The browser copy of a file that is in
+  Files is not shown as a draft (the editor starts empty); an unsaved draft shows as a Files card.
+- Tests: `tests/test_accounts.py` +3 (the whole flow incl. own Files, the early-access AI with open sign-up on,
+  numbering, owner sees/changes/turns off/removes, member cannot change it; guessing limited to 8 then 429; testers use
+  the owner's saved key with no key, hint or settings in any answer, and cannot save or test keys). Checked in Chromium:
   sign-in link, wrong code message, access20 -> Files as Internal tester 1, avatar menu, New part, phone width, the
   owner's People dialog.
 
@@ -426,8 +438,8 @@ with model pictures, a deep audit, "connect Claude, Codex or whatever", a better
   Download .osk instead); on a file = save now + picture. Save As is a list (A copy in Files, .osk, STEP, STL,
   SOLIDWORKS macro). Replacing an unsaved draft asks Save to Files / Don't save / Cancel (`confirmLeaveDraft`).
   Leaving a page with unsent edits warns (beforeunload) and flushes. A file deleted elsewhere stays open as a
-  draft with a note. Start-up (`app.startup`): ?doc, else the file this browser had open (`opensketch.autosave.link`,
-  fetched fresh), else an unsaved draft from localStorage, else the Files page. Browser copy (`autosave`) is
+  draft with a note. Start-up (`app.startup`): ?doc, else the Files page (since 2026-10-19; storage per person, see
+  "Early access code"). Browser copy (`autosave`) is
   debounced 400 ms and flushed on pagehide/hidden.
 - Connect AI (`static/js/connect.js`, File / OpenSketch AI tab / account menu / AI pane): tab "Your AI app"
   with steps checked against the vendors' docs (Oct 2026) for ChatGPT (developer mode, chatgpt.com/plugins > Add

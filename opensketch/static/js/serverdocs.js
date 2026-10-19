@@ -9,6 +9,7 @@
 
 import { dialog, message } from './ui/dialogs.js';
 import { isAssembly } from './asm.js';
+import { skey } from './scope.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (t) => String(t ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -17,9 +18,10 @@ const PUSH_MS = 1200;
 const THUMB_MS = 20000; // at most one new picture of the model per 20 s while editing
 const LAST = 'opensketch.lastDoc';
 const DRAFT_LINK = 'opensketch.autosave.link';
-const store = {
-  get: (k) => { try { return localStorage.getItem(k); } catch (_) { return null; } },
-  set: (k, v) => { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (_) { /* storage off */ } },
+export const LAST_KEYS = [LAST, DRAFT_LINK];
+const store = { // per signed-in person (scope.js)
+  get: (k) => { try { return localStorage.getItem(skey(k)); } catch (_) { return null; } },
+  set: (k, v) => { try { if (v == null) localStorage.removeItem(skey(k)); else localStorage.setItem(skey(k), v); } catch (_) { /* storage off */ } },
 };
 
 function ago(t) {

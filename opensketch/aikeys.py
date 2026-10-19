@@ -126,6 +126,20 @@ def config_for(user_id: str) -> dict | None:
     return {"provider": rec["provider"], "model": rec["model"], "base_url": rec.get("base_url") or "", "key": key, "source": "yours"}
 
 
+def early_access_config() -> dict | None:
+    """The AI early-access testers use: the server's key, else the key the owner saved in OpenSketch. Testers never
+    see it (no key, no hint, no provider settings of the owner's reach the browser); source "early_access"."""
+    cfg = server_config()
+    if cfg is None:
+        try:
+            from . import accounts
+            owner = next((u for u in accounts.list_users() if u.get("role") == "owner"), None)
+        except Exception:
+            owner = None
+        cfg = (config_for(owner["id"]) if owner else None) or config_for("local")
+    return dict(cfg, source="early_access") if cfg else None
+
+
 def server_config() -> dict | None:
     """The server's own key (ANTHROPIC_API_KEY), shared with signed-in people unless turned off."""
     if os.environ.get("OPENSKETCH_SHARE_SERVER_KEY", "1") == "0":
@@ -144,9 +158,9 @@ def effective(user: dict | None) -> dict | None:
     own = config_for(owner_id(user))
     if own:
         return own
+    if user and user.get("role") == "tester":
+        return early_access_config()  # early access (accounts.create_tester): the owner's AI, no limit
     cfg = server_config()
-    if cfg and user and user.get("role") == "tester":
-        return cfg  # early access (accounts.create_tester): the owner lets testers use the server's key, no limit
     if cfg and user and not user.get("legacy") and user.get("role") != "owner" and os.environ.get("OPENSKETCH_SHARE_SERVER_KEY") != "all":
         from . import accounts
         if accounts.settings()["open_signup"]:

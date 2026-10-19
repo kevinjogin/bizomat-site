@@ -19,7 +19,8 @@ import { AssemblyMode, isAssembly, newAssembly, hexColor } from './asm.js';
 import { LivePlayer } from './live.js';
 import { Toolbox } from './toolbox.js';
 import { SectionView } from './section.js';
-import { ServerDocs } from './serverdocs.js';
+import { ServerDocs, LAST_KEYS } from './serverdocs.js';
+import { setScope, skey, adopt } from './scope.js';
 import { Account } from './account.js';
 import { DesignPanel } from './design.js';
 import { MotionReview } from './review.js';
@@ -138,24 +139,20 @@ export class App {
   async startup() {
     const q = new URLSearchParams(location.search);
     const docId = q.get('doc');
+    // browser storage is per signed-in person (scope.js); wait briefly for who that is
+    const who = await Promise.race([this.account?.ready?.then(() => this.account.user).catch(() => null), new Promise((ok) => setTimeout(() => ok(undefined), 4000))]);
+    const user = who && !who.legacy ? who : null;
+    setScope(user?.id);
+    if (user?.role === 'owner') adopt([AUTOSAVE, ...LAST_KEYS]);
     const draftLink = ServerDocs.draftLink;
     const hasDraft = this.restore();
+    if (draftLink && !docId) this.doc = newDoc(); // that copy is a file in Files, not a draft
     this.updateDocChrome();
     if (docId) {
       if (!(await this.server.open(docId, { quiet: true }))) { this.regen().then(() => this.viewer.zoomToFit(false)); this.files.open(); }
-    } else if (draftLink) {
-      const ok = await this.server.open(draftLink, { quiet: true }).catch(() => false);
-      if (!ok) {
-        this.regen().then(() => this.viewer.zoomToFit(false));
-        if (hasDraft) { this.dirty = true; this.updateDocChrome(); this.status('Could not reach that file on the server. This is the copy kept in this browser.'); }
-      }
-    } else if (hasDraft) {
-      this.dirty = true;
-      this.updateDocChrome();
-      await this.regen();
-      this.viewer.zoomToFit(false);
-      this.status('Unsaved draft from your last visit. Save it to keep it in your Files (Ctrl+S).');
     } else {
+      // Signed in: the Files page first (YZ 2026-10-19). The last file is the top card; an unsaved draft is a card too.
+      if (hasDraft && !draftLink) { this.dirty = true; this.updateDocChrome(); }
       this.regen().then(() => this.viewer.zoomToFit(false));
       this.files.open();
     }
@@ -386,12 +383,12 @@ export class App {
   autosaveNow() {
     clearTimeout(this._autosaveTimer); this._autosaveTimer = null;
     if (this.reviewMode) return;
-    try { localStorage.setItem(AUTOSAVE, JSON.stringify(this.rootDoc())); } catch (_) { /* full or unavailable: Files keeps the record */ }
+    try { localStorage.setItem(skey(AUTOSAVE), JSON.stringify(this.rootDoc())); } catch (_) { /* full or unavailable: Files keeps the record */ }
   }
 
   restore() {
     try {
-      const s = localStorage.getItem(AUTOSAVE);
+      const s = localStorage.getItem(skey(AUTOSAVE));
       if (s) {
         const d = JSON.parse(s);
         if (d && (Array.isArray(d.features) || isAssembly(d))) {

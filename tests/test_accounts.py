@@ -304,7 +304,7 @@ def test_early_access_code_skips_sign_up_as_an_internal_tester(monkeypatch):
     assert [d["id"] for d in visitor.get("/api/docs").json()] == [doc["id"]]
     assert owner.get(f"/api/docs/{doc['id']}").status_code == 404
     accounts.set_open_signup(True)
-    assert aikeys.effective(me)["source"] == "server"
+    assert aikeys.effective(me)["source"] == "early_access"
     assert visitor.get("/api/ai/status").json()["available"]
     second = TestClient(server.app)
     second.post("/access", data={"code": "access20", "next": "/"})
@@ -335,3 +335,32 @@ def test_access_code_guessing_is_limited(monkeypatch):
     assert codes[:auth.LIMIT] == [401] * auth.LIMIT and codes[-1] == 429
     assert c.post("/access", data={"code": "access20"}, follow_redirects=False).status_code == 429  # waits even when right
     auth._fails.clear()
+
+
+def test_testers_use_the_owners_saved_key_and_never_see_it(monkeypatch):
+    """YZ: a tester was still asked for an API key (the live server has no ANTHROPIC_API_KEY: the owner saved his
+    own key in OpenSketch). Testers use that key; nothing about it reaches their browser."""
+    from opensketch import aikeys
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.delenv("ANTHROPIC_AUTH_TOKEN", raising=False)
+    monkeypatch.setenv("OPENSKETCH_ACCESS_CODE", "access20")
+    auth._fails.clear()
+    owner = TestClient(server.app)
+    _owner(owner)
+    secret = "sk-ant-api03-owners-secret-key-WXYZ"
+    monkeypatch.setattr(aikeys.providers, "list_models", lambda cfg: ["claude-opus-5-5"])
+    assert owner.post("/api/ai/keys", json={"provider": "anthropic", "model": "claude-opus-5-5", "key": secret}).status_code == 200
+    t = TestClient(server.app)
+    t.post("/access", data={"code": "access20"})
+    st = t.get("/api/ai/status").json()
+    assert st["available"] and st["source"] == "early_access" and st["model"] == "claude-opus-5-5"
+    keys = t.get("/api/ai/keys").json()
+    assert keys["early_access"] and keys["server_key"] and keys["settings"] is None
+    for r in (t.get("/api/ai/status"), t.get("/api/ai/keys"), t.get("/api/account")):
+        assert "WXYZ" not in r.text and "owners-secret" not in r.text  # not the key, not its last four
+    assert t.post("/api/ai/keys", json={"provider": "anthropic", "model": "x", "key": "sk-ant-mine-12345678"}).status_code == 403
+    assert t.post("/api/ai/models", json={"provider": "anthropic"}).status_code == 403  # cannot test the owner's key
+    assert aikeys.effective(t.get("/api/account").json()["user"])["key"] == secret  # used on the server only
+    # without the owner's key or a server key there is no AI, and the chat says so
+    owner.delete("/api/ai/keys")
+    assert not t.get("/api/ai/status").json()["available"]

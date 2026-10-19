@@ -590,13 +590,24 @@ class AIKeyRequest(BaseModel):
 def api_ai_keys(request: Request):
     """This person's AI settings (never the key itself), the providers, and whether the server has a key."""
     from . import aikeys, providers
-    return {"settings": aikeys.public(aikeys.owner_id(getattr(request.state, "user", None))),
+    u = getattr(request.state, "user", None)
+    if u and u.get("role") == "tester":  # early access: the AI is provided; nothing about the key leaves the server
+        cfg = aikeys.early_access_config()
+        return {"settings": None, "providers": providers.public_list(), "server_key": cfg is not None, "early_access": True}
+    return {"settings": aikeys.public(aikeys.owner_id(u)),
             "providers": providers.public_list(), "server_key": aikeys.server_config() is not None}
+
+
+def _no_tester(request: Request) -> None:
+    u = getattr(request.state, "user", None)
+    if u and u.get("role") == "tester":
+        raise HTTPException(403, "Early access already includes the AI.")
 
 
 @app.post("/api/ai/keys")
 def api_ai_keys_save(req: AIKeyRequest, request: Request):
     from . import aikeys
+    _no_tester(request)
     try:
         return {"settings": aikeys.save(aikeys.owner_id(getattr(request.state, "user", None)), req.provider, req.model or "",
                                         req.key, req.base_url)}
@@ -615,6 +626,7 @@ def api_ai_keys_remove(request: Request):
 def api_ai_models(req: AIKeyRequest, request: Request):
     """Check a key and list the models it can use. Without a key, the stored one (same provider) is used."""
     from . import aikeys, providers
+    _no_tester(request)
     spec = providers.PROVIDERS.get(req.provider)
     if spec is None:
         return JSONResponse({"error": "Choose a provider."}, status_code=400)

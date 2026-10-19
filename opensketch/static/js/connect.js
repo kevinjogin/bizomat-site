@@ -208,7 +208,8 @@ function keyTab(app, info, close) {
     status.innerHTML = '';
     const s = app.aiInfo || {};
     let text, cls;
-    if (cur) { text = `Using your ${providers.find((p) => p.id === cur.provider)?.label || cur.provider} key ending ${cur.hint}, model ${cur.model}.`; cls = 'ok'; }
+    if (info.early_access) { text = info.server_key ? 'AI is included with early access. Nothing to set up.' : 'AI is not available on this server right now.'; cls = info.server_key ? 'ok' : 'none'; }
+    else if (cur) { text = `Using your ${providers.find((p) => p.id === cur.provider)?.label || cur.provider} key ending ${cur.hint}, model ${cur.model}.`; cls = 'ok'; }
     else if (info.server_key) { text = `Using this server's Claude key (${s.model || 'claude'}). Add your own to use your account or another provider.`; cls = 'ok'; }
     else { text = 'No AI key yet. Add one below, or use an AI app you already have (the other tab).'; cls = 'none'; }
     status.className = 'cx-status ' + cls;
@@ -221,6 +222,7 @@ function keyTab(app, info, close) {
   };
   drawStatus();
   wrap.appendChild(status);
+  if (info.early_access) return wrap; // testers use the owner's AI: no key form
 
   const cards = h('div', 'cx-provs'); cards.setAttribute('role', 'radiogroup'); cards.setAttribute('aria-label', 'Provider');
   for (const p of providers) {
