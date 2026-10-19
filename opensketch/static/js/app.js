@@ -2432,6 +2432,7 @@ export class App {
 
   cursorFeedback(fb) {
     const el = $('sketchcursor');
+    if (!el) return;
     if (!fb || (!fb.glyph && !fb.value)) { el.classList.add('hidden'); return; }
     el.innerHTML = (fb.glyph ? `<span class="glyph">${icon(fb.glyph, 14)}</span>` : '') + (fb.value ? `<span class="val">${fb.value}</span>` : '');
     el.style.left = fb.x + 16 + 'px'; el.style.top = fb.y + 14 + 'px';
