@@ -1216,15 +1216,25 @@ export class App {
   }
 
   // ------------------------------------------------------------------ sketch mode
-  sketchCommand() {
+  // tool: a sketch tool clicked with no sketch open (Line, Corner Rectangle...). As in SOLIDWORKS it starts as
+  // soon as the plane is picked; cancelling the plane pick forgets it.
+  sketchCommand(tool = null) {
     if (this.isAsm) { this.toast('Sketches are drawn in a part. Select a component and click Open Part.'); return; }
     if (this.mode === 'sketch') return this.exitSketch();
     const s = this.selection.find((x) => x.kind === 'plane' || (x.kind === 'face' && x.data?.plane) || x.kind === 'sketch');
     if (s) { if (s.kind === 'sketch') return this.editSketch(s.id); return this.sketchOn(s); }
     if (this.cmd) this.pmCancel();
-    this.cmd = {
+    const cmd = this.cmd = {
       wantsPlanes: true,
-      onPick: (p) => { if (p.kind === 'plane' || (p.kind === 'face' && p.data?.plane)) { setTimeout(() => { this.closeCommand(); this.sketchOn(p); }, 0); return true; } return false; },
+      onPick: (p) => {
+        if (!(p.kind === 'plane' || (p.kind === 'face' && p.data?.plane))) return false;
+        setTimeout(() => {
+          if (this.cmd !== cmd) return; // cancelled meanwhile
+          this.closeCommand(); this.sketchOn(p);
+          if (tool && this.mode === 'sketch') this.sketcher.setTool(tool);
+        }, 0);
+        return true;
+      },
     };
     this.pm.open({ title: 'Edit Sketch', icon: 'sketch', sections: [{ title: 'Message', rows: [{ type: 'text', text: 'Select a plane on which to create a sketch for the entity.' }] }], okEnabled: () => false });
     this.updatePlanes();
@@ -1326,7 +1336,7 @@ export class App {
     if (this.mode !== 'sketch') {
       const s = this.selection.find((x) => x.kind === 'plane' || (x.kind === 'face' && x.data?.plane));
       if (s) this.sketchOn(s);
-      else { const sk = this.selection.find((x) => x.kind === 'sketch'); if (sk) this.editSketch(sk.id); else { this.sketchCommand(); this.pendingTool = name; return; } }
+      else { const sk = this.selection.find((x) => x.kind === 'sketch'); if (sk) this.editSketch(sk.id); else { this.sketchCommand(name); return; } }
     }
     if (this.mode !== 'sketch') return;
     if (this.cmd) this.closeCommand();
