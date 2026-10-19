@@ -327,8 +327,11 @@ def _sha_of(data: str) -> str:
     hit = _sha_memo.get(id(data))
     if hit is not None and hit[0] is data:
         return hit[1]
-    sha = hashlib.sha256(data.encode()).hexdigest()
-    if len(_sha_memo) > 32:
+    return _remember_sha(data, hashlib.sha256(data.encode()).hexdigest())
+
+
+def _remember_sha(data: str, sha: str) -> str:
+    if len(_sha_memo) > 256:
         _sha_memo.clear()
     _sha_memo[id(data)] = (data, sha)
     return sha
@@ -421,6 +424,7 @@ def _unpack(rec: dict, doc_id: str) -> dict:
                     f["data"] = (_blob_dir(doc_id) / sha).read_text()
                 except FileNotFoundError:
                     raise _BlobMissing(sha) from None
+                _remember_sha(f["data"], sha)  # saved again unchanged: not hashed again
     return rec
 
 
