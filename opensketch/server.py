@@ -1429,7 +1429,7 @@ def api_review_delete(token: str, request: Request):
 
 _REVIEW_HEADERS = {"Cache-Control": "private, max-age=300", "Referrer-Policy": "no-referrer",
                    "X-Content-Type-Options": "nosniff", "X-Robots-Tag": "noindex, nofollow", "X-Frame-Options": "SAMEORIGIN"}
-_REVIEW_ASSETS = ("css/", "js/", "vendor/")
+_REVIEW_ASSETS = ("css/", "js/", "vendor/", "fonts/")
 
 
 class CheckRequest(BaseModel):
@@ -1652,7 +1652,8 @@ NO_CACHE = {"Cache-Control": "no-cache"}
 def _shell_assets() -> list[str]:
     """The files the page needs to start, fetched by the service worker when it installs."""
     out = ["/css/app.css", "/css/linear.css", "/css/brand.css", *("/" + v for v in _import_map().values()),
-           "/favicon.svg", "/manifest.webmanifest", "/icons/icon-192.png"]
+           "/favicon.svg", "/manifest.webmanifest", "/icons/icon-192.png",
+           "/fonts/fonts.css", "/fonts/inter-latin.woff2", "/fonts/inter-tight-latin.woff2"]
     out += sorted("/" + p.relative_to(STATIC).as_posix() for p in (STATIC / "js").rglob("*.js"))
     return out
 

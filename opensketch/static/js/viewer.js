@@ -11,7 +11,7 @@ const mix = (a, b, t) => {
 };
 export const matOf = (m) => new THREE.Matrix4().set(...m); // row-major 16 numbers
 
-export const COLORS = {
+const COLORS_CLASSIC = {
   body: 0xc4cad2,
   edge: 0x101010,
   hl: 0xff8c00,
@@ -21,7 +21,7 @@ export const COLORS = {
   planeEdge: 0x3a6fb8,
   proposal: 0xa58cff,
 };
-if (VIEW_COLORS) Object.assign(COLORS, VIEW_COLORS);
+export const COLORS = { ...COLORS_CLASSIC, ...(VIEW_COLORS || {}) };
 const THUMB_COLORS = { body: 0xa8b8c8, edge: 0x37424c }; // Files pictures: preview.py's body and edge colours
 
 export const STD_FRAMES = {
@@ -676,6 +676,19 @@ export class Viewer {
   // read clearly on top of it.
   baseFor(f) { return this.sketchDim && SKETCH_BODY_DIM != null ? mix(f.userData.baseColor, SKETCH_BODY_DIM, 0.9) : f.userData.baseColor; }
   setSketchDim(on) { if (!!on === !!this.sketchDim) return; this.sketchDim = !!on; this.refreshHighlights(); }
+
+  // The look changed (View > Theme, no reload): take the new palette and recolour what is drawn. Faces in the
+  // default body colour follow it; faces with their own appearance keep theirs.
+  applyLook() {
+    const oldBody = COLORS.body;
+    Object.assign(COLORS, COLORS_CLASSIC, VIEW_COLORS || {});
+    for (const f of this.faceObjs) if (f.userData.baseColor === oldBody) f.userData.baseColor = COLORS.body;
+    for (const obj of this.planeObjs.values()) {
+      obj.userData.mesh.material.color.setHex(COLORS.plane);
+      obj.userData.border.material.color.setHex(COLORS.planeEdge);
+    }
+    this.refreshHighlights();
+  }
 
   setSelectedKeys(keys) { this.selected = new Set(keys); this.refreshHighlights(); }
 

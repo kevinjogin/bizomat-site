@@ -15,8 +15,8 @@ export function buildCommands(app) {
     new: { label: 'New', icon: 'new', key: 'Ctrl+N', tip: 'Creates a new document (Ctrl+N)', run: () => app.newDoc() },
     open: { label: 'Open', icon: 'open', key: 'Ctrl+O', tip: 'Your Files: open, upload or start a model (Ctrl+O)', run: () => app.openFile() },
     save: { label: 'Save', icon: 'save', key: 'Ctrl+S', tip: 'Saves to your Files (Ctrl+S). Files save by themselves after the first save.', run: () => app.saveFile() },
-    saveas: { label: 'Save As', icon: 'save', tip: 'Saves the document as .osk, STEP, STL or a SOLIDWORKS macro', run: () => app.saveAs() },
-    sldmacro: { label: 'Export SOLIDWORKS Macro', icon: 'save', tip: 'Writes a SOLIDWORKS macro (.bas) that rebuilds the part, or the parts and the mated assembly, in SOLIDWORKS', run: () => app.exportMacro() },
+    saveas: { label: 'Save As', icon: 'saveas', tip: 'Saves the document as .osk, STEP, STL or a SOLIDWORKS macro', run: () => app.saveAs() },
+    sldmacro: { label: 'Export SOLIDWORKS Macro', icon: 'macro', tip: 'Writes a SOLIDWORKS macro (.bas) that rebuilds the part, or the parts and the mated assembly, in SOLIDWORKS', run: () => app.exportMacro() },
     print: { label: 'Print', icon: 'print', tip: 'Prints the graphics area', run: () => app.printGraphics() },
     undo: { label: 'Undo', icon: 'undo', key: 'Ctrl+Z', tip: 'Undo the last action (Ctrl+Z)', run: () => app.undo() },
     redo: { label: 'Redo', icon: 'redo', key: 'Ctrl+Y', tip: 'Redo the last undone action (Ctrl+Y)', run: () => app.redo() },
@@ -24,9 +24,9 @@ export function buildCommands(app) {
     rebuild: { label: 'Rebuild', icon: 'rebuild', key: 'Ctrl+B', tip: 'Rebuilds the part (Ctrl+B)', run: () => app.regen(true) },
     fileprops: { label: 'File Properties', icon: 'props', tip: 'Summary and custom properties', run: () => app.openTask('custprops') },
     serveropen: { label: 'Files...', icon: 'open', tip: 'Your files on this server, with a picture of each. Your AI\'s changes appear live in the one you open.', run: () => app.files.open() },
-    serversave: { label: 'Save a Copy to Files', icon: 'save', tip: 'Stores a copy of this model in your Files.', run: () => (app.server.linked ? app.server.saveAsNew(app.rootDoc().name + ' copy') : app.server.saveDraft()) },
-    publishreview: { label: 'Publish Review...', icon: 'save', tip: 'Publishes a read-only link to this version, to send or open on a phone: the model in OpenSketch, its joints, what changed and the checks.', run: () => app.server.publishDialog() },
-    connectclaude: { label: 'Connect AI', icon: 'ai', tip: 'Use ChatGPT, Claude, Codex, Cursor or another AI app with OpenSketch, or add your own API key for the built-in AI.', run: () => app.server.connectDialog() },
+    serversave: { label: 'Save a Copy to Files', icon: 'savecopy', tip: 'Stores a copy of this model in your Files.', run: () => (app.server.linked ? app.server.saveAsNew(app.rootDoc().name + ' copy') : app.server.saveDraft()) },
+    publishreview: { label: 'Publish Review...', icon: 'publish', tip: 'Publishes a read-only link to this version, to send or open on a phone: the model in OpenSketch, its joints, what changed and the checks.', run: () => app.server.publishDialog() },
+    connectclaude: { label: 'Connect AI', icon: 'connect', tip: 'Use ChatGPT, Claude, Codex, Cursor or another AI app with OpenSketch, or add your own API key for the built-in AI.', run: () => app.server.connectDialog() },
     openlocal: { label: 'Open from Computer...', icon: 'open', tip: 'Opens an OpenSketch, STEP or EAGLE file from your computer into your Files.', run: () => app.openFromComputer() },
     options: { label: 'Options', icon: 'options', tip: 'System options and document properties', run: () => app.optionsDialog() },
 
@@ -109,7 +109,7 @@ export function buildCommands(app) {
     playback: { label: 'Assembly Playback', icon: 'playback', tip: 'Replays the assembly order: each component flies in and settles onto its mates (Motion Study).', run: () => app.asm.playSequence() },
     openpart: { label: 'Open Part', icon: 'open', tip: 'Opens the selected component\'s part for editing. Return to the assembly when done.', run: () => { const s = app.selection.find((x) => x.kind === 'component'); if (!s) return app.toast('Select a component first.'); app.asm.openPart(s.id); } },
     toolbox: { label: 'Toolbox', icon: 'toolbox', tip: 'Standard screws, nuts, washers and bearings, made to size.', run: () => app.openTask('library') },
-    asmexplain: { label: 'Explain Assembly', icon: 'ai', tip: 'Asks the AI to explain the assembly and how it moves.', run: () => app.aiQuick('Explain this assembly: the parts, how they are mated and which components can still move. Do not change it.') },
+    asmexplain: { label: 'Explain Assembly', icon: 'aiexplain', tip: 'Asks the AI to explain the assembly and how it moves.', run: () => app.aiQuick('Explain this assembly: the parts, how they are mated and which components can still move. Do not change it.') },
     aimates: { label: 'Add Mates', icon: 'mate', tip: 'Asks the AI to mate an imported assembly from its geometry, leaving hinges and slides free.', run: () => app.aiQuick('This assembly has components without enough mates (for example it was imported from STEP). Call find_mate_candidates, then add the mates a designer would use so every part sits where it is now. Leave hinges, slides and wheels free to move where the product moves. Do not move or change parts.') },
     recognize: { label: 'Recognize Features', icon: 'featureworks', tip: 'FeatureWorks: turns an imported body into editable features (extrudes, cuts, revolves, holes, fillets, chamfers), each checked against the import.', run: () => app.featureworks.open() },
     airebuild: { label: 'Rebuild as Features', icon: 'imported', tip: 'Asks the AI to rebuild an imported body as an editable feature tree, starting from Recognize Features.', run: () => app.aiQuick('Rebuild the imported body as an editable feature tree. Call recognize_features first. If an imported body is left, replace it with sketches (relations and dimensions), extrudes, cuts and revolves using propose_features mode replace with the whole tree, and get the comparison with the import as close to zero as you can. Tell me what you could not match.') },
@@ -117,7 +117,7 @@ export function buildCommands(app) {
 
     // AI add-in
     ai: { label: 'OpenSketch AI', icon: 'ai', key: 'Ctrl+L', tip: 'Describe a part or a change, the AI proposes features you can accept or reject (Ctrl+L).', run: () => app.openTask('ai') },
-    aiexplain: { label: 'Explain Model', icon: 'ai', tip: 'Asks the AI to explain the feature tree.', run: () => app.aiQuick('Explain this part and its design intent in a few sentences. Do not change it.') },
+    aiexplain: { label: 'Explain Model', icon: 'aiexplain', tip: 'Asks the AI to explain the feature tree.', run: () => app.aiQuick('Explain this part and its design intent in a few sentences. Do not change it.') },
     aifix: { label: 'Fix Errors', icon: 'rebuild', tip: 'Asks the AI to fix rebuild errors.', run: () => app.aiQuick('Fix the rebuild errors in this part with minimal changes.') },
     aidefine: { label: 'Fully Define', icon: 'smartdim', tip: 'Asks the AI to add relations and dimensions so every sketch is fully defined.', run: () => app.aiQuick('Add relations and dimensions so every sketch is fully defined, keeping the current geometry.') },
   };

@@ -202,7 +202,7 @@ export class Ribbon {
       b.title = this.tip(c);
       b.onclick = () => this.run(id);
       q.appendChild(b);
-      if (id === 'print' || id === 'redo' || id === 'rebuild') q.appendChild(h('span', null, '')).style.cssText = 'width:1px;height:18px;background:#ddd;margin:0 3px';
+      if (id === 'print' || id === 'redo' || id === 'rebuild') q.appendChild(h('span', 'qa-sep'));
     }
   }
 

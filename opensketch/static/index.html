@@ -4,20 +4,18 @@
 <meta charset="utf-8">
 <title>OpenSketch</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>(function(){var c=document.documentElement.classList,k='linear',t='dark';try{if(localStorage.getItem('opensketch.skin')==='classic'){k='classic';t='light'}else if(localStorage.getItem('opensketch.theme')==='light'){t='light'}}catch(e){}c.add('skin-'+k,'theme-'+t)})()</script>
+<meta name="theme-color" content="#0c0d0e">
+<script>(function(){var c=document.documentElement.classList,k='linear',t='dark';try{if(localStorage.getItem('opensketch.skin')==='classic'){k='classic';t='light'}else if(localStorage.getItem('opensketch.theme')==='light'){t='light'}}catch(e){}c.add('skin-'+k,'theme-'+t);var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',k==='classic'?'#fbfbfb':t==='light'?'#f5f5f6':'#0c0d0e')})()</script>
 <script>(function(){if(location.pathname!=='/'||/[?&]doc=/.test(location.search))return;var c=document.documentElement.classList,off=function(){c.remove('boot-files')};c.add('boot-files');setTimeout(off,6000);addEventListener('error',off)})()</script>
 <meta name="opensketch-version" content="__VERSION__">
-<meta name="theme-color" content="#0c0d0e" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#f5f5f6" media="(prefers-color-scheme: light)">
 <meta name="description" content="OpenSketch: parametric CAD in the browser, with an AI that builds while you watch.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="OpenSketch">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=Inter+Tight:wght@600..800&display=swap">
+<link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="fonts/fonts.css">
 <link rel="stylesheet" href="css/app.css">
 <link rel="stylesheet" href="css/linear.css">
 <link rel="stylesheet" href="css/brand.css">
@@ -44,7 +42,7 @@
     <aside id="leftpanel">
       <div id="mgrtabs" class="mgrtabs"></div>
       <div id="featuremgr" class="panel-body">
-        <form class="tree-filter" role="search" autocomplete="off" data-own-form><input id="treefilter" type="search" name="os-tree-filter" placeholder="&#x1F50D;&#xFE0E; Filter" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Filter the design tree" data-1p-ignore data-lpignore="true" data-bwignore data-form-type="other"></form>
+        <form class="tree-filter" role="search" autocomplete="off" data-own-form><input id="treefilter" type="search" name="os-tree-filter" placeholder="Filter" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Filter the design tree" data-1p-ignore data-lpignore="true" data-bwignore data-form-type="other"></form>
         <div id="tree" class="tree" tabindex="0"></div>
       </div>
       <div id="propmgr" class="panel-body hidden"></div>
@@ -54,9 +52,8 @@
     <section id="graphics">
       <div id="viewport"></div>
       <div id="labels" class="labels"></div>
-      <div id="flyout-tree" class="flyout-tree hidden"></div>
       <div id="breadcrumbs" class="breadcrumbs"></div>
-      <div id="editbar" class="editbar hidden"></div>
+      <div id="banners" class="banners"><div id="editbar" class="editbar hidden"></div></div>
       <div id="livecap" class="livecap hidden"></div>
       <div id="headsup" class="headsup"></div>
       <div id="confirmcorner" class="confirmcorner hidden"></div>
@@ -69,7 +66,6 @@
         <span class="doctab active">Model</span><span class="doctab">3D Views</span><span class="doctab">Motion Study 1</span>
       </div>
       <div id="busyind" class="busyind hidden" role="status" aria-live="polite"><i class="busy-spin"></i><span class="busy-label">Loading model...</span></div>
-      <div id="toast" class="toast hidden"></div>
     </section>
 
     <aside id="taskpane">

@@ -109,16 +109,29 @@ export function dialog({ title, body, buttons = [], x, y, modal = true, cls = ''
   }
   back.appendChild(dlg);
   layer().appendChild(back);
-  const r = dlg.getBoundingClientRect();
-  dlg.style.left = Math.max(4, Math.min(window.innerWidth - r.width - 4, x ?? (window.innerWidth - r.width) / 2)) + 'px';
-  dlg.style.top = Math.max(4, Math.min(window.innerHeight - r.height - 4, y ?? (window.innerHeight - r.height) / 3)) + 'px';
+  // layout sizes (offsetWidth/Height), not the box on screen: the entrance animation scales it for a moment
+  const W = dlg.offsetWidth, H = dlg.offsetHeight;
+  dlg.style.left = Math.max(4, Math.min(window.innerWidth - W - 4, x ?? (window.innerWidth - W) / 2)) + 'px';
+  dlg.style.top = Math.max(4, Math.min(window.innerHeight - H - 4, y ?? (window.innerHeight - H) / 3)) + 'px';
   makeDraggable(dlg, head);
+  // Keep it inside the window when its content grows (lists that load late) or the window shrinks (a phone
+  // turned): the stylesheet caps its size, this moves it back so the title and the buttons stay reachable.
+  const clamp = () => {
+    const l = parseFloat(dlg.style.left) || 0, t = parseFloat(dlg.style.top) || 0;
+    const L = Math.max(4, Math.min(window.innerWidth - dlg.offsetWidth - 4, l)), T = Math.max(4, Math.min(window.innerHeight - dlg.offsetHeight - 4, t));
+    if (Math.abs(L - l) > 0.5) dlg.style.left = L + 'px';
+    if (Math.abs(T - t) > 0.5) dlg.style.top = T + 'px';
+  };
+  const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(clamp) : null;
+  ro?.observe(dlg);
+  window.addEventListener('resize', clamp);
   const before = document.activeElement;
   if (modal) syncInert();
   let closed = false;
   function close() {
     if (closed) return;
     closed = true;
+    ro?.disconnect(); window.removeEventListener('resize', clamp);
     document.removeEventListener('keydown', key, true);
     back.classList.add('closing');
     document.body.appendChild(back); // out of the dialog layer at once; it fades out on its own
@@ -244,10 +257,10 @@ export function contextMenu(x, y, items, toolbar = null, opts = {}) {
   }
   menuKeys(m, opts);
   document.body.appendChild(m);
-  const r = m.getBoundingClientRect();
-  const left = opts.alignRight ? x - r.width : x;
-  m.style.left = Math.max(4, Math.min(left, window.innerWidth - r.width - 4)) + 'px';
-  m.style.top = Math.max(4, Math.min(y, window.innerHeight - r.height - 4)) + 'px';
+  const W = m.offsetWidth, H = m.offsetHeight; // layout size: the opening animation scales the menu for a moment
+  const left = opts.alignRight ? x - W : x;
+  m.style.left = Math.max(4, Math.min(left, window.innerWidth - W - 4)) + 'px';
+  m.style.top = Math.max(4, Math.min(y, window.innerHeight - H - 4)) + 'px';
   // A menu opened by a mouse click on a toolbar button does not hand the focus back to that button (the
   // SOLIDWORKS keys would then stop reaching the model); one opened from the keyboard does.
   m._returnTo = opts.keyboard || !returnTo?.closest?.('button, [role=button], [role=tab]') ? returnTo : null;

@@ -31,6 +31,7 @@ from urllib.parse import parse_qs, quote, urlencode
 COOKIE = "opensketch_session"
 ACCOUNT_COOKIE = "opensketch_user"
 PUBLIC_FILES = ("/manifest.webmanifest", "/sw.js", "/favicon.svg", "/favicon.ico")
+PUBLIC_DIRS = ("/icons/", "/fonts/")  # app icons and the self-hosted fonts: no data, needed by the sign-in pages
 
 
 def password() -> str:
@@ -201,10 +202,9 @@ def logged_in(scope) -> bool:
 PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex"><title>{title} - OpenSketch</title><meta name="theme-color" content="#0c0d0e">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="manifest" href="/manifest.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Inter+Tight:wght@600..800&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/fonts/fonts.css">
 <style>
-:root{{--bg:#0c0d0e;--card:#141517;--field:#1b1c1f;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.14);--text:#e3e4e8;--text2:#a3a6ad;--muted:#7a7f88;--accent:#5e6ad2;--accent-h:#6b77de;--link:#8b93ff;--err:#eb5757;
+:root{{--bg:#0c0d0e;--card:#141517;--field:#1b1c1f;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.14);--text:#e3e4e8;--text2:#a3a6ad;--muted:#868a93;--accent:#5e6ad2;--accent-h:#6b77de;--link:#8b93ff;--err:#eb5757;
 --display:"Inter Tight",Inter,system-ui,-apple-system,"Segoe UI",sans-serif;--ease:cubic-bezier(.16,1,.3,1)}}
 *{{box-sizing:border-box}}
 html,body{{height:100%}}
@@ -219,7 +219,7 @@ filter:blur(30px);animation:drift 16s ease-in-out infinite alternate;mix-blend-m
 .wrap{{position:relative;z-index:1;min-height:100vh;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,440px);gap:56px;align-items:center;max-width:1080px;margin:0 auto;padding:40px 32px 48px}}
 .brand{{position:absolute;top:26px;left:32px;color:#fff;text-decoration:none;font-family:var(--display);font-weight:800;font-size:21px;letter-spacing:-.04em;line-height:1}}
 .pitch h2{{margin:0;font-family:var(--display);font-weight:750;font-size:52px;line-height:1.02;letter-spacing:-.045em;color:#fff;text-wrap:balance}}
-.card{{background:var(--card);border-radius:16px;padding:32px;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 30px 60px -12px rgba(0,0,0,.6),0 18px 36px -18px rgba(0,0,0,.5);animation:rise .5s var(--ease)}}
+.card{{background:var(--card);border-radius:16px;padding:32px;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 30px 60px -12px rgba(0,0,0,.6),0 18px 36px -18px rgba(0,0,0,.5);animation:rise .22s var(--ease)}}
 @keyframes rise{{from{{opacity:0;transform:translateY(10px)}}}}
 h1{{font-family:var(--display);font-size:26px;font-weight:750;margin:0 0 6px;letter-spacing:-.035em;line-height:1.15}} p.sub{{color:var(--text2);margin:0 0 22px}}
 label{{display:block;font-size:12.5px;font-weight:550;color:var(--text2);margin:14px 0 6px}}
@@ -240,9 +240,10 @@ button:hover:after{{transform:translateX(3px)}}
 .note b{{color:var(--text);font-weight:600}}.note.center{{text-align:center;margin-top:12px}}
 button.ghost{{margin-top:10px;background:transparent;box-shadow:inset 0 0 0 1px var(--line2);color:var(--text)}}button.ghost:after{{display:none}}button.ghost:hover{{background:rgba(255,255,255,.05)}}
 .links{{margin-top:18px;display:flex;justify-content:space-between;gap:12px;font-size:13px}} a{{color:var(--link);text-decoration:none}} a:hover{{text-decoration:underline}}
+.foot{{position:relative;z-index:2;display:flex;justify-content:space-between;gap:12px;max-width:1080px;margin:-56px auto 0;padding:0 32px 20px;color:var(--muted);font-size:12px}}.foot a{{color:var(--muted)}}.foot a:hover{{color:var(--text)}}
 a:focus-visible,button:focus-visible{{outline:2px solid var(--link);outline-offset:3px;border-radius:4px}} button:focus-visible{{border-radius:21px}}
-.foot{{position:absolute;bottom:20px;left:32px;right:32px;display:flex;justify-content:space-between;color:var(--muted);font-size:12px}}.foot a{{color:var(--muted)}}.foot a:hover{{color:var(--text)}}
-@media (max-width:900px){{.wrap{{grid-template-columns:1fr;gap:28px;padding:96px 20px 64px;max-width:480px}}.pitch h2{{font-size:36px}}.brand{{left:20px;top:22px}}.card{{padding:26px 22px}}.foot{{left:20px;right:20px}}.band{{height:62vh}}}}
+@media (max-width:900px){{.wrap{{grid-template-columns:1fr;gap:28px;padding:96px 20px 64px;max-width:480px}}.pitch h2{{font-size:36px}}.brand{{left:20px;top:22px}}.card{{padding:26px 22px}}.foot{{padding:0 20px 20px;max-width:480px;margin-top:-40px}}.band{{height:62vh}}}}
+@media (pointer:coarse){{input{{font-size:16px}}}}
 @media (prefers-reduced-motion:reduce){{*,*:before,*:after{{animation:none!important;transition:none!important}}}}
 </style></head><body><div class="band"><i></i></div>
 <div class="wrap"><a class="brand" href="/">OpenSketch</a>
@@ -291,9 +292,9 @@ def oauth_problem_page(message: str) -> bytes:
 # Privacy notice: public (Google requires one before a sign-in app can be used by anyone), about this server.
 PRIVACY = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Privacy - OpenSketch</title><meta name="theme-color" content="#0c0d0e"><link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Inter+Tight:wght@600..800&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/fonts/fonts.css">
 <style>
-:root{--bg:#0c0d0e;--line:rgba(255,255,255,.08);--text:#e3e4e8;--text2:#a3a6ad;--muted:#7a7f88;--link:#8b93ff;--display:"Inter Tight",Inter,system-ui,sans-serif}
+:root{--bg:#0c0d0e;--line:rgba(255,255,255,.08);--text:#e3e4e8;--text2:#a3a6ad;--muted:#868a93;--link:#8b93ff;--display:"Inter Tight",Inter,system-ui,sans-serif}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text2);font:15px/1.65 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;color-scheme:dark}
 header{display:flex;justify-content:space-between;align-items:center;max-width:760px;margin:0 auto;padding:26px 24px}
 .brand{color:#fff;text-decoration:none;font-family:var(--display);font-weight:800;font-size:21px;letter-spacing:-.04em}
@@ -323,6 +324,8 @@ the Google sign-in step and is removed after it.</li>
 <li><b>AI keys you add:</b> stored encrypted, used only for your own AI requests, and never shown back in full.</li>
 </ul>
 <p>Your browser also keeps an unsaved draft and your display settings in its own storage. They stay on your device.</p>
+<p>OpenSketch's pages load nothing from other sites: the fonts, scripts and pictures all come from this server, so
+opening OpenSketch tells no one else that you visited.</p>
 
 <h2>Sign in with Google</h2>
 <p>If you choose Continue with Google, Google tells OpenSketch your name, your email address, whether that address is
@@ -635,7 +638,7 @@ class PasswordGate:
         if _machine_path(path) or path.startswith("/review/") or (path == "/api/features" and scope.get("method") == "GET"):
             return await self.app(scope, receive, send)
         # The installable-app files hold no data: browsers fetch the manifest without cookies.
-        if scope.get("method") in ("GET", "HEAD") and (path in PUBLIC_FILES or path.startswith("/icons/")):
+        if scope.get("method") in ("GET", "HEAD") and (path in PUBLIC_FILES or path.startswith(PUBLIC_DIRS)):
             return await self.app(scope, receive, send)
         user = current_user(scope, m)
         scope.setdefault("state", {})["user"] = user
