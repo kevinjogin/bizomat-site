@@ -120,7 +120,8 @@ def _get(url, timeout=10, data=None, method=None):
 
 
 class _Server:
-    """python -m opensketch on a free port with CAD workers on (open mode: no password, no accounts)."""
+    """python -m opensketch on a free port with CAD workers on (open mode: no password, no accounts). Fails at once,
+    with the server's own output, if it exits or does not answer within 90 s."""
 
     def __init__(self, tmp_path):
         with socket.socket() as sk:
@@ -128,22 +129,40 @@ class _Server:
             self.port = sk.getsockname()[1]
         env = dict(os.environ, OPENSKETCH_DATA=str(tmp_path / "data"), OPENSKETCH_CAD_WORKERS="1")
         env.pop("OPENSKETCH_PASSWORD", None)
+        self.out = open(tmp_path / "server.log", "w+")
         self.proc = subprocess.Popen([sys.executable, "-m", "opensketch", "--host", "127.0.0.1", "--port", str(self.port),
-                                      "--no-browser"], env=env, cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                                      "--no-browser"], env=env, cwd=ROOT, stdout=self.out, stderr=subprocess.STDOUT)
         self.base = f"http://127.0.0.1:{self.port}"
-        for _ in range(120):
+        end = time.monotonic() + 90
+        while True:
             try:
                 if _get(self.base + "/healthz", 2)[0] == 200:
                     break
             except OSError:
-                time.sleep(0.5)
+                pass
+            if self.proc.poll() is not None or time.monotonic() > end:
+                log = self.log()
+                self.__exit__()
+                pytest.fail(f"the server did not start (exit code {self.proc.returncode}):\n{log[-3000:]}")
+            time.sleep(0.5)
+
+    def log(self) -> str:
+        self.out.flush()
+        self.out.seek(0)
+        return self.out.read()
 
     def __enter__(self):
         return self
 
     def __exit__(self, *exc):
-        self.proc.terminate()
-        self.proc.wait(15)
+        if self.proc.poll() is None:
+            self.proc.terminate()
+            try:
+                self.proc.wait(15)
+            except subprocess.TimeoutExpired:
+                self.proc.kill()
+                self.proc.wait(5)
+        self.out.close()
 
     def json(self, path, body=None, timeout=300):
         return json.loads(_get(self.base + path, timeout, json.dumps(body).encode() if body is not None else None)[1])
@@ -171,6 +190,7 @@ def _watch(base, paths, while_alive):
     return worst
 
 
+@pytest.mark.slow
 def test_the_server_answers_while_a_heavy_rebuild_runs(tmp_path):
     with _Server(tmp_path) as srv:
         base = srv.base
@@ -189,9 +209,12 @@ def test_the_server_answers_while_a_heavy_rebuild_runs(tmp_path):
         status, body, took = out["r"]
         assert status == 200 and took > 5.0, took  # the rebuild really was heavy
         assert json.loads(body)["status"][-1]["state"] == "ok"
-        assert worst < 1.0, f"the server took {worst:.2f} s to answer during the rebuild"
+        # without worker processes one ~2 s OpenCascade call of the rebuild holds every request (2-3 s); 1.5 s leaves
+        # room for a busy test machine and still tells the two apart
+        assert worst < 1.5, f"the server took {worst:.2f} s to answer during the rebuild"
 
 
+@pytest.mark.slow
 def test_claudes_edits_run_in_a_worker_and_the_server_keeps_answering(tmp_path):
     with _Server(tmp_path) as srv:
         srv.mcp(None, {"protocolVersion": "2025-06-18", "capabilities": {}, "clientInfo": {"name": "test", "version": "1"}})
@@ -209,9 +232,10 @@ def test_claudes_edits_run_in_a_worker_and_the_server_keeps_answering(tmp_path):
         t.join()
         assert out["r"]["version"] == 2 and out["r"]["clean"], out["r"]
         assert srv.json(f"/api/docs/{d['doc_id']}/head")["by"] == "claude"
-        assert worst < 1.0, f"the server took {worst:.2f} s to answer while Claude edited"
+        assert worst < 1.5, f"the server took {worst:.2f} s to answer while Claude edited"
 
 
+@pytest.mark.slow
 def test_the_ai_chat_runs_in_its_own_process_and_keeps_the_conversation(tmp_path):
     def chat(srv, conversation=None):
         body = {"doc": {"features": []}, "prompt": "an L bracket", "demo": "part"}
@@ -238,6 +262,7 @@ def test_people_get_their_own_workers(monkeypatch):
     assert cadworker.lane_for(None) is cadworker.lane_for(None)
 
 
+@pytest.mark.slow
 def test_one_persons_heavy_rebuild_does_not_hold_up_anothers(monkeypatch):
     import asyncio
     monkeypatch.setenv("OPENSKETCH_CAD_WORKERS", "1")
@@ -256,7 +281,9 @@ def test_one_persons_heavy_rebuild_does_not_hold_up_anothers(monkeypatch):
             await heavy_job
             return res, took
         res, took = _run(both())
-        assert res["status"][-1]["state"] == "ok" and took < 5.0, took
+        # the proof is that the heavy rebuild was still running when bob's finished (asserted in both()); the time
+        # only has to be far below the heavy rebuild's ~25 s, with room for sharing one core
+        assert res["status"][-1]["state"] == "ok" and took < 8.0, took
     finally:
         a.reset(kill=True)
         b.reset(kill=True)

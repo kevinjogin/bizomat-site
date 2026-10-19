@@ -219,13 +219,15 @@ restarts itself within about two minutes. Everything is set up already; it is al
 
 1. Sign up at fly.io and add a card.
 2. In the Fly dashboard, open Tokens and create an organization token for your personal organization.
-   Copy it.
+   Copy it. (After the first deploy, swap it for a deploy token of the app only: the app > Tokens, or
+   `fly tokens create deploy -a opensketch-yz`. The workflow then holds less power over your Fly account.)
 3. On GitHub, in this repository: Settings > Secrets and variables > Actions > New repository secret.
    Add `FLY_API_TOKEN` (the token), `OPENSKETCH_PASSWORD` (required: the key for creating the owner
    account and resetting passwords) and, for the
    built-in AI chat, `ANTHROPIC_API_KEY`.
 4. Open the Actions tab, choose Deploy to Fly.io, Run workflow. The first run creates the app and its
-   storage and takes about 10 minutes; after that every push to main deploys by itself.
+   storage and takes about 10 minutes; after that every push to main deploys by itself once the tests
+   pass (the Tests workflow also runs on pull requests). A deploy that does not come up fails the run.
 5. OpenSketch is then at `https://opensketch-yz.fly.dev`. If Fly says the name is taken, add a repository
    variable `FLY_APP` (same Settings page, Variables tab) with another name, and run it again.
 6. In that OpenSketch, open Connect AI and add the connector (`https://opensketch-yz.fly.dev/mcp`) to your AI app; it signs in once.
@@ -243,8 +245,8 @@ Files > Download .osk, then Upload on the other).
 ## Run it locally
 
 ```bash
-pip install -e .            # build123d, fastapi, uvicorn
-pip install -e ".[ai]"      # optional: the AI copilot (anthropic SDK)
+pip install -r requirements-dev.txt && pip install --no-deps -e .   # the exact versions CI tests and the server runs
+# or, with whatever versions pip picks: pip install -e ".[ai,dev]"
 export ANTHROPIC_API_KEY=... # optional
 python -m opensketch         # opens http://127.0.0.1:8000
 python -m opensketch --no-browser # background server for MCP, no browser launch

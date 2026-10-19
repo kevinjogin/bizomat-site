@@ -8,11 +8,15 @@ version = "0.6.0"
 description = "SOLIDWORKS-style parametric CAD on build123d, with an AI copilot"
 readme = "README.md"
 requires-python = ">=3.10"
+# Ranges here. The exact versions CI tests and the server image runs are pinned with hashes in requirements.txt
+# (and requirements-dev.txt for tests). To move one, in a pull request so CI runs the whole suite on it:
+#   uv pip compile pyproject.toml --extra ai --universal --python-version 3.12 --generate-hashes -o requirements.txt --upgrade-package <name>
+#   uv pip compile pyproject.toml --extra ai --extra dev --universal --python-version 3.12 --generate-hashes -c requirements.txt -o requirements-dev.txt
 dependencies = ["build123d>=0.9", "fastapi>=0.110", "uvicorn>=0.29", "pydantic>=2", "numpy>=1.24", "bd_warehouse>=0.4", "mcp>=2.2,<3", "httpx>=0.27", "cryptography>=42"]
 
 [project.optional-dependencies]
 ai = ["anthropic>=1.0"]
-dev = ["pytest>=8", "httpx>=0.27"]
+dev = ["pytest>=8", "httpx>=0.27", "pytest-timeout>=2.3"]
 
 [project.scripts]
 opensketch = "opensketch.__main__:main"
@@ -27,3 +31,4 @@ opensketch = ["static/*.html", "static/*.svg", "static/*.webmanifest", "static/i
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = ["slow: end-to-end tests with real worker processes and servers (their own CI job; skip with -m 'not slow')"]

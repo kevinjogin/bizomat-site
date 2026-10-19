@@ -140,7 +140,7 @@ def test_share_links_work_without_the_password(monkeypatch):
         assert data.status_code == 200 and data.headers["content-encoding"] == "gzip"
         snap = data.json()
         assert snap["notes"] == "Lid opening 90." and snap["doc"]["parts"]["lid"]["features"] == [] and snap["result"]["parts"]
-        assert anon.get("/review/js/app.js").status_code == 200 and anon.get("/review/vendor/three.module.js").status_code == 200
+        assert anon.get("/review/js/app.js").status_code == 200 and anon.get("/review/vendor/three.module.min.js").status_code == 200
         assert anon.get("/api/features").status_code == 200  # the command list the app loads
         assert "import hmac" not in anon.get("/review/js/../../auth.py").text and "def " not in anon.get("/review/js/../../auth.py").text  # normalised to /auth.py: a sign-in page, not the source
         for bad in ("/review/index.html", "/review/js/%2e%2e/%2e%2e/auth.py", "/review/x/data"):
