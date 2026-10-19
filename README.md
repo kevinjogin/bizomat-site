@@ -107,12 +107,15 @@ See the [plane contract](docs/DOCUMENT.md#conventions).
    Visibility > Public. Claude cannot reach a private port. (The first visit asks you to create your
    account, with the password as the key.)
 3. **Open Connect AI.** In OpenSketch: OpenSketch AI tab > Connect AI (or File > Connect AI). The "Your AI
-   app" tab has the address and the exact steps for ChatGPT, Claude, Claude Code, Codex, Cursor, VS Code,
-   Gemini CLI and any other MCP app (one-click buttons for Cursor and VS Code). The address contains the
-   key; keep it private. Each account gets its own address, which reaches only that person's Files.
-4. **Add it to your AI app.** For example in Claude: Customize > Connectors > Add custom connector, paste
-   the address, choose No sign-in. In ChatGPT (paid plans, developer mode on): chatgpt.com/plugins > + >
-   Add custom MCP server, Server URL, No authentication.
+   app" tab has the address (`https://<your site>/mcp`, the same for everyone) and the exact steps for ChatGPT,
+   Claude, Claude Code, Codex, Cursor, VS Code, Gemini CLI and any other MCP app.
+4. **Add it to your AI app and sign in once.** For example in Claude: Customize > Connectors > Add custom
+   connector, paste the address, click Connect. OpenSketch opens: sign in (password or Google) and click
+   Allow. That is all: the app stays connected (it renews its sign-in by itself, on every device) and sees
+   only your Files. Account settings > Connected AI apps lists them, with Disconnect. In ChatGPT (paid plans,
+   developer mode on): Settings > Apps & Connectors > Create, the address, Authentication OAuth, then sign in.
+   Apps that cannot sign in can use your private address instead (Connect AI > "App cannot sign in?"); it
+   contains a key, so keep it private.
 5. **Use it.** In a chat, turn OpenSketch on and ask, for example: "In OpenSketch, design a wall bracket
    for a 20 kg shelf using off-the-shelf screws." Open the link it gives you.
 
@@ -219,7 +222,7 @@ takes a few seconds). Everything is set up already; it is all browser steps:
    storage and takes about 10 minutes; after that every push to main deploys by itself.
 5. OpenSketch is then at `https://opensketch-yz.fly.dev`. If Fly says the name is taken, add a repository
    variable `FLY_APP` (same Settings page, Variables tab) with another name, and run it again.
-6. In that OpenSketch, open Connect AI and update the connector in your AI app with the new address.
+6. In that OpenSketch, open Connect AI and add the connector (`https://opensketch-yz.fly.dev/mcp`) to your AI app; it signs in once.
 
 Your own domain (optional): in the Fly dashboard open the app, Certificates, Add certificate, and enter a
 subdomain such as `cad.example.com`. Add the CNAME record Fly shows at your domain's DNS provider (plus the

@@ -1,8 +1,9 @@
 // Connect AI: the two ways to use AI with OpenSketch, in one dialog.
 //
 //  1. "Your AI app": ChatGPT, Claude, Codex, Cursor, VS Code... drive OpenSketch through its MCP address
-//     (the subscription you already pay for; nothing to paste into OpenSketch). The address is personal:
-//     it only reaches your Files.
+//     (the subscription you already pay for; nothing to paste into OpenSketch). The address is the same for
+//     everyone (<site>/mcp): the app signs in to OpenSketch once (OAuth) and sees only that person's Files.
+//     The older private address (/mcp/<key>) stays as a fallback for apps that cannot sign in.
 //  2. "Built-in AI": the OpenSketch AI pane with your own API key (Claude, OpenAI, Gemini, OpenRouter or
 //     any OpenAI-compatible provider). The key goes to the server once and is stored encrypted on your
 //     account; the page only ever gets back the provider, model and the last four characters.
@@ -45,70 +46,69 @@ function codeBlock(text, lang = '') {
 }
 
 // ---------------------------------------------------------------- clients (MCP)
-// Each: name, kind (app | code), mark (two letters on a tile), steps(url) -> [text or {code, lang} or {link}]
+// Each: name, kind (app | code), mark (two letters on a tile), steps(url, signin) -> [text or {code, lang} or {copy}]
+// signin: this server has sign-in, so the app signs in to OpenSketch once (OAuth, mcpauth.py) and stays connected.
+const SIGNIN = 'Your browser opens OpenSketch: sign in (Google works) and click Allow. You only do this once.';
 const CLIENTS = [
-  { id: 'chatgpt', name: 'ChatGPT', kind: 'app', mark: 'GPT', color: '#10a37f', note: 'Paid plans with developer mode (Plus, Pro, Business, Enterprise or Edu). Web only.',
-    steps: (u) => [
-      'In ChatGPT, open Settings and turn on Developer mode (business workspaces: an admin turns it on).',
-      'Go to chatgpt.com/plugins, click +, then Add custom MCP server (some accounts say Create MCP App).',
-      { text: 'Name it OpenSketch. Connection: Server URL. Paste this address:', copy: u },
-      'Authentication: No authentication. Tick the warning, click Create, then install it from your plugins.',
-      'In a chat, type @ and pick OpenSketch, then ask for a design. Open the link it gives you to watch the model.',
-    ] },
-  { id: 'claude', name: 'Claude', kind: 'app', mark: 'C', color: '#d97757', note: 'Any plan (Free allows one custom connector). Web and desktop.',
-    steps: (u) => [
+  { id: 'claude', name: 'Claude', kind: 'app', mark: 'C', color: '#d97757', note: 'Any plan (Free allows one custom connector). Web, desktop and phone.',
+    steps: (u, s) => [
       'In Claude, open Customize > Connectors and click Add custom connector. (Team and Enterprise: an owner adds it under Organization settings > Connectors.)',
-      { text: 'Name it OpenSketch and paste this address as the server URL. Choose No sign-in:', copy: u },
+      { text: 'Name it OpenSketch and paste this address. Leave the advanced settings empty:', copy: u },
+      s ? `Click Connect. ${SIGNIN} Claude stays connected on the web, desktop and phone.` : 'Click Add. This server has no sign-in, so there is nothing else to do.',
       'In a chat, turn it on under + > Connectors, then ask, for example: "In OpenSketch, design a wall bracket for a 20 kg shelf with off-the-shelf screws."',
-      'Open the link Claude gives you to watch the model being built.',
     ] },
-  { id: 'claudecode', name: 'Claude Code', kind: 'code', mark: '>_', color: '#d97757', note: 'Terminal. One command.',
-    steps: (u) => [
+  { id: 'chatgpt', name: 'ChatGPT', kind: 'app', mark: 'GPT', color: '#10a37f', note: 'Paid plans with developer mode (Plus, Pro, Business, Enterprise or Edu). Web.',
+    steps: (u, s) => [
+      'In ChatGPT, open Settings > Apps & Connectors > Advanced settings and turn on Developer mode (business workspaces: an admin turns it on).',
+      'Back in Apps & Connectors, click Create (on some accounts: chatgpt.com/plugins > Add custom MCP server).',
+      { text: 'Name it OpenSketch and paste this address as the server URL:', copy: u },
+      s ? `Authentication: OAuth (leave any client ID and secret empty). Click Create. ${SIGNIN}` : 'Authentication: No authentication. Click Create.',
+      'In a chat, click + > More > OpenSketch, then ask for a design. Open the link it gives you to watch the model.',
+    ] },
+  { id: 'claudecode', name: 'Claude Code', kind: 'code', mark: '>_', color: '#d97757', note: 'Terminal.',
+    steps: (u, s) => [
       'Run this once in a terminal. It adds OpenSketch for all your projects:',
       { code: `claude mcp add --transport http --scope user opensketch ${u}`, lang: 'shell' },
-      'Check it with /mcp inside Claude Code, then ask it to design in OpenSketch.',
+      s ? `In Claude Code, type /mcp, pick opensketch and choose Authenticate. ${SIGNIN}` : 'Check it with /mcp inside Claude Code.',
     ] },
   { id: 'codex', name: 'Codex', kind: 'code', mark: 'Cx', color: '#6b7280', note: 'Codex app, CLI and IDE extension share one setting.',
-    steps: (u) => [
-      'Codex app: Settings > MCP servers > Add server > Streamable HTTP, paste the address, Save, then restart Codex:',
-      { copy: u },
-      'Or in a terminal:',
+    steps: (u, s) => [
+      'In a terminal (or the Codex app: Settings > MCP servers > Add server > Streamable HTTP):',
       { code: `codex mcp add opensketch --url ${u}`, lang: 'shell' },
+      ...(s ? ['Then sign in once:', { code: 'codex mcp login opensketch', lang: 'shell' }, SIGNIN] : []),
       'Or add this to ~/.codex/config.toml:',
       { code: `[mcp_servers.opensketch]\nurl = "${u}"`, lang: 'toml' },
     ] },
   { id: 'cursor', name: 'Cursor', kind: 'code', mark: 'Cu', color: '#111827', note: 'One click, or your global mcp.json.',
     link: (u) => ({ label: 'Add to Cursor', href: `cursor://anysphere.cursor-deeplink/mcp/install?name=opensketch&config=${encodeURIComponent(btoa(JSON.stringify({ url: u })))}` }),
-    steps: (u) => [
-      'Click Add to Cursor above, or put this in ~/.cursor/mcp.json (your home folder, so the address stays out of your projects):',
+    steps: (u, s) => [
+      'Click Add to Cursor above, or put this in ~/.cursor/mcp.json:',
       { code: JSON.stringify({ mcpServers: { opensketch: { url: u } } }, null, 2), lang: 'json' },
+      ...(s ? [`In Cursor Settings > MCP, click the sign-in button next to opensketch. ${SIGNIN}`] : []),
     ] },
   { id: 'vscode', name: 'VS Code', kind: 'code', mark: 'VS', color: '#2f80ed', note: 'GitHub Copilot agent mode.',
     link: (u) => ({ label: 'Add to VS Code', href: `vscode:mcp/install?${encodeURIComponent(JSON.stringify({ name: 'opensketch', type: 'http', url: u }))}` }),
-    steps: (u) => [
+    steps: (u, s) => [
       'Click Add to VS Code above, or run MCP: Add Server from the Command Palette, choose HTTP, paste the address and pick User:',
       { copy: u },
-      'Or put this in your user mcp.json (MCP: Open User Configuration):',
-      { code: JSON.stringify({ servers: { opensketch: { type: 'http', url: u } } }, null, 2), lang: 'json' },
+      ...(s ? [`When VS Code asks to sign in to opensketch, click Allow. ${SIGNIN}`] : []),
       'In Copilot Chat, turn its tools on with Configure Tools.',
     ] },
   { id: 'gemini', name: 'Gemini CLI', kind: 'code', mark: 'G', color: '#4285f4', note: 'Terminal.',
-    steps: (u) => [
+    steps: (u, s) => [
       'Run this once:',
       { code: `gemini mcp add --transport http -s user opensketch ${u}`, lang: 'shell' },
-      'Or add it to ~/.gemini/settings.json (httpUrl, not url):',
-      { code: JSON.stringify({ mcpServers: { opensketch: { httpUrl: u } } }, null, 2), lang: 'json' },
+      ...(s ? ['Then, inside Gemini CLI:', { code: '/mcp auth opensketch', lang: 'shell' }, SIGNIN] : []),
     ] },
   { id: 'other', name: 'Other', kind: 'code', mark: '+', color: '#5e6ad2', note: 'Any app that supports remote MCP servers.',
-    steps: (u) => [
-      'Add a remote MCP server with this address. Transport: Streamable HTTP. Authentication: none (the address is the key).',
-      { copy: u },
-      'Windsurf / Devin Desktop: ~/.config/devin/mcp_config.json with {"mcpServers": {"opensketch": {"serverUrl": "<address>"}}}.',
+    steps: (u, s) => [
+      { text: 'Add a remote MCP server (Streamable HTTP) with this address:', copy: u },
+      s ? `Authentication: OAuth. When the app asks, sign in to OpenSketch and click Allow. Apps that cannot sign in can use your private address (below).` : 'Authentication: none.',
     ] },
 ];
 
 function clientPane(c, info) {
-  const u = info.mcp_url;
+  const u = info.url || info.mcp_url;
   const box = h('div', 'cx-client');
   const head = h('div', 'cx-chead');
   const title = h('div', 'cx-ctitle');
@@ -117,7 +117,7 @@ function clientPane(c, info) {
   if (c.link) { const l = c.link(u); const a = h('a', 'btn primary fv-pill', `<span>${l.label}</span>${FI.arrow}`); a.href = l.href; head.appendChild(a); }
   box.appendChild(head);
   const ol = h('ol', 'cx-steps');
-  for (const s of c.steps(u)) {
+  for (const s of c.steps(u, info.signin !== false)) {
     const li = document.createElement('li');
     if (typeof s === 'string') li.appendChild(t('span', null, s));
     else {
@@ -141,7 +141,7 @@ function appTab(app, info) {
   const warn = [];
   if (!info.password_set && !info.accounts) warn.push('This server has no sign-in. Anyone with its address can use it. Set OPENSKETCH_PASSWORD where it runs, then restart it.');
   if (info.codespace) warn.push('Codespaces: make port 8000 public (Ports tab, right-click, Port Visibility > Public) or the AI cannot reach it.');
-  if (/^http:\/\/(127\.|localhost)/.test(info.mcp_url)) warn.push('This address is on your own computer. ChatGPT and Claude on the web cannot reach it; desktop tools like Claude Code, Codex and Cursor can.');
+  if (/^http:\/\/(127\.|localhost)/.test(info.url || info.mcp_url)) warn.push('This address is on your own computer. ChatGPT and Claude on the web cannot reach it; desktop tools like Claude Code, Codex and Cursor can.');
   for (const w of warn) wrap.appendChild(t('div', 'cx-warn', w));
   const grid = h('div', 'cx-clients'); grid.setAttribute('role', 'tablist');
   const detail = h('div', 'cx-detail');
@@ -161,11 +161,27 @@ function appTab(app, info) {
   }
   wrap.append(grid, detail);
   const keyNote = h('div', 'cx-foot');
-  keyNote.append(t('span', null, info.personal ? 'This address is yours: it reaches only your Files. Keep it private.' : 'The address is the key: keep it private. Changing the server password changes it.'));
+  if (info.signin === false) {
+    keyNote.append(t('span', null, 'This server has no sign-in, so anyone with its address can use it.'));
+  } else {
+    keyNote.append(t('span', null, 'Each app signs in as you and sees only your Files. See or disconnect them in Account settings.'));
+    const more = t('button', 'cx-link', 'App cannot sign in? Use your private address');
+    const priv = h('div', 'cx-private'); priv.hidden = true;
+    priv.append(t('p', null, 'This address works without sign-in. It is a key to your Files: keep it private, and never put it in a shared project.'));
+    const row = h('div', 'cx-url'); const inp = h('input'); inp.readOnly = true; inp.value = info.mcp_url; inp.onfocus = () => inp.select();
+    row.append(inp, copyButton(() => info.mcp_url)); priv.appendChild(row);
+    more.onclick = () => { priv.hidden = !priv.hidden; };
+    keyNote.append(more);
+    wrap.append(keyNote, priv);
+    return finish();
+  }
   wrap.appendChild(keyNote);
-  let saved = null; try { saved = localStorage.getItem('opensketch.connect.client'); } catch (_) { /* */ }
-  pick(CLIENTS.find((c) => c.id === saved) || CLIENTS[0]);
-  return wrap;
+  return finish();
+  function finish() {
+    let saved = null; try { saved = localStorage.getItem('opensketch.connect.client'); } catch (_) { /* */ }
+    pick(CLIENTS.find((c) => c.id === saved) || CLIENTS[0]);
+    return wrap;
+  }
 }
 
 // ---------------------------------------------------------------- built-in AI (your own key)

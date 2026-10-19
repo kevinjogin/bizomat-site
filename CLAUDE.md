@@ -208,6 +208,31 @@ with model pictures, a deep audit, "connect Claude, Codex or whatever", a better
   Public privacy notice at /privacy (`auth.PRIVACY`, served by PasswordGate before any sign-in check; linked from the
   sign-in pages' footer): what the server keeps, the Google data used (name, email, verified, sub, hd) and that it
   is not shared, sold or used for ads or AI training; needed before the Google app can be published to everyone.
+- AI apps sign in (2026-10-19, YZ: "have the MCP tied to the user account so one Claude account links without
+  reconnecting"): OAuth 2.1 for MCP (`mcpauth.py`, MCP authorization spec 2025-11-25). Connector address is
+  `<site>/mcp` for everyone. No/bad Bearer -> 401 `WWW-Authenticate: Bearer resource_metadata=".../.well-known/
+  oauth-protected-resource/mcp", scope="opensketch"` (`mcp_server._BearerGate`, CORS open; open-mode servers need no
+  token). Metadata: /.well-known/oauth-protected-resource[/mcp] (resource = base/mcp, authorization_servers = base),
+  /.well-known/oauth-authorization-server[/mcp] (S256 only, iss parameter, DCR + Client ID Metadata Documents).
+  Clients: DCR at /oauth/register (redirect URIs: https, http loopback, or an app scheme like cursor://; never
+  fragments or userinfo; 30 per IP per hour; unused registrations dropped after 30 days; secrets stored as SHA-256)
+  or an https client_id URL (CIMD, ChatGPT's way) fetched through `providers.pinned` (public IP only, no redirects,
+  64 KB, 5 s, cached 1 h, client_id must equal the URL, public clients only). /oauth/authorize: the gate sends a
+  signed-out person to sign-in (password or Google) and back; the consent page (`auth.consent_page`: app name as
+  text, the return host, a warning for apps on this computer, Allow / Cancel) posts a signed request (HMAC, 15 min,
+  bound to the person) back; Allow -> one-time code (memory, 10 min) to the registered redirect with state + iss.
+  /oauth/token: authorization_code (PKCE S256 checked, resource must be this /mcp) and refresh_token (rotated every
+  use, the previous one still works for 120 s so a retry does not break the link; 90 days); access tokens 1 h
+  (`osa_`), refresh `osr_`, all stored as SHA-256 in `mcp_oauth.json` with one grant per person and app. Unknown
+  client at the token endpoint -> 401 invalid_client (Claude re-registers). /oauth/revoke ends the grant. The token
+  stands for the person (`_mcp_user`), so tools see only their files; removing a member drops their grants.
+  Account settings > Connected AI apps (GET/DELETE /api/account/apps) with Disconnect. Connect AI dialog: plain
+  address + per-app sign-in steps (Claude: Connect; ChatGPT: Authentication OAuth; Claude Code: /mcp >
+  Authenticate; Codex: `codex mcp login opensketch`; Cursor and VS Code: their sign-in prompt; Gemini CLI: `/mcp
+  auth`); "App cannot sign in? Use your private address" shows the old /mcp/<key> address, which keeps working.
+  Tests: tests/test_mcp_oauth.py (7, incl. the MCP Python SDK's own OAuth client doing discovery, DCR, consent,
+  PKCE and tool calls against a real uvicorn server, and CIMD with a pinned fetch). Checked in Chromium: consent
+  page, Allow -> code -> token -> list_documents, Connected AI apps, Connect AI dialog.
 - Tests: `tests/test_files.py` (8: history size cap, per-person files and 404s, rename/duplicate/trash/restore/purge/versions,
   30-day purge, meta-only poll and list, pictures browser + server-drawn + AI redraw + limits, personal MCP
   addresses over JSON-RPC, PWA files public and versioned), `tests/test_hardening.py` (8: safe next, cross-site
@@ -637,7 +662,9 @@ See `docs/CODE_REVIEW_2026-10-16.md` for reproductions, new-feature usage and UX
 - Files: no folders, sharing between accounts or per-file permissions beyond the owner; the Trash purge runs when
   a list is loaded; empty files made by New stay until deleted; pictures are 480x360 trimetric only.
 - Connect AI: client steps are from vendor docs (Oct 2026), not tried end to end in ChatGPT, Codex, Cursor or
-  VS Code; ChatGPT's developer-mode menu and plan rules differ between OpenAI's pages.
+  VS Code; ChatGPT's developer-mode menu and plan rules differ between OpenAI's pages. App sign-in (OAuth) is
+  tested with the MCP Python SDK client; not yet with the real Claude / ChatGPT connectors. No scopes beyond one
+  ("opensketch" = everything the person can do); codes are in memory (a restart mid-sign-in means connect again).
 - Service worker: offline shows the last app page and the browser copy of the model; rebuilds need the server.
 
 - BYOK: only the Anthropic path has web search, thinking display and the server-side fallback; OpenAI-compatible

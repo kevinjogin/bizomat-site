@@ -81,6 +81,29 @@ export class Account {
       body.querySelector('.acct-sub').textContent = 'Set a password (you sign in with Google now)';
     }
     body.querySelector('.acct-v').textContent = u.email + (u.google ? '  (linked to Google)' : '');
+    // AI apps that signed in to this account (Claude, ChatGPT, Codex...): see and disconnect them
+    const apps = h('div', 'acct-apps');
+    apps.append(h('div', 'acct-sep'), h('div', 'acct-sub', 'Connected AI apps'));
+    const list = h('div', 'acct-applist', 'Loading...');
+    apps.appendChild(list);
+    body.appendChild(apps);
+    const when = (s) => { if (!s) return ''; const d = (Date.now() / 1000 - s) / 86400; return d < 1 ? 'today' : d < 2 ? 'yesterday' : `${Math.floor(d)} days ago`; };
+    const draw = (items) => {
+      list.innerHTML = '';
+      if (!items.length) { list.appendChild(h('div', 'acct-note', 'None yet. Connect Claude, ChatGPT or another AI app from Connect AI: it signs in here once.')); return; }
+      for (const a of items) {
+        const row = h('div', 'acct-app');
+        const who = h('span', 'acct-who'); who.append(h('b', null, a.name), h('span', null, `${a.host ? a.host + ' - ' : ''}connected ${when(a.created)}, used ${when(a.last_used)}`));
+        const off = h('button', 'btn', 'Disconnect');
+        off.onclick = async () => {
+          off.disabled = true;
+          try { const r = await fetch('/api/account/apps/' + encodeURIComponent(a.id), { method: 'DELETE' }); if (!r.ok) throw new Error(r.statusText); draw((await r.json()).apps || []); this.app.toast?.(`${a.name} disconnected. It has to sign in again to use your files.`); }
+          catch (_) { off.disabled = false; this.app.toast?.('Could not disconnect. Check your connection and try again.'); }
+        };
+        row.append(who, off); list.appendChild(row);
+      }
+    };
+    fetch('/api/account/apps', { cache: 'no-store' }).then((r) => r.json()).then((j) => draw(j.apps || [])).catch(() => { list.textContent = 'Could not load the list.'; });
     body.querySelectorAll('input').forEach((i) => i.addEventListener('keydown', (e) => e.stopPropagation()));
     const err = body.querySelector('.acct-err');
     const d = dialog({ title: 'Account settings', body, cls: 'acct-dlg', buttons: [

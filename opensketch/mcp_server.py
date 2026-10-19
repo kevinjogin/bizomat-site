@@ -928,6 +928,59 @@ class _TokenGate:
             _mcp_user.reset(token)
 
 
+class _BearerGate:
+    """ASGI app for /mcp: the AI app signed in (mcpauth.py) and sends `Authorization: Bearer <token>`.
+    No or a bad token: 401 with the WWW-Authenticate pointer the MCP spec asks for, so the app starts sign-in.
+    A server without sign-in (open mode) needs no token."""
+
+    async def __call__(self, scope, receive, send):
+        from . import mcpauth
+        headers = {k.decode().lower(): v.decode() for k, v in scope.get("headers", [])}
+        cors = [(b"access-control-allow-origin", b"*"),
+                (b"access-control-expose-headers", b"mcp-session-id, mcp-protocol-version, www-authenticate")]
+        if scope.get("method") == "OPTIONS":
+            await send({"type": "http.response.start", "status": 204, "headers": cors + [
+                (b"access-control-allow-methods", b"GET, POST, DELETE, OPTIONS"),
+                (b"access-control-allow-headers", b"authorization, content-type, mcp-protocol-version, mcp-session-id, last-event-id"),
+                (b"access-control-max-age", b"600")]})
+            await send({"type": "http.response.body", "body": b""})
+            return
+        if auth.mode() == "open":
+            ok, user = True, None
+        else:
+            authz = headers.get("authorization", "")
+            tok = authz[7:].strip() if authz[:7].lower() == "bearer " else ""
+            ok, user = mcpauth.user_for_access(tok) if tok else (False, None)
+            if not ok:
+                body = json.dumps({"error": "invalid_token" if tok else "unauthorized",
+                                   "error_description": "Sign in to OpenSketch to use it from this app."}).encode()
+                await send({"type": "http.response.start", "status": 401, "headers": cors + [
+                    (b"content-type", b"application/json"),
+                    (b"www-authenticate", mcpauth.challenge(headers, "invalid_token" if tok else "").encode())]})
+                await send({"type": "http.response.body", "body": body})
+                return
+
+        async def send_cors(msg):
+            if msg["type"] == "http.response.start":
+                msg = dict(msg, headers=list(msg.get("headers", [])) + cors)
+            await send(msg)
+        token = _mcp_user.set(user)
+        try:
+            await http_app().inner(scope, receive, send_cors)
+        finally:
+            _mcp_user.reset(token)
+
+
+_bearer_app = None
+
+
+def bearer_app():
+    global _bearer_app
+    if _bearer_app is None:
+        _bearer_app = _BearerGate()
+    return _bearer_app
+
+
 def http_app():
     """The ASGI app for /mcp/<token> (token checked here) and the session manager to run in the lifespan."""
     global _http_app

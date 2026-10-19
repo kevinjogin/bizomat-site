@@ -208,6 +208,10 @@ button:hover:after{{transform:translateX(3px)}}
 .gbtn{{display:flex;align-items:center;justify-content:center;gap:10px;height:42px;border-radius:21px;background:#fff;color:#1f1f1f;font-weight:600;text-decoration:none;border:1px solid #dadce0;transition:background .12s}}
 .gbtn:hover{{background:#f2f2f2;text-decoration:none}}
 .or{{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;margin:18px 0 0}} .or:before,.or:after{{content:"";flex:1;border-top:1px solid var(--line)}}
+.can{{list-style:none;margin:0 0 14px;padding:14px 16px;border-radius:12px;background:var(--field);display:grid;gap:8px;color:var(--text)}}
+.can li{{display:flex;gap:10px;align-items:center}}.can li:before{{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);flex:none}}
+.note b{{color:var(--text);font-weight:600}}.note.center{{text-align:center;margin-top:12px}}
+button.ghost{{margin-top:10px;background:transparent;box-shadow:inset 0 0 0 1px var(--line2);color:var(--text)}}button.ghost:after{{display:none}}button.ghost:hover{{background:rgba(255,255,255,.05)}}
 .links{{margin-top:18px;display:flex;justify-content:space-between;gap:12px;font-size:13px}} a{{color:var(--link);text-decoration:none}} a:hover{{text-decoration:underline}}
 .foot{{position:absolute;bottom:20px;left:32px;right:32px;display:flex;justify-content:space-between;color:var(--muted);font-size:12px}}.foot a{{color:var(--muted)}}.foot a:hover{{color:var(--text)}}
 @media (max-width:900px){{.wrap{{grid-template-columns:1fr;gap:28px;padding:96px 20px 64px;max-width:480px}}.pitch h2{{font-size:36px}}.pitch p{{font-size:15px;margin-bottom:0}}.pitch ul{{display:none}}.brand{{left:20px;top:22px}}.card{{padding:26px 22px}}.foot{{left:20px;right:20px}}.band{{height:62vh}}}}
@@ -219,6 +223,35 @@ button:hover:after{{transform:translateX(3px)}}
 <form class="card" method="post" action="{action}" autocomplete="on"><h1>{title}</h1><p class="sub">{sub}</p>{top}
 <input type="hidden" name="next" value="{next}">{fields}{error}<button type="submit">{button}</button>{links}</form></div>
 <div class="foot"><span>OpenSketch</span><span>Parametric CAD with AI &nbsp;&middot;&nbsp; <a href="/privacy">Privacy</a></span></div></body></html>"""
+
+
+def consent_page(app_name: str, redirect_uri: str, user: dict | None, req: str, app_host: str = "") -> bytes:
+    """Allow / Cancel for an AI app that wants to use this person's OpenSketch (mcpauth.py)."""
+    from urllib.parse import urlsplit
+    u = urlsplit(redirect_uri)
+    host = u.hostname or (u.scheme + "://")
+    local = (u.hostname or "") in ("localhost", "127.0.0.1", "::1") or u.scheme not in ("http", "https")
+    name = _esc(app_name)
+    who = (f'<b>{_esc(user.get("name") or "")}</b> ({_esc(user.get("email") or "")})' if user and not user.get("legacy")
+           else "<b>this server</b>")
+    top = (f'<ul class="can"><li>Find and open your files</li><li>Create parts and assemblies and change them</li>'
+           f'<li>Import, preview and export your models</li></ul>'
+           f'<div class="note">Signed in as {who}. Not you? <a href="/logout">Sign out</a></div>'
+           f'<div class="note">You go back to <b>{_esc(host)}</b> after this.'
+           + (" That is an app on this computer: allow it only if you just started connecting it." if local else "")
+           + '</div>')
+    fields = [f'<input type="hidden" name="req" value="{_esc(req)}">']
+    links = ('<button type="submit" name="action" value="deny" class="ghost">Cancel</button>'
+             '<div class="note center">You can disconnect it any time in Account settings.</div>')
+    sub = f"{name} wants to work in your OpenSketch files." + (f" Its details come from <b>{_esc(app_host)}</b>." if app_host else "")
+    return _page(f"Connect {name}", sub, "/oauth/authorize", fields,
+                 "Allow", "/", "", links, top)
+
+
+def oauth_problem_page(message: str) -> bytes:
+    page = _page("Could not connect", "Your AI app sent a sign-in request OpenSketch cannot accept.", "/", [],
+                 "Go to OpenSketch", "/", message)
+    return page.replace(b'method="post" action="/"', b'method="get" action="/"').replace(b'<input type="hidden" name="next" value="/">', b"")
 
 
 # Privacy notice: public (Google requires one before a sign-in app can be used by anyone), about this server.
@@ -435,6 +468,16 @@ def _failed(*keys: str) -> None:
         _fails.setdefault(k, []).append(time.time())
 
 
+OAUTH_PUBLIC = ("/oauth/register", "/oauth/token", "/oauth/revoke")
+
+
+def _machine_path(path: str) -> bool:
+    """Paths AI apps call from their own servers or tools: no cookies, their own keys, so no sign-in page and no
+    same-site check (consent at /oauth/authorize is not one of them)."""
+    return (path in ("/mcp", "/mcp/") or path.startswith("/mcp/") or path in OAUTH_PUBLIC
+            or path.startswith("/.well-known/oauth-"))
+
+
 def _same_origin(scope) -> bool:
     """A browser request that changes something must come from this site's own pages (Origin /
     Sec-Fetch-Site). Requests without those headers (scripts, tests, MCP clients) are not browsers."""
@@ -465,7 +508,7 @@ class PasswordGate:
         if scope["type"] != "http":
             return await self.app(scope, receive, send)
         path = scope.get("path", "")
-        if scope.get("method") not in ("GET", "HEAD", "OPTIONS") and not path.startswith("/mcp/") and not _same_origin(scope):
+        if scope.get("method") not in ("GET", "HEAD", "OPTIONS") and not _machine_path(path) and not _same_origin(scope):
             return await _send(send, 403, b'{"error":"This request did not come from OpenSketch."}', [(b"content-type", b"application/json")])
         if path == "/privacy" and scope.get("method") in ("GET", "HEAD"):
             return await _send(send, 200, PRIVACY.encode(), [(b"content-type", b"text/html; charset=utf-8"), (b"cache-control", b"no-cache")])
@@ -476,9 +519,10 @@ class PasswordGate:
             return await _send(send, 503, json.dumps({"error": str(e)}).encode(), [(b"content-type", b"application/json")])
         if path in ("/login", "/setup", "/reset", "/logout", "/signup") or path.startswith("/join/") or path.startswith("/auth/google"):
             return await self._page(path, scope, receive, send)
-        # /mcp/ and /review/: their tokens are the keys. GET /api/features: the command list (no document
-        # data), which the read-only review app loads too.
-        if path.startswith("/mcp/") or path.startswith("/review/") or (path == "/api/features" and scope.get("method") == "GET"):
+        # /mcp and /mcp/<key>, /review/: their tokens are the keys. OAuth metadata, registration, token and revoke are
+        # for AI apps (no cookies). GET /api/features: the command list (no document data), which the read-only
+        # review app loads too.
+        if _machine_path(path) or path.startswith("/review/") or (path == "/api/features" and scope.get("method") == "GET"):
             return await self.app(scope, receive, send)
         # The installable-app files hold no data: browsers fetch the manifest without cookies.
         if scope.get("method") in ("GET", "HEAD") and (path in PUBLIC_FILES or path.startswith("/icons/")):

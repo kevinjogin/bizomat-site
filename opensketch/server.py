@@ -826,15 +826,19 @@ def api_remove_user(user_id: str, request: Request):
         accounts.remove(user_id, "")
     except accounts.AccountError as e:
         return JSONResponse({"error": str(e)}, status_code=400)
+    from . import mcpauth
+    mcpauth.drop_user(user_id)  # their connected AI apps stop working too
     return {"removed": user_id}
 
 
 @app.get("/api/connect")
 def api_connect(request: Request):
-    """What the Connect AI dialog shows: this person's connector address."""
+    """What the Connect AI dialog shows: the sign-in address (/mcp, the app signs in as you) and this person's
+    private address (/mcp/<key>, for apps that cannot sign in)."""
     base = auth.public_url(dict(request.headers))
     u = _user(request)
-    return {"mcp_url": f"{base}/mcp/{auth.mcp_token_for(u)}", "password_set": bool(auth.password()),
+    return {"url": f"{base}/mcp", "signin": auth.mode() != "open",
+            "mcp_url": f"{base}/mcp/{auth.mcp_token_for(u)}", "password_set": bool(auth.password()),
             "codespace": bool(os.environ.get("CODESPACE_NAME")), "app_url": base, "accounts": auth.mode() == "accounts",
             "personal": bool(u and not u.get("legacy") and u.get("role") != "owner")}
 
@@ -1041,7 +1045,145 @@ def review_asset(asset: str):
     return FileResponse(p)
 
 
-# MCP (Streamable HTTP): the token in the path is the key; routed before the static files.
+# ----------------------------------------------------------------------------- AI apps sign in (OAuth for MCP)
+# See mcpauth.py. Metadata, registration, token and revoke are public (PasswordGate lets them through, no cookies,
+# CORS open); /oauth/authorize needs the person signed in (the gate sends them to sign-in and back).
+
+OAUTH_CORS = {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+              "Access-Control-Allow-Headers": "Authorization, Content-Type, MCP-Protocol-Version", "Cache-Control": "no-store"}
+
+
+def _hdrs(request: Request) -> dict:
+    return {k.lower(): v for k, v in request.headers.items()}
+
+
+async def _body_form(request: Request) -> dict:
+    from urllib.parse import parse_qs
+    raw = await request.body()
+    if len(raw) > 20000:
+        return {}
+    return {k: v[0] for k, v in parse_qs(raw.decode(errors="ignore")).items()}
+
+
+@app.get("/.well-known/oauth-protected-resource")
+@app.get("/.well-known/oauth-protected-resource/mcp")
+def oauth_resource(request: Request):
+    from . import mcpauth
+    return JSONResponse(mcpauth.protected_resource(_hdrs(request)), headers=OAUTH_CORS)
+
+
+@app.get("/.well-known/oauth-authorization-server")
+@app.get("/.well-known/oauth-authorization-server/mcp")
+def oauth_server(request: Request):
+    from . import mcpauth
+    return JSONResponse(mcpauth.server_metadata(_hdrs(request)), headers=OAUTH_CORS)
+
+
+@app.options("/.well-known/{rest:path}")
+@app.options("/oauth/{rest:path}")
+def oauth_preflight(rest: str):
+    return Response(status_code=204, headers=OAUTH_CORS)
+
+
+@app.post("/oauth/register")
+async def oauth_register(request: Request):
+    from . import mcpauth
+    try:
+        meta = await request.json()
+    except Exception:
+        meta = None
+    try:
+        out = await run_in_threadpool(mcpauth.register, meta, auth._client(request.scope))
+    except mcpauth.OAuthError as e:
+        return JSONResponse(e.body(), status_code=e.status, headers=OAUTH_CORS)
+    return JSONResponse(out, status_code=201, headers=OAUTH_CORS)
+
+
+@app.post("/oauth/token")
+async def oauth_token(request: Request):
+    from . import mcpauth
+    form = await _body_form(request)
+    try:
+        out = await run_in_threadpool(mcpauth.token, form, request.headers.get("authorization", ""))
+    except mcpauth.OAuthError as e:
+        extra = {"WWW-Authenticate": 'Basic realm="OpenSketch"'} if e.status == 401 else {}
+        return JSONResponse(e.body(), status_code=e.status, headers={**OAUTH_CORS, **extra})
+    return JSONResponse(out, headers={**OAUTH_CORS, "Pragma": "no-cache"})
+
+
+@app.post("/oauth/revoke")
+async def oauth_revoke(request: Request):
+    from . import mcpauth
+    form = await _body_form(request)
+    try:
+        await run_in_threadpool(mcpauth.revoke, form, request.headers.get("authorization", ""))
+    except mcpauth.OAuthError as e:
+        return JSONResponse(e.body(), status_code=e.status, headers=OAUTH_CORS)
+    return JSONResponse({}, headers=OAUTH_CORS)
+
+
+def _auth_html(body: bytes, status: int = 200) -> Response:
+    return Response(body, status_code=status, headers={k.decode(): v.decode() for k, v in auth.HTML})
+
+
+@app.get("/oauth/authorize")
+def oauth_authorize(request: Request):
+    """The consent page an AI app sends the person to (after sign-in, which the gate handles)."""
+    from fastapi.responses import RedirectResponse
+    from . import mcpauth
+    h = _hdrs(request)
+    try:
+        rec, req = mcpauth.check_authorize(dict(request.query_params), h)
+    except mcpauth.RedirectError as e:
+        return RedirectResponse(e.location, status_code=302)
+    except mcpauth.OAuthError as e:
+        return _auth_html(auth.oauth_problem_page(e.description), 400)
+    u = _user(request)
+    uid = u["id"] if u else "local"
+    return _auth_html(auth.consent_page(rec["name"], req["redirect_uri"], u, mcpauth.sign_request(req, uid),
+                                        rec.get("host", "") if rec.get("cimd") else ""))
+
+
+@app.post("/oauth/authorize")
+async def oauth_decide(request: Request):
+    from fastapi.responses import RedirectResponse
+    from . import mcpauth
+    form = await _body_form(request)
+    u = _user(request)
+    uid = u["id"] if u else "local"
+    req = mcpauth.read_request(form.get("req", ""), uid)
+    if req is None or mcpauth.client(req["client_id"]) is None:
+        return _auth_html(auth.oauth_problem_page("This page has expired. Start connecting again from your AI app."), 400)
+    iss = mcpauth.base_url(_hdrs(request))
+    if form.get("action") == "deny":
+        return RedirectResponse(mcpauth.with_query(req["redirect_uri"], error="access_denied", state=req["state"] or None,
+                                                   iss=iss), status_code=303)
+    code = await run_in_threadpool(mcpauth.issue_code, req, uid)
+    return RedirectResponse(mcpauth.with_query(req["redirect_uri"], code=code, state=req["state"] or None, iss=iss),
+                            status_code=303)
+
+
+@app.get("/api/account/apps")
+def api_apps(request: Request):
+    """AI apps this person connected by signing in (Account settings > Connected AI apps)."""
+    from . import mcpauth
+    u = _user(request)
+    return {"apps": mcpauth.grants_for(u["id"] if u else "local")}
+
+
+@app.delete("/api/account/apps/{grant_id}")
+def api_app_disconnect(grant_id: str, request: Request):
+    from . import mcpauth
+    u = _user(request)
+    if not mcpauth.drop_grant(u["id"] if u else "local", grant_id):
+        raise HTTPException(404, "No such connection")
+    return {"apps": mcpauth.grants_for(u["id"] if u else "local")}
+
+
+# MCP (Streamable HTTP): /mcp takes a Bearer token from the sign-in above; /mcp/<key> is the older private
+# address (the key in the path). Routed before the static files.
+app.router.routes.append(Route("/mcp", endpoint=mcp_server.bearer_app(), methods=["GET", "POST", "DELETE", "OPTIONS"]))
+app.router.routes.append(Route("/mcp/", endpoint=mcp_server.bearer_app(), methods=["GET", "POST", "DELETE", "OPTIONS"]))
 app.router.routes.append(Route("/mcp/{token}", endpoint=mcp_server.http_app(), methods=["GET", "POST", "DELETE"]))
 app.router.routes.append(Route("/mcp/{token}/", endpoint=mcp_server.http_app(), methods=["GET", "POST", "DELETE"]))
 
