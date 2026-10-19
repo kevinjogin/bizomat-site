@@ -1,5 +1,5 @@
 // Assembly mode: components, mates, Move Component, Interference Detection, Open Part and the
-// assembly playback (Motion Study). The document format is in docs/DOCUMENT.md ("Assembly document").
+// assembly playback. The document format is in docs/DOCUMENT.md ("Assembly document").
 
 import * as THREE from 'three';
 import { COLORS, matOf } from './viewer.js';
@@ -9,6 +9,7 @@ import { regenLocal, measurePair, couplerLaw } from './asmsolver.js';
 import { mateReferences, featureSketchIds, rolledBackFeature, escapeHtml as esc } from './model-utils.js';
 
 const clone = (o) => JSON.parse(JSON.stringify(o));
+const GLIDE_MS = 450; // a mated part travels onto its mate (SOLIDWORKS does not jump it there)
 
 export const MATE_TYPES = [
   ['coincident', 'Coincident', 'r_coincident'],
@@ -91,6 +92,8 @@ export class AssemblyMode {
   async regen(announce = false, docOverride = null, label = null) {
     const app = this.app;
     const seq = ++app.regenSeq;
+    const glide = this.glideNext ? GLIDE_MS : 0; // a mate was just added, previewed or cancelled
+    this.glideNext = false;
     const doc = app.cleanDoc(docOverride || app.shownDoc);
     let res;
     if (this.canSolveLocally(doc)) {
@@ -111,14 +114,14 @@ export class AssemblyMode {
       this.remember(res, doc);
     }
     try {
-      if (docOverride) { this.draw(res, docOverride); return res; }
-      this.apply(res);
+      if (docOverride) { this.draw(res, docOverride, glide); return res; }
+      this.apply(res, glide);
     } finally { done(); }
     if (announce) app.status('Rebuild complete');
     return res;
   }
 
-  apply(res) {
+  apply(res, glide = 0) {
     const app = this.app;
     this.res = res;
     app.result = res;
@@ -136,7 +139,7 @@ export class AssemblyMode {
       }
       if (!app.proposal) app.autosave();
     }
-    this.draw(res);
+    this.draw(res, this.doc, glide);
     app.tree.render();
     app.updatePlanes();
     const bad = res.mates.filter((m) => m.state === 'error');
@@ -152,7 +155,7 @@ export class AssemblyMode {
     return cs.length ? (under ? `${under} of ${cs.length} components under defined` : 'Fully defined') : 'Insert components to start the assembly.';
   }
 
-  draw(res = this.res, doc = this.doc) {
+  draw(res = this.res, doc = this.doc, glide = 0) {
     if (!res) return;
     const app = this.app;
     const proposal = !!app.proposal;
@@ -169,7 +172,7 @@ export class AssemblyMode {
     });
     const bodies = Object.fromEntries(Object.entries(res.parts).filter(([, p]) => p.body).map(([k, p]) => [k, p.body]));
     app.viewer.setTool(null);
-    app.viewer.setAssembly(comps, bodies);
+    app.viewer.setAssembly(comps, bodies, glide);
     app.viewer.clearGroup(app.viewer.otherSketches);
     app.refreshSelectionDisplay();
   }
@@ -683,6 +686,7 @@ export class AssemblyMode {
         if (!/^limit/.test(mm.type)) { delete mm.min; delete mm.max; }
         if (mm.type !== 'lock') delete mm.pose;
         if (existing && existing.type !== mm.type) mm.name = this.nextMateName(mm.type);
+        this.glideNext = true;
         app.commit(existing ? 'Edit ' + name : name, () => {
           if (existing) { const i = doc.mates.findIndex((x) => x.id === existing.id); doc.mates[i] = mm; } else doc.mates.push(mm);
         });
@@ -691,7 +695,7 @@ export class AssemblyMode {
         app.pm.render();
         return false; // SOLIDWORKS keeps the Mate PropertyManager open for the next mate
       },
-      onCancel: () => { this.regen(); },
+      onCancel: () => { this.glideNext = true; this.regen(); },
     };
     app.pm.open(spec);
     if (!existing) {
@@ -752,12 +756,13 @@ export class AssemblyMode {
       onOk: () => {
         if (!spec.okEnabled()) return false;
         const mm = { ...this.cleanHinge(m, limits), id: existing ? existing.id : this.uid('m'), name: existing ? m.name : this.nextMateName('hinge') };
+        this.glideNext = true;
         app.commit(existing ? 'Edit ' + mm.name : mm.name, () => {
           if (existing) { const i = doc.mates.findIndex((x) => x.id === existing.id); doc.mates[i] = mm; } else doc.mates.push(mm);
         });
         return undefined;
       },
-      onCancel: () => { this.regen(); },
+      onCancel: () => { this.glideNext = true; this.regen(); },
     };
     app.pm.open(spec);
     app.setSelection([]);
@@ -912,6 +917,7 @@ export class AssemblyMode {
         if (!spec.okEnabled()) return false;
         const id = existing ? existing.id : this.uid('m');
         const mm = { ...this.cleanCoupler(m, mode), id, name: existing ? m.name : this.nextMateName('coupler') };
+        this.glideNext = true;
         app.commit(existing ? 'Edit ' + mm.name : mm.name, () => {
           if (existing) { const i = doc.mates.findIndex((x) => x.id === existing.id); doc.mates[i] = mm; } else doc.mates.push(mm);
           doc.contacts = (doc.contacts || []).filter((k) => k.of !== id);
@@ -924,7 +930,7 @@ export class AssemblyMode {
         });
         return undefined;
       },
-      onCancel: () => { this.regen(); },
+      onCancel: () => { this.glideNext = true; this.regen(); },
     };
     app.pm.open(spec);
     app.setSelection([]);
@@ -1001,6 +1007,7 @@ export class AssemblyMode {
       const doc = this.app.cleanDoc(this.app.doc);
       const mm = { ...clone(m), id: existing?.id || '_preview', name: 'Preview' };
       if (existing) doc.mates = doc.mates.map((x) => (x.id === existing.id ? mm : x)); else doc.mates.push(mm);
+      this.glideNext = true;
       const res = await this.regen(false, doc);
       if (!res || !this.app.pm.spec) return;
       const st = res.mates.find((x) => x.id === mm.id);
@@ -1099,7 +1106,7 @@ export class AssemblyMode {
     if (rb) app.toast(`${part.name || f.pid} is rolled back above ${rb.name}, so the assembly shows it that way. Right-click it > Roll Part to End.`);
   }
 
-  // ------------------------------------------------------------------ Motion Study: assembly playback
+  // ------------------------------------------------------------------ assembly playback
   async playSequence() {
     const app = this.app, v = app.viewer;
     if (!this.res) await this.regen();
