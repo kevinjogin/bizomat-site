@@ -234,7 +234,7 @@ def test_the_chat_never_falls_back_to_the_server_key(monkeypatch):
     assert stranger.get("/api/ai/status").json()["available"] is False
     ev = _stream(stranger)
     assert ev[-1]["ev"] == "error" and ev[-1]["message"] == ai.NO_KEY and used == []
-    assert stranger.post("/api/ai", json={"doc": {"features": []}, "prompt": "x"}).status_code == 503
+    assert stranger.post("/api/ai", json={"doc": {"features": []}, "prompt": "x"}).status_code in (404, 405)  # the old route is gone
     monkeypatch.setenv("OPENSKETCH_SHARE_SERVER_KEY", "0")
     ev = _stream(owner)
     assert ev[-1]["message"] == ai.NO_KEY and used == []
