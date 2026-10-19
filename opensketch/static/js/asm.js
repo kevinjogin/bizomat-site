@@ -403,12 +403,19 @@ export class AssemblyMode {
       items.push({ head: c.name });
       items.push({ label: 'Open Part', icon: 'open', run: () => this.openPart(c.id) });
       if (rolledBackFeature(this.doc.parts?.[c.part])) items.push({ label: 'Roll Part to End', run: () => this.rollPartsToEnd([c.part]) });
+      if ((this.app.doc.parts[c.part]?.features || []).some((f) => f.type === 'import')) items.push({ label: 'Recognize Features', icon: 'featureworks', run: () => this.app.featureworks.open({ partId: c.part, auto: true }) });
       items.push({ label: 'Mate', icon: 'mate', run: () => { this.app.setSelection([]); this.matePM(); } });
       items.push({ label: c.fixed ? 'Float' : 'Fix', icon: 'fix', run: () => this.setFixed(c.id, !c.fixed) });
       items.push({ label: c.hidden ? 'Show Components' : 'Hide Components', icon: 'hideshow', run: () => this.setHidden(c.id, !c.hidden) });
       items.push({ label: c.suppressed ? 'Unsuppress' : 'Suppress', run: () => this.app.commit(c.suppressed ? 'Unsuppress' : 'Suppress', () => { const x = this.app.doc.components.find((cc) => cc.id === c.id); if (x.suppressed) delete x.suppressed; else x.suppressed = true; }) });
       items.push({ label: 'Rename', key: 'F2', run: () => this.app.tree.rename(c.id) });
       items.push('-', { label: 'Delete', key: 'Del', run: () => this.deleteItems([c.id], []) });
+    } else if (item?.kind === 'compfeature') {
+      const [cid, fid] = String(item.id).split(':');
+      const c = this.comp(cid);
+      const f = c && (this.app.doc.parts[c.part]?.features || []).find((x) => x.id === fid);
+      if (f?.type === 'import') items.push({ label: 'Recognize Features', icon: 'featureworks', run: () => this.app.featureworks.open({ partId: c.part, auto: true }) });
+      if (c) items.push({ label: 'Open Part', icon: 'open', run: () => this.openPart(c.id) });
     } else if (item?.kind === 'mate') {
       const m = this.mate(item.id);
       items.push({ label: 'Edit Feature', icon: mateIcon(m.type), run: () => this.editMate(m) });
@@ -419,6 +426,7 @@ export class AssemblyMode {
       items.push({ label: 'Rebuild', icon: 'rebuild', key: 'Ctrl+B', run: () => this.app.regen(true) });
       items.push({ label: 'Insert Components', icon: 'insertcomp', run: () => this.insertPM() });
       items.push({ label: 'Assembly Playback', icon: 'playback', run: () => this.playSequence() });
+      if (this.app.featureworks?.importedParts().length) items.push({ label: 'Recognize Features', icon: 'featureworks', run: () => this.app.featureworks.open() });
     }
     return items;
   }

@@ -42,7 +42,8 @@ goes back). For more than two changes use batch: the steps run as one change and
 Pick edges and faces with body_topology (pass their `ref`), and check results with inspect_design. Work in the background by default: no browser is needed to model, import, inspect a PNG
 preview, or export CAD. Use import_document for source files (for anything over about 100 KB, get a link
 with request_upload, PUT the file to it, then import_document with the upload_id instead of base64 data),
-preview_document for visual review and export_document for .osk, STEP and STL downloads. Open the app only
+preview_document for visual review and export_document for .osk, STEP and STL downloads. Imported STEP bodies
+have no features: recognize_features turns them into an editable feature tree. Open the app only
 when the user asks or would benefit from interactive inspection. After building, give the user the
 document's link from the tool result.
 
@@ -347,7 +348,8 @@ async def import_document(filename: Annotated[str | None, Field(description="e.g
     data (base64, small files only) or as upload_id: call request_upload, send the file's bytes to its
     upload_url with an HTTP PUT (curl -T file.step '<upload_url>'), then pass the upload_id here. At most
     32 MiB either way. Supports .osk/.json, STEP/.stp, EAGLE XML .brd, or a zip with one supported CAD file.
-    EAGLE supplies PCB geometry, not populated component solids. Runs in background."""
+    EAGLE supplies PCB geometry, not populated component solids. Runs in background. STEP bodies come in as
+    imported bodies with no history; call recognize_features to turn them into editable features."""
     try:
         return await anyio.to_thread.run_sync(_import_sync, filename, data, name, upload_id)
     except (ValueError, importer.ImportError_) as exc:
@@ -564,6 +566,20 @@ async def find_mate_candidates(doc_id: str) -> str:
 
 
 @mcp.tool()
+async def recognize_features(doc_id: str,
+                             part_id: Annotated[str | None, Field(description=(
+                                 "Assembly: the part to recognise. Without it every part with an imported body is done"))] = None,
+                             kinds: Annotated[list[Literal["extrudes", "revolves", "holes", "fillets", "chamfers"]] | None, Field(
+                                 description="Feature types to recognise (default: all)")] = None) -> str:
+    """Feature recognition (SOLIDWORKS FeatureWorks): turn imported STEP bodies into editable feature trees.
+    Fillets, chamfers and holes (counterbore, countersink, blind, through) become features; the base becomes
+    extrudes and cuts with dimensioned sketches, or a revolve. Every step is checked against the import, and
+    anything not recognised stays an imported body under the recognised features. Saved as one version.
+    Large parts take up to two minutes each."""
+    return await _apply(doc_id, "recognize_features", part_id=part_id, kinds=kinds)
+
+
+@mcp.tool()
 async def standard_part(doc_id: str, part_id: str, kind: StdKind, size: str, length: float | None = None) -> str:
     """Create a standard (Toolbox) part made to size: ISO screws, nuts, washers, ball bearings. size e.g.
     "M6-1" for screws, nuts and washers, "M8-22-7" (bore-OD-width) for bearings; length in mm for screws.
@@ -587,7 +603,7 @@ async def request_part_file(doc_id: str, part_id: str, description: str, mcmaste
 
 BATCH_TOOLS = ("propose_features", "create_part", "insert_component", "add_mate", "delete_items", "standard_part",
                "request_part_file", "check_interference", "find_mate_candidates", "set_parameter", "set_equation",
-               "add_contact")
+               "add_contact", "recognize_features")
 MAX_BATCH_STEPS = 100
 
 

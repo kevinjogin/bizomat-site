@@ -62,6 +62,9 @@ the server can import source CAD, build the model, return a PNG for inspection, 
 - `export_document(doc_id, format, part_id?)`: `.osk`, STEP or STL, with source version, SHA-256 and
   an artifact-specific download link valid for one hour. Exporting an assembly part uses its local
   coordinates. Downloads and previews do not change the document or create history versions.
+- `recognize_features(doc_id, part_id?, kinds?)`: feature recognition on imported STEP bodies (one part,
+  or every imported part of an assembly). Fillets, chamfers, holes and an extruded or revolved base become
+  features, checked against the import; the rest stays an imported body. Saved as one version.
 
 For reliable building, Claude also gets three tools borrowed from
 [SolidCraft](https://github.com/bherbruck/solidcraft):
@@ -323,8 +326,15 @@ Task Pane on the right, status bar with Under/Fully/Over Defined and "Editing Sk
   generated. Archives with several supported models ask you to select a file explicitly.
 - Open or drop a STEP file, or the .zip a supplier like McMaster-Carr sends it in. One body becomes a part with an `Imported1` feature you can keep adding
   cuts, fillets and shells to. Several bodies become an assembly, identical bodies sharing one part.
-  OpenSketch AI > **Rebuild as Features** turns an imported body into an editable feature tree and
-  checks the volume against the import; **Add Mates** mates an imported assembly from its geometry.
+- **Recognize Features** (SOLIDWORKS FeatureWorks; Features tab, Insert > FeatureWorks, right-click
+  `Imported1` or a component, or the prompt after an import) turns an imported body into an editable
+  feature tree: fillets, chamfers and holes (simple, counterbore, countersink, blind or through, rows of
+  holes as a linear pattern) become features, and the base becomes extrudes and cuts with dimensioned,
+  fully defined sketches, or a revolve. Every step is rebuilt and checked against the import; what cannot
+  be recognized stays an imported body under the recognized features. In an assembly it runs on one part
+  or on every imported part. OK applies it as one undo step. The AI and the MCP connector have it as
+  `recognize_features`. OpenSketch AI > **Rebuild as Features** starts there and has the AI finish the
+  rest; **Add Mates** mates an imported assembly from its geometry.
 - SOLIDWORKS files (.sldprt, .sldasm) are a closed format: save them as STEP in SOLIDWORKS first.
 - Toolbox (Design Library pane, or Assembly > Toolbox): ISO screws, nuts, washers and ball bearings,
   made to size. The AI uses it too, and for bought parts it gives you the McMaster-Carr number to
@@ -483,7 +493,9 @@ pytest -q                                  # regen, previews, mate solver, strea
                                            # reference parts (tests/reference_parts: hand-worked volume,
                                            # centre of mass and bounding box for 14 parts), parameter
                                            # sweeps, and the action matrix (fillet/chamfer/shell/draft on
-                                           # every edge and face of 20 parts against a saved baseline)
+                                           # every edge and face of 20 parts against a saved baseline),
+                                           # and feature recognition (ten shapes rebuilt exactly, a worker
+                                           # that hangs on purpose, the REST job and MCP tool)
 npm ci                                    # dev-only DOM test dependency; Node >=20.6
 npm test                                  # sketch solver, offset, document history, command and DOM regressions
 ```

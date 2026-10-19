@@ -118,9 +118,15 @@ def _same_when_placed(local, solid) -> bool:
             and (placed.center() - solid.center()).length <= tol)
 
 
+GENERIC_LABELS = re.compile(r"^(open ?cascade step translator.*|step translator.*|untitled|unnamed|none|solid\d*|part\d*|body\d*)$",
+                            re.IGNORECASE)
+
+
 def _clean_name(label: str | None, fallback: str) -> str:
     s = (label or "").strip()
     s = re.sub(r"\s+", " ", s)
+    if GENERIC_LABELS.match(re.sub(r"[_\s]+", " ", s)):  # what OpenCascade, FreeCAD or build123d write when nothing was named
+        s = ""
     return s[:60] or fallback
 
 

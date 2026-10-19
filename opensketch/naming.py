@@ -336,12 +336,40 @@ def edge_names(part, faces, names) -> list[str]:
 def annotate(part_before: dict, feat: dict) -> dict:
     """The feature with the persistent name added to each face and edge ref it picks, worked out on the part
     as it stands before the feature (the browser stores picks as points; this makes them survive edits)."""
-    import copy
-
     from . import geometry
     st, _ = geometry.regen(part_before)
     if st.part is None:
         return feat
+    return _annotate_on(st, feat)
+
+
+def annotate_all(feats: list[dict], types=("fillet", "chamfer", "shell", "draft")) -> list[dict]:
+    """annotate() for every feature of these types, in one rebuild of the tree. annotate() alone rebuilds the part up
+    to each feature, which is slow for many features on a large imported body (feature recognition)."""
+    from . import geometry
+    st = geometry.RegenState(namer=Namer())
+    out = []
+    for f in feats:
+        g = f
+        if f.get("suppressed"):
+            out.append(f)
+            continue
+        if f.get("type") in types and st.part is not None:
+            try:
+                g = _annotate_on(st, f)
+            except Exception:
+                g = f
+        before = st.part
+        geometry.rebuild_feature(g, st)
+        st.namer.record(g, before, st)
+        out.append(g)
+    return out
+
+
+def _annotate_on(st, feat: dict) -> dict:
+    import copy
+
+    from . import geometry
     faces, names, _ = st.namer.current(st.part)
     enames = edge_names(st.part, faces, names)
     edges = st.part.edges()

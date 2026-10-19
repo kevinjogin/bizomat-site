@@ -432,7 +432,11 @@ export class FilesView {
       } catch (err) { message('Upload', `Could not upload ${esc(file.name)}: ${esc(err.message)}`); }
       t?.close?.();
     }
-    if (good.length === 1 && last) { await this.openFile({ id: last.id, name: last.name }); return; }
+    if (good.length === 1 && last) {
+      await this.openFile({ id: last.id, name: last.name });
+      if (app.isImportable(good[0])) app.featureworks?.offer();
+      return;
+    }
     this.load();
   }
 

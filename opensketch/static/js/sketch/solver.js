@@ -467,3 +467,6 @@ export function measure(sketch, c) {
   if (c.orient === 'vertical') return Math.abs(b[1] - a[1]);
   return Math.hypot(b[0] - a[0], b[1] - a[1]);
 }
+
+// For define_cli.mjs (server: Fully Define for sketches made by feature recognition). Same equations as solveSketch.
+export const _internals = { buildVars, buildEquations, jacobian, entityMap };

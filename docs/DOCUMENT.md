@@ -351,3 +351,32 @@ position, the first one fixed, no mates (as SOLIDWORKS does with STEP). SOLIDWOR
 The AI never receives the BREP data: it gets the import feature with `data` omitted and a `summary`
 (bounding box, volume, planar faces, cylinders). When it echoes the feature back, the data is restored
 by feature id.
+
+## Feature recognition
+
+Recognize Features (`opensketch/recognize.py`, SOLIDWORKS FeatureWorks) replaces an `import` feature with
+ordinary features; nothing new is added to the format. It works on an import that comes first in the tree
+(sketches and planes before it are fine). Features after the import are kept and keep their references.
+
+- Local features become `fillet` (constant radius; edge refs with persistent names), `chamfer` (equal
+  distances as `angle_distance` 45, else `distance_distance`) and `hole` (`simple`, `counterbore`,
+  `countersink`; `blind` with `depth` or `through_all`). A hole's `plane` is a `face` plane on the face it
+  is drilled into (its origin is the part origin projected onto that face, `reverse: true` drills into the
+  material), or a `fixed` plane at the rim when that face is not flat across the axis. Three or more equal
+  holes in an evenly spaced row become one hole and a `linear_pattern` with a `vector` direction.
+- The base becomes extrudes along one direction, or one `revolve` (sketch on a plane through the axis, a
+  construction centerline as `axis`, 360 degrees). Extrudes are written as a stock with cuts from the top
+  and bottom faces, or as stacked bosses, whichever needs fewer features. The base sketch sits on a
+  standard plane where the body allows (`midplane` when the body is symmetric about it), else on a hidden
+  reference `plane` offset from one. Cuts and stacked bosses sit on `face` planes so they follow an edited
+  depth; a face plane that would land on another face is written `fixed`. Through holes along the extrude
+  direction are circles in the sketch.
+- Sketches get relations (horizontal, vertical, tangent, coincident with the origin) and dimensions
+  (diameters, radii, lengths, angles, positions from the origin, named D1, D2...) only where the browser's
+  sketch solver says they remove a degree of freedom (`static/js/sketch/define_cli.mjs`), so they are never
+  over-defined and usually fully defined. Curves other than lines, circles and arcs become splines through
+  points on them (close, not exact; the report says so).
+- What is not recognised stays an `import` feature holding the body with the recognised features taken off.
+- Generated ids start with `fw`. The finished tree is rebuilt and compared with the import: equal volume and
+  every sampled surface point of each solid on the other's surface (OpenCascade booleans alone are not
+  trusted for near-identical solids). A result that does not match is not offered.

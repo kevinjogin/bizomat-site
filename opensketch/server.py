@@ -58,7 +58,7 @@ async def lifespan(_app):
 # Responses that carry meshes or documents are gzipped: a part's mesh JSON shrinks about 6x (10 MB -> 1.5 MB),
 # which is most of the wait on a hosted server. Streams (/api/ai/stream) are left alone so events are not held back.
 GZIP_PATHS = ("/api/regen", "/api/import", "/api/docs", "/api/params", "/api/interference", "/api/toolbox",
-              "/api/review/check", "/api/reviews", "/api/features")
+              "/api/review/check", "/api/reviews", "/api/features", "/api/recognize")
 
 
 class SelectiveGZip:
@@ -372,6 +372,81 @@ def api_macro_zip(jid: str, request: Request):
         raise HTTPException(404, "Not ready")
     name = "".join(c if c.isalnum() or c in "-_" else "_" for c in job["name"]) or "OpenSketch"
     return FileResponse(job["zip"], filename=f"{name}_SOLIDWORKS_macro.zip", media_type="application/zip")
+
+
+class RecognizeRequest(BaseModel):
+    doc: dict
+    part_id: str | None = None
+    kinds: list[str] | None = None
+
+
+_recognize_jobs: dict = {}
+RECOGNIZE_RUNNING_MAX = 1  # recognition is CPU-heavy: one job per person at a time
+
+
+@app.post("/api/recognize/start")
+def api_recognize_start(req: RecognizeRequest, request: Request):
+    """Start feature recognition (FeatureWorks) on a part's or an assembly's imported bodies. A background job:
+    a large part can take a minute or two, an assembly one part after another."""
+    from . import recognize
+    me = _who(request)
+    if sum(1 for j in _recognize_jobs.values() if j["state"] in ("running", "cancelling") and j.get("owner") == me) >= RECOGNIZE_RUNNING_MAX:
+        return JSONResponse({"error": "Feature recognition is already running. Wait for it to finish."}, status_code=429)
+    if not recognize.imported_parts(req.doc):
+        return JSONResponse({"error": "There is no imported body to recognize."}, status_code=400)
+    if req.kinds and set(req.kinds) - set(recognize.KINDS):
+        return JSONResponse({"error": f"Feature types are {', '.join(recognize.KINDS)}."}, status_code=400)
+    jid = uuid.uuid4().hex[:12]
+    job = {"state": "running", "started": time.time(), "owner": me, "done": 0, "total": 0, "current": None,
+           "parts": {}, "result": None}
+    _recognize_jobs[jid] = job
+    for k in [k for k, v in _recognize_jobs.items() if v["state"] not in ("running", "cancelling") and time.time() - v["started"] > 3600]:
+        _recognize_jobs.pop(k, None)
+
+    def progress(done, total, name, reports):
+        job.update(done=done, total=total, current=name, parts=dict(reports))
+
+    def work():
+        try:
+            res = recognize.recognize_doc(req.doc, part_id=req.part_id, kinds=req.kinds, progress=progress,
+                                          stop=lambda: job.get("cancel", False))
+            asm = assembly.is_assembly(res["doc"])
+            job["result"] = {"changed": res["changed"], "parts": res["parts"],
+                             "updates": {pid: {k: (res["doc"]["parts"][pid] if asm else res["doc"]).get(k)
+                                               for k in ("features", "rollback")} for pid in res["changed"]}}
+            job["state"] = "cancelled" if job.get("cancel") else "done"
+        except recognize.RecognizeError as exc:
+            job["state"], job["error"] = "error", str(exc)
+        except Exception as exc:
+            job["state"], job["error"] = "error", f"{type(exc).__name__}: {exc}"
+    threading.Thread(target=work, daemon=True).start()
+    return {"job": jid}
+
+
+@app.delete("/api/recognize/{jid}")
+def api_recognize_cancel(jid: str, request: Request):
+    """Stop a recognition job: it ends at the next check (a part in progress keeps what it has recognised)."""
+    job = _recognize_jobs.get(jid)
+    if job is None or job.get("owner") != _who(request):
+        raise HTTPException(404, "No such job")
+    job["cancel"] = True
+    if job["state"] == "running":
+        job["state"] = "cancelling"
+    return {"state": job["state"]}
+
+
+@app.get("/api/recognize/{jid}")
+def api_recognize_status(jid: str, request: Request):
+    job = _recognize_jobs.get(jid)
+    if job is None or job.get("owner") != _who(request):
+        raise HTTPException(404, "No such job")
+    out = {k: job.get(k) for k in ("state", "done", "total", "current", "error")}
+    out["seconds"] = round(time.time() - job["started"])
+    out["parts"] = {pid: {k: r.get(k) for k in ("name", "message", "exact", "base", "counts", "recognized", "faces")}
+                    for pid, r in (job.get("parts") or {}).items()}
+    if job["state"] == "done":
+        out["result"] = job["result"]
+    return out
 
 
 @app.post("/api/ai")

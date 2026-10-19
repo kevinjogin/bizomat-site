@@ -122,6 +122,7 @@ export class Ribbon {
         const r = mi.getBoundingClientRect();
         contextMenu(r.left, r.bottom, m.items.map((it) => {
           if (it === '-') return '-';
+          if (it.head) return { head: it.head };
           if (typeof it === 'string') { const c = this.C[it]; return { label: val(c.label), icon: val(c.icon), disabled: c.disabled, run: () => this.run(it) }; }
           return { label: it.label, key: it.key, run: () => it.run(this.app) };
         }));

@@ -112,7 +112,8 @@ export function buildCommands(app) {
     toolbox: { label: 'Toolbox', icon: 'toolbox', tip: 'Standard screws, nuts, washers and bearings, made to size.', run: () => app.openTask('library') },
     asmexplain: { label: 'Explain Assembly', icon: 'ai', tip: 'Asks the AI to explain the assembly and how it moves.', run: () => app.aiQuick('Explain this assembly: the parts, how they are mated and which components can still move. Do not change it.') },
     aimates: { label: 'Add Mates', icon: 'mate', tip: 'Asks the AI to mate an imported assembly from its geometry, leaving hinges and slides free.', run: () => app.aiQuick('This assembly has components without enough mates (for example it was imported from STEP). Call find_mate_candidates, then add the mates a designer would use so every part sits where it is now. Leave hinges, slides and wheels free to move where the product moves. Do not move or change parts.') },
-    airebuild: { label: 'Rebuild as Features', icon: 'imported', tip: 'Asks the AI to rebuild an imported body as an editable feature tree.', run: () => app.aiQuick('Rebuild the imported body (the import feature) as an editable feature tree: sketches with relations and dimensions, extrudes, cuts, revolves, fillets. Use propose_features mode replace without the import feature, and get the comparison with the import as close to zero as you can. Tell me what you could not match.') },
+    recognize: { label: 'Recognize Features', icon: 'featureworks', tip: 'FeatureWorks: turns an imported body into editable features (extrudes, cuts, revolves, holes, fillets, chamfers), each checked against the import.', run: () => app.featureworks.open() },
+    airebuild: { label: 'Rebuild as Features', icon: 'imported', tip: 'Asks the AI to rebuild an imported body as an editable feature tree, starting from Recognize Features.', run: () => app.aiQuick('Rebuild the imported body as an editable feature tree. Call recognize_features first. If an imported body is left, replace it with sketches (relations and dimensions), extrudes, cuts and revolves using propose_features mode replace with the whole tree, and get the comparison with the import as close to zero as you can. Tell me what you could not match.') },
     asmfix: { label: 'Fix Mates', icon: 'mate', tip: 'Asks the AI to fix mate errors and interferences.', run: () => app.aiQuick('Fix the mate errors and any interferences in this assembly with minimal changes.') },
 
     // AI add-in
@@ -136,7 +137,7 @@ export const TABS = [
     { big: 'cut' }, { big: 'hole' }, { big: 'revcut' }, { col: ['sweepcut', 'loftcut', 'boundarycut'] }, '|',
     { big: 'fillet', fly: ['fillet', 'chamfer'] }, { big: 'linpattern', fly: ['linpattern', 'circpattern', 'mirror'] },
     { col: ['rib', 'wrap'] }, { col: ['draft', 'intersect'] }, { col: ['shell', 'mirror'] }, '|',
-    { big: 'refgeom', fly: ['plane'] }, { big: 'curves' }, { big: 'instant3d' },
+    { big: 'refgeom', fly: ['plane'] }, { big: 'curves' }, { big: 'instant3d' }, '|', { big: 'recognize' },
   ] },
   { name: 'Sketch', items: [
     { big: 'sketch' }, { big: 'smartdim' }, '|',
@@ -153,7 +154,7 @@ export const ASM_TABS = [
   { name: 'Assembly', items: [
     { big: 'insertcomp', fly: ['insertcomp', 'newpart'] }, { big: 'mate', fly: ['mate', 'coupler'] }, '|',
     { big: 'movecomp' }, { col: ['fixfloat', 'hidecomp', 'openpart'] }, '|',
-    { big: 'interference' }, { big: 'playback' }, '|', { big: 'toolbox' },
+    { big: 'interference' }, { big: 'playback' }, '|', { big: 'toolbox' }, { big: 'recognize' },
   ] },
   { name: 'Evaluate', items: [{ big: 'interference' }, { big: 'motionreview' }, { big: 'massprops' }, { big: 'section' }, { big: 'check' }, { big: 'stats' }] },
   { name: 'OpenSketch AI', items: [{ big: 'ai' }, { big: 'aimates' }, { big: 'asmexplain' }, { big: 'asmfix' }, '|', { big: 'connectclaude' }] },
@@ -165,7 +166,7 @@ export const MENUS = [
   { name: 'File', items: ['new', 'open', 'openlocal', '-', 'save', 'saveas', 'serversave', 'sldmacro', '-', 'publishreview', 'connectclaude', '-', 'print', '-', 'fileprops'] },
   { name: 'Edit', items: ['undo', 'redo', '-', 'rebuild', '-', { label: 'Delete', run: (app) => app.deleteSelection(), key: 'Del' }, { label: 'Suppress', run: (app) => app.suppressSelection(true) }, { label: 'Unsuppress', run: (app) => app.suppressSelection(false) }] },
   { name: 'View', items: [{ label: 'Planes', run: (app) => app.toggleView('planes') }, { label: 'Origins', run: (app) => app.toggleView('origins') }, { label: 'Sketches', run: (app) => app.toggleView('sketches') }, { label: 'Sketch Relations', run: (app) => app.toggleView('relations') }, '-', { label: 'Zoom to Fit', run: (app) => app.viewer.zoomToFit(), key: 'F' }, '-', ...LOOKS.map(([k, t]) => ({ label: `Theme: ${t}${LOOK === k ? '  (on)' : ''}`, run: () => setLook(k) }))] },
-  { name: 'Insert', items: ['insertcomp', 'newpart', 'mate', 'coupler', '-', 'extrude', 'revolve', 'cut', 'revcut', '-', 'fillet', 'chamfer', 'shell', '-', 'linpattern', 'circpattern', 'mirror', '-', 'plane', '-', 'sketch'] },
+  { name: 'Insert', items: ['insertcomp', 'newpart', 'mate', 'coupler', '-', 'extrude', 'revolve', 'cut', 'revcut', '-', 'fillet', 'chamfer', 'shell', '-', 'linpattern', 'circpattern', 'mirror', '-', 'plane', '-', 'sketch', '-', { head: 'FeatureWorks' }, 'recognize'] },
   { name: 'Tools', items: ['line', 'centerline', 'rectangle', 'circle', 'arc', 'slot', 'polygon', 'point', '-', 'smartdim', 'addrelation', 'relations', '-', 'trim', 'convert', 'offset', 'sketchmirror', 'sketchfillet', '-', 'equations', '-', 'measure', 'massprops', 'motionreview', '-', 'options'] },
   { name: 'Window', items: [{ label: 'Part1', run: () => {} }] },
   { name: 'Help', items: [{ label: 'Keyboard Shortcuts', run: (app) => app.shortcutsDialog() }, { label: 'About OpenSketch', run: (app) => app.aboutDialog() }] },

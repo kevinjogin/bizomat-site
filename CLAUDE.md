@@ -43,7 +43,91 @@ assemblies only when a part changes.
   for main calls to action, the text wordmark "OpenSketch" as the logo (no mark or tile; YZ 2026-10-19); new UI styled with the theme tokens and checked in dark,
   light and classic, and at phone width. Motion: `--ease`, 120-220 ms, nothing that blocks input.
 
-## Current state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand, text logo, Google sign-in set up in the app, upload links for big MCP imports, SOLIDWORKS add-in, dedicated CPU + self-restarting server)
+## Current state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand, text logo, Google sign-in set up in the app, upload links for big MCP imports, SOLIDWORKS add-in, dedicated CPU + self-restarting server, feature recognition)
+
+Feature recognition (2026-10-19, YZ: "a feature recognition kind of feature so that imported parts can have auto
+features"; SOLIDWORKS FeatureWorks). `opensketch/recognize.py` turns an `import` feature into ordinary features
+(no format change; docs/DOCUMENT.md "Feature recognition"). Pipeline, every step proven by building forward:
+- Local features, last made first: fillets (cylinder < 180 deg / torus / sphere faces with >= 2 smooth neighbours;
+  cylinders along the main direction are kept as sketch arcs), chamfers (narrow inclined planes, cones between two
+  circles, grouped by touching chains / width / singly), holes (concave coaxial cylinders, cones, flat floors and
+  counterbore steps; simple / counterbore / countersink incl. a cone alone through thin stock; blind / through;
+  drill points refused). Each group is removed with `BRepAlgoAPI_Defeaturing`; new sharp edges come from its
+  history (`Modified`); the feature is rebuilt on the result (`after.fillet/chamfer`, `geometry.hole_tool`) and must
+  give back the body: `Ctx.same_near` = equal volume + every sampled point on the faces around the change ON the
+  other solid (`BRepClass3d_SolidClassifier`), no booleans. "Around the change" = the removed faces plus every
+  face the defeaturing history reports modified or deleted (`_touched`): on the indicator slide defeaturing
+  changed faces far from the fillet it removed, and a check limited to the removed faces let a 0.29 mm3 error
+  through. Fillet chains go in packs of <= 6 faces (`BATCH_FACES`; 52 faces in one defeature took 88 s on the
+  Lavilock plate, single chains ~0.5 s); packs of one size are merged back into one feature when OpenCascade
+  takes them together (`_build`).
+- Base: `_main_direction` (most faces along it, cap area counted twice). Extrudes along one direction
+  (`_prismatic`: caps across, everything else along; levels = cap heights; sections at mid-slab -> `Regions` 2D
+  booleans): `_cut_plan` (stock = union of slabs, cuts from top and bottom, valid only if every slab comes out
+  right) vs `_boss_plan` (bottom-up, each region extruded as far as it persists); fewer features wins, a tie goes
+  to cuts when they are interior pockets. Base sketch on a standard plane (midplane when symmetric) or a hidden
+  offset `plane`; cuts and stacked bosses on `face` planes (follow depth edits; pinned `fixed` when the face
+  attachment would land elsewhere, `_fix_face_planes`). Through holes along it go into the sketch as circles.
+  Revolve when every face is a surface of revolution about one axis (half-section on a plane through it, a
+  construction centerline as the axis). Otherwise the defeatured body stays an `import` feature (FeatureWorks
+  does the same) with the recognised features on top.
+- Sketches: `SketchBuilder` (lines, circles, arcs CCW, splines through 16 points for anything else = approximate)
+  + candidates (origin coincident, H/V, tangent joints, diameters, radii, lengths, angles, origin anchors, point
+  pair H/V distances); `static/js/sketch/define_cli.mjs` keeps a candidate only if its Jacobian rows are
+  independent of what is kept (incremental Gram-Schmidt per connected group, solver.js's own equations via the new
+  `_internals` export), so sketches are never over-defined and usually fully defined (D1, D2...).
+- Build and check (`_build`, `attempt`): base, then stages in reverse; fillet/chamfer edges re-found on the rebuilt
+  body (`_match_edges`: every rebuilt edge lying along a target, split or whole) and given persistent names in one
+  rebuild (`naming.annotate_all`, new); after each stage the volume must equal the one recorded when it was found,
+  else it is marked bad; rows of 3+ equal evenly spaced holes -> hole + `linear_pattern`. Final verdict
+  `same_solid` = equal volume + full surface sampling both ways (booleans alone gave a false "same" on the inside
+  shoe: OpenCascade returned empty cuts for two solids 0.014 mm3 apart; and a false "different" on the outside
+  shoe). If the recognised base does not take the stages back exactly, the import base is tried; stages that will
+  not rebuild are left in the body and the part reruns (at most twice). `ok` only for an exact result (or an
+  approximate spline sketch within 0.1 %).
+- Hangs: OpenCascade holds the GIL, and defeaturing one Lavilock spindle fillet ran 5 minutes, so the server runs
+  each part in a spawned worker (`recognize_part_safe`): the worker marks each risky step in a heartbeat file
+  (`_mark`), a step over `HANG_SECONDS` (20 s; whole-tree build/check 120 s) is killed, the part reruns from the
+  worker's checkpoint (`_save_checkpoint` after each accepted stage: body + stages + failed attempts) skipping that
+  step; out of time, one last worker builds from the checkpoint. `OPENSKETCH_RECOGNIZE_STALL` makes a worker stall
+  on purpose (tests). `TIME_LIMIT` 120 s per part.
+- `geometry.bbox`: bodies over 150 faces use OpenCascade's fast bounding box (the exact one cost 0.5 s per call on
+  the 274-face plate and rebuilds ask for several per feature); small parts unchanged.
+- Server: `POST /api/recognize/start {doc, part_id?, kinds?}` -> job (one per person; 400 without an import or with
+  unknown kinds), `GET /api/recognize/{job}` (state, done/total, current part, per-part reports; result =
+  {changed, parts, updates: {pid: {features, rollback}}}), `DELETE` stops it (`stop` reaches the worker).
+  `recognize.recognize_doc(doc, part_id?, kinds?, progress, stop, isolate=True)`.
+- AI / MCP: `ai.Session.recognize_features` (streams build_start / build_step per feature / proposal; assemblies
+  re-solve), tool in `ai.TOOLS`, system prompt "Imported geometry" says to call it first; MCP tool
+  `recognize_features(doc_id, part_id?, kinds?)` (now 66 tools with the SOLIDWORKS add-in tools), in `BATCH_TOOLS`; INSTRUCTIONS and
+  import_document mention it; skill opensketch-cad "Imported STEP bodies".
+- Browser (`static/js/featureworks.js`, `app.featureworks`): PropertyManager "FeatureWorks" (Recognition Mode
+  note, Parts: this part / all imported parts in an assembly, Automatic Features checkboxes, Recognize / Stop /
+  Recognize Again, Recognized Features list per part with one-line descriptions, status line with progress; part
+  documents: Preview colours the import's faces by what they became, matched by face centre from the report's
+  `faces` {kind: [centres]}: green extrude/revolve, blue hole, yellow fillet, orange chamfer, body colour = stays
+  imported; restored on Cancel/OK); OK
+  = one `app.commit('Recognize Features')` replacing the parts' features (refused if the model changed during the
+  job); Cancel/close stops the job. Entry points: Features tab and Assembly tab button "Recognize Features"
+  (icon `featureworks`), Insert menu FeatureWorks heading (`ribbon.buildMenus` now passes `{head}` items),
+  right-click Imported1, a component, a component's Imported1 row (`compfeature`, had no menu before) and the
+  assembly root, Edit Feature on Imported1 (dialog with Recognize Features), toast after uploading a STEP
+  (`files.upload` -> `featureworks.offer()`). Rebuild as Features (AI) now calls recognize_features first.
+- Import names: `importer._clean_name` ignores generic STEP labels ("Open CASCADE STEP translator ...", untitled,
+  Part1...) and uses the file name.
+- Lavilock O2S6 r6 (17 part STEPs, alg a269529) through `recognize_part_safe`, each result rebuilt and compared
+  independently: 16 exact trees, 776 s in all. Fully recognised: cam roller (1 extrude), indicator lens (2),
+  inside/outside back plates (1 extrude, 7/8 countersunk holes, 1 chamfer, sketch fully defined), inside rotor
+  (5 extrudes, hole, chamfer, fillet). Imported base + recognised features: inside/outside plate (1/2 fillets,
+  166/175 s, out of time), levers, shoes, spindles (one defeature step stalled and was skipped), outside rotor,
+  snib (3 chamfers, fillet), snib carrier. Indicator slide: nothing recognised (its fillets do not rebuild exactly). Tests: `tests/test_recognize.py` (26: ten shapes rebuilt
+  exactly incl. counterbore/countersink/blind sizes, a pocket that follows a taller block, kinds, refusals, part
+  doc keeps later features, assembly parts one by one, AI session events, MCP version, REST job + stop,
+  define_cli never over-defines, the solid check sees a moved hole, a stalled worker is killed, generic STEP
+  label, eight hole fillets found in packs merged into one Fillet), `tests/js/featureworks.test.mjs` (7).
+  374 pytest (2 skipped: macro toolchain) + 72 node (with the SOLIDWORKS add-in work on main). Checked in Chromium: upload -> toast -> Recognize -> OK -> undo/redo
+  on the Lavilock back plate (1 extrude, 7 countersunk holes, 1 chamfer, fully defined sketch), a three-part STEP
+  assembly recognised on all parts and applied, no page errors.
 
 Server stays up (2026-10-19, YZ's screenshot: Files stuck on "Waiting for the server" for ~10 minutes after the 12:59
 deploy; even /favicon.svg timed out, so the whole process was frozen, not crashed; a manual run of the Deploy workflow
@@ -880,8 +964,15 @@ See `docs/CODE_REVIEW_2026-10-16.md` for reproductions, new-feature usage and UX
 - No tangent, width, symmetric, gear or slot mates; no sub-assemblies (STEP assemblies are flattened);
   no exploded views. Shift+Tab finds hidden components by bounding box, not exact shape.
 - The upload fix is checked locally only; not yet confirmed through a real Codespaces tunnel. If a large file still fails there, the dialog now names the HTTP status.
-- Imported bodies have no history; Rebuild as Features depends on the AI. STEP surfaces/wireframes
-  are not imported (solids only). Section caps use one colour for every component.
+- Feature recognition: bases only as extrudes along one direction or one revolve. Not yet recognised (they stay in
+  the imported body): cuts and bosses in a second direction, drafted extrudes (cones and tapered walls, the
+  Lavilock levers), turned bosses on a prismatic body, variable or B-spline fillets, chamfers made of irregular
+  corner pieces, drill-point holes, holes crossing other holes, circular hole patterns, shells, mirrors. Fillets of
+  one radius found in packs are merged back only when OpenCascade takes them in one go. A fillet OpenCascade will not
+  build again on the rebuilt tree is left in the body (the inside rotor's 0.4 mm hole fillet on the first run). Large bodies are slow
+  (defeaturing the 274-face Lavilock plate is minutes; the per-part limit is 120 s, then what is done is kept).
+  Face-plane holes and cuts follow the face they were found on, by the stored normal and nearest face.
+- STEP surfaces/wireframes are not imported (solids only). Section caps use one colour for every component.
 - Sweep requires one closed profile and one connected sketch path; no guide curves or twist controls.
   Loft requires distinct ordered single contours, without inner contours or guide curves.
   Hole Wizard uses explicit flat-bottom dimensions, one position per feature; patterns can repeat it.
@@ -903,6 +994,11 @@ are within about 2x of Python and fillets do not fail more often; otherwise stay
 The .osk JSON format stays the contract either way.
 
 ## Next phase
+
+Feature recognition, next: drafted extrudes (taper), second-direction cuts and bosses (defeature a depression's
+walls and floor, rebuild as a cut-extrude from that floor's plane), turned bosses and grooves as revolve features,
+circular hole patterns and mirrors, the preview in assemblies, and running it on YZ's Lavilock O2S6 document
+(69bc1fc107a3).
 
 SolidCraft ideas a-g are done (see Current state). Still open from it: exact names from OpenCascade
 history (BRepAlgoAPI Modified/Generated) instead of geometric matching; a replayable script export of the

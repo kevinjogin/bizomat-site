@@ -23,6 +23,7 @@ import { ServerDocs } from './serverdocs.js';
 import { Account } from './account.js';
 import { DesignPanel } from './design.js';
 import { MotionReview } from './review.js';
+import { FeatureWorks } from './featureworks.js';
 import { FilesView, FI } from './files.js';
 import { escapeHtml as esc, featureSketchIds, dependentFeatureIds, removeFeatures, measurementData } from './model-utils.js';
 
@@ -95,6 +96,7 @@ export class App {
     this.toolbox = new Toolbox(this);
     this.section = new SectionView(this);
     this.review = new MotionReview(this);
+    this.featureworks = new FeatureWorks(this);
     this.files = new FilesView(this);
     this.reviewMode = typeof window.OPENSKETCH_REVIEW === 'string'; // a shared review link: read-only, no server
     this.docStack = []; // Open Part from an assembly: the assembly waits here
@@ -979,6 +981,7 @@ export class App {
       items.push({ label: 'Rename', key: 'F2', run: () => this.tree.rename(item.id) });
       items.push('-', { label: 'Delete...', key: 'Del', run: () => this.deleteFeature(item.id) });
     } else if (item.kind === 'feature') {
+      if (f.type === 'import') items.push({ label: 'Recognize Features', icon: 'featureworks', run: () => this.featureworks.open({ auto: true }) });
       items.push({ label: 'Edit Feature', icon: featureIcon(f), run: () => this.editFeature(f.id) });
       if (f.sketch) items.push({ label: 'Edit Sketch', icon: 'sketch', run: () => this.editSketch(f.sketch) });
       items.push({ label: f.suppressed ? 'Unsuppress' : 'Suppress', run: () => this.suppress(f.id, !f.suppressed) });
@@ -1142,7 +1145,11 @@ export class App {
     const f = this.featureById(id);
     if (!f) return;
     if (f.type === 'sketch') return this.editSketch(id);
-    if (f.type === 'import') { message('Imported1', 'An imported body has no feature history to edit. Add features on top of it (cuts, fillets, shells), or ask OpenSketch AI to Rebuild as Features.'); return; }
+    if (f.type === 'import') {
+      message(f.name || 'Imported1', 'An imported body has no feature history to edit. Recognize Features turns it into extrudes, cuts, revolves, holes, fillets and chamfers you can edit. You can also add features on top of it.',
+        [{ label: 'Recognize Features', primary: true, run: () => this.featureworks.open({ auto: true }) }, { label: 'Close' }]);
+      return;
+    }
     if (f.type === 'standard') return this.toolbox.editPM(f);
     this.featureCommand(metaKey(f), f);
   }

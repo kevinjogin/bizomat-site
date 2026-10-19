@@ -190,7 +190,8 @@ export class LivePlayer {
     it.name = ev.name || it.name;
     if (it.pid) this.byPart.set(it.pid, it);
     if (it.mode === 'part' && this.partBase) { this.viewer.bodyGroup.visible = false; this.partBase = false; }
-    this.caption(it.mode === 'asm' ? `Building ${it.name || 'part'}` : 'Building features');
+    it.recognizing = ev.tool === 'recognize_features';
+    this.caption(it.mode === 'asm' ? `Building ${it.name || 'part'}` : it.recognizing ? 'Recognizing features' : 'Building features');
     await sleep(150 * this.speed());
   }
 
@@ -200,7 +201,7 @@ export class LivePlayer {
     if (it.mode === 'part' && this.partBase) { v.bodyGroup.visible = false; this.partBase = false; }
     const f = ev.feature || {};
     const sub = `${f.name || f.type}${ev.state === 'error' ? ' (error: ' + (ev.message || '') + ')' : ''}`;
-    this.caption(it.mode === 'asm' ? `Building ${it.name || 'part'}` : 'Building features', sub);
+    this.caption(it.mode === 'asm' ? `Building ${it.name || 'part'}` : it.recognizing ? 'Recognizing features' : 'Building features', sub);
     const sp = this.speed();
     if (ev.sketch && ev.frame) {
       v.clearGroup(it.sketch);

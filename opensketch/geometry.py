@@ -103,10 +103,23 @@ def solid_of(part):
     return part
 
 
+BIG_BODY_FACES = 150  # above this, bounding boxes come from OpenCascade's fast box (the exact one took 0.5 s on a
+                      # 274-face imported plate, and a rebuild asks for several per feature)
+
+
+def bbox(shape):
+    """The shape's bounding box: exact for ordinary parts, the fast (slightly looser) box for large bodies."""
+    try:
+        big = len(shape.faces()) > BIG_BODY_FACES
+    except Exception:
+        big = False
+    return shape.bounding_box(optimal=not big)
+
+
 def scale_of(part) -> float:
     if part is None:
         return 100.0
-    bb = part.bounding_box()
+    bb = bbox(part)
     return max(bb.diagonal, 1.0)
 
 
@@ -688,7 +701,7 @@ def _regen_feature(feat: dict, st: RegenState):
 def shape_bounds(shape) -> list | None:
     if shape is None:
         return None
-    bb = shape.bounding_box()
+    bb = bbox(shape)
     return [vlist(bb.min), vlist(bb.max)]
 
 

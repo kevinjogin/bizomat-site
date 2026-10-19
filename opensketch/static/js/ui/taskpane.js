@@ -33,6 +33,7 @@ const TOOL_META = {
   set_parameter: { title: 'Setting a variable', icon: 'options' },
   set_equation: { title: 'Writing an equation', icon: 'options' },
   add_contact: { title: 'Adding a contact check', icon: 'contact' },
+  recognize_features: { title: 'Recognizing features', icon: 'featureworks' },
 };
 // add_<type> tools come from the feature registry: "Adding Draft".
 const toolMetaFromRegistry = (name) => {

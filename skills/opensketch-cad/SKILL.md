@@ -26,6 +26,15 @@ fixes and traps are in reference.md (the same text comes back from get_modelling
 6. **Fix now, not later.** A wrong number is a wrong plane, direction or depth. Fix it before the next
    stage; errors compound.
 
+## Imported STEP bodies
+
+An import is one `Imported1` feature with no history. Call recognize_features first (part_id for one part of
+an assembly, or none for every imported part): fillets, chamfers, holes and an extruded or revolved base
+become features with dimensioned sketches, each checked against the import. Read its report per part:
+`exact`, `base` (extrude / revolve / import) and `notes`. If an imported body is left, finish it with
+propose_features mode "replace" (the whole tree, the import swapped for sketches and extrudes) and check
+`compared_with_import`. Never delete an import to "simplify" a part YZ gave you.
+
 ## Picking faces and edges
 
 Never guess a midpoint. Call body_topology with near=[x, y, z] around the spot and pass the item's `ref`
