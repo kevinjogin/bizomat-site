@@ -42,8 +42,113 @@ assemblies only when a part changes.
 - Brand: names and headings in `--font-display` (Inter Tight, bold, tight tracking), pill buttons (`.btn.fv-pill`)
   for main calls to action, the text wordmark "OpenSketch" as the logo (no mark or tile; YZ 2026-10-19); new UI styled with the theme tokens and checked in dark,
   light and classic, and at phone width. Motion: `--ease`, 120-220 ms, nothing that blocks input.
+- CI (`.github/workflows/tests.yml`) runs pytest (two jobs: main and `-m slow`) and npm test on every pull request;
+  `deploy.yml` deploys main only after the same tests pass. Python versions are pinned with hashes in
+  `requirements.txt` (image) and `requirements-dev.txt` (CI, Codespaces); move a pin there, not only in pyproject.
+- A saved document must never change shape on reopen: a field left out builds as it always has (registry
+  `omitted`); new features are written with every default (`features.with_defaults`).
+- Keys: SOLIDWORKS shortcuts act only when focus is on the page, the graphics area or the FeatureManager tree
+  (`app.keyTarget`); dialogs, menus, the Files page and text fields keep their keys. New controls are real buttons
+  or `dialogs.asButton` with a name.
+- Heavy work never runs on the web server's event loop: CAD goes through a person's lane (`server._cad`), long jobs
+  through `cadworker.start_job` with a `Slots` cap, blocking file work through `run_in_threadpool`.
 
-## Current state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand, text logo, Google sign-in set up in the app, upload links for big MCP imports, SOLIDWORKS add-in, dedicated CPU + self-restarting server, feature recognition, CAD in worker processes, one worker per person, early access code, simpler screens)
+## Current state (2026-10-19, v0.7: whole-project audit fixes)
+
+A whole-project audit (YZ: "pick up logic issues, UX that does not make sense, technical issues that can grow, unsafe
+actions, performance, UI and motion; you own this project"): 14 code auditors (each finding checked by skeptics,
+165 confirmed), 6 live journeys in Chromium (94 UX/visual issues), parity, test-health, product-UX and scale audits.
+Fixed in ten workstreams (branches fix/<name>, merged into claude/dazzling-heisenberg-6ndmoc, PR #9), then six
+browser journeys on the merged app found 20 seam bugs, fixed the same day. 389 -> 506 pytest (2 skipped: macro
+toolchain), 72 -> 147 node tests.
+
+- Accounts and keys: members' and testers' private MCP addresses come from `data_secret("mcp-address")` and a
+  per-person counter, never the server password (a tester could brute-force the password from theirs); the owner's
+  server-wide address is unchanged. Account settings: Make a new address, Disconnect all (a password change does
+  both). Testers get AI only while the access code is on; the chat never falls back to the server key when
+  `aikeys.effective` says no AI (`ai.SERVER_KEY` default for scripts/tests). Named AI providers always use their own
+  address (only "custom" takes one). OAuth client metadata fetches: pool of 4, 5 s deadline, off request threads;
+  OAuth store cached; registrations bounded; authorize errors are pages, never redirects. A Google sign-in takes over
+  an account whose email was only typed (`email_verified`). Invites have notes and can be revoked. Sign-in limits:
+  15 min per email, 5 min per address, IPv6 per /64. At most 100 testers (OPENSKETCH_MAX_TESTERS), 30 new accounts an
+  hour per address. Testers can "Keep my work" (email + password or Google, stay testers); signing out without it
+  warns. Account files are parsed once per change (no per-request deep copies). Tests: test_auth_security.py (17).
+- Storage: `store.check_structure` refuses malformed documents on every route (one bad file broke Files and New for
+  everyone); listings skip unreadable files; a damaged record is served from its newest kept version (`recovered`)
+  and repaired on the next save. History: identical saves make no version; autosaves by one author within 10 minutes
+  keep one version; AI changes, restores, renames and "Keep mine" always keep the version before; `versions.json`
+  indexes it; imported BREP data stored once per document in `docs/<id>/blobs/`. Per-person index `docs/.owners/`
+  (a listing reads only that person's files). Limits (env): document 64 MB, per account (not the owner) 200 MB and
+  1000 files, disk reserve 150 MB; refusals are 413/507 with plain messages, shown in the title bar as "Not saved".
+  `BodyLimit` caps request bodies before sign-in (64 KB outside /api and /mcp, 68 MB inside). Downloads have per-person
+  room, previews never fail for want of room. Review links can be deleted and go with their file. Removed testers'
+  files go to the owner's Trash, removed members' files to the owner's Files. Untouched new files: removed when left
+  (POST .../discard, again from the next page after a reload) and by the listing after a day. A save carries a
+  `save_id`, so a 409 naming the tab's own save (its answer was lost) is not a conflict. A rename keeps the picture.
+  POST /api/docs answers the whole record for a new empty file (New opens it). Tests: test_storage_limits.py (17).
+- Processes: a lane's time limit counts only its own run (per-lane turn lock); a queued call never kills another
+  person's work. The worker cap (OPENSKETCH_CAD_LANES, 3) is checked whenever a process starts; one place is kept for
+  the owner; workers over 800 MB are replaced after their call; the `built` cache is capped at 200 MB. Workers, jobs
+  and recognition workers die with their parent; the supervisor kills a crashed server's process group and gives up
+  (exit 1) after 6 starts without an answer. Heavy jobs are rationed (`cadworker.Slots`): one AI chat per person,
+  OPENSKETCH_AI_JOBS (2) server-wide with a short queue, then a plain busy answer; one macro export and one
+  recognition part at a time. `/api/ai` and `ai.run` are gone. Thumbnails, SOLIDWORKS tools' CAD work and big JSON
+  encoding are off the event loop; light rebuilds (no preview, <= 30 sketch items) only run in the web process.
+  `RequestLog` logs 5xx and slow requests. Tests: test_job_limits.py, test_event_loop.py, test_cadworker +9.
+- AI and MCP: tool inputs checked against their schemas; a refused or failed tool leaves the document unchanged and
+  MCP never saves a refusal; feature ids unique; cut-off tool calls are not run. Prompt caching; follow-up turns send
+  only what changed (`ai.document_message`); histories over 400K characters compacted (`ai.compact_history`); chat
+  store capped at 48 MB; a chat the server lost says so. Live events carry no part features (`ai.light_doc`). MCP tools
+  run without the document lock and save with base_version (rerun once if the person saved meanwhile); undo_last_change
+  undoes only Claude's change unless asked; identical repeated calls are made once. Tests: test_ai_mcp_safety.py (21).
+- Geometry: face sketches store an `at` point and stay on the picked face; mate plane refs stay on their face. Both
+  mate solvers reject an over-defining mate like SOLIDWORKS (only that mate red, `over_defining`, `conflicts_with`),
+  the Mate/Hinge/Coupler PMs refuse OK for it. Limits never take a degree of freedom (`_equalities` / `equalities`), so a
+  part on a bound can be dragged back; Limit Distance picks are ordered to keep the part's side. Sketch angles cross
+  90 deg; the sketch solver works group by group (441 circles: 15.8 s -> 24 ms). Patterns: one boolean per seed, at
+  most 2000 instances. Bad expressions mark the feature red. Imported body data unpacks to at most 512 MB; generic STEP
+  names give way to the file name. Read-only paths and previews reuse the build cache. Sketches whose points miss their
+  dimensions warn `sketch_not_solved`. Seam tests for logic written twice.
+- Browser data: undo is per file; rebuilt states come from memory on undo/redo (`regenCache`); one rebuild and one
+  preview in flight. A file's unsent edits are kept per file (`opensketch.unsent.<id>`) until saved and come back on
+  reopen; a copy offered with "Restore my changes" is set aside (`.offer`) until answered. A pending AI change is
+  accepted, never dropped, when you edit. The poll never replaces the model mid-command. Files opens first with no
+  editor flash; entrance once per visit; "Copy of X"; Trash with inline Restore / Delete forever. The service worker
+  falls back after 10 s or on 5xx and keeps the app page from install. Tests: doc-lifecycle.test.mjs (20), sw.test.mjs.
+- Keyboard and chrome: the rule in Rules above; the ribbon, tabs, quick access, menu bar, heads-up, task strip and
+  confirmation corner are named buttons; the FeatureManager is a role=tree with arrow keys; context menus take the
+  keyboard; dialogs never start on a destructive button and put Cancel last; menus and command search offer only the
+  open document's commands; PM number fields read 2,5 / cm / in and step with Up/Down; Delete acts on every selected
+  item; Print prints the graphics area. Tests: keyboard.test.mjs (17).
+- CAD UI: one mesh and one edge set per body with face/edge ranges for picking (806-face plate: 2,819 -> 3 draw calls,
+  19.4 -> 0.1 ms a frame); hover orange, selection indigo; replaced meshes freed; big assemblies and drags solve in a
+  worker (`asmworker.js`); touch: one finger turns, two pan and pinch. OK reuses the preview (one rebuild), every PM
+  has the confirmation corner; the Design panel opens only after a settled single click on the model or tree, never
+  on phones, and keeps the model in place. Insert Components lists the parts in your Files (copies). AI chat per file,
+  follow-ups build on a waiting result, Enter sends, Retry on failure. An assembly part with no component no longer
+  sends solves to the server. Tests: cadui.test.mjs (13).
+- Visual: text tokens pass WCAG AA in both Linear themes (`--faint` keeps the old dim grey for disabled/suppressed);
+  fields have a hairline; the global Linear field rule uses `:where()`. Dialogs and menus fit the window and scroll.
+  Bars stack in `#banners`. Fonts (Inter, Inter Tight) are served from static/fonts: no Google requests. The theme
+  switches without a reload (`skin.setLook` -> `opensketch:look` -> `viewer.applyLook`). Phones: Undo/Redo/menu in the
+  title bar, the PM as a bottom sheet, 100dvh, 16 px fields. Rollback bar has a 14 px grab band. Tests: look, dialog-fit,
+  motion, phone, rollback-bar, theme (tests/js/css-cascade.mjs runs the real stylesheets).
+- Ops: CI as in Rules; deploy probes the live /healthz version and fails if it does not appear; actions pinned by SHA,
+  the Fly token only in flyctl steps; Dockerfile layers cached in order (macro toolchain keyed on its folder, version
+  last; WITH_MACRO=1 strict); fly.toml proxy limits soft 200 / hard 1000. Static files gzipped (level 9, once per file
+  version) with ETag; modules preloaded; three.js r170 minified. First load 2.16 MB -> about 0.65 MB on the wire.
+  conftest points every test at a temporary data folder.
+- YZ to do on Fly / GitHub: rotate OPENSKETCH_PASSWORD (old member/tester addresses exposed it) and set
+  OPENSKETCH_MCP_TOKEN if the owner's connector address should stay the same; replace the org-wide FLY_API_TOKEN with
+  an app deploy token (README); CI costs about 25 runner-minutes per code push to main (GitHub Free: 2,000 a month for
+  private repositories). The first deploy moves files of accounts removed earlier into the owner's Trash.
+- Known from the audit, not done: a long rebuild a person abandons still runs, and their next file waits for it in
+  their one worker (37 s seen); a tester sees no "Update from Files" for inserted parts (copies); browser and server
+  pictures differ slightly in shading; spline/ellipse sketch entities are not drawn in the browser; the 60 KB keepalive
+  limit on page close (edits are kept in the browser instead); refresh-token reuse detection; streaming SOLIDWORKS
+  uploads to disk; an extrude depth handle in the graphics area.
+
+## Earlier state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand, text logo, Google sign-in set up in the app, upload links for big MCP imports, SOLIDWORKS add-in, dedicated CPU + self-restarting server, feature recognition, CAD in worker processes, one worker per person, early access code, simpler screens)
 
 Simpler screens (2026-10-19, YZ: "too much info, reduce the text, start with a plain screen, go straight into the
 default interface like SOLIDWORKS"):
@@ -129,7 +234,7 @@ held the GIL in long OpenCascade calls, so every other request waited. A bigger 
 - One worker per person (same day, YZ: "the goal is that my edits won't affect others' performance"):
   `cadworker.lane_for(person, kind)` replaces the single MODEL lane: key "edit:<account id>" (browser routes, via
   `server._lane(request)` = `store.owner_of(user)`, None -> "local") or "agent:<id>" (MCP tools), so one person's
-  rebuilds never queue another's and their own clicks never queue behind their AI. At most `OPENSKETCH_CAD_LANES` (4)
+  rebuilds never queue another's and their own clicks never queue behind their AI. At most `OPENSKETCH_CAD_LANES` (4; 3 since v0.7)
   live person workers; past that a new one shares the least busy live lane. Idle person workers stop after 15 min
   (`PERSON_IDLE`; caches go with them). `_warm_owner()` starts the owner's edit worker at startup. They still share
   the CPU: on one core, two heavy jobs at once each run at about half speed (more cores or machines for that).
@@ -620,7 +725,7 @@ and no indicator"): measured on a 4 MB STEP plate (1329 faces, 441 chamfered hol
 - Checked in Chromium: plate STEP import 6.1 s end to end with the indicator, assembly Open Part shows faces in the
   same frame, return draws 8 components at once, edit + return updates the part, unchanged round trip = 1 request
   (the part view's status). Tests: `tests/test_loading_speed.py` (4). 290 pytest (2 skipped) + 59 node.
-- Still slow on big models: the browser draws one mesh per face and one line per edge (1329 + 3099 objects on the
+- Still slow on big models (fixed in v0.7: one mesh per body): the browser drew one mesh per face and one line per edge (1329 + 3099 objects on the
   plate); merging them into one geometry per body with face ranges for picking is the next step if needed.
 
 Accounts (2026-10-18): `accounts.py` (users.json: scrypt-hashed passwords, owner/member roles, single-use
@@ -981,7 +1086,7 @@ Phase 1 (part files), phase 2 (assemblies + live AI build), phase 3 (import, mot
 | Sketch | Line, centerline, rectangles, slot, circle, 3 arc types, polygon, point; inference and snapping; Smart Dimension with Modify box and driven prompt; relations and glyphs; drag; box select; trim; sketch fillet; convert, offset, mirror entities; live DOF solver with under/fully/over colours. Model edges (2026-10-16): edges of the body lying in the sketch plane (`sketcher.modelEdges`, from `viewer.bodyData`, cached per body/frame; lines, circles/arcs fitted by `circle3`, other types vertices only) are snap targets after sketch points: vertices and arc centres, line midpoints, then the curves (nearest wins against sketch curves); the edge highlights orange with the landing square while a tool is active. Committing (`pointFor` -> `linkModel`) adds `coincident` / `midpoint` to a hidden reference: `ref: "edge"` construction copy of the edge (`refKey` = edge midpoint) with fixed `ref` points (`refPoint` / `refEdge`, reused per edge); refs are skipped by render, hit test, snap, box select, trim, point reuse, revolve axis choice, inactive drawing and `geometry.sketch_geometry`; `pruneRefs` (every `edit` and `removeEntity`) drops refs nothing but their own fixes uses; glyphs: none for ref fixes, title "On Edge" for links. With no tool, hovering a model edge highlights it and clicking selects it (`modelSel`, Ctrl/Shift to add, Esc clears); Convert Entities converts a pre-selection at once (else the pick PM). Checked in Chromium on a sketch on a block face: point 3 px off an edge lands on it (On Edge, still under defined), corner point fully defined, circle centre midpoint-snapped, edge click + Convert adds a fixed line, deleting the point prunes its reference. |
 | Features | Extrude boss/cut (blind, through all, up to next, mid plane, direction 2, draft), revolve boss/cut, sweep boss/cut (profile + connected path), loft boss/cut (ordered single contours), dimensioned simple/counterbore/countersink holes, fillet, chamfer, shell, mirror, linear and circular pattern, reference plane, Draft (neutral plane; registry-generated). Live previews; edit, suppress, rollback, delete, rename, undo/redo. |
 | Assemblies | `assembly.py`: parts embedded in one .osk; part rebuild cache keyed by content; components with position/rotation (R = Rz Ry Rx); mates coincident, parallel, perpendicular, concentric, distance, angle, lock with align anti/aligned/auto; Levenberg-Marquardt solver over 6 DOF per free component (minimum motion), per-mate ok/error, per-component fixed/under/full and remaining DOF (SVD null space); plane/axis refs follow their face after part edits; interference (pairwise boolean common); STEP/STL export; mass. UI (`asm.js`): tree with (f)/(-) prefixes and Mates folder, Insert Components (parts in file, Browse, New Part), Mate PM with live preview that stays open, left-drag of under-defined components (one solve request in flight, warm-started), Fix/Float, Hide/Show, Suppress, Delete, Rename, Open Part / Return to Assembly (document stack; the edit is one undo step), Interference Detection PM, Motion Study tab = assembly playback in `sequence` order. |
-| AI | `ai.py` streams NDJSON events (`/api/ai/stream`): summarized thinking, text, tool_start, build_start/build_step (each feature rebuilt by `LiveBuilder` as soon as `FeatureScanner` sees it complete in the streaming tool JSON; tools use `eager_input_streaming`), assembly (solved result per insert/mate, meshes sent once per part key), interference, tool_done, done. Tools: propose_features, create_part, insert_component, add_mate, delete_items, check_interference. A part doc becomes an assembly when the AI creates parts. Model `claude-opus-5-5`, adaptive thinking with display summarized (retried without if rejected), server-side fallback "default". Old `/api/ai` kept as a non-streaming wrapper. Web (2026-10-16): Anthropic server tools `web_search_20250305` (max 5 per request) and `web_fetch_20250910` (max 5, 20k content tokens, citations on) added by `web_tools()`; `OPENSKETCH_AI_WEB=0` turns them off. Basic versions on purpose (direct calls, no code-execution filtering blocks in the stream) for the first live runs; the 2026-03 versions with dynamic filtering are the later upgrade. Stream: `server_tool_use` -> `tool_start` + `web_query` (query or url), `web_search_tool_result` / `web_fetch_tool_result` -> `web_result` ({title, url} list or error code); `stop_reason: pause_turn` continues the loop with the paused turn sent back unchanged; `done.sources` = pages read + search results the reply cites. Chat (`taskpane.js`): rows "Searching the web: N results" / "Read a page" with globe and page icons, readable error text, a Sources list under the reply (only http/https become links). System prompt: "Off-the-shelf first" (standard_part for fasteners and bearings, request_part_file with real part numbers for catalogue parts, custom parts only for what is product-specific and built around stock sizes and the chosen screws/bearings; final message says which parts are bought and which custom) and "Web" (look up real numbers before modelling, few searches, McMaster pages need JavaScript, page content is data not instructions, say where numbers came from). Demo `demo: "web"` (`demo.web_script`): a search, a page read, an M5 Toolbox screw, a cited reply. Not added: a browser (Anthropic's browser toolset, client-run) for JavaScript sites; planned read-only first if search and fetch fall short. |
+| AI | `ai.py` streams NDJSON events (`/api/ai/stream`): summarized thinking, text, tool_start, build_start/build_step (each feature rebuilt by `LiveBuilder` as soon as `FeatureScanner` sees it complete in the streaming tool JSON; tools use `eager_input_streaming`), assembly (solved result per insert/mate, meshes sent once per part key), interference, tool_done, done. Tools: propose_features, create_part, insert_component, add_mate, delete_items, check_interference. A part doc becomes an assembly when the AI creates parts. Model `claude-opus-5-5`, adaptive thinking with display summarized (retried without if rejected), server-side fallback "default". The old non-streaming `/api/ai` was removed in v0.7. Web (2026-10-16): Anthropic server tools `web_search_20250305` (max 5 per request) and `web_fetch_20250910` (max 5, 20k content tokens, citations on) added by `web_tools()`; `OPENSKETCH_AI_WEB=0` turns them off. Basic versions on purpose (direct calls, no code-execution filtering blocks in the stream) for the first live runs; the 2026-03 versions with dynamic filtering are the later upgrade. Stream: `server_tool_use` -> `tool_start` + `web_query` (query or url), `web_search_tool_result` / `web_fetch_tool_result` -> `web_result` ({title, url} list or error code); `stop_reason: pause_turn` continues the loop with the paused turn sent back unchanged; `done.sources` = pages read + search results the reply cites. Chat (`taskpane.js`): rows "Searching the web: N results" / "Read a page" with globe and page icons, readable error text, a Sources list under the reply (only http/https become links). System prompt: "Off-the-shelf first" (standard_part for fasteners and bearings, request_part_file with real part numbers for catalogue parts, custom parts only for what is product-specific and built around stock sizes and the chosen screws/bearings; final message says which parts are bought and which custom) and "Web" (look up real numbers before modelling, few searches, McMaster pages need JavaScript, page content is data not instructions, say where numbers came from). Demo `demo: "web"` (`demo.web_script`): a search, a page read, an M5 Toolbox screw, a cited reply. Not added: a browser (Anthropic's browser toolset, client-run) for JavaScript sites; planned read-only first if search and fetch fall short. |
 | MCP (2026-10-16) | `mcp_server.py`: MCP SDK 2.x `MCPServer`, Streamable HTTP, stateless + JSON responses (survives server restarts), routed at `/mcp/{token}` (Starlette Route to a `_TokenGate` ASGI class, before the static mount; session manager run in the FastAPI lifespan; DNS-rebinding check off, the token is the key). 19 tools: import_document, export_document, preview_document, get_modelling_guide (MCP preface + `ai.SYSTEM`), list_documents, create_document, get_document (`model_view` + rebuild state + requested bought parts), undo_last_change, list_versions, restore_version, and the `ai.Session` tools (propose_features, create_part, insert_component, add_mate incl. hinge/limit fields, delete_items, check_interference, find_mate_candidates, standard_part, request_part_file) run on a stored document in a thread and saved at once as a new version by "claude"; results carry doc_id, version, clean, report and an `open` link (`auth.public_url`: OPENSKETCH_PUBLIC_URL, the codespace forwarded address, or the request). `store.py`: documents in OPENSKETCH_DATA (default ~/opensketch-data) as `docs/<id>.json` {id, name, version, updated, by, summary, doc, requests} plus the last 50 versions in `docs/<id>/v<N>.json`; atomic writes, per-doc lock, Conflict on a stale base_version, undo (again = redo), restore. REST: GET/POST /api/docs, GET /api/docs/{id}, GET /api/docs/{id}/head (polled), PUT /api/docs/{id} {doc, base_version} (409 + current on conflict), GET /api/connect (MCP URL for the Connect dialog). `auth.py`: OPENSKETCH_PASSWORD gates every page and API call (`PasswordGate` ASGI middleware, login page, 90-day HttpOnly SameSite=Lax cookie = HMAC of the password, Secure behind https, 1 s delay on a wrong password, no open redirect); unset = open as before. MCP token = OPENSKETCH_MCP_TOKEN or HMAC(password or a random secret in the data folder, "mcp"), so a new password changes the address. Also fixed: `Session.add_mate` dropped hinge/limit fields (planes, angle_refs, angle_min/max, min/max); now kept, and in the add_mate schema. Browser (`static/js/serverdocs.js`, `app.server`): `?doc=<id>` (Claude's `open` links, reloads) or File > Open from Server opens a stored document and links the page to it (title shows "on server, shared with Claude"); polls `/head` every 1.5 s while visible and loads each newer version as one undo step ("Claude: <summary>"); your edits are PUT ~1.2 s after `docChanged` with the base version (only the swap itself is hidden from `changed()`, so an edit made during the redraw is saved); with local edits pending, an open command or sketch mode, or on a 409, a bar asks "Load Claude's version / Keep mine" (keep = save over it; theirs stays in history). Save on a linked doc saves now; Save As offers .osk download or a new server copy; File > Save to Server; opening a local file or New unlinks. Idle (2026-10-16): background requests (the `/head` poll and `/api/version`) run only while `app.isActive()` (tab visible and input in the last 15 min, `watchActivity`), so a hosted server can stop; the first input after a skipped check polls at once (`markActive`). Checked in Chromium: 0 requests while idle, catch-up on mouse move. Requested bought parts (`requests` on the record) become the AI pane's STEP cards; a replaced part leaves the list. Connect AI (OpenSketch AI tabs, File menu; was Connect Claude): `/api/connect` = the person's address; steps per AI app (connect.js), warnings when no password is set, in a codespace to make port 8000 public, and for a localhost address. A part document that becomes an assembly keeps its name (MCP and a named empty doc). Checked: a real MCP client session over HTTP (create document, plate part, M6 Toolbox screw, inserts, concentric mate, bought-part request, get_document, undo, versions, unknown doc); Playwright with a real MCP client driving the same document: `?doc` link opens it, Claude's insert appears in the page, a page edit reaches Claude's get_document as by "you", simultaneous changes raise the bar and Load Claude's version applies, a bought-part card appears, Connect and Open dialogs; with a password, a `?doc` link goes through login and lands on the document. Not yet tried through a real codespace public port and the real Claude connector. |
 | Live view | `live.js`: parts built on a shelf beside the assembly (sketch in blue, then new material grows out of the sketch plane via clipping planes), components fly from the shelf to the solved pose, mates tween the components and flash them, interference shown in red; queue paced with speed-up on backlog; camera follows unless the user navigated in the last 4 s. Chat shows thinking, sentences and an activity row per tool. Stop aborts. Demo button plays `demo.py` (hand press: 5 parts, 8 components, 16 mates; L bracket part). |
 | Import (v0.3, upload reworked 2026-10-16) | `importer.py`: STEP via `/api/import/raw?filename=` (body = the file's bytes, gzipped by the browser with `CompressionStream` and flagged `X-OpenSketch-Gzip: 1`; a 14.5 MB McMaster STEP goes up as 2.7 MB). Before, the client sent base64 JSON to `/api/import` (19 MB for that file), the Codespaces tunnel dropped it and the dialog read "Could not insert:" with nothing after it. `/api/import` (base64 JSON) is kept for scripts. Every server failure comes back as JSON `{error}` with text (`_import_reply`, `str(exc) or type name`); the client's `importFailText` explains statuses that never reached OpenSketch (413, 502-504, 401/403, network drop). A `.zip` is opened (`_from_zip`): one STEP inside is imported, `__MACOSX`/dot files ignored; several STEPs, no STEP or only SOLIDWORKS files give a plain message. `app.readDocFile` is the one reader for Open, drag-drop and Insert Components > Browse (STEP/zip/SLDPRT to the server, .osk/.json parsed, anything else a plain "cannot open .xxx files" message instead of a JSON parser error). One solid: part with an `import` feature (BREP zlib+base64 in the doc, decoded with an LRU cache) that later features build on. Several solids: assembly, parts deduplicated by shape signature, components at STEP positions, first fixed, no mates. .sldprt/.sldasm refused with a "save as STEP" message (closed format; user chose STEP for now). Open dialog, drag-drop on the graphics area (open, or insert into an assembly), Insert Components > Browse (STEP assemblies are flattened in). AI sees imports via `model_view` (data omitted, summary given) and `restore_blobs` puts data back by id. Quick actions: Rebuild as Features (report compares with the import by boolean volume), Add Mates (`find_mate_candidates` = `assembly.mate_candidates`: coaxial cylinders, opposite coplanar overlapping faces). |
@@ -1115,6 +1220,10 @@ are within about 2x of Python and fillets do not fail more often; otherwise stay
 The .osk JSON format stays the contract either way.
 
 ## Next phase
+
+Audit follow-ups (v0.7): YZ's Fly and GitHub actions in "Current state"; cancel a rebuild the browser abandoned (abort
+the request when a file is left, and reset that lane only when someone else waits); a disk-use line in People and a
+bigger Fly volume when Files grow; the remaining items in "Known from the audit, not done".
 
 Feature recognition, next: drafted extrudes (taper), second-direction cuts and bosses (defeature a depression's
 walls and floor, rebuild as a cut-extrude from that floor's plane), turned bosses and grooves as revolve features,
