@@ -271,12 +271,16 @@ export class App {
   // The codespace pulls each push to main and restarts the server (.devcontainer/run.sh). When the
   // server's version changes, offer a reload; the work in progress is kept by autosave.
   watchVersion() {
-    let first = null;
+    // the page's own version (the server writes it into index.html); a page from the service worker's copy is
+    // older than the server it then reaches, and says so
+    const mine = document.querySelector('meta[name="opensketch-version"]')?.content;
+    let first = mine && !mine.startsWith('__') ? mine : null;
     const check = async () => {
       if (!this.isActive()) { this.lastIdleSeen = true; return; } // let a hosted server sleep while nobody is looking
       let v;
       try { v = await (await fetch('/api/version', { cache: 'no-store' })).json(); } catch (_) { return; } // restarting
       if (first === null) first = v.version;
+      if (v.version !== first) this.regenCache?.clear(); // rebuilds by the new server may differ
       this.showUpdateBar(v.version !== first, v.note || '');
     };
     check();

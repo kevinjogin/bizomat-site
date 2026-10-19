@@ -1591,7 +1591,9 @@ def manifest():
 
 @app.get("/")
 def index():
-    return FileResponse(STATIC / "index.html", headers=NO_CACHE)
+    # the page knows its own version, so a tab opened from the service worker's copy sees it is out of date
+    page = (STATIC / "index.html").read_text().replace("__VERSION__", VERSION, 1)
+    return HTMLResponse(page, headers=NO_CACHE)
 
 
 class AppFiles(StaticFiles):

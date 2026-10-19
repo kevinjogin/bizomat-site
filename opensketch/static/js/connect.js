@@ -373,11 +373,16 @@ function swTab(sw) {
   };
   foot.append(t('span', null, 'Log: %LOCALAPPDATA%\\OpenSketch\\SolidWorks\\log.txt'), renew);
   wrap.appendChild(foot);
-  const timer = setInterval(async () => {
-    if (!wrap.isConnected) { clearInterval(timer); return; }
-    try { paint((await json('/api/sw')).status); } catch (_) { /* offline */ }
-  }, 3000);
-  return wrap;
+  // the status is asked for every 3 s while this tab shows (show() starts and stops it)
+  let timer = null;
+  const start = () => {
+    if (timer) return;
+    const tick = async () => { try { paint((await json('/api/sw')).status); } catch (_) { /* offline */ } };
+    tick();
+    timer = setInterval(() => { if (!wrap.isConnected) { stop(); return; } tick(); }, 3000);
+  };
+  const stop = () => { clearInterval(timer); timer = null; };
+  return { el: wrap, start, stop };
 }
 
 // ---------------------------------------------------------------- dialog
@@ -397,7 +402,7 @@ export async function connectDialog(app, tab = null) {
   tabs.append(tA, tB, tC);
   const panes = h('div', 'cx-panes');
   body.append(hero, tabs, panes);
-  const d = dialog({ title: 'Connect AI', body, cls: 'cx-dlg', buttons: [] });
+  const d = dialog({ title: 'Connect AI', body, cls: 'cx-dlg', buttons: [], onClose: () => C?.stop() });
   const A = appTab(app, info);
   const B = keyTab(app, keys, () => d.close());
   const C = swTab(sw);
@@ -405,7 +410,8 @@ export async function connectDialog(app, tab = null) {
     try { localStorage.setItem('opensketch.connect.tab', which); } catch (_) { /* */ }
     tA.classList.toggle('on', which === 'app'); tB.classList.toggle('on', which === 'key'); tC.classList.toggle('on', which === 'sw');
     tA.setAttribute('aria-selected', which === 'app'); tB.setAttribute('aria-selected', which === 'key'); tC.setAttribute('aria-selected', which === 'sw');
-    panes.innerHTML = ''; panes.appendChild(which === 'app' ? A : which === 'sw' ? C : B.el);
+    panes.innerHTML = ''; panes.appendChild(which === 'app' ? A : which === 'sw' ? C.el : B.el);
+    if (which === 'sw') C.start(); else C.stop();
     if (which === 'key') setTimeout(() => B.focus(), 30);
     // keep the dialog on screen as its height changes
     const r = d.el.getBoundingClientRect();

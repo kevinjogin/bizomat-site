@@ -537,7 +537,11 @@ export class ServerDocs {
   openDialog() { return this.app.files.open(); }
 
   // Connect AI: Claude, ChatGPT, Codex, Cursor... (connect.js)
-  connectDialog(tab) { return import('./connect.js').then((m) => m.connectDialog(this.app, tab)); }
+  // (loaded when first used: after a deploy the new file may not fit the page's older ones, so it asks for a reload)
+  connectDialog(tab) {
+    return import('./connect.js').then((m) => m.connectDialog(this.app, tab),
+      () => this.app.toast?.('OpenSketch was updated. Reload the page to use Connect AI.', 8000, { label: 'Reload', run: () => location.reload() }));
+  }
 
   // ---------------------------------------------------------------- File > Publish Review
   // A frozen, shareable page of this version (model, joint sliders, what changed, checks); see review.py.
