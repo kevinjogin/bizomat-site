@@ -20,7 +20,7 @@ import { LivePlayer } from './live.js';
 import { Toolbox } from './toolbox.js';
 import { SectionView } from './section.js';
 import { ServerDocs, LAST_KEYS } from './serverdocs.js';
-import { setScope, skey, adopt } from './scope.js';
+import { setScope, skey, adopt, scopeKnown } from './scope.js';
 import { Account } from './account.js';
 import { DesignPanel } from './design.js';
 import { MotionReview } from './review.js';
@@ -139,22 +139,21 @@ export class App {
   async startup() {
     const q = new URLSearchParams(location.search);
     const docId = q.get('doc');
+    // Signed in: the Files page first (YZ 2026-10-19), drawn at once (its list comes from the server, per person).
+    // The last file is the top card; an unsaved draft is a card too.
+    if (!docId) this.files.open();
     // browser storage is per signed-in person (scope.js); wait briefly for who that is
     const who = await Promise.race([this.account?.ready?.then(() => this.account.user).catch(() => null), new Promise((ok) => setTimeout(() => ok(undefined), 4000))]);
-    const user = who && !who.legacy ? who : null;
-    setScope(user?.id);
-    if (user?.role === 'owner') adopt([AUTOSAVE, ...LAST_KEYS]);
-    const draftLink = ServerDocs.draftLink;
-    const hasDraft = this.restore();
-    if (draftLink && !docId) this.doc = newDoc(); // that copy is a file in Files, not a draft
+    const known = !this.account?.el || (who !== undefined && typeof this.account.info?.mode === 'string');
+    if (known) this.useScope(who); else this.waitForAccount(); // storage stays off until it is known
+    const hasDraft = known && this.restore();
+    if (hasDraft) this.dirty = true; // only in this browser: kept until saved or let go
     this.updateDocChrome();
     if (docId) {
-      if (!(await this.server.open(docId, { quiet: true }))) { this.regen().then(() => this.viewer.zoomToFit(false)); this.files.open(); }
+      if (!(await this.server.open(docId, { quiet: true }))) this.files.open();
     } else {
-      // Signed in: the Files page first (YZ 2026-10-19). The last file is the top card; an unsaved draft is a card too.
-      if (hasDraft && !draftLink) { this.dirty = true; this.updateDocChrome(); }
-      this.regen().then(() => this.viewer.zoomToFit(false));
-      this.files.open();
+      if (hasDraft) this.regen().then(() => this.viewer.zoomToFit(false)); // built behind Files, so Keep editing is instant
+      if (this.files.isOpen) this.files.renderGrid();
     }
     if (q.get('view') === 'files' && !this.files.isOpen) this.files.open();
     if (q.get('new') === 'part' || q.get('new') === 'assembly') this.files.newFile(q.get('new'));
@@ -162,6 +161,31 @@ export class App {
     const u = new URL(location.href);
     for (const k of ['view', 'new', 'source']) u.searchParams.delete(k);
     history.replaceState(null, '', u);
+  }
+
+  useScope(who) {
+    const user = who && !who.legacy ? who : null;
+    setScope(user?.id);
+    if (user?.role === 'owner') adopt([AUTOSAVE, ...LAST_KEYS]);
+    if (ServerDocs.draftLink) { this.forgetDraft(); this.server.forgetLegacy(); } // an older page kept a file's copy there, not a draft
+  }
+
+  // /api/account was slow or failed at start: keep asking, then turn browser storage on for that person (and
+  // bring in their draft if the editor is still empty).
+  async waitForAccount() {
+    const acct = this.account;
+    try { await acct.ready; } catch (_) { /* asked again below */ }
+    for (const ms of [2000, 5000, 10000, 20000, 30000, 60000]) {
+      if (typeof acct.info?.mode === 'string') break;
+      await new Promise((ok) => setTimeout(ok, ms));
+      await acct.load();
+    }
+    if (typeof acct.info?.mode !== 'string') return; // never known: nothing is kept in this browser this session
+    this.useScope(acct.user);
+    if (!this.server.linked && !this.hasModel() && !this.dirty && this.restore()) {
+      this.dirty = true; this.updateDocChrome(); this.regen();
+      if (this.files.isOpen) this.files.renderGrid();
+    } else this.autosaveNow(); // what was done meanwhile
   }
 
   // Installed app: .osk and STEP files opened with OpenSketch from the computer (File Handling API).
@@ -215,7 +239,7 @@ export class App {
       dialog({ title: 'Save your draft?', cls: 'acct-dlg', onClose: () => { if (!saving) done(false); },
         body: `<p class="fv-p"><b>${esc(name)}</b> is only in this browser. Save it to your Files before you leave it?</p>`,
         buttons: [
-          { label: "Don't save", run: () => { this.dirty = false; done(true); } },
+          { label: "Don't save", run: () => { this.dirty = false; this.forgetDraft(); done(true); } },
           { label: 'Cancel', run: () => done(false) },
           // the Save to Files dialog answers: saved -> go on to what was asked (open the file, New...)
           { label: 'Save to Files', primary: true, run: () => { saving = true; setTimeout(() => this.server.saveDraft().then(done), 0); } },
@@ -390,13 +414,40 @@ export class App {
     }
   }
 
+  // A draft (not in Files) is kept in this browser's draft slot. A file's edits are kept only while the server
+  // does not have them yet (ServerDocs.keepUnsent), so another tab's open file never replaces a draft.
   autosaveNow() {
     clearTimeout(this._autosaveTimer); this._autosaveTimer = null;
-    if (this.reviewMode) return;
-    try { localStorage.setItem(skey(AUTOSAVE), JSON.stringify(this.rootDoc())); } catch (_) { /* full or unavailable: Files keeps the record */ }
+    if (this.reviewMode || !scopeKnown()) return;
+    if (this.server?.linked) { if (this.server.link.local) this.server.keepUnsent(); return; }
+    try { localStorage.setItem(skey(AUTOSAVE), JSON.stringify(this.rootDoc())); } catch (_) { /* full or unavailable */ }
+  }
+
+  // The open file left the editor (moved to the Trash): an empty new part takes its place, with nothing to save.
+  // The Undo toast or Trash > Restore brings the file back.
+  closeFile() {
+    this.server.unlink();
+    this.hideContextToolbar();
+    if (this.mode === 'sketch') this.exitSketch({ silent: true });
+    this.closeCommand();
+    this.leaveDocument();
+    this.doc = newDoc(); this.proposal = null; this.result = null;
+    this.docChanged();
+    this.dirty = false; this.updateDocChrome();
+    this.ribbon.setTab('Features');
+    this.setSelection([]);
+    this.viewer.setBody(null);
+  }
+
+  // The draft slot is let go: saved to Files, "Don't save", or nothing worth keeping.
+  forgetDraft() {
+    clearTimeout(this._autosaveTimer); this._autosaveTimer = null;
+    if (!scopeKnown()) return;
+    try { localStorage.removeItem(skey(AUTOSAVE)); } catch (_) { /* storage off */ }
   }
 
   restore() {
+    if (!scopeKnown()) return false;
     try {
       const s = localStorage.getItem(skey(AUTOSAVE));
       if (s) {
@@ -435,7 +486,7 @@ export class App {
     const sv = this.server;
     const st = this.reviewMode ? null : !sv?.linked ? 'draft' : sv.state;
     const label = { draft: 'Draft', saved: 'Saved', saving: 'Saving', offline: 'Offline', conflict: 'Changed elsewhere' }[st] || '';
-    const tip = { draft: 'Only in this browser. Save it to your Files (Ctrl+S).', saved: 'Saved to your Files. Your AI sees this version.', saving: 'Saving to your Files...', offline: 'Cannot reach the server. Your edits are kept and saved when it is back.', conflict: 'The file changed elsewhere. Choose which version to keep.' }[st] || '';
+    const tip = { draft: 'Only in this browser. Save it to your Files (Ctrl+S).', saved: 'Saved to your Files. Your AI sees this version.', saving: 'Saving to your Files...', offline: 'Cannot reach the server. Your edits are kept in this browser and saved when it is back.', conflict: 'The file changed elsewhere. Choose which version to keep.' }[st] || '';
     const name = f ? `${this.doc.name}` : (root.name || 'Untitled');
     const ctx = f ? ` in ${root.name}` : '';
     if (!this._dt) {

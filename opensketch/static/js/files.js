@@ -488,7 +488,7 @@ export class FilesView {
       const r = await this.req('DELETE', `/api/docs/${encodeURIComponent(f.id)}`);
       this.items = this.items.filter((x) => x.id !== f.id);
       this.trash.unshift(r);
-      if (app.server.link?.id === f.id) { app.server.unlink({ keepAsDraft: true }); this.trashedOpen = f.id; this.trashedUndo = app.undoStack.length; }
+      if (app.server.link?.id === f.id) { app.closeFile(); this.trashedOpen = f.id; } // closed, not kept as a draft
       this.renderNav(); this.renderGrid();
       app.toast?.(`Moved ${f.name} to the Trash.`, 6000, { label: 'Undo', run: () => this.untrash(r) });
     } catch (err) { card()?.classList.remove('working'); message('Move to Trash', esc(err.message)); } finally { this.trashing.delete(f.id); }
@@ -502,7 +502,7 @@ export class FilesView {
       this.renderNav(); this.renderGrid();
       this.app.toast?.(`Restored ${f.name}.`);
       // the file that was open comes back: link the editor to it again (nothing was saved in between)
-      if (this.trashedOpen === f.id && !this.app.server.linked && this.app.undoStack.length === this.trashedUndo) { this.trashedOpen = null; this.app.dirty = false; await this.app.server.open(f.id, { quiet: true }); this.renderGrid(); }
+      if (this.trashedOpen === f.id && !this.app.server.linked && !this.app.hasModel()) { this.trashedOpen = null; await this.app.server.open(f.id, { quiet: true }); this.renderGrid(); }
     } catch (err) { message('Restore', esc(err.message)); }
   }
 

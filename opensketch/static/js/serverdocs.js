@@ -9,7 +9,7 @@
 
 import { dialog, message } from './ui/dialogs.js';
 import { isAssembly } from './asm.js';
-import { skey } from './scope.js';
+import { skey, scopeKnown } from './scope.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (t) => String(t ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -18,11 +18,15 @@ const PUSH_MS = 1200;
 const THUMB_MS = 20000; // at most one new picture of the model per 20 s while editing
 const sleep = (ms) => new Promise((ok) => setTimeout(ok, Math.max(0, ms)));
 const LAST = 'opensketch.lastDoc';
-const DRAFT_LINK = 'opensketch.autosave.link';
+const DRAFT_LINK = 'opensketch.autosave.link'; // older pages: the browser copy was a file's, not a draft
+const UNSENT = 'opensketch.unsent.'; // + file id: edits the server does not have yet
 export const LAST_KEYS = [LAST, DRAFT_LINK];
-const store = { // per signed-in person (scope.js)
-  get: (k) => { try { return localStorage.getItem(skey(k)); } catch (_) { return null; } },
-  set: (k, v) => { try { if (v == null) localStorage.removeItem(skey(k)); else localStorage.setItem(skey(k), v); } catch (_) { /* storage off */ } },
+export const store = { // per signed-in person (scope.js); off until the page knows who that is
+  get: (k) => { if (!scopeKnown()) return null; try { return localStorage.getItem(skey(k)); } catch (_) { return null; } },
+  set: (k, v) => {
+    if (!scopeKnown()) return false;
+    try { if (v == null) localStorage.removeItem(skey(k)); else localStorage.setItem(skey(k), v); return true; } catch (_) { return false; } // storage off or full
+  },
 };
 
 function ago(t) {
@@ -51,7 +55,7 @@ export class ServerDocs {
       if (this.link?.local || this.pushing) { this.flush(); e.preventDefault(); e.returnValue = ''; }
     });
     // the page is going away with unsent edits: a last save that outlives the page (small models only;
-    // larger ones stay in this browser's copy and the next open asks which version to keep)
+    // every model's unsent edits also stay in this browser, and opening the file again offers them back)
     window.addEventListener('pagehide', () => {
       const L = this.link;
       if (!L?.local || this.app.proposal) return;
@@ -64,6 +68,65 @@ export class ServerDocs {
   get linked() { return !!this.link; }
   static get lastDoc() { return store.get(LAST); }
   static get draftLink() { return store.get(DRAFT_LINK); }
+
+  // ---------------------------------------------------------------- unsent edits, kept in this browser
+  // Edits the server does not have yet (offline, a closed tab, a crash) are kept per file until a save gets
+  // through; opening the file again puts them back (or offers to, when the file changed since).
+  keepUnsent() {
+    const L = this.link;
+    if (!L) return;
+    const ok = store.set(UNSENT + L.id, JSON.stringify({ id: L.id, name: L.name, base: L.version, at: Date.now(), doc: this.app.rootDoc() }));
+    if (!ok && scopeKnown() && !this.copyWarned && this.state === 'offline') {
+      this.copyWarned = true;
+      this.app.toast?.('This model is too big for the browser to keep a copy. Keep this tab open until it is saved.', 9000);
+    }
+  }
+
+  forgetLegacy() { store.set(DRAFT_LINK, null); }
+
+  unsent(id) { try { return JSON.parse(store.get(UNSENT + id)) || null; } catch (_) { return null; } }
+  dropUnsent(id) { store.set(UNSENT + id, null); }
+
+  // After opening a file: edits from this browser that never reached the server come back.
+  offerUnsent(rec) {
+    const u = this.unsent(rec.id);
+    if (!u?.doc || this.link?.id !== rec.id) return;
+    const same = (a, b) => JSON.stringify({ ...a, name: '' }) === JSON.stringify({ ...b, name: '' });
+    if (same(u.doc, rec.doc)) { this.dropUnsent(rec.id); return; }
+    const app = this.app;
+    const put = () => {
+      if (this.link?.id !== rec.id) return;
+      app.pushUndo('Unsaved changes from this browser');
+      app.doc = { ...u.doc, name: this.link.name };
+      app.docChanged(); // saved now, over the server version (that one stays in the version history)
+      app.regen();
+    };
+    const when = new Date(u.at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+    if (u.base === rec.version) { // nobody changed the file since: they simply go back in
+      put();
+      app.toast?.(`Your changes from ${when} had not reached the server. They are back and saved now. Ctrl+Z takes them out.`, 8000);
+      return;
+    }
+    this.showNote(`This browser has changes to ${rec.name} from ${when} that never reached the server. The file has changed since.`, [
+      { label: 'Restore my changes', primary: true, title: 'Put them back and save them. The current version stays in the version history.', run: () => put() },
+      { label: 'Discard them', run: () => this.dropUnsent(rec.id) },
+    ]);
+  }
+
+  // A bar above the model with a question about this file's versions (one at a time).
+  showNote(text, buttons) {
+    let bar = $('serverbar');
+    if (!bar) { bar = document.createElement('div'); bar.id = 'serverbar'; bar.className = 'update-bar note'; $('graphics')?.appendChild(bar); }
+    delete bar.dataset.v;
+    bar.innerHTML = '';
+    const span = document.createElement('span'); span.textContent = text; bar.appendChild(span);
+    for (const b of buttons) {
+      const e = document.createElement('button'); e.className = 'btn' + (b.primary ? ' primary' : ''); e.textContent = b.label;
+      if (b.title) e.title = b.title;
+      e.onclick = () => { bar.remove(); b.run(); };
+      bar.appendChild(e);
+    }
+  }
 
   setState(st) {
     if (this.state === st) return;
@@ -88,11 +151,14 @@ export class ServerDocs {
       return false;
     }
     if (this.link && this.link.id !== rec.id) { this.leaveThumb(); await this.flush(); clearInterval(this.pollTimer); }
+    if (!this.link && !this.app.dirtyDraft()) this.app.forgetDraft(); // nothing worth keeping in the draft slot
     this.link = { id: rec.id, name: rec.name, version: rec.version, local: false, requests: rec.requests || [] };
     this.shownRequests = new Set();
     this.state = 'saved';
-    store.set(LAST, rec.id); store.set(DRAFT_LINK, rec.id);
+    this.hideBar(); // a question about the previous file's versions goes with it
+    store.set(LAST, rec.id);
     await this.apply(rec, { fit: true, fresh: true });
+    this.offerUnsent(rec);
     this.setUrl(rec.id);
     this.startPolling();
     if (!quiet) this.app.status(`Opened ${rec.name}. Your edits save by themselves; your AI's changes appear here.`);
@@ -205,10 +271,12 @@ export class ServerDocs {
   async saveAsNew(name) {
     const app = this.app;
     const d = app.rootDoc();
+    const wasDraft = !this.link;
     const rec = await this.req('POST', '/api/docs', { name: name || d.name || 'Untitled', doc: d });
     this.link = { id: rec.id, name: rec.name, version: rec.version, local: false, requests: [] };
     this.state = 'saved';
-    store.set(LAST, rec.id); store.set(DRAFT_LINK, rec.id);
+    store.set(LAST, rec.id);
+    if (wasDraft) app.forgetDraft(); // the draft is a file now
     this.setUrl(rec.id);
     this.startPolling();
     app.dirty = false; app.updateDocChrome();
@@ -219,7 +287,8 @@ export class ServerDocs {
   // Stop following the server document. keepAsDraft: the model stays open as an unsaved draft (its file
   // went to the Trash); otherwise the caller replaces it.
   unlink({ keepAsDraft = false } = {}) {
-    if (!this.link) return;
+    const L = this.link;
+    if (!L) return;
     if (!keepAsDraft) this.flush();
     clearTimeout(this.thumbTimer);
     if (!keepAsDraft) this.leaveThumb();
@@ -228,8 +297,7 @@ export class ServerDocs {
     clearInterval(this.pollTimer); this.pollTimer = null;
     this.hideBar();
     this.setUrl(null);
-    store.set(DRAFT_LINK, null);
-    if (keepAsDraft) { store.set(LAST, null); this.app.dirty = true; }
+    if (keepAsDraft) { store.set(LAST, null); this.dropUnsent(L.id); this.app.dirty = true; this.app.autosave(); }
     this.app.updateDocChrome();
   }
 
@@ -332,6 +400,7 @@ export class ServerDocs {
         if (this.app.mode === 'sketch') this.app.exitSketch({ silent: true });
         this.app.closeCommand();
         await this.apply(rec, { label: `${who}: ${rec.summary || 'change'}` });
+        this.dropUnsent(rec.id); // their version replaced the edits (Ctrl+Z brings them back)
       } catch (err) { take.disabled = false; this.app.toast?.('Could not load it: ' + err.message); }
     };
     const keep = document.createElement('button'); keep.className = 'btn'; keep.textContent = 'Keep mine';
@@ -378,8 +447,12 @@ export class ServerDocs {
       try {
         const rec = await this.req('PUT', `/api/docs/${L.id}`, { doc, base_version: L.version, summary, requests: L.requests });
         L.version = rec.version; L.name = rec.name;
+        const sent = JSON.stringify(doc);
+        const copy = this.unsent(L.id);
+        if (copy && JSON.stringify(copy.doc) === sent) this.dropUnsent(L.id); // the server has what this browser kept
         if (this.link !== L) return true; // another file is open now: this one is saved, nothing to redraw
-        if (this.app.undoStack.length === pushedAt && JSON.stringify(this.app.rootDoc()) === JSON.stringify(doc)) L.local = false;
+        if (this.app.undoStack.length === pushedAt && JSON.stringify(this.app.rootDoc()) === sent) L.local = false;
+        if (!L.local) this.dropUnsent(L.id); else this.app.autosaveNow(); // the kept copy follows the new base version
         this.app.dirty = false;
         this.state = L.local ? 'saving' : 'saved';
         this.app.updateDocChrome();

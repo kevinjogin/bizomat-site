@@ -221,3 +221,84 @@ test('Ctrl+S says what happened: saved, or kept in this browser while the server
   server.down = false;
   stopTimers(app);
 });
+
+test('edits that never reached the server come back when the file is opened again', async () => {
+  server.docs.clear(); server.puts = []; server.down = false; mem.clear();
+  addDoc('U', part('Gear', 1));
+  const tab1 = makeApp();
+  await tab1.server.open('U');
+  server.down = true;
+  tab1.commit('Plane2', () => tab1.doc.features.push({ id: 'p2', type: 'plane', name: 'Plane2' }), false);
+  assert.equal(await tab1.server.flush(), false);
+  tab1.autosaveNow(); // the page goes away (pagehide flushes the browser copy)
+  stopTimers(tab1);
+  assert.ok([...mem.keys()].some((k) => k.startsWith('opensketch.unsent.U')), 'kept in this browser');
+  assert.equal(mem.get('opensketch.autosave.v1'), undefined, 'a file never goes into the draft slot');
+  server.down = false;
+  // next visit: nobody changed the file since, so the edits simply go back in and are saved
+  const tab2 = makeApp();
+  await tab2.server.open('U');
+  assert.equal(tab2.doc.features.length, 2);
+  assert.match(tab2.toasts.at(-1), /had not reached the server/);
+  assert.equal(await tab2.server.flush(), true);
+  assert.equal(server.docs.get('U').doc.features.length, 2);
+  assert.ok(![...mem.keys()].some((k) => k.startsWith('opensketch.unsent.U')), 'dropped once saved');
+  stopTimers(tab2);
+});
+
+test('when the file changed since, the browser copy is offered, not forced', async () => {
+  server.docs.clear(); server.puts = []; server.down = false; mem.clear();
+  document.getElementById('graphics').innerHTML = '';
+  addDoc('V', part('Lid', 1));
+  const tab1 = makeApp();
+  await tab1.server.open('V');
+  server.down = true;
+  tab1.commit('Mine', () => tab1.doc.features.push({ id: 'm', type: 'plane', name: 'Mine' }), false);
+  await tab1.server.flush(); tab1.autosaveNow(); stopTimers(tab1);
+  server.down = false;
+  const rec = server.docs.get('V');
+  Object.assign(rec, { version: 2, by: 'claude', doc: { ...rec.doc, features: [...rec.doc.features, { id: 'ai', type: 'plane', name: 'Theirs' }] } });
+  const tab2 = makeApp();
+  await tab2.server.open('V');
+  assert.deepEqual(tab2.doc.features.map((f) => f.id), ['f0', 'ai'], 'the server version opens');
+  const bar = document.getElementById('serverbar');
+  assert.match(bar.textContent, /never reached the server/);
+  [...bar.querySelectorAll('button')].find((b) => b.textContent === 'Restore my changes').onclick();
+  assert.deepEqual(tab2.doc.features.map((f) => f.id), ['f0', 'm']);
+  assert.equal(tab2.undoStack.at(-1).label, 'Unsaved changes from this browser');
+  assert.equal(await tab2.server.flush(), true);
+  assert.equal(server.docs.get('V').version, 3);
+  stopTimers(tab2);
+});
+
+test('browser storage stays off until the page knows who is signed in', async () => {
+  const scope = await import('../../opensketch/static/js/scope.js?fresh');
+  assert.equal(scope.scopeKnown(), false);
+  mem.clear();
+  mem.set('opensketch.autosave.v1', 'someone else\'s draft');
+  scope.setScope('owner1');
+  scope.adopt(['opensketch.autosave.v1']);
+  assert.equal(mem.get('opensketch.autosave.v1.owner1'), "someone else's draft");
+  mem.set('opensketch.autosave.v1', 'written later by an older page');
+  scope.adopt(['opensketch.autosave.v1']);
+  assert.equal(mem.get('opensketch.autosave.v1.owner1'), "someone else's draft", 'adopted once only');
+});
+
+test('moving the open file to the Trash closes it: no draft to save, now or next time', async () => {
+  server.docs.clear(); server.calls = []; server.down = false; mem.clear();
+  addDoc('T', part('Bracket', 2));
+  const app = makeApp();
+  await app.server.open('T');
+  app.commit('Plane3', () => app.doc.features.push({ id: 'p3', type: 'plane', name: 'Plane3' }), false);
+  const { FilesView } = await import('../../opensketch/static/js/files.js');
+  const files = new FilesView(app);
+  app.files = files;
+  await files.trashFile({ id: 'T', name: 'Bracket' });
+  assert.equal(server.docs.get('T').doc.features.length, 3, 'the last edit went into the file first');
+  assert.equal(app.server.linked, false);
+  assert.equal(app.dirtyDraft(), false, 'nothing asks to be saved');
+  assert.equal(app.doc.features.length, 0);
+  app.autosaveNow();
+  assert.equal(app.restore(), false, 'no draft comes back at the next start');
+  stopTimers(app);
+});
