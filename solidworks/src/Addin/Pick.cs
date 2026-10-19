@@ -84,6 +84,28 @@ namespace OpenSketch.Sw
             return best;
         }
 
+        /// <summary>The planar face lying in a sketch's plane (facing its normal) nearest the sketch origin, or null.</summary>
+        static IFace2 CoplanarFace(IModelDoc2 m, SketchFrame os)
+        {
+            IFace2 best = null;
+            var bd = double.MaxValue;
+            foreach (var b in Bodies(m))
+            foreach (var o in b.GetFaces() as object[] ?? new object[0])
+            {
+                var f = (IFace2)o;
+                var fn = PlanarNormal(f);
+                if (!fn.HasValue || fn.Value.Dot(os.N) < 0.9999) continue;
+                var d = Dist(f, os.O, out var at);
+                if (Math.Abs((at - os.O).Dot(os.N)) > 1e-4) continue;
+                if (d < bd)
+                {
+                    bd = d;
+                    best = f;
+                }
+            }
+            return best;
+        }
+
         IEdge FindEdge(List<IBody2> bodies, Dictionary<string, object> r, List<string> notes, Pose? place = null)
         {
             var p = J.V3(r, "mid") ?? J.V3(r, "point") ?? throw new UserError("An edge reference needs mid: " + Json.Write(r));

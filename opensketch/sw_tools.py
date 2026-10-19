@@ -376,7 +376,7 @@ async def sw_set_parameter(name: str, expression: str | None = None, doc: _DOC =
 
 
 @mcp.tool()
-async def sw_set_equation(target: Annotated[str, Field(description='A dimension "D1@Sketch1", or "<feature name>.<field>" such as "Boss-Extrude1.depth"')],
+async def sw_set_equation(target: Annotated[str, Field(description='A dimension "D1@Sketch1", or "<feature name>.<field>" such as "Boss-Extrude1.depth" (fields: depth, dir2.depth, diameter (from the feature\'s sketch), radius, distance, thickness, offset, spacing, spacing2, angle, draft, step, count, count2; holes also bore_depth, bore_diameter, sink_diameter)')],
                           expression: Annotated[str | None, Field(description='Global variables and numbers, e.g. "wall * 2"; empty removes the equation')] = None,
                           doc: _DOC = None) -> CallToolResult:
     """Drive a dimension with an equation of global variables (SOLIDWORKS Equations)."""

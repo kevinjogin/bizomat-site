@@ -127,6 +127,11 @@ chosen scope: Claude builds in SOLIDWORKS 2022 on his work PC, no admin rights, 
   one command at a time (semaphore) and no changes while the user has a sketch open; expressions use arcsin / arccos /
   atn, trig in degrees (set when no equation uses trig yet), a note when the document is not in mm; a failed sketch is
   deleted, not left half made; `--attach` ends with its window. Every SelectEntity result that matters is checked.
+  A second review of those fixes: a draft retry finds faces again but keeps its neutral plane (no extra planes); a
+  later sketch on an earlier face sketch only takes a face in the same plane (`CoplanarFace`), else the old face; fillet
+  edges go as object[]; `@file` is stripped from equation names only for the document's own file (two components never
+  match); failed relations or dimensions make the sketch a warning; a hole's second sketch goes on the first one's plane;
+  `<feature>.diameter` is the diameter dimension in the feature's sketch (holes: `bore_*`, `sink_*` fields).
 - Tests: `tests/test_swbridge.py` (4, fake add-in over real uvicorn; a renewed key says why even when a poll races it),
   `tests/test_sw_selftest.py` (11: the selftest data
   builds in OpenSketch, passes the send checks, plate sketches fully defined; all three stages pass against SimSW, a

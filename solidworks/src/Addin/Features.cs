@@ -246,9 +246,9 @@ namespace OpenSketch.Sw
                 if (c.Planes.TryGetValue(r, out var pl)) return new PlaneTarget { Entity = pl.f, Os = pl.os };
                 if (c.Sketches.TryGetValue(r, out var sk))
                 {
-                    // a face may have been rebuilt since: find it again from how it was asked for
-                    if (sk.PlaneEntity is IFace2 && sk.PlaneSpec != null && J.Str(sk.PlaneSpec, "ref") == null)
-                        return ResolvePlane(c, sk.PlaneSpec, predicted);
+                    // a face may have been rebuilt since: find it again, but only in the same plane as the sketch
+                    if (sk.PlaneEntity is IFace2 && CoplanarFace(c.Doc, sk.Os) is IFace2 again)
+                        return new PlaneTarget { Entity = again, Os = sk.Os };
                     return new PlaneTarget { Entity = sk.PlaneEntity, Os = sk.Os };
                 }
                 var f = Named(c, r, "plane");
@@ -688,7 +688,7 @@ namespace OpenSketch.Sw
                     if (data == null) return null;
                     data.Initialize((int)swSimpleFilletType_e.swConstRadiusFillet);
                     data.DefaultRadius = r * Units.M;
-                    data.Edges = items.Cast<IEdge>().ToArray();
+                    data.Edges = items.ToArray();
                     feat = c.Doc.FeatureManager.CreateFeature(data) as IFeature;
                 }
                 c.Doc.ClearSelection2(true);
@@ -768,7 +768,7 @@ namespace OpenSketch.Sw
                 if (calls++ > 0)
                 {
                     items = Picks(c, f, true, null);
-                    neutral = findNeutral();
+                    if (neutral is IFace2) neutral = findNeutral();   // a plane stays (finding it again could make another)
                 }
                 if (!SelectPicks(c.Doc, items, 2, () => SelectEntity(c.Doc, neutral, true, 1)))
                     throw new InvalidOperationException("not every face could be selected");
@@ -997,18 +997,21 @@ namespace OpenSketch.Sw
             var style = J.Str(f, "style", "simple");
             var n = ++c.Holes;
             var parts = new List<string>();
-            Dictionary<string, object> circle(string sid, double dia) => J.O(
-                "id", sid, "type", "sketch", "plane", plane,
+            Dictionary<string, object> circle(string sid, double dia, Dictionary<string, object> on) => J.O(
+                "id", sid, "type", "sketch", "plane", on,
                 "entities", J.L(J.O("id", "c", "type", "point", "x", x, "y", y), J.O("id", "h", "type", "circle", "center", "c", "r", dia / 2)),
                 "constraints", J.L(J.O("id", "dd", "type", "diameter", "refs", J.L("h"), "value", dia),
                                    J.O("id", "dx", "type", "distance", "refs", J.L("c", "origin"), "orient", "horizontal", "value", Math.Abs(x)),
                                    J.O("id", "dy", "type", "distance", "refs", J.L("c", "origin"), "orient", "vertical", "value", Math.Abs(y))));
             // every sketch of the hole is drawn on the start plane before anything is cut, so a later sketch cannot land
             // on the floor of an earlier cut
+            string firstSketch = null;
             void sketchFor(string sid, double dia)
             {
                 var skRow = new Dictionary<string, object>();
-                var circ = circle(sid, dia);
+                // the second sketch goes on the first one's plane (a fixed plane is not made twice)
+                var circ = circle(sid, dia, firstSketch == null ? plane : J.O("ref", firstSketch));
+                if (firstSketch == null) firstSketch = sid;
                 if (Math.Abs(x) < 1e-9) ((List<object>)circ["constraints"]).RemoveAll(k => J.Str((Dictionary<string, object>)k, "id") == "dx");
                 if (Math.Abs(y) < 1e-9) ((List<object>)circ["constraints"]).RemoveAll(k => J.Str((Dictionary<string, object>)k, "id") == "dy");
                 var sk = DrawSketch(c, circ, skRow);

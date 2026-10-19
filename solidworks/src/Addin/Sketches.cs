@@ -440,6 +440,7 @@ namespace OpenSketch.Sw
                 }
                 catch (Exception)
                 {
+                    notes.Add($"{d.Source}: SOLIDWORKS would not give the dimension's name" + (string.IsNullOrEmpty(d.Eq) ? "" : $"; its equation ({d.Eq}) was not added"));
                     continue;
                 }
                 dimNames.Add(J.O("dimension", full, "from", d.Source, "value", Math.Round(got, 6)));
@@ -454,7 +455,8 @@ namespace OpenSketch.Sw
             if (dimFailed.Count > 0) row["dimensions_not_added"] = dimFailed;
             if (moved.Count > 0) notes.Add("adding relations and dimensions moved points " + string.Join(", ", moved.Take(12)) + ": check the sketch");
             if (notes.Count > 0) row["notes"] = notes;
-            row["state"] = failed.Count > 0 ? "error" : moved.Count > 0 || state == (int)swConstrainedStatus_e.swOverConstrained ? "warning" : "ok";
+            row["state"] = failed.Count > 0 ? "error"
+                : moved.Count > 0 || relFailed.Count > 0 || dimFailed.Count > 0 || state == (int)swConstrainedStatus_e.swOverConstrained ? "warning" : "ok";
             if (state == (int)swConstrainedStatus_e.swOverConstrained) row["reason"] = "over defined";
             return made;
         }

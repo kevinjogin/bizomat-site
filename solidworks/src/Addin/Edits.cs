@@ -75,19 +75,32 @@ namespace OpenSketch.Sw
             return mt.Success ? mt.Groups[1].Value : null;
         }
 
-        static int FindEquation(IEquationMgr em, string lhs)
+        static int FindEquation(IEquationMgr em, string lhs, IModelDoc2 own = null)
         {
+            string me = null;
+            try
+            {
+                if (own != null) me = System.IO.Path.GetFileNameWithoutExtension(own.GetTitle());
+            }
+            catch (Exception)
+            {
+            }
             for (var i = 0; i < em.GetCount(); i++)
-                if (string.Equals(NormDim(Lhs(em.get_Equation(i))), NormDim(lhs), StringComparison.OrdinalIgnoreCase)) return i;
+                if (string.Equals(NormDim(Lhs(em.get_Equation(i)), me), NormDim(lhs, me), StringComparison.OrdinalIgnoreCase)) return i;
             return -1;
         }
 
-        /// <summary>"D1@Sketch1@Part1.SLDPRT" and "D1@Sketch1" are the same dimension.</summary>
-        static string NormDim(string name)
+        /// <summary>"D1@Sketch1@Part1.Part" in Part1 itself is "D1@Sketch1"; a component's suffix (bracket-1.Part in an
+        /// assembly) is kept, so two components' dimensions never match each other.</summary>
+        static string NormDim(string name, string me)
         {
-            if (name == null) return null;
+            if (name == null || string.IsNullOrEmpty(me)) return name;
             var parts = name.Split('@');
-            return parts.Length >= 3 && parts[parts.Length - 1].Contains(".") ? string.Join("@", parts.Take(parts.Length - 1)) : name;
+            if (parts.Length < 3) return name;
+            var last = parts[parts.Length - 1];
+            var dot = last.LastIndexOf('.');
+            var stem = dot > 0 ? last.Substring(0, dot) : last;
+            return string.Equals(stem, me, StringComparison.OrdinalIgnoreCase) ? string.Join("@", parts.Take(parts.Length - 1)) : name;
         }
 
         /// <summary>Appends an equation (index -1) in all configurations; Add2 for parts Add3 refuses (made before 2014).</summary>
@@ -228,7 +241,7 @@ namespace OpenSketch.Sw
             var dim = DimensionName(m, target);
             var em = (IEquationMgr)m.GetEquationMgr();
             journal?.Equations(m);
-            var i = FindEquation(em, dim);
+            var i = FindEquation(em, dim, m);
             var expr = J.Str(a, "expression");
             if (string.IsNullOrWhiteSpace(expr))
             {
@@ -241,7 +254,7 @@ namespace OpenSketch.Sw
             if (i >= 0) em.set_Equation(i, text);
             else AddEquation(em, text);
             m.ForceRebuild3(false);
-            var idx = FindEquation(em, dim);
+            var idx = FindEquation(em, dim, m);
             if (idx < 0) throw new UserError($"SOLIDWORKS did not take {text}.");
             return J.O("doc", Ref(m), "equation", em.get_Equation(idx), "value", R(em.get_Value(idx), 6),
                        "status", em.Status == 0 ? "ok" : "error " + em.Status, "equations", Equations(m), "note", UnitsNote(m));
@@ -258,8 +271,9 @@ namespace OpenSketch.Sw
             // a counterbore or countersink hole is two cuts: Hole1 is the bore or sink, Hole1-2 the hole itself
             if (Regex.IsMatch(feat.Name, "^Hole\\d+$") && Feature(m, feat.Name + "-2") is IFeature hole2)
             {
-                if (field == "depth") feat = hole2;
-                else if (field == "bore_depth") field = "depth";
+                if (field == "depth" || field == "diameter") feat = hole2;
+                else if (field == "bore_depth" || field == "sink_depth") field = "depth";
+                else if (field == "bore_diameter" || field == "sink_diameter") field = "diameter";
             }
             var lin = new List<IDimension>();
             var ang = new List<IDimension>();
@@ -286,8 +300,26 @@ namespace OpenSketch.Sw
                 case "thickness":
                 case "offset":
                 case "spacing":
-                case "diameter":
                     pick = lin.FirstOrDefault();
+                    break;
+                case "diameter":
+                    // a hole's or a round boss's diameter is a dimension of its sketch, not of the extrude
+                    var skf = feat.GetFirstSubFeature() as IFeature;
+                    while (skf != null && pick == null)
+                    {
+                        if (skf.GetTypeName2() == "ProfileFeature")
+                        {
+                            var sdd = skf.GetFirstDisplayDimension() as IDisplayDimension;
+                            var g2 = 0;
+                            while (sdd != null && pick == null && g2++ < 200)
+                            {
+                                if (sdd.GetType() == (int)swDimensionType_e.swDiameterDimension) pick = sdd.GetDimension2(0) as IDimension;
+                                sdd = skf.GetNextDisplayDimension(sdd) as IDisplayDimension;
+                            }
+                            if (pick != null) feat = skf;
+                        }
+                        skf = skf.GetNextSubFeature() as IFeature;
+                    }
                     break;
                 case "dir2.depth":
                 case "distance2":
