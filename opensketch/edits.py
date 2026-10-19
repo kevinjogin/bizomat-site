@@ -47,7 +47,7 @@ def references(feat: dict, ids: set[str]) -> set[str]:
 def sketch_ids(feat: dict) -> list[str]:
     """Sketches a feature consumes (it cannot exist without them): extrude/revolve/sweep sketch, sweep path,
     loft profiles. Same rule as featureSketchIds in static/js/model-utils.js."""
-    ids = [feat.get("sketch"), feat.get("path")] + list(feat.get("profiles") or [])
+    ids = [feat.get("sketch"), feat.get("path") if feat.get("type") == "sweep" else None] + list(feat.get("profiles") or [])
     return [i for i in ids if isinstance(i, str)]
 
 
