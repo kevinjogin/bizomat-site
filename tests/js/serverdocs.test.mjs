@@ -10,6 +10,7 @@ const { window, document } = parseHTML('<html><body><div id="modal-layer"></div>
 globalThis.window = window;
 globalThis.document = document;
 window.innerWidth = 1280; window.innerHeight = 900;
+for (const k of ['select', 'focus']) if (!window.HTMLElement.prototype[k]) window.HTMLElement.prototype[k] = () => {};
 const mem = new Map();
 globalThis.localStorage = {
   getItem: (k) => (mem.has(k) ? mem.get(k) : null), setItem: (k, v) => { mem.set(k, String(v)); },
@@ -143,4 +144,35 @@ test('a newer version of the open file is one undo step, and a part open from it
   const snap = JSON.parse(app.undoStack[0].json);
   assert.equal(snap.parts.p1.features.length, 2, 'the part edit is in the undo step');
   assert.equal(app.doc.mates.length, 1);
+});
+
+const click = (label) => {
+  const b = [...document.querySelectorAll('#modal-layer .dlg-back:not(.closing) button')].reverse().find((x) => x.textContent === label);
+  assert.ok(b, 'button ' + label);
+  b.onclick();
+};
+
+test('Save to Files resolves true once saved, and a second Save makes no second copy', async () => {
+  server.docs.clear(); server.calls = [];
+  const app = makeApp();
+  app.doc = part('Bracket', 2); app.dirty = true;
+  const p = app.server.saveDraft();
+  await tick(); click('Save');
+  assert.equal(await p, true);
+  assert.equal(server.calls.filter((c) => c === 'POST /api/docs').length, 1);
+  assert.equal(await app.server.saveDraft(), true);
+  assert.equal(server.calls.filter((c) => c === 'POST /api/docs').length, 1);
+  stopTimers(app);
+});
+
+test('"Save your draft?" > Save to Files goes on to what was asked once the draft is saved', async () => {
+  server.docs.clear(); server.calls = [];
+  const app = makeApp();
+  app.doc = part('Sketchy', 1); app.dirty = true;
+  const go = app.confirmLeaveDraft();
+  await tick(); click('Save to Files');
+  await tick(5); click('Save');
+  assert.equal(await go, true);
+  assert.equal(app.server.linked, true);
+  stopTimers(app);
 });

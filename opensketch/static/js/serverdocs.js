@@ -115,8 +115,10 @@ export class ServerDocs {
     return ok;
   }
 
-  // Put the current draft in Files under a name the person chooses. Resolves true when saved.
+  // Put the current draft in Files under a name the person chooses. Resolves true when saved (at once when the
+  // model is a file already, so a second click never makes a second copy).
   saveDraft() {
+    if (this.link) return Promise.resolve(true);
     const app = this.app;
     const d = app.rootDoc();
     return new Promise((resolve) => {
@@ -135,7 +137,7 @@ export class ServerDocs {
         try {
           if (app.doc.name !== name && !app.docStack.length) app.doc.name = name;
           await this.saveAsNew(name);
-          dlg.close(); resolve(true);
+          resolve(true); dlg.close(); // resolve first: closing answers false for every other way out
         } catch (err) { busy = false; body.querySelector('.acct-err').textContent = 'Could not save: ' + err.message; }
       };
       const dlg = dialog({ title: 'Save to Files', body, cls: 'acct-dlg', onClose: () => resolve(false), buttons: [

@@ -210,14 +210,15 @@ export class App {
     if (!this.dirtyDraft()) return Promise.resolve(true);
     const name = this.rootDoc().name || 'Untitled';
     return new Promise((resolve) => {
-      let answered = false;
+      let answered = false, saving = false;
       const done = (v) => { if (!answered) { answered = true; resolve(v); } };
-      dialog({ title: 'Save your draft?', cls: 'acct-dlg', onClose: () => done(false),
+      dialog({ title: 'Save your draft?', cls: 'acct-dlg', onClose: () => { if (!saving) done(false); },
         body: `<p class="fv-p"><b>${esc(name)}</b> is only in this browser. Save it to your Files before you leave it?</p>`,
         buttons: [
           { label: "Don't save", run: () => { this.dirty = false; done(true); } },
           { label: 'Cancel', run: () => done(false) },
-          { label: 'Save to Files', primary: true, run: () => { setTimeout(async () => done(await this.server.saveDraft()), 0); } },
+          // the Save to Files dialog answers: saved -> go on to what was asked (open the file, New...)
+          { label: 'Save to Files', primary: true, run: () => { saving = true; setTimeout(() => this.server.saveDraft().then(done), 0); } },
         ] });
     });
   }
