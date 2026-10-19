@@ -1,7 +1,7 @@
 // OpenSketch service worker (served at /sw.js with this server's version, see server.py).
 //
 // It makes OpenSketch installable and keeps it opening when the server is asleep or unreachable:
-//  - the app's own files (css, js, vendor, icons) are fetched from the network first, so a new deploy is
+//  - the app's own files (css, js, vendor, icons, fonts) are fetched from the network first, so a new deploy is
 //    always used, and kept as a fallback for when the network fails;
 //  - page loads use the network first, then the last app page this browser loaded;
 //  - everything else (/api, /mcp, /review, sign-in pages, other sites) is never touched.
@@ -11,7 +11,7 @@ const VERSION = '__VERSION__';
 const CACHE = 'opensketch-' + VERSION;
 const SHELL = '/__shell';
 const ASSETS = __ASSETS__;
-const STATIC = /^\/(css|js|vendor|icons)\/|^\/(favicon\.svg|manifest\.webmanifest)$/;
+const STATIC = /^\/(css|js|vendor|icons|fonts)\/|^\/(favicon\.svg|manifest\.webmanifest)$/;
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
