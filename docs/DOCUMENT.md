@@ -363,9 +363,14 @@ settles onto its mates. The AI fills it as it assembles.
 # Import
 
 `POST /api/import` with a STEP file returns a document. One solid: a part with an `import` feature.
-Several solids: an assembly with one part per distinct shape (same volume, area, face and edge count
-and size are taken as the same part, so instances share it) and one component per solid at its STEP
-position, the first one fixed, no mates (as SOLIDWORKS does with STEP). SOLIDWORKS files (.sldprt,
+Several solids: an assembly with one component per solid at its STEP position, the first one fixed, no
+mates (as SOLIDWORKS does with STEP). Solids share a part when they have the same shape (volume, area,
+face and edge count and size) and either the part's shape moved by the solid's own STEP location lands on
+it (instances of one product), or the solid is the same product (its name without a copy number, such as
+`Screw003`) moved without turning (copies written in world coordinates); the component is then placed by
+that move. A mirror image never shares a part. Generic STEP names (`COMPOUND`, `Part1`, `Solid`, `Body`,
+`Product`, `Assembly`, `Shape`, OpenCascade's translator text) give way to the file name. An `import`
+feature's `data` (zlib + base64 BREP) unpacks to at most 512 MB. SOLIDWORKS files (.sldprt,
 .sldasm) are refused with a message to save them as STEP first: the format is closed.
 
 The AI never receives the BREP data: it gets the import feature with `data` omitted and a `summary`
