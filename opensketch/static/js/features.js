@@ -336,7 +336,7 @@ function circPatternSpec(app, f) {
       { title: 'Direction 1', rows: [
         { type: 'select', options: [['X', 'X axis'], ['Y', 'Y axis'], ['Z', 'Z axis']], get: () => (typeof f.axis === 'string' ? f.axis : 'Y'), set: (v) => { f.axis = v; } },
         { type: 'radio', name: 'cpeq', options: [['eq', 'Equal spacing'], ['inst', 'Instance spacing']], get: () => (f.equal_spacing !== false ? 'eq' : 'inst'), set: (v) => { f.equal_spacing = v === 'eq'; } },
-        { type: 'number', icon: 'angle_i', unit: 'deg', get: () => (f.equal_spacing !== false ? f.angle : f.step ?? 30), set: (v) => { if (f.equal_spacing !== false) f.angle = v; else f.step = v; }, min: 0.001, max: 360 },
+        { type: 'number', icon: 'angle_i', unit: 'deg', get: () => (f.equal_spacing !== false ? f.angle : f.step ?? 90), set: (v) => { if (f.equal_spacing !== false) f.angle = v; else f.step = v; }, min: 0.001, max: 360 },
         { type: 'number', icon: 'count_i', unit: '', int: true, get: () => f.count, set: (v) => { f.count = v; }, min: 1, max: 500 },
       ] },
       { title: 'Features and Faces', rows: [featureListRows(app, f)] },

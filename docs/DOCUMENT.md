@@ -108,7 +108,10 @@ mating, or deleting a component. A successful individual operation does not clea
   the sketch plane (with `"refKey"` naming the edge by its midpoint), plus its fixed endpoints. A point
   snapped onto a model edge is `coincident` (or `midpoint`) with it, which SOLIDWORKS shows as On Edge.
   References are never drawn, picked or used for profiles, and are dropped once nothing refers to them.
-- Closed loops become regions; loops inside loops become holes (even/odd nesting).
+- Closed loops become regions; loops inside loops become holes (even/odd nesting). Loops that cross or
+  touch join into the outline of everything they enclose (two overlapping circles make one figure-eight, an
+  overlapping pair of holes one hole), and a line from edge to edge of a region (T-junctions) keeps the
+  whole region. A curve with a free end is an open contour: an error that names the free end.
 
 Relations: `coincident` (point-point, point on line, point on circle/arc), `horizontal`, `vertical`
 (a line, or two points), `parallel`, `perpendicular`, `collinear`, `equal` (lines or radii),

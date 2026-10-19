@@ -133,8 +133,8 @@ register(FeatureType(
         Param("spacing", "length", "Spacing", default=20, min=0.0001),
         Param("reverse", "bool", "Reverse direction 1"),
         Param("direction2", "direction", "Optional direction 2"),
-        Param("count2", "int", "Instances in direction 2", min=1, max=500),
-        Param("spacing2", "length", "Spacing in direction 2", min=0.0001),
+        Param("count2", "int", "Instances in direction 2 (2 when left out)", min=1, max=500),
+        Param("spacing2", "length", "Spacing in direction 2 (10 when left out)", min=0.0001),
     ]))
 
 register(FeatureType(
@@ -146,5 +146,5 @@ register(FeatureType(
         Param("count", "int", "Number of instances including the original", default=4, min=1, max=500),
         Param("angle", "angle", "Total angle", default=360, min=0.001, max=360),
         Param("equal_spacing", "bool", "Spread the instances evenly over the angle", default=True),
-        Param("step", "angle", "Angle between instances", when={"equal_spacing": False}),
+        Param("step", "angle", "Angle between instances", default=90, when={"equal_spacing": False}),
     ]))

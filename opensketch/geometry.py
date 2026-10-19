@@ -77,6 +77,18 @@ class RegenState:
 
 # ----------------------------------------------------------------------------- helpers
 
+def param(feat: dict, name: str, fallback=None):
+    """A feature's value, or the registry's default when the document leaves it out. The registry (features/)
+    is the authority for defaults, so the PropertyManager, the Design panel, the AI's tools, the SOLIDWORKS
+    add-in and the rebuild agree on what an omitted value means."""
+    v = feat.get(name)
+    if v is not None:
+        return v
+    from . import features as registry
+    d = registry.default_of(feat.get("type"), name)
+    return fallback if d is None else d
+
+
 def v3(p) -> Vector:
     return Vector(float(p[0]), float(p[1]), float(p[2]))
 
@@ -249,7 +261,7 @@ def resolve_plane(spec: dict, st: RegenState, diagnostics: dict | None = None) -
 
 def plane_feature(feat: dict, st: RegenState, diagnostics: dict | None = None) -> Plane:
     base = resolve_plane(feat.get("base") or {"ref": "Front Plane"}, st, diagnostics)
-    off = float(feat.get("offset", 0.0)) * (-1 if feat.get("flip") else 1)
+    off = float(param(feat, "offset", 0.0)) * (-1 if feat.get("flip") else 1)
     pl = Plane(origin=base.origin + base.z_dir * off, x_dir=base.x_dir, z_dir=base.z_dir)
     if feat.get("flip"):
         pl = Plane(origin=pl.origin, x_dir=pl.x_dir, z_dir=-pl.z_dir)
@@ -320,13 +332,16 @@ def sketch_geometry(feat: dict, pl: Plane, include_construction=False):
 
 
 def sketch_profiles(edges: list[Edge], pl: Plane) -> list[Face]:
-    """Closed contours -> faces with holes (even/odd nesting, like SOLIDWORKS contours)."""
+    """Closed contours -> faces with holes (even/odd nesting, like SOLIDWORKS contours). Contours that cross or
+    touch, and lines that split a region (T-junctions), are first turned into the regions they bound
+    (_merged_contours): overlapping shapes on one level join (two overlapping circles make a figure-eight, never
+    two overlapping solids) and a splitting line keeps the whole region."""
     if not edges:
         raise FeatureError("Sketch is empty")
     wires = Wire.combine(edges, tol=1e-6)
     closed = [w for w in wires if w.is_closed]
-    if len(closed) != len(wires):
-        raise FeatureError("Sketch contains an open contour")
+    if len(closed) != len(wires) or _contours_touch(closed):
+        closed = _merged_contours(edges, pl)
     faces = []
     for w in closed:
         try:
@@ -334,11 +349,14 @@ def sketch_profiles(edges: list[Edge], pl: Plane) -> list[Face]:
         except Exception as exc:  # self-intersecting etc.
             raise FeatureError(f"Cannot make a region from a contour: {exc}") from exc
     order = sorted(range(len(faces)), key=lambda i: -faces[i].area)
+    # Nesting: the smallest earlier (larger) contour whose box holds this one's box and whose face holds a point
+    # of it. Boxes first, so sibling holes in a grid are never classified against each other.
+    boxes = [_box2(w, pl) for w in closed]
     parent = {}
     for idx, i in enumerate(order):
         probe = closed[i].edges()[0].position_at(0.5)
         for j in reversed(order[:idx]):  # smallest enclosing face first
-            if faces[j].is_inside(probe):
+            if _box_holds(boxes[j], boxes[i]) and face_contains(faces[j], probe):
                 parent[i] = j
                 break
     depth = {}
@@ -360,6 +378,117 @@ def sketch_profiles(edges: list[Edge], pl: Plane) -> list[Face]:
             f = f.reversed() if hasattr(f, "reversed") else -f
         out.append(f)
     return out
+
+
+def _box2(shape, pl: Plane):
+    """(xmin, ymin, xmax, ymax) of a planar shape in the sketch plane's coordinates."""
+    bb = pl.to_local_coords(shape).bounding_box()
+    return (bb.min.X, bb.min.Y, bb.max.X, bb.max.Y)
+
+
+def _box_holds(a, b, tol: float = 1e-6) -> bool:
+    return a[0] <= b[0] + tol and a[1] <= b[1] + tol and a[2] >= b[2] - tol and a[3] >= b[3] - tol
+
+
+def _contours_touch(closed: list) -> bool:
+    """Whether any two closed contours cross or touch (boxes first, then the exact distance)."""
+    if len(closed) < 2:
+        return False
+    import numpy as np
+    from OCP.BRepExtrema import BRepExtrema_DistShapeShape
+    boxes = []
+    for w in closed:
+        bb = w.bounding_box()
+        boxes.append((bb.min.X, bb.min.Y, bb.min.Z, bb.max.X, bb.max.Y, bb.max.Z))
+    b = np.array(boxes)
+    tol = 1e-6
+    lo, hi = b[:, :3], b[:, 3:]
+    meet = np.all((lo[:, None, :] <= hi[None, :, :] + tol) & (lo[None, :, :] <= hi[:, None, :] + tol), axis=2)
+    for i, j in zip(*np.nonzero(np.triu(meet, 1))):
+        dist = BRepExtrema_DistShapeShape(closed[i].wrapped, closed[j].wrapped)
+        dist.Perform()
+        if dist.IsDone() and dist.Value() <= 1e-6:
+            return True
+    return False
+
+
+def _merged_contours(edges: list[Edge], pl: Plane) -> list:
+    """Closed contours that no longer touch one another, from sketch curves that cross, touch, branch or meet in
+    T-junctions. The curves are split where they meet; curves with a free end are an open contour (an error
+    that says where); each connected group that is a single loop stays that loop, and a group with branches
+    becomes the outline of every region it encloses."""
+    from OCP.BOPAlgo import BOPAlgo_Builder
+    if len(edges) > 1:
+        gf = BOPAlgo_Builder()
+        for e in edges:
+            gf.AddArgument(e.wrapped)
+        gf.SetRunParallel(False)
+        gf.Perform()
+        if gf.HasErrors():
+            raise FeatureError("Sketch curves cross in a way that cannot be resolved")
+        split = Compound(gf.Shape()).edges()
+    else:
+        split = list(edges)
+    ends: dict[int, list] = {}   # vertex -> edges that end there (a closed curve counts twice)
+    where: dict[int, Vector] = {}
+    for k, e in enumerate(split):
+        for v in (e.vertices() if not e.is_closed else e.vertices() * 2):
+            ends.setdefault(hash(v), []).append(k)
+            where[hash(v)] = Vector(v.X, v.Y, v.Z)
+    free = [h for h, ks in ends.items() if len(ks) == 1]
+    if free:
+        p = pl.to_local_coords(where[free[0]])
+        raise FeatureError(f"Sketch contains an open contour: the curve ending at ({p.X:.6g}, {p.Y:.6g}) "
+                           "is not connected to anything")
+    # connected groups of curves
+    group = list(range(len(split)))
+
+    def root(k):
+        while group[k] != k:
+            group[k] = group[group[k]]
+            k = group[k]
+        return k
+
+    for ks in ends.values():
+        for k in ks[1:]:
+            group[root(k)] = root(ks[0])
+    groups: dict[int, list] = {}
+    for k in range(len(split)):
+        groups.setdefault(root(k), []).append(k)
+    out = []
+    for ks in groups.values():
+        es = [split[k] for k in ks]
+        verts = {hash(v) for k in ks for v in split[k].vertices()}
+        if all(len(ends[h]) == 2 for h in verts):  # one simple loop
+            ws = Wire.combine(es, tol=1e-6)
+            if len(ws) == 1 and ws[0].is_closed:
+                out.append(ws[0])
+                continue
+        out.extend(f.outer_wire() for f in _enclosed(es, pl))
+    return out
+
+
+def _enclosed(edges: list[Edge], pl: Plane) -> list[Face]:
+    """The union of every region a connected group of curves encloses, as faces (no holes)."""
+    from OCP.BRepAlgoAPI import BRepAlgoAPI_Splitter
+    from build123d.topology.shape_core import List_TopoDS_Shape
+    x0, y0, x1, y1 = _box2(Compound(children=edges), pl)
+    size = 4 * max(x1 - x0, y1 - y0, 1.0)
+    centre = pl.from_local_coords(((x0 + x1) / 2, (y0 + y1) / 2))
+    big = Face.make_rect(size, size, Plane(origin=centre, x_dir=pl.x_dir, z_dir=pl.z_dir))
+    args, tools = List_TopoDS_Shape(), List_TopoDS_Shape()
+    args.Append(big.wrapped)
+    for e in edges:
+        tools.Append(e.wrapped)
+    sp = BRepAlgoAPI_Splitter()
+    sp.SetArguments(args)
+    sp.SetTools(tools)
+    sp.Build()
+    inner = [f for f in Compound(sp.Shape()).faces() if _box_holds(_box2(big, pl), _box2(f, pl), -1e-6)]
+    if not inner:
+        raise FeatureError("Sketch curves meet but enclose no region")
+    merged = inner[0].fuse(*inner[1:]) if len(inner) > 1 else inner[0]
+    return list(merged.faces())
 
 
 # ----------------------------------------------------------------------------- refs
@@ -492,7 +621,7 @@ def extrude_tool(feat: dict, st: RegenState):
         return extrude(faces, amount=depth, dir=direction, taper=taper)
 
     end = feat.get("end", "blind")
-    tool = one(normal, end, float(feat.get("depth", 10)), feat.get("draft", 0))
+    tool = one(normal, end, float(param(feat, "depth", 10)), feat.get("draft", 0))
     d2 = feat.get("dir2")
     if d2 and end != "midplane":
         tool = tool + one(-normal, d2.get("end", "blind"), float(d2.get("depth", 10)), d2.get("draft", 0))
@@ -517,7 +646,7 @@ def revolve_tool(feat: dict, st: RegenState):
     p0, p1 = ed.position_at(0), ed.position_at(1)
     d = (p1 - p0).normalized() * (-1 if feat.get("reverse") else 1)
     axis = Axis(p0, d)
-    ang = float(feat.get("angle", 360))
+    ang = float(param(feat, "angle", 360))
     if not 0 < ang <= 360:
         raise FeatureError("Angle must be between 0 and 360 degrees")
     if feat.get("end") == "midplane" and ang < 360:
@@ -576,7 +705,7 @@ def hole_tool(feat: dict, st: RegenState):
     normal = pl.z_dir * (-1 if feat.get("reverse") else 1)
     axis_plane = Plane(origin=origin, x_dir=pl.x_dir, z_dir=normal)
     diameter = float(feat.get("diameter", 0))
-    depth = float(feat.get("depth", 10))
+    depth = float(param(feat, "depth", 10))
     if not math.isfinite(diameter) or diameter <= 0:
         raise FeatureError("Hole diameter must be greater than 0")
     if feat.get("end", "blind") == "through_all":
@@ -599,7 +728,7 @@ def hole_tool(feat: dict, st: RegenState):
         tool = tool + Solid.make_cylinder(outer, recess, axis_plane)
     elif style == "countersink":
         outer = float(feat.get("sink_diameter", 0)) / 2
-        angle = float(feat.get("sink_angle", 90))
+        angle = float(param(feat, "sink_angle", 90))
         if not all(math.isfinite(v) for v in (outer, angle)) or outer <= radius or not 0 < angle < 180:
             raise FeatureError("Countersink diameter must exceed the hole diameter; included angle must be between 0 and 180 degrees")
         recess = (outer - radius) / math.tan(math.radians(angle / 2))
@@ -671,7 +800,7 @@ def _regen_feature(feat: dict, st: RegenState):
         edges, missing = find_edges(st.part, feat.get("edges", []), st.namer)
         if not edges:
             raise FeatureError("Select edges to fillet")
-        r = float(feat.get("radius", 1))
+        r = float(param(feat, "radius", 1))
         try:
             st.part = solid_of(st.part.fillet(r, edges))
         except Exception as exc:
@@ -681,10 +810,10 @@ def _regen_feature(feat: dict, st: RegenState):
         edges, missing = find_edges(st.part, feat.get("edges", []), st.namer)
         if not edges:
             raise FeatureError("Select edges to chamfer")
-        d1 = float(feat.get("distance", 1))
+        d1 = float(param(feat, "distance", 1))
         d2 = feat.get("distance2")
-        if feat.get("mode") == "angle_distance":
-            d2 = d1 * math.tan(math.radians(float(feat.get("angle", 45))))
+        if param(feat, "mode") == "angle_distance":
+            d2 = d1 * math.tan(math.radians(float(param(feat, "angle", 45))))
         try:
             st.part = solid_of(st.part.chamfer(d1, float(d2) if d2 else None, edges))
         except Exception as exc:
@@ -692,7 +821,7 @@ def _regen_feature(feat: dict, st: RegenState):
         return f"{missing} edge reference(s) missing" if missing else None
     if t == "shell":
         faces, missing = find_faces(st.part, feat.get("faces", []), st.namer)
-        th = float(feat.get("thickness", 1))
+        th = float(param(feat, "thickness", 1))
         amt = th if feat.get("outward") else -th
         before = st.part.volume
         result = None
@@ -726,19 +855,22 @@ def _regen_feature(feat: dict, st: RegenState):
     if t == "linear_pattern":
         seeds = pattern_seed_tools(feat, st)
         d = direction_of(feat.get("direction", "X"), st) * (-1 if feat.get("reverse") else 1)
-        n, sp = int(feat.get("count", 2)), float(feat.get("spacing", 10))
+        n, sp = int(param(feat, "count", 2)), float(param(feat, "spacing", 10))
         d2 = feat.get("direction2")
-        n2, sp2 = int(feat.get("count2", 1)), float(feat.get("spacing2", 10))
+        n2, sp2 = int(param(feat, "count2", 2)), float(param(feat, "spacing2", 10))  # as the PM shows them
         dv2 = direction_of(d2, st) if d2 else None
-        for i in range(n):
-            for j in range(n2 if dv2 is not None else 1):
-                if i == 0 and j == 0:
-                    continue
-                off = d * (sp * i) + (dv2 * (sp2 * j) if dv2 is not None else Vector())
-                for (tool, op), sid in zip(seeds, feat["features"]):
+        _check_instances(n * (n2 if dv2 is not None else 1))
+        for (tool, op), sid in zip(seeds, feat["features"]):  # seed by seed, all copies of one in one boolean
+            copies = []
+            for i in range(n):
+                for j in range(n2 if dv2 is not None else 1):
+                    if i == 0 and j == 0:
+                        continue
+                    off = d * (sp * i) + (dv2 * (sp2 * j) if dv2 is not None else Vector())
                     copy = tool.moved(Location(off))
                     st.instances.setdefault(feat["id"], []).append((copy, op, sid, f"{i + 1}" + (f".{j + 1}" if dv2 is not None else "")))
-                    st.part = apply_op(st.part, copy, op)
+                    copies.append(copy)
+            _apply_copies(st, copies, op)
         return None
     if t == "circular_pattern":
         seeds = pattern_seed_tools(feat, st)
@@ -747,21 +879,39 @@ def _regen_feature(feat: dict, st: RegenState):
             axis = {"X": Axis.X, "Y": Axis.Y, "Z": Axis.Z}[ax.upper()]
         else:
             axis = Axis(v3(ax["origin"]), v3(ax["dir"]))
-        n = int(feat.get("count", 4))
-        total = float(feat.get("angle", 360))
+        n = int(param(feat, "count", 4))
+        total = float(param(feat, "angle", 360))
         step = total / n if feat.get("equal_spacing", True) and abs(total - 360) < 1e-9 else (
-            total / max(n - 1, 1) if feat.get("equal_spacing", True) else float(feat.get("step", 90)))
-        for i in range(1, n):
-            for (tool, op), sid in zip(seeds, feat["features"]):
+            total / max(n - 1, 1) if feat.get("equal_spacing", True) else float(param(feat, "step", 90)))
+        _check_instances(n)
+        for (tool, op), sid in zip(seeds, feat["features"]):
+            copies = []
+            for i in range(1, n):
                 copy = tool.rotate(axis, step * i)
                 st.instances.setdefault(feat["id"], []).append((copy, op, sid, f"{i + 1}"))
-                st.part = apply_op(st.part, copy, op)
+                copies.append(copy)
+            _apply_copies(st, copies, op)
         return None
     from . import features as registry
     ft = registry.get(t)
     if ft is not None and ft.build is not None:
         return ft.build(feat, st, diagnostics)
     raise FeatureError(f"Unknown feature type '{t}'")
+
+
+PATTERN_MAX = 2000  # instances of one pattern feature (a 500 x 500 grid would run for many minutes)
+
+
+def _check_instances(total: int) -> None:
+    if total > PATTERN_MAX:
+        raise FeatureError(f"A pattern can make at most {PATTERN_MAX} instances; this one asks for {total}.")
+
+
+def _apply_copies(st: RegenState, copies: list, op: str) -> None:
+    """Every copy of one seed in a single boolean: one cut or fuse with all of them, not one per copy against an
+    ever larger body (225 holes: 0.35 s instead of 10 s)."""
+    if copies:
+        st.part = apply_op(st.part, copies[0] if len(copies) == 1 else Compound(children=copies), op)
 
 
 def shape_bounds(shape) -> list | None:

@@ -98,6 +98,14 @@ def get(type_: str) -> FeatureType | None:
     return REGISTRY.get(type_)
 
 
+def default_of(type_: str, name: str):
+    """The registry default of one field of a feature type, or None."""
+    ft = REGISTRY.get(type_)
+    if ft is None:
+        return None
+    return next((p.default for p in ft.params if p.name == name), None)
+
+
 def known_types() -> list[str]:
     return [*OTHER_TYPES[:1], *REGISTRY]
 
@@ -311,6 +319,14 @@ def validate(feat: dict) -> list[str]:
         why = check_value(p, v)
         if why:
             out.append(f"{label}: {p.name} {why}")
+    if t in ("linear_pattern", "circular_pattern"):
+        from ..geometry import PATTERN_MAX
+        try:
+            total = int(feat.get("count") or 1) * (int(feat.get("count2") or 2) if t == "linear_pattern" and feat.get("direction2") else 1)
+        except (TypeError, ValueError):
+            total = 0
+        if total > PATTERN_MAX:
+            out.append(f"{label}: makes {total} instances; a pattern can make at most {PATTERN_MAX}")
     return out
 
 
