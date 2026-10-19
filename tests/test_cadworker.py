@@ -256,6 +256,9 @@ def test_the_ai_chat_runs_in_its_own_process_and_keeps_the_conversation(tmp_path
 
 def test_people_get_their_own_workers(monkeypatch):
     monkeypatch.setattr(cadworker, "_lanes", {})
+    # whatever earlier tests left: no place kept for an owner, and memory is not short
+    monkeypatch.setattr(cadworker, "_reserved", None)
+    monkeypatch.setattr(cadworker, "memory_low", lambda: False)
     a, b = cadworker.lane_for("alice"), cadworker.lane_for("bob")
     assert a is not b and cadworker.lane_for("alice") is a
     assert cadworker.lane_for("alice", "agent") is not a  # their AI's edits never queue their own clicks
