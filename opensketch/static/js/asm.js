@@ -723,6 +723,7 @@ export class AssemblyMode {
   matePM(existing = null) {
     const app = this.app;
     if (app.cmd) app.pmCancel();
+    this.previewProblem = null;
     const doc = app.doc;
     const m = existing ? clone(existing) : { type: 'coincident', refs: [], align: 'auto' };
     // an existing mate's selections read like new picks: what was picked, on which component
@@ -817,6 +818,7 @@ export class AssemblyMode {
   hingePM(existing = null) {
     const app = this.app;
     if (app.cmd) app.pmCancel();
+    this.previewProblem = null;
     const doc = app.doc;
     const m = existing ? clone(existing) : { type: 'hinge', refs: [], planes: [], angle_refs: [] };
     m.planes = m.planes || []; m.angle_refs = m.angle_refs || [];
@@ -894,6 +896,7 @@ export class AssemblyMode {
   couplerPM(existing = null) {
     const app = this.app;
     if (app.cmd) app.pmCancel();
+    this.previewProblem = null;
     const doc = app.doc;
     const m = existing ? clone(existing) : { type: 'coupler', input_refs: [], input: 'angle', refs: [], output: 'distance', law: [] };
     m.input_refs = m.input_refs || []; m.refs = m.refs || [];
@@ -1108,25 +1111,36 @@ export class AssemblyMode {
     return base + n;
   }
 
-  // OK on a mate that cannot hold (it over-defines the assembly or conflicts with mates already there) is
-  // refused, as in SOLIDWORKS: nothing is added, the PropertyManager stays open and says why. A mate is to blame
-  // when it is in error itself, or when mates that held before fail with it.
+  // Why a mate cannot hold, from a solve with it in; null when it holds. Both solvers (assembly.py, asmsolver.js)
+  // reject a mate that over defines the assembly: it is in error with over_defining and conflicts_with (the mates
+  // it fights) and a message naming them, while the others stay solved. Mates already in error before (`before`)
+  // do not count; one that fails only because of this mate does (an edited mate can push a later one out).
+  mateConflict(res, mm, before = new Set()) {
+    const own = res?.mates?.find((x) => x.id === mm.id);
+    if (own?.state === 'error') return own.message || 'This mate cannot be satisfied with the other mates.';
+    const hit = (res?.mates || []).filter((x) => x.state === 'error' && !before.has(x.id) && x.id !== mm.id && (!x.conflicts_with || x.conflicts_with.includes(mm.id)));
+    if (!hit.length) return null;
+    const names = hit.map((x) => this.mate(x.id)?.name || x.id);
+    const list = names.length > 3 ? `${names.slice(0, 3).join(', ')} and ${names.length - 3} more` : names.join(', ');
+    return `With this mate, ${list} ${names.length === 1 ? 'over defines' : 'over define'} the assembly.`;
+  }
+
+  errorIds(res) { return new Set((res?.mates || []).filter((x) => x.state === 'error').map((x) => x.id)); }
+
+  // OK on a mate that cannot hold is refused, as in SOLIDWORKS: nothing is added, the PropertyManager stays open
+  // and says why. Solved here when the parts are the ones the server built, else the last preview's verdict.
   mateProblem(mm, existing) {
     const app = this.app;
     const doc = app.cleanDoc(app.doc);
-    const errs = (res) => new Set((res?.mates || []).filter((x) => x.state === 'error').map((x) => x.id));
-    if (!this.canSolveLocally(doc)) return app.pm.spec?.error || null; // the last preview's verdict
-    const after = app.cleanDoc(doc);
-    if (existing) after.mates = after.mates.map((x) => (x.id === existing.id ? mm : x)); else after.mates.push(mm);
-    let r0, r1;
-    try { r0 = regenLocal(doc, this.partsInfo); r1 = regenLocal(after, this.partsInfo); } catch (_) { return null; }
-    const before = errs(r0), now = errs(r1);
-    const own = r1.mates.find((x) => x.id === mm.id);
-    const broken = [...now].filter((id) => id !== mm.id && !before.has(id)).map((id) => this.mate(id)?.name || id);
-    if (own?.state !== 'error' && !broken.length) return null;
-    const why = own?.state === 'error' && own.message ? own.message.replace(/\.$/, '') + '. ' : '';
-    const list = broken.length > 3 ? `${broken.slice(0, 3).join(', ')} and ${broken.length - 3} more` : broken.join(', ');
-    return `${why}${broken.length ? `It conflicts with ${list}. ` : ''}The mate was not added. Change its type or selections, or delete a mate that holds the same freedom.`;
+    let why;
+    if (!this.canSolveLocally(doc)) why = this.previewProblem || null;
+    else {
+      const after = app.cleanDoc(doc);
+      if (existing) after.mates = after.mates.map((x) => (x.id === existing.id ? mm : x)); else after.mates.push(mm);
+      try { why = this.mateConflict(regenLocal(after, this.partsInfo), mm, this.errorIds(regenLocal(doc, this.partsInfo))); } catch (_) { return null; }
+    }
+    if (!why) return null;
+    return `${why.replace(/\.$/, '')}. ${existing ? 'The change was not made' : 'The mate was not added'}. Change its type or selections, or delete a mate that holds the same freedom.`;
   }
 
   refuseMate(mm, existing) {
@@ -1139,7 +1153,7 @@ export class AssemblyMode {
   }
 
   previewMate(m, existing) {
-    if (m.refs.length < 2) return;
+    if (m.refs.length < 2) { this.previewProblem = null; return; }
     clearTimeout(this.previewTimer);
     const cmd = this.app.cmd;
     this.previewTimer = setTimeout(async () => {
@@ -1147,10 +1161,11 @@ export class AssemblyMode {
       const doc = this.app.cleanDoc(this.app.doc);
       const mm = { ...clone(m), id: existing?.id || '_preview', name: 'Preview' };
       if (existing) doc.mates = doc.mates.map((x) => (x.id === existing.id ? mm : x)); else doc.mates.push(mm);
+      const before = this.errorIds(this.res);
       const res = await this.regen(false, doc, null, () => this.app.cmd === cmd);
       if (!res || !this.app.pm.spec || this.app.cmd !== cmd) return;
-      const st = res.mates.find((x) => x.id === mm.id);
-      this.app.pm.spec.error = st && st.state === 'error' ? st.message : null;
+      this.previewProblem = this.mateConflict(res, mm, before);
+      this.app.pm.spec.error = this.previewProblem;
       this.app.pm.render();
     }, 80);
   }

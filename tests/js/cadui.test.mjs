@@ -239,3 +239,19 @@ test('live build: what is queued plays in a few seconds, faster once the AI has 
   lp.hurry = false;
   assert.equal(lp.speed(), 1);
 });
+
+test('Mate OK is refused for a mate the solver rejects as over defining, with the solver\'s reason', async () => {
+  const { AssemblyMode } = await import('../../opensketch/static/js/asm.js');
+  const doc = { type: 'assembly', parts: {}, components: [], mates: [{ id: 'm1', name: 'Coincident3' }, { id: 'm2', name: 'Distance1' }] };
+  const asm = new AssemblyMode({ get shownDoc() { return doc; }, doc });
+  const mm = { id: '_preview' };
+  // the contract of both solvers: the rejected mate is in error with over_defining and conflicts_with, the others hold
+  const res = { mates: [{ id: 'm1', state: 'ok' }, { id: 'm2', state: 'ok' }, { id: '_preview', state: 'error', over_defining: true, conflicts_with: ['m1'], message: 'Over defines the assembly: conflicts with Coincident3.' }], conflicts: ['_preview'] };
+  assert.equal(asm.mateConflict(res, mm), 'Over defines the assembly: conflicts with Coincident3.');
+  assert.equal(asm.mateConflict({ mates: [{ id: 'm1', state: 'ok' }, { id: '_preview', state: 'ok' }] }, mm), null);
+  // an edited mate pushes a later one out: that one is named
+  const edited = { mates: [{ id: 'm1', state: 'ok' }, { id: 'm2', state: 'error', over_defining: true, conflicts_with: ['m1'] }] };
+  assert.match(asm.mateConflict(edited, { id: 'm1' }), /Distance1 over defines/);
+  // a mate already in error before does not count against this one
+  assert.equal(asm.mateConflict(edited, { id: 'm1' }, new Set(['m2'])), null);
+});
