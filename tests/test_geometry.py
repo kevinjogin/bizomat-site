@@ -234,3 +234,24 @@ def test_many_holes_nest_quickly():
     assert time.monotonic() - t < 1.0  # 2.4 s with a classifier test per pair of contours
     faces = st.profiles["s1"]
     assert len(faces) == 1 and len(faces[0].inner_wires()) == 196
+
+
+def test_a_sketch_whose_points_miss_its_dimensions_is_flagged():
+    """The server builds stored points; the browser and the SOLIDWORKS path solve first. A sketch whose points do
+    not fit its dimensions (an AI writing round numbers) must say so instead of building quietly."""
+    sk = rect_sketch("s1", {"ref": "Front Plane"}, 0, 0, 100, 50)
+    sk["constraints"] = [{"id": "D1", "name": "D1", "type": "distance", "refs": ["s1L0"], "value": 80},
+                         {"id": "D2", "name": "D2", "type": "distance", "refs": ["s1L1"], "value": 50}]
+    st, _ = regen({"features": [sk, {"id": "e1", "type": "extrude", "sketch": "s1", "depth": 5}]})
+    s = st.status[0]
+    assert s["state"] == "warning" and s["warnings"][0]["code"] == "sketch_not_solved"
+    assert "D1 is 80 mm but the sketch is drawn at 100 mm" in s["message"] and "D2" not in s["message"]
+    sk["constraints"][0]["value"] = 100
+    st, _ = regen({"features": [sk]})
+    assert st.status[0]["state"] == "ok"
+    # an arc whose end is not on its circle (radius 10.2 at the end, 10 at the start)
+    ents = [{"id": "c", "type": "point", "x": 0, "y": 0}, {"id": "a", "type": "point", "x": 10, "y": 0},
+            {"id": "b", "type": "point", "x": -10.2, "y": 0},
+            {"id": "arc", "type": "arc", "center": "c", "start": "a", "end": "b"}, {"id": "l", "type": "line", "p1": "b", "p2": "a"}]
+    st, _ = regen({"features": [{"id": "s1", "type": "sketch", "plane": {"ref": "Front Plane"}, "entities": ents, "constraints": []}]})
+    assert "arc arc ends 0.2 mm off its circle" in st.status[0]["message"]

@@ -332,6 +332,81 @@ def sketch_geometry(feat: dict, pl: Plane, include_construction=False):
     return edges
 
 
+UNSOLVED_MM, UNSOLVED_DEG = 1e-3, 1e-3
+
+
+def unsolved(feat: dict) -> list[str]:
+    """Where a sketch's stored points disagree with its dimensions (measured as solver.js measure() does), and
+    arcs whose end is off their circle. The browser solves a sketch when it is opened; the server builds what is
+    stored, so a sketch written by the AI or a script with points that do not fit its dimensions builds a
+    different part than it says."""
+    ents = {e.get("id"): e for e in feat.get("entities") or [] if isinstance(e, dict)}
+
+    def pt(pid):
+        if pid == "origin":
+            return 0.0, 0.0
+        e = ents[pid]
+        if e.get("type") != "point":
+            return pt(e["center"])
+        return float(e["x"]), float(e["y"])
+
+    def radius(e):
+        if e["type"] == "circle":
+            return float(e["r"])
+        (cx, cy), (sx, sy) = pt(e["center"]), pt(e["start"])
+        return math.hypot(sx - cx, sy - cy)
+
+    def line_dist(q, ln):
+        (ax, ay), (bx, by) = pt(ln["p1"]), pt(ln["p2"])
+        return abs((q[0] - ax) * (by - ay) - (q[1] - ay) * (bx - ax)) / (math.hypot(bx - ax, by - ay) or 1e-12)
+
+    out = []
+    try:
+        for e in ents.values():
+            if e.get("type") == "arc" and not e.get("ref"):
+                (cx, cy), (ex, ey) = pt(e["center"]), pt(e["end"])
+                gap = abs(math.hypot(ex - cx, ey - cy) - radius(e))
+                if gap > UNSOLVED_MM:
+                    out.append(f"arc {e['id']} ends {gap:.4g} mm off its circle")
+        for c in feat.get("constraints") or []:
+            t = c.get("type") if isinstance(c, dict) else None
+            if t not in ("distance", "diameter", "radius", "angle") or c.get("driven") or c.get("value") is None:
+                continue
+            v, refs, label = float(c["value"]), c.get("refs") or [], c.get("name") or c.get("id")
+            get = lambda i: {"type": "point"} if i == "origin" else ents[i]
+            if t in ("diameter", "radius"):
+                m = radius(ents[refs[0]]) * (2 if t == "diameter" else 1)
+            elif t == "angle":
+                l1, l2 = ents[refs[0]], ents[refs[1]]
+                (a1, b1), (a2, b2) = (pt(l1["p1"]), pt(l1["p2"])), (pt(l2["p1"]), pt(l2["p2"]))
+                d1, d2 = (b1[0] - a1[0], b1[1] - a1[1]), (b2[0] - a2[0], b2[1] - a2[1])
+                th = abs(math.degrees(math.atan2(d1[0] * d2[1] - d1[1] * d2[0], d1[0] * d2[0] + d1[1] * d2[1])))
+                sides = [180 - th] if c.get("supplement") else [th] if c.get("supplement") is False else [th, 180 - th]
+                if min(abs(v - s) for s in sides) > UNSOLVED_DEG:
+                    out.append(f"{label} is {v:g} deg but the lines are drawn at {th:.6g} deg")
+                continue
+            else:
+                A, B = (refs + [None])[:2]
+                if len(refs) == 1 and get(A).get("type") == "line":
+                    A, B = get(A)["p1"], get(A)["p2"]
+                ea, eb = get(A), get(B)
+                if ea.get("type") == "line" and eb.get("type") == "line":
+                    m = line_dist(pt(eb["p1"]), ea)
+                elif ea.get("type") == "line":
+                    m = line_dist(pt(B), ea)
+                elif eb.get("type") == "line":
+                    m = line_dist(pt(A), eb)
+                else:
+                    (ax, ay), (bx, by) = pt(A), pt(B)
+                    o = c.get("orient")
+                    m = abs(bx - ax) if o == "horizontal" else abs(by - ay) if o == "vertical" else math.hypot(bx - ax, by - ay)
+            if abs(m - v) > max(UNSOLVED_MM, 1e-9 * abs(v)):
+                out.append(f"{label} is {v:g} mm but the sketch is drawn at {m:.6g} mm")
+    except (KeyError, TypeError, ValueError, IndexError):
+        pass  # a broken reference is reported by the solver and the build, not here
+    return out
+
+
 def sketch_profiles(edges: list[Edge], pl: Plane) -> list[Face]:
     """Closed contours -> faces with holes (even/odd nesting, like SOLIDWORKS contours). Contours that cross or
     touch, and lines that split a region (T-junctions), are first turned into the regions they bound
@@ -774,6 +849,13 @@ def _regen_feature(feat: dict, st: RegenState):
     if t == "sketch":
         pl = resolve_plane(feat.get("plane"), st, diagnostics)
         st.planes[feat["id"]] = pl
+        off = unsolved(feat)
+        if off:
+            diagnostics.setdefault("warnings", []).append({
+                "code": "sketch_not_solved",
+                "message": ("The sketch is built from its stored points, which do not match its dimensions: "
+                            + "; ".join(off[:4]) + (f" (and {len(off) - 4} more)" if len(off) > 4 else "")
+                            + ". Open the sketch to solve it, or write points that satisfy the dimensions.")})
         st.sketch_edges[feat["id"]] = sketch_geometry(feat, pl, include_construction=True)
         prof_edges = list(sketch_geometry(feat, pl).values())
         st.path_edges[feat["id"]] = prof_edges

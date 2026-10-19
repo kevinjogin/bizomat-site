@@ -128,6 +128,10 @@ side its value is nearer), and keeps it.
 
 The solver (`static/js/sketch/solver.js`) treats every point as (x, y) and every circle radius as
 unknowns, and reports degrees of freedom, per-entity defined state and over-defining relations.
+The browser solves a sketch when it is opened; a rebuild uses the stored points as they are. So points
+must already satisfy the dimensions: a sketch whose stored points miss a dimension by more than 0.001 mm
+(or 0.001 deg), or has an arc whose end is off its circle, rebuilds with a `sketch_not_solved` warning
+that names them.
 
 ## Features
 
