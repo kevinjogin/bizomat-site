@@ -118,6 +118,10 @@ Relations: `coincident` (point-point, point on line, point on circle/arc), `hori
 Dimensions: `distance` (`refs` a line, two points, point-line or two parallel lines; `orient`
 `aligned` / `horizontal` / `vertical`), `diameter`, `radius`, `angle` (two lines). `value` drives
 the geometry unless `driven: true`. `label` is where the dimension text sits (sketch coordinates).
+An `angle` is measured between the lines' directions (`p1` to `p2`), 0 to 180 degrees; with
+`supplement: true` it is 180 minus that (the other side of the corner). A value can be set across 90
+degrees. An angle without `supplement` gets it from the geometry the first time it is solved (whichever
+side its value is nearer), and keeps it.
 
 The solver (`static/js/sketch/solver.js`) treats every point as (x, y) and every circle radius as
 unknowns, and reports degrees of freedom, per-entity defined state and over-defining relations.

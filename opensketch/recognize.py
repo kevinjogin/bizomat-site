@@ -1252,8 +1252,11 @@ class SketchBuilder:
             ang = math.degrees(abs(math.atan2(a[0] * b[1] - a[1] * b[0], a[0] * b[0] + a[1] * b[1])))
             if 1e-6 < ang < 180 - 1e-6:
                 x, y = P[pid]
+                # the solver measures between the lines' directions (p1 to p2): say which side this angle is
+                (ux, uy), (wx, wy) = ((P[e["p2"]][0] - P[e["p1"]][0], P[e["p2"]][1] - P[e["p1"]][1]) for e in ls)
+                th = math.degrees(abs(math.atan2(ux * wy - uy * wx, ux * wx + uy * wy)))
                 dims.append({"id": cid(), "type": "angle", "refs": [ls[0]["id"], ls[1]["id"]], "value": _r(ang),
-                             "label": [_r(x + off), _r(y + off)]})
+                             "supplement": abs(ang - (180 - th)) < abs(ang - th), "label": [_r(x + off), _r(y + off)]})
         out.extend(dims)
         # Positions: tie each connected piece to the origin.
         parent = {pid: pid for pid in P}

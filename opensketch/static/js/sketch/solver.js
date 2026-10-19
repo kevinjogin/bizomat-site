@@ -239,13 +239,19 @@ function buildEquations(sketch, V, ents) {
         break;
       }
       case 'angle': {
+        // The value is the angle between the lines' directions (p1 to p2), or its supplement with
+        // `supplement: true`: exactly what measure() reports, so a dimension can be set across 90 degrees.
+        // Only the mirror image (sign) is free. A dimension that does not say is given a side once, from
+        // the geometry it was drawn with (SOLIDWORKS fixes the side when the dimension is placed).
         const d1 = dir(r[0]), d2 = dir(r[1]);
         const v = (+c.value * Math.PI) / 180;
+        const thAt = (p) => { const a = d1.dx(p), b = d1.dy(p), u = d2.dx(p), w = d2.dy(p); return Math.atan2(a * w - b * u, a * u + b * w); };
+        if (c.supplement === undefined || c.supplement === null) c.supplement = angleSide(+c.value, Math.abs(thAt(V.vals)) * 180 / Math.PI);
+        const targets = c.supplement ? [Math.PI - v, v - Math.PI] : [v, -v];
         add(cid, [...d1.vars, ...d2.vars], (p) => {
-          const a = d1.dx(p), b = d1.dy(p), u = d2.dx(p), w = d2.dy(p);
-          const th = Math.atan2(a * w - b * u, a * u + b * w);
+          const th = thAt(p);
           let best = Infinity;
-          for (const t of [v, -v, Math.PI - v, v - Math.PI]) {
+          for (const t of targets) {
             let d = th - t; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI;
             if (Math.abs(d) < Math.abs(best)) best = d;
           }
@@ -257,6 +263,20 @@ function buildEquations(sketch, V, ents) {
     }
   }
   return eqs;
+}
+
+/** Whether an angle dimension's value means the supplement of the measured directional angle (degrees). */
+function angleSide(value, measured) { return Math.abs(value - (180 - measured)) < Math.abs(value - measured); }
+
+/** Give every angle dimension that does not say which angle it measures its side, from the geometry as
+ * drawn. Call before changing a value on a copy of a sketch (the Design panel), so a new value across 90
+ * degrees is read on the same side. */
+export function angleSides(sketch) {
+  for (const c of sketch.constraints || []) {
+    if (c.type !== 'angle' || (c.supplement !== undefined && c.supplement !== null)) continue;
+    try { c.supplement = angleSide(+c.value, measure(sketch, { ...c, supplement: false })); } catch (_) { /* bad refs: the solve reports them */ }
+  }
+  return sketch;
 }
 
 function residuals(eqs, p) { return eqs.map((e) => e.f(p)); }

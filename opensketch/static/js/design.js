@@ -7,7 +7,7 @@
 
 import { icon } from './icons.js';
 import { SPECS, featureIcon } from './features.js';
-import { solveSketch } from './sketch/solver.js';
+import { solveSketch, angleSides } from './sketch/solver.js';
 import { evalExpr } from './ui/pm.js';
 import { featureSketchIds } from './model-utils.js';
 
@@ -345,13 +345,14 @@ export class DesignPanel {
 
   // Sketch dimension: solve a copy first; only a solvable result is kept (no broken sketches).
   setDimension(sketch, c, v) {
-    const copy = JSON.parse(JSON.stringify(sketch));
+    const copy = angleSides(JSON.parse(JSON.stringify(sketch))); // an angle keeps its side across 90 degrees
     const cc = copy.constraints.find((x) => x.id === c.id);
     cc.value = v;
     const res = solveSketch(copy);
     if (!res.ok || res.status === 'over') return false;
     sketch.entities = copy.entities;
     c.value = v;
+    if (cc.supplement !== undefined) c.supplement = cc.supplement;
     return true;
   }
 
