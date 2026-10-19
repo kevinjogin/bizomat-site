@@ -309,6 +309,28 @@ def test_an_untouched_new_file_can_be_discarded():
     assert sorted(f["name"] for f in c.get("/api/docs").json()) == ["Bracket", used["name"]]
 
 
+def test_review_links_go_with_their_file_and_the_index_is_safe(monkeypatch):
+    owner, member = _setup_owner_and_member()
+    doc = member.post("/api/docs", json={"name": "Lock", "doc": _block()}).json()
+    pub = member.post("/api/reviews", json={"doc_id": doc["id"]}).json()
+    token = pub["token"]
+    assert member.get(f"/review/{token}/data").status_code == 200
+    # someone else cannot delete it; a link missing from the list is the server owner's only
+    assert owner.delete(f"/api/reviews/{token}").status_code == 404
+    assert member.delete("/api/reviews/notinthelist0000000000000").status_code == 404
+    # deleting the file for good unpublishes its links
+    member.delete(f"/api/docs/{doc['id']}")
+    member.delete(f"/api/docs/{doc['id']}?forever=1")
+    assert member.get(f"/review/{token}/data").status_code == 404
+    assert review.listing() == []
+    # a damaged list is never written over (it would lose every other link)
+    doc2 = member.post("/api/docs", json={"name": "Lock 2", "doc": _block()}).json()
+    (review._dir() / "reviews.json").write_text("[{broken")
+    r = member.post("/api/reviews", json={"doc_id": doc2["id"]})
+    assert r.status_code == 400 and "damaged" in r.json()["error"]
+    assert (review._dir() / "reviews.json").read_text() == "[{broken"
+
+
 def test_each_person_has_their_own_room_for_downloads(monkeypatch):
     monkeypatch.setattr(artifacts, "PERSON_FILES", 2)
     a = store.create("A", _block(), owner="alice00000001")

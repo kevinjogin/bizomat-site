@@ -506,7 +506,7 @@ export class FilesView {
   }
 
   purge(f) {
-    dialog({ title: 'Delete forever', cls: 'fv-dlg', body: `<p class="fv-p">Delete <b>${esc(f.name)}</b> and its version history for good? This cannot be undone.</p>`, buttons: [
+    dialog({ title: 'Delete forever', cls: 'fv-dlg', body: `<p class="fv-p">Delete <b>${esc(f.name)}</b>, its version history and its review links for good? This cannot be undone.</p>`, buttons: [
       { label: 'Cancel' },
       { label: 'Delete forever', primary: true, danger: true, run: () => {
         this.req('DELETE', `/api/docs/${encodeURIComponent(f.id)}?forever=1`).then(() => {

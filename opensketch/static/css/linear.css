@@ -290,6 +290,7 @@
 .skin-linear .srv-row { background: transparent; color: var(--text); border-radius: 8px; border-color: var(--line); }
 .skin-linear .srv-row:hover { border-color: var(--accent); background: var(--hover-bg); }
 .skin-linear .srv-row.cur { border-color: var(--accent); }
+.skin-linear .srv-row.pubrev:hover { border-color: var(--line); background: transparent; }
 .skin-linear .srv-warn { border: 0; border-radius: 8px; background: var(--note-bg); border-left: 3px solid var(--yellow); }
 .skin-linear .macro-dlg .macro-log { border-radius: 8px; border-color: var(--line); background: var(--field); color: var(--text-2); }
 .skin-linear .macro-dlg table.macro-parts td { border-bottom-color: var(--line); }

@@ -422,6 +422,17 @@ input, select, button { font: inherit; color: inherit; }
 .srv-warn { border: 1px solid #f0d28a; border-left: 3px solid #c8961e; background: #fffbf0; padding: 6px 8px; border-radius: 4px; margin: 6px 0; font-size: 12px; }
 .srv-url { display: flex; gap: 6px; margin: 4px 0; }
 .srv-url input { flex: 1; min-width: 0; font: 11.5px ui-monospace, monospace; padding: 4px 6px; border: 1px solid #c5cad0; border-radius: 3px; }
+/* Publish Review: earlier links with Delete link */
+.pub-list { padding: 0; margin: 4px 0 0; min-width: 0; }
+.srv-row.pubrev { flex-direction: row; align-items: center; justify-content: space-between; gap: 8px; cursor: default; }
+.srv-row.pubrev:hover { border-color: #e3e3e3; background: #fff; }
+.srv-row.pubrev > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.srv-row.pubrev a { overflow-wrap: anywhere; }
+.pub-del { flex: none; }
+@media (max-width: 760px) {
+  .srv-url[data-token] { flex-wrap: wrap; }
+  .srv-url[data-token] input { flex-basis: 100%; }
+}
 
 /* Equations dialog */
 .eqdialog { min-width: 680px; }

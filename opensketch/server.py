@@ -1441,7 +1441,21 @@ async def api_review_publish(req: ReviewRequest, request: Request):
             return JSONResponse({"error": "Save the document to the server first (Save it to your Files first: Ctrl+S)."}, status_code=404)
         if exc.kind in ("ReviewError", "AssemblyError", "FeatureError"):
             return JSONResponse({"error": exc.message}, status_code=400)
+        if exc.kind in ("DiskFull", "QuotaFull", "TooBig"):
+            return JSONResponse({"error": exc.message}, status_code=507)
         raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
+
+
+def _review_visible(item: dict | None, request: Request) -> bool:
+    """A review is its document's owner's. Its document gone: the owner it was published for (older reviews: the
+    server owner); a link not in the list at all: the server owner only."""
+    user = _user(request)
+    if item is None:
+        return store.can_see({"owner": None}, user)
+    try:
+        return store.can_see(store.meta(item["doc_id"]), user)
+    except store.NotFound:
+        return store.can_see({"owner": item.get("owner")}, user)
 
 
 @app.get("/api/reviews")
@@ -1449,30 +1463,21 @@ def api_review_list(request: Request, doc_id: str | None = None):
     from . import review
     if doc_id is not None:
         _doc_meta(doc_id, request)
-    out = []
-    for item in review.listing(doc_id, _base(request)):
-        try:
-            if store.can_see(store.meta(item["doc_id"]), _user(request)):
-                out.append(item)
-        except store.NotFound:
-            if store.can_see({"owner": None}, _user(request)):
-                out.append(item)  # its document is gone: the server owner can still see and delete it
-    return out
+    return [item for item in review.listing(doc_id, _base(request)) if _review_visible(item, request)]
 
 
 @app.delete("/api/reviews/{token}")
 def api_review_delete(token: str, request: Request):
+    """Unpublish: the link stops working at once."""
     from . import review
     item = next((i for i in review.listing() if i["token"] == token), None)
-    if item is not None:
-        try:
-            visible = store.can_see(store.meta(item["doc_id"]), _user(request))
-        except store.NotFound:
-            visible = store.can_see({"owner": None}, _user(request))
-        if not visible:
-            raise HTTPException(404, "No such review")
-    if not review.delete(token):
+    if not _review_visible(item, request):
         raise HTTPException(404, "No such review")
+    try:
+        if not review.delete(token):
+            raise HTTPException(404, "No such review")
+    except review.ReviewError as e:
+        return JSONResponse({"error": str(e)}, status_code=409)
     return {"deleted": token}
 
 
