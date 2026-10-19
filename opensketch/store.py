@@ -332,6 +332,23 @@ def untrash(doc_id: str) -> dict:
         return meta(doc_id)
 
 
+def discard_untouched(doc_id: str) -> bool:
+    """Remove a document exactly as New made it (version 1, by the person, empty, no bought-part requests, not in
+    the Trash): the browser calls this when the person leaves a new file without touching it, so Files does not
+    fill with empty "Part N" files. Anything else stays (edited, renamed, written by an AI). True when removed."""
+    with lock(doc_id):
+        try:
+            rec = get(doc_id)
+        except NotFound:
+            return False
+        empty = not any(_counts(rec.get("doc") or {}).values())
+        if (rec.get("version") != 1 or rec.get("by") != "you" or rec.get("summary") != "Created" or rec.get("deleted")
+                or rec.get("requests") or not empty):
+            return False
+        purge(doc_id)
+        return True
+
+
 def purge(doc_id: str) -> None:
     """Remove a document, its history and its picture for good."""
     with lock(doc_id):
