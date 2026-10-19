@@ -89,3 +89,27 @@ def test_healthz_answers_without_sign_in(tmp_path, monkeypatch):
     r = c.get("/healthz")
     assert r.status_code == 200 and r.json()["ok"] is True
     assert c.get("/api/docs").status_code == 401  # everything else still needs signing in
+
+
+def test_a_paused_machine_is_not_taken_for_a_hang(tmp_path, monkeypatch):
+    """Fly can suspend an idle machine: the clock jumps on waking, but the server is fine."""
+    clock = {"skew": 0.0}
+    real = time.monotonic
+    monkeypatch.setattr(supervisor.time, "monotonic", lambda: real() + clock["skew"])
+    script = tmp_path / "fake.py"
+    script.write_text(FAKE)
+    starts = tmp_path / "starts.txt"
+    port = _free_port()
+    logs = []
+    sup = supervisor.Supervisor([sys.executable, str(script), str(port), str(starts), "ok"],
+                                f"http://127.0.0.1:{port}/healthz", interval=0.2, timeout=0.5, hang=1.0, boot=3.0,
+                                stop_wait=2.0, log=logs.append)
+    t = threading.Thread(target=sup.run, daemon=True)
+    t.start()
+    time.sleep(1.5)
+    clock["skew"] = 3600.0  # an hour "passes" in one step
+    time.sleep(1.5)
+    sup.stop()
+    t.join(10)
+    assert sup.restarts == 0 and starts.read_text().count("start") == 1
+    assert any("paused" in m for m in logs), logs

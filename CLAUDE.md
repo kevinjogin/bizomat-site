@@ -43,7 +43,51 @@ assemblies only when a part changes.
   for main calls to action, the text wordmark "OpenSketch" as the logo (no mark or tile; YZ 2026-10-19); new UI styled with the theme tokens and checked in dark,
   light and classic, and at phone width. Motion: `--ease`, 120-220 ms, nothing that blocks input.
 
-## Current state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand, text logo, Google sign-in set up in the app, upload links for big MCP imports, SOLIDWORKS add-in, dedicated CPU + self-restarting server, feature recognition)
+## Current state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand, text logo, Google sign-in set up in the app, upload links for big MCP imports, SOLIDWORKS add-in, dedicated CPU + self-restarting server, feature recognition, CAD in worker processes)
+
+CAD in worker processes (2026-10-19, YZ at 14:29: "the site is basically frozen, New part / New assembly / open do
+not work at all, a new tab does not load either"). Fly logs: the machine woke from idle at 14:28:31, was ready at
+14:28:41, then answered nothing until a deploy replaced it at 14:31; opening a big model on a cold cache (Lavilock)
+held the GIL in long OpenCascade calls, so every other request waited. A bigger machine does not help.
+- `opensketch/cadworker.py`: `Lane` = one `spawn`ed worker process (ProcessPoolExecutor, max 1), started on first use
+  (`MODEL.warm()` in the lifespan). `await lane.run(fn, *args, limit=)` sends `module:qualname` + args; the worker
+  never raises (`_call` returns ("ok", value) or ("err", type name, message, traceback)), so the server gets
+  `CadJobError(kind, message)` for any exception, `CadUnavailable` when the call ran past its limit (the lane's
+  process is killed, the next call starts a fresh one) or the worker died (BrokenProcessPool: out of memory, a crash).
+  Lanes: `MODEL` (limit `OPENSKETCH_CAD_LIMIT` 600 s, nice 2; keeps `geometry.built`'s cache between calls) and
+  `BACKGROUND` (Files pictures; 180 s, nice 10, stops after 5 idle minutes). `start_job(fn, ..., on_event, uses)`:
+  a process of its own for long jobs with progress (`progress(*a)` / `log(line)` -> on_event("progress", a); `stop()`
+  after `cancel()`; "done" / "error" at the end; killed 30 s after a cancel it ignores; limit 1 h). Workers ignore
+  SIGINT. Memory: ~240 MB private per CAD process (OpenCascade libraries are shared), main ~280 MB.
+- `opensketch/cadjobs.py`: the browser routes' work as plain functions (regen, params, name_refs, face_owner,
+  delete_plan, mass, interference, export, import_file, toolbox_part, thumb_png, review_checks, review_publish).
+  server.py: those routes are `async` and go through `_cad(lane, fn, ...)` (CadUnavailable -> 503 with the plain
+  message; unexpected exceptions -> 500 "Kind: message", as before); errors that had their own status keep it by
+  `exc.kind` (FeatureError / AssemblyError on export 400, ImportError_ 422, ReviewError 400, NotFound 404). Pictures:
+  `_render_thumb` reads the record here, draws in BACKGROUND, stores here (store writes stay in one process).
+  `_light(doc)`: a part with only sketches and planes (<= 400 sketch entities) or an empty assembly is rebuilt here at
+  once, so New part / New assembly and a first sketch never queue behind a big rebuild in the one MODEL worker.
+  SOLIDWORKS macro jobs run via `start_job` (a daemon process, so the job itself must not start multiprocessing
+  children). Feature recognition stays a thread: it already runs each part in its own spawned worker
+  (`recognize_part_safe`).
+- Still in the server's own process: the in-app AI chat (`/api/ai/stream`) and the MCP tools (Claude's edits). While
+  Claude builds through the connector, each OpenCascade call still pauses the server; moving `ai.Session` work into
+  the MODEL lane (`_apply_sync`, `_batch_sync`, `_read_sync`...) is the next step.
+- `OPENSKETCH_CAD_WORKERS=0` runs everything in threads as before; tests/conftest.py sets it so monkeypatches apply.
+- Tests: `tests/test_cadworker.py` (6: same result from another process and the same worker next time, errors keep
+  their type name, a runaway call is stopped and replaced, a crashed worker is replaced, a job's progress and result,
+  and a real server answering /healthz, the Files list and New part in under 1 s while a ~25 s rebuild with ~2 s
+  single OpenCascade calls runs; with OPENSKETCH_CAD_WORKERS=0 the same test waits 3 s for an answer). Checked in
+  Chromium against a supervised server with workers: during that rebuild, Files > New part opened the editor in
+  0.23 s and the Files page drew its cards in 0.57 s (before `_light`, New part waited for the rebuild); no page errors.
+- Also (same push): `auto_stop_machines = "suspend"` (wakes in a few hundred ms with memory and caches; needs 2 GB or
+  less, no swap; a deploy still starts cold); the supervisor tells a paused machine from a hang (a jump of more than
+  interval + timeout + 30 s between checks resets its clocks and logs "paused"), prints the server's stacks once
+  after 30 s without an answer (`DUMP_SECONDS`, the server keeps running), and starts the server in its own process
+  group so a restart also ends its workers (`_kill_group`); uvicorn `timeout_graceful_shutdown=3` (open long polls
+  and streams no longer hold a stop for the full 8 s); the deploy workflow skips pushes that only change `**.md`,
+  `docs/`, `tests/`, `solidworks/tests/` (each deploy is ~15-20 s offline; there were 15 by 14:30 that day).
+  Supervisor test +1 (`test_a_paused_machine_is_not_taken_for_a_hang`).
 
 Feature recognition (2026-10-19, YZ: "a feature recognition kind of feature so that imported parts can have auto
 features"; SOLIDWORKS FeatureWorks). `opensketch/recognize.py` turns an `import` feature into ordinary features
@@ -151,7 +195,7 @@ brought it back. YZ: "make it so the server doesn't go down"):
 - Measured: OpenCascade (OCP) calls hold the GIL for their whole length (a 0.3 s boolean in a thread left the main
   thread without a single wakeup), so one long CAD call pauses every request for its length on any machine. The
   120 s limit leaves room for the slowest normal work (Lavilock rebuild ~11 s, interference ~29 s, both many short
-  calls). If those pauses show up as "Waiting for the server", the next step is running CAD work in a worker process.
+  calls). Those pauses did show up, so the browser's CAD work moved to worker processes (see "CAD in worker processes").
 - Checked: the real server under the supervisor locally: SIGSTOP on the child -> killed and answering again in 23 s
   (with OPENSKETCH_HANG_SECONDS=10); SIGTERM to the supervisor stops both in 2 s; SIGUSR1 prints the stacks and the
   server keeps answering. Tests: `tests/test_supervisor.py` (4: hung server restarted, exiting server restarted with

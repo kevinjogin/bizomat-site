@@ -27,7 +27,8 @@ def main():
     if not args.no_browser:
         threading.Timer(1.0, lambda: webbrowser.open(url)).start()
     print(f"OpenSketch running at {url}")
-    uvicorn.run("opensketch.server:app", host=args.host, port=args.port, log_level="warning")
+    # on a stop, open connections (long polls, AI streams) get 3 s to finish instead of holding the restart up
+    uvicorn.run("opensketch.server:app", host=args.host, port=args.port, log_level="warning", timeout_graceful_shutdown=3)
 
 
 if __name__ == "__main__":

@@ -7,6 +7,12 @@ name: Deploy to Fly.io
 on:
   push:
     branches: [main]
+    # every deploy restarts the one server (~15 s offline): pushes that only change notes or tests do not deploy
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - "tests/**"
+      - "solidworks/tests/**"
   workflow_dispatch:
 
 concurrency:

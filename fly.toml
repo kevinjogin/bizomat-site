@@ -20,7 +20,10 @@ kill_timeout = 15
 [http_service]
   internal_port = 8080
   force_https = true
-  auto_stop_machines = "stop"
+  # suspend, not stop: an idle machine is frozen with its memory and wakes in a few hundred ms with its caches
+  # (a stopped one boots in ~10 s and rebuilds every model from scratch). Needs 2 GB or less and no swap. The
+  # supervisor tells a pause from a hang (supervisor.py). A deploy still starts it cold.
+  auto_stop_machines = "suspend"
   auto_start_machines = true
   min_machines_running = 0
 

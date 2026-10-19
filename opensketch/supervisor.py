@@ -21,6 +21,7 @@ import time
 import urllib.request
 
 HANG_SECONDS = 120.0   # no answer for this long after it has answered once -> restart
+DUMP_SECONDS = 30.0    # no answer for this long -> the server prints its thread stacks once (it keeps running)
 BOOT_SECONDS = 180.0   # never answered this long after starting -> restart
 INTERVAL = 5.0         # seconds between checks
 TIMEOUT = 8.0          # seconds one check may take
@@ -34,10 +35,10 @@ def _log(msg: str) -> None:
 class Supervisor:
     def __init__(self, cmd: list[str], url: str, *, interval: float = INTERVAL, timeout: float = TIMEOUT,
                  hang: float = HANG_SECONDS, boot: float = BOOT_SECONDS, stop_wait: float = STOP_WAIT,
-                 backoff_max: float = 30.0, log=_log):
+                 dump: float = DUMP_SECONDS, backoff_max: float = 30.0, log=_log):
         self.cmd, self.url = cmd, url
         self.interval, self.timeout, self.hang, self.boot = interval, timeout, hang, boot
-        self.stop_wait, self.backoff_max = stop_wait, backoff_max
+        self.stop_wait, self.backoff_max, self.dump = stop_wait, backoff_max, dump
         self.log = log
         self.child: subprocess.Popen | None = None
         self.restarts = 0
@@ -64,7 +65,8 @@ class Supervisor:
         fails = 0  # servers in a row that died or hung without ever answering
         while not self._stop.is_set():
             started = time.monotonic()
-            self.child = subprocess.Popen(self.cmd)
+            # its own process group, so a restart also ends the server's CAD worker processes (cadworker.py)
+            self.child = subprocess.Popen(self.cmd, start_new_session=True)
             reason, answered = self._watch(started)
             if self._stop.is_set():
                 break
@@ -79,9 +81,18 @@ class Supervisor:
 
     def _watch(self, started: float) -> tuple[str, bool]:
         last_ok = None
+        dumped = False
+        prev = time.monotonic()
         while True:
             if self._stop.wait(self.interval):
                 return "stopping", last_ok is not None
+            now = time.monotonic()
+            if now - prev > self.interval + self.timeout + 30:
+                # the whole machine was paused (Fly suspends an idle machine): time passed, but nothing hung
+                self.log(f"the machine was paused for about {now - prev:.0f} s; carrying on")
+                started = now if last_ok is None else started
+                last_ok = now if last_ok is not None else None
+            prev = now
             code = self.child.poll()
             if code is not None:
                 return f"the server exited (code {code})", last_ok is not None
@@ -89,9 +100,18 @@ class Supervisor:
             if self._stop.is_set():
                 return "stopping", last_ok is not None
             now = time.monotonic()
+            prev = now
             if ok:
-                last_ok = now
-            elif last_ok is None and now - started > self.boot:
+                last_ok, dumped = now, False
+                continue
+            if last_ok is not None and now - last_ok > self.dump and not dumped and hasattr(signal, "SIGUSR1"):
+                dumped = True  # leave a trace of what it is stuck on, even if it recovers by itself
+                self.log(f"the server has not answered for {now - last_ok:.0f} s; its thread stacks follow")
+                try:
+                    self.child.send_signal(signal.SIGUSR1)
+                except OSError:
+                    pass
+            if last_ok is None and now - started > self.boot:
                 self._kill_hung()
                 return f"the server did not start answering within {self.boot:g} s", False
             elif last_ok is not None and now - last_ok > self.hang:
@@ -112,17 +132,29 @@ class Supervisor:
 
     def _end_child(self, sig=signal.SIGINT, wait: float | None = None) -> None:
         child = self.child
-        if child is None or child.poll() is not None:
+        if child is None:
             return
+        if child.poll() is None:
+            try:
+                child.send_signal(sig)
+                child.wait(self.stop_wait if wait is None else wait)
+            except subprocess.TimeoutExpired:
+                self.log("the server did not stop by itself; killing it")
+                self._kill_group(child)
+                child.wait()
+            except OSError:
+                pass
+        self._kill_group(child)  # anything it left behind (CAD worker processes)
+
+    @staticmethod
+    def _kill_group(child) -> None:
         try:
-            child.send_signal(sig)
-            child.wait(self.stop_wait if wait is None else wait)
-        except subprocess.TimeoutExpired:
-            self.log("the server did not stop by itself; killing it")
-            child.kill()
-            child.wait()
-        except OSError:
-            pass
+            os.killpg(child.pid, signal.SIGKILL)
+        except (OSError, AttributeError):
+            try:
+                child.kill()
+            except OSError:
+                pass
 
 
 def main(host: str, port: int) -> int:

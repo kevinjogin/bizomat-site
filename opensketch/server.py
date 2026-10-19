@@ -31,7 +31,7 @@ from contextlib import asynccontextmanager
 
 from starlette.routing import Route
 
-from . import ai, artifacts, assembly, auth, features, geometry, importer, mcp_server, sldexport, store, uploads
+from . import ai, artifacts, assembly, auth, cadjobs, cadworker, features, geometry, importer, mcp_server, sldexport, store, uploads
 
 STATIC = Path(__file__).parent / "static"
 
@@ -51,8 +51,21 @@ UPDATE_NOTE = Path(os.environ.get("OPENSKETCH_UPDATE_NOTE", str(Path.home() / ".
 
 @asynccontextmanager
 async def lifespan(_app):
-    async with mcp_server.lifespan_context():
-        yield
+    cadworker.MODEL.warm()  # CAD runs in worker processes (cadworker.py); load OpenCascade there now
+    try:
+        async with mcp_server.lifespan_context():
+            yield
+    finally:
+        cadworker.shutdown()
+
+
+async def _cad(lane, fn, *args, **kwargs):
+    """Run CAD work in a worker process. A worker that ran out of time or stopped -> 503 with a plain message;
+    an unexpected exception in the work -> 500 with its message (as before, when it ran in this process)."""
+    try:
+        return await lane.run(fn, *args, **kwargs)
+    except cadworker.CadUnavailable as exc:
+        raise HTTPException(503, str(exc)) from None
 
 
 # Responses that carry meshes or documents are gzipped: a part's mesh JSON shrinks about 6x (10 MB -> 1.5 MB),
@@ -109,11 +122,24 @@ class FastJSON(JSONResponse):
         return json.dumps(content, separators=(",", ":"), allow_nan=False, default=_json_default).encode("utf-8")
 
 
+def _light(doc: dict) -> bool:
+    """Nothing heavy to build: a new part, a part with only sketches and planes so far, an empty assembly. These
+    are answered here at once, so a new file never waits behind a big rebuild in the worker."""
+    if assembly.is_assembly(doc):
+        return not doc.get("components") and not doc.get("parts")
+    feats = doc.get("features") or []
+    return all(f.get("type") in ("sketch", "plane") for f in feats) and sum(len(f.get("entities") or []) for f in feats) <= 400
+
+
 @app.post("/api/regen")
-def api_regen(req: RegenRequest):
-    if assembly.is_assembly(req.doc):
-        return FastJSON(assembly.regen_assembly(req.doc, req.known, drag=req.drag))
-    return FastJSON(geometry.regen_result(req.doc, req.preview))
+async def api_regen(req: RegenRequest):
+    if _light(req.doc):
+        return FastJSON(await run_in_threadpool(cadjobs.regen, req.doc, req.preview, req.known, req.drag))
+    try:
+        res = await _cad(cadworker.MODEL, cadjobs.regen, req.doc, req.preview, req.known, req.drag)
+    except cadworker.CadJobError as exc:
+        raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
+    return FastJSON(res)
 
 
 class ParamsRequest(BaseModel):
@@ -122,19 +148,16 @@ class ParamsRequest(BaseModel):
 
 
 @app.post("/api/params")
-def api_params(req: ParamsRequest):
+async def api_params(req: ParamsRequest):
     """Equations dialog: variables with values and problems, every equation, and the part with the numbers the
     equations give (sketches re-solved). With `expression`: its value, or an error."""
-    from . import params
-    if req.expression is not None:
-        values, _ = params.variables(req.doc)
-        try:
-            return {"value": params.evaluate_expr(req.expression, values)}
-        except params.ExprError as exc:
-            return JSONResponse({"error": str(exc)}, status_code=400)
-    new, rep = params.evaluate(req.doc)
-    return {"parameters": params.table(new), "equations": params.equations(new), "problems": rep["problems"],
-            "recomputed": rep["recomputed"], "features": new.get("features", [])}
+    try:
+        out = await _cad(cadworker.MODEL, cadjobs.params, req.doc, req.expression)
+    except cadworker.CadJobError as exc:
+        raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
+    if "__error__" in out:
+        return JSONResponse({"error": out["__error__"]}, status_code=400)
+    return out
 
 
 class NameRefsRequest(BaseModel):
@@ -143,10 +166,12 @@ class NameRefsRequest(BaseModel):
 
 
 @app.post("/api/name_refs")
-def api_name_refs(req: NameRefsRequest):
+async def api_name_refs(req: NameRefsRequest):
     """Add persistent names to a feature's face and edge picks (naming.annotate), so they survive edits."""
-    from . import naming
-    return {"feature": naming.annotate(req.doc, req.feature)}
+    try:
+        return {"feature": await _cad(cadworker.MODEL, cadjobs.name_refs, req.doc, req.feature)}
+    except cadworker.CadJobError as exc:
+        raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
 
 
 class FaceOwnerRequest(BaseModel):
@@ -156,11 +181,13 @@ class FaceOwnerRequest(BaseModel):
 
 
 @app.post("/api/face_owner")
-def api_face_owner(req: FaceOwnerRequest):
+async def api_face_owner(req: FaceOwnerRequest):
     """Which feature made a face, and from which sketch curve (persistent names, naming.py). Drives the
     Design panel: click a face, see the numbers that shape it."""
-    from . import naming
-    return naming.face_owner(req.doc, req.center, req.normal)
+    try:
+        return await _cad(cadworker.MODEL, cadjobs.face_owner, req.doc, req.center, req.normal)
+    except cadworker.CadJobError as exc:
+        raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
 
 
 class DeletePlanRequest(BaseModel):
@@ -170,27 +197,33 @@ class DeletePlanRequest(BaseModel):
 
 
 @app.post("/api/delete_plan")
-def api_delete_plan(req: DeletePlanRequest):
+async def api_delete_plan(req: DeletePlanRequest):
     """What deleting these part features takes with it and breaks (edits.plan_delete), plus the new part."""
-    from . import edits
-    plan = edits.plan_delete(req.doc, req.features, req.delete_absorbed)
+    try:
+        plan = await _cad(cadworker.MODEL, cadjobs.delete_plan, req.doc, req.features, req.delete_absorbed)
+    except cadworker.CadJobError as exc:
+        raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
     if "error" in plan:
         return JSONResponse({"error": plan["error"]}, status_code=400)
     return plan
 
 
 @app.post("/api/mass")
-def api_mass(req: RegenRequest):
-    if assembly.is_assembly(req.doc):
-        return assembly.mass_properties(req.doc)
-    return geometry.mass_properties(req.doc)
+async def api_mass(req: RegenRequest):
+    try:
+        return await _cad(cadworker.MODEL, cadjobs.mass, req.doc)
+    except cadworker.CadJobError as exc:
+        raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
 
 
 @app.post("/api/interference")
-def api_interference(req: RegenRequest):
+async def api_interference(req: RegenRequest):
     if not assembly.is_assembly(req.doc):
         raise HTTPException(400, "Interference Detection works on assemblies")
-    return assembly.interference(req.doc)
+    try:
+        return await _cad(cadworker.MODEL, cadjobs.interference, req.doc)
+    except cadworker.CadJobError as exc:
+        raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
 
 
 class ImportRequest(BaseModel):
@@ -198,24 +231,27 @@ class ImportRequest(BaseModel):
     data: str  # base64 file content
 
 
-def _import_reply(raw: bytes, filename: str):
+async def _import_reply(raw: bytes, filename: str):
     """Every failure comes back as JSON {error} with a readable message, never a bare 500."""
     try:
-        return {"doc": importer.import_file(raw, filename)}
-    except importer.ImportError_ as exc:
-        return JSONResponse({"error": str(exc)}, status_code=422)
-    except Exception as exc:  # anything else the reader or the assembly step throws
-        return JSONResponse({"error": f"Could not import {filename}: {str(exc).strip() or type(exc).__name__}"}, status_code=422)
+        return {"doc": await cadworker.MODEL.run(cadjobs.import_file, raw, filename)}
+    except cadworker.CadUnavailable as exc:
+        return JSONResponse({"error": f"Could not import {filename}: {exc}"}, status_code=503)
+    except cadworker.CadJobError as exc:
+        if exc.kind == "ImportError_":
+            return JSONResponse({"error": exc.message}, status_code=422)
+        # anything else the reader or the assembly step throws
+        return JSONResponse({"error": f"Could not import {filename}: {exc.message.strip() or exc.kind}"}, status_code=422)
 
 
 @app.post("/api/import")
-def api_import(req: ImportRequest):
+async def api_import(req: ImportRequest):
     """STEP -> part or assembly document (base64 in JSON; kept for old clients and scripts)."""
     try:
         raw = base64.b64decode(req.data, validate=True)
     except (binascii.Error, ValueError):
         return JSONResponse({"error": "The upload is not valid base64. Try uploading the file again."}, status_code=400)
-    return _import_reply(raw, req.filename)
+    return await _import_reply(raw, req.filename)
 
 
 IMPORT_MAX = 128 * 1024 * 1024  # bytes of CAD data per upload (after unzipping the browser's gzip)
@@ -243,7 +279,7 @@ async def api_import_raw(request: Request, filename: str = "model.step"):
                 raise zlib.error("truncated")
         except zlib.error:
             return JSONResponse({"error": "The upload arrived damaged. Try again."}, status_code=400)
-    return await run_in_threadpool(_import_reply, body, filename)
+    return await _import_reply(body, filename)
 
 
 @app.get("/api/features")
@@ -264,7 +300,7 @@ class ToolboxRequest(BaseModel):
 
 
 @app.post("/api/toolbox/part")
-def api_toolbox_part(req: ToolboxRequest):
+async def api_toolbox_part(req: ToolboxRequest):
     if req.kind not in importer.STANDARD:
         raise HTTPException(400, "Unknown kind")
     args = {"size": req.size}
@@ -272,32 +308,27 @@ def api_toolbox_part(req: ToolboxRequest):
         if req.length is not None and (not math.isfinite(req.length) or req.length <= 0):
             raise HTTPException(400, "Length must be greater than 0")
         args["length"] = req.length if req.length is not None else 10
-    doc = importer.standard_part_doc(req.kind, **args)
     try:
-        st, _ = geometry.regen(doc)
-        bad = next((s for s in st.status if s.get("state") == "error"), None)
-        if bad or st.part is None:
-            raise ValueError(bad.get("message") if bad else "The selected size did not produce a solid body")
-    except Exception as exc:  # bad size
-        raise HTTPException(400, str(exc)) from exc
+        doc = await _cad(cadworker.MODEL, cadjobs.toolbox_part, req.kind, args)
+    except cadworker.CadJobError as exc:  # bad size
+        raise HTTPException(400, exc.message) from None
     return {"doc": doc}
 
 
 @app.post("/api/export/{fmt}")
-def api_export(fmt: str, req: RegenRequest):
+async def api_export(fmt: str, req: RegenRequest):
     if fmt not in ("step", "stl"):
         raise HTTPException(400, "Format must be step or stl")
     fd, path = tempfile.mkstemp(suffix=f".{fmt}")
     os.close(fd)
     try:
-        if assembly.is_assembly(req.doc):
-            assembly.export(req.doc, fmt, path)
-        else:
-            geometry.export(req.doc, fmt, path)
-    except (geometry.FeatureError, assembly.AssemblyError) as exc:
+        await _cad(cadworker.MODEL, cadjobs.export, req.doc, fmt, path)
+    except cadworker.CadJobError as exc:
         Path(path).unlink(missing_ok=True)
-        raise HTTPException(400, str(exc)) from exc
-    except Exception:
+        if exc.kind in ("FeatureError", "AssemblyError"):
+            raise HTTPException(400, exc.message) from None
+        raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
+    except BaseException:
         Path(path).unlink(missing_ok=True)
         raise
     name = (req.doc.get("name") or ("Assem1" if assembly.is_assembly(req.doc) else "Part1")) + (".step" if fmt == "step" else ".stl")
@@ -346,14 +377,15 @@ def api_macro_start(req: MacroRequest, request: Request):
             _macro_jobs.pop(k, None)
             Path(old["zip"]).unlink(missing_ok=True)
 
-    def work():
-        try:
-            job["report"] = sldexport.export(req.doc, path, name=req.name, verify=req.verify, log=job["log"].append)
-            job["state"] = "done"
-        except Exception as exc:
-            job["state"] = "error"
-            job["error"] = f"{type(exc).__name__}: {exc}"
-    threading.Thread(target=work, daemon=True).start()
+    def event(kind, payload):  # from the job's own process (cadworker.start_job)
+        if kind == "progress":
+            job["log"].append(payload[0])
+        elif kind == "done":
+            job["report"], job["state"] = payload, "done"
+        else:
+            job["state"], job["error"] = "error", f"{payload[0]}: {payload[1]}"
+    cadworker.start_job(sldexport.export, req.doc, path, name=req.name, verify=req.verify, uses=("log",),
+                        on_event=event, limit=3 * 3600)
     return {"job": jid}
 
 
@@ -406,7 +438,7 @@ def api_recognize_start(req: RecognizeRequest, request: Request):
     def progress(done, total, name, reports):
         job.update(done=done, total=total, current=name, parts=dict(reports))
 
-    def work():
+    def work():  # each part runs in recognize's own spawned worker (recognize_part_safe), so this thread only waits
         try:
             res = recognize.recognize_doc(req.doc, part_id=req.part_id, kinds=req.kinds, progress=progress,
                                           stop=lambda: job.get("cancel", False))
@@ -759,13 +791,12 @@ THUMB_SERVER_MAX = 400 * 1024  # bytes of stored document above which the server
 _thumb_failed: dict[str, int] = {}  # document id -> version the server could not draw
 
 
-def _render_thumb(doc_id: str) -> None:
-    """Draw a picture on the server (a document the AI made, or one never opened in a browser)."""
-    from . import preview
-    with _thumb_slots:
-        rec = store.get(doc_id)
-        png = preview.render_preview(rec["doc"], "isometric", 480, 360, transparent=True)
-        store.set_thumb(doc_id, png, "png", rec["version"], "server")
+async def _render_thumb(doc_id: str) -> None:
+    """Draw a picture on the server (a document the AI made, or one never opened in a browser), in the background
+    worker so it never holds up a rebuild or the web server."""
+    rec = await run_in_threadpool(store.get, doc_id)
+    png = await cadworker.BACKGROUND.run(cadjobs.thumb_png, rec["doc"])
+    await run_in_threadpool(store.set_thumb, doc_id, png, "png", rec["version"], "server")
 
 
 @app.get("/api/docs/{doc_id}/thumb")
@@ -787,7 +818,7 @@ async def api_doc_thumb(doc_id: str, request: Request):
         try:
             if mine:
                 try:
-                    await run_in_threadpool(_render_thumb, doc_id)
+                    await _render_thumb(doc_id)
                     _thumb_failed.pop(doc_id, None)
                 except Exception:  # nothing to draw (empty, failing): keep the old picture if any
                     _thumb_failed[doc_id] = version
@@ -1183,12 +1214,14 @@ async def api_review_publish(req: ReviewRequest, request: Request):
     from . import review
     _doc_meta(req.doc_id, request)
     try:
-        return await run_in_threadpool(review.publish, req.doc_id, req.compare_version, req.title, req.notes, "you",
-                                       _base(request))
-    except store.NotFound:
-        return JSONResponse({"error": "Save the document to the server first (Save it to your Files first: Ctrl+S)."}, status_code=404)
-    except (review.ReviewError, assembly.AssemblyError, geometry.FeatureError) as exc:
-        return JSONResponse({"error": str(exc)}, status_code=400)
+        return await _cad(cadworker.MODEL, cadjobs.review_publish, req.doc_id, req.compare_version, req.title, req.notes,
+                          "you", _base(request))
+    except cadworker.CadJobError as exc:
+        if exc.kind == "NotFound":
+            return JSONResponse({"error": "Save the document to the server first (Save it to your Files first: Ctrl+S)."}, status_code=404)
+        if exc.kind in ("ReviewError", "AssemblyError", "FeatureError"):
+            return JSONResponse({"error": exc.message}, status_code=400)
+        raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
 
 
 @app.get("/api/reviews")
@@ -1237,9 +1270,11 @@ async def api_review_check(req: CheckRequest):
     """Motion Review in the app: errors, clashes through each joint's travel, gaps, contacts."""
     from . import review
     try:
-        return await run_in_threadpool(review.checks, req.doc)
-    except (review.ReviewError, assembly.AssemblyError, geometry.FeatureError) as exc:
-        return JSONResponse({"error": str(exc)}, status_code=400)
+        return await _cad(cadworker.MODEL, cadjobs.review_checks, req.doc)
+    except cadworker.CadJobError as exc:
+        if exc.kind in ("ReviewError", "AssemblyError", "FeatureError"):
+            return JSONResponse({"error": exc.message}, status_code=400)
+        raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
 
 
 @app.get("/review/{token}/data")
