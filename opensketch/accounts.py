@@ -7,6 +7,11 @@ Stored in the data folder (OPENSKETCH_DATA):
 Passwords are hashed with scrypt (salted, never stored). Session cookies are random tokens; only their
 SHA-256 is stored, so the file cannot be used to sign in. Signing out removes the session on the server.
 The first account is the owner. The owner invites other people with single-use links that last 7 days.
+
+Early access (showcases): anyone who types the owner's access code skips sign-up and gets an account of their own
+named "Internal tester N" (role "tester": no password, no real email). Testers use the server's AI key with no
+limit (aikeys.effective). The code is the owner's setting (`settings.access` in users.json), else the server's
+OPENSKETCH_ACCESS_CODE; the owner can change it, turn it off, or remove every tester at once.
 """
 
 from __future__ import annotations
@@ -27,6 +32,8 @@ SESSION_DAYS = 90
 INVITE_DAYS = 7
 MIN_PASSWORD = 8
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+ACCESS_RE = re.compile(r"^[A-Za-z0-9_-]{4,40}$")
+TESTER_DOMAIN = "testers.opensketch.app"  # placeholder emails, never mailed
 _lock = threading.RLock()
 
 
@@ -100,7 +107,7 @@ def _sha(token: str) -> str:
 
 def public(u: dict) -> dict:
     return {"id": u["id"], "email": u["email"], "name": u["name"], "role": u["role"], "created": u.get("created"),
-            "google": bool(u.get("google")), "has_password": bool(u.get("hash"))}
+            "google": bool(u.get("google")), "has_password": bool(u.get("hash")), "tester": u["role"] == "tester"}
 
 
 def any_users() -> bool:
@@ -298,6 +305,76 @@ def set_open_signup(on: bool) -> dict:
         data.setdefault("settings", {})["open_signup"] = bool(on)
         _write("users.json", data)
     return settings()
+
+
+# ---------------------------------------------------------------- early access
+
+def access_settings() -> dict:
+    """The early-access code (owner only): {code, on, source: "app" | "server" | "none"}."""
+    s = _users().get("settings", {}).get("access")
+    if s is None:
+        env = os.environ.get("OPENSKETCH_ACCESS_CODE", "").strip()
+        return {"code": env, "on": bool(env), "source": "server" if env else "none"}
+    return {"code": s.get("code", ""), "on": bool(s.get("on") and s.get("code")), "source": "app"}
+
+
+def access_code() -> str | None:
+    s = access_settings()
+    return s["code"] if s["on"] else None
+
+
+def set_access(code: str | None = None, on: bool | None = None) -> dict:
+    """Owner: change the code and/or turn it on or off (stored here, over OPENSKETCH_ACCESS_CODE)."""
+    with _lock:
+        cur = access_settings()
+        code = cur["code"] if code is None else code.strip()
+        if code and not ACCESS_RE.match(code):
+            raise AccountError("Use 4 to 40 letters, numbers, - or _ for the code.")
+        on = cur["on"] if on is None else bool(on)
+        if on and not code:
+            raise AccountError("Enter a code first.")
+        data = _users()
+        data.setdefault("settings", {})["access"] = {"code": code, "on": on}
+        _write("users.json", data)
+    return access_settings()
+
+
+def check_access(given: str) -> bool:
+    """Is this the early-access code? Case and spaces around it do not matter."""
+    code = access_code()
+    return bool(code) and hmac.compare_digest((given or "").strip().lower().encode(), code.lower().encode())
+
+
+def create_tester() -> dict:
+    """A new "Internal tester N" account for someone who typed the access code."""
+    with _lock:
+        data = _users()
+        if not data["users"]:
+            raise AccountError("Create the owner account first.")
+        settings = data.setdefault("settings", {})
+        n = int(settings.get("testers_made", 0)) + 1
+        settings["testers_made"] = n
+        email = f"tester{n}-{secrets.token_hex(3)}@{TESTER_DOMAIN}"
+        u = _new_user(email, f"Internal tester {n}", None, "tester")
+        data["users"].append(u)
+        _write("users.json", data)
+        return public(u)
+
+
+def tester_ids() -> list[str]:
+    return [u["id"] for u in _users()["users"] if u["role"] == "tester"]
+
+
+def remove_testers() -> list[str]:
+    """Owner: remove every tester account (signed out at once; their files stay on the server)."""
+    with _lock:
+        data = _users()
+        gone = [u["id"] for u in data["users"] if u["role"] == "tester"]
+        data["users"] = [u for u in data["users"] if u["role"] != "tester"]
+        _write("users.json", data)
+    for uid in gone:
+        end_sessions(uid)
+    return gone
 
 
 def sign_up(email: str, name: str, password: str | None, google: str | None = None) -> dict:

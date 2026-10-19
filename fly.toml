@@ -16,6 +16,9 @@ kill_timeout = 15
 
 [env]
   OPENSKETCH_DATA = "/data"
+  # early access for showcases: people who type this code skip sign-up and use the server's AI key (accounts.py).
+  # The owner can change it or turn it off in People on this server, which overrides this.
+  OPENSKETCH_ACCESS_CODE = "access20"
 
 [http_service]
   internal_port = 8080

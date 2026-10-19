@@ -902,6 +902,8 @@ def api_account(request: Request):
     if u and u.get("role") == "owner" and m == "accounts":
         out["users"] = accounts.list_users()
         out["pending_invites"] = accounts.pending_invites()
+        out["access"] = dict(accounts.access_settings(), testers=len(accounts.tester_ids()),
+                             link=f"{_base(request)}/access")
     return out
 
 
@@ -928,15 +930,38 @@ def api_account_update(req: AccountUpdate, request: Request):
 
 
 class AccountSettings(BaseModel):
-    open_signup: bool
+    open_signup: bool | None = None
+    access_code: str | None = None  # early access: the code people type to skip sign-up
+    access_on: bool | None = None
 
 
 @app.post("/api/account/settings")
 def api_account_settings(req: AccountSettings, request: Request):
-    """Owner: let anyone create an account (email or Google), or keep the server invite-only."""
+    """Owner: let anyone create an account (email or Google), or keep the server invite-only; the early-access code
+    (testers skip sign-up and use the server's AI key)."""
     from . import accounts
     _owner(request)
-    return accounts.set_open_signup(req.open_signup)
+    out = {}
+    if req.open_signup is not None:
+        out.update(accounts.set_open_signup(req.open_signup))
+    if req.access_code is not None or req.access_on is not None:
+        try:
+            out["access"] = dict(accounts.set_access(req.access_code, req.access_on), testers=len(accounts.tester_ids()),
+                                 link=f"{_base(request)}/access")
+        except accounts.AccountError as e:
+            return JSONResponse({"error": str(e)}, status_code=400)
+    return out or accounts.settings()
+
+
+@app.delete("/api/account/testers")
+def api_remove_testers(request: Request):
+    """Owner: remove every Internal tester account (early access). Their connected AI apps stop working too."""
+    from . import accounts, mcpauth
+    _owner(request)
+    gone = accounts.remove_testers()
+    for uid in gone:
+        mcpauth.drop_user(uid)
+    return {"removed": len(gone)}
 
 
 def _google_redirect(request: Request) -> str:

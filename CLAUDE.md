@@ -43,7 +43,32 @@ assemblies only when a part changes.
   for main calls to action, the text wordmark "OpenSketch" as the logo (no mark or tile; YZ 2026-10-19); new UI styled with the theme tokens and checked in dark,
   light and classic, and at phone width. Motion: `--ease`, 120-220 ms, nothing that blocks input.
 
-## Current state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand, text logo, Google sign-in set up in the app, upload links for big MCP imports, SOLIDWORKS add-in, dedicated CPU + self-restarting server, feature recognition, CAD in worker processes, one worker per person)
+## Current state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand, text logo, Google sign-in set up in the app, upload links for big MCP imports, SOLIDWORKS add-in, dedicated CPU + self-restarting server, feature recognition, CAD in worker processes, one worker per person, early access code)
+
+Early access code (2026-10-19, YZ: "people type access20 as a code, skip sign-up, show up as internal tester, use my API,
+unlimited usage; just for showcases"):
+- `accounts.py`: `access_settings()` {code, on, source} = the owner's `settings.access` in users.json, else the server's
+  `OPENSKETCH_ACCESS_CODE` (fly.toml [env] sets "access20"; the repo is private); `check_access` ignores case and
+  spaces (hmac compare); `set_access(code, on)` (4-40 of A-Z a-z 0-9 - _); `create_tester()` = role "tester", name
+  "Internal tester N" (`settings.testers_made` counter), placeholder email `testerN-xxxxxx@testers.opensketch.app`, no
+  password; `public()` adds `tester`; `remove_testers()` ends their sessions.
+- `auth.py`: `/access` (accounts mode only; 410 page when no code is on; GET shows the form, `?code=` prefills it, an
+  already signed-in browser goes straight in; POST rate-limited per IP like sign-in, 1 s delay on a wrong code, then a
+  new tester + session cookie -> `next`). Sign-in page shows "Have an early access code?" while a code is on.
+- `aikeys.effective`: a tester without their own key always gets the server's key, even with open sign-up on. No usage
+  limit (YZ's choice): anyone with the code can spend the server's Anthropic key until the code is changed or off.
+- Server: `/api/account` gives the owner `access` {code, on, source, testers, link}; `POST /api/account/settings`
+  takes `access_code` / `access_on` (open_signup now optional); `DELETE /api/account/testers` removes them all (and
+  their connected AI apps, `mcpauth.drop_user`). Testers get their own Files and CAD workers like members; their files
+  stay on the server after removal.
+- Browser (`account.js`): People on this server > Early access (on/off, code, Save code, the /access link and the link
+  with the code, a warning about the key, N internal testers, Remove all testers); People rows say Internal tester;
+  a tester's avatar menu is "Internal tester N - early access" with Files, Connect AI, Theme, Sign out (no Account
+  settings: no email or password to manage).
+- Tests: `tests/test_accounts.py` +2 (the whole flow incl. own Files, server key with open sign-up on, numbering,
+  owner sees/changes/turns off/removes, member cannot change it; guessing limited to 8 then 429). Checked in Chromium:
+  sign-in link, wrong code message, access20 -> Files as Internal tester 1, avatar menu, New part, phone width, the
+  owner's People dialog.
 
 CAD in worker processes (2026-10-19, YZ at 14:29: "the site is basically frozen, New part / New assembly / open do
 not work at all, a new tab does not load either"). Fly logs: the machine woke from idle at 14:28:31, was ready at

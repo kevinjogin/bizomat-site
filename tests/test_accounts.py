@@ -273,3 +273,65 @@ def test_privacy_page_is_public():
     r = anon.get("/privacy", follow_redirects=False)
     assert r.status_code == 200 and b"Sign in with Google" in r.content and b"not sold" in r.content
     assert b'href="/privacy"' in anon.get("/login").content
+
+
+def test_early_access_code_skips_sign_up_as_an_internal_tester(monkeypatch):
+    """YZ 2026-10-19: showcase visitors type a code (access20), skip sign-up, show up as Internal tester and use the
+    owner's AI key with no limit."""
+    from opensketch import aikeys
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-test")
+    monkeypatch.delenv("OPENSKETCH_ACCESS_CODE", raising=False)
+    auth._fails.clear()
+    owner = TestClient(server.app)
+    _owner(owner)
+    visitor = TestClient(server.app)
+    assert visitor.get("/access").status_code == 410  # no code set: closed
+    assert b"/access" not in visitor.get("/login").content
+
+    monkeypatch.setenv("OPENSKETCH_ACCESS_CODE", "access20")  # the server's code (fly.toml)
+    assert b'href="/access"' in visitor.get("/login").content
+    assert b'value="access20"' in visitor.get("/access?code=access20").content  # a link can carry the code
+    r = visitor.post("/access", data={"code": "access21", "next": "/"}, follow_redirects=False)
+    assert r.status_code == 401 and b"not right" in r.content
+    r = visitor.post("/access", data={"code": " Access20 ", "next": "/?view=files"}, follow_redirects=False)
+    assert r.status_code == 303 and r.headers["location"] == "/?view=files" and "opensketch_user=" in r.headers["set-cookie"]
+    me = visitor.get("/api/account").json()["user"]
+    assert me["name"] == "Internal tester 1" and me["tester"] and me["role"] == "tester"
+    assert "access" not in visitor.get("/api/account").json()  # the code is the owner's to see
+    assert visitor.get("/access", follow_redirects=False).headers["location"] == "/"  # already in
+    # their own Files, and the server's AI key even with open sign-up on (members lose it then)
+    doc = visitor.post("/api/docs", json={"name": "", "kind": "part"}).json()
+    assert [d["id"] for d in visitor.get("/api/docs").json()] == [doc["id"]]
+    assert owner.get(f"/api/docs/{doc['id']}").status_code == 404
+    accounts.set_open_signup(True)
+    assert aikeys.effective(me)["source"] == "server"
+    assert visitor.get("/api/ai/status").json()["available"]
+    second = TestClient(server.app)
+    second.post("/access", data={"code": "access20", "next": "/"})
+    assert second.get("/api/account").json()["user"]["name"] == "Internal tester 2"
+
+    # the owner sees, changes, turns off and clears it
+    a = owner.get("/api/account").json()["access"]
+    assert a == {"code": "access20", "on": True, "source": "server", "testers": 2, "link": "http://testserver/access"}
+    assert owner.post("/api/account/settings", json={"access_code": "no"}).status_code == 400  # too short
+    assert owner.post("/api/account/settings", json={"access_code": "showcase-2026"}).json()["access"]["code"] == "showcase-2026"
+    third = TestClient(server.app)
+    assert third.post("/access", data={"code": "access20"}, follow_redirects=False).status_code == 401  # the old code is gone
+    assert third.post("/access", data={"code": "SHOWCASE-2026"}, follow_redirects=False).status_code == 303
+    assert owner.post("/api/account/settings", json={"access_on": False}).json()["access"]["on"] is False
+    assert TestClient(server.app).get("/access").status_code == 410
+    assert visitor.post("/api/account/settings", json={"access_on": True}).status_code == 403  # owner only
+    assert owner.delete("/api/account/testers").json() == {"removed": 3}
+    assert visitor.get("/api/docs").status_code == 401  # signed out at once
+    assert [u["role"] for u in accounts.list_users()] == ["owner"]
+
+
+def test_access_code_guessing_is_limited(monkeypatch):
+    monkeypatch.setenv("OPENSKETCH_ACCESS_CODE", "access20")
+    auth._fails.clear()
+    _owner(TestClient(server.app))
+    c = TestClient(server.app)
+    codes = [c.post("/access", data={"code": f"guess{i}"}, follow_redirects=False).status_code for i in range(auth.LIMIT + 1)]
+    assert codes[:auth.LIMIT] == [401] * auth.LIMIT and codes[-1] == 429
+    assert c.post("/access", data={"code": "access20"}, follow_redirects=False).status_code == 429  # waits even when right
+    auth._fails.clear()

@@ -468,6 +468,13 @@ select.cx-model { cursor: pointer; }
 .acct-steps b { color: var(--text); font-weight: 600; }
 .acct-steps a { color: var(--accent); }
 .acct-g { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line, var(--border)); color: var(--text-2, var(--text)); }
+/* People on this server > Early access (account.js accessSection) */
+.acct-access { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line, var(--border)); }
+.acct-access > .acct-l { margin-top: 0; font-weight: 600; color: var(--text, inherit); font-size: 12px; }
+.acct-access .acct-toggle { margin-top: 8px; }
+.acct-access .srv-url { margin-top: 10px; }
+.acct-access .acct-note b { color: var(--text, inherit); font-weight: 600; overflow-wrap: anywhere; }
+.acct-access .acct-g { border-top: 0; padding-top: 0; margin-top: 10px; }
 
 /* Account settings: AI apps that signed in */
 .acct-applist { display: flex; flex-direction: column; gap: 2px; margin-top: 6px; }

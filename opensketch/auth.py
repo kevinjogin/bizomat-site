@@ -349,10 +349,26 @@ def _login_page(nxt, error="", email=""):
               '<span class="note">Forgot your password? Ask the server owner for help.</span>')
     signup = '<a href="/signup">Create an account</a>' if accounts.settings()["open_signup"] else ""
     links = f'<div class="links">{forgot}{signup}</div>'
+    if accounts.access_code():
+        links += '<div class="links"><a href="/access">Have an early access code?</a></div>'
     return _page("Sign in", "Sign in to your OpenSketch account.", "/login",
                  [_field("email", "Email", "email", "username", not email, email),
                   _field("password", "Password", "password", "current-password", bool(email))], "Sign in", nxt, error, links,
                  _google_block(nxt))
+
+
+def _access_page(nxt="/", error="", code=""):
+    """Early access: type the owner's code, skip sign-up, work as an Internal tester (accounts.create_tester)."""
+    return _page("Early access", "Enter your access code to try OpenSketch. No account or AI key needed.", "/access",
+                 [_field("code", "Access code", "text", "off", True, code).replace(
+                     'autocomplete="off"', 'autocomplete="off" spellcheck="false" autocapitalize="off"')], "Start", nxt, error,
+                 '<div class="links"><a href="/login">I have an account</a></div>')
+
+
+def _access_closed_page() -> bytes:
+    page = _page("Early access", "Early access is closed right now. Ask the person who gave you the code.", "/login", [],
+                 "Sign in instead", "/")
+    return page.replace(b'method="post" action="/login"', b'method="get" action="/login"').replace(b'<input type="hidden" name="next" value="/">', b"")
 
 
 def _signup_page(nxt="/", error="", form=None):
@@ -519,7 +535,7 @@ class PasswordGate:
             mode()
         except accounts.AccountError as e:  # damaged or missing accounts file: closed, never open
             return await _send(send, 503, json.dumps({"error": str(e)}).encode(), [(b"content-type", b"application/json")])
-        if path in ("/login", "/setup", "/reset", "/logout", "/signup") or path.startswith("/join/") or path.startswith("/auth/google"):
+        if path in ("/login", "/setup", "/reset", "/logout", "/signup", "/access") or path.startswith("/join/") or path.startswith("/auth/google"):
             return await self._page(path, scope, receive, send)
         # /mcp and /mcp/<key>, /review/: their tokens are the keys. OAuth metadata, registration, token and revoke are
         # for AI apps (no cookies). GET /api/features: the command list (no document data), which the read-only
@@ -561,6 +577,28 @@ class PasswordGate:
 
         if path == "/auth/google" or path == "/auth/google/callback":
             return await self._google(path, scope, q, go, send)
+
+        if path == "/access":
+            if m != "accounts":
+                return await go("/login" if m == "password" else "/")
+            if not accounts.access_code():
+                return await _send(send, 410, _access_closed_page(), HTML)
+            if not post:
+                if current_user(scope) is not None:
+                    return await go(nxt)  # already signed in on this browser
+                return await _send(send, 200, _access_page(nxt, code=(q.get("code") or "")[:40]), HTML)
+            ip = "ip:" + _client(scope)
+            if _limited(ip):
+                return await _send(send, 429, _access_page(nxt, TOO_MANY), HTML)
+            if not accounts.check_access(form.get("code", "")):
+                _failed(ip)
+                await asyncio.sleep(1)  # slow down guessing
+                return await _send(send, 401, _access_page(nxt, "That code is not right. Check it and try again."), HTML)
+            try:
+                u = await asyncio.to_thread(accounts.create_tester)
+            except accounts.AccountError as e:
+                return await _send(send, 400, _access_page(nxt, str(e)), HTML)
+            return await go(nxt, _set_account_cookie(scope, await asyncio.to_thread(accounts.start_session, u["id"])))
 
         if path == "/signup":
             if m != "accounts" or not accounts.settings()["open_signup"]:

@@ -32,7 +32,7 @@ export class Account {
     const a = h('div', 'avatar' + (u && !u.legacy ? '' : ' none'), u && !u.legacy ? initials(u.name) : '');
     if (u && !u.legacy) a.style.background = colorFor(u.email);
     else a.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 21c1-4.5 4.5-6.5 8-6.5s7 2 8 6.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
-    a.title = u && !u.legacy ? `${u.name} (${u.email})` : 'Account';
+    a.title = u && u.tester ? `${u.name} (early access)` : u && !u.legacy ? `${u.name} (${u.email})` : 'Account';
     a.setAttribute('role', 'button'); a.setAttribute('aria-label', 'Account menu'); a.tabIndex = 0;
     a.onclick = () => this.menu();
     a.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.menu(); } };
@@ -44,7 +44,11 @@ export class Account {
     const r = (anchor || this.el).getBoundingClientRect();
     const u = this.user, m = this.info?.mode;
     const items = [];
-    if (u && !u.legacy) {
+    if (u && u.tester) { // early access: no password or email to manage
+      items.push({ head: `${u.name} - early access` });
+      items.push({ label: 'Files', run: () => this.app.files?.open() });
+      items.push({ label: 'Connect AI...', run: () => this.app.server?.connectDialog() });
+    } else if (u && !u.legacy) {
       items.push({ head: `${u.name} - ${u.email}` });
       items.push({ label: 'Account settings...', run: () => this.settings() });
       items.push({ label: 'Files', run: () => this.app.files?.open() });
@@ -148,8 +152,8 @@ export class Account {
     for (const p of this.info.users || []) {
       const row = h('div', 'acct-p');
       const av = h('span', 'avatar', initials(p.name)); av.style.background = colorFor(p.email);
-      const who = h('span', 'acct-who'); who.append(h('b', null, p.name), h('span', null, p.email));
-      row.append(av, who, h('span', 'acct-role', p.role === 'owner' ? 'Owner' : 'Member'));
+      const who = h('span', 'acct-who'); who.append(h('b', null, p.name), h('span', null, p.tester ? 'Early access code' : p.email));
+      row.append(av, who, h('span', 'acct-role', p.role === 'owner' ? 'Owner' : p.tester ? 'Internal tester' : 'Member'));
       if (p.role !== 'owner') {
         const rm = h('button', 'btn', 'Remove');
         rm.onclick = () => dialog({ title: 'Remove person', cls: 'acct-dlg', body: `<p class="fv-p">Remove <b>${esc(p.name)}</b> (${esc(p.email)})? They are signed out at once and can no longer sign in. Their files stay on the server.</p>`,
@@ -177,7 +181,61 @@ export class Account {
     const gb = h('button', 'btn', this.info.google ? 'Settings...' : 'Set up...'); gb.onclick = () => setTimeout(() => this.google(), 0);
     g.appendChild(gb); body.appendChild(g);
     if (this.info.pending_invites) body.appendChild(h('div', 'acct-note', `${this.info.pending_invites} invite link(s) not used yet.`));
+    if (this.info.access) body.appendChild(this.accessSection(this.info.access, list));
     dialog({ title: 'People on this server', body, cls: 'acct-dlg', buttons: [{ label: 'Invite people...', run: () => { setTimeout(() => this.invite(), 0); } }, { label: 'Done', primary: true }] });
+  }
+
+  // Owner: the early-access code. People who type it skip sign-up, appear as "Internal tester N" and use the
+  // server's AI key with no limit (accounts.create_tester, aikeys.effective).
+  accessSection(st, list) {
+    const box = h('div', 'acct-access');
+    box.appendChild(h('div', 'acct-l', 'Early access'));
+    const tog = h('label', 'acct-toggle');
+    const cb = h('input'); cb.type = 'checkbox'; cb.checked = !!st.on;
+    tog.append(cb, h('span', null, 'Anyone with the code can try OpenSketch without signing up'));
+    const row = h('div', 'srv-url');
+    const inp = h('input', 'acct-i'); inp.value = st.code || ''; inp.placeholder = 'access20'; inp.spellcheck = false; inp.autocomplete = 'off';
+    inp.addEventListener('keydown', (e) => e.stopPropagation());
+    const save = h('button', 'btn', 'Save code');
+    row.append(inp, save);
+    const link = h('div', 'acct-note');
+    const note = h('div', 'acct-note');
+    const err = h('div', 'acct-err'); err.setAttribute('role', 'alert');
+    const testers = h('div', 'acct-g');
+    const show = (a) => {
+      st = a; cb.checked = !!a.on; inp.value = a.code || '';
+      link.innerHTML = a.on ? `They go to <b>${esc(a.link)}</b> and type the code, or use <b>${esc(a.link)}?code=${esc(encodeURIComponent(a.code))}</b>.` : 'Off: the code does not work.';
+      note.textContent = 'Testers get their own Files, show up as Internal tester, and use your AI key with no limit, so share the code only with people you trust. Change it or turn it off any time.';
+      testers.innerHTML = '';
+      testers.append(h('span', null, `${a.testers} internal tester${a.testers === 1 ? '' : 's'}.`));
+      if (a.testers) {
+        const rm = h('button', 'btn', 'Remove all testers');
+        rm.onclick = () => dialog({ title: 'Remove all testers', cls: 'acct-dlg', body: `<p class="fv-p">Remove all ${a.testers} internal testers? They are signed out at once. Their files stay on the server.</p>`,
+          buttons: [{ label: 'Cancel' }, { label: 'Remove all', primary: true, danger: true, run: () => {
+            fetch('/api/account/testers', { method: 'DELETE' }).then((x) => x.json()).then((r) => {
+              if (r.error || r.detail) { message('People', esc(r.error || r.detail)); return; }
+              list.querySelectorAll('.acct-p').forEach((el) => { if (el.querySelector('.acct-role')?.textContent === 'Internal tester') el.remove(); });
+              show({ ...st, testers: 0 });
+            }).catch(() => message('People', 'Could not remove them. Check your connection and try again.'));
+          } }] });
+        testers.appendChild(rm);
+      }
+    };
+    const send = async (payload) => {
+      err.textContent = '';
+      try {
+        const r = await fetch('/api/account/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        const j = await r.json();
+        if (!r.ok || j.error) throw new Error(j.error || j.detail || 'Could not save.');
+        show(j.access); this.info.access = j.access;
+        return true;
+      } catch (e) { err.textContent = e.message; return false; }
+    };
+    cb.onchange = async () => { if (!(await send({ access_on: cb.checked, access_code: inp.value.trim() }))) cb.checked = !cb.checked; };
+    save.onclick = async () => { if (await send({ access_code: inp.value.trim() })) this.app.toast?.('Access code saved.'); };
+    box.append(tog, row, link, note, err, testers);
+    show(st);
+    return box;
   }
 
   // Owner: turn on "Continue with Google" by pasting a Web application OAuth client from Google Cloud.
