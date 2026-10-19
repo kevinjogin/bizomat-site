@@ -913,7 +913,8 @@ def api_account(request: Request):
            "google": oauth.enabled(), **accounts.settings()}
     if u and u.get("role") == "owner" and m == "accounts":
         out["users"] = accounts.list_users()
-        out["pending_invites"] = accounts.pending_invites()
+        out["invites"] = accounts.list_invites()
+        out["pending_invites"] = len(out["invites"])
         out["access"] = dict(accounts.access_settings(), testers=len(accounts.tester_ids()),
                              link=f"{_base(request)}/access")
     return out
@@ -939,6 +940,26 @@ def api_account_update(req: AccountUpdate, request: Request):
     except accounts.AccountError as e:
         return JSONResponse({"error": str(e)}, status_code=400)
     return {"user": accounts.get(u["id"]), "signed_out": bool(req.new_password)}
+
+
+class KeepWork(BaseModel):
+    name: str | None = None
+    email: str
+    password: str
+
+
+@app.post("/api/account/keep")
+def api_account_keep(req: KeepWork, request: Request):
+    """Early access: the tester adds an email and password to their account, so signing out (or another browser)
+    no longer loses their files. They stay a tester (the access code still decides their AI)."""
+    from . import accounts
+    u = _user(request)
+    if not u or not u.get("tester"):
+        return JSONResponse({"error": "Only early-access accounts need this."}, status_code=400)
+    try:
+        return {"user": accounts.keep_tester(u["id"], req.email, req.name or "", req.password)}
+    except accounts.AccountError as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
 
 
 class AccountSettings(BaseModel):
@@ -1015,12 +1036,34 @@ def api_google_off(request: Request):
     return oauth.public(_google_redirect(request))
 
 
+class InviteRequest(BaseModel):
+    note: str | None = None  # who it is for ("for Alex"), shown in People on this server
+
+
 @app.post("/api/account/invites")
-def api_invite(request: Request):
+def api_invite(request: Request, req: InviteRequest | None = None):
     from . import accounts
     u = _owner(request)
-    token = accounts.create_invite(u["id"])
-    return {"url": f"{_base(request)}/join/{token}", "days": accounts.INVITE_DAYS}
+    token = accounts.create_invite(u["id"], (req.note if req else "") or "")
+    return {"url": f"{_base(request)}/join/{token}", "days": accounts.INVITE_DAYS, "invites": accounts.list_invites()}
+
+
+@app.get("/api/account/invites")
+def api_invites(request: Request):
+    """Owner: invite links not used yet (never the links themselves: only their SHA-256 is kept)."""
+    from . import accounts
+    _owner(request)
+    return {"invites": accounts.list_invites()}
+
+
+@app.delete("/api/account/invites/{invite_id}")
+def api_invite_revoke(invite_id: str, request: Request):
+    """Owner: an invite link stops working at once."""
+    from . import accounts
+    _owner(request)
+    if not accounts.revoke_invite(invite_id):
+        raise HTTPException(404, "No such invite. It may have been used or expired.")
+    return {"invites": accounts.list_invites()}
 
 
 @app.delete("/api/account/users/{user_id}")
@@ -1046,6 +1089,17 @@ def api_connect(request: Request):
             "mcp_url": f"{base}/mcp/{auth.mcp_token_for(u)}", "password_set": bool(auth.password()),
             "codespace": bool(os.environ.get("CODESPACE_NAME")), "app_url": base, "accounts": auth.mode() == "accounts",
             "personal": bool(u and not u.get("legacy") and u.get("role") != "owner")}
+
+
+@app.post("/api/connect/new_address")
+def api_connect_new_address(request: Request):
+    """A new private address (/mcp/<key>) for the signed-in person: the old one stops working at once."""
+    from . import accounts
+    u = _user(request)
+    if not u or u.get("legacy"):
+        return JSONResponse({"error": "Create an account first."}, status_code=400)
+    accounts.new_mcp_address(u["id"])
+    return {"mcp_url": f"{auth.public_url(dict(request.headers))}/mcp/{auth.mcp_token_for(u)}"}
 
 
 @app.get("/mcp/artifacts/{artifact_id}/{filename}")
@@ -1513,6 +1567,15 @@ def api_apps(request: Request):
     from . import mcpauth
     u = _user(request)
     return {"apps": mcpauth.grants_for(u["id"] if u else "local")}
+
+
+@app.delete("/api/account/apps")
+def api_apps_disconnect_all(request: Request):
+    """Sign every AI app out of this person's account (each has to sign in again)."""
+    from . import mcpauth
+    u = _user(request)
+    mcpauth.drop_user(u["id"] if u else "local")
+    return {"apps": []}
 
 
 @app.delete("/api/account/apps/{grant_id}")

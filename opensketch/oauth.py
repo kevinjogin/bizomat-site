@@ -144,10 +144,11 @@ def read_state(cookie: str) -> dict | None:
     return data if isinstance(data, dict) and data.get("exp", 0) > time.time() else None
 
 
-def start(redirect_uri: str, nxt: str = "/", invite: str = "") -> tuple[str, str]:
-    """(URL to send the browser to, signed state cookie value)."""
+def start(redirect_uri: str, nxt: str = "/", invite: str = "", keep: str = "") -> tuple[str, str]:
+    """(URL to send the browser to, signed state cookie value). keep: the early-access tester who is adding this
+    Google account to their own account (Keep my work), instead of signing in."""
     state = secrets.token_urlsafe(24)
-    cookie = sign_state({"s": state, "n": nxt, "i": invite, "r": redirect_uri, "exp": int(time.time()) + STATE_TTL})
+    cookie = sign_state({"s": state, "n": nxt, "i": invite, "k": keep, "r": redirect_uri, "exp": int(time.time()) + STATE_TTL})
     url = AUTH_URL + "?" + urlencode({"client_id": client()[0], "redirect_uri": redirect_uri,
                                       "response_type": "code", "scope": "openid email profile", "state": state,
                                       "prompt": "select_account"})
