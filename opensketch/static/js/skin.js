@@ -31,10 +31,11 @@ const ICONS = {
 };
 export const ICON_SWAP = SKIN === 'linear' ? ICONS[THEME] : null;
 
-// 3D colours in the graphics area.
+// 3D colours in the graphics area. Hover (what a click will pick) is orange, as in SOLIDWORKS and the sketch;
+// selection is the indigo accent, so the two never look alike.
 export const VIEW_COLORS = SKIN !== 'linear' ? null : THEME === 'dark'
-  ? { body: 0x8d9199, edge: 0x16171a, hl: 0x9ea6ff, sel: 0x6e79ff, planeEdge: 0x8b93ff, plane: 0x5e6ad2 }
-  : { body: 0xc9ccd2, edge: 0x2a2b2f, hl: 0x9ea6ff, sel: 0x5e6ad2, planeEdge: 0x5e6ad2, plane: 0xb9bef5 };
+  ? { body: 0x8d9199, edge: 0x16171a, hl: 0xffb35c, sel: 0x6e79ff, planeEdge: 0x8b93ff, plane: 0x5e6ad2 }
+  : { body: 0xc9ccd2, edge: 0x2a2b2f, hl: 0xe8890c, sel: 0x5e6ad2, planeEdge: 0x5e6ad2, plane: 0xb9bef5 };
 
 // Sketch colours: the meaning stays (under = blue, fully = the ink colour, over = red); on a dark
 // canvas the ink is light and the blue lighter.

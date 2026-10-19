@@ -159,7 +159,7 @@ export class ServerDocs {
   // replaced) and send it in the background.
   leaveThumb() {
     const L = this.link, app = this.app;
-    if (!L || !this.thumbPending || app.proposal || app.reviewMode) return;
+    if (!L || !this.thumbPending || app.proposal || app.reviewMode || app.docStack?.length) return;
     this.thumbPending = false;
     clearTimeout(this.thumbTimer);
     const version = L.version + (L.local ? 1 : 0);
@@ -181,7 +181,9 @@ export class ServerDocs {
   async uploadThumb() {
     const L = this.link, app = this.app;
     if (!L || app.reviewMode) return;
-    if (app.proposal || app.taskpane?.busy || app.live?.active || L.local || this.pushing) { this.scheduleThumb(3000); return; }
+    // not while the person is turning the view or working in a command, a sketch or a part opened from the
+    // assembly (the picture would show that, not the file); the picture is taken when things are still
+    if (app.proposal || app.taskpane?.busy || app.live?.active || L.local || this.pushing || app.viewer.isNavigating?.() || app.cmd || app.mode === 'sketch' || app.docStack?.length) { this.scheduleThumb(3000); return; }
     this.thumbAt = Date.now();
     this.thumbPending = false;
     let blob = null;

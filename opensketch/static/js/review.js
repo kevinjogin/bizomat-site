@@ -5,6 +5,7 @@
 
 import * as THREE from 'three';
 import { regenLocal, measurePair } from './asmsolver.js';
+import { buildPartMesh } from './viewer.js';
 import { escapeHtml as esc } from './model-utils.js';
 import { fmt } from './sketch/geom2d.js';
 
@@ -124,13 +125,13 @@ export class MotionReview {
     const ok = (text) => items.push({ icon: 'ok', text });
     const bad = (text, go) => items.push({ icon: 'interference', text, go, bad: true });
     if (c.errors.length) for (const e of c.errors) bad(e); else ok('No rebuild or mate errors.');
-    if (c.clashes_rest.length) for (const x of c.clashes_rest) bad(`Clash as assembled: ${nm(x.a)} and ${nm(x.b)} (${fmt(x.volume_mm3, 3)} mm^3).`, () => this.flag([x.a, x.b]));
+    if (c.clashes_rest.length) for (const x of c.clashes_rest) bad(`Clash as assembled: ${nm(x.a)} and ${nm(x.b)} (${fmt(x.volume_mm3, 3)} mm³).`, () => this.flag([x.a, x.b]));
     else ok('No clashes as assembled.');
     for (const j of c.joints) {
       const u = j.unit === 'mm' ? 'mm' : 'deg';
       const m = this.app.doc.mates.find((x) => x.id === j.id);
       if (j.clashes.length) {
-        for (const x of j.clashes) bad(`${j.name}: ${nm(x.a)} hits ${nm(x.b)} at ${fmt(x.value, 1)} ${u} (${fmt(x.volume_mm3, 3)} mm^3).`, () => { this.goTo(j.id, x.value); this.flag([x.a, x.b]); });
+        for (const x of j.clashes) bad(`${j.name}: ${nm(x.a)} hits ${nm(x.b)} at ${fmt(x.value, 1)} ${u} (${fmt(x.volume_mm3, 3)} mm³).`, () => { this.goTo(j.id, x.value); this.flag([x.a, x.b]); });
       } else ok(`${j.name}: clear through ${fmt(j.reached[0], 1)} to ${fmt(j.reached[1], 1)} ${u} (${j.poses_checked} poses).`);
       if (m) {
         const [lo, hi] = jointRange(m);
@@ -208,13 +209,16 @@ export class MotionReview {
   setJoint(id, v) {
     const app = this.app, asm = app.asm;
     this.values[id] = v;
-    if (!asm.canSolveLocally(this.work)) {
+    // whether the parts are the ones the server built is asked once per build, not on every Play frame
+    if (this.localFor !== asm.partsInfo) { this.localOK = asm.canSolveLocally(this.work); this.localFor = asm.partsInfo; }
+    if (!this.localOK) {
       if (this.readOnly) return;
       // a part changed since the server last built it: rebuild once, then solve here
-      if (!this.rebuilding) this.rebuilding = asm.regen().then(() => { this.rebuilding = null; this.work = app.cleanDoc(app.doc); this.setJoint(id, this.values[id]); });
+      if (!this.rebuilding) this.rebuilding = asm.regen().then(() => { this.rebuilding = null; this.work = app.cleanDoc(app.doc); this.localFor = null; this.setJoint(id, this.values[id]); });
       return;
     }
-    const d = clone(this.work);
+    // the solver needs only components and mates: a Play frame copies those, not the parts
+    const d = { components: clone(this.work.components), mates: clone(this.work.mates) };
     const m = d.mates.find((x) => x.id === id);
     if (!m) return;
     pin(m, v);
@@ -326,23 +330,15 @@ export class MotionReview {
     v.clearGroup(this.ghost);
     if (this.showGhost && this.shared?.old?.length) {
       const mat = new THREE.MeshBasicMaterial({ color: 0x7a8794, transparent: true, opacity: 0.18, depthWrite: false });
+      const lm = new THREE.LineBasicMaterial({ color: 0x7a8794, transparent: true, opacity: 0.5 });
       for (const o of this.shared.old) {
         const g = new THREE.Group();
         g.matrixAutoUpdate = false;
         const M = o.matrix;
         g.matrix.set(...M);
-        for (const f of o.body.faces) {
-          const geo = new THREE.BufferGeometry();
-          geo.setAttribute('position', new THREE.Float32BufferAttribute(f.positions, 3));
-          geo.setIndex(f.indices);
-          g.add(new THREE.Mesh(geo, mat));
-        }
-        const lm = new THREE.LineBasicMaterial({ color: 0x7a8794, transparent: true, opacity: 0.5 });
-        for (const e of o.body.edges) {
-          const geo = new THREE.BufferGeometry();
-          geo.setAttribute('position', new THREE.Float32BufferAttribute(e.points, 3));
-          g.add(new THREE.Line(geo, lm));
-        }
+        const pm = buildPartMesh(o.body); // one mesh and one set of lines per old part
+        pm.geo.userData.shared = false; pm.egeo.userData.shared = false;
+        g.add(new THREE.Mesh(pm.geo, mat), new THREE.LineSegments(pm.egeo, lm));
         this.ghost.add(g);
       }
     }
