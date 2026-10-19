@@ -2,9 +2,10 @@
 # Keeps OpenSketch running in the codespace and up to date with GitHub.
 #
 # Every OPENSKETCH_UPDATE_SECONDS (default 60) it fetches origin/main. When there is something new it
-# fast-forwards, reinstalls the Python package if pyproject.toml changed, and restarts the server, so a
-# push to main reaches the open codespace within about a minute. The browser tab notices the new
-# version (/api/version) and offers to reload. It also restarts the server if it ever stops.
+# fast-forwards, reinstalls the Python packages if pyproject.toml or requirements*.txt changed, and
+# restarts the server, so a push to main reaches the open codespace within about a minute. The browser
+# tab notices the new version (/api/version) and offers to reload. It also restarts the server if it
+# ever stops.
 #
 # It never throws work away: if files in the codespace were edited (tracked changes) or the branch has
 # its own commits, it does not update and says so in the browser instead.
@@ -54,9 +55,10 @@ update() {
   git merge -q --ff-only origin/main || { note "Not updated: git could not fast-forward."; return 1; }
   rm -f "$NOTE"
   LOG "updated $(git rev-parse --short "$head") -> $(git rev-parse --short HEAD)"
-  if grep -qx 'pyproject.toml' <<<"$changed"; then
-    LOG "pyproject.toml changed: reinstalling"
-    "$PY" -m pip install --no-cache-dir -q -e ".[ai,dev]" || note "Updated, but installing the new requirements failed. See the terminal."
+  if grep -Eqx 'pyproject\.toml|requirements(-dev)?\.txt' <<<"$changed"; then
+    LOG "requirements changed: reinstalling"
+    { "$PY" -m pip install --no-cache-dir -q -r requirements-dev.txt && "$PY" -m pip install --no-cache-dir -q --no-deps -e .; } \
+      || note "Updated, but installing the new requirements failed. See the terminal."
   fi
   grep -qx '.devcontainer/run.sh' <<<"$changed" && RESTART_SELF=1
   if grep -Eq '^\.devcontainer/(devcontainer\.json|setup\.sh)$' <<<"$changed"; then
