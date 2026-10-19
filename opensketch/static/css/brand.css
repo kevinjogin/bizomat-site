@@ -109,6 +109,7 @@ a.fv-pill { line-height: 34px; }
 /* ---------------------------------------------------------------- Files page */
 .files-view { position: fixed; inset: 0; z-index: 150; display: grid; grid-template-rows: 56px 1fr; background: var(--content); color: var(--text); font-size: 13px;
   animation: os-fade var(--t-med) var(--ease); outline: none; }
+.skin-linear .files-view:focus-visible { outline: none; } /* the page itself takes focus only to catch keys; its cards and fields show the ring */
 .files-view.leaving { animation: os-fadeout 150ms var(--ease-in) forwards; pointer-events: none; }
 @keyframes os-fade { from { opacity: 0; } }
 @keyframes os-fadeout { to { opacity: 0; } }
