@@ -17,7 +17,11 @@ const STATIC = /^\/(css|js|vendor|icons|fonts)\/|^\/(favicon\.svg|manifest\.webm
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE)
-      .then((c) => Promise.all(ASSETS.map((u) => fetch(u, { cache: 'no-cache' }).then((r) => (r.ok && !r.redirected ? c.put(u, r) : null)).catch(() => null))))
+      .then((c) => Promise.all([
+        ...ASSETS.map((u) => fetch(u, { cache: 'no-cache' }).then((r) => (r.ok && !r.redirected ? c.put(u, r) : null)).catch(() => null)),
+        // the app page itself, so the first reload without a network still opens the app (not a sign-in redirect)
+        fetch('/', { cache: 'no-cache' }).then((r) => (r.ok && !r.redirected ? c.put(SHELL, r) : null)).catch(() => null),
+      ]))
       .then(() => self.skipWaiting()),
   );
 });

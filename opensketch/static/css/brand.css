@@ -48,7 +48,7 @@
 .dt-state i { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
 .dt-state.saving i { background: var(--accent-text); animation: os-pulse 1s ease-in-out infinite; }
 .dt-state.offline i { background: var(--yellow); }
-.dt-state.conflict i { background: var(--red); }
+.dt-state.conflict i, .dt-state.refused i { background: var(--red); }
 .dt-state.saved { border-color: transparent; }
 .dt-state.offline { cursor: pointer; }
 .dt-state.draft { cursor: pointer; padding: 0 3px 0 9px; border-color: var(--line-2); color: var(--text-2); }
@@ -431,7 +431,7 @@ select.cx-model { cursor: pointer; }
   .doctitle .dt-name { max-width: 42vw; }
   .dt-state span { display: none; }
   .dt-state.draft span { display: none; }
-  .dt-state.offline span, .dt-state.conflict span { display: inline; } /* problems say so in words, not only a colour */
+  .dt-state.offline span, .dt-state.conflict span, .dt-state.refused span { display: inline; } /* problems say so in words, not only a colour */
   .dt-state.saved { display: none; }
   .dt-state { padding: 0 6px; }
   #ribbon { overflow-x: auto; scrollbar-width: none; }

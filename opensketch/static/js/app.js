@@ -557,8 +557,9 @@ export class App {
     if (!el) return;
     const sv = this.server;
     const st = this.reviewMode ? null : !sv?.linked ? 'draft' : sv.state;
-    const label = { draft: 'Draft', saved: 'Saved', saving: 'Saving', offline: 'Offline', conflict: 'Changed elsewhere' }[st] || '';
-    const tip = { draft: 'Only in this browser. Save it to your Files (Ctrl+S).', saved: 'Saved to your Files. Your AI sees this version.', saving: 'Saving to your Files...', offline: 'Cannot reach the server. Your edits are kept in this browser and saved when it is back.', conflict: 'The file changed elsewhere. Choose which version to keep.' }[st] || '';
+    const label = { draft: 'Draft', saved: 'Saved', saving: 'Saving', offline: 'Offline', conflict: 'Changed elsewhere', refused: 'Not saved' }[st] || '';
+    const tip = { draft: 'Only in this browser. Save it to your Files (Ctrl+S).', saved: 'Saved to your Files. Your AI sees this version.', saving: 'Saving to your Files...', offline: 'Cannot reach the server. Your edits are kept in this browser and saved when it is back.', conflict: 'The file changed elsewhere. Choose which version to keep.',
+      refused: `The server did not take this version: ${sv?.refused || ''} Your edits are kept in this browser. File > Save As > .osk downloads them.` }[st] || '';
     const name = f ? `${this.doc.name}` : (root.name || 'Untitled');
     const ctx = f ? ` in ${root.name}` : '';
     if (!this._dt) {
@@ -2117,6 +2118,7 @@ export class App {
       if (ok) { this.dirty = false; this.updateDocChrome(); this.toast('Saved to your Files.'); }
       else if (this.proposal) this.toast("Not saved yet: accept or reject the AI's change first.", 5000);
       else if (sv.state === 'conflict') this.toast('Not saved: this file changed elsewhere. Choose which version to keep in the bar above the model.', 7000);
+      else if (sv.state === 'refused') this.toast(`Not saved: ${sv.refused} Your edits are kept in this browser. File > Save As > .osk downloads them.`, 9000);
       else this.toast('Not saved yet: the server is not answering. Your edits are kept in this browser and saved when it is back.', 7000);
       return;
     }

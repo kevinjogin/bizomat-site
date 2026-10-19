@@ -21,6 +21,7 @@ const sameModel = (a, b) => JSON.stringify({ ...a, name: '' }) === JSON.stringif
 const LAST = 'opensketch.lastDoc';
 const DRAFT_LINK = 'opensketch.autosave.link'; // older pages: the browser copy was a file's, not a draft
 const UNSENT = 'opensketch.unsent.'; // + file id: edits the server does not have yet
+const OFFER = '.offer'; // a kept copy offered back with "Restore my changes", set aside until answered
 const LEFT = 'opensketch.leftNew'; // this tab removed its untouched new file as it went away (sessionStorage)
 export const LAST_KEYS = [LAST, DRAFT_LINK];
 export const store = { // per signed-in person (scope.js); off until the page knows who that is
@@ -91,15 +92,20 @@ export class ServerDocs {
 
   unsent(id) { try { return JSON.parse(store.get(UNSENT + id)) || null; } catch (_) { return null; } }
   dropUnsent(id) { store.set(UNSENT + id, null); }
+  unsentOffer(id) { try { return JSON.parse(store.get(UNSENT + id + OFFER)) || null; } catch (_) { return null; } }
 
   // After opening a file: edits from this browser that never reached the server come back.
   offerUnsent(rec) {
-    const u = this.unsent(rec.id);
+    // a copy offered before and not answered yet comes first (edits made since were kept under the usual key)
+    const offered = this.unsentOffer(rec.id);
+    const u = offered || this.unsent(rec.id);
     if (!u?.doc || this.link?.id !== rec.id) return;
-    if (sameModel(u.doc, rec.doc)) { this.dropUnsent(rec.id); return; }
+    const settle = () => { store.set(UNSENT + rec.id + OFFER, null); if (this.unsent(rec.id)?.at === u.at) this.dropUnsent(rec.id); };
+    if (sameModel(u.doc, rec.doc)) { settle(); return; }
     const app = this.app;
     const put = () => {
       if (this.link?.id !== rec.id) return;
+      store.set(UNSENT + rec.id + OFFER, null);
       app.pushUndo('Unsaved changes from this browser');
       app.doc = { ...u.doc, name: this.link.name };
       app.docChanged(); // saved now, over the server version (that one stays in the version history)
@@ -111,16 +117,18 @@ export class ServerDocs {
       app.toast?.(`Your changes from ${when} had not reached the server. They are back and saved now. Ctrl+Z takes them out.`, 8000);
       return;
     }
+    // set aside until answered: an edit made meanwhile keeps its own copy and never writes over these
+    store.set(UNSENT + rec.id + OFFER, JSON.stringify(u));
     this.showNote(`This browser has changes to ${rec.name} from ${when} that never reached the server. The file has changed since.`, [
       { label: 'Restore my changes', primary: true, title: 'Put them back and save them. The current version stays in the version history.', run: () => put() },
-      { label: 'Discard them', run: () => this.dropUnsent(rec.id) },
+      { label: 'Discard them', run: () => settle() },
     ]);
   }
 
   // A bar above the model with a question about this file's versions (one at a time).
   showNote(text, buttons) {
     let bar = $('serverbar');
-    if (!bar) { bar = document.createElement('div'); bar.id = 'serverbar'; bar.className = 'update-bar note'; $('graphics')?.appendChild(bar); }
+    if (!bar) { bar = document.createElement('div'); bar.id = 'serverbar'; bar.className = 'update-bar note'; ($('banners') || $('graphics'))?.appendChild(bar); }
     delete bar.dataset.v;
     bar.innerHTML = '';
     const span = document.createElement('span'); span.textContent = text; bar.appendChild(span);
@@ -143,7 +151,7 @@ export class ServerDocs {
     if (r.status === 401) { location.href = '/login?next=' + encodeURIComponent(location.pathname + location.search); throw new Error('Sign in first'); }
     const j = await r.json().catch(() => ({}));
     if (r.status === 409) { const e = new Error('conflict'); e.current = j.current; throw e; }
-    if (!r.ok) throw new Error(j.detail || j.error || `HTTP ${r.status}`);
+    if (!r.ok) { const e = new Error(j.detail || j.error || `HTTP ${r.status}`); e.status = r.status; throw e; }
     return j;
   }
 
@@ -452,7 +460,8 @@ export class ServerDocs {
     };
     const keep = document.createElement('button'); keep.className = 'btn'; keep.textContent = 'Keep mine';
     keep.title = 'Save your version over it. Theirs stays in the version history.';
-    keep.onclick = () => { this.hideBar(); this.link.version = h.version; this.link.local = true; this.push(); };
+    // a named save, not an autosave: the version it replaces always stays in the history
+    keep.onclick = () => { this.hideBar(); this.link.version = h.version; this.link.local = true; this.push('Kept this version over another change'); };
     bar.append(take, keep);
   }
 
@@ -527,6 +536,13 @@ export class ServerDocs {
         }
         else if (err.message === 'conflict' && err.current) this.showBar(err.current);
         else if (/No such document/.test(err.message)) { this.unlink({ keepAsDraft: true }); this.app.toast?.('This file is no longer in your Files. It stays open here as a draft: save it to keep it.', 8000); }
+        else if (err.status === 413 || err.status === 507) {
+          // the server refuses it for good (file too big, Files full, disk nearly full): say why, keep the copy here,
+          // and do not send it again until the model changes
+          this.refused = err.message; this.setState('refused');
+          this.app.toast?.(`Not saved: ${err.message} Your edits are kept in this browser. File > Save As > .osk downloads them.`, 12000);
+          return false;
+        }
         else { this.setState('offline'); this.app.status('Could not save to the server (' + err.message + '). Trying again.'); }
         if (err.message !== 'conflict' && this.link === L) { clearTimeout(this.pushTimer); this.pushTimer = setTimeout(() => this.push(summary), 5000); }
         return false;
