@@ -118,7 +118,8 @@ See the [plane contract](docs/DOCUMENT.md#conventions).
    only your Files. Account settings > Connected AI apps lists them, with Disconnect. In ChatGPT (paid plans,
    developer mode on): Settings > Apps & Connectors > Create, the address, Authentication OAuth, then sign in.
    Apps that cannot sign in can use your private address instead (Connect AI > "App cannot sign in?"); it
-   contains a key, so keep it private.
+   contains a key, so keep it private. If someone else may have seen it, Account settings > Make a new address
+   (changing your password does that too, and disconnects your AI apps).
 5. **Use it.** In a chat, turn OpenSketch on and ask, for example: "In OpenSketch, design a wall bracket
    for a 20 kg shelf using off-the-shelf screws." Open the link it gives you.
 
