@@ -154,7 +154,8 @@ export class App {
     if (hasDraft) this.dirty = true; // only in this browser: kept until saved or let go
     this.updateDocChrome();
     if (docId) {
-      if (!(await this.server.open(docId, { quiet: true }))) this.files.open();
+      const left = ServerDocs.discardedOnLeave(docId); // a reload of an untouched new file: a new one in its place
+      if (!(left ? await this.server.createAndOpen(left.kind) : await this.server.open(docId, { quiet: true }))) this.files.open();
     } else {
       if (hasDraft) this.regen().then(() => this.viewer.zoomToFit(false)); // built behind Files, so Keep editing is instant
       if (this.files.isOpen) this.files.renderGrid();
@@ -224,7 +225,7 @@ export class App {
   }
 
   // A model is on screen (anything to go back to from the Files page).
-  hasModel() { const d = this.rootDoc(); return isAssembly(d) ? (d.components || []).length > 0 || Object.keys(d.parts || {}).length > 0 : (d.features || []).length > 0 || !!this.server.linked; }
+  hasModel() { const d = this.rootDoc(); return !!this.server.linked || (isAssembly(d) ? (d.components || []).length > 0 || Object.keys(d.parts || {}).length > 0 : (d.features || []).length > 0); }
 
   // The open model is an unsaved draft with something in it (not in Files).
   dirtyDraft() {
@@ -544,7 +545,7 @@ export class App {
     this._dt.state.innerHTML = st === 'draft' ? '<span>Draft</span><b>Save to Files</b>' : `<i></i><span>${label}</span>`;
     this._dt.state.title = tip;
     this._dt.state.hidden = !st;
-    document.title = `${name}${st === 'draft' && this.dirty ? ' (draft)' : ''} - OpenSketch`;
+    if (!this.files?.isOpen) document.title = `${name}${st === 'draft' && this.dirty ? ' (draft)' : ''} - OpenSketch`; // Files has its own
   }
 
   // Rename the open file (title bar click): on the server when it is in Files.
@@ -1804,22 +1805,24 @@ export class App {
   }
 
   // ------------------------------------------------------------------ files
+  // A new part or assembly only in this browser (the server could not make the file).
+  startDraft(kind) {
+    this.server.unlink();
+    this.hideContextToolbar();
+    if (this.mode === 'sketch') this.exitSketch({ silent: true });
+    this.closeCommand();
+    this.leaveDocument();
+    this.doc = kind === 'assembly' ? newAssembly() : newDoc();
+    this.proposal = null;
+    this.docChanged();
+    this.dirty = false; this.updateDocChrome();
+    this.ribbon.setTab(kind === 'assembly' ? 'Assembly' : 'Features');
+    this.setSelection([]);
+    this.viewer.setBody(null);
+    this.regen().then(() => { this.viewer.standardView('trimetric'); this.viewer.zoomToFit(); if (kind === 'assembly') this.asm.insertPM(); });
+  }
+
   newDoc() {
-    const go = (kind) => {
-      this.server.unlink();
-      this.hideContextToolbar();
-      if (this.mode === 'sketch') this.exitSketch({ silent: true });
-      this.closeCommand();
-      this.leaveDocument();
-      this.doc = kind === 'assembly' ? newAssembly() : newDoc();
-      this.proposal = null;
-      this.docChanged();
-      this.dirty = false; this.updateDocChrome();
-      this.ribbon.setTab(kind === 'assembly' ? 'Assembly' : 'Features');
-      this.setSelection([]);
-      this.viewer.setBody(null);
-      this.regen().then(() => { this.viewer.standardView('trimetric'); this.viewer.zoomToFit(); if (kind === 'assembly') this.asm.insertPM(); });
-    };
     const body = document.createElement('div');
     body.className = 'newdoc';
     body.innerHTML = `<button class="nd" data-k="part">${icon('part', 48)}<b>Part</b><span>a 3D representation of a single design component</span></button>
@@ -1829,7 +1832,7 @@ export class App {
       n.onclick = async () => {
         dlg.close();
         if (!(await this.confirmLeaveDraft())) return;
-        if (!(await this.server.createAndOpen(n.dataset.k))) go(n.dataset.k); // no server: a draft here
+        if (!(await this.server.createAndOpen(n.dataset.k, { onShown: () => this.files.close() }))) { this.startDraft(n.dataset.k); this.files.close(); } // no server: a draft here
       };
     });
     setTimeout(() => body.querySelector('.nd')?.focus(), 0);
@@ -2220,14 +2223,21 @@ export class App {
     const t = document.createElement('div');
     t.className = 'toast2';
     const span = document.createElement('span'); span.textContent = msg; t.appendChild(span);
-    let timer = null;
-    const close = () => { clearTimeout(timer); t.classList.add('out'); setTimeout(() => t.remove(), 180); };
+    let timer = null, closed = false;
+    const close = () => { if (closed) return; closed = true; clearTimeout(timer); t.classList.add('out'); setTimeout(() => t.remove(), 180); };
     if (action) {
       const b = document.createElement('button'); b.className = 'toast-act'; b.textContent = action.label;
       b.onclick = () => { close(); action.run(); };
       t.appendChild(b);
+      if (ms) ms = Math.max(ms, 8000); // time to reach the button
     }
     host.appendChild(t);
+    // the time stops while the pointer or focus is on it (reaching for Undo never loses it)
+    let left = ms, started = Date.now();
+    const pause = () => { if (!ms || closed) return; clearTimeout(timer); timer = null; left -= Date.now() - started; };
+    const resume = () => { if (!ms || closed || t.matches(':hover') || t.contains(document.activeElement)) return; started = Date.now(); clearTimeout(timer); timer = setTimeout(close, Math.max(left, 2000)); };
+    t.addEventListener('mouseenter', pause); t.addEventListener('focusin', pause);
+    t.addEventListener('mouseleave', resume); t.addEventListener('focusout', () => setTimeout(resume, 0));
     if (ms) timer = setTimeout(close, ms);
     return { close };
   }

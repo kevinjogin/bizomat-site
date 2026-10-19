@@ -20,6 +20,7 @@ const sleep = (ms) => new Promise((ok) => setTimeout(ok, Math.max(0, ms)));
 const LAST = 'opensketch.lastDoc';
 const DRAFT_LINK = 'opensketch.autosave.link'; // older pages: the browser copy was a file's, not a draft
 const UNSENT = 'opensketch.unsent.'; // + file id: edits the server does not have yet
+const LEFT = 'opensketch.leftNew'; // this tab removed its untouched new file as it went away (sessionStorage)
 export const LAST_KEYS = [LAST, DRAFT_LINK];
 export const store = { // per signed-in person (scope.js); off until the page knows who that is
   get: (k) => { if (!scopeKnown()) return null; try { return localStorage.getItem(skey(k)); } catch (_) { return null; } },
@@ -49,8 +50,10 @@ export class ServerDocs {
     this.state = 'draft'; // draft | saved | saving | offline | conflict
     this.thumbTimer = null;
     this.thumbAt = 0;
+    // back from the browser's page cache after the untouched new file was removed: start again cleanly
+    window.addEventListener('pageshow', (e) => { if (e.persisted && this.leftNew) location.reload(); });
     // switching tabs or apps (phones may discard a hidden page): send the edits now rather than in a second
-    document.addEventListener('visibilitychange', () => { if (document.hidden && this.link?.local) this.flush(); });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) { if (this.link?.local) this.flush(); else this.sendThumbNow(); } });
     window.addEventListener('beforeunload', (e) => {
       if (this.link?.local || this.pushing || this.app.proposal) { this.flush(); e.preventDefault(); e.returnValue = ''; } // an AI change waiting is only in this page
     });
@@ -58,6 +61,7 @@ export class ServerDocs {
     // every model's unsent edits also stay in this browser, and opening the file again offers them back)
     window.addEventListener('pagehide', () => {
       const L = this.link;
+      if (this.leaveFile(L, { keepalive: true })) { try { sessionStorage.setItem(LEFT, JSON.stringify({ id: L.id, kind: L.untouched })); } catch (_) { /* */ } this.leftNew = true; }
       if (!L?.local || this.app.proposal) return;
       const body = JSON.stringify({ doc: this.app.rootDoc(), base_version: L.version, summary: '', requests: L.requests });
       if (body.length > 60000) return;
@@ -144,36 +148,44 @@ export class ServerDocs {
   }
 
   // ---------------------------------------------------------------- open / link
-  async open(id, { quiet = false } = {}) {
+  // onShown: called once the model is in the editor, before its rebuild (the Files page closes then, and the
+  // editor's own loading pill says what is happening).
+  async open(id, { quiet = false, onShown = null } = {}) {
     let rec;
     try { rec = await this.req('GET', `/api/docs/${encodeURIComponent(id)}`); } catch (err) {
       message('Open', `Could not open that document from the server: ${esc(err.message)}`);
       return false;
     }
-    if (this.link && this.link.id !== rec.id) { this.leaveThumb(); await this.flush(); clearInterval(this.pollTimer); }
+    return this.openRecord(rec, { quiet, onShown });
+  }
+
+  // Link the editor to a record and show it. untouched: the kind, for a file New just made here (removed again
+  // if it is left without a change, see leaveFile).
+  async openRecord(rec, { quiet = false, onShown = null, untouched = null } = {}) {
+    if (this.link && this.link.id !== rec.id) { const L = this.link; this.leaveThumb(); await this.flush(); clearInterval(this.pollTimer); this.leaveFile(L); }
     if (!this.link && !this.app.dirtyDraft()) this.app.forgetDraft(); // nothing worth keeping in the draft slot
-    this.link = { id: rec.id, name: rec.name, version: rec.version, local: false, requests: rec.requests || [] };
+    this.link = { id: rec.id, name: rec.name, version: rec.version, local: false, requests: rec.requests || [], untouched };
     this.shownRequests = new Set();
     this.state = 'saved';
     this.hideBar(); // a question about the previous file's versions goes with it
     store.set(LAST, rec.id);
-    await this.apply(rec, { fit: true, fresh: true });
-    this.offerUnsent(rec);
     this.setUrl(rec.id);
+    await this.apply(rec, { fit: true, fresh: true, onShown, loading: `Opening ${rec.name}` });
+    this.offerUnsent(rec);
     this.startPolling();
     if (!quiet) this.app.status(`Opened ${rec.name}. Your edits save by themselves; your AI's changes appear here.`);
     if (!rec.thumb || rec.thumb.version < rec.version || rec.thumb.source !== 'browser') this.scheduleThumb(1500);
     return true;
   }
 
-  // A new empty part or assembly in the person's Files, opened.
-  async createAndOpen(kind = 'part') {
+  // A new empty part or assembly in the person's Files, opened (the POST answers with the whole record).
+  async createAndOpen(kind = 'part', { onShown = null } = {}) {
     let rec;
     try { rec = await this.req('POST', '/api/docs', { name: '', kind }); } catch (err) {
       message('New', `Could not create it in your Files (${esc(err.message)}). Starting a draft in this browser instead.`);
       return false;
     }
-    const ok = await this.open(rec.id, { quiet: true });
+    const ok = await this.openRecord(rec, { quiet: true, onShown, untouched: kind });
     if (ok) {
       this.app.ribbon.setTab(kind === 'assembly' ? 'Assembly' : 'Features');
       this.app.viewer.standardView('trimetric');
@@ -181,6 +193,23 @@ export class ServerDocs {
       this.app.status(kind === 'assembly' ? `${rec.name} is in your Files. Insert components to start.` : `${rec.name} is in your Files. Select a plane and click Sketch to start.`);
     }
     return ok;
+  }
+
+  // Leaving a file. One New made here and never touched is removed again (the server keeps it if anything,
+  // anyone, changed it), so empty "Part N" files do not pile up in Files.
+  leaveFile(L, { keepalive = false } = {}) {
+    if (!L?.untouched || L.local) return false;
+    try { fetch(`/api/docs/${encodeURIComponent(L.id)}/discard`, { method: 'POST', keepalive }).catch(() => {}); } catch (_) { /* best effort */ }
+    return true;
+  }
+
+  // This tab left an untouched new file when it went away (a reload): open a new one in its place.
+  static discardedOnLeave(id) {
+    try {
+      const d = JSON.parse(sessionStorage.getItem(LEFT) || 'null');
+      sessionStorage.removeItem(LEFT);
+      return d && d.id === id ? d : null;
+    } catch (_) { return null; }
   }
 
   // Put the current draft in Files under a name the person chooses. Resolves true when saved (at once when the
@@ -222,7 +251,7 @@ export class ServerDocs {
   // version check without this page ever loading the other change: the poll or the bar deals with it.
   renamedOnServer(rec) {
     if (!this.link || this.link.id !== rec.id) return;
-    this.link.name = rec.name;
+    this.link.name = rec.name; this.link.untouched = null;
     if (rec.version === this.link.version + 1) this.link.version = rec.version;
     const root = this.app.docStack.length ? this.app.docStack[0].doc : this.app.doc;
     root.name = rec.name;
@@ -234,7 +263,7 @@ export class ServerDocs {
   // replaced) and send it in the background.
   leaveThumb() {
     const L = this.link, app = this.app;
-    if (!L || !this.thumbPending || app.proposal || app.reviewMode) return;
+    if (!L || !this.thumbPending || app.proposal || app.reviewMode || app.mode === 'sketch' || app.docStack?.length) return;
     this.thumbPending = false;
     clearTimeout(this.thumbTimer);
     const version = L.version + (L.local ? 1 : 0);
@@ -253,10 +282,19 @@ export class ServerDocs {
     this.thumbTimer = setTimeout(() => this.uploadThumb(), wait);
   }
 
+  // Files is opening or the page is being hidden: the picture waiting for its 20 s turn goes now.
+  sendThumbNow() {
+    if (!this.thumbPending || !this.link) return null;
+    clearTimeout(this.thumbTimer);
+    this.thumbAt = 0;
+    return this.uploadThumb();
+  }
+
   async uploadThumb() {
     const L = this.link, app = this.app;
     if (!L || app.reviewMode) return;
-    if (app.proposal || app.taskpane?.busy || app.live?.active || L.local || this.pushing) { this.scheduleThumb(3000); return; }
+    // not while a sketch is open (the sketch being edited is not in the picture) or something else is going on
+    if (app.proposal || app.taskpane?.busy || app.live?.active || L.local || this.pushing || app.mode === 'sketch' || app.docStack?.length) { this.scheduleThumb(3000); return; }
     this.thumbAt = Date.now();
     this.thumbPending = false;
     let blob = null;
@@ -289,7 +327,7 @@ export class ServerDocs {
   unlink({ keepAsDraft = false } = {}) {
     const L = this.link;
     if (!L) return;
-    if (!keepAsDraft) this.flush();
+    if (!keepAsDraft) { this.flush(); this.leaveFile(L); }
     clearTimeout(this.thumbTimer);
     if (!keepAsDraft) this.leaveThumb();
     this.link = null;
@@ -312,7 +350,7 @@ export class ServerDocs {
   // fresh: another file takes the editor and its undo history starts empty (undo is per document, as in
   // SOLIDWORKS), so Ctrl+Z right after opening a file never puts the previous model into it and saves that.
   // Otherwise (a newer version of this file) the swap is one undo step named by label.
-  async apply(rec, { fit = false, label = null, fresh = false } = {}) {
+  async apply(rec, { fit = false, label = null, fresh = false, onShown = null, loading = null } = {}) {
     const app = this.app;
     app.hideContextToolbar();
     if (app.mode === 'sketch') app.exitSketch({ silent: true });
@@ -329,12 +367,13 @@ export class ServerDocs {
     app.proposal = null;
     this.applying = true;
     try { app.docChanged(); } finally { this.applying = false; }
-    if (this.link) { this.link.version = rec.version; this.link.name = rec.name; this.link.local = false; this.link.requests = rec.requests || []; }
+    if (this.link) { this.link.version = rec.version; this.link.name = rec.name; this.link.local = false; this.link.requests = rec.requests || []; if (!fresh) this.link.untouched = null; }
     app.dirty = false; app.updateDocChrome();
     if (fit || wasAsm !== isAssembly(app.doc)) app.ribbon.setTab(isAssembly(app.doc) ? 'Assembly' : 'Features');
     if (fit) app.viewer.setBody(null);
     this.showRequests();
-    await app.regen();
+    onShown?.();
+    await app.regen(false, loading);
     if (fit) app.viewer.zoomToFit();
   }
 
@@ -415,6 +454,7 @@ export class ServerDocs {
   changed() {
     if (!this.link || this.applying) return;
     this.link.local = true;
+    this.link.untouched = null;
     if (this.state !== 'conflict') this.setState('saving');
     clearTimeout(this.pushTimer);
     this.pushTimer = setTimeout(() => this.push(), PUSH_MS);

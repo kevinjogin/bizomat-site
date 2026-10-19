@@ -47,6 +47,11 @@ globalThis.fetch = async (url, opts = {}) => {
     if (server.regenHold) await server.regenHold;
     return reply(200, { status: body.doc.features.map((f) => ({ id: f.id, state: 'ok' })), body: { faces: [{ id: 0, positions: [0, 0, 0], indices: [0] }], edges: [] }, planes: {} });
   }
+  if (method === 'GET' && u.pathname === '/api/docs') {
+    const trash = u.searchParams.get('trash') === '1';
+    return reply(200, [...server.docs.values()].filter((r) => !!r.deleted === trash)
+      .map((r) => ({ id: r.id, name: r.name, kind: r.doc.type === 'assembly' ? 'assembly' : 'part', version: r.version, by: r.by, updated: 1, created: 1, deleted: r.deleted || null, counts: { features: (r.doc.features || []).length }, thumb: null })));
+  }
   if (u.pathname === '/api/delete_plan') return reply(400, { error: 'Unknown feature x' });
   if (u.pathname === '/api/gate') return reply(401, { error: 'Sign in to OpenSketch first.' });
   const m = u.pathname.match(/^\/api\/docs\/([^/]+)(\/(\w+))?$/);
@@ -94,7 +99,7 @@ function makeApp() {
   Object.assign(app, {
     doc: part('Part1'), undoStack: [], redoStack: [], docStack: [], mode: 'part', cmd: null, selection: [], proposal: null,
     reviewMode: false, regenSeq: 0, toasts: [], statusText: '',
-    viewer: { setBody: noop, zoomToFit: noop, standardView: noop, snapshot: async () => null, setAssembly: noop },
+    viewer: { setBody: noop, zoomToFit: noop, standardView: noop, snapshot: async () => null, setAssembly: noop, resize: noop },
     ribbon: { setTab: noop, render: noop }, tree: { render: noop }, design: { refresh: noop },
     taskpane: { log: [], render: noop, add: noop, show: noop, busy: false }, live: { active: false },
     asm: {}, pm: { isOpen: false },
@@ -419,5 +424,87 @@ test('undo keeps one copy of an imported body, and the history is capped by size
   for (let i = 0; i < 30; i++) app.undo();
   assert.equal(app.doc.features.length, 1);
   assert.equal(app.doc.features[0].data, brep, 'the body comes back whole');
+  stopTimers(app);
+});
+
+// ---------------------------------------------------------------- the Files page
+globalThis.CSS = globalThis.CSS || { escape: (s) => String(s).replace(/["\\]/g, '\\$&') };
+Object.defineProperty(window.HTMLSelectElement.prototype, 'value', { configurable: true, // linkedom: a <select> value cannot be set
+  get() { const o = this.querySelector('option[selected]') || this.querySelector('option'); return o ? o.value : ''; },
+  set(v) { for (const o of this.querySelectorAll('option')) o.toggleAttribute('selected', o.value === v); } });
+const { FilesView } = await import('../../opensketch/static/js/files.js');
+const press = (el, key) => el.dispatchEvent(Object.assign(new window.Event('keydown', { bubbles: true }), { key }));
+
+async function filesApp() {
+  server.docs.clear(); server.calls = []; server.down = false;
+  const app = makeApp();
+  app.files = new FilesView(app);
+  app.startDraft = function (kind) { this.drafted = kind; };
+  app.server.connectDialog = noop;
+  await app.files.open();
+  return app;
+}
+
+test('Files: Escape goes back to an open model, and with none open neither Escape nor the wordmark makes a file', async () => {
+  const app = await filesApp();
+  assert.equal(document.title, 'Files - OpenSketch');
+  press(app.files.el, 'Escape');
+  app.files.el.querySelector('.fv-brand').onclick();
+  await tick(5);
+  assert.equal(server.calls.filter((c) => c === 'POST /api/docs').length, 0, 'no file made');
+  assert.equal(app.files.isOpen, true, 'Files stays');
+  assert.equal(app.files.el.querySelector('.fv-brand').classList.contains('plain'), true);
+  addDoc('E', part('Shaft', 1));
+  await app.server.open('E');
+  app.files.renderGrid();
+  press(app.files.el, 'Escape');
+  assert.equal(app.files.isOpen, false, 'Escape goes back to the model');
+  stopTimers(app);
+});
+
+test('Files: New part twice in a row makes one file; leaving it untouched removes it again', async () => {
+  const app = await filesApp();
+  const a = app.files.newFile('part'), b = app.files.newFile('part');
+  await Promise.all([a, b]);
+  assert.equal(server.calls.filter((c) => c === 'POST /api/docs').length, 1);
+  assert.equal(server.calls.filter((c) => c.startsWith('GET /api/docs/n')).length, 0, 'the POST answer is used, no second GET');
+  const made = app.server.link.id;
+  assert.equal(app.files.isOpen, false);
+  // left without a change: it goes again
+  addDoc('W', part('Wheel', 1));
+  await app.server.open('W');
+  await tick(5);
+  assert.equal(server.docs.has(made), false, 'the empty new file was removed');
+  // a new file that was touched stays
+  await app.files.open();
+  await app.files.newFile('part');
+  const kept = app.server.link.id;
+  app.commit('Sketch1', () => app.doc.features.push({ id: 's1', type: 'sketch', name: 'Sketch1', entities: [], constraints: [] }), false);
+  await app.server.open('W');
+  await tick(5);
+  assert.equal(server.docs.has(kept), true);
+  stopTimers(app);
+});
+
+test('Files: search redraws without replaying the entrance; Undo toast goes once the file is restored', async () => {
+  addDoc('A1', part('Alpha', 1)); addDoc('B1', part('Beta', 1));
+  const app = await filesApp();
+  addDoc('A1', part('Alpha', 1)); addDoc('B1', part('Beta', 1));
+  await app.files.load();
+  const inp = app.files.el.querySelector('.fv-search input');
+  inp.value = 'alp'; inp.oninput();
+  assert.equal(app.files.grid.classList.contains('intro'), false);
+  assert.equal(app.files.grid.querySelectorAll('.fv-card').length, 1);
+  press(inp, 'Escape');
+  assert.equal(inp.value, '', 'Escape in the search box clears it first');
+  assert.equal(app.files.isOpen, true);
+  let closed = 0;
+  app.toast = () => ({ close: () => { closed++; } });
+  server.docs.get('A1').deleted = null;
+  await app.files.trashFile({ id: 'A1', name: 'Alpha' });
+  assert.equal(app.files.undoToasts.size, 1);
+  globalThis.fetch = ((orig) => async (url, opts) => (String(url).endsWith('/restore') ? reply(200, { id: 'A1', name: 'Alpha', version: 1 }) : orig(url, opts)))(globalThis.fetch);
+  await app.files.untrash({ id: 'A1', name: 'Alpha' });
+  assert.equal(closed, 1, 'the stale Undo toast closed');
   stopTimers(app);
 });

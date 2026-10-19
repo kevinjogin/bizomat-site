@@ -22,6 +22,7 @@ export const COLORS = {
   proposal: 0xa58cff,
 };
 if (VIEW_COLORS) Object.assign(COLORS, VIEW_COLORS);
+const THUMB_COLORS = { body: 0xa8b8c8, edge: 0x37424c }; // Files pictures: preview.py's body and edge colours
 
 export const STD_FRAMES = {
   'Front Plane': { origin: [0, 0, 0], xdir: [1, 0, 0], ydir: [0, 1, 0], normal: [0, 0, 1] },
@@ -188,10 +189,20 @@ export class Viewer {
       hov: this.hoverKey, extra: this.extraHighlights, dim: this.sketchDim, clip: this.renderer.clippingPlanes };
     groups.forEach((g) => { g.visible = false; });
     if (!hasBody) this.otherSketches.visible = true;
-    const box = this.sceneBox();
+    // fitted to what is really drawn (an object inside a hidden group, such as the sketch being edited, does not
+    // count): with nothing to draw there is no picture, never an empty one
+    const box = new THREE.Box3();
+    for (const g of [this.bodyGroup, this.otherSketches]) {
+      if (!g.visible) continue;
+      g.updateMatrixWorld(true);
+      g.traverseVisible((o) => { if ((o.isMesh || o.isLine) && !o.userData.noFit) box.expandByObject(o); });
+    }
     if (box.isEmpty()) { groups.forEach((g, i) => { g.visible = vis[i]; }); return null; }
     this.selected = new Set(); this.hoverKey = null; this.extraHighlights = new Set(); this.sketchDim = false;
     this.refreshHighlights();
+    // the same colours whoever draws the picture, the browser in any theme or the server (preview.py)
+    for (const f of this.faceObjs) if (f.userData.baseColor === COLORS.body) f.material.color.setHex(THUMB_COLORS.body);
+    for (const e of this.edgeObjs) e.material.color.setHex(THUMB_COLORS.edge);
     let out = null;
     try {
       // the largest W:H region that fits the canvas, bottom-left (GL viewport origin)

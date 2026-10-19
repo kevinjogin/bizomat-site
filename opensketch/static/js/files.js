@@ -75,9 +75,10 @@ export class FilesView {
     this.query = '';
     try { this.sort = localStorage.getItem('opensketch.files.sort') || 'updated'; this.layout = localStorage.getItem('opensketch.files.layout') || 'grid'; } catch (_) { this.sort = 'updated'; this.layout = 'grid'; }
     this.loading = false;
+    this.undoToasts = new Map(); // file id -> its "Moved to the Trash" toast (closed once Undo means nothing)
   }
 
-  get isOpen() { return !!this.el && !this.el.classList.contains('hidden'); }
+  get isOpen() { return !!this.el && !this.el.classList.contains('hidden') && !this.el.classList.contains('leaving'); }
 
   // Files actions wait out a server that is starting or busy (no answer, or Fly.io's 502/503/504) for up to ~40 s,
   // with a note after a moment, so a click never looks ignored (YZ 2026-10-19: Move to Trash "did nothing" while
@@ -114,13 +115,22 @@ export class FilesView {
     if (this.app.reviewMode) return;
     if (filter) this.filter = filter;
     if (!this.el) this.build();
-    this.lastFocus = document.activeElement;
+    const was = this.isOpen;
+    if (!was) this.lastFocus = document.activeElement;
     this.el.classList.remove('hidden', 'leaving');
+    document.documentElement.classList.remove('boot-files'); // the start page is drawn: the editor may show under it
     document.body.classList.add('files-open');
-    this.app.server?.flush?.(); // the model being edited is saved before its card is drawn
+    document.title = 'Files - OpenSketch';
+    this.intro = !was; // the cards come in once per visit, not on every search or sort
     this.renderShell();
+    this.loading = true; this.renderGrid();
+    // the file being edited: its last edits and its latest picture go first, so its card is current
+    const sv = this.app.server, wait = (p, ms) => p && Promise.race([p, new Promise((ok) => setTimeout(ok, ms))]);
+    if (sv?.link?.local) await wait(sv.flush(), 1500);
+    await wait(sv?.sendThumbNow?.(), 800);
     await this.load();
-    setTimeout(() => this.el.querySelector('.fv-search input')?.focus({ preventScroll: true }), 30);
+    // the search box takes focus with a mouse (not on phones, where it opens the keyboard over the files)
+    if (window.matchMedia?.('(hover: hover) and (pointer: fine)')?.matches && this.items.length) setTimeout(() => this.el.querySelector('.fv-search input')?.focus({ preventScroll: true }), 30);
   }
 
   close() {
@@ -129,6 +139,8 @@ export class FilesView {
     document.body.classList.remove('files-open');
     setTimeout(() => { if (this.el.classList.contains('leaving')) this.el.classList.add('hidden'); }, 160);
     this.app.viewer?.resize();
+    this.app.updateDocChrome(); // the tab's title is the model's again
+    if (!this.app.result && !this.app.server.linked) this.app.regen(); // the startup part was never built behind Files
     try { this.lastFocus?.focus?.({ preventScroll: true }); } catch (_) { /* gone */ }
   }
 
@@ -142,7 +154,12 @@ export class FilesView {
     this.el = el;
     el.addEventListener('keydown', (e) => {
       e.stopPropagation(); // the editor's shortcuts do not apply here
-      if (e.key === 'Escape' && !document.querySelector('.dlg-back, .contextmenu')) { e.preventDefault(); this.backToModel(); }
+      if (e.key === 'Escape') { // (open menus and dialogs take their Escape first, in the capture phase)
+        e.preventDefault();
+        const q = e.target.closest?.('.fv-search input');
+        if (q && q.value) { q.value = ''; this.query = ''; this.renderGrid(); return; } // first it clears the search
+        this.backToModel();
+      }
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); el.querySelector('.fv-search input')?.focus(); }
     });
     // drop files anywhere on the page to upload them
@@ -151,9 +168,21 @@ export class FilesView {
     el.addEventListener('drop', (e) => { e.preventDefault(); el.classList.remove('dropping'); const fs = [...(e.dataTransfer?.files || [])]; if (fs.length) this.upload(fs); });
   }
 
+  // Back to the open model. With none open, Files is the place to be: nothing happens (it never makes a file).
   backToModel() {
-    if (!this.app.hasModel()) { this.newFile('part'); return; }
+    if (!this.app.hasModel()) { this.el?.querySelector('.fv-cta .btn.primary')?.focus(); return; }
     this.close();
+  }
+
+  // The wordmark and Back to model lead back only when there is a model to go back to.
+  syncBack() {
+    const has = this.app.hasModel();
+    if (this.backEl) this.backEl.hidden = !has;
+    if (this.brandEl) {
+      this.brandEl.classList.toggle('plain', !has);
+      this.brandEl.title = has ? 'Back to the model' : 'OpenSketch';
+      this.brandEl.tabIndex = has ? 0 : -1;
+    }
   }
 
   // ---------------------------------------------------------------- data
@@ -185,19 +214,21 @@ export class FilesView {
     el.innerHTML = '';
     const top = h('header', 'fv-top');
     const brand = h('button', 'fv-brand', 'OpenSketch');
-    brand.title = 'Back to the model'; brand.onclick = () => this.backToModel();
+    brand.onclick = () => this.backToModel();
+    this.brandEl = brand;
     const search = h('label', 'fv-search', `${FI.search}<input type="search" placeholder="Search files" autocomplete="off" spellcheck="false" aria-label="Search files"><kbd>Ctrl K</kbd>`);
     const inp = search.querySelector('input'); inp.value = this.query;
     inp.oninput = () => { this.query = inp.value; this.renderGrid(); };
     const right = h('div', 'fv-right');
     const connect = h('button', 'btn fv-ghost', `${FI.plug}<span>Connect AI</span>`);
-    connect.onclick = () => import('./connect.js').then((m) => m.connectDialog(this.app));
+    connect.onclick = () => this.app.server.connectDialog();
     const av = h('div', 'fv-avatar');
     this.avatarHost = av;
     this.syncAvatar();
     const back = h('button', 'btn fv-ghost fv-backbtn', `${FI.back}<span>Back to model</span>`);
     back.onclick = () => this.backToModel();
-    back.hidden = !this.app.hasModel();
+    this.backEl = back;
+    this.syncBack();
     right.append(back, connect, av);
     top.append(brand, search, right);
 
@@ -207,10 +238,10 @@ export class FilesView {
     const hero = h('div', 'fv-hero');
     hero.innerHTML = '<h1>Files</h1>'; // just the title (YZ 2026-10-19: less text)
     const cta = h('div', 'fv-cta');
-    const np = h('button', 'btn primary fv-pill', `${FI.plus}<span>New part</span>${FI.arrow}`); np.onclick = () => this.newFile('part');
-    const na = h('button', 'btn fv-pill', `${FI.assembly}<span>New assembly</span>`); na.onclick = () => this.newFile('assembly');
+    const np = h('button', 'btn primary fv-pill', `${FI.plus}<span>New part</span>${FI.arrow}`); np.onclick = () => this.newFile('part'); np.dataset.new = 'part';
+    const na = h('button', 'btn fv-pill', `${FI.assembly}<span>New assembly</span>`); na.onclick = () => this.newFile('assembly'); na.dataset.new = 'assembly';
     const up = h('button', 'btn fv-pill', `${FI.upload}<span>Upload</span>`); up.title = 'OpenSketch (.osk), STEP (.step, .stp), EAGLE (.brd) or a .zip';
-    up.onclick = () => { const i = document.createElement('input'); i.type = 'file'; i.multiple = true; i.accept = '.osk,.json,.step,.stp,.brd,.zip'; i.onchange = () => i.files.length && this.upload([...i.files]); i.click(); };
+    up.onclick = () => this.pickFiles();
     cta.append(np, na, up);
     hero.appendChild(cta);
     this.draftEl = h('div', 'fv-draftslot');
@@ -226,6 +257,8 @@ export class FilesView {
       b.onclick = () => { this.layout = b.dataset.l; try { localStorage.setItem('opensketch.files.layout', this.layout); } catch (_) { /* */ } lay.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); this.renderGrid(); };
     });
     this.sortEl = sort;
+    this.toolsEl = lay;
+    this.barEl = bar;
     bar.append(this.countEl, h('span', 'fv-sp'), sort, lay);
     this.grid = h('div', 'fv-grid');
     content.append(hero, this.draftEl, bar, this.grid);
@@ -233,6 +266,12 @@ export class FilesView {
     const drop = h('div', 'fv-drop', `<div>${FI.upload}<b>Drop to upload</b><span>OpenSketch, STEP, EAGLE or a .zip</span></div>`);
     el.append(top, main, drop);
     this.renderNav();
+  }
+
+  pickFiles() {
+    const i = document.createElement('input'); i.type = 'file'; i.multiple = true; i.accept = '.osk,.json,.step,.stp,.brd,.zip';
+    i.onchange = () => i.files.length && this.upload([...i.files]);
+    i.click();
   }
 
   // The account avatar (same menu as the title bar's), redrawn when the account loads.
@@ -279,10 +318,13 @@ export class FilesView {
   renderGrid() {
     if (!this.grid) return;
     this.renderDraft();
+    this.syncBack();
     const g = this.grid;
     g.className = 'fv-grid ' + (this.layout === 'list' ? 'as-list' : 'as-grid');
     g.innerHTML = '';
-    if (this.sortEl) this.sortEl.disabled = this.filter === 'trash';
+    const trashView = this.filter === 'trash';
+    if (this.sortEl) this.sortEl.hidden = trashView; // the Trash is always newest deleted first
+    if (this.barEl) this.barEl.hidden = !this.loading && !this.error && !this.items.length && this.filter === 'all' && !this.query;
     if (this.loading && !this.items.length && !this.trash.length) {
       for (let i = 0; i < 6; i++) g.appendChild(h('div', 'fv-card skel', '<div class="fv-thumb"></div><div class="fv-meta"><b></b><span></span></div>'));
       if (this.countEl) this.countEl.textContent = '';
@@ -294,21 +336,23 @@ export class FilesView {
     }
     const list = this.shown();
     const total = this.filter === 'trash' ? this.trash.length : this.items.length;
-    if (this.countEl) this.countEl.textContent = this.filter === 'trash' ? `${list.length} in the Trash. Files here are removed after 30 days.` : this.query ? `${list.length} of ${total} files` : `${total} file${total === 1 ? '' : 's'}`;
+    if (this.countEl) this.countEl.textContent = trashView ? `${list.length} in the Trash, newest deleted first. Files here are removed after 30 days.` : this.query ? `${list.length} of ${total} files` : `${total} file${total === 1 ? '' : 's'}`;
     if (!list.length) {
       if (this.query) g.appendChild(this.empty('No files match', `Nothing is called "${esc(this.query)}".`, 'Clear search', () => { this.query = ''; this.el.querySelector('.fv-search input').value = ''; this.renderGrid(); }));
-      else if (this.filter === 'trash') g.appendChild(this.empty('The Trash is empty', 'Files you delete stay here for 30 days.'));
+      else if (trashView) g.appendChild(this.empty('The Trash is empty', 'Files you delete stay here for 30 days.'));
       else if (this.filter !== 'all') g.appendChild(this.empty('Nothing here yet', 'Files that match this filter show up here.'));
-      else g.appendChild(this.empty('No files yet', '', 'New part', () => this.newFile('part')));
+      else g.appendChild(this.empty('No files yet', 'Start a part, or drop a STEP, OpenSketch or EAGLE file on this page.', 'Upload', () => this.pickFiles(), true));
       return;
     }
+    // the entrance plays once per visit, when the cards first arrive; searching, sorting and filtering redraw at once
+    if (this.intro && !this.loading) { this.intro = false; g.classList.add('intro'); setTimeout(() => g.classList.remove('intro'), 450); }
     list.forEach((f, i) => g.appendChild(this.card(f, i)));
   }
 
-  empty(title, text, action, run) {
+  empty(title, text, action, run, quiet = false) {
     const e = h('div', 'fv-empty');
     e.innerHTML = `<div class="fv-empty-art">${FI.part}</div><h3>${esc(title)}</h3>${text ? `<p>${text}</p>` : ''}`;
-    if (action) { const b = h('button', 'btn primary fv-pill', `<span>${esc(action)}</span>`); b.onclick = run; e.appendChild(b); }
+    if (action) { const b = h('button', 'btn fv-pill' + (quiet ? ' fv-ghost' : ' primary'), `${quiet ? FI.upload : ''}<span>${esc(action)}</span>`); b.onclick = run; e.appendChild(b); }
     return e;
   }
 
@@ -320,36 +364,41 @@ export class FilesView {
     c.style.setProperty('--i', Math.min(i, 12));
     c.dataset.id = f.id;
     const th = h('div', 'fv-thumb');
-    if (f.thumb) {
-      const img = h('img'); img.alt = ''; img.loading = 'lazy'; img.decoding = 'async'; img.src = f.thumb;
+    const picture = (src) => {
+      const img = h('img'); img.alt = ''; img.loading = 'lazy'; img.decoding = 'async'; img.src = src;
       img.onerror = () => { img.remove(); th.classList.add('none'); };
       img.onload = () => th.classList.add('loaded');
+      if (img.complete && img.naturalWidth) th.classList.add('loaded'); // already in the browser: no fade again
       th.appendChild(img);
-    } else if (!(f.counts?.features || f.counts?.components || f.counts?.imported || f.counts?.sketches)) {
-      th.classList.add('none'); // empty: nothing to draw
-    } else {
-      // no picture yet: ask the server to draw one (it renders models the AI made)
-      const img = h('img'); img.alt = ''; img.loading = 'lazy'; img.decoding = 'async'; img.src = `/api/docs/${encodeURIComponent(f.id)}/thumb?v=${f.version}`;
-      img.onerror = () => { img.remove(); th.classList.add('none'); };
-      img.onload = () => th.classList.add('loaded');
-      th.appendChild(img);
-    }
+    };
+    if (f.thumb) picture(f.thumb);
+    else if (!(f.counts?.features || f.counts?.components || f.counts?.imported || f.counts?.sketches)) th.classList.add('none'); // empty: nothing to draw
+    else picture(`/api/docs/${encodeURIComponent(f.id)}/thumb?v=${f.version}`); // no picture yet: the server draws one
     th.insertAdjacentHTML('beforeend', `<span class="fv-ph">${f.kind === 'assembly' ? FI.assembly : FI.part}</span>`);
     th.insertAdjacentHTML('beforeend', `<span class="fv-kind">${f.kind === 'assembly' ? 'Assembly' : 'Part'}</span>`);
     if (cur) th.insertAdjacentHTML('beforeend', '<span class="fv-cur">Open</span>');
     const meta = h('div', 'fv-meta');
     const nm = h('b'); nm.textContent = f.name; nm.title = f.name;
     const sub = h('span');
-    sub.textContent = trash ? `Deleted ${ago(f.deleted)}` : `${f.by === 'claude' ? 'AI edited' : 'Edited'} ${ago(f.updated)}`;
+    sub.textContent = trash ? `Deleted ${ago(f.deleted)}`
+      : f.version === 1 && f.by !== 'claude' ? `Created ${ago(f.created || f.updated)}` : `${f.by === 'claude' ? 'AI edited' : 'Edited'} ${ago(f.updated)}`;
     const sub2 = h('span', 'fv-detail'); sub2.textContent = `${detail(f)}${f.size ? ' · ' + KB(f.size) : ''}`;
     if (f.by === 'claude' && !trash) meta.classList.add('by-ai');
     meta.append(nm, sub, sub2);
+    if (trash) { // the two things to do with a deleted file, on the card itself
+      const acts = h('div', 'fv-tacts');
+      const rs = h('button', 'btn', 'Restore'); rs.onclick = (e) => { e.stopPropagation(); this.untrash(f); };
+      const df = h('button', 'btn fv-ghost', 'Delete forever'); df.onclick = (e) => { e.stopPropagation(); this.purge(f); };
+      acts.append(rs, df);
+      meta.appendChild(acts);
+    }
     const more = h('button', 'fv-more', FI.more); more.setAttribute('aria-label', `Actions for ${f.name}`); more.title = 'Actions';
     more.onclick = (e) => { e.stopPropagation(); const r = more.getBoundingClientRect(); this.menu(f, r.right - 200, r.bottom + 4); };
+    more.onkeydown = (e) => e.stopPropagation(); // Enter on the button opens its menu, not the file
     c.append(th, meta, more);
-    c.onclick = () => (trash ? this.menu(f, ...this.menuAt(c)) : this.openFile(f));
+    c.onclick = () => (trash ? c.focus() : this.openFile(f));
     c.onkeydown = (e) => {
-      if (e.key === 'Enter') { e.preventDefault(); c.onclick(); }
+      if (e.key === 'Enter' && !trash) { e.preventDefault(); c.onclick(); }
       if (e.key === 'F2' && !trash) { e.preventDefault(); this.rename(f, nm); }
       if ((e.key === 'Delete' || e.key === 'Backspace') && !trash) { e.preventDefault(); this.trashFile(f); }
       if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) {
@@ -391,22 +440,45 @@ export class FilesView {
   }
 
   // ---------------------------------------------------------------- actions
+  // One open or New at a time (a second click never opens two files or makes a second one). Files closes as soon
+  // as the model is in the editor; the editor's loading pill covers the rebuild.
   async openFile(f) {
     const app = this.app;
     if (app.server.link?.id === f.id) { this.close(); return; }
-    if (!(await app.confirmLeaveDraft())) return;
-    const card = this.grid?.querySelector(`[data-id="${CSS.escape(f.id)}"]`);
-    card?.classList.add('opening');
-    const ok = await app.server.open(f.id, { quiet: true });
-    card?.classList.remove('opening');
-    if (ok) { this.close(); app.status(`Opened ${f.name}. Changes save by themselves.`); }
+    if (this.busyOpen) return;
+    this.busyOpen = true;
+    let card = null, sub = null, was = null;
+    try {
+      if (!(await app.confirmLeaveDraft())) return;
+      card = this.grid?.querySelector(`[data-id="${CSS.escape(f.id)}"]`);
+      card?.classList.add('opening'); card?.setAttribute('aria-busy', 'true');
+      sub = card?.querySelector('.fv-meta span'); was = sub?.textContent;
+      if (sub) sub.textContent = 'Opening...';
+      const ok = await app.server.open(f.id, { quiet: true, onShown: () => this.close() });
+      if (ok) app.status(`Opened ${f.name}. Changes save by themselves.`);
+    } finally {
+      this.busyOpen = false;
+      card?.classList.remove('opening'); card?.removeAttribute('aria-busy');
+      if (sub) sub.textContent = was;
+    }
   }
 
   async newFile(kind) {
     const app = this.app;
-    if (!(await app.confirmLeaveDraft())) return;
-    const ok = await app.server.createAndOpen(kind);
-    if (ok) this.close();
+    if (this.busyOpen) return;
+    this.busyOpen = true;
+    let btn = null, label = null, text = null;
+    try {
+      if (!(await app.confirmLeaveDraft())) return;
+      btn = this.el?.querySelector(`[data-new="${kind}"]`);
+      label = btn?.querySelector('span'); text = label?.textContent;
+      if (btn) { btn.disabled = true; btn.setAttribute('aria-busy', 'true'); label.textContent = 'Creating...'; }
+      const ok = await app.server.createAndOpen(kind, { onShown: () => this.close() });
+      if (!ok) { app.startDraft(kind); this.close(); } // the server could not make the file: a draft in this browser
+    } finally {
+      this.busyOpen = false;
+      if (btn) { btn.disabled = false; btn.removeAttribute('aria-busy'); label.textContent = text; }
+    }
   }
 
   async upload(files) {
@@ -465,8 +537,10 @@ export class FilesView {
       const r = await this.req('POST', `/api/docs/${encodeURIComponent(f.id)}/duplicate`, {});
       this.items.unshift(r);
       this.renderNav(); this.renderGrid();
-      this.grid.querySelector(`[data-id="${CSS.escape(r.id)}"]`)?.focus();
-      this.app.toast?.(`Made ${r.name}.`);
+      const card = this.grid.querySelector(`[data-id="${CSS.escape(r.id)}"]`);
+      card?.focus(); card?.classList.add('fresh'); // a ring for a moment: this one is the copy
+      setTimeout(() => card?.classList.remove('fresh'), 1600);
+      this.app.toast?.(`Duplicated as "${r.name}".`);
     } catch (err) { message('Duplicate', esc(err.message)); }
   }
 
@@ -489,12 +563,25 @@ export class FilesView {
       this.items = this.items.filter((x) => x.id !== f.id);
       this.trash.unshift(r);
       if (app.server.link?.id === f.id) { app.closeFile(); this.trashedOpen = f.id; } // closed, not kept as a draft
+      const at = [...(this.grid?.querySelectorAll('.fv-card:not(.skel)') || [])].findIndex((x) => x.dataset.id === f.id);
       this.renderNav(); this.renderGrid();
-      app.toast?.(`Moved ${f.name} to the Trash.`, 6000, { label: 'Undo', run: () => this.untrash(r) });
+      this.focusNear(at);
+      this.undoToasts.get(f.id)?.close();
+      this.undoToasts.set(f.id, app.toast?.(`Moved ${f.name} to the Trash.`, 8000, { label: 'Undo', run: () => { if (this.trash.some((x) => x.id === r.id)) this.untrash(r); } }));
     } catch (err) { card()?.classList.remove('working'); message('Move to Trash', esc(err.message)); } finally { this.trashing.delete(f.id); }
   }
 
+  // After a card left the grid, focus the one that took its place (keys stay on the Files page).
+  focusNear(k) {
+    const all = [...(this.grid?.querySelectorAll('.fv-card:not(.skel)') || [])];
+    const next = k >= 0 ? all[k] || all[k - 1] : null;
+    (next || this.el)?.focus({ preventScroll: true });
+  }
+
+  closeUndo(id) { this.undoToasts.get(id)?.close(); this.undoToasts.delete(id); }
+
   async untrash(f) {
+    this.closeUndo(f.id);
     try {
       const r = await this.req('POST', `/api/docs/${encodeURIComponent(f.id)}/restore`);
       this.trash = this.trash.filter((x) => x.id !== f.id);
@@ -511,6 +598,7 @@ export class FilesView {
       { label: 'Cancel' },
       { label: 'Delete forever', primary: true, danger: true, run: () => {
         this.req('DELETE', `/api/docs/${encodeURIComponent(f.id)}?forever=1`).then(() => {
+          this.closeUndo(f.id);
           this.trash = this.trash.filter((x) => x.id !== f.id); this.renderNav(); this.renderGrid();
         }, (err) => message('Delete forever', esc(err.message)));
       } },

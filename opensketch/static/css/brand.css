@@ -115,6 +115,8 @@ a.fv-pill { line-height: 34px; }
 .fv-brand { display: inline-flex; align-items: center; border: 0; background: transparent; color: var(--text); padding: 6px 8px; border-radius: 8px; cursor: pointer;
   font-family: var(--font-display); font-weight: 800; font-size: 18px; letter-spacing: -.04em; line-height: 1; white-space: nowrap; }
 .fv-brand:hover { background: var(--hover-bg); }
+.fv-brand.plain { cursor: default; } /* nothing open to go back to: just the wordmark */
+.fv-brand.plain:hover { background: transparent; }
 .fv-search { position: relative; display: flex; align-items: center; flex: 0 1 460px; margin: 0 auto; }
 .fv-search .fi { position: absolute; left: 11px; color: var(--muted); pointer-events: none; }
 .fv-search input { width: 100%; height: 34px; padding: 0 64px 0 34px !important; border-radius: 9px !important; border: 1px solid var(--line) !important; background: var(--field); font-size: 13px; }
@@ -139,7 +141,8 @@ a.fv-pill { line-height: 34px; }
 .fv-navsep { height: 1px; background: var(--line); margin: 8px 6px; }
 .fv-content { overflow: auto; padding: 0 40px 64px; min-width: 0; }
 
-.fv-hero { position: relative; padding: 46px 0 30px; margin: 0 -40px 0; padding-left: 40px; padding-right: 40px; overflow: hidden; isolation: isolate; }
+.fv-hero { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; padding: 26px 40px 16px; margin: 0 -40px 0;
+  overflow: hidden; isolation: isolate; }
 .fv-hero::before { content: ""; position: absolute; inset: -40% -10% 10% 30%; z-index: -1; opacity: .55; filter: blur(40px);
   background: radial-gradient(40% 50% at 70% 40%, rgba(102, 112, 224, .55), transparent 70%), radial-gradient(30% 40% at 90% 20%, rgba(163, 170, 255, .45), transparent 70%),
     radial-gradient(35% 45% at 55% 70%, rgba(224, 85, 155, .22), transparent 70%); animation: os-drift 18s ease-in-out infinite alternate; }
@@ -147,9 +150,9 @@ a.fv-pill { line-height: 34px; }
 @keyframes os-drift { to { transform: translate3d(-6%, 4%, 0) rotate(6deg) scale(1.08); } }
 .fv-eyebrow { display: inline-flex; align-items: center; gap: 7px; color: var(--accent-text); font-weight: 600; font-size: 12.5px; letter-spacing: -.005em; }
 .fv-eyebrow .fi { width: 14px; height: 14px; }
-.fv-hero h1 { margin: 10px 0 8px; font-family: var(--font-display); font-weight: 750; font-size: 44px; line-height: 1.02; letter-spacing: -.045em; }
+.fv-hero h1 { margin: 0; font-family: var(--font-display); font-weight: 750; font-size: 30px; line-height: 1.05; letter-spacing: -.04em; }
 .fv-hero p { margin: 0; max-width: 520px; color: var(--text-2); font-size: 15px; line-height: 1.55; letter-spacing: -.008em; }
-.fv-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.fv-cta { display: flex; flex-wrap: wrap; gap: 10px; }
 .fv-draftslot:empty { display: none; }
 .fv-draft { display: flex; align-items: center; gap: 10px; margin: 6px 0 18px; padding: 12px 12px 12px 16px; border-radius: 12px; border: 1px solid rgba(139, 147, 255, .35); background: var(--accent-bg); }
 .fv-draft-t { display: flex; flex-direction: column; flex: 1; min-width: 0; }
@@ -169,17 +172,22 @@ a.fv-pill { line-height: 34px; }
 .fv-grid.as-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(208px, 1fr)); gap: 18px; }
 .fv-grid.as-list { display: flex; flex-direction: column; gap: 4px; }
 .fv-card { position: relative; display: flex; flex-direction: column; border-radius: 12px; background: var(--raised); box-shadow: 0 0 0 1px var(--line); cursor: pointer; outline: none;
-  transition: transform var(--t-med) var(--ease), box-shadow var(--t-med) var(--ease); animation: os-cardin 320ms var(--ease) both; animation-delay: calc(var(--i, 0) * 22ms); }
+  transition: transform var(--t-med) var(--ease), box-shadow var(--t-med) var(--ease); }
+/* the entrance plays when a visit's cards first arrive, not on every search, sort or filter (files.js renderGrid) */
+.fv-grid.intro .fv-card { animation: os-cardin 200ms var(--ease) both; animation-delay: calc(min(var(--i, 0), 8) * 15ms); }
 @keyframes os-cardin { from { opacity: 0; transform: translateY(8px); } }
 .fv-card:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px var(--line-2), 0 12px 28px -8px rgba(0, 0, 0, .45); }
 .theme-light .fv-card:hover { box-shadow: 0 0 0 1px var(--line-2), 0 12px 28px -10px rgba(30, 34, 60, .25); }
 .fv-card:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
 .fv-card.working { opacity: .45; pointer-events: none; transform: none; transition: opacity 160ms var(--ease, ease); }
 .fv-card.current { box-shadow: 0 0 0 1.5px var(--accent); }
-.fv-card.opening { opacity: .6; pointer-events: none; }
+.fv-card.opening { pointer-events: none; }
+.fv-card.opening .fv-thumb::after { content: ""; position: absolute; left: 12px; bottom: 12px; width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid var(--accent); border-right-color: transparent; animation: os-spin .7s linear infinite; }
+.fv-card.fresh { box-shadow: 0 0 0 2px var(--accent); }
 .fv-thumb { position: relative; aspect-ratio: 4 / 3; border-radius: 12px 12px 0 0; overflow: hidden; display: grid; place-items: center;
   background: radial-gradient(120% 90% at 50% 0%, var(--field), var(--side)); border-bottom: 1px solid var(--line); }
-.fv-thumb img { position: absolute; inset: 6% 6%; width: 88%; height: 88%; object-fit: contain; opacity: 0; transition: opacity 260ms var(--ease), transform 400ms var(--ease); }
+.fv-thumb img { position: absolute; inset: 6% 6%; width: 88%; height: 88%; object-fit: contain; opacity: 0; transition: opacity 180ms var(--ease), transform 400ms var(--ease); }
 .fv-thumb.loaded img { opacity: 1; }
 .fv-card:hover .fv-thumb img { transform: scale(1.035); }
 .fv-ph { color: var(--muted); opacity: .45; }
@@ -191,6 +199,10 @@ a.fv-pill { line-height: 34px; }
 .fv-cur { right: 10px; background: var(--accent); color: #fff; }
 .fv-meta { display: flex; flex-direction: column; gap: 1px; padding: 11px 40px 12px 14px; min-width: 0; }
 .fv-meta b { font-family: var(--font-display); font-weight: 650; font-size: 14px; letter-spacing: -.015em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* grid cards: long names on two lines (two files that differ only at the end can be told apart) */
+.fv-grid.as-grid .fv-card:not(.skel) .fv-meta b { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: anywhere; }
+.fv-tacts { display: flex; gap: 6px; margin-top: 8px; }
+.fv-tacts .btn { height: 26px !important; font-size: 12px; }
 .fv-meta span { color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fv-meta.by-ai span:nth-child(2) { color: var(--accent-text); }
 .fv-meta .fv-detail { font-size: 11.5px; }
@@ -207,7 +219,7 @@ a.fv-pill { line-height: 34px; }
 @keyframes os-shimmer { to { background-position: -200% 0; } }
 
 /* list layout */
-.fv-grid.as-list .fv-card { flex-direction: row; align-items: center; border-radius: 10px; box-shadow: none; background: transparent; animation-duration: 220ms; }
+.fv-grid.as-list .fv-card { flex-direction: row; align-items: center; border-radius: 10px; box-shadow: none; background: transparent; }
 .fv-grid.as-list .fv-card:hover { transform: none; background: var(--hover-bg); box-shadow: none; }
 .fv-grid.as-list .fv-card.current { box-shadow: inset 0 0 0 1.5px var(--accent); }
 .fv-grid.as-list .fv-thumb { width: 72px; flex: none; border-radius: 8px; margin: 6px; border: 0; background: var(--field); }
@@ -225,8 +237,11 @@ a.fv-pill { line-height: 34px; }
 .fv-empty h3 { margin: 4px 0 0; font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: -.025em; color: var(--text); }
 .fv-empty p { margin: 0 0 12px; max-width: 380px; line-height: 1.5; }
 
-.fv-drop { position: fixed; inset: 64px 16px 16px; border-radius: 18px; border: 2px dashed var(--accent); background: rgba(94, 106, 210, .12); display: none; place-items: center; z-index: 5; pointer-events: none; }
-.fv-drop div { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text); }
+.fv-drop { position: fixed; inset: 64px 16px 16px; border-radius: 18px; border: 2px dashed var(--accent); display: none; place-items: center; z-index: 5; pointer-events: none;
+  background: color-mix(in srgb, var(--content) 82%, transparent); backdrop-filter: blur(3px); }
+/* the label sits on its own panel, never over card titles */
+.fv-drop div { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text); padding: 22px 30px; border-radius: 14px; background: var(--raised);
+  box-shadow: var(--shadow); border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); }
 .fv-drop .fi { width: 32px; height: 32px; color: var(--accent-text); }
 .fv-drop b { font-family: var(--font-display); font-size: 20px; letter-spacing: -.02em; }
 .fv-drop span { color: var(--text-2); }
@@ -246,13 +261,14 @@ a.fv-pill { line-height: 34px; }
 
 @media (max-width: 860px) {
   .fv-main { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
-  .fv-nav { flex-direction: row; overflow-x: auto; padding: 10px 12px; border-right: 0; border-bottom: 1px solid var(--line); gap: 4px; }
+  .fv-nav { flex-direction: row; overflow-x: auto; padding: 10px 12px; border-right: 0; border-bottom: 1px solid var(--line); gap: 4px; scroll-padding: 12px;
+    -webkit-mask-image: linear-gradient(90deg, #000 86%, transparent); mask-image: linear-gradient(90deg, #000 86%, transparent); } /* more chips to the right */
   .fv-navi { flex: none; height: 30px; }
   .fv-navi span { flex: none; }
   .fv-navsep { display: none; }
   .fv-content { padding: 0 16px 48px; }
-  .fv-hero { margin: 0 -16px; padding: 28px 16px 22px; }
-  .fv-hero h1 { font-size: 34px; }
+  .fv-hero { margin: 0 -16px; padding: 18px 16px 12px; }
+  .fv-hero h1 { font-size: 24px; }
   .fv-grid.as-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
   .fv-top { padding: 0 12px; gap: 10px; }
   .fv-ghost span, .fv-search kbd { display: none; }
@@ -424,6 +440,8 @@ select.cx-model { cursor: pointer; }
   .doctitle .dt-name { max-width: 42vw; }
   .dt-state span { display: none; }
   .dt-state.draft span { display: none; }
+  .dt-state.offline span, .dt-state.conflict span { display: inline; } /* problems say so in words, not only a colour */
+  .dt-state.saved { display: none; }
   .dt-state { padding: 0 6px; }
   #ribbon { overflow-x: auto; scrollbar-width: none; }
   #ribbon::-webkit-scrollbar { display: none; }
@@ -489,3 +507,8 @@ select.cx-model { cursor: pointer; }
 .acct-app .acct-who span { display: block; color: var(--muted); font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cx-private { margin-top: 8px; padding: 12px; border-radius: 10px; background: var(--field); }
 .cx-private p { margin: 0 0 8px; color: var(--text-2); font-size: 12.5px; }
+
+/* start-up without a ?doc link: the Files page is the first screen, so the editor never flashes before it
+   (index.html sets boot-files, FilesView.open removes it) */
+.boot-files #app { visibility: hidden; }
+.boot-files .files-view { animation: none; }
