@@ -66,6 +66,7 @@ def _warm_owner() -> None:
         owner = next((u for u in accounts.list_users() if u.get("role") == "owner"), None)
     except Exception:
         owner = None
+    cadworker.reserve_for(owner["id"] if owner else None)  # newcomers never take the owner's last worker place
     cadworker.lane_for(owner["id"] if owner else None).warm()
 
 

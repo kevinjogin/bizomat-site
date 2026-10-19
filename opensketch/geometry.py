@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import os
 import threading
 from collections import OrderedDict
 from dataclasses import dataclass, field
@@ -929,7 +930,29 @@ def _edge_points(e, n):
 _built: "OrderedDict[str, tuple]" = OrderedDict()
 _built_lock = threading.Lock()
 BUILT_CACHE_SIZE = 24
+# Bounded by size too: an entry keeps the rebuild state (every feature's tool and intermediate bodies) and the mesh
+# as Python lists, ~20-30 MB for a 200-face plate, and a Design panel drag adds one per step. 24 such entries took
+# a worker past 1 GB on a 2 GB machine.
+BUILT_CACHE_MB = float(os.environ.get("OPENSKETCH_BUILT_CACHE_MB", 200))
+_built_bytes: dict[str, int] = {}
 NOT_GEOMETRY = ("appearance", "name", "description", "designer", "type", "seq", "material")
+
+
+def _mesh_bytes(mesh: dict) -> int:
+    """About what a cache entry holds in memory: its mesh numbers (Python floats in lists, ~40 B each), twice that
+    for the rebuild state's bodies and tools (OpenCascade's own memory, not visible from here; measured), and a base."""
+    n = sum(len(f.get("positions") or ()) + len(f.get("indices") or ()) for f in mesh.get("faces") or ())
+    n += sum(len(e.get("points") or ()) for e in mesh.get("edges") or ())
+    return 120 * n + 256 * 1024
+
+
+def _trim_memory() -> None:
+    """Give freed memory back to the system (glibc keeps it otherwise, so a worker never shrinks)."""
+    try:
+        import ctypes
+        ctypes.CDLL("libc.so.6").malloc_trim(0)
+    except Exception:
+        pass
 
 
 def body_key(doc: dict) -> str:
@@ -949,10 +972,17 @@ def built(doc: dict) -> tuple["RegenState", dict]:
             return hit
     st, _ = regen(doc)
     out = (st, mesh_shape(st.part))
+    budget = BUILT_CACHE_MB * 2**20
+    evicted = False
     with _built_lock:
         _built[key] = out
-        while len(_built) > BUILT_CACHE_SIZE:
-            _built.popitem(last=False)
+        _built_bytes[key] = _mesh_bytes(out[1])
+        while len(_built) > 1 and (len(_built) > BUILT_CACHE_SIZE or sum(_built_bytes.get(k, 0) for k in _built) > budget):
+            old, _ = _built.popitem(last=False)
+            _built_bytes.pop(old, None)
+            evicted = True
+    if evicted:
+        _trim_memory()
     return out
 
 

@@ -2220,8 +2220,16 @@ def _load_checkpoint(path: str) -> dict | None:
 
 def _child(out, part, kinds, feature_id, time_limit, skip, beat_path, checkpoint):  # pragma: no cover - a worker
     """Worker process: recognise one part, announcing each risky step in beat_path, saving progress in checkpoint,
-    and send the result back."""
+    and send the result back. It ends itself if the process that started it dies (an AI chat that was stopped, a
+    CAD worker that was killed): a result nobody reads would otherwise keep it waiting at exit for good."""
     global _beat
+    from . import cadworker
+    cadworker._die_with_parent()
+    cadworker.oom_score(800)
+    try:
+        os.nice(5)  # below the web server and the people's CAD workers
+    except OSError:
+        pass
 
     def beat(label):
         tmp = beat_path + ".tmp"

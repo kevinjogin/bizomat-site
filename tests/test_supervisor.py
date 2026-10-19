@@ -19,6 +19,13 @@ FAKE = textwrap.dedent("""
     if mode == "exit":
         time.sleep(0.3)
         sys.exit(3)
+    if mode == "crash-leaving-workers":  # a CAD worker in the server's group, then the server dies
+        import subprocess
+        w = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])
+        with open(starts + ".workers", "a") as f:
+            f.write(f"{w.pid}\\n")
+        time.sleep(0.3)
+        os._exit(9)
     born = time.monotonic()
     hung = threading.Event()
     class H(http.server.BaseHTTPRequestHandler):
@@ -113,3 +120,24 @@ def test_a_paused_machine_is_not_taken_for_a_hang(tmp_path, monkeypatch):
     t.join(10)
     assert sup.restarts == 0 and starts.read_text().count("start") == 1
     assert any("paused" in m for m in logs), logs
+
+
+def test_a_crashed_servers_workers_are_ended_before_the_next_start(tmp_path):
+    """A server that crashed or was killed for memory leaves its worker processes behind: the supervisor ends its
+    whole process group before it starts the next server (before, they piled up and memory ran out again)."""
+    import os
+    n, logs, sup = _run(tmp_path, "crash-leaving-workers", lambda n: n >= 2)
+    pids = [int(x) for x in (tmp_path / "starts.txt.workers").read_text().split()]
+    first = pids[0]
+    time.sleep(0.5)
+    try:
+        os.kill(first, 0)
+        state = open(f"/proc/{first}/stat").read().split(")")[1].split()[0]
+    except (OSError, FileNotFoundError):
+        state = "gone"
+    for pid in pids:  # tidy up whatever is left
+        try:
+            os.kill(pid, 9)
+        except OSError:
+            pass
+    assert state in ("gone", "Z"), state
