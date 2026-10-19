@@ -322,6 +322,7 @@ export class MotionReview {
     app.viewer.zoomToFit(false);
     this.drawGhost();
     this.open();
+    app.status('Read-only review. Drag to rotate; scroll or pinch to zoom; two fingers pan. Move the joints in Motion Review.');
   }
 
   drawGhost() {

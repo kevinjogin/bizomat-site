@@ -100,7 +100,10 @@ export class AssemblyMode {
     const doc = app.cleanDoc(docOverride || app.shownDoc);
     let res;
     if (this.canSolveLocally(doc)) {
-      try { res = regenLocal(doc, this.partsInfo); } catch (err) { console.error(err); res = null; }
+      // a big assembly solves in the worker, so Fix/Float, a mate preview or the end of a drag never freezes the page
+      const w = (doc.components || []).length > 12 ? this.solverWorker() : null;
+      try { res = w ? await w.solve({ components: doc.components, mates: doc.mates }, this.partsInfo) : regenLocal(doc, this.partsInfo); } catch (err) { console.error(err); res = null; }
+      if (w && res && seq !== app.regenSeq) return null; // a newer rebuild started meanwhile
     }
     if (!res && app.reviewMode) return null; // a shared review has no server to rebuild parts
     let done = () => {};
@@ -220,7 +223,7 @@ export class AssemblyMode {
       const names = (m.refs || []).map((r) => (r.component ? this.comp(r.component)?.name : r.ref) || '?');
       const n = node({ id: m.id, kind: 'mate', name: `${m.name} (${names.join(',')})`, ic: mateIcon(m.type), depth: 2,
         cls: `${state}${proposed.has(m.id) ? ' proposed' : ''}`, badge: state === 'error' ? tree.badgeIcon('error') : '', onDbl: () => this.editMate(m) });
-      if (n && s?.message) n.title = s.message;
+      if (n) n.title = `${m.name}: ${names.join(' to ')}` + (s?.message ? `\n${s.message}` : ''); // the row is cut short in a narrow tree
     }
   }
 
@@ -334,9 +337,40 @@ export class AssemblyMode {
     this.draw(res, d.doc);
   }
 
+  // The mate solver in a worker (asmworker.js), for drags: the page keeps answering while a long linkage solves.
+  // null where workers are not available (the solve then runs here, once per animation frame).
+  solverWorker() {
+    if (this._worker !== undefined) return this._worker;
+    this._worker = null;
+    if (typeof Worker !== 'function') return null;
+    try {
+      const w = new Worker(new URL('./asmworker.js', import.meta.url), { type: 'module' });
+      const pending = new Map();
+      let seq = 0;
+      w.onmessage = (e) => { const p = pending.get(e.data.id); if (!p) return; pending.delete(e.data.id); if (e.data.error) p.reject(new Error(e.data.error)); else p.resolve(e.data.res); };
+      w.onerror = (e) => { e.preventDefault?.(); for (const p of pending.values()) p.reject(new Error('The solver worker stopped.')); pending.clear(); this._worker = null; w.terminate(); };
+      this._worker = { solve: (asm, parts, drag) => new Promise((resolve, reject) => { const id = ++seq; pending.set(id, { resolve, reject }); w.postMessage({ id, asm, parts, drag }); }) };
+    } catch (_) { this._worker = null; }
+    return this._worker;
+  }
+
   pumpDrag(d) {
     if (d.flight) return d.flight;
     const drag = (at) => ({ component: d.id, point: d.local, target: this.dragTarget(d, at) });
+    const worker = this.canSolveLocally(d.doc) ? this.solverWorker() : null;
+    if (worker) {
+      // newest mouse position wins: one solve in flight, the next one starts from the pose it found
+      d.flight = (async () => {
+        while (d.at && d.solvedAt !== d.at && !d.cancelled) {
+          const at = d.at;
+          let res;
+          try { res = await worker.solve({ components: d.doc.components, mates: d.doc.mates }, this.partsInfo, drag(at)); } catch (err) { console.warn(err); d.solvedAt = at; break; }
+          this.dragSolve(d, at, res);
+        }
+        d.flight = null;
+      })();
+      return d.flight;
+    }
     if (this.canSolveLocally(d.doc)) {
       d.flight = new Promise((resolve) => requestAnimationFrame(() => {
         const at = d.at;
@@ -691,7 +725,8 @@ export class AssemblyMode {
     if (app.cmd) app.pmCancel();
     const doc = app.doc;
     const m = existing ? clone(existing) : { type: 'coincident', refs: [], align: 'auto' };
-    const labels = existing ? m.refs.map((r) => (r.component ? `${esc(this.comp(r.component)?.name)}` : esc(r.ref))) : [];
+    // an existing mate's selections read like new picks: what was picked, on which component
+    const labels = existing ? m.refs.map((r) => (r.component ? `${r.plane ? 'Face' : r.axis ? 'Axis' : 'Point'}@${esc(this.comp(r.component)?.name)}` : esc(r.ref))) : [];
     let typed = !!existing;
     const kinds = () => m.refs.map((r) => (r.plane || ['Front Plane', 'Top Plane', 'Right Plane'].includes(r.ref) ? 'plane' : r.axis || /axis/.test(r.ref || '') ? 'axis' : 'point'));
     const autoType = () => {

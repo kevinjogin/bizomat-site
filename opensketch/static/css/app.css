@@ -371,7 +371,7 @@ button.cc:focus-visible { outline: 2px solid #2467b2; outline-offset: 2px; }
 .ai-act .ah { display: flex; align-items: center; gap: 5px; }
 .ai-act .ah .ic { flex: none; }
 .ai-act .ah b { flex: 0 1 auto; min-width: 0; white-space: normal; overflow-wrap: anywhere; }
-.ai-act .ad { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.ai-act .ad { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1 1 0; }
 .ai-act.error { border-color: #e7a7a2; background: #fffafa; }
 .ai-act.running { border-color: #c9b8ff; background: #faf8ff; }
 .ai-steps { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
