@@ -460,7 +460,8 @@ with model pictures, a deep audit, "connect Claude, Codex or whatever", a better
   need a picture) are the wordmark's "O" (glyph outline from Inter Tight 800 as an SVG path, no font needed) in
   #f2f3f5 on #141517, not blue. Inter Tight 600-800 for names and headings (tight tracking), Inter
   400-700 for the UI; pill calls to action with a sliding arrow; a slow indigo mesh behind the Files header.
-  Sign-in pages (`auth.PAGE`): angled indigo-to-pink band, bold pitch on the left, raised card, pill button,
+  Sign-in pages (`auth.PAGE`): angled indigo-to-pink band, the headline alone on the left ("CAD that builds while
+  you watch."; the paragraph and three bullets were removed 2026-10-19, YZ: too much text), raised card, pill button,
   stacked on phones. Colours unchanged (tokens from linear.css; classic skin gets fallbacks).
 - Motion (brand.css): dialogs pop in (180 ms ease-out) and fade out (closing dialogs leave #modal-layer at once),
   menus/popovers, task pane slide, toasts rise, cards stagger, button press scale; all off with

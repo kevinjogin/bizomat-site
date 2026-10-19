@@ -186,12 +186,7 @@ filter:blur(30px);animation:drift 16s ease-in-out infinite alternate;mix-blend-m
 @keyframes drift{{to{{transform:translate3d(8%,-6%,0) rotate(8deg)}}}}
 .wrap{{position:relative;z-index:1;min-height:100vh;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,440px);gap:56px;align-items:center;max-width:1080px;margin:0 auto;padding:40px 32px 48px}}
 .brand{{position:absolute;top:26px;left:32px;color:#fff;text-decoration:none;font-family:var(--display);font-weight:800;font-size:21px;letter-spacing:-.04em;line-height:1}}
-.pitch h2{{margin:0 0 16px;font-family:var(--display);font-weight:750;font-size:52px;line-height:1.02;letter-spacing:-.045em;color:#fff;text-wrap:balance}}
-.pitch p{{margin:0 0 26px;color:rgba(255,255,255,.78);font-size:17px;line-height:1.55;max-width:470px;letter-spacing:-.01em}}
-.pitch ul{{list-style:none;margin:0;padding:0;display:grid;gap:12px;color:var(--text2)}}
-.pitch li{{display:flex;gap:10px;align-items:flex-start}}
-.pitch li b{{color:var(--text);font-weight:600}}
-.pitch li:before{{content:"";flex:none;width:18px;height:18px;margin-top:2px;border-radius:50%;background:rgba(94,106,210,.22) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='%238b93ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat}}
+.pitch h2{{margin:0;font-family:var(--display);font-weight:750;font-size:52px;line-height:1.02;letter-spacing:-.045em;color:#fff;text-wrap:balance}}
 .card{{background:var(--card);border-radius:16px;padding:32px;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 30px 60px -12px rgba(0,0,0,.6),0 18px 36px -18px rgba(0,0,0,.5);animation:rise .5s var(--ease)}}
 @keyframes rise{{from{{opacity:0;transform:translateY(10px)}}}}
 h1{{font-family:var(--display);font-size:26px;font-weight:750;margin:0 0 6px;letter-spacing:-.035em;line-height:1.15}} p.sub{{color:var(--text2);margin:0 0 22px}}
@@ -214,12 +209,11 @@ button:hover:after{{transform:translateX(3px)}}
 button.ghost{{margin-top:10px;background:transparent;box-shadow:inset 0 0 0 1px var(--line2);color:var(--text)}}button.ghost:after{{display:none}}button.ghost:hover{{background:rgba(255,255,255,.05)}}
 .links{{margin-top:18px;display:flex;justify-content:space-between;gap:12px;font-size:13px}} a{{color:var(--link);text-decoration:none}} a:hover{{text-decoration:underline}}
 .foot{{position:absolute;bottom:20px;left:32px;right:32px;display:flex;justify-content:space-between;color:var(--muted);font-size:12px}}.foot a{{color:var(--muted)}}.foot a:hover{{color:var(--text)}}
-@media (max-width:900px){{.wrap{{grid-template-columns:1fr;gap:28px;padding:96px 20px 64px;max-width:480px}}.pitch h2{{font-size:36px}}.pitch p{{font-size:15px;margin-bottom:0}}.pitch ul{{display:none}}.brand{{left:20px;top:22px}}.card{{padding:26px 22px}}.foot{{left:20px;right:20px}}.band{{height:62vh}}}}
+@media (max-width:900px){{.wrap{{grid-template-columns:1fr;gap:28px;padding:96px 20px 64px;max-width:480px}}.pitch h2{{font-size:36px}}.brand{{left:20px;top:22px}}.card{{padding:26px 22px}}.foot{{left:20px;right:20px}}.band{{height:62vh}}}}
 @media (prefers-reduced-motion:reduce){{*,*:before,*:after{{animation:none!important;transition:none!important}}}}
 </style></head><body><div class="band"><i></i></div>
 <div class="wrap"><a class="brand" href="/">OpenSketch</a>
-<section class="pitch"><h2>CAD that builds while you watch.</h2><p>Sketch, extrude and mate parts the way you already know, or let ChatGPT, Claude or Codex model them in your Files, live.</p>
-<ul><li><span><b>Real feature trees.</b> Sketches, dimensions and mates you can edit.</span></li><li><span><b>Your AI, connected.</b> Works with the AI app you already pay for.</span></li><li><span><b>Nothing to install.</b> Runs in the browser, or install it as an app.</span></li></ul></section>
+<section class="pitch"><h2>CAD that builds while you watch.</h2></section>
 <form class="card" method="post" action="{action}" autocomplete="on"><h1>{title}</h1><p class="sub">{sub}</p>{top}
 <input type="hidden" name="next" value="{next}">{fields}{error}<button type="submit">{button}</button>{links}</form></div>
 <div class="foot"><span>OpenSketch</span><span>Parametric CAD with AI &nbsp;&middot;&nbsp; <a href="/privacy">Privacy</a></span></div></body></html>"""
