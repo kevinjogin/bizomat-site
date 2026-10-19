@@ -347,6 +347,8 @@
 .skin-linear .ai-steps .st { background: var(--field); }
 .skin-linear .ai-steps .st.error { background: var(--err-bg); color: var(--red); }
 .skin-linear .ai-steps .st.warning { background: var(--note-bg); }
+.skin-linear .pm-act.busy::after { border-color: var(--accent-bg); border-top-color: var(--accent); }
+.skin-linear .cc.disabled:hover { background: var(--raised); }
 .skin-linear .ai-sources { border-left-color: var(--line-2); }
 .skin-linear .ai-sources a { color: var(--accent-text); }
 .skin-linear .ai-request { border: 1px solid rgba(242, 201, 76, .35); background: var(--note-bg); border-radius: 8px; }

@@ -34,7 +34,9 @@ export function hexColor(hex, fallback = COLORS.body) {
   return typeof hex === 'string' && /^#[0-9a-f]{6}$/i.test(hex) ? parseInt(hex.slice(1), 16) : fallback;
 }
 
-function tint(c, t = 0.45) { return new THREE.Color(c).lerp(new THREE.Color(COLORS.proposal), t).getHex(); }
+// A pending AI result keeps each part's own colour, with a light lavender cast (it was a 45% wash that made every
+// part look the same).
+function tint(c, t = 0.22) { return new THREE.Color(c).lerp(new THREE.Color(COLORS.proposal), t).getHex(); }
 
 export class AssemblyMode {
   constructor(app) {
@@ -86,15 +88,22 @@ export class AssemblyMode {
     // the parts the server just built, so later solves can stay in the browser
     this.partsInfo = Object.fromEntries(Object.entries(res.parts || {}).map(([pid, p]) => { const { body, ...rest } = p; return [pid, rest]; }));
     this.builtParts = Object.fromEntries(Object.entries(doc.parts || {}).map(([pid, p]) => [pid, this.partText(p)]));
+    // meshes of parts no longer in the assembly are freed (they stay on the GPU otherwise)
+    const keep = new Set([...Object.keys(doc.parts || {}), ...Object.keys(isAssembly(this.app.doc) ? this.app.doc.parts || {} : {})]);
+    for (const pid of [...this.app.viewer.partGeo.keys()]) if (!keep.has(pid)) this.app.viewer.dropPart(pid);
   }
 
-  async regen(announce = false, docOverride = null, label = null) {
+  // wanted: for previews, asked before drawing (a preview whose command has closed is not drawn)
+  async regen(announce = false, docOverride = null, label = null, wanted = null) {
     const app = this.app;
     const seq = ++app.regenSeq;
     const doc = app.cleanDoc(docOverride || app.shownDoc);
     let res;
     if (this.canSolveLocally(doc)) {
-      try { res = regenLocal(doc, this.partsInfo); } catch (err) { console.error(err); res = null; }
+      // a big assembly solves in the worker, so Fix/Float, a mate preview or the end of a drag never freezes the page
+      const w = (doc.components || []).length > 12 ? this.solverWorker() : null;
+      try { res = w ? await w.solve({ components: doc.components, mates: doc.mates }, this.partsInfo) : regenLocal(doc, this.partsInfo); } catch (err) { console.error(err); res = null; }
+      if (w && res && seq !== app.regenSeq) return null; // a newer rebuild started meanwhile
     }
     if (!res && app.reviewMode) return null; // a shared review has no server to rebuild parts
     let done = () => {};
@@ -105,14 +114,14 @@ export class AssemblyMode {
       if (!Array.isArray(res?.components)) { done(); return null; } // not an assembly's answer (a part was open)
       // a mesh we thought we had is gone (cache replaced): ask again without the shortcut
       if (res.components.some((c) => !app.viewer.partGeo.get(c.part) && !res.parts[c.part]?.body && res.parts[c.part])) {
-        for (const pid of Object.keys(res.parts)) app.viewer.partGeo.delete(pid);
+        for (const pid of Object.keys(res.parts)) app.viewer.dropPart(pid);
         done();
-        return this.regen(announce, docOverride, label);
+        return this.regen(announce, docOverride, label, wanted);
       }
       this.remember(res, doc);
     }
     try {
-      if (docOverride) { this.draw(res, docOverride); return res; }
+      if (docOverride) { if (wanted && !wanted()) return null; this.draw(res, docOverride); return res; }
       this.apply(res);
     } finally { done(); }
     if (announce) app.status('Rebuild complete');
@@ -215,7 +224,7 @@ export class AssemblyMode {
       const names = (m.refs || []).map((r) => (r.component ? this.comp(r.component)?.name : r.ref) || '?');
       const n = node({ id: m.id, kind: 'mate', name: `${m.name} (${names.join(',')})`, ic: mateIcon(m.type), depth: 2,
         cls: `${state}${proposed.has(m.id) ? ' proposed' : ''}`, badge: state === 'error' ? tree.badgeIcon('error') : '', onDbl: () => this.editMate(m) });
-      if (n && s?.message) n.title = s.message;
+      if (n) n.title = `${m.name}: ${names.join(' to ')}` + (s?.message ? `\n${s.message}` : ''); // the row is cut short in a narrow tree
     }
   }
 
@@ -235,6 +244,9 @@ export class AssemblyMode {
     else {
       const it = this.pickToItem(p);
       app.viewer.setHover(it?.kind === 'component' ? { kind: 'comp', id: it.id } : null);
+      const c = it?.kind === 'component' ? this.comp(it.id) : null;
+      const stuck = c && !app.proposal && !app.reviewMode && (c.fixed || this.resComp(c.id)?.state === 'full');
+      app.viewer.canvas.style.cursor = stuck ? 'not-allowed' : '';
     }
     const hp = p && p.kind === 'plane' ? p.id : null;
     if (hp !== app.hoverPlane) { app.hoverPlane = hp; app.updatePlanes(); }
@@ -250,6 +262,8 @@ export class AssemblyMode {
     }
     const it = this.pickToItem(p);
     if (!it) { if (!e.ctrlKey && !e.shiftKey) app.setSelection([]); return; }
+    // the face or edge under the cursor rides along with its component: Mate takes it as a Mate Selection
+    if (p.kind === 'face' || p.kind === 'edge') it.pick = { kind: p.kind, id: p.id, data: p.data };
     const key = `${it.kind}:${it.id}`;
     if (e.ctrlKey || e.shiftKey) {
       const has = app.selection.some((s) => `${s.kind}:${s.id}` === key);
@@ -257,13 +271,23 @@ export class AssemblyMode {
       return;
     }
     app.setSelection([it]);
-    if (it.kind === 'component' && !app.proposal) {
+    if (it.kind === 'component' && !app.proposal && !app.reviewMode) {
       // left-drag moves an under-defined component; mates keep holding (SOLIDWORKS drag)
       const g = app.viewer.compGroups.get(it.id);
       const local = g ? p.point.clone().applyMatrix4(g.matrix.clone().invert()).toArray() : [0, 0, 0];
-      this.drag = { id: it.id, x: e.offsetX, y: e.offsetY, cx: e.clientX, cy: e.clientY, point: p.point.clone(), local, moved: false };
-      app.viewer.canvas.setPointerCapture(e.pointerId);
+      this.drag = { id: it.id, x: e.offsetX, y: e.offsetY, cx: e.clientX, cy: e.clientY, point: p.point.clone(), local, moved: false, pointerId: e.pointerId };
+      try { app.viewer.canvas.setPointerCapture(e.pointerId); } catch (_) { /* */ }
     } else app.showContextToolbar(it, e.clientX, e.clientY);
+  }
+
+  // A drag the browser cancelled (a touch or pen gesture taken for scrolling, a lost capture): put the
+  // components back where they were and commit nothing.
+  cancelDrag() {
+    const d = this.drag;
+    if (!d) return;
+    this.drag = null;
+    d.cancelled = true;
+    if (d.moved) { this.draw(); this.app.status(this.defineSummary()); }
   }
 
   pointerUp(e) {
@@ -305,7 +329,7 @@ export class AssemblyMode {
   // since the server last built them, the same loop asks the server, one request at a time.
   dragSolve(d, at, res) {
     d.solvedAt = at;
-    if (!res?.components) return;
+    if (!res?.components || d.cancelled) return;
     d.res = res;
     for (const c of res.components) {
       const dc = d.doc.components.find((x) => x.id === c.id);
@@ -314,9 +338,40 @@ export class AssemblyMode {
     this.draw(res, d.doc);
   }
 
+  // The mate solver in a worker (asmworker.js), for drags: the page keeps answering while a long linkage solves.
+  // null where workers are not available (the solve then runs here, once per animation frame).
+  solverWorker() {
+    if (this._worker !== undefined) return this._worker;
+    this._worker = null;
+    if (typeof Worker !== 'function') return null;
+    try {
+      const w = new Worker(new URL('./asmworker.js', import.meta.url), { type: 'module' });
+      const pending = new Map();
+      let seq = 0;
+      w.onmessage = (e) => { const p = pending.get(e.data.id); if (!p) return; pending.delete(e.data.id); if (e.data.error) p.reject(new Error(e.data.error)); else p.resolve(e.data.res); };
+      w.onerror = (e) => { e.preventDefault?.(); for (const p of pending.values()) p.reject(new Error('The solver worker stopped.')); pending.clear(); this._worker = null; w.terminate(); };
+      this._worker = { solve: (asm, parts, drag) => new Promise((resolve, reject) => { const id = ++seq; pending.set(id, { resolve, reject }); w.postMessage({ id, asm, parts, drag }); }) };
+    } catch (_) { this._worker = null; }
+    return this._worker;
+  }
+
   pumpDrag(d) {
     if (d.flight) return d.flight;
     const drag = (at) => ({ component: d.id, point: d.local, target: this.dragTarget(d, at) });
+    const worker = this.canSolveLocally(d.doc) ? this.solverWorker() : null;
+    if (worker) {
+      // newest mouse position wins: one solve in flight, the next one starts from the pose it found
+      d.flight = (async () => {
+        while (d.at && d.solvedAt !== d.at && !d.cancelled) {
+          const at = d.at;
+          let res;
+          try { res = await worker.solve({ components: d.doc.components, mates: d.doc.mates }, this.partsInfo, drag(at)); } catch (err) { console.warn(err); d.solvedAt = at; break; }
+          this.dragSolve(d, at, res);
+        }
+        d.flight = null;
+      })();
+      return d.flight;
+    }
     if (this.canSolveLocally(d.doc)) {
       d.flight = new Promise((resolve) => requestAnimationFrame(() => {
         const at = d.at;
@@ -327,7 +382,7 @@ export class AssemblyMode {
       return d.flight;
     }
     d.flight = (async () => {
-      while (d.at && d.solvedAt !== d.at) {
+      while (d.at && d.solvedAt !== d.at && !d.cancelled) {
         const at = d.at;
         let res;
         try { res = await this.app.api('/api/regen', { doc: d.doc, known: this.knownKeys(), drag: drag(at) }); } catch (_) { break; }
@@ -347,8 +402,9 @@ export class AssemblyMode {
     if (!d.moved) {
       d.moved = true;
       app.hideContextToolbar();
-      if (c.fixed) { this.drag = null; app.status(`${c.name} is fixed. Right-click it and choose Float to move it.`); return; }
-      if (this.resComp(d.id)?.state === 'full') { this.drag = null; app.status(`${c.name} is fully defined by its mates and cannot move.`); return; }
+      // say why nothing moves where the person is looking, not only in the status bar
+      if (c.fixed) { this.drag = null; const t = `${c.name} is fixed. Right-click it and choose Float to move it.`; app.status(t); app.toast(t); return; }
+      if (this.resComp(d.id)?.state === 'full') { this.drag = null; const t = `${c.name} is fully defined by its mates and cannot move.`; app.status(t); app.toast(t); return; }
       app.status('Dragging ' + c.name + '. Mates keep holding.');
       d.doc = app.cleanDoc(app.doc);
     }
@@ -467,12 +523,15 @@ export class AssemblyMode {
   }
 
   deleteItems(compIds, mateIds) {
-    const doc = this.app.doc;
     const comps = new Set(compIds);
     const mates = new Set(mateIds);
-    for (const m of doc.mates) if (mateReferences(m).some((r) => comps.has(r.component))) mates.add(m.id);
+    for (const m of this.app.doc.mates) if (mateReferences(m).some((r) => comps.has(r.component))) mates.add(m.id);
     const names = [...[...comps].map((c) => this.comp(c)?.name), ...[...mates].map((m) => this.mate(m)?.name)].filter(Boolean);
+    // the parts of the deleted components (only these) go when no other component uses them; parts waiting to be
+    // inserted (the AI's new parts, bought-part placeholders) stay, as with the AI's delete_items
+    const theirParts = new Set(this.app.doc.components.filter((c) => comps.has(c.id)).map((c) => c.part));
     const go = () => this.app.commit('Delete', () => {
+      const doc = this.app.doc; // after the dialog: the document as it is now
       doc.components = doc.components.filter((c) => !comps.has(c.id));
       doc.mates = doc.mates.filter((m) => !mates.has(m.id));
       doc.sequence = (doc.sequence || []).filter((c) => !comps.has(c));
@@ -482,11 +541,13 @@ export class AssemblyMode {
         if (!doc.contacts.length) delete doc.contacts;
       }
       const used = new Set(doc.components.map((c) => c.part));
-      for (const pid of Object.keys(doc.parts)) if (!used.has(pid) && compIds.length) delete doc.parts[pid];
+      for (const pid of theirParts) if (!used.has(pid)) delete doc.parts[pid];
       this.app.selection = [];
     });
     if (!comps.size) return go();
-    dialog({ title: 'Confirm Delete', body: `<div>Delete ${names.map(esc).join(', ')}?</div>` + (mates.size ? '<div style="margin-top:6px">Mates that use these components are deleted too.</div>' : ''),
+    const gone = [...theirParts].filter((pid) => !this.app.doc.components.some((c) => !comps.has(c.id) && c.part === pid)).map((pid) => this.partName(pid));
+    dialog({ title: 'Confirm Delete', body: `<div>Delete ${names.map(esc).join(', ')}?</div>` + (mates.size ? '<div style="margin-top:6px">Mates that use these components are deleted too.</div>' : '') +
+      (gone.length ? `<div style="margin-top:6px">No other component uses ${gone.length === 1 ? 'its part' : 'their parts'}, so ${gone.map(esc).join(', ')} ${gone.length === 1 ? 'is' : 'are'} removed from the assembly too.</div>` : ''),
       buttons: [{ label: 'Yes', primary: true, run: go }, { label: 'No' }] });
   }
 
@@ -505,12 +566,13 @@ export class AssemblyMode {
     return false;
   }
 
+  // The parts already in this assembly, the parts in your Files (copied in), Browse... for a file on the computer.
   insertPM() {
     if (!this.asmOnly()) return;
     const app = this.app;
     if (app.cmd) app.pmCancel();
     const doc = app.doc;
-    const state = { picked: null };
+    const state = { picked: null, files: null, busy: false };
     const pickFile = () => {
       const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.osk,.json,.step,.stp,.brd,.zip,.sldprt,.sldasm';
       inp.onchange = () => { if (inp.files[0]) { app.closeCommand(); this.insertFile(inp.files[0]); } };
@@ -518,36 +580,78 @@ export class AssemblyMode {
     };
     const spec = {
       title: 'Insert Component', icon: 'insertcomp',
-      message: 'Select a part to insert. It is placed beside the assembly; then add mates.',
+      message: () => (state.busy ? 'Getting the part from your Files...' : 'Select a part to insert. It is placed beside the assembly; then add mates.'),
       sections: [
         { title: 'Part/Assembly to Insert', rows: [
           { type: 'list', items: () => Object.entries(doc.parts).map(([pid, p]) => ({ label: esc(p.name || pid), icon: 'part', selected: state.picked === pid, select: () => { state.picked = pid; app.pm.render(); } })), empty: 'No parts in this assembly yet.' },
           { type: 'buttons', buttons: [{ label: 'Browse...', run: pickFile }, { label: 'New Part', run: () => { app.closeCommand(); this.newPart(); } }] },
         ] },
+        { title: 'Your Files', rows: [
+          { type: 'list', items: () => (state.files || []).map((f) => ({ label: esc(f.name), icon: 'part', selected: state.picked === 'file:' + f.id, select: () => { state.picked = 'file:' + f.id; app.pm.render(); } })),
+            empty: state.files === null ? 'Loading...' : 'No parts in your Files yet.' },
+          { type: 'text', text: 'A part from your Files is copied into the assembly. Later changes to the file do not change the copy.' },
+        ] },
         { title: 'Options', rows: [{ type: 'text', text: 'The first component is fixed. Drag under-defined components to move them.' }] },
       ],
-      okEnabled: () => !!state.picked,
+      okEnabled: () => !!state.picked && !state.busy,
     };
-    app.cmd = { key: 'insertcomp', onOk: () => {
+    const cmd = { key: 'insertcomp', onOk: () => {
       if (!state.picked) return false;
+      if (state.picked.startsWith('file:')) { this.insertFromFiles(state.picked.slice(5), state, cmd); return false; }
       app.commit('Insert ' + this.partName(state.picked), () => this.addComponent(state.picked));
       return undefined;
     } };
+    app.cmd = cmd;
     app.pm.open(spec);
+    (async () => {
+      let list = [];
+      try { const r = await fetch('/api/docs', { cache: 'no-store' }); list = r.ok ? await r.json() : []; } catch (_) { list = []; }
+      const open = app.server?.link?.id;
+      state.files = (Array.isArray(list) ? list : []).filter((f) => f.kind === 'part' && f.id !== open);
+      const sec = spec.sections[1].rows[0];
+      sec.empty = 'No parts in your Files yet.';
+      if (app.cmd === cmd) app.pm.render();
+    })();
+  }
+
+  // A part file from Files goes in as a copy (its own part in this assembly), placed beside the others.
+  async insertFromFiles(id, state, cmd) {
+    const app = this.app;
+    state.busy = true; app.pm.render();
+    let rec;
+    try {
+      const r = await fetch(`/api/docs/${encodeURIComponent(id)}`, { cache: 'no-store' });
+      if (!r.ok) throw new Error(r.status === 404 ? 'That file is no longer in your Files.' : `The server answered ${r.status}.`);
+      rec = await r.json();
+    } catch (err) { state.busy = false; if (app.cmd === cmd) { app.pm.spec.error = err.message; app.pm.render(); } return; }
+    state.busy = false;
+    if (app.cmd !== cmd) return;
+    const d = rec.doc;
+    if (!d || !Array.isArray(d.features)) { app.pm.spec.error = 'That file is not a part.'; app.pm.render(); return; }
+    const doc = app.doc; // read now: the document may have been replaced while the file was fetched
+    const name = d.name || rec.name || 'Part';
+    const base = name.toLowerCase().replace(/[^a-z0-9]+/g, '') || 'part';
+    let pid = base, k = 2;
+    while (doc.parts[pid]) pid = base + k++;
+    app.commit('Insert ' + name, () => { app.doc.parts[pid] = { ...d, name, type: 'part', rollback: null }; this.addComponent(pid); });
+    app.closeCommand();
   }
 
   // Insert a part file (.osk or STEP) into this assembly. A STEP assembly is flattened in: its parts
   // and components come in at their STEP positions relative to each other, placed beside the assembly.
   async insertFile(file) {
     const app = this.app;
-    const doc = app.doc;
     try {
       const d = await app.readDocFile(file);
+      // the document as it is now: an undo or a new version from the server may have replaced it during the import
+      const doc = app.doc;
+      if (!isAssembly(doc)) { message('Insert Components', 'The assembly is no longer open, so nothing was inserted.'); return; }
       if (isAssembly(d)) {
         const map = {};
         const bb = this.res?.bbox;
         const dx = bb ? bb[1][0] + 40 : 0;
         app.commit('Insert ' + d.name, () => {
+          const doc = app.doc;
           for (const [pid, p] of Object.entries(d.parts)) {
             let k = pid, n = 2;
             while (doc.parts[k]) k = pid + n++;
@@ -565,7 +669,7 @@ export class AssemblyMode {
       const base = (d.name || file.name.replace(/\.[^.]+$/, '')).toLowerCase().replace(/[^a-z0-9]+/g, '') || 'part';
       let pid = base, k = 2;
       while (doc.parts[pid]) pid = base + k++;
-      app.commit('Insert ' + (d.name || pid), () => { doc.parts[pid] = { ...d, type: 'part', rollback: null }; this.addComponent(pid); });
+      app.commit('Insert ' + (d.name || pid), () => { app.doc.parts[pid] = { ...d, type: 'part', rollback: null }; this.addComponent(pid); });
     } catch (err) { message('Insert Components', 'Could not insert: ' + esc(err.message)); }
   }
 
@@ -631,9 +735,11 @@ export class AssemblyMode {
     if (!this.asmOnly()) return;
     const app = this.app;
     if (app.cmd) app.pmCancel();
+    this.previewProblem = null;
     const doc = app.doc;
     const m = existing ? clone(existing) : { type: 'coincident', refs: [], align: 'auto' };
-    const labels = existing ? m.refs.map((r) => (r.component ? `${esc(this.comp(r.component)?.name)}` : esc(r.ref))) : [];
+    // an existing mate's selections read like new picks: what was picked, on which component
+    const labels = existing ? m.refs.map((r) => (r.component ? `${r.plane ? 'Face' : r.axis ? 'Axis' : 'Point'}@${esc(this.comp(r.component)?.name)}` : esc(r.ref))) : [];
     let typed = !!existing;
     const kinds = () => m.refs.map((r) => (r.plane || ['Front Plane', 'Top Plane', 'Right Plane'].includes(r.ref) ? 'plane' : r.axis || /axis/.test(r.ref || '') ? 'axis' : 'point'));
     const autoType = () => {
@@ -695,6 +801,7 @@ export class AssemblyMode {
         if (!/^limit/.test(mm.type)) { delete mm.min; delete mm.max; }
         if (mm.type !== 'lock') delete mm.pose;
         if (existing && existing.type !== mm.type) mm.name = this.nextMateName(mm.type);
+        if (this.refuseMate(mm, existing)) return false;
         app.commit(existing ? 'Edit ' + name : name, () => {
           if (existing) { const i = doc.mates.findIndex((x) => x.id === existing.id); doc.mates[i] = mm; } else doc.mates.push(mm);
         });
@@ -706,11 +813,16 @@ export class AssemblyMode {
       onCancel: () => { this.regen(); },
     };
     app.pm.open(spec);
-    if (!existing) {
-      // preselected faces from the graphics area
-      for (const s of app.selection) if (s.kind === 'face') app.cmd.onPick({ kind: 'face', id: s.id, data: s.data });
-    }
+    if (!existing) this.takePreselection();
     app.setSelection([]);
+  }
+
+  // SOLIDWORKS: select two faces (Ctrl+click), then Mate. The faces, edges or planes picked before the command
+  // become its selections (up to two).
+  takePreselection() {
+    const app = this.app;
+    const picks = app.selection.map((s) => (s.pick ? s.pick : s.kind === 'plane' ? { kind: 'plane', id: s.id } : s.kind === 'face' || s.kind === 'edge' ? s : null)).filter(Boolean).slice(0, 2);
+    for (const p of picks) app.cmd?.onPick?.(p);
   }
 
   // Hinge (SOLIDWORKS Mechanical Mates): Concentric selections, Coincident selections, optional
@@ -719,6 +831,7 @@ export class AssemblyMode {
     if (!this.asmOnly()) return;
     const app = this.app;
     if (app.cmd) app.pmCancel();
+    this.previewProblem = null;
     const doc = app.doc;
     const m = existing ? clone(existing) : { type: 'hinge', refs: [], planes: [], angle_refs: [] };
     m.planes = m.planes || []; m.angle_refs = m.angle_refs || [];
@@ -765,6 +878,7 @@ export class AssemblyMode {
       onOk: () => {
         if (!spec.okEnabled()) return false;
         const mm = { ...this.cleanHinge(m, limits), id: existing ? existing.id : this.uid('m'), name: existing ? m.name : this.nextMateName('hinge') };
+        if (this.refuseMate(mm, existing)) return false;
         app.commit(existing ? 'Edit ' + mm.name : mm.name, () => {
           if (existing) { const i = doc.mates.findIndex((x) => x.id === existing.id); doc.mates[i] = mm; } else doc.mates.push(mm);
         });
@@ -773,6 +887,7 @@ export class AssemblyMode {
       onCancel: () => { this.regen(); },
     };
     app.pm.open(spec);
+    if (!existing) this.takePreselection();
     app.setSelection([]);
   }
 
@@ -795,6 +910,7 @@ export class AssemblyMode {
     if (!this.asmOnly()) return;
     const app = this.app;
     if (app.cmd) app.pmCancel();
+    this.previewProblem = null;
     const doc = app.doc;
     const m = existing ? clone(existing) : { type: 'coupler', input_refs: [], input: 'angle', refs: [], output: 'distance', law: [] };
     m.input_refs = m.input_refs || []; m.refs = m.refs || [];
@@ -926,6 +1042,7 @@ export class AssemblyMode {
         if (!spec.okEnabled()) return false;
         const id = existing ? existing.id : this.uid('m');
         const mm = { ...this.cleanCoupler(m, mode), id, name: existing ? m.name : this.nextMateName('coupler') };
+        if (this.refuseMate(mm, existing)) return false;
         app.commit(existing ? 'Edit ' + mm.name : mm.name, () => {
           if (existing) { const i = doc.mates.findIndex((x) => x.id === existing.id); doc.mates[i] = mm; } else doc.mates.push(mm);
           doc.contacts = (doc.contacts || []).filter((k) => k.of !== id);
@@ -1008,17 +1125,61 @@ export class AssemblyMode {
     return base + n;
   }
 
+  // Why a mate cannot hold, from a solve with it in; null when it holds. Both solvers (assembly.py, asmsolver.js)
+  // reject a mate that over defines the assembly: it is in error with over_defining and conflicts_with (the mates
+  // it fights) and a message naming them, while the others stay solved. Mates already in error before (`before`)
+  // do not count; one that fails only because of this mate does (an edited mate can push a later one out).
+  mateConflict(res, mm, before = new Set()) {
+    const own = res?.mates?.find((x) => x.id === mm.id);
+    if (own?.state === 'error') return own.message || 'This mate cannot be satisfied with the other mates.';
+    const hit = (res?.mates || []).filter((x) => x.state === 'error' && !before.has(x.id) && x.id !== mm.id && (!x.conflicts_with || x.conflicts_with.includes(mm.id)));
+    if (!hit.length) return null;
+    const names = hit.map((x) => this.mate(x.id)?.name || x.id);
+    const list = names.length > 3 ? `${names.slice(0, 3).join(', ')} and ${names.length - 3} more` : names.join(', ');
+    return `With this mate, ${list} ${names.length === 1 ? 'over defines' : 'over define'} the assembly.`;
+  }
+
+  errorIds(res) { return new Set((res?.mates || []).filter((x) => x.state === 'error').map((x) => x.id)); }
+
+  // OK on a mate that cannot hold is refused, as in SOLIDWORKS: nothing is added, the PropertyManager stays open
+  // and says why. Solved here when the parts are the ones the server built, else the last preview's verdict.
+  mateProblem(mm, existing) {
+    const app = this.app;
+    const doc = app.cleanDoc(app.doc);
+    let why;
+    if (!this.canSolveLocally(doc)) why = this.previewProblem || null;
+    else {
+      const after = app.cleanDoc(doc);
+      if (existing) after.mates = after.mates.map((x) => (x.id === existing.id ? mm : x)); else after.mates.push(mm);
+      try { why = this.mateConflict(regenLocal(after, this.partsInfo), mm, this.errorIds(regenLocal(doc, this.partsInfo))); } catch (_) { return null; }
+    }
+    if (!why) return null;
+    return `${why.replace(/\.$/, '')}. ${existing ? 'The change was not made' : 'The mate was not added'}. Change its type or selections, or delete a mate that holds the same freedom.`;
+  }
+
+  refuseMate(mm, existing) {
+    const p = this.mateProblem(mm, existing);
+    if (!p) return false;
+    const app = this.app;
+    if (app.pm.spec) { app.pm.spec.error = p; app.pm.render(); }
+    app.toast(existing ? 'The mate cannot hold that way. It was left as it was.' : 'That mate cannot hold. It was not added.');
+    return true;
+  }
+
   previewMate(m, existing) {
-    if (m.refs.length < 2) return;
+    if (m.refs.length < 2) { this.previewProblem = null; return; }
     clearTimeout(this.previewTimer);
+    const cmd = this.app.cmd;
     this.previewTimer = setTimeout(async () => {
+      if (!cmd || this.app.cmd !== cmd) return; // the Mate PropertyManager closed meanwhile
       const doc = this.app.cleanDoc(this.app.doc);
       const mm = { ...clone(m), id: existing?.id || '_preview', name: 'Preview' };
       if (existing) doc.mates = doc.mates.map((x) => (x.id === existing.id ? mm : x)); else doc.mates.push(mm);
-      const res = await this.regen(false, doc);
-      if (!res || !this.app.pm.spec) return;
-      const st = res.mates.find((x) => x.id === mm.id);
-      this.app.pm.spec.error = st && st.state === 'error' ? st.message : null;
+      const before = this.errorIds(this.res);
+      const res = await this.regen(false, doc, null, () => this.app.cmd === cmd);
+      if (!res || !this.app.pm.spec || this.app.cmd !== cmd) return;
+      this.previewProblem = this.mateConflict(res, mm, before);
+      this.app.pm.spec.error = this.previewProblem;
       this.app.pm.render();
     }, 80);
   }
@@ -1041,7 +1202,7 @@ export class AssemblyMode {
       title: 'Interference Detection', icon: 'interference',
       message: () => (state.busy ? 'Calculating...' : null),
       sections: [{ title: 'Results', rows: [
-        { type: 'list', items: () => (state.items || []).map((x, i) => ({ label: `Interference${i + 1}: ${esc(x.names[0])} and ${esc(x.names[1])} (${fmt(x.volume, 2)} mm^3)`, icon: 'interference', selected: state.sel === i, select: () => { state.sel = state.sel === i ? -1 : i; show(); app.pm.render(); } })),
+        { type: 'list', items: () => (state.items || []).map((x, i) => ({ label: `Interference${i + 1}: ${esc(x.names[0])} and ${esc(x.names[1])} (${fmt(x.volume, 2)} mm³)`, icon: 'interference', selected: state.sel === i, select: () => { state.sel = state.sel === i ? -1 : i; show(); app.pm.render(); } })),
           empty: state.busy ? '' : 'No Interferences' },
         { type: 'buttons', buttons: [{ label: 'Calculate', run: () => run() }] },
       ] }],
@@ -1115,13 +1276,21 @@ export class AssemblyMode {
   }
 
   // ------------------------------------------------------------------ Motion Study: assembly playback
+  // Components fly in one by one in `sequence` order. A click in the graphics area, Escape or the Model tab stops
+  // it, with every component at its place.
   async playSequence() {
     if (!this.asmOnly()) return;
     const app = this.app, v = app.viewer;
     if (!this.res) await this.regen();
     if (!this.res || this.playing) return;
     this.playing = true;
-    app.status('Assembly playback');
+    const ctl = new AbortController();
+    this.playCtl = ctl;
+    const stop = () => ctl.abort();
+    const onKey = (e) => { if (e.key === 'Escape') stop(); };
+    v.canvas.addEventListener('pointerdown', stop);
+    window.addEventListener('keydown', onKey, true);
+    app.status('Assembly playback. Click the model or press Escape to stop.');
     const order = [...(this.doc.sequence || [])];
     for (const c of this.doc.components) if (!order.includes(c.id)) order.push(c.id);
     const groups = order.map((id) => [id, v.compGroups.get(id)]).filter(([, g]) => g);
@@ -1129,23 +1298,34 @@ export class AssemblyMode {
     const bb = this.res.bbox;
     const size = bb ? Math.max(...bb[1].map((x, i) => x - bb[0][i])) : 100;
     const center = bb ? new THREE.Vector3(...bb[0]).add(new THREE.Vector3(...bb[1])).multiplyScalar(0.5) : new THREE.Vector3();
-    for (const [, g] of groups) g.visible = false;
-    v.requestRender();
-    for (const [i, [id, g]] of groups.entries()) {
-      const to = targets.get(id);
-      const p = new THREE.Vector3().setFromMatrixPosition(to);
-      const out = p.clone().sub(center); out.y = Math.max(out.y, 0);
-      if (out.length() < 1e-6) out.set(0, 1, 0);
-      out.normalize().multiplyScalar(size * 0.7).add(new THREE.Vector3(0, size * 0.5, 0));
-      const from = to.clone().premultiply(new THREE.Matrix4().makeTranslation(out.x, out.y, out.z));
-      const via = to.clone().premultiply(new THREE.Matrix4().makeTranslation(0, size * 0.18, 0));
-      g.matrix.copy(from); g.visible = true;
-      app.status(`Assembly playback: ${i + 1}/${groups.length} ${this.comp(id)?.name || id}`);
-      await v.tweenGroups([{ group: g, via, to }], i === 0 ? 500 : 850);
+    try {
+      for (const [, g] of groups) g.visible = false;
+      v.requestRender();
+      for (const [i, [id, g]] of groups.entries()) {
+        if (ctl.signal.aborted) break;
+        const to = targets.get(id);
+        const p = new THREE.Vector3().setFromMatrixPosition(to);
+        const out = p.clone().sub(center); out.y = Math.max(out.y, 0);
+        if (out.length() < 1e-6) out.set(0, 1, 0);
+        out.normalize().multiplyScalar(size * 0.7).add(new THREE.Vector3(0, size * 0.5, 0));
+        const from = to.clone().premultiply(new THREE.Matrix4().makeTranslation(out.x, out.y, out.z));
+        const via = to.clone().premultiply(new THREE.Matrix4().makeTranslation(0, size * 0.18, 0));
+        g.matrix.copy(from); g.visible = true;
+        app.status(`Assembly playback: ${i + 1}/${groups.length} ${this.comp(id)?.name || id}. Click the model or press Escape to stop.`);
+        await v.tweenGroups([{ group: g, via, to }], i === 0 ? 500 : 850, ctl.signal);
+      }
+    } finally {
+      for (const [id, g] of groups) { g.visible = true; g.matrix.copy(targets.get(id)); g.matrixWorldNeedsUpdate = true; }
+      v.requestRender();
+      v.canvas.removeEventListener('pointerdown', stop);
+      window.removeEventListener('keydown', onKey, true);
+      this.playing = false;
+      this.playCtl = null;
+      app.status(ctl.signal.aborted ? 'Playback stopped' : 'Playback complete');
     }
-    this.playing = false;
-    app.status('Playback complete');
   }
+
+  stopPlayback() { this.playCtl?.abort(); }
 
   async massProperties() {
     const app = this.app;
@@ -1154,9 +1334,9 @@ export class AssemblyMode {
     message('Mass Properties', `<table class="mass-table">
       <tr><td>Components</td><td>${r.components}</td></tr>
       <tr><td>Mass</td><td>${fmt(r.mass * 1000, 2)} grams</td></tr>
-      <tr><td>Volume</td><td>${fmt(r.volume, 2)} mm^3</td></tr>
+      <tr><td>Volume</td><td>${fmt(r.volume, 2)} mm³</td></tr>
       <tr><td>Center of mass</td><td>X = ${fmt(r.center_of_mass[0], 3)}<br>Y = ${fmt(r.center_of_mass[1], 3)}<br>Z = ${fmt(r.center_of_mass[2], 3)}</td></tr></table>
-      <div class="pm-note" style="margin-top:6px">Each part uses its own material. Parts without one count as 1000 kg/m^3.</div>`);
+      <div class="pm-note" style="margin-top:6px">Each part uses its own material. Parts without one count as 1000 kg/m³.</div>`);
   }
 
   canvasContext(e) {

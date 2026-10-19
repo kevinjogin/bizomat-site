@@ -295,8 +295,9 @@ export class ServerDocs {
   async uploadThumb() {
     const L = this.link, app = this.app;
     if (!L || app.reviewMode) return;
-    // not while a sketch is open (the sketch being edited is not in the picture) or something else is going on
-    if (app.proposal || app.taskpane?.busy || app.live?.active || L.local || this.pushing || app.mode === 'sketch' || app.docStack?.length) { this.scheduleThumb(3000); return; }
+    // not while the person is turning the view or working in a command, a sketch or a part opened from the
+    // assembly (the picture would show that, not the file); the picture is taken when things are still
+    if (app.proposal || app.taskpane?.busy || app.live?.active || L.local || this.pushing || app.viewer.isNavigating?.() || app.cmd || app.mode === 'sketch' || app.docStack?.length) { this.scheduleThumb(3000); return; }
     this.thumbAt = Date.now();
     this.thumbPending = false;
     let blob = null;

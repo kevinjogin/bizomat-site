@@ -119,6 +119,8 @@ export function buildCommands(app) {
     ai: { label: 'OpenSketch AI', icon: 'ai', key: 'Ctrl+L', tip: 'Describe a part or a change, the AI proposes features you can accept or reject (Ctrl+L).', run: () => app.openTask('ai') },
     aiexplain: { label: 'Explain Model', icon: 'aiexplain', tip: 'Asks the AI to explain the feature tree.', run: () => app.aiQuick('Explain this part and its design intent in a few sentences. Do not change it.') },
     aifix: { label: 'Fix Errors', icon: 'rebuild', tip: 'Asks the AI to fix rebuild errors.', run: () => app.aiQuick('Fix the rebuild errors in this part with minimal changes.') },
+    // a recorded session plays without any AI key (the server streams demo.py): a part demo in a part, the hand press in an assembly
+    aidemo: { label: 'Watch Demo', icon: 'playback', tip: 'Plays a recorded AI session that builds a model. No key needed.', run: () => app.taskpane.send(app.isAsm ? 'Design a hand press for pressing bearings' : 'Design an L bracket with two mounting holes', { demo: app.isAsm ? 'press' : 'part' }) },
     aidefine: { label: 'Fully Define', icon: 'smartdim', tip: 'Asks the AI to add relations and dimensions so every sketch is fully defined.', run: () => app.aiQuick('Add relations and dimensions so every sketch is fully defined, keeping the current geometry.') },
   };
   for (const spec of Object.values(SPECS)) {
@@ -160,7 +162,7 @@ export const TABS = [
     { big: 'relations', fly: ['relations', 'addrelation'] }, { big: 'repair' }, { big: 'quicksnaps' }, { big: 'rapidsketch' }, { big: 'instant2d' }, { big: 'shadedsketch' },
   ] },
   { name: 'Evaluate', items: [{ big: 'measure' }, { big: 'massprops' }, { big: 'section' }, { big: 'check' }, { big: 'stats' }] },
-  { name: 'OpenSketch AI', items: [{ big: 'ai' }, { big: 'airebuild' }, { big: 'aiexplain' }, { big: 'aifix' }, { big: 'aidefine' }, '|', { big: 'connectclaude' }] },
+  { name: 'OpenSketch AI', items: [{ big: 'ai' }, { big: 'airebuild' }, { big: 'aiexplain' }, { big: 'aifix' }, { big: 'aidefine' }, '|', { big: 'aidemo' }, { big: 'connectclaude' }] },
 ];
 
 // Assembly documents get the SOLIDWORKS assembly CommandManager.
@@ -171,7 +173,7 @@ export const ASM_TABS = [
     { big: 'interference' }, { big: 'playback' }, '|', { big: 'toolbox' }, { big: 'recognize' },
   ] },
   { name: 'Evaluate', items: [{ big: 'interference' }, { big: 'motionreview' }, { big: 'massprops' }, { big: 'section' }, { big: 'check' }, { big: 'stats' }] },
-  { name: 'OpenSketch AI', items: [{ big: 'ai' }, { big: 'aimates' }, { big: 'asmexplain' }, { big: 'asmfix' }, '|', { big: 'connectclaude' }] },
+  { name: 'OpenSketch AI', items: [{ big: 'ai' }, { big: 'aimates' }, { big: 'asmexplain' }, { big: 'asmfix' }, '|', { big: 'aidemo' }, { big: 'connectclaude' }] },
 ];
 
 export const QUICK = ['new', 'open', 'save', 'print', 'undo', 'redo', 'select', 'rebuild', 'fileprops', 'options'];
@@ -196,12 +198,15 @@ export const MENUS = [
 ];
 
 // Registered features that have no place in the layout yet go next to Shell (ribbon) and after Shell
-// (Insert menu).
-for (const spec of Object.values(SPECS)) {
-  if (spec.ui !== 'generated') continue;
-  const id = spec.command;
-  const placed = JSON.stringify(TABS[0].items).includes(`"${id}"`);
-  if (!placed) TABS[0].items.splice(TABS[0].items.findIndex((it) => it.big === 'refgeom') - 1, 0, { big: id });
-  const ins = MENUS.find((m) => m.name === 'Insert').items;
-  if (!ins.includes(id)) ins.splice(ins.indexOf('shell') + 1, 0, id);
+// (Insert menu). Run again when the registry arrives late (features.js).
+export function placeRegistryCommands() {
+  for (const spec of Object.values(SPECS)) {
+    if (spec.ui !== 'generated') continue;
+    const id = spec.command;
+    const placed = JSON.stringify(TABS[0].items).includes(`"${id}"`);
+    if (!placed) TABS[0].items.splice(TABS[0].items.findIndex((it) => it.big === 'refgeom') - 1, 0, { big: id });
+    const ins = MENUS.find((m) => m.name === 'Insert').items;
+    if (!ins.includes(id)) ins.splice(ins.indexOf('shell') + 1, 0, id);
+  }
 }
+placeRegistryCommands();

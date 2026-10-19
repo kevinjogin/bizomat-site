@@ -38,6 +38,30 @@ export class DesignPanel {
     this.collapsed = new Set();
     this.rebuild = { pending: false, running: false };
     try { this.auto = localStorage.getItem(AUTO_KEY) !== '0'; } catch (_) { this.auto = true; }
+    // Auto-open waits for a click to settle: a press that turns into a drag, a double-click or a selection made by
+    // the app itself (Exit Sketch) never opens it, so the graphics area never changes size under the pointer.
+    this.press = null;
+    this.pendingOpen = null;
+    window.addEventListener('pointerdown', (e) => {
+      clearTimeout(this.pendingOpen); this.pendingOpen = null;
+      // only a click on the model or in the FeatureManager tree selects something worth opening the panel for
+      // (not Exit Sketch, a ribbon command or the confirmation corner, which also leave something selected)
+      const onModel = e.target === this.app.viewer?.canvas || !!e.target?.closest?.('#tree');
+      this.press = onModel ? { x: e.clientX, y: e.clientY, t: performance.now(), down: true, moved: false } : null;
+    }, true);
+    window.addEventListener('pointermove', (e) => {
+      const p = this.press;
+      if (p?.down && !p.moved && Math.hypot(e.clientX - p.x, e.clientY - p.y) > 4) p.moved = true;
+    }, true);
+    const up = (e) => {
+      const p = this.press;
+      if (!p?.down) return;
+      p.down = false;
+      if (e.type !== 'pointerup') p.moved = true;
+      if (p.want) this.settle();
+    };
+    window.addEventListener('pointerup', up, true);
+    window.addEventListener('pointercancel', up, true);
   }
 
   setAuto(on) { this.auto = on; try { localStorage.setItem(AUTO_KEY, on ? '1' : '0'); } catch (_) { /* ignore */ } }
@@ -113,17 +137,55 @@ export class DesignPanel {
 
   isOpen() { return this.app.taskpane.open === 'design'; }
 
-  // Called on every selection change: open the panel (unless the user closed it), or redraw it.
+  // Called on every selection change: redraw the panel, or open it once the click that made the selection has
+  // settled (unless the user closed it).
   onSelection() {
     const app = this.app;
     if (this.dragging) return;
     this.pinned = null;
+    if (this.isOpen()) { this.refresh(); return; }
+    const p = this.press;
+    // only a selection the user just clicked: not one the app made (Exit Sketch selects the sketch)
+    if (!p || performance.now() - p.t > 1500 || !this.canAutoOpen()) { if (p) p.want = false; return; }
+    p.want = true;
+    if (!p.down) this.settle();
+  }
+
+  canAutoOpen() {
+    const app = this.app;
     const sel = app.selection || [];
     const useful = sel.some((s) => ['face', 'feature', 'sketch', 'component', 'mate', 'plane'].includes(s.kind) && !['Front Plane', 'Top Plane', 'Right Plane'].includes(s.id));
-    if (useful && this.auto && !app.cmd && app.mode !== 'sketch' && !app.live?.active && (app.taskpane.open === null || app.taskpane.open === 'design')) {
-      if (!this.isOpen()) { app.taskpane.show('design'); return; }
-    }
-    if (this.isOpen()) this.refresh();
+    if (!useful || !this.auto || app.cmd || app.mode !== 'part' && !app.isAsm || app.mode === 'sketch' || app.live?.active || app.taskpane.busy) return false;
+    if (app.taskpane.open !== null) return false;
+    // phones: the panel is a sheet over the model; it opens from the task strip only
+    if (window.matchMedia?.('(max-width: 760px)').matches) return false;
+    return this.hasRows();
+  }
+
+  // Something to change: a face (its feature is looked up), a feature or component with numbers, a mate with numbers.
+  hasRows() {
+    const ctx = this.context();
+    if (ctx.kind === 'mate') return ['value', 'min', 'max', 'angle_min', 'angle_max'].some((k) => Number.isFinite(ctx.mate[k]));
+    if (ctx.kind !== 'part') return false;
+    if ((this.app.selection || []).some((s) => s.kind === 'face')) return true;
+    const feats = ctx.focus.length ? ctx.focus.map((id) => ctx.part.features.find((f) => f.id === id)).filter(Boolean) : ctx.part.features || [];
+    return feats.some((f) => this.rowsFor(ctx.part, f).length);
+  }
+
+  // The click is over: open shortly after (a second click of a double-click cancels it), unless it was a drag or
+  // the pointer is where the panel will go (the next Ctrl+click must still land on the model).
+  settle() {
+    const p = this.press;
+    if (!p || !p.want || p.moved) return;
+    p.want = false;
+    clearTimeout(this.pendingOpen);
+    this.pendingOpen = setTimeout(() => {
+      this.pendingOpen = null;
+      if (this.press !== p || this.isOpen() || !this.canAutoOpen()) return;
+      const r = this.app.viewer.el.getBoundingClientRect();
+      if (p.x > r.right - 360 && p.x < r.right && p.y > r.top && p.y < r.bottom) return;
+      this.app.taskpane.show('design');
+    }, 260);
   }
 
   refresh() { if (this.isOpen() && !this.dragging) this.app.taskpane.render(); }
@@ -142,7 +204,7 @@ export class DesignPanel {
     body.appendChild(head);
 
     const blocked = app.proposal ? 'Accept or reject the AI proposal first.' : app.mode === 'sketch' ? 'You are editing a sketch. Use Smart Dimension, or exit the sketch to change numbers here.'
-      : app.cmd?.spec ? 'Finish or cancel the open command first.' : app.live?.active ? 'The AI is building. Numbers can be changed when it finishes.' : '';
+      : app.cmd?.spec ? 'Finish or cancel the open command first.' : app.live?.active || app.taskpane?.busy ? 'The AI is building. Numbers can be changed when it finishes.' : '';
     this.locked = !!blocked;
     if (blocked) body.appendChild(h('div', 'dp-note', blocked));
 
@@ -308,16 +370,20 @@ export class DesignPanel {
         apply(round(start + Math.round(acc) * step, step));
       };
       const up = () => {
-        lab.removeEventListener('pointermove', mv); lab.removeEventListener('pointerup', up); lab.removeEventListener('pointercancel', up);
+        lab.removeEventListener('pointermove', mv); lab.removeEventListener('pointerup', up); lab.removeEventListener('pointercancel', up); lab.removeEventListener('lostpointercapture', up);
         document.body.classList.remove('dp-scrubbing');
         this.dragging = false;
         this.end();
       };
-      lab.addEventListener('pointermove', mv); lab.addEventListener('pointerup', up); lab.addEventListener('pointercancel', up);
+      lab.addEventListener('pointermove', mv); lab.addEventListener('pointerup', up); lab.addEventListener('pointercancel', up); lab.addEventListener('lostpointercapture', up);
     });
 
-    // slider
-    slider.addEventListener('pointerdown', () => { this.dragging = true; });
+    // slider: the drag ends with the pointer (a click on the thumb that changes nothing fires no 'change')
+    const release = () => { if (!this.dragging) return; this.dragging = false; this.end(); };
+    slider.addEventListener('pointerdown', (e) => { this.dragging = true; try { slider.setPointerCapture(e.pointerId); } catch (_) { /* */ } });
+    slider.addEventListener('pointerup', release);
+    slider.addEventListener('pointercancel', release);
+    slider.addEventListener('lostpointercapture', release);
     slider.addEventListener('input', () => apply(+slider.value));
     slider.addEventListener('change', () => { this.dragging = false; this.end(); });
     slider.addEventListener('keydown', (e) => e.stopPropagation());

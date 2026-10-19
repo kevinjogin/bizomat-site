@@ -218,6 +218,19 @@ input, select, button { font: inherit; color: inherit; }
 .cc { display: flex; align-items: center; justify-content: center; width: 36px; height: 34px; cursor: pointer; border: 1px solid transparent; border-radius: 3px; background: rgba(255,255,255,.35); }
 .cc:hover { background: rgba(255,255,255,.9); border-color: var(--hover-b); }
 .cc .ic { width: 30px; height: 30px; }
+button.cc { padding: 0; font: inherit; color: inherit; }
+button.cc:focus-visible { outline: 2px solid #2467b2; outline-offset: 2px; }
+.cc.disabled { opacity: .35; cursor: default; }
+/* OK pressed: the feature is being applied */
+.pm-act.busy { position: relative; pointer-events: none; }
+.pm-act.busy .ic { opacity: .25; }
+.pm-act.busy::after { content: ''; position: absolute; left: calc(50% - 8px); top: calc(50% - 8px); width: 12px; height: 12px; border: 2px solid rgba(42, 140, 255, .3); border-top-color: #2a8cff; border-radius: 50%;
+  animation: spin .8s linear infinite, os-fade 160ms ease; }
+@media (prefers-reduced-motion: reduce) { .pm-act.busy::after { animation: none; border-color: #2a8cff; } }
+/* phones: while the AI builds or its result waits, the AI sheet is lower so the model shows above it */
+@media (max-width: 760px) {
+  body.ai-live:not(.review-mode) #taskpane .taskpanel:not(.hidden) { height: 38vh; }
+}
 
 .sketchcursor { position: absolute; pointer-events: none; display: flex; align-items: center; gap: 2px; z-index: 8; }
 .sketchcursor .glyph { width: 16px; height: 16px; background: #fffbe0; border: 1px solid #c8a63a; display: flex; align-items: center; justify-content: center; }
@@ -357,14 +370,16 @@ input, select, button { font: inherit; color: inherit; }
 .ai-act { border: 1px solid #e3e3e3; border-radius: 4px; padding: 4px 6px; background: #fff; font-size: 11.5px; }
 .ai-act .ah { display: flex; align-items: center; gap: 5px; }
 .ai-act .ah .ic { flex: none; }
-.ai-act .ah b { white-space: nowrap; flex: none; }
-.ai-act .ad { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.ai-act .ah b { flex: 0 1 auto; min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+.ai-act .ad { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1 1 0; }
 .ai-act.error { border-color: #e7a7a2; background: #fffafa; }
 .ai-act.running { border-color: #c9b8ff; background: #faf8ff; }
 .ai-steps { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
 .ai-steps .st { display: inline-flex; align-items: center; gap: 2px; padding: 0 5px 0 2px; border-radius: 8px; background: #f1f1f4; font-size: 10.5px; animation: popin .2s var(--ease, ease-out); }
 .ai-steps .st.error { background: #fde3e1; color: var(--sw-red); }
 .ai-steps .st.warning { background: #fff3d6; }
+.ai-steps .st.running { opacity: .6; }
+.ai-errbtns { display: flex; gap: 6px; margin-top: 8px; }
 .ai-sources { border-left: 2px solid #e3e3e3; padding: 2px 0 2px 8px; font-size: 11.5px; display: flex; flex-direction: column; gap: 2px; }
 .ai-sources .sh { color: var(--muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; }
 .ai-sources a { color: var(--sw-blue, #2f7fd8); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

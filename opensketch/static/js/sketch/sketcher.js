@@ -679,6 +679,21 @@ export class Sketcher {
     if (d.started) { this.solve(); this.app.docChanged(); this.render(); }
   }
 
+  // The browser cancelled the gesture (touch taken for scrolling, a lost capture): the dragged geometry goes back
+  // and no undo step is left behind; a box selection is dropped.
+  cancelDrag() {
+    const d = this.drag;
+    if (!d && !this.box) return; // a normal release already ended it
+    this.drag = null;
+    if (d?.started) {
+      this.sk.entities = JSON.parse(d.snapshot);
+      if (this.app.undoStack[this.app.undoStack.length - 1]?.label === 'Drag') this.app.undoStack.pop();
+      this.solve();
+    }
+    if (this.box) { this.box = null; this.app.showSelBox(null); }
+    this.render();
+  }
+
   boxEnd(e) {
     const b = this.box; this.box = null; this.app.showSelBox(null);
     if (Math.hypot(b.x1 - b.x0, b.y1 - b.y0) < 4) { this.render(); return; }
@@ -1368,8 +1383,8 @@ export class Sketcher {
         c.label = this.toLocal(ev.clientX - r.left, ev.clientY - r.top);
         this.render();
       };
-      const up = () => { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); if (moved) this.app.docChanged(); };
-      window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up);
+      const up = () => { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); if (moved) this.app.docChanged(); };
+      window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
       this.render();
     });
     el.addEventListener('dblclick', (e) => {

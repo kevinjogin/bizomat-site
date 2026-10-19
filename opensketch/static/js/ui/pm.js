@@ -63,6 +63,7 @@ export class PropertyManager {
     this.feedbackUpdates = [];
     this.root.innerHTML = '';
     this.app.showPanel('tree');
+    this.app.updateConfirmCorner?.();
   }
 
   findSelboxes() {
@@ -101,7 +102,13 @@ export class PropertyManager {
     // a native button keeps OK keyboard reachable; aria-disabled (not disabled) so a click that commits a field
     // on blur still reaches OK (Offset Entities Distance -> OK)
     const ok = el('button', 'pm-act' + (s.okEnabled && !s.okEnabled() ? ' disabled' : ''), icon('ok', 20)); ok.title = 'OK'; ok.setAttribute('aria-label', 'OK');
-    const okState = () => { const off = (!!s.okEnabled && !s.okEnabled()) || this.badFields.size > 0; ok.classList.toggle('disabled', off); ok.setAttribute('aria-disabled', String(off)); };
+    // OK pressed and the feature is being applied: show it at once (a spinner), and ignore more clicks
+    const okState = () => {
+      const busy = !!this.app?.cmd?.committing, off = (!!s.okEnabled && !s.okEnabled()) || this.badFields.size > 0 || busy;
+      ok.classList.toggle('disabled', off && !busy); ok.classList.toggle('busy', busy);
+      ok.setAttribute('aria-disabled', String(off)); ok.setAttribute('aria-busy', String(busy));
+      this.app?.updateConfirmCorner?.();
+    };
     okState(); this.feedbackUpdates.push(okState);
     ok.onclick = () => { okState(); if (ok.getAttribute('aria-disabled') !== 'true') this.app.pmOk(); };
     acts.appendChild(ok);

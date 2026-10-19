@@ -51,6 +51,9 @@ const WEB_ERRORS = {
 const featureIconFor = (f) => { try { return featureIcon(f); } catch (_) { return 'feature'; } };
 const mateIconFor = (t) => mateIcon(t);
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const GROUPED = { add_mate: ['Adding', 'Added', 'mate', 'mates'], insert_component: ['Inserting', 'Inserted', 'component', 'components'] };
+
 const COLORS = ['#b9c0c8', '#d0d4d8', '#8a96a3', '#3c4650', '#c8a050', '#b87333', '#d9372b', '#2f7fd8', '#2f9e44', '#f2c230', '#ffffff', '#202020'];
 
 export class TaskPane {
@@ -63,6 +66,8 @@ export class TaskPane {
     this.conversation = null;
     this.busy = false;
     this.strip.setAttribute('role', 'toolbar'); this.strip.setAttribute('aria-label', 'Task Pane');
+    this.chats = new Map(); // file -> {log, conversation, draft}: each file keeps its own chat
+    this.fileKey = null;
     for (const p of PANES) {
       const b = asButton(h('div', 'ts', icon(p.icon, 20)), p.title, { pressed: false });
       b.title = p.title; b.dataset.id = p.id;
@@ -73,12 +78,58 @@ export class TaskPane {
 
   toggle(id) { this.show(this.open === id ? null : id); }
 
+  // Opening or closing the panel narrows or widens the graphics area: the view moves with it so the model stays
+  // where it is on the screen (a face just clicked does not jump away from the pointer).
   show(id) {
+    const v = this.app.viewer;
+    const r0 = v.el.getBoundingClientRect();
     this.open = id;
     [...this.strip.children].forEach((b) => { b.classList.toggle('active', b.dataset.id === id); b.setAttribute('aria-pressed', String(b.dataset.id === id)); });
     this.panel.classList.toggle('hidden', !id);
     if (id) this.render();
-    this.app.viewer.resize();
+    v.resize();
+    const r1 = v.el.getBoundingClientRect();
+    if (r0.width > 1 && r1.width > 1 && (r0.left !== r1.left || r0.width !== r1.width)) {
+      const anim = v.anim;
+      v.panBy((r0.left - r1.left) + (r0.width - r1.width) / 2, 0);
+      v.anim = anim;
+    }
+    this.updateLiveSheet();
+  }
+
+  // Phones: while the AI builds or its result waits, the sheet is lower and the view is fitted above it.
+  updateLiveSheet() {
+    const on = this.busy || !!this.app.proposal;
+    document.body.classList.toggle('ai-live', on);
+    document.body.classList.toggle('ai-building', this.busy);
+    const v = this.app.viewer;
+    let inset = 0;
+    if (on && this.open && window.matchMedia?.('(max-width: 760px)').matches) {
+      const r = this.panel.getBoundingClientRect(), vr = v.el.getBoundingClientRect();
+      inset = Math.max(0, Math.min(vr.height * 0.7, vr.bottom - r.top));
+    }
+    v.fitInsetBottom = inset;
+  }
+
+  // ---------------------------------------------------------------- one chat per file
+  currentFileKey() { return this.app.reviewMode ? 'review' : this.app.server?.link?.id || 'draft'; }
+  rootObj() { return this.app.docStack?.length ? this.app.docStack[0].doc : this.app.doc; }
+
+  // Called whenever the title bar is redrawn (app.updateDocChrome): when another file is open now, its own chat
+  // comes back (or an empty one). A request still running is stopped first: its result is for the other file.
+  docSwitched() {
+    const key = this.currentFileKey(), root = this.rootObj();
+    if (this.fileKey === null) { this.fileKey = key; this.rootAt = root; return; }
+    if (key === this.fileKey) { this.rootAt = root; return; }
+    if (this.fileKey === 'draft' && root === this.rootAt) { this.fileKey = key; return; } // the draft was saved to Files
+    if (this.busy) { this.switchPending = true; this.stop(true); return; }
+    this.chats.set(this.fileKey, { log: this.log, conversation: this.conversation, draft: this.draft || '' });
+    while (this.chats.size > 30) this.chats.delete(this.chats.keys().next().value);
+    const c = this.chats.get(key);
+    this.chats.delete(key);
+    this.log = c?.log || []; this.conversation = c?.conversation || null; this.draft = c?.draft || '';
+    this.fileKey = key; this.rootAt = root;
+    if (this.open === 'ai') this.render();
   }
 
   render() {
@@ -92,7 +143,7 @@ export class TaskPane {
     const body = h('div', 'tp-body');
     this.panel.appendChild(body);
     if (p.id === 'design') return this.app.design.render(body);
-    if (p.id === 'ai') return this.renderAI(body);
+    if (p.id === 'ai') { this.renderAI(body); this.updateLiveSheet(); return; }
     if (p.id === 'resources') return this.renderResources(body);
     if (p.id === 'appearance') return this.renderAppearance(body);
     if (p.id === 'custprops') return this.renderProps(body);
@@ -109,24 +160,28 @@ export class TaskPane {
     this.logEl = logEl;
     this.bodyEl = body;
     body.appendChild(logEl);
-    // A plain start (YZ 2026-10-19: no intro, example prompts or demo button). Without an AI, one line and a button.
-    if (!this.log.length && this.app.aiAvailable === false && !this.app.aiDemo) {
-      const off = h('div', 'ai-empty');
-      off.appendChild(h('span', null, 'No AI connected.'));
-      const b = h('button', 'btn primary', 'Connect AI');
-      b.onclick = () => this.app.server.connectDialog();
-      off.appendChild(b);
-      logEl.appendChild(off);
-    }
     for (const m of this.log) {
       const seen = !!m.el; // drawn before: no entrance animation again (brand.css .settled)
       const e = this.entryEl(m);
       if (seen) e.classList.add('settled');
       logEl.appendChild(e);
     }
+    // A plain start (YZ 2026-10-19: no intro, example prompts or demo button). Without an AI, one line and a button,
+    // kept just above the box whatever the chat holds (the Watch Demo command stays on the OpenSketch AI tab).
+    const noAI = this.app.aiAvailable === false && !this.app.aiDemo;
+    if (noAI) {
+      const off = h('div', 'ai-empty');
+      off.appendChild(h('span', null, this.draft ? 'No AI connected. Your request is kept here.' : 'No AI connected.'));
+      const b = h('button', 'btn primary', 'Connect AI');
+      b.onclick = () => this.app.server.connectDialog('key');
+      off.appendChild(b);
+      logEl.appendChild(off);
+    }
     const inp = h('div', 'ai-input');
     const ta = h('textarea'); ta.placeholder = 'Describe a part or a change';
-    ta.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); this.send(); } });
+    ta.setAttribute('aria-label', 'Message to OpenSketch AI');
+    // Enter sends, Shift+Enter starts a new line (Ctrl+Enter sends too)
+    ta.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); this.send(); } });
     if (this.draft) ta.value = this.draft;
     ta.oninput = () => { this.draft = ta.value; };
     this.input = ta;
@@ -144,8 +199,8 @@ export class TaskPane {
       this.chipHost.appendChild(mr);
     }
     const reset = h('button', 'btn', 'New chat'); reset.onclick = () => { if (this.busy) return; this.log = []; this.conversation = null; this.render(); };
-    reset.disabled = this.busy;
-    const send = this.busy ? h('button', 'btn danger', `${icon('ai_stop', 12)} Stop`) : h('button', 'btn primary', 'Send');
+    reset.disabled = this.busy || !this.log.length;
+    const send = this.busy ? h('button', 'btn danger', `${icon('ai_stop', 12)} Stop`) : h('button', 'btn primary', noAI ? 'Connect AI to send' : 'Send');
     send.onclick = () => (this.busy ? this.stop() : this.send());
     row.append(reset, send);
     inp.append(ta, row);
@@ -188,7 +243,7 @@ export class TaskPane {
         btns.append(ok, no);
         if (m.assembly) { const pb = h('button', 'btn ai-inline', `${icon('playback', 12)}<span>Replay</span>`); pb.title = 'Replay the assembly order'; pb.onclick = () => this.app.asm.playSequence(); btns.append(pb); }
         el.appendChild(btns);
-      } else { const n = h('div', 'pm-note'); n.textContent = m.note || (m.state === 'accepted' ? 'Accepted' : 'Rejected'); el.appendChild(n); }
+      } else { const n = h('div', 'pm-note'); n.textContent = m.note || (m.state === 'accepted' ? 'Accepted' : m.state === 'superseded' ? 'Carried into the next change below' : 'Rejected'); el.appendChild(n); }
     } else if (m.role === 'request') {
       el = h('div', 'ai-request');
       // A McMaster-Carr number always links to McMaster-Carr (never to an address the AI was given); other pages show their host.
@@ -227,12 +282,26 @@ export class TaskPane {
       const txt = h('div', 'tx'); txt.textContent = m.text;
       el.append(head, txt);
     } else if (m.role === 'activity') {
-      el = h('div', 'ai-act ' + (m.state || 'running'));
-      const st = m.state === 'running' ? '<span class="spinner"></span>' : m.state === 'error' ? icon('error', 13) : icon('ok', 13);
-      el.innerHTML = `<div class="ah">${st}${icon(m.icon || 'ai', 14)}<b>${esc(m.title)}</b>${m.detail ? `<span class="ad">${esc(m.detail)}</span>` : ''}</div>`;
-      if (m.items?.length) {
+      // consecutive mates or inserts share one row ("Added 16 mates") with a chip each; a failed one stays visible
+      let { title, detail, state } = m, items = m.items;
+      if (m.calls) {
+        const g = GROUPED[m.tool] || ['Running', 'Ran', 'step', 'steps'];
+        const running = m.calls.some((c) => c.state === 'running'), errs = m.calls.filter((c) => c.state === 'error');
+        state = running ? 'running' : errs.length ? 'error' : 'done';
+        title = `${running ? g[0] : g[1]} ${m.calls.length} ${m.calls.length === 1 ? g[2] : g[3]}`;
+        // the parts involved, once each ("Base Plate, Guide Column")
+        const who = new Set();
+        for (const c of m.calls) for (const n of (m.tool === 'add_mate' ? String(c.detail || '').split(': ')[0].split(' to ') : [c.title])) if (n && c.state !== 'running') who.add(n.replace(/<\d+>$/, ''));
+        detail = errs.length ? `${errs[0].title}: ${errs[0].detail || 'failed'}` : [...who].join(', ');
+        items = m.calls.map((c) => ({ label: c.title, icon: c.icon, state: c.state === 'error' ? 'error' : c.state === 'running' ? 'running' : 'ok', tip: c.detail }));
+      }
+      el = h('div', 'ai-act ' + (state || 'running'));
+      const st = state === 'running' ? '<span class="spinner"></span>' : state === 'error' ? icon('error', 13) : icon('ok', 13);
+      el.innerHTML = `<div class="ah">${st}${icon(m.icon || 'ai', 14)}<b>${esc(title)}</b>${detail ? `<span class="ad">${esc(detail)}</span>` : ''}</div>`;
+      el.title = detail ? `${title}: ${detail}` : title;
+      if (items?.length) {
         const list = h('div', 'ai-steps');
-        for (const it of m.items) list.appendChild(h('span', 'st ' + (it.state || 'ok'), `${icon(it.icon || 'feature', 12)}${esc(it.label)}`));
+        for (const it of items) { const c = h('span', 'st ' + (it.state || 'ok'), `${icon(it.icon || 'feature', 12)}${esc(it.label)}`); if (it.tip) c.title = it.tip; list.appendChild(c); }
         el.appendChild(list);
       }
     } else {
@@ -241,6 +310,16 @@ export class TaskPane {
       else el.innerHTML = renderMarkdown(m.text);
       if (m.about) { const a = h('div', 'ai-about'); a.textContent = 'About: ' + m.about; el.appendChild(a); }
       if (m.live) el.classList.add('live');
+      if (m.role === 'error' && (m.retry || m.connect) && !this.busy) {
+        const row = h('div', 'ai-errbtns');
+        if (m.connect) { const b = h('button', 'btn primary ai-keybtn', 'Connect AI'); b.onclick = () => this.app.server.connectDialog('key'); row.appendChild(b); }
+        if (m.retry) {
+          const b = h('button', 'btn ai-keybtn', 'Retry');
+          b.onclick = () => { const r = m.retry; m.retry = null; if (this.draft?.trim() === r.prompt) this.draft = ''; this.send(r.prompt, r.opts); };
+          row.appendChild(b);
+        }
+        el.appendChild(row);
+      }
     }
     m.el = el;
     return el;
@@ -248,6 +327,7 @@ export class TaskPane {
 
   // Re-draw one chat entry in place (keeps the input box and scroll position).
   refresh(m) {
+    if (m.row) return this.refresh(m.row); // one call of a grouped row
     if (!m.el || !m.el.isConnected) return;
     const old = m.el;
     const had = old.querySelectorAll('.ai-steps .st').length;
@@ -264,7 +344,10 @@ export class TaskPane {
     return m;
   }
 
-  stop() {
+  // Stop: ends the request. Once the AI has finished and only the picture is catching up, it skips the rest of
+  // the playback and shows the result at once.
+  stop(force = false) {
+    if (this.streamDone && !force) { this.app.live.skip(); return; }
     if (this.abort) this.abort.abort();
   }
 
@@ -272,28 +355,65 @@ export class TaskPane {
     const prompt = (text ?? this.input?.value ?? '').trim();
     if (!prompt || this.busy) return;
     const app = this.app;
+    // No AI connected (and not a demo): nothing is sent; what was typed stays in the box and Connect AI opens.
+    if (app.aiAvailable === false && !app.aiDemo && !opts.demo) {
+      this.draft = prompt;
+      this.show('ai');
+      app.server?.connectDialog?.('key');
+      return;
+    }
     if (app.mode === 'sketch') app.exitSketch();
-    if (app.proposal) app.rejectProposal(true);
+    // A result still waiting for Accept is not thrown away by a follow-up: the request builds on it (the AI's own
+    // history says it made it), and the new result, when it comes, includes it.
+    const base = app.proposal ? app.cleanDoc(app.proposal) : null;
+    const baseIds = base ? [...(app.proposedIds || [])] : [];
+    // The AI takes over the editor while it builds: no open command, no context toolbar; edits wait (app.aiLocked).
+    app.closeCommand();
+    app.hideContextToolbar?.();
     this.show('ai');
     const selection = opts.selection ?? (text === undefined && !this.noSelection && app.design ? app.design.describeSelection() : null);
     this.noSelection = false;
     if (text === undefined && this.input) { this.input.value = ''; this.draft = ''; }
+    // tell the AI once that the person rejected its last change (its history says it made it)
+    const last = [...this.log].reverse().find((m) => m.role === 'proposal');
+    const told = last && last.state === 'rejected' && !last.told ? (last.told = true, 'Note: I rejected your last proposed change; it was not applied.\n\n') : '';
     this.busy = true;
+    this.streamDone = false;
     this.log.push({ role: 'user', text: prompt, about: selection && selection.length ? selection.map((x) => x.name || (x.feature_name ? 'Face of ' + x.feature_name : x.kind)).join(', ') : '' });
     this.render();
+    app.status('OpenSketch AI is working. Press Stop to take over.');
     const ctl = new AbortController();
     this.abort = ctl;
-    const before = app.cleanDoc();
-    const epoch = app.docEpoch; // the file this request is about (another file opened meanwhile = not applied)
-    const S = { text: null, think: null, acts: new Map(), proposal: null, done: null, error: null };
+    const before = base || app.cleanDoc();
+    const fileAt = this.currentFileKey();
+    const S = { text: null, think: null, acts: new Map(), proposal: null, done: null, error: null, retry: false };
+    let wait = null;
     try {
-      const r = await fetch('/api/ai/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: ctl.signal,
-        body: JSON.stringify({ doc: before, prompt, conversation: this.conversation, demo: opts.demo || false, selection: selection && selection.length ? selection : null }) });
+      const body = JSON.stringify({ doc: before, prompt: told + prompt, conversation: this.conversation, demo: opts.demo || false, selection: selection && selection.length ? selection : null });
+      // a server that is starting or restarting (no answer, or a 502/503/504 page) is waited for, as rebuilds do
+      const waits = [1000, 2000, 4000, 8000, 15000, 15000];
+      let r;
+      for (let i = 0; ; i++) {
+        let away = false;
+        try { r = await fetch('/api/ai/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: ctl.signal, body }); } catch (err) {
+          if (ctl.signal.aborted) throw err;
+          away = true;
+        }
+        if (!away && [502, 503, 504].includes(r.status) && !(r.headers.get('content-type') || '').includes('json')) away = true;
+        if (!away) break;
+        if (i >= waits.length) { S.retry = true; throw new Error('The server did not answer for over a minute. Your request is kept: press Retry when it is back.'); }
+        if (!wait) wait = this.add({ role: 'activity', title: 'Waiting for the server', icon: 'ai', state: 'running', items: [] });
+        await sleep(waits[i]);
+        if (ctl.signal.aborted) throw new Error('Stopped.');
+      }
+      if (wait) { this.log.splice(this.log.indexOf(wait), 1); wait.el?.remove(); wait = null; }
       if (r.status === 401) { location.href = '/login?next=' + encodeURIComponent(location.pathname + location.search); throw new Error('Sign in again.'); }
-      if (!r.ok || !r.body) { // a plain reason when the server gave one (busy, still answering, too long)
-        let why = '';
-        try { why = (await r.json()).error || ''; } catch (_) { /* not JSON */ }
-        throw new Error(why || `Server error ${r.status}`);
+      if (!r.ok || !r.body) {
+        // the server's own words (a busy server says so, and when to try again)
+        let msg = '';
+        try { const j = await r.json(); msg = j.error || (typeof j.detail === 'string' ? j.detail : '') || ''; } catch (_) { /* not JSON */ }
+        S.retry = true;
+        throw new Error(msg || `The server could not take the request (HTTP ${r.status}).`);
       }
       const reader = r.body.getReader();
       const dec = new TextDecoder();
@@ -311,32 +431,48 @@ export class TaskPane {
       if (buf.trim()) { try { this.onEvent(JSON.parse(buf), S); } catch (_) { /* cut off */ } }
     } catch (err) {
       S.error = ctl.signal.aborted ? 'Stopped.' : String(err.message || err);
+      if (!ctl.signal.aborted && !S.done) S.retry = true;
     }
-    // close any open entries
-    if (S.text) { S.text.live = false; this.refresh(S.text); }
-    if (S.think) { S.think.live = false; S.think.open = false; this.refresh(S.think); }
-    for (const a of S.acts.values()) if (a.state === 'running') { a.state = S.error ? 'error' : 'done'; this.refresh(a); }
-    if (S.error) {
-      app.live.stop();
-      this.add({ role: 'error', text: S.error });
-      if (S.proposal && ctl.signal.aborted) this.add({ role: 'bot', text: 'The partial result was discarded.' });
-    } else if (S.done) {
-      const d = S.done;
-      this.conversation = d.conversation || this.conversation;
-      await app.live.finish();
-      if (d.proposal && app.docEpoch !== epoch) { d.proposal = null; this.add({ role: 'bot', text: 'Finished, but another file is open now, so the change was not applied there. Open the file again and ask once more.' }); }
-      if (d.proposal) await this.showResult(d, before); // drawn under the live view, then revealed
-      else if (d.reply && !(S.lastText && S.lastText.trim() === d.reply.trim())) this.add({ role: 'bot', text: d.reply });
-      if (d.sources?.length) this.add({ role: 'sources', items: d.sources });
-      app.live.stop();
-      if (d.proposal) app.viewer.followBox(app.viewer.sceneBox());
-    } else app.live.stop();
-    this.busy = false;
-    this.abort = null;
-    this.render();
+    this.streamDone = true;
+    try {
+      if (wait) { const i = this.log.indexOf(wait); if (i >= 0) this.log.splice(i, 1); wait.el?.remove(); }
+      // close any open entries
+      if (S.text) { S.text.live = false; this.refresh(S.text); }
+      if (S.think) { S.think.live = false; S.think.open = false; this.refresh(S.think); }
+      for (const a of S.acts.values()) if (a.state === 'running') { a.state = S.error ? 'error' : 'done'; this.refresh(a); }
+      const elsewhere = this.currentFileKey() !== fileAt;
+      if (S.error) {
+        app.live.stop();
+        const noKey = /Connect AI/.test(S.error);
+        this.add({ role: 'error', text: S.error, connect: noKey, retry: S.retry || S.error === 'Stopped.' ? { prompt, opts: { ...opts, selection } } : null });
+        // the request goes back in the box when nothing came of it, so it is not typed again
+        if (!S.proposal && !this.draft && (S.retry || noKey)) this.draft = prompt;
+        if (S.proposal && ctl.signal.aborted) this.add({ role: 'bot', text: elsewhere ? 'Another file was opened, so the result was not applied.' : 'The partial result was discarded.' });
+      } else if (S.done) {
+        const d = S.done;
+        this.conversation = d.conversation || this.conversation;
+        await app.live.finish();
+        if (this.currentFileKey() !== fileAt) {
+          this.add({ role: 'bot', text: 'Another file was opened, so this result was not applied.' });
+        } else if (d.proposal) {
+          if (base) for (const m of this.log) if (m.role === 'proposal' && m.state === 'pending') m.state = 'superseded';
+          await this.showResult(d, before, baseIds); // drawn under the live view, then revealed
+        } else if (d.reply && !(S.lastText && S.lastText.trim() === d.reply.trim())) this.add({ role: 'bot', text: d.reply });
+        if (d.sources?.length) this.add({ role: 'sources', items: d.sources });
+        app.live.stop();
+        if (d.proposal && !elsewhere) app.viewer.followBox(app.viewer.sceneBox());
+      } else app.live.stop();
+    } finally {
+      this.busy = false;
+      this.abort = null;
+      this.streamDone = false;
+      if (this.switchPending) { this.switchPending = false; this.docSwitched(); }
+      this.render();
+      if (!this.app.cmd) app.status(S.error ? 'OpenSketch AI stopped.' : app.proposal ? 'Accept or reject the AI\'s change in the AI panel.' : 'Ready.');
+    }
   }
 
-  showResult(d, before) {
+  showResult(d, before, keepIds = []) {
     const app = this.app;
     const p = d.proposal;
     let ids, lines, assembly = false;
@@ -363,8 +499,11 @@ export class TaskPane {
     }
     if (d.reply && !(this.lastStreamed && this.lastStreamed.trim() === d.reply.trim())) this.add({ role: 'bot', text: d.reply });
     this.add({ role: 'proposal', summary: assembly ? `Assembly: ${p.name}` : d.summary, features: lines, state: 'pending', assembly });
-    app.proposalBase = JSON.stringify(before); // Accept says so if the model was edited while the AI worked
-    return app.showProposal(p, ids, false);
+    // Accept says so if the model was edited while the AI worked: the model as it was when the first request of
+    // this change was sent (a follow-up on a waiting result keeps it)
+    app.proposalBase = app.proposal && app.proposalBase ? app.proposalBase : JSON.stringify(before);
+    // a follow-up on a result still waiting: what it added stays marked as proposed too
+    return app.showProposal(p, [...new Set([...keepIds, ...ids])], false);
   }
 
   onEvent(ev, S) {
@@ -376,9 +515,11 @@ export class TaskPane {
         if (ev.resumed === false) this.add({ role: 'bot', text: 'The server restarted, so the AI no longer remembers this chat. It still sees your model as it is now.' });
         this.conversation = ev.conversation;
         if (ev.history_lost) this.add({ role: 'bot', text: 'The server was updated, so the AI no longer has the earlier messages of this chat. It sees this message and the current model.' });
+        if (ev.demo) this.add({ role: 'bot', text: 'Demo: a recorded session. Connect AI to describe your own part.' });
         app.live.start(ev);
         break;
       case 'thinking_start':
+        S.lastAct = null;
         endText();
         S.think = this.add({ role: 'thinking', text: '', live: true, open: true });
         app.live.hint('Thinking...');
@@ -389,6 +530,7 @@ export class TaskPane {
         if (S.think.el) { S.think.el.querySelector('.tx').textContent = S.think.text; this.scroll(); }
         break;
       case 'text':
+        S.lastAct = null;
         endThink();
         if (!S.text) S.text = this.add({ role: 'bot', text: '', live: true });
         S.text.text += ev.delta;
@@ -398,9 +540,25 @@ export class TaskPane {
       case 'tool_start': {
         endText(); endThink();
         const meta = TOOL_META[ev.tool] || toolMetaFromRegistry(ev.tool) || { title: ev.tool, icon: 'ai' };
-        const a = this.add({ role: 'activity', title: meta.title, icon: meta.icon, items: [], state: 'running', tool: ev.tool });
-        S.acts.set(ev.index, a);
-        S.cur = a;
+        const last = this.log[this.log.length - 1];
+        if (GROUPED[ev.tool] && last && last === S.lastAct && last.tool === ev.tool) {
+          // the next mate (or insert) right after another: one row, one chip each
+          if (!last.calls) {
+            const first = { title: last.title, icon: last.icon, state: last.state, detail: last.detail, row: last };
+            for (const [k, v] of S.acts) if (v === last) S.acts.set(k, first);
+            last.calls = [first];
+          }
+          const call = { title: meta.title, icon: meta.icon, state: 'running', row: last };
+          last.calls.push(call);
+          S.acts.set(ev.index, call);
+          S.cur = call;
+          this.refresh(last);
+        } else {
+          const a = this.add({ role: 'activity', title: meta.title, icon: meta.icon, items: [], state: 'running', tool: ev.tool });
+          S.acts.set(ev.index, a);
+          S.cur = a;
+          S.lastAct = a;
+        }
         app.live.hint(meta.title + '...');
         break;
       }
@@ -439,15 +597,17 @@ export class TaskPane {
         if (a && act.kind === 'mate') {
           const m = ev.doc.mates.find((x) => x.id === act.mate);
           const st = ev.result.mates.find((x) => x.id === act.mate);
-          a.title = `${m?.name}: ${(m?.refs || []).map((r) => names[r.component] || r.ref).join(' to ')}`;
+          // the short name in bold, the parts it joins in the detail (which shortens with "..." when narrow)
+          const who = (m?.refs || []).map((r) => names[r.component] || r.ref).join(' to ');
+          a.title = m?.name || 'Mate';
           a.icon = mateIconFor(m?.type);
-          a.detail = '';
-          if (st?.state === 'error') { a.state = 'error'; a.detail = st.message; }
+          a.detail = who;
+          if (st?.state === 'error') { a.state = 'error'; a.detail = `${who}: ${st.message}`; }
           this.refresh(a);
         } else if (a && act.kind === 'insert') {
           const c = ev.doc.components.find((x) => x.id === act.component);
           const rc = ev.result.components.find((x) => x.id === act.component);
-          a.title = `${act.new === false ? 'Moved' : 'Inserted'} ${c?.name || act.component}`; a.icon = 'insertcomp';
+          a.title = a.row ? `${c?.name || act.component}` : `${act.new === false ? 'Moved' : 'Inserted'} ${c?.name || act.component}`; a.icon = 'insertcomp';
           a.detail = rc?.state === 'fixed' ? 'fixed' : '';
           this.refresh(a);
         }
@@ -491,7 +651,7 @@ export class TaskPane {
         break;
       }
       case 'note': break;
-      case 'done': S.done = ev; break;
+      case 'done': S.done = ev; app.live.hurryUp?.(); break;
       case 'error': S.error = ev.message; break;
       default: break;
     }
