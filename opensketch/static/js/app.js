@@ -970,21 +970,33 @@ export class App {
 
   suppress(id, on) { this.commit(on ? 'Suppress' : 'Unsuppress', () => { const f = this.featureById(id); if (on) f.suppressed = true; else delete f.suppressed; }); }
 
-  suppressSelection(on) { for (const s of this.selection) if (s.kind === 'feature' || s.kind === 'sketch') this.suppress(s.id, on); }
+  // Edit > Suppress / Unsuppress: features and sketches in a part, components and mates in an assembly.
+  suppressSelection(on) {
+    const label = on ? 'Suppress' : 'Unsuppress';
+    if (this.isAsm) {
+      const ids = new Set(this.selection.filter((s) => s.kind === 'component' || s.kind === 'mate').map((s) => s.id));
+      if (!ids.size) { this.status(`Select a component or mate to ${label.toLowerCase()}.`); return; }
+      this.commit(label, () => { for (const x of [...(this.doc.components || []), ...(this.doc.mates || [])]) if (ids.has(x.id)) { if (on) x.suppressed = true; else delete x.suppressed; } });
+      return;
+    }
+    const ids = new Set(this.selection.filter((s) => s.kind === 'feature' || s.kind === 'sketch').map((s) => s.id));
+    if (!ids.size) { this.status(`Select a feature to ${label.toLowerCase()}.`); return; }
+    this.commit(label, () => { for (const f of this.doc.features) if (ids.has(f.id)) { if (on) f.suppressed = true; else delete f.suppressed; } });
+  }
 
-  // Confirm Delete: the server works out what goes with the feature and what would break (edits.plan_delete),
+  // Confirm Delete: the server works out what goes with the features and what would break (edits.plan_delete),
   // the same rules Claude's delete_items uses. Children that would only break stay unless "Delete child
-  // features" is ticked, as in SOLIDWORKS.
+  // features" is ticked, as in SOLIDWORKS. One call for everything selected (Ctrl+click several, then Delete).
   async deleteFeature(id) {
-    const f = this.featureById(id);
-    if (!f) return;
+    const want = (Array.isArray(id) ? id : [id]).filter((x) => this.featureById(x));
+    if (!want.length) return;
     const names = (ids) => ids.map((x) => esc(this.featureById(x)?.name || x)).join(', ');
     const plan = async (ids, absorbed) => this.api('/api/delete_plan', { doc: this.cleanDoc(this.doc), features: ids, delete_absorbed: absorbed });
     let first;
-    try { first = await plan([id], true); } catch (err) { this.status(`Cannot delete: ${err.message}`); return; }
+    try { first = await plan(want, true); } catch (err) { this.status(`Cannot delete: ${err.message}`); return; }
     const kids = first.would_fail.map((x) => x.id);
     const body = document.createElement('div');
-    body.innerHTML = `<div>Delete <b>${esc(f.name)}</b>?</div>` +
+    body.innerHTML = `<div>Delete <b>${names(want)}</b>?</div>` +
       (first.deleted_with_it.length ? `<div style="margin-top:6px">Also deleted (they need it): ${names(first.deleted_with_it)}</div>` : '') +
       (first.patterns_trimmed.length ? `<div style="margin-top:6px">Patterns that keep their other features: ${names(first.patterns_trimmed.map((x) => x.id))}</div>` : '') +
       (first.absorbed.length ? `<label style="display:block;margin-top:8px"><input type="checkbox" id="delabs" checked> Delete absorbed features (${names(first.absorbed)})</label>` : '') +
@@ -995,7 +1007,7 @@ export class App {
         const delAbs = body.querySelector('#delabs')?.checked ?? true, delChild = body.querySelector('#delchild')?.checked;
         let p = first;
         if (!delAbs || delChild) {
-          try { p = await plan(delChild ? [id, ...kids] : [id], delAbs); } catch (err) { this.status(`Cannot delete: ${err.message}`); return; }
+          try { p = await plan(delChild ? [...want, ...kids] : want, delAbs); } catch (err) { this.status(`Cannot delete: ${err.message}`); return; }
         }
         const kill = new Set([...p.deleted, ...p.deleted_with_it, ...p.absorbed]);
         const trim = new Map(p.patterns_trimmed.map((x) => [x.id, x.keeps]));
@@ -1014,8 +1026,16 @@ export class App {
   deleteSelection() {
     if (this.mode === 'sketch') return this.sketcher.deleteSelection();
     if (this.isAsm) return this.asm.deleteSelection();
-    const s = this.selection.find((x) => (x.kind === 'feature' || x.kind === 'sketch' || x.kind === 'plane') && !STD_PLANES.includes(x.id));
-    if (s) this.deleteFeature(s.id);
+    const ids = this.selection.filter((x) => (x.kind === 'feature' || x.kind === 'sketch' || x.kind === 'plane') && !STD_PLANES.includes(x.id)).map((x) => x.id);
+    if (ids.length) this.deleteFeature([...new Set(ids)]);
+  }
+
+  // Edit > Delete with nothing to delete says so.
+  menuDelete() {
+    const any = this.mode === 'sketch' ? this.sketcher.sel.size > 0 : this.isAsm ? this.selection.some((x) => x.kind === 'component' || x.kind === 'mate')
+      : this.selection.some((x) => (x.kind === 'feature' || x.kind === 'sketch' || x.kind === 'plane') && !STD_PLANES.includes(x.id));
+    if (!any) { this.status('Select what to delete first: a feature or sketch in the tree or the graphics area.'); return; }
+    this.deleteSelection();
   }
 
   // ------------------------------------------------------------------ PropertyManager plumbing
