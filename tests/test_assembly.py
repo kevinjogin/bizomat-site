@@ -275,3 +275,12 @@ def test_mated_parts_follow_a_drag():
     blk, pin_ = comp_of(res, "c2"), comp_of(res, "c3")
     assert np.linalg.norm(np.array(blk["position"]) - [100, 10, 0]) > 40
     assert all(m["state"] == "ok" for m in res["mates"])
+
+
+def test_a_limit_never_takes_a_degree_of_freedom():
+    """SOLIDWORKS: a part resting on a limit's bound is still under defined and can be dragged back."""
+    from tests.test_solver_parity import at_bound
+    d = at_bound()
+    free = dict(d, mates=[m for m in d["mates"] if m["type"] != "limit_distance"])
+    dof = lambda doc: next(c for c in A.regen_assembly(doc)["components"] if c["id"] == "c2")["dof"]
+    assert dof(d) == dof(free) == 2  # the limit, at its bound, takes none (it took one before)

@@ -566,7 +566,7 @@ def _env_int(name: str, default: int) -> int:
 
 AI_JOBS = Slots("ai", _env_int("OPENSKETCH_AI_JOBS", 2), per_person=1, queue=_env_int("OPENSKETCH_AI_QUEUE", 4), wait=30.0,
                 busy="The AI is busy with other people's requests. Try again in a minute.",
-                mine="The AI is still answering your previous message. Wait for it, or press Stop first.")
+                mine="The AI is still answering your previous message (in this or another tab). Wait for it to finish, or press Stop there.")
 MACRO_JOBS = Slots("macro", _env_int("OPENSKETCH_MACRO_JOBS", 1), per_person=1, queue=0,
                    busy="Another SOLIDWORKS macro export is running on the server. Try again in a few minutes.",
                    mine="Your earlier SOLIDWORKS macro export is still running. Wait for it to finish.")

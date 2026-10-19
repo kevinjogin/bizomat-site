@@ -724,7 +724,8 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
         free = mated
         idx = {c: i for i, c in enumerate(free)}
         n = 6 * len(free)
-        whole = System(accepted)
+        # limits are inequalities: they never take a degree of freedom (SOLIDWORKS), even at a bound
+        whole = System([(e, al, cs) for m, al, cs in accepted if (e := _equalities(m)) is not None])
         r = whole.res(poses)
         J = whole.jac(poses, r) if len(r) else np.zeros((0, n))
         if J.shape[0]:
@@ -739,6 +740,20 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
             dofs[c] = int(np.linalg.matrix_rank(blk, tol=1e-6)) if blk.size else 0
     return {"poses": poses, "mates": report, "comp_state": comp_state, "dof": dofs, "updates": updates, "iterations": iters,
             "fixed": fixed, "conflicts": [k for k in rejected]}
+
+
+def _equalities(m: dict) -> dict | None:
+    """What a mate holds exactly, for counting degrees of freedom (asmsolver.js equalities): a limit's range is
+    not counted, so a part at a limit's bound stays under defined and can be dragged back into the range."""
+    t = m["type"]
+    if t == "limit_angle":
+        return None
+    if t == "limit_distance":  # two planes stay parallel; the distance between them is free within the range
+        refs = m.get("refs") or []
+        return dict(m, type="parallel") if len(refs) == 2 and all("plane" in r for r in refs) else None
+    if t == "hinge" and ("angle_min" in m or "angle_max" in m):
+        return {k: v for k, v in m.items() if k not in ("angle_min", "angle_max")}
+    return m
 
 
 def _conflict_message(others: list[dict], cs: list, fixed: set) -> str:

@@ -81,7 +81,11 @@ export class AssemblyMode {
     const pids = Object.keys(doc.parts || {});
     if (pids.length !== Object.keys(built).length) return false;
     const v = this.app.viewer;
-    return pids.every((pid) => built[pid] === this.partText(doc.parts[pid]) && info[pid] && v.partGeo.get(pid)?.key === info[pid].key);
+    // a mesh is needed only for parts a component shows (a part in the file with no component, such as a Toolbox
+    // screw the AI added but did not insert, has none, and must not send every solve to the server)
+    const used = new Set((doc.components || []).map((c) => c.part));
+    return pids.every((pid) => built[pid] === this.partText(doc.parts[pid])
+      && (!used.has(pid) || (info[pid] && v.partGeo.get(pid)?.key === info[pid].key)));
   }
 
   remember(res, doc) {
@@ -776,7 +780,14 @@ export class AssemblyMode {
         ] },
       ],
       okEnabled: () => m.refs.length === 2,
-      onChange: () => this.previewMate(m, existing),
+      onChange: () => { keepSide(); this.previewMate(m, existing); },
+    };
+    // A Limit Distance is measured along the first pick's normal: order the picks so the part stays on the side
+    // it is on now (picking the moving part first must not flip it through the other one)
+    const keepSide = () => {
+      if (m.type !== 'limit_distance' || m.refs.length !== 2) return;
+      const d = measurePair('distance', m.refs, (app.shownDoc || app.doc).components);
+      if (d != null && d < 0) { m.refs.reverse(); labels.reverse(); }
     };
     app.cmd = {
       key: 'mate',
@@ -788,6 +799,7 @@ export class AssemblyMode {
         m.refs.push(r.ref); labels.push(r.label);
         if (m.refs.length === 2 && !typed && kinds()[0] === 'plane' && kinds()[1] === 'plane') m.align = 'auto';
         autoType();
+        keepSide();
         app.pm.render();
         this.previewMate(m, existing);
         return true;
@@ -1167,7 +1179,11 @@ export class AssemblyMode {
   }
 
   previewMate(m, existing) {
-    if (m.refs.length < 2) { this.previewProblem = null; return; }
+    if (m.refs.length < 2) { // a new pair is being picked: the last pair's problem no longer applies
+      this.previewProblem = null;
+      if (this.app.pm?.spec?.error) { this.app.pm.spec.error = null; this.app.pm.render(); }
+      return;
+    }
     clearTimeout(this.previewTimer);
     const cmd = this.app.cmd;
     this.previewTimer = setTimeout(async () => {

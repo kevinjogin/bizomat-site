@@ -43,6 +43,7 @@ export class MotionReview {
     if (app.cmd) app.pmCancel();
     this.work = app.cleanDoc(app.doc);
     this.values = {};
+    this.rebuiltOnce = false;
     for (const m of this.joints()) this.values[m.id] = this.clampNow(m);
     this.flagged = new Set();
     const spec = {
@@ -213,8 +214,15 @@ export class MotionReview {
     if (this.localFor !== asm.partsInfo) { this.localOK = asm.canSolveLocally(this.work); this.localFor = asm.partsInfo; }
     if (!this.localOK) {
       if (this.readOnly) return;
-      // a part changed since the server last built it: rebuild once, then solve here
-      if (!this.rebuilding) this.rebuilding = asm.regen().then(() => { this.rebuilding = null; this.work = app.cleanDoc(app.doc); this.localFor = null; this.setJoint(id, this.values[id]); });
+      // a part changed since the server last built it: rebuild once, then solve here. Once only: if the rebuild
+      // did not make a browser solve possible, the slider stops asking (no endless rebuilds)
+      if (this.rebuilding || this.rebuiltOnce) return;
+      this.rebuilding = asm.regen().then(() => {
+        this.rebuilding = null; this.work = app.cleanDoc(app.doc); this.localFor = null;
+        this.rebuiltOnce = !asm.canSolveLocally(this.work);
+        if (this.rebuiltOnce) app.toast?.('Motion Review could not move this joint here. Rebuild (Ctrl+B) and open it again.');
+        else this.setJoint(id, this.values[id]);
+      });
       return;
     }
     // the solver needs only components and mates: a Play frame copies those, not the parts

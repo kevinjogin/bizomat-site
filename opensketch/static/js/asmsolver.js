@@ -210,6 +210,15 @@ export function couplerMeasure(kind, a, b) {
 }
 
 /** The current angle (deg) or distance (mm) between two references, with the components where they are now. */
+/** What a mate holds exactly, for counting degrees of freedom (assembly.py _equalities): a limit's range is not
+ * counted, so a part at a limit's bound stays under defined and can be dragged back into the range. */
+function equalities(m) {
+  if (m.type === 'limit_angle') return null;
+  if (m.type === 'limit_distance') return (m.refs || []).length === 2 && m.refs.every((r) => 'plane' in r) ? { ...m, type: 'parallel' } : null;
+  if (m.type === 'hinge' && ('angle_min' in m || 'angle_max' in m)) { const { angle_min, angle_max, ...rest } = m; return rest; }
+  return m;
+}
+
 export function measurePair(kind, refs, components) {
   try {
     const poses = Object.fromEntries((components || []).map((c) => [c.id, Pose.of(c)]));
@@ -630,7 +639,8 @@ export function solve(asm, size = 100, drag = null) {
     free = mated;
     idx = Object.fromEntries(free.map((c, i) => [c, i]));
     n = 6 * free.length;
-    const S = system(accepted), r = S.res(poses);
+    // limits are inequalities: they never take a degree of freedom (SOLIDWORKS), even at a bound
+    const S = system(accepted.map(([m, al, cs]) => [equalities(m), al, cs]).filter(([e]) => e)), r = S.res(poses);
     let null_;
     if (r.length) {
       const { s, V } = svd(S.jac(poses, r), n);

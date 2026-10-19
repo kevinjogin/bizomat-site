@@ -173,6 +173,12 @@ def conflict_cases():
     ]
 
 
+def at_bound():
+    d = slider()
+    d["components"][1].update(position=[0, 35, 0])  # 25 mm from the plane: on the limit's upper bound
+    return d
+
+
 def cases():
     p = press()
     by = {c["id"]: c for c in p["components"]}
@@ -189,6 +195,7 @@ def cases():
         ("hinge drag", hinge_solved, {"component": "c2", "point": [0, 5, 60], "target": [0, 80, 0]}),
         ("hinge drag past its limit", limits(), {"component": "c2", "point": [0, 5, 60], "target": [0, 0, -200]}),
         ("slider drag to its limit", slider(), {"component": "c2", "point": [0, 0, 0], "target": [30, 300, 0]}),
+        ("slider resting at its limit (still under defined)", at_bound(), None),
         ("chain: drag the block", chain, {"component": "c2", "point": [-20, 5, 0], "target": [80, 15, 60]}),
         ("chain: drag the pin", chain, {"component": "c3", "point": [0, 20, 0], "target": [110, 20, 80]}),
         ("floated plate drag", floated(A.apply_solution(T.asm_doc(), A.regen_assembly(T.asm_doc()))),
