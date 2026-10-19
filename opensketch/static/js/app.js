@@ -1524,7 +1524,7 @@ export class App {
     const eqs = targets.filter((t) => t.eq).map((t) => ({ key: t.key, expr: t.eq }));
     const body = document.createElement('div');
     body.className = 'eqdlg';
-    let last = null;
+    let last = null, tried = false; // tried: OK was refused, so empty rows show in red too
     const draft = () => {
       const d = this.cleanDoc(this.doc);
       d.parameters = vars.filter((v) => v.name).map((v) => ({ name: v.name.trim(), expression: String(v.expression ?? ''), unit: v.unit || 'mm', ...(v.comment ? { comment: v.comment } : {}) }));
@@ -1539,24 +1539,26 @@ export class App {
       return d;
     };
     const render = () => {
+      const empty = (t) => (tried && !String(t ?? '').trim() ? ' aria-invalid="true"' : '');
       const vrow = (v, i) => {
         const row = last?.parameters?.find((r) => r.name === v.name);
         const val = row?.problem ? `<span class="eqbad">${esc(row.problem)}</span>` : row?.value != null ? +(+row.value).toFixed(6) : '';
-        return `<tr><td><input data-v="${i}" data-k="name" value="${esc(v.name)}" placeholder="Name"></td><td><input data-v="${i}" data-k="expression" value="${esc(v.expression)}" placeholder="Value or equation"></td>` +
-          `<td class="eqval">${val}</td><td><input data-v="${i}" data-k="comment" value="${esc(v.comment)}" placeholder="Comments"></td><td><span class="eqx" data-dv="${i}" title="Delete">&#x2715;</span></td></tr>`;
+        return `<tr><td><input data-v="${i}" data-k="name" value="${esc(v.name)}" placeholder="Name" aria-label="Variable name"${empty(v.name)}></td><td><input data-v="${i}" data-k="expression" value="${esc(v.expression)}" placeholder="Value or equation" aria-label="Value or equation"${empty(v.expression)}></td>` +
+          `<td class="eqval">${val}</td><td><input data-v="${i}" data-k="comment" value="${esc(v.comment)}" placeholder="Comments" aria-label="Comments"></td><td><button type="button" class="eqx" data-dv="${i}" title="Delete" aria-label="Delete variable">&#x2715;</button></td></tr>`;
       };
       const erow = (e, i) => {
         const t = targets.find((x) => x.key === e.key);
         const r = last?.equations?.find((x) => `${x.feature}|${x.constraint || x.field}` === e.key);
         const prob = t && last?.problems?.[t.feature];
         const val = prob ? `<span class="eqbad">${esc(prob)}</span>` : r ? +(+r.value).toFixed(6) : '';
-        return `<tr><td>"${esc(t?.label)}"</td><td><input data-e="${i}" value="${esc(e.expr)}" placeholder="= equation"></td><td class="eqval">${val}</td><td></td><td><span class="eqx" data-de="${i}" title="Delete">&#x2715;</span></td></tr>`;
+        return `<tr><td>"${esc(t?.label)}"</td><td><input data-e="${i}" value="${esc(e.expr)}" placeholder="= equation" aria-label="Equation for ${esc(t?.label)}"${empty(e.expr)}></td><td class="eqval">${val}</td><td></td><td><button type="button" class="eqx" data-de="${i}" title="Delete" aria-label="Delete equation">&#x2715;</button></td></tr>`;
       };
       const free = targets.filter((t) => !eqs.some((e) => e.key === t.key));
       body.innerHTML = `<table class="eqt"><thead><tr><th>Name</th><th>Value / Equation</th><th>Evaluates to</th><th>Comments</th><th></th></tr></thead><tbody>` +
-        `<tr class="eqsec"><td colspan="5">Global Variables</td></tr>${vars.map(vrow).join('')}<tr><td colspan="5"><span class="eqadd" data-add="var">Add global variable</span></td></tr>` +
+        `<tr class="eqsec"><td colspan="5">Global Variables</td></tr>${vars.map(vrow).join('')}<tr><td colspan="5"><button type="button" class="eqadd" data-add="var">Add global variable</button></td></tr>` +
         `<tr class="eqsec"><td colspan="5">Equations</td></tr>${eqs.map(erow).join('')}` +
-        `<tr><td colspan="5"><select data-add="eq"><option value="">Add equation to a dimension...</option>${free.map((t) => `<option value="${esc(t.key)}">${esc(t.label)}</option>`).join('')}</select></td></tr></tbody></table>` +
+        `<tr><td colspan="5"><select data-add="eq" aria-label="Add equation to a dimension"><option value="">Add equation to a dimension...</option>${free.map((t) => `<option value="${esc(t.key)}">${esc(t.label)}</option>`).join('')}</select></td></tr></tbody></table>` +
+        `<div class="eqmsg" role="alert">${tried ? esc(why(last)) : ''}</div>` +
         `<div class="eqfoot">Units: mm, cm, m, in, deg, rad. Functions: abs, min, max, sqrt, round, floor, ceil, sin, cos, tan (degrees).</div>`;
       body.querySelectorAll('input[data-v]').forEach((inp) => { inp.oninput = () => { vars[+inp.dataset.v][inp.dataset.k] = inp.value; refresh(); }; });
       body.querySelectorAll('input[data-e]').forEach((inp) => { inp.oninput = () => { eqs[+inp.dataset.e].expr = inp.value; refresh(); }; });
@@ -1571,20 +1573,27 @@ export class App {
       clearTimeout(timer);
       timer = setTimeout(async () => {
         await evaluate();
-        // keep typing focus: update only the value cells unless rows changed
-        const focus = document.activeElement; const sel = focus?.dataset ? { ...focus.dataset } : null; const pos = focus?.selectionStart;
+        // keep the focus (a field, the dimension list or a button) on the same control when the rows are drawn again
+        const focus = document.activeElement; const sel = focus && body.contains(focus) && focus.dataset ? { ...focus.dataset } : null; const pos = focus?.selectionStart;
         render();
-        if (sel) { const q = Object.entries(sel).map(([k, v]) => `[data-${k}="${v}"]`).join(''); const el = q && body.querySelector('input' + q); if (el) { el.focus(); if (pos != null) el.setSelectionRange(pos, pos); } }
+        if (sel) { const q = Object.entries(sel).map(([k, v]) => `[data-${k}="${v}"]`).join(''); const el = q && body.querySelector(q); if (el) { el.focus(); if (pos != null && el.setSelectionRange) el.setSelectionRange(pos, pos); } }
       }, now ? 0 : 250);
     };
     const bad = (r) => r.error || (r.parameters || []).some((p) => p.problem) || Object.keys(r.problems || {}).length ||
       eqs.some((e) => !String(e.expr).trim()) || vars.some((v) => !v.name || !String(v.expression ?? '').trim());
+    // why OK was refused, in the dialog itself
+    const why = (r) => {
+      if (!r) return '';
+      if (r.error) return `Cannot check the equations: ${r.error}`;
+      if (vars.some((v) => !v.name || !String(v.expression ?? '').trim()) || eqs.some((e) => !String(e.expr).trim())) return 'Fill in or delete the empty rows (in red), then click OK.';
+      return bad(r) ? 'Fix the items in red, then click OK.' : '';
+    };
     const d = dialog({ title: 'Equations, Global Variables, and Dimensions', body, cls: 'eqdialog', buttons: [
       { label: 'OK', primary: true, run: () => {
         (async () => {
           clearTimeout(timer);
           const r = await evaluate();
-          if (bad(r)) { render(); this.status('Fix the items in red (or empty rows) first.'); return; }
+          if (bad(r)) { tried = true; render(); body.querySelector('[aria-invalid="true"]')?.focus(); return; }
           const dd = draft();
           this.commit('Equations', () => {
             this.doc.parameters = dd.parameters; if (!dd.parameters) delete this.doc.parameters;
@@ -1945,7 +1954,7 @@ export class App {
 
   materialDialog() {
     const body = document.createElement('div');
-    const sel = document.createElement('select'); sel.size = 12; sel.style.width = '260px';
+    const sel = document.createElement('select'); sel.size = 12; sel.style.width = '260px'; sel.setAttribute('aria-label', 'Material');
     for (const [n, d] of MATERIALS) { const o = document.createElement('option'); o.value = n; o.textContent = `${n}  (${fmt(d * 1e9, 0)} kg/m^3)`; sel.appendChild(o); }
     sel.value = this.doc.material?.name || 'ABS';
     body.appendChild(sel);

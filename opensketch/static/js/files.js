@@ -191,11 +191,13 @@ export class FilesView {
     inp.oninput = () => { this.query = inp.value; this.renderGrid(); };
     const right = h('div', 'fv-right');
     const connect = h('button', 'btn fv-ghost', `${FI.plug}<span>Connect AI</span>`);
+    connect.setAttribute('aria-label', 'Connect AI'); // the text is hidden on phones
     connect.onclick = () => import('./connect.js').then((m) => m.connectDialog(this.app));
     const av = h('div', 'fv-avatar');
     this.avatarHost = av;
     this.syncAvatar();
     const back = h('button', 'btn fv-ghost fv-backbtn', `${FI.back}<span>Back to model</span>`);
+    back.setAttribute('aria-label', 'Back to model');
     back.onclick = () => this.backToModel();
     back.hidden = !this.app.hasModel();
     right.append(back, connect, av);
@@ -492,7 +494,7 @@ export class FilesView {
       this.trash.unshift(r);
       if (app.server.link?.id === f.id) { app.server.unlink({ keepAsDraft: true }); this.trashedOpen = f.id; this.trashedUndo = app.undoStack.length; }
       this.renderNav(); this.renderGrid();
-      app.toast?.(`Moved ${f.name} to the Trash.`, 6000, { label: 'Undo', run: () => this.untrash(r) });
+      this.trashToast = app.toast?.(`Moved ${f.name} to the Trash.`, 6000, { label: 'Undo', run: () => this.untrash(r) });
     } catch (err) { card()?.classList.remove('working'); message('Move to Trash', esc(err.message)); } finally { this.trashing.delete(f.id); }
   }
 
@@ -502,6 +504,7 @@ export class FilesView {
       this.trash = this.trash.filter((x) => x.id !== f.id);
       this.items = [r, ...this.items.filter((x) => x.id !== r.id)];
       this.renderNav(); this.renderGrid();
+      this.trashToast?.close(); // its Undo would restore it a second time
       this.app.toast?.(`Restored ${f.name}.`);
       // the file that was open comes back: link the editor to it again (nothing was saved in between)
       if (this.trashedOpen === f.id && !this.app.server.linked && this.app.undoStack.length === this.trashedUndo) { this.trashedOpen = null; this.app.dirty = false; await this.app.server.open(f.id, { quiet: true }); this.renderGrid(); }
@@ -514,6 +517,7 @@ export class FilesView {
       { label: 'Delete forever', primary: true, danger: true, run: () => {
         this.req('DELETE', `/api/docs/${encodeURIComponent(f.id)}?forever=1`).then(() => {
           this.trash = this.trash.filter((x) => x.id !== f.id); this.renderNav(); this.renderGrid();
+          this.app.toast?.(`Deleted ${f.name} forever.`);
         }, (err) => message('Delete forever', esc(err.message)));
       } },
     ] });
