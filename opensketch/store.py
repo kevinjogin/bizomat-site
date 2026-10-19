@@ -68,6 +68,7 @@ def _env_mb(name: str, default: float) -> int:
 
 KEEP = 50                    # versions kept per document at most
 TRASH_DAYS = 30
+UNTOUCHED_KEEP = 86400  # seconds an empty, untouched new file stays when its tab could not remove it
 THUMB_MAX = 600_000          # bytes
 HISTORY_MAX = 64 * 2**20     # bytes of kept versions per document (imported geometry is stored once, not counted here)
 AUTOSAVE_RUN = 600           # seconds of browser autosaves that share one kept version
@@ -986,7 +987,12 @@ def rename(doc_id: str, name: str, by: str = "you") -> dict:
     with lock(doc_id):
         rec = get(doc_id)
         doc = dict(rec["doc"], name=name)
-        return save(doc_id, doc, by, f"Renamed to {name}")
+        new = save(doc_id, doc, by, f"Renamed to {name}")
+        # the model did not change shape: a picture of the version before still shows it (no redraw for a rename)
+        t = meta(doc_id).get("thumb")
+        if t and int(t.get("version") or 0) >= rec["version"] and new["version"] > rec["version"]:
+            set_thumb_entry(doc_id, dict(t, version=new["version"]))
+        return new
 
 
 def duplicate(doc_id: str, owner: str | None, by: str = "you", name: str | None = None) -> dict:
@@ -1272,6 +1278,11 @@ def listing(visible=None, deleted: bool = False) -> list[dict]:
                     continue
             m = fresh
         if bool(m.get("deleted")) != deleted:
+            continue
+        # a file New made and left untouched for a day (its tab closed before it could remove it): gone
+        if (not deleted and m.get("version") == 1 and m.get("by") == "you" and m.get("summary") == "Created"
+                and not any((m.get("counts") or {}).values()) and float(m.get("updated") or 0) < time.time() - UNTOUCHED_KEEP
+                and discard_untouched(m["id"])):
             continue
         out.append(m)
     key = lambda r: -float((r.get("deleted") or r.get("updated") or 0) if deleted else (r.get("updated") or 0))

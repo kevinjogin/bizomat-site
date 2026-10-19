@@ -298,7 +298,7 @@ export class Viewer {
   // never shows. Returns a Blob (WebP, or PNG where WebP cannot be written) or null when there is nothing to draw.
   async snapshot(W = 480, H = 360) {
     const groups = [this.planesGroup, this.overlayGroup, this.sketchGroup, this.toolGroup, this.liveGroup, this.capGroup, this.otherSketches];
-    const hasBody = this.instances.length > 0;
+    const hasBody = this.instances.some((x) => x.comp || (x.pm?.faces?.length || 0) > 0); // a sketch-only part draws its sketches
     const vis = groups.map((g) => g.visible);
     const bodyVis = this.bodyGroup.visible;
     const saved = { q: this.quat.clone(), t: this.target.clone(), vh: this.viewH, w: this.w, h: this.h, sel: this.selected,

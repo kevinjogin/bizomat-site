@@ -205,7 +205,7 @@ a.fv-pill { line-height: 34px; }
 /* grid cards: long names on two lines (two files that differ only at the end can be told apart) */
 .fv-grid.as-grid .fv-card:not(.skel) .fv-meta b { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: anywhere; }
 .fv-tacts { display: flex; gap: 6px; margin-top: 8px; }
-.fv-tacts .btn { height: 26px !important; font-size: 12px; }
+.fv-tacts .btn { height: 26px !important; font-size: 12px; white-space: nowrap; }
 .fv-meta span { color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fv-meta.by-ai span:nth-child(2) { color: var(--accent-text); }
 .fv-meta .fv-detail { font-size: 11.5px; }
@@ -444,6 +444,8 @@ select.cx-model { cursor: pointer; }
     border-radius: 16px 16px 0 0; box-shadow: 0 -12px 40px rgba(0, 0, 0, .45); }
   /* the file name chip sits below the centred heads-up toolbar instead of under it */
   body:not(.review-mode) .breadcrumbs { top: 48px; }
+  /* OK / Cancel sit below the heads-up toolbar, which spans the top of a narrow graphics area */
+  .confirmcorner, .skin-linear .confirmcorner { top: 48px; }
   .banners, .skin-linear .banners { top: 76px; }
   /* the context toolbar of a tree row shows above the drawer it was opened from */
   .contexttb { z-index: 50; }

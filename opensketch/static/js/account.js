@@ -66,7 +66,10 @@ export class Account {
     }
     items.push('-', { head: 'Theme' }, ...LOOKS.map(([k, t]) => ({ label: t, icon: LOOK === k ? 'ok' : null, run: () => { if (LOOK !== k) setLook(k); } })));
     if (m !== 'open') items.push('-', { label: 'Sign out', run: () => this.signOut() });
-    contextMenu(Math.max(4, r.right - 260), r.bottom + 6, items.map((it) => (it.head ? { head: it.head } : it)));
+    // on the Files page the keys (Escape, Ctrl+K) are the page's: the focus goes back to it when the menu closes
+    const files = this.app.files?.isOpen ? this.app.files.el : null;
+    contextMenu(Math.max(4, r.right - 260), r.bottom + 6, items.map((it) => (it.head ? { head: it.head } : it)), null,
+      files ? { returnTo: files, keyboard: true } : {});
   }
 
   async signOut(force) {

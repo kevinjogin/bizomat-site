@@ -310,3 +310,24 @@ def test_a_browser_picture_older_than_an_untouched_model_is_redrawn():
     r = c.get(f"/api/docs/{doc_id}/thumb")
     assert r.content != _png() and r.headers["cache-control"] == "private, max-age=86400"
     assert store.meta(doc_id)["thumb"]["source"] == "server"
+
+
+def test_a_rename_keeps_the_picture_current():
+    c = TestClient(server.app)
+    rec = c.post("/api/docs", json={"name": "Block", "doc": _block()}).json()
+    doc_id = rec["id"]
+    c.put(f"/api/docs/{doc_id}/thumb?version=1", content=_png(), headers={"Content-Type": "image/png"})
+    assert c.patch(f"/api/docs/{doc_id}", json={"name": "Block renamed"}).json()["version"] == 2
+    t = store.meta(doc_id)["thumb"]
+    assert t["version"] == 2 and t["source"] == "browser"  # the same shape: no server redraw for a name
+
+
+def test_an_untouched_new_file_left_by_a_closed_tab_goes_after_a_day():
+    c = TestClient(server.app)
+    old = c.post("/api/docs", json={"name": "", "kind": "part"}).json()
+    fresh = c.post("/api/docs", json={"name": "", "kind": "part"}).json()
+    rec = store.get(old["id"])
+    rec["updated"] -= store.UNTOUCHED_KEEP + 60
+    store._save_files(rec)
+    ids = [d["id"] for d in c.get("/api/docs").json()]
+    assert old["id"] not in ids and fresh["id"] in ids  # a file just made stays (its tab may still be open)

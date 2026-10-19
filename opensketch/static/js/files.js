@@ -118,6 +118,9 @@ export class FilesView {
     const was = this.isOpen;
     if (!was) this.lastFocus = document.activeElement;
     this.el.classList.remove('hidden', 'leaving');
+    // the start page appears at once (a fade would show the empty editor through it); later visits fade in
+    const boot = document.documentElement.classList.contains('boot-files');
+    this.el.style.animation = boot ? 'none' : '';
     document.documentElement.classList.remove('boot-files'); // the start page is drawn: the editor may show under it
     document.body.classList.add('files-open');
     document.title = 'Files - OpenSketch';
