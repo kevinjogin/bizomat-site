@@ -1964,6 +1964,25 @@ export class App {
     const btn = dl.el.querySelector('.dlg-f .btn.primary');
   }
 
+  // Print (quick access, File menu): the graphics area alone, as it is on screen, with the file's name above it on
+  // a white page. The CSS print rules hide the rest of the window.
+  printGraphics() {
+    let url = null;
+    try { this.viewer.render(); url = this.viewer.canvas.toDataURL('image/png'); } catch (_) { /* no picture: print the page */ }
+    let sheet = $('print-sheet');
+    if (!sheet) { sheet = document.createElement('div'); sheet.id = 'print-sheet'; document.body.appendChild(sheet); }
+    sheet.innerHTML = '<div class="ps-name"></div><img alt="">';
+    const f = this.docStack[this.docStack.length - 1];
+    sheet.querySelector('.ps-name').textContent = f ? `${this.doc.name} in ${this.docStack[0].doc.name}` : (this.doc.name || 'Untitled');
+    const img = sheet.querySelector('img');
+    const clear = () => { window.removeEventListener('afterprint', clear); sheet.innerHTML = ''; };
+    window.addEventListener('afterprint', clear);
+    const go = () => setTimeout(() => window.print(), 0);
+    if (!url) return go();
+    img.onload = go; img.onerror = go;
+    img.src = url;
+  }
+
   download2(url) {
     const a = document.createElement('a');
     a.href = url; a.download = '';
