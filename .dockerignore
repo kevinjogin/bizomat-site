@@ -2,9 +2,16 @@
 .github
 .devcontainer
 tests
+docs
+/*.md
+package.json
+package-lock.json
+requirements-dev.txt
 **/__pycache__
 *.pyc
+.pytest_cache
 node_modules
+opensketch/static/downloads
 solidworks/**/bin
 solidworks/**/obj
 solidworks/dist
