@@ -23,15 +23,15 @@
 .skin-linear .dlg-h { font-family: var(--font-display); font-weight: 650; font-size: 13.5px; letter-spacing: -.012em; }
 .skin-linear .tp-head span:not(.pin) { font-family: var(--font-display); font-weight: 650; letter-spacing: -.01em; }
 .skin-linear .pm-title span:not(.pm-help) { font-family: var(--font-display); font-weight: 700; font-size: 14px; letter-spacing: -.02em; }
-.skin-linear .tree .root .lbl, .skin-linear .tree > div:first-child .lbl { font-family: var(--font-display); font-weight: 650; letter-spacing: -.01em; }
+.skin-linear .tree .tn.root .nm { font-family: var(--font-display); font-weight: 650; letter-spacing: -.01em; }
 .skin-linear .btn { font-weight: 550; letter-spacing: -.005em; }
 .skin-linear .btn.primary { box-shadow: 0 1px 0 rgba(255, 255, 255, .14) inset, 0 1px 2px rgba(0, 0, 0, .25); }
 
 /* ---------------------------------------------------------------- title bar */
 #titlebar .brand { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 7px; cursor: pointer; }
 #titlebar .brand:hover { background: var(--hover-bg); }
-.skin-linear #titlebar .brand-text { font-family: var(--font-display); font-weight: 800; font-size: 15px; letter-spacing: -.04em; line-height: 1; color: var(--text); }
-.skin-classic #titlebar .brand-text { color: var(--sw-red); font-weight: 800; }
+/* one wordmark in every look (classic showed a red upper-case OPENSKETCH) */
+#titlebar .brand-text { font-family: var(--font-display); font-weight: 800; font-size: 15px; letter-spacing: -.04em; line-height: 1; color: var(--text); text-transform: none; }
 .tb-files { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 9px 0 7px; margin-left: 2px; border: 1px solid var(--line); border-radius: 7px;
   background: transparent; color: var(--text-2); font-weight: 550; font-size: 12px; cursor: pointer; transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast); }
 .tb-files:hover { background: var(--hover-bg); color: var(--text); border-color: var(--line-2); }
@@ -90,7 +90,8 @@
   background: transparent; color: var(--text); cursor: pointer; transition: border-color var(--t-fast), background var(--t-fast), transform var(--t-fast); }
 .saveas-opt b { font-weight: 600; }
 .saveas-opt span { color: var(--muted); font-size: 11.5px; }
-.saveas-opt:hover, .saveas-opt:focus-visible { border-color: var(--accent); background: var(--hover-bg); }
+.saveas-opt:hover { border-color: var(--line-2); background: var(--hover-bg); }
+.saveas-opt:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); outline: none; }
 .saveas-opt:active { transform: scale(.99); }
 .fv-p { margin: 0; line-height: 1.5; max-width: 380px; }
 .save-dlg { display: flex; flex-direction: column; }
@@ -146,8 +147,6 @@ a.fv-pill { line-height: 34px; }
     radial-gradient(35% 45% at 55% 70%, rgba(224, 85, 155, .22), transparent 70%); animation: os-drift 18s ease-in-out 2 alternate; }
 .theme-light .fv-hero::before { opacity: .35; }
 @keyframes os-drift { to { transform: translate3d(-6%, 4%, 0) rotate(6deg) scale(1.08); } }
-.fv-eyebrow { display: inline-flex; align-items: center; gap: 7px; color: var(--accent-text); font-weight: 600; font-size: 12.5px; letter-spacing: -.005em; }
-.fv-eyebrow .fi { width: 14px; height: 14px; }
 .fv-hero h1 { margin: 10px 0 8px; font-family: var(--font-display); font-weight: 750; font-size: 44px; line-height: 1.02; letter-spacing: -.045em; }
 .fv-hero p { margin: 0; max-width: 520px; color: var(--text-2); font-size: 15px; line-height: 1.55; letter-spacing: -.008em; }
 .fv-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
@@ -265,7 +264,7 @@ a.fv-pill { line-height: 34px; }
 
 /* ---------------------------------------------------------------- Connect AI */
 .cx-dlg { width: min(680px, calc(100vw - 24px)); }
-.cx-dlg .dlg-h { border-bottom: 0; height: 36px; }
+.cx-dlg .dlg-h { border-bottom: 0; height: 36px; background: transparent; }
 .cx-dlg .dlg-h > span:first-child { visibility: hidden; }
 .cx-dlg .dlg-b { padding: 0 22px 20px; }
 .cx-hero { display: flex; align-items: center; gap: 14px; margin: 2px 0 16px; }
@@ -279,22 +278,17 @@ a.fv-pill { line-height: 34px; }
 .cx-tab:hover { border-color: var(--line-2); background: var(--hover-bg); }
 .cx-tab.on { border-color: var(--accent); background: var(--accent-bg); box-shadow: 0 0 0 3px var(--accent-bg); }
 .cx-pane { animation: os-rise var(--t-med) var(--ease); }
-.cx-lead { margin: 0 0 12px; color: var(--text-2); line-height: 1.5; }
 .cx-warn { margin: 0 0 10px; padding: 8px 12px; border-radius: 8px; background: var(--note-bg); border-left: 3px solid var(--yellow); font-size: 12px; line-height: 1.45; }
 .cx-ok { margin: 0 0 10px; padding: 8px 12px; border-radius: 8px; background: rgba(76, 183, 130, .12); border-left: 3px solid var(--green); font-size: 12px; line-height: 1.45; }
 .cx-steps li > .btn.fv-pill { margin-top: 8px; display: flex; width: max-content; }
 .cx-url input[type=password] { letter-spacing: .12em; }
 .cx-clients { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-.cx-chip { display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 12px 0 5px; border-radius: 16px; border: 1px solid var(--line); background: transparent; color: var(--text-2);
+.cx-chip { display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 14px; border-radius: 16px; border: 1px solid var(--line); background: transparent; color: var(--text-2);
   font-weight: 550; cursor: pointer; transition: border-color var(--t-fast), background var(--t-fast), color var(--t-fast); }
-.cx-chip i { min-width: 22px; height: 22px; padding: 0 4px; border-radius: 11px; display: grid; place-items: center; background: var(--c); color: #fff; font: 700 9.5px/1 var(--font-display); letter-spacing: -.02em; font-style: normal; }
 .cx-chip:hover { border-color: var(--line-2); color: var(--text); }
 .cx-chip.on { border-color: var(--accent); color: var(--text); background: var(--accent-bg); }
 .cx-client { border-radius: 12px; border: 1px solid var(--line); padding: 16px 16px 6px; background: var(--side); animation: os-rise var(--t-med) var(--ease); }
 .cx-chead { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-.cx-ctitle { display: flex; flex-direction: column; flex: 1; }
-.cx-ctitle b { font-family: var(--font-display); font-weight: 700; font-size: 16px; letter-spacing: -.025em; }
-.cx-ctitle span { color: var(--muted); font-size: 12px; }
 .cx-steps { margin: 6px 0 0; padding: 0; list-style: none; counter-reset: cx; }
 .cx-steps li { position: relative; padding: 0 0 12px 30px; counter-increment: cx; line-height: 1.5; }
 .cx-steps li::before { content: counter(cx); position: absolute; left: 0; top: 0; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center;
@@ -350,7 +344,6 @@ a.btn { text-decoration: none; }
 @keyframes os-spin { to { transform: rotate(360deg); } }
 select.cx-model { cursor: pointer; }
 .cx-model[hidden] { display: none; }
-.cx-hint { color: var(--muted); font-size: 11.5px; padding-left: 32px; }
 .cx-form .acct-err { padding-left: 32px; margin: 0; }
 .cx-actions { display: flex; align-items: center; gap: 14px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
 .cx-fine { flex: 1; color: var(--muted); font-size: 11.5px; line-height: 1.4; }
@@ -389,25 +382,11 @@ select.cx-model { cursor: pointer; }
 .cp-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
 .cp-row label { width: 90px; flex: none; color: var(--text-2); }
 .cp-in { flex: 1; height: 28px; padding: 0 8px; border-radius: 6px; border: 1px solid var(--border); }
-.ai-keyrow { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 /* AI panel with no AI connected: one line and a button (taskpane.renderAI) */
 .ai-empty { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 4px 0; padding: 10px 12px; border-radius: 10px; background: var(--field, #f3f3f3); color: var(--text-2, inherit); font-size: 12.5px; }
 .ai-empty .btn { margin: 0; flex: none; }
-.ai-keyrow .btn { margin: 0; }
 
 /* ---------------------------------------------------------------- empty part / assembly: first steps */
-.starthint { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 20; pointer-events: none; }
-.starthint .sh-card { pointer-events: auto; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 22px 26px 20px; max-width: min(460px, calc(100vw - 32px));
-  border-radius: 16px; background: color-mix(in srgb, var(--raised) 88%, transparent); backdrop-filter: blur(10px); box-shadow: var(--shadow); animation: os-rise 320ms var(--ease); }
-.starthint b { font-family: var(--font-display); font-weight: 750; font-size: 20px; letter-spacing: -.03em; }
-.starthint span { color: var(--text-2); font-size: 13px; line-height: 1.45; }
-.sh-planes { display: flex; gap: 8px; margin: 12px 0 4px; }
-.sh-plane { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 84px; padding: 10px 6px 8px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--text-2); cursor: pointer;
-  transition: border-color var(--t-fast), background var(--t-fast), color var(--t-fast), transform var(--t-fast) var(--ease); }
-.sh-plane span { font-size: 12px; font-weight: 600; color: inherit; }
-.sh-plane:hover { border-color: var(--accent); background: var(--accent-bg); color: var(--text); transform: translateY(-1px); }
-.sh-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 10px; }
-.sh-row .fv-pill { height: 32px; font-size: 12.5px; }
 
 /* ---------------------------------------------------------------- phones: the model first, panels slide over it */
 .tb-tree { display: none; }
@@ -471,7 +450,7 @@ select.cx-model { cursor: pointer; }
 
 /* ---------------------------------------------------------------- motion layer */
 .skin-linear .btn, .skin-linear .qa, .skin-linear .rb-btn, .skin-linear .rb-sm, .skin-linear .cmdtab, .skin-linear .ts, .skin-linear .doctab, .skin-linear .menubar .mi,
-.skin-linear .tree .node, .skin-linear .contextmenu .cm, .skin-linear .srv-row, .skin-linear .newdoc .nd {
+.skin-linear .tree .tn, .skin-linear .contextmenu .cm, .skin-linear .srv-row, .skin-linear .newdoc .nd {
   transition: background-color var(--t-fast) ease, color var(--t-fast) ease, border-color var(--t-fast) ease, opacity var(--t-fast) ease, transform var(--t-fast) var(--ease), box-shadow var(--t-med) ease; }
 .skin-linear .btn:active:not(:disabled), .skin-linear .rb-btn:active, .skin-linear .qa:active, .cx-chip:active, .fv-navi:active { transform: scale(.97); }
 .skin-linear .dlg-back.modal { animation: os-fade 160ms ease; }
@@ -480,7 +459,7 @@ select.cx-model { cursor: pointer; }
 .dlg-back.closing .dlg { animation: os-popout 120ms var(--ease-in) forwards; }
 @keyframes os-pop { from { opacity: 0; transform: translateY(6px) scale(.985); } }
 @keyframes os-popout { to { opacity: 0; transform: translateY(4px) scale(.985); } }
-.skin-linear .contextmenu, .skin-linear .search-results, .skin-linear .flyout, .skin-linear .contexttb { animation: os-menu 140ms var(--ease); transform-origin: top left; }
+.skin-linear .contextmenu, .skin-linear .search-results, .skin-linear .contexttb { animation: os-menu 140ms var(--ease); transform-origin: top left; }
 @keyframes os-menu { from { opacity: 0; transform: translateY(-3px) scale(.98); } }
 .skin-linear .taskpanel:not(.hidden) { animation: os-slide 200ms var(--ease); }
 @keyframes os-slide { from { opacity: 0; transform: translateX(10px); } }
@@ -491,7 +470,7 @@ select.cx-model { cursor: pointer; }
 /* chat entries re-drawn while the AI streams (taskpane.refresh / render) do not play their entrance again;
    only a step chip that is new since the last re-draw pops in */
 .ai-log .settled, .ai-log .settled .st:not(.new) { animation: none; }
-.skin-linear .tree .node:hover { transition-duration: 60ms; }
+.skin-linear .tree .tn:hover { transition-duration: 60ms; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; animation-delay: 0ms !important; transition-duration: 1ms !important; }
