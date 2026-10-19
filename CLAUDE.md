@@ -55,6 +55,17 @@ assemblies only when a part changes.
 
 ## Current state (2026-10-19, v0.7: whole-project audit fixes)
 
+Room for jobs (2026-10-20, YZ's screenshot: "can u automate this" on the imported DS2200_Lavilock_Option_2 (17 parts)
+ended in "Server error: The job stopped unexpectedly (it may have run out of memory)" during find_mate_candidates).
+The same call through MCP finished (26 candidates), and locally the job peaks at ~500 MB resident (OpenCascade ~430 MB
+loaded, then every part rebuilt: the job has no build cache). Jobs run with oom_score_adj 800, so on the 2 GB machine
+with no swap they are the kernel's first victim when the server, the pictures worker and person workers holding
+their caches already fill it; Slots let the first job start whatever memory was left. Now `cadworker.make_room(need)`
+(OPENSKETCH_JOB_ROOM_MB, 700) runs before every job (AI chat, macro export): workers with no call stop, the pictures
+worker first, then the longest unused, until that much is free (busy workers never). A job that dies logs its exit
+code and the free memory. Test: test_cadworker.py::test_idle_workers_give_way_before_a_job_starts. Not changed: a
+job still rebuilds what the person's worker already has; more memory or swap (which ends suspend) would be YZ's call.
+
 A whole-project audit (YZ: "pick up logic issues, UX that does not make sense, technical issues that can grow, unsafe
 actions, performance, UI and motion; you own this project"): 14 code auditors (each finding checked by skeptics,
 165 confirmed), 6 live journeys in Chromium (94 UX/visual issues), parity, test-health, product-UX and scale audits.

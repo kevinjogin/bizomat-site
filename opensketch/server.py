@@ -582,6 +582,7 @@ def api_macro_start(req: MacroRequest, request: Request):
         else:
             job["state"], job["error"] = "error", f"{payload[0]}: {payload[1]}"
     try:
+        cadworker.make_room()  # a plain def route: already off the event loop
         job["handle"] = cadworker.start_job(sldexport.export, req.doc, path, name=req.name, verify=req.verify,
                                             uses=("log",), on_event=event, limit=3 * 3600, on_end=ticket.release)
     except BaseException:
@@ -749,6 +750,7 @@ async def api_ai_stream(req: AIRequest, request: Request):
             yield json.dumps({"ev": "error", "message": str(exc)}) + "\n"
             return
         try:
+            await run_in_threadpool(cadworker.make_room)  # idle workers give way before the job loads OpenCascade
             job = cadworker.start_job(cadjobs.ai_stream, req.doc, req.prompt, conv,
                                       ai._conversations.get(conv) if conv else None, req.demo, selection, cfg,
                                       lost=lost, on_event=on_event, limit=3600, on_end=ticket.release)

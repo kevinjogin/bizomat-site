@@ -433,6 +433,38 @@ def lane_for(person: str | None, kind: str = "edit") -> Lane:
         return own
 
 
+JOB_ROOM_MB = float(os.environ.get("OPENSKETCH_JOB_ROOM_MB", 700))  # free memory a new job process should find
+
+
+def make_room(need_mb: float = JOB_ROOM_MB, keep: tuple = ()) -> float | None:
+    """Before a new process starts (a job: the AI chat, a macro export), stop workers nobody is using until `need_mb`
+    is free: the pictures worker first, then person workers without a call, longest unused first (their caches go;
+    the next call starts them again). A job loads OpenCascade (~430 MB resident) and grows with what it builds, and
+    on a 2 GB machine with no swap the kernel then kills the job (oom_score 800) part-way through a tool call.
+    Workers in `keep` and busy ones stay. Returns the free memory afterwards (None where /proc is missing)."""
+    free = available_mb()
+    if free is None or free >= need_mb:
+        return free
+    idle = [ln for ln in lanes() if ln not in keep and ln._pool is not None and not ln._busy]
+    idle.sort(key=lambda ln: (ln is not BACKGROUND, ln._last))
+    for ln in idle:
+        with ln._lock:
+            if ln._busy or ln._pool is None:
+                continue
+            pool, ln._pool = ln._pool, None
+        _stop_pool(pool, kill=True)
+        _log(f"({ln.name}) stopped to make room for a job ({free:.0f} MB free)")
+        for _ in range(20):  # the kernel takes a moment to hand the memory back
+            time.sleep(0.1)
+            now = available_mb()
+            if now is not None and now > free + 50:
+                break
+        free = available_mb() or free
+        if free >= need_mb:
+            break
+    return free
+
+
 def lanes() -> list[Lane]:
     with _lanes_guard:
         return list({id(x): x for x in _lanes.values()}.values()) + [BACKGROUND]
@@ -652,6 +684,7 @@ class Job:
         self._recv, send = _CTX.Pipe(duplex=False)
         self._stop = _CTX.Event()
         self.on_event, self.limit, self.on_end = on_event, limit, on_end
+        self.path = f"{fn.__module__}:{fn.__qualname__}"
         self.proc = _CTX.Process(target=_job_main, daemon=False,
                                  args=(f"{fn.__module__}:{fn.__qualname__}", args, dict(kwargs), send, self._stop, nice, tuple(uses)))
         self.proc.start()
@@ -693,6 +726,9 @@ class Job:
                 ended = kind in ("done", "error")
             if not ended:
                 code = self.proc.exitcode
+                free = available_mb()
+                _log(f"job {self.path} ended with exit code {code}"
+                     + (f" ({free:.0f} MB free now)" if free is not None else ""))
                 self.on_event("error", ("WorkerStopped", "The job stopped unexpectedly"
                                         + (" (it may have run out of memory)." if code in (-9, 137) else f" (exit code {code}).")))
         finally:

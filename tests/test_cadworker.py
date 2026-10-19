@@ -501,3 +501,40 @@ def test_a_recognition_worker_ends_when_whoever_started_it_dies(tmp_path):
     for k in left:
         os.kill(k, signal.SIGKILL)
     assert not left
+
+
+def test_idle_workers_give_way_before_a_job_starts(monkeypatch):
+    """2026-10-20: YZ's in-app AI ran find_mate_candidates on an imported 17-part lock and the job was killed by the
+    kernel ("The job stopped unexpectedly (it may have run out of memory)"): the job loads OpenCascade (~430 MB) and
+    rebuilds every part, beside the server, the pictures worker and person workers holding their caches. Before a job
+    starts, workers with no call stop until there is room: the pictures worker first, then the longest unused."""
+    monkeypatch.setattr(cadworker, "_lanes", {})
+    monkeypatch.setattr(cadworker, "_reserved", None)
+    stopped = []
+    free = [2000.0]  # plenty while the lanes are handed out (lane_for shares one when memory is low)
+    monkeypatch.setattr(cadworker, "available_mb", lambda: free[0])
+    monkeypatch.setattr(cadworker.time, "sleep", lambda s: None)
+
+    def stop(pool, kill):
+        stopped.append(pool)
+        free[0] += 300
+    monkeypatch.setattr(cadworker, "_stop_pool", stop)
+    old, new, busy = cadworker.lane_for("old"), cadworker.lane_for("new"), cadworker.lane_for("busy")
+    for i, ln in enumerate((old, new, busy)):
+        ln._pool = f"pool-{ln.name}"
+        ln._last = time.monotonic() - 100 + i
+    busy._busy = 1
+    free[0] = 200.0
+    monkeypatch.setattr(cadworker.BACKGROUND, "_pool", "pool-pictures")
+    monkeypatch.setattr(cadworker.BACKGROUND, "_busy", 0)
+    assert cadworker.make_room(700) >= 700
+    assert stopped == ["pool-pictures", "pool-edit:old"]  # pictures first, then the longest unused; enough room now
+    assert new._pool and busy._pool and old._pool is None and cadworker.BACKGROUND._pool is None
+    free[0] = 100.0
+    cadworker.make_room(10_000)  # never enough: every idle worker goes, a busy one never does
+    assert new._pool is None and busy._pool == "pool-edit:busy"
+    stopped.clear()
+    free[0] = 900.0
+    old._pool = "again"
+    cadworker.make_room(700)  # room already: nothing stops
+    assert stopped == []
