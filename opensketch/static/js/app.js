@@ -2091,7 +2091,15 @@ export class App {
   // ------------------------------------------------------------------ chrome
   status(msg) { $('sb-msg').textContent = msg; }
   coords(t) { $('sb-coords').textContent = t; }
-  statusDefined(text, cls) { const e = $('sb-defined'); e.textContent = text; e.className = 'sb-cell ' + (cls || ''); this.tree.render(); }
+  // The sketch's state in the status bar and in its tree row. Sketch drags solve on every move: the tree is drawn
+  // again only when the state changes.
+  statusDefined(text, cls) {
+    const e = $('sb-defined');
+    const c = 'sb-cell ' + (cls || '');
+    if (e.textContent === text && e.className === c) return;
+    e.textContent = text; e.className = c;
+    this.tree.render();
+  }
   sketchDefinedPrefix(f) {
     if (this.mode === 'sketch' && this.sketcher.skId === f.id) return this.sketcher.state?.status === 'under' ? '(-) ' : this.sketcher.state?.status === 'over' ? '(+) ' : '';
     // every tree redraw asks for every sketch: solve each version of a sketch once
