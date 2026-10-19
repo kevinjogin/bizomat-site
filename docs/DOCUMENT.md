@@ -57,11 +57,14 @@ Units are millimetres and degrees. Y is up, as in SOLIDWORKS.
 A plane reference is one of:
 
 - `{"ref": "Front Plane"}` (or Top / Right), or `{"ref": "<plane or sketch feature id>"}`
-- a planar face: `{"type": "face", "origin": [x,y,z], "normal": [x,y,z], "xdir": [x,y,z]}`.
-  The origin is the part origin projected onto the face. On rebuild the face is found again
-  (same normal, nearest face), so the sketch follows if an earlier depth changes. The stored origin
-  is an attachment hint, not a fixed height. The rebuild reports the requested and resolved plane,
-  and warns if reattachment moves it or no matching face exists.
+- a planar face: `{"type": "face", "origin": [x,y,z], "normal": [x,y,z], "xdir": [x,y,z], "at": [x,y,z]}`.
+  The origin is the part origin projected onto the face. `at` (optional) is a point on the picked face
+  (the browser stores one; body_topology gives one as a face's `point`). On rebuild the face is found again
+  among the planar faces with the same normal: the one holding `at` (nearest along the normal), else one
+  at the stored height, else the nearest along the normal. So the sketch follows if an earlier depth
+  changes, and a face away from the origin is not mistaken for the face below it that covers the origin.
+  The stored origin is an attachment hint, not a fixed height. The rebuild reports the requested and
+  resolved plane, and warns if reattachment moves it or no matching face exists.
 - a fixed coordinate plane: `{"type": "fixed", "origin": [x,y,z], "normal": [x,y,z], "xdir": [x,y,z]}`.
   It stays at the supplied origin even if nearby faces move. Use this for computed enclosure floor,
   pocket, or pin heights. A `plane` feature offset from a named plane is another fixed datum option.
@@ -260,7 +263,7 @@ coordinates (the coordinates used while modelling the part):
 
 | entity | form | from a face pick |
 |---|---|---|
-| plane | `"plane": {"point": [x,y,z], "normal": [x,y,z]}` | planar face: center and outward normal |
+| plane | `"plane": {"point": [x,y,z], "normal": [x,y,z]}` | planar face: a point on it (not its centre, which can lie off a ring-shaped face) and outward normal |
 | axis | `"axis": {"point": [x,y,z], "dir": [x,y,z]}` | cylindrical or conical face: its axis |
 | point | `"point": [x,y,z]` | vertex or sketch point |
 | named | `"ref": "Front Plane" / "Top Plane" / "Right Plane" / "Origin" / "X axis" / "Y axis" / "Z axis"` | the part's own reference geometry |
@@ -269,8 +272,10 @@ A reference without `component` (for example `{"ref": "Top Plane"}`) is the asse
 geometry, which is fixed.
 
 When a part changes, plane and axis references follow their face: on rebuild each one is matched to
-the nearest face of the rebuilt part with the same direction (within 20% of the part size) and the
-stored point is updated. Like edge and face references in parts, this is geometric matching, not
+a face of the rebuilt part with the same direction (within 20% of the part size) and the stored point is
+updated. A plane reference stays put while some face still lies in its plane (so an unchanged part never
+moves its mates); otherwise it goes to the face that holds the stored point, else the nearest along the
+normal. An axis goes to the nearest coaxial cylinder or cone. Like edge and face references in parts, this is geometric matching, not
 full topological naming.
 
 ## Mates
@@ -285,22 +290,33 @@ full topological naming.
 | `angle` | plane or axis, plane or axis | `value` degrees between directions |
 | `lock` | any two references on two components | the second component keeps its current pose relative to the first; the pose is stored in `pose` |
 | `hinge` | `refs`: two axes; optional `planes`: two planes (coincident, stops sliding); optional `angle_refs`: two planes or axes with `angle_min` / `angle_max` (degrees) | SOLIDWORKS Hinge mechanical mate: one rotation left, optionally limited |
-| `limit_distance` | plane-plane (also kept parallel), or point-point | distance between `min` and `max` mm |
+| `limit_distance` | plane-plane (also kept parallel), plane-point, axis-axis, axis-point, point-point | distance between `min` and `max` mm, measured as a coupler's `distance` (below) |
 | `limit_angle` | plane or axis, plane or axis | angle between `min` and `max` degrees |
 | `coupler` | `input_refs`: the driver pair; `refs`: the driven pair (each pair: two references, usually on different components) | SOLIDWORKS Linear/Linear Coupler, generalised to a motion law: the driven measure follows the driver measure. See below. |
 
 - `align`: `"anti"` (normals face each other, SOLIDWORKS "Anti-Aligned", the default for touching
   faces), `"aligned"`, or `"auto"` (whichever is closer when the mate is solved; the default).
 - `flip`: for `distance`, measure to the other side.
-- `suppressed`: the mate is ignored.
+- `suppressed`: the mate is ignored. A mate on a suppressed component is reported `suppressed` too.
+- `value`, `min`, `max`, `angle_min`, `angle_max`, `ratio`, `offset`: numbers; `null` is the same as
+  leaving it out. Anything else makes that mate an error, not the whole assembly.
 
 The solver is a damped least-squares (Levenberg-Marquardt) solve over the six degrees of freedom of
 every free component. It moves components as little as possible. Limits only act when exceeded.
 
 Dragging: `/api/regen` takes `drag` = `{"component", "point" (part coordinates), "target" (assembly
 coordinates)}`. The solver first pulls that point toward the target softly with every mate in place,
-then makes every mate exact again. So a hinged lid swings, a slider slides, a linkage follows. Each mate reports `ok` or `error`
-(cannot be satisfied together with the others, like an over-defining mate in SOLIDWORKS).
+then makes every mate exact again. So a hinged lid swings, a slider slides, a linkage follows. Each mate reports `ok`, `error`
+or `suppressed`.
+
+Over-defining mates (as in SOLIDWORKS): when the mates cannot all hold, the solver adds them again in
+document order, from where the components were, and rejects each mate that cannot hold together with the
+ones before it. Only the rejected mates are errors; the others stay `ok` and the components sit where the
+accepted mates put them (nothing moves to a compromise). A rejected mate's result has
+`"over_defining": true`, `conflicts_with` (ids of the earlier mates it fights: those whose removal would let
+it hold, else every earlier mate on its moving components) and a message such as "Over defines the assembly:
+conflicts with Coincident3." `/api/regen` (and the browser's own solve) also lists their ids in `conflicts`. Drag frames skip this (the
+solve on release does it).
 
 ### Coupler (motion law)
 

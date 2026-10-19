@@ -64,12 +64,10 @@ def _measure(m: dict, poses: dict) -> float | None:
         if a[2] is None or b[2] is None:
             return None
         return math.degrees(math.acos(max(-1.0, min(1.0, float(a[2] @ b[2])))))
-    order = {"plane": 0, "axis": 1, "point": 2}
-    if order[a[0]] > order[b[0]]:
-        a, b = b, a
-    if a[0] == "plane" and b[0] == "plane":
-        return float((b[1] - a[1]) @ a[2])
-    return float(np.linalg.norm(b[1] - a[1]))
+    try:
+        return assembly.coupler_measure("distance", a, b)  # the solver's own limit_distance measure
+    except assembly.AssemblyError:
+        return None
 
 
 def _limits(m: dict) -> tuple[float | None, float | None]:

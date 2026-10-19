@@ -210,7 +210,7 @@ export class AssemblyMode {
     node({ id: 'mates', kind: 'folder', name: 'Mates', ic: 'mates', depth: 1, twisty: this.matesOpen, onTwisty: () => { this.matesOpen = !this.matesOpen; tree.render(); } });
     if (this.matesOpen) for (const m of mates) {
       const s = st[m.id];
-      const state = m.suppressed ? 'suppressed' : s?.state === 'error' ? 'error' : 'ok';
+      const state = m.suppressed || s?.state === 'suppressed' ? 'suppressed' : s?.state === 'error' ? 'error' : 'ok'; // a suppressed component suppresses its mates
       const names = (m.refs || []).map((r) => (r.component ? this.comp(r.component)?.name : r.ref) || '?');
       const n = node({ id: m.id, kind: 'mate', name: `${m.name} (${names.join(',')})`, ic: mateIcon(m.type), depth: 2,
         cls: `${state}${proposed.has(m.id) ? ' proposed' : ''}`, badge: state === 'error' ? tree.badgeIcon('error') : '', onDbl: () => this.editMate(m) });
@@ -602,7 +602,7 @@ export class AssemblyMode {
     const d = p.data || {};
     const r = (v) => v.map((x) => +(+x).toFixed(6));
     if (p.kind === 'face') {
-      if (d.normal) return { ref: { component: cid, plane: { point: r(d.center), normal: r(d.normal) } }, label: `Face&lt;${+sub + 1}&gt;@${esc(cname)}`, kind: 'plane' };
+      if (d.normal) return { ref: { component: cid, plane: { point: r(d.point || d.center), normal: r(d.normal) } }, label: `Face&lt;${+sub + 1}&gt;@${esc(cname)}`, kind: 'plane' };
       if (d.axis) return { ref: { component: cid, axis: { point: r(d.axis.point), dir: r(d.axis.dir) } }, label: `Face&lt;${+sub + 1}&gt;@${esc(cname)}`, kind: 'axis' };
       this.app.toast('Pick a planar or cylindrical face.');
       return null;
