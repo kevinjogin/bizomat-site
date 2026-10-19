@@ -38,6 +38,8 @@ def _docs():
     return store.data_dir() / "docs"
 
 
+# ----------------------------------------------------------------------------- one bad document breaks nothing
+
 def test_a_malformed_document_is_refused_and_never_breaks_the_list():
     owner, member = _setup_owner_and_member()
     # the browser routes check the structure, as MCP imports do: nothing is stored
@@ -109,6 +111,8 @@ def test_made_up_document_ids_leave_nothing_behind():
     assert not (_docs() / "nosuch9999.lock").exists()
 
 
+# ----------------------------------------------------------------------------- request bodies
+
 def test_request_bodies_are_capped_before_anything_reads_them(monkeypatch):
     c = TestClient(server.app)
     # public OAuth: a big body is refused from its Content-Length, unread
@@ -139,6 +143,8 @@ def test_request_bodies_are_capped_before_anything_reads_them(monkeypatch):
     r = c.post("/api/import/raw?filename=a.step", content=gzip.compress(raw), headers={"X-OpenSketch-Gzip": "1"})
     assert r.status_code != 413
 
+
+# ----------------------------------------------------------------------------- version history
 
 def test_identical_saves_make_no_version_and_a_retry_is_not_a_conflict():
     c = TestClient(server.app)
@@ -194,6 +200,8 @@ def test_version_list_reads_its_index_not_the_versions():
     assert (store._hist_dir(rec["id"]) / "versions.json").exists()
 
 
+# ----------------------------------------------------------------------------- imported geometry stored once
+
 def test_imported_geometry_is_stored_once_for_every_version():
     doc = _imported()
     data = doc["features"][0]["data"]
@@ -238,6 +246,8 @@ def test_imported_geometry_is_stored_once_for_every_version():
     assert not store._hist_dir(doc_id).exists()
 
 
+# ----------------------------------------------------------------------------- limits
+
 def test_document_size_account_quota_and_disk_reserve(monkeypatch):
     owner, member = _setup_owner_and_member()
     monkeypatch.setattr(store, "DOC_MAX", 3000)
@@ -277,6 +287,8 @@ def test_document_size_account_quota_and_disk_reserve(monkeypatch):
     assert store.get(a["id"])["doc"]["name"] == "A3"  # nothing half-written
 
 
+# ----------------------------------------------------------------------------- listing reads only yours
+
 def test_listing_reads_only_the_persons_own_documents(monkeypatch):
     owner, member = _setup_owner_and_member()
     mei = member.get("/api/account").json()["user"]["id"]
@@ -297,6 +309,26 @@ def test_listing_reads_only_the_persons_own_documents(monkeypatch):
     assert len(owner.get("/api/docs").json()) == 0
 
 
+# ----------------------------------------------------------------------------- removed accounts
+
+def test_files_of_removed_people_go_to_the_owner():
+    owner, member = _setup_owner_and_member()
+    mei = member.get("/api/account").json()["user"]["id"]
+    kept = member.post("/api/docs", json={"name": "Mei's bracket", "doc": _block()}).json()
+    tester = accounts.create_tester()
+    t_doc = store.create("Tester part", _block(), owner=tester["id"])
+    assert owner.delete("/api/account/testers").json() == {"removed": 1}
+    trash = owner.get("/api/docs?trash=1").json()
+    assert [f["id"] for f in trash] == [t_doc["id"]]  # in the owner's Trash: kept 30 days, then gone
+    assert owner.delete(f"/api/account/users/{mei}").json()["files"] == 1
+    assert kept["id"] in [f["id"] for f in owner.get("/api/docs").json()]  # a member's files move to the owner's Files
+    # files of accounts removed before this existed are found when the server starts
+    store.create("Orphan", _block(), owner="gone12345678")
+    with TestClient(server.app):
+        pass
+    assert "Orphan" in [f["name"] for f in owner.get("/api/docs?trash=1").json()]
+
+
 def test_an_untouched_new_file_can_be_discarded():
     c = TestClient(server.app)
     new = c.post("/api/docs", json={"name": "", "kind": "part"}).json()
@@ -308,6 +340,8 @@ def test_an_untouched_new_file_can_be_discarded():
     assert c.delete(f"/api/docs/{used['id']}?untouched=1").json() == {"kept": True}
     assert sorted(f["name"] for f in c.get("/api/docs").json()) == ["Bracket", used["name"]]
 
+
+# ----------------------------------------------------------------------------- reviews
 
 def test_review_links_go_with_their_file_and_the_index_is_safe(monkeypatch):
     owner, member = _setup_owner_and_member()
@@ -330,6 +364,8 @@ def test_review_links_go_with_their_file_and_the_index_is_safe(monkeypatch):
     assert r.status_code == 400 and "damaged" in r.json()["error"]
     assert (review._dir() / "reviews.json").read_text() == "[{broken"
 
+
+# ----------------------------------------------------------------------------- downloads and uploads
 
 def test_each_person_has_their_own_room_for_downloads(monkeypatch):
     monkeypatch.setattr(artifacts, "PERSON_FILES", 2)

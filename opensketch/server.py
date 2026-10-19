@@ -53,6 +53,7 @@ UPDATE_NOTE = Path(os.environ.get("OPENSKETCH_UPDATE_NOTE", str(Path.home() / ".
 @asynccontextmanager
 async def lifespan(_app):
     _warm_owner()  # CAD runs in worker processes, one per person (cadworker.py): start the owner's now
+    await run_in_threadpool(_hand_over_orphans)
     try:
         async with mcp_server.lifespan_context():
             yield
@@ -67,6 +68,19 @@ def _warm_owner() -> None:
     except Exception:
         owner = None
     cadworker.lane_for(owner["id"] if owner else None).warm()
+
+
+def _hand_over_orphans() -> None:
+    """Files of accounts removed before their files were handed over go to the server owner's Trash (store.hand_over)."""
+    try:
+        from . import accounts
+        users = accounts.list_users()
+        if users:
+            moved = store.hand_over_orphans({u["id"] for u in users})
+            if moved:
+                print(f"OpenSketch: {moved} file(s) of removed accounts moved to the owner's Trash", flush=True)
+    except Exception as exc:  # never stops the server from starting
+        print(f"OpenSketch: could not check for files of removed accounts: {exc}", flush=True)
 
 
 def _lane(request: Request) -> "cadworker.Lane":
@@ -1108,7 +1122,20 @@ def api_remove_testers(request: Request):
     gone = accounts.remove_testers()
     for uid in gone:
         mcpauth.drop_user(uid)
+        _forget(uid, trash=True)  # their files go to your Trash (kept 30 days), their AI key is deleted
     return {"removed": len(gone)}
+
+
+def _forget(uid: str, trash: bool) -> int:
+    """What a removed account leaves: its saved AI key is deleted, its SOLIDWORKS link closed, its files go to the
+    server owner (store.hand_over)."""
+    from . import aikeys, swbridge
+    for step in (lambda: aikeys.remove(uid), lambda: swbridge.drop(uid, "closed")):
+        try:
+            step()
+        except Exception:
+            pass
+    return store.hand_over(uid, trash=trash)
 
 
 def _google_redirect(request: Request) -> str:
@@ -1168,7 +1195,8 @@ def api_remove_user(user_id: str, request: Request):
         return JSONResponse({"error": str(e)}, status_code=400)
     from . import mcpauth
     mcpauth.drop_user(user_id)  # their connected AI apps stop working too
-    return {"removed": user_id}
+    files = _forget(user_id, trash=False)  # their files move to your Files
+    return {"removed": user_id, "files": files}
 
 
 @app.get("/api/connect")
