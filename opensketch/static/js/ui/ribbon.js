@@ -106,10 +106,10 @@ export class Ribbon {
     for (const id of QUICK) {
       const c = this.C[id];
       const b = h('div', 'qa', icon(val(c.icon), 18));
-      b.title = this.tip(c);
+      b.title = this.tip(c); b.dataset.cmd = id; // phones keep only Undo and Redo (brand.css)
       b.onclick = () => this.run(id);
       q.appendChild(b);
-      if (id === 'print' || id === 'redo' || id === 'rebuild') q.appendChild(h('span', null, '')).style.cssText = 'width:1px;height:18px;background:#ddd;margin:0 3px';
+      if (id === 'print' || id === 'redo' || id === 'rebuild') q.appendChild(h('span', 'qa-sep'));
     }
   }
 

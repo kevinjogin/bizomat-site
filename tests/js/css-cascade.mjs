@@ -199,7 +199,7 @@ function cascade(rules, els, i, pseudoEl, media) {
       const spec = selectorSpec(s);
       for (const [prop, value, imp] of r.decls) for (const [p, v] of expand(prop, value)) {
         const rk = [imp ? 1 : 0, ...spec, r.order];
-        if (!win[p] || later(rk, win[p].rk)) win[p] = { v, rk };
+        if (!win[p] || !later(win[p].rk, rk)) win[p] = { v, rk }; // a tie: the later declaration wins
       }
     }
   }

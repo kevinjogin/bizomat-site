@@ -30,7 +30,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 input, select, button { font: inherit; color: inherit; }
 .ic { display: block; flex: none; }
 
-#app { display: grid; grid-template-rows: 34px auto 1fr 22px; height: 100vh; }
+#app { display: grid; grid-template-rows: 34px auto 1fr 22px; height: 100vh; height: 100dvh; padding-bottom: env(safe-area-inset-bottom, 0px); }
 
 /* ---------------------------------------------------------------- title bar */
 #titlebar { display: flex; align-items: center; gap: 6px; background: #fbfbfb; border-bottom: 1px solid var(--border-l); padding: 0 6px; position: relative; z-index: 30; }
@@ -47,6 +47,7 @@ input, select, button { font: inherit; color: inherit; }
 .qa { display: flex; align-items: center; padding: 3px; border: 1px solid transparent; border-radius: 2px; cursor: pointer; }
 .qa:hover { background: var(--hover); border-color: var(--hover-b); }
 .qa .caret { font-size: 8px; color: #555; margin-left: 1px; }
+.qa-sep { flex: none; width: 1px; height: 16px; margin: 0 4px; background: var(--border-l); }
 .doctitle { flex: 1; text-align: center; font-size: 12px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .search { position: relative; }
 .search input { width: 190px; height: 22px; border: 1px solid var(--border); border-radius: 2px; padding: 0 6px; background: var(--field, #fff); }

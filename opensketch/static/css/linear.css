@@ -114,6 +114,7 @@
 .skin-linear .qa { border: 0; border-radius: 5px; padding: 4px; opacity: .85; }
 .skin-linear .qa:hover { background: var(--hover-bg); opacity: 1; }
 .skin-linear .qa .ic { width: 18px; height: 18px; }
+.skin-linear .qa-sep { height: 14px; margin: 0 3px; background: var(--line-2); }
 .skin-linear .doctitle { color: var(--text-2); font-weight: 500; }
 .skin-linear .search input { width: 220px; height: 26px; padding: 0 9px; background: var(--field); border: 1px solid var(--line); border-radius: 6px; }
 .skin-linear .search::after { content: "Ctrl K"; position: absolute; right: 8px; top: 6px; font-size: 10.5px; color: var(--muted); pointer-events: none; }

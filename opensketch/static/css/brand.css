@@ -417,7 +417,13 @@ select.cx-model { cursor: pointer; }
     transform: translateX(-104%); transition: transform 220ms var(--ease); box-shadow: var(--shadow); }
   body.left-open:not(.review-mode) #leftpanel { transform: none; }
   body:not(.review-mode) #splitter { display: none; }
-  body:not(.review-mode) #quickaccess, body:not(.review-mode) #titlebar .search, body:not(.review-mode) .title-help, body:not(.review-mode) .menu-flyout { display: none; }
+  /* the title bar keeps Undo, Redo and the menus (File > Save As / Export, Edit, View...): a touch screen has no Ctrl+Z */
+  body:not(.review-mode) #titlebar .search, body:not(.review-mode) .title-help { display: none; }
+  body:not(.review-mode) #quickaccess { border-left: 0; padding-left: 0; gap: 0; }
+  body:not(.review-mode) #quickaccess > :not(.qa[data-cmd=undo]):not(.qa[data-cmd=redo]) { display: none; }
+  body:not(.review-mode) #menubar:not(.hidden) { position: absolute; left: 0; right: 0; top: 100%; z-index: 35; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none;
+    padding: 4px 8px; background: var(--side, #fbfbfb); border-bottom: 1px solid var(--line, var(--border-l)); box-shadow: 0 8px 18px rgba(0, 0, 0, .25); }
+  body:not(.review-mode) #menubar .mi { flex: none; padding: 8px 12px; }
   .tb-files span { display: none; }
   .tb-files { padding: 0 6px; }
   .tb-tree { display: inline-grid; place-items: center; width: 28px; height: 26px; border: 1px solid var(--line); border-radius: 7px; background: transparent; color: var(--text-2); cursor: pointer; }
@@ -430,10 +436,36 @@ select.cx-model { cursor: pointer; }
   #ribbon { overflow-x: auto; scrollbar-width: none; }
   #ribbon::-webkit-scrollbar { display: none; }
   .cmdtabs { overflow-x: auto; scrollbar-width: none; }
-  body:not(.review-mode) #taskpane .taskpanel:not(.hidden) { position: fixed; left: 0; right: 0; bottom: 22px; top: auto; height: 62vh; width: auto; z-index: 60;
-    border-radius: 16px 16px 0 0; box-shadow: 0 -12px 40px rgba(0, 0, 0, .45); animation: os-sheet 260ms var(--ease); }
+  body:not(.review-mode) #taskpane .taskpanel:not(.hidden) { position: fixed; left: 0; right: 0; bottom: 22px; top: auto; height: 62vh; height: 56dvh; width: auto; z-index: 60;
+    border-radius: 16px 16px 0 0; box-shadow: 0 -12px 40px rgba(0, 0, 0, .45); animation: os-sheet 220ms var(--ease); }
+  /* an open PropertyManager comes up as a sheet over the lower part of the model (it was inside the closed drawer) */
+  body:not(.review-mode) #leftpanel:has(> #propmgr:not(.hidden)) { transform: none; top: auto; bottom: 0; right: 0; width: auto; height: 44%;
+    border-radius: 16px 16px 0 0; box-shadow: 0 -12px 40px rgba(0, 0, 0, .45); }
+  /* the file name chip sits below the centred heads-up toolbar instead of under it */
+  .breadcrumbs { top: 48px; }
+  .banners, .skin-linear .banners { top: 76px; }
+  /* the context toolbar of a tree row shows above the drawer it was opened from */
+  .contexttb { z-index: 50; }
   #statusbar .sb-cell:not(#sb-defined) { display: none; }
-  .headsup { transform: scale(.9); transform-origin: top center; }
+  /* centred by translate in app.css; only the size changes here, and a long bar scrolls instead of being cut off */
+  .headsup { scale: .9; transform-origin: top center; max-width: calc((100% - 16px) / .9); overflow-x: auto; scrollbar-width: none; }
+  .headsup::-webkit-scrollbar, #menubar::-webkit-scrollbar { display: none; }
+  /* the ribbon scrolls sideways: fade its right edge so that shows */
+  #ribbon { -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); }
+}
+/* touch screens: fields at 16 px (iOS zooms the page into smaller ones), larger tap targets where it matters */
+@media (pointer: coarse) {
+  input:not([type=range], [type=checkbox], [type=radio]), select, textarea { font-size: 16px !important; }
+  .cmdtab { min-height: 32px; display: inline-flex; align-items: center; }
+  .cmdtabs { height: auto !important; }
+  .mgrtab { min-width: 36px; min-height: 32px; }
+  .qa, .tb-tree, .tb-files { min-width: 32px; min-height: 32px; justify-content: center; }
+  .fv-more { width: 36px; height: 36px; }
+  .fv-seg button { width: 34px; height: 30px; }
+  .pm-spin { display: none; }
+  .skin-linear .pm-num input { border-radius: 5px; }
+  .pm-num input { border-right: 1px solid var(--border); }
+  .skin-linear .pm-num input { border-right-color: var(--field-line); }
 }
 @keyframes os-sheet { from { transform: translateY(40px); opacity: 0; } }
 
