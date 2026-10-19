@@ -43,7 +43,7 @@ assemblies only when a part changes.
   for main calls to action, the text wordmark "OpenSketch" as the logo (no mark or tile; YZ 2026-10-19); new UI styled with the theme tokens and checked in dark,
   light and classic, and at phone width. Motion: `--ease`, 120-220 ms, nothing that blocks input.
 
-## Current state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand, text logo, Google sign-in set up in the app, upload links for big MCP imports, SOLIDWORKS add-in, dedicated CPU + self-restarting server, feature recognition, CAD in worker processes)
+## Current state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand, text logo, Google sign-in set up in the app, upload links for big MCP imports, SOLIDWORKS add-in, dedicated CPU + self-restarting server, feature recognition, CAD in worker processes, one worker per person)
 
 CAD in worker processes (2026-10-19, YZ at 14:29: "the site is basically frozen, New part / New assembly / open do
 not work at all, a new tab does not load either"). Fly logs: the machine woke from idle at 14:28:31, was ready at
@@ -70,16 +70,36 @@ held the GIL in long OpenCascade calls, so every other request waited. A bigger 
   SOLIDWORKS macro jobs run via `start_job` (a daemon process, so the job itself must not start multiprocessing
   children). Feature recognition stays a thread: it already runs each part in its own spawned worker
   (`recognize_part_safe`).
-- Still in the server's own process: the in-app AI chat (`/api/ai/stream`) and the MCP tools (Claude's edits). While
-  Claude builds through the connector, each OpenCascade call still pauses the server; moving `ai.Session` work into
-  the MODEL lane (`_apply_sync`, `_batch_sync`, `_read_sync`...) is the next step.
+- One worker per person (same day, YZ: "the goal is that my edits won't affect others' performance"):
+  `cadworker.lane_for(person, kind)` replaces the single MODEL lane: key "edit:<account id>" (browser routes, via
+  `server._lane(request)` = `store.owner_of(user)`, None -> "local") or "agent:<id>" (MCP tools), so one person's
+  rebuilds never queue another's and their own clicks never queue behind their AI. At most `OPENSKETCH_CAD_LANES` (4)
+  live person workers; past that a new one shares the least busy live lane. Idle person workers stop after 15 min
+  (`PERSON_IDLE`; caches go with them). `_warm_owner()` starts the owner's edit worker at startup. They still share
+  the CPU: on one core, two heavy jobs at once each run at about half speed (more cores or machines for that).
+- MCP tools: `mcp_server._work(fn, *args, limit=)` runs each `*_sync` (`_apply_sync`, `_read_sync`, `_import_sync`,
+  `_export_sync`, `_preview_sync`, `_batch_sync` (limit 1 h), `_topology_sync`, `_inspect_sync`, `_review_sync`,
+  `_measure_sync`) in the caller's agent worker through `_as(user, name, args)` (sets `_mcp_user` there);
+  `LONG_TOOLS` gives recognize_features 1 h. `Lane.run(..., raw=True)` re-raises the worker's own exception when it
+  survives pickling (NotFound, ValueError, ImportError_...), so the tools' except clauses work unchanged; `Lane.call`
+  is the same for code in a thread. Workers save documents, so `store.lock(doc_id)` is now `_DocLock`: a re-entrant
+  thread lock plus an flock on `docs/<id>.lock` (removed by purge). SOLIDWORKS `sw_` tools still run in the server.
+- In-app AI chat: `/api/ai/stream` runs `cadjobs.ai_stream` via `start_job` (a fresh process per request, ~4 s to
+  load before the first event): events come back through `progress`, the conversation's history goes in and comes
+  back (`ai._conversations` stays in the server); the response is an async generator, so Stop / leaving the page
+  cancels the job (killed 10 s later if it has not stopped). Job processes are not daemons (a job may start its own
+  processes, as feature recognition does); `cadworker.shutdown()` kills them.
 - `OPENSKETCH_CAD_WORKERS=0` runs everything in threads as before; tests/conftest.py sets it so monkeypatches apply.
-- Tests: `tests/test_cadworker.py` (6: same result from another process and the same worker next time, errors keep
+- Tests: `tests/test_cadworker.py` (11: same result from another process and the same worker next time, errors keep
   their type name, a runaway call is stopped and replaced, a crashed worker is replaced, a job's progress and result,
   and a real server answering /healthz, the Files list and New part in under 1 s while a ~25 s rebuild with ~2 s
   single OpenCascade calls runs; with OPENSKETCH_CAD_WORKERS=0 the same test waits 3 s for an answer). Checked in
   Chromium against a supervised server with workers: during that rebuild, Files > New part opened the editor in
   0.23 s and the Files page drew its cards in 0.57 s (before `_light`, New part waited for the rebuild); no page errors.
+  Added with per-person workers: Claude's propose_features of that grid plate over MCP while the server answers
+  /healthz, the document head and a regen in under 1 s (2.0 s without workers); the AI chat demo in its own process
+  keeping its conversation; people get their own lanes; a person's medium rebuild finishes in under 5 s while
+  another person's 25 s rebuild runs; routes use the signed-in person's lane.
 - Also (same push): `auto_stop_machines = "suspend"` (wakes in a few hundred ms with memory and caches; needs 2 GB or
   less, no swap; a deploy still starts cold); the supervisor tells a paused machine from a hang (a jump of more than
   interval + timeout + 30 s between checks resets its clocks and logs "paused"), prints the server's stacks once

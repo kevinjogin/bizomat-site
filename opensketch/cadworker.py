@@ -5,10 +5,12 @@ in one thread left every other thread without a single turn). With everything in
 (a cold Lavilock assembly after the machine woke up) froze the Files page, New part, saves and even the page itself.
 
 Lanes, one worker process each, started on first use (`spawn`, so no locks are inherited from the server):
-- MODEL: work someone is waiting for (rebuilds, drags, equations, Design panel lookups, mass, interference,
-  imports, exports, Toolbox parts, Motion Review checks). It keeps `geometry.built`'s cache between calls.
+- per person and kind (`lane_for(person, kind)`): "edit" for what the person does in the browser (rebuilds, drags,
+  equations, Design panel lookups, mass, interference, imports, exports, Toolbox parts, Motion Review), "agent" for
+  their AI's edits through the MCP connector. Each keeps `geometry.built`'s cache between calls and stops after
+  15 idle minutes. So one person's heavy work, or their Claude session, never queues anyone else's.
 - BACKGROUND: Files pictures drawn on the server, at a lower CPU priority; stopped when idle for 5 minutes.
-Long jobs with progress (feature recognition, SOLIDWORKS macros) get a process of their own (`start_job`).
+Long jobs get a process of their own (`start_job`): the in-app AI chat, SOLIDWORKS macros.
 
 A call that runs past its time limit kills its lane's process; a lane whose process died (out of memory, a crash in
 OpenCascade) starts a fresh one on the next call. Either way only that call fails, with a plain message, and the
@@ -28,7 +30,7 @@ import os
 import threading
 import time
 import traceback
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, TimeoutError as FuturesTimeout
 from concurrent.futures.process import BrokenProcessPool
 
 _CTX = mp.get_context("spawn")
@@ -68,12 +70,28 @@ def _init(nice: int) -> None:
             pass
 
 
-def _call(path: str, args: tuple, kwargs: dict):
-    """Runs in the worker: never raises, so every exception type comes back (some cannot be pickled)."""
+def _call(path: str, args: tuple, kwargs: dict, raw: bool = False):
+    """Runs in the worker: never raises, so every exception type comes back (some cannot be pickled). With `raw`,
+    the exception itself comes back when it survives pickling, so callers can catch their own types."""
     try:
         return ("ok", _resolve(path)(*args, **kwargs))
     except BaseException as exc:  # noqa: BLE001 - reported to the caller
+        if raw:
+            import pickle
+            try:
+                pickle.loads(pickle.dumps(exc))
+                return ("exc", exc)
+            except Exception:
+                pass
         return ("err", type(exc).__name__, str(exc), traceback.format_exc(limit=8))
+
+
+def _unwrap(res):
+    if res[0] == "exc":
+        raise res[1]
+    if res[0] == "err":
+        raise CadJobError(res[1], res[2], res[3])
+    return res[1]
 
 
 def _ping() -> int:
@@ -120,51 +138,126 @@ class Lane:
         if enabled():
             self._get().submit(_ping)
 
-    async def run(self, fn, *args, limit: float | None = None, **kwargs):
+    async def run(self, fn, *args, limit: float | None = None, raw: bool = False, **kwargs):
+        """Await fn(*args, **kwargs) in this lane's worker. Exceptions: CadJobError (kind = type name), or with
+        `raw` the original exception when it can cross over; CadUnavailable when out of time or the worker died."""
         path = f"{fn.__module__}:{fn.__qualname__}"
         if not enabled():
             from starlette.concurrency import run_in_threadpool
             try:
                 return await run_in_threadpool(fn, *args, **kwargs)
             except Exception as exc:
+                if raw:
+                    raise
                 raise CadJobError(type(exc).__name__, str(exc), traceback.format_exc(limit=8)) from exc
         limit = self.limit if limit is None else limit
         loop = asyncio.get_running_loop()
-        self._busy += 1
+        self._begin()
         try:
             try:
-                fut = loop.run_in_executor(self._get(), functools.partial(_call, path, args, kwargs))
+                fut = loop.run_in_executor(self._get(), functools.partial(_call, path, args, kwargs, raw))
                 res = await asyncio.wait_for(fut, limit)
             except asyncio.TimeoutError:
-                self.reset(kill=True)
-                print(f"OpenSketch CAD worker ({self.name}): {path} ran past {limit:g} s; worker restarted", flush=True)
-                raise CadUnavailable(f"This took longer than {limit / 60:.0f} minutes, so it was stopped. "
-                                     "Try a smaller change, or suppress heavy features first.") from None
+                self._timed_out(path, limit)
             except BrokenProcessPool:
-                self.reset()
-                print(f"OpenSketch CAD worker ({self.name}): the worker stopped during {path}; starting a new one", flush=True)
-                raise CadUnavailable("The CAD worker stopped while working on this (it may have run out of memory). "
-                                     "It has restarted: try again.") from None
+                self._broken(path)
         finally:
+            self._end()
+        return _unwrap(res)
+
+    def call(self, fn, *args, limit: float | None = None, raw: bool = False, **kwargs):
+        """The same as run() for code in a worker thread (MCP tools hold a document lock while they wait)."""
+        if not enabled():
+            try:
+                return fn(*args, **kwargs)
+            except Exception as exc:
+                if raw:
+                    raise
+                raise CadJobError(type(exc).__name__, str(exc), traceback.format_exc(limit=8)) from exc
+        path = f"{fn.__module__}:{fn.__qualname__}"
+        limit = self.limit if limit is None else limit
+        self._begin()
+        try:
+            try:
+                res = self._get().submit(_call, path, args, kwargs, raw).result(timeout=limit)
+            except FuturesTimeout:
+                self._timed_out(path, limit)
+            except BrokenProcessPool:
+                self._broken(path)
+        finally:
+            self._end()
+        return _unwrap(res)
+
+    def _begin(self) -> None:
+        with self._lock:
+            self._busy += 1
+
+    def _end(self) -> None:
+        with self._lock:
             self._busy -= 1
             self._last = time.monotonic()
-            if self.idle:
-                threading.Timer(self.idle + 1, self._idle_check).start()
-        if res[0] == "err":
-            raise CadJobError(res[1], res[2], res[3])
-        return res[1]
+        if self.idle:
+            t = threading.Timer(self.idle + 1, self._idle_check)
+            t.daemon = True
+            t.start()
+
+    def _timed_out(self, path: str, limit: float):
+        self.reset(kill=True)
+        print(f"OpenSketch CAD worker ({self.name}): {path} ran past {limit:g} s; worker restarted", flush=True)
+        raise CadUnavailable(f"This took longer than {limit / 60:.0f} minutes, so it was stopped. "
+                             "Try a smaller change, or suppress heavy features first.") from None
+
+    def _broken(self, path: str):
+        self.reset()
+        print(f"OpenSketch CAD worker ({self.name}): the worker stopped during {path}; starting a new one", flush=True)
+        raise CadUnavailable("The CAD worker stopped while working on this (it may have run out of memory). "
+                             "It has restarted: try again.") from None
+
+    @property
+    def live(self) -> bool:
+        return self._pool is not None or self._busy > 0
 
     def _idle_check(self) -> None:
         if self._busy == 0 and self._pool is not None and time.monotonic() - self._last >= self.idle:
             self.reset()
 
 
-MODEL = Lane("model", limit=float(os.environ.get("OPENSKETCH_CAD_LIMIT", 600)), nice=2)
+CAD_LIMIT = float(os.environ.get("OPENSKETCH_CAD_LIMIT", 600))
+MAX_LANES = int(os.environ.get("OPENSKETCH_CAD_LANES", 4))  # person workers alive at once (~240 MB each, idle)
+PERSON_IDLE = 900.0  # a person's worker stops after 15 idle minutes (its caches go with it)
 BACKGROUND = Lane("background", limit=180, nice=10, idle=300)
+
+# One worker per person, so one person's heavy rebuild or Claude session never queues another person's work.
+# They still share the machine's CPU: on one core, two heavy jobs at once each run at about half speed.
+_lanes: dict[str, Lane] = {}
+_lanes_guard = threading.Lock()
+
+
+def lane_for(person: str | None, kind: str = "edit") -> Lane:
+    """The worker for this person (an account id; None = the server's single user) and kind of work: "edit" for
+    what the person does in the browser, "agent" for their AI's edits (MCP tools), so a long Claude operation
+    never holds up their own clicks either. Past MAX_LANES live workers, a new one shares the least busy."""
+    key = f"{kind}:{person or 'local'}"
+    with _lanes_guard:
+        lane = _lanes.get(key)
+        if lane is not None:
+            return lane
+        live = {id(x): x for x in _lanes.values() if x.live}
+        if len(live) < MAX_LANES:
+            lane = Lane(key[:20], limit=CAD_LIMIT, nice=2, idle=PERSON_IDLE)
+        else:
+            lane = min(live.values(), key=lambda x: x._busy)
+        _lanes[key] = lane
+        return lane
+
+
+def lanes() -> list[Lane]:
+    with _lanes_guard:
+        return list({id(x): x for x in _lanes.values()}.values()) + [BACKGROUND]
 
 
 def shutdown() -> None:
-    for lane in (MODEL, BACKGROUND):
+    for lane in lanes():
         lane.reset(kill=True)
     for job in list(_jobs):
         job.kill()
@@ -209,7 +302,7 @@ class Job:
         self._recv, send = _CTX.Pipe(duplex=False)
         self._stop = _CTX.Event()
         self.on_event, self.limit = on_event, limit
-        self.proc = _CTX.Process(target=_job_main, daemon=True,
+        self.proc = _CTX.Process(target=_job_main, daemon=False,
                                  args=(f"{fn.__module__}:{fn.__qualname__}", args, dict(kwargs), send, self._stop, nice, tuple(uses)))
         self.proc.start()
         send.close()
@@ -219,7 +312,9 @@ class Job:
     def cancel(self, grace: float = 30.0) -> None:
         """Ask the job to stop at its next check; kill it if it has not stopped after `grace` seconds."""
         self._stop.set()
-        threading.Timer(grace, self.kill).start()
+        t = threading.Timer(grace, self.kill)
+        t.daemon = True
+        t.start()
 
     def kill(self) -> None:
         if self.proc.is_alive():

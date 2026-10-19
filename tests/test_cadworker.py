@@ -119,22 +119,61 @@ def _get(url, timeout=10, data=None, method=None):
     return r.status, body, time.monotonic() - t
 
 
-def test_the_server_answers_while_a_heavy_rebuild_runs(tmp_path):
-    with socket.socket() as s:
-        s.bind(("127.0.0.1", 0))
-        port = s.getsockname()[1]
-    env = dict(os.environ, OPENSKETCH_DATA=str(tmp_path / "data"), OPENSKETCH_CAD_WORKERS="1")
-    env.pop("OPENSKETCH_PASSWORD", None)
-    proc = subprocess.Popen([sys.executable, "-m", "opensketch", "--host", "127.0.0.1", "--port", str(port), "--no-browser"],
-                            env=env, cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    base = f"http://127.0.0.1:{port}"
-    try:
+class _Server:
+    """python -m opensketch on a free port with CAD workers on (open mode: no password, no accounts)."""
+
+    def __init__(self, tmp_path):
+        with socket.socket() as sk:
+            sk.bind(("127.0.0.1", 0))
+            self.port = sk.getsockname()[1]
+        env = dict(os.environ, OPENSKETCH_DATA=str(tmp_path / "data"), OPENSKETCH_CAD_WORKERS="1")
+        env.pop("OPENSKETCH_PASSWORD", None)
+        self.proc = subprocess.Popen([sys.executable, "-m", "opensketch", "--host", "127.0.0.1", "--port", str(self.port),
+                                      "--no-browser"], env=env, cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        self.base = f"http://127.0.0.1:{self.port}"
         for _ in range(120):
             try:
-                if _get(base + "/healthz", 2)[0] == 200:
+                if _get(self.base + "/healthz", 2)[0] == 200:
                     break
             except OSError:
                 time.sleep(0.5)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.proc.terminate()
+        self.proc.wait(15)
+
+    def json(self, path, body=None, timeout=300):
+        return json.loads(_get(self.base + path, timeout, json.dumps(body).encode() if body is not None else None)[1])
+
+    def mcp(self, name, args, i=[0]):
+        i[0] += 1
+        req = urllib.request.Request(self.base + "/mcp", method="POST", headers={
+            "Content-Type": "application/json", "Accept": "application/json, text/event-stream"},
+            data=json.dumps({"jsonrpc": "2.0", "id": i[0], "method": "tools/call" if name else "initialize",
+                             "params": {"name": name, "arguments": args} if name else args}).encode())
+        with urllib.request.urlopen(req, timeout=300) as r:
+            res = json.loads(r.read())["result"]
+        return json.loads(res["content"][0]["text"]) if name else res
+
+
+def _watch(base, paths, while_alive):
+    """Ask the server for these paths over and over while the thread runs; the slowest answer in seconds."""
+    worst = 0.0
+    while while_alive.is_alive():
+        for path, data, method in paths:
+            status, _, took = _get(base + path, 10, data, method)
+            assert status == 200
+            worst = max(worst, took)
+        time.sleep(0.2)
+    return worst
+
+
+def test_the_server_answers_while_a_heavy_rebuild_runs(tmp_path):
+    with _Server(tmp_path) as srv:
+        base = srv.base
         # a first small rebuild waits for the worker to load OpenCascade
         assert _get(base + "/api/regen", 120, json.dumps({"doc": block()}).encode())[0] == 200
         out = {}
@@ -144,19 +183,95 @@ def test_the_server_answers_while_a_heavy_rebuild_runs(tmp_path):
         t = threading.Thread(target=rebuild)
         t.start()
         time.sleep(1.0)
-        worst = 0.0
-        while t.is_alive():
-            for path, data, method in (("/healthz", None, None), ("/api/docs", None, None),
-                                       ("/api/docs", json.dumps({"name": "", "kind": "part"}).encode(), "POST")):
-                status, _, took = _get(base + path, 10, data, method)
-                assert status == 200
-                worst = max(worst, took)
-            time.sleep(0.2)
+        worst = _watch(base, [("/healthz", None, None), ("/api/docs", None, None),
+                              ("/api/docs", json.dumps({"name": "", "kind": "part"}).encode(), "POST")], t)
         t.join()
         status, body, took = out["r"]
         assert status == 200 and took > 5.0, took  # the rebuild really was heavy
         assert json.loads(body)["status"][-1]["state"] == "ok"
         assert worst < 1.0, f"the server took {worst:.2f} s to answer during the rebuild"
+
+
+def test_claudes_edits_run_in_a_worker_and_the_server_keeps_answering(tmp_path):
+    with _Server(tmp_path) as srv:
+        srv.mcp(None, {"protocolVersion": "2025-06-18", "capabilities": {}, "clientInfo": {"name": "test", "version": "1"}})
+        d = srv.mcp("create_document", {"name": "Grid"})
+        out = {}
+
+        def edit():
+            out["r"] = srv.mcp("propose_features", {"doc_id": d["doc_id"], "mode": "replace", "summary": "Grid plate",
+                                                    "features": heavy()["features"]})
+        t = threading.Thread(target=edit)
+        t.start()
+        time.sleep(1.0)
+        worst = _watch(srv.base, [("/healthz", None, None), (f"/api/docs/{d['doc_id']}/head", None, None),
+                                  ("/api/regen", json.dumps({"doc": {"features": []}}).encode(), "POST")], t)
+        t.join()
+        assert out["r"]["version"] == 2 and out["r"]["clean"], out["r"]
+        assert srv.json(f"/api/docs/{d['doc_id']}/head")["by"] == "claude"
+        assert worst < 1.0, f"the server took {worst:.2f} s to answer while Claude edited"
+
+
+def test_the_ai_chat_runs_in_its_own_process_and_keeps_the_conversation(tmp_path):
+    def chat(srv, conversation=None):
+        body = {"doc": {"features": []}, "prompt": "an L bracket", "demo": "part"}
+        if conversation:
+            body["conversation"] = conversation
+        req = urllib.request.Request(srv.base + "/api/ai/stream", data=json.dumps(body).encode(),
+                                     headers={"Content-Type": "application/json"}, method="POST")
+        with urllib.request.urlopen(req, timeout=300) as r:
+            return [json.loads(line) for line in r.read().decode().splitlines() if line.strip()]
+    with _Server(tmp_path) as srv:
+        first = chat(srv)
+        assert first[0]["ev"] == "start" and first[-1]["ev"] == "done", first[-1]
+        assert any(e["ev"] == "build_step" for e in first)
+        conv = first[0]["conversation"]
+        second = chat(srv, conv)
+        assert second[0]["conversation"] == conv and second[-1]["ev"] == "done"  # the server kept the history
+
+
+def test_people_get_their_own_workers(monkeypatch):
+    monkeypatch.setattr(cadworker, "_lanes", {})
+    a, b = cadworker.lane_for("alice"), cadworker.lane_for("bob")
+    assert a is not b and cadworker.lane_for("alice") is a
+    assert cadworker.lane_for("alice", "agent") is not a  # their AI's edits never queue their own clicks
+    assert cadworker.lane_for(None) is cadworker.lane_for(None)
+
+
+def test_one_persons_heavy_rebuild_does_not_hold_up_anothers(monkeypatch):
+    import asyncio
+    monkeypatch.setenv("OPENSKETCH_CAD_WORKERS", "1")
+    a, b = cadworker.Lane("alice", limit=300), cadworker.Lane("bob", limit=300)
+    try:
+        _run(a.run(_sleep, 0))
+        _run(b.run(_sleep, 0))  # both workers loaded
+
+        async def both():
+            heavy_job = asyncio.ensure_future(a.run(cadjobs.regen, heavy()))
+            await asyncio.sleep(1.0)
+            t = time.monotonic()
+            res = await b.run(cadjobs.regen, block())
+            took = time.monotonic() - t
+            assert not heavy_job.done(), "the heavy rebuild should still be running"
+            await heavy_job
+            return res, took
+        res, took = _run(both())
+        assert res["status"][-1]["state"] == "ok" and took < 5.0, took
     finally:
-        proc.terminate()
-        proc.wait(15)
+        a.reset(kill=True)
+        b.reset(kill=True)
+
+
+def test_routes_use_the_signed_in_persons_worker(tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
+    from opensketch import server
+    monkeypatch.setenv("OPENSKETCH_DATA", str(tmp_path / "data"))
+    monkeypatch.delenv("OPENSKETCH_PASSWORD", raising=False)
+    seen = []
+    real = cadworker.lane_for
+    monkeypatch.setattr(cadworker, "lane_for", lambda person, kind="edit": seen.append((person, kind)) or real(person, kind))
+    c = TestClient(server.app)
+    c.post("/setup", data={"name": "YZ", "email": "yz@example.com", "new_password": "correct horse", "next": "/"})
+    me = c.get("/api/account").json()
+    assert c.post("/api/regen", json={"doc": block()}).status_code == 200
+    assert seen and seen[-1] == (me["user"]["id"] if "user" in me else me["id"], "edit"), (seen, me)

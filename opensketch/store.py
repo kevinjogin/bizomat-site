@@ -28,10 +28,15 @@ import time
 import uuid
 from pathlib import Path
 
+try:
+    import fcntl
+except ImportError:  # Windows: thread locks only (no CAD worker processes share the data folder there)
+    fcntl = None
+
 KEEP = 50
 TRASH_DAYS = 30
 THUMB_MAX = 600_000  # bytes
-_locks: dict[str, threading.RLock] = {}
+_locks: dict[str, "_DocLock"] = {}
 _locks_guard = threading.Lock()
 META_KEYS = ("id", "name", "version", "created", "updated", "by", "summary", "owner", "deleted")
 
@@ -52,9 +57,51 @@ def data_dir() -> Path:
     return d
 
 
-def lock(doc_id: str) -> threading.RLock:
+class _DocLock:
+    """One document's lock, across threads and across processes: CAD worker processes (cadworker.py) save
+    documents too (Claude's edits), so besides a thread lock it holds an flock on docs/<id>.lock. Re-entrant."""
+
+    def __init__(self, doc_id: str):
+        self.doc_id = doc_id
+        self._rlock = threading.RLock()
+        self._depth = 0
+        self._fh = None
+
+    def acquire(self) -> bool:
+        self._rlock.acquire()
+        if self._depth == 0 and fcntl is not None and valid_id(self.doc_id):
+            try:
+                fh = open(data_dir() / "docs" / f"{self.doc_id}.lock", "a+")
+                fcntl.flock(fh, fcntl.LOCK_EX)
+                self._fh = fh
+            except BaseException:
+                self._rlock.release()
+                raise
+        self._depth += 1
+        return True
+
+    def release(self) -> None:
+        self._depth -= 1
+        if self._depth == 0 and self._fh is not None:
+            fh, self._fh = self._fh, None
+            try:
+                fcntl.flock(fh, fcntl.LOCK_UN)
+            finally:
+                fh.close()
+        self._rlock.release()
+
+    def __enter__(self):
+        self.acquire()
+        return self
+
+    def __exit__(self, *exc):
+        self.release()
+        return False
+
+
+def lock(doc_id: str) -> _DocLock:
     with _locks_guard:
-        return _locks.setdefault(doc_id, threading.RLock())
+        return _locks.setdefault(doc_id, _DocLock(doc_id))
 
 
 def valid_id(doc_id) -> bool:
@@ -295,6 +342,7 @@ def purge(doc_id: str) -> None:
             except FileNotFoundError:
                 pass
         shutil.rmtree(p.with_suffix(""), ignore_errors=True)
+        (data_dir() / "docs" / f"{doc_id}.lock").unlink(missing_ok=True)  # the document is gone for good
 
 
 # ----------------------------------------------------------------------------- thumbnails

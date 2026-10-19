@@ -83,3 +83,30 @@ def review_checks(doc: dict) -> dict:
 def review_publish(doc_id, compare_version, title, notes, by, base) -> dict:
     from . import review
     return review.publish(doc_id, compare_version, title, notes, by, base)
+
+
+def ai_stream(doc: dict, prompt: str, conv_id: str | None, history: list | None, demo, selection, ai_config,
+              progress=None, stop=None) -> dict:
+    """The in-app AI chat (ai.run_stream) in a process of its own (cadworker.start_job): each event goes out
+    through progress(event); the conversation's history comes in and goes back, because the server keeps it."""
+    import pickle
+    from . import ai
+    if conv_id and history is not None:
+        ai._conversations[conv_id] = history
+    used = None
+    gen = ai.run_stream(doc, prompt, conv_id, demo=demo, selection=selection, ai_config=ai_config)
+    try:
+        for ev in gen:
+            used = ev.get("conversation") or used
+            if progress:
+                progress(ev)
+            if stop and stop():
+                break
+    finally:
+        gen.close()
+    hist = ai._conversations.get(used) if used else None
+    try:
+        pickle.dumps(hist)
+    except Exception:  # never lose the reply over history that cannot travel back
+        hist = None
+    return {"conversation": used, "history": hist}

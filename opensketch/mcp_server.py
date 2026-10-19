@@ -29,7 +29,7 @@ from mcp.types import CallToolResult, ImageContent, TextContent, ToolAnnotations
 
 from pydantic import Field
 
-from . import ai, artifacts, assembly, auth, features, geometry, importer, inspection, measure, store, uploads
+from . import ai, artifacts, assembly, auth, cadworker, features, geometry, importer, inspection, measure, store, uploads
 
 INSTRUCTIONS = """OpenSketch is a parametric CAD app that works like SOLIDWORKS. You build real feature trees
 (sketches with relations and dimensions, extrudes, revolves, fillets...) and assemblies with mates, in
@@ -153,9 +153,32 @@ def _apply_sync(doc_id: str, tool: str, inp: dict) -> str:
         return _result(rec, report, clean, changed)
 
 
+def _as(user: dict | None, name: str, args: tuple):
+    """Runs in a CAD worker process: one of this module's *_sync functions, as the person who called the tool."""
+    token = _mcp_user.set(user)
+    try:
+        return globals()[name](*args)
+    finally:
+        _mcp_user.reset(token)
+
+
+async def _work(fn, *args, limit: float | None = None):
+    """A tool's document work, in the calling person's "agent" CAD worker (cadworker.lane_for), so Claude's edits
+    never pause the web server, the person's own clicks, or anyone else. Saves from the worker are safe: store.lock
+    is a file lock too. Exceptions come back as their own types (NotFound, ValueError...)."""
+    if not cadworker.enabled():
+        return await anyio.to_thread.run_sync(fn, *args)
+    user = _who()
+    lane = cadworker.lane_for(store.owner_of(user), "agent")
+    return await lane.run(_as, user, fn.__name__, args, limit=limit, raw=True)
+
+
+LONG_TOOLS = {"recognize_features": 3600.0}  # seconds a tool may run in its worker (default cadworker.CAD_LIMIT)
+
+
 async def _apply(doc_id: str, tool: str, **inp) -> str:
     try:
-        return await anyio.to_thread.run_sync(_apply_sync, doc_id, tool, inp)
+        return await _work(_apply_sync, doc_id, tool, inp, limit=LONG_TOOLS.get(tool))
     except store.NotFound:
         return f"No document {doc_id!r}. Use list_documents or create_document."
 
@@ -222,7 +245,7 @@ async def get_document(doc_id: str) -> str:
     the rebuild state (feature errors, mate states, degrees of freedom). Read it before editing a
     document the user has been working on: they may have changed it by hand."""
     try:
-        return await anyio.to_thread.run_sync(_read_sync, doc_id)
+        return await _work(_read_sync, doc_id)
     except store.NotFound:
         return f"No document {doc_id!r}."
 
@@ -351,7 +374,7 @@ async def import_document(filename: Annotated[str | None, Field(description="e.g
     EAGLE supplies PCB geometry, not populated component solids. Runs in background. STEP bodies come in as
     imported bodies with no history; call recognize_features to turn them into editable features."""
     try:
-        return await anyio.to_thread.run_sync(_import_sync, filename, data, name, upload_id)
+        return await _work(_import_sync, filename, data, name, upload_id)
     except (ValueError, importer.ImportError_) as exc:
         return json.dumps({"error": f"Cannot import: {exc}"})
 
@@ -377,6 +400,14 @@ def _shell_quote(s: str) -> str:
     return "'" + s.replace("'", "'\\''") + "'"
 
 
+def _export_sync(rec, fmt, part_id):
+    return artifacts.export_record(rec, fmt, part_id)
+
+
+def _preview_sync(rec, view, width, height, part_id, camera, section):
+    return artifacts.preview_record(rec, view, width, height, part_id, camera, section)
+
+
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
 async def export_document(doc_id: str, format: Literal["osk", "step", "stl"], part_id: str | None = None) -> str:
     """Export a saved document without a browser or changing its version. Returns an immutable file,
@@ -384,7 +415,7 @@ async def export_document(doc_id: str, format: Literal["osk", "step", "stl"], pa
     an assembly part in LOCAL coordinates. STEP/STL refuse failed rebuilds; .osk preserves source."""
     try:
         rec = _get(doc_id)
-        result = await anyio.to_thread.run_sync(artifacts.export_record, rec, format, part_id)
+        result = await _work(_export_sync, rec, format, part_id)
         return json.dumps(dict(result, open=_link(doc_id)))
     except (store.NotFound, artifacts.ArtifactError, geometry.FeatureError, assembly.AssemblyError) as exc:
         return json.dumps({"error": f"Cannot export: {exc}"})
@@ -410,8 +441,7 @@ async def preview_document(doc_id: str, view: Literal["isometric", "top", "front
             raise artifacts.ArtifactError("Preview dimensions must be between 128 and 1600 pixels.")
         rec = _get(doc_id)
         camera = {"yaw": yaw, "pitch": pitch, "target": target, "view_width": view_width}
-        result, raw = await anyio.to_thread.run_sync(artifacts.preview_record, rec, view, width, height, part_id,
-                                                     camera, section)
+        result, raw = await _work(_preview_sync, rec, view, width, height, part_id, camera, section)
         result["open"] = _link(doc_id)
         return CallToolResult(content=[TextContent(type="text", text=json.dumps(result)),
                                        ImageContent(type="image", data=base64.b64encode(raw).decode(), mime_type="image/png")],
@@ -728,7 +758,7 @@ async def batch(doc_id: str, steps: Annotated[list[dict], Field(description=(
     undo). dry_run=true checks the batch without saving. Prefer this for anything over two steps: build a
     part in stages of a few features, checking volume and bounding box in the results after each stage."""
     try:
-        return await anyio.to_thread.run_sync(_batch_sync, doc_id, steps, summary, stop_on_warnings, dry_run)
+        return await _work(_batch_sync, doc_id, steps, summary, stop_on_warnings, dry_run, limit=3600)
     except store.NotFound:
         return CallToolResult(content=[TextContent(type="text", text=f"No document {doc_id!r}.")], is_error=True)
 
@@ -769,7 +799,7 @@ async def body_topology(doc_id: str, part_id: str | None = None,
     in shell / draft faces. Use near=[x,y,z] to get the items around a spot. Assembly parts are in part
     coordinates (give part_id)."""
     try:
-        return await anyio.to_thread.run_sync(_topology_sync, doc_id, part_id, kind, near, limit)
+        return await _work(_topology_sync, doc_id, part_id, kind, near, limit)
     except store.NotFound:
         return f"No document {doc_id!r}."
     except ValueError as exc:
@@ -793,7 +823,7 @@ async def inspect_design(doc_id: str, part_id: str | None = None, sketches: bool
     Work out the volume and bounding box you expect before building, then compare. A cut whose volume
     change is 0 missed the body."""
     try:
-        return await anyio.to_thread.run_sync(_inspect_sync, doc_id, part_id, sketches)
+        return await _work(_inspect_sync, doc_id, part_id, sketches)
     except store.NotFound:
         return f"No document {doc_id!r}."
 
@@ -825,7 +855,7 @@ async def publish_review(doc_id: str,
     send it or open it on a phone; it does not change when the model does. Use it at the end of a design
     round; give YZ the url and the checks summary."""
     try:
-        return await anyio.to_thread.run_sync(_review_sync, doc_id, compare_version, title, notes)
+        return await _work(_review_sync, doc_id, compare_version, title, notes)
     except store.NotFound:
         return f"No document {doc_id!r}."
 
@@ -855,7 +885,7 @@ async def measure_items(doc_id: str, a: Annotated[dict, Field(description=_PICK)
     plane_distance for planes, axis_to_plane distance. Use it to check positions, gaps and hole sizes that
     volume and centre of mass cannot show, e.g. the clearance between two components."""
     try:
-        return await anyio.to_thread.run_sync(_measure_sync, doc_id, a, b, part_id)
+        return await _work(_measure_sync, doc_id, a, b, part_id)
     except store.NotFound:
         return f"No document {doc_id!r}."
 

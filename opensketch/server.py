@@ -21,6 +21,7 @@ from pydantic import BaseModel
 import base64
 import binascii
 import gzip
+import queue
 import hashlib
 import zlib
 import threading
@@ -51,12 +52,26 @@ UPDATE_NOTE = Path(os.environ.get("OPENSKETCH_UPDATE_NOTE", str(Path.home() / ".
 
 @asynccontextmanager
 async def lifespan(_app):
-    cadworker.MODEL.warm()  # CAD runs in worker processes (cadworker.py); load OpenCascade there now
+    _warm_owner()  # CAD runs in worker processes, one per person (cadworker.py): start the owner's now
     try:
         async with mcp_server.lifespan_context():
             yield
     finally:
         cadworker.shutdown()
+
+
+def _warm_owner() -> None:
+    try:
+        from . import accounts
+        owner = next((u for u in accounts.list_users() if u.get("role") == "owner"), None)
+    except Exception:
+        owner = None
+    cadworker.lane_for(owner["id"] if owner else None).warm()
+
+
+def _lane(request: Request) -> "cadworker.Lane":
+    """The signed-in person's CAD worker (cadworker.lane_for), so one person's work never queues another's."""
+    return cadworker.lane_for(store.owner_of(getattr(request.state, "user", None)))
 
 
 async def _cad(lane, fn, *args, **kwargs):
@@ -132,11 +147,11 @@ def _light(doc: dict) -> bool:
 
 
 @app.post("/api/regen")
-async def api_regen(req: RegenRequest):
+async def api_regen(req: RegenRequest, request: Request):
     if _light(req.doc):
         return FastJSON(await run_in_threadpool(cadjobs.regen, req.doc, req.preview, req.known, req.drag))
     try:
-        res = await _cad(cadworker.MODEL, cadjobs.regen, req.doc, req.preview, req.known, req.drag)
+        res = await _cad(_lane(request), cadjobs.regen, req.doc, req.preview, req.known, req.drag)
     except cadworker.CadJobError as exc:
         raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
     return FastJSON(res)
@@ -148,11 +163,11 @@ class ParamsRequest(BaseModel):
 
 
 @app.post("/api/params")
-async def api_params(req: ParamsRequest):
+async def api_params(req: ParamsRequest, request: Request):
     """Equations dialog: variables with values and problems, every equation, and the part with the numbers the
     equations give (sketches re-solved). With `expression`: its value, or an error."""
     try:
-        out = await _cad(cadworker.MODEL, cadjobs.params, req.doc, req.expression)
+        out = await _cad(_lane(request), cadjobs.params, req.doc, req.expression)
     except cadworker.CadJobError as exc:
         raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
     if "__error__" in out:
@@ -166,10 +181,10 @@ class NameRefsRequest(BaseModel):
 
 
 @app.post("/api/name_refs")
-async def api_name_refs(req: NameRefsRequest):
+async def api_name_refs(req: NameRefsRequest, request: Request):
     """Add persistent names to a feature's face and edge picks (naming.annotate), so they survive edits."""
     try:
-        return {"feature": await _cad(cadworker.MODEL, cadjobs.name_refs, req.doc, req.feature)}
+        return {"feature": await _cad(_lane(request), cadjobs.name_refs, req.doc, req.feature)}
     except cadworker.CadJobError as exc:
         raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
 
@@ -181,11 +196,11 @@ class FaceOwnerRequest(BaseModel):
 
 
 @app.post("/api/face_owner")
-async def api_face_owner(req: FaceOwnerRequest):
+async def api_face_owner(req: FaceOwnerRequest, request: Request):
     """Which feature made a face, and from which sketch curve (persistent names, naming.py). Drives the
     Design panel: click a face, see the numbers that shape it."""
     try:
-        return await _cad(cadworker.MODEL, cadjobs.face_owner, req.doc, req.center, req.normal)
+        return await _cad(_lane(request), cadjobs.face_owner, req.doc, req.center, req.normal)
     except cadworker.CadJobError as exc:
         raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
 
@@ -197,10 +212,10 @@ class DeletePlanRequest(BaseModel):
 
 
 @app.post("/api/delete_plan")
-async def api_delete_plan(req: DeletePlanRequest):
+async def api_delete_plan(req: DeletePlanRequest, request: Request):
     """What deleting these part features takes with it and breaks (edits.plan_delete), plus the new part."""
     try:
-        plan = await _cad(cadworker.MODEL, cadjobs.delete_plan, req.doc, req.features, req.delete_absorbed)
+        plan = await _cad(_lane(request), cadjobs.delete_plan, req.doc, req.features, req.delete_absorbed)
     except cadworker.CadJobError as exc:
         raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
     if "error" in plan:
@@ -209,19 +224,19 @@ async def api_delete_plan(req: DeletePlanRequest):
 
 
 @app.post("/api/mass")
-async def api_mass(req: RegenRequest):
+async def api_mass(req: RegenRequest, request: Request):
     try:
-        return await _cad(cadworker.MODEL, cadjobs.mass, req.doc)
+        return await _cad(_lane(request), cadjobs.mass, req.doc)
     except cadworker.CadJobError as exc:
         raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
 
 
 @app.post("/api/interference")
-async def api_interference(req: RegenRequest):
+async def api_interference(req: RegenRequest, request: Request):
     if not assembly.is_assembly(req.doc):
         raise HTTPException(400, "Interference Detection works on assemblies")
     try:
-        return await _cad(cadworker.MODEL, cadjobs.interference, req.doc)
+        return await _cad(_lane(request), cadjobs.interference, req.doc)
     except cadworker.CadJobError as exc:
         raise HTTPException(500, f"{exc.kind}: {exc.message}") from None
 
@@ -231,10 +246,10 @@ class ImportRequest(BaseModel):
     data: str  # base64 file content
 
 
-async def _import_reply(raw: bytes, filename: str):
+async def _import_reply(raw: bytes, filename: str, lane):
     """Every failure comes back as JSON {error} with a readable message, never a bare 500."""
     try:
-        return {"doc": await cadworker.MODEL.run(cadjobs.import_file, raw, filename)}
+        return {"doc": await lane.run(cadjobs.import_file, raw, filename)}
     except cadworker.CadUnavailable as exc:
         return JSONResponse({"error": f"Could not import {filename}: {exc}"}, status_code=503)
     except cadworker.CadJobError as exc:
@@ -245,13 +260,13 @@ async def _import_reply(raw: bytes, filename: str):
 
 
 @app.post("/api/import")
-async def api_import(req: ImportRequest):
+async def api_import(req: ImportRequest, request: Request):
     """STEP -> part or assembly document (base64 in JSON; kept for old clients and scripts)."""
     try:
         raw = base64.b64decode(req.data, validate=True)
     except (binascii.Error, ValueError):
         return JSONResponse({"error": "The upload is not valid base64. Try uploading the file again."}, status_code=400)
-    return await _import_reply(raw, req.filename)
+    return await _import_reply(raw, req.filename, _lane(request))
 
 
 IMPORT_MAX = 128 * 1024 * 1024  # bytes of CAD data per upload (after unzipping the browser's gzip)
@@ -279,7 +294,7 @@ async def api_import_raw(request: Request, filename: str = "model.step"):
                 raise zlib.error("truncated")
         except zlib.error:
             return JSONResponse({"error": "The upload arrived damaged. Try again."}, status_code=400)
-    return await _import_reply(body, filename)
+    return await _import_reply(body, filename, _lane(request))
 
 
 @app.get("/api/features")
@@ -300,7 +315,7 @@ class ToolboxRequest(BaseModel):
 
 
 @app.post("/api/toolbox/part")
-async def api_toolbox_part(req: ToolboxRequest):
+async def api_toolbox_part(req: ToolboxRequest, request: Request):
     if req.kind not in importer.STANDARD:
         raise HTTPException(400, "Unknown kind")
     args = {"size": req.size}
@@ -309,20 +324,20 @@ async def api_toolbox_part(req: ToolboxRequest):
             raise HTTPException(400, "Length must be greater than 0")
         args["length"] = req.length if req.length is not None else 10
     try:
-        doc = await _cad(cadworker.MODEL, cadjobs.toolbox_part, req.kind, args)
+        doc = await _cad(_lane(request), cadjobs.toolbox_part, req.kind, args)
     except cadworker.CadJobError as exc:  # bad size
         raise HTTPException(400, exc.message) from None
     return {"doc": doc}
 
 
 @app.post("/api/export/{fmt}")
-async def api_export(fmt: str, req: RegenRequest):
+async def api_export(fmt: str, req: RegenRequest, request: Request):
     if fmt not in ("step", "stl"):
         raise HTTPException(400, "Format must be step or stl")
     fd, path = tempfile.mkstemp(suffix=f".{fmt}")
     os.close(fd)
     try:
-        await _cad(cadworker.MODEL, cadjobs.export, req.doc, fmt, path)
+        await _cad(_lane(request), cadjobs.export, req.doc, fmt, path)
     except cadworker.CadJobError as exc:
         Path(path).unlink(missing_ok=True)
         if exc.kind in ("FeatureError", "AssemblyError"):
@@ -499,14 +514,41 @@ def api_ai_stream(req: AIRequest, request: Request):
     (aikeys) or the server's."""
     from . import aikeys
     cfg = aikeys.effective(getattr(request.state, "user", None))
+    headers = {"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
+    if not cadworker.enabled():
+        def gen():
+            try:
+                for ev in ai.run_stream(req.doc, req.prompt, req.conversation, demo=req.demo, selection=req.selection, ai_config=cfg):
+                    yield json.dumps(ev, separators=(",", ":")) + "\n"
+            except Exception as exc:  # never leave the client hanging
+                yield json.dumps({"ev": "error", "message": f"Server error: {exc}"}) + "\n"
+        return StreamingResponse(gen(), media_type="application/x-ndjson", headers=headers)
 
-    def gen():
+    # The chat runs in a process of its own (its builds hold OpenCascade's GIL); its events come back here.
+    events: queue.Queue = queue.Queue()
+    conv = req.conversation if isinstance(req.conversation, str) and req.conversation in ai._conversations else None
+
+    def on_event(kind, payload):
+        events.put((kind, payload))
+    job = cadworker.start_job(cadjobs.ai_stream, req.doc, req.prompt, conv, ai._conversations.get(conv) if conv else None,
+                              req.demo, req.selection, cfg, on_event=on_event, limit=3600)
+
+    async def agen():
         try:
-            for ev in ai.run_stream(req.doc, req.prompt, req.conversation, demo=req.demo, selection=req.selection, ai_config=cfg):
-                yield json.dumps(ev, separators=(",", ":")) + "\n"
-        except Exception as exc:  # never leave the client hanging
-            yield json.dumps({"ev": "error", "message": f"Server error: {exc}"}) + "\n"
-    return StreamingResponse(gen(), media_type="application/x-ndjson", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+            while True:
+                kind, payload = await run_in_threadpool(events.get)
+                if kind == "progress":
+                    yield json.dumps(payload[0], separators=(",", ":"), default=_json_default) + "\n"
+                elif kind == "done":
+                    if payload.get("conversation") and payload.get("history") is not None:
+                        ai._conversations[payload["conversation"]] = payload["history"]
+                    return
+                else:  # never leave the client hanging
+                    yield json.dumps({"ev": "error", "message": f"Server error: {payload[1]}"}) + "\n"
+                    return
+        finally:
+            job.cancel(grace=10)  # the person pressed Stop or left: end the job (nothing happens if it finished)
+    return StreamingResponse(agen(), media_type="application/x-ndjson", headers=headers)
 
 
 @app.get("/healthz", include_in_schema=False)
@@ -1214,7 +1256,7 @@ async def api_review_publish(req: ReviewRequest, request: Request):
     from . import review
     _doc_meta(req.doc_id, request)
     try:
-        return await _cad(cadworker.MODEL, cadjobs.review_publish, req.doc_id, req.compare_version, req.title, req.notes,
+        return await _cad(_lane(request), cadjobs.review_publish, req.doc_id, req.compare_version, req.title, req.notes,
                           "you", _base(request))
     except cadworker.CadJobError as exc:
         if exc.kind == "NotFound":
@@ -1266,11 +1308,11 @@ class CheckRequest(BaseModel):
 
 
 @app.post("/api/review/check")
-async def api_review_check(req: CheckRequest):
+async def api_review_check(req: CheckRequest, request: Request):
     """Motion Review in the app: errors, clashes through each joint's travel, gaps, contacts."""
     from . import review
     try:
-        return await _cad(cadworker.MODEL, cadjobs.review_checks, req.doc)
+        return await _cad(_lane(request), cadjobs.review_checks, req.doc)
     except cadworker.CadJobError as exc:
         if exc.kind in ("ReviewError", "AssemblyError", "FeatureError"):
             return JSONResponse({"error": exc.message}, status_code=400)
