@@ -34,7 +34,8 @@ def test_app_files_are_gzipped_and_revalidated(client):
     for enc in ("identity", "gzip;q=0"):
         plain = client.get("/js/app.js", headers={"Accept-Encoding": enc})
         assert "content-encoding" not in plain.headers and plain.content == raw
-        assert client.get("/js/app.js", headers={"Accept-Encoding": enc, "If-None-Match": plain.headers["etag"]}).status_code == 304
+        again = client.get("/js/app.js", headers={"Accept-Encoding": enc, "If-None-Match": plain.headers["etag"]})
+        assert again.status_code == 304
     assert "content-encoding" not in client.get("/js/app.js", headers={**GZ, "Range": "bytes=0-9"}).headers
     css = client.get("/css/linear.css", headers=GZ)
     assert css.headers["content-encoding"] == "gzip" and "text/css" in css.headers["content-type"]
