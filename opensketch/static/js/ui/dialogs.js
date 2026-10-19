@@ -110,7 +110,7 @@ export function dialog({ title, body, buttons = [], x, y, modal = true, cls = ''
   back.appendChild(dlg);
   layer().appendChild(back);
   // layout sizes (offsetWidth/Height), not the box on screen: the entrance animation scales it for a moment
-  const W = dlg.offsetWidth, H = dlg.offsetHeight;
+  const W = dlg.offsetWidth || 0, H = dlg.offsetHeight || 0;
   dlg.style.left = Math.max(4, Math.min(window.innerWidth - W - 4, x ?? (window.innerWidth - W) / 2)) + 'px';
   dlg.style.top = Math.max(4, Math.min(window.innerHeight - H - 4, y ?? (window.innerHeight - H) / 3)) + 'px';
   makeDraggable(dlg, head);
@@ -118,7 +118,7 @@ export function dialog({ title, body, buttons = [], x, y, modal = true, cls = ''
   // turned): the stylesheet caps its size, this moves it back so the title and the buttons stay reachable.
   const clamp = () => {
     const l = parseFloat(dlg.style.left) || 0, t = parseFloat(dlg.style.top) || 0;
-    const L = Math.max(4, Math.min(window.innerWidth - dlg.offsetWidth - 4, l)), T = Math.max(4, Math.min(window.innerHeight - dlg.offsetHeight - 4, t));
+    const L = Math.max(4, Math.min(window.innerWidth - (dlg.offsetWidth || 0) - 4, l)), T = Math.max(4, Math.min(window.innerHeight - (dlg.offsetHeight || 0) - 4, t));
     if (Math.abs(L - l) > 0.5) dlg.style.left = L + 'px';
     if (Math.abs(T - t) > 0.5) dlg.style.top = T + 'px';
   };
@@ -257,7 +257,7 @@ export function contextMenu(x, y, items, toolbar = null, opts = {}) {
   }
   menuKeys(m, opts);
   document.body.appendChild(m);
-  const W = m.offsetWidth, H = m.offsetHeight; // layout size: the opening animation scales the menu for a moment
+  const W = m.offsetWidth || 0, H = m.offsetHeight || 0; // layout size: the opening animation scales the menu for a moment
   const left = opts.alignRight ? x - W : x;
   m.style.left = Math.max(4, Math.min(left, window.innerWidth - W - 4)) + 'px';
   m.style.top = Math.max(4, Math.min(y, window.innerHeight - H - 4)) + 'px';
