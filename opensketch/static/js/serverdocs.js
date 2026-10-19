@@ -45,6 +45,8 @@ export class ServerDocs {
     this.state = 'draft'; // draft | saved | saving | offline | conflict
     this.thumbTimer = null;
     this.thumbAt = 0;
+    // switching tabs or apps (phones may discard a hidden page): send the edits now rather than in a second
+    document.addEventListener('visibilitychange', () => { if (document.hidden && this.link?.local) this.flush(); });
     window.addEventListener('beforeunload', (e) => {
       if (this.link?.local || this.pushing) { this.flush(); e.preventDefault(); e.returnValue = ''; }
     });
@@ -149,9 +151,13 @@ export class ServerDocs {
     });
   }
 
+  // The open file was renamed (title bar or Files). The rename is a new version on the server; take its number
+  // only when it is the very next one (nothing else changed there), else the next save would pass the
+  // version check without this page ever loading the other change: the poll or the bar deals with it.
   renamedOnServer(rec) {
     if (!this.link || this.link.id !== rec.id) return;
-    this.link.name = rec.name; this.link.version = rec.version;
+    this.link.name = rec.name;
+    if (rec.version === this.link.version + 1) this.link.version = rec.version;
     const root = this.app.docStack.length ? this.app.docStack[0].doc : this.app.doc;
     root.name = rec.name;
     this.app.autosave();
@@ -310,10 +316,10 @@ export class ServerDocs {
     if (!bar) { bar = document.createElement('div'); bar.id = 'serverbar'; bar.className = 'update-bar note'; $('graphics').appendChild(bar); }
     if (bar.dataset.v === String(h.version)) return;
     bar.dataset.v = String(h.version);
-    const who = h.by === 'claude' ? 'Your AI' : 'Someone';
+    const who = h.by === 'claude' ? 'Your AI' : 'Another window';
     this.setState('conflict');
     bar.innerHTML = `<span>${esc(who)} changed this model (${esc(h.summary || 'a change')}) while you were editing.</span>`;
-    const take = document.createElement('button'); take.className = 'btn primary'; take.textContent = `Load ${who === 'Your AI' ? "the AI's" : 'their'} version`;
+    const take = document.createElement('button'); take.className = 'btn primary'; take.textContent = `Load ${who === 'Your AI' ? "the AI's" : 'that'} version`;
     take.onclick = async () => {
       take.disabled = true;
       clearTimeout(this.pushTimer);
@@ -382,7 +388,8 @@ export class ServerDocs {
         return true;
       } catch (err) {
         if (this.link !== L) return false; // the file left the editor; its edits stay in this browser (unsent copy)
-        if (err.message === 'conflict' && err.current) this.showBar(err.current);
+        if (err.message === 'conflict' && err.current && err.current.version <= L.version) { clearTimeout(this.pushTimer); this.pushTimer = setTimeout(() => this.push(summary), 300); } // our own rename landed first
+        else if (err.message === 'conflict' && err.current) this.showBar(err.current);
         else if (/No such document/.test(err.message)) { this.unlink({ keepAsDraft: true }); this.app.toast?.('This file is no longer in your Files. It stays open here as a draft: save it to keep it.', 8000); }
         else { this.setState('offline'); this.app.status('Could not save to the server (' + err.message + '). Trying again.'); }
         if (err.message !== 'conflict' && this.link === L) { clearTimeout(this.pushTimer); this.pushTimer = setTimeout(() => this.push(summary), 5000); }

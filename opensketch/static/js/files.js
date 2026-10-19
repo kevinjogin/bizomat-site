@@ -449,6 +449,7 @@ export class FilesView {
       if (!save || !v || v === f.name) return;
       nameEl.textContent = v;
       try {
+        if (this.app.server.link?.id === f.id) await this.app.server.flush(); // its last edits go first
         const r = await this.req('PATCH', `/api/docs/${encodeURIComponent(f.id)}`, { name: v });
         Object.assign(f, r);
         if (this.app.server.link?.id === f.id) this.app.server.renamedOnServer(r);
@@ -483,7 +484,7 @@ export class FilesView {
     const card = () => this.grid?.querySelector(`[data-id="${CSS.escape(f.id)}"]`);
     card()?.classList.add('working'); // dimmed at once, so the click visibly landed
     try {
-      if (app.server.link?.id === f.id) app.server.flush();
+      if (app.server.link?.id === f.id) await app.server.flush(); // its last edits are in the file that goes to the Trash
       const r = await this.req('DELETE', `/api/docs/${encodeURIComponent(f.id)}`);
       this.items = this.items.filter((x) => x.id !== f.id);
       this.trash.unshift(r);

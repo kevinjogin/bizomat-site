@@ -36,6 +36,7 @@ globalThis.fetch = async (url, opts = {}) => {
   const body = opts.body ? JSON.parse(opts.body) : null;
   server.calls.push(`${method} ${u.pathname}`);
   if (server.hold) await server.hold;
+  if (server.down) throw new TypeError('Failed to fetch');
   const m = u.pathname.match(/^\/api\/docs\/([^/]+)(\/(\w+))?$/);
   if (method === 'POST' && u.pathname === '/api/docs') {
     const id = 'n' + server.next++;
@@ -174,5 +175,49 @@ test('"Save your draft?" > Save to Files goes on to what was asked once the draf
   await tick(5); click('Save');
   assert.equal(await go, true);
   assert.equal(app.server.linked, true);
+  stopTimers(app);
+});
+
+test('a rename takes the new version number only when nothing else changed on the server', async () => {
+  server.docs.clear(); server.puts = []; server.down = false;
+  addDoc('R', part('Plate', 1));
+  const app = makeApp();
+  await app.server.open('R');
+  const L = app.server.link;
+  // only the rename happened: the page follows it, and the next save goes through
+  const r1 = await app.server.req('PATCH', '/api/docs/R', { name: 'Base plate' });
+  app.server.renamedOnServer(r1);
+  assert.equal(L.version, 2);
+  app.commit('Plane2', () => app.doc.features.push({ id: 'p2', type: 'plane', name: 'Plane2' }), false);
+  assert.equal(await app.server.flush(), true);
+  assert.equal(server.docs.get('R').version, 3);
+  assert.equal(server.docs.get('R').name, 'Base plate');
+  // the AI saved a version this page never loaded, then a rename: the page must not skip past it
+  const rec = server.docs.get('R');
+  Object.assign(rec, { version: rec.version + 1, by: 'claude', summary: 'Added a hole', doc: { ...rec.doc, features: [...rec.doc.features, { id: 'h', type: 'plane', name: 'AIPlane' }] } });
+  const r2 = await app.server.req('PATCH', '/api/docs/R', { name: 'Plate 2' });
+  app.server.renamedOnServer(r2);
+  assert.equal(L.version, 3, 'not jumped past the AI version');
+  app.commit('Plane3', () => app.doc.features.push({ id: 'p3', type: 'plane', name: 'Plane3' }), false);
+  assert.equal(await app.server.flush(), false);
+  assert.equal(app.server.state, 'conflict', 'the bar asks which version to keep');
+  assert.ok(server.docs.get('R').doc.features.some((f) => f.id === 'h'), "the AI's change is still on the server");
+  app.server.hideBar(); stopTimers(app);
+});
+
+test('Ctrl+S says what happened: saved, or kept in this browser while the server is away', async () => {
+  server.docs.clear(); server.puts = []; server.down = false;
+  addDoc('K', part('Clip', 1));
+  const app = makeApp();
+  await app.server.open('K');
+  app.commit('Plane2', () => app.doc.features.push({ id: 'p2', type: 'plane', name: 'Plane2' }), false);
+  await app.saveFile();
+  assert.equal(app.toasts.at(-1), 'Saved to your Files.');
+  server.down = true;
+  app.commit('Plane3', () => app.doc.features.push({ id: 'p3', type: 'plane', name: 'Plane3' }), false);
+  await app.saveFile();
+  assert.match(app.toasts.at(-1), /^Not saved yet: the server is not answering/);
+  assert.equal(app.server.state, 'offline');
+  server.down = false;
   stopTimers(app);
 });

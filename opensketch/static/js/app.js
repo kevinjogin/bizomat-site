@@ -272,7 +272,7 @@ export class App {
     bar.innerHTML = `<span>${esc(updated ? 'OpenSketch was updated. Reload to use the new version. Your model is kept.' + (note ? ' ' + note : '') : note)}</span>`;
     if (updated) {
       const b = document.createElement('button'); b.className = 'btn primary'; b.textContent = 'Reload';
-      b.onclick = () => { this.autosaveNow(); location.reload(); };
+      b.onclick = async () => { b.disabled = true; await this.server?.flush(5000); this.autosaveNow(); location.reload(); };
       bar.appendChild(b);
     }
     const x = document.createElement('button'); x.className = 'btn'; x.textContent = 'Later'; x.title = 'Hide this message';
@@ -471,7 +471,7 @@ export class App {
       const v = inp.value.trim().slice(0, 120);
       if (!save || !v || v === target.name) return;
       if (this.server.linked && !this.docStack.length) {
-        this.server.flush();
+        await this.server.flush(); // the last edits first, so the rename never meets a save of the old name
         try {
           const r = await this.server.req('PATCH', `/api/docs/${encodeURIComponent(this.server.link.id)}`, { name: v });
           this.server.renamedOnServer(r);
@@ -584,7 +584,12 @@ export class App {
     this.result = res;
     if (res.equations && this.mode !== 'sketch' && !this.proposal) {
       // numbers driven by equations: show what was built (no undo step; the equation owns the value)
-      for (const [id, f] of Object.entries(res.equations.features)) { const mine = this.featureById(id); if (mine) Object.assign(mine, f); }
+      let moved = false;
+      for (const [id, f] of Object.entries(res.equations.features)) {
+        const mine = this.featureById(id);
+        if (mine && Object.keys(f).some((k) => JSON.stringify(mine[k]) !== JSON.stringify(f[k]))) { Object.assign(mine, f); moved = true; }
+      }
+      if (moved) this.server?.changed(); // the file keeps the numbers it was built with (else the save state stays on Saving)
       const r = res.equations.recomputed[0];
       this.status(`Driven by an equation: ${r.field}@${this.featureById(r.feature)?.name || r.feature} = ${+(+r.new).toFixed(6)}`);
     }
@@ -1796,13 +1801,17 @@ export class App {
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   }
 
-  saveFile() {
+  async saveFile() {
     if (this.reviewMode) return;
-    if (this.server.linked) { // a file in Files saves itself; Save just does it now
-      this.server.flush();
-      this.server.scheduleThumb(400);
-      this.dirty = false; this.updateDocChrome();
-      this.toast('Saved to your Files.');
+    if (this.server.linked) { // a file in Files saves itself; Save just does it now, and says what happened
+      const sv = this.server;
+      const ok = await sv.flush();
+      if (!sv.linked) return;
+      sv.scheduleThumb(400);
+      if (ok) { this.dirty = false; this.updateDocChrome(); this.toast('Saved to your Files.'); }
+      else if (this.proposal) this.toast("Not saved yet: accept or reject the AI's change first.", 5000);
+      else if (sv.state === 'conflict') this.toast('Not saved: this file changed elsewhere. Choose which version to keep in the bar above the model.', 7000);
+      else this.toast('Not saved yet: the server is not answering. Your edits are kept in this browser and saved when it is back.', 7000);
       return;
     }
     this.server.saveDraft();
