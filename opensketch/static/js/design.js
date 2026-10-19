@@ -44,8 +44,10 @@ export class DesignPanel {
     this.pendingOpen = null;
     window.addEventListener('pointerdown', (e) => {
       clearTimeout(this.pendingOpen); this.pendingOpen = null;
-      if (e.target?.closest?.('#taskpanel, #taskstrip, .contextmenu, #modal-layer')) { this.press = null; return; }
-      this.press = { x: e.clientX, y: e.clientY, t: performance.now(), down: true, moved: false };
+      // only a click on the model or in the FeatureManager tree selects something worth opening the panel for
+      // (not Exit Sketch, a ribbon command or the confirmation corner, which also leave something selected)
+      const onModel = e.target === this.app.viewer?.canvas || !!e.target?.closest?.('#tree');
+      this.press = onModel ? { x: e.clientX, y: e.clientY, t: performance.now(), down: true, moved: false } : null;
     }, true);
     window.addEventListener('pointermove', (e) => {
       const p = this.press;

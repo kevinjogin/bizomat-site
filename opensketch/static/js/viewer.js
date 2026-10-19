@@ -800,6 +800,14 @@ export class Viewer {
 
   setDisplayStyle(s) { this.displayStyle = s; this.applyDisplayStyle(); }
 
+  // After the theme changes (COLORS updated in place): edges and highlights of what is drawn now take the new colours.
+  refreshColors() {
+    this.partEdgeMat.color.setHex(COLORS.edge);
+    for (const m of this.compMats.values()) m.edge.color.setHex(COLORS.edge);
+    for (const r of this.faceObjs) r.painted = null;
+    this.applyDisplayStyle();
+  }
+
   applyDisplayStyle() {
     const s = this.displayStyle;
     this.clearMarks(); // redrawn below for the new style
