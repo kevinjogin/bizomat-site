@@ -18,6 +18,8 @@ and saved to disk, so a part made by hand and a part made by the AI are the same
 ```
 
 - `rollback`: index of the rollback bar (`null` = end of tree). Features at or after it are not built.
+  A part inside an assembly builds to its bar there too (as in SOLIDWORKS); /api/regen marks it with
+  `parts[pid].rolled_back` {id, name} and assembly STEP/STL exports refuse until it is rolled to the end.
 - `material.density` is in kg/mm^3.
 - `seq` is the id counter used by the UI.
 

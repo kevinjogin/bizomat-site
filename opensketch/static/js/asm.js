@@ -6,7 +6,7 @@ import { COLORS, matOf } from './viewer.js';
 import { dialog, message, contextMenu } from './ui/dialogs.js';
 import { fmt } from './sketch/geom2d.js';
 import { regenLocal, measurePair, couplerLaw } from './asmsolver.js';
-import { mateReferences, featureSketchIds, escapeHtml as esc } from './model-utils.js';
+import { mateReferences, featureSketchIds, rolledBackFeature, escapeHtml as esc } from './model-utils.js';
 
 const clone = (o) => JSON.parse(JSON.stringify(o));
 
@@ -190,14 +190,22 @@ export class AssemblyMode {
       const prefix = c.suppressed ? '' : c.fixed || s?.state === 'fixed' ? '(f) ' : s?.state === 'under' ? '(-) ' : '';
       const state = c.suppressed ? 'suppressed' : s?.state === 'error' ? 'error' : 'ok';
       const open = this.expandedComps.has(c.id);
+      // A part left rolled back builds only the features above its bar, here too (as in SOLIDWORKS).
+      // SOLIDWORKS gives no sign of it in the assembly; OpenSketch greys the row and says so.
+      const rb = c.suppressed ? null : rolledBackFeature(doc.parts[c.part]);
       const n = node({ id: c.id, kind: 'component', name: prefix + c.name, ic: 'part', depth: 1, twisty: open,
-        cls: `${state}${c.hidden ? ' hiddencomp' : ''}${proposed.has(c.id) ? ' proposed' : ''}`,
-        badge: state === 'error' ? tree.badgeIcon('error') : '', onDbl: () => this.openPart(c.id), onTwisty: () => { open ? this.expandedComps.delete(c.id) : this.expandedComps.add(c.id); tree.render(); } });
+        cls: `${state}${rb ? ' rolledback' : ''}${c.hidden ? ' hiddencomp' : ''}${proposed.has(c.id) ? ' proposed' : ''}`,
+        badge: state === 'error' ? tree.badgeIcon('error') : rb ? tree.badgeIcon('warning') : '', onDbl: () => this.openPart(c.id), onTwisty: () => { open ? this.expandedComps.delete(c.id) : this.expandedComps.add(c.id); tree.render(); } });
       if (n && s?.message) n.title = s.message;
       if (n && s?.state === 'under') n.title = `${s.dof} degree${s.dof === 1 ? '' : 's'} of freedom left`;
-      if (open) for (const f of doc.parts[c.part]?.features || []) {
-        if (f.type === 'sketch' && doc.parts[c.part].features.some((x) => featureSketchIds(x).includes(f.id))) continue;
-        node({ id: `${c.id}:${f.id}`, kind: 'compfeature', name: f.name, ic: tree.featureIcon(f), depth: 2, onDbl: () => this.openPart(c.id) });
+      if (n && rb) n.title = `Rolled back: the part's rollback bar is above ${rb.name}. Right-click > Roll Part to End.` + (n.title ? `\n${n.title}` : '');
+      if (open) {
+        const feats = doc.parts[c.part]?.features || [];
+        const stop = rb ? feats.indexOf(rb) : feats.length;
+        feats.forEach((f, i) => {
+          if (f.type === 'sketch' && feats.some((x) => featureSketchIds(x).includes(f.id))) return;
+          node({ id: `${c.id}:${f.id}`, kind: 'compfeature', name: f.name, ic: tree.featureIcon(f), depth: 2, cls: i >= stop ? 'rolledback' : '', onDbl: () => this.openPart(c.id) });
+        });
       }
     }
     const mates = doc.mates || [];
@@ -369,12 +377,32 @@ export class AssemblyMode {
     return tb;
   }
 
+  // Active components whose part was left rolled back: [{ comp, part, pid, feature }].
+  rolledBackComponents() {
+    const doc = this.app.doc;
+    return (doc.components || []).filter((c) => !c.suppressed).map((c) => ({ comp: c, pid: c.part, part: doc.parts?.[c.part], feature: rolledBackFeature(doc.parts?.[c.part]) }))
+      .filter((x) => x.feature);
+  }
+
+  // One undo step: put each part's rollback bar back at the end, then rebuild.
+  rollPartsToEnd(pids) {
+    const app = this.app;
+    if (app.proposal) { app.toast('Accept or reject the AI proposal first.'); return false; }
+    const todo = [...new Set(pids)].filter((pid) => rolledBackFeature(app.doc.parts?.[pid]));
+    if (!todo.length) return false;
+    app.commit(todo.length === 1 ? `Roll ${app.doc.parts[todo[0]].name || todo[0]} to End` : 'Roll Parts to End', () => {
+      for (const pid of todo) app.doc.parts[pid].rollback = null;
+    });
+    return true;
+  }
+
   contextMenuItems(item) {
     const items = [];
     if (item?.kind === 'component') {
       const c = this.comp(item.id);
       items.push({ head: c.name });
       items.push({ label: 'Open Part', icon: 'open', run: () => this.openPart(c.id) });
+      if (rolledBackFeature(this.doc.parts?.[c.part])) items.push({ label: 'Roll Part to End', run: () => this.rollPartsToEnd([c.part]) });
       items.push({ label: 'Mate', icon: 'mate', run: () => { this.app.setSelection([]); this.matePM(); } });
       items.push({ label: c.fixed ? 'Float' : 'Fix', icon: 'fix', run: () => this.setFixed(c.id, !c.fixed) });
       items.push({ label: c.hidden ? 'Show Components' : 'Hide Components', icon: 'hideshow', run: () => this.setHidden(c.id, !c.hidden) });

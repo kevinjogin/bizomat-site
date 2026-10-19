@@ -46,9 +46,16 @@ def select_document(doc: dict, part_id: str | None = None) -> dict:
     return copy.deepcopy(part)
 
 
-def validate_geometry(doc: dict) -> dict:
-    """Do not silently export/preview the last good solid left by a failed feature or mate."""
+def validate_geometry(doc: dict, export: bool = True) -> dict:
+    """Do not silently export/preview the last good solid left by a failed feature or mate.
+
+    A part left rolled back is not a failure: a preview shows it as it stands (with a warning), an
+    export refuses and says which part to roll to the end."""
     issues, warnings = [], []
+    if export and assembly.is_assembly(doc):
+        problem = assembly.rollback_export_error(doc)
+        if problem:
+            raise ArtifactError(problem)
 
     def statuses(items, label):
         for s in items:
@@ -69,7 +76,10 @@ def validate_geometry(doc: dict) -> dict:
                 continue
             built = assembly.build_part(parts[pid])
             statuses(built["status"], f"{pid}/")
-            if built["solid"] is None:
+            note = geometry.rollback_note(parts[pid], built["solid"] is not None)
+            if note:
+                warnings.append(f"{note} {assembly.ROLL_TO_END_HINT}")
+            elif built["solid"] is None:
                 issues.append(f"Part {pid!r} has no solid body.")
         if not issues:
             result = assembly.regen_assembly(doc)
@@ -78,6 +88,11 @@ def validate_geometry(doc: dict) -> dict:
     else:
         st, _ = geometry.regen(doc)
         statuses(st.status, "Feature ")
+        note = geometry.rollback_note(doc, st.part is not None)
+        if note and st.part is None:
+            raise ArtifactError(f"{note} Roll the part to the end in OpenSketch (right-click its name > Rollback to End).")
+        if note:
+            warnings.append(note)
         if st.part is None:
             issues.append("No solid body.")
     if issues:
@@ -197,8 +212,8 @@ def preview_record(rec: dict, view: str, width: int, height: int, part_id: str |
                    camera: dict | None = None, section: dict | None = None) -> tuple[dict, bytes]:
     from .preview import render_preview
     doc = select_document(rec["doc"], part_id)
-    report = validate_geometry(doc)
-    cam = {k: v for k, v in (camera or {}).items() if k in ("yaw", "pitch", "target", "view_width") and v is not None}
+    report = validate_geometry(doc, export=False)
+    cam ={k: v for k, v in (camera or {}).items() if k in ("yaw", "pitch", "target", "view_width") and v is not None}
     raw = render_preview(doc, view=view, width=width, height=height, section=section, **cam)
     extra = {"camera": cam} if cam else {}
     if section:

@@ -85,6 +85,8 @@ def _meshes(doc, section=None):
         if any(s["state"] == "error" for s in part["status"]):
             raise ValueError(f"Fix feature errors in {c['part']} before rendering a preview")
         if not part["body"]["faces"]:
+            if part.get("rolled_back"):
+                continue  # rolled back to nothing: drawn as the app shows it (validate_geometry warns)
             raise ValueError(f"Component {c['id']} has no solid body")
         if not original.get("hidden"):
             matrix = np.array(c["matrix"]).reshape(4, 4)

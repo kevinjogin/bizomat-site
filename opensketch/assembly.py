@@ -693,6 +693,9 @@ def regen_assembly(asm: dict, known: dict | None = None, solve_mates: bool = Tru
         built[pid] = b
         info = {"key": b["key"], "status": b["status"], "bbox": b["bbox"], "name": part.get("name", pid),
                 "appearance": part.get("appearance"), "planes": b["planes"]}
+        rb = geometry.rolled_back(part)
+        if rb is not None:
+            info["rolled_back"] = rb
         if known.get(pid) != b["key"]:
             info["body"] = b["mesh"]
         parts_out[pid] = info
@@ -755,7 +758,40 @@ def _size(asm, built) -> float:
 
 # ----------------------------------------------------------------------------- shapes, checks, files
 
+def rolled_back_components(asm: dict) -> list[tuple[dict, dict, dict]]:
+    """(component, part, first rolled-back feature) for every active component whose part was left
+    rolled back. Such a part builds only the features above its bar, so an export would silently miss
+    them (or the whole part when the bar is at the top)."""
+    out = []
+    for c in asm.get("components", []):
+        part = (asm.get("parts") or {}).get(c.get("part"))
+        if c.get("suppressed") or part is None:
+            continue
+        rb = geometry.rolled_back(part)
+        if rb is not None:
+            out.append((c, part, rb))
+    return out
+
+
+ROLL_TO_END_HINT = "Right-click it in the assembly tree and choose Roll Part to End, then export again."
+
+
+def rollback_export_error(asm: dict) -> str | None:
+    found = rolled_back_components(asm)
+    if not found:
+        return None
+    notes = []
+    for c, part, _ in found:
+        b = build_part(part)
+        notes.append(f"{c.get('name') or c['id']}: {geometry.rollback_note(part, b['solid'] is not None)}")
+    return "Cannot export. " + " ".join(notes) + " " + ROLL_TO_END_HINT
+
+
 def placed_solids(asm: dict, strict: bool = False) -> list[tuple[dict, object]]:
+    if strict:
+        problem = rollback_export_error(asm)
+        if problem:
+            raise AssemblyError(problem)
     built = {pid: build_part(p) for pid, p in asm.get("parts", {}).items()}
     solids = {c["id"]: built[c["part"]]["solid"] for c in asm.get("components", []) if c.get("part") in built}
     sol = solve(asm, _size(asm, built), solids)

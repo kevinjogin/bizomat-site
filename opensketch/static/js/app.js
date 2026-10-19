@@ -1833,6 +1833,25 @@ export class App {
   }
 
   async exportAs(fmtName) {
+    // An assembly with a part left rolled back would export without that part's later features (or with
+    // no body at all). Say which part, and offer to roll it forward first (one undo step).
+    if (this.isAsm && !this.proposal) {
+      const rb = this.asm.rolledBackComponents();
+      if (rb.length) {
+        const seen = new Set();
+        const lines = rb.filter((x) => !seen.has(x.pid) && seen.add(x.pid)).map((x) => {
+          const built = this.asm.res?.parts?.[x.pid];
+          const what = built && !built.bbox ? 'so it has no body' : 'so the features from there down are left out';
+          return `<li><b>${esc(x.comp.name)}</b>: the rollback bar is above ${esc(x.feature.name)}, ${what}.</li>`;
+        }).join('');
+        const one = rb.length === 1;
+        message('Export', `<p style="margin:0 0 8px">${one ? 'This part is' : 'These parts are'} rolled back:</p><ul style="margin:0 0 8px;padding-left:18px">${lines}</ul><p style="margin:0">Roll ${one ? 'it' : 'them'} to the end and export?</p>`, [
+          { label: 'Cancel' },
+          { label: 'Roll to End and Export', primary: true, run: () => { this.asm.rollPartsToEnd(rb.map((x) => x.pid)); setTimeout(() => this.exportAs(fmtName), 0); } },
+        ]);
+        return;
+      }
+    }
     try {
       const r = await fetch('/api/export/' + fmtName, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ doc: this.cleanDoc() }) });
       if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.detail || r.statusText); }

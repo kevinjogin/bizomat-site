@@ -985,11 +985,40 @@ def mass_properties(doc: dict) -> dict:
     }
 
 
+def rolled_back(doc: dict) -> dict | None:
+    """The first feature below a part's rollback bar as {id, name}, or None when the bar is at the end."""
+    feats = doc.get("features") or []
+    rb = doc.get("rollback")
+    if rb is None:
+        return None
+    try:
+        rb = max(int(rb), 0)
+    except (TypeError, ValueError):
+        return None
+    if rb >= len(feats):
+        return None
+    f = feats[rb]
+    return {"id": f.get("id"), "name": f.get("name") or f.get("id")}
+
+
+def rollback_note(doc: dict, has_body: bool) -> str | None:
+    """Plain words for a part left rolled back, or None. A rolled-back part builds only the features
+    above its bar, here and in every assembly that uses it (as in SOLIDWORKS)."""
+    rb = rolled_back(doc)
+    if rb is None:
+        return None
+    left = "so the features from there down are left out" if has_body else "so it has no body"
+    return f"{doc.get('name') or 'The part'} is rolled back: its rollback bar is above {rb['name']}, {left}."
+
+
 def export(doc: dict, fmt: str, path: str) -> None:
     from build123d import export_step, export_stl
     st, _ = regen(doc)
     require_clean(st.status, doc.get("name", "Part"))
     if st.part is None:
+        note = rollback_note(doc, False)
+        if note:
+            raise FeatureError(f"{note} Right-click the part name at the top of the tree and choose Rollback to End.")
         raise FeatureError("No solid body to export")
     if fmt == "step":
         export_step(st.part, path)

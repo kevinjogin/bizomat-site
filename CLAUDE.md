@@ -45,6 +45,26 @@ assemblies only when a part changes.
 
 ## Current state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand, text logo, Google sign-in set up in the app, upload links for big MCP imports)
 
+Rolled-back parts in assemblies (2026-10-19, YZ: Lavilock O2S6 assembly export "Cannot export Inside_plate<1>: no solid
+body", while part exports worked): Inside_plate's `rollback` was 0 (bar above Imported1, its only feature), so the part
+built to nothing in the assembly, was not drawn, and strict export refused with no reason. A part keeps building to its
+bar in assemblies (as SOLIDWORKS does; SOLIDWORKS gives no sign of it there, OpenSketch now does):
+- `geometry.rolled_back(doc)` -> first feature below the bar {id, name} or None; `rollback_note(doc, has_body)` the plain
+  sentence. Part export of a part with no body says "rolled back... Rollback to End".
+- `assembly.rolled_back_components`, `rollback_export_error`, `ROLL_TO_END_HINT`: `placed_solids(strict=True)` (all STEP/STL
+  assembly exports) refuses first with every rolled-back active component named, whether it has no body or only misses
+  features (suppressed components do not block). `regen_assembly` adds `parts[pid].rolled_back`.
+- `artifacts.validate_geometry(doc, export=True)`: exports refuse with the same message; previews (`export=False`) warn and
+  draw what is there; `preview.render_preview` skips a rolled-back part with no body (also fixes server-drawn Files pictures
+  of such assemblies). Part branch (MCP part_id): no body -> refused with the reason; part-way -> warning.
+- `ai._asm_report` (get_document / AI state): a warning per rolled-back part, so `clean` is false.
+- Browser: `model-utils.rolledBackFeature(part)`; assembly tree greys the component (`rolledback` class), warning badge,
+  title "Rolled back: the part's rollback bar is above X. Right-click > Roll Part to End."; its expanded features below the
+  bar are greyed. Component menu "Roll Part to End" (`asm.rollPartsToEnd(pids)`, one undo step). `app.exportAs` on an
+  assembly lists the rolled-back parts and offers Cancel / "Roll to End and Export".
+- Tests: `tests/test_rollback_export.py` (6). Checked in Chromium on YZ's v31 document: tree flag, menu item, dialog, roll +
+  export downloads the 6.58 MB STEP, Ctrl+Z puts the bar back. 328 pytest (2 skipped) + 62 node.
+
 Upload links for the connector (2026-10-19, YZ: a 6.5 MB named STEP would be ~1.6 million base64 characters inside one
 import_document call, too much for a model to write out exactly): `uploads.py` + MCP tool `request_upload(filename,
 size_bytes?)` (now 41 tools) -> {upload_id, upload_url, method PUT, expires_at, expires_in_seconds 600, max_bytes, how

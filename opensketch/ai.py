@@ -560,6 +560,12 @@ def _asm_report(asm: dict, res: dict) -> dict:
              for k, v in res["parts"].items()}
     errors = [{"part": pid, **e} for pid, p in parts.items() for e in p["errors"]]
     warnings = [{"part": pid, **w} for pid, p in parts.items() for w in p["warnings"]]
+    for pid, v in res["parts"].items():
+        if v.get("rolled_back"):
+            what = "has no body in the assembly" if not v.get("bbox") else "is missing its features from there down"
+            warnings.append({"part": pid, "message": f"{v.get('name') or pid} is rolled back (bar above "
+                             f"{v['rolled_back']['name']}) and {what}. Export refuses until it is rolled to the end: "
+                             "the user right-clicks the component > Roll Part to End."})
     for kind in ("mate", "component"):
         for item in res[kind + "s"]:
             if item["state"] == "error":

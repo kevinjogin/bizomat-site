@@ -28,6 +28,15 @@ export function dependentFeatureIds(doc, roots) {
   return removed;
 }
 
+// The first feature below a part's rollback bar, or null when the bar is at the end (geometry.rolled_back).
+export function rolledBackFeature(part) {
+  const feats = part?.features || [];
+  const rb = part?.rollback;
+  if (rb === null || rb === undefined || !Number.isFinite(+rb)) return null;
+  const i = Math.max(Math.trunc(+rb), 0);
+  return i < feats.length ? feats[i] : null;
+}
+
 export function removeFeatures(doc, removed) {
   if (doc.rollback != null) doc.rollback -= doc.features.slice(0, doc.rollback).filter((f) => removed.has(f.id)).length;
   doc.features = doc.features.filter((f) => !removed.has(f.id));
