@@ -61,10 +61,18 @@ def _solid_for(doc: dict, pick: dict, part_id: str | None):
             part_doc = doc["parts"][pid]
     else:
         part_doc = doc
-    st, _ = geometry.regen(part_doc)
+    st = geometry.rebuilt(part_doc)  # two picks on one part, or a part just built, cost no second rebuild
     if st.part is None:
         raise MeasureError("The part has no solid body yet.")
     return st, loc
+
+
+def _place(doc: dict, pick: dict):
+    """Where a component sits, without building its part (a point pick only needs that)."""
+    comp = next((c for c in doc.get("components", []) if c["id"] == pick.get("component")), None)
+    if comp is None:
+        raise MeasureError(f"Unknown component {pick.get('component')!r}.")
+    return assembly.location_of(assembly.Pose.of(comp))
 
 
 def resolve(doc: dict, pick: dict, part_id: str | None = None):
@@ -77,9 +85,11 @@ def resolve(doc: dict, pick: dict, part_id: str | None = None):
         if not (isinstance(p, list) and len(p) == 3):
             raise MeasureError("point must be [x, y, z].")
         v = Vertex(*map(float, p))
-        if pick.get("component"):
+        if pick.get("component") and assembly.is_assembly(doc):
+            v = v.moved(_place(doc, pick))
+        elif pick.get("component"):
             _, loc = _solid_for(doc, pick, part_id)
-            v = v.moved(loc)
+            v = v.moved(loc) if loc is not None else v
         return v
     st, loc = _solid_for(doc, pick, part_id)
     solid, namer = st.part, st.namer

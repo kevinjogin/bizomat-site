@@ -890,11 +890,14 @@ def placed_solids(asm: dict, strict: bool = False) -> list[tuple[dict, object]]:
 def interference(asm: dict) -> dict:
     items = placed_solids(asm)
     found = []
+    boxes = []  # one box per placed solid (the fast box on big bodies), not two exact ones per pair
+    for _, s in items:
+        bb = geometry.bbox(s)
+        boxes.append((geometry.vlist(bb.min), geometry.vlist(bb.max)))
     for i in range(len(items)):
         for j in range(i + 1, len(items)):
             (ca, a), (cb, b) = items[i], items[j]
-            ba, bb = a.bounding_box(), b.bounding_box()
-            amin, amax, bmin, bmax = (geometry.vlist(v) for v in (ba.min, ba.max, bb.min, bb.max))
+            (amin, amax), (bmin, bmax) = boxes[i], boxes[j]
             if any(amax[k] < bmin[k] or bmax[k] < amin[k] for k in range(3)):
                 continue
             try:
@@ -985,20 +988,24 @@ def mate_candidates(asm: dict, limit: int = 80) -> list[dict]:
                 elif f.geom_type == GeomType.PLANE:
                     n0 = np.array(geometry.vlist(f.normal_at()))
                     c0 = np.array(geometry.vlist(geometry.on_face_point(f)))  # on the face: refind's anchor
-                    bb = f.bounding_box()
+                    bb = f.bounding_box(optimal=False)
                     corners = np.array([[x, y, z] for x in (bb.min.X, bb.max.X) for y in (bb.min.Y, bb.max.Y) for z in (bb.min.Z, bb.max.Z)])
                     W = corners @ P.R.T + P.t
                     pl.append({"p": c0, "n": n0, "P": P.R @ c0 + P.t, "N": P.R @ n0, "lo": W.min(0), "hi": W.max(0), "area": f.area})
             except Exception:
                 continue
-        info[c["id"]] = (cyl, pl)
+        bb = geometry.bbox(solid)
+        W = np.array([[x, y, z] for x in (bb.min.X, bb.max.X) for y in (bb.min.Y, bb.max.Y) for z in (bb.min.Z, bb.max.Z)]) @ P.R.T + P.t
+        info[c["id"]] = (cyl, pl, W.min(0), W.max(0))
     out = []
     names = {c["id"]: c.get("name", c["id"]) for c in comps}
     seen = set()
     for i, a in enumerate(comps):
         for b in comps[i + 1:]:
-            ca, pa = info[a["id"]]
-            cb, pb = info[b["id"]]
+            ca, pa, alo, ahi = info[a["id"]]
+            cb, pb, blo, bhi = info[b["id"]]
+            if np.any(ahi + tol < blo) or np.any(bhi + tol < alo):
+                continue  # boxes apart: no faces of theirs touch (coaxial shafts far apart are not a mate)
             for x in ca:
                 for y in cb:
                     if np.linalg.norm(np.cross(x["D"], y["D"])) > 1e-3:

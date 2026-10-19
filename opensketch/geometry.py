@@ -73,6 +73,7 @@ class RegenState:
     evaluated: dict | None = None  # the part with equation results, when params is set
     instances: dict = field(default_factory=dict)  # pattern/mirror id -> [(moved tool, op, seed id, label)]
     namer: Any = None  # naming.Namer: persistent face and edge names, worked out on request
+    measured: tuple | None = None  # (body, its volume): the last volume worked out, so the next feature reuses it
 
 
 # ----------------------------------------------------------------------------- helpers
@@ -921,15 +922,26 @@ def shape_bounds(shape) -> list | None:
     return [vlist(bb.min), vlist(bb.max)]
 
 
+def _volume(st: RegenState, body) -> float:
+    """A body's volume, worked out once: each feature's body before is the last one's after (OpenCascade does
+    not keep volumes, and one takes ~0.13 s on a 900-face body)."""
+    if st.measured is not None and st.measured[0] is body:
+        return st.measured[1]
+    v = body.volume
+    st.measured = (body, v)
+    return v
+
+
 def regen_feature(feat: dict, st: RegenState):
     """Build one feature, preserving its tool return value and recording measured diagnostics."""
     diagnostics = st.diagnostics[feat["id"]] = {}
     before = st.part
-    before_volume = before.volume if before is not None else 0.0
+    solid = feat["type"] not in ("sketch", "plane")
+    before_volume = _volume(st, before) if solid and before is not None else 0.0
     result = _regen_feature(feat, st)
     diagnostics["result_bbox"] = shape_bounds(st.part)
-    if feat["type"] not in ("sketch", "plane") and st.part is not None:
-        delta = st.part.volume - before_volume
+    if solid and st.part is not None:
+        delta = _volume(st, st.part) - before_volume
         diagnostics["volume_change_mm3"] = round(delta, 9)
     if feat["id"] in st.tools:
         tool, op = st.tools[feat["id"]]
@@ -1011,21 +1023,43 @@ def regen(doc: dict, preview: dict | None = None) -> tuple[RegenState, Any]:
         before = st.part
         rebuild_feature(f, st)
         st.namer.record(f, before, st)
-    tool = None
-    if preview is not None:
-        before = st.part
-        tool, status = rebuild_feature({"id": "preview", **preview}, st)
-        status["preview"] = True
-        if isinstance(tool, str):
-            tool = None
-        if status["state"] == "error":
-            st.part = before
-        if preview.get("type") in ("extrude", "revolve", "sweep", "loft", "hole"):
-            st.part = before  # SOLIDWORKS shows the body as it was plus a yellow tool preview
-        elif before is not None and st.part is not None and st.part is not before:
-            tool = changed_faces(before, st.part)
-            st.part = before
+    tool = _preview_on(st, preview) if preview is not None else None
     return st, tool
+
+
+def _preview_on(st: RegenState, preview: dict):
+    """Build a tentative feature on a rebuilt state and return what to draw for it; the state's body stays as
+    it was (SOLIDWORKS shows the body plus a yellow preview)."""
+    before = st.part
+    tool, status = rebuild_feature({"id": "preview", **preview}, st)
+    status["preview"] = True
+    if isinstance(tool, str):
+        tool = None
+    if status["state"] == "error":
+        st.part = before
+    if preview.get("type") in ("extrude", "revolve", "sweep", "loft", "hole"):
+        st.part = before  # SOLIDWORKS shows the body as it was plus a yellow tool preview
+    elif before is not None and st.part is not None and st.part is not before:
+        tool = changed_faces(before, st.part)
+        st.part = before
+    return tool
+
+
+def _preview_state(doc: dict, preview: dict) -> tuple[RegenState, dict, Any]:
+    """(state, body mesh, preview tool) for a PropertyManager preview. The tree above the feature does not change
+    while the PropertyManager is open, so it comes from the build cache (the document rolled back to the
+    feature) and only the tentative feature is built, on a copy of that state."""
+    feats = doc.get("features", [])
+    rb = doc.get("rollback")
+    stop = len(feats) if rb is None else int(rb)
+    if preview.get("_index") is not None:
+        stop = min(stop, int(preview["_index"]))
+    base, body = built({**doc, "rollback": None if stop >= len(feats) else stop})
+    st = RegenState(part=base.part, planes=dict(base.planes), profiles=dict(base.profiles),
+                    sketch_edges=dict(base.sketch_edges), path_edges=dict(base.path_edges), tools=dict(base.tools),
+                    status=list(base.status), diagnostics=dict(base.diagnostics), params=base.params,
+                    evaluated=base.evaluated, instances=dict(base.instances), namer=base.namer, measured=base.measured)
+    return st, body, _preview_on(st, preview)
 
 
 def changed_faces(before, after):
@@ -1191,13 +1225,33 @@ def built(doc: dict) -> tuple["RegenState", dict]:
     return out
 
 
+_last_state: tuple | None = None  # (body key, state) of the latest rebuilt() miss
+
+
+def rebuilt(doc: dict) -> RegenState:
+    """The regen state of a document for read-only use (delete plans, measure, inspect, section previews,
+    exports): built()'s cached state when it holds the document, else one rebuild without a mesh, kept for the
+    next caller (a check and the export after it share it). Callers must not change what they get."""
+    global _last_state
+    key = body_key(doc)
+    with _built_lock:
+        hit = _built.get(key)
+    if hit is not None and getattr(hit[0], "namer", None) is not None:
+        return hit[0]
+    last = _last_state
+    if last is not None and last[0] == key:
+        return last[1]
+    st, _ = regen(doc)
+    _last_state = (key, st)
+    return st
+
+
 def regen_result(doc: dict, preview: dict | None = None) -> dict:
     if preview is None:
         st, body = built(doc)
         tool = None
     else:
-        st, tool = regen(doc, preview)
-        body = mesh_shape(st.part)
+        st, body, tool = _preview_state(doc, preview)
     part = st.part
     out = {
         "status": st.status,
@@ -1217,7 +1271,7 @@ def regen_result(doc: dict, preview: dict | None = None) -> dict:
 
 
 def mass_properties(doc: dict) -> dict:
-    st, _ = regen(doc)
+    st = rebuilt(doc)
     part = st.part
     if part is None:
         return {"error": "No solid body"}
@@ -1261,7 +1315,7 @@ def rollback_note(doc: dict, has_body: bool) -> str | None:
 
 def export(doc: dict, fmt: str, path: str) -> None:
     from build123d import export_step, export_stl
-    st, _ = regen(doc)
+    st = rebuilt(doc)
     require_clean(st.status, doc.get("name", "Part"))
     if st.part is None:
         note = rollback_note(doc, False)

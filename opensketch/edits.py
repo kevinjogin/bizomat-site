@@ -52,7 +52,7 @@ def sketch_ids(feat: dict) -> list[str]:
 
 
 def _problems(doc: dict) -> tuple[dict, dict]:
-    st, _ = geometry.regen(doc)
+    st = geometry.rebuilt(doc)  # the part as it stands is usually what the browser just built
     errs = {s["id"]: s.get("message", "error") for s in st.status if s["state"] == "error"}
     warns = {s["id"]: s.get("message", "warning") for s in st.status if s["state"] == "warning"}
     return errs, warns

@@ -222,7 +222,7 @@ def _body(part, material: dict | None) -> dict | None:
 
 def inspect_part(part_doc: dict, sketches: bool = True) -> dict:
     from .ai import _status_report
-    st, _ = geometry.regen(part_doc)
+    st = geometry.rebuilt(part_doc)
     rep = _status_report(st.status)
     names = {f["id"]: (f.get("name"), f.get("type")) for f in part_doc.get("features", [])}
     timeline = []

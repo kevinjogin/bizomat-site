@@ -70,3 +70,29 @@ def test_big_models_get_a_coarser_mesh(monkeypatch):
     fine = geometry.mesh_shape(plate)
     assert len(coarse["faces"]) == len(fine["faces"]) and len(coarse["edges"]) == len(fine["edges"])
     assert tris(coarse) < 0.75 * tris(fine)
+
+
+def test_read_only_paths_and_previews_reuse_the_build(monkeypatch):
+    """Measure, delete plans, inspect, exports and PropertyManager previews used to rebuild the whole part
+    (again) although the build cache held it."""
+    from opensketch import edits, geometry, inspection, measure
+    from tests.test_geometry import circle_ent, rect_sketch
+    doc = {"name": "Plate", "features": [
+        rect_sketch("s1", {"ref": "Front Plane"}, 0, 0, 60, 40), {"id": "e1", "type": "extrude", "sketch": "s1", "depth": 8},
+        {"id": "s2", "type": "sketch", "plane": {"ref": "Front Plane"}, "entities": circle_ent("c", 20, 20, 4), "constraints": []},
+        {"id": "e2", "type": "extrude", "sketch": "s2", "op": "cut", "end": "through_all", "dir2": {"end": "through_all"}}]}
+    geometry.built(doc)
+    calls = []
+    real = geometry.regen
+    monkeypatch.setattr(geometry, "regen", lambda d, preview=None: calls.append(1) or real(d, preview))
+    measure.measure(doc, {"face": {"center": [30, 20, 8], "normal": [0, 0, 1]}}, {"face": {"center": [30, 20, 0], "normal": [0, 0, -1]}})
+    inspection.inspect_part(doc)
+    edits.plan_delete(doc, ["e2"])  # rebuilds only the part without e2
+    assert len(calls) == 1
+    calls.clear()
+    preview = {"type": "fillet", "radius": 1, "edges": [{"mid": [30, 0, 8]}], "_index": 4}
+    for r in (1, 1.5, 2):
+        res = geometry.regen_result(doc, {**preview, "radius": r})
+        assert res["tool"] and res["body"]["faces"]
+        assert res["status"][-1]["preview"] and res["status"][-1]["state"] == "ok"
+    assert not calls  # the tree above the fillet comes from the cache
