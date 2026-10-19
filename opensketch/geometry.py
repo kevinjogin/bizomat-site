@@ -879,7 +879,7 @@ def _regen_feature(feat: dict, st: RegenState):
         if isinstance(ax, str):
             axis = {"X": Axis.X, "Y": Axis.Y, "Z": Axis.Z}[ax.upper()]
         else:
-            axis = Axis(v3(ax["origin"]), v3(ax["dir"]))
+            axis = Axis(v3(ax.get("origin") or (0, 0, 0)), v3(ax["dir"]))
         n = int(param(feat, "count", 4))
         total = float(param(feat, "angle", 360))
         step = total / n if feat.get("equal_spacing", True) and abs(total - 360) < 1e-9 else (

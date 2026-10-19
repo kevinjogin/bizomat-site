@@ -205,7 +205,7 @@ def _value_hint(p: Param) -> str:
         return "|".join(json.dumps(o[0]) for o in p.options)
     return {"length": "mm", "angle": "deg", "number": "number", "int": "int", "bool": "bool", "string": "text",
             "plane": "<plane>", "faces": "[faces]", "edges": "[edges]", "sketch": "<sketch id>",
-            "sketch_line": "<line id in that sketch>", "features": "[feature ids]", "axis": '"X"|"Y"|"Z"',
+            "sketch_line": "<line id in that sketch>", "features": "[feature ids]", "axis": '"X"|"Y"|"Z"|{"origin","dir"}',
             "direction": '"X"|"Y"|"Z"|{"edge"}', "object": "{...}"}[k]
 
 
@@ -269,8 +269,9 @@ def check_value(p: Param, v) -> str | None:
         if v not in [o[0] for o in p.options]:
             return "must be one of " + ", ".join(json.dumps(o[0]) for o in p.options)
     elif k == "axis":
-        if not (isinstance(v, str) and v.upper() in ("X", "Y", "Z")) and not (isinstance(v, dict) and _is_v3(v.get("dir"))):
-            return 'must be "X", "Y", "Z" or {"origin": [x,y,z], "dir": [x,y,z]}'
+        if not (isinstance(v, str) and v.upper() in ("X", "Y", "Z")) and not (
+                isinstance(v, dict) and _is_v3(v.get("dir")) and any(v["dir"]) and (v.get("origin") is None or _is_v3(v["origin"]))):
+            return 'must be "X", "Y", "Z" or {"origin": [x,y,z], "dir": [x,y,z]} (origin defaults to the part origin)'
     elif k == "plane":
         if not isinstance(v, dict) or not (v.get("ref") or (_is_v3(v.get("origin")) and _is_v3(v.get("normal")))):
             return "must be " + PLANE_DOC

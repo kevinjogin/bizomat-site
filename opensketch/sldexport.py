@@ -926,6 +926,19 @@ def export(doc: dict, out_zip: str, name: str | None = None, verify: bool = True
     tc = toolchain()
     report = {"name": NAME, "title": title, "assembly": is_asm, "parts": [], "mates": {}, "checks": {},
               "toolchain": tc["have"], "notes": []}
+    # A rolled-back part builds only the features above its bar: say so instead of sending SOLIDWORKS less
+    # than the model (or failing with "does not rebuild"), as the STEP and STL exports do.
+    if is_asm:
+        problem = assembly.rollback_export_error(doc)
+        if problem:
+            raise ValueError(problem)
+    else:  # a part exports what it shows (as SOLIDWORKS does), with a note; nothing at all is an error
+        has_body = assembly.build_part(doc)["solid"] is not None
+        note = geometry.rollback_note(doc, has_body)
+        if note and not has_body:
+            raise ValueError(f"{note} Right-click the part name at the top of the tree and choose Rollback to End.")
+        if note:
+            report["notes"].append(note)
     parts = doc["parts"] if is_asm else {"part": doc}
     if is_asm:
         used_pids = {c["part"] for c in doc.get("components", []) if not c.get("suppressed")}

@@ -118,3 +118,16 @@ def test_mcp_and_browser_get_the_same_list(tmp_path, monkeypatch):
         assert r["clean"] and r["version"] == 2
         saved = store.get(rec["id"])
         assert saved["doc"]["features"][-1]["type"] == "draft" and saved["by"] == "claude"
+
+
+def test_circular_pattern_axis_object_without_origin():
+    from opensketch import features, geometry
+    from tests.test_geometry import circle_ent, rect_sketch
+    feats = [rect_sketch("s1", {"ref": "Top Plane"}, -50, -50, 50, 50), {"id": "e1", "type": "extrude", "sketch": "s1", "depth": 5},
+             {"id": "s2", "type": "sketch", "plane": {"ref": "Top Plane"}, "entities": circle_ent("c", 30, 0, 3), "constraints": []},
+             {"id": "e2", "type": "extrude", "sketch": "s2", "op": "cut", "end": "through_all", "dir2": {"end": "through_all"}},
+             {"id": "p", "type": "circular_pattern", "features": ["e2"], "axis": {"dir": [0, 1, 0]}, "count": 4}]
+    assert features.validate(feats[-1]) == []
+    st, _ = geometry.regen({"features": feats})
+    assert all(s["state"] == "ok" for s in st.status)
+    assert features.validate({**feats[-1], "axis": {"dir": [0, 0, 0]}})
