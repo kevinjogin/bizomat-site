@@ -817,7 +817,7 @@ def api_ai_keys(request: Request):
     from . import aikeys, providers
     u = getattr(request.state, "user", None)
     if u and u.get("role") == "tester":  # early access: the AI is provided; nothing about the key leaves the server
-        cfg = aikeys.early_access_config()
+        cfg = aikeys.effective(u)  # None once the owner turned early access off
         return {"settings": None, "providers": providers.public_list(), "server_key": cfg is not None, "early_access": True}
     return {"settings": aikeys.public(aikeys.owner_id(u)),
             "providers": providers.public_list(), "server_key": aikeys.server_config() is not None}
@@ -973,7 +973,9 @@ def api_doc_create(req: DocCreate, request: Request):
     name = (req.name or "").strip()
     if not name or (req.doc is None and name == "Untitled"):
         name = _free_name(kind, _user(request))
-    return store.brief(store.create(name, req.doc, kind, by="you", owner=store.owner_of(_user(request))))
+    rec = store.create(name, req.doc, kind, by="you", owner=store.owner_of(_user(request)))
+    # a new empty file is opened from this answer (small); a model the browser sent is not sent back
+    return rec if req.doc is None else store.brief(rec)
 
 
 @app.get("/api/docs/{doc_id}")
@@ -1375,13 +1377,14 @@ def api_invite_revoke(invite_id: str, request: Request):
 def api_remove_user(user_id: str, request: Request):
     from . import accounts
     _owner(request)
+    tester = (accounts.get(user_id) or {}).get("role") == "tester"
     try:
         accounts.remove(user_id, "")
     except accounts.AccountError as e:
         return JSONResponse({"error": str(e)}, status_code=400)
     from . import mcpauth
     mcpauth.drop_user(user_id)  # their connected AI apps stop working too
-    files = _forget(user_id, trash=False)  # their files move to your Files
+    files = _forget(user_id, trash=tester)  # a member's files move to your Files, a tester's to your Trash
     return {"removed": user_id, "files": files}
 
 

@@ -283,6 +283,7 @@ export class Account {
             fetch('/api/account/users/' + encodeURIComponent(p.id), { method: 'DELETE' }).then((x) => x.json()).then((r) => {
               if (r.error) { message('People', esc(r.error)); return; }
               row.remove();
+              if (p.tester) this.accessBox?.dropTester?.(); // the early-access count says one fewer
             }).catch(() => message('People', 'Could not remove them. Check your connection and try again.'));
           } }] });
         row.appendChild(rm);
@@ -303,7 +304,7 @@ export class Account {
     const gb = h('button', 'btn', this.info.google ? 'Settings...' : 'Set up...'); gb.onclick = () => setTimeout(() => this.google(), 0);
     g.appendChild(gb); body.appendChild(g);
     body.appendChild(this.inviteList(this.info.invites || []));
-    if (this.info.access) body.appendChild(this.accessSection(this.info.access, list));
+    if (this.info.access) body.appendChild(this.accessBox = this.accessSection(this.info.access, list));
     dialog({ title: 'People on this server', body, cls: 'acct-dlg', buttons: [{ label: 'Invite people...', run: () => { setTimeout(() => this.invite(), 0); } }, { label: 'Done', primary: true }] });
   }
 
@@ -359,6 +360,7 @@ export class Account {
     save.onclick = async () => { if (await send({ access_code: inp.value.trim() })) this.app.toast?.('Access code saved.'); };
     box.append(tog, row, link, note, err, testers);
     show(st);
+    box.dropTester = () => show({ ...st, testers: Math.max(0, (st.testers || 0) - 1) });
     return box;
   }
 

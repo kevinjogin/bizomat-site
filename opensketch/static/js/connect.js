@@ -422,20 +422,21 @@ export async function connectDialog(app, tab = null) {
   const A = appTab(app, info);
   const B = keyTab(app, keys, () => d.close());
   const C = swTab(sw);
-  const show = (which) => {
+  // focusField: a mouse click on the tab or the dialog opening (keys that move between the tabs keep the focus there)
+  const show = (which, focusField = false) => {
     try { localStorage.setItem('opensketch.connect.tab', which); } catch (_) { /* */ }
     tA.classList.toggle('on', which === 'app'); tB.classList.toggle('on', which === 'key'); tC.classList.toggle('on', which === 'sw');
     tA.setAttribute('aria-selected', which === 'app'); tB.setAttribute('aria-selected', which === 'key'); tC.setAttribute('aria-selected', which === 'sw');
     for (const [tb, w] of [[tA, 'app'], [tB, 'key'], [tC, 'sw']]) tb.tabIndex = which === w ? 0 : -1;
     panes.innerHTML = ''; panes.appendChild(which === 'app' ? A : which === 'sw' ? C.el : B.el);
     if (which === 'sw') C.start(); else C.stop();
-    if (which === 'key') setTimeout(() => B.focus(), 30);
+    if (which === 'key' && focusField) setTimeout(() => B.focus(), 30);
     // keep the dialog on screen as its height changes
     const r = d.el.getBoundingClientRect();
     if (r.bottom > window.innerHeight - 8) d.el.style.top = Math.max(8, window.innerHeight - r.height - 8) + 'px';
   };
-  tA.onclick = () => show('app'); tB.onclick = () => show('key'); tC.onclick = () => show('sw');
+  tA.onclick = () => show('app'); tB.onclick = (e) => show('key', e.detail > 0); tC.onclick = () => show('sw');
   let saved = null; try { saved = localStorage.getItem('opensketch.connect.tab'); } catch (_) { /* */ }
-  show(tab || saved || 'app');
+  show(tab || saved || 'app', true);
   d.el.style.top = Math.max(8, (window.innerHeight - d.el.getBoundingClientRect().height) / 2.6) + 'px';
 }
