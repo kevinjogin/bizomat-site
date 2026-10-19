@@ -1386,9 +1386,16 @@ def selection_note(selection: list | None) -> str:
             "`feature` made it and `entity` is the sketch curve its side came from):\n" + "\n".join(lines))
 
 
+SERVER_KEY = object()  # run_stream's default for scripts and tests: the server's own ANTHROPIC_API_KEY
+
+
 def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool | str = False,
-               demo_speed: float = 1.0, selection: list | None = None, ai_config: dict | None = None) -> Iterator[dict]:
+               demo_speed: float = 1.0, selection: list | None = None, ai_config=SERVER_KEY) -> Iterator[dict]:
     """Yield events while Claude designs. The last event is {"ev": "done", ...} or {"ev": "error", ...}.
+
+    ai_config: the provider settings to use (aikeys.effective for the signed-in person). None means this person has
+    no AI: never the server's key instead (the server decided they may not use it). Left out (scripts, tests): the
+    server's own key.
 
     With demo=True (or OPENSKETCH_AI_DEMO=1) a scripted session (opensketch/demo.py) is streamed
     through the same code path, so the live view can be tried without an API key."""
@@ -1403,8 +1410,8 @@ def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool
     else:
         from . import providers
         cfg = ai_config
-        if cfg is None and available():
-            cfg = {"provider": "anthropic", "model": MODEL, "base_url": "", "key": None, "source": "server"}
+        if cfg is SERVER_KEY:
+            cfg = {"provider": "anthropic", "model": MODEL, "base_url": "", "key": None, "source": "server"} if available() else None
         if cfg is None:
             yield {"ev": "error", "message": NO_KEY}
             return
@@ -1551,12 +1558,12 @@ def run_stream(doc: dict, prompt: str, history_id: str | None = None, demo: bool
            "sources": sources}
 
 
-def run(doc: dict, prompt: str, history_id: str | None = None) -> dict:
-    """Non-streaming wrapper: run the whole loop and return the final result."""
-    if not available():
+def run(doc: dict, prompt: str, history_id: str | None = None, ai_config=SERVER_KEY) -> dict:
+    """Non-streaming wrapper: run the whole loop and return the final result (ai_config as in run_stream)."""
+    if ai_config is SERVER_KEY and not available():
         raise AIUnavailable("Set ANTHROPIC_API_KEY to use OpenSketch AI.")
     last = None
-    for ev in run_stream(doc, prompt, history_id):
+    for ev in run_stream(doc, prompt, history_id, ai_config=ai_config):
         last = ev
         if ev["ev"] == "error":
             raise AIUnavailable(ev["message"])

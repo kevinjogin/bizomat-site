@@ -500,10 +500,11 @@ def api_recognize_status(jid: str, request: Request):
 def api_ai(req: AIRequest, request: Request):
     """Old non-streaming route (scripts): the same person's key as the chat."""
     from . import aikeys
-    if aikeys.effective(getattr(request.state, "user", None)) is None and not ai.demo_enabled():
+    cfg = aikeys.effective(getattr(request.state, "user", None))
+    if cfg is None and not ai.demo_enabled():
         return JSONResponse({"error": ai.NO_KEY}, status_code=503)
     try:
-        return ai.run(req.doc, req.prompt, req.conversation)
+        return ai.run(req.doc, req.prompt, req.conversation, ai_config=cfg)
     except ai.AIUnavailable as exc:
         return JSONResponse({"error": str(exc)}, status_code=503)
 
@@ -636,7 +637,8 @@ def api_ai_models(req: AIKeyRequest, request: Request):
         if not stored or stored["provider"] != req.provider:
             return JSONResponse({"error": "Paste the API key first."}, status_code=400)
         key = stored["key"]
-    base = (req.base_url or "").strip().rstrip("/") or spec["base_url"]
+    # only a custom provider takes an address from the browser; the named ones always use their own
+    base = (req.base_url or "").strip().rstrip("/") if req.provider == "custom" else spec["base_url"]
     if not base:
         return JSONResponse({"error": "Enter the provider's address."}, status_code=400)
     try:
