@@ -527,6 +527,11 @@ body.review-mode .doctitle { flex: 1; text-align: left; }
 .acct-who { display: flex; flex-direction: column; min-width: 0; flex: 1; }
 .acct-who span { color: var(--muted); font-size: 11px; overflow: hidden; text-overflow: ellipsis; }
 .acct-role { color: var(--muted); font-size: 11px; }
+/* Account settings (Disconnect all, private address), Keep my work, invite links (account.js) */
+.acct-apps > .btn, .acct-gkeep { align-self: flex-start; margin-top: 8px; }
+.acct-apps .srv-url { margin-top: 8px; }
+.acct-invites:not(:empty) { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line, var(--border)); }
+.acct-invites > .acct-l { margin-top: 0; font-weight: 600; color: var(--text, inherit); font-size: 12px; }
 
 /* ---------------------------------------------------------------- Design panel (both skins) */
 .tp-body.dp { padding: 0; }

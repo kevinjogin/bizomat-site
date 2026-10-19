@@ -500,10 +500,11 @@ def api_recognize_status(jid: str, request: Request):
 def api_ai(req: AIRequest, request: Request):
     """Old non-streaming route (scripts): the same person's key as the chat."""
     from . import aikeys
-    if aikeys.effective(getattr(request.state, "user", None)) is None and not ai.demo_enabled():
+    cfg = aikeys.effective(getattr(request.state, "user", None))
+    if cfg is None and not ai.demo_enabled():
         return JSONResponse({"error": ai.NO_KEY}, status_code=503)
     try:
-        return ai.run(req.doc, req.prompt, req.conversation)
+        return ai.run(req.doc, req.prompt, req.conversation, ai_config=cfg)
     except ai.AIUnavailable as exc:
         return JSONResponse({"error": str(exc)}, status_code=503)
 
@@ -636,7 +637,8 @@ def api_ai_models(req: AIKeyRequest, request: Request):
         if not stored or stored["provider"] != req.provider:
             return JSONResponse({"error": "Paste the API key first."}, status_code=400)
         key = stored["key"]
-    base = (req.base_url or "").strip().rstrip("/") or spec["base_url"]
+    # only a custom provider takes an address from the browser; the named ones always use their own
+    base = (req.base_url or "").strip().rstrip("/") if req.provider == "custom" else spec["base_url"]
     if not base:
         return JSONResponse({"error": "Enter the provider's address."}, status_code=400)
     try:
@@ -913,7 +915,8 @@ def api_account(request: Request):
            "google": oauth.enabled(), **accounts.settings()}
     if u and u.get("role") == "owner" and m == "accounts":
         out["users"] = accounts.list_users()
-        out["pending_invites"] = accounts.pending_invites()
+        out["invites"] = accounts.list_invites()
+        out["pending_invites"] = len(out["invites"])
         out["access"] = dict(accounts.access_settings(), testers=len(accounts.tester_ids()),
                              link=f"{_base(request)}/access")
     return out
@@ -939,6 +942,26 @@ def api_account_update(req: AccountUpdate, request: Request):
     except accounts.AccountError as e:
         return JSONResponse({"error": str(e)}, status_code=400)
     return {"user": accounts.get(u["id"]), "signed_out": bool(req.new_password)}
+
+
+class KeepWork(BaseModel):
+    name: str | None = None
+    email: str
+    password: str
+
+
+@app.post("/api/account/keep")
+def api_account_keep(req: KeepWork, request: Request):
+    """Early access: the tester adds an email and password to their account, so signing out (or another browser)
+    no longer loses their files. They stay a tester (the access code still decides their AI)."""
+    from . import accounts
+    u = _user(request)
+    if not u or not u.get("tester"):
+        return JSONResponse({"error": "Only early-access accounts need this."}, status_code=400)
+    try:
+        return {"user": accounts.keep_tester(u["id"], req.email, req.name or "", req.password)}
+    except accounts.AccountError as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
 
 
 class AccountSettings(BaseModel):
@@ -1015,12 +1038,34 @@ def api_google_off(request: Request):
     return oauth.public(_google_redirect(request))
 
 
+class InviteRequest(BaseModel):
+    note: str | None = None  # who it is for ("for Alex"), shown in People on this server
+
+
 @app.post("/api/account/invites")
-def api_invite(request: Request):
+def api_invite(request: Request, req: InviteRequest | None = None):
     from . import accounts
     u = _owner(request)
-    token = accounts.create_invite(u["id"])
-    return {"url": f"{_base(request)}/join/{token}", "days": accounts.INVITE_DAYS}
+    token = accounts.create_invite(u["id"], (req.note if req else "") or "")
+    return {"url": f"{_base(request)}/join/{token}", "days": accounts.INVITE_DAYS, "invites": accounts.list_invites()}
+
+
+@app.get("/api/account/invites")
+def api_invites(request: Request):
+    """Owner: invite links not used yet (never the links themselves: only their SHA-256 is kept)."""
+    from . import accounts
+    _owner(request)
+    return {"invites": accounts.list_invites()}
+
+
+@app.delete("/api/account/invites/{invite_id}")
+def api_invite_revoke(invite_id: str, request: Request):
+    """Owner: an invite link stops working at once."""
+    from . import accounts
+    _owner(request)
+    if not accounts.revoke_invite(invite_id):
+        raise HTTPException(404, "No such invite. It may have been used or expired.")
+    return {"invites": accounts.list_invites()}
 
 
 @app.delete("/api/account/users/{user_id}")
@@ -1046,6 +1091,17 @@ def api_connect(request: Request):
             "mcp_url": f"{base}/mcp/{auth.mcp_token_for(u)}", "password_set": bool(auth.password()),
             "codespace": bool(os.environ.get("CODESPACE_NAME")), "app_url": base, "accounts": auth.mode() == "accounts",
             "personal": bool(u and not u.get("legacy") and u.get("role") != "owner")}
+
+
+@app.post("/api/connect/new_address")
+def api_connect_new_address(request: Request):
+    """A new private address (/mcp/<key>) for the signed-in person: the old one stops working at once."""
+    from . import accounts
+    u = _user(request)
+    if not u or u.get("legacy"):
+        return JSONResponse({"error": "Create an account first."}, status_code=400)
+    accounts.new_mcp_address(u["id"])
+    return {"mcp_url": f"{auth.public_url(dict(request.headers))}/mcp/{auth.mcp_token_for(u)}"}
 
 
 @app.get("/mcp/artifacts/{artifact_id}/{filename}")
@@ -1443,12 +1499,22 @@ async def oauth_register(request: Request):
     return JSONResponse(out, status_code=201, headers=OAUTH_CORS)
 
 
+async def _oauth_client_call(request: Request, fn):
+    """Token and revoke: limited per address; an app's metadata document (client_id = https URL) is read first in
+    mcpauth's own small pool with a deadline, never on a request thread (a slow address cannot use them all up)."""
+    from . import mcpauth
+    if not mcpauth.token_rate_ok(auth._client(request.scope)):
+        raise mcpauth.OAuthError("temporarily_unavailable", "Too many requests from this address. Try again in a minute.", 429)
+    form = await _body_form(request)
+    await mcpauth.ensure_client(form.get("client_id"))
+    return await run_in_threadpool(fn, form, request.headers.get("authorization", ""))
+
+
 @app.post("/oauth/token")
 async def oauth_token(request: Request):
     from . import mcpauth
-    form = await _body_form(request)
     try:
-        out = await run_in_threadpool(mcpauth.token, form, request.headers.get("authorization", ""))
+        out = await _oauth_client_call(request, mcpauth.token)
     except mcpauth.OAuthError as e:
         extra = {"WWW-Authenticate": 'Basic realm="OpenSketch"'} if e.status == 401 else {}
         return JSONResponse(e.body(), status_code=e.status, headers={**OAUTH_CORS, **extra})
@@ -1458,9 +1524,8 @@ async def oauth_token(request: Request):
 @app.post("/oauth/revoke")
 async def oauth_revoke(request: Request):
     from . import mcpauth
-    form = await _body_form(request)
     try:
-        await run_in_threadpool(mcpauth.revoke, form, request.headers.get("authorization", ""))
+        await _oauth_client_call(request, mcpauth.revoke)
     except mcpauth.OAuthError as e:
         return JSONResponse(e.body(), status_code=e.status, headers=OAUTH_CORS)
     return JSONResponse({}, headers=OAUTH_CORS)
@@ -1471,15 +1536,14 @@ def _auth_html(body: bytes, status: int = 200) -> Response:
 
 
 @app.get("/oauth/authorize")
-def oauth_authorize(request: Request):
-    """The consent page an AI app sends the person to (after sign-in, which the gate handles)."""
-    from fastapi.responses import RedirectResponse
+async def oauth_authorize(request: Request):
+    """The consent page an AI app sends the person to (after sign-in, which the gate handles). Every problem is a
+    page here, never a redirect (mcpauth.check_authorize)."""
     from . import mcpauth
     h = _hdrs(request)
     try:
+        await mcpauth.ensure_client(request.query_params.get("client_id"))
         rec, req = mcpauth.check_authorize(dict(request.query_params), h)
-    except mcpauth.RedirectError as e:
-        return RedirectResponse(e.location, status_code=302)
     except mcpauth.OAuthError as e:
         return _auth_html(auth.oauth_problem_page(e.description), 400)
     u = _user(request)
@@ -1496,7 +1560,12 @@ async def oauth_decide(request: Request):
     u = _user(request)
     uid = u["id"] if u else "local"
     req = mcpauth.read_request(form.get("req", ""), uid)
-    if req is None or mcpauth.client(req["client_id"]) is None:
+    if req is not None:
+        try:
+            await mcpauth.ensure_client(req["client_id"])
+        except mcpauth.OAuthError:
+            pass
+    if req is None or mcpauth.client(req["client_id"], fetch=False) is None:
         return _auth_html(auth.oauth_problem_page("This page has expired. Start connecting again from your AI app."), 400)
     iss = mcpauth.base_url(_hdrs(request))
     if form.get("action") == "deny":
@@ -1513,6 +1582,15 @@ def api_apps(request: Request):
     from . import mcpauth
     u = _user(request)
     return {"apps": mcpauth.grants_for(u["id"] if u else "local")}
+
+
+@app.delete("/api/account/apps")
+def api_apps_disconnect_all(request: Request):
+    """Sign every AI app out of this person's account (each has to sign in again)."""
+    from . import mcpauth
+    u = _user(request)
+    mcpauth.drop_user(u["id"] if u else "local")
+    return {"apps": []}
 
 
 @app.delete("/api/account/apps/{grant_id}")

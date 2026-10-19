@@ -9,6 +9,8 @@ const h = (tag, cls, text) => { const e = document.createElement(tag); if (cls) 
 const COLORS = ['#9747ff', '#0d99ff', '#14ae5c', '#f24822', '#ffa629', '#e0559b', '#1bc4c4'];
 const initials = (n) => { const w = (n || '').trim().split(/\s+/).filter(Boolean); return (w.length > 1 ? w[0][0] + w[1][0] : (w[0] || '?').slice(0, 2)).toUpperCase(); };
 const colorFor = (s) => COLORS[[...(s || '')].reduce((a, c) => a + c.charCodeAt(0), 0) % COLORS.length];
+// an early-access tester who added their own sign-in (Keep my work): an email and password, or Google
+const kept = (u) => !!(u && (u.has_password || u.google));
 
 export class Account {
   constructor(app) {
@@ -33,7 +35,7 @@ export class Account {
     const a = h('div', 'avatar' + (u && !u.legacy ? '' : ' none'), u && !u.legacy ? initials(u.name) : '');
     if (u && !u.legacy) a.style.background = colorFor(u.email);
     else a.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 21c1-4.5 4.5-6.5 8-6.5s7 2 8 6.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
-    a.title = u && u.tester ? `${u.name} (early access)` : u && !u.legacy ? `${u.name} (${u.email})` : 'Account';
+    a.title = u && u.tester && !kept(u) ? `${u.name} (early access)` : u && !u.legacy ? `${u.name} (${u.email})` : 'Account';
     a.setAttribute('role', 'button'); a.setAttribute('aria-label', 'Account menu'); a.tabIndex = 0;
     a.onclick = () => this.menu();
     a.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.menu(); } };
@@ -45,8 +47,9 @@ export class Account {
     const r = (anchor || this.el).getBoundingClientRect();
     const u = this.user, m = this.info?.mode;
     const items = [];
-    if (u && u.tester) { // early access: no password or email to manage
+    if (u && u.tester && !kept(u)) { // early access: the account lives in this browser until they keep their work
       items.push({ head: `${u.name} - early access` });
+      items.push({ label: 'Keep my work...', run: () => this.keepWork() });
       items.push({ label: 'Files', run: () => this.app.files?.open() });
       items.push({ label: 'Connect AI...', run: () => this.app.server?.connectDialog() });
     } else if (u && !u.legacy) {
@@ -66,9 +69,52 @@ export class Account {
     contextMenu(Math.max(4, r.right - 260), r.bottom + 6, items.map((it) => (it.head ? { head: it.head } : it)));
   }
 
-  async signOut() {
+  async signOut(force) {
+    const u = this.user;
+    if (!force && u && u.tester && !kept(u)) { // nothing else leads back to this account: say so first
+      dialog({ title: 'Sign out?', cls: 'acct-dlg', body: '<div class="acct"><p>Your files are tied to this browser. After you sign out you cannot get back to them, '
+        + 'and the access code makes a new, empty account.</p><p>Keep your work first: add an email and a password, then sign in with them anywhere.</p></div>',
+      buttons: [{ label: 'Cancel' }, { label: 'Sign out anyway', danger: true, run: () => { this.signOut(true); } },
+        { label: 'Keep my work...', primary: true, run: () => { setTimeout(() => this.keepWork(), 0); } }] });
+      return;
+    }
     try { await this.app.server?.flush?.(); } catch (_) { /* best effort */ }
     location.href = '/logout';
+  }
+
+  // Early access: the tester adds an email and password (or Google) to their account, so their files are not lost
+  // when they sign out or change browser. They stay a tester (POST /api/account/keep, accounts.keep_tester).
+  keepWork() {
+    const body = h('div', 'acct');
+    body.innerHTML = `<p class="fv-p">Add an email and a password to keep your files. Sign in with them from any browser.</p>
+      <label class="acct-l" for="kw-name">Your name</label><input class="acct-i" id="kw-name" name="name" autocomplete="name">
+      <label class="acct-l" for="kw-email">Email</label><input class="acct-i" id="kw-email" name="username" type="email" autocomplete="username">
+      <label class="acct-l" for="kw-pw">Password</label><input class="acct-i" id="kw-pw" name="new" type="password" autocomplete="new-password" aria-describedby="kw-note">
+      <div class="acct-note" id="kw-note">At least 8 characters.</div><div class="acct-err" role="alert"></div>`;
+    if (this.info?.google) {
+      const g = h('button', 'btn acct-gkeep', 'Use my Google account instead'); g.type = 'button';
+      g.onclick = async () => {
+        try { await this.app.server?.flush?.(); } catch (_) { /* best effort */ }
+        location.href = '/auth/google?keep=1&next=' + encodeURIComponent(location.pathname + location.search);
+      };
+      body.appendChild(g);
+    }
+    body.querySelectorAll('input').forEach((i) => i.addEventListener('keydown', (e) => e.stopPropagation()));
+    const err = body.querySelector('.acct-err');
+    const d = dialog({ title: 'Keep my work', body, cls: 'acct-dlg', buttons: [
+      { label: 'Cancel' },
+      { label: 'Save', primary: true, run: () => {
+        const val = (n) => body.querySelector(`[name=${n}]`).value.trim();
+        if (!val('username') || !body.querySelector('[name=new]').value) { err.textContent = 'Enter an email and a password.'; return false; }
+        fetch('/api/account/keep', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: val('name'), email: val('username'), password: body.querySelector('[name=new]').value }) })
+          .then((r) => r.json()).then((j) => {
+            if (j.error || j.detail) { err.textContent = j.error || (typeof j.detail === 'string' ? j.detail : 'Check the email and password.'); return; }
+            d.close(); this.info.user = j.user; this.render();
+            this.app.toast?.(`Saved. Sign in with ${j.user.email} next time.`);
+          }).catch(() => { err.textContent = 'Could not save. Check your connection and try again.'; });
+        return false;
+      } }] });
   }
 
   settings() {
@@ -82,7 +128,7 @@ export class Account {
       <div class="acct-sep"></div><div class="acct-sub">Change password</div>
       <label class="acct-l acct-cur">Current password</label><input class="acct-i acct-cur" name="cur" type="password" autocomplete="current-password">
       <label class="acct-l">New password</label><input class="acct-i" name="new" type="password" autocomplete="new-password">
-      <div class="acct-note">At least 8 characters. Changing it signs you out everywhere.</div><div class="acct-err" role="alert"></div>`;
+      <div class="acct-note">At least 8 characters. Changing it signs you out everywhere, disconnects your AI apps and replaces your private AI address.</div><div class="acct-err" role="alert"></div>`;
     body.querySelector('[name=name]').value = u.name;
     body.querySelector('[name=username]').value = u.email || '';
     if (u.has_password === false) {
@@ -94,11 +140,40 @@ export class Account {
     const apps = h('div', 'acct-apps');
     apps.append(h('div', 'acct-sep'), h('div', 'acct-sub', 'Connected AI apps'));
     const list = h('div', 'acct-applist', 'Loading...');
-    apps.appendChild(list);
-    body.appendChild(apps);
+    const allOff = h('button', 'btn', 'Disconnect all'); allOff.type = 'button'; allOff.hidden = true;
+    allOff.onclick = async () => {
+      allOff.disabled = true;
+      try { const r = await fetch('/api/account/apps', { method: 'DELETE' }); if (!r.ok) throw new Error(r.statusText); draw([]); this.app.toast?.('Every AI app is disconnected. Each has to sign in again.'); }
+      catch (_) { this.app.toast?.('Could not disconnect. Check your connection and try again.'); }
+      allOff.disabled = false;
+    };
+    apps.append(list, allOff);
+    // the private address (/mcp/<key>) for apps that cannot sign in: replace it if someone else may have seen it
+    const addr = h('div', 'acct-apps');
+    addr.append(h('div', 'acct-sep'), h('div', 'acct-sub', 'Private AI address'),
+      h('div', 'acct-note', 'For AI apps that cannot sign in (Connect AI > App cannot sign in?). If someone else may have seen it, make a new one: the old one stops working at once.'));
+    const addrRow = h('div', 'srv-url'); addrRow.hidden = true;
+    const addrInp = h('input'); addrInp.readOnly = true; addrInp.setAttribute('aria-label', 'New private AI address');
+    const addrCopy = h('button', 'btn', 'Copy'); addrCopy.type = 'button';
+    addrCopy.onclick = () => { navigator.clipboard?.writeText(addrInp.value).then(() => { addrCopy.textContent = 'Copied'; }, () => addrInp.select()); };
+    addrRow.append(addrInp, addrCopy);
+    const addrNew = h('button', 'btn', 'Make a new address'); addrNew.type = 'button';
+    addrNew.onclick = async () => {
+      addrNew.disabled = true;
+      try {
+        const r = await fetch('/api/connect/new_address', { method: 'POST' }); const j = await r.json();
+        if (!r.ok || j.error) throw new Error(j.error || r.statusText);
+        addrInp.value = j.mcp_url; addrRow.hidden = false; addrCopy.textContent = 'Copy';
+        this.app.toast?.('New private address made. Paste it into the apps that used the old one.');
+      } catch (e) { this.app.toast?.(e.message || 'Could not make a new address.'); }
+      addrNew.disabled = false;
+    };
+    addr.append(addrNew, addrRow);
+    body.append(apps, addr);
     const when = (s) => { if (!s) return ''; const d = (Date.now() / 1000 - s) / 86400; return d < 1 ? 'today' : d < 2 ? 'yesterday' : `${Math.floor(d)} days ago`; };
     const draw = (items) => {
       list.innerHTML = '';
+      allOff.hidden = items.length < 2;
       if (!items.length) { list.appendChild(h('div', 'acct-note', 'None yet. Connect Claude, ChatGPT or another AI app from Connect AI: it signs in here once.')); return; }
       for (const a of items) {
         const row = h('div', 'acct-app');
@@ -134,16 +209,62 @@ export class Account {
   }
 
   async invite() {
-    let j;
-    try { j = await (await fetch('/api/account/invites', { method: 'POST' })).json(); } catch (e) { message('Invite people', esc(String(e))); return; }
-    if (j.detail || j.error) { message('Invite people', esc(j.detail || j.error)); return; }
+    // who it is for first (shown in People, so a link sent to the wrong chat can be found and revoked), then the link
+    const body = h('div', 'acct');
+    body.innerHTML = `<label class="acct-l" for="inv-note">Who is it for? (optional)</label>
+      <input class="acct-i" id="inv-note" name="note" maxlength="60" autocomplete="off" placeholder="For example: Alex">
+      <div class="acct-note">The link works once and lasts 7 days. You can revoke it in People on this server.</div><div class="acct-err" role="alert"></div>`;
+    const note = body.querySelector('[name=note]'), err = body.querySelector('.acct-err');
+    note.addEventListener('keydown', (e) => e.stopPropagation());
+    const d = dialog({ title: 'Invite people', body, cls: 'acct-dlg', buttons: [{ label: 'Cancel' }, { label: 'Make link', primary: true, run: () => {
+      fetch('/api/account/invites', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ note: note.value.trim() }) })
+        .then((r) => r.json()).then((j) => {
+          if (j.detail || j.error) { err.textContent = j.detail || j.error; return; }
+          if (this.info) { this.info.invites = j.invites; this.info.pending_invites = (j.invites || []).length; }
+          d.close(); this.showInvite(j);
+        }).catch(() => { err.textContent = 'Could not make the link. Check your connection and try again.'; });
+      return false;
+    } }] });
+  }
+
+  showInvite(j) {
     const body = h('div', 'acct');
     body.appendChild(h('p', null, `Send this link to the person you want to invite. It works once and lasts ${j.days} days. They choose their own email and password.`));
-    const row = h('div', 'srv-url'); const inp = h('input'); inp.readOnly = true; inp.value = j.url;
-    const copy = h('button', 'btn primary', 'Copy');
+    const row = h('div', 'srv-url'); const inp = h('input'); inp.readOnly = true; inp.value = j.url; inp.setAttribute('aria-label', 'Invite link');
+    const copy = h('button', 'btn primary', 'Copy'); copy.type = 'button';
     copy.onclick = () => { navigator.clipboard?.writeText(j.url).then(() => { copy.textContent = 'Copied'; }, () => { inp.select(); }); };
     row.append(inp, copy); body.appendChild(row);
     dialog({ title: 'Invite people', body, cls: 'acct-dlg', buttons: [{ label: 'Done', primary: true }] });
+  }
+
+  // Owner: invite links not used yet, each with Revoke (the link stops working at once).
+  inviteList(invites) {
+    const box = h('div', 'acct-invites');
+    const draw = (items) => {
+      box.innerHTML = '';
+      if (!items.length) return;
+      box.appendChild(h('div', 'acct-l', `Invite links not used yet (${items.length})`));
+      const left = (t) => { const d = Math.max(0, Math.ceil((t - Date.now() / 1000) / 86400)); return d <= 1 ? 'ends within a day' : `ends in ${d} days`; };
+      for (const i of items) {
+        const row = h('div', 'acct-p');
+        const who = h('span', 'acct-who'); who.append(h('b', null, i.note || 'Invite link'), h('span', null, left(i.expires)));
+        const rm = h('button', 'btn', 'Revoke'); rm.type = 'button';
+        rm.onclick = async () => {
+          rm.disabled = true;
+          try {
+            const r = await fetch('/api/account/invites/' + encodeURIComponent(i.id), { method: 'DELETE' });
+            const j = await r.json().catch(() => ({}));
+            if (!r.ok && r.status !== 404) throw new Error(j.detail || r.statusText);
+            const next = j.invites || items.filter((x) => x.id !== i.id);
+            if (this.info) { this.info.invites = next; this.info.pending_invites = next.length; }
+            draw(next); this.app.toast?.('Invite link revoked. It no longer works.');
+          } catch (_) { rm.disabled = false; this.app.toast?.('Could not revoke it. Check your connection and try again.'); }
+        };
+        row.append(who, rm); box.appendChild(row);
+      }
+    };
+    draw(invites);
+    return box;
   }
 
   async people() {
@@ -153,11 +274,11 @@ export class Account {
     for (const p of this.info.users || []) {
       const row = h('div', 'acct-p');
       const av = h('span', 'avatar', initials(p.name)); av.style.background = colorFor(p.email);
-      const who = h('span', 'acct-who'); who.append(h('b', null, p.name), h('span', null, p.tester ? 'Early access code' : p.email));
+      const who = h('span', 'acct-who'); who.append(h('b', null, p.name), h('span', null, p.tester && !kept(p) ? 'Early access code' : p.email));
       row.append(av, who, h('span', 'acct-role', p.role === 'owner' ? 'Owner' : p.tester ? 'Internal tester' : 'Member'));
       if (p.role !== 'owner') {
         const rm = h('button', 'btn', 'Remove');
-        rm.onclick = () => dialog({ title: 'Remove person', cls: 'acct-dlg', body: `<p class="fv-p">Remove <b>${esc(p.name)}</b> (${esc(p.email)})? They are signed out at once and can no longer sign in. Their files stay on the server.</p>`,
+        rm.onclick = () => dialog({ title: 'Remove person', cls: 'acct-dlg', body: `<p class="fv-p">Remove <b>${esc(p.name)}</b>${p.tester && !kept(p) ? '' : ` (${esc(p.email)})`}? They are signed out at once and can no longer sign in. Their files stay on the server.</p>`,
           buttons: [{ label: 'Cancel' }, { label: 'Remove', primary: true, danger: true, run: () => {
             fetch('/api/account/users/' + encodeURIComponent(p.id), { method: 'DELETE' }).then((x) => x.json()).then((r) => {
               if (r.error) { message('People', esc(r.error)); return; }
@@ -181,7 +302,7 @@ export class Account {
     g.append(h('span', null, this.info.google ? 'Sign in with Google is on.' : 'Sign in with Google is off.'));
     const gb = h('button', 'btn', this.info.google ? 'Settings...' : 'Set up...'); gb.onclick = () => setTimeout(() => this.google(), 0);
     g.appendChild(gb); body.appendChild(g);
-    if (this.info.pending_invites) body.appendChild(h('div', 'acct-note', `${this.info.pending_invites} invite link(s) not used yet.`));
+    body.appendChild(this.inviteList(this.info.invites || []));
     if (this.info.access) body.appendChild(this.accessSection(this.info.access, list));
     dialog({ title: 'People on this server', body, cls: 'acct-dlg', buttons: [{ label: 'Invite people...', run: () => { setTimeout(() => this.invite(), 0); } }, { label: 'Done', primary: true }] });
   }
@@ -205,8 +326,10 @@ export class Account {
     const testers = h('div', 'acct-g');
     const show = (a) => {
       st = a; cb.checked = !!a.on; inp.value = a.code || '';
-      link.innerHTML = a.on ? `They go to <b>${esc(a.link)}</b> and type the code, or use <b>${esc(a.link)}?code=${esc(encodeURIComponent(a.code))}</b>.` : 'Off: the code does not work.';
-      note.textContent = 'Testers get their own Files, show up as Internal tester, and use your AI key with no limit, so share the code only with people you trust. Change it or turn it off any time.';
+      link.innerHTML = a.on ? `They go to <b>${esc(a.link)}</b> and type the code, or use <b>${esc(a.link)}?code=${esc(encodeURIComponent(a.code))}</b>.`
+        : 'Off: the code does not work and testers have no AI. They can still open their own files.';
+      note.textContent = 'Testers get their own Files, show up as Internal tester, and use your AI key with no limit while the code is on, so share it only with people you trust. '
+        + 'Turning it off stops new testers and their AI at once. People who already came in keep their account and files until you remove them.';
       testers.innerHTML = '';
       testers.append(h('span', null, `${a.testers} internal tester${a.testers === 1 ? '' : 's'}.`));
       if (a.testers) {

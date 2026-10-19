@@ -229,6 +229,14 @@ def _headers(cfg: dict) -> dict:
     return h
 
 
+def _base(cfg: dict) -> str:
+    """Where requests go: a named provider's own address always (a stored or sent address is ignored, so it can
+    never point the server at a private address); a custom provider's checked address (pinned when used)."""
+    if cfg["provider"] != "custom":
+        return PROVIDERS[cfg["provider"]]["base_url"].rstrip("/")
+    return (cfg.get("base_url") or "").rstrip("/")
+
+
 def _error_text(r: httpx.Response) -> str:
     try:
         j = r.json()
@@ -254,7 +262,7 @@ class OpenAICompatMessages:
         tools = to_openai_tools(kw.get("tools"))
         if tools:
             body["tools"] = tools
-        url = cfg["base_url"].rstrip("/") + "/chat/completions"
+        url = _base(cfg) + "/chat/completions"
         headers, ext = _headers(cfg), {}
         if cfg["provider"] == "custom":
             url, host, ext = pinned(url)
@@ -312,7 +320,7 @@ def list_models(cfg: dict) -> list[str]:
             r = httpx.get("https://api.anthropic.com/v1/models?limit=100", timeout=20,
                           headers={"x-api-key": cfg["key"], "anthropic-version": "2023-06-01"})
         else:
-            url, headers, ext = cfg["base_url"].rstrip("/") + "/models", _headers(cfg), {}
+            url, headers, ext = _base(cfg) + "/models", _headers(cfg), {}
             if cfg["provider"] == "custom":
                 url, host, ext = pinned(url)
                 headers = {**headers, **host}

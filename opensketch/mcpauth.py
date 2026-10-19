@@ -32,9 +32,12 @@ REFRESH_TTL = 90 * 86400
 REFRESH_GRACE = 120          # a retried refresh with the token just replaced still works for this long
 CODE_TTL = 600
 CONSENT_TTL = 900
-MAX_CLIENTS = 2000
+MAX_CLIENTS = 2000           # when full, the oldest registration never used for a grant makes room
 UNUSED_CLIENT_DAYS = 30      # registrations never used for a grant are removed after this
-REGISTER_LIMIT = 30          # registrations per address per hour
+REGISTER_LIMIT = 30          # registrations per address (IPv6: per /64) per hour
+MAX_REDIRECTS = 5            # return addresses per registration
+MAX_REDIRECT_LEN = 512
+TOKEN_LIMIT = 120            # token and revoke calls per address per minute
 TOUCH_EVERY = 300            # how often "last used" is written
 
 _lock = threading.RLock()
@@ -59,14 +62,35 @@ def _file():
     return store.data_dir() / "mcp_oauth.json"
 
 
-def _load() -> dict:
+_cache: dict[str, tuple] = {}  # file -> (inode, mtime_ns, size, parsed): the MCP endpoint reads it on every request
+
+
+def _view() -> dict:
+    """The stored clients, grants and access tokens, parsed once per change and shared: never change it."""
+    p = _file()
     try:
-        d = json.loads(_file().read_text())
-    except (FileNotFoundError, ValueError):
+        st = p.stat()
+    except FileNotFoundError:
+        return {"clients": {}, "grants": {}, "access": {}}
+    hit = _cache.get(str(p))
+    if hit and hit[:3] == (st.st_ino, st.st_mtime_ns, st.st_size):
+        return hit[3]
+    try:
+        d = json.loads(p.read_text())
+    except ValueError:
+        d = {}
+    if not isinstance(d, dict):
         d = {}
     for k in ("clients", "grants", "access"):
         d.setdefault(k, {})
+    _cache[str(p)] = (st.st_ino, st.st_mtime_ns, st.st_size, d)
     return d
+
+
+def _load() -> dict:
+    """A private copy for a writer (hold _lock, then _save)."""
+    import copy
+    return copy.deepcopy(_view())
 
 
 def _save(d: dict) -> None:
@@ -83,6 +107,9 @@ def _save(d: dict) -> None:
         json.dump(d, f)
     os.chmod(tmp, 0o600)
     os.replace(tmp, p)
+    import copy
+    st = p.stat()
+    _cache[str(p)] = (st.st_ino, st.st_mtime_ns, st.st_size, copy.deepcopy(d))
 
 
 def _h(token: str) -> str:
@@ -141,7 +168,7 @@ _BAD_SCHEMES = {"javascript", "data", "file", "vbscript", "about", "blob", "ftp"
 def redirect_ok(uri: str) -> bool:
     """https anywhere; http only to this computer (localhost, 127.0.0.1, [::1]); or an app's own scheme
     (cursor://..., vscode://...). Never a fragment, never credentials in the address."""
-    if not isinstance(uri, str) or not uri or len(uri) > 2000 or any(ord(c) < 0x21 for c in uri):
+    if not isinstance(uri, str) or not uri or len(uri) > MAX_REDIRECT_LEN or any(ord(c) < 0x21 for c in uri):
         return False
     try:
         u = urlsplit(uri)
@@ -157,22 +184,37 @@ def redirect_ok(uri: str) -> bool:
     return bool(s) and s not in _BAD_SCHEMES and s.isascii() and (s[0].isalpha())
 
 
-def _rate_ok(ip: str) -> bool:
+def _rate_ok(ip: str, limit: int = REGISTER_LIMIT, window: float = 3600, table: dict | None = None) -> bool:
+    """At most `limit` calls per `window` seconds from one client address (auth._client: IPv6 counts per /64)."""
+    table = _reg_hits if table is None else table
     now = time.time()
-    hits = [t for t in _reg_hits.get(ip, []) if now - t < 3600]
-    _reg_hits[ip] = hits
-    if len(hits) >= REGISTER_LIMIT:
-        return False
-    hits.append(now)
-    return True
+    with _lock:
+        if len(table) > 5000:  # forget addresses that went quiet, never the whole table
+            for k in [k for k, v in table.items() if not v or now - v[-1] >= window]:
+                table.pop(k, None)
+        hits = [t for t in table.get(ip, []) if now - t < window]
+        table[ip] = hits
+        if len(hits) >= limit:
+            return False
+        hits.append(now)
+        return True
+
+
+_token_hits: dict[str, list[float]] = {}
+
+
+def token_rate_ok(ip: str) -> bool:
+    """The public token and revoke endpoints: TOKEN_LIMIT calls a minute per address."""
+    return _rate_ok(ip or "?", TOKEN_LIMIT, 60, _token_hits)
 
 
 def register(meta: dict, ip: str = "") -> dict:
     if not isinstance(meta, dict):
         raise OAuthError("invalid_client_metadata", "Send the client metadata as a JSON object.")
     uris = meta.get("redirect_uris")
-    if not isinstance(uris, list) or not uris or len(uris) > 10 or not all(redirect_ok(u) for u in uris):
-        raise OAuthError("invalid_redirect_uri", "redirect_uris must be https addresses, http://localhost or an app's own scheme.")
+    if not isinstance(uris, list) or not uris or len(uris) > MAX_REDIRECTS or not all(redirect_ok(u) for u in uris):
+        raise OAuthError("invalid_redirect_uri", f"redirect_uris must be 1 to {MAX_REDIRECTS} https addresses, http://localhost "
+                                                 "or an app's own scheme.")
     method = meta.get("token_endpoint_auth_method") or "none"
     if method not in ("none", "client_secret_post", "client_secret_basic"):
         raise OAuthError("invalid_client_metadata", "token_endpoint_auth_method must be none, client_secret_post or client_secret_basic.")
@@ -194,23 +236,29 @@ def register(meta: dict, ip: str = "") -> dict:
         out["client_secret"], out["client_secret_expires_at"] = secret, 0
     with _lock:
         d = _load()
-        if len(d["clients"]) >= MAX_CLIENTS:
-            raise OAuthError("temporarily_unavailable", "This server has too many registered apps.", 503)
+        if len(d["clients"]) >= MAX_CLIENTS:  # make room: the oldest registrations no grant ever used
+            used = {g["client_id"] for g in d["grants"].values()}
+            unused = sorted((v.get("created", 0), k) for k, v in d["clients"].items() if k not in used)
+            if not unused:
+                raise OAuthError("temporarily_unavailable", "This server has too many connected apps.", 503)
+            for _, k in unused[:len(d["clients"]) - MAX_CLIENTS + 1]:
+                d["clients"].pop(k, None)
         d["clients"][client_id] = rec
         _save(d)
     return out
 
 
-def client(client_id: str) -> dict | None:
+def client(client_id: str, fetch: bool = True) -> dict | None:
     """A registered client (osc_...), or a Client ID Metadata Document: an https URL whose JSON describes the app
-    (ChatGPT uses https://chatgpt.com/oauth/client.json). None when unknown or unreadable."""
+    (ChatGPT uses https://chatgpt.com/oauth/client.json). None when unknown or unreadable. fetch=False: a document
+    only when it was read already (ensure_client), never a network call."""
     if not isinstance(client_id, str):
         return None
     if client_id.startswith("https://"):
-        return metadata_client(client_id)
+        return metadata_client(client_id, fetch)
     if not client_id.startswith("osc_"):
         return None
-    return _load()["clients"].get(client_id)
+    return _view()["clients"].get(client_id)
 
 
 # ----------------------------------------------------------------------------- client ID metadata documents
@@ -218,7 +266,70 @@ def client(client_id: str) -> dict | None:
 CIMD_TTL = 3600
 CIMD_FAIL_TTL = 60
 CIMD_MAX_BYTES = 64 * 1024
+CIMD_DEADLINE = 5.0          # the whole fetch (connect, every read)
+CIMD_WORKERS = 4             # fetches at once, in their own threads (never the server's request threads)
 _cimd: dict[str, tuple[float, dict | None]] = {}
+_cimd_slots = threading.BoundedSemaphore(CIMD_WORKERS)
+_cimd_running: dict[str, object] = {}
+_cimd_pool = None
+
+
+def _cimd_future(url: str):
+    """The fetch of this document, started if needed: one per address, at most CIMD_WORKERS at once, refused
+    at once when they are all busy (slow or hostile addresses cannot pile up)."""
+    global _cimd_pool
+    from concurrent.futures import ThreadPoolExecutor
+    with _lock:
+        f = _cimd_running.get(url)
+        if f is not None:
+            return f
+        if not _cimd_slots.acquire(blocking=False):
+            raise OAuthError("temporarily_unavailable", "Too many apps are connecting right now. Try again in a minute.", 503)
+        if _cimd_pool is None:
+            _cimd_pool = ThreadPoolExecutor(max_workers=CIMD_WORKERS, thread_name_prefix="cimd")
+        try:
+            f = _cimd_pool.submit(_cimd_run, url)
+        except BaseException:
+            _cimd_slots.release()
+            raise
+        _cimd_running[url] = f
+        return f
+
+
+def _cimd_run(url: str):
+    try:
+        return _read_metadata(url)
+    finally:
+        with _lock:
+            _cimd_running.pop(url, None)
+        _cimd_slots.release()
+
+
+def _remember(url: str, rec: dict | None) -> None:
+    now = time.time()
+    with _lock:
+        if len(_cimd) > 500:
+            for k in [k for k, v in _cimd.items() if v[0] <= now] or sorted(_cimd, key=lambda k: _cimd[k][0])[:100]:
+                _cimd.pop(k, None)
+        _cimd[url] = (now + (CIMD_TTL if rec else CIMD_FAIL_TTL), rec)
+
+
+async def ensure_client(client_id) -> None:
+    """Read an app's metadata document (if its client_id is one) without holding a request thread: the fetch runs
+    in this module's own small pool and is given up after CIMD_DEADLINE + 1 s. Then client(id, fetch=False)
+    answers from the cache."""
+    import asyncio
+    if not isinstance(client_id, str) or not client_id.startswith("https://") or not _cimd_url_ok(client_id):
+        return
+    hit = _cimd.get(client_id)
+    if hit and hit[0] > time.time():
+        return
+    f = _cimd_future(client_id)
+    try:
+        rec = await asyncio.wait_for(asyncio.shield(asyncio.wrap_future(f)), CIMD_DEADLINE + 1)
+    except (OAuthError, asyncio.TimeoutError):
+        rec = None
+    _remember(client_id, rec)
 
 
 def _cimd_url_ok(url: str) -> bool:
@@ -236,9 +347,11 @@ def _fetch_metadata(url: str) -> dict:
     (no DNS rebinding), no redirects, at most 64 KB, 5 seconds (the server makes this request: SSRF rules apply)."""
     import httpx
     from . import providers
+    deadline = time.monotonic() + CIMD_DEADLINE
     try:
         target, host, ext = providers.pinned(url)
-        with httpx.Client(timeout=5, follow_redirects=False) as http:
+        left = max(0.5, deadline - time.monotonic())
+        with httpx.Client(timeout=httpx.Timeout(left), follow_redirects=False) as http:
             with http.stream("GET", target, headers={**host, "Accept": "application/json"}, extensions=ext) as r:
                 if r.status_code != 200:
                     raise OAuthError("invalid_client", f"The app's details at {urlsplit(url).hostname} could not be read ({r.status_code}).")
@@ -247,6 +360,8 @@ def _fetch_metadata(url: str) -> dict:
                     body += chunk
                     if len(body) > CIMD_MAX_BYTES:
                         raise OAuthError("invalid_client", "The app's details document is too large.")
+                    if time.monotonic() > deadline:  # a server that trickles bytes: the read timeout alone never ends
+                        raise OAuthError("invalid_client", f"{urlsplit(url).hostname} took too long to send the app's details.")
     except providers.ProviderError as e:
         raise OAuthError("invalid_client", f"The app's details address is not usable: {e}") from None
     except httpx.HTTPError:
@@ -257,32 +372,36 @@ def _fetch_metadata(url: str) -> dict:
         raise OAuthError("invalid_client", "The app's details document is not JSON.") from None
 
 
-def metadata_client(url: str) -> dict | None:
+def _read_metadata(url: str) -> dict:
+    """Fetch and check an app's metadata document -> its client record. Raises OAuthError."""
+    doc = _fetch_metadata(url)
+    uris = doc.get("redirect_uris") if isinstance(doc, dict) else None
+    if not isinstance(doc, dict) or doc.get("client_id") != url:
+        raise OAuthError("invalid_client", "The app's details document names a different client.")
+    if not isinstance(uris, list) or not uris or len(uris) > 20 or not all(redirect_ok(u) for u in uris):
+        raise OAuthError("invalid_client", "The app's details document has no usable return address.")
+    if (doc.get("token_endpoint_auth_method") or "none") != "none":
+        raise OAuthError("invalid_client", "Only public apps (token_endpoint_auth_method none) are supported.")
+    host = urlsplit(url).hostname
+    return {"name": str(doc.get("client_name") or host).strip()[:80] or host, "redirect_uris": uris, "auth": "none",
+            "created": int(time.time()), "cimd": True, "host": host}
+
+
+def metadata_client(url: str, fetch: bool = True) -> dict | None:
     if not _cimd_url_ok(url):
         return None
-    now = time.time()
     hit = _cimd.get(url)
-    if hit and hit[0] > now:
+    if hit and hit[0] > time.time():
         return hit[1]
-    try:
-        doc = _fetch_metadata(url)
-        uris = doc.get("redirect_uris") if isinstance(doc, dict) else None
-        if not isinstance(doc, dict) or doc.get("client_id") != url:
-            raise OAuthError("invalid_client", "The app's details document names a different client.")
-        if not isinstance(uris, list) or not uris or len(uris) > 20 or not all(redirect_ok(u) for u in uris):
-            raise OAuthError("invalid_client", "The app's details document has no usable return address.")
-        if (doc.get("token_endpoint_auth_method") or "none") != "none":
-            raise OAuthError("invalid_client", "Only public apps (token_endpoint_auth_method none) are supported.")
-        host = urlsplit(url).hostname
-        rec = {"name": str(doc.get("client_name") or host).strip()[:80] or host, "redirect_uris": uris, "auth": "none",
-               "created": int(now), "cimd": True, "host": host}
-        if len(_cimd) > 500:
-            _cimd.clear()
-        _cimd[url] = (now + CIMD_TTL, rec)
-        return rec
-    except OAuthError:
-        _cimd[url] = (now + CIMD_FAIL_TTL, None)
+    if not fetch:
         return None
+    from concurrent.futures import TimeoutError as FutureTimeout
+    try:
+        rec = _cimd_future(url).result(timeout=CIMD_DEADLINE + 1)
+    except (OAuthError, FutureTimeout):
+        rec = None
+    _remember(url, rec)
+    return rec
 
 
 def _client_auth(form: dict, basic: str) -> tuple[str, dict]:
@@ -296,7 +415,7 @@ def _client_auth(form: dict, basic: str) -> tuple[str, dict]:
             cid, secret = unquote(a), unquote(b)
         except Exception:
             raise OAuthError("invalid_client", "The client credentials could not be read.", 401)
-    rec = client(cid)
+    rec = client(cid, fetch=False)  # a metadata document was read before this, off the request threads (ensure_client)
     if rec is None:
         raise OAuthError("invalid_client", "This app is not registered here (any more). Connect it again.", 401)
     if rec.get("secret") and not _eq(_h(secret or ""), rec["secret"]):
@@ -312,9 +431,10 @@ def _canon(uri: str) -> str:
 
 
 def check_authorize(params: dict, headers: dict) -> tuple[dict, dict]:
-    """Validate an authorization request. Problems with the client or redirect address raise OAuthError (shown as
-    a page, never redirected); the rest raise RedirectError so the app hears about them."""
-    rec = client(params.get("client_id", ""))
+    """Validate an authorization request. Every problem raises OAuthError and is shown as a page, never sent to the
+    return address: anyone can register a client with any https return address, so an error redirect would let a
+    link on this site bounce a signed-in person to any site (real apps always send a valid request)."""
+    rec = client(params.get("client_id", ""), fetch=False)
     if rec is None:
         raise OAuthError("invalid_client", "OpenSketch does not know this app, or could not read its details. Remove the connector in the app and add it again.")
     redirect = params.get("redirect_uri") or (rec["redirect_uris"][0] if len(rec["redirect_uris"]) == 1 else "")
@@ -322,25 +442,18 @@ def check_authorize(params: dict, headers: dict) -> tuple[dict, dict]:
         raise OAuthError("invalid_request", "The app sent a return address it did not register.")
     state = params.get("state", "")
     if params.get("response_type") != "code":
-        raise RedirectError(redirect, state, "unsupported_response_type", "Only response_type=code is supported.", headers)
+        raise OAuthError("unsupported_response_type", "The app asked for something other than a sign-in code (response_type=code).")
     if params.get("code_challenge_method") != "S256" or not (43 <= len(params.get("code_challenge", "")) <= 128):
-        raise RedirectError(redirect, state, "invalid_request", "PKCE with S256 is required.", headers)
+        raise OAuthError("invalid_request", "The app did not protect the sign-in with PKCE (S256).")
     res = params.get("resource")
     if res and _canon(res) not in (_canon(resource_url(headers)), _canon(base_url(headers))):
-        raise RedirectError(redirect, state, "invalid_target", "This server only issues tokens for its own MCP endpoint.", headers)
+        raise OAuthError("invalid_target", "The app asked to sign in to a different server.")
     scope = params.get("scope") or SCOPE
     if any(s not in (SCOPE, "openid", "profile", "email", "offline_access") for s in scope.split()):
-        raise RedirectError(redirect, state, "invalid_scope", f"The only scope is {SCOPE}.", headers)
+        raise OAuthError("invalid_scope", f"The app asked for more than OpenSketch offers (scope {SCOPE}).")
     req = {"client_id": params["client_id"], "redirect_uri": redirect, "state": state,
            "code_challenge": params["code_challenge"], "resource": resource_url(headers), "scope": SCOPE}
     return rec, req
-
-
-class RedirectError(OAuthError):
-    def __init__(self, redirect: str, state: str, error: str, description: str, headers: dict):
-        super().__init__(error, description)
-        self.location = with_query(redirect, error=error, error_description=description, state=state or None,
-                                   iss=base_url(headers))
 
 
 def with_query(uri: str, **q) -> str:
@@ -423,7 +536,15 @@ def token(form: dict, basic: str = "") -> dict:
             d = _load()
             gid = "osg_" + secrets.token_urlsafe(12)
             now = int(time.time())
-            host = urlsplit(c["redirect_uri"]).hostname or urlsplit(c["redirect_uri"]).scheme
+            r = urlsplit(c["redirect_uri"])
+            host = r.hostname or r.scheme
+            # one connection per person and app: the same client, or the same app registered again (Claude
+            # registers on every connect) returning to the same public https host
+            same = [k for k, g in d["grants"].items() if g["user"] == c["user"] and (
+                g["client_id"] == cid or (r.scheme == "https" and host not in ("localhost", "127.0.0.1", "::1")
+                                          and g.get("name") == rec["name"] and g.get("host") == host))]
+            for k in same:
+                d["grants"].pop(k, None)
             d["grants"][gid] = {"user": c["user"], "client_id": cid, "name": rec["name"], "host": host,
                                 "resource": c["resource"], "created": now, "last_used": now}
             out = _new_tokens(d, gid)
@@ -465,9 +586,9 @@ def revoke(form: dict, basic: str = "") -> None:
 
 def user_for_access(tok: str) -> tuple[bool, dict | None]:
     """(valid, person) for a Bearer token on the MCP endpoint. Person None = a server without accounts."""
-    if not tok or not tok.startswith("osa_"):
+    if not tok or not tok.startswith("osa_") or len(tok) > 100:
         return False, None
-    d = _load()
+    d = _view()
     a = d["access"].get(_h(tok))
     now = time.time()
     if not a or a["exp"] < now:
@@ -476,10 +597,9 @@ def user_for_access(tok: str) -> tuple[bool, dict | None]:
     if not g:
         return False, None
     from . import accounts
-    users = accounts.list_users()
     if g["user"] in ("server", "local"):
-        user = next((u for u in users if u["role"] == "owner"), None)
-        if users and user is None:
+        user = accounts.owner()
+        if user is None and accounts.any_users():
             return False, None
     else:
         user = accounts.get(g["user"])
@@ -499,7 +619,7 @@ def user_for_access(tok: str) -> tuple[bool, dict | None]:
 # ----------------------------------------------------------------------------- the person's own list
 
 def grants_for(user_id: str) -> list[dict]:
-    d = _load()
+    d = _view()
     out = [{"id": k, "name": g["name"], "host": g.get("host", ""), "created": g["created"], "last_used": g.get("last_used")}
            for k, g in d["grants"].items() if g["user"] == user_id]
     return sorted(out, key=lambda g: -(g["last_used"] or 0))

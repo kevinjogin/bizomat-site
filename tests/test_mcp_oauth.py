@@ -141,9 +141,11 @@ def test_sign_in_consent_tokens_and_files_are_per_person(app):
     # unknown client or unregistered return address: a page, never a redirect
     assert owner.get(q.replace(info["client_id"], "osc_nope"), follow_redirects=False).status_code == 400
     assert owner.get(q.replace("claude.ai", "evil.example"), follow_redirects=False).status_code == 400
-    # no PKCE: back to the app with an error
+    # no PKCE (or any other bad request): a page too, never a redirect (anyone can register any return address,
+    # so an error redirect would make this site bounce signed-in people anywhere)
     r = owner.get(q.replace("S256", "plain"), follow_redirects=False)
-    assert r.status_code == 302 and "error=invalid_request" in r.headers["location"]
+    assert r.status_code == 400 and "location" not in r.headers and b"PKCE" in r.content
+    assert owner.get(q.replace("response_type=code", "response_type=x"), follow_redirects=False).status_code == 400
     # Cancel
     page = owner.get(q)
     req = re.search(r'name="req" value="([^"]+)"', page.text).group(1)

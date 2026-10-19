@@ -8,9 +8,13 @@ Three modes:
 - open: no password and no accounts (a private codespace). Anyone who reaches the app can use it; the
   account menu offers to create the owner account, which turns sign-in on.
 
-The MCP endpoint is /mcp/<token>. Claude's connector cannot sign in, so the address itself is the key:
-the token is derived from the password (or from a random secret kept in the data folder when there is no
-password), or set directly with OPENSKETCH_MCP_TOKEN. Accounts do not change it.
+The private MCP address is /mcp/<token> (for AI apps that cannot sign in; the others use /mcp with OAuth, mcpauth.py):
+the address itself is the key. The server owner keeps the server-wide token from before accounts (derived from the
+password, or from a random secret kept in the data folder when there is no password, or set directly with
+OPENSKETCH_MCP_TOKEN), so connectors added then keep working. Every other person's token is keyed by the data
+folder's random secret (data_secret) and a counter: never by the server password, which would let anyone holding
+their own address guess the password offline. A new address (Account settings, or a password change) bumps the
+counter; the owner's first new address leaves the server-wide token too.
 """
 
 from __future__ import annotations
@@ -48,22 +52,28 @@ def _mac(label: str, n: int) -> str:
     return hmac.new(_base_secret(), label.encode(), hashlib.sha256).hexdigest()[:n]
 
 
+_secrets: dict[str, bytes] = {}  # data folder -> its secret.keys (read once: every MCP and SOLIDWORKS call needs it)
+
+
 def data_secret(label: str) -> bytes:
     """A key from a random secret kept in the data folder, never from the server password (a short password
     must not be guessable offline from a signed link or cookie)."""
     from . import store
     p = store.data_dir() / "secret.keys"
-    if not p.exists():
-        tmp = p.with_name(p.name + f".{secrets.token_hex(4)}.tmp")
-        tmp.write_text(secrets.token_hex(32))
-        tmp.chmod(0o600)
-        try:
-            os.link(tmp, p)  # first writer wins
-        except FileExistsError:
-            pass
-        finally:
-            tmp.unlink()
-    return hmac.new(p.read_text().strip().encode(), label.encode(), hashlib.sha256).digest()
+    base = _secrets.get(str(p))
+    if base is None or not p.exists():
+        if not p.exists():
+            tmp = p.with_name(p.name + f".{secrets.token_hex(4)}.tmp")
+            tmp.write_text(secrets.token_hex(32))
+            tmp.chmod(0o600)
+            try:
+                os.link(tmp, p)  # first writer wins
+            except FileExistsError:
+                pass
+            finally:
+                tmp.unlink()
+        base = _secrets[str(p)] = p.read_text().strip().encode()
+    return hmac.new(base, label.encode(), hashlib.sha256).digest()
 
 
 def _eq(a, b) -> bool:
@@ -83,27 +93,49 @@ def check_token(token: str) -> bool:
     return resolve_mcp(token)[0]
 
 
+def _person_token(user_id: str, n: int) -> str:
+    return hmac.new(data_secret("mcp-address"), f"{user_id}:{n}".encode(), hashlib.sha256).hexdigest()[:32]
+
+
 def mcp_token_for(user: dict | None) -> str:
-    """The connector address key for one person. The server owner (and a server without accounts) keeps the
-    server-wide address, so a connector added before accounts keeps working; every other account gets its own,
-    which only reaches that person's Files."""
-    if user is None or user.get("legacy") or user.get("role") == "owner":
+    """The private connector address key for one person, which only reaches that person's Files. The server owner
+    (and a server without accounts) keeps the server-wide address until they ask for a new one, so a connector
+    added before accounts keeps working."""
+    from . import accounts
+    if user is None or user.get("legacy"):
         return mcp_token()
-    return _mac("mcp:" + user["id"], 32)
+    n = accounts.mcp_counter(user["id"])
+    if user.get("role") == "owner" and n == 0:
+        return mcp_token()
+    return _person_token(user["id"], n)
+
+
+def _address_index(data: dict) -> dict:
+    """sha256(private address key) -> account id, for every account that has its own key."""
+    out = {}
+    for u in data["users"]:
+        n = int(u.get("mcp_n", 0))
+        if u["role"] == "owner" and n == 0:
+            continue  # the server-wide key
+        out[hashlib.sha256(_person_token(u["id"], n).encode()).hexdigest()] = u["id"]
+    return out
 
 
 def resolve_mcp(token: str) -> tuple[bool, dict | None]:
     """(valid, person) for an MCP address key. The server-wide key acts as the server owner once accounts
-    exist; None as the person means no accounts (everything is shared)."""
-    if not token:
+    exist (until the owner makes a new address); None as the person means no accounts (everything is shared).
+    A lookup by the key's hash: no work per account on a request (anyone can send one)."""
+    if not token or len(token) > 200:
         return False, None
     from . import accounts
-    users = accounts.list_users()
-    if _eq(token, mcp_token()):
-        return True, next((u for u in users if u["role"] == "owner"), None)
-    for u in users:
-        if u["role"] != "owner" and _eq(token, _mac("mcp:" + u["id"], 32)):
-            return True, u
+    owner = accounts.owner()
+    if (owner is None or accounts.mcp_counter(owner["id"]) == 0) and _eq(token, mcp_token()):
+        return True, owner
+    uid = accounts.derived("mcp-addresses", _address_index).get(hashlib.sha256(token.encode()).hexdigest())
+    if uid:
+        user = accounts.get(uid)
+        if user:
+            return True, user
     return False, None
 
 
@@ -146,10 +178,10 @@ def _cookie(scope, name: str) -> str:
     return v.value if v else ""
 
 
-def current_user(scope) -> dict | None:
+def current_user(scope, m: str | None = None) -> dict | None:
     """The signed-in person, or None. In password mode the old password cookie stands for the server."""
     from . import accounts
-    m = mode()
+    m = m or mode()
     if m == "accounts":
         return accounts.session_user(_cookie(scope, ACCOUNT_COOKIE))
     if m == "password":
@@ -208,6 +240,7 @@ button:hover:after{{transform:translateX(3px)}}
 .note b{{color:var(--text);font-weight:600}}.note.center{{text-align:center;margin-top:12px}}
 button.ghost{{margin-top:10px;background:transparent;box-shadow:inset 0 0 0 1px var(--line2);color:var(--text)}}button.ghost:after{{display:none}}button.ghost:hover{{background:rgba(255,255,255,.05)}}
 .links{{margin-top:18px;display:flex;justify-content:space-between;gap:12px;font-size:13px}} a{{color:var(--link);text-decoration:none}} a:hover{{text-decoration:underline}}
+a:focus-visible,button:focus-visible{{outline:2px solid var(--link);outline-offset:3px;border-radius:4px}} button:focus-visible{{border-radius:21px}}
 .foot{{position:absolute;bottom:20px;left:32px;right:32px;display:flex;justify-content:space-between;color:var(--muted);font-size:12px}}.foot a{{color:var(--muted)}}.foot a:hover{{color:var(--text)}}
 @media (max-width:900px){{.wrap{{grid-template-columns:1fr;gap:28px;padding:96px 20px 64px;max-width:480px}}.pitch h2{{font-size:36px}}.brand{{left:20px;top:22px}}.card{{padding:26px 22px}}.foot{{left:20px;right:20px}}.band{{height:62vh}}}}
 @media (prefers-reduced-motion:reduce){{*,*:before,*:after{{animation:none!important;transition:none!important}}}}
@@ -240,6 +273,13 @@ def consent_page(app_name: str, redirect_uri: str, user: dict | None, req: str, 
     sub = f"{name} wants to work in your OpenSketch files." + (f" Its details come from <b>{_esc(app_host)}</b>." if app_host else "")
     return _page(f"Connect {name}", sub, "/oauth/authorize", fields,
                  "Allow", "/", "", links, top)
+
+
+def notice_page(title: str, sub: str, message: str = "", button: str = "Go to OpenSketch", href: str = "/") -> bytes:
+    """A page with one message and a way on (no form to fill)."""
+    page = _page(title, sub, "/", [], button, "/", message)
+    return page.replace(b'method="post" action="/"', f'method="get" action="{_esc(href)}"'.encode()).replace(
+        b'<input type="hidden" name="next" value="/">', b"")
 
 
 def oauth_problem_page(message: str) -> bytes:
@@ -312,9 +352,14 @@ account and remove your sign-in details, ask the person who runs this server or 
 </main></body></html>"""
 
 
-def _field(name: str, label: str, kind: str = "text", auto: str = "", focus: bool = False, value: str = "", note: str = "") -> str:
+def _field(name: str, label: str, kind: str = "text", auto: str = "", focus: bool = False, value: str = "", note: str = "",
+           invalid: bool = False) -> str:
+    """A labelled input; its note and (when invalid) the page's error are read out with it (aria-describedby)."""
+    described = " ".join(x for x in ((f"{name}-note" if note else ""), ("err" if invalid else "")) if x)
     return (f'<label for="{name}">{label}</label><input id="{name}" name="{name}" type="{kind}" autocomplete="{auto}"'
-            f' value="{_esc(value)}"{" autofocus" if focus else ""} required>' + (f'<div class="note">{note}</div>' if note else ""))
+            f' value="{_esc(value)}"{" autofocus" if focus else ""} required'
+            + (f' aria-describedby="{described}"' if described else "") + (' aria-invalid="true"' if invalid else "") + '>'
+            + (f'<div class="note" id="{name}-note">{note}</div>' if note else ""))
 
 
 GOOGLE_G = ('<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.8 6C12.4 13.7 17.7 9.5 24 9.5z"/>'
@@ -334,7 +379,7 @@ def _google_block(nxt: str = "/", invite: str = "", label: str = "Continue with 
 
 def _page(title, sub, action, fields, button, nxt="/", error="", links="", top="") -> bytes:
     return PAGE.format(title=title, sub=sub, action=action, fields="".join(fields), button=button, next=_esc(nxt), top=top,
-                       error=f'<div class="err" role="alert">{_esc(error)}</div>' if error else "", links=links).encode()
+                       error=f'<div class="err" id="err" role="alert">{_esc(error)}</div>' if error else "", links=links).encode()
 
 
 def _login_page(nxt, error="", email=""):
@@ -343,20 +388,21 @@ def _login_page(nxt, error="", email=""):
               '<span class="note">Forgot your password? Ask the server owner for help.</span>')
     signup = '<a href="/signup">Create an account</a>' if accounts.settings()["open_signup"] else ""
     links = f'<div class="links">{forgot}{signup}</div>'
-    if accounts.access_code():
-        links += '<div class="links"><a href="/access">Have an early access code?</a></div>'
+    if accounts.access_code():  # keeps `next`, so an AI app's sign-in (/oauth/authorize) carries on after the code
+        q = "?" + urlencode({"next": nxt}) if nxt and nxt != "/" else ""
+        links += f'<div class="links"><a href="/access{_esc(q)}">Have an early access code?</a></div>'
     return _page("Sign in", "Sign in to your OpenSketch account.", "/login",
                  [_field("email", "Email", "email", "username", not email, email),
-                  _field("password", "Password", "password", "current-password", bool(email))], "Sign in", nxt, error, links,
-                 _google_block(nxt))
+                  _field("password", "Password", "password", "current-password", bool(email), invalid=bool(error))],
+                 "Sign in", nxt, error, links, _google_block(nxt))
 
 
 def _access_page(nxt="/", error="", code=""):
     """Early access: type the owner's code, skip sign-up, work as an Internal tester (accounts.create_tester)."""
     return _page("Early access", "Enter your access code to try OpenSketch. No account or AI key needed.", "/access",
-                 [_field("code", "Access code", "text", "off", True, code).replace(
+                 [_field("code", "Access code", "text", "off", True, code, invalid=bool(error)).replace(
                      'autocomplete="off"', 'autocomplete="off" spellcheck="false" autocapitalize="off"')], "Start", nxt, error,
-                 '<div class="links"><a href="/login">I have an account</a></div>')
+                 f'<div class="links"><a href="/login{_esc("?" + urlencode({"next": nxt}) if nxt and nxt != "/" else "")}">I have an account</a></div>')
 
 
 def _access_closed_page() -> bytes:
@@ -383,8 +429,8 @@ def _setup_page(nxt, error="", form=None):
     if password():
         f.append(_field("server_password", "Server password", "password", "off",
                         note="The OPENSKETCH_PASSWORD this server was started with. It proves you own it."))
-    return _page("Create the owner account", "OpenSketch now uses accounts. The first account owns this server "
-                 "and can invite other people.", "/setup", f, "Create account", nxt, error)
+    return _page("Create the owner account", "You will own this server and can invite people.", "/setup", f,
+                 "Create account", nxt, error)
 
 
 def _join_page(token, error="", form=None):
@@ -410,7 +456,8 @@ async def _send(send, status: int, body: bytes, headers: list) -> None:
     await send({"type": "http.response.body", "body": body})
 
 
-TOO_MANY = "Too many tries. Wait a minute, then try again."
+TOO_MANY = "Too many tries. Wait a few minutes, then try again."
+TOO_MANY_NEW = "Too many new accounts from this network. Try again in an hour."
 HTML = [(b"content-type", b"text/html; charset=utf-8"), (b"cache-control", b"no-store"),
         (b"x-frame-options", b"DENY"), (b"referrer-policy", b"same-origin")]
 
@@ -448,23 +495,61 @@ async def _form(receive) -> dict:
     return {k: v[0] for k, v in parse_qs(body.decode(errors="ignore")).items()}
 
 
-# Sign-in guesses: at most LIMIT failures a minute per address and per email, then a short wait.
+# Sign-in guesses: at most LIMIT failures per WINDOW for one email, and per IP_WINDOW from one client address
+# (IPv6: one /64), then a wait. New accounts (early access, open sign-up): at most NEW_PER_HOUR per address an hour.
 LIMIT = 8
+WINDOW = 15 * 60
+IP_WINDOW = 5 * 60
+NEW_PER_HOUR = 30
 _fails: dict[str, list[float]] = {}
+_made: dict[str, list[float]] = {}
+
+
+def _net(ip: str) -> str:
+    """One client for the limits: an IPv6 address counts as its /64 (one home or one server holds a whole /64)."""
+    import ipaddress
+    try:
+        a = ipaddress.ip_address(ip.strip().strip("[]").split("%")[0])
+    except ValueError:
+        return ip
+    if a.version == 6 and a.ipv4_mapped:
+        return str(a.ipv4_mapped)
+    return str(ipaddress.ip_network(f"{a}/64", strict=False)) if a.version == 6 else str(a)
 
 
 def _client(scope) -> str:
     h = _headers(scope)
     ip = h.get("fly-client-ip") or (h.get("x-forwarded-for") or "").split(",")[0].strip()
-    return ip or (scope.get("client") or ("?",))[0]
+    return _net(ip or (scope.get("client") or ("?",))[0])
+
+
+def _window(key: str) -> float:
+    return WINDOW if key.startswith("email:") else IP_WINDOW
+
+
+def _prune(table: dict, window, keep: int = 5000) -> None:
+    """Forget keys whose last entry is older than their window, never the whole table (clearing it let anyone reset
+    a counter by filling it); past keep * 4 keys, the quietest go."""
+    import time
+    if len(table) <= keep:
+        return
+    now = time.time()
+    for k in [k for k, v in table.items() if not v or now - v[-1] >= window(k)]:
+        table.pop(k, None)
+    if len(table) > keep * 4:
+        for k in sorted(table, key=lambda k: table[k][-1])[:len(table) - keep * 2]:
+            table.pop(k, None)
 
 
 def _limited(*keys: str) -> bool:
     import time
     now = time.time()
     for k in keys:
-        recent = [t for t in _fails.get(k, []) if now - t < 60]
-        _fails[k] = recent
+        recent = [t for t in _fails.get(k, []) if now - t < _window(k)]
+        if recent:
+            _fails[k] = recent
+        else:
+            _fails.pop(k, None)
         if len(recent) >= LIMIT:
             return True
     return False
@@ -472,10 +557,22 @@ def _limited(*keys: str) -> bool:
 
 def _failed(*keys: str) -> None:
     import time
-    if len(_fails) > 5000:
-        _fails.clear()
+    _prune(_fails, _window)
     for k in keys:
         _fails.setdefault(k, []).append(time.time())
+
+
+def _new_account_ok(scope) -> bool:
+    """Counts one new account from this address; False past NEW_PER_HOUR an hour (a script with the code)."""
+    import time
+    now, k = time.time(), _client(scope)
+    _prune(_made, lambda _k: 3600)
+    hits = [t for t in _made.get(k, []) if now - t < 3600]
+    if len(hits) >= NEW_PER_HOUR:
+        _made[k] = hits
+        return False
+    _made[k] = hits + [now]
+    return True
 
 
 OAUTH_PUBLIC = ("/oauth/register", "/oauth/token", "/oauth/revoke")
@@ -526,7 +623,7 @@ class PasswordGate:
             return await _send(send, 200, PRIVACY.encode(), [(b"content-type", b"text/html; charset=utf-8"), (b"cache-control", b"no-cache")])
         from . import accounts
         try:
-            mode()
+            m = mode()
         except accounts.AccountError as e:  # damaged or missing accounts file: closed, never open
             return await _send(send, 503, json.dumps({"error": str(e)}).encode(), [(b"content-type", b"application/json")])
         if path in ("/login", "/setup", "/reset", "/logout", "/signup", "/access") or path.startswith("/join/") or path.startswith("/auth/google"):
@@ -539,8 +636,7 @@ class PasswordGate:
         # The installable-app files hold no data: browsers fetch the manifest without cookies.
         if scope.get("method") in ("GET", "HEAD") and (path in PUBLIC_FILES or path.startswith("/icons/")):
             return await self.app(scope, receive, send)
-        m = mode()
-        user = current_user(scope)
+        user = current_user(scope, m)
         scope.setdefault("state", {})["user"] = user
         if m == "open" or user is not None:
             return await self.app(scope, receive, send)
@@ -587,11 +683,14 @@ class PasswordGate:
             if not accounts.check_access(form.get("code", "")):
                 _failed(ip)
                 await asyncio.sleep(1)  # slow down guessing
-                return await _send(send, 401, _access_page(nxt, "That code is not right. Check it and try again."), HTML)
+                return await _send(send, 401, _access_page(nxt, "That code is not right. Check it and try again.",
+                                                           form.get("code", "")[:40]), HTML)
+            if not _new_account_ok(scope):
+                return await _send(send, 429, _access_page(nxt, TOO_MANY_NEW), HTML)
             try:
                 u = await asyncio.to_thread(accounts.create_tester)
             except accounts.AccountError as e:
-                return await _send(send, 400, _access_page(nxt, str(e)), HTML)
+                return await _send(send, 503, _access_page(nxt, str(e)), HTML)
             return await go(nxt, _set_account_cookie(scope, await asyncio.to_thread(accounts.start_session, u["id"])))
 
         if path == "/signup":
@@ -599,6 +698,8 @@ class PasswordGate:
                 return await go("/login")
             if not post:
                 return await _send(send, 200, _signup_page(nxt), HTML)
+            if not _new_account_ok(scope):
+                return await _send(send, 429, _signup_page(nxt, TOO_MANY_NEW, form), HTML)
             try:
                 u = await asyncio.to_thread(accounts.sign_up, form.get("email", ""), form.get("name", ""), form.get("new_password", ""))
             except accounts.AccountError as e:
@@ -697,7 +798,9 @@ async def _google_flow(path, scope, q, go, send):
         return await go("/login")
     if path == "/auth/google":
         nxt = _safe_next(q.get("next") or "/")
-        url, cookie = oauth.start(_request_base(scope) + "/auth/google/callback", nxt, q.get("invite", "")[:200])
+        me = current_user(scope) if q.get("keep") else None
+        keep = me["id"] if me and me.get("tester") else ""
+        url, cookie = oauth.start(_request_base(scope) + "/auth/google/callback", nxt, q.get("invite", "")[:200], keep)
         c = f"{oauth.STATE_COOKIE}={cookie}; Path=/auth/google; Max-Age={oauth.STATE_TTL}; HttpOnly; SameSite=Lax{_secure(scope)}"
         return await go(url, c.encode())
     clear = f"{oauth.STATE_COOKIE}=; Path=/auth/google; Max-Age=0; HttpOnly; SameSite=Lax".encode()
@@ -720,6 +823,21 @@ async def _google_flow(path, scope, q, go, send):
     if not accounts.any_users():
         return await fail("Create the owner account first, then sign in with Google.")
     verified = info.get("email_verified") in (True, "true")
+    if st.get("k"):  # an early-access tester keeps their work with this Google account (accounts.keep_tester)
+        me = current_user(scope)
+        back = _safe_next(st.get("n") or "/")
+        if not me or me["id"] != st["k"]:
+            return await _send(send, 403, notice_page("Could not keep your work", "Open OpenSketch in the browser you "
+                                                      "used with the access code, then try again.", "This browser is signed in "
+                                                      "to a different account.", href=back), HTML + [(b"set-cookie", clear)])
+        try:
+            if not verified:
+                raise accounts.AccountError("Your Google email is not verified.")
+            await asyncio.to_thread(accounts.keep_tester, me["id"], info["email"], info.get("name") or "", None, info["sub"])
+        except accounts.AccountError as e:
+            return await _send(send, 409, notice_page("Could not keep your work", "Your files are still here, in this "
+                                                      "browser.", str(e), "Back to OpenSketch", back), HTML + [(b"set-cookie", clear)])
+        return await go(back, clear)
     domain = (info.get("email") or "").rsplit("@", 1)[-1].lower()
     managed = domain in ("gmail.com", "googlemail.com") or (info.get("hd") or "").lower() == domain
     try:
