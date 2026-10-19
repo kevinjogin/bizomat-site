@@ -30,10 +30,15 @@ kill_timeout = 15
   auto_start_machines = true
   min_machines_running = 0
 
+  # Past hard_limit requests in flight, Fly's proxy stops sending the machine new ones (they wait at the proxy), while
+  # /healthz, asked inside the machine, still looks fine. Many requests here stay open on purpose: AI chat streams,
+  # the SOLIDWORKS add-in's 25 s long polls, MCP tool calls (minutes), Files pictures drawn on demand; at 100, a couple
+  # of people opening Files with many new pictures could stop the whole site. The server is async and limits the
+  # heavy work itself (CAD worker lanes, picture slots, AI jobs), so the proxy's limit is only a flood guard.
   [http_service.concurrency]
     type = "requests"
-    soft_limit = 50
-    hard_limit = 100
+    soft_limit = 200
+    hard_limit = 1000
 
 [[vm]]
   size = "performance-1x"
