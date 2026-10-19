@@ -7,6 +7,8 @@ from __future__ import annotations
 import json
 import math
 import os
+import posixpath
+import re
 import tempfile
 from pathlib import Path
 
@@ -17,6 +19,8 @@ from fastapi.staticfiles import StaticFiles
 from starlette.background import BackgroundTask
 from starlette.middleware.gzip import GZipMiddleware
 from pydantic import BaseModel
+import anyio
+from starlette.datastructures import Headers
 
 import base64
 import binascii
@@ -1371,7 +1375,7 @@ def review_page(token: str):
     """A published review: the app, read-only, no login (the token is the key), not indexed, no referrer."""
     from . import review
     if review.data_path(token):
-        return HTMLResponse(review.viewer_page(token, STATIC), headers=_REVIEW_HEADERS)
+        return HTMLResponse(_preload_modules(review.viewer_page(token, STATIC)), headers=_REVIEW_HEADERS)
     p = review.html_path(token)  # published before the app viewer
     if p is None:
         raise HTTPException(404, "No such review. It may have been deleted.")
@@ -1379,14 +1383,12 @@ def review_page(token: str):
 
 
 @app.get("/review/{asset:path}")
-def review_asset(asset: str):
-    """The app's own files for the review viewer (its relative paths resolve under /review/)."""
+async def review_asset(asset: str, request: Request):
+    """The app's own files for the review viewer (its relative paths resolve under /review/): served like the app's
+    (ETag, gzip), from the static folder only."""
     if not asset.startswith(_REVIEW_ASSETS):
         raise HTTPException(404)
-    p = (STATIC / asset).resolve()
-    if not p.is_file() or STATIC.resolve() not in p.parents:
-        raise HTTPException(404)
-    return FileResponse(p)
+    return await APP_FILES.get_response(asset, request.scope)
 
 
 # ----------------------------------------------------------------------------- AI apps sign in (OAuth for MCP)
@@ -1539,39 +1541,163 @@ NO_CACHE = {"Cache-Control": "no-cache"}
 
 def _shell_assets() -> list[str]:
     """The files the page needs to start, fetched by the service worker when it installs."""
-    out = ["/css/app.css", "/css/linear.css", "/css/brand.css", "/vendor/three.module.js", "/favicon.svg",
-           "/manifest.webmanifest", "/icons/icon-192.png"]
+    out = ["/css/app.css", "/css/linear.css", "/css/brand.css", *("/" + v for v in _import_map().values()),
+           "/favicon.svg", "/manifest.webmanifest", "/icons/icon-192.png"]
     out += sorted("/" + p.relative_to(STATIC).as_posix() for p in (STATIC / "js").rglob("*.js"))
     return out
 
 
+# ----------------------------------------------------------------------------- the app's own files
+# Text files go out gzipped at level 9, compressed once per file version and kept in memory. Fly's proxy compresses
+# what is not compressed yet, but at a fast level: measured on the live site, three.js came back 307 KB (zstd), 337 KB
+# (br) or 418 KB (gzip) against 265 KB from gzip -9, and app.js 43 KB (zstd) against 37 KB. Hosts with no such proxy
+# (Codespaces, plain Docker) sent everything raw: 2.1 MB on a first load.
+GZIP_STATIC = {".js", ".mjs", ".css", ".svg", ".json", ".webmanifest", ".html", ".txt"}
+GZIP_STATIC_MIN = 1024
+_gz_cache: dict[str, tuple[object, bytes]] = {}  # file or page -> (its version, gzipped bytes)
+
+
+def _accepts_gzip(scope) -> bool:
+    for part in Headers(scope=scope).get("accept-encoding", "").split(","):
+        name, _, params = part.partition(";")
+        if name.strip().lower() in ("gzip", "*"):
+            q = params.strip().replace(" ", "")
+            try:
+                return not q.startswith("q=") or float(q[2:]) > 0
+            except ValueError:
+                return False
+    return False
+
+
+def _gzipped(key: str, version, read) -> bytes:
+    hit = _gz_cache.get(key)
+    if hit and hit[0] == version:
+        return hit[1]
+    data = gzip.compress(read(), compresslevel=9, mtime=0)
+    if len(_gz_cache) > 512:  # the app has under 100 text files; this only guards against odd growth
+        _gz_cache.clear()
+    _gz_cache[key] = (version, data)
+    return data
+
+
+def _etag_matches(scope, etag: str) -> bool:
+    tags = Headers(scope=scope).get("if-none-match", "")
+    return etag in [t.strip().removeprefix("W/") for t in tags.split(",")]
+
+
+async def _text_page(scope, body: bytes, media_type: str, headers: dict) -> Response:
+    """A page made here (index, service worker): an ETag (304 when unchanged), gzipped when the browser takes it."""
+    etag = '"' + hashlib.sha256(body).hexdigest()[:24] + '"'
+    h = {**headers, "ETag": etag, "Vary": "Accept-Encoding"}
+    if _etag_matches(scope, etag):
+        return Response(status_code=304, headers=h)
+    if len(body) >= GZIP_STATIC_MIN and scope.get("method") == "GET" and _accepts_gzip(scope):
+        body = await anyio.to_thread.run_sync(_gzipped, "page:" + etag, etag, lambda: body)
+        h.update({"ETag": "W/" + etag, "Content-Encoding": "gzip"})
+    return Response(body, media_type=media_type, headers=h)
+
+
+def _import_map() -> dict[str, str]:
+    """index.html's import map, paths relative to the static folder ({"three": "vendor/three.module.min.js"})."""
+    m = re.search(r'<script type="importmap">(.*?)</script>', (STATIC / "index.html").read_text(), re.S)
+    try:
+        imports = json.loads(m.group(1))["imports"] if m else {}
+    except (ValueError, KeyError):
+        return {}
+    return {k: posixpath.normpath(v.lstrip("/")) for k, v in imports.items() if not v.startswith(("http:", "https:"))}
+
+
+_IMPORT_RE = re.compile(r"""^[ \t]*(?:import|export)\s*(?:[\w$*{},\s]*?\bfrom\s*)?["']([^"']+)["']""", re.M)
+_preloads: tuple[object, list[str]] = (None, [])
+
+
+def _module_graph(entry: str = "js/app.js") -> list[str]:
+    """Every module app.js loads through static imports (relative to the static folder), worked out from the files
+    themselves, so the list cannot drift. The page preloads them all at once instead of finding them one import
+    level at a time (three levels: about two round trips saved on a first load)."""
+    global _preloads
+    files = sorted((STATIC / "js").rglob("*.js"))
+    version = tuple((str(p), p.stat().st_mtime_ns) for p in files) + ((STATIC / "index.html").stat().st_mtime_ns,)
+    if _preloads[0] == version:
+        return _preloads[1]
+    mapped = _import_map()
+    seen, todo = [], [entry]
+    while todo:
+        rel = todo.pop(0)
+        if rel in seen or not (STATIC / rel).is_file():
+            continue
+        seen.append(rel)
+        for spec in _IMPORT_RE.findall((STATIC / rel).read_text()):
+            if spec in mapped:
+                todo.append(mapped[spec])
+            elif spec.startswith("."):
+                todo.append(posixpath.normpath(posixpath.join(posixpath.dirname(rel), spec)))
+    out = sorted((m for m in seen if m != entry), key=lambda m: (not m.startswith("vendor/"), m))  # three.js first
+    _preloads = (version, out)
+    return out
+
+
+def _preload_modules(page: str) -> str:
+    """index.html with a modulepreload link for every module the app loads (after the import map, which must come
+    first) and a preload of /api/features, which features.js awaits before anything runs. Relative links, so the
+    review viewer under /review/ preloads its own copies."""
+    m = re.search(r'<script type="importmap">.*?</script>\n?', page, re.S)
+    if not m:
+        return page
+    links = "".join(f'<link rel="modulepreload" href="{p}">\n' for p in _module_graph())
+    page = page[:m.end()] + links + page[m.end():]
+    return page.replace("</head>", '<link rel="preload" href="/api/features" as="fetch" crossorigin>\n</head>', 1)
+
+
 @app.get("/sw.js")
-def service_worker():
+async def service_worker(request: Request):
     src = (Path(__file__).parent / "sw.js").read_text()
     src = src.replace("__VERSION__", VERSION).replace("__ASSETS__", json.dumps(_shell_assets()))
-    return Response(src, media_type="application/javascript",
-                    headers={**NO_CACHE, "Service-Worker-Allowed": "/"})
+    return await _text_page(request.scope, src.encode(), "application/javascript",
+                            {**NO_CACHE, "Service-Worker-Allowed": "/"})
 
 
 @app.get("/manifest.webmanifest")
-def manifest():
-    return FileResponse(STATIC / "manifest.webmanifest", media_type="application/manifest+json", headers=NO_CACHE)
+async def manifest(request: Request):
+    res = await APP_FILES.get_response("manifest.webmanifest", request.scope)
+    res.headers["Content-Type"] = "application/manifest+json"
+    return res
 
 
 @app.get("/")
-def index():
-    return FileResponse(STATIC / "index.html", headers=NO_CACHE)
+async def index(request: Request):
+    page = _preload_modules((STATIC / "index.html").read_text())
+    return await _text_page(request.scope, page.encode(), "text/html; charset=utf-8", NO_CACHE)
 
 
 class AppFiles(StaticFiles):
     """The app's files, revalidated on every load (an ETag check, usually a 304), so a deploy is picked up
-    at once instead of after a browser's guessed cache lifetime."""
+    at once instead of after a browser's guessed cache lifetime. Text files are sent gzipped (see GZIP_STATIC)."""
 
     async def get_response(self, path, scope):
         res = await super().get_response(path, scope)
         if res.status_code in (200, 304):
             res.headers["Cache-Control"] = "public, max-age=604800" if path.startswith("icons/") else "no-cache"
+        if Path(path).suffix in GZIP_STATIC:
+            if res.status_code == 304:
+                res.headers["Vary"] = "Accept-Encoding"
+            elif isinstance(res, FileResponse) and res.status_code == 200:
+                res = await self._gzip(res, scope)
         return res
 
+    @staticmethod
+    async def _gzip(res: FileResponse, scope) -> Response:
+        res.headers["Vary"] = "Accept-Encoding"
+        st = res.stat_result or os.stat(res.path)
+        if (st.st_size < GZIP_STATIC_MIN or scope.get("method") != "GET" or "range" in Headers(scope=scope)
+                or not _accepts_gzip(scope)):
+            return res
+        path = str(res.path)
+        body = await anyio.to_thread.run_sync(_gzipped, path, (st.st_mtime_ns, st.st_size), Path(path).read_bytes)
+        headers = {k: v for k, v in res.headers.items() if k not in ("content-length", "accept-ranges", "etag")}
+        headers.update({"etag": "W/" + res.headers["etag"], "content-encoding": "gzip"})
+        return Response(body, headers=headers)
 
-app.mount("/", AppFiles(directory=STATIC), name="static")
+
+APP_FILES = AppFiles(directory=STATIC)
+app.mount("/", APP_FILES, name="static")
