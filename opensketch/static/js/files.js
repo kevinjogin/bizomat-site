@@ -80,8 +80,30 @@ export class FilesView {
 
   get isOpen() { return !!this.el && !this.el.classList.contains('hidden'); }
 
+  // Files actions wait out a server that is starting or busy (no answer, or Fly.io's 502/503/504) for up to ~40 s,
+  // with a note after a moment, so a click never looks ignored (YZ 2026-10-19: Move to Trash "did nothing" while
+  // the server was stalled).
   async req(method, url, body) {
-    const r = await fetch(url, { method, headers: body ? { 'Content-Type': 'application/json' } : {}, body: body ? JSON.stringify(body) : undefined, cache: 'no-store' });
+    const waits = [800, 1500, 3000, 6000, 10000, 15000];
+    let note = null;
+    const slow = setTimeout(() => { note = this.app.toast?.('Waiting for the server. It may be starting up or busy...', 0); }, 2500);
+    try {
+      for (let i = 0; ; i++) {
+        let r = null;
+        try { r = await fetch(url, { method, headers: body ? { 'Content-Type': 'application/json' } : {}, body: body ? JSON.stringify(body) : undefined, cache: 'no-store' }); } catch (_) { r = null; }
+        const away = !r || ([502, 503, 504].includes(r.status) && !(r.headers.get('content-type') || '').includes('json'));
+        if (away) {
+          // a POST that never got an answer may have been done: only repeatable requests are sent again
+          if (i >= waits.length || method === 'POST') throw new Error('The server did not answer. It may be starting up or too busy. Try again in a minute.');
+          await new Promise((ok) => setTimeout(ok, waits[i]));
+          continue;
+        }
+        return await this.answer(r);
+      }
+    } finally { clearTimeout(slow); note?.close(); }
+  }
+
+  async answer(r) {
     if (r.status === 401) { location.href = '/login?next=' + encodeURIComponent(location.pathname + location.search); throw new Error('Sign in first'); }
     const j = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(j.error || j.detail || `HTTP ${r.status}`);
@@ -456,6 +478,10 @@ export class FilesView {
 
   async trashFile(f) {
     const app = this.app;
+    if (this.trashing?.has(f.id)) return;
+    (this.trashing ||= new Set()).add(f.id);
+    const card = () => this.grid?.querySelector(`[data-id="${CSS.escape(f.id)}"]`);
+    card()?.classList.add('working'); // dimmed at once, so the click visibly landed
     try {
       if (app.server.link?.id === f.id) app.server.flush();
       const r = await this.req('DELETE', `/api/docs/${encodeURIComponent(f.id)}`);
@@ -464,7 +490,7 @@ export class FilesView {
       if (app.server.link?.id === f.id) { app.server.unlink({ keepAsDraft: true }); this.trashedOpen = f.id; this.trashedUndo = app.undoStack.length; }
       this.renderNav(); this.renderGrid();
       app.toast?.(`Moved ${f.name} to the Trash.`, 6000, { label: 'Undo', run: () => this.untrash(r) });
-    } catch (err) { message('Move to Trash', esc(err.message)); }
+    } catch (err) { card()?.classList.remove('working'); message('Move to Trash', esc(err.message)); } finally { this.trashing.delete(f.id); }
   }
 
   async untrash(f) {

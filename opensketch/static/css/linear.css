@@ -148,6 +148,10 @@
 .skin-linear .mgrtab.active { background: var(--active-bg); margin-bottom: 0; opacity: 1; }
 .skin-linear .tree-filter { padding: 4px 8px 6px; }
 .skin-linear .tree-filter input { height: 26px; padding: 0 9px; border-radius: 6px; }
+.skin-linear .tree-filtering { margin: 0 0 6px; padding: 4px 4px 4px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--raised); color: var(--text-2); font-size: 12px; }
+.skin-linear .tree-filtering.none { color: var(--text); }
+.skin-linear .tree-filtering .tf-clear { height: 22px; padding: 0 10px; border: 1px solid var(--line); border-radius: 11px; background: var(--field); color: var(--text); }
+.skin-linear .tree-filtering .tf-clear:hover { border-color: var(--accent); }
 .skin-linear .tree { padding: 2px 8px 30px; }
 .skin-linear .tn { height: 26px; border: 0; border-radius: 5px; color: var(--text-2); }
 .skin-linear .tn .ic { width: 15px; height: 15px; margin-right: 7px; opacity: .85; }

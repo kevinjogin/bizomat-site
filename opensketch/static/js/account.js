@@ -1,7 +1,7 @@
 // Account avatar (title bar, right): who is signed in, account settings, invites, look, sign out.
 // The server decides everything (auth.py, accounts.py); this only shows it.
 
-import { contextMenu, dialog, message } from './ui/dialogs.js';
+import { contextMenu, dialog, message, secretField } from './ui/dialogs.js';
 import { escapeHtml as esc } from './model-utils.js';
 import { LOOK, LOOKS, setLook } from './skin.js';
 
@@ -69,13 +69,17 @@ export class Account {
   settings() {
     const u = this.user;
     const body = h('div', 'acct');
-    body.innerHTML = `<label class="acct-l">Name</label><input class="acct-i" name="name" autocomplete="name">
+    // the hidden username tells the browser whose password this is (it is a change-password form), so it never
+    // puts the saved email into another field of the page
+    body.innerHTML = `<input type="email" name="username" autocomplete="username" readonly hidden tabindex="-1">
+      <label class="acct-l">Name</label><input class="acct-i" name="name" autocomplete="name">
       <label class="acct-l">Email</label><div class="acct-v"></div>
       <div class="acct-sep"></div><div class="acct-sub">Change password</div>
       <label class="acct-l acct-cur">Current password</label><input class="acct-i acct-cur" name="cur" type="password" autocomplete="current-password">
       <label class="acct-l">New password</label><input class="acct-i" name="new" type="password" autocomplete="new-password">
       <div class="acct-note">At least 8 characters. Changing it signs you out everywhere.</div><div class="acct-err" role="alert"></div>`;
     body.querySelector('[name=name]').value = u.name;
+    body.querySelector('[name=username]').value = u.email || '';
     if (u.has_password === false) {
       body.querySelectorAll('.acct-cur').forEach((e) => e.remove());
       body.querySelector('.acct-sub').textContent = 'Set a password (you sign in with Google now)';
@@ -205,10 +209,11 @@ export class Account {
     last.innerHTML = '<li>Click <b>Create</b>. Google shows the Client ID and Client secret once: paste both here.</li>';
     body.appendChild(last);
     body.insertAdjacentHTML('beforeend', `<label class="acct-l">Client ID</label><input class="acct-i" name="cid" autocomplete="off" spellcheck="false" placeholder="....apps.googleusercontent.com">
-      <label class="acct-l">Client secret</label><input class="acct-i" name="sec" type="password" autocomplete="off" spellcheck="false" placeholder="${st.enabled && st.source === 'app' ? 'Saved. Paste a new one to change it.' : 'GOCSPX-...'}">
+      <label class="acct-l">Client secret</label><input class="acct-i os-secret" name="sec" type="text" placeholder="${st.enabled && st.source === 'app' ? 'Saved. Paste a new one to change it.' : 'GOCSPX-...'}">
       <div class="acct-note">The secret is stored encrypted on this server and never shown again.</div><div class="acct-err" role="alert"></div>`);
     const cid = body.querySelector('[name=cid]'), sec = body.querySelector('[name=sec]'), err = body.querySelector('.acct-err');
     cid.value = st.client_id || '';
+    secretField(cid); secretField(sec);
     if (st.source === 'server') { cid.disabled = true; sec.disabled = true; }
     body.querySelectorAll('input').forEach((i) => i.addEventListener('keydown', (e) => e.stopPropagation()));
     const call = async (method, payload) => {

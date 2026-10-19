@@ -28,7 +28,7 @@
     <nav id="menubar" class="menubar hidden"></nav>
     <div id="quickaccess" class="quickaccess"></div>
     <div id="doctitle" class="doctitle">Part1 *</div>
-    <div class="search"><input id="cmdsearch" placeholder="Search Commands" autocomplete="off"><div id="cmdsearch-results" class="search-results hidden"></div></div>
+    <form class="search" role="search" autocomplete="off" data-own-form><input id="cmdsearch" type="search" name="os-command-search" placeholder="Search Commands" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Search commands" data-1p-ignore data-lpignore="true" data-bwignore data-form-type="other"><div id="cmdsearch-results" class="search-results hidden"></div></form>
     <div class="title-help" title="Help">?</div>
     <div id="account" class="account" title="Account"></div>
   </header>
@@ -42,7 +42,7 @@
     <aside id="leftpanel">
       <div id="mgrtabs" class="mgrtabs"></div>
       <div id="featuremgr" class="panel-body">
-        <div class="tree-filter"><input id="treefilter" placeholder="&#x1F50D;&#xFE0E; Filter" autocomplete="off"></div>
+        <form class="tree-filter" role="search" autocomplete="off" data-own-form><input id="treefilter" type="search" name="os-tree-filter" placeholder="&#x1F50D;&#xFE0E; Filter" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Filter the design tree" data-1p-ignore data-lpignore="true" data-bwignore data-form-type="other"></form>
         <div id="tree" class="tree" tabindex="0"></div>
       </div>
       <div id="propmgr" class="panel-body hidden"></div>

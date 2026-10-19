@@ -172,6 +172,7 @@ a.fv-pill { line-height: 34px; }
 .fv-card:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px var(--line-2), 0 12px 28px -8px rgba(0, 0, 0, .45); }
 .theme-light .fv-card:hover { box-shadow: 0 0 0 1px var(--line-2), 0 12px 28px -10px rgba(30, 34, 60, .25); }
 .fv-card:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
+.fv-card.working { opacity: .45; pointer-events: none; transform: none; transition: opacity 160ms var(--ease, ease); }
 .fv-card.current { box-shadow: 0 0 0 1.5px var(--accent); }
 .fv-card.opening { opacity: .6; pointer-events: none; }
 .fv-thumb { position: relative; aspect-ratio: 4 / 3; border-radius: 12px 12px 0 0; overflow: hidden; display: grid; place-items: center;

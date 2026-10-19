@@ -4,6 +4,18 @@ import { icon } from '../icons.js';
 import { featureIcon } from '../features.js';
 import { featureSketchIds } from '../model-utils.js';
 
+/** True when the browser filled this field itself (saved email, password manager), not the person. */
+export function autofilled(el) {
+  for (const sel of [':autofill', ':-webkit-autofill']) { try { if (el.matches(sel)) return true; } catch (_) { /* selector not supported */ } }
+  return false;
+}
+
+/** An input event the person made by typing, pasting or dictating (an InputEvent), not an autofill. */
+export function typedInput(e, el) {
+  if (typeof InputEvent !== 'undefined' && !(e instanceof InputEvent)) return false;
+  return !autofilled(el);
+}
+
 const h = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 
 export class FeatureTree {
@@ -12,11 +24,41 @@ export class FeatureTree {
     this.el = document.getElementById('tree');
     this.filter = document.getElementById('treefilter');
     this.expanded = new Set();
-    this.filter.addEventListener('input', () => this.render());
-    this.filter.addEventListener('keydown', (e) => e.stopPropagation());
+    // Only words the person types filter the tree. A browser or password manager that drops a saved email into
+    // the box (YZ 2026-10-19: the tree showed only "yyz.works@gmail.com") fills it without typing: no InputEvent,
+    // or the field matches :autofill. That value is thrown away so the tree never empties by itself.
+    this.filter.value = '';
+    this.filter.addEventListener('input', (e) => {
+      if (this.filter.value && !typedInput(e, this.filter)) this.filter.value = '';
+      this.render();
+    });
+    this.filter.addEventListener('animationstart', (e) => { if (e.animationName === 'os-autofill' && this.filter.value) this.clearFilter(); });
+    this.filter.addEventListener('keydown', (e) => {
+      e.stopPropagation();
+      if (e.key === 'Escape' && this.filter.value) { e.preventDefault(); this.clearFilter(); }
+    });
     this.el.addEventListener('keydown', (e) => {
       if (e.key === 'F2') { const s = this.app.selection.find((x) => ['feature', 'sketch', 'component', 'mate'].includes(x.kind)); if (s) { e.preventDefault(); this.rename(s.id); } }
     });
+  }
+
+  clearFilter(focusTree = false) {
+    this.filter.value = '';
+    this.render();
+    if (focusTree) this.el.focus({ preventScroll: true });
+  }
+
+  // While a filter is on, say so above the tree (with the count and Clear), so a filtered tree is never
+  // mistaken for an empty one.
+  filterNote(q) {
+    if (!q) return;
+    const n = this.el.querySelectorAll('.tn').length;
+    const note = h('div', 'tree-filtering' + (n ? '' : ' none'));
+    const t = h('span'); t.textContent = n ? `${n} item${n === 1 ? '' : 's'} match "${this.filter.value.trim()}"` : `Nothing matches "${this.filter.value.trim()}"`;
+    const b = h('button', 'tf-clear', 'Clear filter'); b.type = 'button';
+    b.onclick = () => this.clearFilter(true);
+    note.append(t, b);
+    this.el.prepend(note);
   }
 
   // which feature absorbs each sketch (first consumer)
@@ -55,7 +97,7 @@ export class FeatureTree {
       this.el.appendChild(n);
       return n;
     };
-    if (app.isAsm) return app.asm.renderTree(this, node);
+    if (app.isAsm) { app.asm.renderTree(this, node); this.filterNote(q); return; }
     const bodies = app.result?.body?.faces?.length ? 1 : 0;
     node({ id: 'root', kind: 'root', name: `${doc.name} (Default<<Default>_Display State 1>)`, ic: 'part', cls: 'root' });
     node({ id: 'history', kind: 'folder', name: 'History', ic: 'history', depth: 1, twisty: false });
@@ -97,6 +139,7 @@ export class FeatureTree {
       }
     });
     if (!placedBar) bar();
+    this.filterNote(q);
   }
 
   dragRollback(e, bar) {

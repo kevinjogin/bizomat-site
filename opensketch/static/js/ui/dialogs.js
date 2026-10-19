@@ -16,6 +16,14 @@ function makeDraggable(dlg, handle) {
   });
 }
 
+/** A field password managers must leave alone (keys, secrets, ids): no saved email or password is put in it. */
+export function secretField(el) {
+  el.autocomplete = 'off'; el.spellcheck = false;
+  el.setAttribute('autocapitalize', 'off');
+  for (const [k, v] of [['data-1p-ignore', ''], ['data-lpignore', 'true'], ['data-bwignore', ''], ['data-form-type', 'other']]) el.setAttribute(k, v);
+  return el;
+}
+
 export function dialog({ title, body, buttons = [], x, y, modal = true, cls = '', onClose }) {
   const back = h('div', 'dlg-back' + (modal ? ' modal' : ''));
   if (!modal) back.style.pointerEvents = 'none';
@@ -25,8 +33,14 @@ export function dialog({ title, body, buttons = [], x, y, modal = true, cls = ''
   head.firstElementChild.textContent = title;
   dlg.setAttribute('role', 'dialog'); dlg.setAttribute('aria-label', title);
   if (modal) dlg.setAttribute('aria-modal', 'true');
-  const b = h('div', 'dlg-b');
+  // Each dialog is its own form, so a browser reads its fields on their own: a password field in one dialog
+  // never makes the browser put a saved email into the FeatureManager filter or another box on the page.
+  const b = h('form', 'dlg-b');
+  b.setAttribute('autocomplete', 'off'); b.noValidate = true;
+  b.addEventListener('submit', (e) => e.preventDefault());
   if (typeof body === 'string') b.innerHTML = body; else b.appendChild(body);
+  // A disabled default button: Enter in a field never "clicks" the first button of the body (implicit submission).
+  b.insertAdjacentHTML('afterbegin', '<button type="submit" disabled hidden aria-hidden="true" tabindex="-1"></button>');
   dlg.append(head, b);
   if (buttons.length) {
     const f = h('div', 'dlg-f');

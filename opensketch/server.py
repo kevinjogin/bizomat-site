@@ -666,7 +666,14 @@ async def api_doc_thumb_put(doc_id: str, request: Request, version: int = 0):
 
 _thumb_jobs: dict[str, threading.Event] = {}
 _thumb_guard = threading.Lock()
-_thumb_slots = threading.BoundedSemaphore(2)  # server-drawn pictures at once (a Files page asks for many)
+# Server-drawn pictures are a background nicety and must never starve the server (2026-10-19: Files visits redrew
+# the 19-part Lavilock assembly again and again while YZ worked; on Fly's shared CPU that used up the burst
+# balance and the server stopped answering). One at a time; big models (imported STEP assemblies) are left to the
+# browser, which draws a picture for free when the file is opened; a model that failed to draw is not tried again
+# until it changes.
+_thumb_slots = threading.BoundedSemaphore(1)
+THUMB_SERVER_MAX = 400 * 1024  # bytes of stored document above which the server does not draw the picture
+_thumb_failed: dict[str, int] = {}  # document id -> version the server could not draw
 
 
 def _render_thumb(doc_id: str) -> None:
@@ -684,7 +691,11 @@ async def api_doc_thumb(doc_id: str, request: Request):
     (once at a time per document) and kept. 404 when the model cannot be drawn (empty or failing)."""
     m = _doc_meta(doc_id, request, trash_ok=True)
     t = m.get("thumb")
-    if not t or (int(t.get("version") or 0) < int(m["version"]) and (m.get("by") == "claude" or t.get("source") == "server")):
+    version = int(m["version"])
+    stale = not t or (int(t.get("version") or 0) < version and (m.get("by") == "claude" or t.get("source") == "server"))
+    if stale and (int(m.get("size") or 0) > THUMB_SERVER_MAX or _thumb_failed.get(doc_id) == version):
+        stale = False  # the browser that opens it draws it; or it failed at this version already
+    if stale:
         with _thumb_guard:
             ev = _thumb_jobs.get(doc_id)
             mine = ev is None
@@ -694,8 +705,9 @@ async def api_doc_thumb(doc_id: str, request: Request):
             if mine:
                 try:
                     await run_in_threadpool(_render_thumb, doc_id)
+                    _thumb_failed.pop(doc_id, None)
                 except Exception:  # nothing to draw (empty, failing): keep the old picture if any
-                    pass
+                    _thumb_failed[doc_id] = version
             else:
                 await run_in_threadpool(ev.wait, 30)
         finally:

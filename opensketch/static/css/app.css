@@ -85,6 +85,21 @@ input, select, button { font: inherit; color: inherit; }
 .panel-body { flex: 1; overflow: auto; min-height: 0; }
 .tree-filter { padding: 4px 6px; }
 .tree-filter input { width: 100%; height: 22px; border: 1px solid var(--border-l); padding: 0 6px; background: #fff; }
+.tree-filter, .search { margin: 0; }
+#treefilter, #cmdsearch { -webkit-appearance: none; appearance: none; box-sizing: border-box; }
+#treefilter::-webkit-search-decoration, #cmdsearch::-webkit-search-decoration { -webkit-appearance: none; }
+/* a browser autofill starts this animation; tree.js and ribbon.js then drop the filled value */
+@keyframes os-autofill { from { outline-color: transparent; } to { outline-color: transparent; } }
+#treefilter:-webkit-autofill, #cmdsearch:-webkit-autofill { animation: os-autofill 1ms; }
+#treefilter:autofill, #cmdsearch:autofill { animation: os-autofill 1ms; }
+.tree-filtering { display: flex; align-items: center; gap: 6px; margin: 0 6px 4px; padding: 3px 4px 3px 8px; border: 1px solid var(--border-l);
+  background: #f7f7f7; color: var(--muted); font-size: 11px; white-space: nowrap; }
+.tree-filtering span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.tree-filtering.none { color: var(--text); }
+.tree-filtering .tf-clear { flex: none; height: 20px; padding: 0 8px; border: 1px solid var(--border); border-radius: 2px; background: #fff; color: var(--text); font: inherit; cursor: pointer; }
+.tree-filtering .tf-clear:hover { background: var(--hover); border-color: var(--hover-b); }
+/* keys and secrets: shown as dots without being a password field (browsers would autofill a password field) */
+.os-secret:not(.shown) { -webkit-text-security: disc; }
 
 /* FeatureManager design tree */
 .tree { outline: none; padding: 2px 0 30px; user-select: none; }

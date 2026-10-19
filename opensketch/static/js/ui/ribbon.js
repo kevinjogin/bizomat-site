@@ -3,6 +3,7 @@
 import { icon } from '../icons.js';
 import { TABS, ASM_TABS, QUICK, MENUS } from '../commands.js';
 import { contextMenu } from './dialogs.js';
+import { typedInput } from './tree.js';
 
 const val = (v) => (typeof v === 'function' ? v() : v);
 const h = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
@@ -149,7 +150,9 @@ export class Ribbon {
       });
       res.classList.toggle('hidden', !items.length);
     };
-    inp.addEventListener('input', show);
+    // typed words only: a browser that autofills a saved email into the box is ignored (see tree.js)
+    inp.addEventListener('input', (e) => { if (inp.value && !typedInput(e, inp)) inp.value = ''; show(); });
+    inp.addEventListener('animationstart', (e) => { if (e.animationName === 'os-autofill') { inp.value = ''; show(); } });
     inp.addEventListener('keydown', (e) => {
       e.stopPropagation();
       if (e.key === 'ArrowDown') { idx = Math.min(items.length - 1, idx + 1); [...res.children].forEach((c, i) => c.classList.toggle('active', i === idx)); }

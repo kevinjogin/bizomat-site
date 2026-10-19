@@ -45,6 +45,34 @@ assemblies only when a part changes.
 
 ## Current state (2026-10-19, v0.6: Files with pictures, installable app, Connect AI for any AI app, Stripe-like brand, text logo, Google sign-in set up in the app, upload links for big MCP imports)
 
+Autofill, PropertyManager tab, stalled server (2026-10-19, YZ's screenshots):
+- The FeatureManager tree showed only "yyz.works@gmail.com": Chrome's password manager treats every field outside a
+  `<form>` as one form, so a password field in a dialog (Account settings, Google client secret, the Connect AI key)
+  made it put the saved email into the tree filter, which then hid every row. Fixes: `#treefilter` and `#cmdsearch` are
+  `type=search` in forms of their own (`form[data-own-form]`, submit prevented in the App constructor, password-manager
+  ignore attributes); every `dialog()` body is its own `<form class="dlg-b">` (submit prevented); Account settings has
+  a hidden `autocomplete="username"` field with the email; the API key and Google client secret are masked text fields
+  (`.os-secret`, `-webkit-text-security`, `dialogs.secretField`), not password fields. `tree.typedInput(e, el)`: only an
+  InputEvent that is not `:autofill` filters (an autofill sends a plain Event; an `os-autofill` animation on
+  `:-webkit-autofill` catches the rest) in tree.js and the command search. While a filter is on, `.tree-filtering`
+  above the tree says "N items match" / "Nothing matches" with Clear filter; Escape clears. Test: tests/js/tree-filter.test.mjs.
+- PropertyManager tab (second manager tab, `app.propertyTab`): the open command's PM; with none open in an assembly,
+  the selected mate's PM (`asm.editMate`), else the Mate PM (preselected faces become Mate Selections); in a part a
+  toast says why it is empty (it did nothing before).
+- "Delete does nothing" and "rebuild error sometimes": Fly logs show the machine stopped answering (PU02 operation timed
+  out, 01:22-01:24 UTC) and ignoring SIGINT/SIGTERM on the next deploy. shared-cpu-2x gets 6.25% of a core per vCPU
+  once its burst balance (5 s at boot, up to 500 s) is spent; Lavilock rebuilds (~11 s CPU here), interference (~29 s)
+  and server-drawn pictures (~15 s each, redrawn on every Files visit after an AI edit or a failed draw) used it up.
+  Fixes: server pictures one at a time, never for documents over `THUMB_SERVER_MAX` (400 KB stored; the browser draws
+  them when opened), and not retried for a version that failed (`server._thumb_failed`); `app.api` turns no answer or
+  a non-JSON 502/503/504 into `serverAway()` (`err.away`), `app.apiPatient` retries rebuilds for ~75 s with the pill
+  saying "Waiting for the server", `rebuildFailed` explains; Files `req` retries repeatable requests (not POST) with a
+  "Waiting for the server" toast after 2.5 s, and Move to Trash dims the card at once (`.fv-card.working`). The real
+  cure is CPU: a performance-1x machine (asked YZ; not changed in fly.toml without his go-ahead).
+  Test: tests/test_files.py::test_server_pictures_spare_the_server. Checked in Chromium: autofill dropped, filter note
+  in dark/light/classic, Enter in the boxes does not reload, Mate PM / mate PM from the tab, regen through two 502s,
+  Move to Trash through three 503s.
+
 Rolled-back parts in assemblies (2026-10-19, YZ: Lavilock O2S6 assembly export "Cannot export Inside_plate<1>: no solid
 body", while part exports worked): Inside_plate's `rollback` was 0 (bar above Imported1, its only feature), so the part
 built to nothing in the assembly, was not drawn, and strict export refused with no reason. A part keeps building to its

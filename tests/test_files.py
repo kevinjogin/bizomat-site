@@ -160,6 +160,32 @@ def test_pictures_from_the_browser_and_drawn_on_the_server():
     assert cp["thumb"] and c.get(f"/api/docs/{cp['id']}/thumb").status_code == 200
 
 
+
+def test_server_pictures_spare_the_server(monkeypatch):
+    """Files visits must not redraw heavy models again and again (2026-10-19: the 19-part Lavilock assembly was
+    redrawn on every visit and the Fly machine stopped answering): big models are left to the browser, and a model
+    that failed to draw is not tried again until it changes."""
+    from opensketch import preview
+    calls = []
+
+    def failing(*a, **k):
+        calls.append(1)
+        raise RuntimeError("cannot draw")
+    monkeypatch.setattr(preview, "render_preview", failing)
+    c = TestClient(server.app)
+    doc_id = c.post("/api/docs", json={"name": "Block", "doc": _block()}).json()["id"]
+    assert c.get(f"/api/docs/{doc_id}/thumb").status_code == 404 and len(calls) == 1
+    assert c.get(f"/api/docs/{doc_id}/thumb").status_code == 404 and len(calls) == 1  # same version: not again
+    store.save(doc_id, _block(), "claude", "AI change")
+    assert c.get(f"/api/docs/{doc_id}/thumb").status_code == 404 and len(calls) == 2  # changed: tried again
+    # a big model (an imported STEP assembly) is never drawn on the server: the browser draws it when opened
+    monkeypatch.setattr(server, "THUMB_SERVER_MAX", 10)
+    big = c.post("/api/docs", json={"name": "Big", "doc": _block()}).json()["id"]
+    assert c.get(f"/api/docs/{big}/thumb").status_code == 404 and len(calls) == 2
+    assert c.put(f"/api/docs/{big}/thumb?version=1", content=_png(), headers={"Content-Type": "image/png"}).status_code == 200
+    assert c.get(f"/api/docs/{big}/thumb").content == _png()
+
+
 def test_connector_addresses_are_personal_and_scoped():
     owner, member = _setup_owner_and_member()
     owner_url = owner.get("/api/connect").json()["mcp_url"]

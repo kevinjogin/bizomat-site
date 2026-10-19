@@ -10,7 +10,7 @@
 //
 // Client steps checked against each vendor's documentation in October 2026.
 
-import { dialog } from './ui/dialogs.js';
+import { dialog, secretField } from './ui/dialogs.js';
 import { FI } from './files.js';
 import { refreshAIStatus } from './aikeys.js';
 
@@ -246,10 +246,12 @@ function keyTab(app, info, close) {
   const step2 = h('div', 'cx-row');
   step2.innerHTML = '<span class="cx-n">2</span>';
   const keyWrap = h('div', 'cx-keywrap');
-  const key = h('input', 'acct-i cx-key'); key.type = 'password'; key.autocomplete = 'off'; key.spellcheck = false; key.setAttribute('aria-label', 'API key');
+  // a masked text field, not type=password: browsers treat any password field as a sign-in form and fill your
+  // saved OpenSketch email and password into this dialog (and nearby fields)
+  const key = h('input', 'acct-i cx-key os-secret'); key.type = 'text'; secretField(key); key.setAttribute('aria-label', 'API key');
   const eye = h('button', 'cx-eye', '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg>');
   eye.title = 'Show or hide the key'; eye.type = 'button';
-  eye.onclick = () => { key.type = key.type === 'password' ? 'text' : 'password'; eye.classList.toggle('on', key.type === 'text'); };
+  eye.onclick = () => { const on = key.classList.toggle('shown'); eye.classList.toggle('on', on); };
   const badge = h('span', 'cx-badge');
   keyWrap.append(key, eye, badge);
   step2.appendChild(keyWrap);

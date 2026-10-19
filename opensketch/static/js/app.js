@@ -61,6 +61,13 @@ function frameForFace(normal, center) {
   return { origin: r(o), xdir: r(x), ydir: r(y), normal: r(n) };
 }
 
+/** The server gave no answer (offline, starting up, or too busy): worth waiting and asking again. */
+export function serverAway() {
+  const e = new Error('The server did not answer. It may be starting up or busy.');
+  e.away = true;
+  return e;
+}
+
 export class App {
   constructor() {
     this.doc = newDoc();
@@ -94,6 +101,8 @@ export class App {
     this.forConstruction = false;
     this.polygonSides = 6;
     this.filletRadius = 5;
+    // the search boxes are forms of their own (so browsers do not autofill them): Enter never reloads the page
+    for (const f of document.querySelectorAll('form[data-own-form]')) f.addEventListener('submit', (e) => e.preventDefault());
     this.buildMgrTabs();
     this.buildHeadsUp();
     this.bindCanvas();
@@ -479,8 +488,12 @@ export class App {
   }
 
   async api(url, body, method = 'POST') {
-    const r = await fetch(url, method === 'GET' ? {} : { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    let r;
+    try {
+      r = await fetch(url, method === 'GET' ? {} : { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    } catch (_) { throw serverAway(); } // no answer at all: offline, or the server is starting up
     const ct = r.headers.get('content-type') || '';
+    if ([502, 503, 504].includes(r.status) && !ct.includes('json')) throw serverAway(); // Fly.io: the machine is waking or too busy
     if (ct.includes('json')) {
       const j = await r.json();
       if (!r.ok && !j.error) throw new Error(j.detail || r.statusText || `HTTP ${r.status}`);
@@ -489,6 +502,23 @@ export class App {
     if (r.status === 401) { location.href = '/login?next=' + encodeURIComponent(location.pathname + location.search); throw new Error('Sign in again'); }
     if (!r.ok) throw new Error(r.statusText || `HTTP ${r.status}`);
     return r;
+  }
+
+  // A rebuild waits out a server that is starting or busy instead of failing at once (Fly.io wakes a stopped
+  // machine in 10-30 s and answers 502 meanwhile). Up to ~75 s; the loading pill says what it is waiting for.
+  async apiPatient(url, body, done) {
+    const waits = [1000, 2000, 4000, 8000, 15000, 15000, 30000];
+    for (let i = 0; ; i++) {
+      try { return await this.api(url, body); } catch (err) {
+        if (!err.away || i >= waits.length) throw err;
+        done?.relabel?.('Waiting for the server');
+        await new Promise((ok) => setTimeout(ok, waits[i]));
+      }
+    }
+  }
+
+  rebuildFailed(err) {
+    this.toast(err.away ? 'Rebuild failed: the server did not answer for over a minute. Your model is kept. Press Ctrl+B to try again.' : 'Rebuild failed: ' + err.message, err.away ? 9000 : 3200);
   }
 
   // ------------------------------------------------------------------ rebuild
@@ -507,7 +537,7 @@ export class App {
     const seq = ++this.regenSeq;
     const done = this.busy(label || (this.viewer.bodyData ? 'Rebuilding' : 'Loading model'));
     let res;
-    try { res = await this.api('/api/regen', { doc: this.docForRegen() }); } catch (err) { done(); this.toast('Rebuild failed: ' + err.message); return; }
+    try { res = await this.apiPatient('/api/regen', { doc: this.docForRegen() }, done); } catch (err) { done(); this.rebuildFailed(err); return; }
     if (seq !== this.regenSeq) { done(); return; }
     this.applyResult(res);
     done();
@@ -529,13 +559,15 @@ export class App {
       if (top.shown) el.classList.remove('hidden');
     };
     job.timer = setTimeout(() => { job.shown = true; show(); }, delay);
-    return () => {
+    const done = () => {
       clearTimeout(job.timer);
       const i = this.busyJobs.indexOf(job);
       if (i < 0) return;
       this.busyJobs.splice(i, 1);
       if (!this.busyJobs.some((j) => j.shown)) el.classList.add('hidden'); else show();
     };
+    done.relabel = (text) => { if (this.busyJobs.includes(job)) { job.label = text; clearTimeout(job.timer); job.shown = true; show(); } };
+    return done;
   }
 
   applyResult(res) {
@@ -2098,12 +2130,25 @@ export class App {
     el.innerHTML = `<span class="bc">${icon(isAssembly(this.doc) ? 'assembly' : 'part', 14)}${esc(this.doc.name)}</span>` + (this.mode === 'sketch' ? `<span class="bc">${icon('sketch_t', 14)}${esc(this.sketcher.sk?.name || '')}</span>` : '');
   }
 
+  // The PropertyManager tab: the open command's PropertyManager. With none open in an assembly it shows mate
+  // properties (YZ 2026-10-19): the selected mate's own PropertyManager, else the Mate PropertyManager with the
+  // selected faces as Mate Selections. In a part there is nothing to show until a command or Edit Feature.
+  propertyTab() {
+    if (this.pm.isOpen) return this.showPanel('pm');
+    if (this.isAsm) {
+      const s = this.selection.find((x) => x.kind === 'mate');
+      const m = s && this.asm.mate(s.id);
+      return m ? this.asm.editMate(m) : this.asm.matePM();
+    }
+    this.toast(this.mode === 'sketch' ? 'Select a sketch entity or dimension to see its properties.' : 'No command is open. Start a command, or right-click a feature and choose Edit Feature.');
+  }
+
   buildMgrTabs() {
     const tabs = [['feature_mgr', 'FeatureManager Design Tree', 'tree'], ['property_mgr', 'PropertyManager', 'pm'], ['config_mgr', 'ConfigurationManager', null], ['dimxpert', 'DimXpertManager', null], ['display_mgr', 'DisplayManager', null]];
     const el = $('mgrtabs');
     tabs.forEach(([ic, title, panel], i) => {
       const t = document.createElement('div'); t.className = 'mgrtab' + (i === 0 ? ' active' : ''); t.title = title; t.innerHTML = icon(ic, 18);
-      t.onclick = () => { if (panel === 'tree') this.showPanel('tree'); else if (panel === 'pm' && this.pm.isOpen) this.showPanel('pm'); else if (!panel) this.toast(title + ' is not available yet.'); };
+      t.onclick = () => { if (panel === 'tree') this.showPanel('tree'); else if (panel === 'pm') this.propertyTab(); else this.toast(title + ' is not available yet.'); };
       el.appendChild(t);
     });
   }

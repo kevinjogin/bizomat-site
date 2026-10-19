@@ -100,7 +100,7 @@ export class AssemblyMode {
     let done = () => {};
     if (!res) {
       done = app.busy(label || (app.viewer.partGeo.size ? 'Rebuilding assembly' : 'Loading assembly'));
-      try { res = await app.api('/api/regen', { doc, known: this.knownKeys() }); } catch (err) { done(); app.toast('Rebuild failed: ' + err.message); return null; }
+      try { res = await app.apiPatient('/api/regen', { doc, known: this.knownKeys() }, done); } catch (err) { done(); app.rebuildFailed(err); return null; }
       if (seq !== app.regenSeq) { done(); return null; }
       // a mesh we thought we had is gone (cache replaced): ask again without the shortcut
       if (res.components.some((c) => !app.viewer.partGeo.get(c.part) && !res.parts[c.part]?.body && res.parts[c.part])) {
