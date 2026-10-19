@@ -8,6 +8,7 @@
   --border-l: #dedede;
   --text: #1e1e1e;
   --muted: #6b6b6b;
+  --faint: #9a9a9a;      /* inactive states (suppressed, rolled back) */
   --hover: #e5f1fb;
   --hover-b: #a8cbea;
   --select: #cce4f7;
@@ -48,7 +49,7 @@ input, select, button { font: inherit; color: inherit; }
 .qa .caret { font-size: 8px; color: #555; margin-left: 1px; }
 .doctitle { flex: 1; text-align: center; font-size: 12px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .search { position: relative; }
-.search input { width: 190px; height: 22px; border: 1px solid var(--border); border-radius: 2px; padding: 0 6px; background: #fff; }
+.search input { width: 190px; height: 22px; border: 1px solid var(--border); border-radius: 2px; padding: 0 6px; background: var(--field, #fff); }
 .search-results { position: absolute; right: 0; top: 24px; width: 260px; background: #fff; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,.18); max-height: 320px; overflow: auto; z-index: 60; }
 .search-results .sr { display: flex; align-items: center; gap: 6px; padding: 4px 8px; cursor: pointer; }
 .search-results .sr:hover, .search-results .sr.active { background: var(--hover); }
@@ -84,7 +85,7 @@ input, select, button { font: inherit; color: inherit; }
 .mgrtab .ic { width: 18px; height: 18px; }
 .panel-body { flex: 1; overflow: auto; min-height: 0; }
 .tree-filter { padding: 4px 6px; }
-.tree-filter input { width: 100%; height: 22px; border: 1px solid var(--border-l); padding: 0 6px; background: #fff; }
+.tree-filter input { width: 100%; height: 22px; border: 1px solid var(--border-l); padding: 0 6px; background: var(--field, #fff); }
 .tree-filter, .search { margin: 0; }
 #treefilter, #cmdsearch { -webkit-appearance: none; appearance: none; box-sizing: border-box; }
 #treefilter::-webkit-search-decoration, #cmdsearch::-webkit-search-decoration { -webkit-appearance: none; }
@@ -110,14 +111,15 @@ input, select, button { font: inherit; color: inherit; }
 .tn .tw { width: 14px; text-align: center; font-size: 8px; color: #555; flex: none; cursor: pointer; }
 .tn .ic { width: 16px; height: 16px; margin-right: 4px; }
 .tn .nm { overflow: hidden; text-overflow: ellipsis; }
-.tn .nm.rename { background: #fff; border: 1px solid var(--accent); padding: 0 2px; outline: none; }
 .tn .badge { display: inline-flex; margin-left: 4px; }
 .tn .badge .ic { width: 13px; height: 13px; }
-.tn.suppressed .nm, .tn.rolledback .nm { color: #9a9a9a; }
+.tn.suppressed .nm, .tn.rolledback .nm { color: var(--faint); }
 .tn.suppressed .ic, .tn.rolledback .ic { opacity: .45; }
 .tn.error .nm { color: var(--sw-red); }
 .tn.proposed .nm { color: #6a3fd6; font-style: italic; }
 .tn.root .nm { font-weight: 600; }
+/* inline rename (F2): a field in the theme's colours, after the state rules so a greyed or red name reads normally */
+.tn .nm.rename { background: var(--field, #fff); color: var(--text); font-style: normal; border: 1px solid var(--accent); padding: 0 2px; outline: none; text-overflow: clip; cursor: text; }
 .rollbar { height: 6px; margin: 2px 6px 2px 14px; background: #3c6fd1; border-top: 2px solid #f2c230; cursor: ns-resize; border-radius: 1px; }
 .rollbar:hover, .rollbar.drag { background: #2050b8; }
 .rollbar-ghost { height: 3px; margin: 0 6px 0 14px; background: #3c6fd1; opacity: .6; }
@@ -146,7 +148,7 @@ input, select, button { font: inherit; color: inherit; }
 .pm-row .ic { width: 18px; height: 18px; }
 .pm-row label { flex: none; }
 .pm-row .grow { flex: 1; min-width: 0; }
-.pm-row select, .pm-row input[type=text], .pm-num input { height: 22px; border: 1px solid var(--border); background: #fff; padding: 0 4px; width: 100%; }
+.pm-row select, .pm-row input[type=text], .pm-num input { height: 22px; border: 1px solid var(--border); background: var(--field, #fff); padding: 0 4px; width: 100%; }
 .pm-num { display: flex; flex: 1; min-width: 0; }
 .pm-num input { border-right: none; }
 .pm-spin { display: flex; flex-direction: column; width: 14px; border: 1px solid var(--border); background: #f6f6f6; }
@@ -183,13 +185,13 @@ input, select, button { font: inherit; color: inherit; }
 #viewport { position: absolute; inset: 0; }
 #viewport canvas { display: block; outline: none; }
 .labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.dimlbl { position: absolute; transform: translate(-50%, -50%); font: 12px/1 Arial, sans-serif; color: #000; padding: 1px 2px; white-space: nowrap; pointer-events: auto; cursor: pointer; user-select: none; }
+.dimlbl { position: absolute; transform: translate(-50%, -50%); font: 12px/1 Arial, sans-serif; color: #000; padding: 1px 3px; border-radius: 2px; background: rgba(255,255,255,.85); white-space: nowrap; pointer-events: auto; cursor: pointer; user-select: none; }
 .dimlbl.under { color: #000; }
 .dimlbl.driven { color: #7a7a7a; }
 .dimlbl.over { color: var(--sketch-over); }
 .dimlbl.hl { color: var(--hl); }
 .dimlbl.sel { color: var(--sel); }
-.dimlbl.preview { color: #444; pointer-events: none; }
+.dimlbl.preview { color: #444; background: transparent; pointer-events: none; }
 .relglyph { position: absolute; transform: translate(-50%, -50%); width: 15px; height: 15px; background: #eef8ee; border: 1px solid #5aaa5a; pointer-events: auto; cursor: pointer; }
 .relglyph .ic { width: 13px; height: 13px; }
 .relglyph.sel { border-color: var(--sel); background: #dbeaff; }
@@ -421,21 +423,21 @@ input, select, button { font: inherit; color: inherit; }
 .srv-connect li { margin: 3px 0; }
 .srv-warn { border: 1px solid #f0d28a; border-left: 3px solid #c8961e; background: #fffbf0; padding: 6px 8px; border-radius: 4px; margin: 6px 0; font-size: 12px; }
 .srv-url { display: flex; gap: 6px; margin: 4px 0; }
-.srv-url input { flex: 1; min-width: 0; font: 11.5px ui-monospace, monospace; padding: 4px 6px; border: 1px solid #c5cad0; border-radius: 3px; }
+.srv-url input { flex: 1; min-width: 0; font: 11.5px ui-monospace, monospace; padding: 4px 6px; border: 1px solid var(--border); border-radius: 3px; }
 
 /* Equations dialog */
 .eqdialog { min-width: 680px; }
 .eqt { border-collapse: collapse; width: 100%; font-size: 12px; }
 .eqt th { text-align: left; font-weight: normal; color: #555; border-bottom: 1px solid #c8c8c8; padding: 3px 4px; }
 .eqt td { padding: 2px 4px; vertical-align: middle; }
-.eqt input { width: 100%; box-sizing: border-box; height: 22px; border: 1px solid #c8c8c8; padding: 0 4px; font: inherit; }
+.eqt input { width: 100%; box-sizing: border-box; height: 22px; border: 1px solid var(--border); padding: 0 4px; font: inherit; }
 .eqt select { height: 22px; font: inherit; }
 .eqsec td { font-weight: 600; padding-top: 8px; border-bottom: 1px solid #e0e0e0; }
 .eqval { min-width: 90px; color: #333; }
 .eqbad { color: var(--sw-red); }
 .eqadd { color: #0a64c8; cursor: pointer; }
 .eqx { cursor: pointer; color: #777; }
-.eqfoot { margin-top: 8px; color: #666; font-size: 11px; }
+.eqfoot { margin-top: 8px; color: var(--muted); font-size: 11px; }
 
 /* Native buttons keep PropertyManager actions keyboard reachable. */
 button.pm-act { padding: 0; background: transparent; font: inherit; }
