@@ -303,6 +303,7 @@ export class Viewer {
   // copied out in the same task (the drawing buffer is still there), then the normal view is drawn again, so it
   // never shows. Returns a Blob (WebP, or PNG where WebP cannot be written) or null when there is nothing to draw.
   async snapshot(W = 480, H = 360) {
+    this.finishGlide(); // the picture shows where the parts are, not part-way to their mates
     const groups = [this.planesGroup, this.overlayGroup, this.sketchGroup, this.toolGroup, this.liveGroup, this.capGroup, this.otherSketches];
     const hasBody = this.instances.some((x) => x.comp || (x.pm?.faces?.length || 0) > 0); // a sketch-only part draws its sketches
     const vis = groups.map((g) => g.visible);
@@ -1239,7 +1240,7 @@ export class Viewer {
       g.matrixWorldNeedsUpdate = true;
     }
     if (!items.length) return;
-    const run = { stopped: false };
+    const run = { stopped: false, items };
     this.glideRun = run;
     this.tweenGroups(items, dur, run).then(() => {
       if (this.glideRun !== run) return;
@@ -1248,6 +1249,18 @@ export class Viewer {
       if (this.clipPlane) this.rebuildCaps();
       this.requestRender();
     });
+  }
+
+  // A glide in flight jumps to its end: every gliding component at its new place at once.
+  finishGlide() {
+    const run = this.glideRun;
+    if (!run) return;
+    run.stopped = true;
+    this.glideRun = null;
+    for (const it of run.items) { it.group.matrix.copy(it.to); it.group.matrixWorldNeedsUpdate = true; }
+    this.bodyGroup.updateMatrixWorld(true);
+    if (this.clipPlane) this.rebuildCaps();
+    this.requestRender();
   }
 
   // Tween groups to new matrices. items: [{group, to: Matrix4, via?: Matrix4, from?: Matrix4, pivot?: Vector3}].

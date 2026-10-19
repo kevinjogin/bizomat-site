@@ -171,7 +171,8 @@ export class AssemblyMode {
   }
 
   draw(res = this.res, doc = this.doc, glide = 0) {
-    if (!res) return;
+    if (!res || !isAssembly(doc)) return;
+    if (this.playing) { this.playCtl?.abort(); this.redrawAfterPlay = true; } // a newer pose wins over a playback
     const app = this.app;
     const proposal = !!app.proposal;
     const proposedComps = new Set(app.proposedIds || []);
@@ -743,6 +744,7 @@ export class AssemblyMode {
     if (!this.asmOnly()) return;
     const app = this.app;
     if (app.cmd) app.pmCancel();
+    app.settleProposal(); // a waiting AI change is kept first, so the mate goes into the document on screen
     this.previewProblem = null;
     const doc = app.doc;
     const m = existing ? clone(existing) : { type: 'coincident', refs: [], align: 'auto' };
@@ -818,9 +820,11 @@ export class AssemblyMode {
         if (mm.type !== 'lock') delete mm.pose;
         if (existing && existing.type !== mm.type) mm.name = this.nextMateName(mm.type);
         if (this.refuseMate(mm, existing)) return false;
-        this.glideNext = true;
+        clearTimeout(this.previewTimer); // a preview still waiting must not run on the cleared selections
         app.commit(existing ? 'Edit ' + name : name, () => {
-          if (existing) { const i = doc.mates.findIndex((x) => x.id === existing.id); doc.mates[i] = mm; } else doc.mates.push(mm);
+          const d = app.doc; // the document now (an AI change may have been kept by the commit)
+          this.glideNext = true; // only when the commit runs: a refused one must not make a later redraw glide
+          if (existing) { const i = d.mates.findIndex((x) => x.id === existing.id); d.mates[i] = mm; } else d.mates.push(mm);
         });
         if (existing) return undefined;
         m.refs = []; labels.length = 0; typed = false; m.type = 'coincident'; m.align = 'auto'; delete m.value; delete m.flip;
@@ -848,6 +852,7 @@ export class AssemblyMode {
     if (!this.asmOnly()) return;
     const app = this.app;
     if (app.cmd) app.pmCancel();
+    app.settleProposal(); // a waiting AI change is kept first, so the mate goes into the document on screen
     this.previewProblem = null;
     const doc = app.doc;
     const m = existing ? clone(existing) : { type: 'hinge', refs: [], planes: [], angle_refs: [] };
@@ -896,9 +901,10 @@ export class AssemblyMode {
         if (!spec.okEnabled()) return false;
         const mm = { ...this.cleanHinge(m, limits), id: existing ? existing.id : this.uid('m'), name: existing ? m.name : this.nextMateName('hinge') };
         if (this.refuseMate(mm, existing)) return false;
-        this.glideNext = true;
         app.commit(existing ? 'Edit ' + mm.name : mm.name, () => {
-          if (existing) { const i = doc.mates.findIndex((x) => x.id === existing.id); doc.mates[i] = mm; } else doc.mates.push(mm);
+          const d = app.doc;
+          this.glideNext = true;
+          if (existing) { const i = d.mates.findIndex((x) => x.id === existing.id); d.mates[i] = mm; } else d.mates.push(mm);
         });
         return undefined;
       },
@@ -928,6 +934,7 @@ export class AssemblyMode {
     if (!this.asmOnly()) return;
     const app = this.app;
     if (app.cmd) app.pmCancel();
+    app.settleProposal(); // a waiting AI change is kept first, so the mate goes into the document on screen
     this.previewProblem = null;
     const doc = app.doc;
     const m = existing ? clone(existing) : { type: 'coupler', input_refs: [], input: 'angle', refs: [], output: 'distance', law: [] };
@@ -1061,16 +1068,17 @@ export class AssemblyMode {
         const id = existing ? existing.id : this.uid('m');
         const mm = { ...this.cleanCoupler(m, mode), id, name: existing ? m.name : this.nextMateName('coupler') };
         if (this.refuseMate(mm, existing)) return false;
-        this.glideNext = true;
         app.commit(existing ? 'Edit ' + mm.name : mm.name, () => {
-          if (existing) { const i = doc.mates.findIndex((x) => x.id === existing.id); doc.mates[i] = mm; } else doc.mates.push(mm);
-          doc.contacts = (doc.contacts || []).filter((k) => k.of !== id);
+          const d = app.doc;
+          this.glideNext = true;
+          if (existing) { const i = d.mates.findIndex((x) => x.id === existing.id); d.mates[i] = mm; } else d.mates.push(mm);
+          d.contacts = (d.contacts || []).filter((k) => k.of !== id);
           if (checkContact && contact.a && contact.b && contact.a !== contact.b) {
             const k = { id: oldContact?.id || this.contactId(), name: `${this.comp(contact.a)?.name || contact.a} on ${this.comp(contact.b)?.name || contact.b}`, a: contact.a, b: contact.b, of: id };
             if (contact.joint) { k.joint = contact.joint; k.from = contact.from ?? this.jointRange(contact.joint)[0]; k.to = contact.to ?? this.jointRange(contact.joint)[1]; }
-            doc.contacts.push(k);
+            d.contacts.push(k);
           }
-          if (!doc.contacts.length) delete doc.contacts;
+          if (!d.contacts.length) delete d.contacts;
         });
         return undefined;
       },
@@ -1194,7 +1202,7 @@ export class AssemblyMode {
     clearTimeout(this.previewTimer);
     const cmd = this.app.cmd;
     this.previewTimer = setTimeout(async () => {
-      if (!cmd || this.app.cmd !== cmd) return; // the Mate PropertyManager closed meanwhile
+      if (!cmd || this.app.cmd !== cmd || m.refs.length < 2) return; // closed, or the selections were cleared (OK)
       const doc = this.app.cleanDoc(this.app.doc);
       const mm = { ...clone(m), id: existing?.id || '_preview', name: 'Preview' };
       if (existing) doc.mates = doc.mates.map((x) => (x.id === existing.id ? mm : x)); else doc.mates.push(mm);
@@ -1300,14 +1308,16 @@ export class AssemblyMode {
   }
 
   // ------------------------------------------------------------------ assembly playback
-  // Components fly in one by one in `sequence` order. A click in the graphics area or Escape stops it, with every
-  // component at its place.
+  // Components fly in one by one in `sequence` order. A click in the graphics area, Escape, the Model or Motion
+  // Review tab, or any newer draw stops it, with every component at its place.
   async playSequence() {
     if (!this.asmOnly()) return;
     const app = this.app, v = app.viewer;
     if (!this.res) await this.regen();
     if (!this.res || this.playing) return;
+    v.finishGlide(); // the targets are where the parts are going, not part-way through a mate's glide
     this.playing = true;
+    this.redrawAfterPlay = false;
     const ctl = new AbortController();
     this.playCtl = ctl;
     const stop = () => ctl.abort();
@@ -1340,11 +1350,13 @@ export class AssemblyMode {
       }
     } finally {
       for (const [id, g] of groups) { g.visible = true; g.matrix.copy(targets.get(id)); g.matrixWorldNeedsUpdate = true; }
-      v.requestRender();
       v.canvas.removeEventListener('pointerdown', stop);
       window.removeEventListener('keydown', onKey, true);
       this.playing = false;
       this.playCtl = null;
+      // a newer draw stopped it: that pose again (Motion Review's when it opened meanwhile, else the document's)
+      if (this.redrawAfterPlay) { if (app.cmd?.key === 'motionreview') app.review.draw(); else this.draw(); }
+      v.requestRender();
       app.status(ctl.signal.aborted ? 'Playback stopped' : 'Playback complete');
     }
   }

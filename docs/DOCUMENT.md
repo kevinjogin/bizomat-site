@@ -371,7 +371,7 @@ deleted.
 ## Sequence
 
 `sequence` lists component ids in the order they were assembled (insertion order if absent).
-The Motion Study tab replays this order: each component flies in from an exploded position and
+Assembly Playback (Assembly tab) replays this order: each component flies in from an exploded position and
 settles onto its mates. The AI fills it as it assembles.
 
 # Import

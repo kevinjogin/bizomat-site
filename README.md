@@ -317,7 +317,8 @@ Task Pane on the right, status bar with Under/Fully/Over Defined and "Editing Sk
   slides along its columns.
 - Open Part edits a component's part in place; Return to Assembly brings the change back as one
   undo step, and mates follow the faces that moved.
-- Motion Study 1 (bottom tab) replays the assembly order: each component flies in and settles.
+- Assembly Playback (Assembly tab, or right-click the assembly) replays the assembly order: each component flies in
+  and settles. The Motion Review tab under the graphics area drives each joint through its travel and checks it.
 - Interference Detection lists overlapping pairs with their volume and shows the clash in red.
 - STEP / STL export of the whole assembly, mass properties with each part's own material.
 

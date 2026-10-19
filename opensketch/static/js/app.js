@@ -364,6 +364,7 @@ export class App {
   // in SOLIDWORKS: the history starts again, so Ctrl+Z can never put the previous model into this one.
   leaveDocument() {
     if (this.proposal) this.rejectProposal(true, 'Not applied: another file was opened.');
+    if (this.review) { this.review.checks = null; this.review.checkedText = null; this.review.checkError = null; } // checks belong to one file
     this.docStack = [];
     this.undoStack = []; this.redoStack = [];
     this.blobs = null;
@@ -616,7 +617,10 @@ export class App {
       t.setAttribute('role', 'tab');
       t.onclick = () => {
         if (t.dataset.tab === 'review') { if (this.cmd?.key !== 'motionreview') this.review.open(); }
-        else if (this.cmd?.key === 'motionreview') this.pmCancel();
+        else {
+          this.asm.stopPlayback(); // Model: a playback stops with every part at its place
+          if (this.cmd?.key === 'motionreview') this.pmCancel();
+        }
         this.syncDocTabs();
       };
     }
@@ -1277,7 +1281,8 @@ export class App {
   // (applyResult clears it), so the model does not flash back to the old body in between.
   closeCommand({ keepPreview = false } = {}) {
     if (this.cmd) this.cmd.cancelled = true;
-    if (this.cmd && this.cmd.onClose) this.cmd.onClose();
+    // a command that fails to close (its document was replaced under it) must not keep the PropertyManager stuck open
+    if (this.cmd && this.cmd.onClose) { try { this.cmd.onClose(); } catch (err) { console.error(err); } }
     this.cmd = null;
     clearTimeout(this.previewTimer);
     clearTimeout(this.asm?.previewTimer); // a mate preview still waiting must not draw after the command ends

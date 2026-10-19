@@ -60,7 +60,7 @@ actions, performance, UI and motion; you own this project"): 14 code auditors (e
 165 confirmed), 6 live journeys in Chromium (94 UX/visual issues), parity, test-health, product-UX and scale audits.
 Fixed in ten workstreams (branches fix/<name>, merged into claude/dazzling-heisenberg-6ndmoc, PR #9), then six
 browser journeys on the merged app found 20 seam bugs, fixed the same day. 389 -> 506 pytest (2 skipped: macro
-toolchain), 72 -> 147 node tests.
+toolchain), 72 -> 155 node tests.
 
 - Accounts and keys: members' and testers' private MCP addresses come from `data_secret("mcp-address")` and a
   per-person counter, never the server password (a tester could brute-force the password from theirs); the owner's
@@ -148,6 +148,16 @@ toolchain), 72 -> 147 node tests.
   jump to the end) or a glide run (stopped: leave the groups where the newer draw put them). The Mate / Hinge /
   Coupler PMs refuse an over-defining mate before gliding. Doc tabs are Model / Motion Review (role tab,
   aria-selected); Assembly Playback stays on the Assembly tab and its context menu.
+  A review of the merge (3 reviewers, 2 skeptics per finding) found 10 seam bugs, all fixed: the glide flag is set
+  inside the mate's commit (a commit refused while the AI builds left it set, so a later undo glided); the Mate /
+  Hinge / Coupler PMs keep a waiting AI change when they open and write into `app.doc` at commit (a mate OK'd while
+  an AI change waited went into the replaced document and was lost); a mate preview still waiting when OK clears the
+  boxes does not run; `viewer.finishGlide()` (snapshot and playback start) puts gliding parts at their place;
+  `asm.draw` stops a playback in progress, and playback ends by drawing the latest pose (the review's when it is open);
+  the Model and Motion Review tabs stop playback; Motion Review waits for a pending AI change, its checks reset with
+  the file (`leaveDocument`), `review.close` / `asm.draw` skip a document that is no longer an assembly, and
+  `closeCommand` lets go of a command whose close throws (an undo back to a part left the PM stuck open); README and
+  DOCUMENT.md say Assembly Playback, not the Motion Study tab. Tests: mate-glide.test.mjs (8, each fails before).
 - Known from the audit, not done: a long rebuild a person abandons still runs, and their next file waits for it in
   their one worker (37 s seen); a tester sees no "Update from Files" for inserted parts (copies); browser and server
   pictures differ slightly in shading; spline/ellipse sketch entities are not drawn in the browser; the 60 KB keepalive

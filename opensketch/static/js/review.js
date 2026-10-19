@@ -40,6 +40,8 @@ export class MotionReview {
   async open() {
     const app = this.app;
     if (!app.isAsm) { app.toast('Motion Review drives the joints of an assembly. Open or create an assembly first.'); return; }
+    if (app.proposal) { app.toast('Accept or reject the AI change first.'); app.syncDocTabs?.(); return; }
+    app.asm.stopPlayback();
     if (app.cmd) app.pmCancel();
     this.work = app.cleanDoc(app.doc);
     this.values = {};
@@ -300,7 +302,7 @@ export class MotionReview {
     this.flagged = new Set();
     this.res = null;
     this.work = null;
-    if (this.readOnly) return;
+    if (this.readOnly || !this.app.isAsm) return; // an undo back to a part: nothing to put back
     this.app.asm.draw();  // back to the document's own pose
   }
 
