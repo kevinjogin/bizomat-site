@@ -89,6 +89,7 @@ export class Toolbox {
     try { cat = await this.load(); } catch (err) { app.toast(err.message); return; }
     const v = cat[f.kind];
     const st = { size: f.size, length: f.length };
+    if (app.cmd) app.pmCancel(); // the open command's own clean-up (preview body, polling) runs first
     app.cmd = { key: 'toolbox', onOk: () => {
       app.commit('Edit ' + f.name, () => {
         const g = app.featureById(f.id);

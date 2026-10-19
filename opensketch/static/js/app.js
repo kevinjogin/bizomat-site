@@ -12,7 +12,7 @@ import { dialog, message, modifyBox, contextMenu, closeMenus } from './ui/dialog
 import { Ribbon } from './ui/ribbon.js';
 import { FeatureTree } from './ui/tree.js';
 import { TaskPane } from './ui/taskpane.js';
-import { buildCommands } from './commands.js';
+import { buildCommands, placeRegistryCommands } from './commands.js';
 import { SPECS, metaFor, buildSpec, defaultsFor, nextName, metaKey, featureIcon } from './features.js';
 import { icon } from './icons.js';
 import { AssemblyMode, isAssembly, newAssembly, hexColor } from './asm.js';
@@ -112,6 +112,8 @@ export class App {
     this.bindKeys();
     this.bindSplitter();
     this.viewer.afterRender.push(() => this.afterRender());
+    // the feature registry came late (server restarting when the page loaded): add its commands now
+    window.addEventListener('opensketch:registry', () => { Object.assign(this.commands, buildCommands(this)); placeRegistryCommands(); this.ribbon.render(); this.design?.refresh(); });
     $('fileinput').addEventListener('change', (e) => this.loadFile(e.target.files[0]));
     $('sb-help').onclick = () => this.shortcutsDialog();
     const th = document.querySelector('#titlebar .title-help');
@@ -122,7 +124,7 @@ export class App {
       const b = document.querySelector('#titlebar .brand');
       if (b) b.innerHTML = '<span class="brand-text">OpenSketch</span>';
       this.review.loadShared(window.OPENSKETCH_REVIEW);
-      this.status('Read-only review. Drag to rotate, scroll to zoom; move the joints in Motion Review.');
+      this.status('Read-only review. Drag to rotate; scroll or pinch to zoom; two fingers pan. Move the joints in Motion Review.');
       return;
     }
     this.buildBrand();
@@ -314,12 +316,23 @@ export class App {
       else this.exitSketch({ silent: true });
     }
     this.closeCommand();
+    // a sketch tool stays armed after undo (as in SOLIDWORKS): its PropertyManager comes back, the old size badge goes
+    if (this.mode === 'sketch' && this.sketcher.tool) this.onSketchToolChanged(this.sketcher.tool.name);
+    this.cursorFeedback(null);
     this.setSelection([]);
     this.docChanged();
     this.regen();
   }
 
+  // While the AI builds, the model is its: edits and undo wait (its result is made from the model as it was).
+  aiLocked() {
+    if (!this.taskpane?.busy) return false;
+    this.toast('The AI is building. Press Stop in the AI panel to take over.');
+    return true;
+  }
+
   undo() {
+    if (this.aiLocked()) return;
     if (this.mode === 'sketch' && this.sketcher.tool && this.sketcher.tool.stage > 0) { this.sketcher.cancelTool(); return; }
     const u = this.undoStack.pop();
     if (!u) { this.status('Nothing to undo'); return; }
@@ -329,6 +342,7 @@ export class App {
   }
 
   redo() {
+    if (this.aiLocked()) return;
     const r = this.redoStack.pop();
     if (!r) return;
     this.undoStack.push({ label: r.label, json: JSON.stringify(this.cleanDoc()) });
@@ -338,6 +352,7 @@ export class App {
 
   // Change the document, then rebuild.
   commit(label, fn, regen = true) {
+    if (this.aiLocked()) return;
     this.pushUndo(label);
     fn();
     this.docChanged();
@@ -416,6 +431,7 @@ export class App {
     }
     bar.classList.toggle('hidden', !f);
     this.ribbon?.render();
+    this.taskpane?.docSwitched?.(); // another file: its own AI chat
   }
 
   // Title bar centre: the file name (click to rename) and whether it is saved.
@@ -480,8 +496,10 @@ export class App {
         tabs.forEach((x) => x.classList.toggle('active', x === t));
         if (i === 2) {
           if (!this.isAsm) { this.toast('Motion Study replays an assembly. Open or create an assembly first.'); tabs[0].click(); return; }
+          if (this.asm.playing) { this.asm.stopPlayback(); return; } // a second click stops it
           this.asm.playSequence().then(() => tabs[0].classList.add('active'), () => {}).finally(() => tabs[2].classList.remove('active'));
         } else if (i === 1) { this.toast('3D Views are not available yet.'); tabs[0].click(); }
+        else this.asm.stopPlayback?.(); // Model: playback stops where it is, every part at its place
       };
     });
   }
@@ -682,7 +700,7 @@ export class App {
   }
 
   refreshSelectionDisplay() {
-    const keys = this.selection.filter((s) => s.kind === 'face' || s.kind === 'edge' || s.kind === 'component').map((s) => (s.kind === 'component' ? `comp:${s.id}` : `${s.kind}:${s.id}`));
+    const keys = this.selection.filter((s) => s.kind === 'face' || s.kind === 'edge' || s.kind === 'component').flatMap((s) => (s.kind === 'component' ? [`comp:${s.id}`, ...(s.pick ? [`${s.pick.kind}:${s.pick.id}`] : [])] : [`${s.kind}:${s.id}`]));
     const extra = this.cmd?.spec?.selectedKeys ? this.cmd.spec.selectedKeys() : [];
     this.viewer.setSelectedKeys([...keys, ...extra]);
     this.updatePlanes();
@@ -715,25 +733,44 @@ export class App {
   canvasRect() { return this.viewer.canvas.getBoundingClientRect(); }
 
   bindCanvas() {
-    const c = this.viewer.canvas;
-    let down = null;
+    const c = this.viewer.canvas, v = this.viewer;
+    let down = null, tap = null;
+    // Touch (phones, tablets, review links): one finger turns the view, unless it is drawing in a sketch or dragging
+    // a part; a tap selects when the finger lifts; two fingers pan and zoom and drop any drag a finger started.
+    // In a shared review a plain left mouse drag turns the view too (nothing there is dragged).
+    v.allowTouchRotate = () => !(this.mode === 'sketch' && !this.cmd?.modelPick) && !this.zoomAreaMode && !this.asm.drag;
+    v.onTouchGesture = () => { tap = null; this.cancelCanvasDrags(); };
+    v.leftDragRotates = () => this.reviewMode;
     c.addEventListener('pointerdown', (e) => {
       closeMenus();
       this.hideContextToolbar();
+      if (e.pointerType === 'touch' && !e.isPrimary) return; // a second finger: the view's pinch
       if (e.button !== 0 || e.altKey) { if (e.button === 2) down = { x: e.offsetX, y: e.offsetY, right: true }; return; }
       down = { x: e.offsetX, y: e.offsetY };
       if (this.zoomAreaMode) { this.zoomBox = { x0: e.offsetX, y0: e.offsetY, x1: e.offsetX, y1: e.offsetY }; c.setPointerCapture(e.pointerId); return; }
       if (this.mode === 'sketch' && !this.cmd?.modelPick) { c.setPointerCapture(e.pointerId); this.sketcher.pointerDown(e.offsetX, e.offsetY, e); return; }
+      if (e.pointerType === 'touch') {
+        // a finger on a part in an assembly drags it, as the mouse does; elsewhere it waits to be a tap or a turn
+        if (this.isAsm && !this.cmd && !this.reviewMode && !this.live.active && this.asm.pickToItem(this.pickAt(e.offsetX, e.offsetY))?.kind === 'component') { this.partDown(e); return; }
+        tap = { x: e.offsetX, y: e.offsetY, id: e.pointerId };
+        return;
+      }
       this.partDown(e);
     });
     c.addEventListener('pointermove', (e) => {
       if (this.viewer.isNavigating()) return;
+      if (e.pointerType === 'touch' && this.mode !== 'sketch' && !this.asm.drag && !this.zoomBox) return; // no hover under a finger
       if (this.zoomBox) { this.zoomBox.x1 = e.offsetX; this.zoomBox.y1 = e.offsetY; this.showSelBox(this.zoomBox); return; }
       if (this.ctbAt && Math.hypot(e.clientX - this.ctbAt.x, e.clientY - this.ctbAt.y) > 160) this.hideContextToolbar();
       if (this.mode === 'sketch' && !this.cmd?.modelPick) { this.sketcher.pointerMove(e.offsetX, e.offsetY, e); return; }
       this.partMove(e);
     });
     c.addEventListener('pointerup', (e) => {
+      if (tap && e.pointerId === tap.id) {
+        const t = tap; tap = null;
+        if (Math.hypot(e.offsetX - t.x, e.offsetY - t.y) < 8) this.partDown(e); // a tap, not a turn
+        return;
+      }
       if (this.zoomBox) { this.finishZoomArea(); return; }
       if (e.button === 2 && down?.right && Math.hypot(e.offsetX - down.x, e.offsetY - down.y) < 4) this.canvasContext(e);
       if (this.mode === 'sketch' && !this.cmd?.modelPick && e.button === 0) this.sketcher.pointerUp(e.offsetX, e.offsetY, e);
@@ -747,6 +784,16 @@ export class App {
       if (p && p.kind === 'sketch') this.editSketch(p.id);
     });
     c.addEventListener('pointerleave', () => { this.viewer.setHover(null); this.cursorFeedback(null); $('sb-coords').textContent = ''; });
+    // The browser took the gesture (a touch or pen turned into a scroll) or the capture was lost: end any drag
+    // without committing it. After a normal release there is nothing left to cancel.
+    c.addEventListener('pointercancel', (e) => { if (tap?.id === e.pointerId) tap = null; this.cancelCanvasDrags(); });
+    c.addEventListener('lostpointercapture', () => this.cancelCanvasDrags());
+  }
+
+  cancelCanvasDrags() {
+    this.asm?.cancelDrag();
+    if (this.mode === 'sketch') this.sketcher.cancelDrag?.();
+    if (this.zoomBox) { this.zoomBox = null; this.showSelBox(null); }
   }
 
   sketchDblClick(e) {
@@ -1012,6 +1059,7 @@ export class App {
   }
 
   deleteSelection() {
+    if (this.aiLocked()) return;
     if (this.mode === 'sketch') return this.sketcher.deleteSelection();
     if (this.isAsm) return this.asm.deleteSelection();
     const s = this.selection.find((x) => (x.kind === 'feature' || x.kind === 'sketch' || x.kind === 'plane') && !STD_PLANES.includes(x.id));
@@ -1025,13 +1073,16 @@ export class App {
     [...$('mgrtabs').children].forEach((t, i) => t.classList.toggle('active', (which === 'pm' ? 1 : 0) === i));
   }
 
-  closeCommand() {
+  // keepPreview: a feature was just committed; its preview stays on screen until the rebuild replaces it
+  // (applyResult clears it), so the model does not flash back to the old body in between.
+  closeCommand({ keepPreview = false } = {}) {
     if (this.cmd) this.cmd.cancelled = true;
     if (this.cmd && this.cmd.onClose) this.cmd.onClose();
     this.cmd = null;
     clearTimeout(this.previewTimer);
+    clearTimeout(this.asm?.previewTimer); // a mate preview still waiting must not draw after the command ends
     if (this.pm.isOpen) this.pm.close();
-    this.viewer.setTool(null);
+    if (!keepPreview) this.viewer.setTool(null);
     this.refreshSelectionDisplay();
     this.design?.refresh(); // its "finish the open command first" note goes with the command
     this.updateStartHint();
@@ -1056,7 +1107,9 @@ export class App {
 
   // ------------------------------------------------------------------ feature commands
   featureCommand(key, existing = null) {
+    if (this.aiLocked()) return;
     if (this.isAsm) { this.toast('Features are added in a part. Select a component and click Open Part.'); return; }
+    this.hideContextToolbar(); // the toolbar of the click that started it would float over the preview
     if (this.mode === 'sketch') {
       const sid = this.sketcher.skId;
       this.exitSketch();
@@ -1118,10 +1171,26 @@ export class App {
     this.previewTimer = setTimeout(() => this.runPreview(), delay);
   }
 
-  async runPreview() {
+  // The preview of the current parameters is built once. OK reuses it, or waits for the one in flight, instead of
+  // asking the server for the same build again. Resolves true when it built cleanly.
+  runPreview() {
     const cmd = this.cmd;
-    if (!cmd || !cmd.spec || cmd.cancelled) return false;
+    if (!cmd || !cmd.spec || cmd.cancelled) return Promise.resolve(false);
     const version = cmd.previewVersion || 0;
+    const key = `${version}|${this.undoStack.length}`;
+    if (cmd.preview && cmd.preview.key === key && cmd.preview.doc === this.doc) return cmd.preview.promise;
+    const run = { key, doc: this.doc };
+    // 'failed' (no answer) or 'stale' (overtaken by another rebuild) is not worth keeping: the next call asks again
+    run.promise = this.buildPreview(cmd, version).then((r) => {
+      cmd.previewStale = r === 'stale';
+      if (typeof r === 'string' && cmd.preview === run) cmd.preview = null;
+      return r === true;
+    });
+    cmd.preview = run;
+    return run.promise;
+  }
+
+  async buildPreview(cmd, version) {
     this.drawSketches();
     if (!cmd.spec.okEnabled()) { this.viewer.setTool(null); return false; }
     const f = this.cleanDoc(cmd.f);
@@ -1130,10 +1199,11 @@ export class App {
     if (cmd.existing) { const i = doc.features.findIndex((x) => x.id === cmd.existing.id); f._index = i; }
     const seq = ++this.regenSeq;
     let res;
-    const done = this.busy('Updating preview', 400);
-    try { res = await this.api('/api/regen', { doc, preview: f }); } catch (err) { this.toast('Preview failed: ' + err.message); return false; } finally { done(); }
-    if (seq !== this.regenSeq || this.cmd !== cmd || cmd.cancelled || version !== (cmd.previewVersion || 0)) return false;
-    if (!Array.isArray(res.status) || !res.body) { this.toast('The server did not return a valid preview.'); return false; }
+    const done = cmd.committing ? () => {} : this.busy('Updating preview', 400); // after OK the "Applying" pill says it
+    try { res = await this.api('/api/regen', { doc, preview: f }); } catch (err) { this.toast('Preview failed: ' + err.message); return 'failed'; } finally { done(); }
+    if (this.cmd !== cmd || cmd.cancelled || version !== (cmd.previewVersion || 0)) return false;
+    if (seq !== this.regenSeq) return 'stale';
+    if (!Array.isArray(res.status) || !res.body) { this.toast('The server did not return a valid preview.'); return 'failed'; }
     this.result = { ...this.result, planes: { ...(this.result?.planes || {}), ...res.planes } };
     this.viewer.setBody(res.body, { color: this.bodyColor() });
     this.viewer.setTool(res.tool);
@@ -1151,10 +1221,17 @@ export class App {
     if (!cmd.spec.okEnabled()) { this.toast('Complete the required selections first.'); return; }
     clearTimeout(this.previewTimer);
     cmd.committing = true;
+    this.pm.refreshFeedback?.(); // OK shows that it was pressed
+    const working = this.busy(`Applying ${cmd.f.name || 'the feature'}`, 250);
     let valid;
-    try { valid = await this.runPreview(); } finally { cmd.committing = false; }
-    if (this.cmd !== cmd || cmd.cancelled) return;
-    if (!valid) { if (cmd.lastError) { this.pm.spec.error = cmd.lastError; this.pm.render(); this.toast('Rebuild error: ' + cmd.lastError); } return; }
+    try {
+      const version = cmd.previewVersion || 0;
+      valid = await this.runPreview();
+      // the preview was overtaken by another rebuild: build these parameters once more
+      if (!valid && cmd.previewStale && this.cmd === cmd && !cmd.cancelled && version === (cmd.previewVersion || 0)) valid = await this.runPreview();
+    } finally { cmd.committing = false; }
+    if (this.cmd !== cmd || cmd.cancelled) { working(); return; }
+    if (!valid) { working(); this.pm.refreshFeedback?.(); if (cmd.lastError) { this.pm.spec.error = cmd.lastError; this.pm.render(); this.toast('Rebuild error: ' + cmd.lastError); } return; }
     let f = this.cleanDoc(cmd.f);
     if (f.draftOn === false) delete f.draft;
     if (f.edges?.length || f.faces?.length || f.direction?.edge || f.direction2?.edge) {
@@ -1162,17 +1239,22 @@ export class App {
       const before = this.cleanDoc(this.doc);
       const at = cmd.existing ? before.features.findIndex((x) => x.id === cmd.existing.id) : (before.rollback ?? before.features.length);
       before.rollback = at;
-      try { f = (await this.api('/api/name_refs', { doc: before, feature: f })).feature; } catch (_) { /* keep the points */ }
-      if (this.cmd !== cmd || cmd.cancelled) return;
+      cmd.committing = true; this.pm.refreshFeedback?.();
+      try { f = (await this.api('/api/name_refs', { doc: before, feature: f })).feature; } catch (_) { /* keep the points */ } finally { cmd.committing = false; }
+      if (this.cmd !== cmd || cmd.cancelled) { working(); return; }
     }
     this.commit(cmd.existing ? 'Edit ' + f.name : f.name, () => {
       if (cmd.existing) { const i = this.doc.features.findIndex((x) => x.id === cmd.existing.id); this.doc.features[i] = f; }
       else this.insertFeature(f);
-    });
-    this.cmd = null;
-    this.pm.close();
-    this.viewer.setTool(null);
-    this.status(`${f.name} created`);
+    }, false);
+    // closeCommand redraws the Design panel without its "finish the open command" note; the preview stays on
+    // screen until the rebuild below replaces it
+    this.closeCommand({ keepPreview: true });
+    this.status(cmd.existing ? `${f.name} changed` : `${f.name} created`);
+    try { await this.regen(false, `Applying ${f.name}`); } finally {
+      working();
+      if (!this.cmd?.spec && this.mode !== 'sketch') this.viewer.setTool(null); // a failed rebuild leaves no stale preview
+    }
   }
 
   insertFeature(f) {
@@ -1189,6 +1271,7 @@ export class App {
 
   // ------------------------------------------------------------------ sketch mode
   sketchCommand() {
+    if (this.aiLocked()) return;
     if (this.isAsm) { this.toast('Sketches are drawn in a part. Select a component and click Open Part.'); return; }
     if (this.mode === 'sketch') return this.exitSketch();
     const s = this.selection.find((x) => x.kind === 'plane' || (x.kind === 'face' && x.data?.plane) || x.kind === 'sketch');
@@ -1219,6 +1302,8 @@ export class App {
   }
 
   editSketch(id) {
+    if (this.aiLocked()) return;
+    this.hideContextToolbar();
     if (this.mode === 'sketch') this.exitSketch();
     if (this.cmd) this.pmCancel();
     const f = this.featureById(id);
@@ -1584,11 +1669,11 @@ export class App {
     const m = this.doc.material;
     const g = (v) => fmt(v * 1000, 2);
     message('Mass Properties', `<table class="mass-table">
-      <tr><td>Material</td><td>${esc(m?.name || 'not specified (density 1000 kg/m^3)')}</td></tr>
-      <tr><td>Density</td><td>${fmt(r.density * 1e9, 1)} kg/m^3</td></tr>
+      <tr><td>Material</td><td>${esc(m?.name || 'not specified (density 1000 kg/m³)')}</td></tr>
+      <tr><td>Density</td><td>${fmt(r.density * 1e9, 1)} kg/m³</td></tr>
       <tr><td>Mass</td><td>${g(r.mass)} grams</td></tr>
-      <tr><td>Volume</td><td>${fmt(r.volume, 2)} mm^3</td></tr>
-      <tr><td>Surface area</td><td>${fmt(r.area, 2)} mm^2</td></tr>
+      <tr><td>Volume</td><td>${fmt(r.volume, 2)} mm³</td></tr>
+      <tr><td>Surface area</td><td>${fmt(r.area, 2)} mm²</td></tr>
       <tr><td>Center of mass</td><td>X = ${fmt(r.center_of_mass[0], 3)}<br>Y = ${fmt(r.center_of_mass[1], 3)}<br>Z = ${fmt(r.center_of_mass[2], 3)}</td></tr>
       <tr><td>Bounding box</td><td>${r.bbox[1].map((v, i) => fmt(v - r.bbox[0][i], 2)).join(' x ')} mm</td></tr>
       <tr><td>Solid bodies</td><td>${r.bodies}</td></tr></table>`);
@@ -1602,7 +1687,7 @@ export class App {
       const out = [];
       const edges = picks.filter((p) => p.kind === 'edge'), faces = picks.filter((p) => p.kind === 'face');
       if (edges.length) out.push(`Length: ${fmt(edges.reduce((s, e) => s + e.data.length, 0), 3)} mm`);
-      if (faces.length) out.push(`Area: ${fmt(faces.reduce((s, f) => s + f.data.area, 0), 3)} mm^2`);
+      if (faces.length) out.push(`Area: ${fmt(faces.reduce((s, f) => s + f.data.area, 0), 3)} mm²`);
       if (faces.length === 2 && faces[0].data.normal && faces[1].data.normal) {
         const [a, b] = faces.map((f) => f.data);
         const dt = a.normal[0] * b.normal[0] + a.normal[1] * b.normal[1] + a.normal[2] * b.normal[2];
@@ -1917,7 +2002,7 @@ export class App {
   materialDialog() {
     const body = document.createElement('div');
     const sel = document.createElement('select'); sel.size = 12; sel.style.width = '260px';
-    for (const [n, d] of MATERIALS) { const o = document.createElement('option'); o.value = n; o.textContent = `${n}  (${fmt(d * 1e9, 0)} kg/m^3)`; sel.appendChild(o); }
+    for (const [n, d] of MATERIALS) { const o = document.createElement('option'); o.value = n; o.textContent = `${n}  (${fmt(d * 1e9, 0)} kg/m³)`; sel.appendChild(o); }
     sel.value = this.doc.material?.name || 'ABS';
     body.appendChild(sel);
     dialog({ title: 'Material', body, buttons: [
@@ -2079,13 +2164,36 @@ export class App {
     v.zoomAt(Math.max(w / v.w, h / v.h), v.w / 2, v.h / 2);
   }
 
+  // Top right of the graphics area (SOLIDWORKS confirmation corner): OK / Cancel for the open PropertyManager
+  // command, Exit Sketch / Discard in a sketch. pm.js calls this whenever the PropertyManager opens, closes or
+  // its OK state changes.
   updateConfirmCorner() {
     const el = $('confirmcorner');
+    if (!el) return;
+    const btn = (title, ic, size, run, off = false) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'cc' + (off ? ' disabled' : '');
+      b.title = title; b.setAttribute('aria-label', title); b.innerHTML = icon(ic, size);
+      // aria-disabled, not disabled: a click that commits a PropertyManager field on blur must still reach OK
+      if (off) b.setAttribute('aria-disabled', 'true');
+      b.onclick = run;
+      return b;
+    };
+    const spec = this.pm?.spec;
+    let key = 'none', items = null;
+    if (this.cmd && spec && !this.reviewMode) {
+      const off = !!spec.okEnabled && !spec.okEnabled();
+      key = `cmd|${off}|${!!spec.noCancel}|${!!this.cmd.committing}`;
+      items = () => [btn('OK', 'ok', 30, () => { const s = this.pm.spec; if (s && !(s.okEnabled && !s.okEnabled())) this.pmOk(); }, off || !!this.cmd.committing),
+        ...(spec.noCancel ? [] : [btn('Cancel', 'cancel', 26, () => this.pmCancel())])];
+    } else if (this.mode === 'sketch') {
+      key = 'sketch';
+      items = () => [btn('Exit Sketch', 'exitsketch', 30, () => this.exitSketch()), btn('Discard changes and exit', 'cancel', 26, () => this.discardSketch())];
+    }
+    if (el.dataset.key === key && key !== 'none') return; // unchanged: keep the buttons (a click may be under way)
+    el.dataset.key = key;
     el.innerHTML = '';
-    if (this.mode !== 'sketch') { el.classList.add('hidden'); return; }
-    const a = document.createElement('div'); a.className = 'cc'; a.title = 'Exit Sketch'; a.innerHTML = icon('exitsketch', 30); a.onclick = () => this.exitSketch();
-    const b = document.createElement('div'); b.className = 'cc'; b.title = 'Discard changes and exit'; b.innerHTML = icon('cancel', 26); b.onclick = () => this.discardSketch();
-    el.append(a, b);
+    if (!items) { el.classList.add('hidden'); return; }
+    el.append(...items());
     el.classList.remove('hidden');
   }
 

@@ -26,11 +26,26 @@ export const FEATURE_META = {
 };
 
 // The feature registry from the server (opensketch/features): types without a hand-written
-// PropertyManager below get a generated one, plus ribbon commands and defaults.
-async function loadSpecs() {
-  try { const r = await fetch('/api/features'); return r.ok ? await r.json() : {}; } catch (_) { return {}; }
+// PropertyManager below get a generated one, plus ribbon commands and defaults. The app waits for it a few
+// seconds at most (a page from the offline copy must still start while the server restarts); if it is late or
+// fails, it keeps asking in the background, fills SPECS in place and says so with an 'opensketch:registry' event.
+export const SPECS = {};
+async function fetchSpecs(ms) {
+  const ctl = typeof AbortController === 'function' ? new AbortController() : null;
+  const t = ctl ? setTimeout(() => ctl.abort(), ms) : null;
+  try { const r = await fetch('/api/features', ctl ? { signal: ctl.signal } : {}); return r.ok ? await r.json() : null; } catch (_) { return null; } finally { clearTimeout(t); }
 }
-export const SPECS = await loadSpecs();
+const firstSpecs = await fetchSpecs(6000);
+if (firstSpecs) Object.assign(SPECS, firstSpecs);
+else if (typeof location !== 'undefined' && /^https?:/.test(location.protocol || '')) {
+  (async () => {
+    for (let wait = 2000; ; wait = Math.min(wait * 2, 30000)) {
+      await new Promise((r) => setTimeout(r, wait));
+      const s = await fetchSpecs(10000);
+      if (s) { Object.assign(SPECS, s); window.dispatchEvent(new Event('opensketch:registry')); return; }
+    }
+  })();
+}
 
 export function metaFor(key) {
   if (FEATURE_META[key]) return FEATURE_META[key];
@@ -207,6 +222,7 @@ function revolveSpec(app, f, cut) {
 const edgeLabel = (e, i) => `Edge<${i + 1}>`;
 
 function filletSpec(app, f, chamfer) {
+  if (!Array.isArray(f.edges)) f.edges = [];
   const rows = chamfer ? [
     { type: 'radio', name: 'chtype', options: [['angle_distance', 'Angle Distance'], ['distance_distance', 'Distance Distance']], get: () => f.mode || 'angle_distance', set: (v) => { f.mode = v; } },
   ] : [
@@ -226,7 +242,8 @@ function filletSpec(app, f, chamfer) {
       { title: chamfer ? 'Chamfer Type' : 'Fillet Type', rows },
       { title: chamfer ? 'Items To Chamfer' : 'Items To Fillet', rows: [
         { type: 'selbox', id: 'edges', placeholder: 'Select edges or faces', items: () => f.edges, label: edgeLabel, remove: (i) => f.edges.splice(i, 1), kinds: ['edge', 'face'] },
-        { type: 'check', label: 'Tangent propagation', get: () => f.tangent !== false, set: (v) => { f.tangent = v; } },
+        // OpenCascade always runs a fillet or chamfer on along tangent edges (SOLIDWORKS' default), so this is not a choice here
+        { type: 'text', text: 'Tangent propagation: tangent edges are always included.' },
         { type: 'check', label: 'Full preview', get: () => true, set: () => {} },
       ] },
       { title: chamfer ? 'Chamfer Parameters' : 'Fillet Parameters', rows: params },
@@ -246,6 +263,7 @@ function filletSpec(app, f, chamfer) {
 }
 
 function shellSpec(app, f) {
+  if (!Array.isArray(f.faces)) f.faces = []; // empty = a closed hollow body (the registry's default)
   return {
     sections: [
       { title: 'Parameters', rows: [
@@ -516,20 +534,28 @@ export function buildSpec(key, app, f) {
   }
 }
 
-// Plain-language summary of a feature, used by the AI pane and tooltips.
+// Plain-language summary of a feature, used by the AI pane and tooltips. A field the AI left out reads as the
+// registry's default (a shell with no faces is a closed hollow body), and a summary never throws.
 export function describeFeature(f, app) {
+  try { return describeOne(f, app); } catch (_) { return f.name || f.id || f.type; }
+}
+
+function describeOne(f, app) {
+  const dflt = (k) => f[k] ?? SPECS[f.type]?.params?.find((p) => p.name === k)?.default;
+  const num = (k) => { const v = Number(dflt(k)); return Number.isFinite(v) ? fmt(v) : '?'; };
+  const count = (k) => (Array.isArray(f[k]) ? f[k].length : 0);
   switch (f.type) {
-    case 'sketch': return `${f.name}: ${f.entities.filter((e) => e.type !== 'point').length} entities, ${f.constraints.length} relations/dimensions`;
-    case 'extrude': return `${f.name}: ${f.op === 'cut' ? 'cut' : 'extrude'} ${sketchName(app, f.sketch)} ${f.end === 'through_all' ? 'through all' : fmt(f.depth || 0) + ' mm'}`;
-    case 'revolve': return `${f.name}: revolve ${sketchName(app, f.sketch)} ${fmt(f.angle)}°`;
+    case 'sketch': return `${f.name}: ${(f.entities || []).filter((e) => e.type !== 'point').length} entities, ${count('constraints')} relations/dimensions`;
+    case 'extrude': return `${f.name}: ${f.op === 'cut' ? 'cut' : 'extrude'} ${sketchName(app, f.sketch)} ${f.end === 'through_all' ? 'through all' : num('depth') + ' mm'}`;
+    case 'revolve': return `${f.name}: revolve ${sketchName(app, f.sketch)} ${f.angle == null && dflt('angle') == null ? 360 : num('angle')}°`;
     case 'sweep': return `${f.name}: ${f.op === 'cut' ? 'cut' : 'boss'} sweep along ${f.path}`;
-    case 'loft': return `${f.name}: ${f.op === 'cut' ? 'cut' : 'boss'} loft through ${f.profiles.length} sections`;
-    case 'hole': return `${f.name}: ${f.style || 'simple'} hole, diameter ${fmt(f.diameter)} mm`;
-    case 'fillet': return `${f.name}: R${fmt(f.radius)} on ${f.edges.length} edge(s)`;
-    case 'chamfer': return `${f.name}: ${fmt(f.distance)} mm on ${f.edges.length} edge(s)`;
-    case 'shell': return `${f.name}: ${fmt(f.thickness)} mm, ${f.faces.length} face(s) removed`;
+    case 'loft': return `${f.name}: ${f.op === 'cut' ? 'cut' : 'boss'} loft through ${count('profiles')} sections`;
+    case 'hole': return `${f.name}: ${f.style || 'simple'} hole, diameter ${num('diameter')} mm`;
+    case 'fillet': return `${f.name}: R${num('radius')} on ${count('edges')} edge(s)`;
+    case 'chamfer': return `${f.name}: ${num('distance')} mm on ${count('edges')} edge(s)`;
+    case 'shell': return `${f.name}: ${num('thickness')} mm, ${count('faces') ? count('faces') + ' face(s) removed' : 'closed (no face removed)'}`;
     case 'import': return `${f.name}: imported body${f.source ? ' from ' + f.source : ''}`;
-    case 'standard': return `${f.name}: ${f.kind.replace(/_/g, ' ')} ${f.size}${f.length ? ' x ' + fmt(f.length) : ''}`;
+    case 'standard': return `${f.name}: ${String(f.kind || '').replace(/_/g, ' ')} ${f.size ?? ''}${f.length ? ' x ' + fmt(f.length) : ''}`;
     default: {
       const spec = SPECS[f.type];
       if (!spec) return f.name;

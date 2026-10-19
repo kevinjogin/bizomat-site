@@ -105,19 +105,22 @@ export function modifyBox({ value, name, unit = 'mm', x, y, onApply, onPreview, 
   const rebuild = h('div', 'pm-act', icon('rebuild', 16)); rebuild.title = 'Regenerate the model with the current value';
   tb.append(ok, cancel, rebuild);
   const row = h('div', 'mod-val');
-  const inp = h('input'); inp.value = (+(+value).toFixed(6)) + unit;
+  // shown as the dimension label shows it (60, not 59.999988); an unchanged field keeps the exact stored value
+  const show = (v) => `${+(+v).toFixed(2)}${unit}`;
+  const orig = +value, shown = show(orig);
+  const inp = h('input'); inp.value = shown;
   row.appendChild(inp);
   const caption = h('div', 'mod-name'); caption.textContent = name;
   body.append(tb, row, caption);
   const d = dialog({ title: 'Modify', body, x, y, modal: false, cls: 'modify', onClose: () => { if (!done) onCancel && onCancel(); } });
   let done = false;
-  const parse = () => evalExpr(inp.value);
+  const parse = () => (inp.value.trim() === shown ? orig : evalExpr(inp.value));
   const apply = () => { const v = parse(); if (!Number.isFinite(v) || v < 0) { inp.style.borderColor = '#d9372b'; return; } done = true; d.close(); onApply(v); };
   ok.onclick = apply;
   cancel.onclick = () => { d.close(); };
   rebuild.onclick = () => { const v = parse(); if (Number.isFinite(v)) onPreview && onPreview(v); };
   inp.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter') apply(); if (e.key === 'Escape') d.close(); });
-  inp.addEventListener('wheel', (e) => { e.preventDefault(); const v = parse(); if (!Number.isFinite(v)) return; const nv = Math.max(0, v + (e.deltaY < 0 ? 1 : -1)); inp.value = +nv.toFixed(6) + unit; onPreview && onPreview(nv); });
+  inp.addEventListener('wheel', (e) => { e.preventDefault(); const v = parse(); if (!Number.isFinite(v)) return; const nv = Math.max(0, v + (e.deltaY < 0 ? 1 : -1)); inp.value = show(nv); onPreview && onPreview(nv); });
   setTimeout(() => { inp.focus(); inp.select(); }, 0);
   return d;
 }
