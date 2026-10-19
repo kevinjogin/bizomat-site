@@ -8,7 +8,7 @@ import { drawInactiveSketch, pointsOf, entityPolyline } from './sketch/draw.js';
 import { solveSketch } from './sketch/solver.js';
 import { projSeg, fmt } from './sketch/geom2d.js';
 import { PropertyManager } from './ui/pm.js';
-import { dialog, message, modifyBox, contextMenu, closeMenus } from './ui/dialogs.js';
+import { dialog, message, modifyBox, contextMenu, closeMenus, modalOpen, asButton } from './ui/dialogs.js';
 import { Ribbon } from './ui/ribbon.js';
 import { FeatureTree } from './ui/tree.js';
 import { TaskPane } from './ui/taskpane.js';
@@ -35,8 +35,8 @@ const MB = (n) => (n / 1e6).toFixed(1) + ' MB';
 // When the upload never reached OpenSketch (the reply is not ours), say what the status means.
 function importFailText(status, size) {
   if (status === 413) return `The upload (${MB(size)}) was too big for the connection to the server.`;
-  if (status === 502 || status === 503 || status === 504) return 'The connection to the server gave up before the import finished. Try again; if it keeps failing, the file may be too big for the Codespaces connection.';
-  if (status === 401 || status === 403) return 'The server refused the upload (signed out of the Codespace?). Reload the page and try again.';
+  if (status === 502 || status === 503 || status === 504) return 'The server did not finish the upload. Try again in a minute. If it keeps failing, try a .zip of the file or a smaller file.';
+  if (status === 401 || status === 403) return 'You were signed out. Reload the page, sign in again and try once more.';
   return `The server did not answer properly (HTTP ${status || 'no status'}). Reload the page and try again.`;
 }
 const AUTOSAVE = 'opensketch.autosave.v1';
@@ -106,6 +106,7 @@ export class App {
     this.reviewMode = typeof window.OPENSKETCH_REVIEW === 'string'; // a shared review link: read-only, no server
     this.docStack = []; // Open Part from an assembly: the assembly waits here
     this.forConstruction = false;
+    this.pinnedCmds = new Set(); // PropertyManagers pinned with Keep Visible
     this.polygonSides = 6;
     this.filletRadius = 5;
     // the search boxes are forms of their own (so browsers do not autofill them): Enter never reloads the page
@@ -118,9 +119,13 @@ export class App {
     this.viewer.afterRender.push(() => this.afterRender());
     $('fileinput').addEventListener('change', (e) => this.loadFile(e.target.files[0]));
     $('sb-help').onclick = () => this.shortcutsDialog();
+    asButton($('sb-help'), 'Keyboard shortcuts');
     const th = document.querySelector('#titlebar .title-help');
-    if (th) { th.setAttribute('role', 'button'); th.tabIndex = 0; th.onclick = () => this.helpMenu(th); th.onkeydown = (e) => { if (e.key === 'Enter') this.helpMenu(th); }; }
-    $('sb-units').onclick = (e) => contextMenu(e.clientX, e.clientY - 120, [{ head: 'Unit system' }, { label: 'MMGS (millimeter, gram, second)', run: () => {} }]);
+    if (th) { asButton(th, 'Help', { popup: true }); th.onclick = (e) => this.helpMenu(th, !e.detail); }
+    // one unit system for now: the menu shows it ticked
+    const units = $('sb-units');
+    asButton(units, 'Unit system: MMGS (millimeter, gram, second)', { popup: true });
+    units.onclick = (e) => { const r = units.getBoundingClientRect(); contextMenu(r.left, r.top - 70, [{ head: 'Unit system' }, { label: 'MMGS (millimeter, gram, second)', role: 'menuitemradio', checked: true, run: () => {} }], null, { keyboard: !e.detail, returnTo: units }); };
     this.bindDocTabs();
     if (this.reviewMode) {
       const b = document.querySelector('#titlebar .brand');
@@ -584,13 +589,16 @@ export class App {
 
   bindDocTabs() {
     const tabs = [...document.querySelectorAll('#doctabs .doctab')];
+    $('doctabs')?.setAttribute('role', 'tablist');
     tabs.forEach((t, i) => {
+      asButton(t, t.textContent, { role: 'tab', pressed: i === 0, disabled: i === 1 });
+      if (i === 1) t.title = '3D Views: not available in this version';
       t.onclick = () => {
-        tabs.forEach((x) => x.classList.toggle('active', x === t));
+        tabs.forEach((x) => { x.classList.toggle('active', x === t); x.setAttribute('aria-selected', String(x === t)); });
         if (i === 2) {
           if (!this.isAsm) { this.toast('Motion Study replays an assembly. Open or create an assembly first.'); tabs[0].click(); return; }
           this.asm.playSequence().then(() => tabs[0].classList.add('active'), () => {}).finally(() => tabs[2].classList.remove('active'));
-        } else if (i === 1) { this.toast('3D Views are not available yet.'); tabs[0].click(); }
+        } else if (i === 1) { this.toast('3D Views are not available in this version.'); tabs[0].click(); }
       };
     });
   }
@@ -1024,7 +1032,8 @@ export class App {
     if (!tb.length) return;
     const el = $('contexttb');
     el.innerHTML = '';
-    for (const t of tb) { const b = document.createElement('div'); b.className = 'ct'; b.title = t.title; b.innerHTML = icon(t.icon, 20); b.onclick = () => { this.hideContextToolbar(); t.run(); }; el.appendChild(b); }
+    el.setAttribute('role', 'toolbar'); el.setAttribute('aria-label', 'Context toolbar');
+    for (const t of tb) { const b = document.createElement('div'); b.className = 'ct'; b.title = t.title; b.innerHTML = icon(t.icon, 20); asButton(b, t.title); b.onclick = () => { this.hideContextToolbar(); t.run(); }; el.appendChild(b); }
     const gr = $('graphics').getBoundingClientRect();
     el.style.left = Math.max(4, Math.min(gr.width - 200, x - gr.left + 12)) + 'px';
     el.style.top = Math.max(4, y - gr.top - 44) + 'px';
@@ -1112,14 +1121,26 @@ export class App {
 
   suppress(id, on) { this.commit(on ? 'Suppress' : 'Unsuppress', () => { const f = this.featureById(id); if (on) f.suppressed = true; else delete f.suppressed; }); }
 
-  suppressSelection(on) { for (const s of this.selection) if (s.kind === 'feature' || s.kind === 'sketch') this.suppress(s.id, on); }
+  // Edit > Suppress / Unsuppress: features and sketches in a part, components and mates in an assembly.
+  suppressSelection(on) {
+    const label = on ? 'Suppress' : 'Unsuppress';
+    if (this.isAsm) {
+      const ids = new Set(this.selection.filter((s) => s.kind === 'component' || s.kind === 'mate').map((s) => s.id));
+      if (!ids.size) { this.status(`Select a component or mate to ${label.toLowerCase()}.`); return; }
+      this.commit(label, () => { for (const x of [...(this.doc.components || []), ...(this.doc.mates || [])]) if (ids.has(x.id)) { if (on) x.suppressed = true; else delete x.suppressed; } });
+      return;
+    }
+    const ids = new Set(this.selection.filter((s) => s.kind === 'feature' || s.kind === 'sketch').map((s) => s.id));
+    if (!ids.size) { this.status(`Select a feature to ${label.toLowerCase()}.`); return; }
+    this.commit(label, () => { for (const f of this.doc.features) if (ids.has(f.id)) { if (on) f.suppressed = true; else delete f.suppressed; } });
+  }
 
-  // Confirm Delete: the server works out what goes with the feature and what would break (edits.plan_delete),
+  // Confirm Delete: the server works out what goes with the features and what would break (edits.plan_delete),
   // the same rules Claude's delete_items uses. Children that would only break stay unless "Delete child
-  // features" is ticked, as in SOLIDWORKS.
+  // features" is ticked, as in SOLIDWORKS. One call for everything selected (Ctrl+click several, then Delete).
   async deleteFeature(id) {
-    const f = this.featureById(id);
-    if (!f) return;
+    const want = (Array.isArray(id) ? id : [id]).filter((x) => this.featureById(x));
+    if (!want.length) return;
     const names = (ids) => ids.map((x) => esc(this.featureById(x)?.name || x)).join(', ');
     // the server rebuilds the part to see what breaks: a pill says so, and a second Delete waits for it
     const plan = async (ids, absorbed) => {
@@ -1129,11 +1150,11 @@ export class App {
     if (this.deleting) return;
     this.deleting = true;
     let first;
-    try { first = await plan([id], true); } catch (err) { this.toast(`Cannot delete ${f.name}: ${err.message}`, 6000); return; } finally { this.deleting = false; }
-    if (!this.featureById(id)) return; // gone meanwhile
+    try { first = await plan(want, true); } catch (err) { this.toast(`Cannot delete: ${err.message}`, 6000); return; } finally { this.deleting = false; }
+    if (!want.some((x) => this.featureById(x))) return; // gone meanwhile
     const kids = first.would_fail.map((x) => x.id);
     const body = document.createElement('div');
-    body.innerHTML = `<div>Delete <b>${esc(f.name)}</b>?</div>` +
+    body.innerHTML = `<div>Delete <b>${names(want)}</b>?</div>` +
       (first.deleted_with_it.length ? `<div style="margin-top:6px">Also deleted (they need it): ${names(first.deleted_with_it)}</div>` : '') +
       (first.patterns_trimmed.length ? `<div style="margin-top:6px">Patterns that keep their other features: ${names(first.patterns_trimmed.map((x) => x.id))}</div>` : '') +
       (first.absorbed.length ? `<label style="display:block;margin-top:8px"><input type="checkbox" id="delabs" checked> Delete absorbed features (${names(first.absorbed)})</label>` : '') +
@@ -1144,7 +1165,7 @@ export class App {
         const delAbs = body.querySelector('#delabs')?.checked ?? true, delChild = body.querySelector('#delchild')?.checked;
         let p = first;
         if (!delAbs || delChild) {
-          try { p = await plan(delChild ? [id, ...kids] : [id], delAbs); } catch (err) { this.toast(`Cannot delete ${f.name}: ${err.message}`, 6000); return; }
+          try { p = await plan(delChild ? [...want, ...kids] : want, delAbs); } catch (err) { this.toast(`Cannot delete: ${err.message}`, 6000); return; }
         }
         const kill = new Set([...p.deleted, ...p.deleted_with_it, ...p.absorbed]);
         const trim = new Map(p.patterns_trimmed.map((x) => [x.id, x.keeps]));
@@ -1163,15 +1184,23 @@ export class App {
   deleteSelection() {
     if (this.mode === 'sketch') return this.sketcher.deleteSelection();
     if (this.isAsm) return this.asm.deleteSelection();
-    const s = this.selection.find((x) => (x.kind === 'feature' || x.kind === 'sketch' || x.kind === 'plane') && !STD_PLANES.includes(x.id));
-    if (s) this.deleteFeature(s.id);
+    const ids = this.selection.filter((x) => (x.kind === 'feature' || x.kind === 'sketch' || x.kind === 'plane') && !STD_PLANES.includes(x.id)).map((x) => x.id);
+    if (ids.length) this.deleteFeature([...new Set(ids)]);
+  }
+
+  // Edit > Delete with nothing to delete says so.
+  menuDelete() {
+    const any = this.mode === 'sketch' ? this.sketcher.sel.size > 0 : this.isAsm ? this.selection.some((x) => x.kind === 'component' || x.kind === 'mate')
+      : this.selection.some((x) => (x.kind === 'feature' || x.kind === 'sketch' || x.kind === 'plane') && !STD_PLANES.includes(x.id));
+    if (!any) { this.status('Select what to delete first: a feature or sketch in the tree or the graphics area.'); return; }
+    this.deleteSelection();
   }
 
   // ------------------------------------------------------------------ PropertyManager plumbing
   showPanel(which) {
     $('featuremgr').classList.toggle('hidden', which === 'pm');
     $('propmgr').classList.toggle('hidden', which !== 'pm');
-    [...$('mgrtabs').children].forEach((t, i) => t.classList.toggle('active', (which === 'pm' ? 1 : 0) === i));
+    [...$('mgrtabs').children].forEach((t, i) => { const on = (which === 'pm' ? 1 : 0) === i; t.classList.toggle('active', on); t.setAttribute('aria-selected', String(on)); });
   }
 
   closeCommand() {
@@ -1190,9 +1219,15 @@ export class App {
     const cmd = this.cmd;
     if (this.mode === 'sketch' && !cmd) { this.sketcher.setTool(null); this.sketcher.sel.clear(); this.onSketchSelection(); this.sketcher.render(); return; }
     if (!cmd) return this.pm.close();
+    if (this.pm.badFields?.size) { this.toast('Fix the value shown in red first.'); return; }
     if (this.pm.spec?.okEnabled && !this.pm.spec.okEnabled()) { this.toast('Complete the required selections first.'); return; }
     if (cmd.onOk) { const keep = cmd.onOk(); if (keep === false) return; this.closeCommand(); return; }
-    if (cmd.spec) return this.commitFeature();
+    if (cmd.spec) {
+      const done = this.commitFeature();
+      // Keep Visible: the same command opens again for the next feature once this one is in
+      if (!cmd.existing && this.pinnedCmds?.has(cmd.key)) Promise.resolve(done).then(() => { if (!this.cmd && this.mode !== 'sketch' && this.doc.features?.some((f) => f.id === cmd.f.id)) this.featureCommand(cmd.key); });
+      return done;
+    }
   }
 
   pmCancel() {
@@ -1237,6 +1272,7 @@ export class App {
       hole: 'Select a plane or planar face, then set the hole dimensions and position.',
     };
     this.pm.open({ title: existing ? f.name : meta.title, icon: meta.icon, sections: spec.sections, okEnabled: spec.okEnabled, activeSelbox: spec.activeSelbox,
+      repeat: !existing, pinned: !!this.pinnedCmds?.has(key), onPin: (on) => { const p = (this.pinnedCmds ||= new Set()); if (on) p.add(key); else p.delete(key); },
       message: () => (spec.okEnabled() ? null : msgs[key] || SPECS[key]?.message), onChange: () => { this.refreshSelectionDisplay(); this.schedulePreview(); } });
     this.setSelection([]);
     // Looking straight at the sketch? Turn to trimetric so the preview reads in 3D (as SOLIDWORKS does).
@@ -1344,15 +1380,25 @@ export class App {
   }
 
   // ------------------------------------------------------------------ sketch mode
-  sketchCommand() {
+  // tool: a sketch tool clicked with no sketch open (Line, Corner Rectangle...). As in SOLIDWORKS it starts as
+  // soon as the plane is picked; cancelling the plane pick forgets it.
+  sketchCommand(tool = null) {
     if (this.isAsm) { this.toast('Sketches are drawn in a part. Select a component and click Open Part.'); return; }
     if (this.mode === 'sketch') return this.exitSketch();
     const s = this.selection.find((x) => x.kind === 'plane' || (x.kind === 'face' && x.data?.plane) || x.kind === 'sketch');
     if (s) { if (s.kind === 'sketch') return this.editSketch(s.id); return this.sketchOn(s); }
     if (this.cmd) this.pmCancel();
-    this.cmd = {
+    const cmd = this.cmd = {
       wantsPlanes: true,
-      onPick: (p) => { if (p.kind === 'plane' || (p.kind === 'face' && p.data?.plane)) { setTimeout(() => { this.closeCommand(); this.sketchOn(p); }, 0); return true; } return false; },
+      onPick: (p) => {
+        if (!(p.kind === 'plane' || (p.kind === 'face' && p.data?.plane))) return false;
+        setTimeout(() => {
+          if (this.cmd !== cmd) return; // cancelled meanwhile
+          this.closeCommand(); this.sketchOn(p);
+          if (tool && this.mode === 'sketch') this.sketcher.setTool(tool);
+        }, 0);
+        return true;
+      },
     };
     this.pm.open({ title: 'Edit Sketch', icon: 'sketch', sections: [{ title: 'Message', rows: [{ type: 'text', text: 'Select a plane on which to create a sketch for the entity.' }] }], okEnabled: () => false });
     this.updatePlanes();
@@ -1452,10 +1498,11 @@ export class App {
   }
 
   sketchTool(name) {
+    if (this.isAsm) { this.toast('Sketches are drawn in a part. Select a component and click Open Part.'); return; }
     if (this.mode !== 'sketch') {
       const s = this.selection.find((x) => x.kind === 'plane' || (x.kind === 'face' && x.data?.plane));
       if (s) this.sketchOn(s);
-      else { const sk = this.selection.find((x) => x.kind === 'sketch'); if (sk) this.editSketch(sk.id); else { this.sketchCommand(); this.pendingTool = name; return; } }
+      else { const sk = this.selection.find((x) => x.kind === 'sketch'); if (sk) this.editSketch(sk.id); else { this.sketchCommand(name); return; } }
     }
     if (this.mode !== 'sketch') return;
     if (this.cmd) this.closeCommand();
@@ -1653,7 +1700,7 @@ export class App {
     const eqs = targets.filter((t) => t.eq).map((t) => ({ key: t.key, expr: t.eq }));
     const body = document.createElement('div');
     body.className = 'eqdlg';
-    let last = null;
+    let last = null, tried = false; // tried: OK was refused, so empty rows show in red too
     const draft = () => {
       const d = this.cleanDoc(this.doc);
       d.parameters = vars.filter((v) => v.name).map((v) => ({ name: v.name.trim(), expression: String(v.expression ?? ''), unit: v.unit || 'mm', ...(v.comment ? { comment: v.comment } : {}) }));
@@ -1668,24 +1715,26 @@ export class App {
       return d;
     };
     const render = () => {
+      const empty = (t) => (tried && !String(t ?? '').trim() ? ' aria-invalid="true"' : '');
       const vrow = (v, i) => {
         const row = last?.parameters?.find((r) => r.name === v.name);
         const val = row?.problem ? `<span class="eqbad">${esc(row.problem)}</span>` : row?.value != null ? +(+row.value).toFixed(6) : '';
-        return `<tr><td><input data-v="${i}" data-k="name" value="${esc(v.name)}" placeholder="Name"></td><td><input data-v="${i}" data-k="expression" value="${esc(v.expression)}" placeholder="Value or equation"></td>` +
-          `<td class="eqval">${val}</td><td><input data-v="${i}" data-k="comment" value="${esc(v.comment)}" placeholder="Comments"></td><td><span class="eqx" data-dv="${i}" title="Delete">&#x2715;</span></td></tr>`;
+        return `<tr><td><input data-v="${i}" data-k="name" value="${esc(v.name)}" placeholder="Name" aria-label="Variable name"${empty(v.name)}></td><td><input data-v="${i}" data-k="expression" value="${esc(v.expression)}" placeholder="Value or equation" aria-label="Value or equation"${empty(v.expression)}></td>` +
+          `<td class="eqval">${val}</td><td><input data-v="${i}" data-k="comment" value="${esc(v.comment)}" placeholder="Comments" aria-label="Comments"></td><td><button type="button" class="eqx" data-dv="${i}" title="Delete" aria-label="Delete variable">&#x2715;</button></td></tr>`;
       };
       const erow = (e, i) => {
         const t = targets.find((x) => x.key === e.key);
         const r = last?.equations?.find((x) => `${x.feature}|${x.constraint || x.field}` === e.key);
         const prob = t && last?.problems?.[t.feature];
         const val = prob ? `<span class="eqbad">${esc(prob)}</span>` : r ? +(+r.value).toFixed(6) : '';
-        return `<tr><td>"${esc(t?.label)}"</td><td><input data-e="${i}" value="${esc(e.expr)}" placeholder="= equation"></td><td class="eqval">${val}</td><td></td><td><span class="eqx" data-de="${i}" title="Delete">&#x2715;</span></td></tr>`;
+        return `<tr><td>"${esc(t?.label)}"</td><td><input data-e="${i}" value="${esc(e.expr)}" placeholder="= equation" aria-label="Equation for ${esc(t?.label)}"${empty(e.expr)}></td><td class="eqval">${val}</td><td></td><td><button type="button" class="eqx" data-de="${i}" title="Delete" aria-label="Delete equation">&#x2715;</button></td></tr>`;
       };
       const free = targets.filter((t) => !eqs.some((e) => e.key === t.key));
       body.innerHTML = `<table class="eqt"><thead><tr><th>Name</th><th>Value / Equation</th><th>Evaluates to</th><th>Comments</th><th></th></tr></thead><tbody>` +
-        `<tr class="eqsec"><td colspan="5">Global Variables</td></tr>${vars.map(vrow).join('')}<tr><td colspan="5"><span class="eqadd" data-add="var">Add global variable</span></td></tr>` +
+        `<tr class="eqsec"><td colspan="5">Global Variables</td></tr>${vars.map(vrow).join('')}<tr><td colspan="5"><button type="button" class="eqadd" data-add="var">Add global variable</button></td></tr>` +
         `<tr class="eqsec"><td colspan="5">Equations</td></tr>${eqs.map(erow).join('')}` +
-        `<tr><td colspan="5"><select data-add="eq"><option value="">Add equation to a dimension...</option>${free.map((t) => `<option value="${esc(t.key)}">${esc(t.label)}</option>`).join('')}</select></td></tr></tbody></table>` +
+        `<tr><td colspan="5"><select data-add="eq" aria-label="Add equation to a dimension"><option value="">Add equation to a dimension...</option>${free.map((t) => `<option value="${esc(t.key)}">${esc(t.label)}</option>`).join('')}</select></td></tr></tbody></table>` +
+        `<div class="eqmsg" role="alert">${tried ? esc(why(last)) : ''}</div>` +
         `<div class="eqfoot">Units: mm, cm, m, in, deg, rad. Functions: abs, min, max, sqrt, round, floor, ceil, sin, cos, tan (degrees).</div>`;
       body.querySelectorAll('input[data-v]').forEach((inp) => { inp.oninput = () => { vars[+inp.dataset.v][inp.dataset.k] = inp.value; refresh(); }; });
       body.querySelectorAll('input[data-e]').forEach((inp) => { inp.oninput = () => { eqs[+inp.dataset.e].expr = inp.value; refresh(); }; });
@@ -1700,20 +1749,27 @@ export class App {
       clearTimeout(timer);
       timer = setTimeout(async () => {
         await evaluate();
-        // keep typing focus: update only the value cells unless rows changed
-        const focus = document.activeElement; const sel = focus?.dataset ? { ...focus.dataset } : null; const pos = focus?.selectionStart;
+        // keep the focus (a field, the dimension list or a button) on the same control when the rows are drawn again
+        const focus = document.activeElement; const sel = focus && body.contains(focus) && focus.dataset ? { ...focus.dataset } : null; const pos = focus?.selectionStart;
         render();
-        if (sel) { const q = Object.entries(sel).map(([k, v]) => `[data-${k}="${v}"]`).join(''); const el = q && body.querySelector('input' + q); if (el) { el.focus(); if (pos != null) el.setSelectionRange(pos, pos); } }
+        if (sel) { const q = Object.entries(sel).map(([k, v]) => `[data-${k}="${v}"]`).join(''); const el = q && body.querySelector(q); if (el) { el.focus(); if (pos != null && el.setSelectionRange) el.setSelectionRange(pos, pos); } }
       }, now ? 0 : 250);
     };
     const bad = (r) => r.error || (r.parameters || []).some((p) => p.problem) || Object.keys(r.problems || {}).length ||
       eqs.some((e) => !String(e.expr).trim()) || vars.some((v) => !v.name || !String(v.expression ?? '').trim());
+    // why OK was refused, in the dialog itself
+    const why = (r) => {
+      if (!r) return '';
+      if (r.error) return `Cannot check the equations: ${r.error}`;
+      if (vars.some((v) => !v.name || !String(v.expression ?? '').trim()) || eqs.some((e) => !String(e.expr).trim())) return 'Fill in or delete the empty rows (in red), then click OK.';
+      return bad(r) ? 'Fix the items in red, then click OK.' : '';
+    };
     const d = dialog({ title: 'Equations, Global Variables, and Dimensions', body, cls: 'eqdialog', buttons: [
       { label: 'OK', primary: true, run: () => {
         (async () => {
           clearTimeout(timer);
           const r = await evaluate();
-          if (bad(r)) { render(); this.status('Fix the items in red (or empty rows) first.'); return; }
+          if (bad(r)) { tried = true; render(); body.querySelector('[aria-invalid="true"]')?.focus(); return; }
           const dd = draft();
           this.commit('Equations', () => {
             this.doc.parameters = dd.parameters; if (!dd.parameters) delete this.doc.parameters;
@@ -2076,6 +2132,25 @@ export class App {
     const btn = dl.el.querySelector('.dlg-f .btn.primary');
   }
 
+  // Print (quick access, File menu): the graphics area alone, as it is on screen, with the file's name above it on
+  // a white page. The CSS print rules hide the rest of the window.
+  printGraphics() {
+    let url = null;
+    try { this.viewer.render(); url = this.viewer.canvas.toDataURL('image/png'); } catch (_) { /* no picture: print the page */ }
+    let sheet = $('print-sheet');
+    if (!sheet) { sheet = document.createElement('div'); sheet.id = 'print-sheet'; document.body.appendChild(sheet); }
+    sheet.innerHTML = '<div class="ps-name"></div><img alt="">';
+    const f = this.docStack[this.docStack.length - 1];
+    sheet.querySelector('.ps-name').textContent = f ? `${this.doc.name} in ${this.docStack[0].doc.name}` : (this.doc.name || 'Untitled');
+    const img = sheet.querySelector('img');
+    const clear = () => { window.removeEventListener('afterprint', clear); sheet.innerHTML = ''; };
+    window.addEventListener('afterprint', clear);
+    const go = () => setTimeout(() => window.print(), 0);
+    if (!url) return go();
+    img.onload = go; img.onerror = go;
+    img.src = url;
+  }
+
   download2(url) {
     const a = document.createElement('a');
     a.href = url; a.download = '';
@@ -2084,7 +2159,7 @@ export class App {
 
   materialDialog() {
     const body = document.createElement('div');
-    const sel = document.createElement('select'); sel.size = 12; sel.style.width = '260px';
+    const sel = document.createElement('select'); sel.size = 12; sel.style.width = '260px'; sel.setAttribute('aria-label', 'Material');
     for (const [n, d] of MATERIALS) { const o = document.createElement('option'); o.value = n; o.textContent = `${n}  (${fmt(d * 1e9, 0)} kg/m^3)`; sel.appendChild(o); }
     sel.value = this.doc.material?.name || 'ABS';
     body.appendChild(sel);
@@ -2122,15 +2197,15 @@ export class App {
     } }, { label: 'Cancel' }] });
   }
 
-  helpMenu(anchor) {
+  helpMenu(anchor, keyboard = false) {
     const r = anchor.getBoundingClientRect();
-    contextMenu(Math.max(4, r.right - 220), r.bottom + 6, [
+    contextMenu(r.right, r.bottom + 6, [
       { label: 'Getting started', run: () => this.openTask('resources') },
       { label: 'Keyboard shortcuts', run: () => this.shortcutsDialog() },
       { label: 'Connect AI...', run: () => this.server.connectDialog() },
       '-',
       { label: 'About OpenSketch', run: () => this.aboutDialog() },
-    ]);
+    ], null, { keyboard, returnTo: anchor, alignRight: true });
   }
 
   shortcutsDialog() {
@@ -2205,7 +2280,15 @@ export class App {
   // ------------------------------------------------------------------ chrome
   status(msg) { $('sb-msg').textContent = msg; }
   coords(t) { $('sb-coords').textContent = t; }
-  statusDefined(text, cls) { const e = $('sb-defined'); e.textContent = text; e.className = 'sb-cell ' + (cls || ''); this.tree.render(); }
+  // The sketch's state in the status bar and in its tree row. Sketch drags solve on every move: the tree is drawn
+  // again only when the state changes.
+  statusDefined(text, cls) {
+    const e = $('sb-defined');
+    const c = 'sb-cell ' + (cls || '');
+    if (e.textContent === text && e.className === c) return;
+    e.textContent = text; e.className = c;
+    this.tree.render();
+  }
   sketchDefinedPrefix(f) {
     if (this.mode === 'sketch' && this.sketcher.skId === f.id) return this.sketcher.state?.status === 'under' ? '(-) ' : this.sketcher.state?.status === 'over' ? '(+) ' : '';
     // every tree redraw asks for every sketch: solve each version of a sketch once
@@ -2281,6 +2364,7 @@ export class App {
     if (this.mode !== 'sketch') { el.classList.add('hidden'); return; }
     const a = document.createElement('div'); a.className = 'cc'; a.title = 'Exit Sketch'; a.innerHTML = icon('exitsketch', 30); a.onclick = () => this.exitSketch();
     const b = document.createElement('div'); b.className = 'cc'; b.title = 'Discard changes and exit'; b.innerHTML = icon('cancel', 26); b.onclick = () => this.discardSketch();
+    asButton(a, 'Exit Sketch'); asButton(b, 'Discard changes and exit');
     el.append(a, b);
     el.classList.remove('hidden');
   }
@@ -2307,45 +2391,49 @@ export class App {
   buildMgrTabs() {
     const tabs = [['feature_mgr', 'FeatureManager Design Tree', 'tree'], ['property_mgr', 'PropertyManager', 'pm'], ['config_mgr', 'ConfigurationManager', null], ['dimxpert', 'DimXpertManager', null], ['display_mgr', 'DisplayManager', null]];
     const el = $('mgrtabs');
+    el.setAttribute('role', 'tablist'); el.setAttribute('aria-label', 'Managers');
     tabs.forEach(([ic, title, panel], i) => {
-      const t = document.createElement('div'); t.className = 'mgrtab' + (i === 0 ? ' active' : ''); t.title = title; t.innerHTML = icon(ic, 18);
-      t.onclick = () => { if (panel === 'tree') this.showPanel('tree'); else if (panel === 'pm') this.propertyTab(); else this.toast(title + ' is not available yet.'); };
+      const t = document.createElement('div'); t.className = 'mgrtab' + (i === 0 ? ' active' : '') + (panel ? '' : ' disabled'); t.title = panel ? title : `${title}: not available in this version`; t.innerHTML = icon(ic, 18);
+      asButton(t, title, { role: 'tab', pressed: i === 0, disabled: !panel });
+      t.onclick = () => { if (panel === 'tree') this.showPanel('tree'); else if (panel === 'pm') this.propertyTab(); else this.toast(title + ' is not available in this version.'); };
       el.appendChild(t);
     });
   }
 
   buildHeadsUp() {
     const el = $('headsup');
+    el.setAttribute('role', 'toolbar'); el.setAttribute('aria-label', 'View');
     const v = this.viewer;
     const add = (id, ic, title, run, caret = false) => {
       const b = document.createElement('div'); b.className = 'hu'; b.dataset.id = id; b.title = title;
       b.innerHTML = icon(ic, 20) + (caret ? '<span class="caret">&#9660;</span>' : '');
+      asButton(b, title, { popup: caret, pressed: id === 'zoomarea' ? false : undefined });
       b.onclick = (e) => run(b, e);
       el.appendChild(b); return b;
     };
     const sep = () => { const s = document.createElement('div'); s.className = 'hu-sep'; el.appendChild(s); };
-    const fly = (anchor, items) => {
+    const fly = (anchor, items, e) => {
       const r = anchor.getBoundingClientRect();
-      contextMenu(r.left, r.bottom + 2, items);
+      contextMenu(r.left, r.bottom + 2, items, null, { keyboard: !e?.detail, returnTo: anchor });
     };
     add('zoomfit', 'zoomfit', 'Zoom to Fit (F)', () => v.zoomToFit());
-    add('zoomarea', 'zoomarea', 'Zoom to Area', (b) => { this.zoomAreaMode = !this.zoomAreaMode; b.classList.toggle('on', this.zoomAreaMode); });
+    add('zoomarea', 'zoomarea', 'Zoom to Area', (b) => { this.zoomAreaMode = !this.zoomAreaMode; b.classList.toggle('on', this.zoomAreaMode); b.setAttribute('aria-pressed', String(this.zoomAreaMode)); });
     add('prevview', 'prevview', 'Previous View', () => v.previousView());
     sep();
     add('section', 'sectionview', 'Section View', () => this.sectionPM());
     sep();
     add('orient', 'vieworient', 'View Orientation (Spacebar)', (b) => this.orientationPopup(b), true);
-    add('display', 'displaystyle', 'Display Style', (b) => fly(b, [
-      ['shadedEdges', 'Shaded With Edges'], ['shaded', 'Shaded'], ['hlr', 'Hidden Lines Removed'], ['hlv', 'Hidden Lines Visible'], ['wireframe', 'Wireframe']].map(([s, l]) => ({ label: l, icon: 'displaystyle', run: () => v.setDisplayStyle(s) }))), true);
-    add('hideshow', 'hideshow', 'Hide/Show Items', (b) => fly(b, [
-      { label: (this.view.planes ? '✓ ' : '') + 'View Planes', icon: 'plane', run: () => this.toggleView('planes') },
-      { label: (this.view.origins ? '✓ ' : '') + 'View Origins', icon: 'origin', run: () => this.toggleView('origins') },
-      { label: (this.view.sketches ? '✓ ' : '') + 'View Sketches', icon: 'sketch_t', run: () => this.toggleView('sketches') },
-      { label: (this.view.relations ? '✓ ' : '') + 'View Sketch Relations', icon: 'r_coincident', run: () => this.toggleView('relations') },
-    ]), true);
+    add('display', 'displaystyle', 'Display Style', (b, e) => fly(b, [
+      ['shadedEdges', 'Shaded With Edges'], ['shaded', 'Shaded'], ['hlr', 'Hidden Lines Removed'], ['hlv', 'Hidden Lines Visible'], ['wireframe', 'Wireframe']].map(([s, l]) => ({ label: l, icon: 'displaystyle', run: () => v.setDisplayStyle(s) })), e), true);
+    add('hideshow', 'hideshow', 'Hide/Show Items', (b, e) => fly(b, [
+      { label: (this.view.planes ? '✓ ' : '') + 'View Planes', icon: 'plane', role: 'menuitemcheckbox', checked: this.view.planes, run: () => this.toggleView('planes') },
+      { label: (this.view.origins ? '✓ ' : '') + 'View Origins', icon: 'origin', role: 'menuitemcheckbox', checked: this.view.origins, run: () => this.toggleView('origins') },
+      { label: (this.view.sketches ? '✓ ' : '') + 'View Sketches', icon: 'sketch_t', role: 'menuitemcheckbox', checked: this.view.sketches, run: () => this.toggleView('sketches') },
+      { label: (this.view.relations ? '✓ ' : '') + 'View Sketch Relations', icon: 'r_coincident', role: 'menuitemcheckbox', checked: this.view.relations, run: () => this.toggleView('relations') },
+    ], e), true);
     add('appearance', 'appearance', 'Edit Appearance', () => this.openTask('appearance'), true);
     add('scene', 'scene', 'Apply Scene', () => this.openTask('appearance'), true);
-    add('viewsettings', 'viewsettings', 'View Settings', (b) => fly(b, [{ label: 'Reverse mouse wheel zoom', run: () => { v.reverseWheel = !v.reverseWheel; } }]), true);
+    add('viewsettings', 'viewsettings', 'View Settings', (b, e) => fly(b, [{ label: 'Reverse mouse wheel zoom', role: 'menuitemcheckbox', checked: !!v.reverseWheel, run: () => { v.reverseWheel = !v.reverseWheel; } }], e), true);
   }
 
   orientationPopup(anchor) {
@@ -2356,6 +2444,7 @@ export class App {
     const grid = document.createElement('div'); grid.className = 'vo-grid';
     for (const [k, ic, t] of views) {
       const b = document.createElement('div'); b.className = 'fo'; b.title = t; b.innerHTML = icon(ic, 22);
+      asButton(b, t);
       b.onclick = () => { el.classList.add('hidden'); this.orient(k); };
       grid.appendChild(b);
     }
@@ -2400,12 +2489,20 @@ export class App {
       const c = this.commands[id];
       const b = document.createElement('div'); b.className = 'ct'; b.title = typeof c.label === 'function' ? c.label() : c.label;
       b.innerHTML = icon(typeof c.icon === 'function' ? c.icon() : c.icon, 20);
+      asButton(b, b.title);
       b.onclick = () => { el.classList.add('hidden'); this.lastCommand = id; c.run(); this.ribbon.render(); };
       el.appendChild(b);
     }
     const gr = $('graphics').getBoundingClientRect();
     el.style.left = Math.min(gr.width - 180, x - gr.left) + 'px'; el.style.top = Math.min(gr.height - 120, y - gr.top) + 'px';
     el.classList.remove('hidden');
+  }
+
+  // The pointer is over the graphics area itself (not a toolbar or dialog on top of it).
+  overGraphics(mouse) {
+    if (!mouse) return false;
+    const el = document.elementFromPoint?.(mouse.x, mouse.y);
+    return !!el && (el === this.viewer.canvas || !!el.closest?.('#viewport, #labels'));
   }
 
   // SOLIDWORKS: Tab hides the component (or body) under the cursor, Shift+Tab shows hidden ones there.
@@ -2420,13 +2517,60 @@ export class App {
     if (p && (p.kind === 'face' || p.kind === 'edge')) { this.bodyHidden = true; this.viewer.bodyGroup.visible = false; this.viewer.requestRender(); this.status('Body hidden. Shift+Tab over it shows it again.'); }
   }
 
+  // Who gets a key (owner's rule, 2026-10-19). 'model': the focus is on the page, the graphics area or the
+  // FeatureManager tree, so the SOLIDWORKS shortcuts act. 'control': a button, tab or toolbar item of the editor
+  // has the focus (a keyboard user put it there); it keeps Tab, Enter, Space, the arrows and Delete, and only Escape
+  // and the Ctrl shortcuts reach the editor. 'none': a dialog, the Files page, a menu or a text field has the
+  // keyboard, and nothing reaches the model behind it.
+  keyTarget(e) {
+    if (this.files?.isOpen || modalOpen()) return 'none';
+    const t = e.target;
+    if (!t || t === document || t === window || t === document.body || t === document.documentElement) return 'model';
+    if (t === this.viewer?.canvas || t.id === 'tree' || t.id === 'viewport') return 'model';
+    if (t.closest?.('#modal-layer, .dlg, .contextmenu, #files, .search-results')) return 'none';
+    const tag = (t.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'select' || t.isContentEditable) return 'none';
+    return 'control';
+  }
+
+  // Esc: close menus and popups, then cancel the tool, the command or the selection.
+  escapeKey() {
+    closeMenus(); this.hideContextToolbar(); $('shortcutbar')?.classList.add('hidden'); $('viewcube')?.classList.add('hidden');
+    if (this.zoomAreaMode) { this.zoomAreaMode = false; $('headsup')?.querySelector('[data-id=zoomarea]')?.classList.remove('on'); return; }
+    if (this.mode === 'sketch' && !this.cmd) { this.sketcher.cancelTool(); return; }
+    if (this.cmd) return this.pmCancel();
+    return this.setSelection([]);
+  }
+
+  // F10 (Windows, SOLIDWORKS): the menu bar, File first.
+  focusMenubar() {
+    const bar = $('menubar');
+    if (!bar) return;
+    if (bar.classList.contains('hidden')) this.ribbon?.toggleMenubar?.(true);
+    bar.querySelector('.mi')?.focus();
+  }
+
   bindKeys() {
-    let mouse = { x: 300, y: 300 };
+    // Unknown until the pointer moves: a keyboard user's Tab must never hide the model under a stale position.
+    let mouse = null;
     window.addEventListener('pointermove', (e) => { mouse = { x: e.clientX, y: e.clientY }; });
+    document.addEventListener('pointerleave', () => { mouse = null; });
+    // A mouse click on a toolbar button or tab does not leave the keyboard focus on it, so Delete, Enter, Space and
+    // the letters keep acting on the model. Keyboard users who Tab to a button keep their focus there.
+    document.addEventListener('click', (e) => {
+      if (!e.detail) return;
+      const b = e.target?.closest?.('button, [role=button], [role=tab]');
+      if (b && document.activeElement === b && b.closest('#app') && !b.closest('.dlg, .contextmenu')) b.blur();
+    });
     document.addEventListener('keydown', (e) => {
-      const tag = (e.target.tagName || '').toLowerCase();
-      if (tag === 'input' || tag === 'textarea' || tag === 'select' || e.target.isContentEditable) return;
+      const where = this.keyTarget(e);
+      if (where === 'none') return;
       const k = e.key, ctrl = e.ctrlKey || e.metaKey, v = this.viewer;
+      if (k === 'F10' && !ctrl && !e.altKey && !e.shiftKey) { e.preventDefault(); return this.focusMenubar(); }
+      if (where === 'control') {
+        if (k === 'Escape') { e.target.blur?.(); return this.escapeKey(); }
+        if (!ctrl) return;
+      }
       if (ctrl && k.toLowerCase() === 'z') { e.preventDefault(); return this.undo(); }
       if (ctrl && k.toLowerCase() === 'y') { e.preventDefault(); return this.redo(); }
       if (ctrl && k.toLowerCase() === 's') { e.preventDefault(); return this.saveFile(); }
@@ -2438,23 +2582,26 @@ export class App {
       if (ctrl && /^[1-8]$/.test(k)) { e.preventDefault(); return this.orient(['front', 'back', 'left', 'right', 'top', 'bottom', 'isometric', 'normal'][+k - 1]); }
       if (ctrl && k.startsWith('Arrow')) { e.preventDefault(); const d = 40; return v.panBy(k === 'ArrowLeft' ? -d : k === 'ArrowRight' ? d : 0, k === 'ArrowUp' ? -d : k === 'ArrowDown' ? d : 0); }
       if (e.altKey && (k === 'ArrowLeft' || k === 'ArrowRight')) { e.preventDefault(); return v.rollBy((k === 'ArrowLeft' ? 1 : -1) * Math.PI / 12); }
+      if (ctrl) return;
       if (k.startsWith('Arrow')) { e.preventDefault(); const a = (e.shiftKey ? 90 : 15) * Math.PI / 180; return v.rotateBy(k === 'ArrowLeft' ? -a : k === 'ArrowRight' ? a : 0, k === 'ArrowUp' ? -a : k === 'ArrowDown' ? a : 0); }
-      if (k === 'Escape') {
-        closeMenus(); this.hideContextToolbar(); $('shortcutbar').classList.add('hidden'); $('viewcube').classList.add('hidden');
-        if (this.zoomAreaMode) { this.zoomAreaMode = false; $('headsup').querySelector('[data-id=zoomarea]')?.classList.remove('on'); return; }
-        if (this.mode === 'sketch' && !this.cmd) { if (this.sketcher.cancelTool()) return; return; }
-        if (this.cmd) return this.pmCancel();
-        return this.setSelection([]);
-      }
+      if (k === 'Escape') return this.escapeKey();
       if (k === 'Delete' || k === 'Backspace') { e.preventDefault(); return this.deleteSelection(); }
-      if (k === 'Enter') { if (this.pm.isOpen && (this.cmd || this.mode === 'sketch')) return this.pmOk(); if (this.lastCommand) return this.commands[this.lastCommand].run(); }
+      if (k === 'Enter') {
+        if (this.pm.isOpen && (this.cmd || this.mode === 'sketch')) { e.preventDefault(); return this.pmOk(); }
+        if (this.lastCommand) { e.preventDefault(); return this.commands[this.lastCommand].run(); }
+        return;
+      }
       if (k === ' ') { e.preventDefault(); return this.orientationPopup(); }
-      if (k === 'Tab') { e.preventDefault(); return this.tabHide(mouse, e.shiftKey); }
-      if (ctrl || e.altKey) return;
+      // Tab hides what is under the pointer only over the graphics area; anywhere else it moves the focus.
+      if (k === 'Tab') {
+        if (e.target.id === 'tree' || !this.overGraphics(mouse)) return;
+        e.preventDefault(); return this.tabHide(mouse, e.shiftKey);
+      }
+      if (e.altKey) return;
       if (k === 'f' || k === 'F') return v.zoomToFit();
       if (k === 'z') return v.zoomAt(1.25, v.w / 2, v.h / 2);
       if (k === 'Z') return v.zoomAt(0.8, v.w / 2, v.h / 2);
-      if (k === 's') return this.shortcutBar(mouse.x, mouse.y);
+      if (k === 's') return this.shortcutBar(mouse?.x ?? window.innerWidth / 2, mouse?.y ?? window.innerHeight / 2);
       if (this.mode === 'sketch') {
         const map = { l: 'line', c: 'circle', r: 'rectangle', d: 'smartdim', a: 'arc', p: 'point', t: 'trim' };
         if (map[k]) return this.sketchTool(map[k]);

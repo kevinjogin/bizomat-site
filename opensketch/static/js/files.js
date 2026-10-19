@@ -221,11 +221,13 @@ export class FilesView {
     inp.oninput = () => { this.query = inp.value; this.renderGrid(); };
     const right = h('div', 'fv-right');
     const connect = h('button', 'btn fv-ghost', `${FI.plug}<span>Connect AI</span>`);
+    connect.setAttribute('aria-label', 'Connect AI'); // the text is hidden on phones
     connect.onclick = () => this.app.server.connectDialog();
     const av = h('div', 'fv-avatar');
     this.avatarHost = av;
     this.syncAvatar();
     const back = h('button', 'btn fv-ghost fv-backbtn', `${FI.back}<span>Back to model</span>`);
+    back.setAttribute('aria-label', 'Back to model');
     back.onclick = () => this.backToModel();
     this.backEl = back;
     this.syncBack();
@@ -392,11 +394,13 @@ export class FilesView {
       meta.appendChild(acts);
     }
     const more = h('button', 'fv-more', FI.more); more.setAttribute('aria-label', `Actions for ${f.name}`); more.title = 'Actions';
-    more.onclick = (e) => { e.stopPropagation(); const r = more.getBoundingClientRect(); this.menu(f, r.right - 200, r.bottom + 4); };
-    more.onkeydown = (e) => e.stopPropagation(); // Enter on the button opens its menu, not the file
+    more.setAttribute('aria-haspopup', 'menu');
+    more.onclick = (e) => { e.stopPropagation(); const r = more.getBoundingClientRect(); this.menu(f, r.right, r.bottom + 4, { keyboard: !e.detail, returnTo: more, alignRight: true }); };
     c.append(th, meta, more);
     c.onclick = () => (trash ? c.focus() : this.openFile(f));
     c.onkeydown = (e) => {
+      if (e.target !== c) return; // keys on the card's "..." button are that button's
+      if ((e.key === 'F10' && e.shiftKey) || e.key === 'ContextMenu') { e.preventDefault(); this.menu(f, ...this.menuAt(c), { keyboard: true, returnTo: c }); return; }
       if (e.key === 'Enter' && !trash) { e.preventDefault(); c.onclick(); }
       if (e.key === 'F2' && !trash) { e.preventDefault(); this.rename(f, nm); }
       if ((e.key === 'Delete' || e.key === 'Backspace') && !trash) { e.preventDefault(); this.trashFile(f); }
@@ -416,13 +420,13 @@ export class FilesView {
 
   menuAt(el) { const r = el.getBoundingClientRect(); return [r.left + 16, r.top + 40]; }
 
-  menu(f, x, y) {
+  menu(f, x, y, opts = {}) {
     if (this.filter === 'trash') {
       contextMenu(x, y, [
         { label: 'Restore', icon: null, run: () => this.untrash(f) },
         '-',
         { label: 'Delete forever...', run: () => this.purge(f) },
-      ]);
+      ], null, opts);
       return;
     }
     contextMenu(x, y, [
@@ -435,7 +439,7 @@ export class FilesView {
       { label: 'Version history...', run: () => this.history(f) },
       '-',
       { label: 'Move to Trash', key: 'Del', run: () => this.trashFile(f) },
-    ]);
+    ], null, opts);
   }
 
   // ---------------------------------------------------------------- actions
@@ -599,6 +603,7 @@ export class FilesView {
         this.req('DELETE', `/api/docs/${encodeURIComponent(f.id)}?forever=1`).then(() => {
           this.closeUndo(f.id);
           this.trash = this.trash.filter((x) => x.id !== f.id); this.renderNav(); this.renderGrid();
+          this.app.toast?.(`Deleted ${f.name} forever.`);
         }, (err) => message('Delete forever', esc(err.message)));
       } },
     ] });
@@ -611,7 +616,7 @@ export class FilesView {
     const cur = h('div', 'fv-hrow cur', `<span class="v">v${f.version}</span><span class="w"><b>Current version</b><i></i></span><span class="t">${esc(ago(f.updated))}</span>`);
     cur.querySelector('i').textContent = `${f.by === 'claude' ? 'AI' : 'You'}: ${f.summary || ''}`;
     body.appendChild(cur);
-    if (!vs.length) body.appendChild(h('p', 'fv-p', 'No earlier versions yet. Every save keeps one, up to the last 50.'));
+    if (!vs.length) body.appendChild(h('p', 'fv-p', 'No earlier versions yet.'));
     for (const v of vs) {
       const row = h('div', 'fv-hrow', `<span class="v">v${v.version}</span><span class="w"><b></b><i></i></span><span class="t">${esc(ago(v.updated))}</span>`);
       row.querySelector('b').textContent = v.summary || 'Change';

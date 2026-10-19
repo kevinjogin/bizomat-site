@@ -418,9 +418,9 @@ function paramRow(app, spec, f, p) {
     case 'edges':
       return { type: 'selbox', id: p.name, placeholder: p.label || 'Select edges or faces', items: list, label: edgeLabel, remove: (i) => list().splice(i, 1), kinds: SEL_KINDS.edges, visible };
     case 'features':
-      return { type: 'selbox', id: p.name, color: 2, placeholder: p.label || 'Select features in the tree', items: list, label: (id) => app.featureById(id)?.name || id, remove: (i) => list().splice(i, 1), kinds: SEL_KINDS.features, visible };
+      return { type: 'selbox', id: p.name, color: 2, placeholder: p.label || 'Select features in the tree', items: list, label: (id) => esc(app.featureById(id)?.name || id), remove: (i) => list().splice(i, 1), kinds: SEL_KINDS.features, visible };
     case 'sketch':
-      return { type: 'selbox', id: p.name, placeholder: p.label || 'Select a sketch', items: () => (f[p.name] ? [f[p.name]] : []), label: (id) => sketchName(app, id), remove: () => { f[p.name] = null; }, kinds: SEL_KINDS.sketch, visible };
+      return { type: 'selbox', id: p.name, placeholder: p.label || 'Select a sketch', items: () => (f[p.name] ? [f[p.name]] : []), label: (id) => sketchLabel(app, id), remove: () => { f[p.name] = null; }, kinds: SEL_KINDS.sketch, visible };
     default:
       return null; // string, direction, object, sketch_line: set by the AI or a hand-written PropertyManager
   }
