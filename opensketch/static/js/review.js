@@ -54,6 +54,7 @@ export class MotionReview {
     };
     app.cmd = { key: 'motionreview', onOk: () => undefined, onClose: () => this.close() };
     app.pm.open(spec);
+    app.syncDocTabs?.();
     this.draw();
     if (!this.readOnly && !this.checks) this.runChecks();
   }

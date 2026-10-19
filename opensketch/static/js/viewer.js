@@ -34,6 +34,12 @@ export const STD_FRAMES = {
   'Right Plane': { origin: [0, 0, 0], xdir: [0, 0, -1], ydir: [0, 1, 0], normal: [1, 0, 0] },
 };
 
+// How far a placement change moves a part: its pivot's travel (mm) plus its turn (rad, weighted as 10 mm).
+function moveSize(a, b, pivot) {
+  const qa = new THREE.Quaternion().setFromRotationMatrix(a), qb = new THREE.Quaternion().setFromRotationMatrix(b);
+  return pivot.clone().applyMatrix4(a).distanceTo(pivot.clone().applyMatrix4(b)) + qa.angleTo(qb) * 10;
+}
+
 function quatFromBasis(x, y, z) {
   const m = new THREE.Matrix4().makeBasis(x, y, z);
   return new THREE.Quaternion().setFromRotationMatrix(m);
@@ -1136,6 +1142,7 @@ export class Viewer {
     if (!body) return hit || null;
     const pm = buildPartMesh(body);
     pm.key = key;
+    pm.center = pm.bbox.isEmpty() ? new THREE.Vector3() : pm.bbox.getCenter(new THREE.Vector3()); // glide pivot
     if (hit) this.retired.push(hit);
     this.partGeo.set(pid, pm);
     return pm;
@@ -1166,7 +1173,12 @@ export class Viewer {
   // comps: [{id, part, key, matrix, color, hidden, opacity}], bodies: {part id: mesh or undefined}
   // When the same components show the same part builds, only their placements and colours change (drags, mate
   // previews, Motion Review frames): no objects or materials are made, so no shaders are rebuilt.
-  setAssembly(comps, bodies = {}) {
+  // glide (ms): components that moved since the last draw travel to their new place instead of jumping, the way
+  // SOLIDWORKS brings a part onto its mate.
+  setAssembly(comps, bodies = {}, glide = 0) {
+    const was = new Map([...this.compGroups].map(([id, g]) => [id, g.matrix.clone()]));
+    if (this.glideRun) this.glideRun.stopped = true;
+    this.glideRun = null;
     const list = [];
     for (const c of comps) {
       const pg = this.partGeometry(c.part, c.key, bodies[c.part]);
@@ -1183,6 +1195,7 @@ export class Viewer {
       }
       this.bodyGroup.updateMatrixWorld(true);
       this.refreshHighlights();
+      if (glide > 0) this.glideFrom(was, glide);
       return;
     }
     this.clearBodies();
@@ -1213,35 +1226,63 @@ export class Viewer {
     this.applyDisplayStyle();
     this.bodyGroup.updateMatrixWorld(true);
     if (this.clipPlane) this.rebuildCaps();
+    if (glide > 0) this.glideFrom(was, glide);
   }
 
-  // Tween groups to new matrices. items: [{group, to: Matrix4, via?: Matrix4, from?: Matrix4}]. A path through
-  // `via` is a smooth curve (via pulls it, as a Bezier control point), not two straight legs. `signal` (an
-  // AbortSignal) ends it early at the end pose; reduced motion jumps there at once.
-  tweenGroups(items, dur = 700, signal = null) {
+  glideFrom(was, dur) {
+    const items = [];
+    for (const [id, g] of this.compGroups) {
+      const from = was.get(id), pivot = g.userData.inst?.pm.center || new THREE.Vector3();
+      if (!from || moveSize(from, g.matrix, pivot) < 1e-3) continue;
+      items.push({ group: g, from, to: g.matrix.clone(), pivot });
+      g.matrix.copy(from);
+      g.matrixWorldNeedsUpdate = true;
+    }
+    if (!items.length) return;
+    const run = { stopped: false };
+    this.glideRun = run;
+    this.tweenGroups(items, dur, run).then(() => {
+      if (this.glideRun !== run) return;
+      this.glideRun = null;
+      this.bodyGroup.updateMatrixWorld(true);
+      if (this.clipPlane) this.rebuildCaps();
+      this.requestRender();
+    });
+  }
+
+  // Tween groups to new matrices. items: [{group, to: Matrix4, via?: Matrix4, from?: Matrix4, pivot?: Vector3}].
+  // The pivot (part coordinates, e.g. the part's centre) travels while the part turns about it, so a part whose
+  // origin is far away does not swing round in an arc. A path through `via` is a smooth curve (via pulls it, as a
+  // Bezier control point), not two straight legs. `stop` is an AbortSignal (aborted: jump to the end pose) or a run
+  // {stopped} (stopped: leave the groups where they are, a newer draw has placed them); reduced motion jumps at once.
+  tweenGroups(items, dur = 700, stop = null) {
     const parts = items.map((it) => {
+      const c = it.pivot || new THREE.Vector3();
       const keys = [it.from || it.group.matrix.clone(), ...(it.via ? [it.via] : []), it.to].map((m) => {
         const p = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3();
         m.decompose(p, q, s);
-        return { p, q, s };
+        return { w: c.clone().applyMatrix4(m), q, s };
       });
-      return { g: it.group, keys };
+      return { g: it.group, c, keys };
     });
     if (reducedMotion()) dur = 0;
     const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
     return new Promise((resolve) => {
       const t0 = performance.now();
-      const p = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3();
+      const p = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3(), w = new THREE.Vector3();
       const frame = () => {
-        const u = dur <= 0 || signal?.aborted ? 1 : Math.min(1, (performance.now() - t0) / dur);
+        if (stop?.stopped) { resolve(); return; }
+        const u = dur <= 0 || stop?.aborted ? 1 : Math.min(1, (performance.now() - t0) / dur);
         const e = ease(u);
-        for (const { g, keys } of parts) {
+        for (const { g, c, keys } of parts) {
           const a = keys[0], b = keys[keys.length - 1];
           if (keys.length === 3) {
             const v = keys[1], w0 = (1 - e) * (1 - e), w1 = 2 * (1 - e) * e, w2 = e * e;
-            p.set(0, 0, 0).addScaledVector(a.p, w0).addScaledVector(v.p, w1).addScaledVector(b.p, w2);
-          } else p.lerpVectors(a.p, b.p, e);
+            w.set(0, 0, 0).addScaledVector(a.w, w0).addScaledVector(v.w, w1).addScaledVector(b.w, w2);
+          } else w.lerpVectors(a.w, b.w, e);
           q.slerpQuaternions(a.q, b.q, e); s.lerpVectors(a.s, b.s, e);
+          p.copy(c).multiply(s).applyQuaternion(q);
+          p.subVectors(w, p);
           g.matrix.compose(p, q, s);
           g.matrixWorldNeedsUpdate = true;
         }

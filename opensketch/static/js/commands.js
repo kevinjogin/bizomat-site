@@ -106,7 +106,7 @@ export function buildCommands(app) {
     interference: { label: 'Interference Detection', icon: 'interference', tip: 'Finds overlapping volume between components.', run: () => app.asm.interferencePM() },
     motionreview: { label: 'Motion Review', icon: 'motionreview', tip: 'Drives each joint through its travel and checks for clashes, gaps and contacts that must touch.', run: () => app.review.open() },
     coupler: { label: 'Coupler', icon: 'coupler', tip: 'Mechanical mate: one part drives another by a motion law (a lever throws a tongue, a cam lifts a follower).', run: () => app.asm.couplerPM() },
-    playback: { label: 'Assembly Playback', icon: 'playback', tip: 'Replays the assembly order: each component flies in and settles onto its mates (Motion Study).', run: () => app.asm.playSequence() },
+    playback: { label: 'Assembly Playback', icon: 'playback', tip: 'Replays the assembly order: each component flies in and settles onto its mates.', run: () => app.asm.playSequence() },
     openpart: { label: 'Open Part', icon: 'open', tip: 'Opens the selected component\'s part for editing. Return to the assembly when done.', run: () => { const s = app.selection.find((x) => x.kind === 'component'); if (!s) return app.toast('Select a component first.'); app.asm.openPart(s.id); } },
     toolbox: { label: 'Toolbox', icon: 'toolbox', tip: 'Standard screws, nuts, washers and bearings, made to size.', run: () => app.openTask('library') },
     asmexplain: { label: 'Explain Assembly', icon: 'aiexplain', tip: 'Asks the AI to explain the assembly and how it moves.', run: () => app.aiQuick('Explain this assembly: the parts, how they are mated and which components can still move. Do not change it.') },
