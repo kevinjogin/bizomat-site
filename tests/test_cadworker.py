@@ -207,7 +207,8 @@ def test_the_server_answers_while_a_heavy_rebuild_runs(tmp_path):
                               ("/api/docs", json.dumps({"name": "", "kind": "part"}).encode(), "POST")], t)
         t.join()
         status, body, took = out["r"]
-        assert status == 200 and took > 5.0, took  # the rebuild really was heavy
+        # the rebuild really was heavy: at least twice the answer limit below (a fast CI runner builds it in ~5 s)
+        assert status == 200 and took > 3.0, took
         assert json.loads(body)["status"][-1]["state"] == "ok"
         # without worker processes one ~2 s OpenCascade call of the rebuild holds every request (2-3 s); 1.5 s leaves
         # room for a busy test machine and still tells the two apart
