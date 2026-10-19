@@ -300,6 +300,15 @@ export class App {
 
   cleanDoc(d = this.doc) { return JSON.parse(JSON.stringify(d, (k, v) => (k.startsWith('_') ? undefined : v))); }
 
+  // Another document takes the editor (a file opened, New, a file from the computer). Undo is per document, as
+  // in SOLIDWORKS: the history starts again, so Ctrl+Z can never put the previous model into this one.
+  leaveDocument() {
+    if (this.proposal) this.rejectProposal(true);
+    this.docStack = [];
+    this.undoStack = []; this.redoStack = [];
+    this.docEpoch = (this.docEpoch || 0) + 1;
+  }
+
   pushUndo(label) {
     if (this.proposal) this.rejectProposal(true);
     this.undoStack.push({ label, json: JSON.stringify(this.cleanDoc()) });
@@ -1654,8 +1663,7 @@ export class App {
       this.hideContextToolbar();
       if (this.mode === 'sketch') this.exitSketch({ silent: true });
       this.closeCommand();
-      if (this.docStack.length) { this.doc = this.cleanDoc(this.docStack[0].doc); this.undoStack = this.docStack[0].undo; this.redoStack = this.docStack[0].redo; this.docStack = []; }
-      this.pushUndo('New');
+      this.leaveDocument();
       this.doc = kind === 'assembly' ? newAssembly() : newDoc();
       this.proposal = null;
       this.docChanged();
@@ -1734,8 +1742,7 @@ export class App {
       this.hideContextToolbar();
       if (this.mode === 'sketch') this.exitSketch({ silent: true });
       this.closeCommand();
-      if (this.docStack.length) { this.doc = this.cleanDoc(this.docStack[0].doc); this.undoStack = this.docStack[0].undo; this.redoStack = this.docStack[0].redo; this.docStack = []; }
-      this.pushUndo('Open');
+      this.leaveDocument();
       this.doc = d; this.doc.seq = this.doc.seq || 1000;
       this.proposal = null;
       this.docChanged();

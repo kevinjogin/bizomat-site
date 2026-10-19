@@ -761,7 +761,9 @@ def api_doc_restore_version(doc_id: str, req: VersionRequest, request: Request):
 
 @app.put("/api/docs/{doc_id}")
 def api_doc_save(doc_id: str, req: DocSave, request: Request):
-    _doc_meta(doc_id, request)
+    m = _doc_meta(doc_id, request)
+    if isinstance(req.doc, dict):
+        req.doc["name"] = m["name"]  # a file is renamed only by PATCH: a save never renames it
     try:
         return store.save(doc_id, req.doc, "you", req.summary or "Edited in OpenSketch", req.base_version, req.requests)
     except store.NotFound:
