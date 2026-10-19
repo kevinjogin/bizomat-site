@@ -21,5 +21,5 @@ export async function refreshAIStatus(app) {
 
 // The key form is the "Built-in AI" tab of Connect AI (connect.js).
 export function aiKeyDialog(app) {
-  return import('./connect.js').then((m) => m.connectDialog(app, 'key'));
+  return app.server.connectDialog('key');
 }

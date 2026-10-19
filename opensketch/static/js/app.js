@@ -20,7 +20,7 @@ import { LivePlayer } from './live.js';
 import { Toolbox } from './toolbox.js';
 import { SectionView } from './section.js';
 import { ServerDocs, LAST_KEYS } from './serverdocs.js';
-import { setScope, skey, adopt } from './scope.js';
+import { setScope, skey, adopt, scopeKnown } from './scope.js';
 import { Account } from './account.js';
 import { DesignPanel } from './design.js';
 import { MotionReview } from './review.js';
@@ -40,6 +40,10 @@ function importFailText(status, size) {
   return `The server did not answer properly (HTTP ${status || 'no status'}). Reload the page and try again.`;
 }
 const AUTOSAVE = 'opensketch.autosave.v1';
+const BLOB = '\u0000blob:'; // stands for a big string in undo steps (app.undoJSON)
+const BLOB_MIN = 64 * 1024;
+const UNDO_MAX = 64e6; // characters of undo history kept
+const CACHE_MAX = 60e6; // bytes (about) of rebuilt meshes kept for undo, redo and going back
 
 const MATERIALS = [
   ['ABS', 1.02e-6], ['PC/ABS', 1.15e-6], ['Nylon 6/6', 1.14e-6], ['PLA', 1.24e-6], ['Polypropylene', 0.9e-6],
@@ -139,22 +143,22 @@ export class App {
   async startup() {
     const q = new URLSearchParams(location.search);
     const docId = q.get('doc');
+    // Signed in: the Files page first (YZ 2026-10-19), drawn at once (its list comes from the server, per person).
+    // The last file is the top card; an unsaved draft is a card too.
+    if (!docId) this.files.open();
     // browser storage is per signed-in person (scope.js); wait briefly for who that is
     const who = await Promise.race([this.account?.ready?.then(() => this.account.user).catch(() => null), new Promise((ok) => setTimeout(() => ok(undefined), 4000))]);
-    const user = who && !who.legacy ? who : null;
-    setScope(user?.id);
-    if (user?.role === 'owner') adopt([AUTOSAVE, ...LAST_KEYS]);
-    const draftLink = ServerDocs.draftLink;
-    const hasDraft = this.restore();
-    if (draftLink && !docId) this.doc = newDoc(); // that copy is a file in Files, not a draft
+    const known = !this.account?.el || (who !== undefined && typeof this.account.info?.mode === 'string');
+    if (known) this.useScope(who); else this.waitForAccount(); // storage stays off until it is known
+    const hasDraft = known && this.restore();
+    if (hasDraft) this.dirty = true; // only in this browser: kept until saved or let go
     this.updateDocChrome();
     if (docId) {
-      if (!(await this.server.open(docId, { quiet: true }))) { this.regen().then(() => this.viewer.zoomToFit(false)); this.files.open(); }
+      const left = ServerDocs.discardedOnLeave(docId); // a reload of an untouched new file: a new one in its place
+      if (!(left ? await this.server.createAndOpen(left.kind) : await this.server.open(docId, { quiet: true }))) this.files.open();
     } else {
-      // Signed in: the Files page first (YZ 2026-10-19). The last file is the top card; an unsaved draft is a card too.
-      if (hasDraft && !draftLink) { this.dirty = true; this.updateDocChrome(); }
-      this.regen().then(() => this.viewer.zoomToFit(false));
-      this.files.open();
+      if (hasDraft) this.regen().then(() => this.viewer.zoomToFit(false)); // built behind Files, so Keep editing is instant
+      if (this.files.isOpen) this.files.renderGrid();
     }
     if (q.get('view') === 'files' && !this.files.isOpen) this.files.open();
     if (q.get('new') === 'part' || q.get('new') === 'assembly') this.files.newFile(q.get('new'));
@@ -162,6 +166,31 @@ export class App {
     const u = new URL(location.href);
     for (const k of ['view', 'new', 'source']) u.searchParams.delete(k);
     history.replaceState(null, '', u);
+  }
+
+  useScope(who) {
+    const user = who && !who.legacy ? who : null;
+    setScope(user?.id);
+    if (user?.role === 'owner') adopt([AUTOSAVE, ...LAST_KEYS]);
+    if (ServerDocs.draftLink) { this.forgetDraft(); this.server.forgetLegacy(); } // an older page kept a file's copy there, not a draft
+  }
+
+  // /api/account was slow or failed at start: keep asking, then turn browser storage on for that person (and
+  // bring in their draft if the editor is still empty).
+  async waitForAccount() {
+    const acct = this.account;
+    try { await acct.ready; } catch (_) { /* asked again below */ }
+    for (const ms of [2000, 5000, 10000, 20000, 30000, 60000]) {
+      if (typeof acct.info?.mode === 'string') break;
+      await new Promise((ok) => setTimeout(ok, ms));
+      await acct.load();
+    }
+    if (typeof acct.info?.mode !== 'string') return; // never known: nothing is kept in this browser this session
+    this.useScope(acct.user);
+    if (!this.server.linked && !this.hasModel() && !this.dirty && this.restore()) {
+      this.dirty = true; this.updateDocChrome(); this.regen();
+      if (this.files.isOpen) this.files.renderGrid();
+    } else this.autosaveNow(); // what was done meanwhile
   }
 
   // Installed app: .osk and STEP files opened with OpenSketch from the computer (File Handling API).
@@ -196,7 +225,7 @@ export class App {
   }
 
   // A model is on screen (anything to go back to from the Files page).
-  hasModel() { const d = this.rootDoc(); return isAssembly(d) ? (d.components || []).length > 0 || Object.keys(d.parts || {}).length > 0 : (d.features || []).length > 0 || !!this.server.linked; }
+  hasModel() { const d = this.rootDoc(); return !!this.server.linked || (isAssembly(d) ? (d.components || []).length > 0 || Object.keys(d.parts || {}).length > 0 : (d.features || []).length > 0); }
 
   // The open model is an unsaved draft with something in it (not in Files).
   dirtyDraft() {
@@ -205,19 +234,36 @@ export class App {
     return !!this.dirty && (isAssembly(d) ? (d.components || []).length > 0 : (d.features || []).length > 0);
   }
 
-  // Before something replaces an unsaved draft: offer to save it. Resolves true to go ahead.
-  confirmLeaveDraft() {
-    if (!this.dirtyDraft()) return Promise.resolve(true);
+  // Before something replaces the open model: an AI change still waiting is accepted or discarded, and an unsaved
+  // draft is offered to Files. Resolves true to go ahead.
+  async confirmLeaveDraft() {
+    if (this.proposal && !(await this.confirmProposal())) return false;
+    if (!this.dirtyDraft()) return true;
     const name = this.rootDoc().name || 'Untitled';
+    return new Promise((resolve) => {
+      let answered = false, saving = false;
+      const done = (v) => { if (!answered) { answered = true; resolve(v); } };
+      dialog({ title: 'Save your draft?', cls: 'acct-dlg', onClose: () => { if (!saving) done(false); },
+        body: `<p class="fv-p"><b>${esc(name)}</b> is only in this browser. Save it to your Files before you leave it?</p>`,
+        buttons: [
+          { label: "Don't save", run: () => { this.dirty = false; this.forgetDraft(); done(true); } },
+          { label: 'Cancel', run: () => done(false) },
+          // the Save to Files dialog answers: saved -> go on to what was asked (open the file, New...)
+          { label: 'Save to Files', primary: true, run: () => { saving = true; setTimeout(() => this.server.saveDraft().then(done), 0); } },
+        ] });
+    });
+  }
+
+  confirmProposal() {
     return new Promise((resolve) => {
       let answered = false;
       const done = (v) => { if (!answered) { answered = true; resolve(v); } };
-      dialog({ title: 'Save your draft?', cls: 'acct-dlg', onClose: () => done(false),
-        body: `<p class="fv-p"><b>${esc(name)}</b> is only in this browser. Save it to your Files before you leave it?</p>`,
+      dialog({ title: "Keep the AI's change?", cls: 'acct-dlg', onClose: () => done(false),
+        body: `<p class="fv-p">The AI's change to <b>${esc(this.rootDoc().name || 'this model')}</b> is not accepted yet. Accept it before you leave?</p>`,
         buttons: [
-          { label: "Don't save", run: () => { this.dirty = false; done(true); } },
+          { label: 'Discard', run: () => { this.rejectProposal(true); done(true); } },
           { label: 'Cancel', run: () => done(false) },
-          { label: 'Save to Files', primary: true, run: () => { setTimeout(async () => done(await this.server.saveDraft()), 0); } },
+          { label: 'Accept', primary: true, run: () => { this.acceptProposal(); done(true); } },
         ] });
     });
   }
@@ -225,12 +271,16 @@ export class App {
   // The codespace pulls each push to main and restarts the server (.devcontainer/run.sh). When the
   // server's version changes, offer a reload; the work in progress is kept by autosave.
   watchVersion() {
-    let first = null;
+    // the page's own version (the server writes it into index.html); a page from the service worker's copy is
+    // older than the server it then reaches, and says so
+    const mine = document.querySelector('meta[name="opensketch-version"]')?.content;
+    let first = mine && !mine.startsWith('__') ? mine : null;
     const check = async () => {
       if (!this.isActive()) { this.lastIdleSeen = true; return; } // let a hosted server sleep while nobody is looking
       let v;
       try { v = await (await fetch('/api/version', { cache: 'no-store' })).json(); } catch (_) { return; } // restarting
       if (first === null) first = v.version;
+      if (v.version !== first) this.regenCache?.clear(); // rebuilds by the new server may differ
       this.showUpdateBar(v.version !== first, v.note || '');
     };
     check();
@@ -271,7 +321,7 @@ export class App {
     bar.innerHTML = `<span>${esc(updated ? 'OpenSketch was updated. Reload to use the new version. Your model is kept.' + (note ? ' ' + note : '') : note)}</span>`;
     if (updated) {
       const b = document.createElement('button'); b.className = 'btn primary'; b.textContent = 'Reload';
-      b.onclick = () => { this.autosaveNow(); location.reload(); };
+      b.onclick = async () => { b.disabled = true; await this.server?.flush(5000); this.autosaveNow(); location.reload(); };
       bar.appendChild(b);
     }
     const x = document.createElement('button'); x.className = 'btn'; x.textContent = 'Later'; x.title = 'Hide this message';
@@ -300,15 +350,47 @@ export class App {
 
   cleanDoc(d = this.doc) { return JSON.parse(JSON.stringify(d, (k, v) => (k.startsWith('_') ? undefined : v))); }
 
+  // Another document takes the editor (a file opened, New, a file from the computer). Undo is per document, as
+  // in SOLIDWORKS: the history starts again, so Ctrl+Z can never put the previous model into this one.
+  leaveDocument() {
+    if (this.proposal) this.rejectProposal(true, 'Not applied: another file was opened.');
+    this.docStack = [];
+    this.undoStack = []; this.redoStack = [];
+    this.blobs = null;
+    this.regenCache?.clear();
+    this.docEpoch = (this.docEpoch || 0) + 1;
+  }
+
+  // An undo step: the document as text, in one pass. Big strings that rarely change (an import's BREP) are kept
+  // once and stand in the text as a short token, so 200 steps of an imported model do not hold 200 copies.
+  undoJSON(d = this.doc) {
+    const blobs = this.blobs || (this.blobs = { byText: new Map(), byToken: new Map() });
+    return JSON.stringify(d, (k, v) => {
+      if (k.startsWith('_')) return undefined;
+      if (typeof v !== 'string' || v.length < BLOB_MIN) return v;
+      let t = blobs.byText.get(v);
+      if (!t) { t = BLOB + blobs.byText.size; blobs.byText.set(v, t); blobs.byToken.set(t, v); }
+      return t;
+    });
+  }
+
+  fromUndoJSON(json) {
+    const byToken = this.blobs?.byToken;
+    return JSON.parse(json, byToken ? (k, v) => (typeof v === 'string' && v.startsWith(BLOB) ? byToken.get(v) ?? v : v) : undefined);
+  }
+
   pushUndo(label) {
-    if (this.proposal) this.rejectProposal(true);
-    this.undoStack.push({ label, json: JSON.stringify(this.cleanDoc()) });
-    if (this.undoStack.length > 200) this.undoStack.shift();
+    this.settleProposal();
+    this.undoStack.push({ label, json: this.undoJSON() });
+    // at most 200 steps and UNDO_MAX characters in all (the newest step always stays)
+    let total = 0;
+    for (const u of this.undoStack) total += u.json.length;
+    while (this.undoStack.length > 1 && (this.undoStack.length > 200 || total > UNDO_MAX)) total -= this.undoStack.shift().json.length;
     this.redoStack = [];
   }
 
   restoreJSON(json) {
-    this.doc = JSON.parse(json);
+    this.doc = this.fromUndoJSON(json);
     if (this.mode === 'sketch') {
       if (this.featureById(this.sketcher.skId)) { this.sketcher.sel.clear(); this.sketcher.solve(); this.sketcher.render(); }
       else this.exitSketch({ silent: true });
@@ -323,7 +405,7 @@ export class App {
     if (this.mode === 'sketch' && this.sketcher.tool && this.sketcher.tool.stage > 0) { this.sketcher.cancelTool(); return; }
     const u = this.undoStack.pop();
     if (!u) { this.status('Nothing to undo'); return; }
-    this.redoStack.push({ label: u.label, json: JSON.stringify(this.cleanDoc()) });
+    this.redoStack.push({ label: u.label, json: this.undoJSON() });
     this.restoreJSON(u.json);
     this.status('Undo ' + u.label);
   }
@@ -331,7 +413,7 @@ export class App {
   redo() {
     const r = this.redoStack.pop();
     if (!r) return;
-    this.undoStack.push({ label: r.label, json: JSON.stringify(this.cleanDoc()) });
+    this.undoStack.push({ label: r.label, json: this.undoJSON() });
     this.restoreJSON(r.json);
     this.status('Redo ' + r.label);
   }
@@ -380,13 +462,40 @@ export class App {
     }
   }
 
+  // A draft (not in Files) is kept in this browser's draft slot. A file's edits are kept only while the server
+  // does not have them yet (ServerDocs.keepUnsent), so another tab's open file never replaces a draft.
   autosaveNow() {
     clearTimeout(this._autosaveTimer); this._autosaveTimer = null;
-    if (this.reviewMode) return;
-    try { localStorage.setItem(skey(AUTOSAVE), JSON.stringify(this.rootDoc())); } catch (_) { /* full or unavailable: Files keeps the record */ }
+    if (this.reviewMode || !scopeKnown()) return;
+    if (this.server?.linked) { if (this.server.link.local) this.server.keepUnsent(); return; }
+    try { localStorage.setItem(skey(AUTOSAVE), JSON.stringify(this.rootDoc())); } catch (_) { /* full or unavailable */ }
+  }
+
+  // The open file left the editor (moved to the Trash): an empty new part takes its place, with nothing to save.
+  // The Undo toast or Trash > Restore brings the file back.
+  closeFile() {
+    this.server.unlink();
+    this.hideContextToolbar();
+    if (this.mode === 'sketch') this.exitSketch({ silent: true });
+    this.closeCommand();
+    this.leaveDocument();
+    this.doc = newDoc(); this.proposal = null; this.result = null;
+    this.docChanged();
+    this.dirty = false; this.updateDocChrome();
+    this.ribbon.setTab('Features');
+    this.setSelection([]);
+    this.viewer.setBody(null);
+  }
+
+  // The draft slot is let go: saved to Files, "Don't save", or nothing worth keeping.
+  forgetDraft() {
+    clearTimeout(this._autosaveTimer); this._autosaveTimer = null;
+    if (!scopeKnown()) return;
+    try { localStorage.removeItem(skey(AUTOSAVE)); } catch (_) { /* storage off */ }
   }
 
   restore() {
+    if (!scopeKnown()) return false;
     try {
       const s = localStorage.getItem(skey(AUTOSAVE));
       if (s) {
@@ -425,7 +534,7 @@ export class App {
     const sv = this.server;
     const st = this.reviewMode ? null : !sv?.linked ? 'draft' : sv.state;
     const label = { draft: 'Draft', saved: 'Saved', saving: 'Saving', offline: 'Offline', conflict: 'Changed elsewhere' }[st] || '';
-    const tip = { draft: 'Only in this browser. Save it to your Files (Ctrl+S).', saved: 'Saved to your Files. Your AI sees this version.', saving: 'Saving to your Files...', offline: 'Cannot reach the server. Your edits are kept and saved when it is back.', conflict: 'The file changed elsewhere. Choose which version to keep.' }[st] || '';
+    const tip = { draft: 'Only in this browser. Save it to your Files (Ctrl+S).', saved: 'Saved to your Files. Your AI sees this version.', saving: 'Saving to your Files...', offline: 'Cannot reach the server. Your edits are kept in this browser and saved when it is back.', conflict: 'The file changed elsewhere. Choose which version to keep.' }[st] || '';
     const name = f ? `${this.doc.name}` : (root.name || 'Untitled');
     const ctx = f ? ` in ${root.name}` : '';
     if (!this._dt) {
@@ -440,7 +549,7 @@ export class App {
     this._dt.state.innerHTML = st === 'draft' ? '<span>Draft</span><b>Save to Files</b>' : `<i></i><span>${label}</span>`;
     this._dt.state.title = tip;
     this._dt.state.hidden = !st;
-    document.title = `${name}${st === 'draft' && this.dirty ? ' (draft)' : ''} - OpenSketch`;
+    if (!this.files?.isOpen) document.title = `${name}${st === 'draft' && this.dirty ? ' (draft)' : ''} - OpenSketch`; // Files has its own
   }
 
   // Rename the open file (title bar click): on the server when it is in Files.
@@ -461,7 +570,7 @@ export class App {
       const v = inp.value.trim().slice(0, 120);
       if (!save || !v || v === target.name) return;
       if (this.server.linked && !this.docStack.length) {
-        this.server.flush();
+        await this.server.flush(); // the last edits first, so the rename never meets a save of the old name
         try {
           const r = await this.server.req('PATCH', `/api/docs/${encodeURIComponent(this.server.link.id)}`, { name: v });
           this.server.renamedOnServer(r);
@@ -492,26 +601,28 @@ export class App {
       r = await fetch(url, method === 'GET' ? {} : { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     } catch (_) { throw serverAway(); } // no answer at all: offline, or the server is starting up
     const ct = r.headers.get('content-type') || '';
+    if (r.status === 401) { location.href = '/login?next=' + encodeURIComponent(location.pathname + location.search); throw new Error('Sign in again'); }
     if ([502, 503, 504].includes(r.status) && !ct.includes('json')) throw serverAway(); // Fly.io: the machine is waking or too busy
     if (ct.includes('json')) {
       const j = await r.json();
-      if (!r.ok && !j.error) throw new Error(j.detail || r.statusText || `HTTP ${r.status}`);
+      if (!r.ok) { const e = new Error(j.error || j.detail || r.statusText || `HTTP ${r.status}`); e.status = r.status; e.body = j; throw e; }
       return j;
     }
-    if (r.status === 401) { location.href = '/login?next=' + encodeURIComponent(location.pathname + location.search); throw new Error('Sign in again'); }
     if (!r.ok) throw new Error(r.statusText || `HTTP ${r.status}`);
     return r;
   }
 
   // A rebuild waits out a server that is starting or busy instead of failing at once (Fly.io wakes a stopped
   // machine in 10-30 s and answers 502 meanwhile). Up to ~75 s; the loading pill says what it is waiting for.
-  async apiPatient(url, body, done) {
+  // stale(): true once a newer request replaced this one, which then stops asking.
+  async apiPatient(url, body, done, stale = null) {
     const waits = [1000, 2000, 4000, 8000, 15000, 15000, 30000];
     for (let i = 0; ; i++) {
       try { return await this.api(url, body); } catch (err) {
         if (!err.away || i >= waits.length) throw err;
         done?.relabel?.('Waiting for the server');
         await new Promise((ok) => setTimeout(ok, waits[i]));
+        if (stale?.()) { const e = new Error('Replaced by a newer rebuild'); e.superseded = true; throw e; }
       }
     }
   }
@@ -531,16 +642,42 @@ export class App {
   }
 
   // label: what the loading indicator says if the server takes a moment ("Opening Bracket")
+  // A part's rebuild. A state this page has built before (undo, redo, leaving a sketch) is drawn at once from
+  // memory; otherwise one request at a time goes to the server: a newer rebuild waits for the one in flight
+  // and only the newest state is sent (the person's CAD worker does one job at a time, so stale ones would
+  // queue there). Ctrl+B (announce) always asks the server.
   async regen(announce = false, label = null) {
     if (this.isAsm) return this.asm.regen(announce, null, label);
     const seq = ++this.regenSeq;
+    let key = JSON.stringify(this.docForRegen());
+    const hit = !announce && this.regenCache?.get(key);
+    if (hit) { this.regenCache.delete(key); this.regenCache.set(key, hit); this.applyResult(hit); return; }
+    while (this.regenFlight) { await this.regenFlight.catch(() => {}); if (seq !== this.regenSeq) return; }
+    const doc = this.docForRegen();
+    key = JSON.stringify(doc);
     const done = this.busy(label || (this.viewer.bodyData ? 'Rebuilding' : 'Loading model'));
+    const flight = this.apiPatient('/api/regen', { doc }, done, () => seq !== this.regenSeq);
+    this.regenFlight = flight;
     let res;
-    try { res = await this.apiPatient('/api/regen', { doc: this.docForRegen() }, done); } catch (err) { done(); this.rebuildFailed(err); return; }
+    try { res = await flight; } catch (err) { done(); if (!err.superseded && seq === this.regenSeq) this.rebuildFailed(err); return; } finally { if (this.regenFlight === flight) this.regenFlight = null; }
+    this.cacheResult(key, res);
     if (seq !== this.regenSeq) { done(); return; }
-    this.applyResult(res);
-    done();
+    try { this.applyResult(res); } finally { done(); }
     if (announce) this.status('Rebuild complete');
+  }
+
+  // Rebuilt results kept by document text (a few, up to CACHE_MAX bytes of mesh), newest last.
+  cacheResult(key, res) {
+    if (!res || !Array.isArray(res.status)) return;
+    const c = this.regenCache || (this.regenCache = new Map());
+    let n = 0;
+    for (const f of res.body?.faces || []) n += (f.positions?.length || 0) + (f.indices?.length || 0);
+    for (const e of res.body?.edges || []) n += e.points?.length || 0;
+    res._bytes = n * 8 + key.length * 2;
+    c.delete(key); c.set(key, res);
+    let total = 0;
+    for (const r of c.values()) total += r._bytes;
+    for (const [k, r] of c) { if (c.size <= 1 || (c.size <= 8 && total <= CACHE_MAX)) break; c.delete(k); total -= r._bytes; }
   }
 
   // Loading indicator in the graphics area for server work (rebuilds, imports, previews). It appears only
@@ -574,7 +711,12 @@ export class App {
     this.result = res;
     if (res.equations && this.mode !== 'sketch' && !this.proposal) {
       // numbers driven by equations: show what was built (no undo step; the equation owns the value)
-      for (const [id, f] of Object.entries(res.equations.features)) { const mine = this.featureById(id); if (mine) Object.assign(mine, f); }
+      let moved = false;
+      for (const [id, f] of Object.entries(res.equations.features)) {
+        const mine = this.featureById(id);
+        if (mine && Object.keys(f).some((k) => JSON.stringify(mine[k]) !== JSON.stringify(f[k]))) { Object.assign(mine, f); moved = true; }
+      }
+      if (moved) this.server?.changed(); // the file keeps the numbers it was built with (else the save state stays on Saving)
       const r = res.equations.recomputed[0];
       this.status(`Driven by an equation: ${r.field}@${this.featureById(r.feature)?.name || r.feature} = ${+(+r.new).toFixed(6)}`);
     }
@@ -979,9 +1121,16 @@ export class App {
     const f = this.featureById(id);
     if (!f) return;
     const names = (ids) => ids.map((x) => esc(this.featureById(x)?.name || x)).join(', ');
-    const plan = async (ids, absorbed) => this.api('/api/delete_plan', { doc: this.cleanDoc(this.doc), features: ids, delete_absorbed: absorbed });
+    // the server rebuilds the part to see what breaks: a pill says so, and a second Delete waits for it
+    const plan = async (ids, absorbed) => {
+      const done = this.busy('Checking what goes with it', 300);
+      try { return await this.api('/api/delete_plan', { doc: this.cleanDoc(this.doc), features: ids, delete_absorbed: absorbed }); } finally { done(); }
+    };
+    if (this.deleting) return;
+    this.deleting = true;
     let first;
-    try { first = await plan([id], true); } catch (err) { this.status(`Cannot delete: ${err.message}`); return; }
+    try { first = await plan([id], true); } catch (err) { this.toast(`Cannot delete ${f.name}: ${err.message}`, 6000); return; } finally { this.deleting = false; }
+    if (!this.featureById(id)) return; // gone meanwhile
     const kids = first.would_fail.map((x) => x.id);
     const body = document.createElement('div');
     body.innerHTML = `<div>Delete <b>${esc(f.name)}</b>?</div>` +
@@ -995,7 +1144,7 @@ export class App {
         const delAbs = body.querySelector('#delabs')?.checked ?? true, delChild = body.querySelector('#delchild')?.checked;
         let p = first;
         if (!delAbs || delChild) {
-          try { p = await plan(delChild ? [id, ...kids] : [id], delAbs); } catch (err) { this.status(`Cannot delete: ${err.message}`); return; }
+          try { p = await plan(delChild ? [id, ...kids] : [id], delAbs); } catch (err) { this.toast(`Cannot delete ${f.name}: ${err.message}`, 6000); return; }
         }
         const kill = new Set([...p.deleted, ...p.deleted_with_it, ...p.absorbed]);
         const trim = new Map(p.patterns_trimmed.map((x) => [x.id, x.keeps]));
@@ -1057,6 +1206,7 @@ export class App {
   // ------------------------------------------------------------------ feature commands
   featureCommand(key, existing = null) {
     if (this.isAsm) { this.toast('Features are added in a part. Select a component and click Open Part.'); return; }
+    this.settleProposal(); // new ids and names must not clash with the AI's
     if (this.mode === 'sketch') {
       const sid = this.sketcher.skId;
       this.exitSketch();
@@ -1121,6 +1271,10 @@ export class App {
   async runPreview() {
     const cmd = this.cmd;
     if (!cmd || !cmd.spec || cmd.cancelled) return false;
+    // one preview request at a time: a newer change waits for the one in flight; only the newest is sent
+    const ticket = this.previewTicket = (this.previewTicket || 0) + 1;
+    while (this.previewFlight) { await this.previewFlight.catch(() => {}); if (ticket !== this.previewTicket) return false; }
+    if (this.cmd !== cmd || cmd.cancelled) return false;
     const version = cmd.previewVersion || 0;
     this.drawSketches();
     if (!cmd.spec.okEnabled()) { this.viewer.setTool(null); return false; }
@@ -1131,7 +1285,9 @@ export class App {
     const seq = ++this.regenSeq;
     let res;
     const done = this.busy('Updating preview', 400);
-    try { res = await this.api('/api/regen', { doc, preview: f }); } catch (err) { this.toast('Preview failed: ' + err.message); return false; } finally { done(); }
+    const flight = this.api('/api/regen', { doc, preview: f });
+    this.previewFlight = flight;
+    try { res = await flight; } catch (err) { if (this.cmd === cmd && !cmd.cancelled) this.toast('Preview failed: ' + err.message); return false; } finally { done(); if (this.previewFlight === flight) this.previewFlight = null; }
     if (seq !== this.regenSeq || this.cmd !== cmd || cmd.cancelled || version !== (cmd.previewVersion || 0)) return false;
     if (!Array.isArray(res.status) || !res.body) { this.toast('The server did not return a valid preview.'); return false; }
     this.result = { ...this.result, planes: { ...(this.result?.planes || {}), ...res.planes } };
@@ -1204,6 +1360,7 @@ export class App {
   }
 
   sketchOn(p, pendingFeature = null) {
+    this.settleProposal(); // before the snapshot that Cancel goes back to
     let spec, frame;
     if (p.kind === 'plane') { spec = { ref: p.id }; frame = this.planeFrame(p.id); }
     else { frame = frameForFace(p.data.normal, p.data.center); spec = { type: 'face', origin: frame.origin, normal: frame.normal, xdir: frame.xdir }; }
@@ -1221,6 +1378,7 @@ export class App {
   editSketch(id) {
     if (this.mode === 'sketch') this.exitSketch();
     if (this.cmd) this.pmCancel();
+    this.settleProposal();
     const f = this.featureById(id);
     if (!f) return;
     const frame = this.sketchFrame(id);
@@ -1578,8 +1736,11 @@ export class App {
 
   async massProperties() {
     if (this.isAsm) return this.asm.massProperties();
+    if (this.massBusy) return;
+    this.massBusy = true;
+    const done = this.busy('Calculating mass properties', 300);
     let r;
-    try { r = await this.api('/api/mass', { doc: this.cleanDoc() }); } catch (err) { this.toast(String(err)); return; }
+    try { r = await this.api('/api/mass', { doc: this.cleanDoc() }); } catch (err) { this.toast('Mass Properties: ' + err.message, 6000); return; } finally { done(); this.massBusy = false; }
     if (r.error) { message('Mass Properties', esc(r.error)); return; }
     const m = this.doc.material;
     const g = (v) => fmt(v * 1000, 2);
@@ -1648,23 +1809,24 @@ export class App {
   }
 
   // ------------------------------------------------------------------ files
+  // A new part or assembly only in this browser (the server could not make the file).
+  startDraft(kind) {
+    this.server.unlink();
+    this.hideContextToolbar();
+    if (this.mode === 'sketch') this.exitSketch({ silent: true });
+    this.closeCommand();
+    this.leaveDocument();
+    this.doc = kind === 'assembly' ? newAssembly() : newDoc();
+    this.proposal = null;
+    this.docChanged();
+    this.dirty = false; this.updateDocChrome();
+    this.ribbon.setTab(kind === 'assembly' ? 'Assembly' : 'Features');
+    this.setSelection([]);
+    this.viewer.setBody(null);
+    this.regen().then(() => { this.viewer.standardView('trimetric'); this.viewer.zoomToFit(); if (kind === 'assembly') this.asm.insertPM(); });
+  }
+
   newDoc() {
-    const go = (kind) => {
-      this.server.unlink();
-      this.hideContextToolbar();
-      if (this.mode === 'sketch') this.exitSketch({ silent: true });
-      this.closeCommand();
-      if (this.docStack.length) { this.doc = this.cleanDoc(this.docStack[0].doc); this.undoStack = this.docStack[0].undo; this.redoStack = this.docStack[0].redo; this.docStack = []; }
-      this.pushUndo('New');
-      this.doc = kind === 'assembly' ? newAssembly() : newDoc();
-      this.proposal = null;
-      this.docChanged();
-      this.dirty = false; this.updateDocChrome();
-      this.ribbon.setTab(kind === 'assembly' ? 'Assembly' : 'Features');
-      this.setSelection([]);
-      this.viewer.setBody(null);
-      this.regen().then(() => { this.viewer.standardView('trimetric'); this.viewer.zoomToFit(); if (kind === 'assembly') this.asm.insertPM(); });
-    };
     const body = document.createElement('div');
     body.className = 'newdoc';
     body.innerHTML = `<button class="nd" data-k="part">${icon('part', 48)}<b>Part</b><span>a 3D representation of a single design component</span></button>
@@ -1674,7 +1836,7 @@ export class App {
       n.onclick = async () => {
         dlg.close();
         if (!(await this.confirmLeaveDraft())) return;
-        if (!(await this.server.createAndOpen(n.dataset.k))) go(n.dataset.k); // no server: a draft here
+        if (!(await this.server.createAndOpen(n.dataset.k, { onShown: () => this.files.close() }))) { this.startDraft(n.dataset.k); this.files.close(); } // no server: a draft here
       };
     });
     setTimeout(() => body.querySelector('.nd')?.focus(), 0);
@@ -1734,8 +1896,7 @@ export class App {
       this.hideContextToolbar();
       if (this.mode === 'sketch') this.exitSketch({ silent: true });
       this.closeCommand();
-      if (this.docStack.length) { this.doc = this.cleanDoc(this.docStack[0].doc); this.undoStack = this.docStack[0].undo; this.redoStack = this.docStack[0].redo; this.docStack = []; }
-      this.pushUndo('Open');
+      this.leaveDocument();
       this.doc = d; this.doc.seq = this.doc.seq || 1000;
       this.proposal = null;
       this.docChanged();
@@ -1788,13 +1949,17 @@ export class App {
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   }
 
-  saveFile() {
+  async saveFile() {
     if (this.reviewMode) return;
-    if (this.server.linked) { // a file in Files saves itself; Save just does it now
-      this.server.flush();
-      this.server.scheduleThumb(400);
-      this.dirty = false; this.updateDocChrome();
-      this.toast('Saved to your Files.');
+    if (this.server.linked) { // a file in Files saves itself; Save just does it now, and says what happened
+      const sv = this.server;
+      const ok = await sv.flush();
+      if (!sv.linked) return;
+      sv.scheduleThumb(400);
+      if (ok) { this.dirty = false; this.updateDocChrome(); this.toast('Saved to your Files.'); }
+      else if (this.proposal) this.toast("Not saved yet: accept or reject the AI's change first.", 5000);
+      else if (sv.state === 'conflict') this.toast('Not saved: this file changed elsewhere. Choose which version to keep in the bar above the model.', 7000);
+      else this.toast('Not saved yet: the server is not answering. Your edits are kept in this browser and saved when it is back.', 7000);
       return;
     }
     this.server.saveDraft();
@@ -1849,11 +2014,14 @@ export class App {
         return;
       }
     }
+    if (this.exporting) { this.toast('An export is already running. It downloads when it is ready.'); return; }
+    this.exporting = true;
+    const done = this.busy(`Exporting ${fmtName.toUpperCase()}`, 0);
     try {
       const r = await fetch('/api/export/' + fmtName, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ doc: this.cleanDoc() }) });
-      if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.detail || r.statusText); }
+      if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.error || j.detail || r.statusText); }
       this.download(await r.blob(), `${this.doc.name}.${fmtName}`);
-    } catch (err) { message('Export', esc(err.message || err)); }
+    } catch (err) { message('Export', esc(err.message || err)); } finally { done(); this.exporting = false; }
   }
 
   // SOLIDWORKS macro: a background job on the server (the macro is checked before it is handed over).
@@ -1991,26 +2159,47 @@ export class App {
     if (fit) this.viewer.zoomToFit();
   }
 
+  // Accept the AI's change (one undo step). Returns false when there is none any more. Edits made while the AI
+  // was building are replaced by its version: a toast says so and Undo brings them back.
   acceptProposal() {
     const p = this.proposal;
-    if (!p) return;
+    if (!p) return false;
     const wasAsm = this.isAsm;
-    this.proposal = null;
+    const replaced = this.proposalBase && this.proposalBase !== JSON.stringify(this.cleanDoc());
+    this.proposal = null; this.proposalBase = null;
     this.pushUndo('AI change');
     this.doc = { ...p, seq: Math.max(this.doc.seq || 1, p.seq || 1) };
     this.proposedIds = [];
+    this.markProposal('accepted');
     this.docChanged();
     if (wasAsm) this.ribbon.setTab('Assembly');
     this.regen();
+    if (replaced) this.toast('The edits you made while the AI was working were replaced by its version.', 8000, { label: 'Undo', run: () => this.undo() });
+    return true;
   }
 
-  rejectProposal(silent = false) {
+  // note: why it was set aside, shown on its chat card instead of "Rejected"
+  rejectProposal(silent = false, note = null) {
     if (!this.proposal) return;
-    this.proposal = null; this.proposedIds = [];
-    for (const m of this.taskpane.log) if (m.state === 'pending') m.state = 'rejected';
+    this.proposal = null; this.proposedIds = []; this.proposalBase = null;
+    this.markProposal('rejected', note);
     this.updateDocChrome();
     if (!this.isAsm) this.viewer.setAssembly([], {});
-    if (!silent) { this.regen(); this.taskpane.render(); }
+    if (!silent) this.regen();
+  }
+
+  // The chat card of the AI change that was waiting says what became of it.
+  markProposal(state, note = null) {
+    let n = 0;
+    for (const m of this.taskpane?.log || []) if (m.role === 'proposal' && m.state === 'pending') { m.state = state; m.note = note; n++; }
+    if (n) this.taskpane.render();
+  }
+
+  // An edit while an AI change waits builds on that change (it is what is on screen, and previews use it), so the
+  // change is accepted first, as its own undo step: never thrown away without a word.
+  settleProposal() {
+    if (!this.proposal) return;
+    if (this.acceptProposal()) this.toast("Kept the AI's change so you can edit it. Ctrl+Z takes it back.", 5000);
   }
 
   // ------------------------------------------------------------------ chrome
@@ -2038,14 +2227,21 @@ export class App {
     const t = document.createElement('div');
     t.className = 'toast2';
     const span = document.createElement('span'); span.textContent = msg; t.appendChild(span);
-    let timer = null;
-    const close = () => { clearTimeout(timer); t.classList.add('out'); setTimeout(() => t.remove(), 180); };
+    let timer = null, closed = false;
+    const close = () => { if (closed) return; closed = true; clearTimeout(timer); t.classList.add('out'); setTimeout(() => t.remove(), 180); };
     if (action) {
       const b = document.createElement('button'); b.className = 'toast-act'; b.textContent = action.label;
       b.onclick = () => { close(); action.run(); };
       t.appendChild(b);
+      if (ms) ms = Math.max(ms, 8000); // time to reach the button
     }
     host.appendChild(t);
+    // the time stops while the pointer or focus is on it (reaching for Undo never loses it)
+    let left = ms, started = Date.now();
+    const pause = () => { if (!ms || closed) return; clearTimeout(timer); timer = null; left -= Date.now() - started; };
+    const resume = () => { if (!ms || closed || t.matches(':hover') || t.contains(document.activeElement)) return; started = Date.now(); clearTimeout(timer); timer = setTimeout(close, Math.max(left, 2000)); };
+    t.addEventListener('mouseenter', pause); t.addEventListener('focusin', pause);
+    t.addEventListener('mouseleave', resume); t.addEventListener('focusout', () => setTimeout(resume, 0));
     if (ms) timer = setTimeout(close, ms);
     return { close };
   }

@@ -705,8 +705,11 @@ def _card(m: dict) -> dict:
     t = m.get("thumb")
     out = {k: m.get(k) for k in ("id", "name", "kind", "version", "created", "updated", "by", "summary", "deleted",
                                  "counts", "size")}
-    out["thumb"] = f"/api/docs/{m['id']}/thumb?v={t['version']}-{int(t.get('updated') or 0)}" if t else None
     out["thumb_stale"] = bool(t) and int(t.get("version") or 0) < int(m["version"])
+    # the address changes with the picture, and with the model while the picture is older than it: a changed
+    # model (the AI's edit) is asked for again instead of shown from the browser's day-long cache
+    out["thumb"] = (f"/api/docs/{m['id']}/thumb?v={t['version']}-{int(t.get('updated') or 0)}"
+                    + (f"-{m['version']}" if out["thumb_stale"] else "")) if t else None
     return out
 
 
@@ -768,7 +771,9 @@ def api_doc_restore_version(doc_id: str, req: VersionRequest, request: Request):
 
 @app.put("/api/docs/{doc_id}")
 def api_doc_save(doc_id: str, req: DocSave, request: Request):
-    _doc_meta(doc_id, request)
+    m = _doc_meta(doc_id, request)
+    if isinstance(req.doc, dict):
+        req.doc["name"] = m["name"]  # a file is renamed only by PATCH: a save never renames it
     try:
         return store.save(doc_id, req.doc, "you", req.summary or "Edited in OpenSketch", req.base_version, req.requests)
     except store.NotFound:
@@ -789,11 +794,32 @@ def api_doc_patch(doc_id: str, req: DocPatch, request: Request):
     return _card(store.meta(doc_id))
 
 
+def _copy_name(name: str, user) -> str:
+    """"Copy of X", then "Copy 2 of X"...: the difference stays at the start, where a long name is not cut off."""
+    used = {m["name"] for m in store.listing(store.visible_to(user))}
+    n = 1
+    while True:
+        cand = (("Copy of " if n == 1 else f"Copy {n} of ") + name)[:120].strip()
+        if cand not in used:
+            return cand
+        n += 1
+
+
 @app.post("/api/docs/{doc_id}/duplicate")
 def api_doc_duplicate(doc_id: str, req: DocCopy, request: Request):
-    _doc_meta(doc_id, request)
-    rec = store.duplicate(doc_id, store.owner_of(_user(request)), "you", req.name)
+    m = _doc_meta(doc_id, request)
+    rec = store.duplicate(doc_id, store.owner_of(_user(request)), "you", req.name or _copy_name(m["name"], _user(request)))
     return _card(store.meta(rec["id"]))
+
+
+@app.post("/api/docs/{doc_id}/discard")
+def api_doc_discard(doc_id: str, request: Request):
+    """A file New made and the person left untouched: removed for good (no empty "Part N" files pile up).
+    Anything that was changed, renamed or written by an AI is kept (409)."""
+    _doc_meta(doc_id, request)
+    if store.discard_untouched(doc_id):
+        return {"discarded": doc_id}
+    return JSONResponse({"error": "Kept: it was changed.", "discarded": False}, status_code=409)
 
 
 @app.delete("/api/docs/{doc_id}")
@@ -867,7 +893,10 @@ async def api_doc_thumb(doc_id: str, request: Request):
     m = _doc_meta(doc_id, request, trash_ok=True)
     t = m.get("thumb")
     version = int(m["version"])
-    stale = not t or (int(t.get("version") or 0) < version and (m.get("by") == "claude" or t.get("source") == "server"))
+    old = bool(t) and int(t.get("version") or 0) < version
+    # redrawn here when there is none, the AI changed the model, the picture was drawn here, or a browser's
+    # picture is older than the model and nobody has touched it for 2 minutes (a tab closed right after an edit)
+    stale = not t or (old and (m.get("by") == "claude" or t.get("source") == "server" or time.time() - float(m.get("updated") or 0) > 120))
     if stale and (int(m.get("size") or 0) > THUMB_SERVER_MAX or _thumb_failed.get(doc_id) == version):
         stale = False  # the browser that opens it draws it; or it failed at this version already
     if stale:
@@ -894,8 +923,10 @@ async def api_doc_thumb(doc_id: str, request: Request):
     if not found:
         raise HTTPException(404, "No picture yet")
     path, entry = found
+    # a picture older than the model is not cached: the next visit asks again (it may be redrawn by then)
+    current = int(entry.get("version") or 0) >= version
     return FileResponse(path, media_type="image/webp" if entry["ext"] == "webp" else "image/png",
-                        headers={"Cache-Control": "private, max-age=86400"})
+                        headers={"Cache-Control": "private, max-age=86400" if current else "no-cache"})
 
 
 def _user(request: Request) -> dict | None:
@@ -1745,7 +1776,9 @@ async def manifest(request: Request):
 
 @app.get("/")
 async def index(request: Request):
-    page = _preload_modules((STATIC / "index.html").read_text())
+    # the page knows its own version, so a tab opened from the service worker's copy sees it is out of date
+    page = (STATIC / "index.html").read_text().replace("__VERSION__", VERSION, 1)
+    page = _preload_modules(page)
     return await _text_page(request.scope, page.encode(), "text/html; charset=utf-8", NO_CACHE)
 
 
