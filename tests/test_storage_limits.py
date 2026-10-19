@@ -109,6 +109,37 @@ def test_made_up_document_ids_leave_nothing_behind():
     assert not (_docs() / "nosuch9999.lock").exists()
 
 
+def test_request_bodies_are_capped_before_anything_reads_them(monkeypatch):
+    c = TestClient(server.app)
+    # public OAuth: a big body is refused from its Content-Length, unread
+    r = c.post("/oauth/register", content=b"x" * (server.BODY_SMALL + 1), headers={"Content-Type": "application/json"})
+    assert r.status_code == 413 and "too big" in r.json()["error"]
+    r = c.post("/oauth/token", content=b"a=" + b"x" * (server.BODY_SMALL + 10),
+               headers={"Content-Type": "application/x-www-form-urlencoded"})
+    assert r.status_code == 413
+
+    def chunks(n, size=16384):  # no Content-Length: counted as it arrives
+        for _ in range(n):
+            yield b"x" * size
+    r = c.post("/oauth/token", content=chunks(10), headers={"Content-Type": "application/x-www-form-urlencoded"})
+    assert r.status_code == 413
+    r = c.post("/login", content=chunks(10), headers={"Content-Type": "application/x-www-form-urlencoded"})
+    assert r.status_code == 413
+    # a small OAuth body still gets its normal answer
+    assert c.post("/oauth/token", data={"grant_type": "nope"}).status_code in (400, 401)
+    # API routes: a document's worth (BODY_MAX), here made small
+    monkeypatch.setattr(server, "BODY_MAX", 2000)
+    rec = store.create("Plate", _block())
+    r = c.put(f"/api/docs/{rec['id']}", json={"doc": dict(_block(), pad="y" * 3000)})
+    assert r.status_code == 413
+    r = c.post("/api/regen", content=chunks(1, 4000), headers={"Content-Type": "application/json"})
+    assert r.status_code == 413
+    # uploads keep their own, larger streamed caps
+    raw = b"ISO-10303-21;" + b"x" * 5000
+    r = c.post("/api/import/raw?filename=a.step", content=gzip.compress(raw), headers={"X-OpenSketch-Gzip": "1"})
+    assert r.status_code != 413
+
+
 def test_identical_saves_make_no_version_and_a_retry_is_not_a_conflict():
     c = TestClient(server.app)
     rec = c.post("/api/docs", json={"name": "Plate", "doc": _block("Plate")}).json()

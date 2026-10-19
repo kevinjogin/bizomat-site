@@ -101,9 +101,79 @@ class SelectiveGZip:
         return await self.app(scope, receive, send)
 
 
+class _BodyTooBig(HTTPException):
+    def __init__(self, cap: int):
+        super().__init__(413, f"This request is too big (more than {cap / 2**20:.0f} MB)." if cap >= 2**20
+                         else "This request is too big.")
+
+
+BODY_MAX = store.DOC_MAX + 4 * 2**20  # a whole document plus the request around it (/api/regen, PUT /api/docs...)
+BODY_SMALL = 64 * 1024                # sign-in forms, OAuth, everything that is not /api/ or /mcp/
+OWN_BODY_LIMIT = ("/api/import/raw", "/mcp/uploads/", "/mcp/sw/file")  # streamed to their own, larger caps
+
+
+class BodyLimit:
+    """Refuses a request body over the size its path allows before anything reads it (sign-in, JSON parsing, the
+    routes): a Content-Length over it gets 413 at once, a body without one is counted as it arrives and stopped at
+    the limit. Without this one anonymous POST of a gigabyte to /oauth/token filled the 2 GB machine's memory."""
+
+    def __init__(self, app):
+        self.app = app
+
+    @staticmethod
+    def cap(path: str) -> int | None:
+        if path.startswith(OWN_BODY_LIMIT):
+            return None
+        return BODY_MAX if path.startswith(("/api/", "/mcp")) else BODY_SMALL
+
+    async def __call__(self, scope, receive, send):
+        cap = self.cap(scope.get("path", "")) if scope["type"] == "http" else None
+        if cap is None:
+            return await self.app(scope, receive, send)
+        try:
+            declared = int(dict(scope.get("headers") or []).get(b"content-length", b"0") or 0)
+        except ValueError:
+            declared = 0
+        if declared > cap:
+            return await self._refuse(send, cap)
+        seen, started = 0, False
+
+        async def limited():
+            nonlocal seen
+            message = await receive()
+            if message["type"] == "http.request":
+                seen += len(message.get("body", b""))
+                if seen > cap:
+                    raise _BodyTooBig(cap)  # FastAPI answers 413; anything else reading the body stops here
+            return message
+
+        async def tracked(message):
+            nonlocal started
+            if message["type"] == "http.response.start":
+                started = True
+            await send(message)
+
+        try:
+            await self.app(scope, limited, tracked)
+        except _BodyTooBig:
+            if started:
+                raise
+            await self._refuse(send, cap)
+
+    @staticmethod
+    async def _refuse(send, cap):
+        exc = _BodyTooBig(cap)
+        body = json.dumps({"error": exc.detail, "detail": exc.detail}).encode()
+        await send({"type": "http.response.start", "status": 413,
+                    "headers": [(b"content-type", b"application/json"), (b"content-length", str(len(body)).encode()),
+                                (b"connection", b"close")]})
+        await send({"type": "http.response.body", "body": body})
+
+
 app = FastAPI(title="OpenSketch", lifespan=lifespan)
 app.add_middleware(auth.PasswordGate)
 app.add_middleware(SelectiveGZip)
+app.add_middleware(BodyLimit)  # outermost: before the sign-in gate reads anything
 
 
 @app.exception_handler(store.StorageError)
@@ -257,10 +327,11 @@ class ImportRequest(BaseModel):
     data: str  # base64 file content
 
 
-async def _import_reply(raw: bytes, filename: str, lane):
-    """Every failure comes back as JSON {error} with a readable message, never a bare 500."""
+async def _import_reply(raw, filename: str, lane, path: bool = False):
+    """Every failure comes back as JSON {error} with a readable message, never a bare 500. path: raw is the name of
+    a file holding the bytes (read by the worker)."""
     try:
-        return {"doc": await lane.run(cadjobs.import_file, raw, filename)}
+        return {"doc": await lane.run(cadjobs.import_path if path else cadjobs.import_file, raw, filename)}
     except cadworker.CadUnavailable as exc:
         return JSONResponse({"error": f"Could not import {filename}: {exc}"}, status_code=503)
     except cadworker.CadJobError as exc:
@@ -286,26 +357,49 @@ IMPORT_MAX = 128 * 1024 * 1024  # bytes of CAD data per upload (after unzipping 
 @app.post("/api/import/raw")
 async def api_import_raw(request: Request, filename: str = "model.step"):
     """STEP -> part or assembly document. The body is the file's bytes, gzipped by the browser when
-    the X-OpenSketch-Gzip header is 1 (a 14 MB STEP becomes ~3 MB, small enough for the Codespaces tunnel)."""
+    the X-OpenSketch-Gzip header is 1 (a 14 MB STEP becomes ~3 MB, small enough for the Codespaces tunnel).
+    The file goes to a temporary file as it arrives (unzipped bounded on the way), and the CAD worker reads it
+    from there, so the web server never holds a copy of it."""
     too_big = JSONResponse({"error": f"The file is bigger than {IMPORT_MAX // 2**20} MB. Split it or simplify it first."}, status_code=413)
-    body = bytearray()
-    async for chunk in request.stream():
-        body += chunk
-        if len(body) > IMPORT_MAX:
+    try:
+        if int(request.headers.get("content-length") or 0) > IMPORT_MAX:
             return too_big
-    body = bytes(body)
-    if request.headers.get("x-opensketch-gzip") == "1":
-        try:  # bounded: a small gzip that unpacks to gigabytes is refused, not unpacked
-            d = zlib.decompressobj(16 + zlib.MAX_WBITS)
-            out = d.decompress(body, IMPORT_MAX + 1)
-            if len(out) > IMPORT_MAX or d.unconsumed_tail:
-                return too_big
-            body = out + d.flush()
-            if not d.eof:
-                raise zlib.error("truncated")
-        except zlib.error:
-            return JSONResponse({"error": "The upload arrived damaged. Try again."}, status_code=400)
-    return await _import_reply(body, filename, _lane(request))
+    except ValueError:
+        pass
+    unzip = zlib.decompressobj(16 + zlib.MAX_WBITS) if request.headers.get("x-opensketch-gzip") == "1" else None
+    fd, tmp = tempfile.mkstemp(prefix="opensketch-import-", suffix=".bin")
+    try:
+        size = wire = 0
+        with os.fdopen(fd, "wb") as out:
+            try:
+                async for chunk in request.stream():
+                    wire += len(chunk)
+                    if wire > IMPORT_MAX:
+                        return too_big
+                    if unzip is not None:  # bounded: a small gzip that unpacks to gigabytes is refused, not unpacked
+                        chunk = unzip.decompress(chunk, IMPORT_MAX - size + 1)
+                        if unzip.unconsumed_tail:
+                            return too_big
+                    size += len(chunk)
+                    if size > IMPORT_MAX:
+                        return too_big
+                    out.write(chunk)
+                if unzip is not None:
+                    rest = unzip.flush()
+                    size += len(rest)
+                    if size > IMPORT_MAX:
+                        return too_big
+                    out.write(rest)
+                    if not unzip.eof:
+                        raise zlib.error("truncated")
+            except zlib.error:
+                return JSONResponse({"error": "The upload arrived damaged. Try again."}, status_code=400)
+        return await _import_reply(tmp, filename, _lane(request), path=True)
+    finally:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
 
 
 @app.get("/api/features")
