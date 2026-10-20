@@ -4,8 +4,15 @@
   const tools = window.GOCORE_TOOLS || [];
   const guides = window.WORKOS_GUIDES || {};
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  function refsHtml(refs) {
+    return `<ul>${refs.map((ref) => {
+      const match = /^(.*?)\s+—\s+(https:\/\/[^\s]+)$/.exec(ref);
+      return match ? `<li><a href="${esc(match[2])}" rel="noopener noreferrer">${esc(match[1])}</a></li>` : `<li>${esc(ref)}</li>`;
+    }).join('')}</ul>`;
+  }
   const STATUS = { pass: 'PASS', warn: 'REVIEW', fail: 'FAIL', verify: 'VERIFY' };
-  let activeCategory = 'All';
+  const collection = (t) => t.collection === 'MAKEOS' ? 'MAKEOS' : 'WORKOS';
+  let activeCategory = new URLSearchParams(location.search).get('collection') === 'makeos' ? 'MAKEOS' : 'All';
   let current = null; // { t, r, sens }
   let timer = 0;
 
@@ -21,7 +28,7 @@
   function cardHtml(t) {
     const g = guides[t.id] || {};
     const text = [t.name, t.category, t.question, t.description, ...(t.keywords || []), ...(g.uses || []), ...(g.users || [])].join(' ').toLowerCase();
-    return `<a class="tool-card" href="/tools/?tool=${encodeURIComponent(t.id)}" data-tool-id="${esc(t.id)}" data-category="${esc(t.category)}" data-search="${esc(text)}"><span class="card-top"><span class="category-label">${esc(t.category)}</span></span><h2>${esc(t.name)}</h2><p>${esc(t.question)}</p><span class="card-link">Open tool →</span></a>`;
+    return `<a class="tool-card" href="/tools/?tool=${encodeURIComponent(t.id)}" data-tool-id="${esc(t.id)}" data-category="${esc(t.category)}" data-collection="${collection(t)}" data-search="${esc(text)}"><span class="card-top"><span class="category-label">${esc(t.category)}</span></span><h2>${esc(t.name)}</h2><p>${esc(t.question)}</p><span class="card-link">Open tool →</span></a>`;
   }
   // The page renders the cards at build time; this fallback only runs if they are missing.
   if (!grid.querySelector('[data-tool-id]')) grid.insertAdjacentHTML('afterbegin', tools.map(cardHtml).join(''));
@@ -31,9 +38,13 @@
     let visible = 0;
     grid.querySelectorAll('[data-tool-id]').forEach((card) => {
       const hay = card.dataset.search || '';
-      const show = (activeCategory === 'All' || card.dataset.category === activeCategory) && words.every((w) => hay.includes(w));
+      const show = (activeCategory === 'All' || card.dataset.category === activeCategory || (activeCategory === 'MAKEOS' && card.dataset.collection === 'MAKEOS')) && words.every((w) => hay.includes(w));
       card.hidden = !show;
       if (show) visible++;
+    });
+    document.querySelectorAll('[data-cat]').forEach((chip) => {
+      chip.classList.toggle('active', chip.dataset.cat === activeCategory);
+      chip.setAttribute('aria-pressed', chip.dataset.cat === activeCategory ? 'true' : 'false');
     });
     count.textContent = `${visible} tool${visible === 1 ? '' : 's'}`;
     empty.hidden = visible !== 0;
@@ -63,7 +74,7 @@
       return `<div class="field"><label for="${id}">${esc(f.label)}</label><div class="range-line"><input id="${id}" name="${esc(f.key)}" type="range" min="${f.min}" max="${f.max}" step="${f.step ?? 1}" value="${f.default}"><span class="range-value" data-range="${esc(f.key)}">${f.default}</span></div>${sourceHint(t, f)}</div>`;
     if (f.type === 'select')
       return `<div class="field"><label for="${id}">${esc(f.label)}</label><select id="${id}" name="${esc(f.key)}">${f.options.map((o) => `<option value="${esc(o[0])}"${o[0] === f.default ? ' selected' : ''}>${esc(o[1])}</option>`).join('')}</select>${sourceHint(t, f)}</div>`;
-    return `<div class="field"><label for="${id}">${esc(f.label)}</label><div class="input-wrap"><input id="${id}" name="${esc(f.key)}" type="number" value="${f.default}" min="${f.min ?? ''}" max="${f.max ?? ''}" step="${f.step ?? 'any'}" inputmode="decimal">${f.unit ? `<span class="unit">${esc(f.unit)}</span>` : ''}</div>${sourceHint(t, f)}</div>`;
+    return `<div class="field"><label for="${id}">${esc(f.label)}</label><div class="input-wrap"><input id="${id}" name="${esc(f.key)}" type="number" ${t.collection === 'MAKEOS' ? 'required' : ''} value="${f.default}" min="${f.min ?? ''}" max="${f.max ?? ''}" step="${f.step ?? 'any'}" inputmode="decimal">${f.unit ? `<span class="unit">${esc(f.unit)}</span>` : ''}</div>${sourceHint(t, f)}</div>`;
   }
   const inputFields = (t) => t.fields.filter((f) => f.type !== 'heading');
   /** Input fields grouped under the form headings that precede them ({ heading: {label: ''} } when there are none). */
@@ -86,8 +97,8 @@
 
   // ---------- Results ----------
   const pill = (s) => `<span class="check-pill check-pill--${esc(s)}">${STATUS[s] || esc(s).toUpperCase()}</span>`;
-  function renderResult(r) {
-    $('#result').innerHTML = `<div class="result-kicker">WORKOS decision</div><div class="result-status ${esc(r.tone)}${r.text.length > 22 ? ' result-status--long' : ''}">${esc(r.text)}</div><div class="result-summary">${esc(r.summary)}</div><div class="metric-grid">${r.metrics.map((x) => `<div class="metric"><span>${esc(x.label)}</span><strong>${esc(x.value)}</strong></div>`).join('')}</div>${r.recommendation ? `<div class="rec"><strong>Recommendation</strong><br>${esc(r.recommendation)}</div>` : ''}${r.checks.length ? `<p class="result-checks">${['fail', 'verify', 'warn', 'pass'].map((s) => { const n = r.checks.filter((c) => c.status === s).length; return n ? `${pill(s)} ${n}` : ''; }).filter(Boolean).join(' ')} <a href="#tool-analysis">See checks</a></p>` : ''}`;
+  function renderResult(r, t) {
+    $('#result').innerHTML = `<div class="result-kicker">${collection(t)} ${t.collection === 'MAKEOS' ? 'calculation' : 'decision'}</div><div class="result-status ${esc(r.tone)}${r.text.length > 22 ? ' result-status--long' : ''}">${esc(r.text)}</div><div class="result-summary">${esc(r.summary)}</div><div class="metric-grid">${r.metrics.map((x) => `<div class="metric"><span>${esc(x.label)}</span><strong>${esc(x.value)}</strong></div>`).join('')}</div>${r.recommendation ? `<div class="rec"><strong>Recommendation</strong><br>${esc(r.recommendation)}</div>` : ''}${r.checks.length ? `<p class="result-checks">${['fail', 'verify', 'warn', 'pass'].map((s) => { const n = r.checks.filter((c) => c.status === s).length; return n ? `${pill(s)} ${n}` : ''; }).filter(Boolean).join(' ')} <a href="#tool-analysis">See checks</a></p>` : ''}`;
   }
   function sensRows(r, sens, limit = 8) {
     return sens.slice(0, limit).map((s) => `<tr><th scope="row">${esc(s.label)}</th><td>${esc(fmtPrimary(r.primary.fmt, s.low))}</td><td>${esc(fmtPrimary(r.primary.fmt, s.high))}</td><td>${s.flips ? `<strong class="flip">Yes</strong> (${esc(s.lowText)} / ${esc(s.highText)})` : 'No'}</td></tr>`).join('');
@@ -134,7 +145,7 @@
       <section class="guide-card"><h3>Method and formulas</h3><ol class="guide-method">${(g.method || []).map((x) => `<li>${esc(x)}</li>`).join('')}</ol></section>
       <section class="guide-card"><h3>Limitations</h3>${list(g.limitations || [])}</section>
       <section class="guide-card"><h3>Interpreting the result</h3>${list(g.interpret || [])}</section>
-      ${g.refs?.length ? `<section class="guide-card guide-card--wide"><h3>References</h3>${list(g.refs)}</section>` : ''}
+      ${g.refs?.length ? `<section class="guide-card guide-card--wide"><h3>References</h3>${refsHtml(g.refs)}</section>` : ''}
     </div>`;
   }
 
@@ -149,7 +160,7 @@
     const list = (items) => `<ul>${items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>`;
     const verify = [...r.verify, ...(g.verify || [])];
     return `<article class="wr">
-<header class="wr-head"><p class="wr-brand">KEVOS® WORKOS · Decision report</p><h1>${esc(t.name)}</h1><p class="wr-meta">${esc(t.question)} · Generated ${esc(stamp)} · ${esc(shareUrl(t))}</p></header>
+<header class="wr-head"><p class="wr-brand">KEVOS® ${collection(t)} · Decision report</p><h1>${esc(t.name)}</h1><p class="wr-meta">${esc(t.question)} · Generated ${esc(stamp)} · ${esc(shareUrl(t))}</p></header>
 <section><h2>Decision</h2><p class="wr-decision wr-${esc(r.tone)}">${esc(r.text)}</p><p>${esc(r.summary)}</p>${r.recommendation ? `<p><strong>Recommendation:</strong> ${esc(r.recommendation)}</p>` : ''}</section>
 ${g.purpose ? `<section><h2>Purpose</h2><p>${esc(g.purpose)}</p></section>` : ''}
 <section><h2>Inputs and assumptions</h2><table><thead><tr><th>Input</th><th>Value</th><th>Source to confirm</th></tr></thead><tbody>${rows}</tbody></table></section>
@@ -162,6 +173,7 @@ ${r.risks?.length ? `<section><h2>Risks</h2><table><thead><tr><th>Risk</th><th>L
 ${(r.guidance || []).map((x) => `<section><h2>${esc(x.title)}</h2>${list(x.items)}</section>`).join('')}
 ${r.actions.length ? `<section><h2>Next actions</h2><ol>${r.actions.map((a) => `<li>${esc(a)}</li>`).join('')}</ol></section>` : ''}
 ${verify.length ? `<section><h2>Verification required</h2>${list(verify)}</section>` : ''}
+${g.refs?.length ? `<section><h2>References</h2>${refsHtml(g.refs)}</section>` : ''}
 ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</section>` : ''}
 <footer class="wr-foot"><p>WORKOS tools are screening and decision-support utilities. Results depend entirely on the inputs and assumptions above. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p><p>KEVOS® | kevos.com/tools/</p></footer>
 </article>`;
@@ -170,14 +182,15 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
 
   function downloadReport() {
     if (!current) return;
+    analyse(current.t);
     const { t, r, sens } = current;
     const now = new Date();
     const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`; // local date, not UTC
-    const html = `<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(t.name)} · KEVOS® WORKOS decision report</title><style>${REPORT_CSS}</style></head><body>${reportBody(t, r, sens)}</body></html>`;
+    const html = `<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(t.name)} · KEVOS® ${collection(t)} decision report</title><style>${REPORT_CSS}</style></head><body>${reportBody(t, r, sens)}</body></html>`;
     const url = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }));
     const a = document.createElement('a');
     a.href = url;
-    a.download = `kevos-workos-${t.id}-${date}.html`;
+    a.download = `kevos-${collection(t).toLowerCase()}-${t.id}-${date}.html`;
     document.body.append(a);
     a.click();
     a.remove();
@@ -186,6 +199,7 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
   }
   function printReport() {
     if (!current) return;
+    analyse(current.t);
     const box = $('#print-report');
     if (box.parentElement !== document.body) document.body.append(box); // printed on its own; see tools.css
     box.innerHTML = reportBody(current.t, current.r, current.sens);
@@ -211,7 +225,7 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
     return u.href;
   }
   function summaryText(t, r) {
-    return [`${t.name} (KEVOS® WORKOS)`, `Decision: ${r.text}`, r.summary, ...r.metrics.map((x) => `${x.label}: ${x.value}`), ...r.checks.filter((c) => c.status !== 'pass').map((c) => `${STATUS[c.status]}: ${c.label}${c.detail ? ` (${c.detail})` : ''}`), shareUrl(t)].join('\n');
+    return [`${t.name} (KEVOS® ${collection(t)})`, `Decision: ${r.text}`, r.summary, ...r.metrics.map((x) => `${x.label}: ${x.value}`), ...r.checks.filter((c) => c.status !== 'pass').map((c) => `${STATUS[c.status]}: ${c.label}${c.detail ? ` (${c.detail})` : ''}`), shareUrl(t)].join('\n');
   }
   function flash(text) {
     const el = $('#tool-flash');
@@ -226,7 +240,7 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
     const r = calc(t.id);
     const sens = sensitivity(t, r);
     current = { t, r, sens };
-    renderResult(r);
+    renderResult(r, t);
     $('#tool-analysis').innerHTML = analysisHtml(t, r, sens);
   }
   function applyParams(t) {
@@ -238,15 +252,16 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
       if (!el) continue;
       if (f.type === 'select') {
         if (f.options.some((o) => o[0] === v)) el.value = v;
+        else if (t.collection === 'MAKEOS') el.value = '';
       } else if (v !== '' && Number.isFinite(Number(v))) {
         el.value = v;
         const out = document.querySelector(`[data-range="${f.key}"]`);
         if (out) out.textContent = v;
-      }
+      } else if (t.collection === 'MAKEOS') el.value = '';
     }
   }
   function buildTool(t) {
-    $('#tool-category').textContent = `${t.category} · KEVOS® WORKOS`;
+    $('#tool-category').textContent = `${t.category} · KEVOS® ${collection(t)}`;
     $('#tool-name').textContent = t.name;
     $('#tool-question').textContent = t.question;
     $('#tool-description').textContent = t.description;
@@ -280,6 +295,7 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
       analyse(t);
     };
     $('#copy-result').onclick = async () => {
+      analyse(t);
       try {
         await navigator.clipboard.writeText(summaryText(t, current.r));
         flash('Summary copied.');
@@ -292,7 +308,7 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
     $('#share-tool').onclick = async () => {
       const url = shareUrl(t);
       try {
-        if (navigator.share) await navigator.share({ title: `${t.name} (KEVOS® WORKOS)`, text: t.question, url });
+        if (navigator.share) await navigator.share({ title: `${t.name} (KEVOS® ${collection(t)})`, text: t.question, url });
         else {
           await navigator.clipboard.writeText(url);
           flash('Link with your inputs copied.');
@@ -317,7 +333,7 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
     directory.hidden = true;
     if (intro) intro.hidden = true;
     workspace.hidden = false;
-    document.title = `${t.name} | KEVOS® WORKOS`;
+    document.title = `${t.name} | KEVOS® ${collection(t)}`;
     workspace.scrollIntoView({ block: 'start' });
   }
   function closeTool(push = true) {
