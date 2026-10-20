@@ -1,8 +1,7 @@
-// Runs the browser's sketch solver for the server (inspect_design): reads
+// Runs the sketch solver for the server (sketch checks and inspect_design): reads
 // {"sketches": [{id, entities, constraints}, ...]} on stdin and prints
 // {"<sketch id>": {dof, status, solved, conflicts, under}} on stdout. With "entities": true each result also
 // has the solved entities (used when an equation changes a sketch dimension on the server).
-// The same solver.js the browser uses, so the server never disagrees with the page.
 import { solveSketch } from './solver.js';
 
 let raw = '';

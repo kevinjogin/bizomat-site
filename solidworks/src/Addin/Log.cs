@@ -6,7 +6,7 @@ using System.Text;
 namespace OpenSketch.Sw
 {
     /// <summary>The add-in's log: %LOCALAPPDATA%\OpenSketch\SolidWorks\log.txt (kept under 2 MB, the previous one
-    /// as log.old.txt), and the last lines in memory for the window. YZ sends this file back after a first run.</summary>
+    /// as log.old.txt), and the last lines in memory for the window. Send it with a problem report after a first run.</summary>
     public static class Log
     {
         static readonly object Gate = new object();

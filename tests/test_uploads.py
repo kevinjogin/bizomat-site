@@ -54,7 +54,7 @@ def _path(url: str) -> str:
 
 def _setup_owner_and_member():
     owner = TestClient(server.app)
-    owner.post("/setup", data={"name": "YZ", "email": "yz@example.com", "new_password": "correct horse", "next": "/"})
+    owner.post("/setup", data={"name": "Owner", "email": "owner@example.com", "new_password": "correct horse", "next": "/"})
     token = owner.post("/api/account/invites").json()["url"].split("/join/")[1]
     member = TestClient(server.app)
     member.post(f"/join/{token}", data={"name": "Mei", "email": "mei@example.com", "new_password": "battery staple"})
@@ -118,7 +118,7 @@ def test_gzip_body_bounds_and_retry(tmp_path, monkeypatch):
 def test_links_are_signed_expire_and_open_nothing_else(monkeypatch):
     url = f"/mcp/{auth.mcp_token()}"
     with TestClient(server.app) as c:
-        link = _tool(c, url, "request_upload", filename="part.osk")
+        link = _tool(c, url, "request_upload", filename="part.json")
         s = urlsplit(link["upload_url"])
         args = parse_qs(s.query)
         put = lambda p: c.put(p, content=json.dumps(plate()).encode())
@@ -126,7 +126,7 @@ def test_links_are_signed_expire_and_open_nothing_else(monkeypatch):
         assert put(f"{s.path}?{urlencode({'expires': args['expires'][0], 'signature': 'a' * 64})}").status_code == 404
         later = urlencode({"expires": int(args["expires"][0]) + 3600, "signature": args["signature"][0]})
         assert put(f"{s.path}?{later}").status_code == 404                              # expiry is signed
-        other = _tool(c, url, "request_upload", filename="part.osk")
+        other = _tool(c, url, "request_upload", filename="part.json")
         swapped = urlunsplit(s._replace(path=urlsplit(other["upload_url"]).path))
         assert put(_path(swapped)).status_code == 404                                   # signature is per link
         assert c.put(f"/mcp/uploads/../{auth.mcp_token()}?{s.query}", content=b"x").status_code in (404, 405)
@@ -146,7 +146,7 @@ def test_uploads_belong_to_one_account():
     o_url = f"/mcp/{auth.mcp_token()}"
     member_user = member.get("/api/account").json()["user"]
     with TestClient(server.app) as c:
-        link = _tool(c, m_url, "request_upload", filename="part.osk")
+        link = _tool(c, m_url, "request_upload", filename="part.json")
         assert c.put(_path(link["upload_url"]), content=json.dumps(plate()).encode()).status_code == 201
         # the owner cannot take the member's upload, and is not told it exists
         assert "Unknown upload_id" in _take(link["upload_id"], owner.get("/api/account").json()["user"])

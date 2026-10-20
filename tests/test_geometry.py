@@ -215,7 +215,7 @@ def test_many_holes_nest_quickly():
 
 
 def test_a_sketch_whose_points_miss_its_dimensions_is_flagged():
-    """The server builds stored points; the browser and the SOLIDWORKS path solve first. A sketch whose points do
+    """The kernel builds stored points; the SOLIDWORKS path solves first. A sketch whose points do
     not fit its dimensions (an AI writing round numbers) must say so instead of building quietly."""
     sk = rect_sketch("s1", {"ref": "Front Plane"}, 0, 0, 100, 50)
     sk["constraints"] = [{"id": "D1", "name": "D1", "type": "distance", "refs": ["s1L0"], "value": 80},

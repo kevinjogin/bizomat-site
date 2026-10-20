@@ -1,9 +1,9 @@
 """Sign in with Google (OpenID Connect, authorization code flow).
 
 Turned on by a "Web application" OAuth client in Google Cloud (with https://<your address>/auth/google/callback
-as an authorized redirect URI): either GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET on the server, or pasted by the owner
-in the app (avatar > Sign in with Google), kept in `google_oauth.json` in the data folder with the secret encrypted
-like the AI keys. The server's environment wins when both are set. The browser is sent to
+as an authorized redirect URI): either GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET on the server, or sent by the owner
+(POST /api/account/google), kept in `google_oauth.json` in the data folder with the secret encrypted
+(secretbox.py). The server's environment wins when both are set. The browser is sent to
 Google with a random `state` that is also kept in a short-lived signed cookie; Google sends it back with a
 code; the server swaps the code for tokens directly with Google (over TLS, with the client secret) and reads
 the person's verified email from Google's userinfo endpoint.
@@ -61,9 +61,9 @@ def client() -> tuple[str, str, str] | None:
     d = _saved()
     if not d.get("client_id") or not d.get("secret"):
         return None
-    from . import aikeys
+    from . import secretbox
     try:
-        sec = aikeys._fernet().decrypt(d["secret"].encode()).decode()
+        sec = secretbox.fernet().decrypt(d["secret"].encode()).decode()
     except Exception:
         return None  # the key secret changed: the owner pastes the client secret again
     return d["client_id"], sec, "app"
@@ -106,8 +106,8 @@ def save(client_id: str, secret: str, redirect_uri: str, check: bool = True) -> 
         why = check_client(client_id, secret, redirect_uri)
         if why:
             raise SetupError(why)
-    from . import aikeys
-    data = {"client_id": client_id, "secret": aikeys._fernet().encrypt(secret.encode()).decode(), "updated": int(time.time())}
+    from . import secretbox
+    data = {"client_id": client_id, "secret": secretbox.fernet().encrypt(secret.encode()).decode(), "updated": int(time.time())}
     p = _file()
     tmp = p.with_name(f".{p.name}.{secrets.token_hex(4)}")
     tmp.write_text(json.dumps(data))
@@ -146,7 +146,7 @@ def read_state(cookie: str) -> dict | None:
 
 def start(redirect_uri: str, nxt: str = "/", invite: str = "", keep: str = "") -> tuple[str, str]:
     """(URL to send the browser to, signed state cookie value). keep: the early-access tester who is adding this
-    Google account to their own account (Keep my work), instead of signing in."""
+    Google account to their own account, instead of signing in."""
     state = secrets.token_urlsafe(24)
     cookie = sign_state({"s": state, "n": nxt, "i": invite, "k": keep, "r": redirect_uri, "exp": int(time.time()) + STATE_TTL})
     url = AUTH_URL + "?" + urlencode({"client_id": client()[0], "redirect_uri": redirect_uri,

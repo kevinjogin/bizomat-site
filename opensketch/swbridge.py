@@ -1,4 +1,4 @@
-"""The link between Claude (the sw_ tools in sw_tools.py) and SOLIDWORKS on the user's own PC.
+"""The link between the AI app (the sw_ tools in sw_tools.py) and SOLIDWORKS on the user's own PC.
 
 The OpenSketch add-in for SOLIDWORKS (solidworks/ in this repo) connects OUT to this server, so the PC needs no
 open port and works behind a company firewall or proxy:
@@ -12,9 +12,8 @@ open port and works behind a company firewall or proxy:
 A tool calls `await call(person, op, args)` and gets the result (and any uploaded files) back. One SOLIDWORKS
 per person: a new hello replaces the old session (the old one is told to stop).
 
-The key is per person: HMAC of a data-folder secret over the person's id and a counter, so "New key" in the
-SOLIDWORKS page (or the app's Connect AI dialog) voids the old key. It reaches only the bridge (not files, not the
-MCP endpoints).
+The key is per person: HMAC of a data-folder secret over the person's id and a counter, so New key on the
+home page voids the old key. It reaches only the bridge (not the account, not the MCP endpoints).
 """
 
 from __future__ import annotations
@@ -85,7 +84,7 @@ def key_for(user: dict | None) -> str:
 
 
 def new_key(user: dict | None) -> str:
-    """Void the person's key and make a new one (the SOLIDWORKS page's New key, or Connect AI > SOLIDWORKS)."""
+    """Void the person's key and make a new one (New key on the home page)."""
     pid = person_id(user)
     _retired[hashlib.sha256(key_for(user).encode()).hexdigest()] = time.time()
     with _lock:

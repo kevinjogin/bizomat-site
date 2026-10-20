@@ -1,11 +1,11 @@
 """Numbers about a document for the AI, so it can check its work without looking at a picture.
 
 - `body_topology`: every face and edge of a part with an on-face point, normal, axis, midpoint and
-  adjacent faces, plus the exact reference to pass to fillet / chamfer / shell / draft. Indices are the
-  same as the browser's selection ids (faces() / edges() order, see geometry.mesh_shape).
+  adjacent faces, plus the exact reference to pass to fillet / chamfer / shell / draft. Indices follow
+  the body's faces() / edges() order (see geometry.mesh_shape).
 - `inspect_design`: one call with the rebuild state of every feature, the body's volume, area, centre of
-  mass and bounding box, and every sketch's degrees of freedom (solved by the browser's own sketch
-  solver, run with node, so the server and the page never disagree).
+  mass and bounding box, and every sketch's degrees of freedom (solved by the sketch solver in
+  solver/solver.js, run with node).
 
 Idea borrowed from SolidCraft (bherbruck/solidcraft): body_topology and inspect_design in its MCP.
 """
@@ -161,7 +161,7 @@ def body_topology(part, kind: str = "both", near: list | None = None, limit: int
 # ----------------------------------------------------------------------------- sketches
 
 def solve_sketches(sketches: list[dict], entities: bool = False) -> tuple[dict, str | None]:
-    """{sketch id: {dof, status, solved, conflicts, under}} from the browser solver, or ({}, reason).
+    """{sketch id: {dof, status, solved, conflicts, under}} from the sketch solver, or ({}, reason).
     entities=True also returns each sketch's solved entities."""
     if not sketches:
         return {}, None

@@ -22,7 +22,6 @@ import base64
 import binascii
 import copy
 import json
-import math
 from collections import OrderedDict
 from typing import Annotated, Any, Literal
 
@@ -187,7 +186,7 @@ class _Bad(ValueError):
 
 
 def _solve(feats: list[dict]) -> tuple[list[dict], list[str], dict]:
-    """Check features with the registry and solve every sketch with the browser's solver. Returns the features
+    """Check features with the registry and solve every sketch with the sketch solver. Returns the features
     with solved coordinates, input problems, and per-sketch solver notes."""
     problems: list[str] = []
     out = copy.deepcopy(feats)
@@ -220,8 +219,7 @@ def _solve(feats: list[dict]) -> tuple[list[dict], list[str], dict]:
 async def _predict(doc: str | None, component: str | None, feats: list[dict]) -> tuple[dict, str | None]:
     """What OpenSketch's own kernel makes of these features on SOLIDWORKS' current body: each feature's volume
     change, the body's box after it, an extrude's range along its sketch normal and the resolved sketch planes.
-    The add-in compares and makes a feature the other way round if SOLIDWORKS read a flag differently (as the macro
-    engine does). Features that refer to SOLIDWORKS names get no prediction."""
+    The add-in compares and makes a feature the other way round if SOLIDWORKS read a flag differently. Features that refer to SOLIDWORKS names get no prediction."""
     try:
         g = await _geometry(doc, component)
         if g["kind"] != "part":
@@ -741,7 +739,7 @@ async def sw_standard_part(kind: StdKind, size: str, length: float | None = None
 
 
 def _standard_step(kind: str, size: str, length: float | None) -> tuple[dict, bytes]:
-    """In the worker: a Toolbox part and its STEP."""
+    """In the worker: a standard part and its STEP."""
     import tempfile
     from pathlib import Path
     from . import geometry

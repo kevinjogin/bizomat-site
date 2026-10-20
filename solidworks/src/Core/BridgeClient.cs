@@ -59,7 +59,7 @@ namespace OpenSketch.Sw.Core
             var h = new HttpClientHandler();
             try
             {
-                // the company proxy (and its sign-in) the way the browser uses it
+                // the company proxy (and its sign-in) the way Windows web browsers use it
                 h.Proxy = WebRequest.GetSystemWebProxy();
                 if (h.Proxy != null) h.Proxy.Credentials = CredentialCache.DefaultCredentials;
                 h.UseProxy = true;
@@ -95,7 +95,7 @@ namespace OpenSketch.Sw.Core
             }
             if (!key.StartsWith("oss_"))
             {
-                Set("The key must start with oss_ (copy it from the OpenSketch SOLIDWORKS page).", false);
+                Set("The key must start with oss_ (copy it from the OpenSketch home page).", false);
                 return;
             }
             var backoff = 2;
@@ -151,7 +151,7 @@ namespace OpenSketch.Sw.Core
             {
                 var text = r.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                 if (r.StatusCode == HttpStatusCode.Unauthorized)
-                    throw new Fatal(J.Str(SafeParse(text), "detail") ?? "The server did not accept this key. Copy it again from the OpenSketch SOLIDWORKS page.");
+                    throw new Fatal(J.Str(SafeParse(text), "detail") ?? "The server did not accept this key. Copy it again from the OpenSketch home page.");
                 if (r.StatusCode == HttpStatusCode.NotFound)
                     throw new Fatal("This server has no SOLIDWORKS link. Check the address (it is the OpenSketch site, e.g. https://opensketch-yz.fly.dev).");
                 if (!r.IsSuccessStatusCode) throw new IOException("hello: HTTP " + (int)r.StatusCode + " " + Trim(text));

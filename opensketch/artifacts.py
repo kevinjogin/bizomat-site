@@ -1,6 +1,6 @@
 """Immutable, version-labelled exports for MCP clients, with scoped expiring download links.
 
-Downloads live under /mcp/artifacts so they do not need a browser login cookie. Each link grants
+Downloads live under /mcp/artifacts so they do not need a sign-in cookie. Each link grants
 access to exactly one file for an hour (a preview PNG for ten minutes: the image itself comes back
 in the tool's answer), never access to the document or the MCP endpoint itself.
 
@@ -100,7 +100,7 @@ def validate_geometry(doc: dict, export: bool = True) -> dict:
         statuses(st.status, "Feature ")
         note = geometry.rollback_note(doc, st.part is not None)
         if note and st.part is None:
-            raise ArtifactError(f"{note} Roll the part to the end in OpenSketch (right-click its name > Rollback to End).")
+            raise ArtifactError(f"{note} Roll the part to the end (rollback bar below its last feature), then export again.")
         if note:
             warnings.append(note)
         if st.part is None:

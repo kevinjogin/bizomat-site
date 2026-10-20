@@ -1,4 +1,4 @@
-"""STEP import (part and assembly), imported bodies you can keep modelling on, Toolbox parts."""
+"""STEP import (part and assembly), imported bodies you can keep modelling on, standard parts."""
 import math
 
 import pytest

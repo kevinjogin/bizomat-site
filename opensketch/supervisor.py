@@ -3,8 +3,7 @@ asks it for /healthz every few seconds and restarts it when it stops answering o
 
 Why: Fly.io restarts a machine only when its process exits, and its health checks never restart anything. A
 server stuck in a CAD call (or starved of CPU, or with every worker thread busy) keeps running and answers
-nothing, so it stays down until the next deploy. On 2026-10-19 the site sat at "Waiting for the server" for
-over 10 minutes that way.
+nothing, so it would stay down until the next deploy.
 
 Before killing a hung server the supervisor sends it SIGUSR1, which makes it print every thread's stack to
 the log (faulthandler, works while another thread holds the GIL), so the log shows what it was stuck on.

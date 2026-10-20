@@ -13,9 +13,8 @@ SHA-256 is stored, so the file cannot be used to sign in. Signing out removes th
 The first account is the owner. The owner invites other people with single-use links that last 7 days.
 
 Early access (showcases): anyone who types the owner's access code skips sign-up and gets an account of their own
-named "Internal tester N" (role "tester": no password, no real email, until they keep their work with an email and
-password or Google: keep_tester). Testers use the server's AI key with no limit while the code is on
-(aikeys.effective). The code is the owner's setting (`settings.access` in users.json), else the server's
+named "Internal tester N" (role "tester": no password, no real email, until they keep the account with an email and
+password or Google: keep_tester). The code is the owner's setting (`settings.access` in users.json), else the server's
 OPENSKETCH_ACCESS_CODE; the owner can change it, turn it off, or remove every tester at once.
 """
 
@@ -483,16 +482,16 @@ def tester_ids() -> list[str]:
 
 def keep_tester(user_id: str, email: str, name: str, password: str | None, google: str | None = None) -> dict:
     """An Internal tester adds their own sign-in (email and password, or a Google account) so they can come back
-    to their files from any browser. They stay a tester: early access still decides their AI."""
+    to their account from any browser. They stay a tester."""
     with _lock:
         data = _edit()
         u = next((x for x in data["users"] if x["id"] == user_id), None)
         if u is None or u["role"] != "tester":
             raise AccountError("Only early-access accounts can do this.")
-        if u.get("hash") or u.get("google"):  # changing it needs the current password (Account settings)
-            raise AccountError("Your work is kept already. Change your sign-in in Account settings.")
+        if u.get("hash") or u.get("google"):  # changing it needs the current password
+            raise AccountError("Your account is kept already. Change your password instead.")
         if google and any(x.get("google") == google and x["id"] != user_id for x in data["users"]):
-            raise AccountError("That Google account already has an OpenSketch account. Your files stay with this one.")
+            raise AccountError("That Google account already has an OpenSketch account.")
         email, name = _check_new(email, name or u["name"], None if google else (password or ""), data, me=user_id)
         u["email"], u["name"] = email, name
         if google:
@@ -505,7 +504,7 @@ def keep_tester(user_id: str, email: str, name: str, password: str | None, googl
 
 
 def remove_testers() -> list[str]:
-    """Owner: remove every tester account (signed out at once; their files stay on the server)."""
+    """Owner: remove every tester account (signed out at once)."""
     with _lock:
         data = _edit()
         gone = [u["id"] for u in data["users"] if u["role"] == "tester"]

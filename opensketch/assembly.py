@@ -343,7 +343,7 @@ def mate_residual(m: dict, poses: dict, L: float, align: str) -> np.ndarray:
     def dir_match():
         return (da - sgn * db) * L
 
-    if t == "_goal":  # drag: pull a point of a component toward the cursor (soft)
+    if t == "_goal":  # drag: pull a point of a component toward a target (soft)
         P = poses[m["component"]]
         return (P.R @ m["point"] + P.t - m["target"]) * m.get("weight", 1e-2)
     if t == "hinge":
@@ -423,7 +423,7 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
 
     `solids` (component id -> rebuilt part solid) lets references follow their faces.
     `drag` = {"component", "point" (part coordinates), "target" (assembly coordinates)}: the component
-    is pulled so that point follows the cursor while every mate keeps holding, the way SOLIDWORKS
+    is pulled so that point moves toward the target while every mate keeps holding, the way SOLIDWORKS
     drags a component (a hinge turns, a slider slides)."""
     comps = [c for c in asm.get("components", []) if not c.get("suppressed")]
     ids = {c["id"] for c in comps}
@@ -618,13 +618,13 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
         sys_.res(P)
         return P
 
-    # Rotations cost more than moves when the cursor can be followed either way, so a free part
-    # slides with the cursor instead of tumbling; a hinge still turns (it has no other way).
+    # Rotations cost more than moves when the target can be reached either way, so a free part
+    # slides toward it instead of tumbling; a hinge still turns (it has no other way).
     D = np.tile([1.0, 1.0, 1.0, 0.005, 0.005, 0.005], len(free))
 
     def run_drag(P, sys_, nh):
         """Constrained Gauss-Newton: each step keeps the mates (linearised) and moves the grabbed
-        point as close to the cursor as they allow, with the smallest motion."""
+        point as close to the target as they allow, with the smallest motion."""
         nonlocal iters
         for _ in range(40):
             iters += 1
@@ -650,7 +650,7 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
                     scale = min(scale, 0.2 * L / tn)
                 if rn > 0.35:
                     scale = min(scale, 0.35 / rn)
-            # When the cursor is off the path the mates allow (a hinge point can only reach a circle),
+            # When the target is off the path the mates allow (a hinge point can only reach a circle),
             # plain Gauss-Newton only creeps toward the closest point. Try longer strides along the
             # same step and keep the best (residual evaluations are cheap next to a Jacobian).
             best, bestc = None, None
@@ -665,7 +665,7 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
                 elif a > 2:
                     break
             P = best
-            if float(np.linalg.norm(dx)) < 5e-4 * L and float(np.linalg.norm(rm)) < tol:  # the cursor is not that exact; run_lm makes the mates exact
+            if float(np.linalg.norm(dx)) < 5e-4 * L and float(np.linalg.norm(rm)) < tol:  # close enough to the target; run_lm makes the mates exact
                 break
         return P
 
@@ -682,7 +682,7 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
 
     # A mate that over defines the assembly: like SOLIDWORKS, that mate is the one in error and the others
     # stay solved. Least squares spreads a conflict over every mate in the loop and leaves a compromise pose,
-    # so when anything fails (not on drag frames: the solve on release does it), solve again from the
+    # so when anything fails (not while dragging: the solve without a drag does it), solve again from the
     # starting poses adding the mates in document order; a mate that cannot be added with the ones before
     # it is rejected and the poses that hold the accepted ones are kept.
     accepted, rejected = hard, {}
@@ -720,7 +720,7 @@ def solve(asm: dict, size: float = 100.0, solids: dict | None = None, drag: dict
     comp_state = {c["id"]: "fixed" if c["id"] in fixed else "under" for c in comps}
     dofs = {}
     mated = sorted({c for _, _, cs in accepted for c in cs if c not in fixed}, key=lambda c: order_ids.index(c))
-    if mated and not goal:  # drag frames only draw; the rebuild after the drag reports the states
+    if mated and not goal:  # a drag only moves parts; a solve without one reports the states
         free = mated
         idx = {c: i for i, c in enumerate(free)}
         n = 6 * len(free)
@@ -775,9 +775,9 @@ def part_of(asm: dict, comp: dict) -> dict:
 
 
 def regen_assembly(asm: dict, known: dict | None = None, solve_mates: bool = True, drag: dict | None = None) -> dict:
-    """Rebuild parts, solve mates, return what the UI draws.
+    """Rebuild parts and solve mates: parts (status, bbox, mesh), placed components and mate states.
 
-    `known` maps part id -> cache key the client already holds; those meshes are not resent."""
+    `known` maps part id -> cache key the caller already holds; those meshes are left out."""
     known = known or {}
     parts_out, built = {}, {}
     for pid, part in (asm.get("parts") or {}).items():
@@ -865,7 +865,7 @@ def rolled_back_components(asm: dict) -> list[tuple[dict, dict, dict]]:
     return out
 
 
-ROLL_TO_END_HINT = "Right-click it in the assembly tree and choose Roll Part to End, then export again."
+ROLL_TO_END_HINT = "Roll the part to the end (rollback bar below its last feature), then export again."
 
 
 def rollback_export_error(asm: dict) -> str | None:

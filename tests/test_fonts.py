@@ -16,9 +16,9 @@ def data(tmp_path, monkeypatch):
 
 def test_pages_load_no_fonts_from_other_sites():
     owner = TestClient(server.app)
-    owner.post("/setup", data={"name": "YZ", "email": "yz@example.com", "new_password": "correct horse", "next": "/"})
+    owner.post("/setup", data={"name": "Owner", "email": "owner@example.com", "new_password": "correct horse", "next": "/"})
     anon = TestClient(server.app)
-    pages = {"login": anon.get("/login").text, "privacy": anon.get("/privacy").text, "app": owner.get("/").text}
+    pages = {"login": anon.get("/login").text, "privacy": anon.get("/privacy").text, "home": owner.get("/").text}
     for name, html in pages.items():
         assert "googleapis" not in html and "gstatic" not in html, name
         assert "fonts/fonts.css" in html, name

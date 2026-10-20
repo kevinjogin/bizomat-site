@@ -20,7 +20,6 @@ Idea from SolidCraft (bherbruck/solidcraft): crates/doc/src/naming.rs.
 
 from __future__ import annotations
 
-import math
 
 TOL = 1e-4
 
@@ -335,7 +334,7 @@ def edge_names(part, faces, names) -> list[str]:
 
 def annotate(part_before: dict, feat: dict) -> dict:
     """The feature with the persistent name added to each face and edge ref it picks, worked out on the part
-    as it stands before the feature (the browser stores picks as points; this makes them survive edits)."""
+    as it stands before the feature (a pick stored as a point gets a name that survives edits)."""
     from . import geometry
     st, _ = geometry.regen(part_before)
     if st.part is None:

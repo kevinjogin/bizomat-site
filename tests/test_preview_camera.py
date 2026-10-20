@@ -1,4 +1,4 @@
-"""preview_document camera (yaw, pitch, target, view_width) and section cut (idea from SolidCraft)."""
+"""Preview camera (yaw, pitch, target, view_width) and section cut (idea from SolidCraft)."""
 import json
 import struct
 import zlib

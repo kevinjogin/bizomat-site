@@ -11,7 +11,7 @@ namespace OpenSketch.Sw
     /// OpenSketch features as native SOLIDWORKS features. Each one is made, then measured: the volume change and,
     /// for extrudes, where the new faces lie along the sketch normal, against what the server's own kernel made of
     /// the same feature on the same body (the "expect" the server sends). Where SOLIDWORKS read a direction flag the
-    /// other way, the feature is deleted and made again flipped, as the macro engine does.
+    /// other way, the feature is deleted and made again flipped.
     /// </summary>
     public sealed partial class Commands
     {
@@ -678,7 +678,7 @@ namespace OpenSketch.Sw
                 if (!SelectPicks(c.Doc, items, t < 2 ? marks[t] : 1)) throw new InvalidOperationException("not every edge could be selected");
                 IFeature feat;
                 if (t < 2)
-                    // FeatureFillet3 (what the macro engine uses): propagate, uniform radius, attach edges, keep features
+                    // FeatureFillet3: propagate, uniform radius, attach edges, keep features
                     feat = c.Doc.FeatureManager.FeatureFillet3(195, r * Units.M, 0, 0, (int)swFeatureFilletType_e.swFeatureFilletType_Simple,
                                                               0, 0, none, none, none, none, none, none, none) as IFeature;
                 else

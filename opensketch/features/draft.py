@@ -40,17 +40,14 @@ def build(feat: dict, st, diagnostics: dict):
 
 
 register(FeatureType(
-    "draft", "Draft", "Draft", "draft",
+    "draft", "Draft", "Draft",
     "Tapers faces by an angle about a neutral plane, for parts that come out of a mould.",
-    build=build, label="Draft",
-    message="Select a neutral plane and the faces to draft.",
+    build=build,
     notes=("The pull direction is the neutral plane's normal; a positive angle narrows the part along it. Pick side "
            "faces (not faces parallel to the neutral plane), usually the bottom face or the parting plane as neutral plane."),
     params=[
-        Param("angle", "angle", "Draft angle", default=1, min=0.01, max=45, icon="angle_i", section="Draft Angle"),
-        Param("neutral_plane", "plane", "Neutral plane: the faces keep their size where they meet it", required=True,
-              label="Neutral Plane", section="Neutral Plane"),
-        Param("reverse", "bool", "Reverse the pull direction", default=False, icon="reverse", label="Reverse Direction",
-              section="Neutral Plane", widget="toggle"),
-        Param("faces", "faces", "Faces to draft", required=True, label="Faces to Draft", section="Faces to Draft"),
+        Param("angle", "angle", "Draft angle", default=1, min=0.01, max=45),
+        Param("neutral_plane", "plane", "Neutral plane: the faces keep their size where they meet it", required=True),
+        Param("reverse", "bool", "Reverse the pull direction", default=False),
+        Param("faces", "faces", "Faces to draft", required=True),
     ]))

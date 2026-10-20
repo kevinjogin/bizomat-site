@@ -1,8 +1,8 @@
-"""Browser-free orthographic CAD previews, rendered from the rebuilt tessellation.
+"""Orthographic CAD previews (sw_preview), rendered on the server from the rebuilt tessellation.
 
-This is a geometry preview, not a browser screenshot. A depth buffer hides back
+This is a geometry preview, not a screenshot of SOLIDWORKS. A depth buffer hides back
 faces and edges. NumPy and the standard PNG encoder keep it usable on headless
-Codespaces/Fly hosts without Chromium, a display server, or a graphics driver.
+hosts without a display server or a graphics driver.
 """
 from __future__ import annotations
 
@@ -86,7 +86,7 @@ def _meshes(doc, section=None):
             raise ValueError(f"Fix feature errors in {c['part']} before rendering a preview")
         if not part["body"]["faces"]:
             if part.get("rolled_back"):
-                continue  # rolled back to nothing: drawn as the app shows it (validate_geometry warns)
+                continue  # rolled back to nothing: drawn as it stands (validate_geometry warns)
             raise ValueError(f"Component {c['id']} has no solid body")
         if not original.get("hidden"):
             matrix = np.array(c["matrix"]).reshape(4, 4)
@@ -126,7 +126,7 @@ def render_preview(doc: dict, view: str = "isometric", width: int = 960, height:
     drawn. Bounds are fitted to the visible geometry with an eight percent margin,
     unless target / view_width ask for a close-up. yaw and pitch (degrees) give any
     direction. section {point, normal} cuts the solids and removes the normal's side;
-    cut faces are drawn in orange. transparent=True gives an RGBA PNG with no background (thumbnails).
+    cut faces are drawn in orange. transparent=True gives an RGBA PNG with no background.
     """
     if view not in VIEWS:
         raise ValueError("View must be isometric, top, front or right")

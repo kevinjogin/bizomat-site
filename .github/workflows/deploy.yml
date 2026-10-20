@@ -1,11 +1,10 @@
 # Deploys OpenSketch to Fly.io from main, only after the tests pass (tests.yml, called below).
 #
 # Repository secrets (Settings > Secrets and variables > Actions):
-# - FLY_API_TOKEN: a deploy token for this app only: `fly tokens create deploy -a opensketch-yz` (or the Fly
-#   dashboard: the app > Tokens). Until it is set nothing is deployed (OpenSketch still runs in Codespaces). Only the
-#   steps that run flyctl see it.
-# - OPENSKETCH_PASSWORD (required, so the public site is never open), ANTHROPIC_API_KEY (optional, the built-in AI
-#   chat), GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET (optional): passed to Fly as the app's secrets.
+# - FLY_API_TOKEN: a deploy token for this app only: `fly tokens create deploy -a <app>` (or the Fly dashboard:
+#   the app > Tokens). Until it is set nothing is deployed. Only the steps that run flyctl see it.
+# - OPENSKETCH_PASSWORD (required, so the public site is never open), GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET
+#   (optional), OPENSKETCH_ACCESS_CODE (optional early access code): passed to Fly as the app's secrets.
 # A new app needs the app and its volume once: `fly apps create <app>` and
 # `fly volumes create opensketch_data -a <app> -r syd -s 1` (with an org token this workflow still makes them).
 #
@@ -105,7 +104,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           if [ "$HAS_TOKEN" != "true" ]; then
-            echo "No FLY_API_TOKEN secret yet: not deploying (OpenSketch still runs in Codespaces)."
+            echo "No FLY_API_TOKEN secret yet: not deploying."
             echo "go=no" >> "$GITHUB_OUTPUT"
           elif [ "$HAS_PASSWORD" != "true" ]; then
             echo "::error::Add the OPENSKETCH_PASSWORD secret first, so the public site is not open to everyone."
@@ -144,12 +143,12 @@ jobs:
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
           PASSWORD: ${{ secrets.OPENSKETCH_PASSWORD }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENSKETCH_ACCESS_CODE: ${{ secrets.OPENSKETCH_ACCESS_CODE }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         run: |
           args=("OPENSKETCH_PASSWORD=$PASSWORD")
-          [ -n "$ANTHROPIC_API_KEY" ] && args+=("ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY")
+          [ -n "$OPENSKETCH_ACCESS_CODE" ] && args+=("OPENSKETCH_ACCESS_CODE=$OPENSKETCH_ACCESS_CODE")
           [ -n "$GOOGLE_CLIENT_ID" ] && [ -n "$GOOGLE_CLIENT_SECRET" ] && args+=("GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET")
           flyctl secrets set --app "$APP" --stage "${args[@]}"
 

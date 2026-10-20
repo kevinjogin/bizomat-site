@@ -117,7 +117,7 @@ def resolve(doc: dict, pick: dict, part_id: str | None = None):
 # ----------------------------------------------------------------------------- one item
 
 def _loop(wire) -> dict:
-    """Recognise an inner loop of a planar face: round hole, slot, or anything else by its size."""
+    """Classify an inner loop of a planar face: round hole, slot, or anything else by its size."""
     edges = wire.edges()
     types = [_type(e) for e in edges]
     if len(edges) == 1 and types[0] == "circle":

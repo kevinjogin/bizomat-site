@@ -1,5 +1,4 @@
-"""The hosted server restarts itself when it hangs or exits (2026-10-19: the Fly site sat at "Waiting for the
-server" for over 10 minutes, and Fly only restarts a machine whose process exits)."""
+"""The hosted server restarts itself when it hangs or exits (Fly only restarts a machine whose process exits)."""
 import sys
 import textwrap
 import threading

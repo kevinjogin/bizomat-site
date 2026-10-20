@@ -1,12 +1,11 @@
 """STEP import, and the "imported" and "standard" feature bodies.
 
-An imported solid is stored inside the document as BREP text (zlib + base64), so an .osk file stays
+An imported solid is stored inside the document as BREP text (zlib + base64), so a document stays
 self-contained. SOLIDWORKS calls this an "Imported" base feature: you keep modelling on top of it.
 
 A STEP with one solid becomes a part. A STEP with several solids becomes an assembly: one part per
 distinct shape (identical shapes share a part, like instances), one component per solid at its STEP
-position. Like SOLIDWORKS importing a STEP assembly, no mates come in; Add Mates (AI) or the Mate
-command adds them.
+position. Like SOLIDWORKS importing a STEP assembly, no mates come in; sw_add_mate adds them.
 
 A .zip imports exactly one STEP file.
 """
@@ -200,7 +199,7 @@ def import_part_feature(solid, name: str, source: str) -> dict:
 MAX_ARCHIVE_FILE_BYTES = 64 * 1024 * 1024
 
 
-def _from_zip(data: bytes, filename: str, *, include_eagle=False) -> tuple[bytes, str]:
+def _from_zip(data: bytes, filename: str) -> tuple[bytes, str]:
     """Read exactly one supported CAD file; never silently choose between models."""
     try:
         zf = zipfile.ZipFile(io.BytesIO(data))
@@ -211,7 +210,7 @@ def _from_zip(data: bytes, filename: str, *, include_eagle=False) -> tuple[bytes
             raise ImportError_(f"{filename} has too many archive entries. Unzip it and open one CAD file.")
         entries = [i for i in zf.infolist() if not i.is_dir()
                    and not any(p.startswith(".") or p == "__MACOSX" for p in i.filename.split("/"))]
-        extensions = (".step", ".stp", ".brd") if include_eagle else (".step", ".stp")
+        extensions = (".step", ".stp")
         models = [i for i in entries if os.path.splitext(i.filename)[1].lower() in extensions]
         if len(models) == 1:
             entry = models[0]
@@ -227,15 +226,13 @@ def _from_zip(data: bytes, filename: str, *, include_eagle=False) -> tuple[bytes
             return raw, os.path.basename(entry.filename)
         if len(models) > 1:
             listed = ", ".join(os.path.basename(i.filename) for i in models[:6]) + (" ..." if len(models) > 6 else "")
-            kind = "STEP" if all(os.path.splitext(i.filename)[1].lower() in (".step", ".stp") for i in models) else "supported CAD"
-            raise ImportError_(f"{filename} holds {len(models)} {kind} files ({listed}). Unzip it and open the one you want.")
+            raise ImportError_(f"{filename} holds {len(models)} STEP files ({listed}). Unzip it and open the one you want.")
         native = [i for i in entries if os.path.splitext(i.filename)[1].lower() in NATIVE_SOLIDWORKS]
         if native:
             raise ImportError_(
                 f"{filename} only holds SOLIDWORKS files ({os.path.basename(native[0].filename)}). Download the STEP version "
                 "instead, or in SOLIDWORKS use File > Save As > STEP AP214 (*.step).")
-        suffix = " or an EAGLE board (.brd)" if include_eagle else ""
-        raise ImportError_(f"{filename} has no STEP file inside (.step or .stp){suffix}.")
+        raise ImportError_(f"{filename} has no STEP file inside (.step or .stp).")
 
 
 def surfaces_match(a, b, tol: float) -> bool:
@@ -287,7 +284,7 @@ def import_step(data: bytes, filename: str = "model.step") -> dict:
     if ext in NATIVE_SOLIDWORKS:
         raise ImportError_(
             "SOLIDWORKS files (.sldprt, .sldasm) are a closed format that only SOLIDWORKS can read. "
-            "In SOLIDWORKS use File > Save As > STEP AP214 (*.step), then open the STEP file here.")
+            "In SOLIDWORKS use File > Save As > STEP AP214 (*.step), then import the STEP file.")
     if ext not in (".step", ".stp", ""):
         raise ImportError_(f"Cannot import {ext} files. Use STEP (.step or .stp), or a .zip holding one.")
     try:
@@ -356,7 +353,7 @@ def _matrix(loc):
     return R, t
 
 
-# ----------------------------------------------------------------------------- standard parts (Toolbox)
+# ----------------------------------------------------------------------------- standard parts
 
 STANDARD = {
     # kind: (module, class, required args, description)
@@ -393,7 +390,7 @@ def standard_catalog() -> dict:
 
 
 def build_standard(feat: dict):
-    """Solid for a standard (Toolbox) part. Screws run down -Z from the head's underside at Z=0 in
+    """Solid for a standard part (screw, nut, washer, bearing). Screws run down -Z from the head's underside at Z=0 in
     bd_warehouse; OpenSketch turns them so the axis is Y (up, as SOLIDWORKS) with the head on top."""
     import importlib
     from build123d import Axis

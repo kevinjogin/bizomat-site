@@ -3,11 +3,9 @@ user's own SOLIDWORKS, through the OpenSketch add-in on their PC (swbridge.py). 
 sw_selftest.py; they register on `mcp` here.
 
 Addresses: <site>/mcp, where the AI app signs in (OAuth, mcpauth.py; Bearer token), and <site>/mcp/<key>, the
-private address for apps that cannot sign in (auth.resolve_mcp). /solidworks/mcp is the same server under the
-address it had on 2026-10-20 while the browser app still owned /mcp. Streamable HTTP, stateless, JSON responses,
-so a server restart after an update does not break the AI app's connection.
-
-The browser CAD app and its document tools are archived (branch archive/opensketch-app).
+private address for apps that cannot sign in (auth.resolve_mcp). /solidworks/mcp is the same server under a second
+address that early connectors used. Streamable HTTP, stateless, JSON responses, so a server restart after an update
+does not break the AI app's connection.
 """
 
 from __future__ import annotations
@@ -26,7 +24,7 @@ from pydantic import Field
 from . import auth, uploads
 
 NAME = "OpenSketch"
-PATHS = ("/mcp", "/solidworks/mcp")  # the first is the address people are given
+PATHS = ("/mcp", "/solidworks/mcp")  # the first is the address people are given; the second is kept for early connectors
 
 INSTRUCTIONS = """OpenSketch: you build native SOLIDWORKS parts and assemblies in the user's own files, in the
 SOLIDWORKS running on their PC (through the OpenSketch add-in). Everything you make is a real SOLIDWORKS feature:

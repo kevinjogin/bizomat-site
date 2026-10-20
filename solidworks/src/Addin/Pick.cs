@@ -8,8 +8,7 @@ using SolidWorks.Interop.swconst;
 namespace OpenSketch.Sw
 {
     /// <summary>Finding faces, edges and planes the way OpenSketch names them (a point on them, mm) and selecting
-    /// them with a selection mark. A face or edge is the one the point lies on (IFace2/IEdge.GetClosestPointOn),
-    /// as the macro engine does.</summary>
+    /// them with a selection mark. A face or edge is the one the point lies on (IFace2/IEdge.GetClosestPointOn).</summary>
     public sealed partial class Commands
     {
         const double FindTolMm = 0.05;

@@ -3,7 +3,7 @@
 // Variables: x,y per sketch point (the sketch origin is fixed), r per circle.
 // Each relation or dimension adds residual equations. Newton steps use the
 // weighted least-norm update, so geometry moves as little as possible and
-// dragged variables (high weight) stay near the cursor, like SOLIDWORKS.
+// pulled variables (opts.drag, high weight) stay near their target values.
 // Degrees of freedom and per-entity defined state come from the rank of the
 // Jacobian, which also finds redundant (over-defining) relations.
 
@@ -269,7 +269,7 @@ function buildEquations(sketch, V, ents) {
 function angleSide(value, measured) { return Math.abs(value - (180 - measured)) < Math.abs(value - measured); }
 
 /** Give every angle dimension that does not say which angle it measures its side, from the geometry as
- * drawn. Call before changing a value on a copy of a sketch (the Design panel), so a new value across 90
+ * drawn. Call before changing a value on a copy of a sketch (an equation or parameter), so a new value across 90
  * degrees is read on the same side. */
 export function angleSides(sketch) {
   for (const c of sketch.constraints || []) {
@@ -418,7 +418,7 @@ function groups(eqs, nvars) {
 
 /**
  * Solve a sketch in place.
- * opts.drag: [{key:'p3.x', value}, ...] variables to pull toward the cursor.
+ * opts.drag: [{key:'p3.x', value}, ...] variables to pull toward these values.
  * Returns {ok, dof, status, entityState: Map(id -> 'under'|'fully'|'over'), conflicts: Set(cid)}
  */
 export function solveSketch(sketch, opts = {}) {
@@ -441,7 +441,7 @@ export function solveSketch(sketch, opts = {}) {
   const solveAll = () => parts.reduce((ok, g) => newton(g.list, p, w, g.vars).converged && ok, true);
   let converged = solveAll();
   if (!converged && opts.drag) {
-    // Dragging into an impossible spot: fall back to solving from the original geometry.
+    // Pulled into an impossible spot: fall back to solving from the original geometry.
     p.set(backup); w.fill(1);
     converged = solveAll();
     if (!converged) p.set(backup);

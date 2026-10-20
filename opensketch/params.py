@@ -6,9 +6,9 @@ Document format (docs/DOCUMENT.md, "Parameters and equations"):
 - feature["eq"] = {"depth": "wall * 5", "dir2.depth": "height - 2"}: an equation drives that field.
 - a sketch dimension {"type": "distance", "value": 40, "eq": "width"}: an equation drives that dimension.
 
-Every driven field keeps its current number, so the sketch solver, the browser and old files read the
+Every driven field keeps its current number, so the sketch solver and older documents read the
 document as before; `evaluate` recomputes the numbers from the equations (re-solving a sketch whose
-dimension changed with the browser's own solver) and says what changed and what could not be computed.
+dimension changed with the sketch solver) and says what changed and what could not be computed.
 
 Expressions: numbers, + - * / ^ (or **) %, parentheses, variable names, pi, abs min max sqrt round floor
 ceil, sin cos tan asin acos atan atan2 in degrees, and unit suffixes mm cm m in deg rad (lengths become mm,
@@ -337,7 +337,7 @@ def _angle_side(sketch: dict, c: dict) -> bool | None:
 
 
 def table(part: dict) -> list[dict]:
-    """Global variables with their values and which fields use them (for inspect_design and the UI)."""
+    """Global variables with their values and which fields use them (for inspect_design)."""
     values, problems = variables(part)
     used: dict[str, list[str]] = {}
     for f in part.get("features") or []:

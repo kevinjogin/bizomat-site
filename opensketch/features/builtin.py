@@ -1,6 +1,5 @@
-"""The features that existed before the registry. Their PropertyManagers are hand-written in features.js
-(ui="custom") and their geometry stays in geometry._regen_feature; the descriptions here give the AI and
-MCP their tools, help text and input checks."""
+"""The core features. Their geometry is in geometry._regen_feature; the descriptions here give the AI its help
+text and the input checks."""
 
 from . import FeatureType, Param, register
 
@@ -8,7 +7,7 @@ END = [("blind", "Blind"), ("through_all", "Through All"), ("up_to_next", "Up To
 OP = [("boss", "Boss"), ("cut", "Cut")]
 
 register(FeatureType(
-    "plane", "Plane", "Plane", "plane", "A reference plane offset from a plane or planar face.", ui="custom",
+    "plane", "Plane", "Plane", "A reference plane offset from a plane or planar face.",
     params=[
         Param("base", "plane", "The plane or planar face it is offset from", required=True),
         Param("offset", "length", "Offset distance", default=10, min=0, omitted=0),
@@ -16,8 +15,7 @@ register(FeatureType(
     ]))
 
 register(FeatureType(
-    "extrude", "Boss-Extrude", "Boss-Extrude", "extrude", "Extrudes a sketch's closed loops into a boss, or cuts with them.",
-    ui="custom", label="Extruded Boss/Base",
+    "extrude", "Boss-Extrude", "Boss-Extrude", "Extrudes a sketch's closed loops into a boss, or cuts with them.",
     notes=('Boss extrudes along the sketch plane normal; use "reverse": true for the other way. A cut sketched on a '
            'top face needs "reverse": true to go into the material.'),
     params=[
@@ -34,8 +32,7 @@ register(FeatureType(
     ]))
 
 register(FeatureType(
-    "revolve", "Revolve", "Revolve", "revolve", "Revolves a sketch's closed loops about a line or centerline in the same sketch.",
-    ui="custom", label="Revolved Boss/Base",
+    "revolve", "Revolve", "Revolve", "Revolves a sketch's closed loops about a line or centerline in the same sketch.",
     params=[
         Param("sketch", "sketch", "The sketch to revolve", required=True),
         Param("axis", "sketch_line", "Line or centerline id in that sketch", required=True),
@@ -47,8 +44,7 @@ register(FeatureType(
     ]))
 
 register(FeatureType(
-    "sweep", "Sweep", "Sweep", "sweep", "Sweeps one closed sketch profile along a path drawn in another sketch.",
-    ui="custom", label="Swept Boss/Base",
+    "sweep", "Sweep", "Sweep", "Sweeps one closed sketch profile along a path drawn in another sketch.",
     notes="The path is one connected chain of non-construction curves. No guide curves or twist.",
     params=[
         Param("sketch", "sketch", "The closed profile sketch", required=True),
@@ -58,8 +54,7 @@ register(FeatureType(
     ]))
 
 register(FeatureType(
-    "loft", "Loft", "Loft", "loft", "Adds or removes material between two or more closed profiles, in order.",
-    ui="custom", label="Lofted Boss/Base",
+    "loft", "Loft", "Loft", "Adds or removes material between two or more closed profiles, in order.",
     notes="One closed contour per sketch, no inner contours or guide curves: loft the outside, then cut the inside.",
     params=[
         Param("profiles", "features", "Profile sketch ids in section order (at least two different sketches)", required=True),
@@ -69,8 +64,7 @@ register(FeatureType(
     ]))
 
 register(FeatureType(
-    "hole", "Hole", "Hole", "hole", "Hole Wizard: a simple, counterbore or countersink hole with explicit dimensions.",
-    ui="custom", label="Hole Wizard",
+    "hole", "Hole", "Hole", "Hole Wizard: a simple, counterbore or countersink hole with explicit dimensions.",
     notes=("x and y are the position in the plane's own coordinates. Holes on outer faces usually need "
            '"reverse": true to cut into the material. Flat bottom; no threads or standard sizes; one position '
            "per feature (pattern it for more)."),
@@ -91,14 +85,14 @@ register(FeatureType(
     ]))
 
 register(FeatureType(
-    "fillet", "Fillet", "Fillet", "fillet", "Rounds edges with a constant radius.", ui="custom",
+    "fillet", "Fillet", "Fillet", "Rounds edges with a constant radius.",
     params=[
         Param("radius", "length", "Radius", default=2, min=0.0001, omitted=1),
         Param("edges", "edges", "Edges to round", required=True),
     ]))
 
 register(FeatureType(
-    "chamfer", "Chamfer", "Chamfer", "chamfer", "Bevels edges.", ui="custom",
+    "chamfer", "Chamfer", "Chamfer", "Bevels edges.",
     params=[
         Param("distance", "length", "Distance", default=1, min=0.0001),
         Param("edges", "edges", "Edges to bevel", required=True),
@@ -109,7 +103,7 @@ register(FeatureType(
     ]))
 
 register(FeatureType(
-    "shell", "Shell", "Shell", "shell", "Hollows the body to a wall thickness, removing the chosen faces.", ui="custom",
+    "shell", "Shell", "Shell", "Hollows the body to a wall thickness, removing the chosen faces.",
     params=[
         Param("thickness", "length", "Wall thickness", default=1, min=0.0001),
         Param("faces", "faces", "Faces to remove (open faces); empty makes a closed hollow body", default=[]),
@@ -117,15 +111,14 @@ register(FeatureType(
     ]))
 
 register(FeatureType(
-    "mirror", "Mirror", "Mirror", "mirror", "Mirrors extrudes and revolves, or the whole body, about a plane.", ui="custom",
+    "mirror", "Mirror", "Mirror", "Mirrors extrudes and revolves, or the whole body, about a plane.",
     params=[
         Param("plane", "plane", "Mirror plane", required=True),
         Param("features", "features", "Extrude or revolve feature ids; empty mirrors the whole body", default=[]),
     ]))
 
 register(FeatureType(
-    "linear_pattern", "Linear Pattern", "LPattern", "linpattern", "Copies extrudes and revolves along one or two directions.",
-    ui="custom", command="linpattern",
+    "linear_pattern", "Linear Pattern", "LPattern", "Copies extrudes and revolves along one or two directions.",
     params=[
         Param("features", "features", "Extrude or revolve feature ids", required=True),
         Param("direction", "direction", "Direction 1", default="X"),
@@ -138,8 +131,7 @@ register(FeatureType(
     ]))
 
 register(FeatureType(
-    "circular_pattern", "Circular Pattern", "CirPattern", "circpattern", "Copies extrudes and revolves around an axis.",
-    ui="custom", command="circpattern",
+    "circular_pattern", "Circular Pattern", "CirPattern", "Copies extrudes and revolves around an axis.",
     params=[
         Param("features", "features", "Extrude or revolve feature ids", required=True),
         Param("axis", "axis", "Axis through the part origin", default="Y"),

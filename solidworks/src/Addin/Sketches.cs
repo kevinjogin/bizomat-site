@@ -8,7 +8,7 @@ using SolidWorks.Interop.swconst;
 namespace OpenSketch.Sw
 {
     /// <summary>
-    /// Drawing an OpenSketch sketch in SOLIDWORKS, the way the macro engine does: every curve drawn at its exact
+    /// Drawing an OpenSketch sketch in SOLIDWORKS: every curve drawn at its exact
     /// (already solved) place straight into the sketch (no snapping or automatic relations), shared end points merged,
     /// then the sketch's own relations and dimensions. If adding them moved anything, that is reported.
     /// </summary>
@@ -410,7 +410,7 @@ namespace OpenSketch.Sw
                 }
             }
             var state = sk.GetConstrainedStatus();
-            var feat = sk as IFeature;   // a sketch is also a feature (the macro engine relies on the same)
+            var feat = sk as IFeature;   // a sketch is also a feature
             sm.InsertSketch(true); // leave the sketch
             if (feat == null) feat = m.Extension.GetLastFeatureAdded() as IFeature;
             if (feat == null) throw new UserError("SOLIDWORKS made the sketch but did not hand it back.");

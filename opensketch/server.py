@@ -1,8 +1,6 @@
 """FastAPI server for OpenSketch, the connector between AI apps and SOLIDWORKS: the home page (sw_page.py) where a
 person sets it up, sign-in (accounts, Google, OAuth for AI apps; auth.py, mcpauth.py), the MCP endpoint
-(mcp_server.py, the sw_ tools), and the link the SOLIDWORKS add-in polls (swbridge.py).
-
-The browser CAD app this server used to serve is archived (branch archive/opensketch-app)."""
+(mcp_server.py, the sw_ tools), and the link the SOLIDWORKS add-in polls (swbridge.py)."""
 
 from __future__ import annotations
 
@@ -66,7 +64,7 @@ class _BodyTooBig(HTTPException):
                          else "This request is too big.")
 
 
-BODY_MAX = store.DOC_MAX + 4 * 2**20  # a whole document plus the request around it (/api/regen, PUT /api/docs...)
+BODY_MAX = 68 * 2**20                 # an MCP call with a 32 MiB file as base64, or a file from the add-in
 BODY_SMALL = 64 * 1024                # sign-in forms, OAuth, everything that is not /api/ or /mcp/
 OWN_BODY_LIMIT = ("/mcp/uploads/", "/mcp/sw/file")  # streamed to their own, larger caps
 
@@ -176,15 +174,12 @@ app.add_middleware(auth.PasswordGate)
 app.add_middleware(RequestLog)
 app.add_middleware(BodyLimit)  # outermost: before the sign-in gate reads anything
 
+
 @app.exception_handler(store.StorageError)
 async def _storage_full(_request: Request, exc: store.StorageError):
-    """No room (disk nearly full, the person's Files full, a file too big): a plain message, nothing written."""
+    """No room on the data disk: a plain message, nothing written."""
     return JSONResponse({"error": str(exc)}, status_code=exc.status)
 
-
-@app.exception_handler(store.Damaged)
-async def _damaged(_request: Request, exc: store.Damaged):
-    return JSONResponse({"error": str(exc)}, status_code=422)
 
 @app.get("/healthz", include_in_schema=False)
 async def healthz():
@@ -258,8 +253,8 @@ class KeepWork(BaseModel):
 
 @app.post("/api/account/keep")
 def api_account_keep(req: KeepWork, request: Request):
-    """Early access: the tester adds an email and password to their account, so signing out (or another browser)
-    no longer loses their files. They stay a tester (the access code still decides their AI)."""
+    """Early access: the tester adds an email and password to their account, so they can sign in again after
+    signing out. They stay a tester."""
     from . import accounts
     u = _user(request)
     if not u or not u.get("tester"):
@@ -279,7 +274,7 @@ class AccountSettings(BaseModel):
 @app.post("/api/account/settings")
 def api_account_settings(req: AccountSettings, request: Request):
     """Owner: let anyone create an account (email or Google), or keep the server invite-only; the early-access code
-    (testers skip sign-up and use the server's AI key)."""
+    (testers skip sign-up)."""
     from . import accounts
     _owner(request)
     out = {}
@@ -302,20 +297,17 @@ def api_remove_testers(request: Request):
     gone = accounts.remove_testers()
     for uid in gone:
         mcpauth.drop_user(uid)
-        _forget(uid, trash=True)  # their files go to your Trash (kept 30 days), their AI key is deleted
+        _forget(uid)
     return {"removed": len(gone)}
 
 
-def _forget(uid: str, trash: bool) -> int:
-    """What a removed account leaves: its saved AI key is deleted, its SOLIDWORKS link closed, its files go to the
-    server owner (store.hand_over)."""
-    from . import aikeys, swbridge
-    for step in (lambda: aikeys.remove(uid), lambda: swbridge.drop(uid, "closed")):
-        try:
-            step()
-        except Exception:
-            pass
-    return store.hand_over(uid, trash=trash)
+def _forget(uid: str) -> None:
+    """A removed account's SOLIDWORKS link is closed."""
+    from . import swbridge
+    try:
+        swbridge.drop(uid, "closed")
+    except Exception:
+        pass
 
 
 def _google_redirect(request: Request) -> str:
@@ -391,21 +383,20 @@ def api_invite_revoke(invite_id: str, request: Request):
 def api_remove_user(user_id: str, request: Request):
     from . import accounts
     _owner(request)
-    tester = (accounts.get(user_id) or {}).get("role") == "tester"
     try:
         accounts.remove(user_id, "")
     except accounts.AccountError as e:
         return JSONResponse({"error": str(e)}, status_code=400)
     from . import mcpauth
     mcpauth.drop_user(user_id)  # their connected AI apps stop working too
-    files = _forget(user_id, trash=tester)  # a member's files move to your Files, a tester's to your Trash
-    return {"removed": user_id, "files": files}
+    _forget(user_id)
+    return {"removed": user_id}
 
 
 
 @app.get("/mcp/artifacts/{artifact_id}/{filename}")
 def api_artifact(artifact_id: str, filename: str, expires: str = "", signature: str = ""):
-    """Artifact-scoped signed capability: no login cookie or document/MCP credential in the URL."""
+    """Artifact-scoped signed capability: no login cookie or MCP credential in the URL."""
     try:
         path, info = artifacts.resolve(artifact_id, filename, expires, signature)
     except artifacts.ArtifactError:
@@ -424,7 +415,7 @@ def _upload_reply(body: dict, status: int = 200) -> JSONResponse:
 
 @app.api_route("/mcp/uploads/{upload_id}", methods=["PUT", "POST"])
 async def api_upload(upload_id: str, request: Request, expires: str = "", signature: str = ""):
-    """A file for import_document(upload_id=...), sent to the one-time link from the request_upload MCP tool.
+    """A file for sw_import(upload_id=...), sent to the one-time link from the request_upload MCP tool.
     The body is the file's bytes (curl -T file '<link>'); Content-Encoding: gzip (or X-OpenSketch-Gzip: 1) is
     unzipped on the way in, bounded. Same 32 MiB cap as base64 imports. No sign-in: the link is the key."""
     cap = mcp_server.MAX_IMPORT_BYTES
@@ -512,7 +503,7 @@ def _sw_person(request: Request):
     tok = authz[7:].strip() if authz[:7].lower() == "bearer " else ""
     ok, user = swbridge.resolve(tok)
     if not ok:
-        page = f"{auth.public_url(dict(request.headers))}/solidworks"
+        page = f"the OpenSketch home page, {auth.public_url(dict(request.headers))}"
         if swbridge.retired(tok):
             raise HTTPException(401, f"A new SOLIDWORKS key was made, so this one stopped working. Paste the new key from {page}")
         raise HTTPException(401, f"This SOLIDWORKS key is not valid. Copy the key again from {page}")
@@ -621,8 +612,8 @@ SW_DOWNLOAD = Path(os.environ.get("OPENSKETCH_SW_ZIP", str(Path(__file__).parent
 
 @app.get("/api/sw")
 def api_sw(request: Request):
-    """The Connect AI dialog's SOLIDWORKS tab: this person's key, the server address the add-in needs, whether
-    SOLIDWORKS is connected now, and whether the add-in download is on this server."""
+    """This person's SOLIDWORKS key, the server address the add-in needs, whether SOLIDWORKS is connected now, and
+    whether the add-in download is on this server."""
     from . import swbridge
     u = _user(request)
     return {"key": swbridge.key_for(u), "server": auth.public_url(dict(request.headers)),
@@ -865,7 +856,7 @@ def _gzipped(key: str, version, read) -> bytes:
     if hit and hit[0] == version:
         return hit[1]
     data = gzip.compress(read(), compresslevel=9, mtime=0)
-    if len(_gz_cache) > 512:  # the app has under 100 text files; this only guards against odd growth
+    if len(_gz_cache) > 512:  # only guards against odd growth
         _gz_cache.clear()
     _gz_cache[key] = (version, data)
     return data
@@ -877,7 +868,7 @@ def _etag_matches(scope, etag: str) -> bool:
 
 
 async def _text_page(scope, body: bytes, media_type: str, headers: dict) -> Response:
-    """A page made here (index, service worker): an ETag (304 when unchanged), gzipped when the browser takes it."""
+    """A page made here: an ETag (304 when unchanged), gzipped when the client takes it."""
     etag = '"' + hashlib.sha256(body).hexdigest()[:24] + '"'
     h = {**headers, "ETag": etag, "Vary": "Accept-Encoding"}
     if _etag_matches(scope, etag):

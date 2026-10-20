@@ -1,19 +1,16 @@
 """CAD work runs outside the web server's process, so the site keeps answering while a model rebuilds.
 
-Why: OpenCascade (OCP) holds Python's GIL for the whole length of each call (measured 2026-10-19: a 0.3 s boolean
-in one thread left every other thread without a single turn). With everything in one process, one heavy rebuild
-(a cold Lavilock assembly after the machine woke up) froze the Files page, New part, saves and even the page itself.
+Why: OpenCascade (OCP) holds Python's GIL for the whole length of each call (a 0.3 s boolean in one thread leaves
+every other thread without a single turn). With everything in one process, one heavy rebuild (a large assembly read
+from SOLIDWORKS) would stop the server answering anyone, including the add-in's link and sign-in.
 
 Lanes, one worker process each, started on first use (`spawn`, so no locks are inherited from the server):
-- per person and kind (`lane_for(person, kind)`): "edit" for what the person does in the browser (rebuilds, drags,
-  equations, Design panel lookups, mass, interference, imports, exports, Toolbox parts, Motion Review), "agent" for
-  their AI's edits through the MCP connector and the SOLIDWORKS tools' geometry. Each keeps `geometry.built`'s
-  cache between calls and stops after 15 idle minutes. So one person's heavy work, or their Claude session, never
+- per person and kind (`lane_for(person, kind)`): "agent" for the sw_ tools' geometry (checking and predicting
+  features, reading SOLIDWORKS' STEP, measuring, previews, interference); other kinds keep other work apart. Each
+  keeps `geometry.built`'s cache between calls and stops after 15 idle minutes. So one person's heavy work never
   queues anyone else's. Past MAX_LANES live workers (or when the machine is short of memory) a newcomer borrows the
   least busy live worker for that one call and asks again next time; one place is kept for the server's owner.
-- BACKGROUND: Files pictures drawn on the server, at a lower CPU priority; stopped when idle for 5 minutes.
-Long jobs get a process of their own (`start_job`): the in-app AI chat, SOLIDWORKS macros. `Slots` caps how many
-run at once, per person and on the whole server (the machine has 2 GB and one core).
+Long jobs can get a process of their own (`start_job`), with progress messages and a stop flag.
 
 A lane runs one call at a time: later calls wait their turn in the server (`wait`, then "busy, try again" without
 touching the running call), and a call's time limit counts only its own run. A call that runs past its limit kills
@@ -23,15 +20,13 @@ plain message, and the web server carries on. Exceptions inside a worker come ba
 original type's name (and are logged with their traceback). Workers and jobs end themselves when the server
 process dies (`_die_with_parent`), so a crashed or killed server leaves nothing running.
 
-`OPENSKETCH_CAD_WORKERS=0` runs everything in the server's own threads, as before (the test suite does this, so
+`OPENSKETCH_CAD_WORKERS=0` runs everything in the server's own threads (the test suite does this, so
 monkeypatched functions still apply; tests/test_cadworker.py checks the worker path).
 """
 
 from __future__ import annotations
 
 import asyncio
-import contextlib
-import functools
 import importlib
 import multiprocessing as mp
 import os
@@ -108,7 +103,7 @@ def memory_low() -> bool:
 
 def _die_with_parent() -> None:
     """End this process when the process that started it dies (an OOM kill or a crash of the server): it would
-    otherwise keep its memory, or keep spending the owner's AI key, with nobody listening."""
+    otherwise keep its memory and CPU with nobody listening."""
     parent = mp.parent_process()
     if parent is None:
         return
@@ -125,7 +120,7 @@ def _die_with_parent() -> None:
 
 def oom_score(score: int) -> None:
     """Tell the kernel which process to kill first when memory runs out: a worker or a job (one call fails), not
-    the web server (everyone's requests, streams and jobs would go). Best effort: lowering needs root."""
+    the web server (everyone's requests and the add-in links would go). Best effort: lowering needs root."""
     try:
         with open("/proc/self/oom_score_adj", "w") as fh:
             fh.write(str(int(score)))
@@ -386,9 +381,8 @@ def _reap() -> None:
 CAD_LIMIT = float(os.environ.get("OPENSKETCH_CAD_LIMIT", 600))
 MAX_LANES = int(os.environ.get("OPENSKETCH_CAD_LANES", 3))  # person workers alive at once (~250-800 MB each)
 PERSON_IDLE = 900.0  # a person's worker stops after 15 idle minutes (its caches go with it)
-BACKGROUND = Lane("background", limit=180, nice=10, idle=300)
 
-# One worker per person, so one person's heavy rebuild or Claude session never queues another person's work.
+# One worker per person, so one person's heavy rebuild never queues another person's work.
 # They still share the machine's CPU: on one core, two heavy jobs at once each run at about half speed.
 _lanes: dict[str, Lane] = {}
 _lanes_guard = threading.Lock()
@@ -409,10 +403,9 @@ def _forget(lane: Lane) -> None:
 
 
 def lane_for(person: str | None, kind: str = "edit") -> Lane:
-    """The worker for this person (an account id; None = the server's single user) and kind of work: "edit" for
-    what the person does in the browser, "agent" for their AI's edits (MCP tools), so a long Claude operation
-    never holds up their own clicks either. Past MAX_LANES live workers, or when memory is short, the least busy
-    live worker serves this call (it is not kept: the next call asks again)."""
+    """The worker for this person (an account id; None = the server's single user) and kind of work ("agent" for
+    the sw_ tools), so one kind of long work never holds up another. Past MAX_LANES live workers, or when memory
+    is short, the least busy live worker serves this call (it is not kept: the next call asks again)."""
     who = person or "local"
     key = f"{kind}:{who}"
     with _lanes_guard:
@@ -437,16 +430,16 @@ JOB_ROOM_MB = float(os.environ.get("OPENSKETCH_JOB_ROOM_MB", 700))  # free memor
 
 
 def make_room(need_mb: float = JOB_ROOM_MB, keep: tuple = ()) -> float | None:
-    """Before a new process starts (a job: the AI chat, a macro export), stop workers nobody is using until `need_mb`
-    is free: the pictures worker first, then person workers without a call, longest unused first (their caches go;
-    the next call starts them again). A job loads OpenCascade (~430 MB resident) and grows with what it builds, and
-    on a 2 GB machine with no swap the kernel then kills the job (oom_score 800) part-way through a tool call.
+    """Before a new process starts (a job), stop workers nobody is using until `need_mb` is free: workers without a
+    call, longest unused first (their caches go; the next call starts them again). A job loads OpenCascade (~430 MB
+    resident) and grows with what it builds, and on a 2 GB machine with no swap the kernel would then kill the job
+    (oom_score 800) part-way through.
     Workers in `keep` and busy ones stay. Returns the free memory afterwards (None where /proc is missing)."""
     free = available_mb()
     if free is None or free >= need_mb:
         return free
     idle = [ln for ln in lanes() if ln not in keep and ln._pool is not None and not ln._busy]
-    idle.sort(key=lambda ln: (ln is not BACKGROUND, ln._last))
+    idle.sort(key=lambda ln: ln._last)
     for ln in idle:
         with ln._lock:
             if ln._busy or ln._pool is None:
@@ -467,7 +460,7 @@ def make_room(need_mb: float = JOB_ROOM_MB, keep: tuple = ()) -> float | None:
 
 def lanes() -> list[Lane]:
     with _lanes_guard:
-        return list({id(x): x for x in _lanes.values()}.values()) + [BACKGROUND]
+        return list({id(x): x for x in _lanes.values()}.values())
 
 
 def shutdown() -> None:
@@ -477,176 +470,11 @@ def shutdown() -> None:
         job.kill()
 
 
-# ---------------------------------------------------------------------------------------------- admission
-# Long jobs are whole processes (~250-300 MB each, ~4 s of CPU to start). Slots says how many may run at once: at most
-# `per_person` for one person and `cap` on the server. A request that finds no free place waits in a short queue
-# (`queue` places, `wait` seconds), then gets a plain "busy" answer.
-
-class Busy(Exception):
-    """No place for this job now. `status`: 429 (this person's own job is still running) or 503 (the server is full)."""
-
-    def __init__(self, message: str, status: int = 503):
-        super().__init__(message)
-        self.status = status
-
-
-class Ticket:
-    def __init__(self, slots: "Slots", person: str):
-        self.slots, self.person = slots, person
-        self.granted = False
-        self.stopping = False  # its job was asked to stop (the person pressed Stop or left)
-        self.done = False
-
-    def release(self) -> None:
-        self.slots.release(self)
-
-
-class Slots:
-    def __init__(self, name: str, cap: int, per_person: int = 1, queue: int = 4, wait: float = 30.0,
-                 busy: str = "The server is busy. Try again in a minute.",
-                 mine: str = "Your earlier request is still running. Wait for it to finish."):
-        self.name, self.cap, self.per_person, self.queue, self.wait = name, max(1, cap), max(1, per_person), queue, wait
-        self.busy_msg, self.mine_msg = busy, mine
-        self._lock = threading.Lock()
-        self._running: list[Ticket] = []
-        self._waiting: list[Ticket] = []
-
-    def running(self, person: str | None = None) -> list[Ticket]:
-        with self._lock:
-            return [t for t in self._running if person is None or t.person == person]
-
-    def _grant(self) -> None:
-        """Give free places to waiters in arrival order (a waiter whose person is at their limit lets later ones by)."""
-        free_mem = None
-        for t in list(self._waiting):
-            if len(self._running) >= self.cap:
-                return
-            if sum(1 for r in self._running if r.person == t.person) >= self.per_person:
-                continue
-            if free_mem is None:
-                free_mem = not (self._running and memory_low())  # the first job always may start
-            if not free_mem:
-                return
-            self._waiting.remove(t)
-            self._running.append(t)
-            t.granted = True
-
-    def check(self, person: str, queue: bool = True) -> None:
-        """Refuse at once when this person's own job is running and still wanted, or (`queue`) the queue is full."""
-        with self._lock:
-            mine = [t for t in self._running if t.person == person]
-            if len(mine) >= self.per_person and not all(t.stopping for t in mine):
-                raise Busy(self.mine_msg, 429)
-            if queue and len(self._waiting) >= self.queue and len(self._running) >= self.cap:
-                raise Busy(self.busy_msg, 503)
-
-    def try_take(self, person: str) -> Ticket:
-        """A place now, or Busy (for jobs started by a plain request: no queue)."""
-        self.check(person, queue=False)
-        t = Ticket(self, person)
-        with self._lock:
-            self._waiting.append(t)
-            self._grant()
-            if not t.granted:
-                self._waiting.remove(t)
-                mine = sum(1 for r in self._running if r.person == person) >= self.per_person
-                raise Busy(self.mine_msg if mine else self.busy_msg, 429 if mine else 503)
-        return t
-
-    async def take(self, person: str, wait: float | None = None) -> Ticket:
-        """Wait (up to `wait` s) for a place; Busy when none came free."""
-        self.check(person)
-        t = Ticket(self, person)
-        with self._lock:
-            self._waiting.append(t)
-            self._grant()
-        end = time.monotonic() + (self.wait if wait is None else wait)
-        try:
-            while not t.granted:
-                if time.monotonic() >= end:
-                    raise Busy(self.busy_msg, 503)
-                await asyncio.sleep(0.25)
-                with self._lock:
-                    self._grant()
-        except BaseException:
-            with self._lock:
-                if t in self._waiting:
-                    self._waiting.remove(t)
-                    self._grant()
-                    raise
-            if t.granted:
-                t.release()
-            raise
-        return t
-
-    def release(self, t: Ticket) -> None:
-        with self._lock:
-            t.done = True
-            if t in self._running:
-                self._running.remove(t)
-            if t in self._waiting:
-                self._waiting.remove(t)
-            self._grant()
-
-
-def _env_int(name: str, default: int) -> int:
-    try:
-        return int(os.environ.get(name, default))
-    except ValueError:
-        return default
-
-
-AI_JOBS = Slots("ai", _env_int("OPENSKETCH_AI_JOBS", 2), per_person=1, queue=_env_int("OPENSKETCH_AI_QUEUE", 4), wait=30.0,
-                busy="The AI is busy with other people's requests. Try again in a minute.",
-                mine="The AI is still answering your previous message (in this or another tab). Wait for it to finish, or press Stop there.")
-MACRO_JOBS = Slots("macro", _env_int("OPENSKETCH_MACRO_JOBS", 1), per_person=1, queue=0,
-                   busy="Another SOLIDWORKS macro export is running on the server. Try again in a few minutes.",
-                   mine="Your earlier SOLIDWORKS macro export is still running. Wait for it to finish.")
-
-
-@contextlib.contextmanager
-def proc_slot(name: str, cap: int, stop=None, poll: float = 0.5, on_wait=None):
-    """A place among `cap` across every process of this server (the web server, its workers and jobs), held while
-    the block runs: a lock file per place under <data>/run, so a process that dies frees its place. Waits for a
-    free one (calling on_wait() once); yields False instead when stop() turns true while waiting."""
-    import fcntl
-    from . import store
-    run_dir = store.data_dir() / "run"
-    run_dir.mkdir(parents=True, exist_ok=True)
-    fh = None
-    told = False
-    while fh is None:
-        for i in range(max(1, cap)):
-            f = open(run_dir / f"{name}.{i}.lock", "a+")
-            try:
-                fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                fh = f
-                break
-            except OSError:
-                f.close()
-        if fh is not None:
-            break
-        if stop is not None and stop():
-            yield False
-            return
-        if on_wait is not None and not told:
-            told = True
-            on_wait()
-        time.sleep(poll)
-    try:
-        yield True
-    finally:
-        try:
-            fcntl.flock(fh, fcntl.LOCK_UN)
-        finally:
-            fh.close()
-
-
 # ---------------------------------------------------------------------------------------------- long jobs
 # A job runs fn(*args, **kwargs, progress=..., stop=...) in a process of its own. `progress(*a)` calls come back to
 # on_event("progress", a) in the server; `stop()` is true once cancel() was called. The end arrives as
-# on_event("done", result) or on_event("error", (kind, message)). `on_end()` runs once the process has ended (a
-# Slots ticket is released there, so a job that was asked to stop keeps its place until it really stopped).
+# on_event("done", result) or on_event("error", (kind, message)). `on_end()` runs once the process has ended (so a
+# job that was asked to stop can keep its place in a queue until it really stopped).
 
 _jobs: set["Job"] = set()
 

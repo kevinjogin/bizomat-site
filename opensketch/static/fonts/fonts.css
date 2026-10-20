@@ -1,6 +1,6 @@
 /* Inter (interface) and Inter Tight (names and headings), served by OpenSketch itself: no request to another
-   site, so a page view tells no one else you visited, and the installed app has its fonts offline.
-   Latin and latin-ext subsets (the browser fetches latin-ext only for characters that need it). SIL OFL 1.1, see OFL.txt. */
+   site, so a page view tells no one else you visited.
+   Latin and latin-ext subsets (a browser fetches latin-ext only for characters that need it). SIL OFL 1.1, see OFL.txt. */
 @font-face {
   font-family: 'Inter'; font-style: normal; font-weight: 400 700; font-display: swap;
   src: url(inter-latin-ext.woff2) format('woff2');

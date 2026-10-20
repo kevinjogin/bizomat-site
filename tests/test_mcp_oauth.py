@@ -22,7 +22,7 @@ ACCEPT = {"Accept": "application/json, text/event-stream"}
 @pytest.fixture(autouse=True)
 def data(tmp_path, monkeypatch):
     monkeypatch.setenv("OPENSKETCH_DATA", str(tmp_path / "data"))
-    for k in ("OPENSKETCH_PASSWORD", "OPENSKETCH_MCP_TOKEN", "OPENSKETCH_PUBLIC_URL", "CODESPACE_NAME"):
+    for k in ("OPENSKETCH_PASSWORD", "OPENSKETCH_MCP_TOKEN", "OPENSKETCH_PUBLIC_URL"):
         monkeypatch.delenv(k, raising=False)
     mcpauth._codes.clear()
     mcpauth._reg_hits.clear()
@@ -38,7 +38,7 @@ def app():
 
 def _owner():
     c = TestClient(server.app)
-    c.post("/setup", data={"name": "YZ", "email": "yz@example.com", "new_password": "correct horse", "next": "/"})
+    c.post("/setup", data={"name": "Owner", "email": "owner@example.com", "new_password": "correct horse", "next": "/"})
     return c
 
 
@@ -61,7 +61,7 @@ def _register(c, redirect="https://claude.ai/api/mcp/auth_callback", **extra):
 
 
 def _connect(browser, app_client, client_info, redirect="https://claude.ai/api/mcp/auth_callback"):
-    """The person's browser goes through consent; the app swaps the code. Returns the token response."""
+    """The person's browser goes through consent; the AI app swaps the code. Returns the token response."""
     verifier, chal = _pkce()
     q = {"response_type": "code", "client_id": client_info["client_id"], "redirect_uri": redirect, "state": "s1",
          "code_challenge": chal, "code_challenge_method": "S256", "scope": "opensketch", "resource": "http://testserver/mcp"}
@@ -134,7 +134,7 @@ def test_sign_in_consent_tokens_and_solidworks_are_per_person(app):
     r = fresh.get(q, follow_redirects=False)
     assert r.status_code == 303 and r.headers["location"].startswith("/login?next=/oauth/authorize")
     nxt = parse_qs(urlparse(r.headers["location"]).query)["next"][0]
-    r = fresh.post("/login", data={"email": "yz@example.com", "password": "correct horse", "next": nxt}, follow_redirects=False)
+    r = fresh.post("/login", data={"email": "owner@example.com", "password": "correct horse", "next": nxt}, follow_redirects=False)
     assert r.headers["location"] == q and b"Allow" in fresh.get(q).content
     # a client name with markup is shown as text
     sneaky = _register(app, client_name='<img src=x onerror=alert(1)>')
@@ -194,7 +194,7 @@ def test_refresh_rotation_revoke_and_disconnect(monkeypatch, app):
     latest = app.post("/oauth/token", data=dict(ref, refresh_token=new["refresh_token"])).json()
     assert "refresh_token" in latest, latest
     assert app.post("/oauth/token", data={**ref, "refresh_token": latest["refresh_token"], "client_id": other["client_id"]}).status_code == 400
-    # Account settings lists it; Disconnect ends it
+    # the home page's API lists it; Disconnect ends it
     apps = owner.get("/api/account/apps").json()["apps"]
     assert len(apps) == 1 and apps[0]["name"] == "Claude" and apps[0]["host"] == "claude.ai"
     assert _mcp(app, latest["access_token"], "tools/list").status_code == 200
@@ -259,7 +259,7 @@ def test_the_official_mcp_client_signs_in_and_works():
             time.sleep(0.05)
     try:
         browser = httpx.Client(base_url=base, timeout=20)
-        browser.post("/setup", data={"name": "YZ", "email": "yz@example.com", "new_password": "correct horse", "next": "/"},
+        browser.post("/setup", data={"name": "Owner", "email": "owner@example.com", "new_password": "correct horse", "next": "/"},
                      headers={"Origin": base})
         seen = {}
 
@@ -321,7 +321,7 @@ def test_apps_that_describe_themselves_with_a_metadata_url(monkeypatch, app):
     """Client ID Metadata Documents (ChatGPT's way): the client_id is an https URL; OpenSketch reads it from the
     checked public address (pinned, no redirects) and accepts only the return addresses it lists."""
     import httpx
-    from opensketch import providers
+    from opensketch import safefetch
     url = "https://chatgpt.example/oauth/client.json"
     docs = {url: {"client_id": url, "client_name": "ChatGPT", "token_endpoint_auth_method": "none",
                   "redirect_uris": ["https://chatgpt.example/connector_platform_oauth_redirect"]},
@@ -337,7 +337,7 @@ def test_apps_that_describe_themselves_with_a_metadata_url(monkeypatch, app):
 
     real = httpx.Client
     monkeypatch.setattr(httpx, "Client", lambda **kw: real(transport=httpx.MockTransport(handler), **kw))
-    monkeypatch.setattr(providers, "resolve_public", lambda host, port: "93.184.215.14")
+    monkeypatch.setattr(safefetch, "resolve_public", lambda host, port: "93.184.215.14")
     mcpauth._cimd.clear()
     assert app.get("/.well-known/oauth-authorization-server").json()["client_id_metadata_document_supported"] is True
     owner = _owner()
@@ -359,8 +359,8 @@ def test_apps_that_describe_themselves_with_a_metadata_url(monkeypatch, app):
                                                  "redirect_uri": "https://liar.example/cb"}, follow_redirects=False).status_code == 400
 
     def private(host, port):
-        raise providers.ProviderError("private")
-    monkeypatch.setattr(providers, "resolve_public", private)
+        raise safefetch.FetchError("private")
+    monkeypatch.setattr(safefetch, "resolve_public", private)
     mcpauth._cimd.clear()
     assert owner.get("/oauth/authorize", params={**bad, "client_id": "https://internal.example/c.json",
                                                  "redirect_uri": "https://internal.example/cb"}, follow_redirects=False).status_code == 400

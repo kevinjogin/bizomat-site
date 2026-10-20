@@ -38,7 +38,7 @@ namespace OpenSketch.Sw
             status.SetBounds(34, 45, 470, 34);
             var l1 = new Label { Text = "OpenSketch address", AutoSize = true, Location = new Point(16, 88) };
             server.SetBounds(16, 106, 488, 24);
-            var l2 = new Label { Text = "SOLIDWORKS key (from the OpenSketch SOLIDWORKS page)", AutoSize = true, Location = new Point(16, 138) };
+            var l2 = new Label { Text = "SOLIDWORKS key (from the OpenSketch home page)", AutoSize = true, Location = new Point(16, 138) };
             key.SetBounds(16, 156, 400, 24);
             key.UseSystemPasswordChar = true;
             var paste = new Button { Text = "Paste", Bounds = new Rectangle(424, 155, 80, 26) };

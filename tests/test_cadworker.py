@@ -1,5 +1,5 @@
-"""CAD work runs in worker processes so the web server keeps answering (2026-10-19: one heavy rebuild froze the
-Files page, New part and even the page itself, because OpenCascade holds the GIL for the whole of each call)."""
+"""CAD work runs in worker processes so the web server keeps answering (OpenCascade holds the GIL for the whole of
+each call, so one heavy rebuild in the server's process would stop it answering anyone)."""
 import json
 import os
 import subprocess
@@ -125,7 +125,7 @@ def test_people_get_their_own_workers(monkeypatch):
     monkeypatch.setattr(cadworker, "memory_low", lambda: False)
     a, b = cadworker.lane_for("alice"), cadworker.lane_for("bob")
     assert a is not b and cadworker.lane_for("alice") is a
-    assert cadworker.lane_for("alice", "agent") is not a  # their AI's edits never queue their own clicks
+    assert cadworker.lane_for("alice", "agent") is not a  # each kind of work has its own worker
     assert cadworker.lane_for(None) is cadworker.lane_for(None)
 
 
@@ -162,7 +162,7 @@ def test_one_persons_heavy_rebuild_does_not_hold_up_anothers(monkeypatch):
 
 def test_a_queued_calls_limit_counts_only_its_own_run(workers):
     """A short call queued behind a long one waits its turn: its time limit starts when it starts, and the long call
-    is never killed because of it (before: the queued call timed out after 2 s and killed the running one)."""
+    is never killed because of it."""
     import asyncio
     _run(workers.run(_sleep, 0))
 
@@ -191,7 +191,7 @@ def test_a_call_that_cannot_start_in_time_is_refused_without_harm(workers):
 
 
 def test_the_next_call_waits_for_work_whose_caller_went_away(workers):
-    """A caller that gives up (the browser left) does not free the worker: the work still runs there, so the next
+    """A caller that gives up (the client went away) does not free the worker: the work still runs there, so the next
     call waits for it and still gets its full time limit."""
     import asyncio
     _run(workers.run(_sleep, 0))
@@ -215,8 +215,8 @@ def test_a_worker_that_grew_too_big_is_replaced_after_its_call(workers):
 
 
 def test_an_idle_worker_stops_and_its_place_counts_again(monkeypatch):
-    """A person whose worker stopped when idle starts a new one through the cap, like a newcomer (before: they got
-    their old lane back and started a process without counting, 5 live with a cap of 4)."""
+    """A person whose worker stopped when idle starts a new one through the cap, like a newcomer, so the number of
+    live workers never goes over the cap."""
     monkeypatch.setattr(cadworker, "_lanes", {})
     monkeypatch.setattr(cadworker, "MAX_LANES", 2)
     monkeypatch.setattr(cadworker, "_reserved", None)
@@ -268,8 +268,7 @@ if __name__ == "__main__":
 
 
 def test_workers_and_jobs_end_when_the_server_dies(tmp_path):
-    """An OOM kill or crash of the server must not leave its workers and AI jobs running (they hold ~250 MB each,
-    and a chat would keep spending the owner's key)."""
+    """An OOM kill or crash of the server must not leave its workers and jobs running (they hold ~250 MB each)."""
     import signal
     script = tmp_path / "parent.py"
     script.write_text(PARENT.format(root=str(ROOT)))
@@ -297,8 +296,8 @@ def _state(pid):
 
 
 def test_the_build_cache_is_bounded_by_size(monkeypatch):
-    """Each cached build keeps bodies and a mesh (~20-30 MB for a 200-face plate); a Design panel drag adds one per
-    step. The cache keeps what fits in OPENSKETCH_BUILT_CACHE_MB, not 24 of anything."""
+    """Each cached build keeps bodies and a mesh (~20-30 MB for a 200-face plate); every changed value adds one.
+    The cache keeps what fits in OPENSKETCH_BUILT_CACHE_MB, not 24 of anything."""
     from opensketch import geometry
     monkeypatch.setattr(geometry, "_built", type(geometry._built)())
     monkeypatch.setattr(geometry, "_built_bytes", {})
@@ -313,10 +312,9 @@ def test_the_build_cache_is_bounded_by_size(monkeypatch):
 
 
 def test_idle_workers_give_way_before_a_job_starts(monkeypatch):
-    """2026-10-20: YZ's in-app AI ran find_mate_candidates on an imported 17-part lock and the job was killed by the
-    kernel ("The job stopped unexpectedly (it may have run out of memory)"): the job loads OpenCascade (~430 MB) and
-    rebuilds every part, beside the server, the pictures worker and person workers holding their caches. Before a job
-    starts, workers with no call stop until there is room: the pictures worker first, then the longest unused."""
+    """A job loads OpenCascade (~430 MB) and grows with what it builds, beside the server and person workers holding
+    their caches; on a small machine the kernel would kill it. Before a job starts, workers with no call stop until
+    there is room, the longest unused first."""
     monkeypatch.setattr(cadworker, "_lanes", {})
     monkeypatch.setattr(cadworker, "_reserved", None)
     stopped = []
@@ -333,15 +331,14 @@ def test_idle_workers_give_way_before_a_job_starts(monkeypatch):
         ln._pool = f"pool-{ln.name}"
         ln._last = time.monotonic() - 100 + i
     busy._busy = 1
-    free[0] = 200.0
-    monkeypatch.setattr(cadworker.BACKGROUND, "_pool", "pool-pictures")
-    monkeypatch.setattr(cadworker.BACKGROUND, "_busy", 0)
+    free[0] = 300.0
     assert cadworker.make_room(700) >= 700
-    assert stopped == ["pool-pictures", "pool-edit:old"]  # pictures first, then the longest unused; enough room now
-    assert new._pool and busy._pool and old._pool is None and cadworker.BACKGROUND._pool is None
+    assert stopped == ["pool-edit:old", "pool-edit:new"]  # the longest unused first, until there is enough room
+    assert busy._pool and old._pool is None and new._pool is None
+    old._pool, new._pool = "pool-old", "pool-new"
     free[0] = 100.0
     cadworker.make_room(10_000)  # never enough: every idle worker goes, a busy one never does
-    assert new._pool is None and busy._pool == "pool-edit:busy"
+    assert old._pool is None and new._pool is None and busy._pool == "pool-edit:busy"
     stopped.clear()
     free[0] = 900.0
     old._pool = "again"

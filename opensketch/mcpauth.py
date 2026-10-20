@@ -3,10 +3,10 @@
 An AI app (Claude, ChatGPT, Codex, Cursor, VS Code...) is given only the plain address <site>/mcp. Its first request
 gets 401 with a pointer to the protected-resource metadata; it reads the authorization-server metadata, registers
 itself (Dynamic Client Registration, RFC 7591), and sends the person's browser to /oauth/authorize. There they sign
-in to OpenSketch as usual (password or Google) and click Allow on a consent page. The app swaps the one-time code
-(PKCE S256 required) for an access token (1 hour) and a refresh token (90 days, rotated on every use), and sends
-`Authorization: Bearer <access token>` with every MCP request. The token stands for that person: the MCP tools see
-only their files. People see and disconnect their apps in Account settings.
+in to OpenSketch as usual (password or Google) and click Allow on a consent page. The AI app swaps the one-time
+code (PKCE S256 required) for an access token (1 hour) and a refresh token (90 days, rotated on every use), and sends
+`Authorization: Bearer <access token>` with every MCP request. The token stands for that person: the MCP tools reach
+only their own SOLIDWORKS link. People see and disconnect their apps on the home page.
 
 Stored in <data>/mcp_oauth.json: registered clients (secrets as SHA-256), grants (one per person and app: who, which
 app, when, the current refresh token's SHA-256) and live access tokens (SHA-256 -> grant, expiry). Codes live in
@@ -127,8 +127,8 @@ def base_url(headers: dict) -> str:
     return auth.public_url(headers).rstrip("/")
 
 
-# The MCP endpoint's addresses (mcp_server.PATHS): /mcp, and /solidworks/mcp, its address on 2026-10-20 while the
-# archived browser app owned /mcp. Both are the same server, so a token from either works on both.
+# The MCP endpoint's addresses (mcp_server.PATHS): /mcp, and /solidworks/mcp, a second address early connectors
+# used. Both are the same server, so a token from either works on both.
 RESOURCES = {"/mcp": "OpenSketch", "/solidworks/mcp": "OpenSketch"}
 
 
@@ -353,10 +353,10 @@ def _fetch_metadata(url: str) -> dict:
     """GET the app's metadata document. Only public https addresses, connected by the address checked just now
     (no DNS rebinding), no redirects, at most 64 KB, 5 seconds (the server makes this request: SSRF rules apply)."""
     import httpx
-    from . import providers
+    from . import safefetch
     deadline = time.monotonic() + CIMD_DEADLINE
     try:
-        target, host, ext = providers.pinned(url)
+        target, host, ext = safefetch.pinned(url)
         left = max(0.5, deadline - time.monotonic())
         with httpx.Client(timeout=httpx.Timeout(left), follow_redirects=False) as http:
             with http.stream("GET", target, headers={**host, "Accept": "application/json"}, extensions=ext) as r:
@@ -369,7 +369,7 @@ def _fetch_metadata(url: str) -> dict:
                         raise OAuthError("invalid_client", "The app's details document is too large.")
                     if time.monotonic() > deadline:  # a server that trickles bytes: the read timeout alone never ends
                         raise OAuthError("invalid_client", f"{urlsplit(url).hostname} took too long to send the app's details.")
-    except providers.ProviderError as e:
+    except safefetch.FetchError as e:
         raise OAuthError("invalid_client", f"The app's details address is not usable: {e}") from None
     except httpx.HTTPError:
         raise OAuthError("invalid_client", f"Could not reach {urlsplit(url).hostname} to read the app's details.") from None
@@ -443,7 +443,7 @@ def check_authorize(params: dict, headers: dict) -> tuple[dict, dict]:
     link on this site bounce a signed-in person to any site (real apps always send a valid request)."""
     rec = client(params.get("client_id", ""), fetch=False)
     if rec is None:
-        raise OAuthError("invalid_client", "OpenSketch does not know this app, or could not read its details. Remove the connector in the app and add it again.")
+        raise OAuthError("invalid_client", "OpenSketch does not know this app, or could not read its details. Remove the connector in your AI app and add it again.")
     redirect = params.get("redirect_uri") or (rec["redirect_uris"][0] if len(rec["redirect_uris"]) == 1 else "")
     if redirect not in rec["redirect_uris"]:
         raise OAuthError("invalid_request", "The app sent a return address it did not register.")

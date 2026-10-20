@@ -1,7 +1,7 @@
 """sw_selftest (sw_selftest.py): the test data is right, and the whole run works against a simulated SOLIDWORKS.
 
 1. Every stage's features build in OpenSketch's own kernel with no errors, every solid feature changes the volume,
-   and the sketches meant to be fully defined are (the browser solver says so).
+   and the sketches meant to be fully defined are (the sketch solver says so).
 2. The three stages run through the real MCP tool against a SimSW: a stand-in for the add-in that builds with
    OpenSketch's kernel, names features the way SOLIDWORKS does, answers "geometry" with a real STEP, solves
    mates with OpenSketch's solver and refuses what the real add-in refuses. Every step must pass, which also
@@ -91,7 +91,7 @@ class SimSW:
     # documents
     def op_create_document(self, a):
         ext = ".SLDASM" if a["kind"] == "assembly" else ".SLDPRT"
-        path = f"C:\\Users\\yz\\Documents\\OpenSketch\\{a.get('subfolder', '')}\\{a['name']}{ext}"
+        path = f"C:\\Users\\me\\Documents\\OpenSketch\\{a.get('subfolder', '')}\\{a['name']}{ext}"
         self.docs[path] = {"kind": a["kind"], "title": a["name"] + ext, "features": [], "names": {}, "count": {},
                            "components": [], "mates": [], "params": {}, "stamp": 0}
         return {"doc": path, "title": a["name"] + ext, "kind": a["kind"]}, {}

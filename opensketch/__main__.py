@@ -14,7 +14,7 @@ def main():
     ap = argparse.ArgumentParser(prog="opensketch")
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--port", type=int, default=8000)
-    ap.add_argument("--no-browser", action="store_true")
+    ap.add_argument("--no-browser", action="store_true", help="do not open the home page in a web browser")
     ap.add_argument("--supervise", action="store_true",
                     help="run the server as a child process and restart it when it hangs or exits (hosting)")
     args = ap.parse_args()
@@ -29,7 +29,7 @@ def main():
     if not args.no_browser:
         threading.Timer(1.0, lambda: webbrowser.open(url)).start()
     print(f"OpenSketch running at {url}")
-    # on a stop, open connections (long polls, AI streams) get 3 s to finish instead of holding the restart up
+    # on a stop, open connections (the add-in's long polls) get 3 s to finish instead of holding the restart up
     uvicorn.run("opensketch.server:app", host=args.host, port=args.port, log_level="warning", timeout_graceful_shutdown=3)
 
 

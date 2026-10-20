@@ -1,7 +1,7 @@
 """Feature-tree regeneration with build123d.
 
 A part document is plain JSON (see docs/DOCUMENT.md). `regen(doc)` walks the
-feature list in order, the way SOLIDWORKS rebuilds the FeatureManager tree,
+feature list in order, the way SOLIDWORKS rebuilds its feature tree,
 and returns the resulting solid plus per-feature status.
 """
 
@@ -338,8 +338,7 @@ UNSOLVED_MM, UNSOLVED_DEG = 1e-3, 1e-3
 
 def unsolved(feat: dict) -> list[str]:
     """Where a sketch's stored points disagree with its dimensions (measured as solver.js measure() does), and
-    arcs whose end is off their circle. The browser solves a sketch when it is opened; the server builds what is
-    stored, so a sketch written by the AI or a script with points that do not fit its dimensions builds a
+    arcs whose end is off their circle. The server builds what is stored, so a sketch written by the AI or a script with points that do not fit its dimensions builds a
     different part than it says."""
     ents = {e.get("id"): e for e in feat.get("entities") or [] if isinstance(e, dict)}
 
@@ -1129,9 +1128,9 @@ def _preview_on(st: RegenState, preview: dict):
 
 
 def _preview_state(doc: dict, preview: dict) -> tuple[RegenState, dict, Any]:
-    """(state, body mesh, preview tool) for a PropertyManager preview. The tree above the feature does not change
-    while the PropertyManager is open, so it comes from the build cache (the document rolled back to the
-    feature) and only the tentative feature is built, on a copy of that state."""
+    """(state, body mesh, preview tool) for a tentative feature. The tree above the feature comes from the build
+    cache (the document rolled back to the feature) and only the tentative feature is built, on a copy of that
+    state."""
     feats = doc.get("features", [])
     rb = doc.get("rollback")
     stop = len(feats) if rb is None else int(rb)
@@ -1275,15 +1274,14 @@ def _edge_points(e, n):
         return [c for p in pts for c in (round(p.X, 5), round(p.Y, 5), round(p.Z, 5))]
 
 
-# Rebuilt bodies and their meshes, by geometry content. Shared by the part view (/api/regen on a part) and the
-# assembly part cache, so opening a part from an assembly, returning to it unchanged, or rebuilding a part that
-# was just built (Ctrl+B, undo back to it) does not rebuild and re-mesh it again.
+# Rebuilt bodies and their meshes, by geometry content. Shared by part rebuilds and the assembly part cache, so a
+# part that was just built (in an assembly, or unchanged since the last call) is not rebuilt and re-meshed again.
 _built: "OrderedDict[str, tuple]" = OrderedDict()
 _built_lock = threading.Lock()
 BUILT_CACHE_SIZE = 24
 # Bounded by size too: an entry keeps the rebuild state (every feature's tool and intermediate bodies) and the mesh
-# as Python lists, ~20-30 MB for a 200-face plate, and a Design panel drag adds one per step. 24 such entries took
-# a worker past 1 GB on a 2 GB machine.
+# as Python lists, ~20-30 MB for a 200-face plate, and every changed value adds one. 24 such entries can take a
+# worker past 1 GB on a 2 GB machine.
 BUILT_CACHE_MB = float(os.environ.get("OPENSKETCH_BUILT_CACHE_MB", 200))
 _built_bytes: dict[str, int] = {}
 NOT_GEOMETRY = ("appearance", "name", "description", "designer", "type", "seq", "material")
@@ -1375,7 +1373,7 @@ def regen_result(doc: dict, preview: dict | None = None) -> dict:
         bb = part.bounding_box()
         out["bbox"] = [vlist(bb.min), vlist(bb.max)]
     if st.params and st.params.get("recomputed"):
-        # numbers the equations changed: the browser copies these features so it shows what was built
+        # numbers the equations changed: the features as they were built with them
         ids = {r["feature"] for r in st.params["recomputed"]}
         out["equations"] = {"recomputed": st.params["recomputed"],
                             "features": {f["id"]: f for f in st.evaluated.get("features", []) if f["id"] in ids}}
@@ -1432,7 +1430,7 @@ def export(doc: dict, fmt: str, path: str) -> None:
     if st.part is None:
         note = rollback_note(doc, False)
         if note:
-            raise FeatureError(f"{note} Right-click the part name at the top of the tree and choose Rollback to End.")
+            raise FeatureError(f"{note} Roll the part to the end (rollback bar below its last feature).")
         raise FeatureError("No solid body to export")
     if fmt == "step":
         export_step(st.part, path)

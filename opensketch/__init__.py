@@ -1,3 +1,3 @@
-"""OpenSketch: a SOLIDWORKS-style parametric CAD app on build123d, with an AI copilot."""
+"""OpenSketch: connects AI apps to SOLIDWORKS, checking every sketch and feature with a build123d kernel."""
 
 __version__ = "0.4.0"

@@ -1,20 +1,20 @@
-"""Sign-in for the whole app, and the secret address of the MCP endpoint.
+"""Sign-in for the whole site, and the secret address of the MCP endpoint.
 
 Three modes:
 - accounts: at least one account exists (accounts.py). Every page and API call needs a signed-in person
   (email + password, server-side sessions). The owner invites other people with links.
 - password: OPENSKETCH_PASSWORD is set but nobody has an account yet. The sign-in page asks to create the
   owner account, with the server password as the key. The old password-only sign-in still works until then.
-- open: no password and no accounts (a private codespace). Anyone who reaches the app can use it; the
-  account menu offers to create the owner account, which turns sign-in on.
+- open: no password and no accounts (a server only you can reach). Anyone who reaches the server can use it;
+  creating the owner account (/setup) turns sign-in on.
 
 The private MCP address is /mcp/<token> (for AI apps that cannot sign in; the others use /mcp with OAuth, mcpauth.py):
 the address itself is the key. The server owner keeps the server-wide token from before accounts (derived from the
 password, or from a random secret kept in the data folder when there is no password, or set directly with
 OPENSKETCH_MCP_TOKEN), so connectors added then keep working. Every other person's token is keyed by the data
 folder's random secret (data_secret) and a counter: never by the server password, which would let anyone holding
-their own address guess the password offline. A new address (Account settings, or a password change) bumps the
-counter; the owner's first new address leaves the server-wide token too.
+their own address guess the password offline. A new address (New address on the home page, or a password change) bumps
+the counter; the owner's first new address leaves the server-wide token too.
 """
 
 from __future__ import annotations
@@ -99,9 +99,9 @@ def _person_token(user_id: str, n: int) -> str:
 
 
 def mcp_token_for(user: dict | None) -> str:
-    """The private connector address key for one person, which only reaches that person's Files. The server owner
-    (and a server without accounts) keeps the server-wide address until they ask for a new one, so a connector
-    added before accounts keeps working."""
+    """The private connector address key for one person, which only reaches that person's own SOLIDWORKS link. The
+    server owner (and a server without accounts) keeps the server-wide address until they ask for a new one, so a
+    connector added before accounts keeps working."""
     from . import accounts
     if user is None or user.get("legacy"):
         return mcp_token()
@@ -141,13 +141,10 @@ def resolve_mcp(token: str) -> tuple[bool, dict | None]:
 
 
 def public_url(headers: dict | None = None) -> str:
-    """Address the app is reached at: OPENSKETCH_PUBLIC_URL, the codespace's forwarded port, or the request."""
+    """Address the server is reached at: OPENSKETCH_PUBLIC_URL, or the request's own host."""
     env = os.environ.get("OPENSKETCH_PUBLIC_URL", "").rstrip("/")
     if env:
         return env
-    name, domain = os.environ.get("CODESPACE_NAME"), os.environ.get("GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN")
-    if name and domain:
-        return f"https://{name}-{os.environ.get('OPENSKETCH_PORT', '8000')}.{domain}"
     if headers:
         host = headers.get("x-forwarded-host") or headers.get("host")
         proto = headers.get("x-forwarded-proto") or "http"
@@ -410,7 +407,7 @@ def _login_page(nxt, error="", email=""):
 
 def _access_page(nxt="/", error="", code=""):
     """Early access: type the owner's code, skip sign-up, work as an Internal tester (accounts.create_tester)."""
-    return _page("Early access", "Enter your access code to try OpenSketch. No account or AI key needed.", "/access",
+    return _page("Early access", "Enter your access code to try OpenSketch. No account needed.", "/access",
                  [_field("code", "Access code", "text", "off", True, code, invalid=bool(error)).replace(
                      'autocomplete="off"', 'autocomplete="off" spellcheck="false" autocapitalize="off"')], "Start", nxt, error,
                  f'<div class="links"><a href="/login{_esc("?" + urlencode({"next": nxt}) if nxt and nxt != "/" else "")}">I have an account</a></div>')
@@ -617,7 +614,7 @@ def _server_password_ok(given: str) -> bool:
 
 
 class PasswordGate:
-    """ASGI middleware: sign-in pages, the session check, sign-out. MCP paths and published reviews are
+    """ASGI middleware: sign-in pages, the session check, sign-out. MCP paths (and the add-in's link) are
     checked by their own tokens instead. Puts the signed-in person in scope["state"]["user"]."""
 
     def __init__(self, app):
@@ -834,11 +831,11 @@ async def _google_flow(path, scope, q, go, send):
     if not accounts.any_users():
         return await fail("Create the owner account first, then sign in with Google.")
     verified = info.get("email_verified") in (True, "true")
-    if st.get("k"):  # an early-access tester keeps their work with this Google account (accounts.keep_tester)
+    if st.get("k"):  # an early-access tester keeps their account with this Google account (accounts.keep_tester)
         me = current_user(scope)
         back = _safe_next(st.get("n") or "/")
         if not me or me["id"] != st["k"]:
-            return await _send(send, 403, notice_page("Could not keep your work", "Open OpenSketch in the browser you "
+            return await _send(send, 403, notice_page("Could not keep your account", "Open OpenSketch in the browser you "
                                                       "used with the access code, then try again.", "This browser is signed in "
                                                       "to a different account.", href=back), HTML + [(b"set-cookie", clear)])
         try:
@@ -846,7 +843,7 @@ async def _google_flow(path, scope, q, go, send):
                 raise accounts.AccountError("Your Google email is not verified.")
             await asyncio.to_thread(accounts.keep_tester, me["id"], info["email"], info.get("name") or "", None, info["sub"])
         except accounts.AccountError as e:
-            return await _send(send, 409, notice_page("Could not keep your work", "Your files are still here, in this "
+            return await _send(send, 409, notice_page("Could not keep your account", "You are still signed in, in this "
                                                       "browser.", str(e), "Back to OpenSketch", back), HTML + [(b"set-cookie", clear)])
         return await go(back, clear)
     domain = (info.get("email") or "").rsplit("@", 1)[-1].lower()

@@ -55,7 +55,7 @@ namespace OpenSketch.Sw
                     case "set_parameter": return SetParameter(a, null);
                     case "set_equation": return SetEquation(a, null);
                     default:
-                        throw new UserError($"This add-in does not know the command '{op}'. Update it: download it again from the OpenSketch SOLIDWORKS page.");
+                        throw new UserError($"This add-in does not know the command '{op}'. Update it: download it again from the OpenSketch home page.");
                 }
             }
         }
@@ -86,8 +86,8 @@ namespace OpenSketch.Sw
                 throw new UserError($"A sketch is open for editing in {ad.GetTitle()}. Close it in SOLIDWORKS (exit the sketch), then ask again.");
         }
 
-        /// <summary>No dialog boxes that wait for an answer while Claude works (put back afterwards), as the macro
-        /// engine does: no Modify box on new dimensions, over-defining dimensions become driven, no rebuild error
+        /// <summary>No dialog boxes that wait for an answer while Claude works (put back afterwards): no Modify box
+        /// on new dimensions, over-defining dimensions become driven, no rebuild error
         /// pop-ups.</summary>
         sealed class Quiet : IDisposable
         {

@@ -305,7 +305,7 @@ namespace OpenSketch.Sw.App
             var remove = new Button { Text = "Remove", Bounds = new Rectangle(164, 86, 90, 30) };
             var l2 = new Label
             {
-                Text = "2. In SOLIDWORKS: OpenSketch > Connect to Claude (the add-in), or Tools > Macro > Run > Documents\\OpenSketch\\OpenSketch.swb. Paste your key from the OpenSketch SOLIDWORKS page.",
+                Text = "2. In SOLIDWORKS: OpenSketch > Connect to Claude (the add-in), or Tools > Macro > Run > Documents\\OpenSketch\\OpenSketch.swb. Paste your key from the OpenSketch home page.",
                 Location = new Point(16, 128), Size = new Size(488, 50)
             };
             var copy = new Button { Text = "Copy the macro text", Bounds = new Rectangle(16, 180, 160, 30) };

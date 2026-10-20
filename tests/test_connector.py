@@ -1,6 +1,6 @@
-"""OpenSketch is the connector between AI apps and SOLIDWORKS (2026-10-20): the MCP endpoint has only the SOLIDWORKS
-tools, at /mcp and at /solidworks/mcp (its address while the browser app owned /mcp); the home page sets it up; the
-browser CAD app and its routes are gone (branch archive/opensketch-app)."""
+"""OpenSketch is the connector between AI apps and SOLIDWORKS: the MCP endpoint has only the SOLIDWORKS tools, at
+/mcp and at /solidworks/mcp (a second address early connectors used); the home page sets it up; the server has no
+routes beyond the connector, sign-in and account APIs."""
 import re
 from urllib.parse import parse_qs, urlparse
 
@@ -14,7 +14,7 @@ from tests.test_mcp_oauth import ACCEPT, _owner, _pkce, _register
 @pytest.fixture(autouse=True)
 def data(tmp_path, monkeypatch):
     monkeypatch.setenv("OPENSKETCH_DATA", str(tmp_path / "data"))
-    for k in ("OPENSKETCH_PASSWORD", "OPENSKETCH_MCP_TOKEN", "OPENSKETCH_PUBLIC_URL", "CODESPACE_NAME"):
+    for k in ("OPENSKETCH_PASSWORD", "OPENSKETCH_MCP_TOKEN", "OPENSKETCH_PUBLIC_URL"):
         monkeypatch.delenv(k, raising=False)
     mcpauth._codes.clear()
     mcpauth._reg_hits.clear()
@@ -34,15 +34,15 @@ def _rpc(c, path, method, params=None, token=None):
     return c.post(path, json={"jsonrpc": "2.0", "id": 1, "method": method, "params": params or {}}, headers=h)
 
 
-def _connect(browser, app_client, info, resource):
+def _connect(person, app_client, info, resource):
     redirect = info["redirect_uris"][0]
     verifier, chal = _pkce()
     q = {"response_type": "code", "client_id": info["client_id"], "redirect_uri": redirect, "state": "s",
          "code_challenge": chal, "code_challenge_method": "S256", "scope": "opensketch", "resource": resource}
-    page = browser.get("/oauth/authorize", params=q)
+    page = person.get("/oauth/authorize", params=q)
     assert page.status_code == 200, page.text[:300]
     req = re.search(r'name="req" value="([^"]+)"', page.text).group(1)
-    r = browser.post("/oauth/authorize", data={"req": req}, follow_redirects=False)
+    r = person.post("/oauth/authorize", data={"req": req}, follow_redirects=False)
     code = parse_qs(urlparse(r.headers["location"]).query)["code"][0]
     tok = app_client.post("/oauth/token", data={"grant_type": "authorization_code", "code": code, "redirect_uri": redirect,
                                                 "client_id": info["client_id"], "code_verifier": verifier,
@@ -66,7 +66,7 @@ def test_only_the_solidworks_tools_on_both_addresses(app):
     assert '"connected": false' in out["content"][0]["text"] and "home page" in out["content"][0]["text"]
     guide = _rpc(app, "/mcp", "tools/call", {"name": "sw_get_guide", "arguments": {}}).json()["result"]["content"][0]["text"]
     assert "sw_status first" in guide and '"type":"sketch"' in guide and "Mate references" in guide
-    assert "propose_features" not in guide and "viewport" not in guide  # nothing about the archived app
+    assert "viewport" not in guide  # only the SOLIDWORKS workflow
 
 
 def test_one_sign_in_works_on_both_addresses(app):
@@ -114,22 +114,26 @@ def test_home_page_and_its_api(app):
         assert page.status_code == 200 and "OpenSketch" in page.text and "/api/solidworks" in page.text
     d = owner.get("/api/solidworks").json()
     assert d["key"].startswith("oss_") and d["status"] == {"connected": False} and d["signin"] is True
-    assert d["user"]["email"] == "yz@example.com" and d["apps"] == []
+    assert d["user"]["email"] == "owner@example.com" and d["apps"] == []
     h = {"Authorization": f"Bearer {d['key']}"}
     assert app.post("/mcp/sw/hello", json={"client": "addin", "sw_version": "30.5.0", "machine": "PC1"}, headers=h).status_code == 200
     st = owner.get("/api/solidworks").json()["status"]
     assert st["connected"] and st["machine"] == "PC1"
     bad = app.post("/mcp/sw/hello", json={}, headers={"Authorization": "Bearer oss_" + "0" * 40})
-    assert bad.status_code == 401 and "http://testserver/solidworks" in bad.json()["detail"]
+    assert bad.status_code == 401 and "home page, http://testserver" in bad.json()["detail"]
     privacy = anon.get("/privacy").text
     assert "SOLIDWORKS" in privacy and "built-in AI" not in privacy
 
 
-def test_the_browser_app_is_gone():
+def test_only_connector_routes():
     owner = _owner()
+    allowed = ("/healthz", "/api/account", "/api/sw", "/api/solidworks", "/api/connect/", "/mcp", "/solidworks",
+               "/.well-known/", "/oauth/", "/openapi.json", "/docs", "/redoc")
+    paths = [getattr(r, "path", "") for r in server.app.routes]
+    assert [p for p in paths if p not in ("/", "") and not p.startswith(allowed)] == []
     for path in ("/api/docs", "/api/features", "/api/version", "/sw.js", "/manifest.webmanifest", "/js/app.js",
                  "/css/app.css", "/review/abc"):
         assert owner.get(path).status_code == 404, path
-    for path in ("/api/regen", "/api/ai/stream", "/api/import/raw", "/api/export/sldmacro/start", "/api/recognize/start"):
+    for path in ("/api/regen", "/api/ai/stream", "/api/import/raw", "/api/export/start"):
         assert owner.post(path, json={}).status_code in (404, 405), path
     assert owner.get("/fonts/fonts.css").status_code == 200 and owner.get("/healthz").json()["ok"]

@@ -28,10 +28,10 @@ Connect
    c. OpenSketchSW.exe > "Connect to the open SOLIDWORKS" (drives SOLIDWORKS from outside;
       slower, keep the program open).
 4. In the window that opens, paste the OpenSketch address and your SOLIDWORKS key from
-   the OpenSketch SOLIDWORKS page (<OpenSketch address>/solidworks), and click Connect.
+   the OpenSketch home page (<OpenSketch address>), and click Connect.
    Tick "Connect when SOLIDWORKS starts" to skip this next time.
 5. Add the connector to your AI app: the address is on the same page (it ends in
-   /solidworks/mcp). Then, first time, ask
+   /mcp). Then, first time, ask
    "Run the SOLIDWORKS self test, all three stages."
    It makes test files in Documents\OpenSketch\selftest (plate, shapes, assembly) and
    reports every step as ok, check or failed. If anything is not ok, send the report and
@@ -56,7 +56,7 @@ the other way round. New files go to Documents\OpenSketch.
 If something goes wrong
 -----------------------
 The log is %LOCALAPPDATA%\OpenSketch\SolidWorks\log.txt ("Copy log" in the window).
-Send it back: the first runs on a new PC are expected to need fixes.
+Send it with the self-test report when you report a problem.
 
 Remove: OpenSketchSW.exe > Remove (your key stays saved under
 HKEY_CURRENT_USER\Software\OpenSketch; delete that key to forget it).

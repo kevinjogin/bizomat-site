@@ -73,7 +73,7 @@ def test_rebuild_follows_equations_and_resolves_sketch():
     v, bad, st = volume(doc)
     assert not bad and abs(v - (80 * 60 * 10 - 2 * math.pi * 9 * 10)) < 1e-3
     doc = part(length="120", thick="5", holes="4")
-    v, bad, st = volume(doc)  # the sketch is re-solved with D1 = 120 by the browser's solver
+    v, bad, st = volume(doc)  # the sketch is re-solved with D1 = 120 by the sketch solver
     assert not bad, bad
     bb = st.part.bounding_box()
     assert abs(bb.max.X - 120) < 1e-6 and abs(bb.max.Z - 5) < 1e-6
@@ -94,7 +94,7 @@ def test_bad_equations_turn_the_feature_red():
 
 
 def test_a_bad_expression_marks_its_feature_and_the_rest_rebuilds():
-    """gap = (w - 40)^0.5 with w = 30 is a complex number in Python: the rebuild used to fail with a TypeError."""
+    """gap = (w - 40)^0.5 with w = 30 is a complex number in Python: the rebuild reports it instead of failing with a TypeError."""
     doc = part()
     doc["parameters"].append({"name": "gap", "expression": "(length - 90)^0.5", "unit": "mm"})
     doc["features"][1]["eq"] = {"depth": "gap"}
@@ -120,7 +120,7 @@ def triangle(third="w"):
 def test_a_dimension_the_sketch_cannot_take_is_not_stored_as_built():
     doc = triangle()
     doc["parameters"][0]["expression"] = "30"
-    for _ in range(2):  # copy what the browser copies, then rebuild again: still an error, D3 still 10
+    for _ in range(2):  # copy the features as built, then rebuild again: still an error, D3 still 10
         res = geometry.regen_result(doc)
         assert next(s for s in res["status"] if s["id"] == "s1")["state"] == "error"
         for f in (res.get("equations") or {}).get("features", {}).values():

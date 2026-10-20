@@ -190,7 +190,7 @@ class _Report:
                 "failed": len(bad), "seconds": round(time.monotonic() - self.t0, 1), "steps": self.rows,
                 "files": files,
                 "next": ("All steps passed." if not bad and not check else
-                         "Send YZ's developer this report and the add-in log (%LOCALAPPDATA%\\OpenSketch\\SolidWorks\\log.txt, "
+                         "Send the OpenSketch developers this report and the add-in log (%LOCALAPPDATA%\\OpenSketch\\SolidWorks\\log.txt, "
                          "or Copy log in the OpenSketch window): each failed or check step names the SOLIDWORKS call to fix."),
                 "note": "The test files stay open in SOLIDWORKS and are saved in Documents\\OpenSketch\\selftest; close or delete them when done."}
 

@@ -1,5 +1,5 @@
-"""Security fixes from the 2026-10-19 audit (auth stream): private AI addresses never derived from the server
-password, new addresses and app sign-outs on a password change, and the rest of the sign-in hardening."""
+"""Sign-in security: private AI addresses never derived from the server password, new addresses and app sign-outs
+on a password change, and the rest of the sign-in hardening."""
 import hashlib
 import hmac
 import json
@@ -15,8 +15,7 @@ ACCEPT = {"Accept": "application/json, text/event-stream"}
 @pytest.fixture(autouse=True)
 def data(tmp_path, monkeypatch):
     monkeypatch.setenv("OPENSKETCH_DATA", str(tmp_path / "data"))
-    for k in ("OPENSKETCH_PASSWORD", "OPENSKETCH_MCP_TOKEN", "OPENSKETCH_PUBLIC_URL", "CODESPACE_NAME", "ANTHROPIC_API_KEY",
-              "ANTHROPIC_AUTH_TOKEN", "OPENSKETCH_ACCESS_CODE", "OPENSKETCH_SHARE_SERVER_KEY", "OPENSKETCH_AI_DEMO",
+    for k in ("OPENSKETCH_PASSWORD", "OPENSKETCH_MCP_TOKEN", "OPENSKETCH_PUBLIC_URL", "OPENSKETCH_ACCESS_CODE",
               "OPENSKETCH_MAX_TESTERS"):
         monkeypatch.delenv(k, raising=False)
     auth._fails.clear()
@@ -27,7 +26,7 @@ def data(tmp_path, monkeypatch):
 
 def _owner(pw="correct horse"):
     c = TestClient(server.app)
-    r = c.post("/setup", data={"name": "YZ", "email": "yz@example.com", "new_password": pw, "next": "/",
+    r = c.post("/setup", data={"name": "Owner", "email": "owner@example.com", "new_password": pw, "next": "/",
                                "server_password": auth.password()}, follow_redirects=False)
     assert r.status_code == 303, r.text
     return c
@@ -49,14 +48,14 @@ def _tools_list(app, key):
 
 
 def test_private_addresses_are_not_keyed_by_the_server_password(monkeypatch):
-    """auth-security-0: a member's or tester's private address was HMAC(server password, "mcp:" + id), an offline
-    test for the password. Now it comes from the data folder's random secret; the owner's address is unchanged."""
+    """A member's or tester's private address comes from the data folder's random secret, never from the server
+    password (that would be an offline test for the password); the owner's address is unchanged."""
     monkeypatch.setenv("OPENSKETCH_PASSWORD", "hunter22")
-    monkeypatch.setenv("OPENSKETCH_ACCESS_CODE", "access20")
+    monkeypatch.setenv("OPENSKETCH_ACCESS_CODE", "showcase")
     owner = _owner()
     member = _member(owner)
     tester = TestClient(server.app)
-    tester.post("/access", data={"code": "access20"})
+    tester.post("/access", data={"code": "showcase"})
     assert _key(owner) == auth.mcp_token()  # existing connectors keep working
     for c in (member, tester):
         me = c.get("/api/account").json()["user"]
@@ -75,7 +74,7 @@ def test_private_addresses_are_not_keyed_by_the_server_password(monkeypatch):
 
 
 def test_a_new_private_address_and_a_password_change_end_old_access(monkeypatch):
-    """auth-security-11: a person can replace their private address; a password change replaces it and signs every
+    """A person can replace their private address; a password change replaces it and signs every
     AI app out too, so someone who copied it or clicked Allow on a borrowed laptop loses access."""
     owner = _owner()
     member = _member(owner)
@@ -111,16 +110,16 @@ def test_a_new_private_address_and_a_password_change_end_old_access(monkeypatch)
 
 
 def test_account_files_are_read_once_and_shared(tmp_path):
-    """auth-security-6: every request read users.json and sessions.json through several deep copies. Now they are
-    parsed once per change; writers work on their own copy, so a reader never sees half a change."""
+    """users.json and sessions.json are parsed once per change, not copied on every request; writers work on their
+    own copy, so a reader never sees half a change."""
     owner = _owner()
     first = accounts._users()
     assert accounts._users() is first  # no copy per read
-    owner.post("/api/account", json={"name": "Yuanzheng"})
-    assert accounts._users() is not first and accounts.get(accounts.owner()["id"])["name"] == "Yuanzheng"
-    assert first["users"][0]["name"] == "YZ"  # the writer did not change the shared copy
-    (tmp_path / "data" / "users.json").write_text(json.dumps(accounts._users()).replace("Yuanzheng", "Y Z"))
-    assert accounts.owner()["name"] == "Y Z"  # another process's write is seen
+    owner.post("/api/account", json={"name": "Olivia"})
+    assert accounts._users() is not first and accounts.get(accounts.owner()["id"])["name"] == "Olivia"
+    assert first["users"][0]["name"] == "Owner"  # the writer did not change the shared copy
+    (tmp_path / "data" / "users.json").write_text(json.dumps(accounts._users()).replace("Olivia", "O L"))
+    assert accounts.owner()["name"] == "O L"  # another process's write is seen
 
 
 def _trickle_server(delay=0.3, total=40):
@@ -160,14 +159,14 @@ def _trickle_server(delay=0.3, total=40):
 
 
 def test_a_slow_metadata_address_is_given_up_on_time(monkeypatch):
-    """auth-security-2: httpx's timeout is per read, so a server trickling a byte at a time held the fetch (and a
-    request thread) for hours. Now the whole fetch has a deadline."""
+    """httpx's timeout is per read, so a server trickling a byte at a time could hold the fetch (and a request
+    thread) for hours. The whole fetch has a deadline."""
     import time
-    from opensketch import providers
+    from opensketch import safefetch
     port, stop = _trickle_server()
     try:
         monkeypatch.setattr(mcpauth, "CIMD_DEADLINE", 1.0)
-        monkeypatch.setattr(providers, "pinned", lambda url: (f"http://127.0.0.1:{port}/c.json", {"Host": "slow.example"}, {}))
+        monkeypatch.setattr(safefetch, "pinned", lambda url: (f"http://127.0.0.1:{port}/c.json", {"Host": "slow.example"}, {}))
         mcpauth._cimd.clear()
         t = time.monotonic()
         assert mcpauth.metadata_client("https://slow.example/c.json") is None
@@ -178,9 +177,9 @@ def test_a_slow_metadata_address_is_given_up_on_time(monkeypatch):
 
 
 def test_metadata_fetches_never_hold_request_threads(monkeypatch):
-    """auth-security-2: 40 token requests naming slow https client_ids used up AnyIO's 40 request threads, so
-    /healthz failed and the supervisor restarted the server in a loop. Now the fetches run in mcpauth's own pool of
-    CIMD_WORKERS, the rest are refused at once, and the server keeps answering."""
+    """40 token requests naming slow https client_ids would use up AnyIO's 40 request threads, so /healthz would
+    fail and the supervisor restart the server in a loop. The fetches run in mcpauth's own pool of CIMD_WORKERS,
+    the rest are refused at once, and the server keeps answering."""
     import threading
     import time
     monkeypatch.setattr(mcpauth, "CIMD_DEADLINE", 1.5)
@@ -244,19 +243,19 @@ def _google_round(c, query=""):
 
 
 def test_testers_are_capped_and_scripts_cannot_make_thousands(monkeypatch):
-    """auth-security-6: /access made a new account for every right code with no cap."""
-    monkeypatch.setenv("OPENSKETCH_ACCESS_CODE", "access20")
+    """/access makes a new account for every right code, so the number of testers is capped."""
+    monkeypatch.setenv("OPENSKETCH_ACCESS_CODE", "showcase")
     monkeypatch.setenv("OPENSKETCH_MAX_TESTERS", "3")
     monkeypatch.setattr(auth, "_made", {})
     owner = _owner()
-    codes = [TestClient(server.app).post("/access", data={"code": "access20"}, follow_redirects=False).status_code for _ in range(4)]
+    codes = [TestClient(server.app).post("/access", data={"code": "showcase"}, follow_redirects=False).status_code for _ in range(4)]
     assert codes == [303, 303, 303, 503]
-    full = TestClient(server.app).post("/access", data={"code": "access20"}, follow_redirects=False)
+    full = TestClient(server.app).post("/access", data={"code": "showcase"}, follow_redirects=False)
     assert b"Early access is full" in full.content
     owner.delete("/api/account/testers")
     monkeypatch.setattr(auth, "NEW_PER_HOUR", 2)
     monkeypatch.setattr(auth, "_made", {})
-    codes = [TestClient(server.app).post("/access", data={"code": "access20"}, follow_redirects=False).status_code for _ in range(3)]
+    codes = [TestClient(server.app).post("/access", data={"code": "showcase"}, follow_redirects=False).status_code for _ in range(3)]
     assert codes == [303, 303, 429]
     accounts.set_open_signup(True)
     r = TestClient(server.app).post("/signup", data={"name": "A", "email": "a@example.com", "new_password": "long enough"},
@@ -265,12 +264,12 @@ def test_testers_are_capped_and_scripts_cannot_make_thousands(monkeypatch):
 
 
 def test_sign_in_limits_use_their_window_and_ipv6_networks(monkeypatch):
-    """auth-security-13: the window was 60 s (CLAUDE.md says 15 minutes for an email), filling the table cleared
-    every counter, and each IPv6 address in a /64 counted on its own."""
+    """Sign-in limits count over 15 minutes for an email, filling the table does not clear every counter, and the
+    addresses of one IPv6 /64 count together."""
     import time
     assert auth._net("2001:db8:1:2:aaaa::1") == auth._net("2001:db8:1:2:bbbb::9") == "2001:db8:1:2::/64"
     assert auth._net("::ffff:203.0.113.9") == "203.0.113.9" and auth._net("203.0.113.9") == "203.0.113.9"
-    k = "email:yz@example.com"
+    k = "email:owner@example.com"
     for _ in range(auth.LIMIT):
         auth._failed(k)
     assert auth._limited(k)
@@ -289,7 +288,7 @@ def test_sign_in_limits_use_their_window_and_ipv6_networks(monkeypatch):
 
 
 def test_invite_links_can_be_listed_and_revoked():
-    """auth-security-14: an invite pasted in the wrong chat could not be revoked for 7 days."""
+    """An invite link sent to the wrong person can be revoked before its 7 days are up."""
     owner = _owner()
     made = owner.post("/api/account/invites", json={"note": "for Alex"}).json()
     token = made["url"].split("/join/")[1]
@@ -309,9 +308,9 @@ def test_invite_links_can_be_listed_and_revoked():
 
 
 def test_a_typed_email_never_keeps_a_google_owner_out(monkeypatch):
-    """auth-security-10: anyone could sign up as victim@gmail.com with their own password; when the victim later used
-    Continue with Google, they were linked into that account and both could use it. Now the person Google vouches
-    for takes it over: the typed password, its sessions, its AI apps and its private address end."""
+    """Someone may sign up as victim@gmail.com with their own password; when the victim later uses Continue with
+    Google, they must not share that account. The person Google vouches for takes it over: the typed password, its
+    sessions, its AI apps and its private address end."""
     owner = _owner()
     accounts.set_open_signup(True)
     attacker = TestClient(server.app)
@@ -331,21 +330,21 @@ def test_a_typed_email_never_keeps_a_google_owner_out(monkeypatch):
     assert accounts.verify("victim@gmail.com", "attacker pw") is None  # the typed password is gone
     assert mcpauth.grants_for(uid) == [] and not auth.resolve_mcp(old_key)[0]
     # the owner (who set the server up) and a verified Google account are never taken over this way
-    _google(monkeypatch, {"sub": "g-owner", "email": "yz@example.com", "email_verified": True, "hd": "example.com"})
+    _google(monkeypatch, {"sub": "g-owner", "email": "owner@example.com", "email_verified": True, "hd": "example.com"})
     assert _google_round(TestClient(server.app)).status_code == 303
-    assert accounts.verify("yz@example.com", "correct horse") is not None and owner.get("/api/solidworks").status_code == 200
+    assert accounts.verify("owner@example.com", "correct horse") is not None and owner.get("/api/solidworks").status_code == 200
 
 
-def test_testers_keep_their_work_with_an_email_and_password(monkeypatch):
-    """ux-product-0: a tester's only link to their files was the session cookie; signing out lost everything. Now
-    they can add an email and password (or Google) and sign in again; they stay a tester."""
-    monkeypatch.setenv("OPENSKETCH_ACCESS_CODE", "access20")
+def test_testers_keep_their_account_with_an_email_and_password(monkeypatch):
+    """A tester's only link to their account is the session cookie, so signing out would lose it. They can add an
+    email and password (or Google) and sign in again; they stay a tester."""
+    monkeypatch.setenv("OPENSKETCH_ACCESS_CODE", "showcase")
     owner = _owner()
     t = TestClient(server.app)
-    t.post("/access", data={"code": "access20"})
+    t.post("/access", data={"code": "showcase"})
     key = t.get("/api/solidworks").json()["key"]
     assert t.post("/api/account/keep", json={"email": "bad", "password": "long enough"}).status_code == 400
-    assert t.post("/api/account/keep", json={"email": "yz@example.com", "password": "long enough"}).status_code == 400  # taken
+    assert t.post("/api/account/keep", json={"email": "owner@example.com", "password": "long enough"}).status_code == 400  # taken
     assert t.post("/api/account/keep", json={"email": "sam@example.com", "password": "short"}).status_code == 400
     me = t.post("/api/account/keep", json={"name": "Sam", "email": "Sam@Example.com", "password": "long enough"}).json()["user"]
     assert me["tester"] and me["has_password"] and me["email"] == "sam@example.com" and me["name"] == "Sam"
@@ -356,30 +355,30 @@ def test_testers_keep_their_work_with_an_email_and_password(monkeypatch):
     back = TestClient(server.app)
     assert back.post("/login", data={"email": "sam@example.com", "password": "long enough"}, follow_redirects=False).status_code == 303
     assert back.get("/api/solidworks").json()["key"] == key  # the same account: same SOLIDWORKS key
-    assert back.get("/api/account").json()["user"]["role"] == "tester"  # early access still decides their AI
+    assert back.get("/api/account").json()["user"]["role"] == "tester"  # still a tester
     # Google instead of a password
     g = TestClient(server.app)
-    g.post("/access", data={"code": "access20"})
+    g.post("/access", data={"code": "showcase"})
     _google(monkeypatch, {"sub": "g-kim", "email": "kim@gmail.com", "email_verified": True, "name": "Kim"})
-    r = _google_round(g, "?keep=1&next=/%3Fview%3Dfiles")
-    assert r.status_code == 303 and r.headers["location"] == "/?view=files"
+    r = _google_round(g, "?keep=1&next=/%3Fstep%3D2")
+    assert r.status_code == 303 and r.headers["location"] == "/?step=2"
     me = g.get("/api/account").json()["user"]
     assert me["tester"] and me["google"] and me["email"] == "kim@gmail.com" and me["name"] == "Kim"
     other = TestClient(server.app)
-    other.post("/access", data={"code": "access20"})
+    other.post("/access", data={"code": "showcase"})
     r = _google_round(other, "?keep=1")
     assert r.status_code == 409 and b"already" in r.content  # one Google account, one OpenSketch account
 
 
 def test_the_code_link_keeps_where_the_person_was_going(monkeypatch):
-    """ux-product-0: an AI app's sign-in sent a tester to /login; the code link dropped `next`, so the app never
-    got its answer."""
-    monkeypatch.setenv("OPENSKETCH_ACCESS_CODE", "access20")
+    """An AI app's sign-in that sends a tester to /login keeps `next` through the access-code link, so the AI app
+    gets its answer."""
+    monkeypatch.setenv("OPENSKETCH_ACCESS_CODE", "showcase")
     _owner()
     c = TestClient(server.app)
     page = c.get("/login?next=/oauth/authorize%3Fclient_id%3Dx").text
     assert 'href="/access?next=%2Foauth%2Fauthorize%3Fclient_id%3Dx"' in page
-    r = c.post("/access", data={"code": "access20", "next": "/oauth/authorize?client_id=x"}, follow_redirects=False)
+    r = c.post("/access", data={"code": "showcase", "next": "/oauth/authorize?client_id=x"}, follow_redirects=False)
     assert r.headers["location"] == "/oauth/authorize?client_id=x"
 
 
@@ -389,14 +388,14 @@ def test_sign_in_pages_tie_errors_and_notes_to_fields():
     assert "now uses accounts" not in setup and "You will own this server" in setup
     assert 'aria-describedby="new_password-note"' in setup and 'id="new_password-note"' in setup
     _owner()
-    bad = TestClient(server.app).post("/login", data={"email": "yz@example.com", "password": "nope"}).text
+    bad = TestClient(server.app).post("/login", data={"email": "owner@example.com", "password": "nope"}).text
     assert 'id="err"' in bad and 'aria-invalid="true"' in bad and 'aria-describedby="err"' in bad
     assert "a:focus-visible" in bad
 
 
 def test_one_connection_per_app_and_registrations_are_bounded(monkeypatch):
-    """auth-security-9 and -15: Claude registers again on every connect, so each reconnect added a grant; anyone could
-    fill the 2,000 registrations and lock every new app out; registrations could carry 10 x 2,000-character URLs."""
+    """An AI app registers again on every connect, so a reconnect replaces its grant instead of adding one; nobody can
+    fill the 2,000 registrations and lock every new app out; a registration's return addresses are bounded."""
     import base64
     import re
     import secrets
@@ -447,7 +446,7 @@ def test_one_connection_per_app_and_registrations_are_bounded(monkeypatch):
 
 
 def test_the_mcp_token_store_is_not_parsed_per_request(monkeypatch):
-    """auth-security-9: every Bearer request read and parsed mcp_oauth.json (up to 40 MB) on the event loop."""
+    """A Bearer request does not read and parse mcp_oauth.json (up to 40 MB) on the event loop each time."""
     _owner()
     mcpauth._save({"clients": {}, "grants": {}, "access": {}})
     reads = []

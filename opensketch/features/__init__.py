@@ -1,14 +1,13 @@
-"""The feature registry: one list of feature commands for the user, the in-app AI and MCP.
+"""The feature registry: the one list of feature types the AI may write (docs/DOCUMENT.md).
 
 Each feature type is described once (a FeatureType with typed Params). From that description:
-- the browser builds the PropertyManager (generated layout unless the type has a hand-written one in
-  features.js), the ribbon button and the defaults (GET /api/features),
-- the in-app AI gets an `add_<type>` tool, the feature's line in the system prompt and input checks,
-- the MCP server gets an `add_<type>` tool with the same parameters,
+- `help_text` gives each type's line in the feature-format guide (sw_get_guide),
+- `validate` checks the AI's input before anything is built or sent to SOLIDWORKS,
+- `with_defaults` and `left_out` say what a field that is not given means,
 - geometry.py rebuilds it with the type's `build` function (hand-written types keep their code there).
 
 Adding a feature = one file in this package with its FeatureType and build function, imported at the
-bottom of this module. Nothing else has to change for it to work three ways.
+bottom of this module, then its counterpart in the SOLIDWORKS add-in.
 """
 
 from __future__ import annotations
@@ -32,7 +31,6 @@ from typing import Any, Callable
 #   object    -> free-form object (documented in `doc`)
 KINDS = ("length", "angle", "number", "int", "bool", "string", "enum", "plane", "faces", "edges", "sketch",
          "sketch_line", "features", "axis", "direction", "object")
-SELECTIONS = ("plane", "faces", "edges", "sketch", "sketch_line", "features")  # picked in the graphics area
 
 
 @dataclass
@@ -45,14 +43,10 @@ class Param:
     min: float | None = None
     max: float | None = None
     options: list | None = None      # enum: [(value, label)]
-    label: str | None = None         # PropertyManager label / tooltip
-    icon: str | None = None          # PropertyManager row icon
-    section: str | None = None       # PropertyManager rollout title
-    when: dict | None = None         # shown (and meaningful) only when other params have these values
-    widget: str | None = None        # "radio" for enums shown as radio buttons, "toggle" for icon bools
-    # What a document that leaves the field out builds with, when that is not `default`. Older files were built
-    # with these numbers, so they keep their shape; `default` is what new features are written with (the
-    # PropertyManager, add_<type>, new features in propose_features / create_part), always explicitly.
+    when: dict | None = None         # meaningful only when other params have these values
+    # What a document that leaves the field out builds with, when that is not `default`. Older documents were built
+    # with these numbers, so they keep their shape; `default` is what new features are written with
+    # (features.with_defaults), always explicitly.
     omitted: Any = None
 
     def __post_init__(self):
@@ -67,19 +61,13 @@ class Param:
 @dataclass
 class FeatureType:
     type: str
-    title: str                      # PropertyManager title and ribbon label base
+    title: str                      # SOLIDWORKS name of the feature
     base: str                       # tree name base: Draft -> Draft1, Draft2
-    icon: str
-    summary: str                    # one sentence for the AI and the ribbon tooltip
+    summary: str                    # one sentence for the AI
     params: list[Param]
     build: Callable | None = None   # build(feat, st, diagnostics) -> None or a warning string
-    ui: str = "generated"           # "custom": features.js has a hand-written PropertyManager
-    command: str | None = None      # CommandManager command id (defaults to the type)
-    label: str | None = None        # ribbon label (defaults to the title)
-    message: str = ""               # PropertyManager prompt while required selections are missing
     notes: str = ""                 # extra modelling notes for the AI
-    tool: bool = True               # add_<type> tool for the AI and MCP
-    keys: dict = field(default_factory=dict)  # extra fixed keys a new feature gets (e.g. op for cut)
+    keys: dict = field(default_factory=dict)  # extra fixed keys the type always has (e.g. op for cut)
 
     def param(self, name: str) -> Param | None:
         return next((p for p in self.params if p.name == name), None)
@@ -87,7 +75,7 @@ class FeatureType:
 
 REGISTRY: dict[str, FeatureType] = {}
 
-# Types geometry.py handles that are not commands (no PropertyManager, not added by these tools).
+# Types geometry.py handles that are not registered feature commands (sketches, imported bodies, standard parts).
 OTHER_TYPES = ("sketch", "import", "standard")
 
 
@@ -113,14 +101,14 @@ def left_out(type_: str, name: str):
 
 def with_defaults(feat: dict) -> dict:
     """A copy of a new feature with every left-out field that has a default written in, so the document carries
-    no implicit numbers (what `omitted` means then only matters for older files)."""
+    no implicit numbers (what `omitted` means then only matters for older documents)."""
     ft = REGISTRY.get(feat.get("type")) if isinstance(feat, dict) else None
     if ft is None or feat.get("type") in OTHER_TYPES:
         return feat
     out = dict(feat)
     if out.get("type") == "chamfer" and out.get("mode") is None and out.get("distance2") is not None:
         out["mode"] = "distance_distance"  # two distances given: that is what was meant
-    if out.get("type") == "linear_pattern" and out.get("direction2"):  # as the PropertyManager fills direction 2
+    if out.get("type") == "linear_pattern" and out.get("direction2"):  # as SOLIDWORKS fills direction 2
         if out.get("count2") is None:
             out["count2"] = 2
         if out.get("spacing2") is None:
@@ -135,50 +123,15 @@ def known_types() -> list[str]:
     return [*OTHER_TYPES[:1], *REGISTRY]
 
 
-# ----------------------------------------------------------------------------- JSON schema (AI and MCP)
+# ----------------------------------------------------------------------------- AI help text
 
-_V3 = {"type": "array", "items": {"type": "number"}, "minItems": 3, "maxItems": 3}
 PLANE_DOC = ('{"ref": "Front Plane"|"Top Plane"|"Right Plane"|<plane or sketch feature id>} or a planar face '
              '{"type": "face"|"fixed", "origin": [x,y,z], "normal": [x,y,z], "xdir": [x,y,z]}')
 
 
-def param_schema(p: Param) -> dict:
-    k = p.kind
-    if k in ("length", "angle", "number"):
-        s: dict = {"type": "number"}
-    elif k == "int":
-        s = {"type": "integer"}
-    elif k == "bool":
-        s = {"type": "boolean"}
-    elif k in ("string", "sketch", "sketch_line"):
-        s = {"type": "string"}
-    elif k == "enum":
-        s = {"type": "string", "enum": [o[0] for o in p.options]}
-    elif k == "axis":
-        s = {"type": "string", "enum": ["X", "Y", "Z"]}
-    elif k == "plane":
-        s = {"type": "object"}
-    elif k == "faces":
-        s = {"type": "array", "items": {"type": "object", "properties": {"center": _V3, "normal": _V3}, "required": ["center"]}}
-    elif k == "edges":
-        s = {"type": "array", "items": {"type": "object", "properties": {"mid": _V3}, "required": ["mid"]}}
-    elif k == "features":
-        s = {"type": "array", "items": {"type": "string"}}
-    elif k == "direction":
-        s = {"anyOf": [{"type": "string", "enum": ["X", "Y", "Z"]}, {"type": "object"}]}
-    else:
-        s = {"type": "object"}
-    if p.min is not None and k in ("length", "angle", "number", "int"):
-        s["minimum"] = p.min
-    if p.max is not None and k in ("length", "angle", "number", "int"):
-        s["maximum"] = p.max
-    s["description"] = describe_param(p)
-    return s
-
-
 def describe_param(p: Param) -> str:
     unit = {"length": " (mm)", "angle": " (degrees)"}.get(p.kind, "")
-    d = (p.doc or p.label or p.name) + unit
+    d = (p.doc or p.name) + unit
     if p.kind == "plane" and "{" not in d:
         d += ". " + PLANE_DOC
     elif p.kind == "faces" and "center" not in d:
@@ -191,38 +144,6 @@ def describe_param(p: Param) -> str:
         d += ". Only used when " + ", ".join(f"{k} = {json.dumps(v)}" for k, v in p.when.items())
     return d
 
-
-def tool_name(ft: FeatureType) -> str:
-    return f"add_{ft.type}"
-
-
-def tool_description(ft: FeatureType) -> str:
-    return (f"Add one {ft.title} feature to a part: {ft.summary} It is rebuilt and drawn at once; the result has the "
-            f"rebuild status and the body's bounding box. In an assembly give part_id. For a whole part or many features "
-            f"at once, propose_features / create_part are faster." + (f" {ft.notes}" if ft.notes else ""))
-
-
-def tool_schema(ft: FeatureType) -> dict:
-    props = {"part_id": {"type": "string", "description": "Assembly documents: the part to add the feature to."},
-             "name": {"type": "string", "description": f"Optional tree name (default {ft.base}N)."}}
-    for p in ft.params:
-        props[p.name] = param_schema(p)
-    return {"type": "object", "properties": props, "required": [p.name for p in ft.params if p.required]}
-
-
-def ai_tools() -> list[dict]:
-    return [{"name": tool_name(ft), "description": tool_description(ft), "input_schema": tool_schema(ft)}
-            for ft in REGISTRY.values() if ft.tool]
-
-
-def type_for_tool(name: str) -> FeatureType | None:
-    if not name.startswith("add_"):
-        return None
-    ft = REGISTRY.get(name[4:])
-    return ft if ft and ft.tool else None
-
-
-# ----------------------------------------------------------------------------- AI help text
 
 def _value_hint(p: Param) -> str:
     k = p.kind
@@ -353,36 +274,6 @@ def validate(feat: dict) -> list[str]:
             total = 0
         if total > PATTERN_MAX:
             out.append(f"{label}: makes {total} instances; a pattern can make at most {PATTERN_MAX}")
-    return out
-
-
-def new_feature(ft: FeatureType, inp: dict) -> dict:
-    """A feature dict from tool input: defaults filled in, unknown keys dropped."""
-    f = {"type": ft.type, **ft.keys}
-    for p in ft.params:
-        if inp.get(p.name) is not None:
-            f[p.name] = inp[p.name]
-        elif p.default is not None:
-            f[p.name] = json.loads(json.dumps(p.default))
-    return f
-
-
-# ----------------------------------------------------------------------------- browser
-
-def public() -> dict:
-    """What the browser needs (GET /api/features): every registered type with its parameters."""
-    out = {}
-    for ft in REGISTRY.values():
-        out[ft.type] = {
-            "type": ft.type, "title": ft.title, "base": ft.base, "icon": ft.icon, "summary": ft.summary,
-            "ui": ft.ui, "command": ft.command or ft.type, "label": ft.label or ft.title, "message": ft.message,
-            "keys": ft.keys, "tool": tool_name(ft) if ft.tool else None,
-            "params": [{"name": p.name, "kind": p.kind, "doc": p.doc, "default": p.default, "required": p.required,
-                        "min": p.min, "max": p.max, "options": [list(o) for o in p.options] if p.options else None,
-                        "label": p.label, "icon": p.icon, "section": p.section, "when": p.when, "widget": p.widget,
-                        "omitted": p.omitted}
-                       for p in ft.params],
-        }
     return out
 
 
