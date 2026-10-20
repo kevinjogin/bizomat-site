@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -83,14 +83,14 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /href=\{`\/tools\/\?tool=\$\{t\.id\}`\}/, 'each card links to its tool');
 });
 
-test('register: 63 tools with unique ids, every published id kept, and the Retention Method Selector added', () => {
+test('register: 87 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 63);
+  assert.equal(ids.length, 87);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
   const categories = new Set(engine.tools.map((t) => t.category));
-  assert.deepEqual([...categories].sort(), ['Business', 'Decide', 'Engineering', 'Improvement', 'Inventory', 'Manufacturing', 'Money', 'Operations', 'Planning', 'Projects', 'Quoting']);
+  assert.deepEqual([...categories].sort(), ['Business', 'Decide', 'Engineering', 'Fabrication', 'Hydraulics', 'Improvement', 'Inventory', 'Maintenance', 'Manufacturing', 'Materials', 'Money', 'Operations', 'Planning', 'Pneumatics', 'Power Transmission', 'Projects', 'Quality', 'Quoting']);
   assert.equal(engine.tool('retention-selector').category, 'Engineering');
   for (const t of engine.tools) {
     for (const k of ['name', 'category', 'question', 'description']) assert.ok(typeof t[k] === 'string' && t[k].length > 3, `${t.id}.${k}`);
@@ -501,4 +501,138 @@ test('user text in the report is escaped', () => {
   const html: string = ui.reportBody({ ...t, name: '<script>x</script>' }, { ...r, summary: 'a & "b"' }, sens);
   assert.ok(html.includes('&lt;script&gt;x&lt;/script&gt;') && !html.includes('<script>x'));
   assert.ok(html.includes('a &amp; &quot;b&quot;'));
+});
+
+// ---------------------------------------------------------------- MAKEOS numerical reference cases
+// Independently evaluated SI examples. Raw values are checked before presentation rounding.
+const MAKEOS_CASES: Array<[string, Record<string, number>]> = [
+  ['cutting-speed', { rpm: 1909.859317102744, actual: 62.831853071796 }],
+  ['milling-feed-time', { feed: 200, removal: 4, minutes: 0.5 }],
+  ['turning-time', { feed: 200, perPass: 0.5, minutes: 1.5, speed: 157.07963267949 }],
+  ['drilling-time', { point: 3.004303095138, travel: 25.004303095138, feed: 100, minutes: 1.500258185708 }],
+  ['tapping-feed', { lead: 1.5, feed: 1500, seconds: 0.6 }],
+  ['bolt-circle', { step: 90, chord: 70.710678118655 }],
+  ['taper-geometry', { taper: 0.1, halfAngle: 2.862405226112, includedAngle: 5.724810452224 }],
+  ['sine-bar', { height: 100, arcseconds: 1.190870414111 }],
+  ['fit-clearance', { minimum: 0.007, maximum: 0.041 }],
+  ['thermal-growth', { changeT: 40, growth: 0.48, finalLength: 1000.48 }],
+  ['beam-deflection', { moment: 250000, deflection: 0.104166666667, stress: 12.5 }],
+  ['shaft-torsion', { polar: 251327.41228718345, stress: 15.91549430919, degrees: 0.284965828994 }],
+  ['torque-power', { omega: 157.07963267949, torque: 31.830988618379 }],
+  ['gear-pair', { driverDiameter: 40, drivenDiameter: 120, centre: 80, ratio: 3, outputRpm: 400 }],
+  ['belt-drive', { length: 1476.243077261245, wrap: 168.521659045466, outputRpm: 750, speed: 7.853981633974 }],
+  ['hydraulic-cylinder', { piston: 1963.495408493621, annulus: 1472.621556370216, extension: 18898.6433067511, retraction: 13744.4678594553, extendTime: 1.178097245096, retractTime: 0.883572933822 }],
+  ['hydraulic-power', { fluid: 5, shaft: 5.882352941176, loss: 0.882352941176 }],
+  ['pipe-flow', { velocity: 0.679061090525, reynolds: 16976.5272631355 }],
+  ['pneumatic-consumption', { swept: 0.361283155163, absolute: 7, referenceCycle: 2.52898208614, demand: 25.289820861398 }],
+  ['stock-mass', { section: 1000, volume: 0.001, mass: 7.85 }],
+  ['bend-allowance', { allowance: 5.969026041821, setback: 5, deduction: 4.030973958179, flat: 65.969026041821 }],
+  ['punching-force', { nominal: 60000, adjusted: 72000, tonnes: 7.341956733441 }],
+  ['process-capability', { cp: 1.666666666667, cpu: 1.333333333333, cpl: 2, cpk: 1.333333333333 }],
+  ['maintenance-availability', { availability: 90, mtbf: 180, mttr: 20 }],
+];
+for (const [id, expected] of MAKEOS_CASES) {
+  test(`MAKEOS reference example: ${id}`, () => {
+    const r = engine.run(id);
+    for (const [key, value] of Object.entries(expected)) near(r.values[key], value, Math.max(1e-8, Math.abs(value) * 1e-9), `${id}/${key}`);
+  });
+}
+
+test('MAKEOS rejects empty, non-finite, out-of-range and fractional count inputs without a result', () => {
+  for (const t of engine.tools.filter((t) => t.collection === 'MAKEOS')) {
+    for (const f of t.fields) {
+      const bad = f.type === 'select' ? ['', 'unknown'] : ['', 'abc', Infinity, -Infinity, NaN, f.min - 1, f.max + 1, ...(f.integer ? [f.default + 0.5] : [])];
+      for (const value of bad) {
+        const r = engine.run(t.id, { [f.key]: value });
+        assert.equal(r.text, 'CHECK INPUTS', `${t.id}/${f.key}/${value} rejected`);
+        assert.equal(r.primary, undefined, 'invalid values do not reach sensitivity or a numerical result');
+        assert.ok(r.checks.some((c: any) => c.status === 'fail'));
+        assert.doesNotMatch(JSON.stringify(r), /NaN|Infinity|undefined/);
+      }
+    }
+  }
+});
+
+test('MAKEOS rejects impossible geometry and contradictory specification limits', () => {
+  for (const [id, values] of [
+    ['taper-geometry', { large: 10, small: 20 }], ['fit-clearance', { holeMin: 21 }],
+    ['fit-clearance', { shaftMin: 21 }], ['shaft-torsion', { inner: 40 }],
+    ['belt-drive', { centre: 150 }], ['hydraulic-cylinder', { rod: 50 }],
+    ['pneumatic-consumption', { rod: 50 }], ['stock-mass', { shape: 'tube', thickness: 50 }],
+    ['bend-allowance', { a: 4 }], ['process-capability', { upper: 9.9 }],
+    ['thermal-growth', { alpha: -1000, final: 2000 }],
+    ['maintenance-availability', { uptime: 0, downtime: 0 }],
+  ] as Array<[string, Inputs]>) assert.equal(engine.run(id, values).text, 'CHECK INPUTS', id);
+});
+
+test('MAKEOS geometric sign conventions and alternative modes agree with known cases', () => {
+  const p = engine.run('bolt-circle', { x: 10, y: 20, direction: 'cw' }).values.coordinates;
+  near(p[0].x, 60, 1e-9, 'first X'); near(p[1].y, -30, 1e-9, 'clockwise second Y');
+  assert.equal(engine.run('taper-geometry', { large: 20, small: 20 }).values.halfAngle, 0);
+  assert.equal(engine.run('sine-bar', { angle: 0 }).values.height, 0);
+  assert.equal(engine.run('fit-clearance', { shaftMin: 20.1, shaftMax: 20.2 }).text, 'INTERFERENCE');
+  assert.equal(engine.run('fit-clearance', { shaftMin: 20, shaftMax: 20.01 }).text, 'CONTACT / TRANSITION');
+  assert.equal(engine.run('fit-clearance', { holeMax: 20, shaftMin: 20, shaftMax: 20 }).text, 'LINE-TO-LINE');
+  near(engine.run('thermal-growth', { final: -20 }).values.growth, -0.48, 1e-10, 'cooling contraction');
+  near(engine.run('stock-mass', { shape: 'round', width: 20 }).values.mass, 2.466150233068, 1e-10, 'round bar');
+  near(engine.run('stock-mass', { shape: 'tube', width: 20, thickness: 2 }).values.mass, 0.887814083904, 1e-10, 'tube');
+  near(engine.run('belt-drive', { driver: 100, driven: 100 }).values.length, 1314.159265358979, 1e-9, 'equal pulleys');
+});
+
+test('MAKEOS beam cases and mechanical scaling preserve dimensions and limiting behaviour', () => {
+  near(engine.run('beam-deflection', { case: 'cantilever-point' }).values.deflection, 1.666666666667, 1e-9, 'cantilever');
+  near(engine.run('beam-deflection', { case: 'simple-udl' }).values.deflection, 0.065104166667, 1e-9, 'uniform total load');
+  near(engine.run('beam-deflection', { length: 2000 }).values.deflection, 0.833333333333, 1e-9, 'cubic span effect');
+  near(engine.run('beam-deflection', { inertia: 2000000 }).values.deflection, 0.052083333333, 1e-9, 'inverse stiffness');
+  assert.equal(engine.run('beam-deflection', { load: 0 }).values.stress, 0);
+  assert.equal(engine.run('shaft-torsion', { torque: 0 }).values.twist, 0);
+  const hollow = engine.run('shaft-torsion', { inner: 40 * Math.pow(0.5, 0.25) });
+  near(hollow.values.stress, 31.830988618379, 1e-9, 'half polar area moment doubles stress');
+  near(engine.run('torque-power', { rpm: 3000 }).values.torque, 15.91549430919, 1e-9, 'twice speed at constant power');
+});
+
+test('MAKEOS machining, fluid power and pneumatic reference conversions remain explicit', () => {
+  near(engine.run('tapping-feed', { starts: 2 }).values.feed, 3000, 1e-9, 'lead, not pitch');
+  const c = engine.run('hydraulic-cylinder', { back: 0 }).values;
+  near(c.extension, 19634.9540849362, 1e-8, 'bar to N/mm²');
+  assert.ok(c.retractTime < c.extendTime, 'smaller annulus fills faster at the same inlet flow');
+  assert.ok(engine.run('hydraulic-cylinder', { back: 200 }).values.extension < 0, 'opposing pressure is not silently clamped');
+  assert.equal(engine.run('hydraulic-power', { efficiency: 100 }).values.loss, 0);
+  assert.equal(engine.run('hydraulic-power', { flow: 0 }).values.shaft, 0);
+  near(engine.run('pipe-flow', { viscosity: 10 }).values.reynolds, 1697.65272631355, 1e-7, 'centistokes conversion');
+  assert.equal(metric(engine.run('pipe-flow', { flow: 0 }), 'Regime indication'), 'No mean flow');
+  const air = engine.run('pneumatic-consumption').values;
+  near(engine.run('pneumatic-consumption', { reference: 2 }).values.demand, air.demand / 2, 1e-9, 'absolute reference pressure');
+  near(engine.run('pneumatic-consumption', { temperature: 313.15 }).values.demand, air.demand / 2, 1e-9, 'Kelvin ratio, not Celsius');
+  near(engine.run('pneumatic-consumption', { cycles: 0 }).values.demand, 0, 1e-9, 'idle demand excludes leakage');
+});
+
+test('MAKEOS quality and maintenance do not imply unsupported capability or infinite reliability', () => {
+  assert.equal(engine.run('process-capability').text, 'ASSUMPTIONS UNVERIFIED');
+  assert.equal(engine.run('process-capability', { stable: 'yes' }).text, 'INDICES CALCULATED');
+  assert.ok(engine.run('process-capability', { mean: 10.2 }).values.cpk < 0);
+  const zero = engine.run('maintenance-availability', { failures: 0, downtime: 0 });
+  assert.equal(zero.values.mtbf, null); assert.equal(zero.values.mttr, null);
+  assert.equal(zero.values.availability, 100);
+  assert.ok(engine.run('maintenance-availability', { failures: 0 }).checks.some((c: any) => c.status === 'warn'));
+});
+
+test('MAKEOS shares inputs, preserves fine precision, links sources and fails visibly on invalid shared values', () => {
+  const { ui, document } = loadUi('?tool=fit-clearance&shaftMax=19.999');
+  const { t, r, sens } = ui.state();
+  assert.equal(document.title, 'Hole and Shaft Clearance Limits | KEVOS® MAKEOS');
+  assert.match(ui.summaryText(t, r), /KEVOS® MAKEOS/);
+  assert.equal(new URL(ui.shareUrl(t)).searchParams.get('shaftMax'), '19.999');
+  const html = ui.reportBody(t, r, sens);
+  assert.match(html, /KEVOS® MAKEOS/); assert.match(html, /<h2>References<\/h2>/);
+  assert.match(html, /href="https:\/\/eprintspublications\.npl\.co\.uk/);
+  assert.match(html, /0\.001/);
+  near(Number(runInContext('fmtPrimary("engineering", 0.00000123456789)', engine.ctx)), 0.0000012345679, 1e-14, 'small result precision');
+  const tinyGrowth = engine.run('thermal-growth', { length: 0.001, alpha: 1, initial: 20, final: 21 });
+  assert.ok(tinyGrowth.metrics.some((x: any) => x.value === '0.000000001 mm'), 'small non-zero metrics must not round to zero');
+  for (const search of ['?tool=shaft-torsion&outer=0', '?tool=shaft-torsion&outer=abc', '?tool=shaft-torsion&outer=', '?tool=stock-mass&shape=unknown', '?tool=bolt-circle&holes=4.5']) {
+    const state = loadUi(search).ui.state();
+    assert.equal(state.r.text, 'CHECK INPUTS'); assert.equal(state.sens.length, 0);
+    assert.equal(state.r.primary, undefined);
+  }
 });

@@ -9,7 +9,7 @@ import { runInNewContext } from 'node:vm';
 
 // Tool data, calculations and guides are plain browser scripts in public/tools/ (see tests/tools-calculators.test.ts).
 // The directory cards are also rendered here at build time so the tool names are crawlable and indexed by site search.
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos'];
 const sandbox: { window: Record<string, any> } = { window: {} };
 for (const kind of ['data', 'guides']) {
   for (const f of FILES) runInNewContext(readFileSync(join(process.cwd(), 'public', 'tools', `${kind}-${f}.js`), 'utf8'), sandbox);
@@ -18,7 +18,8 @@ const tools: Array<Record<string, any>> = sandbox.window.GOCORE_TOOLS;
 const guides: Record<string, any> = sandbox.window.WORKOS_GUIDES;
 const searchText = (t: Record<string, any>) => [t.name, t.category, t.question, t.description, ...(t.keywords || []), ...(guides[t.id]?.uses || []), ...(guides[t.id]?.users || [])].join(' ').toLowerCase();
 const TOOL_COUNT = tools.length;
-const CATEGORIES = ['Decide', 'Money', 'Projects', 'Operations', 'Manufacturing', 'Engineering', 'Quoting', 'Inventory', 'Improvement', 'Planning', 'Business'];
+const MAKEOS_COUNT = tools.filter((t) => t.collection === 'MAKEOS').length;
+const CATEGORIES = [...new Set(tools.map((t) => t.category))];
 const description =
   'KEVOS® WORKOS engineering, manufacturing, operations and commercial decision tools with feasibility checks, sensitivity analysis and exportable decision reports.';
 ---
@@ -32,16 +33,17 @@ const description =
             <p class="eyebrow">KEVOS® WORKOS</p>
             <h1>Tools for better decisions.</h1>
             <p class="lead">Engineering, manufacturing, operations and commercial decision tools. Each one explains its method, checks feasibility, tests sensitivity and produces a decision report you can share.</p>
+            <p><strong>MAKEOS engineering toolkit</strong> — {MAKEOS_COUNT} practical calculators for machining, design, fluid power, fabrication, quality and maintenance.</p>
             <div class="tools-meta" aria-label="Tool collection features"><span class="tools-pill">{TOOL_COUNT} decision tools</span><span class="tools-pill">Decision reports</span><span class="tools-pill">Sensitivity analysis</span><span class="tools-pill">No account</span><span class="tools-pill">Runs in your browser</span></div>
           </div>
           <div class="tools-intro__visual"><MotionVisual page="tools" priority /></div>
         </div>
         <div class="tools-search"><input id="tool-search" type="search" placeholder="What are you trying to work out?" aria-label="Search WORKOS tools" autocomplete="off" /><span class="tools-count" id="tool-count">{TOOL_COUNT} tools</span></div>
         <div class="chips" aria-label="Filter tools by category">
-          <button class="chip active" type="button" data-cat="All" aria-pressed="true">All</button>{CATEGORIES.map((c) => <button class="chip" type="button" data-cat={c} aria-pressed="false">{c}</button>)}
+          <button class="chip active" type="button" data-cat="All" aria-pressed="true">All</button><button class="chip" type="button" data-cat="MAKEOS" aria-pressed="false">MAKEOS toolkit</button>{CATEGORIES.map((c) => <button class="chip" type="button" data-cat={c} aria-pressed="false">{c}</button>)}
         </div>
       </div>
-      <div id="tool-directory"><div class="tool-grid" id="tool-grid">{tools.map((t) => <a class="tool-card" href={`/tools/?tool=${t.id}`} data-tool-id={t.id} data-category={t.category} data-search={searchText(t)}><span class="card-top"><span class="category-label">{t.category}</span></span><h2>{t.name}</h2><p>{t.question}</p><span class="card-link">Open tool →</span></a>)}<p class="tools-empty" id="tools-empty" hidden>No matching tool yet. Try another term or category.</p></div></div>
+      <div id="tool-directory"><div class="tool-grid" id="tool-grid">{tools.map((t) => <a class="tool-card" href={`/tools/?tool=${t.id}`} data-tool-id={t.id} data-category={t.category} data-collection={t.collection || 'WORKOS'} data-search={searchText(t)}><span class="card-top"><span class="category-label">{t.category}</span></span><h2>{t.name}</h2><p>{t.question}</p><span class="card-link">Open tool →</span></a>)}<p class="tools-empty" id="tools-empty" hidden>No matching tool yet. Try another term or category.</p></div></div>
       <section class="workspace" id="tool-workspace" hidden>
         <div class="workspace-head"><div><p class="eyebrow" id="tool-category">KEVOS® WORKOS</p><h2 id="tool-name">Tool</h2><p class="lead" id="tool-question"></p><p id="tool-description"></p></div><button class="btn secondary back-button" type="button" id="back-tools">← All tools</button></div>
         <div class="tool-layout">

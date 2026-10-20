@@ -89,6 +89,7 @@ function utilTone(u) {
 /** Format a primary value for display. */
 function fmtPrimary(fmt, v) {
   switch (fmt) {
+    case 'engineering': return new Intl.NumberFormat('en-AU', { maximumSignificantDigits: 8 }).format(v);
     case 'money': return money(v);
     case 'pct': return pct(v);
     case 'years': return `${num(v, 2)} years`;
