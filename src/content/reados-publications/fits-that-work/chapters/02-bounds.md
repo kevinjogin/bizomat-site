@@ -4,7 +4,7 @@ chapterSlug: calculate-the-dimensional-bounds
 order: 2
 title: "Calculate the dimensional bounds"
 description: "Build and check a signed worst-case tolerance stack, distinguish half-widths from total tolerances and test asymmetric limits without hidden assumptions."
-draft: true
+draft: false
 ---
 
 The first dimensional calculation should answer a direct question: can every permitted combination of component sizes satisfy the assembly limit under the stated model? This is a bounds question. It does not require a probability distribution or a claim about how frequently a supplier reaches a limit.

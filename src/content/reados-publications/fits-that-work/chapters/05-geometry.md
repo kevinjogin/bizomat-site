@@ -4,7 +4,7 @@ chapterSlug: connect-size-to-datums-and-geometry
 order: 5
 title: "Connect size to datums and geometry"
 description: "Identify the geometric assumptions hidden in a linear stack, relate measurements to functional references and calculate simple angular and radial effects."
-draft: true
+draft: false
 ---
 
 The gap model assumes parallel contact faces and an unambiguous axial measurement. Real parts have form, orientation and location variation as well as size variation. A scalar stack can remain perfectly calculated while omitting the mechanism that causes assembly difficulty.

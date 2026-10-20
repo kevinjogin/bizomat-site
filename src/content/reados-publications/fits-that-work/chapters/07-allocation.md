@@ -4,7 +4,7 @@ chapterSlug: spend-the-tolerance-budget-deliberately
 order: 7
 title: "Spend the tolerance budget deliberately"
 description: "Compare nominal shifts, tighter features, adjustment and selective assembly using functional margin, manufacturing effort and inspection consequences."
-draft: true
+draft: false
 ---
 
 Once a stack fails, the quickest response is often to tighten every dimension. That can produce an expensive drawing while leaving the underlying problem untouched. A better response identifies which change creates useful functional margin and what it asks of manufacturing, assembly and inspection.

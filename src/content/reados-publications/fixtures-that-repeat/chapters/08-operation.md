@@ -4,7 +4,7 @@ chapterSlug: make-correct-loading-and-changeover-repeatable
 order: 8
 title: "Make correct loading and changeover repeatable"
 description: "Turn fixture knowledge into controlled operating and changeover instructions, with clear checks for part identity, seating, program selection and abnormal conditions."
-draft: true
+draft: false
 ---
 
 A fixture is not ready for routine use while its reliable operation depends on the designer standing beside it. The contact map, loading sequence, permitted adjustments and abnormal-condition response must be visible in the production method.

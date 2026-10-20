@@ -4,7 +4,7 @@ chapterSlug: draw-the-load-path-before-sizing-the-clamp
 order: 3
 title: "Draw the load path before sizing the clamp"
 description: "Use a free-body model to calculate fixture reactions, detect contact loss and distinguish a useful static check from a complete workholding qualification."
-draft: true
+draft: false
 ---
 
 A clamp rating is meaningful only in a load path. The cutting force must travel through the workpiece, contacts, fixture body, fasteners and machine interface. If any link is absent or behaves differently from the model, a large number on the clamp does not complete the design.

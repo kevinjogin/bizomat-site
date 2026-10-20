@@ -4,7 +4,7 @@ chapterSlug: control-deflection-as-well-as-strength
 order: 5
 title: "Control deflection as well as strength"
 description: "Screen fixture deflection with a simple beam model, compare support and thickness changes, and identify joint and workpiece compliance that the model omits."
-draft: true
+draft: false
 ---
 
 A fixture can remain far below a material's strength limit and still move enough to spoil the part. Strength asks whether a component survives a load under the relevant failure criteria. Stiffness asks how much its position changes while carrying that load.

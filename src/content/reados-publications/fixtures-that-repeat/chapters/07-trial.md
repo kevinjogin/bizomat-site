@@ -4,7 +4,7 @@ chapterSlug: separate-fixture-repeatability-from-measurement-noise
 order: 7
 title: "Separate fixture repeatability from measurement noise"
 description: "Design a controlled reload trial, preserve operator and sequence information, and distinguish fixture behaviour from measurement variation and production capability."
-draft: true
+draft: false
 ---
 
 A trial should reveal what the fixture does repeatedly, including the conditions that make it behave differently. Measuring one carefully loaded part once establishes very little about that behaviour.

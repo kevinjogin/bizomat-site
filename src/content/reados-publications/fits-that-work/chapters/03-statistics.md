@@ -4,7 +4,7 @@ chapterSlug: use-statistics-without-losing-the-limits
 order: 3
 title: "Use statistics without losing the limits"
 description: "Compare worst-case and statistical stacks, test distribution and correlation assumptions, and recognise why a drawing tolerance is not a standard deviation."
-draft: true
+draft: false
 ---
 
 A worst-case stack can look conservative when most production lies near the middle of each component tolerance. That observation may justify investigating a statistical model. It does not justify replacing the sum of tolerances with a square root and calling the assembly proven.

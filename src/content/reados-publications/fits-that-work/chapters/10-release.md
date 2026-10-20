@@ -4,7 +4,7 @@ chapterSlug: assemble-a-defensible-release-decision
 order: 10
 title: "Assemble a defensible release decision"
 description: "Complete the stop-cartridge case, reconcile calculation and inspection evidence, and state exactly what can be released and what remains outside the approved envelope."
-draft: true
+draft: false
 ---
 
 The purpose of a tolerance investigation is a decision that another competent person can understand. A folder containing calculations, drawings and inspection results is not enough if those documents refer to different configurations or support different claims.

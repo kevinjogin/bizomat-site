@@ -4,7 +4,7 @@ chapterSlug: make-the-toolpath-and-fixture-agree
 order: 6
 title: "Make the toolpath and fixture agree"
 description: "Review complete tool envelopes and reference transfers, calculate an illustrative feed time and account for the handling and inspection work around the cut."
-draft: true
+draft: false
 ---
 
 A fixture is only useful when the complete machining operation can be performed around it. The cutter must reach the work, the holder must clear the clamps, chips must leave the contacts and the finished part must be removable.

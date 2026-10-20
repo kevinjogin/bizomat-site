@@ -4,7 +4,7 @@ chapterSlug: define-the-function-before-the-tolerance
 order: 1
 title: "Define the function before the tolerance"
 description: "Turn an assembly requirement into a measurable quantity, an operating envelope and an explicit model before allocating dimensional tolerances."
-draft: true
+draft: false
 ---
 
 A drawing can be beautifully dimensioned while leaving the important question unanswered: what must still work when the parts, environment and assembly method vary? Starting with a favourite tolerance makes this question harder. It commits manufacturing effort before the function has been translated into a limit.

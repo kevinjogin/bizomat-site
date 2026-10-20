@@ -4,7 +4,7 @@ chapterSlug: carry-the-stack-through-temperature
 order: 4
 title: "Carry the stack through temperature"
 description: "Calculate differential thermal expansion, evaluate dimensional limits at operating temperature and identify the conditions that invalidate a uniform-temperature model."
-draft: true
+draft: false
 ---
 
 An assembly may pass a dimensional check in a controlled room and behave differently after it warms. The question is not simply whether metal expands. It is which lengths expand, how their changes combine, and whether the components actually share the temperature assumed in the calculation.

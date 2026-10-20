@@ -4,7 +4,7 @@ chapterSlug: make-measurement-and-acceptance-agree
 order: 6
 title: "Make measurement and acceptance agree"
 description: "Build a transparent uncertainty budget, apply an explicit guard-band decision rule and distinguish a measured result from a manufacturing tolerance."
-draft: true
+draft: false
 ---
 
 A digital display presents a number with reassuring clarity. It does not reveal every influence on that number. Calibration, contact, alignment, repeatability, temperature and the definition of the quantity can all affect the result.

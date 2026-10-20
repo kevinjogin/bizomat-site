@@ -4,7 +4,7 @@ chapterSlug: control-wear-spares-and-return-to-service
 order: 9
 title: "Control wear, spares and return to service"
 description: "Connect fixture wear limits to dimensional function, evaluate a simple wear trend and plan spare parts and requalification without treating forecasts as guarantees."
-draft: true
+draft: false
 ---
 
 A fixture's geometry changes through use, cleaning, adjustment and repair. Wear can increase clearance gradually; an impact can change a locator immediately. Maintenance should therefore protect the function the fixture was qualified to perform.

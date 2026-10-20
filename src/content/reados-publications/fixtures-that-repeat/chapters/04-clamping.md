@@ -4,7 +4,7 @@ chapterSlug: choose-clamping-force-that-reaches-the-part
 order: 4
 title: "Choose clamping force that reaches the part"
 description: "Evaluate friction, strap-clamp leverage and contact pressure, then specify how the required clamping condition is achieved and checked in practice."
-draft: true
+draft: false
 ---
 
 The force used in a fixture calculation must be the force delivered to the workpiece in the relevant direction. It is not automatically the bolt tension, handle effort, cylinder force or largest number in a catalogue.

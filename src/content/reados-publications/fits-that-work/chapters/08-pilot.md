@@ -4,7 +4,7 @@ chapterSlug: make-a-pilot-answer-the-right-question
 order: 8
 title: "Make a pilot answer the right question"
 description: "Plan a dimensional pilot, retain sequence and context, distinguish process shifts from measurement effects and report capability claims with their limits."
-draft: true
+draft: false
 ---
 
 A pilot can establish that the proposed process makes acceptable parts under the conditions actually exercised. It can also reveal failure mechanisms that a calculation omitted. It cannot establish every future operating condition simply because all of its samples passed.

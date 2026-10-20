@@ -4,7 +4,7 @@ chapterSlug: define-the-fixture-as-a-production-method
 order: 1
 title: "Define the fixture as a production method"
 description: "Write a fixture brief around functional references, process loads, operator actions and acceptance evidence before selecting plates and clamps."
-draft: true
+draft: false
 ---
 
 A fixture project often begins with an appealing sketch: a base plate, a few locators and quick clamps. The sketch can hide a missing production method. Who establishes the reference, how the blank arrives, which forces act during the cut and how the result is checked are all part of the design.

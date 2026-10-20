@@ -4,7 +4,7 @@ chapterSlug: preserve-the-evidence-when-the-design-changes
 order: 9
 title: "Preserve the evidence when the design changes"
 description: "Evaluate coating, material, supplier and drawing changes against the assembly model, and maintain revision and effectivity records that protect interchangeability."
-draft: true
+draft: false
 ---
 
 A successful review is a statement about a particular design, process and set of conditions. It is not permanent approval of every part that later carries a familiar description. Changes can invalidate the reasoning without changing the nominal dimension displayed on the first page of a drawing.

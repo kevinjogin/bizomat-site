@@ -4,7 +4,7 @@ chapterSlug: qualify-the-fixture-and-the-business-case
 order: 10
 title: "Qualify the fixture and the business case"
 description: "Complete a fixture review, distinguish unresolved technical gates from economic estimates and calculate a transparent batch-level capacity and payback comparison."
-draft: true
+draft: false
 ---
 
 A fixture should be released as a defined configuration performing a defined operation under a defined method. A good part and a favourable payback estimate are useful observations, but neither closes missing evidence about loads, deformation or repeatability.

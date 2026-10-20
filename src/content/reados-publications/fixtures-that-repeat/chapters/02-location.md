@@ -4,7 +4,7 @@ chapterSlug: locate-the-part-without-overconstraint
 order: 2
 title: "Locate the part without overconstraint"
 description: "Map rigid-body freedoms, separate locating contacts from supporting contacts and evaluate the effects of locator spacing, clearance and loading sequence."
-draft: true
+draft: false
 ---
 
 A part should settle into one intended position without being forced to reconcile conflicting contacts. If it rocks until a clamp bends it flat, the final position depends on clamp force, part stiffness and contact sequence. Those are poor hidden substitutes for a location strategy.
