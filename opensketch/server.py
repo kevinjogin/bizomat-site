@@ -143,7 +143,7 @@ class BodyLimit:
     def cap(path: str) -> int | None:
         if path.startswith(OWN_BODY_LIMIT):
             return None
-        return BODY_MAX if path.startswith(("/api/", "/mcp")) else BODY_SMALL
+        return BODY_MAX if path.startswith(("/api/", "/mcp", "/solidworks/mcp")) else BODY_SMALL
 
     async def __call__(self, scope, receive, send):
         cap = self.cap(scope.get("path", "")) if scope["type"] == "http" else None
@@ -1526,10 +1526,10 @@ def _sw_person(request: Request):
     tok = authz[7:].strip() if authz[:7].lower() == "bearer " else ""
     ok, user = swbridge.resolve(tok)
     if not ok:
+        page = f"{auth.public_url(dict(request.headers))}/solidworks"
         if swbridge.retired(tok):
-            raise HTTPException(401, "A new SOLIDWORKS key was made, so this one stopped working. Paste the new key from "
-                                     "OpenSketch > Connect AI > SOLIDWORKS.")
-        raise HTTPException(401, "This SOLIDWORKS key is not valid. Copy the key again from OpenSketch > Connect AI > SOLIDWORKS.")
+            raise HTTPException(401, f"A new SOLIDWORKS key was made, so this one stopped working. Paste the new key from {page}")
+        raise HTTPException(401, f"This SOLIDWORKS key is not valid. Copy the key again from {page}")
     return user
 
 
@@ -1655,6 +1655,39 @@ def api_sw_download():
         raise HTTPException(404, "The SOLIDWORKS add-in is not on this server.")
     return FileResponse(SW_DOWNLOAD, filename="OpenSketch-SOLIDWORKS.zip", media_type="application/zip",
                         headers={"Cache-Control": "no-cache"})
+
+
+# ----------------------------------------------------------------------------- OpenSketch for SOLIDWORKS
+# The connector on its own (sw_connector.py): one page to set it up, no OpenSketch app. OPENSKETCH_HOME=solidworks
+# (or a host listed in OPENSKETCH_SOLIDWORKS_HOSTS) makes it the site's home page too.
+
+def _solidworks_home(request: Request) -> bool:
+    if os.environ.get("OPENSKETCH_HOME", "").strip().lower() == "solidworks":
+        return True
+    hosts = {h.strip().lower() for h in os.environ.get("OPENSKETCH_SOLIDWORKS_HOSTS", "").split(",") if h.strip()}
+    host = (request.headers.get("x-forwarded-host") or request.headers.get("host") or "").split(":")[0].lower()
+    return bool(hosts) and host in hosts
+
+
+@app.get("/solidworks")
+async def solidworks_page(request: Request):
+    from . import sw_page
+    return await _text_page(request.scope, sw_page.page(), "text/html; charset=utf-8",
+                            {"Cache-Control": "no-store", "X-Frame-Options": "DENY", "Referrer-Policy": "same-origin"})
+
+
+@app.get("/api/solidworks")
+def api_solidworks(request: Request):
+    """Everything the SOLIDWORKS page shows: the add-in's address and key, whether SOLIDWORKS is connected, the
+    connector address for AI apps (and the private one for apps that cannot sign in), the AI apps connected to it."""
+    from . import mcpauth, sw_connector, swbridge
+    base = auth.public_url(dict(request.headers))
+    u = _user(request)
+    apps = [a for a in mcpauth.grants_for(u["id"] if u else "local") if a["endpoint"] in (sw_connector.PATH, "")]
+    return {"server": base, "key": swbridge.key_for(u), "status": swbridge.status(u), "download": SW_DOWNLOAD.is_file(),
+            "url": base + sw_connector.PATH, "private_url": f"{base}{sw_connector.PATH}/{auth.mcp_token_for(u)}",
+            "signin": auth.mode() != "open", "apps": apps,
+            "user": {"name": u.get("name"), "email": u.get("email")} if u and not u.get("legacy") else None}
 
 
 class ReviewRequest(BaseModel):
@@ -1800,8 +1833,15 @@ def oauth_resource(request: Request):
     return JSONResponse(mcpauth.protected_resource(_hdrs(request)), headers=OAUTH_CORS)
 
 
+@app.get("/.well-known/oauth-protected-resource/solidworks/mcp")
+def oauth_resource_solidworks(request: Request):
+    from . import mcpauth
+    return JSONResponse(mcpauth.protected_resource(_hdrs(request), "/solidworks/mcp"), headers=OAUTH_CORS)
+
+
 @app.get("/.well-known/oauth-authorization-server")
 @app.get("/.well-known/oauth-authorization-server/mcp")
+@app.get("/.well-known/oauth-authorization-server/solidworks/mcp")
 def oauth_server(request: Request):
     from . import mcpauth
     return JSONResponse(mcpauth.server_metadata(_hdrs(request)), headers=OAUTH_CORS)
@@ -1877,7 +1917,8 @@ async def oauth_authorize(request: Request):
     u = _user(request)
     uid = u["id"] if u else "local"
     return _auth_html(auth.consent_page(rec["name"], req["redirect_uri"], u, mcpauth.sign_request(req, uid),
-                                        rec.get("host", "") if rec.get("cimd") else ""))
+                                        rec.get("host", "") if rec.get("cimd") else "",
+                                        mcpauth.resource_path(req["resource"])))
 
 
 @app.post("/oauth/authorize")
@@ -1931,11 +1972,10 @@ def api_app_disconnect(grant_id: str, request: Request):
 
 
 # MCP (Streamable HTTP): /mcp takes a Bearer token from the sign-in above; /mcp/<key> is the older private
-# address (the key in the path). Routed before the static files.
-app.router.routes.append(Route("/mcp", endpoint=mcp_server.bearer_app(), methods=["GET", "POST", "DELETE", "OPTIONS"]))
-app.router.routes.append(Route("/mcp/", endpoint=mcp_server.bearer_app(), methods=["GET", "POST", "DELETE", "OPTIONS"]))
-app.router.routes.append(Route("/mcp/{token}", endpoint=mcp_server.http_app(), methods=["GET", "POST", "DELETE"]))
-app.router.routes.append(Route("/mcp/{token}/", endpoint=mcp_server.http_app(), methods=["GET", "POST", "DELETE"]))
+# address (the key in the path). The SOLIDWORKS connector (sw_connector.py) has the same pair at /solidworks/mcp.
+# Routed before the static files.
+for _ep in mcp_server.endpoints():
+    app.router.routes.extend(_ep.routes())
 
 
 # ----------------------------------------------------------------------------- installable app (PWA)
@@ -2071,6 +2111,8 @@ async def manifest(request: Request):
 
 @app.get("/")
 async def index(request: Request):
+    if _solidworks_home(request):
+        return await solidworks_page(request)
     # the page knows its own version, so a tab opened from the service worker's copy sees it is out of date
     page = (STATIC / "index.html").read_text().replace("__VERSION__", VERSION, 1)
     page = _preload_modules(page)

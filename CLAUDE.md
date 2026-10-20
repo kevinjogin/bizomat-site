@@ -55,6 +55,36 @@ assemblies only when a part changes.
 
 ## Current state (2026-10-19, v0.7: whole-project audit fixes)
 
+OpenSketch for SOLIDWORKS, the connector on its own (2026-10-20, YZ: "just make a connector for solidworks, no
+opensketch gui ... as a side project; potentially we can drop the gui entirely later; same branding"):
+- Product: one connector address `<site>/solidworks/mcp` an AI app (Claude, ChatGPT...) adds, serving only the
+  SOLIDWORKS tools, and one page `/solidworks` to set it up. The OpenSketch app is untouched and keeps its own `/mcp`.
+- `sw_connector.py`: a second MCPServer ("OpenSketch for SOLIDWORKS", own INSTRUCTIONS) with every `sw_` tool copied
+  from `mcp_server.mcp` (same functions, so the two never drift; a new `sw_` tool shows up on both) plus its own
+  `request_upload` (says sw_import). 25 tools.
+- `mcp_server.Endpoint(server, path)`: the token gate (`path/<key>`), the Bearer gate (`path`), the session manager and
+  routes for one MCP server; `endpoints()` = /mcp and /solidworks/mcp, all routed in server.py and run by
+  `lifespan_context()`. `bearer_app()` / `http_app()` still give /mcp's gates.
+- OAuth (`mcpauth.RESOURCES`): each endpoint is its own resource with its own protected-resource metadata
+  (`/.well-known/oauth-protected-resource/solidworks/mcp`, name "OpenSketch for SOLIDWORKS"); the grant keeps the
+  resource the app asked for and `user_for_access(tok, path)` refuses a token on the other endpoint. No resource, or
+  only the server = either (`resource_path` ""); grants from before have no "resource" path of their own and count as
+  /mcp. "One connection per person and app" is now per endpoint, so Claude connected to both keeps both. The consent
+  page and the sign-in pitch ("Your AI, building in SOLIDWORKS.", when `next` mentions solidworks) speak SOLIDWORKS.
+- `/solidworks` (`sw_page.py`, the sign-in pages' look: dark, gradient band, text wordmark + "for SOLIDWORKS"): four
+  steps (download the add-in, address + key with Show / Copy / New key, the connector address with the private
+  `/solidworks/mcp/<key>` under "Your app cannot sign in?" and the AI apps connected to this endpoint with Disconnect,
+  the self-test prompt), a live status pill ("Connected: SOLIDWORKS 2022 on PC"), steps ticked as they are done.
+  `GET /api/solidworks` gives it all in one call (polled every 3 s while the page is visible). Checked in Chromium at
+  1280 and 390 wide (no sideways scroll, no console errors) with a fake add-in and grants.
+- Home switch for when the GUI is dropped: `OPENSKETCH_HOME=solidworks`, or a host in `OPENSKETCH_SOLIDWORKS_HOSTS`
+  (comma list, e.g. its own domain on the same Fly app), makes `/` the SOLIDWORKS page.
+- Messages that sent people to "OpenSketch > Connect AI > SOLIDWORKS" (swbridge NOT_CONNECTED, the key errors, the
+  add-in's connect window, installer, README) now point at the SOLIDWORKS page. Only text changed in the C#.
+- Tests: `tests/test_sw_connector.py` (5: only SOLIDWORKS tools and its instructions, per-endpoint sign-in incl.
+  refresh and both connections kept, old grants = /mcp, the private address, the page / API / home switch).
+- Not done: nothing has run in a real SOLIDWORKS yet (see Known limits), so the connector is as far as the add-in.
+
 Room for jobs (2026-10-20, YZ's screenshot: "can u automate this" on the imported DS2200_Lavilock_Option_2 (17 parts)
 ended in "Server error: The job stopped unexpectedly (it may have run out of memory)" during find_mate_candidates).
 The same call through MCP finished (26 candidates), and locally the job peaks at ~500 MB resident (OpenCascade ~430 MB
@@ -1278,6 +1308,8 @@ history (BRepAlgoAPI Modified/Generated) instead of geometric matching; a replay
 timeline; a hostile-parameters fuzz test over every tool.
 
 00. SOLIDWORKS add-in on YZ's work PC: install, connect, sw_selftest (three stages), fix from the report and log.
+    Do it through OpenSketch for SOLIDWORKS: <site>/solidworks, then the connector <site>/solidworks/mcp in Claude.
+    If it works: its own domain (OPENSKETCH_SOLIDWORKS_HOSTS), then decide on dropping the GUI.
 0. Run an exported macro in SOLIDWORKS 2022 (press demo first) and fix what the log shows; then
    revolves and cross holes as features where the engine allows.
 1. Run the AI against the live API with an assembly prompt and tune the system prompt (mate

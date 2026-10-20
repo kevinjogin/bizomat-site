@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import base64
 import binascii
+import contextlib
 import contextvars
 import json
 import re
@@ -1087,9 +1088,6 @@ from . import sw_selftest  # noqa: E402,F401
 
 # ----------------------------------------------------------------------------- HTTP
 
-_http_app = None
-
-
 class _TokenGate:
     """ASGI app (a class, so Starlette routes it as ASGI, not as a request handler): 404 unless the token
     in the path is right."""
@@ -1111,9 +1109,13 @@ class _TokenGate:
 
 
 class _BearerGate:
-    """ASGI app for /mcp: the AI app signed in (mcpauth.py) and sends `Authorization: Bearer <token>`.
-    No or a bad token: 401 with the WWW-Authenticate pointer the MCP spec asks for, so the app starts sign-in.
-    A server without sign-in (open mode) needs no token."""
+    """ASGI app for /mcp (or another endpoint's path): the AI app signed in (mcpauth.py) and sends
+    `Authorization: Bearer <token>`, a token made for this endpoint. No or a bad token: 401 with the
+    WWW-Authenticate pointer the MCP spec asks for, so the app starts sign-in. A server without sign-in (open mode)
+    needs no token."""
+
+    def __init__(self, endpoint: "Endpoint"):
+        self.endpoint = endpoint
 
     async def __call__(self, scope, receive, send):
         from . import mcpauth
@@ -1127,18 +1129,19 @@ class _BearerGate:
                 (b"access-control-max-age", b"600")]})
             await send({"type": "http.response.body", "body": b""})
             return
+        path = self.endpoint.path
         if auth.mode() == "open":
             ok, user = True, None
         else:
             authz = headers.get("authorization", "")
             tok = authz[7:].strip() if authz[:7].lower() == "bearer " else ""
-            ok, user = mcpauth.user_for_access(tok) if tok else (False, None)
+            ok, user = mcpauth.user_for_access(tok, path) if tok else (False, None)
             if not ok:
                 body = json.dumps({"error": "invalid_token" if tok else "unauthorized",
                                    "error_description": "Sign in to OpenSketch to use it from this app."}).encode()
                 await send({"type": "http.response.start", "status": 401, "headers": cors + [
                     (b"content-type", b"application/json"),
-                    (b"www-authenticate", mcpauth.challenge(headers, "invalid_token" if tok else "").encode())]})
+                    (b"www-authenticate", mcpauth.challenge(headers, "invalid_token" if tok else "", path).encode())]})
                 await send({"type": "http.response.body", "body": body})
                 return
 
@@ -1148,41 +1151,68 @@ class _BearerGate:
             await send(msg)
         token = _mcp_user.set(user)
         try:
-            await http_app().inner(scope, receive, send_cors)
+            await self.endpoint.token_gate.inner(scope, receive, send_cors)
         finally:
             _mcp_user.reset(token)
 
 
-_bearer_app = None
+class Endpoint:
+    """One MCP server on the web server: `path` (an AI app signed in, Bearer token) and `path`/<key> (the private
+    address). OpenSketch's own tools are at /mcp; the SOLIDWORKS connector (sw_connector.py) at /solidworks/mcp."""
+
+    def __init__(self, server: MCPServer, path: str):
+        self.server, self.path = server, path
+        self.token_gate = _TokenGate(None)
+        self.bearer_gate = _BearerGate(self)
+        self.configure()
+
+    def configure(self):
+        # The SDK's session manager has a single-use lifespan. Keep the mounted gates stable while
+        # creating a fresh manager for each application startup (including repeated test lifespans).
+        self.server.streamable_http_app(stateless_http=True, json_response=True,
+                                        max_request_body_size=4 * ((MAX_IMPORT_BYTES + 2) // 3) + 65536,
+                                        transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False))
+        self.token_gate.inner = StreamableHTTPASGIApp(self.server.session_manager)
+
+    def routes(self) -> list:
+        from starlette.routing import Route
+        signed, keyed = ["GET", "POST", "DELETE", "OPTIONS"], ["GET", "POST", "DELETE"]
+        return [Route(self.path, endpoint=self.bearer_gate, methods=signed),
+                Route(self.path + "/", endpoint=self.bearer_gate, methods=signed),
+                Route(self.path + "/{token}", endpoint=self.token_gate, methods=keyed),
+                Route(self.path + "/{token}/", endpoint=self.token_gate, methods=keyed)]
+
+
+_endpoint: Endpoint | None = None
+
+
+def endpoint() -> Endpoint:
+    global _endpoint
+    if _endpoint is None:
+        _endpoint = Endpoint(mcp, "/mcp")
+    return _endpoint
 
 
 def bearer_app():
-    global _bearer_app
-    if _bearer_app is None:
-        _bearer_app = _BearerGate()
-    return _bearer_app
+    return endpoint().bearer_gate
 
 
 def http_app():
-    """The ASGI app for /mcp/<token> (token checked here) and the session manager to run in the lifespan."""
-    global _http_app
-    if _http_app is None:
-        _http_app = _TokenGate(None)
-        _configure_http()
-    return _http_app
+    """The ASGI app for /mcp/<token> (token checked here)."""
+    return endpoint().token_gate
 
 
-def _configure_http():
-    # The SDK's session manager has a single-use lifespan. Keep the mounted gate stable while
-    # creating a fresh manager for each application startup (including repeated test lifespans).
-    mcp.streamable_http_app(stateless_http=True, json_response=True,
-                            max_request_body_size=4 * ((MAX_IMPORT_BYTES + 2) // 3) + 65536,
-                            transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False))
-    _http_app.inner = StreamableHTTPASGIApp(mcp.session_manager)
+def endpoints() -> list[Endpoint]:
+    """Every MCP endpoint this server serves."""
+    from . import sw_connector
+    return [endpoint(), sw_connector.endpoint()]
 
 
-def lifespan_context():
-    """Run the MCP session manager while the server runs."""
-    http_app()
-    _configure_http()
-    return mcp.session_manager.run()
+@contextlib.asynccontextmanager
+async def lifespan_context():
+    """Run every endpoint's MCP session manager while the server runs."""
+    async with contextlib.AsyncExitStack() as stack:
+        for ep in endpoints():
+            ep.configure()
+            await stack.enter_async_context(ep.server.session_manager.run())
+        yield

@@ -127,18 +127,30 @@ def base_url(headers: dict) -> str:
     return auth.public_url(headers).rstrip("/")
 
 
-def resource_url(headers: dict) -> str:
-    return base_url(headers) + "/mcp"
+# The MCP endpoints an AI app can sign in to, by path: OpenSketch's own tools and the SOLIDWORKS connector
+# (sw_connector.py). A token is made for one of them (the `resource` the app asks for) and works only there.
+RESOURCES = {"/mcp": "OpenSketch", "/solidworks/mcp": "OpenSketch for SOLIDWORKS"}
 
 
-def resource_metadata_url(headers: dict) -> str:
-    return base_url(headers) + "/.well-known/oauth-protected-resource/mcp"
+def resource_url(headers: dict, path: str = "/mcp") -> str:
+    return base_url(headers) + path
 
 
-def protected_resource(headers: dict) -> dict:
-    return {"resource": resource_url(headers), "authorization_servers": [base_url(headers)],
-            "scopes_supported": [SCOPE], "bearer_methods_supported": ["header"], "resource_name": "OpenSketch",
+def resource_metadata_url(headers: dict, path: str = "/mcp") -> str:
+    return base_url(headers) + "/.well-known/oauth-protected-resource" + path
+
+
+def protected_resource(headers: dict, path: str = "/mcp") -> dict:
+    return {"resource": resource_url(headers, path), "authorization_servers": [base_url(headers)],
+            "scopes_supported": [SCOPE], "bearer_methods_supported": ["header"], "resource_name": RESOURCES[path],
             "resource_documentation": base_url(headers) + "/privacy"}
+
+
+def resource_path(resource: str | None) -> str:
+    """Which endpoint a grant's resource is for: "/mcp", "/solidworks/mcp", or "" (the app named only the server,
+    or no resource at all: any endpoint)."""
+    p = urlsplit(resource or "").path.rstrip("/")
+    return p if p in RESOURCES else ""
 
 
 def server_metadata(headers: dict) -> dict:
@@ -154,10 +166,10 @@ def server_metadata(headers: dict) -> dict:
             "service_documentation": b + "/privacy"}
 
 
-def challenge(headers: dict, error: str = "") -> str:
-    """The WWW-Authenticate value for a 401 from the MCP endpoint."""
+def challenge(headers: dict, error: str = "", path: str = "/mcp") -> str:
+    """The WWW-Authenticate value for a 401 from an MCP endpoint."""
     extra = f', error="{error}"' if error else ""
-    return f'Bearer resource_metadata="{resource_metadata_url(headers)}", scope="{SCOPE}"{extra}'
+    return f'Bearer resource_metadata="{resource_metadata_url(headers, path)}", scope="{SCOPE}"{extra}'
 
 
 # ----------------------------------------------------------------------------- clients (RFC 7591)
@@ -446,13 +458,16 @@ def check_authorize(params: dict, headers: dict) -> tuple[dict, dict]:
     if params.get("code_challenge_method") != "S256" or not (43 <= len(params.get("code_challenge", "")) <= 128):
         raise OAuthError("invalid_request", "The app did not protect the sign-in with PKCE (S256).")
     res = params.get("resource")
-    if res and _canon(res) not in (_canon(resource_url(headers)), _canon(base_url(headers))):
+    known = {_canon(resource_url(headers, p)): resource_url(headers, p) for p in RESOURCES}
+    if res and _canon(res) not in known and _canon(res) != _canon(base_url(headers)):
         raise OAuthError("invalid_target", "The app asked to sign in to a different server.")
+    # the endpoint the app named; none (or only the server) = any endpoint, as before there were two
+    target = known.get(_canon(res or ""), base_url(headers))
     scope = params.get("scope") or SCOPE
     if any(s not in (SCOPE, "openid", "profile", "email", "offline_access") for s in scope.split()):
         raise OAuthError("invalid_scope", f"The app asked for more than OpenSketch offers (scope {SCOPE}).")
     req = {"client_id": params["client_id"], "redirect_uri": redirect, "state": state,
-           "code_challenge": params["code_challenge"], "resource": resource_url(headers), "scope": SCOPE}
+           "code_challenge": params["code_challenge"], "resource": target, "scope": SCOPE}
     return rec, req
 
 
@@ -529,7 +544,8 @@ def token(form: dict, basic: str = "") -> dict:
             calc = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).decode().rstrip("=")
             if not verifier or not _eq(calc, c["code_challenge"]):
                 raise OAuthError("invalid_grant", "The PKCE code_verifier does not match.")
-            if form.get("resource") and _canon(form["resource"]) not in (_canon(c["resource"]), _canon(c["resource"].rsplit("/mcp", 1)[0])):
+            if form.get("resource") and _canon(form["resource"]) not in (
+                    _canon(c["resource"]), _canon(c["resource"].rsplit("/mcp", 1)[0]), _canon(_origin(c["resource"]))):
                 raise OAuthError("invalid_target", "This server only issues tokens for its own MCP endpoint.")
             if not _user_exists(c["user"]):
                 raise OAuthError("invalid_grant", "That OpenSketch account no longer exists.")
@@ -540,7 +556,9 @@ def token(form: dict, basic: str = "") -> dict:
             host = r.hostname or r.scheme
             # one connection per person and app: the same client, or the same app registered again (Claude
             # registers on every connect) returning to the same public https host
-            same = [k for k, g in d["grants"].items() if g["user"] == c["user"] and (
+            # ... for the same endpoint: Claude connected to OpenSketch and to the SOLIDWORKS connector keeps both
+            same = [k for k, g in d["grants"].items() if g["user"] == c["user"]
+                    and _grant_path(g) == resource_path(c["resource"]) and (
                 g["client_id"] == cid or (r.scheme == "https" and host not in ("localhost", "127.0.0.1", "::1")
                                           and g.get("name") == rec["name"] and g.get("host") == host))]
             for k in same:
@@ -584,8 +602,19 @@ def revoke(form: dict, basic: str = "") -> None:
             _save(d)
 
 
-def user_for_access(tok: str) -> tuple[bool, dict | None]:
-    """(valid, person) for a Bearer token on the MCP endpoint. Person None = a server without accounts."""
+def _origin(uri: str) -> str:
+    u = urlsplit(uri or "")
+    return f"{u.scheme}://{u.netloc}"
+
+
+def _grant_path(g: dict) -> str:
+    """The endpoint a grant is for ("" = any). Grants from before the SOLIDWORKS connector are all for /mcp."""
+    return resource_path(g["resource"]) if "resource" in g else "/mcp"
+
+
+def user_for_access(tok: str, path: str = "/mcp") -> tuple[bool, dict | None]:
+    """(valid, person) for a Bearer token on the MCP endpoint at `path`. A token made for the other endpoint is
+    not valid here. Person None = a server without accounts."""
     if not tok or not tok.startswith("osa_") or len(tok) > 100:
         return False, None
     d = _view()
@@ -594,7 +623,7 @@ def user_for_access(tok: str) -> tuple[bool, dict | None]:
     if not a or a["exp"] < now:
         return False, None
     g = d["grants"].get(a["grant"])
-    if not g:
+    if not g or _grant_path(g) not in ("", path):
         return False, None
     from . import accounts
     if g["user"] in ("server", "local"):
@@ -620,8 +649,8 @@ def user_for_access(tok: str) -> tuple[bool, dict | None]:
 
 def grants_for(user_id: str) -> list[dict]:
     d = _view()
-    out = [{"id": k, "name": g["name"], "host": g.get("host", ""), "created": g["created"], "last_used": g.get("last_used")}
-           for k, g in d["grants"].items() if g["user"] == user_id]
+    out = [{"id": k, "name": g["name"], "host": g.get("host", ""), "created": g["created"], "last_used": g.get("last_used"),
+            "endpoint": _grant_path(g)} for k, g in d["grants"].items() if g["user"] == user_id]
     return sorted(out, key=lambda g: -(g["last_used"] or 0))
 
 

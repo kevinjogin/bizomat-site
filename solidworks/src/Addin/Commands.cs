@@ -55,7 +55,7 @@ namespace OpenSketch.Sw
                     case "set_parameter": return SetParameter(a, null);
                     case "set_equation": return SetEquation(a, null);
                     default:
-                        throw new UserError($"This add-in does not know the command '{op}'. Update it (OpenSketch > Connect AI > SOLIDWORKS > Download).");
+                        throw new UserError($"This add-in does not know the command '{op}'. Update it: download it again from the OpenSketch SOLIDWORKS page.");
                 }
             }
         }

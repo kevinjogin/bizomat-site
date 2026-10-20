@@ -13,7 +13,8 @@ A tool calls `await call(person, op, args)` and gets the result (and any uploade
 per person: a new hello replaces the old session (the old one is told to stop).
 
 The key is per person: HMAC of a data-folder secret over the person's id and a counter, so "New key" in the
-Connect AI dialog voids the old key. It reaches only the bridge (not files, not the MCP endpoint).
+SOLIDWORKS page (or the app's Connect AI dialog) voids the old key. It reaches only the bridge (not files, not the
+MCP endpoints).
 """
 
 from __future__ import annotations
@@ -84,7 +85,7 @@ def key_for(user: dict | None) -> str:
 
 
 def new_key(user: dict | None) -> str:
-    """Void the person's key and make a new one (Connect AI > SOLIDWORKS > New key)."""
+    """Void the person's key and make a new one (the SOLIDWORKS page's New key, or Connect AI > SOLIDWORKS)."""
     pid = person_id(user)
     _retired[hashlib.sha256(key_for(user).encode()).hexdigest()] = time.time()
     with _lock:
@@ -298,7 +299,7 @@ def status(user: dict | None) -> dict:
 
 NOT_CONNECTED = ("SOLIDWORKS is not connected. On the PC: open SOLIDWORKS, then Tools > OpenSketch > Connect to "
                  "Claude (or run OpenSketchSW.exe, which attaches to the open SOLIDWORKS). The add-in and the key "
-                 "are in OpenSketch > Connect AI > SOLIDWORKS.")
+                 "are on OpenSketch's SOLIDWORKS page (/solidworks on the OpenSketch site).")
 
 
 async def call(user: dict | None, op: str, args: dict | None = None, timeout: float = DEFAULT_TIMEOUT,

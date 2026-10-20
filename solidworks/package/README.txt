@@ -3,9 +3,9 @@ OpenSketch for SOLIDWORKS
 
 Claude builds native SOLIDWORKS parts and assemblies on this PC: sketches with relations and
 dimensions, extrudes, revolves, fillets, patterns, components and mates, in your own files.
-It works through OpenSketch: Claude (with the OpenSketch connector) sends the work to the
-OpenSketch server, and this add-in fetches it from there. The PC only makes outgoing HTTPS
-connections, so it needs no admin rights and no open ports.
+It works through OpenSketch: your AI app (Claude, ChatGPT...) with the OpenSketch for
+SOLIDWORKS connector sends the work to the OpenSketch server, and this add-in fetches it
+from there. The PC only makes outgoing HTTPS connections, so it needs no open ports.
 
 Needs SOLIDWORKS 2022 or newer, 64-bit Windows, .NET Framework 4.8 (part of Windows 10/11).
 
@@ -28,9 +28,10 @@ Connect
    c. OpenSketchSW.exe > "Connect to the open SOLIDWORKS" (drives SOLIDWORKS from outside;
       slower, keep the program open).
 4. In the window that opens, paste the OpenSketch address and your SOLIDWORKS key from
-   OpenSketch > Connect AI > SOLIDWORKS, and click Connect. Tick "Connect when SOLIDWORKS
-   starts" to skip this next time.
-5. First time: in Claude, with the OpenSketch connector on, ask
+   the OpenSketch SOLIDWORKS page (<OpenSketch address>/solidworks), and click Connect.
+   Tick "Connect when SOLIDWORKS starts" to skip this next time.
+5. Add the connector to your AI app: the address is on the same page (it ends in
+   /solidworks/mcp). Then, first time, ask
    "Run the SOLIDWORKS self test, all three stages."
    It makes test files in Documents\OpenSketch\selftest (plate, shapes, assembly) and
    reports every step as ok, check or failed. If anything is not ok, send the report and

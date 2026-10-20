@@ -247,14 +247,16 @@ a:focus-visible,button:focus-visible{{outline:2px solid var(--link);outline-offs
 @media (prefers-reduced-motion:reduce){{*,*:before,*:after{{animation:none!important;transition:none!important}}}}
 </style></head><body><div class="band"><i></i></div>
 <div class="wrap"><a class="brand" href="/">OpenSketch</a>
-<section class="pitch"><h2>CAD that builds while you watch.</h2></section>
+<section class="pitch"><h2>{pitch}</h2></section>
 <form class="card" method="post" action="{action}" autocomplete="on"><h1>{title}</h1><p class="sub">{sub}</p>{top}
 <input type="hidden" name="next" value="{next}">{fields}{error}<button type="submit">{button}</button>{links}</form></div>
 <div class="foot"><span>OpenSketch</span><span>Parametric CAD with AI &nbsp;&middot;&nbsp; <a href="/privacy">Privacy</a></span></div></body></html>"""
 
 
-def consent_page(app_name: str, redirect_uri: str, user: dict | None, req: str, app_host: str = "") -> bytes:
-    """Allow / Cancel for an AI app that wants to use this person's OpenSketch (mcpauth.py)."""
+def consent_page(app_name: str, redirect_uri: str, user: dict | None, req: str, app_host: str = "",
+                 endpoint: str = "/mcp") -> bytes:
+    """Allow / Cancel for an AI app that wants to use this person's OpenSketch (mcpauth.py). `endpoint` is the MCP
+    endpoint it signs in to: "/mcp" (OpenSketch files), "/solidworks/mcp" (SOLIDWORKS on the PC) or "" (both)."""
     from urllib.parse import urlsplit
     u = urlsplit(redirect_uri)
     host = u.hostname or (u.scheme + "://")
@@ -262,18 +264,23 @@ def consent_page(app_name: str, redirect_uri: str, user: dict | None, req: str, 
     name = _esc(app_name)
     who = (f'<b>{_esc(user.get("name") or "")}</b> ({_esc(user.get("email") or "")})' if user and not user.get("legacy")
            else "<b>this server</b>")
-    top = (f'<ul class="can"><li>Find and open your files</li><li>Create parts and assemblies and change them</li>'
-           f'<li>Import, preview and export your models</li></ul>'
+    can = (('Work in SOLIDWORKS on your PC through the add-in', 'Create parts and assemblies and change them',
+            'Import, preview and export your models') if endpoint == "/solidworks/mcp" else
+           ('Find and open your files', 'Create parts and assemblies and change them',
+            'Import, preview and export your models'))
+    top = (f'<ul class="can">{"".join(f"<li>{c}</li>" for c in can)}</ul>'
            f'<div class="note">Signed in as {who}. Not you? <a href="/logout">Sign out</a></div>'
            f'<div class="note">You go back to <b>{_esc(host)}</b> after this.'
            + (" That is an app on this computer: allow it only if you just started connecting it." if local else "")
            + '</div>')
     fields = [f'<input type="hidden" name="req" value="{_esc(req)}">']
+    sw = endpoint == "/solidworks/mcp"
     links = ('<button type="submit" name="action" value="deny" class="ghost">Cancel</button>'
-             '<div class="note center">You can disconnect it any time in Account settings.</div>')
-    sub = f"{name} wants to work in your OpenSketch files." + (f" Its details come from <b>{_esc(app_host)}</b>." if app_host else "")
+             f'<div class="note center">You can disconnect it any time {"on the SOLIDWORKS page" if sw else "in Account settings"}.</div>')
+    sub = (f"{name} wants to build in SOLIDWORKS with OpenSketch." if endpoint == "/solidworks/mcp" else
+           f"{name} wants to work in your OpenSketch files.") + (f" Its details come from <b>{_esc(app_host)}</b>." if app_host else "")
     return _page(f"Connect {name}", sub, "/oauth/authorize", fields,
-                 "Allow", "/", "", links, top)
+                 "Allow", "/", "", links, top, SW_PITCH if sw else None)
 
 
 def notice_page(title: str, sub: str, message: str = "", button: str = "Go to OpenSketch", href: str = "/") -> bytes:
@@ -380,8 +387,15 @@ def _google_block(nxt: str = "/", invite: str = "", label: str = "Continue with 
             '<div class="or">or with email</div>')
 
 
-def _page(title, sub, action, fields, button, nxt="/", error="", links="", top="") -> bytes:
+PITCH = "CAD that builds while you watch."
+SW_PITCH = "Your AI, building in SOLIDWORKS."
+
+
+def _page(title, sub, action, fields, button, nxt="/", error="", links="", top="", pitch=None) -> bytes:
+    # on the way to the SOLIDWORKS connector (its page, or an AI app signing in to it) the pitch is about SOLIDWORKS
+    pitch = pitch or (SW_PITCH if "solidworks" in (nxt or "").lower() else PITCH)
     return PAGE.format(title=title, sub=sub, action=action, fields="".join(fields), button=button, next=_esc(nxt), top=top,
+                       pitch=pitch,
                        error=f'<div class="err" id="err" role="alert">{_esc(error)}</div>' if error else "", links=links).encode()
 
 
@@ -586,6 +600,7 @@ def _machine_path(path: str) -> bool:
     """Paths AI apps call from their own servers or tools: no cookies, their own keys, so no sign-in page and no
     same-site check (consent at /oauth/authorize is not one of them)."""
     return (path in ("/mcp", "/mcp/") or path.startswith("/mcp/") or path in OAUTH_PUBLIC
+            or path in ("/solidworks/mcp", "/solidworks/mcp/") or path.startswith("/solidworks/mcp/")
             or path.startswith("/.well-known/oauth-"))
 
 
