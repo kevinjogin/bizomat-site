@@ -1,18 +1,18 @@
 """Claude builds in SOLIDWORKS: the sw_ MCP tools.
 
-They mirror OpenSketch's own connector tools, but the model is a real SOLIDWORKS part or assembly on the user's
-PC, reached through the add-in (solidworks/ in this repo, linked by swbridge.py). SOLIDWORKS is the master copy:
-the user can edit the same file by hand between calls, and sw_get_document reads it as it is now.
+The model is a real SOLIDWORKS part or assembly on the user's PC, reached through the add-in (solidworks/ in this
+repo, linked by swbridge.py). SOLIDWORKS is the master copy: the user can edit the same file by hand between calls,
+and sw_get_document reads it as it is now.
 
 - Writing: features in OpenSketch's document format (sketches with relations and dimensions, extrudes, revolves,
   fillets, patterns... see sw_get_guide) are made as native SOLIDWORKS features, fully defined sketches where the
   sketch says so. Before anything is sent, the features are checked by the registry and each sketch is solved
-  by the same solver the OpenSketch browser uses, so SOLIDWORKS gets exact coordinates.
+  by OpenSketch's sketch solver (solver/solver.js, run with node), so SOLIDWORKS gets exact coordinates.
 - Reading: the feature tree, errors, sketches and mates come from SOLIDWORKS itself. Topology, measuring,
   previews, interference and mate candidates run here on the STEP of the current body (cached by SOLIDWORKS'
   update stamp), with OpenSketch's own tested code.
 - All OpenCascade work (reading SOLIDWORKS' STEP, predictions, topology, measuring, previews, interference) runs in
-  the person's "agent" CAD worker (cadworker.lane_for), like the other connector tools: in the web server it would
+  the person's "agent" CAD worker (cadworker.lane_for): in the web server it would
   hold the GIL and pause every request on the server. Node (the sketch solver) and big file writes run in threads.
 """
 
@@ -30,7 +30,7 @@ import numpy as np
 from mcp.types import CallToolResult, ImageContent, TextContent, ToolAnnotations
 from pydantic import Field
 
-from . import ai, artifacts, assembly, cadworker, features, importer, inspection, measure, store, swbridge, uploads
+from . import artifacts, assembly, cadworker, features, importer, inspection, measure, store, swbridge, uploads
 from .mcp_server import MAX_IMPORT_BYTES, StdKind, _check_filename, _who, mcp
 
 
@@ -81,7 +81,7 @@ Workflow:
 - sw_undo takes back the last change; sw_save saves (new documents are saved when made, later changes are not
   saved until you call sw_save or the user saves).
 
-Differences from OpenSketch documents:
+How the format maps to SOLIDWORKS:
 - Feature names are SOLIDWORKS' (Sketch1, Boss-Extrude1, Cut-Extrude1, Fillet1...). `name` on a feature
   renames it in the tree.
 - Sketch relations become SOLIDWORKS relations, dimensions become driving dimensions named as you name them
@@ -90,10 +90,8 @@ Differences from OpenSketch documents:
   parallel to Front, Top or Right (it becomes an offset reference plane); otherwise make a `plane` feature.
 - `hole` features are made as cut extrudes (one for a plain hole, two for a counterbore, a tapered cut for a
   countersink), named Hole1, Hole2...
-- Coupler mates (motion laws), contacts and published reviews are OpenSketch-only.
 
-The document format follows. Read "Sketch", "Features" and "Mate references"; ignore what is about the
-OpenSketch app (Accept/Reject, the browser, propose_features' replace mode).
+The feature format follows.
 
 """
 
@@ -146,8 +144,8 @@ async def sw_status() -> CallToolResult:
 def sw_get_guide() -> str:
     """How to build in SOLIDWORKS with these tools, and the feature format (sketches, features, mate references).
     Read it once before your first change."""
-    from .mcp_server import _skill_reference
-    return SW_GUIDE + ai.SYSTEM + _skill_reference()
+    from .docformat import GUIDE
+    return SW_GUIDE + GUIDE
 
 
 @mcp.tool()
@@ -727,7 +725,7 @@ async def sw_standard_part(kind: StdKind, size: str, length: float | None = None
     try:
         pdoc, raw = await _cad(_standard_step, kind, size, length)
     except (KeyError, ValueError, TypeError) as exc:
-        return _text({"error": f"Cannot make that part: {exc}. Sizes: see the OpenSketch Toolbox."}, True)
+        return _text({"error": f"Cannot make that part: {exc}. Check the kind, size and length."}, True)
     except Exception as exc:  # bd_warehouse refuses unknown sizes with its own errors
         return _text({"error": f"Cannot make that part: {exc}"}, True)
     name = pdoc["name"].replace(" ", "_")

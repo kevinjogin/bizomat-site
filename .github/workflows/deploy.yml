@@ -11,8 +11,7 @@
 #
 # What deploys: a push to main whose changes since the live version (the site's /healthz names its commit) touch
 # more than notes and tests (root *.md, docs/, tests/, solidworks/tests/): each deploy restarts the one server
-# (~15 s offline). Changes to skills/ deploy (the MCP guide reads skills/opensketch-cad/reference.md). Afterwards the
-# live /healthz must answer with the new version within 3 minutes, else the run fails.
+# (~15 s offline). Afterwards the live /healthz must answer with the new version within 3 minutes, else the run fails.
 # Run by hand (Actions > Deploy to Fly.io > Run workflow) to redeploy; "skip tests" only to bring a stuck site back.
 name: Deploy to Fly.io
 

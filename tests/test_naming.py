@@ -6,9 +6,29 @@ import pytest
 
 from opensketch import geometry, inspection
 from tests.reference_parts.recipes import FRONT, circle_sketch, rect
-from tests.test_measure_delete import plate as slotted_plate
 from tests.test_params import part as param_plate
 from tests.test_sweeps import with_vars
+
+
+def slot(fid, x0, x1, y, r):
+    """A straight slot from x0 to x1 (arc centres) at height y, width 2r, on the Front Plane."""
+    p = lambda n, x, yy: {"id": f"{fid}{n}", "type": "point", "x": x, "y": yy}  # noqa: E731
+    ents = [p("a", x0, y - r), p("b", x1, y - r), p("c", x1, y + r), p("d", x0, y + r), p("c1", x0, y), p("c2", x1, y),
+            {"id": f"{fid}l1", "type": "line", "p1": f"{fid}a", "p2": f"{fid}b"},
+            {"id": f"{fid}l2", "type": "line", "p1": f"{fid}c", "p2": f"{fid}d"},
+            {"id": f"{fid}a1", "type": "arc", "center": f"{fid}c2", "start": f"{fid}b", "end": f"{fid}c"},
+            {"id": f"{fid}a2", "type": "arc", "center": f"{fid}c1", "start": f"{fid}d", "end": f"{fid}a"}]
+    return {"id": fid, "type": "sketch", "name": fid, "plane": FRONT, "entities": ents, "constraints": []}
+
+
+def slotted_plate():
+    through = {"op": "cut", "end": "through_all", "dir2": {"end": "through_all"}}
+    return [rect("s1", FRONT, 0, 0, 100, 40), {"id": "e1", "type": "extrude", "name": "Boss-Extrude1", "sketch": "s1", "depth": 10},
+            circle_sketch("s2", FRONT, 20, 20, 4), {"id": "e2", "type": "extrude", "name": "Hole", "sketch": "s2", **through},
+            slot("s3", 60, 80, 15, 5), {"id": "e3", "type": "extrude", "name": "Slot", "sketch": "s3", **through},
+            {"id": "lp", "type": "linear_pattern", "name": "LPattern1", "features": ["e2"], "direction": "Y", "count": 2,
+             "spacing": 10}]
+
 
 
 def names_of(doc):
@@ -116,15 +136,3 @@ def test_open_box_sweep_keeps_its_opening(name):
         assert abs(st.part.volume - want) < 1e-6 * want, (name, x)
 
 
-def test_browser_picks_get_names():
-    from fastapi.testclient import TestClient
-    from opensketch import server
-    base = param_plate()
-    feat = {"id": "f1", "type": "fillet", "radius": 2, "edges": [{"mid": [80, 30, 10]}]}
-    with TestClient(server.app) as c:
-        r = c.post("/api/name_refs", json={"doc": base, "feature": feat}).json()
-    assert r["feature"]["edges"] == [{"mid": [80, 30, 10], "name": "e1:end|e1:side:s1L1"}]
-    shell = {"id": "sh", "type": "shell", "thickness": 1, "faces": [{"center": [40, 30, 10], "normal": [0, 0, 1]}]}
-    with TestClient(server.app) as c:
-        r = c.post("/api/name_refs", json={"doc": base, "feature": shell}).json()
-    assert r["feature"]["faces"][0]["name"] == "e1:end"

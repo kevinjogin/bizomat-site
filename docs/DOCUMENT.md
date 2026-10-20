@@ -1,5 +1,9 @@
 # OpenSketch part document (`.osk`)
 
+> Since 2026-10-20 OpenSketch is the connector to SOLIDWORKS: the AI writes features in this format to the
+> sw_ tools, which check them with the kernel and build them in SOLIDWORKS. Parts about the browser UI, the
+> in-app AI, EAGLE boards, reviews and macro export describe the archived app (branch archive/opensketch-app).
+
 A part is one JSON object. The FeatureManager tree is the `features` list, rebuilt in order by
 `opensketch/geometry.py` (build123d). The same format is written by the UI, read by the AI copilot,
 and saved to disk, so a part made by hand and a part made by the AI are the same thing.

@@ -299,7 +299,7 @@ def status(user: dict | None) -> dict:
 
 NOT_CONNECTED = ("SOLIDWORKS is not connected. On the PC: open SOLIDWORKS, then Tools > OpenSketch > Connect to "
                  "Claude (or run OpenSketchSW.exe, which attaches to the open SOLIDWORKS). The add-in and the key "
-                 "are on OpenSketch's SOLIDWORKS page (/solidworks on the OpenSketch site).")
+                 "are on the OpenSketch site's home page.")
 
 
 async def call(user: dict | None, op: str, args: dict | None = None, timeout: float = DEFAULT_TIMEOUT,

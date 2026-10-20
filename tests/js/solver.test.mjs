@@ -1,7 +1,7 @@
 // Sketch solver tests: node --test tests/js
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { solveSketch, measure } from '../../opensketch/static/js/sketch/solver.js';
+import { solveSketch, measure } from '../../opensketch/solver/solver.js';
 
 function rect(x0, y0, x1, y1) {
   return {

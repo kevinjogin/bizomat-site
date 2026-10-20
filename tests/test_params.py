@@ -3,9 +3,8 @@ import math
 
 import pytest
 
-from opensketch import geometry, params, store
+from opensketch import geometry, params
 from tests.reference_parts.recipes import FRONT, circle_sketch, rect
-from tests.test_mcp_inspect import data, mcp  # noqa: F401  (fixtures)
 
 
 def defined_rect(length=80, width=60):
@@ -92,41 +91,6 @@ def test_bad_equations_turn_the_feature_red():
     assert any(b["id"] == "s1" and "has a problem" in b["message"] for b in bad)
 
 
-def test_mcp_set_parameter_and_equation(mcp):
-    d = mcp("create_document", {"name": "Plate"})
-    doc = d["doc_id"]
-    p = part()
-    feats = p["features"]
-    for f in feats:  # build without equations first, then add them through the tools
-        f.pop("eq", None)
-        for c in f.get("constraints", []):
-            c.pop("eq", None)
-    mcp("propose_features", {"doc_id": doc, "mode": "append", "summary": "Plate", "features": feats})
-    for n, e in (("length", "80"), ("width", "60"), ("thick", "10")):
-        r = mcp("set_parameter", {"doc_id": doc, "name": n, "expression": e})
-        assert r["clean"], r
-    r = mcp("set_equation", {"doc_id": doc, "feature": "s1", "field": "D1", "expression": "length"})
-    assert r["clean"] and r["report"]["equations"][0]["expression"] == "length"
-    r = mcp("set_equation", {"doc_id": doc, "feature": "Boss", "field": "depth", "expression": "=thick"})
-    assert r["clean"]
-    r = mcp("set_parameter", {"doc_id": doc, "name": "length", "expression": "100"})
-    rep = r["report"]
-    assert r["clean"] and abs(rep["bbox_max"][0] - 100) < 1e-6
-    assert {"feature": "s1", "field": "D1", "old": 80, "new": 100} in rep["recomputed"]
-    row = next(x for x in rep["parameters"] if x["name"] == "length")
-    assert row["value"] == 100 and row["used_by"] == ["D1@s1"]
-    stored = store.get(doc)["doc"]  # the stored numbers follow, so the browser shows what is built
-    assert next(c for c in stored["features"][0]["constraints"] if c["id"] == "D1")["value"] == 100
-    r = mcp("set_parameter", {"doc_id": doc, "name": "thick", "remove": True})
-    assert "used by depth@Boss" in str(r)
-    r = mcp("set_parameter", {"doc_id": doc, "name": "loop", "expression": "loop + 1"})
-    assert "Circular" in str(r)
-    r = mcp("set_equation", {"doc_id": doc, "feature": "Boss", "field": "colour", "expression": "1"})
-    assert "no number" in str(r)
-    ins = mcp("inspect_design", {"doc_id": doc})
-    assert {x["name"] for x in ins["parameters"]} == {"length", "width", "thick"} and len(ins["equations"]) == 2
-    r = mcp("batch", {"doc_id": doc, "steps": [{"tool": "set_parameter", "args": {"name": "thick", "expression": "-3"}}]})
-    assert r["_is_error"] and "at least" in r["failed"]["error"]
 
 
 def test_a_bad_expression_marks_its_feature_and_the_rest_rebuilds():
@@ -137,8 +101,6 @@ def test_a_bad_expression_marks_its_feature_and_the_rest_rebuilds():
     vol, bad, st = volume(doc)
     assert bad[0]["id"] == "e1" and "'gap', which has a problem" in bad[0]["message"]  # the later features lose their body
     assert "fractional power" in params.table(doc)[-1]["problem"]
-    from opensketch import cadjobs
-    assert cadjobs.params(doc) is not None
 
 
 def triangle(third="w"):

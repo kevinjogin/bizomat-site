@@ -1,10 +1,7 @@
 {
-  "name": "opensketch-ui-tests",
+  "name": "opensketch-solver-tests",
   "private": true,
   "type": "module",
   "scripts": { "test": "node --test tests/js/*.test.mjs" },
-  "engines": { "node": ">=20.6" },
-  "devDependencies": {
-    "linkedom": "^0.18.13"
-  }
+  "engines": { "node": ">=20.6" }
 }

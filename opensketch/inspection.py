@@ -20,7 +20,7 @@ from pathlib import Path
 
 from . import assembly, geometry
 
-SOLVE_CLI = Path(__file__).parent / "static" / "js" / "sketch" / "solve_cli.mjs"
+SOLVE_CLI = Path(__file__).parent / "solver" / "solve_cli.mjs"
 
 
 def _r(v, n=3):
@@ -221,9 +221,9 @@ def _body(part, material: dict | None) -> dict | None:
 
 
 def inspect_part(part_doc: dict, sketches: bool = True) -> dict:
-    from .ai import _status_report
+    from .docformat import status_report
     st = geometry.rebuilt(part_doc)
-    rep = _status_report(st.status)
+    rep = status_report(st.status)
     names = {f["id"]: (f.get("name"), f.get("type")) for f in part_doc.get("features", [])}
     timeline = []
     for s in st.status:
@@ -263,9 +263,9 @@ def inspect_design(doc: dict, part_id: str | None = None, sketches: bool = True)
         if part_id not in parts:
             return {"error": f"Unknown part {part_id!r}; parts: {sorted(parts)}."}
         return dict(inspect_part(parts[part_id], sketches), part_id=part_id)
-    from .ai import _asm_report
+    from .docformat import asm_report
     res = assembly.regen_assembly(doc)
-    rep = _asm_report(doc, res)
+    rep = asm_report(doc, res)
     out = {"kind": "assembly", "name": doc.get("name"), "rebuilt": rep["rebuilt"], "clean": rep["clean"],
            "errors": rep["errors"], "warnings": rep["warnings"], "components": rep["components"],
            "mates": rep["mates"],

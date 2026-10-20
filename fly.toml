@@ -1,7 +1,7 @@
-# Fly.io: OpenSketch in Sydney on one dedicated CPU core with 2 GB, stopped when idle (woken by the next request,
-# a few seconds). performance-1x since 2026-10-19: on shared-cpu-2x a big rebuild or a server-drawn picture used up
-# the burst allowance and the machine dropped to ~6% of a core, so the site froze for 10+ minutes. Billed only while
-# it runs (about US$0.06 an hour in Sydney). Inside, `--supervise` (Dockerfile) restarts the server when it stops
+# Fly.io: OpenSketch in Sydney on one dedicated CPU core with 2 GB, suspended when idle (woken by the next request).
+# performance-1x since 2026-10-19: on shared-cpu-2x heavy CAD work used up the burst allowance and the machine dropped
+# to ~6% of a core. The sw_ tools still run OpenCascade here (checking each feature, measuring SOLIDWORKS' STEP).
+# Billed only while it runs (about US$0.06 an hour in Sydney); a linked add-in's long poll keeps it awake. Inside, `--supervise` (Dockerfile) restarts the server when it stops
 # answering, since Fly only restarts a machine whose process exits.
 # Deployed by .github/workflows/deploy.yml on every push to main once FLY_API_TOKEN is set in the repo's
 # secrets; the app name can be changed with the repository variable FLY_APP (it must be unique on Fly).
@@ -16,8 +16,8 @@ kill_timeout = 15
 
 [env]
   OPENSKETCH_DATA = "/data"
-  # early access for showcases: people who type this code skip sign-up and use the server's AI key (accounts.py).
-  # The owner can change it or turn it off in People on this server, which overrides this.
+  # early access for showcases: people who type this code skip sign-up (accounts.py). The owner's own setting
+  # (users.json settings.access) overrides this.
   OPENSKETCH_ACCESS_CODE = "access20"
 
 [http_service]
@@ -31,10 +31,9 @@ kill_timeout = 15
   min_machines_running = 0
 
   # Past hard_limit requests in flight, Fly's proxy stops sending the machine new ones (they wait at the proxy), while
-  # /healthz, asked inside the machine, still looks fine. Many requests here stay open on purpose: AI chat streams,
-  # the SOLIDWORKS add-in's 25 s long polls, MCP tool calls (minutes), Files pictures drawn on demand; at 100, a couple
-  # of people opening Files with many new pictures could stop the whole site. The server is async and limits the
-  # heavy work itself (CAD worker lanes, picture slots, AI jobs), so the proxy's limit is only a flood guard.
+  # /healthz, asked inside the machine, still looks fine. Many requests here stay open on purpose: the SOLIDWORKS
+  # add-in's 25 s long polls and MCP tool calls (minutes). The server is async and limits the heavy work itself (CAD
+  # worker lanes), so the proxy's limit is only a flood guard.
   [http_service.concurrency]
     type = "requests"
     soft_limit = 200
@@ -44,7 +43,8 @@ kill_timeout = 15
   size = "performance-1x"
   memory = "2gb"
 
-# the documents (and their versions); one machine, since a volume belongs to one machine
+# accounts, connections, upload links (and the archived app's documents, kept); one machine, since a volume belongs
+# to one machine
 [mounts]
   source = "opensketch_data"
   destination = "/data"

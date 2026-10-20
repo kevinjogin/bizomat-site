@@ -1,6 +1,4 @@
 """preview_document camera (yaw, pitch, target, view_width) and section cut (idea from SolidCraft)."""
-import base64
-import io
 import json
 import struct
 import zlib
@@ -8,9 +6,7 @@ import zlib
 import numpy as np
 import pytest
 
-from opensketch import preview, store
-from tests.test_assembly import asm_doc
-from tests.test_mcp_inspect import data, mcp  # noqa: F401  (fixtures)
+from opensketch import preview
 
 SHELL = json.load(open("tests/reference_parts/shell_open_top.json"))
 
@@ -62,12 +58,3 @@ def test_bad_camera_or_section(kw, msg):
         preview.render_preview({"features": SHELL["features"]}, width=200, height=200, **kw)
 
 
-def test_preview_tool_with_camera_and_section(mcp):
-    d = mcp("create_document", {"name": "Shell"})
-    mcp("propose_features", {"doc_id": d["doc_id"], "mode": "append", "summary": "Shell", "features": SHELL["features"]})
-    r = mcp("preview_document", {"doc_id": d["doc_id"], "width": 320, "height": 240, "yaw": 60, "pitch": 25,
-                                 "section": {"point": [20, 15, 10], "normal": [1, 0, 0]}})
-    assert r["camera"] == {"yaw": 60, "pitch": 25} and r["section"]["normal"] == [1, 0, 0]
-    rec = store.create("Pin", doc=asm_doc(), by="you")  # an assembly section cuts each component
-    r = mcp("preview_document", {"doc_id": rec["id"], "width": 256, "height": 256, "section": {"point": [0, 0, 0], "normal": [0, 0, 1]}})
-    assert "error" not in r, r

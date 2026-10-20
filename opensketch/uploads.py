@@ -1,19 +1,19 @@
-"""One-time upload links for MCP clients: request_upload -> send the file to the link -> import_document(upload_id).
+"""One-time upload links for MCP clients: request_upload -> send the file to the link -> sw_import(upload_id).
 
-A tool call carries its arguments as text, so import_document's `data` had to hold the whole file as base64:
+A tool call carries its arguments as text, so sw_import's `data` had to hold the whole file as base64:
 about 1.6 million characters for a 6.5 MB STEP, which a model cannot write out reliably (one wrong character
 breaks the file). Instead the client asks for a link, sends the file's bytes to it with a plain HTTP PUT
-(`curl -T model.step '<url>'`), and passes the upload_id to import_document.
+(`curl -T model.step '<url>'`), and passes the upload_id to sw_import.
 
 - The link is a capability for one upload, like an artifact download link: signed with the data-folder secret
   and the connector address (a new server password voids it), valid LINK_LIFETIME seconds, used once.
   It carries no MCP credential and opens nothing else.
-- The upload belongs to the person whose connector asked for it; import_document refuses anyone else's id.
+- The upload belongs to the person whose connector asked for it; sw_import refuses anyone else's id.
 - The file is capped at the import limit (32 MiB, the same as base64 imports), after unzipping a gzip body.
-  It is kept KEEP seconds for import_document and removed once imported.
-- Room: files waiting for import_document take at most MAX_RESERVED on the server, counted as they arrive (`room`),
+  It is kept KEEP seconds for sw_import and removed once imported.
+- Room: files waiting for sw_import take at most MAX_RESERVED on the server, counted as they arrive (`room`),
   so a link that is never used holds nothing; and nothing is taken when the data disk is nearly full
-  (store.check_disk). The records are shared by the web server and the CAD workers (import_document runs there),
+  (store.check_disk). The records are shared by the web server and the CAD workers (sw_import runs there),
   so they change under a file lock.
 """
 
@@ -32,9 +32,9 @@ from urllib.parse import urlencode
 from . import auth, store
 
 LINK_LIFETIME = 600          # seconds a link takes an upload
-KEEP = 1800                  # seconds an uploaded file waits for import_document
+KEEP = 1800                  # seconds an uploaded file waits for sw_import
 MAX_PENDING = 4              # links per person waiting for a file or an import
-MAX_RESERVED = 192 * 2**20   # bytes of uploaded files waiting for import_document (Fly volume is 1 GB)
+MAX_RESERVED = 192 * 2**20   # bytes of uploaded files waiting for sw_import (Fly volume is 1 GB)
 _ID = re.compile(r"[0-9a-f]{32}")
 _NAME = re.compile(r"[^/\\\x00-\x1f]{1,255}")
 
@@ -112,7 +112,7 @@ def _locked():
 
 
 def _held() -> int:
-    """Bytes the upload area holds now: files waiting for import_document and uploads arriving."""
+    """Bytes the upload area holds now: files waiting for sw_import and uploads arriving."""
     total = 0
     for p in _directory().iterdir():
         if p.suffix in (".bin", ".part") and _ID.fullmatch(p.stem):
@@ -205,11 +205,11 @@ def finish(upload_id: str, size: int, sha256: str) -> dict:
         m.update(state="received", size_bytes=size, sha256=sha256, received_at=now, keep_until=now + KEEP)
         _write(m)
     return {"upload_id": upload_id, "filename": m["filename"], "size_bytes": size, "sha256": sha256,
-            "next": f'Call import_document with upload_id "{upload_id}" within {KEEP // 60} minutes.'}
+            "next": f'Call sw_import with upload_id "{upload_id}" within {KEEP // 60} minutes.'}
 
 
 def take(upload_id: str, user: dict | None) -> tuple[bytes, dict]:
-    """The uploaded bytes for import_document, if this person's upload is there."""
+    """The uploaded bytes for sw_import, if this person's upload is there."""
     if not _ID.fullmatch(upload_id or ""):
         raise UploadError("Unknown upload_id.")
     with _locked():

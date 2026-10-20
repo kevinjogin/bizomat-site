@@ -1,4 +1,4 @@
-"""STEP/EAGLE dispatch, and the "imported" and "standard" feature bodies.
+"""STEP import, and the "imported" and "standard" feature bodies.
 
 An imported solid is stored inside the document as BREP text (zlib + base64), so an .osk file stays
 self-contained. SOLIDWORKS calls this an "Imported" base feature: you keep modelling on top of it.
@@ -8,7 +8,7 @@ distinct shape (identical shapes share a part, like instances), one component pe
 position. Like SOLIDWORKS importing a STEP assembly, no mates come in; Add Mates (AI) or the Mate
 command adds them.
 
-A .zip imports exactly one supported CAD file. EAGLE board geometry is handled by eagle.py.
+A .zip imports exactly one STEP file.
 """
 
 from __future__ import annotations
@@ -150,7 +150,6 @@ def _moved_copy(local, solid):
     does not land on the other's, so it stays a part of its own. No attempt at rotations: symmetric parts make
     them ambiguous."""
     from build123d import Location
-    from .recognize import surfaces_match
     placed = local.moved(solid.location)
     delta = solid.center() - placed.center()
     moved = placed.moved(Location(delta))
@@ -239,18 +238,44 @@ def _from_zip(data: bytes, filename: str, *, include_eagle=False) -> tuple[bytes
         raise ImportError_(f"{filename} has no STEP file inside (.step or .stp){suffix}.")
 
 
+def surfaces_match(a, b, tol: float) -> bool:
+    """No booleans: every sampled point on either solid's faces lies on the other solid's boundary."""
+    from OCP.BRepClass3d import BRepClass3d_SolidClassifier
+    from OCP.gp import gp_Pnt
+    from OCP.TopAbs import TopAbs_ON
+    for x, y in ((a, b), (b, a)):
+        cls = BRepClass3d_SolidClassifier()
+        cls.Load(y.wrapped)
+        for f in x.faces():
+            for p in _samples(f):
+                cls.Perform(gp_Pnt(p.X, p.Y, p.Z), tol)
+                if cls.State() != TopAbs_ON:
+                    return False
+    return True
+
+
+def _samples(face) -> list:
+    pts = []
+    try:
+        pts.append(geometry.on_face_point(face))
+    except Exception:
+        pass
+    for u, v in ((0.31, 0.37), (0.71, 0.63)):
+        try:
+            p = face.position_at(u, v)
+            if face.is_inside(p, tolerance=1e-6):
+                pts.append(p)
+        except Exception:
+            continue
+    return pts
+
+
 def import_file(data: bytes, filename: str = "model.step") -> dict:
-    """Import STEP, an EAGLE XML board, or a ZIP containing exactly one of those."""
+    """Import STEP, or a ZIP containing one."""
     ext = os.path.splitext(filename)[1].lower()
-    if ext == ".zip":
-        data, filename = _from_zip(data, filename, include_eagle=True)
-        ext = os.path.splitext(filename)[1].lower()
-    if ext == ".brd":
-        from .eagle import import_eagle
-        return import_eagle(data, filename)
-    if ext in (".step", ".stp", "") or ext in NATIVE_SOLIDWORKS:
+    if ext in (".step", ".stp", ".zip", "") or ext in NATIVE_SOLIDWORKS:
         return import_step(data, filename)
-    raise ImportError_(f"Cannot import {ext} files. Use STEP (.step or .stp), EAGLE XML (.brd), or a .zip holding one.")
+    raise ImportError_(f"Cannot import {ext} files. Use STEP (.step or .stp), or a .zip holding one.")
 
 
 def import_step(data: bytes, filename: str = "model.step") -> dict:

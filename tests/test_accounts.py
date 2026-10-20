@@ -4,7 +4,7 @@ import json
 import pytest
 from fastapi.testclient import TestClient
 
-from opensketch import accounts, auth, server, store
+from opensketch import accounts, auth, server
 
 
 @pytest.fixture(autouse=True)
@@ -24,7 +24,7 @@ def _owner(c, email="yz@example.com", pw="correct horse", server_pw=None):
 
 def test_open_mode_setup_turns_sign_in_on(tmp_path):
     c = TestClient(server.app)
-    assert c.get("/api/docs").status_code == 200  # nobody, no password: open as before
+    assert c.get("/api/solidworks").status_code == 200  # nobody, no password: open as before
     assert c.get("/api/account").json()["mode"] == "open"
     assert c.get("/login", follow_redirects=False).headers["location"] == "/setup"
     assert _owner(c, pw="short").status_code == 400  # too short
@@ -33,7 +33,7 @@ def test_open_mode_setup_turns_sign_in_on(tmp_path):
     me = c.get("/api/account").json()
     assert me["mode"] == "accounts" and me["user"]["email"] == "yz@example.com" and me["user"]["role"] == "owner"
     anon = TestClient(server.app)
-    assert anon.get("/api/docs").status_code == 401
+    assert anon.get("/api/solidworks").status_code == 401
     assert anon.get("/", follow_redirects=False).headers["location"].startswith("/login")
     assert _owner(anon, email="x@example.com").headers["location"] == "/login"  # setup is closed now
     # files keep no password and no usable session token
@@ -45,13 +45,13 @@ def test_sign_in_wrong_password_sign_out():
     c = TestClient(server.app)
     _owner(c)
     c.get("/logout")
-    assert c.get("/api/docs").status_code == 401  # the session is gone on the server
+    assert c.get("/api/solidworks").status_code == 401  # the session is gone on the server
     bad = c.post("/login", data={"email": "yz@example.com", "password": "nope", "next": "/"}, follow_redirects=False)
     assert bad.status_code == 401 and b"wrong" in bad.content
     assert c.post("/login", data={"email": "nobody@example.com", "password": "x"}, follow_redirects=False).status_code == 401
     r = c.post("/login", data={"email": "YZ@Example.com ", "password": "correct horse", "next": "//evil.example"}, follow_redirects=False)
     assert r.status_code == 303 and r.headers["location"] == "/"  # no open redirect
-    assert c.get("/api/docs").status_code == 200
+    assert c.get("/api/solidworks").status_code == 200
 
 
 def test_password_mode_needs_the_server_password_to_set_up(monkeypatch):
@@ -68,7 +68,7 @@ def test_password_mode_needs_the_server_password_to_set_up(monkeypatch):
     me = old.get("/api/account").json()
     assert me["mode"] == "password" and me["user"]["legacy"] and me["can_setup"]
     assert _owner(c, server_pw="server-secret").status_code == 303
-    assert old.get("/api/docs").status_code == 401  # accounts now: the shared password cookie no longer signs in
+    assert old.get("/api/solidworks").status_code == 401  # accounts now: the shared password cookie no longer signs in
     assert c.get("/api/account").json()["user"]["name"] == "YZ"
 
 
@@ -83,7 +83,7 @@ def test_invites_members_and_owner_rules():
     assert guest.post(f"/join/{token}", data={"name": "Tiff", "email": "yz@example.com", "new_password": "longenough"},
                       follow_redirects=False).status_code == 400  # email taken
     r = guest.post(f"/join/{token}", data={"name": "Tiff", "email": "t@example.com", "new_password": "longenough"}, follow_redirects=False)
-    assert r.status_code == 303 and guest.get("/api/docs").status_code == 200
+    assert r.status_code == 303 and guest.get("/api/solidworks").status_code == 200
     assert TestClient(server.app).get(f"/join/{token}").status_code == 410  # single use
     me = guest.get("/api/account").json()
     assert me["user"]["role"] == "member" and "users" not in me
@@ -94,7 +94,7 @@ def test_invites_members_and_owner_rules():
     member_id = next(u["id"] for u in users if u["role"] == "member")
     assert owner.delete(f"/api/account/users/{owner_id}").status_code == 400
     assert owner.delete(f"/api/account/users/{member_id}").status_code == 200
-    assert guest.get("/api/docs").status_code == 401  # removed: signed out at once
+    assert guest.get("/api/solidworks").status_code == 401  # removed: signed out at once
 
 
 def test_change_password_and_reset(monkeypatch):
@@ -102,7 +102,7 @@ def test_change_password_and_reset(monkeypatch):
     _owner(c)
     assert c.post("/api/account", json={"current_password": "wrong", "new_password": "a new password"}).status_code == 400
     assert c.post("/api/account", json={"current_password": "correct horse", "new_password": "a new password"}).json()["signed_out"]
-    assert c.get("/api/docs").status_code == 401  # every session ends on a password change
+    assert c.get("/api/solidworks").status_code == 401  # every session ends on a password change
     assert c.post("/login", data={"email": "yz@example.com", "password": "a new password"}, follow_redirects=False).status_code == 303
     assert c.post("/api/account", json={"name": "Yuanzheng"}).json()["user"]["name"] == "Yuanzheng"
     # reset needs the server password
@@ -112,10 +112,10 @@ def test_change_password_and_reset(monkeypatch):
     assert r.post("/reset", data={"email": "yz@example.com", "server_password": "nope", "new_password": "third password"}).status_code == 401
     assert r.post("/reset", data={"email": "yz@example.com", "server_password": "server-secret", "new_password": "third password"},
                   follow_redirects=False).status_code == 303
-    assert r.get("/api/docs").status_code == 200
+    assert r.get("/api/solidworks").status_code == 200
 
 
-def test_mcp_and_reviews_ignore_accounts():
+def test_mcp_ignores_accounts():
     token_before = auth.mcp_token()
     c = TestClient(server.app)
     _owner(c)
@@ -125,7 +125,6 @@ def test_mcp_and_reviews_ignore_accounts():
                       content=json.dumps({"jsonrpc": "2.0", "id": 1, "method": "initialize",
                                           "params": {"protocolVersion": "2025-03-26", "capabilities": {}, "clientInfo": {"name": "t", "version": "1"}}}))
         assert r.status_code == 200
-        assert anon.get("/review/nonexistenttoken000000000000").status_code == 404  # not a sign-in redirect
 
 
 def _google(monkeypatch, info):
@@ -276,10 +275,7 @@ def test_privacy_page_is_public():
 
 
 def test_early_access_code_skips_sign_up_as_an_internal_tester(monkeypatch):
-    """YZ 2026-10-19: showcase visitors type a code (access20), skip sign-up, show up as Internal tester and use the
-    owner's AI key with no limit."""
-    from opensketch import aikeys
-    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-test")
+    """YZ 2026-10-19: showcase visitors type a code (access20), skip sign-up and show up as Internal tester."""
     monkeypatch.delenv("OPENSKETCH_ACCESS_CODE", raising=False)
     auth._fails.clear()
     owner = TestClient(server.app)
@@ -299,14 +295,8 @@ def test_early_access_code_skips_sign_up_as_an_internal_tester(monkeypatch):
     assert me["name"] == "Internal tester 1" and me["tester"] and me["role"] == "tester"
     assert "access" not in visitor.get("/api/account").json()  # the code is the owner's to see
     assert visitor.get("/access", follow_redirects=False).headers["location"] == "/"  # already in
-    # their own Files, and the server's AI key even with open sign-up on (members lose it then)
-    doc = visitor.post("/api/docs", json={"name": "", "kind": "part"}).json()
-    assert doc["doc"]["features"] == [] and doc["version"] == 1  # New opens this answer: the whole (empty) record
-    assert [d["id"] for d in visitor.get("/api/docs").json()] == [doc["id"]]
-    assert owner.get(f"/api/docs/{doc['id']}").status_code == 404
-    accounts.set_open_signup(True)
-    assert aikeys.effective(me)["source"] == "early_access"
-    assert visitor.get("/api/ai/status").json()["available"]
+    # their own SOLIDWORKS key, not the owner's
+    assert visitor.get("/api/solidworks").json()["key"] != owner.get("/api/solidworks").json()["key"]
     second = TestClient(server.app)
     second.post("/access", data={"code": "access20", "next": "/"})
     assert second.get("/api/account").json()["user"]["name"] == "Internal tester 2"
@@ -321,17 +311,12 @@ def test_early_access_code_skips_sign_up_as_an_internal_tester(monkeypatch):
     assert third.post("/access", data={"code": "SHOWCASE-2026"}, follow_redirects=False).status_code == 303
     assert owner.post("/api/account/settings", json={"access_on": False}).json()["access"]["on"] is False
     assert TestClient(server.app).get("/access").status_code == 410
-    # code off: the tester's Connect AI says the AI is not available, not "included"
-    assert visitor.get("/api/ai/keys").json()["server_key"] is False and not visitor.get("/api/ai/status").json()["available"]
-    # removing one tester sends their files to the owner's Trash (as the dialog says), not to the owner's Files
     t2 = second.get("/api/account").json()["user"]["id"]
-    kept = second.post("/api/docs", json={"name": "Tester bracket", "kind": "part"}).json()
     assert owner.delete(f"/api/account/users/{t2}").status_code == 200
-    assert kept["id"] not in [d["id"] for d in owner.get("/api/docs").json()]
-    assert kept["id"] in [d["id"] for d in owner.get("/api/docs?trash=1").json()]
+    assert second.get("/api/solidworks").status_code == 401
     assert visitor.post("/api/account/settings", json={"access_on": True}).status_code == 403  # owner only
     assert owner.delete("/api/account/testers").json() == {"removed": 2}
-    assert visitor.get("/api/docs").status_code == 401  # signed out at once
+    assert visitor.get("/api/solidworks").status_code == 401  # signed out at once
     assert [u["role"] for u in accounts.list_users()] == ["owner"]
 
 
@@ -346,30 +331,3 @@ def test_access_code_guessing_is_limited(monkeypatch):
     auth._fails.clear()
 
 
-def test_testers_use_the_owners_saved_key_and_never_see_it(monkeypatch):
-    """YZ: a tester was still asked for an API key (the live server has no ANTHROPIC_API_KEY: the owner saved his
-    own key in OpenSketch). Testers use that key; nothing about it reaches their browser."""
-    from opensketch import aikeys
-    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
-    monkeypatch.delenv("ANTHROPIC_AUTH_TOKEN", raising=False)
-    monkeypatch.setenv("OPENSKETCH_ACCESS_CODE", "access20")
-    auth._fails.clear()
-    owner = TestClient(server.app)
-    _owner(owner)
-    secret = "sk-ant-api03-owners-secret-key-WXYZ"
-    monkeypatch.setattr(aikeys.providers, "list_models", lambda cfg: ["claude-opus-5-5"])
-    assert owner.post("/api/ai/keys", json={"provider": "anthropic", "model": "claude-opus-5-5", "key": secret}).status_code == 200
-    t = TestClient(server.app)
-    t.post("/access", data={"code": "access20"})
-    st = t.get("/api/ai/status").json()
-    assert st["available"] and st["source"] == "early_access" and st["model"] == "claude-opus-5-5"
-    keys = t.get("/api/ai/keys").json()
-    assert keys["early_access"] and keys["server_key"] and keys["settings"] is None
-    for r in (t.get("/api/ai/status"), t.get("/api/ai/keys"), t.get("/api/account")):
-        assert "WXYZ" not in r.text and "owners-secret" not in r.text  # not the key, not its last four
-    assert t.post("/api/ai/keys", json={"provider": "anthropic", "model": "x", "key": "sk-ant-mine-12345678"}).status_code == 403
-    assert t.post("/api/ai/models", json={"provider": "anthropic"}).status_code == 403  # cannot test the owner's key
-    assert aikeys.effective(t.get("/api/account").json()["user"])["key"] == secret  # used on the server only
-    # without the owner's key or a server key there is no AI, and the chat says so
-    owner.delete("/api/ai/keys")
-    assert not t.get("/api/ai/status").json()["available"]

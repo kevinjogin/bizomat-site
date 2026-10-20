@@ -1094,11 +1094,6 @@ def purge(doc_id: str) -> None:
         _index_change(_owner_key(owner), remove=[doc_id])
     except OSError:
         log.warning("Could not take %s out of its owner's list", doc_id)
-    try:  # a review link must not outlive the file (review.py; it stays importable without CAD in a worker)
-        from . import review
-        review.delete_for_doc(doc_id)
-    except Exception:
-        log.exception("Could not remove the published reviews of %s", doc_id)
 
 
 # ----------------------------------------------------------------------------- thumbnails

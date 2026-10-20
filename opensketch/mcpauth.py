@@ -127,9 +127,9 @@ def base_url(headers: dict) -> str:
     return auth.public_url(headers).rstrip("/")
 
 
-# The MCP endpoints an AI app can sign in to, by path: OpenSketch's own tools and the SOLIDWORKS connector
-# (sw_connector.py). A token is made for one of them (the `resource` the app asks for) and works only there.
-RESOURCES = {"/mcp": "OpenSketch", "/solidworks/mcp": "OpenSketch for SOLIDWORKS"}
+# The MCP endpoint's addresses (mcp_server.PATHS): /mcp, and /solidworks/mcp, its address on 2026-10-20 while the
+# archived browser app owned /mcp. Both are the same server, so a token from either works on both.
+RESOURCES = {"/mcp": "OpenSketch", "/solidworks/mcp": "OpenSketch"}
 
 
 def resource_url(headers: dict, path: str = "/mcp") -> str:
@@ -146,11 +146,6 @@ def protected_resource(headers: dict, path: str = "/mcp") -> dict:
             "resource_documentation": base_url(headers) + "/privacy"}
 
 
-def resource_path(resource: str | None) -> str:
-    """Which endpoint a grant's resource is for: "/mcp", "/solidworks/mcp", or "" (the app named only the server,
-    or no resource at all: any endpoint)."""
-    p = urlsplit(resource or "").path.rstrip("/")
-    return p if p in RESOURCES else ""
 
 
 def server_metadata(headers: dict) -> dict:
@@ -461,8 +456,7 @@ def check_authorize(params: dict, headers: dict) -> tuple[dict, dict]:
     known = {_canon(resource_url(headers, p)): resource_url(headers, p) for p in RESOURCES}
     if res and _canon(res) not in known and _canon(res) != _canon(base_url(headers)):
         raise OAuthError("invalid_target", "The app asked to sign in to a different server.")
-    # the endpoint the app named; none (or only the server) = any endpoint, as before there were two
-    target = known.get(_canon(res or ""), base_url(headers))
+    target = known.get(_canon(res or ""), resource_url(headers))
     scope = params.get("scope") or SCOPE
     if any(s not in (SCOPE, "openid", "profile", "email", "offline_access") for s in scope.split()):
         raise OAuthError("invalid_scope", f"The app asked for more than OpenSketch offers (scope {SCOPE}).")
@@ -556,9 +550,7 @@ def token(form: dict, basic: str = "") -> dict:
             host = r.hostname or r.scheme
             # one connection per person and app: the same client, or the same app registered again (Claude
             # registers on every connect) returning to the same public https host
-            # ... for the same endpoint: Claude connected to OpenSketch and to the SOLIDWORKS connector keeps both
-            same = [k for k, g in d["grants"].items() if g["user"] == c["user"]
-                    and _grant_path(g) == resource_path(c["resource"]) and (
+            same = [k for k, g in d["grants"].items() if g["user"] == c["user"] and (
                 g["client_id"] == cid or (r.scheme == "https" and host not in ("localhost", "127.0.0.1", "::1")
                                           and g.get("name") == rec["name"] and g.get("host") == host))]
             for k in same:
@@ -607,14 +599,8 @@ def _origin(uri: str) -> str:
     return f"{u.scheme}://{u.netloc}"
 
 
-def _grant_path(g: dict) -> str:
-    """The endpoint a grant is for ("" = any). Grants from before the SOLIDWORKS connector are all for /mcp."""
-    return resource_path(g["resource"]) if "resource" in g else "/mcp"
-
-
-def user_for_access(tok: str, path: str = "/mcp") -> tuple[bool, dict | None]:
-    """(valid, person) for a Bearer token on the MCP endpoint at `path`. A token made for the other endpoint is
-    not valid here. Person None = a server without accounts."""
+def user_for_access(tok: str) -> tuple[bool, dict | None]:
+    """(valid, person) for a Bearer token on the MCP endpoint. Person None = a server without accounts."""
     if not tok or not tok.startswith("osa_") or len(tok) > 100:
         return False, None
     d = _view()
@@ -623,7 +609,7 @@ def user_for_access(tok: str, path: str = "/mcp") -> tuple[bool, dict | None]:
     if not a or a["exp"] < now:
         return False, None
     g = d["grants"].get(a["grant"])
-    if not g or _grant_path(g) not in ("", path):
+    if not g:
         return False, None
     from . import accounts
     if g["user"] in ("server", "local"):
@@ -649,8 +635,8 @@ def user_for_access(tok: str, path: str = "/mcp") -> tuple[bool, dict | None]:
 
 def grants_for(user_id: str) -> list[dict]:
     d = _view()
-    out = [{"id": k, "name": g["name"], "host": g.get("host", ""), "created": g["created"], "last_used": g.get("last_used"),
-            "endpoint": _grant_path(g)} for k, g in d["grants"].items() if g["user"] == user_id]
+    out = [{"id": k, "name": g["name"], "host": g.get("host", ""), "created": g["created"], "last_used": g.get("last_used")}
+           for k, g in d["grants"].items() if g["user"] == user_id]
     return sorted(out, key=lambda g: -(g["last_used"] or 0))
 
 

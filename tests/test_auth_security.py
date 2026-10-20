@@ -41,7 +41,7 @@ def _member(owner, email="mei@example.com", pw="battery staple"):
 
 
 def _key(c) -> str:
-    return c.get("/api/connect").json()["mcp_url"].split("/mcp/")[1]
+    return c.get("/api/solidworks").json()["private_url"].split("/mcp/")[1]
 
 
 def _tools_list(app, key):
@@ -219,70 +219,10 @@ def _stream(c, prompt="a plate"):
     return [json.loads(line) for line in r.text.splitlines() if line.strip()]
 
 
-def test_the_chat_never_falls_back_to_the_server_key(monkeypatch):
-    """auth-security-3: aikeys.effective said "no AI" (open sign-up member, or OPENSKETCH_SHARE_SERVER_KEY=0), but
-    ai.run_stream then used ANTHROPIC_API_KEY anyway."""
-    from opensketch import ai, providers
-    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-owners")
-    used = []
-    monkeypatch.setattr(providers, "client_for", lambda cfg: used.append(cfg) or (_ for _ in ()).throw(RuntimeError("called")))
-    owner = _owner()
-    accounts.set_open_signup(True)
-    stranger = TestClient(server.app)
-    assert stranger.post("/signup", data={"name": "Bot", "email": "bot@example.com", "new_password": "bot password"},
-                         follow_redirects=False).status_code == 303
-    assert stranger.get("/api/ai/status").json()["available"] is False
-    ev = _stream(stranger)
-    assert ev[-1]["ev"] == "error" and ev[-1]["message"] == ai.NO_KEY and used == []
-    assert stranger.post("/api/ai", json={"doc": {"features": []}, "prompt": "x"}).status_code in (404, 405)  # the old route is gone
-    monkeypatch.setenv("OPENSKETCH_SHARE_SERVER_KEY", "0")
-    ev = _stream(owner)
-    assert ev[-1]["message"] == ai.NO_KEY and used == []
-    monkeypatch.delenv("OPENSKETCH_SHARE_SERVER_KEY")
-    _stream(owner)  # the owner may use it
-    assert used and used[0]["source"] == "server"
 
 
-def test_turning_early_access_off_stops_testers_ai(monkeypatch):
-    """auth-security-5 (owner decision 2): testers kept the owner's AI for their whole 90-day session after the code
-    was turned off. Now their AI follows the code; their account and files stay."""
-    from opensketch import ai
-    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-owners")
-    owner = _owner()
-    owner.post("/api/account/settings", json={"access_code": "showcase-1", "access_on": True})
-    t = TestClient(server.app)
-    t.post("/access", data={"code": "showcase-1"})
-    assert t.get("/api/ai/status").json()["available"]
-    owner.post("/api/account/settings", json={"access_on": False})
-    assert t.get("/api/ai/status").json()["available"] is False
-    assert _stream(t)[-1]["message"] == ai.NO_KEY
-    assert t.get("/api/docs").status_code == 200  # still signed in to their files
-    owner.post("/api/account/settings", json={"access_on": True})
-    assert t.get("/api/ai/status").json()["available"]
 
 
-def test_named_providers_never_take_an_address_from_the_browser(monkeypatch):
-    """auth-security-7: only "custom" was checked, so provider "openai" with base_url http://127.0.0.1:... made the
-    server call (and echo) any internal address."""
-    from opensketch import aikeys, providers
-    seen = []
-    monkeypatch.setattr(providers, "list_models", lambda cfg: seen.append(cfg) or ["m1"])
-    owner = _owner()
-    member = _member(owner)
-    r = member.post("/api/ai/models", json={"provider": "openai", "key": "sk-xxxxxxxxxxxx", "base_url": "http://127.0.0.1:8080/v1"})
-    assert r.status_code == 200 and seen[-1]["base_url"] == "https://api.openai.com/v1"
-    r = member.post("/api/ai/keys", json={"provider": "gemini", "model": "g", "key": "AIzaXXXXXXXXXXXX", "base_url": "http://[fdaa::3]:80"})
-    assert r.json()["settings"]["base_url"] == providers.PROVIDERS["gemini"]["base_url"]
-    # a record saved before this fix with an internal address is never used
-    mid = member.get("/api/account").json()["user"]["id"]
-    d = aikeys._read()
-    d[mid]["base_url"] = "http://169.254.169.254/latest"
-    aikeys._write(d)
-    cfg = aikeys.config_for(mid)
-    assert cfg["base_url"] == providers.PROVIDERS["gemini"]["base_url"]
-    assert providers._base(dict(cfg, base_url="http://127.0.0.1:1")) == providers.PROVIDERS["gemini"]["base_url"]
-    assert member.post("/api/ai/models", json={"provider": "custom", "key": "sk-xxxxxxxxxxxx",
-                                               "base_url": "http://127.0.0.1:8080/v1"}).status_code == 400
 
 
 def _google(monkeypatch, info):
@@ -387,13 +327,13 @@ def test_a_typed_email_never_keeps_a_google_owner_out(monkeypatch):
     victim = TestClient(server.app)
     assert _google_round(victim).status_code == 303
     assert victim.get("/api/account").json()["user"]["id"] == uid
-    assert attacker.get("/api/docs").status_code == 401  # signed out
+    assert attacker.get("/api/solidworks").status_code == 401  # signed out
     assert accounts.verify("victim@gmail.com", "attacker pw") is None  # the typed password is gone
     assert mcpauth.grants_for(uid) == [] and not auth.resolve_mcp(old_key)[0]
     # the owner (who set the server up) and a verified Google account are never taken over this way
     _google(monkeypatch, {"sub": "g-owner", "email": "yz@example.com", "email_verified": True, "hd": "example.com"})
     assert _google_round(TestClient(server.app)).status_code == 303
-    assert accounts.verify("yz@example.com", "correct horse") is not None and owner.get("/api/docs").status_code == 200
+    assert accounts.verify("yz@example.com", "correct horse") is not None and owner.get("/api/solidworks").status_code == 200
 
 
 def test_testers_keep_their_work_with_an_email_and_password(monkeypatch):
@@ -403,7 +343,7 @@ def test_testers_keep_their_work_with_an_email_and_password(monkeypatch):
     owner = _owner()
     t = TestClient(server.app)
     t.post("/access", data={"code": "access20"})
-    doc = t.post("/api/docs", json={"name": "Bracket", "kind": "part"}).json()
+    key = t.get("/api/solidworks").json()["key"]
     assert t.post("/api/account/keep", json={"email": "bad", "password": "long enough"}).status_code == 400
     assert t.post("/api/account/keep", json={"email": "yz@example.com", "password": "long enough"}).status_code == 400  # taken
     assert t.post("/api/account/keep", json={"email": "sam@example.com", "password": "short"}).status_code == 400
@@ -415,7 +355,7 @@ def test_testers_keep_their_work_with_an_email_and_password(monkeypatch):
     t.get("/logout")
     back = TestClient(server.app)
     assert back.post("/login", data={"email": "sam@example.com", "password": "long enough"}, follow_redirects=False).status_code == 303
-    assert [d["id"] for d in back.get("/api/docs").json()] == [doc["id"]]
+    assert back.get("/api/solidworks").json()["key"] == key  # the same account: same SOLIDWORKS key
     assert back.get("/api/account").json()["user"]["role"] == "tester"  # early access still decides their AI
     # Google instead of a password
     g = TestClient(server.app)

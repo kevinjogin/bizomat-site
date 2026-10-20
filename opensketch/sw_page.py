@@ -1,6 +1,6 @@
-"""The OpenSketch for SOLIDWORKS page (/solidworks): everything a person needs to use the connector, and nothing of
-the OpenSketch app. Sign in (the gate sends them to the sign-in page and back), download the add-in, connect
-SOLIDWORKS with the address and key, add the connector address to their AI app, see what is connected.
+"""OpenSketch's home page (/, also /solidworks): everything a person needs to use the connector. Sign in (the gate
+sends them to the sign-in page and back), download the add-in, connect SOLIDWORKS with the address and key, add the
+connector address to their AI app, see what is connected.
 
 Server-rendered shell in the sign-in pages' look (auth.PAGE: dark, the gradient band, the text wordmark); the page
 script reads /api/solidworks and keeps the SOLIDWORKS status fresh while the page is open.
@@ -88,7 +88,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
 @media (pointer:coarse){.row input{font-size:16px}}
 @media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 </style></head><body><div class="band"><i></i></div>
-<header><a class="brand" href="/solidworks"><b>OpenSketch</b><span>for SOLIDWORKS</span></a>
+<header><a class="brand" href="/"><b>OpenSketch</b><span>for SOLIDWORKS</span></a>
 <div class="who"><span id="who"></span><a href="/logout" id="signout">Sign out</a></div></header>
 <main>
 <section class="pitch"><h1>Your AI, building in SOLIDWORKS.</h1>
@@ -110,7 +110,8 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
 <div class="row"><label for="url">Connector</label><input id="url" readonly><button class="btn" data-copy="url">Copy</button></div>
 <details id="private"><summary>Your app cannot sign in?</summary>
 <p>Use this private address instead. Anyone with it can use your SOLIDWORKS link, so keep it to yourself.</p>
-<div class="row"><label for="purl">Private</label><input id="purl" type="password" readonly autocomplete="off"><button class="btn" data-copy="purl">Copy</button></div></details>
+<div class="row"><label for="purl">Private</label><input id="purl" type="password" readonly autocomplete="off"><button class="btn" data-copy="purl">Copy</button></div>
+<div class="links"><button id="newaddr">New address</button></div></details>
 <ul class="apps" id="apps" aria-label="Connected AI apps"></ul></article>
 <article class="step" id="s-try"><h2>Try it</h2>
 <p>The first time, ask your AI app:</p>
@@ -124,7 +125,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
   const err = (m) => { const e = $('err'); e.textContent = m; e.style.display = m ? 'block' : 'none'; };
   async function api(path, opts) {
     const r = await fetch(path, Object.assign({ headers: { Accept: 'application/json' }, credentials: 'same-origin' }, opts || {}));
-    if (r.status === 401) { location.href = '/login?next=' + encodeURIComponent('/solidworks'); throw new Error('Sign in first.'); }
+    if (r.status === 401) { location.href = '/login?next=' + encodeURIComponent(location.pathname); throw new Error('Sign in first.'); }
     const j = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(j.error || j.detail || ('Error ' + r.status));
     return j;
@@ -182,6 +183,10 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
   $('newkey').onclick = async () => {
     if (!confirm('Make a new key? The old one stops working, so SOLIDWORKS disconnects until you paste the new one.')) return;
     try { $('key').value = (await api('/api/sw/key', { method: 'POST' })).key; paint({ connected: false }); } catch (e) { err(e.message); }
+  };
+  $('newaddr').onclick = async () => {
+    if (!confirm('Make a new private address? The old one stops working at once.')) return;
+    try { $('purl').value = (await api('/api/connect/new_address', { method: 'POST' })).mcp_url; } catch (e) { err(e.message); }
   };
   let timer = null;
   const tick = async () => { try { const d = await api('/api/solidworks'); paint(d.status); apps(d.apps || []); } catch (_) { /* offline: try again */ } };

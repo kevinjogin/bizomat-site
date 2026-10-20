@@ -30,8 +30,8 @@ from urllib.parse import parse_qs, quote, urlencode
 
 COOKIE = "opensketch_session"
 ACCOUNT_COOKIE = "opensketch_user"
-PUBLIC_FILES = ("/manifest.webmanifest", "/sw.js", "/favicon.svg", "/favicon.ico")
-PUBLIC_DIRS = ("/icons/", "/fonts/")  # app icons and the self-hosted fonts: no data, needed by the sign-in pages
+PUBLIC_FILES = ("/favicon.svg", "/favicon.ico")
+PUBLIC_DIRS = ("/fonts/",)  # the self-hosted fonts: no data, needed by the sign-in pages
 
 
 def password() -> str:
@@ -201,7 +201,7 @@ def logged_in(scope) -> bool:
 # Sign-in pages: Stripe-like (bold display type, an angled indigo band, a raised card), in OpenSketch's colours.
 PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex"><title>{title} - OpenSketch</title><meta name="theme-color" content="#0c0d0e">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/fonts/fonts.css">
 <style>
 :root{{--bg:#0c0d0e;--card:#141517;--field:#1b1c1f;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.14);--text:#e3e4e8;--text2:#a3a6ad;--muted:#868a93;--accent:#5e6ad2;--accent-h:#6b77de;--link:#8b93ff;--err:#eb5757;
@@ -250,13 +250,11 @@ a:focus-visible,button:focus-visible{{outline:2px solid var(--link);outline-offs
 <section class="pitch"><h2>{pitch}</h2></section>
 <form class="card" method="post" action="{action}" autocomplete="on"><h1>{title}</h1><p class="sub">{sub}</p>{top}
 <input type="hidden" name="next" value="{next}">{fields}{error}<button type="submit">{button}</button>{links}</form></div>
-<div class="foot"><span>OpenSketch</span><span>Parametric CAD with AI &nbsp;&middot;&nbsp; <a href="/privacy">Privacy</a></span></div></body></html>"""
+<div class="foot"><span>OpenSketch</span><span>AI for SOLIDWORKS &nbsp;&middot;&nbsp; <a href="/privacy">Privacy</a></span></div></body></html>"""
 
 
-def consent_page(app_name: str, redirect_uri: str, user: dict | None, req: str, app_host: str = "",
-                 endpoint: str = "/mcp") -> bytes:
-    """Allow / Cancel for an AI app that wants to use this person's OpenSketch (mcpauth.py). `endpoint` is the MCP
-    endpoint it signs in to: "/mcp" (OpenSketch files), "/solidworks/mcp" (SOLIDWORKS on the PC) or "" (both)."""
+def consent_page(app_name: str, redirect_uri: str, user: dict | None, req: str, app_host: str = "") -> bytes:
+    """Allow / Cancel for an AI app that wants to use this person's OpenSketch (mcpauth.py)."""
     from urllib.parse import urlsplit
     u = urlsplit(redirect_uri)
     host = u.hostname or (u.scheme + "://")
@@ -264,23 +262,19 @@ def consent_page(app_name: str, redirect_uri: str, user: dict | None, req: str, 
     name = _esc(app_name)
     who = (f'<b>{_esc(user.get("name") or "")}</b> ({_esc(user.get("email") or "")})' if user and not user.get("legacy")
            else "<b>this server</b>")
-    can = (('Work in SOLIDWORKS on your PC through the add-in', 'Create parts and assemblies and change them',
-            'Import, preview and export your models') if endpoint == "/solidworks/mcp" else
-           ('Find and open your files', 'Create parts and assemblies and change them',
-            'Import, preview and export your models'))
+    can = ('Work in SOLIDWORKS on your PC through the add-in', 'Create parts and assemblies and change them',
+           'Import, preview and export your models')
     top = (f'<ul class="can">{"".join(f"<li>{c}</li>" for c in can)}</ul>'
            f'<div class="note">Signed in as {who}. Not you? <a href="/logout">Sign out</a></div>'
            f'<div class="note">You go back to <b>{_esc(host)}</b> after this.'
            + (" That is an app on this computer: allow it only if you just started connecting it." if local else "")
            + '</div>')
     fields = [f'<input type="hidden" name="req" value="{_esc(req)}">']
-    sw = endpoint == "/solidworks/mcp"
     links = ('<button type="submit" name="action" value="deny" class="ghost">Cancel</button>'
-             f'<div class="note center">You can disconnect it any time {"on the SOLIDWORKS page" if sw else "in Account settings"}.</div>')
-    sub = (f"{name} wants to build in SOLIDWORKS with OpenSketch." if endpoint == "/solidworks/mcp" else
-           f"{name} wants to work in your OpenSketch files.") + (f" Its details come from <b>{_esc(app_host)}</b>." if app_host else "")
+             '<div class="note center">You can disconnect it any time on the OpenSketch home page.</div>')
+    sub = f"{name} wants to build in SOLIDWORKS with OpenSketch." + (f" Its details come from <b>{_esc(app_host)}</b>." if app_host else "")
     return _page(f"Connect {name}", sub, "/oauth/authorize", fields,
-                 "Allow", "/", "", links, top, SW_PITCH if sw else None)
+                 "Allow", "/", "", links, top)
 
 
 def notice_page(title: str, sub: str, message: str = "", button: str = "Go to OpenSketch", href: str = "/") -> bytes:
@@ -315,47 +309,49 @@ p,li{margin:0 0 10px}ul{padding-left:20px;margin:0 0 10px}b{color:var(--text);fo
 <header><a class="brand" href="/">OpenSketch</a><a class="back" href="/login">Sign in</a></header>
 <main>
 <h1>Privacy</h1>
-<p class="date">Last updated 19 October 2026</p>
-<p>OpenSketch is a CAD app you use in your browser. This page explains what this OpenSketch server keeps about you,
-why, and who else sees it. In short: only what it needs to sign you in and keep your files. Nothing is sold, used for
-ads, or tracked across other sites.</p>
+<p class="date">Last updated 20 October 2026</p>
+<p>OpenSketch connects your AI app (Claude, ChatGPT and others) to SOLIDWORKS on your own PC, through the OpenSketch
+add-in. This page explains what this OpenSketch server keeps about you, why, and who else sees it. In short: only
+what it needs to sign you in and pass work between your AI app and SOLIDWORKS. Nothing is sold, used for ads, or
+tracked across other sites.</p>
 
 <h2>What is kept</h2>
 <ul>
 <li><b>Your account:</b> your name, your email address, and either a password (stored only as a one-way hash) or the
 ID of the Google account you sign in with.</li>
-<li><b>Your files:</b> the parts and assemblies you make, their earlier versions, and a small picture of each, so you
-can open them again and see them in Files.</li>
+<li><b>Your connections:</b> the AI apps you connected (their name and sign-in tokens, stored only as one-way hashes)
+and your SOLIDWORKS key, so the add-in on your PC can reach your account.</li>
 <li><b>Sign-in sessions:</b> a random token in a cookie, so you stay signed in. A second, short-lived cookie protects
 the Google sign-in step and is removed after it.</li>
-<li><b>AI keys you add:</b> stored encrypted, used only for your own AI requests, and never shown back in full.</li>
+<li><b>Work in passing:</b> while your AI app works, the commands it sends and the shapes SOLIDWORKS sends back
+(for example a STEP copy of the part, to measure and check it) pass through this server. They are held in memory or
+for a short time to do that work, then dropped. Files you upload for import are deleted once imported, or after 30
+minutes. Your SOLIDWORKS files themselves stay on your PC.</li>
 </ul>
-<p>Your browser also keeps an unsaved draft and your display settings in its own storage. They stay on your device.</p>
-<p>OpenSketch's pages load nothing from other sites: the fonts, scripts and pictures all come from this server, so
-opening OpenSketch tells no one else that you visited.</p>
+<p>OpenSketch's pages load nothing from other sites: the fonts and pictures come from this server, so opening
+OpenSketch tells no one else that you visited.</p>
 
 <h2>Sign in with Google</h2>
 <p>If you choose Continue with Google, Google tells OpenSketch your name, your email address, whether that address is
 verified, your Google account ID and, for work accounts, your organisation's domain. OpenSketch asks for nothing
 else: no access to your Gmail, Drive, contacts or anything in your Google account.</p>
-<p>This information is used only to sign you in, to link the sign-in to your OpenSketch account, and to show your
-name in the app. It is stored with your account on this server. It is not shared with anyone, not sold, not used
-for advertising and not used to train AI models. You can remove the link at any time in your Google account
-settings (Security, Third-party connections).</p>
+<p>This information is used only to sign you in and to link the sign-in to your OpenSketch account. It is stored with
+your account on this server. It is not shared with anyone, not sold, not used for advertising and not used to train
+AI models. You can remove the link at any time in your Google account settings (Security, Third-party
+connections).</p>
 
 <h2>AI</h2>
-<p>When you ask the built-in AI to build or change a model, your request and the model you are working on are sent to
-the AI provider you chose (for example Anthropic, OpenAI, Google or OpenRouter), under that provider's own privacy
-terms. If you connect your own AI app (ChatGPT, Claude, Codex and others), that app can read and change your
-OpenSketch files through your personal connection address. Nothing is sent to an AI provider unless you use the AI.</p>
+<p>OpenSketch runs no AI of its own. The AI app you connect sees what OpenSketch's tools return to it (feature
+lists, measurements, preview pictures of your SOLIDWORKS model), under that app's own privacy terms. It can only do
+what the tools allow, only while you have it connected, and only with the SOLIDWORKS your add-in is linked to.</p>
 
-<h2>Who can see your files</h2>
-<p>Only you. The person who runs this server can technically reach the data stored on it, as with any web service.
-Review links you publish can be opened by anyone who has the link.</p>
+<h2>Who can see your work</h2>
+<p>Only you and the AI apps you connect. The person who runs this server can technically reach the data stored on
+it, as with any web service.</p>
 
 <h2>Deleting your data</h2>
-<p>Delete files from Files (they stay in the Trash for 30 days, or delete them forever from there). To close your
-account and remove your sign-in details, ask the person who runs this server or who invited you.</p>
+<p>Disconnect AI apps or make a new SOLIDWORKS key on the home page. To close your account and remove your sign-in
+details, ask the person who runs this server or who invited you.</p>
 
 <h2>Changes</h2>
 <p>If this page changes, the date at the top changes with it.</p>
@@ -387,13 +383,10 @@ def _google_block(nxt: str = "/", invite: str = "", label: str = "Continue with 
             '<div class="or">or with email</div>')
 
 
-PITCH = "CAD that builds while you watch."
-SW_PITCH = "Your AI, building in SOLIDWORKS."
+PITCH = "Your AI, building in SOLIDWORKS."
 
 
-def _page(title, sub, action, fields, button, nxt="/", error="", links="", top="", pitch=None) -> bytes:
-    # on the way to the SOLIDWORKS connector (its page, or an AI app signing in to it) the pitch is about SOLIDWORKS
-    pitch = pitch or (SW_PITCH if "solidworks" in (nxt or "").lower() else PITCH)
+def _page(title, sub, action, fields, button, nxt="/", error="", links="", top="", pitch=PITCH) -> bytes:
     return PAGE.format(title=title, sub=sub, action=action, fields="".join(fields), button=button, next=_esc(nxt), top=top,
                        pitch=pitch,
                        error=f'<div class="err" id="err" role="alert">{_esc(error)}</div>' if error else "", links=links).encode()
@@ -647,12 +640,11 @@ class PasswordGate:
             return await _send(send, 503, json.dumps({"error": str(e)}).encode(), [(b"content-type", b"application/json")])
         if path in ("/login", "/setup", "/reset", "/logout", "/signup", "/access") or path.startswith("/join/") or path.startswith("/auth/google"):
             return await self._page(path, scope, receive, send)
-        # /mcp and /mcp/<key>, /review/: their tokens are the keys. OAuth metadata, registration, token and revoke are
-        # for AI apps (no cookies). GET /api/features: the command list (no document data), which the read-only
-        # review app loads too.
-        if _machine_path(path) or path.startswith("/review/") or (path == "/api/features" and scope.get("method") == "GET"):
+        # /mcp and /mcp/<key> (and the add-in's /mcp/sw/): their tokens are the keys. OAuth metadata, registration,
+        # token and revoke are for AI apps (no cookies).
+        if _machine_path(path):
             return await self.app(scope, receive, send)
-        # The installable-app files hold no data: browsers fetch the manifest without cookies.
+        # The favicon and fonts hold no data.
         if scope.get("method") in ("GET", "HEAD") and (path in PUBLIC_FILES or path.startswith(PUBLIC_DIRS)):
             return await self.app(scope, receive, send)
         user = current_user(scope, m)

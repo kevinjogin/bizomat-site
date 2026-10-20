@@ -1,5 +1,5 @@
 """Fonts come from OpenSketch itself, not Google Fonts: no third-party request on any page (the privacy page says
-so), nothing render-blocking on another host, and the installed app has its fonts offline."""
+so), nothing render-blocking on another host."""
 import pytest
 from fastapi.testclient import TestClient
 
@@ -32,11 +32,6 @@ def test_pages_load_no_fonts_from_other_sites():
         r = anon.get("/fonts/" + n)
         assert r.status_code == 200 and r.headers["content-type"] == "font/woff2" and r.content[:4] == b"wOF2", n
     assert "Open Font License" in anon.get("/fonts/OFL.txt").text
-    # the app itself still needs sign-in
-    assert anon.get("/css/app.css", follow_redirects=False).status_code == 303
-    # a shared review page loads the same files under /review/
-    assert anon.get("/review/fonts/fonts.css").status_code == 200
-    # the installed app keeps them for offline starts
-    sw = anon.get("/sw.js").text
-    assert "/fonts/inter-latin.woff2" in sw and "fonts" in sw.split("const STATIC")[1].split(";")[0]
-    assert auth.PUBLIC_DIRS == ("/icons/", "/fonts/")
+    # the home page itself still needs sign-in
+    assert anon.get("/", follow_redirects=False).status_code == 303
+    assert auth.PUBLIC_DIRS == ("/fonts/",)

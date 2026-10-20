@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "opensketch"
-version = "0.6.0"
-description = "SOLIDWORKS-style parametric CAD on build123d, with an AI copilot"
+version = "0.8.0"
+description = "Connects AI apps (Claude, ChatGPT) to SOLIDWORKS on your PC, with a build123d kernel that checks every feature"
 readme = "README.md"
 requires-python = ">=3.10"
 # Ranges here. The exact versions CI tests and the server image runs are pinned with hashes in requirements.txt
@@ -25,9 +25,7 @@ opensketch = "opensketch.__main__:main"
 packages = ["opensketch", "opensketch.features"]
 
 [tool.setuptools.package-data]
-opensketch = ["static/*.html", "static/*.svg", "static/*.webmanifest", "static/icons/*", "static/fonts/*", "sw.js", "static/css/*", "static/js/*.js", "static/js/*/*.js", "static/js/*/*.mjs", "static/vendor/*", "sldexport_mock/*.bas",
-              "vendor/sldmacro/*.md", "vendor/sldmacro/engine/*", "vendor/sldmacro/engine/mock/*", "vendor/sldmacro/scripts/*",
-              "vendor/sldmacro/reference/*", "vendor/sldmacro/examples/bracket/*", "vendor/sldmacro/examples/bracket/*/*"]
+opensketch = ["static/*.svg", "static/fonts/*", "solver/*.js", "solver/*.mjs"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

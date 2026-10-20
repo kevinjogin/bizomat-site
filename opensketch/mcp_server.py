@@ -1,384 +1,61 @@
-"""OpenSketch as an MCP server: Claude (in the Claude app, Claude Code, ...) builds parts and
-assemblies in OpenSketch documents, and the user watches them change live in the browser.
+"""OpenSketch as an MCP server: an AI app (Claude, ChatGPT...) builds native SOLIDWORKS parts and assemblies in the
+user's own SOLIDWORKS, through the OpenSketch add-in on their PC (swbridge.py). The tools are in sw_tools.py and
+sw_selftest.py; they register on `mcp` here.
 
-Endpoint: /mcp/<token> (Streamable HTTP, stateless, JSON responses), so a server restart after an update
-does not break Claude's connection. The token is the key (see auth.py); the app's Connect AI
-dialog shows the full address.
+Addresses: <site>/mcp, where the AI app signs in (OAuth, mcpauth.py; Bearer token), and <site>/mcp/<key>, the
+private address for apps that cannot sign in (auth.resolve_mcp). /solidworks/mcp is the same server under the
+address it had on 2026-10-20 while the browser app still owned /mcp. Streamable HTTP, stateless, JSON responses,
+so a server restart after an update does not break the AI app's connection.
 
-The modelling tools are the built-in AI's tools (ai.Session), run against a stored document
-(store.py) instead of a chat proposal: every change is saved as a new version at once, the browser
-follows it, and undo_last_change / restore_version go back.
+The browser CAD app and its document tools are archived (branch archive/opensketch-app).
 """
 
 from __future__ import annotations
 
-import base64
-import binascii
 import contextlib
 import contextvars
 import json
 import re
-import inspect
-from pathlib import Path
-from typing import Annotated, Any, Literal
+from typing import Annotated, Literal
 
-import anyio
 from mcp.server.mcpserver import MCPServer
 from mcp.server.streamable_http_manager import StreamableHTTPASGIApp
 from mcp.server.transport_security import TransportSecuritySettings
-from mcp.types import CallToolResult, ImageContent, TextContent, ToolAnnotations
+from pydantic import Field
 
-from pydantic import AliasChoices, Field
+from . import auth, uploads
 
-from . import ai, artifacts, assembly, auth, cadworker, features, geometry, importer, inspection, measure, store, uploads
+NAME = "OpenSketch"
+PATHS = ("/mcp", "/solidworks/mcp")  # the first is the address people are given
 
-INSTRUCTIONS = """OpenSketch is a parametric CAD app that works like SOLIDWORKS. You build real feature trees
-(sketches with relations and dimensions, extrudes, revolves, fillets...) and assemblies with mates, in
-documents the user has open in their browser: every change you make appears there within a second or two.
-Call get_modelling_guide once before your first change: it has the document format, the assembly workflow
-and the rules (off-the-shelf parts first). Then: list_documents or create_document, get_document to read
-one, and the modelling tools, which all take doc_id (add_<feature> tools such as add_draft or add_fillet add
-one feature; propose_features writes many at once). Every change is saved immediately (undo_last_change
-goes back). For more than two changes use batch: the steps run as one change and nothing is saved if a step fails.
-Pick edges and faces with body_topology (pass their `ref`), and check results with inspect_design. Work in the background by default: no browser is needed to model, import, inspect a PNG
-preview, or export CAD. Use import_document for source files (for anything over about 100 KB, get a link
-with request_upload, PUT the file to it, then import_document with the upload_id instead of base64 data),
-preview_document for visual review and export_document for .osk, STEP and STL downloads. Imported STEP bodies
-have no features: recognize_features turns them into an editable feature tree. Open the app only
-when the user asks or would benefit from interactive inspection. After building, give the user the
-document's link from the tool result.
+INSTRUCTIONS = """OpenSketch: you build native SOLIDWORKS parts and assemblies in the user's own files, in the
+SOLIDWORKS running on their PC (through the OpenSketch add-in). Everything you make is a real SOLIDWORKS feature:
+sketches with relations and dimensions, extrudes, revolves, holes, fillets, patterns, mates.
 
-SOLIDWORKS: when the user wants the work in SOLIDWORKS itself, use the sw_ tools instead. They build native
-SOLIDWORKS features in the user's own files on their PC, through the OpenSketch add-in. Call sw_status first and
-sw_get_guide once; the feature format is the same."""
+- Call sw_status first. If SOLIDWORKS is not connected, tell the user what it says and stop.
+- Call sw_get_guide once before your first change: it has the workflow and the feature format.
+- The user may change the same file by hand between your calls: read it with sw_get_document before you write.
+- Build in small stages with sw_batch (if a step fails, the whole batch is taken back). Predict the volume and
+  bounding box before each stage and compare with the result; a difference means a wrong plane, direction or depth.
+- Pick faces and edges with sw_body_topology (pass each item's `ref`). Check with sw_inspect_design,
+  sw_measure_items and sw_preview; assemblies with sw_check_interference.
+- To bring in a file over about 100 KB: request_upload, send the file with an HTTP PUT, then sw_import(upload_id).
+- New documents are saved when made; later changes are saved with sw_save (or by the user).
+- When the user asks to test the setup, run sw_selftest (stages plate, shapes, assembly) and pass on its report."""
 
-MCP_PREFACE = """You are working in OpenSketch through MCP tools. Differences from the in-app copilot described
-below: every tool takes a doc_id; there is no Accept/Reject step, each change is saved at once as a new
-version (undo_last_change, list_versions, restore_version go back); the user sees the model update live in
-their browser. Write one short line before each change as usual. Use your own web search if you have it
-for real part sizes and standards. Modelling, imports, previews and exports run on the server without
-opening a browser. Default to background work, use preview_document for visual inspection, and use
-export_document for downloads (optional part_id exports one assembly part in its local coordinates).
-To import a file bigger than about 100 KB, do not write it out as base64: call request_upload, send the
-file with an HTTP PUT to upload_url (curl -sS -T file.step '<upload_url>'), then import_document(upload_id=...).
-Download URLs are read-only, artifact-specific links valid for one hour; they never contain the MCP
-credential. Fetch them before expiry or call the tool again. Native .osk exports preserve the source
-even if it needs repair; STEP/STL/PNG are refused when active geometry or mates fail to rebuild.
-When done, give the user the "open" link from the last tool result and any requested download links.
-The user may edit the same document in the app while you work. Read it again with get_document before rewriting a
-tree, and pass base_version (the version you read) to propose_features mode "replace", create_part and batch: if the
-document changed since, nothing is saved and the reply lists the changes. undo_last_change undoes only your own last
-change unless you name the version; its reply says what it undid.
-
-Predict, then measure:
-- Before each stage, work out the volume and bounding box you expect (a box minus its holes is simple
-  arithmetic). After it, compare with the batch result or inspect_design. A difference means a wrong plane,
-  direction or depth: fix it now, not three features later.
-- Build in stages with batch (one to four features each), not one call per feature and not the whole part
-  at once. A failed batch saves nothing; read `failed`, fix that step, send the batch again.
-- A cut with volume_change_mm3 = 0 missed the body. A boss that adds nothing is buried inside it.
-- Fillets, chamfers, shells and drafts: call body_topology (near the spot) and pass the `ref` of the edges or
-  faces you want. Do not guess midpoints. Refs carry persistent names (e1:end|e1:side:s1L1), so picks
-  stay put when the part changes size. face_angle_deg 0 means already smooth; never fillet a seam edge.
-- Use measure_items for hole sizes, spacing, walls and gaps; preview_document with yaw/pitch and a section
-  to look inside. Set global variables (set_parameter) for the numbers a designer would change.
-- Delete with delete_items dry_run first.
-- Fillet last: after holes, ribs and shells, small radii first.
-
-"""
-
-MateType = Literal["coincident", "concentric", "parallel", "perpendicular", "distance", "angle", "lock",
-                   "hinge", "limit_distance", "limit_angle", "coupler"]
-BASE_VERSION = ("Optional: the document version you read (get_document or the last result). If the document changed since "
-                "(the user edited it), nothing is saved and the reply lists the changes, so your edit never undoes theirs.")
 StdKind = Literal["socket_head_cap_screw", "hex_head_screw", "counter_sunk_screw", "button_head_screw",
                   "set_screw", "hex_nut", "plain_washer", "ball_bearing"]
+MAX_IMPORT_BYTES = 32 * 1024 * 1024
 
-mcp = MCPServer(name="OpenSketch", instructions=INSTRUCTIONS)
+mcp = MCPServer(name=NAME, instructions=INSTRUCTIONS)
 
-# The person whose connector address made this request (auth.resolve_mcp): set by _TokenGate for the
-# request and copied into the tool's task and worker threads. None = a server without accounts.
+# The person whose sign-in or private address made this request: set by the gates for the request and copied
+# into the tool's task and worker threads. None = a server without accounts.
 _mcp_user: contextvars.ContextVar = contextvars.ContextVar("opensketch_mcp_user", default=None)
 
 
 def _who() -> dict | None:
     return _mcp_user.get()
-
-
-def _get(doc_id: str) -> dict:
-    """A document this connector may use (its person's Files), else NotFound."""
-    rec = store.get(doc_id)
-    if rec.get("deleted") or not store.can_see(rec, _who()):
-        raise store.NotFound(doc_id)
-    return rec
-
-
-def _check(doc_id: str) -> None:
-    m = store.meta(doc_id)
-    if m.get("deleted") or not store.can_see(m, _who()):
-        raise store.NotFound(doc_id)
-
-
-def _link(doc_id: str) -> str:
-    return f"{auth.public_url()}/?doc={doc_id}"
-
-
-def _result(rec: dict, report: Any = None, clean: bool | None = None, changed: bool = True) -> str:
-    out = {"doc_id": rec["id"], "name": rec["name"], "version": rec["version"], "open": _link(rec["id"])}
-    if clean is not None:
-        out["clean"] = clean
-    if not changed:
-        out["note"] = "Nothing changed."
-    if report is not None:
-        try:
-            out["report"] = json.loads(report) if isinstance(report, str) else report
-        except ValueError:
-            out["report"] = report
-    return json.dumps(out)
-
-
-def _save_session(rec: dict, sess: "ai.Session", summary: str) -> tuple[dict, bool]:
-    """Save the session's work as one new version (if anything changed), only if the document is still the version
-    the work started from (store.Conflict otherwise). Returns (record, changed). The document lock is held for the
-    file writes only, never while CAD runs, so the person's own saves never wait for Claude's work."""
-    if assembly.is_assembly(sess.work) and not assembly.is_assembly(rec["doc"]):
-        sess.work["name"] = rec["name"]  # the document keeps its name when it becomes an assembly
-    reqs = list(rec.get("requests") or [])
-    for r in getattr(sess, "requests", []):
-        item = {k: r.get(k) for k in ("part", "description", "mcmaster", "url", "page") if r.get(k) is not None}
-        reqs = [q for q in reqs if q.get("part") != item.get("part")] + [item]
-    changed = sess.work != rec["doc"] or reqs != (rec.get("requests") or [])
-    if changed:
-        rec = store.save(rec["id"], sess.work, "claude", summary, base_version=rec["version"], requests=reqs)
-    return rec, changed
-
-
-def _changes_since(rec: dict, version: int) -> list[dict]:
-    """Who changed the document after `version`, newest first."""
-    out = [{"version": rec["version"], "by": rec.get("by"), "summary": rec.get("summary")}]
-    try:
-        out += [v for v in store.versions(rec["id"]) if v["version"] > version]
-    except store.NotFound:
-        pass
-    return [v for v in out if v["version"] > version][:10]
-
-
-def _stale(rec: dict, base_version: int) -> str:
-    who = _changes_since(rec, base_version)
-    return json.dumps({"doc_id": rec["id"], "version": rec["version"], "open": _link(rec["id"]), "changed_since": who,
-                       "error": f"Not applied: the document changed after version {base_version} (now version "
-                                f"{rec['version']}; see changed_since). Read it again with get_document, then send the "
-                                "change again based on what is there now. Nothing was saved."})
-
-
-def _rerun_ok(tool: str, inp: dict) -> bool:
-    """Whether a change computed on an older version may simply be made again on the newer one. Not for whole-tree
-    rewrites (propose_features replace was written from what Claude read) or feature recognition (minutes)."""
-    return not ((tool == "propose_features" and inp.get("mode") == "replace") or tool == "recognize_features")
-
-
-def _apply_sync(doc_id: str, tool: str, inp: dict, base_version: int | None = None) -> str:
-    """One modelling tool on a stored document: read it, run the tool without holding the document's lock, then
-    save under the lock if the document is still that version. If the person (or another call) saved meanwhile,
-    the tool runs once more on the new version, or the answer says what changed."""
-    inp = {k: v for k, v in inp.items() if v is not None}
-    for attempt in (1, 2):
-        rec = _get(doc_id)
-        if base_version is not None and rec["version"] != int(base_version):
-            return _stale(rec, int(base_version))
-        sess = ai.Session(rec["doc"])
-        report, clean, _ = sess.apply(tool, inp)
-        if not clean and not ai._is_report(report):  # refused: the session is unchanged, nothing to save
-            return _result(rec, report, clean, changed=False)
-        try:
-            saved, changed = _save_session(rec, sess, sess.summary or tool.replace("_", " ").capitalize())
-        except store.Conflict as exc:
-            if attempt == 1 and _rerun_ok(tool, inp):
-                continue
-            return _stale(exc.current, rec["version"])
-        return _result(saved, report, clean, changed)
-
-
-def _as(user: dict | None, name: str, args: tuple):
-    """Runs in a CAD worker process: one of this module's *_sync functions, as the person who called the tool."""
-    token = _mcp_user.set(user)
-    try:
-        return globals()[name](*args)
-    finally:
-        _mcp_user.reset(token)
-
-
-async def _work(fn, *args, limit: float | None = None):
-    """A tool's document work, in the calling person's "agent" CAD worker (cadworker.lane_for), so Claude's edits
-    never pause the web server, the person's own clicks, or anyone else. Saves from the worker are safe: store.lock
-    is a file lock too. Exceptions come back as their own types (NotFound, ValueError...)."""
-    if not cadworker.enabled():
-        return await anyio.to_thread.run_sync(fn, *args)
-    user = _who()
-    lane = cadworker.lane_for(store.owner_of(user), "agent")
-    return await lane.run(_as, user, fn.__name__, args, limit=limit, raw=True)
-
-
-LONG_TOOLS = {"recognize_features": 3600.0}  # seconds a tool may run in its worker (default cadworker.CAD_LIMIT)
-
-# The same change sent twice (a client that timed out on a long call and retried it) is made once: an identical call
-# still running is joined, and one that finished in the last REPEAT_SECONDS is answered from memory while the
-# document is still the version it saved.
-REPEAT_SECONDS = 300
-_running: dict[str, "anyio.Event"] = {}
-_recent: dict[str, tuple[float, Any]] = {}
-
-
-def _call_key(doc_id: str, tool: str, args: Any) -> str:
-    import hashlib
-    who = store.owner_of(_who())
-    raw = json.dumps([who, doc_id, tool, args], sort_keys=True, default=str)
-    return hashlib.sha256(raw.encode()).hexdigest()
-
-
-def _version_of(result: Any) -> int | None:
-    text = result.content[0].text if isinstance(result, CallToolResult) else result
-    try:
-        out = json.loads(text)
-    except (ValueError, TypeError, AttributeError, IndexError):
-        return None
-    if not isinstance(out, dict) or out.get("error") or not out.get("ok", True) or out.get("note") == "Nothing changed.":
-        return None  # only saved changes are remembered (a refusal is answered afresh)
-    return out.get("version")
-
-
-def _repeat_note(result: Any, seconds: float) -> Any:
-    note = (f"This exact call was already made {round(seconds)} s ago and saved; it was not made again. Change the "
-            "arguments to make another change.")
-    if isinstance(result, CallToolResult):
-        try:
-            body = json.loads(result.content[0].text)
-            body["note"] = note
-            return CallToolResult(content=[TextContent(type="text", text=json.dumps(body))], is_error=result.is_error)
-        except (ValueError, IndexError, AttributeError):
-            return result
-    try:
-        body = json.loads(result)
-        body["note"] = note
-        return json.dumps(body)
-    except ValueError:
-        return result
-
-
-async def _once(doc_id: str, tool: str, args: Any, run):
-    """Run `run()` unless an identical call is running (wait for it) or just finished on the current version."""
-    import time
-    key = _call_key(doc_id, tool, args)
-    now = time.monotonic()
-    for k, (t, _) in list(_recent.items()):
-        if now - t > REPEAT_SECONDS:
-            _recent.pop(k, None)
-    while key in _running:
-        await _running[key].wait()
-    hit = _recent.get(key)
-    if hit is not None:
-        try:
-            current = store.meta(doc_id).get("version")
-        except store.NotFound:
-            current = None
-        if current is not None and _version_of(hit[1]) == current:
-            return _repeat_note(hit[1], time.monotonic() - hit[0])
-    done = _running[key] = anyio.Event()
-    try:
-        result = await run()
-        if _version_of(result) is not None:
-            _recent[key] = (time.monotonic(), result)
-        return result
-    finally:
-        _running.pop(key, None)
-        done.set()
-
-
-async def _apply(doc_id: str, tool: str, base_version: int | None = None, **inp) -> str:
-    async def run():
-        try:
-            return await _work(_apply_sync, doc_id, tool, inp, base_version, limit=LONG_TOOLS.get(tool))
-        except store.NotFound:
-            return f"No document {doc_id!r}. Use list_documents or create_document."
-    if tool in ("check_interference", "find_mate_candidates"):  # read-only answers: nothing to repeat
-        return await run()
-    return await _once(doc_id, tool, {k: v for k, v in inp.items() if v is not None}, run)
-
-
-# ----------------------------------------------------------------------------- documents
-
-SKILL_DIR = Path(__file__).resolve().parent.parent / "skills" / "opensketch-cad"
-
-
-def _skill_reference() -> str:
-    """The opensketch-cad skill's reference (planes, argument shapes, errors and fixes, red flags), so a
-    connector without the skill installed gets the same guidance."""
-    try:
-        return "\n\n" + (SKILL_DIR / "reference.md").read_text()
-    except OSError:
-        return ""
-
-
-@mcp.tool()
-def get_modelling_guide() -> str:
-    """The OpenSketch document format, feature types, assembly workflow, design rules, plane tables, errors
-    and their fixes. Read it once before your first change."""
-    return MCP_PREFACE + ai.SYSTEM + _skill_reference()
-
-
-@mcp.tool()
-def list_documents() -> str:
-    """Documents on this OpenSketch server, newest first (id, name, part or assembly, version, last change)."""
-    keys = ("id", "name", "kind", "version", "updated", "by", "summary")
-    return json.dumps([dict({k: r.get(k) for k in keys}, open=_link(r["id"])) for r in store.listing(store.visible_to(_who()))])
-
-
-@mcp.tool()
-def create_document(name: str, kind: Literal["part", "assembly"] = "part") -> str:
-    """Create an empty part or assembly document. A part document becomes an assembly by itself when you
-    call create_part on it, so start with "part" unless the product clearly has several pieces."""
-    rec = store.create(name, kind=kind, by="claude", owner=store.owner_of(_who()))
-    return _result(rec)
-
-
-def _read_sync(doc_id: str) -> str:
-    rec = _get(doc_id)
-    doc = rec["doc"]
-    out: dict = {"doc_id": doc_id, "name": rec["name"], "version": rec["version"], "open": _link(doc_id),
-                 "last_change": {"by": rec.get("by"), "summary": rec.get("summary")},
-                 "document": ai.model_view(doc)}
-    try:
-        if assembly.is_assembly(doc):
-            res = assembly.regen_assembly(doc)
-            out["state"] = ai._asm_report(doc, res)
-        elif doc.get("features"):
-            st, _ = geometry.regen(doc)
-            out["state"], _ = ai._part_report(st)
-    except Exception as exc:  # report, don't fail: Claude can fix the document
-        out["state"] = {"error": f"Rebuild failed: {exc}"}
-    if rec.get("requests"):
-        out["bought_parts_requested"] = rec["requests"]
-    return json.dumps(out)
-
-
-@mcp.tool()
-async def get_document(doc_id: str) -> str:
-    """Read a document: its features or parts, components and mates (imported geometry summarised), and
-    the rebuild state (feature errors, mate states, degrees of freedom). Read it before editing a
-    document the user has been working on: they may have changed it by hand."""
-    try:
-        return await _work(_read_sync, doc_id)
-    except store.NotFound:
-        return f"No document {doc_id!r}."
-
-
-# These are MCP file operations, not tools offered to the in-app ai.Session. Export and preview do
-# not change the document, so they have no Session/live.js build events. Import creates a new stored
-# document and the browser can follow its returned open link, just like create_document.
-MAX_IMPORT_BYTES = 32 * 1024 * 1024
-
-
-_native_structure = store.check_structure  # the same check the browser's saves get (store.py)
 
 
 def _check_filename(filename: str | None) -> str:
@@ -387,713 +64,41 @@ def _check_filename(filename: str | None) -> str:
     return filename
 
 
-def _import_raw(raw: bytes, filename: str, name: str | None, report: dict) -> tuple[dict, dict]:
-    if not raw or len(raw) > MAX_IMPORT_BYTES:
-        raise ValueError("Import requires a non-empty file of at most 32 MiB.")
-    if filename.lower().endswith((".osk", ".json")):
-        try:
-            doc = json.loads(raw)
-        except ValueError:
-            raise ValueError("The .osk file is not valid JSON.") from None
-        _native_structure(doc)
-    else:
-        doc = importer.import_file(raw, filename)
-    rec = store.create(name or doc.get("name") or filename.rsplit(".", 1)[0], doc=doc, by="claude", owner=store.owner_of(_who()))
-    return rec, dict({"source_filename": filename, "size_bytes": len(raw)}, **report)
-
-
-def _import_sync(filename: str | None, data: str | None, name: str | None, upload_id: str | None = None) -> str:
-    if upload_id and data == "":
-        data = None  # a client still holding the old tool list (data required) sends data "" with the upload_id
-    if (data is None) == (upload_id is None):
-        raise ValueError("Give either data (base64 file bytes) or upload_id (from request_upload), not both.")
-    if upload_id is not None:
-        raw, meta = uploads.take(upload_id, _who())
-        filename = _check_filename(filename or meta["filename"])
-        rec, report = _import_raw(raw, filename, name, {"upload_id": upload_id, "sha256": meta["sha256"]})
-        uploads.mark_imported(upload_id, rec["id"])
-        return _result(rec, report=report)
-    filename = _check_filename(filename)
-    if len(data) > 4 * ((MAX_IMPORT_BYTES + 2) // 3):
-        raise ValueError("Import is limited to 32 MiB before base64 encoding. Use request_upload for big files.")
-    try:
-        raw = base64.b64decode(data, validate=True)
-    except (ValueError, binascii.Error):
-        raise ValueError("data must be valid base64 file content.") from None
-    rec, report = _import_raw(raw, filename, name, {})
-    return _result(rec, report=report)
+def _shell_quote(s: str) -> str:
+    return "'" + s.replace("'", "'\\''") + "'"
 
 
 @mcp.tool()
-async def import_document(filename: Annotated[str | None, Field(description="e.g. bracket.step; picks the reader. Optional with upload_id (the name given to request_upload)")] = None,
-                          data: Annotated[str | None, Field(description="Base64 file bytes. Only for small files (under ~100 KB); otherwise use upload_id")] = None,
-                          name: str | None = None,
-                          upload_id: Annotated[str | None, Field(description="From request_upload, after the file was sent to its upload_url")] = None) -> str:
-    """Import a source file as a NEW stored document; never overwrites existing work. Give the file either as
-    data (base64, small files only) or as upload_id: call request_upload, send the file's bytes to its
-    upload_url with an HTTP PUT (curl -T file.step '<upload_url>'), then pass the upload_id here. At most
-    32 MiB either way. Supports .osk/.json, STEP/.stp, EAGLE XML .brd, or a zip with one supported CAD file.
-    EAGLE supplies PCB geometry, not populated component solids. Runs in background. STEP bodies come in as
-    imported bodies with no history; call recognize_features to turn them into editable features."""
-    try:
-        return await _work(_import_sync, filename, data, name, upload_id)
-    except (ValueError, importer.ImportError_) as exc:
-        return json.dumps({"error": f"Cannot import: {exc}"})
-
-
-@mcp.tool()
-def request_upload(filename: Annotated[str, Field(description="The file's name, e.g. assembly.step or model.zip")],
+def request_upload(filename: Annotated[str, Field(description="The file's name, e.g. bracket.step or housing.x_t")],
                    size_bytes: Annotated[int | None, Field(description="Optional: the file size, to refuse a too-big file before sending it")] = None) -> str:
-    """Get a one-time link to send a file to OpenSketch, for import_document(upload_id=...). Use it for any
-    file bigger than about 100 KB instead of base64 data. Send the file's raw bytes as the body of an HTTP
-    PUT (or POST) to upload_url, e.g. curl -sS -T model.step '<upload_url>'; a gzipped body works with the
-    header Content-Encoding: gzip. The link is for this connector's account only, takes one upload, expires
-    after 10 minutes, and carries no other access; the file waits 30 minutes for import_document. Max 32 MiB."""
+    """Get a one-time link to send a file for sw_import(upload_id=...). Use it for any file bigger than about
+    100 KB instead of base64 data. Send the file's raw bytes as the body of an HTTP PUT (or POST) to upload_url,
+    e.g. curl -sS -T model.step '<upload_url>'; a gzipped body works with the header Content-Encoding: gzip. The
+    link is for this account only, takes one upload, expires after 10 minutes, and carries no other access; the
+    file waits 30 minutes for sw_import. Max 32 MiB."""
     try:
         out = uploads.create(_who(), filename, MAX_IMPORT_BYTES, size_bytes)
     except uploads.UploadError as exc:
         return json.dumps({"error": f"Cannot make an upload link: {exc}"})
     out["how"] = f"curl -sS -T {_shell_quote(filename)} '{out['upload_url']}'"
-    out["next"] = f'import_document(upload_id="{out["upload_id"]}", name=...)'
+    out["next"] = f'sw_import(upload_id="{out["upload_id"]}")'
     return json.dumps(out)
 
 
-def _shell_quote(s: str) -> str:
-    return "'" + s.replace("'", "'\\''") + "'"
+from . import sw_selftest, sw_tools  # noqa: E402,F401  (the sw_ tools register on `mcp`)
 
 
-def _export_sync(rec, fmt, part_id):
-    return artifacts.export_record(rec, fmt, part_id)
-
-
-def _preview_sync(rec, view, width, height, part_id, camera, section):
-    return artifacts.preview_record(rec, view, width, height, part_id, camera, section)
-
-
-@mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
-async def export_document(doc_id: str, format: Literal["osk", "step", "stl"], part_id: str | None = None) -> str:
-    """Export a saved document without a browser or changing its version. Returns an immutable file,
-    source version, SHA-256 and a read-only download_url valid for one hour. Optional part_id exports
-    an assembly part in LOCAL coordinates. STEP/STL refuse failed rebuilds; .osk preserves source."""
-    try:
-        rec = _get(doc_id)
-        result = await _work(_export_sync, rec, format, part_id)
-        return json.dumps(dict(result, open=_link(doc_id)))
-    except (store.NotFound, artifacts.ArtifactError, geometry.FeatureError, assembly.AssemblyError) as exc:
-        return json.dumps({"error": f"Cannot export: {exc}"})
-
-
-@mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
-async def preview_document(doc_id: str, view: Literal["isometric", "top", "front", "right"] = "isometric",
-                           width: int = 960, height: int = 720, part_id: str | None = None,
-                           yaw: Annotated[float | None, Field(description="Degrees about +Y from the front (+Z) toward the right (+X); with pitch, replaces view")] = None,
-                           pitch: Annotated[float | None, Field(description="Degrees the eye is above the XZ plane (-90..90; 90 = top)")] = None,
-                           target: Annotated[list[float] | None, Field(description="[x,y,z] mm to centre on (close-ups)")] = None,
-                           view_width: Annotated[float | None, Field(description="Width shown, in mm (zoom); default fits the model")] = None,
-                           section: Annotated[dict | None, Field(description='{"point": [x,y,z], "normal": [x,y,z]}: cut the model and remove the normal\'s side; cut faces are orange')] = None
-                           ) -> CallToolResult:
-    """Render a PNG of saved geometry without a browser. Returns the image directly for inspection,
-    plus an immutable PNG download_url valid for one hour. Views: isometric, top, front, right, or any
-    direction with yaw/pitch (yaw 0 pitch 0 = front, yaw 90 = right, pitch 90 = top, yaw 45 pitch 35 =
-    isometric). target + view_width give a close-up (e.g. view_width 20 around a boss). section cuts the
-    model to look inside (wall thickness, a bore, a snap fit). Dimensions 128..1600 pixels. Optional
-    part_id previews an assembly part in local coordinates. No document edits."""
-    try:
-        if not 128 <= width <= 1600 or not 128 <= height <= 1600:
-            raise artifacts.ArtifactError("Preview dimensions must be between 128 and 1600 pixels.")
-        rec = _get(doc_id)
-        camera = {"yaw": yaw, "pitch": pitch, "target": target, "view_width": view_width}
-        result, raw = await _work(_preview_sync, rec, view, width, height, part_id, camera, section)
-        result["open"] = _link(doc_id)
-        return CallToolResult(content=[TextContent(type="text", text=json.dumps(result)),
-                                       ImageContent(type="image", data=base64.b64encode(raw).decode(), mime_type="image/png")],
-                              structured_content=result)
-    except (store.NotFound, ValueError, geometry.FeatureError, assembly.AssemblyError) as exc:
-        return CallToolResult(content=[TextContent(type="text", text=json.dumps({"error": f"Cannot preview: {exc}"}))],
-                              is_error=True)
-
-
-@mcp.tool()
-def undo_last_change(doc_id: str,
-                     expected_version: Annotated[int | None, Field(description=(
-                         "The version you mean to undo (the version your change produced). Needed to undo a change "
-                         "the user made in the app"))] = None) -> str:
-    """Undo the latest change to the document, normally your own: if the user has saved a change since (they edit
-    in the app while you work), it is not undone unless you pass that version as expected_version. The reply says
-    which change was undone (version, by, summary). Calling it again redoes it; to go back further use
-    list_versions and restore_version."""
-    try:
-        _check(doc_id)
-        with store.lock(doc_id):  # file work only: the newest version cannot change between the check and the undo
-            rec = store.get(doc_id)
-            last = {"version": rec["version"], "by": rec.get("by"), "summary": rec.get("summary")}
-            if expected_version is not None and int(expected_version) != rec["version"]:
-                return json.dumps({"doc_id": doc_id, "version": rec["version"], "last_change": last,
-                                   "error": f"Not undone: the document is at version {rec['version']}, not "
-                                            f"{expected_version} ({last['by']}: {last['summary']}). Use list_versions "
-                                            "and restore_version to go back to a particular version."})
-            if expected_version is None and rec.get("by") != "claude":
-                return json.dumps({"doc_id": doc_id, "version": rec["version"], "last_change": last,
-                                   "error": f"Not undone: the last change (version {rec['version']}) was made by the "
-                                            f"user in the app: {last['summary']}. Undoing it would throw away their "
-                                            "work. To undo your own earlier change, use list_versions and "
-                                            "restore_version; to undo theirs anyway, pass expected_version="
-                                            f"{rec['version']}."})
-            new = store.undo(doc_id, "claude")
-        out = json.loads(_result(new))
-        out["undid"] = last
-        return json.dumps(out)
-    except store.NotFound as exc:
-        return f"Cannot undo: {exc}"
-
-
-@mcp.tool()
-def list_versions(doc_id: str) -> str:
-    """Earlier versions of a document still kept (the last 50), newest first."""
-    try:
-        _check(doc_id)
-        return json.dumps(store.versions(doc_id))
-    except store.NotFound:
-        return f"No document {doc_id!r}."
-
-
-@mcp.tool()
-def restore_version(doc_id: str, version: int) -> str:
-    """Bring back an earlier version of the document (saved as a new version, so nothing is lost)."""
-    try:
-        _check(doc_id)
-        return _result(store.restore(doc_id, version, "claude"))
-    except store.NotFound as exc:
-        return f"Cannot restore: {exc}"
-
-
-# ----------------------------------------------------------------------------- modelling (ai.Session tools)
-
-@mcp.tool()
-async def propose_features(doc_id: str, mode: Literal["append", "replace"], summary: str, features: list[dict],
-                           base_version: Annotated[int | None, Field(description=BASE_VERSION)] = None) -> str:
-    """Write features into a part document ("append" adds to the tree, "replace" rewrites it). The part is
-    rebuilt and the status of each feature, the bounding box and the volume come back. Part documents
-    only; for assemblies use create_part. Feature ids must be new in append mode. With "replace", pass
-    base_version so a change the user made meanwhile is not overwritten."""
-    return await _apply(doc_id, "propose_features", base_version=base_version, mode=mode, summary=summary,
-                        features=features)
-
-
-@mcp.tool()
-async def create_part(doc_id: str, part_id: str, name: str, features: list[dict], material: str | None = None,
-                      appearance: str | None = None,
-                      base_version: Annotated[int | None, Field(description=BASE_VERSION)] = None) -> str:
-    """Create a part in an assembly (or replace the part with the same part_id). A part document becomes an
-    assembly. Returns rebuild status, bounding box, and the part's planar faces and cylinder axes to mate
-    to. material e.g. "6061 Alloy", "AISI 304", "ABS"; appearance a hex colour."""
-    return await _apply(doc_id, "create_part", base_version=base_version, part_id=part_id, name=name, features=features,
-                        material=material, appearance=appearance)
-
-
-@mcp.tool()
-async def insert_component(doc_id: str, component_id: str, part: str, position: list[float] | None = None,
-                           rotation: list[float] | None = None, fixed: bool | None = None) -> str:
-    """Insert a part as a component (or update the component with this id). position [x,y,z] mm and
-    rotation [rx,ry,rz] degrees are a starting guess; mates finish the placement. The first component is
-    fixed. Returns the solved assembly."""
-    return await _apply(doc_id, "insert_component", component_id=component_id, part=part, position=position,
-                        rotation=rotation, fixed=fixed)
-
-
-@mcp.tool()
-async def add_mate(doc_id: str, type: MateType, refs: list[dict], value: float | None = None,
-                   align: Literal["anti", "aligned", "auto"] | None = None, flip: bool | None = None,
-                   planes: list[dict] | None = None, angle_refs: list[dict] | None = None,
-                   angle_min: float | None = None, angle_max: float | None = None,
-                   min: float | None = None, max: float | None = None,
-                   input_refs: list[dict] | None = None, input: Literal["angle", "distance"] | None = None,
-                   output: Literal["angle", "distance"] | None = None, law: list[list[float]] | None = None,
-                   ratio: float | None = None, offset: float | None = None, name: str | None = None) -> str:
-    """Add a mate between two components and re-solve. refs: two references in each component's part
-    coordinates, e.g. {"component": "c1", "plane": {"point": [x,y,z], "normal": [x,y,z]}}, {"component":
-    "c2", "axis": {"point": [...], "dir": [...]}}, or {"component": "c1", "ref": "Top Plane"}. value: mm or
-    degrees for distance / angle. hinge: refs = two axes, planes = two faces that stay together,
-    angle_refs + angle_min / angle_max = travel limits. limit_distance / limit_angle: refs + min / max.
-    coupler (one part drives another): input_refs + input = the driver's angle or distance, refs + output =
-    the driven one, law = [[driver, driven], ...] (driver increasing; flat = dwell) or ratio + offset."""
-    return await _apply(doc_id, "add_mate", type=type, refs=refs, value=value, align=align, flip=flip, planes=planes,
-                        angle_refs=angle_refs, angle_min=angle_min, angle_max=angle_max, min=min, max=max,
-                        input_refs=input_refs, input=input, output=output, law=law, ratio=ratio, offset=offset, name=name)
-
-
-@mcp.tool()
-async def add_contact(doc_id: str, a: str | None = None, b: str | None = None, joint: str | None = None,
-                      from_value: Annotated[float | None, Field(
-                          validation_alias=AliasChoices("from", "from_value"),
-                          description="Start of the range to check, in the joint's units (also accepted as from_value)")] = None,
-                      to_value: Annotated[float | None, Field(
-                          validation_alias=AliasChoices("to", "to_value"),
-                          description="End of the range (also accepted as to_value)")] = None,
-                      name: str | None = None, remove: str | None = None) -> str:
-    """Declare that components a and b must touch (a pin on a tongue, a cam on its follower). The review
-    checks it through joint's travel (a hinge or limit mate id) between from and to (that joint's units),
-    or at rest without a joint. remove: delete that contact id."""
-    return await _apply(doc_id, "add_contact", a=a, b=b, joint=joint, name=name, remove=remove,
-                        **{"from": from_value, "to": to_value})
-
-
-@mcp.tool()
-async def delete_items(doc_id: str, components: list[str] | None = None, mates: list[str] | None = None,
-                       parts: list[str] | None = None, features: list[str] | None = None, part_id: str | None = None,
-                       delete_absorbed: bool | None = None, dry_run: bool | None = None) -> str:
-    """Delete components, mates or parts from an assembly (mates on deleted components go too), or features
-    from a part (part_id in an assembly). Features take their dependants with them, as in SOLIDWORKS: an
-    extrude whose sketch goes, a pattern left with nothing to copy, and sketches only they used (unless
-    delete_absorbed is false). Features that would break (a sketch on a deleted plane, a fillet whose edge
-    is gone) stay and show the error. dry_run=true reports deleted_with_it, absorbed, patterns_trimmed,
-    would_fail and would_warn (assemblies: mates that would fail) and deletes nothing. Dry-run first."""
-    return await _apply(doc_id, "delete_items", components=components, mates=mates, parts=parts, features=features,
-                        part_id=part_id, delete_absorbed=delete_absorbed, dry_run=dry_run)
-
-
-@mcp.tool()
-async def set_parameter(doc_id: str, name: str, expression: str | None = None, unit: str | None = None,
-                        comment: str | None = None, part_id: str | None = None, remove: bool | None = None,
-                        force: bool | None = None) -> str:
-    """Create, change or remove a global variable of a part (SOLIDWORKS Equations > Global Variables).
-    expression: a number or an equation using other variables ("2", "wall * 2", "length / 2 - 6", "1in";
-    units mm cm m in deg rad; functions abs min max sqrt round floor ceil sin cos tan in degrees). Every
-    equation using it is recomputed (sketches re-solved) and the part rebuilt. The result has the variables
-    with values and where each is used, `recomputed` (field, old, new) and `now_failing`. Put the sensible
-    range in comment. Use variables for the few numbers a designer would change (wall, length, hole size)."""
-    return await _apply(doc_id, "set_parameter", name=name, expression=expression, unit=unit, comment=comment,
-                        part_id=part_id, remove=remove, force=force)
-
-
-@mcp.tool()
-async def set_equation(doc_id: str, feature: str, field: str, expression: str | None = None,
-                       part_id: str | None = None) -> str:
-    """Drive one number with an equation of global variables: a feature field by name ("depth", "radius",
-    "count", "spacing", "dir2.depth") or a sketch dimension by its id or name ("D1"). Empty expression
-    removes the equation and keeps the current value. Equations can also be written directly in features:
-    "eq": {"depth": "wall * 5"} on a feature, "eq": "width" on a sketch dimension."""
-    return await _apply(doc_id, "set_equation", feature=feature, field=field, expression=expression, part_id=part_id)
-
-
-@mcp.tool()
-async def check_interference(doc_id: str) -> str:
-    """Check every pair of components in the assembly for overlapping volume."""
-    return await _apply(doc_id, "check_interference")
-
-
-@mcp.tool()
-async def find_mate_candidates(doc_id: str) -> str:
-    """Likely mates from the assembly's geometry (shafts in holes, faces lying on each other), with
-    references ready for add_mate. Useful after a STEP import, which has no mates."""
-    return await _apply(doc_id, "find_mate_candidates")
-
-
-@mcp.tool()
-async def recognize_features(doc_id: str,
-                             part_id: Annotated[str | None, Field(description=(
-                                 "Assembly: the part to recognise. Without it every part with an imported body is done"))] = None,
-                             kinds: Annotated[list[Literal["extrudes", "revolves", "holes", "fillets", "chamfers"]] | None, Field(
-                                 description="Feature types to recognise (default: all)")] = None) -> str:
-    """Feature recognition (SOLIDWORKS FeatureWorks): turn imported STEP bodies into editable feature trees.
-    Fillets, chamfers and holes (counterbore, countersink, blind, through) become features; the base becomes
-    extrudes and cuts with dimensioned sketches, or a revolve. Every step is checked against the import, and
-    anything not recognised stays an imported body under the recognised features. Saved as one version.
-    Large parts take up to two minutes each."""
-    return await _apply(doc_id, "recognize_features", part_id=part_id, kinds=kinds)
-
-
-@mcp.tool()
-async def standard_part(doc_id: str, part_id: str, kind: StdKind, size: str, length: float | None = None) -> str:
-    """Create a standard (Toolbox) part made to size: ISO screws, nuts, washers, ball bearings. size e.g.
-    "M6-1" for screws, nuts and washers, "M8-22-7" (bore-OD-width) for bearings; length in mm for screws.
-    Then insert_component it. Prefer these over modelling fasteners."""
-    return await _apply(doc_id, "standard_part", part_id=part_id, kind=kind, size=size, length=length)
-
-
-@mcp.tool()
-async def request_part_file(doc_id: str, part_id: str, description: str, mcmaster_part_number: str | None = None,
-                            url: str | None = None) -> str:
-    """Ask the user to download a bought part's STEP (McMaster-Carr or another supplier) and drop it into
-    OpenSketch, where it replaces the placeholder part with this part_id. Also create that placeholder with
-    create_part (the right envelope) so the assembly can go on."""
-    return await _apply(doc_id, "request_part_file", part_id=part_id, description=description,
-                        mcmaster_part_number=mcmaster_part_number, url=url)
-
-
-# ----------------------------------------------------------------------------- batch, topology, inspect
-# Borrowed from SolidCraft (bherbruck/solidcraft): a batch that rolls back as a whole, a topology
-# readout that names edges and faces by points, and a numeric inspect.
-
-BATCH_TOOLS = ("propose_features", "create_part", "insert_component", "add_mate", "delete_items", "standard_part",
-               "request_part_file", "check_interference", "find_mate_candidates", "set_parameter", "set_equation",
-               "add_contact", "recognize_features")
-MAX_BATCH_STEPS = 100
-
-
-def _batch_tool_ok(name: str) -> bool:
-    return name in BATCH_TOOLS or features.type_for_tool(name) is not None
-
-
-def _problem_keys(rep: Any, kind: str) -> set[str]:
-    """Identity of each error (kind="errors") or warning in a report, without its message text, so a known
-    problem whose wording changes is not counted as new."""
-    if not isinstance(rep, dict):
-        return set()
-    keys = set()
-    for e in rep.get(kind) or []:
-        ident = {k: e.get(k) for k in ("part", "id", "mate", "component", "code") if e.get(k) is not None}
-        keys.add(json.dumps(ident or e, sort_keys=True, default=str))
-    return keys
-
-
-def _baseline(doc: dict) -> dict:
-    try:
-        if assembly.is_assembly(doc):
-            return ai._asm_report(doc, assembly.regen_assembly(doc))
-        if doc.get("features"):
-            return ai._part_report(geometry.regen(doc)[0])[0]
-    except Exception:
-        pass
-    return {}
-
-
-def _compact(rep: Any) -> Any:
-    """The parts of a step report worth seeing in a batch result (the last step gets the full report)."""
-    if not isinstance(rep, dict):
-        return rep
-    keep = ("rebuilt", "clean", "errors", "warnings", "input_problems", "feature", "part_id", "volume", "bbox_min",
-            "bbox_max", "this_mate", "interferences")
-    out = {k: rep[k] for k in keep if k in rep}
-    if "errors" in out:  # status rows carry diagnostics; the id and message are enough here
-        out["errors"] = [{k: e[k] for k in ("part", "id", "mate", "component", "message") if k in e} for e in out["errors"]]
-    return out
-
-
-def _with_part(rep: Any, pid: str | None) -> Any:
-    """Step reports of one part (add_<feature>, create_part, set_parameter on part_id) list its errors without a
-    part; the assembly baseline names the part. Name it here too, so an old error is still known."""
-    if not pid or not isinstance(rep, dict):
-        return rep
-    out = dict(rep)
-    for kind in ("errors", "warnings"):
-        if out.get(kind):
-            out[kind] = [dict(e, part=e.get("part") or pid) if isinstance(e, dict) else e for e in out[kind]]
-    return out
-
-
-def _batch_run(rec: dict, steps: list[dict], stop_on_warnings: bool) -> tuple["ai.Session", list, dict | None]:
-    """Run the steps on the record's document (no lock held). Returns (session, results, failure or None)."""
-    sess = ai.Session(rec["doc"])
-    base = _baseline(rec["doc"])
-    known_err, known_warn = _problem_keys(base, "errors"), _problem_keys(base, "warnings")
-    results = []
-    for i, s in enumerate(steps):
-        name = s["tool"]
-        args = {k: v for k, v in (s.get("args") or {}).items() if v is not None and k != "doc_id"}
-        try:
-            report, clean, _ = sess.apply(name, args)
-        except Exception as exc:  # a crash in one step must not leave half a batch saved
-            report, clean = f"{type(exc).__name__}: {exc}", False
-        try:
-            rep = json.loads(report) if isinstance(report, str) else report
-        except ValueError:
-            rep = report
-        why = None
-        if not isinstance(rep, dict):
-            if not clean:
-                why = str(rep)  # tools answer plain text when they refuse ("Unknown part ...")
-        else:
-            keyed = _with_part(rep, (rep.get("part_id") or args.get("part_id")) if assembly.is_assembly(sess.work) else None)
-            new_err = _problem_keys(keyed, "errors") - known_err
-            new_warn = _problem_keys(keyed, "warnings") - known_warn
-            if rep.get("input_problems"):
-                why = "Input problems: " + "; ".join(map(str, rep["input_problems"]))
-            elif new_err:
-                msgs = [e.get("message") or json.dumps(e) for e in keyed.get("errors", [])
-                        if _problem_keys({"errors": [e]}, "errors") & new_err]
-                why = "Rebuild errors: " + "; ".join(map(str, msgs))
-            elif stop_on_warnings and new_warn:
-                msgs = [w.get("message") for w in keyed.get("warnings", []) if _problem_keys({"warnings": [w]}, "warnings") & new_warn]
-                why = "Warnings (stop_on_warnings): " + "; ".join(map(str, msgs))
-            if not why:
-                known_err |= _problem_keys(keyed, "errors")
-                known_warn |= _problem_keys(keyed, "warnings")
-        if why:
-            return sess, results, {"index": i, "tool": name, "error": why, "report": _compact(rep)}
-        results.append({"index": i, "tool": name, "clean": clean, "summary": sess.summary,
-                        "report": _compact(rep) if i < len(steps) - 1 else rep})
-    return sess, results, None
-
-
-def _batch_sync(doc_id: str, steps: list[dict], summary: str, stop_on_warnings: bool, dry_run: bool,
-                base_version: int | None = None) -> CallToolResult:
-    def reply(body: dict, error: bool) -> CallToolResult:
-        return CallToolResult(content=[TextContent(type="text", text=json.dumps(body))], is_error=error)
-
-    if not steps:
-        return reply({"ok": False, "error": "steps is empty."}, True)
-    if len(steps) > MAX_BATCH_STEPS:
-        return reply({"ok": False, "error": f"At most {MAX_BATCH_STEPS} steps per batch."}, True)
-    for i, s in enumerate(steps):
-        name = s.get("tool") if isinstance(s, dict) else None
-        if not isinstance(name, str) or not _batch_tool_ok(name):
-            return reply({"ok": False, "completed": 0, "failed": {"index": i, "tool": name,
-                          "error": f"Not a modelling tool. Use one of {', '.join(BATCH_TOOLS)} or an add_<feature> tool."},
-                          "rolled_back": True}, True)
-        if not isinstance(s.get("args", {}), dict):
-            return reply({"ok": False, "completed": 0, "failed": {"index": i, "tool": name,
-                          "error": "args must be an object."}, "rolled_back": True}, True)
-
-    rerun = all(_rerun_ok(s["tool"], s.get("args") or {}) for s in steps)
-    for attempt in (1, 2):
-        rec = _get(doc_id)
-        if base_version is not None and rec["version"] != int(base_version):
-            return reply(dict(json.loads(_stale(rec, int(base_version))), ok=False, rolled_back=True), True)
-        sess, results, failed = _batch_run(rec, steps, stop_on_warnings)
-        if failed:
-            return reply({"ok": False, "completed": failed["index"], "failed": failed,
-                          "rolled_back": True, "results": results,
-                          "note": f"Nothing was saved: the document is still version {rec['version']}. "
-                                  "Fix that step and send the whole batch again."}, True)
-        if dry_run:
-            return reply({"ok": True, "dry_run": True, "completed": len(steps), "results": results,
-                          "note": f"Dry run: nothing saved, the document is still version {rec['version']}."}, False)
-        try:
-            saved, changed = _save_session(rec, sess, summary or f"{len(steps)} steps")
-        except store.Conflict as exc:  # the person saved while the batch ran
-            if attempt == 1 and rerun:
-                continue
-            return reply(dict(json.loads(_stale(exc.current, rec["version"])), ok=False, rolled_back=True), True)
-        body = json.loads(_result(saved, None, all(r["clean"] for r in results), changed))
-        return reply(dict(body, ok=True, completed=len(steps), results=results), False)
-
-
-@mcp.tool()
-async def batch(doc_id: str, steps: Annotated[list[dict], Field(description=(
-                    'Steps in order, each {"tool": "<modelling tool>", "args": {...}} with the same args as that tool, '
-                    'without doc_id. Tools: propose_features, create_part, insert_component, add_mate, delete_items, '
-                    'standard_part, request_part_file, check_interference, find_mate_candidates, add_<feature>.'))],
-                summary: str = "", stop_on_warnings: bool = False, dry_run: bool = False,
-                base_version: Annotated[int | None, Field(description=BASE_VERSION)] = None) -> CallToolResult:
-    """Run several modelling steps as ONE change. If any step fails (a refused input, a new rebuild error, a
-    failing mate, or with stop_on_warnings a new warning), nothing is saved and the reply says which step
-    failed and why; already existing problems do not count. On success the whole batch is one version (one
-    undo). dry_run=true checks the batch without saving. Prefer this for anything over two steps: build a
-    part in stages of a few features, checking volume and bounding box in the results after each stage."""
-    async def run():
-        try:
-            return await _work(_batch_sync, doc_id, steps, summary, stop_on_warnings, dry_run, base_version, limit=3600)
-        except store.NotFound:
-            return CallToolResult(content=[TextContent(type="text", text=f"No document {doc_id!r}.")], is_error=True)
-    if dry_run:
-        return await run()
-    return await _once(doc_id, "batch", [steps, summary, stop_on_warnings, base_version], run)
-
-
-def _part_doc(doc: dict, part_id: str | None) -> dict:
-    if assembly.is_assembly(doc):
-        parts = doc.get("parts") or {}
-        if part_id not in parts:
-            raise ValueError(f"This is an assembly: give part_id, one of {sorted(parts)}." if not part_id
-                             else f"Unknown part {part_id!r}; parts: {sorted(parts)}.")
-        return parts[part_id]
-    return doc
-
-
-def _topology_sync(doc_id, part_id, kind, near, limit) -> str:
-    rec = _get(doc_id)
-    part = _part_doc(rec["doc"], part_id)
-    st, _ = geometry.regen(part)
-    out = inspection.body_topology(st.part, kind, near, limit, st.namer)
-    out.update(doc_id=doc_id, version=rec["version"], **({"part_id": part_id} if part_id else {}))
-    if assembly.is_assembly(rec["doc"]):
-        out["coordinates"] = "part (local)"
-    return json.dumps(out)
-
-
-@mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
-async def body_topology(doc_id: str, part_id: str | None = None,
-                        kind: Literal["both", "faces", "edges"] = "both",
-                        near: Annotated[list[float] | None, Field(description="[x,y,z] mm: list the faces and edges nearest this point first")] = None,
-                        limit: Annotated[int, Field(ge=1, le=500)] = 60) -> str:
-    """Faces and edges of a part's body, to pick them by name instead of guessing. Every face and edge has a
-    persistent `name` from how it was made (e1:side:s1L2 = the side of extrude e1 made by sketch curve s1L2;
-    e1:end, e1:start; f1:blend:<edge>; edges are "<face A>|<face B>"), so a fillet on an edge stays on it
-    when the part changes size. Faces: type, area, centre,
-    an on-face point, normal (planes), axis and radius (cylinders, cones), and `ref`. Edges: type, midpoint,
-    start, end, length, direction or centre and radius, the two faces it joins, face_angle_deg (90 = square
-    corner, 0 = smooth), seam (where a hole or shaft surface meets itself: never fillet it) and `ref`. Pass an edge's `ref` as-is in fillet / chamfer edges and a face's `ref`
-    in shell / draft faces. Use near=[x,y,z] to get the items around a spot. Assembly parts are in part
-    coordinates (give part_id)."""
-    try:
-        return await _work(_topology_sync, doc_id, part_id, kind, near, limit)
-    except store.NotFound:
-        return f"No document {doc_id!r}."
-    except ValueError as exc:
-        return json.dumps({"error": str(exc)})
-
-
-def _inspect_sync(doc_id, part_id, sketches) -> str:
-    rec = _get(doc_id)
-    out = inspection.inspect_design(rec["doc"], part_id, sketches)
-    out.update(doc_id=doc_id, version=rec["version"])
-    return json.dumps(out)
-
-
-@mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
-async def inspect_design(doc_id: str, part_id: str | None = None, sketches: bool = True) -> str:
-    """Numbers to check the model against what you meant, in one call. Part: rebuild state of every feature
-    (with its volume change), the body's volume, area, centre of mass, bounding box and size, face and edge
-    counts, mass when a material is set, and each sketch's degrees of freedom (dof, status under / fully /
-    over, conflicting relations, under-defined curves). Assembly: component and mate states, free DOF,
-    under-defined components and each part's body numbers; give part_id for one part with its sketches.
-    Work out the volume and bounding box you expect before building, then compare. A cut whose volume
-    change is 0 missed the body."""
-    try:
-        return await _work(_inspect_sync, doc_id, part_id, sketches)
-    except store.NotFound:
-        return f"No document {doc_id!r}."
-
-
-def _review_sync(doc_id, compare_version, title, notes) -> str:
-    from . import review
-    _check(doc_id)  # only this connector's person's documents
-    try:
-        out = review.publish(doc_id, compare_version, title, notes, by="claude")
-    except store.NotFound:
-        raise
-    except (review.ReviewError, assembly.AssemblyError, geometry.FeatureError) as exc:
-        return json.dumps({"error": f"Cannot publish: {exc}"})
-    out["open"] = _link(doc_id)
-    return json.dumps(out)
-
-
-@mcp.tool()
-async def publish_review(doc_id: str,
-                         compare_version: Annotated[int | None, Field(description="An earlier version to compare with: changed parts in black, the old version as a ghost, the change list")] = None,
-                         title: str | None = None,
-                         notes: Annotated[str | None, Field(description="What the reader should know, plain text; blank lines between paragraphs. Say what changed and why, what is open.")] = None) -> str:
-    """Publish a read-only link to the document's current version and return it (`url`): OpenSketch opens
-    on it with Motion Review, the 3D model, a slider for every joint with travel (hinge with angle limits,
-    limit_distance, limit_angle; couplers make driven parts follow), solved live, and a record: what
-    changed since compare_version (parts and mates), checks (rebuild and mate errors, clashes as shown and
-    through each joint's travel, smallest gap, how far each joint reaches, contacts that stop touching).
-    It shares shapes, not the feature history. The link works without the OpenSketch password, so YZ can
-    send it or open it on a phone; it does not change when the model does. Use it at the end of a design
-    round; give YZ the url and the checks summary."""
-    try:
-        return await _work(_review_sync, doc_id, compare_version, title, notes)
-    except store.NotFound:
-        return f"No document {doc_id!r}."
-
-
-def _measure_sync(doc_id, a, b, part_id) -> str:
-    rec = _get(doc_id)
-    try:
-        out = measure.measure(rec["doc"], a, b, part_id)
-    except (measure.MeasureError, geometry.FeatureError) as exc:
-        return json.dumps({"error": str(exc)})
-    out.update(doc_id=doc_id, version=rec["version"])
-    return json.dumps(out)
-
-
-_PICK = ('{"face": ref} | {"edge": ref} | {"point": [x,y,z]} | {"name": "<face or edge name>"}, refs and names as '
-         'body_topology gives them; in an assembly add "component": "<id>" for assembly coordinates')
-
-
-@mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
-async def measure_items(doc_id: str, a: Annotated[dict, Field(description=_PICK)],
-                        b: Annotated[dict | None, Field(description="Optional second item, same form")] = None,
-                        part_id: str | None = None) -> str:
-    """Measure like SOLIDWORKS Evaluate > Measure. One item: area, length, diameter, axis, normal, whether a
-    cylinder is a hole, and for a planar face the round holes and slots through it (diameter, width,
-    centre distance, overall length, centres). Two items: min_distance with the closest points and delta,
-    center_distance between axes (holes, shafts, circular edges), axis_angle_deg, angle_deg and
-    plane_distance for planes, axis_to_plane distance. Use it to check positions, gaps and hole sizes that
-    volume and centre of mass cannot show, e.g. the clearance between two components."""
-    try:
-        return await _work(_measure_sync, doc_id, a, b, part_id)
-    except store.NotFound:
-        return f"No document {doc_id!r}."
-
-
-# ----------------------------------------------------------------------------- feature commands (registry)
-
-def _py_type(p) -> Any:
-    k = p.kind
-    if k in ("length", "angle", "number"):
-        return float
-    if k == "int":
-        return int
-    if k == "bool":
-        return bool
-    if k in ("string", "sketch", "sketch_line"):
-        return str
-    if k == "enum":
-        return Literal[tuple(o[0] for o in p.options)]
-    if k in ("axis", "direction"):
-        return str | dict
-    if k in ("faces", "edges"):
-        return list[dict]
-    if k == "features":
-        return list[str]
-    return dict
-
-
-def _feature_tool(ft):
-    """An MCP tool add_<type>(doc_id, <required params>, part_id, name, <optional params>) for one feature type."""
-    from pydantic import Field
-
-    name = features.tool_name(ft)
-    P = inspect.Parameter
-    params = [P("doc_id", P.POSITIONAL_OR_KEYWORD, annotation=str)]
-    hints: dict = {"doc_id": str, "return": str}
-    for p in ft.params:
-        if p.required:
-            t = Annotated[_py_type(p), Field(description=features.describe_param(p))]
-            params.append(P(p.name, P.POSITIONAL_OR_KEYWORD, annotation=t))
-            hints[p.name] = t
-    for extra, doc in (("part_id", "Assembly documents: the part to add the feature to."),
-                       ("name", f"Optional tree name (default {ft.base}N).")):
-        t = Annotated[str | None, Field(description=doc)]
-        params.append(P(extra, P.POSITIONAL_OR_KEYWORD, annotation=t, default=None))
-        hints[extra] = t
-    for p in ft.params:
-        if not p.required:
-            t = Annotated[_py_type(p) | None, Field(description=features.describe_param(p))]
-            params.append(P(p.name, P.POSITIONAL_OR_KEYWORD, annotation=t, default=None))
-            hints[p.name] = t
-
-    async def tool(**kw) -> str:
-        doc_id = kw.pop("doc_id")
-        return await _apply(doc_id, name, **kw)
-
-    tool.__name__ = name
-    tool.__signature__ = inspect.Signature(params, return_annotation=str)
-    tool.__annotations__ = hints
-    tool.__doc__ = features.tool_description(ft)
-    return tool
-
-
-for _ft in features.REGISTRY.values():
-    if _ft.tool:
-        mcp.add_tool(_feature_tool(_ft), name=features.tool_name(_ft), description=features.tool_description(_ft))
-
-
-# The sw_ tools: the same work in SOLIDWORKS on the user's PC, through the OpenSketch add-in (sw_tools.py).
-from . import sw_tools  # noqa: E402,F401
-from . import sw_selftest  # noqa: E402,F401
+def tool_names() -> list[str]:
+    return sorted(mcp._tool_manager._tools)
 
 
 # ----------------------------------------------------------------------------- HTTP
 
 class _TokenGate:
-    """ASGI app (a class, so Starlette routes it as ASGI, not as a request handler): 404 unless the token
-    in the path is right."""
+    """ASGI app for <path>/<key> (a class, so Starlette routes it as ASGI): 404 unless the key is right."""
 
-    def __init__(self, inner):
-        self.inner = inner
+    def __init__(self, endpoint: "Endpoint"):
+        self.endpoint = endpoint
 
     async def __call__(self, scope, receive, send):
         ok, user = auth.resolve_mcp(scope.get("path_params", {}).get("token", ""))
@@ -1103,16 +108,15 @@ class _TokenGate:
             return
         token = _mcp_user.set(user)
         try:
-            await self.inner(scope, receive, send)
+            await self.endpoint.inner(scope, receive, send)
         finally:
             _mcp_user.reset(token)
 
 
 class _BearerGate:
-    """ASGI app for /mcp (or another endpoint's path): the AI app signed in (mcpauth.py) and sends
-    `Authorization: Bearer <token>`, a token made for this endpoint. No or a bad token: 401 with the
-    WWW-Authenticate pointer the MCP spec asks for, so the app starts sign-in. A server without sign-in (open mode)
-    needs no token."""
+    """ASGI app for the sign-in address: the AI app signed in (mcpauth.py) and sends `Authorization: Bearer
+    <token>`. No or a bad token: 401 with the WWW-Authenticate pointer the MCP spec asks for, so the app starts
+    sign-in. A server without sign-in (open mode) needs no token."""
 
     def __init__(self, endpoint: "Endpoint"):
         self.endpoint = endpoint
@@ -1129,13 +133,13 @@ class _BearerGate:
                 (b"access-control-max-age", b"600")]})
             await send({"type": "http.response.body", "body": b""})
             return
-        path = self.endpoint.path
+        path = scope.get("path", PATHS[0]).rstrip("/") or PATHS[0]
         if auth.mode() == "open":
             ok, user = True, None
         else:
             authz = headers.get("authorization", "")
             tok = authz[7:].strip() if authz[:7].lower() == "bearer " else ""
-            ok, user = mcpauth.user_for_access(tok, path) if tok else (False, None)
+            ok, user = mcpauth.user_for_access(tok) if tok else (False, None)
             if not ok:
                 body = json.dumps({"error": "invalid_token" if tok else "unauthorized",
                                    "error_description": "Sign in to OpenSketch to use it from this app."}).encode()
@@ -1151,36 +155,38 @@ class _BearerGate:
             await send(msg)
         token = _mcp_user.set(user)
         try:
-            await self.endpoint.token_gate.inner(scope, receive, send_cors)
+            await self.endpoint.inner(scope, receive, send_cors)
         finally:
             _mcp_user.reset(token)
 
 
 class Endpoint:
-    """One MCP server on the web server: `path` (an AI app signed in, Bearer token) and `path`/<key> (the private
-    address). OpenSketch's own tools are at /mcp; the SOLIDWORKS connector (sw_connector.py) at /solidworks/mcp."""
+    """The MCP server on the web server: for each path in PATHS, the path itself (signed in) and path/<key>."""
 
-    def __init__(self, server: MCPServer, path: str):
-        self.server, self.path = server, path
-        self.token_gate = _TokenGate(None)
+    def __init__(self):
+        self.inner = None
+        self.token_gate = _TokenGate(self)
         self.bearer_gate = _BearerGate(self)
         self.configure()
 
     def configure(self):
-        # The SDK's session manager has a single-use lifespan. Keep the mounted gates stable while
-        # creating a fresh manager for each application startup (including repeated test lifespans).
-        self.server.streamable_http_app(stateless_http=True, json_response=True,
-                                        max_request_body_size=4 * ((MAX_IMPORT_BYTES + 2) // 3) + 65536,
-                                        transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False))
-        self.token_gate.inner = StreamableHTTPASGIApp(self.server.session_manager)
+        # The SDK's session manager has a single-use lifespan: a fresh one for each application startup (including
+        # repeated test lifespans), behind the same mounted gates.
+        mcp.streamable_http_app(stateless_http=True, json_response=True,
+                                max_request_body_size=4 * ((MAX_IMPORT_BYTES + 2) // 3) + 65536,
+                                transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False))
+        self.inner = StreamableHTTPASGIApp(mcp.session_manager)
 
     def routes(self) -> list:
         from starlette.routing import Route
         signed, keyed = ["GET", "POST", "DELETE", "OPTIONS"], ["GET", "POST", "DELETE"]
-        return [Route(self.path, endpoint=self.bearer_gate, methods=signed),
-                Route(self.path + "/", endpoint=self.bearer_gate, methods=signed),
-                Route(self.path + "/{token}", endpoint=self.token_gate, methods=keyed),
-                Route(self.path + "/{token}/", endpoint=self.token_gate, methods=keyed)]
+        out = []
+        for p in PATHS:
+            out += [Route(p, endpoint=self.bearer_gate, methods=signed),
+                    Route(p + "/", endpoint=self.bearer_gate, methods=signed),
+                    Route(p + "/{token}", endpoint=self.token_gate, methods=keyed),
+                    Route(p + "/{token}/", endpoint=self.token_gate, methods=keyed)]
+        return out
 
 
 _endpoint: Endpoint | None = None
@@ -1189,30 +195,14 @@ _endpoint: Endpoint | None = None
 def endpoint() -> Endpoint:
     global _endpoint
     if _endpoint is None:
-        _endpoint = Endpoint(mcp, "/mcp")
+        _endpoint = Endpoint()
     return _endpoint
-
-
-def bearer_app():
-    return endpoint().bearer_gate
-
-
-def http_app():
-    """The ASGI app for /mcp/<token> (token checked here)."""
-    return endpoint().token_gate
-
-
-def endpoints() -> list[Endpoint]:
-    """Every MCP endpoint this server serves."""
-    from . import sw_connector
-    return [endpoint(), sw_connector.endpoint()]
 
 
 @contextlib.asynccontextmanager
 async def lifespan_context():
-    """Run every endpoint's MCP session manager while the server runs."""
-    async with contextlib.AsyncExitStack() as stack:
-        for ep in endpoints():
-            ep.configure()
-            await stack.enter_async_context(ep.server.session_manager.run())
+    """Run the MCP session manager while the server runs."""
+    ep = endpoint()
+    ep.configure()
+    async with mcp.session_manager.run():
         yield

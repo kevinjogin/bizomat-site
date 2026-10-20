@@ -1,12 +1,8 @@
-"""Audit fixes (2026-10-19): safe redirects, same-origin writes, sign-in limits, failing closed, upload caps,
-macro job owners, bounded chat memory."""
-import gzip
-import json
-
+"""Audit fixes (2026-10-19): safe redirects, same-origin writes, sign-in limits, failing closed."""
 import pytest
 from fastapi.testclient import TestClient
 
-from opensketch import ai, auth, server
+from opensketch import auth, server
 
 
 @pytest.fixture(autouse=True)
@@ -33,14 +29,13 @@ def test_next_never_leaves_the_site():
 
 def test_cross_site_writes_are_refused():
     c = _owner()
-    ok = c.post("/api/docs", json={"name": "", "kind": "part"}, headers={"Origin": "http://testserver", "Sec-Fetch-Site": "same-origin"})
+    ok = c.post("/api/sw/key", headers={"Origin": "http://testserver", "Sec-Fetch-Site": "same-origin"})
     assert ok.status_code == 200
     for h in ({"Origin": "https://evil.example"}, {"Sec-Fetch-Site": "cross-site"}, {"Sec-Fetch-Site": "same-site"}, {"Origin": "null"}):
-        r = c.post("/api/docs", json={"name": "x"}, headers=h)
-        assert r.status_code == 403, h
-        assert c.post("/api/import/raw?filename=a.step", content=b"x", headers={"Content-Type": "text/plain", **h}).status_code == 403
-    # reads and the MCP endpoint are not browser writes
-    assert c.get("/api/docs", headers={"Origin": "https://evil.example"}).status_code == 200
+        assert c.post("/api/sw/key", headers=h).status_code == 403, h
+        assert c.delete("/api/account/apps", headers=h).status_code == 403, h
+    # reads are not browser writes
+    assert c.get("/api/solidworks", headers={"Origin": "https://evil.example"}).status_code == 200
 
 
 def test_sign_in_guessing_is_limited():
@@ -61,59 +56,7 @@ def test_a_damaged_accounts_file_fails_closed(tmp_path):
     users = tmp_path / "data" / "users.json"
     users.write_text("{not json")
     anon = TestClient(server.app)
-    assert anon.get("/api/docs").status_code == 503  # never "no accounts, open to everyone"
+    assert anon.get("/api/solidworks").status_code == 503  # never "no accounts, open to everyone"
     users.unlink()
-    assert anon.get("/api/docs").status_code == 503  # missing after accounts existed: closed too
+    assert anon.get("/api/solidworks").status_code == 503  # missing after accounts existed: closed too
     assert anon.get("/api/account").status_code == 503
-
-
-def test_uploads_are_capped_and_gzip_bombs_refused(monkeypatch):
-    monkeypatch.setattr(server, "IMPORT_MAX", 1000)
-    c = TestClient(server.app)
-    assert c.post("/api/import/raw?filename=a.step", content=b"x" * 2000).status_code == 413
-    bomb = gzip.compress(b"\0" * 50000)
-    assert len(bomb) < 1000
-    assert c.post("/api/import/raw?filename=a.step", content=bomb, headers={"X-OpenSketch-Gzip": "1"}).status_code == 413
-
-
-def test_macro_exports_belong_to_whoever_started_them(monkeypatch):
-    owner = _owner()
-    token = owner.post("/api/account/invites").json()["url"].split("/join/")[1]
-    member = TestClient(server.app)
-    member.post(f"/join/{token}", data={"name": "Mei", "email": "mei@example.com", "new_password": "battery staple"})
-    import threading
-    monkeypatch.setattr(server.sldexport, "export", lambda *a, **k: threading.Event().wait(2) or {})
-    from opensketch import demo
-    doc = {"version": 1, "name": "B", "units": "mm", "features": demo.bracket_features(), "seq": 1000, "rollback": None}
-    jid = owner.post("/api/export/sldmacro/start", json={"doc": doc}).json()["job"]
-    assert owner.get(f"/api/export/sldmacro/{jid}").status_code == 200
-    assert member.get(f"/api/export/sldmacro/{jid}").status_code == 404
-    assert member.get(f"/api/export/sldmacro/{jid}/zip").status_code == 404
-    owner.post("/api/export/sldmacro/start", json={"doc": doc})
-    assert owner.post("/api/export/sldmacro/start", json={"doc": doc}).status_code == 429  # two at once per person
-
-
-def test_chat_memory_is_bounded():
-    conv = ai._Conversations()
-    for i in range(conv.MAX + 50):
-        conv.setdefault(f"c{i}", [])
-    assert len(conv) == conv.MAX and "c0" not in conv and f"c{conv.MAX + 49}" in conv
-    conv.setdefault("c60", [])  # touched: kept as newest
-    conv.setdefault("new", [])
-    assert "c60" in conv and "c50" not in conv
-
-
-def test_mcp_review_publish_checks_the_owner():
-    owner = _owner()
-    token = owner.post("/api/account/invites").json()["url"].split("/join/")[1]
-    member = TestClient(server.app)
-    member.post(f"/join/{token}", data={"name": "Mei", "email": "mei@example.com", "new_password": "battery staple"})
-    from tests.test_mcp import _rpc
-    mine = owner.post("/api/docs", json={"name": "Secret", "kind": "assembly"}).json()
-    with TestClient(server.app) as c:
-        url = "/mcp/" + member.get("/api/connect").json()["mcp_url"].split("/mcp/")[1]
-        _rpc(c, url, "initialize", {"protocolVersion": "2025-06-18", "capabilities": {}, "clientInfo": {"name": "t", "version": "1"}})
-        r = c.post(url, json={"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {"name": "publish_review", "arguments": {"doc_id": mine["id"]}}},
-                   headers={"Accept": "application/json, text/event-stream"}).json()
-        text = json.dumps(r)
-        assert "/review/" not in text and ("No document" in text or "error" in text.lower())

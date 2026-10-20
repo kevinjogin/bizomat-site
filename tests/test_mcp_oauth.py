@@ -119,11 +119,13 @@ def test_registration_checks_return_addresses():
     assert conf["client_secret"] not in (store.data_dir() / "mcp_oauth.json").read_text()  # stored hashed
 
 
-def test_sign_in_consent_tokens_and_files_are_per_person(app):
+def test_sign_in_consent_tokens_and_solidworks_are_per_person(app):
     owner = _owner()
     member = _member(owner)
-    mine = owner.post("/api/docs", json={"name": "Owner plate", "kind": "part"}).json()
-    hers = member.post("/api/docs", json={"name": "Mei bracket", "kind": "part"}).json()
+    # the owner's SOLIDWORKS is linked; Mei's is not
+    key = owner.get("/api/solidworks").json()["key"]
+    assert app.post("/mcp/sw/hello", json={"client": "addin", "machine": "OWNER-PC"},
+                    headers={"Authorization": f"Bearer {key}"}).status_code == 200
     info = _register(app)
     # signed out: the consent link goes through sign-in and comes back
     v, chal = _pkce()
@@ -160,17 +162,12 @@ def test_sign_in_consent_tokens_and_files_are_per_person(app):
     init = _mcp(app, tok["access_token"], "initialize",
                 {"protocolVersion": "2025-06-18", "capabilities": {}, "clientInfo": {"name": "t", "version": "1"}})
     assert init.status_code == 200 and init.headers["access-control-allow-origin"] == "*"
-    listed = json.dumps(_mcp(app, tok["access_token"], params={"name": "list_documents", "arguments": {}}).json())
-    assert "Owner plate" in listed and "Mei bracket" not in listed
-    # Mei connects her own Claude: she sees only hers
+    status = json.dumps(_mcp(app, tok["access_token"], params={"name": "sw_status", "arguments": {}}).json())
+    assert "OWNER-PC" in status
+    # Mei connects her own Claude: it reaches only her SOLIDWORKS link (none yet)
     tok2 = _connect(member, app, info)
-    listed = json.dumps(_mcp(app, tok2["access_token"], params={"name": "list_documents", "arguments": {}}).json())
-    assert "Mei bracket" in listed and "Owner plate" not in listed
-    got = json.dumps(_mcp(app, tok2["access_token"], params={"name": "get_document", "arguments": {"doc_id": mine["id"]}}).json())
-    assert "Owner plate" not in got
-    # a document the app makes belongs to the person who connected it
-    made = _mcp(app, tok2["access_token"], params={"name": "create_document", "arguments": {"name": "From Claude", "kind": "part"}}).json()
-    assert "From Claude" in json.dumps(member.get("/api/docs").json()) and "From Claude" not in json.dumps(owner.get("/api/docs").json())
+    status = json.dumps(_mcp(app, tok2["access_token"], params={"name": "sw_status", "arguments": {}}).json())
+    assert "OWNER-PC" not in status and '\\"connected\\": false' in status
     # a code works once; a wrong verifier never
     assert app.post("/oauth/token", data={"grant_type": "authorization_code", "code": "osk_nope", "client_id": info["client_id"],
                                           "code_verifier": "x" * 50}).json()["error"] == "invalid_grant"
@@ -223,11 +220,11 @@ def test_removed_member_loses_their_connections_and_old_addresses_still_work(app
     owner.delete(f"/api/account/users/{mid}")
     assert _mcp(app, tok["access_token"], "tools/list").status_code == 401
     # the private address still works next to sign-in
-    key_url = owner.get("/api/connect").json()
+    key_url = owner.get("/api/solidworks").json()
     assert key_url["url"] == "http://testserver/mcp" and key_url["signin"] is True
-    path = "/mcp/" + key_url["mcp_url"].split("/mcp/")[1]
+    path = "/mcp/" + key_url["private_url"].split("/mcp/")[1]
     r = app.post(path, json={"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}, headers=ACCEPT)
-    assert r.status_code == 200 and "list_documents" in r.text
+    assert r.status_code == 200 and "sw_status" in r.text
 
 
 def _free_port():
@@ -264,7 +261,6 @@ def test_the_official_mcp_client_signs_in_and_works():
         browser = httpx.Client(base_url=base, timeout=20)
         browser.post("/setup", data={"name": "YZ", "email": "yz@example.com", "new_password": "correct horse", "next": "/"},
                      headers={"Origin": base})
-        browser.post("/api/docs", json={"name": "Desk lamp arm", "kind": "part"}, headers={"Origin": base})
         seen = {}
 
         async def redirect_handler(url: str):
@@ -307,12 +303,12 @@ def test_the_official_mcp_client_signs_in_and_works():
                     async with ClientSession(streams[0], streams[1]) as s:
                         await s.initialize()
                         tools = await s.list_tools()
-                        assert any(t.name == "list_documents" for t in tools.tools)
-                        res = await s.call_tool("list_documents", {})
+                        assert any(t.name == "sw_status" for t in tools.tools)
+                        res = await s.call_tool("sw_status", {})
                         return json.dumps(res.model_dump())
 
         out = anyio.run(run)
-        assert "Desk lamp arm" in out
+        assert "connected" in out and "isError\": true" not in out
         assert storage.tokens.access_token.startswith("osa_") and storage.tokens.refresh_token.startswith("osr_")
         apps = browser.get("/api/account/apps").json()["apps"]
         assert apps and apps[0]["name"] == "SDK test" and apps[0]["host"] == "localhost"

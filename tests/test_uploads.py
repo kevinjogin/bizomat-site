@@ -1,5 +1,5 @@
-"""One-time upload links: request_upload -> PUT the file -> import_document(upload_id), over real MCP calls."""
-import base64
+"""One-time upload links: request_upload -> PUT the file -> sw_import(upload_id), over real MCP calls. sw_import
+itself needs SOLIDWORKS (tests/test_swbridge.py); here the server side takes the bytes with uploads.take, as it does."""
 import gzip
 import hashlib
 import json
@@ -10,8 +10,6 @@ from fastapi.testclient import TestClient
 
 from opensketch import auth, geometry, mcp_server, server, store, uploads
 from tests.test_assembly import plate
-from tests.test_files import _setup_owner_and_member
-from tests.test_mcp import _rpc
 
 
 @pytest.fixture(autouse=True)
@@ -23,10 +21,24 @@ def data(tmp_path, monkeypatch):
     return tmp_path
 
 
+def _rpc(c, url, method, params=None):
+    r = c.post(url, json={"jsonrpc": "2.0", "id": 1, "method": method, "params": params or {}},
+               headers={"Accept": "application/json, text/event-stream"})
+    assert r.status_code == 200, r.text
+    return r.json()["result"]
+
+
 def _tool(client, url, tool, **arguments):
     result = _rpc(client, url, "tools/call", {"name": tool, "arguments": arguments})
     assert not result.get("isError"), result
     return json.loads(result["content"][0]["text"])
+
+
+def _take(upload_id, user=None):
+    try:
+        return uploads.take(upload_id, user)[0]
+    except uploads.UploadError as exc:
+        return str(exc)
 
 
 def _step_bytes(tmp_path) -> bytes:
@@ -40,44 +52,39 @@ def _path(url: str) -> str:
     return f"{s.path}?{s.query}"
 
 
-def test_upload_then_import_without_base64(tmp_path, monkeypatch):
+def _setup_owner_and_member():
+    owner = TestClient(server.app)
+    owner.post("/setup", data={"name": "YZ", "email": "yz@example.com", "new_password": "correct horse", "next": "/"})
+    token = owner.post("/api/account/invites").json()["url"].split("/join/")[1]
+    member = TestClient(server.app)
+    member.post(f"/join/{token}", data={"name": "Mei", "email": "mei@example.com", "new_password": "battery staple"})
+    assert member.get("/api/account").json()["user"]["role"] == "member"
+    return owner, member
+
+
+def test_upload_then_take_without_base64(tmp_path, monkeypatch):
     monkeypatch.setenv("OPENSKETCH_PASSWORD", "secret")  # the site is signed-in; the link alone is the key
     raw = _step_bytes(tmp_path)
     url = f"/mcp/{auth.mcp_token()}"
     with TestClient(server.app) as c:
         tools = {t["name"]: t for t in _rpc(c, url, "tools/list")["tools"]}
-        assert "request_upload" in tools and "upload_id" in tools["import_document"]["inputSchema"]["properties"]
-        assert "filename" not in tools["import_document"]["inputSchema"].get("required", [])
+        assert "request_upload" in tools and "upload_id" in tools["sw_import"]["inputSchema"]["properties"]
         link = _tool(c, url, "request_upload", filename="plate.step", size_bytes=len(raw))
         assert link["method"] == "PUT" and link["max_bytes"] == 32 * 2**20 and link["expires_in_seconds"] == 600
         assert auth.mcp_token() not in link["upload_url"] and link["upload_url"].startswith("http://testserver/mcp/uploads/")
         assert link["how"].startswith("curl -sS -T 'plate.step' 'http://testserver/mcp/uploads/")
-        # nothing sent yet: import says so and the link stays usable
-        early = _tool(c, url, "import_document", upload_id=link["upload_id"])
-        assert "Nothing has been sent" in early["error"]
+        assert link["next"] == f'sw_import(upload_id="{link["upload_id"]}")'
+        assert "Nothing has been sent" in _take(link["upload_id"])  # and the link stays usable
         r = c.put(_path(link["upload_url"]), content=raw)
         assert r.status_code == 201, r.text
         assert r.json()["sha256"] == hashlib.sha256(raw).hexdigest() and r.json()["size_bytes"] == len(raw)
-        assert r.headers["cache-control"] == "no-store"
-        # one upload per link
+        assert r.headers["cache-control"] == "no-store" and "sw_import" in r.json()["next"]
         again = c.put(_path(link["upload_url"]), content=b"other")
         assert again.status_code == 409 and "already used" in again.json()["error"]
-        # a client with the old tool list (filename and data required) sends data "" beside the upload_id
-        out = _tool(c, url, "import_document", filename="plate.step", data="", upload_id=link["upload_id"],
-                    name="Uploaded plate")
-        assert out["name"] == "Uploaded plate" and out["report"]["size_bytes"] == len(raw)
-        assert out["report"]["source_filename"] == "plate.step" and out["report"]["upload_id"] == link["upload_id"]
-        assert store.get(out["doc_id"])["doc"]["features"][0]["type"] == "import"
+        assert _take(link["upload_id"]) == raw
+        uploads.mark_imported(link["upload_id"], "solidworks")
         assert not list((store.data_dir() / "uploads").glob("*.bin"))  # bytes freed after the import
-        second = _tool(c, url, "import_document", upload_id=link["upload_id"])
-        assert out["doc_id"] in second["error"] and len(store.listing()) == 1
-        # the base64 route still works for small files
-        small = _tool(c, url, "import_document", filename="copy.osk",
-                      data=base64.b64encode(json.dumps(plate()).encode()).decode())
-        assert small["doc_id"] != out["doc_id"]
-        both = _tool(c, url, "import_document", filename="x.osk", data="e30=", upload_id=link["upload_id"])
-        assert "either data" in both["error"]
-        assert "either data" in _tool(c, url, "import_document", filename="x.osk")["error"]
+        assert "already imported" in _take(link["upload_id"])
 
 
 def test_gzip_body_bounds_and_retry(tmp_path, monkeypatch):
@@ -94,7 +101,7 @@ def test_gzip_body_bounds_and_retry(tmp_path, monkeypatch):
         assert form.status_code == 400 and "not a form" in form.json()["error"]
         ok = c.put(path, content=gzip.compress(raw), headers={"Content-Encoding": "gzip"})
         assert ok.status_code == 201 and ok.json()["sha256"] == hashlib.sha256(raw).hexdigest()
-        assert _tool(c, url, "import_document", upload_id=link["upload_id"])["doc_id"]
+        assert _take(link["upload_id"]) == raw
         # the 32 MiB cap applies after unzipping: a small gzip that unpacks to more is refused, not unpacked
         monkeypatch.setattr(mcp_server, "MAX_IMPORT_BYTES", 1000)
         link = _tool(c, url, "request_upload", filename="big.step")
@@ -135,19 +142,17 @@ def test_links_are_signed_expire_and_open_nothing_else(monkeypatch):
 
 def test_uploads_belong_to_one_account():
     owner, member = _setup_owner_and_member()
-    m_url = "/mcp/" + member.get("/api/connect").json()["mcp_url"].split("/mcp/")[1]
+    m_url = "/mcp/" + member.get("/api/solidworks").json()["private_url"].split("/mcp/")[1]
     o_url = f"/mcp/{auth.mcp_token()}"
+    member_user = member.get("/api/account").json()["user"]
     with TestClient(server.app) as c:
         link = _tool(c, m_url, "request_upload", filename="part.osk")
         assert c.put(_path(link["upload_url"]), content=json.dumps(plate()).encode()).status_code == 201
-        # the owner's connector cannot import the member's upload, and is not told it exists
-        stolen = _tool(c, o_url, "import_document", upload_id=link["upload_id"])
-        assert "Unknown upload_id" in stolen["error"] and store.listing() == []
-        mine = _tool(c, m_url, "import_document", upload_id=link["upload_id"])
-        assert store.meta(mine["doc_id"])["owner"] == member.get("/api/account").json()["user"]["id"]
-        assert [f["name"] for f in member.get("/api/docs").json()] == ["Plate"]
+        # the owner cannot take the member's upload, and is not told it exists
+        assert "Unknown upload_id" in _take(link["upload_id"], owner.get("/api/account").json()["user"])
+        assert _take(link["upload_id"], member_user) == json.dumps(plate()).encode()
         # a few open links per person, then a plain refusal
-        for _ in range(uploads.MAX_PENDING):
+        for _ in range(uploads.MAX_PENDING - 1):
             assert "upload_id" in _tool(c, m_url, "request_upload", filename="a.step")
         assert "already have" in _tool(c, m_url, "request_upload", filename="a.step")["error"]
         assert "upload_id" in _tool(c, o_url, "request_upload", filename="a.step")  # the owner has their own
@@ -163,7 +168,6 @@ def test_expired_uploads_are_cleaned_up(tmp_path, monkeypatch):
         assert c.put(_path(sent["upload_url"]), content=raw).status_code == 201
         now = uploads.time.time()
         monkeypatch.setattr(uploads.time, "time", lambda: now + uploads.KEEP + 1)
-        gone = _tool(c, url, "import_document", upload_id=sent["upload_id"])
-        assert "expired" in gone["error"]
-        assert "expired" in _tool(c, url, "import_document", upload_id=waiting["upload_id"])["error"]
+        assert "expired" in _take(sent["upload_id"])
+        assert "expired" in _take(waiting["upload_id"])
         assert [p for p in (store.data_dir() / "uploads").iterdir() if p.name != ".lock"] == []
