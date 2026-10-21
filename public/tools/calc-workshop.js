@@ -3,8 +3,6 @@
 (() => {
   const PI = Math.PI;
   const rad = (degrees) => degrees * PI / 180;
-  const deg = (radians) => radians * 180 / PI;
-  const area = (d) => PI * d * d / 4;
   const q = (value, unit, digits = 6) => {
     const formatted = value !== 0 && Math.abs(value) < 10 ** -digits
       ? fmtPrimary('engineering', value) : num(value, digits);
