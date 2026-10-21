@@ -1,19 +1,19 @@
 # MAKEOS handbook opportunity register
 
-First section-by-section opportunity pass, 20 October 2026. **272 distinct opportunities: 24 implemented in batch 1, 10 mapped to existing tools, and 238 future candidates.** The register is a research and delivery backlog, not a claim that every possible engineering application or every page has been independently validated.
+First section-by-section opportunity pass, 20 October 2026. **272 distinct opportunities: 40 have scoped implementations across batches 1–2, 10 map to pre-existing tools, and 222 remain wholly unimplemented.** Broader extensions to several implemented candidates remain open, as recorded below. The register is a research and delivery backlog, not a claim that every possible engineering application or every page has been independently validated.
 
-Reference: the supplied *Machinery’s Handbook, 29th edition* (Industrial Press, 2012), including its additional CD content. All twelve main section contents and the CD contents were inspected. Formula-bearing pages for batch 1 were examined selectively, and current primary technical sources were checked where used. Printed page numbers below are the handbook’s numbering, not PDF page indices. Do not copy handbook tables, illustrations, software or prose into the site.
+Reference: the supplied *Machinery’s Handbook, 29th edition* (Industrial Press, 2012), including its additional CD content. All twelve main section contents and the CD contents were inspected. Formula-bearing pages for batches 1–2 were examined selectively, and current primary technical sources were checked where used. Printed page numbers below are the handbook’s numbering, not PDF page indices. Do not copy handbook tables, illustrations, software or prose into the site.
 
 ## Architecture and scope
 
-The current production directory is WORKOS at `/tools/`, with 63 pre-existing tools. MAKEOS is an engineering collection inside that same directory. Batch 1 adds 24 tools (87 total) and uses the existing form, result, sensitivity, guide, share and report system. Existing tool IDs, navigation, fonts, colours and CSS remain in place. Categories are introduced only when a working tool exists; no empty catalogue promises are published.
+The current production directory is WORKOS at `/tools/`, with 63 pre-existing tools. MAKEOS is an engineering collection inside that same directory. Batch 1 added 24 tools. Batch 2 adds 16 more (40 MAKEOS tools; 103 total) and uses the existing form, result, sensitivity, guide, share and report system. Existing tool IDs, navigation, fonts, colours and CSS remain in place. Categories are introduced only when a working tool exists; no empty catalogue promises are published.
 
 Requested category mapping: Engineering and Manufacturing retain their current names. Maintenance, Hydraulics, Pneumatics, Power Transmission, Materials, Fabrication and Quality are added in batch 1. Project Management maps to existing Projects/Planning/Quoting tools; Productivity maps to Operations/Improvement/Planning. Safety candidates remain behind documented technical review. Automation is a future subject, rather than a global navigation change.
 
 ## Delivery sequence
 
 1. **Batch 1:** the 24 implemented rows below. Transparent SI calculations, examples, finite-input and geometry checks, references, reports and numerical tests.
-2. **Batch 2:** signed tolerance stacks, uncertainty budgets, section properties, counterbore/countersink geometry, chip thinning, stock cutting, coolant mixing and welding quantities. Prioritise repeat use and independently verifiable examples.
+2. **Batch 2:** 16 scoped implementations for tolerance stacks, independent dimensional uncertainty, four section shapes, countersink depth, turning cusp, radial chip thinning, ball-nose diameter, circular feed, coolant blending/top-up, three-size cutting plans, fillet quantity, arc energy, tube development, thermal fits and axial deformation. See `release-2026-10-21.md`.
 3. **Batch 3:** variable-load bearings, pump/system curves, liquid pressure loss, shaft alignment, belt/chain/screw selection and controlled quality studies. Validate all applicability limits.
 4. **Later batches:** standards-dependent thread/GD&T databases and load-rating or safety tools. Obtain current authoritative data, licensing and domain review before release. Never label a historical handbook number as a current approved rating.
 
@@ -21,7 +21,7 @@ Each candidate needs: a defined user decision; inputs/units/data provenance; exa
 
 ## Status key
 
-**Batch 1** links are implemented routes. **Next** means candidate, not scheduled or published. **Review** needs additional model, current-standard, manufacturer or domain validation. **Existing** avoids duplicate products. The topic’s presence in the handbook is a research lead; it does not by itself validate a future implementation.
+**Batch 1** and **Batch 2** links are implemented routes within their stated scope. A scoped delivery does not complete every possible extension of a broad candidate. **Next** means candidate, not scheduled or published. **Review** needs additional model, current-standard, manufacturer or domain validation. **Existing** avoids duplicate products. The topic’s presence in the handbook is a research lead; it does not by itself validate a future implementation.
 
 ## Mathematics
 
@@ -72,11 +72,11 @@ Source coverage: printed 147–368.
 | MH-034 | Torque, Power and Speed | Power Transmission | Mechanical power to torque at an entered speed | [Batch 1](https://kevos.com/tools/?tool=torque-power) |
 | MH-035 | Work and kinetic energy | Engineering | Translational and rotational energy with unit checks | Next |
 | MH-036 | Impact-energy worksheet | Safety | Energy bookkeeping; no impact-force or injury threshold claim | Review |
-| MH-037 | Axial stress and extension | Engineering | Uniform member stress, strain and displacement | Next |
+| MH-037 | Axial Stress and Extension | Engineering | Uniform elastic member stress, strain, displacement and energy | [Batch 2](https://kevos.com/tools/?tool=axial-stress) |
 | MH-038 | Combined plane stress | Engineering | Principal stresses, Mohr circle and declared yield criteria | Review |
 | MH-039 | Stress concentration study | Engineering | Apply user-supplied concentration factors; no copied charts | Review |
 | MH-040 | Fatigue load cycle summary | Engineering | Mean and alternating stress; qualified material model required | Review |
-| MH-041 | Section property builder | Engineering | Area, centroid, second moments and section moduli | Next |
+| MH-041 | Section Properties | Engineering | Four ideal solid/hollow shapes; arbitrary composite sections remain open | [Batch 2](https://kevos.com/tools/?tool=section-properties) |
 | MH-042 | Beam Stress and Deflection | Engineering | Three stated elastic beam load cases | [Batch 1](https://kevos.com/tools/?tool=beam-deflection) |
 | MH-043 | Beam superposition workbench | Engineering | Multiple loads with shear, moment and deflection diagrams | Review |
 | MH-044 | Curved beam screen | Engineering | Curved-beam stress with geometric applicability checks | Review |
@@ -99,7 +99,7 @@ Source coverage: printed 369–607.
 | ID | Tool opportunity | Category | Calculation, chart or workflow | Status |
 | --- | --- | --- | --- | --- |
 | MH-056 | Linear Thermal Growth | Materials | Signed free expansion from a supplied coefficient | [Batch 1](https://kevos.com/tools/?tool=thermal-growth) |
-| MH-057 | Differential thermal fit | Materials | Two mating dimensions and their independent temperatures | Next |
+| MH-057 | Differential Thermal Fit | Materials | Two mating dimensions and independent uniform temperatures | [Batch 2](https://kevos.com/tools/?tool=thermal-fit) |
 | MH-058 | Restrained thermal stress | Materials | Ideal restraint case with elastic applicability checks | Review |
 | MH-059 | Heat energy and heating time | Materials | Sensible/latent heat budget and stated heater efficiency | Next |
 | MH-060 | Thermal resistance network | Materials | Series/parallel conduction paths and interface assumptions | Next |
@@ -126,10 +126,10 @@ Source coverage: printed 608–753.
 | ID | Tool opportunity | Category | Calculation, chart or workflow | Status |
 | --- | --- | --- | --- | --- |
 | MH-076 | Hole and Shaft Clearance Limits | Engineering | Worst-case signed diametral clearance from explicit limits | [Batch 1](https://kevos.com/tools/?tool=fit-clearance) |
-| MH-077 | Signed tolerance stack | Engineering | Many-component worst-case bounds with contribution table | Next |
+| MH-077 | Signed Three-Term Tolerance Stack | Engineering | Three linear signed terms with asymmetric bounds; variable-length chains remain open | [Batch 2](https://kevos.com/tools/?tool=signed-tolerance-stack) |
 | MH-078 | Statistical tolerance stack | Quality | Covariance model, distribution assumptions and sensitivity | Review |
 | MH-079 | Thermal tolerance envelope | Engineering | Enumerate dimensional and thermal corner cases | Next |
-| MH-080 | Measurement uncertainty budget | Quality | Sensitivity coefficients, covariance and coverage assumptions | Review |
+| MH-080 | Independent Dimensional Uncertainty Budget | Quality | Four independent mm contributions with unit sensitivity; covariance/general coefficients remain open | [Batch 2](https://kevos.com/tools/?tool=measurement-uncertainty) |
 | MH-081 | Guard-band decision helper | Quality | User-agreed decision rule and measurement interval | Review |
 | MH-082 | Position-error conversion | Quality | Cartesian offset to radial and diametral position error | Next |
 | MH-083 | Virtual-condition worksheet | Engineering | Current GD&T standard selected explicitly | Review |
@@ -154,13 +154,13 @@ Source coverage: printed 754–1003.
 | ID | Tool opportunity | Category | Calculation, chart or workflow | Status |
 | --- | --- | --- | --- | --- |
 | MH-097 | Tool-angle conversion | Manufacturing | Transform rake/relief conventions for defined tool geometry | Next |
-| MH-098 | Turning cusp-height estimate | Manufacturing | Feed and nose-radius geometry; actual finish requires trials | Next |
+| MH-098 | Turning Cusp Height | Manufacturing | Ideal circular-nose peak-to-valley geometry; no measured Ra/Rz prediction | [Batch 2](https://kevos.com/tools/?tool=turning-cusp) |
 | MH-099 | Form-tool profile compensation | Manufacturing | Geometry correction for declared rake and relief | Review |
 | MH-100 | Milling cutter engagement viewer | Manufacturing | Contact arc and effective teeth for stated engagement | Next |
 | MH-101 | Cutter tooth-rest setting | Manufacturing | Clearance-angle and indicator-drop geometry | Review |
 | MH-102 | Reamer allowance worksheet | Manufacturing | Compare supplied stock allowance against supplier recommendations | Next |
 | MH-103 | Drill point geometry | Manufacturing | Point length and lip geometry; shares geometry with drilling tool | Next |
-| MH-104 | Counterbore and countersink depth | Manufacturing | Diameter, pilot diameter and included-angle depth | Next |
+| MH-104 | Countersink Depth and Breakthrough | Manufacturing | Included-angle cone geometry; counterbore calculator remains open | [Batch 2](https://kevos.com/tools/?tool=countersink-depth) |
 | MH-105 | Drill-size reference navigator | Manufacturing | Current supplier letter/number/fraction size data | Review |
 | MH-106 | Tap-limit reference navigator | Manufacturing | Link current thread-limit and material application data | Review |
 | MH-107 | Taper inspection comparator | Quality | Measured taper deviations from entered nominal geometry | Next |
@@ -180,9 +180,9 @@ Source coverage: printed 1004–1327.
 | MH-114 | Turning Feed and Cutting Time | Manufacturing | Constant-RPM equal axial passes | [Batch 1](https://kevos.com/tools/?tool=turning-time) |
 | MH-115 | Drilling Travel and Time | Manufacturing | Through-hole travel including conical point | [Batch 1](https://kevos.com/tools/?tool=drilling-time) |
 | MH-116 | Facing time with speed cap | Manufacturing | Integrate CSS/RPM-limited radial motion | Next |
-| MH-117 | Radial chip-thinning compensation | Manufacturing | Engagement geometry with cutter-type applicability | Review |
-| MH-118 | Ball-nose effective diameter | Manufacturing | Contact diameter at a stated axial engagement | Next |
-| MH-119 | Circular interpolation feed | Manufacturing | Tool-centre feed versus work-surface feed | Next |
+| MH-117 | Radial Chip-Thinning Feed | Manufacturing | 90° straight peripheral cutter engagement only | [Batch 2](https://kevos.com/tools/?tool=radial-chip-thinning) |
+| MH-118 | Ball-Nose Effective Diameter | Manufacturing | Untilting not modelled: fixed untilted cutter and shallow flat-surface engagement | [Batch 2](https://kevos.com/tools/?tool=ball-nose-diameter) |
+| MH-119 | Circular Interpolation Feed | Manufacturing | Constant-height internal/external centre feed; helical motion excluded | [Batch 2](https://kevos.com/tools/?tool=circular-interpolation-feed) |
 | MH-120 | Machining power estimate | Manufacturing | Removal rate and supplied specific cutting force | Review |
 | MH-121 | Drilling torque and thrust screen | Manufacturing | Supplier-supported coefficients and tool geometry | Review |
 | MH-122 | Taylor tool-life fit | Productivity | Fit coefficients from trials and plot uncertainty | Review |
@@ -190,8 +190,8 @@ Source coverage: printed 1004–1327.
 | MH-124 | Cost per cutting edge | Productivity | Edges used, tool changes and measured parts per edge | Next |
 | MH-125 | Multi-operation cycle estimator | Productivity | Cutting, handling, inspection and change time without double counting | Next |
 | MH-126 | Saw cutting-time estimator | Manufacturing | Section area and validated cutting rate | Next |
-| MH-127 | Coolant concentration mixer | Maintenance | Blend volumes from refractometer factor and target concentration | Next |
-| MH-128 | Coolant top-up mass balance | Maintenance | Account for concentrate, water and existing sump volume | Next |
+| MH-127 | Coolant Blend | Maintenance | Two compatible volume concentrations, additive-volume balance | [Batch 2](https://kevos.com/tools/?tool=coolant-blend) |
+| MH-128 | Coolant Top-up Balance | Maintenance | Single addition with capacity check; drain-and-replace remains open | [Batch 2](https://kevos.com/tools/?tool=coolant-topup) |
 | MH-129 | Grinding wheel surface speed | Manufacturing | RPM and diameter; compare only against entered maker rating | Review |
 | MH-130 | Grinding ratio and removal | Manufacturing | Work volume divided by measured wheel wear volume | Next |
 | MH-131 | Grinding equivalent chip thickness | Manufacturing | Kinematic proxy with process-specific interpretation | Review |
@@ -212,7 +212,7 @@ Source coverage: printed 1328–1516.
 | MH-139 | Multi-bend flat-pattern calculator | Fabrication | Ordered bend deductions and flange convention checks | Next |
 | MH-140 | Press brake force screen | Fabrication | Selected tooling equation with verified material/process inputs | Review |
 | MH-141 | Roll-bending geometry | Fabrication | Cylinder/cone development with springback excluded | Next |
-| MH-142 | Tube bend development | Fabrication | Centreline bend allowance and straight lengths | Next |
+| MH-142 | Tube Bend Developed Length | Fabrication | Centreline geometry for identical bends and tangent straights | [Batch 2](https://kevos.com/tools/?tool=tube-bend-length) |
 | MH-143 | Deep-draw blank estimator | Fabrication | Area conservation with thickness and trim assumptions | Review |
 | MH-144 | Draw reduction sequence | Fabrication | Trial-supported stage limits and material evidence | Review |
 | MH-145 | Press energy and cycle screen | Manufacturing | Force–stroke integration against supplied machine curve | Review |
@@ -221,9 +221,9 @@ Source coverage: printed 1328–1516.
 | MH-148 | Casting pattern allowance | Manufacturing | Directional contraction and machining allowances | Next |
 | MH-149 | Casting yield | Manufacturing | Finished casting mass versus poured metal including gates/risers | Next |
 | MH-150 | Casting solidification comparison | Manufacturing | Modulus-based estimate with fitted process coefficient | Review |
-| MH-151 | Weld metal volume and mass | Fabrication | Specified groove/fillet geometry with reinforcement allowance | Next |
+| MH-151 | Fillet Weld Quantity | Fabrication | Equal-leg fillet volume, mass and consumption; groove/unequal-leg models remain open | [Batch 2](https://kevos.com/tools/?tool=fillet-weld-quantity) |
 | MH-152 | Weld deposition time | Fabrication | Deposited mass and demonstrated deposition rate/arc-on fraction | Next |
-| MH-153 | Welding heat input | Fabrication | Voltage, current, travel and named efficiency convention | Review |
+| MH-153 | Welding Arc Energy and Heat Input | Fabrication | Steady arc with supplied efficiency; waveform integration remains open | [Batch 2](https://kevos.com/tools/?tool=welding-heat-input) |
 | MH-154 | Weld group elastic forces | Engineering | Declared load model; qualified weld design remains separate | Review |
 | MH-155 | Laser line energy | Manufacturing | Power divided by travel; no cut or exposure setting recommendation | Review |
 | MH-156 | Coating area and material demand | Fabrication | Area, dry-film thickness, solids and transfer efficiency | Next |
@@ -383,7 +383,7 @@ Source coverage: printed Related applications; extra research required.
 | MH-261 | Acceptance-sampling planner | Quality | Agreed risks and current sampling standard | Review |
 | MH-262 | Dimensional trial comparison | Quality | Pilot groups, effect sizes and measurement uncertainty | Review |
 | MH-263 | Maintenance interval economics | Maintenance | Failure evidence, consequence and cost model; human review | Review |
-| MH-264 | Cut-stock optimiser | Fabrication | Stock lengths, kerf, trim, required counts and reusable offcuts | Next |
+| MH-264 | Three-Size Stock Cut Planner | Fabrication | Equal-stock first-fit decreasing; mixed stock, offcut inventory and general optimisation remain open | [Batch 2](https://kevos.com/tools/?tool=stock-cut-plan) |
 | MH-265 | Setup reduction value | Productivity | Use the existing measured changeover comparison | [Existing](https://kevos.com/tools/?tool=setup-worth) |
 | MH-266 | OEE and downtime analysis | Productivity | Use the existing availability/performance/quality model | [Existing](https://kevos.com/tools/?tool=oee-downtime-pro) |
 | MH-267 | Manufacturing quote builder | Project Management | Use the current complete cost and margin model | [Existing](https://kevos.com/tools/?tool=manufacturing-quote) |
@@ -395,7 +395,7 @@ Source coverage: printed Related applications; extra research required.
 
 ## Chart opportunities
 
-Create original code-native charts from user data or the implemented equations: load/deflection and shear/moment diagrams; spindle-speed versus diameter; feed/time and cost sensitivity; torque–speed curves; thermal fit envelopes; tolerance contribution and uncertainty bars; pump/system intersections; cylinder force/flow curves; gear/cam displacement and acceleration; bearing duty contributions; control charts, histograms and capability overlays. Every chart needs units, assumptions, an accessible data table and a useful export. The current batch reuses the existing sensitivity tables and adds a bolt-circle coordinate table; these future charts are not claimed as built.
+Create original code-native charts from user data or the implemented equations: load/deflection and shear/moment diagrams; spindle-speed versus diameter; feed/time and cost sensitivity; torque–speed curves; thermal fit envelopes; tolerance contribution and uncertainty bars; pump/system intersections; cylinder force/flow curves; gear/cam displacement and acceleration; bearing duty contributions; control charts, histograms and capability overlays. Every chart needs units, assumptions, an accessible data table and a useful export. Batches 1–2 reuse existing sensitivity tables and add bolt-circle coordinates, tolerance contributions, uncertainty shares, section-property comparisons and per-bar cut plans. Future graphical charts are not claimed as built.
 
 ## Exclusions and current-data dependencies
 
