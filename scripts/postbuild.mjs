@@ -49,14 +49,15 @@ const endpointOrigin = ['https://api.web3forms.com', endpoint && /^https?:\/\//.
   .join(' ');
 // hCaptcha (required by the Web3Forms form settings) loads its widget from these origins.
 const HCAPTCHA = 'https://hcaptcha.com https://*.hcaptcha.com';
+const TURNSTILE = 'https://challenges.cloudflare.com';
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'wasm-unsafe-eval' ${[...scriptHashes].join(' ')} https://static.cloudflareinsights.com ${HCAPTCHA}`.replace(/\s+/g, ' '),
+  `script-src 'self' 'wasm-unsafe-eval' ${[...scriptHashes].join(' ')} https://static.cloudflareinsights.com ${HCAPTCHA} ${TURNSTILE}`.replace(/\s+/g, ' '),
   `style-src 'self' ${[...styleHashes].join(' ')} ${HCAPTCHA}`.replace(/\s+/g, ' ').trim(),
   "img-src 'self' data:",
   "font-src 'self'",
-  `frame-src ${HCAPTCHA}`,
-  `connect-src 'self' https://cloudflareinsights.com ${endpointOrigin} ${HCAPTCHA}`.replace(/\s+/g, ' ').trim(),
+  `frame-src ${HCAPTCHA} ${TURNSTILE}`,
+  `connect-src 'self' https://cloudflareinsights.com ${endpointOrigin} ${HCAPTCHA} ${TURNSTILE}`.replace(/\s+/g, ' ').trim(),
   `form-action 'self' ${endpointOrigin}`.trim(),
   "worker-src 'self' blob:",
   "base-uri 'self'",
