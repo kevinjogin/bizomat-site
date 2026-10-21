@@ -1,6 +1,16 @@
-# Contact form configuration. Copy to .dev.vars for local testing with `npx wrangler pages dev`.
-# In production, set these in Cloudflare: Workers & Pages → gocore → Settings → Variables and Secrets.
+# Runtime configuration examples; no real credentials belong here.
+# Production: Workers & Pages → throbbing-block-6c61 → Settings → Variables and Secrets.
 # Never commit real values. .dev.vars is ignored by Git.
+
+# Contact page: encrypted Worker secret, read server-side only.
+TURNSTILE_SECRET_KEY=
+# The public site key is an Astro BUILD setting; see .env.example.
+# EMAIL is a send_email binding in wrangler.toml, fixed to kevin@kevos.com.
+# Production verification permits only kevos.com/www.kevos.com with action "contact".
+# Use mocked verification in unit tests; do not relax the production hostname check for local testing.
+
+# The following legacy provider options belong to the separate assessment mail adapter.
+# They do not select contact-page delivery, which uses EMAIL exclusively.
 
 # "resend" to send email, or "log" to only log submissions while testing.
 MAIL_PROVIDER=log
@@ -9,15 +19,14 @@ MAIL_PROVIDER=log
 RESEND_API_KEY=
 # Where enquiries are delivered (comma-separated for several inboxes).
 CONTACT_TO=
-# Verified sender on your domain, e.g. GoCore website <website@gocore.com.au>
+# Verified sender on your domain for the separate assessment adapter.
 CONTACT_FROM=
 
 # Optional: restrict which sites may post to the form.
-ALLOWED_ORIGINS=https://gocore.com.au,https://www.gocore.com.au
+ALLOWED_ORIGINS=https://kevos.com,https://www.kevos.com
 
 # Optional rate limit (requires a KV namespace bound as CONTACT_RATE_LIMIT).
 RATE_LIMIT_MAX=5
 RATE_LIMIT_WINDOW=3600
 
-# Optional: point the form at a different Worker URL (build-time variable).
-# PUBLIC_CONTACT_ENDPOINT=https://contact.gocore.com.au/
+# /api/contact is same-origin only; PUBLIC_CONTACT_ENDPOINT cannot redirect it.

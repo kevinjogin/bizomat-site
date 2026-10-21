@@ -146,23 +146,19 @@ Only add real work. Never invent projects or results.
 
 ## 8. Contact form
 
-The form at `/contact/` works from day one through **Web3Forms**, using the access key in `src/config/site.ts` (`SITE.contact.web3formsAccessKey`). Messages arrive at the email address registered with that key.
+The existing `/contact/` form posts to the same-origin `/api/contact` route in the site's **Cloudflare Worker with static assets**, configured by `wrangler.toml`. It uses the existing CAPTCHA container, status area, fields and submit button. Its CSS and visible form markup are preserved.
 
-- The access key is a **public form identifier**, designed to be placed in website HTML. It is not a password. If it is ever abused, regenerate it in the Web3Forms dashboard and update `site.ts`.
-- **Spam protection:** Web3Forms' honeypot (`botcheck`), a "too fast to be human" check, and validation of every field. All of these are accessible.
-- **Without JavaScript**, the form still posts to Web3Forms and redirects to `/contact/sent/`.
-- **Free plan:** 250 submissions per month.
-- **Show an email address** next to the form by setting `SITE.email` in `src/config/site.ts`.
+The server validates and bounds inputs, rejects cross-origin requests, verifies the Turnstile token with Cloudflare (including action `contact` and hostname `kevos.com` or `www.kevos.com`), and then sends a plain-text and escaped HTML message through the native `EMAIL` binding. The recipient is fixed to `kevin@kevos.com`, the sender is `contact-form@kevos.com`, and Reply-To is the validated visitor email. A successful binding response means the provider accepted the message; actual inbox receipt still needs a real production test.
 
-### Switching to a Cloudflare Worker later
+Required configuration:
 
-The UI calls `submitContact()` (`src/lib/contact-client.ts`) and never talks to a provider directly. To move delivery to your own function:
+- **Astro build variable:** `PUBLIC_TURNSTILE_SITE_KEY`; the supplied existing public site key is the source fallback and is shown in `.env.example`.
+- **Encrypted Worker runtime secret:** `TURNSTILE_SECRET_KEY`. Never use a `PUBLIC_` name for this secret, commit its value, or put it in command arguments.
+- **Worker email binding:** `EMAIL`, restricted to `kevin@kevos.com` in `wrangler.toml`. Onboard the sender domain in Cloudflare Email Service and verify the destination before release.
 
-1. Set `PUBLIC_CONTACT_PROVIDER=worker` as a **build** environment variable in Cloudflare.
-2. Add the variables from [.dev.vars.example](.dev.vars.example) (`MAIL_PROVIDER`, `RESEND_API_KEY`, `CONTACT_TO`, `CONTACT_FROM`) under **Settings → Variables and Secrets**. Store keys as **Secrets**.
-3. Optional rate limiting: create a KV namespace, bind it as `CONTACT_RATE_LIMIT` (see `wrangler.toml`).
+The separate assessment and chat forms retain their existing Web3Forms/hCaptcha integration. Do not change the global `PUBLIC_CONTACT_PROVIDER` setting as part of this contact-page release.
 
-The endpoint (`src/worker.ts` → `src/server/contact/`) validates input, checks origin, enforces the honeypot and rate limits, escapes email HTML and blocks header injection. All of this is covered by `tests/contact.test.ts`.
+See [contact email setup and release checklist](docs/CONTACT_EMAIL_SETUP.md) for dashboard settings, the secret-storage flow, deployment and manual tests. No D1 or enquiry storage is introduced. Existing optional KV rate limiting is retained.
 
 ## 9. KEVOS Assistant (AI chat)
 
