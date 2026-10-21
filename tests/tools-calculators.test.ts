@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -83,9 +83,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /href=\{`\/tools\/\?tool=\$\{t\.id\}`\}/, 'each card links to its tool');
 });
 
-test('register: 87 tools with unique ids and every previously published id kept', () => {
+test('register: 103 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 87);
+  assert.equal(ids.length, 103);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -635,4 +635,133 @@ test('MAKEOS shares inputs, preserves fine precision, links sources and fails vi
     assert.equal(state.r.text, 'CHECK INPUTS'); assert.equal(state.sens.length, 0);
     assert.equal(state.r.primary, undefined);
   }
+});
+
+// Independent numeric examples for the second MAKEOS batch; raw values precede display rounding.
+const WORKSHOP_CASES: Array<[string, Record<string, number>]> = [
+  ['signed-tolerance-stack', { nominal: 10, minimum: 9.77, maximum: 10.27, width: .5 }],
+  ['measurement-uncertainty', { combined: .005033222956847167, expanded: .010066445913694334 }],
+  ['section-properties', { area: 3200, ix: 1706666.666666667, iy: 426666.666666667, zx: 42666.666666667, zy: 21333.333333333, rx: 23.094010767585, cx: 20, cy: 40 }],
+  ['countersink-depth', { depth: 3, remaining: 2, breakthroughDiameter: 16 }],
+  ['turning-cusp', { exact: 6.274606680623, approximate: 6.25, difference: .024606680623 }],
+  ['radial-chip-thinning', { engagement: .1, factor: .6, multiplier: 1.666666666667, perTooth: .083333333333, feed: 666.666666666667 }],
+  ['ball-nose-diameter', { effective: 6, surface: 94.247779607694, rpm: 5305.164769729845 }],
+  ['circular-interpolation-feed', { centreDiameter: 40, centreFeed: 800, path: 125.663706143592, minutes: .157079632679 }],
+  ['coolant-blend', { strongVolume: 5, weakVolume: 95, concentrate: 5 }],
+  ['coolant-topup', { addition: 13.333333333333, finalVolume: 113.333333333333, margin: 36.666666666667 }],
+  ['stock-cut-plan', { bars: 3, toBuy: 1, lowerBound: 3, pieces: 14, net: 2580, kerf: 28, trim: 30, offcut: 362, gross: 3000, yieldPercent: 86 }],
+  ['fillet-weld-quantity', { area: 18, throat: 4.242640687119, volume: 19800, deposited: .15543, consumable: .163610526316 }],
+  ['welding-heat-input', { power: 4.8, arc: .96, heat: .768 }],
+  ['tube-bend-length', { perBend: 78.539816339745, arcs: 157.07963267949, length: 557.07963267949 }],
+  ['thermal-fit', { hole: 50.0890276, shaft: 50.024, referenceClearance: .02, clearanceChange: .0450276, clearance: .0650276 }],
+  ['axial-stress', { stress: 50, strain: .00025, extension: .25, energy: 1.25 }],
+];
+for (const [id, expected] of WORKSHOP_CASES) test(`MAKEOS workshop reference example: ${id}`, () => {
+  const r = engine.run(id);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, Math.max(1e-10, Math.abs(value) * 1e-9), `${id}/${key}`);
+});
+
+test('workshop rejects impossible geometry, unattainable balances and unsupported precision', () => {
+  const cases: Array<[string, Inputs]> = [
+    ['measurement-uncertainty', { sd: 0, cal: 0, resolution: 0, bound: 0 }],
+    ['section-properties', { shape: 'rect-tube', wall: 20 }], ['section-properties', { shape: 'circ-tube', wall: 20 }],
+    ['countersink-depth', { mouth: 5 }], ['turning-cusp', { feed: 1.6 }], ['radial-chip-thinning', { width: 11 }],
+    ['ball-nose-diameter', { depth: 6 }], ['circular-interpolation-feed', { cutter: 50 }],
+    ['coolant-blend', { strong: 0 }], ['coolant-blend', { weak: 10 }], ['coolant-blend', { strong: 4 }],
+    ['coolant-topup', { addition: 5 }], ['coolant-topup', { addition: 4 }],
+    ['stock-cut-plan', { stock: 1000.0001 }], ['stock-cut-plan', { trim: 500 }], ['stock-cut-plan', { length1: 989 }],
+    ['stock-cut-plan', { count1: 0, count2: 0, count3: 0 }], ['thermal-fit', { holeAlpha: -1000, holeTemp: 2000 }],
+  ];
+  for (const [id, over] of cases) {
+    const r = engine.run(id, over);
+    assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined);
+    assert.ok(r.checks.some((c: any) => c.status === 'fail'));
+  }
+});
+test('signed stacks contain every endpoint combination and reverse their bounds', () => {
+  const over = { n1: 12, l1: .2, u1: .1, c1: -2, n2: 4, l2: .3, u2: .5, c2: 3, n3: 9, l3: .6, u3: .7, c3: 0 };
+  const r = engine.run('signed-tolerance-stack', over).values, corners: number[] = [];
+  for (const a of [11.8, 12.1]) for (const b of [3.7, 4.5]) for (const c of [8.4, 9.7]) corners.push(-2 * a + 3 * b + 0 * c);
+  near(r.minimum, Math.min(...corners), 1e-12, 'minimum endpoint'); near(r.maximum, Math.max(...corners), 1e-12, 'maximum endpoint');
+  const rev = engine.run('signed-tolerance-stack', { ...over, c1: 2, c2: -3 }).values;
+  near(rev.minimum, -r.maximum, 1e-12, 'reversed lower'); near(rev.maximum, -r.minimum, 1e-12, 'reversed upper');
+});
+test('uncertainty distinguishes a mean without reducing calibration or resolution', () => {
+  const single = engine.run('measurement-uncertainty', { mode: 'single' }).values;
+  near(single.combined, .010739335795724674, 1e-10, 'single observation');
+  const avg = engine.run('measurement-uncertainty', { count: 100 }).values;
+  near(avg.components[0].u, .001, 1e-12, 'mean standard error'); near(avg.components[1].u, .002, 1e-12, 'calibration');
+  near(avg.components[2].u, .002886751345948129, 1e-12, 'resolution');
+  near(single.components.reduce((s: number, c: any) => s + c.share, 0), 100, 1e-10, 'variance shares');
+  assert.equal(engine.run('measurement-uncertainty').text, 'ASSUMPTIONS UNVERIFIED');
+});
+test('section axes and machining boundaries retain their physical meaning', () => {
+  near(engine.run('section-properties', { width: 80, height: 40 }).values.ix, 426666.666666667, 1e-6, 'rotation swaps I');
+  const circle = engine.run('section-properties', { shape: 'circle', width: 20 }).values;
+  near(circle.area, 314.1592653589793, 1e-9, 'circle area'); near(circle.ix, 7853.981633974483, 1e-9, 'circle I'); assert.equal(circle.ix, circle.iy);
+  near(engine.run('section-properties', { shape: 'circ-tube', width: 20, wall: 5 }).values.ix, 7363.107781851077, 1e-9, 'annulus I');
+  const rect = engine.run('section-properties', { shape: 'rect-tube', width: 40, height: 80, wall: 10 }).values;
+  assert.equal(rect.area, 2000); near(rect.ix, 1346666.666666667, 1e-6, 'hollow rectangle I');
+  assert.equal(engine.run('countersink-depth', { thickness: 3 }).text, 'BREAKTHROUGH');
+  assert.ok(engine.run('countersink-depth', { thickness: 2 }).values.remaining < 0);
+  assert.equal(engine.run('countersink-depth', { mouth: 6 }).values.depth, 0);
+  assert.equal(engine.run('turning-cusp', { feed: 0 }).values.exact, 0);
+  assert.ok(engine.run('turning-cusp', { feed: .000001 }).values.exact > 0);
+  assert.equal(engine.run('radial-chip-thinning', { width: 5 }).values.factor, 1);
+  assert.equal(engine.run('radial-chip-thinning', { width: 10 }).values.factor, 1);
+  assert.equal(engine.run('ball-nose-diameter', { depth: 5 }).values.effective, 10);
+  const out = engine.run('circular-interpolation-feed', { side: 'external' }).values;
+  assert.equal(out.centreFeed, 1200); near(out.minutes, .15707963267948966, 1e-12, 'constant wall feed time');
+});
+test('coolant conserves volume and concentrate and reports capacity failure without clipping', () => {
+  for (const target of [2, 3, 5, 8]) {
+    const v = engine.run('coolant-blend', { volume: 120, weak: 2, strong: 8, target }).values;
+    near(v.strongVolume + v.weakVolume, 120, 1e-12, 'volume'); near(v.strongVolume * 8 + v.weakVolume * 2, 120 * target, 1e-10, 'concentrate');
+  }
+  const d = engine.run('coolant-topup', { volume: 100, current: 10, target: 5, addition: 0, capacity: 200 });
+  assert.equal(d.values.addition, 100); assert.equal(d.values.margin, 0);
+  assert.ok(d.checks.some((c: any) => c.label === 'Working capacity' && c.status === 'pass'));
+  const over = engine.run('coolant-topup', { capacity: 110 }); assert.equal(over.text, 'CAPACITY EXCEEDED');
+  near(over.values.addition, 13.333333333333, 1e-9, 'no clipping'); assert.ok(over.checks.some((c: any) => c.status === 'fail'));
+  assert.equal(engine.run('coolant-topup', { current: 5, addition: 5 }).values.addition, 0);
+});
+test('stock plans meet counts and material conservation and do not assert false optimality', () => {
+  const scenarios: Inputs[] = [{}, { stock: 1.003, trim: .001, kerf: .001, length1: .5, count1: 3, count2: 0, count3: 0 }, { stock: 1000, trim: 0, kerf: 0, length1: 1000, count1: 1, count2: 0, count3: 0 }, { stock: 1000, trim: 0, kerf: 0, length1: 400, count1: 2, length2: 300, count2: 4, count3: 0 }, { count1: 100, count2: 100, count3: 100 }];
+  for (const over of scenarios) {
+    const input: any = Object.fromEntries(engine.tool('stock-cut-plan').fields.map((f: any) => [f.key, f.default])); Object.assign(input, over);
+    const r = engine.run('stock-cut-plan', over), v = r.values, counts = [0, 0, 0]; assert.ok(r.primary, JSON.stringify(over));
+    for (const b of v.barRows) {
+      assert.ok(b.offcut >= 0); near(b.net + b.kerf + b.trim + b.offcut, input.stock, 1e-9, 'bar conservation');
+      for (const cut of b.cuts) counts[cut.part - 1] += cut.count;
+    }
+    assert.deepEqual(counts, [input.count1, input.count2, input.count3]); near(v.net + v.kerf + v.trim + v.offcut, v.gross, 1e-8, 'total conservation');
+    assert.ok(v.bars >= v.lowerBound); assert.equal(v.minimumProven, v.bars === v.lowerBound);
+  }
+  // A counterexample: FFD uses 3 bars; 400+300+300 twice would use 2.
+  const r = engine.run('stock-cut-plan', { stock: 1000, trim: 0, kerf: 0, length1: 400, count1: 2, length2: 300, count2: 4, count3: 0 });
+  assert.equal(r.values.bars, 3); assert.equal(r.values.lowerBound, 2); assert.equal(r.text, 'FEASIBLE PLAN');
+});
+test('thermal, weld, tube and axial models retain signs, units and scaling', () => {
+  near(engine.run('thermal-fit', { holeTemp: 20, shaftTemp: 100 }).values.clearance, -.028, 1e-10, 'thermal interference');
+  assert.equal(engine.run('thermal-fit', { holeTemp: 20, shaftTemp: 20 }).values.clearanceChange, 0);
+  const c = engine.run('axial-stress', { force: -10000 }).values; assert.equal(c.stress, -50); assert.equal(c.extension, -.25); assert.equal(c.energy, 1.25);
+  assert.equal(engine.run('axial-stress', { force: 0 }).values.energy, 0);
+  near(engine.run('fillet-weld-quantity', { leg: 12 }).values.deposited, .62172, 1e-12, 'square leg effect');
+  assert.equal(engine.run('fillet-weld-quantity', { length: 0 }).values.consumable, 0);
+  near(engine.run('welding-heat-input', { travel: 600 }).values.heat, .384, 1e-12, 'inverse travel');
+  assert.equal(engine.run('welding-heat-input', { efficiency: 100 }).values.heat, .96);
+  assert.equal(engine.run('tube-bend-length', { bends: 0 }).values.length, 400);
+});
+test('all workshop shared URLs render finite results and export inputs, methods, references and tables', () => {
+  for (const [id] of WORKSHOP_CASES) {
+    const { ui, document } = loadUi(`?tool=${id}`), { t, r, sens } = ui.state();
+    assert.equal(t.id, id); assert.equal(document.title, `${t.name} | KEVOS® MAKEOS`);
+    assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+    const report: string = ui.reportBody(t, r, sens);
+    for (const h of ['Inputs and assumptions', 'Method and calculations', 'Limitations', 'References']) assert.ok(report.includes(`<h2>${h}</h2>`), `${id}/${h}`);
+    for (const f of t.fields) assert.ok(report.includes(`<th>${f.label}</th>`), `${id}/${f.key}`);
+    if (r.table) assert.ok(report.includes(r.table.caption));
+    assert.doesNotMatch(report, /NaN|undefined|\[object Object\]/); assert.equal(new URL(ui.shareUrl(t)).searchParams.get('tool'), id);
+  }
+  const invalid = loadUi('?tool=stock-cut-plan&length1=999').ui.state(); assert.equal(invalid.r.text, 'CHECK INPUTS'); assert.equal(invalid.sens.length, 0);
 });
