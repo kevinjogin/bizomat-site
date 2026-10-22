@@ -52,8 +52,9 @@ const props = Astro.props;
     </main>
     <Footer />
     <script is:inline>
-      // Site-wide context menu deterrent; browser/WORKOS print and export controls
-      // continue to work normally. This cannot prevent content extraction.
+      // Prevent standard mouse, pen and touch-generated context menus.
+      // Keep ordinary tapping, scrolling, editable fields, and all print/export controls.
+      // Browser UI, developer tools and screenshots remain outside this deterrent.
       document.addEventListener('contextmenu', function (event) {
         if (event.cancelable) event.preventDefault();
       }, { capture: true });
@@ -64,4 +65,7 @@ const props = Astro.props;
 
 <style>
   main:focus { outline: none; }
+  /* iOS/iPadOS long-press callouts do not always dispatch contextmenu. */
+  :global(body) { -webkit-touch-callout: none; }
+  :global(input), :global(textarea), :global([contenteditable]) { -webkit-touch-callout: default; }
 </style>
