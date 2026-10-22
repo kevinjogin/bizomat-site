@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -69,7 +69,7 @@ test('every WORKOS browser script parses', () => {
 
 test('the tools page loads exactly the category files that exist, in data → guides → core → calc → ui order', () => {
   const page = readFileSync(join(process.cwd(), 'src', 'pages', 'tools', 'index.astro'), 'utf8');
-  const listed = /const FILES = \[([^\]]+)\]/.exec(page)?.[1].match(/'([a-z]+)'/g)?.map((s) => s.slice(1, -1));
+  const listed = /const FILES = \[([^\]]+)\]/.exec(page)?.[1].match(/'([a-z0-9]+)'/g)?.map((s) => s.slice(1, -1));
   assert.deepEqual(listed, FILES);
   for (const kind of ['data', 'guides', 'calc']) {
     const onDisk = readdirSync(DIR).filter((n) => n.startsWith(`${kind}-`)).map((n) => n.slice(kind.length + 1, -3)).sort();
@@ -83,9 +83,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /href=\{`\/tools\/\?tool=\$\{t\.id\}`\}/, 'each card links to its tool');
 });
 
-test('register: 103 tools with unique ids and every previously published id kept', () => {
+test('register: 115 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 103);
+  assert.equal(ids.length, 115);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
