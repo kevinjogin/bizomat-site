@@ -45,3 +45,42 @@ Change the smallest process that removes a real constraint. Adding a customer ch
 Maintain an owner capacity map, one-page offer brief, funding estimate, contribution and break-even worksheet, thirteen-week forecast, compliance calendar, AI policy and a 30-day decisions log. These are living records; review them, do not file them away.
 
 *KEVOS independently authored practical business learning material. This is general information, not personalised legal, tax or investment advice.*
+
+
+## Extended study: professional practice
+
+### Build a management rhythm without bureaucracy
+
+The purpose of a weekly review is to make fewer avoidable surprises, not create meetings. Keep one agenda with consistent sections: essential commitments, cash outlook, customers, delivery constraints, improvement work and decisions. Circulate simple evidence beforehand. Timebox discussion and record an owner for every agreed action. If a point cannot be resolved because information is absent, assign evidence gathering rather than debating assumptions. Review the effectiveness of the meeting quarterly. If decisions do not change, remove the measure or improve its interpretation.
+
+### Build a dashboard with provenance
+
+Every metric needs a plain definition, source and update date. 'Revenue' might mean invoiced sales, recognised revenue or received cash; do not permit an unlabeled chart to mix them. The dashboard should show actual versus prior expectation, trend, meaningful threshold and next action. Cash, receivables, contribution, late delivery, qualified demand and owner capacity cover different risks. Do not summarise them into an invented single 'business health' score without validating weights. A short note explaining a material variance can be more valuable than a sophisticated chart.
+
+### Use decision records for irreversible commitments
+
+Before hiring, purchasing significant equipment, adding an expensive subscription or entering a long contract, document the problem, options, expected benefit, cash commitment, assumptions, risks, exit costs, approval and review date. Identify a smaller reversible experiment if possible. After the decision, compare outcomes with the original assumptions rather than rewriting the business case. Keep decision records confidential where they contain commercial details. This discipline improves organisational memory and makes management less dependent on one person's recollection.
+
+### Link owner capacity to financial decisions
+
+Growth plans change more than revenue. A new contract may require production hours, working capital, more customer communication and special compliance obligations. Add a simple capacity review to every major sales or investment decision. Who will deliver? What existing work will be displaced? When will customer money arrive? Which person owns quality? If the owner must work nights indefinitely to fulfil the plan, the forecast is operationally incomplete. Consider an explicit cost of replacement labour and a realistic recovery buffer alongside projected profit.
+
+### Run one experiment at a time where evidence is weak
+
+When a business launches multiple promotions, changes pricing, modifies its website and introduces AI concurrently, it becomes difficult to explain any performance change. Select one principal business hypothesis for each short test, with a clear baseline, outcome and decision rule. Related operational improvements may proceed separately if their measures are independent. Document confounding factors such as seasonality or unusual customers. A failed test may justify an altered experiment, but it should not be reported as a success simply because activity increased.
+
+### A practical 30-day handover
+
+At the end of a month, assemble an operating packet: reconciled financial position, thirteen-week cash forecast, open customer and supplier commitments, unresolved risks, owner workload map, compliance schedule, AI pilot results and top three next actions. The packet should permit a trusted authorised manager to understand current priorities without a long oral briefing. Test it by asking someone unfamiliar with the details to locate the next due payment and the current delivery status. Repair missing explanations and access problems while the original owner is still available.
+
+### Review and reset the system
+
+Ask which measure helped a real decision, which process saved actual time, which commitment was missed and which procedure created unnecessary work. Carry forward unresolved actions with owners and dates, but archive completed items rather than allowing the list to become a monument to past activity. Revisit compliance references whenever legislation or staffing circumstances change. A sustainable business system is lightweight, accurate and responsive; it does not depend on collecting more data than anyone can use.
+
+## Primary learning references
+
+- [Australian Government small-business guidance](https://business.gov.au/).
+- [ATO](https://www.ato.gov.au/) for current Australian tax and super requirements.
+- [Fair Work Ombudsman](https://www.fairwork.gov.au/) for employment requirements.
+
+**Study note:** Worked numbers and scenarios are educational illustrations, not actual client records or promises of commercial results.
