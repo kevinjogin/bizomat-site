@@ -4,6 +4,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { SITE } from './src/config/site.ts';
 import rehypeWrapTables from './src/utils/rehype-wrap-tables.ts';
+import remarkKevosFigures from './src/utils/remark-kevos-figures.ts';
 
 // Utility pages that should never appear in search results or the sitemap.
 const EXCLUDE_FROM_SITEMAP = ['/search/', '/chat/', '/contact/sent/', '/contact/error/', '/assessment/received/'];
@@ -25,6 +26,8 @@ export default defineConfig({
   markdown: {
     // Prism emits CSS classes rather than inline styles (CSP-friendly). Token colours live in global.css.
     syntaxHighlight: 'prism',
+    // ```figure blocks in READOS pages become accessible, theme-aware SVG and HTML figures.
+    remarkPlugins: [remarkKevosFigures],
     rehypePlugins: [rehypeWrapTables],
   },
   image: {

@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import Container from '../../../../components/Container.astro';
+import KevosFigureMotion from '../../../../components/KevosFigureMotion.astro';
 import { getChapters, readingTime, type Chapter } from '../../../../utils/content.ts';
 import { buildReadOSCollections, readosCollectionHref, readosCollectionChapterHref, type ReadOSCollection } from '../../../../utils/reados-collections.ts';
 
@@ -38,6 +39,7 @@ const href=readosCollectionChapterHref(book,chapter);
     <p class="origin">Part of <a href={readosCollectionHref(book)}>{book.title}</a> in KEVOS® READOS.</p>
     </Container>
   </article>
+  <KevosFigureMotion />
 </BaseLayout>
 <style>
 .reading-head{padding:clamp(2.8rem,6vw,5rem) 0 2.5rem;border-bottom:1px solid var(--line);margin-bottom:2.5rem}

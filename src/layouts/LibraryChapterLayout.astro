@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import Container from '../components/Container.astro';
+import KevosFigureMotion from '../components/KevosFigureMotion.astro';
 import { primaryGuide as guide, chapterHref } from '../data/library.ts';
 const { frontmatter }=Astro.props;
 const number=Number(frontmatter.chapterNumber);
@@ -39,6 +40,7 @@ const description=`Chapter ${number} of ${guide.chapters.length} in ${guide.titl
       </nav>
     </Container>
   </div>
+  <KevosFigureMotion />
 </BaseLayout>
 <script>
   const root=document.querySelector<HTMLElement>('[data-library-reader]');

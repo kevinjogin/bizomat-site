@@ -1,0 +1,28 @@
+---
+// Plays READOS figure animations (src/styles/figures.css) when each figure scrolls into view,
+// and pauses looping motion while a figure is off screen. Figures stay fully visible without
+// JavaScript, and nothing is hidden or animated when the visitor prefers reduced motion.
+import '../styles/figures.css';
+---
+<script>
+  const figures = document.querySelectorAll<HTMLElement>('.kf');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (figures.length && !reduce && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        const figure = entry.target as HTMLElement;
+        if (entry.isIntersecting) {
+          figure.classList.add('is-in');
+          figure.classList.remove('is-out');
+        } else if (figure.classList.contains('is-in')) {
+          figure.classList.add('is-out');
+        }
+      }
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+    figures.forEach((figure) => {
+      // Only figures not yet on screen are hidden ahead of their entrance, so nothing visible flickers.
+      if (figure.getBoundingClientRect().top > window.innerHeight * 0.92) figure.classList.add('is-armed');
+      observer.observe(figure);
+    });
+  }
+</script>

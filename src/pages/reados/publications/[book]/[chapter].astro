@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import Container from '../../../../components/Container.astro';
+import KevosFigureMotion from '../../../../components/KevosFigureMotion.astro';
 import { getPublications, publicationHref, publicationChapterHref } from '../../../../utils/publications.ts';
 import { readingTime } from '../../../../utils/content.ts';
 import { SITE } from '../../../../config/site.ts';
@@ -25,6 +26,7 @@ const previous=chapters[index-1],next=chapters[index+1];
   </article>
   <nav class="chapter-links" aria-label="Previous and next chapters">{previous?<a href={publicationChapterHref(book.id,previous.data.chapterSlug)}><small>← Previous chapter</small>{previous.data.title}</a>:<a href={publicationHref(book.id)}><small>← Book overview</small>About this book</a>}{next?<a href={publicationChapterHref(book.id,next.data.chapterSlug)}><small>Next chapter →</small>{next.data.title}</a>:<a href={publicationHref(book.id)+'#references'}><small>Book completed →</small>References and further reading</a>}</nav>
  </Container>
+  <KevosFigureMotion />
 </BaseLayout>
 <script>
  const picker=document.querySelector<HTMLSelectElement>('#authored-chapter');
