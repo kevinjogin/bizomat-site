@@ -65,7 +65,7 @@ const isCurrent = (href: string) => path === href;
   /* Keep all three destinations visible alongside the clickable home logo. */
   @media (max-width: 700px) {
     .site-header__brand { flex: 0 1 auto; margin-right: auto; }
-    .site-header__inner { gap: .25rem; }
+    :global(.site-header__inner) { gap: .25rem; }
     .site-nav__list { gap: 0; }
     .site-nav__list > li > a { padding: .4rem .28rem; font-size: clamp(.68rem, 2.45vw, .83rem); white-space: nowrap; }
     .site-header__tools { flex-shrink: 0; gap: 0; }
