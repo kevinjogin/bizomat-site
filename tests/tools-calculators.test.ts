@@ -69,7 +69,7 @@ test('every WORKOS browser script parses', () => {
 
 test('the tools page loads exactly the category files that exist, in data → guides → core → calc → ui order', () => {
   const page = readFileSync(join(process.cwd(), 'src', 'pages', 'tools', 'index.astro'), 'utf8');
-  const listed = /const FILES = \[([^\]]+)\]/.exec(page)?.[1].match(/'([a-z]+)'/g)?.map((s) => s.slice(1, -1));
+  const listed = /const FILES = \[([^\]]+)\]/.exec(page)?.[1].match(/'([a-z0-9]+)'/g)?.map((s) => s.slice(1, -1));
   assert.deepEqual(listed, FILES);
   for (const kind of ['data', 'guides', 'calc']) {
     const onDisk = readdirSync(DIR).filter((n) => n.startsWith(`${kind}-`)).map((n) => n.slice(kind.length + 1, -3)).sort();
