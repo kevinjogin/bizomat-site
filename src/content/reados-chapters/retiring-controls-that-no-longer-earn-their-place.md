@@ -45,6 +45,16 @@ Start by adding four facts to each control on your list:
 3. **Who owns it now.**
 4. **What it costs each year**, measured in whatever resource binds your business: hours, days of turnaround, signatures, or money.
 
+```figure
+type: checklist
+title: Four facts every control should carry
+caption: Without them, nobody can tell whether a control still earns its place.
+- x When it was introduced
+- x Which risk or incident caused it
+- x Who owns it now
+- *x What it costs each year | in your scarcest resource
+```
+
 The second fact is the most revealing. In many businesses, a large share of checks and sign-offs cannot be traced to any specific reason. Those are the first candidates for review.
 
 ## Five tests for each control
@@ -76,6 +86,16 @@ Some signs can be measured rather than argued about:
 - **Workarounds.** When staff routinely find ways around a step, it usually means the step no longer fits the work. Find out why before deciding whether to enforce or remove it.
 - **Duplicate records.** The same information entered in two systems, or signed for twice, often marks a control added on top of an older one.
 
+```figure
+type: checklist
+title: Signs a control has stopped earning its place
+caption: Find out why before deciding; check legal, insurance and contract obligations before removing anything.
+- ? Approvals that are always granted
+- ? Checks that never find anything
+- ? Workarounds
+- *? Duplicate records
+```
+
 None of these proves a control is unnecessary. Each is a reason to ask the five questions.
 
 ## Ask reviews to report surplus as well as gaps
@@ -106,6 +126,16 @@ Over ten years, the hire-out process has grown to fourteen steps. The owner list
 - Three other steps cannot be traced to any reason at all. Two are **retired**; one is **referred** to the branch manager to find out why it exists.
 
 Before the review, a hire-out took about 95 minutes of staff time. Afterwards it takes about 60. Across roughly 1,800 hires a year, that saves about 35 minutes each, or around **1,050 hours a year**, worth about **$57,750** at $55 an hour, and machines go back out on hire sooner. The business also adopts the one-in, one-out rule, so the next incident prompts a decision rather than an automatic extra step.
+
+```figure
+type: stats
+title: The equipment hire review
+caption: Some controls were retired, some kept for their obligations, and untraceable steps were questioned.
+- 95 → 60 min | Staff time per hire-out
+- 1,800 | Hires a year
+- 1,050 hours | Saved each year
+- *$57,750 | At $55 an hour
+```
 
 ## How this applies to a small Australian business
 

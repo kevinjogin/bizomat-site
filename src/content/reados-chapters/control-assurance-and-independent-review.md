@@ -26,6 +26,15 @@ This article explains the three levels, why independence is a set of choices rat
 | **Quality assurance** | Processes | Are our methods and checks suitable, and are they being followed? | Someone separate from the work being checked |
 | **Independent review** | The venture as a whole | Is this still worth doing, and can our management system deliver it? | Someone outside the delivery chain, reporting to the owner or board |
 
+```figure
+type: layers
+title: Three levels of checking
+caption: More inspections do not tell you whether an expansion is wise; each level answers a different question.
+- Quality control | outputs: does this item meet the requirement?
+- Quality assurance | processes: are our methods suitable and followed?
+- *Independent review | the venture: is it still worth doing?
+```
+
 **Quality control** inspects, tests and measures outputs. **Quality assurance** asks whether the processes that produce outputs are sound: whether inspections happen as designed, whether they catch what they should, whether people are trained. **Independent review** takes a wider view: whether the business case still holds, risks are understood, governance works and the business is ready for a commitment that will be hard to reverse.
 
 A useful way to think about them is as **three lines of confidence**. The first line, management control, owns the result. The second line, specialist oversight, tests whether controls work. The third line gives the owner or board an independent view before major decisions. A small business may not have separate teams for each, but the functions still need to exist. A capable peer from another part of the business, an external specialist or a trusted adviser can provide the second or third line, as long as roles and conflicts are clear.
@@ -46,6 +55,17 @@ Independence has several dimensions, and a review can be strong on some and weak
 - **Thinking**: the review includes perspectives not shaped by the same assumptions.
 - **Evidence**: conclusions are tested against original records, not just management summaries.
 - **Access**: the reviewer can talk to the relevant people and see the relevant records and sites.
+
+```figure
+type: checklist
+title: Independence is several choices
+caption: A reviewer who is distant but lacks the knowledge to understand the work adds little.
+- x Structural | not reporting to the person checked
+- x Financial | not rewarded for the outcome
+- x Thinking | perspectives not shaped by the same assumptions
+- x Evidence | original records, not summaries
+- *x Access | the right people, records and sites
+```
 
 A review can be formally independent and still captured if everyone involved shares the same assumptions. Equally, an internal expert can provide valuable challenge if conflicts are declared and the owner keeps the decision.
 
@@ -122,6 +142,16 @@ This is an illustration. A residential renovation builder with 25 staff runs all
 The owner asks the operations manager, who does not supervise sites, to carry out **quality assurance** on the checklist process. Reviewing a sample of 40 checklists against site photos and talking to supervisors, she finds that about a third were signed without the required photographs, often at the end of a busy day, and that two common defects were not on the checklist at all. The control existed; the process behind it was weak. The checklist is revised, photos become mandatory before plastering can be booked, and the operations manager samples ten checklists a month.
 
 Meanwhile, the owner is considering expanding into small multi-unit developments, a commitment of about $600,000 in working capital and new staff. Before committing, the owner asks an experienced builder from a non-competing region and the business's accountant to conduct an **independent review**. Their brief has two questions: is the expansion worth doing, and can the current management system deliver it? The review finds the market case reasonable but identifies a strategic concern: the business has no one with multi-unit project management experience and its cash flow forecast assumes progress payments that are typical for renovations but not for developments. The owner approves the expansion with conditions: hire an experienced project manager first and secure a finance facility sized to the revised cash forecast.
+
+```figure
+type: compare
+title: The renovation builder's three levels of checking
+cols: Finding | Response
+caption: Defects after plastering had cost about $25,200 the year before: 14 at around $1,800 each.
+- Quality control | Pre-plaster checklists on every job, defects still found | Two common defects added to the checklist
+- Quality assurance | About a third of 40 checklists signed without photos | Photos required before plastering is booked; ten sampled monthly
+- *Independent review | A $600,000 expansion with no multi-unit experience | A strategic concern about skills and progress payments
+```
 
 ## How this applies to a small Australian business
 

@@ -37,6 +37,15 @@ A common principle says risk should sit with the party best able to manage it. T
 2. **Can they influence it?** Can their decisions change how likely it is or how large it becomes?
 3. **Can they absorb it?** Would the loss be survivable for them at the scale the contract contemplates?
 
+```figure
+type: checklist
+title: Should this party carry the risk?
+caption: If any answer is no, the transfer exists on paper while the loss stays with you.
+- x Can they see it?
+- x Can they influence it?
+- *x Can they absorb it?
+```
+
 A party that fails any one test is carrying the risk on paper only. The usual failure is the third. A subcontractor may control ground conditions, workmanship or a manufacturing process, and still be far too small to survive the loss if it goes wrong. When that happens, the loss comes back to you, usually through a dispute.
 
 Some risks also sit across the boundary between the parties: integration between systems, changing requirements, interpretation of regulations, the handover into day-to-day operation. Forcing sole ownership of these onto one party can weaken cooperation, because the problem itself is shared.
@@ -104,12 +113,32 @@ The owner traces the recovery chain:
 
 In practice, about 98% of the loss has been retained, even though the risk register had listed component quality as "transferred to supplier".
 
+```figure
+type: stats
+title: A $240,000 field failure from $6,000 of capacitors
+caption: The register had listed component quality as "transferred to supplier".
+- $240,000 | Cost of the failure | boards, farm visits, credits
+- $6,000 | Most the distributor's terms allow
+- $4,800 | Expected recovery | an 80% chance of $6,000
+- *98% | Of the loss retained
+```
+
 The business makes four changes:
 
 - **Changing the odds:** it introduces sample testing of critical components from each new batch and buys only through authorised distribution with batch traceability.
 - **Building reach:** it registers directly with the manufacturer's warranty programme where one exists.
 - **Matching its own promises:** it reviews its contracts with equipment makers so that its own liability for consequential losses is limited and matches what it could realistically recover or absorb.
 - **Insurance:** it asks its broker about product liability and recall cover, and what each would and would not pay for.
+
+```figure
+type: checklist
+title: What the electronics business changed
+caption: It kept the risk, so it built the capability to manage it.
+- x Changing the odds | sample-test new batches; authorised distribution only
+- x Building reach | direct registration with manufacturer warranties
+- x Matching its own promises | limits on its own consequential liability
+- *x Insurance | what recall and liability cover would and would not pay
+```
 
 The owner also notices the mirror image. One equipment maker had asked the business to accept unlimited liability for any recall of its machines. The business could see and influence board quality, but could never absorb the cost of a recall of complete machines. Accepting would not have protected the equipment maker; it would only have meant the electronics business failed first. The two businesses agree a cap linked to a realistic recall scenario, backed by insurance.
 

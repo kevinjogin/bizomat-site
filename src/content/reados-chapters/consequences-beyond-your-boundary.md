@@ -31,6 +31,14 @@ For any significant decision, it helps to think about two boundaries:
 - The **accountability boundary**: the assets, people and transactions the business directly controls.
 - The **consequence boundary**: the wider area in which material effects of the decision can appear, including neighbours, suppliers, customers, shared infrastructure, local environment and future owners of an asset.
 
+```figure
+type: layers
+title: Two boundaries
+caption: Material effects can appear well outside what the business directly controls.
+- Accountability boundary | assets, people and transactions you control
+- *Consequence boundary | neighbours, suppliers, customers, the wider area
+```
+
 These boundaries are rarely the same. Recognising the consequence boundary does not mean the business is solely responsible for everything within it. It means understanding where the business's decisions interact with conditions it does not control.
 
 ## Common misreadings
@@ -55,6 +63,18 @@ Six questions help map a consequence that crosses a boundary:
 | Distribution | Are the costs and benefits concentrated on different people, places or times? |
 | Governance | Who has authority over the source, the pathway and the receptor, and where are the gaps? |
 | Feedback | How could the effect return to the business through cost, regulation, reputation or reliability? |
+
+```figure
+type: steps
+title: Following an effect from source to feedback
+caption: Distribution matters: costs and benefits often fall on different people, places or times.
+- Source | the activity or decision
+- Pathway | air, water, noise, traffic, prices
+- Receptor | who or what experiences it
+- Distribution | who bears costs and benefits
+- Governance | who has authority, and where the gaps are
+- *Feedback | how it returns to the business
+```
 
 The aim is not a perfect assessment. It is to find effects large enough to change the decision while it can still be changed.
 
@@ -116,6 +136,15 @@ This is an illustration. A food manufacturer operates from a site in an area whe
 - **A new customer** whose deliveries leave at 4 am.
 
 Each change seemed modest. Together, night-time truck movements rose from 6 to 22, the condensers added a constant hum audible from nearby gardens, and larger waste volumes caused odour on hot days. Neighbours began complaining to the council, and the council reminded the business of the noise and hours conditions in its planning permit.
+
+```figure
+type: bars
+title: Night-time truck movements at the food manufacturer
+max: 25
+caption: Three changes, each assessed on its own merits, added up to complaints to the council.
+- Before the changes | 6
+- *After a night shift, condensers and a 4 am customer | 22
+```
 
 The owner maps the consequences:
 

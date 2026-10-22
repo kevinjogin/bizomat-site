@@ -32,6 +32,15 @@ ISO 31000 is organised in three connected layers:
 - **The framework** describes the organisational arrangements that support it: leadership, integration, design, implementation, evaluation and improvement.
 - **The process** describes the repeatable cycle for managing specific risks.
 
+```figure
+type: layers
+title: Three layers of ISO 31000
+caption: Guidance, not requirements: there is no ISO 31000 certificate, matrix or register format to adopt.
+- Principles | the qualities effective risk management shows
+- Framework | the arrangements that support it
+- *Process | the repeatable cycle for specific risks
+```
+
 Most businesses start and stop with the process, a register and a matrix, and wonder why nothing changes. The principles and framework are what make the process matter.
 
 ## The principles as diagnostic questions
@@ -62,6 +71,18 @@ The framework has six elements:
 5. **Evaluation.** The business periodically checks whether the framework is working: are risks being managed, are decisions better informed?
 6. **Improvement.** The framework is adapted as the business, its environment and its experience change.
 
+```figure
+type: cycle
+title: The framework that makes risk part of how the business runs
+caption: Owners and senior managers set the tone; the other parts keep the arrangements current.
+- Leadership and commitment
+- Integration | into existing decisions
+- Design | context, policy, roles, criteria
+- Implementation
+- Evaluation | is it working?
+- *Improvement
+```
+
 ## The process: a cycle tied to decisions
 
 The process has several activities that repeat:
@@ -72,6 +93,17 @@ The process has several activities that repeat:
 - **Monitoring and review**: checking whether risks and controls are changing.
 - **Recording and reporting**: documenting decisions and informing the people who need to know.
 - **Communication and consultation**: involving stakeholders throughout.
+
+```figure
+type: cycle
+title: The risk process, tied to a decision
+caption: Communication and consultation run through every step.
+- Scope, context and criteria
+- Assessment | identify, analyse, evaluate
+- Treatment | then assess what remains
+- Monitoring and review
+- *Recording and reporting
+```
 
 The process works best at decision points: when choosing an option, approving a budget, entering a contract, releasing a design, launching a product or changing scope. A monthly review of a static register has its place, but risk management that is not present at decisions has little effect.
 
@@ -147,6 +179,17 @@ This is an illustrative example. A 150-person engineering services and manufactu
 
 **Criteria.** Consequence scales are tailored to the business. Financial consequences, for instance, range from insignificant (under $20,000) through minor ($20,000 to $100,000), moderate ($100,000 to $500,000) and major ($500,000 to $2 million) to severe (over $2 million, roughly two-thirds of a year's profit). Similar scales are set for safety, customers, compliance and reputation. Risks in the highest zone must be reported to the board within a week; risks in the next zone need an executive owner and a treatment plan within a month.
 
+```figure
+type: layers
+title: A financial consequence scale for a $40 million business
+caption: Tailored to the business: severe is roughly two-thirds of a year's profit or more.
+- Insignificant | under $20,000
+- Minor | $20,000 to $100,000
+- Moderate | $100,000 to $500,000
+- Major | $500,000 to $2 million
+- *Severe | over $2 million
+```
+
 **Integration.** The capital approval form gains a risk section, tender reviews include a structured risk discussion, and new product projects must present their top risks at each gate.
 
 **The enterprise register.** The 60 items are consolidated into 15 enterprise risks with executive owners. The review surfaces two risks the old register had missed: the largest customer now accounts for 35% of revenue, and production planning depends on one aging server administered by a single contractor.
@@ -154,6 +197,18 @@ This is an illustrative example. A 150-person engineering services and manufactu
 **Treatment.** A customer diversification plan sets targets for new accounts in two adjacent sectors. The planning system is moved to a supported platform with multi-factor authentication, tested backups and documented recovery. A struggling supplier is identified early through monthly supplier risk reviews, and a second source is qualified before the supplier enters administration.
 
 **After 18 months.** The board receives a two-page quarterly risk report focused on changes and decisions. The largest customer's share has fallen to 28%, and the supplier failure caused a one-week delay rather than a major disruption. The annual framework review finds that managers use the criteria consistently, and that the next improvement should be in sharing lessons from near misses.
+
+```figure
+type: compare
+title: A 60-item register, rebuilt around decisions
+cols: Before | After 18 months
+best: 2
+caption: The review also surfaced a production planning server administered by a single person.
+- Register | 60 items that influenced little | 15 enterprise risks with executive owners
+- Largest customer | 35% of revenue | 28%
+- Supplier failure | Not planned for | A one-week delay, not a major disruption
+- Board reporting | Little influence | A two-page quarterly report on changes and decisions
+```
 
 ## Applying this in an Australian business
 

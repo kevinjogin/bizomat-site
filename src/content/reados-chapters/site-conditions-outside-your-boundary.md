@@ -64,6 +64,17 @@ The same external change costs very different amounts depending on when it happe
 | After contracts are signed | Variations, redesign, possible re-approval and significant delay |
 | During or after construction | Potentially very expensive rework |
 
+```figure
+type: steps
+title: The same change, landing at different times
+caption: The later an external change lands, the more of the design and contract it disturbs.
+- Before you buy | a factor in price
+- Concept design | cheaply absorbed
+- Detailed design | redesign and some delay
+- After contracts | variations, re-approval, delay
+- *During or after construction | very expensive rework
+```
+
 The most valuable moment to resolve external variables is before you commit. Every variable investigated before purchase or contract is cheaper risk reduction than any contingency.
 
 ## Why contingency does not cover it
@@ -105,6 +116,16 @@ Before signing the building contract, the owner works through an external variab
 - **Own landscaping:** the landscape plan includes dense native planting close to the building.
 
 The owner asks the designer and a bushfire consultant to estimate costs at the current classification and one step higher. The illustrative estimate is that designing to the higher level from the start adds about $35,000 to the building cost. If the classification rose after the contract was signed, the estimated cost of redesign, variations, re-approval and delay would be closer to $90,000, plus the lost revenue from opening a season late.
+
+```figure
+type: bars
+title: Paying for a higher bushfire classification
+unit: $'000
+max: 100
+caption: Plus lost revenue from opening a season late if the change lands after the contract.
+- *Designed in from the start | 35
+- Classification rises after the contract | 90 | redesign, variations, re-approval, delay
+```
 
 The owner decides to design to the higher classification from the start, revises the landscaping to reduce the building's own exposure and records the remaining risks in the register with a named person monitoring the neighbouring sale and the mapping review. The decision costs more upfront, but it converts an uncontrolled risk into a known cost at the cheapest point.
 

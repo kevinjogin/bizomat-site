@@ -56,6 +56,29 @@ Owners usually encounter commitments at the end of a chain: a dashboard, a certi
 - **From the promise down**: can you name the decisions and controls meant to deliver it?
 - **From the work up**: can you show how actual performance supports, or contradicts, the claim?
 
+```figure
+type: svg
+title: Tracing a commitment in both directions
+alt: A vertical chain of four boxes: the public commitment, the decisions and controls meant to deliver it, the work and data, and the evidence of results. An arrow runs down the left side labelled from the promise down, and an arrow runs up the right side labelled from the work up.
+caption: If either direction breaks, the commitment is publicity rather than accountability.
+viewbox: 0 0 560 300
+body:
+<rect class="bxa" x="160" y="20" width="240" height="44" rx="6"/>
+<text class="txb" x="280" y="47" text-anchor="middle">The public commitment</text>
+<rect class="bx" x="160" y="92" width="240" height="44" rx="6"/>
+<text class="tx" x="280" y="119" text-anchor="middle">Decisions and controls</text>
+<rect class="bx" x="160" y="164" width="240" height="44" rx="6"/>
+<text class="tx" x="280" y="191" text-anchor="middle">The work and its data</text>
+<rect class="bx" x="160" y="236" width="240" height="44" rx="6"/>
+<text class="tx" x="280" y="263" text-anchor="middle">Evidence of results</text>
+<path class="la flow" d="M120 30V270"/>
+<path class="ah" d="M112 262L120 278L128 262Z"/>
+<text class="tx txs" x="110" y="150" text-anchor="end">promise down</text>
+<path class="la flow" d="M440 270V30"/>
+<path class="ah" d="M432 38L440 22L448 38Z"/>
+<text class="tx txs" x="450" y="150">work up</text>
+```
+
 A short version of the test is: **can we show the mechanism that produces this claim?** If the answer relies mostly on narrative rather than evidence, the claim is exposed. This is the same discipline quality management applies: a quality policy without specifications, process checks, corrective action and review would not be taken seriously. Other commitments deserve the same treatment.
 
 ## Four tests of a strong commitment
@@ -66,6 +89,16 @@ A short version of the test is: **can we show the mechanism that produces this c
 | **Ownership** | "The sustainability team" or nobody | A named person with authority over the work that drives the result |
 | **Verifiability** | Stories and activity counts | Baseline, measure, method and records someone else could check |
 | **Consequence** | Nothing happens if it is missed | Review, corrective action and a decision about the commitment |
+
+```figure
+type: checklist
+title: Four tests of a strong commitment
+caption: An ambitious commitment with no baseline, owner or timeframe is hard to test.
+- x Specificity | scope, outcome and timeframe
+- x Ownership | a named person with authority
+- x Verifiability | baseline, measure and records
+- *x Consequence | review and corrective action if missed
+```
 
 A commitment does not need to score perfectly from day one. The point is to tell an ambition apart from a requirement the business actually manages.
 
@@ -131,6 +164,16 @@ The owner runs each through the chain from commitment to consequence.
 **"Made with plant-based ingredients".** The owner asks what this means. Three products contain a preservative that is not plant-derived. The claim is literally true for some ingredients and potentially misleading for the range. The business narrows the claim to the products where it is accurate, states the percentage of plant-derived ingredients, and keeps supplier specifications on file as evidence.
 
 **Every batch tested.** The test records exist, but a review shows that during peak months several batches were dispatched before results came back, with tests completed afterwards. The control exists on paper but not under pressure. The business changes the dispatch system so a batch cannot be released without a recorded result, which is a design change rather than a reminder.
+
+```figure
+type: compare
+title: Three published claims, tested
+cols: What the check found | What changed
+caption: The batch-testing control existed on paper but not under pressure.
+- Plastic-free by 2027 | No baseline; cheapest bottle bought | Baseline of 31 of 44 products; an owner; quarterly counts
+- Plant-based ingredients | Three products with a non-plant preservative | Claim narrowed; percentage stated; specifications kept
+- *Every batch tested | Batches dispatched before results in peak months | No release without a recorded result
+```
 
 Finally, a supermarket customer asks for an independent audit. The owner writes a short charter: the decision it supports is whether the business can keep supplying under the supermarket's supplier standard, so the audit focuses on compliance with that standard and on batch release controls, not on a general environmental review. A separate internal check, run quarterly, tracks progress on packaging, which the supplier audit would not cover.
 

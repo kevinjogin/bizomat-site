@@ -54,6 +54,18 @@ A response is not complete because an action appears in a column. A working resp
 - **any new risks** the response creates;
 - **a fallback** where the consequence is serious.
 
+```figure
+type: checklist
+title: What every risk response needs
+caption: A named owner who cannot spend, change a plan or escalate is looking after information, not managing risk.
+- x An owner with authority
+- x Resources and time in the budget
+- x A trigger or review point
+- x An expected effect
+- x Any new risks it creates
+- *x A fallback where consequences are serious
+```
+
 Every response costs something: money, time, flexibility, attention or a benefit given up. The [pricing your risk controls](/reados/collections/risk-controls-and-assurance/pricing-your-risk-controls/) article covers how to put a price on that and compare it with the protection bought.
 
 ## Warning signals and triggers
@@ -128,6 +140,40 @@ The owner and the kitchen team draw a bow-tie for the event "cool room loses tem
 - Unable to fill next-day orders: none, beyond "ring around".
 - Food safety breach if spoiled product is used: a written disposal procedure (working, but staff on the early shift had not been trained).
 
+```figure
+type: svg
+title: The cool room bow-tie
+alt: A bow-tie diagram. On the left, three threats lead to the central event, cool room failure: compressor failure, prevented by a working service contract; a door left ajar, with a degraded alarm; and a power outage, with no barrier. On the right, three consequences: spoiled stock, with a text alert untested at night; next-day orders missed, with no barrier; and a food safety breach, with a disposal procedure the early shift had not been trained on.
+caption: Prevention on the left, mitigation on the right. Dashed boxes mark barriers that are degraded, untested or missing.
+viewbox: 0 0 680 300
+body:
+<text class="txb" x="115" y="22" text-anchor="middle">Prevention</text>
+<text class="txb" x="565" y="22" text-anchor="middle">Mitigation</text>
+<rect class="bx" x="10" y="40" width="210" height="48" rx="6"/>
+<rect class="bx dsh" x="10" y="126" width="210" height="48" rx="6"/>
+<rect class="bx dsh" x="10" y="212" width="210" height="48" rx="6"/>
+<text class="tx" x="20" y="60">Compressor failure</text>
+<text class="tx txs" x="20" y="78">service contract: working</text>
+<text class="tx" x="20" y="146">Door left ajar</text>
+<text class="tx txs" x="20" y="164">alarm: degraded</text>
+<text class="tx" x="20" y="232">Power outage</text>
+<text class="tx txs" x="20" y="250">no barrier</text>
+<path class="ln flow" d="M220 64L290 150M220 150H290M220 236L290 150"/>
+<rect class="bxa pulse" x="290" y="120" width="100" height="60" rx="8"/>
+<text class="txb" x="340" y="146" text-anchor="middle">Cool room</text>
+<text class="txb" x="340" y="164" text-anchor="middle">failure</text>
+<path class="ln flow" d="M390 150L460 64M390 150H460M390 150L460 236"/>
+<rect class="bx dsh" x="460" y="40" width="210" height="48" rx="6"/>
+<rect class="bx dsh" x="460" y="126" width="210" height="48" rx="6"/>
+<rect class="bx dsh" x="460" y="212" width="210" height="48" rx="6"/>
+<text class="tx" x="470" y="60">Spoiled stock</text>
+<text class="tx txs" x="470" y="78">text alert: untested at night</text>
+<text class="tx" x="470" y="146">Next-day orders missed</text>
+<text class="tx txs" x="470" y="164">no barrier</text>
+<text class="tx" x="470" y="232">Food safety breach</text>
+<text class="tx txs" x="470" y="250">early shift untrained</text>
+```
+
 Two findings stand out. First, the temperature sensor and its text alerts run through the same internet router as everything else, which loses power in an outage. One of the three listed causes would disable the main mitigating barrier at the same time. Second, there is no real plan for the most expensive consequence: missing a day's orders for regular aged-care and childcare customers.
 
 The business makes four changes, each with an owner and a cost:
@@ -136,6 +182,18 @@ The business makes four changes, each with an owner and a cost:
 - The sensor is moved onto a small battery backup with a mobile data connection, so it still works during an outage.
 - A neighbouring commercial kitchen agrees in writing to provide emergency cool room space, and the business keeps its contact details and access arrangements in the kitchen manual.
 - Early-shift staff are trained on the disposal procedure.
+
+```figure
+type: compare
+title: Restoring the cool room barriers
+cols: Found | Fixed
+best: 2
+caption: The entry now shows four barriers, who checks each one and when it was last tested.
+- Door alarm | Battery removed as "too sensitive" | Replaced and adjusted, not disabled
+- Temperature sensor | Fails in a power outage | Battery backup and a mobile data connection
+- Next-day orders | "Ring around" | A neighbour's written agreement for cool room space
+- Disposal procedure | Early shift untrained | Early shift trained
+```
 
 It also adds a leading indicator. The service technician points out that the cool room's recovery time after the door is opened is a good early sign of compressor wear. The trigger: if recovery takes more than twenty minutes on three days in a week, the technician is called before the next service visit.
 

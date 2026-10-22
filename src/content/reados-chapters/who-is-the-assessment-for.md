@@ -39,6 +39,16 @@ Read as an owner, roughly half of those motivations have an **external audience*
 | Internal improvement | A diagnosis of real weaknesses and a prioritised plan | The people who will make the changes | As an investment, with expected benefits |
 | Internal argument: funding, a dispute, a restructure | Evidence for a decision already in play | The decision-maker, openly | As part of the decision |
 
+```figure
+type: decision
+title: Who is the assessment for?
+question: We are doing this so that who can do what?
+caption: If the sentence names more than one audience, split the work.
+- External audience | Evidenced and comparable | budget it as a cost of winning work
+- *Internal improvement | Targeted and candid | no single headline score
+- Internal argument | Openly stated | part of the decision already in play
+```
+
 Two consequences follow:
 
 - **If the audience is external, do not expect improvement as a by-product.** Budget and own the improvement work separately, or it will not happen.
@@ -78,6 +88,17 @@ A certified management system can drift into a parallel world of documents that 
 4. **Read the scale or standard** and check it fits your business before scoring against it.
 5. **If a crisis triggered it, plan for two quarters**: the few changes that must outlast the urgency come first.
 
+```figure
+type: steps
+title: Five steps before commissioning an assessment
+caption: Energy from a crisis fades within a few months, so the changes that must last come first.
+- Name the audience in one sentence
+- Match the approach to the audience
+- Decide what result would change a decision
+- Read the scale before scoring against it
+- *Plan for two quarters if a crisis triggered it
+```
+
 A supporting rule: if the audience is external, commission and fund the improvement work separately. The two exercises can share evidence. They should not share a scope, a timetable or a report.
 
 ## A worked example
@@ -89,6 +110,17 @@ Instead, the owner runs two tracks.
 **Track A, the credential**, is owned by the office manager, with help from an external consultant. Its purpose is to achieve certification in time for the client's requirement, with a system that genuinely reflects how the business works and does not add unnecessary paperwork. It is budgeted as a cost of keeping the client, about $18,000 including consulting and certification audit fees in this illustration. The owner checks that the certification body is appropriately accredited.
 
 **Track B, improvement**, is owned by the operations manager. It begins with a candid diagnosis of the three weaknesses the team already suspects: drawing revision control, first-off inspection on new jobs and slow closure of customer complaints. There is no overall score. Each weakness gets an owner, a two-quarter plan and a measure, such as the number of jobs made to an outdated drawing revision.
+
+```figure
+type: compare
+title: One client requirement, two separate tracks
+cols: Track A: the credential | Track B: improvement
+caption: Shared evidence is fine; the risk is letting the certification deadline set the improvement agenda.
+- Owner | The office manager, with a consultant | The operations manager
+- Purpose | Certification within six months | Fix three suspected weaknesses
+- Budget | About $18,000, a cost of keeping the client | Two-quarter plans, each with a measure
+- Output | A system that reflects real work | No overall score
+```
 
 The two tracks share evidence. The revision control improvements, for example, also support certification. But they have separate owners, budgets and reports.
 

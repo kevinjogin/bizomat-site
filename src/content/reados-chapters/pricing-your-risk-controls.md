@@ -68,6 +68,16 @@ Add four pieces of information to each significant control in the register:
 3. **Review date and budget holder**: who pays for the control, which is often not the person who owns the risk.
 4. **Risks created**: references to any new risks the control introduces. A blank should mean "none identified after checking", not "not considered".
 
+```figure
+type: layers
+title: A treatment cost line for every control
+caption: A blank in "risks created" should mean none were found after checking.
+- One-off cost | and which budget pays
+- Annual carrying cost | consumables, testing, time, lost output
+- Review date and budget holder
+- *Risks created
+```
+
 A few rules make the cost line useful:
 
 - **Approve controls on net benefit**, or state clearly why net benefit could not be calculated and what judgement was made instead.
@@ -99,7 +109,32 @@ This is an illustration. A small manufacturer reviews four controls in its risk 
 
 **Security patrol.** After a break-in that cost about $6,000 in tools, the business added a nightly patrol at $7,800 a year. The owner estimates the chance of another break-in at 20% a year without the patrol and 10% with it, so expected loss avoided is about $600 a year. The patrol costs $7,200 a year more than it saves. A cheaper alternative, better locks and lighting for about $2,500 (about $500 a year over five years) plus a monitored alarm at $600 a year, is estimated to reduce the likelihood to 8%, avoiding about $720 a year at a cost of about $1,100 a year. Still slightly negative on expected value, but far cheaper, and the owner values the reduced disruption. The patrol is replaced, saving about $6,700 a year.
 
+```figure
+type: compare
+title: Four controls, priced on net benefit
+cols: Annual cost | Decision
+caption: Before the review these four controls cost about $22,800 a year, and nobody had added them up.
+- Standby compressor | About $3,000, avoiding about $4,200 | Keep: net benefit about $1,200
+- Microbiological testing | About $9,600, required | Keep; frequency agreed on results
+- Data backup | $2,400, avoiding about $5,250 | Keep: a loss could threaten survival
+- *Security patrol | $7,800, avoiding about $600 | Replace with locks, lighting and an alarm
+```
+
 Before the review, these four controls cost about $22,800 a year and nobody had added them up. After it, the business spends less, protects itself at least as well, and knows what its risk controls cost.
+
+```figure
+type: bars
+title: Expected loss avoided against cost, per year
+unit: $
+max: 8000
+caption: Testing is required regardless; the patrol was the clear outlier.
+- Standby compressor: avoided | 4200
+- Standby compressor: cost | 3000
+- Data backup: avoided | 5250
+- Data backup: cost | 2400
+- Security patrol: avoided | 600
+- *Security patrol: cost | 7800
+```
 
 ## How this applies to a small Australian business
 

@@ -65,6 +65,16 @@ Australian work health and safety regulations describe a **hierarchy of control 
 3. **Administrative controls**: procedures, training, signage, supervision.
 4. **Personal protective equipment**: the last line, relying entirely on individual behaviour.
 
+```figure
+type: layers
+title: Design it out before you manage it
+caption: Higher levels change the odds without relying on people acting correctly every time.
+- *Elimination | remove the hazard or activity
+- Substitution, isolation, engineering | safer methods; separation
+- Administrative controls | procedures, training, signage
+- Personal protective equipment | the last line
+```
+
 The higher controls do not depend on people remembering to do the right thing every day. The lower ones do. That is the difference between **designed resilience** and **managed vigilance**. Both are sometimes necessary, but they are not equivalent.
 
 One published environmental assessment of a mining project shows the idea well: the initial design involved mining beneath watercourses, and the preferred design simply avoided doing so. The treatment was not another inspection or procedure; the activity creating the exposure was removed. The same thinking applies at any scale. A workshop can manage solvent spills with procedures and spill kits, or reduce the quantity stored, bund it and keep it away from drains. An office can rely on staff not to open sensitive files, or set permissions so they cannot.
@@ -112,7 +122,26 @@ The owner then compares responses that would change the odds, over five years:
 - **A separate seeded-products area (isolation and engineering).** A small partitioned area with its own mixer and utensils costs about $22,000 to fit out. Some cleaning and testing is still needed, at about $2,600 a year: **$35,000 over five years**, with far less reliance on daily behaviour.
 - **Removing sesame altogether (elimination).** Seeded products bring in about $18,000 a year in sales. But the owner checks with customers and finds that the two cafés buying most of them also buy about $60,000 a year of other products and would likely move their whole order. The real exposure is about $78,000 a year of sales.
 
+```figure
+type: bars
+title: Five-year cost of changing the odds of sesame cross-contact
+unit: $'000
+max: 50
+caption: Removing sesame instead would put about $78,000 a year of sales at risk, once the cafés' other orders are counted.
+- Procedures only | 45 | $9,000 a year
+- *A separate seeded area | 35 | $22,000 fit-out + $2,600 a year
+```
+
 The owner chooses the separate area, keeps a shorter changeover procedure for the mixer that remains shared, and keeps the recall insurance, recorded honestly as protection for the cash cost of a recall, not for customer trust. The register now shows two lines for this risk: likelihood after the response, with the evidence being monthly swab results, and the insurance, shown as a "who pays" response with its limits and excess.
+
+```figure
+type: compare
+title: The bakery's register, before and after
+cols: Response | What it changes
+caption: Insurance is recorded honestly: it protects the cash cost of a recall, not customer trust.
+- Recall insurance | Who pays | The financial result, within limits and excess
+- *Separate seeded area | The odds | Likelihood, evidenced by monthly swab results
+```
 
 ## How this applies to a small Australian business
 

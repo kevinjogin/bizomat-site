@@ -29,6 +29,16 @@ A useful way to think about any disruption has four parts:
 | **Sensitivity** | How badly does it suffer when exposed? | Cool room struggles above 40 degrees; work becomes unsafe without cooling |
 | **Adaptive capacity** | What can the business do before, during and after? | Backup refrigeration, shift changes, cash to hire equipment, a customer who will accept a delay |
 
+```figure
+type: steps
+title: From hazard to damage
+caption: Damage depends on what is exposed, how sensitive it is and what the business can do about it.
+- Hazard | days above 42 degrees
+- Exposure | cool room, van, staff
+- Sensitivity | cooling struggles above 40 degrees
+- *Adaptive capacity | backup refrigeration, shift changes, cash
+```
+
 A severe hazard can do little damage where exposure is low or adaptive capacity is high. A moderate one can be serious where something critical is highly sensitive and there are few alternatives. The same lens works for floods, fires, power cuts, supply shocks, cyber incidents and the loss of key people.
 
 Sensitivity often hides behind **thresholds**. Equipment works normally across a wide range, then fails sharply beyond a certain temperature or load. A supplier copes with short disruptions until its stock buffer runs out. Staff tolerate one hot day but not a week. Averages mislead; what matters is where behaviour changes suddenly.
@@ -85,6 +95,19 @@ Many businesses are good at the first and weak at the second. Combining the two 
 | Capable but blind | No | Yes | Options exist but may be used too late |
 | Adaptive | Yes | Yes | Problems seen early enough for responses to matter |
 
+```figure
+type: matrix
+title: Seeing a risk is not coping with it
+x: Cannot see it → can see it
+y: Cannot respond → can respond
+hot: 2
+caption: After Teller and Kock (2013): transparency and coping capacity are separate qualities.
+- Capable but blind | options used too late
+- *Adaptive | seen early enough to matter
+- Blind and fragile | no warning, few options
+- Visible but helpless | good reports, no means to act
+```
+
 A quick exercise: for your ten most important risks, write two sentences each. "What do we know?" and "What can we actually do?" Any risk with a strong first answer and a weak second one is a gap in capability, not in information.
 
 Coping capacity costs something: a second supplier, cross-training, spare stock, cash reserves, flexible contracts, files that can move between systems. These are often the first things removed when a business focuses on efficiency, leaving it leaner but more brittle. The question is not resilience versus efficiency, but how much resilience is justified given how concentrated, irreversible and serious the exposure is.
@@ -100,6 +123,20 @@ This is an illustration. Two small engineering workshops in the same regional to
 **Workshop A** buys steel just in time, so it has two days of material on hand. Half its revenue comes from one mining services customer whose own site is also cut off. Only the owner can program the CNC machine, and the owner lives on the other side of the river. Job files are on a single office computer. Cash would cover about three weeks of costs. The five-day closure turns into nearly three weeks of disruption: no material, no programmer, a customer with no work to give, and a scramble for an overdraft extension.
 
 **Workshop B** keeps two weeks of its most-used materials, has two staff who can program its machines, stores job files in a cloud service, and has a standing arrangement with a workshop in a neighbouring town to share capacity in emergencies. Its largest customer accounts for a quarter of revenue, and it holds about three months of costs in reserve. It loses five days of production and recovers within a week.
+
+```figure
+type: compare
+title: Two workshops, one five-day flood closure
+cols: Workshop A | Workshop B
+best: 2
+caption: Both had "flood" on their risk lists; the difference was structural.
+- Material | Two days, just in time | Two weeks of most-used materials
+- Largest customer | Half of revenue, also cut off | A quarter of revenue
+- Programming | Only the owner | Two staff
+- Job files | One office computer | A cloud service
+- Cash | About three weeks of costs | About three months
+- *Outcome | Nearly three weeks of disruption | Five days lost; recovered within a week
+```
 
 After the flood, Workshop A's owner runs the six-layer check:
 

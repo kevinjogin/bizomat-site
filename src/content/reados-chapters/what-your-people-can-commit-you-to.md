@@ -41,6 +41,17 @@ For any role that deals with suppliers or customers, ask how large an obligation
 | Documents | What is the largest value named in any preliminary document this person signs? | A letter of intent or "confirmed, contract to follow" email |
 | Silence | What is the largest assumption a supplier or customer has written to this person and not been corrected on? | "As discussed, we'll proceed on the revised price unless we hear otherwise" |
 
+```figure
+type: tree
+title: Four ways everyday work creates obligations
+caption: Exposure follows contact, not seniority, and often begins well before any signature.
+- An obligation the business owes
+  - Mobilisation | a supplier starts work on someone's word
+  - Displacement | another party gives something up on an assurance
+  - Documents | letters of intent, "contract to follow"
+  - *Silence | an assumption nobody corrected
+```
+
 The largest of the four is that role's practical **exposure ceiling**. Where it is much larger than the role's approval limit, the business has an uncontrolled risk, even if nobody has ever exceeded a spending limit. Roles with no approval limit at all, such as schedulers and coordinators, can still have significant exposure ceilings.
 
 ## Controls that do not stop the work
@@ -89,6 +100,18 @@ This is an illustration. A civil contracting business with 40 staff gives its si
 
 The owner reviews the roles with the most outside contact, not the most senior: the scheduler, four site supervisors, the estimator and the purchasing officer. For each, they work out the largest exposure the role could create through the four routes. The scheduler's ceiling, through crane and equipment bookings, is around $40,000. One supervisor regularly signs subcontractor "start notices" for jobs worth more than $100,000. None of this appears in the approval schedule.
 
+```figure
+type: bars
+title: Approval limits against real exposure
+unit: $'000
+max: 110
+caption: A crane booking "purchase order to follow" cost $9,000 to settle after a $14,000 claim.
+- Supervisor approval limit | 5
+- Scheduler approval limit | 0 | none at all
+- Scheduler's booking ceiling | 40 | about $40,000
+- *Supervisor start notices | 100 | jobs worth more than $100,000
+```
+
 The business introduces:
 
 - standard booking wording making confirmations subject to a purchase order, with cancellation terms stated;
@@ -96,6 +119,17 @@ The business introduces:
 - a short register of start notices and letters of intent, reviewed weekly;
 - a same-day reply rule for any supplier email stating an understanding that is wrong;
 - a one-hour session for the people concerned, using the crane claim as the example.
+
+```figure
+type: checklist
+title: Controls that do not stop the work
+caption: The changes target the routes exposure actually takes, without slowing daily bookings.
+- x Booking wording subject to a purchase order
+- x Co-approval to start above $10,000
+- x A register of start notices and letters of intent
+- x Same-day replies to wrong assumptions
+- *x A one-hour session using the crane claim
+```
 
 At the same time, the owner notices that a long-standing red risk, subcontractors working without current insurance certificates, turned amber three months ago. On investigation, nothing had been fixed. The operations manager had decided that a small number of lapsed certificates was acceptable given how hard they were to chase. The business reverses that decision, records it properly and introduces a simple check: no subcontractor is booked onto the schedule unless their certificate is current in the system. The risk becomes amber again two months later, this time with a reason.
 

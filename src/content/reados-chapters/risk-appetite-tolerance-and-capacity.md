@@ -46,6 +46,17 @@ Good practice is not minimising risk. It is **accepting the right risks delibera
 - **very low appetite** for safety, legal or ethical failures;
 - **controlled appetite** for new technology, provided there is a workable fallback.
 
+```figure
+type: layers
+title: One business, several appetites
+caption: Lower appetite is not more mature; a sensible appetite differs by kind of risk.
+- High | small, bounded product experiments
+- Moderate | nearby markets or customer types
+- Controlled | new technology, with a workable fallback
+- Low | dependence on one customer or supplier
+- *Very low | safety, legal or ethical failures
+```
+
 A good test: if two sensible people could read your statement and reach opposite conclusions about a major decision, it is too vague.
 
 ## Capacity comes first
@@ -57,6 +68,17 @@ Before deciding how bold to be, work out what the business could actually absorb
 - **Unpaid work:** What is the most money any one customer could owe you at once, including work done but not yet invoiced?
 - **Obligations:** Which contracts, licences or loan conditions would be breached by a particular loss?
 - **Personal exposure:** Have you given personal guarantees, or is your home tied to business borrowing?
+
+```figure
+type: checklist
+title: Five questions that measure capacity
+caption: Capacity is set by reality; approving a bolder appetite does not change it.
+- x Cash and borrowing | months of fixed costs covered
+- x Concentration | your largest customer, supplier or key person
+- x Unpaid work | the most one customer could owe at once
+- x Obligations | contracts, licences, loan conditions
+- *x Personal exposure | guarantees or a home tied to borrowing
+```
 
 Capacity changes over time. A profitable year, a new customer or a paid-down loan increases it; a large purchase, a lost contract or a new lease reduces it. Review it at least once a year and after any major change. The [what a risk score cannot tell you](/reados/collections/risk-controls-and-assurance/what-a-risk-score-cannot-tell-you/) article covers setting a survival line and keeping the risks that could cross it on their own list.
 
@@ -117,6 +139,17 @@ Testing the options:
 | Accept one | 38% | $85,000 | $170,000 |
 
 Accepting all three would put almost half the business's revenue with one customer, and a builder failure at the wrong moment could take nearly all of its cash and overdraft. That is close to capacity, well beyond the owner's appetite. Accepting two still breaches the concentration limit.
+
+```figure
+type: bars
+title: The builder's share of revenue under each option
+unit: %
+max: 60
+caption: The owner's limit is 40%; practical capacity for one customer's default is about $280,000.
+- Accept all three | 49 | peak owed $270,000
+- Accept two | 44 | peak owed $220,000
+- *Accept one | 38 | peak owed $170,000
+```
 
 The owner accepts one contract outright, asks to move to fortnightly progress claims, which would reduce the peak amount owed, and tells the builder the business would be glad to take on the other two once its other customers have grown. The owner also starts actively pursuing two other builders, so that the concentration limit allows more work from the first builder later.
 

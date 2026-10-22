@@ -66,6 +66,19 @@ When a business accepts a risk or makes an uncertain decision, the decision is o
 - **the action**, and whether it is pre-authorised;
 - **when monitoring can be reduced or stopped**.
 
+```figure
+type: steps
+title: Building monitoring into the decision
+caption: Decide in advance what evidence would show the assumption is wrong, and who must act on it.
+- The assumption
+- The indicator that tests it
+- How often evidence is needed
+- Who reviews it
+- The threshold
+- The action | pre-authorised?
+- *When monitoring can stop
+```
+
 Monitor the control, not just the outcome. If the risk is a fuel or chemical leak, waiting for contamination is too late; inspection results, bund condition and alarm tests move earlier. Monitor expected benefits as well as possible harm: if a project was justified partly by savings or improvements, test them too. And look for side effects: a change that reduces one problem can create another elsewhere.
 
 Finally, make sure what is learned survives the project. Monitoring results often stay in a closed project folder, and the next job repeats the same assumptions. Update templates, standards and estimating data when the evidence justifies it. The [plans that detect rather than predict](/reados/collections/project-estimates-schedules-and-costs/plans-that-detect-rather-than-predict/) article covers designing plans around the assumptions that matter most.
@@ -90,6 +103,16 @@ Access without capability buys observation, not oversight. And visibility is not
 - **Presence** buys early knowledge and the chance to influence decisions while they are cheap to change, at the cost of your time and some blurring of accountability.
 - **Exception reporting** is cheaper and keeps accountability clean, but you learn of problems only when a limit is crossed, which is after the fact.
 
+```figure
+type: balance
+title: Presence or exception reporting
+left: Presence
+right: Exception reporting
+caption: The line of visibility into outsourced work should be an explicit early choice.
+- Early knowledge, while decisions are cheap to change | Cheaper, with clean accountability
+- Costs your time | You learn only when a limit is crossed
+```
+
 In practice, the main return from visibility is not catching dishonesty, which is rare. It is discovering **mismatched assumptions**: that you and the supplier mean different things by "complete", "tested" or "ready", while each reports accurately against its own understanding.
 
 Two tests help:
@@ -104,6 +127,17 @@ This is an illustration. A regional food producer is making two changes at once:
 **Online ordering.** The business case assumes that within three months, about 70% of wholesale orders will come through the new system, freeing roughly 15 hours a week of phone order-taking. The original plan was to check this in the quarterly sales review, a latency of up to three months. The owner instead sets up a weekly measure from the ordering system: the share of orders placed online, and the number of customers who logged in once and never again. The monitoring is written into the decision: if online orders are below 40% after six weeks, the sales coordinator calls the non-adopters and the developer reviews the ordering screens; monitoring drops to monthly after six months if the share is stable.
 
 By week four, online orders are 22%, and twelve customers logged in once and stopped. Calls reveal the cause within a day: the system makes customers re-enter their usual order every week. A "repeat last order" button is added. By week ten, online orders are 64% and rising.
+
+```figure
+type: bars
+title: Wholesale orders placed online
+unit: %
+max: 80
+caption: Weekly tracking found the problem in week four instead of at the quarterly sales review.
+- Week four | 22 | twelve customers logged in once and stopped
+- *Week ten, after "repeat last order" | 64 | and rising
+- Business case at three months | 70
+```
 
 **The contract packer.** The supply agreement gives the producer the right to attend production runs and see batch records, but nobody had been assigned to do it. Under the empty-chair test, the seat was empty. The owner assigns the quality coordinator, who understands the product's specifications, to attend the first three runs and visit quarterly. At the first run, the coordinator notices the packer is measuring fill weight differently from the producer's specification. Both were reporting accurately against their own understanding. The difference is fixed before any product ships.
 

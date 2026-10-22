@@ -27,6 +27,17 @@ Two consequences follow, and you can check them on almost any 5 × 5 matrix:
 - **Very different events get the same score.** A catastrophe rated "rare" (1 × 5 = 5) scores the same as a trivial nuisance rated "almost certain" (5 × 1 = 5). The matrix prescribes the same response to both.
 - **Frequency usually beats severity.** A minor problem that happens almost every month (5 × 2 = 10) outranks a major one that happens rarely (2 × 4 = 8). That is what an average means. It only becomes a problem when the business could not survive the major one, and then the ranking is upside down relative to the business's real interest.
 
+```figure
+type: bars
+title: What multiplication does to a 5 × 5 matrix
+max: 10
+caption: A rare catastrophe can score the same as a trivial nuisance, and below a frequent minor problem.
+- Rare catastrophe (1 × 5) | 5
+- Almost-certain nuisance (5 × 1) | 5
+- *Frequent minor problem (5 × 2) | 10
+- Rare major problem (2 × 4) | 8
+```
+
 ## Adding and multiplying give different answers
 
 Some risk templates add the two ratings instead of multiplying them. This looks like a matter of house style, but it changes the order of risks, particularly in the region that matters most:
@@ -70,6 +81,17 @@ A simple fix is to stop ranking survivable and non-survivable risks together.
 4. **Do not rank the survival list by score at all.** Every risk on it needs an owner and a response, whatever its rating, and the question is how likely it is that any of them, or a combination, crosses the line.
 5. **Give rare, severe events a home that does not need a likelihood rating.** A continuity plan, a short list of "events we must survive" or a set of scenarios for your accountant to test against cash flow will do. Each needs an owner, a review date and a trigger.
 
+```figure
+type: steps
+title: Splitting the register at a survival line
+caption: Scores are a reasonable guide only for risks the business could survive.
+- Name your survival line
+- Split the register | could the severe outcome cross it?
+- Rank the survivable list by score
+- Do not rank the survival list | every risk needs an owner and a response
+- *Give rare, severe events a home | without a likelihood rating
+```
+
 A useful single question for each risk is: **would we accept this exposure again and again, at these odds, for this stake?** If yes, the score can stand. If no, it belongs on the survival list.
 
 Also compare the scale with your **commitment horizon**: the length of your lease, your loan, your equipment's life or your key contracts. If you have committed for fifteen years and your scale cannot see anything rarer than once in twenty years, events that could easily happen within your commitment are invisible.
@@ -111,6 +133,16 @@ The owners set a survival line: losing more than one vintage's sales, or a cash 
 - **Smoke affecting a whole vintage.** Not on the register at all, because nobody could choose a rating.
 - **Their main distributor failing.** It handles about 60% of sales; a failure would remove most of the year's income.
 - **Loss of water supply in a long drought.**
+
+```figure
+type: checklist
+title: What the winery's matrix could not show
+caption: Its top-ranked risks were bottling stoppages (10), peak staffing (8) and late payment (8).
+- ? A fire destroying the building and stock | within a fifteen-year loan
+- ? Smoke affecting a whole vintage | never rated
+- ? The main distributor failing | about 60% of sales
+- *? Loss of water supply in a long drought
+```
 
 None of these was in the top five of the ranked list. All four now go on a separate survival list, each with an owner and a response: checking exactly what the business insurance covers and excludes, and talking to the insurer and broker about gaps; maintaining firebreaks and on-site water; setting up a second distribution channel through direct online sales; and agreeing a standing arrangement to buy in fruit from a neighbouring grower if their own crop is lost.
 

@@ -25,6 +25,16 @@ When a business says it complies with a rule, it is relying on two separate thin
 1. **The text**: access to the actual words of the standard, code or regulation.
 2. **The map**: knowledge of which documents apply to the business's activities, in which editions, under which authorities.
 
+```figure
+type: balance
+title: Two things compliance relies on
+left: The text
+right: The map
+caption: Holding the words of a standard is not the same as knowing which ones apply to you.
+- The actual words of the standard or code | Which documents apply, in which editions
+- Where access comes from | Who decided they apply, and how
+```
+
 Most attention goes to the text: buying the standard, subscribing to a library, keeping copies current. The map is more important and usually less examined. If an obligation never appears on your map, no amount of careful reading of the documents you do hold will reveal it.
 
 ## Where the text comes from
@@ -47,6 +57,16 @@ Ask how you know which rules apply to your business. The answer usually falls in
 | An adviser, consultant or certifier told you | An opinion limited to the adviser's brief | Find out what the brief covered and excluded |
 | A document supplier's bundle or subscription | A product selection, shaped by what that supplier sells | Treat it as a starting point and verify it independently |
 | Nobody can say | Nothing reliable | Stop asserting compliance until the obligation is mapped |
+
+```figure
+type: layers
+title: How reliable is your map of obligations?
+caption: Find out what each source covered, and stop asserting compliance where nobody can say.
+- *Verified position | someone read the instruments and dated it
+- Adviser's opinion | limited to the brief
+- Supplier's bundle | a product selection
+- Nothing reliable | nobody can say
+```
 
 None of the external sources is improper. Advisers and suppliers provide valuable services. But each has a scope. A subscription bundle covers the documents that supplier distributes. An adviser's report covers what they were engaged to review, and their engagement may end at project completion while your obligations continue. A certifier's checklist covers what they certify. Gaps between scopes are invisible unless you look for them.
 
@@ -97,6 +117,19 @@ A simple audit, done in a spreadsheet, shows how reliable your compliance knowle
 | Electrical installation requirements | Electrical contractor's advice | 1 | 4 | No | None |
 | Food labelling requirements | Owner read the code | 1 | 2 | Yes, dated | Annual review and amendment alerts |
 | Lifting equipment inspection | Insurer's checklist | 0 | 3 | No | Insurance renewal only |
+
+```figure
+type: bars
+title: People with access against people deciding
+caption: Illustrative obligations; access holders should not be far fewer than the people governed by the rule.
+max: 5
+- Electrical installation: access | 1
+- Electrical installation: deciding | 4
+- Food labelling: access | 1
+- Food labelling: deciding | 2
+- Lifting inspection: access | 0
+- *Lifting inspection: deciding | 3
+```
 
 Rows with no recorded source, or with the map coming only from a supplier or nobody, need attention first. Rows where far more people make decisions than can read the source need well-maintained, properly sourced procedures.
 

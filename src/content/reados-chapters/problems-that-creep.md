@@ -43,6 +43,18 @@ People who work around a condition every day stop noticing it. Familiarity lower
 - A backlog becomes "normal workload".
 - Dust becomes "part of the workshop".
 
+```figure
+type: compare
+title: How warning signs become normal
+cols: What it is | What it becomes
+caption: Human senses are poor instruments for gradual change.
+- Vibration | Minor vibration | "How the machine runs"
+- Workarounds | A workaround | "How the process works"
+- Overtime | Regular overtime | "What delivery requires"
+- Backlog | A growing backlog | "Normal workload"
+- *Dust | Visible dust | "Part of the workshop"
+```
+
 The absence of immediate harm reinforces the habit: "we've done it this way for years". For gradual risks, that reasoning is especially weak, because the delay between exposure and consequence is exactly what stops experience from teaching the lesson. Someone new to the business often sees what everyone else has stopped seeing, so ask newcomers what surprised them. The [making a risk register change decisions](/reados/collections/risk-controls-and-assurance/making-a-risk-register-change-decisions/) article covers turning indicators into triggers that prompt action.
 
 ## Define the condition and its normal range
@@ -56,6 +68,19 @@ Managing a condition needs a few things an event-based approach does not:
 5. **Thresholds and trends**: a level that triggers action, and a rate of change that triggers action even within limits.
 6. **An owner of the trend**: someone responsible for the condition between incidents.
 7. **A periodic challenge** of whether the control method still suits the condition.
+
+```figure
+type: steps
+title: Managing a condition, not waiting for an event
+caption: Slow-building risks give weak feedback, so someone has to own the trend between incidents.
+- Define the condition
+- Set a normal range | measured when things were good
+- Choose leading indicators
+- Match monitoring to the pace of change
+- Set thresholds and trend triggers
+- Name an owner of the trend
+- *Challenge the method periodically
+```
 
 The trend matters as much as the level. A value inside the limit but moving quickly in the wrong direction deserves attention now, not when it crosses the line.
 
@@ -110,6 +135,16 @@ This is an illustration. A joinery business with twelve staff has had no serious
 **Overtime.** Average overtime has risen from about 2 hours to about 7 hours per person per week over 18 months. Everyone describes it as "just how busy we are". The owner sets a rolling four-week average with a threshold of 5 hours, above which a capacity review is triggered: whether to hire, subcontract, change lead times or decline work. The first review leads to a new hire and longer quoted lead times on custom work.
 
 **Maintenance backlog.** Overdue preventive maintenance tasks have grown from 3 to 19, the oldest overdue for five months. The owner sets two indicators, the number of overdue tasks and the age of the oldest, with thresholds of 5 tasks and 30 days. One Friday afternoon each fortnight is protected for maintenance.
+
+```figure
+type: compare
+title: Three conditions that crept up in one workshop
+cols: Found | Threshold now set
+caption: Each condition now has a defined normal range, an indicator and someone watching the trend.
+- Dust extraction | Airflow at the panel saw about 60% of commissioning | Below 80% of commissioning values, checked monthly
+- Overtime | Up from about 2 to 7 hours a person each week | A rolling four-week average above 5 hours
+- *Maintenance backlog | Overdue tasks up from 3 to 19 | More than 5 tasks, or any older than 30 days
+```
 
 Each condition now has an owner, a normal range, an indicator, a frequency and a trigger. None of the three had produced an incident. All three were heading towards one.
 

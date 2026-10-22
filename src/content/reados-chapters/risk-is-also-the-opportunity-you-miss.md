@@ -41,6 +41,16 @@ A risk review usually compares a new proposal with continuing as before, and tre
 - **What could destroy value if we act?**
 - **What value could we fail to create, or lose, if we do not act?**
 
+```figure
+type: balance
+title: Two questions for every decision
+left: If we act
+right: If we do not act
+caption: Managers tend to frame uncertainty as a threat more readily than as an opportunity; the status quo carries risk too.
+- What could destroy value? | What value could we fail to create?
+- The risk of a new commitment | The risk of standing still
+```
+
 The second question is usually underdeveloped. Some examples:
 
 - A business that waits until a new market is fully proven may find competitors have already learned how to serve it.
@@ -103,6 +113,18 @@ For each significant uncertainty the business faces, work through six questions 
 5. **Appetite**: is this a kind of uncertainty we have said we are willing to accept?
 6. **Evidence path**: what would need to become true before we scale, stop or change direction?
 
+```figure
+type: steps
+title: The threat and opportunity test
+caption: Learning and scaling are separate decisions, so test before committing.
+- Threat | what could damage value?
+- Opportunity | what value might become available?
+- Status quo | what happens if we do nothing?
+- Reversibility | can we test without a big commitment?
+- Appetite | have we said we accept this kind?
+- *Evidence path | what must be true to scale or stop?
+```
+
 The symmetry matters. It stops a risk review from becoming automatically defensive, and it equally stops enthusiasm from passing over real threats.
 
 ## Welcome uncomfortable views in both directions
@@ -125,6 +147,16 @@ The owners' first instinct is to treat this as a threat and respond defensively:
 - **Evidence path**: the pilot is a success if one builder takes ten pre-assembled kitchens at an agreed price, installation time on site falls noticeably, the margin is at least as good as current builder work, and the builder commits to a further order of at least 40 kitchens.
 
 The pilot costs about $35,000 in design time, jigs and extra labour. Installation time falls sharply, the margin is slightly better than existing builder work, and the builder places an order for 45 kitchens over the next year. A second builder asks for a quote. Only then do the owners consider the CNC machine, and they decide to lease rather than buy, keeping the commitment reversible while volumes build.
+
+```figure
+type: timeline
+title: Testing a standardised kitchen range before buying a machine
+caption: High appetite for a bounded trial; low appetite for a $400,000 machine before builders committed.
+- The signal | Builders buying flat-pack | builder work could fall to about 20% of revenue
+- The pilot | About $35,000 | existing machines, one builder
+- The evidence | Faster installation, slightly better margin | an order for 45 kitchens
+- *The decision | Lease the CNC machine | reversible while volumes build
+```
 
 The same review prompts a second look at an existing risk the business had stopped noticing: its 18-year-old edge-banding machine, which only one employee knows how to keep running. That risk had never been on a list because it was familiar.
 
