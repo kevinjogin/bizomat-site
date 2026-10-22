@@ -69,9 +69,9 @@ export const SITE = {
 } as const;
 
 export const NAV = [
-  { href: '/', label: 'KEVOS®' },
   { href: '/tools/', label: 'WORKOS' },
   { href: '/reados/', label: 'READOS' },
+  { href: '/contact/', label: 'REACHOS' },
 ] as const;
 
 
