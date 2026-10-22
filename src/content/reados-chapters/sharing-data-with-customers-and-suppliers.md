@@ -53,6 +53,17 @@ Before sharing, answer a few questions:
 4. **Who at the partner needs it?** Share with roles, not whole organisations.
 5. **For how long?** Set an end date or review point.
 
+```figure
+type: steps
+title: Deciding what to share
+caption: A supplier planning capacity may need monthly forecast quantities, not customer names or prices.
+- What is the purpose?
+- What is the minimum needed?
+- How sensitive is it?
+- Who at the partner needs it?
+- *For how long?
+```
+
 Sharing less, more precisely, reduces risk without reducing the benefit.
 
 ## What agreements should cover
@@ -68,6 +79,21 @@ Informal sharing works until something goes wrong. Written terms, whether in a s
 - **Incident notification**: how quickly the recipient must report a breach or loss.
 - **Accuracy and liability**: responsibility for errors in shared data and limits on reliance.
 - **Audit and review**: rights to check compliance.
+
+```figure
+type: checklist
+title: What a data-sharing agreement should cover
+caption: Write the terms before data starts flowing, not after a dispute.
+- x Purpose and permitted use
+- x Ownership and intellectual property
+- x Confidentiality
+- x Security requirements
+- x Subcontractors
+- x Retention and return
+- x Incident notification
+- x Accuracy and liability
+- *x Audit and review
+```
 
 Where personal information is involved, privacy obligations also apply. For organisations covered by the Privacy Act, disclosing personal information to another business must be consistent with the Australian Privacy Principles, including those on use and disclosure and on overseas disclosure. The [privacy by design in business databases](/reados/collections/records-business-data-and-learning/privacy-by-design-in-business-databases/) article explains how to limit and protect personal information. Seek legal advice for significant arrangements.
 
@@ -172,6 +198,18 @@ This is an illustrative example. A manufacturer of agricultural equipment buys f
 **Changes.** The manufacturer sets up a supplier portal. Each supplier sees only its own parts: current drawings with revision status, a rolling 12-month forecast in an agreed format with definitions, and a place to upload certificates and inspection results linked to purchase orders. Access is by named user with multi-factor authentication. Supply agreements are updated with data terms covering permitted use, confidentiality, security and return of data. The former supplier's access is removed, and the business requests confirmation that its drawings have been deleted.
 
 **Result.** Shortages caused by outdated forecasts fall, drawing revision errors stop, and certificates for any batch can be found in minutes during audits. The business keeps a register of all supplier data sharing and reviews access every six months.
+
+```figure
+type: compare
+title: From email attachments to a supplier portal
+cols: Before | After
+best: 2
+caption: The business now keeps a register of all supplier data sharing and reviews access every six months.
+- Forecasts | Emailed spreadsheets, sometimes outdated | A rolling 12-month forecast with definitions
+- Drawings | Wrong revisions used | Current revisions only, each supplier's own parts
+- Certificates | Hard to find in audits | Linked to purchase orders, found in minutes
+- Access | A former supplier still in a shared folder | Named users with multi-factor authentication
+```
 
 ## Applying this in an Australian business
 

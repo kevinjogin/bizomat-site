@@ -40,6 +40,17 @@ Before committing to a significant quote or plan, have someone who did not build
 | What is being replaced | Removal, migration, running old and new side by side, disposal | Any item with no owner |
 | Every boundary with another party | Work needed on each side of each handover | Any boundary with an unowned side |
 
+```figure
+type: checklist
+title: Where an omission audit looks
+caption: A plan cannot check itself for what is missing; compare it against something outside it.
+- x The contract, scope or brief
+- x Cost records of a similar past job
+- x A handover list
+- x What is being replaced
+- *x Every boundary with another party
+```
+
 Each finding gets a written decision: **added** to the plan, **excluded** with a named person accepting the exclusion, or **passed to another party** with a reference. Pay particular attention to commitments about how something must perform or which standard it must meet. These are properties, not parts, so they rarely appear as lines in a plan, and the testing and evidence they require arrive late, as discoveries.
 
 A plan with no line for managing the job itself, or with management shown only as a flat percentage, should be treated as incomplete. The [testing the dependencies in your schedule](/reados/collections/project-estimates-schedules-and-costs/testing-the-dependencies-in-your-schedule/) article covers checking the logic between the tasks you do include.
@@ -106,11 +117,35 @@ Before submitting, the operations manager, who did not prepare the estimate, run
 
 The missing work comes to about 11% of the estimate, more than the whole contingency. The quote goes out at **$468,000**, with the exclusions listed.
 
+```figure
+type: bars
+title: Work the usual template left out
+unit: $'000
+max: 20
+caption: About $48,000 in total, 11% of the $420,000 estimate and more than its 10% contingency.
+- *Project management time | 18 | assumed to be "in overheads"
+- Shop drawing approval | 9
+- Fit-up rework on site | 8
+- Touch-up painting | 6.5
+- Weld procedure records | 4.5
+- Material test certificates | 2
+```
+
 The job is won with a completion date of **20 March**. The fabricator creates an original commitment record. Over the following months, 14 variations are approved, each modest. By May, the working plan reports the job on track. The commitment record tells a different story: the price is up **$58,000** (about 12%) and completion has moved to **8 May**, seven weeks later. The limit the owner set at the start, 10% or four weeks, was crossed several variations earlier, and the owner now schedules a meeting with the client to review the remaining scope and dates as a whole rather than one variation at a time.
 
 A separate check reveals that the site supervisor, the scheduler and the office were working to completion dates of 17 April, 8 May and 30 April respectively. The scheduler's date is confirmed as the current forecast, and the client is told the same date by one person.
 
 After the job, the fabricator adds the six omitted items to its estimating template and records the 12% drift as data for future quotes on similar work.
+
+```figure
+type: compare
+title: Fourteen modest variations later
+cols: Original commitment | By May
+caption: The 10% or four-week limit had been crossed several variations earlier, while the working plan still said "on track".
+- Price | $468,000 | Up $58,000, about 12%
+- Completion | 20 March | 8 May, seven weeks later
+- Dates in use | One | Three: 17 April, 30 April and 8 May
+```
 
 ## How this applies to a small Australian business
 

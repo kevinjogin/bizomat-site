@@ -26,6 +26,15 @@ Ask of any pilot result:
 2. **Would it work at the price the rollout assumes?** If the pilot site got the service free, or the cost was absorbed centrally, or a long-standing customer accepted a discount as a favour, the most important assumption in the business case, that someone will pay this price, has not been tested.
 3. **Has it happened more than once?** One successful cycle shows a capable team, given attention, can do it once. A process is something that produces the result again with different people, at a different site, without the original team present.
 
+```figure
+type: checklist
+title: Three questions a pilot result must answer
+caption: A pilot shows what a capable team can do once with attention; a rollout needs more than that.
+- ? Would it have happened without the extra help?
+- ? Would it work at the price the rollout assumes?
+- *? Has it happened more than once?
+```
+
 A pilot that cannot answer all three is not worthless. It should be recorded as **promising, not proven**, and the next step should be designed to answer the missing questions.
 
 ## Selection happens twice
@@ -61,6 +70,20 @@ A few changes make a pilot far more informative:
 - **Test the price.** If the rollout assumes users pay a fee or a department funds it, have the pilot site pay something close to that price, at least for a period.
 - **Compare with a baseline.** Results during a pilot can be flattered by seasonal changes, a quiet month or other improvements happening at the same time. Compare with similar sites that did not take part, or with the same period last year. The [what would have happened anyway](/reados/collections/investment-appraisal-and-business-cases/what-would-have-happened-anyway/) article covers setting a realistic base case.
 - **Report feasibility and adoption separately.** Say plainly what the pilot showed about whether the thing works, and what it can and cannot show about whether it will be used.
+
+```figure
+type: steps
+title: Designing a pilot that tells you more
+caption: Each step makes the pilot harder, and its result more useful.
+- Record conditions, not just outcomes
+- Write a coverage statement
+- Include a site that would not have volunteered
+- Add a withdrawal period
+- Repeat in stages
+- Test the price
+- Compare with a baseline
+- *Report feasibility and adoption separately
+```
 
 ## Use the pilot to find problems, not just to prove success
 
@@ -101,6 +124,17 @@ The sponsor proposes rolling out to all 15 sites. Before agreeing, the owner ask
 The owner adds a third stage. The operations manager stops visiting the two pilot sites for six weeks while measurement continues; the saving there settles at about 30%. The app is also introduced at a representative night-shift site that would not have volunteered, without extra support. There, the saving is only about 15%: supervisors have little quiet time to set up rosters, and some staff struggle with the app's language settings.
 
 The business case is redone with the lower figure. At an illustrative $40 an hour, a 15% saving across 15 sites, about 1.5 hours a site a week over 48 weeks, is worth about $43,200 a year, comfortably above the $14,400 subscription. The original pilot figure would have suggested about $115,200. The rollout goes ahead, but phased, with a translated quick guide, a half-day setup session for each night-shift supervisor and a support budget, and the owner's expectations are set by the representative site rather than the volunteers.
+
+```figure
+type: bars
+title: Rostering time saved by a shift app
+unit: %
+max: 50
+caption: At 15% across 15 sites, the saving is still worth about $43,200 a year against a $14,400 subscription.
+- Two volunteer pilot sites, with support | 40 | 10 hours a week to about 6
+- Pilot sites after six weeks without visits | 30
+- *A representative night-shift site | 15
+```
 
 ## How this applies to a small Australian business
 

@@ -68,6 +68,16 @@ Structure the review in two levels:
 | Execution | Did we do what we planned? Were people, resources and skills adequate? Were decisions made in time? Did handoffs work? |
 | Assumptions | What did we believe about customers, suppliers, technology, cost, time or risk? What evidence supported those beliefs? What evidence now challenges them? Is the goal itself still right? |
 
+```figure
+type: balance
+title: Correcting execution or questioning the plan
+left: Single-loop
+right: Double-loop
+caption: Most reviews stay on the left; the expensive lessons are usually on the right.
+- Did we carry out the plan properly? | Was this the right plan?
+- Improves how it is done | Questions assumptions, goals and methods
+```
+
 Many reviews stop at the first level. The second level is where the larger lessons usually sit.
 
 ## Categories are not causes
@@ -107,6 +117,17 @@ The diagnosis goes further this time:
 - Nobody rechecked lead times at order, because the estimator assumed the project manager would, and the project manager assumed the estimator had.
 - The client's layout changes came after the business sent drawings for approval with a five-day turnaround, while the client's decision-maker was travelling. The approval process did not check who would actually approve.
 - At the assumption level, the business's standard programme assumed suppliers' lead times were stable, which had stopped being true over the past year.
+
+```figure
+type: compare
+title: A late café fit-out, reviewed twice
+cols: First review | Asking why
+caption: Three weeks late and $18,000 over; the first review closed in an hour.
+- Joinery | "The supplier was slow" | Lead time taken from a six-month-old quote
+- Ownership | "Communicate better with suppliers" | Estimator and project manager each assumed the other rechecked
+- Client changes | "Lock in changes earlier" | A five-day approval turnaround the client could not meet
+- *Assumption | Not examined | The standard programme assumed stable lead times
+```
 
 The remedies are then examined. A rule that lead times are confirmed in writing at the time of order is assigned to the project manager, with the estimator providing current figures. Approval requests now name the client's decision-maker and confirm their availability. The standard programme template is updated to include a check of supplier lead times at three points. Each remedy has an owner and a review date, and the next two jobs are checked against them.
 

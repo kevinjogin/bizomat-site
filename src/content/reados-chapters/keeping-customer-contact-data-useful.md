@@ -41,6 +41,19 @@ The CRM should hold account and contact information once, shared by sales, servi
 - **Duplicates accumulate** from imports, web forms and different staff creating records.
 - **Information is entered incompletely** in a hurry.
 
+```figure
+type: tree
+title: Why contact data decays
+caption: Decay is continuous, so keeping data current has to be part of normal work.
+- A contact record
+  - People change jobs and roles
+  - Email addresses change
+  - Companies merge, rename or close
+  - Phone numbers change
+  - *Duplicates accumulate
+  - Details entered incompletely
+```
+
 Decay is continuous, so one-off clean-ups help only temporarily. Lasting quality depends on habits and processes that keep data current.
 
 ## Structure accounts, contacts and roles
@@ -64,6 +77,17 @@ Duplicates split history across records, cause repeated or conflicting communica
 - **Match imports** against existing records before loading lists from events or campaigns.
 - **Run regular duplicate checks**, using matching rules on email, phone, name and company.
 - **Merge carefully**, choosing the surviving record, combining interaction history and checking consent records, because merging can carry a marketing opt-out from one record to another or lose it.
+
+```figure
+type: steps
+title: Preventing and managing duplicates
+caption: When merging, keep the full interaction history and the most restrictive consent status.
+- Search before creating
+- Standardise formats
+- Match imports first
+- Run regular checks
+- *Merge carefully
+```
 
 ## Standards and required fields
 
@@ -162,6 +186,16 @@ This is an illustrative example. An industrial supplier's CRM holds about 12,000
 **Process changes.** The CRM checks for duplicates at entry, phone numbers and company names follow standards, roles are required, and consent source and date are recorded for every new contact. Sales staff confirm details during visits, and account owners review contacts for the top 200 accounts annually. Opt-outs synchronise automatically with the email platform.
 
 **Result.** The next campaign's bounce rate falls to about 3%, sales staff find the right contacts more often, and the business can show how it obtained consent for the people it markets to. Quarterly quality reports now go to the sales and marketing managers, and the share of contacts verified within the past year rises steadily as confirmation becomes part of every customer visit and service call.
+
+```figure
+type: bars
+title: Email campaign bounce rate
+unit: %
+max: 20
+caption: About 9% of 12,000 contacts and 6% of 3,500 accounts were duplicates, merged with history preserved.
+- Before the clean-up | 18
+- *Next campaign | 3
+```
 
 ## Applying this in an Australian business
 

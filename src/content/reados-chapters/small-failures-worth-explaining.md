@@ -40,6 +40,17 @@ Write down a short rule naming events that earn an explanation however small the
 4. **Surprises in someone else's behaviour.** A customer, supplier or regulator doing something you did not expect is evidence that your understanding of them is wrong.
 5. **Anything a competent person found strange.** The only category that catches what the other four miss.
 
+```figure
+type: checklist
+title: Events worth explaining regardless of damage
+caption: Large losses tend to have large causes, except when the cause is a definition, handover or assumption.
+- x Handover defects
+- x Definition mismatches
+- x Near misses on important boundaries
+- x Surprises in someone else's behaviour
+- *x Anything a competent person found strange
+```
+
 Three quick tests help check your current habits:
 
 - **The severity test.** Would we have looked into this if the consequence had been ten times bigger? If yes, what are we actually deciding on?
@@ -58,6 +69,17 @@ Concrete fixes are not wrong; they are often needed. The problem is a business t
 |---|---|---|
 | The item | "This job's colour profile was wrong" | Add a check for this job type |
 | The habit or decision | "Our briefs do not capture how the customer will use the product" | Change how jobs are briefed and quoted |
+
+```figure
+type: balance
+title: Learning at the right level
+left: The item
+right: The habit or decision
+tilt: right
+caption: The same event can produce a narrow check or a change to how work is briefed and quoted.
+- "This job's colour profile was wrong" | "Our briefs miss how the product will be used"
+- Add a check for this job type | Change how jobs are briefed and quoted
+```
 
 ## Has this happened before?
 
@@ -95,6 +117,16 @@ The owner tries the five categories on the last month of small events and finds 
 - **A supplier surprise.** A delivery arrived with the right label but the wrong paper weight. Prepress noticed by chance.
 
 Each gets a short conversation. The colour issue is first written up as "check stock colour with customer", a concrete fix. The owner then asks the level question, and the team recognises a broader habit: their job briefs record what the customer orders but not how the product will be used. Checking the job log for the past year, they find seven similar reprints, about $420 each or around **$2,940** in total, none large enough to trigger a review. The brief template is changed to capture intended use, and sales staff are shown examples of common mismatches.
+
+```figure
+type: compare
+title: Three small events at a print shop
+cols: Kind | What happened
+caption: The shop had tracked only reprints over $1,000 or that upset a major customer.
+- "White" stock | Definition mismatch | Bright white sent; natural white wanted
+- The paper store | Near miss | A reversing forklift and a gap in the racking
+- *Paper weight | Supplier surprise | Right label, wrong weight; noticed by chance
+```
 
 The forklift near miss leads to the gap in the racking being closed and a marked pedestrian route. The owner checks whether the event needs to be reported to the state safety regulator and records the outcome.
 

@@ -48,6 +48,18 @@ Before designing or reviewing a database, list the personal information it holds
 - **Who uses it** and which other systems receive it.
 - **How long it is needed.**
 
+```figure
+type: steps
+title: An inventory of personal information
+caption: Privacy by design starts with knowing what is held and why.
+- What information | field by field
+- Whose
+- Why | the purpose of each item
+- Where it comes from
+- Who uses it
+- *How long it is needed
+```
+
 This inventory often reveals fields nobody uses, copies held in forgotten spreadsheets and information collected out of habit.
 
 ## Collect less
@@ -116,6 +128,16 @@ Many uses of data do not need to identify individuals: sales analysis, product d
 - **Aggregating** data into totals and groups.
 - **Generalising** detail, such as age bands or postcodes rather than addresses.
 
+```figure
+type: layers
+title: Ways to de-identify data
+caption: Keep any linking key separate and protected.
+- Remove direct identifiers
+- Replace identifiers with codes
+- Aggregate into totals and groups
+- *Generalise detail | age bands, postcodes
+```
+
 De-identification is not absolute. Combining several fields, or linking with other data sets, can sometimes re-identify people, so assess the risk for each use. Test and development environments should use masked or synthetic data rather than copies of real personal information.
 
 ## Know where data is stored
@@ -154,6 +176,18 @@ This is an illustrative example. A business that sells and services home fitness
 **Changes.** Dates of birth are replaced with birth years where needed for warranty and finance checks, and removed elsewhere. Driver's licence numbers are deleted, and the finance process is changed to verify identity without storing document numbers. Health-related notes are moved to a restricted service record with consent recorded, and staff are trained to record only what service work requires. Marketing preferences are stored in the main database and synchronised to the email platform. The test environment is rebuilt with synthetic data. A retention rule de-identifies customers with no purchase or service activity for seven years, subject to checking any legal requirements.
 
 **Result.** The business holds less sensitive information, can locate all records about a person when asked, honours opt-outs consistently and would have far less to notify in the event of a breach.
+
+```figure
+type: compare
+title: A 25,000-record customer database, redesigned
+cols: Found | Changed
+best: 2
+caption: Turnover above $3 million had brought the business under the Privacy Act.
+- Dates of birth | Full dates for every customer | Birth year only where needed
+- Licence numbers | Copied during finance applications | Deleted; identity checked without storing them
+- Health notes | In general notes fields | A restricted service record, with consent
+- Marketing consent | Only in the email platform | In the main database, synchronised
+```
 
 ## Applying this in an Australian business
 

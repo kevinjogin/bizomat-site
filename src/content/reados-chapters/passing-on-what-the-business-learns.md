@@ -43,6 +43,15 @@ Three quick tests show where a business stands:
 2. **The disagreement test.** Does our record show what was argued about, or only what was concluded? Most records show no disagreements at all, because a record full of disagreement looks like a badly run job.
 3. **The point-of-view test.** Whose account is this, and who else would describe the same events differently?
 
+```figure
+type: steps
+title: Three tests of how a business passes on learning
+caption: A document carries conclusions; the next team also needs the reasoning and the conditions.
+- The visitor test | who attended who was not on the job?
+- The disagreement test | does the record show what was argued?
+- *The point-of-view test | whose account is this?
+```
+
 Lessons should also change something: a checklist, a template, an estimate, a supplier choice, a standard. A lesson that changes nothing is an archive entry, not capability.
 
 ## Some capability lives in pairs
@@ -78,6 +87,16 @@ Plan the transition from the start, not at closure:
 | **Strategic** | Keep in the business and build a second person who has it |
 | **Safety or compliance critical** | Keep clear records, authority and verified competence |
 
+```figure
+type: layers
+title: What a temporary team should leave behind
+caption: Match the treatment to the kind of knowledge.
+- Routine | document adequately
+- Operational | transfer to the people who will run it
+- Strategic | keep it, and build a second person
+- *Safety or compliance critical | records, authority, verified competence
+```
+
 Where outside specialists do important work, pair them with someone from the business who takes part in key decisions, sees the difficult problems being solved and gradually takes ownership. That costs some speed during the job. It avoids a dependence nobody chose.
 
 Closing a team is also a people transition. Staff who were pulled into a project may be unsure what they are going back to, and contractors may leave abruptly. Recognise contributions openly, give people a clear next role, and ask each person what they learned about decisions, customers and handoffs, not just about the technical work. People who see that project work was valued and led somewhere are more willing to join the next one, and their experience can be put to use in mentoring and future planning.
@@ -101,6 +120,17 @@ The operations manager changes three things:
 - **The next supervisor attends the review.** Before each fit-out starts, the incoming supervisor sits in on the review of the previous one and may adjust their own plan as a result.
 - **The log records conditions and disagreements.** Entries now say when a lesson applies ("shopping centre sites only") and note where people disagreed and why.
 - **A working pair is kept alive.** The supervisor who understood shopping-centre fit-outs moves into an operations role, but attends the first site meeting of each new centre fit-out. A one-hour meeting keeps a valuable working relationship with the group's shopfitter alive.
+
+```figure
+type: compare
+title: A café group's lessons log, rebuilt
+cols: Before | After
+best: 2
+caption: The old entry read: "Coffee machine installation delayed opening by eight days."
+- Who learns | The next supervisor reads a log | The next supervisor attends the last review
+- What is recorded | Conclusions | Conditions and disagreements
+- Relationships | Lost when people move | A working pair kept alive across roles
+```
 
 At handover, the shopfitter walks the store manager through the point-of-sale and network cabling, and leaves a marked-up plan in the store, so the store team can deal with routine problems without calling the shopfitter. The next shopping-centre opening is on time, and the checklist now includes "confirm centre water connection process and notice period at lease signing".
 

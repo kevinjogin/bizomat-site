@@ -45,6 +45,16 @@ Most business systems use a **pricing hierarchy**, also called precedence rules,
 3. The customer's price group price, less any group discount.
 4. The standard list price.
 
+```figure
+type: steps
+title: How a system decides the price
+caption: Settle in advance what happens when two rules apply at once.
+- Customer contract price | if current
+- Current promotional price
+- Price group price | less any group discount
+- *Standard list price
+```
+
 Systems differ in whether they use the **first price found** in the hierarchy or the **best price** for the customer among those that apply, and in whether discounts **stack**, applying one after another, or the largest applies alone. These rules have large commercial effects and are often configured once and forgotten. Document them, test them with real examples, and make sure sales staff understand them.
 
 | Situation | Question to settle |
@@ -75,6 +85,19 @@ A controlled price change process typically includes:
 5. **Loading** new prices with effective dates, ideally through a controlled import with checks rather than manual editing.
 6. **Verification**: checking a sample of prices in the system against the approved list, and test quotes for typical customers.
 7. **Communication** to sales and customer service staff.
+
+```figure
+type: cycle
+title: A controlled price change
+caption: Load prices through a checked import with effective dates, not manual editing.
+- Trigger
+- Analysis | margins, key customers
+- Approval
+- Customer notice
+- Loading | with effective dates
+- Verification | sample and test quotes
+- *Communication
+```
 
 ### Unit of measure consistency
 
@@ -177,6 +200,16 @@ This is an illustrative example. A building products wholesaler with annual reve
 **Changes.** Contract prices are given end dates and expiry alerts. Expired contracts are reviewed with customers and either renewed on current terms or reverted to standard pricing with notice. Discount limits by role are enforced in the system, with approvals for exceptions. Unit of measure errors are corrected, and monthly override and margin exception reports go to the commercial manager.
 
 **Result.** Over the following year, overrides fall to about 5% of lines, and the business recovers an estimated $150,000 of the leakage while retaining its key customers. The figures are illustrative, but leakage of this kind is common where pricing data is not actively managed.
+
+```figure
+type: stats
+title: Pricing leakage at a $14 million wholesaler
+caption: From expired contracts, unauthorised overrides and unit-of-measure errors.
+- 18% → 5% | Invoice lines with manual overrides
+- 40 | Customers on contracts expired over six months
+- $210,000 | Estimated leakage a year | about 1.5% of revenue
+- *$150,000 | Recovered in a year
+```
 
 ## Applying this in an Australian business
 
