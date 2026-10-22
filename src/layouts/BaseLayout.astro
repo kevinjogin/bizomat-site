@@ -51,14 +51,7 @@ const props = Astro.props;
       <slot />
     </main>
     <Footer />
-    <script is:inline>
-      // Prevent standard mouse, pen and touch-generated context menus.
-      // Keep ordinary tapping, scrolling, editable fields, and all print/export controls.
-      // Browser UI, developer tools and screenshots remain outside this deterrent.
-      document.addEventListener('contextmenu', function (event) {
-        if (event.cancelable) event.preventDefault();
-      }, { capture: true });
-    </script>
+    <script is:inline src="/js/kevos-context-protection-v1.js"></script>
     {SITE.assistant.enabled && <ChatWidget />}
   </body>
 </html>
