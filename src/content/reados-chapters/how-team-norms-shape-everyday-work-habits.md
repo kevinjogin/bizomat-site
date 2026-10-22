@@ -91,6 +91,25 @@ The group holds a 45-minute session to examine recent handovers and agree on a u
 | Fast transfer receives most attention | Recognise a handover that avoids reconstruction | The useful behaviour is named |
 | Responsibility for gaps is unclear | Sender and recipient confirm the next action | Ownership is understood |
 
+```figure
+type: stats
+title: The cost of agreeing a handover norm
+caption: Treated as a real investment, so the discussion stays on the recurring gap.
+- 45 min | Session length
+- 3 | People attending
+- *135 min | Combined time | two hours and 15 minutes
+```
+
+```figure
+type: cycle
+title: A handover the recipient can use
+caption: The norm becomes visible when recognition goes to the handover that avoids reconstruction, not just the fast one.
+- Record | a brief shared handover record
+- Flag | unresolved issues marked before transfer
+- Confirm | sender and recipient agree the next action
+- *Recognise | handovers that avoid reconstruction
+```
+
 The founder uses the new record in their own handovers and explains a case where an unresolved question needs to remain open. This demonstrates that the standard is an accurate transfer of context, not a requirement to make every task appear finished.
 
 At a later review, the team examines whether recipients still need avoidable clarification. If the records are complete but difficult to interpret, the example needs revision. If the founder continues to bypass the method, the group must address that visible exception rather than merely remind everyone else to comply.

@@ -73,6 +73,17 @@ Keep the routine brief and functional. Preparing the right materials helps; repe
 
 Test whether the routine improves the transition into work. If it becomes an obligation that you resent or cannot perform outside one setting, adjust it. A useful beginning should make the task more accessible rather than add another condition that must be perfect.
 
+```figure
+type: steps
+title: Making a postponed task worth starting
+caption: A sound reframe remains true; if the benefit is weak, change the task instead.
+- Name the specific difficulty
+- Make the actual benefit visible
+- Reframe without denying the cost
+- Pair activities only when they fit
+- *Give the beginning a predictable shape
+```
+
 ## Worked example: making a weekly review useful
 
 This is an illustration. A founder keeps postponing a weekly review of product enquiries. The record has grown into a long list, and the review feels like administration with no clear result. In four planned weekly sessions, only one review is completed.
@@ -89,7 +100,27 @@ The founder then creates a 25-minute session. Five minutes are allocated to sele
 
 The founder places this review before a preferred block of concept sketching. The connection is practical: the review supplies a customer question that can inform the sketches. The enjoyable activity is not withheld as a punishment; the sequence is a voluntary arrangement intended to make both tasks more useful.
 
+```figure
+type: stack
+title: A 25-minute weekly review with a defined end
+unit: minutes
+caption: Placed before a preferred block of concept sketching.
+- Select relevant records | 5
+- *Examine the recurring issue | 15
+- Choose the next action | 5
+```
+
 Suppose three of the next four planned reviews are completed. Completion has risen from one of four to three of four, or from 25% to 75%. This is a 50-percentage-point change in a small illustrative sample, not evidence of a general effect size for the method.
+
+```figure
+type: bars
+title: Planned weekly reviews completed
+unit: %
+max: 100
+caption: A small illustrative sample, not evidence of a general effect size.
+- Before | 25 | one of four
+- *After the redesign | 75 | three of four
+```
 
 The founder also examines what the reviews produced. If they generated no useful investigation, the higher completion count would be insufficient. The real question is whether the revised task and sequence support better product decisions without creating disproportionate administration.
 

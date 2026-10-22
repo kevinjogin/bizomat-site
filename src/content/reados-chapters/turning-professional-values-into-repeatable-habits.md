@@ -20,6 +20,15 @@ In *Atomic Habits*, James Clear argues that repeated behaviour and a person's se
 
 An **outcome** is a result, such as completing a project or reducing missed commitments. A **process** is the sequence of actions used to produce work. **Professional identity**, in this context, is the way you understand the kind of practitioner, colleague or founder you are trying to be.
 
+```figure
+type: layers
+title: Outcomes, processes and identity
+caption: A value becomes repeatable when it is attached to an observable action in the process.
+- Outcome | a result, such as fewer missed commitments
+- Process | the actions that produce the work
+- *Identity | the kind of practitioner you are trying to be
+```
+
 These operate at different levels. Delivering a report is an outcome. Checking its assumptions and obtaining review are process steps. Seeing yourself as someone who makes evidence-based decisions is an identity that those actions may support.
 
 Clear's framework asks you to connect the levels rather than focus only on the final result. Completing one accurate report is useful; developing a repeatable checking practice can affect many reports. Over time, performing that practice gives you concrete reasons to regard careful work as part of how you operate.

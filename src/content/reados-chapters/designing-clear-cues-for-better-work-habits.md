@@ -100,7 +100,28 @@ The intended action is to record the decision, its reason and the next owner bef
 | Exception | If interrupted, leave a visible incomplete marker for follow-up |
 | Review | Inspect the next 20 relevant calls |
 
+```figure
+type: steps
+title: Designing a cue for decision capture
+caption: The cue sits at the moment the decision is still fresh, using tools already open.
+- Existing transition | ending a product discussion
+- Visible cue | a final decision section
+- Required action | decision, reason, next owner
+- Exception | a visible incomplete marker
+- *Review | the next 20 relevant calls
+```
+
 Suppose 17 of the next 20 calls have a usable note. That is 85%, compared with 55% previously: 17 divided by 20 and 11 divided by 20 respectively. The increase is 30 percentage points, not a claim that decision quality improved by 30%.
+
+```figure
+type: bars
+title: Calls with a usable decision note
+unit: %
+max: 100
+caption: A 30-percentage-point increase in notes, not a claim that decision quality improved by 30%.
+- First 20 calls | 55 | 11 of 20
+- *Next 20 calls | 85 | 17 of 20
+```
 
 The founder reviews the three remaining cases. Two occurred on a phone away from the usual document, and one ended abruptly. These exceptions suggest a need for a simple mobile capture route and a follow-up rule, rather than adding more prompts to the desktop template.
 
@@ -149,6 +170,16 @@ For a founder working alone, the same discipline applies in a lighter form. Put 
 ## Review the cue and the outcome separately
 
 First ask whether the cue is encountered and understood. Then ask whether the action occurs and whether it helps. These are different questions, and a failure at one stage should not automatically be attributed to another.
+
+```figure
+type: steps
+title: Reviewing a cue one stage at a time
+caption: A failure at one stage should not automatically be attributed to another.
+- Encountered | does the person meet it?
+- Understood | is the moment and action clear?
+- Acted on | does the action occur?
+- *Helpful | does it serve the next person?
+```
 
 A person may see the prompt but lack time to act. They may perform the action correctly while the overall process still has another source of error. The review should follow the evidence rather than concluding that reminders always work or never work.
 

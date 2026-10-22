@@ -50,6 +50,17 @@ An undifferentiated list of unfinished tasks makes everything look equally ready
 | Deferred | Why it is not active | What would justify reconsidering it |
 | Complete or stopped | The result or stopping reason | Whether anything needs communicating |
 
+```figure
+type: steps
+title: Five states for unfinished work
+caption: Each state carries a different next decision, so unfinished work stops being one undifferentiated pile.
+- Ready | when to allocate capacity
+- Waiting | when to follow up
+- Scheduled | are dependencies still available?
+- Deferred | what would justify reconsidering it?
+- *Complete or stopped | does anything need communicating?
+```
+
 Use the smallest system that keeps these distinctions visible. A simple document may be enough for one person; shared work needs a record others can access. The system should help choose the next action rather than becoming another substantial job.
 
 ## Choose a limited set of weekly outcomes
@@ -99,11 +110,33 @@ The founder also allows four hours for ordinary variation based on recent experi
 | Available for a defined prototype stage | 4 |
 | Total | 30 |
 
+```figure
+type: stack
+title: Thirty usable hours in the proposed week
+unit: hours
+caption: The eight-hour prototype task does not fit, so it is divided into two stages with a clear stopping point.
+- Customer commitments | 12
+- Meetings and preparation | 6
+- Recurring administration | 4
+- Allowance for variation | 4
+- *First prototype stage | 4
+```
+
 The founder divides the prototype work into two useful stages. The first four hours will prepare and check a revised component; the second stage will test it in the following period. This is only a sound division if the first stage has a clear stopping point and does not leave work in an unusable state.
 
 On Tuesday, an unexpected customer issue requires three hours. That uses three of the four allowance hours, leaving one. Later, another task is estimated to need two additional hours, so the plan is now one hour over capacity rather than still fitting comfortably.
 
 The founder reviews the remaining work and agrees to defer a one-hour non-urgent administrative task. That restores the 30-hour allocation, provided the deferral is acceptable to anyone depending on it. The next review records both changes so that future estimates reflect what actually happened.
+
+```figure
+type: timeline
+title: When the week does not go to plan
+caption: An illustration of a chosen planning allowance, not a recommended number of hours.
+- Plan | Four hours of allowance | for ordinary variation
+- Tuesday | A customer issue | three hours; one hour of allowance left
+- Later | A task needs two more hours | one hour over capacity
+- *Review | One admin hour deferred | back within 30 hours
+```
 
 The example does not prescribe a suitable working week or a safe number of hours for anyone. It demonstrates the arithmetic of a chosen planning allowance. A real plan must also consider the nature of the work, individual circumstances and applicable requirements.
 

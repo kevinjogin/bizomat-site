@@ -90,9 +90,28 @@ During an initial fortnight, there are 20 conversations that require a handover.
 
 The team changes the note template and clarifies who completes it. In the next fortnight, 18 of 20 relevant conversations have complete notes, giving a rate of 90 per cent. The increase is 30 percentage points. It is an observed difference within this hypothetical example, not proof that the template alone caused the improvement.
 
+```figure
+type: bars
+title: Handovers with complete notes
+unit: %
+max: 100
+caption: Responsibility was the element most often missing, so the template and ownership were changed.
+- Initial fortnight | 60 | 12 of 20
+- *Next fortnight | 90 | 18 of 20
+```
+
 The team also reviews usefulness. In the first period, recipients requested avoidable clarification on six handovers; in the second, they did so on three. Different work complexity or staff availability could contribute to that difference, so the team inspects the cases rather than attributing the entire change to the routine.
 
 For an illustrative time check, completing the tracker field takes 15 seconds for each of the 20 handovers. That adds 300 seconds, or 5 minutes, per fortnight. The team spends another 15 minutes reviewing the record, making the total tracking effort 20 minutes for the period.
+
+```figure
+type: stats
+title: What the tracking costs each fortnight
+caption: Keep the tracking burden proportionate to what it reveals.
+- 5 min | Completing the field | 15 seconds × 20 handovers
+- 15 min | Reviewing the record
+- *20 min | Total tracking effort
+```
 
 The decision is whether that effort provides useful information and supports better handovers. A higher completion rate alone is insufficient if the notes contain generic text that recipients cannot use. The team therefore keeps the measure connected to a small review of actual examples.
 

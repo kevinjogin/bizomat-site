@@ -76,6 +76,17 @@ Build this reset into the work that creates the disorder. If every person postpo
 
 Keep the reset proportionate. Elaborate arrangements can become another form of preparation that takes longer than the problem it solves. Start with the few items that repeatedly prevent work from beginning, and review whether the arrangement actually reduces searching, waiting or rework.
 
+```figure
+type: steps
+title: Making important work easier to start
+caption: Easier to begin does not mean a lower standard for finishing.
+- Remove avoidable friction | physical, informational, decision
+- A starting point in your control
+- A small first action | the two-minute rule
+- A separate completion standard
+- *Reset the workspace for next time
+```
+
 ## Remove waste while retaining useful checks
 
 An easier process is not automatically a better process. A confirmation step may protect against a costly misunderstanding. A second review may be necessary because a decision affects someone beyond the person making it. Removing those steps requires more reasoning than observing that they take time.
@@ -101,7 +112,26 @@ The founder also changes the preceding work. When a relevant customer conversati
 
 For this hypothetical example, the old review took 15 minutes to gather material and 25 minutes to analyse it, giving a total of 40 minutes. Preparing the log reduces gathering to 5 minutes. Analysis still takes 25 minutes, so the revised review takes 30 minutes: a saving of 10 minutes per review.
 
+```figure
+type: bars
+title: Time for one weekly review
+unit: minutes
+max: 45
+caption: Gathering fell from 15 to 5 minutes; analysis still takes 25.
+- Old review | 40 | 15 gathering + 25 analysis
+- *With a prepared log | 30 | 5 gathering + 25 analysis
+```
+
 Over four reviews, that is 40 minutes less gathering time. It is not yet the net saving, because capturing questions also takes time. If maintaining the log adds 6 minutes each week, the four-week maintenance cost is 24 minutes. The net time reduction is therefore 16 minutes over the four reviews.
+
+```figure
+type: stats
+title: The net saving over four reviews
+caption: Capturing questions during the week also takes time, so count it.
+- 40 min | Less gathering time
+- 24 min | Maintaining the log | 6 minutes a week
+- *16 min | Net time reduction
+```
 
 The business also evaluates usefulness. Did the reviews lead to clearer product information, and can the team identify which questions informed the changes? If the log is maintained but no decision follows, the routine has become a well-organised collection exercise rather than a useful review.
 

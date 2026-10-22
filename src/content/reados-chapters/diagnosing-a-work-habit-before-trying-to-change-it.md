@@ -26,6 +26,16 @@ The **response** is the action or thought that follows. The **reward** is the ex
 
 Together these stages form a **feedback loop**: the consequences of an action can influence what happens when a similar situation returns. Treat any proposed loop as a working explanation to test. Observing behaviour does not give you direct access to another person's motives.
 
+```figure
+type: cycle
+title: Four stages of a habit
+caption: After James Clear's Atomic Habits. Treat any proposed loop as a working explanation to test.
+- Cue | a signal of opportunity or need
+- Craving | the anticipated benefit
+- Response | the action or thought
+- *Reward | the experienced consequence
+```
+
 ## Start with one clearly defined behaviour
 
 Choose an action specific enough to recognise. Being distracted is broad; opening the order dashboard while drafting a proposal is observable. Improving communication is broad; sending a clarification request immediately after an incomplete handover is more precise.
@@ -106,6 +116,16 @@ The founder keeps the necessary shipment checks and changes the response to a wr
 
 In a comparable trial period, dashboard checks fall to four. At two minutes each, the direct checking time is eight minutes, a reduction of 16 minutes from the original 24. The founder also checks whether important shipment updates were missed and whether the writing actually progressed.
 
+```figure
+type: bars
+title: Direct time spent checking a shipment dashboard
+unit: minutes
+max: 30
+caption: Measured checking time only; it excludes the time needed to resume writing.
+- Observed period | 24 | 12 checks of about two minutes
+- *Comparable trial | 8 | 4 checks
+```
+
 The result would remain provisional. A quieter shipment day or an easier writing section could explain part of the difference. The trial supports further observation of a plausible change; it does not prove that every dashboard check had the same motive or that the new routine will always help.
 
 ## Select a change that matches the diagnosis
@@ -120,6 +140,17 @@ Clear's four laws of behaviour change connect the stages to practical design cho
 | The result is invisible or disappointing | Provide meaningful completion feedback | Is the feedback linked to worthwhile work? |
 
 For an unwanted habit, examine whether the cue can be reduced, the apparent benefit reconsidered or an alternative response made easier. Avoid obstructing legitimate work simply to suppress a visible behaviour. The replacement should preserve the useful need the old response was serving.
+
+```figure
+type: decision
+title: Matching the change to the diagnosis
+question: What is the observed difficulty?
+caption: After Clear's four laws of behaviour change; check that the change addresses the cause you observed.
+- Not noticed | A prompt at the decision point
+- No clear value | Expose its useful consequence
+- Cumbersome | Remove an unnecessary step or input
+- *Result invisible | Meaningful completion feedback
+```
 
 ## Distinguish a habit issue from a wider process issue
 

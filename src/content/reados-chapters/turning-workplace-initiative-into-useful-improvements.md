@@ -97,7 +97,26 @@ The coordinator proposes a short request template with required fields and a com
 
 Suppose three of the next 20 requests need clarification. At the same assumed 15 minutes each, clarification takes 45 minutes. Compared with the original 120 minutes, the observed reduction is 75 minutes for that group of requests.
 
+```figure
+type: bars
+title: Clarification time across 20 sample requests
+unit: minutes
+max: 130
+caption: At an assumed 15 minutes for each request needing clarification.
+- Before the template | 120 | eight of 20 requests
+- *With the template | 45 | three of 20 requests
+```
+
 The team also records that completing the template adds an average of two minutes to each request. Across 20 requests, that is 40 additional minutes. The illustrative net reduction in recurring handling time is therefore 75 minus 40, or 35 minutes for the group, before counting the one-off effort to design and introduce the template.
+
+```figure
+type: stats
+title: The honest net saving
+caption: Before counting the one-off effort to design and introduce the template.
+- 75 min | Less clarification time
+- 40 min | Added to complete the template | two minutes × 20
+- *35 min | Net reduction for the group
+```
 
 The smaller net figure is more informative than announcing the full 75 minutes as a saving. It also remains provisional: the request mix, users and learning period may differ. The team reviews the three exceptions and finds that one required field is ambiguous, so it revises that wording before deciding whether to adopt the template more broadly.
 

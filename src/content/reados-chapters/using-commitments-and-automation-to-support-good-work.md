@@ -40,6 +40,16 @@ A reminder may be enough when work is infrequent and requires judgement. A defau
 | Advance commitment | Reserve a recurring review session | Can the participants realistically honour it? |
 | Automation | Create a review task when an item reaches a defined stage | Can the trigger and result be checked reliably? |
 
+```figure
+type: layers
+title: From a prompt to a fully automatic step
+caption: Each mechanism moves more of the decision into the setup, so each needs a clear owner afterwards.
+- Reminder | prompts someone able to act
+- Default | an agreed starting status
+- Advance commitment | a reserved, recurring session
+- *Automation | a step triggered by a defined stage
+```
+
 Avoid using a stronger mechanism simply because it is available. Automatically executing an action can create more risk than prompting a person to consider it. Choose the least complicated arrangement that addresses the actual failure in the work.
 
 ## Choose the decision before choosing the tool
@@ -102,7 +112,26 @@ The team trials the process on a limited set of work. It checks that each eligib
 
 For the hypothetical time comparison, the business handles 20 eligible briefs each month. Creating each task manually takes 3 minutes, giving 60 minutes of monthly administrative work. The new process requires a 15-minute monthly check and, in this example, 10 minutes to resolve exceptions, leaving 35 minutes of net monthly time saved.
 
+```figure
+type: bars
+title: Monthly time to create review tasks
+unit: minutes
+max: 70
+caption: The automation creates an internal review task; it does not approve the brief.
+- Manual | 60 | 20 briefs at 3 minutes
+- *Automated | 25 | a 15-minute check + 10 for exceptions
+```
+
 Suppose setup and testing take 210 minutes. At a continuing saving of 35 minutes per month, the setup time is recovered after six months. This calculation considers time only. It excludes software costs, future changes and any difference in review timeliness or error rates.
+
+```figure
+type: stats
+title: When the setup time is recovered
+caption: Time only: software costs, future changes and review timeliness are excluded.
+- 210 min | Setup and testing
+- 35 min | Net saving each month
+- *6 months | To recover the setup time
+```
 
 The business should therefore assess more than the arithmetic. If eligible briefs wait less time and missing reviews become easier to detect, the process may have value beyond the administrative saving. If exception work grows or the underlying workflow changes, the original estimate needs to be revised.
 

@@ -42,6 +42,18 @@ Write a short preparation map showing what you can already do, what needs checki
 | Missing information | Ask a specific question | The necessary input is available |
 | Uncertain outcome | Design a limited attempt and review | The consequences and learning are understood |
 
+```figure
+type: decision
+title: What kind of uncertainty is it?
+question: What makes the task feel unfamiliar?
+caption: Confidence becomes specific when the next action addresses the actual source of doubt.
+- Unfamiliar content | Review accurate material with someone knowledgeable
+- Unpractised sequence | Rehearse in realistic conditions
+- Unclear authority | Confirm the decision boundary
+- Missing information | Ask a specific question
+- *Uncertain outcome | Design a limited attempt and review it
+```
+
 Sometimes the right conclusion is that the task needs another person or more time. Recognising this is part of sound judgement. Confidence should help you engage with the work honestly rather than push through a gap you have not addressed.
 
 ## Set a realistic standard for the next attempt
@@ -108,6 +120,16 @@ The founder allocates four preparation sessions of 30 minutes each. That is 120 
 | Second | Demonstrate the prototype | A workable sequence and a fallback if it fails |
 | Third | Ask and answer questions | Clear prompts and an approach to unknown answers |
 | Fourth | Review with another person | Specific feedback and final corrections |
+
+```figure
+type: steps
+title: Two hours of preparation for a first demonstration
+caption: Four 30-minute sessions, each with an observable output.
+- Explain the problem | a short opening without unsupported claims
+- Demonstrate the prototype | a sequence and a fallback
+- Rehearse questions | including unknown answers
+- *Review with a peer | specific feedback, final corrections
+```
 
 During rehearsal, the peer asks whether the prototype will tolerate repeated use. The founder does not know because that testing has not been completed. The preparation response is to state the limitation clearly, explain what has been tried and record the question for a later test.
 

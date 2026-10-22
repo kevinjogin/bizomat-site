@@ -97,7 +97,25 @@ The writer practises on a suitable internal example, then applies the approach t
 
 Suppose the team examines eight briefs before the change and eight afterwards. In the first group, reviewers find 16 assumptions that should have been labelled, an average of 2 per brief. In the second group, they find 8, an average of 1 per brief. These illustrative counts show a reduction in identified omissions, while leaving open whether the groups were equally difficult.
 
+```figure
+type: bars
+title: Unlabelled assumptions found per design brief
+max: 2.5
+caption: Eight briefs in each group; whether the groups were equally difficult remains open.
+- Before | 2 | 16 across eight briefs
+- *After | 1 | 8 across eight briefs
+```
+
 The team spends 30 minutes reviewing the examples together. With three people attending, that uses 90 minutes of combined staff time. It also records any additional drafting time. This prevents the improvement from being assessed only through the visible reduction in reviewer questions.
+
+```figure
+type: stats
+title: Counting the cost of the improvement
+caption: Additional drafting time is recorded too, so the change is not judged only by fewer reviewer questions.
+- 30 min | Joint review of examples
+- 3 | People attending
+- *90 min | Combined staff time
+```
 
 The next decision depends on the evidence. If labelling helps reviewers act and the added effort is proportionate, the team retains the change. If assumptions are labelled indiscriminately and the document becomes harder to use, it refines the definition and practises again. The aim is better information, not a larger number of labels.
 
