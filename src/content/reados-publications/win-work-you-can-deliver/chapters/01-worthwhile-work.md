@@ -19,6 +19,16 @@ Customers often describe a solution before explaining the problem. A request for
 
 Write the desired outcome as an observable change. Instead of “better marketing”, try “people can identify which service fits before booking a call”. Instead of “improve our documents”, try “staff send customers one approved explanation of what each package includes”. These statements still need testing, but they can be discussed and checked.
 
+```figure
+type: compare
+title: Turning a request into an observable outcome
+cols: Request as stated | Outcome that can be checked
+caption: The deliverable is what you can commit to; the outcome is the change it is meant to support.
+- Marketing | "Better marketing" | People can identify which service fits before booking a call
+- Documents | "Improve our documents" | Staff send customers one approved explanation of each package
+- Brochure | "A new brochure" | The real cause is found first: confusing enquiries, an outdated range or credibility
+```
+
 Avoid promising an outcome you cannot control. You can commit to preparing a clear service document and testing whether readers understand it. You cannot guarantee that it will produce a particular number of sales when demand, prices and follow-up sit outside your control. Separating the deliverable from its intended effect keeps the offer honest.
 
 ## Introduce the case
@@ -34,6 +44,16 @@ Fieldnote could attempt the second by hiring specialists, but that would be a ne
 An operating limit is a boundary that protects something the business needs. It might concern competence, available hours, cash, acceptable customer behaviour or the consequences of failure. It is different from a preference: crossing it changes whether the business should proceed.
 
 For the fictional package, Fieldnote writes these initial limits:
+
+```figure
+type: venn
+title: Work worth a yes sits where three conditions overlap
+centre: Worthwhile
+caption: Early work exists to reduce the uncertainty in each circle; operating limits mark where the business circle ends.
+- Customer outcome | a plausible, observable change for the customer
+- Route to a decision | someone can decide, in a credible way
+- Workable delivery | capability, hours and cash without harming existing commitments
+```
 
 | Boundary | Reason | Evidence needed before accepting |
 |---|---|---|
@@ -52,6 +72,16 @@ Some limits cannot be traded for a higher price. More revenue does not create mi
 Early decisions need not be a binary yes or no. Use **proceed**, **investigate** and **decline or defer**.
 
 Proceed means the evidence supports a defined next step, such as a paid assessment or a scoped proposal. It does not mean the whole job is approved. Investigate means there is a specific gap worth resolving within an agreed time or cost. Decline or defer means the present conditions do not support further investment.
+
+```figure
+type: decision
+title: Three possible early decisions, not two
+question: Does the evidence support investing in a next step?
+caption: An investigate decision needs a question, an owner and a stopping point, or it becomes an expensive waiting room.
+- Proceed | A defined next step | e.g. a paid assessment or scoped proposal; not approval of the whole job
+- *Investigate | A specific gap to resolve | within an agreed time or cost
+- Decline or defer | Present conditions do not support it | e.g. the online store outside Fieldnote's capability
+```
 
 A vague investigate decision can become an expensive waiting room. Attach a question, an owner and a stopping point. “Check whether the customer can provide approved source material by Friday” is useful. “Keep in touch” does not identify what would change the decision.
 

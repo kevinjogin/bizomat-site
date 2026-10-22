@@ -39,6 +39,15 @@ But the book adds an important test: **find out where the cash came from**. Cash
 
 Only the first is evidence of strength. The authors suggest reviewing around seven years of balance sheets to see whether cash is accumulating steadily from ordinary trading, or arriving in lumps from financing and asset sales. The cash flow statement, discussed in the next article, shows exactly which of the three sources produced it.
 
+```figure
+type: checklist
+title: Where did the cash come from?
+caption: Read cash alongside debt; borrowed cash is a loan against the future.
+- Generated from operations, year after year | the only source that shows strength
+- x Borrowed, or raised by selling new shares | money that must be repaid or shared
+- x From selling an asset or a division | a one-off that cannot repeat
+```
+
 ### Cash and debt together
 
 Cash should always be read alongside debt. A business with $50 million of cash and $200 million of borrowings is in a very different position from one with $50 million of cash and no borrowings. **Net cash** (cash minus borrowings) or **net debt** (borrowings minus cash) is a useful single figure that captures both.
@@ -92,6 +101,18 @@ Putting the three measures together gives the **cash conversion cycle**:
 
 It estimates how many days pass between paying suppliers and being paid by customers. Here is an illustration for a small wholesaler.
 
+```figure
+type: formula
+title: The cash conversion cycle
+formula: CCC = Days inventory + Days sales outstanding − Days payables outstanding
+caption: This business funds 75 days of operations from its own cash.
+- Days inventory | inventory ÷ cost of goods sold × 365
+- Days sales outstanding | receivables ÷ revenue × 365
+- Days payables | payables ÷ cost of goods sold × 365
+step: CCC = 60 + 45 − 30
+step: CCC = 75 days
+```
+
 | Measure | Days |
 | --- | --- |
 | Days inventory outstanding | 60 |
@@ -128,6 +149,16 @@ The cash conversion cycle has stretched from 55 days to 112. Growth has turned p
 The owner acts on three fronts. Slow-moving lines are discontinued and stock levels set by actual sales history. New accounts receive 30-day terms, with a small discount for payment within 14 days, and overdue accounts are followed up weekly. Two key suppliers agree to 45-day terms in exchange for larger, more predictable orders.
 
 Within a year, the cycle falls to around 60 days, releasing several hundred thousand dollars of cash, and the business funds its continued growth without additional borrowing.
+
+```figure
+type: bars
+title: The kitchen equipment distributor's cash conversion cycle
+unit: days
+caption: Days inventory 50 to 80 and customer days 35 to 62, with suppliers still paid in 30, stretched the cycle from 55 to 112 days.
+- Before rapid growth | 55 | 50 + 35 − 30
+- *After growth | 112 | 80 + 62 − 30
+- After the owner's changes | 60 | about, within a year
+```
 
 ## What this means for running a business
 

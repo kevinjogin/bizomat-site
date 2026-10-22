@@ -32,6 +32,18 @@ Teaching material on sustainable procurement suggests an order of questions that
 
 The order matters. A business can compare suppliers perfectly and still buy something it did not need.
 
+```figure
+type: steps
+title: Questions to ask before buying anything new
+caption: Each step is cheaper and less permanent than the next; buying new comes last.
+- Avoid | remove the need through a process, schedule or design change
+- Share | use existing capacity elsewhere in the business
+- Extend | repair, refurbish or upgrade what you own
+- Reuse | second-hand or reconditioned
+- Redesign the demand | change the requirement itself
+- *Buy new | judged on whole-life cost and value
+```
+
 ## Demand is often inherited
 
 Many purchase requests reflect the way work is currently organised rather than a genuine shortage:
@@ -68,6 +80,17 @@ A whole-life view of an asset covers five zones:
 - **End of life**: removal, disposal, remediation, and any resale or residual value.
 
 An asset creates a stream of cash flows, not just a purchase transaction.
+
+```figure
+type: timeline
+title: The five cash-flow zones of an asset
+caption: The purchase price is only the first zone; the others often cost more.
+- Zone 1 | Acquisition | price, design, procurement, financing
+- Zone 2 | Implementation | installation, commissioning, training, disruption
+- Zone 3 | Operation | labour, energy, consumables, licences, maintenance
+- Zone 4 | Change and renewal | upgrades, refurbishment, major replacements
+- *Zone 5 | End of life | decommissioning, disposal, resale
+```
 
 ## Depreciation is not cash
 
@@ -126,6 +149,15 @@ The alternatives are to ask the two main suppliers for staggered delivery window
 | Total | $82,300 | $8,000 |
 
 The alternatives solve the availability problem for about a tenth of the cost of a second forklift, with less floor congestion and less energy use. The owner sets a trigger to revisit the decision if delivery volumes grow by more than about a quarter.
+
+```figure
+type: bars
+title: Eight-year whole-life cost: second forklift versus alternatives
+unit: $
+caption: Staggered deliveries, two pallet jacks and a hydraulic repair solve availability for about a tenth of the cost. Illustrative, not discounted.
+- Second forklift | 82300 | $48,000 price + training + servicing and energy − $12,000 resale
+- *Alternatives | 8000 | $3,600 pallet jacks + $2,800 repair + upkeep
+```
 
 ## How this applies to a small Australian business
 

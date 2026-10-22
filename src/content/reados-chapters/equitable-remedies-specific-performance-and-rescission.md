@@ -26,6 +26,17 @@ It helps to start with the basic distinction.
 
 **Equitable remedies** developed because damages were sometimes inadequate or because a party's conduct made it unconscionable to insist on strict legal rights. They are **discretionary**: even when the requirements are met, a court may decline to grant them if, for example, the claimant delayed unreasonably, behaved badly or would gain an unfair advantage, or if the order would cause hardship out of proportion to the benefit.
 
+```figure
+type: balance
+title: Two toolboxes for a contract that goes wrong
+left: Common law damages
+right: Equitable remedies
+caption: Equitable remedies are discretionary: meeting the requirements does not guarantee an order.
+- Available as of right | Granted at the court's discretion
+- Asks what the loss was | Asks whether money is enough, and how the parties behaved
+- Compensates with money | Can order performance, stop an act or unwind a deal
+```
+
 | Remedy | What it does | Typical business situation |
 |---|---|---|
 | Specific performance | Orders a party to perform its contractual obligation | Sale of land or a unique asset; transfer of shares in a private company |
@@ -72,6 +83,16 @@ Restraint clauses illustrate why preparation matters. Courts start from the posi
 
 Rescission is different from termination for breach. Termination ends future obligations under a valid contract and preserves accrued rights, including the right to damages for the breach. Rescission treats the contract as if it should never have bound the parties, and focuses on restoring what each has given.
 
+```figure
+type: compare
+title: Rescission or termination?
+cols: Termination for breach | Rescission
+caption: Rescission can be lost by affirming the contract, by delay, or where restoration or third-party rights stand in the way.
+- The contract | Valid, but future obligations end | Treated as if it should never have bound the parties
+- Accrued rights | Preserved, including damages | The focus is on restoring what each gave
+- Typical trigger | A serious breach or repudiation | Misrepresentation, duress or undue influence
+```
+
 Several limits apply:
 
 - **Election and affirmation.** A party who learns the facts giving rise to the right to rescind and then acts as if the contract continues, for example by accepting further performance or making payments, may be taken to have affirmed it and lost the right.
@@ -107,6 +128,17 @@ Because these remedies are discretionary, the way a business conducts itself dur
 
 A business that may need an equitable remedy should therefore keep its own conduct beyond criticism, act quickly and document what it knew and when.
 
+```figure
+type: checklist
+title: What a court weighs before granting equitable relief
+caption: How a business conducts itself during the dispute can decide whether a remedy is available.
+- ? Delay | did the claimant act promptly?
+- ? Clean hands | has it behaved fairly?
+- ? Hardship | to the defendant or third parties
+- ? Adequacy of damages | would money do the job?
+- ? Practicality | enforceable without ongoing supervision?
+```
+
 ## A worked example
 
 This is an illustrative example. The businesses, figures and events are hypothetical.
@@ -116,6 +148,15 @@ A small manufacturer commissions a toolmaker to build a set of press tools for a
 Damages are a poor remedy here. Replacement tools would take about fourteen weeks, the manufacturer's customer orders would be lost in the meantime, and the tools embody the manufacturer's design. The manufacturer's advisers might consider an urgent injunction to stop the toolmaker using or disposing of the tools, and orders for their delivery up. An interim order would likely require an undertaking as to damages, so the manufacturer must be confident in its position. Its strongest evidence is the contract's ownership clause, proof of full payment, and correspondence showing the $6,000 invoice relates to a different job.
 
 Separately, the manufacturer might consider paying the disputed $6,000 under protest, while reserving its rights, if that releases the tools faster and more cheaply than litigation. That is a commercial judgement, not a legal one. The broader lesson sits upstream. Clear ownership terms, staged release of tooling, an agreed process for disputed invoices and photographs of the tools at each payment milestone would all have made the position easier to enforce.
+
+```figure
+type: decision
+title: Getting the $85,000 press tools back
+question: Fully paid for, but held over an unrelated $6,000 invoice. What now?
+caption: Replacement tools would take about fourteen weeks and the tools embody the manufacturer's design, so damages are a poor remedy.
+- Urgent injunction | Stop use or disposal; seek delivery up | needs an undertaking as to damages
+- *Pay under protest | Release the tools faster, rights reserved | a commercial judgement, not a legal one
+```
 
 ## How this applies to a small Australian business
 

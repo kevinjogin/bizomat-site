@@ -31,6 +31,17 @@ This informality is the advisory board's main advantage. You can design it to su
 
 One caution: if the company habitually acts on an advisor's instructions, as opposed to considering their advice, that advisor could in some circumstances be treated by the law as a director, with a director's duties. Keep the advisory role clearly advisory, and have the actual directors make and record decisions.
 
+```figure
+type: compare
+title: Advisory board or board of directors?
+cols: Board of directors | Advisory board
+caption: If the company habitually acts on an advisor's instructions, that advisor could be treated as a director.
+- Legal status | The company's legal governing body | An informal group of advisors
+- Duties | Directors' legal duties and liabilities | No director duties, if it only advises
+- Decisions | Makes binding decisions | Offers advice the owner may take or leave
+- Flexibility | Formal processes | Easy to set up, change or pause
+```
+
 ## Why set one up
 
 - **Fill capability gaps** in areas such as finance, legal, marketing, HR, operations and product.
@@ -48,6 +59,19 @@ Advisors can also guide the leaders who run departments. Rather than the owner t
 ### 1. Mandate: why are you creating the board?
 
 Start with the purpose. What does the business most need help with over the next one to three years? Possible mandates include:
+
+```figure
+type: steps
+title: Seven parts of an advisory board that works
+caption: The biggest predictor of failure is not tracking progress from one meeting to the next.
+- Mandate | why it exists
+- Members | the expertise you lack
+- Focus | milestones for each advisor
+- Size | small, roles not overlapping
+- Rhythm | monthly or quarterly, two hours
+- Terms | written advisor agreement
+- *Compensation | cash, equity or both
+```
 
 - Growing sales faster.
 - Hiring and building a senior team.
@@ -97,6 +121,16 @@ To avoid ego clashes:
 Hold a full advisory board meeting at least monthly, or quarterly for some businesses, for around two hours, with a sharp agenda. Video meetings are fine when in-person meetings are impractical, but expect everyone to attend.
 
 Structure each meeting around milestones:
+
+```figure
+type: cycle
+title: A milestone-driven meeting rhythm
+caption: Send a short pre-read beforehand and record actions afterwards.
+- Review last meeting's milestones | achieved or not
+- Discuss the main challenges and decisions
+- Agree next milestones | with each advisor's role
+- Track actions between meetings
+```
 
 1. Review the milestones set at the last meeting. Were they achieved?
 2. Discuss the main challenges and decisions ahead.

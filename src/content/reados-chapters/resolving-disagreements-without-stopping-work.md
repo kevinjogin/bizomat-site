@@ -42,6 +42,17 @@ Choose by asking what decision is actually needed:
 
 Remember that mediation helps parties reach their own agreement; it does not impose one. And cost is not only fees: slow resolution has its own cost in delay, distraction and lost cooperation.
 
+```figure
+type: decision
+title: Match the process to the decision needed
+question: What decision is actually needed?
+caption: Each process trades off party control, speed, expertise, cost, enforceability, confidentiality and the relationship.
+- A technical question | An agreed expert | e.g. does a test result meet the specification?
+- A working relationship breaking down | A structured conversation or mediation
+- A construction payment dispute | Statutory adjudication | with strict deadlines
+- *A significant legal entitlement | A binding process | termination or large damages
+```
+
 ## Escalate to authority, not just seniority
 
 A good escalation path moves a problem to people with enough authority and distance to resolve it. A common failure is sending people to a settlement meeting who cannot settle. Escalation should increase **decision authority**, not just the seniority of who attends.
@@ -54,6 +65,15 @@ Before any resolution meeting, know:
 - whether the underlying issue is systemic.
 
 A simple escalation ladder in the contract helps: project leads try to resolve within a short period; if not, senior managers or directors meet within a set time with authority to settle; if still unresolved, the matter goes to the agreed next step. Time limits at each rung stop issues from drifting.
+
+```figure
+type: steps
+title: An escalation ladder with time limits
+caption: Escalate to people with authority to settle, not just more senior people; time limits stop issues drifting.
+- Project leads | resolve within a short period
+- Senior managers or directors | meet within a set time, with authority
+- *The agreed next step | expert, mediation or formal process
+```
 
 ## Run two tracks
 
@@ -75,6 +95,18 @@ Separate the dispute from the delivery. Run two tracks in parallel:
 - What is the next step if it is not resolved?
 
 Undisputed payments should generally not become bargaining chips; withholding them can breach the contract or payment laws and destroys cooperation. Technical collaboration should not collapse because one commercial issue is open. Containing the dispute in this way takes discipline, but it protects far more value than it costs.
+
+```figure
+type: balance
+title: Run two tracks in parallel
+left: Track 1: keep delivering
+right: Track 2: resolve the disagreement
+caption: Separate the dispute from the delivery; prolonged uncertainty has a real cost.
+- Which work continues | What exactly is disputed
+- Interim directions needed | Who has authority to resolve it
+- Undisputed payments still made | Which process the contract requires
+- Safety actions that cannot wait | What evidence is still needed
+```
 
 Speed of resolution has real economic value. An unresolved dispute affecting critical work makes the other party cautious, conserve resources for the argument and withhold discretionary cooperation. This does not mean settling weak claims to make them go away. It means counting the cost of prolonged uncertainty in the decision.
 
@@ -133,6 +165,16 @@ The contractor runs two tracks. On delivery, it proposes that planting and pavin
 On resolution, the drainage question goes to the named engineer, who reviews the design and test results within ten days and finds the system compliant except for one pit, which the contractor fixes at its own cost. The variation dispute goes to a directors' meeting, where both attend with authority to settle. With photographs, the original drawings and the developer's site instruction on file, they agree $29,000.
 
 Afterwards, the contractor notes that both disputes traced back to incomplete drawings issued at tender. It adds a pre-start design review to its process for future developments.
+
+```figure
+type: compare
+title: Three disagreements in one month, three processes
+cols: Process used | Outcome
+caption: Planting and paving continued throughout; both disputes traced back to incomplete tender drawings.
+- Drainage specification | The named hydraulic engineer | Compliant except one pit, fixed at the contractor's cost
+- $38,000 retaining wall variation | Directors with authority to settle | Agreed at $29,000
+- $62,000 progress payment withheld | Track 1: pay what is undisputed | Undisputed portion paid; work continued
+```
 
 ## How this applies to a small Australian business
 

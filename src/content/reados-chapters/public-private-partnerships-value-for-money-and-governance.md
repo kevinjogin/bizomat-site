@@ -31,6 +31,33 @@ A typical availability-based PPP has a few key parts:
 
 Payments usually start when the asset is available for use and are reduced, through **abatements**, if availability or performance standards are not met. At the end of the term, the asset is **handed back** to government in a specified condition. **Financial close** is the point at which contracts and finance are signed and committed.
 
+```figure
+type: svg
+title: The parts of an availability-based PPP
+alt: Government pays a special purpose vehicle for an available asset. Equity investors and lenders fund the special purpose vehicle. It contracts a builder to design and construct the asset and an operator to maintain it over the contract term.
+caption: Equity investors carry the first losses; lenders are repaid from the government's payments.
+viewbox: 0 0 640 300
+body:
+<rect class="bx" x="230" y="16" width="180" height="46" rx="6"/>
+<text class="txb" x="320" y="45" text-anchor="middle">Government</text>
+<path class="la flow" d="M320 62V120"/>
+<text class="tx" x="332" y="96">payments for availability</text>
+<rect class="bxa" x="210" y="120" width="220" height="50" rx="6"/>
+<text class="txa" x="320" y="150" text-anchor="middle">Special purpose vehicle</text>
+<rect class="bx" x="16" y="92" width="160" height="44" rx="6"/>
+<text class="txb" x="96" y="119" text-anchor="middle">Equity investors</text>
+<rect class="bx" x="16" y="156" width="160" height="44" rx="6"/>
+<text class="txb" x="96" y="183" text-anchor="middle">Lenders</text>
+<path class="la" d="M176 114L210 136M176 178L210 156"/>
+<rect class="bx" x="90" y="236" width="200" height="50" rx="6"/>
+<text class="txb" x="190" y="258" text-anchor="middle">Construction</text>
+<text class="txs" x="190" y="276" text-anchor="middle">designs and builds</text>
+<rect class="bx" x="350" y="236" width="200" height="50" rx="6"/>
+<text class="txb" x="450" y="258" text-anchor="middle">Operations</text>
+<text class="txs" x="450" y="276" text-anchor="middle">maintains for the term</text>
+<path class="la" d="M290 170L220 236M350 170L420 236"/>
+```
+
 In user-pays PPPs, such as some toll roads, the private party collects charges and carries some or all of the demand risk.
 
 ## A PPP is not a financing technique
@@ -88,6 +115,15 @@ The comparator is useful because it forces a credible counterfactual and makes a
 
 Leaders should see how much of the result depends on judgement. Require sensitivity analysis on risk values, discount rates and key cost assumptions, and a qualitative assessment alongside the numbers.
 
+```figure
+type: formula
+title: Why the discount rate matters so much
+formula: Present value = Future payment ÷ (1 + rate)^years
+caption: Distant cash flows shrink fast as the rate rises, so a modest change can swing a comparison.
+step: $10 million in 25 years at 4%: about $3.75 million today
+step: The same payment at 7%: about $1.84 million today
+```
+
 ### What must be true
 
 A strong test turns claimed benefits into propositions that can be checked. For each claimed benefit, ask:
@@ -100,6 +136,18 @@ A strong test turns claimed benefits into propositions that can be checked. For 
 - **Measure**: how will it be tested over the contract's life?
 
 If several propositions are weak, the PPP case weakens with them.
+
+```figure
+type: checklist
+title: Turning a claimed benefit into something checkable
+caption: Ask these of each benefit the PPP case relies on, such as lower whole-of-life cost.
+- ? Mechanism | what creates it?
+- ? Evidence | why here?
+- ? Dependency | what must stay true?
+- ? Failure mode | how could it disappear?
+- ? Control | what can government do?
+- ? Measure | how is it tested over the term?
+```
 
 ## Allocating risk and specifying performance
 
@@ -149,7 +197,30 @@ This is an illustrative example. A state agency is considering a PPP for a group
 
 **Comparator.** The agency's public sector comparator estimates a raw cost of $340 million in present value, plus $5 million for competitive neutrality, $45 million of transferable risk and $20 million of retained risk, a total of $410 million. The indicative PPP cost, including retained risk, is about $405 million, a difference of about 1%.
 
+```figure
+type: stack
+title: The regional schools' public sector comparator
+unit: $m
+caption: A $410 million comparator against an indicative PPP of about $405 million: a difference of about 1%.
+- Raw cost | 340
+- Competitive neutrality | 5
+- Transferable risk | 45
+- Retained risk | 20
+```
+
 **Testing.** Sensitivity analysis shows that a plausible range in the valuation of transferable risk, about $15 million either way, and a modest change in the discount rate are each enough to reverse the result. Market sounding finds only two consortia likely to bid. Outputs such as availability and building condition are measurable, but the agency expects significant changes to school layouts and technology over 25 years, which would require frequent contract variations.
+
+```figure
+type: range
+title: A 1% margin inside the uncertainty
+min: 380
+max: 430
+unit: $m
+ticks: $380m | $405m | $430m
+caption: A plausible $15 million swing in transferable risk alone reverses the result; so does a modest change in discount rate.
+- Comparator, with transferable risk ±$15m | 395 | 425
+- *Indicative PPP cost | 405
+```
 
 **Decision.** The agency concludes that the claimed value depends on assumptions it cannot confirm, that competition is thin and that the need for flexibility is high. It proceeds with a design and construct contract with whole-of-life design requirements and a separate ten-year performance-based maintenance contract, retaining the option to market test maintenance later. The agency records the decision and its reasons for future reference.
 

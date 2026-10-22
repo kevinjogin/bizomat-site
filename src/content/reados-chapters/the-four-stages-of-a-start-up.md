@@ -58,6 +58,15 @@ When a founder launches a first product, friends and family often buy it to show
 
 A minimum viable product is validated when **people who do not know you buy it, and buy it again**. Some e-commerce operators say that a customer is not really a customer until they have bought from you at least three times. One purchase may be curiosity. Repeated purchases show genuine value.
 
+```figure
+type: checklist
+title: Validation, not encouragement
+caption: Friends and family buy to show support; strangers who come back are the real signal.
+- Strangers buy | people who do not know you
+- They buy again | repeat purchase without prompting
+- x Friends and family buying | support, not validation
+```
+
 Measure:
 
 - **Purchases by strangers**, not just your network.
@@ -84,6 +93,18 @@ A revealing comparison comes from two budget hotel start-ups that launched aroun
 Both used a similar model: partnering with hotels, taking some rooms and placing their brand signs on the buildings. The difference lay in how they expanded. The better-funded start-up spread itself across many cities to show national reach: a couple of hotels here, a couple there. The other concentrated on one area near Delhi's international airport, signing up a large number of hotels in that single neighbourhood, paying in advance for rooms and putting its sign on every building.
 
 Travellers leaving the airport saw the brand everywhere. Awareness built quickly, and the concentrated presence made operations more efficient. The concentrated start-up grew into a major company. The better-funded rival was eventually absorbed by it.
+
+```figure
+type: balance
+title: Density beats spread
+left: Concentrated in one city first
+right: Spread thinly across many cities
+tilt: left
+caption: Two budget hotel start-ups with the same model: the less-funded one dominated one neighbourhood first and won.
+- Hotels concentrated near the airport | A couple of hotels in each of many cities
+- Brand seen everywhere by arriving travellers | National reach on paper
+- Faster awareness, more efficient operations | Eventually absorbed by its rival
+```
 
 **The lesson: concentrated density in one market often beats thin spread across many.** Dominate a city, region, industry or customer segment before expanding. The article on [winning a focused market, then scaling](/reados/collections/growth-business-models-and-new-markets/winning-a-focused-market-then-scaling/) explains why.
 
@@ -149,6 +170,16 @@ Across every stage, perseverance is essential. Most start-ups face moments when 
 | MVP | Will strangers buy, and buy again? | Minimal product, testing, repeat purchase | Mistaking friends' support for validation |
 | Growth | Can we scale profitably? | Density, team, story, discipline | Spreading thin, arrogance |
 | Maturity | Can we stay relevant? | Systems, culture, innovation, succession | Complacency |
+
+```figure
+type: timeline
+title: What matters at each stage of a start-up
+caption: Each stage needs different priorities, and each has a typical mistake.
+- Idea | Is there a real, painful problem? | crisp idea, homework, data, team; not falling in love with the idea
+- MVP | Will strangers buy, and buy again? | minimal product and repeat purchase; friends are not validation
+- Growth | Can we scale profitably? | density, a team that runs the business, discipline
+- *Maturity | Can we keep what made us succeed? | listening, experimenting, moving quickly
+```
 
 ## Frequently asked questions
 

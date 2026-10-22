@@ -42,6 +42,15 @@ A simple sequence helps:
 
 Not every purchase needs all three stages. For a routine purchase of standard items, the business can go straight to competing. For something genuinely new, all three may be worth the time. The stages are not rigid legal categories. They are a way of matching the question to what the business knows.
 
+```figure
+type: steps
+title: Learn, shape, compete
+caption: Each request suits a different state of knowledge; the label matters less than what the buyer knows.
+- Learn | RFI: what solutions exist?
+- Shape | RFP: propose ways to reach a defined outcome
+- *Compete | RFQ or tender: firm, comparable offers
+```
+
 ## Follow your weakest point
 
 Before choosing how to approach the market, check five things:
@@ -53,6 +62,17 @@ Before choosing how to approach the market, check five things:
 5. **Commitment readiness**: is the business ready to select a supplier and sign a contract, including having budget and approval?
 
 The request should follow the weakest of these. A business that knows exactly what it wants but has no approved budget is not ready for a tender, whatever its specification looks like. A business that has budget but no idea what solutions exist is not ready for firm quotes. The [how much design before seeking quotes](/reados/collections/procurement-and-tendering/how-much-design-before-seeking-quotes/) article covers the requirement side of this test in more detail.
+
+```figure
+type: checklist
+title: Five tests before approaching the market
+caption: A clear specification with no approved budget is not ready for a tender; a budget with no idea of the options is not ready for firm quotes.
+- ? Knowledge | of the solutions available
+- ? Requirement maturity | outcomes and constraints defined
+- ? Innovation need | should suppliers shape the solution?
+- ? Comparability | can offers be compared on a common basis?
+- ? Commitment readiness | budget and approval in place
+```
 
 ## The cost of going too early
 
@@ -122,6 +142,15 @@ Before sending it, the manager checks the five tests. Knowledge is weak: the bus
 - **Compete**: after the demonstrations, the business chooses the dedicated system that performed best on its own data and negotiates final terms with that vendor, using a second proposal as a reference point.
 
 The whole process takes about three months, roughly six weeks longer than sending the original RFQ. But the solution chosen is one the original feature list would have excluded, and implementation proceeds without the scope disputes the manager had seen in a previous project. The business records what it learned about the market for its next technology purchase.
+
+```figure
+type: timeline
+title: Replacing the transport business's planning spreadsheets
+caption: About six weeks longer than the original RFQ, but it chose a solution the copied feature list would have excluded.
+- Learn | RFI to eight vendors | and two similar businesses: three broad solution types emerge
+- Shape | RFP to three vendors | outcomes, not features; demonstrations on the business's own data
+- *Compete | The best performer chosen | final terms negotiated with a second proposal as reference
+```
 
 ## How this applies to a small Australian business
 

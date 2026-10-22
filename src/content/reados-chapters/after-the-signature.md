@@ -48,6 +48,19 @@ Treat the start as a **readiness check** rather than a calendar date. Confirm:
 
 Scale the check to the job. A small service engagement needs a short list; a significant installation needs a proper meeting. What matters is that open items are recorded, owned and visible, not hidden in minutes.
 
+```figure
+type: checklist
+title: A readiness check before work starts
+caption: Treat the start as a readiness check, not a calendar date; a small engagement needs a short list.
+- Commercial | signed contract, security, insurance evidence, pricing basis
+- Authority | named representatives and delegations, both sides
+- Site and interfaces | access, other contractors, utilities
+- Programme | milestones and the customer's information dates
+- Quality | inspections, tests, hold points, defects
+- Safety | arrangements at shared sites
+- Workflow | payment claims, variations, notices, records
+```
+
 The first weeks also set habits. If they tolerate undocumented instructions and late approvals, those become normal. If they start with clear authority and quick issue resolution, both parties learn that speed and control can coexist.
 
 ## Control who can instruct
@@ -85,6 +98,24 @@ Acceptance is where the customer takes ownership of what was built. It often goe
 
 Michael Greer, writing on project management in 1999, put the principle simply: anyone with the power to reject or demand revision of completed work should be required to examine and approve it as it is built. Changes are cheap while work is forming and expensive once it is finished, and the cost of a late rejection falls on everyone except the person who made it.
 
+```figure
+type: svg
+title: Why approvers should look while the work is forming
+alt: A curve showing the cost of a change rising over the life of the work: low while the work is forming, high once it is finished. A late rejection sits at the expensive end.
+caption: The cost of a late rejection falls on everyone except the person who made it.
+viewbox: 0 0 640 260
+body:
+<path class="ln" d="M60 220H610M60 30V220"/>
+<path class="la draw" pathLength="1" d="M70 205C250 200 380 180 470 120S580 50 600 42"/>
+<circle class="fa pulse" cx="120" cy="204" r="7"/>
+<text class="txb" x="120" y="185" text-anchor="middle">Review as it is built</text>
+<text class="tx" x="120" y="242" text-anchor="middle">work forming</text>
+<circle class="fs" cx="590" cy="46" r="7"/>
+<text class="txa" x="575" y="72" text-anchor="end">Late rejection</text>
+<text class="tx" x="590" y="242" text-anchor="end">work finished</text>
+<text class="tx" x="50" y="40" text-anchor="end" transform="rotate(-90 50 40)">cost of a change</text>
+```
+
 Treat an approval right as a **position with duties**: taking part in defining what will be built, reviewing interim deliverables promptly, and helping the supplier get access to the people and information it needs. Decide in advance what happens if an approver does not engage:
 
 - **The right narrows**: they can still reject for safety, legal compliance or a defect against the written specification, but not for preferences that interim reviews would have caught.
@@ -92,6 +123,16 @@ Treat an approval right as a **position with duties**: taking part in defining w
 - **The right stands**, and the business accepts, knowingly, that late changes may follow.
 
 This works only if the work is delivered in reviewable stages, such as prototypes, demonstrations, samples or partial handovers, so there is something to review.
+
+```figure
+type: decision
+title: When an approver does not engage
+question: Decided in advance: what happens to their right to reject?
+caption: Treat an approval right as a position with duties: defining the work, reviewing promptly, opening doors.
+- The right narrows | Safety, law or written specification only | not late preferences
+- *The right transfers | To someone who did engage | a delegate or technical lead
+- The right stands | Accepted knowingly | late changes may follow
+```
 
 Also keep payment and acceptance separate. Paying a progress claim does not usually mean the work is accepted, and acceptance should rest on agreed evidence, not on the invoice being paid.
 
@@ -112,6 +153,17 @@ The senior partner holds the right to accept the system but is busy with tax sea
 Midway through, the firm's data extract arrives three weeks late because of a staff absence. The obligations register makes the cause clear, and the implementer's revised date is accepted without argument.
 
 At acceptance, the practice manager signs off against agreed tests: a sample of client records reconciled, workflows demonstrated and reports checked. There are no surprises, because every concern was raised during the staged reviews.
+
+```figure
+type: timeline
+title: The practice management system, from handover to acceptance
+caption: No surprises at acceptance, because every concern was raised during the staged reviews.
+- Handover | An exclusion surfaces | archived files over seven years old; migrated later for a modest fee
+- Readiness | The firm's own obligations listed | data extract, test environment, two training days
+- Reviews | Acceptance right transfers | to the practice manager; the senior partner keeps limited rejection
+- Midway | Extract three weeks late | the register shows the cause; revised date accepted
+- *Acceptance | Signed off against agreed tests | records reconciled, workflows and reports checked
+```
 
 ## How this applies to a small Australian business
 

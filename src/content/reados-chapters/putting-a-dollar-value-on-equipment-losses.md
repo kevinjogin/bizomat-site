@@ -43,6 +43,16 @@ The value of a lost hour depends on the business situation. Ask two questions fi
 
 Valuing every lost hour as a lost sale overstates the benefit of improvement. Valuing every lost hour at labour cost alone understates it at the constraint. Use realistic demand and margin assumptions.
 
+```figure
+type: decision
+title: What does a lost hour on this machine cost?
+question: Is it the constraint, and is demand above capacity?
+caption: Valuing every hour as a lost sale overstates improvement; valuing none that way understates it.
+- *Constraint, demand exceeds capacity | Lost contribution margin | plus wasted labour and materials
+- Constraint, demand below capacity | Overtime or extra shifts | plus wasted labour and materials
+- Not the constraint | Wasted labour, energy, materials | little or no lost sales
+```
+
 ## Valuing the different kinds of loss
 
 OEE losses are often grouped into three families.
@@ -109,6 +119,18 @@ That is 960 hours of availability loss, so the press ran for 2,880 hours, an ava
 
 OEE is therefore 0.75 × 0.85 × 0.91 = about 58%. The equivalent of about 2,228 hours of good output is produced from 3,840 planned hours. The business estimates the contribution margin of the press's good output at about $260 per hour.
 
+```figure
+type: stack
+title: Where the press's 3,840 planned hours went
+unit: hours
+caption: Availability 75%, performance 85%, quality 91%: OEE about 58%, or about 2,228 hours of good output.
+- Good output | 2228
+- Changeovers | 400
+- Breakdowns | 350
+- Waiting for material | 210
+- Slow running and minor stops, plus scrap | 652
+```
+
 The team assesses three improvement projects:
 
 - **Quick changeover**: preparation done while the press runs, standard tooling carts and a trained set-up team. Expected to halve changeover time, recovering 200 hours. Cost about $35,000.
@@ -127,6 +149,18 @@ A separate quality project targeting the recurring defect is expected to lift qu
 | Good output hours | about 2,228 | about 2,721 |
 
 The projects together would add roughly 494 hours of good output a year, more than the 450 hours of unmet demand. At $260 per hour, that is worth about $128,000 a year in contribution, for an upfront cost of about $50,000 and about $20,000 a year in maintenance. The second press is deferred, with a trigger to revisit the decision if demand grows by more than the recovered capacity or if the improvements fall short after six months.
+
+```figure
+type: bars
+title: Recovering capacity before buying a second press
+unit: hours a year
+caption: About 494 hours of good output for about $50,000 upfront and $20,000 a year, against 450 hours of unmet demand. The $420,000 press is deferred.
+- Quick changeover | 200 | about $35,000
+- Scheduling and material staging | 150 | little direct cost
+- Preventive maintenance | 140 | about $20,000 a year
+- *Total good output added, with quality to 95% | 494 | worth about $128,000 a year
+- Unmet demand | 450
+```
 
 ## How this applies to a small Australian business
 

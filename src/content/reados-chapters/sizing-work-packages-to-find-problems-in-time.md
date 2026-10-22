@@ -45,6 +45,15 @@ The surfacing interval for a package is roughly:
 
 If a package takes eight weeks, reporting happens monthly and decisions take a week to reach the right person, a problem that starts in week one might not be acted on until week twelve or thirteen. If the recovery window is three weeks, the control system was never capable of catching that problem in time, however much effort went into it.
 
+```figure
+type: formula
+title: How long a problem takes to surface
+formula: Surfacing interval ≈ Package duration + Wait for the next report + Time to reach a decision-maker
+caption: If the surfacing interval is longer than the recovery window, the control system cannot catch the problem in time.
+step: 8 weeks + up to 4 weeks + about 1 week
+step: Up to 13 weeks, against a 3-week recovery window
+```
+
 ## The recovery window belongs to the business
 
 The recovery window is not a project number. It is set by the business situation: a customer's promotion date, a seasonal peak, a shutdown period, a lease start, a regulatory deadline, the lead time for alternative parts. It should be stated by the person who carries the consequence of missing it, not estimated by the project team for convenience.
@@ -78,6 +87,16 @@ Smaller packages are one way to shorten the surfacing interval. Others include:
 
 The best choice depends on which part of the surfacing interval is longest.
 
+```figure
+type: checklist
+title: Other ways to shorten the surfacing interval
+caption: Package size is one lever; pick the one aimed at the longest part of the interval.
+- Objective checkpoints | inside longer packages
+- Short, frequent status checks | for short-window branches
+- Faster routes to a decision-maker
+- Leading indicators | such as supplier dispatch confirmations
+```
+
 ## Make progress reports evidence, not estimates
 
 Even well-sized packages can hide problems if progress is reported as a guessed percentage. "About 60% done" is an opinion, and it tends to stay near 90% for a long time before jumping to complete or revealing a problem. A few simple practices make reports more trustworthy:
@@ -103,7 +122,27 @@ The owner resizes the equipment branch into four packages of about two weeks eac
 
 The branch covering updated procedures and staff training has a much longer window, because it can be done in the final fortnight without harm. It stays as one package, reported monthly.
 
+```figure
+type: bars
+title: Surfacing interval against the recovery window
+unit: weeks
+caption: Smaller packages, a weekly check and two-day decisions brought the interval roughly into line with the window.
+- One 8-week package, monthly reports | 13
+- *Four 2-week packages, weekly checks | 3 | about
+- Recovery window for the equipment branch | 3
+```
+
 The extra packages cost about an hour a week of the project lead's time. In week four, the "parts received and inspected" check shows that a valve is on six-week back-order. With about three weeks still in hand, the business switches to an equivalent valve from another supplier, and the line is ready on time. Under the original plan, the shortage would likely have surfaced only when installation stalled.
+
+```figure
+type: timeline
+title: The filling line modification in four checkable packages
+caption: The valve shortage surfaced with about three weeks in hand, and the line was ready on time.
+- Package 1 | Modification drawings approved
+- Package 2 | Parts received and inspected | week four: a valve on six-week back-order
+- Package 3 | Fabrication complete | with a first-article check
+- *Package 4 | Installation complete | with a dry run
+```
 
 ## How this applies to a small Australian business
 

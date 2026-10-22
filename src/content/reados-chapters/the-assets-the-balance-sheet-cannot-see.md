@@ -28,6 +28,16 @@ This approach has real strengths. Historical cost is objective and verifiable: t
 
 A company with $100 million of book value might sell for $40 million if its assets are earning poor returns, or for $500 million if it earns exceptional profits from those same assets. The gap between book value and market value is, in large part, the market's estimate of what the balance sheet cannot see.
 
+```figure
+type: bars
+title: The same $100m of book value, priced on earning power
+unit: $m
+caption: The gap between book and market value is largely the market's estimate of what the balance sheet cannot see.
+- Book value | 100
+- Market value if assets earn poor returns | 40
+- *Market value if assets earn exceptional profits | 500
+```
+
 The book observes that businesses with durable advantages almost never sell for less than their book value, because their real earning power far exceeds what their recorded assets suggest. On the rare occasions they do, it can be an exceptional opportunity.
 
 ## Goodwill: the premium paid for an acquisition
@@ -45,6 +55,15 @@ An illustration:
 | **Goodwill recorded** | **$20m** |
 
 The buyer paid $20 million more than the identifiable net assets were worth. That premium is goodwill.
+
+```figure
+type: stack
+title: What the $50m acquisition price bought
+unit: $m
+caption: Goodwill is the premium over net identifiable assets ($45m fair value less $15m of liabilities assumed).
+- Net identifiable assets | 30
+- Goodwill | 20
+```
 
 Under modern accounting standards, including those used in Australia, goodwill is not written down automatically each year. Instead it is tested for impairment at least annually. If the acquired business has lost value, the goodwill is written down, and the write-down appears as an expense.
 
@@ -102,6 +121,19 @@ The blind spot works in both directions. Some of the most serious problems a bus
 - **Customer dissatisfaction** that has not yet shown up as lost revenue.
 
 A business can look healthy on paper while these hidden liabilities accumulate. They usually reveal themselves eventually, in falling margins, rising costs or departing customers.
+
+```figure
+type: balance
+title: What the accounts leave out, in both directions
+left: Hidden assets
+right: Hidden liabilities
+caption: Neither column appears on the balance sheet unless an asset was bought from someone else.
+- Reputation | Damaged reputation
+- Customer relationships | Key-person dependence
+- Documented know-how and methods | Deferred maintenance
+- Culture and data | Technical debt
+- Supplier and distribution relationships | Unseen customer dissatisfaction
+```
 
 ## Hidden assets in small business sales
 

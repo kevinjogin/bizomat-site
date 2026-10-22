@@ -35,6 +35,16 @@ None of these says much about whether the business can earn the same next year, 
 
 Growth percentages deserve particular care. A business whose profit falls from $10 million to $4 million in a bad year, then recovers to $8 million, can report "100% profit growth" while still earning less than it did two years earlier. Headlines rarely mention the base. Always look at the absolute figures over several years, not just the change from last year.
 
+```figure
+type: bars
+title: The comparison-year trap
+unit: $m profit
+caption: Year 3 can be reported as "100% profit growth" while the business still earns less than it did two years earlier.
+- Year 1 | 10
+- Year 2, a bad year | 4
+- *Year 3, "up 100%" | 8 | still $2m below year 1
+```
+
 ## What a durable business looks like over time
 
 According to the book, businesses with a durable competitive advantage tend to show **steady net earnings with an upward trend**. Not necessarily smooth. Recessions and bad years happen. But the long-run line rises, and the bad years are shallow rather than catastrophic.
@@ -46,6 +56,28 @@ The book's suggested window is roughly **ten years**. That is long enough to inc
 ### An illustration
 
 Here are two hypothetical businesses' net earnings over ten years, in millions of dollars.
+
+```figure
+type: line
+title: Ten years of net earnings for two hypothetical businesses
+x: Year
+y: Net earnings ($m)
+legend: Business A | Business B
+ymin: -4
+ymax: 13
+mark: 6 | B's record year
+caption: B had the best single year ($12m) but A earned a third more over the decade ($66.4m against $50.0m) and never came close to a loss.
+- 1 | 5.0 | 4.0
+- 2 | 5.4 | 9.0
+- 3 | 5.9 | 2.0
+- 4 | 5.6 | -3.0
+- 5 | 6.3 | 6.0
+- 6 | 6.9 | 12.0
+- 7 | 7.4 | 1.0
+- 8 | 7.2 | 5.0
+- 9 | 8.0 | 11.0
+- 10 | 8.7 | 3.0
+```
 
 | Year | Business A | Business B |
 | --- | --- | --- |
@@ -64,6 +96,15 @@ Here are two hypothetical businesses' net earnings over ten years, in millions o
 Business B had the single best year by far: $12 million in year 6. A reader who saw only that year would think it the stronger business. Over the decade, Business A earned a third more, grew in eight of ten years and never came close to a loss. Its two dips (years 4 and 8) were shallow. Business B's results follow no pattern a planner could rely on.
 
 Business A is the kind the book favours. Its consistency suggests something structural: customers who keep returning, costs under control, a position competitors cannot easily take.
+
+```figure
+type: stats
+title: The decade in three numbers
+caption: Totals and counts from the illustration; consistency, not the peak, is the signal.
+- *$66.4m vs $50.0m | Ten-year earnings | A earned about a third more
+- 8 of 10 | Years A grew | two shallow dips, years 4 and 8
+- 0 vs 1 | Loss years | B lost $3m in year 4
+```
 
 ## Separating real earnings from one-off items
 

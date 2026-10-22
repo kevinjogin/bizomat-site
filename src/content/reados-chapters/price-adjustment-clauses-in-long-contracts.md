@@ -47,6 +47,17 @@ Most adjustment clauses use a formula of this shape:
 
 In words, the base price is split into portions. A **fixed share** does not change. Each variable portion has a **weight**, equal to its share of the price, and moves in proportion to an agreed index, compared with the index value at an agreed **base date**. The weights and the fixed share add up to 1.
 
+```figure
+type: formula
+title: The shape of a price adjustment formula
+formula: Adjusted price = Base price × (Fixed share + Σ (Weight × Current index ÷ Base index))
+caption: Keep margin and overheads in the fixed share, and index only genuinely volatile costs.
+- Fixed share | the part that never adjusts
+- Weight | each variable cost's share of the price
+- Index ratio | today's index value against the base date
+- Sum | weights plus fixed share add up to 1
+```
+
 Each element needs care:
 
 | Element | What it is | What to decide |
@@ -100,6 +111,18 @@ A basic formula passes all movements through. Several refinements are common:
 
 Each refinement changes who carries how much risk. Caps protect the buyer but return extreme risk to the supplier, who may price it in. Use them deliberately, not by habit.
 
+```figure
+type: compare
+title: Refinements to a basic formula
+cols: What it does | Who it protects
+caption: Each refinement moves risk between the parties; test them all against high and low scenarios.
+- Threshold | No adjustment inside a band, such as 2% | Both: less administration
+- Cap | Limits the maximum adjustment | The buyer
+- Floor or collar | Limits the minimum | The supplier
+- Sharing | Splits movements beyond a threshold, such as 50:50 | Both, in agreed proportions
+- Re-opener | Forces renegotiation past a larger limit | Both, with a right to exit
+```
+
 ## Alternatives to an index clause
 
 Indexation is not the only option. Others include:
@@ -126,6 +149,16 @@ A clause is only as good as its administration. Record the base date, the base i
 
 This is an illustration. A steel fabricator quotes a two-year contract to supply frames to an equipment manufacturer at a base price of $1,000 per frame. The fabricator's cost breakdown shows that steel is about 40% of the price, labour about 30%, and the remaining 30% covers consumables, overheads and margin.
 
+```figure
+type: stack
+title: How the $1,000 frame price is weighted
+unit: %
+caption: Weights follow the fabricator's actual cost breakdown; only steel and labour are indexed.
+- Fixed: consumables, overheads, margin | 30
+- Steel, indexed | 40
+- Labour, indexed | 30
+```
+
 The parties agree a formula:
 
 **Price = $1,000 × (0.30 + 0.40 × Steel index ÷ Steel base index + 0.30 × Labour index ÷ Labour base index)**
@@ -134,11 +167,34 @@ The steel index is a published producer price index for the relevant steel produ
 
 **First adjustment.** After six months, the steel index has risen 15% and the labour index 4%. The calculation is 0.30 + (0.40 × 1.15) + (0.30 × 1.04) = 0.30 + 0.46 + 0.312 = 1.072. The new price is $1,072, an increase of 7.2%.
 
+```figure
+type: formula
+title: The first quarterly adjustment
+formula: Price = $1,000 × (0.30 + 0.40 × steel ratio + 0.30 × labour ratio)
+caption: No adjustment is made if the calculated change is within ±2% of the current price.
+step: Steel up 15%, labour up 4%
+step: 0.30 + (0.40 × 1.15) + (0.30 × 1.04) = 1.072
+step: New price $1,072, an increase of 7.2%
+```
+
 **A fall.** A year later, steel has fallen back to 10% below its base value, while labour is 4% above base. The calculation is 0.30 + (0.40 × 0.90) + (0.30 × 1.04) = 0.30 + 0.36 + 0.312 = 0.972. The price falls to $972.
 
 **Scenario testing before signing.** In a high scenario, with steel up 30% and labour up 8%, the price would be $1,000 × (0.30 + 0.52 + 0.324) = $1,144. In a low scenario, with steel down 20% and labour up 3%, it would be $1,000 × (0.30 + 0.32 + 0.309) = $929. The buyer therefore budgets for a range of roughly $930 to $1,145 per frame.
 
 **The comparison.** Without the clause, the fabricator says it would have quoted a firm price of about $1,080, including contingency for steel risk. With the clause, the buyer pays less than that in most scenarios and more only if steel rises sharply. The buyer decides that the lower expected price and the fabricator's greater willingness to commit to a two-year term are worth the budget variability. The fabricator, for its part, can quote tightly without betting the business on steel prices.
+
+```figure
+type: range
+title: The frame price with and without the clause
+min: 900
+max: 1160
+ticks: $900 | $1,030 | $1,160
+caption: The buyer pays less than the firm price in most scenarios, and more only if steel rises sharply.
+- *With the clause: tested range | $929 | $1,144 | low and high scenarios
+- After steel fell 10% | $972
+- After the first adjustment | $1,072
+- Firm price without the clause, with contingency | $1,080
+```
 
 ## How this applies to a small Australian business
 

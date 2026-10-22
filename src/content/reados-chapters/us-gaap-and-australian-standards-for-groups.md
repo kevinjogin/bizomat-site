@@ -61,6 +61,17 @@ This is one of the most significant areas of difference.
 
 **Australian standards (AASB 10)** use a **single control model** for all entities: an investor controls an investee if it has power over the relevant activities, exposure or rights to variable returns, and the ability to use its power to affect those returns.
 
+```figure
+type: compare
+title: Control under the two frameworks
+cols: US GAAP (ASC 810) | Australian standards (AASB 10)
+caption: Different routes to control can produce different consolidation conclusions for the same group.
+- Model | Voting interest model plus variable interest model | One control model for all entities
+- Test | Majority votes, or primary beneficiary of a VIE | Power, exposure to variable returns, ability to use power
+- De facto control below 50% | Generally not under the voting model | Can exist
+- Potential voting rights | Treated differently | Substantive rights considered
+```
+
 Practical consequences:
 
 - **De facto control.** Under Australian standards, an investor with less than half the votes can control an investee if its holding is large relative to dispersed other holders. Under the US voting interest model, a majority is generally required, so such entities may not be consolidated.
@@ -135,6 +146,16 @@ An Australian company and a US private company each acquire a similar business f
 - **Listed supplier:** the US company records fair value changes in net income. The Australian company elects to present them in other comprehensive income, keeping them out of profit.
 
 Even with identical businesses and transactions, the two companies' reported profits could differ substantially from year to year.
+
+```figure
+type: compare
+title: Identical deals, different reported profit
+cols: US private company | Australian company
+caption: An illustration only: elections available under each framework change year-to-year profit for the same transactions.
+- $1m goodwill | Amortised under the private company alternative | Not amortised; tested for impairment
+- 30% associate | Fair value option: market swings in profit | Equity method: share of profit
+- 5% listed supplier | Fair value changes in net income | In profit, or OCI if elected
+```
 
 ## Keeping up with change
 

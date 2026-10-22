@@ -32,6 +32,16 @@ Several mechanisms push results down before they rise:
 
 The depth of the dip depends on how much has to change at once, and its length depends on how quickly people learn and customers respond.
 
+```figure
+type: checklist
+title: Why results dip before they rise
+caption: Depth depends on how much changes at once; length on how fast people learn and customers respond.
+- x Up-front costs | paid before benefits arrive
+- x Learning | slower work and more mistakes at first
+- x Disruption | installation and migration interrupt normal work
+- x Parallel running | two systems at once
+```
+
 ## A J-curve or just a decline
 
 The most important judgement during a change is whether the business is at the bottom of a J or on the way down an ordinary decline. Every struggling initiative can claim to be a J-curve. The difference shows up in evidence, not hope.
@@ -50,6 +60,16 @@ Two biases make this judgement harder. **Escalation of commitment** leads people
 ## Plan the dip before you start
 
 A J-curve is far easier to manage when it has been planned. Before committing to a significant change, estimate and agree:
+
+```figure
+type: compare
+title: Bottom of a J, or an ordinary decline?
+cols: Signs of a J-curve | Signs of a decline
+caption: Set the depth, duration and review triggers before starting, so the judgement is not made under pressure.
+- Mechanism | Stated before the change started | Vague or keeps changing
+- Leading indicators | Improving while results lag | Flat or worsening
+- The dip | Within forecast depth and duration | Deeper or longer than forecast
+```
 
 - **Depth**: the largest expected cumulative loss of cash, output or margin.
 - **Duration**: how long results are expected to stay below the starting point.
@@ -121,6 +141,24 @@ This is an illustrative example. A manufacturer plans to replace a manual weldin
 **Planning the curve.** The project team expects output to average about 90 assemblies a day for the first three months while programs are refined and operators learn, losing about 10 × 21 × $50, or $10,500 a month in contribution. Training and integrator support cost a further $20,000. The cumulative position is expected to bottom at about −$451,500 at the end of month three. From month four, the extra 40 assemblies a day earn about $42,000 a month, plus $8,000 in labour savings, a total of about $50,000 a month. Cumulative break-even is expected about nine months later, around month twelve.
 
 **Testing the plan.** The team also checks a slower case. If output stays at about 90 a day for six months instead of three, the cumulative position bottoms at about −$483,000 at month six and break-even moves out to around month sixteen. The benefit is unchanged, but payback is about four months later and more funding is needed.
+
+```figure
+type: line
+title: Cumulative position of the $400,000 welding cell
+x: Month
+y: Cumulative position ($'000)
+legend: Planned: three-month learning period | Slower case: six months
+ymin: -520
+ymax: 220
+mark: 12 | planned break-even
+caption: Derived from the chapter's figures: $420,000 of cell and support, $10,500 a month of lost contribution while learning, then about $50,000 a month.
+- 0 | -420 | -420
+- 3 | -451.5 | -451.5
+- 6 | -301.5 | -483
+- 9 | -151.5 | -333
+- 12 | -1.5 | -183
+- 16 | 198.5 | 17
+```
 
 **Agreeing the rules.** The owners confirm that the business's cash reserves and overdraft can cover a dip of up to $550,000. They agree to review progress monthly against leading indicators: weld cycle time, first-pass yield and unplanned stoppages. If output is below 120 a day by the end of month six, or the cumulative position falls below −$500,000, they will hold a formal review with the integrator to decide whether to fix, change or stop.
 

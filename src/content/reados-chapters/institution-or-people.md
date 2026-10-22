@@ -35,6 +35,18 @@ Most service businesses sit somewhere between these poles, but the direction mat
 
 These are tendencies rather than fixed categories. A clinic can be heavily dependent on one popular practitioner or built around systems and a team. An IT provider can depend on one technician who knows every client's network or on documented systems anyone can follow. Where a particular business sits depends largely on how it has been built.
 
+```figure
+type: compare
+title: From people-specific to institution-specific
+cols: In between | More institution-specific
+rowhead: More people-specific
+caption: Tendencies, not fixed categories; the direction of travel matters most.
+- Boutique advisory built around a star | Medical and allied-health clinics | Payment networks
+- Investment banking teams | Accounting and bookkeeping practices | Ratings agencies
+- Personal trainers and stylists | Trades businesses with several crews | Large franchised service chains
+- Creative studios known for one designer | IT managed-service providers | Software platforms with service layers
+```
+
 ## Why customers trust people first
 
 Services are harder to judge than products. A customer can inspect a product before buying it, compare specifications and read reviews of the identical item. A service is usually bought before it is delivered, and its quality often cannot be fully judged even afterwards. How does a client know whether their tax return was prepared as well as it could have been, or whether their physiotherapist chose the best treatment?
@@ -50,6 +62,18 @@ In a people-specific business, the people who hold the client relationships have
 The book recounts that Buffett learned this directly through his investment in the investment bank Salomon Brothers. He believed he was buying an institution, then watched senior talent leave with major clients and realised the value had been tied to the people all along.
 
 In an institution-specific business, the economics are different. The value sits in systems, brand, processes and reputation that stay with the company. Employees are important, and good ones are well paid, but no individual can walk away with the customers. More of the profit stays with the business.
+
+```figure
+type: compare
+title: Who captures the profit?
+cols: People-specific | Institution-specific
+best: 2
+caption: Buyers routinely discount small service businesses for key-person risk.
+- Clients trust | The individual | The organisation
+- Bargaining power | Sits with the people who hold relationships | Sits with the business
+- Profit goes to | Largely the key people | Largely the owners
+- Value on sale | Discounted for key-person risk | Can be sold, passed on or stepped back from
+```
 
 This is not a judgement about whether people are paid fairly. It is an observation about bargaining power. Where the value lives, the profit tends to follow.
 

@@ -44,6 +44,19 @@ It is tempting to see every dollar of supplier margin as money lost. But margin 
 
 If you remove a supplier or bring work in-house, you inherit these functions along with the margin, usually without the supplier's scale. The make-or-buy decision is covered in [make or buy: choosing between in-house manufacturing and outsourcing](/reados/collections/manufacturing-operations-and-design-for-manufacture/make-or-buy-in-house-manufacturing-or-outsourcing/).
 
+```figure
+type: tree
+title: What a supplier's margin can pay for
+caption: Bring work in-house and you inherit these functions along with the saving.
+- Supplier margin
+  - Risk | idle equipment, scrap, price changes
+  - Inventory | stock funded from its capital
+  - Aggregation | scale across many customers
+  - Tooling and capital | investment to recover
+  - Capability | skills, certifications, know-how
+  - Warranty and quality | standing behind the work
+```
+
 ## Defensible and informational margin
 
 A helpful distinction is between two kinds of margin.
@@ -112,15 +125,48 @@ This is an illustration. A small business buys a powder-coated steel enclosure f
 
 The residual is about a third of the price. That is not evidence of unfairness, but it is worth understanding. The owner meets the supplier and asks about cost drivers rather than demanding a discount. The conversation reveals that the business's specification requires a special powder-coat colour used by no other customer, which the coater charges a colour-change fee for on every batch, and that the business's drawings call for a tight flatness tolerance on a face that is hidden in use.
 
+```figure
+type: stack
+title: Should-cost of the $148 enclosure
+unit: $
+caption: About $97.85 can be explained; the $50.15 residual is what to understand, not automatically what to cut.
+- Steel | 15.10
+- Laser cutting | 18.00
+- Folding | 12.00
+- Welding and assembly | 18.75
+- Powder coating | 14.00
+- Hinges, lock and seal | 11.00
+- Packaging and freight | 9.00
+- Residual | 50.15
+```
+
 The business adopts a standard colour close to its own and relaxes the hidden-face tolerance after checking it has no function. The supplier reduces the price to $139. The saving of $9 a unit on 3,000 enclosures is $27,000 a year, achieved without changing supplier or volume.
 
 The model also helps later. When the supplier asks for a 10% increase, about $13.90, citing a 20% rise in steel prices, the owner can see that steel is about $15 of the cost, so a 20% rise adds about $3 a unit. The owner accepts an increase of about that size and asks for any further rise to be explained by other cost drivers.
+
+```figure
+type: bars
+title: A price rise blamed on steel
+unit: $ a unit
+caption: Steel is about $15 of the cost, so a 20% steel rise explains about $3; anything more needs another cost driver.
+- Increase requested: 10% | 13.90
+- *Explained by a 20% steel rise | 3
+```
 
 ## Linking prices to indices
 
 Where a material makes up a significant and volatile share of an item's cost, an index-linked price can be fairer to both parties than repeated negotiation. The idea is to split the price into a material portion that moves with an agreed published index and a remaining portion that is fixed for an agreed period or adjusted separately.
 
 For example, if a should-cost model shows that material is about 10% of a price, the agreement might say that the material portion changes in proportion to an agreed steel price index, reviewed quarterly, while the remaining 90% is fixed for twelve months. A 20% rise in the index would then raise the total price by about 2%, and a 20% fall would reduce it by the same amount. Both parties can see the calculation, and increases and decreases flow through equally.
+
+```figure
+type: formula
+title: Linking only the material share to an index
+formula: Price change ≈ Material share × Index change
+caption: Increases and decreases flow through equally, and both parties can see the calculation.
+step: 10% × (+20%) ≈ +2% on the total price
+step: 10% × (−20%) ≈ −2%
+```
 
 Choose an index that genuinely reflects the material the supplier buys, agree the base date and value, set a review frequency and decide whether small movements below a threshold are ignored. Take advice on contract wording for significant agreements.
 

@@ -27,6 +27,16 @@ But "fair" still has limits. The lower the price relative to earnings, the highe
 
 The book describes two kinds of moments when good prices appear for excellent businesses.
 
+```figure
+type: compare
+title: When excellent businesses may be priced well, and when to stay away
+cols: What happens | What to check
+caption: Booms are easier to recognise in hindsight; good prices need cash in hand when others cannot act.
+- Broad market downturn | Nearly everything falls, including strong businesses | The advantage is intact
+- One-time, solvable problem | A setback hits a strong company | The problem is genuinely solvable
+- Height of a boom | Even excellent businesses trade at historically high prices | Stay away
+```
+
 ### Broad market downturns
 
 In a bear market, nearly everything falls, including the strongest businesses. Fear spreads across the whole market, and investors sell good and bad companies alike.
@@ -80,6 +90,17 @@ An illustration: a business earns $1 per share and is expected to grow its earni
 | $60 (60 times earnings) | about $159 | Selling is better |
 
 When the price is reasonable, holding usually wins comfortably. Only at extreme prices does selling come out ahead, and even then the comparison depends heavily on the assumptions. That is why the book treats selling as the exception rather than the rule.
+
+```figure
+type: bars
+title: Sell now and reinvest at 5%, or hold for twenty years?
+unit: $ after 20 years
+caption: Holding is worth about $101 (earnings of $6.73 at 15 times). Selling only wins at extreme prices.
+- Hold | 101
+- Sell at $20 (20× earnings) | 53
+- Sell at $40 (40× earnings) | 106
+- *Sell at $60 (60× earnings) | 159
+```
 
 ## Why patience is so hard
 

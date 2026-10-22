@@ -32,6 +32,18 @@ A common approach begins with a spreadsheet: price gets one weighting, experienc
 
 Writing the decision rule in one plain sentence before seeking quotes makes everything after it more consistent and much easier to explain.
 
+```figure
+type: steps
+title: Design the evaluation before seeing the offers
+caption: Writing the decision rule in one sentence first makes every later choice easier to justify.
+- Outcome | the result being bought
+- *Decision rule | what the evaluation optimises
+- Criteria | what distinguishes suppliers
+- Indicators | strong and weak performance
+- Evidence | what suppliers must provide
+- Recommendation
+```
+
 ## Gates and weights are different things
 
 Two kinds of requirement are often mixed together:
@@ -40,6 +52,17 @@ Two kinds of requirement are often mixed together:
 - **Weighted criteria** influence the ranking among offers that pass the gates.
 
 A mandatory requirement is not just a heavy weighting. It is effectively infinite: it decides which offers can be considered at all. That is right for genuinely essential requirements, but gates attract less scrutiny than weights because they look like housekeeping. For each mandatory item, ask: **would we really discard an otherwise outstanding offer that failed this?** If not, it should be weighted, not a gate.
+
+```figure
+type: balance
+title: Gates and weights do different jobs
+left: Mandatory requirements
+right: Weighted criteria
+caption: A gate is effectively an infinite weighting: no score elsewhere can make up for failing it.
+- Exclude any offer that fails | Rank the offers that pass
+- Licences, insurance, legal compliance | Cost, service, method, warranty
+- Pass or fail | A judgement of degree
+```
 
 ## A weighting is a statement about consequence
 
@@ -125,7 +148,28 @@ Three offers pass the gates. One supplier, C, proposes an alternative system des
 
 The cheapest quote, A, is the most expensive over ten years. B and C are close, within about 2% on either basis, so the owner treats them as effectively tied on cost and turns to the worst-year test. B's technicians are based 30 minutes away and its design has about 25% spare capacity for heatwave conditions. C's nearest technicians are two hours away, making the four-hour response guarantee tight, and its design has about 15% spare capacity.
 
+```figure
+type: bars
+title: The cold room's ten-year cost, discounted at 7%
+unit: $
+caption: Price, energy and maintenance together: the lowest quote was the most expensive to own; B and C were within about 2%.
+- A, quoted at $210,000 | 519000
+- B, quoted at $245,000 | 498000
+- *C alternative, quoted at $228,000 | 488000
+```
+
 The owner chooses B and records why: whole-of-life cost effectively tied with C, stronger service and more capacity in the conditions most likely to cause a failure. C's alternative design is noted for future consideration, and its details are not shared with the other suppliers.
+
+```figure
+type: compare
+title: The worst-year test between two tied offers
+cols: Offer B | Offer C
+best: 1
+caption: Most supply failures happen in abnormal conditions; for a cold room, that means heatwaves and breakdowns.
+- Nearest technicians | About 30 minutes away | About two hours away
+- Four-hour response guarantee | Comfortable | Tight
+- Spare capacity for heatwaves | About 25% | About 15%
+```
 
 ## How this applies to a small Australian business
 

@@ -42,6 +42,17 @@ The power to stop matters because stopping is an individual act. Someone has to 
 
 When projects fail two or more tests, the remedy is rarely to find someone more senior. It is to write the delegation down.
 
+```figure
+type: checklist
+title: Five tests of a real sponsor
+caption: A sponsor is defined by authority sufficient to stop the work, not by seniority or enthusiasm.
+- ? Name | one person, named in three seconds
+- ? Delegation | authority covers the remaining commitment
+- ? Exposure | failure lands in their results or budget
+- ? Resources | can commit people and time, not just request them
+- ? Awareness | knows what they can decide
+```
+
 ## Disagreeing with the sponsor
 
 Practitioner advice on disagreement is sensible: if the sponsor's direction seems wrong, say so honestly; if they hold their position, follow it and work to make it succeed. That is how decision rights should work. But it depends on one condition: the disagreement must be **heard and recorded**. Without a record, an accurate warning can disappear, and a later failure gets attributed to delivery. The workable version is simple: the concern is stated and noted, and the sponsor's decision is noted as the sponsor's. That does not challenge authority; it makes authority accountable. The [decision rights before meetings](/reados/collections/leading-people-and-change/decision-rights-before-meetings/) article covers keeping a simple record of who decided what.
@@ -76,6 +87,19 @@ write:
 
 The second version names the person, the action, the timing, the condition and the evidence. It is harder to write and will be resisted. It is also the only kind that can be realised, and it exposes something the first hides: the benefit depends on a decision someone has not yet agreed to make. If nobody will sign it, the benefit is not real, and the business case should shrink accordingly. The [when the project succeeds and the strategy fails](/reados/collections/from-approval-to-benefits/when-the-project-succeeds-and-the-strategy-fails/) article covers testing projects for outcomes rather than outputs.
 
+```figure
+type: compare
+title: A benefit as a hope and as a commitment
+cols: "Save one full-time role" | A named owner's claim
+best: 2
+caption: A benefit that depends on something ending only arrives when it ends.
+- Who | Nobody named | The planning supervisor
+- What changes | A role is saved | Scheduling team goes from three roles to two
+- When | Unstated | By the end of the third quarter after go-live
+- Condition | Unstated | At least 90% of schedules accepted without manual changes
+- Evidence | Unstated | Roster and schedule acceptance rate
+```
+
 ## Five tests for each benefit
 
 - **Named owner**: has a specific person read and accepted the claim?
@@ -85,6 +109,17 @@ The second version names the person, the action, the timing, the condition and t
 - **Stabilisation**: how long will performance dip while people learn, and who carries the extra load?
 
 The cheapest, most effective intervention is often to keep a small amount of support available for a defined period after go-live, with explicit authority to **switch off the old way**. While the old spreadsheet or process remains available, people will use it whenever the new one is inconvenient.
+
+```figure
+type: checklist
+title: Five tests for each benefit
+caption: Most benefits fail in the quiet months after go-live, not during delivery.
+- ? Named owner | has read and accepted the claim
+- ? Behaviour | what people will do differently
+- ? Switch-off | what stops, and on what date
+- ? Evidence | still produced a year after closure
+- ? Stabilisation | the dip, and who carries it
+```
 
 ## A worked example
 
@@ -97,6 +132,17 @@ The planning supervisor is given a seat, a voice on scope changes and a role in 
 The business case originally said the system would "save one full-time role". It is rewritten as a claim by the planning supervisor: the team will go from three to two by the third quarter after go-live, if at least 90% of schedules are accepted without manual changes. The old spreadsheet will be switched off six weeks after go-live. The implementer provides two days a week of support for eight weeks after launch to cover the dip.
 
 Six months after go-live, the acceptance rate is 92%, the spreadsheet is gone and the team has reduced to two through a planned retirement. The benefit is visible in the roster, and the supervisor presented it.
+
+```figure
+type: timeline
+title: The scheduling software, from sponsor tests to benefit
+caption: The benefit is visible in the roster, and the supervisor who owned it presented it.
+- Sponsor tests | Authority matched to the job | a $20,000 limit against $85,000 to spend became authority to $100,000, including to stop
+- Governance | The user gets a seat | the planning supervisor, with a voice on scope
+- Benefit | Rewritten as a claim | three roles to two if 90% of schedules are accepted
+- Go-live | Support for the dip | two days a week for eight weeks; spreadsheet off after six weeks
+- *Six months | 92% acceptance | team of two through a planned retirement
+```
 
 ## How this applies to a small Australian business
 

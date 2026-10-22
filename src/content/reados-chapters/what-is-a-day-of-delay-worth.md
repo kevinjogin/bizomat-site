@@ -45,6 +45,17 @@ Add the costs that continue while the asset is not earning: staff already hired 
 
 Together, the two sides give a daily rate.
 
+```figure
+type: formula
+title: The price of a day of delay
+formula: Daily cost of delay = Contribution lost per day + Costs that keep running per day
+caption: Owned by whoever is accountable for the asset's earnings, not by the project team.
+- Contribution lost | what the asset would earn that day once running normally
+- Costs that keep running | staff, rent, finance, insurance, subscriptions
+step: Brewery taproom in December: $2,800 + $1,500 = $4,300 a day
+step: Same delay in a shoulder month: $900 + $1,500 = $2,400 a day
+```
+
 ## Days are not all the same size
 
 Date-triggered events turn a smooth daily rate into a calendar with cliffs:
@@ -56,6 +67,15 @@ Date-triggered events turn a smooth daily rate into a calendar with cliffs:
 - **Approval validity**: permits or certifications that lapse.
 
 A delay that pushes an opening from the start of a peak season to the end of it may cost more than a much longer delay in a quiet month. That means acceleration money should be concentrated on protecting the expensive days, which requires knowing which days they are before the schedule is fixed. Present the daily figure as a calendar, by month, with the cliffs marked, rather than as a single number.
+
+```figure
+type: checklist
+title: Dates that turn a smooth daily rate into cliffs
+caption: A delay across one of these dates can cost more than a longer delay in a quiet month.
+- ? Seasonal peaks | missing the start of a busy season
+- ? Lease and contract start dates | obligations begin regardless of readiness
+- ? Finance terms | facilities expiring, rates changing on set dates
+```
 
 ## Only some days move the finish date
 
@@ -93,6 +113,18 @@ During the fit-out, the joinery contractor reports a three-week delay, which wou
 - **Air-freighting imported taps** instead of waiting for sea freight, costing about $3,500 and recovering about four days on a separate part of the critical path.
 
 In December, a day of delay costs about $4,300: $2,800 of lost contribution plus $1,500 of continuing costs. Two weeks is worth about $60,200, far more than the $18,000 for the second crew. Four days is worth about $17,200, far more than $3,500 for air freight. Both are clear purchases.
+
+```figure
+type: bars
+title: Is speed worth buying for the taproom?
+unit: $
+caption: Both purchases are clear in December. Even in a shoulder month, with a 30% chance the extra crew fails, two weeks are worth about $23,520.
+- Value of two weeks recovered in December | 60200
+- Cost of a second crew | 18000
+- Value of four days recovered in December | 17200
+- Cost of air freight | 3500
+- Contractor's delay damages per day | 500 | a fraction of the real $4,300
+```
 
 If the same delay had fallen in a shoulder month, a day would be worth about $2,400 and two weeks about $33,600. The second crew would still be worth buying, but with a smaller margin. Allowing a 30% chance that the extra crew fails to recover the time, the expected value of the two weeks is about $23,520, still above $18,000, but closer.
 

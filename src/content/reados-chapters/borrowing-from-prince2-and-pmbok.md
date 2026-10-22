@@ -43,6 +43,20 @@ PRINCE2's seven principles translate well into plain habits:
 
 None of these needs a large organisation. All of them address common small-business failures: projects that continue after they have stopped making sense, owners drawn into every small decision, deliverables nobody defined, and arguments at the end about whether the work is finished.
 
+```figure
+type: tree
+title: Seven principles as small-business habits
+caption: Each addresses a common small-business failure without needing a large organisation.
+- Habits worth borrowing
+  - Still worth doing? | checked at each decision point
+  - Learn from experience | start, during and end
+  - Defined roles | who decides, does, represents users
+  - Manage by stages | continue, change or stop
+  - *Manage by exception | tolerances, then escalate
+  - Focus on products | what will be accepted
+  - Tailor | to size, risk and complexity
+```
+
 ## What to borrow from the PMBOK Guide
 
 The PMBOK Guide's value for a small business lies in practical techniques:
@@ -61,6 +75,30 @@ Its newer emphasis on principles such as stewardship, value, systems thinking an
 One distinction from PRINCE2 is especially useful. **Technical phases** describe the work: design, build, test, install. **Management stages** describe decision points: the moments when the owner reviews progress and decides whether, and how, to continue. They often line up, but not always. A design phase might contain a decision point halfway, after a prototype; installation and commissioning might sit inside one management stage.
 
 Placing decision points where the most important uncertainty is resolved, rather than simply at the end of each phase, makes them far more valuable. The [learn before you commit](/reados/collections/growth-business-models-and-new-markets/learn-before-you-commit/) article covers timing decisions so new information arrives before the point of no return.
+
+```figure
+type: svg
+title: Technical phases and management stages
+alt: Two rows. The top row shows technical phases: design, build, test, install. The bottom row shows decision points that do not line up with the phase boundaries: one halfway through design after a prototype, and one at the end of a stage covering installation and commissioning together.
+caption: Put decision points where the important uncertainty is resolved, not just where one phase ends.
+viewbox: 0 0 640 220
+body:
+<text class="txs" x="40" y="40">TECHNICAL PHASES</text>
+<rect class="bx" x="40" y="52" width="190" height="40" rx="4"/>
+<text class="txb" x="135" y="78" text-anchor="middle">Design</text>
+<rect class="bx" x="234" y="52" width="140" height="40" rx="4"/>
+<text class="txb" x="304" y="78" text-anchor="middle">Build</text>
+<rect class="bx" x="378" y="52" width="100" height="40" rx="4"/>
+<text class="txb" x="428" y="78" text-anchor="middle">Test</text>
+<rect class="bx" x="482" y="52" width="118" height="40" rx="4"/>
+<text class="txb" x="541" y="78" text-anchor="middle">Install</text>
+<text class="txs" x="40" y="132">DECISION POINTS</text>
+<path class="ln" d="M40 160H600"/>
+<path class="fa pulse" d="M135 146L149 160L135 174L121 160Z"/>
+<path class="fa" d="M600 146L614 160L600 174L586 160Z"/>
+<text class="tx" x="135" y="198" text-anchor="middle">after the prototype</text>
+<text class="tx" x="600" y="198" text-anchor="end">after install and commissioning</text>
+```
 
 ## Tolerances: freedom with limits
 
@@ -81,6 +119,19 @@ For most small business projects, a light version covers what matters:
 - **A short exception note** when a tolerance is forecast to be exceeded: what happened, the options and a recommendation.
 - **A lessons log**, started at the beginning, not the end.
 - **A closing check**: the products accepted, outstanding actions handed to someone, and the results reviewed after use.
+
+```figure
+type: checklist
+title: A minimal method for a small business
+caption: Adopt the logic, not the documents: tailoring by deletion removes the decisions too.
+- A one-page brief | why, outcome, acceptance, exclusions
+- Three named roles | owner, user voice, project lead
+- Two to four stages | each ending in a decision
+- Tolerances for each stage | written down
+- A short exception note | when a tolerance will break
+- A lessons log | from the start
+- *A closing check | accepted, handed over, reviewed
+```
 
 ## Where formal methods go wrong
 
@@ -109,6 +160,16 @@ The operations manager, who has some PRINCE2 training, proposes a light approach
 **Closing.** After rollout, the delivery supervisor confirms acceptance against the temperature criteria, outstanding actions go to the delivery team, and the lessons log records that hiring equipment for a pilot is a useful way to keep projects moving.
 
 The project finishes three weeks later than first planned, inside its overall tolerance, and the owner was involved in two decisions rather than twenty.
+
+```figure
+type: decision
+title: The refrigerated vans break a tolerance
+question: The van supplier announces a six-week delay against a two-week tolerance.
+caption: The owner was involved in two decisions rather than twenty, and the project finished inside its overall tolerance.
+- Wait | The pilot starts six weeks late
+- *Hire two refrigerated vans | The pilot starts on time | while the owned vans are built
+- Switch suppliers | Restart selection
+```
 
 ## How this applies to a small Australian business
 

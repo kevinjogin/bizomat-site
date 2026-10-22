@@ -38,6 +38,16 @@ A useful sequence is:
 
 Working through these in order stops the pricing method being used as a substitute for thinking about delivery.
 
+```figure
+type: steps
+title: Four decisions in order
+caption: Choosing the pricing method first tends to make it stand in for decisions it cannot make.
+- Sourcing boundary | do it or buy it?
+- Delivery model | who owns design and integration?
+- *Pricing method | how cost uncertainty is shared
+- Contract controls | performance, change, exit
+```
+
 ## The main pricing methods
 
 | Method | How the supplier is paid | Who carries cost uncertainty | Suits |
@@ -50,6 +60,29 @@ Working through these in order stops the pricing method being used as a substitu
 | Staged | Early stage on rates or a small fixed fee; later stage fixed once defined | Shifts from buyer to supplier as uncertainty falls | Work that becomes well defined only after investigation or design |
 
 Two terms often appear alongside these. A **provisional sum** is an allowance included in a price for work that cannot yet be defined, to be adjusted once the actual cost is known. A **cap** or **not-to-exceed** amount limits what the buyer will pay under a time-and-materials or cost-reimbursable arrangement without further approval. In residential building, some states regulate how allowances such as provisional sums and prime cost items must be used and disclosed, so check the rules in your state if they apply.
+
+```figure
+type: svg
+title: Who carries cost uncertainty?
+alt: A scale from supplier carries most uncertainty on the left to buyer carries most on the right. Fixed price sits at the supplier end, schedule of rates and target cost in the middle as shared, and time and materials and cost reimbursable at the buyer end. Staged pricing moves from buyer to supplier as uncertainty falls.
+caption: Staged pricing shifts the risk from buyer to supplier as the work becomes defined.
+viewbox: 0 0 640 220
+body:
+<path class="ln" d="M40 90H600"/>
+<text class="txb" x="40" y="40">Supplier carries most</text>
+<text class="txb" x="600" y="40" text-anchor="end">Buyer carries most</text>
+<circle class="fa" cx="70" cy="90" r="9"/>
+<text class="tx" x="70" y="125" text-anchor="middle">Fixed price</text>
+<circle class="fs" cx="250" cy="90" r="9"/>
+<text class="tx" x="250" y="125" text-anchor="middle">Schedule of rates</text>
+<circle class="fs" cx="390" cy="90" r="9"/>
+<text class="tx" x="390" y="125" text-anchor="middle">Target cost</text>
+<circle class="fi" cx="560" cy="90" r="9"/>
+<text class="tx" x="560" y="125" text-anchor="middle">Time and materials</text>
+<text class="tx" x="560" y="145" text-anchor="middle">Cost reimbursable</text>
+<path class="la flow" d="M520 185H110"/>
+<text class="txa" x="315" y="175" text-anchor="middle">Staged: moves this way as uncertainty falls</text>
+```
 
 ## Why fixed price persists
 
@@ -127,6 +160,16 @@ This is an illustration. A manufacturer wants a supplier to design, build and co
 
 The owner first asks three integrators for a fixed price for the whole job. The quotes are $640,000, $720,000 and $910,000. The lowest excludes all work on existing equipment. The spread and the exclusions suggest the interfaces with the existing equipment are not well understood.
 
+```figure
+type: bars
+title: Three fixed prices for the same automated cell
+unit: $
+caption: A wide spread and big exclusions signal that the interfaces with existing equipment were not understood.
+- *Lowest: excluded all work on existing equipment | 640000
+- Middle | 720000
+- Highest | 910000
+```
+
 The owner changes approach:
 
 - **Stage 1**: a paid investigation and design stage on time and materials, capped at $45,000, to survey the existing filler and palletiser and complete the design.
@@ -137,6 +180,16 @@ Stage 1 costs $41,500 and finds that the palletiser's controls need replacing, w
 
 The integration actually costs $196,000, an overrun of $16,000. Under the equal sharing formula, the business pays $180,000 plus half the overrun, which is $8,000, for a total of $188,000, and the integrator absorbs the other $8,000.
 
+```figure
+type: formula
+title: Sharing the integration overrun
+formula: Business pays = Target + 50% × (Actual − Target)
+caption: Both parties had a reason to control the cost of the uncertain work.
+step: Target $180,000, actual $196,000: overrun $16,000
+step: $180,000 + 50% × $16,000
+step: Business pays $188,000; the integrator absorbs $8,000
+```
+
 | Item | Cost |
 |---|---|
 | Stage 1 investigation and design | $41,500 |
@@ -145,6 +198,16 @@ The integration actually costs $196,000, an overrun of $16,000. Under the equal 
 | Total | $814,500 |
 
 The total is higher than the lowest original quote, but that quote excluded work the investigation showed was needed. Adding the estimated excluded work to it gives roughly $810,000 to $830,000, before any dispute about what was included. The main difference is not the total. It is that the uncertainty was resolved before the main commitment, rather than argued over during delivery, and that both parties had a reason to control the cost of the uncertain integration work.
+
+```figure
+type: stack
+title: What the staged approach cost in total
+unit: $
+caption: $814,500 against roughly $810,000 to $830,000 for the lowest quote plus the work it excluded; the uncertainty was resolved before the main commitment.
+- Stage 1 investigation and design | 41500
+- Equipment and installation, fixed | 585000
+- Integration, target cost after sharing | 188000
+```
 
 ## How this applies to a small Australian business
 

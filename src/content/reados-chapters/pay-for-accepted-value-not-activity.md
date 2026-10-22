@@ -29,6 +29,18 @@ The question is what each stage pays for. Compare two ways to pay $100,000 for t
 
 Both pay the same total. They create different behaviour. Under the first, the supplier has been paid half the price before anything checkable exists, and the buyer's influence for the rest of the job rests on the final payment alone. Under the second, both parties know exactly what triggers each payment, the supplier is paid as it creates value, and the buyer never pays far ahead of what it has received.
 
+```figure
+type: balance
+title: Two ways to pay $100,000 for the same job
+left: Front-loaded by date
+right: Staged by outcome
+tilt: right
+caption: Same total, different behaviour: staged payments keep the buyer from paying far ahead of what it has received.
+- Half paid before anything checkable exists | Each payment follows a checkable event
+- Influence rests on the final payment alone | Both know exactly what triggers payment
+- Paid for time passing | Paid as value is created
+```
+
 Payment structure also affects suppliers' willingness to work with you. Slow, unpredictable payment pushes suppliers towards higher prices, aggressive claims or reluctance to commit resources ahead of payment. A predictable process, where suppliers know what evidence is needed and when money will move, is good for both sides.
 
 ## Set milestones around value you can verify
@@ -59,6 +71,18 @@ When a payment claim arrives, treat it as a submission to be assessed, not a bil
 5. **Adjustments.** Do any deductions apply under the agreement, such as retention, credits for missed service levels or amounts for defects?
 6. **Record.** Could someone who was not involved understand why this amount was paid?
 
+```figure
+type: steps
+title: Assessing a payment claim
+caption: Paying a claim does not usually mean the work is accepted.
+- Entitlement | which event creates the right?
+- Completion | has it happened, as defined?
+- Evidence | tests, drawings, certificates
+- Value | which price, rate or variation?
+- Adjustments | retention, credits, defects
+- *Record | why this amount was paid
+```
+
 The most common gap is between physical progress and contractual entitlement. A machine standing on the workshop floor looks finished. If the agreed milestone is "installed and producing parts within tolerance", and the test parts have not been run, the milestone has not been reached. The [inspection and test plans](/reados/collections/suppliers-contractors-and-government-work/inspection-and-test-plans-for-supplier-work/) article covers agreeing in advance what evidence each stage must produce.
 
 Two cautions. First, **paying a claim does not usually mean the work is accepted**. Many agreements say so expressly, but the practical rule is the same either way: acceptance should rest on agreed evidence, not on an invoice being paid. Second, **respond on time**. If you dispute part of a claim, say which part and why, in writing, and pay the undisputed amount when it is due. For construction work, every Australian state and territory has security of payment laws that set strict timeframes for responding to payment claims, and missing them can make the claimed amount payable regardless of its merits. Check the rules in your state or get advice before you need them.
@@ -76,6 +100,20 @@ Ordering equipment or materials early is often sensible. A machine has a long le
 - **Design changes** made after ordering may make the item wrong, or need rework.
 
 The delay risk has gone down. The technical and financial risk has gone up. The useful question is not "can we get it early?" but "does buying early create more value than the flexibility we give up?"
+
+```figure
+type: tree
+title: What buying early changes
+caption: Early may simply mean premature if the eight questions cannot be answered.
+- Ordering or paying early
+  - Reduces | delay risk on long-lead items
+  - Creates
+    - Cash paid out earlier
+    - Storage, handling and damage risk
+    - Unclear ownership and insurance
+    - *Exposure if the supplier fails
+    - Degradation in storage, or design changes
+```
 
 Before you approve an early order or an early payment, answer eight questions:
 
@@ -120,9 +158,31 @@ The owner proposes a schedule based on verifiable value instead, and the integra
 
 The total is $180,000. The integrator's cash flow is not much worse than under its own terms, because the biggest payments now follow events it controls.
 
+```figure
+type: stack
+title: The CNC router paid against verifiable value
+unit: $
+caption: Instead of 40% on order, 50% on delivery and 10% on commissioning, the biggest payments follow events the integrator controls.
+- Order and engineering | 18000
+- Design approved | 36000
+- Factory acceptance test passed | 54000
+- Delivered and installed | 54000
+- Commissioned | 18000
+```
+
 The factory test passes eight weeks before the owner's new extension is ready. The integrator asks to be paid the delivery stage now and to store the router at its premises. The owner works through the eight questions. Waiting costs the integrator storage space and cash; paying early exposes the owner if the integrator fails. They agree that the owner will pay half the delivery stage, $27,000, once the integrator confirms in writing that ownership passes on payment, tags and stores the router separately, and confirms insurance while it is stored. The balance of $27,000 is paid on delivery and installation. The owner's accountant checks the cash effect, and a lawyer reviews the ownership wording.
 
 When the installation claim arrives, two of the five extraction ducts are not connected and the electrical test certificate has not been supplied. The owner responds within the agreed time, in writing: the milestone is not yet complete, these are the two missing items, and payment will follow when they are done. The integrator finishes the following week, and the claim is paid in full on the next payment run.
+
+```figure
+type: timeline
+title: Two payment decisions on the router
+caption: Responding in writing, within the agreed time, with the missing items listed kept the relationship intact.
+- Factory test | Passed eight weeks early | integrator asks for the delivery payment and to store the router
+- Early payment | $27,000, half the stage | after written ownership, tagging and insurance
+- Installation claim | Held | two of five ducts unconnected; no electrical certificate
+- *Next payment run | Paid in full | once both items were done
+```
 
 ## How this applies to a small Australian business
 

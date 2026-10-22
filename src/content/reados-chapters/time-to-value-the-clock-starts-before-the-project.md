@@ -29,6 +29,16 @@ A simple way to see the whole picture is to record four dates for every signific
 
 Between them sit three intervals: the **front end** (decided to started), the **project** (started to first production, or to handover if those differ) and the **start-up** (first production to first revenue). Most businesses manage the middle interval closely and barely measure the other two.
 
+```figure
+type: steps
+title: Four marks and three intervals
+caption: The project is only the middle interval; the business pays for all three.
+- Decided | front end begins
+- Started | project begins
+- First production | start-up begins
+- *First revenue | the investment earns
+```
+
 ## What the engineering literature says
 
 Writing in the journal Cost Engineering in 2002, Kul Uppal defined project cycle time as starting "with the project team formation and ends with facilities in production". That definition moves the finish line past handover and past the contractual completion milestone to the point where the facility is actually producing. On that view, a facility that is complete but not yet producing is not finished.
@@ -104,6 +114,17 @@ What actually happens:
 - **To first revenue, March to May (two months)**: the retailer ranges the product and pays on 60-day terms.
 
 From decision to first revenue takes fifteen months, not six. The project itself took four. The nine-month gap against the business case defers about $225,000 of contribution (nine months at $25,000), assuming demand was there.
+
+```figure
+type: stack
+title: Fifteen months from decision to first revenue
+unit: months
+caption: The project took four months and was reported as a success. The nine-month gap deferred about $225,000 of contribution.
+- Front end: finance, quotes, approvals | 7
+- Project: delivery and installation | 4
+- Start-up: training, food safety, trials | 2
+- To first revenue: ranging and 60-day terms | 2
+```
 
 For the next investment, the owner names owners for each interval. The owner and the accountant own the front end: finance pre-approval runs in parallel with quotes, a pre-lodgement meeting is held with the council early in design, and a small decision group can approve orders between monthly meetings. The production manager owns start-up from the day the project starts: training is scheduled before handover, the food safety plan is updated during installation, and the retailer receives samples from pilot runs. The installer is offered a modest bonus for early commissioning that passes agreed acceptance tests. The next comparable investment reaches first revenue in about nine months.
 

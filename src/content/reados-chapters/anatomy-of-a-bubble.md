@@ -23,6 +23,25 @@ The stage model of bubbles is most closely associated with the economic historia
 
 The framework is not a law of nature, and not every bubble passes through every stage in the same way. But it describes the broad shape of most episodes well enough to be a useful map. Its stages are usually described as:
 
+```figure
+type: svg
+title: The five stages of a bubble
+alt: A price line rises gently through displacement, faster through the boom, steeply through euphoria, flattens in distress and then falls sharply in revulsion and panic.
+caption: Kindleberger's stages are a pattern, not a law; not every bubble passes through each stage the same way.
+viewbox: 0 0 640 300
+body:
+<path class="ln" d="M40 260H610M40 30V260"/>
+<path class="la draw" pathLength="1" d="M50 240C120 236 170 228 220 200S320 120 380 70S440 40 460 50S500 120 530 190S580 238 600 244"/>
+<path class="lf dsh" d="M150 40V260M280 40V260M400 40V260M470 40V260"/>
+<text class="tx" x="95" y="280" text-anchor="middle">Displacement</text>
+<text class="tx" x="215" y="280" text-anchor="middle">Boom</text>
+<text class="tx" x="340" y="280" text-anchor="middle">Euphoria</text>
+<text class="tx" x="435" y="280" text-anchor="middle">Distress</text>
+<text class="tx" x="540" y="280" text-anchor="middle">Revulsion, panic</text>
+<circle class="fa pulse" cx="458" cy="49" r="7"/>
+<text class="txa" x="470" y="34">trigger</text>
+```
+
 1. **Displacement:** an outside event creates a new opportunity.
 2. **Boom:** investment and credit flow into the new area, and prices rise.
 3. **Euphoria:** speculation overtakes genuine investment, and expectations become extreme.
@@ -122,6 +141,17 @@ Even with these responses, it is rare to escape a major bust without at least a 
 | Euphoria | Speculation dominates; valuation ignored | Excitement, certainty | Loose, new lenders |
 | Distress | Rise slows; trigger appears | Unease, denial | Tightening |
 | Revulsion and panic | Prices collapse; failures mount | Fear, disgust | Withdrawn |
+
+```figure
+type: timeline
+title: Mood and credit through the stages
+caption: Credit is normal at the start, loosest in euphoria and withdrawn in the panic, which is why busts spread to sound businesses.
+- Displacement | Interest, curiosity | credit normal
+- Boom | Optimism | credit expanding
+- *Euphoria | Excitement, certainty | credit loose, new lenders
+- Distress | Unease, denial | credit tightening
+- Revulsion and panic | Fear, disgust | credit withdrawn
+```
 
 ## A historical illustration: the British Railway Mania
 

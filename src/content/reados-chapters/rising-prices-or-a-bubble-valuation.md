@@ -27,6 +27,17 @@ The second had risen steadily for a decade before the latest surge. Earnings hav
 
 The headline gain is identical. The risk is completely different. Only a valuation measure reveals the difference.
 
+```figure
+type: compare
+title: The same 50% rise, very different risk
+cols: Market recovering from a slump | Market after a decade of rises
+caption: Overvaluation, not the speed of the rise, is the best clue to the probability of a bubble.
+- Before the rise | Had fallen 40% in a recession | Had risen steadily for ten years
+- After the rise | Slightly above the pre-recession level | Far above any previous level
+- Earnings | Recovered strongly | Lagging prices
+- Valuation | Near long-run average | Well above it
+```
+
 ## Valuation measures for shares
 
 ### The price-earnings ratio
@@ -101,6 +112,16 @@ Historical comparisons are powerful because they draw on real experience across 
 
 The second benchmark asks what valuation is reasonable given current conditions. If long-term interest rates are much lower than in the past, a higher P/E or a lower rental yield may be justified, because the alternative investments also yield less.
 
+```figure
+type: balance
+title: Two benchmarks for any valuation
+left: Compared with history
+right: Compared with reasonable levels
+caption: Use both: history draws on real experience; reason allows for genuine changes such as lower interest rates.
+- Long-run averages across many conditions | What today's interest rates and growth justify
+- Hard to argue with | Often correct, but only up to a point
+```
+
 This is a legitimate argument, and it is often correct up to a point. But it can also be stretched. During bubbles, the reasoning shifts from "valuations can be somewhat higher" to "valuations no longer matter at all". The test is whether the case for higher valuations rests on specific, measurable changes, and whether those changes can justify the full extent of the rise.
 
 ## Starting from undervalued levels
@@ -154,6 +175,18 @@ An investor compares two share markets.
 Market A's rise has been driven almost entirely by earnings growth. Its valuation is at its long-run average. Market B has risen less, but its valuation has more than doubled relative to its history, with modest earnings growth.
 
 Despite the smaller rise, Market B carries far more valuation risk. If its P/E returned to its long-run average while earnings stayed the same, prices would fall by more than half.
+
+```figure
+type: compare
+title: Market A and Market B
+cols: Market A | Market B
+best: 1
+caption: Market A's rise came from earnings; Market B's from a rising multiple, so it carries more valuation risk.
+- Rise over three years | 50% | 25%
+- Earnings growth | 45% | 10%
+- Current P/E | 15 | 32
+- Long-run average P/E | 15 | 15
+```
 
 ## Common mistakes
 

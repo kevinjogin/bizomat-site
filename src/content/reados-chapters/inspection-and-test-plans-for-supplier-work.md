@@ -31,6 +31,16 @@ A few terms are used throughout:
 - **Calibration** is checking a measuring instrument against a known reference so its readings can be trusted.
 - A **non-conformance** is a result or condition that does not meet requirements.
 
+```figure
+type: layers
+title: Hold, witness and review points
+caption: Too many hold points stall work; choose where to stop, where to watch and where to read the records.
+- *Hold point | work stops until the customer inspects or accepts
+- Witness point | the customer is notified and may attend; work can proceed
+- Review point | the customer reviews records rather than attending
+- Self-inspection | the supplier checks and keeps records
+```
+
 ## Assurance is an information design problem
 
 Most specifications describe what must be delivered. Fewer describe how delivery will be proven. Designing that proof is an information task: deciding what evidence is needed, when it must be produced, who must see it and what decisions depend on it. Done well, it removes most arguments about completion before they start.
@@ -80,6 +90,17 @@ For each important piece of work, define:
 5. **Commercial effect**: whether acceptance triggers a payment, a milestone, the start of a warranty or another consequence.
 
 Agreeing these before work starts makes payment and completion decisions straightforward.
+
+```figure
+type: checklist
+title: Five elements for each significant deliverable
+caption: Agreed before work starts, they make payment and completion decisions straightforward.
+- Acceptance requirement | exactly what must be true
+- Evidence | the document, test or record that proves it
+- Witness level | self-check, witness, third party, hold
+- Authority | who accepts for the customer
+- *Commercial effect | payment, milestone, warranty start
+```
 
 ## What a simple ITP looks like
 
@@ -137,7 +158,29 @@ The fabricator drafts an ITP. The brewery reviews it and adds:
 
 Payments are linked to evidence: 30% with the order, 40% after the witnessed factory pressure test, 20% after site installation and leak test, and 10% after 30 days of operation with all recorded defects closed and documentation delivered.
 
+```figure
+type: stack
+title: The fermentation tank paid against evidence
+unit: %
+caption: Each payment follows a record the brewery can point to.
+- With the order | 30
+- After the witnessed factory pressure test | 40
+- After site installation and leak test | 20
+- After 30 days with defects closed and documents delivered | 10
+```
+
 At the factory pressure test, a small leak appears at one weld. Because insulation has not yet been fitted, the fabricator repairs the weld in a few hours and the test is repeated and passed. Had the leak been found after cladding and installation, the tank would have needed draining, unclading and repair on site, with lost brewing time. The defect is recorded in the register with the repair and re-test, and the brewery has a clear record if questions arise later.
+
+```figure
+type: compare
+title: The same weld leak, found at two different times
+cols: At the factory hold point | After cladding and installation
+best: 1
+caption: Ask for each step: what evidence will we wish we had if this fails later?
+- The repair | A few hours, then a passed re-test | Drain, unclad and repair on site
+- Brewing | Unaffected | Lost brewing time
+- The record | Logged with the repair and re-test | Harder to reconstruct
+```
 
 ## How this applies to a small Australian business
 

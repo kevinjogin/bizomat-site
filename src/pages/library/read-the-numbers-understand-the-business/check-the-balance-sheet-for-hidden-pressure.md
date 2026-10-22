@@ -16,6 +16,19 @@ Current assets may include cash, customer receivables and inventory. Current lia
 
 If current assets are $4 million and current liabilities are $2 million, the current ratio is **2.0**. That suggests more current assets than current liabilities, but it does not guarantee cash will be available when needed. Inventory might be obsolete, receivables could be overdue, and large commitments may not appear as simple current liabilities.
 
+```figure
+type: gauge
+title: Current ratio in the example
+min: 0
+max: 3
+value: 2.0
+label: = $4m ÷ $2m
+caption: More current assets than liabilities, but obsolete stock or overdue receivables can make the true position weaker.
+- 0 | 1 | Short
+- 1 | 1.5 | Thin
+- 1.5 | 3 | More room
+```
+
 ## Debt and interest
 
 Debt can finance worthwhile investment, but it also creates fixed obligations. Assess the amount of debt, its interest rate, maturity schedule and whether cash flows can service it.
@@ -23,6 +36,16 @@ Debt can finance worthwhile investment, but it also creates fixed obligations. A
 **Interest coverage ≈ Operating profit ÷ Interest expense**
 
 If operating profit is $1.5 million and interest expense is $300,000, coverage is **5 times**. That gives more room than coverage of 1.2 times, but the appropriate comfort level depends on volatility, the type of debt and the industry.
+
+```figure
+type: bars
+title: Interest coverage: room before profit fails to cover interest
+unit: times
+caption: The comfortable level depends on profit volatility, the type of debt and the industry.
+- *Example, $1.5m ÷ $0.3m | 5
+- Thin cover mentioned in the text | 1.2
+- Break-even cover | 1
+```
 
 ## Don't rely on debt-to-equity alone
 

@@ -26,6 +26,16 @@ Then a trigger arrives. It might be a rise in interest rates, an economic slowdo
 
 Once prices start falling, the forces that drove the boom go into reverse.
 
+```figure
+type: cycle
+title: The boom's forces running in reverse
+caption: Revulsion feeds on itself, and even projects that would be viable in normal conditions can fail.
+- Prices fall | collateral loses value
+- Lenders tighten | credit is harder to get
+- Forced selling | borrowers sell to repay
+- Spending and confidence drop | the wider economy weakens
+```
+
 ## Revulsion
 
 The stage after the turn is often called **revulsion**. The mood shifts from enthusiasm to aversion. Assets that everyone wanted become assets nobody wants.
@@ -83,6 +93,16 @@ A bust in one market spreads to the wider economy through several channels.
 ## Why some busts are worse than others
 
 Not all busts are equally damaging. Several factors determine how severe and long-lasting the aftermath will be.
+
+```figure
+type: compare
+title: What makes a bust milder or more severe
+cols: Milder bust | More severe bust
+caption: The deciding factor is usually how the boom was financed and who ends up holding the losses.
+- How the boom was financed | Mainly savings and equity | Mainly debt
+- Who holds the losses | Investors who can absorb them | Banks and highly indebted households
+- Boom-time investment | Modest | Very large, long-lasting overcapacity
+```
 
 | Factor | Milder bust | More severe bust |
 | --- | --- | --- |

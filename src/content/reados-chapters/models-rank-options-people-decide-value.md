@@ -42,6 +42,28 @@ Research on remanufacturing systems by Su, Shi and Dou, for example, found that 
 
 The practical lesson: **let analysis remove the clearly worse options, then spend leadership time on the genuine trade-offs.** Choosing a point on the frontier is not finding the mathematical optimum. It is choosing a balance, and the business should own that choice explicitly.
 
+```figure
+type: svg
+title: Dominated options and the efficient frontier
+alt: A chart of cost against throughput shows several options. Options on the frontier trade cost for throughput; an option behind the frontier is worse on both measures than another and is dominated.
+caption: Analysis can remove dominated options; choosing a point on the frontier is a preference, not a calculation.
+viewbox: 0 0 640 300
+body:
+<path class="ln" d="M70 30V250H610"/>
+<text class="tx" x="70" y="22">Throughput ↑</text>
+<text class="tx" x="610" y="272" text-anchor="end">Capital cost →</text>
+<path class="la draw" pathLength="1" d="M140 200C260 120 380 80 560 64"/>
+<circle class="fa" cx="140" cy="200" r="8"/>
+<circle class="fa" cx="330" cy="98" r="8"/>
+<circle class="fa" cx="460" cy="72" r="8"/>
+<circle class="bxi" cx="470" cy="150" r="8"/>
+<path class="li dsh" d="M462 142L338 106"/>
+<text class="txb" x="484" y="155">Dominated: costs more, does less</text>
+<text class="txa" x="150" y="190">Efficient</text>
+<text class="txa" x="340" y="90">Efficient</text>
+<text class="txa" x="470" y="64">Efficient</text>
+```
+
 ## Constraints, objectives and preferences
 
 Not everything belongs in the same trade-off. A sound decision separates three things:
@@ -124,6 +146,16 @@ Each is better than the others on something. The analyst's scoring sheet rates e
 | C | 6 | 8 | 9 | 7.4 | 7.45 |
 
 On the original weights, B narrowly wins. Moving five points of weight from throughput to changeover reverses the order. The decision is preference-sensitive, so the owner discusses the preference directly rather than accepting the score.
+
+```figure
+type: compare
+title: Five points of weight reverse the ranking
+cols: Weights 40 / 40 / 20 | Weights 40 / 35 / 25
+caption: The decision is preference-sensitive: discuss how much changeovers matter instead of trusting the decimal.
+- Option A: $180,000, 900/h, 45 min | 6.6 | 6.5
+- Option B: $240,000, 1,100/h, 40 min | 7.6, first | 7.3
+- Option C: $260,000, 1,050/h, 15 min | 7.4 | 7.45, first
+```
 
 The business's customers are increasingly ordering smaller batches of more varied products, which means more changeovers each day. That strategic direction favours C's much faster changeover over B's slightly higher speed. The owner chooses C, records the reasoning and sets a review condition: if average batch sizes have not fallen within a year, the choice will be reviewed before the next packing line is planned.
 

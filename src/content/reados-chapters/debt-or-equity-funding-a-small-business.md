@@ -108,9 +108,34 @@ Lenders assess **serviceability**: whether the business generates enough cash to
 
 Many businesses end up using both, at different stages and for different purposes. A useful principle is to **match the funding to the asset**: long-term assets such as machinery and premises suit long-term loans, short-term needs such as working capital suit short-term facilities, and risky, uncertain ventures suit equity.
 
+```figure
+type: compare
+title: Ten questions: debt or equity?
+cols: Favours debt | Favours equity
+caption: Many businesses use both, at different stages and for different purposes.
+- Cash flow | Predictable | Uncertain or delayed
+- Margins | High | Low
+- Cost | Lower | Higher
+- Security | Assets available | No assets, strong plan
+- Ownership and upside | Keep it all | Willing to share
+- Returns to funder | Fixed | Variable
+```
+
 ## Customers: the best investors
 
 Before borrowing or selling shares, ask whether your customers could fund your growth. Customer money is the cheapest funding there is: it costs no interest, requires no equity and proves that people want what you sell. Ways to raise it:
+
+```figure
+type: tree
+title: Ways customers can fund growth
+caption: Deposits are owed back if you cannot deliver; never spend them on unrelated costs.
+- Customer funding
+  - Deposits | on custom orders
+  - Progress payments | tied to milestones
+  - Pre-orders | before production
+  - Subscriptions and annual contracts | paid in advance
+  - Shorter payment terms | balanced with service
+```
 
 - **Deposits** on custom orders, common in manufacturing, construction and furniture.
 - **Progress payments** on long projects, tied to milestones.
@@ -155,6 +180,18 @@ A small precision engineering business earns steady revenue from long-term contr
 **Option B: equity.** An investor offers $300,000 for 25 per cent of the business. There are no repayments. But if the new contract lifts annual profit to $400,000, the investor's share is $100,000 a year, every year, for as long as they hold their shares.
 
 Because cash flow is predictable, margins are healthy and the machine provides security, debt is clearly the better choice here. The interest cost of about $73,650 over five years is small compared with permanently giving away a quarter of the business.
+
+```figure
+type: compare
+title: Funding a $300,000 CNC machine
+cols: Equipment finance | Equity investor
+best: 1
+caption: With predictable cash flow, debt costs about $73,650 in interest; equity would cost a quarter of the profits indefinitely.
+- What it costs | About $6,230 a month for five years | 25% of the business
+- Total cost | About $373,650, interest about $73,650 | $100,000 a year if profit reaches $400,000
+- When it ends | After five years | As long as the investor holds shares
+- Security | The machine | None
+```
 
 Now consider a different business: a two-person start-up developing a new medical device that needs two years of development and regulatory work before any sales. It has no assets and no revenue, and its future is uncertain. Fixed repayments would be impossible. Equity from angel investors, combined with grants and the R&D Tax Incentive where eligible, suits it far better.
 

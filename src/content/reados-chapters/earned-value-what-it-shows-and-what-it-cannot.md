@@ -37,6 +37,17 @@ From these come two simple variances and two indices:
 
 Two simple forecasts of final cost follow. If the cost performance so far continues, the **estimate at completion** is the total budget divided by the CPI. If the problems so far were one-off and the remaining work will go to budget, it is the actual cost plus the budget for the remaining work. The truth usually lies between, and showing both as a range is more honest than choosing one.
 
+```figure
+type: formula
+title: Earned value in two indices
+formula: CPI = EV ÷ AC
+formula: SPI = EV ÷ PV
+caption: Below 1 means less budgeted work per dollar spent, or less work done than planned; value here means budget, not benefit.
+- PV | budget for the work scheduled by now
+- EV | budget for the work actually completed
+- AC | what the completed work actually cost
+```
+
 ## "Value" means budget, not benefit
 
 The word "value" causes the most common misreading. In earned value, value means **the budget assigned to completed work**. It is not customer value, revenue, profit or business benefit. A job can earn its planned value perfectly while building something nobody will use, because the measure only asks whether authorised work is being completed efficiently, not whether that work is still worth doing.
@@ -72,6 +83,18 @@ The most important design choice in earned value is how work **earns** its value
 
 Two principles matter more than the choice of method. First, **reported progress should never run ahead of demonstrated achievement**. Second, **quality should gate earning**: if a package fails its agreed check, it has not fully earned its value, however much effort it absorbed. Shorter packages with tangible outputs make all of this easier; the [sizing work packages](/reados/collections/project-estimates-schedules-and-costs/sizing-work-packages-to-find-problems-in-time/) article covers why.
 
+```figure
+type: tree
+title: Progress rules agreed before work starts
+caption: "The hood is 90% done" is a judgement; a rule agreed in advance removes most of it.
+- How work earns its value
+  - 0/100 | nothing until complete; short packages
+  - 50/50 | half on starting, half on finishing
+  - *Weighted milestones | defined steps earn set shares
+  - Units completed | for repetitive work
+  - Measured physical progress | such as metres laid
+```
+
 ## Read the indices in context
 
 The indices are signals, not verdicts. Some common traps:
@@ -94,6 +117,17 @@ Earned value becomes more useful when it sits alongside other measures, so a gre
 5. **Benefits**: whether the reason for the job still holds.
 
 The [reports that change decisions](/reados/collections/business-systems-and-operating-rhythm/reports-that-change-decisions/) article covers building reports around forecasts and decisions rather than status colours.
+
+```figure
+type: checklist
+title: Earned value in a wider view
+caption: A green cost index means little if the result will not work or the reason for the job has gone.
+- Delivery efficiency | cost and schedule indices
+- Technical performance | requirements, defects, tests
+- Schedule health | critical path, float
+- Readiness | the people who will use it
+- *Benefits | the reason for the job still holds
+```
 
 ## When it is worth the effort
 
@@ -139,7 +173,31 @@ Now the picture is different:
 - **Estimate at completion**, if cost performance continues: 120,000 × 66,000 ÷ 60,000 = $132,000.
 - **Estimate at completion**, if the remaining work goes to budget: 66,000 + (120,000 − 60,000) = $126,000.
 
+```figure
+type: compare
+title: The kitchen fit-out at week 6, measured two ways
+cols: Supervisor's report | Weighted-milestone rule
+best: 2
+caption: Planned value $70,000 and actual cost $66,000 either way; the hood failed inspection and had earned only 60% of its $25,000.
+- Earned value | $70,000 | $60,000
+- SPI | 1.00 | 0.86
+- CPI | 1.06 | 0.91
+- The picture | On schedule, under budget | Behind plan, heading for an overrun
+```
+
 The forecast range is $126,000 to $132,000, an overrun of $6,000 to $12,000.
+
+```figure
+type: range
+title: Forecast cost at completion
+min: 110000
+max: 140000
+unit: $
+ticks: $110k | $125k | $140k
+caption: The low end assumes the remaining work goes to budget; the high end assumes cost performance so far continues.
+- Budget | 120000
+- *Estimate at completion | 126000 | 132000 | $6,000 to $12,000 over
+```
 
 The owner then checks the schedule rather than relying on the SPI. The cool room is independent of the hood and can start on time. But equipment commissioning cannot finish until the hood passes inspection, so the hood rework sits on the critical path. The owner books the re-inspection, asks the ductwork subcontractor to fix the defect under warranty, and moves the cool room installers forward to use the waiting time.
 

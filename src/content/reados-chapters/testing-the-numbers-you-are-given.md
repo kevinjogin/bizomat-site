@@ -24,6 +24,16 @@ A useful shift is to stop treating an estimate as a measurement and start treati
 
 For each important number in a proposal, ask:
 
+```figure
+type: steps
+title: Treat an estimate as testimony
+caption: Where nobody independent has checked a figure, say so.
+- Who produced it?
+- What outcome did they want?
+- Who checked it from outside the proposal?
+- *What could the checker change?
+```
+
 - **Who produced it?**
 - **What outcome did they want?**
 - **Who checked it from outside the proposal?**
@@ -70,6 +80,16 @@ A useful supporting rule: every forward-looking claim should state the rate it d
 
 Confidence is a human signal, not evidence. In any significant proposal, ask the author to label what is:
 
+```figure
+type: layers
+title: Label every number in a proposal
+caption: Separating the four makes it clear which numbers are being argued about.
+- Observed | facts from records
+- Calculated | derived from observed facts
+- Assumed | believed but not yet tested
+- *Preferred | a judgement about what the business should want
+```
+
 - **observed**: facts from records;
 - **calculated**: derived from observed facts;
 - **assumed**: believed but not yet tested;
@@ -103,6 +123,16 @@ The owner applies the four questions:
 - **When we will find out**: within about six weeks, by which time the fit-out's handover date would be at risk.
 
 At the achieved rate, the remaining work needs about 829 hours, a total of about 1,429 hours. Even at the subcontractor's best month, it needs about 611 hours, a total of about 1,211 hours. The recovery plan is not credible.
+
+```figure
+type: bars
+title: The joinery package: what the recovery plan needs
+unit: × planned rate
+caption: 580 budgeted hours remain with 400 left in the budget. The plan needs a rate never achieved, even in the best month.
+- Achieved so far | 0.7
+- Best month | 0.95
+- *Rate the plan requires | 1.45
+```
 
 The owner asks for a revised forecast stating its assumed rate, agrees an additional crew for the critical rooms, re-sequences the work and resets the handover plan with the client early, rather than discovering the problem in six weeks.
 

@@ -60,6 +60,24 @@ Return to the opening example, using an illustrative utility function in which u
 
 The certain amount has higher expected utility, so this decision maker rationally prefers it, despite the gamble's higher expected value.
 
+```figure
+type: line
+title: Diminishing utility of money: utility = √$
+x: Dollars ($'000)
+y: Utility
+ymin: 0
+ymax: 360
+mark: 50 | certain $50,000: 224
+mark: 30 | gamble's certainty equivalent
+caption: The gamble's expected utility (about 173) equals the utility of about $30,000 for certain, so this decision maker takes the certain $50,000.
+- 0 | 0
+- 10 | 100
+- 30 | 173
+- 50 | 224
+- 80 | 283
+- 120 | 346
+```
+
 The **certainty equivalent** of a lottery is the certain amount with the same utility. For this decision maker, the gamble is worth about $30,000 for certain (because √30,000 ≈ 173). They would accept any certain offer above $30,000 in place of the gamble.
 
 ## Risk attitudes
@@ -112,6 +130,17 @@ The **maximum expected utility principle** states that a rational agent should c
 
 In practice, applying the principle requires:
 
+```figure
+type: steps
+title: Applying the maximum expected utility principle
+caption: The arithmetic is simple; the judgement lies in the probabilities and utilities.
+- List the actions
+- Identify outcomes and probabilities
+- Assign utilities to outcomes
+- Calculate expected utility
+- *Choose the highest
+```
+
 1. listing the available actions
 2. identifying the possible outcomes of each, and their probabilities
 3. assigning utilities to the outcomes
@@ -143,6 +172,18 @@ A small manufacturer must choose between two projects with the same expected pro
 On expected value alone, they are equal, before considering the delay. But a $100,000 loss would force the business to draw on its overdraft and delay paying suppliers, which the owner considers very harmful. Through a few elicitation questions, the owner establishes that a $100,000 loss has utility far below what a straight-line scale would suggest.
 
 Taking risk aversion into account, Project B has the higher expected utility even after allowing for the delay. The owner chooses B and records the reasoning, which helps the team understand why the apparently "safer but slower" option was chosen.
+
+```figure
+type: compare
+title: Equal expected value, unequal utility
+cols: Project A | Project B
+best: 2
+caption: A $100,000 loss would force overdraft use and late supplier payments, so its utility sits far below a straight line.
+- Outcomes | 90%: +$100,000; 10%: −$100,000 | Certain +$80,000
+- Expected value | $80,000 | $80,000, before the delay
+- Downside | Survival-threatening loss | Main machine tied up three months
+- Risk-averse choice | Lower expected utility | Higher expected utility
+```
 
 ## Common mistakes
 

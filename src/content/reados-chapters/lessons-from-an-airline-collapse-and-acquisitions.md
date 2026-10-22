@@ -26,6 +26,18 @@ Analysts commonly point to the absence of a sustainable business model and long-
 
 The contrast with the successful low-cost competitor is instructive. It operated a **standardised fleet** of a single aircraft family, **standardised seating** and **standardised operations**, with relentless focus on punctuality, efficiency and cost. Standardisation reduced costs and complexity at every level.
 
+```figure
+type: compare
+title: Two airlines, the same conditions, different choices
+cols: The collapsed premium airline | The low-cost competitor
+best: 2
+caption: None of the competitor's choices was glamorous; together they built resilience.
+- Positioning | Premium service on many routes, some unprofitable | Low fares, on-time, simple service
+- Fleet | Mixed aircraft types and configurations | A single aircraft family
+- Growth | Acquisitions and international expansion while losing money | Expansion matched to demand and finances
+- Management | Weak full-time professional management | Professional management and discipline
+```
+
 **Lesson for any business**: complexity is expensive. Every additional product variant, customer type, process or system adds cost. Successful businesses standardise wherever customers do not value variety, and add complexity only where it earns its keep.
 
 ## Lesson 2: Acquisitions and expansion while losing money
@@ -93,6 +105,18 @@ Many mergers and acquisitions fail to deliver expected value. Common causes incl
 
 Before acquiring, be clear about the strategic logic, assess culture and integration challenges honestly, pay a price justified by realistic synergies and plan integration in detail.
 
+```figure
+type: checklist
+title: Why many acquisitions fail to deliver
+caption: Be clear about the logic, test culture honestly, pay for realistic synergies and plan integration in detail.
+- x Culture mismatch | often cited as the most common cause
+- x Overpaying | optimism or competition for the deal
+- x Poor integration planning | systems, processes, people, customers
+- x Unclear strategic rationale
+- x Distraction from the core business
+- x Brand confusion | as in the airline case
+```
+
 ## Building and empowering teams
 
 Experienced founders consistently identify two essentials for entrepreneurs in any industry:
@@ -143,6 +167,16 @@ Signs that a business is overreaching, as the airline did, include:
 - Leaders spending more time on deals and publicity than on operations.
 
 When several of these appear together, pause expansion, review the core business and restore discipline before it is too late.
+
+```figure
+type: stats
+title: Early warning signs of strategic overreach
+caption: When several appear together, pause expansion and restore discipline in the core business.
+- ↑ revenue ↓ margin | Growth without profit
+- ↑ debt > ↑ profit | Borrowing outpacing earnings
+- New before proven | Ventures launched before the existing ones pay
+- ↑ complexity | More products, sites and systems without clear benefit
+```
 
 ## What the successful competitor did differently
 

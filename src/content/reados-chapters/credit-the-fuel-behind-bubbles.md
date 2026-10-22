@@ -22,6 +22,16 @@ This article explains how credit fuels bubbles, why lending tends to expand in b
 
 The mechanism is a feedback loop.
 
+```figure
+type: cycle
+title: The credit feedback loop in a boom
+caption: As long as prices rise the loop looks virtuous; when they fall, it runs in reverse.
+- Rising prices lift collateral values
+- Lenders feel safer and lend more
+- Borrowers buy more assets
+- Demand pushes prices higher again
+```
+
 1. **Asset prices rise.** A genuine opportunity, falling interest rates or rising incomes push prices up.
 2. **Collateral values rise.** Assets that have risen in value can support larger loans. A house worth more can be borrowed against; shares worth more can secure a larger margin loan.
 3. **Lenders lend more.** With higher collateral values and recent experience of few losses, lenders become more willing to lend, and on easier terms.
@@ -55,6 +65,15 @@ The economist Hyman Minsky offered a useful way to understand how borrowing beco
 - **Ponzi borrowers** (named after a notorious fraud, though Minsky did not mean they were fraudulent) cannot meet even their interest from income. They rely on rising asset prices, so that they can sell or borrow more, to stay afloat.
 
 Minsky argued that long periods of stability encourage a gradual shift from hedge to speculative to Ponzi borrowing, as confidence grows and lenders relax. The system becomes more fragile precisely because it has been stable. When asset prices stop rising, Ponzi and speculative borrowers are forced to sell, and their selling pushes prices down further.
+
+```figure
+type: layers
+title: Minsky's three kinds of borrower
+caption: Long stability encourages a drift from hedge to speculative to Ponzi borrowing.
+- Hedge | income meets interest and loan repayments; safe if prices stop rising
+- Speculative | income meets interest; relies on refinancing the principal
+- *Ponzi | income cannot meet even interest; relies on rising asset prices
+```
 
 ## Money growth, credit growth and real interest rates
 
@@ -124,6 +143,17 @@ Prices then fall 15%, and the property is worth $680,000.
 | Share of deposit lost | 37.5% | 150% |
 
 Buyer A has lost a substantial amount but retains equity and can choose when to sell. Buyer B is in negative equity, owing more than the property is worth. If Buyer B's income falls or interest rates rise, they may be forced to sell at a loss larger than their entire deposit.
+
+```figure
+type: compare
+title: A 15% price fall with different deposits
+cols: Buyer A: 40% deposit | Buyer B: 10% deposit
+caption: Both buy for $800,000; the property falls to $680,000. Leverage turns the same fall into negative equity.
+- Deposit | $320,000 | $80,000
+- Loan | $480,000 | $720,000
+- Equity after the fall | $200,000 | −$40,000
+- Share of deposit lost | 37.5% | 150%
+```
 
 Multiply Buyer B across a whole market, and the forced selling, lender losses and reduced spending explain why credit-fuelled busts are so damaging.
 

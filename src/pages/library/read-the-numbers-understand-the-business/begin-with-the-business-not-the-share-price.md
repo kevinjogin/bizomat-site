@@ -16,11 +16,32 @@ A business that made an unusually large profit last year is not necessarily a go
 
 Neither business is automatically a good investment. Harbour could be a bargain at the right price; Precision could be overpriced or lose its advantage if a better technology appears. Financial statements help us investigate the economic difference between the two.
 
+```figure
+type: compare
+title: Two imaginary manufacturers, two different positions
+cols: Harbour Fasteners | Precision Seal Systems
+caption: Switching costs may protect Precision, but only if quality and pricing discipline hold. Neither is automatically a good investment.
+- What it sells | Standard bolts | A specialised component built into production lines
+- Customer switching | Easy | Requires testing, documentation and downtime
+- Competitive pressure | Frequent undercutting; every order defended | Protected while quality and pricing hold
+- What to verify | Whether profit survives price competition | Whether results support the claimed advantage
+```
+
 ## Look for evidence, not a good story
 
 A potentially durable advantage can come from reputation, cost efficiency, distribution, network effects, switching costs, patents or specialised know-how. Each has weaknesses. Brands fade, low-cost operators face new competitors, patents expire, and technology can make established products obsolete.
 
 Ask whether the company's reported numbers support its claimed advantage. Does it maintain profits when rivals struggle? Can it raise prices without losing customers? Does it generate cash after maintaining its assets? Does its debt remain manageable?
+
+```figure
+type: steps
+title: Treat an advantage as a hypothesis
+caption: A clear explanation of strengths starts the analysis; several years of numbers test it.
+- Name the claimed advantage | reputation, cost, switching costs, patents…
+- Predict what it should show | steady margins, pricing power, returns
+- Check several years of results | not one exceptional year
+- *Ask what could weaken it | competitors, technology, customers
+```
 
 A clear explanation of a company's strengths is the beginning of analysis, not the conclusion.
 

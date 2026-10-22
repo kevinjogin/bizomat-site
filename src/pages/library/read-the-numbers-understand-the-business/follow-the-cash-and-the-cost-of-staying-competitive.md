@@ -12,6 +12,16 @@ Operating cash flow measures the cash produced or used by normal operations afte
 
 A business expanding rapidly may have to purchase materials and extend credit to customers. That can absorb cash even while sales and accounting profit grow. This is not automatically bad, but it deserves explanation.
 
+```figure
+type: steps
+title: Why growth can absorb cash before it returns it
+caption: Profit can be reported while the cash is still tied up in stock and unpaid invoices.
+- Buy materials | cash goes out first
+- Hold inventory | cash sits in stock
+- Sell on credit | profit is recorded; cash is not
+- *Collect receivables | cash finally returns
+```
+
 ## Capital expenditure
 
 Capital expenditure, often shortened to **capex**, is money invested in longer-lived assets such as machinery, buildings and production equipment. Some projects maintain existing operations; others increase future capacity.
@@ -33,6 +43,16 @@ Consider two fictional businesses:
 | Simplified free cash flow | $1.7m | $0.5m |
 
 Both generate the same operating cash flow, but the amount remaining after capital expenditure differs. This alone does not prove that Stable Services is better; Machinery Works might be building profitable new capacity.
+
+```figure
+type: compare
+title: Same operating cash, very different free cash
+cols: Stable Services | Machinery Works
+caption: Simplified free cash flow ≈ operating cash flow − capital expenditure. It is a starting measure, not the whole story.
+- Operating cash flow | $2.0m | $2.0m
+- Capital expenditure | $0.3m | $1.5m
+- Simplified free cash flow | $1.7m | $0.5m
+```
 
 ## Ask what the spending achieves
 

@@ -32,6 +32,17 @@ Large manufacturers, such as Siemens, have argued publicly that supplier partner
 - **Suppliers will share innovation automatically.** Suppliers rarely share their best ideas if doing so exposes their intellectual property, costs them money or simply hands a concept to the buyer to put out to tender.
 - **Spend tells you importance.** A low-spend specialist can be critical, while a high-spend commodity supplier may be easy to replace.
 
+```figure
+type: checklist
+title: Common misreadings of supplier relationships
+caption: Partnerships consume management time; reserve them for relationships where joint value justifies it.
+- x Better relationships mean paying more | they can improve forecasting and responsiveness
+- x Every important supplier needs a partnership
+- x Competition and collaboration cannot coexist
+- x Suppliers share innovation automatically | not if it exposes their IP
+- x Spend tells you importance | a low-spend specialist can be critical
+```
+
 ## Segment by value and dependency
 
 A widely used tool for segmenting purchases is the matrix proposed by Peter Kraljic in 1983, which places categories by their impact on profit and their supply risk. A practical version for most businesses uses four groups of supplier:
@@ -69,6 +80,16 @@ Practical pathways include:
 - **Development agreements** for larger concepts, setting out funding, ownership and use.
 - **Joint pilots** with defined success criteria before commitment.
 - **Regular roadmap reviews** with strategic suppliers, discussing technology, capacity and future demand before they become formal tenders.
+
+```figure
+type: steps
+title: Giving supplier ideas a commercial home
+caption: Decide in advance what happens when a supplier brings a good idea, or it will not bring the next one.
+- Continuous improvement clauses | small ideas, shared savings
+- Development agreements | funding, ownership, use
+- Joint pilots | success criteria first
+- *Roadmap reviews | before needs become tenders
+```
 
 Recognising suppliers' contributions also protects their incentive to bring ideas. A supplier that sees its concept immediately put out to tender with competitors will not offer another. At the same time, the language of innovation should not become a reason for permanent, unchallenged single sourcing.
 
@@ -114,6 +135,17 @@ The owner and purchasing manager segment the main suppliers:
 - **An electronics design firm** develops the control unit used in the business's most advanced product. Treated as an **innovation partner**: a development agreement covering ownership of new designs, how development costs are shared and a twice-yearly roadmap review.
 
 Within a year, a valve supply interruption that would previously have stopped production for weeks is absorbed by safety stock and the second source. Powder-coating rework falls after the joint review identifies a masking problem. The electronics partner proposes a lower-cost controller design, and the agreement makes clear how the savings will be shared. Purchasing spends less time on steel quotes and more on the relationships that matter most.
+
+```figure
+type: tree
+title: The lifting equipment maker's suppliers, segmented
+caption: A valve interruption that once would have stopped production for weeks was absorbed by safety stock and a second source.
+- About 60 suppliers
+  - Transactional | steel sections and plate: largest spend, several distributors
+  - Performance-critical | hydraulic valves: small spend, sole source, twelve-week lead time
+  - Performance-critical | powder coating: every product's appearance and delivery
+  - *Innovation partner | electronics design: development agreement, roadmap reviews
+```
 
 ## How this applies to a small Australian business
 

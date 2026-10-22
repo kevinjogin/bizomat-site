@@ -34,6 +34,19 @@ A job can be late without the contractor being entitled to more time. It can als
 
 Each link needs evidence. A claim that skips a link becomes an assertion, and assertions harden into disputes.
 
+```figure
+type: steps
+title: Delay is a chain of cause and effect
+caption: A claim that skips a link becomes an assertion.
+- Event | what happened, when
+- Responsibility | whose risk
+- Notice | in time, as required
+- Effect on the work | which activities
+- *Effect on completion | or only float used
+- Mitigation | steps taken
+- Decision | time, money or both
+```
+
 ## Common misreadings
 
 - **Anything outside the contractor's control earns more time.** Not necessarily. It depends on what the contract says qualifies.
@@ -67,6 +80,17 @@ When a job falls behind, there is pressure to "just catch up". Acceleration, add
 - the customer insists on the original date while refusing a justified extension, leaving the contractor to speed up and argue about cost later.
 
 The last situation is where disputes grow. If extra resources or resequencing are needed to protect a date, agree the commercial basis in writing before the money is spent.
+
+```figure
+type: tree
+title: Four ways a job gets accelerated
+caption: When the customer refuses a justified extension but holds the date, record the extra cost as it happens.
+- Acceleration
+  - Recovering its own delay | at the contractor's cost
+  - Directed by the customer | usually with a price adjustment
+  - Agreed after a customer delay
+  - *Original date insisted on, extension refused | where disputes grow
+```
 
 Recovery is not a choice between accepting delay and forcing speed. Options may include resequencing, partial handover, extra shifts, an alternative supplier, temporary work-arounds, deferring part of the scope or completing unaffected areas first. Each has a different cost and contractual consequence.
 
@@ -113,10 +137,28 @@ The electrician then looks at the effect rather than just the dates. Its program
 
 It claims a 3-day extension, with the reasoning, rather than 12. The builder at first replies "no extension, just catch up". The electrician sets out the options in writing:
 
+```figure
+type: formula
+title: From a 12-day late handover to a 3-day claim
+formula: Effect on completion = Delay − Float available − Delay absorbed by resequencing
+caption: The programme saved the week before the event was the evidence; the electrician's own two-day switchboard delay stayed its own risk.
+step: 12 days − 4 days of float − 5 days moved to level 3 work
+step: About 3 days
+```
+
 - With a 3-day extension, finishing on 3 July costs nothing in liquidated damages.
 - Without one, it could finish on time by adding an electrician for three days, at about $2,280 (3 days × 8 hours × $95). It asks the builder to confirm in writing whether it is directing acceleration and on what commercial basis before committing the extra labour.
 
 Faced with a clear, evidence-based claim for 3 days rather than an inflated one for 12, the builder grants the extension. The electrician records the cause in its own delay log; over the next year, late handover of ceiling spaces turns out to be a recurring pattern with this builder, and the electrician starts allowing for it in its programme and pricing.
+
+```figure
+type: decision
+title: The options put to the builder in writing
+question: "No extension, just catch up"?
+caption: An evidence-based claim for 3 days, rather than an inflated one for 12, was granted.
+- *Grant the 3-day extension | Finish on 3 July | no liquidated damages at $500 a day
+- Hold 30 June | An extra electrician for three days | about $2,280, once the builder confirms the commercial basis in writing
+```
 
 ## How this applies to a small Australian business
 

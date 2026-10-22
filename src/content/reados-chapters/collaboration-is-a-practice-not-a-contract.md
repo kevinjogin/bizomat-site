@@ -47,6 +47,19 @@ How far to go depends on two questions:
 
 Routine, well-defined work rarely needs more than good contract management. Work with many handoffs, unknown conditions or a need for joint decisions benefits from deliberate collaborative practices, whatever the contract form. Large risk-sharing arrangements such as alliances are one end of the spectrum, not the only way to collaborate. The [matching the contract to the work](/reados/collections/commercial-law-and-contracts/matching-the-contract-to-the-work/) article covers scaling contract structure to the job.
 
+```figure
+type: matrix
+title: How far collaboration should go
+x: Dependence on joint problem-solving: low → high
+y: Uncertainty: low → high
+hot: 2
+caption: Collaborative practices can be added to almost any contract; deeper risk sharing suits uncertain, interdependent work.
+- Conventional contract | with strong change management
+- *Deeper sharing of risk and reward | may be justified
+- A conventional contract | managed well
+- Conventional contract | with collaborative practices added
+```
+
 ## Collaboration is a capability, not a mood
 
 Collaboration is often confused with pleasantness. Real collaboration includes disagreement, challenge and accountability. People can be friendly while withholding information, and robust while being completely honest. What matters is whether problems surface early and get solved jointly.
@@ -64,6 +77,15 @@ On larger engagements, a neutral facilitator can help set up working norms, run 
 
 Culture works in layers. On the surface are visible things: procedures, meeting formats, templates. Below them are shared values about fairness, speed and control. Below those are assumptions people rarely state: "contractors always look for variations", "the customer always changes the scope", "head office does not understand site work", "procurement just slows things down". These assumptions shape behaviour even when official policy says otherwise.
 
+```figure
+type: layers
+title: Culture sits below the procedures
+caption: Unstated assumptions shape behaviour even when official policy says otherwise.
+- Visible | procedures, meeting formats, templates
+- Shared values | fairness, speed, control
+- *Unstated assumptions | "contractors always look for variations", "the customer always changes the scope"
+```
+
 Professional cultures also collide. Engineers may prioritise technical robustness, commercial staff contractual exposure, operations continuity and project leads the schedule. None is wrong. Conflict becomes destructive when one group treats its own definition of success as the only legitimate one.
 
 The way work is bought sends signals too. Choosing on lowest price alone works well for simple, fully specified work. Used for uncertain work, it can select contractors with no room to absorb surprises, who then have every reason to treat each change as a claim.
@@ -78,6 +100,16 @@ The most revealing moment is not the kick-off. It is the first time something go
 - **Can technical and commercial people disagree without going around each other?**
 
 Routines make good behaviour easier when pressure rises: joint risk reviews, clear escalation steps, a disciplined issue log and agreed decision times reduce the need for personal trust to carry the whole relationship. Equally, how the customer responds to the first early warning teaches the contractor whether early warnings are worth giving. The [resolving disagreements without stopping work](/reados/collections/commercial-law-and-contracts/resolving-disagreements-without-stopping-work/) article covers keeping undisputed work moving while issues are settled.
+
+```figure
+type: checklist
+title: What the first problem reveals
+caption: The real culture appears the first time something goes wrong, not at the kick-off.
+- ? Is information disclosed quickly | or are positions protected first?
+- ? Causes or blame?
+- ? Contract notices as governance | or as threats?
+- ? Can technical and commercial people disagree | without going around each other?
+```
 
 ## Include the people who do the work
 
@@ -121,6 +153,16 @@ In week three, the builder finds that old drainage under the floor does not meet
 At the week five review, the electrician points out that the switchboard location on the drawings clashes with the joiner's planned reception counter. Because both are in the room, they agree a small change to the counter on the spot, and the owner approves it the next day. Without the joint review, the clash would have been discovered when the counter arrived on site.
 
 The clinic opens one week late instead of the three or four weeks the drainage problem might otherwise have caused. When the builder later offers a suggestion that saves the owner money on joinery, it comes up at the risk review rather than being held back. Both businesses work together on the next clinic.
+
+```figure
+type: timeline
+title: The clinic fit-out under a few agreed routines
+caption: One week late instead of the three or four weeks the drainage problem might otherwise have caused.
+- Start | Routines agreed | fortnightly risk review, shared issue log, escalation within a week
+- Week 3 | Old drainage fails current requirements | logged same day with two options; decided in two days
+- Week 5 | Switchboard clashes with the counter | spotted at the review; agreed on the spot
+- *Opening | One week late | and a joinery saving offered openly
+```
 
 ## How this applies to a small Australian business
 

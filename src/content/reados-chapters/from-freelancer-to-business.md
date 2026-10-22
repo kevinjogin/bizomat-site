@@ -34,6 +34,16 @@ Your purpose shapes how much effort, risk and investment you commit. People who 
 
 The best freelance offers sit where three things meet:
 
+```figure
+type: venn
+title: Where the best freelance offer sits
+centre: Your offer
+caption: When all three align, clients and income follow far more easily.
+- What you are good at | strongest skills and results
+- What you enjoy | work you can sustain
+- What clients will pay for | real demand
+```
+
 1. **What excites you**: work you enjoy enough to do well and consistently.
 2. **Your skills**: what you are genuinely good at.
 3. **Market demand**: what people will pay for.
@@ -116,6 +126,16 @@ Key practices:
 ### Budget for irregular income
 
 Freelance income varies month to month. Review a year of bank and card statements to understand your true living and business costs, then work out how much you need to earn. If your personal and business costs total $5,000 a month, you may need to invoice considerably more to cover tax, superannuation, quiet periods and savings. In good months, save for the lean ones. A budget tells your money where to go, instead of leaving you wondering where it went.
+
+```figure
+type: layers
+title: What a freelancer's invoices must cover
+caption: Review a year of statements first; invoicing must cover far more than living and business costs.
+- Personal and business costs | e.g. $5,000 a month
+- Tax set aside | quarterly instalments at personal rates
+- Superannuation | your own retirement savings
+- *Quiet periods and savings | months with little work
+```
 
 ## Building a balanced client portfolio
 
@@ -215,6 +235,16 @@ Many freelancers eventually hit a ceiling: there are only so many hours in a wee
 - **Expand geographically** or into new segments.
 
 The shift from freelancer to business owner involves integrating, delegating, eliminating and automating work, so that the business does not depend entirely on your hours.
+
+```figure
+type: steps
+title: Growing beyond your own hours
+caption: The business stops depending entirely on one person's time.
+- Integrate | systems and routines that hold the work together
+- Delegate | to staff or subcontractors
+- Eliminate | work that adds no value
+- *Automate | repetitive tasks
+```
 
 ## A worked example
 

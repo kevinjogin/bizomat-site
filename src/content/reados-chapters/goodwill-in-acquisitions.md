@@ -80,6 +80,18 @@ Goodwill = $2,000,000 − $1,500,000 = **$500,000**.
 
 Note that customer relationships and the brand ($500,000 together) are recognised separately. Without identifying them, goodwill would have appeared to be $1,000,000.
 
+```figure
+type: formula
+title: The goodwill equation for a 100% purchase
+formula: Goodwill = Consideration + NCI + Previously held interest − Identifiable net assets
+caption: Identifying the customer relationships and brand halves the goodwill figure from $1.0m to $0.5m.
+- Consideration | $2,000,000 cash
+- NCI, previous interest | none, as 100% is bought
+- Identifiable net assets | $1,500,000, including $300,000 customer relationships and $200,000 brand
+step: Goodwill = $2,000,000 − $1,500,000
+step: Goodwill = $500,000
+```
+
 ### Example 2: buying 75%
 
 Now suppose the buyer pays $1,500,000 for 75% of the same company.
@@ -119,6 +131,17 @@ Measuring the fair values of every asset and liability takes time, and acquisiti
 
 Under Australian standards (AASB 136 *Impairment of Assets*), goodwill is **not amortised**. Instead:
 
+```figure
+type: steps
+title: Annual goodwill impairment testing under AASB 136
+caption: Goodwill is not amortised, and an impairment loss on goodwill is never reversed.
+- Allocate goodwill | to cash-generating units that benefit
+- Test at least annually | and whenever there is an indication
+- Find the recoverable amount | higher of fair value less disposal costs, and value in use
+- Compare with carrying amount | including the goodwill
+- *Recognise any shortfall | reduce goodwill first; never reversed
+```
+
 - goodwill is allocated to the **cash-generating units**, or groups of units, expected to benefit from the acquisition; a cash-generating unit is the smallest group of assets that generates largely independent cash inflows
 - each unit, or group of units, containing goodwill is tested for impairment **at least annually**, and whenever there is an indication of impairment
 - the unit's **recoverable amount**, the higher of its fair value less costs of disposal and its value in use (the present value of expected future cash flows), is compared with its carrying amount
@@ -128,6 +151,17 @@ Under Australian standards (AASB 136 *Impairment of Assets*), goodwill is **not 
 ### Why goodwill gets impaired
 
 Common causes of goodwill impairment include:
+
+```figure
+type: checklist
+title: Why goodwill gets impaired
+caption: Repeated impairments often point to overpayment or poor integration.
+- x Underperformance | the acquired business misses its forecasts
+- x Missing synergies | expected savings or revenue never arrive
+- x Adverse change | market, technology or regulation
+- x Higher interest rates | lower present value of future cash flows
+- x Overpayment | especially in booms
+```
 
 - the acquired business underperforming its forecasts
 - expected synergies failing to materialise

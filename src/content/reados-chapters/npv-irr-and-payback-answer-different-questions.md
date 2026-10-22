@@ -28,6 +28,16 @@ This article explains what each measure tells you, when the internal rate of ret
 
 Each is a lens on the same commitment. The aim is not to choose a favourite but to understand what each reveals.
 
+```figure
+type: compare
+title: Three measures, three questions
+cols: The question it answers | What it hides
+caption: Three lenses, not three votes: use NPV for value, IRR and payback as checks.
+- NPV | How much value, in today's dollars, above the required return? | Depends on forecasts and the discount rate
+- IRR | What discount rate makes NPV zero? | Scale; can mislead with unusual cash flows
+- Payback | How long until the money is back? | Time value and everything after payback
+```
+
 ## NPV: total value created
 
 NPV discounts each future cash flow back to today at a chosen rate, usually the return the business requires for this level of risk, and subtracts the investment. A positive NPV means the investment is expected to earn more than the required return.
@@ -70,12 +80,34 @@ This is an illustration. A small food business is choosing between two packing u
 
 Option A wins on IRR and payback. Option B wins on NPV. To see which is better, look at the **extra** investment B requires compared with A:
 
+```figure
+type: compare
+title: Two packing upgrades, only one can be installed
+cols: Option A: semi-automatic | Option B: automated line
+caption: A wins on IRR and payback; B creates more value at a 10% required return because its extra $110,000 earns about 15%.
+- Investment | $40,000 | $150,000
+- Annual saving, six years | $16,000 | $45,000
+- NPV at 10% | about $29,700 | about $46,000
+- IRR | about 33% | about 20%
+- Payback | 2.5 years | about 3.3 years
+```
+
 - Extra cost: $150,000 − $40,000 = $110,000.
 - Extra saving: $45,000 − $16,000 = $29,000 a year for six years.
 - NPV of the extra at 10%: about $16,300.
 - IRR of the extra: about 15%.
 
 The additional $110,000 earns about 15%, above the 10% required return, so if the business can fund it and the risks are similar, Option B creates more value. That also explains the disagreement: at a discount rate of about 15%, the two options have roughly the same NPV. Below that rate B is better; above it A is better.
+
+```figure
+type: formula
+title: Compare alternatives on the extra investment
+formula: Incremental case = Option B − Option A
+caption: At a discount rate of about 15% the two options have roughly the same NPV: below it B wins, above it A wins.
+step: Extra investment: $150,000 − $40,000 = $110,000
+step: Extra saving: $45,000 − $16,000 = $29,000 a year for six years
+step: NPV of the extra at 10% ≈ $16,300; IRR of the extra ≈ 15%
+```
 
 One more check shows how fragile each answer is. At a 10% required return, Option B still breaks even if its annual saving falls to about $34,400, roughly 23% below forecast. Option A breaks even at about $9,200 a year, so its saving could fall by more than 40%. And the extra $29,000 a year that justifies choosing B over A only needs to fall by about 13%, to roughly $25,300, before the extra $110,000 stops paying its way. Option B creates more value if the forecasts hold; Option A is far more forgiving if they do not.
 

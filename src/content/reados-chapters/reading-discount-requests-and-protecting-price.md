@@ -67,6 +67,15 @@ Price erosion is hard to spot for three reasons. Each concession is defensible o
 
 A buyer usually asks for a discount for one of two reasons:
 
+```figure
+type: decision
+title: What is this discount request reporting?
+question: Ask before discussing a number: why does the price not work?
+caption: The two conditions arrive in the same sentence and need opposite responses.
+- Alternatives | Someone else could supply this | reduce alternatives structurally, or show value they miss
+- *Objections | Something in the offer falls short | fix the gap, such as delivery or training, not the price
+```
+
 - **Alternatives**: someone else could plausibly supply what you supply.
 - **Objections**: something in your offer does not yet justify the price, such as delivery reliability, service, features or terms.
 
@@ -116,11 +125,34 @@ This is an illustration. A small supplier of industrial dosing systems lists its
 
 The owner builds a simple value model. Customers using the system typically save about $30,000 a year in chemical waste and labour, which they can see in their own chemical invoices and timesheets. Over a five-year life, that is about $150,000, so the list price represents a modest share of the value created.
 
+```figure
+type: stack
+title: Who gets the value of a $24,000 dosing system
+unit: $'000 over five years
+caption: About $150,000 of savings over a five-year life; the list price is a modest share of the value created.
+- Customer's net gain | 126
+- Supplier's price | 24
+```
+
 The business adds a field to its sales records. After one quarter, about 60% of discount requests relate to objections, mainly slow installation scheduling and limited operator training, and about 40% to alternatives, mainly a cheaper imported unit without local service.
 
 The owner fixes the objections by guaranteeing installation dates and adding a training package. For alternatives, sales staff present the value model, including the cost of downtime without local service. Sales staff stop seeing unit cost and instead work with the value model, price bands and a rule that concessions above 5% need the owner's approval with a written recovery mechanism, such as a multi-unit order in the contract.
 
 Over the next two quarters, the average realised price rises to about $22,300, restoring the dollar margin to about $7,300 per unit, while the win rate holds steady.
+
+```figure
+type: line
+title: Dosing system: realised price and margin per unit
+x: Point in time
+y: $ per unit ($'000)
+legend: Realised price | Dollar margin per unit
+ymin: 0
+ymax: 26
+caption: List $24,000, build cost about $15,000. Two years of unmanaged discounts, then two quarters of fixing objections and using a value model.
+- Before drift | 24 | 9
+- After two years | 19.8 | 4.8
+- Two quarters later | 22.3 | 7.3
+```
 
 ## How this applies to a small Australian business
 

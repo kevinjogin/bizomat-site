@@ -29,6 +29,24 @@ Bargaining power in a supply relationship follows a predictable curve, and few b
 
 Terms are therefore not equally available at all times. They are cheapest at the peak and often unobtainable soon after. A business that reaches award without a list of what it wants besides price has not saved the negotiation for later. It has given it away.
 
+```figure
+type: svg
+title: Bargaining power is a wasting asset
+alt: A curve of the buyer's bargaining power over a purchase. It is low while the requirement is unclear, rises while suppliers compete, peaks between shortlisting and award, then collapses at signature and keeps falling.
+caption: Terms are cheapest at the peak, between shortlisting and award, and most expensive afterwards.
+viewbox: 0 0 640 260
+body:
+<path class="ln" d="M50 220H610M50 30V220"/>
+<path class="la draw" pathLength="1" d="M60 190C140 186 180 150 250 110S350 52 380 52C400 52 405 150 420 170S520 200 600 205"/>
+<circle class="fa pulse" cx="378" cy="52" r="8"/>
+<text class="txa" x="378" y="36" text-anchor="middle">Shortlist to award</text>
+<text class="tx" x="100" y="242" text-anchor="middle">Defining</text>
+<text class="tx" x="250" y="242" text-anchor="middle">Competing</text>
+<text class="tx" x="412" y="242" text-anchor="middle">Signature</text>
+<text class="tx" x="545" y="242" text-anchor="middle">Living with it</text>
+<path class="dsh ln" d="M412 60V220"/>
+```
+
 There is a commercial logic to this. Price is the term a supplier can concede fastest and recover most easily, through volume, variations or the next renewal. Reporting obligations, named people, service standards with remedies and exit arrangements are structural: they change how the supplier must run your account. A supplier will trade structural terms for winning the work while it is still competing, and has little reason to afterwards.
 
 ## Price describes the good year; terms describe the bad one
@@ -72,6 +90,18 @@ The fix is to ask suppliers, in the request itself, to state their **departures*
 5. **Weigh material departures in the decision**, alongside price and quality, rather than scoring every deviation mechanically.
 6. **Record who accepted each material departure and why.**
 
+```figure
+type: steps
+title: Bringing departures into the open
+caption: One change to liability, IP ownership or acceptance testing can matter more than a dozen minor edits.
+- Issue preferred terms | with the request
+- List every departure | reason and alternative wording
+- Deal-breakers or preferences
+- Sort by consequence
+- *Weigh material ones | alongside price and quality
+- Record who accepted them
+```
+
 Be proportionate. The aim is to remove uncertainty that could change which supplier you choose, not to finalise every word before selection. And if you are running a formal tender, the process must stay fair: clarifying a supplier's offer is different from giving one bidder a private chance to improve it. Where rules apply to the process, follow them and take advice.
 
 ## Make sure your terms are the ones that govern
@@ -95,11 +125,29 @@ If your business is the smaller party signing a supplier's standard form, the Au
 - **The worst-quarter test.** Describe the quarter you would least like to have: an outage, a surge in demand, a key person leaving, a regulator's letter. Then read the draft agreement and mark every clause that would help. If the marks cluster around price and payment, the arrangement is built for the year you expect, not the one you might get.
 - **The exit test.** If we needed to leave in year two, what would it cost, how long would it take, and would we get our data and records back in a form we can use?
 
+```figure
+type: checklist
+title: Three tests before you sign
+caption: Each test describes the bad year that price alone cannot describe.
+- ? Walk-away | what is our alternative, in writing?
+- ? Worst quarter | outage, surge, key person leaving: what happens?
+- ? Exit | leaving in year two: cost, time, data back?
+```
+
 ## A worked example
 
 This is an illustration. An online retailer selling homewares is moving its storage and dispatch to a third-party logistics warehouse on a three-year agreement. It ships about 3,000 orders a month and has shortlisted two providers.
 
 Provider A quotes $4.10 per order and Provider B $4.35. At 3,000 orders a month, the difference is $750 a month, or $9,000 a year. The owner's first instinct is to negotiate A down further and sign.
+
+```figure
+type: formula
+title: The visible difference between two warehouse quotes
+formula: Annual difference = Price gap per order × Orders a month × 12
+caption: Real, but only part of the comparison once the terms are on the table.
+step: ($4.35 − $4.10) × 3,000 × 12
+step: $750 a month, or $9,000 a year
+```
 
 Instead, before opening price discussions, the owner and the operations manager spend an hour writing a terms schedule: what they want, what it protects, who will use it, and what they will do if the provider refuses.
 
@@ -114,6 +162,17 @@ They send the schedule to both providers with their preferred terms and ask for 
 The owner runs the worst-quarter test: a damaged pallet or a stock count that does not reconcile in the busy season. Under A's terms, most of that loss would stay with the retailer. The owner asks the business's insurance broker whether stock held at a third party's premises is covered, and what extending cover would cost. With that figure, the comparison changes: A's saving is still real, but smaller than it looked.
 
 The owner chooses A, records the decision to accept the liability position and the extra insurance, and signs an agreement that states it overrides the provider's quote and order forms. Two years later, when a dispatch backlog appears, the daily reports show it within a week and the fee credits apply automatically. None of that would have been available if the negotiation had only been about the price per order.
+
+```figure
+type: compare
+title: The two logistics providers once departures were declared
+cols: Provider A | Provider B
+caption: The insurance cost of A's liability limit made its saving smaller than it looked; the owner chose A knowingly and recorded why.
+- Price per order | $4.10 | $4.35
+- Reports, named manager, exit terms | Accepted | Accepted
+- Liability for lost or damaged stock | A small amount per carton, not negotiable | Accepted almost everything
+- Worst-quarter test | Most of the loss stays with the retailer | Not needed
+```
 
 ## How this applies to a small Australian business
 

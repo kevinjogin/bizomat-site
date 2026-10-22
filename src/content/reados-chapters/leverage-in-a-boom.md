@@ -60,6 +60,16 @@ Consider an illustrative investment of $500,000 in each of three ways.
 
 With 80% debt, a 20% rise doubles the owner's money. A 20% fall wipes it out entirely. Leverage turns modest price movements into very large changes in wealth.
 
+```figure
+type: compare
+title: The same $500,000 asset with different leverage
+cols: No debt | 50% debt | 80% debt
+caption: Interest ignored for simplicity; in practice it reduces gains and deepens losses.
+- Owner's money | $500,000 | $250,000 | $100,000
+- Asset rises 20% | +20% on equity | +40% | +100%
+- Asset falls 20% | −20% on equity | −40% | −100%: wiped out
+```
+
 ### Interest costs
 
 Borrowed money is not free. Interest costs reduce the return on a leveraged position. If an asset earns less than the interest rate on the loan, after allowing for any income it produces, leverage reduces returns even when prices are rising slowly. In a boom, rapid price gains easily cover interest costs. When prices stop rising, interest continues, and leveraged owners can find that their asset costs more to hold than it earns.
@@ -114,6 +124,18 @@ On a large scale, this makes the economy more vulnerable. High household debt ma
 
 Leverage can be used sensibly. A few principles reduce the risk.
 
+```figure
+type: checklist
+title: Using leverage more safely
+caption: Leverage can be sensible when the borrowing would survive an ordinary market and a harder year.
+- Borrow against normal values | not boom prices
+- Test repayments at higher rates | several points above today
+- Keep income and asset risks separate | not tied to the same factors
+- x Fund spending with debt | it creates no income-producing asset
+- Understand margin and covenant triggers | with a buffer
+- Keep reserves | to avoid forced sales
+```
+
 ### Borrow against normal values, not boom values
 
 When deciding how much to borrow, consider what the asset might be worth in an ordinary market rather than at its current price. If the debt would still be manageable if prices fell back to longer-term norms, the borrowing is more robust.
@@ -161,6 +183,17 @@ The owner tests the proposal:
 - **If the business slowed**, both income and the ability to service the loan would suffer together.
 
 The owner instead borrows $150,000 for a carefully defined expansion with clear expected returns, keeps the rest of the equity untouched, and builds a cash reserve from business profits. When property prices later soften and interest rates rise, the household and business remain comfortably able to meet their commitments.
+
+```figure
+type: balance
+title: Borrowing against a boom-inflated home
+left: Lender's offer: $900,000 loan
+right: Owner's choice: borrow $150,000
+caption: The owner borrowed against normal values, tested higher rates and kept a reserve, and stayed comfortable when prices softened.
+- Releases $600,000 | Funds one defined expansion
+- 20% price fall leaves $60,000 equity on $960,000 | Most equity untouched
+- Income and loan risk move together | Cash reserve built from profits
+```
 
 ## Common mistakes
 

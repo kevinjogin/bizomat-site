@@ -32,6 +32,17 @@ Backups and archives are often confused, but they serve different purposes:
 
 A backup from five years ago is a poor archive. It may need the old system to restore it, it may hold records in a format nobody can read, and finding one invoice may mean restoring an entire server. Businesses need both: backups to recover from incidents, covered in the [business continuity planning for small businesses](/reados/collections/operational-data-records-and-controls/business-continuity-planning-for-small-businesses/) article, and archives to keep records usable for as long as they are needed.
 
+```figure
+type: balance
+title: Backups and archives serve different purposes
+left: Backup
+right: Archive
+caption: A business needs both: fast restoration of current systems, and records that stay findable and readable for decades.
+- Recover from loss or attack | Keep records for future reference
+- Days to months | Years to decades
+- Fast, complete restoration | Findability, integrity, readability
+```
+
 ## How long to keep records
 
 Retention periods come from three sources: legal requirements, the possibility of claims, and genuine business needs.
@@ -48,6 +59,16 @@ Some Australian requirements commonly apply to businesses. For example:
 | Work health and safety records | Periods vary by record; for example, records of notifiable incidents must generally be kept for at least five years, and some health monitoring records for decades |
 
 Other obligations apply in particular industries, such as food, therapeutic goods, building, transport, financial services and chemicals. Requirements change, and the exact starting point of each period matters, so confirm current obligations with your accountant, lawyer or industry body.
+
+```figure
+type: bars
+title: Common Australian retention requirements
+unit: years
+caption: General periods only; industry rules and possible claims can require longer. Confirm requirements with your advisers.
+- Tax records (ATO) | 5
+- Company financial records (Corporations Act) | 7
+- Employee records (Fair Work Act) | 7
+```
 
 ### Claims and disputes
 
@@ -72,6 +93,18 @@ A **retention schedule** lists the kinds of records the business holds and how l
 5. **Assign an owner** for each record type.
 6. **Review the schedule** every year or two, and when laws, systems or the business change.
 
+```figure
+type: steps
+title: Building a retention schedule
+caption: Set minimum periods for legal and business needs and, for personal information, maximum periods too.
+- List record types | by business function
+- Identify where each lives | systems, drives, paper
+- Set the retention period | law, claims, business use
+- Set the end action | destroy, de-identify, review, keep
+- Assign an owner | one per record type
+- *Review regularly | and when laws or systems change
+```
+
 | Record type | Location | Retention | Starts from | Then | Owner |
 |---|---|---|---|---|---|
 | Sales invoices | Accounting system | 7 years | End of financial year | Destroy | Finance manager |
@@ -85,6 +118,16 @@ The periods in this table are illustrative, not recommendations; set your own wi
 ### Legal holds
 
 When a dispute, claim or investigation is underway or reasonably anticipated, relevant records must be preserved even if their retention period has ended. Destroying such records can have serious consequences in legal proceedings and, in some jurisdictions, can be an offence. A simple **legal hold** procedure lets a manager suspend destruction of specified records until the matter is resolved.
+
+```figure
+type: decision
+title: A record has reached the end of its retention period
+question: Is a dispute, claim or investigation underway or reasonably anticipated?
+caption: Record what was destroyed, when and under what authority, without keeping the content.
+- Yes | Preserve it under a legal hold | even though its period has ended
+- *No | Destroy or de-identify securely | shred, secure delete; keep a destruction record
+- Unsure | Review with the record owner | and take advice before destroying
+```
 
 ## Archiving data from systems being retired
 

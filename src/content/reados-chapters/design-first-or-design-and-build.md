@@ -27,6 +27,29 @@ Very few projects reach procurement with every design decision made. Some decisi
 
 Each approach creates its own risks.
 
+```figure
+type: svg
+title: Who turns requirements into a design?
+alt: Two delivery models. In traditional delivery, the client's designer produces the design and a separate contractor builds it. In design and construct, the client writes a performance brief and one contractor designs and builds.
+caption: Design and construct gives a single point of responsibility; traditional delivery gives the client more control and easier price comparison.
+viewbox: 0 0 640 230
+body:
+<text class="txs" x="20" y="40">TRADITIONAL</text>
+<rect class="bx" x="20" y="52" width="180" height="50" rx="6"/>
+<text class="txb" x="110" y="82" text-anchor="middle">Client's designer</text>
+<rect class="bx" x="250" y="52" width="160" height="50" rx="6"/>
+<text class="tx" x="330" y="82" text-anchor="middle">Detailed design</text>
+<rect class="bx" x="460" y="52" width="160" height="50" rx="6"/>
+<text class="txb" x="540" y="82" text-anchor="middle">Contractor builds</text>
+<path class="la flow" d="M200 77H250M410 77H460"/>
+<text class="txs" x="20" y="150">DESIGN AND CONSTRUCT</text>
+<rect class="bx" x="20" y="162" width="180" height="50" rx="6"/>
+<text class="txb" x="110" y="192" text-anchor="middle">Client's brief</text>
+<rect class="bxa" x="250" y="162" width="370" height="50" rx="6"/>
+<text class="txa" x="435" y="192" text-anchor="middle">One contractor designs and builds</text>
+<path class="la flow" d="M200 187H250"/>
+```
+
 ## The trade-offs
 
 | Factor | Traditional (design first) | Design and construct |
@@ -50,6 +73,17 @@ Neither approach is automatically better. The right choice depends on how mature
 4. **"We can keep approval rights over every design decision without affecting risk."** Extensive approval rights can amount to controlling the design, which can shift responsibility back towards you and slow the project.
 5. **"Choose the model that is fastest."** Schedule matters, but it should not be the only factor.
 
+```figure
+type: checklist
+title: Five common misunderstandings
+caption: Each assumption sounds safe and quietly shifts risk back to the client.
+- x Design and construct transfers all design risk | the client keeps its brief and information
+- x A complete design gives maximum certainty | it can still hold errors and gaps
+- x Detailed drawings plus contractor performance responsibility | prescribing the solution limits that
+- x Approval rights over everything leave risk unchanged | they can amount to control
+- x Choose the fastest model | schedule is one factor among several
+```
+
 ## Match authority with accountability
 
 The guiding principle is to **align design authority with design accountability**:
@@ -58,6 +92,17 @@ The guiding principle is to **align design authority with design accountability*
 - If you want the contractor or supplier to be responsible for performance, give it enough freedom to make the design decisions needed to achieve that performance.
 
 The strongest arrangements align five things: technical freedom, approval authority, professional responsibility, acceptance testing and change control. When they point in different directions, disputes follow.
+
+```figure
+type: checklist
+title: Align design authority with accountability
+caption: When these five point in different directions, disputes follow.
+- Technical freedom | to make the design decisions
+- Approval authority | who can say yes
+- Professional responsibility | who answers for the design
+- Acceptance testing | how the result is proved
+- Change control | how requirements change, and who pays
+```
 
 ## Five tests for choosing the model
 
@@ -105,6 +150,18 @@ This is an illustration. A small food manufacturer needs a new packing room with
 **Option 2: design and supply.** The owner writes a performance brief: pack 40 cartons a minute, weigh and reject underweight cartons, label each carton with product and batch information, hold the room at a specified temperature, fit within the existing building and meet food safety and electrical requirements. Two integrators propose complete solutions. Comparing them takes more effort, because the designs differ, so the owner hires the independent engineer for a few days to evaluate them. The chosen integrator is responsible for the whole line meeting the brief, demonstrated through agreed acceptance tests.
 
 For this owner, with limited internal engineering capability and a system whose parts must work closely together, the second option suits better. A business with a proven standard packing line used at several sites, and strong in-house engineering, might reasonably choose the first.
+
+```figure
+type: compare
+title: The packing room, two ways
+cols: Design first | Design and supply
+best: 2
+caption: With limited engineering capability and tightly linked equipment, one party owning the whole line suited this owner.
+- Who designs | An independent engineer for the owner | Integrators propose complete solutions
+- Comparing tenders | Easy: same design | More effort: the engineer hired to evaluate
+- Making it work together | The owner's problem | The integrator's, proven by acceptance tests
+- What happened | Reject mechanism and labeller controls did not fit; the owner paid | The integrator answers for the whole brief, including 40 cartons a minute
+```
 
 ## Hybrid approaches
 

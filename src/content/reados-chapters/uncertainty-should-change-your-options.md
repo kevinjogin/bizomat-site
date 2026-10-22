@@ -42,6 +42,18 @@ The same research described four broad responses, which can be interpreted gener
 
 These are not mechanical categories. Their value is in forcing a business to connect a specific change in the environment to a specific action, rather than applying the same plan whatever happens.
 
+```figure
+type: matrix
+title: Four responses to outside uncertainty
+x: Continuity threatened →
+y: Market still attractive →
+caption: Shifting decisively needs the strongest evidence because it is the most costly to reverse.
+- Rebalance | market attractive but one part less favourable: move resources, keep a presence
+- Hedge | continuity intact, exposure material: diversify suppliers, adjust stock
+- Salvage | continuity threatened in a weak market: preserve core assets and skills
+- Shift | continuity fundamentally threatened, better alternatives exist: relocate decisively
+```
+
 ## Uncertainty can be an opportunity too
 
 Not all outside uncertainty is bad. During disruption, competitors may freeze investment, good staff may become available, equipment or premises may become cheaper and customer needs may shift in ways the business can serve. A business that only defends may miss the moment when disciplined action would have gained ground. Ask what the change makes possible, as well as what it threatens.
@@ -82,6 +94,16 @@ Separate plans and projects can depend on the same outside condition: the same c
 Many businesses have contingency plans that are never used, because nobody agreed when to use them. Each new development can be interpreted as temporary, so the switch never happens, or happens too late.
 
 A stronger approach is to attach **triggers** to alternative plans: specific, observable conditions agreed in advance. For example:
+
+```figure
+type: decision
+title: Contingency plans become triggers
+question: Has an agreed, observable condition been reached?
+caption: The food manufacturer's triggers, written down before they were needed.
+- Export orders down over 30% for two months | Shift product to the domestic channel
+- *Packaging lead time over 12 weeks | Move half of orders to the second supplier
+- Borrowing cost above the agreed level | Defer stage 2 of the expansion
+```
 
 - if the cost of borrowing rises above an agreed level, defer the next stage of investment;
 - if a supplier's lead time exceeds an agreed number of weeks, activate the second supplier;
@@ -130,6 +152,15 @@ The expansion is staged rather than committed in full:
 | Total | $600,000 | |
 
 Triggers are written down: if export orders fall by more than 30% for two consecutive months, shift product to the domestic channel; if packaging lead times exceed 12 weeks, move at least half of orders to the second supplier; if the cost of borrowing rises above the agreed level, defer stage 2. The owner also decides to hold enough cash to cover about eight weeks of fixed costs, which at roughly $30,000 a week means about $240,000, before committing to stage 2.
+
+```figure
+type: stack
+title: The $600,000 expansion, staged
+unit: $'000
+caption: Stage 2 waits for borrowing costs and orders to meet agreed conditions.
+- Stage 1: needed in all plausible futures | 320
+- Stage 2: conditional | 280
+```
 
 Six months later, the export restrictions are introduced in a milder form than feared, packaging lead times reach 13 weeks and the second supplier is activated, and domestic sales of the new range grow faster than expected. Stage 2 goes ahead, about four months later than originally planned, on a stronger footing. The forecast was wrong in several details. The plan held because it had options and agreed triggers.
 

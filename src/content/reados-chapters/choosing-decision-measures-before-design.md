@@ -61,6 +61,15 @@ Not every measure should be treated the same way:
 
 Avoid collapsing everything into one composite score too early. A single number is convenient, but it can hide that one option is technically stronger but riskier, or cheaper but harder on customers. Look at the separate dimensions first. If a combined score is used, make the weighting visible and test whether reasonable changes to it would change the answer.
 
+```figure
+type: layers
+title: Not every measure works the same way
+caption: A single composite number can hide a failed threshold or a judgement nobody discussed.
+- *Thresholds | must be met to be considered at all
+- Objectives | more or less is better; options compared
+- Judgement criteria | matter but resist measurement; discussed openly
+```
+
 ## Five tests for each measure
 
 More measures do not automatically mean better decisions. A dashboard with dozens of indicators can be as misleading as one with a single number, because attention spreads thin and it becomes easy to pick the measure that supports a preferred answer. Test each proposed measure:
@@ -72,6 +81,17 @@ More measures do not automatically mean better decisions. A dashboard with dozen
 5. **Stakeholder-aware**: does it capture where value and burden actually fall?
 
 Measures that fail these tests should be challenged rather than accumulated. Watch especially for measures chosen because data is easy to obtain. What is easy to measure is not always what matters.
+
+```figure
+type: checklist
+title: Five tests for each measure
+caption: More measures do not automatically mean better decisions.
+- Material | could it change the decision?
+- Causal | a real consequence, not a proxy
+- Transparent | understood by decision-makers
+- Proportionate | effort fits the decision
+- Stakeholder-aware | where value and burden fall
+```
 
 ## Set the boundary deliberately
 
@@ -85,6 +105,16 @@ Decide the boundary consciously and write it down. Useful questions:
 - **Uncertainty**: which estimates are firm, and which are rough?
 
 Two options compared within different boundaries cannot be compared fairly. Use the same boundary for every option in a decision.
+
+```figure
+type: checklist
+title: Setting the boundary of a measure
+caption: Write the boundary down, and use the same one for every option.
+- ? Time | purchase, first year or expected life?
+- ? Stages | supply through to disposal?
+- ? People | only the business, or others affected?
+- ? Uncertainty | which estimates are firm?
+```
 
 ## Revisit measures without moving the goalposts
 
@@ -124,6 +154,16 @@ The team develops three concepts. All figures are illustrative.
 | Threshold check | Passes | Passes | Weathering not yet proven |
 
 Judged on manufacturing cost alone, which is how the business had decided before, the moulded box wins. Once freight and tooling are counted, the steel flat-pack is cheapest landed by a clear margin, takes much less retailer storage space and carries far less tooling commitment. The timber composite option is held back until its weathering is tested. The assembly time for the steel box is within the 20-minute objective, and the team designs the parts so they can only fit together one way.
+
+```figure
+type: bars
+title: Landed cost per storage box over the first 2,000 units
+unit: $
+caption: Illustrative figures. Cheapest to make was dearest landed; the timber option waited on weathering tests.
+- Moulded plastic | 265.00 | $145 to make + $30 tooling + $90 freight
+- *Steel flat-pack | 192.50 | $160 + $7.50 + $25
+- Timber composite flat-pack | 207.50 | $175 + $2.50 + $30; weathering not yet proven
+```
 
 Because the measures were set first, the design team spent its effort making the flat-pack design easy to assemble, rather than discovering at the end that freight made its preferred design uncompetitive.
 

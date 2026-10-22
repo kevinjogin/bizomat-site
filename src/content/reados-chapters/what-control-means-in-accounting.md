@@ -46,6 +46,16 @@ Australian standards (AASB 10 *Consolidated Financial Statements*, equivalent to
 
 All three must be present. Power without exposure to returns, such as a manager acting purely as an agent for others, is not control. Exposure without power, such as a lender with no say over the investee's activities, is not control either.
 
+```figure
+type: venn
+title: The three elements of control under AASB 10
+centre: Control
+caption: Control needs all three; protective rights alone, such as a lender's veto, do not give power.
+- Power over the investee | current ability to direct the relevant activities
+- Exposure to variable returns | returns that vary with performance
+- Ability to use power | to affect those returns
+```
+
 ### Control without a majority
 
 Because the test focuses on power rather than percentages, control can exist with less than half the votes. Examples include:
@@ -100,12 +110,45 @@ Company A owns 40% of Company B and 45% of Company C. Company B owns 25% of Comp
 
 Now change one fact: A owns **60%** of B.
 
+```figure
+type: svg
+title: Indirect control: A owns 60% of B and 45% of C; B owns 25% of C
+alt: Company A holds 60 percent of Company B and 45 percent of Company C directly. Company B holds 25 percent of Company C. A therefore controls 70 percent of C's votes.
+caption: Because A controls B, B's 25% stake counts towards A's control of C: 45% + 25% = 70% of the votes.
+viewbox: 0 0 640 300
+body:
+<rect class="bxa" x="250" y="20" width="140" height="56" rx="6"/>
+<text class="txb" x="320" y="54" text-anchor="middle">Company A</text>
+<rect class="bx" x="60" y="200" width="140" height="56" rx="6"/>
+<text class="txb" x="130" y="234" text-anchor="middle">Company B</text>
+<rect class="bx" x="440" y="200" width="140" height="56" rx="6"/>
+<text class="txb" x="510" y="234" text-anchor="middle">Company C</text>
+<path class="la draw" pathLength="1" d="M280 76L160 200"/>
+<path class="la draw" pathLength="1" d="M360 76L480 200"/>
+<path class="li flow" d="M200 228H440"/>
+<text class="txa" x="190" y="130">60%: controls B</text>
+<text class="txa" x="430" y="130">45% direct</text>
+<text class="tx" x="320" y="220" text-anchor="middle">25% held by B, controlled by A</text>
+<text class="txb" x="510" y="286" text-anchor="middle">A controls 70% of votes</text>
+```
+
 - A now controls B, so B is a subsidiary.
 - A controls B's 25% stake in C, in addition to its own 45%. A therefore controls **70%** of C's votes and controls C.
 
 ### Control is not the same as economic ownership
 
 The second scenario illustrates an important distinction. A controls 70% of C's votes, but its **economic interest** in C is lower. A owns 45% of C directly, plus 60% of B's 25% stake, which is 15%. A's effective economic interest in C is therefore 60%.
+
+```figure
+type: stack
+title: Who owns Company C economically
+unit: % of C
+caption: Control (70%) decides that C is consolidated in full; economic interest (60%) decides how C's results are shared.
+- A directly | 45
+- A through B, 60% × 25% | 15
+- Outside shareholders of C | 30
+- Outside shareholders of B, 40% × 25% | 10
+```
 
 For consolidation, control determines whether C is included in A's group accounts, and C is included in full. The economic interest determines how C's results are divided between A's shareholders and other owners, shown as a **non-controlling interest**. In this example, 40% of C's results would be attributed to non-controlling interests: the 30% of C held by outside shareholders directly, plus the 40% of B's 25% stake held by B's other shareholders, which is 10%.
 

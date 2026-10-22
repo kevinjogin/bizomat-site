@@ -28,6 +28,16 @@ Project management writer Stanley Portny sorted the people around a project into
 
 Portny's wording was careful: drivers define the results only *to some extent*. He was describing influence, not formal authority. But the distinction is a useful foundation for a decision that many businesses never make explicitly: **who is actually permitted to redefine the outcome?**
 
+```figure
+type: tree
+title: Drivers, supporters and observers
+caption: Interest and influence say how much attention someone needs; driver status says who may redefine the result.
+- People around a job
+  - *Drivers | some say over the results
+  - Supporters | enable or carry out the work
+  - Observers | interested, but neither
+```
+
 Four misreadings get in the way:
 
 - **Interest and influence are what matter.** Those describe how much attention someone needs. Two people can be identical on both and differ entirely on whether their objection can change what the job is for.
@@ -47,6 +57,19 @@ Naming drivers is an allocation of authority, and it deserves the same care as a
 6. **Name where disagreements between drivers are settled**, by someone with authority to decide, not just discuss.
 7. **Re-check at each stage.**
 
+```figure
+type: steps
+title: Making driver status a decision
+caption: Telling people their role is the uncomfortable step, and skipping it voids the exercise.
+- List | who has actually changed direction
+- Sort | driver, supporter, observer
+- Reduce | ideally fewer than five drivers
+- Test accountability
+- *Tell people
+- Name the tie-breaker
+- Re-check each stage
+```
+
 Driver status should follow **accountability for the outcome, not seniority**. Naming drivers also means naming, explicitly, that some senior people are not drivers. That is awkward, which is why it is often avoided. But avoiding it does not remove the decision; it hands it to whoever is most persistent.
 
 ## Expectations become requirements
@@ -63,6 +86,18 @@ The answer is neither to ignore expectations nor to absorb them all. Treat each 
 - **Decline** it explicitly, because it is outside the job's purpose.
 
 Silence is a fifth outcome and usually the most dangerous, because different people go on working to different definitions of success.
+
+```figure
+type: decision
+title: Every material expectation gets a decision
+question: Someone expects this. What do we do?
+caption: Watch for "we discussed" becoming "we agreed".
+- Accept | Part of the agreed result
+- Clarify | It is ambiguous
+- Negotiate | A different outcome or condition
+- Decline | Explicitly, as outside the purpose
+- *Say nothing | The most dangerous outcome | different people remember different answers
+```
 
 A useful warning sign is a shift in language. "We discussed" becomes "we agreed". "It would be nice if" becomes "the job will". "The trial included" becomes "the service requires". These shifts show an informal expectation turning into a perceived commitment. The [when a conversation becomes a commitment](/reados/collections/commercial-law-and-contracts/when-a-conversation-becomes-a-commitment/) article covers how informal exchanges can create real obligations.
 
@@ -119,6 +154,15 @@ This is an illustration. A small design-and-construct firm is fitting out a new 
 Three months in, the firm counts 11 change requests from five different people, four of which contradict each other. The other two partners have been visiting the site and asking the site supervisor directly for changes to cabinetry and lighting. The supervisor, keen to keep the customer happy, made several small changes without recording them as variations.
 
 The firm's director meets the managing partner and practice manager to sort roles:
+
+```figure
+type: stats
+title: The dental fit-out three months in
+caption: Small free changes had taught the client that changes cost nothing.
+- 11 | change requests
+- 5 | different people making them
+- 4 | that contradicted each other
+```
 
 - **Drivers:** the managing partner, for scope and budget; the practice manager, for operational requirements such as the sterilisation room workflow.
 - **Observers:** the other two partners and the practice staff, whose views are welcome through the practice manager.

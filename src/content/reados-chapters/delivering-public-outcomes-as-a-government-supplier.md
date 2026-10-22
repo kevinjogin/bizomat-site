@@ -30,6 +30,16 @@ A widely used framework, adapted from Mark Moore's work on creating public value
 
 None of the three is enough alone. A valuable initiative without legitimacy stalls. A popular initiative without operational capacity fails in delivery. An easily delivered initiative that creates little value wastes public money.
 
+```figure
+type: venn
+title: The public value test
+centre: Worth backing
+caption: None of the three is enough alone; a valuable initiative without legitimacy stalls.
+- Public value | worth creating for the community
+- Legitimacy and support | authorised and supported
+- Operational capacity | can actually be delivered and sustained
+```
+
 For suppliers, this framework is practical. A proposal that shows clear public value, aligns with the authorising environment and demonstrates realistic delivery capacity is easier for decision-makers to approve and defend. A proposal that promises benefits without evidence, or capacity the business does not have, creates risk for the buyer.
 
 ### Public value and cost-benefit analysis
@@ -93,6 +103,16 @@ Governance often fails not because rules are missing but because the system cann
 
 Failure at any point disables the whole system. Monitoring is useless if reports are suppressed. An independent decision-maker cannot act on what it never hears. Reporting creates cynicism if nothing follows. Research on regulation also suggests that extra enforcement capacity has diminishing value once compliance is achieved, and that capacity cannot compensate for decision-makers who have been captured by the interests they oversee.
 
+```figure
+type: cycle
+title: Governance as a control system
+caption: Governance fails less often from missing rules than from signals that never reach someone able to act.
+- A signal | data, inspections, complaints, reports
+- A channel | unfiltered, to decision-makers
+- A decision point | independent, with authority
+- *Capacity to act | resources, powers, willingness
+```
+
 For suppliers, this means building contracts and operations so that problems surface quickly and honestly:
 
 - **Measure outcomes**, not just activity, and share data with the agency.
@@ -132,7 +152,28 @@ This is an illustrative example. A regional services company wins a contract wit
 - A dashboard shared with the agency shows trends by clinic, so the agency can account for the service and target support.
 - Drivers can refuse unsafe loads and escalate to a supervisor, with a same-day response.
 
+```figure
+type: compare
+title: Clinical waste contamination: causes and fixes
+cols: What the clinics faced | What the redesign changed
+caption: The problem was not indifference, and penalties alone could not fix it.
+- Equipment | Bins differing between rooms; unclear labels | Standard colour-coded bins and clear labels
+- People | High staff turnover | A ten-minute induction, on site and online
+- Timing | Collection days not matching workloads | Schedules matched to clinic activity
+- Feedback | Nothing until a penalty arrived | Photo records, monthly summaries and a shared dashboard
+```
+
 **Result.** Contamination falls to about 4% of collections within six months. The agency has better information for its own reporting, and the relationship shifts from penalty disputes to joint improvement. The company uses the results as evidence in its next tender.
+
+```figure
+type: bars
+title: Contaminated collections, before and after the redesign
+unit: %
+max: 20
+caption: The relationship shifted from penalty disputes to joint improvement, and the results became evidence for the next tender.
+- First months of the contract | 18
+- *Within six months of the redesign | 4
+```
 
 ## Applying this as a government supplier
 

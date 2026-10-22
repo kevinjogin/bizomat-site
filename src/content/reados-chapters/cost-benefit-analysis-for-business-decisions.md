@@ -52,6 +52,18 @@ Work through each category of cost systematically.
 
 Do not forget one-off **transition costs**: training, commissioning, lost production during installation and the time it takes staff to reach full speed.
 
+```figure
+type: tree
+title: Five kinds of cost to list
+caption: Brainstorm each category systematically, plus one-off transition costs.
+- Total cost of a decision
+  - Direct | purchase price, installation, licences, hiring
+  - Indirect | power, maintenance, insurance, supervision, floor space
+  - Opportunity | interest on cash, management time, the project you could not fund
+  - Tangible | materials, wages, freight
+  - Intangible | changeover disruption, staff stress, learning curve, quality risk
+```
+
 ## Step 3: Brainstorm all the benefits
 
 Benefits can be financial or non-financial. Typical categories include:
@@ -128,6 +140,19 @@ A small sheet-metal fabricator currently outsources bending. It is considering b
 | **Net annual benefit** | **+$69,000** |
 
 **Payback.** $182,000 ÷ $69,000 ≈ 2.6 years.
+
+```figure
+type: bars
+title: The press brake's annual benefit against outsourcing
+unit: $ a year
+caption: Net annual benefit $69,000 on $182,000 upfront: payback about 2.6 years. Without the new work, the benefit falls to $34,000 and the NPV to about −$6,200.
+- Outsourced bending avoided | 70000 | gain
+- *Extra contribution from shorter lead times | 35000 | gain; the key assumption
+- Freight and handling avoided | 6000 | gain
+- Reduced rework | 5000 | gain
+- Additional operator labour | −40000 | cost
+- Power and maintenance | −7000 | cost
+```
 
 **NPV.** Assume a seven-year life, a $20,000 residual value and a 10% discount rate. The present value of $69,000 a year for seven years at 10% is about $335,900. The present value of the residual is about $10,300. Total present value of benefits ≈ $346,200. NPV ≈ $346,200 − $182,000 ≈ **$164,200**. The investment looks attractive.
 

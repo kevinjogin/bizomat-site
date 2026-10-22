@@ -34,6 +34,20 @@ A useful way to approach any settlement decision is to compare the offer on the 
 
 Every decision to sue or settle comes down to this comparison, made carefully. A settlement that looks low against the claimed amount can be excellent against the realistic alternative. The [thinking clearly about a contract problem](/reados/collections/commercial-law-and-contracts/thinking-clearly-about-a-contract-problem/) article offers a structured way to separate facts, obligations and options before making it.
 
+```figure
+type: tree
+title: The offer against your realistic alternative
+caption: Compare the offer on the table with what continuing would realistically produce, not with your best case.
+- The realistic alternative
+  - Outcome | a range, not one figure
+  - Probability | honestly assessed
+  - Costs | to reach a decision, less what is recovered
+  - Time | the cost of waiting
+  - Management time | and disruption
+  - *Collectability | can they pay a judgment?
+  - Relationship | reputation and confidentiality
+```
+
 ## Protecting settlement discussions: without prejudice
 
 Parties are understandably reluctant to make concessions if those concessions could later be used against them in court. The law addresses this through the **without prejudice** principle. In general terms, communications made in a genuine attempt to settle a dispute are protected from being used as evidence of an admission in later proceedings about that dispute. In jurisdictions that have adopted the uniform evidence legislation, including federal courts, a statutory version of this protection applies, and the common law principle continues to operate as well.
@@ -113,6 +127,17 @@ The release clause is where most settlement disputes arise. A release that is to
 
 A useful discipline is to write two lists before drafting: everything the release must cover, and everything it must not. Then check the clause against both.
 
+```figure
+type: balance
+title: Two lists before drafting the release
+left: The release must cover
+right: The release must not cover
+caption: Most settlement disputes arise in the release clause; check the draft against both lists.
+- The claims in dispute | Ongoing warranties and defect obligations
+- Every party that could bring them | Confidentiality obligations
+- Known claims, and unknown ones if intended | Claims about unrelated matters
+```
+
 ## Settling at mediation
 
 Many disputes settle at **mediation**, where a neutral mediator helps the parties negotiate. Mediation settlements are often reached late in the day, when everyone is tired and keen to finish. The common practice is to sign short **heads of agreement** before leaving.
@@ -131,7 +156,31 @@ A small steel fabricator claims $65,000 from a builder for unpaid progress claim
 
 The fabricator assesses its realistic alternative. It is confident about the $45,000 in progress claims, less confident about the variations and thinks the delay deduction is weak but not impossible. Allowing for unrecovered costs and eight to twelve months of delay, it estimates its realistic net outcome from litigation at between $35,000 and $50,000. In a without prejudice letter, it offers to settle for $48,000, explaining its reasoning on each component. After discussion, the parties agree on $45,000.
 
+```figure
+type: range
+title: The steel fabricator's $65,000 claim
+min: 0
+max: 70000
+ticks: $0 | $35,000 | $70,000
+caption: Legal costs could easily exceed $30,000 for each side; a reasoned without prejudice offer closed the gap.
+- Builder's first offer | $30,000
+- Realistic net outcome from litigation | $35,000 | $50,000 | after unrecovered costs and delay
+- Fabricator's offer | $48,000
+- *Agreed settlement | $45,000
+- Amount claimed | $65,000
+```
+
 The settlement deed provides for $25,000 within seven days and $20,000 within thirty days, inclusive of GST. The release takes effect only when both payments are made, and the fabricator can enter consent judgment for the unpaid balance plus $5,000 if a payment is missed. Importantly, the release carves out the fabricator's ongoing warranty obligations for the steelwork, which the builder needs, and the builder's obligation to return the fabricator's bank guarantee, which the fabricator needs. Both carve-outs were identified using the "must cover" and "must not cover" lists.
+
+```figure
+type: timeline
+title: How the settlement deed was structured
+caption: The carve-outs came straight from the "must cover" and "must not cover" lists.
+- Day 7 | $25,000 due | inclusive of GST
+- Day 30 | $20,000 due | the release takes effect only when both are paid
+- If a payment is missed | Consent judgment | for the unpaid balance plus $5,000
+- *Carved out | Warranty and bank guarantee | each side kept what it needed
+```
 
 ## How this applies to a small Australian business
 

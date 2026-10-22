@@ -49,6 +49,21 @@ Avoid names that box you in. A name tied to one product, one suburb or one techn
 
 Some trainers advise that a name should let customers understand what the business does at a glance. A point-of-sale software company that builds its name from "POS" is an example. This works well for clarity and search, but purely descriptive names are often difficult to register as trade marks, because descriptive words must remain available to other traders. Many businesses find a balance: a distinctive name with a descriptive tagline.
 
+```figure
+type: range
+title: Types of name: clear today or protectable tomorrow?
+min: 0
+max: 100
+ticks: Easiest to understand | | Easiest to protect
+caption: Descriptive names are instantly clear but hard to protect; invented names are the reverse.
+- Descriptive | 0 | 25 | clear, good for search, hard to register
+- Founder or family name | 15 | 40 | personal, may complicate a sale
+- Acronym or initials | 25 | 45 | short, often forgettable
+- Compound | 35 | 65 | can be distinctive and meaningful
+- *Suggestive or evocative | 45 | 75 | memorable, easier to protect
+- Invented | 70 | 100 | strongest, needs marketing
+```
+
 ## Generating candidates
 
 - **Brainstorm widely** using your brand criteria: values, benefits, customers, personality and imagery.
@@ -60,6 +75,18 @@ Some trainers advise that a name should let customers understand what the busine
 ## Testing candidates
 
 Narrow the list to five to ten, then test each against these criteria:
+
+```figure
+type: checklist
+title: Testing a shortlisted name
+caption: Any name that fails the legal checks is eliminated, however well it scores.
+- Memorable | recalled after hearing it once
+- Easy to say and spell | found after hearing it in conversation
+- Meaningful or evocative | fits the brand criteria
+- Distinctive | stands apart from competitors
+- Scalable | still fits as the business grows
+- ? Legally available | business name, trade mark, domain, handles
+```
 
 1. **Memorable**: can people recall it after hearing it once?
 2. **Easy to say and spell**: can people find you after hearing the name in conversation or on the radio?

@@ -45,6 +45,16 @@ The difference is the starting point. Several tests then narrow it down:
 
 For example, if a supplier fails to deliver a machine priced at $400,000 and the buyer has to pay $450,000 for an equivalent machine elsewhere, plus $20,000 for urgent freight, the core of the loss is the extra $70,000, not the full contract price. Whether each amount is recoverable depends on the facts, the contract and the law.
 
+```figure
+type: formula
+title: The expected world against the actual world
+formula: Starting point = Position if performed − Position after the breach
+caption: Causation, remoteness, evidence, avoided costs and mitigation then narrow the difference.
+step: Replacement $450,000 + urgent freight $20,000
+step: Less the $400,000 contract price
+step: Core loss: about $70,000, not the full contract price
+```
+
 ## Common mistakes in claims
 
 - **Treating damages as a fine.** Claims built on anger tend to be inflated and lose credibility.
@@ -63,6 +73,17 @@ Being the innocent party does not give a business permission to let losses grow.
 Mitigation is not surrender. Buying replacement goods, accepting substitute work or hiring temporary capacity does not excuse the breach. It reduces the loss, and the business can still claim the reasonable extra cost.
 
 Consider a supplier that fails to deliver material priced at $100 a unit. Equivalent material is available immediately for $110. If the buyer declines it, waits and later makes an emergency purchase at $160, it may struggle to recover the extra $50 a unit, because a reasonable business would have taken the $110 option.
+
+```figure
+type: bars
+title: Waiting is not a neutral choice
+unit: $ a unit
+max: 160
+caption: A reasonable business would have taken the $110 option, so the extra $50 a unit may not be recoverable.
+- Contract price | 100
+- Available immediately | 110
+- *Emergency purchase after waiting | 160
+```
 
 After a breach, assess quickly:
 
@@ -116,7 +137,26 @@ This is an illustration. A bakery orders a new production line for $400,000 to s
 
 The supermarket contract is expected to earn a contribution of about $2,400 a day once the line is at full output. But the owner identifies a realistic alternative: a co-packer could produce the product for the first few weeks at an extra cost of about $1,100 a day, preserving the supermarket contract. Delay would also mean extra costs for storage and the project staff of about $300 a day. The realistic cost of delay is therefore about $1,400 a day, not the full $2,400, because the business would use the co-packer rather than lose the contract. The owner sets the rate at $1,400 a day and records the calculation with the tender documents.
 
+```figure
+type: bars
+title: Setting the liquidated damages rate
+unit: $ a day
+caption: The rate comes from what the asset is for and the realistic alternative, not a percentage of the contract price.
+- Supplier's suggestion: 0.5% of $400,000 | 2000
+- Contribution if the contract were lost | 2400
+- *Realistic delay cost with a co-packer | 1400 | $1,100 co-packer + $300 storage and staff
+```
+
 The line is delivered 12 days late. The bakery uses the co-packer, as planned, keeps the supermarket supplied and claims liquidated damages of 12 × $1,400 = $16,800. Because the rate is clearly based on a genuine estimate and matches what the business actually experienced, the supplier accepts it without dispute.
+
+```figure
+type: formula
+title: The claim when the line arrived late
+formula: Liquidated damages = Days late × Agreed daily rate
+caption: Based on a genuine, recorded estimate that matched what happened, so it was accepted without dispute.
+step: 12 days × $1,400 a day
+step: $16,800
+```
 
 The owner also keeps a mitigation log showing the co-packer arrangement, its cost and the notices sent to the supplier. Had the business instead refused to use the co-packer and lost the supermarket contract, it would have faced difficult questions about whether it had acted reasonably to limit its loss.
 

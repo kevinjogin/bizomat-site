@@ -48,6 +48,23 @@ CLV = $2,000 × 0.8 ÷ (1.1 − 0.8) = $1,600 ÷ 0.3 ≈ **$5,330**.
 
 Raise retention to 90% and CLV becomes $2,000 × 0.9 ÷ 0.2 = **$9,000**. A ten-point improvement in retention increases lifetime value by about 70%. This is why retention is so powerful.
 
+```figure
+type: line
+title: Lifetime value rises steeply with retention
+x: Annual retention (%)
+y: CLV ($)
+ymin: 0
+ymax: 10500
+mark: 80 | $5,330
+mark: 90 | $9,000
+caption: CLV = m × r ÷ (1 + d − r), with $2,000 annual margin and a 10% discount rate. Ten points of retention add about 70%.
+- 60 | 2400
+- 70 | 3500
+- 80 | 5333
+- 85 | 6800
+- 90 | 9000
+```
+
 Use whichever version fits your data. The point is not precision but understanding what a customer is worth, roughly, so you can make sensible decisions about acquisition and retention spending.
 
 ## Customer acquisition cost
@@ -65,6 +82,20 @@ Be honest about what you include. Sales staff time spent on new business, trade 
 ## Comparing CLV and CAC
 
 The relationship between the two numbers tells you whether growth is healthy:
+
+```figure
+type: gauge
+title: Industrial supplier: CLV against CAC
+min: 0
+max: 6
+value: 3.2
+unit: ×
+label: = $6,430 CLV ÷ $2,000 CAC
+caption: About three times: acceptable but not exceptional. Raising retention to 85% lifts CLV to about $10,200 with the same acquisition spend.
+- 0 | 1 | Destroys value
+- 1 | 3 | Thin
+- 3 | 6 | Healthy
+```
 
 - **CLV well above CAC**: each new customer creates value, so you can invest more in acquisition.
 - **CLV close to CAC**: growth adds little value and leaves little margin for error.
@@ -99,6 +130,15 @@ Understanding which kind of business you are in shapes how much you can spend to
 > **Churn rate = customers lost during period ÷ customers at start of period**
 
 **Example:** you start the year with 200 active customers, win 50 new ones and end with 220. Retention = (220 − 50) ÷ 200 = 85%. Churn = 30 lost ÷ 200 = 15%.
+
+```figure
+type: funnel
+title: A year of customers
+caption: Retention = (220 − 50) ÷ 200 = 85%; churn = 30 ÷ 200 = 15%.
+- Start of year | 200
+- Kept through the year | 170
+- Plus new customers won | 50 | end with 220
+```
 
 Retention matters because keeping a customer is usually far cheaper than winning a new one, and because, as the CLV formula shows, small improvements in retention produce large increases in lifetime value. In downturns, well-run companies often intensify retention efforts, knowing that customers lost during hard times are expensive to win back.
 

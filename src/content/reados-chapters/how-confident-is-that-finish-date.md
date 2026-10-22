@@ -34,6 +34,15 @@ Suppose a fit-out is most likely to take 8 weeks, could take 6 if everything goe
 
 The formula is a useful rough guide, but its real value is the conversation it forces:
 
+```figure
+type: formula
+title: A three-point estimate for the fit-out
+formula: Expected ≈ (Optimistic + 4 × Most likely + Pessimistic) ÷ 6
+caption: The extra 0.7 weeks reflects bad outcomes sitting further from the most likely case than good ones.
+step: (6 + 4 × 8 + 14) ÷ 6
+step: About 8.7 weeks
+```
+
 - What must happen for the optimistic case?
 - What conditions define the most likely case?
 - What credible events produce the pessimistic case?
@@ -49,6 +58,19 @@ When a date is under pressure, the usual response is to run work in parallel: sp
 A merge point waits for the slowest stream. It cannot start early because one stream finished early; it can only start late because one stream was late. That means the chance of starting on time is the chance that **every** stream is on time, which is lower than the chance for any one of them.
 
 If four independent streams each have a 90% chance of finishing on time, the chance that all four do is about 66% (0.9 × 0.9 × 0.9 × 0.9). Add a fifth stream at 90%, and it falls to about 59%. The schedule looks shorter. The odds of meeting the date are worse.
+
+```figure
+type: bars
+title: More parallel streams, lower odds of finishing on time
+unit: %
+max: 100
+caption: Each stream has a 90% chance on its own; the merge point waits for the slowest.
+- One stream | 90
+- Two streams | 81
+- Three streams | 73
+- *Four streams | 66
+- Five streams | 59
+```
 
 ## What a confidence figure usually measures
 
@@ -67,6 +89,17 @@ When someone gives you a confidence figure, ask:
 3. How many points require several streams to converge?
 4. Which common causes, such as shared suppliers, approvals or people, were assumed not to matter?
 5. When was it last recalculated, and has more parallel work been added since?
+
+```figure
+type: checklist
+title: Questions to ask of any confidence figure
+caption: Be wary of a figure that improves after a recovery plan adds parallel work.
+- ? How many streams lead to the finish?
+- ? Which path was it calculated on?
+- ? How many merge points?
+- ? Which common causes were assumed away?
+- ? When was it last recalculated?
+```
 
 ## Choose the confidence level to fit the decision
 
@@ -126,6 +159,18 @@ The owner takes three steps:
 - **Reduces the number of streams that must merge.** The equipment is ordered earlier so it arrives with time to spare, and the point-of-sale system is set up and tested at the existing café first.
 - **Identifies a common cause.** The builder and the cool room contractor rely on the same electrician. A single delay there would hold up both. The owner books the electrician's time directly and confirms it in writing.
 - **Changes what is promised.** The public announcement becomes "opening early December", with the exact date confirmed two weeks out, once the council inspection is booked. Internally, the team keeps 1 December as its target.
+
+```figure
+type: bars
+title: The café opening: reported confidence against the real odds
+unit: %
+max: 100
+caption: Running the cool room in parallel made the builder's report look better and the opening less likely.
+- Builder's reported confidence | 85
+- All four streams ready | 69
+- Builder's figure with a parallel cool room | 92
+- *All five streams ready | 66
+```
 
 ## How this applies to a small Australian business
 

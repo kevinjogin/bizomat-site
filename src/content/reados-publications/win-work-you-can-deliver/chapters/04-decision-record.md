@@ -19,6 +19,17 @@ This is also a chance to set a time boundary. A focused initial discussion can i
 
 Avoid making the customer repeat information already supplied. Read the enquiry beforehand, bring the relevant questions and explain any uncertainty in your understanding. Preparation shows up in the usefulness of the conversation, not in an elaborate introductory speech.
 
+```figure
+type: steps
+title: Shape of a productive first conversation
+caption: Every step should leave both sides better able to decide, not simply more enthusiastic.
+- Agree the purpose | what to establish, and a time boundary
+- Find a recent event | "What prompted the request?"
+- Clarify constraints and roles | result, deadline, inputs, approvals, money
+- Summarise and invite correction | expose misunderstandings early
+- *Write the decision record | owner and date for the next action
+```
+
 ## Move from the request to a recent event
 
 Fieldnote asks what prompted the brochure request. The manager describes two staff members giving different answers about whether an inspection is included in a maintenance package. The problem is now more specific: inconsistent explanations of an inclusion.
@@ -33,6 +44,16 @@ Explore the desired result, the reason for the deadline, the inputs available an
 
 Authority is often distributed. One person may manage the work, another approve wording and a third approve expenditure. Ask how those responsibilities work here. Do not assume a job title establishes the full decision process, and do not treat a useful contact as an obstacle because someone else signs the order.
 
+```figure
+type: tree
+title: Who decides at Harbour Services
+caption: A job title does not establish the whole decision process; ask how these responsibilities work here.
+- The purchase decision
+  - Manages the work | day-to-day contact; consolidates feedback
+  - Approves wording | confirms service rules and inclusions
+  - Approves expenditure | signs the order
+```
+
 Money can be discussed directly and respectfully. Explain which scope variables affect the price and ask about the customer's approval process or constraints. A customer may have no fixed budget because they are still learning what the work involves. That is different from being unwilling to pay. You still need enough information to decide whether preparing an offer is worthwhile.
 
 ## Listen for corrections, not just confirmation
@@ -42,6 +63,17 @@ Periodically summarise your understanding and invite correction: “I have heard
 Silence, tone and body language can have many explanations. Do not diagnose a person's motives from them or use unsupported percentages about how communication works. Ask a neutral clarifying question when something is unclear. Give the customer time to explain and allow them to decline a question that is not necessary.
 
 Fieldnote initially writes that the deadline is a service launch. The manager corrects this: it is an internal training session. That changes the immediate deliverable. A concise approved reference for staff may matter more than a polished public brochure. Listening has altered the scope rather than merely built rapport.
+
+```figure
+type: compare
+title: One correction changes the scope
+cols: Before the correction | After the correction
+best: 2
+caption: Listening altered the deliverable, not merely the rapport.
+- Reason for the date | Public service launch | Internal training session
+- Main reader | Customers | Staff
+- Likely first deliverable | Polished public brochure | Concise approved staff reference
+```
 
 ## Create a record that can be corrected
 

@@ -41,6 +41,17 @@ A practical method has five steps:
 4. **Record refusals and qualifications as risks**, with an owner and a date to resolve them. Do not argue them away on the spot.
 5. **Re-collect after any significant re-plan.** When dates or scope move, ask again.
 
+```figure
+type: steps
+title: Collecting commitments, not approvals
+caption: A plan is mostly a register of other people's commitments.
+- List commitments by party
+- Find who can actually give each
+- Collect each in a conversation | with its shape
+- Record refusals as risks
+- *Re-collect after a re-plan
+```
+
 Where several parties are involved, bringing them together briefly is worth it. A commitment made in front of the people who depend on it is considered more carefully, and an objection raised there can be resolved there.
 
 ## What a usable commitment records
@@ -106,6 +117,17 @@ The event manager records the AV shortfall as a risk with a decision date. The o
 Next they name the handoff most likely to fail: speaker slides from the client to the AV operators. The client contact and the AV lead agree, together, on the format, the file-sharing method and the deadline. The internal events manager is asked directly whether two coordinators are truly free on both days; one turns out to be committed to another event on the second morning, and a replacement is arranged.
 
 The conference runs to plan. In the event manager's records, the AV supplier is noted as one whose sales commitments should be confirmed with its scheduler in future.
+
+```figure
+type: compare
+title: Who promised, and who could deliver
+cols: Who said yes | What checking found
+caption: Hiring two extra technicians for about $1,200 kept the staging the client had asked for.
+- AV crew of four from 6 am | Supplier's sales representative | Scheduler: only two free until 9 am
+- Speaker changes | Client's marketing coordinator | Only the CEO's office can confirm them
+- Two internal coordinators | Events manager | One committed elsewhere on the second morning
+- Venue access from 6 am | Venue manager | Confirmed in writing
+```
 
 ## How this applies to a small Australian business
 

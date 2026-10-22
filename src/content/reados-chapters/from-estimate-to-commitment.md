@@ -29,6 +29,19 @@ Two points follow:
 
 The perverse result in many businesses is that the most careful estimator, the one who has thought hardest about what is unknown, produces the least confident-looking figure and loses the argument to someone with a rounder number and less analysis.
 
+```figure
+type: range
+title: Typical accuracy as a project becomes better defined
+min: -35
+max: 35
+unit: %
+ticks: −35% | 0 | +35%
+caption: Indicative figures; they vary by industry and source, but ranges always narrow as design, site and scope become known.
+- Concept: order of magnitude | -30 | 30
+- Preliminary | -20 | 20
+- *Well-defined work | -10 | 10 | 5% to 10%
+```
+
 ## Every number should carry three things
 
 No estimate should reach a decision without:
@@ -111,12 +124,43 @@ The usual method gives a contingency of $32,000: 40% × $50,000 plus 50% × $24,
 
 A $32,000 contingency covers the outcome only 60% of the time; $50,000 covers it 80% of the time. The owner chooses instead to **buy information**: an electrician's assessment and a floor survey cost about $3,000 together and resolve both questions before committing. The survey finds the floor needs levelling; the power supply is adequate. The uncertainty on those items disappears, and the contingency can be sized for what remains.
 
+```figure
+type: formula
+title: The usual contingency, and its trap
+formula: Contingency = Σ (Probability × Cost) for each risk
+caption: The project faces one real outcome, not the average; buying about $3,000 of information removed both uncertainties.
+step: 40% × $50,000 + 50% × $24,000 = $32,000
+step: Covers the actual outcome only 60% of the time
+step: $50,000 would cover it 80% of the time
+```
+
 Quotes then come in. Firm prices cover about 80% of the scope at $412,000, with the remaining items estimated at about $38,000. The owner commits to **$450,000**, records that decision, and sets two funds:
+
+```figure
+type: range
+title: From early estimate to commitment
+min: 280000
+max: 500000
+unit: $
+ticks: $280k | $390k | $500k
+caption: The range travelled with the figure into the loan application, so $450,000 was not a surprise.
+- First estimate, from one past fit-out | 300000 | 480000 | most likely $380,000
+- *Committed: $412,000 firm plus $38,000 estimated | 450000
+```
 
 - **Contingency of $25,000**, controlled by the project lead, for listed risks such as delivery delays and minor building issues. Each use is logged against the risk it covers.
 - **A reserve of $30,000** held by the owner, to be used only for changes to the job itself, such as a customer requirement that alters the cell's layout, and only with a written change covering scope and budget together.
 
 At the end, the owner compares the original $300,000 to $480,000 range with the outcome and records which assumptions proved wrong, for the next estimate.
+
+```figure
+type: tree
+title: Two funds with opposite rules
+caption: Contingency should be fast and delegated; reserve slower and kept with the owner. In one pot, speed wins.
+- Money held back
+  - Contingency, $25,000 | the project lead releases it for listed risks
+  - *Reserve, $30,000 | the owner releases it for changes to the job itself
+```
 
 ## How this applies to a small Australian business
 

@@ -59,6 +59,19 @@ Stacey's matrix combines the two dimensions:
 
 Situations move between these as evidence, people and circumstances change.
 
+```figure
+type: matrix
+title: Agreement and certainty together
+x: Certainty about cause and effect: low → high
+y: Agreement about the outcome: low → high
+hot: 3
+caption: More data reduces uncertainty; it does not settle a disagreement about values or priorities.
+- Experiment | pilots and staged commitments
+- Plan and execute | clear goal, known method
+- *Make sense together | keep options open, smaller decisions
+- Negotiate | with clear decision rights
+```
+
 ## Two kinds of ambiguity
 
 Some ambiguity is **avoidable**: it comes from vague purpose, inconsistent language, unclear responsibilities or unstated assumptions. Remove it quickly. Clear purpose and decision rights cost little and help everything else.
@@ -93,6 +106,18 @@ Before deciding how to run a significant piece of work, ask six questions:
 
 The result is not a score. It is a judgement about which parts of the work need tight planning, which need experiments, which need negotiation and which need a quick stabilising decision. Many initiatives contain all four.
 
+```figure
+type: checklist
+title: A short diagnosis before choosing how to manage
+caption: The answer is a judgement about which parts of the work need which kind of management.
+- ? How predictable is cause and effect?
+- ? How much agreement about the outcome?
+- ? How tightly connected are the parts?
+- ? Would more information narrow the choice?
+- ? Is it changing faster than we can respond?
+- ? Who has authority to decide?
+```
+
 ## When things become chaotic
 
 Occasionally a situation changes faster than anyone can analyse it: a major equipment failure during peak season, a key customer collapsing, a flood, a cyber incident. In these moments, careful analysis is the wrong first step. The priority is to stabilise: protect people, protect the most important customers and commitments, stop the damage spreading and establish a few clear priorities. Decisions are made quickly by whoever is in charge, and communicated simply.
@@ -120,6 +145,16 @@ The owner runs the diagnosis:
 - **The delivery runs** are ambiguous, not uncertain. More analysis will not resolve a disagreement about what matters most. The owner brings the three parties together, sets out who bears the cost of each option, agrees that early delivery for the twenty largest cafés is non-negotiable and the rest can be optimised for distance, and names the operations manager as the decision-maker for future changes, with a review in three months.
 
 The portal settles into a steady improvement rhythm, and the delivery decision, which analysis could not make, is made in a single meeting.
+
+```figure
+type: compare
+title: Three bakery initiatives, three kinds of problem
+cols: What it was | What worked
+caption: After four months the portal plan had been rebaselined three times and the delivery review had produced two analyses and no decision.
+- Replacing an oven | Complicated but predictable | Detailed planning: installed on schedule
+- Online ordering portal | Complex | A basic version to ten cafés, fortnightly review, features on evidence
+- Delivery runs | Ambiguous | One meeting: costs shown, the 20 largest cafés kept early, a named decision-maker
+```
 
 ## How this applies to a small Australian business
 

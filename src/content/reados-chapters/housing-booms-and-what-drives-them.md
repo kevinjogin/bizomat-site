@@ -36,6 +36,20 @@ Housing differs from shares and most other assets in several important ways.
 
 Several forces push house prices up or down, usually in combination.
 
+```figure
+type: tree
+title: Forces that move house prices
+caption: Usually several act together; expectations can amplify all of them.
+- House prices
+  - Interest rates | lower repayments, bigger loans
+  - Credit availability | deposits, loan limits, investor rules
+  - Population and households | more households need more homes
+  - Incomes | what households can afford
+  - Supply | land, planning, construction capacity
+  - Tax settings | negative gearing, capital gains discount
+  - *Expectations | belief in future growth
+```
+
 ### Interest rates
 
 Lower interest rates reduce monthly repayments for a given loan, allowing buyers to borrow more. When rates fall significantly, the amount buyers can afford rises, and prices tend to follow. This is one of the most powerful drivers of housing booms. Housing booms in several countries in the early 2000s were partly the result of low interest rates set to cushion economies after the technology share bubble burst.
@@ -153,6 +167,16 @@ A household earns $150,000 a year before tax and buys a home for $900,000, a pri
 | 7% | about $57,500 | about 38% |
 
 A rise in interest rates from 3% to 7% increases repayments by more than half. A household that bought when rates were low, borrowing the maximum it could, would face serious pressure if rates rose significantly. Multiply that across a market, and it becomes clear why housing is so sensitive to interest rates and why high household debt increases the risk of a correction.
+
+```figure
+type: bars
+title: Repayments on a $720,000, 30-year loan
+unit: % of $150,000 gross income
+caption: Household buys at $900,000 (six times income) with a 20% deposit. From 3% to 7%, repayments rise by more than half.
+- At 3% interest: about $36,400 a year | 24
+- At 5%: about $46,400 a year | 31
+- *At 7%: about $57,500 a year | 38
+```
 
 ## Common mistakes
 

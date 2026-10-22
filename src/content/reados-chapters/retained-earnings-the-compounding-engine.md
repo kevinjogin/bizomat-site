@@ -21,6 +21,15 @@ Retained earnings are the running total of all profits a company has kept since 
 
 A simple reconciliation shows how the figure moves each year:
 
+```figure
+type: formula
+title: How retained earnings move in a year
+formula: Closing retained earnings = Opening + Net profit − Dividends
+caption: Retained earnings are the running total of profits kept, not a pile of cash.
+step: $40.0m + $8.0m − $3.0m
+step: = $45.0m at the end of the year
+```
+
 | | Amount |
 | --- | --- |
 | Retained earnings at start of year | $40.0m |
@@ -62,6 +71,22 @@ Consider two illustrative businesses that each start with $10 million of equity,
 
 Over ten years, the 20% business grows to nearly three times the size of the 8% business. Over twenty years, more than eight times. The difference comes entirely from the rate at which retained profits are reinvested. Time magnifies small differences in return into very large differences in outcome.
 
+```figure
+type: line
+title: $10m of equity reinvested at 20% and at 8%
+x: Years
+y: Equity ($m)
+legend: Reinvesting at 20% | Reinvesting at 8%
+ymin: 0
+ymax: 400
+caption: Illustrative: about $62m against $22m after ten years, and about $383m against $47m after twenty.
+- 0 | 10 | 10
+- 5 | 24.9 | 14.7
+- 10 | 61.9 | 21.6
+- 15 | 154.1 | 31.7
+- 20 | 383.4 | 46.6
+```
+
 These are illustrations, and no real business reinvests everything at a constant rate for twenty years. But the shape is real, and it explains why the book cares so much about businesses that can retain profits and reinvest them well.
 
 ### The reverse is also true
@@ -86,6 +111,17 @@ In Australia, the dividend imputation system means that dividends paid from prof
 ## Where retained profit goes
 
 Because retained earnings are not cash, it is worth following the money. Comparing two balance sheets a year apart shows where retained profit was deployed. Common destinations include:
+
+```figure
+type: tree
+title: Following retained profit to where it went
+caption: Each destination carries a different expected return; the question is what the kept money now earns.
+- Profit retained in the business
+  - New equipment, property or systems | non-current assets grow
+  - Inventory and receivables | working capital grows with the business
+  - Acquisitions | often partly goodwill and other intangibles
+  - Debt repayment or cash reserves | lower risk, more options
+```
 
 - **new equipment, property or systems**, visible as growth in non-current assets
 - **inventory and receivables**, as a growing business carries more stock and extends more credit

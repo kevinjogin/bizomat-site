@@ -86,6 +86,18 @@ Before outsourcing a significant function, run a short **unwritten work inventor
 5. **Test the case.** If the estimated value of the unwritten work exceeds the projected saving, rethink the proposal.
 6. **Check again after a year.** Ask what still happens, who does it now and what the accepted losses have cost.
 
+```figure
+type: steps
+title: An unwritten work inventory
+caption: If the unwritten work is worth more than the saving, rethink the proposal.
+- Observe | for several weeks, do not survey
+- Classify | six types
+- Value it | by avoided consequence
+- *Decide | specify, retain or accept the loss
+- Test the case
+- Check again | after a year
+```
+
 ## Design arrangements that keep judgement cheap
 
 Where unwritten work matters, design the arrangement so judgement remains free at the point of use: a retainer rather than hourly billing for advice, a pre-paid pool of hours for small requests, an obligation to report anything the supplier notices without penalty, or a small retained in-house role alongside the contractor. Often the barrier to useful work is not the money but the transaction needed to request it.
@@ -100,9 +112,38 @@ This is an illustration. A manufacturer is considering outsourcing maintenance. 
 
 The owner builds the full picture. Overseeing the contractor would take about a fifth of the operations manager's time, about $25,000 a year. Small modifications and improvement jobs, currently done by the technicians between tasks, would become billable variations, estimated at about $20,000 a year. Documenting equipment history and transitioning the work would cost about $15,000, or about $5,000 a year over three years. The saving shrinks to about $10,000 a year.
 
+```figure
+type: formula
+title: The maintenance contract's saving, fully counted
+formula: Real saving = Headline saving − Oversight − New variations − Transition
+caption: Two technicians at about $210,000 against a $150,000 quote looked like $60,000 a year.
+step: $60,000 − $25,000 − $20,000 − $5,000
+step: About $10,000 a year
+```
+
 A four-week unwritten work inventory finds that the technicians also help operators with changeovers, give early warning of wear on critical machines, answer troubleshooting calls during shifts, train new operators on basic care and manage the spare parts store. The owner estimates that early warnings alone avoid breakdowns worth about $30,000 a year, and changeover help saves about $18,000 of lost production time. The unwritten work is worth far more than the remaining saving.
 
+```figure
+type: bars
+title: The work nobody wrote down, against the saving
+unit: $ a year
+caption: Early warnings and changeover help alone were worth far more than the remaining saving.
+- Breakdowns avoided by early warnings | 30000
+- Lost production saved by changeover help | 18000
+- *Remaining saving from outsourcing | 10000
+```
+
 The owner chooses a different arrangement: keep one technician in-house, who continues the unwritten work and holds the equipment knowledge, and contract out planned maintenance on specialised equipment and after-hours breakdown cover. The combined cost is about $175,000 a year, about $105,000 for the technician and $70,000 for the contractor, a saving of about $35,000 a year while keeping the work that mattered.
+
+```figure
+type: bars
+title: Three ways to run maintenance
+unit: $ a year
+caption: Keeping one technician kept the early warnings and equipment knowledge while still saving money.
+- Two technicians in-house | 210000
+- Fully outsourced, all costs counted | 200000
+- *One technician plus a specialist contractor | 175000 | $105,000 + $70,000
+```
 
 ## How this applies to a small Australian business
 

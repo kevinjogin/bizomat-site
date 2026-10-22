@@ -39,6 +39,17 @@ Rather than committing indefinitely to an idea, give yourself a defined period o
 
 If the idea fails within those 18 months, that is acceptable. You will have learned a great deal, and you can apply the lessons to the next idea or to a job.
 
+```figure
+type: steps
+title: The 18-month rule
+caption: A defined test period makes failure affordable and evidence the deciding factor.
+- Decide what you will build | the product or service
+- Set the traction target | the evidence of demand you aim for
+- Fund the runway | living and building costs for the period
+- Validate the problem | and the price customers will pay
+- *Decide at 18 months | continue, pivot or stop
+```
+
 ### Validate the customer's problem
 
 Within the 18 months, the first task is to validate that customers have the problem you think they have, and that they will pay what you need to charge. Suppose you plan to charge $5,000 for a solution, but customers currently solve the problem with a $500 workaround. Unless your product delivers dramatically more value, they will not switch.
@@ -67,6 +78,15 @@ University resources can dramatically reduce costs. Most Australian universities
 
 Validation means customers paying the price you want to charge:
 
+```figure
+type: compare
+title: How many paying customers count as validation?
+cols: Premium or high-value product | Mass-market product
+caption: Validation means customers paying the price you plan to charge, not saying they like the idea.
+- First milestone | 10 paying customers | 100 or more
+- Why | Each sale is large and considered | Volume shows repeatable demand
+```
+
 - For a **premium or high-value product**, winning your first 10 paying customers is a meaningful milestone.
 - For a **mass-market product**, aim for your first 100 or more.
 
@@ -88,6 +108,18 @@ A business plan is not a slide deck of aspirations. It shows that you understand
 A common mistake in student business plan competitions is the "1 per cent" argument: "the market is worth billions, and if we capture just 1 per cent, we will be huge." Investors find this unconvincing because it says nothing about how you will win customers.
 
 A better plan is **milestone-driven**: what you will achieve in each quarter of the next year. For example, build the product in the first two quarters, launch at the end of the second, win the first 50 customers in the third and show monthly growth in the fourth.
+
+```figure
+type: balance
+title: Two ways to write a plan
+left: The "1 per cent" plan
+right: The milestone plan
+tilt: right
+caption: Investors back evidence of how customers will be won, quarter by quarter.
+- "The market is worth billions" | What we will achieve each quarter
+- "We only need 1%" | How we will win each customer group
+- Says nothing about how | Reviewed by two experienced people
+```
 
 Have at least two experienced people review your plan before you act on it: mentors, lecturers, incubator managers or experienced founders. Some people describe entrepreneurship as "building a plane after jumping off a cliff". In reality, most people who jump without preparation do not build the plane in time. Careful planning saves time, money and heartache.
 

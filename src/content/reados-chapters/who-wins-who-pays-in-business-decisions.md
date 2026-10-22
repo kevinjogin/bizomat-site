@@ -108,6 +108,16 @@ On the net figure, the decision looks straightforward. The owner draws up an inc
 
 The table changes the picture. The long-serving cleaners are among the business's most reliable workers, and losing several of them would mean recruitment and training costs as well as service problems. The client near the closing depot holds a contract that matters to the business. Neither risk appeared in the net saving.
 
+```figure
+type: bars
+title: Who bears the cost of the cleaning business's changes
+unit: people
+caption: Of 40 staff, most face only a short learning effort; a $68,000 net saving hides concentrated losses for these groups.
+- *Staff from the closing depot | 12 | about 35 minutes more travel each way
+- *Long-serving cleaners uncomfortable with smartphones | 8 | risk of missed shifts and pay errors
+- Major client near the closing depot | 1 | slower emergency response
+```
+
 The owner costs the mitigation:
 
 | Mitigation | First-year cost |
@@ -118,6 +128,17 @@ The owner costs the mitigation:
 | Total | $33,040 |
 
 The first-year net saving falls to $34,960, rising to about $62,000 a year once the travel allowance ends, since the storage point continues. The decision still goes ahead, but in a form that is far less likely to lose experienced staff or a key client, and the owner can explain clearly to everyone affected what is changing and why.
+
+```figure
+type: stack
+title: The $68,000 saving after costed mitigation, year one
+unit: $
+caption: Net saving $34,960 in the first year, rising to about $62,000 once the travel allowance ends.
+- Net saving after mitigation | 34960
+- Travel allowance: 12 × $40 × 48 weeks | 23040
+- Storage point near the client | 6000
+- Help sessions and paper fallback | 4000
+```
 
 ## Check the result after the change
 

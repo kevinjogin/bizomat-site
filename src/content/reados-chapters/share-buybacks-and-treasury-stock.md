@@ -21,6 +21,15 @@ When a company buys its own shares, fewer shares remain in the hands of investor
 
 Consider an illustrative company that earns $100 million a year and has 100 million shares on issue. Earnings per share are $1.00. If it buys back 5 million shares, 95 million remain, and earnings per share rise to about $1.053, an increase of more than 5%, without the business earning a single extra dollar.
 
+```figure
+type: formula
+title: Fewer shares, higher earnings per share, same business
+formula: EPS = Earnings ÷ Shares on issue
+caption: EPS rises by more than 5% without the business earning a single extra dollar.
+step: Before: $100m ÷ 100m shares = $1.00
+step: After buying back 5m: $100m ÷ 95m shares ≈ $1.053
+```
+
 ### Treasury stock and cancelled shares
 
 Shares bought back may be cancelled or, in some countries, held by the company as **treasury stock**. Treasury shares carry no votes and receive no dividends, and they can later be reissued, for example to employees. On the balance sheet they appear as a deduction from shareholders' equity.
@@ -66,6 +75,17 @@ Suppose our illustrative company is genuinely worth $2 billion, or $20 per share
 
 Buying at $15, below the true value, makes each remaining share worth more. Buying at $30, above it, makes each remaining share worth less. In both cases earnings per share rise by the same amount, which is why earnings per share alone cannot tell you whether a buyback was a good decision.
 
+```figure
+type: bars
+title: Value per remaining share after a 5m-share buyback
+unit: $
+max: 21
+caption: Business genuinely worth $20 a share. EPS rises equally in both cases, so EPS cannot show whether a buyback was wise.
+- *Buy back at $15 | 20.26 | $75m spent; value rises
+- No buyback | 20.00
+- Buy back at $30 | 19.47 | $150m spent; value falls
+```
+
 Of course, nobody knows a company's true value precisely. But the principle holds: buybacks at modest prices create value for continuing owners, and buybacks at high prices destroy it.
 
 ### Common misuses
@@ -94,6 +114,19 @@ The right use of surplus cash depends on what each option is likely to earn:
 | Buy back shares | The business's own return, at the price paid | Shares are priced below their value |
 
 A disciplined company compares these options rather than defaulting to any one of them. The book's admiration for buybacks applies to companies that buy back shares because it is the best available use of surplus cash, not because it is fashionable or flattering.
+
+```figure
+type: tree
+title: Choosing a use for surplus cash
+caption: Each option earns a different return; a buyback is an investment decision like any other.
+- Surplus cash
+  - Reinvest in the business | the return on new projects
+  - Acquire another business | acquired earnings less the price paid
+  - Repay debt | the interest saved
+  - Hold a reserve | interest plus resilience
+  - Pay a dividend | owners reinvest elsewhere
+  - *Buy back shares | worthwhile only below true value
+```
 
 ## Reading buybacks well
 

@@ -42,6 +42,18 @@ The threshold is high. Many statements that feel like repudiation do not reach i
 
 This is why the exact words and context matter. "We cannot hold this price" may be a negotiating position. "We will not supply unless you pay the new price" may be repudiation.
 
+```figure
+type: balance
+title: Repudiation, or something less?
+left: Can point to repudiation
+right: Usually not repudiation
+caption: The threshold is high; the test is how a reasonable person in the other party's position would read the words or conduct.
+- "We will not deliver" | A genuine request to renegotiate
+- Insisting on terms the contract lacks | A real dispute about what it means
+- Abandoning the work | "We are struggling to source materials"
+- Breaches showing it is no longer bound | Minor, non-essential breaches
+```
+
 ## Breach, serious breach and essential terms
 
 Repudiation sits alongside other bases for terminating a contract at common law. Australian law, as summarised by the High Court in *Koompahtoo Local Aboriginal Land Council v Sanpine Pty Ltd* (2007), generally recognises a right to terminate:
@@ -68,6 +80,15 @@ When a counterparty repudiates, the innocent party generally has a choice, often
 | Affirm the contract | Treat the contract as continuing and insist on performance | Both parties remain bound; the innocent party must keep performing its own obligations; damages for the breach may still be claimed |
 
 Repudiation does not end a contract by itself. The contract ends only if the innocent party accepts the repudiation, usually by clear communication or by unequivocal conduct inconsistent with the contract continuing. Until then, the repudiating party may be able to withdraw its repudiation and perform.
+
+```figure
+type: decision
+title: The innocent party's election
+question: The other side has repudiated. What do you do?
+caption: Affirmation can happen by accident, and silence or delay is risky.
+- Accept and terminate | The contract ends | accrued rights remain; claim loss of the bargain
+- Affirm | Both stay bound | keep performing; damages for the breach may still be claimed
+```
 
 Several features of the election matter in practice.
 
@@ -111,6 +132,19 @@ When a counterparty signals it may not perform, a structured response protects t
 6. **Decide and communicate clearly.** If terminating, do so in writing, identify the basis and follow every contractual step. If affirming, say so and set out what performance you require.
 7. **Mitigate.** Take reasonable steps to limit the loss, and keep records of what you did and what it cost.
 
+```figure
+type: steps
+title: A disciplined response when performance is in doubt
+caption: Termination should be a decision, not a reaction: a business that terminates without grounds may itself have repudiated.
+- Capture the evidence
+- Read the contract
+- Clarify in writing
+- Keep performing
+- Assess the commercial picture
+- *Decide and communicate
+- Mitigate
+```
+
 ## A worked example
 
 This is an illustrative example. The businesses, figures and events are hypothetical.
@@ -120,6 +154,15 @@ A small food manufacturer has a twelve-month contract to buy 40,000 printed cart
 A more careful response starts by asking whether the email is a refusal to perform at the contract price or an attempt to renegotiate. The manufacturer writes back: "Our contract fixes the price at $0.42 until the end of the term. Please confirm by Friday that next month's delivery will be supplied at the contract price. We reserve our rights." The supplier replies that it will not deliver unless the new price is accepted.
 
 The position is now much clearer. An unqualified refusal to perform the contract at its price, for the rest of the term, points strongly towards repudiation. With advice, the manufacturer accepts the repudiation in writing and contracts with the competitor at $0.47. Its damages claim is based on the difference: $0.05 per carton, multiplied by 40,000 cartons a month over the remaining eight months, which is 320,000 cartons and $16,000, plus any reasonable costs of arranging the replacement supply, less anything it saved. It keeps quotes and correspondence showing that the replacement price was a reasonable market price, which supports its mitigation.
+
+```figure
+type: formula
+title: Damages for the carton supplier's repudiation
+formula: Damages = (Replacement price − Contract price) × Remaining volume
+caption: Plus reasonable costs of arranging replacement supply, less anything saved.
+step: ($0.47 − $0.42) × 40,000 cartons a month × 8 months
+step: $0.05 × 320,000 cartons = $16,000
+```
 
 Had the manufacturer terminated on the first email, the supplier might have argued it was only proposing a price change, and that it was the manufacturer that ended the contract.
 

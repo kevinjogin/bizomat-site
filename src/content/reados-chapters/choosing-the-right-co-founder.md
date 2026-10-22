@@ -49,6 +49,16 @@ Before choosing a co-founder, think about how much equity you are prepared to of
 
 Timing matters too. At the very start, co-founders might each contribute a modest amount of capital for their shares. If someone joins a year or two later, the business may already be worth more. If shares were issued at $1 originally and the business is now worth $1.50 per share, a later co-founder should generally buy in at the current value or earn their equity over time through vesting.
 
+```figure
+type: formula
+title: A later co-founder buys in at today's value
+formula: Buy-in price = Current value per share
+caption: Paying the original price would transfer value from the founders who carried the early risk.
+step: Original shares issued at $1.00
+step: Business now worth $1.50 per share
+step: A later co-founder should generally buy in at about $1.50
+```
+
 There are many equity-splitting approaches, from simple equal splits to frameworks that weigh idea, capital, time, skills, risk and future commitment. Whatever method you use, discuss it openly, document it and make sure everyone feels it is fair. Perceived unfairness grows over time.
 
 ## Where to find a co-founder
@@ -70,6 +80,20 @@ People looking to become co-founders can approach start-ups that match their ski
 ### 1. Clear responsibilities
 
 Define each co-founder's key responsibility areas from the start. Some co-founders assume ownership means they no longer have to do operational work, or that everyone reports to them. Clear roles prevent this and keep the business moving.
+
+```figure
+type: checklist
+title: Eight criteria for choosing a co-founder
+caption: A bad co-founder is worse than none; write the agreement before success brings an investor.
+- Clear responsibilities
+- Complementary backgrounds
+- Roles negotiated and documented early
+- Cultural fit | values and working style
+- A shared history
+- A shared vision | size, speed, capital, success
+- Equal skin in the game
+- Someone smarter than you, in their area
+```
 
 ### 2. Complementary backgrounds
 
@@ -162,6 +186,16 @@ A messy cap table or an undocumented founder arrangement can delay or kill an in
 Two engineers who worked together at a large manufacturer decide to start a business making specialised automation equipment. One is an outstanding mechanical designer, and the other is strong in controls and software. Neither has sales or finance experience. After a year, they invite a former colleague with sales and commercial experience to join as a third co-founder.
 
 They agree an equity split of 40%, 40% and 20%, reflecting the original founders' earlier risk, capital and product development. The third founder's shares vest over four years with a one-year cliff, and all three founders' shares are subject to vesting. Their shareholders' agreement defines roles (design, controls and software, and commercial), requires unanimous agreement on capital raising and major spending, includes a deadlock procedure and leaver provisions, and assigns all IP to the company.
+
+```figure
+type: stack
+title: The automation equipment founders' equity split
+unit: %
+caption: The third founder's shares vest over four years with a one-year cliff; all founders' shares are subject to vesting.
+- Original founder 1 | 40
+- Original founder 2 | 40
+- Third founder, vesting | 20
+```
 
 Two years later, when an investor shows interest, the clean structure and complementary team make the due diligence straightforward.
 

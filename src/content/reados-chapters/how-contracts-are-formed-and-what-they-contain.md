@@ -30,6 +30,17 @@ Under Australian law, which in this area is largely based on the common law, a b
 
 Most business contracts do not need to be in writing or signed to be binding, although some kinds, such as certain land transactions and guarantees, have formal requirements. Contracts can be formed by email and other electronic communications. A clear written contract is still far easier to prove and interpret than an oral one.
 
+```figure
+type: checklist
+title: What a binding contract generally needs
+caption: Writing and signatures are usually not required, but a clear written contract is far easier to prove.
+- Agreement | an offer and its acceptance
+- Consideration | something of value given by each side
+- Intention to create legal relations | meant to be legally binding
+- Certainty | essential terms clear enough to enforce
+- Capacity | parties legally able to contract
+```
+
 ## Offer and acceptance
 
 An **offer** is a clear statement of willingness to be bound on specific terms if the other party accepts. A quote may be an offer, or it may be only an **invitation to treat**, an invitation for the other party to make an offer, depending on its wording and context. Advertisements and price lists are usually invitations to treat.
@@ -71,6 +82,16 @@ Where a contract is fully written, the **parol evidence rule** generally prevent
 
 Terms differ in importance. A **condition** is a term so essential that breach allows the other party to terminate the contract and claim damages. A **warranty**, in this legal sense, is a less important term whose breach allows damages but not termination. Many terms are **intermediate** or **innominate**: the remedy depends on how serious the breach and its consequences are. Contracts often state expressly which terms are essential and what rights each breach gives. The [when a contract is broken](/reados/collections/commercial-law-and-contracts/when-a-contract-is-broken/) article covers responding to breaches.
 
+```figure
+type: compare
+title: What a breach allows depends on the kind of term
+cols: How important | Breach allows
+caption: Contracts often state expressly which terms are essential and what rights each breach gives.
+- Condition | Essential to the contract | Termination and damages
+- Intermediate term | Depends on the breach | A remedy matched to how serious the breach and its consequences are
+- Warranty | Less important | Damages, but not termination
+```
+
 ## Who can enforce a contract
 
 Under the doctrine of **privity**, generally only the parties to a contract can enforce it or be bound by it. A head contractor's client usually cannot sue a subcontractor directly under the subcontract, and a subcontractor usually cannot claim payment from the client. There are exceptions, including under some statutes and for certain insurance contracts, and parties may have rights in negligence or under collateral contracts.
@@ -85,6 +106,16 @@ Privity explains why projects use **collateral warranties** and **deeds of direc
 
 **Novation** replaces one party with another, extinguishing the old contract and creating a new one on the same terms with the new party. It requires the agreement of all three parties: the outgoing party, the incoming party and the party who stays. Novation is common in design and construct projects, where a client's designer is novated to the contractor, and when businesses are sold or restructured. Check carefully what liabilities transfer and from when.
 
+```figure
+type: compare
+title: Assignment or novation?
+cols: Assignment | Novation
+caption: Novation needs the outgoing, incoming and remaining parties to agree; check what liabilities transfer and from when.
+- What moves | The benefit, such as the right to payment | The whole position: a new party replaces an old one
+- Obligations | Not transferred by assignment alone | Taken on by the incoming party
+- The original contract | Continues | Extinguished and replaced on the same terms
+```
+
 ## Exclusion and limitation clauses
 
 **Exclusion clauses** remove or limit liability that would otherwise exist. They include caps on total liability, exclusions of consequential or indirect loss, time limits for claims, and allocations of particular risks. They are among the most important clauses in commercial contracts, because they decide who carries the loss when things go wrong.
@@ -96,6 +127,17 @@ An exclusion clause applies only if it forms part of the contract:
 - **By signature**: a signed document generally binds the signer to its terms, whether or not they were read, unless there is misrepresentation or another vitiating factor.
 - **By reasonable notice**: unsigned terms apply if reasonable notice of them was given before or at the time the contract was made. Terms first presented after the contract was formed, such as on a delivery docket or invoice, usually come too late.
 - **By course of dealing**: consistent previous dealings on the same terms may incorporate them.
+
+```figure
+type: decision
+title: Did the exclusion clause become part of the contract?
+question: How were the terms put to the other party?
+caption: Terms first presented on a delivery docket or invoice, after the contract was formed, usually come too late.
+- Signed document | Generally binding | read or not, unless misrepresentation or another vitiating factor
+- Unsigned terms with reasonable notice | Usually incorporated | if notice came before or when the contract was made
+- *Terms first shown after formation | Usually too late | e.g. a delivery docket
+- Consistent previous dealings | May be incorporated | by course of dealing
+```
 
 ### Construction
 
@@ -125,6 +167,15 @@ This is an illustrative example. A fabrication business is working as a subcontr
 **Issues.** The subcontract has a variation clause requiring written directions from the contract administrator, not the site manager. The fabricator did the work at the head contractor's request, which may support a claim for a reasonable price even without an agreed figure, but the failure to follow the variation procedure and the question of the site manager's authority weaken its position. The steel supplier's exclusion on the delivery docket was presented after the contract was formed, so it was probably not incorporated.
 
 **Outcome.** After legal advice and negotiation, the parties settle the bracket claim at about $31,000. The fabricator changes its practices: no variation work starts without a written direction from an authorised person stating the scope, with price and time either agreed or to be assessed under the contract; its standard terms are sent with every quote and accepted before orders proceed; and staff are trained to recognise when a conversation is changing the contract.
+
+```figure
+type: bars
+title: The bracket variation that started with a phone call
+unit: $
+caption: "Go ahead, we'll sort out the price later" from a site manager whose authority was in doubt left the fabricator settling about $7,000 below its invoice.
+- Invoiced for the extra brackets | 38000
+- *Settled after advice and negotiation | 31000
+```
 
 ## Applying this in an Australian business
 

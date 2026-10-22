@@ -25,6 +25,17 @@ Anyone who looks closely at a business from outside, such as a buyer, a lender o
 
 A useful distinction is between an **asset**, something that produces a return whether or not a particular person turns up, and an **arrangement**, which produces a return only while that person is present. Most owner-run businesses are partly arrangements. The question is how much, and whether the owner has chosen that or simply drifted into it.
 
+```figure
+type: balance
+title: Asset or arrangement?
+left: An asset
+right: An arrangement
+caption: Buyers, lenders and insurers all look for dependence on individuals; arrangements are worth less.
+- Produces a return whoever turns up | Produces a return only while one person is present
+- Transferable to a buyer | Leaves when the person leaves
+- Valued as part of the business | Discounted for key-person risk
+```
+
 ## What dependence costs before anyone leaves
 
 The quiet costs of dependence are continuous:
@@ -58,6 +69,18 @@ Dependence takes different forms, and each needs a different remedy. Treating th
 
 The last two often belong to the owner, and they are the two least likely to appear on any risk list.
 
+```figure
+type: tree
+title: Five kinds of key-person dependence
+caption: Authority and identity often belong to the owner, and are the least likely to appear on any risk list.
+- Dependence on one person
+  - Relationships | customers, suppliers, lenders deal only with them
+  - Judgement | unusual cases: pricing, quality, risk
+  - Method | how the work is actually done
+  - Authority | approvals that clear only when they sign
+  - *Identity | customers believe they are buying the person
+```
+
 ## Score roles, not people
 
 Not every dependence needs fixing. Score each critical role on two dimensions:
@@ -66,6 +89,19 @@ Not every dependence needs fixing. Score each critical role on two dimensions:
 - **Substitutability**: how long and how much it would cost to restore the capability if the person were unavailable.
 
 Act where both are high. Monitor where one is high. Leave the rest. The assessment should be made by the owner or manager responsible, not only by the person concerned or their own team, who may find it hard to judge objectively.
+
+```figure
+type: matrix
+title: Score roles, not people
+x: Substitutability: easy → hard
+y: Materiality: low → high
+hot: 2
+caption: Act first where both materiality and difficulty of substitution are high.
+- Material, quickly restored | lower priority
+- *Material and slow or costly to restore | act here first
+- Minor, quickly restored | leave it
+- Minor but slow to restore | lower priority
+```
 
 ## Build second relationships before you need them
 

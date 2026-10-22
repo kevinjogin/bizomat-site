@@ -42,6 +42,18 @@ Turning float into a managed reserve takes a few hours, not new software:
 5. **Set triggers.** When a chain's remaining float falls below one reporting period, treat it as critical. When total float has shrunk a lot while the finish date has not moved, review the schedule as if it had been re-planned.
 6. **Review monthly.** Separate float lost to slippage from float spent deliberately. Deliberate spending that bought nothing, not a shorter finish, lower cost or reduced risk, is protection given away for free.
 
+```figure
+type: steps
+title: A simple float ledger
+caption: The schedule holds a second contingency, in time, that nobody owns unless someone is given it.
+- Record float by chain | the opening balance
+- Give each chain an owner
+- Set the rule | when shared float needs approval
+- Log each use | who, why, what remains
+- Set triggers | low float means critical
+- *Review monthly | slippage or deliberate spend?
+```
+
 Where work is contracted out, agree in the contract who owns the float in the joint programme. If the contract is silent, the contractor's schedule tends to absorb slack the customer paid for, and the customer learns this during a delay claim.
 
 ## The critical path is a forecast, not a promise
@@ -70,6 +82,19 @@ The useful distinction is between two questions:
 
 The gap between the two answers is risk the schedule creates silently.
 
+```figure
+type: balance
+title: Two questions about when to do the work
+left: When is it easiest?
+right: When is it cheapest to be wrong?
+tilt: right
+caption: Every sequencing rule answers the first question; none asks the second.
+- Follow the dependencies | Before the point of no return
+- Level resources | While a failure can still be absorbed
+- Let the team find its feet | With a partial proof, done small
+- Protect the early stages | Not after the money is spent
+```
+
 ## Find the point of no return
 
 The **point of no return** is rarely written down. It is the moment after which every remaining option costs real money: the old machine is sold, the deposit is non-refundable, the building is modified, the launch is announced, the staff are hired. Find it for each major commitment by asking: if we reversed this the day after committing, what would it cost?
@@ -93,9 +118,29 @@ This is an illustration. A small brewery is installing a new canning line to rep
 
 **Float.** Over six weeks, the electrician moves the switchboard work back eight days to suit another job, and the brewery accepts a cable delivery six days late because "the schedule had room". Nobody records either. The electrical chain's 15 days of float are down to one, and it is about to become the critical path. When the owner starts a float ledger, this shows up immediately. The owner asks the electrician to commit to fixed dates for the remaining work, and the chain owner, the project lead, now approves any further use.
 
+```figure
+type: bars
+title: The brewery's electrical float, spent without a record
+unit: days
+caption: Two unrecorded decisions left one day of float; the chain was about to become critical.
+- Opening float | 15
+- Switchboard work moved for another job | −8
+- Cable delivery accepted late | −6
+- *Remaining | 1
+```
+
 **Sequencing.** The plan, built from sensible rules, puts the hardest test last: running the canning line at full speed on real beer, checking seam quality and fill levels. That would happen after the old bottling line is sold, the first can order of 200,000 printed cans is paid for and launch dates are agreed with two bottle shop chains. If the seams fail, the brewery would have no way to package beer for weeks.
 
 The owner identifies the point of no return as selling the bottling line, and buys a partial proof before it: a two-day factory acceptance test at the canning-line supplier, using the brewery's own beer and a pallet of its printed cans, with seam inspections by an independent technician. The test costs about $4,000 including travel. The cost of a failed line after the sale, in lost sales and emergency contract packing, would run to several weeks of revenue. The trial reveals a seam setting problem with the brewery's can supplier, which is corrected before shipping. The bottling line is sold only after the line passes on-site testing.
+
+```figure
+type: timeline
+title: Moving the hardest test before the point of no return
+caption: About $4,000 against several weeks of lost sales and emergency contract packing if the seams failed after the sale.
+- *Before | Two-day factory test | the brewery's own beer and printed cans, seams checked independently
+- Point of no return | Selling the bottling line
+- After | Commitments locked in | 200,000 printed cans paid for; launch dates agreed with two chains
+```
 
 ## How this applies to a small Australian business
 

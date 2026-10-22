@@ -28,6 +28,16 @@ Commercial problems become expensive when symptoms are mistaken for issues:
 
 Many problems also contain several questions at once. A payment dispute may involve scope, authority, evidence, timing and remedies. Separating them is the first step to resolving them.
 
+```figure
+type: compare
+title: Symptom or issue?
+cols: The instinct | The real issue may be
+caption: Commercial problems become expensive when symptoms are mistaken for issues.
+- A contractor claims extra | Argue the amount | Whether a valid variation was ever made
+- A losing bidder complains | Defend the winning price | Whether the tender promised a process that was not followed
+- A supplier cites a verbal assurance | Compare memories | What the written contract says, and what can be proved
+```
+
 ## An extended method for business problems
 
 Seven steps work well for most commercial problems:
@@ -43,6 +53,19 @@ Seven steps work well for most commercial problems:
 | Decision | What should the business do now, and what advice is needed? |
 
 The first four steps are the traditional method. The last three connect it to business reality.
+
+```figure
+type: steps
+title: Seven steps through a contract problem
+caption: The first four are the traditional legal method; the last three connect it to business decisions.
+- Issue | one precise question
+- Rule | clause, policy, law
+- Evidence | what records prove
+- Application | rule meets facts
+- Alternatives | other readings
+- Consequence | cost, time, relationships
+- *Decision | action and advice needed
+```
 
 ## State the issue precisely
 
@@ -83,6 +106,19 @@ A useful habit is to rate each option on two separate scales:
 - **Commercial attractiveness**: how good is this response for the business overall?
 
 Keeping them separate stops a strong legal position from automatically becoming a decision to escalate, and stops a desirable outcome from being mistaken for a strong position.
+
+```figure
+type: matrix
+title: Rate legal confidence and commercial attractiveness separately
+x: Legal confidence: low → high
+y: Commercial attractiveness: low → high
+hot: 4
+caption: A strong position should not automatically become a decision to escalate, and a desirable outcome is not a strong position.
+- A desirable outcome | but not a strong position
+- Strong and good for the business
+- Weak and unattractive
+- *A strong position | but escalating may cost more than it gains
+```
 
 ## A one-page decision brief
 
@@ -141,6 +177,15 @@ The owner works through the method instead:
 - **Decision**: accept the variation in principle and value it under the schedule of rates.
 
 Valued at the agreed rates, the work comes to $12,300. The subcontractor accepts after reviewing the calculation. The owner then fixes the underlying problem: site supervisors are reminded that directions must include an agreed price or a statement that the schedule of rates applies, and a simple variation form replaces text messages for changes above a set value.
+
+```figure
+type: bars
+title: The rerouting invoice, worked through the method
+unit: $
+caption: The text message was a written direction from the site supervisor, so a variation probably existed; the dispute was about the rates.
+- Invoiced by the plumber | 18500
+- *Valued under the schedule of rates | 12300
+```
 
 ## How this applies to a small Australian business
 

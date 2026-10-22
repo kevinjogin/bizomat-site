@@ -66,11 +66,31 @@ Both the business and the household need buffers:
 
 Borrowing to buy things that lose value, such as holidays, gadgets and luxury goods, means paying interest on consumption. Credit card interest rates are often around 20 per cent a year. A $5,000 credit card balance at 20 per cent, repaid at $150 a month, takes about 50 months to clear and costs about $2,360 in interest.
 
+```figure
+type: stack
+title: Clearing a $5,000 card balance at $150 a month
+unit: $
+caption: About 50 months and about $2,360 of interest at 20% a year: interest on consumption earns nothing.
+- Original balance | 5000
+- Interest paid | 2360
+```
+
 A sound principle: **borrow only when the expected return clearly exceeds the cost of borrowing.** If you borrow $100 at $10 interest, the investment should reliably earn more than $10. Consumption earns nothing.
 
 ### Watch depreciating assets
 
 New cars, the latest phones, expensive watches and premium equipment lose value quickly. If you earn $10,000 a month and spend $10,000 a month on lifestyle and depreciating assets, you are not building wealth, however high your income. If you earn $10,000 and spend $6,000, investing the difference, you are.
+
+```figure
+type: compare
+title: Same income, different wealth
+cols: Spend it all | Invest the difference
+best: 2
+caption: Income alone does not build wealth; what is kept and invested does.
+- Monthly income | $10,000 | $10,000
+- Spent on lifestyle and depreciating assets | $10,000 | $6,000
+- Invested each month | $0 | $4,000
+```
 
 ### Use the power of refurbished and second-hand
 
@@ -101,6 +121,17 @@ Consider investing $500 a month for 20 years, contributing $120,000 in total. At
 | 8% | about $295,000 |
 
 The earlier you start, the more time compounding has to work. Over ten years, the same contributions grow to between about $74,000 and $91,000 at those rates. The extra ten years more than doubles the result.
+
+```figure
+type: bars
+title: $500 a month for 20 years ($120,000 contributed)
+unit: $
+caption: Illustrative, before fees and tax; returns are never guaranteed. Ten more years more than doubles the result.
+- Contributions | 120000
+- At 4% a year | 183000
+- At 6% a year | 231000
+- *At 8% a year | 295000
+```
 
 Returns are never guaranteed. Investments can fall in value, especially in the short term, and higher potential returns come with higher risk.
 

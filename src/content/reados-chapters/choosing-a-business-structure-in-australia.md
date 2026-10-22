@@ -28,6 +28,17 @@ This article explains the four common structures in Australia, a method for comp
 
 A few points are commonly misunderstood:
 
+```figure
+type: compare
+title: The four common structures in Australia
+cols: Who carries on the business | Exposure and administration
+caption: General information only; compare structures with an accountant and lawyer for your situation.
+- Sole trader | You personally; not a separate entity | Simplest; you are personally responsible for debts
+- Partnership | Two or more people together | Partners can be personally liable for partnership debts, even another partner's
+- Company | A separate legal entity, run by directors | More obligations and director duties; limited liability helps but is not absolute
+- Trust | A trustee under a trust deed | More complex and costly; tailored advice needed
+```
+
 - **A business name is not a structure.** Registering a business name with ASIC lets you trade under that name. It does not create a company, and it does not give you trade mark rights, which are a separate registration with IP Australia.
 - **A trust is not a person.** The trustee, an individual or a company, enters contracts and is responsible for the trust's obligations. Many trading trusts use a company as trustee for that reason.
 - **Structures can be combined.** Some businesses use a company to trade and a trust to hold investments or to own the company's shares. Combinations add cost and complexity, and need a clear reason.
@@ -37,6 +48,17 @@ A few points are commonly misunderstood:
 ### 1. Ownership and control
 
 List the owners, who makes which decisions, how votes work, what each person contributes and, critically, what happens when someone wants to leave, becomes unable to work or dies. A structure that suits one founder may not suit three, or an incoming investor or family successor. An informal understanding between friends is not governance; write it down in a partnership agreement, a shareholders agreement or a trust deed, as appropriate. The [choosing the right co-founder](/reados/collections/starting-funding-and-structuring-a-business/choosing-the-right-co-founder/) article covers agreeing these matters with business partners.
+
+```figure
+type: steps
+title: Five questions for choosing a structure
+caption: Do not choose on a headline tax rate alone.
+- Ownership and control | who decides, and what happens when someone leaves
+- The real risks | contracts, staff, liability, guarantees
+- How money will move | after-tax cash in owners' hands
+- Where the business is going | investors, staff equity, sale
+- *Running costs and continuity | paperwork and succession
+```
 
 ### 2. The real risks
 

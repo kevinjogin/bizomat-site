@@ -66,6 +66,16 @@ Total cost = $900,000 + $60,000 = **$960,000**, allocated by relative fair value
 
 No goodwill. No expense for transaction costs. The assets are recorded at a total of $960,000.
 
+```figure
+type: stack
+title: Scenario A: $960,000 allocated by relative fair value
+unit: $'000
+caption: Price $900,000 plus $60,000 of transaction costs, spread 50 : 30 : 20 across the assets. No goodwill arises.
+- Equipment, 50% | 480
+- Building, 30% | 288
+- Product licence, 20% | 192
+```
+
 ### Scenario B: business combination
 
 Now suppose the unit also includes its trained production team, supplier arrangements and customer contracts with a fair value of $150,000. With an organised workforce performing critical processes, it is a business. The buyer pays **$1,300,000**.
@@ -81,6 +91,18 @@ Now suppose the unit also includes its trained production team, supplier arrange
 | **Goodwill** | **$150,000** |
 
 Transaction costs of $60,000 are **expensed** in the period, reducing profit. The assets are recorded at their fair values, plus customer contracts and goodwill.
+
+```figure
+type: compare
+title: Similar assets, two very different records
+cols: Scenario A: asset acquisition | Scenario B: business combination
+caption: Scenario B reports lower profit in the acquisition year and amortisation of customer contracts later; goodwill is then tested for impairment.
+- Price paid | $900,000 | $1,300,000
+- Transaction costs, $60,000 | Added to asset cost | Expensed, reducing profit
+- Assets recorded | $960,000 at allocated cost | $1,150,000 at fair value
+- Customer contracts | Not acquired | $150,000 recognised
+- Goodwill | None | $150,000
+```
 
 ## The differences side by side
 

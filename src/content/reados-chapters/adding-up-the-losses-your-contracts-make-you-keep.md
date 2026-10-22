@@ -34,6 +34,17 @@ A liability regime usually reduces what you can recover in three steps, and most
 
 So the honest way to read a liability clause is: what is the plausible worst-case loss, what classes are excluded, how quickly would we discover the problem, and what is the cap? The **residue**, the loss you would keep, is what remains after all three.
 
+```figure
+type: steps
+title: Three ways recovery shrinks
+caption: Most people only notice the cap; the first two steps often remove more.
+- Plausible worst-case loss | what failure would cost you
+- Excluded classes removed | consequential loss, lost profit, data
+- Late notices lost | failures found after the notice period
+- The cap applied | to whatever survives
+- *What you can recover | the rest is your residue
+```
+
 ## The gaps add up
 
 Each cap is usually accepted on its own, by whoever is negotiating that contract at the time: an office manager renewing a software subscription, a project lead accepting standard terms to keep to a date, an owner trading a warranty for a discount. None of them is thinking about the total. But the residues accumulate, and a single event can trigger several at once. A regional power outage could hit your refrigeration, your systems and your security monitoring simultaneously. A cyber incident at a shared platform could affect several services together.
@@ -84,6 +95,18 @@ A sensible sequence:
 5. **Timing.** When does each cover start, change and end? Responsibility often shifts at milestones such as site possession, handover or the end of a defects period.
 6. **Evidence.** What proof do you need, and who checks it?
 
+```figure
+type: steps
+title: Mapping insurance to responsibility
+caption: A certificate of currency proves a policy exists, not that it responds to your risk.
+- Risk map | what could go wrong
+- Responsibility map | who carries each risk
+- Policy map | which policy responds
+- *Gaps | excluded, capped, large excesses
+- Timing | when cover starts and shifts
+- Evidence | proof needed, and who checks
+```
+
 Some common misunderstandings:
 
 - **A certificate is not adequacy.** It proves a policy exists, not that it responds to your risk, at the right limit, for the right parties.
@@ -107,7 +130,27 @@ This is an illustration. A fresh produce wholesaler with a cold store and delive
 
 The residues total about **$342,000**. More importantly, a regional power outage could trigger three of them at once: refrigeration, software and security together leave about **$299,000**. The business has about $120,000 in cash. Its insurance package covers theft, but the owner is not sure whether it covers stock spoilage from a refrigeration breakdown or power failure.
 
+```figure
+type: bars
+title: What the wholesaler would keep if each supplier failed
+unit: $
+caption: Residue is the failure cost minus what the contract terms would realistically let it recover; together about $342,000.
+- *Refrigeration maintenance, $18,000 a year | 192000 | cap at 12 months' fees; lost profit excluded
+- Warehouse software, $24,000 a year | 78000 | service credits only
+- Freight carrier | 43000 | limited per consignment
+- Security monitoring, $3,600 a year | 29000 | low fixed cap
+```
+
 The business takes several steps:
+
+```figure
+type: bars
+title: One regional power outage against the cash buffer
+unit: $
+caption: Refrigeration, software and security could fail together, and insurance for spoilage from power failure was uncertain.
+- *Residue one outage could trigger | 299000
+- Cash the business holds | 120000
+```
 
 - **It asks its broker** about stock deterioration and business interruption cover, including power supply failure, and what excesses, limits and conditions apply.
 - **It installs a backup generator** for the cool rooms, which changes the odds rather than who pays.

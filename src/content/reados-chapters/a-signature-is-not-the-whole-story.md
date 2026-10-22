@@ -32,6 +32,18 @@ Contract law recognises several situations in which an agreement may be set asid
 
 These are not the same, and the consequences differ. Some defects may mean there was never a binding agreement. Others leave the contract in place unless the affected party acts to set it aside. Facts can also raise several issues at once.
 
+```figure
+type: tree
+title: What went wrong with the consent?
+caption: None of these doctrines rescues a party simply because it made a poor deal.
+- Impaired consent
+  - Pressure | duress: illegitimate threats
+  - A relationship | undue influence: trust, dependence or dominance misused
+  - Understanding | mistake: about the subject, the party or the document
+  - Information | misrepresentation: a false statement of fact
+  - *Disadvantage | unconscionable conduct: unfair advantage taken
+```
+
 ## A hard bargain is not a defective one
 
 None of these doctrines protects a party simply because it made a poor deal. Unequal bargaining power, tough negotiation and a disappointing price are part of commerce. The question is whether the process that produced the agreement was defective, not whether the outcome was favourable.
@@ -57,6 +69,16 @@ Statements made during sales and negotiation fall into different categories:
 - **Promotional language**: obvious exaggeration that no reasonable person would rely on as a precise claim.
 
 The more decision-critical a statement is, the more evidence should stand behind it. A casual remark about a product's appearance is different from a claim about its output, compliance, lifespan or savings.
+
+```figure
+type: layers
+title: Four kinds of pre-contract statement
+caption: Forecasts imply a present fact: that the speaker genuinely believes them on reasonable grounds.
+- Promotional language | obvious exaggeration no one relies on
+- Opinions | still matter when the speaker has special knowledge
+- Intentions and forecasts | need genuine belief and reasonable grounds
+- *Facts | capacity, approvals, test results: need evidence
+```
 
 ## Govern your claims
 
@@ -122,6 +144,18 @@ If any answer is uncertain, the solution is usually not another signature. It is
 This is an illustration. A business that sells and refurbishes food processing equipment sells a refurbished filling machine to a small sauce manufacturer. During the sale, the salesperson tells the customer the machine "will run at 60 units a minute", quoting the brochure for the current new model. The refurbished machine is an older version, realistically capable of about 45 units a minute. The customer, who needed about 55 a minute to meet a new supermarket order, buys it on the strength of the claim.
 
 After installation, the shortfall becomes obvious and the customer complains. The owner of the equipment business reviews what happened. The claim was a statement of fact about capacity, it was central to the customer's decision and the business had no reasonable basis for it. Whatever the precise legal position, the business's credibility and the customer relationship are at stake.
+
+```figure
+type: bars
+title: The filling machine claim against reality
+unit: units a minute
+max: 60
+caption: A brochure figure for the new model was quoted for an older refurbished machine; an upgrade kit costing about $12,000 closed the gap.
+- Claimed in the sale | 60
+- Customer needed | 55
+- *Refurbished machine actually managed | 45
+- After the upgrade kit | 55
+```
 
 The owner resolves the complaint by fitting an upgrade kit at the business's cost, about $12,000, which brings the machine to about 55 units a minute, and confirming the result with a timed run witnessed by the customer.
 

@@ -17,11 +17,34 @@ Price is the most powerful profit lever most businesses have, and the one they m
 
 Small changes in price have large effects on profit. If a business makes a 10% net margin, a 5% price increase with no loss of volume raises profit by half. A 5% price cut without extra volume removes half the profit. That arithmetic is why pricing deserves more attention than it usually gets.
 
+```figure
+type: bars
+title: A 5% price move on a 10% net margin
+unit: % of current profit
+caption: With no change in volume, a 5% price change moves profit by half in either direction.
+- 5% price increase | 150
+- Current price | 100
+- *5% price cut | 50
+```
+
 This article sets out a seven-part pricing method suitable for product and service businesses: define your target customer and market position, know your full costs, quantify the value you create, understand who makes the buying decision, count the customer's alternatives, price for the product's life-cycle, and plan how price will change over time.
 
 ## 1. Define your customer and your market position
 
 Before setting a price, decide which customers you serve and where you sit in the market. A simple way to think about market positions uses two dimensions, price and quality:
+
+```figure
+type: matrix
+title: Price and quality positions
+x: Quality: lower → higher
+y: Price: lower → higher
+hot: 2
+caption: Choose the target customer and position first; the price follows from them.
+- Opportunistic | higher price, lower quality
+- Premium | higher price, higher quality
+- Cheap and basic | lower price, lower quality
+- Value for money | lower price, higher quality
+```
 
 | | Lower quality | Higher quality |
 |---|---|---|
@@ -146,6 +169,20 @@ The firm applies the seven steps to a typical fixture:
 6. **Life-cycle**: custom work, where value matters more than market price.
 
 The old method would have priced the fixture at $10,800. Using value-based pricing, the firm quotes $24,000, still paying back for the customer within about two months, and presents the business case to the plant manager. The customer accepts. The firm's margin on the job more than quadruples, and the customer still captures most of the value.
+
+```figure
+type: range
+title: Pricing the custom fixture: cost floor to customer value
+min: 0
+max: 160000
+unit: $
+ticks: $0 | $40,000 | $80,000 | $120,000 | $160,000
+caption: The value-based quote still pays back for the customer in about two months, and the firm's margin more than quadruples.
+- Full cost | 9000 | 9000
+- Old price: cost + 20% | 10800 | 10800
+- *Value-based quote | 24000 | 24000
+- Annual value to the customer | 150000 | 150000 | 2,500 labour hours saved a year
+```
 
 ## Common pricing mistakes
 

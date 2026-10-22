@@ -30,6 +30,26 @@ A new online store that takes $400,000 of orders has not necessarily created $40
 
 The credible benefit is the **difference between two realistic futures**: with the investment and without it. Three questions help:
 
+```figure
+type: svg
+title: The benefit is the gap between two realistic futures
+alt: Two lines rise from today. The upper line shows results with the investment; the lower dashed line shows the realistic base case without it. The shaded gap between them is the incremental benefit, much smaller than the total results after the investment.
+caption: Crediting everything that happens after an investment confuses sequence with cause; only the gap counts.
+viewbox: 0 0 640 300
+body:
+<path class="ln" d="M60 30V250H610"/>
+<path class="fs" d="M60 200L600 70L600 140L60 200Z"/>
+<path class="la draw" pathLength="1" d="M60 200L600 70"/>
+<path class="li dsh" d="M60 200L600 140"/>
+<path class="lf dsh" d="M60 200H600"/>
+<text class="txa" x="590" y="60" text-anchor="end">With the investment</text>
+<text class="txb" x="590" y="160" text-anchor="end">Realistic base case</text>
+<text class="tx" x="590" y="218" text-anchor="end">"Frozen present": nothing changes</text>
+<text class="txa" x="470" y="112" text-anchor="middle">incremental benefit</text>
+<text class="tx" x="64" y="272">Today</text>
+<text class="tx" x="606" y="272" text-anchor="end">Time</text>
+```
+
 - **Additionality**: what changes because of this investment that would not have changed otherwise?
 - **Attribution**: how much of that change can reasonably be credited to this investment rather than to other factors?
 - **Opportunity cost**: what value is given up by using money, people and attention here rather than elsewhere?
@@ -122,6 +142,19 @@ The owner works through the counterfactual ledger:
 | Credible net benefit | $40,000 |
 
 The project is still worthwhile, but its credible benefit is less than half the original claim, and much more sensitive to the substitution estimate. The owner proceeds with a measurement plan: online orders are matched against the shop customer list to see how many are from existing customers, shop sales are tracked against their previous trend, and the results are reviewed after six months. The forecast becomes something the business can test, rather than a number that is quietly forgotten.
+
+```figure
+type: bars
+title: From claimed to credible benefit for the online store
+unit: $ a year
+caption: The credible net benefit is $40,000, less than half the $90,000 claimed, and most sensitive to the substitution estimate.
+- Claimed net benefit | 90000 | $180,000 gross profit − $90,000 running costs
+- Margin that shops would have earned anyway | −45000 | substitution
+- Payment and platform fees | −12000 | leakage
+- Margin protected from customers who would leave | 27000 | realistic base case
+- Owner's time diverted from wholesale | −20000 | displacement
+- *Credible net benefit | 40000
+```
 
 ## How this applies to a small Australian business
 

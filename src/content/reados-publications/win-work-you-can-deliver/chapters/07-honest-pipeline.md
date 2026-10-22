@@ -25,6 +25,17 @@ Choose a small set of states that match your decisions. For each state, specify 
 
 These are proposed working definitions for this example, not a universal sales model. A purchase order, deposit or other condition may be necessary before a particular business reserves capacity or begins work. Record those conditions separately so “accepted” does not silently mean “cash received” or “ready to start”.
 
+```figure
+type: steps
+title: Pipeline states defined by evidence
+caption: Opportunities can move backwards when evidence changes; the state follows the evidence, not hope.
+- New enquiry | a real request and a way to respond
+- Assessing fit | a named problem under review
+- Offer under review | a specific version has reached the customer
+- *Accepted | acceptance of the defined offer recorded
+- Closed or deferred | reason and any review recorded
+```
+
 Allow opportunities to move backwards when evidence changes. If a customer requests an entirely different scope, an old accepted price should not continue to support the forecast for the new work. Preserve the history and record the new decision needed.
 
 ## Keep the next action visible
@@ -48,6 +59,16 @@ The observed ratios are:
 
 The two remaining offers are still open, so the final acceptance rate for this group is not yet known. The small counts also make the percentages unstable. One additional acceptance would change the offer acceptance ratio from 60% to 80%. Report counts alongside percentages and avoid presenting this example as a benchmark.
 
+```figure
+type: funnel
+title: A cohort of 20 enquiries at its review date
+caption: 15% of enquiries became accepted engagements so far. Two offers are still open, so the final rate is not yet known.
+- Enquiries | 20
+- Suitable | 8 | 40%
+- Offers issued | 5 | 62.5% of suitable
+- Accepted so far | 3 | 60% of offers
+```
+
 A **cohort** is a group defined by a common starting condition, such as enquiries received in a particular month. Comparing offers issued this month with acceptances this month can be misleading if those acceptances came from older enquiries. Use a defined cohort when investigating conversion, and use a separate current-period view for workload and cash decisions.
 
 ## Separate value, forecast and money
@@ -57,6 +78,17 @@ Three accepted packages have a combined fee value of **A$10,800**. That is not a
 For an illustrative scenario, Fieldnote assigns a judgemental 40% probability to each of the two open A$3,600 offers. Their weighted value is 2 × A$3,600 × 0.4 = **A$2,880**. Adding it to accepted fee value produces **A$13,680** as a scenario total.
 
 That arithmetic does not validate the 40% assumption. The business has too little evidence here to treat it as a calibrated probability. Nor will it literally receive A$1,440 from each open offer because of that weighting: each customer may accept, decline or change the scope. Use scenarios such as neither, one or both accepting when planning capacity. Use actual payment schedules and realistic receipt dates when planning cash.
+
+```figure
+type: bars
+title: Value, forecast and money are different numbers
+unit: A$
+caption: The weighted figure is a scenario built on a judgement, not money in the bank.
+- Accepted fee value, 3 × A$3,600 | 10800
+- Open offers at full value | 7200 | not a forecast
+- Open offers weighted at 40% | 2880 | judgemental probability
+- *Scenario total | 13680 | accepted plus weighted
+```
 
 ## Review exceptions, not every field
 

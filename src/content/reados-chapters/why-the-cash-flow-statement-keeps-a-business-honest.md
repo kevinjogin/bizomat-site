@@ -48,6 +48,18 @@ The **indirect method** starts with net profit and adjusts it: adding back non-c
 
 Here is an illustrative cash flow statement for a manufacturing business, presented using the indirect method for operating activities.
 
+```figure
+type: steps
+title: From net profit to operating cash, the indirect way
+caption: The working-capital lines are usually the biggest difference between profit and cash.
+- Net profit | $5.0m
+- Add depreciation | +$1.5m, a non-cash expense
+- Receivables rose | −$1.2m, sales not yet collected
+- Inventory rose | −$0.8m, cash turned into stock
+- Payables rose | +$0.4m, supplier credit used
+- *Operating cash flow | $4.9m
+```
+
 | | Amount |
 | --- | --- |
 | **Operating activities** | |
@@ -68,6 +80,17 @@ Here is an illustrative cash flow statement for a manufacturing business, presen
 | **Net increase in cash** | **$0.6m** |
 
 This business converts its profit into operating cash almost fully. It spends a moderate amount on equipment, repays some debt, pays a dividend and still adds to its cash balance. The pattern is healthy.
+
+```figure
+type: bars
+title: The three sections of the example cash flow statement
+unit: $m
+caption: Operating cash pays for investment, debt repayment and dividends, and still leaves $0.6m more cash than at the start.
+- *Operating activities | 4.9 | in
+- Investing activities | −1.8 | out
+- Financing activities | −2.5 | out
+- Net increase in cash | 0.6 | in
+```
 
 ## What a strong pattern looks like
 
@@ -109,6 +132,15 @@ None of these is automatically sinister, but each means the profit figure is pro
 Behind all of this is a practical question: how much cash could the owners take out each year without harming the business?
 
 A common answer is **free cash flow**: operating cash flow minus capital expenditure. It shows the cash left after the business has funded its operations and its investment in assets.
+
+```figure
+type: formula
+title: Free cash flow in the example
+formula: Free cash flow ≈ Operating cash flow − Capital expenditure
+caption: Owner earnings refine the idea by deducting only the capital spending needed to maintain the business's position.
+step: $4.9m − $2.0m of plant and equipment
+step: Free cash flow ≈ $2.9m
+```
 
 Buffett has written about a related idea under the name *owner earnings*: roughly, reported earnings plus depreciation and other non-cash charges, minus the capital spending needed to maintain the business's competitive position and volume. The distinction from free cash flow is subtle but important. Owner earnings deducts only **maintenance** capital spending, not growth spending, because growth spending is a choice the owners could decline.
 

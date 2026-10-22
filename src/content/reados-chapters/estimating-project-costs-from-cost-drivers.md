@@ -40,6 +40,18 @@ A cost-driver estimate connects each step:
 
 That makes the estimate explainable. If cost rises, the business can see whether the cause is greater volume, more complexity, scarce specialists, extra quality checks, a tighter schedule, more interfaces, uncertainty or changed requirements. That is far more useful than knowing a job is 15% over budget.
 
+```figure
+type: steps
+title: From requirement to margin
+caption: When cost rises, the chain shows whether the cause is volume, complexity, scarce skills, quality, timing or change.
+- Customer requirement
+- Activities needed
+- Resources needed
+- Timing
+- Cost
+- *Margin
+```
+
 ## Seven groups of cost drivers
 
 | Driver group | Questions to ask |
@@ -79,6 +91,17 @@ A good estimate distinguishes five layers:
 5. **Margin**: the profit the business intends to earn.
 
 Blending contingency into margin is dangerous. It makes it impossible to tell whether a job was profitable or simply consumed hidden contingency, and it encourages cutting "margin" in negotiation when the money was really covering risk.
+
+```figure
+type: layers
+title: Five layers of a good estimate
+caption: Keep contingency separate, or nobody can tell whether a job made money or simply avoided its risks.
+- Base work | known and required
+- Known additions | specific to this customer or job
+- Uncertain work | may or may not be needed
+- Contingency | sized to the uncertainty
+- *Margin | the profit intended
+```
 
 ## Charge for discovery when uncertainty is high
 
@@ -125,7 +148,31 @@ The estimator builds a cost-driver estimate for each, using a fabrication cost o
 - Project management: 20 hours, $1,900.
 - **Estimated cost: $42,485**, plus a separate contingency of about $2,000 in case the council requires design changes.
 
+```figure
+type: stack
+title: What Job B really costs
+unit: $
+caption: Same 20 signs and the same fabrication as Job A; design, proofs, permits, five sites and after-hours work add the rest.
+- Fabrication, 20 × $1,300 | 26000
+- Design from concept | 2280
+- Three proof rounds | 855
+- Permit coordination | 950
+- Installation at five sites | 7500
+- After-hours premium | 3000
+- Project management | 1900
+```
+
 At the template price of $36,000, Job B would lose about $6,500 before any margin. With the cost-driver estimate, the business prices Job B to cover its real cost, contingency and margin, and explains the difference to the customer by pointing to the design, permit, multi-site and after-hours requirements. It also offers a cheaper option with installation during normal hours.
+
+```figure
+type: bars
+title: One template price, two very different jobs
+unit: $
+caption: At $1,800 a sign, Job A earns about 18%; Job B loses about $6,500 before any margin or contingency.
+- Template price for either job | 36000
+- Job A estimated cost | 29350
+- *Job B estimated cost | 42485 | plus about $2,000 contingency
+```
 
 ## How this applies to a small Australian business
 

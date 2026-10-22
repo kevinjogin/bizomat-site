@@ -58,6 +58,17 @@ A maintenance technician may have little formal power but understand exactly why
 
 The aim is not equal say in every decision. It is giving people a voice in proportion to their knowledge and exposure, using reliable evidence and being clear about who decides.
 
+```figure
+type: tree
+title: Four attributes worth weighing
+caption: A power-interest grid misses the people who know how things work and the people who bear the cost.
+- A stakeholder's weight
+  - Authority | approve, fund, regulate or stop
+  - Influence | shape opinions, resources, adoption
+  - *Knowledge | how things really work
+  - Exposure | gains, losses and risk borne
+```
+
 ## People are connected
 
 A list of stakeholders treats them as separate. In reality, they influence one another. A message from the owner is interpreted through the credibility of the supervisor who passes it on. A supplier's delay changes staff confidence. Informal leaders often shape adoption more than formal managers. A simple map of who influences whom, who trusts whom and where the points of friction are can be more useful than a ranked list. Revisit it at key points, because positions change as a change unfolds.
@@ -122,6 +133,17 @@ Six weeks in, the project is stalling. The operations manager diagnoses the conf
 - **A major customer's warehouse manager**, who has no purchasing authority, turns out to hold the **knowledge** that matters: their dock can only accept deliveries before 10 am. The delivery schedule is adjusted before launch.
 
 The operations manager replaces the ranked list with a short map of who needs what, what each person needs in return and what genuine commitment would look like. The project restarts, and the launch goes ahead three weeks later than planned but without the disruption that would have followed the original design.
+
+```figure
+type: compare
+title: The planning system's stalled stakeholders, diagnosed
+cols: Kind | What helped
+caption: Most of the people who unlocked the change were not on the original list ranked by power.
+- Sales and operations managers | Allocation: one planner's time | Owner set three days a week; a second person trained
+- Production supervisors | Understanding, plus real information | Their changeover-time correction adopted
+- Night-shift staff | Exposure: work moved to nights | Consulted on shift patterns, which were open
+- Customer's warehouse manager | Knowledge: dock takes deliveries before 10 am | Schedule adjusted before launch
+```
 
 ## How this applies to a small Australian business
 

@@ -49,6 +49,16 @@ In each case, the constraint, not the technology, should decide what happens fir
 
 Classifying proposals helps balance the plan:
 
+```figure
+type: compare
+title: Three kinds of transition investment
+cols: Purpose | Examples
+caption: Replacement projects attract attention; enabling projects decide whether they work.
+- Performance | Improve current operations now | maintenance, tuning, heat recovery, scheduling
+- Enabling | Create the conditions the future needs | supply upgrades, data cleanup, skills, trials
+- *Replacement | Install the future-state asset | new electric equipment, new systems
+```
+
 | Type | Purpose | Examples |
 |---|---|---|
 | Performance | Improve current operations now | Maintenance, tuning, heat recovery, scheduling, process control, reducing waste |
@@ -118,6 +128,16 @@ Working through the tests, the owner builds a staged plan instead:
 - **Replacement later**: replace the gas ovens when the supply upgrade is confirmed and costed, the trial oven meets quality targets on core products, and the gas ovens approach the end of their life or their repair costs rise past an agreed level.
 
 The interim measures have exit logic: the gas oven improvements are expected to pay back well before replacement, and nothing in them locks the business into gas for longer. The bakery reduces gas use and cost immediately, learns whether electric baking works for its products and removes the main constraint, electrical capacity, before committing the bulk of its capital.
+
+```figure
+type: timeline
+title: The bakery's staged path to electric baking
+caption: Each stage improves today or removes a constraint; replacement waits for its triggers.
+- Now | Performance | seals, tuning, schedules: about $18,000, saving about $7,200 a year
+- Now | Enabling | network application, solar sized for growth, training
+- Now | Learning | one electric oven, about $60,000, trialled on one product line
+- *Later | Replacement | when supply is confirmed, the trial meets quality and gas ovens near end of life
+```
 
 ## How this applies to a small Australian business
 

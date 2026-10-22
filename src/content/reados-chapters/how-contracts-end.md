@@ -22,6 +22,17 @@ This article explains, in general terms, the main ways a contract can come to an
 
 Contract law generally recognises four broad pathways by which contractual obligations come to an end:
 
+```figure
+type: decision
+title: How did the contract end?
+question: Which pathway brought the obligations to an end?
+caption: Each pathway leaves the parties in a different position, so record which one applied.
+- Performance | Obligations end | warranties and some clauses continue
+- Agreement | The exit agreement governs | what is owed and released
+- Frustration | Future obligations end | narrow: an unforeseen event, no one's fault
+- *Breach | A right to terminate, or continue | compensation may follow
+```
+
 | Pathway | In general terms | What usually follows |
 |---|---|---|
 | Performance | Both parties do what they promised | Obligations end; warranties and some clauses may continue |
@@ -86,6 +97,17 @@ Before closing any contract, record:
 
 The last two points connect contract closure to value. A contract can end legally while the business still needs what it was meant to deliver.
 
+```figure
+type: checklist
+title: Closing the contract file
+caption: A contract can end legally while the business still lacks the outcome it was bought for.
+- How it ended | and on what basis
+- What remains | payments, defects, warranties, retention, claims
+- What was handed over | documents, data, materials, access
+- What the business still needs | if it ended early
+- What was learned | for future contracts
+```
+
 ## A worked example
 
 This is an illustration. A retail business engages a software developer to build a customer portal over twelve months for $180,000, paid monthly. Four months in, the business is approached by a larger company and agrees to merge with it. The larger company already has a customer portal, so the new one is no longer needed. The developer has performed well and has done nothing wrong.
@@ -108,6 +130,15 @@ The business negotiates with the developer. They agree that the work completed s
 | Cost of completing instead | $125,000 |
 
 The exit costs $28,000 instead of $125,000, the relationship is preserved and the business keeps work it may reuse. For future software contracts, the business adds a termination for convenience clause with an agreed formula for payment.
+
+```figure
+type: bars
+title: The customer portal after the merger
+unit: $
+caption: $55,000 already paid on a $180,000 contract with no termination for convenience clause; the developer had done nothing wrong.
+- Insist on completion | 125000 | for a system it will not use
+- *Negotiated exit | 28000 | $5,000 balance, $15,000 notice period, $8,000 handover
+```
 
 ## How this applies to a small Australian business
 

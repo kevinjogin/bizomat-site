@@ -51,6 +51,15 @@ A useful way to understand ROE is to split it into three components, an approach
 
 Multiply the three together and the revenue and assets cancel out, leaving net earnings divided by equity.
 
+```figure
+type: formula
+title: The DuPont split of return on equity
+formula: ROE = Net margin × Asset turnover × Equity multiplier
+caption: Same 20% ROE: Business A earns it from margin and efficiency, Business B from borrowing.
+step: Business A: 10% × 1.5 × 1.33 ≈ 20%
+step: Business B: 4% × 1.25 × 4.0 = 20%
+```
+
 The value of the split is that two businesses with identical ROE can be very different underneath.
 
 | | Business A | Business B |
@@ -82,6 +91,18 @@ Here is an illustration. Two businesses each have $100 million of assets earning
 
 The underlying businesses are identical. Business B's ROE is more than two and a half times higher purely because of its financing.
 
+```figure
+type: compare
+title: The same business with and without heavy debt
+cols: Business A, no debt | Business B, $80m debt at 6%
+caption: Leverage lifts ROE from 10% to 26% in a normal year and turns a bad year into a loss.
+- Operating profit, normal year | $10.0m | $10.0m
+- Interest | $0 | $4.8m
+- ROE, normal year | 10% | 26%
+- Operating profit, bad year | $4.0m | $4.0m
+- Result, bad year | $4.0m profit, ROE 4% | $0.8m loss, negative ROE
+```
+
 Now suppose a bad year cuts the operating return to 4%, or $4 million. Business A earns $4 million, an ROE of 4%. Business B earns $4 million minus $4.8 million of interest, a loss of $0.8 million and a negative ROE. The same leverage that inflated the return in good years produces losses in bad ones.
 
 The book warns that this kind of financial engineering can make an ordinary business look exceptional, and that it is fragile. If interest rates rise or the investments earn less than expected, leverage can wipe out the equity.
@@ -110,6 +131,19 @@ Occasionally a company shows **negative** shareholders' equity. The book notes t
 ## What changes in ROE tell you
 
 The direction of ROE over time is often more revealing than its level.
+
+```figure
+type: matrix
+title: Four ROE patterns over ten years
+x: Stability of earnings and debt →
+y: Level of ROE →
+hot: 2
+caption: The book looks for steady high returns with steady low debt; the other patterns each need a question answered.
+- Rising ROE | good news only once you know why: margins, or more debt and buybacks?
+- Steady high ROE, low debt | the pattern of a durable advantage
+- Volatile ROE | cyclical, commodity-exposed or highly competitive earnings
+- Falling ROE as retained earnings grow | outgrowing its best opportunities
+```
 
 **Steady high ROE with steady low debt** is the pattern the book looks for. It suggests a business that earns well on each new dollar it retains, year after year.
 

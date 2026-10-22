@@ -33,6 +33,19 @@ Most purchasing processes focus on the supplier: can they make it, at what price
 
 A purchase is only as good as the weakest link in that chain. Checking the supplier thoroughly while assuming the rest will sort itself out is the root of most installation surprises.
 
+```figure
+type: steps
+title: The path from supplier to production
+caption: Checking only the supplier checks one link of seven.
+- Manufacture
+- Transport
+- Receipt | unload, inspect, accept
+- Storage
+- Installation
+- *Integration | services and people ready
+- Commissioning
+```
+
 ## Every chain has a bottleneck
 
 A useful idea from operations management, often associated with Eliyahu Goldratt's **theory of constraints**, is that the performance of any system is limited by its tightest constraint, the **bottleneck**. Improving anything other than the bottleneck does not improve the overall result. If the power upgrade takes eight weeks, getting the machine delivered in four weeks achieves nothing except four weeks of storage.
@@ -41,6 +54,16 @@ Two further points follow:
 
 - **Find the constraint before you optimise.** A cheaper or faster supplier is worth nothing if the binding constraint lies elsewhere, such as site access, electrical capacity or installer availability.
 - **Removing one constraint exposes the next.** Once the power supply is sorted, the crane booking may become the limiting factor. Expect to work through constraints in sequence.
+
+```figure
+type: cycle
+title: Constraints move
+caption: A cheaper or faster supplier is worth nothing if the binding constraint lies elsewhere.
+- Find the binding constraint | e.g. the power supply
+- Remove it
+- *The next one appears | e.g. the crane booking
+- Plan for it in turn
+```
 
 ## The constraints buyers usually own
 
@@ -93,6 +116,17 @@ For any significant purchase, keep a short register listing each constraint, who
 | Crane for unloading | Owner | Book crane and riggers | One week before delivery |
 | Supplier's commissioning technician | Supplier | Confirm date in purchase order | At order |
 
+```figure
+type: timeline
+title: The constraint register in time order
+caption: Some constraints must be cleared before purchase, long before delivery.
+- Before purchase | Core test the slab | engineer advises on a footing
+- At order | Commissioning technician's date | in the purchase order
+- Before shipping | 3.2 m crate, 3.0 m door | remove a crate panel or use the side door
+- Two weeks before delivery | Supply upgraded from 32 A to 63 A | network approval if required
+- *One week before delivery | Crane and riggers booked
+```
+
 ## A worked example
 
 This is an illustration. A small precision engineering shop needs a vertical machining centre weighing about 6.5 tonnes. It receives two offers.
@@ -114,6 +148,16 @@ Both options need the same site work: the shop's 32-amp supply must be upgraded 
 | **Additional costs** | **$23,200** |
 
 Offer A's realistic cost is therefore about $85,000 + $23,200 = $108,200, compared with $98,000 for Offer B. The local offer is about $10,000 cheaper once the whole path is counted, with a single supplier accountable for delivery through commissioning.
+
+```figure
+type: bars
+title: The 6.5-tonne machining centre, whole path counted
+unit: $
+caption: Haulage, cranes, recommissioning, storage and lost production added $23,200 to the cheaper offer.
+- Offer A price, as is | 85000
+- Offer A realistic cost | 108200
+- *Offer B, delivered and commissioned | 98000
+```
 
 The exercise also reveals the true bottleneck: the electrical upgrade, which depends on the electrician's availability and possibly approval from the electricity network provider. Whichever offer is chosen, the owner books the electrician immediately and sets the delivery date to suit.
 

@@ -30,6 +30,18 @@ A trade mark is different from:
 
 Only a registered trade mark gives you exclusive, enforceable rights to use a mark for the goods and services it covers throughout Australia.
 
+```figure
+type: compare
+title: Business name, company name and trade mark
+cols: Registered business or company name | Registered trade mark
+best: 2
+caption: Registering a business name does not give exclusive rights to use it.
+- Who registers it | ASIC | IP Australia
+- Exclusive rights | No | Yes, for the goods and services covered
+- Enforcement against copycats | Not on its own | Court action without first proving reputation
+- The ® symbol | Not allowed | Allowed in Australia
+```
+
 ## Ten reasons to register your trade mark
 
 ### 1. Exclusive rights
@@ -90,9 +102,31 @@ In Australia, trade marks are registered by **IP Australia** under the *Trade Ma
 
 Registration lasts ten years from the filing date and can be renewed indefinitely, provided renewal fees are paid. A registered mark may be vulnerable to removal if it is not used for a continuous period, so use your mark as registered.
 
+```figure
+type: timeline
+title: Protecting a trade mark over time
+caption: Registration only helps if you watch the market and act promptly.
+- Search | Check the register | for similar marks in your classes
+- File | Apply to IP Australia | for the relevant goods and services
+- Register | Exclusive rights begin | ® can be used
+- *Every 10 years | Renew | indefinitely while fees are paid
+- Ongoing | Monitor and enforce | letters, platform tools, court if needed
+```
+
 ## Choosing a strong mark: the distinctiveness spectrum
 
 Marks range from weak to strong in their ability to be registered and protected:
+
+```figure
+type: layers
+title: The distinctiveness spectrum
+caption: Descriptive names are easier to understand at first; distinctive names are easier to protect.
+- Generic terms | e.g. "Steel Brackets": cannot be trade marks
+- Descriptive marks | e.g. "Fast Fab": hard to register without proof of recognition
+- Suggestive marks | hint at a quality: often registrable
+- Arbitrary marks | real words in an unrelated context: strong
+- *Invented words | no prior meaning: strongest and easiest to protect
+```
 
 - **Generic terms**, the common name for the product, such as "Steel Brackets" for brackets, cannot function as trade marks.
 - **Descriptive marks**, which describe a quality, purpose or feature, such as "Fast Fab" for fabrication services, are difficult to register without evidence that customers already recognise them as your brand.

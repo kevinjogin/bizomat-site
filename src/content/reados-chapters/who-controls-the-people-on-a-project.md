@@ -43,6 +43,18 @@ Making someone accountable does not give them authority. A useful check is to se
 
 Lack of authority over both people and scope is the critical combination. It describes a role accountable for a result it cannot materially influence, and no amount of talent overcomes it. The fix is either to give the lead more authority, or to make the limits explicit and hold them accountable only for what they can control. The [decision rights before meetings](/reados/collections/leading-people-and-change/decision-rights-before-meetings/) article covers mapping who can decide what.
 
+```figure
+type: checklist
+title: Does the project lead have the authority to match the accountability?
+caption: Lacking authority over both people and scope is the critical combination.
+- ? People | can their time be withdrawn without agreement?
+- ? Scope | can the lead decline a change?
+- ? Money | can they approve spending within budget?
+- ? Technical standards | who decides, and how fast?
+- ? Standing | present when trade-offs are made?
+- ? Support | help with the administration?
+```
+
 Stronger project authority is not always better, though. Giving a project full control can speed decisions but weaken technical standards, duplicate skills or disconnect the work from the people who will operate the result. Match authority to consequence: high-consequence technical decisions may need to stay with the owner of the standard, even when that is slower.
 
 ## Escalate by type of decision, not just by dollar value
@@ -65,6 +77,18 @@ Practical rules help:
 4. **Plan in uninterrupted blocks, not percentages.** "Tuesdays and Thursdays on the project" is far more reliable than "40%".
 5. **Keep some time unallocated**, so the first surprise does not delay everything at once.
 6. **Name someone who can say no.** In a small business this is usually the owner. Without someone with authority over the total, each request seems reasonable while the overall load becomes impossible.
+
+```figure
+type: steps
+title: Rules for sharing people across projects
+caption: Three people at a third each are not one person.
+- List every commitment | including the normal role
+- Limit the splits | two projects at most
+- Set a minimum | such as a full day a week
+- Plan in blocks | not percentages
+- Keep time unallocated
+- *Name someone who can say no
+```
 
 The [how much change a business can carry](/reados/collections/project-sponsors-governance-and-decisions/how-much-change-a-business-can-carry/) article covers finding the bottleneck people across all projects.
 
@@ -90,6 +114,15 @@ This is an illustration. A 25-person metal fabrication business is developing a 
 
 On paper, each drafter is allocated 50% to the project: 19 hours a week each, or 38 hours combined, based on a 38-hour week. After two months the project is well behind. When the owner asks the drafters to log their time for two weeks, the project is actually getting about 14 hours a week between them. Each drafter holds four commitments: customer jobs, quoting support, a website update and the new product. Every urgent customer request interrupts project work, and every return to the project starts with half an hour of picking up where they left off.
 
+```figure
+type: bars
+title: The drafters' project time, planned and real
+unit: hours a week
+caption: Each drafter held four commitments, and every urgent customer request came first.
+- On paper: 50% each | 38
+- *Logged over two weeks | 14
+```
+
 The owner, as the person with authority over the total, makes five changes:
 
 - **Blocks, not percentages.** Each drafter works on the project every Tuesday and Thursday, uninterrupted except for genuine emergencies. That is 2 days × 7.6 hours × 2 drafters = about 30 hours a week of focused time.
@@ -99,6 +132,18 @@ The owner, as the person with authority over the total, makes five changes:
 - **A clear line on standards.** Welding procedures and load ratings stay with the production manager and the external engineer, and the design engineer gets a guaranteed answer within two working days.
 
 Project time more than doubles without hiring anyone, and conflicts that previously reached the drafters as competing requests now reach the owner as decisions.
+
+```figure
+type: tree
+title: Five changes by the person with authority over the total
+caption: Project time more than doubled without hiring anyone.
+- The owner's changes
+  - *Blocks, not percentages | Tuesdays and Thursdays on the project
+  - Fewer splits | website update deferred: three commitments, not four
+  - Authority for the lead | design details and up to $15,000 on prototypes
+  - Committed trial slots | three workshop days fixed in the schedule
+  - A clear line on standards | welding and load ratings stay with production
+```
 
 ## How this applies to a small Australian business
 

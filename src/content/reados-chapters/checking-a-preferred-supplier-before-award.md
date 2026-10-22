@@ -69,6 +69,19 @@ Much of the work in many contracts is performed by subcontractors and suppliers 
 
 Is the plan for starting the work realistic? Check lead times for key equipment and materials, the mobilisation schedule, any approvals or permits needed and the supplier's other work starting at the same time. A supplier that plans to begin in two weeks but still has to recruit its site team is signalling a risk.
 
+```figure
+type: checklist
+title: Seven areas to check before award
+caption: A high evaluation score does not prove delivery capacity.
+- Legal and organisational capacity | the entity that signs performs
+- Financial resilience | can it fund the work until paid?
+- People | named, real, available
+- Relevant experience | comparable size and complexity
+- Systems | quality and safety in use, not just on paper
+- Supply chain | subcontractors committed
+- Mobilisation | lead times and start-up plan
+```
+
 ## Capability is not capacity
 
 A supplier may have the **capability**, the knowledge and skills, to perform the work, yet lack the **capacity**, enough available people and equipment, to deliver your job on your timetable. The reverse also happens: a large supplier may have plenty of people but no specialist knowledge of your requirement.
@@ -119,6 +132,17 @@ Due diligence findings do not always mean rejecting the supplier. Options includ
 
 The choice depends on how serious the concern is and whether it can be managed. The [choosing between quotes and tenders](/reados/collections/procurement-and-tendering/choosing-between-quotes-and-tenders/) article covers setting decision rules and recording reasons, which also help when due diligence changes the outcome.
 
+```figure
+type: decision
+title: When checks raise concerns
+question: Can the concern be managed?
+caption: Due diligence must not become a way to reopen the evaluation or renegotiate price.
+- Needs explanation | Clarification | more evidence from the supplier
+- Manageable before signing | Conditions of award | personnel, subcontractor commitments, insurance
+- Manageable during delivery | Contract protections | milestones, security, key personnel clauses
+- *Goes to the heart of performance | Reconsideration | the next-ranked supplier
+```
+
 ## Do not start from zero every time
 
 For suppliers you use repeatedly, keep a record of past performance, checks completed, insurance expiry dates, key personnel and total commitments across your contracts. Each new tender can then build on what you already know, and recent experience of a supplier's actual performance is worth more than anything in a tender.
@@ -133,6 +157,15 @@ Before award, the manufacturer runs the high-risk checks it described in the ten
 
 **Finances.** Two years of financial statements show annual revenue of about $3 million. The contract would be about 15% of that. Working capital is thin, with current assets only slightly above current liabilities. The tender asks for a 30% deposit, about $135,000, to buy equipment.
 
+```figure
+type: stats
+title: The conveyor supplier's finances in three numbers
+caption: Thin working capital, a large contract relative to revenue and a big upfront deposit together signal cash pressure.
+- $450,000 | contract value
+- 15% | of the supplier's annual revenue of about $3 million
+- $135,000 | 30% deposit requested to buy equipment
+```
+
 **People.** When asked to confirm the named project manager's availability, the supplier explains that this person is finishing another project and would join after about six weeks. Until then, a less experienced engineer would lead.
 
 **Supply chain.** The control system programming is to be subcontracted to a specialist firm, which has quoted but not yet committed to the dates.
@@ -140,6 +173,17 @@ Before award, the manufacturer runs the high-risk checks it described in the ten
 **References.** Two referees are positive about the quality of the finished work. One mentions that commissioning took three weeks longer than planned because the controls subcontractor was late.
 
 The manufacturer decides the concerns are manageable rather than disqualifying, and sets conditions before award: written commitment from the controls subcontractor to the programme dates; the named project manager to lead the work from the start of installation, which is eight weeks away, with the design phase led by the engineer under the project manager's review; and a key personnel clause. Instead of a 30% upfront deposit, payments are tied to milestones, including a payment on delivery of major equipment to site. The supplier accepts, and the contract is awarded. During delivery, the manufacturer holds fortnightly progress meetings with both the supplier and the controls subcontractor present.
+
+```figure
+type: compare
+title: From findings to conditions of award
+cols: Finding | Condition or protection
+caption: Concerns were managed rather than disqualifying, and the contract was awarded.
+- Finances | Thin working capital; 30% deposit asked | Milestone payments, including on equipment delivery
+- People | Named project manager free in about six weeks | Leads from installation; key personnel clause
+- Supply chain | Controls subcontractor not committed to dates | Written commitment to the programme
+- References | Commissioning once three weeks late, controls blamed | Fortnightly meetings with the subcontractor present
+```
 
 ## How this applies to a small Australian business
 

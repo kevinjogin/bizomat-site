@@ -28,6 +28,24 @@ Most changeovers involve a period in which both the old and the new are live:
 
 That period is not a gap between two funded states. It is a third state with its own cost profile:
 
+```figure
+type: svg
+title: The overlap is a third operating state
+alt: A horizontal timeline shows the old system running until switch-off and the new system running from go-live. Between go-live and switch-off both run together; that shaded overlap period has its own costs.
+caption: Treating go-live as a moment rather than a funded period is comfortable and expensive.
+viewbox: 0 0 640 220
+body:
+<rect class="bxi" x="40" y="50" width="380" height="40" rx="4"/>
+<text class="txb" x="60" y="76">Old way running</text>
+<rect class="bxa" x="260" y="120" width="340" height="40" rx="4"/>
+<text class="txa" x="580" y="146" text-anchor="end">New way running</text>
+<rect class="fs pulse" x="260" y="40" width="160" height="130"/>
+<path class="li dsh" d="M260 30V190M420 30V190"/>
+<text class="tx" x="260" y="208" text-anchor="middle">Go-live</text>
+<text class="tx" x="420" y="208" text-anchor="middle">Switch-off test met</text>
+<text class="txb" x="340" y="110" text-anchor="middle">Overlap</text>
+```
+
 - **Both cost bases at once**: two licences, two leases, two contracts.
 - **Reconciliation work**: people whose job, for now, is keeping two versions of the same reality in agreement. It is usually described as temporary and done by people who already have full jobs.
 - **Errors that exist only in the overlap**: the customer, order or stock item that appears in both systems or in neither.
@@ -92,6 +110,16 @@ The operations manager points out that the old system will be needed for at leas
 - **Owner**: the operations manager, who can approve another week without returning to the owner.
 - **Extension allowance**: up to two further weeks, released if the number of unmatched stock lines is falling by at least a fifth each week.
 - **Switch-off test**, written by the warehouse manager and the accounts manager: two consecutive weekly stock counts reconcile within 0.5% of stock value, all open invoices are in the new system, and one month-end close is completed in the new system.
+
+```figure
+type: stack
+title: A week of overlap for the distributor
+unit: $ a week
+caption: About $2,700 a week; six weeks funded (about $16,000), with up to two more released if unmatched stock lines fall by a fifth each week.
+- Two staff reconciling, 15 h each at $45 | 1350
+- Temporary backfill | 1100
+- Old system licence | 280
+```
 
 In week five, reconciliation stalls. Some products are sold by the carton in one system and by the unit in the other, and a conversion error affects several hundred lines. Because the plan has an owner and a test, the decision is quick: the unmatched lines are falling by more than a fifth a week once the conversion is fixed, so the operations manager releases one extension week. The old system is switched off at the end of week seven, after the switch-off test is met. A planned price list update, frozen during the overlap, goes ahead the following week.
 

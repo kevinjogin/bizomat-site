@@ -52,6 +52,19 @@ One of the most common confusions in small business is between margin and markup
 
 Businesses that price by adding a markup often believe their margins are higher than they are. A "50% markup" sounds healthy but produces only a 33% margin, which may not cover overheads. Knowing the difference is basic but surprisingly important.
 
+```figure
+type: bars
+title: Markup on cost and the gross margin it really produces
+unit: % margin
+max: 100
+caption: A "50% markup" gives only a 33% margin. Margin = markup ÷ (1 + markup).
+- 25% markup | 20
+- *50% markup | 33
+- 67% markup | 40
+- 100% markup | 50
+- 200% markup | 67
+```
+
 ## What the number tends to reveal
 
 The book offers rough bands, drawn from the kinds of companies Buffett favoured:
@@ -63,6 +76,19 @@ The book offers rough bands, drawn from the kinds of companies Buffett favoured:
 | 20% or less | A fiercely competitive industry where price is the main weapon |
 
 The authors stress the word *consistent*. A single year of high margins can come from a lucky product cycle or a temporary shortage. Ten years of high margins is much harder to explain without a genuine advantage.
+
+```figure
+type: range
+title: What a consistent gross margin often suggests
+min: 0
+max: 80
+unit: % gross margin
+ticks: 0% | 20% | 40% | 60% | 80%
+caption: A filter, not a verdict: compare within an industry and look for consistency over years.
+- Fiercely competitive industry | 0 | 20
+- Competition eroding margins | 20 | 40
+- *Possible durable advantage | 40 | 80
+```
 
 ## Why high margins usually mean an advantage
 
@@ -127,6 +153,19 @@ The first sells unbranded beans to cafés on price, competing with several large
 The second has built a recognised brand with its own blends, sells partly through its own café and online subscriptions, and supplies cafés that advertise the brand to their customers. Its gross margin is 55%, giving $550,000 of gross profit. Overheads are higher at $350,000, reflecting marketing and service, but it still earns $200,000. When coffee prices rise, it can pass on part of the increase because customers value the brand.
 
 Same revenue, very different businesses. The difference starts at the gross margin line.
+
+```figure
+type: compare
+title: Two roasters, each selling $1 million of coffee
+cols: Unbranded beans to cafés | Branded roaster with café and subscriptions
+best: 2
+caption: The higher margin funds marketing and service and still earns more than six times the profit.
+- Gross margin | 25% | 55%
+- Gross profit | $250,000 | $550,000
+- Overheads | $220,000 | $350,000
+- Profit | $30,000 | $200,000
+- When coffee prices rise | Squeezed: cafés switch supplier | Can pass on part of the increase
+```
 
 ## Designing for margin from the start
 

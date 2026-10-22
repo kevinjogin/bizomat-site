@@ -29,6 +29,17 @@ Economic pressure often feeds on itself:
 
 **lower margins → less cash → less ability to modernise → continued cost disadvantage → more pressure on prices and margins**
 
+```figure
+type: cycle
+title: The margin squeeze loop
+caption: The longer the loop runs, the fewer options remain.
+- Lower margins
+- Less cash
+- Less ability to modernise
+- Continued cost disadvantage
+- More pressure on prices and margins
+```
+
 The longer this loop runs, the fewer options remain. A move that was affordable two years ago, such as new equipment, a new channel or a change of production location, may become unaffordable once margins and cash have weakened. Recognising the loop early is one of the most valuable things leaders can do.
 
 ## Common misreadings
@@ -71,6 +82,18 @@ Some activities remain useful but no longer justify investment for growth. Runni
 ### Exit
 
 Exit, by selling, closing or discontinuing an activity, makes sense when the business cannot create enough distinctive value, when the investment required is unattractive compared with alternatives or when the activity no longer fits where the business is going. Exit releases capital, people and attention, but it carries real costs: lost revenue, transition effort and effects on staff, customers and suppliers.
+
+```figure
+type: matrix
+title: Four responses when the economics change
+x: Market still attractive →
+y: Capabilities still distinctive →
+caption: A hybrid is common: exit a commoditising line while investing in a distinctive one.
+- Reposition | valuable capabilities, but a different customer or route to market
+- Transform | attractive market, but the way of operating cannot compete
+- Exit | cannot create enough distinctive value; sell, close or discontinue
+- Contain or harvest | still useful, but no longer worth growth investment
+```
 
 A hybrid response is common and often sensible: exit a commoditising product line while investing more in a distinctive one. That is not inconsistency. It is portfolio thinking applied to the business model.
 
@@ -121,6 +144,16 @@ The decision is a hybrid:
 - **Stop investing** in retail packaging, displays and promotional programs.
 
 Revenue falls in the first year as the retail range winds down, but gross profit recovers within eighteen months as capacity shifts to higher-margin commercial work. The business acted while it still had the cash to fund the change.
+
+```figure
+type: bars
+title: Gross margin by channel after three years of pressure
+unit: %
+caption: Imports 40% cheaper and an extra eight points demanded by the retailer halved retail margin; commercial held and was capacity-constrained.
+- Retail range, before | 38
+- *Retail range, after | 19
+- Commercial channel | 42
+```
 
 ## How this applies to a small Australian business
 

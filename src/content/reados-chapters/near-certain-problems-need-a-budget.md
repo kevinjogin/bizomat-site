@@ -27,6 +27,24 @@ Most project methods use two categories:
 
 The definitions are sound. The problem is the gap between them: a **near-certainty**, something the team confidently expects but which has not yet happened. It is too likely to be scored as a risk, so it is removed. But the issue process is built for events that have occurred, so it does nothing until the problem arrives. Nothing in between holds money in advance, schedules a preventive action or appears in any forecast.
 
+```figure
+type: svg
+title: The contingency cliff between risks and issues
+alt: A likelihood scale runs from zero to certain. Risks below the top of the scale are scored and funded by contingency. Items judged near-certain fall off the end of the scale, are removed from the risk list, and arrive later as unfunded issues.
+caption: The most likely problems leave a funded, forward-looking process for an unfunded, reactive one.
+viewbox: 0 0 640 260
+body:
+<path class="ln" d="M40 200H470"/>
+<path class="bxa" d="M40 170H420V200H40Z"/>
+<text class="txa" x="230" y="190" text-anchor="middle">Risks: scored, contingency funded</text>
+<path class="la draw" pathLength="1" d="M420 170Q470 120 520 160T600 220"/>
+<circle class="fa bob" cx="600" cy="220" r="8"/>
+<text class="txb" x="500" y="100" text-anchor="middle">"Too certain to be a risk"</text>
+<text class="tx" x="600" y="250" text-anchor="middle">Arrives as an unfunded issue</text>
+<text class="tx" x="40" y="225">0%</text>
+<text class="tx" x="420" y="225" text-anchor="middle">Top of scale</text>
+```
+
 ## The contingency cliff
 
 Many likelihood scales stop below certainty. The top band may be "almost certain", or the scale may simply instruct that anything above a threshold is treated as an issue. Contingency is often built by adding up likelihood multiplied by impact across the risk list. That creates a strange pattern: as an item becomes more likely, its contribution to contingency rises, until it crosses the threshold, at which point it drops to zero. The calculation has a cliff at the point of greatest expected cost.
@@ -92,6 +110,16 @@ In the review, three items were removed as "certainties":
 - **Packaging artwork approval by the retailer will slip.** It always does, by one to two weeks. Impact: missing the retailer's launch slot would cost about $8,000 in delayed sales.
 
 The near-certainty log totals about $24,000, well above the $15,000 contingency, which had been sized as if none of these would happen.
+
+```figure
+type: stack
+title: Three near-certainties removed from the risk list
+unit: $
+caption: About $24,000 of expected problems against a $15,000 contingency sized as if none would happen.
+- Second certification round: 3 of last 4 products | 6000
+- First mould run off specification: last 4 moulds | 10000
+- Retailer artwork approval slips | 8000
+```
 
 The owner moves all three into the plan. A mould trial run is scheduled two weeks earlier, with its own budget. Two rounds of certification testing are booked and budgeted from the start. Artwork approval is requested three weeks earlier. The project budget rises by about $16,000 and three weeks on paper, but the launch date is now realistic, the contingency is left for genuinely uncertain risks, and the retailer's slot is met.
 

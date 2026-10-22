@@ -22,6 +22,17 @@ This article explains what limited liability does and does not do, the main ways
 
 When something goes wrong, the cost lands somewhere: on the company, on a related company, on directors personally, on an insurer, on a supplier who accepted a risk under contract, or, if none of those can pay, on the person who was harmed. A company structure determines **the order** in which those parties are reached and how far the reach extends. That is valuable. It is not the same thing as protection.
 
+```figure
+type: steps
+title: Where a loss lands when something goes wrong
+caption: Limited liability allocates the cost; it does not erase it.
+- The company | first in line
+- A related company | through guarantees or cross-claims
+- Directors personally | guarantees and personal duties
+- An insurer | only for the risks the policy covers
+- *A supplier or customer | under a contract that shifted the risk
+```
+
 Three common assumptions cause most of the trouble:
 
 - **The company is a wall.** It is better thought of as a starting point. Obligations you take on personally, duties that attach to you as a director and laws aimed specifically at individuals all sit outside it.
@@ -55,6 +66,16 @@ The remedy is simple and cheap: an **obligations register** kept alongside the c
 ## Duties that attach to people
 
 A second group of exposures sits outside the structure by design. Laws aimed only at companies could be defeated by letting the company fail, so some obligations attach to individuals as well. In Australia, general examples include:
+
+```figure
+type: checklist
+title: Exposures that attach to people, not structures
+caption: The detail varies by law and situation and needs professional advice.
+- ? Directors' duties | care and diligence, good faith
+- ? Tax and superannuation | the ATO's director penalty regime
+- ? Work health and safety | officers' own duties
+- ? Environmental and other regulators | personal liability in some regimes
+```
 
 - **Directors' duties** under company law, such as acting with care and diligence and in good faith, and the duty not to let the company incur debts when it is insolvent or would become insolvent by incurring them. ASIC publishes guidance for directors.
 - **Tax and superannuation.** The ATO's director penalty regime can make directors personally liable for certain unpaid company amounts, such as some withheld tax, GST and superannuation guarantee charge. Lodging and paying on time matters. Your accountant or the ATO can explain how it works.
@@ -108,6 +129,18 @@ This is an illustration. The owner of a hospitality business operates a café th
 - a personal guarantee on the lease of a previous café, sold three years ago with the lease assigned to the buyer, with no record of a release and two years remaining at $48,000 a year: possibly up to **$96,000**.
 
 Together, the guarantees could expose the owner personally to around **$441,000**, much of it unrelated to the business the owner is running today. None of it appears on either company's balance sheet.
+
+```figure
+type: bars
+title: The guarantees nobody had added up
+unit: $
+caption: About $441,000 of personal exposure, much of it unrelated to the business run today, and none of it on either balance sheet.
+- Café lease, three years at $60,000 | 180000
+- Catering overdraft, secured on the home | 100000
+- *Previous café lease, never released | 96000 | sold three years ago
+- Supplier trade account guarantee | 40000
+- Second supplier guarantee | 25000
+```
 
 The owner and accountant take several steps:
 

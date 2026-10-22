@@ -28,6 +28,26 @@ Shortening the job buys days on the activities that control the finish date, sta
 
 That point is a property of the job and its costs, and it can be found before work starts.
 
+```figure
+type: svg
+title: Every job has a cheapest duration
+alt: Cost plotted against job duration. Direct costs fall as the job is given more time; time-related costs rise with duration. Their total forms a U-shaped curve whose lowest point is the cheapest duration.
+caption: Compressing below the low point costs more than the time saved; stretching beyond it lets time costs run on.
+viewbox: 0 0 640 280
+body:
+<path class="ln" d="M60 240H610M60 30V240"/>
+<path class="li dsh" d="M80 60C160 150 260 200 590 215"/>
+<path class="lf dsh" d="M80 220C250 205 420 160 590 70"/>
+<path class="la draw" pathLength="1" d="M80 100C160 190 260 175 330 172S520 140 590 60"/>
+<circle class="fa pulse" cx="322" cy="172" r="8"/>
+<text class="txa" x="322" y="150" text-anchor="middle">Cheapest duration</text>
+<text class="tx" x="96" y="52">Direct costs</text>
+<text class="tx" x="590" y="236" text-anchor="end">Time-related costs</text>
+<text class="txb" x="596" y="52" text-anchor="end">Total cost</text>
+<text class="tx" x="70" y="262">Shorter</text>
+<text class="tx" x="600" y="262" text-anchor="end">Longer</text>
+```
+
 ## Count only time costs that genuinely stop
 
 The answer depends heavily on what you count as a time-related cost, and this is where many calculations go wrong. Businesses often charge each job a daily share of general overhead, such as office rent, administration and management salaries. That allocation has a legitimate accounting purpose. But if the job finishes a week early, those costs do not stop. They are simply recovered from other work.
@@ -49,6 +69,16 @@ The cheapest ways to save time are usually available only at the start:
 - **Prefabricating** parts off site while other work proceeds.
 
 By the time a job is visibly late, these options are gone or have become expensive. The business is buying time from a shorter menu at higher prices. That is why late compression often looks costly and reinforces the belief that speed always costs more. The [what your schedule quietly decides](/reados/collections/project-estimates-schedules-and-costs/what-your-schedule-quietly-decides/) article covers how sequencing choices made at the start shape what can be done later.
+
+```figure
+type: checklist
+title: The cheapest ways to save time expire early
+caption: Once a job is visibly late, these options are gone or have become expensive.
+- Order long-lead items early | before expediting is needed
+- Book a second crew or slot | at normal rates
+- Sequence differently | parallel from the start
+- Prefabricate off site | while other work proceeds
+```
 
 ## Price duration at planning
 
@@ -100,11 +130,34 @@ Using the avoidable daily cost of $900:
 - **Weekend painting**: saves $2,700 for $2,700. It breaks even; worth taking only if the customer values the earlier finish.
 - **Second plastering crew**: saves $2,700 for $3,900, a net cost of $1,200. Do not take it.
 
+```figure
+type: bars
+title: Cost per day saved against the avoidable daily cost
+unit: $ a day
+max: 1400
+caption: Take each option below about $900 a day of avoidable time cost; counting the $400 of office overhead would have made two more look worthwhile.
+- Order joinery at planning | 0
+- Add a second electrician | 500
+- Paint on weekends | 900 | breaks even
+- Add a second plastering crew | 1300
+- *Avoidable time cost per day | 900 | supervisor, equipment, amenities, storage
+```
+
 Before settling on the result, the estimator checks the other chains of work. With joinery and electrical shortened, the cool room delivery and installation now sits only two days from controlling the finish, so the estimator confirms the supplier's delivery date in writing and keeps those two days as a buffer.
 
 The cheapest duration is therefore 41 working days instead of 50, saving about $6,100 compared with the baseline plan. If the estimator had used the full $1,300 a day, including allocated overhead, weekend painting would have looked like a $1,200 saving and the extra plastering crew like a break-even, even though the office costs would not actually fall.
 
 The café owner, who expects to earn a contribution of about $1,500 a day once open, is offered weekend painting as an option for $2,700, bringing completion to 38 days. Three extra trading days are worth about $4,500 to the café, so the owner accepts.
+
+```figure
+type: bars
+title: The café fit-out duration
+unit: working days
+caption: The cheapest duration saved the contractor about $6,100; the café paid $2,700 for three more trading days worth about $4,500.
+- Baseline plan | 50
+- *Cheapest for the contractor | 41
+- With weekend painting, chosen by the café | 38
+```
 
 One more point: the early joinery order is free only because it was made at planning. If the job had fallen behind and joinery had to be expedited later, the supplier would have charged a premium, and the cheapest option on the list would have disappeared.
 

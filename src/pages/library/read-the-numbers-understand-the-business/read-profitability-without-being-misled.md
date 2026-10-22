@@ -31,9 +31,33 @@ Operating margin gives a broader view of profitability than gross margin, althou
 
 After interest, tax and other relevant items, assume the company retains $900,000 in net profit. Its net margin is **9%**. A strong net margin can be encouraging, but it does not by itself establish financial strength or an attractive share valuation.
 
+```figure
+type: bars
+title: How much of each sales dollar survives
+unit: %
+max: 100
+caption: Revenue $10m; gross profit $3.5m; operating profit $1.5m; net profit $0.9m.
+- Revenue | 100
+- Gross margin | 35
+- Operating margin | 15
+- *Net margin | 9
+```
+
 ## What a five-year trend might reveal
 
 Imagine revenue increased every year but gross margin fell from 40% to 35%, while operating costs rose faster than sales. The company is growing, yet its competitive position or cost control may be weakening. Alternatively, changes in product mix or a deliberate move into a lower-margin market might explain the trend.
+
+```figure
+type: line
+title: Growing sales can hide a falling margin
+x: Year
+y: Gross margin (%)
+ymin: 30
+ymax: 42
+caption: In the example, revenue rose every year while gross margin fell from 40% to 35% between the first and fifth years. Investigate mix, pricing and costs.
+- Year 1 | 40
+- Year 5 | 35
+```
 
 Check for irregular gains or losses. A company may report attractive net earnings because it sold property or recorded a tax benefit. Such events should not automatically be treated as recurring operating performance.
 

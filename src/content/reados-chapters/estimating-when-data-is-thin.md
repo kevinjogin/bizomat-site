@@ -28,6 +28,18 @@ This article explains the biases that distort expert estimates, simple ways to s
 
 None of these means experts are poor estimators. It means the process of gathering their views needs some structure.
 
+```figure
+type: tree
+title: Why unstructured expert judgement drifts
+caption: The problem is usually the process of gathering judgement, not the experts.
+- Group estimates
+  - Anchoring | the first number heard
+  - Deference | towards senior or confident voices
+  - Overconfidence | ranges far too narrow
+  - Optimism | the plan going as planned
+  - *Motivated estimates | drifting towards the helpful answer
+```
+
 ## Five ways to structure judgement
 
 ### 1. Break the question down
@@ -50,6 +62,17 @@ Ask for a low, a most likely and a high figure, or ask "what is the figure you a
 
 The reasons behind an estimate are often more valuable than the number. They show which assumptions matter most, which can be checked, and which would change the estimate if they turned out wrong.
 
+```figure
+type: checklist
+title: Five ways to structure judgement
+caption: Each one counters a particular bias without needing more data.
+- Break the question down | smaller parts are easier
+- Look for an outside view | what usually happens
+- Independent estimates first | then discussion
+- Ranges, not points | low, likely, high
+- Record the reasons | they show what would change the answer
+```
+
 ## Choose the right people
 
 The quality of judgement depends on who gives it. Include people with hands-on experience of the work, not only those who manage or sell it. Include at least one person likely to be sceptical, and, where possible, someone from outside the business who has done similar work. Ask people to say if they have an interest in the answer, such as a salesperson whose commission depends on the quote. Interests do not disqualify anyone, but they should be visible.
@@ -65,6 +88,17 @@ The Delphi method is a structured way of combining several experts' judgements o
 5. **Round two:** each person reconsiders and gives a revised estimate, explaining any change or why they are holding their view.
 6. **Repeat once more** if views are still moving significantly, then stop.
 7. **Report the result** as a range with the median, and note any remaining disagreement and its reasons.
+
+```figure
+type: cycle
+title: A simple Delphi process
+caption: The aim is not forced agreement; a persistent minority view with a good reason is information.
+- Ask a precise question | of four to eight people
+- Independent, anonymous estimates | with ranges and reasons
+- *Share the median, spread and reasons | without names
+- Revise | explaining any change
+- Stop when views settle | report a range and the median
+```
 
 Two cautions. The aim is not forced agreement: a persistent minority view with a good reason is valuable information and should be recorded. And a single survey or a one-off meeting is not a Delphi; the method's value comes from anonymous, reasoned feedback across rounds.
 
@@ -112,6 +146,20 @@ The owner sets up a quick Delphi. The panel is two senior installers, the projec
 **The quote.** The business prices installation at 340 hours, slightly above the median given the newness of the work, and states clearly that delays or redesign caused by heritage approvals are excluded and will be priced as variations.
 
 Installation takes about 345 hours. One fixing detail needs redesign after a heritage review, and it is priced as a variation as agreed. The business records the outcome against the estimate, so the next heritage job starts with real data.
+
+```figure
+type: range
+title: The heritage fit-out estimate, round by round
+min: 200
+max: 500
+unit: hours
+ticks: 200 | 350 | 500
+caption: The plasterer's high estimate rested on heritage approvals; one fixing detail did need redesign, priced as a variation.
+- Round one | 220 | 480 | median 300
+- Round two | 280 | 420 | median 320
+- Quoted | 340
+- *Actual | 345
+```
 
 ## How this applies to a small Australian business
 

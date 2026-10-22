@@ -45,6 +45,17 @@ Consider how often this happens:
 
 In each case, the original advice may have been perfectly reasonable for its purpose. The failure is that the organisation did not control how the advice was used. So the most useful question is not simply "was the advice correct?" but **who is expected to rely on this advice, for what decision, and with what consequences?**
 
+```figure
+type: compare
+title: Advice that travelled
+cols: Given as | Later treated as
+caption: Reasonable for its original purpose, but relied on for a decision it was never meant to support.
+- Structural | A preliminary opinion on whether to investigate | Final design advice
+- Savings | An estimate on management's assumptions | A business-case figure after the assumptions changed
+- Capacity | A supplier's indicative figure | A delivery commitment in a customer contract
+- Site meeting | A quick verbal answer | A recommendation quoted from the minutes
+```
+
 ## Six things every material piece of advice should state
 
 Treat any advice that will influence a significant decision as having a use case. Before giving it, or before relying on it, make sure it states six things.
@@ -75,6 +86,18 @@ When should the advice be reconsidered? Advice based on market prices, regulatio
 
 The more consequential the decision, the more explicitly these should be recorded.
 
+```figure
+type: checklist
+title: Six things material advice should state
+caption: Give the advice a use case, so it cannot quietly travel to a decision it was not meant for.
+- Purpose | the decision it supports
+- Scope | what was and was not examined
+- Evidence | calculations, measurements, tests
+- Assumptions | what must stay true
+- Reliance | who may rely on it
+- Review or expiry | when to reconsider it
+```
+
 ## Know what kind of statement you are making
 
 Different kinds of professional statement carry different levels of confidence, but people outside the profession often treat them as interchangeable. Being precise about the type of statement reduces misunderstanding.
@@ -89,6 +112,18 @@ Different kinds of professional statement carry different levels of confidence, 
 | Guarantee | A promise that an outcome will occur | Highest, and rarely appropriate for advisers |
 
 When an indicative estimate is quoted as if it were a verification, risk has been created, regardless of how careful the original estimate was.
+
+```figure
+type: layers
+title: Statements carry different levels of confidence
+caption: Quoting an indicative estimate as a verification quietly transfers risk to whoever relies on it.
+- Indicative estimate | low; may change significantly
+- Opinion | depends on scope and evidence
+- Assessment | moderate to high within scope
+- Verification | high for what was checked
+- Certification | high, with formal accountability
+- *Guarantee | highest, and rarely appropriate for advisers
+```
 
 ## Disclaimers and their limits
 
@@ -125,6 +160,18 @@ The engineer reviews the original drawings, which are incomplete, and does not i
 - **Review:** this opinion should not be relied on after 12 months or if the machine specification changes.
 
 When the builder later asks to proceed, the letter makes the next step obvious: commission the site inspection and detailed check. The inspection finds a modified connection that needs strengthening, which is completed before installation. The cost is modest, nobody is harmed and responsibility is clear.
+
+```figure
+type: compare
+title: The 1.8-tonne machine on the mezzanine, two ways
+cols: An email | A short letter
+best: 2
+caption: Same engineer, same incomplete drawings; the letter made the next step, and responsibility, obvious.
+- What was said | "Should be fine for the new machine." | Likely capacity, subject to detailed assessment
+- Limits stated | None | Desktop review of 1998 drawings; no site inspection
+- Reliance | Quoted by the builder six months later | Internal planning only; not for construction
+- Outcome | Floor deflected, work stopped, blame disputed | Modified connection found and strengthened first
+```
 
 ## Communicating uncertainty clearly
 

@@ -18,6 +18,19 @@ So how can you tell the difference? There is no test that gives a certain answer
 
 This article sets out those warning signs as a practical checklist, grouped into six areas: prices and valuation, the economic background, the story, the participants, credit, and policy and currency. It explains why each matters, how to observe it, and how to weigh the checklist as a whole. It forms part of GoCore's series on bubbles; the stages through which bubbles typically pass are described in [The anatomy of a bubble](/reados/collections/booms-bubbles-and-business-cycles/anatomy-of-a-bubble/).
 
+```figure
+type: tree
+title: Six groups of bubble warning signs
+caption: Count the signs, judge their intensity and watch their direction; none alone proves a bubble.
+- Warning signs
+  - Prices and valuation | rapid rises, expectations, overvaluation
+  - Economic background | years into an upswing, subdued inflation
+  - The story | a genuine reason, something new, "this time is different"
+  - The participants | new investors, new entrepreneurs, media interest
+  - Credit | more lending, rising debt, new lenders, lower savings
+  - Policy and currency | relaxed monetary policy, strong exchange rate
+```
+
 ## How to use the checklist
 
 Not every item appears in every bubble, and some items appear in perfectly healthy markets. The checklist is a tool for judgement, not a formula. Three principles help:
@@ -173,6 +186,15 @@ A regional city has experienced strong growth for eight years, driven by a new m
 - **Credit:** lenders are offering high loan-to-value ratios on commercial property.
 
 Most of the signs are present. The owner decides to lease a larger premises on a flexible term instead of buying, keeping capital and options open. Two years later, commodity prices fall, a planned project is cancelled and commercial property prices in the city drop. The business, without a large mortgage on a falling asset, adjusts more easily.
+
+```figure
+type: stats
+title: The regional city's commercial property market
+caption: Most signs are present: a time to avoid paying boom prices or building capacity for demand that may not last.
+- *+60% | Prices in four years
+- 8% → 5% | Rental yields, below the long-run level
+- 8 years | Of strong local growth
+```
 
 ## Common mistakes
 

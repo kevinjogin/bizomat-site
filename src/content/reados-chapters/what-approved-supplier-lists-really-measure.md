@@ -39,6 +39,19 @@ Take common criteria one at a time:
 
 Each is a genuine control. Together they mostly measure whether a supplier can carry the overheads of supplying an organisation like yours. That is worth knowing, but it does not show whether the work will be done well.
 
+```figure
+type: tree
+title: What approval screens mostly measure
+caption: Together, the screens mostly measure whether a supplier can carry overheads, not whether it will do this work well.
+- Common approval criteria
+  - Financial standing | solvency, and often scale
+  - Insurance limits | cover sized for the largest job imagined
+  - Certified systems | ability to fund certification and its paperwork
+  - Compliance declarations | ability to staff a compliance function
+  - Capacity | keeping people available between jobs
+  - *Prior similar work | whether it has done this before
+```
+
 **Prior similar work** deserves special attention. It is the most defensible criterion and the most self-sealing: a supplier must already have done the work to be allowed to do it. Over time, an accident of who was available years ago becomes a structural entitlement.
 
 ## Lists outlive the work they were made for
@@ -66,6 +79,17 @@ If fewer than about a third of the criteria test delivery capability, the list m
 3. **Who is excluded.** Identify suppliers that failed approval or never applied, and whether the barrier was capability or paperwork. If you cannot produce that list, you cannot see what your screen removes.
 4. **Concentration and age.** What share of spending goes to the longest-standing members? How many suppliers joined in the last three years? When was each member's capability last checked against current work?
 5. **The missing supplier.** Name one supplier you would want for this work who cannot quote today, and the criterion that stops them. If nobody can name one, either the market really is narrow or you do not know it.
+
+```figure
+type: checklist
+title: A five-part review of an approved list
+caption: Three outcomes are possible: confirm the list, rescope it, or replace it.
+- Origin | founding work against the last two years of orders
+- What the screen tests | share that tests delivery capability
+- Who is excluded | capability or paperwork?
+- Concentration and age | spend with long-standing members
+- *The missing supplier | the one you want who cannot quote
+```
 
 Three outcomes are possible: **confirm** the list, **rescope** it by changing the criteria and reopening admission, or **split** it by adding a lighter lane for specialist or smaller work that does not need the heavier screen. Allowing suppliers to apply at any time, rather than only when the list expires, keeps it current.
 
@@ -109,7 +133,29 @@ This is an illustration. A facilities management business looks after maintenanc
 
 Over the past two years, its clients' spending has shifted toward energy efficiency work, especially tuning building management systems, now about $120,000 a year. None of the approved contractors specialises in this. In practice, the approved electrical contractor wins the work and subcontracts it to a two-person specialist firm, adding a margin of around 15%, roughly $18,000 a year.
 
+```figure
+type: stack
+title: Where $120,000 a year of building systems work went
+unit: $
+caption: The approved electrical contractor won the work and subcontracted it to a two-person specialist firm.
+- Done by the specialist, as subcontractor | 102000
+- Electrical contractor's margin, about 15% | 18000
+```
+
 The facilities manager runs the review. The list's origin no longer matches its spending. Of the eight criteria, only two test delivery capability. The excluded list includes the specialist firm, rejected only because of the insurance limit and lack of certification. The missing-supplier test names the same firm.
+
+```figure
+type: gauge
+title: Criteria on the list that test delivery capability
+min: 0
+max: 8
+value: 2
+unit: of 8
+label: criteria test whether the work will be done well
+caption: Fewer than about a third suggests the list measures overhead capacity more than delivery.
+- 0 | 2.67 | Under a third
+- 2.67 | 8 | A third or more
+```
 
 After checking with its broker and reviewing its clients' contract requirements, the business creates a **specialist lane** for building systems work under $50,000 per job, with insurance sized to that work, documented quality procedures accepted in place of certification, and capability assessed through references from building owners and a short technical interview. The specialist firm is approved directly. The general list stays as it was for heavier maintenance work, and admission is now open year-round. A year later, the facilities manager checks the result: building systems work is now ordered directly, response times have improved because the specialist attends in person, and two other small firms have applied through the new lane.
 

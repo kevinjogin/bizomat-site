@@ -49,6 +49,15 @@ For each scenario, estimate revenue, margin, costs and cash flow month by month.
 
 Runway turns an abstract worry into a concrete deadline and makes it obvious how much difference each action makes. Cutting monthly net outflow by $10,000 extends that six-month runway to ten.
 
+```figure
+type: formula
+title: Cash runway
+formula: Runway (months) = Cash and available credit ÷ Net monthly cash outflow
+caption: Every action can be measured in months of runway gained.
+step: $150,000 ÷ $25,000 = 6 months
+step: Cut outflow by $10,000: $150,000 ÷ $15,000 = 10 months
+```
+
 ### The 13-week cash flow forecast
 
 In a crisis, monthly forecasts are too coarse. A **13-week cash flow forecast** shows week by week the opening cash, expected receipts from customers, payments to suppliers, wages, rent, tax, loan repayments and closing cash. Update it every week against actual results. It is the single most important management tool in a turnaround, because it shows exactly when pressure points arrive and whether actions are working.
@@ -72,6 +81,18 @@ Then work through the main cost areas systematically.
 ## Step 5: Do not cut quality
 
 The fastest way to turn a downturn into a collapse is to reduce costs by reducing quality. Customers who stay with you during hard times are your foundation for recovery. Cheaper materials, skipped inspections or poorer service may save money this month but cost customers next month. Reduce the cost of production, not the quality of the product.
+
+```figure
+type: steps
+title: Twelve steps through a downturn
+caption: Downturns punish delay; most steps protect cash or revenue without cutting quality.
+- Face the facts | quickly
+- Build scenarios | base, downside, severe
+- Know the runway | with a 13-week forecast
+- Review costs from zero | not equal trims
+- Protect quality | and the profitable mix
+- *Talk early | lenders, suppliers, staff
+```
 
 ## Step 6: Find out which products and customers make money
 
@@ -139,6 +160,15 @@ The lesson is that a first product is rarely the final product. Failure in one f
 ## Step 12: Make a 30-, 90- and 365-day plan
 
 Bring it together in a written plan:
+
+```figure
+type: timeline
+title: The 30-, 90- and 365-day plan
+caption: Review weekly against the 13-week cash forecast.
+- 30 days | Protect cash | negotiations, immediate cost cuts, debtor collection
+- 90 days | Fix the mix | product and customer profitability, working capital
+- *12 months | Rebuild | strategic change, growth, pivots, restoring reserves
+```
 
 - **Next 30 days**: cash protection measures, urgent negotiations, immediate cost reductions and stakeholder communication.
 - **Next 90 days**: product and customer profitability actions, working capital improvements, revenue initiatives and process improvements.

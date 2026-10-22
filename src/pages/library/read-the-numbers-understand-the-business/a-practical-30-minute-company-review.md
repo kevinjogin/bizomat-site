@@ -6,6 +6,18 @@ chapterNumber: 8
 
 The purpose of a fast-reading guide is practical understanding. Here is a repeatable first-pass review you can carry out with an annual report and a spreadsheet. Thirty minutes is enough to identify major questions, not enough for a complete investment decision.
 
+```figure
+type: timeline
+title: The 30-minute review
+caption: A first pass that turns the statements into a few testable questions.
+- 0–5 min | Understand the business | customers, products, competitors
+- 5–10 min | Scan profitability | revenue and margins over several years
+- 10–15 min | Follow the cash | profit versus operating cash flow
+- 15–20 min | Check resilience | cash, obligations, debt, interest
+- 20–25 min | Assess capital use | returns, capex, acquisitions, buybacks
+- *25–30 min | Price and next steps | valuation measures; questions to research
+```
+
 ## Minutes 0–5: Understand the business
 
 Describe the company's customers, products and competitors in plain language. Identify its claimed advantage and one plausible threat to that advantage. If you cannot explain how the company makes money, begin there.
@@ -48,6 +60,16 @@ Check P/E and other relevant valuation measures. Consider whether the price depe
 An unexplained gap between earnings and operating cash flow; falling margins hidden by sales growth; repeatedly rising debt; significant short-term refinancing needs; expensive acquisitions; aggressive adjustments to profit; unusual related-party transactions; or a valuation that leaves little room for disappointment.
 
 One warning sign may have a reasonable explanation. Several warnings together demand greater scrutiny.
+
+```figure
+type: checklist
+title: Signals that justify deeper research
+caption: One sign may have a sound explanation; several together deserve a closer look.
+- ? Earnings and operating cash flow diverge | without explanation
+- ? Margins fall while sales grow | hidden by growth
+- ? Debt keeps rising | or large near-term refinancing
+- ? Expensive acquisitions | or aggressive profit adjustments
+```
 
 ### Final takeaway
 

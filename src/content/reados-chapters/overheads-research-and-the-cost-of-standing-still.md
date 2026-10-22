@@ -40,6 +40,19 @@ The book suggests judging SG&A as a share of **gross profit** rather than of rev
 
 Why gross profit rather than revenue? Because gross profit is what is actually available to pay for overheads. Two businesses can have the same revenue but very different gross profits; measuring overheads against gross profit shows how much room each really has.
 
+```figure
+type: range
+title: SG&A as a share of gross profit
+min: 0
+max: 110
+unit: %
+ticks: 0% | 30% | 80% | 100%
+caption: Rough bands from the book; consistency over many years matters more than any single year.
+- *Unusually efficient | 0 | 30
+- Common, including advantaged businesses | 30 | 80
+- Spends everything just to operate | 95 | 110
+```
+
 As with every measure in the book, consistency matters more than any single year. Overheads that swing sharply from year to year suggest a business that is reacting to competitive pressure (spending heavily on promotion to defend share, cutting deeply when times are bad) rather than operating from strength.
 
 ## Why overheads behave as they do
@@ -81,6 +94,16 @@ Consider two hypothetical businesses, each with $20 million of gross profit.
 
 Business A sells an established product that customers buy repeatedly; its marketing mostly maintains familiarity. Business B sells a technology product that must be substantially redesigned every two years to keep up with competitors, and it must advertise heavily at each launch.
 
+```figure
+type: stack
+title: Business B's $20m of gross profit
+unit: $m
+caption: Same gross profit as Business A, but A keeps $13.5m after SG&A and R&D while B keeps $4.0m.
+- SG&A, 55% | 11
+- R&D, 25% | 5
+- Remaining before depreciation, interest and tax | 4
+```
+
 Both may be well managed. Business B may even be growing faster. But Business A keeps more than three times as much of its gross profit, year after year, and can use it to reinvest, reduce debt or reward owners.
 
 ## Separating maintenance from growth
@@ -88,6 +111,17 @@ Both may be well managed. Business B may even be growing faster. But Business A 
 Not all overhead and research spending is the cost of standing still. Some is genuine investment in growth: entering new markets, developing new products for new customers, building capability that will produce future returns.
 
 A useful exercise, for investors and owners alike, is to estimate how much of the spending is:
+
+```figure
+type: balance
+title: Separating the cost of standing still from investment
+left: Maintenance spending
+right: Growth spending
+caption: Companies rarely report the split, so it takes judgement, but the distinction changes what the business really earns.
+- Keeps the current business at its current level | Discretionary, aimed at expansion
+- Must continue to stand still | Can be paused if returns disappoint
+- Part of the true running cost | An investment to judge on its return
+```
 
 - **maintenance:** needed just to keep the current business at its current level
 - **growth:** discretionary investment aimed at expanding the business

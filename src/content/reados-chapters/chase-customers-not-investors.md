@@ -29,6 +29,16 @@ The business earned a share of that improved revenue as a commission. After cove
 
 The lesson for any founder is to prove that the business works at the smallest scale, one customer, one location or one product, before seeking growth capital.
 
+```figure
+type: steps
+title: Proving the first hotel before raising money
+caption: The business earned a commission on revenue it had helped multiply, which then attracted investors.
+- Better rooms and photography
+- Warmer lighting, Wi-Fi, free breakfast
+- Better booking-site listings | from the bottom of search results
+- *Monthly income up several-fold | proof the unit works
+```
+
 ## Unit economics: the evidence investors want
 
 **Unit economics** describes the revenue and costs associated with a single unit of the business: one customer, one order, one location, one machine or one product sold. Key questions include:
@@ -42,6 +52,18 @@ The lesson for any founder is to prove that the business works at the smallest s
 When unit economics are positive and predictable, growth means multiplying a profitable unit. Investors can see how their money will turn into returns. Short-term losses from hiring ahead of growth become acceptable because the long-term model is sound.
 
 When unit economics are negative, growth multiplies losses. No amount of investment fixes that.
+
+```figure
+type: balance
+title: Growth multiplies whatever the unit earns
+left: Positive unit economics
+right: Negative unit economics
+tilt: left
+caption: Prove one customer, location or product works before seeking growth capital.
+- Each new unit adds profit | Each new unit adds losses
+- Growth is multiplication | Growth makes things worse
+- Capital comes more easily | Capital buys time, not a business
+```
 
 ## Starting with little capital
 
@@ -160,6 +182,18 @@ Australian businesses can access a range of funding sources, including:
 - **Customer funding** through deposits, pre-orders and subscriptions.
 
 Each has conditions and costs. Get advice from an accountant or financial adviser before committing.
+
+```figure
+type: compare
+title: Debt and equity at a glance
+cols: Debt | Equity
+caption: Capital tends to chase businesses that have already proved customers and unit economics.
+- Best for | Predictable cash flow, assets to secure | Uncertain or delayed cash flow, high growth potential
+- Cost | Lower | Higher
+- Collateral | Usually required | Not required
+- Ownership | Retained | Shared
+- Repayment | Fixed schedule | None; investors share in value
+```
 
 ## A worked example
 

@@ -65,6 +65,19 @@ Does it fit where the business is heading? A technically excellent project can b
 
 A proposal does not need zero uncertainty in every area. It needs uncertainty to be visible, proportionate and managed.
 
+```figure
+type: tree
+title: Six areas of feasibility
+caption: A proposal does not need zero uncertainty everywhere, but it must know where the decisive uncertainty sits.
+- Can we commit to this?
+  - Technical | can it perform safely and reliably at scale?
+  - Operational | can we adopt and sustain it?
+  - Market | is there real demand at a workable price?
+  - Commercial | can it be sourced, delivered and supported?
+  - Financial | can we fund the investment and the transition?
+  - Strategic, legal and ethical | does it fit, and is it permitted?
+```
+
 ## Assumptions are part of the design
 
 A feasibility study is only as strong as its critical assumptions. For an equipment investment, these might include sales volume, product mix, utilisation, scrap rates, labour availability, uptime, energy costs and supplier lead times. For a new service, they might include take-up, price, cost to serve and how long customers stay.
@@ -86,6 +99,16 @@ Start by listing the questions that could stop the project outright. Answer thos
 ## Grade the evidence in each area
 
 For each of the six areas, grade the evidence behind the conclusion as **proven**, **plausible**, **weak** or **unknown**. Proven means tested in conditions like yours; plausible means supported by credible comparisons; weak means resting mainly on belief or a supplier's claim; unknown means nobody has looked. The grades show at a glance where the decision still depends on hope rather than evidence. Watch the language too: a study that says "will" where the evidence supports only "may" is signalling more confidence than it has earned.
+
+```figure
+type: layers
+title: Grade the evidence behind each conclusion
+caption: Weak or unknown evidence in a decisive area points to the next test, not to a yes.
+- *Proven | tested here, with our people, materials and customers
+- Plausible | supported by credible references or similar cases
+- Weak | supplier claims or analogy only
+- Unknown | no evidence yet
+```
 
 ## "Aligned to strategy" needs a mechanism
 
@@ -138,6 +161,17 @@ The make-or-break questions are customer approval of printed parts and safe powd
 - **C**: run a short trial with a university or research facility that already has the equipment.
 
 The owner chooses B, with C for one particularly demanding part. A trigger is set: if two customers approve printed parts and orders reach a level that would keep a machine busy for at least 28 hours a week, revisit the purchase with real data. A year later, one customer has approved parts and volume is about half the breakeven level. The business continues with the service provider, earning margin on post-processing and machining without carrying a $770,000 investment that would have run at a loss.
+
+```figure
+type: compare
+title: Three ways into metal additive manufacturing
+cols: What it commits | What it tests
+best: 2
+caption: The trigger to buy: two customers approve printed parts and work would keep a machine busy at least 28 hours a week.
+- A: buy the machine now | About $770,000 with post-processing | Nothing before the money is spent
+- B: specialist printing service for 12 months | Service fees only | Customer approval, real demand, process skills
+- C: short university trial | A small trial budget | One demanding part on proven equipment
+```
 
 ## How this applies to a small Australian business
 

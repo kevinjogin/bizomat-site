@@ -31,6 +31,19 @@ It helps to think of a project team as a small, temporary operating system rathe
 
 Performance comes from the whole system, not just from the talent of the individuals. A team of capable people can still fail if handoffs are unclear, decisions have no owner or everyone is quietly prioritising their day job.
 
+```figure
+type: tree
+title: A project team as a temporary operating system
+caption: Performance comes from the whole system, not just the talent of the individuals in it.
+- A project team needs
+  - Enough capability | actually available
+  - *Clear roles and handoffs | where work meets
+  - A shared outcome | and why it matters
+  - Agreed ways of working | deciding, disagreeing
+  - Access | information, tools, decision-makers
+  - A path to the end | phase changes and closure
+```
+
 ## Role descriptions are not role clarity
 
 A common gap: everyone knows their own tasks, but nobody knows the edges. Who decides when the estimator and the production planner disagree about a workflow? Who tells the supplier the specification has changed? Who signs off that testing is complete? These are the questions that cause rework and friction later, and they are rarely answered by a list of responsibilities.
@@ -62,6 +75,18 @@ Many kickoffs spend an hour on slides and avoid the hard questions. A useful kic
 
 It should also be honest about uncertainty. A plan presented as complete when it is not teaches the team to hide problems. Saying "we do not yet know how the integration will work, and finding out is the first job" builds more trust than false confidence.
 
+```figure
+type: checklist
+title: Questions a kickoff should settle
+caption: An hour of slides that avoids these leaves the hard questions for later, under pressure.
+- ? Why does this project matter?
+- ? What does success mean?
+- ? Which constraints are fixed?
+- ? Who decides what?
+- ? Where are the riskiest handoffs?
+- ? What do we do when we disagree?
+```
+
 ## Early disagreement is useful
 
 Teams commonly go through a period of friction as people assert views and test roles. The [leading discussions and building teams](/reados/collections/teams-incentives-and-performance/leading-discussions-and-building-teams/) article covers the familiar stages of team development. The practical point here is that early disagreement is often valuable, because it surfaces different definitions of success.
@@ -86,6 +111,18 @@ Someone formally on a project while protecting their position in their normal ro
 - **Describe what happens afterwards**: whether the person returns to the same role, takes on ownership of what the project built, or moves on.
 
 The single most common failure in small-business projects is adding project work on top of a full day job and hoping. It rarely works for long.
+
+```figure
+type: balance
+title: What people with day jobs wonder, and what to agree
+left: What they wonder
+right: What to agree
+caption: Adding project work on top of a full job, with nothing taken away, is the most common failure.
+- Will my day job suffer? | The time in writing, and who covers the day job
+- Who wins when the two clash? | How conflicts are resolved
+- Will project work be noticed? | Visible recognition of contributions
+- What do I go back to? | What happens afterwards
+```
 
 ## When people join and leave part-way
 
@@ -122,6 +159,19 @@ The owner pauses for a week and runs the readiness check. Several conditions fai
 - **Transition.** After go-live, the planner becomes the system owner, with that responsibility recognised in their role. The other two return to their roles with the new system in place.
 
 A short kickoff follows, covering why the project matters, what success looks like (on-time jobs, fewer phone calls asking about status) and the riskiest handoff: moving live jobs from the whiteboard to the system. The second attempt still meets problems, but they reach a decision-maker quickly, and the scheduling board goes live in eight weeks.
+
+```figure
+type: compare
+title: The printing business's second start
+cols: First attempt | After the readiness check
+best: 2
+caption: The first attempt stalled within a month; a one-week pause fixed the conditions, not the software.
+- Time | Full day jobs; the estimator missed two workshops | Two days a week each, with the owner covering quote follow-ups
+- Priorities | Planner and estimator disagreed | The scheduling board first; job costing later
+- Decisions | The supplier got conflicting instructions | Planner decides workflow settings within budget
+- Rhythm | None | A 30-minute meeting every Tuesday
+- Afterwards | Unclear | The planner becomes the system owner
+```
 
 ## How this applies to a small Australian business
 

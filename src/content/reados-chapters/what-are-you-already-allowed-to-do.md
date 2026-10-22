@@ -30,6 +30,18 @@ Obligations and prohibitions generate work: compliance checks, records, reports 
 
 So a useful question to ask, periodically and deliberately, is: **what has this business been allowed to do that nobody is using?**
 
+```figure
+type: balance
+title: Why documents get read for restrictions
+left: Obligations and prohibitions
+right: Permissions
+tilt: left
+caption: Restrictions have someone watching; permissions have no one, so they go unread and unused.
+- Generate work and reminders | Generate nothing unless someone acts
+- Someone wants them observed | No one checks they are used
+- Complying is always defensible | Using one is a personal choice
+```
+
 ## Why permissions go unread
 
 ### Restrictions have someone watching; permissions do not
@@ -90,6 +102,17 @@ A **permissions reading** is a structured review of the documents that govern a 
 4. **Decide**, and record which permissions the plan relies on and which it declines, with a reason and a name.
 5. **Repeat** whenever a significant plan is made, a document is renewed, the person who granted a permission changes or a schedule comes under pressure. The reading is worth far more before pressure arrives than during it.
 
+```figure
+type: cycle
+title: A permissions reading
+caption: Record which permissions the plan relies on and which it declines, with a reason and a name.
+- Gather the original documents
+- Classify each clause | obligation, prohibition or permission
+- Test each permission | use, value, preparation, grantor
+- *Decide and record
+- Repeat | new plans, renewals, new grantors
+```
+
 ## Ask for the clause
 
 A simple habit helps. When someone says "we're not allowed to do that", ask which clause says so. Often nobody can find it. The restriction turns out to be an assumption, a past practice or a cautious reading of a clause that actually permits more. The reverse also applies: when someone proposes using flexibility, check the exact wording and any conditions attached.
@@ -111,6 +134,15 @@ Before finalising the plan, the operations manager carries out a permissions rea
 
 Using these, the manager redesigns the move as three stages over ten weeks: storage first, then one production line at a time, with packaging held by the supplier during the transition. The business takes legal advice to confirm the approval conditions and the holding-over terms before relying on them.
 
+```figure
+type: timeline
+title: The staged factory move
+caption: Three stages over ten weeks, each relying on a permission already granted; legal advice confirmed them first.
+- Stage 1 | Storage area first | the approval allows it before the production area is finished
+- Next stages | One production line at a time | packaging held at the supplier, up to eight weeks free
+- *Throughout | The old site held month to month | same rent, with notice, under the old lease
+```
+
 The manager compares the two plans, using the business's average gross margin of $38,000 a week:
 
 | Item | Original plan | Staged plan |
@@ -121,6 +153,15 @@ The manager compares the two plans, using the business's average gross margin of
 | Total | $123,000 | $90,600 |
 
 The staged plan is about $32,400 cheaper in these estimates. More importantly, it removes the risk of a single large cutover in which everything must work at once. The figures are estimates, but the point is that the flexibility was already granted. It only needed to be read and planned for.
+
+```figure
+type: bars
+title: Estimated cost of the move
+unit: $
+caption: Lost margin at $38,000 a week, old-site rent at $4,500 a week and extra handling for the staged plan.
+- Original plan: three-week shutdown | 123000
+- *Staged plan over ten weeks | 90600
+```
 
 ## How this applies to a small Australian business
 

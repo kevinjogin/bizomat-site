@@ -69,6 +69,16 @@ A simple **accumulation check** runs monthly on the risks below the escalation l
 
 There is also a constraint escalation rules never measure: **attention**. When several moderate issues arrive at once, the scarce resource is usually not money but the number of serious decisions a small team can make well in one week.
 
+```figure
+type: steps
+title: A monthly accumulation check
+caption: Risks with one cause happen together, so judge them together.
+- Group by cause | not by owner
+- Add up each group | no discounting
+- *Check timing | three or more in a few weeks: escalate
+- Ask for the offset | what balances them out?
+```
+
 ## Authority with an expiry date
 
 Delivery authority is usually granted once: someone is put in charge of a project, and from then on they are understood to be running it until it ends. That is an unusual way to delegate. Nobody would give a spending authority without a limit or a review date. Yet the authority to commit a business's scarcest people to months of work is often handed over without either.
@@ -119,6 +129,18 @@ This is an illustration. A wholesale plant nursery supplies garden centres and o
 - the hardware chain cutting orders if stock quality falls: about **$18,000**.
 
 Grouped by cause, all five trace back to one driver: a hot, dry spring. Together they come to about **$83,000**, and all could happen in the same six weeks. Under the old rule, the owner would have heard about none of them. Under the accumulation check, the group is escalated in winter. The owner and manager agree to install shade cloth on the most exposed beds, pre-book a water carter, adjust picking hours in heatwaves and discuss quality allowances with the hardware chain in advance.
+
+```figure
+type: stack
+title: Five moderate risks with one cause: a hot, dry spring
+unit: $
+caption: Each was under the manager's $30,000 limit; together about $83,000 in the same six weeks, so the group went to the owner in winter.
+- Heat damage to stock | 25000
+- Carting water under restrictions | 20000
+- Hardware chain cutting orders | 18000
+- Picking productivity and overtime | 12000
+- Irrigation and cooling power | 8000
+```
 
 The same review sets clearer rules for the manager's other big job, a new greenhouse. Authority is granted for the first stage, the structure, with tolerances of two weeks and $15,000. At the end of that stage, the manager presents progress and the plan for fit-out, and the owner renews authority for the next stage. Staff heat safety is recorded as a protection that cannot be traded for output, with a clear rule for when outdoor work stops, and supplying the hardware chain is recorded as a minimum outcome.
 

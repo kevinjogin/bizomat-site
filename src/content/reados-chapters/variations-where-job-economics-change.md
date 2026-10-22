@@ -28,6 +28,16 @@ Before deciding anything, identify what kind of request it is:
 
 The labels matter commercially. Calling a defect an enhancement can shift cost unfairly onto the customer. Calling an enhancement a "clarification" lets scope expand without anyone consciously agreeing to pay for it. And well-meant additions that nobody asked for, sometimes called **gold plating**, can create training, support, warranty or compliance obligations. More is not automatically better.
 
+```figure
+type: tree
+title: Three kinds of change
+caption: Calling a defect an enhancement shifts cost onto the customer; calling an enhancement a "clarification" expands scope unpaid.
+- A change request
+  - Correction | the agreed requirement was not met
+  - *Controlled change | new information or a new decision
+  - Enhancement | something extra beyond scope
+```
+
 ## Common misreadings
 
 - **Small changes are low risk.** A change that is cheap on its own can trigger delay, rework, ordering changes or effects on other trades that cost far more.
@@ -49,6 +59,18 @@ For each change, establish:
 For larger changes, add a sixth: **benefit**. Does it improve, protect or weaken what the job is meant to achieve?
 
 Agreeing these before work proceeds creates a window in which the customer can understand the consequences before committing. Some changes are genuinely urgent, such as safety issues or work that will otherwise stop. Those need a fast route, not no route: urgency should shorten the process, not remove the record. Even a phone photo of a signed note, followed by a proper form the same day, is far better than nothing.
+
+```figure
+type: checklist
+title: Agree before the work proceeds
+caption: Agreeing these first lets the customer decide while there is still a choice.
+- Cause | why it is needed
+- Authority | who can approve it
+- Scope | what changes
+- Cost | direct and knock-on
+- Time | effect on completion
+- *Benefit | for larger changes
+```
 
 ## See the whole effect
 
@@ -126,7 +148,27 @@ For its next jobs, the contractor introduces a one-page variation form and a sim
 
 The contractor also shows the customer the effect of timing. On the next job, relocating a circuit before tiling is quoted at about $600; the same change after tiling would cost about $1,900 because of making good. The customer decides early.
 
+```figure
+type: bars
+title: The same circuit relocation at two moments
+unit: $
+caption: Asking whether this is the right time to change can matter more than whether the change is possible.
+- *Before tiling | 600
+- After tiling, with making good | 1900
+```
+
 After six months, the contractor reviews causes. Of 40 recorded variations, most came from incomplete shopfitting drawings. The contractor now asks for a pre-start coordination meeting with the shopfitter and owner on every fit-out, and disputes over extras largely disappear.
+
+```figure
+type: compare
+title: Extras on the first café job and on the next ones
+cols: First café job | Next jobs
+best: 2
+caption: Of 40 recorded variations, most came from incomplete shopfitting drawings, so pre-start coordination became standard.
+- How requested | Owner and shopfitter, directly to electricians | On a one-page variation form
+- When priced | About $7,800 invoiced at the end | Recorded price and approval first, except urgent safety work
+- How classified | Not at all: disputed as "part of the job" | Correction, controlled change or enhancement
+```
 
 ## How this applies to a small Australian business
 

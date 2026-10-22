@@ -39,6 +39,16 @@ Three quite different things are often bought under the single word "advice":
 
 They need different people, durations and success measures. An engagement scoped as advice but managed as capacity tends to produce a large invoice and no decision. One scoped as capacity but expected to leave skills behind tends to frustrate both sides. Name which you are buying in the engagement letter.
 
+```figure
+type: compare
+title: Three things bought under the word "advice"
+cols: Purpose | Success looks like
+caption: Write down which one you are buying before choosing who to buy it from.
+- Advice | Judgement on a decision you must make | A clear recommendation you can act on
+- Capability transfer | Building a skill inside your business | Your own people can do it afterwards
+- Capacity | Extra hands for work you understand | The work done to standard and on time
+```
+
 Organisational psychologist Edgar Schein drew a related distinction between the **expert model**, where the client buys an answer, and **process consultation**, where the helper improves the client's own ability to diagnose and act. Both are legitimate. Confusing them is one of the most common causes of disappointing engagements.
 
 ## Know your own gap first
@@ -57,6 +67,18 @@ Competence shows itself in behaviour that is hard to fake under questioning. A c
 A merely confident adviser answers immediately from a fixed position, generalises from past successes without checking whether the conditions are the same, and rarely volunteers what would prove them wrong.
 
 Six questions help in a first conversation:
+
+```figure
+type: compare
+title: Competence or confidence? How answers differ
+cols: Competent answer | Confidence-only answer
+best: 1
+caption: Competence shows in how an adviser handles questions, not in how quickly they answer.
+- What would you need to know before advising us? | Narrows and reframes the question | Answers straight away
+- What would make your recommendation wrong? | Names something observable | Restates it more firmly
+- Where has this approach failed, and why? | Explains the conditions success depends on | Lists successes only
+- When should we not engage you? | States the circumstances plainly | Cannot think of any
+```
 
 | Question | Competent answer | Confidence-only answer |
 |---|---|---|

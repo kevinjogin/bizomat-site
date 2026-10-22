@@ -48,6 +48,18 @@ A standing offer is a mechanism for repeated work. It still needs controls in si
 5. **Performance**: how quality, response, safety, documentation and invoice accuracy are monitored.
 6. **Review**: when rates, performance and the arrangement itself are reviewed.
 
+```figure
+type: checklist
+title: What a standing offer must still control
+caption: It is a mechanism for repeated work, and still needs controls in six areas.
+- Call-off authority | who can order, up to what value
+- Scope | covered and excluded work
+- Pricing rules | loadings, travel, materials, variations
+- Capacity and response | urgent and routine times
+- Performance | quality, safety, documents, invoices
+- Review | rates and the arrangement itself
+```
+
 ## Designing the schedule of rates
 
 A good schedule of rates is clear enough that both parties calculate the same price for a job. Typical elements:
@@ -132,9 +144,40 @@ This is an illustration. A food manufacturer has about 180 minor mechanical and 
 
 The business sets up standing offers with two local contractors. The schedule of rates includes a mechanical fitter at $95 an hour in normal hours and $142.50 after hours (1.5 times the normal rate), a call-out charge of $80 within 30 kilometres, materials at cost plus 12% with invoices on request, a four-hour response for urgent work and next business day for routine work. Production supervisors can call off jobs up to $5,000. Above $5,000, both contractors are asked for a quote. Above $20,000, or for new installations, the business seeks separate quotes under its normal purchasing process.
 
+```figure
+type: tree
+title: The schedule of rates
+caption: Clear enough that both parties calculate the same price for the same job.
+- Rates and terms
+  - Mechanical fitter | $95 an hour; $142.50 after hours (1.5×)
+  - Call-out | $80 within 30 kilometres
+  - Materials | cost plus 12%, invoices on request
+  - Response | four hours urgent; next business day routine
+```
+
+```figure
+type: decision
+title: The food manufacturer's call-off boundaries
+question: How large is the job?
+caption: Boundaries protect the buyer from drift and the supplier from major work at minor-work rates.
+- Up to $5,000 | A supervisor calls it off | at the agreed rates
+- Over $5,000 | Both contractors quote
+- *Over $20,000, or a new installation | Separate quotes | under normal purchasing
+```
+
 Performance is reviewed quarterly: response times, jobs needing a return visit, safety and invoice accuracy.
 
 After a year, two things stand out from the call-off records. First, about 40% of call-outs relate to one conveyor line, which leads to a reliability project on that line rather than more repairs. Second, one contractor has received about 85% of the work, mainly because supervisors had its number saved in their phones. The business introduces rotation for routine jobs between the two contractors, with urgent work going to whichever can respond first. Approval delays on small jobs disappear, and the business has a clearer picture of where its maintenance money goes.
+
+```figure
+type: stats
+title: What a year of call-off records showed
+caption: The data led to a reliability project on one line and rotation of routine jobs between the contractors.
+- 180 | minor repair jobs a year, once quoted one by one
+- 3 days | typical wait to approve each quote, before
+- 40% | of call-outs from one conveyor line
+- 85% | of work to one contractor, saved in supervisors' phones
+```
 
 ## How this applies to a small Australian business
 

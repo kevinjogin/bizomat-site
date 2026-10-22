@@ -31,6 +31,17 @@ Two consequences follow:
 
 Consolidation is usually prepared using a worksheet that starts from each entity's own accounts and makes adjustments. The main steps are:
 
+```figure
+type: steps
+title: The basic consolidation steps
+caption: Include everything the group controls; remove everything the group does with itself.
+- Align the accounts | same reporting date and policies
+- Add line by line | cash with cash, revenue with revenue
+- Eliminate the investment | against the subsidiary's equity
+- Recognise non-controlling interests | their share of equity and profit
+- *Eliminate intra-group items | loans, sales, fees and unrealised profit
+```
+
 1. **Align the accounts.** Ensure subsidiaries use the same reporting date and consistent accounting policies, adjusting where necessary.
 2. **Add line by line.** Combine like items: cash with cash, receivables with receivables, revenue with revenue, and so on.
 3. **Eliminate the investment.** Remove the parent's investment in each subsidiary against the parent's share of the subsidiary's equity at acquisition, recognising goodwill and fair value adjustments from the acquisition.
@@ -62,6 +73,17 @@ The balance sheets immediately after the acquisition:
 
 How the adjustments are calculated:
 
+```figure
+type: formula
+title: Parent Co buys 80% of Sub Co for $400,000
+formula: NCI = 20% × Sub Co net assets
+formula: Goodwill = Price paid − 80% × Sub Co net assets
+caption: Proportionate-share method; Sub Co's net assets are $450,000 at fair value.
+step: NCI = 20% × $450,000 = $90,000
+step: Goodwill = $400,000 − $360,000 = $40,000
+step: Investment ($400,000) and Sub Co equity ($450,000) are eliminated
+```
+
 - **Non-controlling interest:** 20% of Sub Co's net assets of $450,000 = **$90,000**.
 - **Goodwill:** the $400,000 paid, less Parent Co's 80% share of Sub Co's net assets ($360,000) = **$40,000**.
 - **Elimination:** Parent Co's investment ($400,000) and Sub Co's equity ($450,000) are removed, replaced by goodwill ($40,000) and the non-controlling interest ($90,000).
@@ -80,6 +102,15 @@ In later periods, the subsidiary's profits are included in full in consolidated 
 - **non-controlling interests**, their share of the subsidiary's profit.
 
 Continuing the example, suppose Sub Co earns a profit of $60,000 in its first year. Consolidated profit includes all $60,000, of which $12,000 (20%) is attributed to the non-controlling interest. The non-controlling interest on the balance sheet rises accordingly.
+
+```figure
+type: stack
+title: Sub Co's $60,000 first-year profit in the group accounts
+unit: $'000
+caption: All $60,000 is included in consolidated profit, then attributed between the owners.
+- Owners of Parent Co, 80% | 48
+- Non-controlling interest, 20% | 12
+```
 
 ## Eliminating intra-group transactions
 

@@ -31,6 +31,16 @@ Make the next action proportionate. An initial enquiry does not need every compa
 
 Channel activity and commercial progress are different measures. Publishing four posts records effort. Receiving six enquiries records a response. Confirming that two enquiries fit the offer records something closer to a sales opportunity. Keep those measures separate.
 
+```figure
+type: steps
+title: Four different things a channel can produce
+caption: Count each separately; only the later steps are close to sales opportunities.
+- Effort | publishing four posts
+- Response | receiving six enquiries
+- Fit | two enquiries match the offer
+- *Opportunity | an agreed next conversation
+```
+
 For a two-week experiment, Fieldnote records the following fictional results:
 
 | Route | Team time | Enquiries | Enquiries that fit the service | Agreed next conversations |
@@ -39,6 +49,18 @@ For a two-week experiment, Fieldnote records the following fictional results:
 | A practical guide shared with an existing audience | 7 hours | 6 | 2 | 1 |
 
 The guide produced more enquiries, while introductions produced more suitable conversations during this short period. Neither result proves a permanent winner. The guide may keep working after publication; introductions may depend on one unusually helpful contact. Two weeks and ten enquiries are too little evidence for a dependable conversion forecast.
+
+```figure
+type: compare
+title: Two-week channel experiment, fictional results
+cols: Introductions | Practical guide
+caption: The guide produced more enquiries, introductions more suitable conversations. Ten enquiries are too few for a dependable forecast.
+- Team time | 5 hours | 7 hours
+- Enquiries | 4 | 6
+- Fit the service | 3 | 2
+- Agreed next conversations | 2 | 1
+- Team time at A$85 per hour | A$425 | A$595
+```
 
 Record enough context to interpret the numbers: the time window, the audience, the definition of fit and whether opportunities have had time to progress. Ask customers how they heard about you without assuming they used only one route. Someone may read a guide after a referral and later search for the business name. A simple record can retain both influences rather than assigning false precision to one source.
 
@@ -49,6 +71,16 @@ At an illustrative planning value of A$85 per hour, five hours represents A$425 
 Do not yet divide that cost by sales if the enquiries are still open. Later, compare a mature group of enquiries with the contribution earned from its completed work. Include relevant direct spending and the time spent preparing material, responding and following up. A channel with cheap clicks can be expensive if most enquiries require lengthy explanations before being declined.
 
 Also check the effect on delivery. If a successful campaign creates more suitable work than the team can handle, the response is not automatically to accept everything. Adjust availability, scheduling or the offer. The capacity test in Chapter 5 applies regardless of how attractively the enquiry arrived.
+
+```figure
+type: checklist
+title: Before scaling a channel that works
+caption: A successful route still has to pass the capacity test in Chapter 5.
+- Mature cohort | compare completed enquiries, not open ones
+- Full cost | direct spending plus preparation, responses and follow-up
+- Delivery effect | adjust availability, scheduling or the offer
+- x Accept everything it brings | attractive arrival does not create capacity
+```
 
 ## Respect permission when making contact
 

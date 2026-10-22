@@ -48,6 +48,21 @@ Procedures vary between courts, but a commercial case typically moves through th
 
 Many cases settle at some point along this path, often after disclosure, after experts have reported or at mediation, when each side has a clearer view of the evidence. The [resolving disagreements without stopping work](/reados/collections/commercial-law-and-contracts/resolving-disagreements-without-stopping-work/) article explains how mediation and other processes can resolve disputes earlier.
 
+```figure
+type: steps
+title: The path of a commercial case
+caption: Many cases settle along the way, often after disclosure, evidence or mediation.
+- Pleadings
+- Case management
+- *Disclosure | often the heaviest burden
+- Evidence | witnesses and experts
+- Interlocutory applications
+- Mediation
+- Trial
+- Judgment
+- Appeal
+```
+
 ### Disclosure is where the burden often falls
 
 The obligation to disclose documents is frequently the most demanding part of litigation for a business. Relevant documents can include emails, text messages, drawings, job records, accounting entries and meeting notes, and they must be preserved once litigation is reasonably anticipated. Destroying or failing to preserve relevant documents can have serious consequences. Businesses with organised records find disclosure much less painful and much cheaper.
@@ -87,6 +102,18 @@ Winning a judgment gives a legal right to be paid. It does not put money in the 
 
 Each step costs money and time, and none helps if the debtor has no unencumbered assets. If the defendant becomes insolvent, an unsecured judgment creditor usually ranks alongside other unsecured creditors and may recover little or nothing. This is why checking the defendant's financial position before starting proceedings is so important.
 
+```figure
+type: tree
+title: Turning a judgment into payment
+caption: Winning gives a right to be paid; collecting it is another process, and none helps if the debtor has no assets.
+- A judgment debt
+  - Examination | of the debtor's assets and finances
+  - Seizure and sale | of property
+  - Garnishee orders | bank balances, debts owed to the debtor
+  - Charging orders | over property
+  - *Insolvency | winding up or bankruptcy
+```
+
 ## Evaluating whether a claim is worth pursuing
 
 A disciplined evaluation turns the decision from a question of principle into a question of value. A simple framework considers:
@@ -112,7 +139,26 @@ The business sets out two outcomes, ignoring interest and time for simplicity:
 - **If it wins:** it recovers $120,000 plus costs of about $54,000 (60% of $90,000), less its own $90,000 spent, for a net gain of $84,000.
 - **If it loses:** it bears its own $90,000 and pays about $54,000 of the other side's costs, for a net loss of $144,000.
 
+```figure
+type: bars
+title: Two outcomes for a $120,000 claim run to trial
+unit: $
+caption: About $90,000 of costs each side, with about 60% of costs recovered by whoever wins.
+- If it wins: net gain | 84000 | $120,000 + $54,000 recovered − $90,000 spent
+- *If it loses: net loss | −144000 | $90,000 own costs + $54,000 of theirs
+```
+
 The probability-weighted value is 0.65 × $84,000 plus 0.35 × (minus $144,000), which is $54,600 minus $50,400, or about $4,200. Before accounting for a year or more of management time, the risk the customer cannot pay and the stress involved, the expected value of running the case to trial is close to zero.
+
+```figure
+type: formula
+title: The expected value of running the case to trial
+formula: Expected value = P(win) × Net gain + P(lose) × Net loss
+caption: Close to zero before management time, collection risk and stress; a resolution well before trial makes more sense.
+step: 0.65 × $84,000 + 0.35 × (−$144,000)
+step: $54,600 − $50,400
+step: About $4,200
+```
 
 This does not mean the claim lacks merit. It means the business should look for a resolution well before trial. A credible letter of demand, a well-reasoned settlement offer and early mediation might achieve a settlement of, say, $70,000 to $80,000 within a few months, with modest costs. If the customer refuses to engage, the business can still commence proceedings and use the early stages to test the evidence, while reviewing the economics at each milestone.
 

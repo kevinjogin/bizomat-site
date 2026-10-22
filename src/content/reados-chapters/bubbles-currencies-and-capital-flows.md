@@ -38,6 +38,16 @@ There is an accounting relationship at the heart of this. A country's **balance 
 
 These two parts must balance. If foreign money flows in as investment, the country must, by definition, run a current account deficit of roughly the same size: it imports more goods and services than it exports, or pays out more income than it receives.
 
+```figure
+type: steps
+title: How capital inflows show up as a trade deficit
+caption: The exchange rate is usually the mechanism that brings the two accounts into balance.
+- Investors buy local assets | shares, property, bonds
+- Demand for the currency rises | the exchange rate strengthens
+- Imports cheapen, exports lose ground | trade deficit widens
+- *Current account deficit matches the inflow | the two accounts balance
+```
+
 The mechanism that brings this about is often the exchange rate. A strong currency makes imports cheaper and exports more expensive. Consumers and businesses buy more from abroad, exporters find it harder to compete, and the trade balance moves towards deficit. In a sense, that is the purpose of the strong currency: it allows the net inflow of capital to be matched by a net inflow of goods and services.
 
 ## Fixed exchange rates
@@ -80,6 +90,16 @@ This pattern is a reminder that, for a country like Australia, exchange-rate swi
 ### The "Dutch disease"
 
 Economists have a name for the pressure a booming sector can place on the rest of an economy through the currency: the **Dutch disease**. The term was coined in the 1970s to describe the Netherlands, where large natural gas discoveries strengthened the currency and made other export industries, particularly manufacturing, less competitive.
+
+```figure
+type: steps
+title: The "Dutch disease" mechanism
+caption: Recognising the pressure separates currency problems from performance problems.
+- A sector booms | commodity prices and investment surge
+- The currency rises | inflows and export earnings
+- Other exporters lose competitiveness | prices too high abroad
+- *Import-competitors face cheaper imports | local manufacturing squeezed
+```
 
 The mechanism is straightforward. A boom in one sector attracts investment and raises export earnings, pushing up the currency. The stronger currency makes every other export more expensive abroad and every import cheaper at home. Industries outside the booming sector face tougher competition on two fronts, and some shrink or move offshore. When the boom ends and the currency falls, those industries may not easily return, because skills, supply chains and customers have been lost.
 
@@ -136,6 +156,16 @@ An Australian business imports equipment priced at US$100,000 each year and sell
 | 0.65 | about $153,800 |
 
 When the Australian dollar is strong, at 1.05, the equipment costs about $95,200. If the currency falls to 0.65, the same equipment costs about $153,800, an increase of more than 60%. A business that set its prices and customer expectations during a period of currency strength could find its margins disappear when the currency falls.
+
+```figure
+type: bars
+title: The same US$100,000 of equipment in Australian dollars
+unit: A$
+caption: From 1.05 to 0.65 US$ per A$, the cost rises by more than 60%. Quarterly price reviews, adjustment clauses and forward contracts protect margins.
+- At 1.05 US$ per A$ | 95200
+- At 0.75 | 133300
+- *At 0.65 | 153800
+```
 
 The business protects itself by reviewing prices quarterly, including an exchange-rate adjustment clause in large contracts, and using forward contracts to fix the rate for orders already committed.
 

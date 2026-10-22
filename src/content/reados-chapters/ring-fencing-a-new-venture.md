@@ -77,6 +77,18 @@ Separation must never be used to hide a liability or move an unattractive obliga
 | Separate entity with outside investors | Shared | High, but investor terms apply | By agreement | Highest |
 | Joint venture with a partner holding a needed asset | Shared, plus contributed assets | Moderate; unwinding is slow | Reciprocal | Highest |
 
+```figure
+type: compare
+title: Five ways to structure a venture: how easily could you stop it?
+cols: Money at risk | Ease of stopping
+caption: The structure decides in advance whether stopping will ever be possible; separation must never hide a liability.
+- Fund from the existing business | Core balance sheet, uncapped in practice | Low
+- Internal ring-fence, hard budget, named stop authority | The core, capped by policy | Moderate, if discipline holds
+- Separately funded entity owned by the business | The amount committed | High, if guarantees are limited
+- Separate entity with outside investors | Shared | High, but investor terms apply
+- Joint venture with a partner | Shared, plus contributed assets | Moderate; unwinding is slow
+```
+
 ## Four questions that help choose
 
 1. **Is the venture's failure linked to the core's?** If the same downturn would hit both, separation protects less than it appears, because both will be short of cash at once.
@@ -102,6 +114,17 @@ The first plan is informal: fund development from business cash and the overdraf
 
 The owner rewrites the plan:
 
+```figure
+type: checklist
+title: Limits written before the structure
+caption: The bank wanted a personal guarantee; the owner declined, because it would tie the venture back to the core.
+- Maximum exposure | $300,000 over two years, released in stages
+- Stop conditions | prototype and three paying pilots by month 12
+- Stop authority | owner plus an independent adviser
+- Separate accounting | engineers at cost, office at fair rent
+- Structure | separate company once pilots succeed
+```
+
 - **Maximum exposure**: $300,000 over two years, funded from retained profits, released in stages.
 - **Stop conditions**: a working prototype and three paying pilot customers by month twelve, or the venture stops or is significantly re-scoped.
 - **Stop authority**: the owner, with an independent adviser who must agree to any extension beyond the cap.
@@ -111,6 +134,16 @@ The owner rewrites the plan:
 The bank offers a loan for the venture but requires a personal guarantee from the owner. Recognising that this would tie the venture back to the owner and the core business, the owner declines and stays within the funded cap.
 
 At month twelve, there are two paying pilots, not three. The owner and adviser agree a six-month extension within the original cap, with a narrower target market. The decision is made against written conditions rather than enthusiasm or sunk cost.
+
+```figure
+type: decision
+title: The month-twelve review
+question: Were the written stop conditions met?
+caption: Decided against written conditions, not enthusiasm or sunk cost.
+- Yes: prototype and three pilots | Continue to the next stage
+- *Partly: two pilots | Six-month extension within the cap, narrower market
+- No | Stop or significantly re-scope
+```
 
 ## How this applies to a small Australian business
 

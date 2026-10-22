@@ -42,6 +42,16 @@ Together, they support one idea: **value has many dimensions, but it still needs
 
 For decisions with several parties, build a simple value map with four elements:
 
+```figure
+type: steps
+title: A value map for decisions with several parties
+caption: Capture is the critical element: value that cannot be captured or justified should not prop up the case.
+- Value | what changes, and for whom
+- Beneficiary | who experiences the benefit
+- Payer | who bears the cost
+- *Capture | how the payer recovers, shares or justifies it
+```
+
 - **Type of value**: financial, strategic, social, environmental, emotional, capability or other.
 - **Beneficiary**: owners, customers, employees, community, government, partners or others.
 - **Payer**: who provides the money, bears the running costs or accepts the risk.
@@ -86,6 +96,16 @@ This avoids two extremes: forcing every impact into a financial figure, and leav
 ## A four-ledger view
 
 For decisions affecting several parties, consider four ledgers side by side:
+
+```figure
+type: layers
+title: Four ledgers for a decision affecting several parties
+caption: For each ledger, define the evidence, the owner and the time horizon.
+- Business economics | cash flow, cost, return and risk to the business
+- Strategic capability | options, resilience or position the cash flow may not show
+- Stakeholder outcomes | who gains or is harmed, and how it is measured
+- External effects and obligations | impacts on others, legal and ethical duties
+```
 
 | Ledger | Question |
 |---|---|

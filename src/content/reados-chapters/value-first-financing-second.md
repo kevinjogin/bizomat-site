@@ -57,6 +57,16 @@ Unused borrowing capacity also has value. A business that borrows to the limit f
 
 The Australian Government's Handbook of Cost-Benefit Analysis, published in 2006, distinguishes three approaches, each suited to a different question:
 
+```figure
+type: decision
+title: Choose the test that fits the question
+question: What are we actually asking?
+caption: Most private decisions use financial appraisal; large decisions may need more than one lens.
+- Is it worthwhile and affordable for us? | Financial appraisal | the business's own cash
+- Does it create net value for others too? | Cost-benefit analysis | includes non-market effects
+- *Outcome fixed: which option is cheapest? | Cost-effectiveness | e.g. emissions cut per dollar
+```
+
 | Question | Method | Strength | Limitation |
 |---|---|---|---|
 | Is this financially worthwhile and affordable for our business? | Financial appraisal | Clear view of the business's own cash | Leaves out effects on others |
@@ -111,6 +121,18 @@ The owner separates the two decisions.
 **The investment first.** The owner's accountant checks the savings against the business's actual electricity use and tariffs and estimates about $32,000 a year. The system needs about $3,000 a year in maintenance and an inverter replacement of about $25,000 in year ten. Over fifteen years at an 8% discount rate, the investment's NPV is about −$13,000; at 6% it is about +$18,000. On the supplier's figures it would have been about +$58,000. The investment is marginal, and its value depends on the discount rate and the savings assumption.
 
 **The financing second.** On realistic figures, net savings of about $29,000 a year are slightly less than the loan repayments of about $30,800. The "cash positive from day one" claim depended on optimistic savings and left out maintenance.
+
+```figure
+type: compare
+title: The solar offer: supplier's claim against the checked figures
+cols: Supplier's proposal | Checked figures
+caption: Judged before financing, the investment's NPV over 15 years at 8% is about −$13,000; the finance does not change that.
+- Annual savings | $36,000 | about $32,000
+- Maintenance | not shown | about $3,000 a year, plus about $25,000 inverter in year 10
+- Net annual cash benefit | $36,000 | about $29,000
+- Loan repayments, 4% over 10 years | about $30,800 | about $30,800
+- Claim | "Cash positive from day one" | Slightly cash negative
+```
 
 **The right test.** The owner also wants to reduce the business's emissions, partly because two major customers are asking suppliers for emissions information. For that goal, the relevant question is cost-effectiveness: which option cuts the most emissions per dollar? A refrigeration controls upgrade costing about $40,000 turns out to reduce energy use significantly with a short payback.
 

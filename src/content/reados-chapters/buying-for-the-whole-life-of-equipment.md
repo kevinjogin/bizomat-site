@@ -33,6 +33,17 @@ A machine, a production line or a software system is valuable only while it work
 
 A useful single question captures all of these: **what must remain true after handover for this equipment to keep creating value?** The answers belong in the purchase, not in a scramble after the first breakdown.
 
+```figure
+type: tree
+title: What you are really buying with equipment
+caption: What must remain true after handover for this equipment to keep creating value?
+- The ability to keep it running
+  - Maintainability | practical inspection, service and repair
+  - Parts availability | the right spares, quickly enough
+  - Technical knowledge | people who can fix it, inside or within reach
+  - Software and data access | backup, restore, change and update
+```
+
 ## Common misreadings
 
 - **Whole-life cost means price plus maintenance.** Whole-life thinking is also about availability, dependence and capability, which may not appear as maintenance costs until something fails.
@@ -58,6 +69,19 @@ Not every part needs to be on the shelf. Classify spares by three factors: how c
 | Non-critical | Covers, panels, cosmetic parts | Order when needed |
 
 Ask the supplier for a **recommended spare parts list** with prices and lead times as part of the quote, then review it rather than accepting it whole. Suppliers sometimes recommend too much, and sometimes too little. Make sure the list gives manufacturer part numbers for standard components, not only the equipment supplier's own codes, so you can buy them from other sources if needed.
+
+```figure
+type: matrix
+title: Deciding which spares to hold
+x: Critical parts above, routine parts below
+y: Holding priority
+hot: 2
+caption: Review the supplier's recommended list against this grid rather than accepting it whole.
+- Critical, short lead time | standard motor or sensor: confirm a local stockist; hold if downtime is costly
+- Critical, long lead time | control board, servo drive: hold on site, or have the supplier hold one locally
+- Wearing parts | belts, seals, blades, filters: hold enough for planned maintenance cycles
+- Non-critical parts | covers, panels, cosmetic parts: order when needed
+```
 
 ### Skills
 
@@ -129,6 +153,16 @@ The owner assumes, for planning purposes, one controller failure over seven year
 | Total | $269,000 | $232,400 | $207,400 |
 
 Offer A looked $20,000 cheaper. On a whole-life view, Offer B is the lowest cost, and it also leaves the business less dependent on one overseas supplier. The owner chooses Offer B and writes the documentation, program backups, training and recommended spares list into the order, with final payment linked to their delivery.
+
+```figure
+type: bars
+title: Seven-year cost of two packing machines
+unit: $
+caption: One controller failure assumed; not discounted. Offer A as quoted risks 40 days of hand packing at $1,200 a day.
+- Offer A as quoted | 269000 | $185,000 + $36,000 subscription + $48,000 outage
+- Offer A with a spare controller | 232400 | + $9,000 spare; outage cut to 2 days
+- *Offer B | 207400 | $205,000 + $2,400 outage; no subscription
+```
 
 The point is not that proprietary equipment is always worse. Sometimes it offers performance nothing else can. The point is that the dependence was made visible and priced before the decision, rather than discovered at the first failure.
 

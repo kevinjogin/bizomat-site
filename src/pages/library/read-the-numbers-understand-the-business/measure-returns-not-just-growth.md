@@ -14,6 +14,17 @@ Suppose a company earns $1 million on average equity of $5 million. Its ROE is *
 
 Imagine the company borrows heavily and uses the money to repurchase shares. Its accounting equity may shrink, causing ROE to increase even if operating performance stays unchanged. This is why high ROE must be investigated alongside leverage.
 
+```figure
+type: compare
+title: How a debt-funded buyback can lift ROE without better operations
+cols: Before | After buyback (illustrative)
+caption: The rise in ROE comes from a smaller equity base and more debt, not from better operations. Investigate ROE alongside leverage.
+- Net profit | $1.0m | About $1.0m, before extra interest
+- Average equity | $5.0m | Smaller
+- ROE | 20% | Higher
+- Debt and risk | Lower | Higher
+```
+
 ## Return on invested capital
 
 Return on invested capital (ROIC) tries to compare operating profit after tax with capital supplied for operating purposes. Different analysts use different adjustments and definitions, so comparisons need consistent methods.
@@ -29,6 +40,15 @@ Buybacks can be beneficial when shares are purchased at sensible prices without 
 ## Growth deserves a return test
 
 Suppose a proposed project requires $4 million of new capital and is expected to generate $200,000 in additional annual operating profit after tax. That is a 5% illustrative return on incremental capital. Whether it creates value depends on project risk and the company's cost of capital.
+
+```figure
+type: formula
+title: Growth deserves a return test
+formula: Return on incremental capital = Extra operating profit after tax ÷ New capital
+caption: Whether 5% creates value depends on project risk and the company's cost of capital.
+step: $200,000 ÷ $4,000,000 = 5%
+step: Compare 5% with the cost and risk of the capital required
+```
 
 Growth that consumes capital at poor returns can make a business bigger without making it better.
 

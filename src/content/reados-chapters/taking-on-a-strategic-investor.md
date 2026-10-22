@@ -53,6 +53,18 @@ Treat the proposal as an exchange across several dimensions:
 
 The deal is attractive only if the whole exchange creates enough value and the loss of flexibility is acceptable.
 
+```figure
+type: tree
+title: Map the whole exchange, not just the money
+caption: Attractive only if the whole exchange creates enough value and the loss of flexibility is acceptable.
+- A strategic investment
+  - Financial | capital, guarantees, funding capacity
+  - Capability | know-how, people, systems, IP
+  - Market | distribution, customers, geography
+  - *Governance | board seats, information rights, vetoes
+  - Economic | dilution, options, exclusivity
+```
+
 ## Terms to understand
 
 Strategic investments usually come with a **shareholders' agreement** that sets out rights and obligations. Terms that commonly deserve close attention include:
@@ -122,6 +134,18 @@ With advice from their lawyer and accountant, they negotiate:
 - **A clear exit mechanism** if the partnership underperforms.
 
 The distributor accepts most of the changes. The owners get the capital and market access they need, while keeping control and the ability to build other channels if the partnership does not deliver.
+
+```figure
+type: compare
+title: The distributor's offer, before and after negotiation
+cols: Original ask | Negotiated
+best: 2
+caption: $1.2 million for 25% values the company at about $4.8 million after the investment.
+- Exclusivity in Asia | Five years | Three years, with minimum sales targets
+- New product lines | Veto | Information rights and consultation
+- Option on more shares | Further 26%, giving control | Stake capped at 40% without founders' consent
+- Board | A seat for the distributor | Plus an independent chair
+```
 
 ## Manage the partnership after signing
 

@@ -34,6 +34,16 @@ The direct cost of producing what you sell:
 
 If a product sells for $100, the one-third rule suggests its product cost should be around $33.
 
+```figure
+type: stack
+title: The one-third benchmark for a $100 sale
+unit: $
+caption: A heuristic for asking questions, not a rigid target; many industries run very different proportions.
+- Product cost | 33
+- Operating cost | 33
+- Profit before tax | 33
+```
+
 ### Second third: operating cost
 
 Everything else needed to run the business and reach customers:
@@ -88,6 +98,16 @@ Applying the one-third rule to the manufacturer's revenue:
 If the product actually costs $6.50 to make, product cost is 59 per cent of the manufacturer's revenue, and the business will struggle to make a profit, whatever its sales volume. The options are to reduce product cost, raise the retail price, negotiate channel margins, sell some volume directly at higher margins, or redesign the product.
 
 This example shows a common trap: founders compare their manufacturing cost with the retail price ($6.50 against $20 looks healthy) instead of with the price they actually receive.
+
+```figure
+type: steps
+title: Where the $20 cleaning product's price goes
+caption: Compare manufacturing cost with the $11.05 actually received, not the $20 shelf price: $6.50 is 59% of it.
+- Retail price | $20.00
+- Retailer keeps about 35% | buys at $13.00
+- Distributor keeps about 15% | buys at about $11.05
+- *Manufacturer receives | $11.05, so each third is about $3.68
+```
 
 The article on [pricing your product or service](/reados/collections/pricing-margins-and-profitability/pricing-your-product-or-service/) explains pricing methods, and the article on [gross margin and pricing power](/reados/collections/pricing-margins-and-profitability/gross-margin-and-pricing-power/) explains why margins matter so much.
 
@@ -166,6 +186,17 @@ A manufacturer of steel shelving has revenue of $4 million. Its profit and loss 
 Operating cost is close to the benchmark, but product cost is far above it. The owner investigates and finds that steel prices have risen without corresponding price increases, scrap rates are high on one product line and a third of sales go to a single large customer at very low margins.
 
 Over two years, the business raises prices on most lines by an average of 6 per cent, cuts scrap through better nesting software and operator training, renegotiates the large customer's contract and introduces a premium range with better margins. Product cost falls to 48 per cent of revenue, revenue grows modestly and profit before tax rises to about 18 per cent. Not one third, but a dramatic improvement, and the business has a clear direction for further gains.
+
+```figure
+type: compare
+title: Rebalancing the shelving manufacturer
+cols: Before | After two years
+best: 2
+caption: Prices up about 6%, less scrap, a renegotiated contract and a premium range. Not one third, but a dramatic improvement.
+- Product cost | 60% of revenue | 48% of revenue
+- Operating cost | 32.5%, near the benchmark | not the focus of the changes
+- Profit before tax | 7.5% | about 18%
+```
 
 ## Frequently asked questions
 

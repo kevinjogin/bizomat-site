@@ -76,6 +76,19 @@ The opposite problem also happens. A business that has been hurt once may insist
 
 The goal is the **least complex contract that can still govern the real relationship responsibly**.
 
+```figure
+type: matrix
+title: Two kinds of mismatch
+x: Relationship complexity: low → high
+y: Contract structure: light → heavy
+hot: 4
+caption: The more common problem in small businesses is a relationship that has grown beyond its contract.
+- Too complex for the relationship | slow reviews, unused mechanisms
+- Matched | real mechanisms for change, performance and exit
+- Matched | a purchase order for a standard item
+- *Too simple for the relationship | works only while things go well
+```
+
 ## Count mechanisms, not pages
 
 A long agreement can still be poorly designed if it repeats general terms while leaving the critical interfaces unresolved. A short agreement can be well designed if the relationship is narrow and its few material risks are handled precisely.
@@ -102,6 +115,16 @@ Every mechanism has to be operated by someone. Notices must be sent, reports rev
 Before agreeing to a mechanism, ask who will run it and whether they have the time. There is little point writing in a monthly performance review that nobody attends, or a formal change process that project staff bypass because it is too slow. A mechanism that is too heavy to use is often worse than a lighter one that is actually followed, because it creates a gap between what the contract says and what happens.
 
 This creates a feedback loop. Complex work may justify a more structured contract, and a more structured contract needs more capability to administer it. Both should be included in the decision to buy. The [hidden costs of outsourcing a function](/reados/collections/suppliers-contractors-and-government-work/hidden-costs-of-outsourcing-a-function/) article looks at this oversight cost in more detail.
+
+```figure
+type: cycle
+title: Structure needs capability to run it
+caption: Include the cost of administering the contract in the decision to buy.
+- Complex work | justifies more structure
+- A more structured contract | more mechanisms to operate
+- More capability needed | notices, reviews, approvals, records
+- *Part of the buying decision | or mechanisms go unused
+```
 
 ## Keep the contract usable over time
 
@@ -149,6 +172,16 @@ The owner scores each relationship from 1 (low) to 3 (high) on the six tests:
 The measuring equipment purchase is appropriately handled by a purchase order, with attention to warranty, delivery, installation and training. The redesign suits a short-form services agreement with a clear scope, staged payments linked to acceptance of each stage and a clause stating that the business owns the resulting designs.
 
 The maintenance relationship is the mismatch. It scores highest, but it runs on the least structure. There are no agreed response times, no service standards, no mechanism for reviewing prices, no agreement about who owns the maintenance records and calibration history, and nothing about what happens if the business changes provider. The contractor has been reliable, but two machine breakdowns last year took several days to resolve and the owner had no basis for raising it.
+
+```figure
+type: bars
+title: Six-test scores for three supplier relationships
+max: 18
+caption: Scored 1 (low) to 3 (high) on each test: the highest-scoring relationship ran on the least structure.
+- Measuring equipment, $18,000 one-off | 7
+- Product redesign, about $40,000 | 10
+- *Machine maintenance, about $90,000 a year | 16 | on a renewed trial purchase order
+```
 
 The owner asks a lawyer to help prepare a master services agreement with a service schedule. It sets response times by severity, a planned maintenance calendar, an annual price review, monthly reporting on breakdowns and response, ownership of all maintenance and calibration records by the business, and transition assistance if the arrangement ends. The legal cost is a few thousand dollars, and the contractor, who wants a longer commitment, agrees to most terms. The production manager is named contract owner, with a short quarterly review meeting. The figures are illustrations, but the pattern is common: the relationship that most needed structure had the least, because it grew gradually from something small.
 

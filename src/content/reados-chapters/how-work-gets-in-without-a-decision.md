@@ -77,6 +77,15 @@ Then apply three tests:
 
 The third question in step 2, who may decide, often has no answer for the routes that matter most, because closing those routes means telling a senior person or a valued customer that a habit of theirs now goes through a process. That is a decision for the owner. Without it, the audit describes the problem but does not change it.
 
+```figure
+type: checklist
+title: Three tests after a channel audit
+caption: Closing the unrecorded routes is a decision for the owner, not the team.
+- ? Record | did most recent additions come through routes with no record?
+- ? Free work | what share of the week goes to work nobody asked for in writing?
+- ? Price | what does it cost a requester to ask?
+```
+
 ## Make goodwill visible, not forbidden
 
 Discretionary effort is a genuine strength. Teams that notice what needs doing and do it are valuable, and customers notice. The aim is not to stop it, but to **make it visible**: ask people to record unrequested work briefly, so the business can see how much of its capacity is being allocated by goodwill rather than by decision. Sometimes the answer will be to price it into future quotes; sometimes to keep doing it deliberately as part of the service; sometimes to stop.
@@ -98,6 +107,15 @@ For the next job, the business runs the channel audit with the drafting team. It
 - **Visible goodwill.** The team logs unrequested work in a single line per item. On the next job, the log shows that correcting customer drawing errors takes about 15 hours. The business discusses it with the customer, who agrees to pay for a separate checking service.
 
 The next fixed-fee job finishes within 5% of budget, and the customer relationship is better, not worse, because requests are answered with clear estimates rather than silent absorption or late invoices.
+
+```figure
+type: bars
+title: The drawing job before and after the channel audit
+unit: hours
+caption: Five routes brought work in, and only the variation form produced a record and a price.
+- Budget | 200
+- *Actual, with unlogged requests | 260 | 30% over
+```
 
 ## How this applies to a small Australian business
 

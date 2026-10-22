@@ -40,6 +40,25 @@ The same business noticed that some contractors owned machines but lacked projec
 
 This is the logic behind many successful platforms: find assets that sit idle and match them with people who need them. In Australia, equipment hire businesses, online machinery marketplaces and shared manufacturing facilities follow the same principle. A small manufacturer with spare machine capacity might offer subcontract machining to others, turning idle hours into revenue.
 
+```figure
+type: svg
+title: Connecting idle capacity with unmet demand
+alt: On the left, contractors own machines that sit idle; on the right, other contractors have projects but no machines. A matching service in the middle connects the two.
+caption: Find assets that sit idle and match them with people who need them.
+viewbox: 0 0 640 240
+body:
+<rect class="bx" x="30" y="60" width="170" height="110" rx="6"/>
+<text class="txb" x="115" y="100" text-anchor="middle">Idle machines</text>
+<text class="tx" x="115" y="124" text-anchor="middle">owners lack projects</text>
+<rect class="bxa" x="245" y="80" width="150" height="70" rx="35"/>
+<text class="txa" x="320" y="120" text-anchor="middle">Match</text>
+<rect class="bx" x="440" y="60" width="170" height="110" rx="6"/>
+<text class="txb" x="525" y="100" text-anchor="middle">Waiting projects</text>
+<text class="tx" x="525" y="124" text-anchor="middle">builders lack machines</text>
+<path class="la flow" d="M200 115H245M395 115H440"/>
+<text class="tx" x="320" y="200" text-anchor="middle">utilisation rises · projects start sooner</text>
+```
+
 ## Lesson 4: Share capital and risk, even with competitors
 
 When a mobile operator asked the financier to fund a mobile phone tower, he knew that operators in other countries shared towers. He offered to finance the tower and to give the operator a discount if other operators also used it, with bigger discounts as more operators joined.
@@ -56,6 +75,16 @@ Small businesses can share capital and risk through:
 - **Competitors**, through shared facilities, joint purchasing or shared logistics.
 
 A caution for Australian businesses: collaborating with competitors must not involve cartel conduct, such as fixing prices, sharing markets, rigging bids or restricting output, which is illegal under the Competition and Consumer Act. Sharing infrastructure, joint purchasing and joint ventures can be legitimate, but get legal advice, and check whether ACCC authorisation or a class exemption applies to collective arrangements.
+
+```figure
+type: checklist
+title: Sharing capital and risk, within the law
+caption: Collaborating with competitors must never become cartel conduct.
+- Shared assets | equipment, facilities, infrastructure
+- Joint purchasing or ventures | with legal advice
+- x Fixing prices or sharing markets
+- x Rigging bids or restricting output
+```
 
 ## Lesson 5: Tell your story with conviction
 
@@ -152,6 +181,17 @@ A small fabrication business in regional Victoria has spare capacity on its lase
 - **Story**: the owner tells the story of the latch, designed with farmers for farmers, in local media and at field days.
 
 Within two years, the latch is the business's best-selling product, machine utilisation has risen sharply and the shared powder-coating line has reduced each business's finishing costs.
+
+```figure
+type: tree
+title: Four lessons in one regional fabrication business
+caption: Within two years the latch was the best seller, utilisation rose and finishing costs fell.
+- Spare afternoon capacity on laser and press brake
+  - Empathy | farm customers' repair time led to a new latch
+  - Price for the many | designed to cut and fold in minutes
+  - Idle capacity | afternoon laser time sold to local businesses
+  - Shared capital | a powder-coating line shared by three fabricators
+```
 
 ## Frequently asked questions
 

@@ -77,6 +77,17 @@ This is the most important and most ignored part of discounting. A discount come
 
 where both are percentages of the original price.
 
+```figure
+type: formula
+title: How much extra volume a discount needs
+formula: Required volume increase = discount ÷ (gross margin − discount)
+caption: At a 30% gross margin, a 10% discount needs 50% more sales just to stand still.
+- discount | as a share of the original price
+- gross margin | as a share of the original price
+step: 10% ÷ (30% − 10%) = 10 ÷ 20
+step: = 50% more volume to keep the same gross profit
+```
+
 | Gross margin | 5% discount | 10% discount | 20% discount |
 |---|---|---|---|
 | 50% | +11% | +25% | +67% |
@@ -86,11 +97,32 @@ where both are percentages of the original price.
 
 At a 30% gross margin, a 10% discount requires 50% more sales just to make the same gross profit. A 20% discount requires three times the original volume. Many discount promotions fail this test, because they increase volume by less than the arithmetic requires and so reduce profit while making the business look busy.
 
+```figure
+type: bars
+title: Extra volume needed to keep gross profit, at a 30% margin
+unit: % more units
+caption: A 20% discount needs three times the original volume. Many promotions fail this test.
+- 5% discount | 20
+- 10% discount | 50
+- *20% discount | 200
+```
+
 ### Example
 
 A retailer sells an item for $100 with a cost of $70, so the gross margin is 30%. At full price, selling 100 units earns $3,000 gross profit. With a 10% discount, the price is $90 and the margin per unit is $20. To earn $3,000, the retailer must sell 150 units, 50% more. If the promotion lifts sales to 130 units, gross profit falls to $2,600, despite "record sales".
 
 Do this calculation before every significant discount.
+
+```figure
+type: compare
+title: "Record sales", lower profit
+cols: Full price | 10% discount
+caption: The promotion lifts sales by 30%, but needed 50%, so gross profit falls by $400.
+- Price and unit cost | $100 and $70 | $90 and $70
+- Gross profit per unit | $30 | $20
+- Units sold | 100 | 130
+- Gross profit | $3,000 | $2,600
+```
 
 ## Parameters to set
 

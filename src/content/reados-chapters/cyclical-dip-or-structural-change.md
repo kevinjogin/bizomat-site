@@ -26,6 +26,22 @@ This article explains how to tell cyclical change from structural change, why si
 
 The difficulty is that the two can look identical at first. A fall in orders might be a downturn or the start of a permanent shift. The numbers are the same for a while; the right response is completely different. A recovery strategy protects the existing model until conditions return. A transformation strategy questions whether the model is still right. Investment, hiring, capacity and priorities can all move in opposite directions depending on which diagnosis is correct.
 
+```figure
+type: svg
+title: A cyclical dip and a structural shift can look identical at first
+alt: Two lines start at the same level and fall together. One recovers to the old trend, a cyclical dip; the other levels off at a permanently lower level, a structural change.
+caption: Early data rarely tells them apart; the test is whether the underlying pattern has changed.
+viewbox: 0 0 640 280
+body:
+<path class="ln" d="M40 250H610M40 30V250"/>
+<path class="lf dsh" d="M50 90H600"/>
+<path class="la draw" pathLength="1" d="M50 90H220C280 90 300 190 340 190S440 95 600 92"/>
+<path class="li dsh" d="M220 90C280 90 300 190 340 190S440 185 600 186"/>
+<text class="txa" x="596" y="80" text-anchor="end">Cyclical: returns to the pattern</text>
+<text class="txb" x="596" y="210" text-anchor="end">Structural: a new, lower pattern</text>
+<text class="tx" x="280" y="268" text-anchor="middle">They look the same here</text>
+```
+
 ## Shocks often accelerate what was already happening
 
 Shocks do not always create new trends. Often they reveal, compress or speed up a trend that was already under way. A useful question after any disruption is: **what was already changing before this happened?** If a trend existed before the shock and has real causes behind it, assuming it will reverse is hard to justify.
@@ -59,6 +75,15 @@ Not every environment should be managed the same way. Management writer Igor Ans
 | Surprising change | Build flexibility and learning | Strong sensing, quick experiments, decisions pushed closer to the work |
 
 Applying the stable-world mode to a turbulent environment produces precise plans for a future that no longer exists. Applying the turbulent-world mode to a stable environment wastes effort on flexibility nobody needs. Different parts of the same business may sit in different rows, so it is worth classifying the main activities separately.
+
+```figure
+type: layers
+title: Match how you manage to how turbulent things are
+caption: Precise plans for a stable world become plans for a future that no longer exists.
+- Stable | preserve and optimise: standard processes, detailed plans
+- Gradual change | improve continuously: regular planned improvements
+- *Faster market change | look outward: monitor customers and competitors, adapt quickly
+```
 
 Strategic flexibility is not the same as indecision. It means distinguishing what should be fixed, such as safety requirements and core customer promises, from what should stay adaptable until uncertainty falls, such as design, sequencing, sourcing and rollout.
 
@@ -119,6 +144,15 @@ The owner decides on staged commitments rather than waiting:
 - A second trigger is agreed: if booth orders reach 25 units within six months, plan a dedicated production line.
 
 Six months later, desk orders remain about a third below the old level, while booth orders reach 31 units. The owner plans the booth line. The business has not abandoned desks; it has stopped betting its capital on their full return.
+
+```figure
+type: decision
+title: The joinery business's staged commitments
+question: What does the evidence say after six months?
+caption: Desk orders stayed about a third down while booth orders reached 31, past the 25-unit trigger.
+- Desk orders back to 90% for two quarters? | Revisit the $280,000 CNC | not met: stays deferred
+- *Booth orders reach 25 in six months? | Plan a dedicated booth line | met: 31 units
+```
 
 ## How this applies to a small Australian business
 

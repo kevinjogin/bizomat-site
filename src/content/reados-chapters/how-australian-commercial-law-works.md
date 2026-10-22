@@ -39,6 +39,16 @@ The **Australian Consumer Law** shows how the layers interact. It is set out in 
 
 Australian law comes from three main sources, which work together.
 
+```figure
+type: tree
+title: Three sources of Australian law
+caption: They operate together within a federal structure that divides responsibility between the Commonwealth and the states.
+- Australian law
+  - Legislation | statutes made by parliament
+  - Common law | developed by judges through decided cases
+  - Equity | principles that soften the common law and prevent unconscionable conduct
+```
+
 ### Legislation
 
 **Legislation** (statutes or Acts) is law made by parliament. It is the most powerful source of law within constitutional limits: if a valid statute conflicts with a common law rule, the statute generally prevails. Acts often authorise **delegated legislation**, such as regulations, rules and legislative instruments, which carry the detail. Modern awards, building codes adopted by legislation and many technical requirements reach business through this route.
@@ -65,9 +75,42 @@ Common law depends on **precedent**: the principle that courts follow earlier de
 
 For a business, the practical point is that "a case said" is not the end of an argument. The questions are which court decided it, whether it is binding where your dispute will be heard, whether it is still good law and whether its facts are close to yours.
 
+```figure
+type: checklist
+title: Before relying on "a case said"
+caption: Only binding, current and relevant decisions carry real weight; overseas cases are rarely a reliable guide.
+- ? Which court decided it? | higher courts bind lower ones in the same hierarchy
+- ? Is it binding where your dispute will be heard? | or only persuasive
+- ? Is it still good law? | statutes and higher courts can override it
+- ? Are its facts close to yours? | or can it be distinguished
+```
+
 ### Reading a case citation
 
 Court decisions are usually cited in a standard form. A citation such as *Mann v Paterson Constructions Pty Ltd* [2019] HCA 32 tells you the parties, the year in square brackets, the court (HCA is the High Court of Australia) and the decision number for that year. Reported decisions may also carry references to law report series. Common court abbreviations include FCA (Federal Court), FCAFC (Full Federal Court), NSWSC (Supreme Court of New South Wales), NSWCA (New South Wales Court of Appeal) and VSC (Supreme Court of Victoria).
+
+```figure
+type: svg
+title: Reading a case citation
+alt: The citation Mann v Paterson Constructions Pty Ltd, 2019, HCA 32, split into four parts: the parties, the year in square brackets, the court abbreviation, and the decision number for that year.
+caption: HCA is the High Court of Australia; other common abbreviations include FCA, FCAFC, NSWSC, NSWCA and VSC.
+viewbox: 0 0 640 180
+body:
+<rect class="bx" x="16" y="50" width="330" height="50" rx="6"/>
+<text class="txb" x="181" y="81" text-anchor="middle">Mann v Paterson Constructions Pty Ltd</text>
+<rect class="bx" x="360" y="50" width="80" height="50" rx="6"/>
+<text class="txb" x="400" y="81" text-anchor="middle">[2019]</text>
+<rect class="bxa" x="452" y="50" width="80" height="50" rx="6"/>
+<text class="txa" x="492" y="81" text-anchor="middle">HCA</text>
+<rect class="bx" x="544" y="50" width="80" height="50" rx="6"/>
+<text class="txb" x="584" y="81" text-anchor="middle">32</text>
+<path class="la draw" pathLength="1" d="M181 100V128M400 100V128M492 100V128M584 100V128"/>
+<text class="tx" x="181" y="150" text-anchor="middle">the parties</text>
+<text class="tx" x="400" y="150" text-anchor="middle">year</text>
+<text class="tx" x="492" y="150" text-anchor="middle">court</text>
+<text class="tx" x="584" y="150" text-anchor="middle">decision no.</text>
+<text class="txs" x="320" y="30" text-anchor="middle">One citation, four pieces of information</text>
+```
 
 ## The courts that hear commercial disputes
 
@@ -82,6 +125,18 @@ Each state and territory has its own court hierarchy, and there is a separate fe
 | Lower courts | Local or Magistrates Courts | | Smaller debt and civil claims, usually with simpler procedures |
 
 Monetary limits and the precise allocation of work differ between jurisdictions and change from time to time, so check the current position for the court you are considering.
+
+```figure
+type: layers
+shape: pyramid
+title: The court hierarchy for commercial disputes
+caption: State and territory courts on the left of each pair, federal courts on the right; limits and allocations vary by jurisdiction.
+- High Court of Australia | final appeal, only by special leave
+- Court of Appeal · Full Federal Court | appeals from trial decisions
+- *Supreme Courts · Federal Court | large or complex commercial disputes, urgent injunctions
+- District or County Courts · Federal Circuit and Family Court | mid-sized claims, some federal matters
+- Local or Magistrates Courts | smaller debt and civil claims
+```
 
 **Federal jurisdiction** is broader than many people expect. The Federal Court hears matters arising under Commonwealth laws such as the Corporations Act and the Australian Consumer Law, and commercial disputes often include such claims alongside contract claims. A cross-vesting scheme allows matters to be transferred between federal and state courts, so a dispute is less likely to fail simply because it started in the wrong place, but forum choice still affects cost, speed and procedure.
 

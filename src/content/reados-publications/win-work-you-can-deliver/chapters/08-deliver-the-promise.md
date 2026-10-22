@@ -27,6 +27,19 @@ Create one delivery record linked to the accepted offer. It should identify the 
 
 The last row matters. If an unresolved inclusion affects the core output, marking it as a risk does not make the work ready. Agree whether to pause, narrow the first stage or obtain a decision. A risk register becomes decorative when it merely records problems everyone then ignores.
 
+```figure
+type: checklist
+title: Handover checks before the production slot starts
+caption: Each item is verified, not assumed; the open risk must be resolved or excluded explicitly.
+- Agreed scope | matches the accepted offer version
+- Source inputs | complete enough for the first task
+- Responsibility | drafter, reviewer and customer contact know their roles
+- Decisions | approvers available during review
+- Schedule | dependencies fit the current calendar
+- Start conditions | acceptance and initial payment verified
+- ? Open risk | the disputed inclusion: resolve or exclude
+```
+
 ## Check inputs before consuming the production slot
 
 Customer input can be present but unusable. A folder of old documents may contain conflicting versions; a spreadsheet may lack definitions; an approval email may come from someone without the agreed role. Schedule a proportionate input check before the main delivery effort.
@@ -39,6 +52,16 @@ If late inputs affect the schedule, communicate the consequence while alternativ
 
 Not every customer request is extra scope. A clarification explains an existing requirement. A correction fixes work that does not meet the agreed requirement. A change alters the requirement or adds work beyond it. The distinction depends on the actual agreement and circumstances, not on whichever label protects the supplier's margin.
 
+```figure
+type: decision
+title: What kind of request is this?
+question: Where did the difference come from?
+caption: Record each change: requested difference, reason, effect, alternatives and approval.
+- Unclear wording | Clarification | explain or adjust within scope
+- Supplier error against approved input | Correction | fix it; it was part of the promise
+- *New requirement | Change | assess time, price and dates before agreeing
+```
+
 Suppose Fieldnote omitted an inclusion that appeared in the approved input. Correcting that omission is not a new service merely because it takes time. By contrast, adding a new package after the documents were drafted may require a separate scope decision. If the original offer was ambiguous, acknowledge that before presenting a charge.
 
 Use a short change record: requested difference, reason, effect on outputs, time and price, alternatives, and approval. Keep the current work safe while the decision is pending. Do not assume a friendly request authorises a new fee or assume that avoiding a fee requires accepting every request without limit.
@@ -46,6 +69,15 @@ Use a short change record: requested difference, reason, effect on outputs, time
 ## Evaluate the consequence before saying yes
 
 In Chapter 5, five extra hours beyond all original allowances reduced the A$3,600 package's planning contribution from A$960 to A$535. Here those hours might arise from an additional document requested after scope agreement. The team should evaluate both the economic effect and whether the time fits.
+
+```figure
+type: bars
+title: The price of an unpaid yes
+unit: A$ contribution
+caption: Paid extension, swap an output, move it to a later slot or decline are all legitimate choices.
+- Original package | 960
+- *After five unpaid extra hours | 535
+```
 
 Possible choices include an agreed paid extension, replacing an existing output, moving the extra work to a later slot or declining it. A deliberate goodwill inclusion can also be a business choice, but record its cost and reason. Repeated unrecorded goodwill makes later estimates unreliable and can create expectations the business cannot sustain.
 

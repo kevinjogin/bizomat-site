@@ -31,6 +31,15 @@ Compare this with “Would a clearer pack help?” A yes is easy and may be sinc
 
 Separate three things in your notes: what happened, what the customer believes caused it, and what you infer. A repeated correction is an observation. “Our old document causes it” is an explanation to test. “They will buy our package” is a further inference. Keeping these apart stops a short conversation from becoming a chain of unsupported conclusions.
 
+```figure
+type: steps
+title: Keep observation, explanation and inference apart
+caption: Each step needs more evidence than the one before it; a short conversation should not jump straight to the last.
+- Observation | "Staff corrected an explanation twice last month"
+- Customer's explanation | "Our old document causes it", to be tested
+- *Your inference | "They will buy our package", the weakest claim
+```
+
 ## Look for variation and disconfirming evidence
 
 Interviewing only friendly contacts can produce a narrow picture. A customer who already trusts you may tolerate weaknesses that a new buyer would not. A person who rejected a similar service can explain obstacles that enthusiastic prospects overlook.
@@ -42,6 +51,17 @@ A small sample is useful for discovering questions and failure modes. It does no
 ## Test the smallest meaningful commitment
 
 The strength of a signal depends on what the person actually does. Agreeing to another conversation is different from supplying information, allocating staff time or accepting a paid pilot. These actions are not interchangeable, and none guarantees long-term demand.
+
+```figure
+type: layers
+title: How strong is the signal?
+shape: pyramid
+caption: None of these guarantees long-term demand, but each step up costs the customer more and so says more.
+- *Accepts a bounded paid pilot | defined fee, output and time limit
+- Allocates staff time | the work matters enough to resource
+- Supplies information | redacted examples, current documents
+- Agrees to another conversation | interest, but little commitment
+```
 
 A bounded pilot can test a delivery assumption as well as demand. Fieldnote offers to review one existing service page, identify inconsistencies and discuss a sample rewrite. The pilot has a defined fee, output and time limit. It does not pretend to deliver the full package for a token price.
 
@@ -57,6 +77,16 @@ Before running it, the team writes what it expects to learn: whether the custome
 | The service can be delivered economically | Initial task estimate exists | Revision time is uncertain | Track actual time on a bounded pilot |
 
 This is a working table, not proof that the opportunity is good. Update it when evidence changes. If a test contradicts a claim, change the offer or stop. Do not quietly replace the original success criterion after seeing the result.
+
+```figure
+type: cycle
+title: The evidence table is a loop, not a verdict
+caption: If a test contradicts a claim, change the offer or stop; do not move the success criterion after seeing the result.
+- State the assumption | a claim that can be challenged
+- Record current evidence | what has actually been observed
+- Name the remaining uncertainty | what would change the decision
+- Run the next useful test | small, specific, decision-changing
+```
 
 ## Decide what the research permits
 

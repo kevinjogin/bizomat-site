@@ -44,6 +44,15 @@ Customer funding is a third source of finance alongside borrowing and selling ow
 
 Concessions made to obtain early payment have a cost that can be compared with borrowing. For example, offering a 3% discount for payment 60 days earlier than usual is roughly equivalent to paying about 19% a year for the use of that money, calculated as 3 ÷ 97 × 365 ÷ 60. Some businesses pay more for customer money than a bank would charge, while congratulating themselves on avoiding debt. Work out what your concessions cost before treating customer funding as free.
 
+```figure
+type: formula
+title: What an early-payment discount really costs
+formula: Annual cost ≈ discount ÷ (100 − discount) × 365 ÷ days earlier
+caption: Some businesses pay more for customer money than they would pay a bank.
+step: 3 ÷ 97 × 365 ÷ 60
+step: ≈ 19% a year for money received 60 days earlier
+```
+
 ## Four properties of each source
 
 The label on each source matters less than four properties:
@@ -66,6 +75,18 @@ Each alone is manageable. Together they can turn the cash position of a business
 ## The discipline that makes it safe
 
 The essential rule is simple: **customer money is safe when it funds the work it came from, and risky when it funds fixed commitments.**
+
+```figure
+type: balance
+title: Customer money is safe or risky depending on what it funds
+left: Safe: funds the work it came from
+right: Risky: funds fixed commitments
+tilt: left
+caption: A sound policy states in advance how much of the float, if any, may fund anything else.
+- Materials for those orders | A new showroom fit-out
+- Wages to deliver them | A five-year lease
+- Shrinks as the work is delivered | Stays when the float is called back
+```
 
 Money taken from customers can safely buy the materials, pay the wages and fund the work needed to deliver what those customers bought. Used that way, the obligation and the asset extinguish together. The moment it pays for a long lease, a permanent increase in staff, new equipment or a fit-out, a reversible obligation has been turned into an irreversible commitment.
 
@@ -112,6 +133,17 @@ Over the past year, the owner used about $150,000 of that cash to fit out a new 
 Then orders fall by a third, to about $133,000 a month. New deposits fall to about $67,000 a month. As earlier orders are delivered, the deposits held shrink towards about $167,000, two and a half months of the lower deposit rate. That is about $83,000 of cash leaving the business over the next couple of months, on top of normal trading, simply because the float is shrinking. Around 10% of customers with open orders, nervous about the slowdown, cancel and are refunded about $25,000.
 
 Together, about $108,000 drains away, leaving roughly $22,000 in the bank before any trading losses, while the showroom lease and fit-out loan continue. The business is not unprofitable. It has used customer money to fund a fixed commitment, and that money has been called back.
+
+```figure
+type: bars
+title: The furniture maker's bank balance when orders fall by a third
+unit: $
+caption: Not unprofitable: customer money that funded a fixed showroom was called back as the float shrank.
+- Bank balance before the downturn | 130000
+- Float shrinking: $250,000 to about $167,000 | −83000
+- Nervous customers' cancellations refunded | −25000
+- *Left before any trading losses | 22000
+```
 
 The owner responds by negotiating with the landlord, reducing fixed costs, moving to staged payments on large orders and adopting a policy: deposits fund only materials and labour for the orders they came from, and a minimum cash balance equal to half the refundable deposits is held at all times. Future fit-outs will be funded from profit or appropriate finance.
 

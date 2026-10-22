@@ -67,6 +67,17 @@ The columns with the most high-criticality marks are **concentration points**: s
 
 Start with the most important projects and the next few months. A complete map of everything is rarely needed and quickly goes out of date.
 
+```figure
+type: steps
+title: Building a dependency matrix
+caption: Columns with many high-criticality marks are concentration points.
+- List projects | down the side
+- List shared resources | across the top
+- Mark dependencies | with criticality
+- Total each column | most depended-on resources
+- *Read each row | most dependent projects
+```
+
 ## Coupling and modularity
 
 **Coupling** describes how strongly a change in one part forces changes in others. Tightly coupled parts must be changed together. Loosely coupled parts can change independently.
@@ -107,6 +118,20 @@ Once a critical dependency is visible, there are several responses, and the revi
 
 Treat these as investment decisions, not just scheduling adjustments. Training a second specialist or qualifying a second supplier costs money, and the dependency map shows where that spending would relieve the most pressure.
 
+```figure
+type: tree
+title: Responses to a critical dependency
+caption: Training a second person or qualifying a second supplier costs money now to buy independence later.
+- A critical dependency
+  - Eliminate | change the design or scope
+  - Buffer | slack or stock in front of it
+  - Duplicate | second person, machine or supplier
+  - Resequence | avoid simultaneous demand
+  - Stabilise the interface | inputs, outputs, decision rights
+  - Delegate | spread the decisions
+  - *Accept | when integration is worth more
+```
+
 ## Dependencies outside the business
 
 Some of the most consequential dependencies sit outside the business. A single supplier may provide a component used by several products. One subcontractor may be booked by three of your projects in the same month. A customer's approval process may hold up work across several jobs. A regulator's inspection schedule may decide when several installations can be completed.
@@ -129,6 +154,16 @@ The owner and the project leads build a dependency matrix for the next three mon
 
 The matrix also shows that a planned change to how the new management system records job costs would affect quoting, purchasing and job reporting on every live project at once.
 
+```figure
+type: bars
+title: Concentration points across eight projects
+unit: projects
+caption: Every project reported green on its own; the delays came from the connections between them.
+- *The owner: variations and the new system | 7
+- Senior design engineer: drawing approvals | 5
+- CNC programmer: in the same six weeks | 4
+```
+
 The team responds:
 
 - **Delegate**: project leads can approve variations under $3,000, which covers most of the owner's variation approvals.
@@ -138,6 +173,18 @@ The team responds:
 - **Accept**: the website project has almost no dependencies on the rest and continues unchanged.
 
 Over the following quarter, drawing approvals stop being the main reason for delay, the owner's approval queue shrinks and the business delivers its next five projects on time. Nothing about the individual project plans changed. The connections between them did.
+
+```figure
+type: compare
+title: How the fabrication business responded
+cols: Concentration | Response
+caption: Nothing about the individual project plans changed; the connections between them did.
+- Delegate | Owner approving every variation | Project leads approve variations under $3,000
+- Duplicate | Senior engineer approving all drawings | A second engineer approves standard details from a library
+- Resequence | CNC programming first come, first served | Weekly slots agreed across projects
+- Resequence | Job-costing change hitting every live job | Held until two large projects close
+- Accept | Website project | Almost no dependencies; continues unchanged
+```
 
 ## How this applies to a small Australian business
 

@@ -30,6 +30,17 @@ Financing can be valuable. It can preserve cash for working capital, match payme
 
 A sensible sequence is:
 
+```figure
+type: steps
+title: Decide the investment before the financing
+caption: The common shortcut runs backwards: the monthly figure arrives first and the case is assembled afterwards.
+- Need | the problem or opportunity
+- Investment case | best option against alternatives
+- Affordability | the whole commitment, not the repayment
+- How to buy | own, lease, rent, subscribe
+- *How to finance | only now compare finance offers
+```
+
 1. **Need**: what problem or opportunity is this meant to address?
 2. **Investment case**: is this the best way to meet the need, compared with alternatives such as hiring, subcontracting, doing less or doing nothing?
 3. **Affordability**: can the business carry the whole commitment, including running costs, through a bad year?
@@ -53,6 +64,15 @@ Two traps are common. A cheaper asset can require expensive proprietary servicin
 ## Budget, cash and commitment are three different things
 
 Even when an investment is approved, three states should be kept separate:
+
+```figure
+type: layers
+title: Three states of an approved investment
+caption: Treating a budget line as permission to commit can create a cash squeeze when several commitments land together.
+- Budget identified | the money is in the plan
+- Cash available | the money will be in the account when payments fall due
+- *Commitment approved | someone with authority has agreed to sign
+```
 
 - **Budget identified**: the money is in the plan.
 - **Cash available**: the money will actually be in the account when payments fall due.
@@ -89,6 +109,24 @@ The owner steps back and asks the investment question first. The business curren
 **Owning** on the dealer's finance costs $1,950 × 12 = $23,400 a year in repayments, plus about $6,000 a year for insurance, registration, servicing and repairs, about $29,400 a year in total during the finance term. At the end of five years, the business owns a machine with some resale value.
 
 At 80 days of use, owning is cheaper. But the comparison depends heavily on usage. At $450 a day, hiring costs the same as owning at about 65 days a year. If work slowed and the machine were needed only 50 days a year, hiring would cost $22,500, well below the $29,400 cost of owning. The real question is not whether $1,950 a month is affordable, but how confident the owner is that the machine will be used at least 65 days a year for five years, given the business's mix of work.
+
+```figure
+type: line
+title: Hire or own the excavator? It depends on days used
+x: Days used a year
+y: Cost a year ($)
+legend: Hire at $450 a day | Own on dealer finance
+ymin: 0
+ymax: 42000
+mark: 65 | break-even
+mark: 80 | last year's use
+caption: Owning costs about $29,400 a year during finance ($23,400 repayments + $6,000 running). Hiring matches it at about 65 days.
+- 40 | 18000 | 29400
+- 50 | 22500 | 29400
+- 65 | 29250 | 29400
+- 80 | 36000 | 29400
+- 90 | 40500 | 29400
+```
 
 The resale value at the end of five years strengthens the case for owning, but only if the machine is looked after and actually used enough to justify the commitment along the way.
 

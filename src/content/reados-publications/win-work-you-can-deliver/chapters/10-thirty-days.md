@@ -25,6 +25,18 @@ Use the tools the team already understands if they can meet the practical requir
 
 These can be sections of a small shared system rather than five separate applications. Avoid copying the same information into several places unless there is a clear reason. Link to the accepted offer instead of retyping its terms into a spreadsheet where they may diverge.
 
+```figure
+type: tree
+title: Five connected records
+caption: One small shared system can hold all five; the value is in the links between them.
+- Fieldnote working system
+  - Opportunity note | decide whether to pursue
+  - Offer and acceptance | preserve the promise
+  - Pipeline | coordinate open decisions
+  - Capacity and cash views | test feasibility
+  - *Delivery and review record | fulfil and improve
+```
+
 ## Week one: establish the baseline
 
 Choose a manageable set of current opportunities and one recently completed engagement. Do not begin by importing every historical contact. Define what makes work suitable, what requires investigation and what the business will decline.
@@ -34,6 +46,16 @@ For each current opportunity, record the last confirmed customer action and the 
 Then examine the completed engagement. Compare estimated effort with actual effort, identify unplanned work and check the timing of receipts. If time records are incomplete, use a clearly labelled estimate rather than inventing precision. The aim is to identify a useful question for the next job, such as whether review coordination is consistently underestimated.
 
 By the end of the week, the team should share a definition of a viable opportunity and know which active promises need attention. A visually tidy contact list is secondary.
+
+```figure
+type: timeline
+title: Thirty days to put the method to work
+caption: A suggested window, not a promise that demand or cash flow will change within a month.
+- Week 1 | Establish the baseline | current opportunities and one completed engagement
+- Week 2 | Test one offer and one route | an evidence test and a channel experiment
+- Week 3 | Connect the offer to delivery | pricing, capacity and cash tests on a real proposal
+- *Week 4 | Review exceptions and simplify | choose a continuing rhythm
+```
 
 ## Week two: test one offer and one route
 
@@ -68,6 +90,18 @@ For the working system described here, assign responsibility for access and reco
 ## Follow one decision through the whole system
 
 Harbour Services began with a brochure request. Investigation revealed inconsistent service explanations and an internal training deadline. Fieldnote waited for approved rules, proposed a bounded package and tested its economics. The accepted offer then guided the delivery record. A late editing error required a correction and an improved check. The review created a possible future update conversation without assuming an ongoing sale.
+
+```figure
+type: steps
+title: One request followed through the whole system
+caption: The brochure request became an approved staff reference because each record changed the next decision.
+- Enquiry | "A better brochure by month end"
+- Decision record | inconsistent inclusions; training date
+- Offer | defined package, 40/60 payment
+- Pipeline | approval of rules made it ready
+- Delivery | inputs checked, changes recorded
+- *Review | use observed; next conversation planned
+```
 
 The value lies in those connections. Research changed the scope; scope informed the estimate; the estimate constrained the offer; the accepted offer governed delivery; delivery evidence improved the next decision. The case does not require every enquiry to convert or every project to run perfectly. It requires the business to notice what is happening and respond deliberately.
 

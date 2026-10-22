@@ -54,6 +54,17 @@ Before committing significant money to uncertain work, answer five questions:
 
 None of these requires knowing the future. All of them require deciding what you currently think, which is far more achievable.
 
+```figure
+type: checklist
+title: Five front-end questions before funding uncertain work
+caption: None needs a forecast; all of them need decisions about what the work is for.
+- ? What result would justify it? | recognisable if it arrived
+- ? Whose view of that result decides?
+- ? What work, by whom | with what capability?
+- ? What else must we have or acquire?
+- ? What could turn out differently | and at what cost?
+```
+
 The front end is also where changing direction is cheapest. Early on, a change of direction costs a conversation. Later it costs contracts, equipment, hiring decisions and credibility. Putting off these questions does not keep options open. It uses up the period when options are cheap without getting anything for it.
 
 ## Find the load-bearing assumptions
@@ -74,6 +85,19 @@ A simple **assumption register** helps. For each important assumption, record:
 | Owner | Who is watching this? |
 
 Focus testing effort on the assumptions that are both important and uncertain. Teams naturally test what is easy to measure rather than what is decisive. Ask which single assumption, if wrong, would most damage the plan, and test that first.
+
+```figure
+type: matrix
+title: Which assumptions to test first
+x: Uncertainty: low → high
+y: Importance: low → high
+hot: 2
+caption: A load-bearing assumption is one the plan cannot survive being wrong about.
+- Important, well evidenced | keep watching
+- *Important and uncertain | test before committing
+- Minor, well evidenced
+- Minor and uncertain
+```
 
 ## Commit in steps that follow learning
 
@@ -142,11 +166,32 @@ They design an eight-week trial with 15 existing café customers, using a hired 
 - **Change course**: reorders are strong but freight or quality falls short. Then redesign the weak part and retest.
 - **Stop**: fewer than 5 cafés reorder. Then end the trial.
 
+```figure
+type: decision
+title: The pastry trial's triggers, set before it began
+question: What happened in eight weeks with 15 cafés?
+caption: Deciding triggers before results arrive stops sunk cost and enthusiasm from rewriting them.
+- At least 9 reorder within four weeks, freight ≤ 12% | Scale | buy the $85,000 blast freezer
+- *Reorders strong, but freight or quality short | Change course | redesign the weak part and retest
+- Fewer than 5 reorder | Stop | end the trial
+```
+
 A shelf-life test runs alongside, and the production manager records the hours used.
 
 After eight weeks, 11 of the 15 cafés have reordered, and trial revenue is $18,000. Quality holds, and production fits within existing hours. But freight has cost $2,880, which is 16% of revenue, above the 12% threshold. Under the agreed triggers, this is a change-of-course result, not a scale result.
 
 The owners redesign delivery: frozen orders are consolidated into one weekly run instead of deliveries on demand. A further four weeks shows freight would have been about $1,980 on the same revenue, or 11%. With all four assumptions now supported by evidence, the owners buy the blast freezer. Their original enthusiasm would probably have led to the same decision, but with a delivery model that would have quietly eroded the margin.
+
+```figure
+type: bars
+title: Frozen freight as a share of trial revenue
+unit: %
+max: 20
+caption: 11 of 15 cafés reordered on $18,000 of revenue, but freight of $2,880 broke the trigger until deliveries were consolidated.
+- Trigger threshold | 12
+- Deliveries on demand | 16
+- *One consolidated weekly run | 11
+```
 
 ## How this applies to a small Australian business
 

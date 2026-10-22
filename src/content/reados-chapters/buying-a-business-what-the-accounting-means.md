@@ -18,6 +18,19 @@ But the accounting matters more than many buyers expect. It determines how the a
 
 This article is a practical guide for owners of small and medium businesses considering an acquisition in Australia. It draws on the concepts set out in the source course material on business combinations and the equivalent Australian standards, and connects them to the stages of a typical deal. It is part of GoCore's series on investments, groups and acquisitions. It is not a substitute for advice from accountants, lawyers and tax advisers, which any acquisition needs.
 
+```figure
+type: timeline
+title: Where accounting enters an acquisition
+caption: The accounting starts long before completion and continues well after it.
+- Stage 1 | Decide what you are buying | shares or assets; business or assets; control or influence
+- Stage 2 | Due diligence | an accounting lens on profit, assets and liabilities
+- Stage 3 | Structure the price | cash, deferred payments, earn-outs
+- Stage 4 | Acquisition date | when control passes
+- Stage 5 | Purchase price allocation | fair values, intangibles, goodwill
+- Stage 6 | The first year | amortisation, costs, lower reported profit
+- *Stage 7 | Bring reporting together | policies, charts of accounts, month-end
+```
+
 ## Stage 1: deciding what you are buying
 
 The first accounting question mirrors the first commercial one: what exactly is being bought?
@@ -126,6 +139,15 @@ Acquisition accounting can affect these measures:
 
 Agreeing clear definitions with lenders, for example whether covenant earnings exclude acquisition costs and amortisation, avoids accidental breaches.
 
+```figure
+type: checklist
+title: How acquisition accounting can move covenant measures
+caption: Agree definitions with lenders, such as whether covenant earnings exclude acquisition costs and amortisation.
+- ? Transaction costs and amortisation | reduce reported earnings
+- ? Goodwill and intangibles | raise total assets but not tangible assets
+- ? Earn-out liabilities | increase reported liabilities
+```
+
 ## Tax is separate
 
 The accounting treatment of an acquisition does not determine its tax treatment. In Australia, the tax consequences depend on whether shares or assets are bought, the nature of the assets, capital gains tax rules for the seller, the treatment of depreciating assets, the tax consolidation regime for corporate groups, and state duties. Goodwill, for example, is generally a capital gains tax asset for tax purposes, not a depreciable asset. Tax advice should be obtained early, because it often shapes the deal structure.
@@ -139,6 +161,15 @@ A regional electrical contractor agrees to buy a smaller competitor for $1.6 mil
 During due diligence, the buyer adjusts the competitor's reported profit for the owner's personal expenses and a one-off contract, finds that some receivables are unlikely to be collected, and confirms that key staff will stay.
 
 After completion, the purchase price allocation identifies equipment and vehicles at fair value, customer contracts and relationships, the trading name, employee entitlements and other liabilities. The earn-out is valued at $250,000, reflecting the likelihood that targets will be met. Goodwill is the remaining excess.
+
+```figure
+type: stack
+title: The electrical contractor's consideration at the acquisition date
+unit: $m
+caption: The headline price is up to $1.6m, but the earn-out enters the accounts at its fair value, $250,000, not its maximum.
+- Cash at completion | 1.2
+- Earn-out at fair value (maximum $0.4m) | 0.25
+```
 
 In the first year, the buyer's reported profit includes the acquired business's results from the acquisition date, less transaction costs expensed, amortisation of customer relationships and depreciation of vehicles at their fair values. Because the buyer prepared its lender for these effects and agreed covenant definitions that exclude acquisition costs, there are no surprises. When the acquired business beats its first-year target, the earn-out liability increases, and the buyer records the increase as an expense, as expected.
 

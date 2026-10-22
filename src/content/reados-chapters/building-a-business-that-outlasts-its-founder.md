@@ -52,6 +52,15 @@ As the business grows, delegate routine work to capable people. Many owners bene
 
 Many business owners prefer to own 100% of a small business rather than a smaller share of a much larger one. Yet owning 10% of a business worth $10 million is worth far more than owning all of a business worth $100,000. Growth often requires bringing in partners, investors or key employees as part-owners.
 
+```figure
+type: bars
+title: A share of a large business or all of a small one?
+unit: $
+caption: Growth often requires bringing in partners, investors or key employees as part-owners.
+- *10% of a business worth $10 million | 1000000
+- 100% of a business worth $100,000 | 100000
+```
+
 Thinking big also means:
 
 - **Not falling in love with a single idea.** A business is a means of creating value. If an idea is not working, change it or move on.
@@ -71,6 +80,17 @@ Many of the world's most valuable companies grew without owning the assets tradi
 - A widely used messaging app launched with a very small team and acquired massive scale before being bought by a larger technology company.
 
 These companies focused on their core strengths, such as design, technology, brand, network and customer experience, and used partners for the rest. Asset-light models allow faster, cheaper expansion.
+
+```figure
+type: checklist
+title: Asset-light options for a small business
+caption: Focus on core strengths such as design, technology, brand and customer experience; use partners for the rest.
+- Outsource manufacturing or specialised processes
+- Partner with existing businesses | rather than building facilities
+- Rent equipment | instead of buying
+- Use contractors and freelancers | for variable work
+- Build platforms or networks | that connect others
+```
 
 For small businesses, asset-light thinking might mean:
 
@@ -123,6 +143,15 @@ Businesses that endure go through a continuous cycle that can be described in th
 - **Renew**: disrupt your own business model before competitors do.
 
 Many businesses master the first two stages but resist the third. They protect existing products long after the market has moved. Photographic film companies that failed to embrace digital imaging, and later the shift to phone cameras, are classic examples. Taxi and hotel industries were transformed by platform businesses that established operators had not anticipated.
+
+```figure
+type: cycle
+title: Create, preserve, renew
+caption: Disruption is the normal evolution of business; renew before competitors do it for you.
+- Create | new products, services and processes
+- Preserve | grow and strengthen what you created
+- *Renew | disrupt your own model before competitors do
+```
 
 Disruption is the normal evolution of business. Enduring organisations regularly ask:
 

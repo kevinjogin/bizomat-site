@@ -43,6 +43,19 @@ Constraints fall into a few types, and the type suggests the response:
 
 Most jobs have three or four types. The one that binds is rarely the type the business is most comfortable managing.
 
+```figure
+type: tree
+title: Types of constraint and the response each suggests
+caption: The constraint that binds is rarely the type the business is most used to managing.
+- Constraints
+  - Physical and operational | design around what cannot stop
+  - Time | work back from someone else's date
+  - Money | scope becomes the variable
+  - Consent and legitimacy | seek consent before committing money
+  - Regulatory | a dependency with a date and a contact
+  - Ethical or welfare | constrains the method itself
+```
+
 ## Find the constraint that breaks first
 
 Every set of constraints contains one that will break first under pressure. Finding it is the most valuable thing you can do at the start of a job. Ask: if pushed, which of these gives way? Then confirm it by asking what would have to change for it to stop binding. If nothing plausible would, design the job around it.
@@ -64,6 +77,16 @@ Once you know what binds, choose how to run the job. There is no single approach
 - **Time-driven**: fast and lean. Suits repeatable work under time pressure, where only the essential controls are kept. Urgency does not remove governance; it makes it more important to know which controls are essential.
 
 A single job can contain all three. A shop fit-out may use a plan-driven approach for the building works, an experimental approach for a new point-of-sale and ordering system, and a fast routine for restocking.
+
+```figure
+type: compare
+title: Three ways to run work
+cols: How it works | Suits
+caption: Urgency does not remove governance; it makes it more important to know which controls are essential.
+- Plan-driven | Detailed plans, firm baselines, change control | Predictable, regulated or costly-to-get-wrong work
+- Change-driven | Staged, experimental, iterative | Work where learning is the main task
+- Time-driven | Fast and lean, essential controls only | Repeatable work under time pressure
+```
 
 Six questions help decide how much control each part needs:
 
@@ -111,9 +134,29 @@ The owner lists the constraints and types them:
 
 The binding constraint is customer supply: losing a major supermarket customer would cost more than any overrun. The owner ranks the conflicts in writing: supply continuity beats the moving date, which beats the budget; if the budget and supply conflict, the business will spend more, such as temporary contract packing, rather than miss deliveries. Retaining the two operators is treated as a minimum outcome, so the owner talks to them first about travel and shift times.
 
+```figure
+type: layers
+title: The food manufacturer's written ranking
+caption: Retaining the two experienced operators was set as a minimum outcome, outside the ranking.
+- *Customer supply | losing a supermarket would cost more than any overrun
+- The 30 June move | the old lease ends
+- The $350,000 budget | yields first, such as paying for contract packing
+```
+
 The approach is tailored by part. The building works and equipment move are plan-driven, with a detailed schedule and firm contractor dates. The council approvals are treated as a dependency with named contacts and decision dates, started immediately. Commissioning the lines at the new site is change-driven: the business moves one line first, runs it for two weeks with real product and adjusts the method before moving the others. Restocking and customer communications follow a simple routine.
 
 The project lead is chosen for experience in keeping production running during change, not just for knowing the equipment. When the second line's move slips, the lead knows what to do without asking: hold the date for that line until the first is stable, and use the agreed contract packer for one week to protect supply.
+
+```figure
+type: compare
+title: The factory move, tailored by part
+cols: Approach | How it runs
+caption: When the grease trap grew by three weeks and extra cost, the written ranking made the decision quick: the budget yielded.
+- Building works and equipment move | Plan-driven | Detailed schedule, firm contractor dates
+- Council approvals | A managed dependency | Named contacts and decision dates, started immediately
+- Line commissioning | Change-driven | One line first, two weeks on real product, then adjust
+- Restocking and customer updates | Routine | A simple repeatable process
+```
 
 Halfway through, conditions change: the water authority asks for a larger grease trap than planned, adding cost and three weeks to the plumbing. Because the ranking is written down, the decision is quick. The budget yields, the lead re-plans the plumbing stage, and the owner reviews whether the remaining contingency still covers the commissioning trials.
 

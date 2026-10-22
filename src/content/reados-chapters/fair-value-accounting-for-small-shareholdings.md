@@ -72,9 +72,31 @@ On 1 July, Ridgeway Pty Ltd buys 5,000 shares in a listed company at $12 per sha
 
 Ridgeway's profit includes $17,500 from the investment: $2,500 of dividends and a $15,000 unrealised gain.
 
+```figure
+type: stack
+title: What Ridgeway's $60,000 holding adds to profit in year one
+unit: $
+caption: Under the default treatment, both lines are in profit; under the election, only the dividend is.
+- Unrealised fair value gain, 5,000 × ($15 − $12) | 15000
+- Dividend income, 5,000 × $0.50 | 2500
+```
+
 **Under the other comprehensive income election:** the balance sheet still shows $75,000, and dividend income of $2,500 is in profit, but the $15,000 gain appears in other comprehensive income instead of profit.
 
 Now suppose the next year the share price falls to $10. Under fair value through profit or loss, Ridgeway records a $25,000 loss in profit. Under the election, the loss goes to other comprehensive income. In both cases the balance sheet shows $50,000.
+
+```figure
+type: line
+title: Ridgeway's holding at each reporting date
+x: Date
+y: Carrying amount ($'000)
+ymin: 40
+ymax: 80
+caption: The balance sheet follows the market either way. The $15,000 gain and then $25,000 loss hit profit by default, or other comprehensive income under the election.
+- Purchase, $12 | 60
+- Year 1, $15 | 75
+- Year 2, $10 | 50
+```
 
 The example shows why the choice matters: under the default, a business's reported profit can swing by tens of thousands of dollars because of share price movements unrelated to its own operations.
 
@@ -83,6 +105,15 @@ The example shows why the choice matters: under the default, a business's report
 **Fair value** is defined in AASB 13 *Fair Value Measurement* as the price that would be received to sell an asset in an orderly transaction between market participants at the measurement date. It is a market-based exit price, not what the investor paid or what it thinks the shares are worth to itself.
 
 AASB 13 groups the inputs used to measure fair value into a **hierarchy**:
+
+```figure
+type: layers
+title: The AASB 13 fair value hierarchy
+caption: The further down the hierarchy, the more judgement is involved and the more must be disclosed.
+- Level 1 | quoted prices for identical assets in active markets, such as ASX shares
+- Level 2 | other observable inputs, such as recent prices for similar shares
+- *Level 3 | unobservable inputs: valuation models for private company shares
+```
 
 | Level | Inputs | Example |
 | --- | --- | --- |

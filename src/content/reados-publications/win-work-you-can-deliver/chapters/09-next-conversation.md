@@ -19,6 +19,17 @@ Fieldnote asks which document staff used, where they still needed clarification 
 
 Compare what you can actually observe with the original purpose. The service rules may now be consistent, while the customer-facing summary is rarely used because staff cannot find it. That is a different problem from poor wording. A useful review distinguishes the quality of the output, its implementation and external influences.
 
+```figure
+type: cycle
+title: Closing the learning loop
+caption: Delivery evidence feeds back into which work to choose, how to price it and how to deliver it.
+- What was promised | the accepted offer
+- What was delivered | versions, changes, handover
+- How it was used | observed after a suitable interval
+- What we learned | effort, input quality, usefulness
+- *Next decision | selection, pricing, delivery, follow-up
+```
+
 ## Treat problems as decisions with consequences
 
 When a customer reports a problem, first establish what happened, what is affected and whether an immediate action is needed to limit harm. Acknowledge the report without making unsupported conclusions about cause or liability. Give a clear response time and keep the customer informed if investigation takes longer.
@@ -26,6 +37,16 @@ When a customer reports a problem, first establish what happened, what is affect
 In the fictional case, Harbour Services finds an old package name in a final document. Fieldnote checks the accepted inputs and discovers it introduced the error during a late edit. The team acknowledges the mistake, supplies a checked correction, identifies the affected version and confirms where it was distributed. It also improves its final consistency check.
 
 Contrast that with a new package introduced by the customer after handover. The document may now need updating even though the original work met the approved requirement. Explain the difference with reference to the agreed scope and chronology. Avoid treating every complaint as extra work or every new requirement as a supplier failure.
+
+```figure
+type: compare
+title: Two reported problems, two different responses
+cols: Old package name in a final document | New package added after handover
+caption: Establish what happened and what is affected before deciding whether the issue is an obligation or a new request.
+- Source | Within the agreed scope | Customer change after completion
+- Response | Correct it promptly | Offer an update as new work
+- Record | Factual note of the issue and fix | Change or new offer
+```
 
 ## Separate obligations from discretionary goodwill
 
@@ -48,6 +69,15 @@ Fieldnote can learn from one customer's comments without treating them as repres
 Repeat purchasing depends on the service and observation period. A one-off document package may not need to be bought again soon. Counting every completed customer as a failed repeat sale after thirty days would misrepresent the business.
 
 Suppose ten fictional customers completed work in a period. Six have subsequently reached a defined annual update window, and four of those six commission an update. The observed repeat-purchase proportion among that eligible group is **4 ÷ 6, or about 66.7%**. The other four customers are outside this particular observation window. State the rule and the small count alongside the percentage.
+
+```figure
+type: funnel
+title: Repeat purchases with an honest denominator
+caption: 4 of 6 eligible customers, about 66.7%. The other four are outside this observation window, not failures.
+- Completed customers | 10
+- Reached the annual update window | 6 | eligible
+- Commissioned an update | 4 | 66.7% of eligible
+```
 
 Do not quietly redefine eligibility to exclude customers who chose not to return. Establish the rule before examining outcomes, and separately record cancellations, uncontactable customers and known changes in need. A measure that improves only because inconvenient cases disappear is not useful learning.
 

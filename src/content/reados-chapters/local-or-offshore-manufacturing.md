@@ -55,6 +55,17 @@ Keep some production local, for example new products, low volumes, customised or
 
 Access process expertise, capacity or market presence through a partner, rather than owning everything. Partnerships can accelerate capability, but the economics must be weighed against control, knowledge transfer and long-term bargaining power. A partner that holds critical process knowledge can become very difficult to replace.
 
+```figure
+type: tree
+title: Four broad manufacturing pathways
+caption: Compare them as whole systems, not as two unit prices.
+- Where and how to make it
+  - Modernise local | equipment, automation, layout, skills
+  - Move offshore | an overseas facility or contract manufacturer
+  - *Hybrid | some local, some offshore
+  - Partnership | a partner's expertise, capacity or market presence
+```
+
 ## Look beyond the unit price
 
 The quoted unit price is only the start of the cost comparison. A realistic comparison includes:
@@ -91,7 +102,26 @@ The owner builds a fuller comparison.
 
 The realistic saving is about $65,000 a year, roughly 8%, not 33%. It also comes with longer lead times, $121,000 of extra working capital tied up in stock and dependence on a single overseas supplier.
 
+```figure
+type: bars
+title: The pump maker's saving from offshoring
+unit: $ a year
+caption: Freight, extra inventory, quality escapes, supplier management and transition costs ate most of the headline.
+- Headline: $14 a unit on 20,000 units | 280000
+- *Realistic, after the full comparison | 65000
+```
+
 The owner then models a third option: investing $300,000 in automating the local line, which reduces the local unit cost to $36. Spreading the investment over ten years adds about $30,000 a year (before financing costs), giving 20,000 × $36 + $30,000 = $750,000 a year. Before financing costs, this is slightly cheaper than offshoring, while keeping control, responsiveness and the link between production and the engineering team.
+
+```figure
+type: bars
+title: Annual cost of three ways to make 20,000 pumps
+unit: $
+caption: Automation was slightly cheaper than offshoring before financing costs, and kept control and responsiveness.
+- Local production today, $42 a unit | 840000
+- Offshore, all costs included | 775000
+- *Automated local line, $36 a unit plus investment | 750000
+```
 
 The numbers do not settle the decision by themselves. The automation option needs capital, the offshore option might fall further in price as volumes grow and currency could move either way. But the comparison now reflects the real economics rather than a headline unit price, and the decision can be made on the business's strategic priorities.
 
@@ -123,6 +153,19 @@ Comparisons often set the current operation against a fully running future opera
 
 A transition needs its own plan, budget, risk register and cash flow forecast. A target state that looks attractive in year three is of no value if the business cannot survive the cash demands and disruption of year one.
 
+```figure
+type: checklist
+title: What a transition costs before the new state runs
+caption: Comparing today's operation with a fully running future one leaves all of these out.
+- Duplicate production | while the new source is qualified
+- Tooling and equipment | new or relocated
+- Knowledge transfer | often tacit
+- Supplier, material and customer approvals
+- Extra inventory buffers
+- *Temporary productivity and quality losses
+- Logistics redesign
+```
+
 ## Dependency, knowledge and intellectual property
 
 Every option shifts knowledge and power somewhere. Consider:
@@ -137,6 +180,32 @@ The article on [make or buy decisions](/reados/collections/manufacturing-operati
 ## Keep options open while you learn
 
 Some choices are easy to reverse and some are not. A pilot production run, a trial order with a contract manufacturer or a staged move of one product family buys information before full commitment. Selling equipment, transferring all process knowledge or signing a long exclusive agreement is much harder to undo.
+
+```figure
+type: svg
+title: The less reversible the commitment, the stronger the evidence needed
+alt: A scale of commitments from easy to reverse on the left to hard to undo on the right. Pilot runs, trial orders and a staged move of one product family sit on the left; selling equipment, transferring all process knowledge and signing a long exclusive agreement sit on the right.
+caption: Early steps buy information before full commitment.
+viewbox: 0 0 640 240
+body:
+<path class="ln" d="M40 100H600"/>
+<path class="la flow" d="M40 100H600"/>
+<text class="txb" x="40" y="70">Easy to reverse</text>
+<text class="txb" x="600" y="70" text-anchor="end">Hard to undo</text>
+<circle class="fa" cx="80" cy="100" r="8"/>
+<circle class="fa" cx="160" cy="100" r="8"/>
+<circle class="fa" cx="240" cy="100" r="8"/>
+<text class="tx" x="80" y="140" text-anchor="middle">Pilot run</text>
+<text class="tx" x="160" y="165" text-anchor="middle">Trial order</text>
+<text class="tx" x="240" y="140" text-anchor="middle">One product family</text>
+<circle class="fi" cx="420" cy="100" r="8"/>
+<circle class="fi" cx="500" cy="100" r="8"/>
+<circle class="fi" cx="580" cy="100" r="8"/>
+<text class="tx" x="420" y="140" text-anchor="middle">Sell equipment</text>
+<text class="tx" x="500" y="165" text-anchor="middle">Transfer know-how</text>
+<text class="tx" x="600" y="190" text-anchor="end">Long exclusive deal</text>
+<text class="txa" x="40" y="228">Evidence required rises →</text>
+```
 
 A sensible principle: **the less reversible the commitment, the stronger the evidence you should require.** Where demand, partner performance or quality are uncertain, stage the decision so that early steps generate evidence for later ones.
 

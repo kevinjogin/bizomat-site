@@ -29,6 +29,24 @@ Two ideas follow:
 
 The basic relationship is: **present value = future amount ÷ (1 + rate) raised to the number of years**. At 8% a year, $10,000 received in five years is worth about $6,800 today.
 
+```figure
+type: line
+title: What $10,000 due in the future is worth today at 8%
+x: Years until received
+y: Present value ($)
+ymin: 0
+ymax: 10500
+mark: 5 | about $6,800
+caption: Present value = future amount ÷ (1 + rate)^years. The later the cash, the less it is worth now.
+- 0 | 10000
+- 1 | 9259
+- 2 | 8573
+- 3 | 7938
+- 4 | 7350
+- 5 | 6806
+- 10 | 4632
+```
+
 **Net present value** adds up the present values of all the cash flows from an investment, with the initial spending counted as negative. A positive NPV means that, under the model's assumptions, the investment is expected to earn more than the rate used to discount it.
 
 The practical consequence is simple but often ignored: two projects with the same total benefit are not equally valuable if one delivers its benefit earlier. Earlier benefits can fund the next investment, reduce borrowing or protect cash. Business cases that present benefits as five-year totals hide this.
@@ -75,6 +93,17 @@ A project that remains attractive across a wide range of assumptions is a differ
 
 A positive NPV is a strong signal, not a decision rule:
 
+```figure
+type: checklist
+title: Why a positive NPV is not automatic approval
+caption: Equally, a weak NPV may still be right for safety, compliance, resilience or capability.
+- ? Another option may have a higher NPV
+- ? The business may not fund every positive project
+- ? People may not be available to deliver it
+- ? Benefits may depend on other projects or customers
+- ? Waiting and learning may be worth more than committing now
+```
+
 - Another option may have a higher NPV.
 - The business may not be able to fund every positive investment and must choose.
 - The business may lack the people to deliver it alongside other priorities.
@@ -118,6 +147,17 @@ The owner checks the cash flows:
 - **The first year will be a ramp-up**, with savings of about half the full level while staff learn the press and work is moved across.
 
 The revised cash flows are about $38,000 in the first year ($50,000 of savings less $12,000 of maintenance) and $88,000 a year for the following five years. The nominal total is still $478,000, more than the price. But at 8%, the NPV is about −$39,000. At 6% it is about −$14,000, and at 10% about −$62,000. The investment does not pay its way on these assumptions at any of these rates.
+
+```figure
+type: bars
+title: The $400,000 press: supplier case against the checked case
+unit: $ NPV at 8%
+caption: Missing maintenance, a ramp-up year and wages that do not disappear turn a positive case negative at any rate from 6% to 10%.
+- Supplier's case: $100,000 a year | 62000
+- *Checked case at 8% | −39000
+- Checked case at 6% | −14000
+- Checked case at 10% | −62000
+```
 
 The owner does not reject the idea outright. Two options are tested: a lease that shifts more of the cost into later years and includes maintenance, and a smaller press that handles most of the work at a lower price. The smaller press shows a positive NPV across the range of rates, and the business chooses it, recording the assumptions so the actual savings can be compared with the forecast after a year.
 

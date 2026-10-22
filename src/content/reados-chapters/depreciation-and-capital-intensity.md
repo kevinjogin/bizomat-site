@@ -32,6 +32,23 @@ Businesses choose a method that reflects how an asset is used up:
 
 The method and the estimated useful life are management choices, disclosed in the notes to the accounts. Longer assumed lives produce smaller annual charges and higher reported profits, so it is worth checking whether a company's assumptions look realistic compared with its competitors.
 
+```figure
+type: line
+title: Two depreciation methods for the same $400,000 machine
+x: Year
+y: Book value ($'000)
+legend: Straight-line over 10 years | Diminishing value at 20% a year
+ymin: 0
+ymax: 420
+caption: Illustrative only. Straight-line charges the same amount each year; diminishing value charges more early. Neither changes the cash already spent.
+- 0 | 400 | 400
+- 2 | 320 | 256
+- 4 | 240 | 164
+- 6 | 160 | 105
+- 8 | 80 | 67
+- 10 | 0 | 43
+```
+
 Tax depreciation is a separate matter. Tax rules set their own effective lives and sometimes offer concessions, including for small businesses, and those rules change from time to time. The figures in the accounts and the figures in a tax return can therefore differ. For tax questions, check current rules with an accountant.
 
 ## Why depreciation is a real cost
@@ -72,6 +89,16 @@ Here is an illustrative ten-year comparison of two businesses, each earning a to
 | Cash left for owners, debt reduction or new investment | $80m | −$30m |
 
 Business A spends a fifth of its earnings maintaining and expanding its assets, leaving $80 million available. Business B spends more than it earns. Despite reporting the same profits, it ends the decade $30 million further in debt or with $30 million of new shares issued.
+
+```figure
+type: bars
+title: Ten years of capex as a share of net earnings
+unit: %
+max: 140
+caption: The book's rough guide: under about 25% suggests a durable business; up to about 50% can still fit; above 100% means borrowing or raising money to stand still.
+- *Business A | 20 | $20m capex on $100m earnings, $80m left
+- Business B | 130 | $130m capex on $100m earnings, $30m short
+```
 
 These are illustrations, not real companies, but the pattern is common in practice. Reported profit is not the same as money the owners can actually use.
 
@@ -151,6 +178,15 @@ In its first year, the owner considers buying a $400,000 laser cutter. Instead, 
 By year three, outsourced cutting costs $150,000 a year and the volume is stable. A cutter now makes sense: depreciation of around $40,000 a year plus operating costs comes well below the outsourcing bill, and owning it shortens lead times, which customers value. She buys it, funded mostly from accumulated earnings rather than debt.
 
 The decision was the same piece of equipment, but the timing changed it from a risky bet into a sound investment.
+
+```figure
+type: timeline
+title: When the laser cutter made sense
+caption: The same machine moved from a risky bet to a sound investment once demand was proven.
+- Year 1 | Outsource cutting | keep capital for welding gear, lease and working capital
+- Year 2 | Learn the work | which jobs pay and how much cutting is really needed
+- *Year 3 | Buy the cutter | outsourcing costs $150,000 a year; depreciation about $40,000 plus running costs is far lower
+```
 
 ## Common mistakes
 

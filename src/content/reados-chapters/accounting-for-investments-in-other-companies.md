@@ -31,6 +31,19 @@ Because influence can be hard to judge directly, accounting standards use the pe
 
 These thresholds are presumptions, not rules. A 15% holder with seats on the board and a say in policy may have significant influence. A 25% holder whose votes are routinely ignored by a majority owner may not. And as the article [What control means](/reados/collections/acquisitions-groups-and-investment-accounting/what-control-means-in-accounting/) explains, control can exist with less than half the votes, or be absent with more.
 
+```figure
+type: range
+title: Voting interest and the usual accounting method
+min: 0
+max: 100
+unit: % of votes
+ticks: 0% | 20% | 50% | 100%
+caption: Thresholds are presumptions: board seats, contracts or potential votes can move a holding into a different method.
+- Fair value: little or no influence | 0 | 20
+- Equity method: significant influence | 20 | 50
+- *Consolidation: control | 50 | 100
+```
+
 ## Little or no influence: fair value
 
 When an investor has little or no influence, the investment is treated much like any other financial asset. The investor cannot shape the investee's results, so it simply reports what the shares are worth.
@@ -97,6 +110,16 @@ Suppose the investor's stake is either 10% (little influence) or 30% (significan
 | Investment at year end | $360,000 | $345,000 |
 
 Under fair value, the investor's profit depends heavily on market movements. Under the equity method, it depends on the investee's earnings, regardless of what happens to the share price. Under consolidation, which would apply above 50%, the investor would report the investee's entire revenue, expenses, assets and liabilities, a far larger footprint in the financial statements.
+
+```figure
+type: compare
+title: The same $300,000 stake under two methods
+cols: 10% stake at fair value | 30% stake, equity method
+caption: Fair value brings market movements into profit; the equity method follows the investee's earnings, whatever the share price does.
+- Income recognised | $65,000: dividends $5,000 + fair value gain $60,000 | $60,000 share of profit
+- Dividends received | $5,000, as income | $15,000, reducing the investment
+- Investment at year end | $360,000 | $345,000
+```
 
 ### What this means for readers of financial statements
 

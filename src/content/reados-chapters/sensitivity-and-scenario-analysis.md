@@ -101,13 +101,50 @@ The business tests each input over a range it considers realistic:
 
 Arranged as a tornado chart, hours sold and contribution per hour sit at the top, followed by machine life. The machine's purchase price, which the business had spent weeks negotiating, matters much less than the volume and price of the work it will do.
 
+```figure
+type: bars
+title: Tornado view of the machining centre case
+unit: $ fall in NPV
+caption: Sorted by effect. Hours sold and contribution per hour dominate; together with machine life they decide the case.
+- *Hours sold 20% lower | 136500
+- *Contribution per hour 20% lower | 136500
+- Machine life 4 years, not 5 | 86900
+- Machine cost 10% higher | 40000
+- Operating costs 20% higher | 30300
+- Discount rate 12%, not 10% | 26000
+```
+
 ### Switching values
 
 For the net present value to fall to zero, the annual cash flow must fall to $400,000 ÷ 3.7908, or about $105,500. Holding other inputs constant, that requires a contribution of about $145,500 a year, which at $120 per hour means about **1,213 hours**, 19% below the base case. Equivalently, at 1,500 hours, the contribution per hour could fall to about $97 before the case breaks even.
 
+```figure
+type: gauge
+title: Switching value for hours sold
+min: 1000
+max: 1700
+value: 1213
+unit: hours
+label: break-even, 19% below the 1,500-hour base
+caption: Annual cash flow must stay above about $105,500. A supply agreement for at least 800 hours was sought before ordering.
+- 1000 | 1213 | Loss
+- 1213 | 1500 | Thin
+- 1500 | 1700 | Base and above
+```
+
 ### Scenarios
 
 The business then builds three scenarios:
+
+```figure
+type: bars
+title: Three internally consistent scenarios
+unit: $ NPV
+caption: Pessimistic: 1,250 hours at $110 and $45,000 costs. Optimistic: 1,700 hours at $125 and $38,000 costs.
+- Pessimistic | −49400
+- Base | 130700
+- Optimistic | 261500
+```
 
 - **Pessimistic**: a key customer reduces orders, so hours fall to 1,250, competition pushes the contribution down to $110 per hour, and operating costs run at $45,000. Annual cash flow is $137,500 less $45,000, or $92,500, and the net present value is about **−$49,400**.
 - **Base**: as above, about **$130,700**.

@@ -26,6 +26,25 @@ This article explains the difference between concept and detailed design, why te
 
 Procurement can sensibly start at different points between the two, depending on the commercial model you choose.
 
+```figure
+type: svg
+title: Going to market somewhere between concept and detail
+alt: A horizontal scale from concept design on the left to detailed design on the right. A performance request can go to market near the concept end, provided the requirement is clear; a prescriptive fixed-price request needs to sit at the detailed end.
+caption: Judge readiness against the commercial decision you are asking suppliers to make, not against how many drawings exist.
+viewbox: 0 0 640 200
+body:
+<rect class="bx" x="40" y="80" width="560" height="14" rx="7"/>
+<rect class="bxa grow" x="40" y="80" width="560" height="14" rx="7"/>
+<text class="txb" x="40" y="60">Concept design</text>
+<text class="txb" x="600" y="60" text-anchor="end">Detailed design</text>
+<circle class="fa pulse" cx="170" cy="87" r="10"/>
+<text class="txa" x="170" y="130" text-anchor="middle">Performance request</text>
+<text class="tx" x="170" y="152" text-anchor="middle">clear, measurable outcome</text>
+<circle class="fs" cx="540" cy="87" r="10"/>
+<text class="txb" x="540" y="130" text-anchor="middle">Prescriptive fixed price</text>
+<text class="tx" x="540" y="152" text-anchor="middle">complete, unambiguous spec</text>
+```
+
 ## What happens when you go too early or too late
 
 | Going to market too early | Going to market too late |
@@ -87,6 +106,17 @@ Can you objectively determine whether the delivered solution works? Define the t
 
 If these five are clear, you may be ready to go to market even if some design details are not fixed.
 
+```figure
+type: checklist
+title: Five tests before sending a request for quotation
+caption: "Faster packing" is not a requirement; "at least 40 cartons a minute with no more than 0.5% rejects" is.
+- Outcome | clear and measurable
+- Interfaces | physical, electrical, data, organisational
+- Constraints | what is non-negotiable
+- Freedom | where suppliers may innovate
+- *Acceptance | an objective test of success
+```
+
 ## A worked example
 
 This is an illustration. A small bakery wants to automate part of its bread slicing and bagging. The owner's first instinct is to wait until an engineer has designed the whole line in detail, which would take three months and cost several thousand dollars.
@@ -99,7 +129,28 @@ Instead, the owner applies the five tests:
 - **Freedom:** suppliers may propose any slicer and bagger combination and layout that meets the requirements.
 - **Acceptance:** a two-hour production test at rated speed with each loaf size, measuring throughput, slice consistency, bag seal quality and downtime.
 
+```figure
+type: stats
+title: The bakery's performance request in three numbers
+caption: Suppliers could propose any slicer and bagger combination that met these requirements.
+- 1,200 | loaves an hour, sliced and bagged
+- 4 | loaf sizes to handle
+- 2 hours | production test at rated speed to accept it
+```
+
 The owner sends this performance request to three equipment suppliers, who visit the site. Their proposals differ: one uses a single combined machine, another two separate machines, and a third proposes a semi-automatic option at lower cost. The owner pays an independent engineer for two days to compare them against the requirements and check the safety and hygiene features. The chosen supplier is responsible for meeting the acceptance test. The project starts two months earlier than the detailed-design route would have allowed, and the chosen solution is one the owner had not considered.
+
+```figure
+type: compare
+title: Waiting for detailed design or asking for performance
+cols: Detailed design first | Performance request
+best: 2
+caption: The chosen supplier carries the acceptance test, and the solution was one the owner had not considered.
+- Before quotes | About three months of engineering | Site visits by three suppliers
+- Specialist cost | Several thousand dollars | Two days of an independent engineer
+- Options seen | The engineer's single design | Combined, separate and semi-automatic machines
+- Start | The later date | Two months earlier
+```
 
 ## Early supplier involvement
 

@@ -37,6 +37,22 @@ This is an opportunity for small businesses. A local producer can offer freshnes
 
 The cooperative's approach to building a brand without excessive capital can be summarised in ten steps.
 
+```figure
+type: steps
+title: Ten steps to a food brand without excessive capital
+caption: Prove the product, operation and economics locally before expanding.
+- Choose one product | made exceptionally well
+- Quality ingredients
+- Appropriate technology
+- Taste first
+- Packaging | sells, protects, informs
+- A brand name
+- Distribution
+- Affordable pricing
+- *Win the local market | about 20% share first
+- Listen and improve
+```
+
 ### 1. Choose your product
 
 Start with one product, or a small range, that you can make exceptionally well. Consider:
@@ -85,6 +101,16 @@ The cooperative's advice is to price so that ordinary households can afford your
 
 The cooperative's sequence is local first, then city, then state, then national. Its rule of thumb was not to move to the next stage until you have a substantial share of your local market, around 20 per cent. The exact figure matters less than the principle: **prove the product, the operation and the economics locally before spending to expand.**
 
+```figure
+type: steps
+title: Local first, then wider
+caption: The rule of thumb: do not move on until you hold a substantial local share, around 20 per cent.
+- *Local | prove product, operation and economics
+- City | expand once local share is substantial
+- State | repeat the test at larger scale
+- National | only after each stage works
+```
+
 ### 10. Listen and improve continuously
 
 Collect customer feedback constantly, through conversations at markets, retailer feedback, online reviews and sales data. Run a continuous improvement cycle on recipes, packaging, pricing and service.
@@ -123,6 +149,18 @@ Some councils allow certain food to be produced at home for sale, subject to reg
 ### Labelling
 
 Packaged food labels generally must include, among other things:
+
+```figure
+type: checklist
+title: What packaged food labels generally must include
+caption: General information; check the Food Standards Code and FSANZ guidance for your product.
+- Name or description of the food
+- Ingredients in order of weight
+- Allergen declarations | plain English format
+- Nutrition information panel | for most foods
+- Date marking | "use by" or "best before"
+- Storage and usage instructions | where needed
+```
 
 - The name or description of the food.
 - Ingredients, listed in order of weight.

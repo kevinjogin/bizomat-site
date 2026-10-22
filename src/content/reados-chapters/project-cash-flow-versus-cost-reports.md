@@ -47,6 +47,21 @@ The difference between cost recognised and cash moved is made of identifiable it
 
 Each of these can be estimated and given an owner. Together they explain why the two pictures differ.
 
+```figure
+type: tree
+title: What separates cost recognised from cash moved
+caption: Each item can be estimated and owned; together they explain why profit and cash disagree.
+- The gap
+  - Deposits paid to suppliers
+  - Deposits received from customers
+  - Work done, not yet invoiced
+  - Invoices issued, not yet paid
+  - *Retentions held back
+  - Materials bought ahead
+  - Tax and duty timing
+  - Supplier credit terms
+```
+
 ## Why the gap is widest when you are growing
 
 Growth consumes cash. A business winning more work, starting more jobs and buying more materials is spending ahead of receipts by its nature. Its project reports look strongest, with more jobs in progress and good margins, at exactly the point its cash position deteriorates fastest. Owners can experience this as a disagreement between an optimistic operations team and a pessimistic accountant, when in fact both are reading their own data correctly.
@@ -69,6 +84,16 @@ A simple reconciliation, prepared for each significant project at the same time 
 - **Divergence**: is the gap between cost completion and cash completion widening, and is any decision now being considered one that improves the cost picture while worsening cash?
 
 One rule completes it: **any change approved on cost or schedule grounds that significantly moves cash, such as accelerating work, buying early for a discount or bringing scope forward, needs a separate check of its cash effect.** These decisions often look excellent on the cost report and consume the most cash headroom.
+
+```figure
+type: steps
+title: A two-ledger reconciliation
+caption: A peak cash requirement without a date cannot be planned for.
+- The accrual line | copied from the cost report
+- The cash line | with the peak and its date
+- The bridge | named items that explain the gap
+- *Two tests | headroom and divergence
+```
 
 ## Building a simple project cash forecast
 
@@ -107,7 +132,35 @@ The remaining $30,000 of retention arrives a year later, bringing the total to t
 
 At the end of month three, the cost report shows the project about half complete, on budget and on track for its margin. The cash picture shows the business $172,500 out of pocket, mainly because the equipment balance was paid at shipment while the customer's payments lag the work.
 
+```figure
+type: line
+title: Cumulative cash on the $600,000 equipment contract
+x: Month
+y: Cumulative cash ($'000)
+legend: Cumulative position
+ymin: -180
+ymax: 100
+mark: 3 | peak need
+caption: Half complete and on budget at month three, yet $172,500 out of pocket; $30,000 of retention arrives a year later.
+- 1 | -52
+- 2 | -41
+- 3 | -172.5
+- 4 | -85
+- 5 | -23
+- 6 | 39
+- 7 | 90
+```
+
 The owner renegotiates before signing similar contracts. The customer agrees to a 20% deposit, and the equipment supplier agrees to take its balance on delivery to site, a month later. Under these terms, the peak cash requirement falls to about $55,000 and moves to month four. The project's margin is unchanged. Only the timing of cash has changed, and with it the business's ability to take on more work safely.
+
+```figure
+type: bars
+title: Peak cash requirement under two sets of terms
+unit: $
+caption: A 20% deposit and the equipment balance paid on delivery to site: same margin, a much smaller and later peak.
+- Original terms, month three | 172500
+- *Renegotiated terms, month four | 55000 | about
+```
 
 ## How this applies to a small Australian business
 

@@ -34,6 +34,15 @@ A relationship lasts only if it works for the customer too. Value for the custom
 
 Value from the customer has direct and indirect forms.
 
+```figure
+type: tree
+title: Value from a customer relationship
+caption: Profit is still fundamental, but it is not the only thing a customer contributes.
+- Value from the customer
+  - Direct | profit, volume, stability through downturns
+  - Indirect | innovation, references and referrals, intelligence, access
+```
+
 **Direct value:**
 
 - **Profit**: still fundamental. Strategic language should not hide a relationship that consistently loses money without a credible reason.
@@ -117,6 +126,16 @@ This is an illustration. A 20-person business designs and manufactures specialis
 - **Customer C** is small, offering about $40,000 at 15%, about $6,000, but would be the business's first reference in a regulated sector it wants to enter.
 
 Ranked by margin on the next job, the choice is A and B. The relationship view adds more: B's platform could generate significant further margin across other customers over the next two years; C opens a new sector; and A's project would push A towards 40% of revenue while consuming capacity on work with no reuse.
+
+```figure
+type: compare
+title: Three customer requests, one engineering team
+cols: Margin on the job | Relationship view
+caption: The owner chose B, a reduced A built on B's platform, and a small paid pilot for C.
+- A: largest customer, about 35% of revenue | $180,000 at 22% ≈ $39,600 | No reuse; pushes A towards 40% of revenue
+- B: technically advanced | $90,000 at 30% ≈ $27,000 | New platform for at least four other customers
+- C: small | $40,000 at 15% ≈ $6,000 | First reference in a regulated sector
+```
 
 The owner chooses B and a reduced version of A, negotiating with A to build its variant on B's new sealing platform, which cuts the bespoke work and improves reuse. C is offered a smaller paid pilot now, with full development planned for the following half-year. The decision record notes the opportunity cost of deferring C and the target to keep A below 35% of revenue. The financial ranking was not ignored, but it was not the only consideration.
 

@@ -27,6 +27,16 @@ There are different ways a supplier's business can change hands, and they affect
 
 The buyer usually chooses the structure, and where it has many customer contracts it will often prefer one that avoids collecting many consents. So the protection businesses most often assume they have, a right to approve a change, may apply only to the structure least likely to be used. A **change-of-control clause** can fill the gap if it is drafted to respond to a change in who owns or controls the supplier. Many contracts do not have one.
 
+```figure
+type: compare
+title: How a supplier can change hands
+cols: Your counterparty | Do you get a say?
+caption: Many contracts only notice a transfer of the contract itself, which a share sale does not involve.
+- Sale of shares | The same company | Usually not, unless the contract says so
+- Sale of business and assets | A different company | Typically yes: substitution needs consent
+- Subcontracting | Unchanged, still responsible | Someone else does the work
+```
+
 ## What changes even when nothing is breached
 
 The most damaging effects of an acquisition are usually not breaches. They are lawful results of the new owner running the business its own way:
@@ -38,6 +48,18 @@ The most damaging effects of an acquisition are usually not breaches. They are l
 - **Your data becomes a negotiating position.** What was easy to export becomes difficult.
 
 Every service level can still be met while what the business actually relied on has gone.
+
+```figure
+type: tree
+title: What changes even when nothing is breached
+caption: Every service level can still be met while what the business actually relied on disappears.
+- After an acquisition
+  - Priorities shift | to the group's goals
+  - *Key people leave | the ones who knew your account
+  - Service is consolidated | depots, support, delivery runs
+  - Terms change at renewal | to the group standard
+  - Data becomes leverage | exports get harder
+```
 
 ## A right to terminate is often not protection
 
@@ -54,6 +76,18 @@ Rights that keep their value under pressure are usually more graduated:
 - **Transition assistance** if you decide to move.
 
 Each of these is useful the morning the news arrives. A termination right is useful only if a real alternative exists, which makes the alternative, not the clause, the real protection. The [settle the terms before the price](/reados/collections/procurement-and-tendering/settle-the-terms-before-the-price/) article covers negotiating rights like these while you still have bargaining power.
+
+```figure
+type: balance
+title: A termination right or graduated rights?
+left: A right to terminate
+right: Graduated rights
+tilt: right
+caption: A termination right is useful only if you could actually leave; graduated rights keep their value under pressure.
+- Useful only if you can replace them quickly | Notice of the change, as early as possible
+- All or nothing | Caps on price rises for a period
+- Leaves you to find a new supplier | Data export, escrow, key people, transition help
+```
 
 ## The relationship often lives in a few people
 
@@ -105,6 +139,16 @@ The vendor announces it has been acquired by a larger company that also owns a n
 The owner decides on three steps. First, the practice manager exports the full client and booking data in a standard format, confirms it can be read, and schedules a repeat export every quarter. Second, at the upcoming renewal, the owner negotiates a cap on price increases for two years, a contractual right to export data in a standard format at any time, advance notice of any future change of control, and 90 days' transition assistance if the clinics leave. Third, the owner asks one senior administrator to document how the system is configured, and arranges a demonstration of one alternative so the replacement path is known.
 
 Nine months later, the vendor announces a new pricing structure with a 30% increase. The clinics' increase is limited by the cap. The owner still has the alternative evaluated and current data in hand, which makes the next renewal conversation a genuine negotiation.
+
+```figure
+type: timeline
+title: The clinics' booking system after the acquisition
+caption: Switching would cost about $15,000 and three months, so the protections were negotiated, not threatened.
+- Announcement | Heard by email, after completion | no change-of-control clause
+- Straight away | Full data exported and checked | repeated every quarter
+- Renewal | Protections negotiated | two-year price cap, export right, notice, 90 days' transition help
+- *Nine months later | 30% price increase announced | the clinics' rise limited by the cap
+```
 
 ## If you are the one being sold
 

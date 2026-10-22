@@ -58,6 +58,16 @@ Businesses usually have outputs, but outputs are not required. As the course poi
 
 The minimum requirement is that the acquired set includes **an input and a substantive process that together significantly contribute to the ability to create outputs**.
 
+```figure
+type: venn
+title: What makes an acquired set a business
+centre: Business
+caption: The minimum is an input and a substantive process that together significantly contribute to creating outputs; outputs themselves are not required.
+- Inputs | resources such as equipment, IP or a workforce
+- Substantive processes | systems applied to inputs; not admin such as payroll
+- Outputs | goods, services or income; usual but not essential
+```
+
 ## The two-step business test
 
 The course describes the US approach as a two-step test.
@@ -81,6 +91,18 @@ Some important details:
 ### Step 2: inputs and substantive processes
 
 If the screen is not met, ask: **were an input and a substantive process acquired that together significantly contribute to the ability to create outputs?**
+
+```figure
+type: tree
+title: The two-step business test
+caption: Step 1 settles many deals quickly; step 2 looks for an organised workforce performing a critical process.
+- Acquired set of assets and activities
+  - Step 1: is substantially all fair value in one asset or a group of similar assets?
+    - Yes: not a business | record as an asset acquisition
+    - No: go to step 2
+      - *Input and substantive process acquired? Yes: business combination
+      - No: asset acquisition
+```
 
 If not, the set is not a business. If so, it is a business, and business combination accounting applies.
 
@@ -117,6 +139,18 @@ A company buys the rights to a product formula from another company, without any
 ### Example 5: an early-stage technology company
 
 A company buys a start-up that has no revenue yet but has a team of engineers actively developing software, along with the software code and related intellectual property. Value is spread across the code, other intellectual property and assembled know-how, so the screen is likely not met. The engineering team is an organised workforce performing a process critical to converting the code into a product. **Likely a business combination**, despite the absence of outputs.
+
+```figure
+type: compare
+title: Five acquisitions through the business test
+cols: Result | Deciding factor
+caption: The same label, such as "buying a business", can cover very different accounting.
+- Building with long-term tenants | Asset acquisition | value concentrated in building, land and leases
+- Twenty similar rental houses | Asset acquisition | group of similar assets; no staff or processes
+- Factory with trained workforce | Business combination | workforce performs critical production processes
+- Product formula licence alone | Asset acquisition | substantially all value in one intangible
+- Pre-revenue software start-up | Likely business combination | engineering team converts code into product
+```
 
 ### Example 6: the course's example in outline
 

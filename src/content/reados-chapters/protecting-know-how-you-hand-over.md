@@ -43,6 +43,17 @@ Six different things move when production is outsourced. The usual checklist cov
 
 Confidentiality agreements protect what can be proved; registrations protect what can be registered; supply agreements protect what is written down. Unwritten know-how is none of these. That is why a checklist can be complete while the real exposure is untouched.
 
+```figure
+type: layers
+title: How recoverable is what you hand over?
+caption: Ask how long it would take to resume elsewhere, not only whether something is protected.
+- Specifications and drawings | yes, if you hold the controlled master
+- Tooling and fixtures | sometimes: ownership and removal rights
+- Process know-how · sub-supplier relationships | rarely
+- Yield improvements and learning | no: they stay where production happens
+- *The ability to compete with you | never
+```
+
 Two protections need no court at all: **refreshing the design** regularly and **improving the product faster** than a copier can follow. They do not prevent copying; they make copies obsolete. Both must be funded deliberately, or they quietly stop happening.
 
 ## Sequence matters more than wording
@@ -54,6 +65,15 @@ Ordinary business processes defeat good intentions. Choosing a manufacturer requ
 1. **Confidentiality obligations are signed before technical evaluation begins**, with every candidate, not only the one appointed.
 2. **Ownership of improvements is agreed before development starts.** A good manufacturer will improve your process. If the contract is silent, ownership of those improvements may be contested exactly when you want to leave.
 3. **Registrations are filed before the product is shown**, in the countries where it will be made as well as where it will be sold.
+
+```figure
+type: timeline
+title: Sequence matters more than wording
+caption: Legal instruments protect going forward, almost never backward.
+- Before evaluation | Confidentiality signed | with every candidate, not only the one appointed
+- Before development | Ownership of improvements agreed | or it is left to argue later
+- *Before showing | Registrations filed | where it is made as well as where it is sold
+```
 
 ## Protections that stop at a border
 
@@ -87,6 +107,18 @@ A layered approach works better than one broad clause:
 5. **Plan exits**: return of devices and documents, handover of customers.
 6. **Reduce dependence**: document methods, share customer relationships across more than one person, and make knowledge part of the business rather than one person's memory.
 
+```figure
+type: steps
+title: Protecting what people carry, in layers
+caption: Broad restraints are weaker than they look; ask what legitimate interest needs protecting.
+- Classify | what is genuinely confidential
+- Limit access
+- Record ownership | in contracts
+- Narrow restraints | only where justified
+- Plan exits | devices, documents, handover
+- *Reduce dependence | knowledge held by the business
+```
+
 Sale-of-business restraints are treated differently from employment restraints, because a buyer paying for goodwill can reasonably expect the seller not to recreate the same business next door. Even then, the scope should match the goodwill being bought.
 
 The [key person dependence](/reados/collections/starting-funding-and-structuring-a-business/key-person-dependence-in-a-small-business/) article covers reducing reliance on individuals, which is the most durable protection of all.
@@ -112,6 +144,18 @@ The company acts on recoverability:
 - Its engineer now spends a week at the factory twice a year.
 - It identifies a local fabricator who could produce a limited range within eight weeks, and keeps that option alive with a small annual order.
 - For the sales role, it replaces the broad non-compete with a narrower customer non-solicitation clause on legal advice, introduces a second council contact for each key account, and documents the quoting method.
+
+```figure
+type: compare
+title: The bicycle rack company's gaps and fixes
+cols: Gap found | Action taken
+caption: The company acted on recoverability, not only on legal protection.
+- Drawings | Sent to three candidates before any confidentiality agreement | Master drawings under its own version control
+- Improvements | A faster jig and better coating, ownership unstated | Ownership confirmed in exchange for a longer term
+- Sub-suppliers | Powder-coater dealing only with the manufacturer | A direct contract for its colour range
+- Registrations | Trade mark in Australia only; design never certified | Certification requested; Madrid Protocol extension
+- People | Council relationships held by one sales manager; a broad non-compete | A narrower non-solicitation clause on legal advice
+```
 
 ## How this applies to a small Australian business
 

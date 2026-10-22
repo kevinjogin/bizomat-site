@@ -57,6 +57,15 @@ At year end:
 
 Notice the gap between profit and cash. Harbour reports $60,000 of income from Coastline but receives only $20,000 in cash. The other $40,000 remains inside Coastline, reflected in the higher carrying amount of the investment.
 
+```figure
+type: steps
+title: Harbour's 25% investment in Coastline through one year
+caption: Harbour reports $60,000 of income but receives $20,000 in cash; the other $40,000 stays inside Coastline.
+- At acquisition | investment recorded at cost, $500,000
+- Share of profit | 25% × $240,000 = +$60,000 → $560,000
+- *Dividends received | 25% × $80,000 = −$20,000 → $540,000
+```
+
 ## Other comprehensive income
 
 Some gains and losses bypass the income statement and are recorded in **other comprehensive income**, such as certain revaluations of property or currency translation differences. If an associate records such items, the investor recognises its share in its own other comprehensive income, again adjusting the investment. The aim is for the investment to keep tracking the investor's share of the associate's net assets.
@@ -88,6 +97,15 @@ This matters in practice. An investor that has guaranteed an associate's debts m
 Investors often trade with their associates: selling them goods, buying from them or providing services. Under the equity method, profits on such transactions are only partly recognised until the goods are sold on to outside parties.
 
 The rule is that unrealised profits on transactions between the investor and its associate are eliminated to the extent of the investor's interest. For example, if Harbour sells equipment to Coastline at a profit of $40,000 and Coastline still holds the equipment at year end, Harbour eliminates 25% of that profit, or $10,000, until the equipment is used up or sold.
+
+```figure
+type: formula
+title: Eliminating unrealised profit with an associate
+formula: Eliminate = Profit on sale × Investor's share
+caption: To the extent Harbour owns Coastline, it has in effect sold the equipment partly to itself.
+step: $40,000 profit on equipment still held by Coastline
+step: 25% × $40,000 = $10,000 eliminated until the equipment is used up or sold
+```
 
 The reasoning is that, to the extent Harbour owns Coastline, it has in effect sold the equipment partly to itself. Profit is not earned by selling to yourself.
 

@@ -34,9 +34,33 @@ A useful scope identifies the outputs, their formats, the inputs required, the r
 
 These entries illustrate a scope discussion; they are not a contract template. The precise terms need to suit the service, customer and applicable law. An exclusion should never be used to conceal a task that is necessary to deliver what the headline promises.
 
+```figure
+type: tree
+title: The parts of an assessable scope
+caption: Each element tells the customer something they must know before accepting.
+- Fieldnote document package
+  - Outputs | staff reference and customer summary, within length limits
+  - Inputs | current documents, approved inclusions, one set of corrections
+  - Reviews | two rounds through one nominated contact
+  - Handover | final files and a short discussion
+  - Exclusions | service design, legal review, website build
+  - *Changes | assessed and agreed before extra work begins
+```
+
 ## Explain timing as a set of dependencies
 
 A delivery date usually depends on more than the supplier's speed. List the important inputs and approval points. Explain what happens if they arrive late. This is more useful than placing a broad disclaimer after an unconditional date.
+
+```figure
+type: steps
+title: A delivery date is a chain of dependencies
+caption: If the customer controls a step, say so; do not invent urgency.
+- Acceptance and initial payment | conditions agreed in the offer
+- Production slot reserved | for a stated period
+- Inputs supplied | approved rules and current documents
+- Drafting and two review rounds | via one contact
+- *Handover | final files and discussion
+```
 
 Fieldnote proposes to reserve a production slot once the agreed acceptance and payment conditions are satisfied. The customer supplies approved inputs before drafting begins and consolidates feedback within the agreed review windows. If a dependency slips, both sides review the schedule rather than assuming the team will absorb the delay through unpaid overtime.
 
@@ -49,6 +73,15 @@ Place the fee, tax treatment, payment schedule and any variable charges where th
 The Australian Government's [guidance on preparing quotes](https://business.gov.au/people/contractors/prepare-quotes) explains the importance of clear quotation details and notes that an accepted quote can become a binding contract. Have appropriate terms reviewed when the work warrants it. Do not assume the word “proposal” makes commitments legally inconsequential.
 
 Fieldnote's educational example uses a A$3,600 fee with a proposed 40% initial payment and 60% later payment. A real offer must specify the actual payment triggers and due dates, along with relevant cancellation, change and other terms. The arithmetic alone does not establish a suitable contract.
+
+```figure
+type: stack
+title: Proposed payment schedule
+unit: A$
+caption: A real offer must state the actual triggers and due dates, plus change and cancellation terms.
+- Initial payment, 40% | 1440
+- Later payment, 60% | 2160
+```
 
 ## Offer alternatives only when they solve different needs
 

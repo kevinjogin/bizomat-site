@@ -31,6 +31,15 @@ Dividing the fixed costs by the contribution margin gives the **monthly revenue 
 
 A business with $60,000 of monthly fixed costs and a 40% contribution margin needs $150,000 of revenue each month just to break even. At that margin, every dollar of fixed cost needs $2.50 of revenue behind it.
 
+```figure
+type: formula
+title: The monthly revenue floor
+formula: Revenue floor = Monthly fixed costs ÷ Contribution margin
+caption: At a 40% contribution margin, every dollar of fixed cost needs $2.50 of revenue behind it.
+step: $60,000 ÷ 40%
+step: = $150,000 of revenue each month to break even
+```
+
 The floor is a decision boundary, not just a report. Almost every commercial decision moves it.
 
 ## Why the floor moves faster than costs
@@ -49,6 +58,17 @@ Using the same business, consider two common decisions.
 | Both decisions | $69,000 | 32% | $215,625 |
 
 The lesson is uncomfortable: **pricing authority is spending authority**, and often the more consequential kind. A standing discount permanently raises what the business must earn to survive, yet it is often approved by fewer people, against a lower threshold, than a modest equipment purchase. The [discounting without destroying your margin](/reados/collections/pricing-margins-and-profitability/discounting-without-destroying-your-margin/) article covers how much extra volume a discount needs.
+
+```figure
+type: bars
+title: How two everyday decisions move the floor
+unit: $ revenue floor a month
+caption: Pricing authority is spending authority: a standing discount moves the floor more than a new lease.
+- Current position: $60,000 at 40% | 150000
+- Standing discount: margin to 32% | 187500
+- New lease and hire: $69,000 at 40% | 172500
+- *Both decisions | 215625
+```
 
 ## Common misreadings
 
@@ -85,6 +105,23 @@ The second breakeven number applies to equipment, vehicles, space and software. 
 - **Leasing or buying** has fixed costs, such as payments, maintenance, insurance and storage, but a lower cost per use.
 
 Suppose hiring a machine costs $100 a day. Leasing one costs $3,000 a year in fixed charges such as maintenance, plus $70 a day to operate. The two options cost the same when $100 × days = $3,000 + $70 × days, which is at **100 days of use a year**. Below 100 days, hiring is cheaper; above it, leasing is.
+
+```figure
+type: line
+title: The rent-or-buy crossover for a machine
+x: Days used per year
+y: Annual cost ($)
+legend: Hire at $100 a day | Lease: $3,000 + $70 a day
+ymin: 0
+ymax: 17000
+mark: 100 | crossover
+caption: The crossover is the easy part; flexibility, risk and capability decide whether to commit.
+- 60 | 6000 | 7200
+- 80 | 8000 | 8600
+- 100 | 10000 | 10000
+- 120 | 12000 | 11400
+- 160 | 16000 | 14200
+```
 
 | Days used per year | Hire cost | Lease cost |
 |---|---|---|

@@ -19,6 +19,20 @@ These look like separate problems needing separate fixes: a better salesperson, 
 
 This article describes an eight-step sequence for building, or rebuilding, a business. It is sometimes taught as the "8 Ps": **problem, prospect, people, product, pricing and positioning, process and performance, profit and purpose**. The value of the framework lies less in the labels than in the order, and in using it to diagnose where a struggling business went wrong.
 
+```figure
+type: steps
+title: Build in the right order
+caption: Profit is the outcome of the first six steps; purpose is the thread through all of them.
+- Problem | a burning customer problem
+- Prospect | exactly who the customer is
+- People | the team to solve it
+- Product | build, test small, learn
+- Positioning | price and route to market
+- Process | scale what works
+- *Profit | the result
+- Purpose | why it exists
+```
+
 ## 1. Problem: start with the customer's burning problem
 
 Everything starts with a real problem worth solving, ideally a **burning** problem that customers feel urgently and will pay to fix. Two questions matter:
@@ -128,6 +142,17 @@ The sequence is most useful as a diagnostic. When something is wrong, ask which 
 | "We grew fast and then collapsed" | Scaling before stages 1–5 were proven |
 
 Rather than repeatedly changing sales methods, identify the weak stage, fix it and move forward through the sequence again.
+
+```figure
+type: decision
+title: Diagnose the symptom back to its stage
+question: What is the symptom?
+caption: Fix the weak stage and move forward through the sequence again.
+- "Customers aren't interested" | Problem or prospect
+- "We keep having to discount" | Product or positioning
+- *"Acquisition is too expensive" | Prospect, product or positioning
+- "We can't keep good staff" | People, and possibly purpose
+```
 
 ## Applying the sequence to an established business
 

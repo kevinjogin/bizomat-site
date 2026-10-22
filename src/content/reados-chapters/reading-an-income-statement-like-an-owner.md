@@ -27,6 +27,17 @@ Every income statement follows roughly the same order, from revenue at the top t
 
 Each subtraction removes a different kind of cost. Reading the statement well means asking, at each step, what that cost says about the business.
 
+```figure
+type: steps
+title: Reading an income statement from top to bottom
+caption: Each subtraction removes a different kind of cost, and each subtotal answers a different question.
+- Revenue | sales for the period
+- Gross profit | after cost of goods sold
+- Operating profit | after overheads, research and depreciation
+- Profit before tax | after interest and one-off items
+- *Net profit | after tax: the bottom line
+```
+
 ## A worked example
 
 Here is a simplified, hypothetical income statement for a company we will call Company A, alongside a competitor, Company B. The figures are illustrations only.
@@ -47,6 +58,19 @@ Here is a simplified, hypothetical income statement for a company we will call C
 | **Net profit** | **$11.9m** | **$0.7m** |
 
 Both companies have the same revenue. Both report a profit. Yet they are completely different businesses, and the income statement shows why at almost every line.
+
+```figure
+type: stack
+title: Where Company A's $30m of gross profit goes
+unit: $m
+caption: Company A keeps $11.9m of its $30m gross profit; overheads, research and depreciation take only 40% of it.
+- Net profit | 11.9
+- SG&A | 9.0
+- Tax | 5.1
+- Depreciation | 2.0
+- Research and development | 1.0
+- Interest | 1.0
+```
 
 ## Revenue: the starting point, not the conclusion
 
@@ -108,6 +132,19 @@ The article "Debt as a warning light" explores this in depth.
 Gains or losses from selling assets, write-downs, restructuring costs and other unusual items can make one year look much better or worse than the underlying business.
 
 Company B is the classic case. Without the $5 million gain from selling property, it would have reported a pre-tax loss of $4 million. The headline profit hides an unprofitable business that is selling assets to stay afloat.
+
+```figure
+type: stack
+title: Company B's $0.7m profit depends on a one-off gain
+unit: $m
+caption: Gross profit of $10m plus a $5m property gain funds the costs. Without the gain, Company B would have made a pre-tax loss of $4m.
+- SG&A | 7.0
+- Depreciation | 3.0
+- Interest | 2.5
+- Research and development | 1.5
+- Tax | 0.3
+- Net profit | 0.7
+```
 
 The book's advice is simple: note one-off items, then look past them. A business is valued on what it earns repeatedly, not on what it earned once.
 

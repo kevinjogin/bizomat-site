@@ -30,6 +30,17 @@ It helps to think of commercial communication as moving through stages:
 
 The law generally treats many everyday communications as invitations rather than offers. Goods on a shelf, most advertisements, auctions and requests for tenders are usually treated as invitations to make an offer. A statement of a price in response to a question may be information rather than an offer to sell at that price. But labels do not decide the matter. An unusually specific and serious promise in an advertisement, or a tender process that promises to follow particular steps, can be treated differently. What matters is the substance and context.
 
+```figure
+type: steps
+title: From information to commitment
+caption: Labels do not decide the stage; substance and context do.
+- Information | facts, products, indicative prices
+- Invitation | to make an offer or talk
+- Negotiation | further agreement expected
+- Offer | prepared to be bound if accepted
+- *Acceptance | a contract, if the other elements are present
+```
+
 Separately from contract law, the Australian Consumer Law prohibits misleading conduct and practices such as advertising goods at a price when the business does not intend to supply reasonable quantities at that price. So "it was only an invitation" is not a complete answer to how prices are advertised.
 
 ## A simple test before sending
@@ -42,6 +53,15 @@ Before sending a significant commercial message, ask four questions:
 4. **What would happen if the other party immediately replied "accepted"?**
 
 The last question is a useful practical check. If an immediate acceptance would surprise the sender, the message is not clear enough.
+
+```figure
+type: decision
+title: The "accepted" test before sending
+question: If the other party replied "accepted" right now, would that surprise us?
+caption: Check intention, wording and authority before any significant commercial message goes out.
+- No | The message says what we mean | send it
+- *Yes | The message is not clear enough | reword it, or check authority first
+```
 
 ## Everyday phrases that sound like commitments
 
@@ -94,6 +114,18 @@ This creates two different expectations:
 
 For suppliers, distinguish forecast volume from committed volume, and be careful about investing on the strength of a forecast. For buyers, be clear about what is and is not committed, and recognise that suppliers will price the uncertainty or limit how much capacity they hold. Flexibility has value, but someone pays for unused capacity. Options such as minimum commitments, reservation fees or tiered pricing can share that cost more deliberately. The [standing offers and schedule-of-rates agreements](/reados/collections/procurement-and-tendering/standing-offers-for-repeat-work/) article covers how these arrangements work in practice.
 
+```figure
+type: balance
+title: What a panel appointment does and does not give
+left: What the supplier won
+right: What it did not win
+tilt: right
+caption: Minimum commitments, reservation fees or tiered pricing can share the cost of unused capacity more deliberately.
+- The right to receive future work | Any particular volume
+- Agreed terms for each order | Exclusivity
+- A forecast or estimate | A pipeline it can invest against
+```
+
 ## Authority matters
 
 Many unintended commitments come from people who sound authoritative but have no authority to commit. A project manager agrees to a variation, a salesperson promises a delivery date, or a senior person tells a supplier a contract will "definitely" be renewed while the business is still deciding. Whether such statements are legally binding is a separate question, but they create exposure and damage relationships either way.
@@ -105,6 +137,14 @@ Make authority clear inside the business: who can make offers, accept variations
 This is an illustration. A signage manufacturer with 18 staff is appointed to a national retailer's supplier panel under a master agreement. The agreement states there is no minimum volume and no exclusivity, and that each job will be ordered by a separate purchase order. In the tender, the retailer estimated that about 120 store refits a year might be required across the panel.
 
 The signage firm's sales manager treats the appointment as a win worth about 120 jobs a year, hires two additional staff at a combined cost of about $140,000 a year and buys $45,000 of material stock. In the first six months, the firm receives 14 purchase orders, well below the 60 it had planned for. The master agreement made no promise of volume, and the estimate in the tender was only an estimate.
+
+```figure
+type: bars
+title: Planned against actual purchase orders, first six months
+caption: The firm hired two staff at about $140,000 a year and bought $45,000 of stock on a tender estimate that promised no volume.
+- Purchase orders planned for | 60
+- *Purchase orders received | 14
+```
 
 During one rollout, the retailer's project manager asks for completion two weeks earlier than the purchase order requires. The firm's project manager replies by email: "No problem, consider it done." The firm then works weekends to meet the new date and afterwards asks for an acceleration fee. The retailer declines, pointing to the email. The firm's position is weak: it agreed to the change without asking for anything in return, and the request for payment came after the work was done.
 

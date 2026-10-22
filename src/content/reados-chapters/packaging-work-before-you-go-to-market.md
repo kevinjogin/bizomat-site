@@ -44,6 +44,20 @@ None of these is right or wrong in general. Each is a trade-off, and the right a
 
 Some of these are standard services with plenty of capable suppliers. Some are specialist. Some are closely tied to how your business works and what makes it good at what it does. Treating the whole bundle as one sourcing decision hides those differences.
 
+```figure
+type: tree
+title: One production line, seven capability blocks
+caption: Some blocks have plenty of capable suppliers; some are specialised; some are best kept close.
+- A new production line
+  - Process design | how the line should work for your products
+  - Equipment | filling machine, conveyors
+  - *Controls and software | make the machines work together
+  - Electrical and building works
+  - Installation and commissioning
+  - Operator training
+  - Maintenance and spares
+```
+
 Disaggregation asks two questions: **what capabilities are we actually buying**, and **how tightly do they depend on one another**? The answers lead to a map rather than a single make-or-buy decision.
 
 ### Assessing each block
@@ -65,6 +79,17 @@ The pattern that emerges usually suggests a sourcing model for each block:
 - **High importance and strong internal capability**: keep it, or at least keep control of it.
 - **High importance but the market is stronger**: buy it from a supplier you work closely with, as a longer relationship rather than a one-off transaction.
 - **Tightly linked blocks**: consider buying them together so one party is responsible for making them work as a whole.
+
+```figure
+type: decision
+title: A sourcing model for each block
+question: What does the assessment say about this block?
+caption: Assess importance, internal strength, market depth, integration, reversibility and management burden for each block.
+- Low importance, deep market | Buy it competitively | in whatever package gives the best value
+- High importance, strong in-house | Keep it | or keep control of it
+- High importance, market stronger | A close, longer relationship | not a one-off purchase
+- *Tightly linked to other blocks | Buy them together | one party makes them work as a whole
+```
 
 The [make or buy: choosing between in-house manufacturing and outsourcing](/reados/collections/manufacturing-operations-and-design-for-manufacture/make-or-buy-in-house-manufacturing-or-outsourcing/) article covers the in-house side of this decision in more depth.
 
@@ -107,6 +132,18 @@ It hurts when:
 - **Transaction costs multiply**: more quotes to assess, more contracts to manage, more invoices and more meetings.
 
 More suppliers do not automatically mean more competition or more resilience. They mean more choices for the buyer to make and more boundaries for someone to manage.
+
+```figure
+type: balance
+title: When bundling helps and when splitting helps
+left: Bundle when
+right: Split when
+caption: Bundling can shrink the field and hide subcontracting; splitting creates interfaces someone must manage.
+- Blocks are tightly linked | It widens the field to specialists
+- Volume earns a better price | Each block suits a different supplier
+- Few people to manage contracts | It reduces dependence on one supplier
+- One party must own the result | It keeps the buyer close to the work
+```
 
 ## Interfaces are the price of splitting
 
@@ -176,6 +213,19 @@ The owner's first instinct is a single turnkey package, where one contractor del
 | Who owns the line working as a whole | Turnkey contractor | The business | Machine supplier, for the line itself |
 
 The totals for options 2 and 3 are close, but option 2's coordination and contingency estimates are the least reliable, because the business has never managed five interacting contracts and has no engineer to do it. In option 3, the machine supplier is responsible for the line working as a whole, with a performance test at commissioning, while the electrical and building works, which are routine and well understood, go to local contractors who will also be available for future maintenance.
+
+```figure
+type: range
+title: Quoted price against estimated total for the packing hall
+min: 1100000
+max: 1400000
+unit: $
+ticks: $1.1m | $1.2m | $1.3m | $1.4m
+caption: The band is coordination effort plus interface contingency; option 2's estimates were the least reliable, with no engineer to manage five contracts.
+- Option 1: turnkey | 1310000 | 1345000 | +$35,000
+- Option 2: five packages | 1120000 | 1260000 | +$140,000
+- *Option 3: hybrid | 1190000 | 1245000 | +$55,000; machine supplier owns the line
+```
 
 The owner chooses option 3, adds a requirement for documentation and operator training in the machine supplier's package and engages an independent electrical engineer for a few days to check that the electrical scope matches the machine's requirements. The interface between the machine supplier and the electrical contractor is written down as a short list of responsibilities and dates. The figures are estimates, and the main benefit of the exercise is not the saving against the turnkey quote. It is that the owner knows exactly which interfaces the business owns and who will manage each one.
 

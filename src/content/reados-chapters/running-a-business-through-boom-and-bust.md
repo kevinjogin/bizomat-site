@@ -48,6 +48,19 @@ When demand rises, there are two broad ways to meet it: add fixed capacity (perm
 
 During a boom, leaning towards flexible capacity costs a little margin in good times and can save the business in bad times.
 
+```figure
+type: balance
+title: Fixed or flexible capacity in a boom
+left: Fixed capacity
+right: Flexible capacity
+tilt: right
+caption: Flexible capacity costs a little margin in good times and can save the business in bad times.
+- Permanent staff | Contractors and overtime
+- Long leases | Short leases
+- Owned equipment | Rented equipment
+- Lower unit cost at full volume | Costs fall when demand falls
+```
+
 ### Be careful with boom-time prices for assets
 
 Premises, equipment and businesses are often most expensive at the height of a boom. Paying those prices locks in a high cost base and, if the purchase is financed with debt, exposes the business to falling asset values. Leasing rather than buying, or waiting, can be the better choice. The valuation thinking in [Rising prices or a bubble?](/reados/collections/booms-bubbles-and-business-cycles/rising-prices-or-a-bubble-valuation/) applies to business assets as much as to shares.
@@ -86,6 +99,17 @@ Nobody can time the end of a boom precisely, but some signals suggest that condi
 - prominent failures among overextended businesses
 
 When several of these appear together, it is time to shift from growth mode to protection mode.
+
+```figure
+type: timeline
+title: Priorities through the cycle
+caption: Shift from growth mode to protection mode when several turning signals appear together.
+- Boom | Separate trend from boom demand | flexible capacity, reserves, careful credit
+- Turning point | Watch the signals | rates, lenders, slow payers, new capacity
+- Preparing | Stress-test and secure funding | before it is needed
+- Downturn | Protect cash and core customers | act early on costs; avoid panic pricing
+- *Recovery | Act on opportunities | assets, people and customers others release
+```
 
 ## Preparing for the downturn
 
@@ -164,6 +188,18 @@ The first expands aggressively. It buys a large warehouse with a substantial mor
 The second grows more cautiously. It leases a modest warehouse on a short term, uses subcontractors for peak work, keeps a cash reserve equal to three months of costs, and spreads its work across residential, commercial and maintenance customers.
 
 When the boom ends, construction activity falls sharply. One of the first business's largest customers fails, owing a large sum. Its mortgage and vehicle repayments continue while revenue falls. It is forced to lay off staff and sell assets at depressed prices.
+
+```figure
+type: compare
+title: Two electrical contractors through one boom and bust
+cols: Aggressive expansion | Cautious growth
+best: 2
+caption: The second business bought assets from a failed competitor at a fraction of their cost and came out stronger.
+- Premises | Bought large warehouse on a big mortgage | Leased modest warehouse, short term
+- Capacity | 20 permanent hires, financed fleet | Subcontractors for peaks
+- Customers | A few very large, long terms | Residential, commercial, maintenance
+- In the bust | Lost a major debtor; sold assets cheaply | Drew on reserve; bought cheaply; hired
+```
 
 The second business sees revenue fall too, but reduces subcontracted work, draws on its reserve and focuses on maintenance customers. A year into the downturn, it buys vehicles and equipment from a failed competitor at a fraction of their original cost and hires several experienced electricians. When construction recovers, it is the stronger of the two.
 

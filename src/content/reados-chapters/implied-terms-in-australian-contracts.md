@@ -26,6 +26,18 @@ It does this in two broad ways. First, it interprets the express words, reading 
 
 That high threshold is the first practical lesson. If something matters to your business, write it down. Implied terms are a safety net, not a substitute for clear drafting.
 
+```figure
+type: balance
+title: A safety net, not a substitute
+left: Write it down
+right: Hope a term is implied
+tilt: left
+caption: Courts will not imply a term merely because it would be reasonable or would leave the parties better off.
+- Settles the point at the outset | Arises only once there is a dispute
+- Says what the parties meant | Must clear a deliberately high threshold
+- Applied as agreed | Argued over facts and reasonableness
+```
+
 ## The four main sources of implied terms
 
 Implied terms come from four broad sources. They operate differently and are tested differently, so it helps to keep them apart.
@@ -50,6 +62,17 @@ In Australia the leading statement of the conditions comes from a 1977 Privy Cou
 5. not contradict any express term of the contract.
 
 All five conditions must be satisfied, and in practice the second and third do most of the work. **Business efficacy** means the contract would not work commercially without the term, not merely that it would work better. The **officious bystander** idea captures the third condition: if someone had asked the parties at signing whether the term was part of their deal, both would have replied impatiently, "of course".
+
+```figure
+type: checklist
+title: The five conditions for a term implied in fact
+caption: All five must be met; in practice "necessary" and "obvious" do most of the work.
+- Reasonable and equitable
+- *Necessary for business efficacy | no term if the contract works without it
+- *So obvious it goes without saying
+- Capable of clear expression
+- Consistent with the express terms
+```
 
 Two features of these tests deserve emphasis.
 
@@ -101,6 +124,16 @@ Many contracts contain an **entire agreement clause**, stating that the document
 
 They do not automatically exclude implied terms. Whether they do depends on their wording and the circumstances, and courts tend to read them narrowly. They cannot exclude consumer guarantees under the ACL, and they do not stop a claim that pre-contract statements were misleading or deceptive under the ACL. If the intention is to exclude terms that would otherwise be implied, the contract needs to say so clearly, and even then statute may override it.
 
+```figure
+type: checklist
+title: What an entire agreement clause does and does not do
+caption: Courts tend to read these clauses narrowly; excluding implied terms needs clear words, and statute may still override them.
+- Reduces arguments about negotiation statements | that they formed part of the deal
+- x Automatically exclude implied terms | depends on wording and circumstances
+- x Exclude consumer guarantees under the ACL
+- x Stop claims of misleading or deceptive conduct
+```
+
 ## Gaps that commonly lead to arguments about implication
 
 Most implied-term disputes arise from a small number of predictable gaps. Closing them in the drafting is far cheaper than arguing about them later.
@@ -123,6 +156,18 @@ A small fabrication business agrees by email to supply and install steel balustr
 How might implication apply? The contract is informal, so a court would look at whether an obligation was necessary for the contract's reasonable or effective operation. Installation was impossible without access, which points towards an implied duty to cooperate by providing access within a reasonable time. Whether that duty was breached depends on what was reasonable in the circumstances, including what the fabricator knew about the program when it agreed to "late March". Even if a breach is established, the fabricator must still prove its loss and show it took reasonable steps to reduce it.
 
 The fabricator may well have a claim, but it now depends on contested facts, a judgement about reasonableness and the cost of pursuing a modest sum. Compare that with one sentence in the original quotation: "Price assumes clear and continuous access to completed slab edges from 20 March; standing time and remobilisation will be charged at the rates below if access is not available." The second approach costs nothing and turns an argument about implication into a straightforward application of agreed terms.
+
+```figure
+type: compare
+title: The balustrade access dispute, two ways
+cols: Relying on implication | One sentence in the quote
+best: 2
+caption: A $48,000 job, three weeks without access and a $9,500 claim for idle labour and remobilisation.
+- The obligation | An implied duty to cooperate, if a court finds it | Clear and continuous access from 20 March
+- What decides it | Contested facts and reasonableness | The agreed terms
+- Standing time | Loss must be proved and mitigated | Charged at the stated rates
+- Cost | Pursuing a modest sum through a dispute | Nothing extra
+```
 
 ## How this applies to a small Australian business
 

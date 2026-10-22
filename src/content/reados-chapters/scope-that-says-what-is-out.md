@@ -41,6 +41,16 @@ Ask them a simple question: **what do you currently believe this work is going t
 
 Every exclusion also needs a **destination**: is the item being done by someone else, scheduled for later, or not happening at all? "Not in this job" is half an answer, and a list that does not say which of the three applies will be read as the most optimistic.
 
+```figure
+type: decision
+title: Sorting what people expect the work to do
+question: What do you currently believe this work is going to do?
+caption: An undecided item behaves exactly like an unstated one until someone owns it.
+- In scope, poorly described | Fix the wording
+- Out of scope | Write it in their words | with a destination
+- *Not yet decided | Give it an owner and a date
+```
+
 Then publish the exclusions in the same document as the scope, at the same time, and record who was told. An exclusion that nobody outside the project has read is not an exclusion; it is a defence prepared in advance, and it will be recognised as one.
 
 Where work is subtractive, such as closing sites, clearing a building or removing a product range, state the **residue**: "everything goes except these three items". A finite list of what remains is far easier to check than an open-ended description of what goes.
@@ -59,6 +69,16 @@ When writing requirements for suppliers to quote against, classify them:
 - **information only**: context, not a requirement.
 
 "High-quality support" is not a requirement anyone can price or later enforce. "Responses to priority-one issues within two business hours, 8 am to 6 pm on business days" is.
+
+```figure
+type: layers
+title: Classify requirements before suppliers quote
+caption: "High-quality support" cannot be priced or enforced; "priority-one responses within two business hours" can.
+- *Mandatory | must be met
+- Evaluated | compared between quotes
+- Optional | welcome, not required
+- Information only | context, not a requirement
+```
 
 ## Interfaces deserve more attention than their length suggests
 
@@ -93,6 +113,18 @@ Good acceptance criteria:
 
 Avoid undefined words like "user-friendly" or "satisfactory" unless you also say who judges and how. Where uncertainty is high, stage acceptance: factory tests, site tests, user trials and a period of stable operation each give stronger evidence. The [after the signature](/reados/collections/commercial-law-and-contracts/after-the-signature/) article covers making sure the people who can reject work also review it along the way.
 
+```figure
+type: checklist
+title: Acceptance criteria that work
+caption: Acceptance asks whether this output was delivered as agreed; success asks whether it achieved its purpose.
+- Protect something that matters
+- Clear enough for two people to agree
+- Realistic conditions | real materials and users
+- End-to-end operation | not just components
+- Named evidence, checker and acceptor
+- *Rules for marginal results | and what carries into operation
+```
+
 ## Scope is an investment boundary
 
 At the level of the owner or sponsor, scope is not a list of features. It is a decision about what change the business is willing to fund and own. A useful scope answers five questions:
@@ -121,6 +153,17 @@ Before finalising, the firm's project lead asks the practice manager, the recept
 The firm sorts them. Cabling is **out**, to be done by the building's electrician, already booked by the landlord for 3 June. The internet connection is **out**, to be ordered by the practice from its provider by 1 May. Phone handsets are **in**, poorly described, and are added explicitly. The cameras are **not decided**: the practice manager will decide by 15 May whether to move them, and the firm provides a quote.
 
 The firm then writes acceptance criteria with the practice manager: every workstation logs in and accesses client files; printing works from every desk; incoming calls reach reception and transfer correctly; internet speed meets an agreed minimum; and the systems run for two business days without significant issues. The scope, exclusions with their destinations and acceptance criteria go out in one document, and the firm records that the practice manager and both partners received it.
+
+```figure
+type: compare
+title: Four expectations nobody had written down
+cols: Status | Where it goes
+caption: Asking the people affected what they believed the move included surfaced each one before the weekend.
+- Data cabling | Out | The building's electrician, booked for 3 June
+- Internet connection | Out | Ordered by the practice by 1 May
+- Phone handsets | In, poorly described | Added explicitly
+- Security cameras | Not decided | The practice manager decides by 15 May; quote provided
+```
 
 The move takes place over a weekend. On Monday, the only issue raised is a printer on the second floor, which is fixed the same day. Nobody asks about cabling or cameras. When the practice later asks the firm to quote for its next office fit-out, it asks for the same format.
 

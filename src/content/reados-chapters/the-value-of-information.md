@@ -80,6 +80,17 @@ Next, using Bayes' rule (explained in [Thinking in probabilities](/reados/collec
 
 Now the best decision after each result:
 
+```figure
+type: tree
+title: How the trial result changes the decision
+caption: The test has value only because a "weak" result switches the decision from launch to no launch.
+- Run the $15,000 trial
+  - Says "strong", 50% | strong demand now 80% likely
+    - *Launch: expected profit $140,000
+  - Says "weak", 50% | strong demand now 20% likely
+    - Do not launch: $0 instead of −$40,000
+```
+
 | Test result | Expected profit if launch | Best action | Value |
 | --- | --- | --- | --- |
 | "Strong" | 0.8 × $200,000 − 0.2 × $100,000 = $140,000 | Launch | $140,000 |
@@ -88,6 +99,16 @@ Now the best decision after each result:
 Expected profit with the test = 0.5 × $140,000 + 0.5 × $0 = $70,000.
 
 The **value of the test** is $70,000 − $50,000 = **$20,000**.
+
+```figure
+type: bars
+title: The launch decision with and without information
+unit: $ expected profit
+caption: A perfect test could add at most $50,000. The real trial adds $20,000 for a $15,000 cost: worth running, but not at $25,000.
+- Decide now: launch | 50000
+- With the imperfect trial | 70000 | value of the test $20,000
+- With perfect information | 100000 | ceiling on any test: $50,000
+```
 
 Since the trial costs $15,000, it is worth running, with a net gain of $5,000 in expected terms. If it cost $25,000, it would not be worth it, even though it is informative.
 

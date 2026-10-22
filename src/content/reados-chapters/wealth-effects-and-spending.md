@@ -78,6 +78,20 @@ In the first year, spending jumps by about 6.7% even though income has not chang
 
 The level of spending is permanently higher, but the boost to *growth* happened only once.
 
+```figure
+type: line
+title: Spending when the savings rate falls once
+x: Year
+y: Spending ($'000)
+legend: Savings rate falls from 10% to 4% | Spending funded by one-off borrowing
+ymin: 85
+ymax: 100
+caption: A lower savings rate lifts spending growth once; borrowed spending reverses the next year unless repeated.
+- Before | 90 | 90
+- Year 1 | 96 | 96
+- Year 2 | 96 | 90
+```
+
 ### When borrowing or asset sales fund the spending
 
 The effect is even more volatile if the extra spending is funded by borrowing or by selling assets, rather than by changing the regular savings rate.
@@ -104,6 +118,16 @@ Wealth effects work in both directions. When asset prices fall, people feel poor
 - **being unable to borrow,** because their home equity has shrunk
 
 These responses reduce spending just as the economy is already weakening after a bust. Businesses that benefited from boom-time spending can see demand fall sharply. The reversal is often faster than the original rise, because fear tends to act more quickly than optimism.
+
+```figure
+type: checklist
+title: When wealth effects reverse
+caption: These responses cut spending just as the economy is already weakening after a bust.
+- x Saving more | to rebuild wealth
+- x Paying down debt | especially after borrowing against assets
+- x Delaying large purchases | cars, renovations, holidays
+- x Unable to borrow | home equity has shrunk
+```
 
 ## What wealth effects mean for businesses
 

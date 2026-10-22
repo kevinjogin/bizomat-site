@@ -33,6 +33,17 @@ The difference from a bond is the crucial part. In a business with a durable com
 
 Nothing about your original price changes. The business simply earns more on it every year.
 
+```figure
+type: compare
+title: An ordinary bond and an equity bond
+cols: Ordinary bond | Equity bond
+caption: The price paid sets the starting yield; in a durable business the coupon then grows.
+- The coupon | Fixed interest | Earnings per share
+- Starting yield | Coupon ÷ price, e.g. $7 on $100 = 7% | Earnings ÷ price, e.g. $2 on $20 = 10%
+- Over time | Unchanged | Rises with earnings growth
+- Inflation | Erodes a fixed coupon | Pricing power can lift the coupon
+```
+
 ### Yield on cost
 
 The yield on your original purchase price is sometimes called **yield on cost**. It is a useful way to see what a long holding period does. Here is an illustration for a business whose earnings per share grow at 8% a year.
@@ -45,6 +56,22 @@ The yield on your original purchase price is sometimes called **yield on cost**.
 | 20 | about 366% | about 46.6% |
 
 After twenty years, the business earns nearly half the original purchase price every year. A bond bought at the same time would still be paying its original coupon.
+
+```figure
+type: line
+title: Yield on cost with earnings growing 8% a year
+x: Years held
+y: Yield on original price (%)
+legend: Bought at a 10% earnings yield | Bought at a 5% earnings yield
+ymin: 0
+ymax: 50
+caption: Same business, same growth: the investor who paid half the price earns double the yield on cost for as long as they hold it.
+- 0 | 10.0 | 5.0
+- 5 | 14.7 | 7.3
+- 10 | 21.6 | 10.8
+- 15 | 31.7 | 15.9
+- 20 | 46.6 | 23.3
+```
 
 ## Why this suits durable businesses in particular
 
@@ -96,6 +123,15 @@ An illustration: a business earns $2.00 per share and has grown earnings at arou
 | $45 | about 3.7% |
 
 The same business, with the same future, produces very different returns depending on today's price. Dividends received along the way would add to both figures.
+
+```figure
+type: bars
+title: Implied annual return over ten years by price paid
+unit: % a year
+caption: Earnings of $2.00 growing 8% a year to about $4.32, valued at 15 times, implies about $65 in ten years. Dividends excluded.
+- *Pay $30 today | 8
+- Pay $45 today | 3.7
+```
 
 ## The price still matters enormously
 

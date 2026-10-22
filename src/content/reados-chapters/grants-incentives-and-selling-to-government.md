@@ -28,6 +28,16 @@ The first rule is to plan the business so it works without the support. Build yo
 
 A grant that requires you to spend first and claim later can make your cash position worse in the short term, even though it improves the overall economics. Model the timing, not just the amount.
 
+```figure
+type: tree
+title: Why support is a bonus, not a foundation
+caption: Plan the business so it works without the support, then treat any support as upside.
+- Public support
+  - The program changes | closes, changes or turns you down
+  - *The money arrives late | milestones, reimbursement, tax time
+  - Conditions bite | co-contributions, reporting, use restrictions
+```
+
 ## The main kinds of support
 
 | Type | What it is | Where to start |
@@ -53,6 +63,17 @@ Each program has its own tests, and they apply to both the business and the acti
 
 Be cautious of advisers who promise outcomes or charge mainly a share of whatever you receive. Good advice is valuable, especially for the R&D Tax Incentive, but responsibility for the claim stays with your business.
 
+```figure
+type: checklist
+title: Checking eligibility honestly
+caption: Reshaping ordinary work to fit a program's language invites trouble later.
+- ? Is the business eligible? | structure, size, turnover, location, industry
+- ? Is the activity eligible as it actually is?
+- ? What must we contribute? | cash, time, matching funds
+- ? What are the obligations afterwards?
+- ? When will the money actually arrive?
+```
+
 ## Keep the evidence as you go
 
 Claims for research and development, and grant acquittals, rest on records. The strongest records are made at the time the work is done:
@@ -64,6 +85,17 @@ Claims for research and development, and grant acquittals, rest on records. The 
 - **What it cost**, linked to the activity.
 
 A short, dated log kept weekly is far more convincing than a narrative written after year-end from invoices. The [what your projects know that your plan does not](/reados/collections/from-approval-to-benefits/what-your-projects-know-that-your-plan-doesnt/) article covers keeping a record of what each initiative is testing, which serves the same purpose.
+
+```figure
+type: steps
+title: A weekly R&D log
+caption: Records kept as the work happens are far more convincing than a narrative written afterwards.
+- The question | and why it could not be known in advance
+- What was tried | experiments, prototypes, trials
+- What was observed | and concluded
+- Who and how long
+- *What it cost | linked to the activity
+```
 
 ## Keep a simple support register
 
@@ -89,6 +121,18 @@ Practical steps:
 
 Government buyers must be able to justify their choice to auditors and the public, so they look for evidence that you will deliver with low risk: relevant experience, references, adequate insurance, financial capacity and sound quality and safety practices. A response that makes the buyer's job of justifying the decision easier is usually stronger than one that simply offers the lowest price.
 
+```figure
+type: steps
+title: Getting started in government work
+caption: Government buyers must justify their choice to auditors and the public, so evidence wins.
+- Find where opportunities appear | AusTender, state and council portals
+- Start where you can win | small quotes, panels
+- Consider subcontracting | to prime contractors
+- Prepare the basics | capability statement, references, insurance
+- Answer each criterion | with evidence
+- *Ask for a debrief | win or lose
+```
+
 Government customers are often reliable payers, but a contract is still a commitment with obligations and risks. Price it properly, and do not let one large government customer become a dependency you cannot replace.
 
 ## Do not chase support at the expense of the business
@@ -108,6 +152,16 @@ Next, the owner looks at three forms of support:
 - **Government customers.** A state agency and two regional councils buy water monitoring equipment. The owner registers on the state procurement portal and AusTender, prepares a capability statement, checks insurance levels, and responds first to a small request for quotes from a council. The business also contacts a larger firm that holds a panel contract, offering to supply sensors as a subcontractor.
 
 A year later, the council contract is complete and has led to a second order, the subcontracting arrangement has produced a steady trickle of work, and the R&D claim is supported by a year of contemporaneous records.
+
+```figure
+type: compare
+title: The sensor maker's three decisions about support
+cols: Decision | Why
+caption: The 24-month forecast stayed positive without any support, with its low point in month seven.
+- R&D Tax Incentive | Claim it, with a weekly log | Counted only after the tax return, as upside
+- State grant | Wait for the next round | Equal co-contribution and reimbursement would deepen the month-seven low
+- Government customers | A small council quote first, and subcontract to a panel holder | Start where it can win
+```
 
 ## How this applies to a small Australian business
 

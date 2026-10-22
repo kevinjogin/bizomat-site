@@ -28,6 +28,16 @@ It helps to separate the scenarios, because different rules apply to each.
 | A contract exists, but work was done outside its scope | Was the extra work requested or accepted, and does the contract's variation clause govern it? | The variation clause first; a reasonable sum may be possible if it does not apply |
 | There is no enforceable contract | Was the work requested or accepted on the basis it would be paid for? | A claim for a reasonable sum, subject to statute and the circumstances |
 
+```figure
+type: decision
+title: Which route to payment?
+question: What agreement covers the work that was done?
+caption: Different rules apply to each situation, so separate them before arguing about the amount.
+- A contract that ended early | Its payment terms first | plus damages if the other party was in breach
+- *Work outside the contract's scope | The variation clause first | a reasonable sum only if it does not apply
+- No enforceable contract | A claim for a reasonable sum | subject to statute and the circumstances
+```
+
 ## Entire and divisible obligations
 
 The first question when a job ends early is how the contract structures payment.
@@ -58,6 +68,16 @@ In general terms, a quantum meruit claim may be available where:
 - there is no valid and applicable contract that governs payment for that work.
 
 The last point is critical. Quantum meruit generally cannot be used to escape the terms of a valid contract that covers the work. If the contract sets a price, that price governs, even if the work turned out to be worth more. Quantum meruit fills gaps where the contract does not apply or no enforceable contract exists. It is not a way to reprice a bad bargain.
+
+```figure
+type: checklist
+title: When a quantum meruit claim may be available
+caption: It generally cannot be used to escape the price or payment terms of a contract that governs the work.
+- Work was done | or services provided
+- The other party requested it | or freely accepted it
+- It was not meant to be free
+- x A valid contract governs payment for it
+```
 
 ## When the contract still governs
 
@@ -103,6 +123,17 @@ The details differ by jurisdiction, but the schemes share some features:
 
 These schemes are powerful but unforgiving. Missing a deadline or using the wrong form can lose a claim or a defence. If your business does construction work, learn the requirements in each state where you operate, or get advice before you rely on them. State regulators and building commissions publish guidance.
 
+```figure
+type: steps
+title: How security of payment schemes work
+caption: Details differ by state and territory; missing a deadline or using the wrong form can lose the benefit.
+- Payment claim | at defined times
+- Payment schedule | strict form and timing
+- *No response in time | consequences can be serious
+- Adjudication | rapid and independent
+- Enforcement | quick, final rights decided later
+```
+
 ## Valuing the work
 
 Whatever the legal route, a claim for payment eventually becomes a question of evidence. What work was done? When? At whose request? What did it cost, and what is it reasonably worth?
@@ -129,6 +160,16 @@ A small electrical contractor agrees in writing to rewire a commercial tenancy f
 After rough-in is complete and invoiced, the tenant's business fails and the project stops. The tenant has paid nothing. The contractor has also completed about half of the fit-off work, worth roughly $12,000 at contract rates.
 
 How might the contractor's position look? The rough-in milestone was reached, so the $20,000 is a debt under the contract. The partly completed fit-off stage had not yet earned its milestone payment; whether the contractor can recover anything for it depends on why the contract ended. If the tenant repudiated the contract and the contractor terminated, the contractor may claim damages, or possibly a reasonable sum for the unfinished stage, limited in practice by the contract price. The server-room circuits are harder. The contract's variation clause required a written direction. The contractor might argue the work was requested and accepted, but its failure to follow the procedure weakens the claim, and it must prove the verbal request.
+
+```figure
+type: bars
+title: The rewiring job when the tenant failed
+unit: $
+caption: A $62,000 lump sum in three milestones, and nothing paid. Milestones protected the first $20,000; a one-line email would have protected the $4,800.
+- *Rough-in milestone reached: a contract debt | 20000
+- Half the fit-off done: milestone not yet earned | 12000 | depends on why the contract ended
+- Server-room circuits, no written variation | 4800 | requested verbally
+```
 
 Because the tenant is in financial trouble, the legal entitlement may matter less than speed. Security of payment legislation may allow the contractor to pursue the rough-in amount quickly, if it complies with the statutory requirements. The broader lessons are familiar. Milestone payments protected the first $20,000. A written variation, even a one-line email confirmation, would have protected the $4,800. Shorter payment intervals would have reduced the exposure on fit-off.
 

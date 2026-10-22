@@ -39,6 +39,17 @@ The usual way of describing dependencies, such as finish-to-start or start-to-st
 
 Only the first two are properties of the work. The third is a property of how the business allocates its people and equipment. The fourth is nobody's decision in particular, and it looks identical to the other three inside a schedule.
 
+```figure
+type: decision
+title: What enforces this link?
+question: Why can this task not start until the other is done?
+caption: Only physical and contractual links are properties of the work; the others are choices.
+- Physical | Keep it | the properties of the work
+- Contractual or regulatory | Start the process earlier
+- Resource | Break it with money | a second crew or machine
+- *Convention | Examine it | it may just be habit
+```
+
 ## Compression is often correction
 
 Schedule compression is usually taught as a set of techniques: add resources, run tasks in parallel, work extra shifts. In practice, one of the largest sources of time is discovering that a dependency was never real. Nothing was sped up. The model was corrected.
@@ -54,6 +65,15 @@ A helpful shift is to treat the schedule as a register of claims, each with an o
 - **What happens if it is wrong?**
 
 The third question matters most. A physical dependency that is wrong can produce a safety incident. A convention that is wrong produces a slightly longer job. Those errors have nothing in common, and a schedule that does not distinguish them treats them the same.
+
+```figure
+type: checklist
+title: Treat each dependency as a claim
+caption: A wrong physical dependency can cause a failure; a wrong convention only costs time, quietly.
+- ? Who asserted it?
+- ? What enforces it?
+- ? What happens if it is wrong?
+```
 
 ## Estimates are claims too
 
@@ -72,6 +92,17 @@ Apply these before a schedule is fixed, and again at any major replan:
 3. **Record who asserted it and when.** This turns a dependency into a decision by a named person rather than a property of a diagram.
 4. **Price the resource dependencies.** For each, estimate what it would cost to break, such as a second crew, a second machine or extra equipment hire, and how many days that would save. These are options the business can choose to buy.
 5. **Re-test on a fixed date, not on a bad day.** Schedule the review in advance, such as at the end of planning or at a project gate. A challenge made on a planned date is analysis. The same challenge made in the week a deadline becomes unavoidable is something else.
+
+```figure
+type: steps
+title: Five steps to test a schedule's logic
+caption: Record dependencies that survive a challenge as tested, with the date.
+- Extract the longest path | usually 8 to 20 links
+- Name what enforces each link
+- Record who asserted it
+- Price resource links | cost to break each one
+- *Re-test on a fixed date
+```
 
 Record dependencies that survive a challenge as tested, with the date. Otherwise the same link is re-argued on every job by people who do not know it was already examined.
 
@@ -103,6 +134,17 @@ Of the twelve links on the longest path, six are examined closely:
 - **Shopfront glazing after the landlord's signage approval**: contractual. Requesting approval three weeks earlier removes about four days of waiting.
 
 After these changes, the original longest path shortens by more than two weeks, and a different chain of tasks becomes the longest path, at about eight weeks. The contractor quotes eight weeks, including the cost of the second crew, and records the tested dependencies in a simple library so future quotes start from the corrected logic rather than the old habits.
+
+```figure
+type: bars
+title: Days found by questioning four links
+unit: days
+caption: Ten weeks became eight, including $6,500 for a second electrical crew; the tested links went into a library.
+- Joinery only after painting on its walls | 4 | convention
+- Electrical fit-off before joinery where possible | 2
+- *Second electrical crew for one week | 5 | about $6,500
+- Landlord signage approval sought earlier | 4 | contractual
+```
 
 ## How this applies to a small Australian business
 

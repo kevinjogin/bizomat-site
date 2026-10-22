@@ -48,6 +48,15 @@ The useful question is therefore not how to stop waiting. It is what the busines
 
 Decision time has two distinct parts:
 
+```figure
+type: timeline
+title: Where 24 days went on the tooling decision
+caption: Preparation lag sits with the proposer; deliberation lag sits with the decider. Keep them separate.
+- 3 March | Answerable | all the information needed existed
+- 10 March | Submitted | seven days of preparation lag
+- *27 March | Decided | seventeen days of deliberation lag, waiting for the monthly meeting
+```
+
 - **Preparation lag**: from the date a question became answerable, meaning all the information needed existed, to the date it reached the person who can decide. This belongs to whoever prepares the decision.
 - **Deliberation lag**: from the date the decider received it to the date they decided. This belongs to the decider and the decision process.
 
@@ -56,6 +65,16 @@ Keep them separate. Combining them hides who can shorten the wait.
 ## A decision log with a price
 
 A simple tool closes the gap: a **decision log** listing every decision that work is waiting on, with a daily cost. It can be a spreadsheet:
+
+```figure
+type: checklist
+title: What a priced decision log records
+caption: If no single decider can be named, that is the first finding.
+- Decision | the question, stated clearly
+- Decider | one named person who could decide today
+- Answerable, submitted and decided dates | to separate preparation from deliberation
+- Daily cost | what the business forgoes for each day it waits
+```
 
 | Field | What to record |
 |---|---|
@@ -120,6 +139,16 @@ This is an illustration. A small manufacturer starts a decision log after notici
 **Packaging supplier.** A decision to switch to a cheaper packaging supplier was deferred twice without a review date. For 45 days the business continued paying about $150 a day more than necessary, about $6,750.
 
 Together, about $35,550 of waiting cost in one quarter, none of it visible in the accounts as such.
+
+```figure
+type: stack
+title: One quarter's waiting cost from three decisions
+unit: $
+caption: About $35,550 in one quarter, none of it visible in the accounts as such.
+- Tooling set: 24 days at $900 | 21600
+- Specification change: 12 days at $600 | 7200
+- Packaging supplier: 45 days at $150 | 6750
+```
 
 The owner makes four changes. The production manager's approval limit rises to $30,000 for budgeted tooling and maintenance purchases. A twenty-minute weekly decision slot replaces waiting for the monthly meeting. Every deferral must carry a review date. The owner and the accountant review the decision log monthly. Over the next quarter, average time from answerable to decided falls from about three weeks to about five days.
 

@@ -40,6 +40,21 @@ Now suppose the asset earns only 4%. The owner earns $40,000 minus $40,000 inter
 
 Debt makes good outcomes better and bad outcomes worse. A business with steady, predictable earnings can use it safely. A business whose earnings swing widely, as most businesses without an advantage do, finds that debt turns bad years into dangerous ones.
 
+```figure
+type: line
+title: Debt amplifies the asset's return for the owner
+x: Asset return (%)
+y: Owner's return on $500,000 (%)
+ymin: -6
+ymax: 24
+mark: 8 | break-even with the 8% loan
+caption: Half-debt at 8%: above an 8% asset return the owner gains extra; below it, the lender is still paid in full and the owner absorbs the shortfall.
+- 2 | -4
+- 4 | 0
+- 8 | 8
+- 15 | 22
+```
+
 ## Interest as a share of operating profit
 
 The first place to look is the income statement. Compare **interest expense** with **operating profit** (earnings before interest and tax).
@@ -81,6 +96,16 @@ Here are two illustrative businesses, each with operating profit of $10 million.
 
 Business A could clear its long-term debt in a little over two years of earnings. Its interest bill barely dents its profit. Business B pays nearly half its operating profit to lenders and would need more than two decades of earnings to repay its debt. If its operating profit fell by half in a bad year, it would struggle to pay interest at all.
 
+```figure
+type: bars
+title: Years of net earnings needed to repay long-term debt
+unit: years
+caption: The book's favoured businesses could repay within about three or four years of earnings; Business A could in about 2.3, Business B would need about 23.
+- *Business A, $15m debt | 2.3 | interest 8% of operating profit
+- Business B, $90m debt | 23 | interest 45% of operating profit
+- Book's rough guide | 4 | three or four years
+```
+
 On the surface both businesses are profitable. Underneath, one stands on its own and the other depends on its lenders' continued goodwill.
 
 ## The particular danger of short-term borrowing
@@ -103,6 +128,16 @@ Not all commitments are labelled "debt". When reading a balance sheet, it is wor
 - **Provisions:** amounts set aside for obligations such as warranties, restoration or employee entitlements.
 
 None of these is necessarily a problem, but together they show the full extent of what the business owes.
+
+```figure
+type: checklist
+title: Obligations that are not always labelled "debt"
+caption: Together they show the full extent of what the business owes; read the notes, not just the borrowings line.
+- ? Lease liabilities | mostly on the balance sheet under current standards
+- ? Supplier finance arrangements | extended payment terms funded by a third party
+- ? Guarantees and contingent liabilities | promises to pay if something goes wrong
+- ? Provisions | warranties, restoration, employee entitlements
+```
 
 ## How lenders think
 

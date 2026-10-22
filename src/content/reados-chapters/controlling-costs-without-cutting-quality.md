@@ -35,6 +35,17 @@ Build a simple cost sheet for your main products or job types:
 
 Compare actual costs with the standard on real jobs periodically. Differences reveal where money is leaking, such as excess scrap, slow setups, rework or price rises not yet passed on.
 
+```figure
+type: tree
+title: A product cost sheet
+caption: Compare actual costs with the standard on real jobs periodically.
+- Cost of one product or job
+  - Materials | bill of materials × current prices, plus scrap allowance
+  - Direct labour | standard hours × fully loaded rate
+  - Machine time | hours × rate for depreciation, maintenance, power
+  - Outsourced processes | coating, heat treatment, machining
+```
+
 ## Look upstream: understand your suppliers' costs
 
 There is a useful saying: if you know your cost of goods sold, you can run a business, but if you know your supplier's cost of goods sold, you can change an industry.
@@ -113,6 +124,17 @@ Cost reduction has a dangerous shortcut: quietly reducing quality. Using cheaper
 
 There is a telling pattern. If a competitor can make a product for $100 and you can only make it for $110, cutting your price to $100 without changing your process means something has been compromised, usually quality. Genuine cost reduction comes from better processes, smarter sourcing, less waste and higher utilisation, not from giving the customer less.
 
+```figure
+type: checklist
+title: Genuine cost reduction, not hidden quality cuts
+caption: Matching a cheaper competitor's price without changing the process means something has been compromised.
+- Better processes | less waiting, searching and setup
+- Smarter sourcing | re-quote the top items by spend
+- Less waste | scrap, energy leaks, over-packaging
+- Higher utilisation | idle equipment still costs money
+- x Quietly reducing quality | the dangerous shortcut
+```
+
 ## Margin before expansion
 
 Growth magnifies whatever economics a business already has. If each sale makes a healthy gross margin, growth multiplies profit. If each sale makes little or no margin, growth multiplies losses and consumes cash. Expanding without an adequate gross margin is one of the fastest ways to destroy a business. Fix unit economics first, then grow.
@@ -129,6 +151,17 @@ The team reviews costs systematically over a quarter:
 - **Inventory.** A fast-, slow- and non-moving analysis identifies $80,000 of non-moving stock, much of it for discontinued products. Selling or scrapping it frees space and cash. Tighter reorder points cut slow-moving stock by a further $50,000.
 
 In total, annual costs fall by around $155,000 and $130,000 of cash is released, without reducing quality or headcount. Profit before tax rises from about 10% to nearly 14% of revenue. None of the changes was dramatic. Together they transformed the business's margin.
+
+```figure
+type: compare
+title: The fabrication business after one quarter of cost review
+cols: Before | After
+best: 2
+caption: About $155,000 a year saved and $130,000 of cash released, with no cut to quality or headcount.
+- Revenue | $4 million | $4 million
+- Materials, labour, overheads | 40%, 25%, 25% | lower through re-quoting, method and waste fixes
+- Profit before tax | about 10% | nearly 14%
+```
 
 ## Frequently asked questions
 

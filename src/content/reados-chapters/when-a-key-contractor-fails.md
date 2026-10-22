@@ -32,6 +32,18 @@ Common forms include:
 
 Each behaves differently. They differ in how quickly money can be accessed, what conditions apply, what they cost the contractor and how they affect the relationship.
 
+```figure
+type: tree
+title: Common forms of performance security
+caption: They differ in how quickly money can be reached, what must be shown and what they cost the contractor.
+- Performance security
+  - Retention | a share held back from each payment
+  - *Bank guarantee or undertaking | paid on request, up to a set amount
+  - Conditional bond | paid on showing breach or loss
+  - Parent company guarantee | the wider group stands behind it
+  - Advance payment security | protects a deposit
+```
+
 ## More security is not always less risk
 
 Security can reduce how much a failure costs. It does not improve the contractor's skill, planning, quality or supervision. And it has a cost that eventually comes back to the business:
@@ -71,6 +83,16 @@ Four continuity questions help:
 3. **Can we keep the supply?** Will key subcontractors and suppliers continue under a new arrangement?
 4. **Can we fund the transition?** Security, retention, amounts not yet paid and your own contingency all affect how quickly you can respond.
 
+```figure
+type: checklist
+title: Four continuity questions
+caption: Default rights are only valuable if the business can actually finish the work.
+- ? Secure | the site, the work and the materials
+- ? Knowledge | drawings, code, test results, records
+- ? Supply | key subcontractors and suppliers stay
+- ? Funding | security, unpaid amounts, contingency
+```
+
 Australian law also limits the use of some contract rights that are triggered only because a counterparty enters certain formal insolvency processes, so termination may not be available exactly as drafted. A lawyer can tell you what applies.
 
 ## Spot distress early
@@ -87,6 +109,18 @@ Contractor trouble often shows before formal default. Signals include:
 - unusual or aggressive claims.
 
 None of these proves a problem on its own. Together they justify closer monitoring, a direct conversation and quiet preparation of alternatives. Bring together what your accounts staff, site supervisors and purchasing people are seeing; distress often shows up in different places before anyone connects it.
+
+```figure
+type: checklist
+title: Signs a contractor may be in distress
+caption: Together they justify closer monitoring and quiet contingency planning.
+- ? Slow mobilisation | or repeated small delays
+- ? Requests to be paid earlier or more
+- ? Subcontractors complaining of late payment
+- ? Key staff leaving
+- ? Insurance lapsing | or security not renewed
+- ? Schedule, quality or claims suddenly worse
+```
 
 ## Design the exit before you need it
 
@@ -128,7 +162,26 @@ Partway through, the owner notices warning signs: the integrator asks to bring f
 
 Two months later the integrator stops trading. By then, approved claims total $240,000, of which $12,000 has been held as retention, so $228,000 has been paid. The filling machine is on site and owned by the food manufacturer. The latest code and drawings are on file.
 
+```figure
+type: timeline
+title: The packaging line when the integrator failed
+caption: Ownership of the machine, the code and a route to the programmer were agreed before signing.
+- Contract | Proportionate protections | deposit paid to the maker, milestones, 5% retention, code at each milestone
+- Partway | Warning signs | earlier payment asked, programmer paid late, project lead leaves
+- Quietly | A second integrator consulted | to understand what finishing would involve
+- *Two months later | Integrator stops trading | $228,000 paid; machine owned; latest code on file
+```
+
 The remaining contract value was $180,000. The second integrator, working with the original programmer, quotes $225,000 to finish: $45,000 more than the original price. Subject to the contract terms and legal advice, the $12,000 retention can be applied against that extra cost, leaving about $33,000 of additional cost and around ten weeks of delay.
+
+```figure
+type: formula
+title: The real cost of the failure
+formula: Extra cost = Cost to finish − Remaining contract value − Retention held
+caption: Subject to the contract and legal advice, plus around ten weeks of delay.
+step: $225,000 − $180,000 = $45,000 more than the original price
+step: $45,000 − $12,000 retention = about $33,000
+```
 
 That is a real loss. But without direct ownership of the filling machine, access to the code and a relationship with the programmer, the business could have faced a much longer delay, a dispute over the machine and the cost of rewriting the software from scratch.
 

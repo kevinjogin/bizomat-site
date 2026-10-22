@@ -27,6 +27,18 @@ Fieldnote considers a A$3,600 package. It estimates 24 hours across input review
 
 Here, **planning contribution** means the price remaining after these stated job allowances. It is not net profit, a tax calculation or a standard accounting presentation. General overhead, wider sales effort and any costs omitted from the assumptions still need to be covered. Keep the definition beside the number when using it internally.
 
+```figure
+type: stack
+title: Where the A$3,600 package goes
+unit: A$
+caption: Planning contribution is what remains after the stated allowances. It is not net profit; overheads and sales effort still need covering.
+- Team delivery time, 24 h × A$85 | 2040
+- External review | 250
+- Uncertainty allowance | 250
+- Software or materials | 100
+- Planning contribution | 960
+```
+
 The uncertainty allowance is also not a measured expense. It acknowledges that the estimate may be incomplete. Replace estimates with actual information as the job proceeds, without treating unused allowance as money that has necessarily arrived in the bank.
 
 ## Test changes before agreeing to them
@@ -37,11 +49,30 @@ This does not mean discounts are always wrong. It means the effect belongs in th
 
 Now consider five extra hours at the original A$3,600 price. They add A$425 to the planning cost and reduce contribution to A$535. Do not subtract the uncertainty allowance again unless the five hours are a separate addition beyond what that allowance was intended to cover. In this scenario, the extra hours are explicitly additional to every original allowance.
 
+```figure
+type: bars
+title: Planning contribution under three scenarios
+unit: A$
+caption: An 11.1% discount removes 41.7% of contribution; five unpaid extra hours remove 44%.
+- Proposed price, A$3,600 | 960 | 26.7% of revenue
+- *A$400 discount, same scope | 560 | 17.5% of revenue
+- Five extra hours, A$3,600 price | 535 | five hours at A$85 = A$425
+```
+
 Discuss scope and price together. If the customer needs a lower total, identify which output or service level can change and explain the consequence. Avoid preserving the same promise while silently planning to spend less time on checking.
 
 ## Treat capacity as a separate constraint
 
 A positive contribution does not establish that the work can fit. Suppose Fieldnote has 80 delivery hours available during the relevant period after existing commitments, administration and planned absence. Four packages at 24 hours each would require 96 hours before any overruns. Accepting all four into that period creates a 16-hour shortfall.
+
+```figure
+type: bars
+title: Capacity is a separate test
+unit: hours
+caption: Four profitable packages still create a 16-hour shortfall before any overrun.
+- Available delivery hours in the period | 80 | after commitments, admin and absence
+- *Four packages × 24 hours | 96 | 16 hours over
+```
 
 Available capacity should be based on usable time, not the number of people multiplied by every hour in the calendar. Consider specialist bottlenecks too. If only one person can perform the final review, the team's total hours may conceal a review queue.
 
@@ -56,6 +87,18 @@ For a simplified pre-delivery period, Fieldnote begins with A$1,800 in cash. The
 **Closing cash = A$1,800 + A$1,440 − A$2,300 = A$940.**
 
 If the deposit arrives after those payments, the same period would instead end at **negative A$500**. The total fee and estimated contribution have not changed; the timing has. An expected receipt cannot pay a bill before it arrives.
+
+```figure
+type: compare
+title: Same fee, same contribution, different cash timing
+cols: Deposit before payments | Deposit after payments
+best: 1
+caption: An expected receipt cannot pay a bill before it arrives.
+- Opening cash | A$1,800 | A$1,800
+- Deposit received in period | A$1,440 | A$0
+- Payments due in period | A$2,300 | A$2,300
+- Closing cash | A$940 | −A$500
+```
 
 The A$2,300 payment figure is a separate cash-budget assumption covering payments due in that period, including other business commitments. It is not the A$2,640 economic job estimate converted into cash. Some allocated owner time may not be paid then, some project costs may fall later, and overhead payments may relate to several jobs. This distinction prevents an apparently precise but incorrect reconciliation.
 
