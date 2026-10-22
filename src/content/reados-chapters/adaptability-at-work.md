@@ -64,6 +64,16 @@ Dispositional flexibility is a general orientation that is both realistic and op
 
 Consider an owner who has to close a business. It is a painful decision, and sadness and low morale are natural. A dispositionally flexible person accepts the reality, grieves the loss, but does not see the situation as hopeless. They recognise that their skills and experience can build something new.
 
+```figure
+type: venn
+title: Three kinds of flexibility
+centre: Adaptability
+caption: Adaptability is a set of skills that can be developed, not a fixed trait.
+- Cognitive | thinking in different ways
+- Emotional | managing your own and others' feelings
+- Dispositional | realistic and optimistic
+```
+
 ## Ways to become more adaptable
 
 ### Be curious
@@ -140,6 +150,16 @@ Habits that support growth:
 - **Meditate or reflect** for a few minutes each day to calm your mind and focus on your goals.
 - **Read something every day.**
 
+```figure
+type: cycle
+title: Adapt, apply, evolve, grow
+caption: Adaptability is the first of four related capabilities in a cycle of personal development.
+- Adapt | respond to change
+- Apply | commit fully to using what you know
+- Evolve | develop gradually through small improvements
+- *Grow | steady, ongoing development
+```
+
 ## The power of interpretation
 
 A key part of adaptability is how you interpret events. An event has no meaning in itself. People give it meaning through their interpretation, and their interpretation shapes what they do next.
@@ -166,6 +186,15 @@ When something negative happens:
 
 This is not about pretending bad things are good. It is about choosing an interpretation that leads to constructive action. Like any framework, it works only when practised consistently.
 
+```figure
+type: steps
+title: The three-by-three exercise
+caption: It is about choosing an interpretation that leads somewhere useful.
+- Three positive messages | opportunity, warning or lesson
+- Three things learned
+- *Three actions in response
+```
+
 ## Adaptability for leaders
 
 Leaders shape how adaptable their organisations become:
@@ -186,6 +215,17 @@ A production supervisor with 25 years' experience is asked to lead the introduct
 He talks to a mentor, who helps him use the three-by-three exercise. Positive messages: the plant is investing in its future, he has been trusted to lead the change and he can learn a valuable new skill. Lessons: his resistance stems mainly from fear of looking foolish, and his team's knowledge of the process is what will make the system work. Actions: attend vendor training early, ask a technically confident team member to be his co-champion, and run the paper and digital systems side by side for a month.
 
 He also practises emotional flexibility with his team, listening to older operators' concerns and arranging extra training for them. Three months later, the system is running well, he has become its most effective advocate and he uses its data to cut changeover times by 20 per cent.
+
+```figure
+type: timeline
+title: A 25-year supervisor leads a digital tracking system
+caption: Three months later he was the system's most effective advocate.
+- First reaction | Resistance | the paper system works; fear of looking incompetent
+- With a mentor | Three-by-three | trusted to lead; resistance was mainly fear
+- Actions | Early vendor training | a co-champion; a month running both systems
+- With the team | Listening | extra training for older operators
+- *Three months on | Changeovers 20% faster | using the system's data
+```
 
 ## Common mistakes
 

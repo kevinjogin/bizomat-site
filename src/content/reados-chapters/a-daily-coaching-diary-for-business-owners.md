@@ -22,6 +22,17 @@ It takes around 90 minutes a day. Initially it feels difficult. Once it becomes 
 
 Imagine being offered a choice: $1 million today, or one cent that doubles every day for 30 days. Most people take the million. But one cent doubled daily becomes about $5.4 million on day 30, and the total of all thirty days' amounts is about $10.7 million.
 
+```figure
+type: bars
+title: A million today, or a cent that doubles
+unit: $m
+max: 11
+caption: Effort does not double daily, but skills, knowledge and relationships do compound.
+- $1 million today | 1
+- One cent doubled, on day 30 | 5.4 | about $5.4 million
+- *Total of all thirty days | 10.7 | about $10.7 million
+```
+
 An old story makes the same point. A sage asked a king for a reward of grain: one grain on the first square of a chessboard, two on the second, four on the third, doubling on each of the 64 squares. The king agreed, thinking it trivial, until his advisers calculated that the total exceeded all the grain the world had ever produced.
 
 Human effort does not double every day, of course. But skills, knowledge, relationships and reputation do accumulate, and their effects build on each other. The early results of consistent effort are so small they often go unnoticed, which is why many people give up too soon. The opposite is also true: small harmful habits seem harmless at first, and their consequences appear only much later.
@@ -137,6 +148,17 @@ A simple diary layout:
 
 A paper notebook works well because it keeps you away from screens. A digital document or notes app works too, if you can avoid distractions.
 
+```figure
+type: stack
+title: Where the daily 90 minutes go
+unit: minutes
+caption: Plus 30 to 60 minutes once a month for the goal statement. Commit for 90 days before judging it.
+- *Morning learning, in solitude | 60
+- Main thing and productivity score | 10
+- Evening review | 10
+- Gratitude | 10
+```
+
 ## Measuring whether it works
 
 Give the diary a fair trial and judge it by evidence rather than feelings. At the end of each month, look back and ask:
@@ -176,6 +198,17 @@ Each working day, she spends 9:00 to 11:00 on the main thing: researching target
 Each evening, she reviews the day. She notices that proposals including a sample quality report get more positive responses, and adds one to every proposal.
 
 By the end of March, she has won two contracts and is negotiating a third. The roster backup system has cut her firefighting time by about an hour a day. She sets April's goal statement and continues.
+
+```figure
+type: timeline
+title: A cleaning business owner's diary in practice
+caption: Goal: three new office-cleaning contracts worth at least $60,000 a year in total by 31 March.
+- 6:00–7:00 | Learning | tenders, quality reporting, pricing
+- 9:00–11:00 | The main thing | target buildings, proposals; a supervisor covers
+- Prevention | A roster backup system | about an hour a day less firefighting
+- Evenings | Review | sample quality reports added to every proposal
+- *End of March | Two contracts won | a third in negotiation
+```
 
 ## Summary
 

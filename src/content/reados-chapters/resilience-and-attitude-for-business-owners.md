@@ -64,7 +64,27 @@ Choose a specific new response and practise it deliberately:
 - Old pattern: avoiding overdue invoices. New pattern: call every overdue account on Monday morning.
 - Old pattern: assuming new staff will fail. New pattern: set clear expectations and check progress after one week.
 
+```figure
+type: compare
+title: Replacing an unhelpful pattern
+cols: Old pattern | New pattern
+best: 2
+caption: Repeat the new response consciously until it becomes natural.
+- Complaints | Replying defensively | Thank, acknowledge and ask a question first
+- Overdue invoices | Avoiding them | Call every overdue account on Monday morning
+- New staff | Assuming they will fail | Clear expectations; check progress after a week
+```
+
 Then reinforce it. Repeat the new response consciously until it becomes natural, and notice the better results it brings. Those results become the "higher taste" that makes the old pattern less attractive.
+
+```figure
+type: steps
+title: Three steps to replace an unhelpful pattern
+caption: Because attitudes are learned patterns, they can be unlearned.
+- See the existing pattern | situation, thought, feeling, action, result
+- Decide to dissolve it
+- *Replace and reinforce a new pattern
+```
 
 ### Useful reframing questions
 
@@ -127,6 +147,18 @@ When a significant setback hits the business, a structured response helps:
 5. **Act on one thing.** Momentum restores confidence. Take one constructive step today.
 6. **Extract the lesson.** Once the immediate crisis has passed, ask what you would do differently and what you will change.
 
+```figure
+type: steps
+title: Responding to a significant setback
+caption: "We lost our largest customer" is a fact; "the business is finished" is an interpretation.
+- Pause before reacting
+- Separate facts from interpretations
+- Look for what you can control
+- Talk to someone
+- Act on one thing
+- *Extract the lesson
+```
+
 The article on [steering a small business through a downturn](/reados/collections/booms-bubbles-and-business-cycles/steering-a-small-business-through-a-downturn/) covers the business side of difficult periods.
 
 ## Leaders' attitudes spread
@@ -163,6 +195,17 @@ After a week, a mentor helps him reflect. Using a simple log, he notices a patte
 He takes one action per day: calling past customers, meeting two new builders, reviewing costs with his accountant and asking his team for ideas. One team member suggests offering kitchen refurbishment directly to homeowners, a market the business had never pursued.
 
 Six months later, revenue has recovered to 85 per cent of its previous level, with a more diverse customer base. More importantly, he has a new pattern for responding to setbacks, which he discusses openly with his team.
+
+```figure
+type: bars
+title: The joinery business after losing its largest builder
+unit: %
+max: 100
+caption: Revenue as a share of its previous level, with a more diverse customer base and a new market in kitchen refurbishment.
+- Before | 100
+- Expected for at least six months | 60 | a 40 per cent fall
+- *Six months later | 85
+```
 
 ## Summary
 

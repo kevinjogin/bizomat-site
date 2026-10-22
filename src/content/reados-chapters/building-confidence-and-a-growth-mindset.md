@@ -62,6 +62,19 @@ Psychologist Carol Dweck's research, popularised in her book *Mindset* (2006), d
 - A **fixed mindset** assumes abilities are largely set. People with this mindset tend to avoid challenges that might expose weakness, give up when things get hard, see effort as pointless and feel threatened by others' success.
 - A **growth mindset** assumes abilities can be developed through effort, learning and good strategies. People with this mindset tend to embrace challenges, persist through setbacks, see effort as the path to mastery, learn from criticism and find inspiration in others' success.
 
+```figure
+type: compare
+title: Fixed and growth mindsets
+cols: Fixed mindset | Growth mindset
+best: 2
+caption: After Carol Dweck's research, popularised in Mindset (2006).
+- Ability | Largely set | Developed through effort, learning and strategy
+- Challenges | Avoided if they might expose weakness | Embraced
+- Setbacks | A reason to give up | Something to persist through
+- Effort | Pointless | The path to mastery
+- Others' success | A threat | An inspiration
+```
+
 Many people talk themselves out of opportunities because of fixed-mindset assumptions, for example not applying for roles they are qualified for because they assume they will not fit. People with a growth mindset try, learn and improve.
 
 Elite athletes illustrate growth mindsets: champions who keep refining technique and working through injuries rather than relying on talent alone. Mindsets are not all-or-nothing. Most people have a mix, and the growth mindset can be strengthened.
@@ -150,6 +163,18 @@ Managers can help team members build confidence:
 - **Create psychological safety**, so people can ask questions and raise ideas without fear of ridicule.
 - **Provide training** in the skills people feel unsure about.
 
+```figure
+type: checklist
+title: Building confidence in a team
+caption: Confident teams take more initiative, raise problems earlier and adapt better.
+- x Stretch assignments, with support
+- x Recognise effort and progress
+- x Frame mistakes as learning
+- x Specific, constructive feedback
+- x Psychological safety
+- *x Training in the skills people feel unsure about
+```
+
 Confident teams take more initiative, raise problems earlier and adapt better to change.
 
 ## Confidence and humility
@@ -163,6 +188,17 @@ A design engineer with excellent technical skills avoids presenting to clients a
 Together they agree a development plan. She keeps a short log of her successful designs and positive client feedback. She prepares one point to contribute in each team meeting. She joins a speaking club and practises two-minute talks. She presents a small section of a client review, well prepared and rehearsed, then gradually takes on larger sections. She also notices and challenges her habitual thought, "they'll think it's a silly idea", replacing it with "my analysis is sound, and I can explain it".
 
 Within a year, she is leading client design reviews, and her manager describes her as one of the most respected engineers in the team.
+
+```figure
+type: steps
+title: From quiet engineer to leading client reviews
+caption: Within a year she was leading client design reviews.
+- A log of successes | designs and client feedback
+- One point in each team meeting
+- Two-minute talks at a speaking club
+- A small, rehearsed section of a client review
+- *Larger sections, and a new thought | "my analysis is sound, and I can explain it"
+```
 
 ## Summary
 

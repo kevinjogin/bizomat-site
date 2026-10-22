@@ -72,6 +72,21 @@ People with this anchor want a career that fits with family, personal interests 
 
 Reflect on the choices you have made, the work you enjoyed most and least, and what you would refuse to give up. Most people have one or two dominant anchors. Choose roles and organisations that align with them. Taking a job that conflicts with your anchor purely for money often leads to frustration and departure.
 
+```figure
+type: tree
+title: Eight career anchors and where they fit
+caption: An anchor is what you will not give up when a choice has to be made.
+- Career anchors
+  - Technical and functional competence | specialist and expert tracks
+  - General managerial competence | management and business unit leadership
+  - Autonomy and independence | entrepreneurship, consulting, freelancing
+  - Security and stability | established organisations, government
+  - Entrepreneurial creativity | starting businesses, product development
+  - Service and dedication to a cause | not-for-profits, health, education
+  - Pure challenge | consulting, agencies, technology roles
+  - Lifestyle | stable, defined roles with good work-life balance
+```
+
 ## A ten-point strengths self-assessment
 
 Knowing your strengths helps you set goals, make better decisions and grow faster. Rate yourself from 1 (weak) to 5 (strong) on these ten competencies:
@@ -90,6 +105,17 @@ Knowing your strengths helps you set goals, make better decisions and grow faste
 Add your scores, giving a total between 10 and 50. Your highest scores show where your strengths lie and where your career should lean. Your lowest scores show gaps to develop, especially if they are foundational, such as discipline or execution, which affect success in any role.
 
 Ask a trusted colleague, manager or mentor to rate you too. Other people's views often reveal strengths and blind spots you cannot see.
+
+```figure
+type: steps
+title: Using the ten-point strengths assessment
+caption: Low scores on foundations such as discipline or execution affect success in any role.
+- Rate ten competencies | 1 (weak) to 5 (strong)
+- Add the total | between 10 and 50
+- Lean towards the highest scores
+- Develop the lowest
+- *Ask someone else to rate you too
+```
 
 ## Nine questions for choosing an employer
 
@@ -140,6 +166,16 @@ Career anchors are not only for individuals planning their own careers. Managers
 - **Create dual career paths.** In engineering and technical firms, strong specialists are often promoted into management because it is the only route to higher pay, and the business loses a good engineer and gains a reluctant manager. A senior specialist track lets technical people progress without leaving their craft.
 - **Match assignments to anchors.** Give challenge-anchored people the hardest problems, autonomy-anchored people clear outcomes with freedom over method, and security-anchored people stable responsibilities with clear expectations.
 - **Respect lifestyle anchors.** Flexible arrangements can keep capable people who would otherwise leave.
+
+```figure
+type: checklist
+title: Using anchors as a manager
+caption: Anchors also explain conflict between people who want different things from work.
+- x Ask about anchors in development conversations
+- x Create dual career paths
+- x Match assignments to anchors
+- *x Respect lifestyle anchors
+```
 
 Anchors also explain conflict. A manager with an entrepreneurial anchor may be frustrated by a team member with a security anchor who resists risky projects, when neither is wrong. They simply value different things.
 

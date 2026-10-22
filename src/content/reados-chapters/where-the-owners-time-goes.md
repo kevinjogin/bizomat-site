@@ -39,6 +39,19 @@ A useful shift is to stop asking "how can I cope with everything?" and start ask
 - **Too many initiatives**: the business is running more change than it can manage.
 - **A culture of upward delegation**: problems are passed up because that is what has always happened.
 
+```figure
+type: tree
+title: What a recurring interruption usually reveals
+caption: Ask "why does this keep reaching me?" rather than "how can I cope?"
+- The interruption
+  - Unclear decision rights
+  - Missing standards
+  - Weak information
+  - Conflicting priorities
+  - Too many initiatives
+  - *Upward delegation
+```
+
 Recording interruptions for a week or two, by type, usually reveals that a handful of categories account for most of them.
 
 ## Exceptions and recurring problems
@@ -67,6 +80,17 @@ When an issue recurs, the solution usually lies in one of a few design changes:
 - **Improve information**: make schedules, stock or job status visible to the people who need them.
 - **Set a priority rule** for recurring conflicts between functions, such as sales and production.
 - **Reduce the number of initiatives** running at once.
+
+```figure
+type: checklist
+title: Fixing the cause, not the event
+caption: Each takes effort up front and removes a recurring demand on the owner for good.
+- x Delegate authority with clear limits
+- x Create a standard
+- x Improve information
+- x Set a priority rule
+- *x Reduce the number of initiatives
+```
 
 Each takes some effort up front. Each removes a recurring demand on the owner for good.
 
@@ -114,6 +138,19 @@ This is an illustration. The owner of a precision engineering workshop with 22 s
 | Other | 6 |
 | Total | 64 |
 
+```figure
+type: bars
+title: Two weeks of interruptions needing the owner
+caption: 64 in a fortnight; only six were genuine exceptions.
+max: 20
+- *Approving prices on quotes | 18
+- Sales–workshop scheduling conflicts | 14
+- Purchasing approvals under $500 | 11
+- Delivery date complaints | 9
+- Genuine exceptions | 6
+- Other | 6
+```
+
 Only six were genuine exceptions. The rest pointed to four design problems, and she addresses each:
 
 - **Quote approvals**: she writes a pricing guide with standard rates and margin rules. The estimator can approve quotes within the guide; only unusual jobs come to her.
@@ -122,6 +159,19 @@ Only six were genuine exceptions. The rest pointed to four design problems, and 
 - **Delivery complaints**: delivery dates are confirmed with the workshop before being promised to customers.
 
 Two months later, she records interruptions again. The total has fallen to about 23 in a fortnight: the six exceptions, six other matters, about five unusual quotes, three scheduling escalations and three delivery issues. She uses the time recovered to block out Friday mornings for visiting key customers and planning, and the estimator and workshop manager both say they prefer having the authority to decide.
+
+```figure
+type: compare
+title: The workshop owner's fortnight, redesigned
+cols: First fortnight | Two months later
+best: 2
+caption: The recovered time went into Friday mornings for key customers and planning.
+- Quotes | 18 approvals | About five unusual quotes, outside the pricing guide
+- Scheduling | 14 conflicts | Three escalations after a weekly planning meeting
+- Purchasing | 11 under $500 | None: the manager approves up to $2,000
+- Delivery | 9 complaints | Three, with dates confirmed before promising
+- Total | 64 | About 23
+```
 
 ## How this applies to a small Australian business
 

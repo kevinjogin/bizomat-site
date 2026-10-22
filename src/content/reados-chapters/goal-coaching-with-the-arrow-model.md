@@ -24,6 +24,17 @@ Coaching frameworks help close that gap by asking the right questions in the rig
 
 ARROW answers three fundamental questions: where do you want to go (aim), where are you now (reality), and how will you get there (reflection, options and way forward). It can be used for business goals, professional development, leadership growth or personal change, by yourself, with a coach or by a manager coaching a team member. This article walks through each step with practical exercises.
 
+```figure
+type: steps
+title: The ARROW coaching model
+caption: Where you want to go, where you are now, and how to close the gap.
+- Aim | a SMART goal, a role model, milestones
+- Reality | where you are now, in the same terms
+- Reflection | why it matters
+- Options | the top five drivers
+- *Way forward | three priorities, tracked weekly
+```
+
 ## A: Aim
 
 ### Identify a role model
@@ -99,6 +110,16 @@ Many people work on goals that, on reflection, do not matter much to them, and s
 
 If the rating is low, either find a more meaningful goal or a stronger reason.
 
+```figure
+type: decision
+title: How important is the goal, from 1 to 10?
+question: Your rating
+caption: Goals that do not matter to you rarely survive the first obstacle.
+- 1–3 | Not really important | reconsider pursuing it
+- 4–7 | Moderately important | expect motivation to waver
+- *8–10 | Very important | you are likely to persist
+```
+
 ## O: Options
 
 ### Create a laundry list
@@ -138,6 +159,16 @@ What cannot be measured cannot be improved. Track progress against milestones, a
 ### Run a weekly improvement cycle
 
 Use the answers to adjust your plan every week. Repeat what works, fix what does not and try improvements. Over six months, this cycle turns a plan on paper into lasting change.
+
+```figure
+type: cycle
+title: The weekly improvement cycle
+caption: Repeat what works and fix what does not.
+- What went well?
+- What went wrong?
+- What could be improved?
+- *Adjust the plan
+```
 
 ## Using ARROW as a manager
 
@@ -187,6 +218,17 @@ The owner of a small engineering consultancy wants to step back from day-to-day 
 - **Way forward**: top three priorities are delegating technical queries with a clear escalation rule, hiring a part-time office manager and dedicating Tuesday and Thursday mornings to business development. Weekly reviews on Friday afternoons.
 
 After nine months, the owner's billable hours have fallen to 18 per week, senior engineers have taken on more client responsibility, and new business has increased. The plan is adjusted to reach the final target.
+
+```figure
+type: bars
+title: The consultancy owner's billable hours
+unit: hours a week
+max: 40
+caption: Senior engineers took on more client responsibility and new business increased.
+- At the start | 35
+- *After nine months | 18
+- Target within 12 months | 15
+```
 
 ## Summary
 

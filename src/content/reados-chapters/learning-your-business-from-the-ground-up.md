@@ -44,6 +44,16 @@ The same founder learned digital marketing before starting his business, working
 - **Conversion rate**: how many of those visitors become customers.
 - **Repeat purchase rate**: how many customers come back.
 
+```figure
+type: steps
+title: From advertisement to repeat customer
+caption: Understanding how customers find and choose suppliers is part of the subject-matter expertise.
+- Sees the advertisement
+- Clicks | click-through rate
+- Becomes a customer | conversion rate
+- *Comes back | repeat purchase rate
+```
+
 For almost any business today, understanding how customers find and choose suppliers online is part of subject-matter expertise. The article on [five ways to improve conversion](/reados/collections/selling-and-business-development/five-ways-to-improve-conversion/) covers the second of those numbers in more detail.
 
 ## Do every job yourself, at least once
@@ -55,6 +65,15 @@ Doing every job taught him three things:
 1. **Unit economics**: exactly what each room cost to prepare and run, and what it earned.
 2. **What to promise customers**: which promises were realistic and which would create disappointment.
 3. **How to convince investors**: a detailed understanding of costs and profits that gave investors confidence.
+
+```figure
+type: layers
+title: What doing every job teaches
+caption: Founders who have done the work design better training and set more realistic standards.
+- Unit economics | what each room cost to prepare and run, and earned
+- What to promise customers | realistic promises, not disappointment
+- *How to convince investors | costs and profits understood in detail
+```
 
 ### No job is beneath you
 
@@ -119,6 +138,16 @@ Consider opening a grocery store. After interviewing stakeholders, you might fin
 - **Distributors** want timely payment and help selling slower-moving products.
 - **Nearby store staff** reveal which products sell out and which gather dust.
 
+```figure
+type: compare
+title: Interviewing a grocery store's stakeholders
+cols: What they value
+caption: One offer can answer each group: delivery and choice for customers, reliable payment for distributors.
+- Customers | Home delivery and a choice of brands
+- Distributors | Timely payment and help with slow movers
+- *Nearby store staff | Knowledge of what sells out and what gathers dust
+```
+
 Your offer could be: the best delivery service and choice in the area for customers, combined with prompt payment and promotion of slower lines for distributors, who might in turn offer better terms. Then check whether the combination is commercially viable.
 
 ### When founders skip research
@@ -166,6 +195,17 @@ She learns that buyers' biggest frustrations are slow quotes, missed delivery da
 Her offer: quotes within 24 hours, firm delivery dates with proactive updates and a simple online job-status page. She negotiates better material terms by committing to a regular ordering schedule and fast payment. She buys a used CNC mill and lathe rather than new machines, and does the machining, quoting and deliveries herself for the first year.
 
 Within eighteen months, she has 30 regular customers and two employees, and she understands every cost in the business.
+
+```figure
+type: timeline
+title: Learning a machining business before opening one
+caption: She did the machining, quoting and deliveries herself for the first year, and understood every cost.
+- Three months | Machinist and estimator | at an established job shop
+- Interviews | 25 engineers and buyers | frustrations with suppliers
+- Research | Suppliers, dealers, two job shops | terms, used equipment, quoting
+- The offer | Quotes within 24 hours | firm dates and an online job-status page
+- *Eighteen months | 30 regular customers | and two employees
+```
 
 ## Common mistakes
 

@@ -64,6 +64,16 @@ Successful career changers usually have:
 - **Clarity of action**: a concrete plan of steps and timelines.
 - **Clarity in communication**: knowing whom to talk to, what to ask and how to present their change to employers and contacts.
 
+```figure
+type: venn
+title: Three kinds of clarity
+centre: A successful change
+caption: Successful career changers usually have all three.
+- Thought | why, and what they want
+- Action | concrete steps and timelines
+- Communication | whom to talk to and what to ask
+```
+
 ## A five-step career change checklist
 
 ### 1. Assess yourself
@@ -89,6 +99,17 @@ Two practical routes:
 
 Start engaging with the community in your target field: follow and interact with its practitioners, share content related to it, comment on its trends and present your transferable skills in your profile. Over time, people will associate you with the new field.
 
+```figure
+type: steps
+title: A five-step career change checklist
+caption: Each step builds evidence that the change is right before you commit to it fully.
+- Assess yourself
+- List target job functions
+- Talk to people in the field
+- Learn new skills | courses or projects in your current job
+- *Shift your professional brand
+```
+
 ## Test before you leap
 
 A career change is a big decision with real costs. Reduce the risk by testing the new field before committing fully:
@@ -97,6 +118,16 @@ A career change is a big decision with real costs. Reduce the risk by testing th
 - **Do a small paid or volunteer project**: build a website for a community group if you want to move into web development, or help a local business with its social media if you want to move into marketing.
 - **Take a short course first**, before enrolling in a long, expensive qualification. If you lose interest in a six-week course, a two-year degree will not suit you either.
 - **Work part-time or freelance in the new field** while keeping your current income, if your circumstances allow it.
+
+```figure
+type: checklist
+title: Test before you leap
+caption: A six-week course you lose interest in is far cheaper than a two-year qualification.
+- x Shadow someone in the target role
+- x Do a small paid or volunteer project
+- x Take a short course first
+- *x Work part-time or freelance in the new field
+```
 
 These tests give you real evidence about whether you enjoy the work and whether you are good at it. They also give you projects to show employers, which often matter more than certificates for career changers.
 
@@ -112,6 +143,16 @@ A structured plan turns intention into progress. One realistic pattern:
 | Months 9–12 | Applications, internal moves or first clients | Targeted applications, interviews or a first paid engagement |
 
 Alongside this, build a financial buffer that covers several months of essential expenses, so a lower starting salary or a gap between roles does not force a hasty decision.
+
+```figure
+type: timeline
+title: A twelve-month transition plan
+caption: Alongside the plan, build a buffer covering several months of essential expenses.
+- Months 1–2 | Research and conversations | a shortlist; at least five conversations
+- Months 3–6 | Core skills | a course and one project to show
+- Months 6–9 | Evidence and network | two or three projects, an updated profile
+- *Months 9–12 | Applications | interviews or a first paid engagement
+```
 
 ## Presenting your change to employers
 

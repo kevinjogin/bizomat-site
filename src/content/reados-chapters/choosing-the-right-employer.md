@@ -72,6 +72,21 @@ Taking a role unrelated to your strengths, hoping to move into the role you real
 
 Ask managers and HR how the role could develop over the next one to three years, in responsibility, skills and pay. If nobody can describe a credible path, be cautious. A good employer has thought about how people grow.
 
+```figure
+type: checklist
+title: The nine-point employer check
+caption: Score each offer against these points, weighted by what matters most to you.
+- x What problem does it solve?
+- x What is the culture like?
+- x Can it grow and scale?
+- x Who will you work with?
+- x Is the business model sound?
+- x Will it be around in five to ten years?
+- x What do reviews and records say?
+- x Does the role match your skills?
+- *x What is the career path?
+```
+
 ## Researching a company
 
 Before interviews, and certainly before accepting an offer, research the company:
@@ -151,6 +166,18 @@ The Fair Work Ombudsman's website explains minimum entitlements and pay rates.
 
 If anything is unclear, ask for an explanation in writing. For senior roles or unusual terms, consider paying for an employment lawyer's review. It is far easier to negotiate terms before signing than after.
 
+```figure
+type: tree
+title: Reading an Australian job offer
+caption: The Fair Work Ombudsman explains minimum entitlements and pay rates.
+- The offer and contract
+  - Pay and entitlements | rate, super, award, bonuses, leave
+  - Hours and location | additional hours, travel, flexibility
+  - Employment type | full-time, part-time, casual, fixed-term
+  - *Restrictive clauses | restraint, confidentiality, IP, training bonds
+  - Notice and termination | notice periods, redundancy
+```
+
 ## Negotiating the offer
 
 Many offers have some room for negotiation, particularly on:
@@ -173,6 +200,18 @@ The way a company recruits often reflects how it operates. Be cautious if you no
 - **Vague answers about pay, hours or employment type.**
 - **Requests to work unpaid "trial" periods** beyond a genuine, short skills demonstration. Unpaid work can be unlawful in many situations, and the Fair Work Ombudsman provides guidance.
 - **High turnover in the role** or team.
+
+```figure
+type: checklist
+title: Warning signs while you are being recruited
+caption: The way a company recruits often reflects how it operates.
+- ? Pressure to accept immediately
+- ? Unclear or changing role descriptions
+- ? Reluctance to let you meet the team or manager
+- ? Vague answers about pay, hours or employment type
+- ? Unpaid "trial" periods beyond a short skills demonstration
+- *? High turnover in the role or team
+```
 
 ## Weighing two offers
 
@@ -199,6 +238,16 @@ A mechanical engineering graduate in Adelaide receives two offers. Company A is 
 Researching both, she finds that Company A's division has been restructured twice in three years, its employee reviews mention long hours and limited development, and the contract administration role does not use her design skills. Company B has steady government and industrial contracts, many staff with ten or more years' service, a structured graduate program and a manager who describes a clear path from graduate to design lead.
 
 The offer from Company B includes a restraint clause preventing her from working for competitors anywhere in Australia for 12 months. She asks about it, and the company narrows it to directly competing roles in South Australia for six months. She accepts Company B's offer, and four years later leads a small design team.
+
+```figure
+type: compare
+title: Asking about a restraint clause
+cols: As offered | After she asked
+best: 2
+caption: She accepted Company B's offer, and four years later leads a small design team.
+- Scope | Competitors anywhere in Australia | Directly competing roles in South Australia
+- Duration | 12 months | Six months
+```
 
 ## Common mistakes
 
