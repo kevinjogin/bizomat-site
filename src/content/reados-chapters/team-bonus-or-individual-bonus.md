@@ -34,6 +34,16 @@ Many businesses pair rewards with work the wrong way round:
 - **Shared bonuses for work groups.** A shared bonus feels collaborative, is easy to administer and offends nobody when designed. But for independent work it prices nothing. Each person's extra effort moves the shared pool only slightly, the strongest contributor carries the weakest without any way to influence them, and people notice within one cycle.
 - **Individual rewards for work teams.** Individual measures already exist, and joint output is hard to divide, so individual measures are used. But in joint work, the separable part of each contribution is usually the least valuable part. Individual rewards then penalise exactly the integrating behaviour the team exists for: helping, handing over well, fixing someone else's problem.
 
+```figure
+type: compare
+title: Pairing the reward with the work
+cols: Work group | Work team
+caption: The difference is whether the output can be divided, not how well people get on.
+- Output | The sum of what each person produces | Nobody could produce it alone
+- Reward that fits | Individual measures and rewards | The joint output, mutually accountable
+- Common inversion | A shared bonus | Individual measures
+```
+
 Getting the pairing backwards is worse than choosing at random, because each mismatch actively discourages the behaviour the work needs.
 
 ## Three misreadings
@@ -59,6 +69,16 @@ Count the team answers:
 - **Three or four**: a work team. Reward the joint output, hold the team mutually accountable and review the whole result rather than the parts.
 - **Two**: the work design is unclear. Rather than splitting the difference, consider splitting the unit into a group and a team, or deliberately increasing the interdependence until it scores clearly.
 
+```figure
+type: decision
+title: Scoring the joint-output test
+question: How many of the four answers indicate a team?
+caption: Answer from the last few months of actual work, not from impressions or the unit's name.
+- Zero or one | Work group | individual measures and rewards
+- Two | Unclear design | consider splitting the unit
+- *Three or four | Work team | reward the joint output
+```
+
 ## Most work sits in the middle
 
 Real work is often independent most of the time and briefly, intensely joint at certain points, such as when a design meets production or a job comes together for handover. Treating it as a team all year rewards coordination that is not happening. Treating it as a group all year rewards nothing during the weeks that decide the outcome.
@@ -73,6 +93,16 @@ A team reward only works when certain conditions hold:
 - **The result is visible.** Team members should be able to see during the period how they are tracking, not just at the end.
 - **The team is small enough** that each person's contribution matters to the result. In large groups, shared rewards dilute quickly.
 - **There is a way to deal with persistent under-contribution.** A team bonus should not leave colleagues to manage a member who is not pulling their weight. That remains a manager's job.
+
+```figure
+type: checklist
+title: When a team reward can work
+caption: If results depend mostly on things outside the team, a team reward feels arbitrary.
+- x The team controls the outcome
+- x The result is visible during the period
+- x The team is small enough for each person to matter
+- *x Persistent under-contribution can be dealt with
+```
 
 ## Watch for side effects
 
@@ -113,6 +143,16 @@ After consulting staff, and keeping the profit share in place for the current ye
 - **The joint point**: designers, machinists and installers share a small quarterly bonus tied to the percentage of kitchens delivered complete and correct on the first site visit, because that is where their work meets.
 
 Within two quarters, callbacks fall, installers start fixing small problems without arguing about whose hours they belong to, and the machinists' rework rate becomes a regular topic in the morning meeting.
+
+```figure
+type: compare
+title: The joinery business, reclassified
+cols: Test score | New reward
+caption: At around ten kitchens a month the crew bonus is up to $1,500, or $500 each.
+- Machinists | 0: a work group | An individual bonus on accuracy and rework as well as output
+- Installation crew | 4: a work team | $150 per kitchen on schedule with no callback in 30 days, shared equally
+- Everyone | Where the work meets | A quarterly bonus on kitchens complete and correct at the first visit
+```
 
 ## How this applies to a small Australian business
 

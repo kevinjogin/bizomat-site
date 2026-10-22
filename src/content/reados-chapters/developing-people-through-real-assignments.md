@@ -28,6 +28,16 @@ Three conditions need to hold together:
 
 Two out of three is not enough. A difficult job with no latitude builds endurance. A free hand on work nobody cares about builds little. Responsibility, latitude and consequence together are what force people to develop judgement.
 
+```figure
+type: venn
+title: What makes an assignment developmental
+centre: Real development
+caption: Two out of three is not enough; pressure is not the active ingredient, latitude is.
+- New responsibility | something not carried before
+- Real latitude | free to choose and be wrong
+- Visible consequence | the result matters
+```
+
 ## Challenge is not the same as opportunity
 
 Not all hard work builds the same capability. Cleaning up a problem, such as an unhappy customer, a failing supplier or a job already off track, builds resilience and composure. Creating something, such as a new service, a new customer or a new process, builds the ability to set direction, take calculated risks and influence people without authority. Both are valuable, but they are different.
@@ -56,6 +66,15 @@ Not every job can be used for development. Sort upcoming work into two groups:
 Good development work often includes investigations that support a later decision, small prototypes or trials, process improvements with a clear owner, well-defined parts of a larger job, and pilots of new services. Each should still have a real customer and clear acceptance criteria. Development does not remove accountability for a useful result.
 
 Small businesses often find the list of protectable work is shorter than expected. That is useful to know. If the business needs two new supervisors within a year and its work offers only one suitable assignment, no training budget will close the gap. The options are to create assignments, for example by splitting a large job so part of it can be led by someone new, to hire, or to change how work is organised so fewer supervisors are needed.
+
+```figure
+type: decision
+title: Can this job carry a learner?
+question: Would mistakes be noticed in time and be recoverable?
+caption: Investigations that support a later decision are often good development work.
+- *Yes | Protectable | a less experienced person can hold it with support
+- No | Critical | the most capable available person does it
+```
 
 ## Support turns challenge into learning
 
@@ -105,6 +124,17 @@ The boundaries are agreed in writing. The leading hand decides crew, sequence an
 The job finishes a week late but within budget, and the customer is satisfied. In the review, the leading hand identifies the main cause of delay: access to the warehouse floor was limited to two nights a week, which nobody confirmed before scheduling. The business adds "confirm access hours and restrictions" to its job-start checklist, so every future job benefits.
 
 The next assignment is the solar maintenance pilot, chosen because it builds a different capability: shaping something new with no existing method. The leading hand also becomes the person who shows a newer apprentice how to run the small fit-outs, which reinforces their own learning and starts the next layer.
+
+```figure
+type: compare
+title: Sorting six months of work for development
+cols: Category | Who leads
+caption: The warehouse job ran a week late but on budget, and "confirm access hours" joined the job-start checklist.
+- Hospital switchboard upgrade | Critical, safety-sensitive | The senior electrician
+- Council maintenance tender | Important, time-pressured | The owner, with help on pricing
+- Warehouse lighting retrofit | Protectable | The leading hand, end to end
+- Solar maintenance pilot | Protectable and new | The leading hand's next assignment
+```
 
 ## How this applies to a small Australian business
 

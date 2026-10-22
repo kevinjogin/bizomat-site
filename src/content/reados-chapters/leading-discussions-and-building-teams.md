@@ -36,6 +36,16 @@ A simple model for preparing for discussions, meetings and interviews is **PREP*
 - **Execute**: participate confidently, following good discussion practice.
 - **Post-mortem**: afterwards, ask for honest feedback. Were you too aggressive? Too quiet? Too fast? Treat feedback as an opportunity to improve, not as criticism.
 
+```figure
+type: cycle
+title: PREP for discussions and meetings
+caption: Treat honest feedback afterwards as the start of the next preparation.
+- Prepare | facts, examples, notes
+- Rehearse | main points, aloud
+- Execute | contribute, listen, build on others
+- *Post-mortem | ask how you came across
+```
+
 ## Contributing effectively
 
 ### Starting a discussion
@@ -185,6 +195,17 @@ Bruce Tuckman's widely used model, first described in 1965, suggests that teams 
 
 Leaders who understand these stages can respond appropriately: providing clarity and direction while a team forms, managing conflict constructively while it storms, reinforcing good practices as it norms, and delegating and stretching it as it performs. Conflict during the storming stage is normal, not a sign of failure.
 
+```figure
+type: steps
+title: Stages of team development
+caption: Tuckman (1965), with adjourning added later; each stage needs a different response from the leader.
+- Forming | polite, uncertain
+- Storming | views and roles asserted
+- Norming | ways of working agreed
+- *Performing | effective collaboration
+- Adjourning | the team disbands
+```
+
 ## Frequently asked questions
 
 **What if I am naturally quiet in group discussions?** Prepare one or two points in advance and make an early contribution, which reduces anxiety for the rest of the discussion. Asking a good question is also a valuable contribution. Quality matters more than quantity.
@@ -202,6 +223,18 @@ A newly promoted team leader in an engineering office finds that team meetings a
 She restructures meetings: each agenda item starts with a brief round in which everyone shares one view, she summarises points before decisions, and she explicitly invites junior engineers to comment on design reviews. She acknowledges good contributions publicly and gives feedback on mistakes privately. She also explains how project assignments are decided, using clear criteria, after noticing complaints about favouritism.
 
 Within a few months, design issues are caught earlier, junior engineers contribute more confidently and team surveys show improved perceptions of fairness.
+
+```figure
+type: compare
+title: Meetings dominated by two senior engineers
+cols: Before | After
+best: 2
+caption: Design issues were caught earlier and perceptions of fairness improved.
+- Who spoke | Two senior engineers | A brief round where everyone gives one view
+- Decisions | Quick, then concerns raised privately | Points summarised before deciding
+- Juniors | Silent; rework followed | Invited explicitly into design reviews
+- Assignments | Unclear | Explained with clear criteria
+```
 
 ## Summary
 

@@ -55,6 +55,17 @@ For example, a salesperson's expected effort might be 50 calls a day, and their 
 
 Tracking both is powerful. High effort with low results suggests a skill, method or targeting problem, which calls for coaching and training. Low effort with good results may mean an unusually effective person or an easy territory. Low effort and low results raise questions of will, clarity or fit. Reviewing effort and results weekly lets managers intervene early.
 
+```figure
+type: bars
+title: Effort against an expected 50 calls a day
+unit: %
+max: 120
+caption: The same arithmetic applies to results, such as an expected $100,000 in monthly sales.
+- 40 calls | 80
+- 50 calls | 100 | on target
+- *60 calls | 120
+```
+
 ## Practical measurement methods
 
 No single method is perfect. Most businesses combine several.
@@ -77,6 +88,19 @@ Assess each person on two dimensions: **performance**, meaning results achieved 
 | **Low potential** | Address: clarify expectations, support and fit | Value and develop in role: reliable contributors |
 
 This helps target development effort. Be careful, though: "potential" is easily biased, so base it on evidence such as learning speed, judgement and initiative.
+
+```figure
+type: matrix
+title: Performance and potential
+x: Low → high performance
+y: Low → high potential
+hot: 2
+caption: Treat "potential" with care: it is easily coloured by bias.
+- Coach | convert ability into results
+- *Develop and stretch | future leaders
+- Address | expectations, support and fit
+- Value and develop in role | reliable contributors
+```
 
 ### 4. Customer feedback
 
@@ -137,6 +161,17 @@ When performance does not improve after clear feedback, support and reasonable t
 4. **Run a quarterly review** using self-evaluation, manager assessment and, for some roles, customer or 180-degree feedback.
 5. **Hold an annual development conversation** about career goals, potential and training plans.
 
+```figure
+type: steps
+title: A simple measurement rhythm for a small business
+caption: Mix effort, result and quality measures, and review often enough that nobody is surprised.
+- Three to five KPIs per role | effort, result, quality
+- Two or three behaviours | rated on a defined scale
+- Monthly 30-minute check-in
+- Quarterly review | self, manager and, for some roles, customers
+- *Annual development conversation
+```
+
 ## Common biases to guard against
 
 Even with good metrics, human judgement creeps into every assessment. Knowing the common biases helps managers correct for them:
@@ -164,6 +199,16 @@ The owner introduces a simple system:
 Each person has a monthly fifteen-minute check-in with the supervisor or owner to look at the numbers and discuss obstacles. Each quarter, a longer review combines a short self-evaluation, the KPIs, behaviour ratings and the manager's comments. Pay decisions at the annual review draw on the four quarterly reviews.
 
 Within two quarters, the owner learns several things impressions had hidden. One welder with an average reputation had the best first-pass quality in the shop. The estimator's low win rate was traced to slow turnaround, because quotes sat waiting for drawings, which pointed to a process problem rather than a personal one. And two fabricators who seemed slow were consistently given the most complex jobs. The system did not just rate people. It improved how work was allocated and supported.
+
+```figure
+type: compare
+title: What impressions had hidden in the fabrication shop
+cols: Impression | Evidence
+caption: The system did not just rate people; it improved how work was allocated and supported.
+- One welder | An average reputation | The best first-pass quality in the shop
+- The estimator | A low win rate | Slow turnaround: quotes waited for drawings
+- Two fabricators | Seemed slow | Consistently given the most complex jobs
+```
 
 ## Frequently asked questions
 

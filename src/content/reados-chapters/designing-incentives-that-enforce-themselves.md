@@ -60,6 +60,16 @@ It works only under certain conditions:
 - **Their claim must be secure**: if your insolvency or a lender's prior security could defeat their claim, the incentive disappears exactly when it matters most. Security interests can be complex, so take legal advice.
 - **The supplier must be able to afford it**: offering a non-cash payment to a thinly financed subcontractor may simply be a wage cut in disguise.
 
+```figure
+type: checklist
+title: When payment in kind works
+caption: If any condition fails, the incentive can disappear exactly when it is needed.
+- x The output is worth holding
+- x The share is material against their cash margin
+- x Their claim is secure
+- *x The supplier can afford it
+```
+
 Common failure modes include doing excellent work on the units they will own and neglecting the rest, disputes about valuation, and adverse selection, where only suppliers who cannot get cash elsewhere accept the arrangement. Fix the valuation basis before work starts, tie the share to the whole outcome, and offer it as an alternative to a fair cash price to see who chooses it.
 
 ## Measure outcomes fairly
@@ -73,6 +83,15 @@ Incentive design matters most when work has already gone wrong, because supervis
 - **One accountable decision-maker.** Stalled work often has many people who can say no and nobody who can say yes.
 - **Finish something small first.** Define the smallest complete piece of work that meets an existing obligation and finish it, restoring cash flow and confidence.
 - **Cash before margin.** In recovery, getting paid matters more than maximising profit on the first piece of work.
+
+```figure
+type: steps
+title: Restarting a stalled project
+caption: Supervision has failed by this point, so the payoff has to do the work.
+- One accountable decision-maker | someone who can say yes
+- Finish something small first | restore cash and confidence
+- *Cash before margin
+```
 
 Where a party wants to leave a stalled project, staged exit terms linked to completion keep their interest attached to finishing rather than to withdrawing immediately.
 
@@ -109,7 +128,29 @@ For the next project, the owner redesigns the payoff:
 - **Individual alignment**: the integrator agrees that its lead engineer's bonus will be linked to the same performance milestone.
 - **Less reporting**: weekly meetings become fortnightly, focused on exceptions.
 
+```figure
+type: stack
+title: How the $220,000 price is paid next time
+unit: %
+caption: Plus a gain-share of 20% of extra contribution above target for six months, capped at $15,000.
+- Remainder of the price | 70
+- *Performance payment: target throughput for four weeks | 20
+- Retention: 90 days of stable running | 10
+```
+
 This time, the integrator stays on site to tune the line, because its own payment depends on it. The line reaches target throughput in the sixth week. The owner spends less time supervising and more time preparing the operators.
+
+```figure
+type: compare
+title: Two packing-line contracts
+cols: First contract | Redesigned payoff
+best: 2
+caption: The line reached target throughput in the sixth week, and the owner spent less time supervising.
+- Payment | Fixed price, monthly progress payments | Retention, performance payment and gain-share
+- Control | Weekly meetings; $300 a day delay damages | Fortnightly meetings on exceptions
+- People | Best engineer moved on before handover | Lead engineer's bonus tied to the milestone
+- Result | Line well below design speed | Integrator stayed on site to tune it
+```
 
 ## How this applies to a small Australian business
 

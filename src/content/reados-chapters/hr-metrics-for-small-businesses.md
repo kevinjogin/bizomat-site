@@ -73,6 +73,16 @@ A business that spends $15,000 a year on training for 15 employees invests $1,00
 
 Include advertising, job board fees, recruiter fees, software, interviewing time, background checks and onboarding. If total recruitment costs for a year are $40,000 and you hire 8 people, cost per hire is $5,000.
 
+```figure
+type: stats
+title: The arithmetic behind four common metrics
+caption: Track each over time and against similar businesses; one number on its own means little.
+- $200,000 | Revenue per employee | $3 million ÷ 15 FTE
+- $20,000 | Profit per employee | $300,000 ÷ 15
+- 10% | Overtime | $120,000 of a $1.2 million wage bill
+- *$5,000 | Cost per hire | $40,000 ÷ 8 hires
+```
+
 ### 9. Annual recruitment cost
 
 The total of all recruitment-related spending in a year: advertising, recruitment agencies, software, job boards and the time of people involved in hiring.
@@ -119,6 +129,17 @@ If an average of 40 employees work in the business and 10 leave during the year,
 
 If 40 people were employed at the start of the year and 32 of them remain at the end, retention is 80%.
 
+```figure
+type: bars
+title: Three ways to read people leaving
+unit: %
+max: 100
+caption: Early attrition points to hiring and onboarding; turnover and retention describe the whole year.
+- Early attrition (90 days) | 30 | 3 of 10 new hires
+- Turnover | 25 | 10 leavers, average of 40 staff
+- *Retention | 80 | 32 of the 40 at the start
+```
+
 ### 17. Key performer retention
 
 > **Key performer retention = key performers retained ÷ key performers at the start × 100**
@@ -150,6 +171,18 @@ If 32 of 40 surveyed employees say they are satisfied, the rate is 80%. Many bus
 **Do not micromanage.** Constant monitoring of individuals damages trust and drives good people away. Use metrics to manage systems, teams and trends, and use conversations to manage people.
 
 **Remember that people are people.** Employees engage with businesses that treat them as human beings. Data should help you treat people better by identifying overwork, unfairness, poor onboarding or lack of development, not reduce them to numbers.
+
+```figure
+type: steps
+title: Using people metrics well
+caption: Metrics show what is happening, not why.
+- Start small | five or six metrics
+- Calculate manually | a monthly spreadsheet
+- Look at trends
+- Ask why
+- Do not micromanage
+- *Remember that people are people
+```
 
 ## Building a simple people dashboard
 
@@ -209,6 +242,18 @@ A 30-person manufacturer is struggling to hire and keep machine operators. The o
 The business acts. It writes clearer job advertisements with realistic pay and shift information, runs interviews on time with a factory tour, sends every candidate a response within two days, introduces a structured two-week onboarding program with a buddy, and creates a skills progression with pay steps.
 
 Six months later, time to fill has fallen to 30 days, offer acceptance has risen to 80%, early attrition has dropped to 10% and overtime has fallen as positions are filled and new starters become productive faster.
+
+```figure
+type: compare
+title: A 30-person manufacturer hiring machine operators
+cols: First quarter | Six months later
+best: 2
+caption: Clearer advertisements, on-time interviews, replies within two days, two-week onboarding with a buddy and a skills progression.
+- Time to fill | 65 days | 30 days
+- Offer acceptance | 50% | 80%
+- Early attrition (90 days) | 40% | 10%
+- Overtime | 14% of wages | Fallen as roles were filled
+```
 
 ## Summary
 

@@ -71,6 +71,16 @@ A ten to fifteen-minute video call at the start of the day, in which each person
 3. What was delayed, and why.
 4. What is carried forward or planned for today, and any blockers.
 
+```figure
+type: cycle
+title: The daily stand-up
+caption: Ten to fifteen minutes on video at the start of the day: visibility, early problems and connection.
+- Planned for yesterday
+- Completed
+- Delayed, and why
+- *Carried forward, plus blockers
+```
+
 Stand-ups provide visibility, surface problems early and maintain connection. Keep them short. Detailed problem-solving happens afterwards with only the people needed.
 
 ### Daily commitments and achievements
@@ -127,6 +137,16 @@ Hybrid arrangements, with some people in the office and some remote, or everyone
 - Evaluate performance on outcomes, not presence.
 - Rotate in-office days so that teams overlap deliberately for collaboration.
 
+```figure
+type: checklist
+title: Hybrid without two classes of employee
+caption: When anyone is remote, run the meeting as if everyone is.
+- x Everyone on their own camera and microphone
+- x Decisions recorded in shared channels
+- x Performance judged on outcomes, not presence
+- *x In-office days rotated so teams overlap deliberately
+```
+
 ## Choosing tools
 
 The right tools make remote work smooth. You do not need many. Most small businesses need one tool in each of these categories:
@@ -165,6 +185,17 @@ New employees find remote work hardest, because they lack the relationships, con
 - **Some in-person time** where possible, especially in the first weeks, for training and relationship building.
 - **Frequent feedback** in the first three months, with a structured review at thirty, sixty and ninety days.
 
+```figure
+type: timeline
+title: Onboarding a remote starter
+caption: New starters find remote work hardest, because they lack the relationships and context others take for granted.
+- Before day one | Equipment and access | a welcome message with the first week's schedule
+- Day one | Welcome call and introductions | how the team communicates
+- First week | Early wins | small, well-defined tasks
+- First month | A buddy | daily check-ins
+- *First three months | Frequent feedback | reviews at 30, 60 and 90 days
+```
+
 Businesses that invest in onboarding see faster productivity and lower early turnover, whether people work remotely or not.
 
 ## Frequently asked questions
@@ -186,6 +217,17 @@ Not every role or person suits remote work. Hands-on production, site work and s
 A small engineering design office with eight people moves to a hybrid arrangement: Tuesdays and Thursdays in the office, other days flexible. In the first months, problems appear. Drawings are released without checks because the checker is not in on the right day. A junior drafter feels lost. The owner is unsure who is working on what.
 
 The office introduces a fifteen-minute video stand-up at 8:45 each morning, a shared project board showing every drawing package with its owner, status and due date, and a rule that drawing checks are requested and completed through the board on any day. The junior drafter is paired with a senior buddy who has a daily check-in call. In-office days are used for design reviews, training and team lunches. Within two months, missed checks disappear, the junior's confidence improves, and the owner can see the status of all work at a glance without chasing anyone.
+
+```figure
+type: compare
+title: A design office goes hybrid
+cols: Problem | Change
+caption: Within two months missed checks disappeared and the owner could see the status of all work at a glance.
+- Checks | Drawings released unchecked when the checker was out | Checks requested and completed through the board on any day
+- Visibility | Owner unsure who was working on what | Shared board: every package with owner, status and due date
+- New staff | A junior drafter felt lost | A senior buddy with a daily check-in call
+- Office days | Tuesdays and Thursdays | Design reviews, training and team lunches
+```
 
 ## Summary
 

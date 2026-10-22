@@ -31,6 +31,16 @@ A **reinforcing loop** is a cycle in which a change feeds back to amplify itself
 
 **schedule pressure → rushed or out-of-sequence work → more defects and rework → less useful output → more schedule pressure**
 
+```figure
+type: cycle
+title: The schedule-pressure loop
+caption: Effort rises, but more of it is converted into rework, so the forecast worsens and pressure rises again.
+- Schedule pressure
+- Rushed or out-of-sequence work
+- More defects and rework
+- *Less useful output
+```
+
 Rework consumes the same people and time needed for the remaining work, so the completion forecast worsens and pressure rises again. Managers who measure only hours worked may see effort increasing and conclude that people are trying hard. They are, but the system is converting more of that effort into **failure demand**: work created by not doing something right the first time, such as fixing defects, answering chasers, expediting and redoing tasks.
 
 The way out of a reinforcing loop is to break it, usually by removing the cause of rework or relieving the constraint, rather than by adding more pressure.
@@ -59,6 +69,18 @@ When output falls, work through six layers before adding labour, overtime or pre
 4. **Resource interaction**: would more people increase output, or create congestion and coordination overhead?
 5. **Human condition**: what roles do fatigue, skill gaps, morale, absence or safety concerns play?
 6. **Management condition**: which decisions, delays, sequencing rules or information failures are producing the current behaviour?
+
+```figure
+type: layers
+title: Six layers to diagnose before you push
+caption: Work through these before adding labour, overtime or pressure; observing the work directly is often the fastest route.
+- Useful output | accepted, finished work
+- Flow constraint | where is work waiting?
+- Rework loop | time spent correcting earlier work
+- Resource interaction | output or congestion?
+- Human condition | fatigue, skills, morale, safety
+- *Management condition | decisions, sequencing, information
+```
 
 Observing the work directly, rather than relying only on reports, is often the fastest way through these questions.
 
@@ -107,6 +129,17 @@ The supervisor works through the six layers and finds that:
 The changes are to re-sequence work by zone so crews do not overlap, check materials daily against the next day's plan, appoint a named person to answer drawing questions within 24 hours, have the supervisor check rough-in work before it is covered, and reduce the crew to ten working about 42 hours each, with Saturday work only for specific tasks.
 
 With 420 hours a week, accepted output rises to about 150 units a week, about 0.36 units per hour, and rework falls to under 10% of hours. With about 600 units remaining, the job would have taken about five and a half more weeks at 110 units a week. At 150 units a week, it takes about four, with fewer people and less overtime.
+
+```figure
+type: bars
+title: Accepted output per hour on the shop fit-out
+unit: units/hour
+max: 0.4
+caption: Fewer people and less overtime finished the remaining 600 units in about four weeks instead of five and a half.
+- Eight workers, 40-hour week | 0.31 | 100 units in 320 hours
+- Twelve workers with Saturday overtime | 0.18 | 110 units in 600 hours
+- *Ten workers, re-sequenced by zone | 0.36 | 150 units in 420 hours
+```
 
 ## How this applies to a small Australian business
 

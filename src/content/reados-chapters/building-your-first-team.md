@@ -26,6 +26,15 @@ Without a big brand or high salaries, start-ups attract people with **vision and
 
 Founders recruiting early team members should do the same: tell the story of the vision, make people believe it can be achieved, and be honest about the risks and rewards.
 
+```figure
+type: steps
+title: Attracting people to an unproven business
+caption: Without a brand or high salaries, start-ups attract people with a credible story.
+- The problem | and why it matters
+- Why this team can solve it | evidence of opportunity and capability
+- *What people gain | learning, responsibility, a share in success
+```
+
 **A note on Australian law.** Founders and co-owners can choose to work without pay, but employees cannot. In Australia, employees must be paid at least the applicable minimum wage or award rate, along with superannuation and other entitlements. Equity or deferred rewards can supplement fair pay, but cannot replace legal minimums for employees. Unpaid "trial" work beyond a brief, genuine skills demonstration is generally unlawful. Get advice before structuring early employment arrangements.
 
 ## Whom to hire
@@ -109,6 +118,18 @@ For each person, identify which competencies are strong, say 7 or more out of 10
 
 Then design work accordingly: give people work in their areas of strength, and minimise work in their areas of weakness. You cannot make everyone good at everything, and trying wastes talent. People working in their strengths often produce several times the output of people forced into roles that do not suit them.
 
+```figure
+type: steps
+title: Designing roles around key people's strengths
+caption: Strong means about 7 or more out of 10; weak, 3 or less. Give people work in their areas of strength.
+- Identify key people | potential, performance, skill, will
+- Map strengths and weaknesses
+- Understand what drives them | recreation, aspiration, proficiency, problems
+- Prepare the conversation
+- *Co-create the role and goals
+- Schedule the follow-up
+```
+
 ### Step 3: Understand what drives them
 
 A simple framework is to explore four areas:
@@ -175,6 +196,17 @@ A software and engineering services start-up has six people and needs to grow to
 New hires are paid fair market-entry salaries with a documented path to market rates and a small option allocation under a properly structured employee share scheme. Each person spends time in customer support, project delivery and internal tools during their first year. Monthly one-to-ones focus on what is working, what is frustrating and where each person wants to grow. The founders map each key person's strengths and redesign two roles: a strong engineer who disliked client meetings moves to lead internal tooling, while a technically capable team member who loved client work becomes the first account manager. Both thrive.
 
 After two years, the team has grown to twenty with low turnover, and several early employees have become team leaders.
+
+```figure
+type: compare
+title: Growing from six to twenty without top salaries
+cols: Approach | Detail
+caption: After two years: twenty people, low turnover, and several early employees leading teams.
+- Attract | A clear vision statement | Used in every interview
+- Select | Values, ownership, learning ability | A practical skills exercise
+- Reward | Fair entry salaries | A documented path to market rates; options under a proper scheme
+- Grow | Rotation across support, delivery and tools | Monthly one-to-ones; roles redesigned around strengths
+```
 
 ## Summary
 

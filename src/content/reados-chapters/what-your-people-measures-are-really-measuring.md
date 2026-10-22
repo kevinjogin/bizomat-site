@@ -26,6 +26,15 @@ Every measure has three costs, and only the first usually reaches a budget:
 - **Distortion**: once a number is published, people move it, and the cheapest way to move a number rarely improves the thing behind it.
 - **Attention**: twenty numbers a month do not get twenty careful judgements. They get a scan, and the scan settles on whichever number moved most, which is often the noisiest rather than the most important.
 
+```figure
+type: layers
+title: The three costs of every measure
+caption: Only the first usually reaches a budget.
+- Collection | time to gather, check and report
+- Distortion | moving the number, not the thing behind it
+- *Attention | twenty numbers get a scan, not twenty judgements
+```
+
 A useful rule of thumb from quality management is to express important measures in money where possible. "Unplanned departures in the warehouse cost us about $60,000 last year in recruitment, training and overtime" is easier to act on than "warehouse retention is 78%".
 
 ## Measures are instructions
@@ -62,6 +71,15 @@ Saying "nobody will be penalised for reporting" is not enough. People do not jud
 1. **Decide that the log is for learning, not appraisal**, and say so in writing.
 2. **Keep its content out of performance reviews**, including indirectly through summaries.
 3. **Reward the behaviours instead**: incidents logged promptly, follow-up actions completed, reviews held on time. These can be checked without reading the entries, and they give no reason to understate.
+
+```figure
+type: steps
+title: Keeping a problem log for learning
+caption: Expect the log to look worse for a few months as hidden problems surface.
+- Declare it is for learning | in writing
+- Keep it out of reviews | including summaries
+- *Reward the behaviours | prompt logging, actions done, reviews on time
+```
 
 Expect the log to look worse for a few months after the change, as problems that were previously unsaid appear. That is a sign it is working. The [bad news early](/reados/collections/leading-people-and-change/bad-news-early-how-a-business-teaches-people-to-speak-up/) article covers the wider incentives that delay bad news.
 
@@ -111,6 +129,18 @@ The owner makes four changes:
 - **Money where it matters.** Turnover is also reported as an estimated annual cost of recruiting and training replacements.
 
 In the first three months, logged incidents rise by about half. Most are minor, but two reveal a recurring chemical storage problem at one site that had not been reported before. Fixing equipment requests faster reduces overtime on the affected sites. The report now takes about a day to produce.
+
+```figure
+type: compare
+title: A 22-measure people report, rebuilt
+cols: Before | After
+best: 2
+caption: Logged incidents rose by about half, revealing a recurring chemical storage problem at one site.
+- Measures | 22, three of which changed a decision | Nine, each with a threshold and an owner
+- Effort | About 35 hours a month | About a day
+- Incidents | Counted in supervisors' reviews | Logged within 24 hours, follow-up completed
+- Turnover | A single rate | By supervisor, and as an annual cost
+```
 
 ## How this applies to a small Australian business
 

@@ -65,6 +65,16 @@ Firm correction is sometimes necessary, particularly for serious misconduct such
 
 The same person may need different styles for different tasks. An excellent technician may need coaching when they first supervise others. Lead the task, not just the person.
 
+```figure
+type: steps
+title: Adapting your style to the person and the task
+caption: The same person may need a different style for each task.
+- Directing | new to the task: what to do and how
+- Coaching | learning: explain, discuss, guide
+- Supporting | capable but uncertain: listen more
+- *Delegating | capable and committed: seek their solutions
+```
+
 ## 7. Recognise effort and contribution
 
 An effort that is appreciated tends to be repeated. Recognition builds confidence, satisfaction and loyalty, and it costs nothing. Recognise joint contributions as well as individual ones to build team spirit. Motivation is like food: it needs to be replenished regularly, not served once a year at a performance review.
@@ -80,6 +90,15 @@ Engage people's heads and hearts, and their hands will follow. Share the purpose
 An annual goal is too distant to guide weekly effort. Break outcomes into milestones: monthly, then weekly. If the annual revenue target is $1.2 million, the monthly milestone might be $100,000 and the weekly milestone about $25,000. Agree milestones with the people who will deliver them, rather than imposing them, and consult key people before settling them.
 
 Review progress regularly. Many businesses set a fixed weekly review time, often Monday morning, for each team, supported by simple management reports. When milestones are achieved, celebrate.
+
+```figure
+type: funnel
+title: Breaking an annual target into milestones
+caption: Agree milestones with the people who deliver them, and review weekly.
+- Annual target | $1.2 million
+- Monthly milestone | $100,000
+- *Weekly milestone | about $25,000
+```
 
 ## 10. Catch people doing things right
 
@@ -146,6 +165,17 @@ When you see these signs, ask before assuming. Hold one-to-one conversations, li
 The owner of a growing electrical contracting business finds that good apprentices and tradespeople keep leaving for competitors offering slightly higher pay. Exit conversations reveal a different story: people felt their work went unnoticed, communication only happened when something went wrong, and there was no clear path to becoming a supervisor.
 
 The owner starts monthly one-to-ones, publishes quarterly goals for each crew and holds a short Monday planning meeting. Supervisors are asked to recognise good work on site every day and share notable examples at the Monday meeting. Two experienced electricians are given structured development to become supervisors, with the owner coaching them. Within a year, turnover drops sharply, two new supervisors are leading crews, and the owner spends more time winning work and less time on site.
+
+```figure
+type: compare
+title: Why good tradespeople were leaving
+cols: What exit conversations said | What the owner changed
+caption: Within a year turnover dropped sharply and two new supervisors were leading crews.
+- Recognition | Work went unnoticed | Daily recognition on site, shared on Mondays
+- Communication | Only when something went wrong | Monthly one-to-ones; a Monday planning meeting
+- Direction | Unclear goals | Quarterly goals for each crew
+- Progression | No path to supervisor | Two electricians developed into supervisors
+```
 
 ## Summary
 
