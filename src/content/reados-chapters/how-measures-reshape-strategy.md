@@ -29,6 +29,16 @@ Consider a typical cascade for a business that develops and sells commercial pro
 
 Every line is specific, measurable and traceable to the line above. But the first two are written in profit and margin, and the last two in cost and time. The individual goal can be fully met while the program's margin falls, for example if the saving comes from landscaping that buyers of the neighbouring units valued, or if finishing early simply means the site sits idle while other parts of the development catch up.
 
+```figure
+type: steps
+title: A cascade that changes units
+caption: Every line traces to the one above, but the unit changes from profit to cost and time.
+- Business | grow profit 5% a year
+- Program | a 10% margin on the development
+- Project | the park for $90,000 in six months
+- *Individual | save $10,000, finish a month early
+```
+
 ## Three conditions hidden in the conversion
 
 Treating a dollar of cost saving as a dollar of margin assumes three conditions:
@@ -38,6 +48,15 @@ Treating a dollar of cost saving as a dollar of margin assumes three conditions:
 3. **The saving is not consumed elsewhere**: it does not simply shift cost or delay to another part of the work.
 
 None of these is usually stated, and all are often false. Finishing early creates value only if something downstream can use the time.
+
+```figure
+type: checklist
+title: Three conditions hidden in "a dollar saved is a dollar of margin"
+caption: Write the conversion down where money becomes another unit, and test each condition.
+- ? Revenue is fixed | customers pay the same
+- ? Nothing valuable is degraded | quality, appearance, durability
+- ? The saving is not consumed elsewhere | cost or delay moved on
+```
 
 ## Common misreadings
 
@@ -106,6 +125,17 @@ A year later, cost per job is down 9% and quotes are up 25%, but gross margin ha
 The owner writes down the conversions. For production: "each dollar of cost saving is treated as margin, assuming quality and customer retention are unaffected." For sales: "more quotes lead to more margin, assuming the mix of jobs stays the same." Both assumptions had failed.
 
 The owner adds companion measures in the unit that matters: production also tracks reprint rates and margin on premium jobs, and sales also tracks average margin per job quoted and won. Leading indicators are added for the margin goal: share of revenue from premium customers and repeat order rates. A quarterly review checks the conversions, not just the targets. Over the following year, margin rises to about 35%, with cost per job roughly flat and fewer but more profitable jobs.
+
+```figure
+type: compare
+title: Every target met, the goal missed
+cols: Year one | After companion measures
+best: 2
+caption: The goal was gross margin from 32% to 36%; cheaper paper raised reprints and small jobs diluted margin.
+- Production | Cost per job down 9% | Also tracks reprints and premium-job margin
+- Sales | Quotes up 25% | Also tracks margin per job quoted and won
+- Gross margin | Barely moved | About 35%
+```
 
 ## How this applies to a small Australian business
 

@@ -52,6 +52,18 @@ A SWOT built only from the opinions of the people in the room is a list of assum
 
 For each entry, ask "how do we know?" If there is no evidence, mark it as an assumption to test.
 
+```figure
+type: matrix
+title: SWOT: inside and outside, helpful and harmful
+x: Helpful → harmful
+y: External → internal
+caption: The most important distinction is between internal factors you control and external ones you respond to.
+- Strengths | internal capabilities that give advantage
+- Weaknesses | internal limitations
+- Opportunities | external conditions to exploit
+- Threats | external conditions that could harm
+```
+
 ## Running a SWOT session
 
 1. **Define the scope.** Is this SWOT for the whole business, a division, a product, a market or a decision? A focused scope produces sharper results.
@@ -78,6 +90,19 @@ The TOWS matrix, described by Heinz Weihrich in the early 1980s, combines the fo
 - **WT (mini-mini)**: where are you vulnerable on both counts? These may call for defensive actions, exits or restructuring.
 
 The TOWS step is what turns a SWOT from a description into a plan.
+
+```figure
+type: matrix
+title: TOWS: from analysis to strategy
+x: Strengths → weaknesses
+y: Threats → opportunities
+hot: 1
+caption: Heinz Weihrich's TOWS matrix (early 1980s) combines the four boxes into four kinds of move.
+- *SO, maxi-maxi | use strengths to pursue opportunities
+- WO, mini-maxi | fix weaknesses to capture opportunities
+- ST, maxi-mini | use strengths to counter threats
+- WT, mini-mini | defend, exit or restructure
+```
 
 ## An illustration: a large online job portal
 
@@ -118,6 +143,17 @@ A 25-person sheet-metal manufacturer runs a SWOT for its next three years.
 - **WT**: reduce dependence on the largest customer and on the owner by training a second estimator and documenting quoting rules. Start an apprenticeship program to address recruitment.
 
 Each strategy is assigned an owner, budget and timeline, and progress is reviewed quarterly.
+
+```figure
+type: compare
+title: The sheet-metal manufacturer's TOWS strategies
+cols: Built from | The move
+caption: An illustration; each move gets an owner, a budget and a timeline.
+- SO | 5-day prototypes; reshoring and renewables demand | Market fast prototyping and design support
+- WO | No certification; ageing press brake | Certify for larger contracts; replace the press brake
+- ST | Speed and design skills; low-cost imports | Compete on speed and small batches, not standard-part price
+- WT | 40% of revenue from one customer; owner in every quote | Train a second estimator; document quoting rules
+```
 
 ## Questions that sharpen each box
 

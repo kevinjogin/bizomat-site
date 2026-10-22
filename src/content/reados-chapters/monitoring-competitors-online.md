@@ -113,6 +113,16 @@ Monitoring is only useful if someone looks at the information and acts on it. A 
 - Update your positioning and sales materials if needed.
 - Decide on any responses: new content, offers, product changes or sales focus.
 
+```figure
+type: cycle
+title: A competitor review rhythm
+caption: Monitoring only pays when someone looks at it and decides something.
+- Alerts and sales notes | through the month
+- Monthly check | sites, search, ads, reviews, jobs, 60 to 90 minutes
+- Update competitor profiles
+- *Quarterly decisions | positioning, content, offers
+```
+
 ## A competitor profile template
 
 Keep a one-page profile for each main competitor:
@@ -196,6 +206,17 @@ Competitor monitoring must stay within ethical and legal boundaries:
 - **Keep comparative advertising accurate.** Under the Australian Consumer Law, claims comparing your products with competitors' must not be misleading.
 - **Never coordinate with competitors** on prices, customers or bids. Monitoring their public prices is lawful. Agreeing on prices is cartel conduct.
 
+```figure
+type: checklist
+title: The ethical and legal limits
+caption: Monitoring public prices is lawful; agreeing prices with a competitor is cartel conduct.
+- Use public information | never pose as a customer to extract secrets
+- x Solicit confidential information | from current or former staff
+- Respect website terms | avoid prohibited scraping
+- Keep comparisons accurate | Australian Consumer Law
+- x Coordinate with competitors | on prices, customers or bids
+```
+
 ## A worked example
 
 A small commercial HVAC maintenance business in Brisbane notices that it has been losing tenders. The owner sets up a monitoring routine:
@@ -208,6 +229,15 @@ A small commercial HVAC maintenance business in Brisbane notices that it has bee
 Within two months, a pattern emerges. One competitor has added a customer portal showing maintenance records and compliance certificates, and highlights it in case studies. Lost-tender contacts mention "visibility of compliance records" as a deciding factor. Reviews praise that competitor's reporting.
 
 The business introduces its own digital maintenance reports, updates its tender responses to emphasise compliance visibility and writes practical articles on maintenance compliance, which begin ranking for relevant searches. Its tender win rate recovers within six months.
+
+```figure
+type: timeline
+title: The HVAC business finds why it was losing tenders
+caption: Its tender win rate recovered within six months.
+- Set up | A light routine | alerts, monthly site checks, reviews, lost-tender calls
+- Two months | A pattern | a rival's customer portal showing compliance records
+- *Response | Digital maintenance reports | tenders and articles stressing compliance visibility
+```
 
 ## Common mistakes
 

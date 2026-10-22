@@ -58,6 +58,17 @@ A standard that is written down but not enforced is not a standard. The behaviou
 
 If these four mechanisms contradict the plan, the mechanisms win. Changing them is the real work of carrying out a strategy.
 
+```figure
+type: tree
+title: Where strategy is really decided
+caption: When these mechanisms contradict the written plan, the mechanisms win.
+- The strategy in practice
+  - Funding | which proposals go ahead
+  - *Hiring | capability is the slowest thing to change
+  - Escalation | what reaches the owner
+  - Tolerance | what is accepted in practice
+```
+
 ## Every commitment has four properties
 
 A useful way to make a strategy concrete is to treat it as a set of commitments, each with four properties:
@@ -79,6 +90,16 @@ One practical change does more than most planning improvements: sort decisions b
 | Practically irreversible | Buying a business, a long lease, a major long-term contract | Independent challenge, a downside scenario, a named person accountable | The owner, partners or board, with advice |
 
 Many businesses discover they have been applying heavy scrutiny to small, reversible decisions, which slows learning for no benefit, and light scrutiny to irreversible ones, which often arrive framed as inevitable.
+
+```figure
+type: layers
+title: Match the evidence to how reversible a decision is
+caption: Heavy scrutiny on small reversible choices and light scrutiny on irreversible ones is the common mismatch.
+- Easily reversed | a clear aim; the responsible manager decides
+- Reversible at some cost | a short case with assumptions
+- Hard to reverse | assumptions tested, alternatives, exit cost
+- *Practically irreversible | independent challenge, downside case, a named owner
+```
 
 ## Four questions that turn priorities into choices
 
@@ -120,6 +141,17 @@ The owner makes explicit choices:
 Decisions are also sorted by reversibility. A pricing trial on small jobs is delegated to the estimators. Leasing a second CNC machine goes to the owner with a short case. The five-year lease the second-city office would have required is recognised as practically irreversible and is not signed without independent advice and a downside scenario, which, for now, means it is not signed at all.
 
 Within a year, tender capacity has grown, the win rate on commercial work has improved and the project manager spends far less time chasing drawings. Three priorities have moved further than eight did the year before.
+
+```figure
+type: compare
+title: Eight agreed priorities became three choices
+cols: Decision | Why
+caption: Five of the eight priorities depended on the same two estimators and one project manager.
+- Fund | Commercial growth, estimating software, margins | The core path
+- Refuse or defer | Second-city office; residential range | A practically irreversible lease; no estimating capacity
+- Keep as obligations | Safety and accreditation | Not optional priorities
+- Change the mechanisms | Hire an estimator first; review lost tenders; enforce drawing deadlines | Hiring, escalation and tolerance had contradicted the plan
+```
 
 ## How this applies to a small Australian business
 

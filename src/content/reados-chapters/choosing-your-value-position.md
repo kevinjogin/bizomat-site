@@ -71,6 +71,17 @@ Businesses can combine value types, for example offering good performance at an 
 
 There is a close parallel in management research. Michael Treacy and Fred Wiersema's book *The Discipline of Market Leaders* (1995) argued that market leaders excel at one of three disciplines: **operational excellence** (best total cost), **product leadership** (best product) or **customer intimacy** (best total solution for specific customers), while meeting acceptable standards in the other two.
 
+```figure
+type: tree
+title: Four kinds of customer value
+caption: Lead with one and meet acceptable standards in the others.
+- Why customers buy
+  - Performance | simply better: reliable, durable, capable
+  - Relational | customisation, responsiveness, support
+  - Emotional | aspiration, status, belonging
+  - Financial | low price and affordability
+```
+
 ## The price–quality map
 
 Positioning also places you on a map of price and quality:
@@ -86,6 +97,19 @@ Positioning also places you on a map of price and quality:
 - **Opportunistic**: high price, ordinary quality. Survives only where customers lack alternatives, and is vulnerable once they have them.
 
 You can operate in more than one quadrant with different product lines, but focus on one as your core.
+
+```figure
+type: matrix
+title: The price–quality map
+x: Lower → higher quality
+y: Lower → higher price
+hot: 4
+caption: Opportunistic pricing survives only where customers lack alternatives.
+- Opportunistic | ordinary quality, high price
+- Premium | performance or emotional value
+- Cheap and basic | thin margins
+- *Value for money | needs excellent cost control
+```
 
 ## Why repositioning often needs a new brand
 
@@ -188,6 +212,18 @@ The owner analyses the customer base and finds that the most profitable, loyal c
 The changes ripple across the business. Marketing materials are rewritten around precision, traceability and reliability, with case examples. Sales targets equipment manufacturers rather than all comers. Production invests in inspection equipment and first-article reports. Quality introduces documented inspection and traceability. HR adds training in measurement and documentation. Purchasing qualifies certified material suppliers. Prices rise for the target segment, and the business politely stops chasing low-margin, price-only work.
 
 Within eighteen months, revenue is similar but gross margin has risen significantly, customer churn has fallen and the business is known for something specific.
+
+```figure
+type: balance
+title: The sheet-metal business repositions
+left: Competing on price
+right: Performance and relational value
+tilt: right
+caption: Revenue stayed similar, but gross margin rose significantly and churn fell.
+- Winning by quoting lowest | Chosen by medical and laboratory makers
+- Shrinking margins, stretched staff | Accuracy, finish, documentation, on-time delivery
+- Customers switch for small savings | Known for something specific
+```
 
 ## Summary
 

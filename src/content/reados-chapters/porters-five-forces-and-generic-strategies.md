@@ -79,6 +79,27 @@ How easily can customers meet the same need in a different way? Substitutes are 
 
 Industry growth, regulation and technological change also matter, but Porter argued that the five forces are the enduring structural drivers of profitability in every industry. Understanding them helps you:
 
+```figure
+type: svg
+title: Porter's five forces
+alt: Competitive rivalry sits in the centre. Around it are four forces that push on profit: supplier power on the left, buyer power on the right, the threat of new entrants above and the threat of substitutes below.
+caption: The stronger the forces, the harder it is for any business in the industry to keep its margins.
+viewbox: 0 0 640 300
+body:
+<rect class="bxa" x="230" y="120" width="180" height="60" rx="8"/>
+<text class="txa" x="320" y="146" text-anchor="middle">Competitive</text>
+<text class="txa" x="320" y="166" text-anchor="middle">rivalry</text>
+<rect class="bx" x="230" y="16" width="180" height="50" rx="6"/>
+<text class="txb" x="320" y="46" text-anchor="middle">New entrants</text>
+<rect class="bx" x="230" y="234" width="180" height="50" rx="6"/>
+<text class="txb" x="320" y="264" text-anchor="middle">Substitutes</text>
+<rect class="bx" x="16" y="125" width="160" height="50" rx="6"/>
+<text class="txb" x="96" y="155" text-anchor="middle">Supplier power</text>
+<rect class="bx" x="464" y="125" width="160" height="50" rx="6"/>
+<text class="txb" x="544" y="155" text-anchor="middle">Buyer power</text>
+<path class="la flow" d="M320 66V120M320 234V180M176 150H230M464 150H410"/>
+```
+
 - Judge how attractive an industry or segment is.
 - See where pressure on your margins comes from.
 - Decide where to invest, such as building barriers, diversifying suppliers, broadening your customer base or differentiating against substitutes.
@@ -142,6 +163,18 @@ Most small businesses cannot be the lowest-cost producer across a whole market, 
 
 Porter warned that firms trying to be everything to everyone, neither the cheapest nor clearly different, risk being "stuck in the middle" with no clear advantage. Many small businesses drift into this position by chasing every enquiry. Choosing a clear strategy, and saying no to work that does not fit it, is often the hardest and most valuable strategic decision.
 
+```figure
+type: matrix
+title: Porter's generic strategies
+x: Lower cost → differentiation
+y: Narrow → broad market
+caption: Most small businesses compete best in the bottom row; trying to be everything to everyone leaves a firm stuck in the middle.
+- Cost leadership | lowest cost across the market; usually needs scale
+- Differentiation | valued features across the market
+- Cost focus | low prices for a narrow segment
+- Differentiation focus | something distinctive for a narrow segment
+```
+
 ## Choosing your strategy
 
 1. **Analyse yourself**: a SWOT analysis shows which strengths could support cost or differentiation advantages.
@@ -178,6 +211,18 @@ Small businesses cannot change an industry's structure, but they can improve the
 A small precision machining business analyses its industry. **Rivalry** is high for standard parts, with many local shops and imports competing on price. **Supplier power** is low, because metal is widely available. **Buyer power** is high, because several large customers account for most revenue and could switch to other shops. The **threat of entry** is moderate, because machines are expensive but used equipment is available. The **threat of substitutes** is rising, because some customers are adopting additive manufacturing for prototypes.
 
 The business concludes that competing on cost for standard parts is a losing strategy. It chooses **differentiation focus**: complex, tight-tolerance parts for medical and scientific equipment makers, where quality systems, inspection capability and fast engineering support matter more than price. It invests in inspection equipment and documentation, diversifies its customer base within the niche to reduce buyer power, and adds additive manufacturing for prototypes, turning a substitute into a complementary service. Margins and customer loyalty improve.
+
+```figure
+type: compare
+title: The machining business's five forces and responses
+cols: Rating | Response
+caption: It chose differentiation focus: complex, tight-tolerance parts for medical and scientific equipment makers.
+- Rivalry | High for standard parts | Leave the price fight for standard parts
+- Supplier power | Low: metal widely available | No action needed
+- Buyer power | High: a few large customers | Diversify customers within the niche
+- New entrants | Moderate: used machines available | Inspection capability and documentation
+- Substitutes | Rising: additive prototypes | Offer additive manufacturing as a service
+```
 
 ## Frequently asked questions
 

@@ -30,6 +30,15 @@ Most people think in two categories: things that are ours and things that belong
 
 Much digital demand sits in the granted category: a ranking position in a marketplace, a social audience, a listing in an app store, visibility in search results. It is real and valuable, but it is not owned. It is granted, priced by the platform and changeable without consultation.
 
+```figure
+type: layers
+title: Owned, contracted or granted
+caption: Much digital demand is granted: it can end immediately, often without appeal.
+- Owned | ends on your decision; the asset remains
+- Contracted | ends with notice and remedies; time to replace it
+- *Granted | ends at someone else's discretion; only what you built elsewhere remains
+```
+
 ## Common misreadings
 
 - **An audience is a relationship.** Followers and marketplace reviews reflect the platform's willingness to show you to people, not a list of customers you can contact.
@@ -62,6 +71,17 @@ The second risk is quieter. Ask:
 - **Who owns your customer records and website code**, and are they in an account the business controls?
 
 These are classic hidden dependencies: assets the business relies on that were never brought under its legal control. Each works perfectly until a relationship ends, and is usually discovered at the most inconvenient moment, such as during a dispute with a contractor or after a staff member leaves.
+
+```figure
+type: checklist
+title: Who actually controls your digital assets?
+caption: Control is a register entry, not a habit.
+- ? Who is the registered holder of the domain | and where do renewals go?
+- ? Who holds administrator access | ads, analytics, social, marketplaces?
+- ? Any held in a personal account | or by a former contractor?
+- ? Is the brand a registered trade mark?
+- ? Who owns customer records and website code?
+```
 
 ## A digital asset register
 
@@ -115,6 +135,18 @@ The owner acts on two fronts:
 - **Owned demand**: the business adds a card to every order inviting customers to register their product for warranty and care tips, with clear consent to receive emails. It launches a simple repeat-purchase offer on its own website and protects about 10% of its marketing budget for building direct relationships, measured by the share of buyers it can contact directly.
 
 Eighteen months later, the marketplace still matters, but it provides about half of sales rather than 70%, and direct and repeat customers provide about 30%. The business negotiates with the marketplace from a stronger position and could survive a further change.
+
+```figure
+type: bars
+title: Share of sales through one marketplace
+unit: %
+max: 100
+caption: A fee and ranking change cut marketplace sales by about 30% in a month; owned demand and fixed account control followed.
+- Marketplace, before | 70
+- *Marketplace, eighteen months later | 50 | about half
+- Direct and repeat customers, before | 10
+- *Direct and repeat customers, eighteen months later | 30
+```
 
 ## How this applies to a small Australian business
 

@@ -36,6 +36,17 @@ The table summarises the book's main rules of thumb alongside what each implies 
 
 Each of these is covered in more detail elsewhere in this series; the full list of articles appears at the end.
 
+```figure
+type: checklist
+title: Five questions before building anything
+caption: Read in reverse, an investor's checklist becomes a design brief for a durable business.
+- ? Why will customers keep choosing us?
+- ? Will the need exist in twenty years?
+- ? What does it cost to stand still?
+- ? Can the business fund its own growth?
+- ? Where does the value live: people or systems?
+```
+
 ## Five questions before building anything
 
 Condensed further, the book's lens suggests five questions worth answering honestly at the start of any venture.
@@ -90,6 +101,19 @@ Idea A could still make money, especially for a founder skilled at spotting tren
 
 The checklist does not make the decision. It makes the trade-offs visible.
 
+```figure
+type: balance
+title: Two business ideas through the durability lens
+left: Novelty phone accessories
+right: Test-and-tag service
+tilt: right
+caption: The checklist does not decide; it makes the trade-offs visible.
+- Trends change; many competitors | Reliability, records, convenience
+- Need depends on fashion | Safety obligations persist
+- High cost to stand still | The service changes slowly
+- Stock-heavy, discount-driven | Recurring revenue, modest equipment
+```
+
 ## The trade-offs in different industries
 
 Not every good business fits this pattern. The thresholds in the book reflect the kinds of businesses Buffett favoured, and other industries work differently.
@@ -137,6 +161,17 @@ Durability is rarely designed in a single decision. It is built over years, roug
 5. **Strengthen the position.** Add recurring services, deepen relationships, lower costs and protect what customers value.
 
 Each stage makes the next easier. Skipping stages, such as scaling before the margin is proven, usually means having to go back later at greater cost.
+
+```figure
+type: steps
+title: Building durability stage by stage
+caption: Skipping stages, such as scaling before the margin is proved, usually magnifies the problem.
+- Prove the need | customers pay, and pay again
+- Prove the margin | all costs counted
+- Build the method | consistent and transferable
+- Build the name | a trusted identity
+- *Strengthen the position | recurring services, lower costs
+```
 
 ## Honest caveats
 

@@ -54,6 +54,18 @@ Not everyone needs to attend every discussion. Some people can provide evidence 
 
 For a small business, these are contributions rather than five positions to create. One person may provide several, but the group should still consider whether any important perspective is missing.
 
+```figure
+type: tree
+title: Five contributions to a planning discussion
+caption: In a small business one person may bring several; what matters is that each is present.
+- A plan that can be delivered
+  - Resource approval | authority to commit time and money
+  - Customer knowledge | needs and recurring problems
+  - *Delivery knowledge | sequence, capacity, exceptions
+  - Coordination | resolving conflicting commitments
+  - Independent challenge | questions the group misses
+```
+
 ## Prepare evidence and a decision brief
 
 A **decision brief** is a short account of the issue, the evidence available, the options to consider and the decision required. Preparing it before the session lets participants spend more time examining choices and less time discovering basic facts.
@@ -102,6 +114,15 @@ The owner can approve the offer and allocate time. A part-time coordinator manag
 
 Each participant spends one hour reviewing the material. A two-hour joint session then uses six person-hours: three people multiplied by two hours. Including the three preparation hours, the initial planning commitment is nine person-hours. Recording this matters because the meeting takes capacity away from other work even when nobody purchases outside assistance.
 
+```figure
+type: formula
+title: What a planning meeting really costs
+formula: Planning commitment = Preparation hours + People × Meeting hours
+caption: Meetings take capacity from other work even when nobody buys outside help.
+step: 3 × 1 hour preparation + 3 people × 2 hours
+step: 3 + 6 = 9 person-hours
+```
+
 The discussion reveals that the proposed faster promise depends on knowing when an order is complete and ready for scheduling. At present, the coordinator and assembler use different interpretations. The group decides to test a shared readiness check before considering a broader customer promise.
 
 | Commitment | Person coordinating it | Completion condition |
@@ -112,6 +133,16 @@ The discussion reveals that the proposed faster promise depends on knowing when 
 | Review the result | Owner, with both implementers | Evidence considered and next decision recorded |
 
 The owner allows 12 hours for trial work over the following two weeks, separate from the nine planning hours. Four hours go to preparing the check, six to using it and recording exceptions, and two to analysing the records. The allocation totals 12 hours, and the group identifies the promotional work that will be deferred to make room.
+
+```figure
+type: stack
+title: The 12 trial hours after the meeting
+unit: hours
+caption: The test checked a shared readiness check before any faster dispatch promise was made to customers.
+- Prepare the readiness check | 4
+- Use it and record exceptions | 6
+- Analyse the records | 2
+```
 
 Before beginning, they agree what the test can establish. It can show whether the readiness definition is usable and whether changes after scheduling become less frequent under the trial conditions. A small trial will not establish a reliable dispatch promise for every product and order volume.
 

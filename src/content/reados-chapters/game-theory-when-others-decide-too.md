@@ -49,6 +49,19 @@ This is an illustration with round numbers. Two cafés on the same street each c
 
 Whatever B does, A earns more by cutting prices ($6,000 instead of $5,000 if B keeps prices; $3,500 instead of $2,500 if B cuts). The same applies to B. If both reason this way, both cut prices and earn $3,500 each, less than the $5,000 each they would earn if both kept prices steady.
 
+```figure
+type: matrix
+title: Two cafés and a price war
+x: Café B keeps → cuts prices
+y: Café A cuts → keeps prices
+hot: 4
+caption: Illustrative monthly profits. Cutting is better for each café whatever the other does, so both end up with less.
+- Both keep | A $5,000 · B $5,000
+- B cuts | A $2,500 · B $6,000
+- A cuts | A $6,000 · B $2,500
+- *Both cut | A $3,500 · B $3,500
+```
+
 Price wars, advertising arms races and over-investment in capacity often have this structure. Recognising it is the first step to avoiding it, for example by competing on quality or service rather than price, or by building relationships that make cooperation more likely over time. Note that agreements between competitors to fix prices are illegal under Australian competition law; the legitimate responses lie in differentiation and in each business making its own independent decisions wisely.
 
 ## Nash equilibrium
@@ -103,6 +116,15 @@ The **traveller's dilemma**, proposed by the economist Kaushik Basu and included
 
 Logic leads step by step downward: undercutting the other by $1 always seems to pay, until the only Nash equilibrium is for both to claim $2. Yet when people play this game, many claim amounts near $100, and often earn far more than equilibrium players would. Models with limited levels of reasoning predict this much better than Nash equilibrium does.
 
+```figure
+type: compare
+title: The traveller's dilemma: theory and people
+cols: Claim | Result
+caption: Predicting rivals and customers as perfect reasoners can mislead; most reason only one or two levels deep.
+- Nash equilibrium | $2 each | Undercutting by $1 always seems to pay
+- What many people do | Near $100 | Often earn far more than equilibrium players
+```
+
 The lesson for business is important: predicting competitors and customers as perfectly rational calculators can be wrong. Thinking about how many steps of reasoning others are actually likely to apply often gives better predictions.
 
 ## Repeated and sequential interactions
@@ -139,6 +161,19 @@ A regional equipment supplier learns that a competitor is opening a branch in it
 Working through the game: the competitor is a larger company that can sustain a price war longer. Both businesses would lose if prices fell sharply, a prisoner's dilemma. The local customer base values fast service and local expertise. The interaction is repeated, and both will be in the market for years.
 
 The supplier chooses not to start a price war. Instead, it strengthens what the competitor cannot easily match: same-day service, local knowledge and long-standing relationships. It keeps prices competitive but not aggressively low, and responds firmly but proportionately if the competitor undercuts on specific lines. Over the following year, both businesses settle into a stable pattern, with the supplier retaining most of its loyal customers at healthy margins.
+
+```figure
+type: steps
+title: Working through the game before reacting
+caption: A repeated interaction with a larger rival favoured service over a price war.
+- Identify the players
+- List their options
+- Consider their goals
+- Look for dominant strategies
+- Find stable outcomes
+- Consider realistic reasoning
+- *Think about repetition
+```
 
 ## Common mistakes
 

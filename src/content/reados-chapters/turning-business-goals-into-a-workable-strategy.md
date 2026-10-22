@@ -44,6 +44,17 @@ Separate observation from interpretation. Customers asking for delivery updates 
 
 Record what is unknown as explicitly as what is known. An empty field is useful when it prevents an unsupported assumption from appearing as a fact in the finished plan.
 
+```figure
+type: steps
+title: Five planning areas, in order
+caption: The budget shows what the business can afford; the plan decides where effort goes.
+- Present position | with evidence
+- How we got here | decisions that still shape things
+- A future that guides choices | objectives with boundaries
+- *Alternative routes | before choosing one
+- Resources and what stops | capacity after existing work
+```
+
 ## Review how the business reached this point
 
 History helps explain why the current position exists. Tracy includes this backward look because a future plan benefits from understanding earlier decisions, successes, mistakes and changes in the environment. The aim is to identify causes that may still matter.
@@ -102,6 +113,16 @@ The owner reviews how orders are accepted and discovers that several earlier add
 
 The proposed objective is at least 90% on-time completion in a comparable four-week period, while monitoring quality complaints and hours worked. At a volume of 40 completed orders, 90% means 36 on time and no more than four late. The team also records that a different mix of products could make comparisons less straightforward.
 
+```figure
+type: bars
+title: The workshop's on-time orders, now and target
+unit: of 40 orders
+max: 40
+caption: Six of the 10 late orders had missing specifications, so delivery was fixed before chasing more demand.
+- Latest four weeks: 75% | 30
+- *Target: at least 90% | 36
+```
+
 Three routes are considered: purchase a new ordering system, reduce the configurable range or introduce a simple specification check. The team chooses the check as an initial test because it addresses the observed gap without first committing to a larger system change.
 
 | Plan element | Illustrative decision |
@@ -115,6 +136,16 @@ Three routes are considered: purchase a new ordering system, reduce the configur
 | Review evidence | Late orders, reasons, complaints and hours worked |
 
 Six hours each week over four weeks provides 24 hours. The owner allocates eight hours to drafting and checking the requirements, eight to trying the process with the team, and eight to reviewing exceptions and results. The total is 24 hours, so the planned work fits the stated allowance before any unexpected effort.
+
+```figure
+type: stack
+title: The 24 improvement hours, planned to fit
+unit: hours
+caption: Six hours a week for four weeks; the promotional experiment was deferred to make room.
+- Draft and check the requirements | 8
+- Try the process with the team | 8
+- Review exceptions and results | 8
+```
 
 Suppose the next comparable period produces 36 on-time completions from 40 orders. That reaches the numerical target, but the review should still check whether the apparent improvement came from easier orders, extra overtime or unresolved quality issues. The decision to extend the process should consider those explanations alongside the headline result.
 

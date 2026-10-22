@@ -85,6 +85,18 @@ Use several kinds of evidence. Customer behaviour indicates whether the problem 
 
 Treat these responses as reasoning prompts. The same observation can have different explanations, and a small trial may be inconclusive. An honest decision rule allows another focused test when the evidence is genuinely insufficient, with a reason and a limit.
 
+```figure
+type: decision
+title: Decision rules agreed before enthusiasm builds
+question: What did the evidence show?
+caption: The same observation can have different explanations; check before acting.
+- Benefit valued, setup hard | Improve setup within the focus
+- Polite interest, no use | Revisit the need or the group
+- Delivery needs repeated exceptions | Limit expansion; fix the process
+- *Use and delivery both hold | A bounded next stage
+- The original need changed | Reconsider the objective
+```
+
 ## Worked example: choosing what deserves the next month
 
 This is an illustration. A two-person Australian product business is exploring practical storage accessories. Its founders can allocate 80 hours over the next four weeks to development and testing after allowing for their other commitments. They are considering a compact organiser, an adjustable mounting accessory and a customised range.
@@ -103,6 +115,18 @@ They choose the compact organiser for the first focused test because they have a
 | Total | 80 |
 
 The planned activities use 64 hours and the reserve accounts for the remaining 16. The founders defer both other concepts for the period and record what evidence would justify returning to them. This protects the test from being diluted by informal work on the alternatives.
+
+```figure
+type: stack
+title: The founders' 80 hours, focused on one test
+unit: hours
+caption: Split three ways, each option would get about 26.7 hours against the 40 a credible test needs.
+- Observe the problem, confirm requirements | 16
+- Build and prepare trial units | 24
+- Observe trials, collect feedback | 16
+- Review and choose the next step | 8
+- Reserve for unexpected work | 16
+```
 
 The trial asks whether people can configure the organiser for a defined use without assistance and whether they choose to keep using it during the trial. It also records setup difficulties and requests outside the intended scope. The founders do not treat positive comments as equivalent to continued use or a purchase decision.
 

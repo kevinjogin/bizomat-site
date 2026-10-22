@@ -43,6 +43,17 @@ It helps to think of a business as having two halves:
 
 Two questions follow. Which half does the customer pay a premium for? And which half did the business keep? If customers pay for the quality of the making and the making has been contracted out, the business may be holding the lower-margin half of its own value chain. If customers pay for design, brand, integration or service, keeping those and outsourcing production may be exactly right.
 
+```figure
+type: balance
+title: Two halves of a business
+left: The repeated half
+right: The orchestrating half
+caption: Ask which half the customer pays a premium for, and which half you kept.
+- Manufacturing, assembly, routine service | Selecting, designing, sourcing, integrating
+- Learning accumulates automatically | Learning compounds only if captured
+- Reliability improves with repetition | Each project varies more
+```
+
 ## Learning stops compounding unless you build for it
 
 In a producing business, learning accumulates almost automatically because the same people do the same work repeatedly. In an orchestrating business, each project or outsourced order can start from scratch. Estimates do not improve, supplier problems recur and lessons leave with the people who learned them.
@@ -87,6 +98,15 @@ Most businesses are producers in some areas and orchestrators in others. Apply t
 
 A fourth question underlies all three: **what could we still do next Monday if our largest supplier stopped work?** The honest answer measures how much of the business you still hold.
 
+```figure
+type: checklist
+title: Three tests for each line of activity
+caption: Underneath all three: what could we still do next Monday if our main supplier stopped?
+- ? Repetition | would doing it more make us better, and does anything stop that?
+- ? Margin | the making or the orchestrating: which earns the premium?
+- ? Reliability | have plans been updated for project-style variation?
+```
+
 ## Decide what you will not outsource
 
 The pressure to outsource one more thing never stops, because each case looks marginal on its own. The cumulative effect is not marginal, and individual cases never provide a natural stopping point. The stopping point has to be a deliberate statement of which capabilities the business will keep at any price, usually those that customers pay for and that would be hardest to rebuild.
@@ -105,6 +125,17 @@ The owner applies the tests:
 - **Residual capability**: if the main manufacturer stopped, the business could not supply 60% of its range. It begins qualifying a second manufacturer for its three best-selling products.
 
 Over the next four launches, three are on time, first shipments have fewer defects and launch estimates become more accurate. The business still orchestrates most of its production, but now it governs itself as an orchestrator.
+
+```figure
+type: compare
+title: The consumer products business governs itself as an orchestrator
+cols: Finding | Response
+caption: About 80% of production had moved to contract manufacturers over ten years.
+- Repetition | Six launches a year, nothing captured | Launch playbook, short reviews, supplier scorecard
+- Margin | Customers pay for design, durability, service | Never outsource design or quality
+- Reliability | Plans assumed the old workshop's reliability | Buffers for first-production samples
+- Residual capability | One maker had about 60% of volume | Qualify a second manufacturer
+```
 
 ## How this applies to a small Australian business
 

@@ -46,6 +46,16 @@ Some lines reward concentrated effort; others absorb it without compounding. Fou
 
 A line that passes all four rewards investment: improvements stick, quality holds as volume grows and advantage builds. A line that fails several will absorb effort without compounding, however attractive its margin. Failing a test is not a verdict to stop. A line may be worth keeping because it anchors an important customer relationship, opens doors to other work or fulfils an obligation. But those reasons should be stated, not assumed. The [focusing business resources without losing flexibility](/reados/collections/competitive-strategy-and-positioning/focusing-business-resources-without-losing-flexibility/) article covers concentrating effort while keeping room to adapt.
 
+```figure
+type: checklist
+title: Four tests for what rewards focus
+caption: Lines that pass all four compound; lines that fail absorb effort without building anything.
+- ? Standard | defined and checked consistently
+- ? Scale | twice the volume for much less than twice the cost
+- ? Cash | turns into cash quickly and predictably
+- ? Independence | works without one person's judgement
+```
+
 ## Count where attention goes
 
 The most useful diagnostic is also the least used. For a month, the owner and key managers note roughly where their time goes: meetings, problems, decisions, customer issues, informal conversations. Attribute each to a product, service or customer, then set it beside each line's contribution.
@@ -94,6 +104,19 @@ This is an illustration. A bakery business has grown over ten years into six lin
 
 The owner keeps a rough attention log for four weeks. Baking classes, about 2.6% of contribution, take about a quarter of the owner's working time: scheduling, enquiries, refunds, setting up and covering for absent instructors. Wholesale, the most scalable and cash-reliable line, receives almost none, even though two cafés nearby have asked about regular supply.
 
+```figure
+type: bars
+title: The bakery's six lines by contribution
+unit: $
+caption: Baking classes, about 2.6% of contribution, took about a quarter of the owner's time; wholesale got almost none.
+- Cafés | 260000
+- *Wholesale | 180000 | passes all four tests
+- Catering | 70000
+- Online cakes | 40000 | 40 made-to-order designs
+- Retail coffee beans | 20000
+- Baking classes | 15000 | about 25% of the owner's time
+```
+
 Applying the four tests, wholesale passes all four. Classes fail on scale and independence: each class costs much the same to run regardless of growth, and they depend on the owner. Online cakes pass on cash but fail on standard, because the range has grown to 40 designs, each made to order with frequent waste.
 
 The owner decides:
@@ -104,6 +127,17 @@ The owner decides:
 - **Give the released time to wholesale**, starting with the two cafés that had already asked.
 
 Within a year, wholesale contribution grows by about $50,000, cake waste falls noticeably and the owner has regular time each week for pricing and key customers. Retail coffee beans stay: they carry little contribution but are a regular reason for café customers to visit, a reason the owner now writes down.
+
+```figure
+type: tree
+title: What the bakery owner decided
+caption: Coffee beans stayed: little contribution, but a regular reason for café customers to visit.
+- Range decisions
+  - Stop baking classes | after honouring bookings, with three months' notice
+  - Cut cakes from 40 designs to 18 | less waste and changeover
+  - Centralise baking | one kitchen; café service stays local
+  - *Give the time to wholesale | about $50,000 more within a year
+```
 
 ## How this applies to a small Australian business
 

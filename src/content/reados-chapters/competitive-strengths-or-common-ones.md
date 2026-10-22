@@ -48,6 +48,16 @@ Two questions, both answered with evidence from outside the business, sort most 
 
 The third category is the most expensive. Businesses can invest for years in capabilities customers do not value, and read the lack of reward as a marketing problem.
 
+```figure
+type: decision
+title: Two tests for each claimed strength
+question: Would a customer choose us, or pay more, because of it?
+caption: Answer both with evidence from outside the business, not from its own history.
+- No | Irrelevant | customers do not reward it, however hard it was to build
+- Yes, and a rival could match it within a year | Common | real and necessary, but cannot hold a price
+- *Yes, and a rival could not | Competitive | worth sustained investment
+```
+
 ## Common strengths are insurance, not advantage
 
 Reliability, responsiveness, meeting specifications, compliance and safety are essential. But they mostly protect against loss rather than create advantage. Failing at them can cost a business its customers or its right to bid. Excelling at them rarely wins extra margin, because customers assume them.
@@ -75,6 +85,15 @@ The same discipline applies to weaknesses, where it is used even less. Three kin
 Attention is often the wrong way round. Catastrophic weaknesses rightly get attention. Common weaknesses get comfortable improvement projects. Profit-eaters get almost none, because each instance is small and nobody adds them up.
 
 The order of attention should be: **catastrophic first, profit-eaters second and common weaknesses last**, unless a common weakness blocks something the strategy depends on. Profit-eaters come second because the money is already being lost, and recovering it funds everything else.
+
+```figure
+type: layers
+title: Which weaknesses to fix first
+caption: Profit-eaters drain margin continuously yet are rarely discussed.
+- *Catastrophic | could end the business or its ability to trade
+- Profit-eaters | rework, uncharged changes, small-order losses
+- Common | shared across the industry
+```
 
 ## Four uncomfortable questions
 
@@ -140,6 +159,19 @@ The owner tests each one, using quote records, customer conversations and what c
 
 The owner then adds up the profit-eaters for the past year:
 
+```figure
+type: compare
+title: Six claimed strengths, tested
+cols: Result | Why
+caption: The capability statement shrank from six strengths to two, with evidence for each.
+- Reliable delivery | Common | About 94% on time, like two main rivals
+- Quality welding | Common | Every serious competitor holds the certification
+- Responsiveness | Common | All good fabricators respond quickly
+- Experienced team | Fails durability | Knowledge held by two people near retirement
+- *In-house powder coating | Competitive | About six days faster; wins urgent jobs at better margins
+- 3D site scanning | Common soon | A rival could buy it within a year
+```
+
 | Profit-eater | Annual cost |
 |---|---|
 | Rework from measurement and drawing errors (410 hours at $85) | $34,850 |
@@ -148,6 +180,16 @@ The owner then adds up the profit-eaters for the past year:
 | Total | $73,050 |
 
 Finally, the owner reviews the last 20 lost quotes. Seven went to named competitors. Nine projects were deferred or did not proceed, and four builders used a standard product or did the work themselves. Thirteen of the twenty losses were not to rivals at all.
+
+```figure
+type: bars
+title: Where the last 20 lost quotes went
+unit: quotes
+caption: Thirteen of the twenty losses were not to rivals at all; profit-eaters cost a further $73,050 last year.
+- Named competitors | 7
+- *Deferred or did not proceed | 9
+- Standard product or done themselves | 4
+```
 
 The decisions follow. Investment in delivery and welding systems is held at its current level. Powder coating capacity is expanded and its faster turnaround becomes the main message to builders. The senior fabricators spend part of each week documenting methods and training two younger staff. A written variation process is introduced so that site changes are charged. Deferred projects are followed up when their budgets are likely to be set. The capability statement shrinks from six strengths to two, with evidence for each.
 

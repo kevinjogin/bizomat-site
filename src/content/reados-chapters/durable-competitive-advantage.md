@@ -30,6 +30,17 @@ Imagine a new product that earns unusually high profits. Three things tend to ha
 
 Squeezed from both sides, margins fall until the business earns roughly what it costs to stay in operation, plus a modest return. This is the normal state of most markets: airlines, generic manufacturing, many retail categories, commodity production. Good management can make a difference, but the industry structure sets a ceiling.
 
+```figure
+type: cycle
+title: How competition erodes unusual profits
+caption: A durable advantage is anything that blocks this cycle for a long time.
+- High profits attract attention
+- Competitors enter
+- Prices fall | customers have choices
+- *Costs rise | marketing, features, service
+- Margins return to ordinary
+```
+
 A durable competitive advantage is anything that blocks this process for a long time.
 
 ## Advantage: why some businesses keep their profits
@@ -81,6 +92,19 @@ A simple illustration shows why time matters so much. Suppose two businesses eac
 
 These are illustrative figures, not data. After five years the two look identical. After twenty-five, the second earns nearly seven times as much. Durability, not the size of the advantage in any single year, is what separates them.
 
+```figure
+type: line
+title: Same earnings today, different durability
+x: Year
+y: Earnings ($ million)
+legend: 25-year advantage | 5-year advantage
+caption: Illustrative: both earn $1 million and grow 10% a year while the advantage lasts; durability is the multiplier.
+- 0 | 1 | 1
+- 5 | 1.6 | 1.6
+- 10 | 2.6 | 1.6
+- 25 | 10.8 | 1.6
+```
+
 ### Durability and risk
 
 Durability also changes risk. A business with a lasting advantage is far less likely to fail outright. In Buffett's approach, as the book describes it, that means a falling share price can be an opportunity rather than a threat, because the underlying business is still intact. Buying such a business when its price falls actually reduces risk while increasing potential return, which reverses the usual assumption that higher returns require higher risk.
@@ -98,6 +122,19 @@ The book's practical claim is that durable advantages leave fingerprints on a co
 - cash accumulating from operations, often returned through dividends or share buybacks
 
 None of these signals proves anything on its own. Together, and over many years, they tell a story that is hard to fake. The rest of this series looks at each signal in turn.
+
+```figure
+type: checklist
+title: Fingerprints of a durable advantage
+caption: Look for them consistently over many years, not in a single good one.
+- Consistently high gross margins
+- Modest overheads relative to gross profit
+- Little need for heavy research or capital spending
+- Low debt and small interest costs
+- Steadily rising earnings
+- Strong returns on equity without borrowing
+- *Cash accumulating from operations
+```
 
 ### Why consistency is the key word
 
