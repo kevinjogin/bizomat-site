@@ -62,11 +62,18 @@ const isCurrent = (href: string) => path === href;
   .header-cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 46px; padding: 0 1.3rem; background: var(--ink); color: var(--paper); border: 1px solid var(--ink); border-radius: 999px; text-decoration: none; font-weight: 640; font-size: .9rem; white-space: nowrap; }
   .header-cta:hover { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
   @media (max-width: 700px) { .header-cta { display: none; } }
+  /* Keep all three destinations visible alongside the clickable home logo. */
+  @media (max-width: 700px) {
+    .site-header__brand { flex: 0 1 auto; margin-right: auto; }
+    .site-header__inner { gap: .25rem; }
+    .site-nav__list { gap: 0; }
+    .site-nav__list > li > a { padding: .4rem .28rem; font-size: clamp(.68rem, 2.45vw, .83rem); white-space: nowrap; }
+    .site-header__tools { flex-shrink: 0; gap: 0; }
+  }
   @media (max-width: 480px) {
-    .site-header__brand { max-width: 128px; }
-    .site-header__brand :global(.site-wordmark) { --wordmark-h: 24px; }
-    .site-nav__list > li > a, .resources-toggle { padding: .4rem .25rem; font-size: .83rem; }
-    .site-header__tools { gap: .15rem; }
+    .site-header__brand { max-width: clamp(72px, 23vw, 108px); }
+    .site-header__brand :global(.site-wordmark) { --wordmark-h: clamp(18px, 4.9vw, 24px); }
+    .site-nav__list > li > a { padding: .4rem .16rem; }
     .resources-dropdown__menu { right: -45px; }
   }
   @media (prefers-reduced-motion: reduce) { .resources-chevron { transition: none; } }
