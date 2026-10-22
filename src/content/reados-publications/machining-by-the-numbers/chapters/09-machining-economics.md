@@ -91,6 +91,10 @@ where t_ch is the tool change time, Ce the cost per edge and R the machine rate 
 
 For Harbourline:
 
+- t_ch + Ce ÷ R = 2.0 + 6.00 ÷ 2.50 = 4.4 min
+- T_E = (1 ÷ 0.218 − 1) × 4.4 = 3.59 × 4.4 = **15.8 min**
+- Minimum-cost speed: V_E = C ÷ T_E^n = 446.8 ÷ 15.8^0.218 = **245 m/min**
+
 ```figure
 type: formula
 title: Minimum-cost and maximum-output tool life
@@ -103,10 +107,6 @@ caption: The equivalent tooling-cost time converts the tool's price into minutes
 step: T_E = 3.59 × 4.4 = 15.8 min → V_E = 446.8 ÷ 15.8^0.218 = 245 m/min
 step: T_P = 3.59 × 2.0 = 7.2 min → V_P = 291 m/min
 ```
-
-- t_ch + Ce ÷ R = 2.0 + 6.00 ÷ 2.50 = 4.4 min
-- T_E = (1 ÷ 0.218 − 1) × 4.4 = 3.59 × 4.4 = **15.8 min**
-- Minimum-cost speed: V_E = C ÷ T_E^n = 446.8 ÷ 15.8^0.218 = **245 m/min**
 
 ## The maximum-output speed
 

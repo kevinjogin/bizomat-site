@@ -155,6 +155,10 @@ Three months in, the firm counts 11 change requests from five different people, 
 
 The firm's director meets the managing partner and practice manager to sort roles:
 
+- **Drivers:** the managing partner, for scope and budget; the practice manager, for operational requirements such as the sterilisation room workflow.
+- **Observers:** the other two partners and the practice staff, whose views are welcome through the practice manager.
+- **Supporters:** the firm's team and its suppliers.
+
 ```figure
 type: stats
 title: The dental fit-out three months in
@@ -163,10 +167,6 @@ caption: Small free changes had taught the client that changes cost nothing.
 - 5 | different people making them
 - 4 | that contradicted each other
 ```
-
-- **Drivers:** the managing partner, for scope and budget; the practice manager, for operational requirements such as the sterilisation room workflow.
-- **Observers:** the other two partners and the practice staff, whose views are welcome through the practice manager.
-- **Supporters:** the firm's team and its suppliers.
 
 All changes now go through the practice manager to the firm's project lead, and the managing partner approves anything affecting cost or time. The firm also recognises its own role in creating an expectation: by making small changes for free, it had taught the client that changes cost nothing. It explains the new process politely and backs it with a simple variation form.
 

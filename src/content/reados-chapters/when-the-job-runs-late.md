@@ -137,6 +137,9 @@ The electrician then looks at the effect rather than just the dates. Its program
 
 It claims a 3-day extension, with the reasoning, rather than 12. The builder at first replies "no extension, just catch up". The electrician sets out the options in writing:
 
+- With a 3-day extension, finishing on 3 July costs nothing in liquidated damages.
+- Without one, it could finish on time by adding an electrician for three days, at about $2,280 (3 days × 8 hours × $95). It asks the builder to confirm in writing whether it is directing acceleration and on what commercial basis before committing the extra labour.
+
 ```figure
 type: formula
 title: From a 12-day late handover to a 3-day claim
@@ -145,9 +148,6 @@ caption: The programme saved the week before the event was the evidence; the ele
 step: 12 days − 4 days of float − 5 days moved to level 3 work
 step: About 3 days
 ```
-
-- With a 3-day extension, finishing on 3 July costs nothing in liquidated damages.
-- Without one, it could finish on time by adding an electrician for three days, at about $2,280 (3 days × 8 hours × $95). It asks the builder to confirm in writing whether it is directing acceleration and on what commercial basis before committing the extra labour.
 
 Faced with a clear, evidence-based claim for 3 days rather than an inflated one for 12, the builder grants the extension. The electrician records the cause in its own delay log; over the next year, late handover of ceiling spaces turns out to be a recurring pattern with this builder, and the electrician starts allowing for it in its programme and pricing.
 

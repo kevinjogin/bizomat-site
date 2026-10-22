@@ -48,18 +48,6 @@ The **indirect method** starts with net profit and adjusts it: adding back non-c
 
 Here is an illustrative cash flow statement for a manufacturing business, presented using the indirect method for operating activities.
 
-```figure
-type: steps
-title: From net profit to operating cash, the indirect way
-caption: The working-capital lines are usually the biggest difference between profit and cash.
-- Net profit | $5.0m
-- Add depreciation | +$1.5m, a non-cash expense
-- Receivables rose | −$1.2m, sales not yet collected
-- Inventory rose | −$0.8m, cash turned into stock
-- Payables rose | +$0.4m, supplier credit used
-- *Operating cash flow | $4.9m
-```
-
 | | Amount |
 | --- | --- |
 | **Operating activities** | |
@@ -78,6 +66,18 @@ caption: The working-capital lines are usually the biggest difference between pr
 | Dividends paid | −$1.5m |
 | **Net cash used in financing activities** | **−$2.5m** |
 | **Net increase in cash** | **$0.6m** |
+
+```figure
+type: steps
+title: From net profit to operating cash, the indirect way
+caption: The working-capital lines are usually the biggest difference between profit and cash.
+- Net profit | $5.0m
+- Add depreciation | +$1.5m, a non-cash expense
+- Receivables rose | −$1.2m, sales not yet collected
+- Inventory rose | −$0.8m, cash turned into stock
+- Payables rose | +$0.4m, supplier credit used
+- *Operating cash flow | $4.9m
+```
 
 This business converts its profit into operating cash almost fully. It spends a moderate amount on equipment, repays some debt, pays a dividend and still adds to its cash balance. The pattern is healthy.
 

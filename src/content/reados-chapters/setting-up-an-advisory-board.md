@@ -60,6 +60,14 @@ Advisors can also guide the leaders who run departments. Rather than the owner t
 
 Start with the purpose. What does the business most need help with over the next one to three years? Possible mandates include:
 
+- Growing sales faster.
+- Hiring and building a senior team.
+- Improving marketing and brand.
+- Raising capital, or preparing for investment or sale.
+- Strengthening legal, compliance and risk management.
+- Expanding into new markets or products.
+- Improving operations and margins.
+
 ```figure
 type: steps
 title: Seven parts of an advisory board that works
@@ -72,14 +80,6 @@ caption: The biggest predictor of failure is not tracking progress from one meet
 - Terms | written advisor agreement
 - *Compensation | cash, equity or both
 ```
-
-- Growing sales faster.
-- Hiring and building a senior team.
-- Improving marketing and brand.
-- Raising capital, or preparing for investment or sale.
-- Strengthening legal, compliance and risk management.
-- Expanding into new markets or products.
-- Improving operations and margins.
 
 There can be more than one mandate, but be clear. The mandate decides which expertise you need and therefore whom you invite.
 
@@ -122,6 +122,10 @@ Hold a full advisory board meeting at least monthly, or quarterly for some busin
 
 Structure each meeting around milestones:
 
+1. Review the milestones set at the last meeting. Were they achieved?
+2. Discuss the main challenges and decisions ahead.
+3. Agree the milestones for the next meeting, with each advisor's role.
+
 ```figure
 type: cycle
 title: A milestone-driven meeting rhythm
@@ -131,10 +135,6 @@ caption: Send a short pre-read beforehand and record actions afterwards.
 - Agree next milestones | with each advisor's role
 - Track actions between meetings
 ```
-
-1. Review the milestones set at the last meeting. Were they achieved?
-2. Discuss the main challenges and decisions ahead.
-3. Agree the milestones for the next meeting, with each advisor's role.
 
 Send a short pre-read in advance, covering performance, issues and specific questions, and record actions afterwards. Between meetings, owners can consult individual advisors as needed.
 

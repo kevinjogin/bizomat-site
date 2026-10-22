@@ -30,6 +30,12 @@ Financing can be valuable. It can preserve cash for working capital, match payme
 
 A sensible sequence is:
 
+1. **Need**: what problem or opportunity is this meant to address?
+2. **Investment case**: is this the best way to meet the need, compared with alternatives such as hiring, subcontracting, doing less or doing nothing?
+3. **Affordability**: can the business carry the whole commitment, including running costs, through a bad year?
+4. **How to buy**: outright purchase, lease, rent as needed, subscription or service contract?
+5. **How to finance**: cash, loan, equipment finance or supplier terms?
+
 ```figure
 type: steps
 title: Decide the investment before the financing
@@ -40,12 +46,6 @@ caption: The common shortcut runs backwards: the monthly figure arrives first an
 - How to buy | own, lease, rent, subscribe
 - *How to finance | only now compare finance offers
 ```
-
-1. **Need**: what problem or opportunity is this meant to address?
-2. **Investment case**: is this the best way to meet the need, compared with alternatives such as hiring, subcontracting, doing less or doing nothing?
-3. **Affordability**: can the business carry the whole commitment, including running costs, through a bad year?
-4. **How to buy**: outright purchase, lease, rent as needed, subscription or service contract?
-5. **How to finance**: cash, loan, equipment finance or supplier terms?
 
 The common shortcut runs the other way: the finance offer arrives first, the monthly figure looks manageable, and the investment case is assembled afterwards. The [cost-benefit analysis for business decisions](/reados/collections/investment-appraisal-and-business-cases/cost-benefit-analysis-for-business-decisions/) article covers building the investment case properly.
 
@@ -65,6 +65,10 @@ Two traps are common. A cheaper asset can require expensive proprietary servicin
 
 Even when an investment is approved, three states should be kept separate:
 
+- **Budget identified**: the money is in the plan.
+- **Cash available**: the money will actually be in the account when payments fall due.
+- **Commitment approved**: someone with authority has agreed to sign.
+
 ```figure
 type: layers
 title: Three states of an approved investment
@@ -73,10 +77,6 @@ caption: Treating a budget line as permission to commit can create a cash squeez
 - Cash available | the money will be in the account when payments fall due
 - *Commitment approved | someone with authority has agreed to sign
 ```
-
-- **Budget identified**: the money is in the plan.
-- **Cash available**: the money will actually be in the account when payments fall due.
-- **Commitment approved**: someone with authority has agreed to sign.
 
 Treating a budget line as permission to commit can create a cash squeeze when several commitments land in the same month, even though each is within its budget. Map when each significant commitment will actually require cash, including deposits and milestone payments, and check it against your cash forecast, especially in seasonal low points.
 

@@ -91,6 +91,12 @@ A dashboard showing only intensity can give false comfort, because efficiency pe
 
 Stahel's work on the circular economy describes a hierarchy of ways to keep value in use:
 
+- **maintenance** keeps an asset working;
+- **reuse** keeps the whole product in service;
+- **repair** restores function;
+- **remanufacturing** preserves components and the value built into them;
+- **recycling** recovers some material value once the other options are exhausted.
+
 ```figure
 type: layers
 title: Keeping value in use, highest value first
@@ -102,12 +108,6 @@ caption: The order matters: each step down recovers less of the value already bu
 - Remanufacturing | preserves components and their embedded value
 - Recycling | recovers some material value last
 ```
-
-- **maintenance** keeps an asset working;
-- **reuse** keeps the whole product in service;
-- **repair** restores function;
-- **remanufacturing** preserves components and the value built into them;
-- **recycling** recovers some material value once the other options are exhausted.
 
 The order matters. Scrapping a working machine to recover its metal technically counts as recycling, but it throws away most of the value invested in its design, manufacture and assembly. A useful rule is to **preserve the highest level of value that remains economically and technically sensible**. In practice, this makes circularity look more like good asset management than waste management. The [durability is sustainability](/reados/collections/specifications-product-quality-and-sustainability/durability-is-sustainability/) article covers designing products that last.
 

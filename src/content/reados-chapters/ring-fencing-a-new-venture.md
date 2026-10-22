@@ -114,6 +114,12 @@ The first plan is informal: fund development from business cash and the overdraf
 
 The owner rewrites the plan:
 
+- **Maximum exposure**: $300,000 over two years, funded from retained profits, released in stages.
+- **Stop conditions**: a working prototype and three paying pilot customers by month twelve, or the venture stops or is significantly re-scoped.
+- **Stop authority**: the owner, with an independent adviser who must agree to any extension beyond the cap.
+- **Separate accounting**: a separate cost centre from the start, with engineers' time charged at cost and shared office space charged at a fair rent.
+- **Structure**: after taking advice, the owner plans to form a separate company once pilots succeed, so a distributor interested in investing can join the venture without taking a share of the engineering business.
+
 ```figure
 type: checklist
 title: Limits written before the structure
@@ -124,12 +130,6 @@ caption: The bank wanted a personal guarantee; the owner declined, because it wo
 - Separate accounting | engineers at cost, office at fair rent
 - Structure | separate company once pilots succeed
 ```
-
-- **Maximum exposure**: $300,000 over two years, funded from retained profits, released in stages.
-- **Stop conditions**: a working prototype and three paying pilot customers by month twelve, or the venture stops or is significantly re-scoped.
-- **Stop authority**: the owner, with an independent adviser who must agree to any extension beyond the cap.
-- **Separate accounting**: a separate cost centre from the start, with engineers' time charged at cost and shared office space charged at a fair rent.
-- **Structure**: after taking advice, the owner plans to form a separate company once pilots succeed, so a distributor interested in investing can join the venture without taking a share of the engineering business.
 
 The bank offers a loan for the venture but requires a personal guarantee from the owner. Recognising that this would tie the venture back to the owner and the core business, the owner declines and stays within the funded cap.
 

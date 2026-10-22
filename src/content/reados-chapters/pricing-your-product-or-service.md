@@ -33,6 +33,11 @@ This article sets out a seven-part pricing method suitable for product and servi
 
 Before setting a price, decide which customers you serve and where you sit in the market. A simple way to think about market positions uses two dimensions, price and quality:
 
+| | Lower quality | Higher quality |
+|---|---|---|
+| **Higher price** | Opportunistic | Premium |
+| **Lower price** | Cheap and basic | Value for money |
+
 ```figure
 type: matrix
 title: Price and quality positions
@@ -45,11 +50,6 @@ caption: Choose the target customer and position first; the price follows from t
 - Cheap and basic | lower price, lower quality
 - Value for money | lower price, higher quality
 ```
-
-| | Lower quality | Higher quality |
-|---|---|---|
-| **Higher price** | Opportunistic | Premium |
-| **Lower price** | Cheap and basic | Value for money |
 
 - **Cheap and basic**: low price, low quality. Customers buy on price alone. Margins are thin and loyalty is low.
 - **Value for money**: good quality at a moderate price. This requires excellent cost control and efficiency. Many successful mass-market brands live here.

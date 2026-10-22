@@ -136,6 +136,10 @@ caption: Annual cash flow must stay above about $105,500. A supply agreement for
 
 The business then builds three scenarios:
 
+- **Pessimistic**: a key customer reduces orders, so hours fall to 1,250, competition pushes the contribution down to $110 per hour, and operating costs run at $45,000. Annual cash flow is $137,500 less $45,000, or $92,500, and the net present value is about **−$49,400**.
+- **Base**: as above, about **$130,700**.
+- **Optimistic**: new aerospace work lifts hours to 1,700 at $125 per hour, with operating costs of $38,000. Annual cash flow is $212,500 less $38,000, or $174,500, and the net present value is about **$261,500**.
+
 ```figure
 type: bars
 title: Three internally consistent scenarios
@@ -145,10 +149,6 @@ caption: Pessimistic: 1,250 hours at $110 and $45,000 costs. Optimistic: 1,700 h
 - Base | 130700
 - Optimistic | 261500
 ```
-
-- **Pessimistic**: a key customer reduces orders, so hours fall to 1,250, competition pushes the contribution down to $110 per hour, and operating costs run at $45,000. Annual cash flow is $137,500 less $45,000, or $92,500, and the net present value is about **−$49,400**.
-- **Base**: as above, about **$130,700**.
-- **Optimistic**: new aerospace work lifts hours to 1,700 at $125 per hour, with operating costs of $38,000. Annual cash flow is $212,500 less $38,000, or $174,500, and the net present value is about **$261,500**.
 
 ### What changes in the decision
 

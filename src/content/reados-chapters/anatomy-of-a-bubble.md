@@ -23,6 +23,12 @@ The stage model of bubbles is most closely associated with the economic historia
 
 The framework is not a law of nature, and not every bubble passes through every stage in the same way. But it describes the broad shape of most episodes well enough to be a useful map. Its stages are usually described as:
 
+1. **Displacement:** an outside event creates a new opportunity.
+2. **Boom:** investment and credit flow into the new area, and prices rise.
+3. **Euphoria:** speculation overtakes genuine investment, and expectations become extreme.
+4. **Distress:** the rise slows, and a trigger starts a decline.
+5. **Revulsion and panic:** prices fall sharply, credit retreats and the wider economy suffers.
+
 ```figure
 type: svg
 title: The five stages of a bubble
@@ -41,12 +47,6 @@ body:
 <circle class="fa pulse" cx="458" cy="49" r="7"/>
 <text class="txa" x="470" y="34">trigger</text>
 ```
-
-1. **Displacement:** an outside event creates a new opportunity.
-2. **Boom:** investment and credit flow into the new area, and prices rise.
-3. **Euphoria:** speculation overtakes genuine investment, and expectations become extreme.
-4. **Distress:** the rise slows, and a trigger starts a decline.
-5. **Revulsion and panic:** prices fall sharply, credit retreats and the wider economy suffers.
 
 ## Stage 1: Displacement
 

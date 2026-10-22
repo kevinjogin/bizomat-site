@@ -150,6 +150,15 @@ Some councils allow certain food to be produced at home for sale, subject to reg
 
 Packaged food labels generally must include, among other things:
 
+- The name or description of the food.
+- Ingredients, listed in order of weight.
+- Allergen declarations, using the plain English allergen labelling format.
+- A nutrition information panel, for most foods.
+- Date marking: "use by" for food that becomes unsafe after a date, and "best before" for others.
+- Storage and usage instructions where needed.
+- The name and Australian address of the supplier.
+- Country of origin labelling for most food sold in Australian retail, under rules enforced by the ACCC.
+
 ```figure
 type: checklist
 title: What packaged food labels generally must include
@@ -161,15 +170,6 @@ caption: General information; check the Food Standards Code and FSANZ guidance f
 - Date marking | "use by" or "best before"
 - Storage and usage instructions | where needed
 ```
-
-- The name or description of the food.
-- Ingredients, listed in order of weight.
-- Allergen declarations, using the plain English allergen labelling format.
-- A nutrition information panel, for most foods.
-- Date marking: "use by" for food that becomes unsafe after a date, and "best before" for others.
-- Storage and usage instructions where needed.
-- The name and Australian address of the supplier.
-- Country of origin labelling for most food sold in Australian retail, under rules enforced by the ACCC.
 
 FSANZ publishes guidance on labelling requirements. Getting labels wrong can lead to product recalls, which are costly and damaging.
 

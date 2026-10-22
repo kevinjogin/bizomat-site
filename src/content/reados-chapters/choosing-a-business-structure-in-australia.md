@@ -28,6 +28,10 @@ This article explains the four common structures in Australia, a method for comp
 
 A few points are commonly misunderstood:
 
+- **A business name is not a structure.** Registering a business name with ASIC lets you trade under that name. It does not create a company, and it does not give you trade mark rights, which are a separate registration with IP Australia.
+- **A trust is not a person.** The trustee, an individual or a company, enters contracts and is responsible for the trust's obligations. Many trading trusts use a company as trustee for that reason.
+- **Structures can be combined.** Some businesses use a company to trade and a trust to hold investments or to own the company's shares. Combinations add cost and complexity, and need a clear reason.
+
 ```figure
 type: compare
 title: The four common structures in Australia
@@ -38,10 +42,6 @@ caption: General information only; compare structures with an accountant and law
 - Company | A separate legal entity, run by directors | More obligations and director duties; limited liability helps but is not absolute
 - Trust | A trustee under a trust deed | More complex and costly; tailored advice needed
 ```
-
-- **A business name is not a structure.** Registering a business name with ASIC lets you trade under that name. It does not create a company, and it does not give you trade mark rights, which are a separate registration with IP Australia.
-- **A trust is not a person.** The trustee, an individual or a company, enters contracts and is responsible for the trust's obligations. Many trading trusts use a company as trustee for that reason.
-- **Structures can be combined.** Some businesses use a company to trade and a trust to hold investments or to own the company's shares. Combinations add cost and complexity, and need a clear reason.
 
 ## Five questions for comparing structures
 

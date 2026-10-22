@@ -22,6 +22,13 @@ This article explains, in general terms, the main ways a contract can come to an
 
 Contract law generally recognises four broad pathways by which contractual obligations come to an end:
 
+| Pathway | In general terms | What usually follows |
+|---|---|---|
+| Performance | Both parties do what they promised | Obligations end; warranties and some clauses may continue |
+| Agreement | The parties agree to end or replace the contract | The terms of the exit agreement govern what is owed |
+| Frustration | An unforeseen event, not caused by either party, makes performance impossible or radically different | Future obligations end; what happens to payments and work done depends on the law and circumstances |
+| Breach | One party fails to perform an important obligation or shows it will not perform | The other party may be able to terminate and claim compensation, or may choose to continue |
+
 ```figure
 type: decision
 title: How did the contract end?
@@ -32,13 +39,6 @@ caption: Each pathway leaves the parties in a different position, so record whic
 - Frustration | Future obligations end | narrow: an unforeseen event, no one's fault
 - *Breach | A right to terminate, or continue | compensation may follow
 ```
-
-| Pathway | In general terms | What usually follows |
-|---|---|---|
-| Performance | Both parties do what they promised | Obligations end; warranties and some clauses may continue |
-| Agreement | The parties agree to end or replace the contract | The terms of the exit agreement govern what is owed |
-| Frustration | An unforeseen event, not caused by either party, makes performance impossible or radically different | Future obligations end; what happens to payments and work done depends on the law and circumstances |
-| Breach | One party fails to perform an important obligation or shows it will not perform | The other party may be able to terminate and claim compensation, or may choose to continue |
 
 ## Performance is not always all or nothing
 

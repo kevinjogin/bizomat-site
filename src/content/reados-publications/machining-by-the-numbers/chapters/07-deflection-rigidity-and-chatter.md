@@ -23,6 +23,9 @@ where F is the force perpendicular to the beam, L the overhang, E the elastic mo
 
 Two features of these formulas explain most deflection problems in machining:
 
+- deflection grows with the **cube** of overhang, so a 33% longer overhang more than doubles it; and
+- stiffness grows with the **fourth power** of diameter, so a modestly smaller tool is much more flexible.
+
 ```figure
 type: svg
 title: A cutting tool behaves like a cantilever
@@ -43,9 +46,6 @@ body:
 <path class="ln" d="M520 140V160M512 140H528M512 160H528"/>
 <text class="txa" x="540" y="126">δ, exaggerated</text>
 ```
-
-- deflection grows with the **cube** of overhang, so a 33% longer overhang more than doubles it; and
-- stiffness grows with the **fourth power** of diameter, so a modestly smaller tool is much more flexible.
 
 The model is approximate. Real tools are not uniform cylinders, holders and spindles flex too, and the fixed end is never perfectly rigid. But it captures the trends reliably and gives realistic orders of magnitude.
 

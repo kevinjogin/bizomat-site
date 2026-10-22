@@ -78,6 +78,9 @@ University resources can dramatically reduce costs. Most Australian universities
 
 Validation means customers paying the price you want to charge:
 
+- For a **premium or high-value product**, winning your first 10 paying customers is a meaningful milestone.
+- For a **mass-market product**, aim for your first 100 or more.
+
 ```figure
 type: compare
 title: How many paying customers count as validation?
@@ -86,9 +89,6 @@ caption: Validation means customers paying the price you plan to charge, not say
 - First milestone | 10 paying customers | 100 or more
 - Why | Each sale is large and considered | Volume shows repeatable demand
 ```
-
-- For a **premium or high-value product**, winning your first 10 paying customers is a meaningful milestone.
-- For a **mass-market product**, aim for your first 100 or more.
 
 ### A validation example
 

@@ -25,6 +25,9 @@ Solid carbide drills generally run at much higher cutting speeds than high-speed
 
 For the flange's six Ø11 bolt holes, Harbourline plans a solid carbide drill at 90 m/min and 0.18 mm/rev:
 
+- n = 1000 × 90 ÷ (π × 11) = 2,604 rev/min
+- vf = 0.18 × 2604 = 469 mm/min
+
 ```figure
 type: stats
 title: Drilling the six Ø11 bolt holes
@@ -34,9 +37,6 @@ caption: Solid carbide drill at 90 m/min and 0.18 mm/rev, with an assumed kc of 
 - 0.324 min | Cutting time for six holes
 - *1.49 kW · 5.44 N·m | Power and torque
 ```
-
-- n = 1000 × 90 ÷ (π × 11) = 2,604 rev/min
-- vf = 0.18 × 2604 = 469 mm/min
 
 ## The length of a drilled hole
 

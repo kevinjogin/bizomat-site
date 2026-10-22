@@ -136,6 +136,9 @@ step: $50,000 would cover it 80% of the time
 
 Quotes then come in. Firm prices cover about 80% of the scope at $412,000, with the remaining items estimated at about $38,000. The owner commits to **$450,000**, records that decision, and sets two funds:
 
+- **Contingency of $25,000**, controlled by the project lead, for listed risks such as delivery delays and minor building issues. Each use is logged against the risk it covers.
+- **A reserve of $30,000** held by the owner, to be used only for changes to the job itself, such as a customer requirement that alters the cell's layout, and only with a written change covering scope and budget together.
+
 ```figure
 type: range
 title: From early estimate to commitment
@@ -147,9 +150,6 @@ caption: The range travelled with the figure into the loan application, so $450,
 - First estimate, from one past fit-out | 300000 | 480000 | most likely $380,000
 - *Committed: $412,000 firm plus $38,000 estimated | 450000
 ```
-
-- **Contingency of $25,000**, controlled by the project lead, for listed risks such as delivery delays and minor building issues. Each use is logged against the risk it covers.
-- **A reserve of $30,000** held by the owner, to be used only for changes to the job itself, such as a customer requirement that alters the cell's layout, and only with a written change covering scope and budget together.
 
 At the end, the owner compares the original $300,000 to $480,000 range with the outcome and records which assumptions proved wrong, for the next estimate.
 

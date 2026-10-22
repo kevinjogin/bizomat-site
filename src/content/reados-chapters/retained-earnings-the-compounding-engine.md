@@ -21,6 +21,13 @@ Retained earnings are the running total of all profits a company has kept since 
 
 A simple reconciliation shows how the figure moves each year:
 
+| | Amount |
+| --- | --- |
+| Retained earnings at start of year | $40.0m |
+| plus net profit for the year | $8.0m |
+| less dividends paid | $3.0m |
+| **Retained earnings at end of year** | **$45.0m** |
+
 ```figure
 type: formula
 title: How retained earnings move in a year
@@ -29,13 +36,6 @@ caption: Retained earnings are the running total of profits kept, not a pile of 
 step: $40.0m + $8.0m − $3.0m
 step: = $45.0m at the end of the year
 ```
-
-| | Amount |
-| --- | --- |
-| Retained earnings at start of year | $40.0m |
-| plus net profit for the year | $8.0m |
-| less dividends paid | $3.0m |
-| **Retained earnings at end of year** | **$45.0m** |
 
 Retained earnings are not a pile of cash. This is the most common misunderstanding. The money has usually been spent on equipment, inventory, acquisitions, research or other investments. The figure records how much of the owners' profit has been reinvested in the business over its life, not where that money is now. To find the cash, look at the asset side of the balance sheet.
 
@@ -112,6 +112,12 @@ In Australia, the dividend imputation system means that dividends paid from prof
 
 Because retained earnings are not cash, it is worth following the money. Comparing two balance sheets a year apart shows where retained profit was deployed. Common destinations include:
 
+- **new equipment, property or systems**, visible as growth in non-current assets
+- **inventory and receivables**, as a growing business carries more stock and extends more credit
+- **acquisitions**, often shown partly as goodwill and other intangible assets
+- **debt repayment**, visible as falling borrowings
+- **cash reserves**, visible as a growing cash balance
+
 ```figure
 type: tree
 title: Following retained profit to where it went
@@ -122,12 +128,6 @@ caption: Each destination carries a different expected return; the question is w
   - Acquisitions | often partly goodwill and other intangibles
   - Debt repayment or cash reserves | lower risk, more options
 ```
-
-- **new equipment, property or systems**, visible as growth in non-current assets
-- **inventory and receivables**, as a growing business carries more stock and extends more credit
-- **acquisitions**, often shown partly as goodwill and other intangible assets
-- **debt repayment**, visible as falling borrowings
-- **cash reserves**, visible as a growing cash balance
 
 Each destination carries a different expected return. Debt repayment earns the interest rate saved. Equipment earns whatever extra profit it produces. Acquisitions earn whatever the acquired business contributes, less what was paid for it. Tracing where retained profit went, and what it earned there, is the most direct way to judge whether retention is creating value.
 

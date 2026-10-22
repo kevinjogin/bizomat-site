@@ -30,6 +30,10 @@ A new online store that takes $400,000 of orders has not necessarily created $40
 
 The credible benefit is the **difference between two realistic futures**: with the investment and without it. Three questions help:
 
+- **Additionality**: what changes because of this investment that would not have changed otherwise?
+- **Attribution**: how much of that change can reasonably be credited to this investment rather than to other factors?
+- **Opportunity cost**: what value is given up by using money, people and attention here rather than elsewhere?
+
 ```figure
 type: svg
 title: The benefit is the gap between two realistic futures
@@ -49,10 +53,6 @@ body:
 <text class="tx" x="64" y="272">Today</text>
 <text class="tx" x="606" y="272" text-anchor="end">Time</text>
 ```
-
-- **Additionality**: what changes because of this investment that would not have changed otherwise?
-- **Attribution**: how much of that change can reasonably be credited to this investment rather than to other factors?
-- **Opportunity cost**: what value is given up by using money, people and attention here rather than elsewhere?
 
 ## The base case is not a frozen present
 

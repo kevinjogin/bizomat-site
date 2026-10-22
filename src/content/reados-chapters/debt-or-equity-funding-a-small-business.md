@@ -125,6 +125,12 @@ caption: Many businesses use both, at different stages and for different purpose
 
 Before borrowing or selling shares, ask whether your customers could fund your growth. Customer money is the cheapest funding there is: it costs no interest, requires no equity and proves that people want what you sell. Ways to raise it:
 
+- **Deposits** on custom orders, common in manufacturing, construction and furniture.
+- **Progress payments** on long projects, tied to milestones.
+- **Pre-orders** for new products before production starts.
+- **Subscriptions and annual contracts** paid in advance.
+- **Shorter payment terms** for customers, balanced with longer terms from suppliers.
+
 ```figure
 type: tree
 title: Ways customers can fund growth
@@ -136,12 +142,6 @@ caption: Deposits are owed back if you cannot deliver; never spend them on unrel
   - Subscriptions and annual contracts | paid in advance
   - Shorter payment terms | balanced with service
 ```
-
-- **Deposits** on custom orders, common in manufacturing, construction and furniture.
-- **Progress payments** on long projects, tied to milestones.
-- **Pre-orders** for new products before production starts.
-- **Subscriptions and annual contracts** paid in advance.
-- **Shorter payment terms** for customers, balanced with longer terms from suppliers.
 
 Investors also notice. A business that can show customers paying in advance is far more attractive than one asking investors to fund an untested idea. The article on [chasing customers, not investors](/reados/collections/starting-funding-and-structuring-a-business/chase-customers-not-investors/) explains this in more depth.
 

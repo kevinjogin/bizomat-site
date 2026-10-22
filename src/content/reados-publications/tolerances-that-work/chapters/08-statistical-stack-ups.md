@@ -37,6 +37,14 @@ If each tolerance really is three standard deviations, the standard deviation of
 
 RSS also shows which parts matter. Each link's share of the total variance is its tolerance squared divided by the sum of squares:
 
+| Link | ± tolerance | Share of variance |
+|---|---|---|
+| A, housing | 0.03 | 9.1% |
+| t, ring | 0.03 | 9.1% |
+| B1, bearing | 0.06 | 36.4% |
+| S, spacer | 0.03 | 9.1% |
+| B2, bearing | 0.06 | 36.4% |
+
 ```figure
 type: stack
 title: Share of float variance in the revised design
@@ -48,14 +56,6 @@ caption: The two bearings supply nearly three-quarters of the variance; tighteni
 - Ring t | 9.1
 - Spacer S | 9.1
 ```
-
-| Link | ± tolerance | Share of variance |
-|---|---|---|
-| A, housing | 0.03 | 9.1% |
-| t, ring | 0.03 | 9.1% |
-| B1, bearing | 0.06 | 36.4% |
-| S, spacer | 0.03 | 9.1% |
-| B2, bearing | 0.06 | 36.4% |
 
 The two bearings contribute almost three-quarters of the variance. Tightening the housing or spacer further would barely change the result. That is why the select-fit option in Chapter 7, which effectively removes most of the bearing variation, is so powerful. Variance contribution is the most useful single output of a statistical stack-up, because it tells you where to spend effort.
 

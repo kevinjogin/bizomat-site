@@ -42,6 +42,11 @@ Together, they support one idea: **value has many dimensions, but it still needs
 
 For decisions with several parties, build a simple value map with four elements:
 
+- **Type of value**: financial, strategic, social, environmental, emotional, capability or other.
+- **Beneficiary**: owners, customers, employees, community, government, partners or others.
+- **Payer**: who provides the money, bears the running costs or accepts the risk.
+- **Capture**: how the funding party receives or justifies the benefit, for example through price, customer retention, lower staff turnover, reputation, a grant or its own mission.
+
 ```figure
 type: steps
 title: A value map for decisions with several parties
@@ -51,11 +56,6 @@ caption: Capture is the critical element: value that cannot be captured or justi
 - Payer | who bears the cost
 - *Capture | how the payer recovers, shares or justifies it
 ```
-
-- **Type of value**: financial, strategic, social, environmental, emotional, capability or other.
-- **Beneficiary**: owners, customers, employees, community, government, partners or others.
-- **Payer**: who provides the money, bears the running costs or accepts the risk.
-- **Capture**: how the funding party receives or justifies the benefit, for example through price, customer retention, lower staff turnover, reputation, a grant or its own mission.
 
 Capture is the critical element. A business can create value for customers and capture it through price or loyalty. A community organisation may justify value through its mission. A business funding staff training may capture value through productivity and retention. Where no capture mechanism exists, a valuable investment may still be hard for the payer to justify.
 
@@ -97,6 +97,13 @@ This avoids two extremes: forcing every impact into a financial figure, and leav
 
 For decisions affecting several parties, consider four ledgers side by side:
 
+| Ledger | Question |
+|---|---|
+| Business economics | What cash flow, cost, return and risk come to the business? |
+| Strategic capability | What capability, option, resilience or position is created that cash flow may not fully show? |
+| Stakeholder outcomes | Who experiences benefits or harms, and how will they be measured? |
+| External effects and obligations | What environmental, social, regulatory, safety or community effects sit outside the financial exchange? |
+
 ```figure
 type: layers
 title: Four ledgers for a decision affecting several parties
@@ -106,13 +113,6 @@ caption: For each ledger, define the evidence, the owner and the time horizon.
 - Stakeholder outcomes | who gains or is harmed, and how it is measured
 - External effects and obligations | impacts on others, legal and ethical duties
 ```
-
-| Ledger | Question |
-|---|---|
-| Business economics | What cash flow, cost, return and risk come to the business? |
-| Strategic capability | What capability, option, resilience or position is created that cash flow may not fully show? |
-| Stakeholder outcomes | Who experiences benefits or harms, and how will they be measured? |
-| External effects and obligations | What environmental, social, regulatory, safety or community effects sit outside the financial exchange? |
 
 For each ledger, define the evidence, the owner and the time horizon. Avoid collapsing them into a single score unless the weighting is transparent and agreed.
 

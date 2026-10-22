@@ -117,6 +117,12 @@ caption: Registration only helps if you watch the market and act promptly.
 
 Marks range from weak to strong in their ability to be registered and protected:
 
+- **Generic terms**, the common name for the product, such as "Steel Brackets" for brackets, cannot function as trade marks.
+- **Descriptive marks**, which describe a quality, purpose or feature, such as "Fast Fab" for fabrication services, are difficult to register without evidence that customers already recognise them as your brand.
+- **Suggestive marks**, which hint at a quality without describing it directly, are often registrable and can be memorable.
+- **Arbitrary marks**, real words used in an unrelated context, such as a fruit name for a technology company, are strong.
+- **Invented words**, coined terms with no prior meaning, are the strongest and easiest to protect.
+
 ```figure
 type: layers
 title: The distinctiveness spectrum
@@ -127,12 +133,6 @@ caption: Descriptive names are easier to understand at first; distinctive names 
 - Arbitrary marks | real words in an unrelated context: strong
 - *Invented words | no prior meaning: strongest and easiest to protect
 ```
-
-- **Generic terms**, the common name for the product, such as "Steel Brackets" for brackets, cannot function as trade marks.
-- **Descriptive marks**, which describe a quality, purpose or feature, such as "Fast Fab" for fabrication services, are difficult to register without evidence that customers already recognise them as your brand.
-- **Suggestive marks**, which hint at a quality without describing it directly, are often registrable and can be memorable.
-- **Arbitrary marks**, real words used in an unrelated context, such as a fruit name for a technology company, are strong.
-- **Invented words**, coined terms with no prior meaning, are the strongest and easiest to protect.
 
 There is a tension: descriptive names are easier to understand at first, while distinctive names are easier to protect. Many successful brands choose a distinctive name and pair it with a descriptive tagline.
 

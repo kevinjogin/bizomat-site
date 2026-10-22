@@ -95,6 +95,12 @@ Many businesses have contingency plans that are never used, because nobody agree
 
 A stronger approach is to attach **triggers** to alternative plans: specific, observable conditions agreed in advance. For example:
 
+- if the cost of borrowing rises above an agreed level, defer the next stage of investment;
+- if a supplier's lead time exceeds an agreed number of weeks, activate the second supplier;
+- if orders from a market fall by more than an agreed share for two consecutive months, redirect stock to other channels;
+- if an approval is delayed beyond a date, redeploy people to another project;
+- if an operation cannot continue at its current site, move defined activities to an agreed alternative.
+
 ```figure
 type: decision
 title: Contingency plans become triggers
@@ -104,12 +110,6 @@ caption: The food manufacturer's triggers, written down before they were needed.
 - *Packaging lead time over 12 weeks | Move half of orders to the second supplier
 - Borrowing cost above the agreed level | Defer stage 2 of the expansion
 ```
-
-- if the cost of borrowing rises above an agreed level, defer the next stage of investment;
-- if a supplier's lead time exceeds an agreed number of weeks, activate the second supplier;
-- if orders from a market fall by more than an agreed share for two consecutive months, redirect stock to other channels;
-- if an approval is delayed beyond a date, redeploy people to another project;
-- if an operation cannot continue at its current site, move defined activities to an agreed alternative.
 
 Triggers turn uncertainty planning into something the business can actually carry out. The [plans that detect rather than predict](/reados/collections/project-estimates-schedules-and-costs/plans-that-detect-rather-than-predict/) article covers how to design triggers more generally.
 

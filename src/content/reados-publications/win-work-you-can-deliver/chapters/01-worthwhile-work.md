@@ -45,6 +45,14 @@ An operating limit is a boundary that protects something the business needs. It 
 
 For the fictional package, Fieldnote writes these initial limits:
 
+| Boundary | Reason | Evidence needed before accepting |
+|---|---|---|
+| One service pack, not a website build | Keep the work within present capability | Customer confirms the required outputs |
+| One named person consolidates feedback | Avoid uncontrolled revision loops | Customer identifies that person |
+| Delivery slot checked before a start date is promised | Protect accepted work | Current workload and planned leave reviewed |
+| Payment timing supports the work | Avoid financing every project from savings | Proposed schedule checked against outgoing cash |
+| No unsupported claims in the final material | Protect the customer and supplier | Customer supplies evidence for performance statements |
+
 ```figure
 type: venn
 title: Work worth a yes sits where three conditions overlap
@@ -54,14 +62,6 @@ caption: Early work exists to reduce the uncertainty in each circle; operating l
 - Route to a decision | someone can decide, in a credible way
 - Workable delivery | capability, hours and cash without harming existing commitments
 ```
-
-| Boundary | Reason | Evidence needed before accepting |
-|---|---|---|
-| One service pack, not a website build | Keep the work within present capability | Customer confirms the required outputs |
-| One named person consolidates feedback | Avoid uncontrolled revision loops | Customer identifies that person |
-| Delivery slot checked before a start date is promised | Protect accepted work | Current workload and planned leave reviewed |
-| Payment timing supports the work | Avoid financing every project from savings | Proposed schedule checked against outgoing cash |
-| No unsupported claims in the final material | Protect the customer and supplier | Customer supplies evidence for performance statements |
 
 These are example conditions, not universal rules. A larger business may absorb uncertainty that a small one cannot. A specialist may accept a difficult technical brief that Fieldnote must decline. Write limits for the business you actually operate.
 

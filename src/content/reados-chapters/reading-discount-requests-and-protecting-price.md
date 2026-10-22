@@ -67,6 +67,9 @@ Price erosion is hard to spot for three reasons. Each concession is defensible o
 
 A buyer usually asks for a discount for one of two reasons:
 
+- **Alternatives**: someone else could plausibly supply what you supply.
+- **Objections**: something in your offer does not yet justify the price, such as delivery reliability, service, features or terms.
+
 ```figure
 type: decision
 title: What is this discount request reporting?
@@ -75,9 +78,6 @@ caption: The two conditions arrive in the same sentence and need opposite respon
 - Alternatives | Someone else could supply this | reduce alternatives structurally, or show value they miss
 - *Objections | Something in the offer falls short | fix the gap, such as delivery or training, not the price
 ```
-
-- **Alternatives**: someone else could plausibly supply what you supply.
-- **Objections**: something in your offer does not yet justify the price, such as delivery reliability, service, features or terms.
 
 These arrive in the same sentence and need opposite responses. Alternatives are a fact about the market. Objections are a fact about your offer. Discounting into an alternatives problem buys time. Discounting into an objections problem leaves the objection in place, to be re-priced at every renewal.
 

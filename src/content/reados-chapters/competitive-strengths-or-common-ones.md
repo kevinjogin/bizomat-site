@@ -159,6 +159,13 @@ The owner tests each one, using quote records, customer conversations and what c
 
 The owner then adds up the profit-eaters for the past year:
 
+| Profit-eater | Annual cost |
+|---|---|
+| Rework from measurement and drawing errors (410 hours at $85) | $34,850 |
+| Design changes made on site and never charged | $27,000 |
+| Freight absorbed on small deliveries | $11,200 |
+| Total | $73,050 |
+
 ```figure
 type: compare
 title: Six claimed strengths, tested
@@ -171,13 +178,6 @@ caption: The capability statement shrank from six strengths to two, with evidenc
 - *In-house powder coating | Competitive | About six days faster; wins urgent jobs at better margins
 - 3D site scanning | Common soon | A rival could buy it within a year
 ```
-
-| Profit-eater | Annual cost |
-|---|---|
-| Rework from measurement and drawing errors (410 hours at $85) | $34,850 |
-| Design changes made on site and never charged | $27,000 |
-| Freight absorbed on small deliveries | $11,200 |
-| Total | $73,050 |
 
 Finally, the owner reviews the last 20 lost quotes. Seven went to named competitors. Nine projects were deferred or did not proceed, and four builders used a standard product or did the work themselves. Thirteen of the twenty losses were not to rivals at all.
 

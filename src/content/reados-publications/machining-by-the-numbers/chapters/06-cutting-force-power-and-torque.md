@@ -73,6 +73,9 @@ This is an illustration. The heaviest turning passes on the flange are the spigo
 
 Two further allowances turn net cutting power into the power the motor must supply:
 
+- **Machine efficiency.** Power is lost in belts, gears and bearings. With an assumed efficiency of 80%, the motor must supply 5.46 ÷ 0.8 = 6.82 kW.
+- **Tool wear.** A worn edge increases cutting force. Machinery's Handbook, for example, applies tool wear factors mostly between about 1.1 and 1.3 for common operations, and higher for extra-heavy cuts. Planning around a fresh edge leaves no margin for the end of the tool's life.
+
 ```figure
 type: formula
 title: Power for the spigot roughing passes
@@ -85,9 +88,6 @@ step: Fc = 2,406 × 2.475 × 0.25 = 1,489 N
 step: Pc = 220 × 2.475 × 0.25 × 2,406 ÷ 60,000 = 5.46 kW
 step: Motor power = 5.46 ÷ 0.8 = 6.82 kW
 ```
-
-- **Machine efficiency.** Power is lost in belts, gears and bearings. With an assumed efficiency of 80%, the motor must supply 5.46 ÷ 0.8 = 6.82 kW.
-- **Tool wear.** A worn edge increases cutting force. Machinery's Handbook, for example, applies tool wear factors mostly between about 1.1 and 1.3 for common operations, and higher for extra-heavy cuts. Planning around a fresh edge leaves no margin for the end of the tool's life.
 
 ## Spindle torque
 

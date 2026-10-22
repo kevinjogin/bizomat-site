@@ -34,6 +34,10 @@ Your purpose shapes how much effort, risk and investment you commit. People who 
 
 The best freelance offers sit where three things meet:
 
+1. **What excites you**: work you enjoy enough to do well and consistently.
+2. **Your skills**: what you are genuinely good at.
+3. **Market demand**: what people will pay for.
+
 ```figure
 type: venn
 title: Where the best freelance offer sits
@@ -43,10 +47,6 @@ caption: When all three align, clients and income follow far more easily.
 - What you enjoy | work you can sustain
 - What clients will pay for | real demand
 ```
-
-1. **What excites you**: work you enjoy enough to do well and consistently.
-2. **Your skills**: what you are genuinely good at.
-3. **Market demand**: what people will pay for.
 
 When all three align, clients and income follow far more easily.
 

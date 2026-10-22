@@ -26,6 +26,14 @@ It helps to start with the basic distinction.
 
 **Equitable remedies** developed because damages were sometimes inadequate or because a party's conduct made it unconscionable to insist on strict legal rights. They are **discretionary**: even when the requirements are met, a court may decline to grant them if, for example, the claimant delayed unreasonably, behaved badly or would gain an unfair advantage, or if the order would cause hardship out of proportion to the benefit.
 
+| Remedy | What it does | Typical business situation |
+|---|---|---|
+| Specific performance | Orders a party to perform its contractual obligation | Sale of land or a unique asset; transfer of shares in a private company |
+| Injunction | Orders a party to stop, or occasionally to do, a specific act | Misuse of confidential information; breach of a restraint; interference with exclusive rights |
+| Rescission | Unwinds a contract and restores the parties to their prior positions | Contract induced by misrepresentation, duress or undue influence |
+| Rectification | Corrects a written document to reflect the actual agreement | A signed contract contains a drafting error both parties overlooked |
+| Equitable compensation or account of profits | Monetary relief for breach of equitable obligations | Misuse of confidential information; breach of fiduciary duty |
+
 ```figure
 type: balance
 title: Two toolboxes for a contract that goes wrong
@@ -36,14 +44,6 @@ caption: Equitable remedies are discretionary: meeting the requirements does not
 - Asks what the loss was | Asks whether money is enough, and how the parties behaved
 - Compensates with money | Can order performance, stop an act or unwind a deal
 ```
-
-| Remedy | What it does | Typical business situation |
-|---|---|---|
-| Specific performance | Orders a party to perform its contractual obligation | Sale of land or a unique asset; transfer of shares in a private company |
-| Injunction | Orders a party to stop, or occasionally to do, a specific act | Misuse of confidential information; breach of a restraint; interference with exclusive rights |
-| Rescission | Unwinds a contract and restores the parties to their prior positions | Contract induced by misrepresentation, duress or undue influence |
-| Rectification | Corrects a written document to reflect the actual agreement | A signed contract contains a drafting error both parties overlooked |
-| Equitable compensation or account of profits | Monetary relief for breach of equitable obligations | Misuse of confidential information; breach of fiduciary duty |
 
 ## Specific performance: holding a party to its promise
 

@@ -49,6 +49,12 @@ In each case, the constraint, not the technology, should decide what happens fir
 
 Classifying proposals helps balance the plan:
 
+| Type | Purpose | Examples |
+|---|---|---|
+| Performance | Improve current operations now | Maintenance, tuning, heat recovery, scheduling, process control, reducing waste |
+| Enabling | Create conditions the future needs | Electrical supply upgrades, data cleanup, skills, supplier development, trials |
+| Replacement | Install the future-state asset | New electric equipment, automation cells, a new platform |
+
 ```figure
 type: compare
 title: Three kinds of transition investment
@@ -58,12 +64,6 @@ caption: Replacement projects attract attention; enabling projects decide whethe
 - Enabling | Create the conditions the future needs | supply upgrades, data cleanup, skills, trials
 - *Replacement | Install the future-state asset | new electric equipment, new systems
 ```
-
-| Type | Purpose | Examples |
-|---|---|---|
-| Performance | Improve current operations now | Maintenance, tuning, heat recovery, scheduling, process control, reducing waste |
-| Enabling | Create conditions the future needs | Electrical supply upgrades, data cleanup, skills, supplier development, trials |
-| Replacement | Install the future-state asset | New electric equipment, automation cells, a new platform |
 
 Replacement projects attract attention because they are visible and feel strategic. But without enablers, they can be premature. Performance projects are often cheap, fast and overlooked. A good plan funds all three in a sensible sequence, judging each proposal partly on how it affects the others.
 

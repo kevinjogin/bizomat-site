@@ -25,6 +25,9 @@ A product has a network effect when its value to each user increases as more peo
 
 Two consequences follow:
 
+- **Value grows faster than cost.** Each new participant adds value for many others, while the cost of adding them grows roughly in line with numbers.
+- **Leaders tend to pull ahead.** The largest network is usually the most valuable, which attracts more participants, which makes it more valuable still.
+
 ```figure
 type: svg
 title: Value grows faster than cost
@@ -39,9 +42,6 @@ body:
 <text class="txb" x="596" y="145" text-anchor="end">Cost of adding people</text>
 <text class="tx" x="600" y="244" text-anchor="end">More participants →</text>
 ```
-
-- **Value grows faster than cost.** Each new participant adds value for many others, while the cost of adding them grows roughly in line with numbers.
-- **Leaders tend to pull ahead.** The largest network is usually the most valuable, which attracts more participants, which makes it more valuable still.
 
 ## Five types of network effect
 

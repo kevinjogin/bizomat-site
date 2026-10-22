@@ -130,6 +130,12 @@ The **maximum expected utility principle** states that a rational agent should c
 
 In practice, applying the principle requires:
 
+1. listing the available actions
+2. identifying the possible outcomes of each, and their probabilities
+3. assigning utilities to the outcomes
+4. calculating expected utility for each action
+5. choosing the highest
+
 ```figure
 type: steps
 title: Applying the maximum expected utility principle
@@ -140,12 +146,6 @@ caption: The arithmetic is simple; the judgement lies in the probabilities and u
 - Calculate expected utility
 - *Choose the highest
 ```
-
-1. listing the available actions
-2. identifying the possible outcomes of each, and their probabilities
-3. assigning utilities to the outcomes
-4. calculating expected utility for each action
-5. choosing the highest
 
 ## Decision networks
 

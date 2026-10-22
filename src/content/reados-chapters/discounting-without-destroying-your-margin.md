@@ -77,6 +77,13 @@ This is the most important and most ignored part of discounting. A discount come
 
 where both are percentages of the original price.
 
+| Gross margin | 5% discount | 10% discount | 20% discount |
+|---|---|---|---|
+| 50% | +11% | +25% | +67% |
+| 40% | +14% | +33% | +100% |
+| 30% | +20% | +50% | +200% |
+| 25% | +25% | +67% | +400% |
+
 ```figure
 type: formula
 title: How much extra volume a discount needs
@@ -87,13 +94,6 @@ caption: At a 30% gross margin, a 10% discount needs 50% more sales just to stan
 step: 10% ÷ (30% − 10%) = 10 ÷ 20
 step: = 50% more volume to keep the same gross profit
 ```
-
-| Gross margin | 5% discount | 10% discount | 20% discount |
-|---|---|---|---|
-| 50% | +11% | +25% | +67% |
-| 40% | +14% | +33% | +100% |
-| 30% | +20% | +50% | +200% |
-| 25% | +25% | +67% | +400% |
 
 At a 30% gross margin, a 10% discount requires 50% more sales just to make the same gross profit. A 20% discount requires three times the original volume. Many discount promotions fail this test, because they increase volume by less than the arithmetic requires and so reduce profit while making the business look busy.
 

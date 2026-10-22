@@ -38,6 +38,10 @@ The lesson is not about stakeholders. It is that a profession concluded that tre
 
 Each can be checked in an afternoon:
 
+1. **Effort without recognition.** Where is significant time being spent on work filed under a heading that names something else? A manager spending a day a week on IT security while their job is "office manager" is a sign. The [key person dependence](/reados/collections/starting-funding-and-structuring-a-business/key-person-dependence-in-a-small-business/) article covers a related risk: important work that depends on one person's goodwill rather than a defined role.
+2. **The same failure across unrelated work.** A problem that recurs within one job is a delivery issue. A problem that recurs across jobs, teams or customers with nothing else in common is usually a missing responsibility.
+3. **Nobody to ask.** For each significant category of work, name the person who would be asked to explain a failure. Where no name comes to mind, the work is being done by whoever happens to notice.
+
 ```figure
 type: checklist
 title: Three signs a side task has outgrown its filing
@@ -47,10 +51,6 @@ caption: Being a recognised area brings an owner, money and a place on the agend
 - ? Nobody to ask | no name for who would explain a failure
 ```
 
-1. **Effort without recognition.** Where is significant time being spent on work filed under a heading that names something else? A manager spending a day a week on IT security while their job is "office manager" is a sign. The [key person dependence](/reados/collections/starting-funding-and-structuring-a-business/key-person-dependence-in-a-small-business/) article covers a related risk: important work that depends on one person's goodwill rather than a defined role.
-2. **The same failure across unrelated work.** A problem that recurs within one job is a delivery issue. A problem that recurs across jobs, teams or customers with nothing else in common is usually a missing responsibility.
-3. **Nobody to ask.** For each significant category of work, name the person who would be asked to explain a failure. Where no name comes to mind, the work is being done by whoever happens to notice.
-
 ## The sequence test: will promotion change anything?
 
 Not every promotion is worthwhile. The useful test is whether giving the work an owner would **move its first activity earlier**.
@@ -58,6 +58,14 @@ Not every promotion is worthwhile. The useful test is whether giving the work an
 Work done at the end of a process, as a check or a clean-up, can only catch problems after they have happened. Work done at the start can change what happens. If making something a recognised responsibility means it is considered before a job is quoted, before a system is chosen or before a customer is onboarded, the change is real. If it simply gains a title while still happening at the same late point, the business has added a reporting line and changed nothing.
 
 Some examples:
+
+| Side task | Late version | Earlier version after promotion |
+|---|---|---|
+| Quoting accuracy | Discovered when jobs lose money | Owner reviews estimates on large quotes before they go out |
+| Cyber security | Addressed after an incident | Owner signs off new systems, suppliers and access before they start |
+| Customer complaints | Handled by whoever answers | Owner tracks causes and feeds them into quoting and design |
+| Data quality | Fixed when a report is wrong | Owner sets rules for how data is entered at the start |
+| Supplier risk | Noticed when a supplier fails | Owner checks critical suppliers before orders are placed |
 
 ```figure
 type: svg
@@ -77,14 +85,6 @@ body:
 <text class="txb" x="540" y="142" text-anchor="middle">Side task: a late check</text>
 <text class="tx" x="540" y="164" text-anchor="middle">catches it afterwards</text>
 ```
-
-| Side task | Late version | Earlier version after promotion |
-|---|---|---|
-| Quoting accuracy | Discovered when jobs lose money | Owner reviews estimates on large quotes before they go out |
-| Cyber security | Addressed after an incident | Owner signs off new systems, suppliers and access before they start |
-| Customer complaints | Handled by whoever answers | Owner tracks causes and feeds them into quoting and design |
-| Data quality | Fixed when a report is wrong | Owner sets rules for how data is entered at the start |
-| Supplier risk | Noticed when a supplier fails | Owner checks critical suppliers before orders are placed |
 
 ## Count the cost before declaring it
 

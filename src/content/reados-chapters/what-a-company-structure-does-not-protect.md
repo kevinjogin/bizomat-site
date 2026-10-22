@@ -67,6 +67,11 @@ The remedy is simple and cheap: an **obligations register** kept alongside the c
 
 A second group of exposures sits outside the structure by design. Laws aimed only at companies could be defeated by letting the company fail, so some obligations attach to individuals as well. In Australia, general examples include:
 
+- **Directors' duties** under company law, such as acting with care and diligence and in good faith, and the duty not to let the company incur debts when it is insolvent or would become insolvent by incurring them. ASIC publishes guidance for directors.
+- **Tax and superannuation.** The ATO's director penalty regime can make directors personally liable for certain unpaid company amounts, such as some withheld tax, GST and superannuation guarantee charge. Lodging and paying on time matters. Your accountant or the ATO can explain how it works.
+- **Work health and safety.** Officers of a business, which can include directors, have their own duty to exercise due diligence, and penalties can apply to individuals.
+- **Environmental and other regulatory regimes**, some of which can reach individuals involved in a contravention.
+
 ```figure
 type: checklist
 title: Exposures that attach to people, not structures
@@ -76,11 +81,6 @@ caption: The detail varies by law and situation and needs professional advice.
 - ? Work health and safety | officers' own duties
 - ? Environmental and other regulators | personal liability in some regimes
 ```
-
-- **Directors' duties** under company law, such as acting with care and diligence and in good faith, and the duty not to let the company incur debts when it is insolvent or would become insolvent by incurring them. ASIC publishes guidance for directors.
-- **Tax and superannuation.** The ATO's director penalty regime can make directors personally liable for certain unpaid company amounts, such as some withheld tax, GST and superannuation guarantee charge. Lodging and paying on time matters. Your accountant or the ATO can explain how it works.
-- **Work health and safety.** Officers of a business, which can include directors, have their own duty to exercise due diligence, and penalties can apply to individuals.
-- **Environmental and other regulatory regimes**, some of which can reach individuals involved in a contravention.
 
 The detail varies by law and situation, and needs professional advice. The governance point does not depend on the detail: this kind of exposure is not limited by your shareholding or the company's assets. It follows conduct, knowledge and the condition of the company at the time. That means it concentrates exactly when pressure is highest: trading through a difficult period, rushing to complete a project, responding to an incident. Agreeing to be a director of a related company "just for the paperwork" is not a purely nominal act. The [steering a small business through a downturn](/reados/collections/booms-bubbles-and-business-cycles/steering-a-small-business-through-a-downturn/) article covers getting advice early when a company is under financial pressure.
 

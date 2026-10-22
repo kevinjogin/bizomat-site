@@ -34,6 +34,12 @@ Suppose a fit-out is most likely to take 8 weeks, could take 6 if everything goe
 
 The formula is a useful rough guide, but its real value is the conversation it forces:
 
+- What must happen for the optimistic case?
+- What conditions define the most likely case?
+- What credible events produce the pessimistic case?
+- Are the bounds based on evidence, or on negotiation?
+- Does the same cause affect several tasks?
+
 ```figure
 type: formula
 title: A three-point estimate for the fit-out
@@ -42,12 +48,6 @@ caption: The extra 0.7 weeks reflects bad outcomes sitting further from the most
 step: (6 + 4 × 8 + 14) ÷ 6
 step: About 8.7 weeks
 ```
-
-- What must happen for the optimistic case?
-- What conditions define the most likely case?
-- What credible events produce the pessimistic case?
-- Are the bounds based on evidence, or on negotiation?
-- Does the same cause affect several tasks?
 
 Treat the formula as a starting point, not a complete risk model. Real durations are often skewed more than the formula assumes, and tasks are often linked.
 

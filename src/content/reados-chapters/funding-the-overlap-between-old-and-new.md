@@ -28,6 +28,11 @@ Most changeovers involve a period in which both the old and the new are live:
 
 That period is not a gap between two funded states. It is a third state with its own cost profile:
 
+- **Both cost bases at once**: two licences, two leases, two contracts.
+- **Reconciliation work**: people whose job, for now, is keeping two versions of the same reality in agreement. It is usually described as temporary and done by people who already have full jobs.
+- **Errors that exist only in the overlap**: the customer, order or stock item that appears in both systems or in neither.
+- **Frozen change**: other improvements to that part of the business are put on hold while two versions are live.
+
 ```figure
 type: svg
 title: The overlap is a third operating state
@@ -45,11 +50,6 @@ body:
 <text class="tx" x="420" y="208" text-anchor="middle">Switch-off test met</text>
 <text class="txb" x="340" y="110" text-anchor="middle">Overlap</text>
 ```
-
-- **Both cost bases at once**: two licences, two leases, two contracts.
-- **Reconciliation work**: people whose job, for now, is keeping two versions of the same reality in agreement. It is usually described as temporary and done by people who already have full jobs.
-- **Errors that exist only in the overlap**: the customer, order or stock item that appears in both systems or in neither.
-- **Frozen change**: other improvements to that part of the business are put on hold while two versions are live.
 
 Treating the overlap as a moment, a go-live date or a moving day, rather than a period with a cost, is comfortable and expensive.
 

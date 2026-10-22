@@ -68,6 +68,15 @@ A merely confident adviser answers immediately from a fixed position, generalise
 
 Six questions help in a first conversation:
 
+| Question | Competent answer | Confidence-only answer |
+|---|---|---|
+| What would you need to know before advising us? | Narrows and reframes the question | Answers straight away |
+| What would make your recommendation wrong? | Names something observable | Restates the recommendation more firmly |
+| Where has this approach failed, and why? | Explains the conditions success depends on | Lists successes only |
+| When should we not engage you? | States the circumstances plainly | Cannot think of any |
+| What will we be able to do ourselves afterwards? | Describes what will be transferred | Describes ongoing dependence |
+| Who else in our industry do you act for? | Discloses openly | Treats the question as hostile |
+
 ```figure
 type: compare
 title: Competence or confidence? How answers differ
@@ -79,15 +88,6 @@ caption: Competence shows in how an adviser handles questions, not in how quickl
 - Where has this approach failed, and why? | Explains the conditions success depends on | Lists successes only
 - When should we not engage you? | States the circumstances plainly | Cannot think of any
 ```
-
-| Question | Competent answer | Confidence-only answer |
-|---|---|---|
-| What would you need to know before advising us? | Narrows and reframes the question | Answers straight away |
-| What would make your recommendation wrong? | Names something observable | Restates the recommendation more firmly |
-| Where has this approach failed, and why? | Explains the conditions success depends on | Lists successes only |
-| When should we not engage you? | States the circumstances plainly | Cannot think of any |
-| What will we be able to do ourselves afterwards? | Describes what will be transferred | Describes ongoing dependence |
-| Who else in our industry do you act for? | Discloses openly | Treats the question as hostile |
 
 Two further tests are revealing. Ask the adviser to argue against their own recommendation for a few minutes: a recommendation can be rehearsed, a genuine counter-argument cannot. And ask what they would need to see in the first two weeks to conclude the engagement should stop.
 

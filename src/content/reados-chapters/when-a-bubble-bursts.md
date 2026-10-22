@@ -94,6 +94,14 @@ A bust in one market spreads to the wider economy through several channels.
 
 Not all busts are equally damaging. Several factors determine how severe and long-lasting the aftermath will be.
 
+| Factor | Milder bust | More severe bust |
+| --- | --- | --- |
+| How the boom was financed | Mainly savings and equity | Mainly debt |
+| Who holds the losses | Investors who can absorb them | Banks and highly indebted households |
+| Size of the boom-time investment | Modest | Very large, creating long-lasting overcapacity |
+| Health of the banking system | Well capitalised | Weakened by losses |
+| Policy response | Quick and effective | Slow or constrained |
+
 ```figure
 type: compare
 title: What makes a bust milder or more severe
@@ -103,14 +111,6 @@ caption: The deciding factor is usually how the boom was financed and who ends u
 - Who holds the losses | Investors who can absorb them | Banks and highly indebted households
 - Boom-time investment | Modest | Very large, long-lasting overcapacity
 ```
-
-| Factor | Milder bust | More severe bust |
-| --- | --- | --- |
-| How the boom was financed | Mainly savings and equity | Mainly debt |
-| Who holds the losses | Investors who can absorb them | Banks and highly indebted households |
-| Size of the boom-time investment | Modest | Very large, creating long-lasting overcapacity |
-| Health of the banking system | Well capitalised | Weakened by losses |
-| Policy response | Quick and effective | Slow or constrained |
 
 The contrast between two American busts illustrates this. When the technology share bubble burst in 2000, the losses fell mainly on shareholders, and the following US recession was relatively mild. When the US housing bubble burst a few years later, the losses fell on highly indebted households and on banks, and the result was the global financial crisis and a deep recession.
 

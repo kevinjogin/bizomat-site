@@ -143,6 +143,12 @@ caption: Residue is the failure cost minus what the contract terms would realist
 
 The business takes several steps:
 
+- **It asks its broker** about stock deterioration and business interruption cover, including power supply failure, and what excesses, limits and conditions apply.
+- **It installs a backup generator** for the cool rooms, which changes the odds rather than who pays.
+- **It renegotiates the refrigeration contract**, paying a higher fee for a faster response time and a higher cap, since that contract carries the largest residue relative to its price.
+- **It declares value or arranges transit insurance** for high-value loads.
+- **It changes its approval rule**: any contract leaving a residue above $50,000 must be approved by the owner, regardless of the contract's price.
+
 ```figure
 type: bars
 title: One regional power outage against the cash buffer
@@ -151,12 +157,6 @@ caption: Refrigeration, software and security could fail together, and insurance
 - *Residue one outage could trigger | 299000
 - Cash the business holds | 120000
 ```
-
-- **It asks its broker** about stock deterioration and business interruption cover, including power supply failure, and what excesses, limits and conditions apply.
-- **It installs a backup generator** for the cool rooms, which changes the odds rather than who pays.
-- **It renegotiates the refrigeration contract**, paying a higher fee for a faster response time and a higher cap, since that contract carries the largest residue relative to its price.
-- **It declares value or arranges transit insurance** for high-value loads.
-- **It changes its approval rule**: any contract leaving a residue above $50,000 must be approved by the owner, regardless of the contract's price.
 
 The review takes two afternoons. Before it, the business believed its suppliers "carried" most of these risks.
 

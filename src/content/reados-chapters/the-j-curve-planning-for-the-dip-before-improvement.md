@@ -61,6 +61,13 @@ Two biases make this judgement harder. **Escalation of commitment** leads people
 
 A J-curve is far easier to manage when it has been planned. Before committing to a significant change, estimate and agree:
 
+- **Depth**: the largest expected cumulative loss of cash, output or margin.
+- **Duration**: how long results are expected to stay below the starting point.
+- **Recovery point**: when cumulative results are expected to return to break-even.
+- **Leading indicators**: the measures that should improve before overall results do.
+- **Review points**: dates or milestones when progress will be checked against the plan.
+- **Stop or rethink criteria**: what evidence would show the change is not working, such as a dip deeper than a set amount or a key indicator below a set level by a set date.
+
 ```figure
 type: compare
 title: Bottom of a J, or an ordinary decline?
@@ -70,13 +77,6 @@ caption: Set the depth, duration and review triggers before starting, so the jud
 - Leading indicators | Improving while results lag | Flat or worsening
 - The dip | Within forecast depth and duration | Deeper or longer than forecast
 ```
-
-- **Depth**: the largest expected cumulative loss of cash, output or margin.
-- **Duration**: how long results are expected to stay below the starting point.
-- **Recovery point**: when cumulative results are expected to return to break-even.
-- **Leading indicators**: the measures that should improve before overall results do.
-- **Review points**: dates or milestones when progress will be checked against the plan.
-- **Stop or rethink criteria**: what evidence would show the change is not working, such as a dip deeper than a set amount or a key indicator below a set level by a set date.
 
 ### Put the dip in the business case
 

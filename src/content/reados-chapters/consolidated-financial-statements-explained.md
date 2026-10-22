@@ -31,6 +31,14 @@ Two consequences follow:
 
 Consolidation is usually prepared using a worksheet that starts from each entity's own accounts and makes adjustments. The main steps are:
 
+1. **Align the accounts.** Ensure subsidiaries use the same reporting date and consistent accounting policies, adjusting where necessary.
+2. **Add line by line.** Combine like items: cash with cash, receivables with receivables, revenue with revenue, and so on.
+3. **Eliminate the investment.** Remove the parent's investment in each subsidiary against the parent's share of the subsidiary's equity at acquisition, recognising goodwill and fair value adjustments from the acquisition.
+4. **Recognise non-controlling interests.** Show the share of subsidiaries' equity and profit belonging to other owners.
+5. **Eliminate intra-group balances.** Remove receivables and payables, loans and other balances between group members.
+6. **Eliminate intra-group transactions.** Remove sales and purchases, interest, management fees, dividends and other transactions between group members.
+7. **Eliminate unrealised profits.** Remove profits on goods or assets sold within the group that have not yet been sold to outside parties.
+
 ```figure
 type: steps
 title: The basic consolidation steps
@@ -41,14 +49,6 @@ caption: Include everything the group controls; remove everything the group does
 - Recognise non-controlling interests | their share of equity and profit
 - *Eliminate intra-group items | loans, sales, fees and unrealised profit
 ```
-
-1. **Align the accounts.** Ensure subsidiaries use the same reporting date and consistent accounting policies, adjusting where necessary.
-2. **Add line by line.** Combine like items: cash with cash, receivables with receivables, revenue with revenue, and so on.
-3. **Eliminate the investment.** Remove the parent's investment in each subsidiary against the parent's share of the subsidiary's equity at acquisition, recognising goodwill and fair value adjustments from the acquisition.
-4. **Recognise non-controlling interests.** Show the share of subsidiaries' equity and profit belonging to other owners.
-5. **Eliminate intra-group balances.** Remove receivables and payables, loans and other balances between group members.
-6. **Eliminate intra-group transactions.** Remove sales and purchases, interest, management fees, dividends and other transactions between group members.
-7. **Eliminate unrealised profits.** Remove profits on goods or assets sold within the group that have not yet been sold to outside parties.
 
 ## A worked example: at acquisition
 
@@ -73,6 +73,10 @@ The balance sheets immediately after the acquisition:
 
 How the adjustments are calculated:
 
+- **Non-controlling interest:** 20% of Sub Co's net assets of $450,000 = **$90,000**.
+- **Goodwill:** the $400,000 paid, less Parent Co's 80% share of Sub Co's net assets ($360,000) = **$40,000**.
+- **Elimination:** Parent Co's investment ($400,000) and Sub Co's equity ($450,000) are removed, replaced by goodwill ($40,000) and the non-controlling interest ($90,000).
+
 ```figure
 type: formula
 title: Parent Co buys 80% of Sub Co for $400,000
@@ -83,10 +87,6 @@ step: NCI = 20% × $450,000 = $90,000
 step: Goodwill = $400,000 − $360,000 = $40,000
 step: Investment ($400,000) and Sub Co equity ($450,000) are eliminated
 ```
-
-- **Non-controlling interest:** 20% of Sub Co's net assets of $450,000 = **$90,000**.
-- **Goodwill:** the $400,000 paid, less Parent Co's 80% share of Sub Co's net assets ($360,000) = **$40,000**.
-- **Elimination:** Parent Co's investment ($400,000) and Sub Co's equity ($450,000) are removed, replaced by goodwill ($40,000) and the non-controlling interest ($90,000).
 
 The consolidated balance sheet shows the group's combined cash, other assets and liabilities, goodwill from the acquisition, the equity of Parent Co's shareholders and the share belonging to Sub Co's other shareholders.
 

@@ -24,6 +24,11 @@ A useful shift is to stop treating an estimate as a measurement and start treati
 
 For each important number in a proposal, ask:
 
+- **Who produced it?**
+- **What outcome did they want?**
+- **Who checked it from outside the proposal?**
+- **What could the checker change?**
+
 ```figure
 type: steps
 title: Treat an estimate as testimony
@@ -33,11 +38,6 @@ caption: Where nobody independent has checked a figure, say so.
 - Who checked it from outside the proposal?
 - *What could the checker change?
 ```
-
-- **Who produced it?**
-- **What outcome did they want?**
-- **Who checked it from outside the proposal?**
-- **What could the checker change?**
 
 Where nobody independent has checked a figure, say so. Simply recording it lets the decision-maker weigh the number accordingly.
 
@@ -80,6 +80,11 @@ A useful supporting rule: every forward-looking claim should state the rate it d
 
 Confidence is a human signal, not evidence. In any significant proposal, ask the author to label what is:
 
+- **observed**: facts from records;
+- **calculated**: derived from observed facts;
+- **assumed**: believed but not yet tested;
+- **preferred**: a judgement about what the business should want.
+
 ```figure
 type: layers
 title: Label every number in a proposal
@@ -89,11 +94,6 @@ caption: Separating the four makes it clear which numbers are being argued about
 - Assumed | believed but not yet tested
 - *Preferred | a judgement about what the business should want
 ```
-
-- **observed**: facts from records;
-- **calculated**: derived from observed facts;
-- **assumed**: believed but not yet tested;
-- **preferred**: a judgement about what the business should want.
 
 This is not bureaucracy. It shows where further evidence could change the decision and where disagreement is really about values. It also helps separate the quality of a decision from its outcome. A good decision can meet bad luck, and a poor decision can be rescued by good luck. Judge decisions by whether the reasoning and evidence were sound at the time, not only by how they turned out.
 

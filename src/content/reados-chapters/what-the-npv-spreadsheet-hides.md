@@ -93,6 +93,12 @@ A project that remains attractive across a wide range of assumptions is a differ
 
 A positive NPV is a strong signal, not a decision rule:
 
+- Another option may have a higher NPV.
+- The business may not be able to fund every positive investment and must choose.
+- The business may lack the people to deliver it alongside other priorities.
+- The benefits may depend on another project or on customer behaviour.
+- Waiting and learning more might be worth more than committing now.
+
 ```figure
 type: checklist
 title: Why a positive NPV is not automatic approval
@@ -103,12 +109,6 @@ caption: Equally, a weak NPV may still be right for safety, compliance, resilien
 - ? Benefits may depend on other projects or customers
 - ? Waiting and learning may be worth more than committing now
 ```
-
-- Another option may have a higher NPV.
-- The business may not be able to fund every positive investment and must choose.
-- The business may lack the people to deliver it alongside other priorities.
-- The benefits may depend on another project or on customer behaviour.
-- Waiting and learning more might be worth more than committing now.
 
 Equally, an investment with a weak NPV may still be the right choice for reasons the cash flows do not capture, such as safety, compliance, resilience or a strategic capability. When that happens, make the trade-off visible: state the financial cost of the choice and why the business is accepting it.
 

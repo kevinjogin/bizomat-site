@@ -38,6 +38,10 @@ Any projection of future cash depends on growth, margins, reinvestment, financin
 
 A useful valuation process therefore uses scenarios:
 
+- **Conservative:** Slower sales growth, weaker margins, higher reinvestment.
+- **Base case:** Plausible performance informed by history and current conditions.
+- **Optimistic:** Strong execution and a sustained economic advantage.
+
 ```figure
 type: range
 title: A valuation is a range, not a point
@@ -49,10 +53,6 @@ caption: Illustrative only: look at the spread of outcomes the assumptions produ
 - *Base case | 40 | 65 | plausible performance from history and conditions
 - Optimistic | 60 | 90 | strong execution, sustained advantage
 ```
-
-- **Conservative:** Slower sales growth, weaker margins, higher reinvestment.
-- **Base case:** Plausible performance informed by history and current conditions.
-- **Optimistic:** Strong execution and a sustained economic advantage.
 
 Look at the range of estimated outcomes rather than treating one precise number as certain.
 

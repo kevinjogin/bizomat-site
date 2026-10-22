@@ -57,6 +57,12 @@ Unused borrowing capacity also has value. A business that borrows to the limit f
 
 The Australian Government's Handbook of Cost-Benefit Analysis, published in 2006, distinguishes three approaches, each suited to a different question:
 
+| Question | Method | Strength | Limitation |
+|---|---|---|---|
+| Is this financially worthwhile and affordable for our business? | Financial appraisal | Clear view of the business's own cash | Leaves out effects on others |
+| Does this create net value for the wider community? | Cost-benefit analysis | Includes effects on others and non-market effects | Valuing some effects is difficult; can hide who gains and loses |
+| Which option achieves a defined outcome at least cost? | Cost-effectiveness analysis | Works where benefits are best measured in physical terms | Does not say whether the outcome is worth its total cost |
+
 ```figure
 type: decision
 title: Choose the test that fits the question
@@ -66,12 +72,6 @@ caption: Most private decisions use financial appraisal; large decisions may nee
 - Does it create net value for others too? | Cost-benefit analysis | includes non-market effects
 - *Outcome fixed: which option is cheapest? | Cost-effectiveness | e.g. emissions cut per dollar
 ```
-
-| Question | Method | Strength | Limitation |
-|---|---|---|---|
-| Is this financially worthwhile and affordable for our business? | Financial appraisal | Clear view of the business's own cash | Leaves out effects on others |
-| Does this create net value for the wider community? | Cost-benefit analysis | Includes effects on others and non-market effects | Valuing some effects is difficult; can hide who gains and loses |
-| Which option achieves a defined outcome at least cost? | Cost-effectiveness analysis | Works where benefits are best measured in physical terms | Does not say whether the outcome is worth its total cost |
 
 For most private business decisions, financial appraisal is the main test. But other lenses help in particular situations:
 

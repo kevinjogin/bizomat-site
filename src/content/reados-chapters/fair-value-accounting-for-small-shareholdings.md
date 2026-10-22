@@ -106,6 +106,12 @@ The example shows why the choice matters: under the default, a business's report
 
 AASB 13 groups the inputs used to measure fair value into a **hierarchy**:
 
+| Level | Inputs | Example |
+| --- | --- | --- |
+| Level 1 | Quoted prices in active markets for identical assets | Shares traded on the ASX |
+| Level 2 | Other observable inputs | Recent prices for similar shares; observable market data |
+| Level 3 | Unobservable inputs based on assumptions | Valuation models for private company shares |
+
 ```figure
 type: layers
 title: The AASB 13 fair value hierarchy
@@ -114,12 +120,6 @@ caption: The further down the hierarchy, the more judgement is involved and the 
 - Level 2 | other observable inputs, such as recent prices for similar shares
 - *Level 3 | unobservable inputs: valuation models for private company shares
 ```
-
-| Level | Inputs | Example |
-| --- | --- | --- |
-| Level 1 | Quoted prices in active markets for identical assets | Shares traded on the ASX |
-| Level 2 | Other observable inputs | Recent prices for similar shares; observable market data |
-| Level 3 | Unobservable inputs based on assumptions | Valuation models for private company shares |
 
 Listed shares are usually straightforward Level 1 measurements: quantity multiplied by quoted price. Shares in private companies usually require Level 3 valuations, using approaches such as:
 

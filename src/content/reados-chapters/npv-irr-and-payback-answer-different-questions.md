@@ -80,6 +80,11 @@ This is an illustration. A small food business is choosing between two packing u
 
 Option A wins on IRR and payback. Option B wins on NPV. To see which is better, look at the **extra** investment B requires compared with A:
 
+- Extra cost: $150,000 − $40,000 = $110,000.
+- Extra saving: $45,000 − $16,000 = $29,000 a year for six years.
+- NPV of the extra at 10%: about $16,300.
+- IRR of the extra: about 15%.
+
 ```figure
 type: compare
 title: Two packing upgrades, only one can be installed
@@ -91,11 +96,6 @@ caption: A wins on IRR and payback; B creates more value at a 10% required retur
 - IRR | about 33% | about 20%
 - Payback | 2.5 years | about 3.3 years
 ```
-
-- Extra cost: $150,000 − $40,000 = $110,000.
-- Extra saving: $45,000 − $16,000 = $29,000 a year for six years.
-- NPV of the extra at 10%: about $16,300.
-- IRR of the extra: about 15%.
 
 The additional $110,000 earns about 15%, above the 10% required return, so if the business can fund it and the risks are similar, Option B creates more value. That also explains the disagreement: at a discount rate of about 15%, the two options have roughly the same NPV. Below that rate B is better; above it A is better.
 

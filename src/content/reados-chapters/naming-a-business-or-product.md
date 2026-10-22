@@ -76,6 +76,16 @@ caption: Descriptive names are instantly clear but hard to protect; invented nam
 
 Narrow the list to five to ten, then test each against these criteria:
 
+1. **Memorable**: can people recall it after hearing it once?
+2. **Easy to say and spell**: can people find you after hearing the name in conversation or on the radio?
+3. **Meaningful or evocative**: does it fit your brand criteria?
+4. **Distinctive**: does it stand apart from competitors' names?
+5. **Scalable**: will it still fit if you expand products, services or locations?
+6. **Culturally appropriate**: does it have unintended meanings in other languages or communities you serve?
+7. **Visually workable**: does it work in a logo, on signage, on a small product label and as a social media handle?
+8. **Legally available**: can you register and protect it? (See below.)
+9. **Domain available**: can you obtain a suitable domain name?
+
 ```figure
 type: checklist
 title: Testing a shortlisted name
@@ -87,16 +97,6 @@ caption: Any name that fails the legal checks is eliminated, however well it sco
 - Scalable | still fits as the business grows
 - ? Legally available | business name, trade mark, domain, handles
 ```
-
-1. **Memorable**: can people recall it after hearing it once?
-2. **Easy to say and spell**: can people find you after hearing the name in conversation or on the radio?
-3. **Meaningful or evocative**: does it fit your brand criteria?
-4. **Distinctive**: does it stand apart from competitors' names?
-5. **Scalable**: will it still fit if you expand products, services or locations?
-6. **Culturally appropriate**: does it have unintended meanings in other languages or communities you serve?
-7. **Visually workable**: does it work in a logo, on signage, on a small product label and as a social media handle?
-8. **Legally available**: can you register and protect it? (See below.)
-9. **Domain available**: can you obtain a suitable domain name?
 
 ### Test with customers
 

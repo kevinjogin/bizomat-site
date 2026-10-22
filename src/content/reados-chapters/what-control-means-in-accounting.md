@@ -110,6 +110,9 @@ Company A owns 40% of Company B and 45% of Company C. Company B owns 25% of Comp
 
 Now change one fact: A owns **60%** of B.
 
+- A now controls B, so B is a subsidiary.
+- A controls B's 25% stake in C, in addition to its own 45%. A therefore controls **70%** of C's votes and controls C.
+
 ```figure
 type: svg
 title: Indirect control: A owns 60% of B and 45% of C; B owns 25% of C
@@ -131,9 +134,6 @@ body:
 <text class="tx" x="320" y="220" text-anchor="middle">25% held by B, controlled by A</text>
 <text class="txb" x="510" y="286" text-anchor="middle">A controls 70% of votes</text>
 ```
-
-- A now controls B, so B is a subsidiary.
-- A controls B's 25% stake in C, in addition to its own 45%. A therefore controls **70%** of C's votes and controls C.
 
 ### Control is not the same as economic ownership
 

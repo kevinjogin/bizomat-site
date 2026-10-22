@@ -101,6 +101,13 @@ Putting the three measures together gives the **cash conversion cycle**:
 
 It estimates how many days pass between paying suppliers and being paid by customers. Here is an illustration for a small wholesaler.
 
+| Measure | Days |
+| --- | --- |
+| Days inventory outstanding | 60 |
+| plus days sales outstanding | 45 |
+| less days payables outstanding | 30 |
+| **Cash conversion cycle** | **75** |
+
 ```figure
 type: formula
 title: The cash conversion cycle
@@ -112,13 +119,6 @@ caption: This business funds 75 days of operations from its own cash.
 step: CCC = 60 + 45 − 30
 step: CCC = 75 days
 ```
-
-| Measure | Days |
-| --- | --- |
-| Days inventory outstanding | 60 |
-| plus days sales outstanding | 45 |
-| less days payables outstanding | 30 |
-| **Cash conversion cycle** | **75** |
 
 This business funds 75 days of operations from its own cash. If its annual cost of goods sold is $3.65 million (about $10,000 a day), it has roughly $750,000 tied up in working capital. Cutting the cycle by 20 days, through faster stock turnover or quicker collections, would release about $200,000 without a single extra sale.
 

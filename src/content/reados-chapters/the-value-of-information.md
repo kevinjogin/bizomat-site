@@ -80,6 +80,11 @@ Next, using Bayes' rule (explained in [Thinking in probabilities](/reados/collec
 
 Now the best decision after each result:
 
+| Test result | Expected profit if launch | Best action | Value |
+| --- | --- | --- | --- |
+| "Strong" | 0.8 × $200,000 − 0.2 × $100,000 = $140,000 | Launch | $140,000 |
+| "Weak" | 0.2 × $200,000 − 0.8 × $100,000 = −$40,000 | Do not launch | $0 |
+
 ```figure
 type: tree
 title: How the trial result changes the decision
@@ -90,11 +95,6 @@ caption: The test has value only because a "weak" result switches the decision f
   - Says "weak", 50% | strong demand now 20% likely
     - Do not launch: $0 instead of −$40,000
 ```
-
-| Test result | Expected profit if launch | Best action | Value |
-| --- | --- | --- | --- |
-| "Strong" | 0.8 × $200,000 − 0.2 × $100,000 = $140,000 | Launch | $140,000 |
-| "Weak" | 0.2 × $200,000 − 0.8 × $100,000 = −$40,000 | Do not launch | $0 |
 
 Expected profit with the test = 0.5 × $140,000 + 0.5 × $0 = $70,000.
 

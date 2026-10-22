@@ -112,6 +112,9 @@ Not all overhead and research spending is the cost of standing still. Some is ge
 
 A useful exercise, for investors and owners alike, is to estimate how much of the spending is:
 
+- **maintenance:** needed just to keep the current business at its current level
+- **growth:** discretionary investment aimed at expanding the business
+
 ```figure
 type: balance
 title: Separating the cost of standing still from investment
@@ -122,9 +125,6 @@ caption: Companies rarely report the split, so it takes judgement, but the disti
 - Must continue to stand still | Can be paused if returns disappoint
 - Part of the true running cost | An investment to judge on its return
 ```
-
-- **maintenance:** needed just to keep the current business at its current level
-- **growth:** discretionary investment aimed at expanding the business
 
 Companies rarely report this split, so it requires judgement. Clues include whether spending rises and falls with competitive pressure, whether products are refreshed on a forced cycle, and what management says about the purpose of spending. A business with low maintenance costs and attractive growth opportunities is in a strong position; one whose spending is mostly maintenance is running hard to stay in place.
 

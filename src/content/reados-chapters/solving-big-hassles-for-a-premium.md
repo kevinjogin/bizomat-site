@@ -25,6 +25,10 @@ This article describes ten kinds of hassle that customers will pay to remove, wi
 
 Before looking at the ten types, the approach is simple:
 
+1. **Find a hassle the market has not solved**: a problem customers complain about, work around or simply accept.
+2. **Understand it deeply** from the customer's perspective.
+3. **Design a solution** that removes it so effectively that customers come to depend on you.
+
 ```figure
 type: tree
 title: Ten hassles customers pay to remove
@@ -41,10 +45,6 @@ caption: Removing a hassle earns either a premium price or market share at a low
   - Needs expensive equipment
   - *Inconvenient in daily use
 ```
-
-1. **Find a hassle the market has not solved**: a problem customers complain about, work around or simply accept.
-2. **Understand it deeply** from the customer's perspective.
-3. **Design a solution** that removes it so effectively that customers come to depend on you.
 
 ## 1. It takes too much time
 

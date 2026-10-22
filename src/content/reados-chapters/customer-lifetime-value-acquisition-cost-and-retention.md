@@ -83,6 +83,10 @@ Be honest about what you include. Sales staff time spent on new business, trade 
 
 The relationship between the two numbers tells you whether growth is healthy:
 
+- **CLV well above CAC**: each new customer creates value, so you can invest more in acquisition.
+- **CLV close to CAC**: growth adds little value and leaves little margin for error.
+- **CLV below CAC**: each new customer destroys value, and growth makes things worse.
+
 ```figure
 type: gauge
 title: Industrial supplier: CLV against CAC
@@ -96,10 +100,6 @@ caption: About three times: acceptable but not exceptional. Raising retention to
 - 1 | 3 | Thin
 - 3 | 6 | Healthy
 ```
-
-- **CLV well above CAC**: each new customer creates value, so you can invest more in acquisition.
-- **CLV close to CAC**: growth adds little value and leaves little margin for error.
-- **CLV below CAC**: each new customer destroys value, and growth makes things worse.
 
 A commonly quoted rule of thumb, especially in subscription businesses, is that CLV should be at least about three times CAC. Also look at the **payback period**: how many months of margin from a new customer it takes to recover the cost of acquiring them. Long payback periods tie up cash, even when lifetime economics are good.
 

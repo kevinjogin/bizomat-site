@@ -22,6 +22,12 @@ This article explains how credit fuels bubbles, why lending tends to expand in b
 
 The mechanism is a feedback loop.
 
+1. **Asset prices rise.** A genuine opportunity, falling interest rates or rising incomes push prices up.
+2. **Collateral values rise.** Assets that have risen in value can support larger loans. A house worth more can be borrowed against; shares worth more can secure a larger margin loan.
+3. **Lenders lend more.** With higher collateral values and recent experience of few losses, lenders become more willing to lend, and on easier terms.
+4. **Borrowers buy more.** The extra credit is spent on more assets, pushing prices higher still.
+5. **The loop repeats.** Higher prices support more lending, which supports higher prices.
+
 ```figure
 type: cycle
 title: The credit feedback loop in a boom
@@ -31,12 +37,6 @@ caption: As long as prices rise the loop looks virtuous; when they fall, it runs
 - Borrowers buy more assets
 - Demand pushes prices higher again
 ```
-
-1. **Asset prices rise.** A genuine opportunity, falling interest rates or rising incomes push prices up.
-2. **Collateral values rise.** Assets that have risen in value can support larger loans. A house worth more can be borrowed against; shares worth more can secure a larger margin loan.
-3. **Lenders lend more.** With higher collateral values and recent experience of few losses, lenders become more willing to lend, and on easier terms.
-4. **Borrowers buy more.** The extra credit is spent on more assets, pushing prices higher still.
-5. **The loop repeats.** Higher prices support more lending, which supports higher prices.
 
 As long as prices keep rising, the loop looks like a virtuous circle. Borrowers profit, lenders record few losses, and the economy grows. The problem is that the same loop runs in reverse when prices fall.
 

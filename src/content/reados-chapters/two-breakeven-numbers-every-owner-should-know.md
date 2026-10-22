@@ -106,6 +106,14 @@ The second breakeven number applies to equipment, vehicles, space and software. 
 
 Suppose hiring a machine costs $100 a day. Leasing one costs $3,000 a year in fixed charges such as maintenance, plus $70 a day to operate. The two options cost the same when $100 × days = $3,000 + $70 × days, which is at **100 days of use a year**. Below 100 days, hiring is cheaper; above it, leasing is.
 
+| Days used per year | Hire cost | Lease cost |
+|---|---|---|
+| 60 | $6,000 | $7,200 |
+| 80 | $8,000 | $8,600 |
+| 100 | $10,000 | $10,000 |
+| 120 | $12,000 | $11,400 |
+| 160 | $16,000 | $14,200 |
+
 ```figure
 type: line
 title: The rent-or-buy crossover for a machine
@@ -122,14 +130,6 @@ caption: The crossover is the easy part; flexibility, risk and capability decide
 - 120 | 12000 | 11400
 - 160 | 16000 | 14200
 ```
-
-| Days used per year | Hire cost | Lease cost |
-|---|---|---|
-| 60 | $6,000 | $7,200 |
-| 80 | $8,000 | $8,600 |
-| 100 | $10,000 | $10,000 |
-| 120 | $12,000 | $11,400 |
-| 160 | $16,000 | $14,200 |
 
 ## The crossover is not the decision
 

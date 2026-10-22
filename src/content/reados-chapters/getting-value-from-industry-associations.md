@@ -93,6 +93,15 @@ Membership fees are usually modest relative to the potential benefits. Compare w
 
 Membership alone delivers little. Value comes from participation:
 
+1. **Know why you joined.** Set two or three goals, such as meeting potential customers, staying ahead of regulation or developing staff.
+2. **Attend regularly.** Relationships are built through repeated contact, not one event.
+3. **Volunteer.** Joining a committee or working group is one of the fastest ways to build relationships and influence.
+4. **Contribute.** Share your expertise through presentations, articles or mentoring. Giving value builds reputation.
+5. **Use the services**: advice lines, templates, research, training and member discounts.
+6. **Involve your team.** Send staff to relevant training and events, and share information internally.
+7. **Follow up.** After events, connect with the people you met and continue conversations.
+8. **Review annually.** Is membership delivering against your goals? Adjust your involvement or switch organisations if not.
+
 ```figure
 type: tree
 title: What membership can offer
@@ -105,15 +114,6 @@ caption: Fees are usually modest relative to the benefits, but value comes from 
   - Money | group purchasing and member discounts
   - Voice | advocacy to government
 ```
-
-1. **Know why you joined.** Set two or three goals, such as meeting potential customers, staying ahead of regulation or developing staff.
-2. **Attend regularly.** Relationships are built through repeated contact, not one event.
-3. **Volunteer.** Joining a committee or working group is one of the fastest ways to build relationships and influence.
-4. **Contribute.** Share your expertise through presentations, articles or mentoring. Giving value builds reputation.
-5. **Use the services**: advice lines, templates, research, training and member discounts.
-6. **Involve your team.** Send staff to relevant training and events, and share information internally.
-7. **Follow up.** After events, connect with the people you met and continue conversations.
-8. **Review annually.** Is membership delivering against your goals? Adjust your involvement or switch organisations if not.
 
 ```figure
 type: steps

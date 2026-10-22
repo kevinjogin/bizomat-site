@@ -103,6 +103,9 @@ when the tolerance is split equally. It can also be split unequally, as long as 
 
 This is an illustration from the guide roller. The housing is fixed to the frame with four M8 screws into tapped holes in the frame. ISO 273 lists clearance holes for M8 screws in fine, medium and coarse series of Ø8.4, Ø9 and Ø10. Northgate chose the medium series, Ø9.0. Using the nominal 8.0 mm as a conservative maximum screw diameter:
 
+- **Fixed fastener case:** T = (9.0 − 8.0) ÷ 2 = 0.5 mm. The housing holes get position Ø0.5 at MMC, and the tapped holes in the customer's frame are specified at position Ø0.5 at MMC as well.
+- **If the design used through-bolts and nuts instead:** T = 9.0 − 8.0 = 1.0 mm for each part.
+
 ```figure
 type: compare
 title: Floating and fixed fasteners with M8 screws in Ø9.0 holes
@@ -113,9 +116,6 @@ caption: A tapped hole uses its share of the clearance without having any, so th
 - Position tolerance per part at MMC | Ø1.0 | Ø0.5
 - Extra control needed | None beyond the two hole patterns | Projected tolerance zone on the tapped holes
 ```
-
-- **Fixed fastener case:** T = (9.0 − 8.0) ÷ 2 = 0.5 mm. The housing holes get position Ø0.5 at MMC, and the tapped holes in the customer's frame are specified at position Ø0.5 at MMC as well.
-- **If the design used through-bolts and nuts instead:** T = 9.0 − 8.0 = 1.0 mm for each part.
 
 The fixed case halves the available tolerance, which is why tapped-hole patterns are more demanding to make and why frame drawings sometimes cause assembly trouble that the housing drawing did not.
 

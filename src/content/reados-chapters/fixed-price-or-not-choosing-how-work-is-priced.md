@@ -180,6 +180,13 @@ Stage 1 costs $41,500 and finds that the palletiser's controls need replacing, w
 
 The integration actually costs $196,000, an overrun of $16,000. Under the equal sharing formula, the business pays $180,000 plus half the overrun, which is $8,000, for a total of $188,000, and the integrator absorbs the other $8,000.
 
+| Item | Cost |
+|---|---|
+| Stage 1 investigation and design | $41,500 |
+| Equipment and installation (fixed) | $585,000 |
+| Integration (target cost after sharing) | $188,000 |
+| Total | $814,500 |
+
 ```figure
 type: formula
 title: Sharing the integration overrun
@@ -189,13 +196,6 @@ step: Target $180,000, actual $196,000: overrun $16,000
 step: $180,000 + 50% × $16,000
 step: Business pays $188,000; the integrator absorbs $8,000
 ```
-
-| Item | Cost |
-|---|---|
-| Stage 1 investigation and design | $41,500 |
-| Equipment and installation (fixed) | $585,000 |
-| Integration (target cost after sharing) | $188,000 |
-| Total | $814,500 |
 
 The total is higher than the lowest original quote, but that quote excluded work the investigation showed was needed. Adding the estimated excluded work to it gives roughly $810,000 to $830,000, before any dispute about what was included. The main difference is not the total. It is that the uncertainty was resolved before the main commitment, rather than argued over during delivery, and that both parties had a reason to control the cost of the uncertain integration work.
 

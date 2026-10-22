@@ -161,6 +161,10 @@ The lesson is that a first product is rarely the final product. Failure in one f
 
 Bring it together in a written plan:
 
+- **Next 30 days**: cash protection measures, urgent negotiations, immediate cost reductions and stakeholder communication.
+- **Next 90 days**: product and customer profitability actions, working capital improvements, revenue initiatives and process improvements.
+- **Next 12 months**: strategic changes, rebuilding growth, potential pivots and restoring financial buffers.
+
 ```figure
 type: timeline
 title: The 30-, 90- and 365-day plan
@@ -169,10 +173,6 @@ caption: Review weekly against the 13-week cash forecast.
 - 90 days | Fix the mix | product and customer profitability, working capital
 - *12 months | Rebuild | strategic change, growth, pivots, restoring reserves
 ```
-
-- **Next 30 days**: cash protection measures, urgent negotiations, immediate cost reductions and stakeholder communication.
-- **Next 90 days**: product and customer profitability actions, working capital improvements, revenue initiatives and process improvements.
-- **Next 12 months**: strategic changes, rebuilding growth, potential pivots and restoring financial buffers.
 
 Review progress weekly against the 13-week cash forecast and the plan.
 

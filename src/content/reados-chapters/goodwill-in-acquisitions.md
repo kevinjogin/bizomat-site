@@ -131,6 +131,12 @@ Measuring the fair values of every asset and liability takes time, and acquisiti
 
 Under Australian standards (AASB 136 *Impairment of Assets*), goodwill is **not amortised**. Instead:
 
+- goodwill is allocated to the **cash-generating units**, or groups of units, expected to benefit from the acquisition; a cash-generating unit is the smallest group of assets that generates largely independent cash inflows
+- each unit, or group of units, containing goodwill is tested for impairment **at least annually**, and whenever there is an indication of impairment
+- the unit's **recoverable amount**, the higher of its fair value less costs of disposal and its value in use (the present value of expected future cash flows), is compared with its carrying amount
+- if the carrying amount is higher, an **impairment loss** is recognised, reducing goodwill first and then other assets of the unit
+- impairment losses on goodwill are **never reversed**, even if conditions later improve
+
 ```figure
 type: steps
 title: Annual goodwill impairment testing under AASB 136
@@ -142,15 +148,15 @@ caption: Goodwill is not amortised, and an impairment loss on goodwill is never 
 - *Recognise any shortfall | reduce goodwill first; never reversed
 ```
 
-- goodwill is allocated to the **cash-generating units**, or groups of units, expected to benefit from the acquisition; a cash-generating unit is the smallest group of assets that generates largely independent cash inflows
-- each unit, or group of units, containing goodwill is tested for impairment **at least annually**, and whenever there is an indication of impairment
-- the unit's **recoverable amount**, the higher of its fair value less costs of disposal and its value in use (the present value of expected future cash flows), is compared with its carrying amount
-- if the carrying amount is higher, an **impairment loss** is recognised, reducing goodwill first and then other assets of the unit
-- impairment losses on goodwill are **never reversed**, even if conditions later improve
-
 ### Why goodwill gets impaired
 
 Common causes of goodwill impairment include:
+
+- the acquired business underperforming its forecasts
+- expected synergies failing to materialise
+- adverse changes in the market, technology or regulation
+- higher interest rates, which reduce the present value of future cash flows
+- overpayment at the time of acquisition, especially during booms
 
 ```figure
 type: checklist
@@ -162,12 +168,6 @@ caption: Repeated impairments often point to overpayment or poor integration.
 - x Higher interest rates | lower present value of future cash flows
 - x Overpayment | especially in booms
 ```
-
-- the acquired business underperforming its forecasts
-- expected synergies failing to materialise
-- adverse changes in the market, technology or regulation
-- higher interest rates, which reduce the present value of future cash flows
-- overpayment at the time of acquisition, especially during booms
 
 GoCore's article [The assets the balance sheet cannot see](/reados/collections/reading-financial-statements/the-assets-the-balance-sheet-cannot-see/) observes that repeated large impairments often suggest a management team that overpays for acquisitions.
 

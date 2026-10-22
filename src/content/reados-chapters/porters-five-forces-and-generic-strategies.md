@@ -79,6 +79,11 @@ How easily can customers meet the same need in a different way? Substitutes are 
 
 Industry growth, regulation and technological change also matter, but Porter argued that the five forces are the enduring structural drivers of profitability in every industry. Understanding them helps you:
 
+- Judge how attractive an industry or segment is.
+- See where pressure on your margins comes from.
+- Decide where to invest, such as building barriers, diversifying suppliers, broadening your customer base or differentiating against substitutes.
+- Anticipate how the industry may change.
+
 ```figure
 type: svg
 title: Porter's five forces
@@ -99,11 +104,6 @@ body:
 <text class="txb" x="544" y="155" text-anchor="middle">Buyer power</text>
 <path class="la flow" d="M320 66V120M320 234V180M176 150H230M464 150H410"/>
 ```
-
-- Judge how attractive an industry or segment is.
-- See where pressure on your margins comes from.
-- Decide where to invest, such as building barriers, diversifying suppliers, broadening your customer base or differentiating against substitutes.
-- Anticipate how the industry may change.
 
 ## Assessing the forces for your business
 
