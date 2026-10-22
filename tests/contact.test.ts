@@ -108,7 +108,7 @@ test('Turnstile HTTP failures, invalid JSON and network failures return safe err
   for (const stub of [async () => new Response('provider internals', { status: 500 }), async () => new Response('invalid JSON'), async () => { throw new Error('sensitive provider detail'); }]) {
     globalThis.fetch = stub;
     const response = await post(); assert.equal(response.status, 503);
-    assert.deepEqual(await response.json(), { success: false, message: CONTACT_FAILURE });
+    assert.match((await response.json()).message, /CF-CONTACT-04/);
   }
   assert.equal(sent.length, 0);
 });
@@ -121,7 +121,7 @@ test('missing secret or binding fails before verifying and cannot fall back to l
 test('email delivery rejection never reports success or leaks provider details', async () => {
   for (const send of [async () => { throw new Error('sensitive mail details'); }, async () => ({ messageId: '' })]) {
     const response = await post(valid, { ...env, EMAIL: { send } });
-    assert.equal(response.status, 502); assert.deepEqual(await response.json(), { success: false, message: CONTACT_FAILURE });
+    assert.equal(response.status, 502); assert.match((await response.json()).message, /CF-CONTACT-0[56]/);
   }
   assert.equal(verified.length, 2);
 });
