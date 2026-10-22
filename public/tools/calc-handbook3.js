@@ -1,0 +1,19 @@
+// Preliminary calculations only; all geometry and technical limits require confirmation.
+(()=>{const defs={"bearing-l10-life":{"formula":"Math.pow(v.C/v.P,3)*1e6/(60*v.rpm)","unit":"h"},"bearing-static-ratio":{"formula":"v.C0/v.P0","unit":"ratio"},"chain-linear-speed":{"formula":"v.pitch*v.teeth*v.rpm/60000","unit":"m/s"},"pulley-speed-ratio":{"formula":"v.rpm*v.driver/v.driven","unit":"rpm"},"leadscrew-speed":{"formula":"v.lead*v.rpm/60","unit":"mm/s"},"leadscrew-torque":{"formula":"v.force*v.lead/1000/(2*Math.PI*v.efficiency)","unit":"N·m"},"pipe-flow-velocity":{"formula":"(v.flow/60000)/(Math.PI*Math.pow(v.diameter/1000,2)/4)","unit":"m/s"},"darcy-pipe-drop":{"formula":"v.friction*v.length/(v.diameter/1000)*v.density*v.velocity*v.velocity/2000","unit":"kPa"},"pump-shaft-power":{"formula":"v.density*9.80665*v.flow/60000*v.head/v.efficiency/1000","unit":"kW"},"shaft-angular-offset":{"formula":"Math.atan(v.difference/v.span)*180/Math.PI","unit":"degrees"},"differential-expansion":{"formula":"v.diameter*(v.boreAlpha-v.shaftAlpha)*1e-6*v.deltaT","unit":"mm"},"cylinder-swept-volume":{"formula":"Math.PI*(2*v.bore*v.bore-v.rod*v.rod)*v.stroke/4e6","unit":"L/cycle"}};
+window.GOCORE_CALC_PARTS=window.GOCORE_CALC_PARTS||[];
+window.GOCORE_CALC_PARTS.push((id)=>{
+ const d=defs[id]; if(!d)return;
+ const tool=window.GOCORE_TOOLS.find(t=>t.id===id),v={};
+ for(const f of tool.fields){
+ const ov=window.WORKOS_OVERRIDE,raw=ov&&Object.prototype.hasOwnProperty.call(ov,f.key)?ov[f.key]:document.querySelector('[name="'+f.key+'"]')?.value;
+ if(raw===undefined||raw===null||String(raw).trim()===''||!Number.isFinite(Number(raw))||Number(raw)<f.min||Number(raw)>f.max)
+ return result('CHECK INPUTS','bad','Invalid '+f.key,[m('Input',f.key),m('Status','Invalid')],'Correct input',{checks:[check('Input','fail',f.key)],actions:['Correct inputs.']});
+ v[f.key]=Number(raw);
+ }
+ if(id==='cylinder-swept-volume' && v.rod>=v.bore)return result('CHECK INPUTS','bad','Rod must be smaller than bore',[m('Input','Rod and bore'),m('Status','Invalid')],'Correct geometry',{checks:[check('Geometry','fail','Rod must be smaller than bore')],actions:['Correct geometry.']});
+ let x;
+ switch(id){case 'bearing-l10-life':x=Math.pow(v.C/v.P,3)*1e6/(60*v.rpm);break;case 'bearing-static-ratio':x=v.C0/v.P0;break;case 'chain-linear-speed':x=v.pitch*v.teeth*v.rpm/60000;break;case 'pulley-speed-ratio':x=v.rpm*v.driver/v.driven;break;case 'leadscrew-speed':x=v.lead*v.rpm/60;break;case 'leadscrew-torque':x=v.force*v.lead/1000/(2*Math.PI*v.efficiency);break;case 'pipe-flow-velocity':x=(v.flow/60000)/(Math.PI*Math.pow(v.diameter/1000,2)/4);break;case 'darcy-pipe-drop':x=v.friction*v.length/(v.diameter/1000)*v.density*v.velocity*v.velocity/2000;break;case 'pump-shaft-power':x=v.density*9.80665*v.flow/60000*v.head/v.efficiency/1000;break;case 'shaft-angular-offset':x=Math.atan(v.difference/v.span)*180/Math.PI;break;case 'differential-expansion':x=v.diameter*(v.boreAlpha-v.shaftAlpha)*1e-6*v.deltaT;break;case 'cylinder-swept-volume':x=Math.PI*(2*v.bore*v.bore-v.rod*v.rod)*v.stroke/4e6;break;}
+ if(!Number.isFinite(x))return result('CHECK INPUTS','bad','Non-finite result',[m('Value','Invalid'),m('Status','Check')],'Review inputs',{checks:[check('Numeric limit','fail','Invalid result')],actions:['Review inputs.']});
+ return result('CALCULATED','warn','Preliminary engineering screening',[m('Calculated value',num(x,6)+' '+d.unit),m('Method','Idealised model')],'Verify current manufacturer data and the application before use.',{primary:primary('Calculated result',x,'engineering'),values:v,checks:[check('Design verification','verify','Not a certified selection')],actions:['Check actual operating and safety conditions.']});
+ });
+})();
