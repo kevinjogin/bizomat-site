@@ -59,6 +59,17 @@ A simple convention makes a large difference: keep two questions apart.
 
 When the two are combined, the second is almost always read as the first. A finding that customers are buying for a different reason becomes "pipeline below target, more marketing planned". Asked separately, the same finding becomes a question about direction.
 
+```figure
+type: balance
+title: Two different questions for two different reports
+left: Status
+right: Learning
+caption: Combined, a learning finding is read as a status problem and answered with more effort.
+- Is it on track against the plan? | Does the premise still hold?
+- Answered with more effort | Answered with a decision about direction
+- Goes to the delivery lead | Goes to whoever may change the purpose
+```
+
 The [plans that detect rather than predict](/reados/collections/project-estimates-schedules-and-costs/plans-that-detect-rather-than-predict/) article describes how to write down the assumptions that make the learning question easy to answer.
 
 ## Write down what each initiative is testing
@@ -98,6 +109,15 @@ Monthly status reports go to the owner: number of enquiries, quotes and contract
 
 The project lead, however, has noticed something the reports do not say. Of the 40 enquiries, 28 came from tenants, and none of those converted, because tenants usually needed the building owner's approval and did not stay long enough to benefit. All 3 contracts came from the 12 enquiries made by building owners, a conversion rate of 25%. The lead has written "tenant conversion low" in the risk register.
 
+```figure
+type: bars
+title: Solar enquiries by who was asking
+unit: enquiries
+caption: Tenants usually needed the owner's approval and did not stay long enough to benefit; the report said "conversion below target".
+- Tenants: 0 contracts | 28
+- *Building owners: 3 contracts, 25% conversion | 12
+```
+
 The owner makes three changes:
 
 - **A separate learning item** is added to the monthly meeting: what have we learned that would change the case for this offer? The project lead attends and presents it.
@@ -105,6 +125,15 @@ The owner makes three changes:
 - **The cycle time is traced**: the tenant pattern was first visible in month three but reached a decision only in month eight, a gap of five months.
 
 At the first learning review, the business decides to redirect the offer towards building owners and property managers, and to check the accreditation and design requirements that apply to the systems it installs before scaling. Marketing spend aimed at tenants stops. The original plan was not foolish. Its premise was simply wrong in a way that only delivery could reveal, and the business now has a way to hear such findings within a month rather than half a year.
+
+```figure
+type: timeline
+title: From observation to decision
+caption: A finding visible in month three reached a decision in month eight; the new learning item makes that about a month.
+- Month 3 | Tenant pattern visible | recorded as "tenant conversion low" in the risk register
+- Month 6 | 40 enquiries, 3 contracts | reports plan more marketing
+- *Month 8 | Decision | redirect to building owners and property managers
+```
 
 ## How this applies to a small Australian business
 

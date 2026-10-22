@@ -29,6 +29,15 @@ Every project has three elements that can, in principle, change: what it deliver
 
 Read this way, a priority label is not an adjective. It is a promise with a cost.
 
+```figure
+type: layers
+title: Each priority label is a different promise
+caption: Fix the outcome and the date, and the only thing left to move is what the project consumes.
+- *Critical | outcome and date fixed: supply whatever it takes
+- Important | budget fixed, plus outcome or date: say which will move
+- Desirable | nothing fixed: spare capacity, interruptions expected
+```
+
 ## Three common misreadings
 
 - **The label describes the project.** It describes the business's stance towards it. Two projects of equal value can legitimately carry different labels, because one has an immovable date and the other does not. Equally, a project everyone agrees is vital is not critical in this sense if the business is not prepared to fund overtime and extra help to hold its date. It is important, and calling it critical describes enthusiasm, not intent.
@@ -58,6 +67,15 @@ Three tests keep the ledger honest:
 1. **The date test.** For each critical project, ask what specifically happens if the date moves by a month. If the answer is a legal penalty, a contractual liability or an event the business cannot move, such as a lease ending or a trade show, the date is genuinely fixed. If the answer is that it would be disappointing, the project is important, not critical. Relabelling it costs nothing and frees real capacity.
 2. **The reserve test.** For every critical label, name the reserve. If there is none, the business has made a promise it has no way to keep. Either create the reserve or change the label.
 3. **The tracking test.** For every desirable project, ask what decision its progress report informs. If none, stop producing it.
+
+```figure
+type: checklist
+title: Three tests for a priority ledger
+caption: For every critical label, name the reserve; a promise with no reserve cannot be kept.
+- ? Date | what happens if it moves a month?
+- ? Reserve | where the extra resources come from
+- ? Tracking | what decision a desirable project's report informs
+```
 
 The [saying no to good projects](/reados/collections/project-sponsors-governance-and-decisions/saying-no-to-good-projects/) article covers deciding which projects to take on in the first place; the ledger starts after that, when labels are attached.
 
@@ -97,6 +115,17 @@ For the two critical projects, the owner names a reserve: the IT contractor's ho
 The software project is given a fixed budget and a flexible go-live date, and its kick-off is moved to August, after the move. The website stops appearing in the monthly report.
 
 In September, the website has still made almost no progress, even though its scope has been reduced to the onboarding form and a designer has been offered. Applying the diagnostic, the owner realises the problem is not resources. Nobody in the practice owns the client onboarding content, and the partners disagree about what clients should be asked. The owner settles the content question with the partners, assigns ownership to one of them, and the form goes live six weeks later.
+
+```figure
+type: compare
+title: Four "critical" projects after the date test
+cols: Label | What was promised
+caption: The website's real problem was not resources but ownership: nobody owned the onboarding content.
+- Office move | Critical: the lease ends 30 June | A temporary administrator in June
+- Peak-season readiness | Critical: client deadlines are fixed | IT contractor up to three days a week, April to July; wins any clash in early July
+- Practice software | Important: budget fixed, date flexible | Kick-off moved to August
+- Website rebuild | Desirable | Spare time only; removed from the monthly report
+```
 
 ## How this applies to a small Australian business
 

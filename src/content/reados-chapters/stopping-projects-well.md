@@ -59,6 +59,18 @@ Stopping is far easier when the conditions for reconsidering a project are agree
 
 A trigger should not mean automatic cancellation. It should mean a genuine review of whether the project still deserves its resources. The [when the project succeeds and the strategy fails](/reados/collections/from-approval-to-benefits/when-the-project-succeeds-and-the-strategy-fails/) article describes a continuing justification test that fits well here.
 
+```figure
+type: checklist
+title: Exit triggers agreed in advance
+caption: A trigger starts a genuine review, not automatic cancellation.
+- ? The goal it serves has changed
+- ? A critical assumption proved wrong
+- ? Confidence in benefits fell below the agreed level
+- ? Cost to complete beyond what is acceptable
+- ? A dependency failed | or a better alternative appeared
+- ? A pilot answered its question
+```
+
 ## Stop, pause, redesign, accelerate or continue
 
 A review should end with one of five clear outcomes:
@@ -72,6 +84,18 @@ A review should end with one of five clear outcomes:
 | Continue | The original reasoning still holds |
 
 Having all five options makes it easier to act, because stopping is not the only response to bad news. It also stops "pause" becoming a polite way of avoiding a decision. A pause without a question and a date is not a pause.
+
+```figure
+type: decision
+title: Five outcomes of a project review
+question: Does continuing still deserve these resources?
+caption: Stopping is easier when it is one of five legitimate answers.
+- No | Stop
+- A question comes first | Pause | with a decision date
+- Goal valuable, approach weak | Redesign
+- *Evidence stronger, delay costly | Accelerate
+- Reasoning still holds | Continue
+```
 
 ## Review the least justified projects first
 
@@ -123,6 +147,18 @@ The outcomes:
 - **Three continue** as planned.
 
 Stopping the three projects releases roughly a day and a half a week of engineering time and about $60,000 of remaining budget. The owner deliberately assigns the time to the accelerated changeover project, rather than letting it disappear into other work. For each stopped project, a short closing note records what was learned, what was handed over and who owns any remaining obligations.
+
+```figure
+type: bars
+title: Nine improvement projects after one review
+unit: projects
+caption: Stopping three released about a day and a half a week of engineering time and about $60,000, deliberately given to the accelerated changeover project.
+- Stopped | 3
+- Paused, until a tender result in eight weeks | 1
+- Redesigned: energy monitoring narrowed to two machines | 1
+- *Accelerated: main-line changeover | 1
+- Continued | 3
+```
 
 ## How this applies to a small Australian business
 

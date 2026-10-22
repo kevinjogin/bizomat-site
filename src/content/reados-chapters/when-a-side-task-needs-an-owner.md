@@ -38,6 +38,15 @@ The lesson is not about stakeholders. It is that a profession concluded that tre
 
 Each can be checked in an afternoon:
 
+```figure
+type: checklist
+title: Three signs a side task has outgrown its filing
+caption: Being a recognised area brings an owner, money and a place on the agenda; a side task gets none of them.
+- ? Effort without recognition | real time spent under another heading
+- ? The same failure across unrelated work
+- ? Nobody to ask | no name for who would explain a failure
+```
+
 1. **Effort without recognition.** Where is significant time being spent on work filed under a heading that names something else? A manager spending a day a week on IT security while their job is "office manager" is a sign. The [key person dependence](/reados/collections/starting-funding-and-structuring-a-business/key-person-dependence-in-a-small-business/) article covers a related risk: important work that depends on one person's goodwill rather than a defined role.
 2. **The same failure across unrelated work.** A problem that recurs within one job is a delivery issue. A problem that recurs across jobs, teams or customers with nothing else in common is usually a missing responsibility.
 3. **Nobody to ask.** For each significant category of work, name the person who would be asked to explain a failure. Where no name comes to mind, the work is being done by whoever happens to notice.
@@ -49,6 +58,25 @@ Not every promotion is worthwhile. The useful test is whether giving the work an
 Work done at the end of a process, as a check or a clean-up, can only catch problems after they have happened. Work done at the start can change what happens. If making something a recognised responsibility means it is considered before a job is quoted, before a system is chosen or before a customer is onboarded, the change is real. If it simply gains a title while still happening at the same late point, the business has added a reporting line and changed nothing.
 
 Some examples:
+
+```figure
+type: svg
+title: Promotion only pays if the work moves earlier
+alt: A process line from start to finish. A side task sits at the end as a check or clean-up that can only catch problems after they happen. After promotion, the owner acts at the start, before the problem is created.
+caption: If promotion would not move the first activity earlier, describe the change honestly as a tidy-up.
+viewbox: 0 0 640 200
+body:
+<path class="ln" d="M40 100H600"/>
+<path class="la flow" d="M40 100H600"/>
+<text class="txb" x="40" y="70">Start</text>
+<text class="txb" x="600" y="70" text-anchor="end">Finish</text>
+<circle class="fa pulse" cx="110" cy="100" r="11"/>
+<text class="txa" x="110" y="142" text-anchor="middle">Promoted: owner acts here</text>
+<text class="tx" x="110" y="164" text-anchor="middle">prevents the problem</text>
+<circle class="fi" cx="540" cy="100" r="11"/>
+<text class="txb" x="540" y="142" text-anchor="middle">Side task: a late check</text>
+<text class="tx" x="540" y="164" text-anchor="middle">catches it afterwards</text>
+```
 
 | Side task | Late version | Earlier version after promotion |
 |---|---|---|
@@ -82,6 +110,18 @@ Naming an owner is only the first step. For the change to be real, the owner nee
 
 Without these, the new area is a title attached to a busy person, and the work will drift back into being a side task.
 
+```figure
+type: checklist
+title: What real ownership includes
+caption: Without these, the new area is a title attached to a busy person.
+- Scope | included and excluded
+- Decisions owned | and what goes higher
+- Time | allocated, and what stops
+- Budget | how much, on what
+- Reporting | what, to whom, how often
+- *A deputy | so it does not lapse
+```
+
 ## Sometimes the right move is the reverse
 
 The same review can show that a recognised area no longer needs to be one. A role created for a past expansion, a committee formed after an incident long since resolved or a report produced for a manager who has left can all outlive their purpose. Apply the same tests in reverse: is there still effort and failure to justify a separate owner, and would merging it back move any work later? If not, fold it into another role, update the decision routes and free the time for responsibilities that need it more.
@@ -105,6 +145,16 @@ The owner applies the three signs. The office manager spends about a day a week 
 The sequence test separates the candidates. **Information and security** passes: an owner would review new systems, suppliers and staff access before they begin, rather than responding after incidents. **Site information for quoting** passes: an owner would set a minimum site checklist before any quote over a set value goes out. **Data consistency** fails on its own; it is really part of the information and security responsibility.
 
 The owner counts the cost. Information and security becomes a recognised area owned by the office manager, with one day a week formally allocated, an annual budget for tools and an external review, and a standing item at the monthly meeting. Quoting quality becomes part of the operations manager's role, with a checklist and a monthly review of jobs that lost money. Completion is measured: within six months, every system has a named owner, staff access is reviewed quarterly, and the old shared passwords are gone. The office manager's other duties are reduced to make room, and that change is written into her role.
+
+```figure
+type: decision
+title: The landscaping business applies the sequence test
+question: Would giving the work an owner move its first activity earlier?
+caption: Completion was measured: every system with an owner, quarterly access reviews and no shared passwords within six months.
+- *Information and security | Yes: promoted | the office manager, one day a week, a budget, a monthly agenda item
+- Site information for quoting | Yes: added to operations | a minimum site checklist before larger quotes
+- Data consistency | No, not on its own | part of information and security
+```
 
 ## How this applies to a small Australian business
 

@@ -31,11 +31,33 @@ When owners think about whether they can take something on, they usually think a
 
 A set of projects can pass the first test and fail several of the others. The one that binds is usually the one nobody counted.
 
+```figure
+type: tree
+title: Six kinds of capacity
+caption: Money is usually the first test and rarely the one that binds.
+- What the business can carry
+  - Financial | what it can fund
+  - Delivery | what project people can complete
+  - *Decision | how many good decisions, how quickly
+  - Operational | project work while serving customers
+  - Change | how much new staff can absorb
+  - Capability | the skills and systems at all
+```
+
 ## Capacity is not capability
 
 **Capacity** is how much work the business can handle. **Capability** is whether it can do the particular work well. The difference matters because a spreadsheet of available hours can look healthy while the business lacks what the work actually requires.
 
 Suppose next quarter's projects need 600 hours of technical work and the team has 700 hours available. On paper there is room. But if most of those hours belong to people who have never used the new technology, or only one person can sign off the critical design, or nobody can connect the new system to the old one, the number is correct and misleading.
+
+```figure
+type: bars
+title: Room on paper is not readiness
+unit: hours
+caption: The numbers can be correct and misleading if the hours belong to people without the skills, or one person signs everything off.
+- Technical work needed next quarter | 600
+- Hours available | 700
+```
 
 A useful readiness check looks at five layers:
 
@@ -84,6 +106,18 @@ The fourth step is the one most businesses avoid, and without it the review is j
 - **Simplify** when scope is creating demand the outcome does not need.
 - **Stop** when a project is not worth the capacity it consumes. The [stopping projects well](/reados/collections/project-sponsors-governance-and-decisions/stopping-projects-well/) article covers doing that cleanly.
 
+```figure
+type: decision
+title: Changing commitments until the plan fits
+question: What kind of constraint is it?
+caption: Without this step, a capacity review is just a description of the problem.
+- Capability exists, timing clashes | Sequence
+- *It will recur | Build | train, hire, second person
+- Outside help fits cleanly | Buy
+- Scope adds unneeded demand | Simplify
+- Not worth the capacity | Stop
+```
+
 ## Count training and onboarding as capacity costs
 
 New capability takes time before it adds capacity. Training someone in a new system, onboarding a contractor or learning a new process all consume hours from the very people who are already scarce. A plan that assumes a new hire or a trained employee will be productive from day one creates an illusion of capacity and quietly overloads everyone else. Include the learning period in the plan.
@@ -107,6 +141,27 @@ If all three projects run at once, the 360 hours of demand are spread across the
 If they run one after another, each gets the full 8 hours a week and takes about 15 weeks. The job management system finishes around week 15, the product line around week 30 and certification around week 45.
 
 The last project finishes at roughly the same time either way, but two of the three deliver their benefits much earlier: 30 weeks earlier for the first and 15 weeks earlier for the second. Less switching also makes the sequenced plan more likely to hold.
+
+```figure
+type: svg
+title: Three projects at once or one after another
+alt: Two timelines over 45 weeks. Running in parallel, all three projects finish around week 45. Run in sequence, the job system finishes at week 15, the product line at week 30 and certification at week 45.
+caption: With about 8 project hours a week from the production manager, sequencing delivers two of the three benefits 30 and 15 weeks earlier.
+viewbox: 0 0 640 230
+body:
+<text class="txs" x="40" y="36">ALL AT ONCE</text>
+<rect class="bx" x="40" y="46" width="540" height="18" rx="4"/>
+<rect class="bx" x="40" y="68" width="540" height="18" rx="4"/>
+<rect class="bx" x="40" y="90" width="540" height="18" rx="4"/>
+<text class="tx" x="590" y="82">week 45</text>
+<text class="txs" x="40" y="138">ONE AFTER ANOTHER</text>
+<rect class="bxa grow" x="40" y="148" width="180" height="18" rx="4"/>
+<rect class="bxa grow" x="220" y="170" width="180" height="18" rx="4"/>
+<rect class="bxa grow" x="400" y="192" width="180" height="18" rx="4"/>
+<text class="tx" x="130" y="162" text-anchor="middle">job system: wk 15</text>
+<text class="tx" x="310" y="184" text-anchor="middle">product line: wk 30</text>
+<text class="tx" x="490" y="206" text-anchor="middle">certification: wk 45</text>
+```
 
 The owner chooses the job management system first, because it reduces the production manager's own admin time and so frees capacity for the later projects. The owner also brings in a part-time consultant to draft the certification procedures, reducing that project's demand on the production manager from 120 hours to about 50, with the consultant handing over editable procedures and a walkthrough so the business can maintain them itself. Finally, a senior operator is assigned to learn trial and testing work alongside the production manager, so the next round of projects is less dependent on one person.
 

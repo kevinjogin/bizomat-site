@@ -43,6 +43,18 @@ Think of each significant commitment as passing through six links:
 
 The chain is only as strong as its weakest link, and commitments most often disappear at the transitions between links.
 
+```figure
+type: steps
+title: A chain of custody for each commitment
+caption: Commitments most often disappear between links, not inside them.
+- Assessment | impact identified
+- Design | avoided or reduced
+- *Contract | a priced deliverable or hold point
+- Work control | in the workers' instructions
+- Verification | evidence it works
+- Handover | a named ongoing owner
+```
+
 ## Controls must be observable
 
 "Manage dust" or "minimise noise" is an aim, not a control. A usable control says what is expected, under what conditions, and how anyone could tell whether it happened. For example: water is applied when soil is disturbed in dry, windy conditions; stockpiles are covered at the end of each day; loads leaving site are covered; plant producing excessive smoke is removed from service; neighbours are notified before noisy works. If a supervisor walking the site cannot see whether a control is in place, it is not yet a control.
@@ -63,6 +75,15 @@ Monitoring data does not control anything on its own. Each important measure sho
 - **Evidence of closure** once the issue is resolved.
 
 Without these, monitoring becomes observation.
+
+```figure
+type: layers
+title: Monitoring that controls something
+caption: Each important measure also needs an owner with authority to act, an escalation path and evidence of closure.
+- Normal range | carry on
+- Warning threshold | closer attention
+- *Action threshold | a defined response, up to stopping work
+```
 
 ## Controls need maintenance
 
@@ -112,6 +133,18 @@ In a better version, the owner builds a commitment-to-control matrix during desi
 - **Handover**: the handover pack lists every continuing obligation, its owner and its schedule.
 
 The conditions are met from the start, at a fraction of the cost of fixing them later.
+
+```figure
+type: compare
+title: The factory extension's permit conditions, two ways
+cols: Left in the permit | Traced into a matrix
+best: 2
+caption: Fixing the conditions afterwards cost far more than building them in during design.
+- Noise | Fan chosen without a noise limit; about $14,000 enclosure retrofitted | Fan specified for the boundary, hold point, measured at commissioning
+- Stormwater | Warning about the separator | On the drawings, in the contract, serviced every six months
+- Landscaping | Planted, never watered; replaced | Twelve-month watering period, then a named owner
+- Handover | Conditions stayed in the permit | Every obligation listed with owner and schedule
+```
 
 ## How this applies to a small Australian business
 

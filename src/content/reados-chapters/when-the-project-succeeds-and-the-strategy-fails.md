@@ -36,6 +36,15 @@ Project management writers such as Williams and Parr distinguish three things:
 
 A project can deliver its outputs perfectly while outcomes and benefits never arrive. A new scheduling system can be installed on time while staff keep using spreadsheets. A new machine can be commissioned while bottlenecks elsewhere mean output does not rise. The chain from output to benefit needs to be designed and owned, not assumed.
 
+```figure
+type: steps
+title: Outputs, outcomes and benefits
+caption: Delivery is measured at the first step; value only appears at the last.
+- Output | what the project delivers
+- Outcome | how the business now operates
+- *Benefit | the value those changes create
+```
+
 ## Common misreadings
 
 - **Approval proves value.** Approval shows only that the project passed whatever decision process existed at the time. Strategy, costs, evidence and competing options can all change.
@@ -72,6 +81,17 @@ At major review points, ask five questions:
 5. **Reversibility**: what does it cost to stop, delay, redesign or continue?
 
 A project can perform well against its own plan and still fail this test. The purpose is not to unsettle every project, but to distinguish genuine confidence from automatic continuation.
+
+```figure
+type: checklist
+title: A continuing justification test
+caption: Ask at each major review point, not only at approval.
+- ? Relevance | which current priority?
+- ? Causal logic | output, outcome, value
+- ? Relative value | still the best use of people and money?
+- ? Feasibility | capacity and conditions still there?
+- ? Reversibility | cost to stop, delay or redesign
+```
 
 ## Name a benefit owner
 
@@ -111,6 +131,16 @@ The owner applies the continuing justification test:
 The owner makes three changes. The scheduling project's remaining configuration work is paused for six weeks while the IT contractor completes the customer portal. The operations manager is named as owner of the scheduling benefit, with a clear outcome measure: all jobs scheduled in the new system within two months, and on-time delivery measured weekly. The old spreadsheets are retired on a set date, with extra training beforehand. The new product range is deliberately deferred by a quarter.
 
 Within three months, the portal is live and the new customer is won. Planners have moved fully to the new software, and on-time delivery rises measurably. No project was delivered faster, but the portfolio created more value.
+
+```figure
+type: compare
+title: Six green projects, rearranged for value
+cols: Before | After the test
+caption: No project was delivered faster, but the portfolio created more value.
+- Scheduling software, $180,000 | On time, but delivery not improving | Configuration paused six weeks; a benefit owner and weekly on-time measure
+- Customer portal | Slipping, waiting for the IT contractor | Done first: the new customer is won
+- New product range | Slipping, same planners | Deferred by a quarter on purpose
+```
 
 ## How this applies to a small Australian business
 

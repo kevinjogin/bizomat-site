@@ -35,6 +35,16 @@ A useful way to see the gap is to compare what the change says should happen wit
 
 The second column is the one customers and staff experience. Governing a change means managing the distance between the two.
 
+```figure
+type: compare
+title: Declared design and everyday practice
+cols: Declared | In practice
+caption: Governing a change means governing the second column, the one customers and staff experience.
+- Scheduling | All jobs scheduled in the system | Urgent jobs arranged by phone, entered later or never
+- Decisions | Team leader decides within limits | Owner overrides whenever a customer calls
+- Information | The system is the single source of truth | Private spreadsheets kept alongside
+```
+
 ## Make the behaviours specific
 
 General aims such as "embrace the new system" or "be more accountable" sound positive but do not tell anyone what to do differently. Identify the few behaviours without which the change cannot work, and describe each so it can be observed:
@@ -62,6 +72,17 @@ For each behaviour, ask:
 | **Reinforcement** | What happens when the old behaviour reappears under pressure? |
 
 The third layer is where many changes fail. If people are asked to raise problems early but are criticised when their reports show problems, the message and the system conflict, and the system wins. If a new process adds work for one group while the benefit goes to another, resistance is a rational response, not a character flaw. The [helping people accept change](/reados/collections/leading-people-and-change/helping-people-accept-change-the-four-quadrant-framework/) article covers understanding what people gain and lose from changing.
+
+```figure
+type: layers
+title: A five-layer adoption check
+caption: If the support layer still pushes people towards the old way, the behaviour will not last.
+- Outcome | what must become reliably true
+- Behaviour | what people will do differently
+- *Support | process, tool, incentive or authority that makes it easy
+- Evidence | observable measures in real work
+- Reinforcement | the response when old habits return
+```
 
 ## Measure adoption, not participation
 
@@ -125,7 +146,26 @@ The owner makes five changes:
 
 Within two months, almost all jobs are closed on site, and invoices go out an average of two days after completion. With monthly invoicing of about $150,000, invoicing seven days sooner brings forward roughly $35,000 of cash, a one-off improvement in working capital.
 
+```figure
+type: bars
+title: Days from job completion to invoice
+unit: days
+caption: Invoicing seven days sooner on about $150,000 a month brought forward roughly $35,000 of cash, once.
+- Two months after go-live: about 60% of jobs closed in the app | 9
+- *After the five changes: almost all closed on site | 2
+```
+
 At the four-month check, paper sheets reappear from one van. A new technician has learned the old way from a colleague. The owner adds an app walkthrough to the induction checklist and pairs new starters with a technician who uses the app well.
+
+```figure
+type: cycle
+title: Drift back, and the response
+caption: Treat drift as information about the support layer, not as a discipline problem.
+- Support withdrawn or the business gets busy
+- New staff learn the old way | from colleagues
+- *Check at one, three and six months
+- Fix the support | induction walkthrough, pairing with a good user
+```
 
 ## How this applies to a small Australian business
 

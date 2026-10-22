@@ -28,6 +28,15 @@ A proposal needs to clear three separate hurdles, and they are often merged into
 
 A business case usually proves the first, sometimes the second, and rarely the third. A proposal should not move from "worthwhile" to "approved" without someone explicitly comparing it with the alternatives. The [what the NPV spreadsheet hides](/reados/collections/investment-appraisal-and-business-cases/what-the-npv-spreadsheet-hides/) article covers testing the numbers inside a single case.
 
+```figure
+type: steps
+title: Three hurdles, not one
+caption: A business case usually proves the first, sometimes the second and rarely the third.
+- Worthwhile | benefits exceed relevant costs
+- Affordable | including cash along the way
+- *Prioritised | ahead of other uses of the same resources
+```
+
 ## Five kinds of opportunity cost
 
 Opportunity cost is the value of the best alternative use of a resource. Money is only one of the resources involved:
@@ -39,6 +48,18 @@ Opportunity cost is the value of the best alternative use of a resource. Money i
 - **Resilience**: committing reserves to one project reduces the business's ability to absorb a shock.
 
 Two cautions. Resources the business already owns, such as a spare shed, an existing team or a machine, still have an opportunity cost if they could be used elsewhere. And money already spent is a **sunk cost**: it should not influence the decision about what to do next, even though it often does.
+
+```figure
+type: tree
+title: Five kinds of opportunity cost
+caption: Wages already being paid do not make skilled people's time free.
+- The best alternative use of
+  - Capital | another investment, debt, a buffer
+  - Capability | skilled people
+  - Time | value delayed elsewhere
+  - *Attention | the scarcest resource
+  - Resilience | reserves for a shock
+```
 
 ## Compare with real alternatives
 
@@ -117,6 +138,18 @@ The decision:
 - **Reserve**: the remaining $115,000, held for the spring peak and any surprises.
 
 In total, $285,000 is committed and $115,000 is held. The inventory system, at $90,000, meets the owner's rule that at least a quarter of the $340,000 left after the must-do work, about $85,000, goes to efficiency and resilience. The owner records what was declined or deferred and why, so the decision can be reviewed honestly next year.
+
+```figure
+type: stack
+title: The hardware business's $400,000, allocated
+unit: $
+caption: Five proposals worth $770,000 together; the second trade counter's five-year lease became a $15,000 trial instead, and solar was deferred with a date.
+- Racking and forklift: must do | 60000
+- Inventory system | 90000
+- Online ordering, after inventory | 120000
+- Trial trade desk: learning money | 15000
+- Reserve for the spring peak | 115000
+```
 
 ## How this applies to a small Australian business
 

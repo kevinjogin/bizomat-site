@@ -27,6 +27,17 @@ This article explains four ways benefits change after approval, how to tell an h
 
 Each needs a different response.
 
+```figure
+type: tree
+title: Four ways benefits change after approval
+caption: Each needs a different response, and none should be handled by quietly rewriting the figure.
+- Benefits after approval
+  - Erosion | falls short of what was expected
+  - Emergent benefit | value nobody anticipated
+  - *Dis-benefit | a negative consequence of the change
+  - Substitution | one benefit matters less, another more
+```
+
 ## Honest revision or convenient rewrite
 
 The difference between a genuine revision and moving the goalposts lies in the process. A credible revision has:
@@ -38,6 +49,17 @@ The difference between a genuine revision and moving the goalposts lies in the p
 - **A trail**: the original figure is kept, alongside the new one.
 
 A convenient rewrite usually appears only after results disappoint, has no clear cause and no decision trail. Keep the original baseline visible in every update, so anyone can see both what was promised and what is now expected.
+
+```figure
+type: checklist
+title: Honest revision or convenient rewrite?
+caption: A rewrite usually appears only after disappointment, with no clear cause and no trail.
+- Evidence | what changed
+- A cause | why the benefit moved
+- Consequences | cost, timing, risk, people
+- An approver | with authority
+- *A trail | the original figure kept
+```
 
 ## Erosion should test the remaining case
 
@@ -128,6 +150,26 @@ Six months in, the practice manager reviews the benefits:
 The practice manager also sets the next review for twelve months, with the same measures and data sources, so the figures can be compared fairly.
 
 The practice ends the year with a smaller headline benefit than first promised, a new one it did not expect, a dis-benefit being actively managed and a clear record showing how each figure changed and why.
+
+```figure
+type: compare
+title: The dental practice's six-month benefit review
+cols: What happened | Action
+caption: Each change has an owner and a reason on record.
+- Missed appointments | About 6%, not 4% | Rebase
+- Online health forms | Fewer late starts | Add, owned by the clinical coordinator
+- Older patients | Online booking hard, phones busier | Mitigate: a morning phone slot and help in the practice
+- Online payment phase | Little extra benefit | Reduce to optional prepayment
+```
+
+```figure
+type: bars
+title: Missed appointments recovered by online booking
+unit: $ a year
+caption: Missed appointments fell from about 8% to about 6%, not 4%; the benefit was rebased with the original figure kept, and still justified the system.
+- Approved case: 864 appointments | 155000
+- *Rebased: 432 appointments | 78000
+```
 
 ## How this applies to a small Australian business
 

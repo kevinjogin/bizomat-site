@@ -31,6 +31,16 @@ Businesses often treat a job as finished on a single date. In practice, there ar
 
 The common mistake is collapsing all four into the handover date. A job can be finished, accepted and paid for while its benefits have not yet been realised and its obligations have barely begun.
 
+```figure
+type: timeline
+title: Four closure points, not one date
+caption: Liability closure is often owned by nobody unless someone is assigned.
+- Project closure | Delivery work finished | the project lead or contractor
+- Acceptance | Output passes to its owner | operations
+- Benefit realisation | Savings actually happening | whoever runs the asset
+- *Liability closure | Obligations met | often nobody
+```
+
 ## Hidden defects outlive warranties
 
 A **latent defect** is a flaw that was not apparent at completion or during the defects period. Some only show after repeated loading, weather, settlement, temperature cycling, vibration or years of operation. By the time they appear:
@@ -58,6 +68,20 @@ Projects tend to archive records for administrative convenience. A better approa
 - commissioning records and initial performance readings.
 
 Store them where they will survive staff changes, a move of premises and a change of software. Record where they are in your asset list, so whoever is responsible in five years can find them.
+
+```figure
+type: checklist
+title: Records the future will need
+caption: A latent defect is hardest to diagnose exactly when it becomes most expensive.
+- Design drawings and calculations | with assumed loads
+- As-built drawings
+- Material certificates and test results
+- Inspections, approvals, certificates
+- Approved changes and deviations
+- Defect list and resolutions
+- Warranties, manuals, maintenance schedules
+- *Commissioning records and first readings
+```
 
 ## Benefits need owners after the project ends
 
@@ -133,6 +157,16 @@ Over the next four years, three problems emerge:
 - **Missed obligation.** The trade waste agreement requires regular pit cleaning and periodic sampling. The project team assumed operations knew; operations assumed the contractor had set it up. After several months without cleaning, the business receives a warning from the utility.
 
 None of these was a failure of the project as delivered. Each was a failure of what happened after closure.
+
+```figure
+type: compare
+title: Three problems that surfaced after handover
+cols: What happened | What was missing
+caption: Each was a failure of what was handed over, not of the project as delivered.
+- Hidden defect | Slab cracks on the forklift route; records lost with an old laptop | Durable records of loads and concrete tests
+- Disappearing benefit | Heat recovery saving about $5,000 a year, not $14,000 | A benefit owner tracking the saving
+- Missed obligation | Pit cleaning and sampling skipped; a utility warning | A named owner for each continuing obligation
+```
 
 For its next project, the business uses a one-page handover sheet. It lists every continuing obligation with a named owner and a date, every expected benefit with a baseline and a review date, and where every critical record is stored. Records are kept in a shared folder linked to the asset list, not on individual devices.
 

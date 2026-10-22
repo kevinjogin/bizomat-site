@@ -29,6 +29,16 @@ Four claims sit underneath the standard project tools:
 
 Where all four hold, as on many building, installation and equipment projects, the tools work well. Where one fails, the tool does not just become less useful. It can actively mislead, because it keeps producing precise-looking reports about a quantity that no longer reflects reality.
 
+```figure
+type: checklist
+title: Four claims beneath the standard project tools
+caption: Where all four hold, the tools work well; where one fails, the plan stops representing the work.
+- ? The scope is knowable in advance
+- ? Dependencies are technical
+- ? Value arrives at handover
+- ? The main constraint is coordination
+```
+
 ## When a claim fails
 
 ### Dependencies that are really negotiations
@@ -111,6 +121,17 @@ A simple document helps make all of this discussable. For each tool or template 
 
 The register takes an hour or two to write and is more useful than adopting a new method, because it makes the assumptions visible.
 
+```figure
+type: compare
+title: What each tool assumes
+cols: It assumes | Be cautious when
+caption: A shadow plan, such as a whiteboard of real unknowns, is the surest sign a tool has stopped representing the work.
+- Gantt chart | Known tasks, technical dependencies | Progress depends on people agreeing
+- Fixed baseline | Scope definable in advance | Much of the work will be discovered
+- Completion sign-off | Value arrives at handover | Benefits depend on changed habits
+- Industry risk template | Discrete, nameable events | Exposures build slowly or combine
+```
+
 ## A worked example
 
 This is an illustration. A building services contractor with 30 staff is replacing its job management system. The project is planned with a detailed Gantt chart and reported weekly to the owner. For two months every report is green. Then go-live slips by six weeks, and nobody can explain why the reports gave no warning.
@@ -127,6 +148,16 @@ The manager also finds a shadow plan: the coordinators have been tracking data p
 Changes follow. Each team-leader agreement gets a named owner and a decision date. The whiteboard's list of unknowns becomes part of the weekly report. The coordinators are released from some daily work for four weeks. Benefit measures for invoicing time and missed bookings will be tracked for six months after go-live.
 
 The owner then looks at the business's risk register, which was built from an industry association template. Of its 22 entries, 19 match the template almost word for word. A short pre-mortem with two outsiders, the business's accountant and a long-standing customer, asks what would cause the business serious trouble within two years. It surfaces two exposures absent from the register: most after-hours call-outs depend on one subcontractor, and several large maintenance contracts come up for renewal in the same month. Both are added, with owners and actions.
+
+```figure
+type: bars
+title: A risk register built from an industry template
+unit: entries
+caption: A pre-mortem with the accountant and a long-standing customer found two exposures the template had no category for.
+- Entries in the register | 22
+- *Matching the template almost word for word | 19
+- Missing exposures found by a divergent review | 2 | one after-hours subcontractor; renewals in the same month
+```
 
 ## How this applies to a small Australian business
 

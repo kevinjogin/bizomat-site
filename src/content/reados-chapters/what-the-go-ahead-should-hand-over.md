@@ -31,6 +31,16 @@ Larger organisations often have four documents for the early life of a project: 
 
 A small business does not need four documents. A one-page note can cover all four for a modest project. But the decisions should not be collapsed into one, because each resolves a different uncertainty. The underlying principle is simple: **evidence should get stronger before commitment gets bigger**. The [which ideas deserve a closer look](/reados/collections/growth-business-models-and-new-markets/which-ideas-deserve-a-closer-look/) article covers the early stages, and [feasibility is more than the numbers](/reados/collections/investment-appraisal-and-business-cases/feasibility-is-more-than-the-numbers/) covers testing whether an option can work.
 
+```figure
+type: steps
+title: Four early decisions, four different questions
+caption: One page can cover all four, as long as each question is actually answered.
+- Proposal | worth investigating?
+- Feasibility | can it work under our constraints?
+- Business case | should we invest, against the alternatives?
+- *Authorisation | this work, these limits, this authority
+```
+
 ## Common misreadings
 
 - **A business case is a bigger proposal.** A proposal makes the case for looking further. A business case compares options, including doing nothing, and explains why the chosen one is better, what it will cost, what could go wrong and how the benefit will be realised.
@@ -50,6 +60,16 @@ The moment of authorisation is a handover from "should we invest?" to "how do we
 4. **Authority**: who may decide what, and what must be escalated.
 
 Return conditions are the part most often missing, and the most useful. They let the delivery lead act confidently inside the limits and recognise immediately when a situation is no longer theirs to decide. They also protect the owner: the decision to invest was made on certain assumptions, and the owner should know when those assumptions break.
+
+```figure
+type: checklist
+title: What the go-ahead should carry
+caption: Return conditions let the delivery lead act alone inside the limits and come back exactly when the reasoning stops holding.
+- Intent | the outcome, not just the output
+- Boundaries | in, out, and what stays with operations
+- *Conditions | assumptions, limits and return conditions
+- Authority | who decides, what is escalated
+```
 
 ## Delivery success and benefit success are different
 
@@ -115,6 +135,15 @@ The owner writes a one-page go-ahead for the office manager, who will lead deliv
 In June, the vendor says the accounting connection needs an upgraded accounting subscription, adding $3,500 and lifting the forecast to $48,500. That is inside the return conditions, so the office manager approves it, records it and tells the owner at the next weekly catch-up.
 
 In August, the vendor's delivery-booking module slips by five weeks, putting September at risk. That triggers a return condition. The office manager brings the owner two options: delay the whole launch, or launch ordering in September and add delivery booking after the peak. The owner chooses the second, because reducing phone time during spring matters most. The decision takes one meeting, because the reasoning was already written down.
+
+```figure
+type: decision
+title: Two vendor problems against written return conditions
+question: Does this cross a return condition?
+caption: Budget $45,000 with a $50,000 return limit, a working accounting link by end of June, and a September date.
+- June: $3,500 subscription upgrade, forecast $48,500 | No | the office manager approves and tells the owner weekly
+- *August: delivery booking five weeks late | Yes: September at risk | the owner launches ordering first, booking after the peak
+```
 
 ## How this applies to a small Australian business
 
