@@ -9,7 +9,7 @@ import { runInNewContext } from 'node:vm';
 
 // Tool data, calculations and guides are plain browser scripts in public/tools/ (see tests/tools-calculators.test.ts).
 // The directory cards are also rendered here at build time so the tool names are crawlable and indexed by site search.
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3'];
 const sandbox: { window: Record<string, any> } = { window: {} };
 for (const kind of ['data', 'guides']) {
   for (const f of FILES) runInNewContext(readFileSync(join(process.cwd(), 'public', 'tools', `${kind}-${f}.js`), 'utf8'), sandbox);
