@@ -85,6 +85,20 @@ End with a clear, small, specific next step: a decision date, a meeting to final
 
 For smaller sales, this might be a single page. For complex ones, several pages. The structure scales.
 
+```figure
+type: steps
+title: A proposal built around the customer
+caption: One page for a small sale, several for a complex one; the order stays the same.
+- Your situation | in their words
+- What success looks like
+- Our recommendation | linked to each need
+- Why it will work | evidence
+- How we will deliver it
+- Risks and how we manage them
+- Investment | clear options
+- *Next steps
+```
+
 ## Presenting the proposal
 
 Where possible, present the proposal in a conversation rather than simply sending it. A conversation lets you:
@@ -119,6 +133,17 @@ A practical approach to any objection:
 | "I need to check with my manager." | You haven't engaged the decision-maker | "Would it help if we spoke with them together?" |
 
 The aim is understanding, not a winning rebuttal. Sometimes understanding reveals that the customer should not buy, at least not now. Accepting that gracefully preserves the relationship.
+
+```figure
+type: cycle
+title: Handling an objection
+caption: An objection is information about a real concern, not an obstacle to beat.
+- Listen fully
+- Acknowledge it
+- *Explore it | "compared with what?"
+- Respond honestly
+- Check | does that address it?
+```
 
 ## Negotiation
 
@@ -178,6 +203,18 @@ A small engineering consultancy proposes a factory layout redesign to a growing 
 The first draft of the proposal opens with the consultancy's experience and a detailed methodology. The consultant rewrites it. The new version opens with the customer's own description of the problem: material travelling back and forth across the factory, congestion near the finishing area, and a plan to add a new product line next year. It sets out three outcomes the owner said mattered most, connects each part of the work to one of them, and includes a short case study from a similar manufacturer. It names two risks (disruption during changeover and uncertain demand for the new line) and proposes a phased approach to manage both.
 
 At the meeting, the owner raises price. The consultant asks what he is comparing it with. It turns out he is comparing it with doing the layout himself. The consultant acknowledges that option, and walks through the cost of disruption if the new line is installed in the wrong place. The owner decides to proceed with phase one.
+
+```figure
+type: compare
+title: The layout proposal, rewritten
+cols: First draft | Rewritten
+best: 2
+caption: Asked "compared with what?", the owner was comparing the fee with doing the layout himself; he went ahead with phase one.
+- Opens with | The consultancy's experience and method | The customer's own description of the problem
+- Structure | Methodology first | Three outcomes he named, each linked to the work
+- Evidence | Credentials | A case study from a similar manufacturer
+- Risk | Not mentioned | Disruption and uncertain demand, managed in phases
+```
 
 ## Common mistakes
 

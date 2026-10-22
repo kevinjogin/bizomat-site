@@ -29,6 +29,18 @@ Before comparing methods, it helps to agree on what "good" means. A prospecting 
 
 No method scores well on everything. The art is choosing a combination that suits your customers and your capacity.
 
+```figure
+type: checklist
+title: Six ways to judge a prospecting method
+caption: Choose a combination that suits your customers and your time.
+- Fit | reaches ideal customers?
+- Quality | conversations become opportunities?
+- Cost | in money and time
+- Speed | how soon results arrive
+- Scalability | can you do more of it?
+- *Durability | do results compound?
+```
+
 ## The main methods
 
 ### Referrals from existing customers
@@ -164,6 +176,18 @@ Most small businesses do best with a mix of two kinds of method:
 
 Relying only on fast methods means always starting from zero. Relying only on compounding methods can mean a long wait before results arrive. A blend covers both.
 
+```figure
+type: balance
+title: Fast and compounding methods
+left: Fast
+right: Compounding
+caption: Use a fast method to keep the pipeline moving while compounding methods build.
+- Targeted outreach | Customer referrals
+- Advertising | Referral partners
+- Events | Content and speaking
+- Stops when you stop | Keeps working over time
+```
+
 A practical approach:
 
 1. **List your current methods** and where your best customers actually came from.
@@ -213,6 +237,16 @@ They decide to:
 - **add a modest fast method:** targeted outreach to manufacturers announcing expansions, with a relevant, specific note
 
 After a year, opportunities are steadier and better qualified, and the quiet months between projects have shrunk.
+
+```figure
+type: bars
+title: Where the consultancy's last 20 projects came from
+unit: projects
+caption: Making referrals systematic came first, then speaking and one modest fast method.
+- *Repeat customers | 12
+- Referrals from two suppliers | 5
+- A seminar talk years earlier | 3
+```
 
 ## Common mistakes
 

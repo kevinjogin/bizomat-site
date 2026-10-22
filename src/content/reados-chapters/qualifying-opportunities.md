@@ -92,6 +92,19 @@ For many small businesses, a lighter set of questions works well. One way to rem
 
 Not every element needs to be perfect. But an opportunity with weak signals across most rows is unlikely to be real, however friendly the conversation.
 
+```figure
+type: compare
+title: Six signals for qualifying an opportunity
+cols: Strong signal | Weak signal
+caption: Weak signals across most elements mean the opportunity probably is not real yet.
+- Need | Specific, in their words | Vague interest
+- Impact | Clear cost or risk | "Nice to have"
+- People | Decision-maker engaged | Only a junior contact
+- Money | Budget, or a clear route to it | No idea, or "free trial only"
+- Timing | A deadline or trigger | "Sometime next year"
+- Fit | A core strength | A stretch
+```
+
 ## Qualifying is a conversation, not an interrogation
 
 The workbook's emphasis on communication is a useful corrective. Firing a list of qualification questions at a customer feels transactional and can damage rapport. Good qualification is woven into a natural conversation about the customer's situation.
@@ -145,6 +158,16 @@ Ways to do it gracefully:
 
 Disqualifying is not a failure. It is how you free time for the opportunities that matter, and it often earns more respect than persistence.
 
+```figure
+type: checklist
+title: Disqualifying gracefully
+caption: Disqualifying frees time for the opportunities that deserve it.
+- Be honest and specific | about why the fit is poor
+- Recommend alternatives
+- Park rather than close | when timing is the issue
+- Thank them
+```
+
 ## A worked example
 
 A small business sells and installs commercial kitchen ventilation. A café owner enquires after seeing their website. This is an illustration.
@@ -154,6 +177,18 @@ In the first call, the salesperson asks open questions about the café, its kitc
 The salesperson summarises: a real need, a strong trigger (the inspection), a clear deadline, a second decision-maker and an undefined but plausible budget. He suggests a site visit with both owners present, and offers to bring indicative price ranges so they can plan.
 
 Compare this with a second enquiry the same week from someone "just looking at options for maybe next year" who cannot say what problem they are solving and does not know who would decide. The salesperson sends useful information, offers to talk again when plans firm up, and spends his time on the café.
+
+```figure
+type: compare
+title: Two enquiries in the same week
+cols: The café | "Maybe next year"
+best: 1
+caption: The salesperson proposed a site visit with both café owners and sent the other enquirer useful information only.
+- Need | Kitchen too hot; staff complaining | Cannot say what problem
+- Trigger | Council inspection in three months | None
+- Decision | Co-owner handles finance | Unknown
+- Budget | Not set, but plausible | Unknown
+```
 
 ## Measuring qualification
 

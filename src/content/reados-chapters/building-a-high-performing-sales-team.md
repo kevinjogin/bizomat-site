@@ -100,6 +100,18 @@ Empowerment means giving people the authority, information and skills to make go
 
 Empowered teams respond faster to customers, solve problems at the point of contact and grow in capability. Teams that must escalate every decision frustrate customers and lose their best people.
 
+```figure
+type: tree
+title: Values of a high-performing sales team
+caption: Strong teams spread capability and learning instead of depending on individual stars.
+- High performance
+  - Accountability | clear expectations, visible measures
+  - Tenacity | consistent activity, not stubbornness
+  - Trust | within the team, with leaders, with customers
+  - *Empowerment | authority, information and skills
+  - Proactive, diverse, inclusive | different views actually heard
+```
+
 ## Being proactive, diverse and inclusive
 
 The profile in the workbook also highlights being **proactive**, **diverse** and **inclusive**.
@@ -164,6 +176,18 @@ New salespeople typically take months to become fully productive, because they n
 
 A documented process makes onboarding far easier, which is another reason to write down what works.
 
+```figure
+type: steps
+title: Onboarding a new salesperson
+caption: Revenue lags for months, so set activity goals early.
+- Teach the customer first
+- Teach the process
+- Shadow before solo
+- Supported conversations | with feedback
+- *Early activity goals
+- Weekly reviews
+```
+
 ## Measuring team health
 
 Beyond sales results, a few indicators show whether a team is healthy:
@@ -181,6 +205,19 @@ A growing equipment supplier has three salespeople who each work in their own wa
 The owner introduces a few changes. The team agrees a shared ideal customer profile and qualifying questions. A weekly thirty-minute pipeline meeting reviews every opportunity's next step. Each salesperson keeps notes in a shared system. Discounts up to a set level can be approved by salespeople themselves; larger ones need a quick conversation. The owner joins one customer meeting per person each month and gives feedback. Recognition in team meetings covers referrals and retained customers, not only new sales.
 
 Within a year, results are more consistent, customer relationships are spread across the team, and a new hire reaches full productivity noticeably faster than previous hires did.
+
+```figure
+type: compare
+title: Three salespeople becoming a team
+cols: Before | After
+best: 2
+caption: When one person left, relationships no longer left with them; a new hire reached full productivity faster.
+- Method | Each worked their own way | Shared customer profile and qualifying questions
+- Pipeline | Private | A weekly 30-minute review of every next step
+- Discounts | Unclear | Approved up to a set level; larger ones discussed
+- Coaching | None | Owner joins one meeting per person each month
+- Recognition | New sales only | Also referrals and retained customers
+```
 
 ## Sales and the rest of the business
 

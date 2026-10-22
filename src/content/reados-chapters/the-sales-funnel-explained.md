@@ -52,6 +52,15 @@ Working backwards:
 
 Suddenly the goal is concrete. Ten customers is abstract; nine relevant conversations a week is something you can plan. If nine a week is unrealistic, the business knows it must either improve its conversion rates or adjust the goal.
 
+```figure
+type: funnel
+title: Working backwards from ten new customers
+caption: One in four conversations qualifies and one in three qualified opportunities wins; use your own rates.
+- First conversations | 120 | about 9 a week
+- Qualified opportunities | 30 | 2 to 3 a week
+- *New customers | 10 | this quarter
+```
+
 The key requirement is **your own numbers**. Industry averages are rarely reliable guides for a specific business. Even rough figures from your last twenty or thirty opportunities are more useful than any benchmark.
 
 ## Where funnels leak
@@ -123,6 +132,15 @@ For example, using illustrative figures:
 
 A weighted forecast is not a promise. Individual deals either close or do not, so actual results will vary, especially with a small number of opportunities. But it is a far better guide than adding up every deal someone hopes will close, and it shows quickly whether the funnel contains enough to meet a target.
 
+```figure
+type: formula
+title: A weighted pipeline forecast
+formula: Forecast = Σ (Stage value × Historical win rate from that stage)
+caption: Illustrative figures; individual deals close or they do not, so treat it as a range.
+step: $160,000 × 20% + $90,000 × 45%
+step: $32,000 + $40,500 = $72,500
+```
+
 ## Different funnels for different businesses
 
 The shape of a funnel varies with the business.
@@ -153,6 +171,17 @@ A short, regular pipeline review keeps the funnel healthy. For a small team, a w
 5. **Forecast.** Based on the stages and our conversion rates, what is likely to close soon?
 
 Closing dead opportunities is an important part of this. A funnel full of hopeful but inactive opportunities gives a false sense of security and hides the real gap.
+
+```figure
+type: checklist
+title: A weekly pipeline review
+caption: A funnel full of hopeful but dead opportunities hides the real position.
+- New opportunities | enough at the top?
+- Movement | forward or stalled?
+- Next steps | dated for every active one?
+- Stuck | re-engage or close?
+- *Forecast | what is likely to close soon?
+```
 
 ## The funnel as a loop
 

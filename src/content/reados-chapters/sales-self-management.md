@@ -68,6 +68,16 @@ Weekly blocks are supported by a short daily routine:
 
 Twenty-five minutes a day keeps everything moving and prevents small tasks from piling up into a backlog.
 
+```figure
+type: stack
+title: A 25-minute daily sales routine
+unit: minutes
+caption: Choose the one sales task that matters most today, and do it first.
+- Start of day: priorities and the key task | 10
+- After each conversation: notes and next step | 5
+- End of day: tomorrow and follow-ups | 10
+```
+
 ### Balancing selling and delivery
 
 Many people who sell also deliver: founders, consultants, tradespeople, technicians. The tension between the two is constant. Delivery is urgent and visible; selling is important but easy to defer. The result is the feast-and-famine cycle described earlier in this series.
@@ -148,6 +158,18 @@ Outcome measures show results, with a delay:
 - retention and repeat business
 
 Tracking both matters. Outcomes tell you whether things are working; activities tell you whether you are doing what is needed to make them work. If activities are on track but outcomes are poor, the problem is quality: which conversations, how they are handled. If activities are low, the problem is effort or time.
+
+```figure
+type: balance
+title: Activity and outcome measures
+left: Activity (leading)
+right: Outcomes (lagging)
+caption: Outcomes show whether it is working; activities show why, and are within your control.
+- New relevant conversations | Qualified opportunities created
+- Follow-ups completed | Conversion by stage
+- Proposals presented | Revenue won
+- Customers contacted, referrals asked | Retention and repeat business
+```
 
 ### A simple weekly scorecard
 
@@ -234,6 +256,22 @@ The owner of a small landscaping design business finds that her work swings betw
 She sets up a simple system. Monday mornings begin with a thirty-minute pipeline review in a spreadsheet: every opportunity, its stage and its next step. Tuesday mornings are protected for prospecting: contacting builders and real estate agents who refer clients. Wednesday afternoons are for calling past clients, which brings repeat work and referrals. Friday afternoons are for notes and planning.
 
 She tracks five activity numbers each week. In the first month, she realises she has been doing almost no prospecting during busy periods, which explains the empty months that follow. Over the next two quarters, with prospecting protected even during busy weeks, the swings flatten. Revenue becomes steadier, and she spends less time worrying about where the next job will come from.
+
+```figure
+type: svg
+title: Protected prospecting flattens the swings
+alt: Two work-level lines over time. Without protected prospecting, work swings between busy peaks and empty troughs. With prospecting protected even in busy weeks, the line stays much flatter.
+caption: Prospecting stopped in busy periods, which explained the empty months that followed.
+viewbox: 0 0 640 240
+body:
+<path class="ln" d="M50 200H610M50 30V200"/>
+<path class="li dsh" d="M60 120C110 50 150 50 200 120S290 190 340 120S430 50 480 120S570 190 600 120"/>
+<path class="la draw" pathLength="1" d="M60 110C140 95 200 102 280 98S440 92 600 95"/>
+<text class="txs" x="70" y="48">Busy</text>
+<text class="txs" x="300" y="196">Empty month</text>
+<text class="txa" x="600" y="84" text-anchor="end">Prospecting protected</text>
+<text class="tx" x="600" y="224" text-anchor="end">Time →</text>
+```
 
 ## Self-management when you work alone
 

@@ -90,6 +90,16 @@ It is tempting to draw the four stages as a funnel that ends with a sale. In pra
 
 Businesses that treat sales as a one-way funnel are always starting from zero. Businesses that treat it as a loop build momentum.
 
+```figure
+type: cycle
+title: Identify, qualify, satisfy, solidify
+caption: Satisfied customers bring referrals, which feed the next round of identifying.
+- Identify | conversations with the right people
+- Qualify | a short list of real opportunities
+- Satisfy | a yes for the right reasons
+- *Solidify | a lasting relationship, and referrals
+```
+
 ## A worked example
 
 Imagine a small business that designs custom workshop storage for trade businesses. This is an illustration, not a real case.
@@ -97,6 +107,16 @@ Imagine a small business that designs custom workshop storage for trade business
 **Identifying.** The owner decides the best customers are established trade businesses with five to twenty staff, who lose time searching for tools and parts, and who are expanding or moving premises. She knows they gather at regional trade expos and listen to recommendations from suppliers. She focuses her effort there instead of on broad online advertising.
 
 **Qualifying.** At an expo she meets twenty owners. Through a few well-chosen questions she learns that six are planning a move or expansion within a year, four of those have budget set aside, and two are experiencing real pain from disorganised storage. Those two become her priority. The others go into a list to revisit later.
+
+```figure
+type: funnel
+title: Qualifying twenty expo conversations
+caption: The rest went onto a list to revisit later.
+- Owners met | 20
+- Planning a move or expansion within a year | 6
+- With budget set aside | 4
+- *In real pain now: priority | 2
+```
 
 **Satisfying.** For the two priority prospects she visits their premises, listens to how staff actually work, and proposes a design that addresses the specific bottlenecks they described in their own words. She shows photos of similar installations and offers a phased option that reduces the up-front commitment. Both say yes, one for a smaller first phase.
 
@@ -125,6 +145,17 @@ Because each stage has a different job, each needs a different measure:
 - **Solidifying:** retention, repeat purchases, growth in customer value and the number of referrals.
 
 Watching only total revenue hides which stage is weak. Watching all four shows where effort will pay off.
+
+```figure
+type: compare
+title: Each stage needs its own measure
+cols: Measure | Common mistake
+caption: Look at your last ten lost or stalled opportunities and name the stage where each went wrong.
+- Identify | Relevant first conversations | Targeting everyone
+- Qualify | Share that become real opportunities | Assuming interest equals intent
+- Satisfy | Conversion and time to decide | Pitching features, ignoring doubts
+- Solidify | Retention, repeat purchases, referrals | Moving on after the sale
+```
 
 ## Applying the four stages in a small business
 

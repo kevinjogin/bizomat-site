@@ -73,6 +73,19 @@ Here is an illustrative profile for a small business offering preventive mainten
 
 With a profile like this, prospecting becomes far more focused. You know whom to look for, when they are likely to be receptive and what to say that will resonate.
 
+```figure
+type: tree
+title: An ideal customer profile, dimension by dimension
+caption: Illustrative profile for a preventive maintenance software business.
+- Ideal customer
+  - Situation | manufacturers with 20 to 150 staff
+  - Problem | reactive maintenance, records on paper
+  - Triggers | a costly breakdown, a new manager, an audit
+  - Decision | maintenance recommends; owner approves
+  - *Fit signals | a maintenance person; recent downtime pain
+  - Poor fit | under ten staff; a competing system
+```
+
 ### Personas within the profile
 
 In business-to-business sales, the organisation is the customer, but individuals make and influence decisions. It helps to describe the main people involved, often called **personas**: their role, their priorities, what worries them and what they are measured on.
@@ -123,6 +136,19 @@ A trigger is an event that makes a problem urgent or a change possible. Common e
 
 Many of these are publicly visible through news, job advertisements, company announcements and industry publications. Others surface through conversations with partners and existing customers.
 
+```figure
+type: checklist
+title: Trigger events worth watching
+caption: Approaching someone soon after a relevant trigger changes the conversation from intrusion to timely help.
+- New premises or a new site
+- A significant hire in the area you serve
+- A large contract or new market
+- A regulatory change or audit
+- A failure: breakdown, supplier problem, incident
+- Growth outstripping systems
+- *A funding round or major investment
+```
+
 Approaching someone shortly after a relevant trigger changes the conversation. Instead of a generic introduction, you can say something specific: "I saw you're opening a second site. Businesses at that stage often find that…". The message is relevant, timely and much more likely to be welcome.
 
 A simple habit is to keep a short list of trigger events that matter for your customers, and spend a few minutes each week scanning for them.
@@ -160,6 +186,17 @@ They then analyse their best ten customers and find a pattern. Almost all are es
 They rewrite their profile around this group and change where they prospect. They build relationships with three accountancy practices and two trade suppliers that serve these businesses, offering useful guidance on financial reporting for growing trade firms. They attend one regional trade association meeting each month, where they give short practical talks.
 
 Within six months, fewer enquiries arrive, but a much higher share become long-term customers. Prospecting time falls, and revenue rises.
+
+```figure
+type: compare
+title: The bookkeeping team's prospecting, before and after
+cols: Broad | Profile-led
+best: 2
+caption: Fewer enquiries, but a much higher share became long-term customers, with less prospecting time.
+- Target | "Small businesses" | Trade firms of 10 to 40 staff, growing fast
+- Channels | Ads, a generic newsletter, occasional events | Three accountants, two trade suppliers, a monthly association talk
+- Result | Price-driven sole traders who left quickly | Long-term customers
+```
 
 ## Measuring prospecting
 

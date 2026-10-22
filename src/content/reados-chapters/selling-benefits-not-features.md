@@ -58,6 +58,15 @@ For example:
 
 The advantage explains *why* the feature matters. The benefit connects it to the customer's situation. A useful bridge phrase is **"which means that..."**: "The impeller is stainless steel, which means it resists corrosion, which means that you'll stop losing production every few months to impeller failures."
 
+```figure
+type: steps
+title: Feature, advantage, benefit
+caption: The advantage explains why the feature matters; the benefit connects it to this customer.
+- Feature | a stainless steel impeller
+- Advantage | resists corrosion far better than cast iron
+- *Benefit | in your saltwater application, far fewer replacements and less downtime
+```
+
 ## Technical examples
 
 Technical products are especially prone to feature-heavy selling, because the people selling them understand and admire the features.
@@ -130,6 +139,15 @@ Work with the customer to estimate:
 - Risks reduced, such as safety incidents, penalties or lost customers.
 
 Use the customer's own figures wherever possible. Numbers they supply are more credible to them than numbers you assert. The article on [cost-benefit analysis for business decisions](/reados/collections/investment-appraisal-and-business-cases/cost-benefit-analysis-for-business-decisions/) explains how to structure these calculations.
+
+```figure
+type: formula
+title: Turning "reduces downtime" into a business case
+formula: Value = Hours of downtime × Cost per hour × Share avoided
+caption: Numbers the customer supplies are more convincing than numbers you assert.
+step: 40 hours × $2,000 an hour × 75%
+step: About $60,000 a year
+```
 
 ## Back benefits with proof
 
@@ -227,6 +245,15 @@ He then explains:
 - The two-stage design runs cooler, **which means** longer service intervals and lower maintenance costs.
 
 He shares a case study from another food manufacturer and offers a two-week data-logging trial to confirm their actual air demand. The customer buys, and the trial data confirms the savings estimate.
+
+```figure
+type: bars
+title: The compressor case, in the customer's numbers
+unit: $ a year
+caption: A two-week data-logging trial confirmed the savings estimate, and the customer bought.
+- Electricity saved by the variable speed drive | 18000
+- *Packaging line stoppages avoided | 25000 | their estimate of last year's cost
+```
 
 ## Summary
 

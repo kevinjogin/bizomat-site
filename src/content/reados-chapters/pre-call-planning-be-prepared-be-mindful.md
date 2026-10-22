@@ -100,6 +100,19 @@ All of this fits on a single page. Here is a simple template:
 
 Filling in a template like this takes fifteen minutes. Over dozens of meetings, it becomes a habit that noticeably improves results.
 
+```figure
+type: steps
+title: A one-page meeting plan
+caption: About fifteen minutes; over dozens of meetings it changes results.
+- Who | and how the meeting came about
+- What I know | three or four facts
+- My hypothesis | the problem, and why now
+- *Objective | what this meeting should achieve
+- Questions | three to five, open
+- Likely concerns
+- Next step | plus a fallback
+```
+
 ## Part two: be mindful
 
 Preparation gets you into the room ready. Conduct determines what happens there. The workbook's second heading, **be mindful**, points to the quality of attention you bring to the conversation.
@@ -177,6 +190,16 @@ The work is not finished when the meeting ends. Within a day:
 
 These steps take perhaps twenty minutes. They turn a single conversation into a managed opportunity.
 
+```figure
+type: checklist
+title: Within a day of the meeting
+caption: About twenty minutes turns one conversation into a working relationship.
+- Write up notes | needs, concerns, decision-makers, next step
+- Send a short follow-up | confirm the next step
+- Compare outcome with objective
+- *Update the hypothesis
+```
+
 ## A worked example
 
 A business that installs energy monitoring systems has a first meeting with the operations manager of a food manufacturer. This is an illustration.
@@ -186,6 +209,17 @@ A business that installs energy monitoring systems has a first meeting with the 
 **Mindfulness.** Early in the conversation, the operations manager mentions that the bigger issue is not cost but unexpected equipment failures, which they suspect are linked to power quality. The salesperson sets his plan aside and explores this. It turns out that power quality monitoring, a related service his business offers, is a far better fit. He summarises what he heard and proposes a different next step: a short power quality assessment on the new line.
 
 The plan made the meeting purposeful; mindfulness made it productive.
+
+```figure
+type: balance
+title: Ready and mindful in the same meeting
+left: Be ready
+right: Be mindful
+caption: The plan made the meeting purposeful; mindfulness made it productive.
+- Hypothesis: energy costs up with the new line | Heard: the real issue is equipment failures
+- Objective: confirm energy visibility | Set the plan aside and explored power quality
+- Next step: a site walk-through | Proposed: a power quality assessment
+```
 
 ## Common mistakes
 

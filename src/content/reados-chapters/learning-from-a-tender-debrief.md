@@ -78,6 +78,17 @@ Feedback is useful only if it is interpreted honestly. A few patterns are common
 
 Record the feedback in writing on the day, including what was said and what the team concluded.
 
+```figure
+type: compare
+title: Reading debrief feedback honestly
+cols: What it may really mean | What to ask or check
+caption: Teams often assume they lost on price; debriefs frequently show otherwise.
+- "Your price was high" | High for the value shown, or truly high | Where were we against the range?
+- "Good, but another was better" | A specific gap | On which criteria, and by how much?
+- "No relevant experience shown" | Experience not evidenced | What evidence would have counted?
+- "Your qualifications concerned us" | Departures read as risk | Which ones mattered most?
+```
+
 ## Debrief your wins too
 
 Most businesses only ask for feedback when they lose, which means they learn what goes wrong but not what works. A short conversation after a win is just as valuable. Ask the buyer what made the difference: which parts of the submission were most persuasive, what reassured them about risk and what they will be watching most closely during delivery. The answers tell the business what to keep doing in future bids, and they set useful expectations for the contract itself. A buyer who says "your shutdown staging plan was the deciding factor" has also told the delivery team where its attention must go.
@@ -146,7 +157,30 @@ Sorting the results reveals a sharper picture:
 
 Debrief notes show that in the public tenders, the business repeatedly lost on "demonstrated experience with similar projects" and "methodology", not on price. Its submissions used generic project descriptions and a standard method statement.
 
+```figure
+type: bars
+title: Two years of tenders by category
+unit: % won
+max: 60
+caption: 46 tenders, 8 wins and about $161,000 of bid cost: roughly $20,000 per contract won.
+- *Existing clients: 6 of 12 | 50
+- New clients with prior contact: 2 of 10 | 20
+- Public adverts, no prior contact: 0 of 24 | 0
+```
+
 The business makes three changes. It stops responding to public advertisements unless it has directly relevant experience and has spoken with the buyer before closing. It builds a library of detailed project case studies, with outcomes and referees, organised by sector. And it rewrites its methodology templates to be tailored for each bid. In the following year, it submits 24 tenders and wins 8, a win rate of about 33%, while spending roughly half as much on tendering.
+
+```figure
+type: compare
+title: Tendering before and after the win-loss review
+cols: Before | After
+best: 2
+caption: Losses had turned on demonstrated experience and methodology, not on price.
+- Tenders submitted | 46 over two years | 24 in a year
+- Wins | 8, about 17% | 8, about 33%
+- Bid spend | About $161,000 | Roughly half
+- Public adverts | Bid on all | Only with relevant experience and prior contact
+```
 
 ## How this applies to a small Australian business
 

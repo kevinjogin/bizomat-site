@@ -52,6 +52,16 @@ During a busy period, everyone is focused on delivery. Nobody has time for netwo
 
 The fix is not heroic selling during the quiet periods. It is steady business development during the busy ones. Even a small amount of consistent activity (a few conversations a week, regular contact with past customers, timely follow-up) smooths the curve. The goal is a pipeline that always has opportunities at different stages, so that when one project ends, another is ready to begin.
 
+```figure
+type: cycle
+title: The feast-and-famine cycle
+caption: The fix is steady business development during busy periods, not heroic selling in quiet ones.
+- Busy | everyone delivers; nobody prospects
+- Projects finish | nothing is lined up
+- *Quiet | a scramble for new work
+- New work lands | delivery takes over again
+```
+
 ## Why it matters at every level
 
 ### For the business as a whole
@@ -117,6 +127,17 @@ For a founder or small team, a routine like the following, adapted to your situa
 
 That is around four hours a week. For most small businesses, four hours of steady, focused business development is worth far more than forty hours of panicked selling when the work runs out.
 
+```figure
+type: stack
+title: A four-hour weekly business development routine
+unit: minutes
+caption: Steady effort beats bursts; adapt the blocks to your business.
+- Monday pipeline review | 30
+- Two outreach blocks to ideal customers | 120
+- Existing and past customers | 60
+- Friday notes and next steps | 20
+```
+
 ## Business development for people who dislike selling
 
 If the idea of business development makes you uncomfortable, a few reframes can help.
@@ -156,6 +177,17 @@ Many people avoid business development because they do not know what to say. A f
 5. **Next step.** If there is a fit, suggest a small, specific next step: a follow-up call, a visit or sending something useful.
 
 The aim is not to sell in the first conversation. It is to understand, to be useful and to earn the right to a second conversation.
+
+```figure
+type: steps
+title: What to aim for in a first conversation
+caption: The aim is to understand, to be useful and to agree whether a next step makes sense.
+- Context | who you are, plainly
+- Curiosity | listen far more than talk
+- Relevance | connect to a problem you solve
+- Honesty | say so if there is no fit
+- *Next step | small and specific
+```
 
 ## Signs that business development is healthy
 

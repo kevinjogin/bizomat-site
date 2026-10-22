@@ -32,6 +32,15 @@ Improving conversion is often more efficient than generating more leads. Conside
 
 Without a single extra lead, the business wins three more customers per quarter. Those extra customers cost almost nothing to acquire, because the prospecting effort was already spent. Improving conversion also frees time that would otherwise be spent on opportunities that never close.
 
+```figure
+type: bars
+title: Thirty qualified opportunities, two conversion rates
+unit: customers a quarter
+caption: Three more customers a quarter without a single extra lead.
+- At 25% conversion | 7.5
+- *At 35% conversion | 10.5
+```
+
 ## Way 1: Qualify better, earlier
 
 The single biggest influence on conversion is often what enters the late stages in the first place. If proposals go to opportunities with no real need, no budget or no decision-maker, conversion will be low however good the proposals are.
@@ -122,6 +131,18 @@ Not every business needs all five. A simple diagnostic helps identify which leve
 
 Choosing one lever, focusing on it for a quarter and measuring the effect is more productive than trying to improve everything at once.
 
+```figure
+type: decision
+title: Finding your biggest conversion lever
+question: What does the symptom look like?
+caption: Choose one lever, focus on it for a quarter and measure the effect.
+- Losses mostly "no budget" | Qualify better, earlier
+- Rivals "understood us better" | Understand the need, and show it
+- Agree but don't commit | Reduce perceived risk
+- Opportunities go quiet | Keep momentum
+- *Nobody knows why deals win or lose | Learn from every result
+```
+
 ## Where to look first: conversion at each stage
 
 Because conversion can be measured at every step of the funnel, it helps to look at the whole chain before choosing a lever. An illustrative example:
@@ -173,6 +194,17 @@ Reviewing its last twenty losses, it finds that eight were "no budget" or "decid
 The pattern points to qualification and momentum. The agency introduces three qualifying questions about budget, decision-makers and timing before any proposal is written, and a rule that every proposal is presented in a meeting with a follow-up scheduled before the meeting ends.
 
 Over the next two quarters, it writes fewer proposals but wins a much larger share. The time saved goes into prospecting for better-fit clients.
+
+```figure
+type: bars
+title: Why the agency lost its last 20 proposals
+unit: losses
+caption: The pattern pointed to qualification and momentum, not to price or competitors.
+- *No budget or decided not to proceed | 8
+- Went quiet with no decision | 6
+- Went to a competitor | 4
+- Too small to pursue | 2
+```
 
 ## Conversion for sole operators and very small teams
 

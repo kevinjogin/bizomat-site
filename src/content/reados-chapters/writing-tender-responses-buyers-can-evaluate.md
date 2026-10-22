@@ -59,6 +59,18 @@ Preparing a strong response takes significant time, often from the same speciali
 
 A clear no-bid is a good decision, not a failure. It frees resources for opportunities you are more likely to win and deliver well.
 
+```figure
+type: checklist
+title: Six bid/no-bid questions
+caption: A clear no-bid frees specialists for opportunities you can actually win.
+- ? A credible right to win?
+- ? Fits our capability?
+- ? Capacity to deliver if we win?
+- ? An acceptable margin?
+- ? Acceptable contract terms?
+- ? What the bid will cost us
+```
+
 ## Read everything and ask questions
 
 Read every document in the tender, including the conditions, specifications, contract and response schedules. Attend briefings and site visits where offered. Where requirements are ambiguous, ask clarifying questions through the official channel before the deadline. Remember that answers are often shared with all bidders. Understand the buyer's underlying outcomes, not just the specification, because the best responses show how the offer delivers what the buyer is trying to achieve.
@@ -75,6 +87,15 @@ Before drafting, list every requirement and instruction in a **compliance matrix
 | 7.1 | Payment terms of 45 days | Departure | Commercial 6.3 | Request 30 days; price impact stated |
 
 The matrix keeps the team honest, makes sure nothing is missed and, where permitted, can be included in the submission to help evaluators.
+
+```figure
+type: decision
+title: Every requirement gets a compliance answer
+question: Does our offer meet this requirement?
+caption: State departures plainly with their price impact; evaluators score only what they can find.
+- Yes | Point to the response section | e.g. 65 packs a minute against 60 required
+- *Not exactly | State the departure | e.g. 30-day payment requested, price impact shown
+```
 
 ## Structure around the buyer's criteria
 
@@ -128,6 +149,18 @@ The team's first draft reads like a brochure: company history, a list of technol
 - The **price** is linked to scope, with assumptions, exclusions and an optional spare-parts package.
 
 A colleague who did not write the response reviews it as an evaluator would and finds two unanswered questions, which are fixed. The business is shortlisted and, in the debrief, learns that its program and evidence scored highly while its price was mid-range. That information shapes its next bid.
+
+```figure
+type: bars
+title: The packaging tender's published weightings
+unit: %
+max: 40
+caption: Price was under a third of the score; the debrief showed program and evidence scored highly and price was mid-range.
+- *Technical solution | 35
+- Price | 30
+- Method and program | 20
+- Team and experience | 15
+```
 
 ## How this applies to a small Australian business
 

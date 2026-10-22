@@ -85,6 +85,17 @@ For important customers, a periodic review (quarterly or annually, depending on 
 
 These conversations surface problems early, reveal new needs and show the customer that you care about their success.
 
+```figure
+type: steps
+title: Five questions for an account review
+caption: Reviews surface problems early, reveal new needs and show the customer you care beyond the invoice.
+- What has gone well?
+- What could have been better?
+- What has changed in your business?
+- Plans and challenges ahead?
+- *How could we help?
+```
+
 ### Multiple relationships
 
 Relationships that depend on a single contact on each side are fragile. If either person leaves, the relationship is at risk. Building connections at several levels makes it more resilient.
@@ -122,6 +133,18 @@ Customers who are drifting away usually show signals before they leave:
 - a new manager reviewing suppliers
 
 Watching for these signals, and responding with a conversation rather than a discount, often saves the relationship.
+
+```figure
+type: checklist
+title: Signs a relationship is drifting
+caption: Customers rarely announce they are leaving; respond with a conversation, not a discount.
+- ? Smaller or less frequent orders
+- ? Slower responses
+- ? A change of key contact
+- ? More complaints, or suddenly none
+- ? Quotes requested for routine orders
+- ? A new manager reviewing suppliers
+```
 
 ## Handling complaints well
 
@@ -188,6 +211,16 @@ A small commercial cleaning business wins a contract with a medical centre. This
 The owner meets the practice manager at the end of the first week and again after a month to check that the standard meets expectations. She learns that the reception area is the centre's biggest concern, because patients see it first, and adjusts the schedule to clean it twice daily. A quarterly review six months later reveals that the centre is opening a second site. The cleaning business is invited to quote and wins the contract without competition.
 
 A year in, the practice manager recommends the business to two other medical centres in the area. The original contract, nurtured deliberately, has produced three customers.
+
+```figure
+type: timeline
+title: One cleaning contract becomes three customers
+caption: The original contract, nurtured deliberately, produced three customers in a year.
+- Week 1 | First check-in | reception is the biggest concern
+- Month 1 | Schedule adjusted | reception cleaned twice daily
+- Month 6 | Quarterly review | a second site is opening: won without competition
+- *Year 1 | Two referrals | to other medical centres nearby
+```
 
 ## Measuring the solidifying stage
 

@@ -33,6 +33,19 @@ In 1972, marketing researchers Frederick Webster and Yoram Wind described organi
 
 The person who signs is often not the person who chooses. And the group changes as a purchase moves: wide while the problem is being defined, narrower during specification, wide again at approval. A relationship with the right person at the wrong stage may be worth little.
 
+```figure
+type: tree
+title: The buying centre in a larger organisation
+caption: Webster and Wind (1972): organisational buying is a group of roles, and the group changes over time.
+- Buying roles
+  - *Outcome owner | scope, budget, urgency; can stop it alone
+  - Trusted adviser | shapes how the market is read
+  - Technical or risk authority | can refuse firmly
+  - Budget or compliance holder | timing and process
+  - Procurement | price and terms within a fixed specification
+  - End users | adoption, rarely a veto
+```
+
 ## Access is not authority
 
 Four misreadings make it easy to spend months with the wrong people:
@@ -80,6 +93,15 @@ Before committing serious effort, apply three tests:
 
 Opportunities that fail all three tests may deserve less effort, or a different approach, rather than more of the same.
 
+```figure
+type: checklist
+title: Three tests for a significant opportunity
+caption: Opportunities that fail all three may deserve less effort or a different entry point.
+- ? Veto | who could stop this alone, and why?
+- ? Carrier | who restates our case when we are absent?
+- ? Mandate | what can our main contact authorise besides price?
+```
+
 ## Send people who can discuss the outcome
 
 Access to an outcome owner is usually granted to someone who can talk credibly about the outcome: the operations problem, the technical risk, the result the customer needs. That often means involving your own technical specialists or experienced operators in the sales process, not just salespeople. For a small business, it may mean the owner or a senior engineer visiting the customer's site early, to understand the problem before any specification is written.
@@ -99,6 +121,18 @@ The owner steps back and maps the buying group:
 The business has never spoken to the plant manager or the maintenance manager. Through a legitimate request, it offers a short site assessment of the line's current performance, which the plant manager accepts. The assessment shows that most lost output comes from changeovers and unplanned stoppages, which the original specification barely addressed. The maintenance manager's main concern turns out to be support response times.
 
 The manufacturer revises its specification to include changeover performance and a support agreement, and reissues it to all bidders. The business's revised proposal includes an output guarantee measured at commissioning and a service agreement with a defined response time. Its price for the line is $455,000, about 5% below its original quote, plus a support agreement of $36,000 a year. It wins, because its offer answers the problem the plant manager actually has, and procurement can still run a fair comparison on the revised specification.
+
+```figure
+type: compare
+title: The packing line pursuit, two ways in
+cols: Through procurement | Through the outcome owner
+best: 2
+caption: The second offer answered the plant manager's real problem: changeovers and unplanned stoppages.
+- Contact | Procurement officer only | Plant manager and maintenance manager
+- Specification | Fixed | Revised: changeover performance and support
+- Ask | A 12% discount on $480,000 | An output guarantee and defined response time
+- Result | Price pressure | Won at $455,000 plus $36,000 a year support
+```
 
 ## How this applies to a small Australian business
 

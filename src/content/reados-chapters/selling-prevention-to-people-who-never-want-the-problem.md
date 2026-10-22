@@ -80,6 +80,18 @@ These differences affect almost everything:
 
 A business can run both, and many should. Response work produces knowledge about how things fail, which makes a prevention offer more credible. But running both is a deliberate choice with real costs: different scheduling, different skills, different contracts and sometimes different people. It should be chosen and costed, not drifted into.
 
+```figure
+type: compare
+title: A response business and a prevention business
+cols: Response | Prevention
+caption: Response work builds knowledge about failures that a prevention service can use.
+- Buyer | Whoever owns the incident | Whoever carries the consequence
+- Buying speed | Fast, under pressure | Slow, evidence-based
+- Pricing | Per job, urgency premiums | A regular fee for a maintained condition
+- Capacity | Spare for surges | Planned and scheduled
+- Evidence | The problem is fixed | The condition is maintained
+```
+
 ## Test the demand before committing
 
 A common mistake is moving from one memorable conversation to a major commitment. A significant customer says something striking to the owner, and within a few months money and people have moved. The importance of the person who heard it is not evidence.
@@ -95,6 +107,17 @@ A simple **evidence ladder** helps. Each level justifies a limited commitment, a
 | The service runs profitably at small scale | That it can be delivered, not just sold | Expanding | Assuming the economics hold at larger volume |
 
 Two habits make the ladder work. Write down the hypothesis before gathering evidence, so the pattern is tested rather than assembled from convenient examples. And write down what would show the hypothesis is wrong. A business that cannot say what would change its mind is building a case, not researching a market.
+
+```figure
+type: layers
+title: An evidence ladder before committing
+caption: Each rung justifies a limited commitment, and nothing more.
+- One customer mentions it | write it down; spend nothing
+- It recurs unprompted | investigate; build nothing
+- Published material agrees | a small pilot with a stop point
+- Customers commit money first | build the capability
+- *It runs profitably small | expand, carefully
+```
 
 Prevention demand also tends to become buyable only when a trigger arrives: a change in regulations, an incident at a similar business, a customer's own contract requirement, a new owner or manager. The [timing a new initiative](/reados/collections/selling-and-business-development/timing-to-the-customers-readiness/) article looks at how to read that kind of readiness.
 
@@ -127,6 +150,17 @@ The owner estimates the cost of delivering the service per site:
 | Total | $1,490 |
 
 That leaves $910 per site, or about 38% of the fee, before overheads. The margin per job is lower than on emergency call-outs, but the work can be scheduled into quiet periods, and the twelve sites together add $28,800 of steady annual revenue.
+
+```figure
+type: stack
+title: The refrigeration prevention service, per site per year
+unit: $
+caption: Twelve sites at $2,400 a year added $28,800 of steady revenue; eleven of twelve renewed.
+- Four service visits | 950
+- Monitoring service | 180
+- Monthly reporting | 360
+- Margin before overheads, about 38% | 910
+```
 
 During the year, the monitoring catches three cool rooms drifting above safe temperature overnight, and each is fixed before stock is lost. The monthly reports record these events, the defects closed and the temperature records kept. At renewal, eleven of the twelve sites continue, and the reports, not the absence of failures, are what the owners point to. Only then does the owner consider extending the offer to new customers, hiring a technician dedicated to scheduled work and changing how the business's capacity is planned.
 

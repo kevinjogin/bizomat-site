@@ -93,6 +93,19 @@ Membership fees are usually modest relative to the potential benefits. Compare w
 
 Membership alone delivers little. Value comes from participation:
 
+```figure
+type: tree
+title: What membership can offer
+caption: Fees are usually modest relative to the benefits, but value comes from taking part.
+- Association membership
+  - Connections | networking, exchange of ideas
+  - Knowledge | training, information, research, best practice
+  - Standing | certification, speaking and writing opportunities
+  - *Support | compliance and workplace relations advice
+  - Money | group purchasing and member discounts
+  - Voice | advocacy to government
+```
+
 1. **Know why you joined.** Set two or three goals, such as meeting potential customers, staying ahead of regulation or developing staff.
 2. **Attend regularly.** Relationships are built through repeated contact, not one event.
 3. **Volunteer.** Joining a committee or working group is one of the fastest ways to build relationships and influence.
@@ -101,6 +114,20 @@ Membership alone delivers little. Value comes from participation:
 6. **Involve your team.** Send staff to relevant training and events, and share information internally.
 7. **Follow up.** After events, connect with the people you met and continue conversations.
 8. **Review annually.** Is membership delivering against your goals? Adjust your involvement or switch organisations if not.
+
+```figure
+type: steps
+title: Getting real value from membership
+caption: Review once a year whether membership is delivering against the goals you set.
+- Know why you joined
+- Attend regularly
+- Volunteer | committees and working groups
+- Contribute | talks, articles, mentoring
+- Use the services
+- Involve your team
+- Follow up
+- *Review annually
+```
 
 ## Associations for engineering and manufacturing businesses
 
@@ -179,6 +206,17 @@ A small engineering and fabrication firm has relied entirely on word of mouth. G
 The owner joins a manufacturing industry association and a local chamber of commerce, and the firm's senior engineer joins a professional engineering body. Over a year, the owner attends regular networking events, joins a committee on skills development and uses the association's workplace relations advice line during an awards question. The engineer attends technical seminars on new welding standards. At a chamber event, the owner meets a procurement manager from a regional manufacturer, which leads to a significant contract. The association's research report on automation trends informs the firm's decision to invest in a robotic welding cell.
 
 The total membership cost is a few thousand dollars a year. The return in contracts, knowledge, compliance support and relationships is many times that.
+
+```figure
+type: compare
+title: A year of membership for a fabrication firm
+cols: What they did | What came of it
+caption: A few thousand dollars a year in fees, returned many times over.
+- Chamber of commerce | Networking events | A significant contract from a regional manufacturer
+- Industry association | Skills committee; advice line on awards | Compliance support and relationships
+- Association research | An automation trends report | Investment in a robotic welding cell
+- Professional body | Seminars on new welding standards | Up to date with standards
+```
 
 ## Summary
 

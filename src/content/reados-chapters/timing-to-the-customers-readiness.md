@@ -53,6 +53,17 @@ Customer readiness is not a mood. It is a set of conditions that can be listed i
 
 Written down before committing money, these conditions make the decision reviewable. Three of five met is a very different proposition from one of five.
 
+```figure
+type: checklist
+title: Conditions for customer readiness
+caption: Written down before committing money, readiness becomes a reviewable decision rather than a mood.
+- ? A budget | allocated for this kind of purchase
+- ? An owner | named and responsible
+- ? A trigger | forcing action in a defined period
+- ? Permission | regulatory, contractual, internal
+- ? Precedent | others like them have done it
+```
+
 While waiting for a market to be ready, capability built in advance is a carrying cost. The disciplined response is to find interim uses for it, rather than pushing harder into a market that cannot yet buy.
 
 ## Deal timing: push, wait or decline
@@ -75,6 +86,16 @@ Stalled initiatives usually fall into three categories:
 - **Right idea at the wrong time**: pause it with a written restart condition, a named owner and a review date.
 
 Businesses handle the third category worst. Initiatives paused without a restart condition are quietly abandoned, and the business loses the option it thought it had kept.
+
+```figure
+type: decision
+title: What to do with a stalled initiative
+question: Why has it stalled?
+caption: Initiatives paused without a restart condition are usually never restarted.
+- Wrong idea | Stop it
+- Right idea, no owner | Assign one
+- *Right idea, wrong time | Pause it | written restart condition, owner and review date
+```
 
 ## Communication timing: when the message can be heard
 
@@ -118,6 +139,14 @@ Separating the three timing decisions changes the picture:
 The owner focuses effort on the two ready councils, declines active pursuit of the others for now and sets a restart condition for each: pursue again when monitoring appears in their published capital works program or budget papers. A junior staff member is assigned to read council agendas and budget papers in the target region each month. Proposals are prepared to arrive during councils' budget preparation periods. Meanwhile, the trained engineers' spare capacity is used on pump condition assessments for private clients.
 
 Within a year, both ready councils sign contracts and three more appear in published budget papers with monitoring allocations. The service was not wrong. The timing was.
+
+```figure
+type: funnel
+title: Twelve councils, sorted by readiness
+caption: Proposals were also moved to arrive during councils' budget preparation, not after it.
+- Councils approached | 12
+- *Ready: funding, an owner, an 18-month reporting need | 2
+```
 
 ## How this applies to a small Australian business
 

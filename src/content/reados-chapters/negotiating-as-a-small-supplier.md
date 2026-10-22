@@ -42,6 +42,16 @@ What must the agreement include for it to be acceptable? For example, a minimum 
 
 Calculate the lowest price at which the work remains worthwhile, considering full costs, risk, opportunity cost and the value of the relationship. This is your **walk-away point**. Below it, you decline.
 
+```figure
+type: checklist
+title: Know these before you negotiate
+caption: The better you understand both sides' alternatives, the less a large customer's size matters.
+- Your must-haves | price, payment, liability, specification
+- Your minimum acceptable price | full cost included
+- Your best alternative | if there is no deal
+- *Their alternatives and limits | switching cost, deadlines
+```
+
 ### Your best alternative
 
 Negotiation experts call your best alternative to a negotiated agreement your **BATNA**. If this deal falls through, what will you do instead? Other customers, other work or spare capacity used differently? The stronger your alternatives, the stronger your position. Before negotiating, work to improve your alternatives, for example by building a healthy pipeline so no single deal is essential.
@@ -95,6 +105,17 @@ Never give a concession without getting something in return. Use "if... then" la
 - "If you can pay within 14 days, then we can include delivery."
 
 Useful things to trade include volume commitments, contract length, payment terms, lead times, specification changes, delivery arrangements and scope.
+
+```figure
+type: balance
+title: Trade, don't give
+left: If you can…
+right: …then we can
+caption: Never give a concession without getting something in return.
+- Commit to 12 months | Offer a lower unit price
+- Accept a four-week lead time | Hold this price
+- Pay within 14 days | Include delivery
+```
 
 ### Seek mutually agreeable outcomes
 
@@ -182,6 +203,17 @@ She trades rather than gives:
 - A guaranteed 48-hour emergency response, which the contractor values highly.
 
 The agreement is signed. The contractor later expands it to additional sites.
+
+```figure
+type: compare
+title: The Mackay fabricator's negotiation
+cols: Procurement asked | Agreed
+caption: Her minimum was about 7% below quote; 48-hour response near the sites was worth more to the contractor than the discount.
+- Discount | 12% | 4%, for a 12-month supply agreement
+- Payment | 90 days | 30 days; 60 offered at a financing price
+- Liability | Unlimited for defects | Capped at the order value, with warranty
+- Response | Not raised | A guaranteed 48-hour emergency response
+```
 
 ## Frequently asked questions
 
