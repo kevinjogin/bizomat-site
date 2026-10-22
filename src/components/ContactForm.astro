@@ -1,7 +1,5 @@
 ---
-// Quote and contact form UI. Delivery is handled by submitContact() (src/lib/contact-client.ts), so the
-// provider (Web3Forms today, a Cloudflare Worker later) can change without touching this component.
-// Without JavaScript the form still posts directly to the configured provider.
+// Existing contact UI; same-origin Worker delivery and Turnstile in the existing CAPTCHA slot.
 // A ?service=<slug> query string (e.g. from "Discuss a Factory Fix") preselects the service.
 import { SITE } from '../config/site.ts';
 import { CONTACT_LIMITS, CONTACT_METHODS, HONEYPOT_FIELD } from '../lib/contact.ts';
@@ -9,21 +7,9 @@ import { SERVICE_OPTIONS } from '../data/services.ts';
 import Button from './Button.astro';
 
 const L = CONTACT_LIMITS;
-const { provider, web3formsAccessKey, web3formsEndpoint, workerEndpoint } = SITE.contact;
-const action = provider === 'web3forms' ? web3formsEndpoint : workerEndpoint;
 ---
 
-<form class="contact-form" action={action} method="post" novalidate data-contact-form data-email={SITE.email}>
-  {
-    provider === 'web3forms' && (
-      <Fragment>
-        <input type="hidden" name="access_key" value={web3formsAccessKey} />
-        <input type="hidden" name="subject" value="KEVOS® website enquiry" />
-        <input type="hidden" name="from_name" value="KEVOS® website" />
-        <input type="hidden" name="redirect" value={new URL('/contact/sent/', SITE.url).href} />
-      </Fragment>
-    )
-  }
+<form class="contact-form" action="/api/contact" method="post" novalidate data-contact-form data-email={SITE.email}>
   <div class="contact-form__row">
     <div class="field">
       <label for="cf-name">Name</label>
@@ -115,8 +101,8 @@ const action = provider === 'web3forms' ? web3formsEndpoint : workerEndpoint;
 
 <script>
   import { HONEYPOT_FIELD, normalise, validate, type ContactErrors } from '../lib/contact.ts';
-  import { submitContact } from '../lib/contact-client.ts';
-  import { mountCaptcha, type Captcha } from '../lib/captcha.ts';
+  import { submitContact, CONTACT_FAILURE_MESSAGE } from '../lib/contact-client.ts';
+  import { mountTurnstile, type ContactCaptcha } from '../lib/turnstile.ts';
 
   const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
   if (form) {
@@ -125,11 +111,14 @@ const action = provider === 'web3forms' ? web3formsEndpoint : workerEndpoint;
     const select = form.querySelector<HTMLSelectElement>('[data-service-select]');
     const captchaEl = form.querySelector<HTMLElement>('[data-captcha]')!;
     const captchaError = form.querySelector<HTMLElement>('[data-captcha-error]')!;
-    let startedAt = Date.now();
+    let submitting = false;
 
     // Load the spam check only once the form is nearly in view or the visitor starts typing.
-    let captcha: Promise<Captcha | null> | null = null;
-    const ensureCaptcha = () => (captcha ??= mountCaptcha(captchaEl));
+    let captcha: Promise<ContactCaptcha | null> | null = null;
+    const ensureCaptcha = () => (captcha ??= mountTurnstile(captchaEl).then((value) => {
+      if (!value) captcha = null;
+      return value;
+    }));
     form.addEventListener('focusin', ensureCaptcha, { once: true });
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
@@ -140,7 +129,6 @@ const action = provider === 'web3forms' ? web3formsEndpoint : workerEndpoint;
       }, { rootMargin: '200px' });
       io.observe(captchaEl);
     }
-    const fallbackEmail = form.dataset.email;
     const check = (input: ReturnType<typeof normalise>) => validate(input, { requireCompany: true });
 
     // Preselect the service from ?service=<slug>, e.g. links from the Factory Fix page.
@@ -186,6 +174,7 @@ const action = provider === 'web3forms' ? web3formsEndpoint : workerEndpoint;
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (submitting) return;
       const data = Object.fromEntries(new FormData(form));
       const input = normalise(data);
       const errors = check(input);
@@ -194,31 +183,32 @@ const action = provider === 'web3forms' ? web3formsEndpoint : workerEndpoint;
         setStatus('error', 'Please check the highlighted fields.');
         return;
       }
-      const check2 = await ensureCaptcha();
-      const token = check2?.token() ?? '';
-      captchaError.textContent = check2
-        ? token
-          ? ''
-          : 'Please complete the spam check above.'
-        : 'The spam check could not load. Please refresh the page, or use “Book a meeting” instead.';
-      if (!token) {
-        setStatus('error', captchaError.textContent);
-        return;
-      }
+      submitting = true;
       submit.disabled = true;
-      setStatus('pending', 'Sending your enquiry');
       try {
-        const result = await submitContact({ ...input, source: 'Contact page', honeypot: data[HONEYPOT_FIELD] ? 'yes' : '', startedAt, captcha: token });
-        check2?.reset();
+        const check2 = await ensureCaptcha();
+        const token = check2?.token() ?? '';
+        captchaError.textContent = check2
+          ? token ? '' : 'Please complete a fresh spam check above. If it still shows success after a failed attempt, wait for it to refresh before retrying.'
+          : `The spam check could not load. ${CONTACT_FAILURE_MESSAGE}`;
+        if (!token) { setStatus('error', captchaError.textContent); return; }
+        setStatus('pending', 'Sending your enquiry');
+        const result = await submitContact({ ...input, source: 'Contact page', honeypot: data[HONEYPOT_FIELD] ? 'yes' : '', captcha: token }, 'worker');
         if (result.ok) {
           form.reset();
-          startedAt = Date.now();
-          setStatus('success', result.message ?? 'Thank you. Your enquiry has been sent.');
+          check2?.reset();
+          setStatus('success', result.message ?? 'Thank you. Your message has been sent.');
         } else {
+          // Preserve entered values and do not reset the widget on failure. Tokens are single-use;
+          // ignore this one until Turnstile's automatic expiry refresh supplies another callback.
+          check2?.consume();
           if (result.errors) showErrors(result.errors);
-          setStatus('error', `${result.message ?? 'Your enquiry could not be sent.'}${fallbackEmail ? ` You can also email ${fallbackEmail}.` : ''}`);
+          setStatus('error', result.message && result.message !== CONTACT_FAILURE_MESSAGE ? `${result.message} ${CONTACT_FAILURE_MESSAGE}` : CONTACT_FAILURE_MESSAGE);
         }
+      } catch {
+        setStatus('error', CONTACT_FAILURE_MESSAGE);
       } finally {
+        submitting = false;
         submit.disabled = false;
         status.focus();
       }
