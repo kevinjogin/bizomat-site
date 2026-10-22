@@ -17,6 +17,12 @@ routes = [
   { pattern = "kevos.com/*", zone_name = "kevos.com" },
 ]
 
+# Contact delivery: onboard kevos.com in Email Service and verify this destination.
+# TURNSTILE_SECRET_KEY belongs in this Worker's encrypted secrets, never in this file.
+[[send_email]]
+name = "EMAIL"
+destination_address = "kevin@kevos.com"
+
 [assets]
 directory = "./dist"
 binding = "ASSETS"
