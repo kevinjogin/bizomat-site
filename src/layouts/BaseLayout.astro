@@ -55,8 +55,8 @@ const props = Astro.props;
       // Site-wide context menu deterrent; browser/WORKOS print and export controls
       // continue to work normally. This cannot prevent content extraction.
       document.addEventListener('contextmenu', function (event) {
-        event.preventDefault();
-      });
+        if (event.cancelable) event.preventDefault();
+      }, { capture: true });
     </script>
     {SITE.assistant.enabled && <ChatWidget />}
   </body>
