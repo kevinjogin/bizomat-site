@@ -61,6 +61,17 @@ Not every friction should go. Some reflect real work, and removing them removes 
 
 How much a friction matters also depends on how often customers meet it. A customer who meets an irritation once a year barely notices. One who meets it weekly may pay a great deal to avoid it, or move to someone who removes it.
 
+```figure
+type: decision
+title: Which frictions to keep
+question: What is the friction really?
+caption: Not every friction should go; some are the honest price of real work.
+- The difficulty is the work itself | Intrinsic | keep it and explain it
+- A real cost charged separately | Passed-on cost | price it openly or absorb it
+- Complexity standing in for a choice | Unmade decision | name a decision-maker and decide
+- *A charge that profits from irritation | Deliberate rent | model the risk; set a date to change it
+```
+
 ## A friction register and three tests
 
 List the frictions in your business in a simple register. For each, record the revenue attached, the cost of removing it, who could remove it more cheaply than you and how many customers encounter it. Then apply three tests:
@@ -68,6 +79,15 @@ List the frictions in your business in a simple register. For each, record the r
 - **The language test**: does the internal name for a charge differ sharply from what customers see or call it? That gap often marks a charge nobody has examined.
 - **The entrant test**: if a competitor offered this free from next quarter, how much revenue would be exposed, and how fast would it move?
 - **The reversal test**: would we introduce this charge today if it did not already exist? A quick "no" is a finding.
+
+```figure
+type: checklist
+title: Three tests for each friction in the register
+caption: A quick "no" to the reversal test is a finding.
+- ? Language | does the internal name differ from what customers call it?
+- ? Entrant | how much revenue moves if a rival offers it free?
+- ? Reversal | would we introduce this charge today?
+```
 
 ## Find frictions from the customer's side
 
@@ -111,6 +131,15 @@ The owner builds a friction register:
 The entrant test is not hypothetical: a new online competitor in the region already advertises all-inclusive pricing and instant booking.
 
 Over the following year, fee revenue falls by about $40,000, but bookings rise by about 12%, adding about $144,000 in hire revenue. Assuming roughly half of that extra revenue is contribution after variable costs, the business gains about $72,000 against the $40,000 of fees given up, and its reviews improve. It made the change on its own timetable rather than in response to losing customers.
+
+```figure
+type: bars
+title: The equipment hire business removes its frictions
+unit: $ a year
+caption: Bookings rose about 12% after a rival already offered all-inclusive pricing; half of the extra hire revenue is assumed to be contribution.
+- Fee revenue given up | −40000
+- *Contribution from about $144,000 more hire | 72000
+```
 
 ## How this applies to a small Australian business
 

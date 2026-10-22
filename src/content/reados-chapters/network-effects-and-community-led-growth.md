@@ -25,6 +25,21 @@ A product has a network effect when its value to each user increases as more peo
 
 Two consequences follow:
 
+```figure
+type: svg
+title: Value grows faster than cost
+alt: Two curves against the number of participants. The cost of adding participants rises roughly in a straight line. The value of the network to participants rises more steeply and pulls away.
+caption: Each new participant adds value for many others, so the largest network tends to pull ahead.
+viewbox: 0 0 640 260
+body:
+<path class="ln" d="M60 220H610M60 30V220"/>
+<path class="li dsh" d="M70 210L600 120"/>
+<path class="la draw" pathLength="1" d="M70 214C260 205 420 160 600 40"/>
+<text class="txa" x="590" y="60" text-anchor="end">Network value</text>
+<text class="txb" x="596" y="145" text-anchor="end">Cost of adding people</text>
+<text class="tx" x="600" y="244" text-anchor="end">More participants →</text>
+```
+
 - **Value grows faster than cost.** Each new participant adds value for many others, while the cost of adding them grows roughly in line with numbers.
 - **Leaders tend to pull ahead.** The largest network is usually the most valuable, which attracts more participants, which makes it more valuable still.
 
@@ -60,6 +75,18 @@ Some networks are local: a dairy delivering to households in a district, a farme
 - **Weaknesses**: local networks do not scale quickly. Because news travels fast in a small market, poor quality can destroy a local position as quickly as good quality built it.
 
 Local networks therefore depend on consistent product quality and a clear brand promise. Some dairy cooperatives and consumer brands have extended local networks by recruiting small local resellers, for example households or small shops that stock products in a fridge and serve their neighbourhood. These networks thrive when incentives are clear and fair.
+
+```figure
+type: tree
+title: Five types of network effect
+caption: Network effects are not only for technology giants.
+- Network effects
+  - Marketplace | buyers and sellers attract each other
+  - Partner and channel | distributors, dealers, installers
+  - Communication | each user adds contacts
+  - Content | creators and audiences
+  - *Local | dense, hard to break into, slow to scale
+```
 
 ## The cold-start problem
 
@@ -136,6 +163,17 @@ A small company builds a scheduling and job-management app for independent elect
 It partners with the regional electrical contractors' association to run evening workshops on running a profitable small electrical business, demonstrating the app and inviting members to share tips in an online group. It adds a feature letting electricians refer overflow jobs to trusted peers who use the app, creating value that grows with every electrician who joins. It also integrates with a major electrical wholesaler's ordering system, so electricians can order materials directly from jobs.
 
 Within two years, a large share of the city's independent electricians use the app, the referral network is valuable enough that new electricians join to access it, and the company expands city by city using the same approach.
+
+```figure
+type: timeline
+title: Solving the cold start for an electricians' app
+caption: Start small and dense, give standalone value, then add value that grows with every user.
+- Start | One city, free version | quotes, scheduling and invoicing useful alone
+- Community | Association workshops | and an online group for tips
+- *Network value | Overflow job referrals | worth more with every electrician who joins
+- Integration | Wholesaler ordering from jobs
+- Two years on | Expand city by city
+```
 
 ## Frequently asked questions
 

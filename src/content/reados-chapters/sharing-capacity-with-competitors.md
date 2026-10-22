@@ -22,6 +22,23 @@ If the advantage is short and the burden long, the logic of the investment chang
 
 For equipment and facilities with high fixed costs, the cost of each unit produced depends heavily on how much the asset is used. Fixed costs such as finance, depreciation, insurance, minimum staffing and maintenance are spread across every unit. An asset running at 40% of its efficient capacity carries more than twice the fixed cost per unit of one running at full capacity.
 
+```figure
+type: svg
+title: Utilisation sets unit cost
+alt: A curve showing fixed cost per unit falling steeply as utilisation rises. At 40% of efficient capacity the fixed cost per unit is more than double the cost at full capacity.
+caption: An asset running at 40% of capacity carries more than twice the fixed cost per unit of one running full.
+viewbox: 0 0 640 260
+body:
+<path class="ln" d="M60 220H610M60 30V220"/>
+<path class="la draw" pathLength="1" d="M90 40C150 120 230 160 330 182S520 200 600 203"/>
+<circle class="fs" cx="250" cy="165" r="8"/>
+<text class="txb" x="262" y="150">40% used: high cost per unit</text>
+<circle class="fa pulse" cx="590" cy="202" r="8"/>
+<text class="txa" x="590" y="186" text-anchor="end">Full capacity</text>
+<text class="tx" x="600" y="244" text-anchor="end">Utilisation →</text>
+<text class="tx" x="50" y="40" text-anchor="end" transform="rotate(-90 50 40)">fixed cost per unit</text>
+```
+
 There is a sizing dilemma. An asset sized for the whole market is rarely sized for your share of it, while one sized for your share is usually too small to be efficient. The second error is harder to see, because the balance sheet looks disciplined while unit costs quietly lose to anyone operating at volume.
 
 ## Differentiating and enabling assets
@@ -94,6 +111,17 @@ Selling surplus capacity to others means serving external customers, which requi
 
 If a competitor could match the asset faster than it pays for itself, set any exclusivity premium in the business case to zero and test the investment on cost, utilisation and reversibility alone.
 
+```figure
+type: balance
+title: Differentiating or enabling asset?
+left: Differentiating
+right: Enabling
+caption: For enabling assets, ownership is mainly a cost question, which makes sharing worth considering.
+- Customers value what it produces | Necessary work customers never see
+- A protected process or unique output | Coating, testing, storage, transport
+- Exclusivity can be worth paying for | Utilisation decides unit cost
+```
+
 ## A worked example
 
 This is an illustration. A regional fabrication business sends its powder coating to a contractor 200 kilometres away, adding days to lead times. It is considering a $750,000 coating line of its own. The proposal argues that it would be the only fabricator in the region with in-house coating, giving it an edge over competitors.
@@ -105,6 +133,16 @@ At 40 units a week, about 1,920 units a year, fixed costs come to about $135 per
 The owner considers selling surplus capacity to other fabricators in the region, including two competitors, at a published price of about $150 per unit. If outside work adds about 45 units a week, total throughput rises to about 85 units a week, about 4,080 units a year. Fixed costs per unit fall to about $64, for a total of about $104 per unit. The outside work contributes about $110 per unit above variable cost, roughly $237,600 a year, covering most of the line's fixed costs.
 
 To limit information risk, the business appoints a dedicated scheduler for the coating line, publishes standard prices, does not share job details or customer names across work streams and includes confidentiality terms in coating agreements. It takes legal advice on the arrangement with competitors before proceeding. The line is approved on the basis of cost and lead time, not exclusivity.
+
+```figure
+type: bars
+title: Coating cost per unit for a $750,000 line
+unit: $ a unit
+caption: About $260,000 a year of fixed costs and $40 a unit variable; outside work at a published $150 contributes about $237,600 a year.
+- Own work only: about 40 units a week | 175
+- *With outside work: about 85 units a week | 104
+- Published price to other fabricators | 150
+```
 
 ## How this applies to a small Australian business
 

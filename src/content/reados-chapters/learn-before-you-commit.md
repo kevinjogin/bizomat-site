@@ -32,6 +32,17 @@ Before commissioning any analysis, trial or research, ask five questions:
 
 If the answer to the third question is no, the information may be interesting but it is not worth paying for in this decision. A simple habit helps: for every study, trial or analysis requested, write down **which decision it will change and how**.
 
+```figure
+type: checklist
+title: Five questions before paying to learn more
+caption: Information is worth something only if it could change the decision.
+- ? Consequence | what is at stake if we are wrong?
+- ? Reducibility | can it narrow the uncertainty in time?
+- ? Action sensitivity | would results change the decision?
+- ? Timing | before the next irreversible step?
+- ? Cost | less than the value of avoiding a poor decision?
+```
+
 ## Three common misconceptions
 
 - **More data is always better.** Large amounts of data can raise confidence without reducing the key uncertainty. Evidence must be tied to the decision.
@@ -74,6 +85,15 @@ It helps to think of reversibility in three forms, which run out on different sc
 
 The real position is the lowest of the three, not the average. A supplier contract might remain easy to cancel, while the physical option has gone because the old system was dismantled. Watching only the contract creates false confidence.
 
+```figure
+type: layers
+title: Three kinds of reversibility
+caption: The real position is the lowest of the three, not the average.
+- Physical | can things be put back as they were?
+- Contractual | can agreements be exited at a known price?
+- *Relationship | can course change without losing trust?
+```
+
 ## Keep a simple register of what can still be undone
 
 A short register, kept alongside the risk list for any significant initiative, makes this visible. For each major commitment, record:
@@ -112,7 +132,26 @@ The main uncertainty is whether consumers will buy the product at the planned pr
 
 Applying the five questions: the consequence is large; the trial would reduce the key uncertainty; a weak result would change the plan by reducing the range and delaying the machine; and the trial can finish before the machine order, though not before the packaging order. The owner estimates roughly a 30% chance the trial would show weak demand. In that case, the business would avoid most of the $120,000 commitment, so the trial's value is in the order of 0.3 × $120,000 = $36,000, well above its cost.
 
+```figure
+type: formula
+title: Is the sauce trial worth $9,000?
+formula: Value of the trial ≈ Chance it changes the decision × Commitment avoided
+caption: The trial could finish before the machine order, though not before the packaging order, so the steps were reordered.
+step: 0.3 × $120,000
+step: About $36,000, against a cost of about $9,000
+```
+
 The owner reorders the steps. The supermarket launch date is moved four weeks later, which the buyer accepts. Packaging is ordered in a smaller first run at a higher unit price, keeping the design flexible. The trial runs first. Its results show strong demand for two of the four sauces and weak demand for the other two. The range is cut to two products, the filling machine is replaced by a cheaper upgrade to the existing machine, and the cool room lease is deferred. The owner records each decision, what it closed and what it bought.
+
+```figure
+type: timeline
+title: Options that close in steps
+caption: About $120,000 of commitments would have become hard to reverse within six weeks.
+- Week 2 | Packaging film | ordered as a smaller first run to keep the design flexible
+- Trial | Four weeks, plain labels | two of four sauces sell strongly
+- Machine | Not bought | a cheaper upgrade to the existing filler
+- *Launch | Four weeks later, accepted | two products; cool room lease deferred
+```
 
 ## How this applies to a small Australian business
 

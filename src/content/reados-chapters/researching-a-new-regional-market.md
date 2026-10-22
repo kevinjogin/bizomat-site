@@ -36,6 +36,14 @@ When the group decided to enter a new state, it conducted research on a scale fe
 
 Each discovery shaped the product, and the newspaper launched as something designed for that region rather than an imported version of the home edition.
 
+```figure
+type: stats
+title: Research at unusual scale
+caption: Each discovery shaped the newspaper before launch, rather than adapting it afterwards.
+- 200,000 | people met before entering a new state
+- 3 | discoveries: vocabulary, numerals, reading habits
+```
+
 ### What to research when expanding in Australia
 
 Differences between Australian regions are smaller than those between Indian states, but they are real and commercially significant:
@@ -140,6 +148,18 @@ Set clear measures before entering, and review them monthly:
 
 Agree in advance what results would justify further investment, and what results would prompt a rethink. Expansion decisions are easier to make objectively before money and pride are committed.
 
+```figure
+type: checklist
+title: Measures for a regional expansion
+caption: Review monthly, and agree in advance what would justify more investment or a change of course.
+- Enquiries and quotes | awareness and interest
+- Win rate | competitive locally?
+- Revenue and margin by region | after extra costs
+- Delivery and service response times
+- Complaints and repeat purchases
+- *Cost to serve | freight, travel, partners
+```
+
 ## A checklist before entering a new region
 
 - Have we spoken with enough potential customers to see clear patterns?
@@ -165,6 +185,17 @@ Instead, the sales manager spends three weeks in Queensland over two trips, meet
 The business adapts. It offers an upgraded corrosion-resistant finish for coastal customers, partners with a Brisbane-based service company guaranteeing next-day response, holds stock of fast-moving items in a Brisbane warehouse before peak season and builds relationships with fit-out contractors through product demonstrations.
 
 It also sets up a quarterly customer panel in Queensland and asks its service partner to report every recurring fault. Within two years, Queensland accounts for 20 per cent of sales, with a lower complaint rate than the home market.
+
+```figure
+type: compare
+title: What 40 conversations in Queensland changed
+cols: Finding | Adaptation
+caption: Within two years Queensland was 20% of sales, with fewer complaints than the home market.
+- Climate | Coastal humidity and salt corrode one line | A corrosion-resistant finish for coastal customers
+- Service | Interstate technicians take days | A Brisbane partner guaranteeing next-day response
+- Seasonality | Tourist-area peaks need fast replacement | Fast movers stocked in Brisbane before peak
+- Influence | Fit-out contractors shape choices | Product demonstrations for contractors
+```
 
 ## Common mistakes
 

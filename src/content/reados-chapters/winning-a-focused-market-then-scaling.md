@@ -68,6 +68,15 @@ A simple estimate is:
 
 **Example:** a business offering a maintenance compliance service to small food manufacturers estimates 2,000 potential customers in its state, each worth about $3,000 a year. TAM ≈ $6 million a year. If it can realistically serve 1,200 of them through its channels (SAM ≈ $3.6 million) and win 10% of those within three years (SOM ≈ $360,000 a year), it can judge whether the opportunity justifies the investment.
 
+```figure
+type: funnel
+title: Sizing the compliance service opportunity
+caption: 2,000 potential food manufacturers at about $3,000 a year each; the obtainable share decides whether to invest.
+- TAM: every potential customer | $6.0m a year
+- SAM: reachable through its channels | $3.6m a year
+- SOM: 10% of SAM within three years | $0.36m a year
+```
+
 Use research rather than intuition. Successful hotel, ride-share and home-services start-ups grounded their models in research about what customers would pay and why. Founders who skipped this step have built products nobody needed.
 
 ## Build a minimum viable product and measure it
@@ -199,6 +208,18 @@ Expansion works best when the first market shows clear signals:
 
 If several of these are missing, keep improving the first market before expanding. Expanding a model that does not yet work simply spreads the problems wider.
 
+```figure
+type: checklist
+title: Signs the first market is ready to expand from
+caption: If several are missing, keep improving the first market before expanding.
+- Strong retention
+- Organic growth | referrals and word of mouth
+- Healthy unit economics | after acquisition cost
+- Repeatable sales | without the founder closing every deal
+- Documented processes
+- *Capacity | team, systems, finances
+```
+
 ## Common scaling mistakes
 
 - **Expanding too fast**, entering many markets before winning one.
@@ -225,6 +246,16 @@ A small company develops software and sensors to monitor refrigeration in food b
 It interviews twenty butchers, builds a simple product with alerts and compliance reports, and signs up early customers with installation support. It tracks retention, alerts acted on, referrals and revenue per customer. Within a year, a large share of the target butchers use the product, and referrals drive most new sales.
 
 The company then expands to adjacent segments, such as delicatessens, cafés and small food manufacturers, and to neighbouring cities, appointing refrigeration service companies as distribution partners with clear margins, training and limited initial credit. Its core advantage, reliable alerts with simple compliance reporting, travels well into each new segment.
+
+```figure
+type: timeline
+title: Refrigeration monitoring: win one market, then move outward
+caption: Its core advantage, reliable alerts with simple compliance reports, travelled into each new segment.
+- Pilot | Independent butchers in one city | high-value stock, strict temperatures, close networks
+- Build | Twenty interviews, a simple product | alerts, compliance reports, installation support
+- Year one | Most target butchers signed up | referrals drive most new sales
+- *Expand | Delis, cafés, small manufacturers, nearby cities | service companies as partners, limited initial credit
+```
 
 ## Summary
 

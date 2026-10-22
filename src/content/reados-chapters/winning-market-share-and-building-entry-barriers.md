@@ -83,6 +83,16 @@ If you sell what everyone else sells, customers have options and will negotiate.
 
 **Reducing objections** means identifying every objection customers raise, such as price, quality, delivery, risk, support or compatibility, and addressing each through product improvement, guarantees, evidence, financing, service or communication.
 
+```figure
+type: balance
+title: Why customers ask for discounts
+left: They have options
+right: They have objections
+caption: Differentiate to reduce options; remove each recurring objection to reduce the rest.
+- Others sell something similar | They see flaws, risks or gaps
+- Answer: offer what others do not | Answer: fix the objection itself
+```
+
 ### Know your perfect customer
 
 Many businesses waste effort selling to customers outside their target audience. Identify your perfect customers using their **needs, interests, concerns and expectations**, along with demographics, psychographics, location, income and lifestyle. A pizza delivery chain, for example, might define its core customer as young urban adults who value convenience and variety. Then review your product portfolio to make sure it serves those customers' needs completely.
@@ -107,6 +117,17 @@ Entry barriers protect a market position by making it difficult for competitors 
 ### Stay within competition law
 
 Barriers must be built lawfully. In Australia, the *Competition and Consumer Act 2010* prohibits misuse of market power, cartel conduct and certain exclusive dealing and other arrangements that substantially lessen competition. Agreements with competitors to fix prices, share markets or rig bids are illegal. Build barriers by being better, not by preventing others from competing unfairly. Seek legal advice on exclusive arrangements.
+
+```figure
+type: tree
+title: Twelve legitimate entry barriers
+caption: Build barriers by being better, never by agreements that stop others competing.
+- Entry barriers
+  - Rights | IP, patents and licensing, exclusive rights, trade secrets
+  - Reach | distribution networks, subscriptions and memberships
+  - Cost | economies of scale, operational efficiency
+  - Distinctiveness | proprietary technology, brand equity, national sentiment, product differentiation
+```
 
 ## Defending your own customers
 
@@ -140,6 +161,17 @@ A regional supplier of commercial cleaning chemicals competes with national bran
 The supplier analyses objections: inconsistent delivery, lack of training for cleaning staff and uncertainty about safety compliance. It introduces scheduled deliveries with automatic replenishment, free on-site training and safety data support, and dispensing equipment that controls dilution, reducing waste and cost per use. It builds relationships with facility managers through quarterly reviews.
 
 Customers now see few comparable options, because competitors offer chemicals but not the full service, and their objections have been addressed. Discount requests fall, the supplier wins accounts from competitors, and its dispensing systems and service relationships create switching costs that protect its position.
+
+```figure
+type: compare
+title: The cleaning chemicals supplier answers each objection
+cols: Objection | Response
+caption: Discount requests fell, accounts were won from rivals, and dispensers plus service built switching costs.
+- Delivery | Inconsistent | Scheduled delivery with automatic replenishment
+- Staff skills | No training for cleaners | Free on-site training
+- Compliance | Unsure about safety | Safety data support
+- Cost in use | Waste from dilution | Dispensers that control dilution
+```
 
 ## Frequently asked questions
 

@@ -58,6 +58,18 @@ Value retailers achieve low prices by keeping the cost of retailing low:
 
 Lower costs per square metre allow lower mark-ups. A value retailer selling at a much smaller mark-up than conventional retailers can win customers while still making a sustainable margin.
 
+```figure
+type: checklist
+title: Fundamentals before everything
+caption: Strong fundamentals are what let small retailers survive larger competitors.
+- Team building
+- Discipline
+- Proper planning
+- Technology
+- A review mechanism
+- *Cash flow management
+```
+
 ## 4. Manage every metre of space
 
 Think of each fixture, rack or shelf as a small shop of its own. A large store with a thousand fixtures is effectively a thousand small shops. For each fixture, the retailer should know:
@@ -188,6 +200,18 @@ Retailers who measure the right things make better decisions. Useful measures in
 
 Review them weekly or monthly, and look for trends and outliers. Share the key numbers with staff, too: teams who understand how their store is performing are better placed to improve it. A fixture or category that consistently underperforms deserves a change of product, display or space.
 
+```figure
+type: tree
+title: Key retail measures
+caption: Share the key numbers with staff, and look for trends and outliers.
+- Retail measures
+  - Space | sales per square metre, by store, department, fixture
+  - Margin | gross margin by category and product
+  - Stock | turnover, sell-through, shrinkage
+  - Basket | average transaction value, items per transaction
+  - *Customers | conversion, retention, loyalty activity
+```
+
 ## Frequently asked questions
 
 **Can independent retailers compete with large chains?** Yes, by specialising, offering expert advice and personal service, curating ranges for local customers, creating experiences and building relationships that large chains struggle to replicate.
@@ -205,6 +229,17 @@ The owners analyse three years of sales data and find that kitchenware and gifts
 In store, they redesign displays around seasonal themes, cross-merchandise kitchenware with recipe cards and local produce, add testers and demonstrations, and change the window fortnightly. Staff are trained to welcome every customer and offer help without pressure. A loyalty program and a small online shop keep regular customers engaged.
 
 Within eighteen months, sales have recovered, margins have improved and the store has a loyal customer base the large competitors have not been able to win over.
+
+```figure
+type: compare
+title: The homewares store's response to a chain and online rivals
+cols: Finding | Action
+caption: Within eighteen months, sales recovered and margins improved.
+- Range | Kitchenware and gifts growing; bedding declining | Less bedding; more kitchenware and local gifts
+- Costs | Room to negotiate | Prompt payment terms; lease renegotiated
+- Data | No category visibility | Point-of-sale tracking of sales and turnover
+- Store | Static displays | Seasonal themes, cross-merchandising, testers, windows changed fortnightly
+```
 
 ## Summary
 

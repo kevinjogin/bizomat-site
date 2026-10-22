@@ -25,6 +25,23 @@ This article describes ten kinds of hassle that customers will pay to remove, wi
 
 Before looking at the ten types, the approach is simple:
 
+```figure
+type: tree
+title: Ten hassles customers pay to remove
+caption: Removing a hassle earns either a premium price or market share at a lower price.
+- Hassles
+  - Too much time
+  - Too much effort
+  - Complex or confusing
+  - Costs too much
+  - Unclear what you get
+  - Distracts from what matters
+  - Needs skills the customer lacks
+  - Hard to find the right supplier
+  - Needs expensive equipment
+  - *Inconvenient in daily use
+```
+
 1. **Find a hassle the market has not solved**: a problem customers complain about, work around or simply accept.
 2. **Understand it deeply** from the customer's perspective.
 3. **Design a solution** that removes it so effectively that customers come to depend on you.
@@ -129,6 +146,19 @@ Hassles are not only opportunities in other markets. Your own customers may expe
 
 Every hassle you remove from your own customers' experience makes you easier to buy from, which is itself a competitive advantage. Over time, being the easiest supplier to deal with can matter as much as having the best product. Ask a few customers to walk you through their last purchase from you, step by step, and note every point of friction.
 
+```figure
+type: steps
+title: Finding hassles in your market
+caption: People often accept hassles without mentioning them, so watch as well as ask.
+- Map the customer journey
+- Look for pain at each step
+- Listen to complaints | including about competitors
+- Observe customers
+- Ask "what is most frustrating?"
+- *Estimate each hassle's cost
+- Design and test small
+```
+
 ## Pricing the solution
 
 Once you remove a hassle, decide whether to take the reward as **premium** or **market share**:
@@ -145,6 +175,18 @@ A small engineering services firm notices a recurring hassle among local manufac
 The firm creates a rapid service: it measures or scans the broken part, produces a manufacturing drawing within 48 hours, arranges machining with trusted partner shops and delivers the replacement. It also archives the drawing, so the next replacement is fast.
 
 Customers previously faced several hassles at once: time, effort, skills they lacked and difficulty finding suppliers. The firm charges a premium for urgent turnaround, and many customers sign up for a service to document their critical spare parts in advance. The service becomes one of the firm's most profitable offerings.
+
+```figure
+type: compare
+title: Replacement parts with no drawings
+cols: Before | The firm's service
+best: 2
+caption: An illustration; the firm charges a premium for urgent turnaround and sells advance documentation of critical spares.
+- Time | Days measuring by hand | A drawing within 48 hours
+- Skills | Guessing tolerances | Measured or scanned by specialists
+- Suppliers | Chasing machine shops | Machining arranged with trusted partners
+- Next time | Start again | The drawing is archived
+```
 
 ## Communicating the hassle you solve
 

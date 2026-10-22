@@ -29,6 +29,15 @@ The economist Walter Stahel, in a 2016 commentary in the journal Nature, disting
 
 The distinction matters because a business can recycle more without changing its incentive to sell more new products. The performance model asks a harder question: can the business earn more by preserving the productive value of its products than by repeatedly replacing them?
 
+```figure
+type: steps
+title: Three industrial logics
+caption: A business can recycle more without changing what it is paid for; only the performance logic rewards products that last.
+- Linear | make, sell; responsibility passes to the buyer
+- Circular | keep products and materials in use
+- *Performance | sell use or results; keep responsibility
+```
+
 ## Common misreadings
 
 - **Circularity means recycling.** Recycling sits late in the hierarchy of value preservation. Maintenance, reuse, repair and remanufacturing preserve far more of the design, labour, energy and materials embodied in a product.
@@ -48,6 +57,16 @@ A circular product involves more than material moving backwards. Four flows need
 - **Decision flow**: who sets prices, acceptance criteria, marketing effort and customer promises.
 
 Weakness in any one can block the others. A circular business model is therefore largely a problem of coordination between parties.
+
+```figure
+type: cycle
+title: Four flows a circular product needs
+caption: A good collection network cannot fix conflicting incentives.
+- Material | products, cores, parts moving both ways
+- Information | condition, history, warranty
+- Cash | deposits, credits, service revenue
+- *Decisions | prices, acceptance, promises
+```
 
 ## Design value across the channel
 
@@ -116,6 +135,19 @@ The manufacturer tests a performance offer with a few industrial customers: a fi
 Because the manufacturer now pays for breakdowns and energy-inefficient running, its engineers redesign the next model for easier servicing and modular replacement of wearing parts, and add remote monitoring to schedule maintenance before failures. Returned units flow predictably at contract end and become feedstock for remanufacturing.
 
 The pilot shows two challenges. The manufacturer must fund the compressors on its own balance sheet, so it arranges asset finance for the program. And some customers prefer to own equipment outright, so the traditional sale remains available alongside the service offer. Over two years, the service offer grows steadily, remanufactured units become a significant share of deployed equipment and customer retention rises.
+
+```figure
+type: compare
+title: Compressors sold outright or as compressed air
+cols: Selling units | Selling capacity
+best: 2
+caption: Remanufactured units cost about 40% less to make; the service model needed asset finance, and outright sale stayed available.
+- Distributors earn | A one-off margin, higher on new units | A monthly service commission
+- Sales staff are paid on | New-unit revenue | Contracted monthly revenue
+- Remanufactured units | Tiny sales; warranty worries | Same performance guarantee as new
+- Returns | Unpredictable | At contract end, feeding remanufacturing
+- Design | Sell more units | Easier servicing, modular wear parts, remote monitoring
+```
 
 ## How this applies to a small Australian business
 

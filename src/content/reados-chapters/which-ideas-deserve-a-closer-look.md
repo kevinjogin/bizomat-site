@@ -31,6 +31,18 @@ It helps to think of an idea passing through stages, each requiring more evidenc
 
 Writer Olivier Mesly, among others, describes pre-feasibility as a broad early look at a proposed project from several angles, aimed at finding points of weakness before deciding whether deeper study is justified. Confusing the stages either wastes effort on ideas that were never strong enough, or pushes immature ideas forward too quickly.
 
+```figure
+type: steps
+title: Stages of evidence for an idea
+caption: Pre-feasibility is a cheap screen before the expensive questions.
+- Trigger
+- Initial value proposition
+- *Pre-feasibility | coherent, material, plausible?
+- Feasibility | can it work?
+- Business case | does it deserve commitment?
+- Decision and authorisation
+```
+
 ## Common mistakes at the earliest stage
 
 **Screening is seen as bureaucracy.** In practice, weak screening creates more work later: many low-quality proposals entering expensive analysis, competing for attention and producing documents that never lead anywhere.
@@ -99,6 +111,18 @@ A screen should end with an explicit decision:
 
 If nearly every idea proceeds, the screen is not working. A healthy screen changes the direction of a meaningful share of the ideas it sees.
 
+```figure
+type: decision
+title: Five outcomes of a screen
+question: Is a closer look worth its cost?
+caption: A healthy screen changes, delays or stops most ideas.
+- *Yes | Proceed to feasibility
+- The need is right, the solution is not | Reshape
+- One unknown decides it | Gather evidence | a small, specific test
+- Not now | Defer | note what would bring it back
+- No | Stop | with a brief record of why
+```
+
 ## A one-page concept note
 
 For any idea that might require significant money or time, ask whoever proposes it, including the owner, to write a one-page note covering:
@@ -139,6 +163,18 @@ Each could absorb weeks of analysis. Instead, the owner spends about an hour on 
 - **Council tender**: it requires accreditations and a scale of operation the business does not have, and closes in three weeks. **Stop** for now, with a note to look at the requirements for the next tender round.
 
 The five concept notes take about five hours. A full study of each idea might have taken around 40 hours each, or 200 hours in total. Instead, the business spends about 45 hours: five on screening and about 40 on the one feasibility study that deserves it, plus a small rental cost for the mower trial. The time saved goes into the irrigation service, which becomes a new line of recurring work.
+
+```figure
+type: compare
+title: Five ideas screened in about five hours
+cols: Outcome | Why
+caption: About 45 hours of work instead of roughly 200 for five full studies.
+- Irrigation maintenance | Proceed | Real, repeated need; existing skills; low capital
+- Robotic mowers | Gather evidence | Slopes and obstacles: rent one for six weeks on two sites
+- Booking app | Reshape | Existing booking software may meet the need
+- Garden centre | Defer | No demand evidence; high, hard-to-reverse capital
+- Council tender | Stop | Accreditations and scale missing; closes in three weeks
+```
 
 ## How this applies to a small Australian business
 

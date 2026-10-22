@@ -116,6 +116,18 @@ A second lesson is that **data is an asset**. Businesses that capture data about
 
 A third lesson, learned painfully by some of these start-ups, is that **funding is not a business model**. Growth subsidised by investors can disappear quickly when funding dries up. Lasting businesses build unit economics that work. The article on [chasing customers, not investors](/reados/collections/starting-funding-and-structuring-a-business/chase-customers-not-investors/) explores this.
 
+```figure
+type: tree
+title: Twelve start-up patterns, grouped
+caption: The common thread: customers pay for value-added service that solves a burning problem, not for the underlying technology.
+- Business model patterns
+  - Digitise and add a layer | fragmented markets, value-added services, paper to data
+  - Change behaviour | reminders, rewards, simple low fees
+  - Speed and reach | flexible local delivery, the last mile
+  - Grow the relationship | product to ecosystem, software with insight
+  - *Rethink the whole offer | social selling, product and delivery together
+```
+
 ## Questions to apply these patterns
 
 - Which of our customers' problems are still handled with paper, phone calls or guesswork?
@@ -138,6 +150,17 @@ A small industrial fastener distributor in Adelaide competes against large natio
 - provides each major customer with a quarterly usage report showing consumption trends and suggestions for consolidating part numbers.
 
 Within eighteen months, repeat orders rise, customers consolidate their purchasing with the distributor and the business is increasingly seen as a partner rather than a supplier, all using affordable, existing software.
+
+```figure
+type: steps
+title: A fastener distributor borrows the patterns
+caption: An illustration of borrowing start-up patterns without start-up funding.
+- Online reorder portal | stock, prices, lead times
+- Digitise picking and delivery records
+- Reminders before usual reorder dates
+- Vendor-managed bins | for the biggest customers
+- *Quarterly usage reports | trends and part consolidation
+```
 
 ## Frequently asked questions
 

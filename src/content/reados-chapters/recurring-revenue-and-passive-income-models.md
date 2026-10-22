@@ -34,6 +34,15 @@ Income alone does not create wealth. If you earn $10,000 a month and spend $10,0
 
 The goal is not just higher income, but a widening gap between income and spending, invested in assets that generate further income.
 
+```figure
+type: bars
+title: Income is not wealth; the gap is
+unit: $ a month left over
+caption: Wealth builds when the gap between income and spending is reinvested in assets that produce income.
+- Earning $10,000, spending $10,000 | 0 | nothing to invest
+- *Earning $30,000, spending $10,000 | 20000 | surplus to reinvest
+```
+
 ## Four ways people earn
 
 A widely used framework, popularised by the author Robert Kiyosaki as the "cashflow quadrant", describes four ways people earn:
@@ -44,6 +53,19 @@ A widely used framework, popularised by the author Robert Kiyosaki as the "cashf
 4. **Investors** earn returns from capital invested in businesses, property and other assets.
 
 The first two quadrants trade time for money. The last two earn from systems and capital. Most people, and many small business owners, sit in the first two. A self-employed person who hires staff but still personally does or checks all the important work remains largely in the second quadrant.
+
+```figure
+type: tree
+title: Four ways people earn
+caption: The first two trade time for money; the last two earn from systems and assets.
+- Ways of earning
+  - Trading time for money
+    - Employee | salary for time worked
+    - Self-employed | paid in proportion to hours
+  - Earning from systems and assets
+    - *Business owner | systems and teams earn
+    - Investor | returns on capital
+```
 
 Moving towards the business owner and investor quadrants does not happen overnight, but each step in that direction reduces dependence on your hours.
 
@@ -109,6 +131,19 @@ Add the scores, which range from 6 to 30:
 
 The scorecard is a diagnostic, not a promise of wealth. Its value lies in showing which dimensions to work on.
 
+```figure
+type: gauge
+title: Recurring-income scorecard
+min: 6
+max: 30
+value: 21
+label: the consultancy after two years, up from 11
+caption: Six questions scored 1 to 5: timing, regularity, sustainability, growth, personal time and on-site engagement.
+- 6 | 14 | Effectively a job
+- 14 | 22 | Room to improve
+- 22 | 30 | Predominantly recurring
+```
+
 ## Steps to shift towards recurring income
 
 ### 1. Productise your service
@@ -169,6 +204,18 @@ Over two years, the principal:
 - reduces their own weekly hours to around 35, focused on strategy and key clients.
 
 Support agreements now provide about a third of revenue, paid monthly. Income is more predictable, and the principal has time to develop a new service line. The scorecard rises to 21.
+
+```figure
+type: compare
+title: The engineering consultancy over two years
+cols: Before | After
+best: 2
+caption: Support agreements paid monthly now bring about a third of revenue.
+- Revenue | One-off projects, swinging monthly | Fixed-price packages and annual support agreements
+- Principal's week | About 60 hours | About 35, on strategy and key clients
+- Delivery | Every project needs the principal | Templates, checklists and a senior engineer
+- Scorecard | 11 | 21
+```
 
 ## Common mistakes
 

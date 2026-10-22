@@ -53,6 +53,15 @@ A full-service restaurant involves hundreds of variables every day. He has descr
 
 This level of detail is what makes expertise transferable. A recipe that says "add tomatoes" depends on the chef. A recipe that specifies exactly which tomatoes, how many and how prepared can be reproduced by a trained team in any location.
 
+```figure
+type: stats
+title: Documenting a restaurant in detail
+caption: A recipe that says "add tomatoes" cannot be delivered by someone else; specified variables can.
+- 300 to 350 | daily variables identified and documented
+- 60 days | stayed for the opening, against a plan of five
+- 3 levels | of audit: internal, external, customer reviews
+```
+
 The same principle applies in other fields:
 
 - An engineering practice can document design standards, calculation methods, checking procedures and drawing conventions.
@@ -151,6 +160,18 @@ Progress from a personality-driven business to a platform-driven one can be trac
 
 Review these measures every quarter. If founder-delivered revenue is not falling, the business is still a job, however busy and profitable it appears.
 
+```figure
+type: checklist
+title: Measuring the shift from person to platform
+caption: If founder-delivered revenue is not falling, the platform is not yet being built.
+- Founder-delivered revenue | should fall
+- Revenue per founder hour | should rise
+- Documented processes | share of regular work
+- Team-delivered quality | audits and feedback
+- Reach | among target customers
+- *Product revenue | licences, training, packaged services
+```
+
 ## Risks to manage
 
 - **Key-person risk**: if the business depends on your reputation, illness, controversy or departure can damage it. Build team capability and a brand that stands for standards, not only for you.
@@ -172,6 +193,18 @@ Over three years, she:
 - appoints an experienced operations manager to handle scheduling, quoting and administration.
 
 Revenue triples, her personal design hours halve, and the business no longer depends entirely on her presence.
+
+```figure
+type: steps
+title: A conveyor engineer becomes a platform
+caption: An illustration: revenue tripled and her personal design hours halved.
+- Document the method | calculations, checks, drawing standards
+- Train two graduates | she reviews final outputs
+- Build reach | articles and workshops
+- Package a service | a standard conveyor audit
+- License the tools | spreadsheets and training
+- *Appoint an operations manager
+```
 
 ## Frequently asked questions
 
