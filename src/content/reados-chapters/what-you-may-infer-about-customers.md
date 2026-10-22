@@ -35,6 +35,15 @@ It helps to separate three questions:
 
 Governance often stops at the first question. Most of the commercial value, and most of the risk, sits in the third.
 
+```figure
+type: steps
+title: Collect, infer, act
+caption: Most of the commercial value, and most of the risk, sits in the last two questions.
+- Collect | lawful basis, purpose, security
+- Infer | attributes not in the record
+- *Act | what may change a price, limit or eligibility
+```
+
 ## Common misreadings
 
 - **If it is legal to hold the data, it is fine to use it.** Legal permission to hold data is not the same as being able to justify using it to set someone's price. Privacy, credit reporting, consumer and anti-discrimination laws set a floor, and specific cases need professional advice. But the floor is not the decision.
@@ -76,6 +85,15 @@ Three thresholds make it workable:
 
 The decisive question is not whether an inference improves accuracy. It is whether the business could state the basis of its decision to the customer, a business partner and a regulator in the same words.
 
+```figure
+type: layers
+title: Three thresholds for using inferences
+caption: The decisive test is whether the business would be comfortable explaining it to the customer concerned.
+- *Never price on | a written list, however predictive
+- Clear consent only | with a plain explanation
+- Everything else | normal use, reviewed periodically
+```
+
 ## Be open with customers
 
 Customers increasingly expect to understand how their information is used. Explain in plain language, in your privacy policy and at the point of collection, what you collect, why and how it affects what they are offered. Where personalisation is used, say so. Where customers can choose not to share information or opt out of personalised offers, make that easy. Openness reduces the chance of an unpleasant surprise that damages trust, and it encourages the business to use only inferences it is comfortable explaining.
@@ -95,6 +113,17 @@ This is an illustration. A small online retailer installs a pricing tool that ad
 The owner applies the gate. The data collected, such as device type and location, is lawfully held for operating the website. But the inferences, affluence from device and suburb, and risk from postcode, fail the "act" test: the owner would not be comfortable explaining to a customer that they paid more because of their phone or where they live, and postcode-based restrictions could affect some communities unfairly.
 
 The owner turns off device- and suburb-based pricing, keeps price changes based on stock levels and clear promotions, removes the retailer's own postcode filter and asks the payment provider to explain its criteria. A short written list now states that the business will not set prices based on location, device or inferred personal characteristics. Over the following months, conversion rates are unchanged, and the owner has removed a risk to the business's reputation and customer trust.
+
+```figure
+type: compare
+title: The online retailer's pricing tool, through the gate
+cols: The tool did | The owner decided
+caption: Conversion rates were unchanged afterwards, and a reputational risk was removed.
+- Device type | Raised prices for "affluent" devices | Switched off
+- Suburb | Raised prices by suburb | Switched off
+- Postcode | Withheld buy-now-pay-later in some areas | Own filter removed; provider asked to explain
+- Stock and promotions | Adjusted prices | Kept
+```
 
 ## How this applies to a small Australian business
 

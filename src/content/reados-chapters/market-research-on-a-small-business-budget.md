@@ -123,6 +123,17 @@ For a small business, a practical five-step approach can be done in a few weeks 
 
 Simple tools are enough: online forms linked to spreadsheets, email to customer lists, social media groups relevant to your market and spreadsheets to organise findings.
 
+```figure
+type: steps
+title: A do-it-yourself research approach
+caption: A few weeks and simple tools are enough for most small decisions.
+- Read five-star reviews of rivals | what customers value
+- Read one- and two-star reviews | where rivals fall short
+- Ask about problems directly
+- Ask about value | informs price
+- *Ask how hard the problem is | hard problems earn a premium
+```
+
 ## Asking questions that produce honest answers
 
 People are often polite, optimistic and poor at predicting their own future behaviour. Ask "would you buy this?" and many will say yes to be kind, then never buy. To get more reliable answers:
@@ -133,6 +144,16 @@ People are often polite, optimistic and poor at predicting their own future beha
 - **Listen more than you talk**, and ask "why?" and "tell me more" often.
 - **Look for commitment.** A pre-order, deposit, letter of intent or pilot agreement is far stronger evidence than enthusiasm.
 - **Make participants comfortable**, so they give honest feedback, including criticism.
+
+```figure
+type: compare
+title: Questions that produce honest answers
+cols: Ask this | Not this
+caption: People are polite and poor at predicting their own behaviour; commitment beats enthusiasm.
+- Behaviour | "When did you last have this problem? What did it cost?" | "Would you buy this?"
+- Neutral wording | "How do you handle this now?" | "Don't you think this is a great idea?"
+- Evidence | A pre-order, deposit or pilot | Compliments and survey enthusiasm
+```
 
 ## When to use a research agency
 
@@ -172,6 +193,17 @@ A small company plans to launch a range of ergonomic workbenches for light assem
 They start with secondary research into the size of the light manufacturing sector and workplace safety trends. They then read reviews of competing workbenches, finding praise for sturdiness and complaints about slow, awkward height adjustment and long delivery times. They interview twelve production managers, asking about recent workstation purchases, injury concerns, how decisions are made and budgets.
 
 The interviews reveal that height adjustment matters most where several shifts share a workstation, and that managers value fast delivery and simple assembly as much as features. Safety and health staff often influence decisions. The founders redesign the product with a quick, tool-free adjustment mechanism and flat-pack delivery, and run a field trial with three factories. Two place orders after the trial. The launch focuses on multi-shift operations, with messaging aimed at both production managers and safety staff.
+
+```figure
+type: timeline
+title: Researching ergonomic workbenches before launch
+caption: The founders' assumption about a premium for height adjustment held only where shifts share a bench.
+- Desk research | Sector size and safety trends
+- Reviews | Rivals praised for sturdiness | criticised for awkward adjustment and slow delivery
+- Interviews | Twelve production managers | delivery and assembly matter as much as features
+- Redesign | Tool-free adjustment, flat pack
+- *Field trial | Three factories | two placed orders
+```
 
 ## Summary
 

@@ -100,6 +100,16 @@ Respondents fall into three groups:
 
 **NPS = percentage of promoters − percentage of detractors.** Passives count in the total but not in the calculation. The score ranges from −100 (all detractors) to +100 (all promoters).
 
+```figure
+type: stack
+title: Net Promoter Score from 100 responses
+unit: %
+caption: NPS = 50% promoters − 20% detractors = +30; passives count in the total but not the calculation.
+- Promoters, 9–10 | 50
+- Passives, 7–8 | 30
+- Detractors, 0–6 | 20
+```
+
 **Example:** 100 customers respond. 50 give 9 or 10 (promoters), 30 give 7 or 8 (passives) and 20 give 0 to 6 (detractors). NPS = 50% − 20% = **+30**.
 
 NPS is popular because it is simple, easy to track over time and correlates with loyalty and growth in many industries. Benchmarks vary widely between industries and countries, so your own trend and your score relative to direct competitors matter more than any universal "good" number.
@@ -115,6 +125,16 @@ Ask the NPS question at different touchpoints, such as after purchase, after sup
 **Detractors.** Contact them personally, apologise where appropriate, listen carefully to understand the problem and fix it. Then go back and tell them what you changed. Some will return. Do not pressure those who do not, but learn from every one of them.
 
 The goal is to move customers up: detractors to passives, and passives to promoters.
+
+```figure
+type: decision
+title: Three groups, three strategies
+question: What score did the customer give?
+caption: The goal is to move detractors to passives and passives to promoters.
+- 9–10 Promoter | Thank and involve | testimonials, referrals, reviews
+- *7–8 Passive | Find what would make it a 9 | often the largest, most neglected group
+- 0–6 Detractor | Contact personally | listen, fix, follow up
+```
 
 ## Analysing feedback
 
@@ -166,6 +186,16 @@ A commercial cleaning equipment supplier starts sending a one-question NPS surve
 The business produces short, illustrated quick-start guides for its ten best-selling products and introduces a same-day callback commitment for service requests, tracked daily. The owner personally calls every detractor. Several mention being pleasantly surprised by the call.
 
 Two quarters later, NPS has risen to +38, the number of service calls about basic operation has dropped, and several promoters have agreed to provide testimonials that now feature on the website.
+
+```figure
+type: bars
+title: The equipment supplier's NPS after acting on comments
+unit: points
+max: 50
+caption: Quick-start guides and faster service responses addressed the two main themes among detractors and passives.
+- First quarter | 12
+- *Two quarters later | 38
+```
 
 ## Frequently asked questions
 

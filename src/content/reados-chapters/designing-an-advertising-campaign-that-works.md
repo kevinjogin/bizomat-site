@@ -77,6 +77,16 @@ Translate every feature into an outcome:
 
 Quantify outcomes wherever possible. An outcome expressed in money or time answers common objections, such as "it's too expensive", "we have no budget" or "your competitor is cheaper", before they are raised.
 
+```figure
+type: compare
+title: Sell the outcome, not the product
+cols: Feature | Outcome
+caption: An outcome expressed in money or time answers "what's in it for me?".
+- Changeovers | Quick-change fixture system | 10 minutes instead of 45
+- Drawings | 3D CAD and drawing service | Parts that fit first time
+- Quotes | Same-day turnaround | Projects that start sooner
+```
+
 ## Part 4: State your unique proposition
 
 What do you offer that competitors do not? Often called a **unique selling proposition** (or, from the customer's side, a unique serving proposition), it is the reason to choose you. Famous examples include a courier's promise of absolutely positively overnight delivery and a pizza chain's historic thirty-minute delivery promise. Home-services platforms promise professional services at your home. Online marketplaces promise to help you buy, sell or find almost anything.
@@ -132,6 +142,19 @@ Effective calls to action:
 
 Test different calls to action. Small wording changes can make large differences in response.
 
+```figure
+type: steps
+title: The parts of an advertisement that works
+caption: Most small-business advertising fails by skipping one of these.
+- Ideal client | precisely defined
+- Magnetic headline | a real problem, a clear benefit
+- The outcome | not the product
+- Unique proposition | specific, relevant, credible
+- Guarantee | one you can honour
+- Social proof | genuine
+- *Call to action | a clear, active verb
+```
+
 ## Creative principles that make campaigns memorable
 
 ### Value first, profit second
@@ -186,6 +209,17 @@ Advertising should be treated as an experiment, not a gamble:
 5. **Review regularly** and stop what does not work.
 
 Small businesses that test methodically often outperform larger competitors who spend more but measure less.
+
+```figure
+type: cycle
+title: Advertising as an experiment
+caption: Start small, find what works, then scale spending on the winners.
+- Define the goal and measure
+- Test variations | same audience and budget
+- Track sources
+- *Scale the winners
+- Review and stop what fails
+```
 
 ## Compliance checklist
 

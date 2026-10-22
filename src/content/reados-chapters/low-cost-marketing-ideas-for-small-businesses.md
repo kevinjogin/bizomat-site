@@ -85,6 +85,16 @@ Many businesses have years of customer records they never use. Organise them in 
 
 This requires thought more than money. Respect privacy and marketing rules, including consent and unsubscribe requirements for electronic messages.
 
+```figure
+type: decision
+title: Giving new life to old customer data
+question: Where does each customer sit?
+caption: Respect privacy and marketing rules when contacting past customers.
+- Hot: active | Appreciate and grow | early access, thank-you notes
+- Warm: occasional | Stay useful | tips, relevant offers
+- *Cold: lapsed | Find out why, then win back | a message addressing the cause
+```
+
 ## 10. Get creative with street-level marketing
 
 Shops and local businesses can attract attention with creative signage: sidewalk chalk art, unusual displays, painted windows and eye-catching standees. Large brands have used creative street-level marketing too, such as pedestrian crossings painted to resemble food packaging, or stairs and escalators painted with different product messages to encourage healthier choices.
@@ -126,6 +136,15 @@ Low-cost does not mean unmeasured. For each activity, track:
 
 Review monthly. Drop activities that consume time without results, and invest more in those that work. What succeeds varies by industry, location and customer type, so let your own data guide you. Remember to count your own time as a cost: an activity that is free in cash but consumes ten hours a week may be more expensive than a modest paid alternative.
 
+```figure
+type: formula
+title: Low-cost does not mean unmeasured
+formula: Cost per customer = (Money + Time value invested) ÷ Customers won
+caption: Track sources with "how did you hear about us?", unique links, codes or phone numbers.
+- Enquiries | traced to each activity
+- Customers won | and their value
+```
+
 ## A lead generation framework
 
 Low-cost marketing works best when it feeds a clear process for turning interest into enquiries. A practical framework:
@@ -155,6 +174,18 @@ A small kitchen and bathroom renovation business has relied on a single online d
 She asks recent clients for reviews and short video testimonials, and gets eleven. She starts a monthly email to past clients with renovation tips and before-and-after projects, and sends handwritten thank-you cards with a small gift on project completion. She contacts lapsed enquiries from the past two years with a short personal message. She hosts a free Saturday workshop at a local hardware store on planning a bathroom renovation, attended by thirty people. A local newspaper runs a story about her business's apprenticeship program. She also forms a referral partnership with two interior designers.
 
 Within six months, directory leads make up less than a third of her enquiries. Referrals, repeat clients and workshop attendees provide the rest, at a fraction of the cost.
+
+```figure
+type: tree
+title: Replacing an expensive directory with low-cost marketing
+caption: Within six months, directory leads were under a third of enquiries, at a fraction of the cost.
+- The renovation business's mix
+  - Proof | eleven reviews and video testimonials
+  - Past clients | a monthly tips email, handwritten thank-yous
+  - Lapsed enquiries | short personal messages
+  - *Teaching | a free Saturday workshop, thirty attendees
+  - Local media | a newspaper story
+```
 
 ## Frequently asked questions
 

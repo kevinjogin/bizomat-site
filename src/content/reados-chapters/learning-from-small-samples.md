@@ -54,6 +54,17 @@ A product page has had 40 visitors and 3 purchases.
 
 The Bayesian estimate is pulled slightly towards the middle, reflecting the limited data. More importantly, the posterior distribution shows a wide range of plausible rates: the true conversion rate could reasonably be anywhere from around 3% to 20%.
 
+```figure
+type: formula
+title: Updating a beta prior with new data
+formula: Posterior = (α + successes, β + failures)
+formula: Estimate = α ÷ (α + β)
+caption: Illustrative: 3 purchases from 40 visitors; similar past pages converted at about 4%.
+step: Simple percentage: 3 ÷ 40 = 7.5%
+step: Uniform prior (1, 1): (4, 38), about 9.5%
+step: Informed prior (2, 48): (5, 85), about 5.6%
+```
+
 Now suppose the business has run similar product pages before, which typically converted at around 4%. It could use an informed prior such as (2, 48), equivalent to 50 previous visitors with 2 purchases.
 
 - **Bayesian with an informed prior (2, 48):** posterior is (2 + 3, 48 + 37) = (5, 85). Posterior mean = 5 ÷ 90 ≈ 5.6%.
@@ -89,6 +100,19 @@ The width of the plausible range shrinks as data grows. Roughly speaking, quadru
 (Ranges are approximate, for illustration, and depend on the method used.)
 
 The same headline percentage carries very different weight depending on the amount of evidence behind it.
+
+```figure
+type: range
+title: The same 40% from different amounts of data
+min: 0
+max: 100
+unit: %
+ticks: 0% | 50% | 100%
+caption: Roughly, quadrupling the data halves the width of the plausible range.
+- 2 wins from 5 | 12 | 78
+- 20 wins from 50 | 28 | 54
+- *200 wins from 500 | 36 | 44
+```
 
 ## How much data is enough?
 
@@ -152,6 +176,15 @@ The simple percentages, 100% and 90%, suggest X is more reliable. A Bayesian vie
 - Y: posterior (26.5, 3.5), mean ≈ 88%.
 
 The two are essentially indistinguishable, and Y's estimate rests on far more evidence. The business decides to offer both the same credit terms, reviewing after another three months, rather than favouring X on the basis of four invoices.
+
+```figure
+type: compare
+title: Which new customer pays more reliably?
+cols: Simple percentage | Bayesian estimate
+caption: Illustrative, with a weak prior worth about 10 invoices at the business's usual 85% on time.
+- Customer X: 4 of 4 on time | 100% | About 89%
+- Customer Y: 18 of 20 on time | 90% | About 88%
+```
 
 ## Common mistakes
 

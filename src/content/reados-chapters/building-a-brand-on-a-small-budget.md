@@ -45,6 +45,19 @@ Brands are damaged when businesses put short-term margin ahead of customers:
 
 Customers notice. Once they believe a brand is cheating them, they switch, and they tell others. A brand built over years can be damaged in months.
 
+```figure
+type: balance
+title: How trust is earned and lost
+left: Builds trust
+right: Destroys trust
+tilt: left
+caption: Once customers believe a brand is cheating them, they switch, and tell others.
+- "This brand is for people like me" | Cheaper ingredients without telling
+- "It will never cheat or harm me" | Opportunistic price rises in shortages
+- "It will be here in the future" | Shrinkflation behind the same pack
+- Promises kept every time | Over-promising, quietly cutting service
+```
+
 ## Lesson 1: Put the product first
 
 The most powerful low-cost marketing is a product good enough that customers recommend it. When a product's quality and features are excellent, word of mouth does much of the work advertising would otherwise do. Many widely used digital services grew to huge scale largely through recommendation rather than advertising.
@@ -150,6 +163,17 @@ Large companies commission expensive brand-tracking studies. Small businesses ca
 
 Improvements in these measures show the brand is strengthening.
 
+```figure
+type: checklist
+title: Measuring brand strength without a big budget
+caption: Track these over time instead of commissioning brand studies.
+- Source of enquiries | referrals, repeat, searches by name
+- Win rate | without cutting price
+- Price resilience | holding or raising prices
+- Reviews and testimonials | volume and tone
+- Unprompted recognition | "I've heard of you"
+```
+
 ## A practical low-cost branding plan
 
 1. **Define your brand promise** in one sentence that customers will care about.
@@ -166,6 +190,17 @@ Improvements in these measures show the brand is strengthening.
 A small family bakery competes with supermarket bread and two chain bakeries. It cannot afford advertising. The owners define their promise as "bread baked fresh every morning from simple ingredients". They switch to a single brand name across their bread, cakes and catering, introduce simple, consistent packaging and post short daily videos of the morning bake. They start a monthly Saturday bread-making class for local families, donate unsold bread to a local charity every evening and share the story of their sourdough starter, which has been kept alive for twenty years.
 
 Within a year, the classes are booked out months ahead, local media have featured the business twice, and customers regularly bring friends. The bakery's spending on marketing is small. Its brand, built on product, promise, consistency and community, is strong.
+
+```figure
+type: steps
+title: The family bakery's low-cost brand
+caption: Product, promise, consistency and community, with very little spent on marketing.
+- Promise | "bread baked fresh every morning from simple ingredients"
+- One brand name | across bread, cakes and catering
+- Consistency | simple packaging, daily bake videos
+- Community | monthly family bread-making classes
+- *Purpose | unsold bread to charity; the 20-year sourdough story
+```
 
 ## Frequently asked questions
 

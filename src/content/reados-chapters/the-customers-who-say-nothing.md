@@ -22,6 +22,25 @@ This article explains why customer feedback systems hear mostly from the extreme
 
 Every feedback channel has a threshold. A complaint requires enough irritation to make the effort worthwhile. A testimonial requires enough enthusiasm to lend your name to someone else's marketing. A survey response requires enough of either to bother answering. All three thresholds filter in the same direction: towards the extremes. A business's knowledge of its customers is therefore built from a sample selected on the very thing it is trying to measure.
 
+```figure
+type: svg
+title: Feedback is filtered by intensity
+alt: A spread of customers from very unhappy to delighted. Complaints come from the unhappy end and praise from the delighted end. The large middle group, neither upset nor delighted, sends almost no feedback.
+caption: Most customers sit in the quiet middle, which feedback channels barely hear.
+viewbox: 0 0 640 240
+body:
+<path class="ln" d="M40 190H600"/>
+<path class="lf draw" pathLength="1" d="M40 190C160 188 220 60 320 60S480 188 600 190"/>
+<rect class="bxa" x="40" y="150" width="90" height="40" rx="4"/>
+<rect class="bxa" x="510" y="150" width="90" height="40" rx="4"/>
+<text class="txa" x="85" y="216" text-anchor="middle">Complaints</text>
+<text class="txa" x="555" y="216" text-anchor="middle">Praise</text>
+<text class="txb" x="320" y="120" text-anchor="middle">The quiet middle</text>
+<text class="tx" x="320" y="142" text-anchor="middle">rarely heard</text>
+<text class="tx" x="40" y="236">Unhappy</text>
+<text class="tx" x="600" y="236" text-anchor="end">Delighted</text>
+```
+
 ## What silence can mean
 
 Silence is often read as satisfaction. It can also mean:
@@ -53,6 +72,18 @@ Behaviour is a signal that does not depend on anyone feeling strongly. Useful be
 - **Payment behaviour**, such as paying later than usual.
 
 These indicators usually already sit in accounting, ordering or customer management systems. They are rarely read as customer intelligence, because they arrive as operational data owned by people who are not looking for it.
+
+```figure
+type: checklist
+title: Behavioural signals you already own
+caption: They do not depend on anyone feeling strongly enough to speak up.
+- Purchase frequency | and its trend
+- Order size and range
+- Time to reorder or renew | against the usual pattern
+- Response time to your messages
+- Channel shift | to the cheapest self-service
+- *Payment behaviour | paying later than usual
+```
 
 ## Make the middle somebody's job
 
@@ -116,6 +147,16 @@ The owner runs the silent loss test. Of the 48 customers lost last year, 35, abo
 The business introduces a monthly report flagging any customer whose ordering frequency has dropped more than 30% below their own twelve-month average. Each flagged customer is assigned to an account manager, who calls within two weeks. In the first year, about 60 customers are flagged. Around 22 mention specific issues, such as inconvenient delivery windows, a new competitor's representative visiting regularly, or a change in their own staff who did not know the products. Many issues are easily fixed.
 
 The following year, customer losses fall from 48 to 31. The satisfaction score barely moves, but the business now knows far more about its largest group of customers than the score ever told it.
+
+```figure
+type: bars
+title: What the silent loss test found
+unit: customers
+caption: About 73% of lost customers had said nothing for a year; most had cut their ordering three to six months before leaving.
+- Customers lost last year | 48
+- *Lost with no complaint, request or survey response | 35
+- Lost the following year, with monthly flags | 31
+```
 
 ## How this applies to a small Australian business
 

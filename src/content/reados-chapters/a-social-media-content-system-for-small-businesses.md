@@ -50,6 +50,19 @@ As your audience grows, you need content more often and more consistently. That 
 
 This creates a small content ecosystem that produces reliable output instead of sporadic posting.
 
+```figure
+type: steps
+title: A seven-step social media system
+caption: Run social media as a system, judged on business outcomes rather than likes.
+- Set clear goals
+- Know the audience; organise the workflow
+- Listen
+- Decide what and how much to post
+- Audit regularly
+- Promote and distribute
+- *Handle customer service
+```
+
 ## Step 3: Listen
 
 Social media listening means paying attention to what your audience, customers and competitors are saying and doing:
@@ -136,6 +149,15 @@ Track three levels of results:
 
 Engagement without return is pleasant but not enough. Connect social media activity to business outcomes using tracked links, enquiry forms that ask "how did you hear about us?" and records of leads by source.
 
+```figure
+type: layers
+title: Three levels of social media results
+caption: Connect social activity to enquiries and sales, not just to reach.
+- Awareness | reach, impressions, follower growth
+- Engagement | comments, shares, saves, clicks
+- *Return | visits, enquiries, leads, sales
+```
+
 ## A worked example: an engineering firm on a professional network
 
 A small engineering design firm wants more enquiries from manufacturers. It sets a goal of ten qualified enquiries a quarter from social media, chooses a professional networking platform as its main channel and plans two posts a week: one short insight or tip, and one project story or behind-the-scenes post.
@@ -143,6 +165,16 @@ A small engineering design firm wants more enquiries from manufacturers. It sets
 The owner and two engineers share the content and comment on industry discussions. Every month, the firm reviews which posts generated profile visits, website clicks and messages. It finds that short videos explaining how a design problem was solved, without revealing client details, perform far better than general company news. It shifts its mix accordingly and adds a monthly newsletter collecting the best posts.
 
 Within two quarters, the firm is receiving its target number of enquiries. Several new clients mention that they had followed the firm's posts for months before getting in touch.
+
+```figure
+type: compare
+title: The engineering firm's professional-network plan
+cols: Plan | What the reviews showed
+caption: The goal of ten qualified enquiries a quarter was met within two quarters.
+- Posts | Two a week: a tip and a project story | Short "how we solved it" videos beat company news
+- Reach | Owner and two engineers share and comment | Clients had followed for months first
+- Review | Monthly: visits, clicks, messages | The mix shifted; a monthly newsletter added
+```
 
 ## Writing posts people actually read
 

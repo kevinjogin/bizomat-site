@@ -80,6 +80,17 @@ Is the content respectful of the reader's time, intelligence and circumstances?
 - Do not trick readers with misleading headlines or hidden sales pitches.
 - Respect privacy: do not demand personal details for basic information.
 
+```figure
+type: checklist
+title: The THINK test before publishing
+caption: Would the reader be better off after reading it, even if they never buy from you?
+- Trustworthy | accurate, balanced, current
+- Helpful | solves a real problem
+- Inspiring | credible examples of progress
+- Necessary | about something that matters
+- *Kind | respects time, intelligence and privacy
+```
+
 ## Where to start: customers' questions
 
 The best content topics come from questions customers actually ask. Collect them from:
@@ -99,6 +110,16 @@ Keep a running list, grouped by stage of the customer's journey:
 | Exploring options | "What are the ways to fix this?" "What do they cost?" | Comparison guides, cost explainers, case studies |
 | Choosing a supplier | "What should I ask suppliers?" "How do I compare quotes?" | Buying guides, specification templates, FAQs |
 | Using the product | "How do I get the best results?" | How-to guides, maintenance guides, videos |
+
+```figure
+type: timeline
+title: Content for each stage of the customer's journey
+caption: The best topics come from questions customers actually ask.
+- Recognising a problem | "Why does this keep failing?" | explainers, diagnostic checklists
+- Exploring options | "What does each fix cost?" | comparison guides, case studies
+- Choosing a supplier | "How do I compare quotes?" | buying guides, specification templates
+- *Using the product | "How do I get the best results?" | how-to and maintenance guides
+```
 
 ### Answer the questions competitors avoid
 
@@ -200,6 +221,15 @@ A small industrial filtration company relies on cold calls and trade shows for n
 The company decides to answer these questions publicly. Over a year, it publishes 24 practical articles, a filter selection guide, a simple calculator estimating the cost of premature filter failure and four short videos showing correct installation. Each piece passes the THINK test: accurate and balanced (including advice on when cheaper filters are adequate), genuinely useful, illustrated with real customer stories, focused on costly problems and written plainly.
 
 Within eighteen months, the articles rank well for many relevant searches, maintenance managers mention them in sales conversations and inbound enquiries have tripled. Several large customers say they chose the company because its content showed it understood their problems.
+
+```figure
+type: stats
+title: The filtration company's year of helpful content
+caption: Customers said they chose the company because its content showed it understood their problems.
+- 24 | practical articles in a year
+- 4 | short installation videos, plus a guide and a calculator
+- 3× | inbound enquiries within eighteen months
+```
 
 ## Common mistakes
 

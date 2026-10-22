@@ -54,6 +54,17 @@ Consider a business that publishes educational videos and sells a training progr
 
 Each ratio points to a different improvement. Ninety per cent of interested subscribers never enquire. Ninety-four per cent of those who enquire do not buy. Ninety-five per cent of buyers do not actively advocate.
 
+```figure
+type: funnel
+title: The five As for an educational video business
+caption: Illustrative figures; the conversion between each stage shows where to focus.
+- Aware | 1,000,000
+- Appeal: subscribed | 100,000 | 10% of aware
+- Ask: enquired | 10,000 | 10% of appeal
+- Act: bought | 600 | 6% of ask
+- Advocate | 30 | 5% of act
+```
+
 A business-to-business example might look like this: 5,000 target companies are aware of an engineering firm, 500 visit its website and engage with content (10%), 100 request a quote (20%), 25 become clients (25%) and 10 refer others or provide testimonials (40%).
 
 ## The most common mistake: spending everything on awareness
@@ -139,6 +150,16 @@ A complementary way to diagnose why customers do not buy is to check four condit
 
 Many businesses assume awareness is the problem and spend accordingly, when the real barrier is acceptability, affordability or accessibility. Mapping these four conditions against the five-A stages helps pinpoint the cause. For example, a product with strong appeal but weak action may have an affordability or accessibility problem rather than a sales problem.
 
+```figure
+type: checklist
+title: Four conditions before people buy
+caption: Many businesses assume awareness is the problem when one of the other three is.
+- ? Acceptability | meets needs, functionally and emotionally
+- ? Affordability | willing and able to pay
+- ? Accessibility | easy to obtain
+- ? Awareness | known and understood
+```
+
 ## Using the framework for a new product launch
 
 Before launching a new product or service, set targets for each stage and plan activities to achieve them:
@@ -168,6 +189,17 @@ Calculate the ratios between stages, look for the weakest link, and focus improv
 An industrial cleaning equipment supplier runs the five-A analysis on a year of data. Around 4,000 facility managers in its region are aware of the brand, through trade shows, advertising and its sales team. About 600 engage with its content or visit its showroom, an appeal ratio of 15%, which is reasonable. But only 60 request demonstrations or quotes, an ask ratio of 10%, and of those, 30 buy, an act ratio of 50%.
 
 The weakest point is clearly the ask stage: many interested facility managers never request a demonstration. Conversations reveal why. They are unsure whether the equipment suits their sites and worry that a demonstration will lead to high-pressure selling. The supplier adds a short online site-suitability checklist, publishes case studies by facility type and offers no-obligation trial weeks. Over the following year, quote requests double, and because the act ratio holds steady, sales double too, without any increase in advertising spending. The analysis took an afternoon. The improvement came from fixing the one stage where customers were stalling.
+
+```figure
+type: bars
+title: Five-A ratios for an industrial cleaning supplier
+unit: %
+max: 60
+caption: Fixing the ask stage doubled quote requests, and sales doubled with no extra advertising.
+- Appeal: 600 of 4,000 aware | 15
+- *Ask: 60 of 600 engaged | 10 | the stall point
+- Act: 30 of 60 enquiries | 50
+```
 
 ## Frequently asked questions
 

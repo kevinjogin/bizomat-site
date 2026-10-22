@@ -50,6 +50,18 @@ These patterns support practical actions:
 - **Early warning** when a regular customer's orders drop, prompting a call before they leave.
 - **Personal touches**, such as remembering preferences and greeting customers on significant dates where they have shared them and agreed to contact.
 
+```figure
+type: tree
+title: From buying records to action
+caption: A well-kept spreadsheet or basic CRM is enough to start.
+- Who, what, when, how much, how
+  - Reorder reminders | timed to each customer's cycle
+  - Relevant offers | based on what they buy
+  - Stock planning | for predictable demand
+  - *Early warning | a call when orders drop
+  - Personal touches | with consent
+```
+
 ## Using everyday habits creatively
 
 Some of the most effective low-cost marketing comes from noticing small, everyday habits and designing around them.
@@ -143,6 +155,17 @@ Research in behavioural economics and psychology highlights several patterns tha
 
 Use these insights to make decisions easier for customers, never to manipulate them against their interests.
 
+```figure
+type: checklist
+title: Behavioural patterns worth designing for
+caption: Use them to make decisions easier for customers, never to manipulate them.
+- Habit | make reordering easy
+- Defaults | set customer-friendly ones
+- Social proof | evidence from similar customers
+- Loss aversion | frame avoided costs honestly
+- Choice overload | curate clear options
+```
+
 ## A worked example
 
 A regional supplier of farm and garden products keeps simple records of customer purchases in a CRM. After a year, it notices patterns: certain fertilisers are bought on a regular seasonal cycle, many customers buy fencing supplies after storms, and a growing number of enquiries come from small hobby farms rather than large properties.
@@ -150,6 +173,17 @@ A regional supplier of farm and garden products keeps simple records of customer
 It also notices, by talking to staff and checking search trends, increasing interest in water tanks and irrigation efficiency after dry seasons.
 
 The business responds with seasonal reorder reminders, a storm-response stock plan and fast local delivery. It launches a "small acreage" advice service and product bundle for hobby farmers. It also develops expertise and partnerships in water storage and irrigation. Sales grow, customer retention improves, and the business becomes known locally as the place that "knows what you need before you ask".
+
+```figure
+type: compare
+title: The farm supplier's patterns and responses
+cols: Pattern noticed | Response
+caption: It became known as the place that "knows what you need before you ask".
+- Seasons | Fertilisers bought on a regular cycle | Seasonal reorder reminders
+- Storms | Fencing demand after storms | A storm-response stock plan and fast delivery
+- Customers | More hobby farms | A small-acreage advice service and bundle
+- Trends | Water tanks and irrigation after dry seasons | Expertise and partnerships in water storage
+```
 
 ## Frequently asked questions
 

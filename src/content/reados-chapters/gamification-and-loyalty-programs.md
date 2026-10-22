@@ -32,6 +32,19 @@ Games tap into deeply human motivations:
 
 When a customer is close to the next level or reward, they are more likely to return and spend more to reach it. That makes behaviour, and therefore revenue, more predictable.
 
+```figure
+type: tree
+title: Why game mechanics motivate
+caption: Being close to the next level or reward is a powerful reason to return.
+- Motivations
+  - Progress | moving up a level
+  - Achievement | a challenge completed
+  - Reward | a benefit, large or small
+  - Competition | against others or yourself
+  - Status | higher tiers, recognition
+  - *Anticipation | surprise rewards
+```
+
 ## Five building blocks
 
 ### 1. Points or badges for actions and purchases
@@ -77,6 +90,20 @@ A loyalty program is an investment and should earn a return. Design it deliberat
 8. **Measure results.** Compare members' behaviour with non-members and with their own pre-program behaviour, and adjust.
 
 Loyalty programs also improve forecasting. When you know customers' reward cycles and spending patterns, you can predict revenue over the next six to twelve months with more confidence.
+
+```figure
+type: steps
+title: Designing a loyalty program that pays
+caption: A loyalty program is an investment and should earn a return.
+- Define the goal
+- Understand customers | segment by behaviour
+- *Calculate the economics
+- Keep it simple
+- Early rewards within reach
+- Surprise and recognition
+- Use data responsibly
+- Measure against non-members
+```
 
 ## Gamification in business-to-business
 
@@ -165,6 +192,16 @@ Training is one of the most effective internal uses of game mechanics. Long manu
 A regional hardware and trade supplies store wants to increase repeat business from tradespeople, who often split purchases across several suppliers. It introduces a trade loyalty program with three tiers based on quarterly spend. Members earn points on every purchase, redeemable for tools and safety equipment. Higher tiers receive priority ordering, free delivery and invitations to supplier product nights. A quarterly challenge awards bonus points for buying across three product categories, and a referral reward brings in new trade accounts.
 
 The store calculates that rewards will cost about 2% of member sales, funded by higher purchase share and supplier contributions to product nights. After a year, member customers spend significantly more with the store, buy across more categories and refer several new accounts. The store also uses the purchase data to stock what its trade customers actually buy.
+
+```figure
+type: layers
+title: The trade store's loyalty program
+caption: Rewards cost about 2% of member sales, funded by a larger share of purchases and supplier product nights.
+- Every member | points on every purchase, redeemable for tools and safety gear
+- Quarterly challenge | bonus points for buying across three categories
+- Referral reward | for new trade accounts
+- *Higher tiers | priority ordering, free delivery, product nights
+```
 
 ## Summary
 

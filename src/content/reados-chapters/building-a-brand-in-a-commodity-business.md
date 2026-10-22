@@ -55,6 +55,16 @@ Before taking a position, know how much loss the business can absorb without bei
 
 Equally important is the discipline to **cut losses**. Many traders hold losing positions in the hope that prices will recover, and sometimes lose everything. If you bought stock at $100 and the price falls to $80, then $70, holding on hoping for recovery can turn a manageable loss into a disaster. Define in advance the point at which you will exit, a **stop-loss**, and stick to it. Do not marry your position.
 
+```figure
+type: checklist
+title: Risk discipline in a commodity business
+caption: Hedging and derivatives carry their own risks; take specialist advice.
+- Hedge most exposure | one leader's rule of thumb: about 80% hedged, 20% open
+- Know the loss you can bear | e.g. $200,000 without risking survival
+- *Set a stop-loss and keep it | do not marry your position
+- Watch political, currency, counterparty and supply risks
+```
+
 ## Lesson 4: Earn returns through turnover, not just margin
 
 Commodity businesses are often described as low-margin, low-return businesses. Margins on each transaction may indeed be thin, but returns depend on how many times capital is turned over.
@@ -62,6 +72,16 @@ Commodity businesses are often described as low-margin, low-return businesses. M
 > **Return on capital ≈ margin per turn × number of turns per year**
 
 If capital is invested once a year at a 3% margin, the annual return is 3%. If the same capital is turned over ten or twelve times a year, each at a 3% margin, the annual return can be 30% or more, before overheads and financing costs.
+
+```figure
+type: bars
+title: Turnover, not just margin
+unit: % a year
+max: 40
+caption: Before overheads and financing; distributors, wholesalers and retailers work the same way.
+- Capital turned once at a 3% margin | 3
+- *Turned ten to twelve times at 3% | 30 | or more
+```
 
 To increase turnover:
 
@@ -159,6 +179,16 @@ A regional rice and grains trader has operated for twenty years on thin margins,
 The owner makes several changes. He stops speculative stockpiling, matching purchases to confirmed orders and hedging larger contracts through fixed-price agreements. He sets a maximum loss the business can bear on open positions and exits early when prices move against him. He shortens the cash cycle by offering small discounts for prompt payment and reduces stock holding, increasing turnover.
 
 He then launches a branded range of cleaned, graded and sealed rice in consumer-friendly packs, promising consistent quality and no adulteration. Distribution starts in his home district through local grocers, with in-store tastings and simple education about quality. The branded range earns significantly higher margins and loyal repeat customers. Over five years, branded products grow to over half of revenue, profits stabilise and the business becomes far less vulnerable to price swings.
+
+```figure
+type: timeline
+title: A grain trader escapes commodity economics
+caption: Over five years branded products grew past half of revenue, and profits stabilised.
+- Risk | Stop speculative stockpiling | purchases matched to orders; larger contracts fixed-price
+- Loss limit | A maximum loss on open positions | exit early when prices turn
+- Turnover | Shorter cash cycle, leaner stock | small prompt-payment discounts
+- *Brand | Cleaned, graded, sealed packs | sold first through home-district grocers
+```
 
 ## Frequently asked questions
 

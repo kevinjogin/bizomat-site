@@ -75,6 +75,22 @@ Companies known for outstanding service tend to share similar practices. Ten of 
 
 **10. Pre-empt questions.** Use what you know about customers to anticipate their needs: send installation guides before delivery, remind them of service intervals, answer common questions in documentation, and notify them before they have to ask.
 
+```figure
+type: checklist
+title: Ten habits behind outstanding service
+caption: Companies known for great service tend to share these practices.
+- Listen to the customer
+- Be empathetic
+- Create surprise and delight
+- Keep customers updated
+- Hire the right people
+- Be honest
+- Respond quickly
+- Answer the phone
+- *Have an escalation matrix
+- Pre-empt questions
+```
+
 ## Service recovery: turning problems into loyalty
 
 Mistakes happen in every business. How you recover often matters more than the mistake itself. Customers whose problems are resolved quickly and generously can become more loyal than customers who never had a problem. This effect is sometimes called the service recovery paradox.
@@ -90,6 +106,17 @@ A good recovery process:
 5. **Fix the cause** so it does not happen again.
 
 Some businesses also use direct channels such as social media or messaging to respond to complaints quickly. Empowering a small team to respond publicly and resolve issues on the spot can transform how customers see a brand.
+
+```figure
+type: cycle
+title: Service recovery
+caption: How you recover often matters more than the mistake itself.
+- Acknowledge and apologise
+- Fix it fast | front-line authority
+- Compensate proportionately
+- Follow up
+- *Fix the cause
+```
 
 ## Consistent communication across channels
 
@@ -185,6 +212,18 @@ It responds with targeted changes:
 - A shared CRM so that sales, production and service all see the same customer history.
 
 Within a year, complaints fall sharply, repeat orders increase and new customers increasingly arrive through referrals. The products did not change. The experience did.
+
+```figure
+type: compare
+title: The stainless-steel equipment maker's five pain points
+cols: Pain point | Change
+caption: The products did not change; the experience did.
+- Quotes | Two weeks | Acknowledged same day; quoted within five working days
+- Order updates | Dates slipped without warning | Milestone emails and a call if a date is at risk
+- Installation | Unclear requirements | A pre-delivery site checklist
+- Service | Hard to reach after hours | A published line with an after-hours roster
+- Answers | Inconsistent between staff | A shared CRM for all teams
+```
 
 ## Frequently asked questions
 

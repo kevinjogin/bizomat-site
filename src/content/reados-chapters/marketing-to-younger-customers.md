@@ -115,6 +115,19 @@ The same characteristics affect business-to-business marketing and recruitment:
 
 Businesses that communicate authentically, digitally and transparently are better placed both to sell to younger buyers and to attract younger talent.
 
+```figure
+type: tree
+title: What younger customers tend to expect
+caption: Generalisations need care; individuals differ widely within any generation.
+- Younger customers
+  - Digital and mobile first | video, easy mobile buying
+  - Allergic to hard selling | help, inform, show real use
+  - Short attention, deep interest | hook fast, offer depth
+  - Value and values | causes that genuinely connect
+  - Conversation, flexibility, choice | two-way, any channel
+  - *Honesty | admit mistakes quickly
+```
+
 ## Influencers and creators
 
 Many younger customers discover products through creators and influencers they follow, whose recommendations can feel more trustworthy than advertising. For small businesses, partnering with **micro-influencers**, creators with smaller but highly engaged audiences in a specific niche or location, is often more effective and affordable than chasing large celebrities.
@@ -158,6 +171,17 @@ Marketing to younger audiences can feel like guesswork, but it can be measured l
 
 Test different formats, topics and tones, keep what works and drop what does not. Because platforms and habits change quickly, review results at least monthly.
 
+```figure
+type: checklist
+title: Measuring marketing to younger audiences
+caption: Engagement matters more than follower counts; keep what works and drop what does not.
+- Engagement | views, watch time, shares, saves
+- Traffic and enquiries | by platform
+- Conversion and repeat purchase | among younger segments
+- Sentiment | comments and reviews
+- *Cost per result | for paid campaigns
+```
+
 ## Attracting younger employees
 
 The same principles help businesses recruit and retain younger staff, an increasingly important challenge in trades, engineering and manufacturing:
@@ -187,6 +211,18 @@ Employers who communicate authentically and treat younger workers with respect g
 A family-owned bicycle shop notices that younger customers browse in store but buy online. The owners decide to adapt. They start posting short videos showing repairs, tips and local riding routes, presented by a young mechanic in a relaxed, conversational style. They respond to every comment and message. They introduce online booking for servicing, digital payments and a simple website showing stock. They partner with a local cycling group on monthly community rides and a bike recycling program that donates refurbished bikes to people in need.
 
 Within a year, younger customers make up a much larger share of sales, the shop's social following has grown substantially, and several customers say they chose the shop because of its videos and community involvement.
+
+```figure
+type: compare
+title: The bicycle shop meets younger customers where they are
+cols: Before | After
+best: 2
+caption: Several customers said they chose the shop because of its videos and community involvement.
+- Content | None | Short repair, tip and route videos by a young mechanic
+- Conversation | One-way | Every comment and message answered
+- Buying | Browse in store, buy online | Online booking, digital payments, stock online
+- Community | None | Monthly group rides; refurbished bikes donated
+```
 
 ## Frequently asked questions
 
