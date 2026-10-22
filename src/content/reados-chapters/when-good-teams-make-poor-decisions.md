@@ -66,6 +66,18 @@ Groups have real advantages: they pool knowledge, see more options and are more 
 
 Strong teams are particularly vulnerable to the first four, because their identity is built around competence and trust. The better a team believes it is, the harder it can be to notice that its decision process is failing.
 
+```figure
+type: checklist
+title: Why cohesive teams decide badly
+caption: Strong teams are especially exposed to the first four, because their identity rests on getting on.
+- x Holding back doubts
+- x Groupthink
+- x False consensus
+- x Hasty decisions
+- x Polarisation
+- x Diffused effort
+```
+
 ## Three stages of a good decision
 
 It helps to separate three stages:
@@ -75,6 +87,15 @@ It helps to separate three stages:
 3. **Commitment to action**: turning the decision into named responsibilities, timing and follow-through.
 
 Weak teams fail at all three. Strong teams often fail more subtly: they become very good at converging and quietly stop diverging. They decide efficiently but examine too little.
+
+```figure
+type: steps
+title: Three stages of a good decision
+caption: Strong teams often fail subtly: they converge before they have diverged.
+- Divergence | information, interpretations, options
+- Convergence | trade-offs, deciding at the right time
+- *Commitment to action | names, timing, follow-through
+```
 
 ## Design dissent in before you need it
 
@@ -139,6 +160,18 @@ Before signing the purchase contract, the owner reopens the decision with a diff
 The concerns surface quickly. The power upgrade is estimated at about $85,000, and only one customer has committed volume. The team chooses a staged approach: an overflow partnership for six months to prove demand, operator training in the meantime and a decision on the press once two customers have committed. The owner is named as the decision owner, the production manager owns the technical readiness plan and the review date is set.
 
 The team stays close. But the next significant decision follows the same process, starting with the people least likely to speak.
+
+```figure
+type: compare
+title: The $600,000 press decision, made twice
+cols: First meeting | Reopened with a process
+best: 2
+caption: Concerns surfaced quickly: a power upgrade of about $85,000 and only one committed customer.
+- How views were heard | The owner proposed; others nodded | Concerns written independently first
+- Who spoke first | The owner | Production and finance managers
+- Options | Buy the press | Lease, overflow partner or a staged approach
+- Outcome | Unspoken doubts | Six months of overflow work to prove demand first
+```
 
 ## How this applies to a small Australian business
 

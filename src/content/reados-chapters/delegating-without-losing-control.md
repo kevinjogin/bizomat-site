@@ -31,6 +31,17 @@ It helps to name the real reasons owners do not let go:
 
 Each of these has a practical answer. Mistakes are managed with controls, not with the owner's personal attention. Speed improves after the initial investment in teaching. Identity shifts from "doer of everything" to "builder of a business that works". The missing system is solved by documenting the process. The bad experience was abdication, not delegation, and the two are very different.
 
+```figure
+type: compare
+title: Why owners hold on, and the practical answer
+cols: The belief | The answer
+caption: Delegation is not abdication: it hands over an outcome with clear expectations, controls and follow-up.
+- Fear of mistakes | "If I don't check, it goes wrong" | Controls, not personal involvement
+- Speed | "Quicker to do it myself" | Faster after the initial investment in teaching
+- No system | Nothing documented to hand over | Document the process
+- Bad past experience | Work dumped, then failed | That was abdication, not delegation
+```
+
 ## Delegation is not abdication
 
 Abdication means handing someone a task and walking away. Delegation means handing someone authority over a task while remaining **accountable** for making sure they can succeed. The person who delegates is still responsible for the outcome. They have to choose the right person, explain the standard, provide the tools, check progress at the right intervals and step in when needed.
@@ -65,6 +76,18 @@ Examples in a small business:
 - **Stock adjustments:** the storeperson records the adjustment, and a manager reviews it periodically.
 
 Maker–checker does two jobs. It catches errors, because a second look finds mistakes the first person cannot see. It also protects against fraud and pressure, because no single person can move money or release work alone. Crucially, it lets the owner delegate the **doing** while keeping the **approval** of high-risk items, which takes minutes rather than hours.
+
+```figure
+type: tree
+title: Maker and checker in a small business
+caption: A second look catches errors, and separating duties makes fraud far harder.
+- Separate making from checking
+  - Payments | prepared by accounts, approved by the owner
+  - *New supplier bank details | verified by a call to a known number
+  - Quotes above a threshold | pricing and margin checked
+  - Drawings | checked before release
+  - Stock adjustments | reviewed periodically
+```
 
 ## Principle 3: Build routines instead of interruptions
 
@@ -110,6 +133,17 @@ Once the work is consistently right, reporting moves to a routine cadence, such 
 The final sign of mastery is that the delegate can train the next person using the same stages. At this point the capability belongs to the business rather than to any individual, and the original expert is free to move on to higher-value work.
 
 The stages may take days for a simple task or months for a complex one. Skipping stages is the most common cause of delegation failure.
+
+```figure
+type: steps
+title: A five-stage handover
+caption: Reporting reduces as competence is shown; skipping stages is where delegation usually fails.
+- I do, you watch
+- You do, I watch
+- You do, report immediately
+- You do, report routinely
+- *You teach someone else
+```
 
 ## Succession at every level
 

@@ -66,6 +66,16 @@ For a small business, three simple values often work best. For example:
 
 Good values are specific enough to guide decisions. "Excellence" is vague. "We test every drawing before it leaves the office" makes a value concrete.
 
+```figure
+type: steps
+title: Embedding core values
+caption: Values only matter if they shape behaviour; leaders go first.
+- Define three to six values | specific enough to decide with
+- Tell a compelling story | who we are and why
+- Recruit champions | to carry the stories
+- *Set milestones and actions | hiring, recognition, decisions
+```
+
 ## Step 2: Tell a compelling story
 
 Values become memorable when they are embedded in a story about who the organisation is, why it exists and what it is trying to achieve. Write a short, compelling story that explains the organisation's purpose and beliefs, and share it with every team.
@@ -169,6 +179,17 @@ Culture can feel intangible, but it leaves measurable traces:
 
 Review these regularly. When values and measured behaviour diverge, investigate why: unclear expectations, conflicting incentives, poor leadership examples or processes that make the right behaviour hard.
 
+```figure
+type: checklist
+title: Traces culture leaves behind
+caption: When stated values and measured behaviour diverge, investigate the systems that reward the gap.
+- Employee surveys | values understood, safe to speak up?
+- Turnover and absenteeism | especially strong performers
+- Customer feedback | how they are treated
+- Incident and complaint patterns
+- *Behaviour in hard moments
+```
+
 ## Aligning systems with values
 
 Values fail when systems reward the opposite behaviour. If the stated value is "customer first" but sales staff are paid only on volume regardless of customer satisfaction, the system will win. Align:
@@ -200,6 +221,18 @@ A family-owned engineering supplies business has grown to forty staff. The found
 The family agrees that one sibling will be managing director, with the other leading sales, each according to their strengths. They work with staff to define three values: honest advice, reliable supply and helping each other. They write a short story about the business's origins and purpose. They recognise staff who demonstrate the values at monthly meetings, start a quarterly open forum where any employee can raise issues with the managing director, and introduce clear credit and borrowing rules.
 
 Within a year, staff turnover falls, customer complaints decline and the business enters a new market segment without taking on unnecessary debt.
+
+```figure
+type: tree
+title: Values and governance in a family business
+caption: Within a year, staff turnover and complaints fell.
+- The family's changes
+  - One leader | one sibling as managing director, the other leads sales
+  - Three values | honest advice, reliable supply, helping each other
+  - *Visible recognition | values recognised at monthly meetings
+  - A voice for staff | a quarterly open forum
+  - Discipline | clear credit and borrowing rules
+```
 
 ## Frequently asked questions
 

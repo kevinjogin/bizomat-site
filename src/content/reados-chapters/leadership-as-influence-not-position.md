@@ -43,6 +43,17 @@ The first four components are held together by a shared purpose. If a leader's p
 
 All five components matter. Missing any one weakens leadership significantly.
 
+```figure
+type: layers
+title: Five components of leadership
+caption: Missing any one weakens leadership significantly.
+- Personal power | self-leadership, not a title
+- Influence | working with and through others
+- Progressive advancement | improving how the organisation works
+- Community | developing leaders who develop leaders
+- *Common purpose | what holds the other four together
+```
+
 ## Four lessons from high-stakes teams
 
 Management writers have drawn leadership lessons from mountaineering expeditions, including the 1996 Everest disaster, in which several climbers died. Expeditions are high-stakes, team-based projects in which leadership decisions have life-or-death consequences. Four lessons translate well into business.
@@ -80,6 +91,17 @@ Ownership shows in everyday behaviour:
 - They do not say "that's not my job" when the outcome is at risk.
 - They take responsibility for mistakes and fix them.
 - They care about results beyond their own area.
+
+```figure
+type: checklist
+title: Ownership in everyday behaviour
+caption: If one competency separates leaders from managers, it is ownership.
+- Follows through | without being chased
+- Raises problems early | with proposed solutions
+- x Says "that's not my job" | when the outcome is at risk
+- Owns mistakes and fixes them
+- *Cares about results beyond their own area
+```
 
 ## Identifying leaders when hiring and promoting
 
@@ -152,6 +174,17 @@ Statements where you answer "never" or "sometimes", or where others see you diff
 A family-owned manufacturer promotes its best machinist to production supervisor. Within months, morale on the floor falls. The new supervisor, used to excelling individually, redoes others' work, issues instructions without explanation and avoids difficult conversations.
 
 The owner works with the supervisor using the five components. They identify that personal effectiveness, including technical skill and work ethic, is strong, but influence and developing others need work. The supervisor attends a short course on coaching and feedback, holds weekly one-to-ones with each machinist, and is asked to train two people to take over complex setups. The owner also models listening and explains decisions rather than just announcing them. Six months later, the supervisor has gained the team's respect, output has improved and two machinists are developing as future leaders.
+
+```figure
+type: compare
+title: Developing a newly promoted supervisor
+cols: What happened | What helped
+caption: Technical skill and work ethic were strong; influence and developing others needed work.
+- Others' work | Redone by the supervisor | Two people trained to take over complex setups
+- Instructions | Given without explanation | Weekly one-to-ones with each machinist
+- Difficult conversations | Avoided | A short course on coaching and feedback
+- Example set | — | The owner explains decisions and listens
+```
 
 ## Summary
 

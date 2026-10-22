@@ -41,6 +41,16 @@ When people consider a change, they weigh four sets of considerations, often unc
 
 People change when quadrants 1 and 4 together, the benefits of changing and the costs of staying the same, outweigh quadrants 2 and 3, the costs of changing and the benefits of staying the same.
 
+```figure
+type: balance
+title: When people change
+left: For changing
+right: For staying the same
+caption: People change when the left side outweighs the right, in their own judgement.
+- Q1: benefits of changing | Q2: costs of changing
+- Q4: costs of staying the same | Q3: benefits of staying the same
+```
+
 Psychologists use a similar tool, often called a decisional balance, to help people think through difficult choices. Its value for leaders is that it reveals *why* someone is resisting, so you can address the real concern rather than repeating your own reasons more loudly.
 
 Different people are moved by different quadrants. Some respond to the benefits of change. Others focus on its costs. Some are anchored by what they would lose. Others are motivated by the risks of standing still. Your task is to find out which quadrants matter most to each person.
@@ -90,6 +100,17 @@ Finally, help the manager see what staying the same might cost them, honestly:
 - Opportunities like this may not arise again soon.
 
 Present this accurately and respectfully, not as a threat. The aim is to help the person see the full picture, not to pressure them.
+
+```figure
+type: compare
+title: Asking a manager to relocate to Brisbane
+cols: What they may weigh | How to respond
+caption: Ask first which quadrant carries most weight for this person.
+- Q1 Benefits of changing | $110,000 to $130,000; branch manager title | Relocation support and career experience
+- Q2 Costs of changing | Doing everything alone | Two or three hires; head office support; realistic targets
+- Q3 Benefits of staying | Family, friends, schools | Family relocation help; visits home; a review point
+- Q4 Costs of staying | Limited progression | Stated honestly, not as a threat
+```
 
 ### Listening first
 
@@ -204,6 +225,16 @@ A manufacturing business plans to introduce a new digital job-tracking system to
 The production manager talks to each one. She learns that one machinist fears looking incompetent with technology (a cost of changing), another values the speed of handwritten notes (a benefit of staying the same) and a third simply does not see the point.
 
 She addresses each concern. She arranges one-on-one training and pairs the first machinist with a supportive younger colleague. She shows the second how quick-entry buttons make updates as fast as handwriting. For the third, she shares data showing how often lost job cards caused rework and overtime last year, a genuine cost of staying the same. She also highlights a benefit for all of them: no more chasing paperwork at the end of each shift.
+
+```figure
+type: compare
+title: Three machinists, three quadrants
+cols: The concern | The response
+caption: Within two months all three used the job-tracking system, and one championed it.
+- Machinist 1 | Fears looking incompetent (cost of changing) | One-on-one training and a supportive colleague
+- Machinist 2 | Handwriting is fast (benefit of staying) | Quick-entry buttons just as fast
+- Machinist 3 | Sees no point | Last year's rework and overtime from lost job cards
+```
 
 Within two months, all three machinists use the system, and one becomes its strongest advocate.
 

@@ -50,6 +50,18 @@ A crisis produces emotion, blame, speculation and pressure from customers, staff
 
 It can feel mechanical. That is the point.
 
+```figure
+type: cycle
+title: Working the problem, not the emotion
+caption: Mechanical on purpose: it keeps a crisis meeting on facts and decisions.
+- Current state | what we know
+- Immediate threat
+- Assumptions | and how to check them
+- Options
+- *Decision and owner
+- Next review
+```
+
 ## Centralise priorities, decentralise expertise
 
 The strongest crisis responses centralise **priorities** and decentralise **expert problem-solving**. The owner or senior leader sets the objective, decides what level of risk is acceptable and allocates scarce resources. The people who know the technical detail, whether that is the quality lead, the maintenance technician, the IT provider or the bookkeeper, then need freedom to solve problems within those limits.
@@ -64,6 +76,17 @@ This avoids two extremes: chaotic autonomy, where everyone does what they think 
 | Expertise | Where is the best knowledge? | Keep technical decisions close to it |
 
 Trust has to exist before the crisis. A business that routinely overrides its specialists in normal times should not expect them to act with confidence under pressure.
+
+```figure
+type: balance
+title: Centralise priorities, decentralise expertise
+left: Centralise
+right: Decentralise
+caption: Less time and higher stakes justify more direction; keep technical decisions close to the knowledge.
+- What matters most | How to solve it technically
+- Limits and escalation | Decisions within agreed limits
+- Communication to customers and staff | Investigation by specialists
+```
 
 ## Honest information is an operating control
 
@@ -137,6 +160,17 @@ The owner stops and runs the meeting differently. Current state: one complaint, 
 The owner also asks a question the team had never heard: "What do we know that we'd rather not say? Nobody will be penalised for anything shared tonight." After a pause, the production supervisor says the metal detector had been bypassed for part of two shifts earlier in the week during a rush, and the bypass was not logged.
 
 That one piece of honest information changes everything. The investigation now has a likely window. The quality lead traces the bypass period to two days of production, and with the state food authority's guidance, the business recalls those batches rather than a full week's output. The fragment is traced to a worn guard on a mixer.
+
+```figure
+type: timeline
+title: A metal fragment complaint, handled as a system
+caption: Honest information narrowed the recall from a week's output to two days.
+- Thursday | One complaint, one fragment | first instinct: "it can't be from our line"
+- The meeting | Facts, threat, options | hold stock from that day and trace it
+- The question | "What would we rather not say?" | a metal detector bypassed, unlogged
+- *The recall | Two days of batches | with the food authority's guidance
+- The cause | A worn mixer guard
+```
 
 Recovery is handled deliberately. Emergency arrangements end the following Monday. Bypassing the metal detector now requires two people and is logged automatically. The team walks through a recall scenario twice a year. And the owner, reflecting on how close the supervisor came to staying silent, changes how production pressure is discussed: deadlines can be missed with notice, but checks cannot be skipped without a decision from the owner.
 

@@ -30,6 +30,18 @@ Compare what each side experiences:
 
 An interest that is specific, certain and immediate produces sustained effort. One that is general, uncertain and later produces goodwill, and goodwill does not turn up to meetings.
 
+```figure
+type: balance
+title: Losses are concentrated; gains are diffuse
+left: Those who lose
+right: Those who gain
+tilt: left
+caption: A specific, certain, immediate interest produces sustained effort; a diffuse one rarely does.
+- A known role, routine or freedom | A general improvement
+- Certain: it is in the plan | Uncertain: it depends on success
+- Soon, often at the start | Later, once it works
+```
+
 Timing makes it worse. Losses usually land early, because restructures, retired systems and changed routines come first. Gains land late, because they depend on the new way working and people becoming competent at it. So there is often a period, several months long, in which all the costs have been paid and none of the benefits has appeared. During that window, the only visible evidence supports the opposition. Many changes fail there, and the post-mortem blames poor communication.
 
 ## What the current way quietly gives people
@@ -48,6 +60,19 @@ The [helping people accept change](/reados/collections/leading-people-and-change
 1. **What does the current way give people that the new way must reproduce?**
 2. **What are we deliberately removing, and how will we compensate?**
 3. **Are our benefits new, or already partly delivered informally?** If the present arrangement already produces some of the value the plan claims, the change formalises it rather than creates it, and the true benefit is smaller. The [what would have happened anyway](/reados/collections/investment-appraisal-and-business-cases/what-would-have-happened-anyway/) article covers setting a realistic base case.
+
+```figure
+type: matrix
+title: Four forces around any change
+x: Changing → staying the same
+y: Costs → gains
+hot: 2
+caption: The gains from not changing are almost never written down, and are often what holds people back.
+- Gains from changing | the benefits
+- *Gains from not changing | what the current way quietly gives
+- Costs of changing | effort, risk, lost competence
+- Costs of not changing | what happens anyway
+```
 
 Ask someone other than the change's champion to gather the answers, through conversations with the people doing the work. A champion asked to list what the old way does well will tend to list very little.
 
@@ -105,6 +130,17 @@ The design changes:
 - **A realistic benefit.** The forecast improvement in on-time delivery is reduced, because part of it already existed.
 
 Within two months, two supervisors are asking for the approach on their own lines. Overtime falls, and on-time delivery improves, by less than the original plan claimed but by a real amount.
+
+```figure
+type: compare
+title: Redesigning central scheduling around what supervisors lost
+cols: The finding | The design change
+caption: On-time delivery improved by less than first claimed, but by a real amount.
+- Hidden value | Supervisors absorbed breakdowns by swapping work | A daily flexible slot they control
+- Immediate loss | Control and a valued skill | No more Friday-afternoon schedule rebuilds
+- Unfair measures | Output likely to dip in transition | Three months reported, not used in reviews
+- Belief | A plan on paper | One line fully converted first; others visit
+```
 
 ## How this applies to a small Australian business
 

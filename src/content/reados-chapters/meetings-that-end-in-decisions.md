@@ -31,6 +31,18 @@ Many meetings exist out of habit. Before scheduling one, ask what it is for:
 
 If the purpose is only to inform, consider not meeting. If the purpose is unclear, the meeting will probably be unproductive.
 
+```figure
+type: decision
+title: Does this need a meeting?
+question: What is it for?
+caption: If the purpose is unclear, it probably is not ready to be a meeting.
+- Decide | Often a meeting
+- Solve a problem | Often a meeting
+- Coordinate | A short meeting or stand-up
+- *Inform | An email, document or short video
+- Build relationships | A meeting, with that purpose stated
+```
+
 ## Prepare: agenda, pre-reads and the right people
 
 **An agenda with outcomes.** List the topics and, for each, the outcome needed: "decide supplier for steel tube", "agree priority order for Q3 projects", "review customer complaint trend and agree actions". Outcome-focused agendas keep discussion on track.
@@ -104,6 +116,17 @@ No single method suits every meeting. As a rough guide:
 | Operational, management and action-oriented meetings | Outlining |
 
 What matters most is consistency. Choose a method for each recurring meeting, and use it every time.
+
+```figure
+type: compare
+title: Four note-taking methods
+cols: Structure | Suits
+caption: Choose one for each recurring meeting and use it consistently.
+- Cornell | Notes, cue column, summary | Information-heavy sessions and training
+- Mapping | Agenda in the centre, branching topics | Project and planning meetings
+- Charting | A table of sub-topics | Single-topic option reviews
+- *Outlining | Headings and sub-points | Operational and action meetings
+```
 
 ## The action register
 
@@ -182,6 +205,17 @@ The operations manager redesigned it:
 - Notes went out within an hour of the meeting.
 
 Within a month, the meeting fitted comfortably into an hour, decisions were recorded, and overdue actions became visible. Recurring issues, such as late material for the paint line, finally got owners and deadlines. Managers who had dreaded the meeting began to value it, because it got them decisions and support.
+
+```figure
+type: stack
+title: The redesigned weekly operations meeting
+unit: minutes
+caption: Twelve attendees and ninety minutes became six people and under an hour, with notes out within the hour.
+- Action register review | 10
+- Key measures | 10
+- Top three issues needing decisions | 25
+- Coming week's priorities | 10
+```
 
 ## Frequently asked questions
 

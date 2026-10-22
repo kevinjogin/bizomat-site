@@ -53,6 +53,16 @@ Use responsibility charts for tasks. For the decisions that matter, keep a **dec
 | Limits | What thresholds require escalation? |
 | Record | Where is the decision and its reasoning kept? |
 
+```figure
+type: checklist
+title: When accountability actually means something
+caption: An "A" in a spreadsheet gives nobody authority, information or resources.
+- The expected outcome is clear
+- They can influence what decides it
+- The decisions they need are theirs | or have a clear route
+- *Performance and consequences are visible
+```
+
 ## Technical authority and business authority differ
 
 In many businesses, two kinds of authority sit side by side. The person running a job owns coordination, schedule and the customer relationship. A qualified tradesperson, engineer or designer holds technical authority over whether work is safe, compliant and fit for purpose. The owner or a manager holds authority over money and commitments.
@@ -133,6 +143,16 @@ The owner tracks four recurring decisions for a month:
 - Hiring replacement tradespeople: average wait **3 weeks**.
 - Deciding whether to keep a maintenance contract that has lost money for two quarters: on the agenda for **four months** without a decision.
 
+```figure
+type: bars
+title: How long recurring decisions waited for the owner
+unit: days
+caption: A maintenance contract losing money for two quarters sat on the agenda for four months.
+- *Variations over $5,000 | 11 | crews working on without agreed prices
+- Quotes over $50,000 | 6
+- Replacement hires | 21 | about three weeks
+```
+
 The owner builds a one-page decision register:
 
 - **Variations** up to $15,000 are approved by the project manager, provided margin stays above an agreed level; above that, or below the margin, they go to the operations manager within two business days.
@@ -143,6 +163,17 @@ The owner builds a one-page decision register:
 The monthly meeting is redesigned. The first 45 minutes are for decisions, each presented with options. Reports are read beforehand and discussed only by exception. At the first redesigned meeting, the maintenance contract is decided: the business gives notice to renegotiate, with a clear walk-away price.
 
 Three months later, variation approvals take about two days and the owner spends noticeably less time approving routine items and more on the decisions only the owner can make.
+
+```figure
+type: decision
+title: The building services decision register
+question: What kind of decision is it?
+caption: Variation approvals fell from about 11 days to about two.
+- Variation up to $15,000, margin intact | Project manager decides
+- Quote up to $100,000 | Estimating manager, with a checklist
+- Replacement hire within headcount | The relevant manager
+- *Safety, legal or a top-five customer | The owner, regardless of value
+```
 
 ## How this applies to a small Australian business
 

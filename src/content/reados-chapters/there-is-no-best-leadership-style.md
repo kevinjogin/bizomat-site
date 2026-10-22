@@ -45,6 +45,19 @@ Behaviours interact, and some combinations fail:
 
 The question is which behaviours to combine, in what order and with what intensity, for the situation in front of you.
 
+```figure
+type: balance
+title: Behaviours that fail on their own
+left: Alone, it becomes
+right: Paired with
+caption: The question is which behaviours to combine, in what order and with what intensity.
+- Monitoring: surveillance | Problem-solving
+- Vision: an aspiration | Planning
+- Consultation: frustration | Real decision space
+- Delegation: avoidable risk | Capability
+- High expectations: exhaustion | Support
+```
+
 ## Diagnose before you act
 
 Six questions help diagnose what a situation needs:
@@ -68,6 +81,19 @@ The answers point to the response:
 | High uncertainty, reversible decisions | Encourage experiments and learning |
 
 This is not a formula. It is a way to stop leading by habit.
+
+```figure
+type: decision
+title: Diagnose before you act
+question: What does this situation look like?
+caption: Not a formula; a way to stop leading by habit.
+- Unclear task, inexperienced people | Structure, coaching, close feedback
+- Unclear task, experienced people | Involve the experts; clarify the outcome
+- Clear task, weak commitment | Find out why
+- *Clear task, capable people | Delegate with boundaries
+- High consequence, little time | More direction, faster decisions
+- High uncertainty, reversible decisions | Encourage experiments
+```
 
 ## Change the system, not just your behaviour
 
@@ -140,6 +166,16 @@ The owner sits down with the supervisor and works through the diagnosis for each
 The owner also looks at the system. Experienced electricians had no clear authority to make decisions on site, so the supervisor felt he had to approve everything. A simple job brief is introduced, stating the outcome, the standard and what the leading hand may decide without asking. And the owner notices a contradiction in their own leadership: a recent push to put "customers first" while the weekly report still praised only the number of jobs completed. The report is changed to include callbacks and customer feedback.
 
 Three months later, the experienced electricians are staying, the solar work has a working method and the supervisor says he is less stretched, because he is no longer the bottleneck for every decision.
+
+```figure
+type: compare
+title: One supervisor, three situations
+cols: Diagnosis | Response
+caption: A job brief also gave leading hands clear authority, so the supervisor stopped being the bottleneck.
+- Apprentices | Unclear tasks, low experience | Keep the structure and close feedback
+- Experienced electricians | Clear tasks, high capability | Agree outcome, standard and check; delegate
+- Solar and battery work | High uncertainty, reversible | Involve the trained two; small experiments
+```
 
 ## How this applies to a small Australian business
 

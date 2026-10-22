@@ -39,6 +39,15 @@ When someone tries to influence another person, there are three broad outcomes:
 
 Compliance is often enough. Not every routine instruction needs enthusiasm. The mistake is expecting compliance to deliver what only commitment can: judgement, adaptation, problem-solving and cooperation across boundaries. When a change depends on those, the influence approach has to aim for commitment.
 
+```figure
+type: layers
+title: Three outcomes of influence
+caption: Compliance is often enough; commitment matters where judgement and unsupervised effort count.
+- Resistance | arguing, delaying, working around
+- Compliance | doing what was asked, while watched
+- *Commitment | supporting it and using judgement to make it work
+```
+
 Commitment is strongest when people support a decision because it makes sense to them, fits their professional standards or serves an outcome they care about, not merely because they like or fear the person asking.
 
 ## Sources of power and their costs
@@ -82,6 +91,19 @@ Common mismatches cause most influence failures:
 - **Inspiring when people need evidence.** Enthusiasm cannot repair a weak case.
 - **Using logic when the concern is fairness or loss.** Better spreadsheets will not resolve it.
 - **Escalating pressure** after a first attempt fails, without asking why it failed.
+
+```figure
+type: decision
+title: Match the approach to the real reason
+question: Why is this person not on board?
+caption: Most influence failures come from a mismatch, such as consulting when there is no real choice.
+- Not convinced by the facts | Rational persuasion | with evidence they trust
+- They know something you don't | Genuine consultation
+- They fear a loss | Address the loss directly
+- Their interests differ | Negotiate honestly
+- *They cannot act | Remove the constraint
+- Extra effort for a shared goal | Appeal to purpose
+```
 
 ## Participation has to be real
 
@@ -129,6 +151,17 @@ She changes her approach:
 - **Consultation**: the first month's results are reviewed with both teams, and two of their suggestions are adopted.
 
 Three months later, schedule changes have fallen sharply, rush orders are still accepted and priced properly, and maintenance work is no longer interrupted. The owner's authority was not needed again, because the teams had helped design a system that worked for them.
+
+```figure
+type: compare
+title: A frozen production plan without new authority
+cols: Real reason | What changed
+caption: The owner's authority was not needed again; the teams had helped design the system.
+- Sales | Fear of losing rush orders | About 10% of weekly capacity reserved, at a premium
+- Maintenance | Could not see the plan in time | Published three days ahead, windows booked in
+- Supervisors | No priority rule | Orders must take a plan slot or the rush allowance
+- Everyone | Not consulted | First month reviewed; two suggestions adopted
+```
 
 ## How this applies to a small Australian business
 

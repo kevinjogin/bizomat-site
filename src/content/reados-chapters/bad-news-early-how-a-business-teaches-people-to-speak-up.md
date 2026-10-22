@@ -57,6 +57,29 @@ Not all of this comes from fear. The psychologist Irving Janis described how coh
 
 Consider a supplier problem noticed by a supervisor in week two of a job. Raised then, several responses exist: find another supplier, resequence the work, or talk to the customer about dates while it is still a conversation rather than a breach. Raised in week six, perhaps one response remains, and it is the most expensive. Nothing about the problem changed between those dates. The number of options attached to it did. That loss of options is the true cost of latency, and it belongs not to the person who waited but to whoever made waiting sensible.
 
+```figure
+type: svg
+title: Options shrink while a problem waits
+alt: A timeline from week two to week six. In week two, several responses exist: another supplier, resequencing the work or talking to the customer. By week six only the most expensive response remains.
+caption: Nothing about the problem changed between those dates; the number of options did.
+viewbox: 0 0 640 220
+body:
+<path class="ln" d="M60 170H600"/>
+<circle class="fa pulse" cx="120" cy="170" r="9"/>
+<circle class="fi" cx="540" cy="170" r="9"/>
+<text class="txb" x="120" y="200" text-anchor="middle">Week 2</text>
+<text class="txb" x="540" y="200" text-anchor="middle">Week 6</text>
+<rect class="bxa" x="40" y="40" width="160" height="26" rx="4"/>
+<rect class="bxa" x="40" y="72" width="160" height="26" rx="4"/>
+<rect class="bxa" x="40" y="104" width="160" height="26" rx="4"/>
+<text class="tx" x="120" y="58" text-anchor="middle">another supplier</text>
+<text class="tx" x="120" y="90" text-anchor="middle">resequence work</text>
+<text class="tx" x="120" y="122" text-anchor="middle">talk dates early</text>
+<rect class="bx" x="460" y="104" width="160" height="26" rx="4"/>
+<text class="txb" x="540" y="122" text-anchor="middle">most expensive fix</text>
+<path class="la flow" d="M220 117H440"/>
+```
+
 There is a second cost. When owners suspect the picture they receive is unreliable, they compensate by checking everything themselves. It works well enough to become permanent, and the business ends up dependent on one person's direct observation, with all the limits that brings.
 
 ## Four design choices
@@ -67,6 +90,16 @@ You cannot exhort people into early disclosure. A statement that the door is alw
 2. **Do not make the reporter the default owner.** Otherwise every warning is a self-assigned extra job, and people will price it accordingly.
 3. **Guarantee a response within a stated time.** An escalation that disappears without reply teaches more than one met with irritation.
 4. **Judge raising and handling separately.** Recognise the person who raised an issue early, even if the issue itself was not handled well.
+
+```figure
+type: checklist
+title: Four design choices that make bad news travel early
+caption: An open-door statement teaches little; what happens to the last messenger teaches a lot.
+- Separate the report from the fault
+- x Make the reporter the default owner
+- Guarantee a response | within a stated time
+- *Judge raising and handling separately
+```
 
 ## Layers smooth the signal
 
@@ -104,6 +137,16 @@ The owner makes four changes:
 - **Recognition for early warnings** in performance conversations.
 
 Six months later, the number of early warnings raised has risen sharply, which the owner reads as a sign of health, not of worsening operations. On the next two significant problems, the time from first internal knowledge to the owner's knowledge is about a week.
+
+```figure
+type: bars
+title: Time from first internal knowledge to the owner
+unit: weeks
+max: 4
+caption: After "bring me solutions" gave way to an early warning item and replies within two days.
+- Average across the last four surprises | 3.5
+- *Next two significant problems | 1 | about a week
+```
 
 ## How this applies to a small Australian business
 

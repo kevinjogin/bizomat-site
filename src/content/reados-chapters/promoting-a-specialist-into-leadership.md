@@ -28,6 +28,16 @@ A useful old distinction separates three kinds of skill:
 
 A specialist is promoted for technical skill. A team leader's job draws mainly on human and conceptual skill. Technical credibility still matters, because a leader needs to understand the work well enough to recognise risk and ask good questions. But it is no longer the main thing they are paid for. As responsibility grows further, the balance shifts again: judgement, integrity under pressure and the ability to adapt when experience no longer applies become the deciding capabilities.
 
+```figure
+type: venn
+title: Three kinds of skill
+centre: The leader's job
+caption: A specialist is promoted for technical skill; the job draws mainly on the other two.
+- Technical | methods and tools
+- Human | working with and through people
+- Conceptual | how the parts of the business connect
+```
+
 Three demands sit at the centre of the change, and each runs against the grain of a technical career:
 
 1. **Letting go of the how.** A specialist is valued for knowing how to do things. A leader sets what and when, and leaves the how to the people doing the work, partly because a group generates options an individual will not. This is a real loss for someone whose identity rests on expertise, and it helps to name it as one.
@@ -46,6 +56,18 @@ The failure patterns are consistent enough that they should be treated as signs 
 - **Micro-managing**, because the technical detail is the only ground where they still feel sure of themselves.
 
 Each is a retreat to familiar ground. Training alone rarely prevents it, because the underlying problem is that the person has been given no permission to be a beginner. Someone who has been the expert for years, and is suddenly a novice without anyone acknowledging it, will move back to where they are still expert.
+
+```figure
+type: checklist
+title: Signs a new leader is retreating to familiar ground
+caption: Training alone rarely prevents it; the transition needs support like a change of career.
+- x Doing the work instead of leading it
+- x Over-delegating within their own field
+- x Reducing leadership to instructions
+- x Retreating to "real work"
+- x Treating risk, planning and communication as admin
+- x Micro-managing
+```
 
 ## Support the transition like a change of career
 
@@ -114,6 +136,17 @@ Instead, the owner treats it as an unsupported transition and resets it:
 - **An alternative is offered.** The owner also describes a senior technical role, with similar pay and responsibility for technical standards and complex projects, and says either choice is respected.
 
 After three months, the team leader chooses to stay in the leadership role. Escalations reach the owner earlier, and two technicians start handling complex tickets that previously went to the team leader. A year later, the business creates the senior technical role anyway and fills it with another strong technician who did not want to manage people.
+
+```figure
+type: steps
+title: Resetting an unsupported promotion
+caption: A year later, the senior technical role was created anyway, for a strong technician who did not want to manage.
+- Name the transition | a different job; what is not yet expected
+- Reduce the technical load | about 30% for three months, then 15%
+- Arrange a mentor | from another business
+- Measure behaviour | not ticket counts
+- *Offer an alternative | a senior technical role
+```
 
 ## How this applies to a small Australian business
 

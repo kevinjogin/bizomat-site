@@ -30,6 +30,16 @@ Businesses tend to invest in the first and neglect the second. They send promisi
 
 A widely cited rule of thumb suggests that most leadership capability comes from challenging experience on the job, a substantial share from relationships such as bosses, mentors, coaches and peers, and a smaller share from formal training: often expressed as 70, 20 and 10 percent. Treat the numbers as an orientation, not a budget rule. Formal learning still matters, especially for knowledge such as finance, contracts and project methods. But experience dominates, and experience develops people best when it is chosen deliberately and reflected on.
 
+```figure
+type: stack
+title: Where leadership capability tends to come from
+unit: %
+caption: A widely cited rule of thumb, best treated as an orientation, not a budget rule.
+- Challenging experience on the job | 70
+- Relationships: bosses, mentors, coaches, peers | 20
+- Formal training | 10
+```
+
 A practical way to think about development is that people grow when three things are present together:
 
 - **Assessment**: honest information about where they are now, their strengths and their gaps.
@@ -37,6 +47,16 @@ A practical way to think about development is that people grow when three things
 - **Support**: help to make sense of the experience, encouragement and a safety net while they learn.
 
 Most development activities provide one or two of these. The most effective combinations provide all three.
+
+```figure
+type: venn
+title: What makes development work
+centre: Growth
+caption: Most activities provide one or two; the most effective combine all three.
+- Assessment | honest information about now
+- Challenge | stretch beyond current capability
+- Support | help to make sense of it
+```
 
 ## Six practices, from formal to embedded
 
@@ -140,6 +160,17 @@ This is an illustrative example. A 120-person engineering contractor promotes mo
 **Succession.** Two participants are identified as potential successors for the senior project manager role. They attend client meetings, deputise during leave and are introduced to the client's key people.
 
 **Result after two years.** All four project manager vacancies are filled internally, and none of the newly promoted managers leaves in their first year. The tender-to-project handover improvement reduces early-stage rework on new projects. When the senior project manager retires, one successor takes over the client relationship with no disruption.
+
+```figure
+type: compare
+title: The engineering contractor's pipeline, before and after
+cols: Before | After two years
+best: 2
+caption: An 18-month cohort of eight engineers with 360 feedback, coaching, stretch assignments and monthly project manager forums.
+- Vacancies | About a third filled externally | All four filled internally
+- New managers | Two left within a year | None left in their first year
+- Succession | Unplanned | A successor took over a client with no disruption
+```
 
 ## Applying this in an Australian business
 
