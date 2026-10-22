@@ -43,6 +43,18 @@ A useful way to structure the analysis is a chain:
 - The **operating response** is the specific change each owner makes.
 - **Verification** checks whether the driver changed and whether the outcome followed.
 
+```figure
+type: steps
+title: From outcome to drivers
+caption: The total cannot be managed directly; the drivers behind each contribution can.
+- Outcome | the total being managed
+- Contributions | machines, processes, products, sites
+- Drivers | idle hours, set-points, scrap, mix
+- Decision owners | who can change each driver
+- Operating response
+- *Verification | did the driver and the outcome move?
+```
+
 Published research illustrates the approach. A study of water use on Irish dairy farms found that a complex water footprint could be predicted reasonably well from a small set of farm variables, such as grass grown, feed concentrates, imported forage and metered water use. A study of the carbon footprint of a large city's roads broke the total down by life-cycle stage and found that construction materials and maintenance accounted for most of it, which pointed attention towards design, specification and maintenance decisions. The specific results belong to those settings. The method is general: a complex total becomes manageable when it is traced to a few drivers.
 
 ## Building a simple driver tree
@@ -101,6 +113,19 @@ A simple matrix helps decide where to start:
 | High impact | Start here | Work through suppliers, design or partners |
 | Low impact | Quick wins, mainly for engagement | Note and monitor |
 
+```figure
+type: matrix
+title: Prioritise by impact and control
+x: Low → high control
+y: Low → high impact
+hot: 2
+caption: Start where impact is high and the business has direct control.
+- Work through suppliers, design or partners
+- *Start here
+- Note and monitor
+- Quick wins, mainly for engagement
+```
+
 Low-impact actions can matter for culture and engagement, but they should not consume most of the effort.
 
 ## Work upstream where you can
@@ -129,6 +154,18 @@ This is an illustration. A small plastics moulder spends about $180,000 a year o
 
 The owner builds a baseline from a year of electricity bills and two weeks of logging on the main circuits. It shows that presses account for about 55% of use, compressed air about 18%, chillers about 12%, lighting about 5% and offices and other loads about 10%.
 
+```figure
+type: stack
+title: Where the moulder's electricity goes
+unit: %
+caption: About $180,000 a year; the first instinct, lighting, was about 5% of use.
+- *Presses | 55
+- Compressed air | 18
+- Chillers | 12
+- Offices and other loads | 10
+- Lighting | 5
+```
+
 The team traces the large contributions to drivers:
 
 - **Presses**: barrel heaters left on during breaks and long changeovers; many short production runs requiring repeated heat-ups.
@@ -140,6 +177,15 @@ Owners are assigned. The production manager owns a shutdown routine for breaks a
 The business tracks three kinds of measure: total kilowatt-hours (flow), kilowatt-hours per kilogram of good parts (intensity) and leading indicators such as heater-on idle hours, open leak tags and system pressure.
 
 After six months, energy per kilogram of good parts has fallen by about 14%. Output has grown by about 6%, so total electricity use has fallen by about 9%. The lighting upgrade still happens, but later and with a clearer view of its small share. The business reports both the intensity and total figures, so neither hides the other.
+
+```figure
+type: stats
+title: Six months of managing the drivers
+caption: Heaters off during breaks, fewer short runs, leaks fixed, pressures and chiller set-points corrected.
+- −14% | Energy per kilogram of good parts
+- +6% | Output
+- *−9% | Total electricity use
+```
 
 ## How this applies to a small Australian business
 

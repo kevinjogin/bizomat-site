@@ -42,6 +42,16 @@ Others are justified more by long-term position than by quick payback. It helps 
 - **Compliance-driven**: required by rules or customer contracts.
 - **Speculative**: valuable only if particular future conditions arise.
 
+```figure
+type: layers
+title: Four kinds of mitigation investment
+caption: Mitigation can pay its own way, but not always; name which kind each project is.
+- *No-regret | worthwhile under almost any future
+- Strategic | needed to stay competitive
+- Compliance-driven | required by rules or contracts
+- Speculative | valuable only under particular futures
+```
+
 Each deserves a different level of evidence and a different kind of approval. Treat mitigation like any other investment, including all its effects: energy cost, reliability, maintenance, capacity and customer requirements, not only emissions.
 
 ## Preparing in advance or reacting afterwards
@@ -94,6 +104,19 @@ Some investments are neither specific mitigation projects nor specific adaptatio
 - clear decision-making authority during disruption;
 - simple data on how weather and hazards affect operations.
 
+```figure
+type: checklist
+title: Capacity that helps across many risks
+caption: Adaptive capacity rarely shows in a single project's payback, but it reduces vulnerability everywhere.
+- x Cash reserves and access to finance
+- x Insurance reviewed against current hazards
+- x Flexible customer and supplier contracts
+- x Cross-trained staff
+- x Alternative suppliers and routes
+- x Clear authority during disruption
+- *x Data on how weather affects operations
+```
+
 This **adaptive capacity** often does not show up in the payback of any single project, but it reduces vulnerability across the business. Research summarised by Berrang-Ford, Ford and Paterson in 2011 found that adaptation was more often proactive where resources and institutions were stronger, and more often reactive where they were weaker. The same pattern can appear inside a business: well-funded parts prepare in advance, while constrained parts rely on workarounds.
 
 ## Not everything should be defended forever
@@ -130,6 +153,16 @@ The owner adds up what the business is already paying in reactive costs each yea
 | Production lost to flood closures (about three days) | $15,000 |
 | Total | $46,000 |
 
+```figure
+type: stack
+title: What reacting to climate pressures already costs
+unit: $'000
+caption: About $46,000 a year for a 35-person regional food processor.
+- *Heat-related overtime and hired cooling | 22
+- Production lost to flood closures | 15
+- Stock spoiled during heatwaves | 9
+```
+
 The owner then sorts the options:
 
 - **Mitigation, no-regret**: rooftop solar and refrigeration controls costing about $85,000, saving an estimated $19,000 a year in electricity.
@@ -137,6 +170,18 @@ The owner then sorts the options:
 - **Adaptation, create an option**: rather than building flood protection, the business agrees a small annual retainer with a warehouse on higher ground for emergency storage, and sets a trigger: if flood closures exceed five days in any year, it will cost a relocation of dispatch.
 - **Avoid lock-in**: the main roof is due for replacement in two years. The specification will include a heat-reflective finish and structural capacity for additional solar, at modest extra cost.
 - **Adaptive capacity**: the business reviews its insurance against current flood and heat exposure, cross-trains staff for early-morning shifts during heatwaves and agrees with two key customers how deliveries will be handled during closures.
+
+```figure
+type: tree
+title: Five responses, matched to how reversible they are
+caption: Heat measures are expected to cut about $21,700 of $31,000 a year in heat-related costs.
+- The food processor's plan
+  - Mitigation, no-regret | solar and refrigeration controls, about $85,000
+  - *Adaptation, act now | insulation, shading, ventilation, about $60,000
+  - Create an option | a warehouse retainer, not flood works
+  - Avoid lock-in | the roof replacement specification
+  - Adaptive capacity | insurance, cross-training
+```
 
 The first year's results are close to the estimates. More importantly, the business has stopped treating heat and flood as bad luck and started treating them as risks it can plan for, while reducing its own energy use at the same time.
 

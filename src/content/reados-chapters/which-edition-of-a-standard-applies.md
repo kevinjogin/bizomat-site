@@ -35,6 +35,16 @@ It is natural to assume that the newest edition of a standard is always safer an
 - It may change the **test method** or method of demonstration, so evidence produced under one edition does not automatically satisfy an obligation framed around another.
 - It may reorganise clauses, so cross-references in design documents no longer line up.
 
+```figure
+type: balance
+title: Dated and undated references
+left: Dated reference
+right: Undated reference
+caption: The obligation comes from the governing instrument, not from the standard's newest edition.
+- Names a particular edition | Points to the standard without an edition
+- The obligation stays with that edition | It may move when the standard moves
+```
+
 A design that exceeds the requirements of the referenced edition in performance may still fail to demonstrate compliance with it, because what an assessor checks is the demonstration against the named edition, not general quality.
 
 ## How good document control creates the problem
@@ -82,6 +92,15 @@ The practical tool is an **edition register**. It is not a list of standards, bu
 2. **Check for drift.** Where the reference is dated and differs from the current edition, flag the row. If the affected product or asset is being designed, built or is still under warranty, escalate it to the owner promptly.
 3. **Check direction.** For each flagged row, state which edition the design follows and which the evidence follows. If they differ from each other or from the referenced edition, estimate the work needed to close the gap before the next major decision.
 
+```figure
+type: steps
+title: Three checks on an edition register
+caption: Gaps between functions have no owner by default, so every row needs a named person.
+- Read the reference | dated or undated?
+- Check for drift | referenced edition against the current one
+- *Check direction | which edition the design and the evidence follow
+```
+
 ### Keep it current
 
 A register built once and never updated creates false confidence. Review it periodically against the publishers' catalogues and against amendments to the governing instruments, and whenever a new project or contract starts.
@@ -93,6 +112,16 @@ This is an illustration. A small engineering firm designs and installs process e
 A new client operates under a licence condition, and a supply specification, that both reference the previous edition by year. During acceptance, the client's certifier asks for evidence of compliance with that edition. Several test methods differ between the editions, and the firm's evidence was produced using the new methods.
 
 The firm has to obtain a copy of the previous edition, map its requirements against the design, and repeat two tests using the older method. The work takes three weeks and costs about $12,000 in engineering time and testing, and the client's commissioning date slips.
+
+```figure
+type: timeline
+title: When the evidence followed the wrong edition
+caption: About $12,000 in engineering time and testing, three weeks of work, and a commissioning date that slipped.
+- Design | Latest edition, as best practice | the previous edition withdrawn
+- The client | Licence and specification name the previous edition | dated references
+- Acceptance | The certifier asks for evidence | to the previous edition's methods
+- *Recovery | Old edition obtained, two tests repeated | three weeks, about $12,000
+```
 
 Afterwards, the firm makes three changes:
 
@@ -143,6 +172,16 @@ If you have never tracked editions, a short, focused start is enough:
 2. **Week 2:** for each, identify the governing instruments and specifications, and read the actual references to standards.
 3. **Week 3:** record the referenced edition, the current edition, the edition your design follows and the edition your evidence follows.
 4. **Week 4:** for any gaps, estimate the work to close them, update quotation and contract wording, and set a review date.
+
+```figure
+type: timeline
+title: A first-month plan for edition control
+caption: Start with the five products, services or assets where a compliance failure would cost the most.
+- Week 1 | List the costliest five
+- Week 2 | Read the actual references
+- Week 3 | Record four editions | referenced, current, design, evidence
+- *Week 4 | Close the gaps | quotations, contracts, a review date
+```
 
 Extend the register to other products and customers over the following months. Keep the register somewhere everyone involved in quoting, design and compliance can see it, and add a step to your project start-up checklist to update it for each new job. The aim is not a perfect document but a habit: every time a new obligation appears, someone records which edition it names before work begins.
 

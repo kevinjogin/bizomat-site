@@ -50,6 +50,16 @@ Before investing in a recovery idea, work through four questions in order:
 3. **Can the process run reliably?** Will the recovery process cope with variation in the waste, operate for long periods and scale up?
 4. **Does the whole system create net value?** After capital, energy, labour, consumables, transport, quality control and disposal of any remaining residues, is the recovered product genuinely better than the alternative?
 
+```figure
+type: steps
+title: Four questions in sequence
+caption: Technical recovery is not commercial viability; the whole system has to create value.
+- Is value present?
+- Can the constraint be removed?
+- Can the process run reliably?
+- *Does the whole system create net value?
+```
+
 Many recovery ideas fail at the fourth question. A process can recover material technically while losing money or using more energy than it saves.
 
 ## Common misunderstandings
@@ -95,6 +105,19 @@ A useful hierarchy, from most to least preferred, is:
 4. **Recycle** or recover materials.
 5. **Recover energy.**
 6. **Dispose** safely of what remains.
+
+```figure
+type: layers
+title: Prevention often beats recovery
+shape: pyramid
+caption: Work down the list: each level is worth reaching only when the one above is exhausted.
+- *Avoid
+- Reduce
+- Reuse
+- Recycle
+- Recover energy
+- Dispose safely
+```
 
 Recovery projects should compete against prevention and simplification, not be assumed as the natural final step.
 
@@ -149,6 +172,16 @@ Working through the gates:
 - **Market fit:** a local garden centre agrees to stock small timber planters and chopping boards made from offcuts. Two farms will take clean sawdust if it is bagged.
 
 The owner first tackles prevention: better cutting optimisation software reduces offcuts by about 15%. Then the owner separates the dust extraction for untreated timber, sells clean sawdust to the farms at a modest price, and makes small products from offcuts during quieter periods. The biomass heater is deferred, because emissions approvals, storage and handling costs outweigh the heating savings at the business's scale.
+
+```figure
+type: compare
+title: Three ideas for 60 tonnes of timber waste
+cols: Gate that decided it | Outcome
+caption: Disposal had cost about $7,200 a year; better cutting software first reduced offcuts by about 15%.
+- Small products from offcuts | Market fit: a garden centre will stock them | Made in quieter periods
+- Sawdust for animal bedding | Feed consistency: untreated material only | Dust extraction separated; sold to two farms
+- *Biomass heater | Net system value: approvals, storage, handling | Deferred
+```
 
 After a year, disposal costs fall by about half, small product sales cover their labour and add a modest margin, and the business has a credible, specific story to tell customers about reducing waste.
 

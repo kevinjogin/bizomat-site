@@ -30,6 +30,17 @@ A useful EMS answers five questions:
 4. **How will we know?** Checks, records and measures that show whether controls work.
 5. **What changes next?** A regular review that turns evidence into action.
 
+```figure
+type: cycle
+title: Five questions an EMS has to answer
+caption: A plan, do, check, act cycle; ISO 14001 is the international standard, but the questions matter more than the manual.
+- What matters?
+- What will we do about it?
+- Who has to act?
+- How will we know?
+- *What changes next?
+```
+
 Everything else in the system should support one of those questions.
 
 ## How an EMS turns into paperwork
@@ -82,6 +93,16 @@ Environmental data becomes useful for decisions when physical and financial info
 - **Physical information** explains the cause: kilowatt-hours, litres, kilograms, number of skip bins. It tells you what to change.
 - **Financial information** shows the consequence: cost, savings and payback. It tells you which change to fund first.
 
+```figure
+type: balance
+title: Physical and financial information together
+left: Physical
+right: Financial
+caption: Physical figures say what to change; financial figures say which change to fund first.
+- Kilowatt-hours, litres, kilograms, bins | Cost, savings and payback
+- Explains the cause | Shows the consequence
+```
+
 Neither is enough alone. A cost can change because prices moved while nothing physical improved. A physical improvement can be worthwhile even when the saving is modest.
 
 It also helps to separate two kinds of information. **Routine** measures, such as monthly energy use or waste volumes, show trends. **One-off analysis**, such as comparing two compressors or two waste contractors, supports a specific decision. Not every question needs a permanent dashboard; keep a small core of reliable data that one-off analyses can draw on.
@@ -111,6 +132,15 @@ The owner and the workshop supervisor start again with a single register. They l
 For each, they set a simple control inside work that already happens. Solvent storage and spill kit checks are added to the existing weekly maintenance checklist, and waste solvent goes to a licensed collector, with dockets filed. A compressed air leak check is added to the quarterly maintenance list. Offcut sorting bins are set up by the saws.
 
 They then connect physical and financial information. The compressor uses about 30,000 kWh a year. A leak survey suggests leaks account for roughly a quarter of that, about 7,500 kWh. At an illustrative $0.30 per kWh, that is about $2,250 a year. Repairs cost about $600, so the repair pays for itself within a few months. For offcuts, the workshop was emptying two skip bins a month at an illustrative $450 each. By passing usable offcuts to a local hobby group and a firewood supplier, it reduces this to one bin a month, saving about $5,400 a year.
+
+```figure
+type: stats
+title: Two findings from a workshop EMS
+caption: A 140-page template manual went unused; three aspects that mattered did not.
+- 7,500 kWh | Compressed-air leaks | about a quarter of 30,000 kWh
+- $2,250 | Cost of leaks each year | repairs about $600
+- *$5,400 | Saved on skip bins each year | two bins a month down to one
+```
 
 A 30-minute review each quarter looks at the register, the checklist records, energy bills and skip dockets, and decides what to change. After a year, the owner extends the system to purchasing, asking the board supplier about lower-emission panel options and including them in quotes where customers want them.
 

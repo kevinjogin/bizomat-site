@@ -46,6 +46,19 @@ Many environmental outcomes are fixed at the design stage. Design determines:
 - **Packaging and transport efficiency.**
 - **End-of-life options**: reuse, recycling or disposal.
 
+```figure
+type: tree
+title: Where product design sets the outcome
+caption: Most of a product's environmental result is fixed before manufacturing begins.
+- The design decision
+  - Material choice and quantity
+  - Durability and useful life
+  - Repairability
+  - Manufacturing complexity | energy and waste
+  - Packaging and transport efficiency
+  - *End-of-life options | reuse, recycling, disposal
+```
+
 Late fixes are constrained by earlier design decisions, so sustainability needs to enter the design process early. At the same time, avoid assuming that any single attribute settles the question. A longer-lasting product usually helps, but if it requires much more material or energy to make, the overall result depends on how long it actually lasts and how it is used. The level of evidence should match the strength of the claim you want to make.
 
 ## Manufacturing determines credibility
@@ -97,6 +110,18 @@ Some businesses build their positioning around durability, responsible productio
 - The cost structure still allows an acceptable return.
 - Quality holds up as volumes grow.
 
+```figure
+type: checklist
+title: When sustainability can differentiate a business
+caption: If any condition fails, the difference may cost more than it earns.
+- x Customers value it and will pay for part of it
+- x Competitors cannot easily copy it
+- x The promise can be delivered consistently
+- x Claims are supported by evidence
+- x The cost structure still gives a return
+- *x Quality holds up as volumes grow
+```
+
 If these conditions are weak, sustainability may still be worthwhile, as a responsibility, a risk reduction or a requirement of customers and regulators, but it may not be a sufficient basis for competitive advantage. It helps to be clear which role sustainability plays: **differentiation**, a **licence to operate** (something customers or regulators require), or **resilience and risk reduction**. Each role justifies a different level and type of investment.
 
 ## A worked example
@@ -115,6 +140,15 @@ The owner considers four options for reducing waste:
 Analysis shows that most waste comes from part geometry: several large parts leave awkward offcuts on standard sheet sizes. Replacing the laser cutter (option A) would not change that. The owner combines options B and C: nesting software and minor redesigns that let parts fit standard sheets better.
 
 Scrap falls from 18% to about 12%, saving roughly 7.2 tonnes of steel a year. At an illustrative steel price of $1,600 a tonne, that is about $11,500 a year in material, before counting reduced handling and scrap disposal. The owner then adds option D for some remaining offcuts, creating a small product range that customers like.
+
+```figure
+type: stats
+title: Less scrap from 120 tonnes of sheet steel
+caption: At an illustrative $1,600 a tonne, before reduced handling and scrap disposal are counted.
+- 18% → 12% | Scrap rate
+- 7.2 t | Steel saved each year
+- *$11,500 | Material saved each year
+```
 
 Separately, the owner tests product durability: coating thickness, corrosion resistance and weld quality are checked against the claims the business wants to make, and spare parts are offered for the most common wear items. Marketing claims are rewritten to describe specific, supportable facts, such as the coating system used and the availability of spare parts, rather than broad statements about being "eco-friendly".
 

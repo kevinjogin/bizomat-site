@@ -30,6 +30,19 @@ Burden shifting takes several forms:
 - **Across places**: impacts move to a different region or country.
 - **Across time**: a short-term reduction creates a long-term problem, such as a material that is hard to recover at end of life.
 
+```figure
+type: tree
+title: Where a burden can shift to
+caption: A lower-carbon option can move impact rather than remove it.
+- A lower-carbon choice
+  - Other environmental impacts | water, toxicity, land use
+  - Performance | life, strength, efficiency
+  - Life-cycle stages | use or end of life
+  - Boundaries | outsourced to a supplier
+  - Places | another region or country
+  - *Time | a long-term problem
+```
+
 None of these is automatically wrong. Some trade-offs are worth making. The problem is hidden trade-offs that nobody chose deliberately.
 
 ## What the research shows
@@ -127,6 +140,15 @@ But the functional unit is not a tray. It is a meal delivered to a customer and 
 | C: Fibre tray, improved seal | 1,028 g | 4% | 1,028 ÷ 0.96 ≈ 1,071 g |
 
 Option B, which looked best per tray, is the worst per meal eaten, because extra spoilage outweighs the packaging saving. Option C, a fibre tray with a better seal, is about equal to plastic on carbon per meal eaten, and the business values reducing plastic use, so it proceeds with a pilot of option C. Its burden-shifting statement records that carbon per meal is about the same, plastic use falls, cost per pack rises slightly, and end-of-life outcomes depend on whether customers' local facilities accept the tray, which the business will check before making any claims about it.
+
+```figure
+type: stats
+title: Carbon per meal eaten, not per tray
+caption: The fibre tray with a standard lid looked best per tray but is worst per meal, because more meals spoil.
+- 1,072 g | Plastic tray | 3% spoiled
+- 1,114 g | Fibre tray, standard lid | 8% spoiled
+- *1,071 g | Fibre tray, improved seal | 4% spoiled
+```
 
 The business also asks the tray supplier for evidence that the tray and its coating are suitable for food contact, and confirms its own obligations with its food regulator.
 

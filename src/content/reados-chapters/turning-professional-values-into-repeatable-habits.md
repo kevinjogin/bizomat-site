@@ -90,6 +90,16 @@ The founder defines the intended behaviour: before confirming a delivery date, c
 
 Over a review period, the founder makes ten new commitments. Eight are recorded after the check; two are made informally and entered later. The record therefore shows the new practice was used at the intended point for eight of ten commitments, or 80%.
 
+```figure
+type: bars
+title: New commitments checked before confirming
+unit: %
+max: 100
+caption: The two exceptions were informal conversations away from the record.
+- *Checked at the intended point | 80 | eight of ten
+- Entered later | 20 | two of ten
+```
+
 That figure is an observation about use of the practice, not a measure of the founder's character. The review examines why the other two commitments bypassed it. Both arose during brief conversations away from the usual planning document.
 
 | Part of the review | Illustrative finding | Practical response |

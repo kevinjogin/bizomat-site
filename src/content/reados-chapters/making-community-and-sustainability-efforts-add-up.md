@@ -42,6 +42,16 @@ Reverse the usual order. Instead of collecting activities and then writing a sto
 3. **The initiatives** that serve each outcome.
 4. **Measures** that show whether each outcome is improving.
 
+```figure
+type: layers
+title: Start from outcomes, not activities
+caption: Usually two or three outcomes, chosen where the business has its biggest effects, risks and opportunities.
+- Purpose | how the business creates value
+- *The few outcomes that matter most
+- Initiatives | each serving an outcome
+- Measures | is each outcome improving?
+```
+
 The outcomes that matter most are usually close to the core of the business: the materials a manufacturer uses, the fuel a transport business burns, the packaging a food business sends out, the safety of the people who work there and the relationships with the community around the site. The [from footprint to drivers](/reados/collections/sustainability-and-environmental-management/from-footprint-to-drivers/) article covers finding the few drivers behind an environmental total.
 
 ## Give every initiative a reason to exist
@@ -77,6 +87,17 @@ Then sort each initiative into one of four actions:
 - **Continue and improve**: useful, but needs better design or measurement.
 - **Combine**: overlapping initiatives that would work better as one.
 - **Stop**: weak fit, little difference made, or a better use exists for the same effort.
+
+```figure
+type: decision
+title: Reviewing the set together
+question: What does the review say about this initiative?
+caption: Judge fit, significance, difference made, dependence, capacity and evidence across the whole set.
+- Strong fit, good evidence | Grow
+- Useful but poorly designed | Continue and improve
+- Overlaps another | Combine
+- *Weak fit or a better use exists | Stop
+```
 
 Stopping matters. A set that can only grow is not being managed. The [stopping projects well](/reados/collections/project-sponsors-governance-and-decisions/stopping-projects-well/) article covers ending things cleanly.
 
@@ -133,6 +154,20 @@ Reviewing the eight initiatives against those outcomes:
 - **Office recycling and solar: continue.** Low effort, sensible, no change needed.
 - **Tree-planting morning: stop as a business initiative.** Staff enjoyed it, so it continues as an optional social event, but it is no longer presented as part of the business's environmental effort.
 - **Website page: rewritten** to describe the specific actions and results, removing general claims the business could not support.
+
+```figure
+type: compare
+title: A courier's eight initiatives, reviewed
+cols: Decision | Change
+caption: The initiatives had used about 300 staff hours a year, a third of them on tree planting and the website.
+- Driver safety | Grow | Near-miss reporting; safe-driving recognition
+- Electric van trial | Continue and improve | Define what the trial should show
+- Route optimisation | Added | Routing software to cut kilometres
+- Netball and hospital | Combined | One road-safety program for young drivers
+- Recycling and solar | Continue | No change needed
+- Tree planting | Stop as a business initiative | An optional social event
+- *Website page | Rewritten | Specific actions and results only
+```
 
 A year later, the business can point to fewer, clearer initiatives: kilometres per delivery down after the routing trial was extended to the whole fleet, safety incidents reported and falling, and a community program that local customers recognise.
 
