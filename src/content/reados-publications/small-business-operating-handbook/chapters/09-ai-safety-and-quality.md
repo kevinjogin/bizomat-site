@@ -33,3 +33,42 @@ Assess five dimensions from 1 to 5: factual accuracy, completeness, clarity, pri
 Pick three common uses of AI. Classify data sensitivity, approval level, verification method and stop rule. Share the one-page policy with anyone who may use AI on the business's behalf and revisit it as providers or workflows change.
 
 *KEVOS educational guidance. Review actual provider data handling and current laws before using business information.*
+
+
+## Extended study: professional practice
+
+### Identify what the system can access
+
+Before approving an AI tool, inspect which conversations, files, email, calendars, repositories or business systems it can read and which actions it may take. An assistant drafting a response is different from an automation with permission to send, modify or delete. Apply least privilege: only the data and action rights necessary for the specific workflow. Record the provider, account owner, plan or agreement, retention settings, access controls and business rationale. Revisit these controls when a connector is enabled or when a service changes terms. A well-written prompt cannot override the surrounding access arrangement.
+
+### Classify information before sharing
+
+Use four tiers, with examples. Public: published product information and approved site copy. Internal: general operating procedures, anonymised aggregate figures and draft schedules. Confidential: client agreements, employee files, supplier prices and unreleased designs. Restricted: credentials, identity documents, private banking details and security recovery information. Define acceptable destinations for each tier. Redaction must remove identifiers and indirectly identifying details; replacing a name while preserving a unique order number may still reveal a customer. For sensitive business data, choose approved environments and seek appropriate privacy and contractual advice.
+
+### Prevent fabricated authority
+
+A language model can sound certain when it is wrong. Require source evidence for tax, legal, safety, regulatory or financial statements. A response claiming a law commenced on a particular date should identify the current regulator page and the effective date; a claim about revenue should come from company records rather than an invented benchmark. Separate suggestions from decisions. A suggestion may be assessed and rejected; an approved decision has a named accountable person, evidence and recorded authorisation. Never publish AI-generated testimonials, results or customer stories that did not occur.
+
+### Test difficult and adversarial cases
+
+A realistic evaluation set includes typical examples, missing information, ambiguous instructions, incorrect amounts, conflicting source documents and attempts to induce unauthorised actions. For a quotation generator, try a missing unit, a mismatched drawing revision and a requested rush date that exceeds capacity. The workflow should flag or halt rather than confidently invent a specification. If a connected document contains text instructing the AI to ignore its rules, the system must treat it as untrusted content rather than higher-priority authority. Re-test when models, prompts or data integrations change.
+
+### Build human approval into the workflow
+
+For low-risk drafting, a trained reviewer may confirm factual quality before distribution. For contracts, financial transfers, employment decisions, legal representations and public technical claims, require explicit approval by an authorised or qualified person. Log who reviewed, which source was checked, what changed and when the final output was used. Approval should occur after the complete final output is visible, not be assumed from an earlier request. An efficient system makes review easy while retaining accountability and traceability.
+
+### Know when to stop
+
+Set rejection conditions that cause a workflow to halt: insufficient source data, irreconcilable figures, confidential content outside approved boundaries, unsupported legal claims, critical errors in a test or a request that exceeds the system's authorised scope. Create an incident process that captures what happened, the potential exposure, immediate containment, human owner, affected parties where appropriate and corrective action. Treat repeated corrections as evidence the process needs redesign. Do not accept a weaker quality standard merely because AI generates answers quickly.
+
+### A one-page assurance register
+
+For each AI-assisted activity record purpose, data classification, authorised model or service, integrations, human owner, source-of-truth records, verification steps, approval method, logs, retention requirement, incident contact and next review date. Test at least five real or synthetic cases before production use. Where the tool touches personal information, customer contracts, payroll or regulated subjects, obtain advice tailored to the business. Sound governance is not a thick policy document; it is a set of controls people can follow and demonstrate.
+
+## Primary learning references
+
+- [Australian Government small-business guidance](https://business.gov.au/).
+- [ATO](https://www.ato.gov.au/) for current Australian tax and super requirements.
+- [Fair Work Ombudsman](https://www.fairwork.gov.au/) for employment requirements.
+
+**Study note:** Worked numbers and scenarios are educational illustrations, not actual client records or promises of commercial results.
