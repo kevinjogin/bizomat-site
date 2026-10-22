@@ -36,6 +36,23 @@ The gap leaves spare mental capacity while someone is talking, and the mind fill
 
 This is the opposite of listening to understand. Covey's distinction (listening to understand versus listening to reply) describes exactly what happens when spare capacity is spent preparing our response rather than taking in what is said.
 
+```figure
+type: svg
+title: The speed gap
+alt: Two bars compare how fast people can process speech with how fast others speak. The listener's processing capacity is longer; the spare capacity is filled by planning a reply, judging, drifting and jumping to conclusions.
+caption: Spare capacity while someone talks is usually spent on everything except listening.
+viewbox: 0 0 640 220
+body:
+<rect class="bx" x="40" y="40" width="360" height="34" rx="4"/>
+<text class="txb" x="52" y="62">How fast others speak</text>
+<rect class="bx" x="40" y="96" width="560" height="34" rx="4"/>
+<rect class="bxa grow" x="400" y="96" width="200" height="34" rx="4"/>
+<text class="txb" x="52" y="118">How fast we can process</text>
+<text class="txa" x="500" y="118" text-anchor="middle">spare capacity</text>
+<text class="tx" x="500" y="160" text-anchor="middle">planning a reply · judging</text>
+<text class="tx" x="500" y="182" text-anchor="middle">drifting · jumping ahead</text>
+```
+
 ## What poor listening costs in business
 
 In customer conversations, poor listening is expensive:
@@ -83,6 +100,16 @@ Reflecting the feeling as well as the content can be powerful when appropriate: 
 
 The clearest sign of listening is a follow-up question that builds on the speaker's own words: "You mentioned the team is stretched. What does that look like day to day?" Prepared questions matter, but follow-up questions show you are engaged with *this* conversation, not a script.
 
+```figure
+type: steps
+title: Four practical listening habits
+caption: The clearest sign of listening is a follow-up question that builds on what was just said.
+- Remove distractions | full attention
+- Listen to the end | before responding
+- Summarise and reflect | content and feeling
+- *Ask follow-up questions | built on their words
+```
+
 ## Listening for what is not said
 
 Some of the most important information in a conversation is implicit:
@@ -128,6 +155,17 @@ In the first version, the technician interrupts after a few sentences: "Yes, tha
 In the second version, the technician lets the customer finish, then summarises: "So it's been happening for about two weeks, it's worse in the mornings, and it's affecting the whole office, not just your computer?" The customer adds that it started when they moved offices. That detail points to a network configuration issue rather than a single computer. The technician asks two follow-up questions, identifies the real cause and fixes it that afternoon.
 
 The difference was not technical knowledge. It was listening to the end.
+
+```figure
+type: compare
+title: The same support call, two ways
+cols: Interrupted | Listened to the end
+best: 2
+caption: A summary drew out the office move, which pointed to the network rather than one computer.
+- Response | "Known issue, clear the cache" | A summary of what was heard
+- Detail found | None | It started after an office move
+- Result | Recurring problem; customer looks elsewhere | Network fault found and fixed that afternoon
+```
 
 ## Listening on the phone and on video
 

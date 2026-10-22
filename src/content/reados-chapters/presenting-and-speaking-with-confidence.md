@@ -63,6 +63,17 @@ If you are new to speaking, start with topics you know deeply. When you speak ab
 
 **5. Be positive.** Expect that your audience will understand and value what you have to say. Confidence is contagious.
 
+```figure
+type: steps
+title: The 5 Ps of preparation
+caption: Many experienced presenters rehearse important talks ten or more times.
+- Plan | message and takeaway
+- Prepare | facts and clean slides
+- *Practise | out loud, on your feet
+- Present fully
+- Be positive
+```
+
 ## A structure that engages: attention, relevance, confidence, satisfaction
 
 John Keller's **ARCS** model, developed for instructional design, offers a useful structure for presentations.
@@ -76,6 +87,16 @@ John Keller's **ARCS** model, developed for instructional design, offers a usefu
 **Satisfaction.** Leave the audience feeling their time was well spent: they learned something useful, made progress on a decision or felt inspired.
 
 A simpler way to think about structure is a strong **opening**, a fact-based **body** organised into a few clear points, and a memorable **close** that summarises the key message and states the next step.
+
+```figure
+type: cycle
+title: ARCS: keeping an audience with you
+caption: John Keller's model, developed for instructional design, works for business talks too.
+- Attention | a story or striking fact
+- Relevance | why it matters to them
+- Confidence | facts and evidence
+- *Satisfaction | time well spent
+```
 
 ## Engage the audience
 
@@ -172,6 +193,18 @@ A production manager at a food manufacturer must present a proposal to the board
 This time, she plans around one message: the new line will remove a bottleneck that is costing contracted sales. She opens with a short story about an order the business had to decline last month. She explains relevance in board terms of revenue, margin and customer retention, presents three supporting points with simple charts and keeps the engineering detail in an appendix. She rehearses eight times, including once in front of a colleague from finance, who asks the questions the board is likely to ask. On the day, she arrives early to test the screen, speaks without reading her slides and answers questions calmly, offering to follow up on one detailed cost query.
 
 The board approves the project, and the chair comments on the clarity of the presentation.
+
+```figure
+type: compare
+title: The packaging line proposal, presented twice
+cols: Past board meetings | This time
+best: 2
+caption: The chair commented on the clarity of the presentation, and the project was approved.
+- Message | Dense slides read aloud | One message: a bottleneck costing contracted sales
+- Opening | Straight into detail | A declined order from last month
+- Content | Engineering detail throughout | Three points in board terms; detail in an appendix
+- Preparation | Little | Eight rehearsals, one with a finance colleague
+```
 
 ## Summary
 

@@ -62,6 +62,16 @@ Not understanding something is normal in any language. Asking politely is profes
 
 **Paraphrasing**, repeating back what you understood in your own words, is one of the most useful habits in any workplace, whether or not English is your first language. It catches misunderstandings before they cause mistakes.
 
+```figure
+type: steps
+title: Checking you have understood
+caption: Asking politely is professional, not a weakness; paraphrasing is one of the most effective habits.
+- Ask to repeat | "Sorry, I didn't catch the last part."
+- Ask for another way | "Could you explain that another way?"
+- *Paraphrase | "Just to check: drawings by Friday, is that right?"
+- Confirm in writing | "Can I confirm that in an email?"
+```
+
 ## Apologising and handling mistakes
 
 - "I'm sorry. That was my mistake. I'll fix it today."
@@ -122,6 +132,18 @@ Supporting a colleague who is upset:
 | Asking questions | "Do you have any questions?" "Can I ask a question?" |
 
 **Polite disagreement** is expected and valued in many Australian workplaces. Direct but respectful disagreement, focused on the issue rather than the person, is usually welcome. If speaking up in a group feels uncomfortable, you can raise points with the meeting leader beforehand or afterwards, or put them in writing.
+
+```figure
+type: checklist
+title: Phrases for taking part in meetings
+caption: Polite disagreement is expected and valued in many Australian workplaces.
+- Asking for opinions | "Any thoughts on this?"
+- Agreeing | "That makes sense."
+- *Disagreeing politely | "I see your point, but…"
+- Adding a point | "Just to build on that…"
+- Interrupting politely | "Sorry to interrupt, but…"
+- Checking actions | "So, who's doing what by when?"
+```
 
 ## Phone and video calls
 
@@ -229,6 +251,17 @@ A CNC programmer who moved to Melbourne from Vietnam is highly skilled but rarel
 They agree on a few changes. The manager circulates the agenda a day before, so she can prepare her points. She keeps a notebook of meeting phrases and practises them. The manager asks her directly for her view on technical items, giving her space to answer. She enrols in a workplace English evening course.
 
 Within three months, she regularly contributes in meetings. Her suggestion to change the machining sequence for a high-volume part reduces cycle time by 15 per cent.
+
+```figure
+type: steps
+title: Helping a skilled colleague speak up
+caption: Within three months she contributed regularly; one suggestion cut a part's cycle time by 15%.
+- A private conversation | meetings move fast; worry about mistakes
+- Agenda a day early | time to prepare points
+- A phrase notebook | practised before meetings
+- Asked directly | on technical items, with space to answer
+- *An evening course | workplace English
+```
 
 ## Frequently asked questions
 

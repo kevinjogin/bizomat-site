@@ -75,6 +75,18 @@ You withdraw from the conflict or postpone it.
 
 Everyone has natural preferences, but effective people adapt their style to the situation. A manager might compete on a safety issue, collaborate on a strategic decision, compromise on a scheduling clash, accommodate a long-standing customer's small request and avoid a petty argument that will blow over.
 
+```figure
+type: matrix
+title: Five conflict-handling styles
+x: Cooperativeness: low → high
+y: Assertiveness: low → high
+caption: Thomas–Kilmann model; compromising sits in the middle of both dimensions.
+- Competing, the shark | firm and decisive; risks relationships
+- Collaborating, the owl | both fully satisfied; takes time
+- Avoiding, the turtle | lets emotions cool; issues can fester
+- Accommodating, the teddy bear | gives way; own needs neglected
+```
+
 ## A five-step conflict resolution process
 
 When a conflict needs active resolution, a structured process helps.
@@ -100,6 +112,17 @@ Generate possible solutions together without judging them immediately. You can a
 Evaluate the options and agree on a solution both parties can accept. Be specific about who will do what and by when, and agree how you will review progress.
 
 Throughout, remember three qualities: **calm, patience and respect**. Do not run away from difficult situations. Face them with a plan.
+
+```figure
+type: steps
+title: A five-step conflict resolution process
+caption: Calm, patience and respect throughout.
+- Set the scene | private, acknowledge the disagreement
+- Gather information | listen, ask open questions
+- *Agree on the problem
+- Brainstorm solutions
+- Negotiate and agree | specific and recorded
+```
 
 ## Interest-based negotiation
 
@@ -188,6 +211,16 @@ Two supervisors at a manufacturing plant clash repeatedly over the use of a shar
 The operations manager meets each supervisor individually. One is frustrated that inbound deliveries arrive during her team's loading window. The other complains that outbound loading blocks the dock when his materials arrive. The positions were "my team needs the forklift first". The interests were predictable access to the dock for each team's critical deliveries.
 
 In a joint meeting, the manager sets the scene, confirms the shared problem of unpredictable dock access causing delays for both teams, and invites options. Together they design a dock schedule with fixed windows for inbound and outbound activity, agree to notify suppliers of the delivery windows and assign a second forklift for peak hours. The arguments stop, and dock delays fall for both teams.
+
+```figure
+type: compare
+title: Positions and interests at the loading dock
+cols: Position | Interest
+caption: A fixed dock schedule, supplier delivery windows and a second forklift at peak ended the arguments.
+- Supervisor A | "My team needs the forklift first" | Inbound deliveries not landing in her loading window
+- Supervisor B | "My team needs the forklift first" | Materials arriving without the dock blocked
+- Shared | Arguments at shift changeover | Predictable dock access for both teams
+```
 
 ## Summary
 

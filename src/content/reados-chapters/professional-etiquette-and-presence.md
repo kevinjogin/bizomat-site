@@ -50,6 +50,19 @@ Email is often the first impression a customer or colleague receives. Good email
 
 Read every important email once more before sending, and pause before replying to anything that makes you angry.
 
+```figure
+type: checklist
+title: An email that makes a good first impression
+caption: Pause before replying to anything that annoys you.
+- Clearly titled
+- Properly addressed
+- Polite, even when frustrated
+- Concise | two or three short paragraphs
+- Clear | what you need, by when
+- Error-free | and attachments checked
+- *Properly closed | with contact details
+```
+
 ## Shared workspace etiquette
 
 - **Respect privacy**: knock or ask before entering someone's office or workspace.
@@ -68,6 +81,18 @@ Meetings are where people observe each other most closely. Good practice:
 4. **Come prepared**: read the agenda and papers, and bring what you need.
 5. **Do not interrupt.** Wait for the speaker to finish, then make your point politely. A meeting is a discussion, not an argument.
 6. **Stay on topic.** Respect the agenda and the time available.
+
+```figure
+type: steps
+title: Meeting etiquette
+caption: Meetings are where people observe each other most closely.
+- Be on time
+- Be appropriately presented
+- Silence your phone
+- Come prepared
+- Do not interrupt
+- *Stay on topic
+```
 
 ## Business meal etiquette
 
@@ -202,6 +227,17 @@ Instant messaging and social media blur the line between personal and profession
 A small engineering consultancy notices that it often impresses prospective clients technically but loses some jobs to competitors. Client feedback reveals small but telling issues: late arrivals to meetings, emails with errors and missing attachments, and staff checking phones during presentations.
 
 The consultancy introduces simple standards: arrive five minutes early, phones away in client meetings, every client email proofread and checked for attachments, and a brief dress guide for client meetings and site visits. Senior staff model the standards. Within months, clients comment on the team's professionalism, and the firm's proposal win rate improves.
+
+```figure
+type: compare
+title: Small habits that were costing proposals
+cols: What clients noticed | New standard
+caption: Senior staff modelled the standards, and the proposal win rate improved.
+- Arrival | Late to meetings | Five minutes early
+- Email | Errors and missing attachments | Proofread and attachments checked
+- Attention | Phones out in presentations | Phones away in client meetings
+- Presentation | Inconsistent | A brief dress guide for meetings and sites
+```
 
 ## Summary
 

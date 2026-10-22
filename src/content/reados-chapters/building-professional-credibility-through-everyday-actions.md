@@ -53,6 +53,17 @@ The same discipline applies to personal experience. Helping with a project is di
 
 When evidence is incomplete, say what is known and what you will check. This gives the other person a usable account of uncertainty. It also prevents an estimate from gradually becoming a promise as it passes between people.
 
+```figure
+type: compare
+title: Keep claims proportionate to evidence
+cols: Useful evidence | Clearer boundary
+caption: Say what is known and what you will check; it lets others decide how much to rely on you.
+- "A process is faster" | Comparable completion times | Which work and conditions were compared
+- "A prototype works" | Results of a defined test | What remains untested
+- "A date is achievable" | Capacity and dependencies checked | What the commitment depends on
+- "Relevant experience" | Your precise contribution | Direct experience or related knowledge
+```
+
 ## Make commitments deliberately
 
 A **commitment** is an undertaking that someone else can reasonably plan around. Before giving one, clarify the result, the conditions, the date and who is responsible. A quick agreement can create substantial downstream work if each person has understood it differently.
@@ -99,6 +110,16 @@ This is an illustration. A small Australian design workshop has agreed to prepar
 
 Six assemblies require 18 finishing hours: six multiplied by three. With 12 hours available, the workshop can finish four assemblies under the stated assumptions. The gap is six hours, so the original promise does not fit the current plan.
 
+```figure
+type: bars
+title: Finishing hours for six sample assemblies
+unit: hours
+max: 18
+caption: Three hours each; only four assemblies fit before Friday under the stated assumptions.
+- *Needed: 6 × 3 hours | 18
+- Available before Friday | 12
+```
+
 The founder first confirms the facts with the person doing the work. The calculation should include whether materials are ready and whether checking and packing are already covered elsewhere. There is little value in correcting one optimistic estimate with another that overlooks necessary steps.
 
 The founder then contacts the customer, acknowledges that the date was offered without a complete capacity check and explains the options. Four assemblies could be ready for Friday, with the remaining two later, or the full review could move to a later agreed date. Neither option is imposed as though the customer caused the problem.
@@ -114,6 +135,17 @@ The founder then contacts the customer, acknowledges that the date was offered w
 Suppose the customer needs only four assemblies to evaluate the design and accepts the staged delivery. That resolves this instance, but it does not erase the original error or guarantee that the customer is satisfied. The founder records the revised agreement and follows through on both parts.
 
 The internal review identifies the missing check without treating the finishing specialist as the cause of the delay. The improvement is to confirm production capacity before offering sample dates. Honest communication and a better process work together: one addresses the present problem, and the other addresses how it arose.
+
+```figure
+type: steps
+title: Correcting an unrealistic promise
+caption: Inform before the deadline, so the customer has time to decide.
+- Verify | 18 hours needed, 12 available
+- Own | the date was unchecked
+- Inform | before Friday
+- Agree | four now, two later
+- *Improve | check capacity before offering dates
+```
 
 ## Repair a mistake without making it larger
 

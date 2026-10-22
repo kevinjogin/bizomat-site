@@ -70,6 +70,16 @@ Jennifer Aaker and Andy Smith's book *The Dragonfly Effect* (2010) describes fou
 
 **An example:** a tea brand in India wanted a distinct voice in a crowded category dominated by established brands (focus). It built a long-running campaign around civic awakening, encouraging people to vote, question bureaucracy and support women's rights (attention). The issues resonated with millions who wanted change, and people shared their own stories on social media (engagement). The campaign built strong brand recall and affection (action).
 
+```figure
+type: steps
+title: The Dragonfly Effect's four wings
+caption: Aaker and Smith (2010): a framework for stories that lead somewhere.
+- Focus | one clear goal
+- Grab attention | surprise, visuals, emotion
+- Engage | personal connection
+- *Take action | a clear next step
+```
+
 ## Finding your story
 
 Every business has stories. Look for:
@@ -91,6 +101,15 @@ There is no single right story. Look for what in your journey and your product h
 1. **Situation**: the setting and the character, usually a customer, with a goal.
 2. **Complication**: the problem, obstacle or conflict.
 3. **Resolution**: how the problem was overcome, with the business playing a helpful role, and the result.
+
+```figure
+type: timeline
+title: A business story in three acts
+caption: Make the customer the hero and the business the helpful guide.
+- Situation | A customer with a goal
+- Complication | The problem or obstacle | and why it mattered
+- *Resolution | How it was overcome | the measurable result
+```
 
 ### Case studies
 
@@ -166,6 +185,17 @@ A small engineering firm's website lists its services and equipment, like every 
 It writes a short founding story about how the founder, a toolmaker by background, started the business after seeing small manufacturers struggle to get practical engineering help without paying large-consultancy prices. It publishes three case studies, with client permission: a jig that halved an assembly time, a drawing package that let a manufacturer move production to a new supplier without errors, and a process review that cut scrap by a third. Each includes the customer's challenge, the approach, measurable results and a quote. The firm also shares short videos of its team solving problems on the shop floor.
 
 Enquiries increase, and prospective clients often mention a specific story that resembled their own situation. The stories did what the service list could not: they helped customers see themselves in the firm's work.
+
+```figure
+type: tree
+title: The engineering firm's stories
+caption: Prospective clients began mentioning specific stories when they got in touch.
+- Stories instead of a service list
+  - Founding | a toolmaker helping small manufacturers without large-consultancy prices
+  - Case study | a jig that halved an assembly time
+  - Case study | a drawing package for an error-free supplier change
+  - *Case study | a process review that cut scrap by a third
+```
 
 ## Summary
 

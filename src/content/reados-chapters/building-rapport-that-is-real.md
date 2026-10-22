@@ -94,6 +94,19 @@ Sales training sometimes teaches rapport as a set of techniques. Some are harmle
 
 The common thread is authenticity. Techniques that support genuine interest and respect help; techniques that substitute for them tend to fail.
 
+```figure
+type: balance
+title: What builds rapport and what backfires
+left: Builds rapport
+right: Tends to backfire
+tilt: left
+caption: Techniques that support genuine interest help; techniques that replace it are noticed.
+- Genuine interest and listening | Deliberate mirroring
+- Real common ground | Excessive use of their name
+- Reliability in small things | Flattery and fake familiarity
+- Honesty about limits | Pretending to agree
+```
+
 ## Rapport with different kinds of people
 
 People differ in what makes them comfortable. A few broad patterns are worth noticing, without treating them as rigid categories:
@@ -104,6 +117,17 @@ People differ in what makes them comfortable. A few broad patterns are worth not
 - **Some people value ideas and energy.** Rapport comes from enthusiasm, possibilities and big-picture conversation.
 
 Many personality and communication frameworks describe variations on these themes. Their value is not in labelling people but in reminding you to notice how the other person prefers to communicate, and to adjust. Rapport is easier when you meet people where they are.
+
+```figure
+type: compare
+title: Rapport with different kinds of people
+cols: What they value | What builds rapport
+caption: Broad patterns only; adjust to the person in front of you rather than to a label.
+- Some people | Directness and efficiency | Being concise, prepared and focused on outcomes
+- Others | Relationships and warmth | Personal connection and time to talk
+- Others | Detail and accuracy | Thoroughness, evidence, careful answers
+- Others | Ideas and energy | Enthusiasm and big-picture conversation
+```
 
 ## Rapport under pressure
 
@@ -128,6 +152,16 @@ The consultancy's lead resists the temptation to fill the silence with enthusias
 Two months in, a supplier delay threatens a milestone. She tells the client lead the same day, explains the cause and presents two options. The client lead chooses one and thanks her for the early warning.
 
 By the end of the project, the client lead is the consultancy's strongest advocate within the organisation. Rapport was built not through charm but through attention to how the client preferred to work, reliability in small things and honesty when it mattered.
+
+```figure
+type: timeline
+title: Rapport with a reserved client
+caption: Built through attention to how the client preferred to work, not through charm.
+- Early | Stiff meetings | she noticed detailed questions and a preference for writing
+- Each meeting | Structured written summaries | decisions, risks, open questions
+- Unknowns | "I don't know", then a precise answer next day
+- *Month two | A supplier delay | raised the same day with two options
+```
 
 ## The two-column self-assessment
 

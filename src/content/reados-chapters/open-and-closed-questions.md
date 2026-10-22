@@ -88,6 +88,16 @@ Neither type of question is better. They do different jobs, and good conversatio
 
 This pattern is sometimes called a **funnel** of questions, echoing the sales funnel discussed earlier in this series.
 
+```figure
+type: funnel
+title: A funnel of questions
+caption: Open questions to understand broadly, then narrower ones to confirm and commit.
+- Open questions | understand the situation
+- Probing questions | explore what matters most
+- Closed questions | confirm details
+- *A closed question | agree the next step
+```
+
 ## Probing questions
 
 Between open and closed questions sit probing questions: follow-ups that dig deeper into something the customer has said. They are where much of the real insight emerges.
@@ -150,6 +160,17 @@ A conversation that starts with a string of closed questions ("Do you have a mai
 
 After a good open question, the most useful thing to do is often nothing. Many people find silence uncomfortable and rush to fill it, either by rephrasing the question or suggesting an answer. Allowing a few seconds of silence gives the customer time to think, and the answer that follows is often richer and more honest than the first thing they would have said.
 
+```figure
+type: balance
+title: Open and closed questions do different jobs
+left: Open
+right: Closed
+caption: Neither is better; good conversations use both, in the right order.
+- "What prompted you to look at this now?" | "Is the 14th still the date you need?"
+- Early, exploring needs and concerns | Confirming facts, narrowing options
+- The customer does most of the talking | Agreeing next steps and commitment
+```
+
 ## Questions for difficult moments
 
 Questions are particularly useful when conversations become tense:
@@ -170,6 +191,18 @@ The first opens with closed questions: "Do you currently use scheduling software
 The second opens with: "Tell me about how a new order moves through the workshop." The production manager talks for five minutes. She mentions, almost in passing, that rush orders cause chaos because nobody can see what is already committed. The salesperson probes: "What happens when a rush order comes in?" The manager describes an expensive missed delivery last month. Asked what would be different if this were solved, she says she would stop spending her evenings rearranging the schedule.
 
 By the end, the second salesperson knows the real problem, its cost and its personal impact. His proposal addresses exactly that. The software is the same; the questions made the difference.
+
+```figure
+type: compare
+title: Two salespeople, the same software
+cols: Closed questions first | Open question first
+best: 2
+caption: The software was the same; the questions made the difference.
+- Opening | "Do you use scheduling software?" | "How does a new order move through the workshop?"
+- Answers | "Spreadsheets. About six. It's fine." | Five minutes, revealing rush-order chaos
+- Learned | Almost nothing | The problem, its cost and its personal impact
+- Outcome | Polite but unconvinced | A proposal aimed at exactly that
+```
 
 ## Questions across the four stages
 

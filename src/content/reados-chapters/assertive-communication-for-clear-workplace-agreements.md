@@ -24,6 +24,15 @@ The management text *Australian management essentials* describes assertiveness a
 
 An assertive response states the issue, explains its relevance and identifies the next action or decision. It allows the other person to add information and disagree. Being direct does not require assuming that your first interpretation is correct.
 
+```figure
+type: layers
+title: Passive, assertive and aggressive
+caption: The aim is a more accurate working agreement, not winning.
+- Passive | the need goes unsaid; commitments become unclear
+- *Assertive | the issue, its relevance and the decision needed, stated respectfully
+- Aggressive | outcomes pursued through intimidation
+```
+
 The purpose is a more accurate working agreement. You may reach a compromise, maintain a boundary or discover that a different person must make the decision. A conversation can be handled well even when the requested outcome is unavailable.
 
 ## Prepare the outcome and the boundary
@@ -60,6 +69,17 @@ Avoid hints that depend on the recipient inferring your priority. Mentioning tha
 | Ask someone to communicate better | Specify the update needed and when | The behaviour to change |
 
 After making the request, listen to the answer. If the person cannot meet it, explore the constraint before repeating the same demand. You may need a smaller deliverable, a different sequence or a decision about which priority takes precedence.
+
+```figure
+type: steps
+title: From observation to agreement
+caption: Specific requests can be answered; hints depend on the other person guessing.
+- Observation | something that can be checked
+- Effect | on the work
+- Request | action and deadline
+- Listen | to the answer
+- *Agree or renegotiate | no ambiguity left
+```
 
 ## Decline or renegotiate without leaving ambiguity
 
@@ -119,6 +139,17 @@ Even with that reduced scope, the total is 14 hours. The coordinator therefore b
 | Outline plus two hours of suitable support | 12 coordinator hours, two support hours | Support must be available and briefed |
 
 The decision-maker chooses the deferral after checking that the supplier task can move. The coordinator confirms the revised deliverables and dates with the affected people. The agreement is clear about both the new work and the commitment changed to accommodate it.
+
+```figure
+type: bars
+title: Competing deadlines against 12 available hours
+unit: hours
+max: 18
+caption: Asking what the presentation had to achieve cut it to a two-hour outline; deferral closed the last gap.
+- All three requests as asked | 18
+- Presentation reduced to an outline | 14
+- *Outline plus two supplier hours deferred | 12 | fits capacity
+```
 
 This conversation does not depend on winning an argument. It depends on accurate information, a specific request, alternatives and a decision by someone with authority. If the estimates later change, the coordinator must update the agreement rather than treat the initial calculation as permanent proof of capacity.
 

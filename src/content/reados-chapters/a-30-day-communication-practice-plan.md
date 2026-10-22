@@ -32,6 +32,18 @@ Communication also happens at two levels:
 
 Communication scholar Leonard Shedletsky has described intrapersonal communication using the same elements as communication between people: a source, a receiver, a message, a channel, feedback, an environment, a context and interference. When you rehearse a presentation in your head, criticise yourself after a meeting or calm yourself before a difficult call, you are both sender and receiver.
 
+```figure
+type: tree
+title: Channels and levels of communication
+caption: The plan works on every channel and on both levels, including how you talk to yourself.
+- Communication
+  - Verbal | conversations, meetings, calls
+  - Written | emails, reports, proposals
+  - Non-verbal | posture, expression, tone
+  - Visual | appearance and materials
+  - *Intrapersonal | self-talk, rehearsal, reflection
+```
+
 ## Week 1: Speaking clearly
 
 ### Exercise 1: Talk to the mirror (daily, 5 minutes)
@@ -159,6 +171,16 @@ If someone seems disengaged or uncomfortable, check rather than assume: "I sense
 | Relaxed hands, open posture | Confidence, openness | |
 | Clenched fists, tense jaw | Anger or stress | Concentration |
 
+```figure
+type: checklist
+title: Reading body language carefully
+caption: Some popular claims, such as detecting lies from eye movements, are not supported.
+- Look for clusters | not single signals
+- Know the baseline | how this person usually behaves
+- Consider context and culture
+- *Treat signals as questions | check rather than assume
+```
+
 Some popular claims, such as reliably detecting lies from eye movements, are not well supported by research. Use body language as one source of information among many, never as proof. The article on [words, tone and body language](/reados/collections/communication-and-professional-presence/words-tone-and-body-language/) explores how the three channels work together.
 
 ## Visual communication
@@ -203,6 +225,16 @@ A maintenance planner at a manufacturing plant is technically excellent but stru
 In week one, she records herself explaining the weekly maintenance schedule and counts 23 filler words in two minutes. By the end of the week, after daily practice, she is down to eight. In week two, she starts summarising what others say before responding, which reduces misunderstandings with production supervisors. In week three, she rewrites her weekly maintenance email, cutting it from 600 words to 250 with a clear summary at the top. Supervisors start reading it. In week four, she practises calming self-talk before presenting to senior management.
 
 After a month, her manager notices that she presents with more confidence, and senior managers begin asking her to brief them directly.
+
+```figure
+type: timeline
+title: A maintenance planner's 30 days
+caption: Measured against her own first recording and first email.
+- Week 1 | Speaking clearly | filler words cut from 23 to 8 in two minutes
+- Week 2 | Listening | summarising before responding
+- Week 3 | Writing | the weekly email cut from 600 words to 250
+- *Week 4 | Self-talk | calming self-talk before presenting to senior management
+```
 
 ## Summary
 

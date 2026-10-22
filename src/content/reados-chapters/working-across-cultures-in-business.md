@@ -30,6 +30,18 @@ Etiquette, such as how to greet people or exchange business cards, matters, but 
 
 The same formal process can produce different behaviour in different settings. A risk register may exist in every location of a business, yet in one team people raise emerging problems early, while in another they wait until they are certain, because raising an unresolved problem feels like admitting failure. The process is identical; the quality of information is not.
 
+```figure
+type: tree
+title: Where culture affects delivery
+caption: Etiquette matters, but these five are where projects actually go wrong.
+- Cultural differences in practice
+  - Authority | who may question a specification
+  - Disagreement | open, indirect or unspoken
+  - Uncertainty | how early problems are raised
+  - Relationships | trust before or after commitment
+  - *Time and commitment | what "yes" and a deadline mean
+```
+
 ## Use frameworks to ask questions, not to predict people
 
 Researchers have developed several frameworks that describe how national cultures tend to differ. Geert Hofstede's cultural dimensions, for example, include power distance (how far people accept unequal distribution of power), individualism versus collectivism, and uncertainty avoidance (comfort with ambiguity and risk). Other models distinguish **low-context** communication, where meaning is carried mainly by explicit words, from **high-context** communication, where much of the meaning lies in the relationship, the setting and what is left unsaid.
@@ -67,6 +79,18 @@ Working across cultures does not mean abandoning standards. It means being clear
 | Records and evidence required | Channels and timing of communication |
 
 Being explicit about this separation avoids two opposite mistakes: imposing your own habits everywhere, and relaxing essential standards in the name of cultural sensitivity.
+
+```figure
+type: balance
+title: Standardise the essentials, adapt the rest
+left: Keep consistent
+right: Adapt as needed
+caption: Being explicit avoids both imposing your habits and abandoning standards.
+- Safety, ethics, anti-bribery rules | Directness and communication style
+- Legal and regulatory obligations | Meeting design and participation
+- Specifications and acceptance criteria | How relationships are built
+- Decision rights and records | Feedback, consultation, channels
+```
 
 ## Practical habits that prevent misunderstanding
 
@@ -136,6 +160,17 @@ The owner reflects on the pattern rather than blaming the factory. The business'
 The business makes several changes. It writes a short working agreement with the factory covering weekly video calls, a standard agenda with risks as the first item, a shared holiday calendar and named contacts for production and quality. Each product gets a consolidated specification with annotated photographs and an approved golden sample held by both sides. Instead of asking "Can you hold this tolerance?", the product manager asks the factory to explain how it will measure the dimension and what it would need to hold it. In one such conversation, the quality manager explains that a jig is worn, and the business pays for half of a replacement. The owner visits the factory, meets the production team and spends time getting to know the factory's managers. Lunar New Year is scheduled as a planned gap in production, with stock built beforehand.
 
 Within six months, shipments are arriving on the agreed dates and finish problems have largely disappeared. The factory's contacts begin raising issues before shipment rather than after. The business applies the same lesson at home: its warehouse safety induction, previously a talk followed by "Any questions?", is redesigned around demonstration and observed practice, with key points in pictures, so that understanding is checked by watching people work.
+
+```figure
+type: compare
+title: The furniture business and its overseas factory
+cols: What went wrong | What changed
+caption: Within six months shipments arrived on the agreed dates and the factory raised issues before shipment.
+- Questions | Invited yes or no | "How would you measure this dimension?"
+- Specifications | Spread across emails | One per product, annotated photos, a shared golden sample
+- Schedules | Holidays ignored | A shared holiday calendar
+- Contacts | Only a sales contact | Weekly calls with production and quality, risks first
+```
 
 ## How this applies to a small Australian business
 

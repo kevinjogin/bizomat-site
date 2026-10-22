@@ -30,6 +30,18 @@ The illusion is created by several common gaps:
 
 Good communication means checking each of these steps rather than assuming them.
 
+```figure
+type: funnel
+title: The illusion of communication
+caption: Each step can fail silently; good communication checks them rather than assuming them.
+- Sent
+- Received
+- Read
+- Understood
+- Agreed
+- *Acted on
+```
+
 ## Why email is overused
 
 Email has real strengths. It is asynchronous, leaves a record and allows careful wording. But it has become the default for almost everything, including conversations it handles badly.
@@ -58,6 +70,17 @@ A useful habit is to choose the channel deliberately, based on what the message 
 | Simple updates | Short message | Fast and efficient |
 
 A practical pattern for important matters is **talk, then write**: have the conversation, then send a short written summary of what was agreed. You get the richness of conversation and the clarity of a record.
+
+```figure
+type: decision
+title: Choosing the channel deliberately
+question: What does the message need to do?
+caption: For important matters: talk, then write.
+- Confirm details or create a record | Email or written message
+- Discuss a problem or sensitive news | Phone, video or in person
+- Something urgent | Phone, then confirm in writing
+- *Disagreement or complaint | Conversation first, written summary after
+```
 
 ## Practical steps to improve communication
 
@@ -183,6 +206,18 @@ A small fabrication business receives an email from a customer asking whether a 
 **Version two.** The staff member calls the customer to clarify: which date exactly, what quantity and whether the design is final. They agree on the 8th for a first batch of fifty, subject to drawing approval by the 25th. The staff member then emails a three-line summary confirming the date, the quantity and the approval deadline. The customer replies to confirm.
 
 Version two takes five extra minutes. It prevents a dispute, and it shows the customer that the business is careful and reliable.
+
+```figure
+type: compare
+title: "Early next month": two replies
+cols: "Should be fine" | Call, then confirm
+best: 2
+caption: Five extra minutes prevented a dispute.
+- What the customer heard | The first week | The 8th, first batch of fifty
+- What the workshop heard | Mid-month | The 8th, subject to approval by the 25th
+- In writing | Three words | A three-line summary, confirmed
+- Result | Anger three weeks later | Both sides agreed
+```
 
 ## Communication inside the business
 

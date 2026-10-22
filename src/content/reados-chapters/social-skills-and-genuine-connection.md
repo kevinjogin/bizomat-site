@@ -97,6 +97,17 @@ Many people want to connect but struggle to start conversations. A simple memory
 
 Share as well as ask. A conversation that is all questions feels like an interrogation. Be mindful of privacy: some people prefer not to discuss family, so follow their cues.
 
+```figure
+type: tree
+title: FORD: topics for starting a conversation
+caption: Share as well as ask; a conversation of only questions feels like an interrogation.
+- Conversation starters
+  - Family | where appropriate and welcomed
+  - *Occupation | often the easiest start in business
+  - Recreation | interests and common ground
+  - Dreams | goals, as rapport builds
+```
+
 ## Two useful mental habits
 
 ### Deserve what you want
@@ -110,6 +121,15 @@ Investor Charlie Munger popularised the idea of inversion: instead of asking onl
 - **Goal**: people like and trust me.
 - **Inverted**: what would make people dislike and distrust me? Talking constantly about myself, gossiping, mocking others, breaking promises, never listening.
 - **Inverted again**: so I should listen, be discreet, show respect, keep promises, show empathy and keep a good sense of humour.
+
+```figure
+type: steps
+title: Inverting the problem
+caption: Charlie Munger's inversion: ask what would guarantee failure, then avoid it.
+- Goal | people like and trust me
+- Inverted | what would make them distrust me? gossip, broken promises
+- *Inverted again | listen, be discreet, keep promises, show empathy
+```
 
 ## Influencing by connecting first
 
@@ -186,6 +206,17 @@ Social skills are not the same as extroversion. Many introverts are excellent li
 A newly appointed business development manager at an engineering services firm struggles at industry events. He talks mainly about the firm's capabilities, hands out brochures and rarely gets follow-up meetings.
 
 He changes his approach. He starts conversations by asking people about their current projects and challenges, listens carefully, and only mentions his firm's services when a genuine need appears. He notes names and key details after each conversation, and within two days sends each new contact something useful: an article, an introduction or a short note about an idea they discussed. Over the following months, his contacts begin to invite him to discuss projects, and his meeting conversion rate rises sharply.
+
+```figure
+type: compare
+title: Networking that earned meetings
+cols: Before | After
+best: 2
+caption: Over the following months, contacts began inviting him to discuss projects.
+- Opening | The firm's capabilities | Questions about their projects and challenges
+- Materials | Brochures handed out | Services mentioned only for a genuine need
+- Follow-up | Rare | Something useful within two days
+```
 
 ## Summary
 

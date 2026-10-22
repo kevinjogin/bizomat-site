@@ -53,6 +53,17 @@ Think of a car that looks beautiful but performs poorly. Customers might be attr
 
 One training program summarises the elements of personality as a mnemonic: understanding **people**, managing **external** relationships, having a clear **reason**, being **social**, **observing** and learning, understanding **needs**, attending to **appearance**, continuous **learning**, **internalising** lessons, **thinking** before acting and saying "**yes, I can**". Whatever framework you use, the message is the same: personal brand rests on character and competence, expressed consistently.
 
+```figure
+type: balance
+title: Inner qualities and outer presentation
+left: Internal qualities
+right: External presentation
+caption: A beautiful car that performs poorly attracts buyers once; both dimensions matter.
+- Mindset and self-confidence | Appearance and presence
+- Knowledge, skills, integrity | Speaking and listening
+- Leadership, adaptability | Visible work, online presence, networks
+```
+
 ## Step 1: Define your brand
 
 Before trying to be visible, decide what you want to be known for:
@@ -143,6 +154,18 @@ Personal branding is not only about external visibility. Inside an organisation,
 
 Repeat monthly, adjusting based on what you learn.
 
+```figure
+type: timeline
+title: A thirty-day personal brand plan
+caption: Repeat monthly, adjusting based on what generated useful responses.
+- Days 1–3 | Write the brand statement
+- Days 4–7 | Update your professional profile
+- Days 8–14 | Publish one useful article
+- Days 15–21 | Attend an event; follow up with three people
+- Days 22–28 | Comment, share, help someone
+- *Days 29–30 | Review and plan the next month
+```
+
 ## Measuring progress
 
 Signs that a personal brand is growing include:
@@ -194,6 +217,17 @@ For founders and small business owners, personal brand and business brand are cl
 A final-year mechanical engineering student wants to work in renewable energy but has no industry connections. She writes a well-researched paper on maintenance challenges for small-scale solar installations in regional areas, drawing on interviews with local installers. She publishes a summary on a professional network, sends the paper to engineering managers at three renewable energy companies with a short, respectful note, and attends two industry association events, where she introduces herself and asks about student projects.
 
 One manager invites her to a short paid internship to extend her research. During the internship, she writes two short articles about what she learns, with the company's approval. By graduation, she has a job offer, a network of industry contacts and a reputation as someone who does thorough, practical work.
+
+```figure
+type: steps
+title: From no connections to a job offer
+caption: An illustration of building a reputation for thorough, practical work.
+- A researched paper | maintenance for small regional solar systems
+- Share it | a summary online; the paper to three managers
+- Two industry events | brief introductions
+- A paid internship | two approved articles
+- *Graduation | a job offer and a network
+```
 
 ## Summary
 

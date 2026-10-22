@@ -39,6 +39,28 @@ Good technical setup lets your audience focus on you rather than distractions:
 - **Background**: choose a tidy, uncluttered background that does not distract. Check that nothing confidential is visible.
 - **Connection and notifications**: use a reliable internet connection, close unnecessary applications and silence notifications.
 
+```figure
+type: svg
+title: A simple camera setup
+alt: A person facing a window, with soft light on their face. The camera sits at eye level about an arm's length away, framing from mid-chest up with a little space above the head. An external microphone sits close by.
+caption: Poor sound loses audiences faster than poor video; check the background for anything confidential.
+viewbox: 0 0 640 240
+body:
+<rect class="bx" x="20" y="40" width="80" height="140" rx="4"/>
+<text class="txs" x="60" y="200" text-anchor="middle">window</text>
+<path class="la flow" d="M100 110H200"/>
+<text class="txs" x="150" y="98" text-anchor="middle">light in front</text>
+<circle class="fs" cx="260" cy="80" r="26"/>
+<rect class="bx" x="220" y="110" width="80" height="80" rx="12"/>
+<rect class="bxa" x="450" y="72" width="70" height="40" rx="6"/>
+<text class="txa" x="485" y="134" text-anchor="middle">camera</text>
+<text class="tx" x="485" y="154" text-anchor="middle">at eye level</text>
+<path class="ln dsh" d="M300 92H450"/>
+<text class="txs" x="375" y="84" text-anchor="middle">about an arm's length</text>
+<circle class="fa" cx="330" cy="150" r="8"/>
+<text class="txs" x="345" y="175">external mic</text>
+```
+
 ## Body language on camera
 
 Body language communicates a great deal on screen. Do:
@@ -56,6 +78,18 @@ Avoid:
 - **Looking away from the camera frequently**, for example at notes or other screens.
 
 Practise the do's and don'ts until they become habits.
+
+```figure
+type: balance
+title: On-camera body language
+left: Do
+right: Avoid
+caption: Look into the lens when speaking, not at your own image.
+- Sit or stand upright | Crossed arms
+- Look into the lens | Touching your face or yawning
+- Natural expressions | Swaying or fidgeting
+- Modest gestures in frame | Looking away often
+```
 
 ## Appearance
 
@@ -174,6 +208,18 @@ The owner of a small engineering firm wants to publish short videos explaining c
 He sets up a simple recording space facing a window, with an external microphone and the camera at eye level. Instead of scripting every word, he writes three bullet points per video and rehearses explaining them aloud as if to a client. He watches each recording, noting one improvement each time: looking at the lens, slowing down, smiling at the start and using his hands naturally. He also joins a local speaking club for regular practice.
 
 After ten videos, his delivery is relaxed and conversational. Clients comment that the videos explain things clearly, and several enquiries mention them as the reason for getting in touch.
+
+```figure
+type: compare
+title: From stiff to conversational in ten videos
+cols: First attempts | After ten videos
+best: 2
+caption: Several enquiries mentioned the videos as the reason for getting in touch.
+- Preparation | A full script, read aloud | Three bullet points, rehearsed as if to a client
+- Eye line | Looking away | Into the lens
+- Voice | Monotone | Slower, varied, smiling at the start
+- Practice | None | One improvement per recording, plus a speaking club
+```
 
 ## Summary
 

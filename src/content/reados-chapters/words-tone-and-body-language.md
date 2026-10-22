@@ -37,6 +37,16 @@ The resulting proportions describe how people judged **feelings and attitudes** 
 
 What the research does support is a more modest and still useful point: **when your words say one thing and your tone or body language says another, people tend to believe the tone and body language**, especially about how you feel.
 
+```figure
+type: compare
+title: The 7-38-55 figures, used correctly
+cols: What Mehrabian studied | How it is often misused
+caption: When words and non-verbal signals conflict, people tend to trust the non-verbal.
+- Setting | Single words, judged for feeling | All communication
+- Condition | Words and tone or face in conflict | Any conversation
+- Claim | Which channel decides the attitude read | "93% of meaning is non-verbal"
+```
+
 ## Words
 
 Words carry the content: facts, ideas, proposals, questions. In business conversations, especially technical or commercial ones, words carry most of the substantive meaning.
@@ -91,6 +101,16 @@ Each sends a mixed message. Customers resolve the mixture by trusting the non-ve
 
 The fix is rarely to perform the right body language. It is usually to sort out the underlying feeling. If you are uncertain about a price, prepare until you can explain its value with conviction. If you are short of time, say so honestly and reschedule rather than half-listening.
 
+```figure
+type: venn
+title: Three channels, one message
+centre: Congruence
+caption: Mixed messages are resolved by trusting the non-verbal, so sort out the content and conviction first.
+- Words | clear, accurate, in their language
+- Tone | pace, emphasis, pauses, warmth
+- Body language | posture, eye contact, attention
+```
+
 ## How to manage each channel
 
 The workbook asks "how do we manage or control it?" for each channel. Some practical answers:
@@ -124,6 +144,18 @@ In the first version, the account manager reads a prepared statement quickly, in
 In the second version, she prepares properly. She understands the cost changes behind the increase, has thought about how to soften the impact (a phased introduction, or a longer-term agreement at a fixed rate) and is genuinely comfortable that the new price is fair. On the call, she explains calmly and plainly, pauses to let the customer react and asks how the change affects them. Her words, tone and confidence align.
 
 The message is the same. The customer's response is very different.
+
+```figure
+type: balance
+title: Explaining a price increase, two ways
+left: Unprepared
+right: Prepared
+tilt: right
+caption: The same message drew a very different response once words, tone and confidence aligned.
+- Read quickly from a script | Explained calmly and plainly
+- Apologetic tone, reasons avoided | Cost reasons understood and shared
+- Customer wonders if it is opportunistic | Phasing or a fixed-rate term offered
+```
 
 ## Presentations and group settings
 

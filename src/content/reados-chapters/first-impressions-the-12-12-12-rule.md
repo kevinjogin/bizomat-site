@@ -66,6 +66,15 @@ Good first words tend to be:
 
 For example: "Hi Sam, thanks for making time today. I know the new site has kept you busy, so I'll keep this focused." That is roughly twelve words in the first sentence, and it does several jobs at once.
 
+```figure
+type: steps
+title: The 12 × 12 × 12 rule
+caption: A memorable rule of thumb, not a scientific finding; the numbers are a mnemonic, not measurements.
+- 12 feet | posture, dress for the context, attention
+- 12 inches | eye contact, genuine expression, tidy materials
+- *12 words | warm, appreciative, about them, clear on purpose
+```
+
 ## What the rule gets right, and where it oversimplifies
 
 The 12×12×12 rule is useful because it breaks a vague idea ("make a good impression") into concrete, checkable parts. It reminds people that impressions are formed through several channels, not just words, and that small details carry weight.
@@ -78,6 +87,16 @@ It also oversimplifies in a few ways:
 - **Authenticity matters more than polish.** People are often quick to detect behaviour that feels rehearsed or insincere. A slightly awkward but genuine greeting usually lands better than a polished but empty one.
 
 Used as a checklist for avoidable mistakes, the rule is valuable. Used as a script, it can backfire.
+
+```figure
+type: compare
+title: The rule in other settings
+cols: "12 feet" | "12 inches" and "12 words"
+caption: Many first impressions now happen before anyone meets in person.
+- Video call | Frame, light, background, on time | Expression, eye on the lens, a warm opening
+- Phone | Your voice, unhurried | Smile as you speak; a clear opening line
+- Email | Subject line and sender | Formatting, spelling, a specific first sentence
+```
 
 ## First impressions in different settings
 
@@ -116,6 +135,18 @@ The first arrives five minutes late, apologises vaguely, is still finishing a ph
 The second arrives a few minutes early and waits calmly in reception. She is dressed practically for a factory visit. She greets the manager by name, thanks him for his time and mentions that she read about the company's recent export contract. Her first question is about what that contract means for production. She brings a single page summarising what she understood from the initial phone call, and checks it with him.
 
 Both consultants may be equally capable. Only one has created the conditions for the manager to find out.
+
+```figure
+type: balance
+title: Two consultants, the same morning
+left: Late and generic
+right: Early and prepared
+tilt: right
+caption: Both may be equally capable; only one created the conditions for a good conversation.
+- Five minutes late, finishing a call | A few minutes early, waiting calmly
+- Ten minutes of firm history | Greets by name; mentions the export contract
+- Generic slides | One page checking what she understood
+```
 
 ## Recovering from a poor start
 
