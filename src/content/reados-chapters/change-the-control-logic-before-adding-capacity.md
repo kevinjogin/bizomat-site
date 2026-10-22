@@ -51,6 +51,17 @@ The **governing constraint** is the variable, rule or condition that currently l
 - **Policy**: a rule that restricts the system even though the equipment could do more, such as batch sizes, shift patterns, approval levels or scheduling conventions.
 - **Information**: a decision delayed or degraded because the right information is missing, wrong or late.
 
+```figure
+type: tree
+title: What is really governing output?
+caption: Queues, overtime and missed output look like a lack of capacity; the cause may be a rule or missing information.
+- The governing constraint
+  - Physical | equipment, flow, heat, power
+  - Interface | shift handovers, poor fit
+  - Policy | batch sizes, shifts, approvals
+  - *Information | missing, wrong or late
+```
+
 The remedies differ. Adding equipment does not fix an information constraint. Training does not remove a physical limit. Improving one component does not fix a weak interface. When every part looks capable but the whole still underperforms, look at the interfaces and policies before replacing parts.
 
 ## Where more stops helping
@@ -101,6 +112,18 @@ Before approving significant capacity, work through six stages:
 5. **Find the saturation point** where further operating effort stops paying.
 6. **Rebuild the capital case**, comparing no investment, control and scheduling changes, minor debottlenecking, modular additions, major expansion and different technology, on whole-of-life value.
 
+```figure
+type: steps
+title: A control-before-capacity review
+caption: Compare the investment against control and scheduling changes, not against doing nothing.
+- Define the outcome
+- Map the constraint | peaks, idle time, changeovers
+- Separate controllable from structural
+- Test operating alternatives
+- Find the saturation point
+- *Rebuild the capital case
+```
+
 A strong case for expansion will survive this review. A weak one will not, and the business will have saved its capital.
 
 ## A worked example
@@ -114,6 +137,16 @@ The team regroups production by allergen group, and orders products within each 
 The team also finds that the mixer and air compressor start together after breaks, tripping the supply about twice a week and losing about 45 minutes each time. Staggering start-ups recovers about 1.5 hours a week.
 
 Together, these changes recover about 6.2 of the 8 hours needed. A trial of slightly larger batches on two high-volume products recovers the rest, after checking that mixing quality is unaffected. The second line is deferred, with a trigger to revisit the decision if demand grows by more than about 15%.
+
+```figure
+type: stack
+title: Recovering eight hours a week without a $350,000 line
+unit: hours
+caption: Cleaning water also fell about 43%, from about 8,400 litres a week to 4,800.
+- *Sequencing by allergen group and colour | 4.7
+- Staggered start-ups after breaks | 1.5
+- Slightly larger batches: the rest | 1.8
+```
 
 ## How this applies to a small Australian business
 

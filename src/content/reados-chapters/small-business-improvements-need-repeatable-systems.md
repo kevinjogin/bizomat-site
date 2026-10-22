@@ -51,6 +51,17 @@ Real processes have limits, interactions and changing conditions. You cannot red
 | Enabling improvement | One change makes another possible | Track the connection rather than double-counting gains |
 | Mathematical compounding | Each gain applies to an enlarged base | Use only when the mechanism supports that calculation |
 
+```figure
+type: decision
+title: What kind of improvement is it?
+question: How does the benefit arise?
+caption: Use compounding arithmetic only when the mechanism really enlarges the base each time.
+- Once | One-off | check whether the cause may return
+- Repeatedly | Accumulated | count occasions and benefit per occasion
+- By making another change possible | Enabling | track the link, do not double-count
+- *On an enlarged base | Compounding | 1.01 multiplied 365 times is about 37.78
+```
+
 This distinction protects the practical lesson from an exaggerated promise. A modest recurring improvement can justify attention without being described as a dramatic multiplier.
 
 ## Find the recurring behaviour behind the result
@@ -90,6 +101,16 @@ The new return routine adds one minute at the end of each job, or 40 minutes acr
 | Total preparation time | 240 minutes | 80 minutes |
 | Added return routine | None measured | 40 minutes |
 | Total measured handling time | 240 minutes | 120 minutes |
+
+```figure
+type: bars
+title: Handling time for shared measuring equipment, per 40 jobs
+unit: minutes
+max: 250
+caption: An accumulated time benefit, not exponential growth; the one-off storage setup is excluded.
+- Before: preparation | 240 | six minutes a job
+- *Trial: preparation + return routine | 120 | 80 + 40 minutes
+```
 
 The improvement is an accumulated time benefit, not exponential growth. If the same conditions held for another group of 40 jobs, a similar saving might occur, but that remains an assumption to check. A different job mix or higher equipment demand could change the result.
 

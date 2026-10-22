@@ -26,6 +26,15 @@ A significant move involves three linked transitions:
 - **The operating transition**: processes, layout, systems, staffing and service readiness at the new site.
 - **The value transition**: customers, revenue, reputation and the benefits that justified the move.
 
+```figure
+type: layers
+title: Three transitions, not one
+caption: The move is finished when the value transition is, not when the keys change hands.
+- Physical | premises, fit-out, equipment, the move
+- Operating | processes, layout, systems, staffing
+- *Value | customers, revenue, reputation, benefits
+```
+
 The physical transition is visible and measurable, so it attracts most of the attention. The other two are harder to see and are where most of the value is won or lost. A single plan should show all three and how they depend on each other.
 
 ## Decide what deserves to survive the move
@@ -100,6 +109,15 @@ The owner starts with the four questions. The constraint being removed is worksh
 
 The owner checks the arithmetic. The extra $35,000 a year of rent is covered by about 20 more services a week at an average gross margin of around $35 each, before any growth in bike sales. That is within the planned capacity, so the case holds if the workshop actually reaches it.
 
+```figure
+type: stats
+title: Does the bigger site pay for itself?
+caption: Rent rises from about $60,000 to about $95,000 a year.
+- 45 → 65 | Services a week, planned capacity
+- $35,000 | Extra rent each year
+- *20 a week | Extra services to cover it | at about $35 gross margin each
+```
+
 Applying the seven tests:
 
 - **Customers**: some regulars walk or ride to the old shop. The business tells them three months ahead, offers a pick-up and drop-off service for local repairs for six months, and records which customers follow.
@@ -109,6 +127,16 @@ Applying the seven tests:
 - **Future options**: the electrical layout includes capacity for e-bike charging and a future hire fleet.
 
 At the six-month review, the workshop is averaging about 58 services a week, below the 65 target but rising, and booking waits have fallen to three days. About a fifth of old walk-in customers have not followed, but new customers from the main road more than replace them. The owner decides to keep the local pick-up service, which has become popular, and to recruit one more mechanic to reach the planned capacity.
+
+```figure
+type: bars
+title: Workshop services a week
+max: 70
+caption: Booking waits fell from up to two weeks to three days; about a fifth of old walk-in customers did not follow.
+- Old site capacity | 45
+- *Six months after the move | 58 | rising
+- Target | 65
+```
 
 ## How this applies to a small Australian business
 

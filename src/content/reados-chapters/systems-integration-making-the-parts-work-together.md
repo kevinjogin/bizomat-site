@@ -95,6 +95,17 @@ Do not wait until every package is finished to find out whether they work togeth
 4. **System tests**: the whole system works under realistic conditions, including peak loads, changeovers and failures.
 5. **Operational tests**: real users run the system as part of normal work.
 
+```figure
+type: steps
+title: Test progressively
+caption: Integration found at the end is expensive; build up from parts to real operation.
+- Component tests
+- Interface tests | pairs of parts together
+- Subsystem tests | a whole line
+- System tests | peak loads, changeovers, failures
+- *Operational tests | real users, normal work
+```
+
 Mock-ups, simulations, test environments and staged demonstrations can bring integration learning forward, when problems are cheaper to fix.
 
 ## Keep an interface register
@@ -123,6 +134,17 @@ Many integration problems are created when contracts are written. If each purcha
 - **Hold back part of the payment** until integrated performance is demonstrated, where that is commercially reasonable.
 - **Set out how interface changes are priced and approved.**
 
+```figure
+type: checklist
+title: Putting integration into contracts
+caption: Equipment acceptance is not system acceptance.
+- x Interfaces described in each contract
+- x Cooperation required
+- x System acceptance defined
+- x Payment held until integrated performance
+- *x Interface changes priced and approved
+```
+
 Contract terms are a legal matter, so take advice on the wording. The point here is commercial: if integration is not written into contracts, it is likely to fall to you, at your cost.
 
 ## A worked example
@@ -138,6 +160,18 @@ In a better plan, the owner appoints a systems integrator for the line, in this 
 - **Configuration control**: one current set of layout drawings and settings, with every change checked for its effects on other machines.
 - **Progressive testing**: factory acceptance tests for each machine, then pairwise interface tests on site, then a full line test at rated speed with all products.
 - **Operator involvement**: the production supervisor reviews the layout for cleaning, changeovers and maintenance before it is finalised.
+
+```figure
+type: compare
+title: A sauce filling line, planned twice
+cols: Each supplier owns its machine | An integrator owns the line
+best: 2
+caption: In the first plan, every machine met its specification and the line still could not run.
+- Speeds | Filler and capper mismatched, no buffer | Throughput and buffers in the architecture
+- Data | Labeller could not receive batch codes | Signals and batch data on the interface list
+- Layout | Reject bin inaccessible; panels in the spray zone | Supervisor reviews cleaning and maintenance access
+- Testing | Problems found at commissioning | Factory, pairwise, then full-line tests
+```
 
 Commissioning still finds problems, as it always does, but they are found earlier, owned by someone and fixed within days. The integrator's fees are a small fraction of the cost of the disputes in the first plan.
 

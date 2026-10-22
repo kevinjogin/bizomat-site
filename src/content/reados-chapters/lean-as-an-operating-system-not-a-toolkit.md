@@ -56,6 +56,16 @@ The step that limits output for the whole process is the **constraint**. An hour
 - **Release work to match the constraint**, rather than keeping every step busy.
 - **Measure the whole flow**, not just each department.
 
+```figure
+type: steps
+title: Managing to the constraint
+caption: Spare capacity at a step that is not the constraint can be necessary, not waste.
+- Find the constraint | where work queues longest
+- Protect it | never waiting for material, people or maintenance
+- Release work to match it
+- *Measure the whole flow
+```
+
 The article on [measuring productivity and equipment effectiveness](/reados/collections/lean-and-continuous-improvement/measuring-productivity-and-equipment-effectiveness/) explains how to find the constraint and measure around it.
 
 ## Stability before optimisation
@@ -135,7 +145,40 @@ The team makes connected changes:
 - **Powder coating pickups** increase to three times a week.
 - **Standard work** is written for the most common welding set-ups.
 
+```figure
+type: svg
+title: Six hours of work in fifteen days
+alt: A bar representing about 15 working days of lead time for a typical fabrication job. A thin slice represents about six hours of actual processing; the rest is waiting. The longest queues are labelled: about three days for drawing approval, about four days before welding, and powder coating batched twice a week.
+caption: The rest of the lead time was waiting, mostly at drawing approval and in front of the welder, the constraint.
+viewbox: 0 0 640 170
+body:
+<rect class="fp" x="20" y="50" width="600" height="40" rx="4"/>
+<rect class="fa grow" x="20" y="50" width="8" height="40" rx="2"/>
+<rect class="fs" x="60" y="50" width="120" height="40"/>
+<rect class="fs" x="260" y="50" width="160" height="40"/>
+<text class="txb" x="24" y="38">6 hours of processing</text>
+<text class="tx txs" x="120" y="112" text-anchor="middle">drawing approval</text>
+<text class="tx txs" x="120" y="128" text-anchor="middle">about 3 days</text>
+<text class="tx txs" x="340" y="112" text-anchor="middle">before welding</text>
+<text class="tx txs" x="340" y="128" text-anchor="middle">about 4 days</text>
+<text class="tx txs" x="520" y="112" text-anchor="middle">powder coating</text>
+<text class="tx txs" x="520" y="128" text-anchor="middle">batched twice a week</text>
+<text class="txb" x="620" y="38" text-anchor="end">about 15 working days</text>
+```
+
 After three months, the illustrative results are: lead time down from about 15 to about 8 working days, on-time delivery up from about 70% to about 90%, and work in progress down by around 40%. Laser utilisation falls from about 85% to about 60%, which is acceptable because the laser was never the constraint.
+
+```figure
+type: compare
+title: The fabricator after three months
+cols: Before | After
+best: 2
+caption: Laser utilisation fell, by design, while the whole flow got faster.
+- Lead time | About 15 working days | About 8
+- On-time delivery | About 70% | About 90%
+- Work in progress | Baseline | Down about 40%
+- Laser utilisation | About 85% | About 60%
+```
 
 ## A first 30 days
 

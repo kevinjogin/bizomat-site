@@ -45,6 +45,16 @@ A better approach separates four levels:
 3. **The local path**: the actions each site chooses, based on its own causes and constraints. This should vary where evidence supports it.
 4. **The checking**: how the business verifies that each site's path is credible and its results are real. This should be common.
 
+```figure
+type: layers
+title: Standardise the outcome, not the intervention
+caption: The goal, rules and checks are common; the path varies where evidence supports it.
+- The goal | common
+- The decision rules | common
+- *The local path | varies by site
+- The checking | common
+```
+
 The result is **controlled differentiation**: a shared direction and shared standards, with local choice about how to get there. It sits between a head office that dictates the same solution everywhere and sites that do whatever they like.
 
 ## Averages hide what is happening locally
@@ -135,7 +145,27 @@ The owner compares the two plans, using estimated savings:
 
 The differentiated plan is estimated to save about twice as much a year for $15,000 less, with a simple payback of about 1.2 years compared with about 3.2 years. The remaining $15,000 is held for the metropolitan depot's refrigeration plant, which is due for replacement in three years, when a larger investment, possibly including solar, can be considered.
 
+```figure
+type: bars
+title: Estimated annual saving across three depots
+unit: $'000
+max: 40
+caption: The differentiated plan costs $45,000, not $60,000; simple payback about 1.2 years against 3.2.
+- Uniform plan: solar and LED everywhere | 19
+- *Differentiated plan: each depot's own causes | 38
+```
+
 The owner also sets fair comparisons: electricity per pallet stored, adjusted for hot days, and fuel per delivery, adjusted for distance. Each depot manager reports on their own measures monthly, and the owner checks the overall 15% goal quarterly. The figures are estimates, but the pattern is common: the uniform plan felt fair and achieved half as much.
+
+```figure
+type: compare
+title: Different causes, different paths
+cols: Main cause | Plan
+caption: Comparisons are normalised: electricity per pallet adjusted for hot days, and fuel per delivery adjusted for distance.
+- Metropolitan | Old refrigeration, worn seals, open doors | Controls, door curtains, maintenance: about $18,000 a year
+- First regional | Vehicle fuel | Route planning and driver training: about $14,000
+- Second regional | Leased, no solar roof | Off-peak pre-cooling, controls, tariff: about $6,000
+```
 
 ## How this applies to a small Australian business
 

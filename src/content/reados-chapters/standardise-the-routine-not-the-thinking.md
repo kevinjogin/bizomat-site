@@ -40,6 +40,16 @@ Every recurring process, template, report or meeting should pass three tests:
 2. **Decision relevance**: does the process produce information or control that someone actually uses to make a decision that matters?
 3. **Proportionality**: is the effort proportionate to the size, complexity, risk and reversibility of the work?
 
+```figure
+type: venn
+title: Three tests for every process
+centre: Worth standardising
+caption: Standardise where all three hold; leave the rest to judgement.
+- Repeatability | the task is similar across jobs
+- Decision relevance | someone uses the output
+- Proportionality | effort fits size and risk
+```
+
 A process that fails all three is probably inherited administration rather than useful management. A process that passes only one deserves redesign.
 
 ## What usually benefits from standardising
@@ -128,7 +138,26 @@ The owner applies the three tests and the process value test with the project ma
 - **Six core status fields**: forecast completion against commitment, forecast cost against budget, the top risk, decisions needed, changes since last report and customer issues.
 - **An exceptions-first review meeting**, starting with jobs that are at risk or need decisions.
 
+```figure
+type: layers
+title: Three tiers of job control
+caption: A mandatory core for every job, with depth added only where size and risk justify it.
+- Small jobs under $20,000 | one-page job card; exceptions only
+- Standard jobs up to $150,000 | job card; fortnightly status, six fields
+- *Major jobs | full plan; weekly reporting
+```
+
 After three months, reporting time falls from about 15 hours to about 6 hours a week across the project managers, saving about 9 hours a week. The review meeting shrinks to about 40 minutes and spends most of that time on the three or four jobs that need attention. A cost overrun on a major job is raised in its second week rather than its sixth. The project managers stop maintaining separate spreadsheets for small jobs.
+
+```figure
+type: bars
+title: Weekly reporting effort, before and after
+unit: hours
+max: 16
+caption: The review meeting also shrank from 90 minutes to about 40, spent on the jobs that needed decisions.
+- Before: five project managers | 15 | about three hours each
+- *After three tiers and six fields | 6
+```
 
 ## How this applies to a small Australian business
 

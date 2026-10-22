@@ -28,6 +28,17 @@ A report earns its place only if it improves understanding, prompts a decision o
 4. **What happens if nothing is done?**
 5. **What decision or support is needed, and by when?**
 
+```figure
+type: steps
+title: Five questions a report should answer
+caption: A report is a decision tool, not a record of activity.
+- What has changed?
+- Why has it changed?
+- What outcome is affected?
+- What happens if nothing is done?
+- *What decision is needed, and by when?
+```
+
 This moves reporting from describing activity to enabling intervention. A useful test for every page or metric is: **which decision could this change?** If nobody can answer, it probably belongs in a lower-level working document, not in front of the owner.
 
 Measures also shape behaviour. If people are judged on staying green, they will defend green. If percentage complete matters more than verified results, reported progress will run ahead of real progress. For each measure, ask what behaviour it encourages and whether it can be improved without improving the outcome.
@@ -102,6 +113,18 @@ There is a difference between leaving out detail and leaving out something that 
 | Exceptions | Matters outside agreed tolerances or needing cross-team action |
 | Decisions | Options, recommendation, who decides and by when |
 
+```figure
+type: layers
+title: The front of a report that changes decisions
+caption: Put the most decision-relevant fact on the first page.
+- Outcome | what it is meant to achieve
+- Position | delivery, quality, risk, readiness
+- Movement | what has materially changed
+- Forecast | expected results and confidence
+- Exceptions | outside tolerance or cross-team
+- *Decisions | options, recommendation, who and when
+```
+
 Detailed evidence stays available behind this, for anyone who wants to check it.
 
 ## A worked example
@@ -117,6 +140,18 @@ The owner redesigns the pack:
 - **Decision papers** must state their main finding and recommendation on the first page, and the owner asks a second manager to summarise each significant paper before the meeting.
 
 Within three months, the meeting takes about 90 minutes and typically makes four or five decisions. The dependency map reveals that two improvement projects need the same maintenance technician in the same fortnight, and one is resequenced. An unusual observation from the receiving team, that a supplier had started sending part shipments without notice, leads to a supplier review that heads off a quality problem before it reaches customers.
+
+```figure
+type: compare
+title: A 38-page management pack, rebuilt
+cols: Before | Within three months
+best: 2
+caption: A dependency map showed two projects needing the same maintenance technician in the same fortnight.
+- Meeting length | Three hours | About 90 minutes
+- Decisions made | One or two | Four or five
+- Pages | 38, few tied to a decision | Four front pages; the rest marked with the decision they support
+- Early warnings | Problems arrived as surprises | An "unusual observations" item, each one followed up
+```
 
 ## How this applies to a small Australian business
 

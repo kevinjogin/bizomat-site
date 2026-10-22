@@ -30,6 +30,17 @@ The total is the product of all three. Improving intensity while scale grows fas
 
 A simple calculation shows the effect. If a business cuts energy per unit by 20% while its output grows by 35%, its total energy use is 1.35 × 0.80 = 1.08 times the starting level, an increase of 8%. To keep total energy flat with 35% growth, energy per unit would need to fall by about 26%, because 1 ÷ 1.35 is about 0.74.
 
+```figure
+type: bars
+title: 20% more efficient, 8% more energy
+unit: ×
+max: 1.4
+caption: Total = scale × intensity × structure: 1.35 × 0.80 = 1.08 of the starting level.
+- Output | 1.35 | 35% growth
+- Energy per unit | 0.8 | 20% better
+- *Total energy | 1.08 | an 8% increase
+```
+
 ## Report what an initiative actually achieved
 
 When a business is growing, an improvement can mean several different things. Be clear which one applies:
@@ -41,6 +52,16 @@ When a business is growing, an improvement can mean several different things. Be
 - **A delay**: the impact will occur later rather than not at all.
 
 For example, if a business's emissions would have grown from 100 to 150 units without action, and an initiative holds them to 120, it has avoided 30 units of growth. But its emissions are still 20 units higher than where it started. That may be a worthwhile achievement. It is not a reduction, and describing it as one is misleading.
+
+```figure
+type: bars
+title: Avoided growth is not an absolute reduction
+max: 160
+caption: Holding emissions to 120 avoided 30 units of growth, but they are still 20 units above the start.
+- Starting level | 100
+- Without action | 150
+- *With the initiative | 120 | 30 avoided; 20 above the start
+```
 
 This matters commercially as well as internally. In Australia, the ACCC has made environmental and sustainability claims a focus and publishes guidance for businesses. A claim such as "we have cut our energy use by 20%" when total use has risen could mislead customers. Make claims that match what was actually achieved and that you can support with evidence.
 
@@ -128,6 +149,17 @@ The owner then looks for concentration and finds that drying heavy items, mainly
 - **Process**: how much water remains in items before drying.
 - **Technology**: gas-fired tumble dryers.
 - **Energy source**: natural gas.
+
+```figure
+type: tree
+title: Tracing the laundry's gas use to its mechanism
+caption: Drying heavy items for two large customers accounts for about 60% of gas use.
+- Total gas use
+  - Growth driver | the hospital contract's heavy linen
+  - Process | water left in items before drying
+  - Technology | gas-fired tumble dryers
+  - *Energy source | natural gas
+```
 
 The options are different at each link: higher-speed extraction to remove more water before drying, discussing lighter linen specifications with the two customers, pricing heavy items to reflect drying energy, and testing whether electric heat-pump dryers make sense given the site's power supply and tariffs.
 

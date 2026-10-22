@@ -76,6 +76,18 @@ Plan the review day as a timetable, for example:
 | 2:30–3:30 | Finance: cash, debtors, creditors |
 | 3:30–4:00 | Quality and customer issues |
 
+```figure
+type: timeline
+title: One review day for the whole business
+caption: Seeing every area in one sitting makes the connections between departments obvious.
+- 9:00 | Leadership team | performance, priorities, cross-department issues
+- 10:30 | Sales and estimating
+- 11:30 | Production and engineering
+- 1:30 | Purchasing and supply
+- 2:30 | Finance | cash, debtors, creditors
+- *3:30 | Quality and customer issues
+```
+
 Each review has an agenda and a fixed end time. Finish on time and move on. Overrunning reviews squeeze later ones and train people to treat timings as optional.
 
 ## Step 5: Require a standard report format
@@ -88,6 +100,18 @@ Ask each leader to prepare a short standard report, ideally the same format ever
 4. **Critical issues** needing decisions or help.
 5. **Plan for the coming period.**
 6. **Status of actions** from the last review.
+
+```figure
+type: steps
+title: A standard one-page report
+caption: Numbers against targets, not descriptions of a busy week.
+- Key measures | three to six, with targets and trends
+- What went well
+- What went wrong | and the response
+- Critical issues | decisions or help needed
+- Plan for the coming period
+- *Status of last review's actions
+```
 
 A consistent format makes reports quick to prepare and quick to read, and it makes trends visible. Without a format, information arrives in a haphazard way that makes decisions difficult.
 
@@ -126,6 +150,16 @@ Reviews are not just for monitoring. Each review should feed a simple improvemen
 - **Repeat** what went well.
 - **Fix** what went wrong.
 - **Plan** what could be improved next.
+
+```figure
+type: cycle
+title: Connecting reviews to improvement
+caption: Each review feeds the next period's plan.
+- Review against targets
+- Repeat | what went well
+- Fix | what went wrong
+- *Plan | what to improve next
+```
 
 Over months, this steady cycle produces significant gains in efficiency, quality and profitability. The review day becomes the engine room of continuous improvement.
 

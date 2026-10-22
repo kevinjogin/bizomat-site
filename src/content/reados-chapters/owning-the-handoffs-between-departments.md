@@ -26,6 +26,15 @@ Practitioner writing on project delivery distinguishes three kinds of interface 
 - **Organisational interfaces** arise between teams or departments with different goals, habits and technical language. These are widely regarded as the hardest, because they involve conflicting objectives as well as people.
 - **System interfaces** involve everything that is not a person: information passed from one task to the next, schedules, physical and technical dependencies.
 
+```figure
+type: layers
+title: Three kinds of interface
+caption: Organisational interfaces get most of the attention; system interfaces often cause more of the delay.
+- Personal | two people on the same work
+- Organisational | teams with different goals and language
+- *System | information, schedules, technical links
+```
+
 All three are real. Usually only the third shows up on a schedule or dashboard.
 
 ## The wrong interface gets the attention
@@ -84,6 +93,17 @@ For important handoffs, write a short specification:
 | Receiver | Who receives it and confirms it is complete? |
 | Exception | What happens if it is incomplete: returned, held or escalated, and to whom? |
 
+```figure
+type: steps
+title: Owning a handoff in five steps
+caption: Ask what each side believes the other will provide, and how long a failure would take to notice.
+- List the handoffs
+- Classify them
+- Assign one owner
+- Apply the two tests
+- *Measure the boundary, not just the boxes
+```
+
 A one-page checklist at the most troublesome handoffs, such as an order pack checklist between sales and engineering, often removes more delay than any change inside a department.
 
 ## Measure handoffs
@@ -132,6 +152,17 @@ They assign owners and specifications:
 Two boundary measures are added: days from order to complete order pack, and days from order to long-lead materials ordered. Clarification emails between sales and engineering are tracked for a month before and after.
 
 Three months later, typical lead time has fallen from about six weeks to about four and a half, and clarification emails between sales and engineering have roughly halved. No department changed how it does its own work. The changes were all at the handoffs.
+
+```figure
+type: compare
+title: Every department on target, every order late
+cols: What the handoff review found | The owner and fix
+caption: Lead time fell from about six weeks to four and a half; no department changed its own work.
+- Sales to engineering | About 40% of order packs incomplete; four days waiting | Sales coordinator: a checklist before acceptance
+- Engineering to purchasing | Long-lead materials ordered late; about six days lost | Engineering lead: an early list within two days
+- Definitions | "Complete" meant different things | Operations manager: a written "ready for production"
+- *Workshop to dispatch | Delivery booked at finish; about two days | Dispatch books at the final operation
+```
 
 ## How this applies to a small Australian business
 

@@ -60,6 +60,18 @@ The layers below are a diagnostic scaffold, not a universal sequence. Use them t
 | Efficiency | Can resources be reduced without damaging lower layers? | Cost cuts followed by more defects or downtime |
 | Sustainability | Can environmental performance be improved deliberately and repeatedly? | Compliance-only activity, isolated projects |
 
+```figure
+type: layers
+title: Building capability in layers
+shape: pyramid
+caption: After the sand-cone model (Ferdows and De Meyer, around 1990), extended to sustainability in a 2017 study.
+- *Sustainability
+- Efficiency
+- Flexibility
+- Dependability
+- Stability
+```
+
 A mature plant may already have strong quality and dependability but poor visibility of energy use. Another may have excellent environmental technology but unstable work practices. The right next step depends on which layer is weakest relative to what the business needs.
 
 ## How the layers connect
@@ -115,7 +127,26 @@ They sequence the work:
 3. **Flexibility**: a schedule frozen three days ahead, with products grouped sensibly, cuts cleans to about eight a week.
 4. **Efficiency and sustainability**: only then does the team survey compressed-air leaks and right-size the compressor settings.
 
+```figure
+type: steps
+title: Fixing the sauce line in order
+caption: Each layer made the next one cheaper to improve.
+- Stability | overfill about 3% to 1%; rejects 4% to 1.5%
+- Dependability | capper breakdowns six hours a week to two
+- Flexibility | cleans twelve a week to about eight
+- *Efficiency and sustainability | then compressed-air leaks
+```
+
 Material lost per good unit, through overfill and rejects together, falls from about 7% to about 2.5%. Fewer stoppages and cleans reduce energy per good unit by about 12%, and the compressed-air work removes about another 5%. Together, energy per good unit falls by roughly 16%, meeting the customer's target with little capital spending, while also improving delivery reliability.
+
+```figure
+type: stats
+title: A 15% target met with little capital spending
+caption: The original plan was a new compressor, LED lighting and a waste campaign.
+- 7% → 2.5% | Material lost per good unit
+- −12% | Energy per good unit, from fewer stoppages and cleans
+- *−16% | Energy per good unit in total
+```
 
 ## How this applies to a small Australian business
 
