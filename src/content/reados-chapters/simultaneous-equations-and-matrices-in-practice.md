@@ -116,7 +116,28 @@ x + y = 1,000
 
 Substituting x = 1,000 − y gives 300 − 0.30y + 0.60y = 450, so y = 500 and x = 500. The blend costs 500 × $2 + 500 × $3 = $2,500.
 
+```figure
+type: steps
+title: Blending to 45% solids
+caption: 1,000 kg from inputs at 30% ($2 a kg) and 60% ($3 a kg): the blend costs $2,500.
+- x + y = 1,000 | total mass
+- 0.30x + 0.60y = 450 | solids
+- Substitute x = 1,000 − y | 300 + 0.30y = 450
+- *y = 500, x = 500
+```
+
 In the same week, the manufacturer's sister workshop plans its product mix. Product A contributes $40 a unit and needs 2 hours of machining and 1 hour of assembly. Product B contributes $30 and needs 1 hour of machining and 2 hours of assembly. The workshop has 100 machining hours and 80 assembly hours. Checking the corners of the feasible region: making only A (50 units) contributes $2,000; making only B (40 units) contributes $1,200; and making the mix where both constraints are fully used, found by solving 2A + B = 100 and A + 2B = 80, gives A = 40 and B = 20, contributing $2,200. The spreadsheet solver confirms the result and shows that both resources are binding, so extra hours on either would increase contribution.
+
+```figure
+type: bars
+title: Contribution at each corner of the feasible region
+unit: $
+max: 2400
+caption: 100 machining and 80 assembly hours; the best mix uses both constraints fully: 2A + B = 100 and A + 2B = 80.
+- Only A: 50 units | 2000
+- Only B: 40 units | 1200
+- *40 A and 20 B | 2200
+```
 
 ## How this applies to a small Australian business
 

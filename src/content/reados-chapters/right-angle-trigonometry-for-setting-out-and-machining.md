@@ -38,6 +38,24 @@ A triangle with sides 3, 4 and 5 units has a right angle, because 3² + 4² = 9 
 
 A rectangle is square when its two diagonals are equal. For a slab or frame 6 m by 4 m, each diagonal should be √(6² + 4²) = √52 ≈ 7.211 m. Measuring both diagonals and adjusting until they match is one of the quickest checks in construction and fabrication.
 
+```figure
+type: svg
+title: Squaring a 6 × 4 m slab
+alt: A rectangle 6 metres by 4 metres with a 3-4-5 triangle marked at one corner and both diagonals drawn. Each diagonal should measure the square root of 52, about 7.211 metres.
+caption: Set out each corner with 3-4-5, then check both diagonals are about 7.211 m.
+viewbox: 0 0 600 300
+body:
+<rect class="bx" x="60" y="40" width="480" height="220" rx="2"/>
+<path class="lf dsh" d="M60 260L540 40M60 40L540 260"/>
+<path class="la draw" d="M60 260H180M60 260V170M180 260L60 170"/>
+<text class="tx txs" x="120" y="282" text-anchor="middle">3 m</text>
+<text class="tx txs" x="50" y="220" text-anchor="end">4 m</text>
+<text class="tx txs" x="140" y="205">5 m</text>
+<text class="txb" x="300" y="140" text-anchor="middle">diagonals ≈ 7.211 m each</text>
+<text class="tx txs" x="300" y="30" text-anchor="middle">6 m</text>
+<text class="tx txs" x="552" y="154">4 m</text>
+```
+
 ## Sine, cosine and tangent
 
 For an angle θ in a right-angled triangle:
@@ -119,6 +137,15 @@ A small manufacturer is installing a new concrete slab and access ramp for a sto
 The storeroom floor is 600 mm above the surrounding pavement, and the business wants an accessible ramp. At 1:14, the ramp needs a horizontal run of 8.4 m, which does not fit on the site in a straight line. The designer splits it into two flights with a landing, checking each flight's gradient and the landing requirements against the applicable standard.
 
 Inside, a fitter must offset a compressed-air line by 300 mm around a column using two 45° elbows. The travel between fitting centres is 300 × 1.414 ≈ 424 mm, and after subtracting the elbow allowances, the pipe is cut to length on the first attempt.
+
+```figure
+type: stats
+title: Three right triangles on one small project
+caption: Setting out, an accessible ramp and a pipe offset all come down to the same geometry.
+- 7.211 m | Slab diagonal | √(6² + 4²)
+- 8.4 m | Ramp run for 600 mm at 1:14 | split into two flights with a landing
+- *424 mm | Travel for a 300 mm offset | 45° elbows: × 1.414
+```
 
 ## How this applies to a small Australian business
 

@@ -49,6 +49,15 @@ price × q = fixed + variable × q
 
 so q = fixed ÷ (price − variable). The denominator, price minus variable cost, is the **contribution** per unit. With fixed costs of $2,500 per month, a price of $45 and a variable cost of $30, break-even is $2,500 ÷ $15 ≈ 167 units a month. The [two breakeven numbers every owner should know](/reados/collections/pricing-margins-and-profitability/two-breakeven-numbers-every-owner-should-know/) article applies the same idea to a whole business.
 
+```figure
+type: stats
+title: Break-even for a simple product
+caption: Price minus variable cost is the contribution each unit makes toward fixed costs.
+- $2,500 | Fixed costs a month
+- $15 | Contribution per unit | $45 price − $30 variable
+- *About 167 | Units a month to break even
+```
+
 ## Calibration lines
 
 Many sensors produce an output that varies linearly with the quantity measured. A common industrial signal is 4 to 20 milliamps, where 4 mA represents the bottom of the range and 20 mA the top. For a pressure transmitter ranged 0 to 10 bar:
@@ -128,6 +137,22 @@ hours ≈ 5.9 + 0.045 × kg
 with an R² of about 0.999. The intercept of about 5.9 hours represents fixed work per job, such as drawing review, set-out and handling, and the slope means about 2.7 minutes per kilogram. The residuals are small and show no obvious pattern.
 
 For a new 700 kg frame, the model estimates about 37.7 hours, well within the range of the data. When asked to quote a 2,000 kg frame, the estimator notes that this is far outside the data: the model gives about 97 hours, but heavier frames need crane handling, different welding positions and possibly site assembly, so the estimate is built up from first principles instead. The business adds each completed job to its data set and refits the line every quarter.
+
+```figure
+type: line
+title: Hours against frame weight
+x: Frame weight (kg)
+y: Hours
+ymin: 0
+ymax: 50
+caption: hours ≈ 5.9 + 0.045 × kg from five jobs (R² about 0.999); a 2,000 kg frame lies far outside the data, so it is estimated from first principles.
+legend: Completed jobs | Fitted line
+- 120 | 11.5 | 11.3
+- 250 | 17 | 17.2
+- 400 | 24.5 | 23.9
+- 600 | 32.5 | 32.9
+- 900 | 47 | 46.4
+```
 
 ## How this applies to a small Australian business
 

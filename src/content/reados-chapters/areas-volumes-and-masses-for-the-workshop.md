@@ -72,6 +72,17 @@ Densities vary slightly with alloy and grade, so supplier data should be used wh
 
 Because steel's density is about 7.85 tonnes per cubic metre, steel plate weighs about **7.85 kg per square metre for every millimetre of thickness**. A 10 mm steel plate weighs about 78.5 kg/m², and a 3 mm sheet about 23.6 kg/m². Aluminium, about a third as dense, weighs about 2.7 kg/m² per millimetre.
 
+```figure
+type: bars
+title: Steel plate mass per square metre
+unit: kg/m²
+max: 100
+caption: About 7.85 kg per square metre for every millimetre of thickness.
+- 3 mm sheet | 23.6
+- 10 mm plate | 78.5
+- *12 mm plate | 94.2
+```
+
 For sections, tubes and bars, suppliers publish **mass per metre** values. Multiplying mass per metre by length gives the mass of a member immediately. For a round tube, the mass per metre can be calculated from π × (D² − d²) ÷ 4 × density. A steel tube of 60.3 mm outside diameter and 3.6 mm wall thickness weighs about 5.0 kg per metre, so a 6 m length weighs about 30 kg. The [structural steel sections and grades](/reados/collections/machine-elements-and-mechanical-design/structural-steel-sections-and-grades/) article explains how standard sections and their published properties are used.
 
 ## Surface area for coatings
@@ -123,6 +134,15 @@ This is an illustrative example. The part and figures are hypothetical.
 A fabricator is quoting 40 steel base plates, each 1,200 mm × 800 mm × 12 mm with four 22 mm holes. The plate area is 1.2 × 0.8 = 0.96 m², and the volume is 0.96 × 0.012 = 0.01152 m³. The four holes remove π × 0.011² × 0.012 × 4 ≈ 0.000018 m³. The finished mass of each plate is about (0.01152 − 0.000018) × 7,850 ≈ 90.3 kg, so the batch weighs about 3.6 tonnes.
 
 Two checks confirm the estimate. Using the shortcut, 12 mm plate weighs about 12 × 7.85 = 94.2 kg/m², and 0.96 m² of it weighs about 90.4 kg before holes. The CAD model reports 90.3 kg once its material is set to steel; earlier, with no material assigned, it had reported a meaningless value.
+
+```figure
+type: stats
+title: Three ways to the same base plate mass
+caption: 40 plates of 1,200 × 800 × 12 mm with four 22 mm holes: about 3.6 tonnes in all.
+- 90.3 kg | Calculated, with holes
+- 90.4 kg | Plate shortcut, before holes
+- *90.3 kg | CAD model, set to steel
+```
 
 The fabricator also checks handling. At about 90 kg each, the plates cannot be lifted manually, so the job is planned with a vacuum lifter, and the delivery is checked against the truck's capacity. For the quote, plates are nested on standard sheets, adding about 6% for offcuts and kerf to the material cost.
 

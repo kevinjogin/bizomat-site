@@ -69,6 +69,27 @@ Holes arranged evenly on a circle, such as bolt holes in a flange, are dimension
 
 For six holes on a 120 mm PCD with the first hole on the X axis, the radius is 60 mm and the holes sit every 60°. Their coordinates are approximately (60, 0), (30, 51.96), (−30, 51.96), (−60, 0), (−30, −51.96) and (30, −51.96).
 
+```figure
+type: svg
+title: Six holes on a 120 mm PCD
+alt: A pitch circle of 120 millimetre diameter with six holes every 60 degrees, the first on the X axis at 60, 0. Adjacent holes are 60 millimetres apart.
+caption: Holes every 60° at radius 60: adjacent pitch = 2 × 60 × sin 30° = 60 mm.
+viewbox: 0 0 400 300
+body:
+<circle class="lf dsh" cx="200" cy="150" r="110"/>
+<path class="lf" d="M60 150H340M200 10V290"/>
+<circle class="fa pulse" cx="310" cy="150" r="10"/>
+<circle class="fa" cx="255" cy="55" r="10"/>
+<circle class="fa" cx="145" cy="55" r="10"/>
+<circle class="fa" cx="90" cy="150" r="10"/>
+<circle class="fa" cx="145" cy="245" r="10"/>
+<circle class="fa" cx="255" cy="245" r="10"/>
+<path class="la" d="M310 150L255 55"/>
+<text class="tx txs" x="296" y="96">60 mm</text>
+<text class="tx txs" x="318" y="176">60, 0</text>
+<text class="tx txs" x="200" y="170" text-anchor="middle">PCD 120</text>
+```
+
 Many flange standards place holes "off centre", straddling the main axes rather than on them, so that the holes are symmetric about both centrelines. For eight holes on a 200 mm PCD straddling the axes, the first hole is at 22.5°, and the coordinates begin at about (92.39, 38.27). Getting the starting angle wrong rotates the whole pattern, so drawings should show it clearly.
 
 ### Checking a bolt pattern
@@ -126,6 +147,15 @@ A fabricator receives an order for a cylindrical tank with an outside diameter o
 For the shell, the plate is cut to π × 594 ≈ 1,866 mm plus the allowance for trimming the unrolled ends, and a test roll on an offcut confirms the result. After rolling and welding, the inspector checks the shell's radius by placing a 400 mm straight edge across the outside and measuring a sagitta of about 34 mm, which gives r ≈ 400² ÷ (8 × 34) + 34 ÷ 2 ≈ 605 mm. That is about twice the intended 300 mm outside radius, which cannot be right for a shell that fits its flange, so the inspector re-measures at several positions and finds a sagitta of 76.5 mm, giving r ≈ 400² ÷ (8 × 76.5) + 76.5 ÷ 2 ≈ 300 mm, as intended. The first reading had been taken across a flat spot near the weld, which is then corrected by re-rolling.
 
 For the flange, the CNC programmer uses a first-hole angle of 22.5° and checks the program by measuring the adjacent-hole pitch of the first part, which should be about 76.5 mm, and the distance between opposite holes, which should be 200 mm.
+
+```figure
+type: compare
+title: Checking a tank shell and flange
+cols: Calculation | Check on the part
+caption: Mean diameter for rolled plate; pitch and opposite-hole distances for the bolt pattern.
+- Shell blank | π × 594 ≈ 1,866 mm | A test roll on an offcut
+- *Flange: 8 holes, 200 PCD | First hole at 22.5° | Adjacent pitch about 76.5 mm
+```
 
 ## How this applies to a small Australian business
 

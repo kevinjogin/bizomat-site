@@ -61,6 +61,26 @@ driven speed = driver speed × driver diameter ÷ driven diameter
 
 A motor running at 1,450 rpm with a 100 mm pulley driving a 250 mm pulley turns the driven shaft at 1,450 × 100 ÷ 250 = 580 rpm. Sprockets and chains work the same way using numbers of teeth.
 
+```figure
+type: svg
+title: A pulley drive
+alt: A 100 millimetre pulley on a motor turning at 1,450 rpm drives a 250 millimetre pulley by a belt, so the driven shaft turns at 1,450 times 100 divided by 250, or 580 rpm.
+caption: Speeds are inversely proportional to diameters: 1,450 × 100 ÷ 250 = 580 rpm.
+viewbox: 0 0 600 220
+body:
+<circle class="bxa" cx="140" cy="110" r="40"/>
+<path class="lf spin" d="M104 110H176M140 74V146"/>
+<circle class="bx" cx="420" cy="110" r="95"/>
+<path class="lf spin" d="M335 110H505M420 25V195"/>
+<path class="ln" d="M140 70L420 15M140 150L420 205"/>
+<circle class="fa" cx="140" cy="110" r="5"/>
+<circle class="fi" cx="420" cy="110" r="6"/>
+<text class="txb" x="140" y="114" text-anchor="middle">100 mm</text>
+<text class="tx txs" x="140" y="185" text-anchor="middle">1,450 rpm</text>
+<text class="txb" x="420" y="104" text-anchor="middle">250 mm</text>
+<text class="tx" x="420" y="130" text-anchor="middle">580 rpm</text>
+```
+
 ### Gears
 
 For a pair of gears, speeds are inversely proportional to the numbers of teeth. A 20-tooth pinion driving a 60-tooth gear gives a 3:1 reduction: the gear turns at one third of the pinion speed and, ignoring losses, delivers three times the torque. In a gear train with several stages, the overall ratio is the product of the stage ratios. The [choosing gearboxes and geared motors](/reados/collections/machine-elements-and-mechanical-design/choosing-gearboxes-and-geared-motors/) article explains how ratio, torque and service factors guide selection.
@@ -124,6 +144,16 @@ This is an illustrative example. The business and figures are hypothetical.
 A small food manufacturer is scaling up a sauce from a 20-litre development batch to a 400-litre production kettle, a factor of 20. The development recipe uses 18 kg of tomato base, 1.2 kg of sugar, 0.3 kg of salt and 60 g of a thickener, with a 30-minute cook.
 
 Multiplying by 20 gives 360 kg of tomato base, 24 kg of sugar, 6 kg of salt and 1.2 kg of thickener. The production manager checks the parts of the process that do not scale linearly. The 400-litre kettle takes much longer to heat because its contents have 20 times the volume but its heated surface is only around seven times larger. The 30-minute cook is therefore redefined as 30 minutes after the batch reaches temperature, measured with a probe. Evaporation is lower relative to the batch, so the sauce comes out thinner, and the thickener is adjusted after two trial batches. The cleaning concentrate used on the kettle also needs a new dilution: 200 litres of 2% solution from a 25% concentrate needs 2 × 200 ÷ 25 = 16 litres of concentrate.
+
+```figure
+type: compare
+title: Scaling a sauce from 20 to 400 litres
+cols: Scales by 20 | Does not scale simply
+caption: The ingredients scale linearly; heating, evaporation and timing do not.
+- Ingredients | 18 kg base to 360 kg; sugar, salt, thickener ×20 | Thickener adjusted after two trials
+- Heating | Contents ×20 | Heated surface only about ×7
+- *Cook time | 30 minutes | Redefined: 30 minutes after reaching temperature
+```
 
 The first production batches match the development product's thickness and taste, and the scale-up notes are added to the product file for future reference.
 

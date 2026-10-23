@@ -81,6 +81,17 @@ R_system = 1 − (1 − R₁) × (1 − R₂) × …
 
 Two pumps, each 95% reliable, arranged so that either can do the job, give a system reliability of 1 − 0.05 × 0.05 = 99.75%. Redundancy is powerful, but its benefit depends on the components failing **independently**. A common cause, such as a shared power supply, a flood or the same maintenance error made on both, can defeat redundancy entirely.
 
+```figure
+type: bars
+title: Reliability in series and in parallel
+unit: %
+max: 100
+caption: Series chains multiply reliabilities down; independent redundancy multiplies the failure chances down.
+- Five components in series, 98% each | 90
+- One pump | 95
+- *Two pumps in parallel, 95% each | 99.75
+```
+
 ## Failure patterns over time
 
 Failures do not occur at a constant rate throughout a product's life. A common pattern, the **bathtub curve**, has three phases: early failures from manufacturing defects or installation errors, a period of low and roughly constant random failures, and rising wear-out failures as components age. Burn-in testing and careful commissioning reduce early failures; preventive replacement addresses wear-out; and spares and redundancy manage random failures. The [maintenance that prevents breakdowns](/reados/collections/lean-and-continuous-improvement/maintenance-that-prevents-breakdowns/) article explains how to match maintenance strategies to failure patterns.
@@ -90,6 +101,15 @@ Failures do not occur at a constant rate throughout a product's life. A common p
 Inspection and testing involve **conditional probabilities**: the probability of a result given the true state. An inspection system might detect 99% of defective parts and wrongly reject 1% of good parts. Those figures sound excellent, but what matters to the operator is different: given that a part has been rejected, what is the chance that it is really defective?
 
 The answer depends on how common defects are. Suppose 0.5% of parts are defective. Of 10,000 parts, 50 are defective, and the system rejects about 49.5 of them. Of the 9,950 good parts, it wrongly rejects about 99.5. In total, it rejects about 149 parts, of which only about a third are truly defective. When defects are rare, most rejects are false alarms, even with an accurate system. Re-inspection of rejects, adjustment of thresholds and efforts to reduce the underlying defect rate all follow from this. The [thinking in probabilities](/reados/collections/judgement-markets-and-learning/thinking-in-probabilities/) article explains the reasoning behind conditional probability and Bayes' rule.
+
+```figure
+type: funnel
+title: Rejects from an accurate inspection system
+caption: 99% detection and 1% false rejects, with 0.5% of parts defective: only about a third of rejects are truly bad.
+- Parts inspected | 10,000
+- Total rejected | about 149
+- *Truly defective among them | about 49.5
+```
 
 ## Expected values and the cost of risk
 
@@ -116,6 +136,14 @@ This is an illustrative example. The business and figures are hypothetical.
 A manufacturer receives batches of 2,000 machined parts and inspects a sample of 50, accepting the batch if no defects are found. A customer complaint reveals that a batch with about 2% defects was accepted. The quality manager calculates that such a batch passes the plan about 36% of the time, so the outcome was not bad luck but a property of the plan. The business adopts a plan from a recognised sampling standard that gives a much lower chance of accepting batches at that defect level, and asks the supplier for process capability data so that inspection can focus on the dimensions most likely to vary.
 
 The same manufacturer reviews its compressed-air supply, which depends on a single compressor with an estimated 95% chance of running a month without a stopping failure. Adding a second, independent compressor raises the estimated monthly reliability to about 99.75%, provided the two machines do not share a single electrical supply or a common air dryer. The manager checks those common points and adds a bypass around the dryer.
+
+```figure
+type: stats
+title: Two probability checks for one manufacturer
+caption: Sampling plans and redundancy both have measurable odds; common points such as one supply or one dryer undo independence.
+- 36% | Chance a 2% defective batch passes | sample of 50, accept on zero defects
+- *99.75% | Monthly air supply reliability | with a second, independent compressor
+```
 
 ## How this applies to a small Australian business
 

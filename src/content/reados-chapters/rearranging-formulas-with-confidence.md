@@ -79,6 +79,15 @@ To find R, combine the right-hand side over a common denominator: 1 ÷ R = (R1 +
 
 R = R1 × R2 ÷ (R1 + R2)
 
+```figure
+type: steps
+title: Rearranging the parallel resistance formula
+caption: For 100 and 220 ohms: 22,000 ÷ 320 = 68.75 ohms, smaller than either, as it should be.
+- 1 ÷ R = 1 ÷ R1 + 1 ÷ R2
+- Combine | 1 ÷ R = (R1 + R2) ÷ (R1 × R2)
+- *Invert both sides | R = R1 × R2 ÷ (R1 + R2)
+```
+
 For 100 and 220 ohms in parallel, R = 22,000 ÷ 320 = 68.75 ohms. A common error is to invert each term separately, writing R = R1 + R2, which is the formula for series resistances. Checking that the combined value is less than the smaller of the two, as it must be for parallel resistances, catches that slip.
 
 ## Variables that appear twice
@@ -132,6 +141,15 @@ This is an illustrative example. The figures are hypothetical.
 A maintenance planner builds a spreadsheet to set spindle speeds for a range of drills, using N = 1,000 × v ÷ π × D, typed as =1000*B2/PI()*C2. For a 10 mm drill at 25 m/min, the spreadsheet returns about 79,577 rpm, an absurd result that the planner fortunately notices because the drill press's maximum is 3,000 rpm.
 
 The error is missing brackets: the spreadsheet divided by π and then multiplied by D, instead of dividing by the product π × D. Corrected to =1000*B2/(PI()*C2), the result is about 796 rpm. The planner adds a check column that recalculates the cutting speed from the computed rpm using the original formula, v = π × D × N ÷ 1,000, and flags any row where the result does not match the input, and adds a warning when the computed speed exceeds the machine's maximum.
+
+```figure
+type: compare
+title: One missing pair of brackets
+cols: Formula | Result for a 10 mm drill at 25 m/min
+caption: Check every rearranged formula against a value you already know.
+- As typed | =1000*B2/PI()*C2 | About 79,577 rpm
+- *Corrected | =1000*B2/(PI()*C2) | About 796 rpm
+```
 
 ## How this applies to a small Australian business
 

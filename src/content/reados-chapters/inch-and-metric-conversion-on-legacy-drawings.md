@@ -43,6 +43,18 @@ Consider a shaft dimensioned Ø1.000" +0.000/−0.002". The limits are 1.000" an
 
 Rounding outward, for example to 25.34 mm, would allow parts that the original design rejects. For fits between mating parts, such as bearings on shafts, the original design intent should be checked, because the metric equivalent may be better expressed as a standard ISO fit rather than a direct conversion. The [specifying tolerances, fits and surface finish](/reados/collections/engineering-design-practice/specifying-tolerances-fits-and-surface-finish/) article explains standard fits.
 
+```figure
+type: range
+title: Converting a shaft tolerance: round the limits inward
+unit: mm
+min: 25.33
+max: 25.41
+caption: Ø1.000" +0.000/−0.002" is 25.400 to 25.3492 mm; rounding outward would accept parts the design rejects.
+- Original limits | 25.3492 | 25.4
+- *Rounded inward | 25.35 | 25.4
+- Rounded outward (wrong) | 25.34 | 25.4
+```
+
 ## Threads: never convert
 
 Thread specifications must never be converted numerically. A 3/8"-16 UNC thread has a specific diameter, pitch, thread form and tolerance class; there is no metric thread that equals it. Writing "M9.5 × 1.59" on a converted drawing describes a thread that does not exist. Imperial threads commonly found in Australia include:
@@ -109,6 +121,16 @@ A maintenance workshop needs a replacement pin for an imported machine. The orig
 The machinist converts the diameter limits: 0.750" = 19.050 mm and 0.749" = 19.0246 mm. Rounding inward to three decimal places gives 19.050 mm and 19.025 mm. The thread stays as 3/8"-16 UNC, with the tapping drill taken from a UNC table, and imperial taps are ordered rather than substituting a metric thread. The surface finish becomes 0.8 µm Ra. The workshop's drawing notes that the thread is imperial and that the dimensions are converted from the original inch drawing, with the inch values shown as reference.
 
 An earlier attempt, made before the workshop adopted this method, had specified the pin as Ø19.0 ± 0.02 mm with an M10 thread. The pin was undersize by the drawing's standard, rattled in its bore and could not accept the original screw.
+
+```figure
+type: compare
+title: A replacement pin, converted twice
+cols: Earlier attempt | Converted properly
+best: 2
+caption: Original: Ø0.750" +0.000/−0.001", a 3/8"-16 UNC tapped hole and a 32 µin finish.
+- Diameter | Ø19.0 ± 0.02 mm: undersize | 19.025 to 19.050 mm, rounded inward
+- *Thread | M10: would not take the original screw | 3/8"-16 UNC, never converted
+```
 
 ## How this applies to a small Australian business
 

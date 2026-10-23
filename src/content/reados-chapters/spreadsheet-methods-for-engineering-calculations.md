@@ -28,6 +28,15 @@ A reliable spreadsheet separates three things:
 
 Keeping inputs separate from formulas prevents the most common error of all: a number typed over a formula. Locking calculation cells and protecting the sheet, while leaving inputs unlocked, reinforces the separation.
 
+```figure
+type: layers
+title: Inputs, calculations, outputs
+caption: Separate the three, label every cell with its unit and protect the formulas.
+- Inputs | entered values, clearly marked
+- Calculations | formulas only, protected
+- *Outputs | results and checks
+```
+
 ## Units in every label
 
 Every input and result should have its units in its label or an adjacent cell: "Load (kN)", "Speed (rpm)", "Area (m²)". Mixing millimetres and metres or kilowatts and watts within one workbook is a frequent source of errors wrong by factors of a thousand. Where conversions are needed, put them in a visible step with the conversion factor shown, or use the spreadsheet's conversion function, rather than burying a factor inside a long formula. The [SI units and calculation checking](/reados/collections/engineering-design-practice/si-units-and-calculation-checking/) article explains unit discipline in engineering calculations.
@@ -110,6 +119,16 @@ This is an illustrative example. The figures are hypothetical.
 A small manufacturer builds a spreadsheet to select conveyor drives. The inputs sheet takes the required throughput in parts per hour, the pitch between parts in millimetres, the load and the friction coefficient. The calculation sheet converts throughput to belt speed, finds the drive force and power and adds a service factor. The outputs sheet selects a motor from a table of standard ratings and a gearbox ratio.
 
 For 1,200 parts per hour at a 400 mm pitch, the speed is 1,200 × 0.4 ÷ 3,600 ≈ 0.133 m/s. The calculated power with the service factor is about 6.2 kW, and an approximate-match lookup selects the next standard rating, 7.5 kW, rather than 5.5 kW. A check cell recalculates throughput from the selected speed and confirms it matches the input. Conditional formatting turns the motor cell red if the calculated power exceeds the largest rating in the table.
+
+```figure
+type: steps
+title: Sizing a conveyor motor in a spreadsheet
+caption: Conditional formatting turns the motor cell red if the power exceeds the largest rating in the table.
+- Speed | 1,200 × 0.4 ÷ 3,600 ≈ 0.133 m/s
+- Power with service factor | about 6.2 kW
+- Lookup | next standard rating: 7.5 kW, not 5.5 kW
+- *Check cell | throughput recalculated from the chosen speed
+```
 
 Before first use, an engineer checks one case by hand and finds that an earlier version had used the pitch in millimetres in a formula expecting metres, giving a speed a thousand times too high. The labels are corrected, the conversion moved to its own visible cell and the workbook versioned and stored in the engineering folder with a front sheet.
 

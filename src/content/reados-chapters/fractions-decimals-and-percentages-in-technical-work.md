@@ -78,6 +78,16 @@ If scrap falls from 4% to 3%, the change is (3 − 4) ÷ 4 × 100 = −25%. Scra
 
 An increase of 10% followed by a decrease of 10% does not return to the start. Starting at 100, a 10% increase gives 110, and a 10% decrease from 110 gives 99. Successive percentage changes multiply: 1.10 × 0.90 = 0.99.
 
+```figure
+type: bars
+title: Up 10%, then down 10%
+max: 115
+caption: Successive percentage changes multiply: 1.10 × 0.90 = 0.99.
+- Start | 100
+- After a 10% increase | 110
+- *After a 10% decrease from 110 | 99
+```
+
 ### Reverse percentages
 
 If a value after an increase is known, divide by the multiplier to find the original. A price of $110 after a 10% increase was $110 ÷ 1.10 = $100, not $110 − 10% = $99.
@@ -100,6 +110,15 @@ Discounts bite into margin faster than intuition suggests. A 10% discount on the
 ## Yields multiply
 
 When a process has several stages, each with its own yield, the overall yield is the product of the stage yields, not their average or sum of losses. Three stages with yields of 95%, 98% and 97% give an overall yield of 0.95 × 0.98 × 0.97 ≈ 0.903, or about 90.3%. If 1,000 good parts are needed, about 1,000 ÷ 0.903 ≈ 1,108 parts must be started. This compounding effect is why small improvements at each stage add up and why many-step processes need high yields at every step.
+
+```figure
+type: funnel
+title: Yields multiply through three stages
+caption: About 1,108 parts must be started to deliver 1,000 good ones.
+- Stage 1 | 95%
+- After stage 2 | 93.1%
+- *After stage 3 | 90.3%
+```
 
 ## Averaging percentages
 
@@ -130,6 +149,15 @@ A small fabrication business quotes a batch of brackets. Its material and labour
 The owner checks the numbers. After the discount, the price is $90 excluding GST, and the profit is $10 per bracket: a margin of about 11.1% and a markup of 12.5%, not 15%. The process also has two stages with yields of 97% and 96%, so only about 0.97 × 0.96 ≈ 93.1% of brackets started are good. To deliver 500 good brackets, the shop must start about 537, adding about 37 brackets' worth of cost that the quote did not include.
 
 Including scrap, the effective cost per good bracket is about $80 ÷ 0.931 ≈ $85.90, leaving a profit of just over $4 per bracket at the discounted price. The owner changes the quoting template to calculate prices from target margins, include yield losses explicitly and show the effect of any discount on margin before it is offered.
+
+```figure
+type: stats
+title: What "still 15%" really left on a bracket
+caption: A 10% discount on a $100 price, and two process stages yielding 97% and 96%.
+- $10 | Profit after the discount | margin about 11.1%, markup 12.5%
+- 93.1% | Brackets started that are good
+- *About $4 | Profit per good bracket | effective cost about $85.90
+```
 
 ## How this applies to a small Australian business
 

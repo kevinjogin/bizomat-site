@@ -47,6 +47,26 @@ resultant = √(ΣFx² + ΣFy²)
 
 and find its direction with tan θ = ΣFy ÷ ΣFx. Two forces of 300 N horizontally and 400 N vertically give a resultant of 500 N at about 53° above horizontal.
 
+```figure
+type: svg
+title: Adding two forces
+alt: A 300 newton horizontal force and a 400 newton vertical force drawn as arrows from the same point combine into a 500 newton resultant at about 53 degrees above horizontal.
+caption: √(300² + 400²) = 500 N, at tan⁻¹(400 ÷ 300) ≈ 53° above horizontal.
+viewbox: 0 0 400 260
+body:
+<path class="ln" d="M60 220H185"/>
+<path class="ah" d="M183 212L199 220L183 228Z"/>
+<path class="ln" d="M60 220V54"/>
+<path class="ah" d="M52 56L60 40L68 56Z"/>
+<path class="lf dsh" d="M60 40H195V220"/>
+<path class="la draw" d="M60 220L186 52"/>
+<path class="ah" d="M180 50L195 40L192 58Z"/>
+<text class="tx" x="128" y="244" text-anchor="middle">300 N</text>
+<text class="tx" x="14" y="134">400 N</text>
+<text class="txb" x="140" y="120">500 N</text>
+<text class="tx txs" x="94" y="212">53°</text>
+```
+
 ## Equilibrium
 
 An object that is stationary, or moving at constant velocity, is in **equilibrium**. All forces on it balance:
@@ -80,6 +100,17 @@ For a 2,000 kg load (19.6 kN):
 - with legs at 30° to the vertical (60° between them), each leg carries about 11.3 kN;
 - at 45° to the vertical (90° between them), each leg carries about 13.9 kN; and
 - at 60° to the vertical (120° between them), each leg carries about 19.6 kN, the full weight of the load.
+
+```figure
+type: bars
+title: Leg tension lifting a 2,000 kg load on two legs
+unit: kN
+max: 20
+caption: Tension = weight ÷ (2 × cos θ); wide sling angles multiply the load in each leg.
+- *30° to the vertical | 11.3
+- 45° to the vertical | 13.9
+- 60° to the vertical | 19.6 | the full weight of the load
+```
 
 As the angle between the legs widens, leg tensions rise sharply, and the horizontal components also squeeze the load and pull inward on the lifting points. Sling manufacturers and lifting standards provide working load limits that reduce with angle, and many limit the included angle used in practice. The [before you buy big equipment](/reados/collections/suppliers-contractors-and-government-work/planning-the-path-from-supplier-to-installation/) article covers planning lifts for large items.
 

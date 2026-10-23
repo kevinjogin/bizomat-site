@@ -75,6 +75,15 @@ When units are squared or cubed, so are their conversion factors. Because 1 m = 
 
 A painted area of 2,400,000 mm² is 2.4 m², not 2,400 m². A tank measuring 1.2 m × 0.8 m × 0.6 m holds 0.576 m³, and since 1 m³ is 1,000 litres, that is 576 litres. Errors in area and volume conversions are among the most common in quantity estimates, especially in spreadsheets where dimensions are entered in millimetres and results reported in square or cubic metres.
 
+```figure
+type: layers
+title: Conversion factors square and cube with the unit
+caption: 1 m = 1,000 mm, so 1 m² = 1,000,000 mm² and 1 m³ = 1,000,000,000 mm³.
+- Length | × 1,000
+- Area | × 1,000,000
+- *Volume | × 1,000,000,000
+```
+
 ## When the square matters: energy and speed
 
 Kinetic energy is E = ½ × m × v², where m is mass and v speed. Because speed is squared, energy rises much faster than speed. Raising speed by 50% multiplies energy by 1.5², or 2.25. That has direct safety consequences: a forklift, vehicle or moving machine part travelling only modestly faster carries far more energy into a collision, needs more distance to stop and causes more damage. Speed limits in workplaces and guards on fast-moving machinery reflect this square law.
@@ -120,6 +129,14 @@ This is an illustrative example. The site and figures are hypothetical.
 A warehouse manager is reviewing forklift speed limits after a near miss. The forklifts weigh about 4,000 kg loaded. At 10 km/h (about 2.78 m/s), the kinetic energy is ½ × 4,000 × 2.78², or roughly 15,400 J. At 15 km/h (about 4.17 m/s), it is roughly 34,700 J, about 2.25 times as much. A 50% increase in speed more than doubles the energy that must be absorbed in a collision and increases stopping distance accordingly.
 
 The same review looks at a racking upgrade. The engineer proposes replacing 100 mm deep beams with 150 mm deep beams of the same width. Because stiffness rises with the cube of depth, the deeper beams are about (150 ÷ 100)³, or 3.4 times, as stiff, reducing deflection under the same load to less than a third. The manager uses both results to explain the changes to the team: lower speed limits in pedestrian areas, and stiffer beams that reduce sagging and the risk of pallets dislodging.
+
+```figure
+type: stats
+title: Squares and cubes on the warehouse floor
+caption: A 50% increase in either speed or beam depth changes the result far more than 50%.
+- 2.25× | Forklift energy at 15 km/h instead of 10 | about 34,700 J against 15,400 J
+- *3.4× | Stiffness of a 150 mm beam against 100 mm | deflection under a third
+```
 
 ## How this applies to a small Australian business
 

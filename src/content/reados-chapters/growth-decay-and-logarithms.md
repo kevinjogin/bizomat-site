@@ -28,6 +28,15 @@ where r is the growth rate per period as a decimal and n the number of periods. 
 
 The difference compounds quickly. Starting with 10,000 and adding 500 a year gives 15,000 after ten years. Growing at 5% a year, which is 500 in the first year, gives 10,000 × 1.05¹⁰ ≈ 16,290 after ten years, and the gap widens every year after that.
 
+```figure
+type: bars
+title: Ten years from 10,000: adding 500 or growing 5%
+max: 17000
+caption: Both start with 500 in year one; compounding pulls ahead every year after.
+- Adding 500 a year | 15000
+- *Growing 5% a year | 16290
+```
+
 ## Compounding
 
 Compound interest is the classic example: interest earned is added to the balance and earns interest itself. The same arithmetic applies to inflation in prices, escalation clauses in contracts, growth in demand and reinvested earnings. When rates are quoted per year but compounded more often, the effective annual rate is slightly higher than the nominal rate.
@@ -117,6 +126,14 @@ This is an illustrative example. The business and figures are hypothetical.
 A powder-coating business is planning capacity. Demand has grown at about 8% a year for several years, and the current oven runs at about 55% of its capacity. By the rule of 72, demand doubles in about nine years, which would exceed the oven's capacity. More precisely, demand reaches capacity when 1.08ⁿ = 1 ÷ 0.55, so n = log(1.818) ÷ log(1.08) ≈ 7.8 years. Allowing for peaks above average demand, the owner plans a decision point in about five years.
 
 In the same review, the owner checks cooling time. Parts leave the oven at about 180 °C in a 25 °C workshop. Trials show a time constant of about 20 minutes for the typical part. After 30 minutes, their temperature is about 25 + 155 × e^(−1.5) ≈ 60 °C, still too hot to handle without gloves, so the packing station is moved further down the conveyor to allow more cooling time.
+
+```figure
+type: stats
+title: Planning an oven and a packing station with exponentials
+caption: Demand grows about 8% a year and the oven runs at about 55% of capacity.
+- About 7.8 years | Until demand reaches oven capacity | decision point planned at about five years
+- *About 60 °C | Parts 30 minutes after leaving the oven | from 180 °C, time constant 20 minutes
+```
 
 Finally, the business is quoting a new product. The first unit is expected to take 40 hours, and an 85% learning curve is assumed from similar past work, so the eighth unit should take about 24.6 hours. The quote for the first batch of eight uses the cumulative hours, not the steady-state figure.
 

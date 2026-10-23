@@ -117,7 +117,38 @@ A manufacturer installs a power logger on its compressor and records hourly read
 
 The average power is about 37 kW, but the peak is 47 kW, and the dip at lunchtime shows that the compressor still draws 30 kW with most machines idle, a sign of leaks. Fixing leaks will reduce both the area under the curve and the idle load.
 
+```figure
+type: line
+title: Compressor power across an eight-hour shift
+x: Hour of the shift
+y: kW
+ymin: 0
+ymax: 50
+caption: The area under the curve, by the trapezoidal rule, is about 297 kWh; the 30 kW lunchtime draw points to leaks.
+legend: Power
+- 0 | 0
+- 1 | 42
+- 2 | 45
+- 3 | 44
+- 4 | 30
+- 5 | 46
+- 6 | 47
+- 7 | 43
+- 8 | 0
+```
+
 The same business reviews purchasing for a consumable used at 12,000 units a year, with an ordering cost of about $80 per order and a holding cost of about $2 per unit per year. The economic order quantity is √(2 × 12,000 × 80 ÷ 2) ≈ 980 units. The total annual cost is about $1,960 at that quantity, compared with about $2,420 when ordering 500 at a time and about $2,140 when ordering 1,500. The curve is flat near the minimum, so the business chooses 1,000 units to suit packaging, at almost no cost penalty.
+
+```figure
+type: bars
+title: Annual ordering and holding cost by order size
+unit: $
+max: 2500
+caption: 12,000 units a year, $80 an order, $2 a unit a year to hold: the economic order quantity is about 980.
+- Order 500 at a time | 2420
+- *Order about 980 | 1960
+- Order 1,500 at a time | 2140
+```
 
 ## How this applies to a small Australian business
 
