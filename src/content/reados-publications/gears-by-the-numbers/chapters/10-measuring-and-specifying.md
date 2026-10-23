@@ -45,6 +45,37 @@ caption: Module 3 mm, 20° pressure angle, no profile shift. Targets include a 0
 
 Measurement over pins or balls is the alternative, placing precise pins in opposite tooth spaces and measuring across them. It suits internal gears and fine-pitch gears where span anvils will not fit. Supplier references, such as KHK's technical notes cited for this book, give the method and the calculation of the nominal value.
 
+## Turning the backlash range into span limits
+
+Chapter 6 worked an illustrative tolerance in which each tooth is thinned by between 0.05 mm and 0.10 mm at the pitch circle. Because a thickness reduction Δs reduces the span by Δs × cos α, the span limits follow directly:
+
+- **Pinion, span over 3 teeth:** upper limit 22.981 − 0.047 ≈ **22.934 mm**, lower limit 22.981 − 0.094 ≈ **22.887 mm**
+- **Gear, span over 7 teeth:** upper limit 60.088 − 0.047 ≈ **60.041 mm**, lower limit 60.088 − 0.094 ≈ **59.994 mm**
+
+The upper limit, the thickest permitted tooth, sets the minimum backlash; the lower limit sets the maximum. Written on the drawing as, for example, "span over 3 teeth 22.887 to 22.934 mm", it gives the gear cutter a target and the inspector a pass or fail test that ties straight back to the backlash calculation.
+
+```figure
+type: range
+title: Pinion span tolerance band
+unit: mm
+min: 22.86
+max: 23
+ticks: 22.887 | 22.934 | 22.981
+caption: Span over 3 teeth. The band sits below the theoretical 22.981 mm because the teeth are thinned for backlash.
+- *Permitted span | 22.887 | 22.934
+- Theoretical span, no thinning | 22.978 | 22.984
+```
+
+## Checking that the anvils touch where they should
+
+A span measurement is only valid if both anvils touch the flanks on their involute portion, between the base circle and the tip. The span line is tangent to the base circle, so the anvils touch the teeth at a radius of:
+
+**r = √(r_b² + (W / 2)²)**
+
+For the pinion, with r_b ≈ 28.191 mm and W ≈ 22.934 mm, the contact radius is about **30.43 mm**, comfortably between the base radius of 28.191 mm and the tip radius of 33 mm, and close to the 30 mm pitch radius. For the gear, with r_b ≈ 84.572 mm and W ≈ 60.041 mm, it is about **89.74 mm**, again close to the 90 mm pitch radius.
+
+If the calculated contact radius falls too close to the tip, or below the base circle, the chosen number of teeth spanned is wrong for that gear, often because of a large profile shift, and k should be changed. The anvils must also be wide enough to reach across the face without touching the tip edges, and the face must be wide enough for the anvils, which matters on narrow helical gears.
+
 ## Identifying an unknown gear
 
 Replacing a worn gear from an unknown source starts with measurement. Count the teeth and measure the outside diameter carefully, then test both systems:
@@ -82,6 +113,57 @@ caption: Enough for a gear cutter, an inspector and a future replacement supplie
 - x Mates with the 60-tooth gear at 120 mm centres
 - *x Material, heat treatment and hardness specified
 ```
+
+## Extra data for a helical gear
+
+A helical gear's data block needs everything a spur gear's does, plus the items that define the helix. For the 15° version of the conveyor pinion from Chapter 7, that means stating the **normal module** of 3 mm and the **normal pressure angle** of 20°, the **helix angle** of 15° at the pitch diameter, the **hand** of the helix, and, usefully, the transverse module of about 3.1058 mm and the pitch diameter of about 62.117 mm as reference values. Some drawings also give the lead, about 728.3 mm for this pinion, because hobbing and grinding machine operators set up from it.
+
+Span measurement still works on helical gears, measured in the normal plane, but the calculation differs from the spur formula, and the face must be wide enough for both anvils to touch the flanks within it. On narrow helical gears that condition can fail, and a measurement over pins or balls is used instead. The supplier references cited for this book give both calculations.
+
+## Accuracy grades in practice
+
+A gear's accuracy grade limits how far its real teeth may depart from perfect geometry. ISO 1328-1 sets tolerance classes for the flanks, with smaller numbers meaning tighter tolerances, and ISO 1328-2 covers radial measurements such as runout. The main quantities are:
+
+- **Single pitch deviation:** the error in spacing between neighbouring teeth.
+- **Cumulative pitch deviation:** how spacing errors add up around the gear, which shows as once-per-revolution variation.
+- **Profile deviation:** how far each flank departs from the intended involute.
+- **Helix deviation:** how far each flank departs from the intended line along the face, straight for spur gears.
+- **Runout:** how far the teeth are eccentric to the gear's datum axis.
+
+Choosing a grade is a balance between cost and duty. Faster, quieter and more heavily loaded gears justify tighter grades; the dynamic factors in modern rating methods reward better accuracy with lower dynamic loads, as Chapter 8 noted. A slow conveyor drive can use a moderate grade. The drawing must state the standard and its edition with the grade, because grade numbers have changed between editions.
+
+## What a gear inspection report shows
+
+A gear measured on a gear measuring machine comes with a report that is worth reading rather than filing. It typically contains:
+
+- **profile and helix traces** for several teeth on both flanks, plotted against tolerance bands;
+- **pitch charts** showing single and cumulative pitch deviations around the gear;
+- **runout** measured with a probe in each tooth space;
+- **tooth thickness**, as a span or over-pins value;
+- the **accuracy grade achieved** for each quantity, against the grade specified.
+
+The traces carry more than a pass or fail. A profile trace that falls away near the tip may show intended tip relief or a worn tool; a helix trace that slopes steadily across the face shows a helix angle error, which in service will push load towards one end. Comparing the report with the contact pattern found at assembly, as described in Chapter 4, often explains a noisy or hot-running pair before it fails.
+
+## Receiving inspection without a gear measuring machine
+
+Many workshops do not have a gear measuring machine. A practical receiving inspection can still catch most errors that matter:
+
+1. **Count the teeth** and confirm the hand of helix where relevant.
+2. **Measure the tip and root diameters** and compare them with the data block.
+3. **Measure the span** at three or four positions around the gear, and check that every reading lies within the limits.
+4. **Check runout** between centres or on the bore datum, with a ball probe placed in each tooth space in turn, or by rolling the gear against a master gear where one is available.
+5. **Inspect the teeth visually** for burrs, nicks, cracks and grinding marks, particularly at the root fillets.
+6. **Check hardness** where the drawing specifies it, on a surface that will not be harmed by the test.
+
+Rolling the new gear with its mate on a simple test stand and checking the contact pattern with marking compound adds a final functional check. Recording these results with the gear's serial or batch number gives the same kind of evidence that a full inspection report provides, at a scale that suits the job.
+
+## Keeping the gear's record
+
+The drawing defines the gear; the records show what was actually made and fitted. For a gear that matters, keep together the drawing at its issued revision, the inspection report or receiving inspection results, the measured spans, the backlash measured at assembly with the positions used, and a photograph of the contact pattern. Years later, when the gear is worn or a replacement is needed, that small file answers the questions a replacement supplier will ask, and it lets wear be measured against a known starting point rather than guessed.
+
+## What to send a gear supplier
+
+A gear supplier can only make what it is told. Sending a worn sample and asking for "one the same" invites guesses about module, shift, tooth thickness, material and accuracy. A useful enquiry includes the drawing with its data block, the mating gear's data, the centre distance and its tolerance, and the duty: power, speeds, hours of operation and the character of the driven machine. With that information, the supplier can confirm the design, propose a rating check, and quote for a gear that will fit and last. Without it, the supplier is reverse engineering, and the purchaser carries the risk.
 
 ## Bringing the book together
 

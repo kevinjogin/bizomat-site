@@ -77,9 +77,93 @@ caption: Check the tightest combination, not the nominal one.
 - Runout and deflection | Local tight spots | from accuracy grade and loads
 ```
 
+## Working a backlash range from tolerances
+
+A single backlash figure hides the real question: what are the smallest and largest values the drawings allow? This is an illustration. Suppose the conveyor pair's drawings specify, for each gear, a tooth thickness reduction of between 0.05 mm and 0.10 mm from the theoretical 4.712 mm, and the housing allows the centre distance to be between nominal and 0.05 mm over.
+
+- **Minimum backlash**, thickest teeth at the closest centres: 0.05 + 0.05 = **0.10 mm** circumferential.
+- **Maximum backlash**, thinnest teeth at the widest centres: 0.10 + 0.10 + 2 × 0.05 × 0.364 ≈ **0.236 mm** circumferential.
+
+If the gears then run 30 °C hotter than a steel housing, as in the example above, the minimum falls by about 0.031 mm to roughly **0.069 mm**. That is still positive with a margin, so the specification is workable. If the minimum had come out close to zero, the remedy would be to increase the minimum tooth thinning or to raise the lower limit of the centre distance, not to rely on the nominal value.
+
+```figure
+type: compare
+title: The conveyor pair's backlash range
+cols: Circumferential | Normal
+caption: Illustrative tolerances: each tooth thinned 0.05 to 0.10 mm, centres 0 to +0.05 mm, gears 30 °C hotter than a steel housing in service.
+- Maximum, thinnest teeth, widest centres | 0.236 mm | 0.222 mm
+- Minimum, thickest teeth, closest centres | 0.100 mm | 0.094 mm
+- *Minimum in service, after thermal closure | 0.069 mm | 0.065 mm
+```
+
+The range is wide, more than three to one between its ends, and that is normal. Narrowing it means tighter tooth thickness and housing tolerances, which cost money in manufacture and inspection. A drive that needs little backlash variation is better served by one of the adjustment methods described below than by ever tighter tolerances.
+
+## Runout takes backlash away at the tight spot
+
+A gear whose teeth are not concentric with its axis has **radial runout**. As it turns, its teeth move in and out relative to the mating gear, which has the same effect as the centre distance changing once per revolution. Where the high points of both gears meet, the backlash is at its smallest.
+
+This is an illustration. If the pinion has a radial runout of 0.02 mm and the gear 0.03 mm, measured as total indicator readings, the teeth move in by up to half of each value at their high points. When both high points meet, the local backlash falls by about:
+
+**2 × (0.01 + 0.015) × tan 20° ≈ 0.018 mm**
+
+That reduction should be included in the minimum backlash check alongside the thermal closure. It also explains why backlash measured at one position in an assembled gearbox can mislead: the same pair may show noticeably different values a quarter of a turn later. Gear accuracy grades in ISO 1328 limit runout, and a better grade buys a more uniform backlash as well as quieter running.
+
+## Measuring backlash in an assembly
+
+The usual workshop method locks one gear and rocks the other through its free movement, measuring the movement with a dial indicator. The indicator is placed against a tooth flank at the pitch circle and perpendicular to the tooth, or against an arm clamped to the shaft at a known radius. A reading taken at a radius other than the pitch radius is converted in proportion:
+
+**jt = reading × pitch radius / indicator radius**
+
+This is an illustration. With the pinion locked, an indicator on an arm 120 mm from the gear's axis reads 0.16 mm of movement. The gear's pitch radius is 90 mm, so:
+
+**jt = 0.16 × 90 / 120 = 0.12 mm**
+
+That lies within the 0.10 to 0.236 mm range calculated above. The measurement should be repeated at several positions, commonly four at roughly 90° intervals on the larger gear, to reveal the effect of runout. Feeler gauges between the non-working flanks give the normal backlash directly where access allows, and a soft lead wire rolled through the mesh and then measured is an older method still used on large gears.
+
 ## How much backlash?
 
 There is no single right amount. Positioning drives, indexing heads and reversing servo axes want small backlash, sometimes with anti-backlash arrangements. Heavily loaded, hot-running drives need more. Gear standards and suppliers publish recommended ranges by module and centre distance; use those as a starting point, then check the service conditions as above.
+
+## Writing backlash onto the drawings
+
+Because backlash depends on both gears and the housing, no single drawing can guarantee it. A gear maker who is told only "backlash 0.10 to 0.20 mm" does not know how the thinning should be split between the pinion and the gear, or what centre distance tolerance the housing will have. The clearer approach is to specify what each maker controls:
+
+- **On each gear drawing:** the tooth thickness tolerance, normally as a span or over-pins measurement with upper and lower limits, as Chapter 10 describes.
+- **On the housing drawing:** the centre distance with its tolerance, preferably zero or positive only, and the parallelism of the bores.
+- **On the assembly drawing:** the resulting backlash range as a reference value, with the method and positions used to check it at assembly.
+
+Stated that way, each supplier can check their own part, and the assembler has a figure to confirm.
+
+## Backlash and the oil
+
+Backlash also gives the lubricant somewhere to go. As teeth come into mesh, oil trapped in the closing space between them must escape, either sideways along the face or through the clearance between the non-working flanks. With very little backlash, particularly on wide, fast-running gears, the trapped oil is squeezed out at high speed, absorbing power, heating the oil and adding noise. This effect, often called oil pocketing or pumping, is one more reason not to chase the smallest possible backlash in a power transmission drive. The minimum backlash should leave room for the oil film as well as for heat, runout and deflection.
+
+## Backlash as lost motion
+
+In a conveyor, backlash hardly matters as long as it is neither zero nor excessive. In a positioning drive, it becomes lost motion: when the direction of rotation reverses, the input turns through the backlash before the output moves at all.
+
+The angular backlash at the gear is the circumferential backlash divided by the gear's pitch radius. For 0.10 mm on the conveyor gear's 90 mm radius:
+
+**0.10 / 90 ≈ 0.00111 rad ≈ 0.064°, or about 3.8 minutes of arc**
+
+On a 200 mm diameter pulley mounted on the output shaft, that is about 0.11 mm of movement at the pulley's surface before the drive takes up the reversal. For a conveyor, that is irrelevant. For a rotary table or a robot joint, it may be the largest single source of positioning error.
+
+In a multi-stage train, the backlash of each stage adds at the output, but stages nearer the input are reduced by the ratios that follow them. Backlash in the first stage of the 4:1 and 5:1 train from Chapter 1 appears at the output shaft divided by five, while backlash in the final stage appears in full. That is why low-backlash gearboxes concentrate their precision in the output stage.
+
+## Reducing backlash where it matters
+
+When small backlash is required, several approaches are used instead of, or as well as, tight tolerances:
+
+- **Adjustable centre distance.** One shaft is mounted in an eccentric bearing housing or a sliding plate, and the centres are closed until the backlash reaches the required value at the tightest point.
+- **Split or scissor gears.** The gear is made in two thin halves, sprung against each other in rotation so that one half bears on each flank of the mating teeth. Backlash is taken up, but the spring must be strong enough for the torque that reverses through it.
+- **Dual drives with preload.** Two pinions drive one gear or rack, with one pinion biased against the other, so that one always bears on each flank direction. This is common on large rack drives.
+- **Selective assembly.** Gears and housings are measured and matched so that thicker teeth go into wider centres.
+
+Each brings cost, complexity or a load limit. They belong in drives where lost motion really matters, not in power transmission like the conveyor.
+
+## Backlash grows with wear
+
+As teeth wear, they thin, and the backlash rises. A record of the backlash at commissioning, measured at marked positions with a known method, turns later measurements into a simple wear indicator. A steady rise over years is normal. A rapid rise, or a large difference between positions, points to a problem worth investigating, such as poor lubrication, misalignment or a worn bearing letting a shaft move.
 
 ## Exercise: combine thinning and centres
 

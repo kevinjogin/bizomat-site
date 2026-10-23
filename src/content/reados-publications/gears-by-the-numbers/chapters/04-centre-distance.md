@@ -23,6 +23,16 @@ For the conveyor pair:
 
 That number goes onto the housing drawing with a tolerance chosen with the backlash requirement in mind (Chapter 6).
 
+## Fitting gears to a fixed centre distance
+
+Often the centre distance comes first: a housing already exists, or a replacement must fit a machine. With standard gears, the centre distance fixes the total number of teeth for each module:
+
+**z₁ + z₂ = 2 × a / m**
+
+For a = 120 mm, the possible totals are 120 teeth at module 2, 96 at module 2.5, 80 at module 3 and 60 at module 4. A 3:1 ratio then gives 30 : 90, 24 : 72, 20 : 60 and 15 : 45 respectively.
+
+The hunting-tooth pair 20 : 61 from Chapter 1 has 81 teeth, which at module 3 would need a centre distance of 121.5 mm. On a fixed 120 mm housing, the designer has three choices: accept the 20 : 60 pair, find another combination with 80 teeth and an acceptable ratio, or use profile shift to fit 81 teeth onto the shorter centre distance, using the relationship between shift and centre distance that Chapter 5 explains. The arithmetic is quick, and it is worth doing before a gear is ordered for an existing housing.
+
 ## Contact ratio: how many teeth share the load
 
 As the gears turn, each pair of teeth enters contact at one end of the line of action and leaves at the other. If a new pair always enters before the previous pair leaves, the load passes smoothly from tooth to tooth. The **transverse contact ratio** εα measures that overlap: the average number of tooth pairs in contact.
@@ -55,6 +65,41 @@ caption: Module 3 mm, 20 and 60 teeth, 20° pressure angle, standard centre dist
 - *1.671 | Contact ratio | average pairs in contact
 ```
 
+## Where one tooth carries the load alone
+
+A contact ratio of 1.671 means more than an average. It divides the path of contact into zones. At each end, for a length of (εα − 1) base pitches, two pairs of teeth are in contact. In the middle, for a length of (2 − εα) base pitches, one pair carries the whole load:
+
+- **Double contact at the start:** 0.671 × 8.8564 ≈ 5.94 mm
+- **Single contact in the middle:** 0.329 × 8.8564 ≈ 2.92 mm
+- **Double contact at the end:** ≈ 5.94 mm
+
+The three lengths add up to the 14.80 mm path of contact.
+
+```figure
+type: bars
+title: Load-sharing zones along the conveyor pair's path of contact
+unit: mm
+max: 7
+caption: Two pairs share the load at each end; one pair carries it alone through the middle 2.92 mm.
+- Double contact, approach | 5.94
+- *Single contact, around the pitch point | 2.92
+- Double contact, recess | 5.94
+```
+
+The single-contact zone matters for strength. When one pair takes the full load at the outer end of that zone, the force acts higher up the tooth than it would at the pitch point, and the bending moment at the root is larger. Detailed rating methods find this **highest point of single tooth contact** and use it in the bending calculation. The simpler Lewis method of Chapter 8 applies the load at the tip, which is conservative for gears with a contact ratio above one. Either way, the zones show why a higher contact ratio helps: the single-contact zone shrinks as εα approaches two.
+
+## Contact ratio rises with tooth numbers
+
+For standard gears with the same 3:1 ratio, the contact ratio increases as the teeth become smaller relative to the gears. Working the same formula for module 3 pairs of different sizes:
+
+- **17 : 51 teeth:** εα ≈ 1.636
+- **20 : 60 teeth:** εα ≈ 1.671
+- **25 : 75 teeth:** εα ≈ 1.714
+- **30 : 90 teeth:** εα ≈ 1.747
+- **40 : 120 teeth:** εα ≈ 1.792
+
+The gain is steady but modest. Standard 20° spur gears rarely reach a contact ratio of two, so there is always some single-pair contact. Designs that need a contact ratio of two or more, for very quiet running, use special tooth proportions with longer addenda, or helical gears whose axial overlap adds to the total.
+
 ## What happens if the centre distance is wrong
 
 Involute gears have a valuable property: if the centre distance is slightly larger than standard, the speed ratio stays exactly the same. The base circles do not change, and the line of action is still tangent to both. What changes is the working pressure angle, the backlash and the contact ratio.
@@ -84,6 +129,48 @@ legend: Contact ratio
 ```
 
 The opposite error, centres too close, is worse. The tips of one gear begin to bottom in the roots of the other, the teeth jam and the pair may fail quickly. That is why the housing tolerance and the tooth thickness tolerance are always considered together.
+
+## The housing decides the real centre distance
+
+The gear drawing states a centre distance, but the housing produces it. Several features contribute:
+
+- **Bore positions.** If each bearing bore is located with a positional tolerance zone of diameter 0.04 mm, each bore centre may lie up to 0.02 mm from its true position, and the distance between two bores can vary by up to ±0.04 mm in the worst case.
+- **Bearing clearance and fit.** Internal clearance in rolling bearings, and the fits of the bearings in their bores and on their shafts, let the shafts move a little under load.
+- **Shaft deflection.** The separating force from Chapter 2 bends the shafts and pushes the gears apart, most at mid-span between bearings.
+- **Temperature.** Steel gears in an aluminium housing see the centres open as the housing warms, because aluminium expands about twice as much as steel. Chapter 6 works an example.
+
+Each of these changes the working centre distance and therefore the backlash and contact ratio. The housing tolerance should be chosen with them in mind, and the backlash specification in Chapter 6 must allow for the whole range, not just the nominal value.
+
+## Keeping the axes parallel
+
+Centre distance is measured between axes assumed to be parallel. If one shaft is tilted relative to the other, the teeth touch more heavily at one end of the face than the other. A tilt in the plane of the two axes changes the centre distance along the face; a tilt out of that plane, which skews the axes, is usually more harmful, because it moves the contact towards one end of every tooth.
+
+This is an illustration. If one axis is out of parallel by 0.03 mm over a 100 mm bearing span, the mismatch across the conveyor pair's 30 mm face is 0.03 × 30 / 100 = 0.009 mm. That is small in absolute terms, but it is comparable to the deflection of the teeth under load, so the load can concentrate towards one end. Rating methods account for it with a face load factor. ISO technical reports give recommended limits for axis parallelism related to the gear accuracy grade, and the housing drawing should carry tolerances consistent with them.
+
+## Measuring the centre distance of a housing
+
+When a housing is made, or when an old one is being checked before new gears are fitted, the centre distance is measured rather than assumed. A coordinate measuring machine does this directly. In a workshop without one, the bores can be measured with a bore gauge and the distance across them with a micrometer, vernier or height gauge, then combined:
+
+**a = L_outside − (D₁ + D₂) / 2**, measured across the far edges of both bores
+
+**a = L_inside + (D₁ + D₂) / 2**, measured between the near edges
+
+This is an illustration. A housing has bearing bores of 52.000 mm and 72.000 mm. The distance across their far edges, measured at the bore's mid-length, is 182.04 mm. Then:
+
+**a = 182.04 − (52.000 + 72.000) / 2 = 182.04 − 62.00 = 120.04 mm**
+
+That is 0.04 mm above the 120 mm nominal, inside the ±0.04 mm range of the example above but at its limit. Measuring at both ends of the bores also shows whether the axes are parallel: different values at the front and back faces mean one bore is tilted. Recording both figures before assembly saves a later argument about whether noise or wear came from the gears or from the housing they were put into.
+
+## Checking the mesh with a contact pattern
+
+The simplest check of centre distance and alignment in an assembled gearbox is the **contact pattern**. A thin layer of marking compound is brushed onto a few teeth of one gear, the pair is turned through mesh under light load, and the transferred marking on the mating teeth shows where they touched:
+
+- **Even marking along the face, centred on the working depth:** alignment and centre distance are close to correct.
+- **Marking heavy at one end of the face:** the axes are not parallel, or a shaft is deflecting.
+- **Marking concentrated towards the tips:** the centres may be too far apart, or the profiles are in error.
+- **Marking concentrated towards the roots:** the centres may be too close.
+
+A light-load pattern does not show how the contact will move under full load as shafts and housings deflect, so critical drives are sometimes checked again under load. It remains one of the most useful and cheapest checks a fitter can make, and a photograph of the pattern is worth keeping with the assembly record.
 
 ## What a contact ratio does not tell you
 

@@ -21,6 +21,14 @@ For standard full-depth teeth with no shift, the theoretical minimum number of t
 
 At α = 20°, sin² α ≈ 0.11698, so **z_min ≈ 17.1**. A standard 20° pinion needs about 17 or more teeth to escape undercut entirely. The conveyor pinion, with 20 teeth, is clear.
 
+## Undercut and interference are related, not identical
+
+Undercut is something the cutting tool does to a gear while it is being made. **Interference** is something two gears do to each other in service: the tip of one tooth reaches the non-involute part of its mate's flank, below the base circle, and digs into it. A gear that has been undercut by its tool will not interfere with a mating gear at that point, because the material has already been removed, but it has lost strength and working profile.
+
+The limit of about 17 teeth applies to generation by a rack-shaped tool, such as a hob, because a rack is the most demanding mate a pinion can have. A pinion meshing with a finite gear can have fewer teeth before the gear's tip interferes. Using the relationship given in Budynas and Nisbett, the smallest 20° full-depth pinion that runs without interference is about 13 teeth against an equal gear and about 15 teeth against a gear three times its size, rising towards 17 as the mate approaches a rack.
+
+Those smaller numbers apply only if the pinion is made without undercut, for example by a pinion-shaped cutter rather than a hob. A hobbed pinion still meets the rack limit of its tool, so in most workshops the practical rule stays at about 17 teeth unshifted, with profile shift for anything smaller.
+
 ## Profile shift moves the tool outward
 
 **Profile shift**, also called addendum modification, moves the generating tool away from the gear centre by x × m, where x is the profile shift coefficient. The same tool still cuts an involute from the same base circle, but uses a part of the curve farther from the base circle. The tooth becomes thicker at the root and pitch circle and pointier at the tip.
@@ -34,6 +42,8 @@ For a 14-tooth pinion:
 **x_min = 1 − (14 × 0.11698) / 2 ≈ 1 − 0.8189 ≈ 0.181**
 
 A designer would typically round up, for example to x = 0.2, and then check that the tooth tip has not become too sharp.
+
+Profile shift costs nothing in tooling. The same hob or rack cutter that makes standard gears of that module and pressure angle makes shifted ones; only the machine setting changes, with the tool withdrawn from the blank centre by x × m, and the blank turned to the larger or smaller tip diameter the shift requires. For the 14-tooth pinion, x = 0.2 at module 3 means the tool sits 0.6 mm further out than it would for a standard gear. That is why shifted gears are so common in industrial gearboxes: they solve undercut, strength and centre-distance problems without a special cutter. The cost lies elsewhere, in the need to record the shift and to make sure that anyone replacing the gear later knows it is not standard.
 
 ```figure
 type: bars
@@ -72,6 +82,29 @@ caption: Pitch diameter is unchanged; the tooth moves outward and thickens.
 - Undercut | Yes, z below 17 | Avoided
 ```
 
+## Checking that the tip is not too sharp
+
+Positive shift thickens the tooth at the root and pitch circle, but the tooth is now cut further out on the involute, where the two flanks converge. The tip becomes narrower, and too much shift leaves a pointed tooth that chips or, if case-hardened, becomes brittle right through at the tip.
+
+The tooth thickness at the tip circle is found from the thickness at the pitch circle and the involute function:
+
+**s_a = d_a × (s / d + inv α − inv α_a)**, where cos α_a = d_b / d_a
+
+For the 14-tooth module 3 pinion with x = 0.2, the base diameter is 42 × cos 20° ≈ 39.467 mm and the tip diameter 49.2 mm, so cos α_a ≈ 0.8022 and α_a ≈ 36.66°. Working through the formula gives a tip thickness of about **1.63 mm, or 0.54 m**. Unshifted, the same pinion would have a tip of about 1.94 mm, or 0.65 m.
+
+Guidance on the minimum acceptable tip thickness varies with the material and heat treatment, and is often quoted in the range of roughly 0.25 m for through-hardened gears to 0.4 m for case-hardened gears. Against that range, the x = 0.2 pinion is comfortable. Increasing the shift to x = 0.6 would push the tip thickness down to about 0.83 mm, or 0.28 m, which is close to or below what most designers would accept. The exercise's 12-tooth pinion with x = 0.3 and module 2 has a tip thickness of about 0.87 mm, or 0.44 m.
+
+```figure
+type: bars
+title: Tip thickness of a module 3 pinion as the shift grows
+unit: multiples of module
+max: 0.7
+caption: 14-tooth, 20° pinion. Positive shift strengthens the root but sharpens the tip.
+- 14 teeth, x = 0 | 0.65
+- *14 teeth, x = 0.2 | 0.54
+- 14 teeth, x = 0.6 | 0.28
+```
+
 ## Shifts change the centre distance
 
 If one gear is shifted positively and its mate negatively by the same amount, the sum is zero and the standard centre distance still applies. This is a common way to strengthen a small pinion at the expense of a large gear that has strength to spare.
@@ -94,9 +127,37 @@ Solving for the angle whose involute function equals 0.017459 gives **α′ ≈ 
 
 The housing must be bored 0.585 mm wider than the standard figure. Getting this wrong is a classic cause of a pair that jams or rattles when a shifted replacement gear is fitted into a housing built for standard gears.
 
+## Fitting the hunting pair onto 120 mm centres
+
+Chapter 4 left an open problem: the hunting-tooth pair of 20 and 61 teeth at module 3 has a standard centre distance of 121.5 mm, but the housing is fixed at 120 mm. Profile shift can make the pair fit, by working the centre distance relationship backwards.
+
+First find the working pressure angle that the 120 mm centres require:
+
+**cos α′ = a × cos α / a′ = 121.5 × 0.939693 / 120 ≈ 0.951439, so α′ ≈ 17.93°**
+
+Then find the total shift from the involute function:
+
+**x₁ + x₂ = (inv α′ − inv α) × (z₁ + z₂) / (2 × tan α)**
+
+**x₁ + x₂ = (0.010630 − 0.014904) × 81 / (2 × 0.36397) ≈ −0.476**
+
+The total shift is negative: the gears must be thinned overall to close up onto the shorter centres. The designer then splits that total between the two gears. Because the 20-tooth pinion is the weaker member, it would usually keep a zero or small positive shift, and the 61-tooth gear, which has strength to spare, takes most of the negative shift. A split such as x₁ = +0.1 and x₂ = −0.576 is one possibility, to be checked for strength, sliding and tip thickness.
+
+Unequal shifts also change the clearance between each tip and its mating root. If both gears were made with tip diameters of m × (z + 2 + 2x), the clearance at 120 mm would be about 0.68 mm instead of the standard 0.75 mm, which is still acceptable. With a positive total shift, the clearance would shrink instead, and the tips are then often reduced, called tip shortening, to restore it.
+
+## Shifting to balance a pair
+
+Even without undercut or a fixed housing, shift is a tool for balancing the two gears. In a reduction pair, the pinion's teeth are thinner at the root, see more load cycles and slide more at the ends of contact than the gear's. A positive shift on the pinion and an equal negative shift on the gear keeps the standard centre distance while moving strength and sliding from the gear, which has margin, to the pinion, which needs it.
+
+For the conveyor pair, a split such as x₁ = +0.3 and x₂ = −0.3 would leave the 120 mm centres unchanged, thicken the pinion's teeth and thin the gear's. Whether it is worthwhile depends on the bending and surface checks in Chapters 8 and 9; standard gears with no shift are perfectly acceptable for the conveyor's moderate load. The point is that shift is a design variable, not only a fix for small pinions, and gear software commonly offers it as a way to equalise bending stress or specific sliding between the two members.
+
 ## Profile shift is a design decision
 
 Profile shift can avoid undercut, balance bending strength or sliding between pinion and gear, adjust a centre distance to fit an existing housing, or tune contact ratio. It must be recorded on the drawing, because two gears with the same module and tooth number but different shifts are not interchangeable. Chapter 10 returns to what the drawing must state.
+
+## Recognising a shifted gear
+
+A shifted gear looks almost the same as a standard one, which is why the shift must be on the drawing. In the workshop, a gear's tip diameter gives the first clue: a measured tip of 49.2 mm on a 14-tooth module 3 pinion, rather than 48 mm, suggests a shift of about +0.2. Tip diameters can be turned to any size, though, so the confirming check is the span measurement of Chapter 10, which reflects the actual tooth thickness. A span larger than the standard value for the module, tooth number and pressure angle indicates positive shift; a smaller one indicates negative shift or deliberate thinning for backlash. When replacing a single gear from an old pair, measuring the mating gear's shift as well avoids fitting a standard replacement into a pair designed around shifted teeth.
 
 ## Exercise: a 12-tooth pinion
 

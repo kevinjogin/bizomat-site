@@ -51,6 +51,49 @@ caption: Different failure modes with different allowables; the numbers are not 
 - *Surface contact, with velocity factor | 441
 ```
 
+## How narrow the contact band is
+
+The Hertz relationship also gives the width of the band over which the teeth touch. For two steel cylinders, the half-width of the contact band is:
+
+**a_H = √(4 × w × R / (π × E′))**
+
+where w is the load per unit face width, R the effective radius from 1/R = 1/r₁ + 1/r₂, and E′ the combined elastic modulus, about 113,700 MPa for steel on steel with E ≈ 207 GPa and Poisson's ratio 0.3, the values behind Shigley's elastic coefficient.
+
+For the conveyor pair at the pitch point, w ≈ 40.98 N/mm including the velocity factor, and R ≈ 1 / 0.12995 ≈ 7.695 mm:
+
+**a_H ≈ √(4 × 40.98 × 7.695 / (π × 113,700)) ≈ 0.059 mm**
+
+The teeth touch over a band only about 0.12 mm wide across the 30 mm face. As a check, the peak pressure across a band of that width is 2 × w / (π × a_H) ≈ 439 MPa, which agrees with the 441 MPa found above within rounding. The whole of the tooth's surface strength is tested in that thin strip, millions of times over.
+
+## The stress peaks below the surface
+
+The highest shear stress under two cylinders in contact does not occur at the surface. For line contact, it reaches about 0.30 times the peak pressure at a depth of about 0.78 times the half-width. For the conveyor pinion, that is roughly:
+
+- **Maximum shear stress:** 0.30 × 441 ≈ **132 MPa**
+- **Depth:** 0.78 × 0.059 ≈ **0.046 mm** below the surface
+
+```figure
+type: stats
+title: Inside the conveyor pinion's contact at the pitch point
+caption: Hertz line contact, steel on steel, including the velocity factor. The surface strength is decided in a very thin layer.
+- 0.12 mm | Contact band width | across the 30 mm face
+- 441 MPa | Peak contact pressure | at the centre of the band
+- 132 MPa | Maximum shear stress | about 0.30 × peak pressure
+- *0.046 mm | Depth of maximum shear | about 0.78 × half-width
+```
+
+This is why pits often start just below the surface and break out as small, shell-like craters. It is also why a surface-hardened case must be deep enough: the hardened layer must extend well beyond the depth of maximum shear, with margin for the gradual fall in hardness towards the core. Rating methods and heat treaters set case depth from the module, the load and the process, typically far deeper than this small number alone suggests, because the stresses under real, rough, sliding surfaces and the hardness gradient both need allowance.
+
+## The worst point is not always the pitch point
+
+The calculation above uses the radii of curvature at the pitch point, which is convenient and is what Shigley's simple expression assumes. The pinion's flank is more sharply curved lower down, nearer its base circle, and if a single pair of teeth carries the full load there, the contact stress is higher.
+
+Chapter 4 showed that the conveyor pair's single-contact zone runs from about 8.30 mm to about 11.21 mm along the line of action, measured from the pinion's tangent point on its base circle. The pitch point, at 10.26 mm, lies inside it. At the lower end of the zone, the **lowest point of single tooth contact** on the pinion, the radii of curvature are about 8.298 mm on the pinion and 32.744 mm on the gear:
+
+**1/r₁ + 1/r₂ ≈ 0.12051 + 0.03054 ≈ 0.15106 per mm**
+
+The contact stress scales with the square root of that sum, so it rises by a factor of √(0.15106 / 0.12995) ≈ 1.078, to about **475 MPa**. Rating methods such as ISO 6336 include a factor for exactly this case when the lowest point of single contact is more severe than the pitch point, as it often is for pinions with few teeth.
+
 ## What changes the contact stress
 
 The square root in the expression means contact stress responds more gently than bending stress to changes in load and size:
@@ -77,9 +120,41 @@ caption: Inspect worn gears before redesigning; the pattern points to the cause.
 - *Contact at one end of the face | Misalignment | shafts, bearings, housing
 ```
 
+## Pairing the hardnesses of pinion and gear
+
+In through-hardened gear pairs, the pinion is commonly made harder than the gear. It sees more contact cycles, as Chapter 8 showed for bending, and its smaller radius of curvature gives it the higher stress at most points. A harder pinion running against a softer gear can also gently work-harden and polish the gear's surface during running in. The difference in hardness between pinion and gear is a design choice, made with the rating method's guidance and the supplier's experience.
+
+Where both members are surface hardened, as in many compact industrial gearboxes, they are often of similar hardness, and the case depth, surface finish and lubrication become the main controls.
+
 ## Lubrication carries the load
 
 A lubricant film separates the teeth for much of each contact cycle. Its thickness depends on viscosity, speed and the curvature of the surfaces. Too thin a film lets asperities touch, accelerating pitting and risking scuffing; contamination and water break the film down. Lubricant choice, cleanliness and temperature control are therefore part of a gear's surface strength, not just maintenance details. Follow the gear or gearbox supplier's lubricant specification, and treat a change of lubricant as a design change.
+
+## Scuffing: when the film fails suddenly
+
+Pitting develops slowly over millions of cycles. **Scuffing** can happen in minutes. When the oil film between sliding teeth breaks down, the surfaces weld together at points and tear apart, leaving rough, streaked bands running in the direction of sliding, usually near the tips and roots where sliding is greatest.
+
+Chapter 2 showed that the conveyor pair slides at up to about 1.6 m/s at the ends of contact, against zero at the pitch point. The heat generated by sliding under high contact pressure raises the temperature of the surfaces briefly as they pass through contact, a rise often called the flash temperature. If the surface temperature exceeds what the lubricant can withstand, the film fails. Higher loads, higher sliding speeds, rougher surfaces and hotter oil all increase the risk.
+
+The defences are a lubricant of suitable viscosity, with extreme-pressure additives where the duty demands them; smooth surfaces; tip relief to soften the heavily sliding entry into contact; and adequate cooling. Rating methods include separate scuffing checks, which become important in fast, heavily loaded or hot-running drives. For the conveyor pair, at moderate speed and load, a suitable gear oil and a clean, cool gearbox should keep scuffing remote.
+
+## Choosing the oil viscosity
+
+Gear oils are graded by viscosity, commonly to the ISO viscosity grade system, which classifies oils by their viscosity at 40 °C. Slow, heavily loaded gears need more viscous oil to build an adequate film; fast, lightly loaded gears can use thinner oil, which also churns less and runs cooler. Gear and lubricant suppliers publish charts that relate the recommended grade to pitch-line speed, load and operating temperature, and the gearbox maker's specification takes priority for a packaged unit.
+
+Temperature matters as much as the grade. Viscosity falls steeply as oil warms, so an oil that is correct at 50 °C may be too thin at 90 °C. A gearbox that runs hotter than expected, perhaps because of a blocked breather, a dirty housing that cannot shed heat or a higher duty than designed, effectively loses film thickness. Checking the running temperature is therefore one of the cheapest checks of surface health a maintainer can make.
+
+## Running in
+
+New gears have surface roughness and small geometric errors that concentrate load on the high spots. A period of **running in**, at reduced load or with a controlled increase in load, lets those high spots wear or deform slightly so that the contact spreads more evenly. The surfaces become smoother and the oil film more effective.
+
+Running in releases fine wear particles. Many gearbox suppliers therefore recommend draining and replacing the oil, or changing the filter, after the first period of operation. The running-in procedure, if the supplier specifies one, belongs in the commissioning record alongside the backlash and contact pattern checks of earlier chapters.
+
+## Reading pitting in service
+
+Not all pitting is a reason for alarm. Small, scattered pits that appear early in life on high spots and then stop growing, sometimes called **initial pitting**, can be the surface adjusting itself as the contact spreads. Pits that keep growing in number and size, merging into larger craters and spreading across the working profile, are **progressive pitting**, and they lead to rising noise, vibration and eventually loss of tooth profile.
+
+The practical response is to record and compare. Photographs of the same teeth at each inspection, taken with consistent lighting and a scale, show whether the pitting has stabilised or is growing. A borescope through an inspection port can do this without dismantling the gearbox. Oil analysis that tracks wear metal content adds evidence. A gear whose pitting is spreading needs its load, alignment and lubrication reviewed before it is simply replaced with an identical part, because an identical part in the same conditions will follow the same path.
 
 ## Exercise: a wider face
 
