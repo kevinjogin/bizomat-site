@@ -65,6 +65,18 @@ Higher pressures need heavier, stronger engines, and early diesels were large an
 | Typical emissions concerns | Carbon monoxide, unburnt fuel, nitrogen oxides | Nitrogen oxides and particulate matter |
 | Best suited to | Light vehicles, intermittent duty | Heavy, sustained loads |
 
+```figure
+type: compare
+title: Petrol and diesel compared
+cols: Petrol, spark ignition | Diesel, compression ignition
+caption: Match the engine to the duty: light and intermittent, or heavy and sustained.
+- Ignition | Spark in a fuel and air mixture | Fuel into hot compressed air
+- Efficiency | Lower, especially at part load | Higher, especially at part load
+- Weight and cost | Lighter and cheaper | Heavier and dearer
+- Torque | Good at higher speeds | Strong at low speeds
+- *Best suited to | Light vehicles, intermittent duty | Heavy, sustained loads
+```
+
 Neither is better in general. The duty decides, together with fuel prices, emissions rules and the support available locally.
 
 ## The gas turbine: continuous combustion
@@ -72,6 +84,17 @@ Neither is better in general. The duty decides, together with fuel prices, emiss
 A **gas turbine** does the work of a piston engine continuously rather than in separate strokes. A compressor squeezes air continuously, fuel burns continuously in a combustion chamber, and the hot gases expand through a turbine that drives the compressor, with surplus energy available as thrust or shaft power.
 
 Frank Whittle in Britain and Hans von Ohain in Germany independently developed jet engines in the late 1930s, and the first jet-powered flight took place in Germany in 1939. Gas turbines have high power for their weight and run smoothly, which made them ideal for aircraft. They also became central to electricity generation: in **combined cycle** power stations, the hot exhaust from a gas turbine raises steam to drive a steam turbine, reaching overall efficiencies of around 60%, much higher than either alone.
+
+```figure
+type: timeline
+title: Engines after steam
+caption: Each engine found the duty it suited best rather than replacing all the others.
+- 1860 | Lenoir's gas engine | no compression, inefficient
+- 1886 | Benz's motor car | a light, fast-running petrol engine
+- 1897 | Diesel's test engine | the most efficient heat engine of its time
+- 1908 | Model T | cars become affordable
+- *1939 | First jet-powered flight | continuous combustion
+```
 
 ### Efficiency is limited by materials
 
@@ -130,6 +153,16 @@ This is an illustrative example. The figures are assumptions. A remote processin
 **Option.** An energy consultant proposes adding solar panels and a battery, keeping the diesel generator for night-time and cloudy periods. Modelling suggests the hybrid system could reduce diesel use by about 60%, saving about $147,000 a year in fuel, for an assumed installed cost of about $600,000, a simple payback of about four years. The generator would also run less often, and closer to its efficient load when it does.
 
 **Decision.** The business commissions a detailed study using measured load data and local solar data, confirms reliability arrangements and proceeds in stages. As with the history of engines, the choice is not about one technology being better in general, but about which mix best suits the duty, the energy prices and the reliability required. The [buying for the whole life of equipment](/reados/collections/investment-appraisal-and-business-cases/buying-for-the-whole-life-of-equipment/) article explains how to compare such options on whole-of-life cost.
+
+```figure
+type: bars
+title: Annual fuel for a remote site averaging 40 kW
+unit: $
+max: 260000
+caption: About 60% less diesel for an assumed $600,000 installed: a simple payback of about four years.
+- Diesel generator alone | 245000
+- *Solar, battery and diesel | 98000
+```
 
 ## Applying these lessons in an Australian business
 

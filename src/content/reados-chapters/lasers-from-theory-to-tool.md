@@ -32,6 +32,18 @@ The first practical device based on stimulated emission worked with microwaves r
 
 Extending the idea to visible light posed new challenges: suitable materials, ways to pump energy into them and optical resonators that could sustain the beam. Several research groups pursued the problem in the late 1950s, and in 1960 Theodore Maiman demonstrated the first working laser, using a synthetic ruby crystal pumped by a flash lamp. Within a few years, many other types followed.
 
+```figure
+type: timeline
+title: From theory to tool
+caption: The laser was demonstrated in 1960 before anyone knew quite what it was for; uses followed over decades.
+- 1917 | Einstein's stimulated emission | a theoretical insight
+- Early 1950s | The maser | microwave amplification
+- *1960 | Maiman's ruby laser | the first working laser
+- 1970s | Room-temperature diode lasers | compact and cheap
+- 1970s–80s | Optical fibre links | telephone and data traffic
+- 2000s | Fibre lasers widespread | in industry
+```
+
 ## The main laser types
 
 Different ways of creating the lasing medium produced lasers with different wavelengths, powers and characteristics:
@@ -45,6 +57,19 @@ Different ways of creating the lasing medium produced lasers with different wave
 | Semiconductor (diode) lasers | 1962 onwards, practical at room temperature in the 1970s | Compact, efficient, inexpensive | Optical communications, data storage, pumping other lasers, sensors |
 | Fibre lasers | Developed over several decades, industrially widespread from the 2000s | Efficient, robust, high beam quality, low maintenance | Sheet metal cutting, welding, marking |
 | Ultrafast lasers | Late twentieth century onwards | Extremely short pulses that remove material with minimal heat | Micromachining, medical devices, electronics |
+
+```figure
+type: decision
+title: Matching the laser to the job
+question: What is the laser for?
+caption: Each type found its uses as its power, efficiency and cost improved.
+- Cutting and welding thick sections, non-metals | Carbon dioxide
+- Welding, marking, drilling | Neodymium-doped crystal
+- Alignment and metrology | Helium-neon
+- Communications and data | Semiconductor diode
+- *Sheet metal cutting and welding | Fibre laser
+- Micromachining with minimal heat | Ultrafast
+```
 
 Each type opened particular applications. The history of industrial lasers is less about one invention than about a succession of laser types, each better suited to certain jobs, and about the gradual improvement of power, efficiency, reliability and cost.
 

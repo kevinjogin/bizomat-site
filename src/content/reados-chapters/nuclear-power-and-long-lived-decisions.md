@@ -51,6 +51,17 @@ Reactor safety is built on **defence in depth**: multiple independent layers, so
 - **Operator training and procedures** for normal operation and emergencies.
 - **Emergency planning** for the surrounding area.
 
+```figure
+type: layers
+title: Defence in depth
+caption: Independent layers, so that if one fails others prevent harm; the danger is one event defeating several at once.
+- Physical barriers | pellet, cladding, vessel, containment
+- Design features | inherent slowing, diverse cooling
+- Automatic protection | shutdown outside safe limits
+- Operator training and procedures
+- *Emergency planning | for the surrounding area
+```
+
 A key challenge is **common-cause failure**: a single event, such as a flood, fire or design error, that defeats several layers at once. Much safety engineering effort goes into separating, diversifying and protecting the layers so they do not share weaknesses.
 
 ## Three accidents
@@ -66,6 +77,19 @@ At Chernobyl in Ukraine, then part of the Soviet Union, operators conducting a t
 ### Fukushima Daiichi, 2011
 
 In March 2011, a massive earthquake and tsunami struck Japan. The reactors at Fukushima Daiichi shut down automatically when the earthquake hit, but the tsunami flooded the site and knocked out power supplies and backup generators needed to run cooling systems. Without cooling, decay heat damaged the cores of three reactors, hydrogen explosions damaged buildings and radioactive material was released. Large areas were evacuated. The accident was a textbook common-cause failure: one external event defeated several layers of protection that had been located where the same flood could reach them. It led to reassessments of external hazards and emergency power arrangements worldwide.
+
+```figure
+type: timeline
+title: From discovery to power, and three accidents
+caption: Fission moved from discovery to electricity within two decades; each accident taught different lessons.
+- 1938 | Fission discovered | Hahn and Strassmann
+- 1942 | First controlled chain reaction | Chicago
+- 1951 | First nuclear electricity | an experimental reactor in Idaho
+- 1956 | Calder Hall | commercial-scale generation
+- 1979 | Three Mile Island | misleading indications
+- 1986 | Chernobyl | safety systems disabled for a test
+- *2011 | Fukushima | earthquake and tsunami
+```
 
 ## Economics and construction
 
@@ -120,6 +144,17 @@ A small manufacturer keeps its server equipment, network switch and backup gener
 After reading about Fukushima, the owner asks a simple question: what single event could disable both the systems and their backups? A heavy storm that floods the plant room would stop the servers and the generator together, and the local backup drive sits on the same shelf as the server.
 
 The business moves the server equipment to a first-floor cabinet, raises the generator on a plinth, adds an automatic off-site backup and tests a restore. The changes cost about $9,000. A flood that destroyed the equipment and data would have stopped invoicing and production scheduling for at least a week, at an estimated cost several times higher, and might have lost records that could not be recreated.
+
+```figure
+type: compare
+title: Removing a common-cause failure from a plant room
+cols: One flood away | Separated
+best: 2
+caption: About $9,000, against at least a week without invoicing or production scheduling.
+- Servers | Ground floor, near a stormwater drain | First-floor cabinet
+- Generator | In the same room | Raised on a plinth
+- *Backups | A drive on the same shelf | Automatic off-site, restore tested
+```
 
 ## How this applies to a small Australian business
 

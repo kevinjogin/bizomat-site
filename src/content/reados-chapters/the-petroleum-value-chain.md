@@ -84,6 +84,15 @@ The modern industry is often described in three segments:
 | Midstream | Pipelines, storage, shipping and terminals | Infrastructure-intensive, often regulated, steady utilisation-driven returns |
 | Downstream | Refining, distribution, marketing and retail; petrochemicals | Margin-driven, operationally complex, sensitive to demand and competition |
 
+```figure
+type: steps
+title: The petroleum value chain
+caption: Each segment has different risks, assets and ways of earning a return.
+- Upstream | exploration and production · high risk, long lead times
+- Midstream | pipelines, storage, shipping · infrastructure-intensive
+- *Downstream | refining, distribution, retail · margin-driven
+```
+
 Value has shifted between these segments many times, depending on prices, technology, regulation and competition. Integrated companies spread risk across segments; specialists focus on the stage where they have an advantage.
 
 ## An Australian perspective
@@ -131,6 +140,17 @@ A small Australian manufacturer of plastic packaging buys resin from overseas su
 Applying lessons from the petroleum value chain, the owner maps the business's own value chain from feedstock to customer. The map shows a single overseas resin source, one shipping route and no local buffer stock: an efficient but fragile arrangement. It also shows that the business's own production scrap, about 4% of output, is sent to landfill.
 
 The business qualifies a second resin supplier, holds a modest buffer of its highest-volume grade and works with a recycler to reprocess clean production scrap into resin for non-food applications, turning a disposal cost into a small feedstock saving. The changes add some cost in normal times but reduce exposure to the next disruption, and the by-product stream becomes a modest source of value. The owner also adds a quarterly review of resin markets and shipping conditions to the management meeting, so that early signs of the next disruption prompt orders before prices and lead times move, rather than after.
+
+```figure
+type: compare
+title: Mapping a packaging maker's own value chain
+cols: Found | Changed to
+best: 2
+caption: When lead times stretched from six to fourteen weeks, the map showed an efficient but fragile chain.
+- Resin supply | One overseas source, one route | A second supplier qualified
+- Buffer stock | None | Highest-volume grade held
+- *Production scrap, about 4% | Sent to landfill | Reprocessed into resin for non-food uses
+```
 
 ## How this applies to a small Australian business
 

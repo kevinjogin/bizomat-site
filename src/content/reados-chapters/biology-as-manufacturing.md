@@ -55,6 +55,18 @@ More recent advances have expanded the toolkit further. **Gene editing** techniq
 
 **Messenger RNA (mRNA) vaccines**, authorised for use against COVID-19 in late 2020, showed a different manufacturing model. Instead of growing cells to produce a protein, mRNA is produced in a cell-free enzymatic process and packaged in lipid nanoparticles, so that the patient's own cells make the protein that triggers immunity. The process can be adapted to new targets by changing the genetic sequence, and it can be scaled quickly once facilities and supply chains exist. Building that capacity rapidly during the pandemic required enormous coordination of raw materials, equipment, quality systems and regulatory review. Australia, like many countries, has since invested in onshore vaccine manufacturing capability.
 
+```figure
+type: timeline
+title: Biology as manufacturing
+caption: Penicillin was discovered in 1928 but became widely available only after an intensive engineering effort.
+- 1916 | Commonwealth Serum Laboratories | vaccines and antitoxins
+- 1928 | Fleming observes penicillin | a mould kills bacteria
+- 1940–41 | Florey's Oxford team | purifies and tests penicillin
+- 1982 | Recombinant human insulin | made by bacteria
+- 2012 | CRISPR-based gene editing | precise changes
+- *2020 | mRNA vaccines authorised | against COVID-19
+```
+
 ## How bioprocessing works
 
 Most biological manufacturing follows a common structure:
@@ -67,6 +79,18 @@ Most biological manufacturing follows a common structure:
 | Harvest and recovery (downstream) | Separating the product from cells and broth | Centrifugation, filtration, yield |
 | Purification | Removing impurities to required purity | Chromatography, filtration, viral clearance |
 | Formulation and fill-finish | Preparing the final product and filling containers | Sterility, stability, accuracy of dose |
+
+```figure
+type: steps
+title: How bioprocessing works
+caption: The process is the product, so every stage from cell line to filling must be controlled.
+- Cell line or strain | productive, stable, documented
+- Media and seed train | sterile, consistent
+- *Production in the bioreactor | temperature, pH, oxygen, mixing
+- Harvest and recovery | centrifuge, filter
+- Purification | chromatography, viral clearance
+- Formulation and fill-finish | sterile, accurate dose
+```
 
 Each stage is tightly controlled, documented and monitored, with in-process tests confirming that conditions stay within validated limits.
 
@@ -133,6 +157,17 @@ A small Australian producer of fermented beverages grows from 500-litre batches 
 Investigation finds that the larger vessel's cooling jacket cannot remove heat as quickly relative to the volume, so the ferment runs warmer, favouring unwanted flavour compounds. Mixing is slower, so temperature varies through the tank. A transfer hose added for the larger vessel is difficult to clean and is a contamination risk.
 
 The producer adds supplementary cooling and temperature probes at several heights, adjusts the yeast pitching rate and feeding schedule based on small trials, replaces the hose with a cleanable hard-piped connection and introduces batch records that capture temperatures, timings, ingredient lots and cleaning checks. Subsequent batches match the small-batch flavour profile, and the records allow any future problem to be traced to its cause. The [product traceability in manufacturing](/reados/collections/manufacturing-quality/product-traceability-in-manufacturing/) article explains how lot records support recalls and investigations.
+
+```figure
+type: checklist
+title: Scaling a ferment from 500 to 5,000 litres
+caption: The larger jacket removed heat more slowly relative to volume, and mixing slowed, so the ferment ran warm.
+- x Supplementary cooling
+- x Temperature probes at several heights
+- x Pitching rate and feeding set from small trials
+- x A cleanable, hard-piped transfer
+- *x Batch records of temperatures, lots and cleaning
+```
 
 ## How this applies to a small Australian business
 

@@ -71,6 +71,19 @@ Australian cities followed the international pattern with local variations.
 - **Brisbane** began electric suburban services in 1979, using 25,000 volts AC.
 - **Adelaide** retained a tram line to Glenelg and later extended it, while its suburban railways remained largely diesel for many years before partial electrification.
 
+```figure
+type: timeline
+title: From horses and cables to electric traction
+caption: Voltages chosen for the motors of the 1900s still govern networks today.
+- 1863 | Metropolitan Railway | steam trains underground
+- 1873 | Hallidie's cable car | San Francisco
+- 1885 | Melbourne's cable trams | one of the largest networks
+- *1888 | Sprague's electric street railway | Richmond, Virginia
+- 1890 | City and South London Railway | deep-level, electric
+- 1919 | Melbourne suburban electric | 1,500 V DC
+- 1979 | Brisbane suburban electric | 25,000 V AC
+```
+
 The contrasting decisions in Melbourne and Sydney show how infrastructure choices that seem economical at one time can look very different decades later. Removing trams saved money on track renewal and allowed more flexible bus routes, but once tracks and reservations were gone, restoring rail was expensive.
 
 ## What electric traction offered
@@ -118,6 +131,16 @@ This is an illustrative example. The business and figures are hypothetical.
 A manufacturer is building a new production hall. The current plan includes underground conduits sized for today's equipment. The electrical contractor points out that adding larger conduits and spare pits now, while the slab is open, would cost about $4,000 extra. If more capacity were needed later, for example for electric forklifts, an induction furnace or rooftop solar with batteries, cutting the slab, trenching, installing new conduits and reinstating the floor would cost an estimated $30,000 and interrupt production for several days.
 
 The owner treats the spare conduits like a tram corridor kept in reserve: a modest cost now to keep a valuable option open. Even if there were only a one-in-three chance of needing the capacity in the next ten years, the expected cost of retrofitting would be about $10,000, well above the $4,000 premium, before counting the disruption. The spare conduits are installed and recorded on the as-built drawings so that future staff know they exist.
+
+```figure
+type: bars
+title: Spare conduits, priced as an option
+unit: $
+max: 11000
+caption: Spare conduits and pits were installed while the slab was open, and recorded on the as-built drawings.
+- *Larger conduits and spare pits now | 4000
+- Expected cost of retrofitting later | 10000 | at a one-in-three chance
+```
 
 ## How this applies to a small Australian business
 

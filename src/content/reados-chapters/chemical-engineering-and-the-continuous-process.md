@@ -74,6 +74,18 @@ At Bhopal in India, a release of toxic methyl isocyanate gas from a pesticide pl
 
 In September 1998, an explosion and fire at the Esso gas plant at Longford in Victoria killed two workers and injured others, and cut Victoria's main natural gas supply for about two weeks, affecting homes and businesses across the state. A royal commission found that a loss of warm oil flow had allowed a heat exchanger to become extremely cold and brittle, and that when warm oil was reintroduced, the vessel fractured. It found failures in hazard identification, training and the management of the plant's operating knowledge. Longford is widely studied in Australia for the distinction it highlighted between **personal safety**, such as slips and trips, and **process safety**, the prevention of major hazard events, which had not received comparable attention.
 
+```figure
+type: timeline
+title: Chemical engineering and the continuous process
+caption: Scaling chemistry up meant engineering the process, its control and its hazards, not just the reaction.
+- 1790s | Leblanc soda process | salt, acid, limestone, coal
+- 1863 | Alkali Act | capture the acid gas
+- 1860s | Solvay process | far less waste, more continuous
+- *1913 | First Haber-Bosch ammonia plant | a laboratory reaction scaled up
+- 1960s–70s | HAZOP studies | systematic deviation reviews
+- 1998 | Longford explosion | Victoria's gas supply cut
+```
+
 ## Methods for hazardous processes
 
 From these and other experiences, the process industries developed structured methods, including:
@@ -120,6 +132,17 @@ A small food manufacturer runs a continuous cooking and cooling line. During a w
 On Monday, the production supervisor notices the hose and, recalling the company's new management-of-change procedure, stops the line. A quick review takes forty minutes: the maintenance planner confirms the hose's rating, finds it unsuitable and sources a correctly rated hose from the store, the change is recorded with a date for permanent repair, and the operators are briefed. The line restarts with a delay of under an hour.
 
 A failure of the original hose at 85 °C would have released scalding water near operators and stopped the line for a full shift. The supervisor's decision cost less than an hour of production; the alternative risked injuries and a much longer stoppage.
+
+```figure
+type: steps
+title: Forty minutes of management of change
+caption: Less than an hour of production, against scalding water near operators and a lost shift.
+- Spot the unrecorded change | stop the line
+- Check the rating | the hose is unsuitable
+- Fit a correctly rated hose | from the store
+- Record the change | with a date for permanent repair
+- *Brief the operators | and restart
+```
 
 ## How this applies to a small Australian business
 

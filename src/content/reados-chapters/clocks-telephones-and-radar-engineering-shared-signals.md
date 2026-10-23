@@ -76,6 +76,19 @@ Any detector must set a **threshold**. Set it low, and it detects faint targets 
 
 Australia built its own radar during the war through the Council for Scientific and Industrial Research's Radiophysics Laboratory in Sydney. After the war, its scientists turned their skills to radio astronomy, and the Parkes radio telescope, opened in 1961, later helped receive television pictures from the Apollo 11 Moon landing in 1969.
 
+```figure
+type: timeline
+title: Engineering shared signals
+caption: Time, telephones, broadcasting and radar all depended on many people agreeing on, or sharing, the same signal.
+- 1859 | Westminster's Great Clock | built to a demanding specification
+- 1876 | Bell's telephone patent | an easy device, a hard network
+- 1884 | Greenwich chosen | the prime meridian
+- 1895 | Australian time zones | eastern, central and western
+- 1927 | First quartz clock | Bell Laboratories
+- 1935 | Radar demonstrated | an aircraft detected by reflection
+- *1967 | The second redefined | by the caesium atom
+```
+
 ## Lessons for engineers and managers
 
 ### Agreement can matter more than accuracy
@@ -112,9 +125,31 @@ This is an illustrative example. A processing plant installed vibration sensors 
 
 **Apply detection thinking.** The reliability engineer estimates that checking an alarm takes a technician about 30 minutes, costing about $75, while a missed bearing failure costs around $30,000. Missed failures are far more costly, but a system that produces so many false alarms that people ignore it misses failures too.
 
+```figure
+type: balance
+title: The two costs of a detector
+left: Checking a false alarm
+right: Missing a real failure
+tilt: right
+caption: Misses cost far more, but a detector that cries wolf gets ignored and misses failures too.
+- About $75 | About $30,000
+- 30 minutes of a technician | A failed pump bearing
+```
+
 **Change the detector.** Instead of a single fixed threshold, alarms now require vibration to stay above an adjusted level for 30 minutes during steady running, ignore start-up periods and compare each pump with its own baseline. Sensor faults are reported separately as maintenance tasks, not as pump alarms.
 
 **Result.** Alarms fall to about three a week, most of which reveal real developing problems, typically two or more weeks before failure. Operators trust the alarms and act on them. The engineer reviews thresholds quarterly against inspection findings. The [maintenance that prevents breakdowns](/reados/collections/lean-and-continuous-improvement/maintenance-that-prevents-breakdowns/) article explains how condition monitoring fits into a wider maintenance strategy.
+
+```figure
+type: compare
+title: Vibration alarms on 40 pumps
+cols: Fixed threshold | Baseline, steady running, 30 minutes
+best: 2
+caption: Sensor faults now go to maintenance as tasks, and thresholds are reviewed quarterly against inspections.
+- Alarms | About 25 a week, mostly false | About 3 a week, mostly real
+- Operators | Ignored them | Trust and act on them
+- *Warning | A bearing failed unnoticed | Typically two or more weeks ahead
+```
 
 ## Applying these lessons in an Australian business
 

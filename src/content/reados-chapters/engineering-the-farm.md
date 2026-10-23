@@ -70,6 +70,18 @@ Steam traction engines worked some large farms in the late nineteenth century, b
 
 Mechanised production was only valuable if produce could reach markets. Railways carried grain and wool to ports, and ships carried it overseas. Refrigeration opened another market: in 1879 and 1880, a ship carrying frozen meat from Australia reached London in good condition, and frozen and chilled meat exports grew into a major trade. Machinery on the farm and infrastructure beyond it worked together.
 
+```figure
+type: timeline
+title: Engineering the farm
+caption: Many farm machines answered labour shortages, and Australian conditions produced machines of their own.
+- 1831 | McCormick's reaper | horse-drawn harvesting
+- 1837 | Deere's steel plough | a share that scours clean
+- 1876 | Stump-jump plough | rides over obstructions
+- 1879–80 | Frozen meat reaches London | distant markets open
+- *1885 | McKay's harvester | strip, thresh and clean in one pass
+- 1917 | Fordson tractor | tractors replace horses
+```
+
 ## Precision agriculture
 
 In recent decades, farm machinery has become a platform for data and automation. Satellite guidance allows tractors and sprayers to follow exact paths, reducing overlaps and missed strips. Yield monitors map harvest results across a paddock. Variable-rate equipment applies seed and fertiliser according to soil and yield maps, and sensors and drones monitor crops. Many Australian grain growers have adopted **controlled traffic farming** and **no-till** systems, keeping machinery on permanent wheel tracks and leaving crop residue on the surface to conserve moisture and soil. The [satellites](/reados/collections/engineering-history-modern-era/satellites-engineering-in-orbit/) article explains the positioning systems that make guidance possible.
@@ -111,6 +123,16 @@ This is an illustrative example. The farm and figures are hypothetical, and cost
 A grain grower crops 2,000 hectares a year and spends about $250 per hectare on seed, fertiliser and crop protection. Without guidance, overlaps between passes average about 8%, meaning that some areas receive inputs twice. A satellite auto-steer system with section control on the sprayer is quoted at about $25,000 installed.
 
 The grower estimates that guidance and section control would reduce overlaps to about 2%, a reduction of 6 percentage points. That would save about 0.06 × $250 × 2,000, or $30,000 a year in inputs, before counting reduced fuel use, less operator fatigue and the ability to work at night. The system would pay for itself in the first year. The grower also checks practical issues: the accuracy of the correction service in the district, compatibility with existing machinery and the local dealer's ability to support the system at sowing time.
+
+```figure
+type: bars
+title: Overlap between passes on 2,000 hectares
+unit: %
+max: 10
+caption: 6 points less overlap on $250 a hectare of inputs: about $30,000 a year against about $25,000 installed.
+- Without guidance | 8
+- *Auto-steer with section control | 2
+```
 
 ## How this applies to a small Australian business
 

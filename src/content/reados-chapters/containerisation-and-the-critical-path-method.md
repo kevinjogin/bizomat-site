@@ -80,6 +80,16 @@ In 1957, engineers at the chemical company DuPont, working with the computer com
 - The **float**, or spare time, between them.
 - The **critical path**: the sequence of activities with no float, which determines the project's duration.
 
+```figure
+type: steps
+title: What a critical path network calculates
+caption: Unlike a bar chart, the network records why activities happen in that order, so a slip shows what else moves.
+- Earliest start | for each activity
+- Latest start | without delaying the project
+- Float | the spare time between them
+- *Critical path | the activities with no float
+```
+
 At about the same time, the United States Navy developed the **Program Evaluation and Review Technique (PERT)** for its Polaris missile program, which involved thousands of contractors. PERT used three estimates for each activity, optimistic, most likely and pessimistic, recognising that durations are uncertain. Its classic calculation tends to understate overall duration when several paths are nearly critical, because the project finishes only when the latest path finishes; modern tools use simulation across the whole network to address this. The [critical path scheduling explained](/reados/collections/project-planning-and-control/critical-path-scheduling-explained/) article covers how to build and use a critical path schedule today.
 
 These methods spread through construction, engineering and defence, and helped establish project management as a discipline, with professional bodies and standards following in the decades after.
@@ -101,6 +111,18 @@ The history explains why so many project tools exist: each was developed when a 
 ## Motorways: consistency from a single parameter
 
 The 1950s also saw the first motorways in many countries, including Britain's first, a short bypass around Preston opened in 1958. A motorway is not simply a wide road. Its geometry, including sight distances, curve radii, lengths of merging lanes and clearances, is derived from one chosen value, the **design speed**, and conflict points are removed by separating crossing traffic onto bridges and interchanges.
+
+```figure
+type: timeline
+title: Standardising boundaries and dependencies
+caption: The container standardised the interface between organisations; the critical path made dependencies calculable.
+- 1910s | Gantt's bar charts | when, but not why
+- *1956 | Ideal X | containers from New Jersey to Texas
+- 1957 | Critical path method | DuPont and Remington Rand
+- 1958 | Preston bypass | Britain's first motorway
+- 1960s | ISO container standards | after contested negotiations
+- 1969 | Project Management Institute | a profession forms
+```
 
 Two lessons stand out. The first is **consistency**: drivers form expectations from the road, and hazards arise where a road suddenly breaks them, such as a sharp curve after a long straight. Designing every element to one consistent parameter keeps expectations valid. The second is **induced demand**: adding capacity to a congested corridor makes travel cheaper and attracts new trips, so congestion often returns. That is not an engineering failure but a predictable response to a change in price, and it means capacity should be judged against whole-network outcomes. Australian road design guidance is published by Austroads.
 
@@ -143,6 +165,16 @@ This is an illustrative example. A manufacturer receives about 2,000 cartons of 
 **Change.** Applying the container principle, the manufacturer agrees with the supplier to ship components directly in the manufacturer's standard returnable totes, labelled with an agreed barcode format. Empty totes return on the supplier's delivery truck. The supplier checks quantities before shipping, and the manufacturer moves to sample checks with supplier quality records.
 
 **Result.** Repacking is eliminated. Managing tote returns and sample checks takes about 10 hours a week, so the net saving is about 57 hours a week. Damage from repeated handling falls, and the production line receives components ready to use. As with shipping containers, the gain came from standardising the interface between two organisations, and it required both to change their processes together.
+
+```figure
+type: bars
+title: Receiving 2,000 cartons of components a week
+unit: hours a week
+max: 70
+caption: A net saving of about 57 hours a week, from standardising the interface between two organisations.
+- Opening, checking and repacking | 67
+- *Returnable totes: returns and sample checks | 10
+```
 
 ## Applying these lessons in an Australian business
 

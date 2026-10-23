@@ -50,6 +50,16 @@ In 1976, Whitfield Diffie and Martin Hellman published a method by which two par
 
 In 1977, Ron Rivest, Adi Shamir and Leonard Adleman published the **RSA** algorithm, which implemented public-key encryption and digital signatures using the difficulty of factoring large numbers. It later emerged that researchers at Britain's signals intelligence agency had developed equivalent ideas earlier in secret, but their work was not declassified until the 1990s.
 
+```figure
+type: compare
+title: Shared-key and public-key cryptography
+cols: Shared key | Public key
+best: 2
+caption: Public-key methods let strangers agree on a secret over a public channel, without any prior secret.
+- Keys | One secret held by both parties | A public key paired with a private key
+- *Key distribution | The secret must be delivered safely first | The public key can be shared openly
+```
+
 Public-key cryptography made two things possible at scale:
 
 - **Secure key exchange** with strangers, so that a browser and a website can set up an encrypted connection without having met before.
@@ -58,6 +68,19 @@ Public-key cryptography made two things possible at scale:
 ## Trust on the internet
 
 In the mid-1990s, as commercial use of the web grew, the browser company Netscape introduced the Secure Sockets Layer protocol to encrypt connections between browsers and websites. Its successor, **Transport Layer Security (TLS)**, protects most web traffic today. When a browser connects to a site, the site presents a **certificate**, a digitally signed statement from a certificate authority that the public key belongs to that domain. Browsers trust a set of certificate authorities, and those authorities vouch for websites. This chain of signatures is the basis of the padlock.
+
+```figure
+type: timeline
+title: From ciphers to digital trust
+caption: Kerckhoffs's principle still holds: security should rest on the key, not on keeping the method secret.
+- 1883 | Kerckhoffs's principles | for military ciphers
+- 1930s | Rejewski breaks Enigma | mathematics and intelligence
+- 1944 | Colossus | an early programmable electronic computer
+- 1976 | Diffie and Hellman | a shared secret over a public channel
+- 1977 | DES and RSA | a standard cipher; public-key encryption
+- Mid-1990s | Secure Sockets Layer | encrypted web connections
+- *2001 | AES selected | through an open international competition
+```
 
 The system works well but depends on processes as much as mathematics: certificate authorities must verify identities carefully, sites must protect private keys and renew certificates before they expire, and browsers must reject compromised certificates. Many security failures arise not from broken cryptography but from stolen passwords, phishing, unpatched software, misconfiguration and lost keys. The [from transistor to smartphone](/reados/collections/engineering-history-modern-era/from-transistor-to-smartphone-engineering-the-digital-economy/) article explains how the networks that carry this traffic were built.
 
@@ -106,6 +129,16 @@ This is an illustrative example. The business and figures are hypothetical.
 A small online retailer's website certificate expires on a Saturday morning because the renewal reminder went to the inbox of a staff member who has left. Customers' browsers display security warnings, and most abandon their purchases. The site is effectively down for online sales for about six hours until the owner finds and fixes the problem.
 
 On a typical Saturday, the site takes about $2,400 in orders between 8 am and 2 pm, so the outage costs roughly that much in lost sales, plus some lost trust from customers who saw the warnings. The owner then reviews the business's digital trust arrangements. Certificate renewal is automated through the hosting provider, renewal and domain notices are sent to a shared mailbox, multi-factor authentication is enabled on the hosting, email, banking and payment accounts, and the domain registration is set to renew automatically. The changes take an afternoon and cost almost nothing.
+
+```figure
+type: checklist
+title: An afternoon's work on digital trust
+caption: An expired certificate cost about $2,400 of Saturday sales; the fixes took an afternoon and cost almost nothing.
+- x Certificate renewal automated
+- x Renewal and domain notices to a shared mailbox
+- x Multi-factor authentication on hosting, email, banking and payments
+- *x Domain registration set to renew automatically
+```
 
 ## How this applies to a small Australian business
 

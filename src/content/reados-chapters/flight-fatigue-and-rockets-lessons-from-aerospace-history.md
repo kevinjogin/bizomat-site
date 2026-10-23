@@ -59,6 +59,18 @@ The broader lesson is that some costs **compound** rather than add. Weight in ve
 
 The Apollo program, which landed astronauts on the Moon in July 1969, depended as much on management methods as on rockets. Coordinating hundreds of thousands of people across government and contractors required disciplined systems engineering, configuration management and testing of whole systems rather than parts alone. Its worst setback came on the ground: in 1967, a fire during a launch rehearsal killed the three-person crew of Apollo 1 inside a cabin filled with pure oxygen at above-atmospheric pressure. The investigation led to major changes to the spacecraft, including a faster-opening hatch, fewer flammable materials and a different cabin atmosphere on the launch pad. A test condition had been more dangerous than the mission it was meant to prepare for.
 
+```figure
+type: timeline
+title: Flight, fatigue and rockets
+caption: Each advance exposed a new way to fail: control, the sound barrier, fatigue and fire.
+- 1894 | Hargrave's box kites | lift him off the ground
+- 1903 | The Wright brothers | sustained, controlled, powered flight
+- 1926 | Goddard's liquid-fuelled rocket | about two and a half seconds
+- 1947 | Bell X-1 | faster than sound in level flight
+- 1954 | Two Comets break up | fatigue in a pressurised fuselage
+- *1969 | Apollo lands on the Moon | rockets and management methods
+```
+
 ## The sound barrier: when a control stops working
 
 During the Second World War and after, aircraft diving at speeds approaching the speed of sound suffered violent buffeting and loss of control, and some test pilots died. The phrase "sound barrier" suggested a wall of drag. Drag did rise sharply, but the deadlier problem was control. As airflow over the wings and tail approached the speed of sound, shock waves formed. A conventional elevator, a hinged flap at the back of the tailplane, could no longer change the airflow ahead of the shock, so pulling back on the control column achieved little.
@@ -79,6 +91,16 @@ The investigation changed how aircraft structures are designed and certified. Ov
 | Safe life | No significant crack will form within a set life | Fatigue testing and retirement at a set number of cycles |
 | Fail safe | Cracks will occur, but the structure must still carry load with a part failed | Redundant load paths and crack stoppers |
 | Damage tolerance | Cracks may exist from manufacture, so their growth must be slow and detectable | Crack growth analysis and inspection intervals set to find damage before it becomes critical |
+
+```figure
+type: layers
+title: How structural design thinking matured
+caption: From strong enough once to safe a thousand times: each approach assumes more about real damage.
+- Static strength | carries its maximum loads
+- Safe life | no crack within a set life
+- Fail safe | still carries load with a part failed
+- *Damage tolerance | crack growth slow and detectable
+```
 
 ### The flight recorder
 
@@ -131,6 +153,16 @@ This is an illustrative example. A manufacturer has built about 400 heavy-duty t
 **Damage tolerance for the fleet.** For trailers already in service, the company calculates how quickly a crack might grow and sets an inspection interval of 25,000 kilometres, with clear criteria for repair, while it offers owners a retrofit reinforcement. It notifies owners promptly and keeps records of inspections.
 
 **Result.** No further failures occur, the retrofit program is completed over a year, and fatigue checks become a standard step in the company's design reviews.
+
+```figure
+type: steps
+title: Fixing fatigue cracks in a trailer chassis
+caption: Twelve of about 400 trailers cracked after roughly 150,000 km; fatigue checks are now a standard design review step.
+- Find the mechanism | fatigue from sharp corners near a weld
+- Test cheaply | measured loads on a rig: weeks, not years
+- Redesign | lower stress, generous radii, away from welds
+- *Protect the fleet | inspect every 25,000 km; offer a retrofit
+```
 
 ## Applying these lessons in an Australian business
 

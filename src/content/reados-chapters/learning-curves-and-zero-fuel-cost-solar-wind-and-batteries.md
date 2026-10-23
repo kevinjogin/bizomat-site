@@ -49,6 +49,18 @@ A silicon cell converts light into electrical charge carriers, and almost every 
 | Recombination | Carriers recombine before reaching a contact, especially at surfaces | Passivation layers that reduce surface recombination |
 | Resistive | Current flowing through the cell and contacts loses power | Balancing contact coverage against shading |
 
+```figure
+type: tree
+title: Where a solar cell loses energy
+caption: Most cell improvements attack one of these losses; thermalisation is inherent to a single-junction cell.
+- Light reaching the cell
+  - Optical | reflection and contact shading
+  - Transmission | long wavelengths pass through
+  - *Thermalisation | the largest single loss
+  - Recombination | carriers lost, especially at surfaces
+  - Resistive | in the cell and contacts
+```
+
 ### PERC: a better design that waited for the economics
 
 In the 1980s, researchers in Martin Green's group at the University of New South Wales developed the **passivated emitter and rear cell (PERC)**. It added a passivating layer on the rear of the cell with small contacts through it, reducing recombination at the rear surface and reflecting unabsorbed light back into the cell. One structural change addressed two loss mechanisms, and the group's cells set efficiency records.
@@ -129,6 +141,18 @@ A battery system has a **power rating**, in kilowatts or megawatts, set by its i
 | Easing local network limits | Location and power | Varies |
 | Seasonal balancing | Very large energy capacity; rarely economic for batteries | Weeks to months |
 
+```figure
+type: compare
+title: Size a battery for the service, not the hardware
+cols: What sizes it | Typical duration
+caption: Grid batteries earn most from speed rather than bulk; seasonal storage is rarely economic for them.
+- *Fast frequency response | Power and response speed | Seconds
+- Reserve after a trip | Power, with modest energy | Minutes
+- Shifting energy | Energy capacity and efficiency | Hours
+- Easing network limits | Location and power | Varies
+- Seasonal balancing | Very large energy capacity | Weeks to months
+```
+
 Describing a battery by only one of the two numbers does not describe it.
 
 ## Zero fuel cost changes the whole system
@@ -174,6 +198,17 @@ This is an illustrative example. A food manufacturer in an Australian city alrea
 **Step one: operations.** Staggering equipment start-ups over 40 minutes cuts the morning peak to about 450 kW. That 70 kW reduction is worth about 70 × $15 × 12, or $12,600 a year, at almost no cost.
 
 **Step two: size for the service.** Holding demand at 400 kW would save a further 50 kW, worth about $9,000 a year. That needs a battery able to deliver about 50 kW for about half an hour, or about 25 kWh. Allowing for usable capacity, degradation over its life and mornings when the peak lasts longer, the engineer suggests about 60 kW and 60 kWh.
+
+```figure
+type: bars
+title: Cutting a food factory's morning demand peak
+unit: kW
+max: 560
+caption: At $15 per kW per month: about $12,600 a year from operations alone, and a further $9,000 from a small battery.
+- Unmanaged peak | 520
+- Start-ups staggered over 40 minutes | 450
+- *Held by a battery of about 60 kW and 60 kWh | 400
+```
 
 **Step three: compare offers.** One supplier proposes a 250 kW, 500 kWh system designed to store midday solar for evening use. Because the site already uses most of its solar output and its problem is a short morning peak, most of that energy capacity would add little value for this purpose. The business seeks quotes for the smaller system, assesses them on whole-of-life cost with both cycle and calendar degradation, and requires installation by qualified installers to the relevant battery installation standard, AS/NZS 5139.
 

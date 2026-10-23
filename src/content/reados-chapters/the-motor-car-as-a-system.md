@@ -46,6 +46,20 @@ Over the first half of the twentieth century, the system around the car grew ste
 | Insurance | Third-party and comprehensive cover, later compulsory | Compensation for injuries and damage |
 | Urban form | Suburbs, shopping centres and car parking | New patterns of living and working |
 
+```figure
+type: tree
+title: The motor car as a system
+caption: The car succeeded because a whole system grew up around it.
+- The motor car
+  - Roads | sealed surfaces, highways, motorways
+  - Fuel supply | pumps, service stations, distribution
+  - Maintenance | garages, mechanics, spare parts
+  - Finance | instalment purchase and loans
+  - *Rules | licences, registration, road rules
+  - Insurance | third-party, later compulsory
+  - Urban form | suburbs, shopping centres, parking
+```
+
 Each element reinforced the others. More cars justified better roads, and better roads encouraged more cars. More cars supported more service stations, and more service stations made cars more practical. This kind of mutual reinforcement is a feature of many technology systems: early growth is slow while the supporting system is thin, then accelerates once it reaches a certain density.
 
 In Australia, distances were vast and populations sparse, so the road system grew unevenly. Main roads between cities were gradually sealed, while many rural roads remained unsealed for much of the century. Governments created road authorities to plan and fund road networks, and fuel taxes and registration fees became significant sources of revenue.
@@ -76,6 +90,17 @@ Australia became a leader in some road safety measures. In 1970, Victoria became
 ### The Safe System approach
 
 Today, Australian road safety strategies are based on the **Safe System** approach. It accepts that people will always make mistakes and that the human body can tolerate only limited crash forces. The aim is therefore to design roads, speeds, vehicles and rules so that mistakes do not lead to death or serious injury. Australia's annual road toll is now less than half its 1970 peak, despite a much larger population and many more vehicles.
+
+```figure
+type: timeline
+title: Bringing down the road toll
+caption: Safer vehicles, roads and behaviour, analysed as a system, more than halved the toll despite far more vehicles.
+- 1959 | Volvo's three-point seatbelt | shared freely
+- 1970 | Road toll peaks | more than 3,700 deaths
+- *1970 | Victoria makes seatbelts compulsory | a world first
+- 1976 | Random breath testing | Victoria, then NSW in 1982
+- Today | Less than half the 1970 peak | with many more vehicles
+```
 
 ## Cleaner cars
 
@@ -132,6 +157,16 @@ This is an illustrative example. The business and figures are hypothetical, and 
 A small catering business considers replacing a diesel delivery van with an electric van. Each day, the van travels about 120 km. The diesel van uses about 10 litres per 100 km, or 12 litres a day, and at $2.00 a litre fuel costs about $24 a day. An electric van using about 0.25 kWh per km would need about 30 kWh a day, which at an off-peak electricity price of $0.20 per kWh costs about $6. The difference is about $18 a day, or roughly $4,500 over 250 working days a year.
 
 The owner then looks at the system around the vehicle. Charging overnight at the depot needs a dedicated charger, and an electrician finds that the switchboard needs an upgrade, adding to installation costs. One weekly delivery route is close to the van's practical range in hot weather with the refrigeration unit running, so the business plans a mid-route charging stop at a public charger. Servicing must be arranged with a dealer qualified for electric vehicles, and the insurer and drivers need to be briefed. With those elements in place, the van makes sense; without them, the fuel saving alone would have been misleading. Like early motorists, the business finds that the vehicle is only part of the decision.
+
+```figure
+type: bars
+title: Daily energy cost for a 120 km delivery round
+unit: $
+max: 26
+caption: About $18 a day less, before the charger, a switchboard upgrade and a mid-route charging stop in hot weather.
+- Diesel van: 12 litres at $2.00 | 24
+- *Electric van: 30 kWh off-peak at $0.20 | 6
+```
 
 ## How this applies to a small Australian business
 

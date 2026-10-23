@@ -66,6 +66,20 @@ In 1989, Tim Berners-Lee at CERN in Switzerland proposed the **World Wide Web**,
 
 Digital mobile telephone networks spread through the 1990s. The US Global Positioning System reached full operation in 1995, making precise positioning available worldwide. Wireless local networks spread through the 2000s, and Australian researchers at CSIRO developed technology that became important to Wi-Fi. Touchscreen smartphones, combining computing, communications, positioning, cameras and sensors in a pocket device, spread rapidly from the late 2000s.
 
+```figure
+type: timeline
+title: From transistor to smartphone
+caption: Each layer, device, chip, controller, network and software, became a component the next could build on.
+- 1947 | The transistor | Bell Laboratories
+- 1959 | Planar integrated circuit | Noyce at Fairchild
+- 1965 | Moore's observation | components doubling regularly
+- 1969 | First programmable logic controller | Modicon
+- 1971 | Intel 4004 | a single-chip microprocessor
+- 1983 | TCP/IP and IEEE 802.3 Ethernet | networks join up
+- 1989 | World Wide Web proposed | CERN
+- *Late 2000s | Touchscreen smartphones | computing in a pocket
+```
+
 Computing then became infrastructure. **Cloud computing** services, offering computing power and storage on demand over the internet, allowed businesses to rent rather than own computing, and enabled the large-scale data processing behind modern artificial intelligence.
 
 ## When software fails
@@ -114,9 +128,29 @@ This is an illustrative example. A machine builder makes packaging machines in 1
 
 **Result.** Panel wiring and testing falls to about two hours per machine, saving about four hours on each of 300 machines, or roughly 1,200 hours a year. At an assumed internal labour cost of $60 an hour, that is worth about $72,000 a year. Sequence changes become software changes, tested and version-controlled, and customer modifications that once took days of rewiring take hours.
 
+```figure
+type: bars
+title: Wiring and testing a packaging machine's control panel
+unit: hours
+max: 7
+caption: About 1,200 hours a year across 300 machines, worth about $72,000; sequence changes became software changes.
+- 12 relay and timer panel variants | 6
+- *One programmable controller, variants in software | 2
+```
+
 **Safety.** Guard interlocks and emergency stops remain on safety-rated devices, independent of the main program, so a software fault cannot defeat them.
 
 **New responsibilities.** The business also takes on new obligations, as the digital history predicts: it creates a software version control and release process, a cyber security baseline for networked machines including password management and remote access controls, and an obsolescence plan that tracks the controller's life cycle, with an approved alternative and a last-time-buy policy when the manufacturer announces end of production. In this illustration, those new activities take about 300 hours a year, so the net gain remains substantial, but only because the business planned for the responsibilities rather than discovering them later.
+
+```figure
+type: checklist
+title: New obligations that come with software control
+caption: Moving functions into software saves wiring but adds responsibilities for versions, security and obsolescence.
+- x Safety functions on safety-rated devices, independent of the program
+- x Software version control and a release process
+- x A cyber security baseline for networked machines
+- *x An obsolescence plan with an approved alternative
+```
 
 ## Applying these lessons in an Australian business
 

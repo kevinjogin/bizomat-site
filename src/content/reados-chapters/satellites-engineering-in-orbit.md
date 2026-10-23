@@ -38,11 +38,32 @@ Within a few years of Sputnik, satellites began serving practical purposes:
 | Navigation | Early naval navigation systems in the 1960s; the Global Positioning System fully operational in 1995 | Precise positioning and timing worldwide |
 | Science | Telescopes and probes from the 1960s onwards | Astronomy, planetary exploration and Earth science |
 
+```figure
+type: timeline
+title: Satellites find their uses
+caption: From a radio beacon in 1957 to infrastructure for weather, communications, mapping and navigation.
+- 1957 | Sputnik 1 | the first artificial satellite
+- 1960 | First weather satellite | cloud images
+- 1964 | Geostationary relay | intercontinental links
+- 1972 | Land-imaging satellites | mapping and monitoring
+- *1995 | GPS fully operational | positioning and timing worldwide
+```
+
 **Communications satellites** carried live television across oceans for the first time in the early 1960s, and geostationary satellites soon provided international telephone circuits. **Weather satellites** transformed forecasting by observing weather systems over oceans and remote regions. **Earth observation** satellites created a continuous record of the planet's surface. **Navigation satellites** eventually provided free positioning and timing signals that became one of the world's most important pieces of infrastructure. Today several global navigation systems operate, and many regions, including Australia and New Zealand, are developing augmentation services to improve accuracy for local users.
 
 ## Australia's part in the story
 
 Australia has contributed to space activity from its early days. In 1967, **WRESAT**, Australia's first satellite, was launched from Woomera in South Australia, making Australia one of the first countries to launch its own satellite from its own territory. In 1969, Australian tracking stations, including the Parkes radio telescope and the Honeysuckle Creek tracking station near Canberra, received and relayed television pictures of the Apollo 11 moonwalk to the world. Australia's national communications satellite system, AUSSAT, began operating in the mid-1980s, improving television and communications to remote areas. The Australian Space Agency was established in 2018 to support the growth of the national space industry.
+
+```figure
+type: timeline
+title: Australia's part in the story
+caption: Australian sites and satellites have been part of space engineering since its first decade.
+- 1967 | WRESAT | launched from Woomera
+- *1969 | Parkes and Honeysuckle Creek | relay pictures of the Moon landing
+- Mid-1980s | AUSSAT | communications to remote areas
+- 2018 | Australian Space Agency | established
+```
 
 ## Choosing an orbit
 
@@ -142,6 +163,16 @@ This is an illustrative example. The business and figures are hypothetical.
 A regional earthmoving contractor installs satellite-based machine guidance on its graders and excavators. Operators now cut and fill to design levels without constant survey checks, and rework falls substantially: on a typical subdivision job, the business estimates it saves around 15% of machine hours previously spent correcting levels.
 
 The owner then asks what would happen if the positioning signal were degraded or lost for a day. The answer is that machines would continue only with traditional survey support, which the business no longer keeps on standby. It responds by maintaining relationships with a local surveyor, keeping physical survey control marks on each site, training a supervisor in traditional level checks and including positioning outages in its project risk register. The investment in satellite guidance continues to pay off, and the business is no longer entirely dependent on it.
+
+```figure
+type: checklist
+title: Keeping a fallback for satellite machine guidance
+caption: Guidance saves around 15% of machine hours on a typical job; the fallback means the business is not entirely dependent on it.
+- x A relationship with a local surveyor
+- x Physical survey control marks on each site
+- x A supervisor trained in traditional level checks
+- *x Positioning outages in the project risk register
+```
 
 ## How this applies to a small Australian business
 
