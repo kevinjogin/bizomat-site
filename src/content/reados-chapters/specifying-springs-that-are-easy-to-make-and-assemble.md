@@ -42,6 +42,15 @@ A compression spring's wire is stressed mainly in torsion, with an additional ef
 
 For a 300 N load on a spring of 4 mm wire and 40 mm mean diameter, the index is 10, the Wahl factor about 1.145 and the stress about 547 MPa. Two points matter: the calculation uses the actual load, not the change in load; and stress does not depend on the number of coils. Coil count sets the rate, not the stress.
 
+```figure
+type: steps
+title: Checking spring stress
+caption: Use the actual maximum load, and include the curvature correction.
+- Spring index | 40 ÷ 4 = 10
+- Wahl correction factor | about 1.145
+- *Maximum shear stress | about 547 MPa at 300 N
+```
+
 The number of **active coils** needed for a given rate is the wire's shear modulus times the wire diameter, divided by 8 times the index cubed times the rate. With spring steel at about 79 GPa, 4 mm wire, an index of 10 and a rate of 6.25 N/mm, about 6.3 active coils are needed, which would be rounded to 6.5. Compression springs with squared and ground ends usually have one inactive coil at each end, so total coils are active coils plus two.
 
 ## Allowable stress, fatigue and service duty
@@ -132,6 +141,18 @@ This is an illustrative example. A business assembles about 20,000 valve actuato
 - The drawing now specifies loads at the installed and fully compressed lengths, the outside diameter with tolerance and maximum solid height, with free length and total coils as reference values.
 
 **Result.** Assembly time falls to about 25 seconds, saving about 15 seconds on each of 20,000 actuators, or roughly 83 hours a year. Test failures from rubbing stop, and springs no longer take a set in service. The spring costs slightly more, but far less than the time and rework saved. As the [cost you commit before you spend](/reados/collections/specifications-product-quality-and-sustainability/the-cost-you-commit-before-you-spend/) article explains, such costs are cheapest to remove at the design stage.
+
+```figure
+type: compare
+title: A valve actuator spring, redesigned for assembly
+cols: Before | After
+best: 2
+caption: About 15 seconds saved on each of 20,000 actuators a year: roughly 83 hours.
+- Fit in the bore | Rubbed at full compression | Smaller coil diameter, index about 9
+- Solid height | Within a few per cent at full stroke | About 15% margin
+- Ends | Open: tangled and tilted | Closed and ground
+- *Assembly time | About 40 seconds | About 25 seconds
+```
 
 ## Applying this in an Australian business
 

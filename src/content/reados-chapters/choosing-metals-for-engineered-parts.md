@@ -74,6 +74,15 @@ Weldability falls as carbon and alloy content rise, because the zone next to the
 
 A structural steel with 0.18% carbon and 1.2% manganese has a carbon equivalent of about 0.38, which generally welds without special precautions in moderate thicknesses. A typical 4140 with 0.40% carbon, 0.85% manganese, 0.95% chromium and 0.20% molybdenum has a carbon equivalent of about 0.77, which needs preheat, controlled cooling and often post-weld heat treatment. The properties that make 4140 a good hardening steel make it a difficult welding steel.
 
+```figure
+type: bars
+title: Carbon equivalent and weldability
+max: 0.9
+caption: Higher carbon equivalent means a harder, crack-prone zone beside the weld and more welding precautions.
+- Structural steel, 0.18% C, 1.2% Mn | 0.38 | welds without special precautions
+- *4140 alloy steel | 0.77 | preheat, controlled cooling, often PWHT
+```
+
 ## Stainless steels
 
 Stainless steels contain at least about 10.5% chromium, which forms a thin protective oxide film. They are grouped by structure:
@@ -151,6 +160,17 @@ This is an illustrative example. A business making mobile equipment wants to mak
 **Analysis.** The engineer notes that the frame's design is governed by stiffness: excessive deflection would misalign a drive. Aluminium's modulus is about a third of steel's, so the same sections would deflect about three times as much. To match the steel frame's stiffness, the sections need about 2.9 times the second moment of area, which deeper rectangular tubes can provide. Welding 6061-T6 reduces strength near the welds, so the joints are designed using the reduced strengths, with bolted brackets at the most heavily loaded points. Stainless fasteners in contact with aluminium in a wet environment risk galvanic corrosion, so insulating washers and sleeves are specified.
 
 **Result.** The redesigned aluminium frame weighs about 60 kg, half the original weight rather than the two-thirds saving that density alone suggests, and matches the steel frame's stiffness. It costs more in material and fabrication, but the lighter machine meets the customer's need for portability. The heavily loaded base, where weight matters less, stays in steel.
+
+```figure
+type: bars
+title: Making a 120 kg steel frame lighter
+unit: kg
+max: 130
+caption: The frame was governed by stiffness: aluminium needs about 2.9 times the second moment of area to match steel.
+- Steel frame | 120
+- Aluminium by density alone | 40 | would deflect about three times as much
+- *Stiffness-matched aluminium frame | 60
+```
 
 ## Applying this in an Australian business
 

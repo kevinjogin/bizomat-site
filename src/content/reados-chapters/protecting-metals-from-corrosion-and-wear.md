@@ -36,6 +36,18 @@ The main forms are:
 
 Atmospheric corrosivity is classified internationally in ISO 9223 categories from C1, very low, such as heated indoor spaces, through C2, C3 and C4 to C5, very high, and CX, extreme. Coastal sites, industrial atmospheres and areas exposed to salt spray are at the severe end. In Australia, AS 4312 describes atmospheric corrosivity zones, and AS/NZS 2312 guides the protection of structural steel using paint coatings and hot-dip galvanising.
 
+```figure
+type: layers
+title: Atmospheric corrosivity categories
+caption: After ISO 9223; coastal and industrial sites, and sheltered surfaces where salt collects, rate higher.
+- C1 | very low, such as heated interiors
+- C2 | low
+- C3 | medium
+- C4 | high
+- C5 | very high
+- *CX | extreme
+```
+
 Within a site, the **microclimate** matters as much as the region. A sheltered underside that collects salt and never gets washed by rain can be more corrosive than an exposed face. Splash zones, areas wetted by process fluids, places where water ponds and spaces near cooling towers all need particular attention.
 
 ## Designing out corrosion
@@ -119,6 +131,17 @@ This is an illustrative example. A business operates a conveyor and transfer sta
 - Coating inspection and touch-up are added to the annual maintenance plan.
 
 **Result.** The duplex system is expected to give a much longer time to first major maintenance than the original paint, according to the coating guidance for the site's environment, and inspection shows little deterioration after the first years. Liner replacements fall from several times a year to about once a year, reducing shutdowns and hot work.
+
+```figure
+type: compare
+title: A coastal conveyor, protected again
+cols: Found | Changed
+caption: Liner replacements fell from several times a year to about once a year.
+- Coating | Single-coat paint, rust within three years | Duplex galvanising and paint
+- Details | Ledges collecting salt, sharp edges | Ledges sloped, edges rounded, laps seal-welded
+- Fasteners | Stainless on galvanised brackets | Matched or isolated fasteners
+- *Chute liners | Mild steel worn through in months | Carbide overlay in the sliding zone; impact steel at loading
+```
 
 ## Applying this in an Australian business
 

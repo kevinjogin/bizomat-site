@@ -34,6 +34,15 @@ This article explains, in general terms, the common Australian structural steel 
 
 For universal beams and columns, the designation gives the **nominal depth** in millimetres, the section type and the **mass per metre** in kilograms. A 310UB40.4 is a universal beam about 310 mm deep weighing 40.4 kg per metre. Two beams with the same nominal depth can have different masses, flange widths and thicknesses, and therefore different strengths and stiffnesses, so the full designation matters.
 
+```figure
+type: stats
+title: Reading 310UB40.4
+caption: Nominal depth, section type and mass per metre; the grade is stated separately.
+- 310 | Nominal depth | millimetres
+- UB | Section type | universal beam
+- *40.4 | Mass | kilograms per metre
+```
+
 Hollow sections are designated by outside dimensions and wall thickness, such as 100 × 100 × 6 SHS, with the grade stated separately.
 
 ## Grades and standards
@@ -121,6 +130,16 @@ The fabricator's supplier offers imported beams described as "equivalent to 310U
 On review, the engineer notes that the offered beams are slightly lighter, with thinner flanges, and are certified to a different standard whose grade designation does not directly correspond to the specified grade. Without a proper equivalence assessment, the beams cannot be accepted. The engineer also points out that sealed hollow columns must not be galvanised without vent and drain holes, because trapped air or moisture can expand violently in the zinc bath and the internal surfaces would remain unprotected. The fabricator orders the specified compliant beams, adds vent and drain holes to the columns according to the galvaniser's guidance and fits the cap plates after galvanising using a detail approved by the engineer.
 
 The extra steel cost is modest. The avoided risks, a non-compliant structure, a dangerous galvanising incident and internal corrosion of the columns, are substantial.
+
+```figure
+type: checklist
+title: Reviewing an "equivalent" beam and sealed columns
+caption: The avoided risks: a non-compliant structure, a dangerous galvanising incident and internal corrosion.
+- ? Offered beams slightly lighter, with thinner flanges
+- ? Certified to a standard whose grade does not directly correspond
+- ? Sealed hollow columns planned for galvanising
+- *x Specified beams ordered; vent and drain holes added; caps fitted after galvanising
+```
 
 ## How this applies to a small Australian business
 

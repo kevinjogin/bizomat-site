@@ -104,6 +104,17 @@ When a bonded joint fails, the fracture surface is informative:
 | Substrate failure | One of the joined parts broke | Joint was stronger than the material; may be acceptable or indicate a weak part |
 | Mixed modes | Combinations of the above | Variable preparation or process |
 
+```figure
+type: decision
+title: Reading a bond failure
+question: Where is the adhesive after the joint fails?
+caption: The failure surface points straight at the likely cause.
+- Cleanly off one surface | Adhesive failure | preparation, contamination or a poor adhesive match
+- On both surfaces | Cohesive failure | overload, poor cure or the wrong adhesive
+- A joined part broke | Substrate failure | the joint outlasted the material
+- *Patches of each | Mixed | variable preparation or process
+```
+
 Cohesive or substrate failure generally indicates a well-made bond; adhesive failure usually points to surfaces or process.
 
 ## Anaerobic adhesives in machinery
@@ -136,6 +147,16 @@ A manufacturer of composite equipment enclosures bonds aluminium mounting bracke
 The investigation finds two causes. The panels are moulded with a release agent that leaves a residue on the surface, and the bonding area is wiped but not abraded. Also, in winter, the workshop temperature falls overnight, and brackets are handled and packed before the epoxy reaches full cure.
 
 The business changes its process. Bond areas on the panels are abraded and solvent-wiped immediately before bonding, and a simple water-break test checks for contamination. Two-part adhesive is dispensed through static mixers. Bonded assemblies cure in a heated area to a defined schedule before handling. Witness lap-shear coupons are made with each batch and tested weekly. The joint geometry is also revised to add a small flange that reduces peel at the bracket edge. Field failures stop, and the witness tests show consistent cohesive failure, indicating sound bonds.
+
+```figure
+type: compare
+title: Brackets detaching from composite panels
+cols: Cause | Change
+caption: The failed joints showed clean separation from the composite: a surface problem, not adhesive strength.
+- Release agent | Residue wiped, not removed | Abraded and solvent-wiped just before bonding; water-break test
+- Mixing | Variable | Static mixers for the two-part epoxy
+- *Cure | Packed before full cure on cold nights | Heated cure to a defined schedule
+```
 
 ## How this applies to a small Australian business
 

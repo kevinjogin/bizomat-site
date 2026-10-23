@@ -53,6 +53,16 @@ Several families can look almost identical to an untrained eye:
 
 Identifying fittings correctly requires measuring the thread diameter and pitch with a gauge, checking the seat angle and noting any O-ring groove or identification marking. Supplier identification guides and thread gauges are inexpensive tools that prevent expensive mistakes. The [choosing fasteners and threads](/reados/collections/machine-elements-and-mechanical-design/choosing-fasteners-and-threads/) article explains thread systems and why mixing 55° and 60° threads causes problems.
 
+```figure
+type: checklist
+title: Identifying a hydraulic fitting
+caption: Look-alike fittings, such as 37° and 45° flares, can thread together and still leak.
+- x Measure the thread diameter
+- x Gauge the thread pitch
+- x Check the seat angle
+- *x Note any O-ring groove or marking
+```
+
 ## Specifying hose assemblies
 
 A hose assembly is a hose with fittings permanently crimped or swaged on each end. Specifying it properly involves several factors, sometimes summarised by suppliers with mnemonics such as STAMPED: size, temperature, application, media, pressure, ends and delivery. In practical terms:
@@ -137,6 +147,16 @@ A small manufacturer operates a hydraulic press that has developed persistent le
 An investigation finds that during an earlier repair, one replacement hose was fitted with a 45° flare fitting on a 37° JIC adapter, which seals only on a line. A second connection has an NPT adapter forced into a BSPP port, engaging only a few threads. The third is a correct ORFS fitting, but its O-ring has been cut during installation.
 
 The business replaces the mismatched fittings with correctly identified parts, fits new O-rings, tightens each connection to the manufacturer's values and labels the hoses with fitting types and installation dates. It buys thread and seat angle gauges and a supplier identification chart for the maintenance team, and standardises new equipment on O-ring face seal and metric O-ring port connections where practical. The leaks stop, and oil consumption returns to normal.
+
+```figure
+type: checklist
+title: Three leaks on a press manifold
+caption: About 20 litres of oil a month and a slip hazard, all from earlier repairs.
+- ? A 45° flare on a 37° JIC adapter, sealing on a line
+- ? An NPT adapter forced into a BSPP port
+- ? A correct ORFS fitting with a cut O-ring
+- *x Correct parts, new O-rings, specified torque, labelled hoses
+```
 
 ## How this applies to a small Australian business
 

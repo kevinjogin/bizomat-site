@@ -57,6 +57,16 @@ Sliding screws suit manual adjustments, jacks, low-duty actuators, vertical axes
 
 A **ball screw** places recirculating balls between screw and nut, turning sliding friction into rolling friction. Efficiency rises to around 90%, so much less torque and motor power are needed. For the same 10 kN load and 6 mm lead, the torque to raise is about the load times the lead divided by 2π times the efficiency, or about 10.6 N·m, compared with about 27 N·m for the trapezoidal screw.
 
+```figure
+type: bars
+title: Torque to lift 10 kN on a 6 mm lead
+unit: N·m
+max: 30
+caption: A ball screw can backdrive, so a vertical axis needs a holding brake.
+- Trapezoidal screw, about 35% efficient | 27 | self-locking
+- *Ball screw, about 90% efficient | 10.6
+```
+
 Ball screws bring other benefits and costs:
 
 - **Life** is calculated like a rolling bearing, from the dynamic load rating and the equivalent load, giving travel distance before fatigue.
@@ -137,6 +147,16 @@ This is an illustrative example. A test rig has a vertical axis that lifts a 10 
 - Wipers and a bellows cover protect the screw from test debris.
 
 **Result.** The axis runs faster and cooler, positioning is repeatable, and nut replacements stop. The brake ensures the load holds during power interruptions and maintenance.
+
+```figure
+type: compare
+title: A vertical test axis, rebuilt for duty
+cols: Before | After
+best: 2
+caption: End supports were rearranged, critical speed and buckling checked, and wipers and a bellows cover added.
+- Screw | 30 mm trapezoidal, nut ran hot | Ball screw, same lead, preloaded nut
+- *Motor | Stepper losing steps | Servo with encoder and spring-applied brake
+```
 
 ## Applying this in an Australian business
 

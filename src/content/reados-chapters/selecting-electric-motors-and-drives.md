@@ -101,6 +101,14 @@ Drives also bring issues that must be managed:
 
 For motors that run for long hours, electricity dominates whole-of-life cost. Consider a 15 kW motor running at 75% load for 6,000 hours a year. At 92% efficiency it draws about 12.2 kW and uses about 73,000 kWh a year, costing about $18,300 at 25 cents a kilowatt-hour. A motor at 94% efficiency draws about 12.0 kW, saving about 1,560 kWh, or about $390 a year, for the life of the motor.
 
+```figure
+type: stats
+title: Two points of efficiency on a 15 kW motor
+caption: At 75% load for 6,000 hours a year and 25 cents a kWh.
+- About 73,000 kWh | Energy a year at 92% efficiency | about $18,300
+- *About $390 a year | Saved at 94% efficiency | about 1,560 kWh
+```
+
 Three-phase motors sold in Australia must meet minimum energy performance standards under the Greenhouse and Energy Minimum Standards scheme, and efficiency classes such as IE2, IE3 and IE4 are defined internationally. Choosing a higher class often pays back quickly on long-running motors. The biggest savings, however, usually come from the system: right-sizing motors, using variable speed on variable loads, and fixing inefficient pumps, fans, belts and controls. The [cutting energy use in business premises](/reados/collections/lean-and-continuous-improvement/cutting-energy-use-in-business-premises/) article covers finding these savings.
 
 When a motor fails, compare **rewinding** with **replacement**. Good-quality rewinding can maintain efficiency on larger motors; for smaller motors, a new higher-efficiency motor is often the better choice over its life. The [buying for the whole life of equipment](/reados/collections/investment-appraisal-and-business-cases/buying-for-the-whole-life-of-equipment/) article explains how to compare options this way.
@@ -124,6 +132,16 @@ This is an illustrative example. A factory's cooling water system uses a 22 kW c
 **Implementation.** A variable speed drive is installed, controlled from the process temperature. The throttling valve is opened fully. The motor is checked for suitability with inverter supply, a shaft grounding device is fitted to protect the bearings, and the drive is set to avoid a resonance found at one speed.
 
 **Result.** Measured input power settles at about 11.5 kW, saving about 7.5 kW for 7,000 hours, or about 52,500 kWh a year, worth about $13,000 at 25 cents a kilowatt-hour. The installed cost is recovered in about a year, and the pump runs more quietly with less wear.
+
+```figure
+type: bars
+title: Cooling water pump input power
+unit: kW
+max: 22
+caption: About 52,500 kWh a year saved, worth about $13,000; the installed cost was recovered in about a year.
+- Throttled by a valve | 19
+- *Speed reduced with a variable speed drive | 11.5
+```
 
 ## Applying this in an Australian business
 

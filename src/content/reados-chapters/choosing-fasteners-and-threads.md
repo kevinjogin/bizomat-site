@@ -65,6 +65,15 @@ A metric fastener designation states the product type, nominal diameter, pitch, 
 
 So class 8.8 has a nominal tensile strength of 800 MPa and a yield strength of about 640 MPa. Nuts have matching classes, such as 8 and 10, and should be at least as strong as the bolt class requires. Bolt heads are marked with their class, and markings should be checked on receipt.
 
+```figure
+type: stats
+title: Reading property class 8.8
+caption: First number × 100 = tensile strength in MPa; the second gives yield as a fraction of it.
+- 8 | × 100 = 800 MPa tensile
+- .8 | Yield 80% of tensile
+- *About 640 MPa | Yield strength
+```
+
 **Stainless steel fasteners** are designated by steel group and strength, such as A2-70 or A4-80, where A2 is broadly equivalent to 304 stainless steel, A4 to 316, and the number indicates tensile strength in tens of megapascals. Stainless fasteners are generally not as strong as high-grade carbon steel fasteners and can gall when stainless nuts are tightened on stainless bolts, so anti-seize compounds may be needed.
 
 **Inch fasteners** are graded under SAE and ASTM standards and identified by head markings, such as three radial lines for SAE grade 5 and six for grade 8.
@@ -158,6 +167,18 @@ This is an illustrative example. A machinery maker reviews the fasteners across 
 - Incoming inspection checks head markings and certificates for high-strength fasteners.
 
 **Result.** Wrong-part errors on the line fall sharply, stripped threads in housings stop, and the business holds fewer fastener part numbers, simplifying purchasing and stock control. Customers receive spare fittings that match.
+
+```figure
+type: compare
+title: Rationalising a fastener range
+cols: Before | After
+best: 2
+caption: Stripped threads stopped and spare fittings now match.
+- Part numbers | About 310: metric, unified, Whitworth | About 85 preferred, all metric
+- Aluminium housings | Screws straight into tapped holes | Helical coil inserts at service holes
+- Pipe threads | Mixed systems in one fitting | One system per product, stated on drawings
+- *High-strength fasteners | Unchecked | Head markings and certificates inspected
+```
 
 ## Applying this in an Australian business
 

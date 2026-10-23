@@ -29,6 +29,19 @@ This article compares the main joining methods for engineered products, explains
 | **Brazing and soldering** | A filler metal, melted below the parts' melting point, drawn into a close gap | Little distortion; joins dissimilar metals; sealed joints | Needs close fit and clean surfaces; lower strength at temperature; lap joints required |
 | **Mechanical forming** (clinching, seaming, press and snap fits) | Interlocking or interference | Fast, no consumables, suits volume | Limited load and materials; tooling needed |
 
+```figure
+type: decision
+title: Which joining method?
+question: What does the joint most need?
+caption: Many products use more than one method, chosen joint by joint.
+- To come apart for service | Bolting
+- Maximum strength and rigidity | Welding
+- Permanent, thin or dissimilar sheet | Riveting
+- No holes, load spread, sealed | Adhesive bonding
+- Little distortion, sealed, dissimilar metals | Brazing or soldering
+- *Speed at volume | Mechanical forming
+```
+
 ## Bolting: serviceable and versatile
 
 Bolted joints can be taken apart for maintenance, transport, replacement and adjustment, which is often decisive. They join any combination of materials without heat. Their performance depends on clamping: a well-preloaded bolted joint carries load mainly through friction and resists fatigue, while a slack one moves, loosens and fatigues. Bolting needs holes, which weaken the parts and must be accurately positioned, and access for tools on both sides unless threaded inserts, tapped holes or rivet nuts are used. Choose bolting where disassembly matters, where materials differ and where heat is unacceptable.
@@ -115,6 +128,18 @@ This is an illustrative example. A 35-person business builds trailer-mounted pum
 **Verification.** Test panels are bonded and riveted following the adhesive supplier's surface preparation procedure, then subjected to a vibration test and pull-off tests on samples. One adhesive fails the pull-off test because of poor adhesion to the painted frame; a primer is added and the retest passes.
 
 **Result.** Panel assembly time falls from about six hours to about two and a half hours per skid, weight falls by roughly 40 kg and pump servicing no longer requires cutting or grinding. Corrosion at the panel joints is checked at the first annual inspection of the early units and found to be absent.
+
+```figure
+type: compare
+title: Pump skid panels: welded steel to two aluminium methods
+cols: Before | After
+best: 2
+caption: An adhesive failed its pull-off test on the painted frame until a primer was added.
+- Fixed panels | Welded steel | Riveted and bonded aluminium
+- Service panels | Welded: cut to service the pump | Stainless bolts into rivet nuts, isolated
+- Assembly time | About six hours | About two and a half
+- *Weight | Baseline | About 40 kg lighter
+```
 
 ## Applying this in an Australian business
 

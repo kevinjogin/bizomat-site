@@ -123,7 +123,26 @@ The energy absorbed per stop is ½ × 2.5 × 151.8², which is about 28,800 joul
 
 The machine stops about 20 times an hour, so the brake must dissipate about 20 × 28.8 kJ = 576 kJ an hour, an average of 576,000 ÷ 3,600, or about 160 watts.
 
+```figure
+type: stats
+title: Sizing a brake for a 2.5 kg·m² drum at 1,450 rev/min
+caption: Energy per stop depends on inertia and speed, not on how quickly the brake stops it.
+- 151.8 rad/s | Angular speed
+- 28.8 kJ | Energy absorbed per stop
+- *About 160 W | Average heat at 20 stops an hour
+```
+
 The risk assessment requires the drum to stop within 3 seconds of a guard being opened. A 50 N·m brake is far too slow. To stop in 3 seconds, the required torque is about (2.5 × 151.8) ÷ 3, or about 127 N·m, before adding a margin. The energy per stop remains about 28.8 kJ, because it depends on inertia and speed, not on stopping time, but the heat is released more quickly during each stop. The designer selects a brake rated well above 127 N·m dynamic torque, confirms with the manufacturer that its energy per stop and hourly heat ratings comfortably exceed 28.8 kJ and 160 W, and treats the stopping function as a safety function subject to the required safety level, monitoring and periodic testing.
+
+```figure
+type: bars
+title: Stopping time against braking torque
+unit: s
+max: 8
+caption: The risk assessment requires a stop within 3 seconds of a guard opening, so 50 N·m is far too slow.
+- 50 N·m brake | 7.6
+- *About 127 N·m, before margin | 3
+```
 
 ## How this applies to a small Australian business
 

@@ -99,11 +99,30 @@ A rotating steel shaft of 30 mm diameter has an ultimate tensile strength of 600
 
 **Estimating fatigue strength.** The polished-specimen endurance limit is approximated as 0.5 × 600 = 300 MPa. Applying typical textbook correction factors for a machined surface (about 0.83) and for a 30 mm diameter (about 0.86) gives an estimated component endurance limit of 300 × 0.83 × 0.86, or about 214 MPa.
 
+```figure
+type: steps
+title: From specimen to component endurance limit
+caption: Typical textbook correction factors for a 30 mm machined steel shaft with a 600 MPa ultimate strength.
+- Polished specimen | 0.5 × 600 = 300 MPa
+- Machined surface | × 0.83
+- 30 mm size | × 0.86
+- *Component estimate | about 214 MPa
+```
+
 **Applying the notch.** The fatigue stress concentration factor is Kf = 1 + 0.8 × (2.0 − 1), which is 1.8. The local alternating stress is 80 × 1.8 = 144 MPa, and the local mean stress is 100 × 1.8 = 180 MPa.
 
 **Checking with Goodman.** The Goodman criterion sums the alternating stress divided by the endurance limit and the mean stress divided by the ultimate strength: 144 ÷ 214 + 180 ÷ 600 = 0.67 + 0.30 = 0.97. The factor of safety is the inverse, about 1.03. That is far too small for a shaft whose failure would stop a production line.
 
 **Improving the detail.** Increasing the fillet radius reduces the theoretical factor to about 1.4, so Kf = 1 + 0.8 × 0.4 = 1.32. The local stresses become 80 × 1.32 ≈ 106 MPa alternating and 100 × 1.32 = 132 MPa mean. The Goodman sum is 106 ÷ 214 + 132 ÷ 600 ≈ 0.49 + 0.22 = 0.71, a factor of safety of about 1.4, with no change in material or diameter. Further improvements could come from a finer surface finish at the fillet or shot peening, which would raise the endurance limit.
+
+```figure
+type: bars
+title: Goodman factor of safety at a shaft shoulder
+max: 1.6
+caption: Same material and diameter; only the fillet changed, reducing Kt from about 2.0 to 1.4.
+- Sharp fillet, Kf 1.8 | 1.03 | far too small
+- *Larger fillet radius, Kf 1.32 | 1.4
+```
 
 ## Design and manufacturing practices that prevent fatigue
 

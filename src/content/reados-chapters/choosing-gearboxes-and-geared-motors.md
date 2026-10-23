@@ -95,6 +95,18 @@ When a load can drive the gearbox backwards, such as an inclined conveyor, a hoi
 
 A larger unit chosen for thermal or overhung load reasons may have a different actual ratio, so recheck speed and torque.
 
+```figure
+type: steps
+title: Sizing a conveyor gearbox
+caption: 2.2 kW at 30 rev/min: output torque = 9,550 × 2.2 ÷ 30 ≈ 700 N·m.
+- Define the duty | about 700 N·m at 30 rev/min
+- Calculate the ratio | 1,450 ÷ 30 ≈ 48
+- Apply a service factor
+- Check efficiency and motor power
+- Check thermal rating and shaft loads
+- *Consider holding and backdriving
+```
+
 ## Geared motors and variable speed drives
 
 **Geared motors** combine the motor and gearbox in one unit, saving space, alignment and coupling costs. They suit most conveyor, mixer and general drives. Separate motor and gearbox arrangements suit larger powers and situations where either part may need to be changed independently.
@@ -134,6 +146,16 @@ The [maintenance that prevents breakdowns](/reados/collections/lean-and-continuo
 This is an illustrative example. An inclined conveyor is driven by a worm gearbox with a ratio of about 48, selected some years ago because it was the cheapest unit with enough torque. The conveyor runs about 6,000 hours a year. The gearbox runs hot, the oil darkens quickly and the wheel shows wear. On one occasion, the conveyor ran backwards after a power interruption, spilling material.
 
 **Analysis.** The conveyor needs about 2.2 kW at the gearbox output. At about 70% efficiency, the worm gearbox draws about 3.1 kW. A helical-bevel geared motor at about 95% efficiency would draw about 2.3 kW. The difference, about 0.8 kW for 6,000 hours a year, is about 4,900 kWh, or roughly $1,200 a year at 25 cents a kilowatt-hour. The worm unit is also running close to its thermal limit in summer, and its self-locking cannot be relied on.
+
+```figure
+type: bars
+title: Input power for 2.2 kW at the conveyor
+unit: kW
+max: 3.4
+caption: About 0.8 kW saved for 6,000 hours a year is about 4,900 kWh, roughly $1,200 at 25 cents a kWh.
+- Worm gearbox, about 70% efficient | 3.1
+- *Helical-bevel, about 95% efficient | 2.3
+```
 
 **Changes.**
 

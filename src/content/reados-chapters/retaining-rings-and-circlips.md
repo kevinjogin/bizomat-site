@@ -120,7 +120,40 @@ A small manufacturer of conveyor drives receives warranty returns from customers
 
 Investigation finds two problems. The gear bore has a 1.5 mm chamfer where it bears against the circlip, which the circlip manufacturer's data shows reduces the ring's effective capacity to less than half its rating. The groove is also machined with a generous corner radius because the shop had changed form tools. Under repeated thrust load, the ring has tilted and walked out of its groove.
 
+```figure
+type: svg
+title: Why a circlip walked out of its groove
+alt: A gear on a shaft is held by a circlip. A large chamfer on the gear bore leaves the circlip supported only at its tip, and a generous groove corner radius lets it tilt. A hardened square-cornered thrust washer between gear and circlip supports the ring fully.
+caption: A 1.5 mm chamfer cut the ring's capacity to under half its rating; a square-cornered thrust washer restored support.
+viewbox: 0 0 600 220
+body:
+<rect class="fp" x="20" y="150" width="560" height="40"/>
+<text class="tx txs" x="40" y="176">shaft</text>
+<rect class="bx" x="80" y="60" width="140" height="90" rx="2"/>
+<path class="ln" d="M220 150L200 130"/>
+<text class="tx txs" x="150" y="108" text-anchor="middle">gear, chamfered bore</text>
+<rect class="bxa pulse" x="232" y="118" width="12" height="40" rx="2"/>
+<text class="tx txs" x="238" y="106" text-anchor="middle">circlip</text>
+<rect class="bx" x="360" y="60" width="140" height="90" rx="2"/>
+<rect class="bxi" x="500" y="100" width="14" height="50"/>
+<rect class="bxa" x="516" y="118" width="12" height="40" rx="2"/>
+<text class="tx txs" x="430" y="108" text-anchor="middle">gear</text>
+<text class="tx txs" x="510" y="92" text-anchor="middle">washer</text>
+<text class="txb" x="150" y="40" text-anchor="middle">before: tilts</text>
+<text class="txb" x="440" y="40" text-anchor="middle">after: fully supported</text>
+```
+
 The manufacturer adds a hardened, square-cornered thrust washer between the gear and the circlip, specifies the groove corner condition on the drawing and adds a groove form check to its first-article inspection. The washer and inspection add about $1.20 per drive, compared with an average warranty claim of more than $800. Returns for this fault stop.
+
+```figure
+type: bars
+title: The cost of the fix against one warranty claim
+unit: $
+max: 850
+caption: Adding the washer, a groove corner callout and a groove form check stopped returns for this fault.
+- *Washer and inspection, per drive | 1.2
+- Average warranty claim | 800 | more than $800
+```
 
 ## How this applies to a small Australian business
 

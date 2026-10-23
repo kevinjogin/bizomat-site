@@ -46,6 +46,23 @@ A belt transmits power through the difference in tension between its tight and s
 
 For a flat belt with a coefficient of friction of 0.3 wrapped 160 degrees around a pulley, the tight side can carry only about 2.3 times the tension of the slack side before slipping. A vee or wedge belt seated in a groove is squeezed by the groove's sides, multiplying the effective friction about threefold, so the same wrap supports a tension ratio of about 13. That is why vee and wedge belts can carry so much power with modest tension.
 
+```figure
+type: svg
+title: Tight side and slack side
+alt: A belt wraps 160 degrees around a pulley. The tight side carries up to about 2.3 times the slack side's tension before a flat belt with a friction coefficient of 0.3 slips.
+caption: Friction over the wrap angle limits the ratio of tight to slack tension; vee and wedge belts grip much harder.
+viewbox: 0 0 560 230
+body:
+<circle class="bx spin" cx="200" cy="115" r="80"/>
+<path class="lf spin" d="M130 115H270M200 45V185"/>
+<path class="la flow" d="M200 35H500"/>
+<path class="ln dsh flow" d="M500 195H200"/>
+<path class="ln" d="M200 35A80 80 0 0 0 200 195"/>
+<text class="txb" x="360" y="26" text-anchor="middle">tight side: up to 2.3 × T₂</text>
+<text class="tx" x="360" y="216" text-anchor="middle">slack side: T₂</text>
+<text class="tx txs" x="200" y="120" text-anchor="middle">160° wrap</text>
+```
+
 The same relationship explains two practical rules. First, wrap matters: small pulleys at large speed ratios and short centres have less wrap and slip sooner. Second, tension must be right: too little and the belt slips, glazes and overheats; too much and it loads the shafts and bearings without adding useful capacity.
 
 ## Sizing a wedge belt drive
@@ -117,6 +134,18 @@ This is an illustrative example. A dust extraction fan is driven by a 30 kW moto
 - The pulleys are aligned with a laser tool.
 - Tension is set with a frequency tension meter, rechecked after running in and then at each monthly inspection.
 - Belts are replaced only as matched sets.
+
+```figure
+type: compare
+title: A 30 kW fan drive eating belts
+cols: Found | Changed
+best: 2
+caption: Belt life went from about three months to well over a year, and the motor bearing runs cooler.
+- Sizing | Light-duty service factor | Factor 1.3 for continuous running: about 39 kW
+- Belts and pulleys | Four classical vee belts, worn grooves | New pulleys and three matched SPB wedge belts
+- Alignment | Fan pulley visibly out | Laser-aligned
+- *Tension | By feel, often too tight | Frequency meter, rechecked monthly
+```
 
 **Result.** Belt life extends from about three months to well over a year, and the motor bearing runs cooler because shaft load is now controlled. The business adds the procedure to its maintenance system. The [buying for the whole life of equipment](/reados/collections/investment-appraisal-and-business-cases/buying-for-the-whole-life-of-equipment/) article explains why the cheapest drive at purchase is rarely the cheapest over its life.
 

@@ -48,7 +48,26 @@ where **K**, the nut factor, bundles together all the friction and thread geomet
 
 The trouble is that most of the torque never reaches the bolt as tension. For an M10 bolt with K of 0.2, only about 12% of the tightening effort goes into stretching the bolt. The rest is consumed by friction, roughly half under the head or nut and the rest in the threads. Small changes in friction therefore cause large changes in preload.
 
+```figure
+type: stack
+title: Where tightening torque goes
+unit: %
+caption: About an eighth of the effort stretches an M10 bolt; the rest is friction under the head and in the thread.
+- *Stretching the bolt | 12
+- Friction and other losses | 88
+```
+
 The **lubrication trap** shows how dangerous this can be. To reach the 25 kN target in a plain M10 8.8 bolt with K of 0.2 needs about 50 N·m. If someone oils the same bolt, K falls to about 0.15, and the same 50 N·m now produces about 33.6 kN: the full proof load. A helpful drop of oil has taken the bolt right to its limit. Torque figures are only valid for the friction condition they were calculated for, so the drawing or procedure must state that condition: dry, lightly oiled, coated or with a specified lubricant.
+
+```figure
+type: bars
+title: Preload from 50 N·m on an M10 8.8 bolt
+unit: kN
+max: 36
+caption: A drop of oil lowers the nut factor from about 0.2 to 0.15 and takes the bolt to its full proof load.
+- Target: 75% of proof load | 25
+- *Same torque, oiled thread | 33.6 | the full proof load
+```
 
 ## Tightening methods and their accuracy
 
@@ -127,6 +146,18 @@ This is an illustrative example. A 40-person materials handling business supplie
 - **Washers and locking.** Split spring washers are replaced with hardened flat washers, and prevailing-torque nuts are added as a backup.
 - **Slip resistance.** The paint is removed from the clamped faces, which had been reducing friction and allowing creep.
 - **Verification.** Assemblers mark each nut after tightening, and a torque audit is done on the first ten units.
+
+```figure
+type: compare
+title: A gearmotor base that kept loosening
+cols: Before | After
+best: 2
+caption: M12 8.8 bolts: proof load about 48.9 kN, target preload about 36.7 kN.
+- Tightening | Impact wrench, no torque stated | About 66 N·m, oiled, calibrated wrench, two passes
+- Bolt stretch | Short grip | Spacer sleeves and longer bolts
+- Washers | Split spring washers, flattened | Hardened flat washers, prevailing-torque nuts
+- *Clamped faces | Painted, letting the base creep | Paint removed for friction
+```
 
 **Result.** Field reports of loosening stop. The torque, lubrication condition and method are now part of the drawing and the assembly instruction, so the result does not depend on who does the work.
 

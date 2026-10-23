@@ -28,6 +28,16 @@ Shafts also carry **bending** from belt and chain tension, gear tooth forces, th
 
 For a solid round shaft in torsion, the maximum shear stress is 16 times the torque divided by π times the diameter cubed. At 99.5 N·m and an allowable shear stress of 40 MPa, chosen conservatively to cover keyways and shock, the required diameter is about 23.3 mm, so a 25 mm shaft would satisfy strength.
 
+```figure
+type: steps
+title: Sizing a 15 kW drive shaft for strength
+caption: Strength gives a minimum; stiffness, fatigue at keyways and deflection often govern the final size.
+- Torque | 9,549 × 15 ÷ 1,440 ≈ 99.5 N·m
+- Allowable shear stress | 40 MPa, conservative
+- Required diameter | about 23.3 mm
+- *Choose | a 25 mm shaft
+```
+
 Stiffness often governs. Twist in a shaft is the torque times its length divided by the shear modulus times the polar moment of area. A common guide for machine drives is to limit twist to about a quarter to one degree per metre. The 25 mm shaft at 99.5 N·m twists about 1.9 degrees per metre, almost double the upper guide. A 30 mm shaft brings it to about one degree per metre. Bending deflection matters too: excessive deflection misaligns gears, overloads bearing edges and wears seals.
 
 Long, slender shafts also have a **critical speed**, the speed at which they resonate in bending. Running near it causes large vibration and rapid damage. Most industrial shafts run well below their first critical speed, but long line shafts, fan shafts and high-speed spindles should be checked, and stiffer shafts or closer bearing spacing raise the critical speed.
@@ -126,6 +136,16 @@ This is an illustrative example. A process plant has a motor-driven pump whose m
 - Alignment checks are added after any maintenance that disturbs the machines.
 
 **Result.** Vibration falls substantially, and over the following year seal and bearing replacements drop to planned changes found by inspection. The [maintenance that prevents breakdowns](/reados/collections/lean-and-continuous-improvement/maintenance-that-prevents-breakdowns/) article covers condition monitoring routines that catch these problems early, and [what engineering failures teach a business](/reados/collections/engineering-design-practice/what-engineering-failures-teach-a-business/) explains why repeat failures deserve investigation.
+
+```figure
+type: checklist
+title: Why a pump's seals and bearings kept failing
+caption: Seal and bearing replacements dropped to planned changes found by inspection.
+- ? A soft foot lifting 0.2 mm
+- ? Pipe strain pulling the pump about 0.4 mm out of line
+- ? A worn, cracked coupling spider
+- *x Laser alignment with the pump maker's thermal offset, recorded as-left
+```
 
 ## Applying this in an Australian business
 

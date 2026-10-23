@@ -49,6 +49,15 @@ Life in millions of revolutions is the ratio of the bearing's **basic dynamic lo
 
 The required life in millions of revolutions is 60 times the speed in rev/min times the required hours, divided by one million. For an electric motor bearing running at 1,450 rev/min for 20,000 hours, that is about 1,740 million revolutions, so a ball bearing needs a load rating about 12 times the equivalent load. For a conveyor pulley bearing running at 120 rev/min for 50,000 hours, it is 360 million revolutions, and a spherical roller bearing needs a load rating about 5.9 times the equivalent load. With an equivalent load of 20 kN, that is a load rating of at least about 117 kN.
 
+```figure
+type: compare
+title: Two bearings, two required lives
+cols: Required revolutions | Consequence
+caption: L10 life = (C ÷ P)³ for ball bearings and (C ÷ P)^(10/3) for roller bearings.
+- *Motor bearing: 1,450 rev/min, 20,000 h | About 1,740 million | A ball bearing needs C about 12 × P
+- Conveyor pulley: 120 rev/min, 50,000 h | 360 million | A spherical roller bearing needs a lower ratio
+```
+
 The **equivalent load** combines radial and axial loads using factors from the catalogue. Shock and vibration should be allowed for with load factors. Modern methods, including ISO 281's modified life, adjust the basic life for reliability, lubricant film, contamination and a fatigue load limit. These adjustments can raise or reduce the calculated life by large factors, which shows how strongly lubrication and cleanliness affect real bearing life.
 
 A calculated life far beyond what is needed is not always good. Very lightly loaded roller bearings can **skid** instead of rolling, damaging the raceways, so manufacturers specify minimum loads.
@@ -138,6 +147,18 @@ This is an illustrative example. A food business runs several screw conveyors in
 - Washdown procedures avoid spraying directly at seals.
 - The worn shaft is repaired and the bearing fit corrected.
 - Vibration readings are added to monthly inspections.
+
+```figure
+type: compare
+title: Screw conveyor bearings failing every six months
+cols: Found | Changed
+best: 2
+caption: The bearings were sized for years of life, so fatigue was not the cause; contamination was.
+- Housings and seals | Rust, dents, grease washed out | Stainless units with multi-lip washdown seals
+- Greasing | Weekly by hand, large amounts | Standard type, quantity and interval, recorded
+- *Washdown | Sprayed straight at housings | Kept off the seals
+- Fits | Inner ring creeping on a worn shaft | Shaft repaired to the correct fit
+```
 
 **Result.** Over the following year, bearing failures fall from about twice a year per conveyor to occasional planned replacements found by inspection. The cost of the new housings is recovered quickly through avoided downtime. The [putting a dollar value on equipment losses](/reados/collections/valuing-time-delay-and-uncertainty/putting-a-dollar-value-on-equipment-losses/) article shows how to calculate the value of improvements like this.
 

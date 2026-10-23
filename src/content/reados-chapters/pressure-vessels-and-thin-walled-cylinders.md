@@ -30,6 +30,17 @@ Consider a long cylinder of radius r and wall thickness t containing a gas or li
 
 σ_long = p × r ÷ (2 × t)
 
+```figure
+type: balance
+title: Hoop stress is twice longitudinal stress
+left: Hoop
+right: Longitudinal
+tilt: left
+caption: Which is why long seams in a cylinder matter more than circumferential ones.
+- σ = p × r ÷ t | σ = p × r ÷ (2 × t)
+- Splits the cylinder along its length | Pulls the ends off
+```
+
 The hoop stress is twice the longitudinal stress. That is why an over-pressurised cylinder, from a burst sausage skin to a ruptured pipe, typically splits along its length, and why longitudinal welds in cylindrical vessels are especially important.
 
 These formulas are reasonable when the wall is thin relative to the radius, commonly taken as a radius more than about ten times the thickness. Thick-walled cylinders, such as hydraulic cylinders and high-pressure tubing, need more detailed analysis because stress varies across the wall.
@@ -118,6 +129,16 @@ At its scheduled inspection, ultrasonic measurements find that internal corrosio
 σ_hoop = 1.0 × 300 ÷ 4 = 75 MPa
 
 a 50% increase. Whether that is acceptable depends on the design code's allowable stress, the remaining corrosion allowance and the condition of the welds, and the inspector recommends removing the receiver from service pending an engineering assessment. The business replaces it with a new receiver fitted with an automatic condensate drain and adds a weekly check of the drain to its maintenance routine.
+
+```figure
+type: bars
+title: Hoop stress in a workshop air receiver at 1.0 MPa
+unit: MPa
+max: 80
+caption: Radius 300 mm; condensate left in the bottom thinned the wall where the drain was rarely opened.
+- Design wall, 6 mm | 50
+- *Corroded wall, about 4 mm | 75 | a 50% increase
+```
 
 ## How this applies to a small Australian business
 

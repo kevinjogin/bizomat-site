@@ -54,6 +54,16 @@ Many parts need a hard, wear-resistant surface over a tough core that resists sh
 
 Diffusion depth grows roughly with the square root of time. If a process reaches a 0.5 mm case in 4 hours, doubling the case to 1.0 mm takes about 16 hours, four times as long. Deep cases are therefore slow and expensive.
 
+```figure
+type: bars
+title: Diffusion case depth against time
+unit: hours
+max: 18
+caption: Depth grows with the square root of time, so doubling the case takes four times as long.
+- 0.5 mm case | 4
+- *1.0 mm case | 16
+```
+
 ### Selective hardening
 
 **Induction hardening** uses an electrical coil to heat only the surface layer of a medium-carbon or alloy steel part rapidly, followed by a quench. It hardens specific areas, such as journals or gear teeth, quickly and repeatably, and suits production volumes. **Flame hardening** does the same with a gas flame and suits large parts and small quantities.
@@ -135,6 +145,18 @@ This is an illustrative example. A business makes drive pins for agricultural eq
 - The heat treater supplies hardness results and a sectioned sample from each batch, and the first batches are magnetic particle inspected in full, moving to sampling once results are consistent.
 
 **Result.** Cracking stops, hardness is consistent between batches, and wear-related returns fall over the following seasons. The specification also makes it straightforward to quote the work with other heat treaters.
+
+```figure
+type: compare
+title: Drive pins: "harden" against a real specification
+cols: Before | After
+best: 2
+caption: Cracking stopped and the specification can now be quoted by other heat treaters.
+- Material | 1045, water-quenched | 4140, hardened and tempered to 28–34 HRC
+- Cross-hole | Sharp edges that cracked | Chamfered and radiused, excluded from hardening
+- Bearing surface | Variable hardness, fast wear | Induction hardened to 50–55 HRC, 1.5–2.5 mm case
+- *Verification | None | Hardness results and a sectioned sample each batch
+```
 
 ## Applying this in an Australian business
 

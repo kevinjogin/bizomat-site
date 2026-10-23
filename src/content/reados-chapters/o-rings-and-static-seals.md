@@ -70,6 +70,18 @@ The O-ring material must be compatible with the fluid, the temperature range and
 | Polyurethane (AU or EU) | High abrasion and extrusion resistance | Limited by temperature and hydrolysis in some fluids |
 | Perfluoroelastomer (FFKM) | Exceptional chemical and temperature resistance | Very expensive |
 
+```figure
+type: decision
+title: Choosing an O-ring elastomer
+question: What will the seal be exposed to?
+caption: Size alone does not make a replacement correct; the compound must suit the fluid and temperature.
+- Mineral oils and many hydraulic fluids | Nitrile (NBR)
+- High temperature, oils and fuels | Fluorocarbon (FKM)
+- *Water, steam, brake fluid, weather | EPDM, never mineral oil
+- Very wide temperature range, static | Silicone (VMQ)
+- Severe chemicals and heat | Perfluoroelastomer (FFKM)
+```
+
 Compatibility charts from seal manufacturers are the starting point, but they are general guides. For unusual fluids, high temperatures or critical applications, ask the manufacturer or test samples. Food, potable water and medical applications usually require materials with appropriate compliance for that use.
 
 **Hardness**, usually measured on the Shore A scale, also matters. Medium hardness compounds suit most applications; harder compounds resist extrusion at high pressure but need more force to seal.
@@ -127,6 +139,16 @@ A small manufacturer's gear pump housing begins leaking at a face-sealed cover p
 The removed O-ring is swollen and soft, and pieces have been pushed into the gap between the cover and housing. The maintenance record shows that the original nitrile O-ring was replaced with an EPDM O-ring of the same size from a general kit. EPDM is generally unsuitable for mineral oil, and the pump runs on mineral hydraulic oil. The O-ring swelled, overfilled the groove and extruded.
 
 The fix is straightforward: replace it with a nitrile O-ring of the correct size and hardness, inspect the cover face for damage and add the material specification to the pump's spare parts list and the kit labelling. The business also separates its O-ring kits by material, with clear colour-coded labels, to prevent the substitution recurring.
+
+```figure
+type: timeline
+title: A cover plate leak after a routine service
+caption: The groove gave a correct 23.5% squeeze; the material was the problem.
+- Service | Nitrile O-ring swapped for EPDM | same size, from a general kit
+- Weeks later | Leak at the cover | O-ring swollen, soft, extruded
+- Cause | EPDM in mineral hydraulic oil
+- *Fix | Correct nitrile O-ring | kits separated and colour-coded by material
+```
 
 ## How this applies to a small Australian business
 
