@@ -67,6 +67,14 @@ The calculation does not establish a formal positional tolerance for the fixture
 
 Keep contacts on surfaces capable of carrying the expected pressure without unacceptable marking or deformation. The widest geometric span is not useful if one contact sits on a weak unsupported lip.
 
+## Place side contacts at the right height
+
+Side and end contacts touch faces that have edges, and the edges are rarely sharp and clean. A chamfer, an edge radius or a burr along the bottom edge can sit exactly where a low contact would touch. A contact placed too high, on the other hand, lets the clamping or cutting force tilt the part about the bottom edge.
+
+For the 16 mm thick bracket, a practical starting point is to place the side and end contacts near mid-thickness, clear of any chamfer or radius at either edge. If the bottom edge has a 0.5 mm chamfer, a contact centred about 6 to 10 mm above the bottom face touches the flat side with margin. Record the contact height on the fixture drawing; it is as much part of the location strategy as the contact's position along the face.
+
+Relieve the corner where the primary supports meet the side contacts. A sharp internal corner in the fixture traps chips and prevents the part's edge from seating, especially if the part carries a small burr. A relief groove or a gap between the support and side locator gives debris and edge features somewhere to go.
+
 ## Avoid an accidental fourth primary locator
 
 Three points define the ideal primary plane. A fourth fixed-height support can be useful only when its relationship to that plane and the part is understood. If it stands high, the part can rock between competing support sets. If it stands low, it may carry no load until the part bends.
@@ -74,6 +82,28 @@ Three points define the ideal primary plane. A fourth fixed-height support can b
 An adjustable or conforming support can provide additional load support after the locating condition is established. Its operating sequence must avoid lifting the part away from the primary references. Locking and load capacity require suitable hardware and application review.
 
 Do not treat “more support” as automatically better. The question is whether the support carries load while preserving the intended reference. A contact that becomes a new uncontrolled locator can reduce repeatability.
+
+## Keep clamp forces inside the support triangle
+
+Three primary supports define a triangle on the bottom face. A downward clamping force that acts inside that triangle presses the part onto all three supports. A force acting outside it tends to tip the part about the nearest edge of the triangle, lifting the opposite support, so the part is no longer seated on its intended plane.
+
+This is an illustration. Place the bracket's three bottom supports at (15, 15), (135, 15) and (75, 70) mm, using x along the length and y across the width from one corner. The triangle covers 3,300 mm², a little over a quarter of the bottom face.
+
+- A clamp at **(75, 40)** lies inside the triangle and seats the part on all three supports.
+- A clamp at **(140, 70)**, near a far corner, lies well outside. On its own, it would tend to tip the part about the line between the supports at (135, 15) and (75, 70).
+- A clamp at **(110, 40)** looks central but lies just outside the same edge. At y = 40 mm, that edge passes through x ≈ 107.7 mm, so the clamp is about 2 mm beyond it.
+
+```figure
+type: compare
+title: Three clamp positions against the support triangle
+cols: Inside the triangle? | Effect on its own
+caption: Supports at (15, 15), (135, 15) and (75, 70) mm. Position, not appearance, decides whether a clamp seats the part.
+- Clamp at (75, 40) | Yes | Seats the part on all three supports
+- Clamp at (140, 70) | No, well outside | Tends to tip the part and lift a support
+- *Clamp at (110, 40) | No, about 2 mm outside | Looks central but can still lift a support
+```
+
+The last case is the useful lesson: a quick visual judgement can be wrong by a few millimetres, which is enough to change whether a clamp seats or tips the part. Plot the supports and clamp points on a plan view. Where a clamp must sit outside the triangle, for access or to hold a thin region, pair it with a clamp on the other side or move a support so that the combined clamping force still acts within the triangle.
 
 ## Use pin location with a clear constraint plan
 
@@ -92,6 +122,32 @@ An operator should be able to seat the part on the primary supports, bring it ag
 If tightening the first clamp rotates the part away from an end stop, changing the written instruction may not be enough. Reconsider the clamp direction, support arrangement or sequence. A method that depends on holding the part by hand beside a moving or closing mechanism needs redesign and a proper machine-safety assessment.
 
 Provide clearance for non-locating surfaces and for expected incoming variation. A generous relief can prevent an uncontrolled rough face from becoming an accidental datum. Provide a way for chips to leave the locating region rather than collect beneath it.
+
+## Seat the part the same way every time
+
+Even with a sound 3-2-1 layout, location depends on how the part is brought against its contacts. One operator may slide the part firmly into the corner; another may drop it in and clamp. The difference can be several hundredths of a millimetre if the part does not quite reach the side or end stops before the clamp closes.
+
+A common remedy is a light, consistent seating force applied before clamping: a spring plunger or a small pusher that holds the part against the side and end contacts while the main clamps are tightened. Its force must be large enough to overcome friction on the primary supports, small enough not to lift or tilt the part, and directed towards the stops. Where a pusher is not practical, the instruction should specify the seating action and include a check, such as a feeler that must not enter between part and stop, before the first clamp is closed.
+
+## Make the wrong orientation impossible
+
+A bracket that is nearly symmetrical can be loaded the wrong way round, upside down or end for end. If the fixture accepts a wrongly oriented part, the machine will cut features in the wrong place, and the error may not be found until inspection.
+
+Fixture designers commonly prevent this by adding a feature that only the correct orientation can clear: a pin that enters an existing hole or slot, a block that fouls an asymmetric profile, or a locator placed where only one end of the part has material. Such features are sometimes called foolproofing or error-proofing.
+
+The foolproofing feature must not become an accidental locator. It should clear the part by enough to avoid touching it when correctly loaded, so that it rejects the wrong orientation without competing with the 3-2-1 contacts. Its clearance belongs on the drawing, and its function should be tested deliberately during the trial by trying to load the part incorrectly.
+
+## Make locating contacts replaceable
+
+Locating contacts wear. The part slides across them during loading, chips are dragged over them, and the clamping force concentrates on small areas. A contact that wears by a few hundredths of a millimetre shifts every part loaded against it.
+
+Using hardened, replaceable locating buttons, pads and pins, rather than machining the contact surfaces into the fixture body, keeps the worn element cheap and quick to change. The replacement must restore the original position, which means the seating of the replaceable part, its height and its fixing method all need to be controlled. Chapter 9 sets out how wear is monitored and when contacts are replaced; the design choice that makes this practical is made now.
+
+## Measure the locators after the fixture is built
+
+The fixture drawing shows where the contacts should be. The built fixture puts them somewhere close to that. Before the trial, measure the actual positions and heights of the three primary supports, the two side contacts and the end contact relative to a fixture reference, and record them.
+
+This record serves three purposes. It confirms that the build matches the design before parts are cut. It gives a baseline against which later wear can be measured. And when the trial shows a systematic offset in the machined features, the measured locator positions often explain it immediately, saving a search through programs and tool offsets.
 
 ## Exercise: diagnose inconsistent location
 

@@ -82,6 +82,22 @@ The assumed contact stiffness is not a catalogue recommendation. The example sho
 
 Real joints can have nonlinear contact behaviour, frictional slip and hysteresis. Several supports may share load in parallel. Use a model that represents the actual arrangement rather than adding every deformation number found in a simulation report.
 
+## The base joint is part of the fixture
+
+The fixture's connection to the machine table is a joint in series with everything else. A base plate that does not sit flat on the table, tee-slot bolts tightened in a random order, or chips trapped under the base all add compliance and can distort the fixture as it is bolted down.
+
+Good practice includes cleaning the table and base before mounting, checking that the base sits without rocking, tightening the bolts in a stated sequence and to a stated method, and locating the fixture on the table with keys or pins rather than indicating it into position each time. A distorted base can move the locating contacts by more than the whole location budget, so it is worth checking the locators after mounting during the trial, not only on the bench.
+
+## Divide the deflection allocation among the members
+
+A single 0.010 mm allocation for the whole fixture is hard to design to, because the movement comes from several places at once. Dividing it gives each member a target. As an illustration, the bracket fixture's 0.010 mm might be split as:
+
+- **Support bridge or plate:** 0.004 mm
+- **Contacts and joints in the load path:** 0.003 mm
+- **Workpiece overhang at the critical feature:** 0.003 mm
+
+Each share then becomes a design check that can be passed or failed separately. The 16 mm bridge at 100 mm span, at about 0.0092 mm, fails its 0.004 mm share on its own, and the 60 mm span, at about 0.0081 mm, fails it too. That points the design towards a stiffer or shorter support, or a different allocation, before anything is built. Like the tolerance budget in a dimensional stack, the deflection budget should be recorded with the reasons for its split and revisited if a member cannot meet its share economically.
+
 ## Consider the part while it is clamped
 
 The workpiece can be the most flexible member. A thin wall may deflect under a clamp, be machined in that state, then return after release. Inspecting only while clamped can hide the resulting free-state error.
@@ -91,6 +107,53 @@ Compare measurements before clamping, under the defined clamping condition and a
 Support near the load path can reduce bending, but an added support must not lift the part off its locating references. The location and support decisions from Chapter 2 remain connected.
 
 Avoid replacing stiffness analysis with maximum clamp force. More force can improve contact retention while worsening the feature you are trying to hold.
+
+## Check overhangs on the part itself
+
+Wherever the cutter works beyond the last support, the part acts as a cantilever. The ideal deflection of a cantilever with a load at its free end is:
+
+**δ = PL³ / (3EI)**
+
+This is an illustration, using steel with E = 200,000 N/mm². Suppose the bracket's full 80 mm width and 16 mm thickness overhang the nearest support by 40 mm, and an 800 N cutting force acts at the edge. Then I = 80 × 16³ / 12 ≈ 27,307 mm⁴, and:
+
+**δ = 800 × 40³ / (3 × 200,000 × 27,307) ≈ 0.0031 mm**
+
+That is within the 0.010 mm allocation. If the same region overhung by 80 mm, the cube of the length would multiply the deflection by eight, to about **0.025 mm**, well outside it.
+
+```figure
+type: compare
+title: The bracket as a cantilever under an 800 N cutting force
+cols: 40 mm overhang | 80 mm overhang
+caption: Steel, 80 mm wide by 16 mm thick, ideal cantilever. Doubling the overhang multiplies the deflection by eight.
+- Deflection at the edge | About 0.0031 mm | About 0.025 mm
+- *Against the 0.010 mm allocation | Inside | Outside
+```
+
+The calculation points to a simple rule: put a support close to wherever the heaviest cut happens, and check the overhang at every machined feature, not only at the part's centre. Thin features, such as a 6 mm tab, deserve their own check. A tab 30 mm wide and 6 mm thick, overhanging 20 mm and loaded with 300 N at its tip, deflects about 0.0074 mm by the same formula, most of the allocation from a small feature that is easy to overlook.
+
+## Stiffness and vibration go together
+
+A fixture is a spring carrying a mass, and every spring-mass system has natural frequencies at which it vibrates readily. For a single effective stiffness k and mass m, the natural frequency is about:
+
+**f = (1 / 2π) × √(k / m)**
+
+This is an illustration. With an effective stiffness of 60,000 N/mm, or 6 × 10⁷ N/m, and an effective moving mass of 5 kg, the natural frequency is about **551 Hz**. If the effective mass were 20 kg at the same stiffness, it would fall to about **276 Hz**.
+
+The cutting forces described in Chapter 3 pulse at the tooth-passing frequency, about 133 Hz for a four-flute cutter at 2,000 rpm, and at its multiples. A fixture whose natural frequency sits close to one of those multiples can resonate, giving chatter marks, poor finish and accelerated tool wear even though its static deflection looked acceptable. A stiffer and lighter fixture raises its natural frequencies, away from the strongest excitation. Where resonance is suspected, a change of spindle speed that moves the tooth-passing frequency away from the problem is often the quickest test.
+
+## Damping helps where stiffness cannot
+
+Stiffness limits how far a fixture moves under a given force; damping limits how much it rings when excited. Materials and joints differ in how quickly they absorb vibration. Cast iron damps better than steel plate, and bolted joints with friction add damping as well as compliance. Polymer concrete and constrained-layer damping treatments are used where vibration is a persistent problem.
+
+For a fixture like the bracket's, stiffness is usually the first lever. Damping becomes worth considering when a stiff, well-supported design still chatters at a particular speed or tool, or when space and weight prevent further stiffening. The trial described in Chapter 7 is where such problems first show themselves, so it should include listening for chatter and inspecting the surface finish, not only measuring dimensions.
+
+## Temperature moves the fixture too
+
+Deflection under load is not the only way a fixture changes shape. A fixture plate warms with the workshop through the day, with coolant temperature and with heat from the cut. Steel expands by roughly 12 millionths of its length per degree Celsius, using the same teaching coefficient as other READOS books.
+
+This is an illustration. If the end stop sits 150 mm from the fixture's reference on the machine table, and the fixture warms by 5 °C between the first part of the morning and mid-afternoon, the stop moves by about **150 × 12 × 10⁻⁶ × 5 ≈ 0.009 mm** relative to that reference. That is almost the whole 0.010 mm deflection allocation, from temperature alone.
+
+The effect is easiest to manage by placing the fixture's reference close to the features that matter, so that the distances that grow are short, by keeping coolant temperature stable, and by checking the first parts after a cold start against parts made once the machine and fixture have settled. The trial in Chapter 7 should include parts from both conditions, so that any warm-up shift is measured rather than discovered in production.
 
 ## Use simulation with an explicit question
 

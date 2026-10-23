@@ -74,6 +74,46 @@ Also establish the maximum acceptable force. A method that reliably exceeds the 
 
 Do not infer working load from a proof load or ultimate rating without understanding the manufacturer's definitions. Confirm direction, arm length, stroke, mounting and cycle conditions. A catalogue value is conditional information.
 
+## Match the clamp's stroke to the incoming parts
+
+A clamp must reach the part, apply its force and still leave room to load and unload. The incoming blank thickness varies, so the clamping point moves up and down from part to part. If the bracket blank is 16 mm thick with an allowed variation of ±0.2 mm, the clamp must deliver its intended force anywhere within a 0.4 mm range of heights, plus whatever extra the pad compresses.
+
+Some clamp types are forgiving of this and some are not. A screw-driven strap clamp follows the part height as it is tightened. A toggle clamp, set once for a nominal height, delivers a force that depends strongly on how far past its set point the part sits: a slightly thicker part may make it hard to close, and a slightly thinner one may leave it barely touching. Toggle clamps with adjustable spindles, or with spring-loaded spindles, are designed to tolerate variation, but they still need setting against the real range of parts, not one sample.
+
+The brief from Chapter 1 should give the incoming variation, and the clamp selection should be checked at both ends of it. A clamp that works on the first blank measured but not on the thickest or thinnest in the batch has been tested, not qualified.
+
+## Know how each clamp type behaves
+
+Different clamps hold in different ways, and the differences matter when the cut vibrates:
+
+- **Screw clamps** hold by thread friction and preload. They are adjustable and tolerant of part variation, but they depend on the operator's tightening and can loosen under vibration if the joint settles.
+- **Toggle clamps** lock by passing over a centre point. Once over centre, cutting forces push them further closed rather than open, provided they are set correctly and rated for the load direction.
+- **Cam clamps** are quick, but a cam held only by friction can work loose under vibration unless its geometry is self-locking for the conditions.
+- **Powered clamps**, hydraulic or pneumatic, deliver force from pressure, which gives consistency but depends on the supply, as the next section shows.
+
+Choosing between them is part of the load-path design. A clamp whose holding depends on friction should not carry a load that vibrates in its opening direction, whatever its catalogue rating.
+
+## Read a pressure gauge as a force
+
+For powered clamps, the force comes from pressure acting on a piston. This is an illustration. A pneumatic cylinder with a 40 mm bore has a piston area of about 1,257 mm². At a supply of 6 bar, or 0.6 MPa, the ideal piston force is:
+
+**1,257 × 0.6 ≈ 754 N**
+
+If the supply falls to 5 bar, the force falls in proportion to about 628 N. Seal friction, return springs and the clamp's lever geometry reduce the force delivered to the part further; a 10% loss would leave about 679 N at 6 bar.
+
+```figure
+type: bars
+title: A 40 mm bore pneumatic clamp at different supply pressures
+unit: N
+max: 800
+caption: Ideal piston force is pressure × area. Losses and lever geometry reduce the force at the part further.
+- 6 bar, ideal | 754
+- *6 bar, with an assumed 10% loss | 679
+- 5 bar, ideal | 628
+```
+
+Two practical points follow. The design should use the lowest supply pressure the clamp will actually see, not the nominal value, and the lever ratio of the clamp arm, like the strap-clamp geometry above, sets how much of the piston force reaches the part. Pneumatic clamps also compress if the cutting force pushes against them, because air is compressible. They suit holding in a direction where the part is pushed onto a stop, not resisting large forces in their own opening direction.
+
 ## Check the contact pressure
 
 For an assumed 900 N clamp force acting over a nominal 100 mm² pad, the average pressure is **900 / 100 = 9 N/mm²**, or **9 MPa**.
@@ -92,6 +132,12 @@ For the teaching fixture, the intended sequence is to clean and inspect the refe
 
 If powered clamps are used, assess pressure loss, unintended release, stored energy and control-system behaviour. A pressure indication alone does not prove that the workpiece is correctly seated or that every clamp has reached its intended condition. Safety-related functions require their own competent design and validation.
 
+## Leave room to load, unload and clear chips
+
+A clamp that holds well but obstructs loading slows every cycle and invites shortcuts. Swing clamps, retracting clamps and clamps that lift clear when released give the operator an open path to place and remove the part. The clearance needed is set by the part, the operator's hand and any lifting aid, not just by the part's outline.
+
+Chips matter too. A clamp body or pad that sits low against the fixture plate creates pockets where chips collect, and chips under a pad or against a locator change the part's position. Designing clamps so that chips can be blown or washed away easily, and so that the locating contacts are visible during loading, protects the location strategy from the most common day-to-day disturbance.
+
 ## Keep force evidence attached to the configuration
 
 Record the clamp model, pad, arm setting, mounting, operating range and any measurement used to qualify the delivered force. Preserve relevant manufacturer instructions and replacement requirements.
@@ -99,6 +145,18 @@ Record the clamp model, pad, arm setting, mounting, operating range and any meas
 Changing a clamp arm length can change both force and stiffness. Changing a pad can change contact pressure. A replacement that fits the same mounting holes is not automatically equivalent.
 
 The broader [workholding and toolholding chapter](/reados/collections/machining-and-metal-parts/workholding-and-toolholding/) is useful background when comparing standard systems. Here the task is to connect one selected arrangement to its actual force at the part.
+
+## Measure the force the part actually receives
+
+When the minimum clamp force matters, measure it in the actual configuration at least once, with a force washer, a load cell in place of the part, or another calibrated method. Measure at the extremes of the part-height range and, for powered clamps, at the lowest expected supply pressure.
+
+Record the measured values with the configuration they apply to. The record then becomes the reference for later checks: if a clamp is rebuilt, a pad is replaced or a supply regulator is changed, repeating the measurement shows whether the delivered force is still within the qualified range. A force that was never measured cannot be shown to have changed.
+
+## Expect clamps to wear and fail
+
+Clamps are mechanisms, and mechanisms wear. Screw threads gall and loosen, toggle linkages develop play that changes their locking point, pads wear and harden, and powered clamps lose force as seals wear or regulators drift. A clamp that delivered its qualified force at commissioning may deliver noticeably less a year later without any visible change.
+
+The design should make this manageable. Use clamps with replaceable wear parts, specify the pad and spindle as identified spares, and make the clamp's condition easy to check: a visible stroke mark, a pressure indication at the clamp rather than only at the supply, or a simple force check against the measured baseline. Chapter 9 turns these into scheduled checks. The design decision now is to choose clamps whose wear can be seen and corrected, rather than ones that fail silently.
 
 ## Exercise: compare force paths
 

@@ -37,6 +37,35 @@ The worked decision is **hold unrestricted production release**. Continue detail
 
 A later approval requires documented closure of the actual gates, not simply changing the word “hold” on the form. Name the configuration, operating envelope, accepted studies, instructions, maintenance requirements and authorised approver.
 
+## Turn each finding into a change and a re-test
+
+A hold decision is useful only if it says what would lift it. For the teaching case, each open finding can be paired with a proposed change and the evidence that would show the change worked:
+
+```figure
+type: compare
+title: From findings to changes for the bracket fixture
+cols: Proposed change | Evidence to close it
+caption: Each finding gets a change and a re-test, so the next review can close it on evidence rather than opinion.
+- Deflection over the allocation | Shorter support span and a stiffer contact interface | Displacement test at the controlled feature under load
+- Holder collision near a clamp | Low-profile clamp moved clear of the pocket | Full-envelope simulation with the real holder, then cautious prove-out
+- Operator offset of 0.008 mm | Seating pusher and a revised loading instruction | Repeat the balanced two-operator reload study
+- *Thin support reaction under load | Clamps moved towards the light support, checked for reversed moments | Updated load-case table and screening calculations
+```
+
+Each change may affect another finding. Moving a clamp for tool access changes the reactions; adding a seating pusher changes the loading sequence; shortening a support span may change access. The change list should therefore be reviewed as a set, and the re-tests run on the revised fixture as a whole, not one item at a time on different configurations.
+
+## Decide which evidence must be repeated
+
+Not every study needs repeating after every change. A useful rule is to repeat any study whose result could have been affected. Moving a clamp affects load retention and access, so those checks repeat; it does not affect the measurement method, so the measurement checks need not. Changing a locating contact affects location, so the reload study repeats, and the locator baseline must be measured again.
+
+Write the decision down for each change, with the reasoning. A reviewer who sees that the reload study was not repeated after a clamp change should be able to read why, rather than wonder whether it was forgotten.
+
+## State the operating envelope
+
+A release covers the fixture under particular conditions, and the release statement should name them. For the bracket fixture, they include the accepted range of blank thickness and condition, the approved cutting data and toolpaths, the clamp settings and the supply pressure range for any powered clamps, the machine or machines it is qualified on, and any warm-up or temperature condition the trial showed to matter.
+
+Conditions outside the envelope are not necessarily unsafe or unworkable, but they have not been shown to work. A request to run the fixture with a heavier cut, a thicker blank or on a different machine is then a change to be assessed, rather than an informal extension that nobody decided.
+
 ## Compare complete batch time
 
 This is an illustration using the assumed 134-second new cycle from Chapter 6. Suppose the current method takes 180 seconds per part and 45 minutes to set up. The candidate method is estimated to take 25 minutes to set up. Each batch contains 300 parts.
@@ -100,6 +129,12 @@ Across twelve batches, the first-year balance would be **A$2,160 − A$300 − A
 
 Technical acceptance remains separate. A financially attractive fixture with an unresolved retention problem cannot be approved on the basis of payback.
 
+## Use measured times in the final case
+
+The business comparison above uses the assumed 134-second cycle from Chapter 6. By the time of release, the trial will have measured the real cycle. The final case should be recalculated with the measured times, including the occasional tasks such as cleaning and checks, and with the measured set-up time from at least one complete changeover.
+
+The sensitivity case shows why this matters: the difference between a 46-second and a 20-second per-part saving is the difference between a fixture that pays back within the year and one that does not. Presenting the assumed figure at release, when a measured one is available, would hide the most important number in the case.
+
 ## Build the handover around evidence
 
 The final package should connect the fixture identifier and revision to the approved part range, drawings, load and stiffness review, manufacturer instructions, machine interface, program and tools, qualification results, operating method and maintenance response.
@@ -109,6 +144,26 @@ Include the raw data needed to interpret the studies, not only selected summary 
 For procurement, define what the supplier must deliver to support acceptance. A finished fixture without the required force data, spare specifications or measurement records may be physically complete but contractually and operationally incomplete.
 
 Use the [Product Development and Launch collection](/reados/collections/product-development-and-launch/) for the wider transition into production. This book concentrates on the fixture's contribution to that transition.
+
+## Make each approval specific
+
+A fixture release usually needs several people to agree, and each approval should cover what that person can judge. The fixture designer approves the location strategy, load-path review and deflection evidence. Manufacturing engineering approves the program, tools, access review and cycle evidence. Quality approves the measurement methods, the reload study and the first-off and last-off checks. Production approves that the operating method and instructions are workable on the shop floor, and maintenance approves that the register, spares and repair instructions are in place. The person accountable for the business case approves the economic basis using the measured times.
+
+Separate approvals make gaps visible. If nobody is able to sign for the maintenance arrangements, the release record shows an empty line rather than hiding the gap beneath a single signature. They also make each person's commitment clear: a quality approval of the reload study is not an endorsement of the payback calculation, and neither should be read as one.
+
+## What a release statement might say once the gaps close
+
+This is an illustration of the form, not a conclusion about the teaching fixture. If the changes above were made and their re-tests passed, a release statement might read:
+
+*Fixture BF-01, revision C, is released for the inspection bracket, drawing revision B, operation 10, on the identified milling machine, using program revision D and the listed tools. Accepted blanks are 16.0 ± 0.2 mm thick with prepared reference faces. Evidence reviewed: load-case review revision 3, displacement test showing the controlled feature within 0.010 mm under the defined load, full-envelope access review and prove-out record, and a balanced twenty-load reload study by two operators. Required controls: set-up sheet revision C, first-off and last-off checks, and the maintenance register entries for locating pin, supports, stops and clamps. Excluded: other parts, other machines and cutting data outside the approved set. Any change to locators, clamps, program, tools or blank condition requires review before use.*
+
+Every phrase in it points to a record. If any record does not yet exist, the corresponding phrase cannot be written, and the release cannot yet be given.
+
+## Review the fixture after the first batches
+
+Release is not the end of the evidence. A review after the first few production batches compares what actually happened with what the release assumed: measured cycle and set-up times, first-off and last-off results, any parts held or scrapped, wear readings against the register, and operator comments.
+
+Small corrections at this stage, an interval adjusted, an instruction clarified, a spare stocked, are normal and should be made through the change process. A large discrepancy, such as a feature drifting through every batch or a cycle time far above the measured trial value, reopens the release for the affected claim. Either way, the review closes the loop between the qualification and the production it was meant to predict.
 
 ## Final exercise: write the approval boundary
 

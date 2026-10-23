@@ -56,6 +56,38 @@ A real brief must identify how its load envelope was obtained and how uncertaint
 
 Do not settle the clamp selection before this information is available. A convenient lever clamp may be inappropriate for the force direction, stroke, reach or operating environment even if its catalogue number looks large enough.
 
+## Decide what kind of workholding the brief needs
+
+The brief should leave the solution open, but it should collect the facts that decide it. Three broad options are common for a part like the bracket:
+
+- **A machine vice with standard or soft jaws.** Quick to set up, familiar to operators and reusable. It suits modest quantities and parts with parallel faces, but it clamps through one direction and can distort thin sections.
+- **A modular fixture**, built from a grid plate with standard locators, supports and clamps. It can be configured, recorded and rebuilt, which suits families of parts and medium quantities, provided the configuration is documented and the components are maintained.
+- **A dedicated fixture**, designed and made for this part. It can give the best access, loading speed and repeatability, but it costs the most to design and make, and it is only worth that cost when quantity, accuracy or operator workload justify it.
+
+```figure
+type: compare
+title: Three ways to hold the bracket
+cols: Best suited to | Main limitation
+caption: The brief collects the facts; the choice follows from quantity, accuracy, access and how often the job returns.
+- Machine vice | Small batches, simple parallel parts | One clamping direction, limited access
+- Modular fixture | Part families, repeat jobs | Needs disciplined records and component care
+- *Dedicated fixture | Higher volumes, demanding features | Design and manufacturing cost
+```
+
+The questions that separate them are the ones the brief already asks: how many parts and how often, which features need which accuracy, what access the tools need, and how long loading may take. A brief that answers those questions often makes the choice obvious.
+
+## Name the hazards the fixture must not add
+
+A fixture changes how people work at the machine, and it can introduce hazards as well as remove them. The brief should ask for a review of at least:
+
+- **Pinch and crush points** between clamps, locators and the operator's hands during loading.
+- **Unintended release**, such as a clamp that can be opened while the spindle runs, or a cam that can back off under vibration.
+- **Handling**, including the weight of the fixture during set-up and of the parts during loading, and the reach and posture needed.
+- **Chips and coolant**, which can be trapped in locating pockets, thrown by the cut or make surfaces slippery.
+- **Interaction with machine guarding**, so that the fixture does not require guards to be opened or bypassed.
+
+These are not afterthoughts for the commissioning checklist. A design that needs the operator's hand between two closing jaws to hold the part in place has a flaw that no instruction can fully remove.
+
 ## Make acceptance observable
 
 | Requirement | Useful evidence | Inadequate substitute |
@@ -83,6 +115,23 @@ caption: Each requirement needs evidence another person can check, not an impres
 
 Choose numerical criteria from the product and process requirements. This table does not prescribe universal repeatability or safety thresholds. The purpose is to prevent attractive but weak evidence from being accepted as proof.
 
+## Plan the evidence before the design
+
+Each acceptance requirement in the table above needs evidence at some stage of the project. Deciding now when that evidence will be collected avoids discovering at the end that a required measurement was never planned.
+
+```figure
+type: steps
+title: When the bracket fixture's evidence is gathered
+caption: Each requirement is assigned a stage, so nothing is left to be proved after the fixture is already in production.
+- Brief review | requirements, loads, open questions
+- Design review | contact map, load cases, access envelope
+- Build check | locator positions, clamp function
+- Trial | reload study, feature verification, timing
+- *Qualification | controlled instructions, maintenance plan, sign-off
+```
+
+The assignment also shows dependencies. The trial cannot test repeatability properly until the locator positions have been checked after the fixture is built, and qualification cannot be signed until the maintenance checks have a baseline from the trial. Seeing the chain in advance allows the schedule to reflect it.
+
 ## Establish the economic baseline honestly
 
 Observe the current method before predicting savings. Separate loading, locating, clamping, cutting, tool changes, unloading and inspection. Record set-up time separately from per-part cycle time.
@@ -92,6 +141,28 @@ A change that saves two minutes of loading but adds three minutes of inspection 
 Also distinguish machine occupancy from operator attention. An automatic cut may free an operator for another task without freeing the machine. A business case should state which resource is constrained and how released time could actually be used.
 
 The existing [fixture business-case chapter](/reados/collections/manufacturing-operations-and-design-for-manufacture/designing-jigs-and-fixtures-that-pay/) provides broader context. This book will connect the economic result to a qualified technical method rather than treating time saved as sufficient approval.
+
+## Estimate the payback window, not just the saving
+
+This is an illustration with invented figures. Suppose the bracket is made in batches totalling 2,400 parts a year, and a dedicated fixture is expected to save 1.5 minutes per part in loading and checking, at a combined machine and operator rate of A$90 per hour. The annual saving is:
+
+**2,400 × 1.5 / 60 × 90 = A$5,400**
+
+If the fixture costs A$6,000 to design, make and qualify, the simple payback is about 13 months. At 600 parts a year, the same fixture would take more than four years to pay back, and a vice or modular solution would probably be the better choice.
+
+The calculation is only as good as its inputs. The saving must come from the observed baseline, not a hopeful estimate; the volume must be the expected production, not the most optimistic forecast; and the fixture cost must include design, trial, qualification and maintenance, not only the steel. A payback window also ignores other benefits, such as fewer scrapped parts or a job that less experienced operators can run. Those belong in the case as well, stated separately so that each can be checked.
+
+## Ask the people who run the job now
+
+Operators who already make the part know things that no drawing records: which blanks arrive with burrs, which face is easiest to clean, where chips collect, which existing set-up step takes the longest and why. A short conversation at the machine during the baseline study often changes the brief.
+
+Record what they say as observations to be checked, not as conclusions. An operator's sense that loading takes "about a minute" should be confirmed with a timed observation. Their knowledge is still the fastest route to the questions that matter, and involving them early makes the eventual fixture easier to adopt.
+
+## Record the production pattern
+
+The same annual quantity can arrive in very different ways. Two thousand four hundred brackets a year could be one long run, monthly batches of two hundred, or small orders mixed with other jobs on the same machine. Each pattern changes what the fixture must do well.
+
+Frequent changeovers reward a fixture that mounts quickly and repeatably on the machine, with its position set by keys or locating pins rather than by indicating each time. Long runs reward fast loading and robust wear resistance. Mixed small orders may favour a modular or vice-based solution that can be cleared away between jobs. The brief should state the expected batch sizes, how often the job returns, which shifts and operators will run it, and whether the fixture will stay on the machine or be stored between batches.
 
 ## Write a brief another person can challenge
 
