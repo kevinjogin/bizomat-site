@@ -99,6 +99,18 @@ Survey data needs additional checks:
 - **Failed attention checks**, where included.
 - **Contradictory answers**.
 
+```figure
+type: checklist
+title: Screening survey responses
+caption: Record every exclusion and its reason in the cleaning log.
+- x Test responses from setting up
+- x Duplicate submissions
+- x Speeders who finished implausibly fast
+- x Straight-liners in grids
+- x Failed attention checks
+- *x Contradictory answers
+```
+
 Rules for excluding responses should be decided before looking at how those responses answered the key questions, so that exclusion is not influenced by whether the results are welcome.
 
 ## Merging data sets
@@ -122,6 +134,16 @@ A service company extracts 1,250 job records from two branches to analyse job du
 Screening finds 38 exact duplicates created when one branch's data was migrated, which are removed after checking against invoices. Branch B records durations in minutes and Branch A in hours, which explains a cluster of jobs apparently lasting several hundred hours; Branch B's 214 values are converted. Twelve jobs have negative durations because overnight work was recorded with only start and finish times; recalculating from full date-time stamps fixes them. The job category field contains 23 variants for 9 real categories, which are mapped with a lookup table. Five jobs show costs ten times higher than similar jobs; source invoices confirm that three are typing errors and two are genuine major repairs, which are kept and flagged.
 
 The cleaning log records each step and the number of records affected. Analysed before cleaning, average job duration would have been reported as about 9 hours; after cleaning, it is about 3.4 hours, consistent with what supervisors expected. The company adds unit labels and a category drop-down to its job forms.
+
+```figure
+type: stats
+title: Cleaning 1,250 job records from two branches
+caption: Job forms now carry unit labels and a category drop-down, to stop the errors at the source.
+- 38 | Duplicates removed | from a migration
+- 214 | Durations converted | minutes to hours
+- 12 | Overnight jobs | recalculated
+- *9 → 3.4 hours | Average job duration | before and after cleaning
+```
 
 ## How this applies to a small Australian business
 

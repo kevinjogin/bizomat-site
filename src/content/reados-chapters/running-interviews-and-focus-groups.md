@@ -46,6 +46,17 @@ A **discussion guide** lists the topics and key questions to cover, in a sensibl
 4. **Reactions**: where relevant, responses to ideas, concepts or prototypes.
 5. **Closing**: anything missed, anything else they want to say, and thanks.
 
+```figure
+type: steps
+title: A discussion guide in five parts
+caption: Use the guide as a map, but follow important leads.
+- Introduction | purpose, confidentiality, consent
+- Warm-up | role and context
+- *Core topics | general to specific
+- Reactions | to ideas or prototypes
+- Closing | anything missed, thanks
+```
+
 **Semi-structured** interviews, which follow a guide but adapt to the conversation, suit most business research. Fully **structured** interviews ask fixed questions in a fixed order and work more like spoken surveys. **Unstructured** interviews explore freely and suit very early exploration.
 
 ## Asking questions that produce evidence
@@ -134,6 +145,16 @@ A commercial cleaning supplies distributor notices that several mid-sized custom
 An external interviewer conducts twelve phone interviews: six with customers whose orders fell, four with stable customers and two with former customers who had moved to a competitor. Each interview follows a semi-structured guide that begins with the customer's role, then asks them to describe their most recent order from start to finish and their most recent problem with any supplier.
 
 Price comes up in most interviews but is rarely decisive. The strongest theme is the difficulty of ordering: customers describe phoning orders in, waiting for callbacks and receiving incomplete deliveries without warning. Two customers who switched say the competitor's online ordering with stock visibility saved their office staff hours each month. The distributor invests in an online ordering portal with live stock levels and proactive shortage notices, rather than cutting prices, and follows up with a short survey to measure how widespread the ordering problem is.
+
+```figure
+type: stack
+title: Twelve interviews before cutting prices
+unit: interviews
+caption: Price came up often but was rarely decisive; the strongest theme was how hard ordering was.
+- Customers whose orders fell | 6
+- Stable customers | 4
+- *Former customers who switched | 2
+```
 
 ## How this applies to a small Australian business
 

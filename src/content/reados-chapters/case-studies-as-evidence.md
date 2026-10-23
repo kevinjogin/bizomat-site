@@ -44,6 +44,18 @@ Which cases are studied determines what can be learned. Common choices include:
 - **Critical cases**, chosen because if an idea works there, it is likely to work elsewhere, or if it fails there, it is likely to fail elsewhere.
 - **Contrasting cases**, such as similar projects with different outcomes, which help isolate the factors that made the difference.
 
+```figure
+type: tree
+title: Choosing cases deliberately
+caption: The choice of case decides what the study can show.
+- Kinds of case
+  - Typical | ordinary experience
+  - Extreme or unusual | exceptional success or failure
+  - Deviant | did not behave as expected
+  - Critical | if it works here, it works elsewhere
+  - *Contrasting | similar cases, different outcomes
+```
+
 Selecting only successes is a frequent and serious error. Studying successful businesses to learn what they did ignores the businesses that did the same things and failed, a form of **survivorship bias**. Including failures and contrasts gives much stronger evidence.
 
 ## Designing a case study
@@ -119,6 +131,16 @@ A fit-out contractor has completed three similar office refurbishments in a year
 For each project, the manager builds a timeline from the estimate, contract, variation register, site diaries and emails, and interviews the estimator, project manager and site supervisor. A comparison table records factors such as the completeness of drawings at tender, the number of variations, the timing of client decisions, subcontractor changes and site access issues.
 
 The pattern is clear. The two overrunning projects were tendered on incomplete design drawings, and most of their overruns came from variations in the first month, when design details were finalised. Estimating rates were similar across all three. The rival explanation of poor subcontractor performance did not hold: subcontractor costs tracked the variations. The contractor changes its tender process to price incomplete designs with explicit allowances and assumptions, and to propose design-completion workshops before construction starts.
+
+```figure
+type: decision
+title: Testing rival explanations for two overruns
+question: Why did two of three refurbishments finish about 20% over budget?
+caption: Timelines from estimates, variation registers, diaries and interviews were compared across all three projects.
+- Poor estimating? | Ruled out | rates similar on all three
+- Subcontractor performance? | Ruled out | costs tracked the variations
+- *Incomplete drawings at tender? | Supported | overruns from first-month variations
+```
 
 ## How this applies to a small Australian business
 

@@ -44,6 +44,15 @@ In **non-probability sampling**, selection depends on convenience, judgement or 
 - **Purposive samples** choose cases deliberately for their relevance, such as long-standing customers or recent defectors.
 - **Snowball samples** ask participants to suggest others.
 
+```figure
+type: tree
+title: Ways to choose a sample
+caption: Use random or systematic selection where results must be generalised to the whole population.
+- Sampling
+  - *Probability | simple random, systematic, stratified, cluster
+  - Non-probability | convenience, quota, purposive, snowball
+```
+
 Non-probability samples are common, cheap and often appropriate for exploratory and qualitative research. Their limitation is that the precision of their results cannot be calculated, and they may be biased in unknown ways.
 
 ## Sampling error and bias
@@ -65,6 +74,22 @@ where p is the proportion and n the sample size. The margin is largest when p is
 - n = 1,000: about ±3.
 
 Halving the margin of error requires roughly four times the sample. These figures assume random sampling and apply to the whole sample; they do not account for bias. The [analysing counts and categories in business data](/reados/collections/operational-data-records-and-controls/analysing-counts-and-categories-in-business-data/) article explains how to judge whether differences between groups are real.
+
+```figure
+type: line
+title: Margin of error at 95% confidence, worst case
+x: Completed responses
+y: Margin (± percentage points)
+ymin: 0
+ymax: 15
+caption: Halving the margin needs roughly four times the sample, and none of this accounts for bias.
+legend: Margin of error
+- 50 | 14
+- 100 | 10
+- 200 | 7
+- 400 | 5
+- 1000 | 3
+```
 
 ## Sample size for a target precision
 
@@ -121,6 +146,15 @@ An equipment hire business with about 300 active customers wants to estimate the
 The business recognises that 120 responses would give a margin of roughly ±6 to 7 points after the adjustment, and accepts this, given the decision. It also checks the frame: the customer list includes only account customers, omitting cash customers who hire occasionally, so it adds a short card survey at the counter for cash customers over two weeks.
 
 When 132 account customers respond, the business compares them with the full list. Larger customers responded at a higher rate, so results are weighted by customer size before estimating the overall proportion. The counter cards show that cash customers are much less interested in online booking, a finding that the original frame would have missed entirely.
+
+```figure
+type: funnel
+title: Surveying an equipment hire business's customers
+caption: Counter cards for cash customers, missing from the customer list, showed much less interest in online booking.
+- Active account customers, all invited | 300
+- Needed for ±5 points | about 169
+- *Responses, weighted by customer size | 132
+```
 
 ## How this applies to a small Australian business
 

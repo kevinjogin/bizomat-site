@@ -86,6 +86,18 @@ When neither experiments nor natural experiments are available, structured reaso
 - **Mechanism**: there is a plausible explanation of how the cause produces the effect.
 - **Alternatives**: other explanations have been examined and found weaker.
 
+```figure
+type: checklist
+title: Reasoning about causes without an experiment
+caption: No single test settles it; the more of these that hold, the stronger the causal case.
+- x Strength | a strong association
+- x Consistency | across places, times and sources
+- x Timing | the cause comes first
+- x Dose-response | more cause, more effect
+- x Mechanism | a plausible explanation of how
+- *x Alternatives | other explanations examined and weaker
+```
+
 No single consideration is decisive, but together they build or weaken a causal case. Diagrams of causes and evidence, such as those described in the [Bayesian networks](/reados/collections/decision-making-machines/bayesian-networks-cause-and-evidence/) article, help make these judgements explicit.
 
 ## Mediators and moderators
@@ -120,6 +132,17 @@ This is an illustrative example. The business and figures are hypothetical.
 A maintenance contractor's data shows that machines receiving more preventive maintenance visits have more breakdowns, and a manager suggests that maintenance visits may be causing problems. The reliability engineer considers alternatives. Older and more heavily used machines receive more visits under the maintenance plan and also break down more, so age and usage are likely confounders. Breakdowns also trigger additional inspection visits, which is reverse causation.
 
 Stratifying machines by age and usage band reverses the pattern: within each band, machines with more preventive visits have fewer breakdowns. To strengthen the evidence, the contractor uses a natural experiment. A software upgrade a year earlier had extended service intervals for an arbitrary subset of machines, unrelated to their age or condition, because of a configuration error, later corrected. Comparing breakdown rates for those machines with similar machines on standard intervals, before and after the error, shows breakdowns rising by about a third during the period of extended intervals. The contractor concludes that preventive visits reduce breakdowns and keeps its maintenance plan.
+
+```figure
+type: compare
+title: Do maintenance visits cause breakdowns?
+cols: Raw data | After checking
+best: 2
+caption: An accidental extension of service intervals acted as a natural experiment: breakdowns rose by about a third.
+- Pattern | More visits, more breakdowns | Within each age and usage band, fewer
+- Explanation | Visits cause problems | Older, busier machines get more visits
+- *Test | A correlation only | A natural experiment from a configuration error
+```
 
 ## How this applies to a small Australian business
 

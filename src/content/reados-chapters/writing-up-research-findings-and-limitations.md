@@ -40,6 +40,19 @@ Business readers are busy, and many will read only the first page. An **answer-f
 6. **Recommendations**: specific actions, owners and next steps.
 7. **Appendices**: questionnaires, detailed tables, technical notes and data sources.
 
+```figure
+type: steps
+title: Put the answer first
+caption: A one-page summary with findings, limitations and recommendations comes before any method.
+- *Summary | on one page
+- Background and question
+- Method | brief, detail in an appendix
+- Findings | ranked by importance
+- Limitations | and their effect on confidence
+- Recommendations | actions, owners, next steps
+- Appendices
+```
+
 The summary should stand alone. A reader who sees nothing else should know what was found, how confident to be and what is recommended.
 
 ## Write findings, not results
@@ -165,6 +178,16 @@ The first draft of the report runs to 40 pages and follows the order in which th
 The revised report starts with a one-page summary. It states three findings, in order of importance. First, delivery reliability for regional customers has fallen: order records show on-time delivery to regional sites dropped from about 90% to about 75% over the period, while metropolitan delivery stayed steady, and eight of the twelve interviewed customers raised late regional deliveries unprompted. Second, customers value the supplier's technical advice, which most rated highly and which several interviewees described as a reason for staying. Third, survey responses suggest price is a lesser concern than expected, although the summary notes that customers who have already left were under-represented among respondents, so price may matter more to them.
 
 The limitations section explains the 36% response rate, the likely under-representation of lost customers and the absence of data on competitors' delivery performance. The recommendations are specific: investigate the regional freight contract change identified in the records, with the logistics manager reporting within six weeks; set a regional on-time target with monthly reporting; and interview a sample of lapsed customers to test the price finding before any pricing change. The managing director reads the summary, asks two questions about the freight data and approves all three actions at the next management meeting.
+
+```figure
+type: bars
+title: On-time delivery to regional trade customers
+unit: %
+max: 100
+caption: Eight of twelve interviewed customers raised late regional deliveries unprompted, while metropolitan delivery stayed steady.
+- Start of the period | 90
+- *End of the period | 75
+```
 
 ## How this applies to a small Australian business
 

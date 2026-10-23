@@ -94,6 +94,18 @@ Coding involves judgement, so checks improve consistency:
 - **Codebook definitions** are updated when ambiguities appear, and earlier coding is revisited.
 - **An audit trail** records decisions about codes and themes.
 
+```figure
+type: steps
+title: From comments to themes
+caption: Systematic coding turns many voices into evidence, without losing the exceptions.
+- Prepare the data | codes, not names
+- Familiarise | read a sample first
+- Build a codebook | defined codes
+- Code everything
+- Group codes into themes
+- *Check reliability | two coders, an audit trail
+```
+
 For small projects with a single analyst, having a colleague review a sample of coded data and the main themes provides a useful check.
 
 ## Looking for exceptions
@@ -134,6 +146,22 @@ This is an illustrative example. The business and figures are hypothetical.
 An equipment service company receives 200 open-ended answers to the survey question "What is the main reason for your score?" The customer service manager first reads a random 50 comments and drafts a codebook with eight codes, including response time, technician skill, communication during jobs, first-time fix, invoicing accuracy, price, booking process and parts availability.
 
 Coding all 200 comments, with a colleague double-coding 40 to check consistency, gives these counts: communication during jobs 68, technician skill 52, response time 41, first-time fix 37, invoicing accuracy 24, booking process 19, parts availability 15 and price 12. Many comments carried more than one code. Linking codes to scores shows that communication problems appear most often among low scores, while technician skill appears most often among high scores.
+
+```figure
+type: bars
+title: Reasons customers gave for their scores
+unit: comments
+max: 70
+caption: Codes from 200 open answers; many comments carried more than one code. Communication problems clustered in low scores.
+- *Communication during jobs | 68
+- Technician skill | 52
+- Response time | 41
+- First-time fix | 37
+- Invoicing accuracy | 24
+- Booking process | 19
+- Parts availability | 15
+- Price | 12
+```
 
 A negative case stands out: several large customers praised communication but criticised invoicing accuracy, which turns out to stem from a separate contract billing process used only for them. The company prioritises job-status updates for all customers and fixes contract invoicing for its largest accounts.
 

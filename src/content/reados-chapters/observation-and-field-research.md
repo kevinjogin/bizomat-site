@@ -97,6 +97,18 @@ A short plan helps:
 - **Permissions, ethics and safety**: consent, briefing, site rules and personal protective equipment.
 - **Recording and analysis**: formats, storage and how findings will be combined.
 
+```figure
+type: steps
+title: Planning an observation
+caption: Choose times that represent normal variation, not only convenient moments.
+- Purpose and questions
+- What and whom to observe
+- *When | shifts, days and seasons
+- Method | notes, checklists, timing, sampling
+- Permissions, ethics and safety
+- Recording and analysis
+```
+
 ## The observer effect
 
 People change their behaviour when they know they are being observed, often working faster, more carefully or more by the book. This **observer effect**, sometimes called the Hawthorne effect, can be reduced by spending time in the setting until people become used to the observer, observing over longer periods, explaining clearly that the focus is on the process rather than individual performance, and comparing observations with records that are not affected by observation.
@@ -126,6 +138,18 @@ This is an illustrative example. The business and figures are hypothetical.
 A parts distributor's warehouse struggles to dispatch orders on time, and staff ask for more pickers. Before hiring, the operations manager conducts a two-week work-sampling study, recording at 400 random moments what each picker is doing. Staff are briefed beforehand that the study is about the layout and process, not individual performance.
 
 The results show pickers spend about 31% of their time walking, 14% searching for stock in the wrong location, 9% waiting for the single packing bench and only about 38% actually picking. Unstructured observation adds detail: the fastest-moving items are stored at the far end of the building, and pickers make extra trips because the order sheets are not sorted by location.
+
+```figure
+type: bars
+title: Where pickers' time went, from 400 random observations
+unit: %
+max: 40
+caption: After re-slotting 200 fast movers, sorting pick lists and adding a packing bench, walking fell to about 18% and searching to 5%.
+- *Picking | 38
+- Walking | 31
+- Searching for misplaced stock | 14
+- Waiting for the packing bench | 9
+```
 
 The warehouse re-slots the 200 fastest-moving items near dispatch, sorts pick lists by location and adds a second packing bench. A repeat study a month later shows walking down to about 18% and searching to about 5%, and on-time dispatch improves without extra staff. The [lean warehousing and material flow](/reados/collections/lean-and-continuous-improvement/lean-warehousing-and-material-flow/) article explains the slotting principles behind the changes.
 

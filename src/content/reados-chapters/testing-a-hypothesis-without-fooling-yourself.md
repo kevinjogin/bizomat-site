@@ -26,6 +26,15 @@ A **hypothesis** is a specific, testable statement about a relationship or diffe
 - **falsifiable**, meaning that some possible result would show them to be wrong; and
 - **stated before the data is examined**, so that the test is a genuine prediction rather than a description of what was already seen.
 
+```figure
+type: checklist
+title: A testable hypothesis
+caption: A hypothesis written after looking at the data is a description, not a test.
+- x Specific | what is compared, and how it is measured
+- x Falsifiable | some result would prove it wrong
+- *x Stated before the data is examined
+```
+
 A vague belief, such as "the new process is better", becomes testable once the measure, the comparison and the expected direction are defined.
 
 ## The logic of significance testing
@@ -120,6 +129,16 @@ This is an illustrative example. The business and figures are hypothetical.
 An engineering services firm believes that adding a fixed-price option to its quotes will improve its win rate. Over a quarter, it alternates quote templates: 80 quotes go out without the option and 90 with it. Twenty-four of the first group are won (30%) and 36 of the second (40%).
 
 The sales director wants to declare success. The analyst calculates that the difference of 10 percentage points has a p-value of about 0.17, and a 95% confidence interval running from about −4 to +24 percentage points. The data is consistent with no effect and with a substantial one. The test was underpowered: detecting a 10-point improvement reliably would have needed around 350 quotes in each group.
+
+```figure
+type: bars
+title: Win rate with and without a fixed-price option
+unit: %
+max: 45
+caption: p ≈ 0.17, and the 95% interval for the difference runs from about −4 to +24 points: consistent with no effect or a large one.
+- Without the option, 80 quotes | 30
+- *With the option, 90 quotes | 40
+```
 
 Rather than abandoning or adopting the idea on this evidence, the firm continues alternating templates for another two quarters, with the decision rule and total sample size written down in advance, and combines the data at the end. It also records quote values, to check whether any change in win rate holds for larger jobs as well as smaller ones.
 

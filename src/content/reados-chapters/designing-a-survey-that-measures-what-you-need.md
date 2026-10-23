@@ -63,6 +63,18 @@ Even well-worded questions are subject to response biases:
 - **Order effects**: earlier questions influence answers to later ones, and the position of options in a list affects how often they are chosen.
 - **Hypothetical bias**: people predict their own future behaviour poorly, especially purchasing.
 
+```figure
+type: tree
+title: Biases in survey responses
+caption: Neutral wording, careful ordering and balanced answer options reduce these biases.
+- Response bias
+  - Social desirability | presenting oneself favourably
+  - Acquiescence | agreeing regardless of content
+  - Recall bias | imperfect memory of frequency and timing
+  - Order effects | earlier questions shape later answers
+  - *Hypothetical bias | poor predictions of future buying
+```
+
 Design can reduce these effects: anonymous responses, neutral wording, mixing positively and negatively worded statements, randomising the order of options where appropriate and asking about past behaviour rather than intentions where possible.
 
 ## Ordering the questionnaire
@@ -120,6 +132,15 @@ An industrial services company wants to improve customer retention. Its first dr
 The operations manager rewrote the survey around three decisions: which service aspects to improve first, whether to introduce a priority response plan and how to communicate during jobs. Each question was traced to one of these decisions, cutting the survey to twelve questions. The leading, double-barrelled first question became four separate questions about response time, technician courtesy, quality of work and communication, each with a balanced five-point scale and a "not applicable" option. A question about interest in a priority response plan described the plan's features and price range and asked about past experiences of urgent breakdowns, rather than relying only on stated intentions.
 
 Five customers completed the survey while talking through their thinking. Two misread "response time" as the time to provide a quote, so the question was clarified. The survey went to 300 customers with a personal email from their account manager and one reminder, and achieved a 38% response rate. Results showed that communication during jobs, not response time, was the weakest area, and the company changed its job-update process before investing in faster response.
+
+```figure
+type: stats
+title: Rebuilding a customer survey around three decisions
+caption: The weakest area turned out to be communication during jobs, not response time.
+- 21 → 12 | Questions | each traced to a decision
+- 5 | Customers tested it aloud | one question clarified
+- *38% | Response rate | from 300 customers
+```
 
 ## How this applies to a small Australian business
 

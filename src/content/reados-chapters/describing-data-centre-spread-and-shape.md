@@ -72,6 +72,18 @@ A **histogram** groups values into ranges, or bins, and shows how many fall in e
 - **Bimodal**: two peaks, often signalling two different processes, products, customer types or shifts mixed together.
 - **Truncated**: a sharp cut-off, sometimes revealing that values beyond a limit were sorted out, reworked or recorded differently.
 
+```figure
+type: decision
+title: Reading the shape of a distribution
+question: What does the histogram look like?
+caption: Look at the shape before choosing a summary; the mean can mislead when the shape is skewed.
+- Symmetrical, bell-shaped | Values cluster around the centre
+- *Right-skewed | A long tail of large values | durations, repair costs
+- Left-skewed | A long tail of small values | less common
+- Bimodal | Two peaks | two processes mixed together
+- Truncated | A sharp cut-off | values beyond a limit removed
+```
+
 ### Box plots
 
 A **box plot** shows the median, quartiles and extremes in a compact form, often with individual outliers marked. Box plots are especially useful for comparing several groups side by side, such as delivery times by depot or cycle times by shift.
@@ -125,6 +137,16 @@ This is an illustrative example. The business and figures are hypothetical.
 A service business records the durations of twelve recent repair jobs: 1.5, 2.0, 2.2, 2.5, 2.8, 3.0, 3.2, 3.5, 4.0, 5.0, 9.0 and 12.0 hours. The scheduling system uses the mean, about 4.2 hours, to book technicians, and most days end with technicians idle or rushing.
 
 Describing the data properly tells a different story. The median is about 3.1 hours: half the jobs take that long or less. The interquartile range runs from about 2.4 to 4.3 hours, so the middle half of jobs fall in a fairly narrow band. Two jobs, at 9 and 12 hours, pull the mean up; without them, the mean of the remaining ten jobs is about 3.0 hours. A histogram shows a right-skewed distribution with a long tail.
+
+```figure
+type: stats
+title: Twelve repair jobs, described properly
+caption: Two long jobs needing mid-job parts pulled the mean up; standard jobs are now booked at about 3.5 hours.
+- 4.2 h | Mean | used for booking
+- *3.1 h | Median | half take this or less
+- 2.4–4.3 h | Interquartile range | the middle half
+- 3.0 h | Mean without the two long jobs
+```
 
 Stratifying by job type reveals that both long jobs involved a particular model of equipment requiring parts to be ordered mid-job. The business changes its scheduling: standard jobs are booked at about 3.5 hours, near the 75th percentile, and jobs on the problem model are flagged for a parts check before booking, with longer allowances. Technician utilisation improves and fewer customers are kept waiting.
 

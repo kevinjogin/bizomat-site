@@ -59,6 +59,15 @@ These terms are often confused:
 - **Anonymous** means that nobody, including the researcher, can link responses to an individual. Truly anonymous surveys collect no identifying information and cannot be matched to other records.
 - **Confidential** means that the researcher knows or could find out who said what, but promises not to reveal it.
 
+```figure
+type: compare
+title: Anonymous or confidential?
+cols: Anonymous | Confidential
+caption: Promise only what the design can deliver.
+- Who can link answers to people | Nobody, including the researcher | The researcher, who promises not to
+- *Typical method | No names, no unique links | Names held, kept private
+```
+
 Promising anonymity when responses can actually be identified, for example through unique survey links, detailed demographics or comments that reveal the writer, breaks trust. In small organisations, combinations of details such as department, role and length of service can identify individuals even without names. Removing names is not always enough to de-identify data.
 
 ## Research with staff
@@ -128,6 +137,17 @@ A 40-person engineering firm wants to run a staff wellbeing survey. The managing
 The firm redesigns the survey. An external survey tool collects responses without names or unique links. Demographic questions are reduced to a single broad grouping of office or workshop. The invitation explains the purpose, that participation is voluntary, that responses are anonymous, who will see the results and that results will be reported only for groups of at least eight. Questions about specific supervisors are removed, and staff are reminded of separate, confidential channels for raising individual concerns. Results are shared at a staff meeting with the actions management will take, and the raw data is deleted after six months.
 
 Participation reaches about 80%, and comments are candid enough to identify workload pressure in the workshop during peak periods, which the firm addresses with changes to scheduling.
+
+```figure
+type: compare
+title: Redesigning a 40-person staff survey
+cols: First plan | Redesigned
+best: 2
+caption: Results reported only for groups of at least eight; participation reached about 80%, with candid comments.
+- Sent from | The managing director's email | An external tool, no names or unique links
+- Groupings | Department, role, age, service | Office or workshop only
+- *Supervisor questions | Named supervisors | Removed
+```
 
 ## How this applies to a small Australian business
 

@@ -36,6 +36,16 @@ This article explains the four levels of measurement, the statistics appropriate
 
 **Ratio** data has equal steps and a true zero: lengths, masses, times, counts, costs and revenues. All arithmetic is meaningful, including ratios: 20 orders is twice as many as 10, and a 4-hour job takes twice as long as a 2-hour job. Ratio data supports the widest range of analysis.
 
+```figure
+type: layers
+title: The four levels of measurement
+caption: The level decides which averages, charts and tests make sense.
+- Nominal | named categories · the mode
+- Ordinal | ordered, steps not equal · the median
+- Interval | equal steps, no true zero · the mean
+- *Ratio | equal steps and a true zero · ratios too
+```
+
 ## Why the level matters
 
 The level of measurement determines:
@@ -124,6 +134,20 @@ This is an illustrative example. The business and figures are hypothetical.
 A distributor asked 200 customers to rate the importance of six service features on a five-point scale. Every feature scored an average between 4.3 and 4.6: everything was "important", and the survey could not guide priorities.
 
 For the next round, the distributor replaced the rating grid with a constant-sum question asking customers to divide 100 points among the six features according to their importance. Delivery reliability received an average of 31 points, accurate invoicing 22, stock availability 20, technical advice 12, online ordering 9 and packaging 6. The differences were now clear, and they matched what account managers heard in conversations. The company prioritised delivery reliability and invoicing accuracy.
+
+```figure
+type: bars
+title: Dividing 100 points among six service features
+unit: points
+max: 35
+caption: Rated one at a time, every feature averaged 4.3 to 4.6 out of 5; a constant-sum question showed clear priorities.
+- *Delivery reliability | 31
+- Accurate invoicing | 22
+- Stock availability | 20
+- Technical advice | 12
+- Online ordering | 9
+- Packaging | 6
+```
 
 The distributor also changed its complaint records. Instead of free-text notes alone, complaints were now coded by type from a defined list, with severity recorded on a three-level scale and the time to resolve recorded in hours. Within a quarter, the business could produce a Pareto chart of complaint types and track resolution times.
 

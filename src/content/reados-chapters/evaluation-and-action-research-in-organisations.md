@@ -49,6 +49,17 @@ A **logic model**, sometimes called a program logic, sets out how an initiative 
 - **Outcomes**: changes that result, in the short and medium term, such as improved skills, changed behaviour or fewer defects.
 - **Impact**: longer-term results, such as higher profit, better safety records or customer retention.
 
+```figure
+type: steps
+title: A logic model
+caption: Link activities to outcomes before launch, and record baselines for each.
+- Inputs | people, time, money, equipment
+- Activities | training, procedures, system changes
+- Outputs | people trained, procedures issued
+- Outcomes | skills, behaviour, fewer defects
+- *Impact | profit, safety, retention
+```
+
 The logic model makes assumptions visible: why should training lead to changed behaviour, and why should that reduce defects? Each link is a hypothesis the evaluation can test. It also distinguishes outputs from outcomes, a common confusion: training 50 people is an output; whether they work differently is an outcome.
 
 ## Evaluation questions
@@ -110,6 +121,16 @@ Evaluations inside organisations involve colleagues, and their findings can affe
 3. **Observe**: collect evidence about what happens.
 4. **Reflect**: interpret the evidence and decide what to do next.
 
+```figure
+type: cycle
+title: An action research cycle
+caption: Document each cycle and use more than one source of evidence.
+- Plan
+- Act
+- Observe
+- *Reflect
+```
+
 The cycle will look familiar to anyone who knows the plan-do-check-act cycle used in quality improvement, described in the [A3 problem solving and PDCA](/reados/collections/lean-and-continuous-improvement/a3-problem-solving-and-pdca/) article. Action research emphasises participation, learning and the development of practical knowledge, and it suits problems where the people involved hold much of the knowledge and must own the solution.
 
 ## Keeping action research rigorous
@@ -133,6 +154,16 @@ This is an illustrative example. The business and figures are hypothetical.
 A manufacturer introduces a structured onboarding program for production staff: a buddy system, a skills checklist and weekly check-ins during the first two months. Before launch, the operations manager builds a logic model linking the activities to faster competence, fewer early errors and better retention, and records baselines from the previous year: new starters took an average of about nine weeks to work unsupervised, and about one in four left within six months.
 
 The evaluation combines records and interviews. After a year, new starters reach unsupervised work in about six weeks on average, and about one in seven leave within six months. A comparison with a sister site that did not adopt the program shows little change over the same period, strengthening the case that the program caused the improvement. Process evaluation finds that the weekly check-ins were often skipped during busy periods, and interviews reveal that buddies felt the role added to their workload without recognition.
+
+```figure
+type: compare
+title: Structured onboarding for production staff
+cols: Previous year | After a year
+best: 2
+caption: A sister site without the program showed little change over the same period, strengthening the causal case.
+- *Time to work unsupervised | About nine weeks | About six weeks
+- Leaving within six months | About one in four | About one in seven
+```
 
 The site then runs two action research cycles with team leaders and buddies. They trial protected time for check-ins and a small allowance for buddies, observe completion rates and feedback, and refine the checklist. Check-in completion rises, and the program is extended to the warehouse.
 

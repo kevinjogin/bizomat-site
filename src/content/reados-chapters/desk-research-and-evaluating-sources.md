@@ -72,6 +72,17 @@ Not all sources deserve equal trust. Useful questions for any source are:
 - **Accuracy and evidence**: does it explain its methods, cite sources and show data, or simply assert conclusions?
 - **Purpose**: was it written to inform, to persuade or to sell? Vendor white papers and promotional surveys may be useful but are not neutral.
 
+```figure
+type: checklist
+title: Five tests for any source
+caption: Vendor white papers and promotional surveys may be useful, but they are not neutral.
+- x Currency | is it still current?
+- x Relevance | right industry, place, size and period?
+- x Authority | who produced it, and are they accountable?
+- x Accuracy and evidence | methods, sources and data shown?
+- *x Purpose | to inform, to persuade or to sell?
+```
+
 **Lateral reading**, checking what other credible sources say about a source and its claims, is often quicker and more reliable than studying the source itself in depth.
 
 ## Primary, secondary and tertiary sources
@@ -132,6 +143,15 @@ A manufacturer of workshop dust extraction units wants to estimate the potential
 Official counts of businesses by industry provide the number of businesses in the relevant industry classes in the state, broken down by employee size. Industry association reports describe typical workshop equipment and replacement cycles. Regulator guidance on wood dust indicates the controls businesses are expected to have. The company's own sales records show which sizes of business have bought its units in the past and how often.
 
 Combining these sources, the company estimates that roughly 2,000 businesses fall into its target size range, that perhaps one in eight might replace or add extraction equipment in a given year, and that its typical sale is about $8,000. That suggests an annual market of roughly 250 sales, or about $2 million, in the state. The source log records each figure's origin and date, and the synthesis table shows that replacement rates are the least certain input. The company commissions a short phone survey of 60 workshops to test that figure before investing in a sales campaign.
+
+```figure
+type: funnel
+title: Sizing a market for dust extraction units from desk research
+caption: Each figure's origin and date is kept in a source log, so the estimate can be checked and updated.
+- Joinery businesses in the target size range | about 2,000
+- Replacing or adding extraction each year | about 1 in 8, or 250
+- *Annual market at about $8,000 a sale | about $2 million
+```
 
 ## How this applies to a small Australian business
 

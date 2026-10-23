@@ -29,6 +29,18 @@ Most research reports, whether academic papers or industry studies, contain the 
 - **the conclusions**: what the authors believe the results mean; and
 - **limitations**: what the study cannot show.
 
+```figure
+type: steps
+title: The anatomy of a study
+caption: Read the method and results before the conclusions.
+- The question
+- The method | what was done and measured
+- The sample | who, how many, how chosen
+- The results | ideally with uncertainty
+- The conclusions | what the authors think it means
+- *Limitations | what it cannot show
+```
+
 A useful reading habit is to read the method and results before the conclusions. Conclusions are the authors' interpretation, and they sometimes go further than the results justify.
 
 ## Who did it, and why
@@ -125,6 +137,16 @@ A manufacturer is offered a condition-monitoring system. The vendor's brochure s
 The study covers three customer sites chosen by the vendor. Downtime was compared for the twelve months before and after installation, with no comparison sites. At two of the sites, the installation coincided with a broader maintenance overhaul and new staff. The average reduction was 40%, but it ranged from 10% to 65%, and one site's "before" year included an unusually long breakdown. There is no independent replication.
 
 The manager concludes that the evidence suggests the system may help but does not establish how much. The manager proposes a six-month trial on two of the plant's most critical machines, comparing their downtime with similar machines without the system, and agrees success measures with the vendor before starting. The trial shows a reduction in unplanned stoppages on the monitored machines, smaller than claimed but enough to justify a staged rollout.
+
+```figure
+type: checklist
+title: Behind "customers reduced unplanned downtime by 40%"
+caption: The claim suggested the system might help but not by how much, so a trial against comparison machines followed.
+- ? Three sites, chosen by the vendor
+- ? Before and after, with no comparison sites
+- ? An overhaul and new staff at two sites at the same time
+- *? An average of 40%, ranging from 10% to 65%
+```
 
 ## How this applies to a small Australian business
 

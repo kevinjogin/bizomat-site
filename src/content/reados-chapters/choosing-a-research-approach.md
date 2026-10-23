@@ -38,6 +38,17 @@ Research questions generally fall into a few types:
 - **Explanatory or causal**: Why does this happen? Does this change cause that result? Explanatory research tests relationships.
 - **Evaluative**: Did it work? Did the new process reduce defects, did the campaign increase enquiries, did training change behaviour? Evaluative research judges an intervention against its aims.
 
+```figure
+type: decision
+title: Four kinds of research question
+question: What do you need to know?
+caption: Classify the question before choosing a method; each kind suits different methods.
+- What is going on? | Exploratory | maps unfamiliar territory
+- How many, how often, how much? | Descriptive
+- Why does this happen? | Explanatory or causal | tests relationships
+- *Did it work? | Evaluative
+```
+
 Many projects combine types: exploring first to understand the issues, then describing their extent, then testing a solution and evaluating it.
 
 ## Quantitative, qualitative and mixed approaches
@@ -147,6 +158,16 @@ A small machinery maker is considering launching a paid preventive maintenance s
 The research plan uses mixed methods. Desk research reviews the company's service records, which show how often customers call for breakdown repairs. Ten interviews with customers of different sizes explore how they manage maintenance now, what frustrates them and what they would value. The interview findings shape a short survey sent to all 300 current customers, asking about current practices, interest in specific service options and acceptable price ranges. Finally, a three-month pilot offers the service to eight customers to test costs and delivery.
 
 The interviews reveal that customers value guaranteed response times more than scheduled visits, so the service design changes before the survey. The survey and pilot together show interest from about a fifth of respondents at the tested price, and the pilot confirms costs. The owner launches the service, with the response-time guarantee as its centrepiece. The [reading a pilot honestly](/reados/collections/records-business-data-and-learning/reading-a-pilot-honestly/) article explains how to judge results like these without overreading them.
+
+```figure
+type: steps
+title: Mixed methods for a maintenance service decision
+caption: The bar was set in advance at 15% of customers; about a fifth showed interest at the tested price.
+- Desk research | service records of breakdown calls
+- Interviews | ten customers of different sizes
+- Survey | all 300 current customers
+- *Pilot | to confirm the costs
+```
 
 ## How this applies to a small Australian business
 
