@@ -76,6 +76,18 @@ The spread of the process is good (Cp about 1.85), but it runs high, so most of 
 
 The fix is simple: adjust the tool offset to centre the process at 10.000 mm. With the same spread, Cpk would rise to 0.05 ÷ 0.027 ≈ 1.85, matching Cp. After the adjustment, a further run confirms the new average and the result.
 
+```figure
+type: range
+title: A 10.00 ± 0.05 mm bearing diameter
+unit: mm
+min: 9.94
+max: 10.06
+caption: Process spread is ±3 × 0.009 mm. Cp is about 1.85; Cpk is about 1.41 as found, rising to about 1.85 once centred.
+- Specification | 9.95 | 10.05
+- Process as found, average 10.012 | 9.985 | 10.039 | runs high
+- *Process centred at 10.000 | 9.973 | 10.027
+```
+
 **Measurement's influence.** The observed standard deviation of 0.009 mm includes the gauge's 0.004 mm. Because variances add, the process's own standard deviation is about √(0.009² − 0.004²) = √(0.000065) ≈ 0.0081 mm. The process is slightly better than the raw data suggests. Had the gauge been much worse, it could have made a good process look marginal, or hidden real problems.
 
 **Reaction plan.** The shop agrees with the operators that if a control chart shows a point beyond the limits or a run of seven points above the average, they stop, check the tool and the last parts made, quarantine any suspect parts, record the cause and restart only once the supervisor signs off.
@@ -113,6 +125,19 @@ A complete package can still be weak if the documents do not agree with each oth
 | Measurement study | The gauge in the control plan is the one that was studied |
 | Capability study | Data came from the turning operation under production conditions |
 | Reaction plan | Operators know what to do and have authority to stop |
+
+```figure
+type: steps
+title: One coherent story for a critical characteristic
+caption: Each piece of evidence must refer to the same characteristic, operation and gauge.
+- Design record | 10.00 ± 0.05 mm, marked critical
+- Process flow | the turning operation shown
+- Process FMEA | tool wear and wrong offset covered
+- Control plan | gauge, sample, frequency, reaction
+- Measurement study | of the gauge in the control plan
+- Capability study | under production conditions
+- *Reaction plan | operators may stop the process
+```
 
 If the characteristic is critical on the drawing but missing from the control plan, or the control plan specifies a gauge that was never studied, the package has a gap, however complete it looks.
 

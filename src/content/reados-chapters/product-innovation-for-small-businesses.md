@@ -121,6 +121,17 @@ With the prospect (ideal customer) and the problem defined, plan the remaining e
 
 Run a **pilot** before full launch, because the first product is never the final product. If customers accept it, expand. If not, revisit the framework.
 
+```figure
+type: steps
+title: A five-step innovation framework
+caption: The first product is never the final product: pilot, then expand or revisit.
+- Define the shift and the need
+- Create a list of promising ideas
+- Select the top ideas
+- Design the solution
+- *Plan the business model around the change
+```
+
 ## Reverse innovation: start with the customer
 
 A common mistake is to build the organisation and the product first, then search for customers. Effective innovators reverse the order: understand customers' needs first, then design the product, then build the organisation to deliver it.
@@ -152,6 +163,15 @@ A small manufacturer of agricultural spraying equipment hears farmers complain a
 The manufacturer writes a need statement: farmers need precise, low-waste spraying that is quick to clean, and environmental rules on chemical use are tightening. Its team lists more than twenty ideas and chooses three: a quick-flush cleaning system, more precise nozzle control and a simple app that records application for compliance. It partners with a sensor supplier for the electronics, prototypes the new features using 3D-printed parts, and pilots machines with six farmers for a season. Feedback leads to design changes before launch.
 
 The redesigned range sells at a premium, wins customers from competitors and becomes the company's best-selling product line.
+
+```figure
+type: funnel
+title: Innovating a range of agricultural sprayers
+caption: The redesigned range sells at a premium and becomes the company's best-selling line.
+- Ideas listed | more than twenty
+- Ideas chosen | 3: quick flush, nozzle control, compliance app
+- *Piloted before launch | with six farmers for a season
+```
 
 ## Summary
 

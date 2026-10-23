@@ -45,6 +45,16 @@ The **Kano model**, developed by Noriaki Kano, classifies customer needs by how 
 | **Performance** | More is better, roughly in proportion | Quieter close, higher load capacity |
 | **Delighters** | Unexpected; presence delights, absence goes unnoticed | Tool-free height adjustment |
 
+```figure
+type: compare
+title: Not all needs are equal
+cols: Effect on satisfaction | Kitchen drawer runner
+caption: Basic needs earn no praise but cause strong dissatisfaction when missing.
+- Basic | Expected; absence causes strong dissatisfaction | Runs smoothly without scraping
+- Performance | More is better, roughly in proportion | Quieter close, higher load
+- *Delighters | Unexpected; absence goes unnoticed | Tool-free height adjustment
+```
+
 Two points follow. Basic needs are rarely mentioned because customers assume them, so research must look for them deliberately, often through complaints and observation. And needs move over time: yesterday's delighter, such as soft-close drawers, becomes today's basic expectation.
 
 ## Translate needs into critical-to-quality requirements
@@ -100,6 +110,17 @@ Where DMAIC improves an existing process, **DMADV** is used when a product or pr
 4. **Design** the detailed product and process, including tolerances, controls and a verification plan.
 5. **Verify** through prototypes, testing and pilot production that the design meets the CTQs, and hand over to operations with controls in place.
 
+```figure
+type: steps
+title: DMADV: designing to requirements
+caption: Verification ends with a handover to operations, with controls in place.
+- Define | customer, need, scope, objective
+- Measure | voice of the customer into CTQs and targets
+- Analyse | concepts against CTQs and risks
+- Design | product, process, tolerances, controls
+- *Verify | prototypes, tests and pilot production
+```
+
 The economic logic is strong. Design decisions fix most of a product's cost and much of its quality before production begins, when changing them is comparatively cheap. A few weeks spent on structured requirements and robustness at the start can save months of correction later.
 
 ## Verification and validation
@@ -129,6 +150,16 @@ This is an illustrative example. A 30-person Australian manufacturer makes drawe
 - **Installation time**: a pair of runners installed by a trained installer, with standard tools, in under 60 seconds.
 - **Durability**: no more than a set loss of damping performance after 50,000 open-close cycles at rated load.
 - **Adjustment**: front adjustable by a set amount in each direction without tools.
+
+```figure
+type: tree
+title: From cabinet makers' words to measurable CTQs
+caption: Ten interviews, four observed installations and two years of complaints.
+- Voice of the customer
+  - "It takes too long to fit" | a pair installed in under 60 seconds
+  - *"Heavy drawers still bang" | closing speed limit over the last 50 mm
+  - "It has to last" | damping kept after 50,000 cycles at rated load
+```
 
 **Drivers.** Analysis and a small designed experiment show that closing speed depends mainly on damper oil viscosity, piston clearance and spring preload, and that piston clearance is the most sensitive. Installation time depends on the position of the mounting holes relative to standard cabinet drilling patterns and on a snap-fit clip design.
 

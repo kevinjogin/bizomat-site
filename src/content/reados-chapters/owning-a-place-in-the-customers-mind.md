@@ -79,6 +79,18 @@ The combination of high margins and low reinvestment is the financial signature 
 | Marketing as share of gross profit | Moderate, steady | Low, but price-driven |
 | Customer loyalty | High | Low, switches on price |
 
+```figure
+type: compare
+title: The financial signature of a trusted product
+cols: Branded product | Generic equivalent
+best: 1
+caption: Nearly the same direct cost, but $3.20 of gross profit a unit against $1.80.
+- Price per unit | $5.00 | $3.50
+- Direct cost per unit | $1.80 | $1.70
+- *Gross margin | 64% | 51%
+- Customer loyalty | High | Low, switches on price
+```
+
 Both products cost about the same to make. The branded product earns nearly twice as much gross profit per unit, and its customers keep returning. Over many years and many units, that gap compounds into very different businesses.
 
 ### Advertising as maintenance
@@ -159,6 +171,15 @@ In its early years, it competes with many similar products and tries to stand ou
 The owner changes approach. The best-performing formula is fixed and kept consistent. The packaging adopts a distinctive colour and shape, unchanged from year to year. The business ensures that every specialist supplier keeps it in stock, and it publishes clear, practical guides on finishing techniques that carry the brand name. When customers ask woodworking forums what to use for a particular job, existing customers increasingly name it.
 
 Over five years, repeat purchase rates rise sharply, retailers ask to stock it because customers request it, and the business is able to raise prices modestly without losing volume. It spends almost nothing on product redesign. In its niche, it now owns a place in the customer's mind.
+
+```figure
+type: timeline
+title: A wood-finishing oil that stopped changing
+caption: It spends almost nothing on redesign, and in its niche it now owns a place in the customer's mind.
+- Early years | New formulas and packaging | customers try it, then something else
+- The change | One fixed formula, a distinctive pack | always in stock; practical guides
+- *Five years on | Repeat purchases up sharply | modest price rises without losing volume
+```
 
 ## Common mistakes
 

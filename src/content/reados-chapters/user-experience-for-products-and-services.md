@@ -27,6 +27,16 @@ Good user experience has three qualities:
 - **Easy**: each step requires little effort, knowledge or decision-making from the user.
 - **Repeatable**: because it is easy, people do it again and form a habit. That habit is a powerful source of loyalty.
 
+```figure
+type: venn
+title: Three fundamentals of user experience
+centre: Habit
+caption: Easy steps that flow without gaps make people come back, and habit is a powerful source of loyalty.
+- Seamless | no gaps or dead ends
+- Easy | little effort or knowledge
+- Repeatable | done again and again
+```
+
 Leading online retailers, ride-share apps and home-services platforms are built around these qualities. Searching, choosing, paying and receiving are all designed to be as close to effortless as possible.
 
 ## Start by removing what users do not need
@@ -122,6 +132,18 @@ Designing for people with disability, including vision, hearing, mobility and co
 5. **Prototype and test** improvements with real users.
 6. **Implement, measure and repeat.** Track measures such as task completion, time taken, errors, abandonment, support calls and satisfaction.
 
+```figure
+type: cycle
+title: Designing better user experience
+caption: Track task completion, time, errors, abandonment, support calls and satisfaction.
+- Map the journey
+- Find the friction
+- Prioritise
+- *Simplify
+- Prototype and test
+- Implement, measure, repeat
+```
+
 ## A worked example: making reordering easy
 
 A distributor of industrial fasteners and consumables finds that many trade customers reorder the same items regularly, usually by phoning or emailing lists with incomplete part numbers. Orders are often wrong, and staff spend hours clarifying them.
@@ -135,6 +157,17 @@ The business maps the reorder journey and makes several changes:
 - Customers can opt in to automatic replenishment for high-use consumables.
 
 Order errors drop substantially, staff time spent clarifying orders falls, and customers report that ordering now takes minutes instead of a phone call and follow-up emails. Several customers consolidate more of their purchasing with the distributor because it is simply easier.
+
+```figure
+type: compare
+title: Making reordering easy for trade customers
+cols: Before | After
+best: 2
+caption: Several customers consolidated more of their purchasing because ordering was simply easier.
+- Ordering | Phoned or emailed lists, part numbers incomplete | Personal reorder sheet and online form
+- Confirmation | Staff spend hours clarifying | Automatic, with delivery dates
+- *Time to order | A call and follow-up emails | Minutes
+```
 
 ## Instructions and documentation are part of the experience
 

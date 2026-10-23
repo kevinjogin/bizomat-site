@@ -118,7 +118,31 @@ The results, after running the combinations in random order, are:
 
 **Main effect of film thickness (C).** At the thick setting (runs 5 to 8) the average is 36 ÷ 4 = 9.0%. At the thin setting (runs 1 to 4) it is 30 ÷ 4 = 7.5%. The effect is +1.5 points, so thicker coating slightly increases failures.
 
+```figure
+type: bars
+title: Main effects on adhesion failures
+unit: points
+max: 5
+caption: Average change in the failure rate as each factor moves from its low to its high level.
+- *A: oven temperature, 180 → 200 °C | 4.5 | fewer failures
+- B: cure time, 10 → 15 minutes | 3.0 | fewer failures
+- C: film thickness, 60 → 90 µm | 1.5 | more failures
+```
+
 **Interaction between temperature and time (AB).** With the short cure time, raising the temperature cuts failures from an average of 13% (runs 1 and 5) to 6.5% (runs 2 and 6), a drop of 6.5 points. With the long cure time, it cuts failures from 8% (runs 3 and 7) to 5.5% (runs 4 and 8), a drop of only 2.5 points. Temperature matters much more when cure time is short. The conventional interaction effect is half the difference between those two figures: (−2.5 − (−6.5)) ÷ 2 = +2.0 points.
+
+```figure
+type: line
+title: Temperature matters more when cure time is short
+x: Cure time (minutes)
+y: Failure rate (%)
+ymin: 0
+ymax: 15
+caption: Lines that are not parallel show an interaction: higher temperature cuts failures by 6.5 points at 10 minutes but only 2.5 at 15.
+legend: 180 °C | 200 °C
+- 10 | 13 | 6.5
+- 15 | 8 | 5.5
+```
 
 Now compare what one-factor-at-a-time testing might have concluded. Starting from run 1 (12%), the owner first lengthens the cure time and sees failures drop to 7% (run 3). Keeping the long time, they raise the temperature and see a further drop only to 5% (run 4). They might reasonably conclude that cure time is the key factor and temperature is a minor tweak. If production later shortens cure times to increase throughput, that conclusion would be badly wrong.
 

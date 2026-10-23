@@ -67,6 +67,18 @@ Once the problem is written down, four questions do most of the work.
 | Current workaround | None, or people don't notice | Clumsy, costly or error-prone |
 | Willingness to change | "Nice to have" | Actively looking for something better |
 
+```figure
+type: compare
+title: Signals of a problem worth solving
+cols: Weaker case | Stronger case
+best: 2
+caption: A better solution is not enough on its own; switching takes effort.
+- Frequency | Occasional or seasonal | Daily or weekly
+- Severity | Mild inconvenience | Lost time, money, materials or safety
+- Current workaround | None, or unnoticed | Clumsy, costly or error-prone
+- *Willingness to change | "Nice to have" | Actively looking for something better
+```
+
 No single row decides the answer. A problem that is rare but severe can still justify a product. A problem that is frequent but trivial usually cannot.
 
 ### The job behind the purchase
@@ -100,6 +112,17 @@ Evidence varies in strength. Roughly, from weakest to strongest:
 3. **Observed behaviour:** the person already spends time or money on a workaround.
 4. **Small commitments:** they give time for a follow-up, introduce a colleague or join a trial.
 5. **Real commitments:** a pre-order, a deposit, a letter of intent or a paid pilot.
+
+```figure
+type: steps
+title: A ladder of evidence
+caption: Ask about the past, not the future: what people did is more reliable than what they say they would do.
+- Opinions | "That sounds like a great idea"
+- Stated intentions | "I would probably buy that"
+- Observed behaviour | already pays for a workaround
+- Small commitments | a follow-up, an introduction, a trial
+- *Real commitments | a pre-order, deposit or paid pilot
+```
 
 The higher up the ladder the evidence sits, the more it can be trusted. An idea supported only by opinions has not yet been tested.
 

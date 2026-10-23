@@ -30,6 +30,17 @@ Product development projects that end in tooled production tend to follow a reco
 | **Tooling and testing** | Tool manufacture, off-tool samples, testing, corrections, final testing and gauges | Gate 3: product and tooling approved for production |
 | **Production readiness and launch** | Final bills of materials and kits, quality documents, system set-up and orders, first production, freight, stock check | Launch: checked stock available |
 
+```figure
+type: timeline
+title: From concept to launch through three gates
+caption: Gate 2, the tooling commitment, is usually the point of no return for the design.
+- Concept | Rough design, rapid prototype | concept approval
+- Development | Detailed design and testing | Gate 1: design approved
+- *Tooling quotation | Controlled drawings, tooling quotes | Gate 2: tooling committed
+- Tooling and testing | Off-tool samples and corrections | Gate 3: approved for production
+- Launch | First production, freight | checked stock available
+```
+
 Industries with formal requirements use similar structures. The automotive industry's **advanced product quality planning (APQP)** approach, for example, describes phases for planning, product design and development, process design and development, product and process validation, and feedback and corrective action, with production part approval at the end of validation. The labels differ, but the logic is the same: evidence at each stage justifies the commitment at the next.
 
 ## Gates are decisions, not calendar events
@@ -100,6 +111,17 @@ A tool can be physically complete while the part is not acceptable. Plan for thi
 4. **Repeat samples and retest** the affected characteristics.
 5. **Final verification**: complete testing, including any gauges or test rigs, on samples from the corrected tool and the intended production process.
 
+```figure
+type: cycle
+title: The off-tool sample loop
+caption: Plan for at least one correction loop rather than treating first samples as a milestone.
+- First samples
+- Disposition: tool, design, material or process?
+- Corrections under change control
+- Repeat samples and retest
+- *Final verification
+```
+
 Schedules should carry at least two separate events, **first samples received** and **part approved**, with at least one correction loop allowed between them. A plan that assumes first samples will pass is a plan that will slip.
 
 Make sure enough samples are ordered for the tests planned, and that test rigs, fixtures and gauges are ready when samples arrive. Waiting weeks for a test rig after the samples arrive is a common and avoidable delay.
@@ -143,6 +165,17 @@ This is an illustrative example. A 20-person Australian business designs garden 
 **Quote review.** Three toolmakers quote. The cheapest excludes texture finishing, includes only one free correction and offers twenty samples. The selected toolmaker's quote is higher but includes texture, two correction rounds and a hundred samples from each trial. A tooling agreement confirms ownership, a shot counter, maintenance responsibility and the right to remove the tools.
 
 **Schedule.** The plan allows about twelve weeks for tooling, two weeks for first-sample testing, three weeks for one correction loop, two weeks for final verification, then production and sea freight. A test rig for pressure cycling is ordered at Gate 2 so it is ready when samples arrive.
+
+```figure
+type: stack
+title: Weeks from tooling order to Gate 3 for a hose connector
+unit: weeks
+caption: About 19 weeks before production and sea freight; the planned correction loop let the spring launch hold.
+- Tooling | 12
+- First-sample testing | 2
+- *One correction loop | 3
+- Final verification | 2
+```
 
 **First samples.** Dimensions are mostly within tolerance, but one body part warps enough that the clip is hard to fit. Disposition identifies uneven wall thickness near the clip as the cause, a design issue rather than a tool fault. The design is revised under change control to revision D, and the tool is modified within the planned correction loop.
 

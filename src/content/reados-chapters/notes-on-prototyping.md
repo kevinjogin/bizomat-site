@@ -101,6 +101,17 @@ A common mistake is to assume that higher fidelity is always better. It is not. 
 - Testing whether a mechanism survives a thousand cycles needs fidelity in materials and tolerances, but not in appearance.
 - Testing whether customers will pay a particular price may need fairly high fidelity in what they see, but not in what happens behind the scenes.
 
+```figure
+type: decision
+title: Match fidelity to the question
+question: What is the prototype testing?
+caption: Fidelity costs time and money; spend it only where the question needs it.
+- Is the concept understood? | Low fidelity
+- Is the grip comfortable? | Shape and weight | not function
+- Will the mechanism survive a thousand cycles? | Materials and tolerances | not appearance
+- *Will customers pay this price? | What they see | not what happens behind the scenes
+```
+
 Asking "which aspects must be real for this question, and which can be faked?" keeps prototypes focused.
 
 ## Running a prototype test
@@ -170,6 +181,15 @@ The second prototype uses plywood and off-the-shelf hooks, testing a revised lay
 Only then does the third prototype explore materials and production: could the board be made from a durable sheet material, cut efficiently, at a cost that leaves a healthy margin?
 
 Each step cost little and answered one question. By the time money is spent on production, the idea has been tested where it matters most: on the wall, in real use.
+
+```figure
+type: timeline
+title: Three prototypes of a workshop tool holder
+caption: By the time money is spent on production, the idea has been tested on the wall, in real use.
+- Prototype 1 | Cardboard tool outlines on a wall | will people put tools back?
+- Prototype 2 | Plywood and off-the-shelf hooks | does the layout suit the work?
+- *Prototype 3 | A durable sheet material | can it be made at a healthy margin?
+```
 
 ## Common mistakes
 

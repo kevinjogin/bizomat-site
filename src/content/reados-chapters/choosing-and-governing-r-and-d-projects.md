@@ -45,6 +45,18 @@ A widely used decision quality framework assesses the decision itself on six dim
 | **Logic** | Do the numbers combine correctly, so the conclusion follows from the inputs? | A spreadsheet that cannot be checked or reproduced |
 | **Commitment** | Will the people who must act accept the result? | A careful evaluation filed away while the real decision is made informally elsewhere |
 
+```figure
+type: checklist
+title: Six checks of decision quality
+caption: A good decision can still have a bad outcome; judge the decision by these, not by luck.
+- x Frame | goals agreed across functions
+- x Alternatives | genuinely different options
+- x Information | reliable, with honest ranges
+- x Values | required return and risk appetite clear
+- x Logic | numbers that combine correctly
+- *x Commitment | accepted by the people who must act
+```
+
 The first five are analytical. The sixth is organisational, and it is often where good evaluations fail. An analysis that the people who must act on it do not trust is not worth much.
 
 ## Weigh value, probability and cost together
@@ -139,6 +151,19 @@ This is an illustration. A 30-person business that designs and makes industrial 
 
 Ranked by expected value per dollar, the order is A, C, D, B, E and F. Funding A, C, D and B uses exactly $500,000 and produces a combined expected value of $1,395,000. Projects E and F have expected values below their costs.
 
+```figure
+type: bars
+title: Expected value per dollar of R&D
+max: 4.5
+caption: Funding A, C, D and B uses exactly $500,000 for an expected $1,395,000; E and F are worth less than they cost.
+- *A: improved seal | 4.0
+- C: remote monitoring | 3.0
+- D: cheaper casting supplier | 2.6
+- B: larger pump model | 2.4
+- E: impeller material | 0.8
+- F: one-customer variant | 0.7
+```
+
 The team does not simply fund the top four. Project C is the most uncertain, so it is staged. A first stage costing $30,000 tests whether the sensor survives inside the pump housing and whether five existing customers will commit to a paid trial. If either test fails, the business stops having spent $30,000 rather than $150,000.
 
 Project F is a commercial question rather than an R&D one. The customer is important, so the owner asks sales to price the variant to cover its development cost, rather than funding it from the R&D budget. Project E is deferred, with a note to revisit if a supplier offers to share testing costs.
@@ -146,6 +171,16 @@ Project F is a commercial question rather than an R&D one. The customer is impor
 The balance check shows two safe incremental projects (A and D), one major new product (B) and one long-term capability (C). The owner is comfortable with that mix.
 
 When the team adds up the pipeline, potential value is $3,150,000 if all four funded projects succeed. Expected value is $1,395,000. The business plans its capacity and hiring on the expected figure, which is less than half the potential one.
+
+```figure
+type: bars
+title: Plan on expected, not potential, value
+unit: $
+max: 3300000
+caption: Capacity and hiring are planned on the expected figure, less than half the potential one.
+- Potential, if all four succeed | 3150000
+- *Expected | 1395000
+```
 
 Four months later, C's first stage shows that the sensor survives, but only three customers will commit to a trial. At the stage decision, the team narrows the project to a monitoring kit for one customer segment, with a revised probability and cost, and continues. When project B is completed the following year, a facilitated review finds that late involvement of the production team caused tooling changes. The next project brings production in from the first stage.
 

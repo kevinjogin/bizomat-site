@@ -31,6 +31,33 @@ Many versions add two further areas below:
 - **Pains:** what frustrates, blocks or worries them.
 - **Gains:** what they want to achieve, and what success looks like to them.
 
+```figure
+type: svg
+title: The empathy map
+alt: An empathy map with the customer at the centre, surrounded by four quadrants: Says, Thinks, Does and Feels. Beneath them sit two boxes, Pains and Gains.
+caption: Fill Says and Does first, because they are observable; mark Thinks and Feels as inferences.
+viewbox: 0 0 600 316
+body:
+<rect class="bxi" x="20" y="20" width="274" height="105" rx="4"/>
+<rect class="bxi" x="306" y="20" width="274" height="105" rx="4"/>
+<rect class="bxi" x="20" y="137" width="274" height="105" rx="4"/>
+<rect class="bxi" x="306" y="137" width="274" height="105" rx="4"/>
+<text class="txb" x="140" y="66" text-anchor="middle">Says</text>
+<text class="tx txs" x="140" y="88" text-anchor="middle">out loud, in their words</text>
+<text class="txb" x="460" y="66" text-anchor="middle">Thinks</text>
+<text class="tx txs" x="460" y="88" text-anchor="middle">worries, priorities, hopes</text>
+<text class="txb" x="140" y="184" text-anchor="middle">Does</text>
+<text class="tx txs" x="140" y="206" text-anchor="middle">what they actually do</text>
+<text class="txb" x="460" y="184" text-anchor="middle">Feels</text>
+<text class="tx txs" x="460" y="206" text-anchor="middle">frustrations, anxieties</text>
+<circle class="bxa pulse" cx="300" cy="131" r="38"/>
+<text class="txa" x="300" y="136" text-anchor="middle">Customer</text>
+<rect class="bx" x="20" y="256" width="274" height="48" rx="4"/>
+<rect class="bx" x="306" y="256" width="274" height="48" rx="4"/>
+<text class="tx txs" x="157" y="285" text-anchor="middle">Pains: what blocks or worries them</text>
+<text class="tx txs" x="443" y="285" text-anchor="middle">Gains: what success looks like</text>
+```
+
 Some extended versions also include what the customer sees and hears in their environment.
 
 ## Why it is useful
@@ -143,6 +170,17 @@ Each person needs something different from the supplier:
 | General manager | Return on investment | A clear, conservative business case |
 | Senior technician | Being monitored, extra admin | Involvement in design, simple tools, clear purpose |
 | Finance officer | Unpredictable costs | Transparent pricing, fixed payment schedule |
+
+```figure
+type: compare
+title: Several people in one customer
+cols: Main concern | What helps
+caption: Map each key person: the decision-maker, the user and the finance approver often want different things.
+- Operations manager | Another failed implementation | Phased start, adoption support, references
+- General manager | Return on investment | A clear, conservative business case
+- *Senior technician | Being monitored, extra admin | Involvement in design, simple tools
+- Finance officer | Unpredictable costs | Transparent pricing, fixed payments
+```
 
 A proposal that speaks to only one of these people may please its champion while stalling elsewhere in the organisation.
 

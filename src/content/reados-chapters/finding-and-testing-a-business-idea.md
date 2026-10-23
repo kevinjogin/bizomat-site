@@ -111,6 +111,36 @@ The **Lean Canvas**, developed by Ash Maurya as an adaptation of Alexander Oster
 | Key metrics | Which numbers show the business is working? |
 | Unfair advantage | What cannot easily be copied or bought? |
 
+```figure
+type: svg
+title: The Lean Canvas on one page
+alt: A one-page Lean Canvas. Across the top, five columns: Problem; Solution above Key metrics; Unique value proposition in the centre; Unfair advantage above Channels; and Customer segments. Across the bottom, Cost structure and Revenue streams.
+caption: Nine boxes on one page make several ideas quick to compare side by side.
+viewbox: 0 0 600 290
+body:
+<rect class="bx" x="10" y="10" width="112" height="200" rx="4"/>
+<rect class="bxi" x="126" y="10" width="112" height="98" rx="4"/>
+<rect class="bxi" x="126" y="112" width="112" height="98" rx="4"/>
+<rect class="bxa pulse" x="242" y="10" width="112" height="200" rx="4"/>
+<rect class="bxi" x="358" y="10" width="112" height="98" rx="4"/>
+<rect class="bxi" x="358" y="112" width="112" height="98" rx="4"/>
+<rect class="bx" x="474" y="10" width="112" height="200" rx="4"/>
+<rect class="bxi" x="10" y="216" width="286" height="64" rx="4"/>
+<rect class="bxi" x="300" y="216" width="286" height="64" rx="4"/>
+<text class="tx txs" x="66" y="114" text-anchor="middle">Problem</text>
+<text class="tx txs" x="182" y="63" text-anchor="middle">Solution</text>
+<text class="tx txs" x="182" y="165" text-anchor="middle">Key metrics</text>
+<text class="txb" x="298" y="106" text-anchor="middle">Unique value</text>
+<text class="txb" x="298" y="124" text-anchor="middle">proposition</text>
+<text class="tx txs" x="414" y="56" text-anchor="middle">Unfair</text>
+<text class="tx txs" x="414" y="72" text-anchor="middle">advantage</text>
+<text class="tx txs" x="414" y="165" text-anchor="middle">Channels</text>
+<text class="tx txs" x="530" y="106" text-anchor="middle">Customer</text>
+<text class="tx txs" x="530" y="122" text-anchor="middle">segments</text>
+<text class="tx txs" x="153" y="252" text-anchor="middle">Cost structure</text>
+<text class="tx txs" x="443" y="252" text-anchor="middle">Revenue streams</text>
+```
+
 Filling in a canvas for each of several ideas makes it easy to compare them, spot weak assumptions and choose which to test first. Established businesses can use the same tool. Senior staff can fill in canvases for the initiatives they are working on, which focuses attention on the few that matter most.
 
 ## Evaluating an idea before you test it
@@ -139,6 +169,20 @@ The strongest evidence that an idea works is customers committing something of v
 5. **Letters of intent** or pilot agreements.
 6. **Pre-orders or deposits.**
 7. **Repeat purchases** at full price.
+
+```figure
+type: layers
+title: How much each signal is worth
+shape: pyramid
+caption: Compliments are pleasant but almost worthless; commitments of money and time are evidence.
+- *Repeat purchases at full price
+- Pre-orders or deposits
+- Letters of intent or pilot agreements
+- Introductions to decision-makers
+- Time for meetings, trials or interviews
+- Interest: sign-ups for more information
+- Compliments
+```
 
 Aim to move up this ladder as quickly as possible. A small number of paying customers teaches you more than hundreds of enthusiastic survey responses. Paying customers also give honest feedback, because they care whether the product works for them.
 
@@ -172,6 +216,15 @@ An engineer notices that small food manufacturers struggle to keep equipment mai
 She networks with food-safety consultants and production managers, who confirm the problem and describe audit pain. She sketches a Lean Canvas and identifies her riskiest assumption: that managers will pay for a simple digital maintenance log. She builds an MVP, a basic mobile form with QR codes on equipment and an automatic audit report, in a few weeks using low-code tools. She pilots it free with three manufacturers, then offers two price plans to a further ten to see which they prefer.
 
 Seven sign up for the paid plan, mostly the cheaper one, and their feedback shapes the next version. Within a year, she has a small but growing subscription business built on evidence rather than assumptions.
+
+```figure
+type: funnel
+title: Testing a digital maintenance log for food manufacturers
+caption: An MVP built in a few weeks with low-code tools tested the riskiest assumption: that managers would pay.
+- Free pilot | 3 manufacturers
+- Offered two price plans | 10 more
+- *Signed up for a paid plan | 7, mostly the cheaper one
+```
 
 ## Summary
 
