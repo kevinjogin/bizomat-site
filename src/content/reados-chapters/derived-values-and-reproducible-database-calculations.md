@@ -49,6 +49,17 @@ A value can be calculated when read, maintained when inputs change or refreshed 
 | Refresh periodically | What was the result at the last completed refresh? | Expose freshness and handle incomplete refreshes |
 | Freeze on acceptance | What value was accepted for this business event? | Preserve the accepted context and correction process |
 
+```figure
+type: decision
+title: When should the calculation run?
+question: Which question must the value answer?
+caption: Each approach brings a different obligation.
+- What follows from the inputs now? | Calculate on read
+- What should be stored after this change? | Maintain on write
+- What was true at the last refresh? | Refresh periodically
+- *What value was accepted for this event? | Freeze on acceptance
+```
+
 Do not choose solely from a preference for fewer columns. A frequently requested expensive summary may justify maintained storage. A simple expression may be clearer and safer when calculated directly. A historical agreement needs preservation even if its formula is trivial.
 
 The same business entity can legitimately carry more than one of these values. A job may have a live estimated material requirement and a separately recorded requirement used when it was released. Clear names and timestamps help users understand why the values may differ.
@@ -58,6 +69,15 @@ The same business entity can legitimately carry more than one of these values. A
 This is an illustrative example. Three order lines each have an unrounded calculated amount of 0.335 currency units. Assume the agreed rule rounds half upward to two decimal places. Rounding each line produces 0.34, so the total of rounded lines is 1.02.
 
 Adding the unrounded amounts first produces 1.005. Rounding that combined value to two decimal places produces 1.01 under the same half-up policy. The one-cent difference arises from the calculation order, not from one report necessarily having a faulty multiplication.
+
+```figure
+type: compare
+title: Rounding three lines of 0.335
+cols: Result | Order of operations
+caption: Half-up rounding to two decimals; the one-cent difference comes from the order, not an error.
+- Round each line, then add | 1.02 | 0.34 + 0.34 + 0.34
+- *Add, then round | 1.01 | 1.005 rounded once
+```
 
 The fixture deliberately uses decimal arithmetic. Binary floating-point representations can introduce another source of differences, so a production design should use a suitable numeric representation and an explicit rounding operation. The example is about consistency of an assumed rule, not a recommendation for financial or tax treatment.
 

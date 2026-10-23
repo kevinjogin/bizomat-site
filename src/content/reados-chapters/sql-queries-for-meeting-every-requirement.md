@@ -50,6 +50,35 @@ This is an illustrative example. A release profile requires a drawing, a parts l
 | B | Drawing, parts list | No |
 | C | Drawing, drawing, drawing | No |
 
+```figure
+type: svg
+title: Counting documents is not covering requirements
+alt: A release profile requires three document types: drawing, parts list and inspection record. Work pack A has all three and is complete. Work pack B is missing the inspection record. Work pack C has three documents, but all are drawings, so it is missing the parts list and inspection record despite having the right count.
+caption: Pack C has three documents, the same count as A, but covers only one of the three requirements.
+viewbox: 0 0 640 220
+body:
+<text class="txb" x="130" y="24" text-anchor="middle">Required</text>
+<text class="txb" x="290" y="24" text-anchor="middle">Pack A</text>
+<text class="txb" x="430" y="24" text-anchor="middle">Pack B</text>
+<text class="txb" x="570" y="24" text-anchor="middle">Pack C</text>
+<text class="tx" x="20" y="66">Drawing</text>
+<text class="tx" x="20" y="116">Parts list</text>
+<text class="tx" x="20" y="166">Inspection record</text>
+<rect class="bxa" x="250" y="46" width="80" height="30" rx="5"/>
+<rect class="bxa" x="250" y="96" width="80" height="30" rx="5"/>
+<rect class="bxa" x="250" y="146" width="80" height="30" rx="5"/>
+<rect class="bxa" x="390" y="46" width="80" height="30" rx="5"/>
+<rect class="bxa" x="390" y="96" width="80" height="30" rx="5"/>
+<rect class="bx dsh" x="390" y="146" width="80" height="30" rx="5"/>
+<rect class="bxa" x="530" y="46" width="80" height="30" rx="5"/>
+<rect class="bx dsh" x="530" y="96" width="80" height="30" rx="5"/>
+<rect class="bx dsh" x="530" y="146" width="80" height="30" rx="5"/>
+<text class="tx txs" x="570" y="66" text-anchor="middle">3 drawings</text>
+<text class="txb" x="290" y="206" text-anchor="middle">complete</text>
+<text class="tx" x="430" y="206" text-anchor="middle">missing 1</text>
+<text class="tx" x="570" y="206" text-anchor="middle">missing 2</text>
+```
+
 The third pack is the useful test case. A simple count of three evidence rows would make it appear complete. The actual rule concerns coverage of three distinct requirements, not the volume of stored evidence.
 
 Assume a simplified schema with `work_pack`, `required_document` and `pack_document` tables. Each work pack references a profile, each requirement belongs to a profile, and each evidence row names its work pack and document type. Document acceptance is represented explicitly by a status.
@@ -72,6 +101,16 @@ WHERE NOT EXISTS (
 ```
 
 This query returns Pack A for the stated data. It does not assess whether a drawing is technically correct or whether an inspection was adequate. It evaluates the recorded completeness rule only. Acceptance must have its own trustworthy process.
+
+```figure
+type: steps
+title: Translating "every" into a query
+caption: A candidate qualifies when no required item lacks matching, acceptable evidence.
+- List the candidates
+- List the requirements that apply
+- Match accepted evidence to each requirement
+- *Keep candidates with no missing requirement
+```
 
 ## Make an empty requirement set a conscious decision
 

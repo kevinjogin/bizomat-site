@@ -38,6 +38,27 @@ The position is evaluated against the result visible to that query. It is not a 
 
 Suppose the first page contains records numbered 1 through 25 in the selected order. Before page two is requested, a new record is inserted before them. Skipping 25 rows now starts with a record the user already saw. Deleting a record before the boundary can create the opposite problem and skip an unseen record.
 
+```figure
+type: svg
+title: Why offset paging repeats a record
+alt: Page one shows records 1 to 25. A new record is then inserted before them, shifting every record down by one. Skipping 25 rows for page two now starts at the old record 25, which the user has already seen.
+caption: Skipping 25 rows refers to a position in the current result, which moves when rows are inserted.
+viewbox: 0 0 640 200
+body:
+<text class="txb" x="20" y="28">Page 1 as seen</text>
+<rect class="bx" x="20" y="40" width="250" height="34" rx="5"/>
+<text class="tx" x="145" y="62" text-anchor="middle">records 1 – 25</text>
+<text class="txb" x="20" y="112">After one insert, skip 25</text>
+<rect class="bxa pulse" x="20" y="124" width="40" height="34" rx="5"/>
+<text class="txb" x="40" y="146" text-anchor="middle">new</text>
+<rect class="bx" x="64" y="124" width="250" height="34" rx="5"/>
+<text class="tx" x="189" y="146" text-anchor="middle">old 1 – 24</text>
+<rect class="bx dsh" x="318" y="124" width="50" height="34" rx="5"/>
+<text class="tx txs" x="343" y="146" text-anchor="middle">old 25</text>
+<path class="la flow" d="M343 180V162"/>
+<text class="tx txs" x="380" y="186">page 2 starts here: seen already</text>
+```
+
 This behaviour may be acceptable for casual browsing of a live list, provided the application does not promise a complete, stable traversal. It is problematic for a process that must visit every eligible record once without omissions.
 
 Offset also has a performance dimension. PostgreSQL documents that skipped rows still need to be computed within the server. Large offsets can therefore require substantial work even when the returned page is small. Measure the intended deep-page workload rather than extrapolating from the first page.
@@ -53,6 +74,17 @@ The full ordering key must be preserved. Saving only the timestamp loses the tie
 The comparison must handle nulls deliberately. If the order places missing timestamps last, the continuation condition needs to reproduce that rule rather than rely on ordinary comparisons with null. Text ordering similarly depends on the database's collation and comparison semantics.
 
 Keyset pagination is particularly natural for next-page traversal. Arbitrary jumps to page 300 are less direct because the boundary values for that page are not known automatically. The interface and navigation requirements should reflect the chosen strategy instead of pretending every strategy provides the same capabilities.
+
+```figure
+type: compare
+title: Offset or keyset paging
+cols: Offset | Keyset
+caption: Order by a unique key, such as creation time plus identifier, so ties cannot split unpredictably.
+- How it continues | Skip a number of rows | Continue after the last key seen
+- Inserts and deletes | Can skip or repeat records | Boundary stays stable
+- Jump to page 300 | Direct | Less direct
+- *Best for | Numbered pages on stable data | Next-page traversal and exports
+```
 
 ## A stable boundary does not create a snapshot
 
@@ -107,6 +139,15 @@ Test entities with many children, no children and tied ordering values. These ca
 The number of items shown to a user is not necessarily the number of rows a database driver fetches in one network operation. Drivers can buffer data, and a database cursor can expose rows through an interface that does not reveal each underlying transfer.
 
 Treat user page size, query limit and driver fetch size as related but separate settings. A page of 25 work orders may require more than 25 database rows if related data is included. A background export may fetch larger batches while writing a streaming output.
+
+```figure
+type: layers
+title: Three sizes that are easy to confuse
+caption: A page of 25 work orders may need more than 25 database rows once task lines are included.
+- *User page size | the entities people recognise
+- Query limit | rows the database returns
+- Driver fetch size | rows moved per round trip
+```
 
 Measure memory, transferred data, round trips and response time together. Fetching everything eagerly can waste resources when users rarely go beyond the first page. Fetching extremely small batches can add avoidable communication overhead.
 

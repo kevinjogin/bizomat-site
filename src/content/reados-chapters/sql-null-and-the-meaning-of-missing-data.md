@@ -36,6 +36,18 @@ Several different conditions commonly need separation:
 | Withheld | A respondent declined an optional answer | Response status without an invented answer |
 | Measured zero | No rejects were found in an inspected batch | The actual value zero |
 
+```figure
+type: tree
+title: Five things a blank can mean
+caption: Store the reason for absence, not just the absence.
+- A missing value
+  - Unknown | not captured
+  - Not yet known | still in progress
+  - Not applicable | does not apply to this item
+  - Withheld | declined to answer
+  - *Measured zero | a real value, not a blank
+```
+
 Not every optional column requires an elaborate status model. Add distinctions when they change a decision, a follow-up action or an interpretation. The [data dictionary guide](/reados/collections/operational-data-records-and-controls/writing-a-data-dictionary/) provides a useful place to record those meanings consistently.
 
 ## Understand the third result of a comparison
@@ -78,6 +90,16 @@ Aggregates can hide missingness because they compress many records into a single
 This is an illustrative example. Five jobs have recorded completion durations of 2, 4, NULL, 0 and NULL days. The row count is five, the count of recorded durations is three, and their sum is six days. The average of the recorded durations is two days: six divided by three.
 
 Replacing both missing durations with zero changes the average to 1.2 days. That calculation is arithmetically correct for the substituted dataset, but the substitution asserts that the two unknown durations were zero. Unless that assertion is justified, the apparently better result is an artefact of data handling.
+
+```figure
+type: bars
+title: Average job duration from 2, 4, NULL, 0 and NULL days
+unit: days
+max: 2.5
+caption: Substituting zero asserts the two unknown durations were zero.
+- *Average of the three recorded values | 2
+- Missing values replaced with zero | 1.2
+```
 
 A more informative report presents the average alongside coverage: three of five jobs have a recorded duration. It may also show the two missing records as an action list. Readers can then see both the performance measure and how much of the intended population it represents.
 

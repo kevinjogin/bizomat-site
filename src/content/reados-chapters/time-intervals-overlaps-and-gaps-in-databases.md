@@ -65,6 +65,29 @@ A request from 08:30 to 10:30 contains the original reservation and also overlap
 | 09:00–10:00 | 08:30–10:30 | Overlap by containment |
 | 09:00–10:00 | 08:00–09:00 | Adjacent |
 
+```figure
+type: svg
+title: Overlap or adjacent, with half-open periods
+alt: An existing booking from 09:00 to 10:00 is drawn as a bar. Four requests are drawn below it: 09:45 to 10:15 overlaps; 10:00 to 10:30 is adjacent; 08:30 to 10:30 overlaps by containing it; 08:00 to 09:00 is adjacent.
+caption: With [start, end), two periods overlap when each starts before the other ends.
+viewbox: 0 0 640 240
+body:
+<path class="lf" d="M160 20V220M320 20V220M480 20V220"/>
+<text class="tx txs" x="160" y="16" text-anchor="middle">08:00</text>
+<text class="tx txs" x="320" y="16" text-anchor="middle">09:00</text>
+<text class="tx txs" x="480" y="16" text-anchor="middle">10:00</text>
+<rect class="bxa" x="320" y="30" width="160" height="26" rx="4"/>
+<text class="txb" x="400" y="48" text-anchor="middle">booked</text>
+<rect class="bx" x="440" y="74" width="80" height="22" rx="4"/>
+<text class="tx txs" x="530" y="90">overlap</text>
+<rect class="bx dsh" x="480" y="110" width="80" height="22" rx="4"/>
+<text class="tx txs" x="570" y="126">adjacent</text>
+<rect class="bx" x="240" y="146" width="320" height="22" rx="4"/>
+<text class="tx txs" x="570" y="162">overlap</text>
+<rect class="bx dsh" x="160" y="182" width="160" height="22" rx="4"/>
+<text class="tx txs" x="40" y="198">adjacent</text>
+```
+
 If the rig needs fifteen minutes of preparation after a booking, represent the protected occupancy through 10:15 or include an explicit preparation rule. The booking end and the next usable time then have different meanings and should be named accordingly.
 
 ## Include the identity whose intervals can conflict
@@ -80,6 +103,16 @@ Do not deduce the scope from the most convenient available column. Establish whi
 ## Separate no overlap from complete coverage
 
 A rule prohibiting overlaps does not guarantee continuity. Periods from 09:00 to 10:00 and from 11:00 to 12:00 satisfy a no-overlap rule but leave an hour uncovered. Conversely, complete coverage can contain overlaps if several records cover the same time.
+
+```figure
+type: balance
+title: No overlap is not complete coverage
+left: No overlap
+right: Complete coverage
+caption: 09:00–10:00 and 11:00–12:00 never overlap, yet leave an hour uncovered.
+- Periods never share an instant | Every instant is covered by some period
+- Can still leave gaps | Can still contain overlaps
+```
 
 Decide which property the business needs. An asset may legitimately be unassigned between jobs. A published rate schedule might require exactly one applicable rate throughout a defined planning horizon. The latter combines non-overlap with coverage.
 

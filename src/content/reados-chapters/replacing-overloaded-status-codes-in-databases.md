@@ -59,9 +59,30 @@ This is an illustrative example. A workshop distinguishes three lifecycle states
 
 Adding a separate yes-or-no material hold doubles the combinations to twenty-four. Adding a further independent property doubles them again to forty-eight. The business has not necessarily become much more complicated; the code vocabulary has expanded because it bundles independent dimensions together.
 
+```figure
+type: bars
+title: How a combined status code grows
+max: 50
+caption: Three lifecycle states, then each independent yes-or-no property doubles the vocabulary.
+- State, urgent, approval outstanding | 12 | 3 × 2 × 2
+- Plus a material hold | 24
+- *Plus one more property | 48
+```
+
 A separated model can retain one lifecycle field and explicit representations for the independent facts. A report for released jobs no longer needs to enumerate released-normal, released-urgent, released-held and every future combination. It can select lifecycle equal to released and then apply additional conditions only when relevant.
 
 Not every theoretical combination will be valid. A completed job might not be allowed to retain an active production hold. That is a rule to state and enforce. It is not a reason to return to a single opaque code whose valid combinations are understood only by a few experienced staff.
+
+```figure
+type: compare
+title: Separating what one code was doing
+cols: Representation | Rule
+caption: Unknown must never silently become false.
+- Lifecycle | One state field, controlled values | Only permitted transitions
+- Assessed property | Boolean or explicit assessment state | Unknown kept distinct
+- *Hold reasons | Related hold records | Each with its own resolution
+- Priority | An ordered code | Agreed ordering
+```
 
 ## Preserve the difference between false and unknown
 

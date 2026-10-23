@@ -51,6 +51,17 @@ This is an illustrative example. A workshop wants a report of work orders that h
 
 Orders 101 and 103 are the expected result. A query that checks for any dispatch would incorrectly exclude 103. A query using an inner join would lose 101. A fixture containing only order 102 would reveal neither problem clearly.
 
+```figure
+type: compare
+title: Four orders that catch two different bugs
+cols: Dispatch state | Expected
+caption: Expect exactly [101, 103]; "any dispatch" wrongly drops 103, and an inner join loses 101.
+- *Order 101 | None | Appears
+- Order 102 | One accepted | Excluded
+- *Order 103 | One cancelled | Appears
+- Order 104 | One accepted, then a second | Excluded, not duplicated
+```
+
 The following query expresses the assumed rule. It uses an existence test so that the question is whether an accepted dispatch exists, rather than how many joined rows happen to be returned.
 
 ```sql
@@ -152,6 +163,17 @@ Review fixtures as maintained project assets. When business rules change, decide
 ## Make failures useful to the next person
 
 A test failure should identify the claim that failed, the relevant records and the difference from the expected result. “Expected orders 101 and 103; received 101” points directly to the cancelled-dispatch rule. A generic database comparison failure may require substantial reconstruction before anyone understands it.
+
+```figure
+type: checklist
+title: Test data that proves something
+caption: Synthetic data with a clear purpose beats a copy of production.
+- x Start from the claim the test must establish
+- x Use deliberate contrasts, such as 4 and 9, not 5 and 5
+- x Test rejection as carefully as acceptance
+- x Control state, identifiers and clocks
+- *x Report the claim, the records and the difference
+```
 
 For a small Australian business commissioning software changes, ask for a few readable acceptance fixtures around the most consequential workflows. They can cover order acceptance, stock movement or historical report classification without becoming a large testing programme immediately.
 

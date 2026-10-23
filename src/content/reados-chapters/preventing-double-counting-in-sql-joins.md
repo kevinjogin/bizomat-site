@@ -61,6 +61,18 @@ This small example is more revealing than a large production sample containing m
 
 The correct balance in this example is zero. A report that subtracts the two inflated totals would show an apparent excess payment of 300. The final subtraction can therefore look like a reconciliation problem even though the problem was introduced several joins earlier.
 
+```figure
+type: bars
+title: Order 410 after joining lines to payments
+unit: units
+max: 950
+caption: Three lines × two payments = six rows; each amount is repeated by the other side's count.
+- True line total | 300
+- Summed after the join | 600 | each line counted twice
+- True payment total | 300
+- *Summed after the join | 900 | each payment counted three times
+```
+
 ## Aggregate independent details before joining
 
 When the requested output is one row per order, summarise each independent detail collection to that grain first. The line summary has one row per order. The payment summary also has one row per order. Joining those summaries to orders avoids forming every line-payment combination.
@@ -85,6 +97,16 @@ LEFT JOIN line_totals AS l ON l.order_id = o.order_id
 LEFT JOIN payment_totals AS p ON p.order_id = o.order_id;
 ```
 
+```figure
+type: steps
+title: Aggregate independent details before joining
+caption: Summarise each detail table to one row per order, then join the summaries.
+- Sum lines per order | 300
+- Sum payments per order | 300
+- Join the two summaries | one row per order
+- *Balance | 300 − 300 = 0
+```
+
 The zero substitutions express a specific convention: no matching detail rows contribute zero to this report. They do not assert that unknown amounts should be replaced with zero. Incomplete source amounts should be detected separately rather than hidden inside the aggregation.
 
 Pre-aggregation is a design pattern, not a universal rule to apply blindly. If the question asks for relationships between individual payments and individual lines, those relationships need to be represented explicitly. Aggregating first would discard the detail the question needs.
@@ -94,6 +116,16 @@ Pre-aggregation is a design pattern, not a universal rule to apply blindly. If t
 `DISTINCT` removes repeated values or repeated selected rows. It does not identify which repetitions arose incorrectly or which business events are genuinely separate.
 
 Suppose two legitimate order lines each have an amount of 100. `SUM(DISTINCT line_amount)` returns 100 even though the correct total is 200. The attempt to repair multiplication now removes valid activity.
+
+```figure
+type: compare
+title: Why DISTINCT does not repair double counting
+cols: Result | Correct
+caption: Removing repeated values also removes legitimate repeated activity.
+- SUM(line_amount) after a join | Inflated by matches | No
+- *SUM(DISTINCT line_amount) | 100 for two lines of 100 | No: the true total is 200
+- Aggregate first, then join | 200 | Yes
+```
 
 Similarly, `SELECT DISTINCT` over a final report can make duplicate-looking rows disappear while leaving inflated aggregates unchanged. If important identifiers were omitted from the projection, genuinely different events may also appear identical and be collapsed.
 

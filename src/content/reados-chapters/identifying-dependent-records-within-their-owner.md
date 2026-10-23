@@ -48,6 +48,17 @@ This is an illustrative example. A workshop records orders 410 and 411. Order 41
 | 410 | 2 | Cover | 6 |
 | 411 | 1 | Bracket | 3 |
 
+```figure
+type: tree
+title: A line is identified within its order
+caption: Three lines but only two distinct line numbers; "line 1" alone is ambiguous.
+- Order 410
+  - Line 1 | Bracket, 4
+  - Line 2 | Cover, 6
+- Order 411
+  - *Line 1 | Bracket, 3
+```
+
 There are three lines and two distinct line numbers. Counting distinct line numbers would therefore give the wrong number of business records. A request referring only to line 1 would be ambiguous; a request referring to order 411, line 1 would be complete.
 
 The following small schema expresses the assumed identity and existence rules. It is deliberately limited to the illustration and does not represent a complete ordering system.
@@ -68,6 +79,16 @@ CREATE TABLE order_line (
 ```
 
 The combined primary key rejects a second line 1 within order 410 while permitting line 1 within order 411. The foreign key rejects a line referring to an order that does not exist. The explicit null restrictions make the required values clear rather than relying on a particular database's treatment of a composite primary key.
+
+```figure
+type: checklist
+title: What the composite key enforces
+caption: Adding a surrogate key later does not remove the need for these rules.
+- x A second line 1 in order 410 is rejected
+- x Line 1 in order 411 is allowed
+- x A line for an order that does not exist is rejected
+- *x Every line carries its complete reference
+```
 
 In SQLite, foreign-key enforcement must be enabled and checked for the connection before relying on this example. Its [foreign-key documentation](https://www.sqlite.org/foreignkeys.html) also explains composite references and deletion actions. Other engines have their own implementation details. A diagram alone does not prove that the running database enforces the relationship.
 

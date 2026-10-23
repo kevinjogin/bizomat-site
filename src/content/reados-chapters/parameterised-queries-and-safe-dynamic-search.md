@@ -51,6 +51,25 @@ The [Python SQLite documentation](https://docs.python.org/3/library/sqlite3.html
 
 The organisation parameter is deliberately obtained from an authorised application context. Binding an organisation number entered by the caller would preserve SQL syntax while still allowing an access-control defect. Correct parameterisation prevents a value becoming SQL; it does not prove the caller is entitled to the rows that value selects.
 
+```figure
+type: svg
+title: Instructions and values in separate channels
+alt: Two lanes enter the database. The top lane carries the fixed SQL text with placeholders, written by the developer. The bottom lane carries the user's values, bound separately. Because the values never become part of the SQL text, input cannot change the query's instructions.
+caption: Values are bound to placeholders, so user input cannot change what the query does.
+viewbox: 0 0 640 190
+body:
+<rect class="bx" x="20" y="30" width="260" height="44" rx="6"/>
+<text class="tx" x="150" y="57" text-anchor="middle">SQL text with placeholders</text>
+<rect class="bxi" x="20" y="116" width="260" height="44" rx="6"/>
+<text class="tx" x="150" y="143" text-anchor="middle">User values, bound</text>
+<path class="la flow" d="M280 52H430"/>
+<path class="la flow" d="M280 138H430"/>
+<text class="tx txs" x="355" y="44" text-anchor="middle">instructions</text>
+<text class="tx txs" x="355" y="130" text-anchor="middle">data only</text>
+<rect class="bxa" x="430" y="30" width="190" height="130" rx="8"/>
+<text class="txb" x="525" y="100" text-anchor="middle">Database</text>
+```
+
 ## Build optional filters from controlled fragments
 
 A search form may allow a customer name, status and minimum order date. Developers sometimes respond by assembling one long string from whatever text is present. A safer structure assembles only developer-controlled SQL fragments and collects the corresponding values separately.
@@ -86,6 +105,16 @@ Very large lists deserve limits and a measured design. Thousands of selected ide
 Pattern matching introduces another language inside the value. In SQL `LIKE`, characters such as percent and underscore commonly have wildcard meanings. Binding the pattern safely stops it becoming SQL syntax, but does not automatically turn those wildcard characters into literal characters.
 
 Suppose a product code is `A_10`. A user asking for that exact code may be surprised when a pattern search also finds codes with other characters in the underscore position. The SQL can be perfectly parameterised while the search behaviour is wrong for the business request.
+
+```figure
+type: checklist
+title: Safe dynamic search
+caption: Parameterising values is necessary, but dynamic parts of the query need their own controls.
+- x Optional filters built from controlled fragments
+- x Sort choices from a fixed vocabulary
+- x Lists passed without hiding SQL in a parameter
+- *x Search punctuation decided: literal or pattern
+```
 
 Separate exact, prefix and wildcard search modes. If an exact identifier is required, equality may be the right operation. If users are allowed to write patterns, explain that behaviour. If the application builds a literal prefix pattern, implement escaping according to the selected database's documented rules and test the escape character itself.
 

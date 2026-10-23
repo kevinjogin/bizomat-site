@@ -22,6 +22,16 @@ Understanding the distinctions helps businesses preserve names, match records re
 
 An **encoding** describes how characters are represented as bytes. UTF-8 is one such encoding. A **collation** supplies rules used for comparing or ordering text in a database operation. Correctly storing a character does not, by itself, decide whether it compares equal to another character sequence.
 
+```figure
+type: balance
+title: Storing text and comparing text
+left: Encoding
+right: Collation
+caption: Storing a character correctly says nothing about how it will be compared or sorted.
+- How characters become bytes, such as UTF-8 | Rules for comparing and ordering
+- Decides what can be stored | Decides what counts as equal
+```
+
 Consider an imported file containing a person's name. Reading its bytes with the wrong encoding can produce visibly incorrect text. Choosing a different sort order afterward does not recover the original characters. The error occurred at the decoding boundary and must be investigated there.
 
 Conversely, a database can store both uppercase and lowercase letters perfectly while treating them as equal for a particular comparison. That may be desirable for a name search and inappropriate for a case-sensitive external identifier. Storage capability and matching policy answer different questions.
@@ -66,6 +76,15 @@ assert len(second) == 5
 assert unicodedata.normalize("NFC", first) == (
     unicodedata.normalize("NFC", second)
 )
+```
+
+```figure
+type: compare
+title: Two ways to write "Café"
+cols: Code points | Length
+caption: They look identical; Unicode normalisation defines when such sequences should be treated as equivalent.
+- Precomposed é | C a f é | 4
+- *e plus a combining accent | C a f e ◌́ | 5
 ```
 
 The character counts in this example describe code points in these Python strings, not a general rule for the number of user-perceived characters. Some visible characters involve several code points. A database's length function and a user interface's character counter may also use different units.
@@ -125,6 +144,15 @@ Record the transformation applied during import. A rejected row should retain en
 ## Specify lengths using the relevant unit
 
 A limit of 40 can refer to bytes, code points or visible characters, depending on the system and field. These are not interchangeable. Multibyte encodings mean a value that fits a character limit may exceed a byte-limited external format.
+
+```figure
+type: layers
+title: What "40 characters" might mean
+caption: In a multibyte encoding, a value within a character limit can exceed a byte limit.
+- Bytes | storage units
+- Code points | Unicode characters
+- *Visible characters | what a person counts
+```
 
 Check downstream constraints before selecting local limits. A label printer, fixed-width file or older integration may have a narrower capability than the database. Truncating values silently to make them fit can create duplicate codes or unreadable names. Define whether the operation rejects, abbreviates through an approved mapping or uses an alternate display field.
 

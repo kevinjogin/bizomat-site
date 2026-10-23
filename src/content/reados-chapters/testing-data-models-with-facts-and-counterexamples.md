@@ -60,6 +60,28 @@ A small population can make a uniqueness rule visible. Suppose the approval fact
 
 Now propose adding T9–I24. This is the counterexample that challenges the proposed upper bound. If the business accepts it, the rule that each inspection has at most one approver is too strict. If the business rejects it, ask why and preserve that explanation.
 
+```figure
+type: svg
+title: A counterexample tests a uniqueness rule
+alt: Technician T8 approves inspections I24 and I25, and T9 approves I26. A proposed new fact, T9 approves I24, is drawn dashed. If the business accepts it, the rule that each inspection has at most one approver is too strict.
+caption: If the business accepts T9–I24, "at most one approver per inspection" is the wrong rule.
+viewbox: 0 0 560 230
+body:
+<rect class="bx" x="40" y="40" width="100" height="40" rx="6"/>
+<rect class="bx" x="40" y="140" width="100" height="40" rx="6"/>
+<text class="txb" x="90" y="65" text-anchor="middle">T8</text>
+<text class="txb" x="90" y="165" text-anchor="middle">T9</text>
+<rect class="bx" x="400" y="20" width="110" height="40" rx="6"/>
+<rect class="bx" x="400" y="90" width="110" height="40" rx="6"/>
+<rect class="bx" x="400" y="160" width="110" height="40" rx="6"/>
+<text class="tx" x="455" y="45" text-anchor="middle">I24</text>
+<text class="tx" x="455" y="115" text-anchor="middle">I25</text>
+<text class="tx" x="455" y="185" text-anchor="middle">I26</text>
+<path class="ln" d="M140 56L400 40M140 64L400 110M140 160L400 180"/>
+<path class="la dsh flow" d="M140 154L400 46"/>
+<text class="txa" x="250" y="96" text-anchor="middle">T9–I24?</text>
+```
+
 The reason may reveal a missing distinction. Perhaps several preliminary reviews are allowed but only one final approval. In that case, the model needs separate fact types or an approval event with a defined role, rather than a broad prohibition on multiple people being associated with the inspection.
 
 Test combinations, not just individual identifiers. Some relationships are unique only across a pair or a larger group of roles. A technician may approve the same inspection at several stages, while the combination of inspection and stage permits only one final approver.
@@ -89,6 +111,18 @@ This distinction exposes a common modelling error. Two separate checks that a te
 Other rules require equal populations or mutual exclusion. Equality means that every participating pair in one fact type also appears in the other, in both directions. Exclusion means that no prohibited combination appears in both. Neither is equivalent to merely having the same number of rows.
 
 Use business examples to validate the relationship between populations before choosing an enforcement mechanism. A composite reference may express some subset rules directly; other rules need different structures or controlled operations. The conceptual obligation should remain clear even when its physical implementation is more involved.
+
+```figure
+type: steps
+title: Testing a model with facts
+caption: Keep the examples with the model, so later changes are tested against them too.
+- A sentence that can be challenged
+- Fact type separate from known facts
+- Quantifiers that expose assumptions
+- Examples that exercise uniqueness
+- Missing facts that test mandatory roles
+- *Time added where a timeless rule is wrong
+```
 
 ## Distinguish independent facts from one combined fact
 

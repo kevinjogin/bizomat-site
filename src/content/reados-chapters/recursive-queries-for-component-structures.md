@@ -50,6 +50,17 @@ The route A to B to D requires two times four, giving eight units of D. The rout
 | A → C → D | 3 × 5 | 15 |
 | Both valid paths | 8 + 15 | 23 |
 
+```figure
+type: tree
+title: Two paths to component D
+caption: One A needs 23 D; an order for six A needs 138.
+- Assembly A
+  - B, 2 per A
+    - D, 4 per B | 8 per A
+  - C, 3 per A
+    - *D, 5 per C | 15 per A
+```
+
 The shared part D is not a duplicate error. It appears through two legitimate paths, each contributing material. Returning D only once as a reachable item answers a different question from calculating the quantity required.
 
 At the same time, B and C are intermediate requirements. Adding their quantities to D and presenting one “total parts” figure mixes different assembly levels. Decide whether the report needs all levels for explanation, leaf requirements for purchasing or selected planning endpoints for a production order.
@@ -139,6 +150,18 @@ For the example A, a purchasing report might stop at B if B is bought complete, 
 ## Measure expansion size as well as depth
 
 A shallow structure can still produce many paths when each level branches widely. Four children per item over five levels produces 1,024 path occurrences at the fifth level alone in a full branching example. A depth threshold therefore does not capture every workload risk.
+
+```figure
+type: bars
+title: Paths in a full branching structure, four children each
+max: 1100
+caption: Measure expansion size as well as depth; five levels already give 1,024 paths at the bottom.
+- Level 1 | 4
+- Level 2 | 16
+- Level 3 | 64
+- Level 4 | 256
+- *Level 5 | 1024
+```
 
 Measure representative structures and observe the number of intermediate rows. Indexes supporting lookup by parent identity and applicable revision can help the recursive step, but no index removes the cost of producing a genuinely large requested result.
 

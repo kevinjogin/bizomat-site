@@ -66,6 +66,17 @@ For a derived value, identify when all relevant inputs are available. A multi-st
 
 Document the chosen timing alongside the rule. Future maintainers need to understand why moving the trigger earlier or later changes its meaning, rather than treating timing as a performance setting that can be adjusted casually.
 
+```figure
+type: steps
+title: Designing a trigger with a predictable effect
+caption: A trigger that does one defined thing is easier to test, change and explain.
+- One defined responsibility
+- Event and condition, defined separately
+- Row or statement event
+- Timing chosen from the required state
+- *Trace the full chain of writes
+```
+
 ## Trace the full chain of writes
 
 A trigger that writes another table can invoke that table's triggers. Those triggers may write back to the original table or continue through other objects. The resulting dependency graph is part of the write path even though the caller submitted only one statement.
@@ -139,6 +150,17 @@ Review restore, replication and maintenance procedures for their documented inte
 Adding a new column to a protected table also deserves review. A history trigger that explicitly lists fields may omit the new attribute, while a broad row-copy mechanism may capture sensitive information that was never intended for the history store. Decide whether the new field belongs in the trigger's responsibility and update the representation, permissions and tests together. Schema compatibility alone does not establish that the captured evidence remains appropriate.
 
 After deployment, reconcile representative source records with the maintained history or derived state. Check for missing effects, duplicate effects and unexpected changes in write latency. The trigger is complete when its behaviour is predictable across the actual operating paths, not merely when its definition compiles.
+
+```figure
+type: checklist
+title: Before a trigger goes live
+caption: Triggers run on every write path, including bulk loads and administrative scripts.
+- x Failure and rollback understood at the real boundary
+- x Concurrency handled, not assumed
+- x Trustworthy context for history
+- x Cost measured on bulk and routine writes
+- *x Changed as part of the database contract
+```
 
 ## Source basis and further reading
 

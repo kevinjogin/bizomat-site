@@ -80,6 +80,17 @@ Choose the comparison columns according to the reconciliation purpose. Comparing
 
 That representation can be useful, provided it is interpreted correctly. It does not mean that two independent people disappeared and appeared. A later step may need to pair the exceptions by stable identity and describe the actual attribute difference.
 
+```figure
+type: compare
+title: Choosing a set operation from the question
+cols: Returns | Answers
+caption: Difference is directional: A EXCEPT B is not B EXCEPT A.
+- UNION | Distinct rows from either input | Who took part at all?
+- UNION ALL | Every row, duplicates kept | How many events happened?
+- INTERSECT | Rows present in both | Which appear in both sources?
+- *EXCEPT | Rows in the first, not the second | What is missing from the second?
+```
+
 ## Bag differences answer a different reconciliation question
 
 Some databases support ALL variants for intersection and difference, preserving multiplicity according to the operation. These can be useful when the number of occurrences matters rather than only distinct membership.
@@ -149,6 +160,16 @@ If the question requires matching imperfect customer records, attributing shared
 Keep the query's assumptions visible in its definition and supporting documentation. State the row grain, equality basis, multiplicity rule and source scope. Those details make a future change reviewable when a new field or source is added.
 
 The most useful result is not simply one without repeated-looking rows. It is a result in which every retained occurrence and every removed duplicate follows from the business question being answered.
+
+```figure
+type: checklist
+title: Validating a set operation
+caption: Identity, multiplicity and provenance are separate questions.
+- x Do the columns mean the same thing, not just share types?
+- x Should duplicates be removed or counted?
+- x How are nulls and text comparison treated?
+- *x Can each result row be traced to its source?
+```
 
 ## Source basis and further reading
 

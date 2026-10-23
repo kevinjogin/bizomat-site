@@ -66,6 +66,15 @@ Define a reuse policy that accounts for those delays. Immediate reuse might be u
 
 Also consider human search. If several retained records share a code, administrative results need enough context to distinguish them. The interface should not silently choose the newest row when the user is trying to investigate an older event.
 
+```figure
+type: decision
+title: After CHECK-7 is retired, may another template use the code?
+question: Do retired records count for uniqueness?
+caption: Both answers can be reasonable, but they create different identity rules.
+- Yes, they count | The code is never reused | it can safely identify history
+- *No, only active records | The code can be reused | history needs a stable identifier too
+```
+
 ## Foreign keys preserve existence, not active eligibility
 
 A foreign key usually verifies that a referenced key exists. If the parent row remains stored after soft deletion, the foreign key can remain satisfied. That does not establish whether a new child record is allowed to reference the inactive parent.
@@ -89,6 +98,16 @@ Avoid confusing database deletion cascades with lifecycle cascades. A physical f
 If dependent states change automatically, define the scope and record why they changed. A child may already be inactive for another reason. Restoring the parent should not necessarily reactivate that child, because doing so could reverse an independent decision.
 
 Large dependency graphs also create operational concerns. Changing thousands of related rows can hold locks and produce substantial downstream work. The transition may need a controlled process with visible progress. Its intermediate states must be acceptable to readers rather than being accidental consequences of a long update.
+
+```figure
+type: layers
+title: Not every removal is a deletion
+caption: Define which population each query should see before choosing a mechanism.
+- Retirement | no longer offered; history kept
+- Cancellation | an accepted record withdrawn
+- Soft deletion | hidden from normal use
+- *Erasure | removed, for example on a lawful request
+```
 
 ## Restoration is a fresh validation event
 

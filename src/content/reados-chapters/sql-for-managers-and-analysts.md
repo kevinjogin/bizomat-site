@@ -50,6 +50,16 @@ Read aloud, this says: show the customer number, name and state from the custome
 - **WHERE** filters the rows.
 - **ORDER BY** sorts the results.
 
+```figure
+type: steps
+title: The shape of a query
+caption: Read aloud: show these columns, from this table, for these rows, in this order.
+- SELECT | the columns to show
+- FROM | the table
+- WHERE | which rows
+- *ORDER BY | how to sort them
+```
+
 Keywords are traditionally written in capitals for readability, although most databases accept lower case. Text values are enclosed in single quotes.
 
 ## Filtering rows
@@ -158,6 +168,17 @@ Every new query should be checked:
 4. **Test edge cases**: records with missing values, cancelled status or dates on period boundaries.
 5. **Ask a colleague** who knows the data to read the query.
 
+```figure
+type: checklist
+title: Checking results before trusting them
+caption: A query that runs is not yet a query that is right.
+- x Reconcile with a known figure
+- x Check the row count makes sense
+- x Inspect samples behind the totals
+- x Test edge cases | missing values, cancellations, boundaries
+- *x Ask a colleague to read it
+```
+
 Write down what each query does and the assumptions behind it, so others can reuse and check it. The [reports that change decisions](/reados/collections/business-systems-and-operating-rhythm/reports-that-change-decisions/) article discusses how to turn checked numbers into reports people act on.
 
 ## Making queries readable and reusable
@@ -203,6 +224,14 @@ This is an illustrative example. A sales manager at an industrial supplier wants
 **Checking.** The total of all customers' sales for each quarter is reconciled with the finance system's figures and agrees. A first version produces totals about four times too high for some customers, traced to joining order lines before summing order totals; the query is corrected to sum at the line level.
 
 **Result.** Of about 420 customers meeting the size threshold, the query identifies 37 with a fall of more than 30%. The sales team contacts each, finding that several had changed suppliers because of delivery problems, which leads to a separate review of dispatch performance. The query is saved as a view and rerun each quarter.
+
+```figure
+type: funnel
+title: Finding established customers who are buying less
+caption: At least $20,000 last year, and first-quarter purchases more than 30% below the same quarter last year.
+- Customers above the size threshold | about 420
+- *Down more than 30% this quarter | 37
+```
 
 ## Applying this in an Australian business
 

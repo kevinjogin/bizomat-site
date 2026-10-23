@@ -62,6 +62,18 @@ WHERE store_code = 'A'
 
 The sum across the five illustrated records starts at 32 and finishes at 36. That four-unit increase is a useful cross-check, but it does not prove the correct two records changed. The verification must inspect identifiers and expected values as well as the total.
 
+```figure
+type: compare
+title: Which records the update should change
+cols: Before → after | Why
+caption: Add 2 to active Store A records below 10. The total rises from 32 to 36, but only identities prove the right rows changed.
+- *Record 1 | 3 → 5 | Active, Store A, below 10
+- *Record 2 | 9 → 11 | The threshold applies before the increase
+- Record 3 | 4 → 4 | Retired
+- Record 4 | 6 → 6 | Store B
+- Record 5 | 10 → 10 | Not below 10
+```
+
 The constants are fixed values for the illustration. An application accepting store codes or quantities from users should bind those values through its database interface rather than build SQL by concatenating input. The selection rule and the safe transport of parameters are separate responsibilities.
 
 ## Use a preview as evidence, not as a lock
@@ -97,6 +109,15 @@ Do not put user deliberation inside a database transaction merely to connect pre
 ## Decide whether repetition is safe
 
 The illustrated increase is not idempotent: running it again can increase some records again. After the first run, record 1 has quantity 5 and still qualifies; record 2 has quantity 11 and no longer qualifies. A second run produces a different changed population and raises the total again.
+
+```figure
+type: timeline
+title: Running the same update twice
+caption: A change that is not idempotent must not be repeated by a retry.
+- Start | Record 1 is 3, record 2 is 9 | both qualify
+- First run | 5 and 11 | record 2 now above the threshold
+- *Second run | Record 1 becomes 7 | it still qualifies
+```
 
 This makes blind retry especially misleading. A network failure after acceptance may leave the caller unsure whether the update completed. Repeating the statement because the caller did not receive confirmation can apply another increase to only part of the original population.
 

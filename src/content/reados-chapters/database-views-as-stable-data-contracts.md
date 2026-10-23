@@ -42,6 +42,16 @@ Prefer explicit column lists in contract definitions. A broad selection of every
 
 Column order can matter to poorly designed but existing consumers that read values by position. Identify that dependency before changing it. A contract migration should address real clients, including their inconvenient assumptions, rather than only the clients the team wishes it had.
 
+```figure
+type: steps
+title: What a view promises its consumers
+caption: A view is a contract: change it deliberately, or version it.
+- What one row means
+- Each column's information | units, nulls, definitions
+- Translations from storage | without erasing differences
+- *Write behaviour | if writes are allowed at all
+```
+
 ## A view can translate storage without erasing semantic differences
 
 The new job schema might store first and last names separately while the old interface expects a display name. A view can construct that display value, but the formatting rule still needs a definition. Missing components, punctuation and international naming conventions can make naive concatenation unsuitable.
@@ -139,6 +149,17 @@ Review new dependencies deliberately. A view created for one operational screen 
 Monitor failures and material changes in usage. Unexpected row-count shifts, slow exports or repeated permission errors can reveal that the contract no longer fits its consumers. Investigate the meaning of the change before simply relaxing filters or adding more columns.
 
 Database views are most useful when they make information boundaries explicit. They can reduce direct coupling to storage, but their reliability comes from the contract maintained around them: stable meaning, supported behaviour and evidence that changes preserve both.
+
+```figure
+type: checklist
+title: Testing a view against its contract
+caption: Ordinary views do not store results; filtered views need a rule for writes that leave the population.
+- x Results match the row meaning
+- x Writes behave as documented, or are refused
+- x Access restrictions verified, not assumed
+- x Performance measured on real queries
+- *x A version plan for consumers that cannot move together
+```
 
 ## Source basis and further reading
 

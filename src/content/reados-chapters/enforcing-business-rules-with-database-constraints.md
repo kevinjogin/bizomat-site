@@ -44,6 +44,17 @@ Classification helps prevent false confidence. A positive quantity check does no
 | Allocation total stays within limit | Several records | How is concurrent change coordinated? |
 | Released work cannot return directly to draft | Old and new state | Which transitions are authorised? |
 
+```figure
+type: layers
+title: Rules by the data they involve
+caption: The wider the scope, the more the rule becomes a concurrency problem.
+- One value or row | quantity is positive
+- Several rows | reference unique within supplier
+- Related table | the item exists
+- Several records | allocation total within limit
+- *Old and new state | released work cannot return to draft
+```
+
 The table is a starting classification, not a guarantee that every database supports every rule declaratively.
 
 ## Prefer declarative controls when they express the rule
@@ -85,6 +96,16 @@ This distinction also helps testing. Test whether invalid final states are rejec
 An application often checks that an identifier is unused before inserting it. This provides helpful feedback when a duplicate already exists. It does not, by itself, prevent two requests from checking simultaneously and both finding the identifier available.
 
 This is an illustrative example. Request A checks supplier reference R-42 and finds no match. Before A inserts, request B performs the same check and also finds no match. Both then attempt to insert the reference.
+
+```figure
+type: timeline
+title: The race in check-then-insert
+caption: Each check is correct when it runs; only a unique constraint or a lock stops the duplicate.
+- 1 | Request A checks R-42 | no match
+- 2 | Request B checks R-42 | no match
+- 3 | A inserts R-42
+- *4 | B inserts R-42 | a duplicate, unless the database enforces uniqueness
+```
 
 A suitable database uniqueness constraint provides a final arbitration point. One conflicting write must fail under the enforced rule, even though both earlier checks appeared to succeed. The application must handle that failure and explain it without exposing raw database internals to the user.
 
