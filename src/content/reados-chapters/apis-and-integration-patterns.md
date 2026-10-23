@@ -89,6 +89,30 @@ The simplest pattern connects two systems directly, such as an online store to a
 
 In a **hub** pattern, systems connect to a central integration layer rather than to each other. The hub transforms data between formats, applies rules, routes messages and records what happened. **Integration platforms as a service**, sometimes called iPaaS, and workflow automation tools provide hubs as cloud services with ready-made connectors for popular applications. They suit small businesses well, provided someone owns and monitors the workflows.
 
+```figure
+type: svg
+title: Point-to-point or a hub
+alt: On the left, four systems each connected directly to every other, giving six links to maintain. On the right, the same four systems each connected once to a central integration hub, giving four links.
+caption: Direct links multiply as systems are added; a hub keeps one connection per system.
+viewbox: 0 0 640 220
+body:
+<text class="txb" x="150" y="20" text-anchor="middle">Point-to-point</text>
+<circle class="fi" cx="70" cy="60" r="16"/>
+<circle class="fi" cx="230" cy="60" r="16"/>
+<circle class="fi" cx="70" cy="180" r="16"/>
+<circle class="fi" cx="230" cy="180" r="16"/>
+<path class="ln" d="M70 60H230M70 180H230M70 60V180M230 60V180M70 60L230 180M230 60L70 180"/>
+<text class="txb" x="490" y="20" text-anchor="middle">Hub</text>
+<circle class="fi" cx="410" cy="60" r="16"/>
+<circle class="fi" cx="570" cy="60" r="16"/>
+<circle class="fi" cx="410" cy="180" r="16"/>
+<circle class="fi" cx="570" cy="180" r="16"/>
+<rect class="bxa pulse" x="460" y="100" width="60" height="40" rx="8"/>
+<path class="la flow" d="M410 60L460 110M570 60L520 110M410 180L460 130M570 180L520 130"/>
+<text class="tx txs" x="150" y="212" text-anchor="middle">6 links</text>
+<text class="tx txs" x="490" y="212" text-anchor="middle">4 links</text>
+```
+
 ### Events and message queues
 
 In an **event-driven** pattern, systems publish events, such as "order placed" or "job completed", and other systems subscribe to the events they care about. **Message queues** hold events until each subscriber has processed them, so a temporary outage does not lose information. This pattern decouples systems, so that adding a new subscriber does not require changing the publisher.
@@ -126,6 +150,17 @@ An outdoor equipment retailer sells through its own online store and a marketpla
 The retailer adopts an integration platform. Webhooks from the store and marketplace send new orders to the platform immediately, which maps them to the warehouse system's format and creates them through its API. When the warehouse despatches an order, an event updates the sales channel with tracking details and creates the invoice in the accounting package. Stock changes in the warehouse system update both channels within a minute.
 
 During testing, the team discovers that the marketplace sometimes sends the same order webhook twice. The integration uses the marketplace's order number to detect and ignore duplicates. A daily reconciliation compares order counts and totals across all systems and emails the operations manager if they differ. Within two months, re-keying has stopped, overselling is rare and the morning order processing that took two hours now takes minutes of exception checking.
+
+```figure
+type: steps
+title: An order's path through the integration
+caption: Duplicate webhooks are ignored by order number, and a daily reconciliation compares counts and totals.
+- Store or marketplace | webhook on a new order
+- Integration platform | maps the format
+- Warehouse system | order created by API
+- Despatch event | tracking back to the channel
+- *Accounting | invoice recorded
+```
 
 ## How this applies to a small Australian business
 

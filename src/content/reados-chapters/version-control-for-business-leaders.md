@@ -70,6 +70,27 @@ Branches should usually be short-lived. A branch that stays separate for weeks o
 
 **Merging** combines the changes from one branch into another, usually a feature branch into main. Git combines changes automatically when they affect different parts of the code. When two branches change the same lines in different ways, Git reports a **conflict**, and a developer must decide how to combine them. Conflicts are a normal part of team development; they are much easier to resolve when branches are small and merged frequently.
 
+```figure
+type: svg
+title: Branch, review, merge
+alt: A main line of commits. A branch splits off for a change, gains two commits, then returns to the main line through a pull request where tests run and a second developer reviews it. A tag marks the released version.
+caption: Work happens on a branch; it reaches the main line only after tests pass and someone reviews it.
+viewbox: 0 0 640 180
+body:
+<path class="ln" d="M20 120H620"/>
+<circle class="fi" cx="60" cy="120" r="9"/>
+<circle class="fi" cx="160" cy="120" r="9"/>
+<circle class="fi" cx="520" cy="120" r="9"/>
+<path class="la flow" d="M160 120C200 50 240 50 260 50H380C420 50 460 60 520 120"/>
+<circle class="fa" cx="280" cy="50" r="8"/>
+<circle class="fa" cx="370" cy="50" r="8"/>
+<text class="tx txs" x="325" y="30" text-anchor="middle">branch: new freight rates</text>
+<rect class="bxa" x="400" y="62" width="110" height="30" rx="6"/>
+<text class="txb" x="455" y="82" text-anchor="middle">tests + review</text>
+<text class="tx txs" x="20" y="150">main</text>
+<text class="txb" x="520" y="150" text-anchor="middle">tag v2.4.0</text>
+```
+
 ## Pull requests: reviewing before accepting
 
 A **pull request**, called a merge request on some platforms, is a proposal to merge a branch into main. It shows exactly which lines have changed, allows reviewers to comment, ask questions and request changes, and records the discussion and the approval. Platforms can also run automated tests on every pull request and block merging if tests fail.
@@ -145,6 +166,18 @@ Once contacted, the contractor finds that a change made the previous Friday, int
 The distributor's manager then sets new arrangements with the contractor. The code is moved into a repository in an account owned by the distributor, with the contractor and a second, part-time developer given access. Changes are made on branches and merged through pull requests, which the second developer reviews. Automated tests check freight calculations for a list of representative postcodes. Each release is tagged, and deployment to the server is done by a script from the tagged version.
 
 Some months later, a new pricing change causes a test for a regional postcode to fail before the pull request is merged. The error is fixed in minutes, and customers never see it.
+
+```figure
+type: compare
+title: A freight error, before and after version control
+cols: Code on a laptop | Repository the business owns
+best: 2
+caption: The second error was caught by a failing test before the change was merged; customers never saw it.
+- Where the code lives | The contractor's laptop | The distributor's own account
+- How changes ship | Uploaded straight to the server | Branches, pull requests, review
+- Checks | None | Automated tests, including regional postcodes
+- *A bad freight change | Most of a day fixing live orders | Fixed in minutes, before release
+```
 
 ## How this applies to a small Australian business
 

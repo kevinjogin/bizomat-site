@@ -29,6 +29,18 @@ Software passes through broadly similar stages regardless of size or method:
 5. **Release and deployment**: putting it into use.
 6. **Operation and maintenance**: running, supporting, fixing and improving it.
 
+```figure
+type: cycle
+title: The software life cycle
+caption: Maintenance is part of the cost from the start; unmaintained software becomes insecure and expensive to change.
+- Requirements
+- Design
+- Building
+- Testing
+- Release and deployment
+- *Operation and maintenance
+```
+
 These stages are not always sequential. Modern teams usually cycle through them repeatedly in small increments. But each stage still has to happen, and skipping one usually creates problems in the next.
 
 ## Requirements: what problem is being solved
@@ -172,6 +184,18 @@ The operations manager instead agrees a smaller first release. The requirements 
 The developer shows working screens every two weeks. During the third review, technicians point out that they often attend several units at one site, a scenario missing from the design; it is added before much code depends on it. Automated tests check calculations and data uploads, and the office team runs acceptance tests with real job scenarios in a staging environment. The first release goes live after ten weeks, with a rollback plan to paper if needed.
 
 Within a month, job notes reach the office the same day for nearly all jobs, invoicing is faster and the business has evidence to plan the next increment, stock tracking, with the same developer. The contract confirms that the business owns the code, which is stored in the business's own repository.
+
+```figure
+type: compare
+title: Nine months of everything, or one problem first
+cols: Proposed | Delivered first
+best: 2
+caption: A missed multi-unit site scenario was caught at the third fortnightly review, before much code depended on it.
+- Scope | Scheduling, quoting, stock, invoicing | Same-day job notes, photos and parts
+- Timing | Nine months | Working screens every two weeks
+- Users | Not involved | Two technicians and an administrator wrote the stories
+- *Next step | Everything at once | Stock tracking, planned from evidence
+```
 
 ## How this applies to a small Australian business
 

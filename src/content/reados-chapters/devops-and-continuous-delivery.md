@@ -69,6 +69,20 @@ A **delivery pipeline** is the automated sequence of steps that takes a change f
 7. **Deploys to production**, using a safe release technique.
 8. **Verifies** the release, checking health and key measures, and rolls back automatically if problems appear.
 
+```figure
+type: steps
+title: The delivery pipeline
+caption: Every change goes through the same automated path; problems are found in minutes, not weekends.
+- Build
+- Fast automated tests
+- Security checks
+- Package and tag
+- Deploy to test, slower tests
+- Approve, if required
+- Deploy safely to production
+- *Verify, or roll back
+```
+
 Each stage acts as a quality gate: a change that fails at any stage stops, and the team is notified. Because every change goes through the same pipeline, releases are consistent, and the pipeline itself becomes a record of what was tested and released.
 
 ## Tests that give real confidence
@@ -136,6 +150,18 @@ A subscription box business has a custom web application for managing subscripti
 The developers set up a pipeline in their code hosting service. Every change is built and tested automatically, including tests for payment calculations and subscription renewals. Changes are deployed to a test environment automatically and to production after a quick review, using a blue-green approach that allows an instant switch back. Feature flags let the business turn on a new referral program for staff first, then for all customers. Monitoring checks sign-up, login and checkout every minute and alerts the developers by phone.
 
 Within six months, the team releases small changes several times a week, usually during business hours. Problems still occur occasionally, but they are smaller, detected within minutes and reversed by switching back to the previous version, typically in under fifteen minutes. The business tracks the four delivery measures monthly and holds a short blameless review after each incident; two reviews lead to new automated tests for edge cases in subscription renewals.
+
+```figure
+type: compare
+title: From six-weekly Sunday releases to small daily changes
+cols: Before | Within six months
+best: 2
+caption: A blue-green approach lets the team switch back to the previous version quickly.
+- Frequency | About every six weeks | Several times a week
+- Timing | Sunday evening, after a weekend of testing | Business hours
+- Problems | About one release in three | Smaller, detected within minutes
+- *Recovery | An urgent fix | Switch back, usually under 15 minutes
+```
 
 ## How this applies to a small Australian business
 

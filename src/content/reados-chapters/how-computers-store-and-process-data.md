@@ -55,6 +55,17 @@ Spreadsheet applications store numbers as floating-point values. Excel keeps abo
 
 The same principle applies to postcodes, phone numbers and part numbers with leading zeros. Darwin's postcode, 0800, becomes 800 when treated as a number. Formatting a column as text before entering or importing data, or using import settings that specify column types, prevents the loss. The [programming concepts for managers](/reados/collections/software-and-cloud-foundations/programming-concepts-for-managers/) article in this series explains why the type of each piece of data matters.
 
+```figure
+type: compare
+title: When identifiers are stored as numbers
+cols: Stored as a number | Stored as text
+best: 2
+caption: Excel keeps about 15 significant digits; codes that look like numbers are not numbers.
+- Darwin postcode | 800 | 0800
+- *A 16-digit account number | Last digit lost | All 16 digits kept
+- Part number 00745 | 745 | 00745
+```
+
 ## Text and character encoding
 
 Text is stored as numbers too, with each character assigned a code by an **encoding**. The early, widely used ASCII standard defined 128 characters: unaccented English letters, digits, punctuation and control codes. Many regional encodings later extended it in incompatible ways, each covering different languages.
@@ -124,6 +135,16 @@ A national plumbing supplies business merges customer and pricing data from a ne
 The data team traces each problem to its cause. The import spreadsheet treated postcodes and account numbers as numbers, dropping leading zeros and losing digits beyond fifteen. The export from the acquired system used an older regional encoding, while the import assumed UTF-8. The acquired system rounded GST on each line, while the main system rounded on the total. Order timestamps were stored in UTC, and the monthly report grouped them by UTC date rather than by local business date.
 
 The team re-runs the import with postcodes and account numbers defined as text, the correct encoding specified and quotes recalculated using an agreed rounding rule. The monthly report is changed to group transactions by local business date. Checks are added to future imports: record counts, totals, the longest identifier length and a sample of names with special characters are compared between source and destination.
+
+```figure
+type: checklist
+title: Four causes behind one messy import
+caption: Checks now run on every import: record counts, totals and sample comparisons.
+- ? Postcodes and account numbers treated as numbers
+- ? An older regional encoding read as UTF-8
+- ? GST rounded per line in one system, on the total in the other
+- *? UTC timestamps grouped by UTC date, not local business date
+```
 
 ## How this applies to a small Australian business
 

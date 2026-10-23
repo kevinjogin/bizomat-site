@@ -60,6 +60,18 @@ A Python analysis is a sequence of steps, each written as a few lines of code:
 5. **Visualise** the results in charts.
 6. **Export** tables and charts to a report, spreadsheet or dashboard.
 
+```figure
+type: steps
+title: A typical analysis in code
+caption: Written as a script, every step can be rerun next month and checked by someone else.
+- Read the sources
+- Clean | test transactions, codes, gaps
+- Combine | match sales, products, customers
+- Calculate the measures
+- Visualise
+- *Export the report
+```
+
 Next month, the same code runs on the new data and produces the same report in minutes. Each step is visible in the code, so a reviewer can see exactly what was done, including which records were excluded and why.
 
 ## What notebooks are
@@ -143,6 +155,14 @@ A distributor of electrical components produces a monthly margin report for the 
 The analyst rewrites the process in Python over several weeks, with help from a contractor who reviews the code. The script reads the three sources, standardises product codes, excludes internal transfers, matches costs and rebates and calculates margin by product group, customer segment and sales representative. It checks that total sales match the general ledger, reports any products without costs and produces charts and a summary workbook for the meeting. The code is stored in version control, with notes explaining each business rule.
 
 The monthly report now takes about an hour, mostly spent reviewing exceptions. In the first run, the checks reveal 140 products with outdated costs that had been silently treated as zero-cost in the old workbook, overstating margin in one product group by several percentage points. Management decisions about pricing in that group are revised.
+
+```figure
+type: stats
+title: A monthly margin report, rewritten as a script
+caption: Built checks catch what a large workbook hid; management decisions changed in one product group.
+- About 1 hour | Monthly effort | mostly reviewing exceptions
+- *140 | Products found with outdated costs | silently zero-cost before
+```
 
 ## How this applies to a small Australian business
 

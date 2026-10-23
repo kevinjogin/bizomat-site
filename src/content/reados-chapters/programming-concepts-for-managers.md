@@ -59,6 +59,15 @@ A **loop** repeats a set of steps, for example for each line on an order, for ea
 
 Loops also explain why some programs slow down dramatically as data grows. A program that, for each of 1,000 orders, searches through all 1,000 orders again performs a million comparisons; with 100,000 orders, it performs ten billion. Code that seemed fast in testing can become unusable with real data volumes, which is why performance testing with realistic data matters.
 
+```figure
+type: bars
+title: Comparisons when each order searches every order
+max: 10000000000
+caption: Doubling data can quadruple work; code that seemed fast in testing can become unusable with real volumes.
+- 1,000 orders | 1000000 | a million
+- *100,000 orders | 10000000000 | ten billion
+```
+
 ## Functions: reusable steps
 
 A **function** packages a set of steps under a name so they can be used repeatedly. A function might calculate GST on an amount, check whether an email address is valid or convert a measurement from inches to millimetres. Functions take **inputs**, often called parameters, and return a **result**.
@@ -141,6 +150,17 @@ An industrial supplies business asks a developer to add volume discounts to its 
 During a short meeting, the developer works through examples with the sales manager and uncovers several questions. Do the thresholds apply before or after GST? Do they include freight? Can volume discounts be combined with existing trade discounts, and if so, in which order are they applied? What happens if a customer returns part of a discounted order and the remainder falls below the threshold? Are some products, such as clearance items, excluded?
 
 The sales manager agrees a decision table with twelve example orders and expected totals, covering trade and retail customers, excluded items and orders exactly on the thresholds. The developer writes a single discount function, tested against all twelve examples. The work takes four days rather than two, but the first version released matches what the business intended, and later changes to the thresholds take minutes because the rule exists in one place.
+
+```figure
+type: checklist
+title: Questions behind "5% over $1,000, 10% over $5,000"
+caption: Twelve agreed example orders turned a two-day guess into four days of work that was right first time.
+- ? Before or after GST?
+- ? Including freight?
+- ? Combined with trade discounts, and in what order?
+- ? What happens on returns?
+- *x Orders exactly on the thresholds tested
+```
 
 ## How this applies to a small Australian business
 

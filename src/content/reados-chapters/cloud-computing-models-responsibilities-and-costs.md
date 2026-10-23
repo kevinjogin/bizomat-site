@@ -50,6 +50,15 @@ PaaS reduces the operating burden on development teams, because patching, scalin
 
 SaaS is the form of cloud computing most small businesses use most. It offers the least control over how the software works and the least technical burden.
 
+```figure
+type: layers
+title: Who manages what in each service model
+caption: Moving down the list hands more work to the provider, in exchange for less control.
+- Infrastructure as a service | provider runs hardware; you install and manage the rest
+- Platform as a service | provider runs servers and operating systems; you bring code and data
+- *Software as a service | a complete application: least control, least burden
+```
+
 ## Deployment models
 
 Cloud services are also described by who uses the infrastructure:
@@ -147,6 +156,17 @@ An architectural practice with 20 staff moved to cloud services three years ago:
 A review finds several causes. Rendering virtual machines created for a large competition entry were never switched off. Daily snapshots of every virtual machine have been kept indefinitely. Eleven SaaS licences belong to former staff or contractors. Large project files are downloaded repeatedly from cloud storage to the office, incurring transfer charges. The review also finds that two former contractors could still sign in to the file storage service, and that the practice has no backup of its SaaS data beyond what the providers retain.
 
 The practice assigns its office manager as cost owner, sets monthly budget alerts and tags resources by project. Rendering machines are scheduled to run only when needed, snapshots are kept for 30 days, unused licences are removed and a local cache reduces repeated downloads. Former contractors' access is removed, multi-factor authentication is enforced and an independent backup service is added for email and files. Monthly costs fall to about $3,200, including the new backup service, and the practice now knows what it pays for and why.
+
+```figure
+type: bars
+title: Monthly cloud costs at a 20-person practice
+unit: $'000
+max: 6
+caption: Idle rendering machines, snapshots kept forever, eleven unused licences and repeated downloads; the new figure includes a backup service.
+- Three years ago | 2
+- Before the review | 5.5
+- *After the review | 3.2
+```
 
 ## How this applies to a small Australian business
 

@@ -54,6 +54,16 @@ Containers are often compared with **virtual machines**, which also isolate soft
 
 The two are frequently combined: containers commonly run inside virtual machines in cloud environments, gaining the efficiency of containers and the stronger isolation of virtual machines.
 
+```figure
+type: balance
+title: Containers and virtual machines
+left: Container
+right: Virtual machine
+caption: A container packages an application with what it needs; a virtual machine emulates a whole computer.
+- Shares the host's operating system | Runs its own operating system
+- Small, starts in seconds | Larger, slower to start
+```
+
 ## Orchestration: running many containers
 
 A single application may consist of several containers, such as a web application, a background worker and a cache. Larger systems may run hundreds. **Orchestration** tools manage containers at scale. They:
@@ -137,6 +147,18 @@ A training provider runs a custom booking and certificate system on a cloud virt
 A new developer packages the application into containers: one for the web application and one for a background task that emails certificates. Build files and infrastructure definitions for the virtual machine, firewall, managed database service, storage and domain records are stored in the business's own repository. The database moves to a managed service with automated backups. Secrets move to the cloud provider's secret store.
 
 Test and production environments are now created from the same definitions and run the same images, so changes are tested reliably before release. Operating system and library updates are applied by rebuilding images, tested and deployed during business hours. When the business runs a recovery exercise, the developer rebuilds the entire production environment in a new region from the definitions and restores the database from backup in under three hours; previously, no one could have estimated how long a rebuild would take.
+
+```figure
+type: compare
+title: A hand-built server, rebuilt as code
+cols: Before | After
+best: 2
+caption: Infrastructure definitions and build files now live in the business's own repository.
+- Setup | By hand, five years ago | Defined in version-controlled files
+- Updates | Postponed: nobody knew the dependencies | Rebuild images, test, deploy in business hours
+- Environments | A test copy that differed | Test and production from the same definitions
+- *Recovery | Uncertain | Rebuilt from the definitions in a recovery exercise
+```
 
 ## How this applies to a small Australian business
 

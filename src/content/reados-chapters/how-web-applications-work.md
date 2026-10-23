@@ -46,6 +46,27 @@ Others, such as PUT, PATCH and DELETE, update or remove resources and are widely
 
 Responses carry a **status code** that indicates the result. Familiar examples include 200 for success, 301 for a resource that has moved permanently, 404 for a resource that cannot be found and 500 for an error on the server. Status codes are useful when diagnosing problems: a 404 suggests a wrong or outdated link, while a 500 suggests something failed inside the application.
 
+```figure
+type: svg
+title: A request and its response
+alt: A browser sends a request over HTTPS to a web server, which may query a database, then returns a response with a status code such as 200 for success, 301 for moved, 404 for not found or 500 for a server error.
+caption: Every page is a request and a response; the status code says what happened.
+viewbox: 0 0 640 190
+body:
+<rect class="bx" x="20" y="60" width="140" height="56" rx="8"/>
+<text class="txb" x="90" y="93" text-anchor="middle">Browser</text>
+<rect class="bxa" x="250" y="60" width="140" height="56" rx="8"/>
+<text class="txb" x="320" y="93" text-anchor="middle">Web server</text>
+<rect class="bxi" x="480" y="60" width="140" height="56" rx="8"/>
+<text class="tx" x="550" y="93" text-anchor="middle">Database</text>
+<path class="la flow" d="M160 76H250"/>
+<path class="ln flow" d="M250 102H160"/>
+<path class="ln dsh" d="M390 88H480"/>
+<text class="tx txs" x="205" y="68" text-anchor="middle">request</text>
+<text class="tx txs" x="205" y="122" text-anchor="middle">response</text>
+<text class="tx txs" x="320" y="160" text-anchor="middle">200 OK · 301 moved · 404 not found · 500 server error</text>
+```
+
 ## HTTP and HTTPS
 
 Requests and responses follow the **Hypertext Transfer Protocol**, or HTTP. **HTTPS** is HTTP sent over an encrypted connection using Transport Layer Security, or TLS. Encryption prevents others on the network from reading or altering the information exchanged, such as passwords, payment details and personal information, and a **certificate** proves that the browser is talking to the genuine site rather than an impostor.
@@ -151,6 +172,16 @@ A tile and stone supplier runs an online trade portal where builders check stock
 Before spending, the business asks its developer to measure where the time goes. Browser tools show that the product pages load more than 6 MB of full-resolution photographs. Server logs show that the order status page takes several seconds because it runs a separate database query for every order line. Monday mornings are slow because many builders check orders at the same time.
 
 The developer resizes and compresses images and serves them through a CDN, adds a database index and rewrites the order status query to fetch all lines at once, and caches the product catalogue for a few minutes at a time while keeping stock levels live. Page load times fall from several seconds to around one second, Monday peaks are handled without a larger server and the hosting upgrade is not needed. While reviewing the system, the developer also finds an outdated plugin with a known vulnerability and updates it.
+
+```figure
+type: compare
+title: A slow trade portal, measured before spending
+cols: Cause found | Fix
+caption: Page loads fell from several seconds to about one second without a bigger server.
+- Product pages | Over 6 MB of full-size photos | Resized, compressed, served by a CDN
+- Order status | One query per order line | An index and one query for all lines
+- *Monday peaks | Everyone loading the catalogue | Catalogue cached for minutes; stock kept live
+```
 
 ## How this applies to a small Australian business
 
