@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import Container from '../../../../components/Container.astro';
-import ReadOSAnimatedCover from '../../../../components/ReadOSAnimatedCover.astro';
+import ReadOSBookHero from '../../../../components/ReadOSBookHero.astro';
 import ReadOSChapterList from '../../../../components/ReadOSChapterList.astro';
 import { getChapters } from '../../../../utils/content.ts';
 import { buildReadOSCollections, readosCollectionHref, readosCollectionChapterHref, type ReadOSCollection } from '../../../../utils/reados-collections.ts';
@@ -16,25 +16,19 @@ const href = readosCollectionHref(book);
 ---
 <BaseLayout title={`${book.title} (READOS)`} description={`${book.description} Read the full KEVOS® collection in structured chapters.`}
   breadcrumbs={[{label:'Home',href:'/'},{label:'READOS',href:'/reados/'},{label:book.title,href}]}>
-  <section class="heading"><Container size="narrow"><div class="book-intro"><div class="book-copy">
-    <p class="eyebrow">READOS / {book.category}</p>
-    <h1>{book.title}</h1>
-    <p class="lead">{book.description}</p>
-    <p class="metadata">{book.chapters.length} chapters · About {book.minutes} minutes · Free to read</p>
-    <a class="start" href={readosCollectionChapterHref(book,book.chapters[0])}>Start reading →</a></div><div class="book-art"><ReadOSAnimatedCover title={book.title} category={book.category} slug={book.slug} chapters={book.chapters.length}/></div></div>
-  </Container></section>
+  <ReadOSBookHero crumbs={[{label:'READOS',href:'/reados/'},{label:book.category,href:`/reados/#${book.category.toLowerCase()}`}]}
+    eyebrow={`READOS / ${book.category}`} title={book.title} description={book.description}
+    meta={[`${book.chapters.length} chapters`,`About ${book.minutes} minutes`,'Free to read']}
+    startHref={readosCollectionChapterHref(book,book.chapters[0])} cover={{title:book.title,category:book.category,slug:book.slug,chapters:book.chapters.length}} />
   <section class="contents"><Container size="narrow">
     <ReadOSChapterList items={book.chapters.map((chapter,index)=>({href:readosCollectionChapterHref(book,chapter),number:index+1,title:chapter.data.title,description:chapter.data.description,body:chapter.body,id:chapter.id}))}>
       <p class="note">These topic-based reading collections are organised alphabetically; chapters may be read in any order.</p>
     </ReadOSChapterList>
-    <a href="/reados/">← All books</a>
+    <a class="back" href="/reados/">← All READOS books</a>
   </Container></section>
 </BaseLayout>
 <style>
-.book-intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,270px);gap:clamp(2rem,5vw,5rem);align-items:center}.book-art{width:100%}@media(max-width:680px){.book-intro{grid-template-columns:1fr}.book-art{max-width:220px;order:-1}}
-
-.heading{padding:clamp(3rem,6vw,6rem) 0;border-bottom:1px solid var(--line)}
-.heading h1{margin:1rem 0}.metadata{color:var(--muted)}.start{display:inline-block;margin-top:1rem;color:var(--accent);font-weight:700}
-.contents{padding:clamp(3rem,6vw,5rem) 0}
+.contents{padding:clamp(3rem,6vw,5rem) 0 var(--space-section)}
 .note{color:var(--muted);font-size:.9rem;margin:2rem 0}
+.back{font-size:.9rem;color:var(--accent)}
 </style>

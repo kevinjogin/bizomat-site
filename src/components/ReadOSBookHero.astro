@@ -1,0 +1,41 @@
+---
+// The header shown on every READOS book page: navigation, eyebrow, title, summary, details,
+// a start button and the animated cover, in the same centred reading column as the chapters.
+import Container from './Container.astro';
+import ReadOSAnimatedCover from './ReadOSAnimatedCover.astro';
+
+interface Crumb { label: string; href: string }
+interface Cover { title: string; category: string; slug: string; motif?: string; publicationLabel?: string; chapters: number }
+interface Props { crumbs: Crumb[]; eyebrow: string; title: string; subtitle?: string; description: string; meta: string[]; startHref: string; draft?: boolean; cover: Cover }
+const { crumbs, eyebrow, title, subtitle, description, meta, startHref, draft = false, cover } = Astro.props;
+---
+<section class="book-hero"><Container size="narrow">
+  <nav class="book-crumb" aria-label="Book navigation">{crumbs.map((crumb, i) => <>{i > 0 && <span aria-hidden="true">/</span>}<a href={crumb.href}>{crumb.label}</a></>)}</nav>
+  <div class="book-intro">
+    <div class="book-copy">
+      <p class="eyebrow">{eyebrow}</p>
+      {draft && <p class="book-draft">Draft preview · not published</p>}
+      <h1>{title}</h1>
+      {subtitle && <p class="book-subtitle">{subtitle}</p>}
+      <p class="book-lead">{description}</p>
+      <p class="book-meta">{meta.join(' · ')}</p>
+      <a class="book-start" href={startHref}>Start reading <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="book-art"><ReadOSAnimatedCover {...cover} /></div>
+  </div>
+</Container></section>
+<style>
+.book-hero{padding:clamp(1.5rem,3vw,2.2rem) 0 clamp(3rem,6vw,5rem);border-bottom:1px solid var(--line)}
+.book-crumb{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:clamp(1.75rem,4vw,3rem);font-size:.82rem;color:var(--muted)}
+.book-crumb a{color:inherit;text-decoration:none}.book-crumb a:hover{color:var(--accent)}
+.book-intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,270px);gap:clamp(2rem,5vw,4.5rem);align-items:center}
+.book-copy h1{margin:1rem 0;font-size:clamp(2.2rem,5vw,3.6rem);line-height:1.08}
+.book-subtitle{margin:0 0 1rem;font-family:var(--font-serif);font-size:clamp(1.1rem,2vw,1.4rem);color:var(--ink-2)}
+.book-lead{margin:0 0 1rem;color:var(--ink-2)}
+.book-meta{margin:0 0 1.5rem;font-size:.88rem;color:var(--muted)}
+.book-draft{display:inline-block;margin:.75rem 0 0;padding:.2rem .6rem;border:1px solid var(--accent);font-size:.8rem;color:var(--accent)}
+.book-start{display:inline-flex;align-items:center;gap:1.25rem;padding:.8rem 1.3rem;background:var(--accent);color:var(--on-accent);font-weight:660;text-decoration:none}
+.book-start:hover{color:var(--on-accent);filter:brightness(1.1)}
+.book-art{width:100%}
+@media(max-width:680px){.book-intro{grid-template-columns:1fr}.book-art{order:-1;max-width:220px}}
+</style>

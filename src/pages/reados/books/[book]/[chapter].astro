@@ -38,7 +38,7 @@ const href=readosChapterHref(book,chapter);
     <Container size="narrow"><div class="prose reading-copy"><Content /></div>
     <nav class="reader-navigation" aria-label="Chapter navigation">
       {previous?<a rel="prev" href={readosChapterHref(book,previous)}>← Previous chapter<span>{previous.data.title}</span></a>:<a href={readosBookHref(book)}>← All chapters</a>}
-      {next?<a rel="next" href={readosChapterHref(book,next)}>Next chapter →<span>{next.data.title}</span></a>:<a href={readosBookHref(book)}>Back to contents →</a>}
+      {next?<a rel="next" href={readosChapterHref(book,next)}>Next chapter →<span>{next.data.title}</span></a>:<a href={readosBookHref(book)}>Back to all chapters →</a>}
     </nav>
     <p class="origin">Part of <a href={readosBookHref(book)}>{book.title}</a> in KEVOS® READOS.{canonical && <> Also in its <a href={canonical}>edited READOS book</a>.</>}</p>
     </Container>
