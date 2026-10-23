@@ -3,7 +3,6 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { loadWorkosTools, hasStandaloneGuide, toolPageHref, toolAppHref } from '../src/utils/workos-tools.ts';
-// @ts-expect-error plain ESM script without type declarations
 import { parsePage, audit, sectionOf } from '../scripts/seo/inventory.mjs';
 
 test('tool pages exist only for tools whose guide stands alone, and keep the calculator link', () => {

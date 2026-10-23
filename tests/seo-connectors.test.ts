@@ -1,18 +1,13 @@
+// @ts-nocheck -- runtime tests with deliberately partial mocks of fetch and API responses.
 // AutoSEO connectors and decision engine, tested against mocked HTTP responses. No real API is called.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-// @ts-expect-error plain ESM modules
 import { fetchJson, redact } from '../scripts/seo/lib/http.mjs';
-// @ts-expect-error plain ESM modules
 import { collectSearchConsole, serviceAccountAssertion, sydneyDate } from '../scripts/seo/lib/gsc.mjs';
-// @ts-expect-error plain ESM modules
 import { collectBing, bingDate } from '../scripts/seo/lib/bing.mjs';
-// @ts-expect-error plain ESM modules
 import { collectCloudflare } from '../scripts/seo/lib/cloudflare.mjs';
-// @ts-expect-error plain ESM modules
 import { changedUrls, contentHash, submitIndexNow } from '../scripts/seo/lib/indexnow.mjs';
-// @ts-expect-error plain ESM modules
 import { analyse, aggregate } from '../scripts/seo/lib/engine.mjs';
 
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
