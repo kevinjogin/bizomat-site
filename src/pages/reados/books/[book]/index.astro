@@ -2,8 +2,7 @@
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import Container from '../../../../components/Container.astro';
 import ReadOSAnimatedCover from '../../../../components/ReadOSAnimatedCover.astro';
-import ReadOSChapterThumb from '../../../../components/ReadOSChapterThumb.astro';
-import KevosFigureMotion from '../../../../components/KevosFigureMotion.astro';
+import ReadOSChapterList from '../../../../components/ReadOSChapterList.astro';
 import { getChapters } from '../../../../utils/content.ts';
 import { buildReadOSBooks, readosBookHref, readosChapterHref, type ReadOSBook } from '../../../../utils/reados.ts';
 
@@ -25,28 +24,17 @@ const href = readosBookHref(book);
     <a class="start" href={readosChapterHref(book,book.chapters[0])}>Start reading →</a></div><div class="book-art"><ReadOSAnimatedCover title={book.title} category={book.category} slug={book.slug} publicationLabel="READOS VOLUME" chapters={book.chapters.length}/></div></div>
   </Container></section>
   <section class="contents"><Container size="narrow">
-    <h2>Contents</h2>
-    <ol>{book.chapters.map((chapter,index)=>
-      <li><a href={readosChapterHref(book,chapter)}>
-        <span class="number">{String(index+1).padStart(2,'0')}</span>
-        <ReadOSChapterThumb body={chapter.body} id={chapter.id} />
-        <span><strong>{chapter.data.title}</strong><small>{chapter.data.description}</small></span>
-        <span aria-hidden="true">↗</span>
-      </a></li>)}</ol>
-    <p class="note">The reading collection is grouped by subject and presented in alphabetical order; chapter order does not imply a prerequisite learning sequence.</p>
+    <ReadOSChapterList items={book.chapters.map((chapter,index)=>({href:readosChapterHref(book,chapter),number:index+1,title:chapter.data.title,description:chapter.data.description,body:chapter.body,id:chapter.id}))}>
+      <p class="note">The reading collection is grouped by subject and presented in alphabetical order; chapter order does not imply a prerequisite learning sequence.</p>
+    </ReadOSChapterList>
     <a href="/reados/">← All books</a>
   </Container></section>
-  <KevosFigureMotion />
 </BaseLayout>
 <style>
 .book-intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,270px);gap:clamp(2rem,5vw,5rem);align-items:center}.book-art{width:100%}@media(max-width:680px){.book-intro{grid-template-columns:1fr}.book-art{max-width:220px;order:-1}}
 
 .heading{padding:clamp(3rem,6vw,6rem) 0;border-bottom:1px solid var(--line)}
 .heading h1{margin:1rem 0}.metadata{color:var(--muted)}.start{display:inline-block;margin-top:1rem;color:var(--accent);font-weight:700}
-.contents{padding:clamp(3rem,6vw,5rem) 0}.contents h2{margin-bottom:1.5rem}.contents ol{margin:0;padding:0;list-style:none;border-top:1px solid var(--line)}
-.contents li a{display:grid;grid-template-columns:2.5rem clamp(7.5rem,20vw,10.5rem) 1fr 1rem;gap:1rem 1.25rem;padding:1.1rem 0;border-bottom:1px solid var(--line);text-decoration:none;align-items:center}
-.contents li a:hover :global(.toc-thumb),.contents li a:focus-visible :global(.toc-thumb){border-color:var(--accent);box-shadow:0 6px 18px -10px var(--accent)}
-@media(max-width:560px){.contents li a{grid-template-columns:1.6rem 1fr;gap:.7rem .75rem;align-items:start}.contents li a>.number{grid-row:span 2}.contents li a>:global(.toc-thumb){aspect-ratio:2/1}.contents li a>span[aria-hidden]:last-child{display:none}}
-.contents li strong{display:block;font-weight:650}.contents li small{display:block;color:var(--muted);margin-top:.3rem;font-size:.85rem}
-.number,.note{color:var(--muted)}.note{font-size:.9rem;margin:2rem 0}
+.contents{padding:clamp(3rem,6vw,5rem) 0}
+.note{color:var(--muted);font-size:.9rem;margin:2rem 0}
 </style>
