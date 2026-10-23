@@ -27,6 +27,24 @@ Across a product's development, two things change in opposite directions.
 
 **Remaining influence** falls as commitments accumulate. Before tooling is ordered, changes cost mainly design time. After tooling is made, the design is effectively fixed. Once production is stable and customers have approved the product, a change may require new tooling, retesting and customer re-approval, costs that often exceed the saving.
 
+```figure
+type: svg
+title: Committed cost rises as influence falls
+alt: A conceptual chart across four stages, concept, design, tooling and production. The committed cost curve rises steeply early and flattens near the top. The remaining influence curve starts high and falls away, crossing the first curve during design.
+caption: By the time a design is released, most of the manufacturing cost has been decided, though little has been spent.
+viewbox: 0 0 600 270
+body:
+<path class="ln" d="M60 30V230H570"/>
+<path class="la draw" d="M60 220C150 80 220 50 570 40"/>
+<path class="ln dsh draw" d="M60 40C160 60 240 190 570 220"/>
+<text class="txa" x="566" y="28" text-anchor="end">Committed cost</text>
+<text class="tx txs" x="70" y="28">Remaining influence</text>
+<text class="tx txs" x="110" y="252" text-anchor="middle">Concept</text>
+<text class="tx txs" x="240" y="252" text-anchor="middle">Design</text>
+<text class="tx txs" x="380" y="252" text-anchor="middle">Tooling</text>
+<text class="tx txs" x="510" y="252" text-anchor="middle">Production</text>
+```
+
 The result is a structural mismatch: at the point where the business has spent almost nothing, it has decided almost everything; at the point where it is spending heavily, it can change very little. A widely repeated rule of thumb holds that most of a product's manufacturing cost is committed by the end of design. The exact share varies by industry and product and is not a measured constant, but the direction is well accepted, and it is the direction that matters for management.
 
 ## Common misreadings
@@ -119,7 +137,29 @@ The redesign uses three laser-cut and folded sheet parts, one fastener type, a t
 | Saving per unit | — | $32 |
 | Saving over 24,000 units | — | $768,000 |
 
+```figure
+type: compare
+title: Redesigning a stainless mounting assembly
+cols: Original design | Revised design
+best: 2
+caption: About $32 saved a unit, or about $768,000 over 24,000 units.
+- Parts | 7, machined from solid bar | 3, laser-cut and folded sheet
+- Fastener types | 4 | 1
+- Tight tolerances | On almost every face | Only on the bore
+- *Unit cost | About $86 | About $54
+```
+
 The review and redesign add about five weeks and roughly $19,000 in engineering time and prototypes. Had the same change been made two years after launch, only the remaining 16,000 units would benefit, worth about $512,000 before the costs of new tooling, retesting and customer re-approval, and engineering time would have been taken from other work.
+
+```figure
+type: bars
+title: What the same redesign is worth, by when it happens
+unit: $
+max: 800000
+caption: The early review cost about five weeks and $19,000; two years after launch, only the remaining 16,000 units would benefit.
+- *Before launch, 24,000 units | 768000
+- Two years later, before retooling and retesting | 512000
+```
 
 ## How this applies to a small Australian business
 

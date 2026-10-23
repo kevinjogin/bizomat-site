@@ -46,6 +46,18 @@ Several systems describe colour, each suited to a different use:
 | RAL and AS 2700 colour references | Standard colour references for paints and coatings | Powder coat, paint and product finishes |
 | CIELAB (L\*a\*b\*) | Device-independent measurement of colour, by lightness and two colour axes | Measuring, specifying and comparing colour objectively |
 
+```figure
+type: decision
+title: Choosing how to specify a colour
+question: Where will the colour appear?
+caption: A brand colour needs a value for every medium, plus a measured reference to compare them against.
+- On screens | RGB and HEX
+- In commercial print | CMYK process inks
+- *Brand colour, packaging, signage | A spot colour, such as Pantone
+- Paint and powder coat | RAL or AS 2700 reference
+- Measuring and comparing | CIELAB values
+```
+
 **Spot colours** are inks mixed to a specific colour and printed as a separate ink, giving consistent, accurate results for brand colours. **Process colours** build colours from the four CMYK inks, which is economical for photographs and full-colour work but cannot reproduce every spot colour.
 
 **CIELAB** is the most important system for quality control, because it describes colour numerically, independent of any device, and allows differences to be measured.
@@ -143,6 +155,17 @@ A practical colour standard for a business includes:
 This is an illustrative example. A manufacturer of electrical enclosures uses a distinctive orange as its brand colour on powder-coated doors, printed brochures, cartons and its website. Customers comment that brochure photos look brownish compared with the products, cartons from a new supplier look red, and a recent batch of doors looks noticeably different from older stock on the same site.
 
 **Investigation.** The business has only an RGB value for its website and a paint supplier's product code. Measurements with a spectrophotometer against a retained door from an earlier batch show the new batch at about ΔE 4.5, a clearly visible difference, and the brochure orange at about ΔE 6.5 from the doors, partly because the bright orange is outside the CMYK gamut of the printing process used.
+
+```figure
+type: bars
+title: How far the brand orange had drifted
+unit: ΔE
+max: 7
+caption: Typical tolerances for important commercial colours are about 2 to 3 ΔE; the powder coater now reports each batch against 2.0.
+- Brochure orange against the doors | 6.5
+- New door batch against a retained door | 4.5
+- *Tolerance now set for each batch | 2.0
+```
 
 **Changes.**
 

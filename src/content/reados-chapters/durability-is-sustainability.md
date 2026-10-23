@@ -87,6 +87,18 @@ Use a short review for new products and significant equipment purchases:
 5. **Maintainability**: can degradation be detected and corrected before functional failure?
 6. **Whole-of-life trade-off**: what combination of material, margin, maintenance and replacement gives the best result over the life?
 
+```figure
+type: steps
+title: A lifecycle durability review
+caption: Fit-for-purpose performance over the whole life, not maximum durability at any cost.
+- Required function and life
+- Governing conditions
+- Failure modes and interfaces
+- Analysis fidelity
+- Maintainability
+- *Whole-of-life trade-off
+```
+
 Keep safety margins separate from economic margins. Safety requirements are not trade-offs. Beyond them, understand where extra durability creates value and where it becomes overdesign.
 
 ## Comparing options by cost per year of service
@@ -132,6 +144,16 @@ The business redesigns the corner joint with a gusset and a better weld detail, 
 | Typical service life | 18 months | 6 years or more |
 | Steel used per year of service | About 32 kg | About 8.5 kg |
 | Cost per year of service | About $253 | About $68 |
+
+```figure
+type: bars
+title: Cost per year of service for a steel stillage
+unit: $
+max: 280
+caption: About 8% more to make and 6% more steel, but six years or more of service instead of 18 months.
+- Original light frame, $380 | 253
+- *Redesigned corner joint, $410 | 68
+```
 
 The redesign uses more material per unit but far less per year of service, and costs customers much less over time. The business markets the stillage on its service life and offers an inspection and repair service, which builds repeat business.
 

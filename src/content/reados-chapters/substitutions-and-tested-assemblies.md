@@ -73,6 +73,15 @@ The gate should trigger on any change to a component's manufacturer, model, form
 | Is the proposed part named in the evidence we hold? | Read the test report or certificate itself, not a datasheet | Go to the next question | Technical reviewer |
 | Do we hold evidence that covers the new combination? | Evidence must be in hand, not "available on request" | Refuse, or obtain new evidence before changing | Named responsible engineer |
 
+```figure
+type: steps
+title: A substitution gate in three questions
+caption: Authority follows the consequence of the claim, not the price of the part.
+- Does a claim depend on this assembly? | if not, a normal purchase by the buyer
+- Is the new part named in our evidence? | read the report itself; technical reviewer
+- *Do we hold evidence for the new combination? | if not, refuse or obtain it; responsible engineer
+```
+
 ### Four rules that make it work
 
 1. **No routine purchasing approval inside high-consequence assemblies.** Where the claim involves personal safety, structural adequacy or a regulated performance requirement, buyers cannot approve substitutions at any price.
@@ -89,6 +98,17 @@ This is an illustration. A small business builds electrical control panels for i
 **With a gate.** The buyer raises the substitution. The technical reviewer traces the panel to the verification evidence and sees that it names the original breakers. The responsible engineer checks the requirements and the manufacturers' data, and decides that verification must be updated before the switch. The work takes a few days and some engineering cost. The business then offers the customer the lower-cost panel with updated evidence, and records the new configuration so future builds match it.
 
 The saving from the cheaper breakers is real, but only after the evidence has caught up.
+
+```figure
+type: compare
+title: Cheaper breakers in a verified control panel
+cols: Without a gate | With a gate
+best: 2
+caption: The saving is real, but only after the evidence has caught up.
+- Approval | The buyer, as like-for-like | Technical review against the evidence
+- Verification | Records still name the old breakers | Updated before the switch
+- *Outcome | Assessed after the event, at the business's cost | Lower-cost panel offered with evidence
+```
 
 ## Build a simple configuration register
 

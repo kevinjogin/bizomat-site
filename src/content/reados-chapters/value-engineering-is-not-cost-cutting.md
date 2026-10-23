@@ -108,6 +108,19 @@ Suppliers and contractors often know cheaper or better ways to meet a function, 
 | Decide | Select, defer or reject, with the reasons recorded |
 | Verify | Confirm the promised value survives detailed design and delivery |
 
+```figure
+type: steps
+title: A seven-stage value process
+caption: Agree the value criteria before generating alternatives, and verify that the value survives delivery.
+- Understand | need, constraints, value criteria
+- Analyse functions | separate need from inherited solution
+- Generate | genuinely different alternatives
+- Evaluate | whole-of-life value, risk, reversibility
+- Develop | work up the strongest options
+- Decide | select, defer or reject, with reasons
+- *Verify | through detailed design and delivery
+```
+
 The last stage is often skipped. A saving agreed in a workshop can be eroded by later changes, and a function quietly dropped can return as a problem after delivery.
 
 ## Running a value review in a small business
@@ -135,6 +148,17 @@ Instead, the team runs a short value review. It lists the functions: contain wat
 - **A custom drain fitting** can be replaced with a standard one that meets the same requirements: saving about $45.
 
 Together these save about $335, bringing the cost to about $2,425, within about 1% of target, with fewer parts, simpler spares and no loss of hygiene or durability. The team verifies the changes with a prototype and a cleaning trial before release.
+
+```figure
+type: stack
+title: Savings from a value review of a wash station
+unit: $
+caption: $2,760 down to about $2,425 against a $2,400 target, without the $180 thinner sheet that would have cost durability.
+- *Folded under-frame for five brackets | 140
+- Standard finish on hidden surfaces | 90
+- Standard tap across the range | 60
+- Standard drain fitting | 45
+```
 
 ## How this applies to a small Australian business
 

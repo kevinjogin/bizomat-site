@@ -69,6 +69,19 @@ Evaluate each recycled-material configuration through seven gates. A configurati
 | Feedstock security and variability | Can the recycled input be sourced reliably and consistently? | Supplier capacity, batch testing, specifications |
 | Commercial value | Does it make the product better or cheaper overall? | Full unit cost including sorting, testing and rejects |
 
+```figure
+type: checklist
+title: Seven gates for a recycled material
+caption: More recycled content is not automatically better; the product must still do its job.
+- x Function | meets the product specification
+- x Environmental advantage | better per unit of function
+- x Manufacturability | consistent at production scale
+- x Compliance and assurance | standards, codes, certification
+- x Durability | lasts as long as the product should
+- x Feedstock | reliable and consistent supply
+- *x Commercial value | better or cheaper overall
+```
+
 ### Function
 
 Test the product, not just a lab sample, against its specification. Report the **performance margin**, how far results sit above the minimum requirement, not just whether they pass. A configuration that only just passes in controlled conditions may fail under normal production variation.
@@ -127,6 +140,18 @@ Long-term evidence takes time, and waiting indefinitely is not practical. The an
 | Field monitoring | Confirm durability over time | Ongoing inspection and records |
 | Scale | Full adoption with supply and quality systems in place | Capital, supply contracts |
 
+```figure
+type: steps
+title: Stage the evidence
+caption: Each stage commits more, so weak options should be eliminated early.
+- Screening | small lab batches
+- Process trials | short runs on real equipment
+- Accelerated testing | ageing and failure mechanisms
+- Pilot | one line, customer or site
+- Field monitoring | durability over time
+- *Scale | supply and quality systems in place
+```
+
 The required evidence depends on consequence. A non-structural decorative product needs less proof than a load-bearing or safety-related one. Funding should rise as uncertainty falls.
 
 ## Know when to stop
@@ -159,6 +184,18 @@ Trial batches replace 0%, 15%, 30% and 50% of the sand by weight. The results, a
 | 15% | 98% | 2% | No visible change |
 | 30% | 93% | 4% | Extra water needed for workability; slightly more surface pinholes |
 | 50% | 84% | 11% | Surface defects; strength margin becomes thin under normal variation |
+
+```figure
+type: bars
+title: Recycled glass in place of sand in concrete pavers
+unit: %
+max: 100
+caption: Breaking strength against the standard mix: 15% adopted, 30% piloted on one line, 50% stopped.
+- No glass | 100 | 2% rejects
+- *15% glass | 98 | 2% rejects
+- 30% glass | 93 | 4% rejects
+- 50% glass | 84 | 11% rejects
+```
 
 The business adopts 15% for its standard range immediately, because performance and reject rates are essentially unchanged. It runs a pilot of 30% for one product line, with the recommended testing for chemical reaction and some pavers placed in the yard for observation, before deciding whether to extend it. It stops the 50% pathway. It writes a simple incoming check for glass deliveries and agrees with the recycler that out-of-specification batches can be returned.
 

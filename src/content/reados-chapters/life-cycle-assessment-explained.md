@@ -29,6 +29,16 @@ The standards describe LCA as four connected phases. In practice, the work is it
 | Impact assessment | What do those flows mean environmentally? | Results for impact categories such as climate change, water use or eutrophication |
 | Interpretation | What can we conclude, and how confident are we? | Conclusions, limitations, sensitivity checks, recommendations |
 
+```figure
+type: steps
+title: The four phases of a life cycle assessment
+caption: Most results are decided in goal and scope, by the functional unit and system boundary.
+- *Goal and scope | functional unit, boundary, assumptions
+- Inventory analysis | materials, energy, emissions, wastes
+- Impact assessment | climate, water and other categories
+- Interpretation | hotspots, sensitivity, limits
+```
+
 ## Goal and scope: where most results are decided
 
 The goal and scope phase is the least glamorous and the most important. Decisions made here shape every result.
@@ -119,6 +129,17 @@ It assumes, for illustration, that steel contributes 2.5 kg CO2-e per kilogram, 
 - **Design B (70% recycled aluminium):** each kilogram contributes 0.3 × 9 plus 0.7 × 2, which is 2.7 plus 1.4, or 4.1 kg CO2-e, so 0.7 kg × 4.1 = about **2.9 kg CO2-e**.
 
 The answer to "which design is better for the climate?" depends almost entirely on the aluminium's recycled content, which depends on the supplier. A marketing claim that "aluminium brackets halve our carbon footprint" would be unsupported unless the business can verify the recycled content, and it would say nothing about other impact categories or end-of-life recovery. The useful outcomes are practical: specify and verify recycled content with the supplier, test the result with real supplier data, and avoid public comparative claims until a properly documented study supports them.
+
+```figure
+type: bars
+title: Cradle-to-gate climate impact of one shelf bracket
+unit: kg CO2-e
+max: 7
+caption: The answer depends almost entirely on recycled content, which the business must specify and verify with its supplier.
+- Steel, 1.8 kg | 4.5
+- Primary aluminium, 0.7 kg | 6.3
+- *Aluminium with 70% recycled content, 0.7 kg | 2.9
+```
 
 ## Streamlined assessment during design
 

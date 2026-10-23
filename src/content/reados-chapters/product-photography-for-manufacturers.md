@@ -109,6 +109,16 @@ Customers expect the product to look like the photo, especially for coloured coa
 - Edit on a calibrated monitor.
 - Compare the image with the real product under daylight-balanced light before publishing.
 
+```figure
+type: checklist
+title: Keeping product colours accurate
+caption: Customers judge colour and finish from the photograph, so it must match the real part.
+- x Lights of a single, consistent colour temperature
+- x A grey card or colour checker at the start of each session
+- x Editing on a calibrated monitor
+- *x A check against the real product under daylight-balanced light
+```
+
 Colour accuracy across screens, printed material and packaging is a wider subject; at minimum, keep master images in a standard colour space such as sRGB for web use, and let printers convert for print.
 
 ## Consistency across a range
@@ -161,6 +171,16 @@ This is an illustrative example. The costs are assumptions. A fabrication busine
 **Method.** The marketing coordinator and a workshop technician write a shot list with four views per product type, mark positions for the camera and lights, and test the setup on the most difficult items: polished stainless fittings and black powder-coated enclosures. Stainless parts are lit with large diffused panels on both sides, with black strips along the edges for definition. Black enclosures get a rim light from behind and a light grey background. Small fittings are focus stacked.
 
 **Result.** After the setup is proven, each product takes about 15 minutes to photograph, about 30 hours in total. At an assumed internal cost of $50 an hour, that is about $1,500 of staff time, so the in-house option costs about $3,000 compared with about $12,000 for the commissioned option. The business keeps the station for new products and revisions, names files by part number and view, and writes alternative text for each web image. It still commissions a professional for a few hero images used in major campaigns.
+
+```figure
+type: bars
+title: Photographing about 120 products, four views each
+unit: $
+max: 13000
+caption: About 15 minutes a product once the setup is proven; the station stays for new products and revisions.
+- Commissioned photographer, 480 images | 12000
+- *In-house station: $1,500 kit plus about $1,500 of staff time | 3000
+```
 
 ## Applying this in an Australian business
 

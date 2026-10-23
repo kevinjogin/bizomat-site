@@ -30,6 +30,16 @@ The word quality does several jobs at once. Research on construction projects by
 | Quality of realisation | How well was the process run, from the client's view? | Feedback during and after delivery |
 | Quality of conformance | Does what was delivered match the description? | Inspection, testing, audits, non-conformance records |
 
+```figure
+type: layers
+title: Four kinds of quality
+caption: Each needs a different technique; inspection only reaches conformance.
+- Conception | does the idea make sense at all?
+- *Specification | is the design fit for its purpose?
+- Realisation | how well was the process run?
+- Conformance | does it match the description?
+```
+
 The researchers' central point is that excellent conformance cannot close the gap between what a client expected and what they received if the specification was not fit for purpose. Doing it right the first time only helps once someone has worked out what "it" should be.
 
 ## Why businesses over-invest in conformance
@@ -110,6 +120,17 @@ In a better version, the owner sets up a simple review register before the desig
 - **Coordination review**, before construction. Limited to checking that drawings are complete and consistent.
 
 Each review records its decisions and the name of the person responsible for each. The reviews take about three half-days of staff time and a few hundred dollars of tape and printing, plus an hour of the designer's time per review. The layout problems are found and fixed on paper.
+
+```figure
+type: compare
+title: Two versions of a factory fit-out
+cols: Built to drawings | With a review register
+best: 2
+caption: None of the problems was a conformance failure; every inspection passed.
+- Layout | Copied from the old factory | Walked through with tape on the floor
+- Problems | Found after the move | Found and fixed on paper
+- *Cost | About $68,000 and weeks of disruption | About three half-days and a few hundred dollars
+```
 
 ## How this applies to a small Australian business
 

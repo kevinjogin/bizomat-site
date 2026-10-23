@@ -34,6 +34,16 @@ Every performance claim your business makes or relies on sits in one of three st
 | **Borrowed** | An external document you chose to adopt where none applies | Whoever chose it | That the choice was reasonable and the evidence sound |
 | **Authored** | Your own specification, with no external source | Whoever wrote it | The specification and whatever evidence supports it |
 
+```figure
+type: compare
+title: Three states a performance claim can be in
+cols: Who set the benchmark | Defence if challenged
+caption: An authored claim makes your own specification the benchmark you are judged against.
+- Covered | An external body | Conformity, supported by evidence
+- Borrowed | Whoever chose the document | A reasonable choice and sound evidence
+- *Authored | Whoever wrote it | The specification and its evidence
+```
+
 All three are legitimate. But they carry very different exposure. In the covered state, responsibility for the benchmark is shared with the body that wrote it, and your defence is external and checkable. In the borrowed state, you made a choice, and you may need to explain why you chose that document, and that version or grade, over alternatives. In the authored state, you are the only source of the figure, and your specification is the benchmark.
 
 The problem is not that authored benchmarks exist. It is that they are usually reached by drift rather than decision. A specification written for one job is reused for the next, becomes a template and turns into the business's declared capability, without anyone with the right authority ever approving it.
@@ -128,6 +138,18 @@ When you launch a product or service that will need an authored or borrowed benc
 4. **State conditions and limits** with the figure: temperature range, installation method, use case, storage conditions.
 5. **Have the claim approved** by someone whose authority matches the exposure.
 6. **Record it in the claim map** with a review date.
+
+```figure
+type: steps
+title: Setting a new claim deliberately
+caption: State the figure with its conditions and limits, and match the approver's authority to the exposure.
+- Check for applicable standards in each market
+- If none apply, decide whether to borrow, and why
+- Gather evidence proportionate to the consequence
+- State conditions and limits with the figure
+- Have it approved by someone with matching authority
+- *Record it in the claim map with a review date
+```
 
 ## When being the benchmark is an advantage
 

@@ -80,6 +80,19 @@ In both technologies, **the instrument measures something other than the result*
 
 Two Australian developments became global products. At the University of Melbourne, Graeme Clark led the development of the **multi-channel cochlear implant**, first implanted in 1978, which stimulates the hearing nerve directly to give profoundly deaf people a sense of sound; the company Cochlear was established to commercialise it. At the University of Sydney, Colin Sullivan developed **nasal continuous positive airway pressure** treatment for obstructive sleep apnoea, reported in 1981, which became the basis of a major Australian medical device business.
 
+```figure
+type: timeline
+title: Engineering for the body, 1903 to 1978
+caption: Each device turned a physical principle into a product that had to be safe on, or inside, a person.
+- 1903 | Electrocardiograph | Einthoven records the heart reliably
+- 1945 | Artificial kidney | a patient survives on Kolff's machine
+- 1953 | Heart-lung machine | Gibbon supports open-heart surgery
+- 1958 | Implanted pacemaker | Elmqvist and Senning, Sweden
+- 1971 | Computed tomography | the image is calculated
+- 1977 | MRI | first human images
+- *1978 | Multi-channel cochlear implant | Melbourne, first implanted
+```
+
 Both followed a path common in medical engineering: clinical insight, close collaboration between clinicians and engineers, long development and testing, and commercialisation through companies built around the technology.
 
 ## Regulation as part of the design
@@ -140,6 +153,16 @@ This is an illustrative example. An Australian electronics company makes wireles
 **Regulatory review.** A regulatory consultant points out that software intended to inform clinicians' treatment decisions may be regulated as a medical device, depending on its intended purpose and claims. The company would need a quality management system aligned with ISO 13485, risk management to ISO 14971, usability engineering for patients using the sensor at home, electrical safety and wireless testing, clinical evidence and inclusion in the Australian Register of Therapeutic Goods before supply.
 
 **Revised plan.** The company estimates about 24 months and $900,000 for a regulated product. It considers two options: proceed with a regulated device in partnership with the physiotherapy group, or limit the first product to general activity tracking without clinical claims, which may change its regulatory status, subject to confirmation against current TGA guidance.
+
+```figure
+type: compare
+title: Adapting an industrial sensor for clinical use
+cols: Initial plan | Regulated product
+caption: Software that informs treatment decisions may be regulated as a medical device, depending on its intended purpose and claims.
+- Time | About nine months | About 24 months
+- Cost | About $250,000 | About $900,000
+- *Scope | Repackage, app, small trial | Quality system, risk, usability, testing, clinical evidence
+```
 
 **Decision.** The company chooses the regulated path in stages, beginning with its quality system and risk management, because the clinical value is in the claims. Usability testing with older patients at home leads to larger buttons, simpler pairing and clear prompts, and those changes later improve its industrial products too.
 

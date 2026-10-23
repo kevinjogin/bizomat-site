@@ -43,6 +43,19 @@ An international standard for preparing information for the use of products, IEC
 | Symbols and icons | Compact, language-independent | Must be standard and understood | Safety signs, warnings, tool and action symbols |
 | Videos and animations | Show motion and sequence | Harder to update and use offline; not a replacement for written records | Complex movements, training |
 
+```figure
+type: decision
+title: Choosing the right kind of technical image
+question: What must the image show?
+caption: Line drawings suit most steps: clear, consistent and easy to annotate and update.
+- A real installation or site | Photograph
+- *Most assembly and maintenance steps | Line drawing
+- How parts fit together | Exploded view
+- Software screens | Screenshot
+- Connections and logic | Schematic
+- Motion and sequence | Video or animation
+```
+
 Most good manuals combine types: line art for step-by-step instructions, photographs for recognition and context, exploded views for parts and schematics for systems.
 
 ## Principles for clear instructional images
@@ -172,6 +185,16 @@ This is an illustrative example. A manufacturer of packaged pump skids supplies 
 - Five installers test the draft manual on a production skid while the team observes, leading to two further image changes.
 
 **Result.** Over the following months, installation-related support calls fall to about three a month, and no warranty claims are traced to installation errors in the first year. Translating the manual for an export customer requires translating only the text and callout tables.
+
+```figure
+type: bars
+title: Installation support calls for a pump skid
+unit: a month
+max: 14
+caption: Line art from the CAD model, one step per image; no warranty claims traced to installation in the first year.
+- Manual with prototype photographs | 12
+- *Re-illustrated and user-tested manual | 3
+```
 
 ## Applying this in an Australian business
 
