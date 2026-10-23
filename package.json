@@ -32,7 +32,7 @@
     "@astrojs/check": "^0.9.10",
     "esbuild": "^0.28.2",
     "pagefind": "^1.5.2",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "wrangler": "^4.147.0"
   },
   "description": "KEVOS website: Astro static site served by a Cloudflare Worker."
