@@ -13,8 +13,16 @@ export async function getStaticPaths() {
 interface Props { book: ReadOSBook }
 const { book } = Astro.props;
 const href = readosBookHref(book);
+// Each numbered volume gets its own description: the category line plus the span of chapters it holds.
+const volumeDescription = (b: typeof book) => {
+  const first = b.chapters[0]?.data.title ?? '';
+  const last = b.chapters[b.chapters.length - 1]?.data.title ?? '';
+  const span = ` Volume ${b.volume}: ${b.chapters.length} chapters, from “${first}” to “${last}”.`;
+  const text = `${b.description}${span}`;
+  return text.length <= 200 ? text : `${b.description} Volume ${b.volume} of the KEVOS® READOS ${b.category} collection, in ${b.chapters.length} chapters.`;
+};
 ---
-<BaseLayout title={`${book.title} (READOS)`} description={`${book.description} Read the full KEVOS® collection in structured chapters.`}
+<BaseLayout title={`${book.title} (READOS)`} description={volumeDescription(book)}
   breadcrumbs={[{label:'Home',href:'/'},{label:'READOS',href:'/reados/'},{label:book.title,href}]}>
   <ReadOSBookHero crumbs={[{label:'READOS',href:'/reados/'},{label:book.category,href:`/reados/#${book.category.toLowerCase()}`}]}
     eyebrow={`READOS / ${book.category}`} title={book.title} description={book.description}

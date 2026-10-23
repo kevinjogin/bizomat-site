@@ -8,6 +8,9 @@ import remarkKevosFigures from './src/utils/remark-kevos-figures.ts';
 
 // Utility pages that should never appear in search results or the sitemap.
 const EXCLUDE_FROM_SITEMAP = ['/search/', '/chat/', '/contact/sent/', '/contact/error/', '/assessment/received/'];
+// Chapters inside category volumes (/reados/books/<volume>/<chapter>/) canonicalise to their edited READOS
+// book, so only that canonical copy belongs in the sitemap. The volume index pages stay listed.
+const NON_CANONICAL = /\/reados\/books\/[^/]+\/[^/]+\/$/;
 
 export default defineConfig({
   site: SITE.url,
@@ -20,7 +23,7 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
-      filter: (page) => !EXCLUDE_FROM_SITEMAP.some((path) => page.endsWith(path)),
+      filter: (page) => !EXCLUDE_FROM_SITEMAP.some((path) => page.endsWith(path)) && !NON_CANONICAL.test(page),
     }),
   ],
   markdown: {
