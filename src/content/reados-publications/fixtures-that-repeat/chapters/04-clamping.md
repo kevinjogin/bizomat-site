@@ -29,6 +29,17 @@ Using the full 1,000 N clamp total as the normal load would ignore uplift. Even 
 
 To obtain 800 N of friction under the same assumed coefficient, the normal reaction would need to be **800 / 0.15 = 5,333.3 N**. Including the 300 N uplift would require a total downward clamping force of **5,633.3 N** in this idealised model.
 
+```figure
+type: bars
+title: Friction alone against an 800 N cutting force
+unit: N
+max: 6000
+caption: At a coefficient of 0.15, 700 N of normal reaction gives only 105 N of ideal friction; a positive stop is the sounder path.
+- Cutting force to resist | 800
+- *Ideal friction available | 105
+- Clamping needed for friction alone | 5633
+```
+
 That result is not a clamp recommendation. The friction coefficient is an assumption; coolant, surface finish, debris and contact condition can change it. The required force may also distort the part. A robust design must justify the actual load-transfer mechanism.
 
 ## Resolve the strap-clamp forces
@@ -40,6 +51,16 @@ Consider a rigid strap supported by a heel at x = 0 and the workpiece at x = 60 
 The downward force delivered to the workpiece is therefore **two-thirds of B**. If B is an assumed 1,500 N, the workpiece receives **1,000 N** and the heel carries the remaining 500 N.
 
 Moving the bolt to x = 20 mm would reduce the workpiece force to **500 N** for the same bolt force. The geometry changed the force delivered to the part without changing the bolt tension.
+
+```figure
+type: compare
+title: Where the strap-clamp bolt sits
+cols: Bolt at x = 40 mm | Bolt at x = 20 mm
+caption: Geometry changed the force on the part without changing the bolt tension.
+- Bolt force | 1,500 N | 1,500 N
+- *Force on the workpiece | 1,000 N | 500 N
+- Force on the heel | 500 N | 1,000 N
+```
 
 The example assumes the intended contacts remain present and the strap behaves as a rigid member. Real straps bend, contact locations shift and component ratings constrain the arrangement. Use the actual manufacturer's permitted geometry and ratings.
 

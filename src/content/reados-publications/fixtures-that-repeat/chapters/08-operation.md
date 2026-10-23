@@ -21,6 +21,15 @@ A key does not establish material grade, program revision or hidden internal fea
 
 Do not call a fixture “mistake-proof” as an unrestricted claim. State the particular incorrect condition it prevents or detects and how that function was tested.
 
+```figure
+type: layers
+title: Prevent, detect or remind
+caption: State which incorrect condition each control prevents or detects, and how that was tested.
+- *Physical key | prevents a reversed part from seating
+- Sensor or gauge | detects incorrect seating
+- Label | reminds the operator
+```
+
 ## Use one controlled operating record
 
 The record should identify the part family and revisions, fixture revision, machine, program, tool assemblies, work-reference method and approved clamping configuration.
@@ -41,6 +50,18 @@ The procedure should direct operators to the machine's approved safety and energ
 | Clamp | Approved configuration and seating condition are achieved | Do not start the cycle |
 | Verify | Required first-off or changeover checks pass | Preserve results and escalate |
 | Release | Part and fixture can be opened and unloaded as intended | Follow the approved abnormal-condition procedure |
+
+```figure
+type: steps
+title: Checks written around observable conditions
+caption: Each stage has a required observation and a defined response when it is absent.
+- Identify | part, fixture and program match
+- Prepare | contacts clean and serviceable
+- Locate | reaches references without forcing
+- *Clamp | approved configuration achieved
+- Verify | first-off checks pass
+- Release | opens and unloads as intended
+```
 
 The table is a design structure for instructions, not a machine operating procedure. The actual checks and safe access method must be qualified for the installation.
 

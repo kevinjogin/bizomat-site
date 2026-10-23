@@ -37,6 +37,15 @@ Now remove and reload the same artefact using the proposed method, preserving ea
 
 Their mean is **0.000500 mm**, sample standard deviation approximately **0.001871 mm**, and range **0.005 mm**.
 
+```figure
+type: stats
+title: Adding the loading operation to the study
+caption: Reloading adds variation that a measure-only repeat cannot reveal.
+- 0.00075 mm | Standard deviation | measured repeatedly, no reload
+- *0.00187 mm | Standard deviation | reloaded each time
+- 0.005 mm | Range | reloaded each time
+```
+
 The larger variation suggests that the combined reload-and-measure process behaves differently from repeated indication without disturbance. It does not isolate the fixture's variance automatically. Re-seating the measuring probe, changes in contact force and measurement alignment may also be involved.
 
 Subtracting two small sample variances and calling the square root “true fixture repeatability” would require additional assumptions and a suitable study. Preserve the distinction between a useful exploratory comparison and a formal variance-component estimate.
@@ -44,6 +53,23 @@ Subtracting two small sample variances and calling the square root “true fixtu
 ## Introduce another operator deliberately
 
 Suppose Operator B's six readings are each 0.008 mm higher than the corresponding A readings. Their mean is **0.008500 mm** with the same sample standard deviation of approximately 0.001871 mm.
+
+```figure
+type: line
+title: Six reloads, three conditions
+x: Reading
+y: Deviation (mm)
+ymin: -0.004
+ymax: 0.012
+caption: Operator B has the same spread as A but sits 0.008 mm higher: a systematic difference to investigate.
+legend: No reloading | Reloaded by A | Reloaded by B
+- 1 | 0 | 0.002 | 0.01
+- 2 | 0.001 | -0.001 | 0.007
+- 3 | -0.001 | 0.003 | 0.011
+- 4 | 0 | 0 | 0.008
+- 5 | 0.001 | -0.002 | 0.006
+- 6 | 0 | 0.001 | 0.009
+```
 
 Both operators have a narrow spread, yet their means differ by 0.008 mm. Investigate the method before adjusting the fixture. One operator may seat against a different contact, apply a different sequence or interpret the measurement reference differently.
 

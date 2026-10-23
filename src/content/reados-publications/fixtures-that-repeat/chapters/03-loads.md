@@ -39,6 +39,16 @@ The results are:
 
 If each clamp applies 500 N, RR is **670 N** and RL is only **30 N**. Their sum is 700 N, which agrees with 1,000 N of downward clamping minus 300 N of uplift.
 
+```figure
+type: bars
+title: Support reactions with two 500 N clamps
+unit: N
+max: 700
+caption: The reactions sum to 700 N: 1,000 N of clamping minus 300 N of uplift. The left contact is only just loaded.
+- Right support, RR = C + 170 | 670
+- *Left support, RL = C − 470 | 30
+```
+
 This check catches a weakness hidden by comparing total clamping force with total uplift. Although 1,000 N exceeds 300 N, the overturning couple nearly unloads the left contact.
 
 ## Interpret a negative reaction physically
@@ -66,6 +76,15 @@ With the same geometry:
 **RL = C − 225 − 480 = C − 705 N.**
 
 **RR = C − 225 + 480 = C + 255 N.**
+
+```figure
+type: stats
+title: Reversing the moment and moving the loads
+caption: A negative reaction means the contact would lift; the model then no longer describes the fixture.
+- *RL = C − 705 N | Left reaction
+- RR = C + 255 N | Right reaction
+- C > 705 N | Each clamp | to keep the left contact loaded
+```
 
 At C = 900 N per clamp, the reactions are **195 N and 1,155 N**. The model retains contact in this case. It also imposes a larger reaction on one support, which must be assessed for its own contact and structural consequences.
 

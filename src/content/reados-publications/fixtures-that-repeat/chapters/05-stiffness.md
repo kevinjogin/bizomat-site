@@ -47,6 +47,18 @@ Keeping the 10 mm thickness but reducing span from 100 to 60 mm gives:
 
 **δ60 = 0.0375 × (60/100)³ = 0.008100 mm.**
 
+```figure
+type: bars
+title: Deflection of the support beam under 900 N
+unit: mm
+max: 0.04
+caption: Thickness acts as a cube and span as a cube: both are powerful, but the interfaces still count.
+- 10 mm plate, 100 mm span | 0.0375
+- 16 mm plate, 100 mm span | 0.009155
+- *10 mm plate, 60 mm span | 0.0081
+- Provisional allocation | 0.01
+```
+
 Both changes bring the ideal beam result below the provisional 0.010 mm allocation. Neither establishes the complete fixture deflection. The shorter, deeper proportions also make neglected shear and actual support conditions more important to review.
 
 Increasing width is less powerful in this model: doubling width halves deflection, while doubling thickness reduces it to one-eighth. This is a useful concept comparison, not a reason to increase thickness without checking tool access, mass and mounting.
@@ -56,6 +68,15 @@ Increasing width is less powerful in this model: doubling width halves deflectio
 A stiff bridge can sit on a compliant joint. As a separate teaching assumption, suppose a contact in the same series load path has stiffness 60,000 N/mm and carries the same 900 N.
 
 Its displacement is **900 / 60,000 = 0.015 mm**. Added to the original beam displacement, the total series displacement is **0.0525 mm**. With the 16 mm bridge, it is still approximately **0.024155 mm**, above the 0.010 mm allocation.
+
+```figure
+type: stack
+title: Compliances in series add
+unit: mm
+caption: Even with a 16 mm bridge, beam plus contact is about 0.024 mm, above the 0.010 mm allocation.
+- Beam, 10 mm plate | 0.0375
+- *Compliant contact at 60,000 N/mm | 0.015
+```
 
 The assumed contact stiffness is not a catalogue recommendation. The example shows why improving one member can leave the dominant movement elsewhere. Adding deflections is appropriate here only because the assumed elements carry the same load in series along the measured direction.
 

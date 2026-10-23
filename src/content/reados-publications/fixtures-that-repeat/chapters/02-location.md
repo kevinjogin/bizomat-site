@@ -32,6 +32,17 @@ For the bracket, use x along the 150 mm length, y across the 80 mm width and z n
 | One end contact | Prepared end | Establish x position |
 | Clamps | Chosen supported regions | Maintain the intended contact state |
 
+```figure
+type: tree
+title: A 3-2-1 contact map for the bracket
+caption: Six contacts remove six freedoms; clamps hold the contacts, they do not locate.
+- Locating the bracket
+  - Three bottom contacts | primary face: z and two rotations
+  - Two side contacts | long side: y and rotation about z
+  - One end contact | end face: x
+  - *Clamps | maintain the intended contact state
+```
+
 The table describes the ideal seated geometry. It does not mean the contacts can resist arbitrary forces in both directions. The load-path review must determine whether a force tends to seat the part or separate it from a contact.
 
 Mark the contacts on a simple section and plan view. Use identifiers that remain consistent in the fixture drawing, inspection method and operating instructions. “Clean the back stops” is less reliable than showing the specific contacts that define the reference.
@@ -41,6 +52,16 @@ Mark the contacts on a simple section and plan view. Use identifiers that remain
 Widely separated secondary locators reduce angular sensitivity to a small difference in their positions. This is an illustration: two side contacts are 100 mm apart, and their relative offset is 0.02 mm. A rigid line seated against them has a small-angle slope of **0.02 / 100 = 0.0002**.
 
 At a feature 150 mm from the first contact, the corresponding offset is approximately **0.03 mm**. If the contacts were only 50 mm apart, the same 0.02 mm mismatch would create approximately 0.06 mm at that feature.
+
+```figure
+type: bars
+title: Why side contacts should be far apart
+unit: mm
+max: 0.07
+caption: The same 0.02 mm mismatch between two side contacts, seen at a feature 150 mm away.
+- *Contacts 100 mm apart | 0.03
+- Contacts 50 mm apart | 0.06
+```
 
 The calculation does not establish a formal positional tolerance for the fixture. It shows why placing locators close together on a convenient small tab can magnify their errors at a distant feature.
 

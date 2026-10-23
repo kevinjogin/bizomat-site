@@ -47,6 +47,15 @@ For a 120 mm straight travel at constant programd feed, ideal travel time is:
 
 **120 / 380 = 0.315789 minutes = 18.947 seconds.**
 
+```figure
+type: stats
+title: Machining inputs for the example pass
+caption: Supplied cutting data, not a recommendation: speed and feed follow from the stated inputs.
+- About 1,910 r/min | Spindle speed | at 120 m/min with a 20 mm cutter
+- 380 mm/min | Table feed | 1,900 r/min × 4 teeth × 0.05 mm
+- *About 19 s | Machining travel | for 120 mm
+```
+
 Actual time includes acceleration, deceleration and other movements. Engagement, chip thinning, tool geometry, material, power and stability also affect the suitability of cutting conditions. Confirm real data and application limits with the relevant tool and machine information.
 
 ## Count the work around the cut
@@ -64,6 +73,20 @@ The 19-second idealised travel does not describe a complete production cycle. Th
 | Unload part | 10 s |
 | Required per-part inspection | 30 s |
 | Total sequential cycle | 134 s |
+
+```figure
+type: stack
+title: Where the 134-second cycle goes
+unit: s
+caption: Cutting is only 19 seconds; saving 4 seconds there improves the whole cycle by about 3%, not 21%.
+- Load blank | 35
+- Locate and check | 10
+- Apply clamps | 12
+- *Machining travel | 19
+- Tool change and transfer | 8
+- Release and unload | 20
+- Per-part inspection | 30
+```
 
 These times are assumptions for a business comparison later in the book. They are not measured results. A real timing study should distinguish necessary work, delays and occasional tasks such as cleaning or tool replacement.
 

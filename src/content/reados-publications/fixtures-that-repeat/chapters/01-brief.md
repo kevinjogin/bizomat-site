@@ -25,6 +25,15 @@ Locators establish position and orientation. Supports carry loads and limit defo
 
 For example, a fixed vice jaw can locate the side of a part and carry a lateral cutting reaction. A movable jaw applies clamping force. Calling both simply “workholding” can conceal which surface controls a dimension and which load path keeps the part from moving.
 
+```figure
+type: layers
+title: Three functions inside a fixture
+caption: One element can do more than one job, but that should be a deliberate design decision.
+- Locators | establish position and orientation
+- Supports | carry loads and limit deformation
+- *Clamps | maintain the contacts and resist assigned loads
+```
+
 The distinction is consistent with [Carr Lane's locating and clamping guidance](https://www.carrlane.com/engineering-resources/fixture-design-principles/locating-clamping-principles). This book develops its own contact map and calculations rather than treating a catalogue illustration as an approved solution.
 
 ## Record the incoming condition
@@ -57,6 +66,20 @@ Do not settle the clamp selection before this information is available. A conven
 | Clear tool access | Complete tool-envelope and program review | Cutter tip clears in one view |
 | Repeatable operation | Observed use of controlled instructions | Designer can operate it |
 | Maintainable accuracy | Wear limits, checks and replaceable items | No visible damage at delivery |
+
+```figure
+type: compare
+title: Make acceptance observable
+cols: Useful evidence | Inadequate substitute
+best: 1
+caption: Each requirement needs evidence another person can check, not an impression.
+- Repeatable location | A defined reload study | One part indicated once
+- Secure load path | Reviewed load cases and ratings | The clamp handle feels tight
+- Limited deformation | A model and measurements under load | The part looks rigid
+- Clear tool access | A full tool-envelope review | The cutter tip clears in one view
+- Repeatable operation | Observed use of instructions | The designer can operate it
+- *Maintainable accuracy | Wear limits, checks, replaceable items | No visible damage at delivery
+```
 
 Choose numerical criteria from the product and process requirements. This table does not prescribe universal repeatability or safety thresholds. The purpose is to prevent attractive but weak evidence from being accepted as proof.
 

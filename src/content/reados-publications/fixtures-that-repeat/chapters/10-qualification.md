@@ -51,6 +51,16 @@ Candidate batch time is:
 
 The estimated difference is **15,000 seconds**, or **4.1667 hours per batch**. It includes both the 20-minute set-up saving and the 46-second per-part saving.
 
+```figure
+type: bars
+title: Time for a 300-part batch
+unit: hours
+max: 17
+caption: About 4.17 hours saved a batch: a 20-minute shorter set-up and 46 seconds less per part.
+- Current method: 45 min set-up, 180 s a part | 15.75
+- *New fixture: 25 min set-up, 134 s a part | 11.58
+```
+
 The estimate assumes the stated activities occur sequentially and excludes unlisted downtime, scrap, maintenance and waiting. Validate those assumptions with observations of the qualified process. Do not compare a measured current method with an ideal new method while hiding the difference in evidence quality.
 
 ## Value capacity separately from cash
@@ -74,6 +84,17 @@ Suppose the verified per-part saving is only 20 seconds instead of 46 seconds, w
 **300 × 20 + 20 × 60 = 7,200 seconds = 2 hours.**
 
 At A$90 per hour, that is A$180 per batch. After A$25 of allocated maintenance, the net value is A$155. Recovering A$3,600 would take approximately **23.23 batches**, more than the assumed annual volume.
+
+```figure
+type: bars
+title: Batches needed to recover the A$3,600 fixture
+unit: batches
+max: 25
+caption: The per-part saving decides the case: at 20 seconds, payback needs more than the twelve batches a year.
+- *Per-part saving of 46 s | 10.29
+- Per-part saving of only 20 s | 23.23
+- Batches a year | 12
+```
 
 Across twelve batches, the first-year balance would be **A$2,160 − A$300 − A$3,600 = negative A$1,740**. The design may still be justified by another supported benefit, but the original time-saving argument no longer supports the same conclusion.
 

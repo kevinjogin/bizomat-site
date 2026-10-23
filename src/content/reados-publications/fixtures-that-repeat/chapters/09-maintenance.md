@@ -39,6 +39,20 @@ The remaining indicated difference to the 7.990 mm action threshold is 0.002 mm.
 
 This is a forecast, not permission to run 400 cycles. Two measurements do not establish a stable wear law. Abrasive contamination, impact, material changes and lubrication conditions can alter the rate. Wear can be directional, so a single diameter measurement may miss the smallest local section.
 
+```figure
+type: line
+title: A locating pin wearing towards its threshold
+x: Cycles
+y: Minimum pin diameter (mm)
+ymin: 7.975
+ymax: 8.0
+caption: Two readings forecast about 400 more cycles to the 7.990 mm action threshold; the geometric boundary is 7.980 mm.
+legend: Measured, then forecast | Action threshold | Geometric boundary
+- 0 | 7.998 | 7.99 | 7.98
+- 1200 | 7.992 | 7.99 | 7.98
+- 1600 | 7.99 | 7.99 | 7.98
+```
+
 Use the trend to plan inspection and spare availability while keeping the actual acceptance rule in force. A proposed 200-cycle inspection interval would imply 0.001 mm of wear per interval under the model, but the interval still needs justification against uncertainty and plausible faster wear.
 
 ## Include measurement uncertainty at the threshold
@@ -70,6 +84,16 @@ Average consumption is **0.5 button per week**. Expected lead-time demand is **0
 This is a simple planning rule, not a specified service-level calculation. It assumes the demand and lead-time estimates are meaningful. Review variability, supplier reliability, minimum order quantities and the consequence of a stockout before adopting it.
 
 Use inventory position: usable stock on hand plus confirmed stock on order, minus allocated demand. If there are four usable buttons, two confirmed on order and one allocated, inventory position is **4 + 2 − 1 = 5**.
+
+```figure
+type: stats
+title: Planning spare locating buttons
+caption: Reorder on inventory position, not just stock on the shelf.
+- 0.5 a week | Average use
+- 3 | Expected lead-time demand | over six weeks
+- *5 | Reorder point | including a buffer
+- 4 + 2 − 1 = 5 | Inventory position | on hand, on order, allocated
+```
 
 Under a policy that orders at or below five, this triggers replenishment. If the chosen order quantity is four, the position becomes nine after the new order is recorded. Keeping the on-order quantity visible prevents repeated ordering from the same low on-hand count.
 
