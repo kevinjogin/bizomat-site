@@ -108,6 +108,28 @@ A workshop machine can be in one of three states each week: good, worn or broken
 | Worn | Earn $700; 60% stay worn, 40% break | Cost $400; 90% good, 10% stay worn | Cost $5,000; good next week |
 | Broken | Earn nothing; stay broken | Repair $1,500; 70% worn, 30% stay broken | Cost $5,000; good next week |
 
+```figure
+type: svg
+title: Machine states and what moves between them
+alt: Three states, good, worn and broken. Running a good machine earns $1,000 with a 20% chance of becoming worn. Running a worn machine earns $700 with a 40% chance of breaking. Servicing a worn machine returns it to good 90% of the time. Repairing a broken machine for $1,500 returns it to worn 70% of the time.
+caption: Running a worn machine risks a 40% chance of breaking; servicing returns it to good 90% of the time.
+viewbox: 0 0 640 240
+body:
+<rect class="bxa" x="30" y="90" width="140" height="56" rx="28"/>
+<text class="txb" x="100" y="123" text-anchor="middle">Good</text>
+<rect class="bx" x="250" y="90" width="140" height="56" rx="28"/>
+<text class="txb" x="320" y="123" text-anchor="middle">Worn</text>
+<rect class="bx dsh" x="470" y="90" width="140" height="56" rx="28"/>
+<text class="txb" x="540" y="123" text-anchor="middle">Broken</text>
+<path class="ln flow" d="M170 108H250M390 108H470"/>
+<text class="tx txs" x="210" y="98" text-anchor="middle">run: 20%</text>
+<text class="tx txs" x="430" y="98" text-anchor="middle">run: 40%</text>
+<path class="la flow" d="M320 146C320 210 100 210 100 146"/>
+<text class="tx txs" x="210" y="222" text-anchor="middle">service: 90% back to good</text>
+<path class="ln dsh flow" d="M540 90C540 30 320 30 320 90"/>
+<text class="tx txs" x="430" y="30" text-anchor="middle">repair $1,500: 70% to worn</text>
+```
+
 A short-sighted manager might always run the machine, because running earns money this week. But running a worn machine carries a 40% chance of breaking, which then means weeks of lost production and expensive repairs.
 
 Solving this MDP with value iteration, using a discount factor of 0.95 to reflect a long-term view, gives this optimal policy:
@@ -115,6 +137,16 @@ Solving this MDP with value iteration, using a discount factor of 0.95 to reflec
 - **Good:** run.
 - **Worn:** service promptly.
 - **Broken:** repair rather than replace.
+
+```figure
+type: decision
+title: The optimal maintenance policy
+question: What state is the machine in?
+caption: With a discount factor of 0.95; at these prices replacement is never the best choice.
+- Good | Run
+- *Worn | Service promptly
+- Broken | Repair rather than replace
+```
 
 The difference from the short-sighted "always run" policy is large. Under "always run", the machine eventually breaks and is never fixed, so it stops earning altogether. Measured as expected discounted earnings from a machine in good condition, the optimal policy is worth roughly three times as much as "always run" in this example.
 

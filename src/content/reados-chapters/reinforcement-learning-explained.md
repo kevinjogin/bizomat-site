@@ -48,6 +48,16 @@ The weakness of model-based methods is that errors in the learned model lead to 
 
 Q-learning maintains an estimate, called the Q-value, of how good each action is in each state: the expected total future reward from taking that action and then acting well afterwards.
 
+```figure
+type: cycle
+title: Learning from experience
+caption: Model-free methods learn the value of actions directly from rewards, without a full model of the world.
+- Observe the state
+- Try an action
+- Receive a reward
+- *Update the estimate of that action's value
+```
+
 Each time the agent takes an action, it observes the immediate reward and the new state. It then updates its estimate for the action it just took, nudging it towards:
 
 > the reward just received, plus the discounted value of the best action available in the new state.
@@ -137,6 +147,16 @@ A warehouse wants to improve how it assigns incoming orders to picking teams. A 
 - Is there a simulator? The warehouse management system has enough historical data to build one.
 - Is the objective clear? Mostly: on-time dispatch, balanced workloads and minimal overtime.
 - Have simpler methods been tried? Only a basic first-come, first-served rule.
+
+```figure
+type: checklist
+title: Before choosing reinforcement learning
+caption: A simple rule by due time and workload captured most of the benefit in the warehouse example.
+- x Is the decision sequential?
+- x Is there a simulator?
+- x Is the objective clear?
+- *? Have simpler methods been tried?
+```
 
 The team first tries a simple improvement: a rule that assigns orders by due time and current team workload. It captures most of the available benefit. A reinforcement learning system is then trained in simulation and tested against the rule. It improves on-time dispatch slightly more, but sometimes makes assignments that staff find hard to understand. The warehouse adopts the simple rule, keeping the learned system as a reference for future refinements.
 

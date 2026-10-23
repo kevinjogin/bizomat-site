@@ -52,6 +52,16 @@ Rollouts are a practical way to look beyond the planning horizon without explori
 
 Forward search is thorough but expensive. The number of branches grows exponentially with depth: with five actions and five possible outcomes per action, there are 25 branches per step, about 15,600 after three steps and almost 10 million after five. For most real problems, exhaustive forward search is only feasible for very short horizons.
 
+```figure
+type: bars
+title: Forward search branches with 5 actions and 5 outcomes
+max: 10000000
+caption: 25 branches per step: about 15,600 after three steps and almost 10 million after five.
+- 1 step | 25
+- 3 steps | 15625 | about 15,600
+- *5 steps | 9765625 | almost 10 million
+```
+
 ## Branch and bound
 
 **Branch and bound** reduces the work by avoiding branches that cannot possibly be the best. If the planner has a quick way to calculate an upper limit on how good a branch could be, and that limit is worse than an option already found, the branch can be skipped.
@@ -74,6 +84,16 @@ Each iteration of MCTS involves four steps:
 2. **Expansion:** when reaching a part of the tree not yet explored, add a new node.
 3. **Simulation:** estimate the value of the new node, often with a rollout.
 4. **Backpropagation:** update the value estimates of all the nodes along the path with the result.
+
+```figure
+type: cycle
+title: Monte Carlo tree search
+caption: It balances how good an action has looked against how uncertain that estimate still is.
+- Selection | move down the tree
+- Expansion | add a new node
+- Simulation | estimate with a rollout
+- *Backpropagation | update the path
+```
 
 After many iterations, the planner chooses the action from the current state that has proved best, usually the one most visited.
 

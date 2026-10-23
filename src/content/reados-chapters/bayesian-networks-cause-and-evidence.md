@@ -36,6 +36,26 @@ Consider a simplified network for a production machine (an illustration):
 
 The arrows run from causes to effects: bearing wear → overheating, lubrication failure → overheating, bearing wear → vibration, overheating → temperature alarm.
 
+```figure
+type: svg
+title: A network for diagnosing a machine fault
+alt: Two root causes, bearing wear and lubrication failure, both point to overheating. Bearing wear also points to unusual vibration. Overheating points to a temperature alarm.
+caption: Arrows run from causes to effects; evidence at the bottom updates belief in the causes at the top.
+viewbox: 0 0 600 260
+body:
+<rect class="bxa" x="40" y="20" width="170" height="44" rx="22"/>
+<text class="txb" x="125" y="47" text-anchor="middle">Bearing wear</text>
+<rect class="bxa" x="390" y="20" width="170" height="44" rx="22"/>
+<text class="txb" x="475" y="47" text-anchor="middle">Lubrication failure</text>
+<rect class="bx" x="215" y="110" width="170" height="44" rx="22"/>
+<text class="tx" x="300" y="137" text-anchor="middle">Overheating</text>
+<rect class="bx" x="20" y="110" width="170" height="44" rx="22"/>
+<text class="tx" x="105" y="137" text-anchor="middle">Unusual vibration</text>
+<rect class="bxi" x="215" y="200" width="170" height="44" rx="22"/>
+<text class="tx" x="300" y="227" text-anchor="middle">Temperature alarm</text>
+<path class="la flow" d="M150 64L260 110M450 64L340 110M115 64L108 110M300 154V200"/>
+```
+
 To specify the network, we need:
 
 - the probability of bearing wear, and of lubrication failure
@@ -109,6 +129,18 @@ When data is limited, Bayesian networks are often built with people who know the
 4. **Estimate the probabilities.** Ask experts for probabilities in concrete terms, such as "out of 100 machines with worn bearings, how many would show unusual vibration?" Frequencies are usually easier to estimate than abstract percentages.
 5. **Test the network.** Enter scenarios where the answer is known and check whether the network's conclusions match experience. Where they do not, revisit the structure or the numbers.
 6. **Update with data.** As records accumulate, refine the probabilities.
+
+```figure
+type: steps
+title: Building a network with experts
+caption: Ask for probabilities in concrete terms, such as "out of 100 machines with worn bearings, how many overheat?"
+- Agree the question
+- List the variables
+- Draw the direct influences
+- Estimate the probabilities
+- Test with known scenarios
+- *Update with data
+```
 
 A side benefit is that the process itself creates shared understanding. Experts often discover that they hold different views about how the system works, and resolving those differences is valuable in its own right.
 

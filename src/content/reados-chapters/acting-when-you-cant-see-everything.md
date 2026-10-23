@@ -36,6 +36,16 @@ Each time the decision maker acts and receives an observation, the belief should
 1. **Predict:** use the transition model to predict how the state may have changed after the action. A machine that was probably good might now be slightly more likely to be worn.
 2. **Update:** use the observation and Bayes' rule to adjust the prediction. If vibration readings are high, the probability of wear rises; if they are normal, it falls.
 
+```figure
+type: cycle
+title: The Bayesian filter
+caption: A belief is a probability over possible states, carried forward and corrected each step.
+- Belief now
+- Predict | how the state may have changed
+- *Update | adjust with the new observation
+- Act on the belief
+```
+
 The updated belief then becomes the starting point for the next step. This cycle of predicting and updating lets the decision maker track a hidden, changing situation over time. The mathematics of Bayes' rule is explained in [Thinking in probabilities](/reados/collections/judgement-markets-and-learning/thinking-in-probabilities/).
 
 ### A worked example: the crying baby
@@ -46,6 +56,16 @@ With illustrative numbers: suppose the caregiver believes there is a 50% chance 
 
 - Probability of crying = 0.5 × 0.8 + 0.5 × 0.1 = 0.45.
 - Updated probability of hunger = (0.5 × 0.8) ÷ 0.45 ≈ **89%**.
+
+```figure
+type: bars
+title: Belief that the baby is hungry
+unit: %
+max: 100
+caption: A hungry baby cries 80% of the time, a fed one 10%; one cry moves the belief from 50% to about 89%.
+- Before the cry | 50
+- *After the cry | 89
+```
 
 If instead the baby is quiet:
 
@@ -134,6 +154,17 @@ A food producer relies on a refrigeration unit whose compressor sometimes starts
 Previously, the producer reacted only to large, sustained temperature rises, by which time stock was often already at risk. It introduces a simple belief tracker: each hour, a small spreadsheet calculation updates the probability that the compressor is degrading, based on how often and how long temperature rises occur outside normal loading times. When the probability exceeds a set threshold, a technician inspects the unit.
 
 Inspections occasionally find nothing, which is expected. But two developing compressor faults are caught early over the following year, preventing stock losses, at a modest cost in technician visits.
+
+```figure
+type: compare
+title: Watching a refrigeration compressor
+cols: Before | With a belief tracker
+best: 2
+caption: Failure ruins $20,000 of stock; door openings cause similar small temperature rises.
+- Trigger | Large, sustained rises | Rising probability of degradation
+- Timing | Often too late for the stock | Early inspection
+- *Result | Stock at risk | Two developing faults caught in a year
+```
 
 ## Common mistakes
 

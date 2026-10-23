@@ -100,6 +100,17 @@ For businesses, the equivalent is structured "how could this go wrong?" thinking
 | Trade analysis | Are the trade-offs acceptable? | Lay out the options on competing goals |
 | Adversarial analysis | What is the most likely way it fails? | Pre-mortems and red teams |
 
+```figure
+type: layers
+title: Five ways to validate a decision system
+caption: Each asks a different question; together they show where trust is and is not justified.
+- Performance metrics | how well does it perform?
+- Rare event simulation | how likely are rare failures?
+- Robustness analysis | what if the world differs?
+- Trade analysis | are the trade-offs acceptable?
+- *Adversarial analysis | how will it most likely fail?
+```
+
 ## Responsible deployment
 
 Validation is part of a broader responsibility. The book's discussion of societal impact highlights several concerns: data-driven systems can inherit biases from how data was collected; algorithms can be vulnerable to manipulation; optimisation can amplify the intentions of whoever uses it; and legal and moral frameworks must address unintended consequences and responsibility.
@@ -145,6 +156,16 @@ A small lender considers using an automated tool to recommend approval or declin
 - **Trade analysis:** plot default rate against approval rate for different approval thresholds, and choose a threshold deliberately.
 - **Adversarial analysis:** ask how an applicant might game the tool, and what checks would detect it.
 - **Fairness:** check whether outcomes differ for groups of applicants in ways that cannot be justified.
+
+```figure
+type: checklist
+title: Validating a loan recommendation tool
+caption: Measure both defaults and good customers wrongly declined.
+- x Compared with past applications of known outcome
+- x Unusual applications: new, seasonal, thin records
+- x A period of economic stress, not only good years
+- *x A threshold chosen deliberately from the trade-off
+```
 
 The analysis shows that the tool performs well for established businesses but poorly for new ones. The lender adopts it for established businesses only, with human review for all declines, and continues to assess new businesses manually.
 

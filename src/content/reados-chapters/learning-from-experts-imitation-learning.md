@@ -60,6 +60,16 @@ Several methods address cascading errors by gathering demonstrations in the situ
 4. Add these new examples to the training data and retrain.
 5. Repeat.
 
+```figure
+type: cycle
+title: Data set aggregation
+caption: The expert corrects the learner in the situations the learner actually reaches, including its own mistakes.
+- Train on the expert's demonstrations
+- Let the learner act
+- *Ask the expert what they would do there
+- Add the examples and retrain
+```
+
 Over time, the training data comes to include the situations the learner actually gets into, including mistakes, along with expert guidance on how to recover. The learned policy becomes much more robust.
 
 ### Gradually handing over control
@@ -146,6 +156,17 @@ This is an illustration, not a real business.
 A small fabrication workshop wants to reduce its dependence on one senior welder whose work is consistently excellent. The first attempt records the welder completing several standard jobs and turns them into step-by-step instructions. Trainees following the instructions do well on standard jobs but struggle when materials vary or a weld starts to go wrong, a form of cascading error.
 
 The workshop changes approach. The senior welder reviews trainees' actual work each week, explaining corrections in the situations the trainees actually face, including how to recover from common problems. The written guide is revised to explain the goals behind each step: penetration, distortion control and finish quality, and how to trade them off for different jobs. Over several months, trainees handle a growing range of jobs independently, and the guide becomes a useful reference rather than a rigid script.
+
+```figure
+type: compare
+title: Capturing a senior welder's know-how
+cols: First attempt | Second attempt
+best: 2
+caption: Demonstrations miss recovery; learners need correction in their own situations, and goals transfer better than steps.
+- Method | Recorded jobs turned into steps | Weekly review of trainees' actual work
+- Content | What to do when all goes well | Corrections, including recovering from common problems
+- *Guide | Step-by-step instructions | Explains the goals behind the steps
+```
 
 ## Common mistakes
 

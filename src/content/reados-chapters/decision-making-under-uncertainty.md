@@ -29,6 +29,16 @@ The interaction between an agent and its environment follows a loop:
 3. The action affects the environment, often in ways that are not entirely predictable.
 4. The agent receives a new observation, and the loop repeats.
 
+```figure
+type: cycle
+title: The observe-act loop
+caption: Each action changes the environment, often unpredictably, and the next observation reflects that.
+- Observe | the environment
+- Decide | choose an action
+- *Act | the environment changes
+- Observe again
+```
+
 Observations are often incomplete or noisy. A person may not notice an approaching hazard; a radar may miss a detection because of interference; a sales report may arrive late or contain errors. Actions often have uncertain effects. Sounding an alert does not guarantee that a pilot responds in time; launching a marketing campaign does not guarantee a particular response.
 
 The agent's task is to choose actions that best achieve its objectives over time, given the observations it has received so far and its knowledge of the environment.
@@ -63,6 +73,16 @@ Other agents act in the same environment, and their behaviour is uncertain. Comp
 | Model uncertainty | How does this system actually work? | How do customers really respond to price? |
 | State uncertainty | What is the situation right now? | Is this machine starting to wear out? |
 | Interaction uncertainty | What will others do? | How will a competitor respond? |
+
+```figure
+type: layers
+title: Four sources of uncertainty
+caption: Each needs a different response: more data, a better model, better sensing or anticipating others.
+- Outcome | what will happen if I do this?
+- Model | how does the system actually work?
+- State | what is the situation now?
+- *Interaction | what will others do?
+```
 
 Most important decisions involve several of these at once. GoCore's series covers each in turn.
 

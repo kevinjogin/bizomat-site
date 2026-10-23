@@ -81,6 +81,29 @@ A delivery business considers different routing policies, each with a different 
 
 Policy D is **dominated**: Policy B achieves better on-time performance at lower cost. A, B, C and E form the frontier. Choosing among them is a business judgement: is the improvement from 95% to 97% on-time worth an extra $1,300 a week? Laying out the frontier makes that judgement explicit and informed.
 
+```figure
+type: svg
+title: The Pareto frontier for delivery policies
+alt: A chart of on-time deliveries against weekly fuel cost for five policies. A at 88% for $4,000, B at 92% for $4,300, C at 95% for $4,900 and E at 97% for $6,200 form the frontier. D at 91% for $4,600 is dominated, because B is both cheaper and more on time.
+caption: D is dominated by B; choosing among A, B, C and E is a business judgement about what more reliability is worth.
+viewbox: 0 0 600 300
+body:
+<path class="lf" d="M60 260H580M60 260V20"/>
+<text class="tx txs" x="580" y="284" text-anchor="end">weekly fuel cost →</text>
+<text class="tx txs" x="66" y="30">on time ↑</text>
+<path class="la draw" d="M100 233L160 155L280 96L540 56"/>
+<circle class="fa" cx="100" cy="233" r="7"/>
+<circle class="fa" cx="160" cy="155" r="7"/>
+<circle class="fa" cx="280" cy="96" r="7"/>
+<circle class="fa" cx="540" cy="56" r="7"/>
+<circle class="fi" cx="220" cy="174" r="7"/>
+<text class="tx txs" x="112" y="246">A 88% · $4,000</text>
+<text class="tx txs" x="104" y="148">B 92% · $4,300</text>
+<text class="tx txs" x="292" y="92">C 95% · $4,900</text>
+<text class="tx txs" x="530" y="44" text-anchor="end">E 97% · $6,200</text>
+<text class="tx txs" x="232" y="190">D 91% · $4,600 (dominated)</text>
+```
+
 ## Designing better objectives
 
 Some principles help, whether the objective is for an algorithm or for a team.
@@ -159,6 +182,17 @@ A small online retailer introduces a target for its customer support team: respo
 Investigation shows that staff are sending quick holding replies to meet the target, then taking longer to actually resolve problems. The measure improved; the goal, helping customers, did not.
 
 The retailer redesigns the objectives: a combination of time to resolution, the share of enquiries resolved in a single interaction, and a short satisfaction rating after each resolved case. Response speed remains a measure, but no longer the only one. Within two months, satisfaction recovers and repeat enquiries fall, while response times remain reasonable.
+
+```figure
+type: compare
+title: A two-hour response target, redesigned
+cols: Single target | Balanced measures
+best: 2
+caption: The measure improved but the goal did not: quick holding replies, slower resolutions and more repeat enquiries.
+- Measured | Reply within two hours | Time to resolution
+- Added | Nothing | Share resolved in one interaction
+- *Customer view | Ignored | A short satisfaction rating
+```
 
 ## Common mistakes
 

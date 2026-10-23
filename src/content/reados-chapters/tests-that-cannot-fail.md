@@ -45,6 +45,17 @@ Applied honestly, the question does uncomfortable work:
 | "Backups are running" | A backup job can succeed while producing unusable files | A timed restore of real data |
 | AI tool "does not use" a protected attribute | The attribute may be reconstructed from other inputs | Outcome testing by group, described below |
 
+```figure
+type: compare
+title: Checks that cannot fail, and ones that can
+cols: Why it cannot fail | A check that could
+caption: Ask what the check would have to observe to show a problem.
+- Training completion | Attendance shows nothing about resisting a scam | Call-back and a second approver
+- Supplier self-assessment | The supplier writes the answers | Evidence such as a restore test
+- "Backups are running" | Jobs succeed with unusable files | A timed restore of real data
+- *"Does not use age" | Age can be reconstructed | Outcome testing by group
+```
+
 Some weak checks are still worth running, because a failure is informative even when a pass is not. The mistake is presenting the pass as proof.
 
 ## State what you fear in terms of consequences
@@ -92,6 +103,16 @@ This is an illustration. A small recruitment agency uses three forms of assuranc
 **Backups.** The IT provider's monthly report says backups "completed successfully". The agency asks for a restore of one week's placement records to a spare laptop. The restore takes nine hours and two files are corrupted. The provider fixes the configuration, and a quarterly timed restore becomes part of the contract.
 
 **AI screening.** The agency uses a CV screening tool whose vendor says it is "unbiased because it does not use age or gender". The owner asks the vendor whether age could be predicted from the other inputs. The vendor cannot say. The agency then looks at outcomes for a sample of recent applicants who had voluntarily provided age information in a separate, optional survey held apart from the screening tool. Applicants over 50 were shortlisted at about 9%, compared with about 21% for other applicants, for similar roles. Graduation year and total years of experience were among the inputs the tool weighted most.
+
+```figure
+type: bars
+title: Shortlisting rates for similar roles
+unit: %
+max: 25
+caption: The tool "does not use age", but graduation year and years of experience were among its heaviest inputs.
+- Other applicants | 21
+- *Applicants over 50 | 9
+```
 
 The agency stops relying on the tool's rejections alone: rejected applicants are now reviewed by a consultant, graduation year is removed from the criteria it controls, and shortlisting rates by age band are checked monthly, with a written trigger for pausing the tool. It also takes advice on its obligations under anti-discrimination and privacy law, and asks the vendor for evidence of outcome testing in future.
 
