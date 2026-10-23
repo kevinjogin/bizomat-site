@@ -67,6 +67,44 @@ These are example conditions, not universal rules. A larger business may absorb 
 
 Some limits cannot be traded for a higher price. More revenue does not create missing competence, remove an unsafe working condition or authorise the use of somebody else's confidential material. Treat those matters as prerequisites rather than weighted scores.
 
+## Check the timing against real dates
+
+Many enquiries carry a date: a launch, a board meeting, the end of a financial year. Before anything else is promised, put the customer's date beside your own calendar. Count back from their date to the latest point at which their input must arrive, allow for their review, and see whether the work fits around the commitments already accepted.
+
+For the launch enquiry, Fieldnote counts back from the customer's planned launch. The pack needs a week of writing, a week for the customer's review and a few days for final changes, so source material must arrive about three weeks before launch. That date is the real constraint, and it belongs in the first reply: "We can meet your launch if we receive the current service details by the 4th." A date stated this way is a commitment the customer can test and act on, rather than a vague assurance that the timing should be fine.
+
+If the dates do not fit, say so early. A customer told in the first week that their timeline is too short can change it, simplify the request or look elsewhere. A customer told in the fourth week has lost the chance to do any of those.
+
+## Check fit without pretending to precision
+
+It is tempting to turn opportunity decisions into a weighted score: so many points for budget, so many for timing, a threshold for proceeding. Scores look objective, but the weights are guesses, and a high total can hide a single condition that should have stopped the work. A short checklist of questions, each answered with the evidence behind it, usually supports a better decision.
+
+```figure
+type: checklist
+title: Six questions before investing in an enquiry
+caption: Each answer should point to something observed, not a hope. One firm "no" on a limit outweighs several "yes" answers.
+- x Is there a customer outcome we can describe in observable terms?
+- x Do we know who decides, and how?
+- x Is the work inside our present capability?
+- x Can we fit it around existing commitments?
+- x Would the likely payment timing work for our cash?
+- *x Is there a next step that would reduce the most important uncertainty?
+```
+
+The answers fall naturally into three groups. Questions answered with evidence support proceeding. Questions with plausible but unconfirmed answers become the subject of an investigate decision. A question that touches an operating limit, and cannot be answered satisfactorily, points to declining or deferring, whatever the other answers say.
+
+## Notice the warning signs early
+
+Some patterns in early conversations predict difficulty later. None of them proves that an opportunity is poor, but each deserves a direct question before more effort is invested:
+
+- **Nobody can say who decides.** The contact is enthusiastic but cannot describe how the purchase will be approved.
+- **A fixed price is demanded before the scope is known.** The customer wants a number before anyone has agreed what it covers.
+- **The deadline cannot move, but neither can anything else.** Scope, quality and budget are all fixed against a date that leaves no room.
+- **Information is withheld.** The customer will not share the material the work depends on until after commitment.
+- **Scope grows during the first conversation.** Each answer adds a new requirement.
+
+Fieldnote's second enquiry showed several of these at once: a large scope, a fixed budget and a launch date chosen before the work was understood. Naming the signs plainly in the decision note makes it easier to raise them with the customer, rather than hoping they resolve themselves.
+
 ## Use three possible decisions
 
 Early decisions need not be a binary yes or no. Use **proceed**, **investigate** and **decline or defer**.
@@ -87,11 +125,38 @@ A vague investigate decision can become an expensive waiting room. Attach a ques
 
 For the proposed online store, Fieldnote records that its package does not include commerce implementation. It offers to explain that boundary and, if appropriate, suggest seeking a specialist. It does not promise to coordinate a supplier it has not assessed. A clear decline preserves both businesses' time.
 
+## Decline in a way that leaves the door open
+
+A decline is a decision about this request at this time, not a judgement of the customer. Done well, it saves the customer time and leaves a good impression. A useful decline:
+
+1. thanks the customer for the enquiry and the information shared;
+2. states plainly which part of the request falls outside what you do, without criticising the request;
+3. says what kind of supplier might suit it, if you know, without recommending a specific firm you have not assessed;
+4. mentions the kind of work you would be well placed to help with, if any part of their need fits.
+
+Fieldnote's reply to the online-store enquiry follows this pattern. It explains that the studio prepares service information rather than building stores or payment systems, suggests that a commerce developer would be the right first contact, and notes that if the customer later needs its service descriptions rewritten for the new store, Fieldnote could help with that part. The reply takes ten minutes, commits Fieldnote to nothing it cannot do, and gives the customer something useful.
+
 ## Count the work before the sale
 
 Sales effort consumes capacity even when it produces no invoice. Research, meetings, estimates and revisions all compete with delivery. Record enough of this effort to notice patterns. A long unpaid proposal for an uncertain job may cost more than a short paid discovery step for a suitable one.
 
 Do not turn this into a rule that every conversation must be billed. Early discussion can be a sensible investment. The question is whether the amount of effort is proportionate to what is known and what the next step can establish. A ten-minute clarification and a three-day solution design are different commitments.
+
+A useful habit is to write, before any substantial unpaid work, what the work is expected to establish. A proposal might establish whether the customer accepts the boundaries of the package; a workshop might establish whether the decision-makers agree about the problem. If the expected result is only "they will like us more", the effort is probably larger than the uncertainty it removes. Writing the purpose down also makes it easier to stop when it has been achieved, rather than continuing to polish material the customer has not asked for.
+
+## Put a value on early investigation
+
+Early work is easier to manage when its cost is visible. This is an illustration with Fieldnote's own planning figures. Suppose a first conversation takes 45 minutes, preparing for it takes another 30, and writing a scoped proposal takes three hours. That is four and a quarter hours of one person's time. At an internal planning rate of A$120 per hour, the investment in one proposal is about **A$510**, before any revision.
+
+That figure is not a reason to refuse proposals. It is a way to compare choices. If Fieldnote writes proposals for several enquiries a month and wins only some of them, the cost of the unsuccessful ones is carried by the successful ones. Knowing the amount helps decide when a short paid discovery step, or a brief written summary instead of a full proposal, would serve both sides better.
+
+Record the time against each opportunity, roughly, as it happens. After a few months, the records show which kinds of enquiry consume the most unpaid effort and which tend to become work. Those patterns are worth more than any general rule about how much time a proposal should take.
+
+## Revisit decisions when the evidence changes
+
+An opportunity decision records what was known on a date. It should change when the evidence does. A deferred enquiry may become suitable when the customer narrows the scope, moves the deadline or confirms the source material. An opportunity that looked promising may need to be declined when a new requirement appears.
+
+Keep the earlier note rather than overwriting it, and add the new evidence and decision beneath it. The history is useful in two ways. It shows the customer, if needed, why the position changed. And it shows the business, over time, which early signs were reliable and which were not.
 
 ## Exercise: write an opportunity decision note
 

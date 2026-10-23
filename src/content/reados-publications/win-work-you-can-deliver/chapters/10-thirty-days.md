@@ -87,6 +87,64 @@ Customer information and accepted offers are business assets. The Australian Cyb
 
 For the working system described here, assign responsibility for access and recovery. Keep the accepted version identifiable, limit access to people who need it and ensure a departing team member does not retain unnecessary access. Check that important records can actually be recovered; the existence of a synchronised folder alone does not demonstrate recovery from every kind of loss.
 
+## Keep the system light enough to last
+
+A method that takes too long to maintain is abandoned in the first busy month. Set a time budget for keeping the records and stick to it. For a two-person business, half an hour a week for the pipeline review and a few minutes after each customer conversation to update the record is usually enough. The monthly clean-up and the end-of-job review add perhaps an hour each.
+
+If the budget is regularly exceeded, the records are probably doing more than the decisions require. Look for fields nobody uses, reports nobody reads and information typed into two places, and remove them. The aim is a system that is cheaper to keep than the mistakes it prevents.
+
+## Recognise the common ways the method fails
+
+The practices in this book tend to fail in predictable ways. Knowing them makes them easier to catch early.
+
+```figure
+type: checklist
+title: Early signs the method is slipping
+caption: Each sign has a simple correction; the danger is not noticing it for months.
+- ? Open records with next-action dates in the past
+- ? Stages used loosely, such as "accepted" before acceptance
+- ? Offers sent without a check against the estimate
+- ? Changes agreed by email but not recorded
+- ? Reviews skipped because "nothing went wrong"
+- ? Records kept by one person only
+```
+
+None of these is a reason to abandon the approach. Each has a simple correction: a date fixed in the weekly review, a definition re-read, a step added to the offer template, a habit of recording changes the same day. The real risk is not noticing the slippage for months, by which time the records describe a business that no longer exists. The weekly review is the natural place to ask, briefly, whether any of these signs has appeared.
+
+## Look for evidence that it is working
+
+After thirty days, the results that matter are mostly visible in the records themselves rather than in sales figures, which take longer to move. Useful signs include:
+
+- every open opportunity has a named owner and a next action with a future date;
+- every offer sent in the period can be traced to a decision record and an estimate;
+- capacity and cash were checked before any new start date was promised;
+- at least one completed job has an estimate-against-actual comparison and one specific change arising from it;
+- the team can explain why each declined enquiry was declined.
+
+These are modest measures, and deliberately so. They show that the business is making its decisions on evidence. Better sales, steadier cash and fewer delivery surprises are the expected consequences over the following months, and they will be easier to attribute when the underlying records are sound.
+
+## Adapt the method as the business grows
+
+The records described here suit a small team. As the business grows, some parts will need to change. More people handling enquiries may justify sales software that enforces the stage definitions and reminds owners of due actions. More jobs running at once may justify a proper scheduling tool for the capacity view. A bookkeeper or accountant may take over the cash forecast.
+
+Move to new tools when a real coordination problem appears, not before. When you do, carry the definitions across deliberately: the evidence required for each stage, the meaning of planning contribution, and the distinction between accepted value and received cash. Software can make records easier to keep, but it cannot decide what they should mean, and a new tool configured without those definitions will quietly reintroduce the vague stages and blended numbers this book set out to remove.
+
+## Teach the method to someone new
+
+The final test of the system is whether a new team member can use it. Give them the definitions, one completed job's records from enquiry to review, and the current pipeline, and ask them to explain the state of two open opportunities and what should happen next. Where they hesitate, the records or definitions need improving.
+
+Teaching in this way also spreads the habits that keep the system alive. A business in which everyone understands why each record exists is far less dependent on the one person who set it up, and far more likely to keep making clear promises when that person is busy, away or has moved on.
+
+## Plan the second month
+
+The first thirty days establish the records and habits. The second month is when they start to produce evidence worth acting on. Plan it before the first month ends, while the lessons are fresh.
+
+A practical second-month plan has three parts. First, carry forward the improvements identified in the reviews, each with its owner and date, and check at the next weekly meeting whether they happened. Second, continue the channel experiment that looked most promising, or start the second one, using the same records so the results can be compared. Third, schedule the follow-up review of the first month's enquiries, about two months after they arrived, as Chapter 3 recommended, so that the slower conversions are counted fairly.
+
+Keep the plan small. One or two improvements actually made are worth more than a long list of intentions. The aim of the second month is not to add new practices but to make the first month's practices routine, so that they continue when the business is busy, which is exactly when they matter most.
+
+Note in the plan which questions are still open, such as whether the assessment-only option attracts customers or whether the input check shortens delivery. Each open question should have a date by which the records will have enough evidence to answer it. Those dates turn the method from a set of habits into a steady way of learning what works for this particular business.
+
 ## Follow one decision through the whole system
 
 Harbour Services began with a brochure request. Investigation revealed inconsistent service explanations and an internal training deadline. Fieldnote waited for approved rules, proposed a bounded package and tested its economics. The accepted offer then guided the delivery record. A late editing error required a correction and an improved check. The review created a possible future update conversation without assuming an ongoing sale.

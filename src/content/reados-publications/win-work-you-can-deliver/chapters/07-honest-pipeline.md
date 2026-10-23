@@ -38,6 +38,24 @@ caption: Opportunities can move backwards when evidence changes; the state follo
 
 Allow opportunities to move backwards when evidence changes. If a customer requests an entirely different scope, an old accepted price should not continue to support the forecast for the new work. Preserve the history and record the new decision needed.
 
+## Choose a record the team will actually keep
+
+The best pipeline tool is the one the team keeps current. For two people, a shared spreadsheet with a few well-defined columns is usually enough, and it is easier to change than a sales system configured before anyone knows what the business needs to track.
+
+```figure
+type: checklist
+title: Columns for a two-person pipeline
+caption: Enough to support the weekly review and the cohort comparison, and no more.
+- x Customer and enquiry date
+- x Current state, from the defined list
+- x Problem in one line, and the proposed scope
+- x Next action, owner and date
+- x Offer version, fee and estimated hours
+- *x Reason closed or deferred, in evidence-based words
+```
+
+Resist adding columns that nobody will fill in. Each column should support a decision the team actually makes, such as which opportunity to chase this week, whether capacity is at risk, or why work was lost. An empty column is worse than none, because it suggests that the information exists somewhere when it does not.
+
 ## Keep the next action visible
 
 For each open opportunity, record the responsible person, next action, intended date and reason that action matters. “Follow up” is incomplete. “Ask whether the owner has approved the service inclusions before preparing the final scope” identifies a decision dependency.
@@ -45,6 +63,14 @@ For each open opportunity, record the responsible person, next action, intended 
 Use dates agreed with the customer where possible. If the customer expects to review a proposal after a board meeting, repeated messages before the meeting add little. If the date passes, ask whether circumstances have changed and whether a revised decision date is useful. Silence should remain missing information, not be converted into acceptance.
 
 Ageing means the time an opportunity has spent open or in its current state. It helps locate stalled decisions. An old opportunity is not automatically lost: procurement, seasonal work or funding may explain the delay. But it should have a current reason to remain active. Move indefinite possibilities out of the active workload view rather than keeping them there to make the total look healthy.
+
+## Make the pipeline visible to everyone who delivers
+
+In a small business, the people who sell are often the people who deliver, but not always at the same moment. When one partner accepts work while the other is deep in a project, the pipeline is how the second person learns what is coming. A pipeline kept in one person's head or private inbox leaves the rest of the team planning blind.
+
+Keep the record where both people can see it, and agree that no new start date is promised without checking it. A short note in the weekly review, such as "Harbour Services may accept this week; if so, drafting starts on the 14th", gives the person delivering current work a chance to raise a clash before it becomes a commitment. Shared visibility does not need sophisticated software. It needs one agreed place for the record and the habit of looking at it before saying yes.
+
+The same openness helps when someone is away. If a partner is ill or on leave, the other can see each open opportunity, its next action and its date, and keep the customer informed. A customer who hears nothing for two weeks because the one person who knew about their enquiry was unavailable has every reason to conclude the business is unreliable.
 
 ## Compare the same group over time
 
@@ -90,6 +116,42 @@ caption: The weighted figure is a scenario built on a judgement, not money in th
 - *Scenario total | 13680 | accepted plus weighted
 ```
 
+## Plan with scenarios, not a single forecast
+
+For planning, a few concrete scenarios are more useful than one weighted total. With three accepted A$3,600 packages and two open offers, the possible fee values are:
+
+- **Neither open offer accepted:** A$10,800, with about 72 hours of delivery.
+- **One accepted:** A$14,400, with about 96 hours.
+- **Both accepted:** A$18,000, with about 120 hours.
+
+```figure
+type: compare
+title: Three scenarios for the same pipeline
+cols: Fee value | Delivery hours
+caption: Each scenario asks a different planning question; the weighted A$13,680 corresponds to none of them.
+- Neither open offer accepted | A$10,800 | About 72
+- One accepted | A$14,400 | About 96
+- *Both accepted | A$18,000 | About 120
+```
+
+Each scenario prompts a different action. The first asks whether the business needs more enquiries soon. The second fits the period with some strain. The third would not fit within the 80 available hours without moving a start date. Notice that the weighted figure of A$13,680 matches none of these outcomes; it is a statistical summary, useful for comparing periods, but not a description of anything that will actually happen.
+
+## Put the pipeline beside the capacity calendar
+
+The pipeline and the capacity calendar should be read together. This is an illustration using the cohort above and the capacity figure from Chapter 5. Three accepted packages at about 24 hours each need about 72 hours. If Fieldnote has about 80 usable delivery hours in the relevant period, the accepted work alone leaves only about 8 hours spare.
+
+The two open offers would need another 48 hours if both were accepted. That is not a reason to withdraw them, but it is a reason to check now which start dates the business could honestly offer if they are accepted, and to make sure the offers say so. Discovering the clash after a customer accepts, and then delaying their start without warning, damages exactly the reliability this book is about.
+
+```figure
+type: bars
+title: Delivery hours needed against hours available
+unit: hours
+caption: Illustrative figures. Accepted work nearly fills the period; both open offers together would need another 48 hours.
+- Available delivery hours | 80
+- *Accepted packages, 3 × 24 | 72
+- Accepted plus both open offers | 120
+```
+
 ## Review exceptions, not every field
 
 A short weekly discussion can focus on changed evidence, overdue actions, capacity pressure and cash exposure. Ask which opportunity requires a decision now and what information would change the decision. Do not spend the whole meeting reciting the same unchanged rows.
@@ -97,6 +159,33 @@ A short weekly discussion can focus on changed evidence, overdue actions, capaci
 For Harbour Services, the important update may be that the owner has approved the input documents but the original training date has moved. That affects scope readiness and scheduling. A new marketing contact in the record may be less urgent. Prioritising consequences keeps the review useful.
 
 Record why work was declined or lost in language supported by evidence. “Customer chose to handle the update internally” is more informative than “price objection” when no price discussion established that explanation. Include your own decision to decline work; otherwise the data describes only customer choices and hides your selection process.
+
+## Let the pipeline steer the effort to find work
+
+The pipeline shows when to look for more work as well as when to slow down. If the accepted work and likely offers already fill the next two months, effort on new channels can pause in favour of delivery. If the pipeline is thin and few offers are open, finding suitable enquiries becomes the priority, well before the current work runs out, because Chapter 3 showed that enquiries take weeks to mature into paid work.
+
+Fieldnote reviews this at the same weekly meeting. A simple rule of thumb serves it well: when the accepted work for the coming six weeks falls below a set level of hours, one person spends part of the week on the channel experiment most likely to produce suitable enquiries. The level is the team's own choice, based on its costs and cash, and the rule keeps the response early rather than leaving it until the calendar is already empty.
+
+## Clean the pipeline once a month
+
+Records drift. Opportunities stay open long after the customer has moved on, duplicates appear when the same customer enquires twice, and next-action dates pass unnoticed. A short monthly clean-up keeps the pipeline honest:
+
+1. Close or defer any opportunity with no customer action since the last review and no current reason to remain open, recording why.
+2. Merge duplicate records, keeping the history of each.
+3. Check every open record has a next action with a future date.
+4. Confirm that accepted work matches the delivery schedule.
+
+The clean-up usually shrinks the apparent total. That is the point: a smaller, accurate pipeline supports better decisions than a large one padded with possibilities nobody is pursuing.
+
+## Keep personal information to what the work needs
+
+Pipeline records often hold contact details and notes from conversations. Apply the same restraint as for customer records in Chapter 4: keep what the next decision needs, avoid personal remarks about individuals, restrict access to the people who use the record, and remove details from closed records when they are no longer needed. A note such as "difficult person" is neither useful evidence nor something a business would want the customer to read; "prefers decisions by email, approves within a week" is both useful and respectful.
+
+## Learn from the closed records
+
+Each quarter, read the records closed or deferred during the period, including those the business declined. Look for patterns: enquiries from one route that rarely fit, offers that stall at the same stage, reasons for loss that recur. With the small numbers typical of a small business, the value lies in the specific examples and the questions they raise, not in percentages.
+
+For Fieldnote, a quarter's review might show that several offers stalled because the customer's service rules were still being debated. That is evidence for the assessment-only option described in Chapter 6, and for asking about approved rules earlier in the first conversation. The pipeline, read this way, becomes a source of improvements to the offer as well as a forecast.
 
 ## Exercise: audit five open opportunities
 

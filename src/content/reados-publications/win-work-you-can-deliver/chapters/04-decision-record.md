@@ -30,6 +30,24 @@ caption: Every step should leave both sides better able to decide, not simply mo
 - *Write the decision record | owner and date for the next action
 ```
 
+## Prepare in fifteen minutes
+
+A short, consistent preparation routine makes most first conversations better. Before the call with Harbour Services, Fieldnote spends about fifteen minutes on four things:
+
+```figure
+type: checklist
+title: Fifteen minutes before a first conversation
+caption: Enough to ask good questions and avoid making the customer repeat themselves; not a research project.
+- x Re-read the enquiry and any earlier messages
+- x Look at the customer's public service information
+- x Write the three questions that would most change the next step
+- *x Note what you will not offer, so the boundary is ready if needed
+```
+
+The public information often shows the problem before the customer describes it: two pages that describe the same package differently, or a service list that has outgrown its layout. Noticing that in advance lets the conversation start from something concrete. The note of what will not be offered matters because boundaries are easier to state calmly when they were decided before the call than when they are improvised in response to an enthusiastic request.
+
+Keep the preparation proportionate. Fifteen minutes suits a first conversation about a modest package; a complex or high-value enquiry may justify more, and a quick question from an existing customer may need none. The test is whether the preparation would change what you ask or say. If an extra half hour of research would not alter a single question, it is better spent on delivery work already promised to someone else.
+
 ## Move from the request to a recent event
 
 Fieldnote asks what prompted the brochure request. The manager describes two staff members giving different answers about whether an inspection is included in a maintenance package. The problem is now more specific: inconsistent explanations of an inclusion.
@@ -56,6 +74,28 @@ caption: A job title does not establish the whole decision process; ask how thes
 
 Money can be discussed directly and respectfully. Explain which scope variables affect the price and ask about the customer's approval process or constraints. A customer may have no fixed budget because they are still learning what the work involves. That is different from being unwilling to pay. You still need enough information to decide whether preparing an offer is worthwhile.
 
+## Answer the price question honestly and early
+
+Customers often ask about price in the first conversation, and avoiding the question tends to reduce trust. Where the price depends on scope, explain what it depends on and, if you can, give a range for typical work, making clear that a firm figure follows once the scope is agreed.
+
+This is an illustration with fictional figures. Fieldnote might say: "A pack covering up to five services, with two rounds of review, has typically been in the range of A$2,000 to A$3,000. The main things that move it are the number of services, how settled the service rules are, and how many people review the draft." That statement gives the customer enough to judge whether to continue, and it names the variables that the decision record will need to pin down.
+
+Avoid a single number given before the scope is understood. It tends to become the customer's reference point, and any later increase feels like a broken promise even when the scope has grown. A range with its reasons is more honest and more useful.
+
+## When the customer wants a proposal straight away
+
+Some customers ask for a proposal at the end of the first call, before the important uncertainties are resolved. Writing one immediately can feel responsive, but a proposal based on guesses either overprices the work to cover the unknowns or underprices it and creates problems later.
+
+A practical alternative is to send the decision record first, with the open questions clearly marked, and propose the proposal once they are answered. For Harbour Services, Fieldnote replies that it will send a fixed-scope offer within two working days of receiving the current documents and the owner's confirmation of the inclusion rule. The customer gets a definite date, and the offer, when it comes, rests on evidence rather than assumption.
+
+## When the customer wants to start before details are settled
+
+Sometimes a customer is ready to begin before the important questions are answered: the documents have not arrived, the approver has not been confirmed, but the deadline is close and they want work to start. Beginning on that basis can feel helpful, yet it usually means drafting from guesses and redoing the work once the real inputs arrive.
+
+A better response is to offer a start that does not depend on the missing information. For Harbour Services, Fieldnote could begin by reviewing the documents already supplied and listing every place where they disagree, which is useful whatever the final scope. The writing itself starts when the owner confirms the inclusion rule. Stating this plainly, with the date by which the confirmation is needed to keep the training deadline, gives the customer momentum without committing Fieldnote to work it may have to discard.
+
+Record any such agreement in the recap. "Work starts on the document review on Monday; drafting starts when the inclusion rule is confirmed" is a commitment both sides can check. "We'll get going and sort out the details" is not.
+
 ## Listen for corrections, not just confirmation
 
 Periodically summarise your understanding and invite correction: “I have heard that the service rules are agreed, but staff use three different documents. Is that accurate?” A useful summary can expose a misunderstanding before it enters a proposal.
@@ -75,6 +115,18 @@ caption: Listening altered the deliverable, not merely the rapport.
 - Likely first deliverable | Polished public brochure | Concise approved staff reference
 ```
 
+## Include the people who decide
+
+When more than one person shapes the decision, a conversation with only one of them can produce an agreement that the others later reverse. Where the approver of the wording or the expenditure is not on the call, ask whether they could join a short second conversation, or whether the contact would like a brief summary to share with them.
+
+Make that summary easy to forward: a few lines stating the problem as the customer described it, what the work would and would not include, the inputs needed and the next step. Written for the absent decision-maker, it is often more useful than a full proposal, because it lets them correct a misunderstanding before anyone has invested in detailed pricing.
+
+## Recognise when the conversation should end
+
+Sometimes the most useful outcome of a first conversation is a clear finding that the work is not a fit. The underlying problem may be a management disagreement no document can resolve, the timing may be impossible, or the customer may need a service you do not offer. Continuing the conversation in the hope that something will change usually costs both sides time.
+
+Say so directly and kindly, summarise what you learned that might help them, and, where you can, suggest the kind of help that would suit. For Harbour Services, if the manager and owner turned out to disagree about the inclusion rule, Fieldnote would say that the writing should wait until that decision is made, and offer to return to the work afterwards. That is an honest conclusion, and it often brings the customer back once they are ready.
+
 ## Create a record that can be corrected
 
 The useful output is a short decision record, not a transcript of everything said.
@@ -89,6 +141,10 @@ The useful output is a short decision record, not a transcript of everything sai
 | Next decision | Whether the inputs support a fixed-scope package | Fieldnote reviews after receipt |
 
 Send a concise recap through the agreed channel and invite corrections. Distinguish what was agreed from what was proposed. “We discussed a possible start in November” does not mean “November is booked.” Identify an owner and date for the next action so the conversation does not end in an indefinite promise to stay in touch.
+
+## Send the recap the same day
+
+The recap described above is most useful when it arrives while the conversation is fresh in both minds. Sending it the same day, or the next morning at the latest, gives the customer the best chance to correct anything misheard, and it shows that the business is organised. Keep it short enough to read on a phone, with the decision record attached or included, and end with the single next action and its date.
 
 ## Keep only information the work needs
 
