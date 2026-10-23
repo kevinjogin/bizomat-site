@@ -47,6 +47,17 @@ Choose geometry partly by asking what you will do with it next. A route may be b
 | Develop an exterior skin | Surfaces | Shape, boundaries and intended continuity |
 | Explore a sculpted form | Mesh geometry | Resolution, editing behaviour and later conversion needs |
 
+```figure
+type: decision
+title: Which kind of 3D geometry?
+question: What is the next operation?
+caption: Choose the representation from the question, then check it before relying on it.
+- Locate a route through space | Lines or curves
+- Compare component envelopes | Simple solids
+- Develop an exterior skin | Surfaces
+- *Explore a sculpted form | Mesh
+```
+
 These are starting points, not universal prescriptions. A single model can contain several kinds of geometry, each serving a different purpose. Keep their roles clear so construction references are not mistaken for finished surfaces or a visual placeholder for a checked component.
 
 Consider exchange requirements early. If someone else must edit or process the model, confirm what their software accepts and what object structure they need. A representation that is convenient for the author may require a conversion that changes the recipient's ability to use it.
@@ -108,6 +119,15 @@ This is an illustration. A founder wants to explore the internal space of a rect
 The outer model is a box whose volume is 120 × 80 × 40, or 384,000 cubic millimetres. The interior width and length are reduced by two wall thicknesses: 112 mm by 72 mm. The cavity begins 4 mm above the bottom and has an internal height of 36 mm.
 
 The interior volume is therefore 112 × 72 × 36, or 290,304 cubic millimetres. Subtracting that cavity from the outer box leaves 93,696 cubic millimetres of modelled material. The calculation provides an independent check on the simplified geometry.
+
+```figure
+type: stats
+title: Checking an open-top container model
+caption: Outside 120 × 80 × 40 mm with 4 mm walls and base; an independent check on the modelled volumes.
+- 384,000 mm³ | Outer box | 120 × 80 × 40
+- 290,304 mm³ | Cavity | 112 × 72 × 36
+- *93,696 mm³ | Modelled material
+```
 
 For the modelling operation, the cutting box can extend slightly beyond the top face while beginning at the required bottom thickness. Only the portion overlapping the outer box is removed. This makes the intended open top explicit without changing the cavity dimensions within the container.
 

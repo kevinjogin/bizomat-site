@@ -92,7 +92,36 @@ Next, the founder changes the height to 160 mm. The opening centre should now be
 | Wider | 240 mm | 120 mm | 120 mm, 60 mm | 20 mm |
 | Wider and taller | 240 mm | 160 mm | 120 mm, 80 mm | 20 mm |
 
+```figure
+type: svg
+title: A centred opening that stays centred
+alt: Three versions of a plate with a 20 millimetre circular opening constrained to its centre. At 200 by 120 the centre is at 100, 60. At 240 by 120 it moves to 120, 60. At 240 by 160 it moves to 120, 80. The diameter stays 20 millimetres.
+caption: The centre is defined at half the width and half the height, so it follows every size change.
+viewbox: 0 0 640 200
+body:
+<rect class="bx" x="10" y="80" width="150" height="90" rx="2"/>
+<circle class="fa" cx="85" cy="125" r="8"/>
+<text class="tx txs" x="85" y="190" text-anchor="middle">200 × 120 · 100, 60</text>
+<rect class="bx" x="200" y="80" width="180" height="90" rx="2"/>
+<circle class="fa" cx="290" cy="125" r="8"/>
+<text class="tx txs" x="290" y="190" text-anchor="middle">240 × 120 · 120, 60</text>
+<rect class="bxa" x="420" y="50" width="180" height="120" rx="2"/>
+<circle class="fa pulse" cx="510" cy="110" r="8"/>
+<text class="tx txs" x="510" y="190" text-anchor="middle">240 × 160 · 120, 80</text>
+<path class="lf dsh" d="M85 80V170M10 125H160M290 80V170M200 125H380M510 50V170M420 110H600"/>
+```
+
 These calculations check the drawing relationships, not the suitability of the plate. Material, attachment method, tolerances and actual use remain separate decisions. The example demonstrates how a few explicit inputs can produce predictable geometry without claiming that the resulting product has been validated.
+
+```figure
+type: balance
+title: Driving and reference values
+left: Driving parameter
+right: Reference parameter
+caption: Decide which values control the geometry and which only report a result.
+- Width = 240 changes the plate | Reports the centre position
+- An input to the design | An observation of the outcome
+```
 
 ## Test limits as well as normal values
 

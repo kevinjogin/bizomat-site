@@ -76,6 +76,16 @@ Name proposed finishes so their status is clear. A working label such as propose
 
 For decisions that depend on real appearance, compare appropriate physical samples under relevant conditions. Displays, lighting and rendering choices can all affect perceived colour or gloss. The image can narrow a discussion, but it should not silently replace the evidence needed to approve a final finish.
 
+```figure
+type: balance
+title: A visual material is not a specification
+left: Rendering material
+right: Material specification
+caption: An image can suggest a finish; it does not establish grade, strength or durability.
+- Colour, reflectance, texture | Grade, properties, finish, standard
+- Helps people discuss appearance | Governs what is made
+```
+
 ## Apply materials consistently and inspect exceptions
 
 The source describes assigning materials by layer, by object or by individual face. Each approach can be useful. A broad assignment can keep a group consistent, while a face assignment can represent a particular surface treatment or explain a local difference.
@@ -127,6 +137,17 @@ Use filenames and captions that distinguish alternatives without relying on memo
 When a rendering is revised, explain what changed. A new camera angle can make an unchanged design appear different, while a small geometric alteration may be difficult to notice in a familiar view. A short change note helps reviewers direct their attention to the relevant issue.
 
 Retain the exact images used for important discussions together with the resulting decisions. This provides context if someone later asks what was shown when an option was selected. It also helps prevent an attractive earlier concept from continuing to circulate after the design has moved on.
+
+```figure
+type: checklist
+title: Before sharing a rendering
+caption: State what the image is for, and what it cannot show.
+- x The purpose is stated
+- x The viewpoint reveals the relevant feature
+- x Lighting explains the form
+- x Alternatives compared under matching conditions
+- *x The image is traceable to its source model
+```
 
 ## Ask for feedback the image can support
 

@@ -104,6 +104,15 @@ After attachment, the distance between the width endpoints measures 240 drawing 
 
 An independent check of the visible height measures 795 mm. The discrepancy from the labelled 800 mm is 5 mm, or 0.625% of 800 mm. The team records that result as evidence of uncertainty in the image or the chosen reference points; it does not declare a universal acceptable tolerance.
 
+```figure
+type: stats
+title: Calibrating a scanned panel drawing
+caption: A second, independent dimension shows how much the image itself can be trusted.
+- 240 → 1,200 | Measured width scaled to the label | factor 5
+- 795 mm | Height after scaling | labelled 800 mm
+- *0.625% | Discrepancy | recorded as uncertainty
+```
+
 The mounting centres are dimensioned 100 mm from the left and right edges and 200 mm above the base. With the lower-left corner as the origin, the intended centres are therefore at coordinates (100, 200) and (1,100, 200) mm. Their horizontal separation is 1,000 mm.
 
 | Item | Reconstruction basis | Independent check |
@@ -112,6 +121,23 @@ The mounting centres are dimensioned 100 mm from the left and right edges and 20
 | Overall height | Labelled 800 mm dimension | Record the 795 mm image measurement discrepancy |
 | Left mounting centre | 100 mm from left, 200 mm above base | Measure both offsets in the model |
 | Right mounting centre | 100 mm from right, 200 mm above base | Confirm 1,000 mm centre separation |
+
+```figure
+type: svg
+title: Rebuilding from the labelled dimensions
+alt: A rebuilt panel outline 1,200 by 800 millimetres with two mounting centres 100 millimetres in from each side and 200 millimetres above the base, at coordinates 100, 200 and 1,100, 200, giving a 1,000 millimetre separation.
+caption: Rebuild from the stated dimensions, not from traced scan pixels.
+viewbox: 0 0 600 300
+body:
+<rect class="bx" x="40" y="30" width="480" height="240" rx="2"/>
+<circle class="fa pulse" cx="80" cy="210" r="7"/>
+<circle class="fa pulse" cx="480" cy="210" r="7"/>
+<path class="lf dsh" d="M80 210H480M80 210V270"/>
+<text class="tx txs" x="280" y="202" text-anchor="middle">1,000 mm</text>
+<text class="tx txs" x="90" y="244">100, 200</text>
+<text class="tx txs" x="470" y="244" text-anchor="end">1,100, 200</text>
+<text class="tx txs" x="280" y="22" text-anchor="middle">1,200 × 800 mm</text>
+```
 
 The team draws the dimensioned rectangle and locates the centres using these relationships. It does not distort the reconstructed rectangle to follow the shorter scanned height. Instead, it notes that the concept uses the written dimensions and that the original geometry has not been independently verified.
 

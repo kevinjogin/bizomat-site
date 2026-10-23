@@ -72,6 +72,15 @@ Keep operations as simple as the form allows. A complicated chain of patches can
 
 **Tangent continuity**, or G1, adds a common tangent direction across the join. The surfaces flow together more smoothly in direction. **Curvature continuity**, or G2, also addresses the curvature relationship across the boundary and can produce a smoother transition in reflected appearance.
 
+```figure
+type: layers
+title: Continuity at a surface join
+caption: Specify the continuity each join needs; a definite break may be exactly right.
+- G0 position | the edges meet
+- G1 tangent | a shared direction across the join
+- *G2 curvature | the curvature also matches
+```
+
 Choose the continuity required by the design rather than automatically choosing the highest available option. An intentional edge should not disappear because a smooth blend was convenient. Equally, positional contact alone may be inadequate where a continuous visual surface is important.
 
 Inspect the transition from more than one direction and at an appropriate scale. A join hidden by one lighting arrangement can become obvious under another. Numerical settings describe the requested relationship, while the resulting geometry still needs review in context.
@@ -134,6 +143,22 @@ After the profile is edited, the reviewer checks that the main surface follows i
 One alternative requires a local form change through direct control vertices. The team retains the procedural version and creates a separate NURBS trial. It records that the new trial is edited through its control framework, so future profile changes should not be assumed to drive it.
 
 The two variants are compared using the same views and analysis settings. The team checks the 45 mm height, the 120 mm span and the opening location in both. A visually smoother variant is not accepted if it moves a required interface or obscures an unresolved relationship.
+
+```figure
+type: svg
+title: Raising the cover from the profile
+alt: A side profile drives a curved cover surface spanning 120 millimetres. Raising the profile's peak from 40 to 45 millimetres raises the surface while the 120 millimetre span stays fixed.
+caption: Change the driver, not the surface: the peak rises 5 mm and the 120 mm span stays fixed.
+viewbox: 0 0 560 230
+body:
+<path class="lf" d="M60 200H500"/>
+<path class="ln dsh" d="M100 200C160 40 380 40 440 200"/>
+<path class="la draw" d="M100 200C160 10 380 10 440 200"/>
+<text class="tx txs" x="270" y="72" text-anchor="middle">40 mm peak</text>
+<text class="txb" x="270" y="38" text-anchor="middle">45 mm peak</text>
+<path class="lf dsh" d="M100 214H440"/>
+<text class="tx txs" x="270" y="226" text-anchor="middle">120 mm span unchanged</text>
+```
 
 If a later task needs a solid, the team treats enclosure or thickening as another modelling step. It checks the resulting representation and relevant dimensions separately. The surface study has answered questions about form and dependency, not every question about the eventual product.
 

@@ -115,6 +115,16 @@ Specifications only predict performance roughly. Testing with your own work is m
 3. **Watch resource use**: processor, memory, graphics and storage, to see what limits performance.
 4. **Compare configurations**, including the current machines, on the same tests.
 
+```figure
+type: steps
+title: Testing a workstation before buying
+caption: Measure with the firm's own files; specifications alone do not predict CAD performance.
+- Choose representative files
+- Time key operations
+- Watch resource use
+- *Compare configurations on the same tests
+```
+
 Many CAD vendors and user communities also provide standard benchmark files and results, which help compare hardware.
 
 ## Lifecycle and standardisation
@@ -124,6 +134,15 @@ Standardising on a small number of workstation configurations simplifies support
 ## The value of faster hardware
 
 Hardware cost should be compared with the value of engineering time. As an illustration, suppose a designer costs the business about $90 an hour, and a faster workstation saves 20 minutes a day of waiting, through quicker rebuilds, opens and drawing updates. Over about 220 working days, that is 20 × 220 = 4,400 minutes, or about 73 hours a year, worth roughly $6,600. A workstation that costs a few thousand dollars more can pay for itself within months, before considering the less measurable benefit of fewer interruptions to concentration.
+
+```figure
+type: stats
+title: The value of 20 minutes a day
+caption: A workstation costing a few thousand dollars more can pay for itself within months.
+- 4,400 min | Waiting saved a year | 20 × 220 days
+- About 73 h | Each year
+- *$6,600 | Value at $90 an hour
+```
 
 The saving is only real if the waiting time is genuinely reduced, which is why testing with real files matters.
 

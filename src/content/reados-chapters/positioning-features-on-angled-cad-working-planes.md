@@ -94,6 +94,16 @@ The local X direction has length 50 mm because the square root of 40 squared plu
 
 A proposed feature centre is 50 mm along local X and 30 mm along local Y from the origin. Its world position is (140, 80, 50): add 40 to world X, 30 to world Y and 30 to world Z. The local description is simpler, while the world position provides an independent placement check.
 
+```figure
+type: compare
+title: The same point, two descriptions
+cols: Local face coordinates | World coordinates
+caption: The local description is simpler; the world description is what the model stores.
+- Origin | 0, 0, 0 | 100, 50, 20
+- *Feature centre | 50, 30, 0 | 140, 80, 50
+- 10 mm into the material | 50, 30, −10 | 146, 80, 42
+```
+
 For this orientation, a 10 mm movement along local positive Z changes world X by minus 6 mm and world Z by plus 8 mm. The perpendicular movement has length 10 mm because the square root of 6 squared plus 8 squared is 10. It has no world Y component.
 
 If the intended cutting direction is local negative Z, a 10 mm movement from the feature centre leads to (146, 80, 42). World X increases by 6 mm and world Z decreases by 8 mm. Simply moving vertically down by 10 mm would reach a different point and would not follow the same normal direction.
@@ -103,6 +113,29 @@ If the intended cutting direction is local negative Z, a 10 mm movement from the
 | Local origin | 100 mm | 50 mm | 20 mm |
 | Feature centre on the face | 140 mm | 80 mm | 50 mm |
 | Point 10 mm along local negative Z | 146 mm | 80 mm | 42 mm |
+
+```figure
+type: svg
+title: Local directions on an angled face
+alt: A side view in the world X-Z plane. A sloping face rises 30 millimetres in Z for every 40 in X, so 50 millimetres along local X. Moving 10 millimetres into the material along local negative Z goes 6 millimetres in positive X and 8 down in Z, not straight down.
+caption: A 10 mm normal cut goes +6 in world X and −8 in Z; moving straight down 10 mm would be a different feature.
+viewbox: 0 0 560 280
+body:
+<path class="lf" d="M40 240H520M60 260V20"/>
+<text class="tx txs" x="520" y="256" text-anchor="end">world X</text>
+<text class="tx txs" x="68" y="30">world Z</text>
+<path class="la draw" d="M100 220L380 10"/>
+<circle class="fa" cx="100" cy="220" r="5"/>
+<text class="tx txs" x="110" y="236">local origin</text>
+<circle class="fa pulse" cx="260" cy="100" r="6"/>
+<path class="ln dsh" d="M260 100L284 132"/>
+<circle class="fa" cx="284" cy="132" r="4"/>
+<text class="tx txs" x="296" y="140">10 mm into the face: +6 X, −8 Z</text>
+<path class="lf dsh" d="M260 100V140"/>
+<text class="tx txs" x="252" y="160" text-anchor="end">straight down: a different feature</text>
+<text class="txb" x="270" y="92">feature centre</text>
+<text class="tx txs" x="330" y="60">50 along local X = 40 X + 30 Z</text>
+```
 
 The example checks coordinate relationships only. It does not establish the face's physical thickness, a suitable hole depth or whether a cutting operation should pass through the component. Those requirements must be supplied by the design before constructing the final feature.
 

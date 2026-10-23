@@ -82,6 +82,25 @@ An **array** repeats selected content according to an arrangement such as rows, 
 
 For a rectangular arrangement, confirm the number of positions in each direction and the spacing between them. Distinguish the distance between adjacent positions from the total span. A four-position row at 30 mm spacing spans 90 mm between its first and last centres, not 120 mm.
 
+```figure
+type: svg
+title: Spacing is not span
+alt: A row of four positions at 30 millimetre spacing. The span from the first to the last centre is 90 millimetres, three spaces, not 120.
+caption: Four positions have three spaces between them: 3 × 30 = 90 mm.
+viewbox: 0 0 560 140
+body:
+<path class="ln" d="M80 60H440"/>
+<circle class="fa" cx="80" cy="60" r="8"/>
+<circle class="fa" cx="200" cy="60" r="8"/>
+<circle class="fa" cx="320" cy="60" r="8"/>
+<circle class="fa pulse" cx="440" cy="60" r="8"/>
+<text class="tx txs" x="140" y="48" text-anchor="middle">30</text>
+<text class="tx txs" x="260" y="48" text-anchor="middle">30</text>
+<text class="tx txs" x="380" y="48" text-anchor="middle">30</text>
+<path class="la" d="M80 100H440"/>
+<text class="txb" x="260" y="126" text-anchor="middle">span 90 mm, not 120</text>
+```
+
 For a circular arrangement, establish the centre or axis, the angular extent and whether each instance rotates with its position. An item that should keep a common orientation differs from one that should face radially. Inspect several positions rather than checking only the first repeated item.
 
 Count the resulting instances against the component list. A correct-looking pattern can include an extra item at a coincident start and end position or omit a required position. Confirm the count and geometry in the software's actual array workflow rather than assuming an old command sequence behaves identically in every release.
@@ -120,6 +139,18 @@ There are five distinct component definitions because the support and collar def
 | Shaft | 1 | 1 |
 | Retaining collar | 1 | 2 |
 | Total | 5 | 7 |
+
+```figure
+type: stack
+title: Five definitions, seven instances
+unit: instances
+caption: Count definitions and instances together: two supports and two collars reuse one definition each.
+- Base | 1
+- *Supports | 2
+- Roller | 1
+- Shaft | 1
+- Retaining collars | 2
+```
 
 The supports' nominal centre planes are positioned 160 mm apart along the assembly X direction. The roller is centred between them. If the left reference is at X equals 20 mm, the right reference is at X equals 180 mm and the midpoint is X equals 100 mm.
 

@@ -47,6 +47,16 @@ For larger tools, developers use the CAD system's API from a general programming
 
 At the highest level, **design automation** tools generate complete models, drawings and documents from a set of inputs, using rules that capture engineering knowledge. A configurator for a family of conveyors, gates or brackets might take overall dimensions and options and produce a correct model and fabrication drawings in minutes. Configurators can transform engineering-to-order businesses, but they demand careful rule design and ongoing maintenance as products evolve.
 
+```figure
+type: layers
+title: Levels of CAD automation
+caption: Start with the simplest level that removes the repeated work, and treat anything shared as software.
+- Recorded macros | repeat a sequence
+- Scripts and simple programs | add logic
+- API add-ins | integrate with the CAD system
+- *Configurators and rules | generate designs from inputs
+```
+
 ## Judging the payback
 
 A simple estimate helps decide whether to automate:
@@ -115,6 +125,15 @@ This is an illustrative example. The business and figures are hypothetical.
 A small engineering team releases about 40 drawings a week. For each, a drafter exports a PDF and a DXF, renames them to the company's standard, copies them to the release folder and updates a spreadsheet register. The work takes about four hours a week, and roughly once a month a wrong revision or a misnamed file reaches a supplier, causing rework.
 
 The team's most experienced CAD user spends about 24 hours building and testing a macro that reads each released drawing's properties, exports both formats with standard names, writes them to the release folder and appends the register. At an internal rate of $95 an hour, the build costs about $2,280. The task now takes about 30 minutes a week to start the batch and review its log, saving 3.5 hours a week, or about 161 hours over 46 working weeks. That is worth roughly $15,300 a year, before counting the avoided supplier rework.
+
+```figure
+type: stats
+title: Automating 40 drawing releases a week
+caption: At $95 an hour, before counting the avoided supplier rework from wrong revisions.
+- $2,280 | Build cost | about 24 hours
+- 4 h → 30 min | Weekly effort
+- *$15,300 | Value a year | about 161 hours over 46 weeks
+```
 
 The team stores the macro's code in a version-controlled repository, documents how it works, trains a second person to maintain it and adds it to the checklist for the next CAD upgrade.
 

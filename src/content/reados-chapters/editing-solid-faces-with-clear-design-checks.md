@@ -114,7 +114,36 @@ Before the edit, the hole centre is 15 mm from the right end. After the edit, th
 
 The added rectangular volume is 20 × 60 × 20, or 24,000 cubic millimetres. The existing hole lies outside that added strip, so its unchanged volume does not affect this difference. The volume change supplies an additional check on the simplified edit.
 
+```figure
+type: svg
+title: Extending one end face by 20 mm
+alt: A rectangular body 100 millimetres long with a through-hole whose centre is at 85 millimetres. The right end face moves 20 millimetres to 120. The hole stays at 85, so its distance to the right end grows from 15 to 35 millimetres. The added strip is 20 by 60 by 20 millimetres, 24,000 cubic millimetres.
+caption: Moving the end face keeps the hole at X = 85; keeping it 15 mm from the end would need a different edit.
+viewbox: 0 0 600 200
+body:
+<rect class="bx" x="40" y="50" width="400" height="100" rx="2"/>
+<rect class="bxa grow" x="440" y="50" width="80" height="100" rx="2"/>
+<circle class="fi" cx="380" cy="100" r="10"/>
+<circle class="fa" cx="380" cy="100" r="3"/>
+<text class="tx txs" x="40" y="174">X = 0</text>
+<text class="tx txs" x="380" y="174" text-anchor="middle">85</text>
+<text class="tx txs" x="440" y="40" text-anchor="middle">100</text>
+<text class="txb" x="520" y="40" text-anchor="middle">120</text>
+<text class="tx txs" x="480" y="104" text-anchor="middle">+24,000</text>
+<text class="tx txs" x="480" y="120" text-anchor="middle">mm³</text>
+```
+
 If the actual requirement had instead been to keep the hole centre 15 mm from the right end, the centre would need to move to X equals 105. Extending only the end face would not fulfil that requirement. The example shows why the change statement must identify relationships as well as overall dimensions.
+
+```figure
+type: balance
+title: Two different revisions
+left: Extend the end face
+right: Keep the hole 15 mm from the end
+caption: State what must stay fixed before choosing the operation.
+- Hole stays at X = 85 | Hole moves to X = 105
+- Edge distance grows to 35 mm | Edge distance stays 15 mm
+```
 
 These checks address nominal geometry. They do not establish tolerances, load capacity or an acceptable edge distance for an actual component. Those decisions belong to the design requirements rather than the face-editing operation.
 

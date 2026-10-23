@@ -79,6 +79,17 @@ A **master model** contains complex shapes, often surfaces, from which several c
 | Skeleton model | Machinery and layouts with many interfaces | Needs discipline to reference only the skeleton |
 | Master model | Products with shared styled surfaces | Changes can cascade widely |
 
+```figure
+type: decision
+title: Choosing an assembly approach
+question: What kind of product is it?
+caption: Each approach has a characteristic risk to manage.
+- Standard parts and stable designs | Bottom-up | keep mates and interfaces maintained
+- Parts fitting precisely around others | Top-down in context | fragile reference chains
+- *Machinery with many interfaces | Skeleton model | reference only the skeleton
+- Shared styled surfaces | Master model | changes cascade widely
+```
+
 ## Structuring large assemblies
 
 Assemblies with thousands of parts, worked on by several people, need structure:
@@ -135,6 +146,18 @@ This is an illustrative example. A machine builder designs a family of processin
 - Key models are tested by changing frame lengths over the product range before release.
 
 **Result.** A frame length change that previously took several days of repair now propagates in a few hours. The main assembly opens in a fraction of the previous time, and bills of materials are generated directly from the models without manual correction. New designers find their way around the models more quickly because the structure is consistent.
+
+```figure
+type: compare
+title: An 1,800-part machine family, restructured
+cols: Before | After
+best: 2
+caption: A frame length change that took several days of repair now propagates in a few hours.
+- References | Long chains between brackets' edges | Sub-assemblies reference a skeleton only
+- Purchased parts | Fully detailed, thousands of faces | Simplified, interfaces kept
+- Duplicates | One bracket under three names | A standard parts library
+- *Revisions and BOMs | In file names; manual BOM fixes | PDM-managed; BOMs straight from models
+```
 
 ## Applying this in an Australian business
 

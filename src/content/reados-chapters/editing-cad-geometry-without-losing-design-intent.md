@@ -71,6 +71,17 @@ Some objects do not stretch in the way a beginner might expect. A selected circl
 | Change all lengths proportionally | Scale | Base point and every affected dimension are appropriate |
 | Reorient a component | Rotate | Rotation centre and angle are correct |
 
+```figure
+type: decision
+title: Which edit matches the intent?
+question: What should change?
+caption: Describe the change as relationships before choosing the command.
+- Position only | Move
+- One end only | Stretch
+- *Every length proportionally | Scale
+- Orientation | Rotate
+```
+
 The table is a reasoning guide, not a substitute for reading the active command prompt. Constraints, blocks and other object behaviour can affect what an operation does.
 
 ## Use copies and patterns deliberately
@@ -130,6 +141,18 @@ Uniform scaling would give a different result. A factor of 1.2 would increase th
 | Left hole X position | 20 mm |
 | Right hole X position | 220 mm |
 | Both hole diameters | 10 mm |
+
+```figure
+type: compare
+title: Widening a panel by stretching or by scaling
+cols: Stretch the right side | Scale by 1.2
+best: 1
+caption: Only the stretch keeps the height, hole sizes and edge distances the requirement fixed.
+- Width | 240 mm | 240 mm
+- Height | 100 mm | 120 mm
+- Hole diameter | 10 mm | 12 mm
+- Hole centres | 20 and 220 mm | Moved proportionally
+```
 
 The team checks these values, the remaining edge distances and the sheet presentation. It also confirms that dimensions refer to the revised geometry and that any change note accurately describes the revision. The example demonstrates editing logic, not a finished panel specification.
 

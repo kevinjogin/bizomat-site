@@ -119,9 +119,43 @@ For the 250 mm option, internal markers lie at path distances of 250, 500, 750 a
 | Six equal intervals | 200, 400, 600, 800, 1,000 mm | 200 mm |
 | Fixed 250 mm intervals | 250, 500, 750, 1,000 mm | 200 mm |
 
+```figure
+type: svg
+title: Equal intervals or fixed spacing on a 1,200 mm path
+alt: Two straightened versions of a 1,200 millimetre path. The top one is divided into six equal 200 millimetre intervals with five internal markers. The bottom one has markers every 250 millimetres at 250, 500, 750 and 1,000, leaving a 200 millimetre remainder at the end.
+caption: Distances are measured along the path; fixed spacing leaves a remainder rather than a sixth full interval.
+viewbox: 0 0 640 170
+body:
+<text class="tx txs" x="20" y="34">6 equal</text>
+<path class="ln" d="M80 40H620"/>
+<circle class="fa" cx="170" cy="40" r="5"/>
+<circle class="fa" cx="260" cy="40" r="5"/>
+<circle class="fa" cx="350" cy="40" r="5"/>
+<circle class="fa" cx="440" cy="40" r="5"/>
+<circle class="fa" cx="530" cy="40" r="5"/>
+<text class="tx txs" x="350" y="66" text-anchor="middle">200 mm each</text>
+<text class="tx txs" x="20" y="114">every 250</text>
+<path class="ln" d="M80 120H620"/>
+<circle class="fa" cx="192" cy="120" r="5"/>
+<circle class="fa" cx="305" cy="120" r="5"/>
+<circle class="fa" cx="418" cy="120" r="5"/>
+<circle class="fa pulse" cx="530" cy="120" r="5"/>
+<path class="la" d="M530 140H620"/>
+<text class="tx txs" x="575" y="158" text-anchor="middle">200 remainder</text>
+```
+
 The drafter then revises the curve while preserving its endpoints. Its measured length becomes 1,260 mm. Six equal intervals now require 210 mm each. Fixed 250 mm spacing produces five internal markers at 250, 500, 750, 1,000 and 1,250 mm, leaving a remainder of 10 mm.
 
 That last calculation matters. Counting markers from the previous version would miss the newly available interval. The team reviews whether a marker only 10 mm from the end is useful for its purpose, rather than accepting it merely because the command can place it.
+
+```figure
+type: compare
+title: After the path grows to 1,260 mm
+cols: Before (1,200 mm) | After (1,260 mm)
+caption: Recalculate from the new length; counting markers from the old version misses the new interval.
+- Six equal intervals | 200 mm each | 210 mm each
+- *Fixed 250 mm spacing | Four internal markers, 200 mm left | Five, leaving 10 mm
+```
 
 The markers also need orientation checks if they are blocks with a directional shape. Following the curve's local direction can be appropriate for one symbol and confusing for another. The team compares the intended reading direction before selecting the alignment behaviour.
 

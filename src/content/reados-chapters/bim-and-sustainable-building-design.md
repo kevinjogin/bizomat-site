@@ -68,6 +68,20 @@ Sustainable design is most effective when it starts early, when decisions about 
 7. **Manage water** with efficient fixtures, rainwater harvesting and water-sensitive landscaping.
 8. **Select materials** for durability, lower embodied carbon, recycled content and healthy indoor air.
 
+```figure
+type: layers
+title: Designing for sustainable performance
+shape: pyramid
+caption: Reduce demand first; renewables come after the loads are smaller.
+- Materials | durable, lower embodied carbon
+- Water | efficient fixtures, harvesting
+- Renewables | once demand is reduced
+- Efficient systems | sized for reduced loads
+- Daylight and natural ventilation
+- *Reduce demand first
+- Climate, site and targets
+```
+
 Each unit of demand removed early shrinks the mechanical and renewable systems needed, lowering capital and running costs and improving resilience.
 
 ### Analysis with BIM
@@ -128,6 +142,16 @@ This is an illustrative example. A developer is building a three-storey medical 
 **Handover.** The contractor updates the model to as-built condition, verified by spot checks, and delivers the asset register in a structured format loaded into the facilities team's maintenance system. Commissioning and a year of seasonal tuning follow, with energy use tracked against the model.
 
 **Result.** Services rework during construction is minimal, the facilities team starts operations with complete asset data, and first-year energy use is close to the adjusted model prediction after tuning.
+
+```figure
+type: timeline
+title: A medical centre delivered with BIM
+caption: The facilities team set its information requirements at the start, because it would run the building.
+- Design | Massing options compared | peak cooling load down about 18%
+- Coordination | Fortnightly model reviews | about 140 clashes resolved
+- Handover | As-built model and asset register | loaded into maintenance
+- *Operation | A year of seasonal tuning | energy close to the adjusted model
+```
 
 ## Applying this in an Australian business
 

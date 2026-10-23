@@ -62,6 +62,16 @@ Use a controlled view and a meaningful pivot for rotation. Rotating an edge arou
 
 **Refinement** adds mesh structure so that a region can be controlled in more detail. It serves a different purpose from simply increasing smoothness. Additional faces are useful when a specific feature needs local control, rather than as a general cure for every awkward shape.
 
+```figure
+type: balance
+title: Smoothing or adding structure
+left: Smoothing
+right: Refining
+caption: Smoothing changes appearance; refinement adds editable faces where control is needed.
+- Rounds the existing control cage | Adds faces, edges and vertices locally
+- Few edits, softer form | More control, more to manage
+```
+
 Compare the silhouette before and after smoothing. Inspect overall extents, flat regions and any feature that must remain aligned with another object. A pleasing surface can still be unsuitable if smoothing reduces a required corner or shifts a contact region.
 
 Refine locally where possible and review the transition to neighbouring faces. A highly detailed patch next to a coarse region can be more difficult to shape consistently. The goal is enough structure to express the feature without making the rest of the model harder to understand.
@@ -122,6 +132,16 @@ If the original top at that location is 30 mm above the base and the feature mov
 | Main shaping | Has the base or silhouette moved unexpectedly? | Principal views and key dimensions |
 | Local feature | Does the projection have the intended height and transition? | Local measurement and edge inspection |
 | Conversion trial | Does the resulting solid preserve the required shape? | Comparison with the retained mesh |
+
+```figure
+type: steps
+title: A controlled mesh shape study
+caption: Measure at each stage so smoothing or conversion cannot silently change the agreed shape.
+- Initial form | a 160 × 70 × 30 mm envelope
+- Main shaping | silhouette and base checked
+- Local feature | a 4 mm thumb rise: 34 mm high there
+- *Conversion trial | the solid compared with the retained mesh
+```
 
 Two variants are kept: one with a soft transition around the feature, and one with a more distinct crease. The team compares them using the same view, scale and display settings. This reduces the chance that a presentation difference is mistaken for a shape difference.
 
