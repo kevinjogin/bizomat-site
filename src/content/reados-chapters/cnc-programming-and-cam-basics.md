@@ -47,6 +47,17 @@ G28 G91 Z0                (return Z to reference)
 M30                       (end of program)
 ```
 
+```figure
+type: steps
+title: What a short drilling program does
+caption: An illustrative program: safe start, tool and offsets, a canned cycle, then a safe finish.
+- Safe start | metric, plane, cancel compensation, absolute
+- Tool change | T1: spot drill
+- Offsets and spindle | G54, length offset, spindle and coolant on
+- Canned cycle | G81 spot drill at each hole
+- *Safe finish | cancel cycle, retract, coolant off, end
+```
+
 ## Coordinate systems and offsets
 
 Understanding where the machine thinks the tool is matters more than any single code.
@@ -139,6 +150,16 @@ A small job shop runs three machining centres and makes about 40 new part number
 An investigation finds that most prove-out time is spent checking offsets and tool lengths by hand, that the CAM tool library does not match the tools in the machines, and that set-up information is passed verbally. Both crashes involved a tool loaded in the wrong pocket.
 
 The shop makes several changes. It builds a CAM tool library that matches its physical tools and holders, adds tool setters and workpiece probes, introduces a standard set-up sheet generated from CAM, creates a single server location for programs with revision naming, and adopts a prove-out checklist. Over the following six months, average prove-out time falls to about 35 minutes. At 40 new programs a month, that recovers about 37 hours of machine time a month (40 × 55 minutes = 2,200 minutes). There are no further crashes caused by tool pocket errors, because the set-up sheet and tool setter confirm each tool before the program runs.
+
+```figure
+type: bars
+title: Machine time to prove out a new program
+unit: minutes
+max: 100
+caption: At 40 new programs a month, 55 minutes saved each recovers about 37 hours of machine time a month.
+- Before | 90
+- *With a matched tool library, probes and a checklist | 35
+```
 
 ## How this applies to a small Australian business
 

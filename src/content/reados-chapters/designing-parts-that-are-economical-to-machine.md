@@ -53,6 +53,16 @@ This creates a trade-off. Faster cutting reduces machine time but consumes more 
 
 For example, with n = 0.25, a tool change time of 2 minutes, an edge cost of $6 and a machine rate of $2 per minute, the minimum-cost tool life is 3 × (2 + 3), or 15 minutes, and the maximum-production tool life is 3 × 2, or 6 minutes. Running at speeds that give tool lives between 6 and 15 minutes is a reasonable range: towards 15 minutes when the machine has spare capacity, towards 6 minutes when it is a bottleneck. The curve is usually shallow near its minimum, so being roughly right matters more than being exact. Tool makers' recommended speeds and feeds are a good starting point.
 
+```figure
+type: range
+title: A sensible tool life window
+unit: minutes
+min: 0
+max: 20
+caption: n = 0.25, a 2-minute tool change, a $6 edge and $2 a minute machine time.
+- *Run between these tool lives | 6 | 15 | maximum production to minimum cost
+```
+
 ## Design rules for milled parts
 
 ### Minimise set-ups
@@ -136,6 +146,16 @@ This is an illustrative example. A business machines an aluminium sensor mount i
 - A fine finish is specified only on the sensor seating face.
 
 **Result.** Cycle time falls to about 26 minutes and set-up time per batch from 120 to 60 minutes. At a machine rate of $120 an hour, or $2 a minute, the cost of machine time and set-up falls from about (48 + 2.4) × $2, or $100.80, to about (26 + 1.2) × $2, or $54.40, per part. That saves about $46 per part, or about $28,000 a year at current volumes, before counting reduced inspection.
+
+```figure
+type: bars
+title: Machine and set-up cost per sensor mount
+unit: $
+max: 110
+caption: About $46 saved per part, roughly $28,000 a year at 600 parts.
+- Original design: 48 min + set-ups | 100.8
+- *Redesigned: 26 min + set-ups | 54.4
+```
 
 ## Applying this in an Australian business
 

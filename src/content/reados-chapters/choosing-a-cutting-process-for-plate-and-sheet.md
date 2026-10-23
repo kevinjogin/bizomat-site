@@ -30,6 +30,17 @@ This article compares the main cutting processes for metal plate, sheet and sect
 | **Sawing** | Bar, tube, sections | Lengths and mitres of stock material | Cheap, cold, straightforward | Straight cuts only |
 | **Shearing and punching** | Sheet and thin plate | Straight cuts, hole patterns, formed features in volume | Fast and cheap per hit; turret punches form louvres and extrusions | Tooling for each shape; burrs; thickness limits |
 
+```figure
+type: layers
+title: Thermal and cold cutting processes
+caption: Heat input, kerf and edge condition change what has to happen to the part next.
+- Fibre laser | fine kerf, small heat-affected zone
+- Plasma | fast on medium plate; bevel and dross
+- Oxy-fuel | very thick steel; wide kerf, distortion
+- *Abrasive waterjet | no heat-affected zone
+- Wire EDM | very precise, slow
+```
+
 ## How thermal cutting works, and why it matters
 
 Oxy-fuel, plasma and laser are **thermal** processes, and the way they remove metal explains their behaviour.
@@ -104,6 +115,17 @@ This is an illustrative example. A 25-person business designs and assembles agri
 - **Medium plate brackets and gussets (8 to 16 mm)**: the profiles are simple and most holes are clearance holes. High-definition plasma meets the requirements at lower cost. The three bolt holes that align with a machined gearbox mount are specified as cut undersize and drilled to size.
 - **Thick base plates (25 to 40 mm)**: oxy-fuel cutting is quoted at a fraction of the laser price and shorter lead time. Edges that will be welded are specified to be ground clean.
 - **Rubber and composite wear strips**: currently cut by hand. Waterjet cutting from sheet gives accurate, consistent parts and frees about a day of labour each month.
+
+```figure
+type: decision
+title: Matching cut parts to processes
+question: Which part family is it?
+caption: Drawings now specify tolerance and edge quality where it matters, not a process for every part.
+- Thin brackets and panels, 1.5–6 mm | Fibre laser | nitrogen for stainless
+- Medium plate, 8–16 mm, simple profiles | High-definition plasma | precise holes drilled to size
+- Thick base plates, 25–40 mm | Oxy-fuel | weld edges ground clean
+- *Rubber and composite strips | Abrasive waterjet | instead of cutting by hand
+```
 
 **Drawings and suppliers.** Drawings now specify tolerances, edge quality where it matters and edge treatments, rather than naming a process for every part. Two suppliers are invited to quote by part family.
 

@@ -73,6 +73,16 @@ Materials expand as they warm. The international reference temperature for dimen
 
 The change in length is approximately the coefficient of thermal expansion multiplied by the length and the temperature difference. Steel expands by roughly 11 to 12 millionths of its length per degree Celsius, and aluminium by roughly 23 millionths. A 300 mm steel part measured at 30 °C is about 0.035 mm longer than at 20 °C; an aluminium part of the same length is about 0.07 mm longer. For tight tolerances, those differences matter.
 
+```figure
+type: bars
+title: Growth of a 300 mm part measured at 30 °C
+unit: mm
+max: 0.08
+caption: Drawings specify size at 20 °C; for tight tolerances, a warm part reads oversize.
+- Steel | 0.035
+- *Aluminium | 0.07
+```
+
 Practical measures include letting parts stabilise at room temperature before measuring, measuring parts and instruments at the same temperature, keeping inspection areas away from direct sun, heaters and machines, and, for precision work, using a temperature-controlled room. Hands warm instruments too; holding a micrometer frame for a long time changes its reading.
 
 ## Care, cleanliness and technique
@@ -128,6 +138,17 @@ A small manufacturer machines steel shafts with a 40 mm bearing seat toleranced 
 The calliper's resolution alone is more than half the tolerance band, and its accuracy, combined with operator technique, is worse still. The calliper simply cannot tell good parts from bad. In addition, shafts are measured straight off the lathe, still warm from cutting and coolant.
 
 The business changes its method. Bearing seats are measured with an outside micrometer with a resolution of 0.001 mm, checked daily against a setting standard, after the shaft has cooled to room temperature. For higher volumes, it introduces a snap gauge set to the tolerance limits as a quick production check, with periodic micrometer measurements recorded for process control. A short gauge study confirms the new measurement system is capable. Loose bearing complaints stop.
+
+```figure
+type: range
+title: A 16-micrometre band and a 10-micrometre calliper
+unit: mm
+min: 39.99
+max: 40.03
+caption: A k6 bearing seat allows 40.002 to 40.018 mm; a calliper resolving 0.01 mm cannot judge it, so a micrometer and snap gauge took over.
+- *k6 tolerance band | 40.002 | 40.018
+- One calliper step | 40.01 | 40.02
+```
 
 ## How this applies to a small Australian business
 

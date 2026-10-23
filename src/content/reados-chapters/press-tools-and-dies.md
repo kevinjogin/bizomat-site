@@ -123,6 +123,22 @@ These controls sit within an employer's duties under work health and safety legi
 
 Hard tooling has a high fixed cost and a low cost per part. Laser or turret punching followed by press brake bending has little fixed cost but a higher cost per part. As an illustration, suppose a bracket costs $4.50 each made by laser cutting and bending, or could be made in a progressive die costing $38,000 at $0.60 each. The total costs are equal when $38,000 + $0.60n = $4.50n, so 3.90n = 38,000, or at about 9,700 parts. If annual demand is 20,000 parts and the design is stable, the die pays back in about half a year. If demand is 2,000 parts a year, or the design is likely to change, laser cutting and bending is the better choice.
 
+```figure
+type: line
+title: Laser and bend against a progressive die
+x: Parts made
+y: Total cost ($'000)
+ymin: 0
+ymax: 100
+caption: Break-even at about 9,700 parts; at 20,000 a year with a stable design, the $38,000 die pays back in about half a year.
+legend: Laser and bend at $4.50 | Die $38,000 + $0.60
+- 0 | 0 | 38
+- 5000 | 22.5 | 41
+- 9700 | 43.7 | 43.8
+- 15000 | 67.5 | 47
+- 20000 | 90 | 50
+```
+
 The [choosing a cutting process for plate and sheet](/reados/collections/machining-and-metal-parts/choosing-a-cutting-process-for-plate-and-sheet/) article compares profile-cutting options for lower volumes.
 
 ## A worked example
@@ -134,6 +150,16 @@ A manufacturer plans a progressive die for a mild steel bracket 3 mm thick. The 
 F = 300 mm × 3 mm × 350 N/mm² = 315,000 N, or 315 kN.
 
 That is roughly the weight of 32 tonnes. Adding allowances for stripping force, a bending station and a safety margin, the toolmaker recommends a press of at least 60 tonnes capacity with suitable bed size and shut height, and staggers the punch lengths so that the holes and outline are not cut at the same instant, reducing peak force.
+
+```figure
+type: steps
+title: Estimating the press for a progressive die
+caption: Stripping force, a bending station and a safety margin come on top of the cutting force.
+- Cut perimeter | about 300 mm
+- Thickness × shear strength | 3 mm × 350 N/mm²
+- Cutting force | 315 kN, roughly 32 tonnes
+- *Press recommended | at least 60 tonnes
+```
 
 During tryout, burr height on the blank edge exceeds the drawing limit. The toolmaker checks clearance, finds the die opening has been ground slightly oversize on one side, corrects it and re-runs the samples. The first-off parts are measured against the drawing and the die is approved for production, with a sharpening interval set at a conservative number of hits until wear data is collected.
 

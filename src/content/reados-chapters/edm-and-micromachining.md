@@ -80,6 +80,18 @@ Designers of critical parts should consider whether recast layer limits need to 
 | Ultrasonic machining | Vibrating tool drives abrasive slurry against brittle materials | Holes and shapes in ceramics, glass and other brittle materials | Slow; suited to hard, brittle non-conductors |
 | Photochemical machining (etching) | Chemical etching through a patterned resist | Thin metal parts such as shims, meshes, flexures and precision springs | No burrs or stresses; limited to thin material |
 
+```figure
+type: decision
+title: Choosing a non-traditional process
+question: What is the part or material like?
+caption: EDM needs a conductive workpiece; other processes cover what it cannot.
+- Hard alloy, complex shape, no recast wanted | Electrochemical machining
+- Sheet, small holes, marking | Laser
+- Heat-sensitive plate, stone, glass, composites | Abrasive waterjet
+- Brittle non-conductors | Ultrasonic machining
+- *Thin precision metal parts | Photochemical etching
+```
+
 The [choosing a cutting process for plate and sheet](/reados/collections/machining-and-metal-parts/choosing-a-cutting-process-for-plate-and-sheet/) article compares laser, plasma, waterjet and other profile-cutting processes in more detail.
 
 ## Micromachining
@@ -132,6 +144,16 @@ This is an illustrative example. The figures, including cutting rates, are hypot
 A small toolmaker is making a punch and die for a bracket blanked from 3 mm steel. Previously, it machined the die plate in the soft state, heat treated it and then hand-finished the profile, but distortion during hardening often required rework and occasionally scrapped a die block.
 
 It now rough machines the die plate, heat treats it to final hardness and wire cuts the die opening afterwards. The die opening has a perimeter of about 300 mm, and the plate is 20 mm thick, giving a cut area of 300 × 20 = 6,000 mm². Assuming a roughing rate of about 150 mm² per minute for this material and thickness, the main cut takes about 40 minutes, and two skim passes add further time, so the total wire time is around two hours including set-up. The punch is wire cut from hardened stock in the same way, with the die clearance built into the programmed offsets, so that punch and die match precisely.
+
+```figure
+type: timeline
+title: Cutting a die after hardening
+caption: Wire cutting after heat treatment removed the distortion rework that had sometimes scrapped die blocks.
+- Rough machine | Die plate in the soft state
+- Heat treat | To final hardness
+- Wire cut | 300 mm perimeter × 20 mm: 6,000 mm² | main cut about 40 minutes at 150 mm² a minute
+- *Skim passes | Total wire time about two hours | punch cut the same way, clearance in the offsets
+```
 
 Distortion-related rework disappears, and the die clearance is consistent around the profile, which improves the quality of the blanked parts and the life of the tool.
 

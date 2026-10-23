@@ -84,6 +84,16 @@ On manual milling machines, a **dividing head** (or indexing head) uses a worm a
 
 For example, to produce seven equally spaced divisions, each division needs 40 ÷ 7 = 5 5/7 turns. Using a plate with a 21-hole circle, 5/7 of a turn equals 15 holes, so each division is five full turns plus 15 holes on the 21-hole circle. **Compound** and **differential** indexing extend the method to numbers that simple indexing cannot reach.
 
+```figure
+type: steps
+title: Seven divisions on a 40:1 dividing head
+caption: 40 crank turns rotate the work once, so each seventh needs 40 ÷ 7 turns.
+- 40 ÷ 7 | 5 5/7 turns per division
+- Choose a plate | a 21-hole circle
+- 5/7 of a turn | 15 holes
+- *Each division | 5 full turns + 15 holes
+```
+
 ### Rotary tables and CNC axes
 
 Rotary tables, and especially CNC rotary axes on machining centres, have made indexing far simpler. A fourth or fifth axis can rotate the part to any programmed angle, allowing several faces and evenly spaced features to be machined in one set-up. This reduces handling, improves the relationship between features and often justifies the investment in multi-axis capability for parts with many angled or radial features.
@@ -123,6 +133,16 @@ A small manufacturer of conveyor components makes about 600 cast-iron pulley hub
 The workshop investigates a standard keyway broach set with guide bushings and shims, used in an existing hydraulic press. The tooling for the two keyway sizes it uses most costs about $2,500. Trials show each keyway takes about 3 minutes, including setting the bushing and shims, costing about $4.50 in labour. Allowing about $1 per hub for broach wear and resharpening, the cost falls to about $5.50 per hub, or about $3,300 a year.
 
 The annual saving is about $14,700, so the $2,500 of tooling pays for itself within the first couple of months of normal production. The workshop keeps the slotting attachment for the occasional blind keyway and for non-standard sizes, and updates its design guide to prefer through keyways in standard sizes wherever the design allows.
+
+```figure
+type: bars
+title: Cost of cutting keyways in 600 hubs a year
+unit: $'000
+max: 20
+caption: $2,500 of broach tooling paid for itself within the first couple of months.
+- Slotting attachment: 20 min each | 18
+- *Push broach with bushings: 3 min each | 3.3
+```
 
 ## How this applies to a small Australian business
 

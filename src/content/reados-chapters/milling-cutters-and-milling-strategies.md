@@ -77,6 +77,23 @@ h = fz × √(1 − (1 − 2 × ae ÷ D)²)
 
 At 10% radial engagement, the expression under the square root is 1 − 0.8² = 0.36, and its square root is 0.6, so the actual chip is only 60% of the programmed feed per tooth. Running light radial passes without compensating for chip thinning is a common reason tools rub, overheat and wear quickly.
 
+```figure
+type: svg
+title: Chip thinning at light radial engagement
+alt: A cutter tooth entering the work at 10 percent radial engagement takes a chip only 60 percent as thick as the programmed feed per tooth, because it meets the material at a shallow angle.
+caption: At 10% engagement the chip is 60% of the programmed feed, so the feed per tooth can rise to keep the chip load.
+viewbox: 0 0 600 220
+body:
+<circle class="bx" cx="200" cy="120" r="80"/>
+<path class="lf spin" d="M130 120H270M200 50V190"/>
+<rect class="fp" x="264" y="30" width="300" height="180"/>
+<path class="la" d="M264 30V210"/>
+<path class="fa" d="M266 70Q275 120 266 170L270 170Q283 120 270 70Z"/>
+<text class="tx txs" x="290" y="60">ae = 10% of D</text>
+<text class="txb" x="420" y="120" text-anchor="middle">chip 0.6 × fz</text>
+<text class="tx txs" x="200" y="124" text-anchor="middle">cutter</text>
+```
+
 ## Adaptive and high-efficiency toolpaths
 
 Traditional pocketing toolpaths alternate between light cuts and heavy engagement in corners, where the cutter suddenly wraps around more material. Those spikes in load cause heat, deflection and tool breakage, so programmers reduce feeds for the whole job to survive the worst moments.
@@ -132,6 +149,18 @@ A workshop is roughing a pocket in 6061 aluminium with a 12 mm, three-flute carb
 **Adaptive approach:** the programmer switches to a constant-engagement toolpath with ae = 1.2 mm (10% of the diameter) and an axial depth of 18 mm (1.5 times the diameter). Because of chip thinning at 10% engagement, the actual chip is only 60% of the programmed feed per tooth, so to keep a 0.06 mm chip, the programmed fz becomes 0.06 ÷ 0.6 = 0.10 mm. The feed rate is 0.10 × 3 × 7,960 ≈ 2,390 mm/min.
 
 The adaptive path engages more of the flute length, keeps the load steady and avoids the corner spikes. In this case the workshop finds tool life improves and chatter disappears, and the cycle time for the pocket falls modestly. The exact gains depend on the machine, holder and part, which is why the programmer trials the change on one part before adopting it.
+
+```figure
+type: compare
+title: Roughing a pocket two ways
+cols: Full-width slotting | Adaptive toolpath
+best: 2
+caption: A 12 mm three-flute cutter at about 7,960 rev/min in 6061, both aiming for a 0.06 mm chip.
+- Radial engagement | 12 mm, full width | 1.2 mm, 10%
+- Axial depth | 6 mm | 18 mm
+- Feed per tooth | 0.06 mm | 0.10 mm, allowing for thinning
+- *Feed rate | About 1,430 mm/min, chatter in corners | About 2,390 mm/min, steady load
+```
 
 ## How this applies to a small Australian business
 

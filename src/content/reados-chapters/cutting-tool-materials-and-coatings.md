@@ -71,6 +71,24 @@ Indexable inserts are described using a standard code that captures their geomet
 | Thickness | 04 | About 4.76 mm thick |
 | Nose radius | 08 | 0.8 mm nose radius |
 
+```figure
+type: svg
+title: Reading CNMG 120408
+alt: The insert code CNMG 120408 split into its parts: C for an 80 degree rhombic shape, N for zero clearance, M for the tolerance class, G for a double-sided insert with hole and chipbreaker, 12 for a 12 millimetre edge, 04 for about 4.76 millimetres thick and 08 for a 0.8 millimetre nose radius.
+caption: Each character position has a fixed meaning, so the code describes the insert completely.
+viewbox: 0 0 640 190
+body:
+<text class="txa" x="320" y="50" text-anchor="middle">C N M G  12 04 08</text>
+<path class="ln" d="M207 62V100M241 62V130M275 62V100M309 62V130M356 62V100M410 62V130M462 62V100"/>
+<text class="tx txs" x="207" y="116" text-anchor="middle">80° rhombic</text>
+<text class="tx txs" x="241" y="146" text-anchor="middle">0° clearance</text>
+<text class="tx txs" x="275" y="116" text-anchor="middle">tolerance</text>
+<text class="tx txs" x="309" y="146" text-anchor="middle">hole + breaker</text>
+<text class="tx txs" x="356" y="116" text-anchor="middle">12 mm edge</text>
+<text class="tx txs" x="410" y="146" text-anchor="middle">4.76 mm thick</text>
+<text class="tx txs" x="462" y="116" text-anchor="middle">0.8 mm nose</text>
+```
+
 Suppliers add their own codes for chipbreaker geometry and grade. The **nose radius** affects both strength and finish: larger radii are stronger and can produce good finishes at higher feeds, but increase cutting forces and the tendency to chatter on slender parts. The **chipbreaker** controls chip formation and must suit the feed and depth of cut. **Negative** inserts are strong and economical, offering more edges; **positive** inserts cut more freely, suiting lighter cuts, slender parts and gummy materials.
 
 ## What coatings do
@@ -142,6 +160,16 @@ Tool cost per part is $18 ÷ 4 edges ÷ 25 parts, or $0.18. Each edge change tak
 The supplier recommends an M-group grade with a PVD coating and a sharper, positive chipbreaker suited to stainless steel, costing $24 per insert with four edges. In a trial, each edge lasts about 70 parts, chipping stops and the cutting speed can be increased slightly, reducing cycle time by about 10%.
 
 The new tool cost per part is $24 ÷ 4 ÷ 70, or about $0.086, and change cost per part is $4.50 ÷ 70, or about $0.064, for a total of about $0.15 per part, compared with $0.36. At 1,800 shafts a month, that saves about $380 a month on tooling and changes alone, before counting the shorter cycle time and the scrap that no longer occurs. The more expensive insert is clearly cheaper per part.
+
+```figure
+type: bars
+title: Tooling and edge-change cost per 316 stainless shaft
+unit: $
+max: 0.4
+caption: About $380 a month saved at 1,800 shafts, before the 10% faster cycle and the scrap avoided.
+- General-purpose insert, 25 parts an edge | 0.36
+- *M-grade PVD insert, 70 parts an edge | 0.15
+```
 
 ## How this applies to a small Australian business
 

@@ -156,7 +156,37 @@ A small manufacturer machines aluminium hydraulic manifold blocks, each with 24 
 
 The investigation finds several causes. The drawing does not say whether 20 mm is the thread depth or the drill depth, so the shop has drilled to 20 mm, leaving no room for chips or the tap's chamfer. Spiral point taps push chips towards the bottom of a blind hole, where they pack. And 20 mm of engagement is more than twice the nominal diameter, more than the joint needs.
 
+```figure
+type: compare
+title: Why one manifold in fifteen was scrapped
+cols: Before | After
+best: 2
+caption: Each scrapped block represented about four hours of machining.
+- Callout | M8 × 20 deep | M8 × 1.25 – 6H, 16 full thread, drill ⌀6.8 × 21
+- Room below the thread | None: drilled to 20 | Space for the tap chamfer and chips
+- *Tap | Spiral point in a blind hole | Spiral flute for blind holes
+```
+
 The engineer revises the callout to "M8 × 1.25 – 6H, 16 full thread, drill ⌀6.8 × 21". The 21 mm full-diameter drill depth leaves 5 mm below the full thread: room for the tap's chamfer, about three pitches or 3 × 1.25 = 3.75 mm, plus a little space for chips. The drill point, roughly 0.3 × 6.8 ≈ 2 mm long, extends beyond that, and the engineer checks that the block's wall thickness allows for it. The shop switches to spiral flute taps for the blind holes. After the change, tap breakage becomes rare and thread depth failures stop. A later trial with forming taps, using the larger pre-drill specified by the tap maker, removes chips altogether and strengthens the thread in the aluminium.
+
+```figure
+type: svg
+title: A blind tapped hole that leaves room for chips
+alt: A section through a blind M8 tapped hole: 16 millimetres of full thread, about 3.75 millimetres for the tap chamfer and chips below it, a 21 millimetre full-diameter drill depth, and a drill point about 2 millimetres longer.
+caption: Callout: M8 × 1.25 – 6H, 16 full thread, drill ⌀6.8 × 21.
+viewbox: 0 0 560 300
+body:
+<rect class="fp" x="40" y="20" width="480" height="260"/>
+<rect class="bxi" x="230" y="20" width="100" height="210"/>
+<path class="bxi" d="M230 230L280 262L330 230Z"/>
+<rect class="bxa" x="230" y="20" width="100" height="160"/>
+<path class="lf" d="M340 20H400M340 180H400M340 230H400M340 262H400"/>
+<text class="txb" x="280" y="105" text-anchor="middle">16 full thread</text>
+<text class="tx txs" x="408" y="104">16 thread</text>
+<text class="tx txs" x="408" y="210">chamfer and chips</text>
+<text class="tx txs" x="408" y="234">drill depth 21</text>
+<text class="tx txs" x="408" y="266">plus about 2 point</text>
+```
 
 ## How this applies to a small Australian business
 

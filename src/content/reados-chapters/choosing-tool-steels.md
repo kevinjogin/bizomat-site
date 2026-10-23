@@ -124,6 +124,19 @@ The failure mode points to the response:
 | Plastic deformation | Hardness too low for the load | Higher hardness or stronger grade |
 | Heat checking | Thermal cycling | Hot-work grade, preheating, controlled cooling |
 
+```figure
+type: decision
+title: Reading a tooling failure
+question: How did the tool fail?
+caption: The failure mode points to grade, hardness, set-up or design.
+- Rapid edge wear | More wear-resistant or PM grade
+- *Chipping | Tougher grade; check alignment and clearance
+- Cracking | Larger radii; check tempering and loads
+- Galling | Finish, coating, lubrication
+- Plastic deformation | Higher hardness
+- Heat checking | Hot-work grade and preheating
+```
+
 ## A worked example
 
 This is an illustrative example. The figures are hypothetical.
@@ -133,6 +146,17 @@ A small press shop blanks brackets from 3 mm high-strength steel sheet. Its punc
 The toolmaker reviews the failure. The chipping occurs at the punch corners, and the die clearance has been set for mild steel. For the stronger material, a tougher punch grade and slightly larger clearance are likely to help. The shop trials a tough PM tool steel for the punch, costing more per punch, and adjusts the clearance according to the steel supplier's guidance.
 
 The new punches run about 80,000 hits before needing regrinding, mainly because of gradual wear rather than chipping. For an annual volume of 240,000 brackets, the number of punch interventions falls from 16 to 3. At $350 each, intervention costs fall from about $5,600 to about $1,050 a year, a saving that far exceeds the additional material cost, before counting the improved bracket quality.
+
+```figure
+type: compare
+title: Punches chipping on high-strength sheet
+cols: D2 punch | Tough PM punch, adjusted clearance
+best: 2
+caption: 240,000 brackets a year at about $350 per punch change and regrind.
+- Hits between regrinds | About 15,000, chipping | About 80,000, gradual wear
+- Interventions a year | 16 | 3
+- *Intervention cost a year | About $5,600 | About $1,050
+```
 
 ## How this applies to a small Australian business
 

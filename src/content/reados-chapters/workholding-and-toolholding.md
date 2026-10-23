@@ -30,6 +30,15 @@ Good workholding performs five jobs:
 
 Location and clamping are separate functions. Locating features define position; clamps hold the part against them. The classic 3-2-1 principle, which uses six contact points to constrain a part in a predictable way, applies to standard workholding as well as custom fixtures. The [designing jigs and fixtures that pay for themselves](/reados/collections/manufacturing-operations-and-design-for-manufacture/designing-jigs-and-fixtures-that-pay/) article explains these principles in detail.
 
+```figure
+type: steps
+title: The 3-2-1 principle
+caption: Six contact points fully locate a prismatic part; clamps then hold it against them.
+- 3 points on the primary face | stops one translation and two rotations
+- 2 points on the secondary face | stops a second translation and rotation
+- *1 point on the tertiary face | stops the last translation
+```
+
 ## Workholding for milling
 
 ### Machine vices
@@ -142,6 +151,16 @@ A job shop runs a vertical machining centre on small batches of aluminium and st
 The shop installs a zero-point system on the table, fits pallets to its two vices and three most-used fixtures, and buys a tool presetter. Vices and fixtures are now loaded and checked on a bench while the machine runs. Changing a pallet takes a few minutes, and work offsets for each pallet are stored and confirmed with a probe. Average set-up time on the machine falls to about 8 minutes.
 
 The time saved is about 37 minutes per set-up. At six set-ups a day, that is 222 minutes, or about 3.7 hours of additional machine time each day. Even allowing for the time spent preparing pallets off the machine, the shop gains substantial capacity without buying another machining centre.
+
+```figure
+type: bars
+title: Machine time lost per set-up
+unit: minutes
+max: 50
+caption: About 3.7 hours of machine time gained each day at six set-ups, without buying another machining centre.
+- T-slot table, indicated each time | 45
+- *Zero-point pallets and presetting | 8
+```
 
 ## How this applies to a small Australian business
 

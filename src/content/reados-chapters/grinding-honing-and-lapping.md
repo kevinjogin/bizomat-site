@@ -39,6 +39,17 @@ Grinding wheels are specified using a standard marking system that describes the
 | Structure | 5 | The spacing between grains; more open structures clear chips and coolant better |
 | Bond | V | Vitrified; other bonds include resinoid, rubber and metal |
 
+```figure
+type: stats
+title: Reading a grinding wheel marking
+caption: A typical conventional wheel such as A60K5V; read left to right.
+- A | Abrasive | aluminium oxide
+- 60 | Grain size | lower is coarser
+- K | Grade | bond strength
+- 5 | Structure | grain spacing
+- *V | Bond | vitrified
+```
+
 The choice of **abrasive** follows the workpiece material:
 
 - **Aluminium oxide** suits most steels.
@@ -142,6 +153,16 @@ A small manufacturer makes hardened steel locating pins for its own fixtures and
 The investigation finds two problems. First, the drawing shows a sharp internal corner at the shoulder, which the grinder cannot form cleanly; operators blend it by hand, leaving a stress concentration. Second, the grinding wheel has been dressed only at the start of each shift. Towards the end of a batch, the wheel dulls and the pins show faint discolouration near the shoulder, suggesting grinding burn.
 
 The manufacturer makes three changes. It revises the drawing to include a small relief groove at the shoulder, with a defined radius that the wheel can generate. It dresses the wheel every 50 pins, with the interval set from a trial that monitored spindle load and finish. It improves coolant delivery to the contact zone and adds a spark-out pass. It also asks its heat treater to confirm case depth on sample pins, so that grinding does not remove too much of the hardened layer. Cracking does not recur, and the hand blending step disappears.
+
+```figure
+type: compare
+title: Cracked locating pins at the shoulder
+cols: Cause | Change
+caption: Cracking did not recur and the hand blending step disappeared.
+- Corner | Sharp internal corner, blended by hand | A relief groove with a radius the wheel can make
+- Wheel | Dressed once a shift; dull, faint burn | Dressed every 50 pins, spark-out pass, better coolant
+- *Case depth | Unchecked after grinding | Confirmed on sample pins by the heat treater
+```
 
 ## How this applies to a small Australian business
 

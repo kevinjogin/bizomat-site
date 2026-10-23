@@ -128,6 +128,21 @@ Patterns, core boxes and dies represent a significant investment and are often s
 
 Tooling cost and piece price trade against each other. As an illustration of the reasoning, suppose a part could be sand cast with a pattern costing $6,000 and a piece price of $45, or high-pressure die cast with a tool costing $60,000 and a piece price of $12. The total cost of n parts is $6,000 + $45n for sand casting and $60,000 + $12n for die casting. The two are equal when 33n = 54,000, or at about 1,640 parts. Below that volume, sand casting is cheaper; above it, die casting becomes cheaper, provided its other characteristics, such as thinner walls, finish and porosity behaviour, suit the part. Real decisions also consider lead times, tool life, machining and quality costs.
 
+```figure
+type: line
+title: Sand casting against high-pressure die casting
+x: Parts made
+y: Total cost ($'000)
+ymin: 0
+ymax: 110
+caption: $6,000 + $45n against $60,000 + $12n: break-even at about 1,640 parts, if die casting suits the part.
+legend: Sand casting | High-pressure die casting
+- 0 | 6 | 60
+- 1000 | 51 | 72
+- 1640 | 79.8 | 79.7
+- 2000 | 96 | 84
+```
+
 ## A worked example
 
 This is an illustrative example. The part and events are hypothetical.
@@ -137,6 +152,18 @@ A small manufacturer converts a welded steel gearbox housing into an aluminium s
 A review with the foundry shows the boss is about three times the surrounding wall thickness, forming an isolated hot spot, and the oil gallery passes close to the boss. The foundry's simulation confirms the boss solidifies last without feeding.
 
 The design is revised. The boss is cored out, with ribs connecting it to the walls at a thickness similar to the wall. A gradual transition replaces the abrupt step. The gallery is moved slightly away from the boss. The foundry relocates a feeder to the boss region. Machining datums are added as small cast pads, and the drawing specifies pressure testing of the gallery, with vacuum impregnation permitted for micro-porosity. Subsequent castings machine cleanly and pass the leak test.
+
+```figure
+type: compare
+title: Shrinkage porosity under a bearing boss
+cols: First casting | Revised design
+best: 2
+caption: The foundry's simulation showed the heavy boss solidifying last, with no feeding.
+- Boss | About three times the wall thickness | Cored out, ribbed to the wall at wall thickness
+- Transition | Abrupt step | Gradual
+- Oil gallery | Close to the boss: it leaked | Moved slightly away
+- *Feeding | None to the boss | A feeder relocated to the boss region
+```
 
 ## How this applies to a small Australian business
 
