@@ -1,0 +1,106 @@
+---
+// A crawlable page for each WORKOS tool whose guide stands on its own. All content comes from the tool's
+// existing guide (public/tools/guides-*.js); nothing is written here. The working calculator stays at
+// /tools/?tool=<id>, so bookmarked and shared links keep working unchanged.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+import '../../styles/tools.css';
+import { SITE } from '../../config/site.ts';
+import { loadWorkosTools, hasStandaloneGuide, toolPageHref, toolAppHref, type Tool, type ToolField } from '../../utils/workos-tools.ts';
+
+export function getStaticPaths() {
+  const { tools, guides } = loadWorkosTools();
+  return tools.filter((t) => hasStandaloneGuide(guides[t.id])).map((t) => ({ params: { tool: t.id }, props: { tool: t } }));
+}
+
+const { tool } = Astro.props as { tool: Tool };
+const { tools, guides } = loadWorkosTools();
+const g = guides[tool.id]!;
+const collection = tool.collection || 'WORKOS';
+const kind = /calculator/i.test(tool.name) ? '' : collection === 'MAKEOS' || tool.category === 'Engineering' ? ' calculator' : ' tool';
+const title = `${tool.name}${kind}`;
+const description = (() => {
+  const base = `${tool.description} Free ${collection} ${kind.trim() || 'calculator'} from KEVOS®: runs in your browser, no account.`;
+  return base.length <= 200 ? base : `${tool.description.slice(0, 196 - 3).replace(/\s+\S*$/, '')}…`;
+})();
+const href = toolPageHref(tool.id);
+
+// Inputs grouped under the form's own headings, as in the live tool.
+const groups: { heading: string; fields: ToolField[] }[] = [{ heading: '', fields: [] }];
+for (const f of tool.fields) {
+  if (f.type === 'heading') groups.push({ heading: f.label, fields: [] });
+  else groups[groups.length - 1].fields.push(f);
+}
+const unitOf = (f: ToolField) => f.unit || (f.type === 'range' ? `${f.min}–${f.max} score` : f.type === 'select' ? 'choice' : '');
+const related = tools
+  .filter((t) => t.id !== tool.id && t.category === tool.category && hasStandaloneGuide(guides[t.id]))
+  .slice(0, 6);
+const sections: [string, string[] | undefined][] = [
+  ['Typical uses', g.uses], ['Who it is for', g.users], ['What you get', g.outputs],
+  ['Interpreting the result', g.interpret], ['Before relying on the result', g.verify],
+];
+---
+
+<BaseLayout title={title} description={description}
+  breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'WORKOS', href: '/tools/' }, { label: tool.name, href }]}
+  schema={[{
+    '@type': 'WebApplication',
+    name: tool.name,
+    url: new URL(href, SITE.url).href,
+    description: tool.description,
+    applicationCategory: collection === 'MAKEOS' || tool.category === 'Engineering' ? 'UtilitiesApplication' : 'BusinessApplication',
+    operatingSystem: 'Any (runs in a web browser)',
+    isAccessibleForFree: true,
+    inLanguage: SITE.locale,
+    publisher: { '@id': `${SITE.url}/#organization` },
+  }]}>
+  <section class="tools-shell tool-page">
+    <Container>
+      <nav class="tool-page__crumbs" aria-label="Breadcrumb"><a href="/tools/">← All WORKOS tools</a></nav>
+      <header class="tool-page__head">
+        <p class="eyebrow">KEVOS® {collection} · {tool.category}</p>
+        <h1>{tool.name}</h1>
+        <p class="lead">{tool.question}</p>
+        <p>{g.purpose}</p>
+        <p class="tool-page__open"><a class="btn" href={toolAppHref(tool.id)}>Open the calculator</a><span>Runs in your browser. No account needed.</span></p>
+      </header>
+
+      <h2 class="guide-title">How this tool works</h2>
+      <div class="guide-grid">
+        <section class="guide-card guide-card--wide">
+          <h3>Inputs, units and where to find them</h3>
+          <div class="an-table-wrap"><table class="an-table"><thead><tr><th scope="col">Input</th><th scope="col">Unit</th><th scope="col">Typical source</th></tr></thead>
+            <tbody>{groups.filter((x) => x.fields.length).map(({ heading, fields }) => <>
+              {heading && <tr class="an-group"><th scope="rowgroup" colspan="3">{heading}</th></tr>}
+              {fields.map((f) => <tr><th scope="row">{f.label}</th><td>{unitOf(f)}</td><td>{g.inputs?.[f.key] ?? ''}</td></tr>)}
+            </>)}</tbody></table></div>
+        </section>
+        <section class="guide-card guide-card--wide"><h3>Method and formulas</h3><ol class="guide-method">{(g.method ?? []).map((m) => <li>{m}</li>)}</ol></section>
+        <section class="guide-card"><h3>Limitations</h3><ul>{(g.limitations ?? []).map((m) => <li>{m}</li>)}</ul></section>
+        {sections.filter(([, items]) => items?.length).map(([heading, items]) => <section class="guide-card"><h3>{heading}</h3><ul>{items!.map((m) => <li>{m}</li>)}</ul></section>)}
+        {g.refs?.length ? <section class="guide-card guide-card--wide"><h3>References</h3><ul>{g.refs.map((m) => <li>{m}</li>)}</ul></section> : null}
+      </div>
+
+      <p class="formula-note">WORKOS tools are screening and decision-support utilities. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p>
+      <p class="tool-page__open"><a class="btn" href={toolAppHref(tool.id)}>Open the {tool.name} calculator</a></p>
+
+      {related.length > 0 && <section class="tool-page__related" aria-labelledby="related-tools">
+        <h2 id="related-tools">Related {tool.category.toLowerCase()} tools</h2>
+        <div class="tool-grid">{related.map((t) => <a class="tool-card" href={toolPageHref(t.id)}><span class="card-top"><span class="category-label">{t.category}</span></span><h3>{t.name}</h3><p>{t.question}</p><span class="card-link">About this tool →</span></a>)}</div>
+      </section>}
+
+      <aside class="custom-cta"><div><h2>Need a tool for your own calculation?</h2><p>If your business uses a spreadsheet, repeated formula or manual decision process, KEVOS® can help turn it into a focused browser tool.</p></div><a href="/contact/">Discuss a custom tool →</a></aside>
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  .tool-page { padding-top: 1.5rem; }
+  .tool-page__crumbs { font-size: .85rem; margin-bottom: 1.5rem; }
+  .tool-page__head { max-width: 48rem; margin-bottom: 2.5rem; }
+  .tool-page__head h1 { font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.15; margin: .75rem 0; }
+  .tool-page__open { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1rem; margin: 1.5rem 0; }
+  .tool-page__open span { color: var(--muted); font-size: .85rem; }
+  .tool-page__related { margin: 3rem 0; }
+  .tool-page__related h2 { margin-bottom: 1rem; }
+</style>

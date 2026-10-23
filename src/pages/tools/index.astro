@@ -3,19 +3,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
 import MotionVisual from '../../components/MotionVisual.astro';
 import '../../styles/tools.css';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { runInNewContext } from 'node:vm';
+import { loadWorkosTools, hasStandaloneGuide, toolPageHref, toolAppHref, TOOL_FILES as FILES } from '../../utils/workos-tools.ts';
 
 // Tool data, calculations and guides are plain browser scripts in public/tools/ (see tests/tools-calculators.test.ts).
 // The directory cards are also rendered here at build time so the tool names are crawlable and indexed by site search.
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3'];
-const sandbox: { window: Record<string, any> } = { window: {} };
-for (const kind of ['data', 'guides']) {
-  for (const f of FILES) runInNewContext(readFileSync(join(process.cwd(), 'public', 'tools', `${kind}-${f}.js`), 'utf8'), sandbox);
-}
-const tools: Array<Record<string, any>> = sandbox.window.GOCORE_TOOLS;
-const guides: Record<string, any> = sandbox.window.WORKOS_GUIDES;
+const { tools, guides } = loadWorkosTools() as { tools: Array<Record<string, any>>; guides: Record<string, any> };
+// Cards link to each tool's own page where one exists, so search engines can find it; a plain click still
+// opens the calculator in place (ui.js intercepts it), exactly as before.
+const cardHref = (id: string) => (hasStandaloneGuide(guides[id]) ? toolPageHref(id) : toolAppHref(id));
 const searchText = (t: Record<string, any>) => [t.name, t.category, t.question, t.description, ...(t.keywords || []), ...(guides[t.id]?.uses || []), ...(guides[t.id]?.users || [])].join(' ').toLowerCase();
 const TOOL_COUNT = tools.length;
 const MAKEOS_COUNT = tools.filter((t) => t.collection === 'MAKEOS').length;
@@ -43,7 +38,7 @@ const description =
           <button class="chip active" type="button" data-cat="All" aria-pressed="true">All</button><button class="chip" type="button" data-cat="MAKEOS" aria-pressed="false">MAKEOS toolkit</button>{CATEGORIES.map((c) => <button class="chip" type="button" data-cat={c} aria-pressed="false">{c}</button>)}
         </div>
       </div>
-      <div id="tool-directory"><div class="tool-grid" id="tool-grid">{tools.map((t) => <a class="tool-card" href={`/tools/?tool=${t.id}`} data-tool-id={t.id} data-category={t.category} data-collection={t.collection || 'WORKOS'} data-search={searchText(t)}><span class="card-top"><span class="category-label">{t.category}</span></span><h2>{t.name}</h2><p>{t.question}</p><span class="card-link">Open tool →</span></a>)}<p class="tools-empty" id="tools-empty" hidden>No matching tool yet. Try another term or category.</p></div></div>
+      <div id="tool-directory"><div class="tool-grid" id="tool-grid">{tools.map((t) => <a class="tool-card" href={cardHref(t.id)} data-tool-id={t.id} data-category={t.category} data-collection={t.collection || 'WORKOS'} data-search={searchText(t)}><span class="card-top"><span class="category-label">{t.category}</span></span><h2>{t.name}</h2><p>{t.question}</p><span class="card-link">Open tool →</span></a>)}<p class="tools-empty" id="tools-empty" hidden>No matching tool yet. Try another term or category.</p></div></div>
       <section class="workspace" id="tool-workspace" hidden>
         <div class="workspace-head"><div><p class="eyebrow" id="tool-category">KEVOS® WORKOS</p><h2 id="tool-name">Tool</h2><p class="lead" id="tool-question"></p><p id="tool-description"></p></div><button class="btn secondary back-button" type="button" id="back-tools">← All tools</button></div>
         <div class="tool-layout">

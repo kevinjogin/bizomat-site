@@ -69,7 +69,10 @@ test('every WORKOS browser script parses', () => {
 
 test('the tools page loads exactly the category files that exist, in data → guides → core → calc → ui order', () => {
   const page = readFileSync(join(process.cwd(), 'src', 'pages', 'tools', 'index.astro'), 'utf8');
-  const listed = /const FILES = \[([^\]]+)\]/.exec(page)?.[1].match(/'([a-z0-9]+)'/g)?.map((s) => s.slice(1, -1));
+  // The file list lives in the shared loader used by the tools page and the tool pages.
+  const loader = readFileSync(join(process.cwd(), 'src', 'utils', 'workos-tools.ts'), 'utf8');
+  assert.match(page, /TOOL_FILES as FILES/);
+  const listed = /export const TOOL_FILES = \[([^\]]+)\]/.exec(loader)?.[1].match(/'([a-z0-9]+)'/g)?.map((s) => s.slice(1, -1));
   assert.deepEqual(listed, FILES);
   for (const kind of ['data', 'guides', 'calc']) {
     const onDisk = readdirSync(DIR).filter((n) => n.startsWith(`${kind}-`)).map((n) => n.slice(kind.length + 1, -3)).sort();
@@ -80,7 +83,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.ok(order.every((p) => p > 0), 'all script groups are loaded');
   assert.deepEqual([...order].sort((a, b) => a - b), order, 'scripts load in dependency order');
   assert.match(page, /data-tool-id=\{t\.id\}/, 'directory cards are rendered at build time');
-  assert.match(page, /href=\{`\/tools\/\?tool=\$\{t\.id\}`\}/, 'each card links to its tool');
+  assert.match(page, /href=\{cardHref\(t\.id\)\}/, 'each card links to its tool');
+  // A tool's own page where its guide stands alone, otherwise the calculator itself.
+  assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
 test('register: 115 tools with unique ids and every previously published id kept', () => {
