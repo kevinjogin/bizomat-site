@@ -32,6 +32,21 @@ The **8D method**, short for eight disciplines, is a structured approach to prob
 | **D7 Prevent recurrence** | Change systems, standards and similar processes | Where else could this happen, and what in our system allowed it? |
 | **D8 Close and recognise** | Confirm closure with the customer and acknowledge the team | Is the customer satisfied, and what did we learn? |
 
+```figure
+type: steps
+title: The eight disciplines
+caption: Containment protects the customer now; root causes and prevention stop it happening again.
+- D0 Prepare and respond
+- D1 Form the team
+- D2 Describe the problem
+- D3 Contain
+- D4 Find root causes
+- D5 Choose corrective actions
+- D6 Implement and validate
+- D7 Prevent recurrence
+- *D8 Close and recognise
+```
+
 The steps are sequential in logic but often overlap in time. Containment, for instance, starts within hours, while root cause analysis may take days.
 
 ## D0 and D1: respond quickly and assemble the right people
@@ -154,6 +169,16 @@ This is an illustrative example. A 30-person sheet-metal business supplies powde
 **D4: escape cause.** The only adhesion check was a test on a flat panel at the start of each shift, hung at the front of the rack, and it passed. Nothing tested production parts or the weakest rack positions, and nothing checked the chemistry before coating began.
 
 **D4: systemic cause.** Pretreatment chemistry control was not in the control plan at all; it depended on one person's routine.
+
+```figure
+type: tree
+title: Three root causes of flaking coating
+caption: Every escaped defect has at least two: why it happened and why it was not caught.
+- Coating flaking on enclosure doors
+  - Occurrence | pretreatment chemistry not topped up that day
+  - Escape | only a flat test panel at the front of the rack was checked
+  - *Systemic | chemistry control depended on one person's routine
+```
 
 **D5 and D6.** The team adds a conductivity monitor with an alarm to the pretreatment stage, introduces titration checks at the start of each shift with results logged, and adds chemistry checks to the control plan with a reaction plan. The adhesion test now uses a production door from the back of the rack on each shift. Over the next six weeks, all adhesion tests pass and the conductivity alarm triggers once, prompting a top-up before any parts are coated. Containment is lifted after the customer's next three deliveries are clean.
 

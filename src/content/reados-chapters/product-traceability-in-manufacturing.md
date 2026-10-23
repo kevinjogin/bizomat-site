@@ -109,6 +109,16 @@ Business systems such as ERP and manufacturing execution systems often provide l
 
 A **mass balance** compares the quantity of each lot received or produced with the quantities used, shipped, scrapped and remaining. If 1,000 kilograms of a material lot were received and records show 940 kilograms used and 40 kilograms in stock, 20 kilograms are unaccounted for. Small differences may be normal process loss; large or unexplained differences show where records are incomplete. Regular mass balance checks on critical materials reveal weaknesses before a real recall does.
 
+```figure
+type: stack
+title: Accounting for a 1,000 kg material lot
+unit: kg
+caption: Small differences may be process loss; large or unexplained ones show where records are incomplete.
+- Used | 940
+- In stock | 40
+- *Unaccounted for | 20
+```
+
 ## Testing with mock recalls
 
 A traceability system should be tested regularly with a **mock recall** or trace exercise:
@@ -150,6 +160,17 @@ This is an illustrative example. A manufacturer moulds and assembles plastic hou
 **Changes.** The manufacturer introduces barcode scanning of each resin bag when loaded into a dryer, records the time each hopper changes lot, labels each production lot of housings with its date, shift and resin lots, and records which housing lots were shipped to which customer. Equipment and system configuration cost about $25,000 in this illustration.
 
 **Result.** In a mock recall six months later, the team traces a resin lot to 1,200 housings and three customer deliveries in under two hours. Had the original incident occurred under the new system, the recall would have covered about 1,200 units, an assumed cost of about $48,000 rather than hundreds of thousands of dollars.
+
+```figure
+type: bars
+title: Housings caught up in one suspect resin lot
+unit: units
+max: 19000
+caption: At an assumed $40 a unit, the potential cost fell from about $720,000 to about $48,000 with dryer-level traceability.
+- No lot-to-production link | 18000
+- Reconstructed from shift notes | 9000 | the customer insisted
+- *With barcode scanning at the dryer | 1200 | traced in under two hours
+```
 
 ## Applying this in an Australian business
 

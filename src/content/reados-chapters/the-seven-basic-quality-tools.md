@@ -144,6 +144,19 @@ This is an illustrative example. A sheet metal fabricator powder coats about 1,0
 
 Three defect types account for about 82% of rejects. Because runs and orange peel both suggest excessive film thickness, the team starts there.
 
+```figure
+type: bars
+title: Powder coating rejects over four weeks
+unit: rejects
+max: 100
+caption: 220 rejects from 4,000 parts; three defects make up about 82%, and two of them point to film thickness.
+- *Runs and sags | 92
+- Orange peel texture | 48
+- Contamination | 41
+- Thin coverage | 23
+- Other | 16
+```
+
 **Histogram.** Film thickness readings from 120 parts form two distinct peaks. Stratifying by spray booth shows that one booth consistently applies much thicker coatings than the other.
 
 **Fishbone.** A cross-functional session lists possible causes of runs: gun settings, powder flow, operator technique, hanging angle, part geometry, oven temperature and humidity.
@@ -153,6 +166,16 @@ Three defect types account for about 82% of rejects. Because runs and orange pee
 **Actions.** Both booths' guns are calibrated, standard settings are documented for each part family, operators are trained on technique and a quick thickness check is added at the start of each shift. Contamination is tackled next, with improved cleaning of hooks and booth filters.
 
 **Control chart.** Daily reject percentage is plotted on a control chart. Over the following two months, the average falls to about 2% and stays within new, narrower limits. The redrawn Pareto shows contamination is now the largest remaining problem, and the team moves on to it.
+
+```figure
+type: bars
+title: Coating reject rate
+unit: %
+max: 6
+caption: One booth applied much thicker coatings; calibrated guns and standard settings fixed it.
+- Before | 5.5
+- *Two months after the actions | 2
+```
 
 ## Applying this in an Australian business
 

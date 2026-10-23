@@ -71,6 +71,15 @@ The combined repeatability and reproducibility, often expressed as a percentage,
 
 Widely used guidance from the automotive industry's MSA reference manual treats a measurement system with R&R under 10% as generally acceptable, between 10% and 30% as possibly acceptable depending on the importance of the characteristic, the cost of the gauge and the consequences of error, and over 30% as generally unacceptable. Many customers apply these bands, but some set their own, so check what applies.
 
+```figure
+type: layers
+title: Judging a gauge R&R result
+caption: After the automotive MSA reference manual; the number of distinct categories should also be adequate.
+- *Under 10% | generally acceptable
+- 10% to 30% | may be acceptable, depending on the application
+- Over 30% | generally unacceptable
+```
+
 A second useful figure is the **number of distinct categories**: roughly how many groups of parts the measurement system can reliably tell apart within the process spread. It is calculated as about 1.41 times the ratio of part variation to measurement variation. A value of five or more is commonly recommended. A system that can distinguish only one or two categories is effectively a go/no-go gauge, however many decimals it displays.
 
 The split between repeatability and reproducibility points to the fix:
@@ -132,6 +141,17 @@ This is an illustrative example. A machining business makes valve bodies with a 
 **First improvement.** Watching the operators reveals three different techniques for finding the minimum reading as the gauge is rocked in the bore, and setting is done against different references. The team writes a one-page method with photographs, introduces a single setting master and adds a simple fixture to hold the part square. A repeat study shows repeatability of about 0.0012 mm and reproducibility of about 0.0010 mm, giving an R&R of about 23%. That falls in the marginal band.
 
 **Second improvement.** Because the bore is a special characteristic for the customer, the business invests in an air gauge for this feature. A third study shows R&R under 10%, and the number of distinct categories is now comfortably above five. The observed Cp rises to about 1.45, without any change to the machining process.
+
+```figure
+type: bars
+title: Gauge R&R on a 20.000 ± 0.020 mm bore
+unit: %
+max: 65
+caption: Observed Cp rose from about 1.11 to 1.45 without changing the machining at all.
+- Original bore gauge | 59
+- One technique, one master, a fixture | 23
+- *Air gauge | 10 | under 10%
+```
 
 **Keeping it.** The air gauge is added to the gauge register with a daily check against its master, plotted on a simple chart, and the study is scheduled to be repeated after any change to the gauge or method.
 

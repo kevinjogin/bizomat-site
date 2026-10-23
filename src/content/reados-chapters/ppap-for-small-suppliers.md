@@ -40,6 +40,17 @@ The elements of a PPAP package are the evidence for those answers. Seen that way
 | **Physical** | Sample production parts, a master sample, checking aids | Real parts and the tools used to accept them |
 | **Records** | Customer-specific requirements, part submission warrant | Everything required has been addressed and is signed for |
 
+```figure
+type: layers
+title: What a PPAP submission proves
+caption: The documents must tell one consistent story about the same part, revision and process.
+- Design | the right, current requirements
+- Process planning | flow, PFMEA, control plan
+- Evidence | MSA, dimensions, tests, capability
+- Physical | real parts and checking aids
+- *Records | customer requirements and the signed warrant
+```
+
 The customer decides how much is submitted and how much is retained at your site for review. This is usually expressed as a submission level. Ask early which level applies and which elements are needed for your part, rather than assuming.
 
 ## The documents must tell one story
@@ -102,6 +113,17 @@ The team builds the process flow, then a process failure mode analysis focused o
 The measurement system study on the existing bore gauge shows too much variation relative to the tolerance. The business buys a more suitable gauge, repeats the study and gets an acceptable result. A capability study on a production run then meets the customer's required level for both bores. Dimensional results cover every characteristic on the drawing for parts from both fixtures used in production, and material certificates from the steel supplier are included.
 
 The readiness review, done by the production supervisor, finds that the dimensional report refers to the previous drawing revision. It is corrected before submission. The customer grants interim approval because a surface finish test at an external laboratory is still pending; the result arrives two weeks later, and full approval follows.
+
+```figure
+type: timeline
+title: A first PPAP for a 15-person machine shop
+caption: Two bore diameters and positions were special characteristics on a safety-related linkage.
+- Plan | Quality lead as owner | submission level and requirements confirmed
+- Risk | PFMEA on the two bores | tool wear, clamping errors
+- Measure | Bore gauge failed MSA | replaced, then passed
+- Prove | Capability met for both bores
+- *Submit | Drawing revision error caught | interim approval until a lab result arrived
+```
 
 Six months on, the business wants to move the job to a newer machine. Its change-control checklist flags this as a change requiring customer notification. The customer asks for a partial resubmission, covering dimensional results and a new capability study, which is approved before the move.
 

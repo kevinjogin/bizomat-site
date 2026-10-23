@@ -60,6 +60,15 @@ Three ratings, each on a scale from 1 to 10, describe the risk:
 | **Occurrence (O)** | How likely the cause is to occur, given current prevention controls | Process history, robustness and the strength of prevention controls |
 | **Detection (D)** | How likely current detection controls are to find the cause or failure mode before the product leaves the process | The type and reliability of detection |
 
+```figure
+type: layers
+title: Three ratings in a PFMEA
+caption: Ratings of 9 and 10 for severity, safety or compliance, deserve attention whatever the RPN says.
+- Severity | how serious the worst likely effect is
+- Occurrence | how likely the cause, given prevention controls
+- *Detection | how likely current controls catch it before it leaves
+```
+
 Use defined rating tables, preferably those your customers require, so that ratings mean the same thing across different analyses. Severity is set by the effect and generally only changes if the design changes. Occurrence falls when prevention improves. Detection improves when detection becomes more reliable, earlier and less dependent on human attention.
 
 Ratings at the top of the severity scale, usually 9 and 10, are reserved for effects that could affect safety or regulatory compliance. These deserve attention whatever the other ratings say.
@@ -148,6 +157,18 @@ This is an illustrative example. A 40-person business assembles industrial venti
 - The housing supplier is given a tighter control requirement on the bore, with capability evidence requested.
 
 **Re-rating.** With program selection by scan, occurrence for the changeover cause falls to 2. With automatic monitoring rejecting incorrect pressings in the station, detection falls to 3. The RPN becomes 42. Severity remains 7, because the effect of the failure has not changed.
+
+```figure
+type: compare
+title: Re-rating a bearing pressing failure
+cols: Before | After
+best: 2
+caption: Severity stays 7 because the effect has not changed; the controls changed the other two ratings.
+- Severity | 7 | 7
+- Occurrence | 5: setter remembers the stop position | 2: program selected by scan
+- Detection | 7: visual check at final assembly | 3: automatic force and distance monitoring
+- *RPN | 245 | 42
+```
 
 **Control plan.** The control plan for the pressing step now lists the force and distance window as a process characteristic, the monitor as the control method, 100% automatic checking as the frequency, and a reaction plan: rejected parts go to a red bin, the setter checks the program, the bore and the press, and three consecutive good pressings are required before production resumes. A known-bad test housing is pressed at the start of each shift to verify the monitor rejects it.
 

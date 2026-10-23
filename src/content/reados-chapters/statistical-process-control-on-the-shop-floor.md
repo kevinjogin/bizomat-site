@@ -50,6 +50,16 @@ This is the most important distinction in SPC, and the most often confused.
 | **What a breach means** | The part is nonconforming | The process has probably changed |
 | **Where they appear** | On individual measurements | Usually on averages or ranges of small samples |
 
+```figure
+type: balance
+title: Specification limits and control limits
+left: Specification limits
+right: Control limits
+caption: Breaching one means a bad part; breaching the other means the process has probably changed.
+- From the drawing or customer | From the process's own data
+- What the product must be | What the process actually does
+```
+
 A process can be in control but produce parts outside specification, because its normal spread is wider than the tolerance. Equally, a process can be out of control while every part is still within specification, because the change has not yet pushed parts over the limit. The chart answers "has the process changed?", while the specification answers "is this part acceptable?". Both questions matter, and they must not be merged. Never draw specification limits on a chart of subgroup averages: averages vary less than individual parts, so the comparison is misleading.
 
 ## Choosing the right chart
@@ -157,6 +167,17 @@ This is an illustrative example. A 25-person machining business turns steel shaf
 **First change: stop tampering.** The team adopts a rule that the offset is adjusted only when the chart signals. After a month, the average range has fallen to about 0.007 mm, giving an estimated standard deviation of about 0.0030 mm. With the process centred on 25.000 mm, Cp and Cpk are both about 1.11.
 
 **Second change: remove a known source.** Annotations on the chart show that most large ranges occur in the first hour after start-up. The team introduces a short warm-up cycle before production parts are run. The estimated standard deviation falls to about 0.0024 mm, and Cp and Cpk rise to about 1.39, above the customer's requirement of 1.33.
+
+```figure
+type: bars
+title: Capability of a 25.000 ± 0.010 mm diameter
+max: 1.5
+caption: The process was stable but not capable; it improved by stopping over-adjustment, then adding a warm-up cycle.
+- Adjusting at every small deviation | 0.62 | Cpk; standard deviation 0.0043 mm
+- Adjusting only on chart signals | 1.11 | standard deviation 0.0030 mm
+- *Plus a warm-up cycle | 1.39 | standard deviation 0.0024 mm
+- Customer requirement | 1.33
+```
 
 **Keeping it.** A reaction plan sits beside the chart: on a signal, the operator stops, checks the insert and the last subgroup, quarantines parts back to the last in-control subgroup if needed, and records the cause. The supervisor reviews the chart at each shift handover.
 

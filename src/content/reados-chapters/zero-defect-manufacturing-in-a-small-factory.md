@@ -47,6 +47,17 @@ For medical devices, aerospace parts and other safety-critical products, conform
 
 The earlier a defect is found, the cheaper it is to fix. A mistake caught at the drawing stage costs minutes. Caught at first-off inspection, it costs a part. Caught at final inspection, it costs a batch. Caught by the customer, it costs the batch, freight, a credit, an apology and possibly the account. Quality practitioners sometimes describe this as the 1–10–100 rule: a dollar of prevention saves ten dollars of correction and a hundred dollars of failure. The ratios are a heuristic, not a law, but the direction is reliable.
 
+```figure
+type: bars
+title: The 1–10–100 rule
+unit: relative cost
+max: 110
+caption: A heuristic, not a law: a dollar of prevention saves ten of correction and a hundred of failure.
+- Prevention | 1
+- Correction | 10
+- *Failure | 100
+```
+
 Inspection alone cannot create quality. It can only sort good from bad after the cost has been incurred. A factory that relies on final inspection is paying for every defect twice: once to make it and once to find it. Prevention moves effort upstream to design, process planning, setup, materials and training, where defects begin.
 
 Practical prevention activities in a small factory include:
@@ -134,6 +145,16 @@ Owners respond to dollars. The most persuasive step in any zero-defect effort is
 | Appraisal | Effort to find defects | Inspection, testing, gauges and their calibration |
 | Internal failure | Defects found before the customer | Scrap, rework, re-inspection, downtime, extra setups |
 | External failure | Defects found by the customer | Returns, credits, warranty work, freight, complaint handling, lost orders |
+
+```figure
+type: layers
+title: The cost of quality
+caption: Measure quality in money; spending on prevention reduces the failure costs below it.
+- *Prevention | training, drawing review, mistake-proofing
+- Appraisal | inspection, testing, calibration
+- Internal failure | scrap, rework, downtime
+- External failure | returns, credits, lost orders
+```
 
 Most businesses find that failure costs are far larger than prevention costs, and that a modest increase in prevention reduces failure costs by much more. You do not need precise accounting to start. Keep a simple log for one month of every scrapped or reworked part: the job, the defect, the cause if known, the material cost and the labour hours. Multiply out the hours. Add any customer returns and credits. The total is usually a surprise, and it gives you a baseline to improve against.
 
