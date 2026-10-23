@@ -4,7 +4,7 @@ chapterSlug: read-the-damage-before-choosing-a-repair
 order: 1
 title: "Read the damage before choosing a repair"
 description: "Establish what failed, why it failed and what the part must still do before deciding between a weld repair, an insert and a replacement."
-draft: true
+draft: false
 ---
 
 Most weld repairs that fail were decided too quickly. A crack is visible, a welder is available and the job looks small. The repair is completed, the part returns to service and the crack reappears beside the new weld, because the conditions that made the first crack were never changed.

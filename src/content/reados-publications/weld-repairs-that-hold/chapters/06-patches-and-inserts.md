@@ -4,7 +4,7 @@ chapterSlug: patches-and-inserts
 order: 6
 title: "Patches and inserts"
 description: "Shape, orient and size a welded insert so its edges sit in sound metal, avoid lines of weakness and keep weld length and restraint under control."
-draft: true
+draft: false
 ---
 
 When damage covers an area rather than a line, the repair becomes an insert: cut out the damaged region and weld in new plate. The 1919 Airco booklet devotes more pages to patches than to any other repair, and its central rule is striking: patches on firebox sheets should be triangular whenever possible. Its reason was that the sides of a triangle do not run parallel with the rows of staybolt holes, as the sides of a rectangle would, and so do not weaken the joint.

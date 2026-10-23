@@ -4,7 +4,7 @@ chapterSlug: procedures-welders-and-inspection
 order: 9
 title: "Procedures, welders and inspection"
 description: "Replace judgement by eye with qualified procedures, qualified welders, suitable inspection and the approvals regulated equipment requires."
-draft: true
+draft: false
 ---
 
 The 1919 Airco booklet ends its foreword with a revealing qualification: the cost of welding was less than riveting, depending on the skill of the welder. Everything in the booklet depended on that skill. There was no written procedure tested beforehand, no qualification test for the welder, no inspection method that could look inside the weld, and the only evidence of success was that the joint stopped leaking.

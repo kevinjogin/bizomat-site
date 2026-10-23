@@ -4,7 +4,7 @@ chapterSlug: undercut-and-profile-shift
 order: 5
 title: "Undercut and profile shift"
 description: "See why pinions with few teeth are undercut, calculate the minimum profile shift that prevents it, and find the new centre distance when shifts are added."
-draft: true
+draft: false
 ---
 
 A pinion with few teeth is attractive: it gives a high ratio in a small space. Below a certain tooth number, however, the generating tool cuts away part of the tooth's root as it forms the involute. The tooth is weakened exactly where bending stress is highest, and part of its working profile disappears. That loss is called undercut.

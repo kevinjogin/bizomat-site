@@ -4,7 +4,7 @@ chapterSlug: building-up-wasted-metal
 order: 8
 title: "Building up wasted metal"
 description: "Survey thinning before deciding on weld build-up, compare deposited metal with an insert, and read published limits as an example of how regulators draw the line."
-draft: true
+draft: false
 ---
 
 Plate does not only crack. It thins. Corrosion, erosion and repeated mechanical work remove metal until a part no longer has the thickness its design assumed. The 1919 Airco booklet describes one such case: firebox edges worn by excessive caulking, by steam escaping through leaking seams and by corrosion. Its remedy was to brush off the rust and build the edge back up with weld, hammering the deposit lightly while it was still red hot.

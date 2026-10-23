@@ -4,7 +4,7 @@ chapterSlug: the-repair-dossier
 order: 10
 title: "The repair dossier"
 description: "Assemble the damage record, decisions, procedure, sequence, temperatures, inspection and return-to-service statement into one record that others can check."
-draft: true
+draft: false
 ---
 
 A finished weld hides most of what made it trustworthy. Once ground and painted, the repair in the tank looks much like the repair a less careful workshop might have made. The difference lives in the record: what the damage was, why the repair was chosen, how it was made and what proved it sound. Without that record, the next person to inspect the tank starts from nothing, and the next failure cannot be traced to its cause.

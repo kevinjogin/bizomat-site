@@ -7,7 +7,7 @@ tags: [design, manufacturing, quality, validation]
 author: KEVOS®
 publisher: KEVOS® READOS
 language: en-AU
-status: draft
+status: published
 publishDate: 2026-10-23
 referencesChecked: 2026-10-23
 edition: "1"

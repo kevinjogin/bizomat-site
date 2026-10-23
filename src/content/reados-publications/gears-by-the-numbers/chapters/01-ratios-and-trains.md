@@ -4,7 +4,7 @@ chapterSlug: ratios-speeds-and-gear-trains
 order: 1
 title: "Ratios, speeds and gear trains"
 description: "Calculate gear ratio, output speed and torque for simple and compound trains, and use tooth numbers to spread wear with a hunting tooth."
-draft: true
+draft: false
 ---
 
 A gear pair does one thing above all: it trades speed for torque at a fixed ratio. Everything else in this book, from tooth geometry to strength, exists to make that trade smooth, quiet and durable. Before any tooth is drawn, the ratio and the torques it creates must be right.

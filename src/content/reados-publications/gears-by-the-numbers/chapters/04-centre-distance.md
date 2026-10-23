@@ -4,7 +4,7 @@ chapterSlug: centre-distance-and-contact-ratio
 order: 4
 title: "Centre distance and contact ratio"
 description: "Calculate the standard centre distance and the transverse contact ratio, and see how a centre distance error changes the pressure angle and overlap."
-draft: true
+draft: false
 ---
 
 Two gears with the right module and tooth numbers still need to be held the right distance apart. The centre distance is a housing dimension, set by bores, bearings and shafts that may be machined by people who never see the gears. Getting it right, and knowing how forgiving the involute is when it is slightly wrong, is part of every gear design.

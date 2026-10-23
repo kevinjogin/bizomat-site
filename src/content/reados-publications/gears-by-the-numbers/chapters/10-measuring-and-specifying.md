@@ -4,7 +4,7 @@ chapterSlug: measuring-and-specifying-a-gear
 order: 10
 title: "Measuring and specifying a gear"
 description: "Check tooth thickness with span measurement, identify an unknown gear from its tooth count and diameter, and write the data a gear drawing needs."
-draft: true
+draft: false
 ---
 
 A gear drawing that shows only an outline and a bore is not a gear drawing. The teeth, which do all the work, are defined by a handful of numbers that a toolmaker, inspector or replacement supplier must be able to read without guessing. And once a gear is made, someone has to confirm that its teeth are the thickness the design intended, because that thickness sets the backlash.

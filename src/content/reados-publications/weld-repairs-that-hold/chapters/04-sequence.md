@@ -4,7 +4,7 @@ chapterSlug: welding-sequence-back-step-and-balance
 order: 4
 title: "Welding sequence: back-step and balance"
 description: "Use back-step, skip and balanced sequences to spread shrinkage, and plan the order of welds so each one works against the smallest restraint."
-draft: true
+draft: false
 ---
 
 If one instruction defines the 1919 Airco booklet, it is the back-step. Tack the joint for an inch at the start. Move about ten inches along. Weld back to the start. Move another ten inches and weld back to the end of the previous run. Repeat until the seam is complete. The booklet applies the method to seams, patches, door collars and cracks, and states its purpose plainly: it prevents the joint from spreading under unequal expansion.

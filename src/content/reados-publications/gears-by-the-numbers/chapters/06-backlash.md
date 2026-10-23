@@ -4,7 +4,7 @@ chapterSlug: backlash-and-tooth-thickness
 order: 6
 title: "Backlash and tooth thickness"
 description: "Specify backlash through tooth thickness and centre distance tolerances, and check that temperature and errors cannot close the clearance."
-draft: true
+draft: false
 ---
 
 Perfect gears made to the theoretical tooth thickness of half the circular pitch would mesh with no clearance at all. Real gears cannot run that way. They need room for lubricant, for manufacturing errors, for deflection under load and for thermal expansion. That deliberate clearance between non-working flanks is **backlash**. Too little and the gears bind, heat and fail; too much and they knock when the load reverses and lose positional accuracy.

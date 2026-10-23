@@ -4,7 +4,7 @@ chapterSlug: joint-preparation-and-weld-volume
 order: 3
 title: "Joint preparation and weld volume"
 description: "Choose an excavation and groove shape that reaches sound metal, allows full fusion and limits weld volume, and calculate what each choice deposits."
-draft: true
+draft: false
 ---
 
 The shape of the groove decides how much metal the welder must deposit, how much heat goes into the plate and how much the joint will shrink. It also decides whether the weld can fuse properly at the root, where most repair defects hide. The 1919 Airco booklet repeated one joint almost everywhere: a butt weld with both edges bevelled at about 45°, making a 90° vee, left open about 3/16 inch at the bottom. It explicitly preferred that butt joint to a lap weld, which it said did not make a strong, tight joint.

@@ -4,7 +4,7 @@ chapterSlug: the-involute-and-pressure-angle
 order: 2
 title: "The involute and the pressure angle"
 description: "See why involute teeth keep a constant speed ratio, how the base circle and line of action are defined, and what the pressure angle does to tooth forces."
-draft: true
+draft: false
 ---
 
 A gear pair must transmit a constant speed ratio, not just an average one. If the ratio wavered slightly as each pair of teeth rolled through contact, the output would accelerate and decelerate many times per revolution, producing vibration, noise and wear. The tooth shape that solves this problem for almost every industrial gear is the involute.

@@ -4,7 +4,7 @@ chapterSlug: helical-gears-and-axial-thrust
 order: 7
 title: "Helical gears and axial thrust"
 description: "Convert between normal and transverse module, size a helical pair to a centre distance, and calculate the axial thrust and face overlap the helix creates."
-draft: true
+draft: false
 ---
 
 Spur teeth engage across their whole face at once, so each tooth pair picks up and drops its load abruptly. Helical gears cut the teeth at an angle to the axis, so contact starts at one end of a tooth and spreads gradually across the face. The result is usually quieter running and higher load capacity for the same size. The price is an axial thrust that bearings must carry, and slightly more complicated geometry.

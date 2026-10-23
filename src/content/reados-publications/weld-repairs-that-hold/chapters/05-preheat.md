@@ -4,7 +4,7 @@ chapterSlug: preheat-hydrogen-and-cooling
 order: 5
 title: "Preheat, hydrogen and cooling"
 description: "Distinguish preheat used to share shrinkage from preheat used to prevent hydrogen cracking, and estimate weldability with a carbon equivalent."
-draft: true
+draft: false
 ---
 
 The word preheat appears throughout the 1919 Airco booklet, but it does not mean what a modern welding procedure means by it. In the booklet, preheating is local and purposeful in a mechanical sense: heat the plate between two holes so it expands with the weld, then let both cool together. In a modern procedure, preheat is usually a specified minimum temperature for the whole joint region, chosen mainly to prevent hydrogen cracking in the heat-affected zone.

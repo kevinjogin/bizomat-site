@@ -4,7 +4,7 @@ chapterSlug: tooth-bending-strength
 order: 8
 title: "Tooth bending strength"
 description: "Screen tooth root bending stress with the Lewis equation and a velocity factor, and see why modern rating methods add many more factors."
-draft: true
+draft: false
 ---
 
 A gear tooth is a short, thick cantilever. Every time it carries load, it bends at its root, and if the bending stress is too high the tooth eventually cracks there and breaks off. Bending fatigue is one of the two main ways gear teeth fail; the other, surface fatigue, is the subject of Chapter 9.

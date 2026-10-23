@@ -4,7 +4,7 @@ chapterSlug: module-pitch-and-gear-sizes
 order: 3
 title: "Module, pitch and gear sizes"
 description: "Use module and tooth number to calculate pitch, tip and root diameters, circular pitch and tooth thickness, and avoid mixing module and diametral pitch gears."
-draft: true
+draft: false
 ---
 
 Once the ratio is chosen, the next decision sets the size of every tooth: the module. Two gears can mesh only if their teeth are the same size and shape, so module is the first number on any metric gear drawing and the first question when replacing a gear from another supplier.

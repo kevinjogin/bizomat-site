@@ -4,7 +4,7 @@ chapterSlug: surface-contact-stress
 order: 9
 title: "Surface contact stress"
 description: "Estimate Hertzian contact stress between gear teeth, see how face width and size change it, and connect it to materials, hardening and lubrication."
-draft: true
+draft: false
 ---
 
 A tooth can be strong enough in bending and still fail. Where two teeth touch, the contact area is a narrow band, and the pressure across it is very high. Repeated millions of times, that pressure can fatigue the surface, starting small pits that grow until the tooth profile is destroyed. Pitting, along with scuffing and wear, is a common way gears actually wear out.

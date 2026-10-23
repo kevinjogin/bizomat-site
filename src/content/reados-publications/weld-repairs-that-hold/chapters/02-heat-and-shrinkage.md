@@ -4,7 +4,7 @@ chapterSlug: heat-expansion-and-shrinkage
 order: 2
 title: "Heat, expansion and shrinkage"
 description: "Estimate thermal expansion and restrained stress, and see why heating part of a plate leaves it shorter and stressed once it cools."
-draft: true
+draft: false
 ---
 
 Every instruction in the 1919 Airco booklet that seems fussy about heat makes sense once you see welding as a thermal event. Leave a root opening "to allow for expansion". Preheat the plate between two holes and keep it red hot. Let the heated section cool with the weld "for uniform shrinkage". Reheat the end of a crack after welding. The writers did not have modern residual-stress models, but they had seen plates pull, crack and leak, and they were managing expansion and contraction by hand.

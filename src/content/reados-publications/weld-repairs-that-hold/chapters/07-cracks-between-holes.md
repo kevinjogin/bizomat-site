@@ -4,7 +4,7 @@ chapterSlug: cracks-between-holes-and-in-knuckles
 order: 7
 title: "Cracks between holes and in knuckles"
 description: "Treat cracks across ligaments and flange radii as evidence of cyclic strain, and recognise when closing holes changes how a plate is supported."
-draft: true
+draft: false
 ---
 
 Some cracks are easy to explain once mapped: a fatigue crack at the toe of a poorly supported attachment, for instance. Two kinds are harder, and the 1919 Airco booklet spends pages on both. The first runs between holes, across the narrow ligaments of plate that separate them. The second runs along a knuckle, the curved flange where a flat plate turns to meet another. Both are signs that a region of plate is being strained, cycle after cycle, more than it can tolerate.
