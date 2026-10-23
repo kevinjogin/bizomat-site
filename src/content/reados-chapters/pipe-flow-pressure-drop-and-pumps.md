@@ -26,6 +26,16 @@ head (m) = pressure (Pa) ÷ (density (kg/m³) × g (m/s²))
 
 For water, a pressure of 100 kPa (1 bar) corresponds to about 10.2 m of head. Head is useful because a centrifugal pump delivers roughly the same head regardless of the fluid's density, whereas the pressure it produces is proportional to density.
 
+```figure
+type: stack
+title: Where the pump's head goes, 80 mm option
+unit: m
+caption: Static lift plus pipe friction plus fitting losses, about 22.5 m in total.
+- *Static lift | 15
+- Pipe friction | 5.9
+- Fittings and valves | 1.6
+```
+
 The total head a pump must provide is the sum of:
 
 - **static head**, the vertical lift from the source liquid level to the delivery level, plus any difference in pressure between them;
@@ -114,6 +124,18 @@ A plant needs to transfer 10 L/s of water through 120 m of steel pipe with a sta
 **Option B: 100 mm internal diameter.** The velocity falls to about 1.27 m/s, with a velocity head of about 0.083 m. Friction loss is about 1.9 m and minor losses about 0.7 m, so the total head is about 17.6 m. Hydraulic power is about 1.7 kW, and shaft power about 2.7 kW.
 
 The larger pipe saves about 0.75 kW of shaft power. Over 4,000 hours, that is about 3,000 kWh a year, or about $750 a year at $0.25 per kWh, before considering motor efficiency. If the extra cost of the larger pipe and fittings is modest, it pays back within a few years and keeps saving for the life of the system. The larger pipe also allows a smaller pump and motor, and leaves headroom for future flow increases.
+
+```figure
+type: compare
+title: Moving 10 L/s through 120 m with a 15 m lift
+cols: 80 mm pipe | 100 mm pipe
+best: 2
+caption: About 0.75 kW less shaft power: about 3,000 kWh, roughly $750, a year over 4,000 hours.
+- Velocity | About 2.0 m/s | About 1.27 m/s
+- Friction loss | About 5.9 m | About 1.9 m
+- Total head | About 22.5 m | About 17.6 m
+- *Shaft power at 65% | About 3.4 kW | About 2.7 kW
+```
 
 ## How this applies to a small Australian business
 

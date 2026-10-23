@@ -57,6 +57,16 @@ The efficiency of cooling equipment is expressed as the ratio of cooling deliver
 
 The difference matters. A building with an average cooling load of 100 kW for 2,500 hours a year uses about 83,300 kWh of electricity for cooling at a COP of 3.0, costing about $20,800 a year at 25 cents a kilowatt-hour. At a COP of 4.5, it uses about 55,600 kWh, costing about $13,900, a saving of about $6,900 a year for the life of the equipment.
 
+```figure
+type: bars
+title: Cooling electricity for 100 kW over 2,500 hours
+unit: kWh a year
+max: 90000
+caption: About $6,900 a year saved at 25 cents a kWh, for the life of the equipment.
+- COP 3.0 | 83300 | about $20,800
+- *COP 4.5 | 55600 | about $13,900
+```
+
 ## Comfort is more than temperature
 
 People's comfort depends on air temperature, the temperature of surrounding surfaces, humidity, air movement, clothing and activity. A person near a hot window or a cold slab feels uncomfortable even when the air temperature is correct; gentle air movement makes warmer air feel comfortable; high humidity makes the same temperature feel oppressive. International standards such as ISO 7730 describe how these factors combine. Treating comfort only as a thermostat setting leads to over-cooling and complaints at the same time. Surveys of occupants, simple measurements of temperature and humidity at desks and workstations, and attention to radiant heat and draughts often solve complaints that bigger equipment would not.
@@ -139,6 +149,17 @@ This is an illustrative example. A manufacturer occupies a building with offices
 - Evaporative spot coolers and ceiling fans added in production.
 
 **Result.** HVAC electricity use falls by about 30%, comfort complaints drop sharply, and the work pays back in under two years. The business sets up a monthly review of building management system alarms, schedules and energy data.
+
+```figure
+type: checklist
+title: Why offices were cold and bills high
+caption: HVAC electricity fell about 30% and the work paid back in under two years.
+- ? Cooling at 20 °C while heating started at 21 °C
+- ? Air handlers running 24 hours a day after an old override
+- ? Economy cycle disabled by a failed damper actuator
+- ? Fouled coils and overdue filters
+- *? Air handler fans at constant speed
+```
 
 ## Applying this in an Australian business
 

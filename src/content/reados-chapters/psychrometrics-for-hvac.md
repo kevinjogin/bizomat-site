@@ -56,6 +56,27 @@ Finding the dew point is simple: from the air's state point, move horizontally l
 | Evaporative cooling | Water evaporates into the air; temperature falls, moisture rises, total heat roughly unchanged | Line up and to the left along a line of roughly constant wet-bulb temperature |
 | Mixing of air streams | Two streams combine | The mixed state lies on the straight line between them, closer to the larger stream |
 
+```figure
+type: svg
+title: The main processes on a psychrometric chart
+alt: A simplified psychrometric chart with dry-bulb temperature across and moisture content up. From a central state point, sensible heating moves right, sensible cooling moves left, cooling and dehumidification moves down and left, heating and humidification moves up and right, and evaporative cooling moves up and left.
+caption: Horizontal moves change temperature only; vertical components change moisture.
+viewbox: 0 0 560 280
+body:
+<path class="lf" d="M60 240H520M60 240V30"/>
+<text class="tx txs" x="520" y="262" text-anchor="end">dry-bulb temperature →</text>
+<text class="tx txs" x="68" y="40">moisture ↑</text>
+<path class="lf dsh" d="M60 230C200 220 380 160 500 40"/>
+<circle class="fa pulse" cx="290" cy="150" r="8"/>
+<path class="la flow" d="M298 150H420M282 150H160M284 156L200 210M296 144L380 90M284 144L210 100"/>
+<text class="tx txs" x="425" y="154">heating</text>
+<text class="tx txs" x="150" y="154" text-anchor="end">cooling</text>
+<text class="tx txs" x="196" y="226" text-anchor="end">cooling and dehumidifying</text>
+<text class="tx txs" x="384" y="84">heating and humidifying</text>
+<text class="tx txs" x="206" y="92" text-anchor="end">evaporative cooling</text>
+<text class="tx txs" x="440" y="70">saturation</text>
+```
+
 These processes explain everyday observations. Heating winter air dries it out in relative terms, which is why heated buildings can feel dry. A cooling coil that runs below the dew point removes moisture, which is why air conditioners drain water. Evaporative coolers work well in dry inland climates, where the gap between dry-bulb and wet-bulb temperatures is large, and much less well in humid coastal conditions, where the gap is small.
 
 ## Sensible and latent loads
@@ -137,6 +158,17 @@ The supply air has a humidity ratio of about 8.5 g/kg, and the room air about 9.
 Staff complain that the room feels damp, and condensation drips from chilled water pipes above the packing line. Measurements on a humid summer day show the room at 27 °C and 70% relative humidity. The dew point at that condition is about 21 °C, well above the 10 °C pipe surface temperature, so the pipes sweat. Investigation finds that a large roller door is often left open to a humid loading dock, adding moisture faster than the system removes it, and the pipe insulation has gaps where its vapour barrier is damaged.
 
 The business installs a fast-acting door and an air curtain, repairs the insulation and its vapour barrier and adjusts the coil controls to provide more dehumidification. The room returns to about 24 °C and 55% relative humidity, giving a dew point of roughly 14 °C, still above the pipe temperature, which is why the repaired insulation remains essential, and the condensation stops.
+
+```figure
+type: bars
+title: Dew point against a 10 °C chilled water pipe
+unit: °C
+max: 25
+caption: Above the pipe temperature, the pipe sweats; the repaired insulation stays essential even after the fix.
+- Damp room: 27 °C, 70% RH | 21
+- *After the fixes: 24 °C, 55% RH | 14
+- Pipe surface | 10
+```
 
 ## How this applies to a small Australian business
 

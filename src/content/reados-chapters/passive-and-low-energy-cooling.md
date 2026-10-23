@@ -85,6 +85,18 @@ Australia's climates vary widely, and the National Construction Code uses climat
 | Temperate coastal | Shading, insulation, natural ventilation, night purging on suitable nights, mixed mode | Overglazed west facades without shading |
 | Warm temperate with hot spells | Mixed mode, air movement, cool roofs, insulation | Evaporative cooling on humid days |
 
+```figure
+type: layers
+title: Reduce heat gains first, then remove heat cheaply
+shape: pyramid
+caption: Refrigerated cooling is the last step, sized for what remains.
+- *Shade, insulate and seal
+- Reduce and relocate internal heat
+- Ventilate and use thermal mass
+- Air movement and evaporative cooling
+- Refrigerated cooling for what remains
+```
+
 ## Comfort is not only temperature
 
 Comfort depends on air temperature, radiant temperature, humidity, air movement, clothing and activity. Hot roofs and windows raise radiant temperature, making spaces feel warmer than the thermostat suggests, which is another reason to reduce heat gains at the source.
@@ -132,6 +144,16 @@ This is an illustrative example. The building, figures and U-values are hypothet
 A small manufacturer occupies a 2,000 m² factory in western Sydney with an uninsulated, dark metal roof. On hot afternoons, temperatures under the roof make work uncomfortable, and quotes for refrigerated air conditioning of the whole space are very expensive.
 
 An engineer estimates roof heat gain to show the scale of the problem. Assuming, for illustration, an effective heat transfer coefficient of about 6 W/m²K for the uninsulated roof and an effective temperature difference of about 25 K, accounting for the sun-heated roof surface, the roof gain is about 6 × 2,000 × 25 = 300,000 W, or 300 kW. With insulation and a reflective coating, assuming an effective coefficient of about 0.5 W/m²K and the same effective temperature difference for simplicity, the gain falls to about 0.5 × 2,000 × 25 = 25,000 W, or 25 kW. In reality a cool roof also lowers the effective temperature difference, so the improvement would be larger still.
+
+```figure
+type: bars
+title: Heat gain through a 2,000 m² factory roof
+unit: kW
+max: 320
+caption: An illustrative estimate at an effective 25 K difference; a cool roof also lowers that difference, so the real gain is smaller still.
+- Uninsulated dark roof, about 6 W/m²K | 300
+- *Insulated and reflective, about 0.5 W/m²K | 25
+```
 
 The business insulates and coats the roof, installs ridge vents, adds high-volume, low-speed fans over the production floor and relocates two air compressors outside with ducted intake air. It installs refrigerated air conditioning only in the offices and a small quality room. Afternoon temperatures on the floor fall noticeably, workers report better comfort with the fans, and the cooling equipment purchased is a fraction of the original quotes.
 

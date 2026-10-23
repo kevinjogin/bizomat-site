@@ -112,7 +112,26 @@ A two-storey office and workshop building is heated by a condensing gas boiler s
 
 The service contractor commissions weather compensation, rebalances the circuits and fixes two stuck bypass valves that were sending hot flow straight back to the boiler. Return temperatures now fall below 50 °C for most of the season, and efficiency is estimated at about 92%. Gas use falls in proportion: 1,200 × (1 − 84 ÷ 92), or about 104 GJ a year. At $18 per GJ, that saves roughly $1,880 a year for a few days of commissioning work.
 
+```figure
+type: bars
+title: Condensing boiler seasonal efficiency
+unit: %
+max: 100
+caption: With return water rarely below 65 °C the boiler almost never condensed; about 104 GJ, roughly $1,880, saved a year.
+- Fixed 80 °C flow | 84
+- *Weather compensation and rebalancing | 92
+```
+
 The owner also compares an air-to-water heat pump for the future. The building needs about 1,200 × 0.84, or roughly 1,008 GJ of delivered heat, which is about 280,000 kWh. At a seasonal coefficient of performance of 3.2, a heat pump would use about 87,500 kWh of electricity, costing roughly $21,900 at $0.25 per kWh, close to the current gas cost of about $21,600. The comparison shows that tariffs, water temperatures and solar generation will decide the answer, and the lower flow temperatures already achieved would make a heat pump more effective.
+
+```figure
+type: compare
+title: Gas boiler or heat pump for 280,000 kWh of heat
+cols: Energy | Annual cost
+caption: Close on cost today; tariffs, water temperatures and solar generation will decide.
+- Condensing gas boiler | About 1,200 GJ of gas | About $21,600
+- *Heat pump, seasonal COP 3.2 | About 87,500 kWh | About $21,900
+```
 
 ## How this applies to a small Australian business
 

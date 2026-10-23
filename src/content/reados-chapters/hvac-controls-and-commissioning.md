@@ -48,6 +48,24 @@ Running plant only when spaces are occupied is the simplest saving. **Optimum st
 
 A **dead band** between heating and cooling set points, for example heating to 21 °C and cooling to 24 °C, prevents systems switching rapidly between modes and saves energy. Overly tight set points and narrow dead bands increase energy use with little comfort benefit.
 
+```figure
+type: svg
+title: A dead band between heating and cooling
+alt: A temperature scale with heating active below 21 degrees, cooling active above 24 degrees, and a dead band between them where neither runs.
+caption: A gap between set points stops plant swapping modes and fighting itself.
+viewbox: 0 0 600 140
+body:
+<rect class="bx" x="40" y="50" width="200" height="40" rx="6"/>
+<rect class="bxi" x="240" y="50" width="120" height="40"/>
+<rect class="bxa" x="360" y="50" width="200" height="40" rx="6"/>
+<text class="tx" x="140" y="75" text-anchor="middle">heating</text>
+<text class="tx txs" x="300" y="75" text-anchor="middle">dead band</text>
+<text class="txb" x="460" y="75" text-anchor="middle">cooling</text>
+<text class="tx txs" x="240" y="112" text-anchor="middle">21 °C</text>
+<text class="tx txs" x="360" y="112" text-anchor="middle">24 °C</text>
+<path class="lf" d="M240 44V96M360 44V96"/>
+```
+
 ### Economy cycle
 
 When outside air is cool and dry enough, an **economy cycle** opens outside air dampers to provide free cooling, reducing or eliminating mechanical cooling. Faulty dampers or sensors often disable this saving without anyone noticing.
@@ -128,6 +146,16 @@ A mid-sized office building uses about 400,000 kWh of electricity a year for hea
 Two weeks of trend analysis reveal several problems: two air-handling units running until 11 pm because of a forgotten override, reheat coils on one floor heating air that the central plant had just cooled, an economy cycle disabled by a failed outside air temperature sensor and duct static pressure held higher than any zone needed.
 
 The contractor removes the override, corrects the reheat sequence, replaces the sensor, introduces a static pressure reset and documents the changes in the sequence of operation. Over the following year, HVAC energy falls by about 18%, or roughly 72,000 kWh, worth about $18,000 at $0.25 per kWh. The tuning work costs a fraction of that, and the building's rating improves at its next assessment. The owner sets up a monthly fault report so that problems are caught before they persist for years.
+
+```figure
+type: checklist
+title: What two weeks of trend data found
+caption: HVAC energy fell about 18%, roughly 72,000 kWh or $18,000 a year, for a fraction of that in tuning.
+- ? Two air handlers running to 11 pm on a forgotten override
+- ? Reheat coils heating air the plant had just cooled
+- ? Economy cycle disabled by a failed sensor
+- *? Duct static pressure higher than any zone needed
+```
 
 ## How this applies to a small Australian business
 

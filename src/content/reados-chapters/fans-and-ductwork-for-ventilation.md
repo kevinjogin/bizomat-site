@@ -48,6 +48,16 @@ For a given fan and system, the **fan laws** describe how performance changes wi
 
 The cube law is why speed control saves so much energy. Reducing fan speed by 20% reduces flow by about 20% but power to roughly half, since 0.8 × 0.8 × 0.8 is about 0.51. In practice, losses in motors and drives and the fixed pressure some systems need reduce the savings somewhat, but they remain large. The [selecting electric motors and drives](/reados/collections/machine-elements-and-mechanical-design/selecting-electric-motors-and-drives/) article explains variable-speed drives in more detail.
 
+```figure
+type: bars
+title: Fan power at reduced speed
+unit: %
+max: 100
+caption: Flow follows speed, pressure its square and power its cube: 0.8³ ≈ 0.51.
+- Full speed | 100
+- *80% speed | 51
+```
+
 ## Duct design
 
 Ducts carry air from the fan to where it is needed and back. Their design balances space, cost, noise and energy:
@@ -111,6 +121,15 @@ This is an illustrative example. The figures are hypothetical, and actual saving
 A factory's general exhaust fan has a 15 kW motor and runs at full speed for about 4,000 hours a year, with airflow controlled by a partly closed damper. A ventilation review finds that the required airflow is about 80% of the fan's full-speed flow.
 
 The site installs a variable-speed drive, opens the damper fully and runs the fan at about 80% speed. By the fan laws, power falls to about 0.8³, or roughly 51% of full-speed power: about 7.7 kW instead of 15 kW. Allowing for drive losses, the saving is still about 7 kW. Over 4,000 hours, that is about 28,000 kWh a year, worth roughly $7,000 at $0.25 per kWh, for a drive costing a few thousand dollars installed. The airflow is measured after the change to confirm that the extraction still meets the required rate.
+
+```figure
+type: stats
+title: Slowing a 15 kW exhaust fan to the airflow needed
+caption: The damper was opened fully and the fan run at about 80% speed.
+- About 7.7 kW | Power at 80% speed
+- About 28,000 kWh | Saved a year | over 4,000 hours
+- *About $7,000 | A year | at $0.25 per kWh
+```
 
 ## How this applies to a small Australian business
 
