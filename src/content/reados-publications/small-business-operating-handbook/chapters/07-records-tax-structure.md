@@ -14,6 +14,18 @@ Common Australian operating structures include sole trader, partnership, company
 
 Review the structure at material changes: taking investors, hiring, acquiring another business, transferring licences, taking debt or preparing a sale. Changing structure may have costs and consequences.
 
+```figure
+type: checklist
+title: When to review the business structure
+caption: Structures differ in liability, tax, control and cost, and changing one has consequences of its own.
+- x Taking investors
+- x Hiring
+- x Acquiring another business
+- x Transferring licences
+- x Taking debt
+- *x Preparing a sale
+```
+
 ## Keep an evidence trail
 Maintain dated invoices, receipts, bank statements, contracts, payroll records where relevant, tax correspondence and asset registers. Store private files with limited access, sensible naming and backups. Reconciling monthly is easier than reconstructing decisions at tax time.
 
@@ -27,6 +39,17 @@ Consider wages, PAYG withholding, superannuation, leave, workers compensation, p
 
 ## Compliance calendar
 Use rows **Obligation | Authority | Reporting period | Due date | Amount expected | Responsible person | Evidence lodged | Paid date**. At least monthly, reconcile it against payroll, accounts and the cash forecast.
+
+```figure
+type: steps
+title: A compliance calendar row
+caption: Reconcile the calendar at least monthly against payroll, accounts and the cash forecast.
+- Obligation and authority
+- Reporting period and due date
+- Amount expected
+- Responsible person
+- *Evidence lodged and date paid
+```
 
 ## Strong approval routine
 A payment should have an authorised purpose, evidence, budget or business justification, correct bank details independently verified where changed, and a clear record of the approver. Small teams can separate preparation from approval even when perfect segregation is impractical.

@@ -18,11 +18,36 @@ The usual simplified formula is:
 
 For fixed monthly costs of $12,000 and a contribution margin of 60%, break-even revenue is **$12,000 ÷ 0.60 = $20,000**. At that level, variable costs are $8,000, fixed costs are $12,000 and simplified operating profit is zero.
 
+```figure
+type: line
+title: Break-even at a 60% contribution margin
+x: Monthly revenue ($'000)
+y: $'000
+ymin: 0
+ymax: 32
+caption: With $12,000 of fixed costs, revenue and total cost meet at $20,000 a month.
+legend: Revenue | Total cost
+- 0 | 0 | 12
+- 10 | 10 | 16
+- 20 | 20 | 20
+- 30 | 30 | 24
+```
+
 ## Units and sales mix
 If contribution per unit is $30 and fixed expenses are $9,000, break-even volume is **300 units**. Round up when the result is not a whole unit. For a multi-product business, calculate an appropriate weighted contribution margin using a defensible expected sales mix; if the mix changes, the threshold changes.
 
 ## Price discount warning
 Suppose an offer sells for $100 with $40 variable cost. Contribution is $60. A discount to $90 with unchanged variable cost cuts contribution to $50, a **16.7% reduction in contribution per sale**, even though the selling price fell by only 10%. You would need 20% more unit sales to generate the same total contribution, assuming costs and mix stay unchanged.
+
+```figure
+type: bars
+title: What a 10% discount does to contribution
+unit: $
+max: 65
+caption: Contribution per sale falls 16.7%, so about 20% more sales are needed just to stand still.
+- Full price $100, variable cost $40 | 60
+- *Discounted to $90 | 50
+```
 
 ## Capacity also matters
 A business cannot sell infinite volume. Consider delivery hours, machine capacity, replenishment time and service quality. An offer with high theoretical margin may still be unattractive if it blocks more valuable work.

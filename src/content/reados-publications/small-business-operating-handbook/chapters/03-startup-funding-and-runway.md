@@ -12,6 +12,17 @@ Funding decisions go wrong when an owner counts equipment and registration fees 
 ## Four funding categories
 **One-off setup:** formation expenses, fit-out, initial tools, deposits and initial systems. **Operating runway:** rent, necessary software, insurance, utilities, planned labour and administration while sales ramp. **Working capital:** money tied up in stock, work in progress and invoices awaiting payment. **Contingency:** a cash buffer sized to the business's risks rather than a universal percentage.
 
+```figure
+type: tree
+title: Four funding categories
+caption: Count each expense once, and never treat tax provisions or refundable deposits as free cash.
+- Funding required
+  - One-off setup | formation, fit-out, tools, deposits
+  - Operating runway | costs while sales ramp up
+  - Working capital | stock, work in progress, unpaid invoices
+  - *Contingency | a buffer sized to the risks
+```
+
 A practical first-pass expression is:
 
 **Additional funding required = setup outflows + forecast operating shortfalls + working-capital requirement + contingency − unrestricted cash already available.**
@@ -20,6 +31,17 @@ Do not count restricted tax provisions or customer deposits that must be refunde
 
 ## Illustrative example
 Assume startup equipment and setup costs of $9,000, expected net operating cash shortfalls of $3,000 per month for four months, a $4,000 inventory timing gap and a $5,000 buffer. Unrestricted funds on hand are $7,000. Indicative additional funds are **$9,000 + $12,000 + $4,000 + $5,000 − $7,000 = $23,000**. These figures do not prove that debt or equity is suitable; they simply reveal the scale and assumptions.
+
+```figure
+type: stack
+title: Estimating additional startup funding
+unit: $
+caption: A $30,000 requirement less $7,000 of unrestricted cash leaves about $23,000 to find; model at least three cases.
+- Equipment and setup | 9000
+- Operating shortfalls, four months at $3,000 | 12000
+- Inventory timing gap | 4000
+- *Buffer | 5000
+```
 
 ## Model at least three cases
 A **base** scenario uses supported sales and expense assumptions. A **downside** case delays payments and reduces conversion. An **upside** case increases sales but also models the stock, delivery and staffing cash required to fulfil them. Fast growth can consume cash before it creates cash.

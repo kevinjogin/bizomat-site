@@ -14,11 +14,30 @@ Create a classification scheme. **Public:** approved website copy and published 
 
 Avoid relying on a single instruction such as 'keep this confidential' to make a third-party system secure. Access permissions, retention, provider terms, organisational settings and human practice matter.
 
+```figure
+type: layers
+title: Classify data before it reaches an AI tool
+caption: An instruction to "keep this confidential" does not make a third-party system secure; permissions and settings do.
+- Public | approved website copy, published specifications
+- Internal | procedures, aggregated non-sensitive figures
+- Confidential | customers, prices, employee records, designs
+- *Restricted | passwords, payment credentials, identity documents
+```
+
 ## Verify every important answer
 For financial advice, check arithmetic against a calculator and your records. For legislation or obligations, consult the current official authority or adviser. For marketing, substantiate claims before publication. For engineering or safety, require qualified review and relevant technical validation. For generated code or automation, test safely before granting production access.
 
 ## A small-business approval matrix
 **Low risk:** internal brainstorming or first-pass formatting of public information; a designated user reviews. **Moderate risk:** operational templates and customer communications; an accountable owner confirms facts and tone. **High risk:** tax interpretations, contractual commitments, employment decisions, financial transfers or regulatory instructions; qualified review, explicit approval and an audit trail are required.
+
+```figure
+type: layers
+title: A small-business approval matrix
+caption: The higher the risk, the more qualified and accountable the reviewer must be.
+- Low risk | brainstorming, formatting public information · a designated user reviews
+- Moderate risk | templates, customer messages · an accountable owner confirms
+- *High risk | tax, contracts, employment · qualified review before use
+```
 
 ## Failure and escalation
 Define when the AI-assisted process stops: source information is missing, figures do not reconcile, the answer claims certainty without evidence, a privacy concern arises or repeated outputs fail quality checks. Record the error and repair the workflow rather than asking the model to sound more confident.

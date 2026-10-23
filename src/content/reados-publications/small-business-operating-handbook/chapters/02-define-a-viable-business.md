@@ -19,8 +19,32 @@ For each offer record the selling price excluding any applicable GST, direct cos
 
 Do not hide the owner's labour. Sole-trader drawings are not ordinarily a wage expense in the same way as employee wages, but the owner's time still has an economic cost. A model that 'profits' only because the owner works unpaid may not be scalable or attractive to a purchaser.
 
+```figure
+type: steps
+title: The economics of one offer
+caption: A model that profits only because the owner works unpaid may not scale or sell.
+- Selling price | excluding GST
+- Less costs that vary with each sale | delivery, returns, fees
+- = Contribution
+- Pays fixed expenses
+- *Then the owner's required return | and profit
+```
+
 ## Customer evidence ladder
 At the lowest level is an opinion. More useful is a detailed interview about a past purchase and its constraints. Stronger evidence is a request for quotation, a trial with clear evaluation criteria, a paid pilot, repeat purchases and reliable contribution margins. No single indicator removes all uncertainty.
+
+```figure
+type: layers
+title: A customer evidence ladder
+shape: pyramid
+caption: Write down the claim before spending, and decide in advance what result means continue, adjust or stop.
+- *Repeat purchases and reliable margins
+- A paid pilot
+- A trial with clear evaluation criteria
+- A request for quotation
+- An interview about a past purchase
+- An opinion
+```
 
 Before expanding into stock, software subscriptions or staff, write down the claim the expenditure depends on. Example: 'At least eight organisations will buy this service at $X within Y days.' Decide in advance what result would mean continue, adjust or stop.
 

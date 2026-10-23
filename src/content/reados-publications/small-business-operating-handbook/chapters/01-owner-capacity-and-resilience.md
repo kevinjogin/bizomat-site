@@ -21,6 +21,15 @@ Estimate the weekly burden in hours and the consequence of a missed action. A 10
 
 **Red — operation is no longer sustainable.** Serious fatigue, inability to maintain essential controls or repeated critical errors require immediate reduction of nonessential load, qualified support where needed, and a continuity plan. This colour framework is a practical self-check, not a clinical assessment.
 
+```figure
+type: layers
+title: A green–amber–red capacity review
+caption: A practical self-check, not a clinical assessment; act at amber, before strain becomes red.
+- Green | functioning and recovering · keep routines
+- Amber | strain increasing · reduce next week's load, ask for support
+- *Red | no longer sustainable · cut nonessential load now
+```
+
 ## Two-minute check-in
 Ask five questions at the start of a workday: What capacity is really available? Which responsibility is absorbing attention? What is under my control? When will I recover? Who can help? Choose **one action**: cancel, defer, document, delegate or ask. A check-in has value only when it changes a decision.
 
@@ -32,6 +41,16 @@ Imagine the owner is unavailable for five business days. Who can find quotations
 
 ## Worked illustration
 An owner spends 12 hours weekly on customer updates, invoice chasing and meeting coordination. They create standard messages, a receivables schedule and a 15-minute daily handover. Suppose these changes save five hours weekly. The direct gain is about 260 hours over a 52-week year, before accounting for holidays. Whether these hours become better service or personal recovery is a separate decision; measure both.
+
+```figure
+type: bars
+title: Owner hours a week on coordination
+unit: hours
+max: 13
+caption: About 260 hours over a year before holidays, if the released time is actually used well.
+- Updates, invoice chasing, meeting coordination | 12
+- *With templates, a receivables schedule and a daily handover | 7
+```
 
 ## Implementation exercise
 Create a table with columns **Task | Hours/week | Risk if missed | Can someone else do it? | Standard procedure exists? | Decision**. Select the three highest burdens. Change only one this week, review the outcome, then repeat.

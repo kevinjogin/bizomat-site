@@ -18,6 +18,19 @@ A book becomes useful when it changes the next operating week. Do not begin by m
 6. **Demand evidence:** qualified enquiries, orders, repeat purchases and validation results.
 7. **Owner capacity:** workload, recovery and critical single-person dependencies.
 
+```figure
+type: checklist
+title: Seven operating measures
+caption: Seven measures for the weekly 30-minute management meeting.
+- x Cash available, net of reserved obligations
+- x Lowest thirteen-week projected cash, and its date
+- x Outstanding receivables and their ageing
+- x Contribution by product or service
+- x Committed bills, payroll and taxes
+- x Demand evidence
+- *x Owner capacity
+```
+
 Each measure needs a source, an owner, update frequency and action threshold. A metric with no next action is decoration.
 
 ## Thirty-day sequence
@@ -28,6 +41,16 @@ Each measure needs a source, an owner, update frequency and action threshold. A 
 **Week three — test and simplify.** Choose one uncertain customer question for a low-cost seven-day experiment. Select one repeated administrative task for an AI-assisted pilot, using approved data only. Document a handoff procedure for a task previously dependent on the owner.
 
 **Week four — compare and decide.** Review experiment evidence, the forecast-versus-actual cash variance, time saved after checking and owner capacity. Decide what to continue, change or stop. Assign no more than three major improvements for the following month.
+
+```figure
+type: timeline
+title: A thirty-day sequence
+caption: Decide what to continue, change or stop, with no more than three major improvements for the next month.
+- Week one | Establish reality | records, obligations, workload map
+- Week two | Make cash visible | contribution, break-even, forecast
+- Week three | Test and simplify | one experiment, one AI pilot, one handoff
+- *Week four | Compare and decide | continue, change or stop
+```
 
 ## Weekly 30-minute meeting
 Minutes 0–5: owner capacity and urgent commitments. Minutes 5–15: receipts, outflows, forecast minimum and overdue invoices. Minutes 15–22: customer evidence and delivery constraints. Minutes 22–27: improvement tests and AI quality. Minutes 27–30: decisions, owners and due dates. Record actions as **what | why | owner | due | evidence of completion**.

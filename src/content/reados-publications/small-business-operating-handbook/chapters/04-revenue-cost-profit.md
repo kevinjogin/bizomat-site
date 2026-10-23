@@ -12,6 +12,16 @@ Owners need three views of the same business: what work has been earned, what co
 ## Revenue versus receipts
 An invoice may record a sale before a customer pays. A cash receipt may settle an invoice issued in an earlier period. A customer deposit may create a future delivery or refund obligation. Track **invoice issue date**, **due date**, **amount received**, **balance outstanding** and **follow-up status**. The exact timing of revenue recognition depends on the applicable accounting basis and circumstances.
 
+```figure
+type: compare
+title: Revenue is not the same as receipts
+cols: Revenue | Receipts
+caption: Track invoice date, due date, amount received, balance outstanding and follow-up status.
+- When recorded | When the sale is invoiced | When the customer pays
+- *Answers | Did we earn it? | Do we have the cash?
+- Deposits | Not yet earned | Cash with an obligation attached
+```
+
 ## Cost categories
 **Variable costs** generally change with volume: materials, packaging, transaction fees and piecework where relevant. **Fixed or committed costs** may include rent, basic subscriptions and certain overheads. In practice some costs are semi-variable or stepped, such as adding another shift or licence tier. Classify based on the decision being analysed rather than assuming every cost behaves perfectly.
 
@@ -21,6 +31,16 @@ Separate operating expenses from major equipment purchases and financing flows. 
 For a month with **$30,000 of sales**, **$12,000 of materials** and **$13,000 of other recognised business expenses**, simplified profit before tax is:
 
 **$30,000 − $12,000 − $13,000 = $5,000.**
+
+```figure
+type: stack
+title: Where a month's $30,000 of sales went
+unit: $
+caption: Simplified profit before tax; equipment purchases and loan principal affect cash differently from profit.
+- Materials | 12000
+- Other recognised expenses | 13000
+- *Profit before tax | 5000
+```
 
 That does not mean $5,000 is safe to withdraw. The business may have overdue invoices, tax payments, loan principal, purchases of assets or future delivery commitments.
 

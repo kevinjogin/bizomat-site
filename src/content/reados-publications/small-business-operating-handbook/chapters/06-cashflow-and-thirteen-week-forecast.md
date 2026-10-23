@@ -22,11 +22,36 @@ The next week's opening cash equals the preceding week's closing cash. Maintain 
 ## Worked cash illustration
 Suppose opening cash is $14,000. In week one the business receives $4,000 and pays $11,000: closing cash is **$7,000**. Week two receives $2,000 and pays $9,000: closing cash is **$0**. If $3,000 of week-two payments must occur before the $2,000 receipt lands, the account can run short before the weekly closing balance suggests. For tight cash, forecast daily within high-risk weeks.
 
+```figure
+type: line
+title: Two weeks of a cash forecast
+x: End of week
+y: Cash ($'000)
+ymin: 0
+ymax: 15
+caption: Weekly closing balances can hide a shortfall inside the week; forecast daily when cash is tight.
+legend: Closing cash
+- 0 | 14
+- 1 | 7
+- 2 | 0
+```
+
 ## Weekly operating rhythm
 Every Monday: reconcile the bank; mark actual receipts and payments; update overdue invoices; confirm payroll and statutory obligations; review the minimum forecast balance; agree action owners. Every Friday: compare forecast against actual, investigate surprises and move the thirteen-week window forward.
 
 ## Response hierarchy when the forecast goes negative
 First verify that the dates and balances are correct. Then contact customers about legitimate outstanding amounts, discuss supplier terms before the due date, remove discretionary commitments, accelerate approved invoicing or adjust delivery timing. Financing is a separate decision with costs and risks; do not assume it is the default answer.
+
+```figure
+type: steps
+title: When the forecast goes negative
+caption: Financing is a separate decision with its own costs; never defer employee entitlements or taxes without advice.
+- *Verify dates and balances
+- Collect legitimate outstanding amounts
+- Discuss supplier terms before due dates
+- Remove discretionary commitments
+- Accelerate invoicing or adjust delivery timing
+```
 
 Never defer legally required employee entitlements or taxes without obtaining suitable advice about permitted arrangements. Record payment commitments and communications.
 

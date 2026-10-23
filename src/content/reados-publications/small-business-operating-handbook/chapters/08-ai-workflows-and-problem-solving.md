@@ -12,6 +12,16 @@ An AI system can help structure research, draft content, compare options and org
 ## The four-step KEVOS working method
 **Interview:** Ask for missing facts before giving advice. **Confirm:** Summarise what is understood, distinguishing facts from assumptions. **Focus:** Choose one problem and one measurable outcome. **Check:** Verify calculations, claims, compliance and proposed actions before use.
 
+```figure
+type: cycle
+title: The four-step KEVOS working method
+caption: A useful request names the customers, the offer, the constraints, the evidence and what success looks like.
+- Interview | ask for missing facts
+- Confirm | facts versus assumptions
+- Focus | one problem, one measurable outcome
+- *Check | calculations, claims and compliance
+```
+
 A prompt such as 'help grow my business' invites generic suggestions. A useful request says who the customers are, what offer exists, what resources are constrained, what evidence is available and what result would count as success.
 
 ## Reusable context interview
@@ -31,6 +41,16 @@ List routine activities by repetition, elapsed time, error cost and privacy sens
 
 ## Measure benefit
 Use a before/after log: **task | baseline minutes | assisted minutes | review minutes | correction rate | cost | quality**. Total assisted time includes fact-checking and rework. If a task saves four minutes but creates ten minutes of verification, it is not an efficiency gain.
+
+```figure
+type: balance
+title: Is an AI-assisted task really faster?
+left: Minutes saved
+right: Minutes checking
+tilt: right
+caption: Count fact-checking and rework in the assisted time: saving four minutes but adding ten of verification is not a gain.
+- 4 minutes faster to draft | 10 minutes to verify
+```
 
 ## Sample prompt for a repeated workflow
 > First interview me about one recurring administrative task. Ask where delays and errors arise, what inputs are available, who approves the result and what information must remain private. Propose a one-page standard operating procedure, a reusable template and a five-case pilot. Include a quality checklist, handoff owner, failure condition and a method to measure actual time saved.
