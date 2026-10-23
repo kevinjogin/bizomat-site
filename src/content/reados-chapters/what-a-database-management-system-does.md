@@ -44,6 +44,15 @@ Applications retrieve and change data by sending requests, usually written in th
 2. **Plans how to answer it**, using a component called the **query optimiser**, which considers different ways of finding and combining the data, such as which index to use and in which order to join tables, and estimates the cost of each.
 3. **Executes the chosen plan** and returns the results.
 
+```figure
+type: steps
+title: How a database answers a question
+caption: The query optimiser chooses among different ways of finding and combining the data.
+- Check the request | syntax and permissions
+- Plan the answer | the query optimiser
+- *Execute the plan | and return results
+```
+
 The optimiser's choices make a large difference. The same question can take a fraction of a second with a good plan or minutes with a poor one. Optimisers rely on statistics about the data, such as how many rows each table holds and how values are distributed, so out-of-date statistics can cause slow performance.
 
 ## Letting many people work at once: concurrency control
@@ -68,6 +77,16 @@ A DBMS groups related changes into a **transaction**, which is completed entirel
 - **Consistency**: the database's rules are satisfied before and after the transaction.
 - **Isolation**: simultaneous transactions do not see each other's incomplete work.
 - **Durability**: once a transaction is confirmed, its changes survive failures such as power loss.
+
+```figure
+type: layers
+title: What a transaction guarantees
+caption: Related changes either all happen or none do, and confirmed changes survive a power loss.
+- Atomicity | all or nothing
+- Consistency | rules satisfied before and after
+- Isolation | no one sees incomplete work
+- *Durability | confirmed changes survive failures
+```
 
 ## Surviving failures: logging and recovery
 
@@ -148,6 +167,16 @@ This is an illustrative example. A wholesale business runs its order and invento
 **With nightly backups only.** Restoring the 11 pm backup would recover the customers but lose every order, receipt and dispatch recorded since then, about 15 hours of work, which would have to be re-entered from paper, emails and memory.
 
 **With transaction log backups.** The business's IT provider had recommended transaction log backups every 15 minutes, also copied off-site, and they had been set up the previous year. The provider restores the database to 2:14 pm, one minute before the deletion. Work entered in the following hour, while the problem was being diagnosed, is re-entered from a short list.
+
+```figure
+type: timeline
+title: A mistaken deletion at 2:15 pm
+caption: About 300 active customers and their open orders were deleted during a clean-up of old records.
+- 11:00 pm | Nightly full backup | copied to cloud storage
+- 2:15 pm | The deletion
+- Nightly backup only | About 15 hours of work lost
+- *With 15-minute log backups | Restored to 2:14 pm | one hour re-entered from a short list
+```
 
 **Lessons.** The business limits bulk deletion rights to two trained people, adds a confirmation step to the clean-up tool, and schedules a restore test every six months. The cost of the more frequent backups was a few hundred dollars a year in storage; the cost of losing a day's transactions would have been far higher.
 

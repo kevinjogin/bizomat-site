@@ -75,6 +75,18 @@ A **database** is an organised collection of data managed by software, called a 
 - **Access can be controlled finely.** Different people can be allowed to see, add or change different information.
 - **History can be kept.** Changes can be logged with who made them and when.
 
+```figure
+type: compare
+title: Spreadsheet or database
+cols: Spreadsheet | Database
+best: 2
+caption: Spreadsheets remain excellent for analysis; they are fragile as shared systems of record.
+- Facts | Repeated in many rows | Stored once and referred to
+- Structure | Nothing enforced | Types, required fields, relationships
+- Users | Edits collide | Many users managed at once
+- History | Mostly current state | Changes logged with who and when
+```
+
 Most people never work with a database directly. They use applications, such as accounting software, customer relationship management systems or custom forms, which store their data in a database behind the scenes.
 
 ## The options for moving on
@@ -133,6 +145,20 @@ Moving records from a spreadsheet into a database or application is a small proj
 7. **Retire the spreadsheet.** Make the old file read-only and archive it. If both remain in use, the business will soon have two inconsistent sources.
 8. **Assign ownership.** Someone must own the system's structure, users, backups and improvements.
 
+```figure
+type: steps
+title: Moving off a spreadsheet well
+caption: If both the old file and the new system stay in use, the business soon has two inconsistent records.
+- Define what the records are for
+- Identify the things and facts
+- Clean the data
+- Build and test with real examples
+- Migrate and reconcile
+- Train the people who use it
+- Retire the spreadsheet
+- *Assign ownership
+```
+
 ## Keep spreadsheets for what they do best
 
 Moving records into a database does not mean abandoning spreadsheets. They remain excellent for analysing data exported from systems, modelling decisions and exploring ideas. A sensible division is that systems hold the records and spreadsheets analyse copies of them. Analysis that becomes routine, such as a weekly report, may later move into the system's own reporting so it no longer needs manual preparation.
@@ -148,6 +174,16 @@ This is an illustrative example. An engineering fabricator with about 40 staff k
 **Migration.** Two years of records are cleaned, duplicates removed and codes standardised, then imported. Counts by month and by product are checked against the spreadsheet before it is made read-only.
 
 **Result.** Monthly reporting falls from six hours to under one, saving about 60 hours a year. More importantly, the next audit finds complete records showing who did what and when. The business also notes a new responsibility: the application needs an owner, documented design and a plan for changes, or it could become the next single point of failure.
+
+```figure
+type: bars
+title: Monthly non-conformance reporting
+unit: hours
+max: 7
+caption: About 900 issues a year, previously in three spreadsheet copies; the next audit found complete records.
+- Spreadsheet copies reconciled by hand | 6
+- *Low-code application | 1 | under an hour
+```
 
 ## Applying this in an Australian business
 

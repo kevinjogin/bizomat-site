@@ -63,6 +63,36 @@ Relationships describe how entities connect. There are three basic kinds:
 - **Many-to-many.** An order can include many products, and a product can appear on many orders. Relational databases represent this with a linking table, often called a junction table. In this example, the linking table is the **order line**, which records which product, how many and at what price.
 - **One-to-one.** Each record in one table matches at most one record in another, for example a machine and its extended technical specification. This is less common and often used to separate rarely used or sensitive information.
 
+```figure
+type: svg
+title: Three kinds of relationship
+alt: Three pairs of boxes. Customer to Order is one-to-many: one customer, many orders. Order to Product is many-to-many through an Order line table between them. Machine to Specification is one-to-one.
+caption: Many-to-many relationships are represented with a linking table, here the order line.
+viewbox: 0 0 640 250
+body:
+<rect class="bx" x="20" y="30" width="130" height="40" rx="6"/>
+<text class="tx" x="85" y="55" text-anchor="middle">Customer</text>
+<rect class="bxa" x="250" y="30" width="130" height="40" rx="6"/>
+<text class="txb" x="315" y="55" text-anchor="middle">Order</text>
+<path class="ln flow" d="M150 50H250"/>
+<text class="tx txs" x="160" y="44">1</text>
+<text class="tx txs" x="232" y="44">many</text>
+<rect class="bxi" x="250" y="110" width="130" height="40" rx="6"/>
+<text class="tx" x="315" y="135" text-anchor="middle">Order line</text>
+<rect class="bx" x="480" y="110" width="130" height="40" rx="6"/>
+<text class="tx" x="545" y="135" text-anchor="middle">Product</text>
+<path class="ln flow" d="M315 70V110M380 130H480"/>
+<text class="tx txs" x="322" y="96">many</text>
+<text class="tx txs" x="440" y="124">many</text>
+<rect class="bx" x="20" y="190" width="130" height="40" rx="6"/>
+<text class="tx" x="85" y="215" text-anchor="middle">Machine</text>
+<rect class="bx" x="250" y="190" width="130" height="40" rx="6"/>
+<text class="tx" x="315" y="215" text-anchor="middle">Specification</text>
+<path class="ln flow" d="M150 210H250"/>
+<text class="tx txs" x="160" y="204">1</text>
+<text class="tx txs" x="238" y="204">1</text>
+```
+
 These relationships are often drawn in an **entity-relationship diagram**, a notation introduced by Peter Chen in 1976, in which boxes represent entities and lines represent relationships, with symbols showing whether each side is "one" or "many" and whether the relationship is optional.
 
 Getting relationships right is essential. If a system assumes each customer has one site, but some customers have twenty, the design will force people into workarounds, such as creating duplicate customers for each site.
@@ -76,6 +106,16 @@ Consider an orders spreadsheet in which each row holds the order number, date, c
 - **Update anomaly.** When the customer moves, all 200 copies must be changed. Miss one, and the records disagree.
 - **Insertion anomaly.** A new customer cannot be recorded until they place an order, because customer details exist only on order rows.
 - **Deletion anomaly.** Deleting a customer's only order also deletes the only record of that customer.
+
+```figure
+type: compare
+title: What goes wrong when a fact is stored many times
+cols: The anomaly | The cause
+caption: A customer with 200 orders has their address repeated 200 times on an orders spreadsheet.
+- Update | All 200 copies must change | Miss one and the records disagree
+- Insertion | A new customer cannot be recorded | Customer details live only on order rows
+- *Deletion | Deleting the only order loses the customer | Nothing else holds the record
+```
 
 Normalisation resolves these by splitting the data into a customer table, an order table and an order line table, each holding only the facts that belong to it.
 
@@ -165,6 +205,14 @@ This is an illustrative example. A maintenance contractor with 25 technicians tr
 **Rules.** Every job must belong to a site; every time entry must have a technician, a date and hours between 0.25 and 16; part numbers must be unique; and job status must come from a fixed list.
 
 **Result.** The new system records each fact once. Reports of hours and parts by customer and site, which took about a day each month to prepare, are produced in minutes. Duplicate customers, about 8% of the original list, are merged during migration. The manager could review and improve the design without writing code, because the model was explained in terms of the business's own things and rules.
+
+```figure
+type: stats
+title: A maintenance contractor leaves its job spreadsheet
+caption: Every job belongs to a site; time entries need a technician, a date and 0.25 to 16 hours.
+- A day → minutes | Monthly hours-and-parts reports
+- *8% | Duplicate customers merged
+```
 
 ## Applying this in an Australian business
 

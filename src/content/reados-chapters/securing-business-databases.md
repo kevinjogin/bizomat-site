@@ -144,6 +144,19 @@ With limited time and budget, a sensible order of priorities is:
 6. **Restrict application accounts** to the permissions they need.
 7. **Alerts for unusual activity** on the most sensitive data.
 
+```figure
+type: steps
+title: Where a small business should start
+caption: Seven controls that close the most common routes to a database breach.
+- Multi-factor authentication | admin, remote and vendor access
+- Nothing exposed to the internet
+- Tested, protected backups
+- Patch internet-facing systems
+- Remove shared, default and unused accounts
+- Restrict application accounts
+- *Alerts for unusual activity
+```
+
 Each step is achievable with modest effort and removes a common path to a breach.
 
 ## Be ready to respond
@@ -178,6 +191,19 @@ This is an illustrative example. A business supplying workwear online and to cor
 **Changes.** The website is given its own service account limited to the tables and actions it needs. The management port is closed to the internet, and administrators connect through a secure access service with multi-factor authentication. The test environment is rebuilt with masked data. The vendor receives named accounts enabled on request. Alerts are configured for large exports, new administrator accounts and repeated failed logins. Customer records inactive for more than seven years are reviewed for deletion in line with the business's retention schedule.
 
 **Testing.** A security tester checks the website for injection and other common vulnerabilities and finds one search field that builds its query unsafely, which the developer fixes using parameterised queries.
+
+```figure
+type: compare
+title: Securing a workwear business's database
+cols: Found | Changed
+best: 2
+caption: About 40,000 customer records; one unsafe search field was fixed with parameterised queries.
+- Website account | Connected as administrator | Its own limited service account
+- Management port | Reachable from the internet, no MFA | Closed; secure access with MFA
+- Test environment | A full copy of real customer data | Rebuilt with masked data
+- Vendor access | One permanent shared account | Named accounts enabled on request
+- *Monitoring | No alerts | Alerts on exports, new admins, failed logins
+```
 
 **Effort.** In this illustration, the changes take about 30 hours of the IT provider's time over a month, plus a modest monthly subscription for the secure access service, far less than the likely cost of investigating and notifying a breach of 40,000 customer records.
 

@@ -44,6 +44,34 @@ This is an illustrative example. The actual approved triples are:
 
 The pairwise lists establish that S1 supplies M1, S1 serves T2 and M1 is used at T2. Combining those three true statements suggests the triple S1-M1-T2, which is absent from the approved set.
 
+```figure
+type: svg
+title: How pairwise links invent a combination
+alt: Three approved triples are listed: S1 with M1 at T1, S1 with M2 at T2, and S2 with M1 at T2. Split into pairs, the true statements S1 supplies M1, S1 serves T2 and M1 is used at T2 combine into the triple S1, M1, T2, which was never approved.
+caption: Three true pairwise statements combine into a triple that is absent from the approved set.
+viewbox: 0 0 640 230
+body:
+<text class="txb" x="110" y="24" text-anchor="middle">Approved triples</text>
+<rect class="bx" x="30" y="40" width="160" height="34" rx="5"/>
+<rect class="bx" x="30" y="82" width="160" height="34" rx="5"/>
+<rect class="bx" x="30" y="124" width="160" height="34" rx="5"/>
+<text class="tx" x="110" y="62" text-anchor="middle">S1 · M1 · T1</text>
+<text class="tx" x="110" y="104" text-anchor="middle">S1 · M2 · T2</text>
+<text class="tx" x="110" y="146" text-anchor="middle">S2 · M1 · T2</text>
+<path class="ln flow" d="M200 99H260"/>
+<text class="txb" x="345" y="24" text-anchor="middle">Pairs kept</text>
+<rect class="bxi" x="270" y="40" width="150" height="34" rx="5"/>
+<rect class="bxi" x="270" y="82" width="150" height="34" rx="5"/>
+<rect class="bxi" x="270" y="124" width="150" height="34" rx="5"/>
+<text class="tx" x="345" y="62" text-anchor="middle">S1 supplies M1</text>
+<text class="tx" x="345" y="104" text-anchor="middle">S1 serves T2</text>
+<text class="tx" x="345" y="146" text-anchor="middle">M1 used at T2</text>
+<path class="ln flow" d="M430 99H480"/>
+<rect class="bxa pulse" x="490" y="76" width="130" height="46" rx="6"/>
+<text class="txb" x="555" y="104" text-anchor="middle">S1 · M1 · T2 ?</text>
+<text class="tx txs" x="555" y="146" text-anchor="middle">never approved</text>
+```
+
 The extra result is a **spurious tuple**: a row introduced by reconstruction that does not belong to the original relation. It is not caused by a spelling mistake or a duplicate identifier. It arises because the decomposition discarded information about which three participants belonged together.
 
 A query can therefore be logically correct for the pairwise tables while answering the wrong business question. Fixing its syntax or adding a distinct operator does not restore the lost relationship.
@@ -137,6 +165,16 @@ Test counterexamples that the business would permit in future. A model can appea
 Prepare a small accepted dataset and a separate set of prohibited combinations. Include multiple participants in every role so the tests can expose accidental assumptions of one-to-one relationships.
 
 For the earlier approval example, confirm that querying the association returns the three actual triples and does not infer S1-M1-T2. Then test the relevant uniqueness rule by attempting a prohibited duplicate or competing primary approval.
+
+```figure
+type: checklist
+title: Validating a three-way relationship
+caption: Test the meaning of the relationship, not only that the tables load.
+- x Querying returns only the actual triples
+- x No triple is inferred from pairs
+- x A prohibited duplicate is rejected
+- *x Time-bounded approvals are read for the right date
+```
 
 Test changes to master records and lifecycle states. Deactivating a supplier may affect whether new approvals can be created without implying that historical approvals should disappear. Deleting a participant can have different consequences from marking it inactive.
 

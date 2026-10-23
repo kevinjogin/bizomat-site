@@ -34,6 +34,16 @@ Ask domain owners to confirm the intended constraints. Their answers determine w
 
 An **update anomaly** occurs when one fact is repeated and a change leaves inconsistent copies. An **insertion anomaly** occurs when recording one fact requires another fact that should be independent. A **deletion anomaly** occurs when removing one fact unintentionally removes another.
 
+```figure
+type: compare
+title: Three anomalies to look for first
+cols: What happens | Review question
+caption: Repeated references are fine; repeated copies of one changeable fact are the problem.
+- Update | A change leaves inconsistent copies | Can the fact be corrected in one place?
+- Insertion | One fact needs an unrelated fact first | Can a supplier be registered before an order?
+- *Deletion | Removing one fact removes another | Can a part go without losing the supplier?
+```
+
 These problems provide concrete review questions. Can a supplier be registered before a product is ordered? Can the supplier's contact details be corrected in one authoritative place? Can a discontinued product be removed without losing the supplier's existence?
 
 The problem is not repetition of any value whatsoever. Many orders legitimately reference the same supplier identifier. That repeated reference expresses a relationship. Repeating the supplier's current address on every order for no historical purpose creates a different maintenance obligation.
@@ -51,6 +61,27 @@ Assume the business rules are:
 | Supplier identifier | Supplier name | One current name per supplier |
 | Part identifier | Part description | One current description per part |
 | Supplier identifier and part identifier | Quoted lead time | One current lead time for that supply relationship |
+
+```figure
+type: svg
+title: Splitting the supplier-part table by its dependencies
+alt: One wide table holding supplier identifier, part identifier, supplier name, part description and lead time is split into three tables. A supplier table holds supplier identifier and supplier name. A part table holds part identifier and part description. A supply table keyed by both identifiers holds the quoted lead time.
+caption: Each fact moves to the table whose key determines it, so each is stored once.
+viewbox: 0 0 640 260
+body:
+<rect class="bxi" x="120" y="16" width="400" height="44" rx="6"/>
+<text class="tx txs" x="320" y="43" text-anchor="middle">supplier id · part id · supplier name · part description · lead time</text>
+<path class="ln flow" d="M220 60L110 150M320 60V150M420 60L530 150"/>
+<rect class="bx" x="20" y="150" width="180" height="72" rx="6"/>
+<text class="txb" x="110" y="176" text-anchor="middle">Supplier</text>
+<text class="tx txs" x="110" y="198" text-anchor="middle">supplier id → name</text>
+<rect class="bxa" x="230" y="150" width="180" height="72" rx="6"/>
+<text class="txb" x="320" y="176" text-anchor="middle">Supply</text>
+<text class="tx txs" x="320" y="198" text-anchor="middle">supplier + part → lead time</text>
+<rect class="bx" x="440" y="150" width="180" height="72" rx="6"/>
+<text class="txb" x="530" y="176" text-anchor="middle">Part</text>
+<text class="tx txs" x="530" y="198" text-anchor="middle">part id → description</text>
+```
 
 The combined supplier-part identifier is a candidate key under these assumptions. Supplier name depends on only the supplier portion. Part description depends on only the part portion. Lead time depends on the combination.
 

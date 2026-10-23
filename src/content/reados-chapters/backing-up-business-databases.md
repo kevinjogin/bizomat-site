@@ -34,6 +34,18 @@ Targets should come from the business, not from the technology. Ask what it woul
 | Engineering file store | 24 hours | 2 business days | Daily changes are recoverable from designers' recent work |
 | Website content | 1 week | 1 business day | Changes are infrequent |
 
+```figure
+type: bars
+title: How much data each system can afford to lose
+unit: hours
+max: 170
+caption: Recovery point objectives from the example: set them from the business impact, then design backups to meet them.
+- *Order and inventory | 0.25 | 15 minutes
+- Accounting | 24
+- Engineering file store | 24
+- Website content | 168 | 1 week
+```
+
 These are illustrations. The [business continuity planning for small businesses](/reados/collections/operational-data-records-and-controls/business-continuity-planning-for-small-businesses/) article explains how to identify critical functions and set recovery targets across the whole business.
 
 ## Why databases need specific backup methods
@@ -52,6 +64,15 @@ Copying the data files of a running database with ordinary file backup tools can
 | Replica | A continuously updated copy on another server | Fast failover | Copies mistakes and corruption instantly; not a backup by itself |
 
 A typical arrangement for an important business database combines a weekly full backup, daily differential backups and transaction log backups every 15 minutes. That allows recovery to almost any point in time, such as one minute before a mistaken deletion.
+
+```figure
+type: timeline
+title: A typical backup week for an important database
+caption: Together they allow recovery to almost any point in time.
+- Weekly | Full backup | the whole database
+- Daily | Differential | changes since the full backup
+- *Every 15 minutes | Transaction log | individual changes
+```
 
 ### Replication is not backup
 
@@ -172,6 +193,16 @@ This is an illustrative example. A wholesale distributor's order and inventory s
 **First test.** The first restore test takes six hours, exceeding the four-hour target, because restoring from cloud storage is slower than expected. The provider adds a local immutable copy for fast restores, keeping the cloud copy for disasters. The next test completes in under two hours, including checks of order counts and stock totals.
 
 **Result.** The business now knows how much data it could lose, how long recovery would take and that its backups would survive a ransomware attack on the office network.
+
+```figure
+type: bars
+title: Restore test time against a four-hour target
+unit: hours
+max: 7
+caption: A local immutable copy was added for fast restores, keeping the cloud copy for disasters; about $150 a month extra.
+- First test, from cloud storage | 6
+- *Second test, local immutable copy | 2 | under two hours, with checks
+```
 
 ## Applying this in an Australian business
 

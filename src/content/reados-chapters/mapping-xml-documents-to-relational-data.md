@@ -50,6 +50,31 @@ This is an illustrative example. One inspection document contains several measur
 
 Creating columns such as measurement_1, measurement_2 and measurement_3 hard-codes a maximum and makes later expansion awkward. It also makes querying across measurements more difficult than querying related rows with consistent attributes.
 
+```figure
+type: svg
+title: Repeated elements become related rows
+alt: An XML inspection document with three measurement elements maps to one inspection row and three measurement rows linked to it, rather than to columns named measurement 1, 2 and 3.
+caption: Fixed columns hard-code a maximum; related rows grow with the document.
+viewbox: 0 0 620 220
+body:
+<rect class="bxi" x="20" y="30" width="200" height="160" rx="6"/>
+<text class="tx txs" x="36" y="58">&lt;inspection id="I7"&gt;</text>
+<text class="tx txs" x="52" y="84">&lt;measurement/&gt;</text>
+<text class="tx txs" x="52" y="110">&lt;measurement/&gt;</text>
+<text class="tx txs" x="52" y="136">&lt;measurement/&gt;</text>
+<text class="tx txs" x="36" y="162">&lt;/inspection&gt;</text>
+<path class="la flow" d="M230 110H300"/>
+<rect class="bxa" x="310" y="30" width="140" height="40" rx="6"/>
+<text class="txb" x="380" y="55" text-anchor="middle">Inspection I7</text>
+<rect class="bx" x="470" y="90" width="130" height="30" rx="5"/>
+<rect class="bx" x="470" y="128" width="130" height="30" rx="5"/>
+<rect class="bx" x="470" y="166" width="130" height="30" rx="5"/>
+<text class="tx txs" x="535" y="110" text-anchor="middle">measurement 1</text>
+<text class="tx txs" x="535" y="148" text-anchor="middle">measurement 2</text>
+<text class="tx txs" x="535" y="186" text-anchor="middle">measurement 3</text>
+<path class="ln" d="M380 70V181H470M380 105H470M380 143H470"/>
+```
+
 Do not assume that a repeated value is an accidental duplicate. Two identical measurements may represent two distinct observations. The source's identity and multiplicity rules determine whether both should be retained.
 
 Conversely, document repetition can arise from a retransmission or a sender defect. Distinguish duplicate documents, duplicate business records and legitimately repeated observations. Each needs its own detection rule.
@@ -71,6 +96,17 @@ Decide whether such content should remain as a structured document fragment, be 
 An XML namespace distinguishes names belonging to different vocabularies. A prefix is a local shorthand; the namespace name and local element name establish the expanded identity used by namespace-aware processing.
 
 Two documents can use different prefixes for the same namespace. Conversely, the same visible prefix can be bound to different namespace names in different contexts. Matching only the prefix or only the unqualified tag text can therefore produce incorrect mappings. [W3C Namespaces in XML specification](https://www.w3.org/TR/xml-names/).
+
+```figure
+type: steps
+title: Checks a mapping has to pass
+caption: Well-formed and valid XML can still be wrong for the business.
+- Well-formed | the syntax parses
+- Valid | it matches the schema
+- Namespaces by name | not by prefix
+- Sequence kept where it carries meaning
+- *Business validation | the content makes sense
+```
 
 This is an illustrative example. A document combines commercial order information with engineering measurements, and both vocabularies contain an element called code. The importer needs to distinguish the business code from the measurement code using the declared vocabulary and context.
 

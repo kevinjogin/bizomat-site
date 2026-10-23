@@ -135,6 +135,19 @@ Traditional business systems usually favour consistency: it is better to refuse 
 | Reporting across large history | Analytical database or data warehouse |
 | Similarity search for AI applications | Vector search, often within an existing database |
 
+```figure
+type: decision
+title: Which kind of database?
+question: What does the data need to do?
+caption: Most businesses need a relational database for core records, and add others only for specific workloads.
+- Core business records | Relational
+- Highly variable attributes | Document columns or a document database
+- Very fast lookups and caching | Key-value, alongside
+- Sensor and machine readings | Time-series
+- Text search | Search engine, fed from the record
+- *Reporting across long history | Analytical database
+```
+
 ## The cost of using many kinds
 
 Using a different database for every job, sometimes called **polyglot persistence**, can give each part of a system the best tool. It also multiplies costs: more products to license, host, secure, back up, patch and monitor, more skills to maintain and more data copies to keep consistent. For small and medium businesses, the sensible default is one well-chosen relational database for core records, adding specialised databases only where a clear need justifies the extra complexity. The [right choice depends on the system around it](/reados/collections/business-systems-security-and-it-decisions/the-right-choice-depends-on-the-system-around-it/) article explores this principle more widely.
@@ -158,6 +171,17 @@ This is an illustrative example. A manufacturer of configurable conveyor systems
 **Decision.** Configurations and orders go into the existing relational database, with variable configuration options stored in a document column. Product structures are handled with recursive queries, which the database supports, because structures are at most six levels deep. Conveyor monitoring uses a managed time-series service, because readings arrive every few seconds from hundreds of sensors and must be summarised by hour and day. Website search uses the search feature built into the existing website platform.
 
 **Result.** The business adds one new database service instead of four, reducing licensing, hosting and support costs and keeping skills requirements manageable, while each capability still uses a tool suited to its data.
+
+```figure
+type: compare
+title: Four proposed databases, one added
+cols: Proposed | Decided
+caption: The business had one IT staff member and an external provider to run whatever it chose.
+- Configurations | Document database | Existing relational database, document column
+- Product structures | Graph database | Recursive queries; at most six levels deep
+- *Monitoring | Time-series database | A managed time-series service
+- Website search | Search engine | Fed from the system of record
+```
 
 ## Applying this in an Australian business
 

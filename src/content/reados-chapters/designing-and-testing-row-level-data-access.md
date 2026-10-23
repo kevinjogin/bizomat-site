@@ -38,6 +38,28 @@ The application must establish the user's identity through its approved authenti
 
 This is an illustrative example. A request includes organisation_id=27. The server must determine whether the authenticated user is authorised for organisation 27 before using that value as an access boundary.
 
+```figure
+type: svg
+title: Never trust the boundary the request supplies
+alt: A request carrying organisation 27 passes through a server check that compares it with the authenticated user's authorised organisations. Only if the user is authorised for organisation 27 does the value become the access boundary for the database query; otherwise the request is refused.
+caption: The server confirms the authenticated user may act for organisation 27 before using it as an access boundary.
+viewbox: 0 0 640 200
+body:
+<rect class="bxi" x="20" y="70" width="150" height="56" rx="6"/>
+<text class="tx" x="95" y="94" text-anchor="middle">Request</text>
+<text class="tx txs" x="95" y="114" text-anchor="middle">organisation_id=27</text>
+<path class="la flow" d="M170 98H240"/>
+<rect class="bxa" x="240" y="62" width="170" height="72" rx="8"/>
+<text class="txb" x="325" y="92" text-anchor="middle">Is this user</text>
+<text class="txb" x="325" y="112" text-anchor="middle">authorised for 27?</text>
+<path class="ln flow" d="M410 80L480 40"/>
+<path class="ln dsh" d="M410 116L480 156"/>
+<rect class="bx" x="480" y="20" width="140" height="40" rx="6"/>
+<text class="tx" x="550" y="45" text-anchor="middle">Query rows for 27</text>
+<rect class="bx dsh" x="480" y="136" width="140" height="40" rx="6"/>
+<text class="tx" x="550" y="161" text-anchor="middle">Refuse</text>
+```
+
 If the database receives identity through session context, determine who can set or alter it. A policy that trusts a freely editable session variable may provide no meaningful protection against a caller capable of changing that variable.
 
 Service identities require equally clear rules. A background worker may legitimately operate across organisations, but its authority should be limited to its function and distinguishable from an ordinary interactive user's authority.
@@ -137,6 +159,19 @@ Use consistent public responses when appropriate, while retaining useful protect
 Row filtering also does not automatically prevent inference from permitted aggregates. A user may learn information from very small groups or from comparing related reports. Those concerns require a separate assessment of the released information.
 
 Describe the mechanism's scope accurately. A tested row policy can enforce a particular access rule through defined paths. It is not proof that every possible disclosure path in the entire application has been eliminated.
+
+```figure
+type: checklist
+title: What row-level access has to cover
+caption: The boundary includes everything derived from the protected rows, not just the main table.
+- x A trusted request identity
+- x The resulting row as well as the existing row
+- x How policies and roles combine
+- x Product-specific bypass behaviour
+- x No identity leaking between pooled requests
+- x Views and functions
+- *x Derived data and exports
+```
 
 ## Build an access test matrix
 

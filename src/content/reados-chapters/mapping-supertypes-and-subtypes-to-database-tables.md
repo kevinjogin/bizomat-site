@@ -58,6 +58,23 @@ Overlapping membership makes a single discriminator less suitable. Encoding ever
 
 Suppose a pressure inspection applies only to a vessel. A foreign key from inspection to the general asset identifier proves that an asset exists. On its own, it does not prove that the asset is a vessel.
 
+```figure
+type: svg
+title: Proving the asset is a vessel
+alt: A pressure inspection record points to the general asset table, which proves only that some asset exists. A second arrow points to a vessel table, which proves the asset is a vessel.
+caption: A foreign key to the general asset proves an asset exists, not that it is a vessel.
+viewbox: 0 0 600 200
+body:
+<rect class="bxa" x="20" y="80" width="170" height="44" rx="6"/>
+<text class="txb" x="105" y="107" text-anchor="middle">Pressure inspection</text>
+<rect class="bx dsh" x="380" y="24" width="190" height="44" rx="6"/>
+<text class="tx" x="475" y="51" text-anchor="middle">Asset: some asset exists</text>
+<rect class="bx" x="380" y="136" width="190" height="44" rx="6"/>
+<text class="txb" x="475" y="163" text-anchor="middle">Vessel: it is a vessel</text>
+<path class="ln dsh" d="M190 94L380 46"/>
+<path class="la flow" d="M190 112L380 158"/>
+```
+
 This distinction matters even when the application normally shows only eligible assets in a selection list. Imports, administrative scripts and other applications may write the same database. The structural guarantee should be assessed independently of a particular screen.
 
 There are several possible designs. A separate vessel table provides a direct reference target. In a single-table design, some schemas use a type-qualified candidate key and a corresponding constrained reference. Other designs enforce eligibility through a controlled write path or database logic. The appropriate mechanism depends on the engine and the complete set of rules.
@@ -97,6 +114,16 @@ The third arrangement stores a complete record in each concrete subtype table, i
 The cost appears when the system needs to treat every subtype as one population. A combined asset list requires a union or another integration layer. Shared changes may require coordinated schema updates in several places. Definitions that begin identical can drift as each table evolves.
 
 Identity requires particular attention. If both the vessel table and the instrument table generate identifier 500 independently, the number alone does not identify an asset across the system. A common reference needs a globally unique identifier, a qualified identity or another reliable structure.
+
+```figure
+type: compare
+title: Three ways to map assets, vessels and instruments
+cols: Strength | What needs care
+caption: Compare the workload and the states the model must prohibit before choosing.
+- One table with a type indicator | Common queries are direct | Conditional columns must be constrained by type
+- Common table plus subtype tables | Shared facts stored once | Creating a complete entity spans tables
+- *A table per concrete kind | Each kind self-contained | Identity across the system is harder
+```
 
 A pair of fields such as entity type and entity identifier can tell an application where to look. In many ordinary relational designs, however, that pair does not automatically behave like a foreign key referencing one of several tables. The design must address missing targets, deletions and concurrent changes explicitly.
 

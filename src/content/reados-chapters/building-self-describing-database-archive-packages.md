@@ -50,6 +50,16 @@ For important fields, record the meaning, unit, permitted values and treatment o
 
 This is an illustrative example. An archived weight field contains 12500. Without its unit and scale, a reader cannot tell whether that means grams, kilograms or an integer representation of 12.500 kilograms.
 
+```figure
+type: decision
+title: What does 12500 mean?
+question: An archived weight field holds 12500
+caption: Without its unit and scale, the value cannot be read; the package must carry its own definitions.
+- Grams? | 12.5 kg
+- Kilograms? | 12,500 kg
+- *Scaled integer? | 12.500 kg
+```
+
 Preserve code lists as they applied to the package. A code can change meaning between application versions. Linking only to the current online list leaves old records dependent on an evolving external interpretation.
 
 Include concise relationship descriptions. A field called parent_id needs the referenced entity, key scope and relationship meaning. A diagram can help, but a diagram without definitions may simply preserve the same ambiguity in another form.
@@ -149,6 +159,19 @@ Check fixity on an appropriate schedule and after relevant transfers. Test resto
 Access controls should cover data, metadata and supporting attachments. Explanatory files can reveal sensitive business context even when the main tables are carefully restricted.
 
 Lifecycle actions require the organisation's approved authority. Technical packaging should make it possible to identify and act on the correct population, but it should not invent retention periods or automatically dispose of information based on an assumed rule.
+
+```figure
+type: steps
+title: Building an archive package that explains itself
+caption: Test interpretation without the original application before accepting the package.
+- Start from future retrieval questions
+- Choose a coherent boundary
+- Keep business definitions with the structure
+- Attach metadata versions to their data
+- Document transformations
+- Build a checkable manifest
+- *Reconcile and test without the application
+```
 
 ## Use acceptance criteria that match the purpose
 

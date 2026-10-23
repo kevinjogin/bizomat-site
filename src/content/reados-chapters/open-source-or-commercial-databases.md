@@ -49,6 +49,18 @@ Licences matter most when a business modifies the database or distributes it as 
 - **Commercial licences** grant rights to use the software for a fee, often per processor core, per server or per user, with terms on where and how it may be run.
 - **Source-available licences** publish the code but restrict some uses, such as offering the software as a hosted service. Several database vendors have moved products from open-source to source-available licences in recent years, MongoDB in 2018 being an early example.
 
+```figure
+type: layers
+title: From open to restricted licences
+caption: Copyleft obligations matter mainly when software is distributed with a product.
+- Public domain | SQLite: essentially no conditions
+- Permissive | PostgreSQL, MIT, BSD: few conditions
+- Copyleft | GPL: distributed software shares the licence
+- Dual licensing | open source, or a paid commercial licence
+- Source-available | code published, some uses restricted
+- *Commercial | a fee per core, server or user
+```
+
 Licence terms are legal documents, and their interpretation can depend on how software is combined and distributed. Businesses distributing software should obtain legal advice.
 
 ## Comparing costs fairly
@@ -124,6 +136,18 @@ An open-source database is only as dependable as the community and organisations
 - **Documentation and tools**: good manuals, administration tools and drivers for common programming languages.
 - **Commercial ecosystem**: firms offering support, training and hosting, including in Australia.
 
+```figure
+type: checklist
+title: Judging the health of an open-source project
+caption: The code stays available if a project declines, but support and security fixes may not.
+- x Regular releases and timely security fixes
+- x Many contributors from several organisations
+- x Open governance
+- x A security reporting process
+- x Good documentation and drivers
+- *x A commercial support ecosystem
+```
+
 The leading open-source databases score well on all of these. Smaller projects may not, however attractive their features.
 
 ## Switching later is possible, but not free
@@ -155,6 +179,16 @@ Businesses sometimes plan to start with one database and move later. That is fea
 This is an illustrative example. A manufacturer of packaging machines is commissioning a custom system to manage machine configurations, quotes and production data. It is also adding a local data log to the controller software in each machine it sells, about 150 machines a year.
 
 **Business system.** The developer compares a commercial database, licensed per core for a four-core server, against PostgreSQL on a managed cloud service. Over five years, the commercial option is estimated at about $28,000 in licences and maintenance plus hosting, and the PostgreSQL option at about $24,000 in managed service fees with no licence cost. The business's IT provider supports both, and the reporting tool the business uses connects to both. The difference is modest, so the decision rests on the developer's skills and the managed service's included backups; the business chooses PostgreSQL with a support arrangement through its IT provider.
+
+```figure
+type: bars
+title: Five-year cost of the business system's database
+unit: $'000
+max: 30
+caption: The difference was modest, so skills and included backups decided the choice.
+- Commercial, licensed per core | 28 | licences, maintenance, hosting
+- *PostgreSQL, managed service | 24 | no licence cost
+```
 
 **Machine controller.** For the data log inside each machine, the developer proposes SQLite, which is public domain and designed for embedded use, avoiding any per-device licence or distribution obligations. The business records SQLite and every other third-party component in a software register for each machine release.
 

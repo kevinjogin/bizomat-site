@@ -28,6 +28,17 @@ This article explains the main options, from on-premise servers to software as a
 | Managed database service | The provider runs the database software; the business uses it | The provider | Largely the provider |
 | Software as a service | The business subscribes to an application; the database is invisible | The provider | The provider |
 
+```figure
+type: layers
+title: From owning everything to subscribing
+caption: Moving down the list hands more of the work to the provider; the data stays the business's responsibility at every level.
+- On-premise | your servers, your premises
+- Colocation | your servers, a data centre
+- Hosted virtual servers | rented machines; you manage the database
+- Managed database service | the provider runs the database
+- *Software as a service | the database is invisible
+```
+
 The options differ less in technology than in **who is responsible for what**. Moving to the cloud does not remove responsibilities; it moves some of them to the provider and leaves others with the business.
 
 ## Shared responsibility
@@ -93,6 +104,16 @@ Each option fails differently:
 - **Software as a service** depends on the provider's reliability and support, which the business cannot control directly.
 
 Providers often state availability targets as percentages. It helps to translate them into time: 99.9% availability allows about 8.8 hours of downtime a year, while 99.99% allows under an hour. Check what an availability commitment covers, what compensation applies and whether planned maintenance is excluded.
+
+```figure
+type: bars
+title: What an availability target allows
+unit: hours a year
+max: 10
+caption: Translate percentages into time, and check what the target covers.
+- 99.9% available | 8.8 | about 8.8 hours of downtime
+- *99.99% available | 0.9 | under an hour
+```
 
 The [business continuity planning for small businesses](/reados/collections/operational-data-records-and-controls/business-continuity-planning-for-small-businesses/) article explains how to set recovery targets for critical functions, which should guide where and how systems are hosted.
 
@@ -180,6 +201,17 @@ This is an illustrative example. A manufacturer with 35 staff runs its job manag
 **Option C: replace the job system.** A software-as-a-service job management product would cost about $90,000 over five years including implementation, but would change processes significantly.
 
 **Decision.** The business chooses Option B. It costs a little more than Option A but removes the hardware refresh, includes tested off-site recovery and lets staff work from site offices. Performance tests confirm the job application is responsive using remote access. Machine data collection stays on a small on-site server that uploads summaries to the cloud. The business revisits Option C in three years, when the job system's support ends.
+
+```figure
+type: bars
+title: Five-year cost of three options for a 35-person manufacturer
+unit: $'000
+max: 100
+caption: Option B costs a little more than A but removes the hardware refresh and includes tested off-site recovery.
+- Option A: replace the server | 65
+- *Option B: hosted services | 72 | plus about $1,200 a year for a second internet link
+- Option C: replace the job system | 90 | with significant process change
+```
 
 ## Applying this in an Australian business
 

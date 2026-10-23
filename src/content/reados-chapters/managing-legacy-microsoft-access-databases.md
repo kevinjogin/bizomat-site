@@ -79,6 +79,20 @@ Whatever the long-term plan, a business-critical Access database should be made 
 - **Train a second person** to support it.
 - **Record the Office versions** in use and test the application before Office updates are rolled out.
 
+```figure
+type: checklist
+title: Stabilise an Access database first
+caption: Stabilising buys time to choose a long-term option calmly.
+- x Proper backups, kept off site
+- x Split into front and back ends
+- x Back end on a reliable server share
+- x Regular compact and repair
+- x Restricted access
+- x Documentation
+- x A second person trained
+- *x Office versions recorded and tested
+```
+
 These steps reduce immediate risk and buy time to decide the future.
 
 ### Security for data that stays in Access
@@ -94,6 +108,17 @@ Access offers limited protection for sensitive data. Anyone with permission to o
 | Rebuild | Recreate the application on a low-code platform or as a custom web application | Distinctive processes that need web or mobile access | Cost and time; requires careful requirements and migration |
 | Replace | Adopt packaged software that covers the process | Common processes such as CRM, maintenance, quality or job management | Process changes; subscription costs; migration |
 | Retire | Stop using it, archiving the data | Processes no longer needed or absorbed by other systems | Data must remain accessible for retention periods |
+
+```figure
+type: layers
+title: Five long-term options
+caption: Choose by how critical and distinctive the process is, and who will support it in five years.
+- Keep and maintain | small, stable, low-risk
+- Upsize the data | server back end, Access front end
+- Rebuild | low-code or custom web application
+- *Replace | packaged software for a common process
+- Retire | archive the data
+```
 
 ### Upsizing to a server database
 
@@ -169,6 +194,16 @@ This is an illustrative example. A precision engineering business uses an Access
 **Migration.** Instrument records, calibration history and certificates are migrated and reconciled. The Access files are archived read-only and retained for the period required by the business's quality system and customer contracts.
 
 **Result.** Users at both sites access records reliably through a web browser, auditors receive complete histories, and the business no longer depends on one person's knowledge of an ageing file.
+
+```figure
+type: timeline
+title: A 14-year-old calibration database
+caption: The Access files were archived read-only for the retention period the quality system requires.
+- Before | 1.4 GB, 15 users, two sites | corruption about once a fortnight
+- Stabilise | Backups, split, server share | a second person trained
+- Decide | A calibration package | change history and electronic sign-off
+- *Migrate | Records reconciled | web access at both sites
+```
 
 ## Applying this in an Australian business
 

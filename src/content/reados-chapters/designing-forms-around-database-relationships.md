@@ -68,11 +68,47 @@ This is an illustrative example. A workshop buys component P20 from suppliers S4
 | P20 | S9 | 25 |
 | P21 | S4 | 5 |
 
+```figure
+type: svg
+title: Where the minimum order quantity belongs
+alt: Components P20 and P21 on the left, suppliers S4 and S9 on the right. Three association lines connect them, each labelled with its own minimum order quantity: P20 to S4 is 10, P20 to S9 is 25, and P21 to S4 is 5.
+caption: The quantity belongs to each supplier-component pairing, not to the supplier or the component.
+viewbox: 0 0 560 220
+body:
+<rect class="bx" x="30" y="40" width="110" height="44" rx="6"/>
+<rect class="bx" x="30" y="140" width="110" height="44" rx="6"/>
+<text class="txb" x="85" y="67" text-anchor="middle">P20</text>
+<text class="txb" x="85" y="167" text-anchor="middle">P21</text>
+<rect class="bx" x="420" y="40" width="110" height="44" rx="6"/>
+<rect class="bx" x="420" y="140" width="110" height="44" rx="6"/>
+<text class="txb" x="475" y="67" text-anchor="middle">S4</text>
+<text class="txb" x="475" y="167" text-anchor="middle">S9</text>
+<path class="la flow" d="M140 62H420"/>
+<path class="ln flow" d="M140 70L420 158"/>
+<path class="ln flow" d="M140 158L420 70"/>
+<rect class="bxa" x="250" y="46" width="60" height="28" rx="14"/>
+<text class="txb" x="280" y="66" text-anchor="middle">10</text>
+<rect class="bxi" x="200" y="84" width="60" height="28" rx="14"/>
+<text class="tx" x="230" y="104" text-anchor="middle">25</text>
+<rect class="bxi" x="300" y="84" width="60" height="28" rx="14"/>
+<text class="tx" x="330" y="104" text-anchor="middle">5</text>
+```
+
 There are two components, two suppliers and three supplier-component associations. A form showing supplier S4's general details should not present one unexplained “minimum order quantity” field, because the correct value depends on the component selected.
 
 A component-focused form could show P20 in the header and two association rows beneath it. Each row would identify the supplier and the minimum quantity for that pairing. A separate link could open the supplier's shared contact information, clearly signalling that changes there affect other component relationships too.
 
 Removing S4 from P20 should leave the P21–S4 association intact under the assumed rule. The test is not simply that one row disappeared from the visible screen. It must also show that the supplier still exists and that the unrelated association remains unchanged.
+
+```figure
+type: checklist
+title: Testing the allocation form
+caption: The test is what remains in the database, not just what disappeared from the screen.
+- x Removing S4 from P20 deletes only that pairing
+- x The P21–S4 pairing remains
+- x Supplier S4 itself remains
+- *x Each pairing keeps its own minimum quantity
+```
 
 ## Distinguish repeated entities from repeated occurrences
 

@@ -35,6 +35,16 @@ In outline:
 3. **The finished files are deployed to Cloudflare's network.** They are served from locations close to each reader, so pages arrive quickly.
 4. **A small function handles the exceptions.** A Cloudflare Worker adds security headers to every response and runs the GoCore Assistant, the chat window in the corner of each page.
 
+```figure
+type: steps
+title: How this site is built and served
+caption: Pages are ready before anyone asks for them, so there is no database to query or leak.
+- Content written as text files | Markdown with structured details
+- A build step makes the pages | Astro checks every file
+- Deployed to Cloudflare's network | served close to each reader
+- *A small Worker for the exceptions | security headers, the assistant
+```
+
 Between the build and the reader, nothing is assembled on the fly. The page you are reading existed, complete, before you asked for it.
 
 ## The simplest system that does the job
@@ -50,6 +60,17 @@ Fewer moving parts brings practical benefits:
 - **Cost.** Static hosting is inexpensive, and often free at this scale.
 - **Durability.** The content is a folder of text files under version control. It can be moved, backed up or rebuilt elsewhere without a migration project.
 - **Transparency.** Every change to every article is recorded in the version history, with who made it and when.
+
+```figure
+type: checklist
+title: What the simplest system gives
+caption: Each new component should solve a specific, real problem before it is added.
+- x Security | no database or admin panel to attack
+- x Speed | pages served from near the reader
+- x Cost | inexpensive static hosting
+- x Durability | a folder of text files
+- *x Transparency | every change recorded
+```
 
 ## How the site is updated
 
@@ -130,6 +151,16 @@ A static site is not a permanent commitment. A database would make sense if GoCo
 - transactions, orders or bookings stored by the site
 - content that changes with every visit or must update in real time
 - large volumes of structured data that readers search and filter
+
+```figure
+type: checklist
+title: When this site would add a database
+caption: Until one of these is needed, files and a build step do the job.
+- ? User accounts and personalised content
+- ? Transactions, orders or bookings
+- ? Content that changes with every visit
+- *? Large volumes of searchable structured data
+```
 
 If those needs arise, the right response is to add the simplest system that meets them, ideally alongside the static site rather than replacing it. The articles would remain plain files, and only the parts that genuinely need a database would use one.
 
