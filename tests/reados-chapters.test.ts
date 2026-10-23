@@ -90,9 +90,10 @@ test('chapter pages name READOS as their home and point duplicates at the edited
   const volume = read('src/pages/reados/books/[book]/[chapter].astro');
   for (const page of [edited, volume]) assert.doesNotMatch(page, /Insights|\/insights\//);
   assert.doesNotMatch(edited, /canonical=/, 'edited-book chapters are their own canonical page');
-  assert.match(edited, /<article data-pagefind-body>/);
+  assert.match(edited, /<ReadOSChapterReader[\s\S]*?\ssearchable[\s>]/);
+  assert.match(read('src/components/ReadOSChapterReader.astro'), /data-pagefind-body=\{searchable \|\| undefined\}/);
   assert.match(volume, /canonical=\{canonical\}/);
-  assert.doesNotMatch(volume, /data-pagefind-body/, 'category volumes do not duplicate chapters in site search');
+  assert.doesNotMatch(volume, /data-pagefind-body|\ssearchable[\s>]/, 'category volumes do not duplicate chapters in site search');
 });
 
 test('feed, byline and dates use the READOS chapters and the current identity', () => {

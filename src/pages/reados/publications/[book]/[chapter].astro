@@ -1,8 +1,7 @@
 ---
 import { render } from 'astro:content';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
-import Container from '../../../../components/Container.astro';
-import KevosFigureMotion from '../../../../components/KevosFigureMotion.astro';
+import ReadOSChapterReader from '../../../../components/ReadOSChapterReader.astro';
 import { getPublications, publicationHref, publicationChapterHref } from '../../../../utils/publications.ts';
 import { readingTime } from '../../../../utils/content.ts';
 import { SITE } from '../../../../config/site.ts';
@@ -12,28 +11,16 @@ export async function getStaticPaths() {
 const {book,chapters,chapter,index}=Astro.props;
 const {Content}=await render(chapter);
 const href=publicationChapterHref(book.id,chapter.data.chapterSlug);
-const previous=chapters[index-1],next=chapters[index+1];
 ---
 <BaseLayout title={`${chapter.data.title} (${book.data.title})`} description={chapter.data.description} canonical={href}
  breadcrumbs={[{label:'READOS',href:'/reados/'},{label:book.data.title,href:publicationHref(book.id)},{label:chapter.data.title,href}]}
  schema={[{'@type':'Chapter',name:chapter.data.title,position:chapter.data.order,description:chapter.data.description,inLanguage:book.data.language,url:new URL(href,SITE.url).href,isPartOf:{'@type':'Book','@id':new URL(publicationHref(book.id),SITE.url).href+'#book',name:book.data.title},author:{'@id':SITE.url+'/#organization'}}]}>
- <Container size="narrow" class="authored-reader">
-  <nav class="reader-nav" aria-label="Book navigation"><a href={publicationHref(book.id)}>← All chapters</a><a href="/reados/">READOS</a></nav>
-  <div class="reader-controls"><label for="authored-chapter">Chapter</label><select id="authored-chapter" aria-label="Go to chapter">{chapters.map(ch=><option value={publicationChapterHref(book.id,ch.data.chapterSlug)} selected={ch.id===chapter.id}>{ch.data.order}. {ch.data.title}</option>)}</select><button type="button" data-reading-size aria-pressed="false">Larger text</button></div>
-  <article data-pagefind-body data-pagefind-filter={`category:${book.data.category}`}>
-   <header class="reader-heading"><p class="eyebrow"><a href={publicationHref(book.id)}>{book.data.title}</a></p><p>Chapter {index+1} of {chapters.length} · {readingTime(chapter.body)} min read</p>{(book.data.status==='draft'||chapter.data.draft)&&<p>Draft preview · not published</p>}<h1>{chapter.data.title}</h1><p class="chapter-description">{chapter.data.description}</p><progress value={index+1} max={chapters.length} aria-label={`Chapter ${index+1} of ${chapters.length}`}></progress></header>
-   <div class="prose authored-prose"><Content /></div>
-  </article>
-  <nav class="chapter-links" aria-label="Previous and next chapters">{previous?<a href={publicationChapterHref(book.id,previous.data.chapterSlug)}><small>← Previous chapter</small>{previous.data.title}</a>:<a href={publicationHref(book.id)}><small>← Book overview</small>About this book</a>}{next?<a href={publicationChapterHref(book.id,next.data.chapterSlug)}><small>Next chapter →</small>{next.data.title}</a>:<a href={publicationHref(book.id)+'#references'}><small>Book completed →</small>References and further reading</a>}</nav>
- </Container>
-  <KevosFigureMotion />
+ <ReadOSChapterReader bookTitle={book.data.title} bookHref={publicationHref(book.id)} home={{label:'READOS',href:'/reados/'}}
+  chapters={chapters.map(ch=>({href:publicationChapterHref(book.id,ch.data.chapterSlug),title:ch.data.title}))} index={index}
+  title={chapter.data.title} description={chapter.data.description} minutes={readingTime(chapter.body)}
+  note={(book.data.status==='draft'||chapter.data.draft)?'Draft preview · not published':undefined}
+  searchable filter={`category:${book.data.category}`}
+  finish={{href:publicationHref(book.id)+'#references',label:'References and further reading',small:'Book completed →'}}>
+  <Content />
+ </ReadOSChapterReader>
 </BaseLayout>
-<script>
- const picker=document.querySelector<HTMLSelectElement>('#authored-chapter');
- picker?.addEventListener('change',()=>{if(picker.value.startsWith('/reados/publications/'))location.assign(picker.value)});
- const button=document.querySelector<HTMLButtonElement>('[data-reading-size]');
- button?.addEventListener('click',()=>{const large=button.getAttribute('aria-pressed')!=='true';button.setAttribute('aria-pressed',String(large));document.querySelector('.authored-prose')?.classList.toggle('large-text',large)});
-</script>
-<style>
-:global(.authored-reader){padding-top:1.5rem;padding-bottom:5rem}.reader-nav{display:flex;justify-content:space-between;gap:1rem;font-size:.85rem}.reader-controls{display:flex;flex-wrap:wrap;align-items:center;gap:.65rem;margin:1.5rem 0;padding:1rem 0;border-block:1px solid var(--line);font-size:.85rem}.reader-controls select{flex:1;min-width:150px;max-width:100%;background:var(--surface);border:1px solid var(--line-strong);padding:.55rem}.reader-controls button{padding:.55rem .8rem;background:var(--surface);border:1px solid var(--line-strong)}.reader-controls button[aria-pressed=true]{border-color:var(--accent);background:var(--accent-soft)}.reader-heading{margin:3rem 0 2rem}.reader-heading h1{font-size:clamp(2rem,4vw,3.4rem);line-height:1.15}.reader-heading>p:not(.eyebrow){color:var(--muted)}.chapter-description{font-size:1.1rem}.reader-heading progress{width:100%;height:4px;border:0;appearance:none;background:var(--line);margin:1rem 0}.reader-heading progress::-webkit-progress-bar{background:var(--line)}.reader-heading progress::-webkit-progress-value{background:var(--accent)}.reader-heading progress::-moz-progress-bar{background:var(--accent)}.authored-prose.large-text{font-size:1.4rem}.chapter-links{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:4rem}.chapter-links a{display:grid;gap:.5rem;text-decoration:none;border-top:1px solid var(--line-strong);padding-top:1rem}.chapter-links a:last-child{text-align:right}.chapter-links small{color:var(--muted)}@media print{.reader-controls,.reader-nav,.chapter-links{display:none}}
-</style>

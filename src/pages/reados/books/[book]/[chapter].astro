@@ -1,8 +1,7 @@
 ---
 import { render } from 'astro:content';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
-import Container from '../../../../components/Container.astro';
-import KevosFigureMotion from '../../../../components/KevosFigureMotion.astro';
+import ReadOSChapterReader from '../../../../components/ReadOSChapterReader.astro';
 import { getChapters, readingTime, type Chapter } from '../../../../utils/content.ts';
 import { buildReadOSBooks, readosBookHref, readosChapterHref, type ReadOSBook } from '../../../../utils/reados.ts';
 import { buildReadOSCollections, readosCollectionChapterHref } from '../../../../utils/reados-collections.ts';
@@ -20,37 +19,15 @@ export async function getStaticPaths() {
 interface Props { book:ReadOSBook;chapter:Chapter;index:number;canonical?:string }
 const {book,chapter,index,canonical}=Astro.props;
 const {Content}=await render(chapter);
-const previous=index>0?book.chapters[index-1]:undefined;
-const next=index+1<book.chapters.length?book.chapters[index+1]:undefined;
 const href=readosChapterHref(book,chapter);
 ---
 <BaseLayout title={`${chapter.data.title} (${book.title}) | READOS`} description={chapter.data.description} canonical={canonical}
   breadcrumbs={[{label:'Home',href:'/'},{label:'READOS',href:'/reados/'},{label:book.title,href:readosBookHref(book)},{label:chapter.data.title,href}]}>
-  <article>
-    <header class="reading-head"><Container size="narrow">
-      <p class="eyebrow">READOS / {book.category} / CHAPTER {index+1}</p>
-      <h1>{chapter.data.title}</h1>
-      <p class="intro">{chapter.data.description}</p>
-      <p class="meta">{readingTime(chapter.body)} min read · Chapter {index+1} of {book.chapters.length}</p>
-      <label class="progress-label" for="chapter-progress">Book progress</label>
-      <progress id="chapter-progress" value={index+1} max={book.chapters.length}>{index+1} of {book.chapters.length}</progress>
-    </Container></header>
-    <Container size="narrow"><div class="prose reading-copy"><Content /></div>
-    <nav class="reader-navigation" aria-label="Chapter navigation">
-      {previous?<a rel="prev" href={readosChapterHref(book,previous)}>← Previous chapter<span>{previous.data.title}</span></a>:<a href={readosBookHref(book)}>← All chapters</a>}
-      {next?<a rel="next" href={readosChapterHref(book,next)}>Next chapter →<span>{next.data.title}</span></a>:<a href={readosBookHref(book)}>Back to all chapters →</a>}
-    </nav>
-    <p class="origin">Part of <a href={readosBookHref(book)}>{book.title}</a> in KEVOS® READOS.{canonical && <> Also in its <a href={canonical}>edited READOS book</a>.</>}</p>
-    </Container>
-  </article>
-  <KevosFigureMotion />
+  <ReadOSChapterReader bookTitle={book.title} bookHref={readosBookHref(book)} home={{label:'READOS',href:'/reados/'}}
+    chapters={book.chapters.map(ch=>({href:readosChapterHref(book,ch),title:ch.data.title}))} index={index}
+    title={chapter.data.title} description={chapter.data.description} minutes={readingTime(chapter.body)}>
+    <Content />
+    <p class="origin" slot="after">Part of <a href={readosBookHref(book)}>{book.title}</a> in KEVOS® READOS.{canonical && <> Also in its <a href={canonical}>edited READOS book</a>.</>}</p>
+  </ReadOSChapterReader>
 </BaseLayout>
-<style>
-.reading-head{padding:clamp(2.8rem,6vw,5rem) 0 2.5rem;border-bottom:1px solid var(--line);margin-bottom:2.5rem}
-.reading-head h1{margin:1rem 0;max-width:24ch}.intro{font-family:var(--font-serif);font-size:var(--step-1);color:var(--ink-2)}.meta,.progress-label{color:var(--muted);font-size:.82rem}
-.progress-label{display:block;margin-top:1rem}progress{display:block;width:100%;height:.4rem;accent-color:var(--accent);margin-top:.5rem}
-.reading-copy{padding-bottom:3rem}.reader-navigation{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;border-top:1px solid var(--line);padding:1.5rem 0}
-.reader-navigation a{display:block;text-decoration:none;color:var(--accent);font-weight:650}.reader-navigation a:last-child{text-align:right}
-.reader-navigation span{display:block;color:var(--ink-2);font-weight:400;font-size:.85rem;margin-top:.5rem}.origin{color:var(--muted);font-size:.83rem;margin:1rem 0 4rem}
-@media(max-width:600px){.reader-navigation{grid-template-columns:1fr}.reader-navigation a:last-child{text-align:left}}
-</style>
+<style>.origin{color:var(--muted);font-size:.83rem;margin:3rem 0 0}</style>

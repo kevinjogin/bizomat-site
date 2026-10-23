@@ -1,77 +1,26 @@
 ---
 import BaseLayout from './BaseLayout.astro';
-import Container from '../components/Container.astro';
-import KevosFigureMotion from '../components/KevosFigureMotion.astro';
+import ReadOSChapterReader from '../components/ReadOSChapterReader.astro';
 import { primaryGuide as guide, chapterHref } from '../data/library.ts';
+import { readingTime } from '../utils/content.ts';
 const { frontmatter }=Astro.props;
 const number=Number(frontmatter.chapterNumber);
 const current=guide.chapters[number-1];
 if(!current)throw new Error('Invalid KEVOS® Library chapter');
-const previous=guide.chapters[number-2],next=guide.chapters[number];
 const currentURL=chapterHref(current.slug);
 const description=`Chapter ${number} of ${guide.chapters.length} in ${guide.title}. Learn ${current.title.toLowerCase()} with clear explanations and quick references.`;
+const sources=import.meta.glob<string>('../pages/library/read-the-numbers-understand-the-business/*.md',{query:'?raw',import:'default',eager:true});
+const source=Object.entries(sources).find(([path])=>path.endsWith(`/${current.slug}.md`))?.[1];
+const minutes=source?readingTime(source.replace(/^---[\s\S]*?---/,'')):undefined;
 ---
 <BaseLayout title={`${current.title} (${guide.title})`} description={description} canonical={currentURL}
   breadcrumbs={[{label:'Home',href:'/'},{label:'Library',href:'/library/'},{label:guide.title,href:`/library/${guide.slug}/`},{label:current.title,href:currentURL}]}
   schema={[{'@type':'Article',headline:current.title,description,author:{'@id':'https://kevos.com/#organization'},publisher:{'@id':'https://kevos.com/#organization'},isPartOf:{'@type':'Book',name:guide.title,url:`https://kevos.com/library/${guide.slug}/`}}]}>
-  <div class="reading-shell" data-library-reader>
-    <Container size="narrow">
-      <nav class="crumb" aria-label="Book navigation"><a href="/library/">Library</a><span aria-hidden="true">/</span><a href={`/library/${guide.slug}/`}>This book</a></nav>
-      <div class="reading-tools" data-pagefind-ignore>
-        <label for="chapter-picker">Chapter</label>
-        <select id="chapter-picker" aria-label="Go to chapter">
-          {guide.chapters.map(ch=><option value={chapterHref(ch.slug)} selected={ch.slug===current.slug}>{String(ch.number).padStart(2,'0')} · {ch.title}</option>)}
-        </select>
-        <div class="font-tools" aria-label="Reading size"><span>Text</span><button type="button" data-font="sm" aria-label="Smaller text">A−</button><button type="button" data-font="normal" aria-label="Default text" aria-pressed="true">A</button><button type="button" data-font="lg" aria-label="Larger text">A+</button></div>
-      </div>
-      <article class="reading-article" data-pagefind-body>
-        <header class="reading-head">
-          <p class="eyebrow">Chapter {String(number).padStart(2,'0')} / {guide.chapters.length}</p>
-          <h1>{current.title}</h1>
-          <p class="reading-book">From <a href={`/library/${guide.slug}/`}>{guide.title}</a></p>
-          <progress class="reading-progress" value={number} max={guide.chapters.length} aria-label={`Chapter ${number} of ${guide.chapters.length}`}></progress>
-        </header>
-        <div class="chapter-content" data-font-size="normal"><div class="prose"><slot /></div></div>
-      </article>
-      <aside class="chapter-note" data-pagefind-ignore>General educational information only, not personal financial advice. Figures and company names in examples are fictional unless otherwise identified. Refer to original company filings before making decisions.</aside>
-      <nav class="chapter-links" aria-label="Previous and next chapters" data-pagefind-ignore>
-        {previous?<a href={chapterHref(previous.slug)}><small>← Previous chapter</small>{previous.title}</a>:<a href={`/library/${guide.slug}/`}><small>← Book overview</small>All chapters</a>}
-        {next?<a class="next" href={chapterHref(next.slug)}><small>Next chapter →</small>{next.title}</a>:<a class="next" href="/library/"><small>Finished →</small>Browse the library</a>}
-      </nav>
-    </Container>
-  </div>
-  <KevosFigureMotion />
+  <ReadOSChapterReader bookTitle={guide.title} bookHref={`/library/${guide.slug}/`} home={{label:'Library',href:'/library/'}}
+    chapters={guide.chapters.map(ch=>({href:chapterHref(ch.slug),title:ch.title}))} index={number-1}
+    title={current.title} minutes={minutes} searchable finish={{href:'/library/',label:'Browse the library',small:'Finished →'}}>
+    <slot />
+    <aside class="chapter-note" slot="after" data-pagefind-ignore>General educational information only, not personal financial advice. Figures and company names in examples are fictional unless otherwise identified. Refer to original company filings before making decisions.</aside>
+  </ReadOSChapterReader>
 </BaseLayout>
-<script>
-  const root=document.querySelector<HTMLElement>('[data-library-reader]');
-  const picker=root?.querySelector<HTMLSelectElement>('#chapter-picker');
-  picker?.addEventListener('change',()=>{const path=picker.value;if(path.startsWith('/library/'))window.location.assign(path);});
-  root?.querySelectorAll<HTMLButtonElement>('[data-font]').forEach(button=>button.addEventListener('click',()=>{
-    const size=button.dataset.font||'normal';
-    const target=root.querySelector<HTMLElement>('[data-font-size]');
-    if(target)target.dataset.fontSize=size;
-    root.querySelectorAll<HTMLButtonElement>('[data-font]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
-  }));
-</script>
-<style>
-  .reading-shell{padding:1.5rem 0 clamp(4rem,8vw,7rem)}
-  .crumb{display:flex;gap:.7rem;font-size:.82rem;color:var(--muted);margin-bottom:2rem}.crumb a{text-decoration:none}
-  .reading-tools{display:flex;align-items:center;gap:.75rem 1rem;justify-content:space-between;flex-wrap:wrap;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:.75rem 0;font-size:.82rem}
-  .reading-tools>label{color:var(--muted)}.reading-tools select{background:var(--surface);max-width:min(100%,400px);flex:1;border:1px solid var(--line-strong);padding:.55rem}
-  .font-tools{display:flex;align-items:center;gap:.3rem}.font-tools span{color:var(--muted);margin-right:.4rem}
-  .font-tools button{border:1px solid var(--line-strong);background:transparent;padding:.35rem .52rem;min-width:2.5rem}.font-tools button[aria-pressed='true']{background:var(--accent-soft);border-color:var(--accent)}
-  .reading-head{margin:clamp(2.5rem,6vw,5rem) 0 2.3rem}.reading-head h1{font-size:clamp(2rem,4.4vw,3.7rem);max-width:24ch;margin:1rem 0}
-  .reading-book{color:var(--muted);font-size:.88rem}.reading-book a{color:var(--ink-2)}
-  .reading-progress{display:block;width:100%;height:4px;margin-top:2.5rem;border:0;appearance:none;background:var(--line)}
-  .reading-progress::-webkit-progress-bar{background:var(--line)}
-  .reading-progress::-webkit-progress-value{background:var(--accent)}
-  .reading-progress::-moz-progress-bar{background:var(--accent)}
-  .chapter-content{max-width:none}.chapter-content :global(.prose){font-size:clamp(1.08rem,1rem + .35vw,1.24rem)}
-  .chapter-content[data-font-size='sm'] :global(.prose){font-size:1rem}
-  .chapter-content[data-font-size='lg'] :global(.prose){font-size:1.45rem}
-  .chapter-note{margin:4rem 0 2rem;padding:1.3rem 0;border-top:1px solid var(--line);font-size:.84rem;color:var(--muted)}
-  .chapter-links{display:grid;grid-template-columns:1fr 1fr;gap:2rem}.chapter-links a{display:grid;gap:.6rem;border-top:1px solid var(--line-strong);padding-top:1.4rem;text-decoration:none;font-weight:630}
-  .chapter-links small{color:var(--muted);font-size:.77rem;font-weight:500}.chapter-links .next{text-align:right}
-  @media(max-width:620px){.chapter-links{gap:1rem}.reading-tools select{max-width:100%}}
-  @media print{.reading-tools,.chapter-links,.crumb{display:none}}
-</style>
+<style>.chapter-note{margin:4rem 0 0;padding:1.3rem 0 0;border-top:1px solid var(--line);font-size:.84rem;color:var(--muted)}</style>
