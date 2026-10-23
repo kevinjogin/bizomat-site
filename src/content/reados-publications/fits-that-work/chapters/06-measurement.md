@@ -32,6 +32,18 @@ The following is an invented budget, expressed entirely as contributions at the 
 | Display rounding | Increment 0.001 mm; uniform rounding within ±0.0005 mm | 0.0005 / √3 = 0.000289 mm |
 | Residual temperature effect | Already evaluated at the output as a standard contribution | 0.002000 mm |
 
+```figure
+type: bars
+title: A small uncertainty budget for the gap
+unit: mm
+max: 0.0035
+caption: Combined standard uncertainty about 0.004035 mm; with k = 2, U is about 0.0081 mm.
+- *Calibration, after correction | 0.003
+- Residual temperature effect | 0.002
+- Repeatability of a five-reading mean | 0.001789
+- Display rounding | 0.000289
+```
+
 The combined standard uncertainty is:
 
 **uc = √(0.003² + (0.004/√5)² + (0.0005/√3)² + 0.002²) ≈ 0.004035 mm.**
@@ -61,6 +73,19 @@ Using the unrounded U above, the acceptance interval for the reported value is a
 | 2.130 mm | 2.121929 to 2.138071 mm | Accept |
 | 2.143 mm | 2.134929 to 2.151071 mm | Hold; conformity is not established |
 | 1.840 mm | 1.831929 to 1.848071 mm | Entire interval below specification |
+
+```figure
+type: range
+title: Applying the decision rule
+unit: mm
+min: 1.82
+max: 2.16
+caption: Accept only when the whole interval y ± U lies inside 1.85 to 2.15 mm; otherwise hold or reject.
+- Specification | 1.85 | 2.15
+- *Result 2.130: accept | 2.122 | 2.138
+- Result 2.143: hold | 2.135 | 2.151 | conformity not established
+- Result 1.840: below specification | 1.832 | 1.848
+```
 
 The second result is not accepted even though its indicated value is inside the drawing limits. Nor is it automatically established as nonconforming: its interval overlaps the limit. A documented hold decision can lead to a better measurement, a permitted rework or a decision by the authorised person.
 

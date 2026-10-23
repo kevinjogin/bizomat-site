@@ -46,6 +46,27 @@ This is an illustration. Ten invented gap observations are taken at the referenc
 | 9 | 1.992 | Set-up B |
 | 10 | 1.992 | Set-up B |
 
+```figure
+type: line
+title: Ten pilot gaps, in sequence
+x: Observation
+y: Gap (mm)
+ymin: 1.97
+ymax: 2.0
+caption: Two set-ups 0.016 mm apart: pooled, the standard deviation is about 0.0085 mm; within each set-up, about 0.0014 mm.
+legend: Measured gap
+- 1 | 1.974
+- 2 | 1.976
+- 3 | 1.978
+- 4 | 1.976
+- 5 | 1.976
+- 6 | 1.99
+- 7 | 1.992
+- 8 | 1.994
+- 9 | 1.992
+- 10 | 1.992
+```
+
 The first group's mean is **1.976 mm**, and the second's is **1.992 mm**. The difference is **0.016 mm**. The overall mean is **1.984 mm**.
 
 Every indicated result lies comfortably within the gap limits. That does not make the shift irrelevant. It is comparable with margins being discussed elsewhere in the design. Investigate whether the shift follows manufacturing, assembly seating, measurement set-up or another changed condition.
@@ -87,6 +108,15 @@ These figures belong to an assumed population, not to the ten-point pilot. No un
 Ten satisfactory parts do not prove a negligible failure probability. Under an independent, representative Bernoulli model with constant failure probability p, the probability of seeing zero failures in n trials is **(1 − p)ⁿ**.
 
 For zero failures in ten trials, a one-sided 95% upper confidence bound obtained from that model is **1 − 0.05^(1/10) ≈ 25.9%**. This is not a prediction that the process fails at that rate. It shows how weak a small zero-failure sample is as evidence for a very low rate.
+
+```figure
+type: stats
+title: What ten good pilot parts can show
+caption: Capability indices hold only under their assumptions, and zero failures in ten trials is weak evidence.
+- 0 of 10 | Failures | in the pilot
+- *Up to 25.9% | Failure rate still possible | one-sided 95% bound
+- 2.50 / 2.33 | Cp and Cpk | under an assumed model
+```
 
 If observations are not independent or the trial excludes difficult conditions, even that model may be inappropriate. Use sample planning tied to the claim you need, rather than choosing a convenient number and describing the resulting confidence afterwards.
 

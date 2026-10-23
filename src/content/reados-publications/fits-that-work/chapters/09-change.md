@@ -27,6 +27,18 @@ Do not assume every change requires every test to be repeated. Select the affect
 | Changed datum feature | Does the measured quantity retain its meaning? | Drawing interpretation and measurement correlation |
 | New assembly sequence | Does seating or deformation change? | Assembly method and functional verification |
 
+```figure
+type: decision
+title: Map the evidence before assessing a change
+question: What is changing?
+caption: Every change asks whether existing evidence still describes the product.
+- Housing material | Are expansion and restraint assumptions valid? | thermal model
+- *Added surface finish | Dimensions before or after finishing? | stack and inspection
+- New supplier | Is the process population equivalent? | process and measurement
+- Datum feature | Does the measured quantity keep its meaning? | drawing interpretation
+- Assembly sequence | Does seating or deformation change? | functional verification
+```
+
 This table is a starting point for consequence review. It is not a universal change-classification system.
 
 ## Work through a coating change
@@ -40,6 +52,18 @@ The total gap reduction is between **0.016 and 0.024 mm**. Applied to Revision B
 **Maximum: 2.127412 − 0.016 = 2.111412 mm.**
 
 The lower limit is violated by **0.014 mm**. Describing the finish as cosmetic would not change its dimensional effect.
+
+```figure
+type: range
+title: A "cosmetic" coating on the housing
+unit: mm
+min: 1.8
+max: 2.2
+caption: A gap reduction of 0.016 to 0.024 mm takes Revision B 0.014 mm below the lower limit.
+- Functional requirement | 1.85 | 2.15
+- Revision B | 1.86 | 2.127
+- *With the coating | 1.836 | 2.111 | lower limit violated
+```
 
 If the drawing instead defines the span after coating, and the finished span is controlled to the existing limits, subtracting coating thickness again would be wrong. The important issue is what the drawing and process actually control. Clarify that before comparing calculations.
 

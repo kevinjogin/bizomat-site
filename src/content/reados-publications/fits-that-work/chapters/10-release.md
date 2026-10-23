@@ -59,6 +59,18 @@ The design model establishes the intended range across permitted variation. Insp
 
 Suppose a corrected assembled-gap result at the reference state is **1.980 mm**, with the Chapter 6 expanded uncertainty of approximately 0.008071 mm. Its interval is approximately **1.971929 to 1.988071 mm**, so it passes the chosen interval-containment rule.
 
+```figure
+type: range
+title: Design prediction and a measured result
+unit: mm
+min: 1.84
+max: 2.16
+caption: The measured interval sits inside both the model and the requirement, for that assembly and its conditions.
+- Functional requirement | 1.85 | 2.15
+- Conservative modelled interval | 1.86 | 2.127
+- *Measured 1.980 ± U | 1.972 | 1.988
+```
+
 That result does not by itself demonstrate thermal performance or the capability of future production. It also does not require adding the design geometry budget again if the measurement already captures the actual functional gap. Keep the product and measurement models distinct.
 
 For each inspected assembly, preserve the configuration and condition. A result from an uncoated Revision A assembly cannot be filed as direct evidence that coated Revision B production meets its operating requirement.
@@ -75,6 +87,15 @@ A useful completed review record has a clear outcome for each claim:
 | Ten pilot parts prove stable long-run capability | Small grouped dataset with a set-up shift | Not supported |
 | Arbitrary temperature gradients are acceptable | Uniform model does not cover them | Not supported |
 | Added housing coating is harmless | Calculated lower bound 1.836 mm | Not supported |
+
+```figure
+type: tree
+title: A release decision with a defined scope
+caption: State exactly what the evidence supports, and assign the rest to named decisions.
+- Release claims
+  - *Supported | Revision B under the bounded uniform-temperature model; one measured assembly under the rule
+  - Not supported | Revision A thermally; long-run capability from ten parts; any temperature gradient; a harmless coating
+```
 
 The worked conclusion is therefore precise: **Revision B is the preferred design for further qualification within the stated envelope. A controlled pilot can proceed after the applicable equipment and process reviews; unrestricted production release requires the remaining geometry, thermal-envelope and process evidence.**
 

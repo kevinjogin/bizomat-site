@@ -35,6 +35,18 @@ This is an illustration. All three Revision A members rise uniformly from 20 to 
 
 The housing growth opens the gap while the two internal growths close it. The net change is **0.05520 − 0.02496 − 0.00288 = 0.02736 mm**. The nominal hot gap is therefore **2.02736 mm**.
 
+```figure
+type: bars
+title: Growth from 20 to 60 °C
+unit: mm
+max: 0.06
+caption: The housing's higher coefficient outgrows the internal parts, so the nominal gap opens to about 2.027 mm.
+- Housing, 60 mm at 23 × 10⁻⁶ /°C | 0.0552 | opens the gap
+- Cartridge, 52 mm at 12 × 10⁻⁶ /°C | 0.02496 | closes it
+- Spacer, 6 mm at 12 × 10⁻⁶ /°C | 0.00288 | closes it
+- *Net change in the gap | 0.02736 | opens
+```
+
 This nominal result lies inside the functional interval. It does not answer the worst-case question because the manufactured lengths are not necessarily nominal.
 
 ## Apply expansion to the actual limiting lengths
@@ -62,6 +74,18 @@ At 60 °C, the largest gap becomes:
 **60.02 × 1.00092 − 51.96 × 1.00048 − 5.97 × 1.00048 = 2.117412 mm.**
 
 The complete ideal interval across the stated uniform-temperature range is now **1.87 to 2.117412 mm**. The lower-side margin remains 0.02 mm; the upper-side margin becomes approximately 0.03259 mm.
+
+```figure
+type: range
+title: The gap from 20 to 60 °C
+unit: mm
+min: 1.8
+max: 2.2
+caption: Expanding the limiting lengths, Revision A exceeds 2.15 mm by about 0.007 mm; Revision B's housing of 59.98 ± 0.04 mm stays inside.
+- Functional requirement | 1.85 | 2.15
+- Revision A | 1.87 | 2.157 | exceeds the upper limit
+- *Revision B | 1.87 | 2.117
+```
 
 Revision B improves the model, but it also asks manufacturing to hold a tighter housing span and a different nominal size. That proposal needs a process and inspection assessment. Chapter 7 compares it with other ways to spend the available tolerance budget.
 

@@ -24,6 +24,20 @@ The following bounds include dimensional variation, uniform temperature from 20 
 | Tighten only: 60.00 ± 0.04 mm | 1.880000 mm | 2.147430 mm | Passes this model with little upper margin |
 | B: 59.98 ± 0.04 mm | 1.860000 mm | 2.127412 mm | Passes this model with more upper margin |
 
+```figure
+type: range
+title: Four housing proposals against the complete model
+unit: mm
+min: 1.8
+max: 2.2
+caption: Shifting the centre alone or tightening alone fixes one end and stresses the other; Revision B does both.
+- Functional requirement | 1.85 | 2.15
+- A: 60.00 ± 0.06 | 1.86 | 2.167 | upper limit exceeded
+- Shift only: 59.98 ± 0.06 | 1.84 | 2.147 | lower limit exceeded
+- Tighten only: 60.00 ± 0.04 | 1.88 | 2.147 | little upper margin
+- *B: 59.98 ± 0.04 | 1.86 | 2.127
+```
+
 Shifting the nominal redistributes margin; it does not reduce variation. Tightening the housing reduces variation but does not remove the thermal shift. Combining the changes gives a more useful balance for this case.
 
 The table is not a release certificate. The geometric allocation still needs evidence, and the uniform-temperature model remains limited. Its value is that options are compared on the same basis.
@@ -43,6 +57,15 @@ If several dimensions are controlled from one functional reference in one set-up
 For a fictional annual quantity of 3,000 housings, suppose the tighter span adds 0.7 minutes of machining at an internal planning rate of A$60 per hour and 1.2 minutes of inspection at A$48 per hour.
 
 The additional machining allocation is **0.7 / 60 × 60 = A$0.70 per part**. Inspection adds **1.2 / 60 × 48 = A$0.96 per part**. Together they add **A$1.66 per part**, or **A$4,980 per year** at the assumed volume.
+
+```figure
+type: stack
+title: The price of tightening the housing
+unit: A$
+caption: About A$1.66 a part, or A$4,980 a year at the assumed volume.
+- Additional machining | 0.70
+- *Additional inspection | 0.96
+```
 
 If a gauge costs A$900 and method development takes six hours at A$60 per hour, the initial allocation is another **A$1,260**. The first-year total is **A$6,240**, before any other costs or savings.
 

@@ -35,6 +35,16 @@ Both lie inside the assumed functional interval of 1.85 to 2.15 mm. The remainin
 
 For this linear chain, each input has a sensitivity of either +1 or −1. A worst-case gap half-width therefore equals the sum of the magnitudes of the three component half-widths: **0.06 + 0.04 + 0.03 = 0.13 mm**. The resulting interval is 2.00 ± 0.13 mm.
 
+```figure
+type: stack
+title: Worst-case half-width of the gap
+unit: mm
+caption: 2.00 ± 0.13 mm: 1.87 to 2.13 mm, leaving 0.02 mm at each end of the 1.85 to 2.15 mm requirement.
+- Housing H | 0.06
+- Cartridge C | 0.04
+- *Spacer S | 0.03
+```
+
 The negative signs in the nominal equation do not make the tolerance contributions cancel. Each internal component can move in the direction that makes the assembly result worse. This distinction between a signed dimension and an unsigned bound should be visible in the worksheet.
 
 If a lever or geometric relationship gives an input a sensitivity other than one, include that sensitivity. For a linear expression Y = 2A − B, a half-width of 0.03 on A contributes 0.06 to the bound on Y. For a nonlinear model, evaluate the appropriate extremes or use an analysis that establishes where the extremes occur; simply adding half-widths may no longer be valid.
@@ -56,6 +66,18 @@ Suppose an alternative spacer is specified as 6.00 mm with a lower deviation of 
 **Gmax = 60.06 − 51.96 − 6.00 = 2.10 mm.**
 
 The low end now touches the functional limit. The nominal gap remains 2.00 mm if nominal means the stated basic numbers, but the centre of the permitted gap interval is 1.975 mm. These are different concepts. Do not silently recentre the design merely to make a symmetric spreadsheet template convenient.
+
+```figure
+type: range
+title: Worst-case gap intervals
+unit: mm
+min: 1.8
+max: 2.2
+caption: The asymmetric spacer keeps a 2.00 mm nominal, but the centre of the permitted gap moves to 1.975 mm.
+- Functional requirement | 1.85 | 2.15
+- Revision A | 1.87 | 2.13
+- *Spacer 6.00 +0.05/0 mm | 1.85 | 2.10 | touches the lower limit
+```
 
 A zero calculated margin leaves no room for an omitted effect. It also creates difficult measurement decisions at the boundary. This alternative is therefore a different engineering proposition even though every nominal size still looks familiar.
 

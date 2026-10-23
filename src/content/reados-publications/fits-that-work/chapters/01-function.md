@@ -23,6 +23,27 @@ The housing shoulder separation is H. The cartridge thickness is C, and the spac
 
 **G = H − C − S.**
 
+```figure
+type: svg
+title: The stop-cartridge stack
+alt: A housing with an inner span H between its left wall and a stop on the right. Inside sit the cartridge C and then the spacer S, leaving a small gap G between the spacer and the housing stop. Dimension lines show H across the full inner span, and C, S and G along it.
+caption: The gap closes when C or S grows, and opens when H grows: G = H − C − S.
+viewbox: 0 0 600 230
+body:
+<rect class="bxi" x="40" y="60" width="20" height="100"/>
+<rect class="bxi" x="540" y="60" width="20" height="100"/>
+<rect class="bxi" x="40" y="150" width="520" height="10"/>
+<rect class="bx" x="60" y="80" width="416" height="60" rx="2"/>
+<rect class="bxi" x="476" y="90" width="48" height="40" rx="2"/>
+<rect class="fs pulse" x="524" y="80" width="16" height="60"/>
+<text class="tx" x="268" y="115" text-anchor="middle">Cartridge C</text>
+<text class="tx txs" x="500" y="114" text-anchor="middle">S</text>
+<text class="txa" x="532" y="50" text-anchor="middle">G</text>
+<path class="ln" d="M60 178H476M476 178H524M524 178H540M60 172V184M476 172V184M524 172V184M540 172V184"/>
+<path class="ln" d="M60 206H540M60 200V212M540 200V212"/>
+<text class="tx txs" x="300" y="226" text-anchor="middle">Housing span H</text>
+```
+
 This equation has a physical meaning. Increasing H opens the gap; increasing either internal component closes it. Draw the chain on an assembly section and label its start and finish. If the equation cannot be followed through actual contacts, it is not ready for a spreadsheet.
 
 ## State the condition of the assembly
@@ -46,6 +67,18 @@ Record whether the limit applies during manufacture, after assembly or throughou
 | Operating range | Uniform 20 to 60 °C for this study | Actual environment and transient conditions |
 | Initial model | G = H − C − S | Confirmation that no intermediate feature was omitted |
 | Remaining mechanisms | Geometry, temperature, measurement and process effects | Assigned checks with an owner and result |
+
+```figure
+type: checklist
+title: A first requirement record
+caption: Each entry still needs evidence in a real project; the record shows what must be proved, not that it has been.
+- x Function | preserve controlled axial free space
+- x Quantity | gap G between named contact boundaries
+- x Limits | 1.85 to 2.15 mm
+- x Reference state | seated, unloaded, clean, 20 °C
+- x Operating range | uniform 20 to 60 °C
+- *x Initial model | G = H − C − S
+```
 
 Keep the record short enough to use. A requirement spreadsheet with dozens of empty columns can conceal the same uncertainty as a vague drawing note. The useful test is whether another person can identify what is being protected and which evidence would support acceptance.
 

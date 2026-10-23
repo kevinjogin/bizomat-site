@@ -41,6 +41,18 @@ The dimensions and limits have not changed. The statistical answer has changed b
 
 In the uniform model, all possible gap values still lie inside 1.87 to 2.13 mm. Three times the calculated standard deviation is approximately 0.13528 mm, slightly larger than the 0.13 mm physical half-width. A three-sigma interval is not a universal statement about possible values. Its interpretation depends on the distribution.
 
+```figure
+type: range
+title: Worst-case and statistical intervals
+unit: mm
+min: 1.84
+max: 2.16
+caption: A statistical interval describes an assumed population; it is a different kind of statement from a worst-case bound.
+- Worst-case bound | 1.87 | 2.13
+- Normal model, ±3 standard deviations | 1.922 | 2.078
+- *Uniform model, ±3 standard deviations | 1.865 | 2.135 | wider than the physical bound
+```
+
 The purpose of this comparison is to expose assumptions, not to recommend uniform distributions whenever data are missing. When evidence is weak, retain the deterministic bounds and identify what data would make a probabilistic decision credible.
 
 ## Include correlation with the right sign
@@ -62,6 +74,15 @@ This does not establish that correlation is 0.6 in any factory. It shows why a r
 A narrow process can be consistently in the wrong place. Suppose the housing mean shifts upward by 0.03 mm and the cartridge mean shifts downward by 0.01 mm, while the spacer mean remains unchanged. The mean gap becomes:
 
 **60.03 − 51.99 − 6.00 = 2.04 mm.**
+
+```figure
+type: stats
+title: Spread, correlation and centring
+caption: A tight spread cannot compensate for a process that is consistently in the wrong place.
+- 0.026 mm | Gap standard deviation | independent normal inputs
+- 0.029 mm | With C and S correlated at 0.6
+- *2.04 mm | Mean gap after shifts | H up 0.03, C down 0.01
+```
 
 Its standard deviation need not change. Reporting only a smaller spread would hide the reduced upper-side margin. Tool offsets, cavity differences and thermal conditions can move means without producing dramatic scatter in a short sample.
 

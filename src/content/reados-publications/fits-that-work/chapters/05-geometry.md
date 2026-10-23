@@ -53,6 +53,16 @@ The remaining ideal radial clearance is approximately **0.043795 mm**. If both o
 
 Checking x and y independently against 0.20 mm would incorrectly accept the second case. Checking against the 0.40 mm diametral difference would be worse. This example is a geometrical clearance calculation, not a complete positional-tolerance or virtual-condition analysis.
 
+```figure
+type: compare
+title: Checking a radial offset correctly
+cols: Offsets 0.12 and 0.10 mm | Offsets 0.16 and 0.16 mm
+caption: A 6.40 mm hole and 6.00 mm pin allow only 0.20 mm of radial offset; combine x and y before comparing.
+- Resultant offset | About 0.156 mm | About 0.226 mm
+- Against 0.20 mm radial | Inside, about 0.044 mm left | Exceeds the allowance
+- *Checking x and y separately | Accepts | Wrongly accepts
+```
+
 With two pins, the first contact can constrain how the second aligns. Do not simply apply the one-pin calculation independently to both holes while allowing the part to translate differently for each. The assembly has one physical position. Clearance, spacing, orientation and any intentional relief must be evaluated together.
 
 ## Allocate a geometric contribution deliberately
@@ -60,6 +70,18 @@ With two pins, the first contact can constrain how the second aligns. Do not sim
 Suppose the stop-cartridge team proposes reserving an additional **±0.010 mm** at the gap output for the combined geometric effects not represented by H, C and S. This is a teaching allocation, not a demonstrated result.
 
 For Revision B, adding that bounded contribution to the thermal-dimensional model gives **1.860000 to 2.127412 mm**. The mathematical margin is 0.010000 mm at the lower side and 0.022588 mm at the upper side, within the uniform-temperature assumptions.
+
+```figure
+type: range
+title: Revision B with a geometric allocation
+unit: mm
+min: 1.8
+max: 2.2
+caption: Reserving ±0.010 mm for geometry not in H, C and S leaves 0.010 mm and about 0.023 mm of margin.
+- Functional requirement | 1.85 | 2.15
+- Thermal-dimensional model | 1.87 | 2.117
+- *Plus ±0.010 mm for geometry | 1.86 | 2.127
+```
 
 The allocation becomes useful only when the team defines how geometry will be shown to remain within it. That may require an analytical relationship, a measurement across the relevant face, a contact model or a controlled test. Writing “geometry allowance” into a spreadsheet does not create a geometric control.
 
