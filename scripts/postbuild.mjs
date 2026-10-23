@@ -201,6 +201,14 @@ if (!sitemaps.includes('<loc>')) problems.push('Sitemap contains no URLs');
 for (const f of files) {
   if (/(^|\/)(\.env|\.dev\.vars|.*\.pem|.*\.key|.*\.sql)$/i.test(rel(f))) problems.push(`Sensitive file in output: ${rel(f)}`);
 }
+// Credentials must never reach the public output, whatever the file is called. Also refuse source maps,
+// which would publish the Worker and component source in readable form.
+const SECRET = /(sk_live_[0-9A-Za-z]{10,}|rk_live_[0-9A-Za-z]{10,}|whsec_[0-9A-Za-z]{10,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|AKIA[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9]{36}|xox[baprs]-[0-9A-Za-z-]{10,})/;
+for (const f of files) {
+  if (f.endsWith('.map')) problems.push(`Source map in output: ${rel(f)}`);
+  if (!/\.(html|js|mjs|json|txt|xml|css|svg|webmanifest)$/i.test(f) || fs.statSync(f).size > 5_000_000) continue;
+  if (SECRET.test(fs.readFileSync(f, 'utf8'))) problems.push(`Possible credential in output: ${rel(f)}`);
+}
 
 if (problems.length) {
   console.error(`\n✗ Post-build check found ${problems.length} problem(s):\n  - ${problems.join('\n  - ')}\n`);
