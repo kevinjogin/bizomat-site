@@ -9,6 +9,7 @@ import { composeAssessment, normaliseAssessment, validateAssessment, type Assess
 import { sendEmail } from '../contact/mail.ts';
 import { checkRateLimit } from '../contact/rate-limit.ts';
 import type { ContactEnv } from '../contact/handler.ts';
+import { readBoundedText } from '../security.ts';
 
 const MIN_FILL_MS = 3000;
 const MAX_BODY_BYTES = 24_000;
@@ -23,9 +24,14 @@ function respond(request: Request, status: number, body: AssessmentResponse): Re
 
 function sameOrigin(request: Request, env: ContactEnv): boolean {
   const origin = request.headers.get('Origin');
-  if (!origin) return true;
+  if (!origin) return request.headers.get('Sec-Fetch-Site') !== 'cross-site';
   const allowed = (env.ALLOWED_ORIGINS ?? '').split(',').map((s) => s.trim()).filter(Boolean);
-  return allowed.length ? allowed.includes(origin) : new URL(origin).host === new URL(request.url).host;
+  if (allowed.length) return allowed.includes(origin);
+  try {
+    return new URL(origin).host === new URL(request.url).host;
+  } catch {
+    return false;
+  }
 }
 
 export async function handleAssessment(request: Request, env: ContactEnv): Promise<Response> {
@@ -39,7 +45,9 @@ export async function handleAssessment(request: Request, env: ContactEnv): Promi
 
   let form: FormData;
   try {
-    form = await request.formData();
+    const text = await readBoundedText(request, MAX_BODY_BYTES);
+    if (text === null) return respond(request, 413, { ok: false, message: 'Your enquiry is too long.' });
+    form = await new Response(text, { headers: { 'Content-Type': type } }).formData();
   } catch {
     return respond(request, 400, { ok: false, message: 'The form could not be read. Please try again.' });
   }

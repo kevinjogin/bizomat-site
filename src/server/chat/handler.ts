@@ -5,6 +5,7 @@
 // pick the most relevant passages → ask the model with strict grounding rules → return JSON.
 import { checkRateLimit, type RateLimitEnv } from '../contact/rate-limit.ts';
 import { retrieve, type KnowledgeChunk } from './retrieve.ts';
+import { isSameOrigin, readBoundedText } from '../security.ts';
 
 interface AiBinding {
   run(model: string, input: Record<string, unknown>): Promise<unknown>;
@@ -121,14 +122,17 @@ function extractText(result: unknown): string {
 
 export async function handleChat(request: Request, env: ChatEnv): Promise<Response> {
   if (request.method !== 'POST') return new Response('Method not allowed', { status: 405, headers: { Allow: 'POST' } });
-  const origin = request.headers.get('Origin');
-  if (origin && new URL(origin).host !== new URL(request.url).host) return json({ ok: false, error: 'Request not allowed.' }, 403);
+  if (!isSameOrigin(request)) return json({ ok: false, error: 'Request not allowed.' }, 403);
   if (!(request.headers.get('Content-Type') ?? '').includes('application/json')) return json({ ok: false, error: 'Unsupported request.' }, 415);
   if (Number(request.headers.get('Content-Length') ?? 0) > 16_000) return json({ ok: false, error: 'Message too long.' }, 413);
 
   let body: { messages?: unknown };
   try {
-    body = await request.json();
+    const text = await readBoundedText(request, 16_000);
+    if (text === null) return json({ ok: false, error: 'Message too long.' }, 413);
+    const parsed: unknown = JSON.parse(text);
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return json({ ok: false, error: 'Invalid request.' }, 400);
+    body = parsed as { messages?: unknown };
   } catch {
     return json({ ok: false, error: 'Invalid request.' }, 400);
   }

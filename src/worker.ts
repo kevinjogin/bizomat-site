@@ -12,12 +12,16 @@ import { handleChat, type ChatEnv } from './server/chat/handler.ts';
 import { handleContact, type ContactEnv } from './server/contact/handler.ts';
 import { handleAssessment } from './server/assessment/handler.ts';
 import { handleStripeWebhook, type StripeEnv } from './server/assessment/stripe.ts';
+import { API_HEADERS, BASELINE_HEADERS, withinEdgeLimit, type RateLimiter } from './server/security.ts';
 
 interface AssetsBinding {
   fetch(input: Request | string | URL): Promise<Response>;
 }
 export interface Env extends ChatEnv, ContactEnv, StripeEnv {
   ASSETS: AssetsBinding;
+  /** Per-IP burst limits (wrangler.toml [[ratelimits]]). Optional: absent bindings allow requests. */
+  CHAT_LIMITER?: RateLimiter;
+  FORM_LIMITER?: RateLimiter;
 }
 
 // Injected at build time from the same values written to dist/_headers.
@@ -27,7 +31,12 @@ const SECURITY_HEADERS: Record<string, string> = typeof __SECURITY_HEADERS__ ===
 /** Apply security and caching headers (only where not already present). */
 export function withHeaders(response: Response, url: URL): Response {
   const res = new Response(response.body, response);
-  for (const [name, value] of Object.entries(SECURITY_HEADERS)) if (!res.headers.has(name)) res.headers.set(name, value);
+  const isApi = url.pathname.startsWith('/api/');
+  for (const set of [SECURITY_HEADERS, BASELINE_HEADERS, isApi ? API_HEADERS : {}]) {
+    for (const [name, value] of Object.entries(set)) if (!res.headers.has(name)) res.headers.set(name, value);
+  }
+  // The page CSP (built with script hashes) describes documents; an API response gets the locked-down one.
+  if (isApi) res.headers.set('Content-Security-Policy', API_HEADERS['Content-Security-Policy']);
   if (url.pathname.startsWith('/_astro/')) res.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
   // Keep Cloudflare preview addresses out of search engines; kevos.com is the canonical domain.
   if (/\.(pages|workers)\.dev$/.test(url.hostname)) res.headers.set('X-Robots-Tag', 'noindex');
@@ -50,6 +59,11 @@ export default {
       return withHeaders(new Response(null, { status: 301, headers: { Location: location.href, 'Cache-Control': 'public, max-age=86400' } }), url);
     }
     let response: Response;
+    const scope = url.pathname.startsWith('/api/chat') ? 'chat' : /^\/api\/(contact|assessment)\/?$/.test(url.pathname) ? 'form' : '';
+    if (scope && request.method === 'POST' && !(await withinEdgeLimit(scope === 'chat' ? env.CHAT_LIMITER : env.FORM_LIMITER, scope, request))) {
+      const body = JSON.stringify({ ok: false, success: false, error: 'Too many requests. Please wait a minute and try again.', message: 'Too many requests. Please wait a minute and try again.' });
+      return withHeaders(new Response(body, { status: 429, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Retry-After': '60' } }), url);
+    }
     if (url.pathname === '/api/chat' || url.pathname === '/api/chat/') response = await handleChat(request, env);
     else if (url.pathname === '/api/contact' || url.pathname === '/api/contact/') response = await handleContact(request, env);
     else if (url.pathname === '/api/assessment' || url.pathname === '/api/assessment/') response = await handleAssessment(request, env);
