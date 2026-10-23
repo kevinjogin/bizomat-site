@@ -83,7 +83,10 @@ test('the cover component is CSP-safe and respects reduced motion', () => {
   assert.doesNotMatch(cover, /\sstyle=/);
   assert.match(cover, /prefers-reduced-motion:\s*reduce/);
   assert.match(cover, /--rc-accent: #ff6a13/);
+  // Book pages pass their cover through the shared ReadOSBookHero header.
+  assert.match(read('src/components/ReadOSBookHero.astro'), /<ReadOSAnimatedCover \{\.\.\.cover\} \/>/);
   for (const page of ['src/pages/reados/index.astro', 'src/pages/reados/collections/[book]/index.astro', 'src/pages/reados/books/[book]/index.astro', 'src/pages/reados/publications/[book]/index.astro', 'src/pages/library/index.astro', 'src/pages/library/read-the-numbers-understand-the-business/index.astro']) {
-    assert.match(read(page), /<ReadOSAnimatedCover[^>]*chapters=/, `${page} shows the animated cover with its chapter count`);
+    const source = read(page);
+    assert.ok(/<ReadOSAnimatedCover[^>]*chapters=/.test(source) || /<ReadOSBookHero[\s\S]*?cover=\{\{[^}]*chapters:/.test(source), `${page} shows the animated cover with its chapter count`);
   }
 });

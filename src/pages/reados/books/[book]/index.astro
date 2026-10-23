@@ -20,7 +20,7 @@ const href = readosBookHref(book);
     eyebrow={`READOS / ${book.category}`} title={book.title} description={book.description}
     meta={[`${book.chapters.length} chapters`,`About ${book.minutes} minutes`,'Free to read']}
     startHref={readosChapterHref(book,book.chapters[0])} cover={{title:book.title,category:book.category,slug:book.slug,publicationLabel:'READOS VOLUME',chapters:book.chapters.length}} />
-  <section class="contents"><Container size="narrow">
+  <section class="contents"><Container>
     <ReadOSChapterList items={book.chapters.map((chapter,index)=>({href:readosChapterHref(book,chapter),number:index+1,title:chapter.data.title,description:chapter.data.description,body:chapter.body,id:chapter.id}))}>
       <p class="note">The reading collection is grouped by subject and presented in alphabetical order; chapter order does not imply a prerequisite learning sequence.</p>
     </ReadOSChapterList>

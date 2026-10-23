@@ -29,7 +29,7 @@ const schema=[{
     meta={[`${guide.chapters.length} chapters`,`About ${guide.minutes} minutes`,'Free to read']}
     startHref={chapterHref(guide.chapters[0].slug)} cover={{title:guide.title,category:guide.category,slug:guide.slug,publicationLabel:'READOS GUIDE',chapters:guide.chapters.length}} />
   <section class="chapter-section">
-    <Container size="narrow">
+    <Container>
       <ReadOSChapterList items={items}>
         <aside class="notice"><strong>About this publication.</strong> An original KEVOS® educational guide using fictional examples, developed to help readers understand company financial statements. It is not an authorised adaptation or endorsement by the authors of any book consulted as background research. General education only, not financial advice.</aside>
       </ReadOSChapterList>

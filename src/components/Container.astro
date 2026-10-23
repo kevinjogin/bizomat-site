@@ -13,6 +13,7 @@ const { as: Tag = 'div', size = 'default', class: className, ...rest } = Astro.p
 
 <style>
   .container { width: min(var(--max), 100% - 2 * var(--gutter)); margin-inline: auto; }
-  .container--narrow { width: min(760px, 100% - 2 * var(--gutter)); }
+  /* Narrow reading columns start at the same left edge as the logo and every other container. */
+  .container--narrow { width: min(760px, 100% - 2 * var(--gutter)); margin-inline: max(var(--gutter), (100% - var(--max)) / 2) auto; }
   .container--wide { width: min(1440px, 100% - 2 * var(--gutter)); }
 </style>

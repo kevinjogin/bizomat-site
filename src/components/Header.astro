@@ -1,5 +1,5 @@
 ---
-import { NAV, QUOTE_CTA } from '../config/site.ts';
+import { NAV } from '../config/site.ts';
 import Container from './Container.astro';
 import SiteWordmark from './SiteWordmark.astro';
 import ThemeToggle from './ThemeToggle.astro';
@@ -24,9 +24,6 @@ const isCurrent = (href: string) => path === href;
 
     <div class="site-header__tools">
       <ThemeToggle />
-      <a class="header-cta" href={QUOTE_CTA.href} data-cta="header-quote">
-        <span>{QUOTE_CTA.label}</span><span aria-hidden="true">↗</span>
-      </a>
     </div>
   </Container>
 </header>
@@ -38,7 +35,7 @@ const isCurrent = (href: string) => path === href;
 
 </script>
 <style>
-  .site-header :is(.site-nav a, .resources-toggle, .header-cta) { text-transform: uppercase; }
+  .site-header :is(.site-nav a, .resources-toggle) { text-transform: uppercase; }
   .site-header { position: sticky; top: 0; z-index: 50; background: var(--paper); border-bottom: 1px solid transparent; transition: border-color .25s var(--ease); }
   .site-header.is-scrolled { border-bottom-color: var(--line); }
   :global(.site-header__inner) { display: flex; align-items: center; gap: clamp(.45rem, 1.8vw, 1.5rem); min-height: var(--header-h); }
@@ -59,9 +56,6 @@ const isCurrent = (href: string) => path === href;
   .resources-item__title { font-weight: 650; font-size: .94rem; }
   .resources-item__description { color: var(--muted); font-size: .8rem; }
   .site-header__tools { display: flex; align-items: center; gap: .5rem; }
-  .header-cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 46px; padding: 0 1.3rem; background: var(--ink); color: var(--paper); border: 1px solid var(--ink); border-radius: 999px; text-decoration: none; font-weight: 640; font-size: .9rem; white-space: nowrap; }
-  .header-cta:hover { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-  @media (max-width: 700px) { .header-cta { display: none; } }
   /* Keep the orange wordmark prominent on tablet widths without reducing menu legibility. */
   @media (max-width: 900px) {
     :global(.site-header__inner) { gap: clamp(.35rem, 1vw, .75rem); }
