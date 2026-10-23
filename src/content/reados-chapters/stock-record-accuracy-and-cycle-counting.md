@@ -32,6 +32,16 @@ A stock record is accurate when the quantity in the system matches the quantity 
 
 Many businesses judge stock accuracy by the net value of stocktake adjustments. That is misleading. If one item is overstated by $5,000 and another understated by $5,000, the net adjustment is zero, but both records were wrong, and both probably caused planning problems. Track both the **hit rate** by line and the **gross value** of adjustments, adding overs and unders without letting them cancel.
 
+```figure
+type: balance
+title: Why net value hides the problem
+left: Overstated item
+right: Understated item
+caption: Net adjustment $0; gross adjustment $10,000, and both records were wrong.
+- +$5,000 | −$5,000
+- Shows stock that is not there | Hides stock that is there
+```
+
 ## Why accuracy matters
 
 | Consequence | How poor records cause it |
@@ -182,6 +192,16 @@ This is an illustrative example. A distributor of hydraulic and pneumatic compon
 **Cycle counting.** An ABC cycle counting program begins, counting A items monthly, B items quarterly and C items twice a year, with blind counts, recounts of differences and recorded causes.
 
 **Result.** Within six months, accuracy across the counted lines rises to about 96%. Planners reduce safety stock on items with reliable records, releasing an estimated $180,000 of stock over the following year in this illustration, and customer service staff promise from the system without calling the warehouse.
+
+```figure
+type: bars
+title: Record accuracy at a hydraulic components distributor
+unit: %
+max: 100
+caption: Fixes to units, returns, overflow locations and receiving released an estimated $180,000 of stock.
+- Trial count of 300 locations | 72
+- *Within six months | 96
+```
 
 ## Applying this in an Australian business
 

@@ -80,6 +80,17 @@ Waiting for replenishment is a common and invisible loss. Set a **minimum and ma
 | **Zone picking** | Each picker covers one area; orders pass between zones | Large warehouses with many items |
 | **Wave picking** | Orders are released in scheduled groups, for example by carrier departure time | Operations with fixed dispatch times |
 
+```figure
+type: decision
+title: Choosing a picking method
+question: What does the order profile look like?
+caption: Match the method to the orders, not the other way round.
+- Few large orders, or urgent ones | Discrete order picking | one picker, one order
+- Many small orders with overlapping items | Batch picking | several orders in one trip
+- A large warehouse with many items | Zone picking | orders pass between zones
+- *Fixed dispatch times | Wave picking | released in scheduled groups
+```
+
 Pick paths matter too. A consistent route through the aisles, with locations numbered in that sequence and pick lists sorted to match, avoids backtracking. Pick to a trolley or tote designed for the work, with labelled compartments for batch picking, rather than carrying items by hand.
 
 ## Receiving and put-away
@@ -145,6 +156,15 @@ This is an illustrative example. A 60-person manufacturer of agricultural spray 
 - **Daily board.** A short meeting at a whiteboard each morning reviews yesterday's urgent requests, count accuracy and late kits.
 
 **Result.** After three months, record accuracy in the sample counts reaches about 97%, urgent requests from the lines drop to one or two a week, and assembly waiting time falls to about an hour a week. The storepeople pick more lines per hour, mostly because they walk less, and the time saved goes into improving the parts counter's service.
+
+```figure
+type: stats
+title: A store feeding assembly, three months on
+caption: Slotting by picks, two-bin supply, a milk run, daily cycle counts and a daily board.
+- *About 97% | Record accuracy | in the sample counts
+- 1–2 | Urgent requests a week | from the lines
+- About 1 hour | Assembly waiting a week | for materials
+```
 
 ## Applying this in an Australian business
 

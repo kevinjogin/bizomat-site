@@ -45,6 +45,33 @@ A typical problem-solving A3 has two halves. The left side tells the story of th
 | Check | What happened, compared with the target? |
 | Follow-up | What will we standardise, share and do next? |
 
+```figure
+type: svg
+title: An A3 on one sheet
+alt: An A3 sheet divided into two halves. The left half tells the problem story: background, current condition, target and analysis. The right half tells the solution story: countermeasures, plan, check and follow-up.
+caption: The left side tells the story of the problem; the right side, the story of the solution.
+viewbox: 0 0 600 280
+body:
+<rect class="bx" x="20" y="20" width="560" height="240" rx="4"/>
+<path class="lf" d="M300 20V260"/>
+<rect class="bxi" x="34" y="34" width="252" height="40" rx="4"/>
+<rect class="bxa" x="34" y="82" width="252" height="70" rx="4"/>
+<rect class="bxi" x="34" y="160" width="252" height="36" rx="4"/>
+<rect class="bxi" x="34" y="204" width="252" height="44" rx="4"/>
+<text class="tx txs" x="160" y="58" text-anchor="middle">Background</text>
+<text class="txb" x="160" y="122" text-anchor="middle">Current condition</text>
+<text class="tx txs" x="160" y="182" text-anchor="middle">Target</text>
+<text class="tx txs" x="160" y="230" text-anchor="middle">Analysis</text>
+<rect class="bxi" x="314" y="34" width="252" height="60" rx="4"/>
+<rect class="bxi" x="314" y="102" width="252" height="50" rx="4"/>
+<rect class="bxi" x="314" y="160" width="252" height="40" rx="4"/>
+<rect class="bxi" x="314" y="208" width="252" height="40" rx="4"/>
+<text class="tx txs" x="440" y="68" text-anchor="middle">Countermeasures</text>
+<text class="tx txs" x="440" y="131" text-anchor="middle">Plan</text>
+<text class="tx txs" x="440" y="184" text-anchor="middle">Check</text>
+<text class="tx txs" x="440" y="232" text-anchor="middle">Follow-up</text>
+```
+
 Formats vary, and that is fine. The thinking matters more than the template.
 
 ## Completing each section well
@@ -151,6 +178,17 @@ This is an illustrative example. A distribution centre picks about 50,000 order 
 - New starters work alongside an experienced picker for their first two weeks.
 
 **Check.** After eight weeks, errors average 0.45% of lines, about 225 a month, close to but above the target. The remaining errors are analysed; most involve a product family with similar packaging from one supplier. A second PDCA cycle adds that family to scanning confirmation, and errors fall below 0.4%.
+
+```figure
+type: bars
+title: Picking errors as a share of order lines
+unit: %
+max: 1.4
+caption: About 50,000 lines a month: from about 600 errors to about 225, close to but above the target.
+- Baseline, 12 weeks | 1.2
+- Target | 0.4
+- *After eight weeks | 0.45
+```
 
 **Follow-up.** The slotting rule and labelling standard are written into standard work, the new starter buddy system becomes standard, and the A3 is shared with the company's other distribution centre.
 

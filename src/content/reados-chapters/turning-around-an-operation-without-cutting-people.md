@@ -94,6 +94,19 @@ With more ideas than capacity, a simple **impact and difficulty matrix** helps. 
 | **High impact** | Do now: quick wins that build momentum | Plan carefully: major projects with resources and sponsors |
 | **Low impact** | Do if easy, or delegate to local teams | Defer or drop |
 
+```figure
+type: matrix
+title: Prioritise by impact and difficulty
+x: Difficulty: low → high
+y: Impact: low → high
+hot: 1
+caption: Start with quick wins to build momentum and fund the bigger projects.
+- Do now | quick wins that build momentum
+- Plan carefully | major projects with resources
+- Do if easy | or delegate to local teams
+- Defer or drop
+```
+
 The matrix turns arguments into a shared conversation. Early quick wins matter: they free capacity, build credibility and show that suggestions lead to action.
 
 ## Step 8: Improve in the right order
@@ -143,6 +156,17 @@ This is an illustrative example. A 90-person manufacturer of steel storage produ
 **Prioritise and improve.** From 26 ideas on the impact and difficulty matrix, six quick wins are implemented in the first two months, including a press tool refurbishment, welding parameter standards and padded handling racks. Two larger projects follow: a welding fixture redesign and a reorganised flow between folding and welding.
 
 **Result after nine months.** Rework and scrap fall to about $16,000 a month, on-time delivery reaches about 92% and overtime is roughly halved. The capacity freed is used to bring folding work back in-house, removing the subcontract cost. Two employees who retire are not replaced, reducing headcount through attrition. Participation in improvement ideas, almost nil at the start, becomes part of each team's weekly routine.
+
+```figure
+type: compare
+title: A 90-person manufacturer, nine months on
+cols: Start | After nine months
+best: 2
+caption: No redundancies from improvement: freed capacity cut overtime, then brought folding work back in-house.
+- *Rework and scrap | About $40,000 a month | About $16,000 a month
+- On-time delivery | About 70% | About 92%
+- Overtime | About $25,000 a month | Roughly halved
+```
 
 ## Applying this in an Australian business
 

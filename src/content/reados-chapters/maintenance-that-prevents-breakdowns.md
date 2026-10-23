@@ -27,6 +27,17 @@ This article explains the main maintenance strategies, how to rank equipment by 
 | **Condition-based** | Check condition and act when it starts to deteriorate | Items whose failure develops gradually and can be detected, such as bearings, hoses and electrical connections |
 | **Predictive** | Use trends in measurements, such as vibration, temperature or oil analysis, to forecast failure | Critical equipment where early warning is worth the cost of monitoring |
 
+```figure
+type: decision
+title: Choosing a maintenance strategy
+question: How does the item fail?
+caption: Rank equipment by criticality first, then match the strategy to the failure pattern.
+- Cheap, non-critical, spares on hand | Run to failure
+- Predictable wear life | Time-based preventive
+- Gradual, detectable deterioration | Condition-based
+- *Critical, worth early warning | Predictive
+```
+
 Run to failure is a legitimate choice for the right items. The mistake is making it the default for everything, including the machines the business cannot afford to lose. The underlying idea, sometimes called reliability-centred maintenance, is that maintenance requirements depend on each asset's function and operating context, so the strategy should be chosen deliberately rather than inherited.
 
 ## Rank equipment by how critical it is
@@ -110,6 +121,17 @@ This is an illustration. A plastics injection moulding business runs eight mould
 **Repeat failures.** Chiller trips keep recurring. Asking why leads to a condenser clogged with dust from a nearby grinding area. Regular condenser cleaning is added to the planned schedule, and a dust screen is fitted. The trips stop.
 
 After four months, unplanned downtime on the two critical machines falls to about 12 hours a month, while planned maintenance takes about 6 hours a month, mostly outside production time. At an illustrative lost contribution of around $120 per machine-hour, the 18 fewer hours of unplanned downtime are worth roughly $2,000 a month, before counting fewer late deliveries to the main customer.
+
+```figure
+type: bars
+title: Downtime on two critical moulding machines
+unit: hours a month
+max: 32
+caption: 18 fewer hours of unplanned downtime are worth roughly $2,000 a month at an illustrative $120 a machine-hour.
+- Unplanned, before | 30
+- *Unplanned, after four months | 12
+- Planned maintenance, mostly outside production | 6
+```
 
 ## How this applies to a small Australian business
 

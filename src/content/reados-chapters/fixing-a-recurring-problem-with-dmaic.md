@@ -83,6 +83,18 @@ Not all fixes are equally strong. In rough order of preference:
 | **Warn** | An alarm that relies on someone responding | Moderate |
 | **Inspect later** | Final inspection or sorting | Weakest; it contains the problem rather than preventing it |
 
+```figure
+type: layers
+title: From the strongest fix to the weakest
+shape: pyramid
+caption: Prefer fixes that prevent the defect over those that only find it.
+- *Eliminate the cause
+- Prevent the error
+- Detect at the source
+- Warn
+- Inspect later
+```
+
 Then trial before full release:
 
 - **Set success criteria** for quality, time, safety and cost.
@@ -129,6 +141,17 @@ This is an illustration. A 25-person manufacturer assembles electronic controlle
 **Control.** The cleaning setting and the visual check go into the work instructions. A simple daily run chart of first-time pass rate is posted at the line, with a reaction plan: if the rate falls below 96% for two days, the supervisor checks the printer settings and stencil. The supervisor owns the chart.
 
 The reduction from about 7% to 2.5% on 500 boards a week avoids around 22 reworked boards a week. At about $30 each, that is roughly $675 a week, or about $32,000 a year over 48 working weeks, from a project that took two people around four weeks part-time.
+
+```figure
+type: bars
+title: Controller boards failing final test
+unit: %
+max: 10
+caption: About 22 fewer reworked boards a week at about $30 each: roughly $32,000 a year.
+- Reported, with a worn test rig | 9
+- True baseline after fixing the rig | 7
+- *After DMAIC | 2.5
+```
 
 ## How this applies to a small Australian business
 

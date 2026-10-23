@@ -68,6 +68,17 @@ The best guide to which method to start with is the nature of the problem.
 | Output is capped by one area; deliveries late; most areas have spare time while one is always behind | A constraint | Theory of constraints |
 | The cause and fix are obvious and low risk | None that needs a method | Just fix it, then check it worked |
 
+```figure
+type: decision
+title: Choose the method from the problem
+question: What do you observe?
+caption: Diagnose first; the methods converge once the main problem is under control.
+- Waiting, stock and handling everywhere | Lean | waste and flow
+- Unpredictable quality, recurring defects | Six Sigma | variation
+- One area caps output while others wait | Theory of constraints | the bottleneck
+- *An obvious, low-risk fix | Just fix it | then check it worked
+```
+
 Many businesses have all three problems at once. The sequence still matters. If output is constrained, start by finding the constraint, because it tells you where Lean and Six Sigma effort will pay. If there is no clear constraint but lead times are long, start with flow. If a specific chronic defect is costing money, a focused DMAIC project may be the most valuable first step.
 
 ## The methods converge
@@ -124,6 +135,18 @@ This is an illustrative example. A 50-person cabinet and joinery manufacturer ma
 **Subordinate.** The router, which had been cutting as much as possible to keep busy, now releases panels at the edgebander's pace, keeping a buffer of about half a day of work in front of it. Work in progress between the router and edgebander falls sharply, and the floor space it occupied is recovered.
 
 **Six Sigma on the constraint.** Because every rejected panel at the edgebander now costs output for the whole business, the owner sponsors a focused DMAIC project on edge chipping. The team verifies that most chipping comes from worn pre-milling cutters and inconsistent panel feed, introduces a cutter change schedule based on metres edged and a feed guide, and reduces rejects to about 1.5%. Good output rises to about 322 panels a day, giving spare capacity to start clearing the backlog.
+
+```figure
+type: bars
+title: Good panels a day from the edgebander
+unit: panels
+max: 340
+caption: Demand needs about 300 good panels a day; exploiting the constraint, then cutting its rejects, cleared it.
+- Before: 7 hours, 6% rejects | 263
+- *Exploited: 8.2 hours, 6% rejects | 307
+- Plus DMAIC: rejects 1.5% | 322
+- Daily demand | 300
+```
 
 **Lean where it now matters.** With the edgebander protected, a value stream map shows that the next biggest delay is at packing, where labels and hardware kits are prepared in batches. A small Lean improvement project moves kit preparation to a line-side supermarket.
 

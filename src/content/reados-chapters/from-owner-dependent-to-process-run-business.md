@@ -94,6 +94,16 @@ A **RACI matrix** helps make accountability explicit for each key activity:
 | C | Consulted | Specialists whose input is sought, such as engineering or finance |
 | I | Informed | People who need to know the outcome, such as the manager or the customer contact |
 
+```figure
+type: layers
+title: RACI: one accountable person per activity
+caption: Assign roles, not names; people change, roles persist.
+- Responsible | does the work
+- *Accountable | answers for the result and signs off
+- Consulted | specialists whose input is sought
+- Informed | told the outcome
+```
+
 The most common failure in small businesses is having no "A", or several, so that everyone assumes someone else is checking. One accountable person per activity removes that gap.
 
 ### Step 6: Write it clearly and visually
@@ -114,6 +124,19 @@ A document alone does not change behaviour. Use a structured handover often desc
 1. **I do**: an experienced person demonstrates the process while the learner watches and follows the SOP.
 2. **We do**: they perform it together, with the learner taking more of the steps.
 3. **You do**: the learner performs it independently while the experienced person observes and gives feedback.
+
+```figure
+type: steps
+title: Seven steps to a working SOP
+caption: Document how the work really happens, not how it should.
+- Start with the problem and goal
+- Set the process boundary
+- Capture current best practice with the team
+- Draw the flow and assign roles
+- Anticipate failures; assign RACI
+- Write it clearly and visually
+- *Train, observe and hand over
+```
 
 Then reduce supervision gradually. At first the learner reports back after each completion. Later they report on a routine schedule. Record who is trained on which procedures in a simple skills matrix.
 

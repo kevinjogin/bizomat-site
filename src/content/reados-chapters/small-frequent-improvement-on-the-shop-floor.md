@@ -77,6 +77,17 @@ Each step prevents a common failure. Without a baseline, the saving cannot be pr
 
 5S is a method of workplace organisation, usually described in five steps: **sort** (remove what is not needed), **set in order** (a place for everything), **shine** (clean and inspect), **standardise** (make the arrangement the normal way) and **sustain** (keep it going). The first three are easy and satisfying. The last two are where most workplaces fail. A big clean-up produces a tidy area for a few weeks, then clutter slowly returns.
 
+```figure
+type: cycle
+title: 5S workplace organisation
+caption: It fades when treated as a one-off cleaning event rather than part of doing the work well.
+- Sort | remove what is not needed
+- Set in order | a place for everything
+- Shine | clean and inspect
+- Standardise
+- *Sustain
+```
+
 5S fades for predictable reasons: it is treated as a one-off event, it is called housekeeping and seen as cleaning rather than as part of doing the work well, nobody owns each area, and leaders stop looking. To keep it alive:
 
 - **Give each area an owner** who maintains its standard.
@@ -126,6 +137,15 @@ This is an illustration. A 20-person spare parts distributor packs about 300 ord
 **5S.** Shadow boards and labelled shelves are set up at each bench, each bench has an owner, and a five-minute reset closes each shift. The owner walks the area for ten minutes each week and asks each packer about their bench standard.
 
 **The routine.** An improvement board lists ideas, the date raised and their status. Over the next three months, 18 ideas are raised, 12 are trialled and 9 become standard. Two packers who had never suggested anything before contribute ideas once they see earlier ones acted on within a week.
+
+```figure
+type: funnel
+title: Three months of small improvements at the packing benches
+caption: Packing time fell from about 4.5 to 3.6 minutes an order: about 4.5 hours saved a day at 300 orders.
+- Ideas raised | 18
+- Trialled | 12
+- *Standardised | 9
+```
 
 ## How this applies to a small Australian business
 

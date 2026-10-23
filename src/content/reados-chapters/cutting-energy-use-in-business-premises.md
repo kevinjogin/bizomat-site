@@ -117,6 +117,18 @@ A sensible sequence for reducing energy use is:
 5. **Upgrade equipment**: LED lighting, variable speed drives, efficient motors and heat pumps, especially when equipment is due for replacement.
 6. **Generate and store**: solar panels and, where justified, batteries.
 
+```figure
+type: steps
+title: The order of action for cutting energy use
+caption: Each step changes the next: smaller loads mean smaller equipment and a smaller solar system.
+- Measure | bill, interval data, main loads
+- Switch off and schedule | base load and running hours
+- Fix faults | leaks, sensors, coils, seals
+- Reduce loads | shading, insulation, sealing
+- Upgrade equipment | LED, drives, heat pumps
+- *Generate and store | solar, then batteries if justified
+```
+
 The order matters because each step changes the next. Reducing cooling loads may mean a smaller air conditioner is enough when the old one fails. Cutting base load and daytime use changes the right size for a solar system. The [buying for the whole life of equipment](/reados/collections/investment-appraisal-and-business-cases/buying-for-the-whole-life-of-equipment/) article covers comparing equipment on lifetime cost rather than purchase price.
 
 ## Solar and storage
@@ -144,6 +156,15 @@ This is an illustration. A 25-person wholesale distributor operates from a 3,000
 **Office.** West-facing windows overheat the office in summer afternoons. External shading is fitted, ceiling fans are added, and the cooling set point is raised slightly. These savings will also be checked against next summer's sub-metered data.
 
 Together, the measured and calculated changes save around 80,500 kWh a year, about 38% of the original use, worth roughly $24,000 a year. Only then does the business get quotes for solar, sized to its reduced daytime load.
+
+```figure
+type: stack
+title: Annual savings at a 25-person distributor
+unit: kWh
+caption: About 80,500 kWh, 38% of 210,000 kWh, worth roughly $24,000 a year; coolroom and office savings await sub-metered data.
+- Base load: 5 kW less over about 5,600 closed hours | 28000
+- *Lighting: LED fittings and occupancy sensors | 52500
+```
 
 ## How this applies to a small Australian business
 

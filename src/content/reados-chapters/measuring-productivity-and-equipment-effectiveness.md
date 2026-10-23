@@ -96,6 +96,16 @@ A machine is scheduled for an 8-hour shift (480 minutes) with 30 minutes of plan
 
 A simpler cross-check gives the same answer: good parts × ideal cycle time ÷ planned time = 315 × 1 ÷ 450 = 70%.
 
+```figure
+type: funnel
+title: OEE for one 480-minute shift
+caption: 0.867 × 0.846 × 0.955 ≈ 70%; each factor looks respectable, yet 30% of potential is lost.
+- Planned production time | 450 min
+- Running time: availability 86.7% | 390 min
+- At ideal speed: performance 84.6% | 330 min
+- *Good parts: quality 95.5% | 315 min
+```
+
 Each factor looks respectable on its own, yet combined they show that 30% of the machine's potential is being lost. OEE figures around 85% are often quoted as world-class for discrete manufacturing, while many plants operate well below that. More important than any benchmark is your own trend, and understanding which losses are largest.
 
 ### The six big losses
@@ -177,6 +187,17 @@ OEE is therefore about 0.68 × 0.88 × 0.97 ≈ 58%. The machines looked busy be
 The team focuses on the biggest loss first: setups. They introduce standard setup sheets, preset tools offline while the machine is running, build two quick-change fixtures for the most common part families and schedule similar jobs together. They also introduce a rule that material and current drawings must be kitted at the machine before a job is released. Within three months, average setup time drops to about 35 minutes and waiting time falls sharply. Availability rises to around 80%, and OEE to around 69%.
 
 That improvement is roughly equivalent to adding a fifth more capacity across the two machines, enough to cut overtime and delay the purchase of a third machine by at least a year. The measurement cost a few minutes per operator per day and some spreadsheet work. The improvement was worth far more than the equipment budget.
+
+```figure
+type: compare
+title: Two machining centres, measured before buying a third
+cols: Before | Three months later
+best: 2
+caption: Roughly a fifth more capacity: overtime cut and a third machine deferred by at least a year.
+- Average setup | About 75 minutes | About 35 minutes
+- Availability | 68% | About 80%
+- *OEE | About 58% | About 69%
+```
 
 ## Productivity in service and project businesses
 

@@ -105,6 +105,18 @@ Review effort and result scores weekly at minimum, and for fast-moving activitie
 | A | 50 calls/day | 40 | 80% | $25,000/week | $20,000 | 80% |
 | B | 50 calls/day | 60 | 120% | $25,000/week | $30,000 | 120% |
 
+```figure
+type: bars
+title: Effort and result scores side by side
+unit: %
+max: 130
+caption: Expected effort 50 calls a day; expected result $25,000 a week.
+- A: effort | 80
+- A: result | 80
+- B: effort | 120
+- *B: result | 120
+```
+
 The review shows who needs support and who deserves recognition. Across the business, the same data reveals which products, territories or customer types are growing. This is the foundation of useful management reporting.
 
 ## Step 7: Run the improvement cycle
@@ -176,6 +188,19 @@ An engineering services firm with nine people, doing drafting, design and projec
 **Step 6: weekly review.** Every Monday at 8:30, a twenty-minute review of the scoreboard on the office whiteboard.
 
 **Step 7: improvement cycle.** In week four, contacts are on target but quote requests are flat. The team realises that their check-in calls are too general. They change the ritual so that each call asks about one specific upcoming project or problem. Quote requests rise over the following month. In week nine, quote turnaround slips because templates do not cover a common job type, so a new template is added.
+
+```figure
+type: cycle
+title: Seven steps of a weekly execution system
+caption: Goal: monthly invoiced revenue from $110,000 to $130,000 by 30 June.
+- Goal statement
+- Difficulties
+- A possibility for each
+- Success rituals
+- Effort and result measures
+- Weekly review
+- *Improvement cycle
+```
 
 By the end of June, revenue is close to the target. More importantly, the business has a repeatable rhythm for generating work that does not depend on chance.
 

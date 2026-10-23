@@ -31,6 +31,16 @@ TPM focuses on losses that reduce how much good output equipment produces. A wid
 | Start-up rejects | Scrap and rework while the process stabilises | Quality |
 | Production rejects | Defects during stable running | Quality |
 
+```figure
+type: tree
+title: Six big losses, by OEE factor
+caption: TPM treats reliability as everyone's job, not only maintenance's.
+- Lost equipment effectiveness
+  - Availability | breakdowns; set-up and adjustment
+  - Performance | small stops; reduced speed
+  - *Quality | start-up rejects; production rejects
+```
+
 These losses map onto **overall equipment effectiveness** (OEE), which multiplies availability, performance and quality. The [measuring productivity](/reados/collections/lean-and-continuous-improvement/measuring-productivity-and-equipment-effectiveness/) article explains how OEE is calculated and its limitations. Small stops and reduced speed are often the largest hidden losses, because they are rarely recorded: an operator clears a jam in thirty seconds forty times a shift and nobody writes it down.
 
 ## The pillars of TPM
@@ -131,6 +141,18 @@ A small food manufacturer's packaging line is the bottleneck of the factory. A m
 The business starts TPM on this line. An initial cleaning session with operators and a maintainer produces 46 tags, including worn guide rails, a loose sensor bracket causing false jam signals, product build-up on a transfer plate and a leaking air fitting reducing pressure to the case erector. The team fixes most tags within three weeks, creates a ten-minute start-of-shift cleaning and inspection standard, marks gauges and bolts and runs a focused improvement project on the remaining most frequent stop.
 
 After three months, availability is 90%, performance 82% and quality 98%. OEE is 0.90 × 0.82 × 0.98, or about 72.3%. Because the line is the bottleneck, good output rises by about a quarter (72.3 ÷ 57.7 is about 1.25) without new equipment or extra shifts. The business then extends the approach to its filling machine.
+
+```figure
+type: compare
+title: TPM on a packaging bottleneck
+cols: Before | After three months
+best: 2
+caption: An initial clean with operators raised 46 tags; good output rose about a quarter without new equipment.
+- Availability | 85% | 90%
+- Performance | 70% | 82%
+- Quality | 97% | 98%
+- *OEE | About 57.7% | About 72.3%
+```
 
 ## How this applies to a small Australian business
 
