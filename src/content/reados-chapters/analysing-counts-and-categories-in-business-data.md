@@ -63,6 +63,16 @@ The same table can be read with different percentages, and each answers a differ
 - **Row percentages**: of surface finish defects, what share occur at night? 45 of 60, or 75%.
 - **Rates against output**: if night shift produces far more parts than day shift, raw defect counts mislead; divide by the number of parts produced on each shift.
 
+```figure
+type: bars
+title: Surface finish defects as a share of each shift's defects
+unit: %
+max: 50
+caption: Column percentages: 15 of 80 on day shift, 45 of 100 at night. Read by row, 75% of surface finish defects occur at night.
+- Day shift | 19
+- *Night shift | 45
+```
+
 Decide which question matters before calculating, and label percentages clearly so readers know what the base is.
 
 ## Absolute and relative differences
@@ -152,6 +162,16 @@ This is an illustrative example. A manufacturer buys machined housings from two 
 | Complex housings | 14 defective of 200 (7.0%) | 34 defective of 500 (6.8%) |
 | Simple housings | 16 defective of 800 (2.0%) | 6 defective of 300 (2.0%) |
 | All housings | 30 of 1,000 (3.0%) | 40 of 800 (5.0%) |
+
+```figure
+type: compare
+title: Defect rates by supplier and part type
+cols: Supplier A | Supplier B
+caption: Supplier B makes most of the complex housings; within each part type the suppliers perform almost identically.
+- Complex housings | 7.0% (14 of 200) | 6.8% (34 of 500)
+- Simple housings | 2.0% (16 of 800) | 2.0% (6 of 300)
+- *All housings | 3.0% (30 of 1,000) | 5.0% (40 of 800)
+```
 
 Within each part type, the suppliers perform almost identically. The overall difference arises because Supplier B makes more of the difficult parts.
 

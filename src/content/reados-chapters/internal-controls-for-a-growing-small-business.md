@@ -79,6 +79,16 @@ Before paying a supplier invoice, check that three documents agree:
 
 This **three-way match** catches overcharging, short deliveries and invoices for goods never received. Many accounting systems can automate it.
 
+```figure
+type: venn
+title: The three-way match
+centre: Pay
+caption: Pay only when all three agree; it catches overcharging, short deliveries and invoices for goods never received.
+- Purchase order | what was ordered, at what price
+- Goods receipt | what was actually received
+- Invoice | what the supplier is charging
+```
+
 ## Control 3: Scheduled payment runs
 
 Instead of paying bills whenever they arrive, set fixed payment days, such as once or twice a week. The founder's company processes all payments on Mondays and Fridays, with bills approved each morning as they arrive.
@@ -201,6 +211,18 @@ With help from the accountant, the owner:
 - builds a compliance calendar in the shared calendar, with an owner and reminders for every obligation.
 
 Within three months, the owner's evenings are free, payments are on time, purchasing costs fall because quotations are compared consistently, and a second attempted payment scam is stopped at the verification call.
+
+```figure
+type: checklist
+title: Controls at a precision engineer grown from 8 to 35 people
+caption: Within three months the owner's evenings were free, and a second payment scam was stopped at the verification call.
+- x Delegation of authority: purchases up to $20,000 by the operations manager
+- x Three quotes above $5,000, evaluated on technical and commercial grounds
+- x Twice-weekly payment runs with dual authorisation
+- *x A call to a known number for any bank detail change
+- x Weekly bank reconciliations, reviewed monthly
+- x A compliance calendar with owners and reminders
+```
 
 ## Summary
 

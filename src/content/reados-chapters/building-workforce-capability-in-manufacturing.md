@@ -48,6 +48,18 @@ A **skills matrix** is a simple grid with the tasks or skills that matter down o
 | **3** | Competent; performs independently to the standard |
 | **4** | Expert; can train and assess others |
 
+```figure
+type: layers
+title: Skill levels in a skills matrix
+shape: pyramid
+caption: Aim for at least three people at level 3 or above in every critical task.
+- *4 · Expert | can train and assess others
+- 3 · Competent | performs independently to the standard
+- 2 · With support | occasional help needed
+- 1 · In training | only under direct supervision
+- 0 · Not trained
+```
+
 Building one is straightforward:
 
 1. **List the tasks** that matter, from the process, the work instructions and the control plan. Include setting up, changeovers, quality checks, maintenance tasks, safety-critical tasks and system use, not just running machines.
@@ -78,6 +90,16 @@ A proven method is **Job Instruction**, part of the Training Within Industry pro
 2. **Present the operation**: demonstrate one important step at a time, then again stressing the key points, then again explaining the reasons for each key point.
 3. **Try out performance**: the learner does the job while the trainer corrects errors, then does it again explaining the key points and reasons, until the trainer is confident they understand.
 4. **Follow up**: the learner works independently, with the trainer checking frequently at first and then less often, and encouraging questions.
+
+```figure
+type: steps
+title: Job Instruction in four steps
+caption: Demonstrate one important step at a time, stressing key points and their reasons.
+- Prepare the learner | explain the job and why it matters
+- Present the operation | step, key points, reasons
+- Try out performance | the learner does it and explains
+- *Follow up | check often at first, then less
+```
 
 The method depends on a **job breakdown** prepared beforehand: the important steps, the key points within each step (anything that makes or breaks the job, affects safety or makes the work easier) and the reasons for each key point. Preparing breakdowns also captures the knowledge of experienced workers in a usable form, which is valuable in its own right.
 
@@ -149,6 +171,17 @@ This is an illustrative example. A 45-person plastics injection moulding busines
 **Retention.** The matrix is displayed in the lunchroom, with each person's progress visible. New skills are recognised at monthly team meetings and reflected in classification reviews in line with the applicable award.
 
 **Result after 12 months.** Coverage of critical tasks rises to about 90%. Two people can now change the large moulds independently, and the standardised method, captured in the job breakdowns, has also shortened changeover time. Time to independent competence for new operators falls from about six months to about three, because training now follows a defined path. The senior setter retires on schedule, with the knowledge staying in the business.
+
+```figure
+type: compare
+title: A 45-person moulder that built its own setters
+cols: Start | After 12 months
+best: 2
+caption: The senior setter retired on schedule, with the knowledge staying in the business.
+- *Critical tasks with three or more competent people | 55% | About 90%
+- Large-mould changeovers | One setter, retiring in about 18 months | Two people, independently
+- Time to independent competence | About six months | About three months
+```
 
 ## Applying this in an Australian manufacturing business
 

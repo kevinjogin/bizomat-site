@@ -28,6 +28,16 @@ Business data can be divided into three broad kinds:
 | **Transaction data** | Events involving master data | Orders, receipts, invoices, payments, production jobs, timesheets | Created continuously, rarely changed after completion |
 | **Reference data** | Shared lists and codes used to classify other data | Units of measure, currencies, countries, payment terms, defect codes | Changes rarely and is often set by standards |
 
+```figure
+type: tree
+title: Three kinds of business data
+caption: Errors behave differently: a wrong master record repeats in every transaction that uses it.
+- Business data
+  - *Master data | items, customers, suppliers · used constantly
+  - Transaction data | orders, invoices, timesheets · created continuously
+  - Reference data | units, currencies, codes · changes rarely
+```
+
 The distinction matters because errors behave differently. A wrong transaction affects one order. A wrong master record affects every transaction that uses it, often for months before anyone notices. A part with the wrong unit of measure, for example, can distort every purchase, stock count and cost calculation that involves it.
 
 ## Why master data matters to manufacturers and distributors
@@ -87,6 +97,17 @@ Most duplicates and inconsistencies are created at the moment a new record is ad
 3. **Apply naming standards.** Descriptions follow an agreed pattern, such as noun first then attributes, so similar items sort and search together, for example "Bolt, hex, M12 x 50, grade 8.8, zinc plated".
 4. **Check and approve.** The data steward checks for duplicates and completeness before the record is activated.
 5. **Restrict who can create records.** A small number of trained people create master records, rather than everyone with system access.
+
+```figure
+type: steps
+title: Controlling how records are created
+caption: Most duplicates are created at the moment a new record is added.
+- Search first
+- Use a request form
+- Apply naming standards
+- Check and approve
+- *Restrict who can create records
+```
 
 ### Item numbering
 
@@ -159,6 +180,15 @@ This is an illustrative example. A distributor of industrial fasteners and fitti
 **Diagnosis.** A review finds about 480 suspected duplicates, around 6% of active items, mostly caused by inconsistent descriptions such as "M12x50 hex bolt 8.8 ZP", "Bolt hex M12 50mm gal" and "HEX BOLT M12 X 50". Many duplicates hold stock, so the business has been reordering items it already holds.
 
 **Clean-up.** Over three months, a purchasing officer confirms 410 genuine duplicates with the warehouse supervisor, moves stock and open orders to surviving records and blocks the duplicates. Surplus stock worth an estimated $95,000 is identified; most is absorbed by normal demand over the following year, reducing purchases by about that amount.
+
+```figure
+type: funnel
+title: Cleaning up duplicate items at a fastener distributor
+caption: Surplus stock worth an estimated $95,000 was identified; most was absorbed by normal demand over the following year.
+- Items in the inventory system | about 8,000
+- Suspected duplicates | about 480, around 6%
+- *Genuine duplicates confirmed and blocked | 410
+```
 
 **Prevention.** The business adopts a description standard, restricts item creation to two trained staff using a request form, and requires a search before creation. Supplier bank detail changes now require a call-back to a known number and a second approver.
 

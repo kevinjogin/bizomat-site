@@ -66,6 +66,17 @@ A simple schedule makes routine care visible. An illustrative set for a business
 - Review documentation and contact lists.
 - Review licensing against actual deployment.
 
+```figure
+type: timeline
+title: Routine database care by frequency
+caption: A simple schedule makes routine care visible, and shows who does each task.
+- Daily | Check backups completed | review alerts; confirm availability
+- Weekly | Storage and integrity | maintenance jobs; failed logins
+- Monthly | Tested security patches | performance trends; new systems covered
+- *Quarterly | Test a restore | review user, vendor and remote access
+- Annually | Recovery targets with owners | versions, documentation, licensing
+```
+
 ## Options for resourcing the work
 
 | Option | Suits | Strengths | Watch for |
@@ -202,6 +213,18 @@ This is an illustrative example. A manufacturer with 70 staff uses a production 
 **Changes.** The parties agree a responsibility matrix. The IT provider implements database-aware backups with transaction logs, monthly reporting and quarterly restore tests witnessed by the operations manager. The vendor schedules an upgrade within the support window. The costing database moves to a server location covered by backups, with documentation written by the finance officer and a second person trained. Credentials move into a shared password vault.
 
 **Result.** The first restore test succeeds in three hours. The business now has written responsibilities, evidence that backups work, an upgrade plan and no databases hidden on laptops. The additional cost is a modest increase in the IT provider's monthly fee in this illustration.
+
+```figure
+type: compare
+title: A 70-person manufacturer after a near miss
+cols: Found | Changed to
+best: 2
+caption: Written responsibilities and evidence that backups work, for a modest increase in the monthly IT fee.
+- Backups | Server files nightly, not database-aware | Database-aware, with transaction logs
+- Restore test | Never tested | Quarterly; the first succeeds in three hours
+- Costing database | On a laptop, copied to USB occasionally | On a backed-up server, a second person trained
+- *Support | Ending within 14 months | Upgrade scheduled within the support window
+```
 
 ## Applying this in an Australian business
 

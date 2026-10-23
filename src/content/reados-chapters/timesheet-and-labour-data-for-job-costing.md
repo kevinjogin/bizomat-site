@@ -60,6 +60,17 @@ Then there is **non-chargeable time**: hours that are worked and paid but cannot
 
 For illustration, consider a tradesperson who earns $40 an hour. Adding superannuation at 12% gives $44.80. Allowing about $7.20 an hour for paid leave and public holidays and about $3.00 an hour for payroll tax and workers compensation gives a loaded cost of roughly $55 per hour worked. If about 80% of worked hours are chargeable to jobs, the cost per chargeable hour is about $55 ÷ 0.8, or roughly $69. Costing jobs at the $40 wage would understate the cost of each chargeable hour by about $29, or more than 40%. Actual on-costs vary by business, state, award and individual circumstances, so calculate your own with your accountant.
 
+```figure
+type: stack
+title: From a $40 wage to a loaded labour rate
+unit: $
+caption: About $55 per hour worked; at 80% chargeable, about $69 per chargeable hour, more than 40% above the wage.
+- Wage | 40
+- Superannuation at 12% | 4.80
+- Paid leave and public holidays | 7.20
+- *Payroll tax and workers compensation | 3.00
+```
+
 ### Keep rates current
 
 Loaded rates go out of date. Award minimum wages usually change from 1 July each year after the Fair Work Commission's annual wage review, enterprise agreements set their own increases, and on-costs such as insurance premiums and payroll tax change too. Review loaded rates at least annually, and whenever wages or on-costs change significantly, so job costs and quotes keep pace. Keep separate rates for different trades or classifications where their costs differ materially.
@@ -159,6 +170,16 @@ This is an illustrative example. A structural steel fabrication and installation
 **Change.** The business introduces a mobile time app. Each job sheet carries a barcode, and workers scan it when they start a task and select a cost code from a short list: cutting, drilling, welding, painting, loading, installation, travel, rework and waiting. Supervisors approve time daily. A loaded labour rate, calculated with the accountant, replaces the wage rate in job costing.
 
 **Findings.** Within three months, hours on the general code fall to about 4%. With time now accurately allocated and costed at loaded rates, job reports show that small stair and handrail jobs, quoted from old norms, consistently take about 20% more hours than estimated, while large structural jobs are slightly more profitable than thought. Rework on painting accounts for a noticeable share of hours on several jobs.
+
+```figure
+type: bars
+title: Hours booked to the general workshop code
+unit: %
+max: 20
+caption: Accurate allocation showed small stair and handrail jobs taking about 20% more hours than estimated.
+- Paper timesheets typed in on Monday | 15
+- *Mobile app with job barcodes, three months on | 4
+```
 
 **Actions.** Estimating norms for stairs and handrails are updated, prices rise accordingly, and a review of painting preparation reduces rework.
 

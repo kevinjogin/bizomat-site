@@ -39,6 +39,16 @@ This article explains the properties of good identifiers, the debate between mea
 | Strengths | People can recognise items from the number; similar items sort together | Never need to change; no scheme to break; easy to generate |
 | Weaknesses | Break when items do not fit the scheme or attributes change; schemes run out of codes; encourage guessing | Mean nothing without a lookup; similar items may be far apart |
 
+```figure
+type: compare
+title: Meaningful or plain identifiers
+cols: Meaningful | Plain
+caption: Whatever the choice, never change an identifier because an attribute changed.
+- Example | BR-SS-M12-50 | 104857
+- Strengths | Recognisable; similar items sort together | Never need to change; easy to generate
+- *Weaknesses | Break when attributes change; codes run out | Mean nothing without a lookup
+```
+
 Meaningful schemes look attractive at first but often age badly. A category embedded in a part number becomes wrong when the product moves to another category; a two-digit material code runs out; a new product fits no existing pattern. Many businesses now use **plain identifiers** for identity, and store attributes such as category, material and size as separate searchable fields. Short **prefixes** indicating the type of record, such as "J" for jobs and "Q" for quotes, are a useful middle ground, because record types rarely change.
 
 Whatever the choice, never change an identifier because an attribute changed. If an item's material changes in a way that affects form, fit or function, it usually needs a new identifier altogether, as a different item.
@@ -74,6 +84,16 @@ For a base job number 24517:
 - From the right: 7 × 3 = 21, 1 × 1 = 1, 5 × 3 = 15, 4 × 1 = 4, 2 × 3 = 6.
 - Total: 21 + 1 + 15 + 4 + 6 = 47.
 - The next multiple of 10 is 50, so the check digit is 3, and the full job number becomes 245173.
+
+```figure
+type: steps
+title: A check digit for job number 24517
+caption: Typing 245713 by mistake gives a total of 35 and a check digit of 5, not 3, so the system rejects it.
+- From the right, multiply by 3 and 1 alternately | 7×3, 1×1, 5×3, 4×1, 2×3
+- Add the results | 21 + 1 + 15 + 4 + 6 = 47
+- Round up to the next multiple of 10 | 50
+- *Check digit 50 − 47 = 3 | full number 245173
+```
 
 If someone types 245713, swapping the 1 and 7, the base 24571 gives a total of 35, so its check digit should be 5, not 3. The system detects the error. This method catches every single-digit error and most swaps of adjacent digits, missing only swaps of digits that differ by five. More elaborate schemes catch even more errors.
 

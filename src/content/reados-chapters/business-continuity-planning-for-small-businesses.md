@@ -165,6 +165,19 @@ A plan that has never been tested will have gaps. Test it:
 
 Review the plan at least annually and after any significant change, such as new premises, systems, key staff or major customers.
 
+```figure
+type: cycle
+title: Seven steps of continuity planning
+caption: A plan that has never been tested will have gaps.
+- Identify the risks
+- Identify critical functions
+- Develop continuity strategies
+- Plan the emergency response
+- Plan communication
+- Lead people through the crisis
+- *Test, review and update
+```
+
 ## Recovering after the event
 
 Continuity planning does not end once operations resume. After any significant disruption:
@@ -214,6 +227,17 @@ The business:
 - builds a cash reserve of three months' fixed costs over two years.
 
 Eighteen months later, a spindle failure stops one CNC machine for three weeks. Critical work goes to a subcontractor, other jobs are resequenced and customers are informed promptly. No major customer is lost.
+
+```figure
+type: compare
+title: Top risks and responses at a 22-person precision engineer
+cols: Why it matters | Continuity strategy
+caption: When a spindle failed for three weeks, critical work went to a subcontractor and no major customer was lost.
+- Flooding | The estate flooded a decade ago | Server room and spares above flood levels
+- *Machine failure | Would halt most production | 48-hour service, spares, two subcontractors
+- Ransomware | Losing CAD files would be catastrophic | Cloud with offsite backups; restore tested
+- Owner's absence | Identified as a top risk | Deputy with authority to approve payments
+```
 
 ## Common mistakes
 

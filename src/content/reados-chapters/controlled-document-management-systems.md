@@ -29,6 +29,17 @@ Quality management distinguishes two kinds of information:
 | Change | Revised and re-approved over time | Not changed after completion, except by controlled correction |
 | Control focus | Current version in use, old versions withdrawn | Accuracy, protection, retention and retrieval |
 
+```figure
+type: compare
+title: Documents and records
+cols: Documents | Records
+caption: Documents say how work should be done; records prove what was done.
+- Purpose | Describe how things should be done | Evidence of what was done
+- Examples | Procedures, instructions, forms | Completed forms, inspection results
+- Change | Revised and re-approved | Not changed after completion
+- *Control focus | Current version in use | Accuracy, protection, retention
+```
+
 A blank inspection form is a document; a completed inspection form is a record. Both need control, but in different ways.
 
 ## What document control requires
@@ -56,6 +67,20 @@ These principles apply whether or not a business is certified to a standard. The
 6. **Use**: the document is available at the point of work.
 7. **Review periodically**: the owner confirms it remains accurate, at set intervals or when triggered.
 8. **Revise or withdraw**: changes go back through the cycle; documents no longer needed are withdrawn and archived.
+
+```figure
+type: cycle
+title: The document life cycle
+caption: Changes go back through the cycle; documents no longer needed are withdrawn and archived.
+- Draft
+- Review
+- *Approve
+- Issue
+- Communicate and train
+- Use
+- Review periodically
+- Revise or withdraw
+```
 
 ## Identification and revisions
 

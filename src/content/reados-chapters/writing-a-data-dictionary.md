@@ -14,6 +14,17 @@ draft: false
 
 Three managers bring three different on-time delivery figures to the same meeting: 94%, 88% and 81%. None of them is wrong. Sales measured deliveries against the date promised when the order was confirmed, operations measured against the date the goods left the warehouse, and the customer's scorecard measured arrival against the date the customer originally requested. The meeting spends half an hour arguing about numbers instead of improving delivery.
 
+```figure
+type: bars
+title: One measure, three answers
+unit: %
+max: 100
+caption: None is wrong: each measures against a different date.
+- Sales: against the date promised | 94
+- Operations: when goods left the warehouse | 88
+- *Customer: arrival against the date requested | 81
+```
+
 Problems like this are common because business data is full of terms that seem obvious but are not defined: customer, active customer, order date, revenue, margin, lead time, defect, job completion, utilisation. Each department, report and system quietly applies its own meaning. A **data dictionary** fixes this by recording what each important piece of data means, where it comes from, what values it can take, who owns it and how key measures are calculated.
 
 This article explains what a data dictionary is, why it matters, what to record for fields and measures, how to write clear definitions, where to start, how to resolve conflicting definitions, how to keep the dictionary current and how to put it to use. It is general information for managers, analysts, system owners and anyone responsible for reports or business systems.
@@ -91,6 +102,18 @@ Good definitions share a few qualities:
 | Lead time: how long it takes | Supplier lead time: the number of calendar days from purchase order issue to goods receipt, measured per purchase order line |
 | Defect: a bad part | Defect: a unit that fails one or more inspection criteria on its current drawing or specification, recorded at the inspection point where it is found |
 | Job complete: when the job is done | Job complete: all work orders on the job are closed, final inspection is recorded and the completion notice has been sent to the customer |
+
+```figure
+type: compare
+title: Weak and clearer definitions
+cols: Weak | Clearer
+best: 2
+caption: A definition is clear enough when two people working from it reach the same answer.
+- Active customer | Buys from us | At least one invoice in the previous 12 complete months
+- Lead time | How long it takes | Calendar days from purchase order to goods receipt, per line
+- Defect | A bad part | Fails an inspection criterion on the current drawing
+- *Job complete | When the job is done | Work orders closed, final inspection recorded, customer notified
+```
 
 ## Naming things consistently
 

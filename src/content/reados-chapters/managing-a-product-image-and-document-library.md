@@ -44,6 +44,16 @@ Most people looking for an asset start with a product. A structure built around 
 | Asset type | Images, Datasheets, Manuals, Certificates, Drawings, Video |
 | Status | Current, Archive |
 
+```figure
+type: layers
+title: Organise the library around how people search
+caption: Product first, then asset type, so every file for a product sits together.
+- Product family | pumps
+- Product or model | P200 series
+- *Asset type | images, datasheets, manuals, certificates
+- Status | current or archive
+```
+
 Brand assets and general marketing material sit in their own sections. Keep the folder structure shallow, typically no more than four or five levels, because deep structures make files hard to find and paths too long for some systems.
 
 Folders alone cannot serve every way people search. A distributor may want all images of products for the mining industry; a designer may want all application photographs taken outdoors. **Metadata**, described below, handles those cross-cutting searches without duplicating files.
@@ -170,6 +180,16 @@ This is an illustrative example. A manufacturer of industrial pumps and valves s
 **Sharing.** The business subscribes to a cloud digital asset management service, at about $4,000 a year in this illustration, and gives distributors portal access to current, approved assets. When a datasheet is revised, distributors are notified automatically.
 
 **Result.** Email requests fall to about five a week, saving roughly 8.75 hours a week, about $20,000 a year at an assumed $50 an hour, well above the subscription cost. More importantly, distributors use current documents, and the business can show which version of each document was available at any time.
+
+```figure
+type: bars
+title: Distributor requests for images and datasheets
+unit: a week
+max: 45
+caption: About 8.75 hours a week saved, roughly $20,000 a year, against a subscription of about $4,000.
+- Before, about 15 minutes each | 40
+- *With a distributor portal | 5
+```
 
 ## Applying this in an Australian business
 

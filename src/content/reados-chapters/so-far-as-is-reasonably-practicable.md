@@ -42,6 +42,17 @@ The model law defines reasonably practicable as what is, or was at a particular 
 4. **The availability and suitability** of ways to eliminate or minimise the risk.
 5. **After assessing** the extent of the risk and the available ways of dealing with it, **the cost** of doing so, including whether the cost is grossly disproportionate to the risk.
 
+```figure
+type: steps
+title: Deciding what is reasonably practicable
+caption: Cost comes last, and rules out a control only when grossly disproportionate to the risk.
+- Likelihood | of the hazard or risk occurring
+- Degree of harm | that might result
+- What is known | or ought reasonably to be known
+- Availability and suitability | of ways to control it
+- *Cost | weighed after all the above
+```
+
 Several practical points follow from this wording.
 
 - **The weighing starts with the risk and the controls, not the budget.** Cost comes last, after the risk and the available options have been assessed.
@@ -56,6 +67,17 @@ Readers who have worked in the United Kingdom or in industries such as oil and g
 ## The hierarchy of control
 
 The model regulations set out a **hierarchy of control measures** for managing many risks: elimination first; then substitution, isolation and engineering controls; then administrative controls; and personal protective equipment last. Higher-level controls are generally more reliable because they do not depend on people remembering and complying every time. Administrative controls and protective equipment are often needed as well, but rarely justify stopping at that level when higher controls are reasonably practicable. The [changing the odds or changing who pays](/reados/collections/risk-controls-and-assurance/changing-the-odds-or-changing-who-pays/) article explains why designing a risk out beats managing it with procedures.
+
+```figure
+type: layers
+title: The hierarchy of control
+shape: pyramid
+caption: Higher-level controls are generally more reliable because they do not depend on people's behaviour.
+- *Elimination
+- Substitution, isolation, engineering controls
+- Administrative controls
+- Personal protective equipment
+```
 
 ## Inherent, current and residual risk
 
@@ -144,6 +166,17 @@ This is an illustrative example. It shows a way of reasoning, not a legal determ
 - **Full automation** of sheet loading, costing several hundred thousand dollars.
 
 **Weighing.** Given the likelihood and severity of harm, the well-known nature of the hazard and the ready availability of suitable aids, the trolleys and vacuum lifter are reasonably practicable; their cost is not grossly disproportionate to the risk. Ordering smaller sheets is adopted where jobs allow. Full automation would further reduce a now much lower residual risk, but its cost is judged grossly disproportionate to that remaining risk at this scale.
+
+```figure
+type: compare
+title: Options for lifting 30 kg sheets onto a press brake
+cols: Cost or limit | Decision
+caption: Three back strains in two years; suitable aids were readily available, so cost was not grossly disproportionate.
+- Smaller sheets | Many parts need full sheets | Where jobs allow
+- *Height-adjustable trolleys | A few thousand dollars each | Adopted
+- *Vacuum lifter on a jib crane | About $15,000 for both machines | Adopted
+- Full automation | Several hundred thousand dollars | Grossly disproportionate
+```
 
 **Verification and record.** The workers who operate the press brakes trial the lifter and trolleys and suggest a change to the trolley height range. A daily pre-use check is added to the lifter, the two-person rule remains for sheets the lifter cannot handle, and the supervisor checks use weekly for the first two months. The decision record lists the options, information consulted, workers' input, reasons and review triggers. Over the following year, no manual handling injuries are reported at the press brakes, and the near-miss log shows the remaining issues are with sheet edges, which lead to a separate review of edge protection.
 

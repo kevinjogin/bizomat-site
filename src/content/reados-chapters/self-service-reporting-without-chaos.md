@@ -183,6 +183,21 @@ For a business that already has some sprawl:
 8. **Train report creators** and establish champions.
 9. **Review regularly.**
 
+```figure
+type: steps
+title: Starting a reporting governance approach
+caption: Agree definitions before rebuilding reports, and retire what nobody uses.
+- Inventory existing reports
+- Find where key measures disagree
+- Agree definitions with data owners
+- Build shared data sets
+- *Rebuild key reports as official
+- Retire duplicates and unused reports
+- Set standards, roles and security
+- Train creators; establish champions
+- Review regularly
+```
+
 Start with one subject, such as sales, where disagreements are most visible, rather than trying to govern everything at once.
 
 ## Common mistakes
@@ -205,6 +220,17 @@ This is an illustrative example. A manufacturer with 150 staff adopted a self-se
 **Definitions and data sets.** The finance and sales managers agree definitions of revenue, margin and order intake. An analyst builds shared data sets for sales, production and purchasing, with row-level security so branch managers see their own branches. Pay and leave data are moved to a restricted data set accessible only to payroll and senior managers, and the supervisors' access is corrected.
 
 **Clean-up.** Key reports are rebuilt on the shared data sets and labelled as official. Unused reports are archived after owners are notified, and the platform shrinks to about 90 active reports.
+
+```figure
+type: bars
+title: Reports on a 150-person manufacturer's platform
+unit: reports
+max: 420
+caption: Many active reports were near-copies; the meeting now uses one set of figures.
+- Reports on the platform | 400
+- Not opened in six months | 250
+- *Active after the clean-up | 90
+```
 
 **Training.** Twelve report creators attend a short course on shared data sets, analysis traps and publishing standards, and two experienced analysts become champions.
 

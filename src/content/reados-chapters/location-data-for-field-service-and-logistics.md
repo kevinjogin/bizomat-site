@@ -31,6 +31,18 @@ A common mistake is treating "the address" as one thing. Businesses usually need
 | Asset location within a site | Building, floor, room, roof or plant area |
 | Depot or base | Where technicians and vehicles start and finish |
 
+```figure
+type: tree
+title: One customer, several locations
+caption: Keep each kind of location in its own field; the site is rarely the billing address.
+- Customer
+  - Billing address | where invoices go
+  - Postal address | may be a post office box
+  - *Site or service address | where work is done
+  - Access point | where vehicles actually enter
+  - Asset location | building, floor, room or plant area
+```
+
 Each customer may have many sites, each site several access points and many assets. Designing the data this way, rather than with a single address field on the customer record, prevents most location problems. The [master data and the single source of truth](/reados/collections/operational-data-records-and-controls/master-data-and-the-single-source-of-truth/) article explains why core records like customers and sites need clear ownership and controlled creation.
 
 ## Structure addresses properly
@@ -177,6 +189,15 @@ This is an illustrative example. A heating, ventilation and air-conditioning ser
 **Scheduling.** With accurate coordinates and job durations based on two years of history, the company introduces routing software. Schedulers review proposed routes each afternoon.
 
 **Result.** In this illustration, average daily driving per technician falls by about 12%, wasted trips caused by access problems drop sharply, and each technician completes on average one more job a week. Mapping completed work shows that jobs in one regional town are consistently unprofitable once travel is counted, leading to a travel charge for that zone.
+
+```figure
+type: stats
+title: An air-conditioning service company after cleaning its site data
+caption: 25 technicians and about 3,000 sites; jobs in one regional town now carry a travel charge.
+- About 6% | Sites failing validation | fixed by technicians on site
+- *About 12% | Less daily driving | per technician
+- +1 | Job a week | per technician on average
+```
 
 ## Applying this in an Australian business
 

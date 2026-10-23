@@ -87,6 +87,17 @@ A business imports 1,000 units at a supplier price of US$10,000 FOB. Assume an e
 | **Landed cost before GST** | **19,854** |
 | Landed cost per unit | 19.85 |
 
+```figure
+type: stack
+title: Landed cost of 1,000 units bought at US$10,000 FOB
+unit: $
+caption: About $19.85 a unit before GST; import GST of about $1,865 is usually claimable as an input tax credit.
+- Goods at US$0.65 | 15385
+- Freight and insurance | 2500
+- Duty at 5% of customs value | 769
+- *Broker, port, terminal and delivery | 1200
+```
+
 In Australia, customs value is generally based on the price of the goods at the point of export, so duty is calculated on that value rather than on the cost of international freight. **Import GST** of 10 per cent is then charged on the value of the taxable importation: broadly the customs value plus duty plus international transport and insurance. In this example, that is about $1,865. A GST-registered business can usually claim it back as an input tax credit, and eligible businesses can defer paying it until their business activity statement.
 
 Many goods attract no duty, particularly from countries with which Australia has free trade agreements, if you have the correct proof of origin. Your customs broker can confirm the tariff classification and any concessions.
@@ -175,6 +186,17 @@ Hold enough safety stock to cover delays, and track supplier delivery performanc
 A small Perth business that makes agricultural spraying equipment buys pumps locally at $180 each. An overseas manufacturer offers equivalent pumps for about $95 FOB.
 
 The owner calculates a landed cost of about $128 per pump, including freight, duty, broker fees and local delivery, then adds an allowance for currency movement, inspection and extra inventory. The real saving is about $40 per pump, not $85. On 1,500 pumps a year, that is still worth $60,000.
+
+```figure
+type: bars
+title: The real price of an imported pump
+unit: $
+max: 200
+caption: After allowances for currency, inspection and extra stock, the saving is about $40 a pump, not $85: still $60,000 on 1,500 a year.
+- Local pump | 180
+- *Imported, landed | 128
+- Overseas FOB price | 95
+```
 
 Before ordering, the owner obtains samples and has them tested, checks electrical compliance requirements for the pump motors, arranges a factory audit through an inspection company and confirms with a customs broker that a free trade agreement removes duty if a certificate of origin is supplied. The first order is a trial of 200 units, paid 30 per cent upfront and 70 per cent after a satisfactory pre-shipment inspection. The business keeps its local supplier for urgent orders.
 
