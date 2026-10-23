@@ -22,3 +22,7 @@ Thumbs.db
 
 # real assessment data and reports (customer information): never commit
 assessment-private/
+
+# AutoSEO working data (snapshots, reports, IndexNow manifest); kept in Actions cache and artifacts, never committed.
+.seo-data/
+.seo-build/
