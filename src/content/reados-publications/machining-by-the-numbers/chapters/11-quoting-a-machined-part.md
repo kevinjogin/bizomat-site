@@ -148,6 +148,29 @@ caption: Spend estimating effort on cycle time and material price; tool life bar
 - Tool life 20% shorter | 0.25
 ```
 
+## Allow for scrap and the extra blanks
+
+The estimate assumes every part is good. In practice, a new job usually produces a few rejects: a part used to prove out a program, a bore cut oversize while an offset is set, or a blank with a flaw. The cost of those parts is real and has to be recovered from the good ones.
+
+This is an illustration. If Harbourline expects 2% of parts to be scrapped on this job, the cost per good part rises by dividing by the yield:
+
+**A$48.32 ÷ 0.98 ≈ A$49.31**, an increase of about A$0.99 per part
+
+To deliver 120 good flanges, the shop also needs to saw and start about **120 ÷ 0.98 ≈ 123** blanks, so the material order and the batch time should allow for the extra parts. On a repeat job with a proven program, the expected scrap is usually lower, and the allowance can be reduced on evidence rather than habit.
+
+An explicit scrap line is better than quietly inflating the cycle time or the hourly rate. It can be checked against the actual rejects after the job, and it makes clear to the customer that a tighter specification, which increases the risk of rejects, has a cost.
+
+## Remember the costs after the last cut
+
+Several costs arise after machining and are easy to leave out:
+
+- **Corrosion protection.** Bare steel flanges will rust in storage and transit unless oiled or bagged with a corrosion inhibitor.
+- **Packaging.** Flanges with finished bores and faces need separators so they do not damage each other.
+- **Documentation.** Inspection reports, material certificates or a first-article report, if the customer requires them, take time to prepare.
+- **Delivery.** Freight, or the time of someone delivering the parts.
+
+Each is small per part, but together they can add a dollar or two to a part costing under fifty. The quotation should either include them or state clearly that they are excluded, so that neither side is surprised.
+
 ## From cost to price
 
 Cost is what the job is expected to consume. Price is a business decision that also reflects the value to the customer, the market, competition, the shop's capacity, the payment terms and the risk. Harbourline's policy in this fictional example adds 15% to estimated cost to cover profit and general risk. On a cost of A$48.32, that gives a price of about A$55.57 per part for 120 flanges.
@@ -177,6 +200,12 @@ A clear quotation reduces disputes and helps the customer compare suppliers fair
 - any assumptions, for example that the customer supplies a 3D model, or that general tolerances follow a stated standard.
 
 The Australian Government's business.gov.au guidance on preparing quotes is a useful plain-language reference on the difference between a quote and an estimate and the information a quote should contain.
+
+## Compare the quote with the job afterwards
+
+Every completed job is an opportunity to improve the next estimate. After the batch, compare the estimate with what happened: actual cycle times from the control, actual set-up hours, tool edges used, parts scrapped, material consumed and bench time. Record the differences and the reasons for them.
+
+Over several jobs, patterns appear. Perhaps non-cutting time is consistently underestimated on the machining centre, or set-up on the second lathe always runs long. Those patterns become correction factors for future estimates, or targets for improvement on the shop floor. A shop that closes this loop quotes with growing confidence; one that never compares estimates with actuals repeats the same errors indefinitely, and usually finds out only when a job loses money.
 
 ## Bringing it together
 

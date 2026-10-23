@@ -89,6 +89,24 @@ step: Pc = 220 × 2.475 × 0.25 × 2,406 ÷ 60,000 = 5.46 kW
 step: Motor power = 5.46 ÷ 0.8 = 6.82 kW
 ```
 
+## A quick check from removal rate
+
+Because kc is energy per unit volume, power can also be found directly from the removal rate:
+
+**Pc = Q × kc ÷ 60,000**
+
+with Q in cm³/min, kc in N/mm² and Pc in kW. For the spigot roughing passes, Q = 220 × 2.475 × 0.25 = 136.1 cm³/min, so Pc = 136.1 × 2,406 ÷ 60,000 = 5.46 kW, the same as before.
+
+This form is handy for a quick sense check. A rule of thumb for a given material, so many cubic centimetres per minute per kilowatt, follows directly: at a kc of about 2,400 N/mm², each kilowatt at the edge removes about 25 cm³/min. If a program claims a removal rate that would need more power than the machine has, the error shows up immediately.
+
+## Allow for the worn edge and the losses together
+
+The motor must deliver the net cutting power plus the machine's losses, and the cutting power itself rises as the tool wears. Applying both allowances to the spigot roughing passes, with a tool wear factor of 1.2 and a machine efficiency of 80%:
+
+**5.46 × 1.2 ÷ 0.8 ≈ 8.19 kW**
+
+That is half as much again as the net figure. A lathe with a 7.5 kW continuous rating would manage the cut with a fresh insert but could struggle near the end of the edge's life, which is exactly when an operator is least likely to be watching closely. Planning to the worn-tool figure, and checking it against the spindle's power at the actual speed from its power curve, avoids a cut that works at the start of a batch and stalls later.
+
 ## Spindle torque
 
 Torque is power divided by angular speed:
@@ -141,6 +159,28 @@ caption: Below base speed the machine is torque-limited. The flange cut fits at 
 Now consider roughing a Ø200 part on the same machine with identical cutting data. The spindle speed would be 1000 × 220 ÷ (π × 200) = 350 rev/min, where the machine can deliver only about 5.13 kW. The same cut, needing 6.82 kW at the motor, would exceed the available power.
 
 Torque shows why slowing down does not help. The cutting force of 1,489 N acting at a radius of 0.1 m needs about 149 N·m at the spindle, or about 186 N·m from the motor at 80% efficiency. That exceeds the 140 N·m available at any speed below base speed. Reducing the cutting speed lowers the power required and the power available in the same proportion. The only remedy is a smaller chip area: less depth of cut or less feed. The power and torque curve, not the motor's headline rating, decides what a machine can do on large diameters.
+
+## When power is short, choose what to give up
+
+If the planned cut needs more power than the machine can supply, something must be reduced. Removal rate, and therefore power, is proportional to cutting speed, depth and feed, so reducing any one by a fifth reduces removal and power by roughly a fifth. They do not all cost the same.
+
+```figure
+type: compare
+title: Two ways to cut the spigot roughing power by about a fifth
+cols: Feed reduced to 0.20 mm/rev | Speed reduced to 176 m/min
+caption: Both give the same 108.9 cm³/min. A thinner chip raises kc, so reducing feed saves less power for the same loss of removal.
+- Removal rate | 108.9 cm³/min | 108.9 cm³/min
+- Specific cutting force | About 2,545 N/mm² | About 2,406 N/mm²
+- *Net cutting power | About 4.62 kW | About 4.37 kW
+```
+
+Reducing the feed thins the chip, which raises kc by about 6%, so the power falls less than the removal rate does. Reducing the cutting speed keeps the chip thickness and kc the same, so power falls in step with removal, and it also lengthens tool life, as Chapter 8 shows. Reducing the depth of cut, and taking an extra pass, likewise keeps kc unchanged but adds the non-cutting time of the extra pass. For a short cut like the flange's spigot, a lower speed is often the least costly choice; for a long cut, an extra pass may be cheaper than running the whole length slowly.
+
+## Read the spindle load meter with care
+
+Most CNC machines display spindle load as a percentage. It is a useful check on a power estimate, but only once its meaning is understood. The percentage is usually relative to the motor's rated output at the current speed, may include the losses in the drive, and on some machines refers to a short-term rating rather than the continuous one.
+
+A practical way to calibrate it is to take a cut whose power has been calculated, such as a roughing pass with known depth, feed and speed, note the displayed load, and compare. Once the relationship is known, the meter becomes a quick tool for confirming that a new program loads the spindle as planned, and for noticing when a familiar job starts drawing more power than usual, a common early sign of a worn tool or a change in the material.
 
 ## Milling power
 

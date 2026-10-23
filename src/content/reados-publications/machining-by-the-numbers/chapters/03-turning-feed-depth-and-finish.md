@@ -30,6 +30,12 @@ The Harbourline flange's outside diameter must go from the Ø110 bar to Ø100, l
 
 A single pass at 4.75 mm would also be inside the range, but it would nearly double the cutting force and power, which Chapter 6 checks against the machine. For a short length of cut, two passes cost very little extra time. For long cuts on a powerful, rigid machine, fewer and deeper passes generally save time.
 
+## How much to leave for finishing
+
+The finishing allowance, 0.25 mm per side on the flange, is a deliberate choice. Too little, and the finishing insert does not cut cleanly: with a depth well below its nose radius, it rubs and burnishes rather than shearing a chip, which can harden the surface, give a poor finish and wear the edge quickly. Too much, and the finishing insert does roughing work, wearing its sharp edge and generating more force and deflection on the very pass that decides the size.
+
+Suppliers' finishing inserts state a minimum depth for good chip formation, often a fraction of a millimetre. A common starting point is to leave enough for one clean finishing pass inside that range, plus an allowance for the roughing pass's own deflection and variation. On a slender part, where roughing deflects the work more, a larger allowance, or a semi-finishing pass, gives the finishing pass a uniform amount to remove and a more predictable size.
+
 ## Metal removal rate
 
 The area of material being cut is the depth of cut times the feed. Multiplying that area by the cutting speed gives the volume removed per minute. With ap and fn in millimetres and vc in metres per minute:
@@ -71,6 +77,12 @@ Removal rate is the most useful single measure of roughing productivity. It allo
 
 At a similar removal rate of about 136 cm³/min, that takes roughly half a minute of cutting, before allowing for approach, retract and the passes needed.
 
+## Feed buys removal more cheaply than speed
+
+Removal rate rises in direct proportion to cutting speed, feed and depth. Tool life does not respond equally to all three. Chapter 8 shows that tool life is usually most sensitive to cutting speed, less sensitive to feed and least sensitive to depth of cut. So, within the insert's working range and the machine's power, increasing depth and feed is generally a cheaper way to raise removal rate than increasing speed.
+
+That is why roughing strategies often use the deepest practical cut and a high feed at a moderate speed, while finishing uses a lower feed for surface finish and a higher speed for a clean cut. For the flange's roughing, raising the feed from 0.25 to 0.30 mm/rev would increase the removal rate by a fifth, from 130.6 to about 156.8 cm³/min, with a smaller effect on tool life than the same increase in cutting speed. Whether the insert, the part and the machine accept the higher feed is the check that limits it.
+
 ## Machining time
 
 For a turning pass of length L at feed fn and spindle speed n:
@@ -101,6 +113,12 @@ caption: The light finishing pass takes longer than either roughing pass because
 ```
 
 Finishing passes are often slower than roughing passes despite removing very little material, because the feed is lower. That is a direct consequence of the surface finish requirement.
+
+## Control the chips
+
+A turning operation that produces long, continuous chips is a problem even if the dimensions are correct. Long chips wrap around the part and the tool, scratch the finished surface, block coolant, jam chip conveyors and are a hazard to anyone clearing them. Chip control depends mainly on the chipbreaker geometry of the insert and on staying inside its depth and feed range; feeds below the range, typical of over-cautious finishing, are a common cause of stringy chips.
+
+When chips will not break, the first checks are whether the depth and feed are inside the chipbreaker's range and whether a different chipbreaker suits the light cut better. Coolant delivered accurately to the cutting zone, particularly at higher pressure, can also help break chips. The machine's guarding and chip handling must be adequate for the chips the process actually produces, and the safe method for clearing them belongs in the operating procedure, not in improvisation at the machine.
 
 ## Predicting surface finish
 
@@ -160,6 +178,12 @@ The theoretical value is a lower bound. Real surfaces are usually rougher becaus
 Harbourline's practice, based on its own measurements, is to plan for a measured Ra of about one and a half to two times the theoretical value on steel with sharp finishing inserts. That is why it finishes the flange at 0.15 mm/rev, theoretically Ra 0.89 µm, against a drawing requirement of Ra 1.6 µm on the outside diameter, rather than at the 0.20 mm/rev the formula alone would allow.
 
 **Wiper inserts**, with a specially shaped section of the nose, are designed to flatten the cusps. Suppliers state that they can give a similar finish at substantially higher feeds than a conventional insert, or a better finish at the same feed. Test them on your own machine and material before relying on the claimed gain.
+
+## Measure the finish the way the drawing means it
+
+A surface finish requirement such as Ra 1.6 µm is a measured parameter, and the measurement method matters. Ra is the arithmetic average of the profile's departures from its mean line over a sampling length; other parameters, such as Rz, describe the height of peaks and valleys and are often several times larger than Ra on the same surface. A drawing that specifies Ra cannot be checked with an Rz reading, and the reverse.
+
+Portable stylus roughness testers are common in workshops. For a meaningful result, the stylus should travel across the lay of the turning marks, that is, along the part's axis, and the instrument's sampling length should suit the surface, following the relevant standard and the instrument maker's guidance. Comparison specimens, felt with a fingernail or viewed under light, are useful for a quick check but not for a borderline decision. Harbourline's practice of planning for one and a half to two times the theoretical Ra is only reliable because it is based on measurements taken this way, consistently.
 
 ## Common mistakes
 

@@ -38,6 +38,12 @@ caption: Solid carbide drill at 90 m/min and 0.18 mm/rev, with an assumed kc of 
 - *1.49 kW · 5.44 N·m | Power and torque
 ```
 
+## Spot drilling and chamfering
+
+High-speed steel drills, and long drills of any material, can wander as they enter an uneven or inclined surface, so a short spot or centre drill is often used first to start the hole in the right place. Many modern carbide drills are designed to start accurately on a flat surface without a spot, which saves a tool change and an operation for each hole.
+
+A spot drill with an included angle larger than the drill's point can also produce the hole's entry chamfer in the same operation, which removes a separate chamfering step. For the flange's bolt holes, Harbourline's carbide drills start without a spot, and a combined chamfering pass is used only where the drawing calls for an edge break. Each extra tool adds a tool change, which Chapter 10 shows is not free.
+
 ## The length of a drilled hole
 
 A drill does not cut a flat-bottomed hole. Its conical point must pass right through the material before a through hole is complete. The length of the point is:
@@ -102,6 +108,18 @@ This is an illustration. Taking an assumed kc of 2,000 N/mm² for the medium-car
 
 The factor 9,549 converts kilowatts and revolutions per minute into newton-metres. Thrust force, the axial push on the drill, is also significant in drilling, largely because the chisel edge at the centre of a conventional drill pushes material aside rather than cutting it. Thrust matters for thin or poorly supported workpieces and for workholding, and suppliers give methods for estimating it.
 
+## Moving between holes
+
+Six holes on an 80 mm pitch circle sit 60° apart, so neighbouring holes are a chord of 80 × sin 30° = **40 mm** apart. Moving from the first hole to the last means five moves of 40 mm, 200 mm in all. At a rapid traverse of 30 m/min, that is only about **0.4 seconds** of travel, if the axes could reach full speed instantly.
+
+They cannot. On short moves, the time is dominated by acceleration, deceleration and the settling of the axes, and each hole also needs a rapid retract to a clearance plane and a rapid approach back down. In practice, the time between holes is often a second or more, and for a part with many small holes, that time can exceed the drilling time itself. Chapter 10 treats these moves as part of the non-cutting time; for now, the lesson is that hole count matters as much as hole depth. A drilling cycle that retracts only to a low clearance plane between holes, where the part and fixture allow it, saves time on every hole.
+
+## Where the holes end up
+
+A hole's position depends on more than the program. The drill can deflect as it enters if the surface is uneven or the drill is long and slender; the part may be positioned slightly differently from part to part, as Fixtures That Repeat explains; and the machine's own positioning accuracy contributes a small amount. A drilled hole is generally less accurately positioned and less straight than a bored or interpolated one.
+
+For the flange, the bolt holes are clearance holes for bolts, so their position tolerance is usually generous. The M8 tapped holes, by contrast, may need to line up with a mating part, and their position is set by the tap drill. Where a hole position is critical, a stiff, short drill, a flat entry surface and checking the first part's hole positions before running the batch are the practical controls.
+
 ## The large bore: indexable drilling on the lathe
 
 On operation 10, Harbourline drills the flange's bore to Ø38 with an indexable insert drill held stationary in the lathe turret while the work rotates. It plans 180 m/min and 0.10 mm/rev:
@@ -152,6 +170,12 @@ step: Per hole, in and out over 16 mm: 2 × 16 ÷ 497.5 = 0.064 min
 step: Two holes: 0.129 min
 ```
 
+## Check threads with gauges
+
+Threaded holes are normally checked with thread plug gauges: a go gauge that must screw in to the required depth, and a no-go gauge that must not enter more than a small amount. The gauges confirm the thread's functional size, which depends on the pitch diameter rather than the drilled minor diameter. A thread that accepts a bolt is not necessarily within tolerance, and a thread made with a worn tap may pass the go gauge but fail the no-go.
+
+For the flange, checking the two M8 holes with go and no-go gauges on the first part and at intervals through the batch catches tap wear before it produces a rejected part. The depth of usable thread, 14 mm in this case, should be checked with the go gauge as well, because a tap that does not reach full depth, or a drill that was too short, leaves the bottom threads incomplete.
+
 ## Reaming and finishing holes
 
 Drilled holes are rarely accurate enough for fits such as H7. Reaming removes a small allowance, typically a few tenths of a millimetre on diameter for small and medium holes, to produce an accurate size and good finish. Reamers generally run at lower cutting speeds and higher feeds per revolution than drills of the same diameter; follow the reamer supplier's data for allowance, speed and feed. Too small an allowance makes the reamer rub, and too large an allowance overloads it.
@@ -161,6 +185,10 @@ The flange's Ø40 H7 bore is finished by single-point boring on the lathe instea
 ## Deep holes
 
 Holes deeper than about three to five diameters need care with chip evacuation. Peck drilling, in which the drill retracts periodically to clear chips, adds considerable time and should be estimated from the number and length of retractions. Drills with through-tool coolant at adequate pressure can often drill much deeper holes without pecking. The READOS chapter on [drilling, reaming and tapping](/reados/collections/machining-and-metal-parts/drilling-reaming-and-tapping-holes/) covers the practical techniques.
+
+## Count all the hole-making steps
+
+When estimating a part with holes, it is easy to count only the drilling. A complete count for the flange's operation 30 includes the drill for the six bolt holes, the tap drill for the two M8 holes, the tap itself, any chamfering, the tool changes between them and the moves between holes. Listing every step, with its tool, length and feed, before adding up the times prevents the most common estimating error for hole-rich parts: a quote built on the drilling time alone.
 
 ## Common mistakes
 

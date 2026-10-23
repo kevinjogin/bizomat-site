@@ -46,6 +46,12 @@ At 200 m/min, for example:
 - Tool change and tool cost per part: (2.0 × 2.50 + 6.00) ÷ 13.3 = A$0.83
 - Total: about **A$12.08** per part
 
+## Know what the machine rate contains
+
+The model's machine rate is a cost, and its value changes the answers. It normally includes the operator's wages and on-costs, the machine's depreciation or lease, its maintenance, the power it uses, the floor space it occupies and a share of the business's overheads, divided by the hours the machine is expected to be productively used.
+
+The last part is the most sensitive. A machine that costs the same to own but is used for fewer productive hours has a higher hourly rate. If a shop's rate assumes the machine is busy for most of each shift, and it is actually idle half the time, every cost calculation using that rate is too low. Chapter 11 builds a quotation on the rate; this model assumes it has been calculated honestly.
+
 ## Cost and time across a range of speeds
 
 Repeating the calculation for several speeds gives the following. All amounts are A$ per part, excluding GST.
@@ -119,6 +125,23 @@ If the aim is the most parts per hour, tool cost drops out and only tool change 
 
 The maximum-output tool life is always shorter than the minimum-cost tool life, so the maximum-output speed is always higher. Between the two lies a range in which a shop trades a little cost for a little output.
 
+## What moves the optimum
+
+The minimum-cost formula shows which inputs push the best speed up or down. Holding Taylor's constants at n = 0.218 and C = 446.8 and the machine rate at A$2.50 per minute:
+
+```figure
+type: compare
+title: How the minimum-cost speed responds to tooling choices
+cols: Minimum-cost tool life | Minimum-cost speed
+caption: Faster tool changes and cheaper edges push the best speed up; dearer edges pull it down.
+- Baseline: 2.0 min change, A$6 per edge | 15.8 min | 245 m/min
+- Tool change cut to 1.0 min | 12.2 min | 259 m/min
+- *Tool change cut to 0.5 min | 10.4 min | 268 m/min
+- Edge cost doubled to A$12 | 24.4 min | 223 m/min
+```
+
+Cheaper or quicker tool changes make it worthwhile to run faster and use edges up sooner, because each change costs less. Expensive edges make it worthwhile to run slower and make each edge last. The machine rate enters through the term Ce ÷ R: a higher machine rate makes the tool's price smaller relative to machine time, which also pushes the optimum speed up. This is why a shop with expensive machines and cheap inserts tends to run hard, while a shop using costly special tools on inexpensive machines tends to run gently.
+
 ## The optimum is flat
 
 The most practical lesson from the table is how flat the cost curve is near its minimum. Running at 260 m/min instead of 245 costs about 5 cents more per part. Even the traditional 200 m/min costs only 50 cents, about 4%, more than the optimum. Most of the benefit comes from avoiding speeds that are far too low or far too high, not from hitting the exact optimum.
@@ -134,6 +157,12 @@ caption: Cutting time dominates; tools and tool changes are under 7% of the tota
 ```
 
 That flatness matters because the inputs are uncertain. Tool life scatters, the machine rate is an estimate and the Taylor constants come from limited tests. A speed somewhat below the calculated optimum is often chosen deliberately: it gives longer, more predictable tool life, fewer interventions and less risk of an edge failing near the end of an unattended run, at almost no cost.
+
+## Tool change time is worth attacking
+
+The tool change term appears in both optimum formulas, and in the cost per part directly. Reducing it helps twice: it lowers the cost of each change and allows a faster optimum speed. On a lathe, indexing an insert in a well-designed holder and confirming the offset may take under a minute; on a machine where the operator must measure, adjust and test-cut after each change, it may take several.
+
+Practical reductions include quick-change toolholders that return to a repeatable position, tools preset to length and diameter away from the machine, sister tools that the control switches to automatically when one edge reaches its planned life, and offset-setting probes. For long-running jobs, the savings repeat on every edge, which is why tooling systems that look expensive per holder often pay back quickly.
 
 ## When the machine is the bottleneck
 
@@ -151,6 +180,12 @@ caption: Valuing machine time at the contribution of the extra parts moves the o
 - Move towards V_P, 291 m/min | Stay near or below V_E, 245 m/min
 - Accept more tool changes | Prefer long, predictable tool life
 ```
+
+## The biggest lever may not be speed
+
+In the shaft example, non-cutting time costs A$3.75 per part at every speed, about a third of the total, and it does not change at all as cutting speed varies. Even at the minimum-cost speed, the cutting and tooling costs together are only about A$7.83 of the A$11.58 total.
+
+That puts the speed optimisation in perspective. Moving from 200 to 245 m/min saves about 50 cents a part. Cutting the non-cutting time from 1.5 to 1.0 minutes, by faster loading, fewer tool changes or shorter rapid moves, would save A$1.25 a part at any speed. Chapter 10 shows how to break down where that non-cutting time goes. Speed optimisation is worth doing for long-running jobs, but it should come after, not instead of, a look at everything else that happens in the cycle.
 
 ## Applying the model to small jobs
 

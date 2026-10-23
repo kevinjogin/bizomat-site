@@ -22,6 +22,25 @@ Tool life is the cutting time an edge can deliver before it reaches a defined en
 
 For estimating and planning, tool life is usually expressed in minutes of cutting time, then converted into parts per edge by dividing by the cutting time per part.
 
+## Read the wear before changing the data
+
+The shape of the wear on a used edge tells you what limited its life, and therefore which change will help. Looking at worn edges under a magnifier before changing the cutting data saves a great deal of trial and error:
+
+```figure
+type: decision
+title: What the worn edge is telling you
+question: What does the wear look like?
+caption: Each wear pattern points to a different cause. Changing speed fixes some and makes others worse.
+- Even flank wear land | Normal, gradual wear | adjust speed to set the life you want
+- Crater on the rake face | Heat and diffusion | lower speed, or a more heat-resistant grade
+- Notch at the depth-of-cut line | Hard skin or work hardening | vary the depth, change the entering angle
+- Material welded to the edge | Built-up edge | raise speed, sharper edge, better coolant
+- Chipped or broken edge | Impact or vibration | tougher grade, stronger edge, check rigidity
+- *Edge pushed down or bulged | Plastic deformation from heat | lower speed or feed, harder grade
+```
+
+Taylor's equation describes the first pattern, steady flank wear, well. The others need different responses. Built-up edge, for example, is cured by raising the speed, which Taylor's equation alone would suggest shortens life. Chipping is not speed-driven at all; slowing down rarely helps, and a tougher grade, a stronger edge preparation or a more rigid set-up usually does. Recording the wear pattern alongside the tool life on the data sheet makes later decisions much easier.
+
 ## Taylor's equation
 
 Taylor found that, for a given tool, workpiece, feed and depth of cut, tool life T and cutting speed V are related by:
@@ -102,6 +121,14 @@ caption: T = (C ÷ V)^(1 ÷ n). Beyond the tested range, other wear mechanisms m
 - 300 | 6.2
 ```
 
+## Plan tool changes around the scatter
+
+Tool life varies from edge to edge even under identical conditions. Small differences in the insert, the material and the set-up mean that two edges run at the same speed may last noticeably different times. A predicted life of 25.8 minutes at 220 m/min is an average, not a guarantee for every edge.
+
+In unattended or lightly attended machining, edges are often changed on a schedule rather than when they fail. Changing at the average life means about half of the edges fail before their change is due, which risks scrap and broken tools. Changing at a fraction of the average, such as 80%, or about 20 minutes here, reduces that risk at the cost of discarding some useful life. Where the scatter has been measured, from repeated tests or from production records, the change point can be set from the data rather than a rule of thumb. Tool life monitoring, by counting parts or measuring spindle load, lets the control prompt a change at the planned count and flag an edge that is wearing faster than usual.
+
+For the flange's roughing insert, with a planned life of about 15 minutes and 1.29 minutes of cutting per part, changing at 80% of life would mean indexing after about 9 parts rather than 11 or 12. Over a 120-part batch, that is two or three extra edges, a few dollars of inserts, in exchange for much less risk of an edge failing in the middle of a heavy spigot cut. For a long unattended run, the trade is usually worth it; for an attended batch where the operator can hear and see the edge, running closer to the full life may be reasonable.
+
 ## Feed and depth of cut
 
 Taylor's work and later research extended the equation to include feed and depth of cut. The general finding is that tool life is much less sensitive to feed than to speed, and least sensitive to depth of cut, within the tool's working range. This has a practical consequence for productivity: removal rate is proportional to speed, feed and depth equally, but increasing feed or depth costs much less tool life than increasing speed by the same proportion.
@@ -117,6 +144,12 @@ caption: Removal rate rises equally with each lever, but tool life is least sens
 - Cutting speed | strongest effect: +10% speed cost about 35% of tool life here
 ```
 
+## Tool life in milling
+
+In milling, each tooth cuts for only part of each revolution and cools for the rest. The resulting thermal cycling can crack carbide edges, especially with coolant applied intermittently, which is one reason many carbide milling operations run dry or with steady air or minimum-quantity lubrication. The cutting time per tooth is also only a fraction of the time the tool is in the cut, so tool life in milling is often expressed in minutes of tool engagement, metres of cut or parts per edge rather than minutes of chip formation.
+
+Taylor's relationship can still describe the effect of speed on milling tool life, provided the tests keep feed per tooth, engagement and the other conditions constant. The chip-thinning correction of Chapter 4 matters here: comparing tool life at two speeds is meaningful only if the actual chip thickness was the same in both tests.
+
 ## Running tool-life tests
 
 Tool-life testing is worth doing for long-running parts or expensive tools. ISO 3685 describes a rigorous method for turning. A simpler workshop approach is:
@@ -129,6 +162,12 @@ Tool-life testing is worth doing for long-running parts or expensive tools. ISO 
 6. Repeat tests where possible; tool life scatters, and a single result can mislead.
 
 Plotting speed against tool life on logarithmic axes shows whether the points lie close to a straight line. If they do, Taylor's equation describes the process well in that range.
+
+## Keep records as a Taylor line
+
+A shop does not need formal tests to benefit from Taylor's equation. Every time a job runs, the cutting speed and the number of parts per edge give one point on a line. Converting parts per edge into cutting minutes per edge, using the cutting time per part, and recording it with the speed, the material and the tool, builds the dataset gradually.
+
+After a few jobs with the same tool and material at different speeds, the points can be plotted on logarithmic axes and a line fitted through them. The result may be less precise than a controlled test, but it reflects the shop's real machines, materials and practices, which is what matters for planning. Points that sit well off the line are worth examining: they often reveal a set-up problem, a material change or a different wear mechanism, each of which is useful to know.
 
 ## When Taylor's equation does not fit
 
@@ -148,6 +187,10 @@ For planning, tool life in minutes is converted into parts per edge:
 **Parts per edge = T ÷ tc**
 
 where tc is the cutting time per part for that tool. On the Harbourline flange, the roughing insert cuts for about 1.29 minutes per part across the facing and roughing passes of both lathe operations. If its life at the planned speed is about 15 minutes, it will rough about 11 to 12 flanges per edge. Chapter 11 uses figures like this to estimate tooling cost per part.
+
+## Sensitivity, not precision, is the lesson
+
+The exact values of n and C matter less than the shape of the relationship. Because tool life falls steeply as speed rises, small increases in speed can be expensive in tools, and small reductions can be cheap ways to extend life when edges are failing too often. Because tool life is less sensitive to feed and depth, those are better levers for productivity. And because the relationship holds only for steady wear in a limited range, it should guide decisions, not replace observation of the worn edges themselves.
 
 ## Common mistakes
 

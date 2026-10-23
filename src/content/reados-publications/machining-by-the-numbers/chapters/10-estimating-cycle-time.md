@@ -74,6 +74,24 @@ The operator must remove each finished part, blow chips from the chuck or fixtur
 
 The estimated machine time per part, including handling, is therefore **8.99 minutes**, or about 9 minutes.
 
+## Spreading tool changes and checks over the batch
+
+Some work happens only every so often, but it still belongs in the time per part. Tool changes at the end of an edge's life are the main example. This is an illustration with assumed figures for four of the flange's tools:
+
+| Tool | Parts per edge | Time to change | Allowance per part (min) |
+|---|---|---|---|
+| Roughing insert | 60 | 2 min | 0.033 |
+| Finishing insert | 120 | 2 min | 0.017 |
+| Boring insert | 40 | 2 min | 0.050 |
+| Ø11 carbide drill | 300 | 1.5 min | 0.005 |
+| **Total** | | | **0.105** |
+
+About a tenth of a minute per part looks small against a nine-minute cycle, but it is real machine time, and it grows quickly when tool life is short. Chapter 8 showed how a modest increase in cutting speed can halve tool life; the allowance per part then doubles as well, which partly offsets the time the faster speed was meant to save.
+
+In-process checks are treated the same way. If the operator measures the bore and spigot on every tenth part, and each check takes about a minute with the machine waiting, that adds **0.1 minutes per part**. Where checks can be done while the next part cuts, they cost operator attention but not machine time, and the estimate should say which applies.
+
+Harbourline adds these allowances as a separate line rather than inflating the cycle time. That keeps the measured cycle comparable with the estimate, and it shows clearly where a change in tool life or inspection frequency would affect the job.
+
 ## Where the time goes
 
 | Component | Time per part (min) | Share |
@@ -126,11 +144,37 @@ Estimates should be checked against reality as soon as possible:
 
 Harbourline records the estimated and actual cycle times for every new job and reviews the difference. Over time, that record provides correction factors for its own machines, operators and programming style, and makes the next estimate better.
 
+## A quick estimate before the details
+
+Not every enquiry justifies a full feature-by-feature estimate. For a first answer, a shop can estimate from similar parts it has already made: list the main features, compare them with a part whose actual cycle time is known, and adjust for the differences in material removed, hole count and number of operations. The record of estimated and actual cycle times described below is what makes this reliable.
+
+A quick estimate should be labelled as such, with a range rather than a single figure, and replaced by a detailed estimate before a firm price is given. The worst outcome is a quick estimate that becomes a firm quote by default, because nobody went back to check it.
+
 ## From cycle time to capacity
 
 For scheduling, cycle time is not the same as the hours a batch occupies a machine. Machines stop for breaks, minor problems, waiting for material and shift changes. Overall equipment effectiveness, which combines availability, performance and quality, describes the gap between ideal and actual output. A machine with 75% effectiveness running a 2.77-minute cycle produces fewer than the theoretical 21.7 parts per hour.
 
 There are two common approaches to that gap. One is to build the losses into the hourly rate, so the rate covers an hour of paid time that includes some unproductive minutes, and estimate at ideal cycle time. The other is to use a rate per productive hour and add an allowance to the cycle time. Either works if it is applied consistently. Harbourline uses the first approach, so its quotes use the cycle estimate directly.
+
+## From cycle time to batch time
+
+For the order of 120 flanges, the total machine time across all three operations is:
+
+**120 × 8.99 ≈ 1,079 minutes, or about 18 hours**
+
+That figure is the basis for cost. Lead time is different. If the three operations run one after another, the batch occupies the shop for about 18 hours of machine time plus three set-ups. If the operations run at the same time on their three machines, with parts passing from one to the next in small transfer batches, the batch moves at the pace of the slowest operation: operation 10, at about 3.37 minutes including handling, gives about **120 × 3.37 ≈ 404 minutes, or 6.7 hours**, plus the time for the first parts to reach the last operation.
+
+```figure
+type: compare
+title: The same 120 flanges, two ways of running them
+cols: Operations in sequence | Operations overlapped
+caption: Machine time and cost are the same; lead time depends on how the work flows between machines.
+- Machine time | About 18 hours | About 18 hours
+- Time the batch takes | About 18 hours plus set-ups | About 6.7 hours plus start-up
+- *What sets the pace | Every operation in turn | The slowest operation, Op 10
+```
+
+Neither figure includes set-up, waiting or the losses described below. They answer different questions: cost per part comes from total machine time, and a promised delivery date comes from the flow of the batch through the shop.
 
 ## Balancing the operations
 

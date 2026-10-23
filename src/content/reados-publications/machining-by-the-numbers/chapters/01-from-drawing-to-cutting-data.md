@@ -44,6 +44,19 @@ caption: Each arrow is one of the simple relationships derived in Chapters 2 to 
 - *Cost | time × machine rate, plus tools
 ```
 
+## Read the drawing for the numbers that drive the job
+
+Before any cutting data is chosen, the drawing decides which operations, passes and tools the job needs. A few features usually drive most of the planning:
+
+- **Tight tolerances.** The Ø40 H7 bore of the flange allows a band of 0.025 mm above 40.000 mm, from 40.000 to 40.025 mm. A drilled hole cannot hold that, so the bore needs a drilling operation to remove most of the material, a roughing bore and a light finishing bore, each with its own cutting data and time.
+- **Surface finish.** A required roughness on a sealing face or bore sets the feed and nose radius of the finishing pass, as Chapter 3 shows, and may call for a separate finishing tool.
+- **Material and condition.** The material specification, and whether the bar is supplied as rolled, normalised or hardened, sets the cutting speed range and the tool grade.
+- **Threads and small holes.** The M8 tapped holes need a tap drill of the right size, a tapping cycle and a machine able to tap at the planned speed.
+
+Reading the drawing this way produces a list of features with their governing requirements. That list, not the overall shape of the part, is what the estimate and the program are built from. A part that looks simple may hide one feature that needs three passes and an in-process check.
+
+Quantity matters as well. The customer's request for prices at 30, 120 and 500 flanges means the plan must work at all three. A feature that is acceptable to finish with a slow, careful pass on 30 parts may justify a dedicated tool or a different sequence at 500, and set-up time, which Chapter 10 separates from per-part time, weighs very differently across those quantities. Noting the quantity range beside the feature list at the start keeps those trade-offs visible.
+
 ## Where cutting data comes from
 
 No formula tells you the right cutting speed for a material. Cutting speed and feed are empirical: they come from testing. There are three common sources:
@@ -63,6 +76,12 @@ caption: Start from the supplier, sense-check with handbooks and record what you
 - Handbooks | Broad coverage; useful for generic tools and checks | Cannot reflect every modern grade or geometry
 - *Your own records | Proven on your machines, fixtures and coolant | Only valid with the conditions recorded beside them
 ```
+
+## Material condition changes the numbers
+
+Two bars both described as medium-carbon steel can behave very differently under the tool. Hardness has the largest effect: harder material needs a lower cutting speed for the same tool life and produces higher cutting forces. Free-machining grades, which contain additions that help chips break, allow higher speeds and better finishes than standard grades of similar strength. Bar that has been cold drawn may machine differently from hot-rolled bar, and material from a new supplier may differ from the last batch even under the same designation.
+
+Tool suppliers group materials by machinability, and their data applies to a stated group and hardness range. Recording the material designation, condition and, where available, measured hardness with every set of cutting data is what makes the data reusable. When a familiar job suddenly wears tools faster, a change in material condition is one of the first things to check.
 
 ## Units and conversions
 
@@ -126,6 +145,30 @@ body:
 <text class="tx" x="150" y="40">Ø11 hole</text>
 <text class="tx" x="240" y="205">M8</text>
 ```
+
+## Let the datums decide the operation order
+
+Harbourline's sequence is not arbitrary. Operation 10 bores the Ø40 hole and turns the Ø100 diameter in one setting, so the two are concentric to the accuracy of that setting. Operation 20 then grips on the finished outside diameter, or locates in the bore, to machine the second side, keeping the spigot concentric with what was already made. Operation 30 drills the bolt holes, locating from the bore and the face, so the hole pattern is positioned relative to the features that matter in assembly.
+
+Each operation uses features produced by the previous one as its references. The same logic appears in fixture design: a surface that will locate the next operation must be finished first and accurately. Changing the order, for example drilling the bolt holes before the bore is finished, would leave the pattern positioned from a rough surface and make the relationship between holes and bore depend on two separate settings.
+
+## Record the conditions with the numbers
+
+A cutting data record is only useful if someone can tell when it applies. A practical data sheet for each tool and material combination records:
+
+```figure
+type: checklist
+title: What a cutting data record should hold
+caption: Values without conditions cannot be trusted on the next job; conditions make the numbers reusable.
+- x Tool, grade, geometry and holder, with stick-out
+- x Material designation, condition and hardness
+- x Machine and workholding used
+- x Cutting speed, feed and depth actually run
+- x Coolant type and delivery
+- *x Result: tool life, finish, problems and date
+```
+
+The last line is the one most often missing. A record that says what was run but not how long the tool lasted, or whether the finish was acceptable, cannot tell the next user whether to start from those values or avoid them. Dating each record also shows when it may no longer reflect current tools or materials.
 
 ## What the numbers cannot tell you
 

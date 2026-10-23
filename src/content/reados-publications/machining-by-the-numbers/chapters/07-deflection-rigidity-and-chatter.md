@@ -88,6 +88,18 @@ caption: Effective diameter 12.8 mm. A third more overhang more than doubles def
 
 A deflection of 0.019 mm may be acceptable for a bracket wall with a tolerance of ±0.05 mm. On a wall toleranced at ±0.02 mm it is not. The tool bends away from the wall most at the tip, so the wall comes out tapered, thicker at the bottom than at the top. Remedies include shorter projection, a larger cutter, lighter finishing cuts with a constant small radial engagement, or a spring pass that repeats the finish path to remove material left by deflection.
 
+## The holder and spindle bend too
+
+The cantilever calculation treats the tool as if it were clamped in a perfectly rigid wall. In reality, the holder, the taper connection to the spindle and the spindle bearings all add their own compliance, and on a long or heavily loaded tool they can add a large share of the total deflection.
+
+Holder choice matters. Shrink-fit and hydraulic holders grip the shank around its full circumference and usually give low runout and good stiffness. Collet chucks vary with collet quality and condition. Side-lock holders grip a flat on the shank, which can push the tool slightly off centre. Beyond the type, the holder's own length and diameter matter in exactly the same way as the tool's: a long, slim holder used to reach past a fixture can bend more than the cutter it carries. Keeping the total gauge length from spindle face to tool tip as short as the job allows is the single most effective stiffness measure for milling.
+
+## Runout loads the teeth unevenly
+
+If a milling cutter runs slightly off centre, one tooth sweeps a larger circle than the others and takes a thicker chip, while the others take thinner chips. This is an illustration. With the bracket profile's corrected feed of 0.121 mm per tooth, a radial runout of 0.02 mm at the cutting edges could make the chip on the highest tooth up to about 0.02 mm thicker than intended, roughly a sixth more, and the chip on the opposite tooth correspondingly thinner.
+
+The tooth that cuts the thicker chip wears faster and carries more force; the one that cuts the thinner chip may rub. The cutter's life is then set by its most heavily loaded tooth, and the surface shows a once-per-revolution pattern. Measuring runout at the cutting edges after the tool is assembled in its holder, and using holders and shanks in good condition, protects both tool life and finish. For small cutters, where the feed per tooth itself is only a few hundredths of a millimetre, a few micrometres of runout can matter as much as this example's 0.02 mm does for the larger tool.
+
 ## Workpiece deflection in turning
 
 Slender workpieces deflect in the same way. A Ø20 steel shaft held in a chuck with 80 mm projecting, and an assumed radial cutting force of 500 N at its end, deflects by:
@@ -140,6 +152,18 @@ caption: Change one thing at a time and note the result, so the fix can be repea
 - Uneven pitch | variable-pitch or variable-helix cutters
 - Add damping | damped bars and holders
 ```
+
+## Find stable speeds by testing
+
+The stability lobes that research describes cannot usually be calculated in a job shop without specialised measurement, but their practical consequence can be used directly: if a cut chatters, a change of spindle speed, sometimes up rather than down, may stop it without reducing depth or removal rate.
+
+A practical test is to take the intended cut at a range of spindle speeds, perhaps in steps of a few per cent, listening for the chatter note and looking at the surface after each. A speed band where the cut runs quietly with a clean surface can then be recorded on the cutting data sheet for that tool, holder and overhang. Specialist services and instruments can measure the system's response directly, with an instrumented hammer tap on the tool, and predict stable speeds and depths; for high-value or high-volume work, that measurement often pays for itself.
+
+## Rigidity is a chain
+
+Every element between the cutting edge and the machine's base takes part in the deflection: insert seat, tool body, holder, spindle, machine structure, fixture and workpiece. Improving one link helps only if it was a weak one. A carbide boring bar does little for a part held by its tips in soft jaws; a stiffer fixture does little for a cutter projecting twice as far as it needs to.
+
+A useful habit is to list the links for a difficult cut and estimate, even roughly, which bends most. The cantilever formula handles the tool and the workpiece; Fixtures That Repeat covers the fixture; the machine and spindle are the hardest to change and are best accommodated by choosing tools and strategies that keep forces modest. The list usually points to one or two cheap changes, such as a shorter tool, a better holder or an extra support, that do more than any change to the cutting data.
 
 ## Common mistakes
 

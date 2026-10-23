@@ -118,6 +118,18 @@ caption: Same cutter, depth and width; only the feed per tooth changes, and the 
 
 Corrections must stay within limits. A strongly increased feed per tooth increases the force on each tooth, and at very light engagement the correction can call for feeds high enough to overload the cutter's corners or exceed the machine's feed limits. Suppliers often give maximum corrected feeds for that reason. Modern CAM strategies that keep radial engagement low and constant, sometimes called trochoidal, adaptive or dynamic milling, rely on chip thinning calculations to set feeds that would look alarming to an operator used to slotting values.
 
+## Slotting is the hardest case
+
+A slot as wide as the cutter puts the tool at full radial engagement: every tooth cuts through half a revolution, from entry to exit, and the chips must escape from a closed channel. Forces are high, heat stays in the cut, and chips that are not cleared can be recut, damaging the edge. Suppliers usually give separate, lower feeds and depths for slotting than for side milling with the same tool.
+
+The chip thickness correction does not raise the feed in a slot, because the width of cut is the full diameter and the factor is already one. The common adjustments run the other way: a reduced axial depth per pass, a cutter with fewer flutes and more chip space, and good coolant or air delivery to clear the chips. For deep slots, a cutter slightly smaller than the slot, used to rough the centre and then finish the walls with side passes, often gives better life and accuracy than plunging a full-width cutter to depth.
+
+## Use the cutter's length wisely
+
+An end mill can cut with its full flute length on a wall, which is efficient: one pass at a 20 mm axial depth and a 2 mm width, as in the bracket example, removes as much as ten passes at 2 mm depth and 2 mm width, with far fewer moves. Using more of the flute also spreads wear along the edge instead of concentrating it at the tip.
+
+Deep axial engagement does have limits. A long flute in contact increases the cutting force and the bending moment on the tool, which Chapter 7 shows grows quickly with stick-out. The helix of the flutes produces an axial force that can pull the tool from a holder that does not grip it securely. And a long contact length makes chip evacuation harder. Combining a deep axial depth with a light, chip-thinning-corrected radial width is the usual compromise for profiling walls in steel: it keeps forces and heat manageable while using the cutter's length.
+
 ## Lead angle and face mills
 
 Face mills introduce a second kind of chip thinning. If the cutting edge is inclined to the feed direction, at an entering angle κr measured from the feed direction, the chip spreads along a longer edge and becomes thinner:
@@ -136,6 +148,18 @@ On operation 30, Harbourline face mills a flat 30 mm long and 20 mm wide on the 
 
 For time, the cutter must travel the length of the flat plus enough to enter and fully clear it. A conservative path is the length plus the cutter diameter plus a small clearance at each end: 30 + 63 + 2 × 2 = 97 mm. The cutting time is 97 ÷ 758 = **0.128 min**. On a part this small, the approach and exit take far longer than the cut itself. Shorter approach distances, or a smaller cutter, could reduce the time, but the difference is a few seconds per part and the larger cutter gives a single clean pass.
 
+## Estimate a pocket from its volume
+
+For a first estimate of milling time, the removal rate turns a volume into minutes, just as in turning. This is an illustration. A pocket 60 mm long, 40 mm wide and 10 mm deep removes 24,000 mm³, or 24 cm³. At the bracket profile's corrected removal rate of 69.3 cm³/min, the ideal cutting time is about **24 ÷ 69.3 ≈ 0.35 min**.
+
+Real pocketing takes longer. The tool must enter the material, by ramping or helical interpolation rather than plunging straight down; it changes direction at every corner; the last passes on the walls and floor are finishing passes at lower removal rates; and short moves rarely reach the programmed feed. Harbourline uses the volume method for quick quotes and adds an allowance based on similar jobs; for a firm price, the CAM system's simulated time, checked against a real run, replaces it.
+
+## Programmed feed is not always achieved feed
+
+The feed rate in the program is a request. On short moves and around corners, the machine must accelerate and decelerate, and its control slows the axes to stay within its acceleration and accuracy limits. A toolpath made of many short segments, typical of finishing a curved surface, may never reach the programmed feed at all.
+
+The effect matters most for high feed rates such as those produced by chip thinning corrections. A profile programmed at 1,733 mm/min on long straight walls will run close to that speed; the same feed on a tight, curving path may average much less. For time estimates, the machine's own cycle-time measurement on a test run is the reliable figure. For tool loading, the reverse concern applies: when the machine slows in a corner but the spindle speed stays the same, the feed per tooth falls and the edge may rub. Many CAM systems adjust feeds through corners for this reason.
+
 ## Number of teeth engaged
 
 The number of teeth in contact at once affects the smoothness of the cut. With a narrow width of cut and few teeth, there may be moments when no tooth is cutting, then a sudden load as the next tooth enters. That intermittent loading can excite vibration. Wider cuts or cutters with more teeth keep at least one tooth engaged, which tends to be smoother, but too many teeth in a deep slot can crowd chips and leave no room for them to escape. Coarse-pitch cutters suit long-chipping materials and less rigid set-ups; fine-pitch cutters suit short-chipping materials and stable conditions.
@@ -143,6 +167,10 @@ The number of teeth in contact at once affects the smoothness of the cut. With a
 ## Climb and conventional milling
 
 In **climb milling**, also called down milling, the tooth enters the material at maximum chip thickness and exits thin. In **conventional milling**, or up milling, it enters thin and exits thick. On modern CNC machines with backlash-free drives, climb milling is usually preferred: the tooth bites cleanly instead of rubbing as it enters, giving better tool life and finish. Conventional milling can still be useful on hard scale, on some castings or on older manual machines where backlash would let a climb cut pull the table forward.
+
+## Check the result against the spindle and table
+
+After correcting feeds and choosing depths, check the numbers against the machine. The spindle speed must be within the machine's range and the toolholder's rating. The feed rate must be within the axis limits. The cutting power, which Chapter 6 calculates from removal rate and specific cutting force, must be within what the spindle can deliver at that speed. For the bracket profile, a feed of 1,733 mm/min and a speed of 3,581 rev/min are well within most machining centres' limits, but the same calculation for a small cutter at high speed, or a large face mill at low speed, may run into one of them first.
 
 ## Common mistakes
 

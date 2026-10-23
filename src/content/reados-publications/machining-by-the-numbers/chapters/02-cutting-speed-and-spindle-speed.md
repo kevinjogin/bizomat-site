@@ -48,6 +48,18 @@ step: n = 220,000 ÷ 314.16
 step: n = 700 rev/min
 ```
 
+## Converting older data
+
+Much published data still uses surface feet per minute. The conversion is a single multiplication: 1 foot is 0.3048 m, so a recommendation of 700 surface feet per minute is about **700 × 0.3048 ≈ 213 m/min**. For the Ø40 bore, that corresponds to about 1,698 rev/min.
+
+Convert the cutting speed first and then calculate the spindle speed in metric units, rather than converting a spindle speed calculated with inch diameters. Keeping one unit system through the calculation removes a common source of error, and recording the original figure and its units alongside the converted one lets anyone check the step.
+
+## Speed follows the material
+
+Recommended cutting speeds vary enormously between materials. Aluminium alloys are usually cut much faster than steels; stainless steels and heat-resistant alloys much slower; titanium and nickel alloys slower still, because they conduct heat poorly and concentrate it at the edge. Within steels, harder grades call for lower speeds. Cast irons have their own ranges, and their abrasive structure affects the choice of tool grade as much as speed.
+
+These relationships are why cutting data is always given for a material group and condition, and why a spindle speed copied from one material to another is so often wrong. The tool supplier's data for the actual grade and material is the right starting point, with the calculation in this chapter turning it into a spindle speed for each diameter.
+
 ## Which diameter?
 
 In a roughing pass the diameter changes as the tool cuts. Turning the outside diameter from 110 mm down to about 105 mm in one pass changes the cutting speed by a few per cent if the spindle speed is fixed. That is rarely important, and estimators often use the diameter at the middle of the cut. For finishing, use the finished diameter, because that is where surface quality is decided.
@@ -83,6 +95,18 @@ caption: Constant surface speed holds 220 m/min down to Ø20; inside that, speed
 - 70 | 220
 - 110 | 220
 ```
+
+## Low spindle speed means high torque
+
+Large diameters need low spindle speeds, and low spindle speeds bring a different limit into play. A spindle motor delivers its full power only above a certain speed; below it, the available torque is limited, so the power falls with speed. Many lathes list a torque or power curve in their manual for this reason.
+
+The torque needed at the spindle follows from power and speed:
+
+**T = 9,550 × P ÷ n**
+
+with T in N·m, P in kW and n in rev/min. This is an illustration. If roughing the flange's outside diameter at 637 rev/min needs 5 kW at the cutting edge, the spindle must deliver about **9,550 × 5 ÷ 637 ≈ 75 N·m**. The same 5 kW in the Ø40 bore at 1,751 rev/min needs only about 27 N·m.
+
+So a machine with ample power at high speed may still stall or slow on a heavy cut at a large diameter. Chapter 6 calculates the cutting power properly; the point here is that the spindle speed chosen for the right cutting speed also decides whether the machine can deliver the torque. Check both against the machine's curve, especially for large bar, big faces and heavy roughing.
 
 ## Time to face with constant surface speed
 
@@ -148,9 +172,21 @@ This is an illustration. A Ø10 ball-nose cutter finishing with ap = 0.5 mm has 
 
 Chamfer mills, tapered tools and inserts with large nose radii taking light cuts have the same issue.
 
+## Slow down for long overhangs
+
+The cutting speed recommendation assumes a rigid set-up. A boring bar extended four or five times its diameter, a long drill or a slender end mill can vibrate at speeds that a short tool handles easily. Suppliers often recommend reducing cutting speed, and sometimes feed, as the overhang grows, and Chapter 7 explains the stiffness behind this.
+
+For the Harbourline bore, a short, stiff boring bar can run at the full planned speed. If a longer bar were needed to reach a deeper bore, starting at a reduced speed and increasing it while listening for chatter and checking the finish is a safer path than starting at the catalogue value and backing off after a damaged insert.
+
 ## How precise does cutting speed need to be?
 
 Cutting speed recommendations come with a range, and tool life is not very sensitive to small changes in either direction at the low end. At the high end, it can be very sensitive, as Chapter 8 shows: a 10% increase in speed can reduce tool life by a third or more. There is no point calculating spindle speeds to the last revolution, but systematic errors of 20% or more, such as using the wrong diameter or forgetting the spindle limit, change results noticeably.
+
+## Check a program's speeds in two minutes
+
+Before running a new or edited program, a quick table catches most speed errors. List each tool and pass, the diameter it cuts, the programmed spindle speed or constant surface speed, and the maximum spindle speed set. Calculate the cutting speed for each fixed-speed pass and compare it with the planned value. Confirm that every constant surface speed block has a maximum speed that respects the machine, chuck and part limits.
+
+Any line where the calculated speed differs from the plan by more than about a fifth deserves a second look. The check takes minutes, and it finds the errors that otherwise show up as worn tools, poor finishes or, worse, a chuck run above its rated speed.
 
 ## Common mistakes
 
