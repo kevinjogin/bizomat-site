@@ -21,6 +21,43 @@ The survey answers three questions:
 2. **How large is the thinned area?**
 3. **What caused it, and has the cause stopped?** A build-up over active corrosion simply gives the corrosion new metal to consume.
 
+## Laying out the survey grid
+
+A thickness survey is only as good as its grid. Readings taken too far apart can miss the thinnest point; readings taken too close waste time on uniform plate. A practical approach is to start with a coarse grid across the whole suspect area, then add closer readings wherever the coarse grid shows thinning or the surface shows pitting.
+
+This is an illustration. For the tank's 350 mm by 250 mm corroded region, a 50 mm grid gives 8 points along the length and 6 across, or 48 readings. Halving the spacing to 25 mm quadruples the work, to 15 by 11, or 165 readings. The workshop uses the 50 mm grid first, then adds 25 mm readings around the three lowest values.
+
+Good survey practice also includes:
+
+- **Calibrating the gauge** on a reference block of known thickness and similar material before starting, and checking it again at the end.
+- **Preparing the surface** at each point, or using a gauge mode designed to read through coatings, because paint and scale can add to the apparent thickness.
+- **Recording position and value together**, on a gridded sketch or photograph, so the survey can be repeated at the same points later.
+- **Reporting the minimum, the general level and the extent**, not just an average. An average of 8.5 mm can hide a pit at 5 mm.
+
+```figure
+type: compare
+title: Two survey grids over a 350 × 250 mm area
+cols: 50 mm grid | 25 mm grid
+caption: Start coarse, then tighten the grid where readings or pitting show it is needed.
+- Readings | 48 | 165
+- Chance of missing a small pit | Higher | Lower
+- *Best use | Mapping the whole area | Around the thinnest readings
+```
+
+## Corrosion rate and remaining life
+
+Thickness readings become far more useful when they are compared over time. The simplest estimate of corrosion rate divides the metal lost by the time in service:
+
+**corrosion rate = (original thickness − measured thickness) / years in service**
+
+This is an illustration with assumed figures. If the tank has been in service for about 35 years and the general level of the corroded region has fallen from 10.0 mm to about 6.5 mm, the average rate is:
+
+**(10.0 − 6.5) / 35 = 0.1 mm per year**
+
+If the owner's engineer has set a minimum acceptable thickness of 6.0 mm for that part of the tank, the remaining allowance is 0.5 mm, which at 0.1 mm per year is about 5 years. That estimate is rough, because corrosion is rarely uniform in time: a change in water quality, drainage or coating can make the recent rate much higher or lower than the long-term average. Repeat surveys at the same points are the only reliable way to measure the current rate.
+
+Even as a rough figure, remaining life frames the decision. Five years of allowance points towards a planned repair at a convenient shutdown rather than an emergency, and towards fixing the cause, the standing water, so that the new insert does not follow the same path.
+
 ## Compare build-up with an insert by the metal deposited
 
 The tank case gives a direct comparison. This is an illustration. The corroded region near the base measures about 350 mm by 250 mm, with remaining thickness down to 6.5 mm on the nominal 10 mm plate. Suppose the average loss across the region is about 2.5 mm.
@@ -85,6 +122,47 @@ Build-up remains useful where:
 - the applicable standard or approver accepts it for that part and location.
 
 The booklet's caulked edges were a reasonable candidate: narrow, local and caused by a mechanism that a welded seam would remove. A broad corroded panel is usually not.
+
+## How build-up is done well
+
+Where weld build-up is the right repair, a few practices make it more reliable:
+
+- **Clean to sound metal** and confirm by inspection that there are no cracks in the area to be built up.
+- **Lay overlapping stringer beads** in a planned pattern, rather than wide weaves, to control heat input and leave a more even surface.
+- **Control preheat and interpass temperature** as for any other weld; build-up covers a large area and can accumulate heat.
+- **Build slightly above the final surface** and grind back to a smooth profile with gentle transitions at the edges, so there is no step to concentrate stress.
+- **Inspect the finished surface** and measure the final thickness to confirm the target was reached.
+
+Where build-up is used to restore a seating face or flange, the final machining or grinding must also restore flatness and surface finish. Wear-resistant overlays, often called hardfacing, are a related but different process, intended to resist abrasion rather than restore load-bearing thickness.
+
+## Hammering the deposit, then and now
+
+The booklet told welders to hammer the built-up edge lightly while it was still red hot. Hammering, or peening, deforms the deposit while it is soft. That stretches it slightly, offsetting some of the shrinkage that would otherwise pull the edge out of shape, and it may have helped close the edge against steam.
+
+Modern practice treats peening as a procedure variable rather than a habit. Done on metal that is too cold, it can crack the deposit. Done on the final layer, it can close surface defects over so that inspection no longer finds them, and it work-hardens the surface. Structural welding codes commonly restrict it, for example by not allowing peening of the root or final layers. Where a procedure does use peening, it states the tool, the passes it applies to and the temperature range. On a modern repair, unrecorded hammering is a deviation, not a craftsman's flourish.
+
+## Inspecting a build-up
+
+Build-up is harder to inspect than a butt weld because the defects that matter lie parallel to the surface: lack of fusion between the deposit and the original plate, lack of fusion between neighbouring beads, and porosity trapped under overlapping passes. A sound inspection plan for build-up therefore works in stages:
+
+- **Inspect each layer before the next.** Remove slag, check for undercut at bead edges and porosity in the surface, and correct faults while they are still accessible.
+- **Apply a surface method after final grinding**, after the hold time the procedure specifies if hydrogen cracking is possible.
+- **Repeat the thickness survey on the original grid.** A before-and-after map at the same points is the most persuasive single record of a build-up, because it shows the restored thickness exactly where the loss was measured.
+- **Examine the fusion interface ultrasonically** where the standard or the consequence of failure calls for it.
+
+Compare the two maps point by point. A reading lower than planned may mean the deposit was ground back too far. A reading that will not settle, or that jumps between values, can indicate a lamination or poor fusion at the interface and deserves a closer look.
+
+## The tank case: two answers on one tank
+
+This is an illustration. The workshop's 50 mm survey confirms a corroded region of about 350 mm by 250 mm, or 87,500 mm², with a minimum of 6.5 mm against the owner's engineer's 6.0 mm minimum, and an estimated five years of remaining allowance. The cause is standing water against the plate.
+
+Build-up would deposit about 1.72 kg of weld metal over the whole region and leave 87,500 mm² of fusion interface to inspect, over plate that would keep corroding from the outside unless the drainage were fixed. The insert deposits about 1.09 kg in a perimeter butt weld that established methods can inspect, and it removes the wasted plate. The workshop chooses the insert, fixes the drainage, and records why.
+
+The closer 25 mm readings also find two isolated pits elsewhere on the shell, each about 20 mm across and 1.5 mm deep, in plate that is otherwise at full thickness. Treating each pit as a shallow disc, the metal to replace is about:
+
+**π × 10² × 1.5 ≈ 471 mm³, or about 3.7 g of weld metal**
+
+These are small, local, with a known cause and surrounded by sound plate. The workshop grinds each pit to a smooth dish, deposits a few stringer beads to the procedure, grinds flush, measures the thickness and applies penetrant testing. Same tank, two different repairs, each chosen by size, cause and how well the result can be inspected.
 
 ## Exercise: apply the published thresholds
 

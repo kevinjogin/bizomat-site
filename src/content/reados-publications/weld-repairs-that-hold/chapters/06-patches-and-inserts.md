@@ -87,6 +87,85 @@ This is an illustration. While the crack is being repaired, thickness readings n
 
 It chooses a rounded rectangle 400 mm by 300 mm with 50 mm corner radii, placed so every edge lies in plate measuring at least 9.4 mm, at least the procedure's minimum distance from the tank's existing vertical seam. The insert is cut from new plate of matching grade and thickness. Welding follows a back-step sequence around the perimeter, starting partway along a long side rather than at a corner. The total weld length is about 1,314 mm.
 
+## Sizing the insert
+
+An insert is sized from the thickness survey and crack map, not from the visible damage. Its edges must sit in plate that inspection has confirmed to be sound and of adequate thickness, with a margin beyond the last thinned reading or crack indication. Several further considerations push the size up or down:
+
+- **Distance from existing welds, holes and openings.** Placing a new weld close to an existing one overlaps their heat-affected zones and residual stresses. Standards and procedures set minimum separations; where an insert would fall too close, it is often better to enlarge it so that it takes in the nearby feature or seam completely.
+- **Shape proportions.** Very long, narrow inserts concentrate shrinkage along their long sides and can pull the surrounding plate out of shape. A more compact shape usually behaves better.
+- **Practical access.** The insert must be weldable around its whole perimeter, on both sides if the procedure requires, and inspectable afterwards.
+- **Future repairs.** An insert that leaves a narrow strip of old plate between itself and the next seam may make the next repair harder. Sometimes extending to the seam is the better long-term choice.
+
+The booklet showed the same instinct when it extended firebox patches to include a whole row of staybolts, and when it cut half door sheets between the first and second rows rather than close to the door hole.
+
+## Matching the curvature of a shell
+
+Inserts in curved parts must be formed to the curvature before they are fitted. The error from fitting a flat plate into a curved shell is larger than many people expect. The height of an arc over a straight chord, called the sagitta, is:
+
+**s = R − √(R² − (c/2)²)**
+
+where R is the shell radius and c the chord length.
+
+The tank in this book is 3 m in diameter, so R = 1,500 mm. Across the 400 mm width of the base insert, measured around the circumference:
+
+**s = 1,500 − √(1,500² − 200²) ≈ 1,500 − 1,486.61 ≈ 13.39 mm**
+
+A flat insert would sit about 13 mm away from the shell at its centre, far beyond any fit-up tolerance. Across a 200 mm chord, the error would still be about 3.3 mm. The insert must therefore be rolled to the shell radius, and its fit checked with a template before welding. Forcing a poorly formed insert into place with tacks and clamps locks in stress before welding even begins.
+
+## Choosing the insert material
+
+The insert becomes part of the structure, so its material deserves the same care as the welding procedure:
+
+- **Match the grade and condition** of the original plate where it is known, or choose a material that the design, the welding procedure and the applicable standard all accept. A stronger plate is not automatically better: a much harder or stronger insert concentrates strain in the softer plate around it.
+- **Match the thickness.** An insert thinner than the surrounding plate weakens the repair. One that is thicker creates a step, which concentrates stress and complicates the joint; where a thickness change is unavoidable, standards typically require the thicker part to be tapered to the thinner at a specified slope.
+- **Keep traceability.** Record the plate's specification, heat or batch number and certificate, and mark the insert so that its origin can be confirmed later. For pressure equipment, material traceability is usually a formal requirement.
+- **Check weldability against the procedure.** The welding procedure must be qualified for the combination of insert and existing plate, including any difference in composition between new steel and old.
+
+Old plate complicates the last point. Steel from a century ago may differ from any modern grade in carbon, sulphur, phosphorus and cleanliness. Chapter 5's advice applies here: test the existing plate's composition before choosing the insert and the procedure, rather than assuming that any mild steel will do.
+
+For the tank, the workshop records the new plate's grade and heat number, the measured composition of the old plate from Chapter 5, and the procedure's qualified range covering both, so that anyone repairing the tank again starts with the same information.
+
+```figure
+type: bars
+title: Gap from fitting a flat plate into a 3 m diameter shell
+unit: mm
+max: 15
+caption: Sagitta at the centre of the chord, for a shell radius of 1,500 mm. Inserts must be formed to the curvature.
+- 200 mm chord | 3.34
+- 300 mm chord | 7.52
+- *400 mm chord | 13.39
+```
+
+## Preparing and fitting the insert
+
+The insert and the opening are prepared together:
+
+1. **Cut the opening** to the planned shape with radiused corners, by a method that leaves an edge suitable for bevelling.
+2. **Cut the insert** from plate of matching grade and thickness, slightly oversize if it will be trimmed to fit.
+3. **Form the insert** to the part's curvature where needed, and check it with a template.
+4. **Bevel both edges** to the procedure's groove geometry, keeping the root gap even around the perimeter.
+5. **Check the fit** for gap, misalignment and contact before tacking.
+6. **Tack in the planned positions**, avoiding corners, with tacks made to the welding procedure.
+
+An even root gap around the whole perimeter is the single most important fit-up feature. A gap that varies from tight to wide changes the heat input, penetration and shrinkage along the weld, and makes the closing segments harder still.
+
+## Lap patches and doublers
+
+A lap patch, or doubler, is a plate laid over the damaged area and fillet welded around its edge. It is quick, needs no cutting of the original plate and does not require a full-penetration weld. It also has serious drawbacks:
+
+- It leaves the damaged plate in place underneath, where corrosion can continue unseen.
+- It creates a crevice between the plates that traps moisture and corrodes.
+- It offsets the load path, so load must turn through the fillet welds, which concentrates stress at their toes and roots.
+- It is difficult to inspect, because the original plate and the fillet roots are hidden.
+
+The 1919 booklet already judged that a lap weld did not make a strong, tight joint compared with a butt weld. Modern codes generally restrict lap patches on pressure-retaining parts, and the United States steam locomotive rule quoted in Chapter 8 requires approval even for flush patches on unstayed boiler portions. Outside regulated equipment, a doubler may be acceptable as a temporary measure or on lightly loaded structures, but it should be recorded as such and its condition monitored.
+
+## Inspecting an insert
+
+Insert welds are inspected around their whole perimeter, with particular attention to the corners and to the closing segments, which carry the most restraint. Surface methods find cracks at the toes and corners; volumetric methods, where the standard requires them, check fusion through the thickness. Thickness readings around the outside of the insert confirm that its edges really did land in sound plate. Any indication at a corner or closing segment is worth investigating carefully, because those are the places where a sequence or fit-up problem would show first.
+
+For the tank, the base insert is inspected visually around its perimeter, penetrant tested after the delayed hold, and surrounded by thickness readings at 50 mm intervals, all recorded in the dossier with the template check that confirmed its curvature.
+
 ## Exercise: ligament efficiency and patch edges
 
 A plate has a row of 22 mm holes at a 90 mm pitch. Calculate the ligament efficiency, then explain why a patch edge laid along that row would be a poor choice even if the weld itself were perfect.

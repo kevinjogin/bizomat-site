@@ -93,6 +93,83 @@ This is an illustration. For the 170 mm crack repair, the workshop's welding sup
 
 The segment length is a starting point for this joint, to be confirmed by the procedure and adjusted if the trial shows movement or cracking. The plan exists so that the sequence is a deliberate decision rather than a habit of whoever is welding that day.
 
+## Sequencing an insert
+
+An insert is a closed loop of weld, and closed loops are unforgiving. The last segment of the perimeter closes the loop against weld that has already cooled and shrunk, so it is welded under the highest restraint of all. Sequence planning for inserts therefore aims to spread the shrinkage evenly around the perimeter and to make the closing segments as short and as early as practical.
+
+Common principles include:
+
+- **Do not start or stop at a corner.** Corners concentrate stress, and a start or stop there combines the worst geometry with the most likely place for a defect. Start partway along a straight side.
+- **Balance opposite sides.** Weld a segment on one side, then a segment on the opposite side, so that each shrinkage is partly opposed by its mirror image rather than pulling the insert towards one edge.
+- **Use short segments in back-step order** on each side, as described above, so each segment finishes against solid weld.
+- **Weld the root around the whole perimeter before filling**, where the procedure allows, so the insert is held evenly before heavier passes add more heat.
+
+The booklet's instructions for door collars, holes and patches follow the same pattern: tack at more than one point, back-weld in short segments from each tack, and complete the loop in a planned order rather than continuously.
+
+## Sequence through the thickness
+
+Most repair welds in plate over a few millimetres thick need several passes. Sequence matters through the thickness as well as along the length:
+
+- **Stagger the stops and starts.** If every pass starts and stops at the same place, the weak points line up through the joint. Offsetting each pass's segment ends by a short distance avoids that.
+- **Alternate the direction of travel** between passes where the procedure permits, so the heat distribution does not always favour one end.
+- **Control interpass temperature.** Waiting for the joint to cool to within the procedure's limit before the next pass prevents heat from accumulating, which would widen the hot zone and increase shrinkage.
+- **Balance through the thickness** with double-sided joints, alternating sides so that angular distortion from one side is corrected by the next.
+
+For thick sections, welders sometimes build the joint in blocks or cascades, filling short lengths to full depth in a planned order rather than laying each pass along the whole length. These are procedure decisions, set and qualified for the joint.
+
+## Order of joints in a structure
+
+When a repair involves several welds, the order between them matters as much as the order within each. General guidance, consistent with the distortion control principles TWI describes, includes:
+
+1. **Weld the joints with the most shrinkage first** while the structure is still free enough to accommodate them, then the joints that tie the structure together.
+2. **Weld from the centre of a structure outwards**, so shrinkage can move towards free edges rather than being trapped between completed welds.
+3. **Complete butt joints in plates before the fillet welds** that attach stiffeners across them, so the butt weld can shrink without fighting the stiffeners.
+4. **Leave closing joints until last**, and keep them short.
+
+None of these rules is absolute. They are starting points to be checked against the actual geometry and restraint, and confirmed by trial where distortion matters.
+
+```figure
+type: steps
+title: Planning the order of welds in a repair
+caption: Free the shrinkage where you can, and keep the most restrained welds short.
+- Identify every weld in the repair
+- Rank them by shrinkage and restraint
+- Weld the high-shrinkage joints first
+- Work from the centre towards free edges
+- Butt welds before crossing fillets
+- *Close the loop last, in short segments
+```
+
+## The tank case: sequencing the base insert
+
+This is an illustration. The 400 mm by 300 mm insert from Chapter 6 has a perimeter of about 1,314 mm. The supervisor divides it into nine segments of roughly 146 mm, numbered around the loop with no segment boundary at a corner. The root is welded in the order 1, 5, 3, 7, 2, 6, 4, 8 and then 9, alternating between opposite sides of the insert, with each segment welded back towards the end of a previous one. Fill and cap passes follow the same pattern with segment ends offset by about 25 mm.
+
+Punch marks across the long sides and a straightedge across the insert are measured before welding, after the root and after cooling. The plan sits in the repair record with the measurements, so that if the insert dishes or a crack appears, the sequence can be reviewed rather than guessed.
+
+## Recording the sequence
+
+A sequence that exists only in the supervisor's head is not a control. A useful sequence record is a simple sketch of the joint with segments numbered in welding order, the direction of each segment marked with an arrow, and space for the welder to initial each segment as it is completed. It takes minutes to prepare, and it lets an inspector confirm afterwards that the planned sequence was followed.
+
+The booklet's drawings, with their numbered points and instructions to weld from point 2 back to point 1, then 3 to 2, were exactly such sequence sketches. They are one of the most transferable ideas in the whole document.
+
+## Tacking is the first sequence decision
+
+Every sequence begins with tack welds, and tacks deserve more respect than they usually get. They hold the joint at its intended gap while the first segments go in, which means they resist the shrinkage of every pass that follows. A tack that is too small can crack as the joint closes; a tack that is too large becomes a lump of weld that the root pass must fuse into without defects.
+
+Good practice treats tacks as part of the weld:
+
+- **Make them to the same procedure** as the root pass, including preheat and low-hydrogen consumables, because they become part of the finished joint.
+- **Space them evenly and close enough** to hold the gap, closer in thin plate and in tightly curved joints.
+- **Inspect them before welding over them.** A cracked tack must be ground out, not buried, because the crack will propagate into the weld.
+- **Feather their ends** by grinding, so the root pass can blend in without a lack of fusion at each tack.
+- **Place them with the sequence in mind.** The booklet tacked an inch at the starting point and then back-welded towards it. A modern sequence sketch shows where the tacks are, because each one is a point the segments work towards.
+
+In repair work, tacks also hold inserts in position against any distortion already present in the surrounding plate. If the insert does not fit without force, stop and find out why: forcing it into place with tacks locks in stress before welding has even begun.
+
+## When sequence is not enough
+
+Sequence reduces and redistributes shrinkage; it does not eliminate it. If a trial or the first segments show unacceptable movement or cracking, the response may include reducing heat input, adding temporary restraint, increasing preheat, changing the joint preparation or reconsidering the repair itself. Record what was observed and what was changed, because the next repair of a similar part will benefit from the evidence.
+
 ## Exercise: count the segments
 
 A 1.2 m seam is to be welded by back-step in 250 mm segments, after an initial 25 mm tack at the start. How many full segments are needed, and how long is the last one?

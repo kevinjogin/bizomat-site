@@ -97,6 +97,77 @@ caption: The groove depth follows the defect; inspection, not appearance, decide
 - Taper the ends | start and stop in sound metal
 ```
 
+## Root opening and fit-up are part of the design
+
+The groove area formula has a feature worth noticing: the root gap term g × t grows with plate thickness. In 10 mm plate, every extra millimetre of gap adds 10 mm² of groove area. For the 60° preparation, opening the gap from 4.8 mm to 6.8 mm, a common enough result of careless fit-up, raises the area from about 105.7 mm² to about 125.7 mm², an increase of about 19%. The welder deposits a fifth more metal than planned, and the joint shrinks accordingly.
+
+A gap that is too tight causes the opposite problem. The root cannot fuse fully, leaving a lack of penetration that acts as a built-in crack, the defect a repair can least afford. For the same 60° groove in 10 mm plate, a 3 mm gap gives about 87.7 mm² of area, less metal, but only if the welder can still achieve a sound root with the chosen process.
+
+Other fit-up conditions matter as much as the gap:
+
+- **Misalignment**, sometimes called hi-lo, where one plate surface sits higher than the other, creates a step that concentrates stress and makes fusion at the root harder. Procedures and standards limit it.
+- **Uneven bevels** leave one side of the joint easier to fuse than the other.
+- **Contamination** such as paint, oil, rust, scale or moisture on the groove faces feeds porosity and hydrogen into the weld.
+
+For a repair, the excavation becomes the joint, so these checks apply to the ground-out groove as much as to a new fabrication. The tank repair specification therefore asks for the groove angle, gap and cleanliness to be checked against the procedure before welding begins.
+
+```figure
+type: bars
+title: Groove area as the root gap changes
+unit: mm²
+max: 140
+caption: 60° single-V in 10 mm plate. Each extra millimetre of gap adds 10 mm² before reinforcement.
+- 3.0 mm gap | 87.7
+- *4.8 mm gap | 105.7
+- 6.8 mm gap | 125.7
+```
+
+## Choosing how to excavate
+
+Several methods remove cracked metal, each with consequences for the repair:
+
+- **Grinding** is controllable and leaves a clean surface, but it is slow for deep or long excavations and can smear metal over a crack, hiding it from penetrant inspection unless the surface is properly prepared.
+- **Air carbon arc gouging** removes metal quickly by melting it with an arc and blowing it away with compressed air. It leaves a carbon-enriched layer on the groove surface that is normally ground off before welding, because carbon pick-up can harden and crack the weld.
+- **Oxy-fuel gouging**, a descendant of the cutting torch the 1919 booklet used for its bevels, works on carbon steels but heats a wider zone.
+- **Machining or milling** gives the most accurate groove where the part can be set up on a machine or a portable machining head can reach it.
+
+Whatever the method, the groove surface must end up clean, smooth and free of notches, with the shape the procedure requires. The excavation is then inspected, and only when inspection confirms that no crack remains does welding begin.
+
+## When the crack goes right through
+
+If a crack runs through the full thickness, the excavation goes through too, and the repair becomes a full-penetration butt weld across an open slot. The welder then needs either access to both sides, so the back of the joint can be ground and welded, or a means of supporting the root from behind, such as a backing bar or a ceramic backing tape. Each choice has implications: welding from both sides balances shrinkage but needs access; a permanent backing bar leaves a crevice that may be unacceptable in corrosive or cyclic service; temporary backings must be removed and the root inspected.
+
+In the firebox, the booklet often had a second welder working on the far side of the plate while the first welded. The modern equivalent is a planned back-gouge and back-weld, or a qualified procedure for single-sided welding with suitable backing.
+
+## Reinforcement and finishing
+
+The cap of a weld usually stands a little proud of the plate, and its area adds to the metal deposited. A rough estimate treats the cap as a shallow curved profile of area about two-thirds of its width times its height.
+
+For the 60° groove in 10 mm plate with a 4.8 mm gap, the top of the groove is about 4.8 + 2 × 10 × tan 30° ≈ 16.35 mm wide. A cap overlapping each edge by 1.5 mm and standing 2 mm high has an area of roughly:
+
+**⅔ × (16.35 + 3) × 2 ≈ 25.8 mm²**
+
+That is about a quarter of the groove area again. Excess reinforcement wastes metal, adds heat, and creates a sharper change of section at the weld toes, where fatigue cracks like to start. In fatigue-sensitive areas, procedures may call for the cap to be dressed smooth or ground flush, which also makes surface inspection more reliable. The booklet's instruction to stand the weld about 1/8 inch proud reflects a time when extra metal was seen mainly as extra strength.
+
+## A preparation checklist
+
+Before the first pass of any repair weld, confirm that:
+
+1. the defect has been fully removed and the clean groove inspected;
+2. the groove angle, root gap and root face match the qualified procedure;
+3. misalignment is within the procedure's limits;
+4. the groove and a margin either side are clean, dry and free of coatings;
+5. access is adequate for the welder and for inspection, on both sides if required;
+6. any backing is suitable for the service and will be removed or accepted as the procedure states.
+
+Each item is quick to check and expensive to discover afterwards.
+
+## From volume to time
+
+Weld volume also drives time, which helps when planning a repair or comparing options. This is an illustration with assumed figures. The tank crack groove is about 170 mm long, with about 105.7 mm² of groove and 25.8 mm² of cap, so about 131.5 mm² in total. Its volume is about 131.5 × 170 ≈ 22,360 mm³, or about 0.18 kg of weld metal at 7.85 g/cm³.
+
+If the welder deposits an assumed 1.2 kg per hour while the arc is running, that is roughly 9 minutes of arc time. Arc time is only part of the work: cleaning between passes, changing electrodes, checking interpass temperature and moving position all take time. With an assumed operating factor of 30%, meaning the arc runs for 30% of the welder's time on the job, the welding itself takes around half an hour, before excavation, preheat and inspection are counted. Use your own process data for real estimates; the method, not the figures, is the point.
+
 ## Exercise: groove area for thicker plate
 
 Calculate the groove area for 16 mm plate with a 3 mm root gap, first for a 60° included single vee and then for a symmetrical double vee, each side 8 mm deep with a 60° included angle and the same 3 mm gap through the full thickness.

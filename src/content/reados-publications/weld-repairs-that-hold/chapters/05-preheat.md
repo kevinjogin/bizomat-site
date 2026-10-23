@@ -73,6 +73,84 @@ In the United States, the steam locomotive regulation discussed in Chapter 8 dis
 
 Cooling deserves as much thought as heating. A repair cooled quickly in a cold workshop, or quenched to save time, can harden and crack. Procedures may call for slow cooling under insulation, holding at temperature for a period to let hydrogen escape, or a formal post-weld heat treatment for stress relief where a standard or design requires it. The booklet's practice of reheating areas after welding to relieve shrinkage was an early, unmeasured step in this direction. Modern heat treatment is controlled, recorded and justified by the applicable standard, because uncontrolled heating can damage as easily as it can help.
 
+## Where hydrogen comes from, and how it is kept out
+
+Hydrogen cracking needs three things together: hydrogen in the weld, a susceptible microstructure in the heat-affected zone, and tensile stress. Preheat works on the second and helps the first. Controlling the hydrogen at its source is just as important.
+
+The main sources are:
+
+- **Moisture in consumables.** Low-hydrogen electrodes and fluxes absorb water from the air. Manufacturers specify storage, drying or baking conditions and the time an electrode may be exposed before it must be re-dried or discarded.
+- **Moisture and contamination on the joint.** Condensation, rust, oil, grease, paint and cutting fluids all release hydrogen in the arc. A cold steel surface in a humid workshop can carry condensation that is invisible until the arc strikes it.
+- **The process.** Some processes and consumables deposit less hydrogen than others. Consumables are commonly classified by their diffusible hydrogen level, with designations such as H5 or H10 indicating a maximum of about 5 or 10 millilitres of hydrogen per 100 grams of weld metal.
+
+For the tank repair, the procedure therefore specifies a low-hydrogen consumable class, the storage and re-drying conditions from the manufacturer's data sheet, and cleaning of the groove and a band either side to bright metal immediately before welding.
+
+## Thickness and restraint change the preheat
+
+Carbon equivalent is only one input to a preheat decision. Methods such as those in EN 1011-2 also consider the **combined thickness** of the joint, the heat input and the hydrogen level of the consumable. Combined thickness reflects how many paths heat has to flow away from the weld: more paths mean faster cooling and a greater need for preheat.
+
+For a butt weld between two plates of equal thickness, the combined thickness is the sum of the thicknesses measured over a short distance either side of the joint. The tank's 10 mm butt repair therefore has a combined thickness of about 20 mm. A fillet weld attaching a 10 mm plate to the middle of another 10 mm plate has heat paths in three directions, two along the continuous plate and one into the attached plate, giving a combined thickness of about 30 mm. The same steel, consumable and heat input can need more preheat at the fillet than at the butt weld.
+
+```figure
+type: tree
+title: What a preheat decision depends on
+caption: Carbon equivalent is one input; thickness, heat input, hydrogen and restraint complete the picture.
+- Preheat temperature
+  - Carbon equivalent | composition of the steel
+  - *Combined thickness | heat paths away from the weld
+  - Heat input | arc energy and process efficiency
+  - Hydrogen level | consumable class and condition
+  - Restraint | how hard the joint is held
+```
+
+Restraint adds a further factor. A highly restrained repair, such as a crack excavation in the middle of a large plate, develops higher stresses during cooling than a free joint, so procedures for repairs sometimes specify more preheat than the same material would need in an unrestrained fabrication.
+
+## Measure preheat where it matters
+
+A preheat requirement is only as good as its measurement. Practical points include:
+
+- **Measure at the right place.** Procedures commonly specify measurement at a set distance from the joint edge, and where possible on the face opposite the heating, so that the reading represents the full thickness rather than a hot surface.
+- **Allow the heat to soak.** After a gas torch or heating element is removed, the surface temperature falls as heat spreads into the plate. Measure after a short equalising time, as the procedure specifies.
+- **Use suitable instruments.** Contact thermometers and temperature-indicating crayons are common. Infrared thermometers are quick but can misread on shiny or scaled surfaces.
+- **Heat the whole band.** Preheat applied to a narrow strip leaves cold metal close by, which cools the weld faster than the reading suggests.
+- **Record the readings.** The repair record should show the preheat and interpass temperatures actually measured, not only the values specified.
+
+The booklet's judgement by colour, red heat, was a measurement of a kind, but it described temperatures far above the preheats a modern procedure uses for carbon steel, and it measured the surface only. A modern record replaces the eye with an instrument and a number.
+
+## The upper limit: interpass temperature
+
+Procedures also set a **maximum interpass temperature**: the hottest the joint may be when the next pass begins. Letting the joint accumulate heat pass after pass widens the hot zone, increases distortion and, in some steels, reduces strength and toughness in the heat-affected zone. Quenched and tempered steels are particularly sensitive, because reheating above their tempering conditions can soften them.
+
+For the tank repair, the welder checks the joint temperature before each pass and waits if it is above the procedure's limit. The waiting time is part of the job, and the sequence plan from Chapter 4 helps by giving the welder somewhere else to work while one area cools.
+
+## Delay the final inspection
+
+Because hydrogen cracks can form hours after welding, an inspection carried out while the joint is still warm can miss them. Standards for susceptible steels and critical joints may therefore specify a hold time before final inspection, sometimes of a day or more. Even where no delay is mandated, inspecting a repair again after it has fully cooled, as the tank procedure requires, is cheap insurance.
+
+## Post-weld heat treatment, briefly
+
+Some repairs go one step further than controlled cooling. **Post-weld heat treatment** heats the welded region, or the whole part, to a specified temperature, holds it there for a time related to the thickness, and cools it at a controlled rate. Its usual purposes are to relax residual stresses towards a lower level, to temper hard microstructures in the heat-affected zone and, in some steels, to restore toughness.
+
+Whether it is required is not a workshop preference. Pressure equipment standards and design codes specify when post-weld heat treatment is mandatory, typically depending on the material, the thickness and the service, and they specify the temperature, hold time, heating and cooling rates and the width of the heated band for local treatment. A repair to a part that was heat treated after its original welding may need the same treatment again, or an approved alternative, to keep the part's condition consistent.
+
+Local heat treatment of a repair in a large structure brings its own risks. Heating a band across a plate creates thermal gradients that can distort the part or induce new stresses if the band is too narrow or the heating uneven. For that reason it is planned with thermocouples placed to the procedure, controlled heating equipment and a record of the temperature cycle actually achieved.
+
+The booklet's practice of reheating areas after welding to relieve shrinkage strains was a distant ancestor of this process, done by eye with a torch. The modern version keeps the intention and replaces judgement with specified temperatures, measured cycles and a written record.
+
+## A preheat and hydrogen checklist
+
+Before welding a repair whose cracking would matter, confirm that:
+
+1. the steel's composition is known, or tested, and its carbon equivalent calculated;
+2. the combined thickness and restraint of the joint have been considered;
+3. the consumable's hydrogen class and storage condition match the procedure;
+4. the joint and a band either side are clean and dry;
+5. preheat is applied across the full band and measured at the specified point;
+6. interpass temperature limits are set and will be checked;
+7. post-weld cooling and inspection timing are planned.
+
+None of these steps appears in the 1919 booklet, and nearly all of them address mechanisms its authors could not yet see. That gap is the clearest measure of how much welding repair has changed.
+
 ## Exercise: compare two steels
 
 Calculate the IIW carbon equivalent for a plate with 0.12% carbon, 0.90% manganese, 0.03% chromium, 0.01% molybdenum, no vanadium, 0.03% nickel and 0.06% copper. Compare it with the tank plate.

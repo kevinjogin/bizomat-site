@@ -90,6 +90,75 @@ The calculations above assume a single average temperature, constant properties 
 
 Use the model for direction and order of magnitude. For a repair whose residual stresses or distortion matter, rely on qualified procedures, measured trials, published guidance and, where justified, analysis by a competent engineer.
 
+## Heat input: the quantity procedures control
+
+The 1919 welder controlled heat with flame size, torch tip and travel by eye. A modern arc welding procedure controls it with numbers. The basic quantity is **arc energy**, the electrical energy delivered per millimetre of weld:
+
+**arc energy (kJ/mm) = V × I × 60 / (travel speed in mm/min × 1,000)**
+
+where V is the arc voltage and I the current. Standards such as EN 1011-1 then apply a thermal efficiency factor for the process to estimate the **heat input** actually absorbed by the work; for manual metal arc welding that factor is commonly taken as 0.8.
+
+This is an illustration. A root pass at 24 V and 180 A, travelling at 150 mm/min, gives:
+
+**arc energy = 24 × 180 × 60 / (150 × 1,000) ≈ 1.728 kJ/mm**
+
+**heat input ≈ 0.8 × 1.728 ≈ 1.38 kJ/mm**
+
+Doubling the travel speed to 300 mm/min at the same voltage and current halves both values, to about 0.86 kJ/mm of arc energy and 0.69 kJ/mm of heat input. That single number links the welder's technique to the physics of this chapter: more heat per millimetre means a wider hot zone, more upsetting and more shrinkage. Procedures therefore set ranges for voltage, current and travel speed, and the record of a repair should show that the welder stayed within them.
+
+```figure
+type: bars
+title: Heat input from two travel speeds
+unit: kJ/mm
+max: 1.6
+caption: 24 V and 180 A, with a thermal efficiency factor of 0.8. Faster travel halves the heat put into each millimetre.
+- *150 mm/min | 1.38
+- 300 mm/min | 0.69
+```
+
+Heat input is not simply "less is better". Too little can cause lack of fusion and hard, crack-prone heat-affected zones; too much can coarsen the steel's grain, reduce toughness and increase distortion. The qualified procedure sets the window.
+
+Heat input also interacts with thickness. The same 1.38 kJ/mm cools far more slowly in thin plate, where heat has little metal to flow into, than in thick plate, where the surrounding steel draws it away quickly. Thin plate therefore tends to distort more for a given heat input, while thick plate tends to cool fast enough to form hard structures in the heat-affected zone. That is one reason procedures are qualified for a thickness range, and why a procedure written for 10 mm plate should not simply be reused on 3 mm or 25 mm plate without checking its range.
+
+## Restraint decides whether you get distortion or stress
+
+The same weld shrinkage has to go somewhere. If the part is free to move, the shrinkage shows up as distortion: the plates close up, rotate or bow. If the part is held rigidly, the shrinkage cannot become movement, so it remains as residual stress instead. Restraint does not remove shrinkage; it changes how it appears.
+
+That trade-off matters in repair work:
+
+- **Clamps, strongbacks and fixtures** keep parts in position during welding and reduce distortion. They also raise the residual stress locked into the joint when the restraint is released, and they can increase the risk of cracking during welding.
+- **A repair in the middle of a large plate** is surrounded by stiff material on all sides. It is one of the most highly restrained situations in welding, which is why repair welds crack more readily than the original fabrication welds.
+- **Releasing restraint** after welding lets some stress relax as distortion, so a part that looked flat in the fixture may move when it comes out.
+
+The booklet's practice of preheating the plate around a weld was an attempt to reduce the effective restraint by making nearby plate move with the weld. Modern practice may use preheat, sequence, controlled restraint and, where a standard calls for it, post-weld heat treatment to manage the same balance.
+
+## Measure distortion as the repair proceeds
+
+Distortion is easier to control than to correct. Before welding, establish references you can measure against: centre-punch marks a known distance apart across the joint, a straightedge position marked on the plate, or dial gauge readings from a fixed point. Measure again after the root pass, after each few passes and after cooling.
+
+This is an illustration. Before welding the tank crack, the workshop marks two punch points 300 mm apart across the groove, at its middle, and records the distance between them. After the root pass, the distance has closed by about 0.3 mm; after the full repair and cooling, by about 0.7 mm. A straightedge laid across the repair shows a slight inward dish of about 1 mm over 300 mm. The supervisor records the readings, judges that neither affects the tank's function, and notes them in the repair record so a later inspection can tell whether the area has moved further.
+
+## Correcting distortion uses the same physics
+
+When distortion must be corrected, two broad approaches exist:
+
+- **Mechanical straightening** with presses, jacks or peening, which deforms the part plastically back towards its intended shape.
+- **Flame straightening**, which heats small, carefully chosen spots or lines on the convex side so that, as they cool and shrink, they pull the part back. It is the shrinkage mechanism of this chapter used deliberately.
+
+Both introduce new strain and new residual stresses, and flame straightening reheats the steel. Some steels, particularly quenched and tempered grades, can lose strength or toughness if heated beyond specified limits. Any straightening of a repaired part that matters should follow a procedure, with temperature limits suited to the material, and be recorded.
+
+## Thinking about shrinkage before welding
+
+The practical lessons of this chapter fit into a short list of questions to ask before any repair weld is made:
+
+1. How much weld metal and heat will this repair put into the plate?
+2. How restrained is the repair, and where will the shrinkage appear: as movement, as stress, or both?
+3. Which features nearby, such as holes, other welds or crack tips, will be most affected by the residual stress?
+4. What references will be measured to detect distortion as the work proceeds?
+5. If distortion or cracking appears, what will the response be?
+
+Answering those questions before the arc is struck turns shrinkage from a surprise into a planned outcome, which is the same thing the 1919 booklet was trying to do with its preheating and short welding steps.
+
 ## Exercise: a shorter heated zone
 
 Repeat the free-expansion estimate for a heated band 80 mm long at an average rise of 500 °C, then calculate the restrained stress for a 50 °C rise.

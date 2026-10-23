@@ -37,13 +37,75 @@ caption: Each step leaves a record the next person can check.
 - *Return to service | with conditions and next inspection
 ```
 
+## Who reads the dossier
+
+A dossier is written for people who were not there. Its readers are likely to include:
+
+- **The next inspector**, who needs to know what was repaired, where, and what to look at first.
+- **The owner's engineer**, who must decide whether the item is fit for its intended use and on what conditions.
+- **A regulator or inspection body**, for regulated equipment, who will judge the repair against the governing requirements.
+- **An insurer or a buyer**, who may ask years later what was done and on what evidence.
+- **The next repairer**, who will be cutting into the same plate and needs to know what is underneath.
+- **The workshop itself**, when a question or a dispute arises after the people involved have moved on.
+
+Each of these readers wants the same thing: enough evidence to reach a conclusion without relying on anyone's memory. Writing for the reader who was not there is the simplest test of whether a dossier is complete.
+
+## Keeping the evidence traceable
+
+A record is only useful if each piece can be tied to the right place, time and person. A few habits make the difference:
+
+- **Give each repair a unique reference**, used on every sketch, photograph, record sheet and report that belongs to it.
+- **Tie locations to fixed references** on the item, such as a seam, a nozzle or a datum mark, and to the survey grid, so that a position can be found again years later.
+- **Photograph with a scale and a location marker**, and take the same view before, during and after the repair.
+- **Date every document and mark its revision**, so it is clear which sketch or procedure was current when the work was done.
+- **Record instrument identities and calibration**, for thickness gauges, thermometers and inspection equipment, so that the readings can be trusted.
+- **Record consumable classifications and batch numbers**, so that a problem traced to a consumable can be followed to every weld that used it.
+
+None of these takes long while the work is under way. All of them are close to impossible to recreate afterwards.
+
 ## Record deviations honestly
 
 Repairs rarely go exactly to plan. The crack is longer than mapped, the plate is thinner under the scale, or a pass shows porosity and has to be ground out. A dossier that records only the plan is less useful than one that records what happened. A deviation recorded with the decision taken is evidence of control; a deviation discovered later is evidence of the opposite.
 
+## Weak and strong records
+
+The difference between a record that helps and one that does not is often a matter of a few words. Vague entries feel complete to the person who wrote them, because that person knows what they meant. To anyone else, they prove nothing.
+
+```figure
+type: compare
+title: Entries that prove little, and entries that prove something
+cols: Weak entry | Strong entry
+best: 2
+caption: Each strong entry names a value, a method, a location or a limit that someone else can check.
+- Damage | Crack near nozzle | 170 mm crack at the nozzle fillet toe, found by penetrant testing
+- Preheat | Preheated | Preheat measured at the procedure's point before each segment, values recorded
+- Inspection | Weld checked, OK | Visual and penetrant testing to the agreed acceptance criteria, no indications
+- Deviation | Fixed porosity | Porosity in insert segment 4 excavated, rewelded and retested with no indications
+- *Return to service | Repaired, as new | Returned for atmospheric water storage, repaired areas to be inspected at next shutdown
+```
+
 ## A scoped return-to-service statement
 
 The final statement should be specific about what the evidence supports. "Repaired and tested" is not enough. A better statement names the repairs, the inspection and tests passed, the conditions of use assumed, any limitations, and the next inspection due. It does not claim more than the evidence shows. If the repaired part is regulated equipment, the statement and approvals take the form the regulator or inspection body requires.
+
+## When the earlier evidence is missing
+
+Many repairs start on items with no records at all. The original drawings are lost, the material certificates never existed or cannot be traced, and earlier repairs were made by people who wrote nothing down. A modern dossier cannot invent that history, but it can say clearly what is known, what was measured to fill the gaps and what remains uncertain.
+
+Practical responses include:
+
+- **Measure instead of assuming.** Where the material is unknown, test it. A composition analysis gives the carbon equivalent that drives preheat; thickness surveys replace nominal dimensions with real ones.
+- **Look for earlier repairs.** Old welds, patches and build-ups are often visible once coatings are removed. Map them and inspect them, because they may carry defects or residual stresses that affect the new work.
+- **State the limitation.** If something could not be established, such as the original design pressure or the condition of an inaccessible area, the dossier says so.
+- **Let the uncertainty shape the conditions.** An item returned to service on incomplete evidence may justify a more conservative use, a shorter interval to the next inspection, or both.
+
+The tank in this book had no surviving mill certificate. That is why a sample of its plate was analysed rather than its grade assumed, why its seams were surveyed before any repair was planned, and why its return-to-service statement is limited to atmospheric water storage. An honest statement of what is not known is part of the evidence, not a weakness in it.
+
+## Signing off
+
+Every dossier ends with signatures, and each one should mean something specific. The welder signs for the welds made to the procedure. The inspector signs for the inspections performed and their results against the stated criteria. The supervisor or workshop signs for the execution record and the deviations. The owner, or the owner's engineer, signs for the decision to return the item to service on the stated conditions. For regulated equipment, the inspection body or regulator's acceptance takes whatever form the governing rules require.
+
+Keeping those responsibilities separate matters. A single signature at the bottom of a page, covering everything, tells a later reader very little about who checked what. Separate signatures, each tied to the part of the record that person controlled, make the dossier a set of commitments that can each be traced. They also make it easier for each person to sign honestly, because each is vouching only for what they actually did or saw.
 
 ## The tank case, brought together
 
@@ -69,6 +131,29 @@ caption: Short, specific and honest about the one deviation; enough for the next
 - x One deviation recorded with its fix
 - *x Inspection, fill test and return-to-service conditions
 ```
+
+## Storing and handing over
+
+A dossier that cannot be found is no better than one that was never written. The owner normally holds the master copy, because the owner is responsible for the item; the workshop keeps its own copy as evidence of its work. Retention periods for regulated equipment are set by the regulator or the governing standard, and for other work by contract or company policy. Many items outlive the businesses that repaired them, which is another reason the owner should hold the record.
+
+Digital records are easier to store and search, but they need the same discipline as paper: consistent file names that include the repair reference, signed documents scanned in full, photographs kept at full resolution with their location noted, and a short index listing every document. A dossier for a modest repair might be a single folder of a dozen files. That is enough, as long as each file can be found and understood.
+
+## Using the dossier at the next inspection
+
+The dossier's first real test comes at the next inspection. The inspector starts from the record rather than from a blank sheet:
+
+1. **Re-measure at the same grid points** around each repair and in the original corroded areas, and compare the readings with the dossier's maps. The corrosion-rate arithmetic from Chapter 8 then uses real repeat measurements rather than an estimate from the original thickness.
+2. **Re-inspect the repaired welds by the same method**, so that any new indication can be compared like with like.
+3. **Check that the controls on each cause are still working**: for the tank, that the pipe supports at the nozzle are intact and that the drainage change still keeps water away from the base.
+4. **Look again at anything the dossier flagged**, such as the seam thinned to about 8.6 mm that was recorded for re-inspection in Chapter 7.
+
+If the controls have failed, the comparison shows it early, while the damage is still small. If they have worked, the repeat readings become the evidence that supports the next return to service. Either way, the next inspection adds to the dossier rather than starting a new one.
+
+## Learning across repairs
+
+A single dossier records one repair. A collection of them shows patterns: the same mechanism appearing on similar equipment, a sequence that kept producing distortion, a consumable that gave repeated porosity, a cause that was recorded but never properly controlled. A workshop that reviews its dossiers from time to time can turn those patterns into better procedures, sequence sketches and inspection plans.
+
+That is, in a sense, what the 1919 booklet itself was: a manufacturer gathering the shop experience of its day into instructions others could follow. The dossier is its modern counterpart, backed now by measurements, tests and records that let the next person check the reasoning rather than simply trust it.
 
 ## What changed between 1919 and now
 

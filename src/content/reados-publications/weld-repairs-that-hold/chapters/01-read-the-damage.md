@@ -80,6 +80,74 @@ The 1919 booklet makes strong claims for welding: stronger joints than riveting,
 
 Read the booklet as evidence of how practitioners reasoned, not as a source of approved methods. Its most durable lesson is the one in this chapter: understand the damage and the plate before welding anything.
 
+## Collect the evidence before anything is cut
+
+The first cut destroys evidence. Grinding out a crack removes its surface, its tip and the corrosion product inside it, all of which can tell you how it grew. Before excavation, record what you can:
+
+- **Photographs** of the damage, the surrounding area and the whole part, with a scale and a reference to its position on the part.
+- **Dimensions**: crack length and orientation, the extent of thinning, and the distance to holes, welds and edges.
+- **Inspection results**: which method was used, by whom, when and with what result, including any indications that later prove false.
+- **Service history**: operating hours or cycles, loads, temperatures, fluids, previous repairs and any events such as an impact, an overload or a period out of service.
+- **Material information**: drawings, specifications, mill certificates and, if those are missing, a decision about whether to test a sample.
+
+For a significant failure, consider keeping a section of the damaged material. A short length of cracked plate removed during an insert repair can be examined later if the repair does not behave as expected. Label it, record where it came from and store it where it will not be thrown out in the next clean-up.
+
+## Read what the fracture surface is saying
+
+Where a part has cracked through, or where a section is removed during the repair, the fracture surface is one of the best clues to its cause. A few broad patterns are worth recognising, while remembering that confirming a mechanism may need laboratory examination:
+
+- **Fatigue** surfaces are usually flat and relatively smooth, often with curved bands, sometimes called beach marks, spreading out from the origin. The origin is commonly at a stress raiser: a hole edge, a weld toe, a corrosion pit or a sharp corner. There is often little overall deformation.
+- **Overload** in a ductile steel tends to show distortion, necking or a rough, fibrous surface, sometimes with sloping shear lips at the edges.
+- **Brittle fracture** surfaces are often bright and granular with little deformation, and may show chevron-like markings pointing back towards the origin.
+- **Corrosion-assisted cracking** may leave crack faces covered in corrosion product, branching cracks or pits along the crack path.
+
+Even a quick look changes the repair decision. A fatigue crack means the part has been cycling at a stress it cannot sustain, so something about the loading, the geometry or the support must change. An overload means a single event exceeded the design, and the question becomes whether it can happen again. A brittle fracture in old plate raises questions about the material itself that welding cannot answer.
+
+## Weigh likelihood and consequence
+
+Two parts with the same crack can deserve very different responses. A simple way to keep the decision honest is to consider two questions separately: how likely is the repaired part to fail again, and what happens if it does?
+
+```figure
+type: matrix
+title: Triage by likelihood and consequence
+x: Likelihood of repeat failure: low → high
+y: Consequence of failure: low → high
+hot: 2
+caption: The same crack can sit in any quadrant; the quadrant decides how much evidence and approval the repair needs.
+- Severe but unlikely | engineered repair with inspection
+- Severe and likely | replace or redesign; seek approval
+- Minor and unlikely | simple repair, recorded
+- Minor but likely | fix the cause before repairing again
+```
+
+A crack in a non-structural cover that cracked once in many years of service sits in the low corner: repair it, record it, move on. A crack in a pressure boundary, a lifting point or a structural member sits in the high-consequence half regardless of how likely a repeat seems, and the repair must be engineered, inspected and approved accordingly. A crack that keeps returning in a low-consequence part is a signal that the cause has not been found, even if each failure is cheap.
+
+## Write the repair decision down
+
+A short decision record, written before any welding, keeps the reasoning visible to the welder, the inspector, the owner and whoever inspects the part next. It should state:
+
+1. what was found, with references to the photographs and inspection results;
+2. the damage mechanism, and how confident the assessment is;
+3. the options considered: repair, insert, replacement or redesign;
+4. the option chosen and why;
+5. how the cause will be removed or controlled;
+6. whether the part is regulated equipment, and what approvals are required;
+7. who made the decision, and who must review it.
+
+The record does not need to be long. A page with clear headings and references to photographs is often enough for workshop equipment. For pressure equipment and structural repairs, the format may be set by the owner's quality system or the inspection body. Chapter 10 builds this record into a full repair dossier.
+
+## Common traps in damage assessment
+
+A few mistakes recur:
+
+- **Measuring the crack you can see.** Visible length understates the real crack, often by a meaningful margin. Map it with an appropriate method first.
+- **Assuming the cause.** "It cracked because it is old" is not a mechanism. Age explains nothing until it is linked to fatigue, corrosion or deterioration of a specific kind.
+- **Repairing over corrosion.** Welding onto thinned or pitted plate without measuring the remaining thickness can leave a sound weld surrounded by plate too thin to carry the load.
+- **Removing evidence too early.** Grinding, painting or blasting before recording the damage can make the cause impossible to establish later.
+- **Treating repeat failures as bad luck.** A second crack in the same place is evidence that the first repair did not address the cause.
+
+The booklet's preference for a new sheet over a sheet covered in cracks reflects the same discipline: look at the whole region, decide what it is telling you, and choose the repair that matches the damage rather than the one that is quickest to start.
+
 ## Exercise: assess a second crack
 
 A second crack in the same tank runs 60 mm from a rivet hole in a riveted seam, roughly along the line of the rivet row. Thickness readings around it are 6.8 to 7.4 mm on a nominal 10 mm plate, and two neighbouring rivets show weeping. List the questions you would answer before choosing a repair.
