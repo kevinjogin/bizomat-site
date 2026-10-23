@@ -67,6 +67,17 @@ When several reference files are used, document their roles and resolve conflict
 
 Run an initial check before correcting anything. Retain the findings and the baseline identity. This creates a useful before-and-after comparison and helps distinguish newly introduced problems from issues already present in the received drawing.
 
+```figure
+type: steps
+title: Checking a drawing against a standard
+caption: Automated comparison finds named mismatches; people still judge meaning.
+- Define what the standard controls
+- Standardise meaning, not just names
+- Build a clean reference
+- Associate the right baseline
+- *Review replacements as design changes
+```
+
 ## Review proposed replacements as design-information changes
 
 A checking tool can identify a nonstandard definition and propose a replacement. The replacement may be reasonable, but it should be reviewed in terms of the drawing objects that depend on it. A style change can affect many visible items at once.
@@ -129,6 +140,16 @@ The first check identifies 24 findings across the three drawings. Review shows t
 | Proposed project exception | 4 | Record scope and reviewer decision |
 | Unresolved meaning | 2 | Inspect content and obtain clarification |
 | Total initial findings | 24 | Retain the initial report |
+
+```figure
+type: stack
+title: Twenty-four findings at intake
+unit: findings
+caption: After 18 corrections, four documented exceptions and two unresolved findings are reported explicitly.
+- *Understood mismatches, corrected | 18
+- Project exceptions, recorded | 4
+- Unresolved meaning, awaiting clarification | 2
+```
 
 After the 18 corrections, six findings remain to account for. Four have documented acceptance as exceptions, and two remain unresolved. The team reports that status explicitly instead of describing the drawings as fully compliant with the baseline.
 

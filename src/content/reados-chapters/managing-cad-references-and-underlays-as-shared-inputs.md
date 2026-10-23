@@ -22,6 +22,16 @@ A **host drawing** is the drawing containing a reference to another file. An **e
 
 This arrangement allows several drawings to use a shared background. A change saved in the source can become visible when a host is opened or the reference is reloaded. Autodesk describes that relationship in its [external reference guide](https://help.autodesk.com/cloudhelp/2020/ENU/AutoCAD-Core/files/GUID-A987D2FF-45BD-474E-99C1-E6316A42F667.htm).
 
+```figure
+type: compare
+title: Unload, detach or bind
+cols: What happens | Use when
+caption: Each choice changes the relationship between the host and its source differently.
+- Unload | Hidden; the link is kept | Temporarily not needed
+- Detach | The link is removed | No longer needed at all
+- *Bind | Content copied into the host | Freezing an issued state
+```
+
 The relationship also creates a **dependency**: something the host needs in order to reproduce its intended content. If the source is missing, moved or replaced, the host may no longer display the expected information.
 
 Map those dependencies before reorganising files. A drawing that appears to belong to one person may be used by several other drawings. Changes to its name, location or coordinate arrangement can therefore affect work beyond the immediate task.
@@ -122,6 +132,25 @@ Reloading the reference makes the new envelope available in each host, but each 
 | Layout study | Check relationships with surrounding geometry |
 | Clearance review | Recheck affected distances and assumptions |
 | Presentation sheet | Check framing, annotation and revision information |
+
+```figure
+type: svg
+title: One shared outline, three hosts
+alt: A shared equipment outline file feeds three host drawings: a layout study, a clearance review and a presentation sheet. When the outline grows from 1,200 to 1,260 millimetres long, each host needs its own review.
+caption: A 60 mm change, 5% of the length, appears in every host; each needs its own check.
+viewbox: 0 0 640 220
+body:
+<rect class="bxa" x="220" y="16" width="200" height="52" rx="6"/>
+<text class="txb" x="320" y="38" text-anchor="middle">Equipment outline</text>
+<text class="tx txs" x="320" y="58" text-anchor="middle">1,200 → 1,260 × 600 mm</text>
+<path class="la flow" d="M320 68V100M110 100H530M110 100V140M320 100V140M530 100V140"/>
+<rect class="bx" x="20" y="140" width="180" height="50" rx="6"/>
+<text class="tx" x="110" y="170" text-anchor="middle">Layout study</text>
+<rect class="bx" x="230" y="140" width="180" height="50" rx="6"/>
+<text class="tx" x="320" y="170" text-anchor="middle">Clearance review</text>
+<rect class="bx" x="440" y="140" width="180" height="50" rx="6"/>
+<text class="tx" x="530" y="170" text-anchor="middle">Presentation sheet</text>
+```
 
 For delivery, the team copies the complete project structure to a separate location and opens the host drawings there. This checks whether the package can resolve its dependencies without relying on the original working folders. The exercise tests file completeness, not the equipment's engineering suitability.
 

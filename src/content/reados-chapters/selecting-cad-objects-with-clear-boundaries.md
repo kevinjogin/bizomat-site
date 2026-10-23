@@ -65,6 +65,16 @@ A **fence selection** follows an open path and selects objects that path crosses
 | Crossing polygon | Containment or contact in an irregular region | An irregular region requiring partial-object contact | Check both included objects and enclosed control points |
 | Fence | Contact with an open path | Several objects along a route | Check every crossing along the path |
 
+```figure
+type: compare
+title: Containment or contact
+cols: Selects | Check
+caption: Window selects only what is fully inside; crossing also takes what the boundary touches.
+- Window | Objects completely inside | Objects extending past the boundary are left out
+- *Crossing | Objects inside or touching | Unrelated objects touched by the boundary
+- Fence | Objects an open path crosses | Every crossing along the path
+```
+
 Autodesk's [SELECT command reference](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-LT-MAC/files/GUID-0DD5DA73-9DC5-4424-8FED-7BBE3BE52A4D.htm) describes these options and their prompts. Use the equivalent help for the installed product when confirming interface details; the important workflow choice is the geometric rule expressed by the selection.
 
 ## Remember that a visible segment may belong to a larger object
@@ -122,6 +132,26 @@ The author starts STRETCH and makes a crossing window covering X = 150 to X = 21
 A displacement of 40 units in positive X then expresses the intended change. The outer rectangle's right side moves from X = 200 to X = 240, while its left side remains at X = 0. The internal rectangle moves from X = 160–180 to X = 200–220.
 
 The checks are specific. The new outer width is 240 units and its height remains 100. The internal rectangle remains 20 units wide and 40 units high. Its right-side clearance remains 20 units because 240 minus 220 equals 20, matching the original 200 minus 180.
+
+```figure
+type: svg
+title: Stretching one end of an outline
+alt: An outer rectangle from X 0 to 200 contains an inner rectangle from X 160 to 180. A crossing window from X 150 to 210 encloses the outer rectangle's right-hand vertices and the whole inner rectangle. A 40-unit stretch moves the outer right side to 240 and the inner rectangle to 200 to 220, keeping the left side fixed and the 20-unit clearance.
+caption: Vertices inside the crossing window move 40 units; the left side stays fixed and the inner feature keeps its size and 20-unit clearance.
+viewbox: 0 0 640 210
+body:
+<rect class="bxa" x="20" y="40" width="480" height="120" rx="2"/>
+<rect class="bx" x="420" y="76" width="40" height="48" rx="2"/>
+<path class="lf dsh" d="M20 40H420V160H20ZM340 76H380V124H340Z"/>
+<path class="ln dsh" d="M320 28H440V172H320Z"/>
+<text class="tx txs" x="20" y="190">X = 0</text>
+<text class="tx txs" x="420" y="190" text-anchor="middle">200</text>
+<text class="txb" x="500" y="190" text-anchor="middle">240</text>
+<text class="tx txs" x="380" y="20" text-anchor="middle">crossing window 150–210</text>
+<path class="la flow" d="M520 100H600"/>
+<text class="tx txs" x="560" y="90" text-anchor="middle">+40</text>
+<text class="tx txs" x="200" y="104" text-anchor="middle">dashed: before</text>
+```
 
 If the crossing boundary instead enclosed only one right-hand vertex of the outer rectangle, the result could distort the outline. If the internal feature were a different object type, its behaviour would need separate consideration. The successful result depends on the chosen points and representation, not simply on seeing two objects highlighted.
 

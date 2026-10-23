@@ -42,6 +42,16 @@ Use a leader without content only when its meaning remains clear within an estab
 | Numbered or labelled block | Identify an item described elsewhere | Identifier, symbol, target and list entry |
 | No content | Supply leader geometry for a defined convention | Whether the convention remains unambiguous |
 
+```figure
+type: decision
+title: What should the callout contain?
+question: What must the reader do with it?
+caption: Review the target and scope whichever content is chosen.
+- Understand a condition | Multiline text
+- *Find the item in a list | A numbered balloon block
+- Follow a defined convention | No content
+```
+
 Choose the content before refining the layout. Otherwise it is easy to spend time aligning labels that later need to become full notes, or to compress a detailed instruction into a symbol without providing a suitable place for its explanation.
 
 ## Build styles around stable annotation roles
@@ -131,6 +141,16 @@ A revision replaces one spacer with a different part, assigned item 5 in the hyp
 The revised sheet is then inspected at its intended output size. The reviewer follows every identifier to the corresponding list entry and every arrow to its target. They also check a smaller-scale view for readable symbols and suitable placement, rather than assuming that the first view's appearance covers both.
 
 Collect is not used for items 3 and 5 because the two parts occupy distinct locations that need separate identification. That decision keeps the relationship clear. The available command is considered in terms of what it would communicate, not simply whether it could make the page look more compact.
+
+```figure
+type: compare
+title: Revising an exploded-view callout set
+cols: Before revision | After revision
+caption: Collect suits a shared target; distinct parts in distinct places need separate callouts.
+- Spacers | Item 3: one leader to each of two spacers | Item 3: one leader to the remaining spacer
+- *Replacement part | (none) | Item 5: its own callout
+- Item 4 | Kept on the opposite side | Avoids crossing the cover
+```
 
 ## Make the review practical for a small team
 

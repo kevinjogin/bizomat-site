@@ -108,6 +108,17 @@ The primary line is twice the nominal thickness of the secondary line because 0.
 | Secondary detail | 0.25 mm | Explain smaller features without dominating |
 | Background reference | 0.18 mm | Provide context behind the proposed content |
 
+```figure
+type: bars
+title: Three trial line roles for monochrome sheets
+unit: mm
+max: 0.55
+caption: Hypothetical settings to test on representative output, not a prescribed standard.
+- *Primary outline | 0.5
+- Secondary detail | 0.25
+- Background reference | 0.18
+```
+
 In a CTB trial, the team assigns agreed indexed colours to those roles and maps them through the table. In an STB trial, it assigns named styles to the relevant layers. It uses separate test drawings appropriate to each method rather than assuming both table types can be applied interchangeably to one drawing.
 
 The samples show a narrow feature becoming difficult to read with the 0.50 mm outline on both sides. The team reviews whether the role assignment or the chosen weight needs adjustment. It does not reduce the physical geometry to make the lineweight problem disappear.
@@ -125,6 +136,16 @@ Next confirm that plotting with styles is enabled and that the intended table is
 Change one likely cause at a time and regenerate the relevant sample. This preserves the connection between a correction and its result. Several simultaneous changes may improve the output while leaving the actual explanation unclear.
 
 Keep scale problems separate from appearance problems. A correctly weighted line can still be shown at the wrong drawing scale. [Checking CAD layouts and plot scale before issue](/reados/collections/cad-drafting-and-drawing-standards/checking-cad-layouts-and-plot-scale-before-issue/) explains the related page and viewport checks.
+
+```figure
+type: balance
+title: Colour-dependent or named plot styles
+left: Colour-dependent
+right: Named
+caption: Choose an arrangement before changing the shared library; converting between them is a migration.
+- Output follows the object's colour | Output follows an assigned style name
+- Colour carries a plotting meaning | Colour is free for display
+```
 
 ## Treat conversion as a controlled migration
 

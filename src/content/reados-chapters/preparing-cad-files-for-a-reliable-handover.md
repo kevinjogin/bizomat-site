@@ -112,11 +112,33 @@ This is an illustration. A small business is handing over three drawing files fo
 
 The expected package therefore contains nine files: three main drawings, two references, one image, one plot style, one PDF and one note. This count is a simple reconciliation aid. It does not establish that the files are the correct versions or that no other dependency exists.
 
+```figure
+type: stack
+title: A nine-file review package
+unit: files
+caption: The count is a reconciliation aid; it does not prove the versions or dependencies are right.
+- *Main drawings | 3
+- Shared references | 2
+- Raster image | 1
+- Plot style table | 1
+- Combined PDF | 1
+- Handover note | 1
+```
+
 During review, the packaging report identifies a missing image reference. The sender finds the approved image, repairs the reference in the working drawing and regenerates the delivery package. The sender then extracts it into a separate folder and opens all three delivered drawings.
 
 One drawing still refers to an old network location, so it appears correct on the sender's machine while remaining unsuitable for transfer. The sender corrects the delivery arrangement, rebuilds the package and repeats the check. The example shows why both a file count and a successful local opening can miss a practical dependency problem.
 
 The recipient then confirms that the three drawings open without missing-reference warnings and that the published sheet appearance is reproduced. Design comments remain outstanding. The handover record distinguishes that technical opening check from approval of the proposed design.
+
+```figure
+type: timeline
+title: Testing the package outside the working folder
+caption: The technical opening check is recorded separately from approval of the design.
+- Report | A missing image reference | repaired and the package rebuilt
+- Extract | One drawing points to an old network path | fixed and rebuilt again
+- *Recipient | All three drawings open cleanly | published appearance reproduced
+```
 
 ## Handle revisions as complete, identifiable issues
 

@@ -53,6 +53,16 @@ Use a simple classification while reviewing candidate content:
 | Geometry from the previous job | Remove unless it is an intentional reusable starting object |
 | External references and project images | Remove unless a documented dependency is genuinely required |
 
+```figure
+type: balance
+title: What a template keeps and what it clears
+left: Keep as reusable defaults
+right: Remove or blank
+caption: A template supplies agreed starting conditions, not the last project's history.
+- Layer names, text and dimension styles | Previous project number, revision, approval
+- Sheet border and title block structure | Old geometry, references and images
+```
+
 Do not use realistic sample project details as placeholders. A convincing date or approval name is easy to overlook because it looks finished. Blank fields make incomplete information visible, while a short instruction can explain who supplies it.
 
 Also examine hidden and non-plotting content. Construction geometry may be intentional, but a copied internal note or obsolete option should not spread through every new drawing. The criterion is whether the content belongs to the drawing family, not whether it happens to be printable.
@@ -110,6 +120,17 @@ The team begins with a completed drawing because its border and annotation style
 The retained content is modest: geometry, centreline and annotation layers; a note style; a dimension style; a border; and a page setup. The title block contains fields for the drawing number, title and revision, but no invented approval. An accompanying description states that one model unit represents one millimetre.
 
 For the acceptance exercise, the reviewer starts a new DWG from the candidate template and draws a rectangle measuring 120 by 80 model units. Its expected perimeter is 400 units because twice the sum of 120 and 80 is 400. A direct measurement checks the geometry independently of the dimension appearance.
+
+```figure
+type: steps
+title: Accepting a component drawing template
+caption: A direct measurement checks the geometry independently of how dimensions look.
+- Start a new drawing from the template
+- Draw a 120 × 80 rectangle
+- Measure the perimeter | expect 400 units
+- Check layers, styles and page setup
+- *Confirm the title block is empty | no invented approval
+```
 
 The reviewer adds a dimension and note, then places the view on the intended sheet. The test concerns whether the selected conventions produce a clear drawing; it does not establish that the component is suitable for manufacture. The PDF is checked for readable text, consistent line treatment and empty project fields that remain obvious.
 

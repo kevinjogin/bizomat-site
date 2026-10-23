@@ -55,6 +55,15 @@ AutoLISP's division behaviour illustrates why this matters. An expression using 
 
 For example, `(/ 5 2)` gives an integer result of 2, while `(/ 5.0 2)` gives 2.5. The difference is not display formatting. It changes the value available to subsequent calculations and can therefore change the geometry created by a routine.
 
+```figure
+type: compare
+title: The same division, two data types
+cols: Result | Consequence
+caption: The difference is a value, not formatting, and it flows into later geometry.
+- (/ 5 2) | 2 | Integer division truncates
+- *(/ 5.0 2) | 2.5 | A real number keeps the fraction
+```
+
 Units require the same care. A variable containing 100 does not explain whether it represents millimetres, metres or an identifier. State the unit convention in prompts and documentation, and convert deliberately where the task requires conversion.
 
 ## Treat points as coordinates in a known system
@@ -122,6 +131,28 @@ The horizontal centre separation is 240 minus twice 20, which equals 200 mm. The
 | Margin of 90 mm with 160 mm height | Reject the crossing centre arrangement | Twice the margin exceeds the height |
 | Cancelled point prompt | Stop cleanly | No unintended geometry or setting changes |
 | Different insertion point | Translate the same arrangement | Relative separations remain 200 and 120 mm |
+
+```figure
+type: svg
+title: Four markers from four inputs
+alt: A 240 by 160 millimetre rectangle with four 6 millimetre markers placed 20 millimetres in from each edge, at 20,20; 220,20; 220,140; and 20,140. The centres are 200 millimetres apart horizontally and 120 vertically.
+caption: Width 240, height 160, margin 20, diameter 6; the expected separations become acceptance checks.
+viewbox: 0 0 560 300
+body:
+<rect class="bx" x="40" y="30" width="480" height="240" rx="2"/>
+<circle class="fa pulse" cx="80" cy="240" r="6"/>
+<circle class="fa" cx="480" cy="240" r="6"/>
+<circle class="fa" cx="480" cy="60" r="6"/>
+<circle class="fa" cx="80" cy="60" r="6"/>
+<path class="lf dsh" d="M80 150H480M280 60V240"/>
+<text class="tx txs" x="280" y="144" text-anchor="middle">200</text>
+<text class="tx txs" x="288" y="200">120</text>
+<text class="tx txs" x="92" y="262">20, 20</text>
+<text class="tx txs" x="430" y="262">220, 20</text>
+<text class="tx txs" x="424" y="52">220, 140</text>
+<text class="tx txs" x="92" y="52">20, 140</text>
+<text class="tx txs" x="280" y="292" text-anchor="middle">240 × 160 mm</text>
+```
 
 The margin rule in this example checks the centre arrangement. It is not a substitute for checking edge clearance using the marker radius, nor does it establish a suitable fastener spacing. If physical hole placement becomes the real task, the routine's requirements must be expanded accordingly.
 

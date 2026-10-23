@@ -47,6 +47,30 @@ In third-angle projection, a top view is normally placed above the front view, a
 | Top view | Below the front view | Above the front view |
 | Right-side view | Left of the front view | Right of the front view |
 
+```figure
+type: svg
+title: First-angle and third-angle layouts
+alt: Two arrangements of the same three views. In first-angle projection the top view sits below the front view and the right-side view sits to the left. In third-angle projection the top view sits above the front view and the right-side view sits to the right.
+caption: State the projection convention on the drawing; the same views swap positions.
+viewbox: 0 0 640 260
+body:
+<text class="txb" x="150" y="20" text-anchor="middle">First angle</text>
+<rect class="bxa" x="120" y="40" width="80" height="60" rx="2"/>
+<text class="tx txs" x="160" y="74" text-anchor="middle">Front</text>
+<rect class="bx" x="120" y="120" width="80" height="60" rx="2"/>
+<text class="tx txs" x="160" y="154" text-anchor="middle">Top</text>
+<rect class="bx" x="20" y="40" width="80" height="60" rx="2"/>
+<text class="tx txs" x="60" y="74" text-anchor="middle">Right side</text>
+<text class="txb" x="480" y="20" text-anchor="middle">Third angle</text>
+<rect class="bxa" x="420" y="120" width="80" height="60" rx="2"/>
+<text class="tx txs" x="460" y="154" text-anchor="middle">Front</text>
+<rect class="bx" x="420" y="40" width="80" height="60" rx="2"/>
+<text class="tx txs" x="460" y="74" text-anchor="middle">Top</text>
+<rect class="bx" x="520" y="120" width="80" height="60" rx="2"/>
+<text class="tx txs" x="560" y="154" text-anchor="middle">Right side</text>
+<path class="lf" d="M320 30V240"/>
+```
+
 Do not infer the required convention from the country of the drafter alone. Drawings move between organisations and software environments. Confirm the project requirement and review any inherited drawing before adding views that might follow a different convention.
 
 Autodesk's [projection-angle documentation](https://help.autodesk.com/cloudhelp/2022/ENU/AutoCAD-Core/files/GUID-96BD966E-F983-40ED-BD88-D3202F32AD47.htm) also notes that changing its model-documentation default affects newly created views rather than existing ones. A changed setting is therefore not evidence that an entire existing sheet has been converted consistently.
@@ -118,6 +142,16 @@ This is an illustration. A rectangular spacer is 100 mm wide, 60 mm deep and 20 
 The top view shows the 100 by 60 mm outline and the circular hole. The front view shows a 100 by 20 mm outline, and the side view a 60 by 20 mm outline. These three outlines give a simple consistency check on the overall dimensions shared between views.
 
 The hole centre is 70 mm from the right edge because 100 minus 30 equals 70. It is 40 mm from the back edge because 60 minus 20 equals 40. These are checking relationships, not a recommendation to add redundant controlling dimensions to the drawing.
+
+```figure
+type: compare
+title: Three views of a 100 × 60 × 20 mm spacer
+cols: Outline | Shows
+caption: The outlines give a consistency check on overall size; the hole is Ø12 mm, 30 mm from the left and 20 mm from the front.
+- *Top view | 100 × 60 mm | The outline and the circular hole
+- Front view | 100 × 20 mm | Hole position 30 mm from the left
+- Side view | 60 × 20 mm | Hole position 20 mm from the front
+```
 
 In a front view, the hole centre projects to the horizontal position 30 mm from the left edge. In a side view, its position must correspond to the stated 20 mm offset from the front, interpreted according to the selected viewing direction and projection convention. This is where a plausible-looking mirrored arrangement could otherwise escape notice.
 

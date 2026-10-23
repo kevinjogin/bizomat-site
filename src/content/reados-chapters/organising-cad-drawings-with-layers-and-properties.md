@@ -106,6 +106,17 @@ Autodesk's [layer guide](https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-MA
 
 This is an illustration. A small workshop receives an internal concept drawing containing 60 objects: 24 outline segments, 12 centre-related objects, 16 annotation objects and 8 temporary construction lines. Everything is on one layer, with colours assigned individually.
 
+```figure
+type: stack
+title: A 60-object concept drawing, sorted by purpose
+unit: objects
+caption: Everything had been drawn on one layer; each group now has a layer that says what it is.
+- *Outline | 24
+- Annotation | 16
+- Centre marks and lines | 12
+- Construction | 8
+```
+
 The team first saves a separate working copy and records what the drawing is intended to communicate. It then assigns the four groups to layers based on purpose. The 16 annotation objects are inspected to determine whether notes and dimensions need separate treatment rather than being moved blindly as one group.
 
 The drafter checks whether each object's colour and line pattern are intentional. Ordinary presentation is changed to follow the relevant layer. A specific exception is retained only where the team can explain its purpose and verify that it appears correctly in the intended output.
@@ -113,6 +124,16 @@ The drafter checks whether each object's colour and line pattern are intentional
 For a hypothetical effort comparison, manually changing the presentation of 24 outline segments takes 10 seconds per segment, or 240 seconds: four minutes. A layer-based change takes 30 seconds, followed by 90 seconds of inspection, giving two minutes in total. The immediate difference is two minutes under these assumptions.
 
 That figure excludes the initial reorganisation effort and does not prove a general productivity gain. The more important result may be that later changes behave predictably. The team checks the output, restores construction visibility for a separate review and confirms that none of the 60 original objects was unintentionally lost.
+
+```figure
+type: bars
+title: Changing the look of 24 outline segments
+unit: minutes
+max: 5
+caption: Under these assumptions, and excluding the initial reorganisation; the bigger gain is predictable later changes.
+- Object by object | 4 | 10 seconds each
+- *By layer | 2 | 30 seconds plus 90 seconds of checks
+```
 
 The final file includes the layer schedule and a short explanation of the saved review state. Another person can now inspect the drawing's structure and repeat the presentation change without relying on the original drafter's memory.
 

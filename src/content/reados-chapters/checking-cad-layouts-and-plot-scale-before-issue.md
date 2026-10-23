@@ -42,6 +42,16 @@ Autodesk's [layout introduction](https://help.autodesk.com/cloudhelp/2023/ENU/Au
 
 For a layout arranged at its intended paper size, the usual aim is to output the sheet at 1:1 while each viewport supplies its own model scale. This keeps the sheet arrangement and the individual view scales conceptually separate.
 
+```figure
+type: layers
+title: Scales in the output path
+caption: Output the sheet at 1:1 and let each viewport carry its own model scale.
+- Model | true-size geometry
+- *Viewport scale | 1:5 overall, 2:1 detail
+- Sheet output | 1:1 on the intended paper
+- Reproduction | any later reduction changes every scale
+```
+
 Confirm the unit relationship when calculating scale. A model in metres and a sheet in millimetres require a unit conversion as well as the intended view ratio. A familiar scale label is not sufficient evidence that all relevant settings are consistent.
 
 Trace the whole path when output size is wrong. The source of a mismatch may be the viewport, the plot setup or the final print dialogue. Changing model geometry to compensate can damage a correct drawing while leaving the actual output problem unresolved.
@@ -110,6 +120,18 @@ Suppose a later print is reduced to 95 per cent. The overall length that should 
 | --- | ---: | ---: |
 | Intended sheet output | 100 mm | 40 mm |
 | Reproduction at 95% | 95 mm | 38 mm |
+
+```figure
+type: bars
+title: What a 95% print does to two view scales
+unit: mm
+max: 110
+caption: The overall view becomes about 1:5.263 and the 2:1 detail 1.9:1; measure a known length before relying on a print.
+- Overall length, intended | 100 | 500 mm at 1:5
+- *Overall length at 95% | 95
+- Detail feature, intended | 40 | 20 mm at 2:1
+- Detail feature at 95% | 38
+```
 
 The geometry in the CAD file has not changed. The discrepancy lies in the output path. The team corrects the reproduction settings or clearly manages the reduced copy's status according to the project's requirements, rather than resizing the model to compensate.
 

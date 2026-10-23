@@ -41,6 +41,21 @@ A,8,-4
 
 The nominal repeating sequence consists of an 8-unit dash and a 4-unit gap. Its nominal repeat length is therefore 12 units before other scale effects. Actual endpoint treatment can adjust the visible beginning and end, so do not use a linetype as a substitute for locating repeated physical features.
 
+```figure
+type: svg
+title: Reading a simple linetype definition
+alt: The definition A,8,-4 produces an 8-unit dash followed by a 4-unit gap, repeating every 12 units. A 120-unit line shows ten repeats.
+caption: Positive values are dashes and negative values gaps; the nominal repeat is 12 units before scale effects.
+viewbox: 0 0 640 150
+body:
+<text class="txb" x="20" y="30">A,8,-4</text>
+<path class="la flow" d="M20 70H100M140 70H220M260 70H340M380 70H460M500 70H580"/>
+<path class="lf dsh" d="M20 100V90M100 100V90M140 100V90"/>
+<text class="tx txs" x="60" y="118" text-anchor="middle">8 dash</text>
+<text class="tx txs" x="120" y="118" text-anchor="middle">4 gap</text>
+<text class="tx txs" x="80" y="138" text-anchor="middle">12-unit repeat</text>
+```
+
 Autodesk's [simple custom linetype reference](https://help.autodesk.com/cloudhelp/2023/ENU/AutoCAD-Customization/files/GUID-EF1DF0A9-2088-487C-8085-16FEE6425405.htm) documents the definition structure. Use the reference for syntax details and product limits, then inspect the loaded result rather than relying only on the text looking plausible.
 
 ## Keep pattern dimensions separate from final appearance
@@ -128,6 +143,15 @@ For the hatch trial, the definition's perpendicular spacing is 4 units. At hatch
 | Curved boundary | Progression and local crowding | Adjust or reject the pattern if unclear |
 | Large hatched region | Visual dominance and density | Review at final output size |
 | Narrow hatched region | Whether enough pattern remains visible | Use another treatment if meaning is lost |
+
+```figure
+type: stats
+title: Numbers to check in the pattern trial
+caption: Measure the test arrangement and check the final output rather than trusting the settings alone.
+- 12 units | Nominal dash-and-gap repeat
+- About 10 | Repeats along a 120-unit line
+- *4 → 8 units | Hatch spacing at scale 2
+```
 
 The team prepares a sample sheet containing those cases beside ordinary text, dimensions and outlines. It checks a monochrome PDF and a paper output where paper is part of the intended workflow. These comparisons reveal whether the new patterns support the drawing hierarchy or compete with more important information.
 

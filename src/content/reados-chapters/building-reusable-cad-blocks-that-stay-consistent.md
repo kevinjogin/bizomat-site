@@ -108,7 +108,42 @@ The drawing needs 12 markers. In a hypothetical manual workflow, drawing and lab
 
 The illustrative difference is ten minutes for that drawing: 24 minus 14. Future use might avoid repeating the full setup effort, but library maintenance and project-specific checks still take time. The example does not establish a general saving for every block.
 
+```figure
+type: bars
+title: Twelve location markers on one drawing
+unit: minutes
+max: 26
+caption: Library maintenance and project checks still take time; the larger gain is consistent, updatable markers.
+- Drawn and labelled one by one | 24 | two minutes each
+- *Reusable block | 14 | eight to prepare, the rest to insert and check
+```
+
 The team then changes the outline presentation in the definition and confirms that all 12 references respond as intended. It also checks that the individual identifiers remain distinct and still match the schedule. A shared graphic update should not erase the information that makes each reference useful.
+
+```figure
+type: svg
+title: One definition, many references
+alt: A block definition for a location marker sits at the top. Twelve inserted references below all point to it. Changing the definition updates every reference, while each reference keeps its own identifier attribute.
+caption: Change the definition once and every reference follows; attributes keep each instance distinct.
+viewbox: 0 0 640 200
+body:
+<rect class="bxa" x="240" y="16" width="160" height="44" rx="6"/>
+<text class="txb" x="320" y="43" text-anchor="middle">Block definition</text>
+<path class="ln flow" d="M320 60V100M60 100H580M60 100V130M160 100V130M260 100V130M380 100V130M480 100V130M580 100V130"/>
+<rect class="bx" x="30" y="130" width="60" height="40" rx="5"/>
+<rect class="bx" x="130" y="130" width="60" height="40" rx="5"/>
+<rect class="bx" x="230" y="130" width="60" height="40" rx="5"/>
+<rect class="bx" x="350" y="130" width="60" height="40" rx="5"/>
+<rect class="bx" x="450" y="130" width="60" height="40" rx="5"/>
+<rect class="bx" x="550" y="130" width="60" height="40" rx="5"/>
+<text class="tx txs" x="60" y="155" text-anchor="middle">M1</text>
+<text class="tx txs" x="160" y="155" text-anchor="middle">M2</text>
+<text class="tx txs" x="260" y="155" text-anchor="middle">M3</text>
+<text class="tx txs" x="320" y="155" text-anchor="middle">…</text>
+<text class="tx txs" x="380" y="155" text-anchor="middle">M10</text>
+<text class="tx txs" x="480" y="155" text-anchor="middle">M11</text>
+<text class="tx txs" x="580" y="155" text-anchor="middle">M12</text>
+```
 
 Finally, a colleague inserts the block into a separate test drawing using the documented units and layer convention. This tests the library item beyond its original environment and reveals whether its behaviour depends on an unstated setting.
 

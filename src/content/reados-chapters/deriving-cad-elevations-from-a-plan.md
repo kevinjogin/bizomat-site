@@ -123,11 +123,42 @@ The drafter projects the four horizontal positions from the plan and creates hei
 
 The right-hand margin is 2,200 mm, calculated as 4,000 minus 1,800. The remaining height above the opening is 400 mm, calculated as 2,400 minus 2,000. These checks provide simple relationships that can be compared with measured drawing geometry.
 
+```figure
+type: svg
+title: A front elevation from projected positions
+alt: A front elevation 4,000 millimetres wide and 2,400 high. Vertical projection lines at 0, 600, 1,800 and 4,000 millimetres meet height lines at 0, 800, 2,000 and 2,400 millimetres. Their intersections define the outer face and a 1,200 by 1,200 millimetre opening, leaving a 2,200 millimetre right margin and 400 millimetres above the opening.
+caption: Positions come from the plan, heights from the agreed references; their intersections define the face.
+viewbox: 0 0 640 280
+body:
+<path class="lf dsh" d="M40 20V260M130 20V260M310 20V260M640 20V260"/>
+<path class="lf dsh" d="M20 240H640M20 180H640M20 60H640M20 24H640"/>
+<rect class="bxi" x="40" y="24" width="580" height="216" rx="1"/>
+<rect class="bxa" x="130" y="60" width="180" height="120" rx="1"/>
+<text class="txb" x="220" y="126" text-anchor="middle">1,200 × 1,200</text>
+<text class="tx txs" x="460" y="126" text-anchor="middle">right margin 2,200</text>
+<text class="tx txs" x="220" y="48" text-anchor="middle">400 above</text>
+<text class="tx txs" x="130" y="274" text-anchor="middle">600</text>
+<text class="tx txs" x="310" y="274" text-anchor="middle">1,800</text>
+<text class="tx txs" x="620" y="274" text-anchor="end">4,000</text>
+<text class="tx txs" x="34" y="184" text-anchor="end">800</text>
+<text class="tx txs" x="34" y="64" text-anchor="end">2,000</text>
+```
+
 The design then moves the opening 200 mm to the right without changing its size or height. Its horizontal edges become 800 and 2,000 mm, and the right-hand margin becomes 2,000 mm. The sill and head stay at 800 and 2,000 mm respectively because this change affects position across the face, not vertical position.
 
 The reviewer checks that the plan and front elevation both show the changed edges. If a copied rear elevation still contains the original opening, they first establish whether the rear face actually has an opening at all. Mirroring the front would not answer that design question.
 
 For a side elevation, the overall horizontal extent comes from the 2,500 mm plan depth, while the vertical extent remains 2,400 mm. Using the front's 4,000 mm width would produce a plausible rectangle with the wrong meaning. The shared height and changed horizontal direction must both be checked.
+
+```figure
+type: balance
+title: Front and side elevations take different widths
+left: Front elevation
+right: Side elevation
+caption: Using the front's width for the side gives a plausible rectangle with the wrong size.
+- 4,000 mm wide, from the plan width | 2,500 mm wide, from the plan depth
+- 2,400 mm high | 2,400 mm high
+```
 
 ## Review revisions across the drawing
 

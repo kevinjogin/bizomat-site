@@ -102,9 +102,42 @@ Each hole is represented by a circle with a diameter of 10 millimetres, so its r
 | Vertical hole spacing | 100 minus 20 | 80 mm |
 | Hole radius | Diameter divided by two | 5 mm |
 
+```figure
+type: svg
+title: Four holes located from one origin
+alt: A plate 200 millimetres wide and 120 millimetres high with its origin at the lower-left corner. Four holes of 10 millimetres diameter sit 20 millimetres in from each edge, at coordinates 20,20; 180,20; 180,100; and 20,100. Their centres are 160 millimetres apart horizontally and 80 vertically.
+caption: Coordinates follow from the reference scheme; 10 is the diameter, so the radius entered is 5.
+viewbox: 0 0 560 300
+body:
+<rect class="bx" x="60" y="40" width="400" height="240" rx="2"/>
+<circle class="fa pulse" cx="100" cy="240" r="10"/>
+<circle class="fa" cx="420" cy="240" r="10"/>
+<circle class="fa" cx="420" cy="80" r="10"/>
+<circle class="fa" cx="100" cy="80" r="10"/>
+<text class="tx txs" x="112" y="266">20, 20</text>
+<text class="tx txs" x="372" y="266">180, 20</text>
+<text class="tx txs" x="372" y="66">180, 100</text>
+<text class="tx txs" x="112" y="66">20, 100</text>
+<path class="lf dsh" d="M100 160H420M260 80V240"/>
+<text class="tx txs" x="260" y="154" text-anchor="middle">160</text>
+<text class="tx txs" x="268" y="200">80</text>
+<text class="txb" x="60" y="298">origin 0, 0</text>
+<text class="tx txs" x="260" y="30" text-anchor="middle">200 × 120 mm plate</text>
+```
+
 The drafter checks the centres numerically and verifies that all circles have the same intended diameter. The plate outline is checked for closure and consistent elevation. These checks establish whether the drawing follows the illustrative geometry; they do not establish that the plate is suitable for any particular load or manufacturing process.
 
 If the team later changes the plate width, it must decide which relationships should remain fixed. Keeping a hole 20 millimetres from the right edge differs from keeping its X coordinate at 180. The original reference scheme makes that design decision visible before the edit is made.
+
+```figure
+type: balance
+title: Which relationship should survive a change?
+left: Keep 20 mm from the right edge
+right: Keep X at 180
+caption: The original reference scheme decides what happens when the plate width changes.
+- The hole follows the edge | The hole stays put
+- Spacing changes with the width | Edge distance changes instead
+```
 
 ## Verify geometry using more than one observation
 

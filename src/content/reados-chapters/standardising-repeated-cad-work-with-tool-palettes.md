@@ -32,6 +32,17 @@ An **action macro** is a recorded sequence of commands and inputs that can be pl
 | Draw an object with agreed properties | Object or command tool | Does the result carry the intended properties? |
 | Repeat a short setup sequence | Recorded action, where supported | Does the starting drawing satisfy the assumptions? |
 
+```figure
+type: decision
+title: Which kind of reuse fits?
+question: What is being repeated?
+caption: Build each tool from a checked source object and test it in the target drawing.
+- Placing a symbol | A block tool
+- Applying a hatch | A hatch tool
+- Drawing with set properties | An object or command tool
+- *A short setup sequence | A recorded action, where supported
+```
+
 Start with the simplest method that handles the task. A palette tool may remove several repeated choices without needing a longer recorded sequence. Adding automation is worthwhile only when its behaviour remains understandable to the person using it.
 
 ## Define the result before creating the tool
@@ -123,6 +134,15 @@ The boundary tool should create layer-controlled lines on REF-BOUNDARY. The mark
 The team prepares three test drawings. The first is an empty drawing using millimetres. The second already contains the relevant layer names and an older marker definition. The third uses metres. These cases test missing content, existing content and unit conversion without requiring a large test project.
 
 The marker contains a reference feature measuring 100 mm in its source. In the millimetre drawing, that feature should measure 100 drawing units. In the metre drawing, it should measure 0.1 drawing units. Measuring those results is more useful than deciding that both markers look about the same size on screen.
+
+```figure
+type: compare
+title: One 100 mm feature in two target drawings
+cols: Expected measure | Why
+caption: Measuring the inserted reference proves the tool scaled correctly.
+- *Millimetre drawing | 100 units | One unit is one millimetre
+- Metre drawing | 0.1 units | One unit is one metre
+```
 
 The older marker in the second drawing exposes a separate question. The team cannot assume that changing the library updates the project's existing definition. It reviews whether the project should adopt the new definition, tests the chosen redefinition procedure on a copy, and checks the already placed markers afterwards.
 

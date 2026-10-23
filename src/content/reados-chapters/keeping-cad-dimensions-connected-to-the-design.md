@@ -120,9 +120,37 @@ The designer then changes the endpoint to (100, 75), retaining the same directio
 | Vertical separation | 60 mm | 75 mm |
 | Aligned length | 100 mm | 125 mm |
 
+```figure
+type: svg
+title: Horizontal or aligned?
+alt: A sloping feature from 0,0 to 80,60 millimetres. A horizontal dimension reads 80 and an aligned dimension along the feature reads 100. When the endpoint moves to 100,75, the associative aligned dimension updates to 125.
+caption: Both numbers are right; the requirement decides which relationship needs dimensioning.
+viewbox: 0 0 560 260
+body:
+<path class="lf dsh" d="M60 220H316V28"/>
+<path class="la draw" d="M60 220L316 28"/>
+<path class="ln" d="M60 220L265 66"/>
+<circle class="fa" cx="265" cy="66" r="5"/>
+<circle class="fa pulse" cx="316" cy="28" r="5"/>
+<text class="tx txs" x="190" y="240" text-anchor="middle">horizontal 80 → 100</text>
+<text class="txb" x="160" y="120" text-anchor="middle">aligned 100 → 125</text>
+<text class="tx txs" x="275" y="84">80, 60</text>
+<text class="tx txs" x="326" y="32">100, 75</text>
+```
+
 An associative aligned dimension connected to the intended endpoints should reflect the revised length when the relationship remains valid. If its text had been replaced with a fixed 100, it could continue to display 100 despite the geometry now measuring 125. The drawing would contain a disagreement that a visual glance might miss.
 
 The reviewer checks the endpoint coordinates, the type of dimension, its association and whether an override exists. The correction addresses the actual cause. Simply typing 125 into the text would repeat the same maintenance problem at the next revision.
+
+```figure
+type: checklist
+title: When a dimension looks wrong
+caption: Typing the new number into the text repeats the original mistake.
+- x Check the endpoint coordinates
+- x Check the dimension type
+- x Check its association to the geometry
+- *x Look for a text override
+```
 
 ## Review dimensions after changing geometry
 

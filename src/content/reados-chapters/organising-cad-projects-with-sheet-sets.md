@@ -94,6 +94,15 @@ Second, check each sheet's content. Confirm that the expected views, notes and d
 
 Third, check relationships across sheets. An assembly reference should lead to the correct component detail, and repeated project information should agree. A change in one sheet can leave another sheet's callout or descriptive text referring to an earlier arrangement.
 
+```figure
+type: checklist
+title: Checking a set at three levels
+caption: Keep the working set separate from the published issue.
+- x Membership | all intended sheets in, unintended ones out
+- x Content | expected views, notes and dimensions present
+- *x Relationships | references lead to the right sheets
+```
+
 These checks answer different questions. A complete page count does not establish correct content, and a correct individual drawing does not establish a coherent set. Keep the distinctions visible in the review routine so a successful check at one level does not silently stand in for all three.
 
 ## Work through a small product drawing set
@@ -108,6 +117,27 @@ The working files are organised differently. One drawing contains both overview 
 | Components | 4 | 2 |
 | Assembly details | 2 | 1 |
 | Total | 8 | 4 |
+
+```figure
+type: svg
+title: Eight sheets from four drawing files
+alt: Four drawing files hold eight layouts. File one holds two overview sheets, files two and three hold two component sheets each, and file four holds two assembly-detail sheets. The sheet set lists all eight in order.
+caption: A sheet set organises selected layouts, which may come from several files.
+viewbox: 0 0 640 220
+body:
+<rect class="bxi" x="20" y="20" width="130" height="40" rx="5"/>
+<rect class="bxi" x="175" y="20" width="130" height="40" rx="5"/>
+<rect class="bxi" x="330" y="20" width="130" height="40" rx="5"/>
+<rect class="bxi" x="485" y="20" width="130" height="40" rx="5"/>
+<text class="tx txs" x="85" y="45" text-anchor="middle">File 1: overview</text>
+<text class="tx txs" x="240" y="45" text-anchor="middle">File 2: components</text>
+<text class="tx txs" x="395" y="45" text-anchor="middle">File 3: components</text>
+<text class="tx txs" x="550" y="45" text-anchor="middle">File 4: assembly</text>
+<path class="ln flow" d="M85 60V130M240 60V130M395 60V130M550 60V130"/>
+<rect class="bxa" x="20" y="130" width="595" height="60" rx="6"/>
+<text class="txb" x="318" y="156" text-anchor="middle">Sheet set: 8 sheets</text>
+<text class="tx txs" x="318" y="178" text-anchor="middle">2 overview · 4 components · 2 assembly details</text>
+```
 
 During import, the author notices an extra layout containing an abandoned component alternative. Including all layouts would produce nine sheets. The author excludes that alternative and records it separately as working material outside the planned issue.
 

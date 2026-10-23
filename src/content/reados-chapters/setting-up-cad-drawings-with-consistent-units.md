@@ -103,7 +103,38 @@ The team then receives a supplier symbol containing a known 50-millimetre refere
 | Detail feature at 2:1 | 24 millimetres on output | Enlargement is applied to the view |
 | Incoming reference length | 50 model units | Imported content agrees with the chosen units |
 
+```figure
+type: svg
+title: One model, two view scales
+alt: A panel modelled at its true size of 240 by 160 millimetres appears on the sheet at 1:2 as 120 by 80 millimetres. A 12-millimetre feature appears in a 2:1 detail as 24 millimetres. The model geometry never changes; only the view scale does.
+caption: Geometry stays at true size; each view applies its own scale on the sheet.
+viewbox: 0 0 640 230
+body:
+<text class="txb" x="130" y="22" text-anchor="middle">Model: true size</text>
+<rect class="bxa" x="20" y="34" width="220" height="146" rx="2"/>
+<text class="tx" x="130" y="112" text-anchor="middle">240 × 160 mm</text>
+<path class="la flow" d="M250 107H310"/>
+<text class="txb" x="400" y="22" text-anchor="middle">Sheet at 1:2</text>
+<rect class="bx" x="345" y="70" width="110" height="73" rx="2"/>
+<text class="tx txs" x="400" y="112" text-anchor="middle">120 × 80 mm</text>
+<text class="txb" x="560" y="22" text-anchor="middle">Detail at 2:1</text>
+<rect class="bxi" x="510" y="80" width="100" height="40" rx="2"/>
+<text class="tx txs" x="560" y="104" text-anchor="middle">12 mm → 24 mm</text>
+<text class="tx txs" x="320" y="214" text-anchor="middle">the stated design size stays the model size</text>
+```
+
 The team creates a sample output before drafting the rest of the panel set. It checks note readability, border clearance and the known printed length. Passing this trial does not approve the panel design; it confirms that the setup communicates the intended geometry and scale under the tested conditions.
+
+```figure
+type: steps
+title: Setting up units before drafting
+caption: Display precision is not geometric accuracy, and view size is not model size.
+- Define what one drawing unit means
+- Keep model size separate from view scale
+- Plan the output sheet and scales
+- Build the decisions into a template
+- *Check incoming geometry against a known length
+```
 
 ## Validate the template with a small trial
 

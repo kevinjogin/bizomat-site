@@ -112,6 +112,16 @@ This is an illustration. A product team prepares a review sheet containing an ov
 
 With non-annotative model-space notes, the overall view would need text 15 millimetres high: 3 multiplied by 5. The full-size detail would need text 3 millimetres high. If the team instead uses an annotative style, it must assign and test the two relevant scales rather than manually applying those heights indiscriminately.
 
+```figure
+type: bars
+title: Model text height for 3 mm printed notes
+unit: mm
+max: 16
+caption: Non-annotative model-space text must be multiplied by the view scale; annotative styles handle this per viewport.
+- *Overall view at 1:5 | 15 | 3 × 5
+- Detail at 1:1 | 3
+```
+
 The sheet contains four feature notes and a small table identifying three open decisions. Each decision has a unique reference, a brief question and an owner. The table is clearly labelled as review information, so the unresolved items are not mistaken for approved instructions.
 
 Two regions use hatching to distinguish the areas being discussed. The legend explains the distinction without assigning an unconfirmed material. An opening inside one region remains unfilled, and the team checks that the hatch boundary correctly excludes it.
@@ -123,6 +133,17 @@ Two regions use hatching to distinguish the areas being discussed. The legend ex
 | Leaders | Each note identifies its intended feature |
 | Decision table | Three references match the marked items |
 | Hatch | Discussed regions are distinct and openings remain clear |
+
+```figure
+type: checklist
+title: Reviewing a prototype sheet
+caption: Review the wording separately from its formatting.
+- x Overall-view text readable at output size
+- x Detail text consistent and clearly placed
+- x Each leader identifies its feature
+- x The decision table matches the marked items
+- *x Hatched regions distinct, openings clear
+```
 
 After exporting the sheet, the team opens the PDF in a separate viewer and inspects it at a realistic reading size. One note overlaps a leader after wrapping, so its width and position are revised. The drawing is clearer because the output was checked, not simply because styles were applied.
 

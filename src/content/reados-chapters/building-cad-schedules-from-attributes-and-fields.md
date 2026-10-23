@@ -119,11 +119,31 @@ The drawing uses millimetres, and each rectangular work area has a separate clos
 | C | 3,000 × 2,000 mm | 6,000,000 | 6.00 |
 | Total | Three separate spaces | 33,000,000 | 33.00 |
 
+```figure
+type: stack
+title: A three-space schedule
+unit: m²
+caption: Area converts by dividing square millimetres by 1,000,000, not by 1,000.
+- Space A: 4,000 × 3,000 mm | 12
+- *Space B: 5,000 × 3,000 mm | 15
+- Space C: 3,000 × 2,000 mm | 6
+```
+
 During setup, the drafter copies A's label into B and changes its name. B still displays 12.00 because the field refers to A's boundary. The error is resolved by selecting B's actual boundary as the field source, updating the field and confirming the expected 15.00 result.
 
 The proposed width of B then changes from 5,000 to 5,500 mm. Its area becomes 16,500,000 mm², or 16.50 m². The total becomes 34.50 m², an increase of 1.50 m². These simple numbers provide a check that the update has reached every stage.
 
 The reviewer first checks the changed boundary dimensions. Next they refresh the field and confirm B's label reads 16.50. They save the source, update the schedule and verify that the three identifiers occur once each and the total reads 34.50. Finally, they inspect the exported sheet to confirm that it shows the same information.
+
+```figure
+type: timeline
+title: Two errors the schedule should catch
+caption: When B widens to 5,500 mm, its area becomes 16.50 m² and the total 34.50 m².
+- Setup | B copied from A's label | still shows 12.00: the field points at A
+- Fix | B's own boundary selected | B reads 15.00
+- Change | B widened to 5,500 mm | field refreshed to 16.50
+- *Extract | Schedule updated | total 34.50, each space once
+```
 
 Suppose the extraction also includes a copied option layout containing another A label. A total alone may not reveal the cause of the problem. Reviewing identifiers and the included source drawings exposes the extra record. The correction belongs in the extraction scope, not in a manually reduced total.
 

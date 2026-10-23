@@ -108,6 +108,25 @@ The reviewer first checks the four intended profile dimensions using appropriate
 
 That net area is 0.22 square metres because one square metre contains 1,000,000 square millimetres. The reviewer records the outer profile and opening separately before comparing the net result. This makes it possible to see whether a discrepancy comes from the outside boundary or the subtraction.
 
+```figure
+type: svg
+title: Checking a profile with an opening
+alt: A rectangular profile 600 by 400 millimetres with a 200 by 100 millimetre rectangular opening. The outer area is 240,000 square millimetres, the opening 20,000, giving a net area of 220,000 square millimetres, or 0.22 square metres.
+caption: Record the outer profile and the opening separately before comparing the net result.
+viewbox: 0 0 600 300
+body:
+<rect class="bxa" x="60" y="30" width="360" height="240" rx="2"/>
+<rect class="bxi" x="180" y="120" width="120" height="60" rx="2"/>
+<text class="tx txs" x="240" y="155" text-anchor="middle">200 × 100</text>
+<text class="tx txs" x="240" y="22" text-anchor="middle">600 mm</text>
+<text class="tx txs" x="40" y="155" text-anchor="end">400</text>
+<text class="tx" x="440" y="90">240,000 mm²</text>
+<text class="tx" x="440" y="130">− 20,000 mm²</text>
+<path class="ln" d="M440 145H590"/>
+<text class="txb" x="440" y="170">220,000 mm²</text>
+<text class="tx txs" x="440" y="192">= 0.22 m²</text>
+```
+
 The outer perimeter is twice the sum of 600 and 400, or 2,000 millimetres. The opening perimeter is twice the sum of 200 and 100, or 600 millimetres. If the question is the total length of those two geometric boundaries, the result is 2,600 millimetres; it is not automatically a production cutting allowance or a machine time estimate.
 
 If the profile represents a uniform 10-millimetre-thick prism with the opening passing completely through it, its geometric volume is 220,000 multiplied by 10, or 2,200,000 cubic millimetres. This equals 0.0022 cubic metres. The calculation says nothing about material density or additional features not represented by that assumption.
@@ -115,6 +134,14 @@ If the profile represents a uniform 10-millimetre-thick prism with the opening p
 Elsewhere in the file, two checked points have coordinate differences of 300, 400 and 1,200 millimetres along the current X, Y and Z axes. Their separation in the XY projection is 500 millimetres. Their spatial separation is 1,300 millimetres, because the square root of 300 squared plus 400 squared plus 1,200 squared is 1,300.
 
 Both distances are correct, but they answer different questions. If the points were intended to share an elevation, the 1,200-millimetre Z difference needs investigation. The reviewer should not alter geometry simply to make the total distance equal the plan distance without confirming the intended design.
+
+```figure
+type: stats
+title: Two correct distances between the same points
+caption: Differences of 300, 400 and 1,200 mm along X, Y and Z; if the points should share an elevation, investigate Z.
+- 500 mm | Separation in the XY projection
+- *1,300 mm | Spatial separation
+```
 
 ## Record enough evidence for the next decision
 

@@ -58,6 +58,17 @@ Break the exchange requirement into observable checks. Start with the overall ge
 | Organisation | Review required layers or component groups | Supports selection and editing |
 | Annotation | Compare dimensions, symbols and text | Preserves intended communication |
 
+```figure
+type: checklist
+title: What must survive a format change
+caption: An imported note saying 200 mm does not prove the outline measures 200 mm.
+- x Size | a known overall length
+- x Position | origin and a feature coordinate
+- x Shape | circles, arcs, closed boundaries
+- x Organisation | layers and groups
+- *x Annotation | dimensions, symbols, text
+```
+
 Do not require every source property to survive if the receiving task does not use it. That can create needless restrictions. Instead, make essential properties explicit and record acceptable changes, such as a deliberate simplification made for a particular downstream operation.
 
 An object count can help diagnose a difference, but it is not a universal acceptance test. One source object may become several valid receiving objects, or several source objects may be combined. Judge that change against the intended structure rather than assuming every count difference is a defect.
@@ -131,6 +142,17 @@ The source uses millimetres. The founder records the overall dimensions, the fou
 The imported width measures 0.2 in the receiving drawing, which is configured in metres. That may represent the correct physical length: 0.2 metres equals 200 mm. The teams establish the receiving unit convention before deciding whether any scaling correction is needed.
 
 The hole centres are then checked in that same convention. Their horizontal separation is 160 mm, or 0.16 metres, and their vertical separation is 80 mm, or 0.08 metres. Their diameter should be 0.01 metres. Consistent conversion across these measurements supports the unit interpretation.
+
+```figure
+type: compare
+title: Checking a transferred panel outline
+cols: Source in mm | Receiving drawing in metres
+caption: 0.2 is correct if the receiving unit is metres; establish the convention before judging the numbers.
+- Width | 200 | 0.2
+- Horizontal hole spacing | 160 | 0.16
+- Vertical hole spacing | 80 | 0.08
+- *Hole diameter | 10 | 0.01
+```
 
 Next, the recipient checks that the four openings remain suitable editable circles and that the outer outline is closed. Those checks are separate from the correct overall size. A file can pass the measurement test and still fail the object-structure requirement.
 
