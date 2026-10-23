@@ -88,6 +88,30 @@ A practical hybrid for engineering and product work usually has:
 4. **A shared definition of done** that includes the documentation, testing and compliance evidence the gates require, so agile work does not reach a gate unprepared.
 5. **One backlog or requirements list** for the product, with clear ownership of priorities, so hardware and software teams work from the same picture.
 
+```figure
+type: svg
+title: A hybrid: gates outside, sprints inside
+alt: A row of five stages with gates between them: concept, design to freeze, tooling and compliance, pilot and launch. Inside the early stages, short loops represent hardware design iterations; a parallel lane of loops represents firmware and app sprints that meet the hardware at integration milestones.
+caption: The predictive frame holds the expensive, hard-to-change decisions; iteration happens inside it where change is cheap.
+viewbox: 0 0 640 210
+body:
+<rect class="bx" x="10" y="20" width="110" height="40" rx="6"/>
+<rect class="bx" x="135" y="20" width="110" height="40" rx="6"/>
+<rect class="bx" x="260" y="20" width="110" height="40" rx="6"/>
+<rect class="bx" x="385" y="20" width="110" height="40" rx="6"/>
+<rect class="bxa" x="510" y="20" width="120" height="40" rx="6"/>
+<text class="tx txs" x="65" y="45" text-anchor="middle">Concept</text>
+<text class="tx txs" x="190" y="45" text-anchor="middle">Design to freeze</text>
+<text class="tx txs" x="315" y="45" text-anchor="middle">Tooling, compliance</text>
+<text class="tx txs" x="440" y="45" text-anchor="middle">Pilot</text>
+<text class="txb" x="570" y="45" text-anchor="middle">Launch</text>
+<path class="la" d="M127 14V66M252 14V66M377 14V66M502 14V66"/>
+<path class="ln flow" d="M30 110a25 18 0 1 0 50 0a25 18 0 1 0 -50 0M150 110a25 18 0 1 0 50 0a25 18 0 1 0 -50 0"/>
+<text class="tx txs" x="20" y="146">hardware iterations</text>
+<path class="la flow" d="M30 176a20 14 0 1 0 40 0a20 14 0 1 0 -40 0M110 176a20 14 0 1 0 40 0a20 14 0 1 0 -40 0M190 176a20 14 0 1 0 40 0a20 14 0 1 0 -40 0M270 176a20 14 0 1 0 40 0a20 14 0 1 0 -40 0M350 176a20 14 0 1 0 40 0a20 14 0 1 0 -40 0"/>
+<text class="tx txs" x="420" y="180">firmware and app sprints</text>
+```
+
 Regulated products show why hybrids are common. Many products need documented design control, risk management and test evidence for compliance, while their software benefits from rapid iteration. Building the documentation and evidence into each sprint, rather than writing it at the end, lets both needs be met.
 
 ## Measure progress in a way that suits the approach
@@ -144,6 +168,17 @@ This is an illustrative example. A 25-person Australian business is developing a
 **What changed.** Sprint reviews reveal that farmers care far more about reliable SMS fault alerts than about the scheduling screens the team had prioritised. The backlog is reordered and the scheduling features are simplified. Hardware design freeze happens on the planned date after the third iteration, and the enclosure is tooled once, without later changes.
 
 **Result.** The pilot units go to twenty farms with a product that does fewer things than originally planned but the most valued ones well. The compliance testing gate passes with evidence already assembled. The business launches on the schedule set at the concept gate.
+
+```figure
+type: compare
+title: What iteration changed in a pump controller project
+cols: Planned | Delivered
+caption: Hardware froze on the planned date and the compliance gate passed with evidence already assembled.
+- App priorities | Scheduling screens | Reliable SMS fault alerts
+- Scope | Many features | Fewer, the most valued, done well
+- Evidence | Written at the end | Accumulated sprint by sprint
+- *Launch | Date set at the concept gate | Met
+```
 
 ## Applying this in an Australian business
 

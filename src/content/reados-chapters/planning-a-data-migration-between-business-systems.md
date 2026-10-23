@@ -94,6 +94,15 @@ Never let go-live be the first full migration. Plan at least two or three **tria
 2. **Second trial**: load a full copy of the data, reconcile it and test that typical processes work with migrated records, such as receiving an open purchase order or invoicing an open sales order.
 3. **Dress rehearsal**: repeat the full process exactly as planned for cutover, timing each step.
 
+```figure
+type: steps
+title: Three trial loads before cutover
+caption: Each trial finds problems the previous one could not.
+- First trial | a sample: mapping and structure
+- Second trial | full copy: reconcile and test processes
+- *Dress rehearsal | the cutover exactly as planned, timed
+```
+
 Each trial finds problems that are much cheaper to fix in rehearsal than after go-live. The dress rehearsal also shows how long the cutover will take, which determines how long normal operations must pause.
 
 ## Step 6: Reconcile, and prove it
@@ -156,6 +165,17 @@ This is an illustrative example. A manufacturer of agricultural equipment is mov
 **Trial loads.** The first trial reveals that the new system requires a country code on every supplier address, which the old system never held; a default is agreed and checked. The second trial shows a stock value difference of $38,000, traced to unit conversions on twelve steel items. The dress rehearsal confirms the cutover takes about 14 hours.
 
 **Reconciliation and cutover.** At cutover, stock is counted, and the migrated stock value of about $1.84 million agrees with the counted value within the agreed tolerance. Receivables and payables match to the cent. Finance and operations managers sign off, and the business goes live after a weekend cutover.
+
+```figure
+type: timeline
+title: Migrating to a cloud ERP
+caption: About 6,500 items, 900 active customers and 300 active suppliers; receivables and payables matched to the cent.
+- Profiling | About 400 duplicate or obsolete items | units of measure inconsistent on steel
+- Trial 1 | Supplier country codes missing | a default agreed
+- Trial 2 | A $38,000 stock value difference | unit conversions on 12 steel items
+- Rehearsal | Cutover takes about 14 hours
+- *Cutover | Stock about $1.84 million | agrees with the count
+```
 
 **Result.** The first month-end closes with only minor issues, staff trust the new balances, and the old system is made read-only and retired three months later once the archive has been checked.
 

@@ -71,6 +71,17 @@ People join distributed projects partway through. A structured onboarding pack, 
 
 Map each location's working hours and find the overlap window for live meetings. Remember that daylight saving changes overlaps twice a year: within Australia, Sydney and Melbourne observe daylight saving while Brisbane and Perth do not, and other countries change on different dates. Where overlap is small, rotate inconvenient meeting times so the same people do not always join at dawn or late at night.
 
+```figure
+type: checklist
+title: Setting up a distributed team
+caption: Information equity matters: everyone needs the same facts, wherever they sit.
+- x A team charter with roles and decision rights
+- x Face to face at the start, if possible
+- x Planned onboarding
+- x Meetings in a fair overlap window
+- *x One shared record of questions and decisions
+```
+
 ### Synchronous and asynchronous work
 
 Use live meetings for what they do best: building relationships, resolving complex or contentious issues, and making decisions that need discussion. Use asynchronous channels, such as shared documents, task systems and written updates, for status, information sharing and routine questions. Written updates should be complete enough to stand alone, with context, the decision or question, and the deadline.
@@ -143,6 +154,17 @@ Choose a small set of tools and use them consistently: a shared document reposit
 This is an illustrative example. An Australian engineering firm is delivering a materials handling upgrade with a project office in Brisbane, a site team in Western Australia, a design partner in India and a fabricator in Vietnam. Three months in, the project is behind schedule. The design partner says drawings were held up by unanswered questions; the fabricator says it received late, inconsistent revisions; the site team feels left out of decisions made in Brisbane.
 
 **Diagnosis.** The project manager maps working hours. Brisbane is on UTC plus 10 hours with no daylight saving, Perth on UTC plus 8, India on UTC plus 5 hours 30 minutes and Vietnam on UTC plus 7. A window from 1 pm to 4 pm Brisbane time corresponds to 11 am to 2 pm in Perth, 8.30 to 11.30 am in India and 10 am to 1 pm in Vietnam, but meetings had been scheduled at 9 am Brisbane time, before the Indian and Perth teams started work. Questions were being sent by email to individuals, and decisions made in Brisbane meetings were not written up.
+
+```figure
+type: compare
+title: One three-hour overlap across four locations
+cols: Time zone | Overlap window
+caption: Coordination meetings moved into the shared window, with questions tracked in one register visible to all.
+- *Brisbane | UTC+10, no daylight saving | 1 pm to 4 pm
+- Perth | UTC+8 | 11 am to 2 pm
+- India | UTC+5:30 | 8.30 to 11.30 am
+- Vietnam | UTC+7 | 10 am to 1 pm
+```
 
 **Changes.**
 

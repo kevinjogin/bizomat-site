@@ -79,6 +79,16 @@ Before writing, analyse the decision-maker. A simple framework is **NICE**:
 
 A report that addresses the reader's concerns directly, such as "what if demand is lower than forecast?", is far more persuasive than one that only presents the upside. Show that you have identified the risks and have a plan for them.
 
+```figure
+type: checklist
+title: Know your reader: NICE
+caption: Answering the reader's concerns directly persuades more than presenting only the upside.
+- x Need | what they need to make a decision
+- x Interest | the outcome they care about
+- *x Concern | the risks they will look for
+- x Expectation | format, detail and evidence
+```
+
 ## A standard structure
 
 Keep the report as simple as the subject allows. The person reading it is a busy human being who wants to understand the proposal quickly. A standard structure:
@@ -170,6 +180,20 @@ A small manufacturer seeking a loan for a new machine might structure its report
 7. Risks: delivery delays, operator training and the possible loss of a contract, each with a mitigation.
 8. Conclusion and request.
 9. Appendices: quotation, contracts and financial statements.
+
+```figure
+type: steps
+title: An equipment loan application, in order
+caption: The executive summary carries the whole case for a reader who reads nothing else.
+- Cover letter | the request
+- Executive summary | constraint, demand, cost, return, repayment
+- Company profile
+- Market and demand | contracts exceed capacity
+- Project | machine, quote, plan
+- Financials | with and without the machine
+- Risks | each with a mitigation
+- *Conclusion and request
+```
 
 ## Presenting the report in person
 

@@ -72,6 +72,15 @@ Calibration is a particularly useful audit finding. If risks rated as unlikely k
 
 Calibration can be checked without sophisticated tools. Suppose the organisation sets contingency at a level it believes has an 80% chance of being sufficient. Across ten comparable projects, it should expect about two to need more. If eight of ten exceed their contingency, the estimates are clearly optimistic. Similarly, if the organisation rates a group of risks at about 10% likelihood each, roughly one in ten should occur; if a third of them occur, the ratings are too low. Keeping a simple table of estimated and actual outcomes across projects turns these checks into routine practice, and over time it provides the historical data that better quantitative analysis needs.
 
+```figure
+type: compare
+title: Checking whether risk estimates are calibrated
+cols: Expected | A warning sign
+caption: Keeping a simple record across projects shows whether estimates are systematically optimistic.
+- Contingency at 80% confidence, 10 projects | About 2 overrun | 8 of 10 overrun
+- *Risks rated about 10% likely | About 1 in 10 occur | A third occur
+```
+
 ## Sharing lessons beyond the project
 
 Some of the most useful lessons involve other parties. Joint reviews with clients, designers, subcontractors and suppliers at the end of significant projects can reveal problems no single party saw, such as late information flows or unclear interfaces. Agree in advance that the purpose is learning, not claims, and respect confidentiality. Industry associations, professional bodies and published investigation reports are further sources of lessons from other organisations' projects, often at no cost.
@@ -142,6 +151,16 @@ This is an illustrative example. A mid-sized engineering contractor completes ab
 - Leaders publish a just culture statement and thank teams publicly for early warnings, including those that turn out to be false alarms.
 
 **Result.** The next three brownfield projects are tendered with more realistic contingency, survey existing services before detailed design and finish within their contingency. Lessons from those projects are added to the register and used in the following tenders.
+
+```figure
+type: timeline
+title: Turning unread lessons into tender practice
+caption: Lessons were rewritten as specific, owned statements in a searchable register by work type.
+- Problem | Brownfield jobs overran | lessons reports went unread
+- Audit | Six projects reviewed | contingency exhausted early on five
+- Changes | "Lessons in" review for every brownfield bid | revised contingency norms
+- *Result | Next three finish within contingency
+```
 
 ## Applying this in an Australian business
 

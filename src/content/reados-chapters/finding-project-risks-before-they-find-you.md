@@ -50,6 +50,19 @@ A two to three hour workshop for a medium-sized project might run like this:
 6. **Initial assessment and ownership** (30 minutes): a quick view of likelihood and impact for each, and a named person to develop each significant risk further.
 7. **Close** (10 minutes): confirm actions and when the register will next be reviewed.
 
+```figure
+type: timeline
+title: A risk workshop in about two and a half hours
+caption: Silent generation first, so the loudest voice does not set the list.
+- 10 min | Purpose and objectives
+- 15 min | Silent individual generation
+- 30 min | Share and cluster
+- 30 min | Structured prompts | assumptions, interfaces, gaps
+- 20 min | Pre-mortem
+- 30 min | Assessment and ownership
+- *10 min | Close and confirm actions
+```
+
 The facilitator's main jobs are to keep generation separate from evaluation, to make sure quieter people are heard and to push into the categories nobody has touched.
 
 ## Use several lenses, not one
@@ -141,6 +154,15 @@ This is an illustrative example. An 80-person metal products manufacturer is ins
 **Blind spots.** Individual written input before discussion surfaces a concern from the operator that the planned booth layout makes colour changes slow, a risk nobody senior had considered.
 
 **Result.** Trade waste, landlord consent and gas connection applications start in the first month instead of the fourth. The booth layout is revised before ordering. When the gas connection is confirmed six weeks later than hoped, the schedule absorbs it because the risk was already visible with a mitigation plan.
+
+```figure
+type: stack
+title: Risks found for a powder coating line
+unit: risks
+caption: The first pass was almost all technical; objectives, the WBS, interfaces and a pre-mortem found approvals and services risks.
+- First-pass brainstorm | 25
+- *Added by other lenses | 18
+```
 
 ## Applying this in an Australian business
 

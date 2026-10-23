@@ -68,6 +68,17 @@ External events can upend any plan. Supply disruptions, illness, regulatory chan
 
 The project is completed and formally closed. Deliverables are handed over and accepted, contracts are finalised, final costs are recorded and the team reviews what went well and what to improve next time. Closing is often skipped in small businesses, which means the same mistakes are repeated. A one-hour lessons-learned review is one of the highest-value hours in any project.
 
+```figure
+type: steps
+title: The five phases of a project
+caption: Monitoring runs alongside execution, so problems are found while they are still cheap to fix.
+- Initiation | objective, owner, benefit
+- Planning | work, schedule, budget, risks
+- Execution | doing the work
+- Monitoring and controlling | checking against the plan
+- *Closing | handover, benefits, lessons
+```
+
 Closing also means confirming that the objective was achieved. Projects often change along the way as new factors emerge. A capable project owner adapts the plan, re-estimates costs and timing, and still drives the project to a clear finish rather than letting it fade out.
 
 ## Ten areas to manage
@@ -133,6 +144,17 @@ A metal products business decides to install a fibre laser cutter to replace out
 **Monitoring and controlling.** In week six, the electrician reports that the switchboard needs a larger upgrade than quoted, adding cost and two weeks. The production manager assesses the impact, uses part of the contingency, re-sequences training to happen at the supplier's site before installation and keeps the overall finish date.
 
 **Closing.** The laser enters production in the last week of September. Cutting costs and lead times are tracked for three months against the business case. A one-hour review records lessons, including "get electrical capacity assessed before ordering equipment", for the next project.
+
+```figure
+type: timeline
+title: Installing a fibre laser in five phases
+caption: A $520,000 budget including building works; lead times were expected to fall from seven days to two.
+- Initiation | Objective set | production by 30 September with two trained operators
+- Planning | Work packages | equipment, building works, training, software
+- Execution | Monday 15-minute check-ins
+- Control | Switchboard upgrade bigger than quoted | contingency used, training re-sequenced
+- *Closing | In production in late September | benefits tracked, lessons recorded
+```
 
 ## Traditional or agile?
 

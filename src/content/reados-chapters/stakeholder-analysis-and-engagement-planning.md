@@ -56,6 +56,19 @@ The most widely used mapping tool is the **power and interest grid**. Each stake
 | **High power** | **Keep satisfied**: meet their needs and consult on matters that affect them, without overloading them | **Manage closely**: involve them in key decisions and engage regularly |
 | **Low power** | **Monitor**: provide general information and watch for changes | **Keep informed**: communicate regularly and listen to concerns |
 
+```figure
+type: matrix
+title: Power and interest
+x: Low → high interest
+y: Low → high power
+hot: 2
+caption: Place each stakeholder, then plan how much engagement each needs.
+- Keep satisfied | consult on what affects them
+- *Manage closely | involve in key decisions
+- Monitor | general information
+- Keep informed | communicate and listen
+```
+
 Variations use influence and impact as the axes, which can be more useful when some stakeholders have little formal power but a strong ability to affect outcomes, or when a project's impact on people is the main concern.
 
 Grids are snapshots. Positions change: a neighbour with low power can gain a great deal of it by contacting the council, and a disengaged executive can become intensely interested when a budget is threatened. Review the map as the project moves.
@@ -109,6 +122,16 @@ For each stakeholder or group, the engagement plan answers:
 Match the method to the stakeholder and the message. Bad news, decisions that affect people's jobs and significant disruption deserve conversation, not a newsletter. Routine progress can be written. One-way broadcasts deliver data but rarely build support.
 
 Communication also gets more complex as the team grows. The number of possible communication channels between people in a group is n × (n − 1) ÷ 2: four people have six channels, while ten people have 45. That is one reason larger projects need deliberate communication plans rather than relying on everyone talking to everyone.
+
+```figure
+type: bars
+title: Communication channels as a team grows
+unit: channels
+max: 50
+caption: Channels = n × (n − 1) ÷ 2, one reason larger projects need deliberate communication planning.
+- 4 people | 6
+- *10 people | 45
+```
 
 ## A simple communication matrix
 
@@ -164,6 +187,17 @@ This is an illustrative example. A 60-person food distribution business is build
 | Electricity distributor | Neutral | Supportive of connection dates |
 
 **Plan.** The managing director briefs the major customers in person on how supply will be protected during construction. Warehouse staff receive a briefing and a fortnightly update at the morning meeting, and two staff join the layout review. The builder and project manager visit the adjoining residents before work starts, deliver a letter with a schedule of noisy work and a phone contact, and agree to avoid deliveries before 7 am. The council receives the construction traffic plan in advance. The electricity distributor's connection application is lodged early, with a named contact checking monthly.
+
+```figure
+type: compare
+title: Engagement for a cold-storage extension
+cols: Current | Desired
+caption: Sixteen stakeholders or groups were identified in a one-hour workshop.
+- Warehouse staff | Unaware | Supportive
+- Major customers | Unaware | Neutral to supportive
+- *Residents | Unaware | Neutral
+- Electricity distributor | Neutral | Supportive of connection dates
+```
 
 **Result.** One resident calls about dust in week five, and the builder adds dust suppression the same day. No complaints reach the council. Warehouse staff suggest a change to the door positions that improves forklift flow. The extension is commissioned on schedule, and both supermarket customers report no disruption to supply.
 

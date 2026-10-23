@@ -86,6 +86,16 @@ Many products, such as designs, specifications, documents and software, are chec
 3. **Decide.** The outcome is one of: complete, complete subject to agreed actions, or incomplete and to be reviewed again.
 4. **Follow up.** Actions are completed and signed off by the named reviewers, and the result is recorded in the quality register.
 
+```figure
+type: steps
+title: Running a quality review
+caption: The outcome is recorded in the quality register.
+- Prepare | reviewers read against the criteria
+- Meet briefly | the producer walks through
+- Decide | complete, complete with actions, or incomplete
+- *Follow up | actions signed off
+```
+
 Choose reviewers who represent the users and the people who will operate and maintain the product, not only technical peers.
 
 ## Factory and site acceptance testing
@@ -130,6 +140,17 @@ This is an illustrative example. A 70-person food manufacturer is upgrading a pa
 **A concession.** During installation, the supplier proposes a different label printer model because the specified one is unavailable. The project manager assesses the impact, confirms equivalent performance and spare parts support, and the production manager approves a concession, conditional on the supplier providing two days of extra training on the new model. It is recorded in the register.
 
 **Acceptance.** SAT shows the line running at 58 packs a minute in week one, within tolerance, and 61 in week three. Changeover averages 12 minutes. One training assessment is outstanding; acceptance is given subject to its completion within two weeks, with the final payment held until it is done. Benefits, such as reduced labour per case, are assigned to the production manager to measure over the next six months.
+
+```figure
+type: bars
+title: Site acceptance of a packaging line upgrade
+unit: packs a minute
+max: 65
+caption: The acceptance criterion was 60 packs a minute for a full shift; changeover averaged 12 minutes against a 15-minute target.
+- Week one | 58 | within tolerance
+- *Week three | 61
+- Acceptance criterion | 60
+```
 
 ## Applying this in an Australian business
 

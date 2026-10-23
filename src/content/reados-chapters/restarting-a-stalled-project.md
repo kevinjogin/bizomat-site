@@ -74,6 +74,18 @@ A restart plan needs a funding plan. Work through:
 3. **The funding gap**, and how it will be filled: owner's funds, new equity, a loan, an investor or a partner.
 4. **A month-by-month cash flow forecast** showing that the plan can be funded through to completion of the first stage.
 
+```figure
+type: steps
+title: Restarting a stalled project
+caption: Make the plan small enough to fund and finish, then prove delivery before relaunching.
+- One person in charge
+- Make the plan smaller
+- Convert it into numbers
+- Rebuild trust with each group
+- Show visible progress quickly
+- *Relaunch once delivery is proven
+```
+
 Many restart plans aim to secure a meaningful share of the required funds up front, for example a fifth to a third, so that work can restart with confidence while remaining inflows follow as milestones are reached. The exact proportion depends on the project, but the principle is to avoid restarting with so little money that the project stalls again within weeks.
 
 In the early stages of a restart, focus on **cash flow before profit**. The goal is to get value moving and obligations met. Profitability can be rebuilt once the project has momentum.
@@ -125,6 +137,17 @@ The restart plan is deliberately smaller. Complete the building services and coo
 The variation dispute with the contractor is resolved through a negotiated settlement with formal change control for the remaining work. The contractor remobilises within two weeks. Customers who had been told about the new capacity receive an honest update and a realistic date. Staff are briefed on the plan and their roles.
 
 Line one is commissioned four months after the restart. Its output relieves the pressure on the existing plant, and its cash flow, together with the demonstrated delivery, supports the financing for line two a year later. The full original plan is eventually completed, but in stages the business could fund and manage.
+
+```figure
+type: timeline
+title: A stalled factory fit-out, restarted in stages
+caption: The full plan was eventually completed, in stages the business could fund and manage.
+- Stall | Overruns, a variation dispute, work stops | six months idle
+- Restart | One lead, a smaller first stage | services, cool rooms, one line
+- Settlement | Formal change control | contractor back within two weeks
+- *Four months | Line one commissioned
+- A year later | Line two financed | on demonstrated delivery
+```
 
 ## Early warning signs that a project is stalling
 

@@ -101,7 +101,46 @@ This is an illustrative example. A manufacturer is installing a new machine. The
 
 **Reading the result.** The critical path is A, B, F, H: 5 + 30 + 4 + 5 = 44 days. Machine delivery dominates the project. The foundation chain, C and D, has 9 days of total float, shared between them: C has no free float, because any delay to C pushes D, but the chain as a whole can absorb up to 9 days. The electrical upgrade has 20 days of float, so it could be scheduled later to suit the electrician. Training has 2 days.
 
+```figure
+type: svg
+title: The machine installation network
+alt: A network diagram. A, prepare specification, 5 days, leads to three branches: B, order and deliver the machine, 30 days; C, design the foundation, 6 days, then D, build it, 8 days plus a 7-day curing lag; and E, upgrade the electrical supply, 10 days. All three branches meet at F, install machine, 4 days, which leads to G, train operators, 3 days, and H, commission and accept, 5 days. The critical path A, B, F, H totals 44 days.
+caption: Critical path A–B–F–H: 5 + 30 + 4 + 5 = 44 days. The foundation chain has 9 days of float and the electrical upgrade 20.
+viewbox: 0 0 640 260
+body:
+<rect class="bxa" x="10" y="110" width="70" height="40" rx="6"/>
+<text class="txb" x="45" y="135" text-anchor="middle">A 5</text>
+<rect class="bxa" x="130" y="20" width="200" height="40" rx="6"/>
+<text class="txb" x="230" y="45" text-anchor="middle">B delivery 30</text>
+<rect class="bx" x="130" y="110" width="80" height="40" rx="6"/>
+<text class="tx" x="170" y="135" text-anchor="middle">C 6</text>
+<rect class="bx" x="240" y="110" width="90" height="40" rx="6"/>
+<text class="tx" x="285" y="135" text-anchor="middle">D 8 +7</text>
+<rect class="bx" x="130" y="200" width="200" height="40" rx="6"/>
+<text class="tx" x="230" y="225" text-anchor="middle">E electrical 10</text>
+<rect class="bxa" x="380" y="110" width="70" height="40" rx="6"/>
+<text class="txb" x="415" y="135" text-anchor="middle">F 4</text>
+<rect class="bx" x="510" y="60" width="110" height="40" rx="6"/>
+<text class="tx" x="565" y="85" text-anchor="middle">G train 3</text>
+<rect class="bxa" x="510" y="160" width="110" height="40" rx="6"/>
+<text class="txb" x="565" y="185" text-anchor="middle">H commission 5</text>
+<path class="la flow" d="M80 125L130 45M330 40L380 120M450 140L510 175"/>
+<path class="ln flow" d="M80 130H130M210 130H240M330 130H380M80 135L130 215M330 220L380 145M450 125L510 85"/>
+```
+
 **Using it.** If the supplier warns that delivery will slip by five days, the project finish moves to day 49 unless something changes. The team can now ask useful questions. Could training start before commissioning finishes, using a start-to-start link? Could some commissioning preparation happen before installation? Is faster freight worth its cost? Meanwhile, nobody needs to rush the electrical work, which has float to spare. And because the foundation chain has only 9 days of float, a wet spell that delays curing is worth watching.
+
+```figure
+type: bars
+title: Total float by activity
+unit: days
+max: 22
+caption: Zero float marks the critical path; a five-day delivery slip moves the finish from day 44 to day 49.
+- A, B, F, H: critical | 0
+- G: train operators | 2
+- C and D: foundation | 9
+- *E: electrical upgrade | 20
+```
 
 ## Calendars, constraints and resources
 

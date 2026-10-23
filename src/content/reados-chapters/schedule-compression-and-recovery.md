@@ -51,6 +51,16 @@ The cause shapes the response. A one-off event, such as a late delivery, may be 
 | Main risks | Diminishing returns, fatigue, congestion, budget overrun | Rework when earlier work changes, coordination failures |
 | Typical phase | Execution-heavy work | Design-heavy and early work |
 
+```figure
+type: balance
+title: Crashing or fast-tracking
+left: Crashing
+right: Fast-tracking
+caption: Both only help on the critical path; reschedule and diagnose the cause before choosing.
+- Adds resources | Overlaps planned sequences
+- Trades time for money | Trades time for rework risk
+```
+
 Most recoveries use both, applied selectively to different activities.
 
 ### Crashing
@@ -97,6 +107,19 @@ This is an illustrative example. A plant upgrade has two paths to completion. Pa
 **Fifth day.** D is fully crashed and E cannot be crashed, so Path 2 cannot be shortened further by crashing. The project manager considers fast-tracking: starting E one day before D finishes, using a section of D's work that is already complete. The engineers judge the rework risk to be low and manageable with daily coordination, so the overlap is adopted, and Path 1 is shortened by crashing A's remaining day at $3,000.
 
 **Economics.** The four crashed days cost $14,000 and save $34,000 in indirect costs and damages. The fifth day costs $3,000 in crashing plus some managed risk and saves $8,500. Recovery is clearly worthwhile. Had damages not applied, each day saved would have been worth only $3,500 in indirect costs. Only the first two days, at $2,000 each, would clearly have been worth buying; the later days cost more than they saved unless earlier completion had other value.
+
+```figure
+type: bars
+title: The cost of each day recovered
+unit: $'000
+max: 9
+caption: Each day of lateness avoided is worth $8,500 in indirect costs and liquidated damages.
+- Days 1–2: crash B | 2
+- Day 3: B and D together | 4.5
+- Day 4: A and D together | 5.5
+- *Day 5: fast-track E | 3 | plus managed risk
+- Value of each day saved | 8.5
+```
 
 ## Other ways to recover time
 

@@ -87,6 +87,29 @@ Relationship sentences make cardinality, the "one" or "many" on each side, under
 | Each job may use many parts, and each part may be used on many jobs | A linking record, such as part usage, is needed |
 | Each asset is of exactly one asset type | Asset types group assets with shared characteristics |
 
+```figure
+type: svg
+title: Relationships written as sentences
+alt: A customer box links to several site boxes, each site to several job boxes, and jobs link to parts through a part usage box, because each job may use many parts and each part may be used on many jobs.
+caption: Each sentence becomes a design rule; a many-to-many sentence needs a linking record.
+viewbox: 0 0 640 200
+body:
+<rect class="bxa" x="10" y="80" width="110" height="44" rx="6"/>
+<text class="txb" x="65" y="107" text-anchor="middle">Customer</text>
+<rect class="bx" x="160" y="80" width="100" height="44" rx="6"/>
+<text class="tx" x="210" y="107" text-anchor="middle">Site</text>
+<rect class="bx" x="300" y="80" width="100" height="44" rx="6"/>
+<text class="tx" x="350" y="107" text-anchor="middle">Job</text>
+<rect class="bxi" x="430" y="80" width="100" height="44" rx="6"/>
+<text class="tx txs" x="480" y="107" text-anchor="middle">Part usage</text>
+<rect class="bx" x="560" y="80" width="70" height="44" rx="6"/>
+<text class="tx" x="595" y="107" text-anchor="middle">Part</text>
+<path class="ln flow" d="M120 102H160M260 102H300M400 102H430M530 102H560"/>
+<text class="tx txs" x="140" y="70" text-anchor="middle">has many</text>
+<text class="tx txs" x="280" y="70" text-anchor="middle">at</text>
+<text class="tx txs" x="480" y="150" text-anchor="middle">many-to-many link</text>
+```
+
 When participants disagree about a sentence, the disagreement is usually important. "Each site belongs to exactly one customer" may be wrong if a shopping centre's management company and its tenants are both customers at the same site.
 
 ## Techniques that help
@@ -160,6 +183,17 @@ This is an illustrative example. An equipment hire business with 60 staff is rep
 **Changes to the design.** The developer's original design held one customer table and one equipment table. The revised model includes accounts, sites, contacts, equipment types, individual assets, bookings, hire periods, inspections and damage reports.
 
 **Result.** The workshops took about 36 person-hours. The developer estimates that discovering the same issues after building would have cost several weeks of rework. Staff recognise their own language and examples in the new system, which helps adoption.
+
+```figure
+type: compare
+title: What two three-hour workshops changed
+cols: Original design | Revised model
+best: 2
+caption: About 36 person-hours, against an estimated several weeks of rework if found after building.
+- "Customer" | One customer table | Accounts, sites and contacts
+- Equipment | One equipment table | Equipment types and individual assets
+- *Hire activity | Hires against names | Bookings, hire periods, inspections, damage reports
+```
 
 ## Applying this in an Australian business
 

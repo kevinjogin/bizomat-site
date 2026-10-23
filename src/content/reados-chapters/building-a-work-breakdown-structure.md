@@ -43,6 +43,15 @@ Remember that projects produce **management products** as well as specialist one
 2. **Identify the major deliverables.** Break the final product into the large components that together make it up. These become the first level of the WBS. Include project management and handover as deliverables in their own right.
 3. **Decompose each deliverable** until the pieces are small and clear enough to be described, estimated, assigned and checked.
 
+```figure
+type: steps
+title: Building a WBS in three steps
+caption: Number each element (1, 1.1, 1.1.1) so schedules, budgets and reports can refer to it.
+- Define the final product
+- Identify the major deliverables
+- *Decompose until each piece can be estimated, owned and checked
+```
+
 Number each element in a consistent scheme, such as 1, 1.1, 1.1.1, so it can be referenced in schedules, budgets and reports.
 
 ## When to stop decomposing
@@ -133,6 +142,21 @@ This is an illustrative example. A 50-person fabrication business is installing 
 6. Production capability: welding fixtures, robot programs, qualified welding procedures, first-article inspection.
 7. People capability: trained operators and programmers, safe work procedures, updated plant risk assessment.
 8. Handover products: operating and maintenance documentation, electrical compliance certificate, acceptance report.
+
+```figure
+type: tree
+title: Deliverables for a robotic welding cell
+caption: Deliverables, not activities: progress is reported by accepted products.
+- Robotic welding cell project
+  - 1 Project management products
+  - 2 Specification and layout
+  - 3 Procured equipment
+  - 4 Prepared site
+  - 5 Installed and commissioned cell
+  - *6 Production capability | fixtures on the critical path
+  - 7 People capability
+  - 8 Handover products
+```
 
 **Product descriptions.** For the qualified welding procedures, the description states the purpose, the bracket family covered, that procedures must be qualified to the applicable welding standard, the tests required and who approves them. For the welding fixtures, it states the locating and clamping requirements and the acceptance check: ten consecutive brackets within drawing tolerance.
 

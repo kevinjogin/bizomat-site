@@ -44,6 +44,17 @@ Classifying correctly matters because the options differ. A request for change a
 4. **Decide.** Route the decision to the person or group with authority for that kind and size of change. Record the decision: approve, reject, defer, request more information, grant a concession or escalate.
 5. **Implement.** Authorise the work, update every affected product, plan and record, verify the result, communicate it and close the issue only when the evidence is complete.
 
+```figure
+type: steps
+title: A five-step procedure for every issue
+caption: Doing nothing is a legitimate option when it is assessed and recorded.
+- Capture | who raised it, when
+- Assess | scope, time, cost, quality, benefits, risk
+- Propose | options with consequences
+- Decide | by the person with authority
+- *Implement | update every affected record, verify, close
+```
+
 Urgent safety or containment action sometimes cannot wait for the full procedure. Take it, then record what was done and confirm it through the normal authority afterwards.
 
 ## Delegate change authority, with limits
@@ -114,6 +125,16 @@ This is an illustrative example. A 40-person engineering business is designing a
 - **Problem.** A sensor supplier advises a two-week delay. It is recorded and managed as a schedule issue, with an alternative sensor identified as a fallback.
 
 **Configuration audit.** Before factory testing, the project engineer audits the machine against the configuration register. The audit finds the bracket made to revision B while revision C was approved, and a PLC program on the machine one version behind the reviewed one. The bracket is remade, the correct program is loaded and the register is updated. The release process is tightened so that drawings are released to the workshop only from the controlled register, never by email.
+
+```figure
+type: decision
+title: Who can approve a change on the assembly machine?
+question: How big is the change?
+caption: Delegated limits agreed at the start let small decisions move fast and large ones reach the right people.
+- Under $2,000, no date effect | Project manager
+- Within a $10,000 change budget | Project manager and customer's engineer | the $3,200 faster actuator
+- *Larger | Senior managers on both sides | the $18,500 second product size
+```
 
 **Result.** Factory acceptance testing passes with the machine matching its approved configuration. The issue register records every decision, which later makes agreeing the variation price with the customer straightforward.
 

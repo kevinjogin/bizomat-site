@@ -47,6 +47,17 @@ Requirements work at several levels, and a good set covers all of them:
 | **Non-functional requirements** | How well it must do it, and under what conditions | Each scan entry takes under 30 seconds; screens are usable with work gloves; data are kept when Wi-Fi drops |
 | **Transition requirements** | What is needed to move from the old way to the new | All operators trained and assessed; two weeks of parallel running; open jobs migrated |
 
+```figure
+type: layers
+title: Five types of requirement
+caption: Each level traces to the one above it, so every feature can be justified by an objective.
+- Business | on-time delivery 78% to 92%
+- Stakeholder | supervisors see job status live
+- Functional | scan job start, stop and scrap
+- Non-functional | under 30 seconds, with gloves
+- *Transition | training, parallel running, migration
+```
+
 Non-functional and transition requirements are the most often missed, and they frequently decide whether a solution is adopted. A system that does everything required but is slow, awkward or unreliable in the real environment will be worked around.
 
 ## Elicit requirements from the right people
@@ -134,6 +145,18 @@ This is an illustrative example. A 120-person metal products manufacturer is rep
 **Change.** Midway through, the sales team asks for a customer portal showing order status. Impact analysis shows it serves neither business objective and would delay go-live by six weeks. It is recorded as a requirement for a later phase.
 
 **Verification and evaluation.** All must-have requirements pass their tests before go-live. Six months later, on-time delivery has reached 88% and scrap has fallen 22%. Analysis of the data shows night-shift scrap entries are incomplete. A small improvement adds a prompt at shift end, and a supervisor checks entries. After twelve months, on-time delivery reaches 91% and scrap is down 31%. The evaluation report recommends keeping the system and extending it to the paint line.
+
+```figure
+type: bars
+title: On-time delivery after a shop-floor data system
+unit: %
+max: 100
+caption: Scrap fell 22% by six months and 31% by twelve, after a fix for incomplete night-shift entries.
+- Before | 78
+- Six months | 88
+- *Twelve months | 91
+- Target | 92
+```
 
 ## Applying this in an Australian business
 

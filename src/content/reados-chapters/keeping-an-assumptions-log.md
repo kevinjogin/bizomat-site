@@ -30,6 +30,17 @@ Planning documents use several related terms. Keeping them distinct makes each m
 | Risk | An uncertain event that would affect objectives if it occurred | A key supplier may become insolvent |
 | Issue | Something that has already happened and needs a response | The supplier has missed its first delivery |
 
+```figure
+type: layers
+title: Five things that get confused with assumptions
+caption: Each needs different handling, so record them separately.
+- *Assumption | treated as true without proof
+- Constraint | a limit to work within
+- Dependency | needed from outside the work
+- Risk | an uncertain future event
+- Issue | already happened
+```
+
 An assumption that proves false often becomes an issue. A doubtful assumption is closely related to a risk: the risk that the assumption is wrong. The difference is one of emphasis. A risk register asks what might go wrong. An assumptions log asks what the plan is relying on and whether that reliance is justified. The [finding project risks before they find you](/reados/collections/project-planning-and-control/finding-project-risks-before-they-find-you/) article covers risk identification; the assumptions log complements it by examining the foundations of the plan itself.
 
 ## Why assumptions deserve their own log
@@ -129,6 +140,17 @@ The team runs a one-hour assumptions workshop and records 26 assumptions. A quic
 The tests cost about $9,000 and take seven weeks. Customers accept $3,400 for the standard bench but want a cheaper basic version. The first two benches take 13 and 11 hours, and the jig is revised to reach 9.5 hours. Pre-orders total 38 benches, suggesting year-one volume closer to 200 than 300.
 
 The plan is revised: a two-model range, a revised cost of 9.5 hours of fabrication and a volume of 200, with a signpost that the business will review the launch if fewer than 60 benches are ordered by the end of month four. The business case still works, but with a longer payback, and the business commits with its eyes open rather than on the original optimistic figures.
+
+```figure
+type: compare
+title: Testing four critical assumptions for $9,000
+cols: Planned | After seven weeks of tests
+caption: The launch will be reviewed if fewer than 60 benches are ordered by the end of month four.
+- Price | $3,400 | Accepted, but customers want a basic model too
+- Fabrication time | 9 hours | First two benches 13 and 11; revised to 9.5
+- *Year-one volume | 300 benches | 200
+- Range | One model | Two models
+```
 
 ## How this applies to a small Australian business
 
