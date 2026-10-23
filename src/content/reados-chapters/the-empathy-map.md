@@ -50,6 +50,7 @@ body:
 <text class="tx txs" x="140" y="206" text-anchor="middle">what they actually do</text>
 <text class="txb" x="460" y="184" text-anchor="middle">Feels</text>
 <text class="tx txs" x="460" y="206" text-anchor="middle">frustrations, anxieties</text>
+<circle class="fp" cx="300" cy="131" r="38"/>
 <circle class="bxa pulse" cx="300" cy="131" r="38"/>
 <text class="txa" x="300" y="136" text-anchor="middle">Customer</text>
 <rect class="bx" x="20" y="256" width="274" height="48" rx="4"/>
