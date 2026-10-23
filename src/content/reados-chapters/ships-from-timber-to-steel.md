@@ -74,6 +74,18 @@ The Bessemer and open-hearth processes made steel cheap enough for shipbuilding 
 
 Two new forms of propulsion arrived around the turn of the twentieth century. In 1897, Charles Parsons demonstrated the steam turbine at sea with his small vessel *Turbinia*, which reached speeds far beyond those of conventional ships at a naval review. Turbines ran smoothly at high power and soon drove fast passenger liners and warships.
 
+```figure
+type: timeline
+title: From timber and sail to steel and steam
+caption: Within roughly a century, almost everything about ocean-going ships changed.
+- 1838 | Great Western | regular transatlantic steam service
+- 1843 | Great Britain | iron hull with a screw propeller
+- 1845 | Rattler against Alecto | screw beats paddle in a tug of war
+- 1869 | Suez Canal opens | a shorter route that favours steam
+- 1880s | Triple-expansion engines; steel hulls | higher efficiency
+- *1897 | Turbinia | the steam turbine at sea
+```
+
 **Diesel engines** followed. Ocean-going motor ships appeared before the First World War, and diesels steadily replaced steam in merchant ships through the twentieth century because of their much lower fuel consumption. Today, most large cargo ships are driven by large, slow-speed diesel engines. The [engines after steam](/reados/collections/engineering-history-modern-era/engines-after-steam-matching-technology-to-duty/) article explains why diesel engines suited heavy, sustained work.
 
 ## The economics of size
@@ -101,6 +113,16 @@ Many of the rules that govern ships were written after disasters.
 **Classification societies** developed to assess the condition and construction of ships. Lloyd's Register, which traces its origins to 1760, began by recording the condition of ships for merchants and insurers and later set rules for ship construction.
 
 **The loss of the *Titanic*** in 1912, in which more than 1,500 people died, exposed gaps in safety rules, including lifeboat capacity that fell far short of the number of people on board. It led to the first International Convention for the Safety of Life at Sea in 1914, which required, among other things, sufficient lifeboat places for everyone on board. The convention has been updated many times since.
+
+```figure
+type: timeline
+title: Rules written after disasters
+caption: Shipping safety rules often followed losses that exposed gaps.
+- 1760 | Lloyd's Register's origins | recording ships' condition
+- 1870s | Load line legislation | a maximum safe loading mark
+- 1912 | Loss of the Titanic | more than 1,500 died
+- *1914 | First SOLAS convention | lifeboat places for everyone
+```
 
 ## Welded ships and brittle fracture
 
@@ -151,6 +173,16 @@ A regional distributor runs two 8-tonne trucks on its delivery routes. Each cost
 The economics of size look attractive. Fully loaded, the small trucks cost $1.60 ÷ 8, or $0.20 per tonne-kilometre, while the larger truck costs $2.40 ÷ 16, or $0.15 per tonne-kilometre, a saving of 25%.
 
 Like a shipowner considering a larger vessel, however, the owner checks the limits. About a fifth of customers are on narrow streets or have loading docks that cannot take the larger vehicle. Loads are full only on some days, and on lighter days the larger truck's advantage shrinks or disappears. With only one truck, a breakdown would stop all deliveries.
+
+```figure
+type: bars
+title: Operating cost per tonne-kilometre, fully loaded
+unit: $
+max: 0.25
+caption: 25% cheaper only when full, and a fifth of customers cannot take the larger truck, so the business keeps one of each.
+- Two 8-tonne trucks at $1.60 a km | 0.20
+- *One 16-tonne truck at $2.40 a km | 0.15
+```
 
 The owner decides to replace one small truck with the larger vehicle for the full-load trunk runs and keep the second small truck for restricted sites and lighter days. The business captures much of the saving of scale while keeping flexibility and a backup, much as shipping lines use large ships on main routes and smaller vessels to serve smaller ports.
 

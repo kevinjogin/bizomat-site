@@ -34,6 +34,17 @@ By the late seventeenth century, British mines were going deeper, and water floo
 4. Atmospheric pressure pushed the piston down, doing the work.
 5. A weighted beam, rocking on a pivot, raised the piston again and worked the pump rods in the mine.
 
+```figure
+type: cycle
+title: One stroke of a Newcomen engine
+caption: Cooling and reheating the cylinder every few seconds wasted well over 99% of the fuel's energy.
+- Boiler makes low-pressure steam
+- Steam fills the cylinder
+- Cold spray condenses it: a partial vacuum
+- *Atmosphere pushes the piston down
+- Weighted beam lifts it and works the pump
+```
+
 Valve gear driven by the engine's own motion soon replaced hand operation, increasing the number of strokes per minute.
 
 By modern standards the Newcomen engine was hopelessly inefficient. The cylinder had to be cooled to condense the steam and reheated by the next charge, every few seconds, wasting well over 99% of the energy in the fuel. Critics joked that it took an iron mine to build one and a coal mine to run it.
@@ -83,6 +94,17 @@ Once Watt's patent expired, **Richard Trevithick** in Cornwall and **Oliver Evan
 
 High pressure changed everything. Force is pressure multiplied by area, so higher pressure gives the same power from a much smaller cylinder. Without a condenser, air pump, cooling water and large beam, the engine became compact and light enough to move. Trevithick built steam road carriages and, in 1804, a locomotive that hauled loads on a tramway in Wales. Trevithick's engines also connected the piston more directly to a crank, an arrangement that became the basis of later reciprocating engines.
 
+```figure
+type: timeline
+title: From mine pump to locomotive
+caption: A good machine from familiar parts, then decades of improvement through measurement and workmanship.
+- 1698 | Savery's steam pump | limited lift, wasteful, risky
+- 1712 | Newcomen's engine | pumping a mine near Dudley Castle
+- *1769 | Watt's separate condenser | condense the steam somewhere else
+- 1800 | About 500 Boulton and Watt engines | at work
+- 1804 | Trevithick's locomotive | hauling loads in Wales
+```
+
 Evans built high-pressure engines that drove mills and factories across the United States, after earlier developing a highly automated flour mill that moved grain through the process with minimal labour.
 
 ## Safety: designing protection that cannot be defeated
@@ -130,6 +152,17 @@ This is an illustrative example. A supplier of variable speed drives and high-ef
 **Savings-based offer, in the Boulton and Watt tradition.** The supplier instead offers to install the equipment for $20,000 and take one-third of the measured savings for five years. If the savings are as estimated, the supplier receives about $8,333 a year, or about $41,700 over five years, a total of about $61,700, slightly more than the conventional price in exchange for carrying the performance risk. The manufacturer keeps two-thirds of the savings from the first year, about $16,700 a year, and pays less up front.
 
 **Measurement.** Both parties agree a baseline from a month of metered data, a method for adjusting for production volume and a metering arrangement, much as Boulton and Watt used stroke counters. If savings fall short, the supplier earns less; if they exceed expectations, both benefit.
+
+```figure
+type: compare
+title: Selling a compressed air retrofit on measured savings
+cols: Conventional sale | Savings-based offer
+caption: Estimated saving of 100,000 kWh, about $25,000 a year; the manufacturer keeps two-thirds from the first year.
+- Upfront | $60,000 | $20,000
+- Ongoing | Nothing | One-third of measured savings for five years
+- Total to the supplier | $60,000 | About $61,700 if savings are as estimated
+- *Performance risk | Carried by the manufacturer | Carried by the supplier
+```
 
 The example shows how the principle of sharing measured savings can still unlock investment when customers doubt claims and suppliers are confident in their technology.
 

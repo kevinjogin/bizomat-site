@@ -38,6 +38,25 @@ In arid regions of Persia and later across North Africa and Central Asia, commun
 
 Qanats show how engineering adapts to local conditions. Carrying water underground reduced evaporation in hot climates and protected the supply. They also required continuous maintenance and clear rules for sharing flow among users, often by time-based allocation. Some qanats remained in use for centuries because the communities around them maintained both the tunnels and the rules.
 
+```figure
+type: svg
+title: How a qanat carries water
+alt: A cross-section of a qanat. Under the foot of a hill, a gently sloping tunnel taps groundwater and carries it under gravity to fields many kilometres away, where it reaches the surface. A row of vertical shafts runs from the ground down to the tunnel for digging and maintenance.
+caption: Carrying water underground keeps it from evaporating in arid country.
+viewbox: 0 0 600 250
+body:
+<path class="ln" d="M20 60C120 60 180 150 260 170L580 190"/>
+<path class="ln dsh" d="M20 150Q60 150 96 204"/>
+<path class="lf" d="M88 74V204M148 108V202M203 144V200M270 171V198M335 175V195M400 179V193M465 183V191"/>
+<path class="la flow" d="M70 205L540 188"/>
+<path class="ah" d="M540 180L556 187L540 194Z"/>
+<text class="tx txs" x="30" y="44">Hills</text>
+<text class="tx txs" x="26" y="172">Groundwater</text>
+<text class="tx txs" x="330" y="152" text-anchor="middle">Access shafts</text>
+<text class="txa" x="300" y="228" text-anchor="middle">Gently sloping tunnel, flowing under gravity</text>
+<text class="tx txs" x="580" y="176" text-anchor="end">Fields</text>
+```
+
 ## A river divided, not dammed
 
 In China's Sichuan basin, the Dujiangyan irrigation system, begun in the third century BCE under the official Li Bing, took a different approach to a dangerous river. Rather than damming the Min River, engineers built an artificial island and embankments that divided the flow into an inner channel for irrigation and an outer channel that carried floodwater and much of the sediment away. A channel was cut through a ridge to lead water onto the plain. The system relied on the river's own behaviour, and annual maintenance, including clearing silt from the channels, became an established routine.
@@ -103,6 +122,15 @@ This is an illustrative example. The business and figures are hypothetical, and 
 A small food processor buys town water through a single main meter. Its average intake is 120 kL a working day. The owner, borrowing Frontinus's method, installs sub-meters on the main uses: wash-down, the boiler, cooling, amenities and product water. Over a month, the sub-meters account for an average of 96 kL a day, leaving 24 kL a day, or 20% of intake, unexplained.
 
 A walk-through finds a failed float valve on a cooling tower make-up line, a leaking underground pipe to an unused building and hoses left running at the end of shifts. Repairs and a simple hose-nozzle policy remove most of the gap. If the combined water and wastewater charge is about $3.20 per kL, the 24 kL a day is worth about 24 × $3.20, or $76.80 a day, roughly $19,200 over 250 working days a year. The business then reads its sub-meters monthly, so the next leak is found in weeks rather than years.
+
+```figure
+type: stack
+title: Accounting for a food processor's water
+unit: kL a day
+caption: Frontinus's method: compare water in with water used. 24 kL a day at about $3.20 a kL is roughly $19,200 a year.
+- Wash-down, boiler, cooling, amenities, product | 96
+- *Unexplained: leaks, a failed valve, running hoses | 24
+```
 
 ## How this applies to a small Australian business
 

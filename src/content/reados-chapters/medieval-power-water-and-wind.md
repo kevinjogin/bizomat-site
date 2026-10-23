@@ -35,6 +35,19 @@ In medieval Europe, water power spread dramatically. A famous indication of its 
 | Paper making | Pounded rags into pulp | Supported the growth of printing and records |
 | Ore crushing and pumping | Crushed ore and lifted water | Enabled mining |
 
+```figure
+type: tree
+title: One source of rotation, many industries
+caption: Cams, gears and cranks adapted the same power to very different tasks.
+- Water or wind power
+  - *Grain milling | turning millstones
+  - Fulling | hammers pounding woollen cloth
+  - Iron working | bellows and trip hammers
+  - Sawing | reciprocating saws
+  - Paper making | pounding rags into pulp
+  - Mining | crushing ore and lifting water
+```
+
 The key insight was that a source of rotating power could be adapted to many different tasks through relatively simple mechanisms.
 
 ## Turning rotation into work
@@ -125,6 +138,15 @@ This is an illustrative example. The business and figures are hypothetical, and 
 A small Australian powder-coating business installs a 100 kW rooftop solar system, which generates an average of about 400 kWh a day. Initially, the business uses about 60% of that energy on site, because its curing oven often runs in the late afternoon and early morning, and exports the rest to the grid at a low feed-in rate.
 
 Like a medieval miller arranging work around the flow of the river, the owner reschedules the oven's main batches to run between about 10 am and 3 pm, when solar generation peaks. On-site use of solar energy rises to about 85% of generation. The additional 25% of generation used on site, about 100 kWh a day, replaces grid electricity that would have cost about $0.25 per kWh instead of earning a feed-in credit of about $0.05 per kWh, a difference of $0.20 per kWh. That is worth about 100 × $0.20, or $20 a day, roughly $5,000 over 250 working days a year, without any new equipment. The owner then looks at whether a modest thermal store, such as better oven insulation and a heated parts buffer, could extend the benefit into cloudy periods, much as a millpond extended the miller's working day when the stream ran low.
+
+```figure
+type: stats
+title: Running the oven when the sun shines
+caption: A 100 kW rooftop system making about 400 kWh a day, with the curing oven's main batches moved to about 10 am to 3 pm.
+- 60% → 85% | Solar used on site | of generation
+- 100 kWh | More used on site a day | each worth $0.20 more
+- *About $5,000 | A year | with no new equipment
+```
 
 ## How this applies to a small Australian business
 

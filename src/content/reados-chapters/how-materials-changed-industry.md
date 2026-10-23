@@ -82,6 +82,19 @@ Concrete is now the most widely used construction material in the world. Cement 
 
 Through the twentieth century, engineers combined materials to get properties neither could provide alone. **Glass fibre reinforced plastics** made light, corrosion-resistant boats, tanks and panels. **Carbon fibre composites**, developed into high-performance materials from the 1960s, offered exceptional strength and stiffness for their weight and moved from aerospace and racing into sporting goods, wind turbine blades and industrial equipment. **Titanium alloys**, technical ceramics and engineered polymers served demanding applications.
 
+```figure
+type: timeline
+title: Materials that changed industry
+caption: Each material became important when a process made it cheap and consistent enough to specify.
+- 1709 | Coke-smelted iron | Coalbrookdale
+- 1779 | The Iron Bridge | cast iron in structures
+- 1824 | Portland cement | modern concrete begins
+- *1856 | Bessemer converter | bulk steel
+- 1886 | Hall–Héroult process | cheap aluminium
+- 1907 | Bakelite | the first fully synthetic plastic
+- 1915 | BHP Newcastle steelworks | Australian steelmaking
+```
+
 These materials brought new challenges: complex manufacturing, difficult inspection, repair methods different from those for metals, and recycling problems that are still being solved. Additive manufacturing has added further options, building parts from metal and polymer powders with properties that depend heavily on the process, so qualification and testing are especially important.
 
 ## From found properties to specified properties
@@ -129,6 +142,16 @@ This is an illustrative example. A manufacturer of food processing equipment use
 - **Use duplex stainless steel such as 2205**, with chloride resistance at least as good as 316 and roughly twice the yield strength, allowing thinner sections where strength governs the design.
 
 **Engineering check.** The engineer notes that stiffness, not strength, governs parts of the frame, and that all stainless steels have similar stiffness, so thinner duplex sections can be used only where strength governs. Members governed by strength are reduced in thickness; those governed by deflection keep their size. Welding procedures are qualified for duplex steel, which needs care to keep its properties.
+
+```figure
+type: decision
+title: A stainless frame exposed to chloride cleaning
+question: Which grade, after 316 prices and lead times rose?
+caption: Thinner duplex sections only where strength governs; the redesigned frame uses about 20% less material.
+- Stay with 316 | Higher cost, longer lead times
+- Grade 304 | Rejected | pitting risk in testing
+- *Duplex 2205 | At least as resistant | about twice the yield strength
+```
 
 **Result.** The redesigned frame, after review by the customer's hygiene and quality staff, uses about 20% less material by weight than the original 316 design, offsetting much of duplex steel's higher price per kilogram, and the business gains a second qualified material that reduces dependence on one supply. As with coke iron three centuries earlier, the substitution was prompted by supply pressure and made to work by engineering.
 

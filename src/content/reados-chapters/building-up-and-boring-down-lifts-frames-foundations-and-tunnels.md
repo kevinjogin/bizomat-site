@@ -85,6 +85,19 @@ Isolation protects contents, equipment and ceilings as well as the structure, wh
 
 In many modern structures, how something will be built drives its form. France's Millau Viaduct, opened in 2004, crosses a deep valley where scaffolding from the ground would have been impractical. Its steel deck was assembled on the plateaus at each end and pushed out over the piers by hydraulic jacks, with temporary supports reducing the spans during launching. Each part of the deck passed over the supports during launching, experiencing loads quite different from those in service, so the temporary condition shaped the design. The [what engineering failures teach a business](/reados/collections/engineering-design-practice/what-engineering-failures-teach-a-business/) article discusses why temporary conditions and fail-safe design matter so often.
 
+```figure
+type: timeline
+title: Building up and boring down
+caption: Going higher and deeper meant solving problems of safety, ground, wind and construction method.
+- 1843 | Thames Tunnel completed | built with a tunnelling shield
+- 1854 | Otis's safety lift | the platform holds when the rope is cut
+- 1885 | Home Insurance Building | a load-bearing metal frame
+- 1931 | Empire State Building | tallest for about four decades
+- 1981 | William Clayton Building | first on base-isolation bearings
+- 1994 | Channel Tunnel | bored through chalk marl
+- *2010 | Burj Khalifa | shaped against wind vortices
+```
+
 ## Lessons for product and business leaders
 
 ### Value can wait on complementary technologies
@@ -122,6 +135,16 @@ This is an illustrative example. A precision component maker is moving into a ne
 **Investigate the ground.** A geotechnical investigation finds soft fill beneath part of the site, so the press is placed where the ground is better and given its own foundation, designed by a structural engineer.
 
 **Decouple rather than strengthen.** Vibration from the press could disturb the CMM. Stiffening the whole floor slab is estimated at about $150,000. Instead, the CMM sits on a separate isolated slab with vibration-isolating mounts in a temperature-controlled room, at an estimated $30,000, and the room is placed away from the press.
+
+```figure
+type: bars
+title: Protecting a CMM from press vibration
+unit: $
+max: 160000
+caption: An isolated slab with vibration mounts in a temperature-controlled room, placed away from the press.
+- Stiffen the whole floor slab | 150000
+- *Isolate the CMM on its own slab | 30000
+```
 
 **Plan the path and the temporary condition.** The press is delivered in sections. The installation plan checks crane positions and outrigger loads on the new slab, which can exceed anything the slab carries in service, and specifies outrigger mats and an exclusion zone. The [planning the path from supplier to installation](/reados/collections/suppliers-contractors-and-government-work/planning-the-path-from-supplier-to-installation/) article covers this kind of planning.
 

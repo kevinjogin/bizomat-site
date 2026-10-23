@@ -76,6 +76,18 @@ From the mid-twentieth century, **cable-stayed bridges**, in which straight cabl
 
 Bridges must be inspected and maintained for decades. Corrosion, fatigue cracking from repeated traffic loads, scour of foundations by floodwater and increasing vehicle weights all degrade capacity over time. The collapse of the Silver Bridge in the United States in 1967, caused by the fracture of a single eyebar in a suspension chain, led to national bridge inspection requirements there. Asset owners now keep inventories, inspect regularly, assess load capacity and plan rehabilitation. The [designing against fatigue](/reados/collections/machine-elements-and-mechanical-design/designing-against-fatigue/) article explains why repeated loads can crack parts that carry their peak loads easily.
 
+```figure
+type: timeline
+title: Bridge failures that changed practice
+caption: Many of the rules bridge engineers rely on were written after failures like these.
+- 1847 | River Dee, Chester | cast-iron girder fails under a train
+- 1879 | Tay Bridge | central spans fall in a storm
+- 1907 | Quebec Bridge | collapses in construction; 75 killed
+- 1940 | Tacoma Narrows | twists in a moderate wind
+- 1967 | Silver Bridge | a single eyebar fractures
+- *1970 | West Gate, Melbourne | span collapses in construction; 35 killed
+```
+
 ## Lessons for engineers and businesses
 
 ### New materials need new forms
@@ -111,6 +123,16 @@ A small manufacturer engages a builder to install a steel mezzanine floor in its
 At a pre-start meeting, the manufacturer's operations manager, aware of the West Gate story, asks how the frame will be kept stable during erection before the bracing and deck are installed, and whether forklifts will continue operating nearby. The builder confirms that the engineer has specified the erection sequence, temporary bracing and exclusion zones, and agrees to install permanent bracing in each bay before moving on. Forklift routes are moved for the two weeks of erection.
 
 During the work, an installer notices that a column base plate does not sit flat on the slab. The crew stops, the engineer inspects, and a grout pad is specified before loading continues. The issue costs half a day. Proceeding without checking could have led to a column moving under load.
+
+```figure
+type: checklist
+title: Keeping a mezzanine stable while it is built
+caption: The half day lost to a grout pad was far cheaper than a column moving under load.
+- x Erection sequence specified by the engineer
+- x Temporary bracing and exclusion zones
+- x Permanent bracing in each bay before moving on
+- *x Stop and check when something does not sit right
+```
 
 ## How this applies to a small Australian business
 

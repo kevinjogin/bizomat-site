@@ -81,6 +81,18 @@ The results were dramatic. The time to assemble a chassis fell from many hours t
 
 The moving line depended on everything that came before: interchangeable parts that needed no fitting, specialised machine tools, fixtures, gauges and careful design of each workstation. It also had human costs. The work was repetitive and intense, and staff turnover was very high until Ford introduced much higher wages in 1914, a move that also helped workers afford the products they made.
 
+```figure
+type: timeline
+title: The industry behind mass production
+caption: The moving line needed parts that required no fitting, which needed machine tools, gauges and standards first.
+- Around 1800 | Maudslay's screw-cutting lathes | accurate, repeatable threads
+- 1841 | Whitworth's standard thread | bolts and nuts from any maker
+- 1846 | Howe's lockstitch sewing machine | product and production designed together
+- Around 1900 | Johansson's gauge blocks | precise reference lengths
+- 1908 | Model T | designed for production in large numbers
+- *1913 | Moving assembly line | Highland Park, Michigan
+```
+
 ## Quality control grows up
 
 Mass production created a new problem: with thousands of identical parts, how could a factory know they were all good? Early factories relied on large inspection departments checking parts against gauges, sorting good from bad after the fact. In the 1920s, Walter Shewhart, working on telephone equipment manufacturing in the United States, introduced the **control chart**, a way of telling normal process variation from signals that something had changed, so problems could be prevented rather than sorted out. Sampling inspection methods followed, and after the Second World War quality experts such as W. Edwards Deming and Joseph Juran helped Japanese manufacturers build quality into processes, management and training. The shift from inspecting quality in to building it in is one of the most important legacies of the mass production era.
@@ -124,6 +136,16 @@ This is an illustrative example. A fabricator makes about 600 steel frames a yea
 **Change.** The engineering team defines the bracket hole positions with tolerances based on the mating equipment, designs a drilling jig that locates from the frame's datum faces, and introduces go and no-go gauges for the critical hole pattern. Brackets are laser cut with holes in their final positions.
 
 **Result.** Fitting time falls to about 0.5 hours per frame, saving about 2 hours on each of 600 frames, or roughly 1,200 hours a year. Spare brackets now fit without site work, and the business can hold stock of standard brackets rather than making them to order. The change required little new equipment; it required tolerances, a jig and gauges, the same tools the nineteenth-century armouries depended on.
+
+```figure
+type: bars
+title: Fitting time per machine-base frame
+unit: hours
+max: 3
+caption: About 1,200 hours saved a year across 600 frames, with tolerances, a drilling jig and go and no-go gauges.
+- Marked out, drilled and adjusted on assembly | 2.5
+- *Laser-cut holes, jig and gauges | 0.5
+```
 
 ## Applying these lessons in an Australian business
 

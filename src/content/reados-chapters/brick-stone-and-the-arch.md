@@ -41,6 +41,31 @@ Two features of arches shaped building practice for millennia:
 
 Later scientific understanding explained why good arches work: the line along which forces flow through the arch, the **line of thrust**, must stay within the masonry. In the seventeenth century, Robert Hooke observed that the ideal shape for an arch is that of a hanging chain turned upside down, because the chain hangs in pure tension and the inverted shape carries load in pure compression.
 
+```figure
+type: svg
+title: How a true arch carries load
+alt: A semicircular arch of wedge-shaped stones, called voussoirs, with the keystone highlighted at the crown. The arch stands on two abutments, and arrows show the arch pushing outward at its base, the thrust the abutments must resist.
+caption: Every stone is held in compression; the abutments must resist the outward thrust, or the arch spreads.
+viewbox: 0 0 600 290
+body:
+<path class="bx" d="M140 220A160 160 0 0 1 460 220L420 220A120 120 0 0 0 180 220Z"/>
+<path class="lf" d="M412.8 179L450.4 165.3M391.9 142.9L422.6 117.2M360 116.1L380 81.4M240 116.1L220 81.4M208.1 142.9L177.4 117.2M187.2 179L149.6 165.3"/>
+<path class="bxa pulse" d="M320.8 101.8L327.8 62.4A160 160 0 0 0 272.2 62.4L279.2 101.8A120 120 0 0 1 320.8 101.8Z"/>
+<rect class="bxi" x="100" y="220" width="80" height="44" rx="2"/>
+<rect class="bxi" x="420" y="220" width="80" height="44" rx="2"/>
+<path class="ln" d="M40 264H560"/>
+<path class="la draw" d="M126 236H64"/>
+<path class="ah" d="M66 228L50 236L66 244Z"/>
+<path class="la draw" d="M474 236H536"/>
+<path class="ah" d="M534 228L550 236L534 244Z"/>
+<text class="txa" x="300" y="40" text-anchor="middle">Keystone</text>
+<text class="tx txs" x="478" y="128">Voussoirs</text>
+<text class="tx txs" x="50" y="220">Thrust</text>
+<text class="tx txs" x="550" y="220" text-anchor="end">Thrust</text>
+<text class="tx txs" x="140" y="284" text-anchor="middle">Abutment</text>
+<text class="tx txs" x="460" y="284" text-anchor="middle">Abutment</text>
+```
+
 ## Roman engineering
 
 The Romans used the arch with extraordinary range and confidence. Arches carried roads over rivers and **aqueducts** across valleys, such as the Pont du Gard in southern France, which carried water across the Gardon river in the first century AD. Arches formed the facades of amphitheatres and the structure of vaults and domes.
@@ -74,6 +99,16 @@ Together these concentrated loads into a skeleton of piers, ribs and buttresses,
 ### Rules of proportion and their limits
 
 Gothic master masons had no theory of stresses. They designed using **geometric rules of proportion**, passed down through training and experience, that related the thickness of piers and buttresses to spans and heights. Those rules worked well within the range of experience. When builders pushed beyond it, failures could follow. The choir vaults of Beauvais Cathedral in France, among the tallest ever attempted, partially collapsed in 1284 and had to be rebuilt with additional supports. Such failures were part of how the tradition learned.
+
+```figure
+type: timeline
+title: Pushing masonry further
+caption: Builders extended what masonry could do by shape and method; when rules were pushed beyond experience, failures followed.
+- 2nd century AD | The Pantheon | a 43 m unreinforced concrete dome
+- 537 | Hagia Sophia | a dome on pendentives over a square plan
+- 1284 | Beauvais Cathedral | choir vaults partially collapse
+- *1420–1436 | Florence Cathedral | two shells and herringbone brick
+```
 
 ## Masonry in modern Australia
 

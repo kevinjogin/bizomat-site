@@ -46,6 +46,17 @@ In 1779, Samuel Crompton combined features of the jenny and the water frame in t
 
 With spinning mechanised, the bottleneck moved back to weaving. Edmund Cartwright patented a **power loom** in 1785, but early versions were unreliable. Through the early decades of the nineteenth century, a series of improvements made power looms practical, and they gradually displaced hand-loom weavers, whose earnings collapsed as a result.
 
+```figure
+type: timeline
+title: The bottleneck moves between weaving and spinning
+caption: Each machine that sped up one stage exposed the next constraint.
+- 1733 | Flying shuttle | weaving speeds up; yarn runs short
+- Mid-1760s | Spinning jenny | one spinner, several spindles
+- 1769 | Water frame | strong thread, driven by water
+- 1779 | Spinning mule | fine, strong yarn in quantity
+- *1785 | Power loom | the constraint returns to weaving
+```
+
 The sequence shows a pattern seen in every production system: improving one stage moves the constraint somewhere else. The [lean, six sigma or theory of constraints](/reados/collections/lean-and-continuous-improvement/lean-six-sigma-or-theory-of-constraints/) article explains how modern improvement methods deal with the same effect.
 
 ## Cromford: the first factory
@@ -125,6 +136,18 @@ A small metal fabrication shop cuts, bends, welds and powder-coats brackets. Its
 Within two weeks, a pile of cut blanks has built up in front of the bending press, which can handle only about 50 parts a day. Output from the shop has risen from 40 to 50 parts a day, not to 70, and roughly 20 cut parts a day are joining a growing queue. Floor space is filling, parts are being damaged in storage and the planner is spending time searching for jobs.
 
 Like the eighteenth-century spinners and weavers, the shop has moved its bottleneck. The owner responds by scheduling cutting to match bending, adding a second shift on the press for two days a week and cross-training a welder to set up the press. Bending capacity rises to about 60 parts a day, the queue shrinks and the owner now checks the capacity of every downstream stage before approving any new equipment.
+
+```figure
+type: bars
+title: A faster laser cutter and a new bottleneck
+unit: parts a day
+max: 75
+caption: Output rose from 40 to 50, not 70, until bending capacity was raised; about 20 cut parts a day had been joining a queue.
+- Laser cutter capacity | 70
+- Bending press, before | 50 | the new bottleneck
+- *Bending press, with a part-time second shift | 60
+- Shop output with the old cutter | 40
+```
 
 ## How this applies to a small Australian business
 

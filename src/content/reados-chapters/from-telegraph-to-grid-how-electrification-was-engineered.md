@@ -80,6 +80,19 @@ Standards became essential. Countries settled on supply frequencies, 50 hertz in
 
 In Australia, electricity grids developed largely state by state. The National Electricity Market, operating since the late 1990s, interconnects the eastern and southern states, while Western Australia and the Northern Territory have separate systems. Today, the grid is being reshaped again by wind, solar and batteries, distributed across many sites rather than concentrated in a few large stations.
 
+```figure
+type: timeline
+title: From telegraph to grid
+caption: Electricity went from laboratory curiosity in 1800 to an interconnected system within about a century.
+- 1794 | Chappe's optical telegraph | towers read by telescope
+- 1837 | Cooke and Wheatstone | electric telegraph beside a railway
+- 1866 | A durable Atlantic cable | after earlier failures
+- 1872 | Overland Telegraph Line | Adelaide to Darwin
+- 1882 | Pearl Street Station | supply to customers
+- 1891 | Long-distance AC | demonstrated in Germany
+- *Late 1990s | National Electricity Market | eastern and southern states
+```
+
 ## Making electricity safe
 
 As electricity entered homes and workplaces, fires and electric shocks followed. Safety developed alongside the technology: fuses and later circuit breakers to interrupt excessive currents, insulation standards for cables, earthing so that faulty equipment would trip protection rather than become live, and wiring rules setting out how installations must be designed and built. In Australia, electrical installations are governed by state and territory laws that require licensed electricians, and by the national wiring rules in AS/NZS 3000. Residual current devices, which disconnect power in a fraction of a second when current leaks to earth, have greatly reduced deaths from electric shock and are now required on many circuits. The pattern mirrors the history of steam boilers: new hazards emerge with new technology, accidents expose them, and engineering standards, licensing and protective devices follow.
@@ -125,6 +138,15 @@ This is an illustrative example. It applies the transmission principle at the sc
 **Current.** At 230 volts single phase, 20 kW draws about 87 amps. At 400 volts three phase, assuming a power factor close to one, the line current is about 20,000 ÷ (1.732 × 400), or roughly 29 amps.
 
 **Losses.** Cable losses are proportional to the square of the current in each conductor. For the same conductor size, the single-phase supply has two current-carrying conductors at 87 amps, and the three-phase supply has three at about 29 amps. Comparing current squared times the number of conductors, about 15,100 against about 2,500, the three-phase supply loses roughly one-sixth as much energy in the cable and has a much smaller voltage drop, or it allows smaller cables for the same loss.
+
+```figure
+type: bars
+title: Supplying 20 kW to a workshop 300 m away
+max: 16000
+caption: Comparing current squared times conductors: three phase loses roughly one-sixth as much in the cable.
+- Single phase, 230 V: 87 A on 2 conductors | 15100
+- *Three phase, 400 V: about 29 A on 3 conductors | 2500
+```
 
 **Decision.** The business installs a three-phase supply, sized by its electrician to the relevant wiring and cable sizing standards, which also suits the workshop's three-phase machinery. The same reasoning that led engineers to high-voltage AC transmission in the 1890s guides the choice, at a much smaller scale. All electrical work must be designed and carried out by licensed electricians.
 

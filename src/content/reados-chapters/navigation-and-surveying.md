@@ -59,6 +59,15 @@ Coastal charts made shipping safer, but settlement also required inland surveys:
 
 In 1620, the English mathematician Edmund Gunter introduced a measuring chain 66 feet long, divided into 100 links. Its genius lay in its compatibility with existing units: 80 chains made a mile, and 10 square chains made an acre. Surveyors could measure fields in chains and links and convert directly to acres. Chains and links were used in surveying in Britain, North America and Australia for centuries, and old Australian title plans still show measurements in them. A cricket pitch, at 22 yards, is one chain long.
 
+```figure
+type: stats
+title: Gunter's chain
+caption: Compatible with existing units, so fields measured in chains converted directly to acres.
+- 66 feet | Chain length | divided into 100 links
+- 80 chains | One mile
+- *10 square chains | One acre
+```
+
 ### Angles and the theodolite
 
 Measuring distances with chains over rough ground was slow and error-prone, but angles could be measured precisely with instruments called theodolites. If the length of one baseline is measured very carefully, the positions of distant points can be calculated from angles alone using trigonometry. This is **triangulation**.
@@ -84,6 +93,18 @@ Every coordinate is defined relative to something: a **datum** or reference fram
 Australia offers a striking example. The Australian tectonic plate moves roughly seven centimetres a year towards the north-east. Over decades, that movement accumulates, so coordinates in an older national datum drift away from those measured by global satellite systems. Australia adopted the Geocentric Datum of Australia 1994 and later updated it to GDA2020, a change that shifted coordinates by roughly 1.8 metres. Mixing data from different datums without converting it can therefore place things in the wrong position by a margin large enough to matter for construction, utilities and property boundaries.
 
 Satellite positioning, explained in the [satellites](/reados/collections/engineering-history-modern-era/satellites-engineering-in-orbit/) article, makes positions easy to obtain, but it does not remove the need to know which reference frame those positions belong to.
+
+```figure
+type: timeline
+title: Turning position into something that can be measured
+caption: Each step made position more reliable, and every coordinate still depends on its datum.
+- 1620 | Gunter's chain | 100 links, 66 feet
+- 1714 | Longitude Act | rewards for longitude at sea
+- 1760s | Harrison's H4 | accurate on trial voyages
+- 1801–1803 | Flinders circumnavigates Australia | high-quality charts
+- 1858 | Torrens title | the register is the evidence
+- *GDA2020 | Australia's datum updated | coordinates shift about 1.8 m
+```
 
 ## Lessons for engineers and businesses
 
@@ -120,6 +141,16 @@ A small civil contractor is engaged to install drainage pits and pipes for a fac
 Before excavating, the contractor's surveyor checks the set-out against two permanent survey marks on the site with known GDA2020 coordinates. The check shows a consistent offset of about 1.5 metres. Excavating to the old coordinates would have placed pits partly outside the easement and clashed with an existing water main.
 
 The check survey takes half a day and costs about $1,200. The contractor estimates that excavating in the wrong place, repairing the water main and re-excavating would have cost more than $25,000 and delayed the project by a week. The contractor adds a datum check to its standard set-out procedure and asks clients to state the datum on every survey and drawing.
+
+```figure
+type: bars
+title: A datum check before excavating
+unit: $
+max: 27000
+caption: The old set-out was offset by about 1.5 m: pits would have sat partly outside the easement and clashed with a water main.
+- *Check survey, half a day | 1200
+- Digging in the wrong place, estimated | 25000 | over $25,000 and a week late
+```
 
 ## How this applies to a small Australian business
 

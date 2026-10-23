@@ -56,6 +56,17 @@ Queensland, with a small population spread across vast distances, chose a cheape
 | Standard | 1,435 mm | New South Wales | Common in Britain and elsewhere |
 | Narrow | 1,067 mm | Queensland, Western Australia, Tasmania, parts of South Australia | Lower construction cost over long distances |
 
+```figure
+type: bars
+title: Australia's three railway gauges
+unit: mm
+max: 1700
+caption: Decisions made in the 1850s and 1860s, each sensible at the time, left one nation with three incompatible systems.
+- Broad | 1600 | Victoria, much of South Australia
+- *Standard | 1435 | New South Wales
+- Narrow | 1067 | Queensland, WA, Tasmania, parts of SA
+```
+
 Each choice was defensible on its own terms. Taken together, they meant that when the colonial networks finally reached each other, they could not exchange trains.
 
 ## The cost of a break
@@ -79,6 +90,20 @@ A royal commission in 1921 recommended standardising on 1,435 mm, but the cost o
 - **Sydney to Perth** was linked by standard gauge by 1970, allowing the first through passenger trains to cross the continent.
 - **Adelaide to Melbourne** was converted to standard gauge in 1995.
 - **Adelaide to Darwin** was completed in 2004, when a new standard gauge line from Alice Springs to Darwin opened.
+
+```figure
+type: timeline
+title: Breaking and rejoining the networks
+caption: Passengers changed trains at Albury for nearly eighty years.
+- 1854 | Melbourne to Sandridge | broad gauge
+- 1855 | Sydney to Parramatta | standard gauge
+- 1865 | Inland from Ipswich | narrow gauge
+- 1883 | NSW and Victoria meet at Albury | change trains
+- 1917 | Trans-Australian Railway | standard gauge
+- 1962 | Sydney to Melbourne | continuous standard gauge
+- 1970 | Sydney to Perth | through trains
+- *2004 | Adelaide to Darwin | standard gauge completed
+```
 
 Today, interstate main lines are largely standard gauge, but Victoria still has an extensive broad gauge network, Queensland's main system remains narrow gauge and other regional networks retain their original gauges.
 
@@ -141,6 +166,17 @@ This is an illustrative example. The business and figures are hypothetical.
 A small food manufacturer acquires a second production site. The two sites use different crate sizes, product codes and labels, so every load transferred between them must be repacked and relabelled. Repacking takes about 1.5 labour hours per truckload at $55 per hour, or $82.50, and damage from extra handling costs about $40 a load, a total of $122.50 per load. With six transfers a week over 48 weeks, there are 288 loads a year, and the break costs about $35,280 a year.
 
 Standardising would mean replacing 1,200 crates at $18 each, or $21,600, and modifying racking at the second site for $8,000, a total of $29,600. The payback is therefore about $29,600 ÷ $35,280, or roughly 10 months. The owner also standardises product codes and labels across both sites at the same time, because doing so later would mean another conversion. Like Australia's railways, the business finds that the cost of a break is paid every week, while the cost of fixing it is paid once.
+
+```figure
+type: balance
+title: The cost of a break between two sites
+left: Repacking every load
+right: Standardising once
+tilt: left
+caption: Payback in roughly 10 months; codes and labels were standardised at the same time, to avoid a second conversion.
+- $35,280 a year | $29,600 once
+- 288 loads at $122.50 | 1,200 crates and racking changes
+```
 
 ## How this applies to a small Australian business
 

@@ -45,6 +45,18 @@ Electrical engineering is the clearest example of an industry built from laborat
 | 1865 | Maxwell's electromagnetic theory | The prediction of electromagnetic waves |
 | 1887 | Hertz's detection of those waves | The basis for radio |
 
+```figure
+type: timeline
+title: Electrical engineering, built outward from science
+caption: Each discovery came before the engineering it made possible.
+- 1800 | Volta's battery | a continuous current
+- 1820 | Oersted | current produces magnetism
+- 1826 | Ohm's law | calculating circuits
+- *1831 | Faraday's induction | generators, motors, transformers
+- 1865 | Maxwell's theory | electromagnetic waves predicted
+- 1887 | Hertz detects the waves | the basis for radio
+```
+
 From Volta's battery to commercial electric power took roughly eighty years, a fraction of the time it took older fields to mature. The telegraph, generator, electric light and alternating current systems were each developed by people who had studied the science, and the field advanced at a pace that craft-based fields had never matched.
 
 Even so, industry ran ahead of education. Formal teaching of electrical engineering in American universities became established only towards the end of the nineteenth century, when electric lighting systems were already operating commercially. That is a normal pattern: new industries usually develop before curricula catch up.
@@ -76,6 +88,18 @@ Formal education did not replace supervised experience. It was added to it, beca
 | New problems without precedent | Limited | Strong; principles apply where precedent does not |
 | Scaling up the number of practitioners | Slow; limited by the number of experienced mentors | Faster; one teacher reaches many |
 | Judgement and practical sense | Strong | Weak without supervised practice |
+
+```figure
+type: compare
+title: What each tradition does well
+cols: Learning through experience | Formal instruction
+caption: Businesses need both: principles for new problems, and practice for judgement.
+- Practical skill | Strong, learned by doing | Weak, hard to teach in a lecture
+- Underlying principles | Often weak | The main purpose
+- New problems | Limited | Strong, principles still apply
+- Scaling up | Slow, limited by mentors | Faster, one teacher reaches many
+- *Judgement | Strong | Weak without supervised practice
+```
 
 Modern professional frameworks reflect that combination. In Australia, Engineers Australia accredits engineering degree programs and administers Chartered status, which requires demonstrated competence developed through practice, and several states, including Queensland, Victoria and New South Wales, operate statutory registration schemes for professional engineers doing certain types of work. Australia was also a founding signatory to the Washington Accord in 1989, under which accredited engineering degrees are mutually recognised among member countries. Registration requirements differ between jurisdictions and change over time, so check current requirements before relying on any summary.
 
@@ -125,6 +149,15 @@ This is an illustrative example. A fabricator makes steel stairs and platforms f
 **Analysis.** The business engages a structural engineer to check its standard designs against the current Australian standards for fixed platforms, walkways, stairways and ladders, AS 1657, and for steel structures, AS 4100. The check finds that stair stringers are much heavier than needed, while one bolted connection used on longer platforms has less capacity than assumed for some load cases.
 
 **Changes.** Stringers are resized, saving about 8 kilograms of steel per stair. At an assumed material and fabrication cost of $5 per kilogram, that is about $6,000 a year across 150 stairs, plus easier handling. The connection is redesigned and existing installations with long platforms are reviewed with their owners. A prototype stair is load-tested to confirm the revised design before it is adopted.
+
+```figure
+type: stats
+title: Checking standard stair designs against AS 1657 and AS 4100
+caption: Calculation found wasted margin and a hidden weakness; experience supplied a welding sequence no calculation had captured.
+- 8 kg | Less steel | per stair
+- *About $6,000 | A year | across 150 stairs
+- 1 | Connection redesigned | after a capacity shortfall
+```
 
 **Knowledge capture.** A graduate engineer works alongside the senior fabricator for a year, documenting the rules of thumb used in the workshop and checking each one by calculation. Most turn out to be sound, including a welding sequence that controls distortion on long stringers, which no calculation had captured and which becomes part of the written procedure.
 

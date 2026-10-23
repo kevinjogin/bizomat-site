@@ -97,6 +97,18 @@ The last point matters more than it first appears. Every buried network leaks a 
 
 The Millennium Drought, which affected much of south-eastern Australia from the late 1990s until about 2009, together with a long-term drying trend in south-western Western Australia, pushed Australian cities to secure supplies that did not depend on rainfall. Perth commissioned Australia's first large seawater desalination plant in 2006, and plants serving the Gold Coast, Sydney, Adelaide and Melbourne followed within about six years.
 
+```figure
+type: timeline
+title: Clean water as an engineered system
+caption: Supply, disposal and treatment work as one system, and barriers can fail together.
+- 1854 | Snow maps cholera in Soho | the Broad Street pump
+- 1859 | Bazalgette's intercepting sewers | after the Great Stink
+- 1872 | Poughkeepsie sand filtration | from the Hudson River
+- 1908 | Jersey City chlorination | continuous disinfection
+- 1998 | Sydney boil-water notices | Cryptosporidium and Giardia
+- *2006 | Perth desalination | water manufactured from the sea
+```
+
 These plants use **reverse osmosis**, pumping seawater at high pressure against membranes that let water through but hold back salt. Seawater's osmotic pressure is around 27 bar, and plants typically operate at 55 to 70 bar. The economics depend heavily on **energy recovery**: devices called pressure exchangers transfer most of the pressure energy in the salty reject stream back to the incoming seawater, cutting energy use dramatically. Membrane life depends mostly on **pretreatment** that removes particles and organic matter before they foul the membranes.
 
 Several of these plants have operated at low output in wet years. That drew criticism, but they were bought as insurance: their value lies in availability during drought, not in constant use. Whether that insurance was priced well against alternatives such as recycling and demand management is a fair debate; judging it by utilisation alone misreads its purpose.
@@ -144,6 +156,16 @@ This is an illustrative example. A food manufacturer uses town water in its prod
 **Failure state.** The plant uses about 20 kilolitres of town water an hour. To finish a production run and clean down safely during a supply interruption of up to four hours, it installs an 80 kilolitre storage tank with level monitoring and a procedure for supply interruptions.
 
 **Result.** The business can show, with outcome data, that its water is safe at the point of use, and it has a plan for the day its supply fails.
+
+```figure
+type: checklist
+title: Water engineering lessons in a food factory
+caption: Prove safety at the point of use, not just that equipment is switched on.
+- x Independent barriers: filter, UV and a chlorine residual
+- x Outcome monitoring at the point of use
+- x A tested backflow device between recycled and drinking water
+- *x An 80 kL tank: four hours at 20 kL an hour
+```
 
 ## Applying these lessons in an Australian business
 
