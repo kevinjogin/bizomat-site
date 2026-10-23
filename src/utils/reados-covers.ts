@@ -108,6 +108,8 @@ export const CATEGORY_COVERS: Record<string, Look> = {
 const SPECIAL_COVERS: Record<string, Look> = {
   'read-the-numbers-understand-the-business': { motif: 'lens', tone: 'graphite' },
   'win-work-you-can-deliver': { motif: 'pathway', tone: 'ember' },
+  'weld-repairs-that-hold': { motif: 'beam', tone: 'ember' },
+  'gears-by-the-numbers': { motif: 'geartrain', tone: 'paper' },
 };
 
 const hash = (s: string) => [...s].reduce((a, c) => (Math.imul(a, 33) + c.charCodeAt(0)) >>> 0, 5381);
