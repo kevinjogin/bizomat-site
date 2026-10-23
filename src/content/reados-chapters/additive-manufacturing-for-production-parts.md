@@ -110,6 +110,22 @@ The cost of a printed part is driven mainly by machine time, material, labour fo
 
 As an illustration, consider a complex plastic duct needed at about 300 parts a year. Injection moulding would need a tool costing $18,000, with a piece price of $3. Polymer powder bed fusion would cost about $22 per part, including finishing, with no tooling. The total cost of n parts is $18,000 + $3n for moulding and $22n for printing. They are equal when 19n = 18,000, or at about 950 parts. At 300 parts a year, printing is cheaper for roughly the first three years of production, and it allows design changes without modifying a tool. If volumes grow or the design stabilises, moulding becomes the cheaper option.
 
+```figure
+type: line
+title: Printing against moulding a plastic duct
+x: Parts made
+y: Total cost ($'000)
+ymin: 0
+ymax: 25
+caption: $18,000 + $3n against $22n: break-even at about 950 parts, so printing wins for about three years at 300 a year.
+legend: Injection moulding | Powder bed printing
+- 0 | 18 | 0
+- 300 | 18.9 | 6.6
+- 600 | 19.8 | 13.2
+- 950 | 20.9 | 20.9
+- 1100 | 21.3 | 24.2
+```
+
 ## A worked example
 
 This is an illustrative example. The figures are hypothetical.
@@ -119,6 +135,17 @@ A small food equipment manufacturer uses about 25 assembly and inspection fixtur
 The business buys an industrial material extrusion printer and fibre-filled nylon filament. For suitable fixtures, it prints the body and adds machined steel locating pins and threaded inserts at critical points. A typical printed fixture costs about $90 in material and labour, takes about six hours to print and is ready in two days.
 
 The business sets rules. Printed fixtures are not used where they would carry significant loads, heat or cutting forces. Locating features that need accuracy use metal pins pressed into reamed holes. Each fixture design is checked on a first article before use. Over a year, about 18 of the 25 fixtures are printed. At a saving of about $560 each, the business saves around $10,000, and fixtures are available in days rather than weeks, which shortens its new product introductions.
+
+```figure
+type: compare
+title: Machined or printed fixtures
+cols: Machined aluminium | Printed nylon, metal pins
+best: 2
+caption: Printed fixtures are kept away from heavy loads, heat and cutting forces; accurate locations use pressed metal pins.
+- Cost | About $650 each | About $90 in material and labour
+- *Lead time | Two to three weeks | About two days
+- Changes | A new machining job | Reprinted quickly
+```
 
 ## How this applies to a small Australian business
 

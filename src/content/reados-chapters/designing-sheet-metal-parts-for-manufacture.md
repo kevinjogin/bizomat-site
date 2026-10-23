@@ -83,6 +83,16 @@ Before a folded part can be cut, its **flat pattern** must be known: the shape a
 
 The **bend allowance**, the length of the neutral line through the bend, is the bend angle in radians multiplied by the inside radius plus K times the thickness. For a 90° bend in 2 mm steel with a 2 mm inside radius and a K-factor of 0.4, the bend allowance is about 1.571 × (2 + 0.8), or roughly 4.4 mm. An L-bracket with outside legs of 50 and 30 mm has straight portions of 46 and 26 mm once the radius and thickness are subtracted from each leg, so the blank is about 46 + 26 + 4.4, or 76.4 mm long, not the 80 mm the outside dimensions suggest. Errors of a millimetre or so per bend add up quickly on a part with several folds.
 
+```figure
+type: stack
+title: Flat blank for a 50 × 30 mm L-bracket in 2 mm steel
+unit: mm
+caption: About 76.4 mm, not the 80 mm the outside dimensions suggest; errors add up across several bends.
+- Straight portion of the 50 mm leg | 46
+- *Bend allowance, 90°, R2, K 0.4 | 4.4
+- Straight portion of the 30 mm leg | 26
+```
+
 CAD sheet metal tools calculate flat patterns automatically from the thickness, radius and K-factor or bend allowance. Default values are only starting points. Press brakes, tooling and material batches behave differently, so fabricators establish their own bend allowances by bending and measuring test pieces. Use the fabricator's values, or send the folded model and let them develop the flat pattern. Model sheet metal parts with proper sheet metal features, not as solid extrusions, so they can be unfolded correctly.
 
 **Springback** also matters: when the press releases, part of the bend recovers elastically and the angle opens slightly. Fabricators compensate by over-bending, and springback is larger for stronger materials and larger radii.
@@ -143,6 +153,17 @@ This is an illustrative example. A 30-person business makes electrical control e
 **Result.** Fabrication time falls from about 2.1 to about 1.2 hours per enclosure, saving roughly 1,350 hours a year at current volumes, and door alignment rework stops. Welding and grinding are almost eliminated, which also reduces fume and noise.
 
 **Stamping decision.** The business asks whether to tool a progressive die for the most common enclosure body. Tooling is quoted at about $60,000, saving about $9 per part, giving a breakeven of about 6,700 parts. At current volumes of that size, that would take several years, and the design is still evolving, so the business stays with laser cutting and press brake bending.
+
+```figure
+type: compare
+title: Redesigning a control enclosure for the press brake
+cols: Found | Changed to
+caption: Fabrication fell from about 2.1 to 1.2 hours: roughly 1,350 hours a year. A $60,000 die would need about 6,700 parts to break even.
+- Bend radii | Four different radii | One radius throughout
+- Mounting rails | Nuts welded inside, then ground | Fasteners without welding
+- Corners | Welded and ground | Designed to close without welding
+- *Hinge holes | Toleranced across three bends | Dimensioned from one datum
+```
 
 ## Applying this in an Australian business
 

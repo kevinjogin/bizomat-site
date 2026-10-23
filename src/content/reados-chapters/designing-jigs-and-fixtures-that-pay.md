@@ -38,6 +38,15 @@ A rigid part in space has six degrees of freedom: it can move along three axes a
 2. **Two locators** on a secondary surface, at right angles to the first, remove two more.
 3. **One locator** on a third surface removes the last.
 
+```figure
+type: stats
+title: Six degrees of freedom to remove
+caption: A fixture must remove all six, and no more, to locate a part without ambiguity.
+- 3 | Translations | along three axes
+- 3 | Rotations | about three axes
+- *3-2-1 | Locators | on primary, secondary and tertiary faces
+```
+
 Three refinements make the principle work in practice:
 
 - **Locate on the datums.** Engineering drawings often define **datums**, the reference features from which other dimensions and tolerances are measured. Locating on the same features that the drawing uses means the fixture reproduces the design intent, and inspection agrees with production. Locating on convenient but different features can produce parts that look right but measure wrong.
@@ -139,6 +148,16 @@ This is an illustrative example. A 30-person fabrication business makes about 1,
 **Trial.** A quick prototype made from offcuts reveals that one clamp blocks a weld joint. It is moved before the fixture is built properly. The first ten frames are measured fully and are all within tolerance.
 
 **Result.** Tack-up time falls to about 9 minutes and diagonal rejects to about 1%. The time saving of 13 minutes on 1,800 frames is about 390 hours a year, worth about $29,000 at an illustrative $75 an hour including overheads. Avoiding rework on about 90 frames saves about $10,800. Against a total cost of about $4,500 for design, materials and manufacture, the fixture pays for itself in about six weeks. The time released is used to take on additional work rather than overtime.
+
+```figure
+type: compare
+title: A tack-up fixture for 1,800 frames a year
+cols: Bench with tape and squares | Fixture
+best: 2
+caption: About $29,000 of time and $10,800 of rework saved a year against about $4,500: paid back in about six weeks.
+- Tack-up time | About 22 minutes | About 9 minutes
+- *Diagonal rejects | About 6% | About 1%
+```
 
 **Keeping it.** The fixture is registered, a one-page standard work sheet with photographs hangs beside it and its locators are checked against a master frame every month.
 

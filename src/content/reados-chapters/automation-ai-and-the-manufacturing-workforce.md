@@ -153,6 +153,20 @@ Before investing, check:
 | Do we understand the full cost, including integration and training? | |
 | Is our network secure enough to connect new equipment? | |
 
+```figure
+type: checklist
+title: Automation readiness
+caption: A "no" is not a stop sign; it shows what to fix first.
+- x Stable, documented process
+- x Steady enough demand
+- x Consistent part designs
+- x People to run and maintain it
+- x Affected people consulted
+- x Safety assessed for this application
+- x Full cost understood
+- *x A secure network
+```
+
 Several "no" answers suggest preparatory work before buying equipment. Standardising parts, documenting processes and building skills often delivers benefits on its own and makes later automation far more successful.
 
 ## AI tools in the office and design team
@@ -194,6 +208,16 @@ The owner involves two senior operators in investigating options. They visit oth
 The two senior operators train with the integrator and become the cell's lead operators. A younger worker starts a mechatronics qualification with the company's support. The integrator documents all programs and settings, and the business adds the cell's network to a separate, secured segment.
 
 After a year, lifting injuries have fallen sharply, output on high-volume parts has risen by 40 per cent, and the business has won new contracts it could not previously have handled. Headcount has grown by three.
+
+```figure
+type: timeline
+title: A robotic press brake cell at a 30-person fabricator
+caption: Output on high-volume parts rose 40% and headcount grew by three.
+- Problem | Heavy lifting, rising injuries | operators hard to recruit
+- Choice | Two senior operators investigate | a cell for high-volume parts only
+- Consultation | No jobs cut | operators trained to run the cell
+- *After a year | Injuries down sharply | new contracts won
+```
 
 ## Frequently asked questions
 

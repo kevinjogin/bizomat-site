@@ -93,6 +93,17 @@ Export pricing must cover all the additional costs: export packaging, labelling,
 - **DAP (Delivered at Place)**: you deliver to a named destination, ready for unloading.
 - **DDP (Delivered Duty Paid)**: you deliver, cleared for import and with duties paid. This is the most demanding for the seller.
 
+```figure
+type: layers
+title: Incoterms: how far the seller goes
+caption: Incoterms 2020 set who pays for and bears the risk at each stage.
+- EXW | buyer collects from your premises
+- FOB | loaded on the vessel at the port of shipment
+- CIF | freight and minimum insurance to the destination port
+- DAP | delivered to a named destination
+- *DDP | delivered, cleared and duty paid
+```
+
 Choose terms you understand and can manage. New exporters often start with terms that limit their exposure to unfamiliar foreign logistics and customs.
 
 Export markets are often price-sensitive, because buyers can compare suppliers worldwide online. Some experienced exporters advise new exporters to aim initially for volume and long-term relationships rather than maximum margin per order, but never price below the full cost of serving the market.
@@ -125,6 +136,17 @@ Payment risk is the biggest fear for new exporters. Common payment methods, from
 | Documents against payment (D/P) | Bank releases shipping documents when buyer pays | Moderate: buyer could refuse to collect goods |
 | Documents against acceptance (D/A) | Bank releases documents when buyer accepts a bill payable later | Higher: buyer may not pay at maturity |
 | Open account | Goods shipped, buyer pays on agreed terms | Highest |
+
+```figure
+type: layers
+title: Payment methods by risk to the exporter
+caption: Start secure with new buyers; move towards open account only as trust grows.
+- Payment in advance | lowest risk
+- Letter of credit | low, if documents comply exactly
+- Documents against payment | moderate
+- Documents against acceptance | higher
+- *Open account | highest risk
+```
 
 Practical approaches for new exporters:
 

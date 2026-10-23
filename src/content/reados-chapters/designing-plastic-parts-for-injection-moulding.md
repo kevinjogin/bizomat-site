@@ -101,6 +101,17 @@ An **undercut** is any feature that prevents the part from being pulled straight
 
 Wall thickness, ribs and bosses interact. A thick rib causes a sink mark; a boss without ribs is weak; a boss thickened to compensate causes the same sink. Design them together against the nominal wall.
 
+```figure
+type: checklist
+title: Part design rules for injection moulding
+caption: Uniform, thin walls fill, pack and cool evenly, which limits warpage and sink marks.
+- x A uniform nominal wall
+- x Rounded corners
+- x Draft on every wall parallel to mould opening
+- x Ribs thinner than the wall, not thicker walls
+- *x Few undercuts
+```
+
 ## Snap fits, hinges, threads and inserts
 
 Moulding allows features that remove separate parts and assembly steps:
@@ -167,6 +178,18 @@ This is an illustrative example. A small equipment business designs an ABS cover
 - A mould flow study moves the gate so that the weld line forms away from a screw boss.
 
 **Results.** Cooling time scales roughly with the square of wall thickness, so cooling falls to about (2.5 ÷ 4)², or 39%, of its original 30 seconds, about 12 seconds. The cycle falls from 45 to about 27 seconds. At a machine rate of $60 an hour, the two-cavity tool's output rises from 160 to about 267 parts an hour, and machine cost per part falls from about 37.5 cents to about 22.5 cents, saving about $3,000 a year. Part weight falls from 85 to 60 grams, saving another $1,500 a year in material at $3 a kilogram. Removing the slide reduces the tool cost and removes a maintenance item. Sink marks over the bosses, which the moulder had warned about, do not appear.
+
+```figure
+type: compare
+title: An ABS sensor cover, redesigned for moulding
+cols: First design | Redesigned
+best: 2
+caption: Cooling scales with the square of wall thickness; about $3,000 a year in machine time and $1,500 in material saved at 20,000 covers.
+- Wall thickness | 4 mm | 2.5 mm
+- Cooling time | About 30 seconds | About 12 seconds
+- Cycle time | 45 seconds | About 27 seconds
+- *Part weight | 85 g | 60 g
+```
 
 ## Applying this in an Australian business
 

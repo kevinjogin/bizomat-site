@@ -43,6 +43,18 @@ Large batches lengthen lead time in a way that is easy to underestimate. Conside
 
 The work content is identical. The difference is entirely waiting for the rest of the batch. In real factories, with different operation times, changeovers and queues, the effect is less tidy but the direction is the same: smaller batches, and smaller transfer quantities between operations, mean faster flow, less work in progress and earlier discovery of defects. A defect in a batch of 100 may not be found until all 100 are made; in one-piece flow it is found on the next operation.
 
+```figure
+type: bars
+title: 100 parts through four one-minute operations
+unit: minutes
+max: 420
+caption: The work content is identical; the difference is waiting for the rest of the batch.
+- Batch and queue: first part | 301
+- Batch and queue: last part | 400
+- *One-piece flow: first part | 4
+- One-piece flow: last part | 103
+```
+
 Batches exist for a reason, usually changeover time. If a machine takes two hours to change over, running small batches loses a lot of capacity. The answer is to reduce changeover time, through **set-up reduction** methods that move work outside the stoppage, standardise tooling and simplify adjustments, so that smaller batches become affordable.
 
 ## Utilisation: why full machines make long queues
@@ -132,6 +144,16 @@ This is an illustrative example. A 35-person fabrication business makes steel eq
 - **Synchronised coating.** Frames are sent to the coater in daily lots rather than weekly, by agreement with the coater, who prefers the steadier flow.
 
 **Result.** After four months, work in progress has fallen to about 160 frames. At the same 40 frames a day, that is about 4 days of internal lead time. Including two days at the coater, the business can quote 7 working days with confidence. Floor space freed by the lower stock becomes a second cell, and defects are found the same day rather than a week later.
+
+```figure
+type: compare
+title: Little's law on a frame shop floor
+cols: Work in progress | Internal lead time at 40 frames a day
+best: 2
+caption: Including two days at the coater, the business can now quote 7 working days with confidence.
+- Before | About 480 frames | About 12 days
+- *After four months | About 160 frames | About 4 days
+```
 
 ## Applying this in an Australian manufacturing business
 

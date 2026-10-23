@@ -53,6 +53,24 @@ Average the last few periods. Suppose monthly demand for a product was:
 
 A three-month moving average forecast for July is (450 + 470 + 430) ÷ 3 = 450 units. Longer averages smooth out noise but react more slowly to genuine changes.
 
+```figure
+type: line
+title: Six months of demand and a moving average
+x: Month
+y: Units
+ymin: 300
+ymax: 500
+caption: The three-month average for July is (450 + 470 + 430) ÷ 3 = 450 units.
+legend: Units sold
+- Jan | 400
+- Feb | 380
+- Mar | 420
+- Apr | 450
+- May | 470
+- Jun | 430
+- Jul (forecast) | 450
+```
+
 ### Exponential smoothing
 
 A weighted average that gives more weight to recent months. Spreadsheets and planning software calculate it easily. It responds faster than a simple moving average while still smoothing noise.
@@ -123,6 +141,15 @@ A component has average demand of 20 units a day, with a standard deviation of 6
 - **Reorder point** = average demand during lead time + safety stock = (20 × 9) + 30 = 210 units.
 
 When stock falls to 210 units, place an order. If lead times are also variable, as they often are with imported items, safety stock needs to be larger.
+
+```figure
+type: stack
+title: Reorder point for a component
+unit: units
+caption: 20 a day average demand, a standard deviation of 6 a day, a 9-day lead time and z = 1.65 for about 95% service.
+- Demand during lead time | 180
+- *Safety stock | 30
+```
 
 ## How much to order
 

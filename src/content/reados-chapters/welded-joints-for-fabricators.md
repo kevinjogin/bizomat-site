@@ -97,6 +97,18 @@ The applicable standard sets acceptance criteria for each weld category. Inspect
 | **Cracks** | Hydrogen, restraint, hardenable steel without preheat, poor filler choice |
 | **Undersize or oversize welds** | Unclear specification, no gauge checks |
 
+```figure
+type: decision
+title: Reading a weld defect
+question: What does the defect look like?
+caption: Most defects trace back to preparation, settings, technique or an unclear specification.
+- Porosity | Contamination, moisture, poor gas cover
+- Lack of fusion | Low heat input or poor access
+- Undercut | Excessive current or travel speed
+- *Cracks | Hydrogen, restraint, no preheat
+- Wrong size | Unclear specification, no gauge checks
+```
+
 ## Build welding knowledge into the business
 
 Much welding knowledge lives in experienced welders' hands and heads. Capture it: record the settings and techniques that work for common joints in the procedures, photograph good and bad examples for training, keep test pieces as references, and pair new welders with experienced ones on the joints that matter most. When a defect occurs, record its cause and the fix, so the same lesson is not learned twice. Repeated defects on the same joint usually point to the joint design, the fit-up or the procedure rather than the individual welder, and are worth investigating properly; the [zero-defect manufacturing in a small factory](/reados/collections/manufacturing-quality/zero-defect-manufacturing-in-a-small-factory/) article covers prevention rather than inspection as the route to fewer defects.
@@ -120,6 +132,19 @@ This is an illustrative example. A 30-person fabricator builds steel access plat
 - **Welding sequence** for frames is standardised to balance shrinkage.
 - **Inspection** is organised in layers: welders check their own welds with fillet gauges, a supervisor visually inspects all welds before painting and critical brackets get magnetic particle testing.
 - **Screens** are installed around the welding bays, improving gas cover and fume extraction at the same time.
+
+```figure
+type: checklist
+title: Fixing weld quality at a platform fabricator
+caption: Weld repairs fell from about 30 hours a month to about 6, and the next customer audit found no weld nonconformances.
+- x Standard weld symbols, sizes and category on drawings
+- x Written procedures for the four most common joints
+- x Welders qualified to the procedures they use
+- x Fit-up checks and a frame fixture
+- x A standard welding sequence
+- x Layered inspection with fillet gauges
+- *x Screens for gas cover and fume extraction
+```
 
 **Result.** After three months, weld repair time falls to about 6 hours a month, frames come off the fixture within squareness limits, and the customer's next audit finds no weld nonconformances. New welders reach the required standard faster because the procedures and fixtures make the expected result clear.
 

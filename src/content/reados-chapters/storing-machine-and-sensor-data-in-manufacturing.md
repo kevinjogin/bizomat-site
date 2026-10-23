@@ -57,6 +57,15 @@ A widely used way of describing manufacturing systems is the level model set out
 
 Historians and time-series databases usually sit at level 3, collecting data from below and providing summaries to systems and people above.
 
+```figure
+type: layers
+title: Where machine data sits in the factory's systems
+caption: After the ISA-95 level model (IEC 62264).
+- Level 4 | business systems such as ERP · days to months
+- *Level 3 | operations systems and historians · minutes to days
+- Levels 0–2 | sensors, controllers, operator screens · milliseconds to minutes
+```
+
 ## Process historians and time-series databases
 
 **Process historians** have been used for decades in process industries such as chemicals, oil and gas, water and power. They are designed to collect large numbers of tagged values from control systems, compress them efficiently, store them for years and retrieve them quickly for trends and analysis. Commercial historians are often closely integrated with automation and supervisory control products.
@@ -177,6 +186,17 @@ This is an illustrative example. A food manufacturer runs three packaging lines.
 **Findings.** Overall equipment effectiveness is calculated at about 58%, not 80%. Many short stoppages of under two minutes, which never appeared in shift reports, are traced to film splicing on one wrapper and a sensor misaligned on a labeller.
 
 **Result.** After the splicing method is changed and the sensor bracket redesigned, effectiveness on the affected lines rises to about 66% within three months, adding output without new equipment. The figures are illustrative, but the pattern of hidden short stoppages is common.
+
+```figure
+type: bars
+title: Packaging line effectiveness
+unit: %
+max: 85
+caption: Short stoppages under two minutes never appeared in shift reports; the historian found them.
+- Believed from shift reports | 80
+- Measured | 58
+- *Three months after the fixes | 66
+```
 
 ## Applying this in an Australian business
 

@@ -78,6 +78,17 @@ Quantities multiply down the structure. Consider a bicycle:
 
 To build 50 bicycles, the business needs 100 wheel assemblies and 3,200 spokes. Scrap allowances multiply too: a 5% allowance on spokes increases the requirement to 3,360.
 
+```figure
+type: tree
+title: Exploding a bicycle bill of materials
+caption: Quantities multiply down the levels: 50 bicycles need 3,200 spokes, or 3,360 with a 5% scrap allowance.
+- Bicycle | 1
+  - Wheel assembly | 2 per bicycle
+    - *Spoke | 32 per wheel: 64 per bicycle
+    - Rim | 1 per wheel: 2 per bicycle
+  - Frame | 1 per bicycle
+```
+
 ### Recursive queries
 
 Because BOMs have an unknown number of levels, systems use **recursive** processing: find the components of the product, then the components of those components, and so on until no more are found. Relational databases support this through recursive queries, part of the SQL standard since 1999. Graph databases are another option for very large or complex structures.
@@ -164,6 +175,16 @@ This is an illustrative example. A manufacturer of agricultural trailers builds 
 **Changes.** All BOMs are moved into the business system with one record for each sub-assembly, used wherever it appears. Units of measure and conversions are checked for every item. Engineering changes now carry effectivity dates, and a where-used report is added to the change process.
 
 **Result.** The next where-used query takes seconds and finds every use. Material requirements become reliable, and the purchasing error with bolts disappears. When the hub sub-assembly is later redesigned, the change applies automatically to all 12 models from the effective date.
+
+```figure
+type: compare
+title: Trailer BOMs out of spreadsheets
+cols: Before | After
+best: 2
+caption: About 400 trailers a year across 12 models, with about 600 items in up to four levels.
+- Where-used search | Two engineers most of a day; one model missed | Seconds, every use found
+- *Units of measure | Bolts ordered 100 times too many | Stocking and BOM units reconciled
+```
 
 ## Applying this in an Australian business
 

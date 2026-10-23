@@ -99,6 +99,20 @@ A simple scorecard helps structure the decision. Score each factor from 1 to 5 f
 | Flexibility | How likely are volumes, designs or technologies to change? |
 | Supply risk | How reliable and replaceable are external suppliers? |
 
+```figure
+type: checklist
+title: A make-or-buy scorecard
+caption: Score each factor 1 to 5 for making in-house, weighted by what matters to the business.
+- x Volume and stability
+- x Total cost, fully loaded
+- x Capability
+- x Strategic importance
+- x Quality risk
+- x Capital availability
+- x Flexibility
+- *x Supply risk
+```
+
 Run the cost comparison honestly. A common mistake is to compare a supplier's price with only the direct material and labour cost of making in-house, ignoring depreciation, setup time, scrap, maintenance, supervision, floor space and the cost of capital. A proper **cost-benefit analysis** that includes these hidden costs, and tests different volume assumptions, prevents expensive mistakes.
 
 Also consider timing. A sensible path for many businesses is to outsource at launch, learn about demand and the product, and bring processes in-house selectively once volumes are proven and the business understands which processes really matter.
@@ -160,6 +174,17 @@ A small manufacturer of agricultural equipment buys 4,000 machined brackets a ye
 | **Total** | **≈ $78,200** |
 
 At 4,000 brackets a year, making them in-house costs about **$19.55 per bracket**, more than the supplier's $18. On the obvious costs of material plus operator time alone, it looked like $10 per bracket. Including the full costs reverses the conclusion.
+
+```figure
+type: bars
+title: Cost per bracket: buy or make
+unit: $
+max: 22
+caption: Material plus operator time looked like $10 a part; the full cost is about $19.55 until the machine is shared with other parts.
+- Supplier price | 18
+- *Make in-house, all costs | 19.55
+- Material and operator time only | 10 | misleading
+```
 
 The picture changes if volume grows, or if the machine can also make other parts. If the machine also makes 6,000 other parts a year currently bought at similar margins, the fixed costs of depreciation, finance, maintenance and floor space are spread across 10,000 parts, and the in-house cost per part falls well below the supplier's prices. The decision therefore depends on utilisation, not just on the bracket. That is why make-or-buy analysis should consider the whole family of parts a capability could serve.
 
