@@ -66,6 +66,17 @@ Alliances usually move through distinct phases, each with its own decisions:
 4. **Implementation**: the alliance delivers the works, managing risks and costs against the target, with regular reporting to the leadership team.
 5. **Completion and close-out**: final costs are audited, gainshare or painshare is calculated, defects are resolved and lessons are recorded.
 
+```figure
+type: steps
+title: The phases of an alliance
+caption: The owner can still decline to proceed at commitment if the target does not stack up.
+- Selection | staged evaluation of partners
+- Development | design, risks, target cost
+- Commitment | the owner decides
+- Implementation | delivery against the target
+- *Close-out | audit, gainshare or painshare, lessons
+```
+
 Treating the commitment decision as a formality is one of the biggest risks to value. By the end of development, the owner and team have invested time and goodwill, and there is strong pressure to proceed. A disciplined review against independent estimates and the business case protects the owner from committing to a target that is too high.
 
 ## Choosing partners before price
@@ -142,6 +153,18 @@ This is an illustrative example. A water utility needs to upgrade a treatment pl
 **Delivery.** Costs are audited quarterly. An audit finds $0.4 million of overhead costs claimed as reimbursable costs, which are corrected. Two design changes requested by the utility adjust the target under the agreed rules. The project finishes at $81 million against the adjusted target of $84 million, and safety and water quality measures are met.
 
 **Outcome.** The $3 million underrun is shared equally, so participants receive $1.5 million in gainshare. The utility records what the selection evidence predicted and how it compared with the team's actual performance, to improve future selections.
+
+```figure
+type: bars
+title: Setting and beating an alliance target
+unit: $m
+max: 90
+caption: The underrun of $3 million was shared equally, giving participants $1.5 million in gainshare.
+- Alliance's first target | 86
+- Independent estimate | 82
+- Agreed target, adjusted | 84
+- *Actual outturn | 81
+```
 
 ## Applying this in an Australian context
 

@@ -52,6 +52,16 @@ Practical completion matters because a cluster of consequences typically attach 
 | Time bars and notices | Contract-specific | Some claims may need to be made by or soon after this point |
 | Operation and maintenance | Contractor's responsibility | Owner's responsibility, with the contractor fixing defects |
 
+```figure
+type: balance
+title: What practical completion moves
+left: Before
+right: After
+caption: Typical effects; the contract's own definitions govern.
+- Contractor controls the site and carries risk | Owner takes possession, risk and insurance
+- Liquidated damages can accrue | Damages stop; defects period starts; retention often halves
+```
+
 The transfer of **risk and insurance** is the consequence most often overlooked. An owner that takes possession without arranging insurance may be exposed if a fire, flood or theft occurs in the first week. The same goes for operations. Once the owner is using the asset, it is responsible for operating and maintaining it correctly, and damage caused by misuse or poor maintenance is not a construction defect.
 
 **Liquidated damages** usually stop at practical completion. That is why contractors push to achieve it, and why owners are sometimes tempted to delay certification. Delaying certification without a contractual basis is risky. The [what is a day of delay worth](/reados/collections/valuing-time-delay-and-uncertainty/what-is-a-day-of-delay-worth/) article explains how owners can think about the real value of time, which helps set sensible liquidated damages rates in the first place.
@@ -124,6 +134,16 @@ This is an illustrative example. The project, figures and events are hypothetica
 A small manufacturer engages a builder to fit out a new production and office area for $420,000. The contract provides for 5% retention, capped at $21,000, with half released at practical completion and half at the end of a twelve-month defects liability period. Liquidated damages are $1,200 per day after the date for completion.
 
 The builder gives notice of practical completion on day 98, three days after the date for completion. The superintendent inspects and finds two problems: the fire-door hardware certification is outstanding, and the compressed-air line is not pressure-tested. Both are required by the contract's definition of practical completion. The superintendent also lists forty minor items. It certifies practical completion on day 104, once the certification and test results are provided. Liquidated damages accrue for nine days: $1,200 × 9 = $10,800. At practical completion, $10,500 of retention is released and the owner's property insurance takes over.
+
+```figure
+type: timeline
+title: A $420,000 fit-out reaches practical completion
+caption: Retention was 5%, capped at $21,000, with half released at practical completion and half after twelve months.
+- Day 95 | Date for completion
+- Day 98 | Builder gives notice | certification and a pressure test outstanding
+- *Day 104 | Practical completion certified | 9 days × $1,200 = $10,800 damages
+- At completion | $10,500 retention released | owner's insurance takes over
+```
 
 In month ten, a section of floor coating begins lifting near the wash-down bay. The owner gives a defect notice with photographs, the specification reference and the maintenance record showing the approved cleaning chemicals were used. The builder returns, investigates and finds inadequate surface preparation. It rectifies the coating, and the contract extends the defects period for that area.
 

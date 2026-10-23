@@ -104,6 +104,18 @@ In areas designated as bushfire-prone by state and territory authorities, constr
 | BAL-40 | Very high radiant heat and possible flame contact |
 | BAL-FZ | Flame zone, direct exposure to flames |
 
+```figure
+type: layers
+title: Bushfire Attack Levels
+caption: The site's BAL, assessed from vegetation, distance and slope, sets the construction requirements.
+- BAL-LOW | very low risk
+- BAL-12.5 | ember attack
+- BAL-19 | embers and radiant heat
+- BAL-29 | higher radiant heat
+- BAL-40 | very high heat, possible flame contact
+- *BAL-FZ | flame zone
+```
+
 Higher BALs require more resistant glazing, framing, cladding, roofing, decking, vents and sub-floor protection, adding cost and limiting product choice. Planning controls may also require defendable space, access and water supply. Changes to vegetation or site layout can change the BAL, so assess it early. The [site conditions outside your boundary](/reados/collections/risk-controls-and-assurance/site-conditions-outside-your-boundary/) article explains how neighbouring land and hazards can set requirements beyond your control.
 
 ## Structural, access, energy and other requirements
@@ -157,6 +169,17 @@ This is an illustrative example. A manufacturer plans to convert part of its war
 - Showroom glazing is specified to meet BAL-19 requirements.
 - Product compliance evidence is collected for fire-rated walls, doors and external glazing before ordering.
 - Approval steps and inspections are added to the program.
+
+```figure
+type: compare
+title: A warehouse conversion reviewed before design was fixed
+cols: Found | Decided
+caption: Converting warehouse space changed part of the building's class, which the original budget had not assumed.
+- Building class | Offices and showroom change the class | Fire separation from the warehouse
+- Mezzanine exits | One stair, a long travel distance | A second stair and a Performance Solution
+- Services | Penetrations through the new separation | Tested penetration systems
+- *Bushfire | On the edge of a bushfire-prone area | Showroom glazing to BAL-19
+```
 
 **Result.** The project budget increases by about a fifth at design stage, but the building permit is issued without redesign, inspections pass, and the occupancy certificate is issued on time. Discovering these requirements during construction would have cost much more.
 

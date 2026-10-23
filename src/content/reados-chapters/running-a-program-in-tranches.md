@@ -28,6 +28,16 @@ The three terms are often used loosely. In their most useful sense they describe
 | Program | Are the related projects and changes together delivering the outcome and benefits we need? | A changed capability in use, producing benefits |
 | Portfolio | Are we investing in the right set of projects and programs for the organisation's goals and capacity? | The best overall use of limited resources |
 
+```figure
+type: decision
+title: Does this group of projects need a program?
+question: What does success depend on?
+caption: A program earns its overhead when an outcome depends on several projects and business change together.
+- One defined output | Run it as a project
+- *Several projects and changes producing benefits | Run a program
+- The best use of limited resources | Manage it as a portfolio
+```
+
 A project delivers things: a building, a system, a machine, a product design. A program uses those things to change how the organisation works, and it is judged by whether that change produces the intended benefits. The [when the project succeeds and the strategy fails](/reados/collections/from-approval-to-benefits/when-the-project-succeeds-and-the-strategy-fails/) article explains why delivering outputs does not guarantee the outcome they were meant to support.
 
 ## When a group of projects deserves a program
@@ -121,6 +131,15 @@ This is an illustrative example. The business, figures and events are hypothetic
 A distributor of building products with three warehouses plans to replace its ageing inventory system, introduce barcode scanning, move to a single regional warehouse and offer customers online ordering. The total budget is $2.4 million over two years. The first plan treats it as one project with a single go-live, consolidating the warehouses and switching on the new system on the same weekend.
 
 The leadership team reframes it as a program with three tranches. **Tranche 1** (six months) replaces the inventory system and introduces scanning in the largest warehouse only, while the others continue on the old process. It also cleans the product data. **Tranche 2** (eight months) rolls scanning out to the other warehouses, stabilises operations and fits out the new regional warehouse. **Tranche 3** (six months) consolidates stock into the regional warehouse and launches online ordering.
+
+```figure
+type: timeline
+title: A warehouse program in three tranches
+caption: Each tranche ends with a review that can change the next one.
+- Tranche 1 · 6 months | New inventory system | scanning in the largest warehouse; product data cleaned
+- Tranche 2 · 8 months | Scanning everywhere | new regional warehouse fitted out
+- *Tranche 3 · 6 months | Stock consolidated | online ordering launched
+```
 
 At the end of tranche 1, the review finds that scanning has reduced picking errors in the pilot warehouse, but that data quality problems took longer to fix than planned and staff needed more training than expected. The board increases training in tranche 2 and moves the online ordering launch back by two months, so that it does not coincide with the busiest trading period. Benefits begin in the first year, and the business never has to absorb a new system, a new process and a new building all at once.
 

@@ -107,6 +107,15 @@ Weakness in any one undermines the others. Governance without commercial judgeme
 | Sourcing strategy and contract model | Project or program leadership with procurement | Strategic procurement manager |
 | Methods, standards and capability | Executive owner of delivery capability | Project management office |
 
+```figure
+type: layers
+title: Projects, programs and portfolios
+caption: Each level answers a different question, so each needs a different role.
+- Portfolio | the right set of investments for our capacity
+- Program | related changes delivering an outcome and benefits
+- *Project | a defined output, on time, budget and quality
+```
+
 Clear decision rights prevent the roles from duplicating or undermining each other. The [decision rights before meetings](/reados/collections/leading-people-and-change/decision-rights-before-meetings/) article explains how to make them explicit.
 
 ## Assessing and developing people for these roles
@@ -148,6 +157,17 @@ This is an illustrative example. An engineering services business with about 150
 - The business system becomes a program, with a program manager focused on process change, training and benefits, working with named benefit owners in each department.
 - The procurement lead joins major initiatives at concept stage to shape sourcing and contract models.
 - Decision rights for each role are written down and shared.
+
+```figure
+type: compare
+title: A renamed project office, refocused
+cols: Before | After
+best: 2
+caption: About 40 initiatives at once in a 150-person engineering services business.
+- Portfolio | Nobody recommended what to stop | Monthly review that recommends stops
+- Reporting | More status reports | Forward-looking exceptions and decisions
+- *Business system | Run as a technical project | A program with benefit owners
+```
 
 **Result.** Within six months, nine initiatives are stopped or merged, freeing key engineers for the most valuable work. Time spent preparing status reports falls by about half. Adoption of the business system improves as departments take ownership of their process changes.
 

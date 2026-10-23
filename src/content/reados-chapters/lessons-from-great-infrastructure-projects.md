@@ -92,6 +92,18 @@ The lesson for project leaders is that a project's value is realised over its op
 | Treat early estimates of novel projects as highly uncertain | Sydney Opera House |
 | Consider environmental consequences from the start | The Snowy scheme |
 
+```figure
+type: timeline
+title: Great projects and what they teach
+caption: Each lesson came from a real project, often learned the hard way.
+- 1761 | Bridgewater Canal | a clear, physical source of value
+- 1904–1914 | Panama Canal | reframe the problem: a lake and locks
+- 1932 | Sydney Harbour Bridge | temporary works carry major risk
+- 1936 | Hoover Dam | at scale, heat governed the design
+- 1949–1974 | Snowy Mountains Scheme | people and capability are outcomes too
+- *1973 | Sydney Opera House | resolve design before building
+```
+
 Research on large projects has found that cost and schedule overruns are common, and that they often stem from optimistic early estimates and underestimated complexity rather than unforeseeable events. Comparing a project with the actual outcomes of similar past projects, an approach called **reference class forecasting**, helps counter that optimism. The [estimating project costs from cost drivers](/reados/collections/project-estimates-schedules-and-costs/estimating-project-costs-from-cost-drivers/) article and the [how confident is that finish date](/reados/collections/project-estimates-schedules-and-costs/how-confident-is-that-finish-date/) article cover practical estimating and forecasting methods.
 
 ## A worked example
@@ -108,6 +120,18 @@ This is an illustrative example. A manufacturer plans a new production building 
 - **People**: a recruitment and training plan for the new line is part of the project, not an afterthought.
 
 **Result.** Contamination found early is dealt with in the design stage, and the power upgrade is completed in time. The project finishes within its $23 million budget plus a modest draw on the reserve, and the business has a record of estimates and outcomes to inform its next project.
+
+```figure
+type: range
+title: Setting a budget from a reference class
+unit: $m
+min: 18
+max: 30
+caption: Comparable projects overran by a median of about 15%, with one in five overrunning by 40% or more.
+- Base estimate | 20 | 20
+- *Budget set by the board | 23 | 23
+- A 40% overrun, one project in five | 28 | 28
+```
 
 ## Applying these lessons in an Australian business
 

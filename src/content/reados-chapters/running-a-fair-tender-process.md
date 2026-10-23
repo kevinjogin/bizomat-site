@@ -68,6 +68,16 @@ During the tender period, bidders will ask questions. How the buyer answers them
 
 Site visits and tender briefings help bidders understand the work. They also create fairness risks. Run them for all bidders together where possible, or give each bidder the same access and information. Record what was said, and issue an addendum if any information provided at the briefing could affect pricing.
 
+```figure
+type: checklist
+title: Fairness you can show
+caption: The rules you publish may bind you, so design the process before issuing it.
+- x Rules and criteria set before the tender is issued
+- x One contact; questions and answers shared with all
+- x Changes issued as numbered addenda
+- *x Evaluation recorded so it can be explained
+```
+
 ## Late tenders
 
 Tender documents usually set a closing date and time and state how late tenders will be treated. A common approach is that late tenders will not be considered unless the buyer is satisfied the lateness was caused by circumstances outside the bidder's control, such as a failure of the buyer's own submission system, and that accepting it would not give the bidder an unfair advantage, for example because no other tenders had been opened.
@@ -129,6 +139,17 @@ A manufacturer invites four contractors to tender for a $600,000 factory extensi
 When the tenders arrive, the contractor who spoke to the operations manager has priced a longer program and is cheapest. The second contractor has priced the revised floor, while the other two have not. The tenders are not comparable, and two bidders had information others lacked.
 
 A sound process would have prevented both problems. All communications would have gone through one contact. The program flexibility would either not have existed or been issued to everyone as an addendum. The floor revision would have been issued as a numbered addendum, with acknowledgement required and, given its significance, a short extension. The manufacturer now faces a choice between re-tendering, which costs time, or seeking clarifications from all four bidders on a common basis: a fixed program and the revised floor. It chooses the second, issues identical written requests to all bidders with a short deadline and records why. The evaluation report explains the issue and how it was resolved.
+
+```figure
+type: compare
+title: How a $600,000 tender became incomparable
+cols: What happened | What a sound process does
+best: 2
+caption: Two bidders had information the others lacked, so the cheapest price was not a fair comparison.
+- Program flexibility | Mentioned to one contractor at an event | Issued to all as an addendum, or not at all
+- Floor-loading change | One contractor heard informally | A numbered addendum, acknowledged, with an extension
+- *Communication | Several informal channels | One contact for all bidders
+```
 
 ## How this applies to a small Australian business
 

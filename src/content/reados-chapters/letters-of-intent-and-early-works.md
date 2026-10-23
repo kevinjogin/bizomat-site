@@ -42,6 +42,16 @@ Australian courts often approach "subject to contract" arrangements using catego
 2. reached final agreement and intend to be bound, but made performance of some terms conditional on signing a formal document; or
 3. not intended to be bound at all until a formal contract is signed.
 
+```figure
+type: decision
+title: Is a "subject to contract" arrangement binding?
+question: What did the parties intend?
+caption: After Masters v Cameron (1954); wording and conduct both matter.
+- Final agreement, bound now | Binding | the formal document restates it
+- Final agreement, performance waits for the document | Binding, conditionally
+- *No intention to be bound yet | Not binding | until the contract is signed
+```
+
 Courts have also recognised a further category, where the parties intend to be bound immediately by the terms agreed so far while expecting to make a further contract with additional terms.
 
 Phrases such as "subject to contract" or "subject to formal agreement" usually point to the third category, but not always. Conduct matters too. If the parties start performing, exchanging payments and acting as if a contract exists, a court may find that one does, even if the formal document was never signed. The [when a conversation becomes a commitment](/reados/collections/commercial-law-and-contracts/when-a-conversation-becomes-a-commitment/) article explains how informal exchanges can create obligations without anyone intending them to.
@@ -127,6 +137,17 @@ A food manufacturer is negotiating a $1.2 million contract with a mechanical con
 Payment is the supplier's cost plus 8% for the order, and agreed hourly rates for drawings. The letter applies the draft contract's insurance, quality and intellectual property clauses, expires in eight weeks unless extended in writing, and provides that if the main contract is not signed, the manufacturer will pay for work done and committed costs up to the cap and take ownership of the conveyor and drawings.
 
 Six weeks later, negotiations over liquidated damages have stalled. The contractor asks to start procuring electrical components "to protect the shutdown date". The manufacturer's project manager agrees by phone. A month later the contractor invoices $64,000 for electrical components on top of $172,000 for the conveyor and drawings, a total of $236,000, which is $56,000 over the cap. The letter has expired, and no written extension was issued.
+
+```figure
+type: bars
+title: Early works invoiced against a $180,000 cap
+unit: $'000
+max: 250
+caption: The extra work was agreed by phone after the letter had expired, and no written extension was issued.
+- Cap in the letter of intent | 180
+- Conveyor and drawings | 172
+- *Total invoiced with electrical | 236 | $56,000 over the cap
+```
 
 The manufacturer now has an awkward position. The electrical work was requested, so it may have to pay a reasonable sum for it even though it was outside the letter. Its negotiating position on the main contract has weakened. Had it tracked the register, it would have seen the expiry approaching, issued a formal written variation increasing the cap and extending the term for defined electrical items, and escalated the liquidated damages negotiation to senior decision-makers before the shutdown date added pressure.
 

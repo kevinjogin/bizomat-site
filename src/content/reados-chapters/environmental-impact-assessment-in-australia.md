@@ -102,6 +102,17 @@ Mitigation is usually approached through a **hierarchy**, applied in order:
 3. **Rehabilitate or restore** affected areas after construction.
 4. **Offset** residual impacts that remain after the other steps, by securing and improving equivalent environmental values elsewhere.
 
+```figure
+type: layers
+title: The mitigation hierarchy
+shape: pyramid
+caption: Offsets come last, for what remains after avoiding, minimising and restoring.
+- *Avoid
+- Minimise
+- Rehabilitate or restore
+- Offset
+```
+
 The order matters. Regulators generally expect avoidance and minimisation to be genuinely explored before offsets are proposed. **Offsets** are governed by Commonwealth policy for EPBC purposes and by state schemes in several jurisdictions, and they can be expensive and slow to secure. Treating offsets as a simple payment to make the problem go away is a common and costly misunderstanding.
 
 The most effective avoidance happens at the earliest design stage, when moving a footprint costs little. Once detailed design, procurement and financing are complete, avoidance becomes expensive and minimisation and offsets become the only options.
@@ -127,6 +138,17 @@ An environmental consultant engaged at concept stage carries out a desktop scree
 Rather than waiting, the team develops an alternative layout that places the warehouse on the cleared paddock to the east, keeps a vegetated buffer along the creek and moves the stormwater outlet to a treatment basin. The truck route becomes 60 metres longer, adding modest construction and operating costs. The surveys are still carried out to confirm the position. Because the revised layout avoids the woodland, the consultant's assessment is that a significant impact on the listed species is unlikely, and the project proceeds through state development approval with conditions on stormwater quality and the creek buffer.
 
 Had the original layout proceeded to detailed design, the project would have faced survey delays, a likely Commonwealth referral, uncertain assessment timeframes and possibly offset costs, all to save 60 metres of driveway.
+
+```figure
+type: compare
+title: A plant expansion beside remnant woodland
+cols: First concept | Alternative layout
+best: 2
+caption: The first layout risked survey delays, a likely Commonwealth referral, uncertain timeframes and offset costs.
+- Warehouse | Across the creek-side woodland | On the cleared paddock to the east
+- Creek | Built up to | A vegetated buffer kept
+- *Stormwater | Outlet near the woodland | Outlet moved
+```
 
 ## How this applies to a small Australian business
 

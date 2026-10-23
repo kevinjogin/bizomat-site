@@ -127,6 +127,18 @@ A practical approach is to build in stages, earning credibility before expanding
 5. **Measure and review.** After six to twelve months, assess whether the problems are improving and adjust.
 6. **Expand only where value is proven.** Add services such as benefits tracking or capability development when the foundation works.
 
+```figure
+type: steps
+title: Building a PMO in stages
+caption: Start with honest visibility; add services only where they prove their value.
+- Define the problems and mandate
+- Start with visibility
+- Add one decision service
+- Introduce minimum standards
+- Measure and review
+- *Expand where value is proven
+```
+
 ## A worked example
 
 This is an illustrative example. The organisation, figures and events are hypothetical.
@@ -136,6 +148,17 @@ A mid-sized manufacturer with 180 staff has 27 active projects: product launches
 Before approving it, the leadership team names the problems: unreliable status, overloaded engineers and projects starting without clear justification. It designs a smaller PMO: one experienced project manager reporting to the general manager, with a twelve-month mandate to deliver three services. First, a single-page monthly portfolio view of all projects over $50,000 or using more than one person-month of engineering time. Second, a monthly capacity view of engineering demand against availability. Third, a short gate review before any new project over $100,000 is approved.
 
 Within six months, the portfolio view shows that 11 of the 27 projects have not progressed in two months. The capacity view shows engineering demand at about 140% of available hours. The leadership team pauses eight projects and stops three. Engineering demand falls to about 95% of capacity, and the average time to complete the remaining projects shortens noticeably. Only then does the business consider adding standard templates and lessons-learned reviews.
+
+```figure
+type: bars
+title: Engineering demand against available hours
+unit: %
+max: 150
+caption: Eight of 27 projects were paused and three stopped; the remaining projects finished noticeably faster.
+- Before the portfolio decisions | 140
+- *After pausing 8 and stopping 3 | 95
+- Available capacity | 100
+```
 
 ## How this applies to a small Australian business
 

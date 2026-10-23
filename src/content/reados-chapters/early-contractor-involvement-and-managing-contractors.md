@@ -30,6 +30,17 @@ Delivery models sit on a spectrum. At one end, the owner hands over as much risk
 | Managing contractor | Often coordinated by the managing contractor | Managing contractor, usually by competitive trade packages | Fee plus reimbursable trade costs, sometimes with a ceiling | Higher; owner carries much of the cost risk and oversees closely |
 | Construction management | Owner's consultants | Owner directly, with the construction manager as agent | Fee to the construction manager; trade contracts priced individually | Highest; owner holds every trade contract and the interface risk |
 
+```figure
+type: layers
+title: A spectrum of control and risk
+caption: Moving down the list gives the owner more control and more risk to carry.
+- Construct only | lump sum; design risk with the owner
+- Design and build | lump sum from the owner's brief
+- Early contractor involvement | stage 1 fee, negotiated stage 2
+- Managing contractor | fee plus reimbursable trades
+- *Construction management | owner holds the trade contracts
+```
+
 The [design first or design and build](/reados/collections/procurement-and-tendering/design-first-or-design-and-build/) article covers the choice between the first two models in detail. This article focuses on the others.
 
 ## Early contractor involvement
@@ -117,6 +128,17 @@ It chooses a two-stage ECI process. Three contractors compete for stage 1 on the
 Its stage 2 lump-sum offer is $4.82 million. The manufacturer's independent estimator, given the same design and risk register, estimates $4.65 million. The difference is mainly in two trade packages and a risk allowance for the roof work. Using the open-book build-up, the parties agree to re-tender the electrical package, which reduces the price by $70,000, and to remove the contractor's $60,000 risk allowance for the roof work, carrying that work instead as a provisional sum because its extent will only be known after opening up. The final lump sum, excluding the provisional sum, is $4.82 million less $70,000 less $60,000, or $4.69 million. The manufacturer keeps the off-ramp until signing, and the design produced in stage 1 belongs to it.
 
 The process cost $60,000 and four months, but it produced a buildable staging plan for an operating site, a price the owner could test and a known approach to the largest risk.
+
+```figure
+type: bars
+title: Testing a stage 2 price for a packing hall expansion
+unit: $m
+max: 5
+caption: Re-tendering electrical saved $70,000 and the $60,000 roof risk allowance became a provisional sum.
+- Contractor's stage 2 offer | 4.82
+- Independent estimate | 4.65
+- *Agreed lump sum | 4.69 | excluding the provisional sum
+```
 
 ## How this applies to a small Australian business
 

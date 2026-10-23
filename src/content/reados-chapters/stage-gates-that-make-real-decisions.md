@@ -37,6 +37,17 @@ A gate that can only say "go" is not a gate. Real gates have at least four possi
 | Recycle | Rework the current stage before deciding | Critical information is missing or unreliable |
 | Stop | End the project and redeploy its resources | The case no longer holds, or better uses of the resources exist |
 
+```figure
+type: decision
+title: Four decisions a gate can make
+question: What does the evidence support?
+caption: A gate that can only say "go" is a rubber stamp.
+- Sound case, ranks well | Go
+- *Worthwhile, not now | Hold
+- Critical information missing | Recycle
+- Case no longer holds | Stop
+```
+
 A **conditional go**, approving the next stage subject to specific conditions being met by a stated date, is also common and useful, provided the conditions are tracked.
 
 Organisations that never stop projects at gates should be suspicious of their gates. Some projects inevitably turn out to be poorer than expected. If none are stopped, they are being carried forward by momentum, not decided.
@@ -129,6 +140,17 @@ A small manufacturer of agricultural equipment uses four gates for new products.
 The gatekeepers check the must-meet criteria: strategic fit, no safety or legal show-stoppers, engineering capacity available in the next quarter. All pass. On the should-meet criteria, they question the volume forecast. It rests on conversations with two dealers, and no farmers have been asked whether they would pay the proposed price. They also note that two other projects need the same design engineer.
 
 Rather than "go", they decide **recycle with conditions**: spend up to $8,000 and six weeks on customer validation, using a simple prototype and structured interviews with twenty farmers, and return with a revised volume and price assessment. The validation shows strong interest but at a lower price, which reduces the margin to $55 per unit, and suggests a realistic volume of about 900 units. Annual contribution falls from roughly $102,000 to roughly $49,500. At the second business case gate, the project still meets its return threshold, but ranks below one of the competing projects. The gatekeepers decide **hold** for one quarter, and approve the competing project first.
+
+```figure
+type: compare
+title: A trailer hitch at the business case gate
+cols: First gate | After $8,000 of validation
+caption: Six weeks of validation prevented a $140,000 commitment on an untested forecast; the project was put on hold.
+- Volume | 1,200 units a year | About 900
+- Margin | $85 a unit | $55 a unit
+- *Annual contribution | About $102,000 | About $49,500
+- Decision | Recycle with conditions | Hold for a quarter
+```
 
 The gate process cost $8,000 and six weeks. It prevented a $140,000 development commitment based on an untested forecast and ensured the scarce design engineer worked on the stronger project first.
 
