@@ -65,6 +65,30 @@ Before connecting anything, decide the **system of record** for each kind of dat
 | Invoices and payments | Accounting | CRM for customer service |
 | Employee hours | Timesheet system | Payroll, job costing |
 
+```figure
+type: svg
+title: One system of record for each kind of data
+alt: The ERP owns items, prices and stock and sends them to the online shop and CRM. The online shop owns web orders and sends them to the ERP. Accounting owns invoices and payments and shares them with the CRM for customer service.
+caption: Decide which system owns each fact; the others receive it and never overwrite it.
+viewbox: 0 0 640 230
+body:
+<rect class="bxa" x="240" y="90" width="160" height="56" rx="8"/>
+<text class="txb" x="320" y="114" text-anchor="middle">ERP</text>
+<text class="tx txs" x="320" y="134" text-anchor="middle">items · prices · stock</text>
+<rect class="bx" x="20" y="20" width="170" height="52" rx="8"/>
+<text class="tx" x="105" y="42" text-anchor="middle">Online shop</text>
+<text class="tx txs" x="105" y="60" text-anchor="middle">owns web orders</text>
+<rect class="bx" x="450" y="20" width="170" height="52" rx="8"/>
+<text class="tx" x="535" y="42" text-anchor="middle">CRM</text>
+<text class="tx txs" x="535" y="60" text-anchor="middle">owns customers</text>
+<rect class="bx" x="240" y="170" width="160" height="52" rx="8"/>
+<text class="tx" x="320" y="192" text-anchor="middle">Accounting</text>
+<text class="tx txs" x="320" y="210" text-anchor="middle">owns invoices, payments</text>
+<path class="la flow" d="M240 108L190 64M400 108L450 64"/>
+<path class="ln flow" d="M150 72L260 92"/>
+<path class="ln dsh flow" d="M400 196L535 72"/>
+```
+
 Other systems should not change data they do not own, or changes will conflict. Two-way synchronisation, where both systems can change the same data, is possible but complex and should be used only when necessary, with clear rules for resolving conflicts.
 
 ## Direction and timing
@@ -177,6 +201,17 @@ This is an illustrative example. A business selling outdoor equipment online and
 **Design.** The ERP is confirmed as the system of record for items, prices and stock; the shop for web orders; and accounting for invoices and payments. New web orders are sent to the ERP immediately through webhooks, each with the shop's order number as a unique reference so duplicates are ignored. Stock levels flow from the ERP to the shop every five minutes, with a safety buffer for fast-selling items. The logistics provider's dispatch confirmations update the ERP, which creates invoices in accounting. Failed messages go to a review queue, and alerts are sent if any flow stops for more than 30 minutes. A nightly report reconciles orders, dispatches and invoices.
 
 **Result.** Oversold orders fall to about one a month, mostly from simultaneous purchases of the last unit. Re-keying is eliminated, and month-end reconciliation takes hours rather than days. The integration register and documentation mean the business is not dependent on the developer who built it.
+
+```figure
+type: compare
+title: Shop, ERP, accounting and logistics, connected
+cols: Before | After
+best: 2
+caption: Web orders reach the ERP immediately by webhook, each with the shop's order number so duplicates are ignored.
+- Oversold orders | About 25 a month in promotions | About one a month
+- Re-keying web orders | About 12 hours a week | None
+- *Month-end reconciliation | Days | Hours
+```
 
 ## Applying this in an Australian business
 

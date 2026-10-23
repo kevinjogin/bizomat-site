@@ -50,6 +50,17 @@ To calculate the pixels needed, convert the printed size to inches by dividing m
 
 To check an existing image, divide its pixel width by the printed width in inches. An image 800 pixels wide placed 150 mm wide in a brochure has about 800 ÷ 5.9, or 135, pixels per inch: noticeably soft in print. For 300 pixels per inch at that size, it would need about 1,770 pixels.
 
+```figure
+type: bars
+title: Pixels per inch for a 150 mm brochure photo
+unit: ppi
+max: 320
+caption: Divide pixel width by printed width in inches (150 mm ≈ 5.9 in); about 300 ppi is the common print target.
+- 800-pixel web image | 135 | looks soft
+- *1,800-pixel export from the original | 305 | about 1,800 ÷ 5.9
+- Print target | 300
+```
+
 **Enlarging** a small image in software does not add real detail. Traditional enlargement makes it blurrier; AI-based enlargement can produce sharper-looking results, but it invents detail, which is unacceptable for technical images where every feature must be real. The only reliable fix for an image that is too small is a larger original.
 
 ## Images for websites
@@ -142,6 +153,17 @@ This is an illustrative example. A small manufacturer is preparing a printed bro
 - A master image library is created with consistent file names, and staff are asked to save original camera files there.
 
 **Result.** The brochure prints cleanly, the product page loads quickly, the tender submission meets the portal's file limit and future work starts from proper masters.
+
+```figure
+type: compare
+title: Fixing images for print, web and a tender
+cols: Problem | Fix
+caption: Start every job from proper masters, and export a derivative for each use.
+- Brochure photo | 800 px from the website | 1,800 px from the original camera file
+- Logo | Only a small PNG | SVG, PDF and EPS in a brand folder
+- Web photos | 6,000 × 4,000 px, 12 MB each | 2,400 px WebP, a few hundred KB
+- *Tender document | About 180 MB | About 9 MB screen version, separate print version
+```
 
 ## Applying this in an Australian business
 

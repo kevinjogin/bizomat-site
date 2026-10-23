@@ -91,6 +91,17 @@ When better capability may have moved the line, test each significant outsourced
 | Control and risk | What changes in operational, cyber, data, continuity or intellectual property risk if the work moves? |
 | Innovation access | Would bringing it inside cut us off from outside ideas and specialist development? |
 
+```figure
+type: checklist
+title: Five tests for each outsourced service
+caption: Better internal capability can move the make-or-buy line; review contracts against today's capability.
+- x Strategic learning
+- x Scale
+- x Differentiation
+- x Control and risk
+- *x Innovation access
+```
+
 The answer does not need to be in or out. Each service can be placed in one of four groups:
 
 - **Own**: capability that builds important knowledge or distinguishes the business.
@@ -153,6 +164,16 @@ The owner estimates the cost change for the reporting decision:
 | Production engineer's time (2 days × 12 months × $1,000 a day, estimate) | $24,000 added |
 | Annual review and improvement project with the consultant (estimate) | $15,000 added |
 | Net change | about $15,000 saved |
+
+```figure
+type: stack
+title: Bringing routine production reporting in-house
+unit: $'000
+caption: A $54,000 consultant report replaced by engineer time and a smaller annual project with the consultant: about $15,000 saved.
+- Engineer's time | 24
+- Annual project with the consultant | 15
+- *Saved | 15
+```
 
 The saving is modest. The larger benefit is that losses are now spotted within a day rather than weeks later, the production engineer's understanding of the process grows every month, and the consultant's time is spent on work that actually needs a specialist. The administrative staff member's half day a week is redirected to other work. The owner also checks the consultant's contract to make sure all past reports and analysis belong to the business, and confirms that the new data system is backed up and access-controlled.
 

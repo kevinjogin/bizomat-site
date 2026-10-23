@@ -122,6 +122,19 @@ A privacy policy is a promise. A policy that says one thing while the website do
 6. **Plan for breaches.** Know how you would respond to a data breach. Covered organisations must notify affected individuals and the OAIC of eligible data breaches likely to result in serious harm under the Notifiable Data Breaches scheme.
 7. **Review regularly**, at least annually and whenever you add a new tool or process.
 
+```figure
+type: steps
+title: Make your practices match your policy
+caption: A policy is only accurate if it describes what the site and the business actually do.
+- Map your data
+- Review your tools
+- Minimise
+- Secure
+- Train staff
+- Plan for breaches
+- *Review regularly
+```
+
 ## A worked example: a small manufacturer's website
 
 A small manufacturer's website has a quote request form, a newsletter sign-up, an analytics tool and an embedded map. Its review finds:
@@ -133,6 +146,17 @@ A small manufacturer's website has a quote request form, a newsletter sign-up, a
 - Quote request emails are kept indefinitely in a shared inbox. A retention rule is introduced: enquiries that do not become customers are deleted after two years.
 
 The business then publishes a clear, accurate policy that matches what the site actually does. The exercise takes a day and reduces both risk and clutter.
+
+```figure
+type: checklist
+title: What a website privacy review found
+caption: The exercise took a day and reduced both risk and clutter.
+- x Quote form fields: reasonable and necessary
+- ? A date-of-birth field left from a template | removed
+- ? Newsletter data stored overseas | now disclosed
+- ? An old advertising pixel still sending data | removed
+- *? Enquiries kept forever | deleted after two years if no sale
+```
 
 ## Common privacy mistakes in small businesses
 

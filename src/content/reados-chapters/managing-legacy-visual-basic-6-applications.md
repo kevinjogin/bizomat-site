@@ -158,6 +158,19 @@ A migration is a project with real operational risk. Good practice includes:
 6. **Train users** and update procedures.
 7. **Decommission properly**: archive code, data and documentation, and remove the old application so it is not used by mistake.
 
+```figure
+type: steps
+title: Running a VB6 migration
+caption: The old application is the specification, including behaviour nobody remembers.
+- Recover the requirements
+- Build characterisation tests
+- Deliver in stages
+- Run in parallel
+- Plan cut-over and rollback
+- Train users
+- *Decommission properly
+```
+
 Security deserves attention on both sides of the change. Old applications that must remain for a while should be isolated and run with the least privileges possible; new ones should use current authentication, logging and patching. The [cyber security basics for small businesses](/reados/collections/business-systems-security-and-it-decisions/cyber-security-basics-for-small-businesses/) article covers the controls that apply.
 
 ## A worked example
@@ -178,6 +191,16 @@ This is an illustrative example. A manufacturer of small pumps runs an end-of-li
 **Rebuild.** The business commissions a new application using a current development platform and a supported database. The developer uses the documented protocol, the recovered test limits and a set of 300 historical test records with known results as characterisation tests.
 
 **Parallel run.** For two weeks, 200 pumps are tested on both systems. The pass or fail decisions match on 198. The two differences are traced to the old application rounding flow readings before comparing them with the limit, a behaviour nobody knew about. Engineering decides which rule is correct, documents the decision and updates the new application. A short measurement system study confirms that the new system's repeatability is acceptable.
+
+```figure
+type: bars
+title: Parallel run of old and new pump test software
+unit: pumps
+max: 200
+caption: The two differences came from the old program rounding flow readings before comparing them with the limit.
+- *Same pass or fail decision | 198
+- Different decision | 2
+```
 
 **Result.** The new test station goes live with a validated record of equivalence, historical results are migrated and archived read-only, and the old application is removed. The business now has source code it owns, documented test rules and a supported platform.
 

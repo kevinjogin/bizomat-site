@@ -157,6 +157,18 @@ After shortlisting systems suited to discrete manufacturing at their size, the b
 
 Six months after the final phase, stock accuracy is above 95%, component shortages are rare, month-end takes three days, and the owner can see margin by product family for the first time. That visibility leads to price increases on two unprofitable lines. The project ran about two months over plan, mainly because cleaning the bills of materials took longer than expected, a common lesson.
 
+```figure
+type: compare
+title: A 30-person steel storage manufacturer after ERP
+cols: Before | Six months after
+best: 2
+caption: The project ran about two months over plan, mainly because cleaning the bills of materials took longer.
+- Stock records | Rarely matched the books | Above 95% accurate
+- Component shortages | Several times a month | Rare
+- Month-end | Slow | Three days
+- *Costing | No product costing | Margin by product family, prompting two price rises
+```
+
 ## A simple selection process
 
 1. **Weeks 1–3:** document processes, problems and requirements. Agree the budget and an internal owner.
@@ -164,6 +176,17 @@ Six months after the final phase, stock accuracy is above 95%, component shortag
 3. **Weeks 5–8:** run scripted demonstrations using your scenarios. Check references from similar businesses.
 4. **Weeks 8–9:** compare total cost of ownership over three to five years, implementation approach, support and fit.
 5. **Week 10:** decide, agree a phased plan and start with process mapping and data cleaning.
+
+```figure
+type: timeline
+title: A ten-week ERP selection
+caption: Scripted demonstrations with your own scenarios reveal more than vendor presentations.
+- Weeks 1–3 | Processes, problems, requirements | budget and an internal owner
+- Weeks 3–5 | Shortlist three or four
+- Weeks 5–8 | Scripted demonstrations | and reference checks
+- Weeks 8–9 | Compare total cost over 3–5 years
+- *Week 10 | Decide and plan the phases
+```
 
 ## Summary
 

@@ -89,6 +89,18 @@ Before approving a technology or facility as the preferred option, ask:
 | Capability | What skills, data and maintenance capability do we need to run it well? |
 | Trajectory | Which of these conditions are likely to change during its life? |
 
+```figure
+type: layers
+title: Six things that change the ranking
+caption: The same technology can rank first in one setting and last in another.
+- Energy | supply, cost and emissions here
+- Use | load, duty cycle, climate
+- Network | transport, storage, suppliers
+- Economics | capital, running, transition
+- Capability | skills, data, maintenance
+- *Trajectory | what changes during its life
+```
+
 Then identify which one or two variables could reverse the recommendation, and make them visible in the business case.
 
 ## Build in flexibility where context is uncertain
@@ -120,6 +132,17 @@ The owner also sketches a third option: combining the two closer kitchens into o
 | Three small kitchens | $4.10 | $0.35 | Nil | $4.45 |
 | One central kitchen | $3.40 | $0.95 | $0.06 | $4.41 |
 | Hub plus one local kitchen | $3.70 | $0.50 | Nil | $4.20 |
+
+```figure
+type: bars
+title: Cost per meal once freight is counted
+unit: $
+max: 4.6
+caption: About 600,000 chilled meals a year; production cost alone favoured one central kitchen.
+- Three small kitchens | 4.45 | $4.10 + $0.35 freight
+- One central kitchen | 4.41 | $3.40 + $0.95 freight + $0.06 investment
+- *Hub plus one local kitchen | 4.2 | $3.70 + $0.50 freight
+```
 
 The central kitchen is only marginally cheaper than the current arrangement once the network is included, and it concentrates all the risk in one place. The hub option is the cheapest in these estimates and keeps a second site for resilience.
 

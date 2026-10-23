@@ -48,6 +48,16 @@ Registering several relevant extensions for your main name protects your brand a
 
 A surprisingly common and costly mistake is letting an employee, developer or contractor register the business's domain in their own name or on their own account, perhaps using their credit card for convenience. The person who controls the registration effectively controls the domain. If they leave, fall out with the business or simply lose access, the business can lose its website and email, and recovering the domain can involve lengthy disputes.
 
+```figure
+type: layers
+title: What the business should own
+caption: Use social media and marketplaces to reach people, but build identity on assets you control.
+- *Domain | in the business's name, on its own account
+- Website and hosting | with backups and HTTPS
+- Email | on the business's domain
+- Listings and profiles | linked back to the website
+```
+
 Good practice:
 
 - Register domains in the business's legal name, on an account the business controls.
@@ -169,6 +179,17 @@ A website only helps if people can find it. Practical steps:
 A small engineering consultancy relied on a social media page and a free email address. When a former contractor who had registered its domain years earlier stopped responding, the consultancy discovered it did not control its own domain.
 
 After recovering the domain through the registrar's dispute process, the owner took control of the business's digital foundations. Domains were registered in the company's name on a company account with multi-factor authentication and auto-renewal. A fast, simple website was built, with HTTPS, clear service pages, project examples and a quote form. Professional email was set up on the domain, with authentication records configured. Monthly backups were scheduled and tested. The social media page now directs visitors to the website.
+
+```figure
+type: compare
+title: Rented land and owned land
+cols: Before | After
+best: 2
+caption: A former contractor had registered the domain; recovering it took a registrar dispute.
+- Domain | Registered by a former contractor | In the company's name, MFA, auto-renewal
+- Presence | A social media page | A fast, simple website it controls
+- *Email | A free address | Professional email on its own domain
+```
 
 Enquiries through the website increased steadily, and the owner no longer worries about losing control of the business's online identity.
 

@@ -151,6 +151,16 @@ User acceptance testing confirms that the system supports real work. Plan it car
 | Medium | A process works with an inconvenient workaround | Fix soon after go-live |
 | Low | Cosmetic issues | Fix when convenient |
 
+```figure
+type: layers
+title: Defect severity and the go-live rule
+caption: Agree the rule before testing starts, so sign-off is not negotiated at the deadline.
+- *Critical | wrong totals, data loss, breach: fix before go-live
+- High | key process fails: fix or approved workaround
+- Medium | awkward workaround: fix soon after
+- Low | cosmetic: fix when convenient
+```
+
 ## Repeating tests after updates
 
 Systems change after go-live through vendor updates, configuration changes and new features. **Regression testing** reruns key scenarios to confirm nothing has broken. Keeping the known dataset and its expected results makes regression testing quick, and automating the most important checks makes it routine. The [tests that cannot fail](/reados/collections/decision-making-machines/tests-that-cannot-fail/) article explains how to make sure checks are capable of finding problems.
@@ -185,6 +195,16 @@ This is an illustrative example. An electrical contracting business is replacing
 **Findings.** Testing finds that GST is calculated on each line and rounded, while the accounting system recalculates on the total, producing one-cent differences on about one invoice in five. A variation entered after a part-invoice doubles a discount. A job created on 30 June appears in the wrong financial year in one report. A site supervisor's role can see labour cost rates.
 
 **Fixes and retest.** The vendor adjusts the GST setting to match the accounting system, a configuration error causing the double discount is corrected, the report filter is changed to use the invoice date, and the supervisor role is restricted. All 60 scenarios are rerun, and two further minor issues are fixed.
+
+```figure
+type: checklist
+title: What 60 scenarios from real jobs found
+caption: A regression set of 20 key scenarios is now rerun after every vendor update.
+- ? GST rounded per line, not on the total | one-cent differences on one invoice in five
+- ? A variation after part-invoicing doubled a discount
+- ? A 30 June job in the wrong financial year
+- *? A site supervisor could see labour cost rates
+```
 
 **Result.** The system goes live with signed-off scenarios and a regression set of 20 key scenarios that is rerun after each vendor update. The one-cent GST issue alone would have created reconciliation work every month and confused customers.
 

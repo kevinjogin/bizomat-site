@@ -45,6 +45,15 @@ Servers need continuous, clean power. Data centres provide it in layers:
 
 Redundancy is often described with simple notation: **N** means just enough capacity, **N+1** means one spare unit beyond what is needed, and **2N** means a complete duplicate system.
 
+```figure
+type: layers
+title: N, N+1 and 2N
+caption: Redundancy describes how much spare capacity stands behind each critical system.
+- N | just enough capacity
+- N+1 | one spare unit
+- *2N | a complete duplicate
+```
+
 In a small office server room, the usual weak points are a UPS with ageing batteries, no generator, and servers with a single power supply plugged into a single power board.
 
 ## Cooling
@@ -92,6 +101,16 @@ The Uptime Institute, an organisation focused on data centre reliability, publis
 | Tier II | Redundant capacity components, such as spare UPS and cooling units |
 | Tier III | Concurrently maintainable: any component can be maintained without shutting down equipment |
 | Tier IV | Fault tolerant: designed to withstand a single failure anywhere without affecting equipment |
+
+```figure
+type: steps
+title: Data centre tiers
+caption: Higher tiers let maintenance and single failures happen without shutting equipment down.
+- Tier I | basic; maintenance needs shutdowns
+- Tier II | redundant components
+- Tier III | concurrently maintainable
+- *Tier IV | fault tolerant
+```
 
 Tier claims should be checked. A facility may be designed to a tier, certified for its design, or certified for how it is actually built and operated. Ask which applies and request evidence.
 
@@ -174,6 +193,16 @@ This is an illustrative example. A professional services and engineering firm wi
 **Options.** The IT provider presents three options: upgrade the room with dedicated cooling, a new UPS, monitoring and access control for about $35,000; move the servers to a rack in a colocation facility with Tier III design, dual power and multiple carriers, at about $1,400 a month including power and remote hands; or move the remaining server workloads to cloud services, retiring the hardware over two years.
 
 **Decision.** The firm moves its servers to colocation for the next two years, because the equipment still has useful life, the facility is 20 minutes away and has a direct connection to the firm's cloud provider. It plans to move remaining workloads to the cloud as the servers reach end of life. The storeroom keeps only network equipment, with a small UPS, a temperature alarm and a lock.
+
+```figure
+type: compare
+title: A storeroom server room, three options
+cols: Cost | Trade-off
+caption: The air conditioner had failed twice in two summers and the UPS batteries were dead during a power cut.
+- Upgrade the room | About $35,000 | Cooling, UPS, monitoring and access on site
+- *Colocation, Tier III | About $1,400 a month | Dual power, multiple carriers, 20 minutes away
+- Move to cloud services | Retire hardware over two years | Changes how systems are run
+```
 
 **Result.** The firm removes the overheating and power risks immediately, avoids a large investment in a room it will soon not need, and has a clear path to retire the hardware.
 

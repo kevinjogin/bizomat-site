@@ -33,6 +33,19 @@ Availability is often expressed as the percentage of time a system is working. C
 
 Each additional "nine" reduces downtime tenfold and usually increases cost and complexity substantially. For most small and medium businesses, the practical range is between 99.5% and 99.95% for critical systems, achieved within business hours rather than around the clock.
 
+```figure
+type: bars
+title: Downtime allowed per year
+unit: hours
+max: 90
+caption: Each extra nine cuts downtime tenfold and usually raises cost and complexity substantially.
+- 99% | 87.6
+- 99.5% | 43.8
+- *99.9% | 8.8
+- 99.95% | 4.4
+- 99.99% | 0.9 | about 53 minutes
+```
+
 ## Availability, backup and disaster recovery are different
 
 | Concern | Protects against | Typical measures |
@@ -151,6 +164,26 @@ For software-as-a-service products, availability is largely in the provider's ha
 
 When a system depends on several components in series, its overall availability is roughly the product of their individual availabilities. A cloud application at 99.95%, depending on an office internet link at 99.5% and an authentication service at 99.9%, is available to office users only about 99.35% of the time, around 57 hours a year. The weakest link often dominates. Improving the internet connection may achieve more than upgrading the application.
 
+```figure
+type: svg
+title: Availability in series
+alt: Three components in series: a cloud application at 99.95%, an office internet link at 99.5% and an authentication service at 99.9%. Together office users see about 99.35%, around 57 hours of downtime a year. The internet link is the weakest component.
+caption: Availabilities multiply; the weakest link, here the office internet, often dominates.
+viewbox: 0 0 640 170
+body:
+<rect class="bx" x="20" y="40" width="160" height="56" rx="8"/>
+<text class="tx" x="100" y="64" text-anchor="middle">Cloud app</text>
+<text class="txb" x="100" y="84" text-anchor="middle">99.95%</text>
+<rect class="bxa pulse" x="230" y="40" width="160" height="56" rx="8"/>
+<text class="tx" x="310" y="64" text-anchor="middle">Office internet</text>
+<text class="txb" x="310" y="84" text-anchor="middle">99.5%</text>
+<rect class="bx" x="440" y="40" width="160" height="56" rx="8"/>
+<text class="tx" x="520" y="64" text-anchor="middle">Sign-in service</text>
+<text class="txb" x="520" y="84" text-anchor="middle">99.9%</text>
+<path class="ln flow" d="M180 68H230M390 68H440"/>
+<text class="txb" x="320" y="140" text-anchor="middle">Together ≈ 99.35%, about 57 hours a year</text>
+```
+
 ## Reading service level commitments
 
 Providers' service level agreements state availability commitments, but read them carefully:
@@ -188,6 +221,17 @@ This is an illustrative example. A distribution centre's warehouse management sy
 **Options.** The IT provider proposes moving the database to a managed service with a standby in a second availability zone, running two application servers behind a load balancer, and adding a second internet link from a different provider using a different technology. The additional cost is about $1,500 a month for the cloud changes and $200 a month for the second link, about $20,400 a year.
 
 **Expected benefit.** The provider estimates that server and database failures would then cause outages of minutes rather than hours, and that the second link would cover most internet outages. Expected downtime falls to perhaps three hours a year, saving about $45,000 a year in expected downtime costs against the $20,400 spent.
+
+```figure
+type: bars
+title: Is redundancy worth it for a warehouse system?
+unit: $'000 a year
+max: 60
+caption: About three six-hour outages a year at $3,000 an hour; expected downtime after the changes is about three hours.
+- Expected downtime cost now | 54
+- *Expected saving | 45
+- Annual cost of the changes | 20.4
+```
 
 **Testing.** A failover test in a planned window takes under two minutes, and the warehouse scanners reconnect automatically after a configuration change. A test of the internet failover reveals that the warehouse's main switch has a single power supply, which is replaced with a redundant model.
 

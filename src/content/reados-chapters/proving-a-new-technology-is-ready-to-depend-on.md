@@ -40,6 +40,20 @@ A useful way to think about readiness is a chain of progressively harder questio
 7. **Can it scale?** What changes when it is larger, faster or running continuously?
 8. **Can it create value?** Does it pay its way once wear, maintenance, consumables and downtime are counted?
 
+```figure
+type: steps
+title: From "can it work?" to "can it pay?"
+caption: A best result shows possibility; dependability needs evidence for every step.
+- Can it work?
+- Repeatedly?
+- Across real variation?
+- Can it be maintained?
+- Can it be integrated?
+- Can it be operated safely?
+- Can it scale?
+- *Can it create value?
+```
+
 A demonstration usually answers the first question. Each later question needs its own evidence. The more expensive and harder to reverse the commitment, the more of the chain should be answered before committing.
 
 ## Common misreadings
@@ -124,6 +138,17 @@ The owner negotiates a four-week paid trial on the real line, with the supplier 
 In the first week, the system catches 94% of the known defects and wrongly rejects about 3% of good jars, around 600 a week. Each false reject needs a manual check of about 30 seconds, about 5 hours of labour a week. The causes are found quickly: afternoon sun through the skylights, condensation on the lens after wash-down and reflections from glossy labels.
 
 The fixes are a shroud over the camera, a lens-cleaning step added to the wash-down checklist and separate inspection settings for the two glossy products. By the fourth week, detection is 98% and false rejects are about 0.5%, around 100 jars a week or about 50 minutes of checking.
+
+```figure
+type: compare
+title: A label-inspection camera, week one and week four
+cols: Week one | Week four
+best: 2
+caption: Sunlight, condensation and glossy labels were found and fixed: a shroud, lens cleaning at wash-down and separate settings.
+- Known defects caught | 94% | 98%
+- *Good jars rejected | About 3%, 600 a week | About 0.5%, 100 a week
+- Checking false rejects | About 5 hours a week | About 50 minutes
+```
 
 The owner buys the system on conditions: training for two staff in adjusting inspection settings, a spare lens kit held on site, a defined support response time and a weekly check using the known-defect jars. The trial cost a little and took a month, but the business now knows how the system behaves in its real conditions, what it needs to stay effective and what to monitor.
 

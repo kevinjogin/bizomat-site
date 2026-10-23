@@ -75,6 +75,20 @@ The Australian Signals Directorate's Australian Cyber Security Centre publishes 
 7. **User application hardening.** Configure browsers and applications to block or limit risky content and features.
 8. **Regular backups.** Back up important data, software and settings, store backups so that they cannot be altered or deleted by an attacker, and test that you can restore them.
 
+```figure
+type: checklist
+title: The Essential Eight
+caption: The Australian Cyber Security Centre's baseline mitigation strategies.
+- x Patch applications
+- x Patch operating systems
+- x Multi-factor authentication
+- x Restrict administrative privileges
+- x Application control
+- x Restrict Office macros
+- x User application hardening
+- *x Regular backups
+```
+
 The Essential Eight is defined in maturity levels. Small businesses do not need to reach the highest level, but most will benefit greatly from implementing the basics of each strategy, starting with updates, MFA, backups and limited administrator access. The ACSC's website at cyber.gov.au also publishes guidance written specifically for small businesses.
 
 ## Practical steps for a small business
@@ -150,6 +164,19 @@ Prepare a one-page incident plan before you need it:
 6. **Notify** where required. If personal information is involved, assess whether the Notifiable Data Breaches scheme under the Privacy Act applies to your business, and seek advice.
 7. **Learn**: review what happened and fix the weakness.
 
+```figure
+type: steps
+title: When something goes wrong
+caption: Call the bank immediately if money has moved; fast action sometimes recovers funds.
+- Contain | disconnect, but keep evidence
+- Contact help | IT provider and bank
+- Report | ReportCyber at cyber.gov.au
+- Change credentials | with MFA
+- Restore from clean backups
+- Notify where required
+- *Learn and fix the weakness
+```
+
 Keep key contacts (IT support, bank, insurer, key customers and suppliers) somewhere accessible offline.
 
 ## A worked example: a near miss
@@ -157,6 +184,16 @@ Keep key contacts (IT support, bank, insurer, key customers and suppliers) somew
 An office manager at a small engineering firm receives an email from a regular steel supplier, apparently in a genuine email thread, advising that the supplier has changed banks and asking that the next payment go to a new account. The invoice amount is correct and the email looks authentic.
 
 The firm has a written rule: any change to supplier bank details must be verified by phone using the number already on file, and approved by a second person. The office manager calls the supplier's accounts department, which knows nothing about the change. The supplier's email account had been compromised. The payment of almost $40,000 is saved by a process that took five minutes.
+
+```figure
+type: timeline
+title: A near miss on a $40,000 payment
+caption: A compromised supplier mailbox was stopped by a five-minute process.
+- The email | "We have changed banks" | in a genuine-looking thread, correct amount
+- The rule | Bank changes verified by phone | using the number already on file
+- The call | Supplier knows nothing about it
+- *The outcome | Almost $40,000 saved | and a second approver as backstop
+```
 
 ## A one-page cyber checklist
 
