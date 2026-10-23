@@ -51,6 +51,17 @@ Open protocols such as the Model Context Protocol aim to standardise how AI appl
 
 Each step an agent takes has some chance of error: misreading a result, choosing the wrong tool, misunderstanding the goal. Over many steps, small error rates multiply. If each step is right 95% of the time, a ten-step task with no checks succeeds only about 60% of the time. This is why long autonomous chains are risky and why checks, validation and human approval at key points matter so much.
 
+```figure
+type: bars
+title: Chance a chain of steps succeeds at 95% each
+unit: %
+max: 100
+caption: Small error rates multiply over unchecked steps.
+- 1 step | 95
+- 5 steps | 77
+- *10 steps | 60 | about 60%
+```
+
 Validation between steps changes the arithmetic. If a check catches most errors at each step, for example by confirming that extracted values match a record or that a proposed action fits business rules, the agent can correct course before errors build up. Shorter chains, verified intermediate results and early hand-over to a person when confidence is low all improve reliability.
 
 ## Controls that keep agents safe
@@ -122,6 +133,16 @@ A staged approach builds evidence before autonomy:
 3. **Supervised action**: the agent takes low-risk, reversible actions within limits, with sampling and review.
 4. **Wider autonomy**: only for tasks where evidence shows consistent performance and the consequences of errors are acceptable.
 
+```figure
+type: steps
+title: Introducing an agent in stages
+caption: Move up only when evidence shows consistent performance and acceptable consequences.
+- Shadow mode | compared, not used
+- Assist mode | drafts and recommends
+- Supervised action | low-risk, reversible, sampled
+- *Wider autonomy | only where evidence supports it
+```
+
 Each stage should have exit criteria agreed in advance, and the business should be able to step back a stage quickly if problems appear.
 
 ## What agents can sensibly do today
@@ -146,6 +167,16 @@ This is an illustrative example. A wholesaler processes about 1,500 supplier inv
 **The exception agent.** For each mismatched invoice, the agent has read-only access to the order, receipt, supplier history, contract prices and correspondence. It investigates likely causes, such as partial deliveries, price changes or duplicate invoices, and drafts a summary with evidence and a recommended resolution. It cannot approve, pay, email suppliers or change records. It stops after a set number of steps or when it cannot find an explanation, and every step is logged.
 
 **Result.** Clerks review the agent's summaries and decide. Average exception handling time falls from about 25 to about 10 minutes, and the evidence trail improves audit readiness. Payments remain under human approval, and a monthly review of a sample of agent investigations checks for errors and missed issues.
+
+```figure
+type: bars
+title: Minutes to handle an invoice exception
+unit: minutes
+max: 30
+caption: About one in five of 1,500 monthly invoices is an exception; payments stay under human approval.
+- Before | 25
+- *Agent gathers evidence, clerk decides | 10
+```
 
 ## Applying this in an Australian business
 

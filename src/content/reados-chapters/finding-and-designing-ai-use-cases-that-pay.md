@@ -148,7 +148,28 @@ This is an illustrative example. A facilities maintenance company with about 200
 | Automated scheduling optimisation | 5 | 1 | 3 | 3.4 |
 | Public customer chatbot | 3 | 4 | 2 | 3.1 |
 
+```figure
+type: bars
+title: Weighted scores for four AI opportunities
+max: 5
+caption: 50% value, 30% feasibility, 20% risk, each scored 1 to 5; scores support discussion, not replace judgement.
+- *Work order categorisation | 4
+- Voice-to-text job reports | 3.7
+- Scheduling optimisation | 3.4
+- Public customer chatbot | 3.1
+```
+
 **Decisions.** Work order categorisation proceeds first, with a baseline of six minutes per work order and a 10% misassignment rate, and targets of two minutes including review and under 3% misassignment. Voice-to-text reports follow. Scheduling optimisation is deferred until job duration data improves, with a data improvement project started instead. The chatbot is not pursued.
+
+```figure
+type: compare
+title: Targets for work order categorisation
+cols: Baseline | Target
+best: 2
+caption: About 400 coordinator hours a month went on reading and categorising work orders.
+- Time per work order | Six minutes | Two minutes, including review
+- *Misassigned to the wrong trade | About 10% | Under 3%
+```
 
 **Result.** Six months later, categorisation takes about two minutes per work order including coordinator review, misassignment has fallen below the target, and the business can show the benefit against its baseline. The structured list of remaining opportunities guides the next round.
 

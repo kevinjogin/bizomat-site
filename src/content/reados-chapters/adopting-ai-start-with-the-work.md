@@ -55,6 +55,17 @@ Once staff see what AI can do, ideas multiply: quoting, marketing copy, scheduli
 | Learning | What will this teach us, or build, that helps later use cases? |
 | Reversibility | Can we stop or roll it back safely if it disappoints? |
 
+```figure
+type: checklist
+title: Scoring an AI use case as a bet
+caption: Choose a portfolio: some quick value, some learning, some kept in explore.
+- x Value | a measurable baseline
+- x Readiness | data, process, owner, systems
+- x Consequence | if it is wrong, biased or unavailable
+- x Learning | what it builds for later
+- *x Reversibility | can it be stopped safely?
+```
+
 Two common sequencing mistakes are to start with the easiest idea, which may demonstrate the technology without testing anything that matters, and to start with the biggest idea, which may depend on data or integration that is not ready. A good first set mixes a few modest, high-readiness uses with one that builds a foundation, such as reliable access to the business's own documents, that later uses will need.
 
 Move ideas through stages, such as explore, pilot, scale and retire, with a decision at each step. Retiring weak pilots deliberately is as important as scaling good ones.
@@ -117,6 +128,17 @@ This is an illustration. A 20-person fabrication and installation business holds
 The team decomposes the estimator's role. Formatting and standard wording are automated. Scope drafting is augmented, with the estimator reviewing and correcting. Pricing judgement, risk assessment and customer negotiation are retained. The released time is deliberately redirected to following up quotes, which previously often went unchased.
 
 After three months, quote turnaround falls from about five days to about three, follow-ups happen consistently and the job search tool is used daily, though it first exposed messy file naming that had to be fixed. One extra pilot, using AI to code supplier invoices, is retired because the business's accounting software already does most of it. The maintenance idea waits for better data.
+
+```figure
+type: compare
+title: Decomposing the estimator's role
+cols: Treatment | Who does it
+caption: Quote turnaround fell from about five days to about three, and follow-ups now happen consistently.
+- Formatting and standard wording | Automated | The tool
+- Scope drafting | Augmented | The tool drafts, the estimator corrects
+- *Pricing, risk and negotiation | Retained | The estimator
+- Released time | Redirected | Following up quotes
+```
 
 ## How this applies to a small Australian business
 

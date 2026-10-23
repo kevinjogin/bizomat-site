@@ -42,6 +42,17 @@ A sound AI delivery lifecycle runs:
 4. **Controlled production**: release to a limited group with monitoring, support and a fallback, and measure results against the baseline.
 5. **Operate and adopt**: expand in planned steps, embed the new process, retire the old one and keep improving.
 
+```figure
+type: steps
+title: A delivery lifecycle that works
+caption: A thin slice in the real environment teaches more than a polished demonstration.
+- Discovery | problem, baseline, owner
+- Thin slice | end to end, in the real environment
+- Evaluation | agreed acceptance criteria
+- Controlled production | limited group, monitored
+- *Operate and adopt | expand, retire the old way
+```
+
 The key idea is the **thin slice**: a narrow but complete path through the real environment, rather than a broad demonstration on a copy of the data. A thin slice exposes integration, security and adoption issues early, when they are cheap to fix.
 
 ## Production standards
@@ -165,6 +176,18 @@ This is an illustrative example. A freight company builds a pilot AI assistant t
 - **Adoption**: two champions train the regional sales team, the procedure for non-standard quotes is updated, and the old quoting spreadsheet is withdrawn after a month of parallel running.
 
 **Result.** Within three months of release, about 85% of non-standard quotes in the region are drafted with the assistant. Average turnaround falls from about two days to about four hours, and sampled quotes stay within pricing tolerance. The company expands to a second region, using the same production standards.
+
+```figure
+type: compare
+title: A quote assistant, stalled and then shipped
+cols: Nine-month pilot | Production in one region
+best: 2
+caption: Within three months about 85% of non-standard quotes in the region were drafted with the assistant.
+- Data | Exported, on a trial account | Customer system and pricing engine connected
+- Acceptance | A good demonstration | Within tolerance on 95% of 250 past enquiries
+- Review | None formal | Security and privacy reviews early
+- *Turnaround | About two days | About four hours
+```
 
 ## Applying this in an Australian business
 

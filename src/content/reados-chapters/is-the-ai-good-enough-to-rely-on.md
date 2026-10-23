@@ -121,11 +121,31 @@ A sample of 400 past requests is classified blind by two experienced coordinator
 
 For routing to the right trade, the tool is about 97% accurate against the coordinators' 94%, and routing errors are cheap to correct. Scenario testing shows the tool struggles with messages describing several problems at once.
 
+```figure
+type: compare
+title: Benchmarking an AI triage tool against coordinators
+cols: Coordinators | AI tool
+caption: Overall accuracy hid the costly errors: the tool was worse on the cost-weighted measure for urgency.
+- Urgency accuracy | About 90% | About 91%
+- *Emergencies classed as routine | 1 of 25 | 4 of 25
+- Trade routing accuracy | About 94% | About 97%
+```
+
 The decisions are:
 
 - **Routing: rely on it**, with coordinators handling flagged exceptions and a monthly check of a sample.
 - **Urgency: use it as support.** The tool suggests an urgency level, and a coordinator confirms it. The justification is more consistent classification, not labour savings. Override rates are tracked.
 - **An AI tool to estimate repair costs: shelved.** The constraint is that the business has no structured history of job costs. The reopening trigger is twelve months of costed job data captured in its new job management system.
+
+```figure
+type: decision
+title: Three outcomes from one benchmark
+question: How does it compare with the current process?
+caption: Each outcome has its own owner, evidence and reversal trigger.
+- *Routing: clearly better, cheap errors | Rely on it | with a monthly sample check
+- Urgency: better on average, worse on costly cases | Use as support | coordinators confirm
+- Repair cost estimates: no benchmark data | Shelve | reopen after 12 months of costed jobs
+```
 
 ## How this applies to a small Australian business
 

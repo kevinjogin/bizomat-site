@@ -63,6 +63,15 @@ The promise of predicting machine failure is appealing, but the data are often t
 2. **Anomaly detection**: use unsupervised methods to learn what normal looks like for each machine and flag unusual patterns for investigation.
 3. **Failure prediction**: once enough failures and their warning signs have been recorded, supervised models can estimate the probability or timing of failure.
 
+```figure
+type: steps
+title: Building up to predictive maintenance
+caption: Each stage needs the data the previous one collected.
+- Condition monitoring | sensible alarm limits
+- Anomaly detection | learn what normal looks like
+- *Failure prediction | once failures and warnings are recorded
+```
+
 Each step is only worth doing if someone can act on the warning: a planned maintenance window, spare parts and a technician. The [maintenance that prevents breakdowns](/reados/collections/lean-and-continuous-improvement/maintenance-that-prevents-breakdowns/) article explains how to decide which machines justify condition monitoring.
 
 ## Demand forecasting
@@ -122,6 +131,16 @@ This is an illustrative example. A 40-person plastics business moulds coloured h
 **Data.** A camera station with controlled lighting is fitted to one machine. Over three months it collects about 12,000 images, of which about 2%, roughly 240, show defects. Two inspectors label the images after first agreeing boundary samples for each defect type, because their initial agreement on borderline specks was poor.
 
 **Training and testing.** The vendor trains a model on the first two months of images and tests it on the third month, about 4,000 images including 80 defects. Images of the same part never appear in both sets. At the chosen threshold, the model catches 77 of the 80 defects, missing about 4%, and flags about 3% of good parts, around 118. Together, about 5% of parts are flagged.
+
+```figure
+type: bars
+title: Defective housings missed at inspection
+unit: %
+max: 14
+caption: Tested on a third month of 4,000 images with 80 defects; about 3% of good parts are also flagged for review.
+- Manual inspection | 12 | more on night shift
+- *Camera model | 4 | 77 of 80 caught
+```
 
 **Threshold and workflow.** Because a defect reaching the customer costs far more than a second look, the business keeps the threshold low and sends flagged parts to an inspector for confirmation, rather than rejecting them automatically. Inspectors now review about one part in twenty rather than every part.
 

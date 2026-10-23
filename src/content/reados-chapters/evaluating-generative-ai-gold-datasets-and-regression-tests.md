@@ -46,6 +46,17 @@ Sizes vary with risk and variety, but a few hundred well-chosen cases are often 
 
 Small test sets give uncertain results. With 200 test cases and a measured accuracy of 95%, the true accuracy could plausibly lie anywhere from about 92% to 98%, so a change from 95% to 94% may be noise rather than a real decline. Report the number of cases with every score, and treat small differences with caution.
 
+```figure
+type: range
+title: What 95% on 200 test cases really means
+unit: %
+min: 90
+max: 100
+caption: A drop from 95% to 94% may be noise; read small-sample scores as ranges.
+- Plausible true accuracy | 92 | 98 | measured 95%
+- *Measured | 95 | 95
+```
+
 Averages also hide what matters. A system can score 96% overall while failing every case of a rare but important type, such as contracts with unusual liability clauses or enquiries from customers with accessibility needs. Break results down by case type, document source, customer group and error severity, and set separate thresholds for critical cases. One serious error in a critical field may matter more than ten minor wording problems.
 
 ### Who should evaluate
@@ -145,6 +156,16 @@ This is an illustrative example. A professional services firm deploys an assista
 **Evaluation design.** The firm assembles a gold dataset of 200 past contracts, with reference lists of key clauses and their effect prepared by experienced staff. The rubric scores correctness, completeness of key terms, groundedness in the contract text and clarity. Two reviewers score a sample of 50 summaries to calibrate a judge model, which agrees with the human consensus on about 85% of scores; disagreements are reviewed by people. Acceptance criteria require at least 95% recall of indemnity and liability clauses, no invented terms and a sampled human review before each release.
 
 **Regression in action.** Some months later, the model provider releases an update. The regression pipeline runs automatically and shows indemnity clause recall falling from 96% to 88%, while other scores are unchanged. Release is blocked. Investigation shows the new model summarises long clauses more aggressively. The prompt is adjusted to require each indemnity clause to be listed separately with its reference, recall returns to 97%, and the release proceeds with the evaluation record attached.
+
+```figure
+type: timeline
+title: A model update caught by regression tests
+caption: Release was blocked automatically until the score recovered, and the evaluation record shipped with it.
+- Baseline | Indemnity clause recall 96%
+- Provider update | Recall falls to 88% | other scores unchanged
+- Fix | Each indemnity clause listed with its reference
+- *Release | Recall 97%
+```
 
 **Monitoring.** Each month, staff review a random sample of live summaries, and any missed clause is added to the gold dataset.
 

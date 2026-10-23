@@ -90,6 +90,16 @@ For the most important use you are planning, list each critical source of inform
 | Drawings | Engineer | Production read, engineering edit | Superseded versions in use | Revision control; archive old versions |
 | Staff and payroll files | Owner | Owner and payroll only | Stored in shared folder | Move to restricted location |
 
+```figure
+type: checklist
+title: A simple data map, one line per information set
+caption: Owner, access, known issues and how errors are corrected.
+- x Who owns it
+- x Who may access it
+- x Its known quality issues
+- *x How errors are corrected at the source
+```
+
 Even this small table often reveals the most important fixes.
 
 ## Simple standards that help
@@ -122,6 +132,16 @@ The owner builds a simple data map and finds:
 - **Drawings in several revisions** in the same folder, with no clear marking of which was built.
 - **Quotes stored separately from the job files** they relate to.
 - **Staff and payroll files** in a shared folder accessible to everyone, which the AI search could surface.
+
+```figure
+type: checklist
+title: Why a past-jobs search returned poor results
+caption: The AI tool exposed the data habits; fixing them helped every later use.
+- ? Three naming conventions for job folders
+- ? Several drawing revisions with no "as built" mark
+- ? Quotes stored apart from their jobs
+- *? Payroll files open to everyone, and to the search
+```
 
 The fixes are modest. A single naming convention is agreed and applied to new jobs, with the past two years' jobs renamed by a junior staff member over two weeks. The engineer becomes owner of drawings and introduces a simple rule: superseded drawings move to an archive subfolder. The estimator owns quote and job files and links them. The owner moves staff and payroll files to a restricted location and checks access permissions across the shared drive. A simple process lets users flag wrong search results to the relevant owner, who fixes the source.
 

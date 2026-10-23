@@ -42,6 +42,18 @@ These capabilities are often combined. A field inspection app might transcribe a
 | Meetings and knowledge | Transcripts, summaries and action lists from meetings and toolbox talks |
 | Accessibility | Reading documents aloud; describing images for people with low vision |
 
+```figure
+type: tree
+title: Where multimodal AI helps operations
+caption: Measure field-level accuracy on your own documents, photos and recordings before relying on it.
+- Documents, images and speech
+  - Accounts | invoices, receipts, dockets
+  - Logistics | consignment notes, delivery photos
+  - Field service | voice notes, nameplates
+  - Engineering | drawings and schedules
+  - *Meetings | transcripts and actions
+```
+
 Visual inspection on production lines, where cameras check parts for defects, is a related application with its own requirements for lighting, training data and testing; it is covered in more depth in material on machine learning in manufacturing.
 
 ## Measuring accuracy
@@ -135,6 +147,15 @@ This is an illustrative example. A civil contractor receives about 3,000 supplie
 - Monthly sampling checks a set of straight-through dockets against the originals.
 
 **Result.** About 80% of dockets pass straight through. Reviewing the remaining 600 takes about a minute each, around 10 hours a month, plus a few hours of sampling and exception handling, saving about 85 hours a month. Disputes from keying errors fall, and the photo record helps resolve the remaining ones quickly.
+
+```figure
+type: funnel
+title: 3,000 delivery dockets a month
+caption: About a minute each to review the exceptions, saving about 85 hours a month.
+- Dockets received | 3,000
+- *Straight through | about 2,400
+- Reviewed by staff | about 600
+```
 
 ## Applying this in an Australian business
 

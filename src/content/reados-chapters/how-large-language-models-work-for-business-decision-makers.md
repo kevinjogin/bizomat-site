@@ -47,6 +47,15 @@ Training usually happens in stages:
 2. **Instruction tuning**: the model is further trained on examples of instructions and good responses, so it follows requests rather than simply continuing text.
 3. **Alignment**: the model is trained, often using human feedback on which responses are better, to be more helpful, honest and harmless, and to refuse some requests.
 
+```figure
+type: steps
+title: How a language model is trained
+caption: The result predicts plausible text one token at a time; it does not look facts up.
+- Pretraining | predict the next token across vast text
+- Instruction tuning | follow requests
+- *Alignment | helpful, honest, harmless
+```
+
 Two consequences follow. First, a model's built-in knowledge stops at its **training cut-off**; it knows nothing after that unless information is supplied. Second, the model does not know your business: your products, prices, customers, procedures or documents, unless you give them to it.
 
 ## The context window
@@ -141,6 +150,18 @@ This is an illustrative example. A parts distributor trials a language model to 
 - A set of 100 past emails, including tricky cases, is used to test the workflow before go-live.
 
 **Result.** Drafting time falls from about six minutes to about two minutes per email. Invented details disappear from tested drafts, and the few errors that remain, such as misreading an ambiguous request, are caught in review. The business keeps human approval in place and reviews a sample of replies each month.
+
+```figure
+type: compare
+title: Order-status replies, designed twice
+cols: General chat tool | Designed workflow
+best: 2
+caption: Drafting fell from about six minutes to two per email, with human approval kept in place.
+- Order data | None: gaps filled with plausible text | Looked up from the order number
+- Instructions | Ad hoc | Use only the record; say when information is missing
+- Testing | None | 100 past emails, including tricky cases
+- *Result | Invented dates and tracking | Invented details gone from tested drafts
+```
 
 ## Applying this in an Australian business
 

@@ -79,6 +79,16 @@ Because features and tools behave differently, budget for them separately. Fund 
 | Stop condition | Contribution falls below an agreed level at realistic usage | The bottleneck moves elsewhere, or options demonstrably narrow |
 | Liability | External and visible | Internal and rarely recorded |
 
+```figure
+type: balance
+title: Embedded feature or internal tool
+left: Embedded feature
+right: Internal tool
+caption: The two have different owners, economics and ways of failing.
+- Cost per use against price and margin | Time saved on the real bottleneck
+- Fails by margin erosion as use grows | Fails by speeding up the wrong step
+```
+
 Three questions classify any AI initiative: Does a customer's use of it consume our cost? Would a customer notice if it were switched off tomorrow? Is it named, described or implied in something we have sold? If two answers are yes, treat it as a feature.
 
 ## A worked example
@@ -88,6 +98,16 @@ This is an illustration. A small facilities maintenance business adds an AI-powe
 Most sites use the diagnostic about 50 times a year, costing about $20. But the business's largest and most valued customers use it heavily, up to about 3,000 times a year at one site, costing about $1,200 and wiping out most of the margin on that account. The more useful the feature proves, the faster heavy users consume the margin.
 
 The business changes the pricing: each site's agreement includes up to 500 diagnostic runs a year, with additional runs charged at 60 cents. It also clarifies in its terms that the diagnostic suggests likely faults for a technician to confirm, rather than giving a final diagnosis.
+
+```figure
+type: bars
+title: Annual AI cost of one diagnostic feature per site
+unit: $
+max: 1300
+caption: At about 40 cents a run under a flat fee, the heaviest users erased the margin; agreements now include 500 runs, then 60 cents each.
+- Typical site: about 50 runs | 20
+- *Heaviest site: about 3,000 runs | 1200
+```
 
 Separately, the business uses an AI tool internally to draft maintenance schedules. It stops asking that tool to justify itself in revenue and instead asks which bottleneck it relieves. The answer turns out to be the planner's time preparing schedules, which had been delaying new contracts. The measure becomes the time from contract signing to the first scheduled visit, which falls from about three weeks to about one.
 

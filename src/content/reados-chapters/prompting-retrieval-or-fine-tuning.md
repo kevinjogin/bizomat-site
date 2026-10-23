@@ -28,6 +28,17 @@ This article explains each method, what problems it solves, its costs and risks,
 | Fine-tuning | The model's parameters | Consistent specialised behaviour, domain language, cheaper smaller models | Training data, training runs, hosting, retraining |
 | Training a new model | Everything | Rarely justified outside large technology organisations | Very high |
 
+```figure
+type: layers
+title: The adaptation ladder
+caption: Climb only as far as the symptom requires; each rung adds cost and ownership.
+- *Prompting | instructions, examples, format
+- Retrieval | facts supplied with each request
+- Tools | exact data and actions
+- Fine-tuning | the model's parameters
+- Training a new model | rarely justified
+```
+
 Most successful applications combine several rungs: a well-designed prompt, retrieved business information, tools for exact data and, sometimes, a fine-tuned model.
 
 ## Prompting: interface design for models
@@ -144,6 +155,17 @@ This is an illustrative example. A manufacturer receives about 2,000 warranty cl
 **Step 2: structure and retrieval.** Structured outputs with a schema fix the format problems. For each claim, the system retrieves the full definitions and three similar past claims for the most likely codes. Accuracy rises to about 86%, but the large model is slow and costly at this volume.
 
 **Step 3: fine-tuning.** The team prepares 3,000 historical claims with verified codes, removing customer personal information, and fine-tunes a smaller model using a parameter-efficient method. On the untouched test set, it assigns the correct code about 93% of the time, at a fraction of the per-claim cost of the large model.
+
+```figure
+type: bars
+title: Correct failure codes on 300 test warranty claims
+unit: %
+max: 100
+caption: About 2,000 claims a month across 40 codes; the fine-tuned smaller model also cost a fraction as much per claim.
+- Prompting with ten examples | 78
+- Structured output and retrieval | 86
+- *Fine-tuned smaller model | 93
+```
 
 **Operation.** Claims where the model's confidence is low, about one in six, go to a technician. A monthly sample of automated decisions is reviewed, and the training data and evaluation are kept so the model can be retrained when the base model is updated or new failure codes are added.
 

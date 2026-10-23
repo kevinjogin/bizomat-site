@@ -86,6 +86,17 @@ Mark retrieved documents, emails and user inputs clearly as content, not instruc
 
 Index only approved sources, restrict who can add or change documents, record provenance and status, and review changes to high-impact content. Keep drafts and external material out of general retrieval.
 
+```figure
+type: checklist
+title: Controls that contain AI-specific threats
+caption: The model is never the security boundary.
+- x Permissions enforced outside the model
+- x Model output treated as untrusted input
+- x Capabilities limited; approval for consequential actions
+- x Untrusted content separated and labelled
+- *x The knowledge base controlled like code
+```
+
 ### Filter inputs and outputs
 
 Screen inputs for known attack patterns and outputs for personal information, secrets, system instructions and prohibited content. Filters catch common problems but should be one layer among several.
@@ -146,6 +157,18 @@ This is an illustrative example. An online retailer pilots an AI assistant that 
 - Email content is passed to the model as clearly labelled customer content, and instructions within it are ignored by design.
 - System instructions are reviewed to contain no sensitive business logic or credentials, and an output filter blocks attempts to reveal them, along with card and bank details.
 - Monitoring flags unusual refund proposals, repeated failed requests and spikes in usage.
+
+```figure
+type: compare
+title: Red-teaming a refund-capable assistant
+cols: Before | After
+best: 2
+caption: Nine of 40 attack scenarios succeeded at first; on retest none of the critical ones did.
+- Refunds | Issued directly up to $50 | Proposed only; policy and limits checked by the system
+- Identity | Judged by the model | Verified by the application from the account
+- Email content | Mixed with instructions | Labelled as customer content
+- *Monitoring | None | Unusual refunds, failures and spikes flagged
+```
 
 **Result.** On retesting, none of the critical scenarios succeed, and two minor issues are accepted with monitoring. The pilot proceeds with weekly review of flagged conversations.
 

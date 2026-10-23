@@ -148,9 +148,30 @@ For step two, the owner compares two scheduling tools:
 | Implementation | $15,000 | $4,000 |
 | First-year cost | $28,200 | $11,800 |
 
+```figure
+type: bars
+title: First-year cost of two field service platforms
+unit: $'000
+max: 30
+caption: Platform B integrated with the accounting software and had local support; the AI scheduling module was deferred.
+- Platform A: $15,000 setup + $1,100 a month | 28.2
+- *Platform B: $4,000 setup + $650 a month | 11.8
+```
+
 Platform A is technically stronger, but Platform B fits the business's existing systems, has local support and a large user base, and costs less than half as much in the first year. The owner chooses Platform B and notes that AI scheduling can be trialled later if the constraint shifts to scheduling logic.
 
 Four months later, missed appointments have fallen to about 5%. The dispatcher's Monday overload has eased because customers confirm or reschedule automatically. The business has solved the problem it had, not the problem the demonstration suggested.
+
+```figure
+type: bars
+title: Missed appointments at a 28-person plumbing business
+unit: %
+max: 10
+caption: The constraint was incomplete booking information, not scheduling logic; the stop condition was below 6% within four months.
+- Before | 9
+- Stop-condition threshold | 6
+- *Four months later | 5
+```
 
 ## How this applies to a small Australian business
 

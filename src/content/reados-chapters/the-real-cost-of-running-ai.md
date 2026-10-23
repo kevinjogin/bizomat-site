@@ -37,6 +37,16 @@ Consider an illustrative model priced at $3 per million input tokens and $15 per
 
 At 20,000 requests a month, that is about $300. If the application instead sends 10,000 input tokens per request, by including whole documents and long histories, the cost rises to about $0.036 per request, or about $720 a month, for the same number of questions. Context size is often the biggest cost lever. Choosing a larger model can multiply prices again, so the same design might cost several times as much on a premium model as on a mid-range one.
 
+```figure
+type: bars
+title: Monthly cost of 20,000 requests
+unit: $
+max: 800
+caption: At $3 per million input tokens and $15 per million output tokens; context size is often the biggest cost lever.
+- 3,000 input tokens a request | 300
+- *10,000 input tokens a request | 720
+```
+
 ## Embedding and search costs
 
 Systems that answer from documents also pay to prepare and search them. Each document is converted into embeddings when it is added, and again whenever it changes or the embedding model is replaced. Embedding is usually cheap per token, but large document collections, frequent updates and a change of embedding model, which requires re-embedding everything, can add up. Vector and text search services charge for storage and queries, and costs grow with the size of the collection. Removing duplicate and obsolete documents reduces these costs as well as improving answers.
@@ -97,6 +107,17 @@ Local is not automatically more private: unencrypted disks, synchronised laptops
 
 Consider an illustrative local server with suitable graphics cards costing $40,000, used over three years, plus about $10,000 a year for power, hosting, maintenance and staff time. Its annual cost is about $13,300 in depreciation plus $10,000, or about $23,300. If the business's cloud usage for the same work is $1,500 a month, or $18,000 a year, the cloud is cheaper. If usage grows to $4,000 a month, or $48,000 a year, and a local model meets the quality requirement, the server could pay for itself, provided it is kept busy and the business has the skills to run it.
 
+```figure
+type: bars
+title: Local server or cloud, per year
+unit: $'000
+max: 50
+caption: A $40,000 server over three years plus $10,000 a year to run costs about $23,300 a year.
+- Cloud at $1,500 a month | 18
+- *Local server | 23.3
+- Cloud at $4,000 a month | 48
+```
+
 Include the hidden costs on both sides: evaluation and testing of open-weight models, security and patching, upgrades as better models appear, and the risk of hardware sitting idle.
 
 ## The rest of the total cost
@@ -135,6 +156,15 @@ This is an illustrative example. A business launches an internal assistant that 
 - Spend alerts and monthly cost reviews are introduced.
 
 **Result.** The monthly bill falls to about $1,700 at the same usage, average response time halves, and scores on the business's test set of questions are unchanged. The team considers a local server but decides that, at this volume, the cloud service remains cheaper and needs less operational effort.
+
+```figure
+type: timeline
+title: An internal assistant's bill
+caption: About 12,000 input tokens a request had come from full documents and whole histories; test scores were unchanged after the fix.
+- Month 1 | About $800
+- Month 6 | About $6,500 | slow answers
+- *After trimming context | About $1,700 | response time halved
+```
 
 ## Applying this in an Australian business
 

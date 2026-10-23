@@ -29,6 +29,17 @@ Automation is not a single state. It is a series of steps that sit close togethe
 4. **Exception reporting**: the system acts and reports only unusual cases.
 5. **Unreviewed**: the system acts and nobody reads the exceptions.
 
+```figure
+type: layers
+title: The ladder of autonomy
+caption: Locate a system by override and queue data, not by its design intent.
+- Advisory | suggests; a person decides
+- Default accepted | applied unless someone intervenes
+- Bounded action | acts within limits, reports
+- Exception reporting | reports only unusual cases
+- *Unreviewed | nobody reads the exceptions
+```
+
 Each step is small, cheap and locally sensible, and none presents itself as a transfer of authority. They arrive as a software update, a threshold change, a staffing decision or a backlog that quietly stopped being worked. The ladder is climbed by accretion, and accretion produces no minutes.
 
 ## Common misreadings
@@ -105,6 +116,18 @@ This is an illustration. A building supplies business uses software to approve t
 The rule works well overall but misjudges customers whose trade is strongly seasonal, such as landscapers. It sets their limits too high going into quiet months. A credit manager would have caught this case by case. The software applies it to every seasonal customer at once. The problem shows up a quarter later as a rise in overdue debts.
 
 The owner puts the decision on a register. The credit manager becomes the authorising person. Automatic approval is limited to $5,000, and customers flagged as seasonal are always referred for review. Each month, the credit manager re-decides a random sample of twenty automatic approvals without seeing the system's decision, and examines any differences. The business tests switching off automatic approval: it takes one day, and a documented manual process covers the gap. The override rate on referred cases is tracked monthly.
+
+```figure
+type: compare
+title: Automatic credit approval, put on a register
+cols: Before | After
+best: 2
+caption: Nobody remembered deciding to let it approve without review; switching it off was tested and took one day.
+- Limit | Up to $10,000, raised for a backlog | Up to $5,000
+- Owner | Nobody named | The credit manager
+- Exceptions | None | Seasonal customers always referred
+- *Checking | None | 20 approvals re-decided blind each month
+```
 
 ## How this applies to a small Australian business
 

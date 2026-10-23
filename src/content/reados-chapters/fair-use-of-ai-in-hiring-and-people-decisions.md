@@ -71,6 +71,17 @@ Before relying on a tool, run it alongside your normal process:
 4. **Compare outcomes across groups** where you lawfully have the information, for example from voluntary diversity questions, and investigate large differences.
 5. **Check which factors drive the scores.** If something unrelated to the job matters a lot, reconfigure or reject the tool.
 
+```figure
+type: steps
+title: Testing a screening tool on your own decisions
+caption: Run the tool and your people in parallel before switching anything off.
+- Define a good decision in job terms
+- Run tool and people in parallel
+- Hand-review a sample of rejections
+- Compare outcomes across groups
+- *Check which factors drive the scores
+```
+
 Repeat these checks periodically after deployment, because applicant pools, job requirements and vendor models change. The [governing AI decisions](/reados/collections/ai-in-business-practice/governing-ai-decisions/) article covers recording what automated systems may decide and planning a fallback.
 
 ## Comparing outcomes between groups
@@ -108,6 +119,15 @@ Tools that score staff performance from system data, or monitor activity, raise 
 This is an illustration. A 45-person logistics business receives about 400 applications a month for warehouse roles. It trials a CV screening tool from its recruitment platform, which ranks applicants and suggests a shortlist of about 40.
 
 Before switching off its manual process, the operations manager runs both in parallel for a month and reviews a random sample of 50 applicants the tool rejected. Nine of them look well suited to the role: they have relevant warehouse experience but were ranked low. About 360 applicants a month are not shortlisted, so if the sample is representative, roughly 65 suitable people a month were being set aside without anyone seeing them. Looking at the tool's explanation of its scores, the manager finds three patterns. Applicants with employment gaps are ranked down. Applicants who did not mention a driver licence are ranked down, although the role does not require one. And applicants from postcodes further from the depot score lower, which may reflect commuting but also screens out areas with higher unemployment.
+
+```figure
+type: stats
+title: What a sample of rejections revealed
+caption: About 400 applications a month for warehouse roles; supervisors now review 30 rejections a month as well as the shortlist.
+- 9 of 50 | Rejected applicants who looked well suited
+- 360 | Applicants not shortlisted each month
+- *About 65 | Suitable people set aside monthly, unseen
+```
 
 The business reconfigures the tool to use only job-related criteria: warehouse experience, forklift licences where relevant, availability for the shifts required, and a stated willingness to commute. It removes the scoring of employment gaps and the driver licence criterion. A video interview add-on that rated "enthusiasm" is not adopted, because nobody can explain how it relates to doing the job.
 

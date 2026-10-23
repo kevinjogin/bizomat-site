@@ -51,6 +51,19 @@ A RAG system has two halves.
 6. **Generate** an answer with instructions to use only the supplied passages and cite them.
 7. **Log** the question, retrieved sources and answer for monitoring.
 
+```figure
+type: steps
+title: Answering a question with retrieval
+caption: Documents are collected, parsed, chunked, enriched, embedded and indexed before any question is asked.
+- Interpret the question
+- Search by meaning and exact terms
+- Filter by metadata and permissions
+- Rerank the candidates
+- Assemble the context
+- Generate with citations
+- *Log for monitoring
+```
+
 ## Design choices that decide quality
 
 ### Parsing and structure
@@ -162,6 +175,16 @@ This is an illustrative example. An engineering services business builds an inte
 - A test set of 150 questions with expected sources is created with engineers and rerun after every change.
 
 **Result.** On the test set, the share of questions where the correct source appears in the top results rises from about 62% to about 91%, superseded documents no longer appear in answers, and access leaks stop. Engineers report finding procedures and past lessons much faster. Content owners begin retiring obsolete documents because the assistant makes their presence visible.
+
+```figure
+type: bars
+title: Questions where the right source is in the top results
+unit: %
+max: 100
+caption: About 12,000 documents; superseded documents and access leaks also disappeared from answers.
+- First version: fixed chunks, no metadata | 62
+- *After redesign | 91
+```
 
 ## Applying this in an Australian business
 
