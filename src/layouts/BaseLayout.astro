@@ -51,6 +51,10 @@ const props = Astro.props;
       <slot />
     </main>
     <Footer />
+    <script>
+      // Casual-copy deterrence shared by every page; see the file for what it does and never does.
+      import '../scripts/content-guard.ts';
+    </script>
     {SITE.assistant.enabled && <ChatWidget />}
   </body>
 </html>

@@ -1,0 +1,7 @@
+# Security contact for kevos.com (RFC 9116).
+# Please report suspected vulnerabilities through the contact page, marked "Security".
+# Do not include exploit code or personal data in the first message; we will reply with a channel.
+Contact: https://kevos.com/contact/
+Expires: 2027-10-01T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://kevos.com/.well-known/security.txt
