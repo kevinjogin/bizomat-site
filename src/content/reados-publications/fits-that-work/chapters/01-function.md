@@ -46,6 +46,30 @@ body:
 
 This equation has a physical meaning. Increasing H opens the gap; increasing either internal component closes it. Draw the chain on an assembly section and label its start and finish. If the equation cannot be followed through actual contacts, it is not ready for a spreadsheet.
 
+## Trace the chain through contacts
+
+A reliable way to write the equation is to walk around the assembly from one boundary of the gap to the other, passing only through faces that actually touch. For the stop-cartridge case, start at the free face of the spacer, where the gap begins:
+
+1. Cross the spacer to its seated face, against the cartridge: the walk moves away from the stop by S.
+2. Cross the cartridge to its seated face, against the housing wall: a further C away from the stop.
+3. Cross the housing from that wall to the stop face: the walk returns towards the stop by H.
+4. Arrive at the stop, the other boundary of the gap.
+
+Assign a positive sign to the steps that move towards the closing boundary and a negative sign to the steps that move away. The walk gives H − C − S, the same equation as before, but now each term is tied to a contact that someone can point to on the assembly.
+
+```figure
+type: steps
+title: Walking the chain from one gap boundary to the other
+caption: Each step crosses one part between two faces that touch. If a step cannot be named as a contact, the equation is not ready.
+- Start at the spacer's free face | one boundary of G
+- Cross the spacer | − S
+- Cross the cartridge | − C
+- Cross the housing to the stop | + H
+- *Arrive at the stop | the other boundary of G
+```
+
+If the walk has to jump through air, through a feature that does not locate anything, or through a part that may sit in more than one position, the model has found a question rather than an answer. Those questions are the most valuable output of this stage.
+
 ## State the condition of the assembly
 
 A dimension is not fully defined by its numerical size. The gap may change between loose assembly and tightening, between unloaded and loaded states, or between a cool inspection room and a hot enclosure. Write the state before measuring or calculating.
@@ -55,6 +79,14 @@ For this case, the initial model uses clean, fully seated rigid components at a 
 The difference matters during review. “The assembly meets the gap requirement” is broader than “the ideal one-dimensional model meets the gap limits at 20 °C”. The second statement is a useful result. The first is premature if the remaining mechanisms have not been checked.
 
 Record whether the limit applies during manufacture, after assembly or throughout service. A gap checked before tightening may not represent the operating gap. Conversely, requiring a temporary assembly state to meet a service limit can impose unnecessary work if that state has no functional consequence.
+
+## Name the consequence at each end
+
+The two limits of a requirement usually protect against different failures. For the stop-cartridge gap, a gap that is too small could mean the spacer touches the stop and preloads the cartridge, or that thermal growth closes the remaining space in service. A gap that is too large could allow axial movement that produces impact, noise or loss of positional accuracy.
+
+Writing the two consequences separately helps in three ways. It shows which limit deserves more caution if they differ in severity. It shows which evidence is needed for each: a closing gap might call for a hot test, an opening gap for a vibration or wear check. And it prevents a later review from treating the limits as interchangeable, for example by accepting a shift towards the larger gap because the lower limit was the original worry.
+
+In the teaching record, both ends are treated as equally important. A real project would record the consequence and its severity for each limit, and a tighter or looser margin at one end can then be a deliberate decision rather than an accident of arithmetic.
 
 ## Build the first requirement record
 
@@ -84,6 +116,16 @@ Keep the record short enough to use. A requirement spreadsheet with dozens of em
 
 Give the requirement an identifier, such as GAP-01, and use it consistently in calculations, inspection records and design reviews. The identifier is a link, not a substitute for a definition. If the meaning changes, preserve the old version so earlier evidence remains interpretable.
 
+## Decide how the requirement will be verified
+
+Before tolerances are allocated, decide how the gap will be confirmed. There are three broad routes:
+
+- **Measure the assembled gap directly**, for example with feeler gauges or a depth gauge through an access point. This tests the real result but needs access, and feeler gauges step in increments and depend on the operator's feel.
+- **Measure each component and calculate the gap.** This works when the assembly hides the gap, but it relies on the model being complete and on each measurement representing the contact faces.
+- **Test the function**, for example by confirming free movement or the absence of contact at temperature. This shows the mechanism works in the tested conditions but may not reveal how close it is to failing.
+
+The choice affects the design. An inspection hole, a datum face that a gauge can reach, or a fixture for measuring components in their assembled orientation is much cheaper to add now than after tooling is made. Record the intended method in the requirement record, next to the limits it will verify.
+
 ## Distinguish requirements from design choices
 
 The gap limits describe the desired result. Choosing a 60 mm housing span or a 6 mm spacer is a design decision intended to achieve that result. A supplier's preferred machining tolerance is a process proposal. Keeping these three levels separate creates room to improve the design.
@@ -94,6 +136,12 @@ An exception may be legitimate when the original functional limit was unnecessar
 
 Also distinguish design margin from an extra allowance. Margin is the distance between a predicted result and its limit. An allowance is a deliberately assigned amount for an effect, such as wear. If the same effect has already been included in the model, deducting it again as an allowance counts it twice.
 
+## Translate the customer's words
+
+Requirements often arrive in words, not numbers: "must not rattle", "must assemble without force", "must keep running when hot". Those statements are valid starting points but cannot be checked against a drawing until they are translated into a quantity, a limit and a condition.
+
+Keep the original words with the translated requirement. If "must not rattle" became a maximum gap of 2.15 mm, the record should show the original statement, who made the translation and what evidence supported the number. When the limit is later challenged, the team can return to the original need rather than argue about a number whose origin has been lost. If the translation turns out to be wrong, it is the translation that changes, with the customer's need still visible.
+
 ## Use a diagram as a question, not proof
 
 A simplified section should reveal the contact sequence and the direction of each term. It need not look like a finished production drawing. Show whether a component rests against a shoulder, floats on a spring or is fixed by a fastener. Those details decide whether its full length belongs in the dimensional chain.
@@ -103,6 +151,18 @@ For example, adding a cover thickness to the equation is wrong if the stop is ma
 Review the model with the people who assemble and inspect the product. They may identify a burr-sensitive seat, a component installed in two orientations or a surface that cannot be reached after assembly. These observations often improve the model more than adding decimal places.
 
 The existing [tolerances, fits and surface finish chapter](/reados/collections/engineering-design-practice/specifying-tolerances-fits-and-surface-finish/) provides the broader drawing context. Here the task is to make one specific assembly quantity traceable.
+
+## Common traps at the start
+
+A few errors recur often enough to check for deliberately:
+
+- **A reference dimension used as a requirement.** A dimension shown on the drawing for information may have no functional meaning at all.
+- **The wrong state.** A requirement written for the loose assembly but checked after tightening, or the reverse.
+- **A missing intermediate part.** A washer, shim, coating or gasket in the contact path that the sketch left out.
+- **Mixed radial and diametral values.** A clearance quoted per side in one document and across a diameter in another.
+- **One number serving two functions.** A single gap limit trying to protect both a seal compression and a clearance, which may need different conditions and evidence.
+
+Finding one of these before any tolerance is set costs a conversation. Finding it after production has started can cost the whole batch.
 
 ## Exercise: expose the hidden state
 

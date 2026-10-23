@@ -31,6 +31,20 @@ Three times this value is about 0.078102 mm. A mean-plus-or-minus-three-standard
 
 Normal distributions have unbounded tails. This model even permits some individual component sizes outside the drawing limits. If incoming inspection removes those parts, the accepted population is truncated and must be modelled accordingly. Neither the normal model nor its three-standard-deviation interval guarantees that every assembly conforms.
 
+## Ask where the standard deviations came from
+
+The table above uses standard deviations invented for teaching. In a real project, each one must come from somewhere, and its source decides how much weight the statistical result can carry. Useful questions include:
+
+- **Which process produced the data?** The same machine, tooling, material and supplier that will make production parts, or a prototype route?
+- **Over what period?** A short run of consecutive parts usually shows less variation than months of production with tool changes, maintenance and seasonal temperature swings.
+- **Was the process stable?** A standard deviation describes a population only if the process behaved consistently while the data were collected. A control chart or a simple run plot of the measurements in time order answers this better than a single summary number.
+- **Was the measurement adequate?** If the measurement uncertainty is a large fraction of the observed spread, the data describe the gauge as much as the parts. Chapter 6 develops this.
+- **How many parts?** A standard deviation estimated from ten parts is itself uncertain; the true value could easily be noticeably larger.
+
+A first-article inspection report, however careful, shows that one part conformed. It does not supply a standard deviation. A supplier's capability claim should come with the data, period and conditions behind it.
+
+It also helps to distinguish short-term from long-term variation. A standard deviation calculated from consecutive parts made in one setting describes how repeatable the process is over minutes. One calculated from parts sampled across weeks includes tool wear, re-setting, material lots and operator changes, and is almost always larger. A stack that uses short-term values to predict long-term assembly performance will look better than reality. Which one belongs in the model depends on the question: a single batch assembled at once, or a product built continuously over years. The model's record should say which was used and why.
+
 ## Test the interpretation of a tolerance
 
 Suppose instead that every value inside each component's drawing limits is equally likely, with independent uniform distributions. A uniform variable on a symmetric interval with half-width t has standard deviation t / √3. The gap standard deviation would then be:
@@ -88,6 +102,48 @@ Its standard deviation need not change. Reporting only a smaller spread would hi
 
 Keep mean and variation estimates tied to the period and process conditions that produced them. A pooled dataset can be wide because several stable populations have different means. Alternatively, a pooled average can conceal a continuing drift. Examine sequence and groups before treating all observations as interchangeable.
 
+## Translate the model into a predicted nonconformance
+
+A statistical model earns its place when it answers a decision question, such as how many assemblies are expected to fall outside the functional limits. For the centred normal model, the limits of 1.85 and 2.15 mm lie 0.15 mm, or about **5.76 standard deviations**, from the 2.00 mm mean. The normal model then predicts about **4 assemblies in a billion** beyond each limit.
+
+If the means shift so that the gap centre moves to 2.04 mm, as in the example above, the upper limit is only 0.11 mm away, about **4.23 standard deviations**. The predicted fraction above it rises to about **12 in a million**, roughly three thousand times higher, even though the spread has not changed at all.
+
+```figure
+type: compare
+title: Predicted fraction above the upper limit, normal model
+cols: Distance to 2.15 mm | Predicted fraction above
+caption: The same spread of 0.026 mm. Moving the centre by 0.04 mm raises the predicted fraction about three thousand times.
+- Gap centred at 2.00 mm | 5.76 standard deviations | About 4 in a billion
+- *Gap centred at 2.04 mm | 4.23 standard deviations | About 12 in a million
+```
+
+These figures are only as good as the model's tails, which are exactly where real distributions most often depart from the normal shape. They are useful for comparing options and for showing sensitivity to centring. They should not be quoted as an expected field failure rate without evidence that the tails behave as assumed.
+
+## Capability indices for the assembly
+
+The same comparison is often expressed with capability indices. For the gap, using the functional limits as the specification:
+
+- **Cp = (2.15 − 1.85) / (6 × 0.026034) ≈ 1.92**, which compares the permitted width with the spread and ignores the centre.
+- **Cpk** takes the nearer limit. Centred at 2.00 mm, it equals Cp. Centred at 2.04 mm, it falls to **0.11 / (3 × 0.026034) ≈ 1.41**.
+
+The indices summarise the same information as the predicted fractions, and they carry the same assumptions: a stable process, a known distribution shape and a measurement system that does not distort the data. A high index computed from a short, unrepresentative sample is a common source of false confidence. Chapter 8 returns to capability when the pilot build produces real data.
+
+## Mixed populations break the bell curve
+
+Suppose the housing is made on two machines, half on each. Each machine is stable with a standard deviation of 0.012 mm, but one runs centred at 59.98 mm and the other at 60.02 mm. Pooled together, the housing population has two humps, not one bell. Its overall standard deviation is:
+
+**√(0.012² + 0.02²) ≈ 0.0233 mm**
+
+slightly larger than the 0.020 mm assumed in the teaching model, and the shape is no longer normal. Using the pooled value in the gap calculation gives a gap standard deviation of about 0.0287 mm, but the normal tail predictions built on it would be unreliable, because the real distribution has a flatter top and sharper sides.
+
+The practical response is to keep the machines, cavities or suppliers separate in the data, check whether each is stable on its own, and model the assembly with the real mixture or with each source separately. Recording which machine made each part, and which parts went into each assembly, is what makes that possible.
+
+## Inspection changes the population
+
+If parts outside the drawing limits are found and removed before assembly, the population that reaches the assembly is truncated at the limits. For a capable process, almost nothing is removed and the effect on the model is negligible. For a process that cannot hold the tolerance, sorting removes the tails but leaves a population crowded towards the limits, which behaves more like the uniform model above than the normal one.
+
+That has an uncomfortable consequence. A supplier who sorts an incapable process can deliver parts that all conform to the drawing, yet whose spread is wider than any statistical stack assumed. Asking whether the parts are made capable or made and sorted is therefore a legitimate engineering question, not a commercial intrusion.
+
 ## Use simulation to inspect a model
 
 A simulation is useful for investigating nonlinear relationships, selection rules or mixed populations. It is not evidence that its input distributions are correct. Record the random seed, number of trials, units, distributions, dependencies and acceptance rule.
@@ -95,6 +151,22 @@ A simulation is useful for investigating nonlinear relationships, selection rule
 Check the code against a case with a known answer before trusting a complicated model. For the present linear normal case, the simulated mean and standard deviation should approach the analytical values as the trial count grows. An unexplained disagreement is a debugging signal.
 
 Do not report a precise failure rate when no failures occurred in a finite run. Zero observed failures in a simulation or trial is not a proof of zero probability. A rare-event claim needs an appropriate statistical method and evidence about the model itself.
+
+## Check a simulation against a known answer
+
+A short simulation of the independent normal model should reproduce the analytical standard deviation. This example uses only the Python standard library and a fixed seed, so the result can be repeated:
+
+```python
+import random, statistics
+
+random.seed(1)
+gaps = [random.gauss(60.00, 0.020) - random.gauss(52.00, 0.013333)
+        - random.gauss(6.00, 0.010) for _ in range(200_000)]
+print(f"{statistics.mean(gaps):.4f} {statistics.stdev(gaps):.5f}")
+# Expect values close to 2.000 and 0.0260
+```
+
+If the printed standard deviation does not come out close to 0.0260 mm, the code has an error, such as a wrong sign or a half-width used in place of a standard deviation. Only after this check does it make sense to extend the simulation to correlation, mixtures or inspection rules, where no simple formula exists to check against.
 
 ## Exercise: challenge a favourable result
 
