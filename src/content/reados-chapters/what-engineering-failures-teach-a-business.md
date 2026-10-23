@@ -30,6 +30,19 @@ Those problems are not unique to nuclear plants and space programs. They appear 
 | **Columbia, 2003** | Foam struck the wing during launch. The damage was not treated as critical, and the orbiter broke up on re-entry. | The investigation board found organisational causes closely resembling Challenger's |
 | **Deepwater Horizon, 2010** | A pressure test on a well gave anomalous readings that were accepted as satisfactory. The well blew out, and 11 people died. | Barrier management, independent verification of well integrity and handling of ambiguous test results |
 
+```figure
+type: timeline
+title: Seven investigations
+caption: The same organisational patterns recur across industries and decades.
+- 1979 | Three Mile Island | indication showed the command, not the valve
+- 1986 | Challenger | earlier seal erosion normalised; objections overruled
+- 1986 | Chernobyl | an unstable condition entered with safety systems off
+- 1988 | Piper Alpha | a permit lost at shift handover
+- 1998 | Longford | a cold exchanger fractured after an upset
+- 2003 | Columbia | foam damage not treated as critical
+- *2010 | Deepwater Horizon | anomalous test readings accepted
+```
+
 Read across the table and the same themes keep returning. The rest of this article takes them one at a time, adds lessons from two older engineering stories, and translates each into practice for an ordinary business.
 
 ## Lesson 1: a recurring anomaly is a signal, not a reassurance
@@ -117,6 +130,16 @@ Over about six months, more assemblies need a second test. The usual explanation
 Then a customer reports a hose assembly that separated at the fitting in service. Nobody is hurt. The investigation finds that one crimping die has worn, producing crimps at the small end of the acceptable range. The crimping machine's display showed the diameter it was set to produce, not the diameter actually achieved. Marginal crimps were holding pressure on retest after the fitting settled, which is why they passed the second time.
 
 Mapping the lessons onto the event is uncomfortable but useful. A recurring anomaly had been normalised. Ambiguous test results had been resolved towards continuing. A display showed the commanded state, not the actual state. A concern had been raised and dismissed.
+
+```figure
+type: checklist
+title: A hose failure mapped to the lessons
+caption: A worn crimping die, a display that showed the setting not the result, and retests that had become routine.
+- ? A recurring anomaly normalised
+- ? Ambiguous results resolved towards continuing
+- ? A display showing the commanded state
+- *? A concern raised and dismissed
+```
 
 The business makes several changes. Every retest is logged with its reason, and any retest now requires the assembly to be quarantined and inspected before it is tested again. Crimp diameters are measured with a gauge at the start of each shift and at set intervals, and recorded. Die wear checks are added to the maintenance schedule. The weekly production meeting now reviews the retest log, and the owner tells staff that raising a concern about quality is expected, not a complaint. The retest rate falls back below 1 in 200, and the business notifies the affected customer and works through the assemblies supplied from the period of die wear.
 

@@ -143,7 +143,27 @@ A designer analyses a steel cantilever bracket, 10 mm thick and 60 mm deep where
 
 The first FEA model fixes the mounting plate's back face rigidly and models the bracket meeting the plate with a perfectly sharp corner. Away from the corner, the stress is about 52 MPa, close to the hand calculation. At the corner, the peak stress is 140 MPa with a coarse mesh, 190 MPa when the mesh is refined and 260 MPa when refined again. It never converges: a stress singularity.
 
+```figure
+type: bars
+title: Peak stress at a perfectly sharp corner
+unit: MPa
+max: 280
+caption: A singularity: the peak keeps rising as the mesh is refined, while the stress away from the corner stays near 52 MPa.
+- Coarse mesh | 140
+- Refined | 190
+- *Refined again | 260 | never converges
+```
+
 The real bracket has a 5 mm fillet. When the fillet is modelled and the mesh refined around it, the peak stress converges at about 75 MPa, a genuine stress concentration about 1.5 times the nominal value. The designer also replaces the rigid fixed face with modelled bolts and contact against a supporting structure, which changes the stress distribution slightly. Reactions balance the applied load. Because the bracket will vibrate in service, the designer then checks fatigue using the converged fillet stress, rather than either the misleading singular peak or the nominal value.
+
+```figure
+type: stats
+title: A cantilever bracket checked three ways
+caption: 2 kN at 150 mm on a 10 × 60 mm section; the hand calculation anchors the model.
+- 50 MPa | Hand calculation | 300,000 N·mm ÷ 6,000 mm³
+- 52 MPa | FEA away from the corner
+- *About 75 MPa | Converged peak at the 5 mm fillet | about 1.5 × nominal
+```
 
 ## How this applies to a small Australian business
 

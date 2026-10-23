@@ -55,6 +55,29 @@ Good dimensioning follows three habits:
 
 Three steps each dimensioned 20 ± 0.1 mm in a chain put the last face anywhere within 60 ± 0.3 mm. Dimensioned from one datum face as 20, 40 and 60 mm, each ± 0.1 mm, no face is worse than ± 0.1 mm. The tolerances are the same; the certainty is three times better.
 
+```figure
+type: svg
+title: Chain or datum dimensioning
+alt: Three steps dimensioned in a chain, each 20 plus or minus 0.1 millimetres, let the last face vary by plus or minus 0.3. The same steps dimensioned from one datum face at 20, 40 and 60 millimetres keep every face within plus or minus 0.1.
+caption: Tolerances add up along a chain; dimensions from one datum do not.
+viewbox: 0 0 600 220
+body:
+<text class="txb" x="20" y="30">Chain</text>
+<path class="ln" d="M80 70H200V50H320V30H440"/>
+<path class="lf" d="M80 90H200M200 90H320M320 90H440"/>
+<text class="tx txs" x="140" y="104" text-anchor="middle">20 ± 0.1</text>
+<text class="tx txs" x="260" y="104" text-anchor="middle">20 ± 0.1</text>
+<text class="tx txs" x="380" y="104" text-anchor="middle">20 ± 0.1</text>
+<text class="txa" x="520" y="60" text-anchor="middle">last face ± 0.3</text>
+<text class="txb" x="20" y="150">Datum</text>
+<path class="la" d="M80 190H200V170H320V150H440"/>
+<path class="lf" d="M80 200V140"/>
+<text class="tx txs" x="200" y="214" text-anchor="middle">20</text>
+<text class="tx txs" x="320" y="214" text-anchor="middle">40</text>
+<text class="tx txs" x="440" y="214" text-anchor="middle">60</text>
+<text class="txb" x="520" y="180" text-anchor="middle">every face ± 0.1</text>
+```
+
 **Every dimension needs a tolerance**, either stated on the dimension or covered by a general tolerance note, such as a reference to ISO 2768 medium class. Apply tight tolerances only where function requires, because they drive cost. Where position, form or orientation matter, **geometric dimensioning and tolerancing**, under ISO GPS standards or ASME Y14.5, defines them unambiguously relative to datums. State which system the drawing follows.
 
 **Define the result, not the process**, unless the process matters. A note saying "drill" where a hole is required stops a supplier using a cheaper equivalent method. Specify a process only when it affects function, such as reaming for a precise fit or forging for grain flow.
@@ -144,6 +167,17 @@ This is an illustrative example. A business sends a welded steel frame out for q
 - A STEP model at the same revision, with a note that the drawing governs.
 
 **Result.** Revised quotes fall within about $2,300 to $2,900, questions drop to a handful, and the first frames fit at installation without rework. The narrower spread shows suppliers are pricing the same job rather than different guesses.
+
+```figure
+type: range
+title: Fabricator quotes for the same steel frame
+unit: $
+min: 1500
+max: 5000
+caption: About 30 supplier questions before; a handful after, and the first frames fitted without rework.
+- First package: incomplete | 1800 | 4600
+- *Revised package | 2300 | 2900
+```
 
 ## Applying this in an Australian business
 

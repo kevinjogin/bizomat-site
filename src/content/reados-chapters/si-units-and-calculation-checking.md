@@ -68,6 +68,16 @@ The safest way to avoid unit errors in calculations is to use a **consistent set
 | Density | kg/m³ | t/mm³ |
 | Modulus of elasticity | Pa | MPa |
 
+```figure
+type: balance
+title: Two consistent unit sets
+left: SI base set
+right: Millimetre set
+caption: Pick one set and stay in it; 1 MPa is exactly 1 N/mm².
+- m, N, Pa, N·m, kg | mm, N, MPa, N·mm, tonne
+- Common in physics and fluids | Common in mechanical design
+```
+
 The millimetre set is popular in mechanical design because drawings use millimetres and 1 MPa equals exactly 1 N/mm². Using it consistently means a stress in MPa follows directly from a force in newtons divided by an area in square millimetres. Mixing sets, for example using metres in one formula and millimetres in another, is a common source of errors by factors of a thousand or a million.
 
 Finite element and simulation software usually does not know which unit system you intend; it simply uses the numbers you enter. Choosing and documenting a consistent set before building a model is essential.
@@ -163,6 +173,16 @@ A designer needs the extending force of a hydraulic cylinder with an 80 mm bore 
 **Consistent units.** Using the millimetre set, the piston area is π × 40², which is about 5,026.5 mm². The pressure is 150 bar, which is 15 MPa, or 15 N/mm². The force is 5,026.5 mm² × 15 N/mm², which is about 75,400 N, or about 75.4 kN.
 
 **A tempting error.** Multiplying 150 by 5,026.5 without converting units gives about 754,000, a number ten times too large if read as newtons. Writing units on every line exposes the problem immediately: bar multiplied by square millimetres is not a newton.
+
+```figure
+type: steps
+title: Cylinder force with units on every line
+caption: An 80 mm bore at 150 bar; skipping the bar-to-MPa step gives an answer ten times too large.
+- Area | π × 40² ≈ 5,026.5 mm²
+- Pressure | 150 bar = 15 MPa = 15 N/mm²
+- Force | 5,026.5 × 15 ≈ 75,400 N
+- *Check | about 7,700 kg equivalent: plausible
+```
 
 **Checking.** An order-of-magnitude check helps: a pressure of about 15 N/mm² acting on about 5,000 mm² gives about 75,000 N. The equivalent mass that the cylinder could lift, ignoring friction and other losses, is 75,400 ÷ 9.81, or about 7,700 kg, which is a plausible figure for a cylinder of this size.
 

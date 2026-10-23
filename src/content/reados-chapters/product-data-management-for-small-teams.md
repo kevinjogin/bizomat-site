@@ -72,6 +72,17 @@ Typical states include:
 | In change | Released item being revised under a change | The assigned designer |
 | Obsolete | No longer used for new production | Nobody |
 
+```figure
+type: cycle
+title: Lifecycle states for a part
+caption: Released data never changes in place; a change creates a new revision.
+- Work in progress | the owning designer edits
+- In review | checked, nobody edits
+- *Released | approved for purchasing and production
+- In change | revised under a change
+- Obsolete | not for new production
+```
+
 Keep the number of states small. Complex workflows that nobody follows are worse than simple ones that everyone does.
 
 ### Metadata
@@ -155,6 +166,17 @@ A small machine builder with four designers stores CAD files in a shared server 
 The business implements a PDM system integrated with its CAD software. It adopts non-significant part numbers, four lifecycle states, a two-step release workflow and automatic PDF and STEP generation on release. Released drawings are published to a read-only folder that purchasing and suppliers use, and superseded PDFs are removed automatically. Active projects are migrated first; ten years of older files are archived read-only and imported only when a product is revised.
 
 In the following year, there are no supplier errors from superseded drawings and no lost work from overwritten files. Where-used searches before changes reveal several cases where a part was shared across products, preventing unintended changes. Designers report spending less time searching for files.
+
+```figure
+type: compare
+title: From a shared folder to PDM
+cols: Shared folder | PDM system
+best: 2
+caption: Where-used searches also stopped unintended changes to parts shared across products.
+- Supplier drawings | 40 brackets made to a superseded drawing, about $3,200 | Read-only released PDFs only
+- Concurrent work | A day lost to overwritten assemblies | Check-in and check-out
+- *Release | Informal | Two-step workflow; PDF and STEP generated on release
+```
 
 ## How this applies to a small Australian business
 

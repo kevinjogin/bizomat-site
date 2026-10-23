@@ -54,6 +54,17 @@ For example, a 25 mm H7/g6 fit is a close running clearance. The H7 hole ranges 
 | Location with a light tap | H7/k6 | Transition |
 | Permanent press fit | H7/p6 | Interference |
 
+```figure
+type: range
+title: A 25 mm H7/g6 close running fit
+unit: mm
+min: 24.97
+max: 25.03
+caption: Any conforming hole and shaft give a clearance between 0.007 and 0.041 mm.
+- *H7 hole | 25 | 25.021
+- g6 shaft | 24.98 | 24.993
+```
+
 Interference fits deserve extra care: the grip that transmits load also creates stresses in both parts, and assembly may need a press, heating of the outer part or cooling of the inner one. Check the stresses and the assembly method with an engineer for anything that carries significant load. These pairings are indicative; confirm values against the standard tables for the size involved. For bearings, seals and other bought-in components, use the manufacturer's recommended shaft and housing tolerances, which reflect load, speed and mounting conditions.
 
 ## Tolerance stack-ups
@@ -124,6 +135,18 @@ This is an illustrative example. A machine builder buys a machined steel bearing
 **Stack-up check.** A clearance between the bracket and an adjacent guard depends on four dimensions. With ±0.1 mm on each, worst-case variation is ±0.4 mm around a 0.6 mm nominal gap, giving a minimum of 0.2 mm, which is acceptable. If each were loosened to ±0.2 mm, the worst case could produce interference, so those four dimensions keep ±0.1 mm.
 
 **Result.** The same supplier re-quotes at $140 per bracket, about 24% less, because most features can now be machined in one set-up at normal feeds and inspection focuses on the functional features. The first batch is inspected against the new drawing and all brackets pass.
+
+```figure
+type: compare
+title: A bearing bracket toleranced by function
+cols: Before | After
+best: 2
+caption: The supplier re-quoted at $140 instead of $185, about 24% less, with one set-up and focused inspection.
+- Non-functional features | ±0.05 mm from a template | ISO 2768 medium
+- Bearing bore | ±0.05 mm | Bearing maker's housing fit, cylindricity, 1.6 µm Ra
+- Datums | None | Face A; dowel holes B and C; bore positioned to A, B, C
+- *Finish | 0.8 µm everywhere | 3.2 µm general
+```
 
 ## Applying this in an Australian business
 

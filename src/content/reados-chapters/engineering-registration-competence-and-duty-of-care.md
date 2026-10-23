@@ -42,6 +42,16 @@ Engineering registration schemes around the world share four elements:
 | Supervised experience | Practice under experienced engineers | Judgement, which can only be developed through exposure to real consequences |
 | Ongoing obligations | Continuing professional development, ethics, insurance and conduct rules | That competence is maintained and used responsibly |
 
+```figure
+type: layers
+title: How engineering competence is built
+caption: Judgement comes only from supervised exposure to real consequences.
+- Accredited education | the theoretical foundation
+- Assessment | knowledge retained and applied
+- Supervised experience | judgement
+- *Ongoing obligations | CPD, ethics, insurance, conduct
+```
+
 Supervised experience matters most and gets the least attention. Knowledge can be tested in an examination; judgement about which assumptions are fragile, when a result looks wrong and when to stop is developed over years.
 
 **Competence is scoped.** An engineer is competent in particular areas of practice, defined by education, experience and current work, not by job title or seniority. A highly experienced mechanical engineer is not automatically competent to design a structural steel building, and an electrical engineer is not automatically competent to design pressure equipment. Competence also fades if not used and maintained.
@@ -132,6 +142,16 @@ This is an illustrative example. A Queensland manufacturer builds a modified wor
 - The business checks registration requirements for the plant design with the regulator and follows the required process.
 - The production manager contributes practical knowledge of manufacture and assembly, and the risk assessment draws on the people who will build and use the platform.
 - Operating and maintenance information is prepared for the customer.
+
+```figure
+type: checklist
+title: Engaging engineering work for a modified work platform
+caption: The business recognised it was a designer under work health and safety law.
+- x A registered engineer with relevant experience
+- x Registration, experience and insurance checked
+- x A recorded design basis: loads, standards, use
+- *x Independent verification by a second engineer
+```
 
 **Result.** The platform is delivered with documented design, verification and information for safe use. The business can demonstrate how it met its duties, and the customer has confidence in the product. The cost of engineering and verification is small compared with the consequences of a failure.
 

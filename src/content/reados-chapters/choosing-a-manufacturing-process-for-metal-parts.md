@@ -65,6 +65,15 @@ Metal also shrinks as it changes from liquid to solid. Thick sections freeze las
 
 A rule known as **Chvorinov's rule** describes this: solidification time rises with the square of a section's volume divided by its cooling surface area, called its modulus. A 100 mm cube has a volume of one million cubic millimetres and a surface of 60,000 square millimetres, giving a modulus of about 16.7 mm. A thin plate of the same volume has far more surface, a much smaller modulus and freezes far sooner. Heavy, isolated sections become hot spots that need feeding.
 
+```figure
+type: stats
+title: Why thick sections freeze last
+caption: Chvorinov's rule: solidification time rises with the square of volume divided by cooling surface area.
+- 1,000,000 mm³ | Volume of a 100 mm cube
+- 60,000 mm² | Its cooling surface
+- *About 16.7 mm | Its modulus | a thin plate of the same volume freezes far sooner
+```
+
 ### Design rules for castings
 
 - **Keep sections as uniform as practical** and avoid isolated heavy masses.
@@ -139,6 +148,17 @@ This is an illustrative example. A business that makes industrial pumps fabricat
 - **Cast in ductile iron**, with a pattern and core box costing about $12,000, a casting price of about $110 and machining of about $60, giving about $170 per part.
 
 **Analysis.** Casting saves about $120 per part, so the tooling breaks even after about 100 parts, roughly three months of usage. Ductile iron meets the strength and toughness needs, and the shape can be improved for stiffness with ribs and fillets that would be costly to fabricate. The foundry suggests moving the parting line to remove one core, adding draft and blending a heavy boss into the surrounding walls to avoid a shrinkage hot spot.
+
+```figure
+type: bars
+title: Cost per bearing housing bracket
+unit: $
+max: 360
+caption: The $12,000 casting pattern breaks even after about 100 parts, roughly three months at 400 a year.
+- Machined from solid | 340
+- Fabricated, as now | 290
+- *Ductile iron casting, machined | 170 | $110 casting + $60 machining
+```
 
 **Decision and checks.** The business commissions the pattern, specifies the ductile iron grade to the relevant standard, requires test certificates and agrees a first-article inspection with dimensional checks and magnetic particle testing on critical areas. Fabrication remains available for rare special variants. After the payback period, the change saves about $48,000 a year at current volumes.
 

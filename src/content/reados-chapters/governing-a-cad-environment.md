@@ -45,6 +45,19 @@ A **standards register** is a single document recording every controlled decisio
 | **Exceptions** | Approved departures from standard, who approved them, why and when they expire |
 | **Change log** | Every change to the environment, with date, reason and approver |
 
+```figure
+type: checklist
+title: A CAD standards register
+caption: One owner keeps it current; every change is logged with a reason and an approver.
+- x Environment baseline
+- x Controlled locations
+- x Configuration decisions
+- x Data management configuration
+- x Operations: backups and restore tests
+- x Exceptions, with expiry dates
+- *x Change log
+```
+
 The register is not compliance theatre. It lets a new administrator, an auditor or an engineer find out what is standard and why, without archaeology.
 
 ## Control shared libraries
@@ -117,6 +130,17 @@ This is an illustrative example. A 25-person machine design and build business u
 **Upgrade.** An upgrade policy is published: the office moves together, after an early service pack, on a date announced a month ahead, with add-ins tested in advance. The next upgrade happens over a weekend, with the data management client switched for everyone on the same day.
 
 **Result.** Within three months, duplicate fasteners disappear from new bills of materials and purchasing reports fewer part number queries. Missing reference complaints stop. A restore test, the first in years, succeeds and is recorded. When the administrator takes leave, the deputy can answer questions from the register.
+
+```figure
+type: timeline
+title: Bringing a 25-person CAD office under control
+caption: The first restore test in years succeeded and was recorded.
+- Owner | A senior designer, about a day a week | with an IT agreement
+- Register | Built in two days | three undocumented exceptions found
+- Library | One hardware library | numbering matched to the business system
+- Settings | Locked installation image | piloted with four engineers
+- *Upgrade | Everyone moves together | on a date announced a month ahead
+```
 
 ## Applying this in an Australian design office
 
