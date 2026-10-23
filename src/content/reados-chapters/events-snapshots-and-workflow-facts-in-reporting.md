@@ -70,6 +70,16 @@ The closing backlog is eight plus five minus four, giving nine open jobs. An eve
 | Jobs open at Monday close | One open job at that observation | Nine open jobs |
 | Completion time for Monday's finished jobs | One repair attempt with defined milestones | Four completed journeys to analyse |
 
+```figure
+type: compare
+title: Three views of the same repair shop
+cols: One row means | Monday's answer
+caption: Declare the grain in one sentence before writing any measure.
+- Events | One accepted receipt | Five arrivals
+- Periodic snapshot | One open job at close | Nine open jobs
+- *Workflow summary | One repair attempt with milestones | Four completed journeys
+```
+
 Adding the nine closing jobs to the five arrivals gives fourteen, but fourteen has no useful meaning as a count of distinct jobs handled that day. Some arrivals remain among the nine open jobs. The two numbers describe different views, not non-overlapping groups.
 
 Likewise, four completion rows do not describe the experience of every job in the workshop. The nine still-open jobs have not reached the selected endpoint. A turnaround report should state that population rather than presenting completed-job duration as a full picture of waiting work.
@@ -77,6 +87,26 @@ Likewise, four completion rows do not describe the experience of every job in th
 ## Reconcile populations with a movement equation
 
 For a clearly defined open-work population, the starting count plus entries minus exits should explain the ending count. More complicated workflows require additional terms. Transfers in, transfers out, cancellations and reopenings must be assigned to the appropriate side of the equation.
+
+```figure
+type: svg
+title: Opening, movements and closing
+alt: A movement equation: jobs open at the start, plus arrivals, minus completions, equals jobs open at the close. It links the event view to the snapshot view.
+caption: For a defined open-work population, start + entries − exits should explain the ending count.
+viewbox: 0 0 640 140
+body:
+<rect class="bx" x="10" y="40" width="130" height="50" rx="6"/>
+<text class="tx" x="75" y="70" text-anchor="middle">Open at start</text>
+<text class="txb" x="160" y="72" text-anchor="middle">+</text>
+<rect class="bx" x="180" y="40" width="120" height="50" rx="6"/>
+<text class="tx" x="240" y="70" text-anchor="middle">Arrivals</text>
+<text class="txb" x="320" y="72" text-anchor="middle">−</text>
+<rect class="bx" x="340" y="40" width="130" height="50" rx="6"/>
+<text class="tx" x="405" y="70" text-anchor="middle">Completions</text>
+<text class="txb" x="490" y="72" text-anchor="middle">=</text>
+<rect class="bxa" x="510" y="40" width="120" height="50" rx="6"/>
+<text class="txb" x="570" y="70" text-anchor="middle">Open at close</text>
+```
 
 Write the equation before building the dashboard. It forces people to decide whether a completed-but-undispatched job is still open, whether a suspended job remains in backlog and whether an internal workshop transfer changes the organisation-wide population. Different management views may legitimately use different definitions.
 

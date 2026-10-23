@@ -58,7 +58,29 @@ Confidence is useful when its interpretation is kept narrow. It answers how ofte
 
 Part B appears in 20 per cent of all jobs, while it appears in 60 per cent of jobs containing A. The lift of the rule is 0.60 divided by 0.20, which equals three. In this population, B appears three times as frequently among A jobs as it does overall.
 
+```figure
+type: stats
+title: Parts A and B across 1,000 jobs
+caption: A in 100 jobs, B in 200, both in 60. Confidence is directional; lift compares with B's baseline.
+- 6% | Support of A and B | 60 of 1,000
+- 60% | Confidence A → B | 60 of 100
+- 30% | Confidence B → A | 60 of 200
+- *3 | Lift of A → B | 60% ÷ 20%
+```
+
 Lift helps expose a weakness of confidence alone. If another item appears in 90 per cent of all jobs, a rule predicting it with 90 per cent confidence offers no increase over its baseline frequency. A high confidence number can therefore describe a very ordinary relationship.
+
+```figure
+type: steps
+title: From a pattern to a decision
+caption: A rule may describe the process that produced the records, not customer behaviour.
+- Define the basket
+- Report support with its count
+- State the rule's direction
+- Compare with the baseline (lift)
+- Test it on other populations
+- *Turn it into a testable decision
+```
 
 A lift above one indicates positive association under the chosen representation; below one indicates lower co-occurrence than the independence baseline; one corresponds to that baseline. These are descriptive comparisons, not evidence that an intervention will produce the same relationship.
 

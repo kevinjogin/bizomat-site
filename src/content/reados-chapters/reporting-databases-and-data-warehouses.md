@@ -30,6 +30,16 @@ Database specialists distinguish two kinds of workload:
 | Design priority | Accuracy, speed of individual transactions, no duplication | Fast summaries, history, consistent definitions |
 | Data | Current state, detailed | History over many years, often summarised |
 
+```figure
+type: balance
+title: Two different kinds of work
+left: Transaction processing
+right: Analytical processing
+caption: Heavy reports on a live system compete with the people serving customers.
+- Many small reads and writes | Fewer, larger reads
+- Current state, no duplication | Years of history, consistent definitions
+```
+
 Business systems such as ERP, CRM and accounting software are designed for transaction processing. Their databases are normalised, storing each fact once across many related tables, which is ideal for recording data accurately but makes analytical queries complex and slow.
 
 ## Why reporting on live systems causes trouble
@@ -146,6 +156,20 @@ A practical path for a small or medium business:
 7. **Retire the old reports**, so there is one version of the truth.
 8. **Extend to the next subject**, such as purchasing, production or jobs.
 
+```figure
+type: steps
+title: Starting a data warehouse small
+caption: One painful subject first, with agreed definitions and one version of the truth.
+- Choose one painful subject
+- List questions and agree definitions
+- Check sources and quality
+- Build a simple star schema
+- Automate the load with reconciliation
+- Connect a reporting tool
+- Retire the old reports
+- *Extend to the next subject
+```
+
 The [turning business data into decisions](/reados/collections/reporting-history-and-analytical-data/turning-business-data-into-decisions/) article covers the broader steps from collecting data to using it.
 
 ## Knowing whether it is working
@@ -180,6 +204,16 @@ This is an illustrative example. A distributor of building products uses an ERP 
 **Build.** A consultant builds a small cloud reporting database with a sales fact table at invoice-line grain and dimensions for date, customer, product, branch and salesperson, keeping history when customers change branch or salesperson. Data loads nightly, and totals are reconciled with the ERP's invoice register automatically. The build costs about $25,000 and running costs about $600 a month in this illustration.
 
 **Result.** Monthly reporting falls from four days to about half a day, mostly reviewing results. Disputes over figures largely stop because definitions are visible. Within a year, the business adds purchasing and stock data to the same warehouse.
+
+```figure
+type: bars
+title: Monthly sales reporting effort
+unit: days
+max: 4.5
+caption: A cloud reporting database for about $25,000, with running costs of about $600 a month; disputes largely stopped.
+- Spreadsheet exports from three systems | 4
+- *Nightly-loaded warehouse | 0.5 | mostly reviewing results
+```
 
 ## Applying this in an Australian business
 

@@ -24,6 +24,17 @@ Consider a report of confidential service-credit amounts for a group of business
 
 The difference is 4,500 units. If the reader knows which customer is excluded, the pair of reports reveals that customer's contribution. Neither report needs to display the customer's name or an individual line item for the inference to work.
 
+```figure
+type: bars
+title: Two harmless totals, one disclosed customer
+unit: units
+max: 90000
+caption: If the reader knows who was excluded, the difference reveals that customer's service credit.
+- 21 customers | 84000
+- The same 20 customers | 79500
+- *The difference: one customer | 4500
+```
+
 The conditions matter. The populations must differ in the relevant way, the measures must use compatible definitions and the time periods must align. Changes in adjustments or coverage can invalidate a naive subtraction. A disclosure assessment should examine actual relationships between releases rather than assume every difference is meaningful.
 
 However, those conditions often arise naturally. A dashboard may allow a reader to include or exclude one known customer through filters. Two departments may publish slightly different versions of the same summary. A monthly total and a corrected total may differ by one known amendment.
@@ -45,6 +56,15 @@ Thresholds should follow a considered disclosure model, not a familiar number co
 ## Suppressing one cell may leave it recoverable
 
 Suppose a table reports a total of 100 cases divided into three mutually exclusive categories. The first category contains 45 cases, the second contains 52 and the third is hidden because it is small. The missing value is still recoverable as three.
+
+```figure
+type: stats
+title: A suppressed cell that is still recoverable
+caption: Hiding one small cell is not enough when the total and the other cells are published.
+- 100 | Total cases
+- 45 + 52 | Published categories
+- *3 | The hidden category, by subtraction
+```
 
 This is an illustrative example. It demonstrates why **primary suppression**, hiding the directly sensitive cell, can require additional protection for related cells or totals. Otherwise the arithmetic structure of the table supplies the missing answer.
 

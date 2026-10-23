@@ -82,6 +82,15 @@ A small manufacturer analyses two years of job data and finds that 15 per cent o
 
 An electrical contractor analyses job histories and discovers that its estimates for older commercial buildings are consistently 30 per cent below actual time. It adjusts its quoting method for that category of job and margins recover.
 
+```figure
+type: compare
+title: From data to insight in two businesses
+cols: What the data showed | What changed
+caption: Each started from a decision question, not a technology.
+- Manufacturer | 15% of products caused 60% of rework, mostly one machining operation | Better fixturing for that operation
+- *Electrical contractor | Older commercial jobs estimated 30% below actual time | Quoting adjusted for that category
+```
+
 ### A laboratory or clinic
 
 Health businesses hold particularly sensitive data. Aggregated, properly de-identified data can reveal useful patterns, such as seasonal demand or regional trends in particular conditions, but its use is strictly regulated. Any use beyond direct patient care requires careful legal advice.
@@ -145,6 +154,17 @@ Poor data leads to poor decisions. Common problems include duplicate customer re
 4. **Ask "why?"** when numbers change, and investigate.
 5. **Act on what you learn**, and check whether the action worked.
 
+```figure
+type: cycle
+title: Building a data habit
+caption: Five to ten measures, linked to the decisions that matter most.
+- Choose key measures
+- Capture consistently
+- Review regularly
+- Ask why
+- *Act, and check it worked
+```
+
 The article on [running a weekly business review](/reados/collections/business-systems-and-operating-rhythm/running-a-weekly-business-review/) shows how to build this into management routines.
 
 ## Key measures by type of business
@@ -168,6 +188,18 @@ Most small businesses move through recognisable stages:
 3. **Reported**: regular reports and dashboards show key measures, reviewed in management meetings.
 4. **Analysed**: the business investigates causes and trends, such as why margins fell or which customers are drifting away.
 5. **Predictive**: the business forecasts demand, identifies at-risk customers and anticipates maintenance needs before problems occur.
+
+```figure
+type: layers
+title: A simple data maturity path
+shape: pyramid
+caption: Most small businesses gain most by moving from scattered to reported.
+- *Predictive | forecasting demand and risk
+- Analysed | investigating causes and trends
+- Reported | regular dashboards in meetings
+- Recorded | consistent capture in core systems
+- Scattered | paper, email, spreadsheets, memory
+```
 
 Move one stage at a time. Jumping to predictive analytics before core data is recorded reliably usually wastes money.
 

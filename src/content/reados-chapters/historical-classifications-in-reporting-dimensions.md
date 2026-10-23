@@ -61,6 +61,15 @@ Suppose a sale of 120 units occurs on day 8 and another sale of 80 units occurs 
 
 If the only customer row were overwritten to South, both sales would appear in South. The total would still be 200, so a grand-total reconciliation alone would not reveal the error. The necessary check is the distribution of facts across classification versions.
 
+```figure
+type: compare
+title: Customer C17 moves from North to South on day 10
+cols: North | South
+caption: Sales of 120 on day 8 and 80 on day 12; both views total 200, so only the split reveals the error.
+- *Version rows (Type 2) | 120 | 80
+- Overwritten (Type 1) | 0 | 200
+```
+
 A report intentionally grouped by current region would put all 200 units in South. That is a valid alternative question, provided it is labelled accordingly. It should not overwrite the version references needed by historical reporting just because the current view is also useful.
 
 ## Keep business identity separate from version identity
@@ -88,6 +97,16 @@ Also define what happens when no interval matches or two intervals match. Neithe
 A transaction received today may describe an event from last week. Looking up only the current dimension version would classify it using today's description, even when the report requires the description at event time.
 
 In the example, suppose a further sale of 30 units from day 9 arrives on day 14. It belongs to the North version. The revised historical totals become 150 units for North and 80 for South, giving 230 overall. Arrival time explains when the report learned of the transaction; it does not change when the sale happened.
+
+```figure
+type: bars
+title: Historical regional totals after a late day-9 sale
+unit: units
+max: 160
+caption: The late fact belongs to the North version by its event date, not by when it arrived.
+- *North | 150 | 120 + 30
+- South | 80
+```
 
 Keep event time and load time as separate concepts in the loading process. They are both useful for investigation. A report that changed after a late arrival should be explainable without pretending that the business event itself occurred later.
 

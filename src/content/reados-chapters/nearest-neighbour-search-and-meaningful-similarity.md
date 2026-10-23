@@ -48,6 +48,17 @@ Raw numerical scales can dominate distance. A feature ranging in thousands can o
 
 This is an illustrative example. Two containers differ by 100 millimetres in length and ten litres in capacity. A raw Euclidean calculation treats the numerical difference of 100 as much larger than ten, without knowing whether a ten-litre shortfall is operationally more significant.
 
+```figure
+type: balance
+title: Unscaled distance favours the bigger number
+left: Length difference
+right: Capacity difference
+tilt: left
+caption: Raw distance treats 100 as larger than 10 without knowing which difference matters; scale and weight deliberately.
+- 100 millimetres | 10 litres
+- Dominates the raw distance | Barely counts
+```
+
 **Scaling** transforms feature ranges into a comparable numerical basis. **Weighting** expresses the relative importance of differences under the chosen model. They are related decisions but serve different purposes.
 
 One practical basis is an agreed tolerance for each attribute. A difference can be expressed relative to the tolerance that matters to the task. This makes the scale easier to explain, although combining tolerances into one score still involves a trade-off.
@@ -107,6 +118,15 @@ Access control is a hard boundary throughout the process. Results, explanations 
 For approximate top-k retrieval, a common check compares the returned identifiers with an exact top-k result under the same data, filters and distance rule. **Recall at k** measures the fraction of reference neighbours recovered.
 
 This is an illustrative example. An exact top-ten result contains ten identifiers. An approximate result includes eight of them, giving recall at ten of 0.8 for that query. This says nothing by itself about whether the two omitted results were materially more useful than the substitutes.
+
+```figure
+type: bars
+title: Recall at ten for one approximate query
+max: 10
+caption: Eight of the exact top ten were found: recall 0.8. Relevance still needs separate evaluation.
+- Exact top ten | 10
+- *Found by approximate search | 8
+```
 
 Use many representative queries and examine the distribution of recall, not only its average. Rare categories or unusual regions of the feature space can perform much worse than common cases.
 

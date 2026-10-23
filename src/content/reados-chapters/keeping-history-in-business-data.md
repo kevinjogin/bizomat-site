@@ -50,6 +50,14 @@ The simplest way to keep history of changing facts is to store each version with
 | Pump P200 | $1,450 | 1 July 2025 | 30 June 2026 |
 | Pump P200 | $1,520 | 1 July 2026 | (open) |
 
+```figure
+type: timeline
+title: A price with effective dates
+caption: The price on any date can be answered without overwriting the past.
+- 1 July 2025 | Pump P200 at $1,450 | until 30 June 2026
+- *1 July 2026 | $1,520 | open-ended
+```
+
 To find the price on any date, the system selects the row whose date range includes that date. Future changes can be entered in advance and take effect automatically.
 
 Effective dating suits prices, cost rates, tax and duty rates, employee roles and pay rates, customer terms, organisational structures and approved supplier lists.
@@ -154,6 +162,16 @@ This is an illustrative example. A manufacturer of hydraulic power units builds 
 **Reconstruction.** For the existing fleet, engineering and production reconstruct the revisions used from purchase and goods receipt records for the manifold blocks, identifying about 110 units built with the weaker revision.
 
 **Result.** The business contacts 110 customers rather than 450 and replaces the affected blocks under a planned program. For future units, the same question can be answered in minutes from the job records.
+
+```figure
+type: bars
+title: Customers to contact about a manifold weakness
+unit: customers
+max: 470
+caption: Purchase and goods-receipt records identified the units built with the weaker revision.
+- Without revision records | 450 | everyone who bought in the period
+- *After reconstruction | 110
+```
 
 ## Applying this in an Australian business
 

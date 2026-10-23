@@ -34,6 +34,27 @@ Maintain a definition for the combined result, including the source meaning of e
 
 Identifiers often have meaning only within their source. Customer 104 in one application need not be the same customer as 104 in another. A shared data type and matching value do not establish shared identity.
 
+```figure
+type: svg
+title: Same number, different customer
+alt: Two source systems each hold a customer numbered 104. A federated query that joins on the number alone treats them as one customer, although they may be different businesses. A mapping table linking each source's identity to a shared identity is needed before the join.
+caption: A shared data type and matching value do not establish shared identity.
+viewbox: 0 0 620 210
+body:
+<rect class="bx" x="20" y="30" width="180" height="50" rx="6"/>
+<text class="tx" x="110" y="52" text-anchor="middle">Sales system</text>
+<text class="txb" x="110" y="70" text-anchor="middle">customer 104</text>
+<rect class="bx" x="20" y="130" width="180" height="50" rx="6"/>
+<text class="tx" x="110" y="152" text-anchor="middle">Service system</text>
+<text class="txb" x="110" y="170" text-anchor="middle">customer 104</text>
+<path class="ln dsh" d="M200 55L300 105M200 155L300 105"/>
+<rect class="bx dsh" x="300" y="82" width="120" height="46" rx="6"/>
+<text class="tx txs" x="360" y="110" text-anchor="middle">join on 104?</text>
+<rect class="bxa" x="440" y="82" width="160" height="46" rx="6"/>
+<text class="txb" x="520" y="110" text-anchor="middle">Identity mapping</text>
+<path class="la flow" d="M420 105H440"/>
+```
+
 Use an explicit cross-reference where source identifiers differ. Record the source system, source identifier and corresponding shared identity, together with any effective dates or mapping qualifications required by the business process.
 
 Mapping may be one-to-many or many-to-one. A corporate customer can have several billing accounts and many delivery sites. Decide which level belongs in the question before joining records across those levels.
@@ -41,6 +62,18 @@ Mapping may be one-to-many or many-to-one. A corporate customer can have several
 This is an illustrative example. A service database records visits against equipment locations, while an invoicing database records charges against billing accounts. Joining through a corporate customer can associate every visit with every invoice for that customer unless the relationship is narrowed to the intended grain.
 
 Test for unmapped and ambiguously mapped records. An inner join can silently remove unmatched data, making the result look cleaner and more complete than it is. Preserve exception counts and choose a deliberate treatment for those records.
+
+```figure
+type: checklist
+title: Before trusting a federated query
+caption: Location transparency is not shared meaning.
+- x The identity being joined is established
+- x Values are reconciled, not just field names
+- x "Simultaneous" is defined across sources
+- x Operational sources are protected from heavy queries
+- x Partial failure is visible in the result
+- *x Access rules survive the combined layer
+```
 
 ## Reconcile values as well as field names
 

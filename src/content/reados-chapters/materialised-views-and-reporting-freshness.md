@@ -50,9 +50,27 @@ A **source watermark** identifies the boundary of source changes incorporated in
 
 This is an illustrative example. A report refresh finishes at 10:15, but its source feed is complete only through 09:50. Displaying “updated at 10:15” without further context suggests a fresher view than the pipeline actually provides.
 
+```figure
+type: timeline
+title: Refresh time is not data freshness
+caption: Show both, so readers know the view is complete only to 09:50.
+- 09:50 | Source feed complete to here | the data's real age
+- *10:15 | Refresh finishes | "updated at 10:15" overstates freshness
+```
+
 Multiple sources complicate the picture. Orders may be current through one boundary and shipments through another. A single latest timestamp cannot establish that both sides of a comparison represent a consistent business state.
 
 Define the freshness promise in terms readers can use. It may be “includes accepted transactions through the previous completed business day” or a clearly labelled operational estimate. Keep processing time, source coverage and business period distinct in the metadata.
+
+```figure
+type: decision
+title: Rebuild or apply changes?
+question: How should the stored result be refreshed?
+caption: Corrections touch both the old and the new group, and processing must never apply a change twice.
+- Small result or complex rules | Rebuild completely
+- Large result, simple measures | Apply changes incrementally
+- *Readers need consistency | Publish a complete generation at once
+```
 
 ## Choose between rebuilding and applying changes
 
@@ -73,6 +91,16 @@ Some aggregates retain enough information to process additions and removals dire
 An average needs more than its displayed value. Maintain the sum and the relevant count, then calculate the average from those components. The count must match the definition of included observations, especially where missing values are possible.
 
 This is an illustrative example. A group has a total duration of 120 minutes across six completed jobs. Adding a job lasting thirty minutes produces 150 minutes across seven jobs, giving approximately 21.43 minutes per job. Adding thirty directly to the old average would have no useful meaning.
+
+```figure
+type: compare
+title: Maintaining an average incrementally
+cols: Before | After adding a 30-minute job
+caption: Store the components, total and count, and recalculate the average from them.
+- Total duration | 120 minutes | 150 minutes
+- Completed jobs | 6 | 7
+- *Average | 20 minutes | about 21.43 minutes
+```
 
 Minimum and maximum values behave differently. A new value can be compared with the current extreme. Removing the record that supplied the extreme may require additional retained information or another search of the source to find the replacement.
 

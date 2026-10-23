@@ -48,6 +48,15 @@ A **semi-additive measure** can be summed across some dimensions but not others.
 
 This is an illustrative example. An item has end-of-day balances of 100, 120 and 80 units over three days. Their sum is 300 unit-observations. The final balance is 80 units. Their simple average is 100 units, but that average is appropriate only for the intended equal-weight observation model.
 
+```figure
+type: stats
+title: Three end-of-day balances: 100, 120 and 80
+caption: A balance is semi-additive: summing it over time gives unit-observations, not stock.
+- 300 | Sum | not a stock quantity
+- 100 | Simple average
+- *80 | Final balance
+```
+
 If observations are unevenly spaced, a simple average may be misleading. A balance that remained unchanged for most of a week should not receive the same weight as a brief exceptional state merely because each was recorded once.
 
 For a time-weighted average, account for the duration represented by each state and define how changes between observations are interpreted. The answer depends on whether the source records every change or only occasional samples.
@@ -59,6 +68,18 @@ Also distinguish missing snapshots from genuine zero balances. Replacing a missi
 Rates and percentages usually require their underlying numerator and denominator when combining groups. Averaging displayed percentages gives every group equal weight, regardless of how much activity it represents.
 
 This is an illustrative example. One production batch has two rejected units out of ten, giving 20%. A second batch has eight rejected units out of ninety, giving approximately 8.89%. The unweighted average of those percentages is approximately 14.44%. The combined rejection rate is ten out of one hundred, or 10%.
+
+```figure
+type: bars
+title: Rejection rate across two batches
+unit: %
+max: 22
+caption: Recalculate a ratio from its components: 10 rejects out of 100 units is 10%.
+- Batch 1 | 20 | 2 of 10
+- Batch 2 | 8.89 | 8 of 90
+- Average of the two rates | 14.44 | misleading
+- *Combined rate | 10 | 10 of 100
+```
 
 The combined rate answers the question about all inspected units. The unweighted average answers a different question about equally weighted batch rates. Either can be useful, but they should not share a label that conceals the distinction.
 
@@ -95,6 +116,17 @@ Changes to identity matching can restate historical counts. If previously separa
 A median is the middle value under a defined ordering convention. Knowing the median of each group is generally insufficient to recover the median of their combined observations.
 
 This is an illustrative example. One group has durations of one, two and one hundred minutes, with a median of two. Another has durations of three, four and five minutes, with a median of four. Averaging the two medians gives three, while the combined six-observation median is 3.5 minutes under the usual midpoint convention.
+
+```figure
+type: compare
+title: Medians cannot be averaged
+cols: Durations | Median
+caption: Keep the underlying distribution if medians must be combined.
+- Group 1 | 1, 2, 100 minutes | 2
+- Group 2 | 3, 4, 5 minutes | 4
+- Average of medians | (2 + 4) ÷ 2 | 3
+- *All six together | 1, 2, 3, 4, 5, 100 | 3.5
+```
 
 Percentiles have a similar issue. A monthly upper-percentile response time cannot usually be reconstructed by averaging daily upper-percentile values. The daily summaries have discarded information about the underlying distributions.
 

@@ -44,6 +44,16 @@ Preserve aliases where they help interpret legacy inputs, but do not let them cr
 
 Translations need the same separation between identity and presentation. Several language-specific labels can describe one recognised value without creating several business categories. Record the language and intended audience of each label, and define a fallback when a translation is unavailable. Reports should group by the shared identity, then display the appropriate label. Otherwise switching the interface language can appear to change the composition of the data itself.
 
+```figure
+type: balance
+title: Identity and label
+left: Stable identity
+right: Display label
+caption: Labels and translations can change; the identity that history refers to should not.
+- Never reused for another meaning | Can be reworded or translated
+- What records refer to | What people read
+```
+
 ## A foreign key validates membership, not suitability
 
 A foreign key to a reference table can ensure that a stored code exists. That is a valuable guarantee, but the existence of the code may be only part of the business rule.
@@ -67,6 +77,17 @@ If a value has been entered incorrectly, decide whether the correction applies t
 Effective dates can help, but they need a clear time basis. Is validity judged when the job was delayed, when the event was recorded or when the record was imported? Late-arriving information can make these dates differ substantially.
 
 Do not reuse a retired identifier for an unrelated meaning. Old messages, exports and archived records may still carry it. Reuse can transform an understandable historical reference into an apparently valid but false current interpretation.
+
+```figure
+type: compare
+title: Changing a set of codes over time
+cols: Rule | Why
+caption: A foreign key proves a value exists, not that it is still suitable for new records.
+- Retire | Keep it for history; block new use | Old records keep their meaning
+- Merge | Map old codes to one new code | History may need the original detail
+- Split | Decide how old records are assigned | One old meaning becomes several
+- *Reuse | Never for an unrelated meaning | Old records would change meaning silently
+```
 
 ## Merging and splitting categories are different migrations
 

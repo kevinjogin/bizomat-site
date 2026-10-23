@@ -42,6 +42,16 @@ Test these properties using identifiers and relationships rather than labels. Tw
 
 Finally, check the measure separately. Even a perfectly strict hierarchy does not make balances additive across time or percentages additive across groups. Hierarchy correctness and aggregation correctness are related checks, but one does not establish the other.
 
+```figure
+type: checklist
+title: When a hierarchy can roll up strictly
+caption: Uneven depth is fine; overlapping or missing membership needs an explicit rule.
+- x Every item belongs somewhere
+- x No item belongs twice without an attribution rule
+- x The report states which historical hierarchy it uses
+- *x Totals reconcile from the detailed facts outward
+```
+
 ## Uneven depth does not necessarily mean missing information
 
 A **ragged hierarchy** has branches with different depths or missing intermediate levels. One division might contain areas and sites, while another manages sites directly. The absence of an area level can be a legitimate organisational arrangement.
@@ -59,6 +69,15 @@ Test navigation and aggregation independently. A tree that expands neatly in the
 Suppose a maintenance project supports two divisions and incurs 10,000 units of cost. The organisation can show the full project cost under each division to indicate exposure or participation. The two displayed division values then total 20,000, while the underlying project cost remains 10,000.
 
 Alternatively, the organisation may allocate 60 per cent to one division and 40 per cent to the other. The attributed values become 6,000 and 4,000, which reconcile to the project total. These are different measures answering different questions.
+
+```figure
+type: compare
+title: A 10,000-unit project shared by two divisions
+cols: Division 1 | Division 2
+caption: Exposure shows the full cost under each division and must not be added; allocation reconciles to the project total.
+- Full exposure | 10,000 | 10,000
+- *Allocated 60 / 40 | 6,000 | 4,000
+```
 
 Neither interpretation should be hidden in a join. Decide whether a report measures participation, ownership, responsibility or allocated contribution. Name the measure accordingly so that users do not assume all displayed groups form mutually exclusive pieces of one total.
 

@@ -64,7 +64,27 @@ The accepted records contain quantities totalling 840 units. A second report inc
 
 The counts reconcile: 120 equals ten plus five plus 105. That reconciliation does not prove the accepted quantities are correct, but it establishes that every source record has an explained destination. Additional checks must validate units, duplicate handling and the meaning of the summed quantity.
 
+```figure
+type: funnel
+title: Every source record has an explained destination
+caption: The accepted 105 records sum to 840 units; reports that count records or include training differ for explained reasons.
+- Source extract | 120 records
+- After training exclusion | 110 records
+- *Accepted after unit validation | 105 records
+```
+
 The rejected five records should not disappear from attention. If they are corrected later, the lineage needs to show whether the week was restated, a correction was carried forward or the original report remained frozen. Otherwise, the total can change without an explanation.
+
+```figure
+type: steps
+title: Tracing a figure backward
+caption: Start from the published result and the decision it supports.
+- The disputed measure
+- The aggregation rule | sum of 840 units
+- The accepted detail | 105 identities
+- The rejections and exclusions | with reasons
+- *The source extract | 120 records for this run
+```
 
 ## Capture the transformation that actually matters
 
