@@ -51,6 +51,15 @@ If agents' actions affect separate parts of the environment, with little interac
 
 Often agents are mostly independent but interact at specific points, such as a hand-over between teams or a shared resource. Focusing coordination effort on those interaction points, rather than on everything, makes the problem manageable.
 
+```figure
+type: layers
+title: Ways to make coordination easier
+caption: Each special case corresponds to a practical way of designing teams and systems.
+- Shared observations | everyone sees the full situation
+- Independent parts | separate territories or products
+- *Limited interaction | focus on hand-overs and shared resources
+```
+
 ## Methods for collaborative planning
 
 The book describes several approaches to finding good joint policies.
@@ -141,6 +150,18 @@ The owner applies the lessons:
 - **Agree conventions:** the plumber who receives a call confirms the booking in the calendar before ending the call; if a job overruns, the plumber updates the calendar immediately.
 
 Within a month, double-bookings stop, urgent calls are answered faster and travel time falls. No one is working harder; the team is simply coordinating with better shared information and clearer conventions.
+
+```figure
+type: compare
+title: Coordinating three plumbers and an office
+cols: Before | After a month
+best: 2
+caption: No one works harder; the team coordinates with better shared information and clearer conventions.
+- Bookings | Each sees only their own calls | One shared calendar on every phone
+- Areas | Two plumbers drive to one suburb | Each owns a set of suburbs
+- Urgent calls | Often missed | Assigned by the office manager
+- *Result | Double-bookings common | Double-bookings stop; less travel
+```
 
 ## Common mistakes
 

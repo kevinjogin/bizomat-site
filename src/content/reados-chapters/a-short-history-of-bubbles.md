@@ -89,6 +89,19 @@ In the early 2000s, low interest rates, loosening lending standards and new fina
 
 US house prices peaked around 2006. As prices fell and interest rates on many loans reset higher, defaults rose. Losses spread through the financial system, and in September 2008 the collapse of the investment bank Lehman Brothers triggered a global financial panic. The result was the deepest global recession in decades. The article [After the peak](/reados/collections/booms-bubbles-and-business-cycles/when-a-bubble-bursts/) looks at how such busts unfold.
 
+```figure
+type: timeline
+title: Four centuries of bubbles
+caption: Different assets, places and eras, with a recognisable pattern each time.
+- 1630s | Tulip mania | prices collapse in early 1637
+- 1719–20 | Mississippi and South Sea bubbles | collapse by the end of 1720
+- 1840s | British Railway Mania
+- 1880s | Melbourne land boom | banking crisis in 1893
+- 1929 | Wall Street crash
+- Late 1990s | Dot-com bubble
+- *2000s | US housing | prices peak around 2006
+```
+
 ## What the bubbles share
 
 Across four centuries, the episodes share striking features.
@@ -101,6 +114,18 @@ Across four centuries, the episodes share striking features.
 | A "new era" story | A new economy, a new economic model, a permanent rise in land values |
 | New companies and promoters | 1720 flotations, mining explorers in 1969, internet start-ups |
 | Collapse followed by economic damage | Depressions after 1893 and 1929, Japan's lost decade, the global financial crisis |
+
+```figure
+type: checklist
+title: What the bubbles share
+caption: Each boom began with something genuinely new; credit, new buyers and a new-era story turned it into a bubble.
+- x A genuine new element
+- x Rapid credit growth or leverage
+- x New participants
+- x A "new era" story
+- x New companies and promoters
+- *x Collapse, then economic damage
+```
 
 The details of each bubble are unique. The pattern is not.
 

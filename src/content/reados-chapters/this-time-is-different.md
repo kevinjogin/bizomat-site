@@ -30,6 +30,17 @@ A typical characteristic of a bubble is a new development or change in the econo
 | 1990s globally | Computers, networking, the internet | A "new economy" with faster productivity growth and no more recessions |
 | 2000s in several countries | Low interest rates, financial innovation, population growth | House prices can only rise |
 
+```figure
+type: timeline
+title: The new element in every bubble
+caption: Each story rested on something real, which is why capable people believed it.
+- 1840s Britain | Railways | transport will be transformed
+- 1920s US | Electricity, cars, radio | permanent prosperity
+- 1980s Japan | Management and manufacturing methods | Japan's model will dominate
+- 1990s | Computers and the internet | a "new economy"
+- *2000s | Low rates and financial innovation | house prices can only rise
+```
+
 In the 1990s, the story was supported by real evidence: an apparent sharp acceleration in US productivity growth, linked to computing and networking technology, led to widespread talk of a "new economy". In 1980s Japan, the perception that methods such as just-in-time inventory management, worker involvement and total quality control would dominate the world was grounded in Japan's genuine manufacturing success. Housing booms in countries such as the United Kingdom and Australia in the early 2000s were often linked to increased immigration and population growth, which were real.
 
 In each case the new element was genuine. The question was whether prices had moved far beyond what it could justify.
@@ -124,6 +135,16 @@ Some principles help:
 - **Keep costs proportionate.** Boom-time funding can encourage spending that only works if the boom continues.
 - **Measure real usage and payment.** Interest and trials are not the same as customers who pay and stay.
 - **Prepare for the trough.** If the field follows the hype cycle, a period of disillusionment will come. Businesses with real customers and modest costs survive it.
+
+```figure
+type: checklist
+title: Building through a new era
+caption: If the field follows the hype cycle, a trough of disillusionment will come.
+- x Build on durable needs, not the excitement
+- x Keep costs proportionate
+- x Measure real usage and payment
+- *x Prepare for the trough
+```
 
 ### Avoiding new-era thinking in your own plans
 

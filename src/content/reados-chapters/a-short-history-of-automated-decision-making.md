@@ -80,6 +80,18 @@ A paper by Thomas Bayes, published in 1763 after his death, contained what becam
 
 These foundations led to **Bayesian networks**, which became popular in artificial intelligence in the 1980s and 1990s, thanks in large part to the work of Judea Pearl. They are explained in [Bayesian networks](/reados/collections/decision-making-machines/bayesian-networks-cause-and-evidence/).
 
+```figure
+type: timeline
+title: Ideas behind automated decisions
+caption: Today's decision systems combine ideas developed over centuries in separate fields.
+- 1738 | Bernoulli | extra money matters less to the wealthy
+- 1763 | Bayes' rule published | updating beliefs with evidence
+- 1943 | McCulloch and Pitts | neurons as logic units
+- 1947 | Dantzig's simplex method | linear programming
+- 1956 | Dartmouth workshop | artificial intelligence as a field
+- *2015–16 | AlphaGo | defeats professional Go players
+```
+
 ## Operations research: optimising organisations
 
 **Operations research** applies mathematical analysis to decisions such as resource allocation, investment and maintenance scheduling. Its roots lie in late-nineteenth and early-twentieth-century efforts to analyse production scientifically. During the Second World War, it was used intensively to allocate military resources, plan convoys and improve the effectiveness of operations.
@@ -105,6 +117,20 @@ Modern decision-making algorithms rely on the convergence of these disciplines:
 | Engineering | State estimation, control | Robotics, vehicles, sensors |
 | Mathematics | Probability, Bayes' rule, Monte Carlo | Inference, simulation, uncertainty |
 | Operations research | Optimisation, dynamic programming | Scheduling, logistics, planning |
+
+```figure
+type: tree
+title: Seven fields that came together
+caption: Each field contributed a piece; modern systems draw on all of them.
+- Automated decision-making
+  - Economics | utility, game theory
+  - Psychology | learning from rewards, biases
+  - Neuroscience | neural networks
+  - Computer science | search, reasoning, learning
+  - Engineering | state estimation, control
+  - Mathematics | probability, Monte Carlo
+  - *Operations research | optimisation, scheduling
+```
 
 Cross-pollination between fields has driven many recent advances. Reinforcement learning, for example, combines psychology's reward-based learning, operations research's dynamic programming, neuroscience's neural networks and computer science's search algorithms.
 

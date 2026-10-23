@@ -37,6 +37,17 @@ Herding has several sources:
 - **Safety in numbers:** if you are wrong along with everyone else, the consequences, including to your reputation, feel smaller.
 - **Professional incentives:** fund managers and advisers are judged against peers, so following the crowd reduces the risk of standing out for the wrong reasons.
 
+```figure
+type: tree
+title: Why people follow the crowd
+caption: Herding feels sensible from the inside, which is what makes it powerful.
+- Herding
+  - Information | perhaps they know something
+  - Fear of missing out | watching others profit
+  - Safety in numbers | wrong together is safer
+  - *Professional incentives | judged against peers
+```
+
 As a bubble develops, more and more people are drawn into speculation in the hope of making quick money. The market becomes a topic of everyday conversation. There is an old saying that when everyone, including people who have never shown any interest in a market, wants to buy, the end is near. The point is not that these newcomers are foolish; it is that their arrival suggests few potential buyers remain.
 
 ## Overconfidence
@@ -124,6 +135,17 @@ The same psychology affects businesses, often outside financial markets entirely
 - **Expansion:** owners extrapolate recent growth into ambitious expansion plans, assuming boom conditions will continue.
 - **Acquisitions:** buyers pay inflated prices for businesses in a hot sector, encouraged by others doing the same.
 - **Hiring and pay:** businesses compete for talent in a booming field, setting costs that only make sense if the boom lasts.
+
+```figure
+type: checklist
+title: Bubble thinking in business decisions
+caption: The same psychology drives booms inside businesses, on a smaller scale.
+- ? Piling into a product category because competitors are
+- ? Adopting a technology because others are
+- ? Extrapolating recent growth into expansion
+- ? Paying inflated prices in a hot sector
+- *? Setting pay that only works if the boom lasts
+```
 
 Recognising the same biases in business decisions is the first step to resisting them.
 

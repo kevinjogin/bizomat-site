@@ -91,6 +91,17 @@ That progress can still be assessed using clear internal status definitions:
 | Completed | The work has finished, with the outcome recorded |
 | Archived | It has been set aside, with the reasons recorded |
 
+```figure
+type: steps
+title: How an idea moves through the work
+caption: Every idea carries a status, and set-aside ideas keep their reasons on record.
+- Exploring | the problem is investigated
+- Developing | something is designed or built
+- Testing | with real people or conditions
+- *Released | available for use
+- Completed or archived | outcome and reasons recorded
+```
+
 Moving from one status to the next requires evidence, not just enthusiasm. An idea moves from exploring to developing when the problem is clearly real and a promising approach has been identified. It moves to testing when there is something concrete for real people to try. It is released only when the tests justify it.
 
 Initiatives that do not hold up are archived, not quietly forgotten. An archived idea, with its reasons written down, is a useful record: it prevents the same idea being revisited without new information, and it shows how decisions were made.
@@ -105,6 +116,18 @@ Some signals suggest an initiative deserves more attention than the others:
 - **The economics look healthy under realistic assumptions.** Margins work without heroic estimates.
 - **Cheap tests keep succeeding.** Each prototype or experiment answers its question in the idea's favour.
 - **The need looks lasting.** The problem seems likely to exist, in some form, for many years.
+
+```figure
+type: checklist
+title: Signals that an idea deserves focus
+caption: The same criteria are applied to every idea, so the focus narrows on evidence rather than excitement.
+- x People describe the problem without prompting
+- x Workarounds are already costing money
+- x Evidence climbs the ladder
+- x The economics look healthy on realistic assumptions
+- x Cheap tests keep succeeding
+- *x The need looks lasting
+```
 
 When several of these signals appear together, the case for narrowing focus around that initiative becomes strong.
 

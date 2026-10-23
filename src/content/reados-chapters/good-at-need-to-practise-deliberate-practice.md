@@ -32,6 +32,17 @@ The term **deliberate practice** comes from research by the psychologist Anders 
 - **Working at the edge of ability:** practising things slightly beyond current comfort.
 - **Repetition with adjustment:** trying again, differently, based on feedback.
 
+```figure
+type: cycle
+title: What makes practice deliberate
+caption: Experience alone repeats habits; deliberate practice improves them.
+- A specific goal
+- Focused attention
+- Immediate feedback
+- Work at the edge of ability
+- *Repeat with adjustment
+```
+
 Ericsson's work was later popularised as a "10,000 hours" rule, a simplification he himself disputed. Subsequent research has also found that practice explains less of the difference between people than early accounts suggested, and that its contribution varies across fields. The core insight still holds up well as practical guidance: **targeted, attentive practice with feedback improves skills far more than unreflective repetition**.
 
 Business skills are not chess or violin. They are messier, and feedback is less immediate. But the principles adapt well.
@@ -61,6 +72,18 @@ Here is an illustrative completed version, covering skills from across this seri
 | Following up promptly by email | Summarising and agreeing next steps before meetings end |
 | Writing structured proposals | Handling price objections without discounting |
 | Preparing for first meetings | Asking satisfied customers for referrals |
+
+```figure
+type: balance
+title: An honest self-assessment
+left: I am good at
+right: I need to practise
+caption: Skills we find uncomfortable are often the ones most worth practising.
+- Building rapport in person | Listening without interrupting
+- Explaining technical details | Asking about budget early
+- Writing structured proposals | Handling price objections
+- Preparing for first meetings | Asking for referrals
+```
 
 The right-hand column becomes the practice agenda. Not all at once: choose one or two items at a time.
 

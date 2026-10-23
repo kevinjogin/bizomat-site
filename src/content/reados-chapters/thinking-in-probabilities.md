@@ -86,6 +86,15 @@ The terms have names:
 - **Likelihood:** P(B | A), how likely the evidence is if the hypothesis is true.
 - **Posterior:** P(A | B), the updated belief after seeing the evidence.
 
+```figure
+type: steps
+title: Bayes' rule in three parts
+caption: Evidence should move a belief by the right amount: neither ignored nor overweighted.
+- Prior | belief before the evidence
+- Likelihood | how likely the evidence is if true
+- *Posterior | belief after the evidence
+```
+
 ### A worked example: a warning alarm
 
 This is an illustration with round numbers.
@@ -106,6 +115,15 @@ Many people's intuition says around 90%, because the alarm is "95% accurate". Ba
 | Alarm sounds | 2% × 95% = 1.9% | 98% × 10% = 9.8% | 11.7% |
 
 Of all days when the alarm sounds (11.7%), only 1.9% involve a real fault. The probability of a fault given an alarm is 1.9 ÷ 11.7, or about **16%**.
+
+```figure
+type: stack
+title: Days when a "95% accurate" alarm sounds
+unit: % of days
+caption: A fault given an alarm is 1.9 ÷ 11.7, about 16%: faults are rare, so most alarms are false.
+- *Real fault developing | 1.9
+- False alarm | 9.8
+```
 
 The alarm is still useful: it raises the probability of a fault from 2% to about 16%, an eightfold increase. But most alarms are false. The reason is the low **base rate**: faults are rare, so even a modest false-alarm rate produces many more false alarms than true ones.
 
@@ -166,6 +184,15 @@ This is an illustration, not a real business.
 A small online retailer uses a fraud-screening tool that flags suspicious orders. The supplier says it catches 90% of fraudulent orders and wrongly flags only 3% of genuine ones. The retailer's records suggest about 1 in 200 orders (0.5%) is fraudulent.
 
 Applying Bayes' rule: of every 10,000 orders, about 50 are fraudulent, of which 45 are flagged. Of the 9,950 genuine orders, about 299 are flagged. So of 344 flagged orders, only 45, or about 13%, are actually fraudulent.
+
+```figure
+type: stack
+title: Orders flagged as fraud, per 10,000
+unit: orders
+caption: Only about 13% of flagged orders were fraudulent, so flagged orders now get a quick check instead of cancellation.
+- *Fraudulent, flagged | 45
+- Genuine, flagged | 299
+```
 
 The retailer had been cancelling every flagged order, losing many genuine customers. It changes its process: flagged orders receive a quick manual check, such as confirming the delivery address, before any cancellation. Lost genuine sales fall sharply, while fraud remains low.
 

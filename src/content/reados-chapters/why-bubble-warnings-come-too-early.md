@@ -27,6 +27,15 @@ Many analysts warned about high US house prices well before the peak of the hous
 
 Japanese share and property prices rose for years in the late 1980s while some observers questioned how they could be sustained. The peak came at the end of 1989.
 
+```figure
+type: timeline
+title: Warnings that came early
+caption: Even correct warnings usually arrive well before the peak.
+- Late 1980s | Japan's prices questioned | the peak came at the end of 1989
+- December 1996 | "Irrational exuberance" | asked by the US Federal Reserve chair
+- *Mid-2000s | US house price warnings | prices kept rising for some time
+```
+
 In each case, the warnings were correct about the risk and wrong, sometimes badly wrong, about the timing.
 
 ### Why being early feels like being wrong
@@ -128,6 +137,17 @@ An investor holds $500,000 in a share market that, by several measures, is well 
 **Strategy B: adjust gradually.** The investor reduces holdings by a tenth each time valuations move further above average, moving the proceeds into lower-risk assets. They miss part of the final rise, but when the fall comes, a smaller share of their portfolio is exposed, and they hold cash to buy when valuations return to normal.
 
 Neither strategy requires predicting the top. Strategy B accepts some cost of being early in exchange for much better protection, and positions the investor for the opportunities the bust creates.
+
+```figure
+type: compare
+title: Two ways to hold $500,000 in an expensive market
+cols: Wait for the top | Adjust gradually
+best: 2
+caption: Gradual adjustment accepts some cost of being early in exchange for much better protection.
+- Approach | Stay fully invested, sell at signs of a peak | Trim a tenth as valuations stretch further
+- Final rise of 30% | Captured in full | Partly missed
+- *After the fall | Sells 25% below the peak, slightly below the start | Less exposed, with cash to buy
+```
 
 ## What this means for business owners
 

@@ -78,6 +78,18 @@ Buffett did not abandon Graham's core idea that price matters and that you shoul
 | Attitude to price | Must be very low | Must be fair, never extreme |
 | Main risk | Buying a business that keeps declining | Overpaying, or misjudging durability |
 
+```figure
+type: compare
+title: From bargains to quality
+cols: Graham's approach | Buffett's later approach
+caption: The question shifted from "is it cheap?" to "is it exceptional, and will it stay so?"
+- Main question | Cheap relative to value? | Exceptional, and lasting?
+- Source of return | Price correcting to value | Business value compounding
+- Holding period | Short to medium | Very long
+- Price | Must be very low | Fair, never extreme
+- *Main risk | A business that keeps declining | Overpaying or misjudging durability
+```
+
 Neither approach is simply right. Graham's method suits investors who cannot judge business quality confidently and want protection through low prices and diversification. Buffett's later approach requires the ability to identify durable advantages, which is harder and riskier if done badly. The book's emphasis on reading financial statements is, in effect, a guide to developing that ability.
 
 ## Why compounding changes the calculation
@@ -87,6 +99,16 @@ The difference between the two approaches is ultimately about time. A bargain pr
 An illustration: suppose an investor buys a mediocre business at half its value and sells it two years later at full value. The gain is 100% over two years, roughly 41% a year. Impressive, but then the money must find a new bargain, and good bargains are not always available.
 
 Another investor buys an excellent business at a fair price, and its value grows at 15% a year for twenty years. The total gain is more than fifteen-fold, with no need to find a new opportunity every two years and no tax paid along the way until the shares are sold.
+
+```figure
+type: bars
+title: A bargain against compounding quality
+unit: times
+max: 18
+caption: The bargain then needs a new opportunity every two years; the compounder needs none.
+- Half value to full value in two years | 2
+- *15% a year for twenty years | 16.4
+```
 
 The first approach requires a constant supply of new bargains and good judgement every time. The second requires one good judgement and patience.
 

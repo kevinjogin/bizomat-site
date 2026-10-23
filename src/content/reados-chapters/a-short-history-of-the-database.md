@@ -13,6 +13,18 @@ draft: false
 
 Every order, invoice, payroll run and production schedule in a modern business depends on a database, yet the technology is younger than many people realise. Within a single long career, business records moved from filing cabinets and punched cards to magnetic tape, then to disks, then to relational databases queried in a standard language, then onto personal computers, the web and finally cloud services that can store more data than any business of the 1960s could have imagined.
 
+```figure
+type: steps
+title: Where business records have lived
+caption: Records outlive the systems that hold them, so export retired data to documented, open formats.
+- Filing cabinets and punched cards
+- Magnetic tape | batch processing
+- Disks | direct access
+- *Relational databases | queried in a standard language
+- Personal computers and the web
+- Cloud services
+```
+
 Each stage in that history solved a specific problem left by the one before: the slowness of manual records, the rigidity of tape, the difficulty of changing early database structures, the expense of central computers, the scale demanded by the internet. Each also created new problems, many of which businesses still face: data trapped in old formats, applications that depend on one person's knowledge, inconsistent definitions across systems and the temptation to adopt new technology before understanding what it is for.
 
 This article traces the main stages of database history in plain language and draws out lessons for businesses about abstraction, standards, the lasting value of data, the difference between storage and meaning, and how to judge new technology. It is general information for anyone interested in how business information systems came to be.
@@ -55,6 +67,18 @@ In 1970, Edgar F. Codd, a researcher at IBM, proposed the **relational model**: 
 Research projects turned the idea into working systems during the 1970s: IBM's System R, which produced the query language that became SQL, and Ingres at the University of California, Berkeley. Commercial products followed. Oracle released one of the first commercial SQL databases in 1979, and IBM released DB2 in 1983. SQL became an American national standard in 1986.
 
 Codd received the Turing Award in 1981. Later awards recognised Jim Gray in 1998 for work on transactions, the techniques that let many users change data safely at once, and Michael Stonebraker in 2014 for contributions to modern database systems.
+
+```figure
+type: timeline
+title: From tabulators to SQL
+caption: The relational model made data queryable in a standard language, and SQL became a national standard in 1986.
+- 1890 | Hollerith's tabulators | the US census on punched cards
+- 1949 | CSIRAC runs | one of the earliest stored-program computers
+- 1956 | IBM RAMAC | the first commercial hard disk
+- *1970 | Codd's relational model | data as tables
+- 1979 | Oracle | an early commercial SQL database
+- 1986 | SQL standardised | an American national standard
+```
 
 ### Transactions: keeping the money right
 

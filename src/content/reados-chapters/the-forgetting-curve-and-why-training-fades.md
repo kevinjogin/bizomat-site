@@ -26,6 +26,25 @@ The shape of the curve is the important part:
 - The rate of forgetting then **slows**. What survives the first few days is lost more gradually.
 - **Reviewing** the material resets the curve, and each well-timed review makes the next decline slower.
 
+```figure
+type: svg
+title: The forgetting curve, with and without review
+alt: A conceptual chart of how much is remembered over time. Without review, recall falls steeply at first and then levels off low. With spaced reviews, marked by dots, recall jumps back up at each review and each later decline is slower.
+caption: Forgetting is fastest at first; each well-timed review resets the curve and slows the next decline.
+viewbox: 0 0 600 260
+body:
+<path class="ln" d="M60 30V220H570"/>
+<path class="ln dsh draw" d="M60 40L85 89.1L110 121.4L135 142.8L160 156.8L210 172.1L260 178.8L360 183L560 184"/>
+<path class="la draw" d="M60 40L85 89.1L110 121.4V40L135 62.1L160 80.8L185 96.7L210 110V40L260 56.9L310 71.8L360 85V40L460 53.7L560 66.1"/>
+<circle class="fa pulse" cx="110" cy="40" r="5"/>
+<circle class="fa pulse" cx="210" cy="40" r="5"/>
+<circle class="fa pulse" cx="360" cy="40" r="5"/>
+<text class="tx txs" x="66" y="24">Remembered</text>
+<text class="txa" x="556" y="88" text-anchor="end">With spaced reviews</text>
+<text class="tx txs" x="556" y="204" text-anchor="end">No review</text>
+<text class="tx txs" x="566" y="244" text-anchor="end">Time</text>
+```
+
 Ebbinghaus's experiments used deliberately meaningless material, so the exact percentages do not transfer neatly to real-world learning. Meaningful, well-understood material is retained better than nonsense syllables. But the general pattern of rapid early loss followed by slower decline, and the power of review to slow it, has been confirmed many times since and underpins modern techniques such as spaced repetition.
 
 ## Why workshops are especially vulnerable
@@ -142,6 +161,17 @@ The first team returns to work and carries on as usual. A few people mention the
 The second team agrees in advance on three behaviours to adopt. The day after the course, each person writes down what they remember and compares notes with a colleague. For the next four weeks, the weekly team meeting starts with a ten-minute practice round, and the manager joins two calls per person and gives brief feedback on the chosen behaviours. Their call-planning template is updated to include space for open questions.
 
 The second team has invested perhaps four extra hours each over the month. Three months later, they still use the techniques, and new team members learn them from the template and from watching colleagues. The course has become part of how they work.
+
+```figure
+type: compare
+title: Two teams, one course on questioning and listening
+cols: Carried on as usual | Planned the follow-up
+best: 2
+caption: The course became part of how the second team works, at a cost of perhaps four extra hours each.
+- After the course | Mentioned it in conversation | Three agreed behaviours, recalled the next day
+- Next four weeks | Nothing planned | Weekly practice; manager joins two calls each
+- *Later | Largely unchanged within a month | Still used three months on, and taught to new staff
+```
 
 ## The role of notes and workbooks
 

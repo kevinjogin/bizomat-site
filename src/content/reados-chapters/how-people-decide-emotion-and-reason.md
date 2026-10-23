@@ -58,6 +58,17 @@ Shortcuts are usually helpful, but they create predictable patterns. A few that 
 - **Anchoring:** the first number someone hears tends to influence their judgement of later numbers.
 - **Social proof:** people are reassured by evidence that others like them have made the same choice.
 
+```figure
+type: tree
+title: Patterns that shape real decisions
+caption: Feelings are part of good decision-making, not a flaw in it; honest selling works with them.
+- How people decide
+  - *Loss aversion | losses feel larger than equal gains
+  - Status quo bias | sticking with what they have
+  - Anchoring | the first number pulls later judgements
+  - Social proof | others like them chose it
+```
+
 Some findings in this field have not replicated as strongly as first reported, so it is wise to treat specific effects as tendencies rather than laws. The broad picture, that human decisions are shaped by more than a calculation of costs and benefits, is well established.
 
 ### Trust and risk dominate business purchases
@@ -146,6 +157,17 @@ The owner agrees that the numbers make sense: the system would reduce stock-outs
 The salesperson does not push harder on the financial case. Instead, she proposes a phased approach: start with one product category, with a clear review point after six weeks and the option to stop. She arranges a call with another family business that made the same transition.
 
 The owner agrees. The logic had been satisfied for weeks; what was missing was reassurance about the risk of repeating a painful experience.
+
+```figure
+type: balance
+title: When the numbers are not the obstacle
+left: The head
+right: The heart
+tilt: right
+caption: A phased start with a six-week review, an option to stop and a reference call addressed the real concern.
+- Fewer stock-outs | A past project that went badly
+- Staff time saved | Embarrassment in front of staff
+```
 
 ## Decisions about doing nothing
 

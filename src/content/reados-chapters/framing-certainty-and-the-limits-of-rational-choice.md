@@ -68,6 +68,16 @@ Framed in terms of deaths:
 
 Most people chose H, the gamble.
 
+```figure
+type: compare
+title: The same programmes, framed two ways
+cols: Framed as lives saved | Framed as deaths
+caption: The outcomes are identical; only the wording changed, and the majority choice reversed.
+- Certain option | E: 200 people will be saved | G: 400 people will die
+- Gamble | F: a one-third chance all 600 are saved | H: a one-third chance nobody dies
+- *Most people chose | E, the certain option | H, the gamble
+```
+
 But E and G describe exactly the same outcome, as do F and H. The only difference is the wording. Described as gains (lives saved), people preferred the certain option. Described as losses (deaths), they preferred the gamble. This is the **framing effect**.
 
 ## Prospect theory
@@ -77,6 +87,16 @@ To explain such patterns, Kahneman and Tversky proposed **prospect theory** in 1
 **Reference points.** People evaluate outcomes as gains or losses relative to a reference point, often the current situation or an expectation, rather than in terms of final wealth.
 
 **Loss aversion.** Losses weigh more heavily than gains of the same size. Losing $100 feels worse than gaining $100 feels good. Studies have commonly found losses weighing roughly twice as much as equivalent gains, though estimates vary.
+
+```figure
+type: balance
+title: Loss aversion
+left: Losing $100
+right: Gaining $100
+tilt: left
+caption: Studies commonly find losses weighing roughly twice as much as equal gains, though estimates vary.
+- Feels worse | Feels good
+```
 
 **Diminishing sensitivity.** The difference between $0 and $100 feels larger than the difference between $1,000 and $1,100, for both gains and losses. This makes people risk averse for gains and often risk seeking for losses.
 

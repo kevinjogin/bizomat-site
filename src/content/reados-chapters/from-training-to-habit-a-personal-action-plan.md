@@ -52,6 +52,16 @@ This is where most plans fail. Vague actions ("communicate better", "prospect mo
 - **small enough to start immediately:** "Write a five-line plan before each first meeting," not "Develop a comprehensive account strategy for every customer."
 - **tied to a cue:** "Every Monday at 9am" or "after each sales call."
 
+```figure
+type: checklist
+title: A good action
+caption: Four actions at a time, each small enough to start this week.
+- x Specific
+- x Observable | you can tell whether it happened
+- x Small enough to start immediately
+- *x Tied to a cue | a time or an event
+```
+
 ### Date: when will I start, and when will I review?
 
 A date turns an intention into a commitment. Two dates are better than one: a start date and a review date. The review is where you check whether the action has become a habit, and decide whether to keep going, adjust or move on.
@@ -122,6 +132,16 @@ Here is how the example plan above might play out over three months. Again, this
 
 By the end of the quarter, four new habits are in place, and the plan has been renewed with the next priorities.
 
+```figure
+type: timeline
+title: Three months of an action plan
+caption: Actions that become automatic leave the plan, making room for the next priority.
+- Month one | Prospecting three Tuesdays of four | qualifying often skipped
+- Review | Qualifying becomes an if–then plan | built into the meeting template
+- Month two | Poor fits closed early | a customer call brings a repeat order
+- *Month three | First three actions near automatic | referrals added to the plan
+```
+
 ## Making the plan stick
 
 Writing the plan is the easy part. These practices help it survive contact with a busy week.
@@ -146,6 +166,17 @@ If an action keeps slipping, the problem is usually one of four things:
 2. **It has no clear cue.** Tie it to a specific time or event.
 3. **It competes with something more urgent.** Protect the time, or move it to a part of the day with fewer interruptions.
 4. **It is not actually valuable.** Some actions turn out not to help. Replacing them is a sensible outcome, not a failure.
+
+```figure
+type: decision
+title: When the plan is not working
+question: Why is the action not happening?
+caption: Replacing an action that does not help is a sensible outcome, not a failure.
+- It is too big | Make it smaller
+- It has no clear cue | Tie it to a time or event
+- Something more urgent wins | Protect the time
+- *It is not actually valuable | Replace it
+```
 
 ## Action plans beyond sales
 
