@@ -6,7 +6,7 @@ export const LIBRARY_GUIDES = [
     subtitle: 'A Practical Introduction to Company Financial Statements',
     description: 'An approachable, practical guide to reading financial statements, interpreting cash flow, assessing business quality, and asking better valuation questions.',
     category: 'Finance and Business',
-    minutes: 16,
+    minutes: 80,
     publisher: 'KEVOS® Books',
     cover: '/library/read-the-numbers-understand-the-business/cover.svg',
     chapters: [
