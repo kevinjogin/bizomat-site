@@ -64,6 +64,15 @@ A fixed lifetime gives a more understandable limit on how long a stored entry re
 
 This is an illustrative example. A report begins reading a source snapshot at 09:00, finishes at 09:08 and receives a ten-minute lifetime at insertion. It can remain available until 09:18 while representing a 09:00 view. Calling it “at most ten minutes old” would be misleading if age means the underlying snapshot time.
 
+```figure
+type: timeline
+title: How old can a ten-minute cache entry be?
+caption: Lifetime counts from insertion, but the data dates from when the read began.
+- 09:00 | Report starts reading | the data's real time
+- 09:08 | Result cached | ten-minute lifetime begins
+- *09:18 | Entry expires | showing 09:00 data, 18 minutes old
+```
+
 Store the observation or source watermark when age matters. Distinguish when a value was calculated, when it entered the cache and which source state it represents. These timestamps answer different operational questions.
 
 ## Examine the update race explicitly
@@ -71,6 +80,15 @@ Store the observation or source watermark when age matters. Distinguish when a v
 One common strategy updates the database and then removes the corresponding cache entry. A subsequent read fetches the new value. This handles many ordinary cases, but concurrent reads can produce a race.
 
 This is an illustrative example. A reader misses the cache and reads database version 7. Before it stores that result, a writer commits version 8 and invalidates the key. The delayed reader then inserts version 7. The cache contains an old value even though the writer performed its intended invalidation.
+
+```figure
+type: timeline
+title: A stale value outliving its invalidation
+caption: The writer invalidated correctly; the delayed reader still restored the old version.
+- 1 | Reader misses the cache | reads version 7
+- 2 | Writer commits version 8 | invalidates the key
+- *3 | Reader stores version 7 | stale until it expires
+```
 
 Reversing the order to invalidate before the database update creates another window: a reader can refill the cache from the old database state before the update commits. The operations need a deliberate coordination strategy if that window violates the required promise.
 

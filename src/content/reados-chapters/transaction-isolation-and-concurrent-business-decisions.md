@@ -61,6 +61,25 @@ Two transactions begin from a view containing both assignments. Transaction A ch
 | Write | Removes A's assignment | Removes B's assignment |
 | Combined result | No coordinator remains | The coverage rule is violated |
 
+```figure
+type: svg
+title: Two correct decisions from the same snapshot
+alt: Two transactions each read that coordinators A and B are both assigned. Transaction one removes A, relying on B; transaction two removes B, relying on A. When both commit, no coordinator remains and the coverage rule is broken.
+caption: Each transaction was valid against what it read; together they break the rule that someone covers the desk.
+viewbox: 0 0 620 220
+body:
+<rect class="bxi" x="210" y="16" width="200" height="40" rx="6"/>
+<text class="tx" x="310" y="41" text-anchor="middle">Snapshot: A and B assigned</text>
+<path class="ln flow" d="M260 56L130 100M360 56L490 100"/>
+<rect class="bx" x="40" y="100" width="180" height="44" rx="6"/>
+<text class="tx" x="130" y="127" text-anchor="middle">Remove A, B covers</text>
+<rect class="bx" x="400" y="100" width="180" height="44" rx="6"/>
+<text class="tx" x="490" y="127" text-anchor="middle">Remove B, A covers</text>
+<path class="ln flow" d="M130 144L260 176M490 144L360 176"/>
+<rect class="bxa pulse" x="210" y="170" width="200" height="40" rx="6"/>
+<text class="txb" x="310" y="195" text-anchor="middle">No coordinator left</text>
+```
+
 Each transaction would be valid if run alone against the starting state. Their combined result is not equivalent to either serial order: the second withdrawal in a serial execution would find no remaining colleague and be refused.
 
 This pattern is commonly called **write skew**. It demonstrates why “the transactions update different rows” is not sufficient evidence that they are independent. Their decisions depend on a shared condition across the records.
@@ -140,6 +159,17 @@ Test the recovery behaviour as well as the final data. A rejected transaction sh
 Repeat tests for imports and background jobs that affect the same invariant. A well-protected interactive path is insufficient if an automated process changes the data under weaker assumptions.
 
 Use load tests afterwards to assess throughput and conflict rates. Correctness tests establish that the protocol works; workload tests establish whether its operational behaviour is acceptable.
+
+```figure
+type: decision
+title: Choosing protection for a concurrent decision
+question: What kind of rule is at risk?
+caption: Retries belong in the operation; an unknown outcome is not the same as a retryable conflict.
+- A simple state change | Put the condition in the update
+- An edit based on old data | Check a version
+- A rule across several rows | Serializable isolation or an explicit lock
+- *Any of these under contention | Retry the whole operation
+```
 
 ## Choose protection according to the invariant
 

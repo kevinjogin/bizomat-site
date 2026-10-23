@@ -72,6 +72,17 @@ After three weeks, the first three consumers use the replacement. Query telemetr
 | Monthly reconciliation | Old definition still in catalogue | Update and rehearse |
 | Recovery diagnostic | Old name in procedure | Update and test procedure |
 
+```figure
+type: checklist
+title: Consumers before the old structure goes
+caption: Rare consumers, such as monthly reconciliations and recovery procedures, are the ones most often missed.
+- x Order application | updated and exercised
+- x Dispatch report | output compared
+- x Nightly export | downstream acceptance confirmed
+- ? Monthly reconciliation | still uses the old definition
+- *? Recovery diagnostic | old name in the procedure
+```
+
 Three of five consumers have completed migration evidence; two remain unresolved. Zero recent calls does not turn that into five completed migrations. The correct next action is to resolve the two remaining paths, not to extend the same incomplete observation and hope it becomes conclusive.
 
 Suppose the reconciliation is updated and reproduces the expected rows for a completed month, while the diagnostic is tested against the replacement in a recovery rehearsal. Retirement can then proceed once the other acceptance conditions are satisfied. The decision is based on specific consumer evidence rather than a percentage alone.
@@ -85,6 +96,18 @@ Identify which representation is authoritative at each stage. If old and new pat
 When old writes are retired, make the supported behaviour explicit. The system might reject those writes with a clear error while preserving reads during the remaining transition. It should not silently accept changes that no longer reach the authoritative representation.
 
 The earlier discussion of [changing a live database safely](/reados/collections/database-performance-concurrency-and-change/changing-a-live-database-safely/) provides the broader change process. Retirement narrows the question: which compatibility promises remain necessary now, and what evidence permits each one to end?
+
+```figure
+type: steps
+title: Retiring a compatibility structure
+caption: End writing first, then reading, then remove it as a specific reviewed change.
+- Identify the contract being retired
+- Build a consumer register
+- Observe for a full business cycle
+- Stop writes, then reads
+- Rehearse with the old structure absent
+- *Remove, monitor, close
+```
 
 ## Rehearse with the old structures actually absent
 

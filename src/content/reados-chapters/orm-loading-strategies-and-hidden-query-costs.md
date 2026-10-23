@@ -38,6 +38,17 @@ The cost is that an apparently ordinary property access can involve database com
 
 This is an illustrative example. One query loads twenty jobs. Rendering each job's task collection then issues one query per job. The operation performs twenty-one queries before considering any further relationships. This is commonly called an **N+1 query pattern**.
 
+```figure
+type: bars
+title: Queries to show twenty jobs and their tasks
+unit: queries
+max: 22
+caption: Lazy loading issues one more query per job as each task list is rendered.
+- *Lazy loading | 21 | 1 + 20
+- Batched loading | 2 | jobs, then all their tasks
+- Joined loading | 1 | about 160 job-task rows
+```
+
 The pattern is not automatically a performance disaster in every environment. Query cost, network latency, caching and population size matter. However, its growth with the number of parent objects makes it important to identify and measure.
 
 A development database on the same machine can conceal communication costs that become visible in a deployed environment. Test representative latency and data volume rather than relying only on a small local demonstration.
@@ -75,6 +86,16 @@ This is an illustrative example. One query loads twenty jobs, another retrieves 
 The exact number of queries can vary with batching limits, key types and the mapping implementation. A large parent set may be divided into chunks. Do not promise a fixed query count without testing the chosen library and database.
 
 SQLAlchemy's documented relationship-loading options include lazy, joined and select-in approaches, as well as controls that can raise an error for unwanted lazy access. Its versioned documentation provides concrete examples of these strategies. [SQLAlchemy relationship loading documentation](https://docs.sqlalchemy.org/en/20/orm/queryguide/relationships.html).
+
+```figure
+type: compare
+title: Three ways to load related records
+cols: Queries | Cost to watch
+caption: Choose from the operation's data requirements, and test the loading behaviour as a contract.
+- Lazy | One per parent, on access | Hidden query counts
+- Joined | One | Parent columns repeated per child row
+- *Batched (select-in) | One per relationship | Very large key lists
+```
 
 Evaluate the strategy per relationship. A small reference object may suit a join, while a large collection may suit batching or a separate paginated query. A mixed strategy often reflects the operation more accurately than one global setting.
 

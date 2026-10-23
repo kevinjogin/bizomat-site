@@ -52,6 +52,43 @@ These approaches have different trade-offs involving memory layout, cache behavi
 
 In the teaching catalogue, finding key 47 might require comparing it with both 17 and 27 first. A missing key assigned to the same bucket may require examining every entry before the system can confidently report no match. Successful and unsuccessful lookups can therefore have different cost distributions.
 
+```figure
+type: svg
+title: Three keys, one bucket
+alt: Ten numbered buckets from 0 to 9. Keys 17, 27 and 47 all hash to bucket 7 using the remainder after division by ten, so they form a chain. Finding 47 means comparing it with 17 and 27 first.
+caption: A hash locates candidates; an equality comparison still has to confirm the match.
+viewbox: 0 0 640 220
+body:
+<rect class="bx" x="20" y="30" width="50" height="34" rx="4"/>
+<rect class="bx" x="80" y="30" width="50" height="34" rx="4"/>
+<rect class="bx" x="140" y="30" width="50" height="34" rx="4"/>
+<rect class="bx" x="200" y="30" width="50" height="34" rx="4"/>
+<rect class="bx" x="260" y="30" width="50" height="34" rx="4"/>
+<rect class="bx" x="320" y="30" width="50" height="34" rx="4"/>
+<rect class="bx" x="380" y="30" width="50" height="34" rx="4"/>
+<rect class="bxa" x="440" y="30" width="50" height="34" rx="4"/>
+<rect class="bx" x="500" y="30" width="50" height="34" rx="4"/>
+<rect class="bx" x="560" y="30" width="50" height="34" rx="4"/>
+<text class="tx txs" x="45" y="52" text-anchor="middle">0</text>
+<text class="tx txs" x="105" y="52" text-anchor="middle">1</text>
+<text class="tx txs" x="165" y="52" text-anchor="middle">2</text>
+<text class="tx txs" x="225" y="52" text-anchor="middle">3</text>
+<text class="tx txs" x="285" y="52" text-anchor="middle">4</text>
+<text class="tx txs" x="345" y="52" text-anchor="middle">5</text>
+<text class="tx txs" x="405" y="52" text-anchor="middle">6</text>
+<text class="txb" x="465" y="52" text-anchor="middle">7</text>
+<text class="tx txs" x="525" y="52" text-anchor="middle">8</text>
+<text class="tx txs" x="585" y="52" text-anchor="middle">9</text>
+<path class="ln flow" d="M465 64V200"/>
+<rect class="bxi" x="430" y="84" width="70" height="28" rx="4"/>
+<rect class="bxi" x="430" y="124" width="70" height="28" rx="4"/>
+<rect class="bxa pulse" x="430" y="164" width="70" height="28" rx="4"/>
+<text class="tx" x="465" y="103" text-anchor="middle">17</text>
+<text class="tx" x="465" y="143" text-anchor="middle">27</text>
+<text class="txb" x="465" y="183" text-anchor="middle">47</text>
+<text class="tx txs" x="410" y="143" text-anchor="end">key mod 10 = 7</text>
+```
+
 Database implementations also have persistence, concurrency and crash-recovery responsibilities. Their pages, locks and maintenance rules make them more complex than a small in-memory example. Use the example to understand the principle, while evaluating the actual engine through its documented behaviour and measured workload.
 
 ## Average occupancy does not describe the worst bucket
@@ -97,6 +134,14 @@ A hash join commonly builds a hash structure from one input and probes it using 
 The build input needs enough storage for the relevant keys and associated row information. If that work exceeds available memory, an engine may partition or spill intermediate data to temporary storage. The resulting cost can differ substantially from an entirely in-memory execution.
 
 Repeated keys are especially important. If one input contains 100 rows for a key and the other contains 200, an ordinary matching join can produce 20,000 row pairs for that key. A fast hash lookup cannot remove the work required to produce a legitimately large result.
+
+```figure
+type: stats
+title: What a hash structure can and cannot fix
+caption: A fast lookup cannot remove the row pairs a join's meaning creates.
+- 0.8 | Average entries per bucket | 800 entries, 1,000 buckets
+- *20,000 | Row pairs for one repeated key | 100 rows × 200 rows
+```
 
 Inspect both estimates and actual cardinalities when diagnosing such a plan. A memory setting may be relevant, but an unintended many-to-many relationship or missing predicate can be the more important issue. Speeding up access to the wrong result does not correct its meaning.
 

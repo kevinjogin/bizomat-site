@@ -80,6 +80,17 @@ Some changes, such as adding a new optional column, are quick and safe. Others, 
 4. **Switch reads**: update the application, reports and integrations to read from the new structure.
 5. **Contract**: once everything uses the new structure and it has proved reliable, remove the old structure.
 
+```figure
+type: steps
+title: Expand, migrate, switch, contract
+caption: The old structure is removed only once nothing still uses it.
+- Expand | add new structure alongside the old
+- Migrate data | in batches
+- Write to both | keep them consistent
+- Switch reads | apps, reports, integrations
+- *Contract | remove the old structure
+```
+
 Each step can be deployed and verified separately, and the old structure remains available as a fallback until the final step. This approach takes longer than a single change, but it avoids long outages and makes problems recoverable.
 
 ### Large data changes
@@ -189,6 +200,16 @@ This is an illustrative example. A building maintenance contractor uses a custom
 **Switch and contract.** Reports and the accounting integration are updated to use sites. Two months later, after confirming nothing still reads the old fields, they are removed in a final change.
 
 **Result.** Each step is deployed with a backup, a rollback plan and verification. Staff experience no outage longer than a few minutes, invoicing by site becomes possible, and duplicate customers disappear.
+
+```figure
+type: timeline
+title: Moving from one address per customer to many sites
+caption: Staff saw no outage longer than a few minutes; invoicing by site became possible and duplicate customers disappeared.
+- Expand | Sites table added | 180,000 jobs linked in eight minutes on a masked copy
+- Transition | App creates sites | old address fields still filled
+- Merge | Duplicate customers become sites | reviewed by accounts
+- *Contract | Old fields removed | two months after the switch
+```
 
 ## Applying this in an Australian business
 

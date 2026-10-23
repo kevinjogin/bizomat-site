@@ -54,6 +54,24 @@ Record the intended overall outcome as well as individual step outcomes. After t
 
 Transitions need explicit preconditions. A worker should confirm that it is acting on the expected workflow version and current intent before making a consequential change. Otherwise, two workers handling different responses can each make a locally reasonable decision that produces an inconsistent overall result.
 
+```figure
+type: svg
+title: Undoing a workflow that spans systems
+alt: A special-delivery workflow allocates material in the warehouse service, then tries to reserve a machine slot, which is unavailable. A compensating action then releases the material reservation as a new recorded action, rather than restoring an old snapshot.
+caption: Releasing the reservation is a new recorded action; restoring an old stock snapshot could erase other orders' changes.
+viewbox: 0 0 640 210
+body:
+<rect class="bx" x="40" y="40" width="220" height="44" rx="6"/>
+<text class="tx" x="150" y="67" text-anchor="middle">Allocate material ✓</text>
+<rect class="bx dsh" x="380" y="40" width="220" height="44" rx="6"/>
+<text class="tx" x="490" y="67" text-anchor="middle">Reserve machine slot ✕</text>
+<path class="la flow" d="M260 62H380"/>
+<rect class="bxa" x="40" y="140" width="220" height="44" rx="6"/>
+<text class="txb" x="150" y="167" text-anchor="middle">Release the reservation</text>
+<path class="la flow" d="M490 84V162H260"/>
+<text class="tx txs" x="380" y="152" text-anchor="middle">compensate with a new action</text>
+```
+
 ## Keep progress durable enough to resume
 
 An in-memory list of completed steps disappears when the process stops. Reliable recovery requires durable records of the workflow identifier, its current objective, completed commitments and outstanding actions. After a restart, another worker should be able to determine what remains without relying on the original worker's memory.
@@ -90,6 +108,17 @@ Describe these dependencies as rules rather than burying them in a sequence of s
 Compensation can introduce new commitments of its own. Returning goods might require a collection booking, inspection and a decision about reuse. Treating that process as a single instantaneous reversal hides both cost and risk. It may be better represented as a linked workflow with its own status and accountable owner.
 
 Avoid holding a database transaction open while waiting for a long external recovery process. The business workflow may last minutes or days. Local transactions should protect well-defined local state changes while durable workflow records connect those changes over time.
+
+```figure
+type: checklist
+title: Making compensation dependable
+caption: Failed compensation is expected work, not an exceptional disaster.
+- x Progress stored durably enough to resume
+- x Retries safe at the business boundary
+- x Compensation order follows dependencies
+- x A queue and owner for failed compensation
+- *x Tests for uncertain outcomes, not only rejections
+```
 
 ## Treat failed compensation as expected work
 

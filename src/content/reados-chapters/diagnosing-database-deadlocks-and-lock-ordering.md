@@ -40,6 +40,29 @@ Transaction One then needs B and waits because Two holds it. Transaction Two the
 | Second request | Requests bin B and waits | Requests bin A and waits |
 | Dependency | Waits for Two | Waits for One |
 
+```figure
+type: svg
+title: A two-resource deadlock
+alt: Transaction one holds bin A and waits for bin B. Transaction two holds bin B and waits for bin A. The two waits form a cycle that neither can break, so the database chooses a victim.
+caption: Blocking ends when the holder finishes; a cycle never does, so the database chooses a victim.
+viewbox: 0 0 600 220
+body:
+<rect class="bx" x="40" y="30" width="160" height="44" rx="6"/>
+<text class="txb" x="120" y="57" text-anchor="middle">Transaction One</text>
+<rect class="bx" x="400" y="30" width="160" height="44" rx="6"/>
+<text class="txb" x="480" y="57" text-anchor="middle">Transaction Two</text>
+<rect class="bxi" x="40" y="146" width="160" height="44" rx="6"/>
+<text class="tx" x="120" y="173" text-anchor="middle">Bin A</text>
+<rect class="bxi" x="400" y="146" width="160" height="44" rx="6"/>
+<text class="tx" x="480" y="173" text-anchor="middle">Bin B</text>
+<path class="ln" d="M120 146V74M480 146V74"/>
+<text class="tx txs" x="128" y="114">holds</text>
+<text class="tx txs" x="488" y="114">holds</text>
+<path class="la flow" d="M200 66L400 158"/>
+<path class="la flow" d="M400 66L200 158"/>
+<text class="txa" x="300" y="104" text-anchor="middle">waits</text>
+```
+
 The database can break the cycle by aborting one transaction. The surviving transaction can then continue once the conflicting locks are released according to the database's behaviour.
 
 This is not evidence that both transactions were trying to corrupt data. They may each represent legitimate operations. The problem is the combination of resources and the inconsistent order in which they were acquired.
@@ -111,6 +134,16 @@ Bulk operations deserve particular attention. Large batches may hold many resour
 Define the consequences of partial completion before changing batch size. A batch that can be restarted safely needs a stable way to identify completed work and avoid applying the same change twice. Operational convenience does not remove the need for correct recovery.
 
 Measure the effect under representative concurrent activity. A batch that is fast when run alone may still impose unacceptable delays on interactive work.
+
+```figure
+type: checklist
+title: Preventing deadlocks
+caption: Then retry the complete logical attempt, protecting external effects during recovery.
+- x A consistent acquisition order
+- x Watch for lock upgrades and indirect work
+- x Hold locks for less time
+- *x Review access paths and batch sizes
+```
 
 ## Retry the complete logical attempt
 

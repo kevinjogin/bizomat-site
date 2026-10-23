@@ -46,11 +46,42 @@ The average number of borrowed connections depends on how often work arrives and
 
 This is an illustrative example. An application completes eighty database operations per second, each holding a connection for an average of 0.05 seconds. Their average occupancy is approximately four connections. If an unrelated network call increases hold time to 0.5 seconds, the same completion rate would require about forty borrowed connections on average.
 
+```figure
+type: bars
+title: Connections in use at 80 operations a second
+unit: connections
+max: 45
+caption: Average occupancy ≈ rate × hold time; a slow network call inside the transaction multiplies demand.
+- Hold time 0.05 seconds | 4
+- *Hold time 0.5 seconds | 40
+```
+
 That tenfold difference can arise without changing any SQL. Moving work outside the connection scope can therefore be more valuable than enlarging the pool. The scope must still preserve transaction correctness: calculations that depend on protected data cannot simply be moved without reviewing concurrency behaviour.
 
 Averages hide bursts and slow cases. Ten requests arriving together behave differently from ten evenly spaced requests. A few long transactions can occupy a large share of a small pool. Measure hold-time distributions and acquisition delays, including their upper ranges, rather than sizing from a daily average alone.
 
 Do not choose a pool size equal to calculated average occupancy and assume the problem is solved. Variability requires capacity or waiting, while excessive concurrency can reduce database throughput. Use the estimate to explain behaviour and choose a sensible test range.
+
+```figure
+type: svg
+title: A connection's working life
+alt: A cycle of four stages: borrow a connection from the pool, do the database work, release it promptly, and the pool checks and resets the session before lending it again.
+caption: Hold time, not request count, sets how many connections are needed.
+viewbox: 0 0 600 200
+body:
+<rect class="bx" x="20" y="80" width="120" height="40" rx="6"/>
+<text class="tx" x="80" y="105" text-anchor="middle">Borrow</text>
+<rect class="bxa" x="170" y="80" width="140" height="40" rx="6"/>
+<text class="txb" x="240" y="105" text-anchor="middle">Database work</text>
+<rect class="bx" x="340" y="80" width="110" height="40" rx="6"/>
+<text class="tx" x="395" y="105" text-anchor="middle">Release</text>
+<rect class="bxi" x="470" y="80" width="110" height="40" rx="6"/>
+<text class="tx" x="525" y="105" text-anchor="middle">Reset</text>
+<path class="la flow" d="M140 100H170M310 100H340M450 100H470"/>
+<path class="ln dsh flow" d="M525 120V170H80V120"/>
+<text class="tx txs" x="300" y="164" text-anchor="middle">back to the pool</text>
+<text class="tx txs" x="240" y="66" text-anchor="middle">keep this short</text>
+```
 
 ## Treat the pool as an admission boundary
 

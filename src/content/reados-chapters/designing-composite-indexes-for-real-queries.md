@@ -65,9 +65,28 @@ FETCH FIRST 20 ROWS ONLY;
 
 A candidate B-tree key is `(workshop_id, status, due_date, job_id)`. It brings the fixed workshop-status combination together and aligns the following key order with the requested display order. The `customer_id` value may still require access to the underlying table unless it is available through a supported covering arrangement.
 
+```figure
+type: steps
+title: Building the key for an outstanding-jobs screen
+caption: Equality columns first, then the columns that give the requested order, with a stable tie-breaker.
+- workshop_id | equality: one workshop
+- status | equality: open
+- due_date | the display order
+- *job_id | stable tie-breaker
+```
+
 Now change the requirement: the screen must show all statuses for that workshop, ordered by due date. The same index groups entries by status before due date, so it does not provide one simple due-date ordering across statuses. A separate sort or another access strategy may be needed.
 
 This small change demonstrates why the exact query matters. An index optimised for one screen variant should not be assumed to optimise every query mentioning the same columns.
+
+```figure
+type: compare
+title: One index, two versions of the screen
+cols: Index order helps? | Why
+caption: An index tuned to one screen variant should not be assumed to suit every query using the same columns.
+- Open jobs by due date | Yes | Status is fixed, so due dates follow in order
+- *All statuses by due date | No | Entries are grouped by status first
+```
 
 ## Distinguish filtering from ordering
 

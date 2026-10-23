@@ -64,6 +64,17 @@ If the cover reservation fails, the transaction should not leave an accepted hea
 
 The quantities four and six are deliberately different, making it easier to detect a swapped relationship during testing. A useful test examines the resulting associations, not just a total of ten units. Summing different products is not a substitute for checking that each reservation belongs to the intended line.
 
+```figure
+type: tree
+title: Writing an order in dependency order
+caption: Each record needs the identity of the one above it, so the unit of work writes from the top down.
+- Order header | an existing customer
+  - Bracket line | quantity 4
+    - Bracket reservation
+  - Cover line | quantity 6
+    - *Cover reservation
+```
+
 ## Order writes according to dependencies
 
 New child records often require keys assigned when parent records are inserted. A coordinator can insert the parent, obtain its identity and use that identity when constructing dependent writes. Application-assigned keys can change the mechanics, but foreign-key constraints still express relationships that must hold at the database boundary.
@@ -93,6 +104,16 @@ One straightforward approach is to dispose of the failed persistence context, re
 Distinguish a known rollback from an uncertain outcome. A network failure while waiting for a commit response may leave the caller unable to tell whether acceptance occurred. Repeating the operation blindly can create a second order or reservation. A stable operation identifier and a way to inspect the recorded result help resolve this ambiguity.
 
 These concerns are particularly important when retry logic sits in a general database helper. That helper might know a connection failed but not know whether rerunning the business command is safe. The operation's owner must define how duplicate effects are detected and how a previously accepted result is returned.
+
+```figure
+type: steps
+title: Tracking, flushing and committing
+caption: External effects, such as emails, are separate commitments made after the database commit.
+- Track changes | pending in memory
+- Flush | send statements in dependency order
+- Commit | accept the whole operation
+- *Then external effects | only after the commit
+```
 
 ## Treat external effects as separate commitments
 

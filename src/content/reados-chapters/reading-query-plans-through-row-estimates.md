@@ -56,6 +56,16 @@ A modest row count can hide substantial repeated execution. An inner operation o
 
 This is an illustrative example. A plan expects 100 outer rows and approximately one matching inner row for each. The actual outer result is 20,000 rows, with three inner rows returned on average per loop. The inner operation produces about 60,000 rows across those loops rather than the roughly 100 suggested by the original expectations.
 
+```figure
+type: bars
+title: Inner rows produced by a nested loop
+unit: rows
+max: 62000
+caption: 20,000 outer rows instead of 100, with three inner rows each instead of one.
+- Estimated | 100
+- *Actual | 60000 | 20,000 loops × 3
+```
+
 The arithmetic describes output volume, not elapsed time. Some lookups may be cheap because their pages are already in memory; others may require more work. The example establishes why an apparently small operation can dominate through repetition.
 
 Do not simply add all reported operation times. Depending on the product and field, parent times can include work performed by children. Treating inclusive times as independent durations double counts execution cost.
@@ -87,6 +97,16 @@ If the estimates improve but elapsed time does not, continue investigating. The 
 An average assumption is weak when values are unevenly distributed. A few customers may account for most orders, or one job status may dominate a table while others are rare. A plan suited to the typical value can perform poorly for the exceptional one.
 
 This is an illustrative example. A table contains 100,000 service requests across 1,000 accounts. The simple average is 100 requests per account, but one account holds 40,000. Estimating that account from the average understates its population by a factor of 400.
+
+```figure
+type: bars
+title: When the average hides the outlier
+unit: requests
+max: 42000
+caption: 100,000 requests across 1,000 accounts average 100 each; an estimate built on that average is wrong by a factor of 400 for the largest account.
+- Average account | 100
+- *Largest account | 40000
+```
 
 Real optimisers use more sophisticated summaries than this simple average where information is available. The example illustrates the risk that arises when the relevant skew is not represented or not usable in the planning context.
 

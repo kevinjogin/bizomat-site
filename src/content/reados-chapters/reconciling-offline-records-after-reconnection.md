@@ -66,6 +66,16 @@ The base version also supports a useful conflict explanation. A reviewer can com
 
 Retain enough context to support that comparison for the expected offline period. If the central system discards all relevant version information before a device returns, it may be unable to distinguish a safe merge from an uncertain overwrite. Version-retention policy and maximum disconnection time should be designed together.
 
+```figure
+type: balance
+title: Observations and instructions
+left: An observation
+right: An instruction to change state
+caption: Readings taken offline remain true; instructions may conflict with what happened meanwhile.
+- "The gauge read 42 at 10:15" | "Close this job"
+- Usually safe to add on reconnection | Must be checked against the current state
+```
+
 ## A last-write rule does not settle business authority
 
 Choosing the update with the latest timestamp is attractive because it produces a simple winner. It can also discard a valid change. Device clocks may disagree, and the latest transmission may describe an earlier observation that was delayed in transit.
@@ -101,6 +111,17 @@ Large attachments create a separate concern. A form can arrive successfully whil
 Choose appropriate local transaction boundaries for related changes. A central operation may atomically accept a set of small records, while larger transfers use a staged process. Either approach needs a recoverable status that survives retries and avoids duplicate child records.
 
 The interface should reflect this structure in language users understand. Saved on device, submitted, awaiting attachments and accepted are different outcomes. Clear status reduces repeated manual entry and helps users identify the particular item requiring attention rather than resubmitting an entire job blindly.
+
+```figure
+type: steps
+title: Reconciling offline work
+caption: A last-write rule does not settle who had authority.
+- Durable local identities for new records
+- The version each edit was based on
+- Deletions carried as information
+- Dependent records in a meaningful order
+- *Conflicts shown without overwhelming the user
+```
 
 ## Make conflicts visible without overwhelming the user
 

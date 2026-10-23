@@ -64,7 +64,27 @@ The persistence boundary might provide a purpose-built operation that loads and 
 | Transition | The job moves from a permitted prior state to released |
 | Failure | No partial release is accepted when a required condition fails |
 
+```figure
+type: checklist
+title: What releasing a job must mean
+caption: Business reviewers can assess these rules without reading SQL.
+- x The actor may release this job
+- x The drawing revision has accepted approval
+- x The material allocation satisfies the requirement
+- x The transition is from a permitted state
+- *x No partial release on failure
+```
+
 If material can be changed concurrently, a check performed before the acceptance transaction may no longer be valid. Moving that check into a “business layer” does not protect it. The boundary must allow the application to preserve the database guarantees needed for the decision.
+
+```figure
+type: layers
+title: Who decides, who stores
+caption: Mapping data is separate from interpreting it; transaction ownership stays visible.
+- *Business operation | decides whether the job may be released
+- Data access | reads and writes the records it needs
+- Database | enforces structure, constraints and transactions
+```
 
 ## Keep transaction ownership visible
 

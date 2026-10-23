@@ -84,11 +84,31 @@ Very small partitions can make individual maintenance units convenient, but they
 
 This is an illustrative example. Keeping five years of monthly data produces roughly sixty monthly units. Daily boundaries produce roughly 1,825 units over the same period, with leap years affecting the precise count. Subdividing each unit into twenty customer groups multiplies the object count again.
 
+```figure
+type: bars
+title: Partitions for five years of data
+max: 1900
+caption: Choose a boundary size that operators can manage and queries can use to exclude irrelevant data.
+- *Monthly boundaries | 60
+- Daily boundaries | 1825 | about 1,825
+```
+
 That arithmetic is not a verdict on either design. Some systems handle many partitions well; others incur substantial planning or administration costs. The question is whether the finer boundary produces a benefit that the team can measure and operate.
 
 Consider the size of routine imports, the range of common reports and the smallest group that must be independently retained or removed. Aligning those operations can simplify the design. Conflicting requirements may require a compromise rather than a mechanically uniform interval.
 
 Include future growth. A scheme that creates objects indefinitely needs a lifecycle procedure, naming convention, monitoring and capacity review. Automatic creation is useful only if failures and unexpected data destinations are visible.
+
+```figure
+type: checklist
+title: Before partitioning a table
+caption: Partitioning helps only when queries and maintenance can use its boundaries.
+- x The workload that needs improving is named
+- x The rule expresses useful boundaries
+- x Queries can exclude irrelevant partitions
+- x Time boundaries are unambiguous
+- *x The lifecycle is designed before a partition expires
+```
 
 ## Keep indexing as a separate design decision
 

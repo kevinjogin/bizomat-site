@@ -57,6 +57,27 @@ The order component changes the delivery instructions to “Goods entrance”. T
 | Account component's separate object | Reception | Ends in 3400 |
 | Intended final record | Goods entrance | Ends in 3400 |
 
+```figure
+type: svg
+title: Two copies of customer 417
+alt: Two application components each load their own copy of customer 417. One changes delivery instructions to Goods entrance; the other changes the contact number to end in 3400. If each saves every field, the last save overwrites the other's change. With one shared object in the identity map, both changes land on the same record.
+caption: Separate objects for one record let the last full save erase the other change; one mapped object keeps both.
+viewbox: 0 0 640 230
+body:
+<rect class="bxi" x="240" y="16" width="160" height="40" rx="6"/>
+<text class="txb" x="320" y="41" text-anchor="middle">Customer 417</text>
+<path class="ln flow" d="M280 56L130 100M360 56L510 100"/>
+<rect class="bx" x="30" y="100" width="200" height="50" rx="6"/>
+<text class="tx" x="130" y="122" text-anchor="middle">Order component</text>
+<text class="tx txs" x="130" y="140" text-anchor="middle">Goods entrance</text>
+<rect class="bx" x="410" y="100" width="200" height="50" rx="6"/>
+<text class="tx" x="510" y="122" text-anchor="middle">Account component</text>
+<text class="tx txs" x="510" y="140" text-anchor="middle">contact ends 3400</text>
+<path class="ln flow" d="M130 150L280 182M510 150L360 182"/>
+<rect class="bxa" x="200" y="178" width="240" height="40" rx="6"/>
+<text class="txb" x="320" y="203" text-anchor="middle">Last full save wins</text>
+```
+
 With an appropriately scoped identity map, both components receive the same customer object. The two edits then accumulate on that object. This removes the disagreement between local copies. It does not decide whether each change is authorised, validate the new contact number or protect against another session editing the database row.
 
 An implementation that saves only changed columns might avoid this particular lost update without an identity map. However, its local components can still disagree while calculating prices, validating an order or displaying a confirmation. The broader design objective is coherent local state, not merely a successful final SQL statement.
@@ -84,6 +105,16 @@ The [SQLAlchemy session documentation](https://docs.sqlalchemy.org/en/20/orm/ses
 ## Keep concurrency protection at the database boundary
 
 Two application requests normally have separate contexts. Each can contain one coherent object for customer 417 while still conflicting with the other request. An identity map does not create a lock across processes, and placing the map in shared memory does not turn it into a reliable distributed transaction coordinator.
+
+```figure
+type: checklist
+title: What an identity map does and does not do
+caption: Concurrency protection still belongs at the database boundary.
+- x One object per record within a context
+- x Keys include type, tenant and other context
+- ? It does not lock across processes
+- *? A refresh can discard unsaved work
+```
 
 For an editable record, a version value can help detect whether the database changed since the application loaded it. The update checks the expected version and fails if the assumption no longer holds. The application then needs a visible resolution path. Other operations may require stronger transactional checks around the business condition being protected.
 

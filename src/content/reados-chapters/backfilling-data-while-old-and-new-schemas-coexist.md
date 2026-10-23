@@ -60,11 +60,31 @@ A backfill reads old data and writes a converted value. A live transaction can m
 
 This is an illustrative example. The backfill reads version 4 of a record. A user commits version 5 and updates the new representation. The delayed backfill then writes its version 4 result over that newer value.
 
+```figure
+type: timeline
+title: A backfill overwriting a newer value
+caption: The backfill must check the version it read is still current before writing.
+- 1 | Backfill reads version 4
+- 2 | A user commits version 5 | the new representation updated
+- *3 | Backfill writes its version 4 result | the newer value lost
+```
+
 Possible protections include conditional updates based on a source version, transactional locking of the relevant record, or a change-capture mechanism that reliably brings the target up to a defined boundary. The chosen method must fit the database and workload.
 
 Simply processing only null target values is not always sufficient. It may avoid one overwrite while failing to propagate subsequent source changes, or it may confuse a legitimate null result with an unprocessed record.
 
 Define a completion marker separate from the business value where necessary. A converted record whose correct target is null still needs to be distinguishable from a record the backfill has never examined.
+
+```figure
+type: checklist
+title: A backfill you can stop and resume
+caption: Do not force every record into a plausible value just to reach 100%.
+- x Rules for converted, unresolved and invalid records
+- x Every reader and writer inventoried
+- x Bounded units with durable progress
+- x Load controlled by operational evidence
+- *x Equivalence validated at the right level
+```
 
 ## Process bounded units with durable progress
 

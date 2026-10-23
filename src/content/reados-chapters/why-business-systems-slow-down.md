@@ -45,6 +45,18 @@ Every action passes through several layers, and delay can arise in any of them:
 | Storage | Slow disks, overloaded shared storage in virtual environments |
 | Other workloads | Backups, maintenance jobs, reports or integrations running at the same time |
 
+```figure
+type: layers
+title: Where the time can go
+caption: Measure each layer before deciding where the delay lives.
+- User's device
+- Network
+- Application
+- *Database
+- Storage
+- Other workloads
+```
+
 Diagnosis is a matter of finding which layer is responsible, rather than assuming.
 
 ## Common database causes
@@ -101,6 +113,20 @@ Backups, index maintenance and large imports running during business hours compe
 6. **Review recent changes**: software updates, new reports, data growth, new integrations, changes to security software or virtual infrastructure.
 7. **Test one fix at a time**, ideally on a copy of the system first, and measure the effect.
 8. **Record what was found and changed**, so future problems are easier to solve.
+
+```figure
+type: steps
+title: Diagnosing a slow system
+caption: A handful of queries or reports often account for most of the load.
+- Define the symptoms precisely
+- Measure a baseline
+- Read the database's own information
+- Find the top consumers
+- Check for blocking
+- Review recent changes
+- Test one fix at a time
+- *Record what was found
+```
 
 ### Wait statistics
 
@@ -186,6 +212,18 @@ This is an illustrative example. A construction services business uses a job cos
 **Fixes.** The vendor supplies an index supported in the current version. Managers run the margin report from a reporting copy refreshed overnight, rather than the live system. Transactions for jobs closed more than three years ago are archived using the vendor's tool, after confirming retention requirements.
 
 **Result.** The margin report runs in about 40 seconds, order entry no longer freezes, and the server purchase is deferred. The business sets up a monthly check of key timings and data growth so problems are caught earlier next time.
+
+```figure
+type: compare
+title: Month-end slowdowns without a $30,000 server
+cols: Found | Fixed
+best: 2
+caption: The job margin report fell from about 18 minutes to about 40 seconds, and the server purchase was deferred.
+- Waiting | Mostly for locks | Order entry no longer freezes
+- Margin report | Seven years read with no suitable index | A supported index from the vendor
+- Who runs it | Several managers on the live system | A reporting copy refreshed overnight
+- *Data growth | Millions of rows for long-closed jobs | Jobs closed over three years archived
+```
 
 ## Applying this in an Australian business
 

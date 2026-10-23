@@ -24,6 +24,15 @@ Consider a service coordinator editing a work order. This is an illustrative exa
 
 Another coordinator then changes the technician to T9 and saves. The first form still contains T4. If its save operation writes every displayed field, it can restore T4 while updating the note, even though the first coordinator never intended to reverse the reassignment.
 
+```figure
+type: timeline
+title: A lost update on a work order
+caption: Writing every displayed field restores T4 although the first coordinator never meant to change it.
+- Opens | Coordinator 1 loads the form | technician T4
+- Saves | Coordinator 2 changes T4 to T9 | committed
+- *Saves | Coordinator 1 edits only the note | T4 written back over T9
+```
+
 The two writes may each be valid local transactions. The problem is that the second write uses stale assumptions from an earlier read. Protecting the physical update does not necessarily protect the meaning of the user's editing session.
 
 Writing only changed fields can reduce accidental overwrites, but it does not solve every conflict. A note may depend on the assigned technician, or two users may edit the same field. Independent-looking fields can also participate in a shared business rule.
@@ -53,6 +62,15 @@ For a simple integer counter, a successful change advances version seven to vers
 A result indicating that no row matched needs interpretation. The record might have changed, been deleted or become inaccessible. The response should preserve necessary access boundaries while giving the user an appropriate explanation. Do not assume every zero-row result means the same kind of conflict.
 
 This approach does not mean that the database uses no locks internally. The final write still participates in the engine's concurrency control. The benefit is avoiding a lock held across the user's long period of reading and editing, while detecting stale assumptions when the write is attempted.
+
+```figure
+type: steps
+title: Optimistic concurrency in three moves
+caption: The comparison and the change must happen in one protected operation.
+- Carry the version the user read
+- Compare and change together | update only if the version still matches
+- *No row changed? | report a conflict and keep the user's work
+```
 
 ## Choose a token that changes whenever the protected state changes
 
