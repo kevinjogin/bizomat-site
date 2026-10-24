@@ -543,6 +543,68 @@ for (const [id, expected] of MAKEOS_CASES) {
   });
 }
 
+// Handbook tools (calc-handbook3.js): defaults evaluated independently by hand from the formulas in each guide.
+const HANDBOOK3_CASES: Array<[string, Record<string, number>]> = [
+  ['bearing-l10-life', { exponent: 3, revolutions: 27, hours: 450 }],
+  ['bearing-static-ratio', { s0: 2.916666666667 }],
+  ['chain-linear-speed', { speed: 2.54, variation: 1.236243519926 }],
+  ['pulley-speed-ratio', { ratio: 2.5, drivenRpm: 600, beltSpeed: 7.853981633974 }],
+  ['leadscrew-speed', { speed: 25 }],
+  ['leadscrew-torque', { ideal: 1.591549430919, torque: 5.305164769730 }],
+  ['pipe-flow-velocity', { flowArea: 490.873852123405, velocity: 3.395305452627 }],
+  ['darcy-pipe-drop', { pa: 40000, kpa: 40, headLoss: 4.078864851912 }],
+  ['pump-shaft-power', { hydraulic: 0.588399, shaft: 0.840570 }],
+  ['shaft-angular-offset', { radians: 0.001499998875, degrees: 0.085943604812, per100: 0.15 }],
+  ['differential-expansion', { boreGrowth: 0.069, shaftGrowth: 0.036, change: 0.033 }],
+  ['cylinder-swept-volume', { extend: 0.392699081699, retract: 0.329867228627, total: 0.722566310326 }],
+];
+for (const [id, expected] of HANDBOOK3_CASES) {
+  test(`handbook reference example: ${id}`, () => {
+    const r = engine.run(id);
+    assert.equal(r.text, 'CALCULATED');
+    for (const [key, value] of Object.entries(expected)) near(r.values[key], value, Math.max(1e-9, Math.abs(value) * 1e-9), `${id}/${key}`);
+  });
+}
+
+test('handbook tools state units, physical bounds and specific guides', () => {
+  for (const [id] of HANDBOOK3_CASES) {
+    const t = engine.tool(id), g = engine.guides[id];
+    for (const f of t.fields.filter((f: any) => f.type === 'number')) {
+      assert.ok(f.unit && f.unit !== 'SI', `${id}/${f.key} has an explicit unit`);
+      assert.ok(f.max < 1e8, `${id}/${f.key} has a physical upper bound`);
+      assert.ok(g.inputs[f.key] && !/^Enter \w+ from verified drawing/.test(g.inputs[f.key]), `${id}/${f.key} has a specific input note`);
+    }
+    assert.ok(g.method.some((s: string) => s.startsWith('Example:')), `${id} guide has a worked example`);
+    assert.ok(!g.method.includes('Compute idealised relation from provided inputs.'), `${id} guide method is specific`);
+    assert.ok(g.refs.length >= 1 && !g.refs.some((r: string) => r.startsWith('Manufacturer engineering application manuals')), `${id} has a specific reference`);
+  }
+  for (const id of ['leadscrew-torque', 'pump-shaft-power']) {
+    assert.equal(engine.run(id, { efficiency: 1.5 }).text, 'CHECK INPUTS', `${id} rejects efficiency above 1`);
+    assert.equal(engine.run(id, { efficiency: 0 }).text, 'CHECK INPUTS', `${id} rejects zero efficiency`);
+  }
+  assert.equal(engine.run('darcy-pipe-drop', { friction: 2 }).text, 'CHECK INPUTS');
+  assert.equal(engine.run('chain-linear-speed', { teeth: 20.5 }).text, 'CHECK INPUTS');
+});
+
+test('handbook tools model assumptions, warnings and limiting cases', () => {
+  const roller = engine.run('bearing-l10-life', { type: 'roller' }).values;
+  near(roller.revolutions, 38.940738398300, 1e-9, 'roller exponent 10/3');
+  near(roller.hours, 649.012306638334, 1e-8, 'roller hours');
+  assert.equal(engine.run('bearing-l10-life', { type: 'unknown' }).text, 'CHECK INPUTS');
+  const warned = (r: any, label: string) => r.checks.some((c: any) => c.label === label && c.status === 'warn');
+  assert.ok(warned(engine.run('bearing-l10-life', { P: 40 }), 'Load level'), 'load above C is flagged');
+  assert.ok(!warned(engine.run('bearing-l10-life'), 'Load level'));
+  assert.ok(warned(engine.run('bearing-static-ratio', { P0: 40 }), 'Static rating'), 's0 below 1 is flagged');
+  assert.ok(warned(engine.run('darcy-pipe-drop', { friction: 0.0062 }), 'Friction factor'), 'Fanning-sized factor is flagged');
+  assert.ok(!warned(engine.run('darcy-pipe-drop'), 'Friction factor'));
+  near(engine.run('chain-linear-speed', { teeth: 40 }).values.variation, 0.308583778835, 1e-9, 'more teeth reduce chordal variation');
+  near(engine.run('differential-expansion', { deltaT: -60 }).values.change, -0.033, 1e-12, 'cooling tightens the fit');
+  assert.equal(engine.run('pipe-flow-velocity', { flow: 0 }).values.velocity, 0);
+  assert.equal(engine.run('darcy-pipe-drop', { velocity: 0 }).values.kpa, 0);
+  near(engine.run('cylinder-swept-volume', { rod: 0 }).values.retract, 0.392699081699, 1e-9, 'no rod: equal strokes');
+  assert.equal(engine.run('cylinder-swept-volume', { rod: 50 }).text, 'CHECK INPUTS');
+});
+
 test('MAKEOS rejects empty, non-finite, out-of-range and fractional count inputs without a result', () => {
   for (const t of engine.tools.filter((t) => t.collection === 'MAKEOS')) {
     for (const f of t.fields) {

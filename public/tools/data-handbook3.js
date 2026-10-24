@@ -1,49 +1,72 @@
-window.GOCORE_TOOLS=(window.GOCORE_TOOLS||[]).concat([
+// KEVOS® MAKEOS handbook tools: bearings, chain, belt, screw, pipe, pump, alignment, expansion and cylinder volume.
+window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {
     "id": "bearing-l10-life",
     "name": "Bearing L10 Life",
     "category": "Engineering",
     "collection": "MAKEOS",
-    "question": "Basic rating life for ball bearings using exponent 3; not a reliability adjusted or lubrication-adjusted prediction.",
-    "description": "Basic rating life for ball bearings using exponent 3; not a reliability adjusted or lubrication-adjusted prediction.",
+    "question": "How many hours will this rolling bearing run before 10% of a group would be expected to fail?",
+    "description": "Calculate basic rating life L10 in revolutions and hours from the dynamic load rating, equivalent load and speed, for ball or roller bearings.",
     "keywords": [
       "MAKEOS",
-      "design",
-      "engineering",
-      "Bearing L10 Life"
+      "bearing life",
+      "L10",
+      "rating life",
+      "rolling bearing",
+      "ball bearing",
+      "roller bearing"
     ],
     "fields": [
       {
+        "key": "type",
+        "label": "Bearing type",
+        "type": "select",
+        "default": "ball",
+        "options": [
+          [
+            "ball",
+            "Ball bearing · exponent 3"
+          ],
+          [
+            "roller",
+            "Roller bearing · exponent 10/3"
+          ]
+        ]
+      },
+      {
         "key": "C",
-        "label": "C",
+        "label": "Basic dynamic load rating C",
         "type": "number",
         "default": 30,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "kN",
+        "min": 0.001,
+        "max": 100000,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "P",
-        "label": "P",
+        "label": "Equivalent dynamic bearing load P",
         "type": "number",
         "default": 10,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "kN",
+        "min": 0.001,
+        "max": 100000,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "rpm",
-        "label": "rpm",
+        "label": "Constant rotational speed",
         "type": "number",
         "default": 1000,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "rpm",
+        "min": 0.1,
+        "max": 100000,
         "step": "any",
+        "integer": false,
         "sens": true
       }
     ]
@@ -53,35 +76,39 @@ window.GOCORE_TOOLS=(window.GOCORE_TOOLS||[]).concat([
     "name": "Bearing Static Load Ratio",
     "category": "Engineering",
     "collection": "MAKEOS",
-    "question": "Ratio of catalogued static capacity to equivalent static load; supplier selection limits still apply.",
-    "description": "Ratio of catalogued static capacity to equivalent static load; supplier selection limits still apply.",
+    "question": "How does the static load on this bearing compare with its static rating?",
+    "description": "Calculate the static safety factor s0 of a rolling bearing from its basic static load rating C0 and the equivalent static load P0.",
     "keywords": [
       "MAKEOS",
-      "design",
-      "engineering",
-      "Bearing Static Load Ratio"
+      "static safety factor",
+      "s0",
+      "static load rating",
+      "C0",
+      "rolling bearing"
     ],
     "fields": [
       {
         "key": "C0",
-        "label": "C0",
+        "label": "Basic static load rating C0",
         "type": "number",
         "default": 35,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "kN",
+        "min": 0.001,
+        "max": 100000,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "P0",
-        "label": "P0",
+        "label": "Equivalent static bearing load P0",
         "type": "number",
         "default": 12,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "kN",
+        "min": 0.001,
+        "max": 100000,
         "step": "any",
+        "integer": false,
         "sens": true
       }
     ]
@@ -91,46 +118,51 @@ window.GOCORE_TOOLS=(window.GOCORE_TOOLS||[]).concat([
     "name": "Chain Linear Speed",
     "category": "Power Transmission",
     "collection": "MAKEOS",
-    "question": "Average chain velocity based on chain pitch, sprocket tooth count and speed; ignores chordal action.",
-    "description": "Average chain velocity based on chain pitch, sprocket tooth count and speed; ignores chordal action.",
+    "question": "How fast does this roller chain run, and how much does its speed fluctuate?",
+    "description": "Calculate average roller chain speed from pitch, sprocket teeth and speed, with the chordal speed variation caused by the sprocket polygon.",
     "keywords": [
       "MAKEOS",
-      "design",
-      "engineering",
-      "Chain Linear Speed"
+      "chain speed",
+      "roller chain",
+      "sprocket",
+      "chordal action",
+      "chain velocity"
     ],
     "fields": [
       {
         "key": "pitch",
-        "label": "pitch",
+        "label": "Chain pitch",
         "type": "number",
         "default": 12.7,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "mm",
+        "min": 1,
+        "max": 300,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "teeth",
-        "label": "teeth",
+        "label": "Sprocket teeth",
         "type": "number",
         "default": 20,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "teeth",
+        "min": 3,
+        "max": 500,
         "step": "any",
-        "sens": true
+        "integer": true,
+        "sens": false
       },
       {
         "key": "rpm",
-        "label": "rpm",
+        "label": "Sprocket speed",
         "type": "number",
         "default": 600,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "rpm",
+        "min": 0.01,
+        "max": 100000,
         "step": "any",
+        "integer": false,
         "sens": true
       }
     ]
@@ -140,46 +172,51 @@ window.GOCORE_TOOLS=(window.GOCORE_TOOLS||[]).concat([
     "name": "Pulley Speed Ratio",
     "category": "Power Transmission",
     "collection": "MAKEOS",
-    "question": "Ideal driven pulley speed using pitch diameters; ignores belt slip.",
-    "description": "Ideal driven pulley speed using pitch diameters; ignores belt slip.",
+    "question": "What speed will the driven pulley run at, ignoring belt slip?",
+    "description": "Calculate the ideal driven pulley speed, speed ratio and belt speed from pitch diameters and driver speed, assuming no slip.",
     "keywords": [
       "MAKEOS",
-      "design",
-      "engineering",
-      "Pulley Speed Ratio"
+      "pulley ratio",
+      "belt drive",
+      "driven speed",
+      "pitch diameter",
+      "belt speed"
     ],
     "fields": [
       {
         "key": "driver",
-        "label": "driver",
+        "label": "Driver pulley pitch diameter",
         "type": "number",
         "default": 100,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "mm",
+        "min": 1,
+        "max": 5000,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "driven",
-        "label": "driven",
+        "label": "Driven pulley pitch diameter",
         "type": "number",
         "default": 250,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "mm",
+        "min": 1,
+        "max": 5000,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "rpm",
-        "label": "rpm",
+        "label": "Driver speed",
         "type": "number",
         "default": 1500,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "rpm",
+        "min": 0.01,
+        "max": 100000,
         "step": "any",
+        "integer": false,
         "sens": true
       }
     ]
@@ -189,35 +226,39 @@ window.GOCORE_TOOLS=(window.GOCORE_TOOLS||[]).concat([
     "name": "Lead Screw Travel Speed",
     "category": "Power Transmission",
     "collection": "MAKEOS",
-    "question": "Linear speed from mechanical lead and revolutions per minute; ignores backlash and acceleration.",
-    "description": "Linear speed from mechanical lead and revolutions per minute; ignores backlash and acceleration.",
+    "question": "How fast does the nut travel at this screw speed?",
+    "description": "Calculate linear travel speed of a lead screw or ball screw from its lead and rotational speed.",
     "keywords": [
       "MAKEOS",
-      "design",
-      "engineering",
-      "Lead Screw Travel Speed"
+      "lead screw speed",
+      "ball screw",
+      "linear speed",
+      "screw lead",
+      "travel speed"
     ],
     "fields": [
       {
         "key": "lead",
-        "label": "lead",
+        "label": "Screw lead (travel per revolution)",
         "type": "number",
         "default": 5,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "mm",
+        "min": 0.01,
+        "max": 200,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "rpm",
-        "label": "rpm",
+        "label": "Screw speed",
         "type": "number",
         "default": 300,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "rpm",
+        "min": 0.01,
+        "max": 100000,
         "step": "any",
+        "integer": false,
         "sens": true
       }
     ]
@@ -227,46 +268,51 @@ window.GOCORE_TOOLS=(window.GOCORE_TOOLS||[]).concat([
     "name": "Lead Screw Input Torque",
     "category": "Power Transmission",
     "collection": "MAKEOS",
-    "question": "Steady axial raising torque assuming a supplied overall efficiency fraction; excludes reverse drive checks.",
-    "description": "Steady axial raising torque assuming a supplied overall efficiency fraction; excludes reverse drive checks.",
+    "question": "What torque is needed to drive this axial load through a lead screw?",
+    "description": "Calculate the input torque to drive a steady axial load through a lead screw or ball screw, from load, lead and overall efficiency.",
     "keywords": [
       "MAKEOS",
-      "design",
-      "engineering",
-      "Lead Screw Input Torque"
+      "lead screw torque",
+      "ball screw torque",
+      "screw efficiency",
+      "axial load",
+      "drive torque"
     ],
     "fields": [
       {
         "key": "force",
-        "label": "force",
+        "label": "Axial load",
         "type": "number",
         "default": 2000,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "N",
+        "min": 0,
+        "max": 10000000,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "lead",
-        "label": "lead",
+        "label": "Screw lead (travel per revolution)",
         "type": "number",
         "default": 5,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "mm",
+        "min": 0.01,
+        "max": 200,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "efficiency",
-        "label": "efficiency",
+        "label": "Overall screw efficiency (as a fraction)",
         "type": "number",
         "default": 0.3,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "fraction 0–1",
+        "min": 0.01,
+        "max": 1,
         "step": "any",
+        "integer": false,
         "sens": true
       }
     ]
@@ -276,35 +322,39 @@ window.GOCORE_TOOLS=(window.GOCORE_TOOLS||[]).concat([
     "name": "Pipe Flow Velocity",
     "category": "Hydraulics",
     "collection": "MAKEOS",
-    "question": "Mean incompressible flow velocity in a circular internal bore.",
-    "description": "Mean incompressible flow velocity in a circular internal bore.",
+    "question": "What is the mean velocity of this flow in a pipe of this bore?",
+    "description": "Calculate mean liquid velocity in a full circular pipe from volumetric flow in L/min and internal bore diameter in mm.",
     "keywords": [
       "MAKEOS",
-      "design",
-      "engineering",
-      "Pipe Flow Velocity"
+      "pipe velocity",
+      "flow velocity",
+      "pipe sizing",
+      "L/min to m/s",
+      "bore diameter"
     ],
     "fields": [
       {
         "key": "flow",
-        "label": "flow",
+        "label": "Volumetric flow",
         "type": "number",
         "default": 100,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "L/min",
+        "min": 0,
+        "max": 1000000,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "diameter",
-        "label": "diameter",
+        "label": "Internal bore diameter",
         "type": "number",
         "default": 25,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "mm",
+        "min": 0.1,
+        "max": 10000,
         "step": "any",
+        "integer": false,
         "sens": true
       }
     ]
@@ -314,68 +364,75 @@ window.GOCORE_TOOLS=(window.GOCORE_TOOLS||[]).concat([
     "name": "Darcy Pipe Pressure Drop",
     "category": "Hydraulics",
     "collection": "MAKEOS",
-    "question": "Straight-pipe Darcy-Weisbach friction loss with supplied Darcy factor; excludes fittings and static head.",
-    "description": "Straight-pipe Darcy-Weisbach friction loss with supplied Darcy factor; excludes fittings and static head.",
+    "question": "How much pressure is lost to friction along this straight pipe?",
+    "description": "Calculate Darcy–Weisbach friction pressure drop and head loss in a straight circular pipe from the Darcy friction factor, length, bore, velocity and density.",
     "keywords": [
       "MAKEOS",
-      "design",
-      "engineering",
-      "Darcy Pipe Pressure Drop"
+      "Darcy-Weisbach",
+      "pressure drop",
+      "friction loss",
+      "head loss",
+      "pipe friction factor"
     ],
     "fields": [
       {
         "key": "friction",
-        "label": "friction",
+        "label": "Darcy friction factor f",
         "type": "number",
         "default": 0.025,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "dimensionless",
+        "min": 0.001,
+        "max": 1,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "length",
-        "label": "length",
+        "label": "Straight pipe length",
         "type": "number",
         "default": 20,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "m",
+        "min": 0,
+        "max": 100000,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "diameter",
-        "label": "diameter",
+        "label": "Internal bore diameter",
         "type": "number",
         "default": 25,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "mm",
+        "min": 0.1,
+        "max": 10000,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "velocity",
-        "label": "velocity",
+        "label": "Mean flow velocity",
         "type": "number",
         "default": 2,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "m/s",
+        "min": 0,
+        "max": 100,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "density",
-        "label": "density",
+        "label": "Fluid density",
         "type": "number",
         "default": 1000,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "kg/m³",
+        "min": 0.01,
+        "max": 25000,
         "step": "any",
+        "integer": false,
         "sens": true
       }
     ]
@@ -385,57 +442,63 @@ window.GOCORE_TOOLS=(window.GOCORE_TOOLS||[]).concat([
     "name": "Pump Shaft Power",
     "category": "Hydraulics",
     "collection": "MAKEOS",
-    "question": "Hydraulic head converted to estimated shaft input power using overall efficiency; verify pump curve.",
-    "description": "Hydraulic head converted to estimated shaft input power using overall efficiency; verify pump curve.",
+    "question": "What shaft power does a pump need for this flow and head?",
+    "description": "Calculate hydraulic power and pump shaft power from flow in L/min, total head in metres, fluid density and pump efficiency.",
     "keywords": [
       "MAKEOS",
-      "design",
-      "engineering",
-      "Pump Shaft Power"
+      "pump power",
+      "shaft power",
+      "hydraulic power",
+      "pump head",
+      "pump efficiency"
     ],
     "fields": [
       {
         "key": "flow",
-        "label": "flow",
+        "label": "Pump flow",
         "type": "number",
         "default": 120,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "L/min",
+        "min": 0,
+        "max": 1000000,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "head",
-        "label": "head",
+        "label": "Total dynamic head",
         "type": "number",
         "default": 30,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "m",
+        "min": 0,
+        "max": 10000,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "density",
-        "label": "density",
+        "label": "Liquid density",
         "type": "number",
         "default": 1000,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "kg/m³",
+        "min": 1,
+        "max": 25000,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "efficiency",
-        "label": "efficiency",
+        "label": "Overall pump efficiency (as a fraction)",
         "type": "number",
         "default": 0.7,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "fraction 0–1",
+        "min": 0.01,
+        "max": 1,
         "step": "any",
+        "integer": false,
         "sens": true
       }
     ]
@@ -445,35 +508,39 @@ window.GOCORE_TOOLS=(window.GOCORE_TOOLS||[]).concat([
     "name": "Shaft Angular Offset",
     "category": "Maintenance",
     "collection": "MAKEOS",
-    "question": "Angular displacement corresponding to a specified relative offset across an axial span; not raw dial reading.",
-    "description": "Angular displacement corresponding to a specified relative offset across an axial span; not raw dial reading.",
+    "question": "What angular misalignment does this offset across a known span represent?",
+    "description": "Convert an offset change across an axial span into angular misalignment in degrees, milliradians and millimetres per 100 mm.",
     "keywords": [
       "MAKEOS",
-      "design",
-      "engineering",
-      "Shaft Angular Offset"
+      "shaft alignment",
+      "angular misalignment",
+      "coupling alignment",
+      "mrad",
+      "mm per 100 mm"
     ],
     "fields": [
       {
         "key": "difference",
-        "label": "difference",
+        "label": "Relative offset change across the span",
         "type": "number",
         "default": 0.15,
-        "unit": "SI",
+        "unit": "mm",
         "min": 0,
-        "max": 100000000,
+        "max": 1000,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "span",
-        "label": "span",
+        "label": "Axial span between measurement planes",
         "type": "number",
         "default": 100,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "mm",
+        "min": 0.1,
+        "max": 100000,
         "step": "any",
+        "integer": false,
         "sens": true
       }
     ]
@@ -483,57 +550,63 @@ window.GOCORE_TOOLS=(window.GOCORE_TOOLS||[]).concat([
     "name": "Differential Thermal Expansion",
     "category": "Materials",
     "collection": "MAKEOS",
-    "question": "Difference in bore and shaft diameter thermal growth using constant coefficients and uniform temperature.",
-    "description": "Difference in bore and shaft diameter thermal growth using constant coefficients and uniform temperature.",
+    "question": "How does a fit clearance change when the bore and shaft materials expand differently?",
+    "description": "Calculate the change in diametral clearance between a bore and shaft of different materials for a uniform temperature change.",
     "keywords": [
       "MAKEOS",
-      "design",
-      "engineering",
-      "Differential Thermal Expansion"
+      "differential expansion",
+      "thermal expansion",
+      "fit clearance",
+      "shrink fit",
+      "expansion coefficient"
     ],
     "fields": [
       {
         "key": "diameter",
-        "label": "diameter",
+        "label": "Nominal fit diameter",
         "type": "number",
         "default": 50,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "mm",
+        "min": 0.1,
+        "max": 10000,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "boreAlpha",
-        "label": "boreAlpha",
+        "label": "Bore (housing) expansion coefficient",
         "type": "number",
         "default": 23,
-        "unit": "SI",
+        "unit": "×10⁻⁶ /°C",
         "min": 0,
-        "max": 100000000,
+        "max": 300,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "shaftAlpha",
-        "label": "shaftAlpha",
+        "label": "Shaft expansion coefficient",
         "type": "number",
         "default": 12,
-        "unit": "SI",
+        "unit": "×10⁻⁶ /°C",
         "min": 0,
-        "max": 100000000,
+        "max": 300,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "deltaT",
-        "label": "deltaT",
+        "label": "Uniform temperature change from assembly",
         "type": "number",
         "default": 60,
-        "unit": "SI",
-        "min": -300,
-        "max": 100000000,
+        "unit": "°C",
+        "min": -250,
+        "max": 1500,
         "step": "any",
+        "integer": false,
         "sens": true
       }
     ]
@@ -543,46 +616,51 @@ window.GOCORE_TOOLS=(window.GOCORE_TOOLS||[]).concat([
     "name": "Pneumatic Cylinder Swept Volume",
     "category": "Pneumatics",
     "collection": "MAKEOS",
-    "question": "Two-stroke double-acting cylinder volume; excludes air pressure conversion, dead volume and leakage.",
-    "description": "Two-stroke double-acting cylinder volume; excludes air pressure conversion, dead volume and leakage.",
+    "question": "What volume does a double-acting cylinder sweep in one complete cycle?",
+    "description": "Calculate the geometric swept volume of a double-acting cylinder for the extend stroke, retract stroke and complete cycle from bore, rod and stroke.",
     "keywords": [
       "MAKEOS",
-      "design",
-      "engineering",
-      "Pneumatic Cylinder Swept Volume"
+      "cylinder volume",
+      "swept volume",
+      "double-acting cylinder",
+      "pneumatic cylinder",
+      "air volume"
     ],
     "fields": [
       {
         "key": "bore",
-        "label": "bore",
+        "label": "Bore diameter",
         "type": "number",
         "default": 50,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "mm",
+        "min": 1,
+        "max": 1000,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "rod",
-        "label": "rod",
+        "label": "Rod diameter",
         "type": "number",
         "default": 20,
-        "unit": "SI",
+        "unit": "mm",
         "min": 0,
-        "max": 100000000,
+        "max": 1000,
         "step": "any",
+        "integer": false,
         "sens": true
       },
       {
         "key": "stroke",
-        "label": "stroke",
+        "label": "Stroke",
         "type": "number",
         "default": 200,
-        "unit": "SI",
-        "min": 1e-7,
-        "max": 100000000,
+        "unit": "mm",
+        "min": 0.1,
+        "max": 10000,
         "step": "any",
+        "integer": false,
         "sens": true
       }
     ]
