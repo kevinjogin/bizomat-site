@@ -13,7 +13,6 @@ const { tools, guides } = loadWorkosTools() as { tools: Array<Record<string, any
 const cardHref = (id: string) => (hasStandaloneGuide(guides[id]) ? toolPageHref(id) : toolAppHref(id));
 const searchText = (t: Record<string, any>) => [t.name, t.category, t.question, t.description, ...(t.keywords || []), ...(guides[t.id]?.uses || []), ...(guides[t.id]?.users || [])].join(' ').toLowerCase();
 const TOOL_COUNT = tools.length;
-const MAKEOS_COUNT = tools.filter((t) => t.collection === 'MAKEOS').length;
 const CATEGORIES = [...new Set(tools.map((t) => t.category))];
 const description =
   'KEVOS® WORKOS engineering, manufacturing, operations and commercial decision tools with feasibility checks, sensitivity analysis and exportable decision reports.';
@@ -27,9 +26,9 @@ const description =
           <div class="tools-intro__copy">
             <p class="eyebrow">KEVOS® WORKOS</p>
             <h1>Tools for better decisions.</h1>
-            <p class="lead">Engineering, manufacturing, operations and commercial decision tools. Each one explains its method, checks feasibility, tests sensitivity and produces a decision report you can share.</p>
-            <p><strong>MAKEOS engineering toolkit</strong> — {MAKEOS_COUNT} practical calculators for machining, design, fluid power, fabrication, quality and maintenance.</p>
-            <div class="tools-meta" aria-label="Tool collection features"><span class="tools-pill">{TOOL_COUNT} decision tools</span><span class="tools-pill">Decision reports</span><span class="tools-pill">Sensitivity analysis</span><span class="tools-pill">No account</span><span class="tools-pill">Runs in your browser</span></div>
+            <p class="lead">Practical tools for the engineering, manufacturing, operations and commercial decisions your team makes every day. Each one shows its method, checks what could go wrong, tests how sensitive the answer is and gives you a report you can share with confidence.</p>
+            <p><strong>MAKEOS engineering toolkit</strong> — a growing library of calculators built on established engineering methods. It covers machining, mechanical design, fasteners and gears, power transmission, fluid power, fabrication, quality and maintenance. Every result shows its working and tells you what to verify before you rely on it.</p>
+            <div class="tools-meta" aria-label="Tool collection features"><span class="tools-pill">Methods shown in full</span><span class="tools-pill">Decision reports</span><span class="tools-pill">Sensitivity analysis</span><span class="tools-pill">No account</span><span class="tools-pill">Runs in your browser</span></div>
           </div>
           <div class="tools-intro__visual"><MotionVisual page="tools" priority /></div>
         </div>
