@@ -110,6 +110,7 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'win-work-you-can-deliver': { motif: 'pathway', tone: 'ember' },
   'weld-repairs-that-hold': { motif: 'beam', tone: 'ember' },
   'gears-by-the-numbers': { motif: 'geartrain', tone: 'paper' },
+  'oxy-fuel-by-the-numbers': { motif: 'gauge', tone: 'carbon' },
 };
 
 const hash = (s: string) => [...s].reduce((a, c) => (Math.imul(a, 33) + c.charCodeAt(0)) >>> 0, 5381);
