@@ -147,3 +147,216 @@ Completion register for the WORKOS engineering decision tools upgrade. Generated
 - Scores, bands and thresholds marked “tool default” in each guide are screening conventions, not standards; replace them with your organisation’s policy where one exists.
 - The Retention Method Selector holds no catalogue dimensions, strength ratings, speed or temperature limits, safety factors or prices. Every rating and cost is entered by the user; missing evidence gives VERIFY, never PASS. Standards are named for reference only and their editions must be confirmed against an approved list.
 - Results are pre-tax and in AUD unless a guide states otherwise.
+
+## Machinery’s Handbook topic tools (added 25 October 2026)
+
+122 MAKEOS calculators in five batches (`public/tools/{data,guides,calc}-handbook4…8.js`), built from topics in *Machinery’s Handbook*, 29th edition (Industrial Press, 2012). Each tool uses standard engineering relations; no handbook tables, ratings or recommended settings are reproduced, and every guide cites the printed pages as a topic reference. Material properties, ratings, allowable stresses, factors and limits are always user inputs.
+
+Applied to every tool: units and bounds on every input, a guide with an input source for every field, a worked example computed from the tool’s own defaults, feasibility and verification checks, ±10% sensitivity, HTML/print report and share link. Automated tests run every tool with its defaults, reject empty, non-finite, out-of-range and fractional inputs, check impossible geometry, and compare 31 reference cases with handbook worked examples, ISO/ASME tabulated values or hand calculations (`tests/tools-calculators.test.ts`).
+
+### Geometry
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Circular Segment and Arc** `circular-segment` | CALCULATED | Sensitivity of radius to height; Model and application | 77–80 | Automated + reference value |
+| **Regular Polygon and Hexagon Sizes** `regular-polygon` | CALCULATED | Round stock for full corners; Model and application | 76, 81–82 | Automated + reference value |
+| **Triangle Solver** `triangle-solver` | CALCULATED | Angle sum; Model and application | 95–102 | Automated + reference value |
+| **Cylindrical Tank Contents** `tank-volume` | CALCULATED | Tank ends; Model and application | 68–69 | Automated + reference value |
+| **Hopper and Frustum Volume** `frustum-volume` | CALCULATED | Outlet smaller than top; Model and application | 82–87, 66 | Automated + reference value |
+| **Ellipse Area and Perimeter** `ellipse` | CALCULATED | Axes; Model and application | 48–50, 70–75 | Automated + reference value |
+| **Compound Angle** `compound-angle` | CALCULATED | Angle definitions; Model and application | 119–121 | Automated |
+| **Polar and Rectangular Coordinates** `polar-coordinates` | CALCULATED | Angle convention; Model and application | 43–45, 692–694 | Automated |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Dovetail Measurement over Rods** `dovetail-measurement` | MEASUREMENT CALCULATED | Rod contacts flank below edge; Model and application | 682 | Automated |
+| **V-Groove Measurement over a Pin** `v-groove-pin` | MEASUREMENT CALCULATED | Pin contacts the flanks; Model and application | 682–691 | Automated |
+| **Gauge Block Stack Builder** `gauge-block-stack` | STACK FOUND | Stack equals target; Model and application | 705–708 | Automated + reference value |
+| **Abbe Offset Error** `abbe-error` | CALCULATED | Measurement capability; Model and application | 709–735 | Automated |
+| **Statistical (RSS) Tolerance Stack** `rss-tolerance-stack` | MEETS WORST CASE | Worst case within limits; RSS within limits; Statistical assumptions; Model and application | 628–634, 128–130 | Automated + reference value |
+| **ISO Tolerance Grade (IT) Value** `it-tolerance-grade` | CALCULATED | Drawing value; Model and application | 635–668 | Automated |
+| **Normal Distribution Out-of-Tolerance** `normal-out-of-spec` | CALCULATED | Process stability and normality; Centring; Model and application | 128–133 | Automated + reference value |
+| **Sample Size to Estimate a Mean** `sample-size-mean` | CALCULATED | Standard deviation estimate; Model and application | 130–132 | Automated |
+| **Two-Sample Comparison (t-test)** `two-sample-t` | SIGNIFICANT DIFFERENCE | Significance; Sampling assumptions; Model and application | 130–133 | Automated + reference value |
+
+### Units
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Length Converter** `length-converter` | CONVERTED | Conversion factors; Model and application | 2661–2662 | Automated |
+| **Force Converter** `force-converter` | CONVERTED | Conversion factors; Model and application | 2683–2686 | Automated |
+| **Pressure and Stress Converter** `pressure-converter` | CONVERTED | Conversion factors; Model and application | 2686–2694 | Automated |
+| **Torque Converter** `torque-converter` | CONVERTED | Conversion factors; Model and application | 2686–2694 | Automated |
+| **Power Converter** `power-converter` | CONVERTED | Conversion factors; Model and application | 2695–2697 | Automated |
+| **Energy and Work Converter** `energy-converter` | CONVERTED | Conversion factors; Model and application | 2695–2697 | Automated |
+| **Volumetric Flow Converter** `flow-converter` | CONVERTED | Conversion factors; Model and application | 2682 | Automated |
+| **Mass Converter** `mass-converter` | CONVERTED | Conversion factors; Model and application | 2683–2685 | Automated |
+| **Speed and Feed Rate Converter** `velocity-converter` | CONVERTED | Conversion factors; Model and application | 2698 | Automated |
+| **Angle Converter** `angle-converter` | CONVERTED | Conversion factors; Model and application | 103–104, 2662 | Automated |
+| **Temperature Converter** `temperature-converter` | CONVERTED | Reading or difference; Model and application | 2695–2696 | Automated |
+| **Decimal to Fraction** `decimal-fraction` | EXACT FRACTION | Exact at 1/64; Model and application | 3, 11–13 | Automated |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Resultant of Concurrent Forces** `force-resultant` | CALCULATED | Concurrent forces; Model and application | 153–163 | Automated |
+| **Inclined Plane and Friction** `inclined-plane` | CALCULATED | Self-locking; Model and application | 165–171 | Automated |
+| **Flywheel Energy and Speed Fluctuation** `flywheel-energy` | RIM SPEED WITHIN LIMIT | Rim speed; Model and application | 3000–3010, 179–186 | Automated + reference value |
+| **Centrifugal Force on a Rotating Mass** `centrifugal-force` | CALCULATED | Retention capacity; Model and application | 187–190 | Automated |
+| **Permissible Residual Unbalance (Balance Grade)** `balance-grade` | CALCULATED | Measured residual unbalance; Model and application | 191–196 | Automated + reference value |
+| **Impact Energy and Stopping Force** `impact-load` | CALCULATED | Absorber rating; Model and application | 179–186, 278 | Automated |
+| **Point-to-Point Move Time** `move-profile` | CALCULATED | Drive force; Model and application | 175–180 | Automated |
+| **Sling Leg Tension** `sling-tension` | WITHIN LEG WLL | Leg tension within WLL; Leg angle; Lift plan; Model and application | 2613–2650 | Automated |
+| **Combined Centre of Gravity** `combined-cg` | CALCULATED | Item data; Model and application | 221–227 | Automated + reference value |
+| **Mass Moment of Inertia** `mass-moment-inertia` | CALCULATED | Geometry; Model and application | 228–240 | Automated + reference value |
+| **Belt, Rope and Band Friction (Capstan)** `belt-friction` | CALCULATED | Friction coefficient; Model and application | 165–168, 2473–2490 | Automated |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Column Buckling (Euler and Johnson)** `column-buckling` | ADEQUATE | Safety factor against buckling; Applied stress below yield; End conditions; Model and application | 281–287 | Automated + reference value |
+| **Principal Stresses and von Mises** `principal-stress` | ADEQUATE | von Mises safety factor; Tresca safety factor; Model and application | 212–218 | Automated + reference value |
+| **Pressure Cylinder Wall Stress** `pressure-cylinder` | ADEQUATE | Safety factor against yield; Wall ratio; Pressure equipment code; Model and application | 290–294 | Automated + reference value |
+| **Fatigue Safety Factor (Goodman)** `goodman-fatigue` | ADEQUATE | Governing safety factor; Corrected endurance limit; Model and application | 200–211, 280 | Automated |
+| **Beam Cases: Off-Centre, Fixed and Propped** `beam-cases` | STRESS WITHIN ALLOWABLE | Bending stress; Deflection limit; Model and application | 257–277 | Automated |
+| **Shaft Diameter for Bending and Torsion** `shaft-diameter` | DIAMETER ADEQUATE | Checked diameter; Deflection and critical speed; Model and application | 295–303 | Automated |
+| **Shaft Critical (Whirling) Speed** `critical-speed` | BELOW CRITICAL | Separation from critical speed; Support stiffness; Model and application | 197, 302 | Automated + reference value |
+| **Circular Flat Plate under Pressure** `circular-plate` | STRESS WITHIN ALLOWABLE | Bending stress; Small-deflection validity; Model and application | 288–290 | Automated |
+| **Press and Shrink Fit Pressure and Holding Torque** `press-fit` | ADEQUATE | Hub stress safety factor; Heating temperature; Interference range; Model and application | 631–634 | Automated + reference value |
+| **Restrained Thermal Stress** `thermal-stress` | CALCULATED | Stress below yield; Buckling in compression; Model and application | 375–376, 578 | Automated |
+| **Hertz Contact Stress** `hertz-contact` | WITHIN ALLOWABLE | Contact pressure; Hardened depth; Model and application | 2301–2309 | Automated + reference value |
+
+### Springs
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Helical Compression Spring Design Check** `compression-spring` | STRESS WITHIN ALLOWABLE | Stress at working length; Stress at solid; Spring index; Buckling; Model and application | 304–324 | Automated + reference value |
+| **Helical Extension Spring Check** `extension-spring` | BODY STRESS WITHIN ALLOWABLE | Body stress; Hook stress; Model and application | 325–332 | Automated |
+| **Helical Torsion Spring Check** `torsion-spring` | SPRING OK | Bending stress; Arbor clearance; Model and application | 333–343 | Automated |
+| **Springs in Series or Parallel** `spring-combination` | CALCULATED | Individual spring limits; Model and application | 304–320 | Automated |
+| **Disc (Belleville) Spring Load and Stress** `disc-spring` | CALCULATED | Working deflection; Ratio h₀/t; Fatigue; Model and application | 350–359 | Automated + reference value |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Bolt Tightening Torque and Preload** `bolt-torque-preload` | WITHIN PROOF LOAD | Preload within proof load; Nut factor; Model and application | 1521–1535 | Automated |
+| **Thread Length of Engagement** `thread-engagement` | CALCULATED | Thread limits used; Model and application | 1536–1537 | Automated |
+| **Bolted Joint Load Sharing and Separation** `bolted-joint` | JOINT HOLDS | No separation; Bolt stress within proof; Member stiffness; Model and application | 1521–1535 | Automated + reference value |
+| **Bolt and Pin Shear and Bearing** `bolt-shear-bearing` | ADEQUATE | Shear; Bearing; Edge distance and net section; Model and application | 1535, 1720–1735 | Automated |
+| **Riveted Lap Joint Efficiency** `riveted-joint` | CALCULATED | Edge distance; Model and application | 1720–1735 | Automated + reference value |
+| **Tap Drill for Percentage of Thread** `tap-drill` | CALCULATED | Minor diameter tolerance; Forming tap suitability; Model and application | 2029–2036 | Automated |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **ISO Metric Thread Basic Dimensions** `metric-thread` | CALCULATED | Tolerance class; Model and application | 1867–1890 | Automated + reference value |
+| **Unified Inch Thread Basic Dimensions** `unified-thread` | CALCULATED | Tolerance class; Model and application | 1806–1866 | Automated + reference value |
+| **Three-Wire Thread Measurement** `three-wire` | CALCULATED | Wire contacts the flanks; Lead angle; Model and application | 1990–2003 | Automated + reference value |
+| **Thread Helix Angle and Screw Efficiency** `screw-efficiency` | CALCULATED | Self-locking; Vibration; Model and application | 1921–1928, 2061–2062 | Automated |
+| **Simple Indexing on a Dividing Head** `simple-indexing` | SIMPLE INDEXING POSSIBLE | Exact indexing; Model and application | 2107–2121 | Automated |
+| **Change Gears for Thread Cutting** `change-gears` | EXACT TRAIN FOUND | Lead accuracy; Gear train fits the lathe; Model and application | 2043–2049 | Automated + reference value |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Helical Gear Pair Geometry** `helical-gear` | CALCULATED | Overlap ratio; Gear rating; Model and application | 2195–2210 | Automated |
+| **Gear Tooth Forces** `gear-forces` | CALCULATED | Dynamic and application factors; Model and application | 2131–2160, 2195–2200 | Automated |
+| **Gear Tooth Bending Stress (Lewis)** `lewis-bending` | WITHIN ALLOWABLE | Bending stress; Full gear rating; Model and application | 2131–2160 | Automated |
+| **Worm Gear Geometry and Efficiency** `worm-gear` | CALCULATED | Back-driving; Thermal rating; Model and application | 2191–2194 | Automated + reference value |
+| **Straight Bevel Gear Geometry** `bevel-gear` | CALCULATED | Face width; Bevel gear rating; Model and application | 2181–2190 | Automated |
+| **Gear Chordal Thickness and Addendum** `chordal-tooth` | CALCULATED | Tip diameter; Model and application | 2145, 2238–2240 | Automated + reference value |
+| **Gear Span (Base Tangent) Measurement** `span-measurement` | CALCULATED | Anvils fit across the face; Model and application | 2236–2248 | Automated + reference value |
+| **Spur Gear Measurement over Pins** `gear-over-pins` | CALCULATED | Pin contact; Model and application | 2236–2248 | Automated |
+| **Gear Train Ratio, Speed and Torque** `gear-train` | CALCULATED | Mesh strength; Model and application | 2122–2160 | Automated |
+| **Cam Follower Peak Velocity and Acceleration** `cam-motion` | CALCULATED | Acceleration continuity; Follower contact; Model and application | 2284–2309 | Automated |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Belt Drive Tensions and Shaft Load** `belt-drive-tensions` | CALCULATED | Belt speed; Installation tension; Model and application | 2473–2520 | Automated |
+| **Roller Chain Length and Centre Distance** `chain-length` | CALCULATED | Wrap on small sprocket; Small sprocket teeth; Model and application | 2537–2560 | Automated |
+| **Reflected Inertia and Motor Acceleration Torque** `reflected-inertia` | CALCULATED | Inertia ratio; Motor rating; Model and application | 180–186, 2569–2580 | Automated |
+| **Ball Screw Critical Speed and Buckling** `ballscrew-limits` | WITHIN LIMITS | Speed; Buckling; Nut life and DN limit; Model and application | 2561–2568 | Automated |
+| **Plate Clutch and Disc Brake Torque** `clutch-torque` | CAPACITY SUFFICIENT | Torque capacity; Lining pressure and heat; Model and application | 2446–2458 | Automated + reference value |
+| **Three-Phase Motor Power, Current and Torque** `motor-power` | CALCULATED | Electrical sizing; Model and application | 2569–2580 | Automated |
+| **Parallel Key Shear and Crushing** `key-stress` | KEY ADEQUATE | Shear; Crushing; Key length; Model and application | 2460–2486, 301 | Automated |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Rolling Bearing Adjusted Rating Life** `bearing-life-adjusted` | LIFE SUFFICIENT | Life against requirement; Load factors; Model and application | 2400–2420 | Automated + reference value |
+| **Plain Bearing Pressure, Velocity and PV** `journal-bearing-pv` | WITHIN MATERIAL LIMITS | Pressure; Sliding speed; PV; Model and application | 2314–2337 | Automated |
+| **O-Ring Squeeze, Stretch and Gland Fill** `o-ring-gland` | WITHIN TYPICAL RANGES | Squeeze; Gland fill; Stretch; Tolerance extremes; Model and application | 2591–2610 | Automated |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Turning Cutting Force and Power** `turning-power` | WITHIN MACHINE POWER | Power available; Power at this speed; Model and application | 1084–1101 | Automated |
+| **Milling Power and Spindle Torque** `milling-power` | WITHIN SPINDLE POWER | Power available; Spindle torque at this speed; Model and application | 1084–1101 | Automated |
+| **Drilling Power, Torque and Thrust** `drilling-power` | WITHIN MACHINE POWER | Power available; Thrust and workholding; Model and application | 1089–1093 | Automated |
+| **Ball-Nose Scallop Height and Stepover** `scallop-height` | CALCULATED | Surface orientation; Model and application | 1039–1058, 1279–1300 | Automated + reference value |
+| **Taylor Tool Life and Economic Cutting Speed** `taylor-tool-life` | IN EFFICIENT RANGE | Planned speed in efficient range; Range of test data; Model and application | 1102–1124, 1132–1140 | Automated + reference value |
+| **Grinding Wheel Speed and Removal Rate** `grinding-wheel` | WITHIN WHEEL SPEED | Wheel speed within marked maximum; Guarding and mounting; Model and application | 1199–1268, 1246–1250 | Automated |
+| **Broach Tooth Pitch** `broach-pitch` | CALCULATED | At least two teeth cutting; Minimum practical pitch; Model and application | 980–990 | Automated + reference value |
+| **Boring Bar Deflection** `boring-bar-deflection` | DEFLECTION ACCEPTABLE | Deflection; Overhang ratio; Model and application | 762–790, 1300 | Automated |
+| **Electroplating Thickness and Time (Faraday)** `electroplating-thickness` | CALCULATED | Thickness distribution; Model and application | 1467, 1500–1516 | Automated |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Guillotine Shearing Force** `shear-force` | WITHIN SHEAR CAPACITY | Shear capacity; Thickness rating; Model and application | 1336–1339 | Automated |
+| **Press Brake Bending Force** `press-brake-force` | WITHIN PRESS CAPACITY | Press capacity; Die opening; Load per length; Model and application | 1346–1353 | Automated |
+| **Drawn Shell Blank Diameter and Draws** `shell-blank` | 2 DRAWS | First drawing ratio; Trim allowance; Model and application | 1353–1360 | Automated + reference value |
+| **Fillet Weld Strength** `fillet-weld-strength` | WELDS ADEQUATE | Weld capacity; Eccentricity and base metal; Model and application | 1476–1486, 1469–1475 | Automated |
+| **Carbon Equivalent and Weldability** `carbon-equivalent` | PREHEAT LIKELY | Weldability band; Pcm applicability; Preheat determination; Model and application | 1431–1449 | Automated |
+| **Casting Solidification Time and Riser Check** `casting-solidification` | RISER MODULUS SUFFICIENT | Modulus ratio; Feed volume and distance; Model and application | 1405–1420 | Automated |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Brinell Hardness from Indentation** `brinell-hardness` | VALID TEST | Indentation size; Specimen thickness; Model and application | 1406–1412 | Automated + reference value |
+| **Heat Flow Through a Layered Wall** `wall-heat-loss` | CALCULATED | Touch temperature; Model and application | 371–378 | Automated |
+| **Heating Energy and Time** `heating-energy` | CALCULATED | Phase change; Model and application | 371–374 | Automated + reference value |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Orifice and Restrictor Flow** `orifice-flow` | CALCULATED | Discharge coefficient; Model and application | 3024–3027, 352–368 | Automated |
+| **Hydraulic Accumulator Size** `accumulator-size` | CALCULATED | Precharge ratio; Pressure ratio; Model and application | 352–368 | Automated + reference value |
+| **Pipe Friction Factor and Pressure Drop** `pipe-friction` | CALCULATED | Flow regime; Operating viscosity; Model and application | 3024–3027 | Automated |
+| **Pump and Fan Affinity Laws** `pump-affinity` | CALCULATED | Impeller trim; Static head; Model and application | 3024–3027 | Automated + reference value |
+| **Pump NPSH Available** `npsh-available` | NPSH ADEQUATE | Margin over NPSHr; Model and application | 3024–3027 | Automated + reference value |
+| **Hydraulic Motor Torque, Speed and Power** `hydraulic-motor` | CALCULATED | Starting torque; Model and application | 352–368 | Automated |
+| **Pipe or Hose Size for a Target Velocity** `pipe-size-velocity` | BORE ADEQUATE | Actual bore; Model and application | 3024–3027 | Automated |
+| **Hydrostatic Pressure and Tank Wall Force** `hydrostatic-force` | CALCULATED | Dynamic loads; Model and application | 3024–3027 | Automated + reference value |
+
+### Pneumatics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Air Compressor Power** `compressor-power` | CALCULATED | Maker data; Model and application | 3032–3041 | Automated |
+| **Compressed Air Leak Cost** `air-leak-cost` | CALCULATED | Flow basis; Choked flow; Model and application | 3032–3041 | Automated |
+| **Air Receiver Size** `air-receiver` | RECEIVER ADEQUATE | Actual receiver; Pressure equipment; Model and application | 3032–3041 | Automated + reference value |
+| **Gas Volume at Pressure and Temperature** `gas-law` | CALCULATED | Reference conditions; Model and application | 3032–3041 | Automated + reference value |
+
+### Money
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Depreciation Schedule** `depreciation-schedule` | CALCULATED | Tax treatment; Model and application | 139–140 | Automated + reference value |
+| **Equivalent Annual Cost Comparison** `euac-compare` | OPTION B | Margin between options; Equal service; Model and application | 134–146 | Automated + reference value |
+| **Internal Rate of Return (Uneven Cash Flows)** `irr-uneven` | MEETS HURDLE RATE | NPV at hurdle rate; Cash flow evidence; Model and application | 140–144 | Automated + reference value |
+| **Interest and Equivalence Factors** `interest-factors` | CALCULATED | Rate basis; Model and application | 134–139 | Automated + reference value |
