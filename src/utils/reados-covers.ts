@@ -111,6 +111,7 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'weld-repairs-that-hold': { motif: 'beam', tone: 'ember' },
   'cad-standards-that-stick': { motif: 'specsheet', tone: 'ember' },
   'cad-data-you-can-trust': { motif: 'archive', tone: 'graphite' },
+  'vehicle-mechanics-by-the-numbers': { motif: 'geartrain', tone: 'ember' },
   'gears-by-the-numbers': { motif: 'geartrain', tone: 'paper' },
   'oxy-fuel-by-the-numbers': { motif: 'gauge', tone: 'carbon' },
   'electroplating-by-the-numbers': { motif: 'experiment', tone: 'ember' },
