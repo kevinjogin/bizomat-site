@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -88,9 +88,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 434 tools with unique ids and every previously published id kept', () => {
+test('register: 444 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 434);
+  assert.equal(ids.length, 444);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -835,16 +835,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 319 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 329 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 319);
+  assert.equal(ids.length, 329);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -1337,6 +1337,53 @@ test('sixth handbook pass rejects impossible inputs', () => {
     ['progression', { l: -5 }], ['preferred-numbers', { max: 0.5 }], ['line-intersection', { x2: 0, y2: 0 }], ['mixture-cost', { mode: 'blend', vT: 12 }],
     ['mixture-cost', { q1: 0, q2: 0, q3: 0, q4: 0 }], ['column-safe-stress-classic', { L: 6000 }], ['iso-cleanliness-code', { c6: 20000 }], ['filter-beta-ratio', { down: 6000 }],
     ['inverse-time-feed', { angle: 0 }], ['screw-machine-stock', { bar: 20 }], ['agma-pitting-power', { kind: 'int', mg: 1 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Seventh handbook pass (handbook23): gear contact geometry, clutch teeth, silent chain, microtools, stockpiles, timber,
+// packed-joint bolts, press flywheels, equivalent chip thickness and draw sequences.
+const HB7_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['spur-contact-diameters', {}, { dc1: 20 * Math.cos(Math.PI / 9) / Math.cos(Math.atan(Math.tan(Math.PI / 9) - 2 * (Math.tan(Math.acos(40 * Math.cos(Math.PI / 9) / 42)) - Math.tan(Math.PI / 9)))) }],
+  ['spur-contact-diameters', {}, { mf: (Math.sqrt(21 ** 2 - (20 * Math.cos(Math.PI / 9)) ** 2) + Math.sqrt(11 ** 2 - (10 * Math.cos(Math.PI / 9)) ** 2) - 30 * Math.sin(Math.PI / 9)) / (Math.PI * Math.cos(Math.PI / 9)) }], // formula 7c
+  ['spur-contact-diameters', {}, { rc: (0.785398 * Math.cos(Math.PI / 9) - 1.25 * Math.sin(Math.PI / 9)) / (1 - Math.sin(Math.PI / 9)) }],
+  ['clutch-teeth-dividing-head', {}, { alpha: 27 + 19.2 / 60 }, 0.01], // handbook table: 5 teeth, 60° single-angle cutter
+  ['clutch-teeth-dividing-head', { Nt: 5, theta: 70 }, { alpha: 55 + 56.3 / 60 }, 0.01], // handbook table
+  ['clutch-teeth-dividing-head', { type: 'double', Nt: 10, theta: 60 }, { alpha: 73 + 39.4 / 60 }, 0.01], // handbook table, double-angle cutter
+  ['clutch-teeth-dividing-head', { type: 'double', Nt: 10, theta: 90 }, { alpha: 80 + 39 / 60 }, 0.01],
+  ['silent-chain-sprocket', {}, { PD: 12.7 / Math.sin(Math.PI / 21), OD: 12.7 * (1 / Math.tan(Math.PI / 21) + 0.08), G: 12.7 * (1 / Math.tan(Math.PI / 21) - 1.16) }],
+  ['silent-chain-sprocket', { Nt: 20 }, { OPD: 12.7 / Math.sin(Math.PI / 20) - 0.125 * 12.7 / Math.sin(Math.PI / 6 - Math.PI / 20) + 0.625 * 12.7 }],
+  ['microtool-stiffness', {}, { dD: -59.04, dL: (1 / 1.44 - 1) * 100 }], // handbook examples: −59% and −30%
+  ['stockpile-weight', {}, { V: Math.PI * 9 * 1.5 * Math.tan(35 * Math.PI / 180) / 12 }],
+  ['stockpile-weight', { shape: 'rect', A: 4, B: 4 }, { V: 16 * 2 * Math.tan(35 * Math.PI / 180) / 3 }], // square base = pyramid
+  ['lumber-board-feet', {}, { bf: 100, cost: 250 }],
+  ['bolt-working-strength-packed', {}, { Wlb: 3000 }, 1], // handbook example: 1-in. bolt at 10,000 psi
+  ['press-flywheel-sizing', {}, { P: 72.7 * 745.7, E1: 90000 * 1.355818 }, 60], // handbook example 1: 72.7 hp, 90,000 ft-lb
+  ['press-flywheel-sizing', {}, { mass: 6570 * 0.4535924 }, 10], // handbook: 6,570 lb of rim
+  ['ect-cutting-forces', {}, { ECT: 0.6, MRR: 480000 }], // handbook example 1
+  ['ect-cutting-forces', { f: 0.4, a: 5, CEL: 5, Kc: 1500, ratio: 0.5, cfa: 30 }, { Fc: 3000, FH: 1500, FA: 1500 * Math.cos(Math.PI / 6), FR: 750 }], // handbook roughing example (A = 2 mm²)
+  ['draw-reductions', {}, { n: 4, d1: 55 }],
+];
+for (const [id, over, expected, tol] of HB7_CASES) test(`handbook reference example: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('seventh handbook pass: consistency and tables', () => {
+  const sc = engine.run('spur-contact-diameters').values;
+  near(sc.mf, sc.mf2, 1e-9, 'both contact ratio formulas agree');
+  assert.ok(sc.dc1 > 20 * Math.cos(Math.PI / 9) && sc.dL1 > sc.dc1, 'contact starts above the base circle and LPSTC lies above it');
+  assert.equal(engine.run('clutch-teeth-dividing-head').values.alphaText, '27° 19.2′');
+  const draws = engine.run('draw-reductions');
+  assert.equal(draws.table.rows.length, 4); assert.equal(draws.table.rows[3][1], '30 mm');
+  assert.equal(engine.run('bolt-working-strength-packed', { d: 12 }).checks[0].status, 'warn');
+});
+
+test('seventh handbook pass rejects impossible inputs', () => {
+  const cases: Array<[string, Inputs]> = [
+    ['spur-contact-diameters', { do1: 17 }], ['spur-contact-diameters', { z1: 12, z2: 12 }], ['clutch-teeth-dividing-head', { Nt: 4 }], ['clutch-teeth-dividing-head', { type: 'double', Nt: 3, theta: 30 }],
+    ['stockpile-weight', { shape: 'rect', A: 8 }], ['bolt-working-strength-packed', { d: 3 }], ['press-flywheel-sizing', { tcut: 5 }], ['press-flywheel-sizing', { emode: 'energy', E: 0 }], ['draw-reductions', { d: 120 }],
   ];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
