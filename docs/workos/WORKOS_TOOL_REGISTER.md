@@ -1358,3 +1358,46 @@ An eighth round of 9 integrated design checks in batch handbook33: spline joint 
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Lifting Lug Design (Plate, Pin and Bearing Checks)** `lifting-lug-design` | LUG ADEQUATE | Net tension; Tear-out; Bearing; Pin shear; Hole clearance; Lifting code; Model and application | 1535, 1720–1735 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, eighteenth pass: integrated design checks, ninth round (added 26 October 2026)
+
+A ninth round of 9 integrated design checks in batch handbook34: helical gear set design (geometry, tangential, axial and separating forces, Lewis bending in the normal plane), straight bevel gear set design (cone angles, forces at the mean diameter, bevel Lewis bending, face width), hydrodynamic journal bearing design (unit load, L/D, Sommerfeld number, Petroff friction and oil flow), an extension spring designer with hook bending and torsion stresses, initial-tension range and natural frequency, a motor duty cycle check for a trapezoidal move (segment torques, RMS and peak, inertia ratio, energy returned), timing belt drive design (belt length, centre distance, teeth in mesh, belt width), heat exchanger sizing (duty, cold outlet, LMTD, area and approach), a surface grinding planner (wheel speed, removal rate, power, passes and time) and compression strut sizing in bar or tube (Euler or Johnson, least diameter by search). Tests cross-check against the helical gear, Lewis bending, bevel gear, Petroff, coolant flow, extension spring, RMS torque, timing belt, LMTD, grinding geometry and column buckling tools. WORKOS now holds 540 tools.
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Helical Gear Set Design (Geometry, Forces and Bending)** `helical-gear-set-design` | GEAR SET ADEQUATE | Bending stress; Overlap ratio; Thrust bearings; Model and application | 2195–2210, 2131–2160 | Automated + cross-check |
+| **Straight Bevel Gear Set Design (Geometry, Forces and Bending)** `bevel-gear-set-design` | GEAR SET ADEQUATE | Bending stress; Face width; Mounting; Model and application | 2181–2190, 2131–2160 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Hydrodynamic Journal Bearing Design (Load, Friction, Heat and Oil)** `journal-bearing-design` | BEARING ADEQUATE | Unit load; L/D; Film; Starting; Model and application | 2326–2345 | Automated + cross-check |
+| **Servo or Motor Duty Cycle Check (Move Profile, RMS and Peak)** `motor-duty-cycle-check` | MOTOR SUITABLE | Continuous (RMS) torque; Peak torque; Speed; Inertia ratio; Model and application | 2569–2580, 180–186 | Automated + cross-check |
+| **Timing Belt Drive Design (Length, Mesh and Belt Width)** `timing-belt-drive-design` | DRIVE ADEQUATE | Belt width; Teeth in mesh; Belt speed; Model and application | 2473–2535 | Automated + cross-check |
+
+### Springs
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Extension Spring Designer (Body, Hooks, Initial Tension, Frequency)** `extension-spring-designer` | SPRING ADEQUATE | Body stress; Hook bending; Hook torsion; Initial tension; Model and application | 325–340 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Heat Exchanger Sizing (Duty, Outlet Temperature and Area)** `heat-exchanger-sizing` | EXCHANGER ADEQUATE | Area; Approach temperature; Fouling; Model and application | 371–378 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Surface Grinding Planner (Speeds, Removal Rate, Power and Time)** `surface-grinding-planner` | PLAN FEASIBLE | Wheel speed; Spindle power; Burn; Model and application | 1199–1268 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Compression Strut Sizing (Euler or Johnson, Round Bar or Tube)** `compression-strut-sizing` | STRUT ADEQUATE | Buckling; Local buckling; End fixity; Model and application | 281–287 | Automated + cross-check |
