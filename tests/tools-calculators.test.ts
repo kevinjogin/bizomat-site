@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -88,9 +88,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 477 tools with unique ids and every previously published id kept', () => {
+test('register: 486 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 477);
+  assert.equal(ids.length, 486);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -835,16 +835,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 362 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 371 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 362);
+  assert.equal(ids.length, 371);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -1559,5 +1559,55 @@ test('second-round design checks: verdicts and guards', () => {
   assert.equal(engine.run('screw-jack-design', { mu: 0.03 }).text, 'SCREW DESIGN NOT ADEQUATE'); // no longer self-locking
   assert.equal(engine.run('pump-system-design', { zs: -6 }).text, 'CAVITATION RISK');
   const cases: Array<[string, Inputs]> = [['v-belt-drive-design', { C: 50 }], ['bearing-selection-check', { Fr: 0, Fa: 0 }], ['clutch-engagement-design', { Di: 250 }], ['screw-jack-design', { p: 45 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Twelfth handbook pass (handbook28): third round of integrated design checks.
+const HB12_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['conveyor-drive-sizing', {}, { qL: 100 / 5.4, Te: 0.025 * 9.80665 * 50 * (100 / 5.4 + 30) + 100 / 5.4 * 9.80665 * 5 }],
+  ['fixture-clamp-force', {}, { Fcl: 2 * 2000 / 0.3 + 600, Fs: (2 * 2000 / 0.3 + 600) / 2 * 2 }],
+  ['fixture-clamp-force', { mode: 'stop' }, { Fcl: 600 }],
+  ['lifting-beam-design', {}, { M: 5000 * 9.80665 * 1.25 * 3000 / 4, defl: 5000 * 9.80665 * 1.25 * 3000 ** 3 / (48 * 206000 * 2e7) }],
+  ['lifting-beam-design', { type: 'spreader' }, { Ts: 5000 * 9.80665 * 1.25 / (2 * Math.cos(Math.PI / 6)), C: 5000 * 9.80665 * 1.25 / 2 * Math.tan(Math.PI / 6) }],
+  ['beam-sizing', {}, { M: 5 * 3000 ** 2 / 8 + 10000 * 3000 / 4, Ireq: (5 * 5 * 3000 ** 4 / (384 * 206000) + 10000 * 3000 ** 3 / (48 * 206000)) / (3000 / 360) }, 1e-3],
+  ['beam-sizing', { sup: 'cant', P: 0 }, { M: 5 * 3000 ** 2 / 2, Ireq: 5 * 3000 ** 4 / (8 * 206000) / (3000 / 360) }],
+  ['beam-sizing', { sup: 'fixed' }, { M: 5 * 3000 ** 2 / 12 + 10000 * 3000 / 8 }],
+  ['vibration-isolator-selection', { zeta: 0 }, { r: Math.sqrt(11), delta: 9806.65 / (2 * Math.PI * 25 / Math.sqrt(11)) ** 2 }, 1e-6], // undamped: T = 1/(r² − 1)
+  ['motor-gearbox-selection', {}, { nm: 1455, i: 9.7, Prated: 5.5 }],
+];
+for (const [id, over, expected, tol] of HB12_CASES) test(`design check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('third-round design checks agree with the tools they chain', () => {
+  const kh = engine.run('keyed-hub-design').values, ks = engine.run('key-stress', { T: kh.T, d: 40, w: 12, h: 8, L: 60, tauA: 60, sigA: 100 }).values;
+  near(kh.Ls, ks.Ls, 1e-9, 'key shear length'); near(kh.Lc, ks.Lc, 1e-9, 'key crushing length');
+  const bb = engine.run('band-brake-stop-design').values, bk = engine.run('band-brake', { T: bb.Td, D: 400, wrap: 270, mu: 0.3, a: 600, b: 60, w: 60 }).values;
+  near(bb.T1, bk.T1, 1e-9, 'tight tension'); near(bb.Fl, bk.Fl, 1e-9, 'lever force'); near(bb.p, bk.p, 1e-12, 'lining pressure');
+  const ca = engine.run('compressed-air-system-sizing').values;
+  near(ca.V, engine.run('air-receiver', { deficit: 2, t: 1, p1: 8, p2: 6.5, Vactual: 0 }).values.V, 1e-12, 'receiver volume');
+  near(ca.shaft, engine.run('compressor-power', { Q: ca.Qc, p2: 8, p1: 1.01325, stages: 1, k: 1.4, eff: 75 }).values.shaft, 1e-9, 'compressor shaft power');
+  near(engine.run('air-pipe-drop', { Q: ca.Qc, d: ca.dReq, L: 100, p: 7, T: 25, eps: 0.045 }).values.dp, 0.1, 1e-6, 'main bore gives the allowed drop');
+  const mg = engine.run('motor-gearbox-selection').values, ri = engine.run('reflected-inertia', { JL: 2, Jm: 0.04, i: mg.i, eff: 94, nL: 150, t: 0.5, TL: 200 }).values;
+  near(mg.Tstart, ri.Tm, 1e-9, 'starting torque equals the reflected-inertia peak torque');
+  const vi = engine.run('vibration-isolator-selection').values, r = vi.r, z = 0.05;
+  near(Math.sqrt((1 + (2 * z * r) ** 2) / ((1 - r * r) ** 2 + (2 * z * r) ** 2)), 0.1, 1e-9, 'transmissibility at the design ratio');
+});
+
+test('third-round design checks: verdicts and guards', () => {
+  assert.equal(engine.run('keyed-hub-design', { hubL: 15 }).text, 'KEYED JOINT NOT ADEQUATE');
+  assert.ok(engine.run('keyed-hub-design', { nk: '2' }).values.Lreq < engine.run('keyed-hub-design').values.Lreq);
+  assert.equal(engine.run('band-brake-stop-design', { t: 0.1 }).text, 'BRAKE TOO WEAK'); // lever force needed exceeds the 300 N available
+  assert.equal(engine.run('fixture-clamp-force', { d: 6, P: 1 }).text, 'CLAMP SCREW OVERLOADED');
+  assert.equal(engine.run('lifting-beam-design', { Z: 200000 }).text, 'BEAM OVERSTRESSED');
+  assert.equal(engine.run('lifting-beam-design', { type: 'spreader', I: 100000 }).text, 'SPREADER NOT ADEQUATE');
+  assert.equal(engine.run('beam-sizing', { Zc: 100000, Ic: 5e6 }).text, 'SECTION TOO SMALL');
+  assert.equal(engine.run('beam-sizing', { Zc: 100000, Ic: 8e6 }).text, 'SECTION ADEQUATE');
+  assert.equal(engine.run('vibration-isolator-selection', { k: 260 }).text, 'MOUNTS ISOLATE');
+  assert.equal(engine.run('vibration-isolator-selection', { k: 20000 }).text, 'MOUNTS AMPLIFY');
+  assert.equal(engine.run('motor-gearbox-selection', { JL: 200 }).text, 'STARTING TORQUE TOO LOW');
+  const cases: Array<[string, Inputs]> = [['band-brake-stop-design', { dir: 'resist', TL: 5000 }], ['conveyor-drive-sizing', { Hl: -50 }], ['beam-sizing', { a: 4000 }], ['compressed-air-system-sizing', { p2: 9 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
