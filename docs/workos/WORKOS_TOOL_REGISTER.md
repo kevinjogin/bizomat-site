@@ -1095,3 +1095,41 @@ Applied to every tool: units and bounds on every input, a guide with an input so
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Pumping System Design (Head, Power and NPSH)** `pump-system-design` | SUCTION ADEQUATE | NPSH margin; Velocity; Model and application | 3021–3026, 3036 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, twelfth pass: integrated design checks, third round (added 25 October 2026)
+
+A third round of 9 integrated design checks in batch handbook28: keyed shaft and hub design (key length for shear and crushing, two-key option, hub length and the handbook’s 75% keyed-shaft rule), band brake stopping design (torque for resisting or overhauling loads, band tensions, lever force against what is available, lining pressure, stopping time and heat), belt conveyor drive sizing (effective tension, power, slip-free take-up), fixture clamping force and clamp screw torque, lifting beam and spreader beam checks, beam sizing for strength and deflection, compressed-air system sizing (compressor, power, receiver, main bore and leak cost), vibration isolator selection and motor-and-gearbox selection. Tests cross-check each against the key-stress, band-brake, air-receiver, compressor-power, air-pipe-drop and reflected-inertia tools. WORKOS now holds 486 tools.
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Keyed Shaft and Hub Design** `keyed-hub-design` | KEYED JOINT ADEQUATE | Hub length; Keyed shaft stress; Key proportions; Model and application | 2460–2486, 301 | Automated |
+| **Band Brake Stopping Design** `band-brake-stop-design` | BRAKE ADEQUATE | Lever force; Lining pressure; Stopping time; Temperature rise; Rotation; Model and application | 2455–2458 | Automated + cross-check |
+| **Belt Conveyor Drive Sizing** `conveyor-drive-sizing` | CALCULATED | Take-up; Belt rating; Model and application | 2487–2512 | Automated + cross-check |
+| **Motor and Gearbox Selection** `motor-gearbox-selection` | MOTOR CAN START THE LOAD | Starting torque; Gearbox rating; Model and application | 2569–2580, 3408–3412 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Fixture Clamping Force and Clamp Screw Torque** `fixture-clamp-force` | CLAMPS ADEQUATE | Screw stress; Positive stop; Model and application | 3131–3134, 1522–1532 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Lifting Beam and Spreader Beam Check** `lifting-beam-design` | BEAM ADEQUATE | Bending stress; Certification; Model and application | 2613–2625, 281–285 | Automated + cross-check |
+| **Vibration Isolator Selection** `vibration-isolator-selection` | CALCULATED | Resonance; Start-up; Model and application | 197–198, 304–316 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Beam Sizing for Strength and Deflection** `beam-sizing` | CALCULATED | Lateral stability; Model and application | 258–275 | Automated + cross-check |
+
+### Pneumatics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Compressed-Air System Sizing** `compressed-air-system-sizing` | CALCULATED | Pressure band; Leakage; Model and application | 3030–3037, 3421–3425 | Automated + cross-check |
