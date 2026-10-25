@@ -824,3 +824,76 @@ Applied to every tool: units and bounds on every input, a guide with an input so
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **3 × 3 Matrix Determinant, Adjoint and Inverse** `matrix-3x3` | CALCULATED | Model and application | 122–125 | Automated + reference value |
+
+## Machinery’s Handbook topic tools, sixth pass: geometry, series, maintenance and shop calculations (added 25 October 2026)
+
+19 MAKEOS tools in batches handbook21–22 add prismoidal volumes, Pappus–Guldinus surfaces and volumes of revolution, Simpson’s rule areas, spherical triangles and great-circle distances, arithmetical and geometrical progressions, Renard preferred numbers, straight-line intersections, the average force of a blow, mixture cost and blending (alligation), the classic AISC column formulas, retaining ring thrust capacity, ISO 4406 cleanliness codes, filter beta ratios, inverse-time feed, screw machine bar stock, shearing blade force, the AGMA pitting resistance power rating, grinding cycle time and pattern shrinkage. Reference cases include the handbook’s torus, spherical-triangle, alloy-cost, cleanliness-code and screw-stock examples. WORKOS now holds 434 tools.
+
+### Geometry
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Prismoidal Formula Volume** `prismoidal-volume` | CALCULATED | Model and application | 66 | Automated + reference value |
+| **Surface and Volume of Revolution (Pappus–Guldinus)** `pappus-revolution` | CALCULATED | Model and application | 66–67 | Automated + reference value |
+| **Area of an Irregular Outline by Simpson’s Rule** `simpson-area` | CALCULATED | Model and application | 67–68 | Automated + reference value |
+| **Spherical Triangle and Great-Circle Distance** `spherical-triangle` | CALCULATED | Model and application | 115–118 | Automated + reference value |
+| **Straight Lines: Intersection, Angle and Distance** `line-intersection` | CALCULATED | Model and application | 40–46 | Automated + reference value |
+
+### Mathematics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Arithmetical and Geometrical Progressions** `progression` | CALCULATED | Model and application | 37–39 | Automated + reference value |
+| **Preferred Number (Renard) Series** `preferred-numbers` | CALCULATED | Model and application | 672 | Automated + reference value |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Average Force of a Blow (Drop Hammer or Pile Driver)** `drop-hammer-blow` | CALCULATED | Model and application | 183–184 | Automated + reference value |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Mixture Cost and Blending (Alligation)** `mixture-cost` | CALCULATED | Model and application | 384 | Automated + reference value |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Steel Column Safe Stress (Classic AISC Formulas)** `column-safe-stress-classic` | WITHIN SAFE LOAD | Safe load; Current code; Model and application | 281–285 | Automated + reference value |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Retaining Ring Thrust Capacity and Groove Edge Margin** `retaining-ring-thrust` | THRUST WITHIN CAPACITY | Thrust; Groove position; Model and application | 1763–1789 | Automated + reference value |
+
+### Maintenance
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **ISO 4406 Oil Cleanliness Code from Particle Counts** `iso-cleanliness-code` | DIRTIER THAN TARGET | 4 µm; 6 µm; 14 µm; Model and application | 2439–2441 | Automated + reference value |
+| **Filter Beta Ratio and Capture Efficiency** `filter-beta-ratio` | CALCULATED | Model and application | 2441–2442 | Automated + reference value |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Inverse Time Feed Rate (G93)** `inverse-time-feed` | CALCULATED | Model and application | 1288–1289 | Automated + reference value |
+| **Bar Stock for Screw Machine Parts** `screw-machine-stock` | CALCULATED | Model and application | 1175–1176 | Automated + reference value |
+| **Surface and Cylindrical Grinding Cycle Time** `grinding-cycle-time` | CALCULATED | Model and application | 1246–1265 | Automated + reference value |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Shearing Force for Parallel and Inclined Blades** `shearing-blade-force` | WITHIN CAPACITY | Machine capacity; Model and application | 1336–1338 | Automated + reference value |
+| **Pattern Size for Shrinkage and Casting Weight from Pattern** `pattern-shrinkage` | CALCULATED | Model and application | 1414, 1419 | Automated + reference value |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Spur Gear Pitting Resistance Power Rating (AGMA)** `agma-pitting-power` | PITTING RATING ADEQUATE | Pitting power; Bending; Model and application | 3304–3313 | Automated + reference value |
