@@ -24,14 +24,55 @@ Two definitions matter here. An Accredited Testing Laboratory is, broadly, one a
 A detection and alarm system is not a single product. It is a set of products, designed into a layout, installed, connected and commissioned. Evidence must cover each link.
 
 ```figure
-type: steps
+type: svg
 title: The evidence chain for the mezzanine detection and alarm
+alt: The evidence chain for the mezzanine detection and alarm. 1. Products: detectors, sounders and control equipment, each with evidence of suitability for their function. 2. Compatibility: evidence that the devices work with the control equipment they connect to. 3. Design: a layout for the mezzanine and the space beneath, to the installation standard called up by the NCC. 4. Installation: an installer's certificate that the system was installed to the design and the standard. 5. Commissioning: test records showing each device operates and the alarm is heard on the mezzanine
 caption: This is an illustration. A gap at any link means the system's performance in the analysis is assumed, not evidenced.
-- Products | detectors, sounders and control equipment, each with evidence of suitability for their function
-- Compatibility | evidence that the devices work with the control equipment they connect to
-- *Design | a layout for the mezzanine and the space beneath, to the installation standard called up by the NCC
-- Installation | an installer's certificate that the system was installed to the design and the standard
-- Commissioning | test records showing each device operates and the alarm is heard on the mezzanine
+viewbox: 0 0 640 445
+body:
+<path class="la draw" pathLength="1" d="M34 67.5V119.5"/>
+<path class="la draw" pathLength="1" d="M34 147.5V199.5"/>
+<path class="la draw" pathLength="1" d="M34 227.5V288.5"/>
+<path class="la draw" pathLength="1" d="M34 316.5V377.5"/>
+<g class="kf-a kd1">
+<rect class="bx" x="58" y="14" width="562" height="79" rx="6"/>
+<circle class="bxi" cx="34" cy="53.5" r="14"/>
+<text class="txb" x="34" y="58.5" text-anchor="middle">1</text>
+<text class="txb" x="74" y="36">Products</text>
+<text class="tx" x="74" y="57">detectors, sounders and control equipment, each with evidence of suitability</text>
+<text class="tx" x="74" y="75">for their function</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="58" y="103" width="562" height="61" rx="6"/>
+<circle class="bxi" cx="34" cy="133.5" r="14"/>
+<text class="txb" x="34" y="138.5" text-anchor="middle">2</text>
+<text class="txb" x="74" y="125">Compatibility</text>
+<text class="tx" x="74" y="146">evidence that the devices work with the control equipment they connect to</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bxa" x="58" y="174" width="562" height="79" rx="6"/>
+<circle class="fa" cx="34" cy="213.5" r="14"/>
+<text class="txb" x="34" y="218.5" text-anchor="middle">3</text>
+<text class="txb" x="74" y="196">Design</text>
+<text class="tx" x="74" y="217">a layout for the mezzanine and the space beneath, to the installation</text>
+<text class="tx" x="74" y="235">standard called up by the NCC</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="58" y="263" width="562" height="79" rx="6"/>
+<circle class="bxi" cx="34" cy="302.5" r="14"/>
+<text class="txb" x="34" y="307.5" text-anchor="middle">4</text>
+<text class="txb" x="74" y="285">Installation</text>
+<text class="tx" x="74" y="306">an installer's certificate that the system was installed to the design and</text>
+<text class="tx" x="74" y="324">the standard</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="58" y="352" width="562" height="79" rx="6"/>
+<circle class="bxi" cx="34" cy="391.5" r="14"/>
+<text class="txb" x="34" y="396.5" text-anchor="middle">5</text>
+<text class="txb" x="74" y="374">Commissioning</text>
+<text class="tx" x="74" y="395">test records showing each device operates and the alarm is heard on the</text>
+<text class="tx" x="74" y="413">mezzanine</text>
+</g>
 ```
 
 The running case's design called for smoke detection on the mezzanine and in the space beneath it, with an alarm sounder on the mezzanine that operates when any of those detectors does. The fire engineer specified the outcome; the fire services designer specified the system to AS 1670.1, the installation standard for fire detection and alarm systems as called up by the NCC. This book names that standard but does not quote it.
@@ -55,16 +96,78 @@ The resolution was to use a wired loop extension that was listed as compatible w
 This is an illustration. The fire engineer kept a register for every item the Performance Solution relied on, separate from the building's general evidence register, so that the certifier could see the solution's dependencies in one place.
 
 ```figure
-type: compare
+type: svg
 title: Evidence register for the running case Performance Solution
-cols: Form of evidence, A5G3(1) | What was checked
+alt: Evidence register for the running case Performance Solution. Smoke detectors and sounders: Form of evidence, A5G3(1) certification of each device for its function; What was checked model numbers match the installed devices. Compatibility with the existing panel: Form of evidence, A5G3(1) supplier's documented compatibility list; What was checked panel model and firmware on the list. Detection layout under and above the mezzanine: Form of evidence, A5G3(1) designer's report setting out its basis; What was checked spacing allows for beams and roof pitch. Installation and commissioning: Form of evidence, A5G3(1) installer's certificate and test records; What was checked every detector tested; alarm audible on the mezzanine. Direction signs on the mezzanine: Form of evidence, A5G3(1) evidence for the sign type to the standard called up; What was checked positions match the wayfinding plan. Stair, barriers and mezzanine structure: Form of evidence, A5G3(1) professional engineer's certificate; What was checked unchanged from the DTS design
 caption: This is an illustration. The register lists the configuration each piece of evidence covers, and the person who checked it against what was installed.
-- Smoke detectors and sounders | certification of each device for its function | model numbers match the installed devices
-- Compatibility with the existing panel | supplier's documented compatibility list | panel model and firmware on the list
-- *Detection layout under and above the mezzanine | designer's report setting out its basis | spacing allows for beams and roof pitch
-- Installation and commissioning | installer's certificate and test records | every detector tested; alarm audible on the mezzanine
-- Direction signs on the mezzanine | evidence for the sign type to the standard called up | positions match the wayfinding plan
-- Stair, barriers and mezzanine structure | professional engineer's certificate | unchanged from the DTS design
+viewbox: 0 0 640 419
+body:
+<g class="kf-a kd1">
+<rect class="fs" x="20" y="10" width="600" height="52" rx="4"/>
+<text class="txb" x="221.2" y="31">Form of evidence,</text>
+<text class="txb" x="221.2" y="50">A5G3(1)</text>
+<text class="txb" x="423.8" y="31">What was checked</text>
+</g>
+<g class="kf-a kd2">
+<path class="lf" d="M20 114H620"/>
+<text class="txb" x="28" y="83">Smoke detectors and</text>
+<text class="txb" x="28" y="102">sounders</text>
+<text class="tx" x="221.2" y="83">certification of each</text>
+<text class="tx" x="221.2" y="101">device for its function</text>
+<text class="tx" x="423.8" y="83">model numbers match the</text>
+<text class="tx" x="423.8" y="101">installed devices</text>
+</g>
+<g class="kf-a kd3">
+<path class="lf" d="M20 166H620"/>
+<text class="txb" x="28" y="135">Compatibility with</text>
+<text class="txb" x="28" y="154">the existing panel</text>
+<text class="tx" x="221.2" y="135">supplier's documented</text>
+<text class="tx" x="221.2" y="153">compatibility list</text>
+<text class="tx" x="423.8" y="135">panel model and firmware</text>
+<text class="tx" x="423.8" y="153">on the list</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bxa" x="20" y="166" width="600" height="71" rx="4"/>
+<path class="lf" d="M20 237H620"/>
+<text class="txb" x="28" y="187">Detection layout</text>
+<text class="txb" x="28" y="206">under and above the</text>
+<text class="txb" x="28" y="225">mezzanine</text>
+<text class="tx" x="221.2" y="187">designer's report setting</text>
+<text class="tx" x="221.2" y="205">out its basis</text>
+<text class="tx" x="423.8" y="187">spacing allows for beams</text>
+<text class="tx" x="423.8" y="205">and roof pitch</text>
+</g>
+<g class="kf-a kd5">
+<path class="lf" d="M20 305H620"/>
+<text class="txb" x="28" y="258">Installation and</text>
+<text class="txb" x="28" y="277">commissioning</text>
+<text class="tx" x="221.2" y="258">installer's certificate</text>
+<text class="tx" x="221.2" y="276">and test records</text>
+<text class="tx" x="423.8" y="258">every detector tested;</text>
+<text class="tx" x="423.8" y="276">alarm audible on the</text>
+<text class="tx" x="423.8" y="294">mezzanine</text>
+</g>
+<g class="kf-a kd6">
+<path class="lf" d="M20 357H620"/>
+<text class="txb" x="28" y="326">Direction signs on</text>
+<text class="txb" x="28" y="345">the mezzanine</text>
+<text class="tx" x="221.2" y="326">evidence for the sign type</text>
+<text class="tx" x="221.2" y="344">to the standard called up</text>
+<text class="tx" x="423.8" y="326">positions match the</text>
+<text class="tx" x="423.8" y="344">wayfinding plan</text>
+</g>
+<g class="kf-a kd7">
+<path class="lf" d="M20 409H620"/>
+<text class="txb" x="28" y="378">Stair, barriers and</text>
+<text class="txb" x="28" y="397">mezzanine structure</text>
+<text class="tx" x="221.2" y="378">professional engineer's</text>
+<text class="tx" x="221.2" y="396">certificate</text>
+<text class="tx" x="423.8" y="378">unchanged from the DTS</text>
+<text class="tx" x="423.8" y="396">design</text>
+</g>
+<rect class="lf" x="20" y="10" width="600" height="399" rx="4" fill="none"/>
+<path class="lf" d="M213.2 10V409"/>
+<path class="lf" d="M415.8 10V409"/>
 ```
 
 ## Reading a test report
@@ -114,15 +217,53 @@ It is possible to demand more evidence than a small solution needs. The running 
 The opposite failure, too little evidence, is more common on small projects. Owners and contractors sometimes treat evidence as paperwork to be gathered at the end, after the products are installed. By then, a mismatch such as the wireless kit can only be fixed by removing work. Assembling the evidence register at design stage, as the running case did, turns each mismatch into a purchasing decision rather than a defect.
 
 ```figure
-type: checklist
+type: svg
 title: Evidence status for the running case Performance Solution
+alt: Evidence status for the running case Performance Solution. Done: Device certification checked against installed model numbers. Done: Compatibility with the existing panel confirmed after the wireless kit was rejected. Done: Detection layout report covering beams under the deck and the pitched roof above. Done: Installer's certificate and commissioning records, including audibility on the mezzanine. Done: Conditions evidenced by markings, signs, procedures, training and a monthly check. Open: Replacement rule written into the maintenance contract, before occupation
 caption: This is an illustration. The final report lists this register and the person who verified each line.
-- x Device certification checked against installed model numbers
-- x Compatibility with the existing panel confirmed after the wireless kit was rejected
-- x Detection layout report covering beams under the deck and the pitched roof above
-- x Installer's certificate and commissioning records, including audibility on the mezzanine
-- x Conditions evidenced by markings, signs, procedures, training and a monthly check
-- ? Replacement rule written into the maintenance contract | before occupation
+viewbox: 0 0 640 394
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="12" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="29" r="11"/>
+<path class="la draw" pathLength="1" d="M34 29l4 4 8-8"/>
+<text class="txb" x="64" y="32">Device certification checked against installed model numbers</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="20" y="59" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="76" r="11"/>
+<path class="la draw" pathLength="1" d="M34 76l4 4 8-8"/>
+<text class="txb" x="64" y="79">Compatibility with the existing panel confirmed after the wireless</text>
+<text class="txb" x="64" y="98">kit was rejected</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="20" y="125" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="142" r="11"/>
+<path class="la draw" pathLength="1" d="M34 142l4 4 8-8"/>
+<text class="txb" x="64" y="145">Detection layout report covering beams under the deck and the</text>
+<text class="txb" x="64" y="164">pitched roof above</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="191" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="208" r="11"/>
+<path class="la draw" pathLength="1" d="M34 208l4 4 8-8"/>
+<text class="txb" x="64" y="211">Installer's certificate and commissioning records, including</text>
+<text class="txb" x="64" y="230">audibility on the mezzanine</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="20" y="257" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="274" r="11"/>
+<path class="la draw" pathLength="1" d="M34 274l4 4 8-8"/>
+<text class="txb" x="64" y="277">Conditions evidenced by markings, signs, procedures, training and</text>
+<text class="txb" x="64" y="296">a monthly check</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bxi" x="20" y="323" width="600" height="59" rx="6"/>
+<circle class="bxi" cx="40" cy="340" r="11"/>
+<text class="txa" x="40" y="345" text-anchor="middle">?</text>
+<text class="txb" x="64" y="343">Replacement rule written into the maintenance contract</text>
+<text class="tx" x="64" y="364">before occupation</text>
+</g>
 ```
 
 ## Exercise: a substitution during maintenance

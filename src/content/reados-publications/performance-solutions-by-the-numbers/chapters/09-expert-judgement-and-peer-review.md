@@ -22,15 +22,47 @@ The idea of recording the basis of a judgement is not new. The supplied BCA 2004
 A sound judgement has six parts. Leaving any of them out weakens it.
 
 ```figure
-type: layers
+type: svg
 title: The parts of a written Expert Judgement
+alt: The parts of a written Expert Judgement. Claim: exactly what is being judged, tied to a Performance Requirement or acceptance criterion. Expert: who made it, with qualifications and relevant experience. Basis: the facts, data, standards, experience and analogies relied on. Reasoning: how the basis leads to the claim, step by step. Limits: what the judgement does not cover and when it would stop holding. Conditions: what must remain true in the building for the judgement to stay valid
 caption: A structure for recording judgements in a Performance Solution report. The reasoning and limits are the parts most often missing.
-- Claim | exactly what is being judged, tied to a Performance Requirement or acceptance criterion
-- Expert | who made it, with qualifications and relevant experience
-- Basis | the facts, data, standards, experience and analogies relied on
-- *Reasoning | how the basis leads to the claim, step by step
-- Limits | what the judgement does not cover and when it would stop holding
-- Conditions | what must remain true in the building for the judgement to stay valid
+viewbox: 0 0 640 357
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="10" width="600" height="54" rx="6"/>
+<text class="txb" x="36" y="33">Claim</text>
+<text class="tx" x="250" y="33">exactly what is being judged, tied to a Performance</text>
+<text class="tx" x="250" y="51">Requirement or acceptance criterion</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="30" y="70" width="580" height="54" rx="6"/>
+<text class="txb" x="46" y="93">Expert</text>
+<text class="tx" x="250" y="93">who made it, with qualifications and relevant</text>
+<text class="tx" x="250" y="111">experience</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="40" y="130" width="560" height="54" rx="6"/>
+<text class="txb" x="56" y="153">Basis</text>
+<text class="tx" x="250" y="153">the facts, data, standards, experience and</text>
+<text class="tx" x="250" y="171">analogies relied on</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bxa" x="50" y="190" width="540" height="37" rx="6"/>
+<text class="txb" x="66" y="213">Reasoning</text>
+<text class="tx" x="250" y="213">how the basis leads to the claim, step by step</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="60" y="233" width="520" height="54" rx="6"/>
+<text class="txb" x="76" y="256">Limits</text>
+<text class="tx" x="250" y="256">what the judgement does not cover and when it</text>
+<text class="tx" x="250" y="274">would stop holding</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bx" x="70" y="293" width="500" height="54" rx="6"/>
+<text class="txb" x="86" y="316">Conditions</text>
+<text class="tx" x="250" y="316">what must remain true in the building for</text>
+<text class="tx" x="250" y="334">the judgement to stay valid</text>
+</g>
 ```
 
 The claim should be narrow. "The proposal is safe" is not a claim a judgement can support; it is the conclusion of the whole solution. "A fire starting within the 3 m clear zone at the proposal's stair foot is less likely than a fire starting near the reference stair foot in the fabrication area" is a claim that a judgement can address.
@@ -53,14 +85,55 @@ The brief required an independent peer review by a second fire safety engineer, 
 The reviewer's findings on the calculations have already appeared: the straight-line measurement in Chapter 3 and the vertical stair distance in Chapter 6. Both were corrected. The findings on the judgements were more consequential.
 
 ```figure
-type: compare
+type: svg
 title: Peer review findings on the four judgements
-cols: Reviewer's finding | Outcome
+alt: Peer review findings on the four judgements. 1. Stair foot exposure: Reviewer's finding supported, provided the clear zone is marked and inspected; Outcome accepted with a condition. 2. Wayfinding: Reviewer's finding supported, with one more sign at the far aisle junction; Outcome accepted with an added sign. 3. Shelving as obstruction: Reviewer's finding consistent with the measurement agreed with the certifier; Outcome accepted. 4. Scenario D credibility: Reviewer's finding not supported as written: the mezzanine deck and some stored items are combustible; Outcome not accepted
 caption: This is an illustration. The reviewer's role is to test the reasoning, not to redesign the solution.
-- 1. Stair foot exposure | supported, provided the clear zone is marked and inspected | accepted with a condition
-- 2. Wayfinding | supported, with one more sign at the far aisle junction | accepted with an added sign
-- 3. Shelving as obstruction | consistent with the measurement agreed with the certifier | accepted
-- *4. Scenario D credibility | not supported as written: the mezzanine deck and some stored items are combustible | not accepted
+viewbox: 0 0 640 275
+body:
+<g class="kf-a kd1">
+<rect class="fs" x="20" y="10" width="600" height="33" rx="4"/>
+<text class="txb" x="196" y="31">Reviewer's finding</text>
+<text class="txb" x="457.7" y="31">Outcome</text>
+</g>
+<g class="kf-a kd2">
+<path class="lf" d="M20 95H620"/>
+<text class="txb" x="28" y="64">1. Stair foot</text>
+<text class="txb" x="28" y="83">exposure</text>
+<text class="tx" x="196" y="64">supported, provided the clear zone</text>
+<text class="tx" x="196" y="82">is marked and inspected</text>
+<text class="tx" x="457.7" y="64">accepted with a</text>
+<text class="tx" x="457.7" y="82">condition</text>
+</g>
+<g class="kf-a kd3">
+<path class="lf" d="M20 145H620"/>
+<text class="txb" x="28" y="116">2. Wayfinding</text>
+<text class="tx" x="196" y="116">supported, with one more sign at</text>
+<text class="tx" x="196" y="134">the far aisle junction</text>
+<text class="tx" x="457.7" y="116">accepted with an added</text>
+<text class="tx" x="457.7" y="134">sign</text>
+</g>
+<g class="kf-a kd4">
+<path class="lf" d="M20 197H620"/>
+<text class="txb" x="28" y="166">3. Shelving as</text>
+<text class="txb" x="28" y="185">obstruction</text>
+<text class="tx" x="196" y="166">consistent with the measurement</text>
+<text class="tx" x="196" y="184">agreed with the certifier</text>
+<text class="tx" x="457.7" y="166">accepted</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bxa" x="20" y="197" width="600" height="68" rx="4"/>
+<path class="lf" d="M20 265H620"/>
+<text class="txb" x="28" y="218">4. Scenario D</text>
+<text class="txb" x="28" y="237">credibility</text>
+<text class="tx" x="196" y="218">not supported as written: the</text>
+<text class="tx" x="196" y="236">mezzanine deck and some stored</text>
+<text class="tx" x="196" y="254">items are combustible</text>
+<text class="tx" x="457.7" y="218">not accepted</text>
+</g>
+<rect class="lf" x="20" y="10" width="600" height="255" rx="4" fill="none"/>
+<path class="lf" d="M188 10V265"/>
+<path class="lf" d="M449.7 10V265"/>
 ```
 
 ## The finding that changed the outcome
@@ -118,15 +191,52 @@ The final report must say how much each conclusion depends on each judgement. In
 Writing this down shows the certifier, and the owner, exactly where the solution is strong and where it depends on opinion. It is the modern form of the BCA 2004 advice to record "the extent to which the judgement was relied upon".
 
 ```figure
-type: checklist
+type: svg
 title: Expert Judgement and peer review record
+alt: Expert Judgement and peer review record. Done: Each judgement written with claim, expert, basis, reasoning, limits and conditions. Done: Independent peer review of brief, inputs, calculations and judgements. Done: Judgements 1 to 3 accepted, with a marked clear zone and an added sign. Done: Judgement 4 not accepted: combustible deck and plastic tool cases. Done: Reliance on each judgement recorded for each scenario. Open: Response to the rejected judgement, owner's decision, Chapter 10
 caption: This is an illustration. The record goes into the final report with the reviewer's letter.
-- x Each judgement written with claim, expert, basis, reasoning, limits and conditions
-- x Independent peer review of brief, inputs, calculations and judgements
-- x Judgements 1 to 3 accepted, with a marked clear zone and an added sign
-- x Judgement 4 not accepted: combustible deck and plastic tool cases
-- x Reliance on each judgement recorded for each scenario
-- ? Response to the rejected judgement | owner's decision, Chapter 10
+viewbox: 0 0 640 375
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="12" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="29" r="11"/>
+<path class="la draw" pathLength="1" d="M34 29l4 4 8-8"/>
+<text class="txb" x="64" y="32">Each judgement written with claim, expert, basis, reasoning,</text>
+<text class="txb" x="64" y="51">limits and conditions</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="20" y="78" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="95" r="11"/>
+<path class="la draw" pathLength="1" d="M34 95l4 4 8-8"/>
+<text class="txb" x="64" y="98">Independent peer review of brief, inputs, calculations and</text>
+<text class="txb" x="64" y="117">judgements</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="20" y="144" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="161" r="11"/>
+<path class="la draw" pathLength="1" d="M34 161l4 4 8-8"/>
+<text class="txb" x="64" y="164">Judgements 1 to 3 accepted, with a marked clear zone and an added</text>
+<text class="txb" x="64" y="183">sign</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="210" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="227" r="11"/>
+<path class="la draw" pathLength="1" d="M34 227l4 4 8-8"/>
+<text class="txb" x="64" y="230">Judgement 4 not accepted: combustible deck and plastic tool cases</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="20" y="257" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="274" r="11"/>
+<path class="la draw" pathLength="1" d="M34 274l4 4 8-8"/>
+<text class="txb" x="64" y="277">Reliance on each judgement recorded for each scenario</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bxi" x="20" y="304" width="600" height="59" rx="6"/>
+<circle class="bxi" cx="40" cy="321" r="11"/>
+<text class="txa" x="40" y="326" text-anchor="middle">?</text>
+<text class="txb" x="64" y="324">Response to the rejected judgement</text>
+<text class="tx" x="64" y="345">owner's decision, Chapter 10</text>
+</g>
 ```
 
 ## Exercise: write a judgement properly

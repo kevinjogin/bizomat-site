@@ -16,14 +16,46 @@ The rise in storeys sounds like something you could count from a photograph. It 
 Table C2D2 of NCC 2022 Volume One sets the minimum type of construction. Type A is the most fire-resistant and Type C the least. Under C2D2(2), each building element must then comply with Specification 5 for that type, which sets out which elements need a fire-resistance level (FRL) and what it is.
 
 ```figure
-type: compare
+type: svg
 title: Minimum type of construction, NCC 2022 Table C2D2
-cols: Class 2, 3 or 9 | Class 5, 6, 7 or 8
+alt: Minimum type of construction, NCC 2022 Table C2D2. Rise in storeys 4 or more: Class 2, 3 or 9 Type A; Class 5, 6, 7 or 8 Type A. Rise in storeys 3: Class 2, 3 or 9 Type A; Class 5, 6, 7 or 8 Type B. Rise in storeys 2: Class 2, 3 or 9 Type B; Class 5, 6, 7 or 8 Type C. Rise in storeys 1: Class 2, 3 or 9 Type C; Class 5, 6, 7 or 8 Type C
 caption: Values from Table C2D2 of NCC 2022 Volume One, subject to the concessions elsewhere in Part C2 and to state variations.
-- Rise in storeys 4 or more | Type A | Type A
-- Rise in storeys 3 | Type A | Type B
-- Rise in storeys 2 | Type B | Type C
-- *Rise in storeys 1 | Type C | Type C
+viewbox: 0 0 640 204
+body:
+<g class="kf-a kd1">
+<rect class="fs" x="20" y="10" width="600" height="33" rx="4"/>
+<text class="txb" x="247.7" y="31">Class 2, 3 or 9</text>
+<text class="txb" x="432.1" y="31">Class 5, 6, 7 or 8</text>
+</g>
+<g class="kf-a kd2">
+<path class="lf" d="M20 95H620"/>
+<text class="txb" x="28" y="64">Rise in storeys 4 or</text>
+<text class="txb" x="28" y="83">more</text>
+<text class="tx" x="247.7" y="64">Type A</text>
+<text class="tx" x="432.1" y="64">Type A</text>
+</g>
+<g class="kf-a kd3">
+<path class="lf" d="M20 128H620"/>
+<text class="txb" x="28" y="116">Rise in storeys 3</text>
+<text class="tx" x="247.7" y="116">Type A</text>
+<text class="tx" x="432.1" y="116">Type B</text>
+</g>
+<g class="kf-a kd4">
+<path class="lf" d="M20 161H620"/>
+<text class="txb" x="28" y="149">Rise in storeys 2</text>
+<text class="tx" x="247.7" y="149">Type B</text>
+<text class="tx" x="432.1" y="149">Type C</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bxa" x="20" y="161" width="600" height="33" rx="4"/>
+<path class="lf" d="M20 194H620"/>
+<text class="txb" x="28" y="182">Rise in storeys 1</text>
+<text class="tx" x="247.7" y="182">Type C</text>
+<text class="tx" x="432.1" y="182">Type C</text>
+</g>
+<rect class="lf" x="20" y="10" width="600" height="184" rx="4" fill="none"/>
+<path class="lf" d="M239.7 10V194"/>
+<path class="lf" d="M424.1 10V194"/>
 ```
 
 For a Class 5 to 8 building, the step that matters is between a rise of 2 (Type C) and a rise of 3 (Type B). Moving from Type C to Type B can mean fire-resisting structure and walls that a Type C building would not need, or a fire engineering exercise to show why they are not needed. Specification 5 decides the detail, and this book does not quote its values. The direction is enough: a higher type costs more, and it is decided early.
@@ -43,15 +75,39 @@ C2D3 then gives the rules for the rise in storeys:
 5. **Count a large mezzanine as a storey.** A mezzanine counts as a storey if its floor area is more than 200 m² or more than one-third of the floor area of the room, whichever is less. Two or more mezzanines at or near the same level count as one storey if their combined floor area exceeds that threshold (C2D3(4)).
 
 ```figure
-type: formula
+type: svg
 title: When a mezzanine counts as a storey
-formula: threshold = the lesser of 200 m² and (room floor area ÷ 3)
+alt: When a mezzanine counts as a storey. Formula: threshold = the lesser of 200 m² and (room floor area ÷ 3). room floor area: area of the room containing the mezzanine, m². threshold: largest mezzanine floor area that does not count as a storey, m². Step: Room ÷ 3: about 1,500 ÷ 3 = 500 m², so 200 m² is the lesser value. Step: 240 m² mezzanine: more than 200 m², so it counts as a storey. Step: 190 m² mezzanine: not more than 200 m², so it does not count
 caption: From C2D3(4) of NCC 2022 Volume One. This is an illustration using the running case's 1,500 m² workshop; the room's floor area is measured within its internal finished surfaces, so it is a little under 1,500 m².
-- room floor area | area of the room containing the mezzanine, m²
-- threshold | largest mezzanine floor area that does not count as a storey, m²
-step: Room ÷ 3: about 1,500 ÷ 3 = 500 m², so 200 m² is the lesser value
-step: 240 m² mezzanine: more than 200 m², so it counts as a storey
-step: 190 m² mezzanine: not more than 200 m², so it does not count
+viewbox: 0 0 640 239
+body:
+<g class="kf-a kd1">
+<rect class="bxa" x="20" y="10" width="600" height="41" rx="8"/>
+<text class="txb" x="320" y="35" text-anchor="middle">threshold = the lesser of 200 m² and (room floor area ÷ 3)</text>
+</g>
+<g class="kf-a kd2">
+<text class="txa" x="30" y="78">room floor area</text>
+<text class="tx" x="196" y="78">area of the room containing the mezzanine, m²</text>
+<path class="lf" d="M20 88H620"/>
+</g>
+<g class="kf-a kd3">
+<text class="txa" x="30" y="107">threshold</text>
+<text class="tx" x="196" y="107">largest mezzanine floor area that does not count as a</text>
+<text class="tx" x="196" y="125">storey, m²</text>
+<path class="lf" d="M20 134H620"/>
+</g>
+<g class="kf-a kd4">
+<path class="ah" d="M28 150l12 7-12 7z"/>
+<text class="txb" x="52" y="162">Room ÷ 3: about 1,500 ÷ 3 = 500 m², so 200 m² is the lesser value</text>
+</g>
+<g class="kf-a kd5">
+<path class="ah" d="M28 179l12 7-12 7z"/>
+<text class="txb" x="52" y="191">240 m² mezzanine: more than 200 m², so it counts as a storey</text>
+</g>
+<g class="kf-a kd6">
+<path class="ah" d="M28 208l12 7-12 7z"/>
+<text class="txb" x="52" y="220">190 m² mezzanine: not more than 200 m², so it does not count</text>
+</g>
 ```
 
 ## The running case: a 240 m² mezzanine
@@ -71,15 +127,59 @@ With the 240 m² mezzanine counted as a storey, the high ground storey is no lon
 The designer's response was not to argue for the narrower reading. It was to change the design so that the reading no longer mattered. Reducing the mezzanine to 19 m by 10 m, **190 m²**, takes it below the 200 m² threshold. It is then not a storey. The workshop storey is the only storey above ground, so under C2D3(3) it counts as one. The rise in storeys is **one**, and Table C2D2 gives **Type C** under every reading.
 
 ```figure
-type: compare
+type: svg
 title: The mezzanine size decision
-cols: 240 m² mezzanine | 190 m² mezzanine
+alt: The mezzanine size decision. Counts as a storey under C2D3(4)?: 240 m² mezzanine Yes, over 200 m²; 190 m² mezzanine No. High workshop storey counts as: 240 m² mezzanine two storeys, on a plain reading; 190 m² mezzanine one storey, the only storey. Rise in storeys: 240 m² mezzanine three, or two on a narrower reading; 190 m² mezzanine one. Type of construction, Table C2D2: 240 m² mezzanine Type B, or Type C on a narrower reading; 190 m² mezzanine Type C. Exposure to interpretation: 240 m² mezzanine high; 190 m² mezzanine none
 caption: This is an illustration. The 50 m² difference in storage area moves the building's type of construction, depending on how the certifier reads C2D3(3) and C2D3(4) together.
-- Counts as a storey under C2D3(4)? | Yes, over 200 m² | No
-- High workshop storey counts as | two storeys, on a plain reading | one storey, the only storey
-- Rise in storeys | three, or two on a narrower reading | one
-- *Type of construction, Table C2D2 | Type B, or Type C on a narrower reading | Type C
-- Exposure to interpretation | high | none
+viewbox: 0 0 640 311
+body:
+<g class="kf-a kd1">
+<rect class="fs" x="20" y="10" width="600" height="33" rx="4"/>
+<text class="txb" x="228.4" y="31">240 m² mezzanine</text>
+<text class="txb" x="441.8" y="31">190 m² mezzanine</text>
+</g>
+<g class="kf-a kd2">
+<path class="lf" d="M20 95H620"/>
+<text class="txb" x="28" y="64">Counts as a storey</text>
+<text class="txb" x="28" y="83">under C2D3(4)?</text>
+<text class="tx" x="228.4" y="64">Yes, over 200 m²</text>
+<text class="tx" x="441.8" y="64">No</text>
+</g>
+<g class="kf-a kd3">
+<path class="lf" d="M20 147H620"/>
+<text class="txb" x="28" y="116">High workshop storey</text>
+<text class="txb" x="28" y="135">counts as</text>
+<text class="tx" x="228.4" y="116">two storeys, on a plain</text>
+<text class="tx" x="228.4" y="134">reading</text>
+<text class="tx" x="441.8" y="116">one storey, the only</text>
+<text class="tx" x="441.8" y="134">storey</text>
+</g>
+<g class="kf-a kd4">
+<path class="lf" d="M20 197H620"/>
+<text class="txb" x="28" y="168">Rise in storeys</text>
+<text class="tx" x="228.4" y="168">three, or two on a narrower</text>
+<text class="tx" x="228.4" y="186">reading</text>
+<text class="tx" x="441.8" y="168">one</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bxa" x="20" y="197" width="600" height="52" rx="4"/>
+<path class="lf" d="M20 249H620"/>
+<text class="txb" x="28" y="218">Type of construction,</text>
+<text class="txb" x="28" y="237">Table C2D2</text>
+<text class="tx" x="228.4" y="218">Type B, or Type C on a</text>
+<text class="tx" x="228.4" y="236">narrower reading</text>
+<text class="tx" x="441.8" y="218">Type C</text>
+</g>
+<g class="kf-a kd6">
+<path class="lf" d="M20 301H620"/>
+<text class="txb" x="28" y="270">Exposure to</text>
+<text class="txb" x="28" y="289">interpretation</text>
+<text class="tx" x="228.4" y="270">high</text>
+<text class="tx" x="441.8" y="270">none</text>
+</g>
+<rect class="lf" x="20" y="10" width="600" height="291" rx="4" fill="none"/>
+<path class="lf" d="M220.4 10V301"/>
+<path class="lf" d="M433.8 10V301"/>
 ```
 
 The owner lost 50 m² of storage. In exchange, the building's fire-resistance requirements were settled at the lowest level available for its class, and the decision did not rest on a contested interpretation. Fifty square metres of racking can be found elsewhere; a change of construction type usually cannot be absorbed so cheaply.
@@ -121,15 +221,54 @@ Type C does not mean that nothing in the building needs fire resistance. Specifi
 What Type C settles is the baseline. Once it is fixed, the designer can select the structure, cladding and roof without designing for a higher fire-resistance level than the class and size require.
 
 ```figure
-type: checklist
+type: svg
 title: Storey and construction-type record for the running case
+alt: Storey and construction-type record for the running case. Done: Mezzanine 190 m², below the 200 m² threshold, C2D3(4), not a storey. Done: Workshop storey average height over 6 m, only storey above ground, C2D3(3), counts as one. Done: Rise in storeys one; effective height zero, C2D3, Schedule 1 definition. Done: Type C construction for Class 5 and Class 8 parts, Table C2D2, C2D4. Open: Specification 5 requirements for external walls near boundaries, designer to check. Open: Any further mezzanine, must be checked against the combined-area rule in C2D3(4)
 caption: This is an illustration. Each line cites the clause relied on, so that a later change can be checked against the same reasoning.
-- x Mezzanine 190 m², below the 200 m² threshold | C2D3(4), not a storey
-- x Workshop storey average height over 6 m, only storey above ground | C2D3(3), counts as one
-- x Rise in storeys one; effective height zero | C2D3, Schedule 1 definition
-- x Type C construction for Class 5 and Class 8 parts | Table C2D2, C2D4
-- ? Specification 5 requirements for external walls near boundaries | designer to check
-- ? Any further mezzanine | must be checked against the combined-area rule in C2D3(4)
+viewbox: 0 0 640 418
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="12" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="29" r="11"/>
+<path class="la draw" pathLength="1" d="M34 29l4 4 8-8"/>
+<text class="txb" x="64" y="32">Mezzanine 190 m², below the 200 m² threshold</text>
+<text class="tx" x="64" y="53">C2D3(4), not a storey</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="20" y="79" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="96" r="11"/>
+<path class="la draw" pathLength="1" d="M34 96l4 4 8-8"/>
+<text class="txb" x="64" y="99">Workshop storey average height over 6 m, only storey above ground</text>
+<text class="tx" x="64" y="120">C2D3(3), counts as one</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="20" y="146" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="163" r="11"/>
+<path class="la draw" pathLength="1" d="M34 163l4 4 8-8"/>
+<text class="txb" x="64" y="166">Rise in storeys one; effective height zero</text>
+<text class="tx" x="64" y="187">C2D3, Schedule 1 definition</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="213" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="230" r="11"/>
+<path class="la draw" pathLength="1" d="M34 230l4 4 8-8"/>
+<text class="txb" x="64" y="233">Type C construction for Class 5 and Class 8 parts</text>
+<text class="tx" x="64" y="254">Table C2D2, C2D4</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bxi" x="20" y="280" width="600" height="59" rx="6"/>
+<circle class="bxi" cx="40" cy="297" r="11"/>
+<text class="txa" x="40" y="302" text-anchor="middle">?</text>
+<text class="txb" x="64" y="300">Specification 5 requirements for external walls near boundaries</text>
+<text class="tx" x="64" y="321">designer to check</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bxi" x="20" y="347" width="600" height="59" rx="6"/>
+<circle class="bxi" cx="40" cy="364" r="11"/>
+<text class="txa" x="40" y="369" text-anchor="middle">?</text>
+<text class="txb" x="64" y="367">Any further mezzanine</text>
+<text class="tx" x="64" y="388">must be checked against the combined-area rule in C2D3(4)</text>
+</g>
 ```
 
 ## Exercise: a wider mezzanine in a smaller room

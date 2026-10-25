@@ -24,15 +24,60 @@ F4D4 requires separate facilities for males and females in Class 3 and 5 to 9 bu
 The number of fixtures comes from tables. Table F4D4a covers Class 3, 5, 6 and 9 buildings other than schools; Table F4D4b covers Class 7 and 8 buildings. For employees, they differ only in the washbasins.
 
 ```figure
-type: compare
+type: svg
 title: Fixtures for employees, NCC 2022 Tables F4D4a and F4D4b
-cols: Class 5 office, Table F4D4a | Class 7 or 8, Table F4D4b
+alt: Fixtures for employees, NCC 2022 Tables F4D4a and F4D4b. Male closet pans: Class 5 office, Table F4D4a 1 for 1 to 20; then 1 more per 20; Class 7 or 8, Table F4D4b 1 for 1 to 20; then 1 more per 20. Urinals: Class 5 office, Table F4D4a none for 1 to 10; 1 for 11 to 25; 2 for 26 to 50; then 1 more per 50; Class 7 or 8, Table F4D4b the same. Male washbasins: Class 5 office, Table F4D4a 1 for 1 to 30; then 1 more per 30; Class 7 or 8, Table F4D4b 1 for 1 to 20; then 1 more per 20. Female closet pans: Class 5 office, Table F4D4a 1 for 1 to 15; then 1 more per 15; Class 7 or 8, Table F4D4b 1 for 1 to 15; then 1 more per 15. Female washbasins: Class 5 office, Table F4D4a 1 for 1 to 30; then 1 more per 30; Class 7 or 8, Table F4D4b 1 for 1 to 20; then 1 more per 20
 caption: Values from NCC 2022 Volume One for employees. Each table also has rows for other user groups, and states may vary other tables.
-- Male closet pans | 1 for 1 to 20; then 1 more per 20 | 1 for 1 to 20; then 1 more per 20
-- Urinals | none for 1 to 10; 1 for 11 to 25; 2 for 26 to 50; then 1 more per 50 | the same
-- Male washbasins | 1 for 1 to 30; then 1 more per 30 | 1 for 1 to 20; then 1 more per 20
-- Female closet pans | 1 for 1 to 15; then 1 more per 15 | 1 for 1 to 15; then 1 more per 15
-- *Female washbasins | 1 for 1 to 30; then 1 more per 30 | 1 for 1 to 20; then 1 more per 20
+viewbox: 0 0 640 344
+body:
+<g class="kf-a kd1">
+<rect class="fs" x="20" y="10" width="600" height="52" rx="4"/>
+<text class="txb" x="182.6" y="31">Class 5 office, Table F4D4a</text>
+<text class="txb" x="436.3" y="31">Class 7 or 8, Table</text>
+<text class="txb" x="436.3" y="50">F4D4b</text>
+</g>
+<g class="kf-a kd2">
+<path class="lf" d="M20 112H620"/>
+<text class="txb" x="28" y="83">Male closet pans</text>
+<text class="tx" x="182.6" y="83">1 for 1 to 20; then 1 more per 20</text>
+<text class="tx" x="436.3" y="83">1 for 1 to 20; then 1</text>
+<text class="tx" x="436.3" y="101">more per 20</text>
+</g>
+<g class="kf-a kd3">
+<path class="lf" d="M20 180H620"/>
+<text class="txb" x="28" y="133">Urinals</text>
+<text class="tx" x="182.6" y="133">none for 1 to 10; 1 for 11 to 25;</text>
+<text class="tx" x="182.6" y="151">2 for 26 to 50; then 1 more per</text>
+<text class="tx" x="182.6" y="169">50</text>
+<text class="tx" x="436.3" y="133">the same</text>
+</g>
+<g class="kf-a kd4">
+<path class="lf" d="M20 230H620"/>
+<text class="txb" x="28" y="201">Male washbasins</text>
+<text class="tx" x="182.6" y="201">1 for 1 to 30; then 1 more per 30</text>
+<text class="tx" x="436.3" y="201">1 for 1 to 20; then 1</text>
+<text class="tx" x="436.3" y="219">more per 20</text>
+</g>
+<g class="kf-a kd5">
+<path class="lf" d="M20 282H620"/>
+<text class="txb" x="28" y="251">Female closet</text>
+<text class="txb" x="28" y="270">pans</text>
+<text class="tx" x="182.6" y="251">1 for 1 to 15; then 1 more per 15</text>
+<text class="tx" x="436.3" y="251">1 for 1 to 15; then 1</text>
+<text class="tx" x="436.3" y="269">more per 15</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bxa" x="20" y="282" width="600" height="52" rx="4"/>
+<path class="lf" d="M20 334H620"/>
+<text class="txb" x="28" y="303">Female</text>
+<text class="txb" x="28" y="322">washbasins</text>
+<text class="tx" x="182.6" y="303">1 for 1 to 30; then 1 more per 30</text>
+<text class="tx" x="436.3" y="303">1 for 1 to 20; then 1</text>
+<text class="tx" x="436.3" y="321">more per 20</text>
+</g>
+<rect class="lf" x="20" y="10" width="600" height="324" rx="4" fill="none"/>
+<path class="lf" d="M174.6 10V334"/>
+<path class="lf" d="M428.3 10V334"/>
 ```
 
 The tables say "1 more per 20" and similar. Where the number of people beyond a band is not an exact multiple, read the increments the way the certifier does, and record it. This chapter uses the cautious reading that any part of a further increment adds a fixture, and says so wherever it matters.
@@ -89,13 +134,24 @@ If the owner had not documented a workforce, the count would fall back to D2D18.
 - Female washbasins: **4**.
 
 ```figure
-type: bars
+type: svg
 title: Workshop fixtures under the two occupant bases
-unit: fixtures
-max: 22
+alt: Workshop fixtures under the two occupant bases. Documented workforce, 30 people: 5 fixtures. D2D18 table count, 144 persons: 20 fixtures
 caption: This is an illustration. Counts use Table F4D4b and the cautious reading of the increments. The documented workforce of 30 gives 5 fixtures; the D2D18 count of 144 gives 20.
-- *Documented workforce, 30 people | 5
-- D2D18 table count, 144 persons | 20
+viewbox: 0 0 640 114
+body:
+<g class="kf-a kd1">
+<text class="txb" x="20" y="26">Documented workforce, 30 people</text>
+<rect class="fp" x="20" y="33" width="470" height="18" rx="3"/>
+<rect class="fa kf-growx" x="20" y="33" width="106.8" height="18" rx="3"/>
+<text class="txa" x="500" y="47">5 fixtures</text>
+</g>
+<g class="kf-a kd2">
+<text class="txb" x="20" y="75">D2D18 table count, 144 persons</text>
+<rect class="fp" x="20" y="82" width="470" height="18" rx="3"/>
+<rect class="fi kf-growx" x="20" y="82" width="427.3" height="18" rx="3"/>
+<text class="txb" x="500" y="96">20 fixtures</text>
+</g>
 ```
 
 The difference is fifteen fixtures, with the floor space, plumbing and cleaning that go with them. It shows why the occupant basis is the most important decision in this chapter, and why it must be recorded. If the workshop later runs two overlapping shifts or adds staff beyond 30, the fixture count must be revisited.
@@ -123,27 +179,97 @@ Access is easy to lose in the details. A 20 mm step at a door threshold, a heavy
 The storage mezzanine is the hard case. It is reached by a stair, and providing a lift or ramp would cost more than the mezzanine. Does D4D2(6) require access to it?
 
 ```figure
-type: decision
+type: svg
 title: Does the storage mezzanine need accessible access?
-question: Is the mezzanine an area normally used by occupants, and does a D4D5 exemption apply?
+alt: Does the storage mezzanine need accessible access?. Question: Is the mezzanine an area normally used by occupants, and does a D4D5 exemption apply?. Normally used and no exemption applies: access required, lift, ramp or relocated storage. Used only for occasional storage handling, with a documented health or safety risk: possible D4D5 exemption, certifier to decide and record. Not normally used at all: possibly outside D4D2(6), unlikely for a store visited daily
 caption: This is an illustration of how the question was framed for the certifier. The answer is the certifier's, case by case, and must be recorded with its reasons.
-- Normally used and no exemption applies | access required | lift, ramp or relocated storage
-- *Used only for occasional storage handling, with a documented health or safety risk | possible D4D5 exemption | certifier to decide and record
-- Not normally used at all | possibly outside D4D2(6) | unlikely for a store visited daily
+viewbox: 0 0 640 362
+body:
+<path class="ln draw" pathLength="1" d="M320 72V88H36V132.5H40"/>
+<path class="la draw" pathLength="1" d="M320 72V163H36V225H40"/>
+<path class="ln draw" pathLength="1" d="M320 72V273H36V317.5H40"/>
+<g class="kf-a kd1">
+<rect class="bxa" x="40" y="10" width="560" height="62" rx="10"/>
+<circle class="fa pulse" cx="62" cy="41" r="10"/>
+<text class="txb" x="62" y="46" text-anchor="middle">?</text>
+<text class="txb" x="330" y="37" text-anchor="middle">Is the mezzanine an area normally used by occupants, and does</text>
+<text class="txb" x="330" y="56" text-anchor="middle">a D4D5 exemption apply?</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="40" y="102" width="580" height="61" rx="8"/>
+<text class="txb" x="56" y="126">Normally used and no</text>
+<text class="txb" x="56" y="145">exemption applies</text>
+<text class="tx" x="316" y="126">access required</text>
+<text class="txa" x="316" y="148">lift, ramp or relocated storage</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bxa" x="40" y="177" width="580" height="96" rx="8"/>
+<text class="txb" x="56" y="201">Used only for occasional</text>
+<text class="txb" x="56" y="220">storage handling, with a</text>
+<text class="txb" x="56" y="239">documented health or safety</text>
+<text class="txb" x="56" y="258">risk</text>
+<text class="tx" x="316" y="201">possible D4D5 exemption</text>
+<text class="txa" x="316" y="223">certifier to decide and record</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="40" y="287" width="580" height="61" rx="8"/>
+<text class="txb" x="56" y="311">Not normally used at all</text>
+<text class="tx" x="316" y="311">possibly outside D4D2(6)</text>
+<text class="txa" x="316" y="333">unlikely for a store visited daily</text>
+</g>
 ```
 
 The owner's designer put a written case to the certifier: the mezzanine holds heavy tooling and fixtures loaded by forklift through a gate in the barrier, and is visited by stores staff handling those items, with risks the designer described. The certifier's decision, with its reasons, became part of the approval record. If the mezzanine were ever converted to an office or training room, as Chapter 6's exercise contemplates, the access question would return in a much stronger form, because offices are areas normally used by occupants.
 
 ```figure
-type: checklist
+type: svg
 title: Sanitary and access record for the running case
+alt: Sanitary and access record for the running case. Done: Occupant basis, documented maximum: 30 in the workshop, 12 in the office. Done: Workshop, Table F4D4b, 1 male pan, 1 urinal, 1 male basin, 1 female pan, 1 female basin. Done: Office, Table F4D4a, 1 male pan, 1 male basin, 1 female pan, 1 female basin. Done: Accessible unisex compartment in each bank; ambulant compartments, F4D5, F4D6, AS 1428.1. Done: Accessway from street entry and accessible parking to the office, D4D3. Open: Mezzanine access, D4D5 exemption sought; certifier's decision to record
 caption: This is an illustration. The occupant basis is the most important line and is repeated in the approval documents.
-- x Occupant basis | documented maximum: 30 in the workshop, 12 in the office
-- x Workshop, Table F4D4b | 1 male pan, 1 urinal, 1 male basin, 1 female pan, 1 female basin
-- x Office, Table F4D4a | 1 male pan, 1 male basin, 1 female pan, 1 female basin
-- x Accessible unisex compartment in each bank; ambulant compartments | F4D5, F4D6, AS 1428.1
-- x Accessway from street entry and accessible parking to the office | D4D3
-- ? Mezzanine access | D4D5 exemption sought; certifier's decision to record
+viewbox: 0 0 640 418
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="12" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="29" r="11"/>
+<path class="la draw" pathLength="1" d="M34 29l4 4 8-8"/>
+<text class="txb" x="64" y="32">Occupant basis</text>
+<text class="tx" x="64" y="53">documented maximum: 30 in the workshop, 12 in the office</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="20" y="79" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="96" r="11"/>
+<path class="la draw" pathLength="1" d="M34 96l4 4 8-8"/>
+<text class="txb" x="64" y="99">Workshop, Table F4D4b</text>
+<text class="tx" x="64" y="120">1 male pan, 1 urinal, 1 male basin, 1 female pan, 1 female basin</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="20" y="146" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="163" r="11"/>
+<path class="la draw" pathLength="1" d="M34 163l4 4 8-8"/>
+<text class="txb" x="64" y="166">Office, Table F4D4a</text>
+<text class="tx" x="64" y="187">1 male pan, 1 male basin, 1 female pan, 1 female basin</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="213" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="230" r="11"/>
+<path class="la draw" pathLength="1" d="M34 230l4 4 8-8"/>
+<text class="txb" x="64" y="233">Accessible unisex compartment in each bank; ambulant compartments</text>
+<text class="tx" x="64" y="254">F4D5, F4D6, AS 1428.1</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="20" y="280" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="297" r="11"/>
+<path class="la draw" pathLength="1" d="M34 297l4 4 8-8"/>
+<text class="txb" x="64" y="300">Accessway from street entry and accessible parking to the office</text>
+<text class="tx" x="64" y="321">D4D3</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bxi" x="20" y="347" width="600" height="59" rx="6"/>
+<circle class="bxi" cx="40" cy="364" r="11"/>
+<text class="txa" x="40" y="369" text-anchor="middle">?</text>
+<text class="txb" x="64" y="367">Mezzanine access</text>
+<text class="tx" x="64" y="388">D4D5 exemption sought; certifier's decision to record</text>
+</g>
 ```
 
 ## Exercise: the workshop grows to 40

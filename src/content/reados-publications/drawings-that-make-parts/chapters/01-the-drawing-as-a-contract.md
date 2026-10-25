@@ -41,23 +41,102 @@ The conventions in the AS 1100 series serve all of these readers by making each 
 AS 1100.101 defines a vocabulary of drawing types in clause 2.2. The distinctions matter, because the type of drawing tells the reader what it is for and what it is not for.
 
 ```figure
-type: tree
+type: svg
 title: Drawing types defined in AS 1100.101 clause 2.2
+alt: Drawing types defined in AS 1100.101 clause 2.2. Drawings for a single part. Detail drawing: end product requirements for the parts shown. Monodetail drawing: a detail drawing of a single part. Multidetail drawing: a detail drawing of two or more uniquely identified parts on one sheet. Tabulated drawing: similar parts with their variations given in a table. Drawings for assemblies and systems. Assembly drawing: an assembly or subassembly, sometimes called a general assembly. Detail assembly drawing: an assembly with one or more parts detailed on it. Arrangement and general arrangement drawings: relationships of major units, the end product for a general arrangement. Installation drawing: information needed to install items relative to their support. Control drawing: parameters for development, procurement or co-functioning, such as envelopes and interfaces. Records and diagrams. Diagrammatic drawing: symbols and lines showing relationships in a system. Works as executed drawing: records what was actually built
 caption: Summarised from AS 1100.101-1992. The running case uses a monodetail drawing for the housing and an assembly drawing for the bearing cartridge.
-- Drawings for a single part
-  - *Detail drawing | end product requirements for the parts shown
-  - Monodetail drawing | a detail drawing of a single part
-  - Multidetail drawing | a detail drawing of two or more uniquely identified parts on one sheet
-  - Tabulated drawing | similar parts with their variations given in a table
-- Drawings for assemblies and systems
-  - Assembly drawing | an assembly or subassembly, sometimes called a general assembly
-  - Detail assembly drawing | an assembly with one or more parts detailed on it
-  - Arrangement and general arrangement drawings | relationships of major units, the end product for a general arrangement
-  - Installation drawing | information needed to install items relative to their support
-  - Control drawing | parameters for development, procurement or co-functioning, such as envelopes and interfaces
-- Records and diagrams
-  - Diagrammatic drawing | symbols and lines showing relationships in a system
-  - Works as executed drawing | records what was actually built
+viewbox: 0 0 640 810
+body:
+<path class="ln draw" pathLength="1" d="M34 47V81H54"/>
+<path class="ln draw" pathLength="1" d="M34 47V132.5H54"/>
+<path class="ln draw" pathLength="1" d="M34 47V184H54"/>
+<path class="ln draw" pathLength="1" d="M34 47V244H54"/>
+<path class="ln draw" pathLength="1" d="M34 332V366H54"/>
+<path class="ln draw" pathLength="1" d="M34 332V426H54"/>
+<path class="ln draw" pathLength="1" d="M34 332V487H54"/>
+<path class="ln draw" pathLength="1" d="M34 332V548H54"/>
+<path class="ln draw" pathLength="1" d="M34 332V617H54"/>
+<path class="ln draw" pathLength="1" d="M34 695V729H54"/>
+<path class="ln draw" pathLength="1" d="M34 695V780.5H54"/>
+<g class="kf-a kd1">
+<rect class="bxi" x="20" y="12" width="600" height="35" rx="6"/>
+<text class="txb" x="32" y="33">Drawings for a single part</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bxa" x="54" y="55" width="566" height="52" rx="6"/>
+<text class="txb" x="66" y="76">Detail drawing</text>
+<text class="tx" x="304" y="76">end product requirements for the parts</text>
+<text class="tx" x="304" y="94">shown</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="54" y="115" width="566" height="35" rx="6"/>
+<text class="txb" x="66" y="136">Monodetail drawing</text>
+<text class="tx" x="304" y="136">a detail drawing of a single part</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="54" y="158" width="566" height="52" rx="6"/>
+<text class="txb" x="66" y="179">Multidetail drawing</text>
+<text class="tx" x="304" y="179">a detail drawing of two or more uniquely</text>
+<text class="tx" x="304" y="197">identified parts on one sheet</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="54" y="218" width="566" height="52" rx="6"/>
+<text class="txb" x="66" y="239">Tabulated drawing</text>
+<text class="tx" x="304" y="239">similar parts with their variations given</text>
+<text class="tx" x="304" y="257">in a table</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bxi" x="20" y="278" width="600" height="54" rx="6"/>
+<text class="txb" x="32" y="299">Drawings for assemblies and</text>
+<text class="txb" x="32" y="318">systems</text>
+</g>
+<g class="kf-a kd7">
+<rect class="bx" x="54" y="340" width="566" height="52" rx="6"/>
+<text class="txb" x="66" y="361">Assembly drawing</text>
+<text class="tx" x="304" y="361">an assembly or subassembly, sometimes</text>
+<text class="tx" x="304" y="379">called a general assembly</text>
+</g>
+<g class="kf-a kd8">
+<rect class="bx" x="54" y="400" width="566" height="52" rx="6"/>
+<text class="txb" x="66" y="421">Detail assembly drawing</text>
+<text class="tx" x="304" y="421">an assembly with one or more parts detailed</text>
+<text class="tx" x="304" y="439">on it</text>
+</g>
+<g class="kf-a kd9">
+<rect class="bx" x="54" y="460" width="566" height="54" rx="6"/>
+<text class="txb" x="66" y="481">Arrangement and general</text>
+<text class="txb" x="66" y="500">arrangement drawings</text>
+<text class="tx" x="304" y="481">relationships of major units, the end</text>
+<text class="tx" x="304" y="499">product for a general arrangement</text>
+</g>
+<g class="kf-a kd10">
+<rect class="bx" x="54" y="522" width="566" height="52" rx="6"/>
+<text class="txb" x="66" y="543">Installation drawing</text>
+<text class="tx" x="304" y="543">information needed to install items</text>
+<text class="tx" x="304" y="561">relative to their support</text>
+</g>
+<g class="kf-a kd11">
+<rect class="bx" x="54" y="582" width="566" height="70" rx="6"/>
+<text class="txb" x="66" y="603">Control drawing</text>
+<text class="tx" x="304" y="603">parameters for development, procurement or</text>
+<text class="tx" x="304" y="621">co-functioning, such as envelopes and</text>
+<text class="tx" x="304" y="639">interfaces</text>
+</g>
+<g class="kf-a kd12">
+<rect class="bxi" x="20" y="660" width="600" height="35" rx="6"/>
+<text class="txb" x="32" y="681">Records and diagrams</text>
+</g>
+<g class="kf-a kd12">
+<rect class="bx" x="54" y="703" width="566" height="52" rx="6"/>
+<text class="txb" x="66" y="724">Diagrammatic drawing</text>
+<text class="tx" x="304" y="724">symbols and lines showing relationships in</text>
+<text class="tx" x="304" y="742">a system</text>
+</g>
+<g class="kf-a kd12">
+<rect class="bx" x="54" y="763" width="566" height="35" rx="6"/>
+<text class="txb" x="66" y="784">Works as executed drawing</text>
+<text class="tx" x="304" y="784">records what was actually built</text>
+</g>
 ```
 
 The running case uses two of these. The housing gets a **monodetail drawing**: one part, one sheet, everything needed to make and inspect it. The bearing cartridge, which combines the housing, bearing, shaft, end cap, seal and screws, gets an **assembly drawing** with a parts list. The assembly drawing does not repeat the housing's dimensions; it refers to the housing's drawing number.
@@ -71,14 +150,42 @@ AS 1100 is a series. Part 101 sets the general principles for all technical draw
 Alongside the AS 1100 series sit Australian adoptions of ISO drawing standards, such as AS ISO 128.24 on lines for mechanical engineering drawings, which is an identical adoption of ISO 128-24:1999. Its preface shows how the adoption works: the Australian number appears on the title page, the ISO number on the cover, and references to other ISO standards are replaced by Australian equivalents where they exist.
 
 ```figure
-type: layers
+type: svg
 title: The standards behind a mechanical drawing in this book
+alt: The standards behind a mechanical drawing in this book. AS 1100.101-1992: general principles for all technical drawing; reconfirmed 2014; listed as pending revision. AS 1100.201-1992: mechanical engineering drawing; reconfirmed 2014. AS ISO 128.24-2005: lines on mechanical engineering drawings; adopts ISO 128-24:1999. Referenced standards: for example AS 1101.3 welding symbols and AS 1913 centre holes, at the editions called up. Contract or customer standard: may specify ISO or other standards instead, and then governs
 caption: The status shown is as found on the Standards Australia store and in the supplied documents in October 2026. Always check the edition your contract calls up.
-- AS 1100.101-1992 | general principles for all technical drawing; reconfirmed 2014; listed as pending revision
-- AS 1100.201-1992 | mechanical engineering drawing; reconfirmed 2014
-- AS ISO 128.24-2005 | lines on mechanical engineering drawings; adopts ISO 128-24:1999
-- *Referenced standards | for example AS 1101.3 welding symbols and AS 1913 centre holes, at the editions called up
-- Contract or customer standard | may specify ISO or other standards instead, and then governs
+viewbox: 0 0 640 299
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="10" width="600" height="54" rx="6"/>
+<text class="txb" x="36" y="33">AS 1100.101-1992</text>
+<text class="tx" x="250" y="33">general principles for all technical drawing;</text>
+<text class="tx" x="250" y="51">reconfirmed 2014; listed as pending revision</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="30" y="70" width="580" height="37" rx="6"/>
+<text class="txb" x="46" y="93">AS 1100.201-1992</text>
+<text class="tx" x="250" y="93">mechanical engineering drawing; reconfirmed 2014</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="40" y="113" width="560" height="54" rx="6"/>
+<text class="txb" x="56" y="136">AS ISO 128.24-2005</text>
+<text class="tx" x="250" y="136">lines on mechanical engineering drawings; adopts</text>
+<text class="tx" x="250" y="154">ISO 128-24:1999</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bxa" x="50" y="173" width="540" height="54" rx="6"/>
+<text class="txb" x="66" y="196">Referenced standards</text>
+<text class="tx" x="250" y="196">for example AS 1101.3 welding symbols and AS</text>
+<text class="tx" x="250" y="214">1913 centre holes, at the editions called up</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="60" y="233" width="520" height="56" rx="6"/>
+<text class="txb" x="76" y="256">Contract or</text>
+<text class="txb" x="76" y="275">customer standard</text>
+<text class="tx" x="250" y="256">may specify ISO or other standards instead,</text>
+<text class="tx" x="250" y="274">and then governs</text>
+</g>
 ```
 
 ### Which edition governs
@@ -107,14 +214,47 @@ This is an illustration. The business is designing a bearing cartridge for a sma
 - an overall length of 77 mm from the spigot face to the rear face.
 
 ```figure
-type: stats
+type: svg
 title: The running case housing
+alt: The running case housing. Ø140 × 12, Flange (four Ø9 holes on a Ø115 pitch circle). Ø100 × 5, Locating spigot (centres the housing on the pump). Ø62, Bearing bore (seats a deep-groove ball bearing). 4 × M6, Tapped holes (on a Ø78 pitch circle, rear face). 77, Overall length, mm (spigot face to rear face)
 caption: This is an illustration. These are nominal sizes; later chapters add views, tolerances and surface texture.
-- *Ø140 × 12 | Flange | four Ø9 holes on a Ø115 pitch circle
-- Ø100 × 5 | Locating spigot | centres the housing on the pump
-- Ø62 | Bearing bore | seats a deep-groove ball bearing
-- 4 × M6 | Tapped holes | on a Ø78 pitch circle, rear face
-- 77 | Overall length, mm | spigot face to rear face
+viewbox: 0 0 640 262
+body:
+<g class="kf-a kd1">
+<rect class="bxa" x="20" y="10" width="192" height="114" rx="8"/>
+<circle class="fa pulse" cx="198" cy="24" r="5"/>
+<text class="txa" x="32" y="36">Ø140 × 12</text>
+<text class="txb" x="32" y="61">Flange</text>
+<text class="tx" x="32" y="82">four Ø9 holes on a Ø115</text>
+<text class="tx" x="32" y="100">pitch circle</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="224" y="10" width="192" height="114" rx="8"/>
+<text class="txa" x="236" y="36">Ø100 × 5</text>
+<text class="txb" x="236" y="61">Locating spigot</text>
+<text class="tx" x="236" y="82">centres the housing on</text>
+<text class="tx" x="236" y="100">the pump</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="428" y="10" width="192" height="114" rx="8"/>
+<text class="txa" x="440" y="36">Ø62</text>
+<text class="txb" x="440" y="61">Bearing bore</text>
+<text class="tx" x="440" y="82">seats a deep-groove ball</text>
+<text class="tx" x="440" y="100">bearing</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="136" width="192" height="114" rx="8"/>
+<text class="txa" x="32" y="162">4 × M6</text>
+<text class="txb" x="32" y="187">Tapped holes</text>
+<text class="tx" x="32" y="208">on a Ø78 pitch circle,</text>
+<text class="tx" x="32" y="226">rear face</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="224" y="136" width="192" height="114" rx="8"/>
+<text class="txa" x="236" y="162">77</text>
+<text class="txb" x="236" y="187">Overall length, mm</text>
+<text class="tx" x="236" y="208">spigot face to rear face</text>
+</g>
 ```
 
 ## A drawing as a record

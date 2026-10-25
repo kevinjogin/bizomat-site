@@ -16,18 +16,81 @@ This chapter applies AS 1100.101 clause 8.2 to the running case housing. It cove
 AS 1100.101 Table 8.1 defines symbols that tell the reader what kind of feature a dimension refers to. Each is placed in front of the number unless stated otherwise.
 
 ```figure
-type: compare
+type: svg
 title: Dimensioning symbols, AS 1100.101 Table 8.1
-cols: Meaning | Placed
+alt: Dimensioning symbols, AS 1100.101 Table 8.1. Ø: Meaning diameter of a circle or cylinder; Placed in front of the dimension. R: Meaning radius; Placed in front of the dimension. SØ and SR: Meaning diameter or radius of a spherical surface; Placed in front of the dimension. Square symbol: Meaning width across flats of a square section; Placed in front of the dimension. Taper and slope symbols: Meaning a taper or slope and its direction; Placed in front of the ratio. Countersink, counterbore or spotface, depth: Meaning features of holes; Placed in front of the dimension. Arc symbol: Meaning length along an arc; Placed above the dimension. Centre line symbol: Meaning the centre line of a part or feature group; Placed on or beside the centre line
 caption: Summarised from AS 1100.101-1992; the symbols' shapes and sizes are in its Figure 4.14.
-- Ø | diameter of a circle or cylinder | in front of the dimension
-- R | radius | in front of the dimension
-- SØ and SR | diameter or radius of a spherical surface | in front of the dimension
-- Square symbol | width across flats of a square section | in front of the dimension
-- Taper and slope symbols | a taper or slope and its direction | in front of the ratio
-- Countersink, counterbore or spotface, depth | features of holes | in front of the dimension
-- Arc symbol | length along an arc | above the dimension
-- Centre line symbol | the centre line of a part or feature group | on or beside the centre line
+viewbox: 0 0 640 457
+body:
+<g class="kf-a kd1">
+<rect class="fs" x="20" y="10" width="600" height="33" rx="4"/>
+<text class="txb" x="239" y="31">Meaning</text>
+<text class="txb" x="448.2" y="31">Placed</text>
+</g>
+<g class="kf-a kd2">
+<path class="lf" d="M20 93H620"/>
+<text class="txb" x="28" y="64">Ø</text>
+<text class="tx" x="239" y="64">diameter of a circle or</text>
+<text class="tx" x="239" y="82">cylinder</text>
+<text class="tx" x="448.2" y="64">in front of the</text>
+<text class="tx" x="448.2" y="82">dimension</text>
+</g>
+<g class="kf-a kd3">
+<path class="lf" d="M20 143H620"/>
+<text class="txb" x="28" y="114">R</text>
+<text class="tx" x="239" y="114">radius</text>
+<text class="tx" x="448.2" y="114">in front of the</text>
+<text class="tx" x="448.2" y="132">dimension</text>
+</g>
+<g class="kf-a kd4">
+<path class="lf" d="M20 193H620"/>
+<text class="txb" x="28" y="164">SØ and SR</text>
+<text class="tx" x="239" y="164">diameter or radius of a</text>
+<text class="tx" x="239" y="182">spherical surface</text>
+<text class="tx" x="448.2" y="164">in front of the</text>
+<text class="tx" x="448.2" y="182">dimension</text>
+</g>
+<g class="kf-a kd5">
+<path class="lf" d="M20 243H620"/>
+<text class="txb" x="28" y="214">Square symbol</text>
+<text class="tx" x="239" y="214">width across flats of a</text>
+<text class="tx" x="239" y="232">square section</text>
+<text class="tx" x="448.2" y="214">in front of the</text>
+<text class="tx" x="448.2" y="232">dimension</text>
+</g>
+<g class="kf-a kd6">
+<path class="lf" d="M20 293H620"/>
+<text class="txb" x="28" y="264">Taper and slope symbols</text>
+<text class="tx" x="239" y="264">a taper or slope and its</text>
+<text class="tx" x="239" y="282">direction</text>
+<text class="tx" x="448.2" y="264">in front of the ratio</text>
+</g>
+<g class="kf-a kd7">
+<path class="lf" d="M20 364H620"/>
+<text class="txb" x="28" y="314">Countersink,</text>
+<text class="txb" x="28" y="333">counterbore or</text>
+<text class="txb" x="28" y="352">spotface, depth</text>
+<text class="tx" x="239" y="314">features of holes</text>
+<text class="tx" x="448.2" y="314">in front of the</text>
+<text class="tx" x="448.2" y="332">dimension</text>
+</g>
+<g class="kf-a kd8">
+<path class="lf" d="M20 397H620"/>
+<text class="txb" x="28" y="385">Arc symbol</text>
+<text class="tx" x="239" y="385">length along an arc</text>
+<text class="tx" x="448.2" y="385">above the dimension</text>
+</g>
+<g class="kf-a kd9">
+<path class="lf" d="M20 447H620"/>
+<text class="txb" x="28" y="418">Centre line symbol</text>
+<text class="tx" x="239" y="418">the centre line of a part</text>
+<text class="tx" x="239" y="436">or feature group</text>
+<text class="tx" x="448.2" y="418">on or beside the centre</text>
+<text class="tx" x="448.2" y="436">line</text>
+</g>
+<rect class="lf" x="20" y="10" width="600" height="437" rx="4" fill="none"/>
+<path class="lf" d="M231 10V447"/>
+<path class="lf" d="M440.2 10V447"/>
 ```
 
 The symbols do more than save words. A diameter symbol lets a single view define a round feature, as Chapter 4 showed. A depth symbol after a hole size removes the need for a section to show the depth. A counterbore symbol tells the reader the feature is a stepped hole, not two separate holes.
@@ -44,14 +107,81 @@ Clause 8.2.3 sets out how the lines around a dimension are drawn:
 With the 3.5 mm characters chosen in Chapter 3, the first row of dimensions on the housing sits at least **3 × 3.5 = 10.5 mm** from the outline, and each further row at least **2 × 3.5 = 7 mm** beyond the last. Three rows on one side of a view therefore need at least **10.5 + 7 + 7 = 24.5 mm** of clear space. That is part of the reason the housing needed an A3 sheet.
 
 ```figure
-type: formula
+type: svg
 title: Space needed for rows of dimensions
-formula: space = 3h + 2h × (n − 1)
+alt: Space needed for rows of dimensions. Formula: space = 3h + 2h × (n − 1). h: character height, mm. n: number of rows of dimension lines on one side. Step: h = 3.5 mm, n = 3: 10.5 + 7 + 7 = 24.5 mm. Step: h = 2.5 mm, n = 3: 7.5 + 5 + 5 = 17.5 mm
 caption: From the minimum spacings in AS 1100.101 clause 8.2.3.2, with h the character height and n the number of rows on one side of a view.
+viewbox: 0 0 640 330
+- Formula | space = 3h + 2h × (n − 1)
 - h | character height, mm
 - n | number of rows of dimension lines on one side
-step: h = 3.5 mm, n = 3: 10.5 + 7 + 7 = 24.5 mm
-step: h = 2.5 mm, n = 3: 7.5 + 5 + 5 = 17.5 mm
+- Worked | h = 3.5 mm, n = 3: 10.5 + 7 + 7 = 24.5 mm
+- Worked | h = 2.5 mm, n = 3: 7.5 + 5 + 5 = 17.5 mm
+body:
+<g class="kf-a kd1">
+<rect class="bxi" x="20" y="250" width="220" height="40"/>
+<text class="txs" x="130" y="275" text-anchor="middle">part outline</text>
+<path class="lf" d="M30 248V181M230 248V181"/>
+<path class="ln" d="M30 187H230"/>
+<path class="ah" d="M30 187l8 -4v8z"/>
+<path class="ah" d="M230 187l-8 -4v8z"/>
+<text class="txs" x="130" y="181" text-anchor="middle">row 1</text>
+<path class="lf" d="M50 248V139M210 248V139"/>
+<path class="ln" d="M50 145H210"/>
+<path class="ah" d="M50 145l8 -4v8z"/>
+<path class="ah" d="M210 145l-8 -4v8z"/>
+<text class="txs" x="130" y="139" text-anchor="middle">row 2</text>
+<path class="lf" d="M70 248V97M190 248V97"/>
+<path class="ln" d="M70 103H190"/>
+<path class="ah" d="M70 103l8 -4v8z"/>
+<path class="ah" d="M190 103l-8 -4v8z"/>
+<text class="txs" x="130" y="97" text-anchor="middle">row 3</text>
+<path class="ln" d="M270 187V250"/>
+<path class="ah" d="M270 187l-4 8h8z"/>
+<path class="ah" d="M270 250l-4 -8h8z"/>
+<text class="txs" x="278" y="222.5" text-anchor="start">3h = 10.5</text>
+<path class="ln" d="M270 145V187"/>
+<path class="ah" d="M270 145l-4 8h8z"/>
+<path class="ah" d="M270 187l-4 -8h8z"/>
+<text class="txs" x="278" y="170" text-anchor="start">2h = 7</text>
+<path class="ln" d="M270 103V145"/>
+<path class="ah" d="M270 103l-4 8h8z"/>
+<path class="ah" d="M270 145l-4 -8h8z"/>
+<text class="txs" x="278" y="128" text-anchor="start">2h = 7</text>
+<text class="txb" x="130" y="315" text-anchor="middle">h = 3.5 mm: 24.5 mm for 3 rows</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bxi" x="340" y="250" width="220" height="40"/>
+<text class="txs" x="450" y="275" text-anchor="middle">part outline</text>
+<path class="lf" d="M350 248V199M550 248V199"/>
+<path class="ln" d="M350 205H550"/>
+<path class="ah" d="M350 205l8 -4v8z"/>
+<path class="ah" d="M550 205l-8 -4v8z"/>
+<text class="txs" x="450" y="199" text-anchor="middle">row 1</text>
+<path class="lf" d="M370 248V169M530 248V169"/>
+<path class="ln" d="M370 175H530"/>
+<path class="ah" d="M370 175l8 -4v8z"/>
+<path class="ah" d="M530 175l-8 -4v8z"/>
+<text class="txs" x="450" y="169" text-anchor="middle">row 2</text>
+<path class="lf" d="M390 248V139M510 248V139"/>
+<path class="ln" d="M390 145H510"/>
+<path class="ah" d="M390 145l8 -4v8z"/>
+<path class="ah" d="M510 145l-8 -4v8z"/>
+<text class="txs" x="450" y="139" text-anchor="middle">row 3</text>
+<path class="ln" d="M590 205V250"/>
+<path class="ah" d="M590 205l-4 8h8z"/>
+<path class="ah" d="M590 250l-4 -8h8z"/>
+<text class="txs" x="598" y="231.5" text-anchor="start">3h = 7.5</text>
+<path class="ln" d="M590 175V205"/>
+<path class="ah" d="M590 175l-4 8h8z"/>
+<path class="ah" d="M590 205l-4 -8h8z"/>
+<text class="txs" x="598" y="194" text-anchor="start">2h = 5</text>
+<path class="ln" d="M590 145V175"/>
+<path class="ah" d="M590 145l-4 8h8z"/>
+<path class="ah" d="M590 175l-4 -8h8z"/>
+<text class="txs" x="598" y="164" text-anchor="start">2h = 5</text>
+<text class="txb" x="450" y="315" text-anchor="middle">h = 2.5 mm: 17.5 mm for 3 rows</text>
+</g>
 ```
 
 ## Chain, parallel and running dimensions
@@ -93,14 +223,51 @@ This is an illustration. The housing locates on the pump through its spigot face
 - **Diameters and hole positions** are referred to the axis, which is established by the spigot and the bore together (Chapter 7 adds the geometric tolerance that makes this explicit).
 
 ```figure
-type: steps
+type: svg
 title: Axial dimensions on the housing, chosen by function
+alt: Axial dimensions on the housing, chosen by function. 1. Spigot length 5: from the spigot face, which seats on the pump. 2. Flange thickness 12: from the flange front face, which carries the bolt load. 3. Body length 60: from the flange rear face to the rear face. 4. Bearing seat depth 18: from the rear face, against which the end cap clamps. 5. Overall length (77): auxiliary: 5 + 12 + 60, not toleranced, not for acceptance
 caption: This is an illustration. The overall length is shown in parentheses as an auxiliary dimension because the chain already defines it.
-- Spigot length 5 | from the spigot face, which seats on the pump
-- Flange thickness 12 | from the flange front face, which carries the bolt load
-- Body length 60 | from the flange rear face to the rear face
-- *Bearing seat depth 18 | from the rear face, against which the end cap clamps
-- Overall length (77) | auxiliary: 5 + 12 + 60, not toleranced, not for acceptance
+viewbox: 0 0 640 373
+body:
+<path class="la draw" pathLength="1" d="M34 58.5V101.5"/>
+<path class="la draw" pathLength="1" d="M34 129.5V172.5"/>
+<path class="la draw" pathLength="1" d="M34 200.5V243.5"/>
+<path class="la draw" pathLength="1" d="M34 271.5V314.5"/>
+<g class="kf-a kd1">
+<rect class="bx" x="58" y="14" width="562" height="61" rx="6"/>
+<circle class="bxi" cx="34" cy="44.5" r="14"/>
+<text class="txb" x="34" y="49.5" text-anchor="middle">1</text>
+<text class="txb" x="74" y="36">Spigot length 5</text>
+<text class="tx" x="74" y="57">from the spigot face, which seats on the pump</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="58" y="85" width="562" height="61" rx="6"/>
+<circle class="bxi" cx="34" cy="115.5" r="14"/>
+<text class="txb" x="34" y="120.5" text-anchor="middle">2</text>
+<text class="txb" x="74" y="107">Flange thickness 12</text>
+<text class="tx" x="74" y="128">from the flange front face, which carries the bolt load</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="58" y="156" width="562" height="61" rx="6"/>
+<circle class="bxi" cx="34" cy="186.5" r="14"/>
+<text class="txb" x="34" y="191.5" text-anchor="middle">3</text>
+<text class="txb" x="74" y="178">Body length 60</text>
+<text class="tx" x="74" y="199">from the flange rear face to the rear face</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bxa" x="58" y="227" width="562" height="61" rx="6"/>
+<circle class="fa" cx="34" cy="257.5" r="14"/>
+<text class="txb" x="34" y="262.5" text-anchor="middle">4</text>
+<text class="txb" x="74" y="249">Bearing seat depth 18</text>
+<text class="tx" x="74" y="270">from the rear face, against which the end cap clamps</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="58" y="298" width="562" height="61" rx="6"/>
+<circle class="bxi" cx="34" cy="328.5" r="14"/>
+<text class="txb" x="34" y="333.5" text-anchor="middle">5</text>
+<text class="txb" x="74" y="320">Overall length (77)</text>
+<text class="tx" x="74" y="341">auxiliary: 5 + 12 + 60, not toleranced, not for acceptance</text>
+</g>
 ```
 
 ## Dimensioning for the inspector

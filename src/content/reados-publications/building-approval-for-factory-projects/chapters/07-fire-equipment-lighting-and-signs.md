@@ -52,14 +52,55 @@ E1D14 lists where portable extinguishers are needed, with the type of risk defin
 - Class A risks in Class 2, 3 or 5 buildings and Class 4 parts, among other listed cases.
 
 ```figure
-type: compare
+type: svg
 title: Extinguisher triggers in the running case, NCC 2022 E1D14
-cols: Office compartment, Class 5 | Workshop compartment, Class 8
+alt: Extinguisher triggers in the running case, NCC 2022 E1D14. Class A risk: Office compartment, Class 5 required for a Class 5 building; Workshop compartment, Class 8 covered by hose reels; not triggered. Class B, over 50 L of flammable liquid: Office compartment, Class 5 none stored; Workshop compartment, Class 8 80 L of solvents and thinners: required. Class E or AE, emergency switchboard: Office compartment, Class 5 none in this compartment; Workshop compartment, Class 8 main switchboard: treated as one, to confirm. Class F, cooking oils in a kitchen: Office compartment, Class 5 kitchenette has no fryer: not triggered; Workshop compartment, Class 8 none
 caption: This is an illustration. The risk classes and the selection and location of extinguishers follow AS 2444, which is not quoted here.
-- Class A risk | required for a Class 5 building | covered by hose reels; not triggered
-- *Class B, over 50 L of flammable liquid | none stored | 80 L of solvents and thinners: required
-- Class E or AE, emergency switchboard | none in this compartment | main switchboard: treated as one, to confirm
-- Class F, cooking oils in a kitchen | kitchenette has no fryer: not triggered | none
+viewbox: 0 0 640 278
+body:
+<g class="kf-a kd1">
+<rect class="fs" x="20" y="10" width="600" height="52" rx="4"/>
+<text class="txb" x="223.6" y="31">Office compartment,</text>
+<text class="txb" x="223.6" y="50">Class 5</text>
+<text class="txb" x="421.2" y="31">Workshop compartment,</text>
+<text class="txb" x="421.2" y="50">Class 8</text>
+</g>
+<g class="kf-a kd2">
+<path class="lf" d="M20 112H620"/>
+<text class="txb" x="28" y="83">Class A risk</text>
+<text class="tx" x="223.6" y="83">required for a Class 5</text>
+<text class="tx" x="223.6" y="101">building</text>
+<text class="tx" x="421.2" y="83">covered by hose reels; not</text>
+<text class="tx" x="421.2" y="101">triggered</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bxa" x="20" y="112" width="600" height="52" rx="4"/>
+<path class="lf" d="M20 164H620"/>
+<text class="txb" x="28" y="133">Class B, over 50 L of</text>
+<text class="txb" x="28" y="152">flammable liquid</text>
+<text class="tx" x="223.6" y="133">none stored</text>
+<text class="tx" x="421.2" y="133">80 L of solvents and</text>
+<text class="tx" x="421.2" y="151">thinners: required</text>
+</g>
+<g class="kf-a kd4">
+<path class="lf" d="M20 216H620"/>
+<text class="txb" x="28" y="185">Class E or AE,</text>
+<text class="txb" x="28" y="204">emergency switchboard</text>
+<text class="tx" x="223.6" y="185">none in this compartment</text>
+<text class="tx" x="421.2" y="185">main switchboard: treated</text>
+<text class="tx" x="421.2" y="203">as one, to confirm</text>
+</g>
+<g class="kf-a kd5">
+<path class="lf" d="M20 268H620"/>
+<text class="txb" x="28" y="237">Class F, cooking oils</text>
+<text class="txb" x="28" y="256">in a kitchen</text>
+<text class="tx" x="223.6" y="237">kitchenette has no fryer:</text>
+<text class="tx" x="223.6" y="255">not triggered</text>
+<text class="tx" x="421.2" y="237">none</text>
+</g>
+<rect class="lf" x="20" y="10" width="600" height="258" rx="4" fill="none"/>
+<path class="lf" d="M215.6 10V268"/>
+<path class="lf" d="M413.2 10V268"/>
 ```
 
 This is an illustration. The owner stores about 80 L of solvents and thinners in a flammable liquids cabinet for degreasing and touch-up painting. That is over the 50 L threshold, so a Class B extinguisher is required for that risk. The quantity also matters under hazardous chemicals rules, which are outside the NCC. Whether the main switchboard counts as an emergency switchboard for E1D14 depends on what it serves, and the certifier was asked to confirm. Either way, the owner's existing extinguisher beside it was a water type left by the previous tenant. Water is unsuitable for electrical risks, and the extinguisher was replaced with a type suited to the risk, as AS 2444 requires.
@@ -69,14 +110,56 @@ This is an illustration. The owner stores about 80 L of solvents and thinners in
 Sprinklers are the most expensive item on the list, so it is worth showing why the running case does not need them rather than simply leaving them off.
 
 ```figure
-type: decision
+type: svg
 title: Sprinkler triggers checked for the running case
-question: Does any NCC 2022 trigger apply to this Class 5 and Class 8 building?
+alt: Sprinkler triggers checked for the running case. Question: Does any NCC 2022 trigger apply to this Class 5 and Class 8 building?. Effective height over 25 m, E1D5: effective height is zero, no. Class 6 compartment over 3,500 m² or 21,000 m³, E1D8: no Class 6 part, no. Excessive hazard: compartment over 2,000 m² or 12,000 m³ with hazardous processes or high combustible storage, E1D13: 1,690 m² and 10,125 m³ after the fire wall, no. Large isolated building route, C3D4: not used; the fire wall was chosen instead, no
 caption: This is an illustration of the check, not a complete list of every trigger in Part E1. Each trigger was read in the edition that applies.
-- Effective height over 25 m, E1D5 | effective height is zero | no
-- Class 6 compartment over 3,500 m² or 21,000 m³, E1D8 | no Class 6 part | no
-- *Excessive hazard: compartment over 2,000 m² or 12,000 m³ with hazardous processes or high combustible storage, E1D13 | 1,690 m² and 10,125 m³ after the fire wall | no
-- Large isolated building route, C3D4 | not used; the fire wall was chosen instead | no
+viewbox: 0 0 640 474
+body:
+<path class="ln draw" pathLength="1" d="M320 72V88H36V132.5H40"/>
+<path class="ln draw" pathLength="1" d="M320 72V163H36V207.5H40"/>
+<path class="la draw" pathLength="1" d="M320 72V238H36V309.5H40"/>
+<path class="ln draw" pathLength="1" d="M320 72V367H36V420.5H40"/>
+<g class="kf-a kd1">
+<rect class="bxa" x="40" y="10" width="560" height="62" rx="10"/>
+<circle class="fa pulse" cx="62" cy="41" r="10"/>
+<text class="txb" x="62" y="46" text-anchor="middle">?</text>
+<text class="txb" x="330" y="37" text-anchor="middle">Does any NCC 2022 trigger apply to this Class 5 and Class 8</text>
+<text class="txb" x="330" y="56" text-anchor="middle">building?</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="40" y="102" width="580" height="61" rx="8"/>
+<text class="txb" x="56" y="126">Effective height over 25 m,</text>
+<text class="txb" x="56" y="145">E1D5</text>
+<text class="tx" x="316" y="126">effective height is zero</text>
+<text class="txa" x="316" y="148">no</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="40" y="177" width="580" height="61" rx="8"/>
+<text class="txb" x="56" y="201">Class 6 compartment over</text>
+<text class="txb" x="56" y="220">3,500 m² or 21,000 m³, E1D8</text>
+<text class="tx" x="316" y="201">no Class 6 part</text>
+<text class="txa" x="316" y="223">no</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bxa" x="40" y="252" width="580" height="115" rx="8"/>
+<text class="txb" x="56" y="276">Excessive hazard:</text>
+<text class="txb" x="56" y="295">compartment over 2,000 m²</text>
+<text class="txb" x="56" y="314">or 12,000 m³ with hazardous</text>
+<text class="txb" x="56" y="333">processes or high</text>
+<text class="txb" x="56" y="352">combustible storage, E1D13</text>
+<text class="tx" x="316" y="276">1,690 m² and 10,125 m³ after the fire</text>
+<text class="tx" x="316" y="294">wall</text>
+<text class="txa" x="316" y="316">no</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="40" y="381" width="580" height="79" rx="8"/>
+<text class="txb" x="56" y="405">Large isolated building</text>
+<text class="txb" x="56" y="424">route, C3D4</text>
+<text class="tx" x="316" y="405">not used; the fire wall was chosen</text>
+<text class="tx" x="316" y="423">instead</text>
+<text class="txa" x="316" y="445">no</text>
+</g>
 ```
 
 Two of those answers depend on earlier decisions. If the owner had not built the fire wall and had instead used the large isolated building route in C3D4, sprinklers would have been part of the solution. And if the workshop compartment had been larger, high racking of combustible goods could have brought in E1D13. The equipment list is downstream of the compartment decision.
@@ -123,15 +206,56 @@ E1D16 applies while the work is being done. At least one extinguisher suited to 
 Fit-outs in occupied buildings deserve particular care. The workshop's existing hose reels and extinguishers may be isolated or moved during works, and hot work for the mezzanine steel adds ignition sources. The builder's construction fire plan should say which equipment remains in service at each stage.
 
 ```figure
-type: checklist
+type: svg
 title: Fire equipment and visibility record for the running case
+alt: Fire equipment and visibility record for the running case. Done: Hydrant system to AS 2419.1, E1D2: over 500 m², brigade within 50 km; existing system to be assessed. Done: Hose reels within 4 m of P1, P2 and P3, E1D3: Class 8 compartment over 500 m². Done: Extinguishers: Class A in office; Class B for solvents; E-rated at the main switchboard, E1D14 and AS 2444. Done: Sprinklers not required, E1D5, E1D8, E1D13 checked. Done: Emergency lighting in workshop, mezzanine stair and office corridor, E4D2, AS/NZS 2293.1. Open: Direction signs after machines and shelving are installed, E4D6, to verify on site
 caption: This is an illustration. Each item cites the trigger clause and the reason it applies or does not.
-- x Hydrant system to AS 2419.1 | E1D2: over 500 m², brigade within 50 km; existing system to be assessed
-- x Hose reels within 4 m of P1, P2 and P3 | E1D3: Class 8 compartment over 500 m²
-- x Extinguishers: Class A in office; Class B for solvents; E-rated at the main switchboard | E1D14 and AS 2444
-- x Sprinklers not required | E1D5, E1D8, E1D13 checked
-- x Emergency lighting in workshop, mezzanine stair and office corridor | E4D2, AS/NZS 2293.1
-- ? Direction signs after machines and shelving are installed | E4D6, to verify on site
+viewbox: 0 0 640 456
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="12" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="29" r="11"/>
+<path class="la draw" pathLength="1" d="M34 29l4 4 8-8"/>
+<text class="txb" x="64" y="32">Hydrant system to AS 2419.1</text>
+<text class="tx" x="64" y="53">E1D2: over 500 m², brigade within 50 km; existing system to be assessed</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="20" y="79" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="96" r="11"/>
+<path class="la draw" pathLength="1" d="M34 96l4 4 8-8"/>
+<text class="txb" x="64" y="99">Hose reels within 4 m of P1, P2 and P3</text>
+<text class="tx" x="64" y="120">E1D3: Class 8 compartment over 500 m²</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="20" y="146" width="600" height="78" rx="6"/>
+<circle class="bxa" cx="40" cy="163" r="11"/>
+<path class="la draw" pathLength="1" d="M34 163l4 4 8-8"/>
+<text class="txb" x="64" y="166">Extinguishers: Class A in office; Class B for solvents; E-rated at</text>
+<text class="txb" x="64" y="185">the main switchboard</text>
+<text class="tx" x="64" y="206">E1D14 and AS 2444</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="232" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="249" r="11"/>
+<path class="la draw" pathLength="1" d="M34 249l4 4 8-8"/>
+<text class="txb" x="64" y="252">Sprinklers not required</text>
+<text class="tx" x="64" y="273">E1D5, E1D8, E1D13 checked</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="20" y="299" width="600" height="78" rx="6"/>
+<circle class="bxa" cx="40" cy="316" r="11"/>
+<path class="la draw" pathLength="1" d="M34 316l4 4 8-8"/>
+<text class="txb" x="64" y="319">Emergency lighting in workshop, mezzanine stair and office</text>
+<text class="txb" x="64" y="338">corridor</text>
+<text class="tx" x="64" y="359">E4D2, AS/NZS 2293.1</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bxi" x="20" y="385" width="600" height="59" rx="6"/>
+<circle class="bxi" cx="40" cy="402" r="11"/>
+<text class="txa" x="40" y="407" text-anchor="middle">?</text>
+<text class="txb" x="64" y="405">Direction signs after machines and shelving are installed</text>
+<text class="tx" x="64" y="426">E4D6, to verify on site</text>
+</g>
 ```
 
 ## Exercise: more flammable liquid and a smaller room

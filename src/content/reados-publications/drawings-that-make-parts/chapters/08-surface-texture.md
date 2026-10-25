@@ -16,13 +16,40 @@ This chapter covers the surface texture conventions in AS 1100.201 Section 3: th
 AS 1100.201 clause 3.2 defines a basic symbol made of two lines at 60° to the horizontal, and two modifications:
 
 ```figure
-type: compare
+type: svg
 title: Basic surface texture symbols, AS 1100.201 clause 3.2
-cols: Meaning
+alt: Basic surface texture symbols, AS 1100.201 clause 3.2. Basic symbol: Meaning the surface texture may be produced by any method. With a bar across the open side: Meaning removal of material by machining is required. With a circle in the open side: Meaning removal of material is not permitted; leave the surface as produced by the previous process
 caption: Summarised from AS 1100.201-1992. Each symbol's size is proportioned to the character height used on the drawing.
-- Basic symbol | the surface texture may be produced by any method
-- *With a bar across the open side | removal of material by machining is required
-- With a circle in the open side | removal of material is not permitted; leave the surface as produced by the previous process
+viewbox: 0 0 640 250
+- Basic symbol | Meaning: the surface texture may be produced by any method
+- With a bar across the open side | Meaning: removal of material by machining is required
+- With a circle in the open side | Meaning: removal of material is not permitted; leave the surface as produced by the previous process
+body:
+<g class="kf-a kd1">
+<path class="li draw" pathLength="1" d="M76.4 116L110 150L179.3 82"/>
+<text class="txb" x="110" y="196" text-anchor="middle">Basic symbol</text>
+<text class="txs" x="110" y="214" text-anchor="middle">any production method</text>
+<text class="txs" x="110" y="230" text-anchor="middle">
+</text>
+</g>
+<g class="kf-a kd2">
+<path class="li draw" pathLength="1" d="M286.4 116L320 150L389.3 82"/>
+<path class="li" d="M286.4 116H344.7"/>
+<text class="txa" x="320" y="196" text-anchor="middle">Bar across the open side</text>
+<text class="txs" x="320" y="214" text-anchor="middle">machining required</text>
+<text class="txs" x="320" y="230" text-anchor="middle">
+</text>
+</g>
+<g class="kf-a kd3">
+<path class="li draw" pathLength="1" d="M496.4 116L530 150L599.3 82"/>
+<circle class="li" cx="530" cy="134" r="11"/>
+<text class="txb" x="530" y="196" text-anchor="middle">Circle in the open side</text>
+<text class="txs" x="530" y="214" text-anchor="middle">no material removal;</text>
+<text class="txs" x="530" y="230" text-anchor="middle">leave as produced</text>
+</g>
+<g class="kf-a kd4">
+<text class="txs" x="320" y="30" text-anchor="middle">Legs at 60° to the horizontal; the Ra value is written above the symbol</text>
+</g>
 ```
 
 Used alone, without a value, the bar symbol says only that the surface must be machined, and the circle symbol says only that it must be left as cast, forged or rolled. Both are useful on castings and forgings, where the reader needs to know which surfaces will be machined and which will not. They also help the estimator, who prices machined surfaces and must know how many there are.
@@ -88,14 +115,50 @@ The running case housing is painted on its cast outside surfaces only. The machi
 This is an illustration. The designer assigned textures by function:
 
 ```figure
-type: stats
+type: svg
 title: Surface texture on the housing
+alt: Surface texture on the housing. Ra 1.6, machined, Bearing bore Ø62 (supports the outer ring evenly). Ra 3.2, machined, Spigot Ø100 and spigot face (locates and seats on the pump). Ra 3.2, machined, Rear face (carries the end cap gasket). Ra 6.3, machined, All other machined surfaces (general note near the title block). Circle symbol, Unmachined cast surfaces (leave as cast)
 caption: This is an illustration. Values are the designer's choices for this part, informed by the bearing maker's guidance and the pump's sealing face; they are not requirements of AS 1100.
-- *Ra 1.6, machined | Bearing bore Ø62 | supports the outer ring evenly
-- Ra 3.2, machined | Spigot Ø100 and spigot face | locates and seats on the pump
-- Ra 3.2, machined | Rear face | carries the end cap gasket
-- Ra 6.3, machined | All other machined surfaces | general note near the title block
-- Circle symbol | Unmachined cast surfaces | leave as cast
+viewbox: 0 0 640 300
+body:
+<g class="kf-a kd1">
+<rect class="bxa" x="20" y="10" width="192" height="133" rx="8"/>
+<circle class="fa pulse" cx="198" cy="24" r="5"/>
+<text class="txa" x="32" y="36">Ra 1.6, machined</text>
+<text class="txb" x="32" y="61">Bearing bore Ø62</text>
+<text class="tx" x="32" y="82">supports the outer ring</text>
+<text class="tx" x="32" y="100">evenly</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="224" y="10" width="192" height="133" rx="8"/>
+<text class="txa" x="236" y="36">Ra 3.2, machined</text>
+<text class="txb" x="236" y="61">Spigot Ø100 and</text>
+<text class="txb" x="236" y="80">spigot face</text>
+<text class="tx" x="236" y="101">locates and seats on the</text>
+<text class="tx" x="236" y="119">pump</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="428" y="10" width="192" height="133" rx="8"/>
+<text class="txa" x="440" y="36">Ra 3.2, machined</text>
+<text class="txb" x="440" y="61">Rear face</text>
+<text class="tx" x="440" y="82">carries the end cap</text>
+<text class="tx" x="440" y="100">gasket</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="155" width="192" height="133" rx="8"/>
+<text class="txa" x="32" y="181">Ra 6.3, machined</text>
+<text class="txb" x="32" y="206">All other machined</text>
+<text class="txb" x="32" y="225">surfaces</text>
+<text class="tx" x="32" y="246">general note near the</text>
+<text class="tx" x="32" y="264">title block</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="224" y="155" width="192" height="133" rx="8"/>
+<text class="txa" x="236" y="181">Circle symbol</text>
+<text class="txb" x="236" y="206">Unmachined cast</text>
+<text class="txb" x="236" y="225">surfaces</text>
+<text class="tx" x="236" y="246">leave as cast</text>
+</g>
 ```
 
 The general note near the title block uses the simplified procedure: a barred symbol with 6.3 above it, followed by a note that it applies to all machined surfaces except where otherwise marked. The bore, spigot and rear face carry their own symbols on section A-A. The cast surfaces are covered by a circle symbol in the same note, so the machine shop knows not to skim them.
@@ -109,15 +172,50 @@ Both measurements were made properly. The difference was the cut-off. The shop's
 The discrepancy was detected because the business recorded the instrument settings with its own measurement and compared them with the shop's report, which listed its cut-off in small print. The corrections were: the shop re-measured the batch at 0.8 mm and reworked the bores that failed; the business's purchase order now requires roughness results to state the cut-off and instrument; and the first-article report template includes the cut-off as a mandatory field. The fretting itself had a second cause, the bore size, already corrected in Chapter 7, but the roughness discrepancy would have hidden a real non-conformance on later batches.
 
 ```figure
-type: checklist
+type: svg
 title: Reviewing surface texture indications before release
+alt: Reviewing surface texture indications before release. Done: Every functional surface has its own symbol on the view where it is dimensioned. Done: Values are from the preferred Ra series. Done: Barred and circled symbols distinguish machined from unmachined surfaces. Done: A general note covers all remaining surfaces. Done: Cut-off stated wherever it is not the default 0.8 mm. Open: Standard the symbols follow is stated on the drawing
 caption: This is an illustration of the business's review questions, based on AS 1100.201 Section 3.
-- x Every functional surface has its own symbol on the view where it is dimensioned
-- x Values are from the preferred Ra series
-- x Barred and circled symbols distinguish machined from unmachined surfaces
-- x A general note covers all remaining surfaces
-- x Cut-off stated wherever it is not the default 0.8 mm
-- ? Standard the symbols follow is stated on the drawing
+viewbox: 0 0 640 336
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="12" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="29" r="11"/>
+<path class="la draw" pathLength="1" d="M34 29l4 4 8-8"/>
+<text class="txb" x="64" y="32">Every functional surface has its own symbol on the view where it</text>
+<text class="txb" x="64" y="51">is dimensioned</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="20" y="78" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="95" r="11"/>
+<path class="la draw" pathLength="1" d="M34 95l4 4 8-8"/>
+<text class="txb" x="64" y="98">Values are from the preferred Ra series</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="20" y="125" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="142" r="11"/>
+<path class="la draw" pathLength="1" d="M34 142l4 4 8-8"/>
+<text class="txb" x="64" y="145">Barred and circled symbols distinguish machined from unmachined</text>
+<text class="txb" x="64" y="164">surfaces</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="191" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="208" r="11"/>
+<path class="la draw" pathLength="1" d="M34 208l4 4 8-8"/>
+<text class="txb" x="64" y="211">A general note covers all remaining surfaces</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="20" y="238" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="255" r="11"/>
+<path class="la draw" pathLength="1" d="M34 255l4 4 8-8"/>
+<text class="txb" x="64" y="258">Cut-off stated wherever it is not the default 0.8 mm</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bxi" x="20" y="285" width="600" height="39" rx="6"/>
+<circle class="bxi" cx="40" cy="302" r="11"/>
+<text class="txa" x="40" y="307" text-anchor="middle">?</text>
+<text class="txb" x="64" y="305">Standard the symbols follow is stated on the drawing</text>
+</g>
 ```
 
 ## When the drawing follows later ISO practice

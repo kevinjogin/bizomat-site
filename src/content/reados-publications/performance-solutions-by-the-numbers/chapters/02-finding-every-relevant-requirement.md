@@ -18,12 +18,35 @@ A2G2(3) of NCC 2022 Volume One requires that, for a Performance Solution, the re
 Where a Performance Solution is combined with a Deemed-to-Satisfy Solution, which describes most real buildings, A2G4(3) sets out the steps:
 
 ```figure
-type: steps
+type: svg
 title: Identifying relevant Performance Requirements, NCC 2022 A2G4(3)
+alt: Identifying relevant Performance Requirements, NCC 2022 A2G4(3). 1. Identify the DTS Provisions: that are the subject of the Performance Solution. 2. Identify the related Performance Requirements: from the same Sections or Parts as those DTS Provisions. 3. Identify affected Performance Requirements: from other Sections or Parts that the solution affects
 caption: Summarised from NCC 2022 Volume One. BCA 2004 clause A0.10 set out the same three steps for Alternative Solutions.
-- Identify the DTS Provisions | that are the subject of the Performance Solution
-- *Identify the related Performance Requirements | from the same Sections or Parts as those DTS Provisions
-- Identify affected Performance Requirements | from other Sections or Parts that the solution affects
+viewbox: 0 0 640 231
+body:
+<path class="la draw" pathLength="1" d="M34 58.5V101.5"/>
+<path class="la draw" pathLength="1" d="M34 129.5V172.5"/>
+<g class="kf-a kd1">
+<rect class="bx" x="58" y="14" width="562" height="61" rx="6"/>
+<circle class="bxi" cx="34" cy="44.5" r="14"/>
+<text class="txb" x="34" y="49.5" text-anchor="middle">1</text>
+<text class="txb" x="74" y="36">Identify the DTS Provisions</text>
+<text class="tx" x="74" y="57">that are the subject of the Performance Solution</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bxa" x="58" y="85" width="562" height="61" rx="6"/>
+<circle class="fa" cx="34" cy="115.5" r="14"/>
+<text class="txb" x="34" y="120.5" text-anchor="middle">2</text>
+<text class="txb" x="74" y="107">Identify the related Performance Requirements</text>
+<text class="tx" x="74" y="128">from the same Sections or Parts as those DTS Provisions</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="58" y="156" width="562" height="61" rx="6"/>
+<circle class="bxi" cx="34" cy="186.5" r="14"/>
+<text class="txb" x="34" y="191.5" text-anchor="middle">3</text>
+<text class="txb" x="74" y="178">Identify affected Performance Requirements</text>
+<text class="tx" x="74" y="199">from other Sections or Parts that the solution affects</text>
+</g>
 ```
 
 The method is deliberately conservative. The first step ties the solution to the specific DTS Provisions it replaces, so that everything else in the building stays on the DTS route. The second step finds the requirements those provisions were meeting. The third step asks a harder question: what else does the solution change?
@@ -62,17 +85,85 @@ This is where solutions usually go wrong, because the connections are not shown 
 **Run a factor sweep.** Performance Requirements list the factors they depend on. If a solution changes a factor, every requirement listing that factor is a candidate. The running case changes the evacuation time, because occupants walk further. So search the Performance Requirements for "evacuation time" as a factor. In NCC 2022 Volume One, it appears in C1P1 on structural stability during a fire, C1P2 on the spread of fire and C1P4 on safe conditions for evacuation.
 
 ```figure
-type: compare
+type: svg
 title: Relevant Performance Requirements for the running case
-cols: Why it is a candidate | Outcome of the review
+alt: Relevant Performance Requirements for the running case. D1P4 exits: Why it is a candidate travel distance is a listed factor; D2D5(3) departed; Outcome of the review relevant: the core of the solution. D1P6 paths of travel: Why it is a candidate same Part; Outcome of the review not affected: widths and heights unchanged. C1P4 safe conditions for evacuation: Why it is a candidate evacuation time is a listed factor; Outcome of the review relevant: exposure time on the mezzanine. C1P1 and C1P2 stability and fire spread: Why it is a candidate evacuation time is a listed factor; Outcome of the review considered: affected only if evacuation is slower than the DTS reference. E4P2 exit identification: Why it is a candidate a longer route with turns needs guidance; Outcome of the review relevant: direction signs on the mezzanine. E4P3 warning systems: Why it is a candidate an added local alarm is a warning system; Outcome of the review relevant if an alarm forms part of the solution. Part E2 smoke hazard management: Why it is a candidate added smoke detection; Outcome of the review check whether its requirements are affected
 caption: This is an illustration of the requirement register kept by the engineer. Every candidate is listed with its reason, including those found not to be affected.
-- *D1P4 exits | travel distance is a listed factor; D2D5(3) departed | relevant: the core of the solution
-- D1P6 paths of travel | same Part | not affected: widths and heights unchanged
-- C1P4 safe conditions for evacuation | evacuation time is a listed factor | relevant: exposure time on the mezzanine
-- C1P1 and C1P2 stability and fire spread | evacuation time is a listed factor | considered: affected only if evacuation is slower than the DTS reference
-- E4P2 exit identification | a longer route with turns needs guidance | relevant: direction signs on the mezzanine
-- E4P3 warning systems | an added local alarm is a warning system | relevant if an alarm forms part of the solution
-- Part E2 smoke hazard management | added smoke detection | check whether its requirements are affected
+viewbox: 0 0 640 471
+body:
+<g class="kf-a kd1">
+<rect class="fs" x="20" y="10" width="600" height="33" rx="4"/>
+<text class="txb" x="205" y="31">Why it is a candidate</text>
+<text class="txb" x="402.8" y="31">Outcome of the review</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bxa" x="20" y="43" width="600" height="68" rx="4"/>
+<path class="lf" d="M20 111H620"/>
+<text class="txb" x="28" y="64">D1P4 exits</text>
+<text class="tx" x="205" y="64">travel distance is a</text>
+<text class="tx" x="205" y="82">listed factor; D2D5(3)</text>
+<text class="tx" x="205" y="100">departed</text>
+<text class="tx" x="402.8" y="64">relevant: the core of the</text>
+<text class="tx" x="402.8" y="82">solution</text>
+</g>
+<g class="kf-a kd3">
+<path class="lf" d="M20 163H620"/>
+<text class="txb" x="28" y="132">D1P6 paths of</text>
+<text class="txb" x="28" y="151">travel</text>
+<text class="tx" x="205" y="132">same Part</text>
+<text class="tx" x="402.8" y="132">not affected: widths and</text>
+<text class="tx" x="402.8" y="150">heights unchanged</text>
+</g>
+<g class="kf-a kd4">
+<path class="lf" d="M20 234H620"/>
+<text class="txb" x="28" y="184">C1P4 safe</text>
+<text class="txb" x="28" y="203">conditions for</text>
+<text class="txb" x="28" y="222">evacuation</text>
+<text class="tx" x="205" y="184">evacuation time is a</text>
+<text class="tx" x="205" y="202">listed factor</text>
+<text class="tx" x="402.8" y="184">relevant: exposure time on</text>
+<text class="tx" x="402.8" y="202">the mezzanine</text>
+</g>
+<g class="kf-a kd5">
+<path class="lf" d="M20 305H620"/>
+<text class="txb" x="28" y="255">C1P1 and C1P2</text>
+<text class="txb" x="28" y="274">stability and fire</text>
+<text class="txb" x="28" y="293">spread</text>
+<text class="tx" x="205" y="255">evacuation time is a</text>
+<text class="tx" x="205" y="273">listed factor</text>
+<text class="tx" x="402.8" y="255">considered: affected only if</text>
+<text class="tx" x="402.8" y="273">evacuation is slower than the</text>
+<text class="tx" x="402.8" y="291">DTS reference</text>
+</g>
+<g class="kf-a kd6">
+<path class="lf" d="M20 357H620"/>
+<text class="txb" x="28" y="326">E4P2 exit</text>
+<text class="txb" x="28" y="345">identification</text>
+<text class="tx" x="205" y="326">a longer route with turns</text>
+<text class="tx" x="205" y="344">needs guidance</text>
+<text class="tx" x="402.8" y="326">relevant: direction signs on</text>
+<text class="tx" x="402.8" y="344">the mezzanine</text>
+</g>
+<g class="kf-a kd7">
+<path class="lf" d="M20 409H620"/>
+<text class="txb" x="28" y="378">E4P3 warning</text>
+<text class="txb" x="28" y="397">systems</text>
+<text class="tx" x="205" y="378">an added local alarm is a</text>
+<text class="tx" x="205" y="396">warning system</text>
+<text class="tx" x="402.8" y="378">relevant if an alarm forms</text>
+<text class="tx" x="402.8" y="396">part of the solution</text>
+</g>
+<g class="kf-a kd8">
+<path class="lf" d="M20 461H620"/>
+<text class="txb" x="28" y="430">Part E2 smoke</text>
+<text class="txb" x="28" y="449">hazard management</text>
+<text class="tx" x="205" y="430">added smoke detection</text>
+<text class="tx" x="402.8" y="430">check whether its</text>
+<text class="tx" x="402.8" y="448">requirements are affected</text>
+</g>
+<rect class="lf" x="20" y="10" width="600" height="451" rx="4" fill="none"/>
+<path class="lf" d="M197 10V461"/>
+<path class="lf" d="M394.8 10V461"/>
 ```
 
 The factor sweep produced a useful decision for C1P1 and C1P2. Neither is affected if the proposal's evacuation is no slower than the DTS reference layout's, because then the structure and the fire separation are not asked to perform for longer. That condition becomes an acceptance criterion in the brief (Chapter 4). In effect, the sweep converts a possible gap into a test.
@@ -138,15 +229,52 @@ In the running case, the owner's operations manager reviewed the draft register 
 The engineer's practice afterwards was to send the draft register to the owner with one question at the top: "What happens on, under and around the mezzanine that is not on the drawings?" The answers included the export crates, a battery charger for the order picker parked under the mezzanine overnight and a weekly stocktake that puts four people on the mezzanine at once. Each was a fact the analysis needed, and none appeared on any drawing.
 
 ```figure
-type: checklist
+type: svg
 title: Requirement register status for the running case
+alt: Requirement register status for the running case. Done: DTS Provision departed: D2D5(3) on the mezzanine only. Done: Same-Part requirements: D1P4 relevant; D1P2, D1P5, D1P6 considered and not affected. Done: Factor sweep for "evacuation time": C1P1, C1P2, C1P4 found. Done: Physical-change review: E4P2 signage; E4P3 and Part E2 if detection and alarm are added. Open: Export crate staging on the mezzanine, fire load to be agreed in the brief. Open: Final register signed off by the certifier, after the brief meeting
 caption: This is an illustration. Open items are resolved in the design brief before any analysis is done.
-- x DTS Provision departed: D2D5(3) on the mezzanine only
-- x Same-Part requirements: D1P4 relevant; D1P2, D1P5, D1P6 considered and not affected
-- x Factor sweep for "evacuation time": C1P1, C1P2, C1P4 found
-- x Physical-change review: E4P2 signage; E4P3 and Part E2 if detection and alarm are added
-- ? Export crate staging on the mezzanine | fire load to be agreed in the brief
-- ? Final register signed off by the certifier | after the brief meeting
+viewbox: 0 0 640 376
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="12" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="29" r="11"/>
+<path class="la draw" pathLength="1" d="M34 29l4 4 8-8"/>
+<text class="txb" x="64" y="32">DTS Provision departed: D2D5(3) on the mezzanine only</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="20" y="59" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="76" r="11"/>
+<path class="la draw" pathLength="1" d="M34 76l4 4 8-8"/>
+<text class="txb" x="64" y="79">Same-Part requirements: D1P4 relevant; D1P2, D1P5, D1P6 considered</text>
+<text class="txb" x="64" y="98">and not affected</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="20" y="125" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="142" r="11"/>
+<path class="la draw" pathLength="1" d="M34 142l4 4 8-8"/>
+<text class="txb" x="64" y="145">Factor sweep for "evacuation time": C1P1, C1P2, C1P4 found</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="172" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="189" r="11"/>
+<path class="la draw" pathLength="1" d="M34 189l4 4 8-8"/>
+<text class="txb" x="64" y="192">Physical-change review: E4P2 signage; E4P3 and Part E2 if</text>
+<text class="txb" x="64" y="211">detection and alarm are added</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bxi" x="20" y="238" width="600" height="59" rx="6"/>
+<circle class="bxi" cx="40" cy="255" r="11"/>
+<text class="txa" x="40" y="260" text-anchor="middle">?</text>
+<text class="txb" x="64" y="258">Export crate staging on the mezzanine</text>
+<text class="tx" x="64" y="279">fire load to be agreed in the brief</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bxi" x="20" y="305" width="600" height="59" rx="6"/>
+<circle class="bxi" cx="40" cy="322" r="11"/>
+<text class="txa" x="40" y="327" text-anchor="middle">?</text>
+<text class="txb" x="64" y="325">Final register signed off by the certifier</text>
+<text class="tx" x="64" y="346">after the brief meeting</text>
+</g>
 ```
 
 ## Exercise: a different departure

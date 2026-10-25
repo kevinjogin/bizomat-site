@@ -16,15 +16,46 @@ This chapter takes the AS 1100.101 provisions for sheets, layouts, title blocks 
 AS 1100.101 clause 2.4 makes the ISO A series the preferred sheet sizes. The cut sizes in its Table 2.1 are the familiar ones:
 
 ```figure
-type: compare
+type: svg
 title: Preferred sheet sizes, AS 1100.101 Table 2.1
-cols: Cut size, mm | Area relative to A4
+alt: Preferred sheet sizes, AS 1100.101 Table 2.1. A0: Cut size, mm 841 × 1189; Area relative to A4 16 ×. A1: Cut size, mm 594 × 841; Area relative to A4 8 ×. A2: Cut size, mm 420 × 594; Area relative to A4 4 ×. A3: Cut size, mm 297 × 420; Area relative to A4 2 ×. A4: Cut size, mm 210 × 297; Area relative to A4 1 ×
 caption: From AS 1100.101-1992. Each size is half the next larger one, so a drawing reduces from one size to the next without changing its proportions.
-- A0 | 841 × 1189 | 16 ×
-- A1 | 594 × 841 | 8 ×
-- A2 | 420 × 594 | 4 ×
-- *A3 | 297 × 420 | 2 ×
-- A4 | 210 × 297 | 1 ×
+viewbox: 0 0 640 440
+- A0 | Cut size, mm: 841 × 1189; Area relative to A4: 16 ×
+- A1 | Cut size, mm: 594 × 841; Area relative to A4: 8 ×
+- A2 | Cut size, mm: 420 × 594; Area relative to A4: 4 ×
+- A3 | Cut size, mm: 297 × 420; Area relative to A4: 2 ×
+- A4 | Cut size, mm: 210 × 297; Area relative to A4: 1 ×
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="40" y="20" width="560" height="396"/>
+<text class="txb" x="460" y="220" text-anchor="middle">A0</text>
+<text class="txs" x="460" y="236" text-anchor="middle">841 × 1189 mm, 16 × A4</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="40" y="20" width="280" height="396"/>
+<text class="txb" x="180" y="120" text-anchor="middle">A1</text>
+<text class="txs" x="180" y="136" text-anchor="middle">594 × 841 mm, 8 × A4</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="40" y="218" width="280" height="198"/>
+<text class="txb" x="250" y="310" text-anchor="middle">A2</text>
+<text class="txs" x="250" y="326" text-anchor="middle">420 × 594, 4 × A4</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bxa" x="40" y="218" width="140" height="198"/>
+<text class="txa" x="110" y="265" text-anchor="middle">A3</text>
+<text class="txs" x="110" y="281" text-anchor="middle">297 × 420, 2 × A4</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="40" y="317" width="140" height="99"/>
+<text class="txb" x="110" y="350" text-anchor="middle">A4</text>
+<text class="txs" x="110" y="366" text-anchor="middle">210 × 297, 1 ×</text>
+</g>
+<g class="kf-a kd6">
+<path class="la draw" pathLength="1" d="M320 20V416M40 218H320M180 218V416M40 317H180"/>
+<text class="txs" x="320" y="434" text-anchor="middle">Each fold halves the area and keeps the 1 : 1.414 shape; A3 to A4 scales lengths by 0.707.</text>
+</g>
 ```
 
 Because each sheet's sides are in the ratio of about 1 to 1.414, halving the area keeps the shape. Reducing an A3 drawing to A4 scales every length by **210 ÷ 297 = 0.707**. Chapter 3 shows that this factor matters for line thicknesses and lettering, because whatever you draw on A3 will often be read at 71% of its size.
@@ -70,15 +101,57 @@ Clause 2.5.9 requires spaces in the title block for the name of the organisation
 Clause 2.5.10 recommends spaces to the left of the title block for standard information: units, tolerances, a key to machining and other symbols, treatment and finish, tool and gauge references, issue or revision information, material specification and reference drawing numbers. For assembly and multidetail drawings, clause 2.5.11 asks for a parts list adjacent to the title block, giving item numbers, part names, quantities, material, the drawing number of each detail and any stores reference.
 
 ```figure
-type: checklist
+type: svg
 title: Title block and edge information for the running case housing
+alt: Title block and edge information for the running case housing. Done: Organisation, title, drawing number, signatures and dates, clause 2.5.9. Done: Scale 1:1, with "OR AS SHOWN" for the enlarged detail, clause 5.3.3. Done: Third-angle projection symbol and words, clause 2.5.6. Done: DO NOT SCALE; DIMENSIONS IN MILLIMETRES; prepared to AS 1100.101 and AS 1100.201, clause 2.5.6. Done: Material, general tolerances and surface texture notes to the left of the title block, clause 2.5.10. Done: Sheet size A3 in the bottom right; drawing number repeated top left, clauses 2.5.5 and 2.5.9
 caption: This is an illustration of the business's A3 template. Each item traces to a clause of AS 1100.101.
-- x Organisation, title, drawing number, signatures and dates | clause 2.5.9
-- x Scale 1:1, with "OR AS SHOWN" for the enlarged detail | clause 5.3.3
-- x Third-angle projection symbol and words | clause 2.5.6
-- x DO NOT SCALE; DIMENSIONS IN MILLIMETRES; prepared to AS 1100.101 and AS 1100.201 | clause 2.5.6
-- x Material, general tolerances and surface texture notes to the left of the title block | clause 2.5.10
-- x Sheet size A3 in the bottom right; drawing number repeated top left | clauses 2.5.5 and 2.5.9
+viewbox: 0 0 640 475
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="12" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="29" r="11"/>
+<path class="la draw" pathLength="1" d="M34 29l4 4 8-8"/>
+<text class="txb" x="64" y="32">Organisation, title, drawing number, signatures and dates</text>
+<text class="tx" x="64" y="53">clause 2.5.9</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="20" y="79" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="96" r="11"/>
+<path class="la draw" pathLength="1" d="M34 96l4 4 8-8"/>
+<text class="txb" x="64" y="99">Scale 1:1, with "OR AS SHOWN" for the enlarged detail</text>
+<text class="tx" x="64" y="120">clause 5.3.3</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="20" y="146" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="163" r="11"/>
+<path class="la draw" pathLength="1" d="M34 163l4 4 8-8"/>
+<text class="txb" x="64" y="166">Third-angle projection symbol and words</text>
+<text class="tx" x="64" y="187">clause 2.5.6</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="213" width="600" height="78" rx="6"/>
+<circle class="bxa" cx="40" cy="230" r="11"/>
+<path class="la draw" pathLength="1" d="M34 230l4 4 8-8"/>
+<text class="txb" x="64" y="233">DO NOT SCALE; DIMENSIONS IN MILLIMETRES; prepared to AS 1100.101</text>
+<text class="txb" x="64" y="252">and AS 1100.201</text>
+<text class="tx" x="64" y="273">clause 2.5.6</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="20" y="299" width="600" height="78" rx="6"/>
+<circle class="bxa" cx="40" cy="316" r="11"/>
+<path class="la draw" pathLength="1" d="M34 316l4 4 8-8"/>
+<text class="txb" x="64" y="319">Material, general tolerances and surface texture notes to the left</text>
+<text class="txb" x="64" y="338">of the title block</text>
+<text class="tx" x="64" y="359">clause 2.5.10</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bx" x="20" y="385" width="600" height="78" rx="6"/>
+<circle class="bxa" cx="40" cy="402" r="11"/>
+<path class="la draw" pathLength="1" d="M34 402l4 4 8-8"/>
+<text class="txb" x="64" y="405">Sheet size A3 in the bottom right; drawing number repeated top</text>
+<text class="txb" x="64" y="424">left</text>
+<text class="tx" x="64" y="445">clauses 2.5.5 and 2.5.9</text>
+</g>
 ```
 
 All text, tables and dimensions should be readable from the bottom edge or the right-hand edge of the sheet, under clause 2.5.14. That rule seems old-fashioned in a digital office, but it keeps a printed drawing readable without turning it round and round on a bench.
@@ -88,13 +161,35 @@ All text, tables and dimensions should be readable from the bottom edge or the r
 AS 1100.101 Section 5 defines scale as the ratio of a length on the drawing to the same length on the object, and recommends a limited set of scales in its Table 5.1:
 
 ```figure
-type: compare
+type: svg
 title: Recommended engineering drawing scales, AS 1100.101 Table 5.1
-cols: Scales
+alt: Recommended engineering drawing scales, AS 1100.101 Table 5.1. Enlargement: Scales 50:1, 20:1, 10:1, 5:1, 2:1. Full size: Scales 1:1. Reduction: Scales 1:2, 1:5, 1:10, 1:20, 1:50, 1:100, 1:200, 1:500, 1:1 000 and smaller
 caption: From AS 1100.101-1992. The range may be extended by multiplying a recommended scale by an integral power of 10, and intermediate scales may be used only in exceptional cases.
-- Enlargement | 50:1, 20:1, 10:1, 5:1, 2:1
-- *Full size | 1:1
-- Reduction | 1:2, 1:5, 1:10, 1:20, 1:50, 1:100, 1:200, 1:500, 1:1 000 and smaller
+viewbox: 0 0 640 169
+body:
+<g class="kf-a kd1">
+<rect class="fs" x="20" y="10" width="600" height="33" rx="4"/>
+<text class="txb" x="233" y="31">Scales</text>
+</g>
+<g class="kf-a kd2">
+<path class="lf" d="M20 76H620"/>
+<text class="txb" x="28" y="64">Enlargement</text>
+<text class="tx" x="233" y="64">50:1, 20:1, 10:1, 5:1, 2:1</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bxa" x="20" y="76" width="600" height="33" rx="4"/>
+<path class="lf" d="M20 109H620"/>
+<text class="txb" x="28" y="97">Full size</text>
+<text class="tx" x="233" y="97">1:1</text>
+</g>
+<g class="kf-a kd4">
+<path class="lf" d="M20 159H620"/>
+<text class="txb" x="28" y="130">Reduction</text>
+<text class="tx" x="233" y="130">1:2, 1:5, 1:10, 1:20, 1:50, 1:100, 1:200, 1:500, 1:1</text>
+<text class="tx" x="233" y="148">000 and smaller</text>
+</g>
+<rect class="lf" x="20" y="10" width="600" height="149" rx="4" fill="none"/>
+<path class="lf" d="M225 10V159"/>
 ```
 
 The scale is shown as a ratio after the word "SCALE", by a graduated block scale, or as "NOT TO SCALE" where the drawing is not to scale. Where one scale predominates, it goes in or near the title block with "OR AS SHOWN", and the other scales are written beside the views that use them. Where several scales are used with none predominant, each is shown beside its view and "SCALES AS SHOWN" appears near the title block. Clause 5.5 adds a useful recommendation: for a small object drawn at a large scale, add a full-size view, even if only in outline, so that the reader can see how big the part really is.
@@ -110,13 +205,43 @@ The designer tried A4 first. In landscape, A4 is 297 mm wide. The two views side
 A3 landscape, at 420 × 297 mm, gives room for both views at 1:1, the dimension rows, a 2:1 detail of the groove and the notes area beside the title block. Full size has an extra advantage: anyone holding the print can see the true size of the part, which helps them spot a gross error.
 
 ```figure
-type: decision
+type: svg
 title: Choosing a sheet and scale for the housing
-question: Can the views, dimensions, notes and title block fit at 1:1 without crowding?
+alt: Choosing a sheet and scale for the housing. Question: Can the views, dimensions, notes and title block fit at 1:1 without crowding?. On A4 at 1:1: views need about 217 mm of width before dimensions, too tight. On A4 at 1:2: fits, but features such as the groove become too small, rejected. On A3 at 1:1: fits with room for two dimension rows, notes and a 2:1 detail, chosen
 caption: This is an illustration. The detail view of the groove is drawn at 2:1, so the scale note reads "SCALE 1:1 OR AS SHOWN".
-- On A4 at 1:1 | views need about 217 mm of width before dimensions | too tight
-- On A4 at 1:2 | fits, but features such as the groove become too small | rejected
-- *On A3 at 1:1 | fits with room for two dimension rows, notes and a 2:1 detail | chosen
+viewbox: 0 0 640 381
+body:
+<path class="ln draw" pathLength="1" d="M320 72V88H36V141.5H40"/>
+<path class="ln draw" pathLength="1" d="M320 72V181H36V234.5H40"/>
+<path class="la draw" pathLength="1" d="M320 72V274H36V327.5H40"/>
+<g class="kf-a kd1">
+<rect class="bxa" x="40" y="10" width="560" height="62" rx="10"/>
+<circle class="fa pulse" cx="62" cy="41" r="10"/>
+<text class="txb" x="62" y="46" text-anchor="middle">?</text>
+<text class="txb" x="330" y="37" text-anchor="middle">Can the views, dimensions, notes and title block fit at 1:1</text>
+<text class="txb" x="330" y="56" text-anchor="middle">without crowding?</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="40" y="102" width="580" height="79" rx="8"/>
+<text class="txb" x="56" y="126">On A4 at 1:1</text>
+<text class="tx" x="316" y="126">views need about 217 mm of width before</text>
+<text class="tx" x="316" y="144">dimensions</text>
+<text class="txa" x="316" y="166">too tight</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="40" y="195" width="580" height="79" rx="8"/>
+<text class="txb" x="56" y="219">On A4 at 1:2</text>
+<text class="tx" x="316" y="219">fits, but features such as the groove</text>
+<text class="tx" x="316" y="237">become too small</text>
+<text class="txa" x="316" y="259">rejected</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bxa" x="40" y="288" width="580" height="79" rx="8"/>
+<text class="txb" x="56" y="312">On A3 at 1:1</text>
+<text class="tx" x="316" y="312">fits with room for two dimension rows,</text>
+<text class="tx" x="316" y="330">notes and a 2:1 detail</text>
+<text class="txa" x="316" y="352">chosen</text>
+</g>
 ```
 
 ## One template per sheet size

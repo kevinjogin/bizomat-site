@@ -16,14 +16,52 @@ This chapter sets out what the NCC requires the report to contain, shows how to 
 A2G2(4)(d) of NCC 2022 Volume One requires a final report that includes:
 
 ```figure
-type: steps
+type: svg
 title: Contents of a Performance Solution final report, NCC 2022 A2G2(4)(d)
+alt: Contents of a Performance Solution final report, NCC 2022 A2G2(4)(d). 1. Requirements: all Performance Requirements and DTS Provisions identified for the solution. 2. Methods: the Assessment Methods used. 3. Steps: details of the brief, the analysis and the evaluation against the acceptance criteria. 4. Confirmation: that the Performance Requirements have been met. 5. Conditions and limitations: anything that must remain true for the solution to hold
 caption: Summarised from NCC 2022 Volume One. The conditions and limitations are the part that matters most to the people who run the building afterwards.
-- Requirements | all Performance Requirements and DTS Provisions identified for the solution
-- Methods | the Assessment Methods used
-- Steps | details of the brief, the analysis and the evaluation against the acceptance criteria
-- Confirmation | that the Performance Requirements have been met
-- *Conditions and limitations | anything that must remain true for the solution to hold
+viewbox: 0 0 640 391
+body:
+<path class="la draw" pathLength="1" d="M34 58.5V101.5"/>
+<path class="la draw" pathLength="1" d="M34 129.5V181.5"/>
+<path class="la draw" pathLength="1" d="M34 209.5V261.5"/>
+<path class="la draw" pathLength="1" d="M34 289.5V332.5"/>
+<g class="kf-a kd1">
+<rect class="bx" x="58" y="14" width="562" height="61" rx="6"/>
+<circle class="bxi" cx="34" cy="44.5" r="14"/>
+<text class="txb" x="34" y="49.5" text-anchor="middle">1</text>
+<text class="txb" x="74" y="36">Requirements</text>
+<text class="tx" x="74" y="57">all Performance Requirements and DTS Provisions identified for the solution</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="58" y="85" width="562" height="61" rx="6"/>
+<circle class="bxi" cx="34" cy="115.5" r="14"/>
+<text class="txb" x="34" y="120.5" text-anchor="middle">2</text>
+<text class="txb" x="74" y="107">Methods</text>
+<text class="tx" x="74" y="128">the Assessment Methods used</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="58" y="156" width="562" height="79" rx="6"/>
+<circle class="bxi" cx="34" cy="195.5" r="14"/>
+<text class="txb" x="34" y="200.5" text-anchor="middle">3</text>
+<text class="txb" x="74" y="178">Steps</text>
+<text class="tx" x="74" y="199">details of the brief, the analysis and the evaluation against the acceptance</text>
+<text class="tx" x="74" y="217">criteria</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="58" y="245" width="562" height="61" rx="6"/>
+<circle class="bxi" cx="34" cy="275.5" r="14"/>
+<text class="txb" x="34" y="280.5" text-anchor="middle">4</text>
+<text class="txb" x="74" y="267">Confirmation</text>
+<text class="tx" x="74" y="288">that the Performance Requirements have been met</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bxa" x="58" y="316" width="562" height="61" rx="6"/>
+<circle class="fa" cx="34" cy="346.5" r="14"/>
+<text class="txb" x="34" y="351.5" text-anchor="middle">5</text>
+<text class="txb" x="74" y="338">Conditions and limitations</text>
+<text class="tx" x="74" y="359">anything that must remain true for the solution to hold</text>
+</g>
 ```
 
 A report that meets these headings can still be poor. The best reports also include the requirement register from Chapter 2, the agreed brief and its amendments from Chapter 4, the inputs with their sources, the sensitivity results with their margins from Chapter 7, the evidence register from Chapter 8, each Expert Judgement in its six-part form with the reliance placed on it from Chapter 9, and the peer reviewer's findings with the responses.
@@ -62,16 +100,72 @@ This is an illustration. After the peer review, the engineer set out the two opt
 **Option 2: move the stair.** Put the stair at the middle of the mezzanine's south edge, which meets the DTS Provisions with the farthest point 18.5 m from the top riser. There is no Performance Solution and no conditions beyond those that apply to any DTS building. The cost is operational: the stair foot lands in the fabrication area, so a clear landing zone at its foot must be kept away from forklift routes, as part of normal housekeeping rather than as a code condition.
 
 ```figure
-type: compare
+type: svg
 title: The owner's choice after peer review
-cols: Option 1, Performance Solution | Option 2, Deemed-to-Satisfy stair
+alt: The owner's choice after peer review. Design changes: Option 1, Performance Solution steel plate deck; tools unpacked into steel storage; Option 2, Deemed-to-Satisfy stair stair relocated before installation. Added systems: Option 1, Performance Solution detection and alarm on and under the mezzanine; Option 2, Deemed-to-Satisfy stair none beyond the DTS systems. Conditions on the building: Option 1, Performance Solution eight, including a storage ban and an impairment closure; Option 2, Deemed-to-Satisfy stair none. Engineering and review fees: Option 1, Performance Solution brief, analysis, peer review and report; Option 2, Deemed-to-Satisfy stair none for this item. Annual assessment: Option 1, Performance Solution added measures assessed every year; Option 2, Deemed-to-Satisfy stair DTS measures only. Effect of a future change of use: Option 1, Performance Solution likely to invalidate the solution; Option 2, Deemed-to-Satisfy stair normal approval process only
 caption: This is an illustration. Neither option is unsafe; they differ in what the business must do to keep them compliant.
-- Design changes | steel plate deck; tools unpacked into steel storage | stair relocated before installation
-- Added systems | detection and alarm on and under the mezzanine | none beyond the DTS systems
-- *Conditions on the building | eight, including a storage ban and an impairment closure | none
-- Engineering and review fees | brief, analysis, peer review and report | none for this item
-- Annual assessment | added measures assessed every year | DTS measures only
-- Effect of a future change of use | likely to invalidate the solution | normal approval process only
+viewbox: 0 0 640 397
+body:
+<g class="kf-a kd1">
+<rect class="fs" x="20" y="10" width="600" height="71" rx="4"/>
+<text class="txb" x="211.4" y="31">Option 1, Performance</text>
+<text class="txb" x="211.4" y="50">Solution</text>
+<text class="txb" x="438.4" y="31">Option 2,</text>
+<text class="txb" x="438.4" y="50">Deemed-to-Satisfy</text>
+<text class="txb" x="438.4" y="69">stair</text>
+</g>
+<g class="kf-a kd2">
+<path class="lf" d="M20 131H620"/>
+<text class="txb" x="28" y="102">Design changes</text>
+<text class="tx" x="211.4" y="102">steel plate deck; tools</text>
+<text class="tx" x="211.4" y="120">unpacked into steel storage</text>
+<text class="tx" x="438.4" y="102">stair relocated before</text>
+<text class="tx" x="438.4" y="120">installation</text>
+</g>
+<g class="kf-a kd3">
+<path class="lf" d="M20 181H620"/>
+<text class="txb" x="28" y="152">Added systems</text>
+<text class="tx" x="211.4" y="152">detection and alarm on and</text>
+<text class="tx" x="211.4" y="170">under the mezzanine</text>
+<text class="tx" x="438.4" y="152">none beyond the DTS</text>
+<text class="tx" x="438.4" y="170">systems</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bxa" x="20" y="181" width="600" height="52" rx="4"/>
+<path class="lf" d="M20 233H620"/>
+<text class="txb" x="28" y="202">Conditions on the</text>
+<text class="txb" x="28" y="221">building</text>
+<text class="tx" x="211.4" y="202">eight, including a storage ban</text>
+<text class="tx" x="211.4" y="220">and an impairment closure</text>
+<text class="tx" x="438.4" y="202">none</text>
+</g>
+<g class="kf-a kd5">
+<path class="lf" d="M20 285H620"/>
+<text class="txb" x="28" y="254">Engineering and</text>
+<text class="txb" x="28" y="273">review fees</text>
+<text class="tx" x="211.4" y="254">brief, analysis, peer review</text>
+<text class="tx" x="211.4" y="272">and report</text>
+<text class="tx" x="438.4" y="254">none for this item</text>
+</g>
+<g class="kf-a kd6">
+<path class="lf" d="M20 335H620"/>
+<text class="txb" x="28" y="306">Annual assessment</text>
+<text class="tx" x="211.4" y="306">added measures assessed every</text>
+<text class="tx" x="211.4" y="324">year</text>
+<text class="tx" x="438.4" y="306">DTS measures only</text>
+</g>
+<g class="kf-a kd7">
+<path class="lf" d="M20 387H620"/>
+<text class="txb" x="28" y="356">Effect of a future</text>
+<text class="txb" x="28" y="375">change of use</text>
+<text class="tx" x="211.4" y="356">likely to invalidate the</text>
+<text class="tx" x="211.4" y="374">solution</text>
+<text class="tx" x="438.4" y="356">normal approval process</text>
+<text class="tx" x="438.4" y="374">only</text>
+</g>
+<rect class="lf" x="20" y="10" width="600" height="377" rx="4" fill="none"/>
+<path class="lf" d="M203.4 10V387"/>
+<path class="lf" d="M430.4 10V387"/>
 ```
 
 ## The owner's decision
@@ -130,15 +224,53 @@ None of these automatically invalidates the solution. Each is a reason to check.
 The running case did not end with a Performance Solution. That is not a failure of the method; it is the method working. Each chapter added a piece of discipline: reading the requirement precisely, finding every requirement affected, building a fair reference, agreeing the brief before the numbers, choosing proportionate methods, calculating openly, testing sensitivity on the inputs that matter, evidencing every link, writing judgements that can be challenged and submitting them to review. Together, those steps turned an owner's preference into a clear choice between two compliant buildings with different costs over time.
 
 ```figure
-type: checklist
+type: svg
 title: Closing record for the running case
+alt: Closing record for the running case. Done: Performance Solution for the east-end stair investigated to the NCC 2022 A2G2 process. Done: Scenario A supported with detection; scenario D supportable only with further design changes. Done: Option 1 conditions written in specific, checkable form. Done: Owner chose the DTS stair position; closing report issued with brief, results and peer review. Done: Protected landing zone at the DTS stair foot added to housekeeping procedures. Open: Future proposals for the mezzanine, to be checked against this record first
 caption: This is an illustration. The record is kept with the building's approval documents.
-- x Performance Solution for the east-end stair investigated to the NCC 2022 A2G2 process
-- x Scenario A supported with detection; scenario D supportable only with further design changes
-- x Option 1 conditions written in specific, checkable form
-- x Owner chose the DTS stair position; closing report issued with brief, results and peer review
-- x Protected landing zone at the DTS stair foot added to housekeeping procedures
-- ? Future proposals for the mezzanine | to be checked against this record first
+viewbox: 0 0 640 394
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="12" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="29" r="11"/>
+<path class="la draw" pathLength="1" d="M34 29l4 4 8-8"/>
+<text class="txb" x="64" y="32">Performance Solution for the east-end stair investigated to the</text>
+<text class="txb" x="64" y="51">NCC 2022 A2G2 process</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="20" y="78" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="95" r="11"/>
+<path class="la draw" pathLength="1" d="M34 95l4 4 8-8"/>
+<text class="txb" x="64" y="98">Scenario A supported with detection; scenario D supportable only</text>
+<text class="txb" x="64" y="117">with further design changes</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="20" y="144" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="161" r="11"/>
+<path class="la draw" pathLength="1" d="M34 161l4 4 8-8"/>
+<text class="txb" x="64" y="164">Option 1 conditions written in specific, checkable form</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="191" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="208" r="11"/>
+<path class="la draw" pathLength="1" d="M34 208l4 4 8-8"/>
+<text class="txb" x="64" y="211">Owner chose the DTS stair position; closing report issued with</text>
+<text class="txb" x="64" y="230">brief, results and peer review</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="20" y="257" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="274" r="11"/>
+<path class="la draw" pathLength="1" d="M34 274l4 4 8-8"/>
+<text class="txb" x="64" y="277">Protected landing zone at the DTS stair foot added to housekeeping</text>
+<text class="txb" x="64" y="296">procedures</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bxi" x="20" y="323" width="600" height="59" rx="6"/>
+<circle class="bxi" cx="40" cy="340" r="11"/>
+<text class="txa" x="40" y="345" text-anchor="middle">?</text>
+<text class="txb" x="64" y="343">Future proposals for the mezzanine</text>
+<text class="tx" x="64" y="364">to be checked against this record first</text>
+</g>
 ```
 
 ## Exercise: test a future change

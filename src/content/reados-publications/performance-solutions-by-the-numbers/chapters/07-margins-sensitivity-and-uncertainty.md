@@ -16,14 +16,52 @@ This chapter puts the running case through the sensitivity cases agreed in the b
 Fire safety engineering commonly frames egress as a race between two times. The available safe egress time (ASET) is how long conditions in a space remain survivable once a fire starts. The required safe egress time (RSET) is how long the occupants need to get out, which is what Chapter 6 calculated. The superseded NCC 2019 Fire Safety Verification Method stated the principle directly: ASET must be greater than RSET.
 
 ```figure
-type: formula
+type: svg
 title: The egress margin
-formula: margin = ASET − RSET, which must be greater than zero
+alt: The egress margin. Formula: margin = ASET − RSET, which must be greater than zero. ASET: available safe egress time: until conditions in the space stop being survivable, s. RSET: required safe egress time: until the occupants reach a place of safety, s. Step: Comparative check: if ASET is the same in reference and proposal, the proposal's margin is at least as large when its RSET is no longer. Step: Scenario A: proposal RSET 173.25 s against reference 225.6 s, so its margin is larger by 52.35 s
 caption: The principle as stated in the NCC 2019 Fire Safety Verification Method, a superseded edition, and widely used in fire safety engineering. This book does not quote tenability values.
+viewbox: 0 0 640 230
+- Formula | margin = ASET − RSET, which must be greater than zero
 - ASET | available safe egress time: until conditions in the space stop being survivable, s
 - RSET | required safe egress time: until the occupants reach a place of safety, s
-step: Comparative check: if ASET is the same in reference and proposal, the proposal's margin is at least as large when its RSET is no longer
-step: Scenario A: proposal RSET 173.25 s against reference 225.6 s, so its margin is larger by 52.35 s
+- Worked | Comparative check: if ASET is the same in reference and proposal, the proposal's margin is at least as large when its RSET is no longer
+- Worked | Scenario A: proposal RSET 173.25 s against reference 225.6 s, so its margin is larger by 52.35 s
+body:
+<g class="kf-a kd1">
+<path class="li" d="M40 180H515"/>
+<path class="ln" d="M40 176V184"/>
+<text class="txs" x="40" y="200" text-anchor="middle">0 s</text>
+<path class="ln" d="M135 176V184"/>
+<text class="txs" x="135" y="200" text-anchor="middle">50 s</text>
+<path class="ln" d="M230 176V184"/>
+<text class="txs" x="230" y="200" text-anchor="middle">100 s</text>
+<path class="ln" d="M325 176V184"/>
+<text class="txs" x="325" y="200" text-anchor="middle">150 s</text>
+<path class="ln" d="M420 176V184"/>
+<text class="txs" x="420" y="200" text-anchor="middle">200 s</text>
+<path class="ln" d="M515 176V184"/>
+<text class="txs" x="515" y="200" text-anchor="middle">250 s</text>
+<path class="ln" d="M521 174l8 12M527 174l8 12"/>
+</g>
+<g class="kf-a kd2">
+<rect class="fi kf-growx" x="40" y="40" width="428.6" height="22"/>
+<text class="txb" x="44" y="32" text-anchor="start">RSET, reference 225.6 s</text>
+</g>
+<g class="kf-a kd3">
+<rect class="fa kf-growx" x="40" y="96" width="329.2" height="22"/>
+<text class="txa" x="44" y="88" text-anchor="start">RSET, proposal with detection 173.25 s</text>
+</g>
+<g class="kf-a kd4">
+<path class="la" d="M590 26V170"/>
+<text class="txb" x="586" y="22" text-anchor="end">ASET</text>
+<text class="txs" x="586" y="146" text-anchor="end">same in both layouts</text>
+<text class="txs" x="586" y="160" text-anchor="end">not calculated here</text>
+</g>
+<g class="kf-a kd5">
+<path class="la flow" d="M369.2 107H586"/>
+<path class="ln flow" d="M468.6 51H586"/>
+<text class="txs" x="520" y="128" text-anchor="end">larger margin by 52.35 s</text>
+</g>
 ```
 
 A comparative analysis can avoid calculating ASET in absolute terms if ASET is the same in both layouts. In scenario A, it largely is: the fire, the mezzanine and the roof are identical, and smoke reaches the mezzanine at the same time whichever end the stair is at. The proposal's smaller RSET then means a larger margin.
@@ -35,17 +73,77 @@ In scenario D, ASET is not obviously the same. With the fire on the mezzanine, t
 This is an illustration. The brief required each sensitivity case to be run for scenario A against the DTS limit reference, with everything else at its base value. The results:
 
 ```figure
-type: compare
+type: svg
 title: Scenario A sensitivity, proposal with detection against the reference
-cols: Reference | Proposal | Difference
+alt: Scenario A sensitivity, proposal with detection against the reference. Base inputs: Reference 225.6 s; Proposal 173.25 s; Difference −52.35 s. Slower walking 0.6 m/s and stair 0.3 m/s: Reference 252.0 s; Proposal 204.7 s; Difference −47.25 s. Pre-movement 180 s in both: Reference 345.6 s; Proposal 293.25 s; Difference −52.35 s. 20 occupants on the mezzanine in both: Reference 238.6 s; Proposal 186.25 s; Difference −52.35 s. Detection slower, awareness at 100 s: Reference 225.6 s; Proposal 213.25 s; Difference −12.35 s. DTS alternative reference at 18.5 m: Reference 224.1 s; Proposal 173.25 s; Difference −50.85 s. Detection unavailable: Reference 225.6 s; Proposal 233.25 s; Difference +7.65 s
 caption: This is an illustration using the teaching inputs. Negative differences mean the proposal is faster. The detection-unavailable case is the only one that fails.
-- Base inputs | 225.6 s | 173.25 s | −52.35 s
-- Slower walking 0.6 m/s and stair 0.3 m/s | 252.0 s | 204.7 s | −47.25 s
-- Pre-movement 180 s in both | 345.6 s | 293.25 s | −52.35 s
-- 20 occupants on the mezzanine in both | 238.6 s | 186.25 s | −52.35 s
-- Detection slower, awareness at 100 s | 225.6 s | 213.25 s | −12.35 s
-- DTS alternative reference at 18.5 m | 224.1 s | 173.25 s | −50.85 s
-- *Detection unavailable | 225.6 s | 233.25 s | +7.65 s
+viewbox: 0 0 640 379
+body:
+<g class="kf-a kd1">
+<rect class="fs" x="20" y="10" width="600" height="33" rx="4"/>
+<text class="txb" x="242.2" y="31">Reference</text>
+<text class="txb" x="370.9" y="31">Proposal</text>
+<text class="txb" x="495.2" y="31">Difference</text>
+</g>
+<g class="kf-a kd2">
+<path class="lf" d="M20 76H620"/>
+<text class="txb" x="28" y="64">Base inputs</text>
+<text class="tx" x="242.2" y="64">225.6 s</text>
+<text class="tx" x="370.9" y="64">173.25 s</text>
+<text class="tx" x="495.2" y="64">−52.35 s</text>
+</g>
+<g class="kf-a kd3">
+<path class="lf" d="M20 128H620"/>
+<text class="txb" x="28" y="97">Slower walking 0.6 m/s</text>
+<text class="txb" x="28" y="116">and stair 0.3 m/s</text>
+<text class="tx" x="242.2" y="97">252.0 s</text>
+<text class="tx" x="370.9" y="97">204.7 s</text>
+<text class="tx" x="495.2" y="97">−47.25 s</text>
+</g>
+<g class="kf-a kd4">
+<path class="lf" d="M20 180H620"/>
+<text class="txb" x="28" y="149">Pre-movement 180 s in</text>
+<text class="txb" x="28" y="168">both</text>
+<text class="tx" x="242.2" y="149">345.6 s</text>
+<text class="tx" x="370.9" y="149">293.25 s</text>
+<text class="tx" x="495.2" y="149">−52.35 s</text>
+</g>
+<g class="kf-a kd5">
+<path class="lf" d="M20 232H620"/>
+<text class="txb" x="28" y="201">20 occupants on the</text>
+<text class="txb" x="28" y="220">mezzanine in both</text>
+<text class="tx" x="242.2" y="201">238.6 s</text>
+<text class="tx" x="370.9" y="201">186.25 s</text>
+<text class="tx" x="495.2" y="201">−52.35 s</text>
+</g>
+<g class="kf-a kd6">
+<path class="lf" d="M20 284H620"/>
+<text class="txb" x="28" y="253">Detection slower,</text>
+<text class="txb" x="28" y="272">awareness at 100 s</text>
+<text class="tx" x="242.2" y="253">225.6 s</text>
+<text class="tx" x="370.9" y="253">213.25 s</text>
+<text class="tx" x="495.2" y="253">−12.35 s</text>
+</g>
+<g class="kf-a kd7">
+<path class="lf" d="M20 336H620"/>
+<text class="txb" x="28" y="305">DTS alternative</text>
+<text class="txb" x="28" y="324">reference at 18.5 m</text>
+<text class="tx" x="242.2" y="305">224.1 s</text>
+<text class="tx" x="370.9" y="305">173.25 s</text>
+<text class="tx" x="495.2" y="305">−50.85 s</text>
+</g>
+<g class="kf-a kd8">
+<rect class="bxa" x="20" y="336" width="600" height="33" rx="4"/>
+<path class="lf" d="M20 369H620"/>
+<text class="txb" x="28" y="357">Detection unavailable</text>
+<text class="tx" x="242.2" y="357">225.6 s</text>
+<text class="tx" x="370.9" y="357">233.25 s</text>
+<text class="tx" x="495.2" y="357">+7.65 s</text>
+</g>
+<rect class="lf" x="20" y="10" width="600" height="359" rx="4" fill="none"/>
+<path class="lf" d="M234.2 10V369"/>
+<path class="lf" d="M362.9 10V369"/>
+<path class="lf" d="M487.2 10V369"/>
 ```
 
 Read the table by asking which inputs move the difference and which do not. Pre-movement time and the number of occupants change both times equally, so they change nothing in the comparison. Slower movement narrows the gap a little. The choice of reference narrows it a little. Slower detection narrows it a lot. And no detection reverses it.
@@ -83,16 +181,46 @@ Scenario D, the fire on the mezzanine, failed in Chapter 6 by 7.65 s, independen
 The engineer's draft conclusion was that the Performance Solution could be supported only with the fire load restriction, and that the restriction must be written as a condition: no combustible storage on the mezzanine, no staging of packed export crates, and steel bins for tooling.
 
 ```figure
-type: matrix
+type: svg
 title: Responses to the scenario D failure
-x: Ongoing burden on the business: low → high
-y: Confidence the failure is resolved: low → high
-hot: 1
+alt: Responses to the scenario D failure. Horizontal axis: Ongoing burden on the business: low → high. Vertical axis: Confidence the failure is resolved: low → high. Top left: Move the stair to the DTS position, resolved by the DTS Provisions; no ongoing condition. Top right: Restrict the mezzanine to non-combustible storage, resolved by judgement; permanent restriction on use. Bottom left: Accept the failure without a response, not acceptable under the brief. Bottom right: Re-plan shelving for a diagonal route, narrows but does not resolve; loses storage
 caption: This is an illustration of the engineer's assessment. The fire load restriction resolves the failure only through Expert Judgement and creates a lasting operational condition.
-- Move the stair to the DTS position | resolved by the DTS Provisions; no ongoing condition
-- Restrict the mezzanine to non-combustible storage | resolved by judgement; permanent restriction on use
-- Accept the failure without a response | not acceptable under the brief
-- Re-plan shelving for a diagonal route | narrows but does not resolve; loses storage
+viewbox: 0 0 640 270
+body:
+<path class="li draw" pathLength="1" d="M56 240H630"/>
+<path class="ah" d="M630 234l10 6-10 6z"/>
+<path class="li draw" pathLength="1" d="M56 240V12"/>
+<path class="ah" d="M50 12l6 -10 6 10z"/>
+<text class="txs" x="346" y="260" text-anchor="middle">Ongoing burden on the business: low → high</text>
+<text class="txs" x="0" y="0" text-anchor="middle" transform="translate(44 124) rotate(-90)">Confidence the failure is resolved: low → high</text>
+<g class="kf-a kd1">
+<rect class="bxa" x="70" y="14" width="270" height="104" rx="8"/>
+<circle class="fa pulse" cx="326" cy="28" r="5"/>
+<text class="txb" x="82" y="38">Move the stair to the DTS</text>
+<text class="txb" x="82" y="57">position</text>
+<text class="tx" x="82" y="80">resolved by the DTS Provisions; no</text>
+<text class="tx" x="82" y="98">ongoing condition</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="352" y="14" width="270" height="104" rx="8"/>
+<text class="txb" x="364" y="38">Restrict the mezzanine to</text>
+<text class="txb" x="364" y="57">non-combustible storage</text>
+<text class="tx" x="364" y="80">resolved by judgement; permanent</text>
+<text class="tx" x="364" y="98">restriction on use</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="70" y="130" width="270" height="104" rx="8"/>
+<text class="txb" x="82" y="154">Accept the failure without a</text>
+<text class="txb" x="82" y="173">response</text>
+<text class="tx" x="82" y="196">not acceptable under the brief</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="352" y="130" width="270" height="104" rx="8"/>
+<text class="txb" x="364" y="154">Re-plan shelving for a</text>
+<text class="txb" x="364" y="173">diagonal route</text>
+<text class="tx" x="364" y="196">narrows but does not resolve; loses</text>
+<text class="tx" x="364" y="214">storage</text>
+</g>
 ```
 
 ## Why the mezzanine is the exposed place
@@ -132,15 +260,52 @@ Some uncertainty cannot be put into a sensitivity table:
 The final report should name these uncertainties and say how each is managed, usually by a condition, a record or a limit on use. An uncertainty that cannot be managed by any of these is a reason to reconsider the solution, not a footnote.
 
 ```figure
-type: checklist
+type: svg
 title: Sensitivity and margin record for the running case
+alt: Sensitivity and margin record for the running case. Done: Scenario A passes in all cases except detection unavailable. Done: Detection dependency managed by specification, maintenance and an impairment procedure. Done: Break-even awareness time 112.35 s against an assumed 60 s. Done: Scenario D fails by 7.65 s; shelving re-plan narrows it to 0.67 s but does not resolve it. Open: Fire load restriction on the mezzanine, Expert Judgement, Chapter 9. Open: Owner's decision between conditions and the DTS stair position, Chapter 10
 caption: This is an illustration. Each finding becomes either a margin in the report or a condition on the building.
-- x Scenario A passes in all cases except detection unavailable
-- x Detection dependency managed by specification, maintenance and an impairment procedure
-- x Break-even awareness time 112.35 s against an assumed 60 s
-- x Scenario D fails by 7.65 s; shelving re-plan narrows it to 0.67 s but does not resolve it
-- ? Fire load restriction on the mezzanine | Expert Judgement, Chapter 9
-- ? Owner's decision between conditions and the DTS stair position | Chapter 10
+viewbox: 0 0 640 376
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="12" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="29" r="11"/>
+<path class="la draw" pathLength="1" d="M34 29l4 4 8-8"/>
+<text class="txb" x="64" y="32">Scenario A passes in all cases except detection unavailable</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="20" y="59" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="76" r="11"/>
+<path class="la draw" pathLength="1" d="M34 76l4 4 8-8"/>
+<text class="txb" x="64" y="79">Detection dependency managed by specification, maintenance and an</text>
+<text class="txb" x="64" y="98">impairment procedure</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="20" y="125" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="142" r="11"/>
+<path class="la draw" pathLength="1" d="M34 142l4 4 8-8"/>
+<text class="txb" x="64" y="145">Break-even awareness time 112.35 s against an assumed 60 s</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="172" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="189" r="11"/>
+<path class="la draw" pathLength="1" d="M34 189l4 4 8-8"/>
+<text class="txb" x="64" y="192">Scenario D fails by 7.65 s; shelving re-plan narrows it to 0.67 s</text>
+<text class="txb" x="64" y="211">but does not resolve it</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bxi" x="20" y="238" width="600" height="59" rx="6"/>
+<circle class="bxi" cx="40" cy="255" r="11"/>
+<text class="txa" x="40" y="260" text-anchor="middle">?</text>
+<text class="txb" x="64" y="258">Fire load restriction on the mezzanine</text>
+<text class="tx" x="64" y="279">Expert Judgement, Chapter 9</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bxi" x="20" y="305" width="600" height="59" rx="6"/>
+<circle class="bxi" cx="40" cy="322" r="11"/>
+<text class="txa" x="40" y="327" text-anchor="middle">?</text>
+<text class="txb" x="64" y="325">Owner's decision between conditions and the DTS stair position</text>
+<text class="tx" x="64" y="346">Chapter 10</text>
+</g>
 ```
 
 ## Exercise: how slow can detection be?

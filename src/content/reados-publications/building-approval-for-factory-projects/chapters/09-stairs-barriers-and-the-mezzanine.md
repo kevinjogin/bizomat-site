@@ -36,17 +36,51 @@ Table D3D15 sets slip resistance for treads: P3 or R10 when dry and P4 or R11 wh
 This is an illustration. The mezzanine deck is 3.0 m above the workshop floor, measured from the finished floor to the finished deck surface. The designer needs a whole number of equal risers that falls within 115 mm to 190 mm.
 
 ```figure
-type: formula
+type: svg
 title: Choosing the number of risers for a 3,000 mm rise
-formula: R = H ÷ n, then check 115 ≤ R ≤ 190 mm and 550 ≤ 2R + G ≤ 700 mm
+alt: Choosing the number of risers for a 3,000 mm rise. Formula: R = H ÷ n, then check 115 ≤ R ≤ 190 mm and 550 ≤ 2R + G ≤ 700 mm. H: total rise, finished floor to finished deck, mm. n: number of risers in the flight, 2 to 18. R, G: riser and going, mm. Step: 15 risers: R = 3,000 ÷ 15 = 200 mm, over 190 mm, so fails. Step: 16 risers: R = 187.5 mm; with G = 250 mm, 2R + G = 625 mm, so passes. Step: 17 risers: R = 176.5 mm; with G = 260 mm, 2R + G = 613 mm, so passes. Step: 18 risers: R = 166.7 mm, passes but uses the most floor space
 caption: This is an illustration. H is the finished floor to finished deck height. Limits are from Table D3D14 of NCC 2022 Volume One for public stairways.
+viewbox: 0 0 640 320
+- Formula | R = H ÷ n, then check 115 ≤ R ≤ 190 mm and 550 ≤ 2R + G ≤ 700 mm
 - H | total rise, finished floor to finished deck, mm
 - n | number of risers in the flight, 2 to 18
 - R, G | riser and going, mm
-step: 15 risers: R = 3,000 ÷ 15 = 200 mm, over 190 mm, so fails
-step: 16 risers: R = 187.5 mm; with G = 250 mm, 2R + G = 625 mm, so passes
-step: 17 risers: R = 176.5 mm; with G = 260 mm, 2R + G = 613 mm, so passes
-step: 18 risers: R = 166.7 mm, passes but uses the most floor space
+- Worked | 15 risers: R = 3,000 ÷ 15 = 200 mm, over 190 mm, so fails
+- Worked | 16 risers: R = 187.5 mm; with G = 250 mm, 2R + G = 625 mm, so passes
+- Worked | 17 risers: R = 176.5 mm; with G = 260 mm, 2R + G = 613 mm, so passes
+- Worked | 18 risers: R = 166.7 mm, passes but uses the most floor space
+body:
+<g class="kf-a kd1">
+<path class="ln" d="M30 270H408.8"/>
+<text class="txs" x="34" y="286" text-anchor="start">finished floor</text>
+<rect class="bxi" x="338.8" y="105" width="70" height="10"/>
+<text class="txs" x="373.8" y="99" text-anchor="middle">deck</text>
+</g>
+<g class="kf-a kd2">
+<path class="la draw" pathLength="1" d="M110 270V260.3H124.3V250.6H138.6V240.9H152.9V231.2H167.2V221.5H181.5V211.8H195.8V202.1H210.1V192.4H224.4V182.6H238.7V172.9H253V163.2H267.3V153.5H281.6V143.8H295.9V134.1H310.2V124.4H324.5V114.7H338.8V105H398.8"/>
+</g>
+<g class="kf-a kd3">
+<path class="cl" d="M110 260.29411764705884L338.8 105"/>
+<text class="txs" x="260" y="246" text-anchor="start">line of nosings about 5.03 m</text>
+</g>
+<g class="kf-a kd4">
+<path class="ln" d="M84 105V270"/>
+<path class="ah" d="M84 105l-4 8h8z"/>
+<path class="ah" d="M84 270l-4 -8h8z"/>
+<text class="txs" x="76" y="191.5" text-anchor="end">H = 3,000 mm</text>
+<path class="ln" d="M110 300H338.8"/>
+<path class="ah" d="M110 300l8 -4v8z"/>
+<path class="ah" d="M338.8 300l-8 -4v8z"/>
+<text class="txs" x="224.4" y="294" text-anchor="middle">16 goings × 260 = 4,160 mm</text>
+</g>
+<g class="kf-a kd5">
+<text class="txb" x="420" y="70" text-anchor="start">17 risers chosen</text>
+<text class="tx" x="420" y="92" text-anchor="start">R = 176.5 mm (115 to 190)</text>
+<text class="tx" x="420" y="112" text-anchor="start">G = 260 mm (250 to 355)</text>
+<text class="tx" x="420" y="134" text-anchor="start">2R + G = 613 mm</text>
+<text class="tx" x="420" y="152" text-anchor="start">(limits 550 to 700)</text>
+<text class="tx" x="420" y="174" text-anchor="start">at most 18 risers per flight</text>
+</g>
 ```
 
 The designer chose **17 risers of 176.5 mm** with a **260 mm going**, giving 2R + G of **613 mm**, near the middle of the 550 to 700 mm band. That leaves margin for small site variations, which matters later. Seventeen risers is within the 18-riser limit, so no intermediate landing is needed. The stair has 16 treads, so its horizontal run is **16 × 260 = 4,160 mm**, and its line of nosings is about **5.03 m** long, the length Chapter 6 used in the travel distance.
@@ -60,15 +94,64 @@ D3D17 requires a continuous barrier along the side of any floor, mezzanine, stai
 D3D18 sets the heights, and D3D19 the openings. The Class 8 relaxations in D3D19 and D3D20 matter here.
 
 ```figure
-type: compare
+type: svg
 title: Barrier requirements for the running case, NCC 2022 Volume One
-cols: Mezzanine edge | Stair flight
+alt: Barrier requirements for the running case, NCC 2022 Volume One. Barrier height, D3D18: Mezzanine edge at least 1 m; Stair flight at least 865 mm, measured above the nosing line. Openings, D3D19, Class 8: Mezzanine edge a 300 mm sphere must not pass; with rails, no more than 460 mm between rails; Stair flight the same, and a 150 mm sphere must not pass between the nosing line and the bottom rail. Gap between barrier and the edge it protects: Mezzanine edge not more than 40 mm; Stair flight not more than 40 mm. Climbable elements, D3D20: Mezzanine edge Class 8 buildings exempt; Stair flight Class 8 buildings exempt. Handrail, D3D22: Mezzanine edge not applicable; Stair flight at least one side, at least 865 mm above the nosings, continuous
 caption: Values from D3D18, D3D19, D3D20 and D3D22. The Class 8 relaxations in D3D19 and D3D20 apply because the mezzanine is in a Class 8 building.
-- Barrier height, D3D18 | at least 1 m | at least 865 mm, measured above the nosing line
-- *Openings, D3D19, Class 8 | a 300 mm sphere must not pass; with rails, no more than 460 mm between rails | the same, and a 150 mm sphere must not pass between the nosing line and the bottom rail
-- Gap between barrier and the edge it protects | not more than 40 mm | not more than 40 mm
-- Climbable elements, D3D20 | Class 8 buildings exempt | Class 8 buildings exempt
-- Handrail, D3D22 | not applicable | at least one side, at least 865 mm above the nosings, continuous
+viewbox: 0 0 640 382
+body:
+<g class="kf-a kd1">
+<rect class="fs" x="20" y="10" width="600" height="33" rx="4"/>
+<text class="txb" x="196.8" y="31">Mezzanine edge</text>
+<text class="txb" x="406.5" y="31">Stair flight</text>
+</g>
+<g class="kf-a kd2">
+<path class="lf" d="M20 95H620"/>
+<text class="txb" x="28" y="64">Barrier height,</text>
+<text class="txb" x="28" y="83">D3D18</text>
+<text class="tx" x="196.8" y="64">at least 1 m</text>
+<text class="tx" x="406.5" y="64">at least 865 mm, measured</text>
+<text class="tx" x="406.5" y="82">above the nosing line</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bxa" x="20" y="95" width="600" height="86" rx="4"/>
+<path class="lf" d="M20 181H620"/>
+<text class="txb" x="28" y="116">Openings, D3D19,</text>
+<text class="txb" x="28" y="135">Class 8</text>
+<text class="tx" x="196.8" y="116">a 300 mm sphere must not</text>
+<text class="tx" x="196.8" y="134">pass; with rails, no more</text>
+<text class="tx" x="196.8" y="152">than 460 mm between rails</text>
+<text class="tx" x="406.5" y="116">the same, and a 150 mm sphere</text>
+<text class="tx" x="406.5" y="134">must not pass between the</text>
+<text class="tx" x="406.5" y="152">nosing line and the bottom</text>
+<text class="tx" x="406.5" y="170">rail</text>
+</g>
+<g class="kf-a kd4">
+<path class="lf" d="M20 252H620"/>
+<text class="txb" x="28" y="202">Gap between</text>
+<text class="txb" x="28" y="221">barrier and the</text>
+<text class="txb" x="28" y="240">edge it protects</text>
+<text class="tx" x="196.8" y="202">not more than 40 mm</text>
+<text class="tx" x="406.5" y="202">not more than 40 mm</text>
+</g>
+<g class="kf-a kd5">
+<path class="lf" d="M20 304H620"/>
+<text class="txb" x="28" y="273">Climbable</text>
+<text class="txb" x="28" y="292">elements, D3D20</text>
+<text class="tx" x="196.8" y="273">Class 8 buildings exempt</text>
+<text class="tx" x="406.5" y="273">Class 8 buildings exempt</text>
+</g>
+<g class="kf-a kd6">
+<path class="lf" d="M20 372H620"/>
+<text class="txb" x="28" y="325">Handrail, D3D22</text>
+<text class="tx" x="196.8" y="325">not applicable</text>
+<text class="tx" x="406.5" y="325">at least one side, at least</text>
+<text class="tx" x="406.5" y="343">865 mm above the nosings,</text>
+<text class="tx" x="406.5" y="361">continuous</text>
+</g>
+<rect class="lf" x="20" y="10" width="600" height="362" rx="4" fill="none"/>
+<path class="lf" d="M188.8 10V372"/>
+<path class="lf" d="M398.5 10V372"/>
 ```
 
 For a general building, barriers must stop a 125 mm sphere and, on floors more than 4 m above the surface below, avoid climbable horizontal elements between 150 mm and 760 mm. In a Class 8 building, a rail-type barrier is acceptable within the limits above. The designer used a top rail at 1,000 mm on the mezzanine edge, with a mid-rail and a toe-board set so that no gap between rails exceeds 460 mm. On the stair, the handrail at 865 mm above the nosings is fixed to the barrier posts, the rails follow the stair's pitch within the 460 mm limit, and the bottom rail is close enough to the nosing line that a 150 mm sphere cannot pass.
@@ -120,14 +203,53 @@ The stair arrived as a fabricated kit, designed for exactly 3,000 mm between fin
 The cause was the floor. The slab at the stair foot was 20 mm lower than the datum the mezzanine had been set from, so the stair landed 20 mm low and the whole of the error appeared in the first step. A 197 mm riser fails twice: it is over the 190 mm maximum, and it differs from the adjacent riser by about 20 mm, against a 5 mm limit for adjacent risers.
 
 ```figure
-type: steps
+type: svg
 title: Finding and fixing the bottom riser error
+alt: Finding and fixing the bottom riser error. 1. Measure: every riser and going, top to bottom, with the stair loaded on its fixings. 2. Compare: bottom riser 197 mm against 190 mm maximum and 5 mm adjacent tolerance; fails both. 3. Diagnose: slab at the stair foot 20 mm below the datum used for the mezzanine. 4. Fix: a 20 mm structural pad under the stair foot, finished to the slip-resistance rating. 5. Re-measure: all risers 176 mm to 177 mm; record the measurements in the compliance file
 caption: This is an illustration. The fix restores equal risers; the check that found it is cheap enough to do on every stair before handover.
-- Measure | every riser and going, top to bottom, with the stair loaded on its fixings
-- *Compare | bottom riser 197 mm against 190 mm maximum and 5 mm adjacent tolerance; fails both
-- Diagnose | slab at the stair foot 20 mm below the datum used for the mezzanine
-- Fix | a 20 mm structural pad under the stair foot, finished to the slip-resistance rating
-- Re-measure | all risers 176 mm to 177 mm; record the measurements in the compliance file
+viewbox: 0 0 640 409
+body:
+<path class="la draw" pathLength="1" d="M34 58.5V110.5"/>
+<path class="la draw" pathLength="1" d="M34 138.5V190.5"/>
+<path class="la draw" pathLength="1" d="M34 218.5V270.5"/>
+<path class="la draw" pathLength="1" d="M34 298.5V350.5"/>
+<g class="kf-a kd1">
+<rect class="bx" x="58" y="14" width="562" height="61" rx="6"/>
+<circle class="bxi" cx="34" cy="44.5" r="14"/>
+<text class="txb" x="34" y="49.5" text-anchor="middle">1</text>
+<text class="txb" x="74" y="36">Measure</text>
+<text class="tx" x="74" y="57">every riser and going, top to bottom, with the stair loaded on its fixings</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bxa" x="58" y="85" width="562" height="79" rx="6"/>
+<circle class="fa" cx="34" cy="124.5" r="14"/>
+<text class="txb" x="34" y="129.5" text-anchor="middle">2</text>
+<text class="txb" x="74" y="107">Compare</text>
+<text class="tx" x="74" y="128">bottom riser 197 mm against 190 mm maximum and 5 mm adjacent tolerance; fails</text>
+<text class="tx" x="74" y="146">both</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="58" y="174" width="562" height="61" rx="6"/>
+<circle class="bxi" cx="34" cy="204.5" r="14"/>
+<text class="txb" x="34" y="209.5" text-anchor="middle">3</text>
+<text class="txb" x="74" y="196">Diagnose</text>
+<text class="tx" x="74" y="217">slab at the stair foot 20 mm below the datum used for the mezzanine</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="58" y="245" width="562" height="79" rx="6"/>
+<circle class="bxi" cx="34" cy="284.5" r="14"/>
+<text class="txb" x="34" y="289.5" text-anchor="middle">4</text>
+<text class="txb" x="74" y="267">Fix</text>
+<text class="tx" x="74" y="288">a 20 mm structural pad under the stair foot, finished to the slip-resistance</text>
+<text class="tx" x="74" y="306">rating</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="58" y="334" width="562" height="61" rx="6"/>
+<circle class="bxi" cx="34" cy="364.5" r="14"/>
+<text class="txb" x="34" y="369.5" text-anchor="middle">5</text>
+<text class="txb" x="74" y="356">Re-measure</text>
+<text class="tx" x="74" y="377">all risers 176 mm to 177 mm; record the measurements in the compliance file</text>
+</g>
 ```
 
 A falling stair is one of the most predictable ways to injure someone. Uneven risers are a known cause, because people set their stride on the first few steps and then miss the odd one. Measuring every riser is a few minutes' work and should be on every handover checklist.

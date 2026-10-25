@@ -24,16 +24,61 @@ Fire engineers commonly break the time needed to escape into stages. The running
 The sum is the required escape time for the last person to leave the mezzanine and reach open space. In a comparative analysis, the same five stages are calculated for the reference and the proposal with the same inputs, except where the proposal deliberately changes one.
 
 ```figure
-type: formula
+type: svg
 title: Required escape time from the mezzanine to open space
-formula: t = t_aware + t_pre + L_m ÷ v + L_s ÷ v_s + L_f ÷ v + (n − 1) ÷ F
+alt: Required escape time from the mezzanine to open space. Formula: t = t_aware + t_pre + L_m ÷ v + L_s ÷ v_s + L_f ÷ v + (n − 1) ÷ F. t_aware, t_pre: awareness and pre-movement time, s. L_m, L_s, L_f: route length on the mezzanine, along the stair nosings and on the floor, m. v, v_s: walking speed on the flat and travel speed on the stair, m/s. n, F: occupants on the mezzanine and flow onto the stair, persons per second. Step: Stair travel: 5.03 ÷ 0.5 = 10.06 s, the same in every case. Step: Queue for the last of 7 people at 1.0 person per second: 6 ÷ 1.0 = 6 s
 caption: This is an illustration using the teaching inputs from the brief, not design values. The queue term is the delay for the last of n people entering the stair at flow F.
+viewbox: 0 0 640 262
+- Formula | t = t_aware + t_pre + L_m ÷ v + L_s ÷ v_s + L_f ÷ v + (n − 1) ÷ F
 - t_aware, t_pre | awareness and pre-movement time, s
 - L_m, L_s, L_f | route length on the mezzanine, along the stair nosings and on the floor, m
 - v, v_s | walking speed on the flat and travel speed on the stair, m/s
 - n, F | occupants on the mezzanine and flow onto the stair, persons per second
-step: Stair travel: 5.03 ÷ 0.5 = 10.06 s, the same in every case
-step: Queue for the last of 7 people at 1.0 person per second: 6 ÷ 1.0 = 6 s
+- Worked | Stair travel: 5.03 ÷ 0.5 = 10.06 s, the same in every case
+- Worked | Queue for the last of 7 people at 1.0 person per second: 6 ÷ 1.0 = 6 s
+body:
+<g class="kf-a kd1">
+<text class="txb" x="20" y="22" text-anchor="start">Reference, DTS limit</text>
+<rect class="fi kf-growx" x="20" y="30" width="264" height="24"/>
+<text class="txs" x="152" y="70" text-anchor="middle">aware 120</text>
+<rect class="bx kf-growx" x="284" y="30" width="132" height="24"/>
+<text class="txs" x="350" y="70" text-anchor="middle">pre 60</text>
+<rect class="fa kf-growx" x="416" y="30" width="44" height="24"/>
+<text class="txs" x="438" y="70" text-anchor="middle">walk 20</text>
+<rect class="bxa kf-growx" x="460" y="30" width="22.1" height="24"/>
+<rect class="fs kf-growx" x="482.1" y="30" width="21" height="24"/>
+<rect class="bxi kf-growx" x="503.1" y="30" width="13.2" height="24"/>
+<text class="txb" x="524.3" y="47" text-anchor="start">225.6 s</text>
+</g>
+<g class="kf-a kd2">
+<text class="txb" x="20" y="96" text-anchor="start">Proposal, no detection</text>
+<rect class="fi kf-growx" x="20" y="104" width="264" height="24"/>
+<text class="txs" x="152" y="144" text-anchor="middle">aware 120</text>
+<rect class="bx kf-growx" x="284" y="104" width="132" height="24"/>
+<text class="txs" x="350" y="144" text-anchor="middle">pre 60</text>
+<rect class="fa kf-growx" x="416" y="104" width="61.6" height="24"/>
+<text class="txs" x="446.8" y="144" text-anchor="middle">walk 28</text>
+<rect class="bxa kf-growx" x="477.6" y="104" width="22.1" height="24"/>
+<rect class="fs kf-growx" x="499.7" y="104" width="20.2" height="24"/>
+<rect class="bxi kf-growx" x="520" y="104" width="13.2" height="24"/>
+<text class="txb" x="541.2" y="121" text-anchor="start">233.25 s</text>
+</g>
+<g class="kf-a kd3">
+<text class="txb" x="20" y="170" text-anchor="start">Proposal, detection</text>
+<rect class="fi kf-growx" x="20" y="178" width="132" height="24"/>
+<text class="txs" x="86" y="218" text-anchor="middle">aware 60</text>
+<rect class="bx kf-growx" x="152" y="178" width="132" height="24"/>
+<text class="txs" x="218" y="218" text-anchor="middle">pre 60</text>
+<rect class="fa kf-growx" x="284" y="178" width="61.6" height="24"/>
+<text class="txs" x="314.8" y="218" text-anchor="middle">walk 28</text>
+<rect class="bxa kf-growx" x="345.6" y="178" width="22.1" height="24"/>
+<rect class="fs kf-growx" x="367.7" y="178" width="20.2" height="24"/>
+<rect class="bxi kf-growx" x="388" y="178" width="13.2" height="24"/>
+<text class="txa" x="409.2" y="195" text-anchor="start">173.25 s</text>
+</g>
+<g class="kf-a kd4">
+<text class="txs" x="20" y="252" text-anchor="start">Scenario A, teaching inputs: t = aware + pre-movement + walk + stair 10.06 s + floor + queue 6 s</text>
+</g>
 ```
 
 ## Scenario A: a fire under the mezzanine
@@ -55,15 +100,36 @@ This is an illustration. In scenario A, packaging catches fire in the workshop u
 Without detection, the proposal is **7.65 s slower** than the reference: 8 m more walking on the mezzanine, less 0.35 m on the floor. With detection, it is **52.35 s faster**. Against the more demanding DTS alternative reference, which takes 224.1 s, the detected proposal is 50.85 s faster.
 
 ```figure
-type: bars
+type: svg
 title: Scenario A escape time from the mezzanine to open space
-unit: s
-max: 240
+alt: Scenario A escape time from the mezzanine to open space. DTS limit reference, no detection: 225.6 s. DTS alternative reference, no detection: 224.1 s. Proposal, no detection: 233.25 s. Proposal, with detection and alarm: 173.25 s
 caption: This is an illustration using the agreed teaching inputs. Detection reduces awareness time from 120 s to 60 s, which outweighs the longer walk.
-- DTS limit reference, no detection | 225.6
-- DTS alternative reference, no detection | 224.1
-- Proposal, no detection | 233.25
-- *Proposal, with detection and alarm | 173.25
+viewbox: 0 0 640 212
+body:
+<g class="kf-a kd1">
+<text class="txb" x="20" y="26">DTS limit reference, no detection</text>
+<rect class="fp" x="20" y="33" width="470" height="18" rx="3"/>
+<rect class="fi kf-growx" x="20" y="33" width="441.8" height="18" rx="3"/>
+<text class="txb" x="500" y="47">225.6 s</text>
+</g>
+<g class="kf-a kd2">
+<text class="txb" x="20" y="75">DTS alternative reference, no detection</text>
+<rect class="fp" x="20" y="82" width="470" height="18" rx="3"/>
+<rect class="fi kf-growx" x="20" y="82" width="438.9" height="18" rx="3"/>
+<text class="txb" x="500" y="96">224.1 s</text>
+</g>
+<g class="kf-a kd3">
+<text class="txb" x="20" y="124">Proposal, no detection</text>
+<rect class="fp" x="20" y="131" width="470" height="18" rx="3"/>
+<rect class="fi kf-growx" x="20" y="131" width="456.8" height="18" rx="3"/>
+<text class="txb" x="500" y="145">233.25 s</text>
+</g>
+<g class="kf-a kd4">
+<text class="txb" x="20" y="173">Proposal, with detection and alarm</text>
+<rect class="fp" x="20" y="180" width="470" height="18" rx="3"/>
+<rect class="fa kf-growx" x="20" y="180" width="339.3" height="18" rx="3"/>
+<text class="txa" x="500" y="194">173.25 s</text>
+</g>
 ```
 
 The break-even point is easy to find. The proposal without detection is 7.65 s slower, so detection must bring awareness forward by at least 7.65 s for the proposal to match the DTS limit reference. In this scenario, awareness would need to come no later than **120 − 7.65 = 112.35 s**. The brief's assumed 60 s gives a wide margin, but Chapter 7 tests what happens if the detection is slower or not working.
@@ -109,14 +175,50 @@ In scenario D, the fire starts on the mezzanine itself, among packed tooling on 
 The proposal is **7.65 s slower**, with or without detection, because detection has nothing to contribute when awareness is immediate. Acceptance criterion 1 in the brief, that the proposal's required escape time is not longer than the reference's in each scenario, is **not met** in scenario D.
 
 ```figure
-type: compare
+type: svg
 title: Results against acceptance criterion 1
-cols: Reference | Proposal with detection
+alt: Results against acceptance criterion 1. Scenario A, fire under the mezzanine: Reference 225.6 s; Proposal with detection 173.25 s: meets. Scenario B, fire near the proposal's stair foot: Reference qualitative; Proposal with detection addressed by the clear zone and Expert Judgement. Scenario C, fire near the reference stair foot: Reference qualitative; Proposal with detection the proposal is not exposed. Scenario D, fire on the mezzanine: Reference 135.6 s; Proposal with detection 143.25 s: does not meet
 caption: This is an illustration. Times are for the last person to reach open space from the mezzanine, using the agreed teaching inputs.
-- Scenario A, fire under the mezzanine | 225.6 s | 173.25 s: meets
-- Scenario B, fire near the proposal's stair foot | qualitative | addressed by the clear zone and Expert Judgement
-- Scenario C, fire near the reference stair foot | qualitative | the proposal is not exposed
-- *Scenario D, fire on the mezzanine | 135.6 s | 143.25 s: does not meet
+viewbox: 0 0 640 261
+body:
+<g class="kf-a kd1">
+<rect class="fs" x="20" y="10" width="600" height="33" rx="4"/>
+<text class="txb" x="258" y="31">Reference</text>
+<text class="txb" x="396.1" y="31">Proposal with detection</text>
+</g>
+<g class="kf-a kd2">
+<path class="lf" d="M20 95H620"/>
+<text class="txb" x="28" y="64">Scenario A, fire under</text>
+<text class="txb" x="28" y="83">the mezzanine</text>
+<text class="tx" x="258" y="64">225.6 s</text>
+<text class="tx" x="396.1" y="64">173.25 s: meets</text>
+</g>
+<g class="kf-a kd3">
+<path class="lf" d="M20 147H620"/>
+<text class="txb" x="28" y="116">Scenario B, fire near the</text>
+<text class="txb" x="28" y="135">proposal's stair foot</text>
+<text class="tx" x="258" y="116">qualitative</text>
+<text class="tx" x="396.1" y="116">addressed by the clear zone</text>
+<text class="tx" x="396.1" y="134">and Expert Judgement</text>
+</g>
+<g class="kf-a kd4">
+<path class="lf" d="M20 199H620"/>
+<text class="txb" x="28" y="168">Scenario C, fire near the</text>
+<text class="txb" x="28" y="187">reference stair foot</text>
+<text class="tx" x="258" y="168">qualitative</text>
+<text class="tx" x="396.1" y="168">the proposal is not exposed</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bxa" x="20" y="199" width="600" height="52" rx="4"/>
+<path class="lf" d="M20 251H620"/>
+<text class="txb" x="28" y="220">Scenario D, fire on the</text>
+<text class="txb" x="28" y="239">mezzanine</text>
+<text class="tx" x="258" y="220">135.6 s</text>
+<text class="tx" x="396.1" y="220">143.25 s: does not meet</text>
+</g>
+<rect class="lf" x="20" y="10" width="600" height="241" rx="4" fill="none"/>
+<path class="lf" d="M250 10V251"/>
+<path class="lf" d="M388.1 10V251"/>
 ```
 
 ## What a failed scenario means
@@ -150,15 +252,51 @@ Several cautions apply to every number in this chapter:
 The value of the calculation is not precision. It is that it makes the argument visible: anyone can see which term changed, by how much, and why. A reviewer who disagrees with an input can change it and see the effect at once, which is much harder with a complex model whose workings are hidden.
 
 ```figure
-type: checklist
+type: svg
 title: Escape time results for the running case
+alt: Escape time results for the running case. Done: Time-line method and inputs as agreed in the brief. Done: Scenario A: proposal with detection 173.25 s against reference 225.6 s; meets. Done: Scenarios B and C: qualitative; referred to Expert Judgement. Done: Scenario D: proposal 143.25 s against reference 135.6 s; does not meet criterion 1. Done: Stair distance measured along the nosings, 5.03 m, after review. Open: Response to scenario D, Chapter 7
 caption: This is an illustration. Results are recorded with the inputs and the scenario, so that each can be reproduced.
-- x Time-line method and inputs as agreed in the brief
-- x Scenario A: proposal with detection 173.25 s against reference 225.6 s; meets
-- x Scenarios B and C: qualitative; referred to Expert Judgement
-- x Scenario D: proposal 143.25 s against reference 135.6 s; does not meet criterion 1
-- x Stair distance measured along the nosings, 5.03 m, after review
-- ? Response to scenario D | Chapter 7
+viewbox: 0 0 640 356
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="12" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="29" r="11"/>
+<path class="la draw" pathLength="1" d="M34 29l4 4 8-8"/>
+<text class="txb" x="64" y="32">Time-line method and inputs as agreed in the brief</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="20" y="59" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="76" r="11"/>
+<path class="la draw" pathLength="1" d="M34 76l4 4 8-8"/>
+<text class="txb" x="64" y="79">Scenario A: proposal with detection 173.25 s against reference</text>
+<text class="txb" x="64" y="98">225.6 s; meets</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="20" y="125" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="142" r="11"/>
+<path class="la draw" pathLength="1" d="M34 142l4 4 8-8"/>
+<text class="txb" x="64" y="145">Scenarios B and C: qualitative; referred to Expert Judgement</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="172" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="189" r="11"/>
+<path class="la draw" pathLength="1" d="M34 189l4 4 8-8"/>
+<text class="txb" x="64" y="192">Scenario D: proposal 143.25 s against reference 135.6 s; does not</text>
+<text class="txb" x="64" y="211">meet criterion 1</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="20" y="238" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="255" r="11"/>
+<path class="la draw" pathLength="1" d="M34 255l4 4 8-8"/>
+<text class="txb" x="64" y="258">Stair distance measured along the nosings, 5.03 m, after review</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bxi" x="20" y="285" width="600" height="59" rx="6"/>
+<circle class="bxi" cx="40" cy="302" r="11"/>
+<text class="txa" x="40" y="307" text-anchor="middle">?</text>
+<text class="txb" x="64" y="305">Response to scenario D</text>
+<text class="tx" x="64" y="326">Chapter 7</text>
+</g>
 ```
 
 ## Exercise: faster detection, slower people

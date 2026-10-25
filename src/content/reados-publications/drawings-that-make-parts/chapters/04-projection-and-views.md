@@ -16,15 +16,48 @@ This chapter covers the projection methods recognised in AS 1100.101, the princi
 AS 1100.101 Table 6.1 groups projection methods by whether the lines of sight are parallel or converging:
 
 ```figure
-type: tree
+type: svg
 title: Methods of projection, AS 1100.101 Table 6.1
+alt: Methods of projection, AS 1100.101 Table 6.1. Parallel lines of sight. Orthogonal: *third angle (preferred) or first angle, two-dimensional multiview drawings. Axonometric: isometric, dimetric or trimetric, single pictorial view. Oblique: cavalier, cabinet or general, single pictorial view. Converging lines of sight. Perspective: one-point, two-point or three-point, single pictorial view
 caption: From AS 1100.101-1992. Orthogonal projection is used for dimensioned multiview drawings; the others give single pictorial views.
-- Parallel lines of sight
-  - Orthogonal | *third angle (preferred) or first angle | two-dimensional multiview drawings
-  - Axonometric | isometric, dimetric or trimetric | single pictorial view
-  - Oblique | cavalier, cabinet or general | single pictorial view
-- Converging lines of sight
-  - Perspective | one-point, two-point or three-point | single pictorial view
+viewbox: 0 0 640 342
+body:
+<path class="ln draw" pathLength="1" d="M34 47V81H54"/>
+<path class="ln draw" pathLength="1" d="M34 47V141H54"/>
+<path class="ln draw" pathLength="1" d="M34 47V201H54"/>
+<path class="ln draw" pathLength="1" d="M34 270V304H54"/>
+<g class="kf-a kd1">
+<rect class="bxi" x="20" y="12" width="600" height="35" rx="6"/>
+<text class="txb" x="32" y="33">Parallel lines of sight</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="54" y="55" width="566" height="52" rx="6"/>
+<text class="txb" x="66" y="76">Orthogonal</text>
+<text class="tx" x="304" y="76">*third angle (preferred) or first angle |</text>
+<text class="tx" x="304" y="94">two-dimensional multiview drawings</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="54" y="115" width="566" height="52" rx="6"/>
+<text class="txb" x="66" y="136">Axonometric</text>
+<text class="tx" x="304" y="136">isometric, dimetric or trimetric | single</text>
+<text class="tx" x="304" y="154">pictorial view</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="54" y="175" width="566" height="52" rx="6"/>
+<text class="txb" x="66" y="196">Oblique</text>
+<text class="tx" x="304" y="196">cavalier, cabinet or general | single</text>
+<text class="tx" x="304" y="214">pictorial view</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bxi" x="20" y="235" width="600" height="35" rx="6"/>
+<text class="txb" x="32" y="256">Converging lines of sight</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bx" x="54" y="278" width="566" height="52" rx="6"/>
+<text class="txb" x="66" y="299">Perspective</text>
+<text class="tx" x="304" y="299">one-point, two-point or three-point |</text>
+<text class="tx" x="304" y="317">single pictorial view</text>
+</g>
 ```
 
 Detail drawings use orthogonal projection, in which each view is formed by lines of sight perpendicular to the plane of projection. Pictorial views, usually isometric, are useful on assembly and instruction drawings to help a reader understand the shape, but they are poor for dimensioning because most lengths are foreshortened.
@@ -36,14 +69,45 @@ AS 1100.101 clause 6.3 explains the two orthogonal methods in terms of where the
 The standard states that third-angle projection is preferred and that drawings must be marked to show which method is used, either by the projection symbol or by the words "3RD ANGLE PROJECTION" or "1ST ANGLE PROJECTION". The symbol is a small pair of views of a truncated cone; the arrangement of its two views shows the method.
 
 ```figure
-type: compare
+type: svg
 title: Where the views go in each method
-cols: Third angle (AS 1100.101 preferred) | First angle
+alt: Where the views go in each method. View from the right: Third angle (AS 1100.101 preferred) drawn to the right of the front view; First angle drawn to the left of the front view. View from above (top view): Third angle (AS 1100.101 preferred) drawn above the front view; First angle drawn below the front view. View from the left: Third angle (AS 1100.101 preferred) drawn to the left; First angle drawn to the right. Rule of thumb: Third angle (AS 1100.101 preferred) each view sits beside the face it shows; First angle each view sits on the far side from the face it shows
 caption: Summarised from AS 1100.101 clause 6.3. Many European and Asian drawings use first-angle projection, so the symbol on every sheet matters.
-- View from the right | drawn to the right of the front view | drawn to the left of the front view
-- View from above (top view) | drawn above the front view | drawn below the front view
-- View from the left | drawn to the left | drawn to the right
-- *Rule of thumb | each view sits beside the face it shows | each view sits on the far side from the face it shows
+viewbox: 0 0 640 320
+- View from the right | Third angle (AS 1100.101 preferred): drawn to the right of the front view; First angle: drawn to the left of the front view
+- View from above (top view) | Third angle (AS 1100.101 preferred): drawn above the front view; First angle: drawn below the front view
+- View from the left | Third angle (AS 1100.101 preferred): drawn to the left; First angle: drawn to the right
+- Rule of thumb | Third angle (AS 1100.101 preferred): each view sits beside the face it shows; First angle: each view sits on the far side from the face it shows
+body:
+<g class="kf-a kd1">
+<text class="txb" x="160" y="20" text-anchor="middle">Third angle (preferred)</text>
+<rect class="bxa" x="130" y="130" width="80" height="56" rx="4"/>
+<text class="txa" x="170" y="163" text-anchor="middle">Front</text>
+<rect class="bx" x="130" y="30" width="80" height="56" rx="4"/>
+<text class="txb" x="170" y="63" text-anchor="middle">Top</text>
+<rect class="bx" x="220" y="130" width="80" height="56" rx="4"/>
+<text class="txb" x="260" y="163" text-anchor="middle">Right side</text>
+<rect class="bx" x="40" y="130" width="80" height="56" rx="4"/>
+<text class="txb" x="80" y="163" text-anchor="middle">Left side</text>
+<path class="la flow" d="M170 186V186"/>
+</g>
+<g class="kf-a kd2">
+<text class="txb" x="480" y="20" text-anchor="middle">First angle</text>
+<rect class="bxa" x="450" y="130" width="80" height="56" rx="4"/>
+<text class="txa" x="490" y="163" text-anchor="middle">Front</text>
+<rect class="bx" x="450" y="230" width="80" height="56" rx="4"/>
+<text class="txb" x="490" y="263" text-anchor="middle">Top</text>
+<rect class="bx" x="360" y="130" width="80" height="56" rx="4"/>
+<text class="txb" x="400" y="163" text-anchor="middle">Right side</text>
+<rect class="bx" x="540" y="130" width="80" height="56" rx="4"/>
+<text class="txb" x="580" y="163" text-anchor="middle">Left side</text>
+<path class="la flow" d="M490 186V186"/>
+</g>
+<g class="kf-a kd3">
+<path class="lf" d="M320 30V300"/>
+<text class="txs" x="160" y="312" text-anchor="middle">each view sits beside the face it shows</text>
+<text class="txs" x="480" y="312" text-anchor="middle">each view sits on the far side</text>
+</g>
 ```
 
 ## Choosing views
@@ -77,14 +141,47 @@ The designer's first layout had four views: a front view of the flange end, a si
 The top view disappeared: everything it showed was either in the section or defined by diameter symbols.
 
 ```figure
-type: checklist
+type: svg
 title: View selection for the housing
+alt: View selection for the housing. Done: Front view of the flange end, flange holes, pitch circle, lubrication hole angle. Done: Section A-A through the axis, bore, shoulder, spigot, depth of tapped and flange holes. Done: Partial rear view, to the right of the section, tapped holes and their 45° offset. Done: Top view removed, its information is in the section and the diameter symbols. Done: Projection marked by symbol and words in the title block, AS 1100.101 clause 2.5.6
 caption: This is an illustration. Each view is kept only if it shows something no other view shows.
-- x Front view of the flange end | flange holes, pitch circle, lubrication hole angle
-- x Section A-A through the axis | bore, shoulder, spigot, depth of tapped and flange holes
-- x Partial rear view, to the right of the section | tapped holes and their 45° offset
-- x Top view removed | its information is in the section and the diameter symbols
-- x Projection marked by symbol and words in the title block | AS 1100.101 clause 2.5.6
+viewbox: 0 0 640 351
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="12" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="29" r="11"/>
+<path class="la draw" pathLength="1" d="M34 29l4 4 8-8"/>
+<text class="txb" x="64" y="32">Front view of the flange end</text>
+<text class="tx" x="64" y="53">flange holes, pitch circle, lubrication hole angle</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="20" y="79" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="96" r="11"/>
+<path class="la draw" pathLength="1" d="M34 96l4 4 8-8"/>
+<text class="txb" x="64" y="99">Section A-A through the axis</text>
+<text class="tx" x="64" y="120">bore, shoulder, spigot, depth of tapped and flange holes</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="20" y="146" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="163" r="11"/>
+<path class="la draw" pathLength="1" d="M34 163l4 4 8-8"/>
+<text class="txb" x="64" y="166">Partial rear view, to the right of the section</text>
+<text class="tx" x="64" y="187">tapped holes and their 45° offset</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="213" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="230" r="11"/>
+<path class="la draw" pathLength="1" d="M34 230l4 4 8-8"/>
+<text class="txb" x="64" y="233">Top view removed</text>
+<text class="tx" x="64" y="254">its information is in the section and the diameter symbols</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="20" y="280" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="297" r="11"/>
+<path class="la draw" pathLength="1" d="M34 297l4 4 8-8"/>
+<text class="txb" x="64" y="300">Projection marked by symbol and words in the title block</text>
+<text class="tx" x="64" y="321">AS 1100.101 clause 2.5.6</text>
+</g>
 ```
 
 ## Naming views and labelling features

@@ -16,13 +16,45 @@ This chapter draws the earlier chapters together into a checking routine, sets o
 AS 1100.101 clause 2.5.9 requires spaces in the title block for signatures or initials and dates. It does not prescribe who signs. Most businesses use three roles, and the value of each lies in its independence from the others.
 
 ```figure
-type: steps
+type: svg
 title: From draft to released drawing
+alt: From draft to released drawing. 1. Drawn: the drafter completes the drawing and runs a self-check against the checklist. 2. Checked: a second person checks the drawing independently against the checklist and the design intent. 3. Approved: the responsible engineer confirms the design meets its requirements. 4. Released: the drawing is issued at a revision, recorded in the register and sent to the people who need it
 caption: This is an illustration of the running case business's process. A small business may combine roles, but the checker should not be the person who drew it.
-- Drawn | the drafter completes the drawing and runs a self-check against the checklist
-- *Checked | a second person checks the drawing independently against the checklist and the design intent
-- Approved | the responsible engineer confirms the design meets its requirements
-- Released | the drawing is issued at a revision, recorded in the register and sent to the people who need it
+viewbox: 0 0 640 338
+body:
+<path class="la draw" pathLength="1" d="M34 58.5V110.5"/>
+<path class="la draw" pathLength="1" d="M34 138.5V190.5"/>
+<path class="la draw" pathLength="1" d="M34 218.5V270.5"/>
+<g class="kf-a kd1">
+<rect class="bx" x="58" y="14" width="562" height="61" rx="6"/>
+<circle class="bxi" cx="34" cy="44.5" r="14"/>
+<text class="txb" x="34" y="49.5" text-anchor="middle">1</text>
+<text class="txb" x="74" y="36">Drawn</text>
+<text class="tx" x="74" y="57">the drafter completes the drawing and runs a self-check against the checklist</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bxa" x="58" y="85" width="562" height="79" rx="6"/>
+<circle class="fa" cx="34" cy="124.5" r="14"/>
+<text class="txb" x="34" y="129.5" text-anchor="middle">2</text>
+<text class="txb" x="74" y="107">Checked</text>
+<text class="tx" x="74" y="128">a second person checks the drawing independently against the checklist and</text>
+<text class="tx" x="74" y="146">the design intent</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="58" y="174" width="562" height="61" rx="6"/>
+<circle class="bxi" cx="34" cy="204.5" r="14"/>
+<text class="txb" x="34" y="209.5" text-anchor="middle">3</text>
+<text class="txb" x="74" y="196">Approved</text>
+<text class="tx" x="74" y="217">the responsible engineer confirms the design meets its requirements</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="58" y="245" width="562" height="79" rx="6"/>
+<circle class="bxi" cx="34" cy="284.5" r="14"/>
+<text class="txb" x="34" y="289.5" text-anchor="middle">4</text>
+<text class="txb" x="74" y="267">Released</text>
+<text class="tx" x="74" y="288">the drawing is issued at a revision, recorded in the register and sent to the</text>
+<text class="tx" x="74" y="306">people who need it</text>
+</g>
 ```
 
 The drafter's self-check finds most slips. The independent checker finds what the drafter cannot see because they know what they meant: a dimension that is obvious to its author and ambiguous to everyone else. The approver confirms that the part, as drawn, does its job. Signing a box without doing the check behind it is worse than leaving the box empty, because it tells readers a check happened. The signature is a statement of fact, and readers rely on it when they decide whether to query a drawing or trust it.
@@ -32,19 +64,92 @@ The drafter's self-check finds most slips. The independent checker finds what th
 The running case business's checklist follows the order of the chapters. Each item is a question a checker can answer by looking at the drawing.
 
 ```figure
-type: checklist
+type: svg
 title: Release checklist for a detail drawing
+alt: Release checklist for a detail drawing. Done: Drawing type, title, number and the standard it is prepared to are stated, Chapter 1. Done: Sheet size, scale and "OR AS SHOWN" where needed; DO NOT SCALE; units, Chapter 2. Done: Line group and lettering survive the usual reduction; coincident lines resolved, Chapter 3. Done: Projection marked by symbol and words; views and labels follow the rules, Chapter 4. Done: Sections labelled; same part, same hatching; fasteners and shafts unhatched, Chapter 5. Done: Every feature sized and located once; no chain plus toleranced overall, Chapter 6. Done: General tolerance note present; functional features have explicit tolerances, Chapter 7. Done: Surface texture on functional surfaces; general note; cut-off where not default, Chapter 8. Done: Threads by the right convention and fully designated; parts list complete, Chapter 9. Done: Revision recorded, changes located by grid reference, superseded prints withdrawn, Chapter 10
 caption: This is an illustration. Each line refers to the chapter that explains it; the business adds lines whenever an error gets through.
-- x Drawing type, title, number and the standard it is prepared to are stated | Chapter 1
-- x Sheet size, scale and "OR AS SHOWN" where needed; DO NOT SCALE; units | Chapter 2
-- x Line group and lettering survive the usual reduction; coincident lines resolved | Chapter 3
-- x Projection marked by symbol and words; views and labels follow the rules | Chapter 4
-- x Sections labelled; same part, same hatching; fasteners and shafts unhatched | Chapter 5
-- x Every feature sized and located once; no chain plus toleranced overall | Chapter 6
-- x General tolerance note present; functional features have explicit tolerances | Chapter 7
-- x Surface texture on functional surfaces; general note; cut-off where not default | Chapter 8
-- x Threads by the right convention and fully designated; parts list complete | Chapter 9
-- x Revision recorded, changes located by grid reference, superseded prints withdrawn | Chapter 10
+viewbox: 0 0 640 876
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="12" width="600" height="78" rx="6"/>
+<circle class="bxa" cx="40" cy="29" r="11"/>
+<path class="la draw" pathLength="1" d="M34 29l4 4 8-8"/>
+<text class="txb" x="64" y="32">Drawing type, title, number and the standard it is prepared to are</text>
+<text class="txb" x="64" y="51">stated</text>
+<text class="tx" x="64" y="72">Chapter 1</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="20" y="98" width="600" height="78" rx="6"/>
+<circle class="bxa" cx="40" cy="115" r="11"/>
+<path class="la draw" pathLength="1" d="M34 115l4 4 8-8"/>
+<text class="txb" x="64" y="118">Sheet size, scale and "OR AS SHOWN" where needed; DO NOT SCALE;</text>
+<text class="txb" x="64" y="137">units</text>
+<text class="tx" x="64" y="158">Chapter 2</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="20" y="184" width="600" height="78" rx="6"/>
+<circle class="bxa" cx="40" cy="201" r="11"/>
+<path class="la draw" pathLength="1" d="M34 201l4 4 8-8"/>
+<text class="txb" x="64" y="204">Line group and lettering survive the usual reduction; coincident</text>
+<text class="txb" x="64" y="223">lines resolved</text>
+<text class="tx" x="64" y="244">Chapter 3</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="270" width="600" height="78" rx="6"/>
+<circle class="bxa" cx="40" cy="287" r="11"/>
+<path class="la draw" pathLength="1" d="M34 287l4 4 8-8"/>
+<text class="txb" x="64" y="290">Projection marked by symbol and words; views and labels follow the</text>
+<text class="txb" x="64" y="309">rules</text>
+<text class="tx" x="64" y="330">Chapter 4</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="20" y="356" width="600" height="78" rx="6"/>
+<circle class="bxa" cx="40" cy="373" r="11"/>
+<path class="la draw" pathLength="1" d="M34 373l4 4 8-8"/>
+<text class="txb" x="64" y="376">Sections labelled; same part, same hatching; fasteners and shafts</text>
+<text class="txb" x="64" y="395">unhatched</text>
+<text class="tx" x="64" y="416">Chapter 5</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bx" x="20" y="442" width="600" height="78" rx="6"/>
+<circle class="bxa" cx="40" cy="459" r="11"/>
+<path class="la draw" pathLength="1" d="M34 459l4 4 8-8"/>
+<text class="txb" x="64" y="462">Every feature sized and located once; no chain plus toleranced</text>
+<text class="txb" x="64" y="481">overall</text>
+<text class="tx" x="64" y="502">Chapter 6</text>
+</g>
+<g class="kf-a kd7">
+<rect class="bx" x="20" y="528" width="600" height="78" rx="6"/>
+<circle class="bxa" cx="40" cy="545" r="11"/>
+<path class="la draw" pathLength="1" d="M34 545l4 4 8-8"/>
+<text class="txb" x="64" y="548">General tolerance note present; functional features have explicit</text>
+<text class="txb" x="64" y="567">tolerances</text>
+<text class="tx" x="64" y="588">Chapter 7</text>
+</g>
+<g class="kf-a kd8">
+<rect class="bx" x="20" y="614" width="600" height="78" rx="6"/>
+<circle class="bxa" cx="40" cy="631" r="11"/>
+<path class="la draw" pathLength="1" d="M34 631l4 4 8-8"/>
+<text class="txb" x="64" y="634">Surface texture on functional surfaces; general note; cut-off</text>
+<text class="txb" x="64" y="653">where not default</text>
+<text class="tx" x="64" y="674">Chapter 8</text>
+</g>
+<g class="kf-a kd9">
+<rect class="bx" x="20" y="700" width="600" height="78" rx="6"/>
+<circle class="bxa" cx="40" cy="717" r="11"/>
+<path class="la draw" pathLength="1" d="M34 717l4 4 8-8"/>
+<text class="txb" x="64" y="720">Threads by the right convention and fully designated; parts list</text>
+<text class="txb" x="64" y="739">complete</text>
+<text class="tx" x="64" y="760">Chapter 9</text>
+</g>
+<g class="kf-a kd10">
+<rect class="bx" x="20" y="786" width="600" height="78" rx="6"/>
+<circle class="bxa" cx="40" cy="803" r="11"/>
+<path class="la draw" pathLength="1" d="M34 803l4 4 8-8"/>
+<text class="txb" x="64" y="806">Revision recorded, changes located by grid reference, superseded</text>
+<text class="txb" x="64" y="825">prints withdrawn</text>
+<text class="tx" x="64" y="846">Chapter 10</text>
+</g>
 ```
 
 A checklist is a floor, not a ceiling. It catches the faults the business has seen before. The checker's judgement is still needed for faults nobody has listed yet, which is why the business adds a line each time an error gets past the checklist into a supplier's workshop.
@@ -93,12 +198,34 @@ Two dimensioning conventions from AS 1100.101 help after a revision. A dimension
 This is an illustration. The housing drawing went through the following history:
 
 ```figure
-type: timeline
+type: svg
 title: Revision history of the housing drawing
+alt: Revision history of the housing drawing. Rev A: First release for prototypes, general tolerances only on the bore; drawn before the bearing data was final. Rev B: Bore limits 62.000 to 62.030 added; runout 0.02 to datum A added, grid C5 and D5; after the prototype failure in Chapter 7. Rev C: Overall length made auxiliary (77); lubrication hole angle note added, grid B3 and F2; after the queries in Chapters 4 and 6
 caption: This is an illustration. Each revision records what changed, where, when and who approved it.
-- Rev A | First release for prototypes | general tolerances only on the bore; drawn before the bearing data was final
-- *Rev B | Bore limits 62.000 to 62.030 added; runout 0.02 to datum A added | grid C5 and D5; after the prototype failure in Chapter 7
-- Rev C | Overall length made auxiliary (77); lubrication hole angle note added | grid B3 and F2; after the queries in Chapters 4 and 6
+viewbox: 0 0 640 259
+body:
+<path class="ln draw" pathLength="1" d="M184 14V249"/>
+<g class="kf-a kd1">
+<circle class="bxi" cx="184" cy="22" r="8"/>
+<text class="txa" x="166" y="27" text-anchor="end">Rev A</text>
+<text class="txb" x="206" y="27">First release for prototypes</text>
+<text class="tx" x="206" y="48">general tolerances only on the bore; drawn before the</text>
+<text class="tx" x="206" y="66">bearing data was final</text>
+</g>
+<g class="kf-a kd2">
+<circle class="fa pulse" cx="184" cy="103" r="8"/>
+<text class="txa" x="166" y="108" text-anchor="end">Rev B</text>
+<text class="txb" x="206" y="108">Bore limits 62.000 to 62.030 added; runout 0.02</text>
+<text class="txb" x="206" y="127">to datum A added</text>
+<text class="tx" x="206" y="148">grid C5 and D5; after the prototype failure in Chapter 7</text>
+</g>
+<g class="kf-a kd3">
+<circle class="bxi" cx="184" cy="185" r="8"/>
+<text class="txa" x="166" y="190" text-anchor="end">Rev C</text>
+<text class="txb" x="206" y="190">Overall length made auxiliary (77); lubrication</text>
+<text class="txb" x="206" y="209">hole angle note added</text>
+<text class="tx" x="206" y="230">grid B3 and F2; after the queries in Chapters 4 and 6</text>
+</g>
 ```
 
 Each revision went through the same check, approval and release steps as the first issue. The business's drawing register, a simple list of drawing numbers, titles and current revisions, was updated each time, and every supplier holding a print of the housing was sent the new revision with a note of what had changed.

@@ -18,19 +18,93 @@ Under D2D18 of NCC 2022 Volume One, the number of persons accommodated in a stor
 The values relevant to industrial buildings are:
 
 ```figure
-type: compare
+type: svg
 title: Area per person for industrial uses, NCC 2022 Table D2D18
-cols: Area per person | Notes
+alt: Area per person for industrial uses, NCC 2022 Table D2D18. Factory: machine shop, fitting shop or the like: Area per person 5 m²; Notes metal or glass working, such as cutting, finishing or fitting. Factory: fabrication and processing: Area per person 50 m²; Notes other than a machine or fitting shop. Factory: where fixed plant sets the occupancy: Area per person as set by the plant; Notes the use of the plant or equipment governs. Workshop for maintenance staff: Area per person 30 m² |; Notes . Office: Area per person 10 m²; Notes including document copying. Storage space: Area per person 30 m² |; Notes . Plant room for ventilation, electrical or other services: Area per person 30 m² |; Notes . Plant room for boilers or power plant: Area per person 50 m² |; Notes . Kitchen, laboratory or laundry: Area per person 10 m² |; Notes
 caption: Base values from Table D2D18 of NCC 2022 Volume One. State variations may add or change entries; NSW's variations add entertainment uses and leave these values unchanged.
-- *Factory: machine shop, fitting shop or the like | 5 m² | metal or glass working, such as cutting, finishing or fitting
-- Factory: fabrication and processing | 50 m² | other than a machine or fitting shop
-- Factory: where fixed plant sets the occupancy | as set by the plant | the use of the plant or equipment governs
-- Workshop for maintenance staff | 30 m² |
-- Office | 10 m² | including document copying
-- Storage space | 30 m² |
-- Plant room for ventilation, electrical or other services | 30 m² |
-- Plant room for boilers or power plant | 50 m² |
-- Kitchen, laboratory or laundry | 10 m² |
+viewbox: 0 0 640 518
+body:
+<g class="kf-a kd1">
+<rect class="fs" x="20" y="10" width="600" height="33" rx="4"/>
+<text class="txb" x="249.8" y="31">Area per person</text>
+<text class="txb" x="398.5" y="31">Notes</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bxa" x="20" y="43" width="600" height="68" rx="4"/>
+<path class="lf" d="M20 111H620"/>
+<text class="txb" x="28" y="64">Factory: machine shop,</text>
+<text class="txb" x="28" y="83">fitting shop or the like</text>
+<text class="tx" x="249.8" y="64">5 m²</text>
+<text class="tx" x="398.5" y="64">metal or glass working, such</text>
+<text class="tx" x="398.5" y="82">as cutting, finishing or</text>
+<text class="tx" x="398.5" y="100">fitting</text>
+</g>
+<g class="kf-a kd3">
+<path class="lf" d="M20 163H620"/>
+<text class="txb" x="28" y="132">Factory: fabrication and</text>
+<text class="txb" x="28" y="151">processing</text>
+<text class="tx" x="249.8" y="132">50 m²</text>
+<text class="tx" x="398.5" y="132">other than a machine or</text>
+<text class="tx" x="398.5" y="150">fitting shop</text>
+</g>
+<g class="kf-a kd4">
+<path class="lf" d="M20 215H620"/>
+<text class="txb" x="28" y="184">Factory: where fixed</text>
+<text class="txb" x="28" y="203">plant sets the occupancy</text>
+<text class="tx" x="249.8" y="184">as set by the</text>
+<text class="tx" x="249.8" y="202">plant</text>
+<text class="tx" x="398.5" y="184">the use of the plant or</text>
+<text class="tx" x="398.5" y="202">equipment governs</text>
+</g>
+<g class="kf-a kd5">
+<path class="lf" d="M20 267H620"/>
+<text class="txb" x="28" y="236">Workshop for maintenance</text>
+<text class="txb" x="28" y="255">staff</text>
+<text class="tx" x="249.8" y="236">30 m² |</text>
+<text class="tx" x="398.5" y="236">
+</text>
+</g>
+<g class="kf-a kd6">
+<path class="lf" d="M20 300H620"/>
+<text class="txb" x="28" y="288">Office</text>
+<text class="tx" x="249.8" y="288">10 m²</text>
+<text class="tx" x="398.5" y="288">including document copying</text>
+</g>
+<g class="kf-a kd7">
+<path class="lf" d="M20 333H620"/>
+<text class="txb" x="28" y="321">Storage space</text>
+<text class="tx" x="249.8" y="321">30 m² |</text>
+<text class="tx" x="398.5" y="321">
+</text>
+</g>
+<g class="kf-a kd8">
+<path class="lf" d="M20 404H620"/>
+<text class="txb" x="28" y="354">Plant room for</text>
+<text class="txb" x="28" y="373">ventilation, electrical</text>
+<text class="txb" x="28" y="392">or other services</text>
+<text class="tx" x="249.8" y="354">30 m² |</text>
+<text class="tx" x="398.5" y="354">
+</text>
+</g>
+<g class="kf-a kd9">
+<path class="lf" d="M20 456H620"/>
+<text class="txb" x="28" y="425">Plant room for boilers</text>
+<text class="txb" x="28" y="444">or power plant</text>
+<text class="tx" x="249.8" y="425">50 m² |</text>
+<text class="tx" x="398.5" y="425">
+</text>
+</g>
+<g class="kf-a kd10">
+<path class="lf" d="M20 508H620"/>
+<text class="txb" x="28" y="477">Kitchen, laboratory or</text>
+<text class="txb" x="28" y="496">laundry</text>
+<text class="tx" x="249.8" y="477">10 m² |</text>
+<text class="tx" x="398.5" y="477">
+</text>
+</g>
+<rect class="lf" x="20" y="10" width="600" height="498" rx="4" fill="none"/>
+<path class="lf" d="M241.8 10V508"/>
+<path class="lf" d="M390.5 10V508"/>
 ```
 
 Notice the factor of ten between a machine or fitting shop at 5 m² per person and fabrication and processing at 50 m². The code treats a machine shop as a densely occupied space, with operators at each machine and fitters at benches. A fabrication bay with large workpieces and few people is treated as sparse. Which row you choose changes the answer by an order of magnitude, so the choice must follow how the space will actually be used.
@@ -57,15 +131,36 @@ This is an illustration. With the fire wall from Chapter 4, the office and the w
 The NCC does not state a rounding rule for part persons. Rounding up is the conservative choice and is what the running case does. Record your rounding so that the certifier can see it.
 
 ```figure
-type: bars
+type: svg
 title: Persons assumed in the workshop compartment by use
-unit: persons
-max: 150
+alt: Persons assumed in the workshop compartment by use. Machine shop, 600 m² at 5 m² per person: 120 persons. Fabrication and assembly, 840 m² at 50 m² per person: 17 persons. Mezzanine storage, 190 m² at 30 m² per person: 7 persons. Owner's expected maximum on a shift: 30 persons
 caption: This is an illustration. The machine shop dominates the count because Table D2D18 assumes 5 m² per person there, against 50 m² per person for fabrication and processing.
-- *Machine shop, 600 m² at 5 m² per person | 120
-- Fabrication and assembly, 840 m² at 50 m² per person | 17
-- Mezzanine storage, 190 m² at 30 m² per person | 7
-- Owner's expected maximum on a shift | 30
+viewbox: 0 0 640 212
+body:
+<g class="kf-a kd1">
+<text class="txb" x="20" y="26">Machine shop, 600 m² at 5 m² per person</text>
+<rect class="fp" x="20" y="33" width="470" height="18" rx="3"/>
+<rect class="fa kf-growx" x="20" y="33" width="376" height="18" rx="3"/>
+<text class="txa" x="500" y="47">120 persons</text>
+</g>
+<g class="kf-a kd2">
+<text class="txb" x="20" y="75">Fabrication and assembly, 840 m² at 50 m² per person</text>
+<rect class="fp" x="20" y="82" width="470" height="18" rx="3"/>
+<rect class="fi kf-growx" x="20" y="82" width="53.3" height="18" rx="3"/>
+<text class="txb" x="500" y="96">17 persons</text>
+</g>
+<g class="kf-a kd3">
+<text class="txb" x="20" y="124">Mezzanine storage, 190 m² at 30 m² per person</text>
+<rect class="fp" x="20" y="131" width="470" height="18" rx="3"/>
+<rect class="fi kf-growx" x="20" y="131" width="21.9" height="18" rx="3"/>
+<text class="txb" x="500" y="145">7 persons</text>
+</g>
+<g class="kf-a kd4">
+<text class="txb" x="20" y="173">Owner's expected maximum on a shift</text>
+<rect class="fp" x="20" y="180" width="470" height="18" rx="3"/>
+<rect class="fi kf-growx" x="20" y="180" width="94" height="18" rx="3"/>
+<text class="txb" x="500" y="194">30 persons</text>
+</g>
 ```
 
 ## An error that halves the exit width
@@ -107,16 +202,43 @@ For the running case, the owner chose not to ask. The table's 144 gives a modest
 D2D8 sets the minimum width of exits and paths of travel. Each exit and path of travel must be at least 1 m wide, with larger minimums for some health and aged care uses. Above 100 persons, the aggregate width of the exits from a storey must grow with the number of people:
 
 ```figure
-type: formula
+type: svg
 title: Aggregate exit width, NCC 2022 D2D8
-formula: 101 to 200 persons: W = 1 m + 0.25 m for each 25 persons, or part, over 100
+alt: Aggregate exit width, NCC 2022 D2D8. Formula: 101 to 200 persons: W = 1 m + 0.25 m for each 25 persons, or part, over 100. W: minimum aggregate width of exits, m. persons: number of persons accommodated, from D2D18. Step: Workshop, 144 persons: 144 − 100 = 44, which is 2 parts of 25. Step: W = 1 + 2 × 0.25 = 1.5 m in aggregate. Step: Office, 25 persons: not more than 100, so each exit at least 1 m. Step: Estimator's 36 persons would have given 1 m only
 caption: From D2D8(2) and D2D8(3) of NCC 2022 Volume One. Above 200 persons, W = 2 m plus 0.5 m for each 75 persons or part over 200, or for each 60 persons or part where egress involves a stair or ramp steeper than 1 in 12. Doorways are covered separately by D2D9.
-- W | minimum aggregate width of exits, m
-- persons | number of persons accommodated, from D2D18
-step: Workshop, 144 persons: 144 − 100 = 44, which is 2 parts of 25
-step: W = 1 + 2 × 0.25 = 1.5 m in aggregate
-step: Office, 25 persons: not more than 100, so each exit at least 1 m
-step: Estimator's 36 persons would have given 1 m only
+viewbox: 0 0 640 270
+body:
+<g class="kf-a kd1">
+<rect class="bxa" x="20" y="10" width="600" height="60" rx="8"/>
+<text class="txb" x="320" y="35" text-anchor="middle">101 to 200 persons: W = 1 m + 0.25 m for each 25 persons, or part,</text>
+<text class="txb" x="320" y="54" text-anchor="middle">over 100</text>
+</g>
+<g class="kf-a kd2">
+<text class="txa" x="30" y="97">W</text>
+<text class="tx" x="196" y="97">minimum aggregate width of exits, m</text>
+<path class="lf" d="M20 107H620"/>
+</g>
+<g class="kf-a kd3">
+<text class="txa" x="30" y="126">persons</text>
+<text class="tx" x="196" y="126">number of persons accommodated, from D2D18</text>
+<path class="lf" d="M20 136H620"/>
+</g>
+<g class="kf-a kd4">
+<path class="ah" d="M28 152l12 7-12 7z"/>
+<text class="txb" x="52" y="164">Workshop, 144 persons: 144 − 100 = 44, which is 2 parts of 25</text>
+</g>
+<g class="kf-a kd5">
+<path class="ah" d="M28 181l12 7-12 7z"/>
+<text class="txb" x="52" y="193">W = 1 + 2 × 0.25 = 1.5 m in aggregate</text>
+</g>
+<g class="kf-a kd6">
+<path class="ah" d="M28 210l12 7-12 7z"/>
+<text class="txb" x="52" y="222">Office, 25 persons: not more than 100, so each exit at least 1 m</text>
+</g>
+<g class="kf-a kd7">
+<path class="ah" d="M28 239l12 7-12 7z"/>
+<text class="txb" x="52" y="251">Estimator's 36 persons would have given 1 m only</text>
+</g>
 ```
 
 The running case workshop has three personnel exits, each with a path at least 1 m wide, so the aggregate is 3 m against a requirement of 1.5 m. The width requirement is met with a large margin, which is useful because Chapter 6 shows that the number and position of the exits are driven by travel distance rather than width.
@@ -138,15 +260,54 @@ Machine layouts create a subtler version of the same problem. A new machine tool
 The running case marks the required paths of travel on the floor with yellow lines and includes them in the weekly housekeeping check. That is a work health and safety practice rather than a code requirement, but it protects the code compliance the owner paid for.
 
 ```figure
-type: checklist
+type: svg
 title: Occupant and width record for the running case
+alt: Occupant and width record for the running case. Done: Machine shop 600 m² at 5 m² per person, 120. Done: Fabrication and assembly 840 m² at 50 m² per person, 17, rounded up. Done: Mezzanine store 190 m² at 30 m² per person, 7, rounded up. Done: Workshop 144 persons, aggregate exit width 1.5 m required, 3 m provided. Done: Office 25 persons, each exit at least 1 m, provided. Open: Rounding of part persons agreed with the certifier, to confirm
 caption: This is an illustration. Areas are measured on the classification plan; deductions follow D2D18.
-- x Machine shop 600 m² at 5 m² per person | 120
-- x Fabrication and assembly 840 m² at 50 m² per person | 17, rounded up
-- x Mezzanine store 190 m² at 30 m² per person | 7, rounded up
-- x Workshop 144 persons, aggregate exit width 1.5 m required | 3 m provided
-- x Office 25 persons, each exit at least 1 m | provided
-- ? Rounding of part persons agreed with the certifier | to confirm
+viewbox: 0 0 640 418
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="12" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="29" r="11"/>
+<path class="la draw" pathLength="1" d="M34 29l4 4 8-8"/>
+<text class="txb" x="64" y="32">Machine shop 600 m² at 5 m² per person</text>
+<text class="tx" x="64" y="53">120</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="20" y="79" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="96" r="11"/>
+<path class="la draw" pathLength="1" d="M34 96l4 4 8-8"/>
+<text class="txb" x="64" y="99">Fabrication and assembly 840 m² at 50 m² per person</text>
+<text class="tx" x="64" y="120">17, rounded up</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="20" y="146" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="163" r="11"/>
+<path class="la draw" pathLength="1" d="M34 163l4 4 8-8"/>
+<text class="txb" x="64" y="166">Mezzanine store 190 m² at 30 m² per person</text>
+<text class="tx" x="64" y="187">7, rounded up</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="213" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="230" r="11"/>
+<path class="la draw" pathLength="1" d="M34 230l4 4 8-8"/>
+<text class="txb" x="64" y="233">Workshop 144 persons, aggregate exit width 1.5 m required</text>
+<text class="tx" x="64" y="254">3 m provided</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="20" y="280" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="297" r="11"/>
+<path class="la draw" pathLength="1" d="M34 297l4 4 8-8"/>
+<text class="txb" x="64" y="300">Office 25 persons, each exit at least 1 m</text>
+<text class="tx" x="64" y="321">provided</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bxi" x="20" y="347" width="600" height="59" rx="6"/>
+<circle class="bxi" cx="40" cy="364" r="11"/>
+<text class="txa" x="40" y="369" text-anchor="middle">?</text>
+<text class="txb" x="64" y="367">Rounding of part persons agreed with the certifier</text>
+<text class="tx" x="64" y="388">to confirm</text>
+</g>
 ```
 
 ## Exercise: convert the fabrication area to machining

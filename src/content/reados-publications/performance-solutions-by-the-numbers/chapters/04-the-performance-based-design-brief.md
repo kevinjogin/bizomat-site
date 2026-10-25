@@ -16,13 +16,44 @@ This chapter explains what the code requires of the brief, builds one for the ru
 A2G2(4) of NCC 2022 Volume One sets out the steps of a Performance Solution:
 
 ```figure
-type: steps
+type: svg
 title: The four steps of a Performance Solution, NCC 2022 A2G2(4)
+alt: The four steps of a Performance Solution, NCC 2022 A2G2(4). 1. Prepare a performance-based design brief: in consultation with relevant stakeholders. 2. Carry out the analysis: as proposed by the brief. 3. Evaluate the results: against the acceptance criteria in the brief. 4. Prepare a final report: Performance Requirements, methods, steps, confirmation and any conditions or limitations
 caption: Summarised from NCC 2022 Volume One. The brief in step 1 fixes the method and the acceptance criteria used in steps 2 and 3.
-- *Prepare a performance-based design brief | in consultation with relevant stakeholders
-- Carry out the analysis | as proposed by the brief
-- Evaluate the results | against the acceptance criteria in the brief
-- Prepare a final report | Performance Requirements, methods, steps, confirmation and any conditions or limitations
+viewbox: 0 0 640 320
+body:
+<path class="la draw" pathLength="1" d="M34 58.5V101.5"/>
+<path class="la draw" pathLength="1" d="M34 129.5V172.5"/>
+<path class="la draw" pathLength="1" d="M34 200.5V252.5"/>
+<g class="kf-a kd1">
+<rect class="bxa" x="58" y="14" width="562" height="61" rx="6"/>
+<circle class="fa" cx="34" cy="44.5" r="14"/>
+<text class="txb" x="34" y="49.5" text-anchor="middle">1</text>
+<text class="txb" x="74" y="36">Prepare a performance-based design brief</text>
+<text class="tx" x="74" y="57">in consultation with relevant stakeholders</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="58" y="85" width="562" height="61" rx="6"/>
+<circle class="bxi" cx="34" cy="115.5" r="14"/>
+<text class="txb" x="34" y="120.5" text-anchor="middle">2</text>
+<text class="txb" x="74" y="107">Carry out the analysis</text>
+<text class="tx" x="74" y="128">as proposed by the brief</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="58" y="156" width="562" height="61" rx="6"/>
+<circle class="bxi" cx="34" cy="186.5" r="14"/>
+<text class="txb" x="34" y="191.5" text-anchor="middle">3</text>
+<text class="txb" x="74" y="178">Evaluate the results</text>
+<text class="tx" x="74" y="199">against the acceptance criteria in the brief</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="58" y="227" width="562" height="79" rx="6"/>
+<circle class="bxi" cx="34" cy="266.5" r="14"/>
+<text class="txb" x="34" y="271.5" text-anchor="middle">4</text>
+<text class="txb" x="74" y="249">Prepare a final report</text>
+<text class="tx" x="74" y="270">Performance Requirements, methods, steps, confirmation and any conditions or</text>
+<text class="tx" x="74" y="288">limitations</text>
+</g>
 ```
 
 The NCC defines the performance-based design brief as a report that sets out the scope of work for the performance-based analysis, the technical basis for the analysis, and the acceptance criteria for any relevant Performance Solution, as agreed by the stakeholders. Three things in that definition matter: the brief defines scope, it defines the technical basis, and it is agreed. A brief written by the engineer alone and attached to the final report does not meet the definition.
@@ -81,14 +112,59 @@ A brief should also not contain the answer. Phrases such as "the analysis will d
 A scenario is a description of a fire: where it starts, what it burns and how it develops. For a comparative analysis, the same scenarios are applied to the reference and the proposal. The brief for the running case selected four, each chosen to challenge a different part of the argument.
 
 ```figure
-type: compare
+type: svg
 title: Design fire scenarios in the running case brief
-cols: Why it was chosen | What it tests
+alt: Design fire scenarios in the running case brief. A. Packaging fire under the mezzanine: Why it was chosen smoke rises directly beneath the occupants; What it tests detection time and exposure on the mezzanine. B. Fire near the proposal's stair foot: Why it was chosen the single stair could be threatened; What it tests the value of the 3 m clear zone at the stair foot. C. Fire near the reference stair foot: Why it was chosen the DTS layout's stair lands in the fabrication area; What it tests fairness: the reference faces the same test. D. Fire on the mezzanine among the shelving: Why it was chosen occupants are in the room of fire origin; What it tests whether a longer walk past the fire is acceptable
 caption: This is an illustration. Real scenario selection is the fire engineer's responsibility and should draw on recognised guidance for the building type.
-- A. Packaging fire under the mezzanine | smoke rises directly beneath the occupants | detection time and exposure on the mezzanine
-- B. Fire near the proposal's stair foot | the single stair could be threatened | the value of the 3 m clear zone at the stair foot
-- C. Fire near the reference stair foot | the DTS layout's stair lands in the fabrication area | fairness: the reference faces the same test
-- *D. Fire on the mezzanine among the shelving | occupants are in the room of fire origin | whether a longer walk past the fire is acceptable
+viewbox: 0 0 640 296
+body:
+<g class="kf-a kd1">
+<rect class="fs" x="20" y="10" width="600" height="33" rx="4"/>
+<text class="txb" x="219.8" y="31">Why it was chosen</text>
+<text class="txb" x="426.3" y="31">What it tests</text>
+</g>
+<g class="kf-a kd2">
+<path class="lf" d="M20 95H620"/>
+<text class="txb" x="28" y="64">A. Packaging fire</text>
+<text class="txb" x="28" y="83">under the mezzanine</text>
+<text class="tx" x="219.8" y="64">smoke rises directly</text>
+<text class="tx" x="219.8" y="82">beneath the occupants</text>
+<text class="tx" x="426.3" y="64">detection time and</text>
+<text class="tx" x="426.3" y="82">exposure on the mezzanine</text>
+</g>
+<g class="kf-a kd3">
+<path class="lf" d="M20 147H620"/>
+<text class="txb" x="28" y="116">B. Fire near the</text>
+<text class="txb" x="28" y="135">proposal's stair foot</text>
+<text class="tx" x="219.8" y="116">the single stair could be</text>
+<text class="tx" x="219.8" y="134">threatened</text>
+<text class="tx" x="426.3" y="116">the value of the 3 m clear</text>
+<text class="tx" x="426.3" y="134">zone at the stair foot</text>
+</g>
+<g class="kf-a kd4">
+<path class="lf" d="M20 215H620"/>
+<text class="txb" x="28" y="168">C. Fire near the</text>
+<text class="txb" x="28" y="187">reference stair foot</text>
+<text class="tx" x="219.8" y="168">the DTS layout's stair</text>
+<text class="tx" x="219.8" y="186">lands in the fabrication</text>
+<text class="tx" x="219.8" y="204">area</text>
+<text class="tx" x="426.3" y="168">fairness: the reference</text>
+<text class="tx" x="426.3" y="186">faces the same test</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bxa" x="20" y="215" width="600" height="71" rx="4"/>
+<path class="lf" d="M20 286H620"/>
+<text class="txb" x="28" y="236">D. Fire on the</text>
+<text class="txb" x="28" y="255">mezzanine among the</text>
+<text class="txb" x="28" y="274">shelving</text>
+<text class="tx" x="219.8" y="236">occupants are in the room</text>
+<text class="tx" x="219.8" y="254">of fire origin</text>
+<text class="tx" x="426.3" y="236">whether a longer walk past</text>
+<text class="tx" x="426.3" y="254">the fire is acceptable</text>
+</g>
+<rect class="lf" x="20" y="10" width="600" height="276" rx="4" fill="none"/>
+<path class="lf" d="M211.8 10V286"/>
+<path class="lf" d="M418.3 10V286"/>
 ```
 
 Scenario D deserves comment. When the fire is on the mezzanine itself, occupants may have to walk towards or past it to reach the only stair. A longer route makes that more likely. The brief therefore required the analysis to consider where on the mezzanine a fire could start relative to the route, not just how long the route is. Chapter 7 returns to it.
@@ -98,15 +174,62 @@ Scenario D deserves comment. When the fire is on the mezzanine itself, occupants
 Every number used in the analysis should appear in the brief with its source, before results exist. For a real project, the sources would be recognised fire engineering data and guidance, chosen and justified by the engineer. In this book, the inputs are teaching assumptions, chosen to make the arithmetic visible.
 
 ```figure
-type: stats
+type: svg
 title: Teaching inputs for the comparative escape-time check
+alt: Teaching inputs for the comparative escape-time check. 120 s, Time to become aware of a fire, no detection (cue-based awareness on the mezzanine). 60 s, Time to become aware, with detection and a local alarm (added by the proposal). 60 s, Pre-movement time once aware (same in reference and proposal). 1.0 m/s, Walking speed on the flat (mezzanine and workshop floor). 0.5 m/s, Travel speed along the stair nosings (descending one flight). 1.0 person per second, Flow onto the stair (queue for the last of 7 people)
 caption: This is an illustration. These are not design values. A real brief cites recognised data for each and explains why it suits the occupants and building.
-- *120 s | Time to become aware of a fire, no detection | cue-based awareness on the mezzanine
-- 60 s | Time to become aware, with detection and a local alarm | added by the proposal
-- 60 s | Pre-movement time once aware | same in reference and proposal
-- 1.0 m/s | Walking speed on the flat | mezzanine and workshop floor
-- 0.5 m/s | Travel speed along the stair nosings | descending one flight
-- 1.0 person per second | Flow onto the stair | queue for the last of 7 people
+viewbox: 0 0 640 320
+body:
+<g class="kf-a kd1">
+<rect class="bxa" x="20" y="10" width="192" height="153" rx="8"/>
+<circle class="fa pulse" cx="198" cy="24" r="5"/>
+<text class="txa" x="32" y="36">120 s</text>
+<text class="txb" x="32" y="61">Time to become aware</text>
+<text class="txb" x="32" y="80">of a fire, no</text>
+<text class="txb" x="32" y="99">detection</text>
+<text class="tx" x="32" y="120">cue-based awareness on</text>
+<text class="tx" x="32" y="138">the mezzanine</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="224" y="10" width="192" height="153" rx="8"/>
+<text class="txa" x="236" y="36">60 s</text>
+<text class="txb" x="236" y="61">Time to become</text>
+<text class="txb" x="236" y="80">aware, with</text>
+<text class="txb" x="236" y="99">detection and a</text>
+<text class="txb" x="236" y="118">local alarm</text>
+<text class="tx" x="236" y="139">added by the proposal</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="428" y="10" width="192" height="153" rx="8"/>
+<text class="txa" x="440" y="36">60 s</text>
+<text class="txb" x="440" y="61">Pre-movement time</text>
+<text class="txb" x="440" y="80">once aware</text>
+<text class="tx" x="440" y="101">same in reference and</text>
+<text class="tx" x="440" y="119">proposal</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="175" width="192" height="133" rx="8"/>
+<text class="txa" x="32" y="201">1.0 m/s</text>
+<text class="txb" x="32" y="226">Walking speed on the</text>
+<text class="txb" x="32" y="245">flat</text>
+<text class="tx" x="32" y="266">mezzanine and workshop</text>
+<text class="tx" x="32" y="284">floor</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="224" y="175" width="192" height="133" rx="8"/>
+<text class="txa" x="236" y="201">0.5 m/s</text>
+<text class="txb" x="236" y="226">Travel speed along</text>
+<text class="txb" x="236" y="245">the stair nosings</text>
+<text class="tx" x="236" y="266">descending one flight</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bx" x="428" y="175" width="192" height="133" rx="8"/>
+<text class="txa" x="440" y="201">1.0 person per</text>
+<text class="txa" x="440" y="220">second</text>
+<text class="txb" x="440" y="245">Flow onto the stair</text>
+<text class="tx" x="440" y="266">queue for the last of 7</text>
+<text class="tx" x="440" y="284">people</text>
+</g>
 ```
 
 Two features of the table matter more than the values. First, the inputs that differ between reference and proposal are few: only the time to become aware, because detection is part of the proposal. Everything else is identical, as Chapter 3 requires. Second, each input will be varied in the sensitivity analysis, so the brief also states the ranges, which stops anyone choosing a range after seeing which way the result moves.
@@ -138,15 +261,50 @@ The brief is agreed when the stakeholders say so in writing. In the running case
 Agreement is not the end of the brief's life. Analysis sometimes reveals that an input is wrong or a scenario is missing. When that happens, the brief should be changed openly: the engineer records what changed, why, and whether any results already produced are affected, and the stakeholders confirm the change. In the running case, the operations manager's late disclosure of export crates staged on the mezzanine (Chapter 2) arrived after the first brief draft. It was handled as a formal amendment that added fire load to scenario D, with a note that no results had yet been produced. A brief that changes silently during analysis has the same weakness as no brief at all: nobody can tell whether the criteria were set before or after the answer was known.
 
 ```figure
-type: checklist
+type: svg
 title: Brief agreement record for the running case
+alt: Brief agreement record for the running case. Done: Scope: D2D5(3) on the mezzanine only. Done: Requirement register attached and reviewed by the owner. Done: Approach and references fixed: DTS limit primary, DTS alternative sensitivity. Done: Scenarios A to D, inputs with sources, acceptance criteria 1 to 5. Done: Sensitivity ranges stated, including detection unavailable. Done: Written agreement from owner, designer, certifier and maintenance contractor
 caption: This is an illustration. Analysis starts only when every line is ticked.
-- x Scope: D2D5(3) on the mezzanine only
-- x Requirement register attached and reviewed by the owner
-- x Approach and references fixed: DTS limit primary, DTS alternative sensitivity
-- x Scenarios A to D, inputs with sources, acceptance criteria 1 to 5
-- x Sensitivity ranges stated, including detection unavailable
-- x Written agreement from owner, designer, certifier and maintenance contractor
+viewbox: 0 0 640 336
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="12" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="29" r="11"/>
+<path class="la draw" pathLength="1" d="M34 29l4 4 8-8"/>
+<text class="txb" x="64" y="32">Scope: D2D5(3) on the mezzanine only</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="20" y="59" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="76" r="11"/>
+<path class="la draw" pathLength="1" d="M34 76l4 4 8-8"/>
+<text class="txb" x="64" y="79">Requirement register attached and reviewed by the owner</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="20" y="106" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="123" r="11"/>
+<path class="la draw" pathLength="1" d="M34 123l4 4 8-8"/>
+<text class="txb" x="64" y="126">Approach and references fixed: DTS limit primary, DTS alternative</text>
+<text class="txb" x="64" y="145">sensitivity</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="172" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="189" r="11"/>
+<path class="la draw" pathLength="1" d="M34 189l4 4 8-8"/>
+<text class="txb" x="64" y="192">Scenarios A to D, inputs with sources, acceptance criteria 1 to 5</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="20" y="219" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="236" r="11"/>
+<path class="la draw" pathLength="1" d="M34 236l4 4 8-8"/>
+<text class="txb" x="64" y="239">Sensitivity ranges stated, including detection unavailable</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bx" x="20" y="266" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="283" r="11"/>
+<path class="la draw" pathLength="1" d="M34 283l4 4 8-8"/>
+<text class="txb" x="64" y="286">Written agreement from owner, designer, certifier and maintenance</text>
+<text class="txb" x="64" y="305">contractor</text>
+</g>
 ```
 
 ## Exercise: write an acceptance criterion

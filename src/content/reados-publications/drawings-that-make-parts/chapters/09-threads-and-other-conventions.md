@@ -22,14 +22,77 @@ Clause 9.3.1 adds the convention for **repeated features**: where identical feat
 AS 1100.101 clause 9.3.2 says screw threads are specified by the relevant standard and represented by convention. The convention relies on the two line widths from Chapter 3, so that crests and roots can be told apart:
 
 ```figure
-type: compare
+type: svg
 title: Representing screw threads, AS 1100.101 clause 9.3.2
-cols: Crests | Roots | Other lines
+alt: Representing screw threads, AS 1100.101 clause 9.3.2. End view: Crests full circle, Type A; Roots arc of a circle, Type B, with a gap of about 30° to 45°; Other lines none. Side view, external thread: Crests straight lines, Type A; Roots straight lines, Type B, for the full thread length; Other lines runout, if shown, Type B at 30° to the axis. Side view, internal thread in section: Crests straight lines, Type A; Roots straight lines, Type B, for the full thread length; Other lines runout, if shown, at 30° to the axis. Side view, internal thread not sectioned: Crests hidden lines; Roots hidden lines; Other lines runout, if shown, as hidden lines at 30°
 caption: Summarised from AS 1100.101-1992. Type A is a wide continuous line, Type B narrow continuous, and the hidden-line types are dashed. The same conventions apply to all thread forms; a thread other than a V-form also needs a section or detail showing its form.
-- End view | full circle, Type A | arc of a circle, Type B, with a gap of about 30° to 45° | none
-- Side view, external thread | straight lines, Type A | straight lines, Type B, for the full thread length | runout, if shown, Type B at 30° to the axis
-- *Side view, internal thread in section | straight lines, Type A | straight lines, Type B, for the full thread length | runout, if shown, at 30° to the axis
-- Side view, internal thread not sectioned | hidden lines | hidden lines | runout, if shown, as hidden lines at 30°
+viewbox: 0 0 640 290
+- End view | Crests: full circle, Type A; Roots: arc of a circle, Type B, with a gap of about 30° to 45°; Other lines: none
+- Side view, external thread | Crests: straight lines, Type A; Roots: straight lines, Type B, for the full thread length; Other lines: runout, if shown, Type B at 30° to the axis
+- Side view, internal thread in section | Crests: straight lines, Type A; Roots: straight lines, Type B, for the full thread length; Other lines: runout, if shown, at 30° to the axis
+- Side view, internal thread not sectioned | Crests: hidden lines; Roots: hidden lines; Other lines: runout, if shown, as hidden lines at 30°
+body:
+<g class="kf-a kd1">
+<circle class="li" cx="100" cy="120" r="50"/>
+<path class="ln draw" pathLength="1" d="M113.7 82.4A40 40 0 1 1 86.3 82.4"/>
+<path class="cl" d="M30 120H170M100 50V190"/>
+<text class="txb" x="100" y="215" text-anchor="middle">End view</text>
+<text class="txs" x="100" y="232" text-anchor="middle">crest: full wide circle;</text>
+<text class="txs" x="100" y="248" text-anchor="middle">root: narrow arc with a 30°</text>
+<text class="txs" x="100" y="264" text-anchor="middle">to 45° gap</text>
+</g>
+<g class="kf-a kd2">
+<rect class="li" x="210" y="80" width="170" height="80"/>
+<path class="ln" d="M210 92H340M210 148H340"/>
+<path class="li" d="M340 80V160"/>
+<path class="ln" d="M340 92l14 -10M340 148l14 10"/>
+<path class="cl" d="M196 120H394"/>
+<text class="txb" x="295" y="215" text-anchor="middle">External thread, side view</text>
+<text class="txs" x="295" y="232" text-anchor="middle">crests wide outside, roots</text>
+<text class="txs" x="295" y="248" text-anchor="middle">narrow inside; wide line at the</text>
+<text class="txs" x="295" y="264" text-anchor="middle">limit of full thread; runout at</text>
+<text class="txs" x="295" y="280" text-anchor="middle">30°</text>
+</g>
+<g class="kf-a kd3">
+<clipPath id="{id}-c1">
+<path d="M430 80H600V160H430V136H560V104H430Z"/>
+</clipPath>
+<g clip-path="url(#{id}-c1)">
+<path class="ln" d="M350 160L430 80"/>
+<path class="ln" d="M362 160L442 80"/>
+<path class="ln" d="M374 160L454 80"/>
+<path class="ln" d="M386 160L466 80"/>
+<path class="ln" d="M398 160L478 80"/>
+<path class="ln" d="M410 160L490 80"/>
+<path class="ln" d="M422 160L502 80"/>
+<path class="ln" d="M434 160L514 80"/>
+<path class="ln" d="M446 160L526 80"/>
+<path class="ln" d="M458 160L538 80"/>
+<path class="ln" d="M470 160L550 80"/>
+<path class="ln" d="M482 160L562 80"/>
+<path class="ln" d="M494 160L574 80"/>
+<path class="ln" d="M506 160L586 80"/>
+<path class="ln" d="M518 160L598 80"/>
+<path class="ln" d="M530 160L610 80"/>
+<path class="ln" d="M542 160L622 80"/>
+<path class="ln" d="M554 160L634 80"/>
+<path class="ln" d="M566 160L646 80"/>
+<path class="ln" d="M578 160L658 80"/>
+<path class="ln" d="M590 160L670 80"/>
+<path class="ln" d="M602 160L682 80"/>
+<path class="ln" d="M614 160L694 80"/>
+<path class="ln" d="M626 160L706 80"/>
+</g>
+<rect class="bxa" x="430" y="80" width="170" height="80"/>
+<path class="li" d="M430 104H560M430 136H560"/>
+<path class="ln" d="M430 96H560M430 144H560"/>
+<path class="li" d="M560 96V144"/>
+<path class="cl" d="M416 120H614"/>
+<text class="txa" x="515" y="215" text-anchor="middle">Internal thread in section</text>
+<text class="txs" x="515" y="232" text-anchor="middle">crests (minor diameter) wide,</text>
+<text class="txs" x="515" y="248" text-anchor="middle">roots narrow; if not sectioned,</text>
+<text class="txs" x="515" y="264" text-anchor="middle">both are hidden lines</text>
+</g>
 ```
 
 The limit of useful thread length is shown by a wide line across the major diameter if it is visible, or a hidden line if it is hidden. The key idea is that the crest line is always wide and the root line always narrow. On an external thread, the crest is the outside diameter, so the wide line is outside. On an internal thread, the crest is the inside, at the minor diameter, so in a section the wide line is inside and the narrow line outside. A reader can tell an external thread from an internal one at a glance, provided the drawing follows the convention.
@@ -57,20 +120,76 @@ On the shaft drawing, the designer required centre holes at both ends, designate
 AS 1100.201 gives conventions for several more feature types:
 
 ```figure
-type: tree
+type: svg
 title: Further conventions in AS 1100.201
+alt: Further conventions in AS 1100.201. Springs, Section 7. Drawn in conventional representation: with the essential data in a table on the drawing or on a separate data sheet. Leaf springs: number of leaves, leaf dimensions, load and deflection, material, tests, process, accuracy, finish, identification. Gears, Section 8. Teeth not normally drawn: tooth data on the drawing or a data sheet, with terms to AS 2075. Rolling element bearings, Section 10. Two methods: depending on how much detail is needed. Seals, Section 11. General representation: a square with a freestanding diagonal cross centred in it, not touching the outline. Knurling, Section 12. A few narrow lines on the cylindrical feature: with the knurl specified in a note
 caption: Summarised from AS 1100.201-1992 Sections 7, 8 and 10 to 12. In each case the convention shows the feature; data on the drawing or a data sheet specifies it.
-- Springs, Section 7
-  - Drawn in conventional representation | with the essential data in a table on the drawing or on a separate data sheet
-  - Leaf springs | number of leaves, leaf dimensions, load and deflection, material, tests, process, accuracy, finish, identification
-- Gears, Section 8
-  - Teeth not normally drawn | tooth data on the drawing or a data sheet, with terms to AS 2075
-- Rolling element bearings, Section 10
-  - Two methods | depending on how much detail is needed
-- Seals, Section 11
-  - *General representation | a square with a freestanding diagonal cross centred in it, not touching the outline
-- Knurling, Section 12
-  - A few narrow lines on the cylindrical feature | with the knurl specified in a note
+viewbox: 0 0 640 615
+body:
+<path class="ln draw" pathLength="1" d="M34 47V82H54"/>
+<path class="ln draw" pathLength="1" d="M34 47V152H54"/>
+<path class="ln draw" pathLength="1" d="M34 230V264H54"/>
+<path class="ln draw" pathLength="1" d="M34 352V377.5H54"/>
+<path class="ln draw" pathLength="1" d="M34 438V472H54"/>
+<path class="ln draw" pathLength="1" d="M34 541V576H54"/>
+<g class="kf-a kd1">
+<rect class="bxi" x="20" y="12" width="600" height="35" rx="6"/>
+<text class="txb" x="32" y="33">Springs, Section 7</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="54" y="55" width="566" height="54" rx="6"/>
+<text class="txb" x="66" y="76">Drawn in conventional</text>
+<text class="txb" x="66" y="95">representation</text>
+<text class="tx" x="304" y="76">with the essential data in a table on the</text>
+<text class="tx" x="304" y="94">drawing or on a separate data sheet</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="54" y="117" width="566" height="70" rx="6"/>
+<text class="txb" x="66" y="138">Leaf springs</text>
+<text class="tx" x="304" y="138">number of leaves, leaf dimensions, load and</text>
+<text class="tx" x="304" y="156">deflection, material, tests, process,</text>
+<text class="tx" x="304" y="174">accuracy, finish, identification</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bxi" x="20" y="195" width="600" height="35" rx="6"/>
+<text class="txb" x="32" y="216">Gears, Section 8</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="54" y="238" width="566" height="52" rx="6"/>
+<text class="txb" x="66" y="259">Teeth not normally drawn</text>
+<text class="tx" x="304" y="259">tooth data on the drawing or a data sheet,</text>
+<text class="tx" x="304" y="277">with terms to AS 2075</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bxi" x="20" y="298" width="600" height="54" rx="6"/>
+<text class="txb" x="32" y="319">Rolling element bearings,</text>
+<text class="txb" x="32" y="338">Section 10</text>
+</g>
+<g class="kf-a kd7">
+<rect class="bx" x="54" y="360" width="566" height="35" rx="6"/>
+<text class="txb" x="66" y="381">Two methods</text>
+<text class="tx" x="304" y="381">depending on how much detail is needed</text>
+</g>
+<g class="kf-a kd8">
+<rect class="bxi" x="20" y="403" width="600" height="35" rx="6"/>
+<text class="txb" x="32" y="424">Seals, Section 11</text>
+</g>
+<g class="kf-a kd9">
+<rect class="bxa" x="54" y="446" width="566" height="52" rx="6"/>
+<text class="txb" x="66" y="467">General representation</text>
+<text class="tx" x="304" y="467">a square with a freestanding diagonal cross</text>
+<text class="tx" x="304" y="485">centred in it, not touching the outline</text>
+</g>
+<g class="kf-a kd10">
+<rect class="bxi" x="20" y="506" width="600" height="35" rx="6"/>
+<text class="txb" x="32" y="527">Knurling, Section 12</text>
+</g>
+<g class="kf-a kd11">
+<rect class="bx" x="54" y="549" width="566" height="54" rx="6"/>
+<text class="txb" x="66" y="570">A few narrow lines on the</text>
+<text class="txb" x="66" y="589">cylindrical feature</text>
+<text class="tx" x="304" y="570">with the knurl specified in a note</text>
+</g>
 ```
 
 The pattern is the same in each case. The convention keeps the drawing readable; the specification, in a note, a table or a data sheet, carries the information the maker needs. A gear drawn without its tooth data, or a spring drawn without its load and deflection requirements, is a picture, not a specification.
@@ -96,15 +215,52 @@ The correction was to replace the library block with one following AS 1100.101 f
 Two more families of convention appear on mechanical drawings, and both are covered by standards outside this book's supplied sources. AS 1100.201 refers readers to AS 1101.3 for welding symbols and how to apply them, which was not read for this book; a fabricated part should carry weld symbols to that standard, or to the standard the contract names, rather than notes such as "weld all round" that leave the size and type of weld to the welder. AS 1100.201 Section 6 gives a simplified representation of pipelines in orthogonal and isometric projection, in which pipes are drawn as single lines and fittings and valves as symbols. Both conventions follow the same principle as threads and gears: show the feature simply and specify it exactly.
 
 ```figure
-type: checklist
+type: svg
 title: Convention check on the housing and cartridge drawings
+alt: Convention check on the housing and cartridge drawings. Done: Threads drawn by the internal or external convention to match the designation. Done: Thread depth and drill depth both given for blind tapped holes. Done: Repeated features shown once in full, the rest by centre lines, with the count stated. Done: Centre hole symbols on turned parts: required, permitted or not permitted. Done: Bearings, seals and screws in the assembly shown conventionally and fully specified in the parts list. Open: Weld symbols to the named standard on any fabricated part
 caption: This is an illustration of the lines added to the business's drawing checklist after the tapped-hole error.
-- x Threads drawn by the internal or external convention to match the designation
-- x Thread depth and drill depth both given for blind tapped holes
-- x Repeated features shown once in full, the rest by centre lines, with the count stated
-- x Centre hole symbols on turned parts: required, permitted or not permitted
-- x Bearings, seals and screws in the assembly shown conventionally and fully specified in the parts list
-- ? Weld symbols to the named standard on any fabricated part
+viewbox: 0 0 640 374
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="12" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="29" r="11"/>
+<path class="la draw" pathLength="1" d="M34 29l4 4 8-8"/>
+<text class="txb" x="64" y="32">Threads drawn by the internal or external convention to match the</text>
+<text class="txb" x="64" y="51">designation</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="20" y="78" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="95" r="11"/>
+<path class="la draw" pathLength="1" d="M34 95l4 4 8-8"/>
+<text class="txb" x="64" y="98">Thread depth and drill depth both given for blind tapped holes</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="20" y="125" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="142" r="11"/>
+<path class="la draw" pathLength="1" d="M34 142l4 4 8-8"/>
+<text class="txb" x="64" y="145">Repeated features shown once in full, the rest by centre lines,</text>
+<text class="txb" x="64" y="164">with the count stated</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="191" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="208" r="11"/>
+<path class="la draw" pathLength="1" d="M34 208l4 4 8-8"/>
+<text class="txb" x="64" y="211">Centre hole symbols on turned parts: required, permitted or not</text>
+<text class="txb" x="64" y="230">permitted</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="20" y="257" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="274" r="11"/>
+<path class="la draw" pathLength="1" d="M34 274l4 4 8-8"/>
+<text class="txb" x="64" y="277">Bearings, seals and screws in the assembly shown conventionally</text>
+<text class="txb" x="64" y="296">and fully specified in the parts list</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bxi" x="20" y="323" width="600" height="39" rx="6"/>
+<circle class="bxi" cx="40" cy="340" r="11"/>
+<text class="txa" x="40" y="345" text-anchor="middle">?</text>
+<text class="txb" x="64" y="343">Weld symbols to the named standard on any fabricated part</text>
+</g>
 ```
 
 ## Conventions and the parts list

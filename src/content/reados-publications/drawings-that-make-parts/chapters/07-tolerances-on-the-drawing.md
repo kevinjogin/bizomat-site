@@ -18,15 +18,44 @@ AS 1100.201 Appendix A, which is informative, gives a guide to general toleranci
 For linear dimensions, the appendix gives four grades, fine, medium, coarse and very coarse, designated f, m, c and v, with permissible deviations that grow with the size of the dimension. For the medium grade, selected values from its Table A1 are:
 
 ```figure
-type: compare
+type: svg
 title: Medium grade linear deviations, AS 1100.201 Table A1 (selected)
-cols: Permissible deviation, mm
+alt: Medium grade linear deviations, AS 1100.201 Table A1 (selected). Over 3 up to 6 mm: Permissible deviation, mm ±0.1. Over 6 up to 30 mm: Permissible deviation, mm ±0.2. Over 30 up to 120 mm: Permissible deviation, mm ±0.3. Over 120 up to 400 mm: Permissible deviation, mm ±0.5. Over 400 up to 1 000 mm: Permissible deviation, mm ±0.8
 caption: From the informative Appendix A of AS 1100.201-1992, medium grade (m). The table also gives fine, coarse and very coarse grades and sizes up to 4 000 mm.
-- Over 3 up to 6 mm | ±0.1
-- Over 6 up to 30 mm | ±0.2
-- *Over 30 up to 120 mm | ±0.3
-- Over 120 up to 400 mm | ±0.5
-- Over 400 up to 1 000 mm | ±0.8
+viewbox: 0 0 640 218
+body:
+<g class="kf-a kd1">
+<rect class="fs" x="20" y="10" width="600" height="33" rx="4"/>
+<text class="txb" x="323.6" y="31">Permissible deviation, mm</text>
+</g>
+<g class="kf-a kd2">
+<path class="lf" d="M20 76H620"/>
+<text class="txb" x="28" y="64">Over 3 up to 6 mm</text>
+<text class="tx" x="323.6" y="64">±0.1</text>
+</g>
+<g class="kf-a kd3">
+<path class="lf" d="M20 109H620"/>
+<text class="txb" x="28" y="97">Over 6 up to 30 mm</text>
+<text class="tx" x="323.6" y="97">±0.2</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bxa" x="20" y="109" width="600" height="33" rx="4"/>
+<path class="lf" d="M20 142H620"/>
+<text class="txb" x="28" y="130">Over 30 up to 120 mm</text>
+<text class="tx" x="323.6" y="130">±0.3</text>
+</g>
+<g class="kf-a kd5">
+<path class="lf" d="M20 175H620"/>
+<text class="txb" x="28" y="163">Over 120 up to 400 mm</text>
+<text class="tx" x="323.6" y="163">±0.5</text>
+</g>
+<g class="kf-a kd6">
+<path class="lf" d="M20 208H620"/>
+<text class="txb" x="28" y="196">Over 400 up to 1 000 mm</text>
+<text class="tx" x="323.6" y="196">±0.8</text>
+</g>
+<rect class="lf" x="20" y="10" width="600" height="198" rx="4" fill="none"/>
+<path class="lf" d="M315.6 10V208"/>
 ```
 
 The appendix also covers broken edges (external radii and chamfer heights), angular dimensions by the length of the shorter side, and general geometric tolerances in three classes, H, K and L, for straightness, flatness, parallelism, perpendicularity and runout. It notes that parallelism is limited by the size tolerance or the flatness value, whichever is greater, and that for perpendicularity the longer side of the angle is taken as the datum.
@@ -61,13 +90,41 @@ The running case business therefore has two drawings for the housing: a casting 
 The designer then went through the housing feature by feature and asked, for each one: does the general tolerance let this feature do its job? Four features failed the test.
 
 ```figure
-type: checklist
+type: svg
 title: Features of the housing that need explicit tolerances
+alt: Features of the housing that need explicit tolerances. Done: Bearing bore Ø62, general ±0.3 would let the bearing rattle or jam; explicit limits 62.000 to 62.030. Done: Spigot Ø100, locates the housing on the pump; explicit limits 99.964 to 99.986. Done: Bearing seat depth 18, sets the end cap clamp; explicit ±0.05 instead of general ±0.2. Done: Bore runout relative to the spigot, general 0.2 too large for the seal; explicit 0.02
 caption: This is an illustration. Limits are illustrative values chosen by the designer from function and the bearing maker's guidance, not values from AS 1100.
-- x Bearing bore Ø62 | general ±0.3 would let the bearing rattle or jam; explicit limits 62.000 to 62.030
-- x Spigot Ø100 | locates the housing on the pump; explicit limits 99.964 to 99.986
-- x Bearing seat depth 18 | sets the end cap clamp; explicit ±0.05 instead of general ±0.2
-- x Bore runout relative to the spigot | general 0.2 too large for the seal; explicit 0.02
+viewbox: 0 0 640 302
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="12" width="600" height="77" rx="6"/>
+<circle class="bxa" cx="40" cy="29" r="11"/>
+<path class="la draw" pathLength="1" d="M34 29l4 4 8-8"/>
+<text class="txb" x="64" y="32">Bearing bore Ø62</text>
+<text class="tx" x="64" y="53">general ±0.3 would let the bearing rattle or jam; explicit limits 62.000 to</text>
+<text class="tx" x="64" y="71">62.030</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="20" y="97" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="114" r="11"/>
+<path class="la draw" pathLength="1" d="M34 114l4 4 8-8"/>
+<text class="txb" x="64" y="117">Spigot Ø100</text>
+<text class="tx" x="64" y="138">locates the housing on the pump; explicit limits 99.964 to 99.986</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="20" y="164" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="181" r="11"/>
+<path class="la draw" pathLength="1" d="M34 181l4 4 8-8"/>
+<text class="txb" x="64" y="184">Bearing seat depth 18</text>
+<text class="tx" x="64" y="205">sets the end cap clamp; explicit ±0.05 instead of general ±0.2</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="231" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="248" r="11"/>
+<path class="la draw" pathLength="1" d="M34 248l4 4 8-8"/>
+<text class="txb" x="64" y="251">Bore runout relative to the spigot</text>
+<text class="tx" x="64" y="272">general 0.2 too large for the seal; explicit 0.02</text>
+</g>
 ```
 
 Each explicit tolerance overrides the general note for that feature only. Everything else on the drawing stays under the general note. In the end, four tolerances are written on the drawing instead of thirty, and those four are the ones the inspector must check carefully.
@@ -87,15 +144,42 @@ Two more conventions from AS 1100.101 appear on the housing.
 **Maximum material condition.** AS 1100.101 clause 8.5 explains that where a geometric tolerance is applied on a maximum material condition (MMC) basis, the tolerance applies at the MMC size and grows as the feature departs from it. For a hole, MMC is the smallest permitted size. This is an illustration. The flange holes are Ø9 with limits 9.0 to 9.2, and their position tolerance is Ø0.2 at MMC. A hole made at 9.0 must be within a Ø0.2 zone of its true position. A hole made at 9.2 has departed from MMC by 0.2, so its permitted position zone grows to **0.2 + 0.2 = Ø0.4**. The extra tolerance costs nothing functionally, because a larger hole gives the bolt more clearance.
 
 ```figure
-type: formula
+type: svg
 title: Position tolerance on a hole specified at MMC
-formula: permitted zone = stated tolerance + (actual hole size − MMC size)
+alt: Position tolerance on a hole specified at MMC. Formula: permitted zone = stated tolerance + (actual hole size − MMC size). stated tolerance: the position tolerance in the feature control frame, Ø mm. MMC size: smallest permitted hole size, mm. Step: Hole at 9.0: zone = 0.2 + (9.0 − 9.0) = Ø0.2. Step: Hole at 9.1: zone = 0.2 + (9.1 − 9.0) = Ø0.3. Step: Hole at 9.2: zone = 0.2 + (9.2 − 9.0) = Ø0.4
 caption: This is an illustration of the principle in AS 1100.101 clause 8.5, using the housing's flange holes.
+viewbox: 0 0 640 320
+- Formula | permitted zone = stated tolerance + (actual hole size − MMC size)
 - stated tolerance | the position tolerance in the feature control frame, Ø mm
 - MMC size | smallest permitted hole size, mm
-step: Hole at 9.0: zone = 0.2 + (9.0 − 9.0) = Ø0.2
-step: Hole at 9.1: zone = 0.2 + (9.1 − 9.0) = Ø0.3
-step: Hole at 9.2: zone = 0.2 + (9.2 − 9.0) = Ø0.4
+- Worked | Hole at 9.0: zone = 0.2 + (9.0 − 9.0) = Ø0.2
+- Worked | Hole at 9.1: zone = 0.2 + (9.1 − 9.0) = Ø0.3
+- Worked | Hole at 9.2: zone = 0.2 + (9.2 − 9.0) = Ø0.4
+body:
+<g class="kf-a kd1">
+<circle class="bx" cx="110" cy="140" r="99"/>
+<circle class="fs pulse" cx="110" cy="140" r="10"/>
+<path class="cl" d="M-10 140H230M110 20V260"/>
+<text class="txb" x="110" y="285" text-anchor="middle">hole Ø9.0</text>
+<text class="txa" x="110" y="305" text-anchor="middle">zone Ø0.2</text>
+</g>
+<g class="kf-a kd2">
+<circle class="bx" cx="320" cy="140" r="100.1"/>
+<circle class="fs pulse" cx="320" cy="140" r="15"/>
+<path class="cl" d="M200 140H440M320 20V260"/>
+<text class="txb" x="320" y="285" text-anchor="middle">hole Ø9.1</text>
+<text class="txa" x="320" y="305" text-anchor="middle">zone Ø0.3</text>
+</g>
+<g class="kf-a kd3">
+<circle class="bx" cx="530" cy="140" r="101.2"/>
+<circle class="bxa pulse" cx="530" cy="140" r="20"/>
+<path class="cl" d="M410 140H650M530 20V260"/>
+<text class="txb" x="530" y="285" text-anchor="middle">hole Ø9.2</text>
+<text class="txa" x="530" y="305" text-anchor="middle">zone Ø0.4</text>
+</g>
+<g class="kf-a kd4">
+<text class="txs" x="320" y="20" text-anchor="middle">Hole drawn 22 × size; position zone drawn 100 × size; MMC is the smallest hole, Ø9.0</text>
+</g>
 ```
 
 ## The error: a bearing bore under the general note

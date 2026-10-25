@@ -32,15 +32,42 @@ This is an illustration. Two DTS-compliant reference layouts were available for 
 The DTS limit layout is the more common choice for a reference, and it is defensible: the code deems any layout up to 20 m acceptable, so the proposal need only match the worst acceptable case. The DTS alternative layout is more conservative, because it compares the proposal with what the owner would actually build otherwise. The brief for the running case uses the DTS limit as the primary reference and the DTS alternative as a sensitivity check, and it says so in writing before any analysis.
 
 ```figure
-type: compare
+type: svg
 title: Proposal and reference layouts for the mezzanine
-cols: DTS limit reference | Proposal, east-end stair
+alt: Proposal and reference layouts for the mezzanine. Farthest point to the top riser: DTS limit reference 20.0 m, the D2D5(3) limit; Proposal, east-end stair 28.0 m. Line of nosings, 17 risers: DTS limit reference 5.03 m; Proposal, east-end stair 5.03 m. Stair foot to door to open space: DTS limit reference 9.54 m to P3; Proposal, east-end stair 9.19 m to P2. Total route to open space: DTS limit reference 34.6 m; Proposal, east-end stair 42.2 m. Stair foot location: DTS limit reference in the fabrication and assembly area; Proposal, east-end stair beside exit P2, outside forklift routes
 caption: This is an illustration. Distances are along the shelving aisles to the top riser, then along the stair nosings, then across the workshop floor to the nearest door to open space.
-- Farthest point to the top riser | 20.0 m, the D2D5(3) limit | 28.0 m
-- Line of nosings, 17 risers | 5.03 m | 5.03 m
-- Stair foot to door to open space | 9.54 m to P3 | 9.19 m to P2
-- *Total route to open space | 34.6 m | 42.2 m
-- Stair foot location | in the fabrication and assembly area | beside exit P2, outside forklift routes
+viewbox: 0 0 640 220
+- Farthest point to the top riser | DTS limit reference: 20.0 m, the D2D5(3) limit; Proposal, east-end stair: 28.0 m
+- Line of nosings, 17 risers | DTS limit reference: 5.03 m; Proposal, east-end stair: 5.03 m
+- Stair foot to door to open space | DTS limit reference: 9.54 m to P3; Proposal, east-end stair: 9.19 m to P2
+- Total route to open space | DTS limit reference: 34.6 m; Proposal, east-end stair: 42.2 m
+- Stair foot location | DTS limit reference: in the fabrication and assembly area; Proposal, east-end stair: beside exit P2, outside forklift routes
+body:
+<g class="kf-a kd1">
+<text class="txb" x="20" y="26" text-anchor="start">DTS limit reference</text>
+<rect class="fi kf-growx" x="20" y="34" width="240" height="22"/>
+<text class="txs" x="140" y="72" text-anchor="middle">mezzanine 20.0</text>
+<rect class="bxa kf-growx" x="260" y="34" width="60.4" height="22"/>
+<text class="txs" x="290.2" y="72" text-anchor="middle">stair 5.03</text>
+<rect class="fs kf-growx" x="320.4" y="34" width="114.5" height="22"/>
+<text class="txs" x="377.6" y="72" text-anchor="middle">floor 9.54 to P3</text>
+<text class="txb" x="443.2" y="50" text-anchor="start">34.6 m</text>
+</g>
+<g class="kf-a kd2">
+<text class="txb" x="20" y="104" text-anchor="start">Proposal, east stair</text>
+<rect class="fa kf-growx" x="20" y="112" width="336" height="22"/>
+<text class="txs" x="188" y="150" text-anchor="middle">mezzanine 28.0</text>
+<rect class="bxa kf-growx" x="356" y="112" width="60.4" height="22"/>
+<text class="txs" x="386.2" y="150" text-anchor="middle">stair 5.03</text>
+<rect class="fs kf-growx" x="416.4" y="112" width="110.3" height="22"/>
+<text class="txs" x="471.5" y="150" text-anchor="middle">floor 9.19 to P2</text>
+<text class="txa" x="534.4" y="128" text-anchor="start">42.2 m</text>
+</g>
+<g class="kf-a kd3">
+<path class="lf dsh" d="M260 22V164"/>
+<text class="txs" x="260" y="180" text-anchor="middle">D2D5(3) limit 20 m on the mezzanine</text>
+<text class="txs" x="20" y="204" text-anchor="start">Route lengths in metres: along the aisles to the top riser, along the nosings, then across the floor to a door to open space.</text>
+</g>
 ```
 
 ## What must stay the same
@@ -62,14 +89,30 @@ The first comparison prepared for the running case contained a quiet error. It m
 The error was the measurement basis. The DTS limit is a distance measured as D2D20 requires, around built obstructions. With floor-fixed shelving, a person on the mezzanine walks along the aisles, which makes the proposal's route 9 m south plus 19 m east, **28 m**. A DTS layout must meet 20 m on the same basis. Comparing a straight-line proposal distance with an along-the-aisle limit understated the difference by a factor of eight: the real increase is 8 m, not 1 m.
 
 ```figure
-type: bars
+type: svg
 title: The same proposal measured two ways against the 20 m reference
-unit: m
-max: 30
+alt: The same proposal measured two ways against the 20 m reference. DTS limit reference: 20 m. Proposal, straight line from the far corner: 21 m. Proposal, along the shelving aisles: 28 m
 caption: This is an illustration. Only the along-the-aisle measure is comparable with the DTS limit, because D2D20 measures around built obstructions.
-- DTS limit reference | 20
-- Proposal, straight line from the far corner | 21
-- *Proposal, along the shelving aisles | 28
+viewbox: 0 0 640 163
+body:
+<g class="kf-a kd1">
+<text class="txb" x="20" y="26">DTS limit reference</text>
+<rect class="fp" x="20" y="33" width="470" height="18" rx="3"/>
+<rect class="fi kf-growx" x="20" y="33" width="313.3" height="18" rx="3"/>
+<text class="txb" x="500" y="47">20 m</text>
+</g>
+<g class="kf-a kd2">
+<text class="txb" x="20" y="75">Proposal, straight line from the far corner</text>
+<rect class="fp" x="20" y="82" width="470" height="18" rx="3"/>
+<rect class="fi kf-growx" x="20" y="82" width="329" height="18" rx="3"/>
+<text class="txb" x="500" y="96">21 m</text>
+</g>
+<g class="kf-a kd3">
+<text class="txb" x="20" y="124">Proposal, along the shelving aisles</text>
+<rect class="fp" x="20" y="131" width="470" height="18" rx="3"/>
+<rect class="fa kf-growx" x="20" y="131" width="438.7" height="18" rx="3"/>
+<text class="txa" x="500" y="145">28 m</text>
+</g>
 ```
 
 The error was found by a peer reviewer who redrew both routes on the shelving plan. It is a common failure: the proposal is measured optimistically and the reference pessimistically, or vice versa, and the comparison quietly favours whichever outcome the author expected. The defence is a single, written measurement method applied to both.
@@ -130,15 +173,53 @@ A useful side-effect of building a reference is that it shows the size of the pr
 Knowing the scale early helps everyone decide how much analysis the question deserves. A departure measured in seconds for seven trained people suggests a proportionate, comparative analysis. A departure measured in minutes for hundreds of members of the public would suggest something much more rigorous.
 
 ```figure
-type: checklist
+type: svg
 title: Fair comparison rules agreed for the running case
+alt: Fair comparison rules agreed for the running case. Done: Primary reference: DTS limit layout at 20 m; sensitivity reference: the DTS alternative at 18.5 m. Done: Both measured along the shelving aisles, then the stair nosings, then the floor route. Done: Identical building, occupants, fires, baseline systems and calculation inputs. Done: Compensating measures are part of the solution and must be maintained. Done: Stair foot clear zone of 3 m secured as a condition, not assumed. Open: Peer reviewer to redraw both routes before the analysis is accepted
 caption: This is an illustration. The rules are written into the design brief and applied to both layouts.
-- x Primary reference: DTS limit layout at 20 m; sensitivity reference: the DTS alternative at 18.5 m
-- x Both measured along the shelving aisles, then the stair nosings, then the floor route
-- x Identical building, occupants, fires, baseline systems and calculation inputs
-- x Compensating measures are part of the solution and must be maintained
-- x Stair foot clear zone of 3 m secured as a condition, not assumed
-- ? Peer reviewer to redraw both routes before the analysis is accepted
+viewbox: 0 0 640 393
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="12" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="29" r="11"/>
+<path class="la draw" pathLength="1" d="M34 29l4 4 8-8"/>
+<text class="txb" x="64" y="32">Primary reference: DTS limit layout at 20 m; sensitivity</text>
+<text class="txb" x="64" y="51">reference: the DTS alternative at 18.5 m</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="20" y="78" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="95" r="11"/>
+<path class="la draw" pathLength="1" d="M34 95l4 4 8-8"/>
+<text class="txb" x="64" y="98">Both measured along the shelving aisles, then the stair nosings,</text>
+<text class="txb" x="64" y="117">then the floor route</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="20" y="144" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="161" r="11"/>
+<path class="la draw" pathLength="1" d="M34 161l4 4 8-8"/>
+<text class="txb" x="64" y="164">Identical building, occupants, fires, baseline systems and</text>
+<text class="txb" x="64" y="183">calculation inputs</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="210" width="600" height="58" rx="6"/>
+<circle class="bxa" cx="40" cy="227" r="11"/>
+<path class="la draw" pathLength="1" d="M34 227l4 4 8-8"/>
+<text class="txb" x="64" y="230">Compensating measures are part of the solution and must be</text>
+<text class="txb" x="64" y="249">maintained</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="20" y="276" width="600" height="39" rx="6"/>
+<circle class="bxa" cx="40" cy="293" r="11"/>
+<path class="la draw" pathLength="1" d="M34 293l4 4 8-8"/>
+<text class="txb" x="64" y="296">Stair foot clear zone of 3 m secured as a condition, not assumed</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bxi" x="20" y="323" width="600" height="58" rx="6"/>
+<circle class="bxi" cx="40" cy="340" r="11"/>
+<text class="txa" x="40" y="345" text-anchor="middle">?</text>
+<text class="txb" x="64" y="343">Peer reviewer to redraw both routes before the analysis is</text>
+<text class="txb" x="64" y="362">accepted</text>
+</g>
 ```
 
 ## Exercise: compare against the alternative layout

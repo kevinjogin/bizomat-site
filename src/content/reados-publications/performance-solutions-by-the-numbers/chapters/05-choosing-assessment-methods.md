@@ -25,14 +25,63 @@ For a Deemed-to-Satisfy Solution, A2G3(2) lists only two: evidence of suitabilit
 The list has not changed in substance for two decades. The supplied BCA 2004, in clause A0.9, listed documentary evidence, Verification Methods (the code's own or those the appropriate authority accepts), comparison with the DTS Provisions and Expert Judgement. What has changed is the framework around them: the brief, the evaluation against agreed criteria and the final report in A2G2(4).
 
 ```figure
-type: compare
+type: svg
 title: The four Assessment Methods in NCC 2022 A2G2(2)
-cols: Good at | Limits
+alt: The four Assessment Methods in NCC 2022 A2G2(2). Evidence of suitability, Part A5: Good at showing that a product or system performs as tested or certified; Limits covers only the configuration tested or certified. Verification Method: Good at a defined test or calculation with stated criteria; Limits only where a suitable method exists and its conditions are met. Expert Judgement: Good at qualitative questions where no method or data exists; Limits only as good as the expert's competence and stated reasoning. Comparison with the DTS Provisions: Good at local departures where the DTS design is a fair benchmark; Limits needs a fair reference and consistent measurement
 caption: Summarised from NCC 2022 Volume One. Most real Performance Solutions combine two or more methods, each used where it is strongest.
-- Evidence of suitability, Part A5 | showing that a product or system performs as tested or certified | covers only the configuration tested or certified
-- Verification Method | a defined test or calculation with stated criteria | only where a suitable method exists and its conditions are met
-- Expert Judgement | qualitative questions where no method or data exists | only as good as the expert's competence and stated reasoning
-- *Comparison with the DTS Provisions | local departures where the DTS design is a fair benchmark | needs a fair reference and consistent measurement
+viewbox: 0 0 640 328
+body:
+<g class="kf-a kd1">
+<rect class="fs" x="20" y="10" width="600" height="33" rx="4"/>
+<text class="txb" x="197.6" y="31">Good at</text>
+<text class="txb" x="414.2" y="31">Limits</text>
+</g>
+<g class="kf-a kd2">
+<path class="lf" d="M20 114H620"/>
+<text class="txb" x="28" y="64">Evidence of</text>
+<text class="txb" x="28" y="83">suitability, Part</text>
+<text class="txb" x="28" y="102">A5</text>
+<text class="tx" x="197.6" y="64">showing that a product or</text>
+<text class="tx" x="197.6" y="82">system performs as tested or</text>
+<text class="tx" x="197.6" y="100">certified</text>
+<text class="tx" x="414.2" y="64">covers only the</text>
+<text class="tx" x="414.2" y="82">configuration tested or</text>
+<text class="tx" x="414.2" y="100">certified</text>
+</g>
+<g class="kf-a kd3">
+<path class="lf" d="M20 182H620"/>
+<text class="txb" x="28" y="135">Verification</text>
+<text class="txb" x="28" y="154">Method</text>
+<text class="tx" x="197.6" y="135">a defined test or</text>
+<text class="tx" x="197.6" y="153">calculation with stated</text>
+<text class="tx" x="197.6" y="171">criteria</text>
+<text class="tx" x="414.2" y="135">only where a suitable method</text>
+<text class="tx" x="414.2" y="153">exists and its conditions</text>
+<text class="tx" x="414.2" y="171">are met</text>
+</g>
+<g class="kf-a kd4">
+<path class="lf" d="M20 250H620"/>
+<text class="txb" x="28" y="203">Expert Judgement</text>
+<text class="tx" x="197.6" y="203">qualitative questions where</text>
+<text class="tx" x="197.6" y="221">no method or data exists</text>
+<text class="tx" x="414.2" y="203">only as good as the expert's</text>
+<text class="tx" x="414.2" y="221">competence and stated</text>
+<text class="tx" x="414.2" y="239">reasoning</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bxa" x="20" y="250" width="600" height="68" rx="4"/>
+<path class="lf" d="M20 318H620"/>
+<text class="txb" x="28" y="271">Comparison with</text>
+<text class="txb" x="28" y="290">the DTS Provisions</text>
+<text class="tx" x="197.6" y="271">local departures where the</text>
+<text class="tx" x="197.6" y="289">DTS design is a fair</text>
+<text class="tx" x="197.6" y="307">benchmark</text>
+<text class="tx" x="414.2" y="271">needs a fair reference and</text>
+<text class="tx" x="414.2" y="289">consistent measurement</text>
+</g>
+<rect class="lf" x="20" y="10" width="600" height="308" rx="4" fill="none"/>
+<path class="lf" d="M189.6 10V318"/>
+<path class="lf" d="M406.2 10V318"/>
 ```
 
 ## What a Verification Method looks like
@@ -42,14 +91,45 @@ The NCC defines a Verification Method as a test, inspection, calculation or othe
 C1V1 is a compact example. It verifies part of C1P2, the requirement to avoid fire spreading between buildings on adjoining allotments. It does so by setting out the radiant heat flux a building may emit at various distances from the boundary, and the heat flux a building must be able to withstand without ignition. C1V2 does the same for buildings on the same allotment, with different distances.
 
 ```figure
-type: compare
+type: svg
 title: Heat flux limits in two NCC 2022 Verification Methods
-cols: C1V1, adjoining allotments | C1V2, same allotment
+alt: Heat flux limits in two NCC 2022 Verification Methods. 80 kW/m²: C1V1, adjoining allotments at the boundary; C1V2, same allotment at 0 m. 40 kW/m²: C1V1, adjoining allotments at 1 m; C1V2, same allotment at 2 m. 20 kW/m²: C1V1, adjoining allotments at 3 m; C1V2, same allotment at 6 m. 10 kW/m²: C1V1, adjoining allotments at 6 m; C1V2, same allotment at 12 m
 caption: Values from Tables C1V1 and C1V2 of NCC 2022 Volume One, as summarised on NCC Online. Shown here only to illustrate how a Verification Method states its criteria numerically.
-- 80 kW/m² | at the boundary | at 0 m
-- 40 kW/m² | at 1 m | at 2 m
-- 20 kW/m² | at 3 m | at 6 m
-- 10 kW/m² | at 6 m | at 12 m
+viewbox: 0 0 640 204
+body:
+<g class="kf-a kd1">
+<rect class="fs" x="20" y="10" width="600" height="52" rx="4"/>
+<text class="txb" x="185.5" y="31">C1V1, adjoining</text>
+<text class="txb" x="185.5" y="50">allotments</text>
+<text class="txb" x="416.9" y="31">C1V2, same allotment</text>
+</g>
+<g class="kf-a kd2">
+<path class="lf" d="M20 95H620"/>
+<text class="txb" x="28" y="83">80 kW/m²</text>
+<text class="tx" x="185.5" y="83">at the boundary</text>
+<text class="tx" x="416.9" y="83">at 0 m</text>
+</g>
+<g class="kf-a kd3">
+<path class="lf" d="M20 128H620"/>
+<text class="txb" x="28" y="116">40 kW/m²</text>
+<text class="tx" x="185.5" y="116">at 1 m</text>
+<text class="tx" x="416.9" y="116">at 2 m</text>
+</g>
+<g class="kf-a kd4">
+<path class="lf" d="M20 161H620"/>
+<text class="txb" x="28" y="149">20 kW/m²</text>
+<text class="tx" x="185.5" y="149">at 3 m</text>
+<text class="tx" x="416.9" y="149">at 6 m</text>
+</g>
+<g class="kf-a kd5">
+<path class="lf" d="M20 194H620"/>
+<text class="txb" x="28" y="182">10 kW/m²</text>
+<text class="tx" x="185.5" y="182">at 6 m</text>
+<text class="tx" x="416.9" y="182">at 12 m</text>
+</g>
+<rect class="lf" x="20" y="10" width="600" height="184" rx="4" fill="none"/>
+<path class="lf" d="M177.5 10V194"/>
+<path class="lf" d="M408.9 10V194"/>
 ```
 
 Notice what the method provides: a quantity to calculate, the points at which to calculate it and the limits it must meet. A designer who follows it does not need to argue about what "avoid the spread of fire" means; the method has already turned the words into numbers.
@@ -67,14 +147,53 @@ The Fire Safety Verification Method is a whole-building approach. It is designed
 This is an illustration. The brief for the mezzanine stair uses three methods, each for the part of the argument it handles best:
 
 ```figure
-type: decision
+type: svg
 title: Assessment Methods for each part of the running case argument
-question: Which method demonstrates this part of the solution?
+alt: Assessment Methods for each part of the running case argument. Question: Which method demonstrates this part of the solution?. Escape time compared with the DTS reference: comparison with the DTS Provisions, supported by a stated time-line calculation, Chapters 3, 6 and 7. Detection, alarm and direction signs perform as specified: evidence of suitability under Part A5, Chapter 8. Stair foot clear zone reduces the chance of the route being blocked: Expert Judgement, with reasons, Chapter 9. Whole-building fire safety: not engineered; remains Deemed-to-Satisfy, outside the solution
 caption: This is an illustration. The combination and the reasons are written into the brief and repeated in the final report.
-- *Escape time compared with the DTS reference | comparison with the DTS Provisions, supported by a stated time-line calculation | Chapters 3, 6 and 7
-- Detection, alarm and direction signs perform as specified | evidence of suitability under Part A5 | Chapter 8
-- Stair foot clear zone reduces the chance of the route being blocked | Expert Judgement, with reasons | Chapter 9
-- Whole-building fire safety | not engineered; remains Deemed-to-Satisfy | outside the solution
+viewbox: 0 0 640 451
+body:
+<path class="la draw" pathLength="1" d="M320 53V69H36V131.5H40"/>
+<path class="ln draw" pathLength="1" d="M320 53V180H36V232.5H40"/>
+<path class="ln draw" pathLength="1" d="M320 53V271H36V323.5H40"/>
+<path class="ln draw" pathLength="1" d="M320 53V362H36V406.5H40"/>
+<g class="kf-a kd1">
+<rect class="bxa" x="40" y="10" width="560" height="43" rx="10"/>
+<circle class="fa pulse" cx="62" cy="31.5" r="10"/>
+<text class="txb" x="62" y="36.5" text-anchor="middle">?</text>
+<text class="txb" x="330" y="37" text-anchor="middle">Which method demonstrates this part of the solution?</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bxa" x="40" y="83" width="580" height="97" rx="8"/>
+<text class="txb" x="56" y="107">Escape time compared with</text>
+<text class="txb" x="56" y="126">the DTS reference</text>
+<text class="tx" x="316" y="107">comparison with the DTS Provisions,</text>
+<text class="tx" x="316" y="125">supported by a stated time-line</text>
+<text class="tx" x="316" y="143">calculation</text>
+<text class="txa" x="316" y="165">Chapters 3, 6 and 7</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="40" y="194" width="580" height="77" rx="8"/>
+<text class="txb" x="56" y="218">Detection, alarm and</text>
+<text class="txb" x="56" y="237">direction signs perform as</text>
+<text class="txb" x="56" y="256">specified</text>
+<text class="tx" x="316" y="218">evidence of suitability under Part A5</text>
+<text class="txa" x="316" y="240">Chapter 8</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="40" y="285" width="580" height="77" rx="8"/>
+<text class="txb" x="56" y="309">Stair foot clear zone</text>
+<text class="txb" x="56" y="328">reduces the chance of the</text>
+<text class="txb" x="56" y="347">route being blocked</text>
+<text class="tx" x="316" y="309">Expert Judgement, with reasons</text>
+<text class="txa" x="316" y="331">Chapter 9</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="40" y="376" width="580" height="61" rx="8"/>
+<text class="txb" x="56" y="400">Whole-building fire safety</text>
+<text class="tx" x="316" y="400">not engineered; remains Deemed-to-Satisfy</text>
+<text class="txa" x="316" y="422">outside the solution</text>
+</g>
 ```
 
 The time-line calculation in Chapter 6 is part of the comparison, not a separate Verification Method. It is a tool for comparing two designs on agreed inputs. It does not verify compliance with D1P4 in absolute terms, and it would not be presented as doing so.
@@ -132,15 +251,54 @@ The right combination is the lightest one that demonstrates every relevant requi
 Every requirement in the register from Chapter 2 now has a method beside it. That is the test of a complete method section: no requirement without a method, and no method without a requirement. A method listed with nothing to demonstrate is usually a sign of padding; a requirement with no method is a gap that a reviewer will find.
 
 ```figure
-type: checklist
+type: svg
 title: Method register for the running case
+alt: Method register for the running case. Done: D1P4 exits, comparison with the DTS Provisions, with sensitivity. Done: C1P4 safe conditions; C1P1 and C1P2, the same comparison; escape no slower than the reference. Done: E4P2 exit identification, evidence of suitability for signs; Expert Judgement on positions. Done: Detection and alarm, E4P3 and Part E2 if affected, evidence of suitability; system to the relevant standard. Done: Fire Safety Verification Method, considered; not used, as disproportionate to the departure. Open: Peer review of the Expert Judgement elements, Chapter 9
 caption: This is an illustration. Each line pairs a relevant Performance Requirement with the method that demonstrates it.
-- x D1P4 exits | comparison with the DTS Provisions, with sensitivity
-- x C1P4 safe conditions; C1P1 and C1P2 | the same comparison; escape no slower than the reference
-- x E4P2 exit identification | evidence of suitability for signs; Expert Judgement on positions
-- x Detection and alarm, E4P3 and Part E2 if affected | evidence of suitability; system to the relevant standard
-- x Fire Safety Verification Method | considered; not used, as disproportionate to the departure
-- ? Peer review of the Expert Judgement elements | Chapter 9
+viewbox: 0 0 640 418
+body:
+<g class="kf-a kd1">
+<rect class="bx" x="20" y="12" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="29" r="11"/>
+<path class="la draw" pathLength="1" d="M34 29l4 4 8-8"/>
+<text class="txb" x="64" y="32">D1P4 exits</text>
+<text class="tx" x="64" y="53">comparison with the DTS Provisions, with sensitivity</text>
+</g>
+<g class="kf-a kd2">
+<rect class="bx" x="20" y="79" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="96" r="11"/>
+<path class="la draw" pathLength="1" d="M34 96l4 4 8-8"/>
+<text class="txb" x="64" y="99">C1P4 safe conditions; C1P1 and C1P2</text>
+<text class="tx" x="64" y="120">the same comparison; escape no slower than the reference</text>
+</g>
+<g class="kf-a kd3">
+<rect class="bx" x="20" y="146" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="163" r="11"/>
+<path class="la draw" pathLength="1" d="M34 163l4 4 8-8"/>
+<text class="txb" x="64" y="166">E4P2 exit identification</text>
+<text class="tx" x="64" y="187">evidence of suitability for signs; Expert Judgement on positions</text>
+</g>
+<g class="kf-a kd4">
+<rect class="bx" x="20" y="213" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="230" r="11"/>
+<path class="la draw" pathLength="1" d="M34 230l4 4 8-8"/>
+<text class="txb" x="64" y="233">Detection and alarm, E4P3 and Part E2 if affected</text>
+<text class="tx" x="64" y="254">evidence of suitability; system to the relevant standard</text>
+</g>
+<g class="kf-a kd5">
+<rect class="bx" x="20" y="280" width="600" height="59" rx="6"/>
+<circle class="bxa" cx="40" cy="297" r="11"/>
+<path class="la draw" pathLength="1" d="M34 297l4 4 8-8"/>
+<text class="txb" x="64" y="300">Fire Safety Verification Method</text>
+<text class="tx" x="64" y="321">considered; not used, as disproportionate to the departure</text>
+</g>
+<g class="kf-a kd6">
+<rect class="bxi" x="20" y="347" width="600" height="59" rx="6"/>
+<circle class="bxi" cx="40" cy="364" r="11"/>
+<text class="txa" x="40" y="369" text-anchor="middle">?</text>
+<text class="txb" x="64" y="367">Peer review of the Expert Judgement elements</text>
+<text class="tx" x="64" y="388">Chapter 9</text>
+</g>
 ```
 
 ## Exercise: match a method to a claim
