@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -88,9 +88,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 444 tools with unique ids and every previously published id kept', () => {
+test('register: 447 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 444);
+  assert.equal(ids.length, 447);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -835,16 +835,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 329 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 332 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 329);
+  assert.equal(ids.length, 332);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -1386,4 +1386,29 @@ test('seventh handbook pass rejects impossible inputs', () => {
     ['stockpile-weight', { shape: 'rect', A: 8 }], ['bolt-working-strength-packed', { d: 3 }], ['press-flywheel-sizing', { tcut: 5 }], ['press-flywheel-sizing', { emode: 'energy', E: 0 }], ['draw-reductions', { d: 120 }],
   ];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Eighth handbook pass (handbook24): plastics gears, plastic–metal thermal mismatch and set-screw holding power.
+const usPlasticGearKW = (SsPsi: number, Fin: number, Y: number, Vfpm: number, P: number, Cs: number) => SsPsi * Fin * Y * Vfpm / (55 * (600 + Vfpm) * P * Cs) * 0.7457;
+const HB8_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['plastic-gear-power', {}, { kW: 10 * 0.308 * 1.5 * 40 * (Math.PI * 45 * 600 / 60000) / (327 * (3.05 + Math.PI * 45 * 600 / 60000) * 1.25) }],
+  ['plastic-gear-power', {}, { kW: usPlasticGearKW(40 / 0.0068948, 10 / 25.4, 0.308, Math.PI * 45 * 600 / 60000 * 196.85, 25.4 / 1.5, 1.25) }, 0.002], // metric and US forms agree
+  ['plastic-gear-power', { type: 'bevel' }, { kW: 10 * 0.308 * 1.5 * 40 * (Math.PI * 45 * 600 / 60000) / (327 * (3.05 + Math.PI * 45 * 600 / 60000) * 1.25) * 50 / 60 }],
+  ['plastic-thermal-mismatch', {}, { sigma: (11.7 - 80) * 1e-6 * 2000 * 40, dLrel: 68.3e-6 * 100 * 40 }],
+  ['plastic-thermal-mismatch', { emode: 'creep', dT: -40 }, { E: 1000, sigma: (11.7 - 80) * 1e-6 * 1000 * -40 }],
+  ['set-screw-holding', {}, { hp: 4.1, n: 1 }, 0.05], // handbook: ½-in. screw, 1-in. shaft, 1000 rpm
+  ['set-screw-holding', { d: 9.525 }, { hp: 2.1, n: 2 }, 0.05], // handbook: 3/8-in. screws, two needed for 3 hp
+  ['set-screw-holding', { d: 6.35 }, { Fh: 100 * 4.448222 }, 0.04 * 445], // handbook holding force ≈ 100 lb for ¼ in.
+];
+for (const [id, over, expected, tol] of HB8_CASES) test(`handbook reference example: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('eighth handbook pass: verdicts and guards', () => {
+  assert.equal(engine.run('plastic-thermal-mismatch', { allow: 5 }).text, 'STRESS TOO HIGH');
+  assert.equal(engine.run('set-screw-holding', { P: 10 }).checks[0].status, 'warn');
+  const bad = engine.run('plastic-gear-power', { type: 'bevel', C: 8 });
+  assert.equal(bad.text, 'CHECK INPUTS'); assert.equal(bad.primary, undefined);
 });
