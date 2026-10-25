@@ -360,3 +360,161 @@ Applied to every tool: units and bounds on every input, a guide with an input so
 | **Equivalent Annual Cost Comparison** `euac-compare` | OPTION B | Margin between options; Equal service; Model and application | 134–146 | Automated + reference value |
 | **Internal Rate of Return (Uneven Cash Flows)** `irr-uneven` | MEETS HURDLE RATE | NPV at hurdle rate; Cash flow evidence; Model and application | 140–144 | Automated + reference value |
 | **Interest and Equivalence Factors** `interest-factors` | CALCULATED | Rate basis; Model and application | 134–139 | Automated + reference value |
+
+## Machinery’s Handbook topic tools, second pass (added 25 October 2026)
+
+69 further MAKEOS calculators in batches handbook9–13 (`public/tools/{data,guides,calc}-handbook9…13.js`), same rules as the first pass: standard relations only, no handbook tables reproduced, page references as topic references, ratings and limits entered by the user. 41 reference cases cover handbook worked examples (surface finish feed, differential indexing for 67 divisions, helical milling change gears), ASME/ASTM values (½ NPT, ASTM E112 grain size) and hand calculations. WORKOS now holds 306 tools.
+
+### Geometry
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Helix (Coil) Developed Length** `helix-length` | CALCULATED | Material allowance; Model and application | 2060–2062, 304–320 | Automated |
+| **Tank and Vessel Volume with Heads** `vessel-head-volume` | CALCULATED | Head proportions; Model and application | 68–69, 82–87 | Automated + reference value |
+| **Linear Interpolation** `linear-interpolation` | CALCULATED | Within table range; Model and application | 121 | Automated + reference value |
+| **Circle Through Three Points** `circle-three-points` | CALCULATED | Point spread; Model and application | 40–48 | Automated + reference value |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **True Position with Bonus Tolerance** `true-position` | CONFORMS | Position within allowed tolerance; Size within limits; Datum reference frame; Model and application | 615–627 | Automated + reference value |
+| **Internal Taper Angle from Two Balls** `taper-balls` | CALCULATED | Ball contact; Model and application | 682–691 | Automated + reference value |
+| **Go and No-Go Gauge Sizes** `go-nogo-gauge` | CALCULATED | Production tolerance remaining; Gauge calibration; Model and application | 661–663, 705–708 | Automated + reference value |
+| **X-bar and R Control Chart Limits** `xbar-r-limits` | CALCULATED | Process stability; Model and application | 128–133 | Automated + reference value |
+| **Acceptance Sampling Probability (OC Curve)** `sampling-oc` | CALCULATED | Lot size; Model and application | 128–133 | Automated + reference value |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Toggle Joint Force** `toggle-joint` | CALCULATED | Small link angle; Model and application | 172–174 | Automated + reference value |
+| **Wedge Force with Friction** `wedge-force` | CALCULATED | Self-locking; Vibration; Model and application | 169–171 | Automated |
+| **Power Screw Raise and Lower Torque** `power-screw-torque` | CALCULATED | Self-locking; Starting friction; Model and application | 1921–1928, 2561–2568 | Automated |
+| **Band Brake Torque and Lever Force** `band-brake` | CALCULATED | Rotation direction; Lining pressure; Model and application | 2455–2457 | Automated |
+| **Single Shoe (Block) Brake** `shoe-brake` | CALCULATED | Self-locking; Lining pressure and heat; Model and application | 2455–2459 | Automated |
+| **Wire Rope Reeving: Line Pull and Safety Factor** `wire-rope-reeving` | ROPE AND SHEAVE OK | Rope safety factor; Sheave D/d; Lifting code; Model and application | 2613–2650 | Automated + reference value |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Cone Clutch Torque and Engaging Force** `cone-clutch` | CAPACITY SUFFICIENT | Torque capacity; Cone angle; Model and application | 2446–2449 | Automated + reference value |
+| **Induction Motor Synchronous Speed, Slip and Load** `motor-slip` | CALCULATED | Load level; Measurement; Model and application | 2569–2580 | Automated + reference value |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Rectangular Bar in Torsion** `rect-bar-torsion` | WITHIN ALLOWABLE | Shear stress; Model and application | 295–303 | Automated + reference value |
+| **Curved Beam and Hook Stress** `curved-beam` | WITHIN ALLOWABLE | Maximum fibre stress; Lifting standard; Model and application | 212–218, 257–260 | Automated |
+| **Tube Collapse under External Pressure** `tube-collapse` | ADEQUATE | Safety factor; Out-of-roundness and stiffener spacing; Model and application | 293–294 | Automated + reference value |
+| **Eccentrically Loaded Column (Secant Formula)** `eccentric-column` | ADEQUATE | Load factor to yield; Stress at applied load; Model and application | 281–287 | Automated + reference value |
+| **Impact Load on a Beam** `beam-impact` | WITHIN ALLOWABLE | Dynamic stress; Model and application | 278 | Automated |
+| **Section Properties: I, T, Channel and Angle** `section-shapes` | CALCULATED | Rolled sections; Model and application | 234–246 | Automated + reference value |
+| **Thin-Walled Closed Tube in Torsion** `thin-tube-torsion` | WITHIN ALLOWABLE | Shear stress; Thin-wall assumption; Model and application | 295–303 | Automated + reference value |
+| **Rotating Disc Stress and Burst Margin** `rotating-disc` | ADEQUATE | Safety factor; Stress raisers; Model and application | 187–190, 3000–3010 | Automated + reference value |
+| **Combined Axial and Biaxial Bending Stress** `axial-bending-stress` | WITHIN ALLOWABLE | Peak stress; Sign of stress; Model and application | 212–218 | Automated |
+
+### Springs
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Flat and Leaf Spring** `leaf-spring` | STRESS WITHIN ALLOWABLE | Bending stress; Small deflection; Model and application | 344–345 | Automated |
+| **Torsion Bar Spring** `torsion-bar` | STRESS WITHIN ALLOWABLE | Shear stress; End fittings; Model and application | 295–303, 344 | Automated |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **ASTM Grain Size Number** `grain-size` | CALCULATED | Method reporting; Model and application | 369–380 | Automated + reference value |
+| **Corrosion Rate from Mass Loss** `corrosion-rate` | CALCULATED | Localised corrosion; Model and application | 1500–1516 | Automated |
+| **Radiant Heat Loss** `radiant-heat` | CALCULATED | Convection; Model and application | 371–378 | Automated + reference value |
+| **Heat Loss from an Insulated Pipe** `insulated-pipe` | CALCULATED | Surface temperature; Model and application | 371–378 | Automated |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Bolt Stretch and Turn-of-Nut Angle** `bolt-stretch` | CALCULATED | Angle procedure; Model and application | 1521–1535 | Automated |
+| **Eccentrically Loaded Bolt Group** `bolt-group-eccentric` | BOLTS ADEQUATE | Critical bolt capacity; Plate and bearing; Model and application | 1535, 1720–1735 | Automated + reference value |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Acme and Trapezoidal Thread Dimensions** `acme-thread` | CALCULATED | Thread class; Model and application | 1921–1946 | Automated + reference value |
+| **NPT Pipe Thread Gauge Dimensions** `npt-thread` | CALCULATED | Gauging; Model and application | 1952–1975 | Automated + reference value |
+| **Differential Indexing on a Dividing Head** `differential-indexing` | DIFFERENTIAL INDEXING | Exact ratio; Idler arrangement; Model and application | 2107–2121 | Automated + reference value |
+| **Helical Milling Lead and Change Gears** `helical-milling` | APPROXIMATE TRAIN | Lead accuracy; Gear fit; Model and application | 2060–2062, 2205 | Automated + reference value |
+| **Thread Turning Infeed per Pass** `thread-infeed` | CALCULATED | Last pass infeed; Model and application | 2037–2042, 1289–1300 | Automated |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Planetary Gear Train** `planetary-gear` | ASSEMBLES | Equal planet spacing; Neighbouring planets clear; Model and application | 2211, 2122–2160 | Automated + reference value |
+| **Profile Shift and Working Centre Distance** `profile-shift` | CALCULATED | Pinion undercut; Gear undercut; Tooth tip thickness; Model and application | 2141–2160 | Automated + reference value |
+| **Spur Gear Contact Ratio** `contact-ratio` | CALCULATED | Contact ratio; Model and application | 2131–2160 | Automated + reference value |
+| **Spur Gear Dimensions (Diametral Pitch)** `dp-spur-gear` | CALCULATED | Fine pitch allowance; Model and application | 2131–2140, 2249–2251 | Automated |
+| **Roller Chain Sprocket Diameters** `sprocket-diameters` | CALCULATED | Tooth count; Model and application | 2537–2550 | Automated |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Tool Nose Radius Compensation for Tapers** `nose-radius-compensation` | CALCULATED | Tip orientation; Model and application | 782–790, 1289–1300 | Automated + reference value |
+| **Turning Feed for Surface Finish (Ra)** `feed-for-finish` | CALCULATED | Feed against nose radius; Model and application | 1125–1131 | Automated + reference value |
+| **Speeds and Feeds in Inch Units** `inch-speeds-feeds` | CALCULATED | Machine limits; Model and application | 1013–1017 | Automated |
+| **Knurling Blank Diameter for Tracking** `knurl-blank` | TRACKS CLEANLY | Whole number of teeth; Model and application | 991–997 | Automated + reference value |
+| **Band Saw Cutting Time** `bandsaw-time` | CALCULATED | Cutting rate source; Model and application | 1182–1192 | Automated |
+| **Centerless Grinding Through-Feed Rate** `centerless-feed` | CALCULATED | Actual output; Model and application | 1259–1261 | Automated |
+
+### Maintenance
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Coolant Concentration from Refractometer** `refractometer-concentration` | WITHIN 10% OF TARGET | Concentration; Tramp oil; Model and application | 1176–1181 | Automated + reference value |
+| **Rim and Face Shaft Alignment Corrections** `rim-face-alignment` | CALCULATED | Sign convention and sag; Soft foot; Model and application | 2645–2650 | Automated |
+| **Weibull Reliability and B10 Life** `weibull-reliability` | CALCULATED | Preventive replacement; Data source; Model and application | 128–133 | Automated + reference value |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Sheet Metal Bending Springback** `bending-springback` | CALCULATED | Trial bend; Model and application | 1351–1352 | Automated + reference value |
+| **Tube Bending Wall Thinning** `tube-bend-thinning` | WALL ADEQUATE | Minimum wall; Tooling; Model and application | 1382–1386 | Automated + reference value |
+| **Fillet Weld Cost per Metre** `weld-cost` | CALCULATED | Shop data; Model and application | 1439–1441, 1429–1449 | Automated + reference value |
+| **Lap Joint Overlap (Brazed, Soldered or Bonded)** `lap-joint-length` | OVERLAP ADEQUATE | Chosen overlap; Service load; Model and application | 1423–1430 | Automated |
+| **Paint and Powder Coating Coverage** `coating-coverage` | CALCULATED | Transfer efficiency; Model and application | 1500–1516 | Automated + reference value |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Rolling Bearing Friction Torque and Heat** `bearing-friction` | CALCULATED | Seal and lubricant drag; Model and application | 2365–2420 | Automated |
+| **Oil Viscosity at Temperature** `oil-viscosity-temperature` | CALCULATED | Within data range; Model and application | 2329–2337, 2698 | Automated + reference value |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Water Hammer Pressure Surge** `water-hammer` | CALCULATED | Closing time; Pressure rating; Model and application | 3024–3027 | Automated |
+| **Coolant Flow for a Heat Load** `coolant-flow-heat` | CALCULATED | Fluid properties; Model and application | 371–374 | Automated |
+| **Valve Flow Coefficient (Kv and Cv)** `valve-flow-coefficient` | CALCULATED | Cavitation and flashing; Model and application | 3024–3027 | Automated + reference value |
+| **Heat Exchanger LMTD and Area** `lmtd-exchanger` | CALCULATED | Temperature approach; Heat balance; Model and application | 371–378 | Automated + reference value |
+
+### Pneumatics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Compressed Air Pipe Pressure Drop** `air-pipe-drop` | CALCULATED | Small-drop approximation; Air velocity; Model and application | 3036–3041, 3024–3027 | Automated |
+| **Pneumatic Cylinder Force and Bore Selection** `pneumatic-cylinder-force` | BORE ADEQUATE | Load ratio; Model and application | 3032–3041 | Automated + reference value |
+| **Vacuum Cup Holding Force** `vacuum-cup` | CUPS HOLD | Holding force; Surface condition; Model and application | 3032–3041 | Automated + reference value |
+
+### Money
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Process Selection Break-Even Quantity** `process-breakeven` | PROCESS A | Distance from break-even; Like-for-like quality; Model and application | 143–146 | Automated + reference value |
+| **Learning Curve Unit Time and Cost** `learning-curve` | CALCULATED | Learning rate evidence; Model and application | 146 | Automated + reference value |
