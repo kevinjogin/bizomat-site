@@ -1315,3 +1315,46 @@ A seventh round of 9 integrated design checks in batch handbook32: bearing fit a
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Vertical Storage Tank Shell Thickness by Course** `storage-tank-shell` | CALCULATED | Standard; Model and application | 290–294, 3021–3026 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, seventeenth pass: integrated design checks, eighth round (added 26 October 2026)
+
+An eighth round of 9 integrated design checks in batch handbook33: spline joint design (engagement length, root, tooth-shear and compressive stresses), ball-screw axis stiffness with preload, drag torque and axial frequency, electric tank heater sizing with heat-up time and watt density, hydraulic line sizing (velocity, pressure drop and Barlow tube rating), spring-applied holding brake sizing (stop time, energy per stop and per hour, holding factor), weld preheat and t8/5 cooling time screening, snap-fit joint design with retention force, worm gear drive design with forces, oil temperature and self-locking, and lifting lug design. Tests cross-check against the spline torque capacity, heating energy, pipe friction, pipe size by velocity, carbon equivalent, welding heat input, snap-fit, worm gear and bolt and pin shear tools. WORKOS now holds 531 tools.
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Spline Joint Design (Engagement Length and Stresses)** `spline-joint-design` | SPLINE ADEQUATE | Root shear; Engagement length; Practical length; Model and application | 2255–2282 | Automated + cross-check |
+| **Worm Gear Drive Design (Efficiency, Forces and Heat)** `worm-gear-drive-design` | DRIVE SUITABLE | Oil temperature; Self-locking; Rating; Model and application | 2191–2194 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Ball-Screw Axis Stiffness, Preload and Axial Frequency** `ballscrew-axis-stiffness` | AXIS STIFF ENOUGH | Deflection; Axial frequency; Preload holds; Preload level; Model and application | 2561–2568 | Automated + cross-check |
+| **Spring-Applied Holding Brake Sizing (Stop Time, Energy and Holding)** `holding-brake-sizing` | BRAKE SUITABLE | Stop time; Holding; Energy per stop; Energy per hour; Model and application | 2455–2459 | Automated + cross-check |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Electric Tank Heater Sizing (Heat-up, Losses and Watt Density)** `tank-heater-sizing` | HEATER ADEQUATE | Heat-up time; Watt density; Control; Model and application | 371–378 | Automated + cross-check |
+| **Snap-Fit Joint Design (Deflection, Assembly and Retention Forces)** `snap-fit-joint-design` | SNAP-FIT WORKS | Strain; Retention; Root radius; Model and application | 593–605 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Hydraulic Line Sizing (Velocity, Pressure Drop and Tube Rating)** `hydraulic-line-sizing` | LINE ADEQUATE | Velocity; Pressure rating; Pressure drop; Fittings and hose; Model and application | 3024–3027, 281–286 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Weld Preheat and Cooling Time Check (CE, Heat Input, t8/5)** `weld-preheat-check` | PROCEDURE PLAUSIBLE | Preheat against the estimate; Cooling time; Code preheat; Procedure; Model and application | 1431–1449 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Lifting Lug Design (Plate, Pin and Bearing Checks)** `lifting-lug-design` | LUG ADEQUATE | Net tension; Tear-out; Bearing; Pin shear; Hole clearance; Lifting code; Model and application | 1535, 1720–1735 | Automated + cross-check |
