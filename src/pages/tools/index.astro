@@ -1,9 +1,14 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
-import MotionVisual from '../../components/MotionVisual.astro';
+import LibraryHero from '../../components/library/LibraryHero.astro';
+import LibraryBrowser from '../../components/library/LibraryBrowser.astro';
+import LibrarySection from '../../components/library/LibrarySection.astro';
+import ToolCard from '../../components/library/ToolCard.astro';
+import '../../styles/library.css';
 import '../../styles/tools.css';
 import { loadWorkosTools, hasStandaloneGuide, toolPageHref, toolAppHref, TOOL_FILES as FILES } from '../../utils/workos-tools.ts';
+import { groupToolsByTopic, subcategoryLabel, subcategorySlug } from '../../utils/workos-topics.ts';
 
 // Tool data, calculations and guides are plain browser scripts in public/tools/ (see tests/tools-calculators.test.ts).
 // The directory cards are also rendered here at build time so the tool names are crawlable and indexed by site search.
@@ -11,55 +16,69 @@ const { tools, guides } = loadWorkosTools() as { tools: Array<Record<string, any
 // Cards link to each tool's own page where one exists, so search engines can find it; a plain click still
 // opens the calculator in place (ui.js intercepts it), exactly as before.
 const cardHref = (id: string) => (hasStandaloneGuide(guides[id]) ? toolPageHref(id) : toolAppHref(id));
-const searchText = (t: Record<string, any>) => [t.name, t.category, t.question, t.description, ...(t.keywords || []), ...(guides[t.id]?.uses || []), ...(guides[t.id]?.users || [])].join(' ').toLowerCase();
-const TOOL_COUNT = tools.length;
-const CATEGORIES = [...new Set(tools.map((t) => t.category))];
+// Every tool is rendered in its topic; cards after the first PREVIEW of a topic start hidden until the topic is opened.
+const PREVIEW = 6;
+const topics = groupToolsByTopic(tools as any, PREVIEW);
+const collectionOf = (t: Record<string, any>) => (t.collection === 'MAKEOS' ? 'MAKEOS' : 'WORKOS');
+const tagsOf = (t: Record<string, any>, topicName: string) => [t.category, subcategoryLabel(t.category), topicName, collectionOf(t), ...(t.keywords || [])].join(' ');
+const bodyOf = (t: Record<string, any>) => [t.description, ...(guides[t.id]?.uses || []), ...(guides[t.id]?.users || [])].join(' ');
 const description =
   'KEVOS® WORKOS engineering, manufacturing, operations and commercial decision tools with feasibility checks, sensitivity analysis and exportable decision reports.';
 ---
 
 <BaseLayout title="WORKOS calculators and decision tools" description={description} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'WORKOS', href: '/tools/' }]}>
-  <section class="tools-shell">
-    <Container>
-      <div class="tools-intro">
-        <div class="tools-intro__story">
-          <div class="tools-intro__copy">
-            <p class="eyebrow">KEVOS® WORKOS</p>
-            <h1>Tools for better decisions.</h1>
-            <p class="lead">Practical tools for the engineering, manufacturing, operations and commercial decisions your team makes every day. Each one shows its method, checks what could go wrong, tests how sensitive the answer is and gives you a report you can share with confidence.</p>
-            <p><strong>MAKEOS engineering toolkit</strong> — a growing library of calculators built on established engineering methods. It covers machining, mechanical design, fasteners and gears, power transmission, fluid power, fabrication, quality and maintenance. Every result shows its working and tells you what to verify before you rely on it.</p>
-            <div class="tools-meta" aria-label="Tool collection features"><span class="tools-pill">Methods shown in full</span><span class="tools-pill">Decision reports</span><span class="tools-pill">Sensitivity analysis</span><span class="tools-pill">No account</span><span class="tools-pill">Runs in your browser</span></div>
+  <LibraryHero
+    title="WORKOS"
+    description="Practical engineering, manufacturing and business tools to calculate, analyse and make better decisions."
+    action="/tools/"
+    placeholder="Search WORKOS tools..."
+    label="Search WORKOS tools"
+    total={tools.length}
+    noun="tool"
+  />
+  <LibraryBrowser id="tool-directory" name="WORKOS" base="/tools/" noun="tool" preview={PREVIEW} topics={topics.map((t) => ({ slug: t.slug, name: t.name, description: t.description, icon: t.icon, count: t.items.length }))}>
+    {topics.map((topic) => (
+      <LibrarySection slug={topic.slug} name={topic.name} description={topic.description} count={topic.items.length} noun="tool" base="/tools/" preview={PREVIEW} subs={topic.subs}>
+        {topic.items.map((t: Record<string, any>) => (
+          <ToolCard id={t.id} href={cardHref(t.id)} name={t.name} purpose={t.question} category={subcategoryLabel(t.category)} topic={topic.slug} sub={subcategorySlug(t.category)} collection={collectionOf(t)} tags={tagsOf(t, topic.name)} body={bodyOf(t)} hidden={!topic.preview.has(t.id)} />
+        ))}
+      </LibrarySection>
+    ))}
+    <details class="lib-about" slot="after">
+      <summary>About WORKOS</summary>
+      <div class="lib-about__body">
+        <p>WORKOS covers the engineering, manufacturing, operations and commercial decisions a team makes every day. Each tool shows its method, checks what could go wrong, tests how sensitive the answer is and gives you a report you can share with confidence.</p>
+        <p><strong>MAKEOS engineering toolkit</strong> is the WORKOS collection of calculators built on established engineering methods. It covers machining, mechanical design, fasteners and gears, power transmission, fluid power, fabrication, quality and maintenance. Every result shows its working and tells you what to verify before you rely on it. <a href="/tools/?collection=makeos">Browse the MAKEOS toolkit →</a></p>
+        <ul>
+          <li>Methods shown in full, with feasibility and verification checks.</li>
+          <li>Sensitivity analysis and decision reports you can download, print or share.</li>
+          <li>No account needed. Calculations run in your browser.</li>
+        </ul>
+      </div>
+    </details>
+  </LibraryBrowser>
+  <Container>
+    <section class="workspace" id="tool-workspace" hidden>
+      <div class="workspace-head"><div><p class="eyebrow" id="tool-category">KEVOS® WORKOS</p><h2 id="tool-name">Tool</h2><p class="lead" id="tool-question"></p><p id="tool-description"></p></div><button class="btn secondary back-button" type="button" id="back-tools">← All tools</button></div>
+      <div class="tool-layout">
+        <form id="tool-form" class="panel" autocomplete="off"></form>
+        <div class="panel sticky">
+          <div id="result" aria-live="polite"></div>
+          <div class="tool-actions">
+            <button class="btn" id="download-report" type="button">Download report</button>
+            <button class="btn secondary" id="print-result" type="button">Print or save as PDF</button>
+            <button class="btn secondary" id="copy-result" type="button">Copy summary</button>
+            <button class="btn secondary" id="share-tool" type="button">Share with inputs</button>
           </div>
-          <div class="tools-intro__visual"><MotionVisual page="tools" priority /></div>
-        </div>
-        <div class="tools-search"><input id="tool-search" type="search" placeholder="What are you trying to work out?" aria-label="Search WORKOS tools" autocomplete="off" /><span class="tools-count" id="tool-count">{TOOL_COUNT} tools</span></div>
-        <div class="chips" aria-label="Filter tools by category">
-          <button class="chip active" type="button" data-cat="All" aria-pressed="true">All</button><button class="chip" type="button" data-cat="MAKEOS" aria-pressed="false">MAKEOS toolkit</button>{CATEGORIES.map((c) => <button class="chip" type="button" data-cat={c} aria-pressed="false">{c}</button>)}
+          <p class="tool-flash" id="tool-flash" role="status"></p>
+          <p class="formula-note">WORKOS tools are screening and decision-support utilities. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p>
         </div>
       </div>
-      <div id="tool-directory"><div class="tool-grid" id="tool-grid">{tools.map((t) => <a class="tool-card" href={cardHref(t.id)} data-tool-id={t.id} data-category={t.category} data-collection={t.collection || 'WORKOS'} data-search={searchText(t)}><span class="card-top"><span class="category-label">{t.category}</span></span><h2>{t.name}</h2><p>{t.question}</p><span class="card-link">Open tool →</span></a>)}<p class="tools-empty" id="tools-empty" hidden>No matching tool yet. Try another term or category.</p></div></div>
-      <section class="workspace" id="tool-workspace" hidden>
-        <div class="workspace-head"><div><p class="eyebrow" id="tool-category">KEVOS® WORKOS</p><h2 id="tool-name">Tool</h2><p class="lead" id="tool-question"></p><p id="tool-description"></p></div><button class="btn secondary back-button" type="button" id="back-tools">← All tools</button></div>
-        <div class="tool-layout">
-          <form id="tool-form" class="panel" autocomplete="off"></form>
-          <div class="panel sticky">
-            <div id="result" aria-live="polite"></div>
-            <div class="tool-actions">
-              <button class="btn" id="download-report" type="button">Download report</button>
-              <button class="btn secondary" id="print-result" type="button">Print or save as PDF</button>
-              <button class="btn secondary" id="copy-result" type="button">Copy summary</button>
-              <button class="btn secondary" id="share-tool" type="button">Share with inputs</button>
-            </div>
-            <p class="tool-flash" id="tool-flash" role="status"></p>
-            <p class="formula-note">WORKOS tools are screening and decision-support utilities. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p>
-          </div>
-        </div>
-        <div class="tool-analysis" id="tool-analysis"></div>
-        <div class="tool-guide" id="tool-guide"></div>
-        <aside class="custom-cta"><div><h2>Need a tool for your own calculation?</h2><p>If your business uses a spreadsheet, repeated formula or manual decision process, KEVOS® can help turn it into a focused browser tool.</p></div><a href="/contact/">Discuss a custom tool →</a></aside>
-      </section>
-    </Container>
-  </section>
+      <div class="tool-analysis" id="tool-analysis"></div>
+      <div class="tool-guide" id="tool-guide"></div>
+      <aside class="custom-cta"><div><h2>Need a tool for your own calculation?</h2><p>If your business uses a spreadsheet, repeated formula or manual decision process, KEVOS® can help turn it into a focused browser tool.</p></div><a href="/contact/">Discuss a custom tool →</a></aside>
+    </section>
+  </Container>
   <div class="print-report" id="print-report" hidden></div>
   {FILES.map((f) => <script is:inline src={`/tools/data-${f}.js`}></script>)}
   {FILES.map((f) => <script is:inline src={`/tools/guides-${f}.js`}></script>)}

@@ -1,0 +1,26 @@
+---
+// Shared compact header for the WORKOS and READOS libraries: one title, one sentence, then the library search.
+import Container from '../Container.astro';
+import LibrarySearch from './LibrarySearch.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Page path the search form submits to (works without JavaScript through ?q=). */
+  action: string;
+  placeholder: string;
+  label: string;
+  /** Total items, e.g. 504, and the noun used for counts ("tool" / "book"). */
+  total: number;
+  noun: string;
+}
+const { title, description, ...search } = Astro.props;
+---
+
+<header class="lib-hero" data-library-intro>
+  <Container>
+    <h1 class="lib-hero__title">{title}</h1>
+    <p class="lib-hero__lead">{description}</p>
+    <LibrarySearch {...search} />
+  </Container>
+</header>

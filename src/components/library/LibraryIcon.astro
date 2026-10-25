@@ -1,0 +1,7 @@
+---
+import { LIBRARY_ICONS, type LibraryIconName } from './icons.ts';
+interface Props { name: LibraryIconName }
+const { name } = Astro.props;
+---
+
+<svg class="lib-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={LIBRARY_ICONS[name]} /></svg>

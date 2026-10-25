@@ -1,88 +1,98 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Container from '../../components/Container.astro';
 import ReadOSAnimatedCover from '../../components/ReadOSAnimatedCover.astro';
-import Hero from '../../components/Hero.astro';
-import MotionVisual from '../../components/MotionVisual.astro';
+import LibraryHero from '../../components/library/LibraryHero.astro';
+import LibraryBrowser from '../../components/library/LibraryBrowser.astro';
+import LibrarySection from '../../components/library/LibrarySection.astro';
+import BookCard from '../../components/library/BookCard.astro';
+import type { LibraryIconName } from '../../components/library/icons.ts';
+import '../../styles/library.css';
 import { LIBRARY_GUIDES } from '../../data/library.ts';
 import { getChapters } from '../../utils/content.ts';
-import { buildReadOSCollections, readosCollectionHref } from '../../utils/reados-collections.ts';
+import { buildReadOSCollections, readosCollectionHref, readosCollectionChapterHref } from '../../utils/reados-collections.ts';
 import { getPublications, publicationHref, publicationChapterHref } from '../../utils/publications.ts';
-const books=buildReadOSCollections(await getChapters());
-const publications=await getPublications();
-const categories=[
-  {name:'Engineering',slug:'engineering',description:'Design, CAD and practical engineering methods'},
-  {name:'Manufacturing',slug:'manufacturing',description:'Tooling, factory production and quality'},
-  {name:'Operations',slug:'operations',description:'Processes, Lean and operational improvement'},
-  {name:'Projects',slug:'projects',description:'Planning, control, risk and project delivery'},
-  {name:'Technology',slug:'technology',description:'AI, databases, software and digital systems'},
-  {name:'Business',slug:'business',description:'Finance, strategy, governance and leadership'},
-  {name:'Products',slug:'products',description:'Product development, validation and launches'},
-  {name:'Ideas',slug:'ideas',description:'Innovation, exploration and practical concepts'}
+import { tagLabel } from '../../config/taxonomy.ts';
+
+const books = buildReadOSCollections(await getChapters());
+const publications = await getPublications();
+const categories: { name: string; slug: string; description: string; icon: LibraryIconName }[] = [
+  { name: 'Engineering', slug: 'engineering', icon: 'compass', description: 'Design, CAD and practical engineering methods' },
+  { name: 'Manufacturing', slug: 'manufacturing', icon: 'factory', description: 'Tooling, factory production and quality' },
+  { name: 'Operations', slug: 'operations', icon: 'flow', description: 'Processes, Lean and operational improvement' },
+  { name: 'Projects', slug: 'projects', icon: 'flag', description: 'Planning, control, risk and project delivery' },
+  { name: 'Technology', slug: 'technology', icon: 'chip', description: 'AI, databases, software and digital systems' },
+  { name: 'Business', slug: 'business', icon: 'briefcase', description: 'Finance, strategy, governance and leadership' },
+  { name: 'Products', slug: 'products', icon: 'box', description: 'Product development, validation and launches' },
+  { name: 'Ideas', slug: 'ideas', icon: 'bulb', description: 'Innovation, exploration and practical concepts' },
 ];
-const count=books.length+LIBRARY_GUIDES.length+publications.length;
-const totalChapters=books.reduce((n,book)=>n+book.chapters.length,0)+LIBRARY_GUIDES.reduce((n,g)=>n+g.chapters.length,0)+publications.reduce((n,p)=>n+p.chapters.length,0);
+
+// One list of READOS books per subject, in the existing order: authored books, featured guides, then collections.
+// Each entry carries its chapter titles and links, so search can point straight to a matching chapter.
+interface Entry {
+  id: string; title: string; summary: string; href: string; startHref: string; tags: string;
+  cover: { title: string; category: string; slug: string; motif?: string; publicationLabel?: string };
+  chapters: [string, string][];
+}
+const subjects = categories.map((c) => {
+  const entries: Entry[] = [
+    ...publications.filter((p) => p.book.data.category === c.name).map(({ book, chapters }): Entry => ({
+      id: `publication-${book.id}`, title: book.data.title, summary: book.data.description, href: publicationHref(book.id),
+      startHref: publicationChapterHref(book.id, chapters[0].data.chapterSlug),
+      tags: [c.name, 'KEVOS original book', book.data.subtitle, ...book.data.tags.map(tagLabel)].join(' '),
+      cover: { title: book.data.title, category: book.data.category, slug: book.id, motif: book.data.coverVariant, publicationLabel: 'KEVOS® ORIGINAL BOOK' },
+      chapters: chapters.map((ch) => [ch.data.title, publicationChapterHref(book.id, ch.data.chapterSlug)]),
+    })),
+    ...(c.name === 'Business' ? LIBRARY_GUIDES : []).map((guide): Entry => ({
+      id: `guide-${guide.slug}`, title: guide.title, summary: guide.description, href: `/library/${guide.slug}/`,
+      startHref: `/library/${guide.slug}/${guide.chapters[0].slug}/`,
+      tags: [c.name, guide.category, 'READOS guide', guide.subtitle].join(' '),
+      cover: { title: guide.title, category: guide.category, slug: guide.slug, publicationLabel: 'READOS GUIDE' },
+      chapters: guide.chapters.map((ch): [string, string] => [ch.title, `/library/${guide.slug}/${ch.slug}/`]),
+    })),
+    ...books.filter((book) => book.category === c.name).map((book): Entry => ({
+      id: `collection-${book.slug}`, title: book.title, summary: book.description, href: readosCollectionHref(book),
+      startHref: readosCollectionChapterHref(book, book.chapters[0]),
+      tags: [c.name, 'READOS collection'].join(' '),
+      cover: { title: book.title, category: book.category, slug: book.slug },
+      chapters: book.chapters.map((ch): [string, string] => [ch.data.title, readosCollectionChapterHref(book, ch)]),
+    })),
+  ];
+  return { ...c, entries };
+}).filter((s) => s.entries.length > 0);
+
+const PREVIEW = 6;
+const total = subjects.reduce((n, s) => n + s.entries.length, 0);
+// Chapter titles and links for search, keyed by card id (read by src/scripts/library-browser.ts).
+const chapterIndex = JSON.stringify(Object.fromEntries(subjects.flatMap((s) => s.entries.map((e) => [e.id, e.chapters])))).replace(/</g, '\\u003c');
 ---
 <BaseLayout title="READOS books and guides by topic" description="Browse KEVOS® READOS books by Engineering, Manufacturing, Operations, Projects, Technology, Business, Products and Ideas.">
-  <Hero eyebrow="KEVOS® READOS" title="Books and guides, <em>organised by topic.</em>" lead="Choose a subject, find a book and read at your own pace. Explore practical guides to engineering, technology and business, one chapter at a time.">
-    <div class="reados-summary"><span><strong>{count}</strong> books and guides</span><span><strong>{totalChapters}</strong> chapters</span><span><strong>{categories.length}</strong> subjects</span></div>
-    <MotionVisual page="reados" slot="visual" />
-  </Hero>
-  <section class="topics"><Container>
-    <h2>Browse by topic</h2>
-    <nav class="topic-links" aria-label="READOS subjects">
-      {categories.map(c=><a href={`#${c.slug}`}>{c.name} <span aria-hidden="true">↗</span></a>)}
-    </nav>
-  </Container></section>
-  <section class="collections" aria-label="READOS book categories"><Container>
-    {categories.map(c=>{
-      const selected=books.filter(book=>book.category===c.name);
-      const featured=c.name==='Business'?LIBRARY_GUIDES:[];
-      const authored=publications.filter(p=>p.book.data.category===c.name);
-      if(!selected.length&&!featured.length&&!authored.length)return null;
-      return <section class="category" id={c.slug}>
-        <div class="category-heading"><div><p class="eyebrow">READOS {c.name.toUpperCase()}</p><h2>{c.name}</h2><p>{c.description}</p></div><span class="count">{selected.length+featured.length+authored.length} publications</span></div>
-        <div class="cover-grid">
-          {authored.map(({book,chapters})=><article class="cover-card">
-            <a class="cover-link" href={publicationHref(book.id)} aria-label={`Read ${book.data.title}`}><ReadOSAnimatedCover title={book.data.title} category={book.data.category} slug={book.id} motif={book.data.coverVariant} publicationLabel="KEVOS® ORIGINAL BOOK" chapters={chapters.length} compact/></a>
-            <p class="card-type">Authored book · {chapters.length} chapters</p>
-            <h3><a href={publicationHref(book.id)}>{book.data.title}</a></h3>
-            <p class="desc">{book.data.description}</p>
-            <a class="open" href={publicationChapterHref(book.id,chapters[0].data.chapterSlug)}>Start reading →</a>
-          </article>)}
-          {featured.map(guide=><article class="cover-card">
-            <a class="cover-link" href={`/library/${guide.slug}/`} aria-label={`Read ${guide.title}`}><ReadOSAnimatedCover title={guide.title} category={guide.category} slug={guide.slug} publicationLabel="READOS GUIDE" chapters={guide.chapters.length} compact/></a>
-            <p class="card-type">{guide.category} · {guide.chapters.length} chapters</p>
-            <h3><a href={`/library/${guide.slug}/`}>{guide.title}</a></h3>
-            <p class="desc">{guide.description}</p>
-            <a class="open" href={`/library/${guide.slug}/`}>Open guide →</a>
-          </article>)}
-          {selected.map(book=><article class="cover-card">
-            <a class="cover-link" href={readosCollectionHref(book)} aria-label={`Read ${book.title}`}><ReadOSAnimatedCover title={book.title} category={book.category} slug={book.slug} chapters={book.chapters.length} compact/></a>
-            <p class="card-type">{book.category} · {book.chapters.length} chapters</p>
-            <h3><a href={readosCollectionHref(book)}>{book.title}</a></h3>
-            <p class="desc">{book.description}</p>
-            <a class="open" href={readosCollectionHref(book)}>Open book →</a>
-          </article>)}
-        </div>
-      </section>;
-    })}
-    <p class="note">Each collection brings together complete KEVOS® articles as chapters. You can still read the articles at their original links.</p>
-  </Container></section>
+  <LibraryHero
+    title="READOS"
+    description="Practical books and guides covering engineering, manufacturing, operations, projects and business."
+    action="/reados/"
+    placeholder="Search READOS books..."
+    label="Search READOS books"
+    total={total}
+    noun="book"
+  />
+  <LibraryBrowser name="READOS" base="/reados/" noun="book" preview={PREVIEW} topics={subjects.map((s) => ({ slug: s.slug, name: s.name, description: s.description, icon: s.icon, count: s.entries.length }))}>
+    {subjects.map((s) => (
+      <LibrarySection slug={s.slug} name={s.name} description={s.description} count={s.entries.length} noun="book" base="/reados/" preview={PREVIEW}>
+        {s.entries.map((e, n) => (
+          <BookCard id={e.id} href={e.href} startHref={e.startHref} title={e.title} summary={e.summary} subject={s.name} chapters={e.chapters.length} topic={s.slug} tags={e.tags} chapterTitles={e.chapters.map(([t]) => t).join(' | ')} hidden={n >= PREVIEW}>
+            <ReadOSAnimatedCover slot="cover" {...e.cover} chapters={e.chapters.length} compact />
+          </BookCard>
+        ))}
+      </LibrarySection>
+    ))}
+    <details class="lib-about" slot="after">
+      <summary>About READOS</summary>
+      <div class="lib-about__body">
+        <p>Choose a subject, find a book and read at your own pace. READOS brings together practical guides to engineering, manufacturing, operations, projects, technology and business, one chapter at a time.</p>
+        <p>Search looks at book titles, summaries, subjects and chapter titles. It does not search the full text of chapters.</p>
+        <p>Each collection brings together complete KEVOS® articles as chapters. You can still read the articles at their original links.</p>
+      </div>
+    </details>
+  </LibraryBrowser>
+  <script type="application/json" id="lib-chapters" set:html={chapterIndex}></script>
 </BaseLayout>
-<style>
-.reados-summary{display:flex;flex-wrap:wrap;gap:1.2rem;margin-top:2.2rem;color:var(--muted);font-size:.93rem}.reados-summary strong{color:var(--ink);font-size:1.4rem}
-.topics{padding:2.5rem 0;border-bottom:1px solid var(--line)}.topics h2{font-size:var(--step-2);margin-bottom:1.3rem}
-.topic-links{display:flex;flex-wrap:wrap;gap:.6rem}.topic-links a{border:1px solid var(--line-strong);padding:.7rem 1rem;text-decoration:none;background:var(--surface);font-weight:600}.topic-links a:hover{color:var(--accent);border-color:var(--accent)}
-.collections{padding:1rem 0 var(--space-section)}.category{padding:3rem 0 4rem;border-bottom:1px solid var(--line);scroll-margin-top:6rem}
-.category-heading{display:flex;justify-content:space-between;align-items:end;gap:1rem;margin-bottom:2rem}
-.category-heading h2{font-size:var(--step-3);margin:.4rem 0}.category-heading p:not(.eyebrow),.count{color:var(--muted);font-size:.94rem}
-.cover-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,195px),1fr));gap:1.4rem}
-.cover-card{display:flex;flex-direction:column;min-width:0}.cover-link{display:block;text-decoration:none;transition:transform .2s}.cover-link:hover{transform:translateY(-4px)}
-.cover-link img{width:100%;height:auto;aspect-ratio:360/490;object-fit:cover;box-shadow:0 12px 28px rgb(0 0 0/.18)}
-.card-type{color:var(--accent);font-size:.74rem;letter-spacing:.04em;margin:1rem 0 .3rem}
-.cover-card h3{font-size:1.08rem;line-height:1.3;margin:.1rem 0 .45rem}.cover-card h3 a{text-decoration:none}
-.desc{color:var(--muted);font-size:.85rem;line-height:1.5;margin:0 0 1rem}.open{color:var(--accent);font-weight:650;text-decoration:none;font-size:.85rem;margin-top:auto}
-.note{color:var(--muted);font-size:.85rem;margin:2rem 0}
-@media(max-width:650px){.category-heading{display:block}.cover-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.cover-card h3{font-size:.98rem}}
-</style>

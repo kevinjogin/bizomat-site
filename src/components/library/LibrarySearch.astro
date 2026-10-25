@@ -1,0 +1,17 @@
+---
+// Shared library search field. Each page searches only its own cards (see src/scripts/library-browser.ts).
+interface Props { action: string; placeholder: string; label: string; total: number; noun: string }
+const { action, placeholder, label, total, noun } = Astro.props;
+---
+
+<form class="lib-search" role="search" action={action} method="get" data-lib-search-form>
+  <label class="visually-hidden" for="lib-search-input">{label}</label>
+  <div class="lib-search__field">
+    <svg class="lib-search__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 4a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM15.3 15.3 20 20" /></svg>
+    <input id="lib-search-input" name="q" type="search" placeholder={placeholder} autocomplete="off" spellcheck="false" enterkeyhint="search" aria-describedby="lib-status" aria-controls="lib-results" data-lib-input />
+    <button class="lib-search__clear" type="button" aria-label="Clear search" hidden data-lib-clear>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+    </button>
+  </div>
+  <p class="lib-search__count" id="lib-status" aria-live="polite" data-lib-status data-total={total} data-noun={noun}>{total} {noun}s</p>
+</form>

@@ -82,8 +82,8 @@ test('the tools page loads exactly the category files that exist, in data → gu
   const order = ['/tools/data-${f}.js', '/tools/guides-${f}.js', '/tools/core.js', '/tools/calc-${f}.js', '/tools/ui.js'].map((s) => page.indexOf(s));
   assert.ok(order.every((p) => p > 0), 'all script groups are loaded');
   assert.deepEqual([...order].sort((a, b) => a - b), order, 'scripts load in dependency order');
-  assert.match(page, /data-tool-id=\{t\.id\}/, 'directory cards are rendered at build time');
-  assert.match(page, /href=\{cardHref\(t\.id\)\}/, 'each card links to its tool');
+  assert.match(page, /<ToolCard id=\{t\.id\} href=\{cardHref\(t\.id\)\}/, 'directory cards are rendered at build time and link to their tool');
+  assert.match(readFileSync(join(process.cwd(), 'src', 'components', 'library', 'ToolCard.astro'), 'utf8'), /<a class="lib-card" href=\{href\}[^>]*data-tool-id=\{id\}/, 'cards carry the id ui.js opens');
   // A tool's own page where its guide stands alone, otherwise the calculator itself.
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });

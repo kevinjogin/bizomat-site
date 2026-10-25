@@ -12,54 +12,16 @@
   }
   const STATUS = { pass: 'PASS', warn: 'REVIEW', fail: 'FAIL', verify: 'VERIFY' };
   const collection = (t) => t.collection === 'MAKEOS' ? 'MAKEOS' : 'WORKOS';
-  let activeCategory = new URLSearchParams(location.search).get('collection') === 'makeos' ? 'MAKEOS' : 'All';
   let current = null; // { t, r, sens }
   let timer = 0;
 
+  // The directory (topics, search and cards) is the shared library browser in src/scripts/library-browser.ts.
   const directory = $('#tool-directory');
   const workspace = $('#tool-workspace');
-  const grid = $('#tool-grid');
-  const search = $('#tool-search');
-  const count = $('#tool-count');
-  const empty = $('#tools-empty');
-  const intro = document.querySelector('.tools-intro');
-
-  // ---------- Directory ----------
-  function cardHtml(t) {
-    const g = guides[t.id] || {};
-    const text = [t.name, t.category, t.question, t.description, ...(t.keywords || []), ...(g.uses || []), ...(g.users || [])].join(' ').toLowerCase();
-    return `<a class="tool-card" href="/tools/?tool=${encodeURIComponent(t.id)}" data-tool-id="${esc(t.id)}" data-category="${esc(t.category)}" data-collection="${collection(t)}" data-search="${esc(text)}"><span class="card-top"><span class="category-label">${esc(t.category)}</span></span><h2>${esc(t.name)}</h2><p>${esc(t.question)}</p><span class="card-link">Open tool →</span></a>`;
-  }
-  // The page renders the cards at build time; this fallback only runs if they are missing.
-  if (!grid.querySelector('[data-tool-id]')) grid.insertAdjacentHTML('afterbegin', tools.map(cardHtml).join(''));
-  function renderCards() {
-    const q = (search?.value || '').trim().toLowerCase();
-    const words = q.split(/\s+/).filter(Boolean);
-    let visible = 0;
-    grid.querySelectorAll('[data-tool-id]').forEach((card) => {
-      const hay = card.dataset.search || '';
-      const show = (activeCategory === 'All' || card.dataset.category === activeCategory || (activeCategory === 'MAKEOS' && card.dataset.collection === 'MAKEOS')) && words.every((w) => hay.includes(w));
-      card.hidden = !show;
-      if (show) visible++;
-    });
-    document.querySelectorAll('[data-cat]').forEach((chip) => {
-      chip.classList.toggle('active', chip.dataset.cat === activeCategory);
-      chip.setAttribute('aria-pressed', chip.dataset.cat === activeCategory ? 'true' : 'false');
-    });
-    count.textContent = `${visible} tool${visible === 1 ? '' : 's'}`;
-    empty.hidden = visible !== 0;
-  }
-  search?.addEventListener('input', renderCards);
-  document.querySelectorAll('[data-cat]').forEach((chip) =>
-    chip.addEventListener('click', () => {
-      activeCategory = chip.dataset.cat || 'All';
-      document.querySelectorAll('[data-cat]').forEach((c) => {
-        c.classList.toggle('active', c === chip);
-        c.setAttribute('aria-pressed', c === chip ? 'true' : 'false');
-      });
-      renderCards();
-    }),
-  );
+  const intro = document.querySelector('[data-library-intro]');
+  // A tool opened from the directory returns to the same topic or search, at the same scroll position.
+  let openedInPage = false;
+  let directoryScroll = 0;
 
   // ---------- Inputs ----------
   function sourceHint(t, f) {
@@ -324,6 +286,10 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
     const t = tools.find((x) => x.id === id);
     if (!t) return;
     if (push) {
+      if (workspace.hidden) {
+        openedInPage = true;
+        directoryScroll = window.scrollY || 0;
+      }
       const u = new URL(location.href);
       u.search = '';
       u.searchParams.set('tool', id);
@@ -347,22 +313,25 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
       history.pushState({}, '', u);
     }
     document.title = 'WORKOS calculators and decision tools | KEVOS®';
-    directory.scrollIntoView({ block: 'start' });
+    if (openedInPage) window.scrollTo(0, directoryScroll);
+    else directory.scrollIntoView({ block: 'start' });
+    openedInPage = false;
   }
-  grid.addEventListener('click', (e) => {
+  directory.addEventListener('click', (e) => {
     const c = e.target.closest('[data-tool-id]');
     if (!c || e.button > 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return; // let modified clicks open a new tab
     e.preventDefault();
     openTool(c.dataset.toolId);
   });
-  $('#back-tools').addEventListener('click', () => closeTool());
+  // Step back through history when the tool was opened here, so the directory's topic and search come back with it.
+  $('#back-tools').addEventListener('click', () => (openedInPage ? history.back() : closeTool()));
   window.addEventListener('popstate', () => {
     const id = new URLSearchParams(location.search).get('tool');
-    id ? openTool(id, false) : closeTool(false);
+    if (id) openTool(id, false);
+    else if (!workspace.hidden) closeTool(false);
   });
   // Read-only hooks for automated tests and debugging; nothing on the page depends on them.
   window.WORKOS_UI = { reportBody, shareUrl, summaryText, guideHtml, analysisHtml, state: () => current };
   const initial = new URLSearchParams(location.search).get('tool');
   if (initial) openTool(initial, false);
-  renderCards();
 })();

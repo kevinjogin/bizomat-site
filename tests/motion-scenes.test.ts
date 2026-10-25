@@ -5,7 +5,7 @@ import { join } from 'node:path';
 
 const read = (path: string) => readFileSync(join(process.cwd(), path), 'utf8');
 
-test('all seven KEVOS pages use a purpose-built responsive motion scene', () => {
+test('the KEVOS service pages use a purpose-built responsive motion scene', () => {
   const motion = read('src/components/MotionVisual.astro');
   const orbit = read('src/components/ServiceMap.astro');
   assert.match(motion, /<ServiceMap variant=/);
@@ -21,12 +21,12 @@ test('all seven KEVOS pages use a purpose-built responsive motion scene', () => 
     industries: 'src/pages/industries.astro',
     about: 'src/pages/about.astro',
     contact: 'src/pages/contact/index.astro',
-    tools: 'src/pages/tools/index.astro',
-    reados: 'src/pages/reados/index.astro',
   };
   for (const [name, path] of Object.entries(pages)) {
     assert.ok(read(path).includes('<MotionVisual page="' + name + '"'), path + ' uses the ' + name + ' scene');
   }
+  // The WORKOS and READOS libraries open content-first, with no illustration above the search (see tests/library.test.ts).
+  for (const path of ['src/pages/tools/index.astro', 'src/pages/reados/index.astro']) assert.doesNotMatch(read(path), /<MotionVisual\b/, path);
 });
 
 test('Factory Fix and the assessment have their own reduced-motion-safe hero scenes', () => {

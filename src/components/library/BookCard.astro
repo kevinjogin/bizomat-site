@@ -1,0 +1,30 @@
+---
+// READOS book card: cover (passed in the "cover" slot), title, summary, subject, chapter count and Start reading.
+// The title link covers the card; Start reading opens the first chapter.
+interface Props {
+  id: string;
+  href: string;
+  startHref: string;
+  title: string;
+  summary: string;
+  subject: string;
+  chapters: number;
+  topic: string;
+  /** Search-only metadata and the book's chapter titles. */
+  tags: string;
+  chapterTitles: string;
+  hidden?: boolean;
+}
+const { id, href, startHref, title, summary, subject, chapters, topic, tags, chapterTitles, hidden } = Astro.props;
+---
+
+<article class="lib-card lib-card--book" hidden={hidden} data-lib-item data-lib-id={id} data-topic={topic} data-lib-tags={tags} data-lib-body={summary} data-lib-extra={chapterTitles}>
+  <div class="lib-card__cover" aria-hidden="true"><slot name="cover" /></div>
+  <div class="lib-card__text">
+    <span class="lib-card__meta">{subject} · {chapters} chapters</span>
+    <h3 class="lib-card__title"><a class="lib-card__link" href={href} data-lib-primary data-lib-title>{title}</a></h3>
+    <p class="lib-card__desc" data-lib-desc>{summary}</p>
+    <ul class="lib-card__chapters" hidden data-lib-chapter-hits></ul>
+    <a class="lib-card__action" href={startHref} aria-label={`Start reading ${title} (${subject})`}>Start reading <span aria-hidden="true">→</span></a>
+  </div>
+</article>

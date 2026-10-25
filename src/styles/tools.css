@@ -1,23 +1,5 @@
 .tools-shell { padding-block: clamp(2.5rem,6vw,5.5rem) var(--space-section); }
-.tools-intro { max-width:100%; margin-bottom:clamp(2rem,4vw,3.5rem); }
-.tools-intro__story { display:grid; grid-template-columns:minmax(0,1.08fr) minmax(300px,.92fr); gap:clamp(2rem,4vw,4rem); align-items:center; }
-.tools-intro__copy { min-width:0; }
-.tools-intro__visual { width:100%; max-width:500px; justify-self:end; }
-@media (max-width:960px) {
-  .tools-intro__story { grid-template-columns:1fr; }
-  .tools-intro__visual { max-width:540px; justify-self:start; }
-}
 
-.tools-intro h1 { max-width:17ch; margin-top:.6rem; }
-.tools-intro .lead { margin-top:1rem; max-width:58ch; }
-.tools-meta { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.15rem; }
-.tools-pill { display:inline-flex; align-items:center; min-height:30px; padding:.28rem .72rem; border:1px solid var(--line-strong); border-radius:999px; background:var(--surface); color:var(--ink-2); font-size:.84rem; }
-.tools-search { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:.65rem; margin-top:1.5rem; max-width:760px; }
-.tools-search input { width:100%; min-height:52px; padding:0 1rem; border:1px solid var(--line-strong); border-radius:var(--radius); background:var(--surface); }
-.tools-count { display:inline-flex; align-items:center; justify-content:center; min-width:95px; padding:.5rem .9rem; border:1px solid var(--line); border-radius:var(--radius); background:var(--paper-2); color:var(--muted); font-size:.9rem; }
-.chips { display:flex; flex-wrap:wrap; gap:.45rem; margin-top:1rem; }
-.chip { border:1px solid var(--line); background:var(--surface); color:var(--ink-2); border-radius:999px; padding:.45rem .8rem; font-size:.88rem; }
-.chip:hover,.chip.active { background:var(--ink); border-color:var(--ink); color:var(--paper); }
 .tool-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
 .tool-card { display:flex; min-height:220px; flex-direction:column; width:100%; padding:1.35rem; text-align:left; border:1px solid var(--line); border-radius:10px; background:var(--surface); color:inherit; text-decoration:none; transition:transform .2s var(--ease),border-color .2s var(--ease),box-shadow .2s var(--ease); }
 .tool-card:hover { transform:translateY(-2px); border-color:var(--line-strong); box-shadow:0 14px 36px rgb(0 0 0 / .06); }
@@ -26,8 +8,7 @@
 .tool-card h2 { font-size:var(--step-1); margin-bottom:.65rem; }
 .tool-card p { margin:0; color:var(--ink-2); font-size:.97rem; line-height:1.5; }
 .card-link { margin-top:auto; padding-top:1.2rem; font-size:.9rem; font-weight:600; }
-.tools-empty { grid-column:1/-1; padding:2rem; border:1px dashed var(--line-strong); color:var(--muted); text-align:center; }
-.workspace { margin-top:1rem; }
+.workspace { padding-block:clamp(2rem,4vw,3.5rem) var(--space-section); }
 .workspace-head { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:1.5rem; align-items:start; margin-bottom:1.5rem; }
 .workspace-head h2 { margin:.45rem 0 .75rem; font-size:var(--step-3); }
 .workspace-head p { max-width:760px; color:var(--ink-2); }
@@ -64,10 +45,8 @@
 .custom-cta p { margin:.55rem 0 0; color:var(--inverse-muted); }.custom-cta a { color:var(--inverse-ink); }
 [hidden] { display:none !important; }
 @media (max-width:900px){.tool-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tool-layout{grid-template-columns:1fr}.panel.sticky{position:static}}
-@media (max-width:620px){.tools-shell{padding-top:2rem}.tools-search{grid-template-columns:1fr}.tool-grid{grid-template-columns:1fr}.tool-card{min-height:190px}.workspace-head{grid-template-columns:1fr}.metric-grid{grid-template-columns:1fr}.custom-cta{grid-template-columns:1fr}}
+@media (max-width:620px){.tools-shell{padding-top:2rem}.tool-grid{grid-template-columns:1fr}.tool-card{min-height:190px}.workspace-head{grid-template-columns:1fr}.metric-grid{grid-template-columns:1fr}.custom-cta{grid-template-columns:1fr}}
 
-.tools-intro { padding:clamp(1.4rem,3vw,2.2rem); border:1px solid var(--line); border-radius:18px; background:linear-gradient(135deg,var(--surface),var(--paper-2)); }
-.tools-search input:focus { outline:2px solid var(--accent); outline-offset:2px; border-color:var(--accent); }
 .tool-card:focus-visible,.chip:focus-visible,.btn:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
 
 /* ---------- Inputs ---------- */
