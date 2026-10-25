@@ -113,6 +113,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'oxy-fuel-by-the-numbers': { motif: 'gauge', tone: 'carbon' },
   'electroplating-by-the-numbers': { motif: 'experiment', tone: 'ember' },
   'weldability-by-the-numbers': { motif: 'pump', tone: 'ember' },
+  'resistance-welding-by-the-numbers': { motif: 'production', tone: 'carbon' },
+  'arc-welding-by-the-numbers': { motif: 'pylon', tone: 'ember' },
 };
 
 const hash = (s: string) => [...s].reduce((a, c) => (Math.imul(a, 33) + c.charCodeAt(0)) >>> 0, 5381);
