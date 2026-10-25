@@ -1277,3 +1277,41 @@ A sixth round of 9 integrated design checks in batch handbook31: the pump operat
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Gasketed Flange Bolt Load Check** `flange-bolt-load-check` | BOLTING ADEQUATE | Bolt area; Flange design; Model and application | 1521–1536, 3392–3404 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, sixteenth pass: integrated design checks, seventh round (added 26 October 2026)
+
+A seventh round of 9 integrated design checks in batch handbook32: bearing fit and operating internal clearance with a preload check, overhung load on gearbox and motor shafts corrected for hub position, an injection moulding estimate (clamp force, shot size, cooling time, cycle and output), bearing friction with circulating oil flow, press brake set-up (die opening, inside radius, minimum flange, tonnage), gearbox selection with service factor, thermal and torque checks, riveted joint design with the balanced pitch, vertical storage tank shell thickness by course, and milling cost per part with tool life. Tests cross-check against the bearing-friction, coolant, press-brake and riveted-joint tools. WORKOS now holds 522 tools.
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Bearing Fit and Operating Internal Clearance** `bearing-fit-clearance` | CLEARANCE ADEQUATE | Minimum operating clearance; Model and application | 2365–2416 | Automated + cross-check |
+| **Overhung (Radial) Load on a Gearbox or Motor Shaft** `overhung-load-check` | OVERHUNG LOAD ACCEPTABLE | Allowable; Fix; Model and application | 2487–2556, 2365–2416 | Automated + cross-check |
+| **Bearing and Gear Losses with Circulating Oil Flow** `bearing-friction-oil-flow` | CALCULATED | Model and application | 2365–2440 | Automated |
+| **Gearbox Selection Check (Service Factor, Thermal and Torque)** `gearbox-selection-check` | GEARBOX SUITABLE | Mechanical rating; Thermal rating; Output torque; Model and application | 3339–3340, 3304–3313 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Injection Moulding Clamp, Shot, Cooling and Cycle Estimate** `injection-moulding-estimate` | MACHINE SUITABLE | Clamp force; Shot size; Model and application | 584–592 | Automated + cross-check |
+| **Milling Time and Cost per Part with Tool Life** `milling-cost-per-part` | CALCULATED | Model and application | 1084–1101, 1146–1152 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Press Brake Set-up: Die, Radius, Flange and Tonnage** `press-brake-setup` | SET-UP FEASIBLE | Press capacity; Die rating; Radius; Model and application | 1346–1353, 1383–1386 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Riveted Joint Design (Balanced Pitch and Rivet Count)** `riveted-joint-design` | JOINT ADEQUATE | Capacity; Minimum pitch; Model and application | 1735–1745 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Vertical Storage Tank Shell Thickness by Course** `storage-tank-shell` | CALCULATED | Standard; Model and application | 290–294, 3021–3026 | Automated + cross-check |
