@@ -1234,3 +1234,46 @@ A fifth round of 9 integrated design checks in batch handbook30: lathe chuck gri
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Gear Backlash at Operating Temperature** `gear-backlash-temperature` | BACKLASH REMAINS | Running backlash; Model and application | 2163–2167, 375–378 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, fifteenth pass: integrated design checks, sixth round (added 26 October 2026)
+
+A sixth round of 9 integrated design checks in batch handbook31: the pump operating point on the system curve (with efficiency, power, position against best efficiency and the speed for a target flow), fan duty with the fan laws and belt drive, machine foundation block sizing (bearing pressure and resonance), measurement error from part and gauge temperature, pressure vessel shell and head thickness comparison, fixture locating error from round and diamond pin clearances, gasketed flange bolt load, chain conveyor pull and drive, and rail travel drive sizing with a wheel-slip check. Tests cross-check against the pump-affinity, thermal-growth and rolling-resistance tools and confirm the operating point lies on both curves. WORKOS now holds 513 tools.
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Pump Operating Point on the System Curve** `pump-operating-point` | NEAR BEST EFFICIENCY | Operating region; Speed change; Model and application | 3021–3026 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Fan Duty, Fan Laws and Belt Drive** `fan-drive-sizing` | CALCULATED | Fan speed limit; Belt and bearings; Model and application | 2487–2536 | Automated + cross-check |
+| **Chain Conveyor Pull and Drive Sizing** `chain-conveyor-sizing` | CHAIN ADEQUATE | Chain working load; Sprocket teeth; Model and application | 2537–2556 | Automated + cross-check |
+| **Rail Travel Drive Sizing (Crane, Trolley or Transfer Car)** `travel-drive-sizing` | NO WHEEL SLIP | Adhesion; Model and application | 165–167, 2569–2580 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Machine Foundation Block Sizing** `machine-foundation-block` | FOUNDATION ACCEPTABLE | Soil bearing; Resonance; Engineering; Model and application | 3237–3238, 197–198 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Measurement Error from Part and Gauge Temperature** `measurement-temperature-error` | CORRECT OR WAIT FOR TEMPERATURE | Tolerance share; Model and application | 375–378, 2660 | Automated + cross-check |
+| **Fixture Locating Error from Pin and Hole Clearances** `fixture-locating-error` | LOCATING ADEQUATE | Position tolerance; Model and application | 3131–3134, 620–623 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Pressure Vessel Shell and Head Thickness Comparison** `pressure-vessel-thickness` | CALCULATED | Thin-wall range; Code; Model and application | 290–294 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Gasketed Flange Bolt Load Check** `flange-bolt-load-check` | BOLTING ADEQUATE | Bolt area; Flange design; Model and application | 1521–1536, 3392–3404 | Automated + cross-check |
