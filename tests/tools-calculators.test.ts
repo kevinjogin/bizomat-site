@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -88,9 +88,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 558 tools with unique ids and every previously published id kept', () => {
+test('register: 567 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 558);
+  assert.equal(ids.length, 567);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -835,16 +835,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 443 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 452 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 443);
+  assert.equal(ids.length, 452);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -2056,5 +2056,82 @@ test('eleventh-round design checks: verdicts and guards', () => {
   assert.equal(engine.run('cylindrical-grinding-planner', { ns: 2000 }).text, 'PLAN NOT FEASIBLE');
   assert.equal(engine.run('cylindrical-grinding-planner', { u: 150 }).text, 'PLAN NOT FEASIBLE');
   const cases: Array<[string, Inputs]> = [['deep-drawing-plan', { flange: 50 }], ['shaft-critical-speed-check', { a1: 1600 }], ['friction-grip-joint', { Ft: 80 }], ['flexible-coupling-selection', { d: 60 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Twenty-first handbook pass (handbook37): twelfth round of integrated design checks.
+const HB21_KF = 1 + (1 / (1 + 0.0254 * Math.pow(2070 / 600, 1.8))) * 1.2, HB21_N = 1000 * 100 / (Math.PI * 20);
+const HB21_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['fatigue-design-check', {}, { Se: 300 * 0.8 * 0.85 * 0.868, Kf: HB21_KF, sa: HB21_KF * 40, sm: HB21_KF * 60 }],
+  ['fatigue-design-check', { Sep: 250 }, { Sep: 250, Se: 250 * 0.8 * 0.85 * 0.868 }],
+  ['crane-hook-design', { proof: 2 }, { As: Math.PI / 4 * (30 - 0.938194 * 3.5) ** 2, ss: 20000 / (Math.PI / 4 * (30 - 0.938194 * 3.5) ** 2) }],
+  ['universal-joint-drive', {}, { fluct: 0, nImax: 1000 / Math.cos(Math.PI / 12), nImin: 1000 * Math.cos(Math.PI / 12) }, 1e-2],
+  ['tolerance-stack-design', {}, { nominal: 0.5, wc: 0.28, sig: Math.sqrt(0.0214) / (3 * 1.33), top: 1 }],
+  ['leaf-spring-design', {}, { nReq: 4, nS: 3 * 5000 * 1000 / (2 * 60 * 64 * 700) }],
+  ['lathe-threading-plan', {}, { ap: 0.6134 * 2.5, n: HB21_N, t: 9 * 35 / (2.5 * HB21_N) }],
+  ['lathe-threading-plan', { nmax: 1000 }, { n: 1000 }],
+  ['lathe-threading-plan', { vfMax: 2000 }, { n: 800 }],
+  ['clevis-pin-joint', {}, { M: 110000, tau: 20000 / (2 * Math.PI * 100), st: 20000 / (30 * 20), tt: 20000 / (2 * 20 * 15) }],
+  ['o-ring-groove-design', {}, { mate: 52.2 }],
+  ['flywheel-rim-design', {}, { I: 5000 / ((20 * Math.PI) ** 2 * 0.05), dEc: 5, nmax: 615, nmin: 585 }],
+];
+for (const [id, over, expected, tol] of HB21_CASES) test(`design check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('twelfth-round design checks agree with the tools they chain', () => {
+  const fd = engine.run('fatigue-design-check').values;
+  near(fd.Kf, engine.run('fatigue-notch-factor', { Kt: 2.2, r: 1, aMode: 'steel', Su: 600 }).values.Kf, 1e-12, 'fatigue notch factor');
+  const gf = engine.run('goodman-fatigue', { sa: fd.sa, sm: fd.sm, Se: fd.Se, Su: 600, Sy: 400, req: 1.5 }).values;
+  for (const k of ['nG', 'nS', 'nGb', 'ny']) near(fd[k], gf[k], 1e-9, `fatigue ${k}`);
+  const ff = engine.run('fatigue-design-check', { smax: 180 }).values;
+  near(ff.N, engine.run('sn-fatigue-life', { sa: ff.sar, Su: 600, Se: ff.Se, f: 0.9 }).values.N, ff.N * 1e-9, 'finite life');
+  const ch = engine.run('crane-hook-design').values, cb = engine.run('curved-beam', { P: 20000, ri: 40, h: 60, b: 30, allow: 200 }).values;
+  for (const k of ['si', 'so', 'e', 'sStraight', 'factor']) near(ch[k], cb[k], 1e-9, `hook ${k}`);
+  near(ch.siP, 2 * ch.si, 1e-9, 'proof stress');
+  const us = engine.run('universal-joint-drive', { mode: 'single' }).values, uj = engine.run('universal-joint', { angle: 15, rpm: 1000, pos: 45, Tin: 100 }).values;
+  near(us.nmax, uj.nmax, 1e-2, 'single joint top speed'); near(us.nmin, uj.nmin, 1e-2, 'single joint bottom speed');
+  const out = engine.run('universal-joint-drive', { phase: 'out' }).values; assert.ok(out.fluct > 2 * us.fluct * 0.9, 'out-of-phase joints add their fluctuation');
+  const ts = engine.run('tolerance-stack-design').values, rs = engine.run('rss-tolerance-stack').values;
+  for (const k of ['nominal', 'wc', 'rss']) near(ts[k], rs[k], 1e-12, `stack ${k}`);
+  const ls = engine.run('leaf-spring-design').values, lo = engine.run('leaf-spring', { type: 'semi', F: 5000, L: 1000, b: 60, t: 8, n: 6, E: 207, allow: 700 }).values;
+  for (const k of ['sigma', 'k']) near(ls[k], lo[k], 1e-9, `leaf ${k}`); near(ls.defl, lo.defl, 1e-12, 'leaf deflection');
+  near(engine.run('leaf-spring-design', { n: 1, dMax: 2000 }).values.nS, engine.run('leaf-spring', { type: 'semi', F: 5000, L: 1000, b: 60, t: 8, n: 1, E: 207, allow: 700 }).values.sigma / 700, 1e-12, 'leaves for stress');
+  for (const passes of [2, 5, 8]) {
+    const lt = engine.run('lathe-threading-plan', { passes }).values, ti = engine.run('thread-infeed', { type: 'ext', d: 20, P: 2.5, passes, depth: 0 }).values;
+    near(lt.ap, ti.ap, 1e-12, `depth ${passes}`); near(lt.first, ti.first, 1e-12, `first pass ${passes}`); near(lt.last, ti.last, 1e-12, `last pass ${passes}`);
+  }
+  const cp = engine.run('clevis-pin-joint').values, bs = engine.run('bolt-shear-bearing', { F: 20000, n: 1, planes: '2', d: 20, t: 20, tauAllow: 120, bAllow: 200 }).values;
+  near(cp.tau, bs.tau, 1e-9, 'pin double shear'); near(cp.be, bs.sb, 1e-9, 'eye bearing');
+  const og = engine.run('o-ring-groove-design').values, oo = engine.run('o-ring-gland').values;
+  for (const k of ['stretch', 'cs2', 'squeeze', 'fill']) near(og[k], oo[k], 1e-9, `o-ring ${k}`);
+  const od = engine.run('o-ring-groove-design', { depth: 0, width: 0 }).values; near(od.squeeze, 20, 1e-9, 'design depth gives the target squeeze'); near(od.fill, 75, 1e-9, 'design width gives the target fill');
+  const fw = engine.run('flywheel-rim-design').values, fe = engine.run('flywheel-energy', { mass: fw.mass, outer: 800, inner: fw.Di, nmax: 615, nmin: 585, vmax: 30 }).values;
+  near(fe.J, fw.I, 1e-9, 'flywheel inertia'); near(fe.dE, fw.dEc * 1000, 1e-6, 'energy fluctuation');
+  near(fw.smax, engine.run('rotating-disc', { Do: 800, Di: fw.Di, rpm: 615, rho: 7200, nu: 0.26, Sy: 150, req: 5 }).values.smax, 1e-9, 'rotating stress');
+});
+
+test('twelfth-round design checks: verdicts and guards', () => {
+  assert.equal(engine.run('fatigue-design-check').text, 'INFINITE LIFE');
+  assert.equal(engine.run('fatigue-design-check', { smax: 180 }).text, 'FATIGUE FAILURE EXPECTED');
+  assert.equal(engine.run('fatigue-design-check', { smax: 180, Nreq: 1e5 }).text, 'FINITE LIFE ADEQUATE');
+  assert.equal(engine.run('fatigue-design-check', { smax: 120 }).text, 'MARGIN TOO SMALL');
+  assert.equal(engine.run('crane-hook-design', { W: 40 }).text, 'HOOK NOT ADEQUATE');
+  assert.equal(engine.run('crane-hook-design', { Sy: 200 }).text, 'HOOK NOT ADEQUATE');
+  assert.equal(engine.run('universal-joint-drive', { b1: 30, b2: 30 }).text, 'DRIVE NOT ADEQUATE');
+  assert.equal(engine.run('universal-joint-drive', { mode: 'single' }).text, 'DRIVE NOT ADEQUATE');
+  assert.equal(engine.run('tolerance-stack-design', { Cp: 0.5, reqMin: 0.35 }).text, 'STACK FAILS');
+  assert.equal(engine.run('tolerance-stack-design', { reqMin: 0.3 }).text, 'STACK MEETS STATISTICALLY');
+  assert.equal(engine.run('leaf-spring-design', { n: 3 }).text, 'SPRING NOT ADEQUATE');
+  assert.equal(engine.run('lathe-threading-plan', { passes: 2 }).text, 'CHANGE THE PASS COUNT');
+  assert.equal(engine.run('lathe-threading-plan', { passes: 30 }).text, 'CHANGE THE PASS COUNT');
+  assert.equal(engine.run('clevis-pin-joint', { g: 10 }).text, 'PIN JOINT OVERSTRESSED');
+  assert.equal(engine.run('o-ring-groove-design', { gap: 0.2 }).text, 'REVISE THE GROOVE');
+  assert.equal(engine.run('o-ring-groove-design', { gd: 46 }).text, 'REVISE THE GROOVE');
+  assert.equal(engine.run('flywheel-rim-design', { vMax: 20 }).text, 'FLYWHEEL NOT ADEQUATE');
+  assert.equal(engine.run('flywheel-rim-design', { Sy: 15 }).text, 'FLYWHEEL NOT ADEQUATE');
+  const cases: Array<[string, Inputs]> = [['fatigue-design-check', { smin: 200 }], ['fatigue-design-check', { Sy: 700 }], ['tolerance-stack-design', { reqMin: 1, reqMax: 0.5 }], ['tolerance-stack-design', { dir1: 'off', dir2: 'off', dir3: 'off', dir4: 'off' }], ['clevis-pin-joint', { R: 9 }], ['o-ring-groove-design', { sqLo: 30, sqHi: 20 }], ['flywheel-rim-design', { Do: 400 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
