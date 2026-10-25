@@ -11,8 +11,10 @@ import Logo from './Logo.astro';
 import { INDUSTRIES, PROCESS } from '../data/services.ts';
 
 type Page = 'services' | 'how-it-works' | 'industries' | 'about' | 'contact' | 'tools' | 'reados';
-interface Props { page: Page; priority?: boolean; class?: string; }
+/** `compact` draws the WORKOS and READOS scenes as a wide, short banner for the library page headers. */
+interface Props { page: Page; priority?: boolean; class?: string; compact?: boolean; }
 const { page, class: className } = Astro.props;
+const compact = Boolean(Astro.props.compact) && (page === 'tools' || page === 'reados');
 const sharedOrbit = page === 'services' || page === 'about';
 
 const sectors = INDUSTRIES.slice(0, 6).map((item, i) => ({
@@ -67,13 +69,61 @@ const scene = !sharedOrbit ? copy[page as keyof typeof copy] : null;
 {sharedOrbit ? (
   <ServiceMap variant={page as 'services' | 'about'} />
 ) : (
-  <figure class:list={['mv', 'mv--' + page, className]} aria-labelledby={'mv-caption-' + page}>
+  <figure class:list={['mv', 'mv--' + page, compact && 'mv--compact', className]} aria-labelledby={'mv-caption-' + page}>
     <figcaption id={'mv-caption-' + page} class="visually-hidden">{scene?.description}</figcaption>
     <div class="mv__panel">
       <div class="mv__top" aria-hidden="true">
         <span class="mv__eyebrow">{scene?.eyebrow}</span>
         <span class="mv__top-brand"><Logo label="" height={14} /></span>
       </div>
+
+      {compact && page === 'tools' && (
+        <div class="mv__content mv__cw" aria-hidden="true">
+          {toolStages.map((stage) => (
+            <div class="mv__cw-card">
+              <span class="mv__num">{stage.number}</span>
+              <strong>{stage.name}</strong>
+              <span class="mv__sub">{stage.note}</span>
+              <span class="mv__tool-bars"><span></span><span></span></span>
+            </div>
+          ))}
+          <div class="mv__cw-flow"><span class="mv__flowpacket"></span></div>
+        </div>
+      )}
+
+      {compact && page === 'reados' && (
+        <div class="mv__content mv__cr" aria-hidden="true">
+          <div class="mv__cr-step">
+            <span class="mv__reading-label"><b>01</b> Knowledge</span>
+            <div class="mv__documents">
+              {[0, 1, 2].map(() => <svg viewBox="0 0 62 78" focusable="false"><path class="mv__paper" d="M7 2h34l14 14v59H7Z"/><path d="M41 2v15h14M17 31h27M17 40h27M17 49h19M17 61h12"/></svg>)}
+            </div>
+          </div>
+          <div class="mv__cr-step mv__cr-topics">
+            <span class="mv__reading-label"><b>02</b> Topics</span>
+            <div class="mv__topic">Engineering</div>
+            <div class="mv__topic mv__topic--selected">Business</div>
+            <div class="mv__topic">Technology</div>
+          </div>
+          <div class="mv__cr-step">
+            <span class="mv__reading-label"><b>03</b> Book</span>
+            <div class="mv__shelf">
+              <span class="mv__spine"></span><span class="mv__spine"></span>
+              <div class="mv__focus-book"><span>READOS</span><strong>Read the<br/>Numbers</strong><span class="mv__book-rule"></span></div>
+            </div>
+          </div>
+          <div class="mv__cr-step">
+            <span class="mv__reading-label"><b>04</b> Reading</span>
+            <div class="mv__cr-page">
+              <strong>Follow the cash</strong>
+              <div class="mv__page-lines"><i></i><i></i><i></i></div>
+              <div class="mv__reading-progress"><i></i></div>
+              <span class="mv__page-turn"></span>
+            </div>
+          </div>
+          <div class="mv__cw-flow mv__cr-flow"><span class="mv__flowpacket"></span></div>
+        </div>
+      )}
 
       {page === 'industries' && (
         <div class="mv__sectors mv__content" role="list" aria-label="Production sectors">
@@ -110,7 +160,7 @@ const scene = !sharedOrbit ? copy[page as keyof typeof copy] : null;
         </div>
       )}
 
-      {page === 'tools' && (
+      {!compact && page === 'tools' && (
         <div class="mv__tool-scene mv__content">
           <div class="mv__tool-stages">
             {toolStages.map((stage) => (
@@ -133,7 +183,7 @@ const scene = !sharedOrbit ? copy[page as keyof typeof copy] : null;
         </div>
       )}
 
-      {page === 'reados' && (
+      {!compact && page === 'reados' && (
         <div class="mv__reading-scene mv__content" aria-hidden="true">
           <div class="mv__reading-sources">
             <div class="mv__knowledge">
@@ -413,7 +463,49 @@ const scene = !sharedOrbit ? copy[page as keyof typeof copy] : null;
   @keyframes mv-reading-flow{from{stroke-dashoffset:302;}to{stroke-dashoffset:0;}}
   @keyframes mv-turn-page{0%,50%,80%,100%{transform:rotateY(0);opacity:0;}56%{transform:rotateY(0);opacity:.8;}74%{transform:rotateY(-90deg);opacity:0;}}
   @keyframes mv-read-progress{0%,40%,100%{transform:scaleX(.65);}70%,85%{transform:scaleX(1);}}
+  /* COMPACT (WORKOS and READOS library headers): the same scenes as a wide, short banner.
+     One signal crosses the panel and lights each stage as it passes. */
+  .mv--compact{max-width:none;}
+  .mv--compact .mv__panel{aspect-ratio:2.6;border-radius:16px;background-size:20px 20px;}
+  .mv--compact .mv__top{top:9%;left:4%;right:4%;}
+  .mv--compact .mv__bottom{bottom:7%;left:4%;right:4%;}
+  .mv--compact .mv__top-brand{max-width:22%;}
+  .mv--compact .mv__content{inset:21% 4% 23%;}
+
+  .mv__cw{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:minmax(0,1fr) auto;gap:9px 10px;}
+  .mv__cw-card{
+    display:flex;flex-direction:column;gap:3px;min-width:0;min-height:0;padding:8px 10px;
+    border:1px solid var(--m-line);border-radius:11px;background:var(--m-card);
+    animation:mv-sector 6s ease-in-out 1s infinite;
+  }
+  .mv__cw-card:nth-child(2){animation-delay:3s;}
+  .mv__cw-card:nth-child(3){animation-delay:5s;}
+  .mv__cw-card strong{font-size:clamp(.78rem,.6rem + .4vw,.95rem);}
+  .mv__cw-card .mv__sub{font-size:clamp(.5rem,.4rem + .2vw,.62rem);}
+  .mv__cw-card .mv__tool-bars{gap:4px;}
+  .mv__cw-card .mv__tool-bars span{height:4px;}
+  .mv__cw-flow{position:relative;grid-column:1/-1;height:2px;margin:0 3%;background:var(--m-line);}
+
+  .mv__cr{display:grid;grid-template-columns:.8fr 1.1fr .9fr 1.25fr;grid-template-rows:minmax(0,1fr) auto;gap:9px 4%;container-type:inline-size;}
+  .mv__cr-step{display:flex;flex-direction:column;gap:5px;min-width:0;min-height:0;}
+  .mv__cr .mv__documents{flex:1;width:56%;height:auto;margin:4px auto 0;}
+  .mv__cr-topics{display:grid;grid-template-rows:auto repeat(3,minmax(0,1fr));gap:4px;}
+  .mv__cr .mv__topic{padding:0 7%;border-radius:6px;font-size:clamp(.5rem,2.2cqi,.68rem);}
+  .mv__cr .mv__shelf{flex:1;height:auto;margin-top:0;}
+  .mv__cr .mv__focus-book{padding:9% 7% 9% 12%;}
+  .mv__cr .mv__focus-book>span:first-child{font-size:clamp(.38rem,1.5cqi,.5rem);}
+  .mv__cr .mv__focus-book strong{font-size:clamp(.55rem,2.4cqi,.78rem);}
+  .mv__cr-page{
+    position:relative;flex:1;display:flex;flex-direction:column;gap:5px;min-height:0;padding:7px 9px;
+    border:1px solid var(--m-line);border-radius:10px;background:var(--m-card);overflow:hidden;perspective:400px;
+  }
+  .mv__cr-page strong{font-family:var(--font-display);font-size:clamp(.58rem,2.5cqi,.82rem);}
+  .mv__cr-page .mv__page-lines{gap:4px;margin:0;}
+  .mv__cr-page .mv__reading-progress{margin-top:auto;}
+  .mv__cr-flow .mv__flowpacket{animation-duration:12s;}
+
   @media (prefers-reduced-motion: reduce){
+    .mv--compact *, .mv--compact *::before, .mv--compact *::after{animation:none!important;}
     .mv__reading-scene *, .mv__reading-scene *::before, .mv__reading-scene *::after{animation:none!important;}
     .mv__reading-signal{stroke-dasharray:none;opacity:.55;}
     .mv__sector,.mv__step,.mv__rail-packet,.mv__tool-bars span,.mv__flowpacket,.mv__contact-option{animation:none!important;}

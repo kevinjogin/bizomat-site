@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ReadOSAnimatedCover from '../../components/ReadOSAnimatedCover.astro';
+import MotionVisual from '../../components/MotionVisual.astro';
 import LibraryHero from '../../components/library/LibraryHero.astro';
 import LibraryBrowser from '../../components/library/LibraryBrowser.astro';
 import LibrarySection from '../../components/library/LibrarySection.astro';
@@ -74,7 +75,9 @@ const chapterIndex = JSON.stringify(Object.fromEntries(subjects.flatMap((s) => s
     label="Search READOS books"
     total={total}
     noun="book"
-  />
+  >
+    <MotionVisual page="reados" slot="visual" compact priority />
+  </LibraryHero>
   <LibraryBrowser name="READOS" base="/reados/" noun="book" preview={PREVIEW} topics={subjects.map((s) => ({ slug: s.slug, name: s.name, description: s.description, icon: s.icon, count: s.entries.length }))}>
     {subjects.map((s) => (
       <LibrarySection slug={s.slug} name={s.name} description={s.description} count={s.entries.length} noun="book" base="/reados/" preview={PREVIEW}>
@@ -88,9 +91,9 @@ const chapterIndex = JSON.stringify(Object.fromEntries(subjects.flatMap((s) => s
     <details class="lib-about" slot="after">
       <summary>About READOS</summary>
       <div class="lib-about__body">
-        <p>Choose a subject, find a book and read at your own pace. READOS brings together practical guides to engineering, manufacturing, operations, projects, technology and business, one chapter at a time.</p>
-        <p>Search looks at book titles, summaries, subjects and chapter titles. It does not search the full text of chapters.</p>
-        <p>Each collection brings together complete KEVOS® articles as chapters. You can still read the articles at their original links.</p>
+        <p>READOS is the KEVOS® knowledge library: structured, practitioner-written guidance on engineering, manufacturing, operations, projects, technology and business, published to help organisations make sound technical and commercial decisions.</p>
+        <p>Every title is written to be applied. Read the method in READOS, run the numbers with the matching <a href="/tools/">WORKOS tools</a>, and when your organisation needs the work delivered, <a href="/contact/">discuss your requirements with KEVOS®</a>.</p>
+        <p>Search covers titles, summaries, subjects and chapter headings. It does not search the full text of each chapter.</p>
       </div>
     </details>
   </LibraryBrowser>

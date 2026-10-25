@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
+import MotionVisual from '../../components/MotionVisual.astro';
 import LibraryHero from '../../components/library/LibraryHero.astro';
 import LibraryBrowser from '../../components/library/LibraryBrowser.astro';
 import LibrarySection from '../../components/library/LibrarySection.astro';
@@ -35,7 +36,9 @@ const description =
     label="Search WORKOS tools"
     total={tools.length}
     noun="tool"
-  />
+  >
+    <MotionVisual page="tools" slot="visual" compact priority />
+  </LibraryHero>
   <LibraryBrowser id="tool-directory" name="WORKOS" base="/tools/" noun="tool" preview={PREVIEW} topics={topics.map((t) => ({ slug: t.slug, name: t.name, description: t.description, icon: t.icon, count: t.items.length }))}>
     {topics.map((topic) => (
       <LibrarySection slug={topic.slug} name={topic.name} description={topic.description} count={topic.items.length} noun="tool" base="/tools/" preview={PREVIEW} subs={topic.subs}>

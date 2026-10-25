@@ -1,5 +1,6 @@
 ---
-// Shared compact header for the WORKOS and READOS libraries: one title, one sentence, then the library search.
+// Shared compact header for the WORKOS and READOS libraries: one title, one sentence, the library's compact
+// brand animation (the "visual" slot) beside them, then the library search across the full width.
 import Container from '../Container.astro';
 import LibrarySearch from './LibrarySearch.astro';
 
@@ -15,12 +16,18 @@ interface Props {
   noun: string;
 }
 const { title, description, ...search } = Astro.props;
+const visual = Astro.slots.has('visual');
 ---
 
 <header class="lib-hero" data-library-intro>
   <Container>
-    <h1 class="lib-hero__title">{title}</h1>
-    <p class="lib-hero__lead">{description}</p>
+    <div class:list={['lib-hero__top', visual && 'lib-hero__top--visual']}>
+      <div class="lib-hero__copy">
+        <h1 class="lib-hero__title">{title}</h1>
+        <p class="lib-hero__lead">{description}</p>
+      </div>
+      {visual && <div class="lib-hero__visual"><slot name="visual" /></div>}
+    </div>
     <LibrarySearch {...search} />
   </Container>
 </header>

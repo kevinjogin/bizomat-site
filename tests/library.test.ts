@@ -94,7 +94,8 @@ test('WORKOS and READOS share the same hero, search, topic grid and sections', (
   const reados = read('src/pages/reados/index.astro');
   for (const page of [workos, reados]) {
     for (const part of ['<LibraryHero', '<LibraryBrowser', '<LibrarySection', "import '../../styles/library.css'", '<details class="lib-about"']) assert.ok(page.includes(part), part);
-    assert.doesNotMatch(page, /<MotionVisual|<Hero\b|tools-pill|class="chips"/, 'no illustration, badge row or tag cloud');
+    assert.doesNotMatch(page, /<Hero\b|tools-pill|class="chips"/, 'no large hero, badge row or tag cloud');
+    assert.match(page, /<MotionVisual page="\w+" slot="visual" compact/, 'the brand animation is the compact banner');
   }
   assert.match(workos, /title="WORKOS"\s+description="Practical engineering, manufacturing and business tools to calculate, analyse and make better decisions\."/);
   assert.match(workos, /placeholder="Search WORKOS tools\.\.\."/);
