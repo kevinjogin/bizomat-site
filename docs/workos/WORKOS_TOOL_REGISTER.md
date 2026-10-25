@@ -1186,3 +1186,51 @@ A fourth round of 9 integrated design checks in batch handbook29: a gear train t
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Hydraulic Motor Drive Sizing** `hydraulic-motor-drive` | MOTOR ADEQUATE | Pressure; Starting torque; Model and application | 3418–3425 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, fourteenth pass: integrated design checks, fifth round (added 26 October 2026)
+
+A fifth round of 9 integrated design checks in batch handbook30: lathe chuck grip force with centrifugal loss and the safe speed, machine coolant system sizing, rotary index table drive (inertia, profile, motor torque, holding torque), rack-and-pinion axis sizing with a Lewis tooth check, hoist drive sizing (line pull, rope factor, drum, gearbox, motor rating, brake), a heat-treatment furnace load plan (heat-up time, energy, cost per kg), crank press capacity above bottom from the slider-crank geometry, pipe thermal expansion with anchor force and loop leg length, and gear backlash at operating temperature. Tests cross-check each against the coolant, pump, rack-and-pinion, Lewis, wire-rope, heating-energy and thermal-stress tools. WORKOS now holds 504 tools.
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Lathe Chuck Grip Force and Speed Limit** `chuck-grip-force` | GRIP ADEQUATE | Chuck rating; Speed; Model and application | 1084–1101, 3131–3134 | Automated + cross-check |
+| **Machine Coolant System Sizing** `coolant-system-sizing` | CALCULATED | Chip handling; Model and application | 1112–1121, 1183–1190 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Rotary Index Table Drive Sizing** `rotary-index-table-sizing` | CALCULATED | Inertia ratio; Holding; Model and application | 171, 2284–2290 | Automated + cross-check |
+| **Rack and Pinion Axis Sizing** `rack-pinion-axis-sizing` | TEETH ADEQUATE | Tooth bending; Vertical axis; Model and application | 2131–2140, 2219 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Hoist Drive Sizing (Rope, Drum, Gearbox, Motor and Brake)** `hoist-drive-sizing` | ROPE AND DRUM ADEQUATE | Rope safety factor; Drum D/d; Certification; Model and application | 2613–2625, 3444–3450 | Automated + cross-check |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Heat-Treatment Furnace Load Plan (Time, Energy, Cost)** `furnace-heat-treat-plan` | CALCULATED | Model and application | 472–480, 372–376 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Mechanical (Crank) Press Capacity Above Bottom** `crank-press-capacity` | PRESS UNDERSIZED AT THIS HEIGHT | Force at height; Energy; Model and application | 1386–1392, 1342 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Pipe Thermal Expansion, Anchor Force and Expansion Loop** `pipe-expansion-loop` | CALCULATED | Restraint; Piping code; Model and application | 375–378, 3401–3402 | Automated + cross-check |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Gear Backlash at Operating Temperature** `gear-backlash-temperature` | BACKLASH REMAINS | Running backlash; Model and application | 2163–2167, 375–378 | Automated + cross-check |
