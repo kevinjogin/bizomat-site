@@ -1401,3 +1401,46 @@ A ninth round of 9 integrated design checks in batch handbook34: helical gear se
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Compression Strut Sizing (Euler or Johnson, Round Bar or Tube)** `compression-strut-sizing` | STRUT ADEQUATE | Buckling; Local buckling; End fixity; Model and application | 281–287 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, nineteenth pass: integrated design checks, tenth round (added 26 October 2026)
+
+A tenth round of 9 integrated design checks in batch handbook35: a torsion spring designer (straight-leg deflection, curvature-corrected bending stress, largest safe angle, wound diameter and arbor clearance), planetary gear set design (ratio, equal-spacing and adjacency checks, sun torque, force per planet with load sharing, pin load, sun bending), a turning cut planner (speed held to the machine maximum, passes, power, torque, theoretical finish and time), flat belt drive design (wrap, length, tensions with centrifugal tension, belt width from the allowable stress), caliper disc brake design (clamp force, pad pressure, energy and disc temperature rise), circular cover plate design (thickness for stress and for deflection), hydraulic power unit sizing (pump displacement, shaft power, reservoir, heat and cooler), linear guide selection (four-carriage loads with offset and acceleration, life and static safety) and a hydraulic cylinder structural check (Lamé barrel with least wall and bore growth, end cap, rod buckling). Tests cross-check against the torsion spring, planetary gear, Lewis bending, turning power, turning cusp, turning time, belt drive tensions, circular plate, hydraulic power, pressure cylinder and column buckling tools. WORKOS now holds 549 tools.
+
+### Springs
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Torsion Spring Designer (Angle, Stress, Legs and Arbor)** `torsion-spring-designer` | SPRING ADEQUATE | Bending stress; Arbor clearance; Body length; Model and application | 333–343 | Automated + cross-check |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Planetary Gear Set Design (Ratio, Assembly, Forces and Bending)** `planetary-gear-set-design` | GEAR SET ADEQUATE | Equal spacing; Planet adjacency; Sun bending; Model and application | 2211, 2122–2160 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Turning Cut Planner (Speed, Power, Torque, Finish and Time)** `turning-cut-planner` | CUT FEASIBLE | Spindle power; Spindle torque; Surface finish; Chip control; Model and application | 1084–1101, 1023–1030 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Flat Belt Drive Design (Wrap, Tensions and Belt Width)** `flat-belt-drive-design` | BELT ADEQUATE | Belt width; Belt speed; Wrap; Model and application | 2473–2520 | Automated + cross-check |
+| **Caliper Disc Brake Design (Clamp Force, Pad Pressure, Heat)** `disc-brake-design` | BRAKE ADEQUATE | Clamp force; Pad pressure; Disc heating; Model and application | 2455–2459 | Automated + cross-check |
+| **Linear Guide Selection (Carriage Loads, Life and Static Safety)** `linear-guide-selection` | GUIDE ADEQUATE | Life; Static safety; Lift-off; Model and application | 2365–2416 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Circular Cover Plate Design (Thickness for Stress and Deflection)** `cover-plate-design` | COVER ADEQUATE | Stress; Deflection; Thin-plate range; Bolting; Model and application | 288–290 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Hydraulic Power Unit Sizing (Pump, Motor, Reservoir, Cooling)** `hydraulic-power-unit-sizing` | MOTOR ADEQUATE | Motor power; Cooling; Pump selection; Model and application | 3421–3425, 371–378 | Automated + cross-check |
+| **Hydraulic Cylinder Structure (Barrel, End Cap and Rod Buckling)** `hydraulic-cylinder-structure` | CYLINDER ADEQUATE | Barrel; End cap; Rod buckling; Seals; Model and application | 290–294, 281–288, 3421–3425 | Automated + cross-check |
