@@ -1444,3 +1444,46 @@ A tenth round of 9 integrated design checks in batch handbook35: a torsion sprin
 |---|---|---|---|---|
 | **Hydraulic Power Unit Sizing (Pump, Motor, Reservoir, Cooling)** `hydraulic-power-unit-sizing` | MOTOR ADEQUATE | Motor power; Cooling; Pump selection; Model and application | 3421–3425, 371–378 | Automated + cross-check |
 | **Hydraulic Cylinder Structure (Barrel, End Cap and Rod Buckling)** `hydraulic-cylinder-structure` | CYLINDER ADEQUATE | Barrel; End cap; Rod buckling; Seals; Model and application | 290–294, 281–288, 3421–3425 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, twentieth pass: integrated design checks, eleventh round (added 26 October 2026)
+
+An eleventh round of 9 integrated design checks in batch handbook36: a deep drawing plan (blank, draw-by-draw diameters, drawing and blank-holder forces, press check), a broaching plan (pitch, teeth engaged, force, broach length, stroke and time), shaft critical speed with up to three masses (Dunkerley and Rayleigh), Geneva drive dynamics (peak acceleration, roller force and driver torque), a friction-grip bolted joint (preload, torque, slip resistance and bearing backup), flexible coupling selection (service and peak torque, speed, combined misalignment, bore and hub key), a punching operation plan (force with stripping, punch stress, smallest punch, clearance and energy), toggle clamp design (cylinder force, clamping force, angle for the required force, travels and link stress) and a cylindrical traverse grinding planner. Tests cross-check against the shell blank, draw reductions, broach pitch, critical speed, Geneva mechanism, bolt torque–preload, bolt and pin shear, key stress, punching force, pneumatic cylinder force, toggle joint, grinding geometry and grinding cycle time tools. WORKOS now holds 558 tools.
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Deep Drawing Plan (Blank, Draws, Forces and Press)** `deep-drawing-plan` | PRESS ADEQUATE | Press capacity; Annealing; Model and application | 1353–1361 | Automated + cross-check |
+| **Punching Operation Plan (Force, Stripping, Punch Stress, Clearance)** `punching-operation-plan` | PUNCHING FEASIBLE | Press capacity; Punch stress; Off-centre load; Model and application | 1338–1346 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Broaching Plan (Pitch, Teeth, Force, Broach Length and Time)** `broaching-plan` | BROACHING FEASIBLE | Machine pull; Stroke; Teeth in the cut; Model and application | 980–990 | Automated + cross-check |
+| **Cylindrical Grinding Planner (Traverse: Speeds, Power and Time)** `cylindrical-grinding-planner` | PLAN FEASIBLE | Wheel speed; Spindle power; Burn; Model and application | 1199–1268 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Shaft Critical Speed with Several Masses (Dunkerley and Rayleigh)** `shaft-critical-speed-check` | BELOW CRITICAL | Separation; Passing through; Model and application | 197, 302 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Geneva Drive Design (Acceleration, Pin Force and Drive Torque)** `geneva-drive-design` | DRIVE ADEQUATE | Roller force; Driver torque; Entry; Model and application | 171 | Automated + cross-check |
+| **Toggle Clamp Design (Cylinder, Toggle Angle and Clamping Force)** `toggle-clamp-design` | CLAMP ADEQUATE | Clamping force; Link stress; Small angle; Model and application | 172–174 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Friction-Grip (Slip-Resistant) Bolted Joint** `friction-grip-joint` | NO SLIP | Slip; Bearing-type backup; Tightening method; Model and application | 1521–1535, 1720–1735 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Flexible Coupling Selection (Torque, Speed, Misalignment, Bore and Key)** `flexible-coupling-selection` | COUPLING SUITABLE | Nominal torque; Peak torque; Speed; Misalignment; Hub key; Model and application | 302–304, 2460–2486 | Automated + cross-check |
