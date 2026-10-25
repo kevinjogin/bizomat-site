@@ -946,3 +946,25 @@ Applied to every tool: units and bounds on every input, a guide with an input so
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Deep Drawing Reduction Sequence** `draw-reductions` | CALCULATED | Model and application | 1353–1359 | Automated + reference value |
+
+## Machinery’s Handbook topic tools, eighth pass: plastics and set screws (added 25 October 2026)
+
+3 MAKEOS tools in batch handbook24 add the plastics gear power rating (spur, helical and straight bevel), thermal stress and relative movement in plastic–metal assemblies with an apparent creep modulus option, and set-screw holding power and torque. Reference cases include the handbook’s set-screw examples and agreement of the metric and US plastics gear formulas. WORKOS now holds 447 tools.
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Plastics Gear Power Rating** `plastic-gear-power` | CALCULATED | Wear and heat; Model and application | 604–606 | Automated + reference value |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Thermal Stress and Movement in Plastic–Metal Assemblies** `plastic-thermal-mismatch` | STRESS ACCEPTABLE | Stress; Fixings; Model and application | 578–580 | Automated + reference value |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Set-Screw Holding Power and Torque** `set-screw-holding` | CALCULATED | Number of screws; Model and application | 1699–1700 | Automated + reference value |
