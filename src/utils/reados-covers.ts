@@ -109,6 +109,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'read-the-numbers-understand-the-business': { motif: 'lens', tone: 'graphite' },
   'win-work-you-can-deliver': { motif: 'pathway', tone: 'ember' },
   'weld-repairs-that-hold': { motif: 'beam', tone: 'ember' },
+  'cad-standards-that-stick': { motif: 'specsheet', tone: 'ember' },
+  'cad-data-you-can-trust': { motif: 'archive', tone: 'graphite' },
   'gears-by-the-numbers': { motif: 'geartrain', tone: 'paper' },
   'oxy-fuel-by-the-numbers': { motif: 'gauge', tone: 'carbon' },
   'electroplating-by-the-numbers': { motif: 'experiment', tone: 'ember' },
