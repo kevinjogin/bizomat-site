@@ -1487,3 +1487,56 @@ An eleventh round of 9 integrated design checks in batch handbook36: a deep draw
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Flexible Coupling Selection (Torque, Speed, Misalignment, Bore and Key)** `flexible-coupling-selection` | COUPLING SUITABLE | Nominal torque; Peak torque; Speed; Misalignment; Hub key; Model and application | 302–304, 2460–2486 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, twenty-first pass: integrated design checks, twelfth round (added 26 October 2026)
+
+A twelfth round of 9 integrated design checks in batch handbook37: a fatigue design check (corrected endurance limit, fatigue notch factor, Goodman, Soderberg and Gerber factors, yield, finite life from the S-N line), crane hook design (curved-beam stresses at working and proof load, shank thread), a single or double Cardan drive (speed fluctuation, phasing for constant velocity, inertia torques, peak joint torque), tolerance stack design (worst case, RSS, predicted rejects from process capability), semi-elliptic leaf spring design (leaves for stress and deflection), a lathe threading plan (infeed per pass, spindle speed limit, time), a clevis pin joint (pin bending, shear, bearing, eye tension and tear-out), O-ring groove design (depth and width for target squeeze and fill, mating diameter, extrusion gap) and flywheel rim design (inertia for the speed fluctuation, bore, mass, rim speed, rotating stress). Tests cross-check against the fatigue notch factor, Goodman fatigue, S-N fatigue life, curved beam, universal joint, RSS tolerance stack, leaf spring, thread infeed, bolt and pin shear, O-ring gland, flywheel energy and rotating disc tools. WORKOS now holds 567 tools.
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Fatigue Design Check (Corrected Endurance, Notch, Mean Stress, Life)** `fatigue-design-check` | INFINITE LIFE | Goodman and yield; Life; Data; Model and application | 200–211, 280, 358 | Automated + cross-check |
+| **Crane Hook Design (Curved-Beam Stress, Proof Load and Shank)** `crane-hook-design` | HOOK ADEQUATE | Working load; Proof load; Shank; Standard; Model and application | 274–276, 1521–1535 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Universal-Joint Drive (Single or Double Cardan: Speed, Torque, Inertia)** `universal-joint-drive` | DRIVE ADEQUATE | Joint angles; Constant velocity; Joint torque; Model and application | 2445–2446 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Tolerance Stack Design (Worst Case, RSS and Predicted Rejects)** `tolerance-stack-design` | STACK MEETS WORST CASE | Worst case; RSS; Predicted rejects; Model and application | 628–634, 128–130 | Automated + cross-check |
+
+### Springs
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Semi-Elliptic Leaf Spring Design (Leaves for Stress and Deflection)** `leaf-spring-design` | SPRING ADEQUATE | Stress; Deflection; Leaf count; Model and application | 344–345 | Automated + cross-check |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Lathe Threading Plan (Infeed per Pass, Spindle Speed and Time)** `lathe-threading-plan` | PLAN FEASIBLE | First pass; Last pass; Run-in; Model and application | 2037–2042, 1289–1300 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Clevis Pin Joint Design (Pin Bending, Shear, Bearing and Eye)** `clevis-pin-joint` | PIN JOINT ADEQUATE | Pin bending; Pin shear; Eye bearing; Fork bearing; Eye net tension; Eye tear-out; Model and application | 1535, 1720–1735 | Automated + cross-check |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **O-Ring Groove Design (Depth, Width, Bore and Extrusion Gap)** `o-ring-groove-design` | GROOVE ADEQUATE | Squeeze; Fill; Stretch; Extrusion gap; Model and application | 2591–2610 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Flywheel Rim Design (Inertia for Speed Fluctuation, Size and Stress)** `flywheel-rim-design` | FLYWHEEL ADEQUATE | Rotating stress; Rim speed; Guarding; Model and application | 3000–3010, 179–190 | Automated + cross-check |
