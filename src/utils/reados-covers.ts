@@ -136,6 +136,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'welding-health-and-safety-by-the-numbers': { motif: 'shield', tone: 'paper' },
   'building-approval-for-factory-projects': { motif: 'crane', tone: 'carbon' },
   'performance-solutions-by-the-numbers': { motif: 'scales', tone: 'paper' },
+  'railway-clearances-by-the-numbers': { motif: 'gates', tone: 'paper' },
+  'railway-track-geometry-by-the-numbers': { motif: 'pathway', tone: 'graphite' },
   'drawings-that-make-parts': { motif: 'drawing', tone: 'ember' },
   'surfaces-that-make-parts': { motif: 'contour', tone: 'graphite' },
   'inspecting-to-the-drawing': { motif: 'gauge', tone: 'paper' },
