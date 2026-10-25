@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -88,9 +88,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 382 tools with unique ids and every previously published id kept', () => {
+test('register: 415 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 382);
+  assert.equal(ids.length, 415);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -835,16 +835,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 267 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 300 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 267);
+  assert.equal(ids.length, 300);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -1181,6 +1181,93 @@ test('fourth handbook pass rejects impossible inputs', () => {
   const cases: Array<[string, Inputs]> = [
     ['cnc-chord-error', { tol: 60 }], ['timing-belt', { C: 20 }], ['elastic-constants', { nu: 0.6 }], ['thread-milling-path', { dc: 22 }],
     ['grinding-geometry', { type: 'int', dw: 300 }], ['bolted-joint-fatigue', { Fi: 80 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Fifth handbook pass (handbook19–20): mechanics and mechanisms, machine elements, forming and shop calculations.
+const g0 = 9.80665;
+const HB5_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['uniform-acceleration', {}, { v: 10, s: 25 }],
+  ['uniform-acceleration', { mode: 'fall', u: 0, h: 10 }, { v: Math.sqrt(2 * g0 * 10), t: Math.sqrt(2 * 10 / g0) }],
+  ['uniform-acceleration', { mode: 'distance', u: 10, v: 0, s: 25 }, { a: -2, t: 5 }],
+  ['angular-acceleration-torque', {}, { alpha: 50 * Math.PI / 2, T: 0.5 * 25 * Math.PI + 2, revs: 25 }],
+  ['impulse-momentum', {}, { F: 500 }],
+  ['impulse-momentum', { mode: 'collision' }, { v1p: 1, v2p: 4, loss: 0 }, 1e-9], // elastic impact, 2 kg at 3 m/s on 1 kg at rest
+  ['impulse-momentum', { mode: 'collision', e: 0 }, { v1p: 2, v2p: 2, loss: 3 }, 1e-9],
+  ['pendulum-period', {}, { T: 2 * Math.PI * Math.sqrt(1 / g0) }],
+  ['pendulum-period', { type: 'compound' }, { T: 2 * Math.PI * Math.sqrt(0.36 / (g0 * 0.4)) }],
+  ['pendulum-period', { type: 'torsional' }, { T: 8 * Math.sqrt(Math.PI * 2 * 0.01 * 1 / (0.003 ** 4 * 79.3e9)) }], // handbook SI form
+  ['flyball-governor', {}, { h: 2933 / 200 ** 2 * 6 * 0.3048, C: 0.1 }, 0.0002], // handbook: h = 2933 ÷ n² × (c + w) ÷ w in feet
+  ['geneva-mechanism', {}, { a: 100 * Math.SQRT1_2, tIndex: 0.25, ratio: 1 + Math.SQRT2 }],
+  ['gyroscope-precession', {}, { Tg: 0.4 * 100 * Math.PI * Math.PI / 3, F: 0.4 * 100 * Math.PI * Math.PI / 3 / 0.3 }],
+  ['prony-brake', {}, { P: 2 * Math.PI * 1 * 600 * 200 / 60 }],
+  ['rolling-resistance', {}, { F: 10000 * 0.5 / 150 }],
+  ['rotating-balance-plane', {}, { mc: Math.hypot(5000 + 2400 * Math.cos(200 * Math.PI / 180), 2400 + 2400 * Math.sin(200 * Math.PI / 180)) / 100 }],
+  ['two-plane-balance', {}, { mA: Math.hypot(2625, 1500 * Math.sqrt(3) * 0.25) / 100, mB: Math.hypot(125, 1500 * Math.sqrt(3) * 0.75) / 100 }],
+  ['torsional-vibration', {}, { K: 79.3e9 * Math.PI * 0.02 ** 4 / 32 / 0.5 }],
+  ['torsional-vibration', { mode: 'single', kMode: 'entered', K: 2000, J2: 0.05 }, { fn: Math.sqrt(2000 / 0.05) / (2 * Math.PI) }],
+  ['buoyancy', {}, { Fb: 1000 * g0 * 0.01, app: (78.5 - 10) * g0 }],
+  ['wind-pressure', { V: 100 * 0.44704, Cd: 1.6 }, { p: 0.6 * (100 * 0.44704) ** 2 * 1.6 }], // about the handbook's 40 lb/ft² at 100 mph
+  ['escaping-air-velocity', {}, { vSonic: Math.sqrt(2 * 1.4 * 287.05 * 294.15 / 2.4) }],
+  ['escaping-air-velocity', { p1: 0.2 }, { vOr: Math.sqrt(7 * 287.05 * 294.15 * (1 - (1.01325 / 1.21325) ** (0.4 / 1.4))) }],
+  ['ratchet-wheel-pitch', {}, { F: 35, P: Math.sqrt(35 * 200000 / (25 * 20 * 16)) }],
+  ['lever-force', {}, { F: 800 * 100 / 600, R: 800 + 800 / 6 }],
+  ['lever-force', { mode: 'arm', W1: 9000, a1: 1.5, F: 400 }, { x: 9000 * 1.5 / 400 }],
+  ['hoist-advantage', {}, { ideal: 10000 * 15 / 300 }],
+  ['hoist-advantage', { type: 'geared', W: 2000, R: 12, r: 2, g1: 1, eff: 100 }, { F: 2000 * 2 / 12 }], // handbook windlass example
+  ['hoist-advantage', { type: 'block', W: 200, n: 5, eff: 100 }, { F: 40 }], // handbook: five parts of rope
+  ['agma-bending-stress', {}, { sF: 3000 * 1.25 * 1.2 * 1.3 / (30 * 2.5 * 0.35) }],
+  ['spline-torque-capacity', {}, { sRoot: 16 * 500000 * 1.2 / (Math.PI * 28 ** 3), sComp: 2 * 500000 * 1.2 / (9 * 30 * 24 * 25 * 1.125) }],
+  ['internal-gear', {}, { Di: 11.8 * 25.4, Dop: 3.41667 * 25.4, C: 27 * 4.2333 }, 0.005], // handbook: 72 teeth with an 18-tooth pinion, 6 DP
+  ['film-thickness-ratio', {}, { lam: 0.25 / Math.hypot(0.06, 0.04) }],
+  ['turn-of-nut-preload', {}, { theta: 360 * 35000 * (30 / (Math.PI * 25) + 10 / 58) / 205000 / 1.5 }],
+  ['turn-of-nut-preload', { mode: 'preload', theta: 360 * 35000 * (30 / (Math.PI * 25) + 10 / 58) / 205000 / 1.5 }, { F: 35 }, 1e-9],
+  ['deep-draw-force', {}, { F: Math.PI * 80 * 1.5 * 350 / 1000 }],
+  ['deep-draw-force', { op: 'redraw' }, { F: Math.PI * 60 * 1.5 * 350 * (2 - 0.7) / 1000 }],
+  ['thread-roll-diameter', { d: 0.45, T: 0.0499, Ns: 2 }, { D: 0.8001 }, 0.0002], // handbook: double roll for a ½ in. thread
+  ['hobbing-time', {}, { tCut: (30 + Math.sqrt(5.625 * 74.375) + 3) / (1.5 * 60000 / (80 * Math.PI) / 40) }],
+  ['angle-ring-length', { mode: 'constant', D: 240, k: 4.319 }, { L: Math.PI * 240 - 4.319 }], // handbook: 20 ft stand-pipe, inches
+  ['perforated-open-area', {}, { OA: 90.69 * 25 / 64 }],
+  ['sound-level', {}, { L: 46.7 }, 0.05], // handbook example 1
+  ['sound-level', { B: 41 }, { L: 50.5 }, 0.05], // handbook example 2
+  ['sound-level', { mode: 'sum', L1: 85, L2: 85 }, { L: 85 + 10 * Math.log10(2) }],
+  ['sound-level', { mode: 'distance' }, { L: 90 - 20 * Math.log10(4) }],
+  ['equivalent-stiffness-thickness', {}, { tStiff: 2 * Math.cbrt(200 / 3), tStr: 2 * Math.sqrt(250 / 60) }],
+  ['matrix-3x3', {}, { det: 1, i11: 3, i12: -1, i13: 1, i21: -15, i22: 6, i23: -5, i31: 5, i32: -2, i33: 2 }, 1e-12],
+  ['wood-moisture-density', {}, { MC: 25, rho: 1000 * 0.5 * 1.12 / (1 + 0.009 * 0.5 * 12) }],
+];
+for (const [id, over, expected, tol] of HB5_CASES) test(`handbook reference example: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('fifth handbook pass: self-consistency and verdicts', () => {
+  const cat = engine.run('catenary-cable').values;
+  near(cat.a * (Math.cosh(100 / (2 * cat.a)) - 1), 5, 1e-9, 'catenary sag');
+  near(cat.Tmax, cat.H + 10 * 5, 1e-9, 'catenary tension');
+  near(cat.L, 2 * cat.a * Math.sinh(50 / cat.a), 1e-9, 'catenary length');
+  const tp = engine.run('two-plane-balance').values; // corrections must cancel the force and the moment about plane A
+  const vec = (mass: number, r: number, aDeg: number) => [mass * r * Math.cos(aDeg * Math.PI / 180), mass * r * Math.sin(aDeg * Math.PI / 180)];
+  const u1 = vec(40, 100, 0), u2 = vec(30, 100, 120), uA = vec(tp.mA, 100, tp.angA), uB = vec(tp.mB, 100, tp.angB);
+  near(u1[0] + u2[0] + uA[0] + uB[0], 0, 1e-6, 'two-plane force x'); near(u1[1] + u2[1] + uA[1] + uB[1], 0, 1e-6, 'two-plane force y');
+  near(u1[0] * 100 + u2[0] * 300 + uB[0] * 400, 0, 1e-4, 'two-plane moment x'); near(u1[1] * 100 + u2[1] * 300 + uB[1] * 400, 0, 1e-4, 'two-plane moment y');
+  assert.equal(engine.run('internal-gear', { Zp: 65 }).text, 'INTERFERENCE LIKELY');
+  assert.equal(engine.run('torsional-vibration', { Ls: 20000 }).text, 'WITHIN BANDWIDTH');
+  assert.equal(engine.run('film-thickness-ratio', { h: 0.03 }).text, 'BOUNDARY');
+  assert.equal(engine.run('buoyancy').text, 'SINKS');
+  assert.equal(engine.run('buoyancy', { mass: 5 }).text, 'FLOATS');
+  assert.equal(engine.run('agma-bending-stress', { allow: 300 }).text, 'BENDING OVERSTRESSED');
+  assert.equal(engine.run('deep-draw-force', { press: 100 }).text, 'EXCEEDS PRESS CAPACITY');
+});
+
+test('fifth handbook pass rejects impossible inputs', () => {
+  const cases: Array<[string, Inputs]> = [
+    ['uniform-acceleration', { mode: 'distance', u: 0, v: 0 }], ['pendulum-period', { type: 'compound', k0: 0.3 }], ['flyball-governor', { nmax: 180 }], ['prony-brake', { tare: 40 }],
+    ['catenary-cable', { d: 150 }], ['rotating-balance-plane', { m1: 0, m2: 0, m3: 0 }], ['torsional-vibration', { di: 25 }], ['escaping-air-velocity', { p2: 9 }],
+    ['lever-force', { W1: 0 }], ['hoist-advantage', { r: 200 }], ['spline-torque-capacity', { Dh: 30 }], ['internal-gear', { Zp: 72 }], ['deep-draw-force', { op: 'iron', c: 2 }],
+    ['perforated-open-area', { d: 9 }], ['sound-level', { B: 60 }], ['matrix-3x3', { a11: 1, a12: 2, a13: 3, a21: 2, a22: 4, a23: 6 }], ['wood-moisture-density', { wet: 5 }],
   ];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
