@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -88,9 +88,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 504 tools with unique ids and every previously published id kept', () => {
+test('register: 513 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 504);
+  assert.equal(ids.length, 513);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -835,16 +835,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 389 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 398 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 389);
+  assert.equal(ids.length, 398);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -1710,5 +1710,51 @@ test('fifth-round design checks: verdicts and guards', () => {
   assert.equal(engine.run('crank-press-capacity', { hw: 6, dw: 6 }).text, 'PRESS CAN DO THE WORK');
   assert.equal(engine.run('gear-backlash-temperature', { ag: 90, ah: 11 }).text, 'GEARS MAY JAM');
   const cases: Array<[string, Inputs]> = [['rotary-index-table-sizing', { tc: 0.5 }], ['coolant-system-sizing', { Pc: 0, nz: 0 }], ['furnace-heat-treat-plan', { T1: 10 }], ['crank-press-capacity', { L: 50 }], ['crank-press-capacity', { hw: 200 }], ['pipe-expansion-loop', { wt: 60 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Fifteenth handbook pass (handbook31): sixth round of integrated design checks.
+const HB15_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['pump-operating-point', {}, { Q: Math.sqrt(35 / (10 / 400 ** 2 + 15 / 300 ** 2)) }],
+  ['fan-drive-sizing', {}, { Pair: 4, n2: 1200, p2: 1152, P2: 4 / 0.7 * 1.2 ** 3, df: 150 * 1450 / 1200 }],
+  ['machine-foundation-block', {}, { depth: 15000 / (2400 * 6), qb: 20000 * 9.80665 / 6 / 1000, fn: Math.sqrt(30e6 * 6 / 20000) / (2 * Math.PI) }],
+  ['measurement-temperature-error', {}, { dev: 500e-6 * (23 * 8 - 11.5 * 2), dTallow: 0.1 * 0.04 / (500e-6 * 11.5) }],
+  ['measurement-temperature-error', { Tp: 20, Tg: 20 }, { dev: 0 }, 1e-15],
+  ['pressure-vessel-thickness', {}, { tShell: 500 / (117.3 - 0.6) + 1.5, tEll: 1000 / (234.6 - 0.2) + 1.5, tTori: 0.885 * 1000 / (117.3 - 0.1) + 1.5, pt: 1.3 }],
+  ['fixture-locating-error', {}, { c1: 0.03, rot: 0.06 / 600, zone: 2 * (0.015 + 150 * 0.0001) }, 1e-9],
+  ['flange-bolt-load-check', {}, { H: Math.PI / 4 * 200 ** 2 * 2, Wm2: Math.PI * 8 * 200 * 69, Ab: 12 * Math.PI / 4 * (20 - 0.938194 * 2.5) ** 2 }],
+  ['chain-conveyor-sizing', {}, { Tt: 60 * 9.80665 * (0.15 * 30 + 2) + 10 * 9.80665 * 0.15 * 30, PD: 38.1 / Math.sin(Math.PI / 12) }],
+  ['travel-drive-sizing', {}, { Facc: 4400, Fadh: 0.15 * 20000 * 9.80665 / 2 }],
+];
+for (const [id, over, expected, tol] of HB15_CASES) test(`design check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('sixth-round design checks agree with the tools they chain', () => {
+  const po = engine.run('pump-operating-point').values; // the operating point lies on both curves
+  near(50 - 10 / 400 ** 2 * po.Q ** 2, po.H, 1e-9, 'point lies on the pump curve');
+  const sp = engine.run('pump-operating-point', { Qt: 250 }).values; // the speed found delivers the target flow on the system curve
+  near(sp.s ** 2 * 50 - 10 / 400 ** 2 * 250 ** 2, 15 + 15 / 300 ** 2 * 250 ** 2, 1e-9, 'speed for target flow');
+  const fd = engine.run('fan-drive-sizing').values, pa = engine.run('pump-affinity', { Q1: 5, H1: 800, P1: 4 / 0.7, n1: 1000, n2: 1200, D1: 200, D2: 200 }).values;
+  near(fd.p2, pa.H2, 1e-9, 'fan pressure by the fan laws'); near(fd.P2, pa.P2, 1e-9, 'fan power by the fan laws');
+  const mt = engine.run('measurement-temperature-error', { Tg: 20 }).values; // gauge at 20 °C: only the part grows
+  near(mt.dev, engine.run('thermal-growth', { length: 500, alpha: 23, initial: 20, final: 28 }).values.growth, 1e-12, 'part growth matches thermal growth');
+  const td = engine.run('travel-drive-sizing', { mub: 0, flange: 1 }).values;
+  near(td.Frun, engine.run('rolling-resistance', { W: 20000 * 9.80665, r: 200, f: 0.5, v: 1, mu: 0.15 }).values.F, 1e-9, 'rolling resistance');
+});
+
+test('sixth-round design checks: verdicts and guards', () => {
+  assert.equal(engine.run('pump-operating-point', { Hd: 70 }).text, 'AWAY FROM BEST EFFICIENCY'); // steep system curve: 57% of BEP flow
+  assert.equal(engine.run('machine-foundation-block', { ks: 50 }).text, 'REVISE THE FOUNDATION');
+  assert.equal(engine.run('measurement-temperature-error').text, 'CORRECT OR WAIT FOR TEMPERATURE');
+  assert.equal(engine.run('measurement-temperature-error', { Tp: 20.5, Tg: 20.5 }).text, 'WITHIN TEMPERATURE ALLOWANCE');
+  assert.equal(engine.run('fixture-locating-error').text, 'LOCATING ADEQUATE');
+  assert.equal(engine.run('fixture-locating-error', { Lp: 100 }).text, 'LOCATING ERROR TOO LARGE');
+  assert.equal(engine.run('flange-bolt-load-check', { nb: 8, d: 16, P: 2 }).text, 'BOLTING INADEQUATE');
+  assert.equal(engine.run('chain-conveyor-sizing', { Wc: 2 }).text, 'CHAIN OVERLOADED');
+  assert.equal(engine.run('travel-drive-sizing', { a: 1 }).text, 'DRIVEN WHEELS WILL SLIP');
+  const cases: Array<[string, Inputs]> = [['pump-operating-point', { Hb: 60 }], ['pump-operating-point', { Hd: 10 }], ['pump-operating-point', { Hs: 60, Hd: 70 }], ['fixture-locating-error', { p1max: 10.01 }], ['travel-drive-sizing', { driven: 6 }], ['chain-conveyor-sizing', { Hl: -100 }], ['pressure-vessel-thickness', { p: 100, S: 50 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
