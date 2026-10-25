@@ -1014,3 +1014,51 @@ Applied to every tool: units and bounds on every input, a guide with an input so
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **CNC Axis Positioning Accuracy and Repeatability** `machine-positioning-accuracy` | MEETS REQUIRED ACCURACY | Accuracy; Model and application | 1319–1322 | Automated + reference value |
+
+## Machinery’s Handbook topic tools, tenth pass: integrated design checks (added 25 October 2026)
+
+9 MAKEOS tools in batch handbook26 chain several handbook methods into one design decision: a spur gear set check (geometry, contact ratio, undercut, bending and pitting with the face width each needs), a compression spring designer from two working points, a shrink or press fit designed from the torque and thrust it must carry, a bolted joint check with preload scatter, separation, proof and fatigue, turning cost per part with minimum-cost and maximum-production speeds, compound or progressive die tonnage, hydraulic cylinder sizing with rod buckling, flows, power and pipe bores, shaft sizing for strength, twist and critical speed, and a milling cut planner with chip thinning, power and torque. Each is cross-checked in the tests against the single-purpose tools it chains. WORKOS now holds 468 tools.
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Spur Gear Set Design Check** `spur-gear-set-design` | GEAR SET ADEQUATE | Bending; Pitting; Undercut; Contact ratio; Face width ratio; Model and application | 2131–2156, 3304–3320 | Automated + cross-check |
+
+### Springs
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Compression Spring Designer (Two Working Points)** `compression-spring-designer` | SPRING FEASIBLE | Clash allowance; Spring index; Stress at solid; Buckling; Model and application | 304–324 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Shrink or Press Fit Design from Required Torque** `shrink-fit-design` | FIT FEASIBLE | Hub stress; Heating temperature; Model and application | 631–633, 2442–2444 | Automated + cross-check |
+| **Shaft Design: Strength, Twist and Critical Speed** `shaft-design-check` | CALCULATED | Governing criterion; Model and application | 295–303 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Bolted Joint Design Check (Preload, Separation, Proof and Fatigue)** `bolted-joint-design-check` | JOINT DESIGN ADEQUATE | Separation; Proof load; Fatigue; Preload scatter; Model and application | 1521–1536 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Turning Cycle Time and Cost per Part with Tool Life** `turning-cost-per-part` | CALCULATED | Speed choice; Model and application | 1102–1152 | Automated + cross-check |
+| **Milling Cut Planner (Speed, Thinned Feed, Power and Torque)** `milling-cut-planner` | WITHIN SPINDLE POWER | Spindle power; Spindle speed; Chip thinning; Model and application | 1084–1101, 1162–1167 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Press Tonnage for a Compound or Progressive Die** `press-die-tonnage` | PRESS ADEQUATE | Press capacity; Off-centre load; Model and application | 1336–1359, 1386–1392 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Hydraulic Cylinder Sizing (Bore, Rod Buckling, Flow, Power, Pipes)** `hydraulic-cylinder-sizing` | CYLINDER FEASIBLE | Rod fits the bore; Standard sizes; Model and application | 281–286, 3421–3425 | Automated + cross-check |
