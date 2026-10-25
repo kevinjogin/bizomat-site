@@ -1133,3 +1133,56 @@ A third round of 9 integrated design checks in batch handbook28: keyed shaft and
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Compressed-Air System Sizing** `compressed-air-system-sizing` | CALCULATED | Pressure band; Leakage; Model and application | 3030–3037, 3421–3425 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, thirteenth pass: integrated design checks, fourth round (added 25 October 2026)
+
+A fourth round of 9 integrated design checks in batch handbook29: a gear train tooth number planner (one or two stages, hunting-tooth preference, five best trains), gearbox or hydraulic unit heat balance with cooler duty, cutting tool deflection with the depth of cut that holds tolerance, a sheet-metal bracket cost build-up (flat blank, nesting yield, bending force, labour), tapped hole design (drill, engagement against stripping, thread and drill depths), pneumatic cylinder sizing with air use, cushioning and running cost, disc spring stack design (series and parallel counts, heights, stress), a drilling cycle planner (power, torque, thrust, pecking and total time) and hydraulic motor drive sizing. Tests cross-check each against the boring-bar, bend-allowance, press-brake, tap-drill, thread-engagement, pneumatic, disc-spring, drilling and hydraulic motor tools. WORKOS now holds 495 tools.
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Gear Train Tooth Number Planner** `gear-train-ratio-planner` | CALCULATED | Model and application | 2131–2160, 2043–2047 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Gearbox or Hydraulic Unit Heat Balance and Cooling** `gearbox-heat-balance` | NO COOLER NEEDED | Oil temperature; Maker rating; Model and application | 3339–3340, 2430–2436 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Cutting Tool Deflection and Depth-of-Cut Limit** `tool-deflection-cut-limit` | DEFLECTION TOO LARGE | Deflection; Overhang; Model and application | 1093–1094, 1162–1167 | Automated + cross-check |
+| **Drilling Cycle Planner (Speed, Feed, Thrust, Power and Time)** `drilling-cycle-planner` | DRILLING PLAN FEASIBLE | Spindle power; Thrust; Hole depth; Model and application | 1084–1092, 1089 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Sheet-Metal Bracket: Flat Blank, Nesting, Bending Force and Cost** `sheet-metal-part-cost` | CALCULATED | Material utilisation; Die opening; Model and application | 1346–1353 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Tapped Hole Design (Drill, Engagement and Depth)** `tapped-hole-design` | CALCULATED | Engagement length; Blind hole; Model and application | 1536, 2029–2031 | Automated + cross-check |
+
+### Pneumatics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Pneumatic Cylinder Sizing, Air Use and Running Cost** `pneumatic-cylinder-sizing` | CALCULATED | Cushioning; Valve and tubing; Model and application | 3421–3425, 3030–3037 | Automated + cross-check |
+
+### Springs
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Disc Spring Stack Design** `disc-spring-stack-design` | STACK FEASIBLE | Stress; Guiding; Model and application | 350–353 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Hydraulic Motor Drive Sizing** `hydraulic-motor-drive` | MOTOR ADEQUATE | Pressure; Starting torque; Model and application | 3418–3425 | Automated + cross-check |
