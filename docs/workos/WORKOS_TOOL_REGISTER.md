@@ -897,3 +897,52 @@ Applied to every tool: units and bounds on every input, a guide with an input so
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Spur Gear Pitting Resistance Power Rating (AGMA)** `agma-pitting-power` | PITTING RATING ADEQUATE | Pitting power; Bending; Model and application | 3304–3313 | Automated + reference value |
+
+## Machinery’s Handbook topic tools, seventh pass: remaining edge topics (added 25 October 2026)
+
+10 MAKEOS tools in batch handbook23 cover the remaining formula-based edge topics: spur gear contact diameters, contact ratio, lowest point of single tooth contact and maximum hob tip radius, dividing-head angles for milling clutch teeth, silent chain sprocket diameters, small cutter stiffness and deflection, stockpile volume and weight, lumber board feet, packed-joint bolt working strength, punch and shear flywheel sizing, equivalent chip thickness cutting forces and deep drawing reduction sequences. Reference cases include the handbook’s clutch-head table, 1-in. bolt, hot-slab shear flywheel, microtool and ECT examples. What remains in the handbook is predominantly tables and descriptive text, which are not reproduced. WORKOS now holds 444 tools.
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Spur Gear Contact Diameters, Contact Ratio and LPSTC** `spur-contact-diameters` | CALCULATED | Contact ratio; Model and application | 2155–2157 | Automated + reference value |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Dividing-Head Angle for Milling Clutch Teeth** `clutch-teeth-dividing-head` | CALCULATED | Model and application | 2452–2454 | Automated + reference value |
+| **Small Cutter and Drill Stiffness and Deflection** `microtool-stiffness` | CALCULATED | Model and application | 1093–1094 | Automated + reference value |
+| **Equivalent Chip Thickness (ECT) and Cutting Forces** `ect-cutting-forces` | CALCULATED | ECT against feed; Model and application | 1132–1141 | Automated + reference value |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Silent (Inverted-Tooth) Chain Sprocket Diameters** `silent-chain-sprocket` | CALCULATED | Model and application | 3457–3460 | Automated + reference value |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Stockpile Volume and Weight from Angle of Repose** `stockpile-weight` | CALCULATED | Model and application | 382–383 | Automated + reference value |
+| **Lumber Board Feet and Volume** `lumber-board-feet` | CALCULATED | Model and application | 3018–3019 | Automated + reference value |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Working Strength of Bolts in Packed (Gasketed) Joints** `bolt-working-strength-packed` | CALCULATED | Bolt size; Model and application | 1535–1536 | Automated + reference value |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Punch and Shear Flywheel Sizing** `press-flywheel-sizing` | CALCULATED | Model and application | 3004–3006 | Automated + reference value |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Deep Drawing Reduction Sequence** `draw-reductions` | CALCULATED | Model and application | 1353–1359 | Automated + reference value |
