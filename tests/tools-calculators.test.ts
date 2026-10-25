@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -88,9 +88,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 513 tools with unique ids and every previously published id kept', () => {
+test('register: 522 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 513);
+  assert.equal(ids.length, 522);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -835,16 +835,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 398 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 407 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 398);
+  assert.equal(ids.length, 407);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -1756,5 +1756,44 @@ test('sixth-round design checks: verdicts and guards', () => {
   assert.equal(engine.run('chain-conveyor-sizing', { Wc: 2 }).text, 'CHAIN OVERLOADED');
   assert.equal(engine.run('travel-drive-sizing', { a: 1 }).text, 'DRIVEN WHEELS WILL SLIP');
   const cases: Array<[string, Inputs]> = [['pump-operating-point', { Hb: 60 }], ['pump-operating-point', { Hd: 10 }], ['pump-operating-point', { Hs: 60, Hd: 70 }], ['fixture-locating-error', { p1max: 10.01 }], ['travel-drive-sizing', { driven: 6 }], ['chain-conveyor-sizing', { Hl: -100 }], ['pressure-vessel-thickness', { p: 100, S: 50 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Sixteenth handbook pass (handbook32): seventh round of integrated design checks.
+const HB16_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['bearing-fit-clearance', {}, { fit: 16, th: 12 * 5 * 70 / 1000, opMin: 25 - 16 - 4.2 }, 1e-9],
+  ['overhung-load-check', {}, { OHL: 2 * (7500 / (2 * Math.PI * 100 / 60)) * 1000 / 200, Fallow: 10000 * 60 / 80, Fb: 2 * (7500 / (2 * Math.PI * 100 / 60)) * 1000 / 200 * 200 / 120 }],
+  ['injection-moulding-estimate', {}, { F: 220 * 100 * 40 * 1.1 / 1000, shot: 130, tc: 6.25 / (Math.PI ** 2 * 0.09) * Math.log(4 / Math.PI * 190 / 50) }],
+  ['press-brake-setup', {}, { V: 24, F: 1.33 * 1000 * 9 * 450 / 24, ri: 0.16 * 24 }],
+  ['gearbox-selection-check', {}, { n2: 1450 / 14.5, Preq: 10.5, T2: 7500 * 0.94 / (2 * Math.PI * 100 / 60) }],
+  ['riveted-joint-design', {}, { R: 2 * Math.PI * 17 ** 2 / 4 * 100, pBal: 17 + 2 * Math.PI * 17 ** 2 / 4 * 100 / 1500, p: 51 }],
+  ['storage-tank-shell', {}, { t1: 4.9 * 20 * 11.7 / (160 * 0.85) + 1.5, cap: Math.PI * 100 * 12, nc: 6 }],
+  ['milling-cost-per-part', {}, { Q: 45.84, tc: 120 / 45.84 }],
+];
+for (const [id, over, expected, tol] of HB16_CASES) test(`design check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('seventh-round design checks agree with the tools they chain', () => {
+  const bo = engine.run('bearing-friction-oil-flow').values;
+  near(bo.Wb, engine.run('bearing-friction', { P: 5000, d: 50, mu: 0.0015, rpm: 1500, n: 2 }).values.W, 1e-9, 'bearing loss');
+  near(bo.Q, engine.run('coolant-flow-heat', { mode: 'flow', kW: bo.heat / 1000, dT: 10, Q: 1, cp: 1.9, rho: 870 }).values.Q, 1e-9, 'oil flow');
+  near(engine.run('press-brake-setup').values.F, engine.run('press-brake-force', { L: 1000, t: 3, uts: 450, V: 24, k: 1.33, cap: 1000 }).values.F, 1e-9, 'bending force');
+  const rj = engine.run('riveted-joint-design').values, rt = engine.run('riveted-joint', { p: rj.p, d: 17, t: 10, rows: 2, shear: '1', st: 150, tau: 100, sc: 250 }).values;
+  near(rj.eff, rt.eff, 1e-9, 'joint efficiency');
+  const mc = engine.run('milling-cost-per-part').values; near(mc.cost, mc.mach + mc.toolT + mc.toolC + mc.set, 1e-12, 'cost adds up');
+  assert.equal(engine.run('storage-tank-shell').table.rows.length, 6);
+});
+
+test('seventh-round design checks: verdicts and guards', () => {
+  assert.equal(engine.run('bearing-fit-clearance', { cmin: 10 }).text, 'PRELOAD RISK');
+  assert.equal(engine.run('overhung-load-check', { La: 200 }).text, 'OVERHUNG LOAD TOO HIGH');
+  assert.equal(engine.run('injection-moulding-estimate', { clamp: 500 }).text, 'MACHINE NOT SUITABLE');
+  assert.equal(engine.run('press-brake-setup', { cap: 100 }).text, 'PRESS OR DIE OVERLOADED');
+  assert.equal(engine.run('gearbox-selection-check', { Pth: 5 }).text, 'GEARBOX NOT SUITABLE');
+  assert.equal(engine.run('riveted-joint-design', { F: 600 }).text, 'JOINT TOO WEAK');
+  const cases: Array<[string, Inputs]> = [['bearing-fit-clearance', { cmax: 10 }], ['injection-moulding-estimate', { Te: 30 }], ['press-brake-setup', { t: 40 }], ['riveted-joint-design', { Lj: 20 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
