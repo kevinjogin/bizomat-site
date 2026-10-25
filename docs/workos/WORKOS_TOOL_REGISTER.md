@@ -518,3 +518,115 @@ Applied to every tool: units and bounds on every input, a guide with an input so
 |---|---|---|---|---|
 | **Process Selection Break-Even Quantity** `process-breakeven` | PROCESS A | Distance from break-even; Like-for-like quality; Model and application | 143–146 | Automated + reference value |
 | **Learning Curve Unit Time and Cost** `learning-curve` | CALCULATED | Learning rate evidence; Model and application | 146 | Automated + reference value |
+
+## Machinery’s Handbook topic tools, third pass: index of interactive equations (added 25 October 2026)
+
+43 MAKEOS tools in batches handbook14–16 complete the coverage of the handbook’s Index of Interactive Equations: plane and solid geometry, centroids, complex numbers, matrices, equations, trigonometric and involute functions, overhanging and continuous beams, further beam cases, 3D and combined stresses, Rankine columns, further sections and mass properties, non-concurrent forces, square-wire springs, journal and thrust bearings, gas processes, Unified and ISO metric thread limits, Whitworth threads, lead-angle wire measurement, involute splines, gear cutters, crossed helical gears, keyseats, roll, pin and disc inspection, drill sizes, full-power cutting and belt lengths. Reference cases include the handbook’s disc-gauge, bolt-circle and ½-28 UNEF worked examples and ASME B1.1 / ISO 965 table values. Table-only content (fits, hardness conversions, material properties) is not reproduced. WORKOS now holds 349 tools.
+
+### Geometry
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Plane Figure Area and Perimeter** `plane-area` | CALCULATED | Dimensions; Model and application | 66–81 | Automated + reference value |
+| **Polygon Area and Centroid from Coordinates** `polygon-area` | CALCULATED | Simple polygon; Model and application | 40–48, 66–76 | Automated + reference value |
+| **Volume and Surface of Solids** `solid-volume` | CALCULATED | Dimensions; Model and application | 82–88 | Automated + reference value |
+| **Centre of Gravity of Common Shapes** `centroid-shapes` | CALCULATED | Reference point; Model and application | 221–227 | Automated + reference value |
+| **Cylindrical and Spherical Coordinates** `coordinates-3d` | CALCULATED | Angle convention; Model and application | 43–45 | Automated |
+| **Distance and Angle Between Two Points** `two-point-distance` | CALCULATED | Coordinate frame; Model and application | 40–42 | Automated |
+| **Triangle from Two Sides and an Opposite Angle** `triangle-ssa` | CALCULATED | Ambiguity; Model and application | 95–102 | Automated + reference value |
+| **Rollers Around a Shaft and Circles in Circles** `circle-packing` | CALCULATED | Running clearance; Model and application | 88–94 | Automated + reference value |
+
+### Mathematics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Complex Number Calculator** `complex-number` | CALCULATED | Angle convention; Model and application | 18–19 | Automated + reference value |
+| **Quadratic and Cubic Equation Solver** `equation-solver` | CALCULATED | Roots verified by substitution; Model and application | 32–34 | Automated + reference value |
+| **Simultaneous Equations and 3 × 3 Matrix** `linear-system` | CALCULATED | Conditioning; Model and application | 122–127 | Automated + reference value |
+| **Factorials, Permutations and Combinations** `combinations` | CALCULATED | Precision; Model and application | 19 | Automated + reference value |
+| **Trigonometric and Involute Functions** `trig-functions` | CALCULATED | Domain; Model and application | 95–114 | Automated + reference value |
+
+### Units
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Degrees, Minutes and Seconds Converter** `dms-converter` | CONVERTED | Conversion; Model and application | 103–104 | Automated + reference value |
+| **Density and Specific Gravity Converter** `density-converter` | CONVERTED | Conversion factors; Model and application | 369–380, 2683 | Automated + reference value |
+| **Wind Chill Temperature** `wind-chill` | CALCULATED | Formula range; Model and application | 2695–2697 | Automated + reference value |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Overhanging Beam** `overhanging-beam` | STRESS WITHIN ALLOWABLE | Bending stress; Uplift at a support; Model and application | 257–262 | Automated + reference value |
+| **Continuous Beam over Two Spans** `two-span-beam` | STRESS WITHIN ALLOWABLE | Bending stress; Pattern loading; Model and application | 264–267 | Automated + reference value |
+| **Beam Cases: Fixed, Guided, Propped and Partial Loads** `beam-cases-more` | STRESS WITHIN ALLOWABLE | Bending stress; End fixity; Model and application | 257–270 | Automated + reference value |
+| **Round Shaft under Axial Load, Bending and Torsion** `shaft-combined-stress` | ADEQUATE | von Mises safety factor; Tresca safety factor; Model and application | 212–218, 295–303 | Automated + reference value |
+| **Three-Dimensional Principal Stresses** `principal-stress-3d` | CALCULATED | Yield; Model and application | 212–218 | Automated + reference value |
+| **Column Strength by Rankine–Gordon** `rankine-column` | INADEQUATE | Safety factor; Rankine constant; Model and application | 281–287 | Automated |
+| **Section Properties: Ellipse, Hexagon, Triangle, Z and Cross** `section-shapes-more` | CALCULATED | Torsion; Model and application | 234–246 | Automated + reference value |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Mass Moment of Inertia: Cone, Torus, Ellipsoid and Shells** `mass-inertia-more` | CALCULATED | Shape idealisation; Model and application | 228–240 | Automated + reference value |
+| **Resultant of Non-Concurrent and Parallel Forces** `force-system` | CALCULATED | Sign convention; Model and application | 153–163 | Automated + reference value |
+
+### Springs
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Square-Wire Compression Spring** `square-wire-spring` | STRESS WITHIN ALLOWABLE | Corrected stress; Solid length; Model and application | 304–324 | Automated + reference value |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Journal Bearing Friction (Petroff) and Sommerfeld Number** `journal-bearing-petroff` | CALCULATED | Load level; Model and application | 2326–2337 | Automated + reference value |
+| **Thrust Bearing Pad Unit Load and PV** `thrust-bearing-pads` | WITHIN LIMITS | Unit load; PV; Model and application | 2338–2356 | Automated + reference value |
+
+### Pneumatics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Gas Compression and Expansion Process** `gas-compression-process` | CALCULATED | Temperature; Model and application | 3032–3041 | Automated + reference value |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Unified Thread Limits of Size (Classes 1A–3B)** `unified-thread-limits` | CALCULATED | Internal minor maximum; Model and application | 1813–1866 | Automated + reference value |
+| **ISO Metric Thread Limits of Size (6g, 6H and Others)** `metric-thread-limits` | CALCULATED | Table values; Model and application | 1867–1912 | Automated + reference value |
+| **Whitworth Thread Basic Dimensions** `whitworth-thread` | CALCULATED | Thread form; Model and application | 1980–1989, 1995–1998 | Automated + reference value |
+| **Three-Wire Measurement with Lead Angle (Buckingham)** `three-wire-lead-angle` | CALCULATED | Lead angle range; Model and application | 1990–2003 | Automated + reference value |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Involute Spline Basic Dimensions (ANSI B92.1)** `involute-spline` | CALCULATED | Fit class tolerances; Model and application | 2255–2282 | Automated + reference value |
+| **Involute Gear Cutter Number** `gear-cutter-number` | CALCULATED | Cutter pitch; Model and application | 2148–2150, 820–829 | Automated + reference value |
+| **Crossed Helical Gears (Shafts at Right Angles)** `crossed-helical-gears` | CALCULATED | Hand of helix; Model and application | 2195–2203 | Automated + reference value |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Keyseat Depth and Measurement over Key** `keyseat-depth` | CALCULATED | Key standard; Model and application | 2460–2486 | Automated + reference value |
+| **Crossed Belt and Three-Pulley Belt Length** `belt-length-crossed-three` | CALCULATED | Minimum wrap; Model and application | 2473–2490 | Automated + reference value |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Arc Radius from Measurement over Rolls** `arc-radius-rolls` | CALCULATED | Sensitivity; Model and application | 687–688 | Automated + reference value |
+| **Bolt Circle Measurement over Pins** `bolt-circle-pins` | CALCULATED | Plug fit; Model and application | 686 | Automated + reference value |
+| **Taper and Angle Gauges with Discs** `taper-discs` | CALCULATED | Set-up accuracy; Model and application | 684–685 | Automated + reference value |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Drill Sizes: Number, Letter, Fraction and Metric** `drill-size-lookup` | CALCULATED | Hole tolerance; Model and application | 2695, 1015–1016 | Automated |
+| **Cutting Speed or Feed for Full Machine Power** `full-power-cutting-speed` | CALCULATED | Tool speed limit; Model and application | 1084–1101 | Automated + reference value |
