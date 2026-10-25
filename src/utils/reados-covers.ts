@@ -115,6 +115,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'weldability-by-the-numbers': { motif: 'pump', tone: 'ember' },
   'resistance-welding-by-the-numbers': { motif: 'production', tone: 'carbon' },
   'arc-welding-by-the-numbers': { motif: 'pylon', tone: 'ember' },
+  'thermit-welding-by-the-numbers': { motif: 'experiment', tone: 'carbon' },
+  'testing-welded-joints-by-the-numbers': { motif: 'search', tone: 'graphite' },
 };
 
 const hash = (s: string) => [...s].reduce((a, c) => (Math.imul(a, 33) + c.charCodeAt(0)) >>> 0, 5381);
