@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -88,9 +88,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 237 tools with unique ids and every previously published id kept', () => {
+test('register: 306 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 237);
+  assert.equal(ids.length, 306);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -835,16 +835,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 122 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 191 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 122);
+  assert.equal(ids.length, 191);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -964,5 +964,85 @@ test('all handbook tool shared URLs render finite results and export inputs, met
     for (const f of t.fields.filter((f: any) => f.type !== 'heading')) assert.ok(report.includes(`<th>${f.label}</th>`), `${id}/${f.key}`);
     if (r.table) assert.ok(report.includes(r.table.caption));
     assert.doesNotMatch(report, /NaN|undefined|\[object Object\]/);
+  }
+});
+
+// Second handbook pass (handbook9–13): handbook worked examples, standard values and hand calculations.
+const HB2_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['feed-for-finish', {}, { f: 0.178 }, 0.0005], // handbook example: Ra 1 µm with a 1 mm nose radius → 0.178 mm/rev
+  ['differential-indexing', {}, { A: 70 }], // handbook example: 67 divisions use A = 70, 12/21 turn and 48/28 gears
+  ['helical-milling', { D: 48 / Math.PI, beta: 45, Lm: 10 }, { lead: 48, err: 0 }, 1e-9], // handbook: 48 in lead on a 10 in machine = 72/24 × 64/40
+  ['toggle-joint', {}, { R: 500 / (2 * Math.tan(Math.PI / 18)) }],
+  ['npt-thread', {}, { E0: 0.75843, L2: 0.5337 }, 0.00005], // ASME B1.20.1 ½ NPT
+  ['nose-radius-compensation', {}, { dz: 0.8 * (1 - Math.tan(Math.PI / 8)), dx: 0.8 * (1 - Math.tan(Math.PI / 8)) }],
+  ['bending-springback', {}, { Rf: 6 / (4 * 0.00375 ** 3 - 3 * 0.00375 + 1) }],
+  ['grain-size', {}, { G: 7, lbar: 28.28 }, 0.01], // ASTM E112: G 7 = 64 grains/in² at 100×, 28.3 µm intercept
+  ['grain-size', { mode: 'na', value: 992 }, { G: 7 }, 0.005],
+  ['sampling-oc', {}, { Pa: 0.98 ** 50 + 50 * 0.02 * 0.98 ** 49 }],
+  ['weibull-reliability', {}, { R: Math.exp(-0.04), mttf: 10000 * 0.886226925452758 }, 1e-6],
+  ['xbar-r-limits', {}, { ucl: 25.01 + 0.577 * 0.03, rucl: 2.114 * 0.03, sigma: 0.03 / 2.326 }],
+  ['oil-viscosity-temperature', { T: 40 }, { nu: 46 }, 1e-6],
+  ['oil-viscosity-temperature', { T: 100 }, { nu: 6.8 }, 1e-6],
+  ['section-shapes', {}, { Ix: (100 * 200 ** 3 - 94 * 180 ** 3) / 12, A: 3080 }, 1e-6],
+  ['circle-three-points', {}, { cx: 0, cy: 0, r: 50 }, 1e-9],
+  ['true-position', {}, { pos: 0.2, allowed: 0.32 }, 1e-9],
+  ['taper-balls', {}, { angle: 2 * Math.asin(0.2) * 180 / Math.PI }],
+  ['wire-rope-reeving', {}, { F: 5000 * 9.80665 * 0.02 / (1 - 0.98 ** 4) }],
+  ['process-breakeven', {}, { q0: 275 }],
+  ['learning-curve', { n: 2 }, { Tn: 8.5 }],
+  ['pneumatic-cylinder-force', {}, { Fe: 0.6 * Math.PI * 2500 / 4 * 0.9 }],
+  ['vacuum-cup', {}, { per: 60 * Math.PI * 1600 / 4000 }],
+  ['valve-flow-coefficient', {}, { Kv: 10 * Math.SQRT2 }],
+  ['motor-slip', {}, { ns: 1500, slip: 25 / 15 }],
+  ['lmtd-exchanger', {}, { lmtd: 10 / Math.log(1.4) }],
+  ['rotating-disc', { Di: 0 }, { smax: 3.3 / 8 * 7850 * (100 * Math.PI) ** 2 * 0.0625 / 1e6 }],
+  ['rect-bar-torsion', {}, { tau: 200000 * 156 / (1600 * 400) }],
+  ['tube-collapse', {}, { pcr: 2 * 200000 / 0.91 * (2 / 98) ** 3 }],
+  ['radiant-heat', {}, { Q: 0.8 * 5.670374e-8 * 2 * (573.15 ** 4 - 298.15 ** 4) }],
+  ['vessel-head-volume', {}, { total: (Math.PI * 1e6 * 2000 / 4 + 2 * Math.PI * 1e9 / 24) / 1e6 }],
+  ['acme-thread', {}, { d2: 18, d3: 15.5 }],
+  ['planetary-gear', {}, { i: 4, zp: 24 }],
+  ['contact-ratio', {}, { eps: 1.6557 }, 0.0005],
+  ['profile-shift', { x1: 0 }, { awd: 54 }, 1e-9],
+  ['bolt-group-eccentric', {}, { Fmax: Math.hypot(12.5, 17.5) }],
+  ['refractometer-concentration', {}, { conc: 6.4, add: 400 * 0.6 / 93 }],
+  ['knurl-blank', {}, { teeth: 72 }],
+  ['coating-coverage', {}, { theo: 8, qty: 50 / 5.2 }],
+  ['weld-cost', {}, { mass: 0.5 * 36 * 1.15 * 7.85 / 1000 }],
+  ['linear-interpolation', {}, { result: 4.18 + 5 * (-0.001 / 20) }],
+];
+for (const [id, over, expected, tol] of HB2_CASES) test(`handbook reference example: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('second handbook pass: procedures, decisions and conventions', () => {
+  const di = engine.run('differential-indexing');
+  assert.match(metric(di, 'Crank movement per division'), /12 holes in the 21-hole circle/);
+  assert.match(metric(di, 'Change gears'), /48 on the spindle driving 28 on the worm/);
+  assert.equal(engine.run('differential-indexing', { divisions: 27 }).text, 'USE SIMPLE INDEXING');
+  assert.equal(engine.run('true-position', { size: 10.0, dx: 0.1 }).text, 'DOES NOT CONFORM', 'no bonus at MMC size');
+  assert.equal(engine.run('true-position', { mod: 'rfs' }).values.bonus, 0);
+  assert.equal(engine.run('shoe-brake', { b: 10 }).text, 'SELF-LOCKING');
+  assert.equal(engine.run('planetary-gear', { np: 5 }).text, 'CHECK TOOTH COUNTS');
+  assert.equal(engine.run('wire-rope-reeving', { mbl: 50 }).text, 'NOT ADEQUATE');
+  assert.equal(engine.run('vacuum-cup', { orient: 'vertical', mu: 0.3 }).text, 'CUPS INSUFFICIENT');
+  assert.equal(engine.run('process-breakeven', { qty: 400 }).text, 'PROCESS B');
+  assert.ok(engine.run('weibull-reliability', { beta: 0.8 }).checks.some((c: any) => c.label === 'Preventive replacement' && c.status === 'warn'));
+  assert.ok(engine.run('wedge-force', { angle: 30 }).values.locks === false, 'steep wedge is not self-locking');
+  near(engine.run('rim-face-alignment', { face: 0 }).values.back, 0.15, 1e-12, 'pure offset moves both feet equally');
+});
+
+test('second handbook pass rejects impossible inputs', () => {
+  const cases: Array<[string, Inputs]> = [
+    ['circle-three-points', { x3: 100, y3: -50 }], ['taper-balls', { h1: 12 }], ['go-nogo-gauge', { gpct: 50, wpct: 50 }], ['npt-thread', { n: 1 }],
+    ['motor-slip', { n: 1600 }], ['lmtd-exchanger', { Tco: 75 }], ['tube-bend-thinning', { R: 20 }], ['bending-springback', { Ri: 400, t: 1 }],
+    ['planetary-gear', { zr: 71 }], ['cone-clutch', { Di: 250 }], ['eccentric-column', { P: 300000 }], ['rotating-disc', { Di: 600 }],
+    ['linear-interpolation', { x2: 20 }], ['section-shapes', { tf: 150 }], ['oil-viscosity-temperature', { T2: 40 }], ['thin-tube-torsion', { t: 60 }],
+  ];
+  for (const [id, over] of cases) {
+    const r = engine.run(id, over);
+    assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined);
   }
 });
