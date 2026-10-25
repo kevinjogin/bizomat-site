@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -88,14 +88,14 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 306 tools with unique ids and every previously published id kept', () => {
+test('register: 349 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 306);
+  assert.equal(ids.length, 349);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
   const categories = new Set(engine.tools.map((t) => t.category));
-  assert.deepEqual([...categories].sort(), ['Business', 'Decide', 'Engineering', 'Fabrication', 'Fasteners', 'Gears', 'Geometry', 'Hydraulics', 'Improvement', 'Inventory', 'Maintenance', 'Manufacturing', 'Materials', 'Mechanics', 'Money', 'Operations', 'Planning', 'Pneumatics', 'Power Transmission', 'Projects', 'Quality', 'Quoting', 'Springs', 'Strength', 'Threads', 'Units']);
+  assert.deepEqual([...categories].sort(), ['Business', 'Decide', 'Engineering', 'Fabrication', 'Fasteners', 'Gears', 'Geometry', 'Hydraulics', 'Improvement', 'Inventory', 'Maintenance', 'Manufacturing', 'Materials', 'Mathematics', 'Mechanics', 'Money', 'Operations', 'Planning', 'Pneumatics', 'Power Transmission', 'Projects', 'Quality', 'Quoting', 'Springs', 'Strength', 'Threads', 'Units']);
   assert.equal(engine.tool('retention-selector').category, 'Engineering');
   for (const t of engine.tools) {
     for (const k of ['name', 'category', 'question', 'description']) assert.ok(typeof t[k] === 'string' && t[k].length > 3, `${t.id}.${k}`);
@@ -835,16 +835,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 191 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 234 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 191);
+  assert.equal(ids.length, 234);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -1045,4 +1045,91 @@ test('second handbook pass rejects impossible inputs', () => {
     const r = engine.run(id, over);
     assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined);
   }
+});
+
+// Third handbook pass (handbook14–16): the remaining entries of the handbook's index of interactive equations.
+const HB3_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['unified-thread-limits', {}, { es: 0.0015, dmax: 0.4985, dmin: 0.4876, d2max: 0.4485, d2min: 0.4435, D2min: 0.45, D2max: 0.4565, D1min: 0.417 }, 1e-9], // ASME B1.1 table, ½-13 UNC-2A/2B
+  ['unified-thread-limits', { n: 28 }, { es: 0.0011, dmax: 0.4989, dmin: 0.4924, d2max: 0.4757, d2min: 0.472, Td2: 0.003668 }, 1e-9], // handbook worked example, ½-28 UNEF-2A
+  ['metric-thread-limits', {}, { dmax: 9.968, dmin: 9.732, d2max: 8.994, d2min: 8.862, D1min: 8.376, D1max: 8.676, D2min: 9.026 }, 1e-9], // ISO 965-2, M10 × 1.5-6g / 6H
+  ['taper-discs', {}, { angleOut: 5.732, Tc: 1.2015 }, 0.0005], // handbook: discs 1 and 1.5 in at 5 in
+  ['taper-discs', { mode: 'cTaper', D: 1.5, d: 1.25, T: 0.75 }, { C: 4.002 }, 0.0005], // handbook: ¾ in per foot
+  ['taper-discs', { mode: 'cAngle', D: 3, d: 1, angle: 20 }, { C: 5.759 }, 0.0005], // handbook: 20°
+  ['taper-discs', { mode: 'angle', D: 3, d: 2, C: 5 }, { Ts: 2.4367 }, 0.0005], // handbook: taper from one side
+  ['taper-discs', { mode: 'cSide', D: 5, d: 2, T: 6.9 }, { C: 5.815 }, 0.0005], // handbook: 6.9 in per foot from one side
+  ['taper-discs', { mode: 'disk', d: 1, angle: 15 }, { D: 1.3002 }, 0.0001], // handbook: disc touching a 1 in disc at 15°
+  ['bolt-circle-pins', {}, { x: 5.0801 }, 0.0001], // handbook: six ¾ in holes, 4½ in over alternate plugs
+  ['three-wire-lead-angle', { angle: 60, starts: 1, P: 1.75, E: 10.863 }, { W: 1.75 * 0.57735 }, 0.002],
+  ['gear-cutter-number', { type: 'spur', Nt: 30 }, { Nf: 30 }],
+  ['crossed-helical-gears', {}, { D: 40 / (8 * Math.SQRT1_2), d: 20 / (8 * Math.SQRT1_2) }], // handbook: D = N ÷ 0.70711 Pn at 45°
+  ['involute-spline', {}, { D: 1.25, sv: Math.PI / 32, Do: 21 / 16, Dri: 21.35 / 16 }],
+  ['involute-spline', { type: '37fillet', Pd: 2.5 }, { sv: 0.6683 }, 0.00005], // ANSI B92.1 table 3
+  ['whitworth-thread', {}, { d2: 0.5 - 0.640327 / 12, d1: 0.5 - 2 * 0.640327 / 12 }],
+  ['keyseat-depth', {}, { Y: (40 - Math.sqrt(1600 - 144)) / 2 }],
+  ['arc-radius-rolls', {}, { R: 82.5 }],
+  ['full-power-cutting-speed', {}, { vc: 8.8 * 60000 / (2000 * 4 * 0.3) }],
+  ['belt-length-crossed-three', { mode: 'crossed', D1: 200, D2: 100, C: 600 }, { L: 2 * Math.sqrt(600 ** 2 - 150 ** 2) + 150 * (Math.PI + 2 * Math.asin(0.25)) }],
+  ['two-span-beam', {}, { RA: 2250, RB: 7500, MB: -2.25e6, M1: 9 * 2 * 9e6 / 128 }, 1e-3],
+  ['two-span-beam', { case: 'point', w1: 1000, w2: 1000 }, { RA: 5000 / 16 * 1000 / 1000 * 1, MB: -3 * 1000 * 3000 / 16 }, 1e-6],
+  ['overhanging-beam', {}, { R1: 9200, Mneg: -1.28e6, Mpos: 3.22e6 }, 1e-6],
+  ['beam-cases-more', {}, { R1: 3920, M: 1.47e6 }, 1e-6],
+  ['beam-cases-more', { case: 'guided-point' }, { M: 5000 * 2000 / 2 }],
+  ['force-system', {}, { x0: 1100000 / 3000, R: 3000 }, 1e-9],
+  ['gas-compression-process', {}, { T2c: 293.15 * Math.pow(8 / 1.013, 0.4 / 1.4) - 273.15 }],
+  ['principal-stress-3d', { sx: 100, sy: 50, sz: -20, txy: 0, tyz: 0, tzx: 0 }, { s1: 100, s2: 50, s3: -20 }, 1e-9],
+  ['shaft-combined-stress', { P: 0, M: 0 }, { tau: 500000 * 16 / (Math.PI * 64000) }],
+  ['section-shapes-more', {}, { Ix: 5 * Math.sqrt(3) / 16 * (30 / Math.sqrt(3)) ** 4 }],
+  ['mass-inertia-more', {}, { J: 10 * (0.2 ** 2 + 0.75 * 0.03 ** 2) }],
+  ['journal-bearing-petroff', {}, { S: (0.025 / 0.00004) ** 2 * 0.025 * 25 / 2e6 }],
+  ['square-wire-spring', {}, { k: 79300 * 81 / (5.58 * 8 * 8000) }],
+  ['plane-area', {}, { area: 3200 }],
+  ['polygon-area', { n: 4, x1: 0, y1: 0, x2: 10, y2: 0, x3: 10, y3: 5, x4: 0, y4: 5 }, { area: 50, cx: 5, cy: 2.5 }, 1e-9],
+  ['solid-volume', { shape: 'sphere', A: 10 }, { V: Math.PI * 1000 / 6 }],
+  ['centroid-shapes', { shape: 'hemisphere', A: 8 }, { cg: 3 }],
+  ['complex-number', {}, { re: 11, im: -2 }],
+  ['equation-solver', {}, { first: 1 }, 1e-9],
+  ['linear-system', {}, { x1: 2, x2: 3, x3: -1 }, 1e-9],
+  ['combinations', {}, { C: 120, P: 720 }],
+  ['trig-functions', {}, { inv: Math.tan(Math.PI / 9) - Math.PI / 9 }],
+  ['trig-functions', { mode: 'inv', invValue: Math.tan(Math.PI / 9) - Math.PI / 9 }, { deg: 20 }, 1e-9],
+  ['dms-converter', {}, { decv: 12 + 30 / 60 + 15 / 3600 }],
+  ['circle-packing', { mode: 'shaft', n: 6, d: 30 }, { roller: 30 }, 1e-9],
+  ['wind-chill', {}, { wct: 13.12 + 0.6215 * -5 - 11.37 * 30 ** 0.16 + 0.3965 * -5 * 30 ** 0.16 }],
+  ['density-converter', {}, { si: 7850 }],
+];
+for (const [id, over, expected, tol] of HB3_CASES) test(`handbook reference example: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('third handbook pass: lookups and procedures', () => {
+  assert.equal(metric(engine.run('drill-size-lookup', { mode: 'code', code: '#7' }), 'Drill #7'), '0.201 in (5.105 mm)'); // ¼-20 tap drill
+  assert.equal(metric(engine.run('drill-size-lookup', { mode: 'code', code: 'F' }), 'Drill F'), '0.257 in (6.528 mm)');
+  assert.match(metric(engine.run('drill-size-lookup', { dia: 0.201, unit: 'in' }), 'Nearest number / letter'), /^No\. 7 /);
+  assert.equal(engine.run('gear-cutter-number', { type: 'spur', Nt: 13 }).values.cutter, '8');
+  assert.equal(engine.run('gear-cutter-number', { type: 'spur', Nt: 140 }).values.cutter, '1');
+  assert.equal(engine.run('gear-cutter-number', { type: 'spur', Nt: 24 }).values.halfC, '4½');
+  assert.equal(engine.run('triangle-ssa').values.count, 2);
+  assert.equal(engine.run('triangle-ssa', { a: 60 }).values.count, 1);
+  near(engine.run('circle-packing', { mode: 'incircle', n: 7, d: 10 }).values.D, 30, 1e-9, 'seven circles in a circle');
+  assert.equal(engine.run('equation-solver', { degree: '2', a: 1, b: 0, c: 1 }).values.nreal, 0, 'x² + 1 has no real roots');
+  const belt = engine.run('belt-length-crossed-three'); assert.ok(belt.metrics.filter((x: any) => x.label.startsWith('Wrap on pulley')).length === 3);
+});
+
+test('third handbook pass rejects impossible inputs', () => {
+  const cases: Array<[string, Inputs]> = [
+    ['linear-system', { a31: 4, a32: 2, a33: -2, a11: 2, a12: 1, a13: -1 }], ['equation-solver', { a: 0 }], ['triangle-ssa', { a: 10 }], ['combinations', { r: 11 }],
+    ['polygon-area', { n: 3, x1: 0, y1: 0, x2: 1, y2: 1, x3: 2, y3: 2 }], ['plane-area', { shape: 'ring', B: 120 }], ['arc-radius-rolls', { Hh: 10 }],
+    ['bolt-circle-pins', { n: 5 }], ['taper-discs', { D: 1, d: 1.5 }], ['keyseat-depth', { w: 50 }], ['crossed-helical-gears', { psi: 90 }],
+    ['overhanging-beam', { case: 'two-udl', allow: 0.001 }], ['two-span-beam', { case: 'point', a1: 4000 }], ['beam-cases-more', { a: 2500 }],
+    ['square-wire-spring', { Lw: 70 }], ['thrust-bearing-pads', { Di: 200 }], ['section-shapes-more', { shape: 'cirsq', C: 25 }],
+  ];
+  for (const [id, over] of cases) {
+    const r = engine.run(id, over);
+    if (id === 'overhanging-beam') { assert.equal(r.text, 'OVERSTRESSED'); continue; }
+    if (id === 'crossed-helical-gears') continue; // 90° is outside the field range and rejected by the input check below
+    assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined);
+  }
+  assert.equal(engine.run('crossed-helical-gears', { psi: 90 }).text, 'CHECK INPUTS');
 });
