@@ -630,3 +630,100 @@ Applied to every tool: units and bounds on every input, a guide with an input so
 |---|---|---|---|---|
 | **Drill Sizes: Number, Letter, Fraction and Metric** `drill-size-lookup` | CALCULATED | Hole tolerance; Model and application | 2695, 1015–1016 | Automated |
 | **Cutting Speed or Feed for Full Machine Power** `full-power-cutting-speed` | CALCULATED | Tool speed limit; Model and application | 1084–1101 | Automated + reference value |
+
+## Machinery’s Handbook topic tools, fourth pass (added 25 October 2026)
+
+33 MAKEOS tools in batches handbook17–18 add flat plates and spherical shells, brittle hollow shafts, coupling bolts and taper pins, universal-joint speed variation, notch sensitivity and S-N fatigue life, Vickers and Knoop hardness, elastic constants, melting energy, snap fits, gear contact stress, cam pressure angle, bearing duty cycles, RMS motor torque, ball-screw life, timing belts, thermal growth in alignment, bend radius limits, anodizing time, gating choke area, CNC chord error, chip thickness and specific cutting force, grinding geometry, thread-milling paths, angular indexing, bolted-joint fatigue, machine-hour rate, benefit-cost ratio, geometric speed series, factors and GCD, and rack-and-pinion drives. Reference cases include the handbook’s universal-joint example. Ratings and allowables stay user inputs. WORKOS now holds 382 tools.
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Square and Rectangular Flat Plates** `rectangular-plate` | STRESS WITHIN ALLOWABLE | Plate stress; Small-deflection validity; Model and application | 288–290 | Automated |
+| **Spherical Shell under Internal Pressure** `spherical-shell` | ADEQUATE | Safety factor; Pressure equipment code; Model and application | 290–294 | Automated + reference value |
+| **Shaft Diameter for Brittle Materials and Hollow Shafts** `shaft-brittle-hollow` | CALCULATED | Material is brittle; Model and application | 295–303 | Automated |
+| **Fatigue Notch Factor from Stress Concentration** `fatigue-notch-factor` | CALCULATED | Source of Kt; Model and application | 200–211 | Automated + reference value |
+| **Fatigue Life from the S-N Curve (Steel)** `sn-fatigue-life` | LIFE SUFFICIENT | Life against requirement; Scatter; Model and application | 200–211, 358 | Automated + reference value |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Flange Coupling Bolt Capacity** `flange-coupling-bolts` | BOLTS ADEQUATE | Bolt shear; Friction capacity; Model and application | 2441–2450, 302 | Automated |
+| **Universal (Cardan) Joint Speed Variation** `universal-joint` | CALCULATED | Joint angle; Model and application | 2445–2446 | Automated + reference value |
+| **RMS Torque for a Motor Duty Cycle** `rms-torque` | MOTOR ADEQUATE | Continuous torque; Peak torque; Model and application | 2569–2580, 180–186 | Automated + reference value |
+| **Ball Screw Rating Life** `ball-screw-life` | LIFE SUFFICIENT | Life against requirement; Speed and buckling; Model and application | 2561–2568 | Automated + reference value |
+| **Timing (Synchronous) Belt Length and Teeth** `timing-belt` | CALCULATED | Teeth in mesh; Model and application | 2473–2535 | Automated + reference value |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Taper Pin for Torque Transmission** `taper-pin-torque` | PIN ADEQUATE | Checked pin; Shaft weakening; Model and application | 220, 1714–1720 | Automated |
+| **Bolted Joint Fatigue Check** `bolted-joint-fatigue` | FATIGUE SAFE | Fatigue safety factor; Joint separation; Model and application | 1521–1535 | Automated + reference value |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Vickers and Knoop Hardness from Indentation** `vickers-knoop-hardness` | CALCULATED | Specimen thickness; Model and application | 1406–1412 | Automated + reference value |
+| **Elastic Constants: E, G, ν and Bulk Modulus** `elastic-constants` | CALCULATED | Physical range; Model and application | 369–380, 2695 | Automated + reference value |
+| **Energy and Time to Melt Metal** `melting-energy` | CALCULATED | Material data; Model and application | 371–374, 1404–1420 | Automated + reference value |
+| **Cantilever Snap-Fit Design (Plastics)** `snap-fit` | STRAIN ACCEPTABLE | Assembly strain; Root radius; Model and application | 593–605 | Automated + reference value |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Spur and Helical Gear Contact (Pitting) Stress** `gear-contact-stress` | WITHIN ALLOWABLE | Contact stress; Full rating; Model and application | 2131–2160, 2301–2309 | Automated + reference value |
+| **Cam Pressure Angle** `cam-pressure-angle` | WITHIN LIMIT | Pressure angle; Undercutting; Model and application | 2284–2309 | Automated |
+| **Rack and Pinion Speed, Force and Travel** `rack-pinion` | CALCULATED | Guide friction and acceleration; Model and application | 2131–2160 | Automated + reference value |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Bearing Life for a Load and Speed Duty Cycle** `bearing-duty-cycle` | CALCULATED | Life adjustment; Model and application | 2400–2420 | Automated + reference value |
+
+### Maintenance
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Thermal Growth for Hot Shaft Alignment** `alignment-thermal-growth` | CALCULATED | Hot check; Model and application | 2645–2650, 375–376 | Automated + reference value |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Minimum and Maximum Bend Radius** `bend-radius-limits` | RADIUS ACCEPTABLE | Cracking; Permanent bend; Grain direction; Model and application | 1346–1347 | Automated + reference value |
+| **Casting Gating System Choke Area** `gating-choke-area` | CALCULATED | Gate velocity; Model and application | 1404–1420 | Automated |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Anodizing Time and Coating Thickness** `anodizing-time` | CALCULATED | Thickness measurement; Model and application | 1500–1516 | Automated + reference value |
+| **CNC Arc Linearisation Chord Error** `cnc-chord-error` | CALCULATED | Program size; Model and application | 1279–1300, 77–80 | Automated + reference value |
+| **Chip Thickness and Specific Cutting Force** `chip-thickness-kc` | CALCULATED | Material data; Model and application | 1084–1101 | Automated |
+| **Grinding Equivalent Diameter and G-Ratio** `grinding-geometry` | CALCULATED | Wheel wear data; Model and application | 1199–1268 | Automated + reference value |
+| **Thread Milling Tool Path and Feed** `thread-milling-path` | CALCULATED | Cutter size; Model and application | 2063–2070, 1292–1300 | Automated + reference value |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Angular Indexing on a Dividing Head** `angular-indexing` | APPROXIMATE | Angular error; Model and application | 2107–2121 | Automated + reference value |
+
+### Money
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Machine Hour Rate** `machine-hour-rate` | CALCULATED | Productive hours; Model and application | 134–146, 1153–1160 | Automated |
+| **Benefit–Cost Ratio** `benefit-cost-ratio` | BENEFITS EXCEED COSTS | B/C above 1; Benefit evidence; Model and application | 140–144 | Automated + reference value |
+
+### Mathematics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Geometric Speed and Size Series** `speed-series` | CALCULATED | Step size; Model and application | 37–39 | Automated + reference value |
+| **Prime Factors, Greatest Common Divisor and Least Common Multiple** `factors-gcd` | CALCULATED | Hunting tooth; Model and application | 20–29 | Automated + reference value |
