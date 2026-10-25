@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -88,9 +88,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 415 tools with unique ids and every previously published id kept', () => {
+test('register: 434 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 415);
+  assert.equal(ids.length, 434);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -835,16 +835,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 300 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 319 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 300);
+  assert.equal(ids.length, 319);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -1268,6 +1268,75 @@ test('fifth handbook pass rejects impossible inputs', () => {
     ['catenary-cable', { d: 150 }], ['rotating-balance-plane', { m1: 0, m2: 0, m3: 0 }], ['torsional-vibration', { di: 25 }], ['escaping-air-velocity', { p2: 9 }],
     ['lever-force', { W1: 0 }], ['hoist-advantage', { r: 200 }], ['spline-torque-capacity', { Dh: 30 }], ['internal-gear', { Zp: 72 }], ['deep-draw-force', { op: 'iron', c: 2 }],
     ['perforated-open-area', { d: 9 }], ['sound-level', { B: 60 }], ['matrix-3x3', { a11: 1, a12: 2, a13: 3, a21: 2, a22: 4, a23: 6 }], ['wood-moisture-density', { wet: 5 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Sixth handbook pass (handbook21–22): prismoids, Pappus, Simpson, spherical triangles, series, lines, mixtures,
+// classic columns, retaining rings, oil cleanliness, filters, inverse-time feed, bar stock, shearing, pitting power,
+// grinding time and pattern shrinkage.
+const HB6_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['prismoidal-volume', {}, { V: 500 / 3 * (240000 + 60000 + Math.sqrt(240000 * 60000)) }], // exact for a frustum of a pyramid
+  ['prismoidal-volume', { mode: 'circ' }, { V: Math.PI * 500 / 12 * (600 ** 2 + 600 * 300 + 300 ** 2) }], // frustum of a cone
+  ['pappus-revolution', {}, { S: 296.089, V: 222.067 }, 0.002], // handbook torus example
+  ['pappus-revolution', { shape: 'custom', ang: 180 }, { S: 20 * Math.PI * 30, V: 50 * Math.PI * 30 }],
+  ['simpson-area', { Ns: 2, W: 1, V0: 0, V1: 1, V2: 4 }, { A: 8 / 3 }], // ∫x² from 0 to 2, exact by Simpson
+  ['spherical-triangle', {}, { C: 120, area: 100 * 2 * Math.PI / 3 }, 1e-9], // handbook: one sixth of a 20 mm sphere, 209.4 mm²
+  ['spherical-triangle', { a: 90, b: 90, c: 90 }, { A: 90, area: 4 * Math.PI * 100 / 8 }, 1e-9],
+  ['spherical-triangle', { mode: 'gc', R: 1000, lat1: 0, lon1: 0, lat2: 0, lon2: 90 }, { ca: 90, dist: 500 * Math.PI, brg: 90 }, 1e-9],
+  ['progression', {}, { last: 2 * 1.5 ** 7, sum: 2 * (1.5 ** 8 - 1) / 0.5 }],
+  ['progression', { type: 'arith', l: 23 }, { last: 23, sum: 100, fit: 3 }],
+  ['preferred-numbers', {}, { count: 11, ratio: 10 ** 0.1 }],
+  ['preferred-numbers', { series: '5', min: 1, max: 100 }, { count: 11, ratio: 10 ** 0.2 }],
+  ['line-intersection', {}, { ix: 160 / 3, iy: 80 / 3, angle: Math.atan(3) * 180 / Math.PI, dist: 30 / Math.sqrt(1.25) }],
+  ['drop-hammer-blow', {}, { F: 500 * 9.80665 * 1.51 / 0.01, vImp: Math.sqrt(2 * 9.80665 * 1.5) }],
+  ['mixture-cost', {}, { total: 150.8, avg: 150.8 / 85 }], // handbook alloy example
+  ['mixture-cost', { mode: 'blend' }, { sA: 0.625, qA: 62.5 }],
+  ['column-safe-stress-classic', {}, { lr: 100, psi: 17000 - 0.485 * 100 ** 2 }],
+  ['column-safe-stress-classic', { L: 3500, member: 'secondary' }, { psi: 18000 / (1 + 140 ** 2 / 18000) }],
+  ['column-safe-stress-classic', { L: 3500 }, { psi: 18000 / (1 + 140 ** 2 / 18000) * (1.6 - 140 / 200) }],
+  ['retaining-ring-thrust', {}, { Ps: Math.PI * 25 * 1.2 * 1000 / 3, PG: Math.PI * 25 * 0.5 * 250 / 3, Y: 3 * 3000 / (Math.PI * 25 * 200) }],
+  ['iso-cleanliness-code', {}, { R4: 21, R6: 19, R14: 17 }], // handbook example code 21/19/17
+  ['iso-cleanliness-code', { vol: 10, c4: 150000, c6: 30000, c14: 10000 }, { R4: 21, R6: 19, R14: 17 }],
+  ['filter-beta-ratio', {}, { beta: 200, eff: 99.5 }],
+  ['filter-beta-ratio', { mode: 'rating', beta: 75 }, { down: 5000 / 75 }],
+  ['inverse-time-feed', {}, { F: 300 / (20 * Math.PI) }],
+  ['inverse-time-feed', { mode: 'linear', dist: 50, feed: 500 }, { F: 10 }],
+  ['screw-machine-stock', {}, { perBar: 109, bars: 10 }],
+  ['screw-machine-stock', { W: 0.062 * 25.4 }, { hb: 1.062 * 84 * 0.3048 }], // handbook: F = (L + W) × 84 ft per 1000
+  ['shearing-blade-force', { blades: 'parallel' }, { F: 900000, FM: 1170000 }],
+  ['shearing-blade-force', {}, { F: 0.8 * 0.75 * 400 * 0.6 * 9 / Math.tan(2 * Math.PI / 180) }],
+  ['agma-pitting-power', {}, { I: Math.cos(Math.PI / 9) * Math.sin(Math.PI / 9) / 2 * 0.75, Pac: 1500 * 30 / 1.91e7 * Math.cos(Math.PI / 9) * Math.sin(Math.PI / 9) / 2 * 0.75 * 0.8 / (1.3 * 1.25) * (60 * 1000 / 191) ** 2 }],
+  ['agma-pitting-power', { kind: 'int' }, { I: Math.cos(Math.PI / 9) * Math.sin(Math.PI / 9) / 2 * 1.5 }],
+  ['grinding-cycle-time', {}, { passes: 12, strokes: 20, minutes: 12 * 20 * 350 / 15000 }],
+  ['grinding-cycle-time', { type: 'traverse' }, { rate: 3000, minutes: 12 * 190 / 3000 }],
+  ['grinding-cycle-time', { type: 'plunge' }, { minutes: 0.4 + 5 / 60 }],
+  ['pattern-shrinkage', {}, { cast: 306, pattern: 306 * 1.0104, W: 57.6 }],
+];
+for (const [id, over, expected, tol] of HB6_CASES) test(`handbook reference example: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('sixth handbook pass: codes and verdicts', () => {
+  assert.equal(engine.run('iso-cleanliness-code').values.code, '21/19/17');
+  assert.equal(engine.run('iso-cleanliness-code').text, 'DIRTIER THAN TARGET');
+  assert.equal(engine.run('iso-cleanliness-code', { c4: 100, c6: 30, c14: 5 }).text, 'MEETS TARGET');
+  assert.equal(engine.run('retaining-ring-thrust', { P: 5 }).text, 'THRUST EXCEEDS CAPACITY');
+  assert.equal(engine.run('shearing-blade-force', { cap: 40 }).text, 'EXCEEDS CAPACITY');
+  assert.equal(engine.run('agma-pitting-power', { P: 20 }).text, 'PITTING RATING EXCEEDED');
+  assert.equal(engine.run('column-safe-stress-classic', { L: 3500, member: 'secondary' }).text, 'OVER SAFE LOAD');
+  const par = engine.run('line-intersection', { x3: 0, y3: 10, x4: 100, y4: 60 }); // parallel to line 1
+  assert.equal(par.checks[0].status, 'warn'); near(par.values.dist, 30 / Math.sqrt(1.25), 1e-9, 'distance with parallel lines');
+});
+
+test('sixth handbook pass rejects impossible inputs', () => {
+  const cases: Array<[string, Inputs]> = [
+    ['prismoidal-volume', { mode: 'areas', A1: 0, Am: 0, A2: 0 }], ['pappus-revolution', { d: 20 }], ['simpson-area', { Ns: 7 }], ['spherical-triangle', { a: 20, b: 20, c: 60 }],
+    ['progression', { l: -5 }], ['preferred-numbers', { max: 0.5 }], ['line-intersection', { x2: 0, y2: 0 }], ['mixture-cost', { mode: 'blend', vT: 12 }],
+    ['mixture-cost', { q1: 0, q2: 0, q3: 0, q4: 0 }], ['column-safe-stress-classic', { L: 6000 }], ['iso-cleanliness-code', { c6: 20000 }], ['filter-beta-ratio', { down: 6000 }],
+    ['inverse-time-feed', { angle: 0 }], ['screw-machine-stock', { bar: 20 }], ['agma-pitting-power', { kind: 'int', mg: 1 }],
   ];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
