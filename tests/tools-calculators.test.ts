@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -88,9 +88,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 447 tools with unique ids and every previously published id kept', () => {
+test('register: 459 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 447);
+  assert.equal(ids.length, 459);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -835,16 +835,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 332 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 344 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 332);
+  assert.equal(ids.length, 344);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -1411,4 +1411,54 @@ test('eighth handbook pass: verdicts and guards', () => {
   assert.equal(engine.run('set-screw-holding', { P: 10 }).checks[0].status, 'warn');
   const bad = engine.run('plastic-gear-power', { type: 'bevel', C: 8 });
   assert.equal(bad.text, 'CHECK INPUTS'); assert.equal(bad.primary, undefined);
+});
+
+// Ninth handbook pass (handbook25): uncited formula pages found by a page-by-page coverage map.
+const HB9_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['forming-tool-depth', { D: 0.5, C: 15 }, { depth: 0.48296 }, 0.00001], // handbook table: 0.5 in. step at 15° clearance
+  ['forming-tool-depth', {}, { Ap: 44 }, 0.02], // handbook table: 45° on the work, 15° clearance → 44° 0′
+  ['forming-tool-depth', { mode: 'rake' }, { depth: 5.490, B: 6.23 }, 0.002], // handbook example: 16 and 10 mm radii
+  ['forming-tool-depth', { mode: 'circular', Rt: 1.5, off: 0.25, D: 0.25 }, { k: 1.4790, rr: Math.sqrt((Math.sqrt(2.1875) - 0.25) ** 2 + 0.0625) }, 0.0001], // B&S No. 2 constant
+  ['spade-drill-power', { D: 25.4, f: 0.254, n: 300, dull: 0, em: 1 }, { kWc: 0.79 * Math.PI / 4 * 0.01 * 300 * 0.7457 }, 0.005], // metric form agrees with uhp form
+  ['spade-drill-power', { D: 25.4, f: 0.254, dull: 0 }, { Bs: 148500 * 0.79 * 0.01 * 4.448222 }, 15], // thrust agrees with the US form
+  ['true-stress-strain', {}, { sN: 30000 / 78.54, eN: 0.2, eT: Math.log(1.2), sT: 30000 * 1.2 / 78.54, flow: 530 * Math.log(1.2) ** 0.26 }],
+  ['viscosity-units', {}, { cP: 68 * 0.88, sus40: 68 * 4.632, sus100: 68 * 4.664 }],
+  ['viscosity-units', { unit: 'reyn', val: 1e-5, sg: 1 }, { cP: 68.95 }, 1e-9],
+  ['buttress-thread', { D: 2, p: 0.1, G: 0 }, { H: 0.089064, En: 1.94, Kn: 1.88, Dn: 2.012542, Ks: 2 - 0.132542 }],
+  ['three-wire-taper-buttress', {}, { M: 3.495 * 25.4 }, 0.0005 * 25.4], // handbook: 3-in. pipe thread gauge, 3.495 in.
+  ['three-wire-taper-buttress', { Mm: 3.495 * 25.4 }, { E2: 3.3885 * 25.4 }, 0.0005 * 25.4], // and back to 3.3885 in.
+  ['three-wire-taper-buttress', { mode: 'buttress', E: 10, P: 1, W: 0.5, A: 45, a: 0 }, { M: 10 - 1 + 0.5 * 3.4142, wire: 0.586 }, 0.0005], // handbook 45° buttress formula (3)
+  ['three-wire-taper-buttress', { mode: 'buttress', E: 10, P: 1, W: 0.6, A: 50, a: 5 }, { M: 10 - 0.91955 + 0.6 * 3.2235, wire: 0.606 }, 0.0005], // handbook formula (4)
+  ['multi-start-threading', { P: 0.0625 * 25.4 }, { lead: 0.1875 * 25.4, spacing: 120 }], // handbook: triple start, 16 TPI → F0.1875
+  ['shear-spinning', {}, { T: 4, Ft: 300 * 2 * 0.5 }],
+  ['machine-positioning-accuracy', { nt: 1 }, { mean1: 0.0004 * 25400, acc: 6 * Math.sqrt(0.00000066 / 4) * 25400 }, 1e-6], // handbook example: X̄ = 0.0004 in.
+  ['acme-tap-drill', {}, { min: 0.4, max: 0.405 }, 1e-12], // handbook ½-10 Acme 2G
+  ['acme-tap-drill', { cls: 'C24' }, { min: 0.41, max: 0.415 }, 1e-12], // handbook 2C
+  ['acme-tap-drill', { cls: 'C56' }, { min: 0.3923, max: 0.3973 }, 0.00005], // handbook 5C
+  ['milling-cutter-teeth', {}, { T: 9.45 }], // handbook: about 10 teeth
+  ['milling-cutter-teeth', { mode: 'periph', D: 101.6, d: 6.35 }, { T: 12.6 * 4 / 5 }, 1e-9], // handbook: about 10 teeth
+  ['milling-cutter-teeth', { mode: 'power', d: 3.2, W: 152.4 }, { T: 14278 * 7.5 / (0.2032 * 272 * 3.2 * 152.4) }],
+  ['angular-cutter-setting', {}, { A: 21 + 52 / 60, D: 47 + 34 / 60 }, 0.02], // handbook: 21° 52′
+  ['angular-cutter-setting', { B: 0 }, { A: Math.acos(Math.tan(40 * Math.PI / 180) / Math.tan(55 * Math.PI / 180)) * 180 / Math.PI }, 1e-9], // 0° blank: cos A = tan(360/N) cot C
+];
+for (const [id, over, expected, tol] of HB9_CASES) test(`handbook reference example: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('ninth handbook pass: verdicts and tables', () => {
+  assert.equal(engine.run('angular-cutter-setting').values.Atext, '21° 52.2′');
+  assert.equal(engine.run('machine-positioning-accuracy').table.rows.length, 3);
+  assert.equal(engine.run('machine-positioning-accuracy', { req: 40 }).text, 'OUTSIDE REQUIRED ACCURACY');
+  assert.equal(engine.run('spade-drill-power', { avail: 2 }).text, 'EXCEEDS MACHINE POWER');
+  assert.equal(engine.run('multi-start-threading', { rpm: 2000 }).text, 'SPEED EXCEEDS AXIS LIMIT');
+});
+
+test('ninth handbook pass rejects impossible inputs', () => {
+  const cases: Array<[string, Inputs]> = [
+    ['forming-tool-depth', { mode: 'rake', r: 20 }], ['forming-tool-depth', { mode: 'rake', F: 0 }], ['forming-tool-depth', { mode: 'circular', off: 40 }], ['true-stress-strain', { l: 40 }],
+    ['buttress-thread', { D: 5, p: 10 }], ['acme-tap-drill', { D: 0.1, tpi: 1 }], ['milling-cutter-teeth', { W: 200 }], ['angular-cutter-setting', { Nt: 5, C: 20, B: 0 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
