@@ -727,3 +727,100 @@ Applied to every tool: units and bounds on every input, a guide with an input so
 |---|---|---|---|---|
 | **Geometric Speed and Size Series** `speed-series` | CALCULATED | Step size; Model and application | 37–39 | Automated + reference value |
 | **Prime Factors, Greatest Common Divisor and Least Common Multiple** `factors-gcd` | CALCULATED | Hunting tooth; Model and application | 20–29 | Automated + reference value |
+
+## Machinery’s Handbook topic tools, fifth pass: mechanisms, machine elements and shop calculations (added 25 October 2026)
+
+33 MAKEOS tools in batches handbook19–20 add uniformly accelerated motion and falling bodies, run-up torque, impulse and collisions, simple, compound, conical and torsional pendulums, fly-ball (Porter) governors, Geneva wheels, gyroscopic couples, Prony brakes, catenary cables, rolling resistance, single- and two-plane balancing, torsional resonance of drives, buoyancy, wind pressure, escaping compressed air, ratchet wheels, levers and lifting machines, AGMA bending stress, involute spline stresses, internal gear proportions, lubricant film thickness ratio, turn-of-nut tightening, drawing and ironing forces, threading rolls, hobbing time, rolled angle rings, perforated sheet, machinery noise, equivalent stiffness thickness, 3 × 3 matrices and wood moisture and density. Reference cases include the handbook’s internal gear, threading roll, Porter governor, windlass, rope block, stand-pipe angle ring and machinery noise examples. Ratings, factors and allowables stay user inputs. WORKOS now holds 415 tools.
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Uniformly Accelerated Motion and Falling Bodies** `uniform-acceleration` | CALCULATED | Direction; Model and application | 175–181 | Automated + reference value |
+| **Torque to Accelerate a Rotating Load** `angular-acceleration-torque` | CALCULATED | Braking; Model and application | 176–181 | Automated + reference value |
+| **Impulse, Momentum and Collisions** `impulse-momentum` | CALCULATED | Model and application | 184–186 | Automated + reference value |
+| **Pendulum Period: Simple, Compound, Conical and Torsional** `pendulum-period` | CALCULATED | Amplitude; Model and application | 173–174 | Automated + reference value |
+| **Fly-ball (Porter) Governor Height and Sensitivity** `flyball-governor` | CALCULATED | Model and application | 3453–3455 | Automated + reference value |
+| **Geneva Wheel Indexing Mechanism** `geneva-mechanism` | CALCULATED | Slot width; Entry shock; Model and application | 171 | Automated + reference value |
+| **Gyroscopic Couple and Bearing Reactions** `gyroscope-precession` | CALCULATED | Model and application | 2998 | Automated + reference value |
+| **Prony Brake and Absorption Dynamometer Power** `prony-brake` | CALCULATED | Model and application | 2998–2999 | Automated + reference value |
+| **Catenary Cable Sag, Tension and Length** `catenary-cable` | CALCULATED | Model and application | 2999 | Automated + reference value |
+| **Rolling Resistance of Wheels and Rollers** `rolling-resistance` | CALCULATED | Model and application | 165–167 | Automated + reference value |
+| **Counterbalancing Masses in One Plane** `rotating-balance-plane` | CALCULATED | Model and application | 191–195 | Automated + reference value |
+| **Two-Plane (Dynamic) Balance Corrections** `two-plane-balance` | CALCULATED | Model and application | 191–195 | Automated + reference value |
+| **Torsional Natural Frequency of a Drive** `torsional-vibration` | ABOVE BANDWIDTH | Resonance against bandwidth; Model and application | 3412–3413 | Automated + reference value |
+| **Wind Pressure and Force on a Surface** `wind-pressure` | CALCULATED | Model and application | 3028 | Automated + reference value |
+| **Lever Force with Several Loads** `lever-force` | CALCULATED | Arrangement; Model and application | 167–168 | Automated + reference value |
+| **Windlass, Gear Hoist and Differential Pulley Effort** `hoist-advantage` | CALCULATED | Self-sustaining; Model and application | 170–171 | Automated + reference value |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Buoyancy and Submerged Weight** `buoyancy` | SINKS | Flotation; Model and application | 3027 | Automated + reference value |
+
+### Pneumatics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Velocity and Flow of Escaping Compressed Air** `escaping-air-velocity` | CALCULATED | Choked flow; Model and application | 3037–3038 | Automated + reference value |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Ratchet Wheel Tooth Pitch** `ratchet-wheel-pitch` | CALCULATED | Model and application | 2215–2217 | Automated + reference value |
+| **Involute Spline Stresses and Torque Capacity** `spline-torque-capacity` | SPLINE ADEQUATE | Shear; Compression; Model and application | 2266–2270 | Automated + reference value |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Gear Tooth Bending Stress (AGMA Form)** `agma-bending-stress` | BENDING ADEQUATE | Bending safety factor; Pitting; Model and application | 3304–3320 | Automated + reference value |
+| **Internal Gear and Pinion Proportions** `internal-gear` | NUMBERS COMPATIBLE | Tooth-number difference; Pinion size; Model and application | 2170–2171 | Automated + reference value |
+| **Gear Hobbing Cycle Time** `hobbing-time` | CALCULATED | Model and application | 3347–3349 | Automated + reference value |
+
+### Maintenance
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Lubricant Film Thickness Ratio (Lambda)** `film-thickness-ratio` | FULL FILM | Separation; Model and application | 2420–2422 | Automated + reference value |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Turn-of-Nut Angle for Bolt Preload** `turn-of-nut-preload` | CALCULATED | Joint compliance; Model and application | 1522–1528 | Automated + reference value |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Deep Drawing and Ironing Punch Force** `deep-draw-force` | WITHIN PRESS CAPACITY | Press capacity; Blank holder; Model and application | 1353–1361 | Automated + reference value |
+| **Length of Angle or Bar Bent to a Ring** `angle-ring-length` | CALCULATED | Model and application | 2593 | Automated + reference value |
+| **Perforated Sheet Open Area and Hole Count** `perforated-open-area` | CALCULATED | Ligament; Model and application | 2607–2608 | Automated + reference value |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Threading Roll Pitch Diameter** `thread-roll-diameter` | CALCULATED | Model and application | 2050–2051 | Automated + reference value |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Machinery Noise: Machine Level, Combined Sources and Distance** `sound-level` | CALCULATED | Background margin; Model and application | 3455–3456 | Automated + reference value |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Equivalent Thickness for Equal Stiffness or Strength** `equivalent-stiffness-thickness` | CALCULATED | Model and application | 575–580 | Automated + reference value |
+| **Wood Moisture Content and Density** `wood-moisture-density` | CALCULATED | Fibre saturation; Model and application | 386–387, 3019 | Automated + reference value |
+
+### Mathematics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **3 × 3 Matrix Determinant, Adjoint and Inverse** `matrix-3x3` | CALCULATED | Model and application | 122–125 | Automated + reference value |
