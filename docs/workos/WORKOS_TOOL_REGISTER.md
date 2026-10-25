@@ -968,3 +968,49 @@ Applied to every tool: units and bounds on every input, a guide with an input so
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Set-Screw Holding Power and Torque** `set-screw-holding` | CALCULATED | Number of screws; Model and application | 1699–1700 | Automated + reference value |
+
+## Machinery’s Handbook topic tools, ninth pass: uncited formula pages (added 25 October 2026)
+
+12 MAKEOS tools in batch handbook25 came from a page-by-page map of formula density in the handbook against the pages existing tools already cite. They add forming tool step depths (flat, raked and circular tools), spade drilling power and thrust, true stress–strain and the flow curve, oil viscosity unit conversion, ANSI 7°/45° buttress thread dimensions, three-wire measurement of taper and buttress threads, multi-start threading set-up, shear spinning, CNC axis positioning accuracy and repeatability, Acme tap drill limits, milling cutter tooth count and dividing-head settings for fluting angular cutters and taper reamers. Reference cases include the handbook’s 3-in. pipe gauge (3.495 in.), forming-tool, Acme tap drill, positioning accuracy and 21° 52′ fluting examples. WORKOS now holds 459 tools.
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Forming Tool Step Depths and Angles** `forming-tool-depth` | CALCULATED | Model and application | 797–801 | Automated + reference value |
+| **Spade Drilling Power and Thrust** `spade-drill-power` | WITHIN MACHINE POWER | Machine power; Model and application | 1077–1079 | Automated + reference value |
+| **Multi-Start Thread Turning Set-up** `multi-start-threading` | SPEED WITHIN AXIS LIMIT | Axis feed; Model and application | 1304–1305 | Automated + reference value |
+| **Number of Teeth for a Milling Cutter** `milling-cutter-teeth` | CALCULATED | Model and application | 808–809 | Automated + reference value |
+| **Dividing-Head Setting for Fluting Angular Cutters and Taper Reamers** `angular-cutter-setting` | CALCULATED | Model and application | 833–834 | Automated + reference value |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **True Stress, True Strain and Flow Curve** `true-stress-strain` | CALCULATED | Model and application | 1331–1334 | Automated + reference value |
+
+### Units
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Oil Viscosity Unit Conversion (cSt, cP, SUS, Reyn)** `viscosity-units` | CALCULATED | Model and application | 2425–2426 | Automated + reference value |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **ANSI Buttress Thread Basic Dimensions (7°/45°)** `buttress-thread` | CALCULATED | Model and application | 1945–1952 | Automated + reference value |
+| **Three-Wire Measurement of Taper and Buttress Threads** `three-wire-taper-buttress` | CALCULATED | Model and application | 2005–2007 | Automated + reference value |
+| **Acme Thread Tap Drill Size** `acme-tap-drill` | CALCULATED | Model and application | 944–947 | Automated + reference value |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Shear Spinning Blank Thickness and Force** `shear-spinning` | CALCULATED | Model and application | 1362–1364 | Automated + reference value |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **CNC Axis Positioning Accuracy and Repeatability** `machine-positioning-accuracy` | MEETS REQUIRED ACCURACY | Accuracy; Model and application | 1319–1322 | Automated + reference value |
