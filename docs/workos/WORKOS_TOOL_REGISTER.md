@@ -1062,3 +1062,36 @@ Applied to every tool: units and bounds on every input, a guide with an input so
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Hydraulic Cylinder Sizing (Bore, Rod Buckling, Flow, Power, Pipes)** `hydraulic-cylinder-sizing` | CYLINDER FEASIBLE | Rod fits the bore; Standard sizes; Model and application | 281–286, 3421–3425 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, eleventh pass: integrated design checks, second round (added 25 October 2026)
+
+9 more integrated design checks in batch handbook27: ball-screw linear axis sizing (phase torques with inertia, RMS torque, critical speed, buckling and life), V-belt or flat belt drive design (length, wrap, tensions, number of belts and shaft load), roller chain drive design (rating, breaking-load factor, links, exact centres and chordal action), rolling bearing selection (required rating, life at a chosen reliability on the ISO 281:2007 or the handbook’s ANSI/ABMA basis, static safety and speed), fillet weld size and cost, cam and spring-loaded follower contact and preload, friction clutch engagement with slip energy and heat, screw jack design (torques, self-locking, nut pressure, root stress, buckling) and pumping system design (head, power, motor and NPSH). Tests cross-check each against the single-purpose tools it chains; the bearing check exposes the difference between the handbook’s reliability factors and the current ISO values and offers both. WORKOS now holds 477 tools.
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Ball-Screw Linear Axis Sizing** `ballscrew-axis-sizing` | AXIS FEASIBLE | Critical speed; Buckling; Life; Motor; Model and application | 2561–2563 | Automated + cross-check |
+| **Cam and Spring-Loaded Follower Design** `cam-follower-design` | CAM DESIGN ADEQUATE | Follower contact; Pressure angle; Model and application | 2284–2310 | Automated + cross-check |
+| **Screw Jack and Power Screw Design** `screw-jack-design` | SCREW DESIGN ADEQUATE | Self-locking; Nut pressure; Screw stress; Buckling; Lever effort; Model and application | 171, 2561 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **V-Belt or Flat Belt Drive Design** `v-belt-drive-design` | CALCULATED | Wrap angle; Belt speed; Belt catalogue; Model and application | 2487–2536 | Automated + cross-check |
+| **Roller Chain Drive Design** `roller-chain-drive-design` | CHAIN ADEQUATE | Power rating; Breaking load; Small sprocket; Ratio; Model and application | 2537–2556 | Automated + cross-check |
+| **Rolling Bearing Selection Check** `bearing-selection-check` | BEARING SUITABLE | Life; Static safety; Speed; Model and application | 2365–2422 | Automated + cross-check |
+| **Friction Clutch Engagement Design** `clutch-engagement-design` | CLUTCH ADEQUATE | Lining pressure; Temperature rise; Model and application | 2446–2458 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Fillet Weld Joint Design and Cost** `fillet-weld-joint-design` | CALCULATED | Leg against plate; Over-welding; Welding code; Model and application | 1433–1486 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Pumping System Design (Head, Power and NPSH)** `pump-system-design` | SUCTION ADEQUATE | NPSH margin; Velocity; Model and application | 3021–3026, 3036 | Automated + cross-check |
