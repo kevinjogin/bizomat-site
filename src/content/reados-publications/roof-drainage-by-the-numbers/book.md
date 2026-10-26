@@ -55,6 +55,8 @@ references:
     url: "https://safeworkaustralia.gov.au/doc/model-code-practice-managing-risk-falls-workplaces"
     note: "Background for the roof access and inspection safety points in Chapter 8. Check whether the code has legal effect in your jurisdiction."
 related:
+  - title: "Architectural Sheet Metal by the Numbers"
+    href: "/reados/publications/architectural-sheet-metal-by-the-numbers/"
   - title: "Galvanic pairs and sealing"
     href: "/reados/publications/sheet-metal-joints-by-the-numbers/galvanic-pairs-and-sealing/"
   - title: "Building regulation for project teams"

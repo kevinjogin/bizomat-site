@@ -40,6 +40,8 @@ references:
     url: "https://safeworkaustralia.gov.au/doc/model-code-practice-managing-risk-falls-workplaces"
     note: "Background for the note on site measurement and installation at height in Chapters 1 and 8."
 related:
+  - title: "Roof Drainage by the Numbers"
+    href: "/reados/publications/roof-drainage-by-the-numbers/"
   - title: "Sheet Metal Patterns by the Numbers"
     href: "/reados/publications/sheet-metal-patterns-by-the-numbers/"
   - title: "Sheet Metal Parts by the Numbers"
