@@ -183,6 +183,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'water-hammer-by-the-numbers': { motif: 'waterwheel', tone: 'graphite' },
   'transitional-elbows-by-the-numbers': { motif: 'triangle', tone: 'paper' },
   'branched-fittings-by-the-numbers': { motif: 'network', tone: 'graphite' },
+  'machine-noise-control-by-the-numbers': { motif: 'shield', tone: 'graphite' },
+  'product-acoustics-by-the-numbers': { motif: 'megaphone', tone: 'ember' },
 };
 
 const hash = (s: string) => [...s].reduce((a, c) => (Math.imul(a, 33) + c.charCodeAt(0)) >>> 0, 5381);
