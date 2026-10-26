@@ -1684,3 +1684,51 @@ A fifteenth round of 9 integrated design checks in batch handbook40: drop impact
 |---|---|---|---|---|
 | **Machine Tipping Stability (Overturning, Safety Factor, Anchors)** `machine-tipping-stability` | ANCHORS NEEDED | Tipping; Anchors; Sliding; Model and application | 167–168, 221–227 | Automated + cross-check |
 | **Rope Winch Drum and Capstan (Wraps, Holding Pull, Torque, Power)** `rope-winch-drum` | WINCH ADEQUATE | Holding; Rope; Wet rope; Model and application | 165–168 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, twenty-fifth pass: integrated design checks, sixteenth round (added 26 October 2026)
+
+A sixteenth round of 9 integrated design checks in batch handbook41: a casting pour plan (moduli, riser feed volume, metal poured, yield, choke area, ladle), a coating job estimate (coats, thinner, wet film, labour, cost per square metre), valve closure surge against the pipe rating with the closing time needed, control valve sizing (Kv, opening, authority, full-open flow), vacuum gripper sizing (cup size and count, evacuation time), wind load on a sign post (force, base stress, deflection), noise exposure (combined sources, distance, dose), process capability from X-bar R data (sigma, limits, Cp, Cpk, ppm) and corrosion remaining life with the next inspection. Tests cross-check against the casting solidification, gating choke area, coating coverage, water hammer, valve flow coefficient, vacuum cup, wind pressure, sound level, X-bar R limits, normal out-of-spec and corrosion rate tools. WORKOS now holds 603 tools.
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Casting Pour Plan (Riser, Feed Volume, Gating and Ladle)** `casting-pour-plan` | POUR PLAN ADEQUATE | Riser modulus; Feed volume; Ladle; Model and application | 1404–1420 | Automated + cross-check |
+| **Coating Job Estimate (Coats, Material, Thinner, Labour, Film)** `coating-job-estimate` | ESTIMATE READY | Wet film; Transfer efficiency; Model and application | 1500–1516 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Valve Closure Surge (Water Hammer against Pipe Rating)** `valve-closure-surge` | SURGE WITHIN RATING | Rating; Closing time; Analysis; Model and application | 3024–3027 | Automated + cross-check |
+| **Control Valve Sizing (Kv, Opening, Authority, Full-Open Flow)** `control-valve-sizing` | VALVE SUITABLE | Opening at design; Authority; Cavitation; Model and application | 3024–3027 | Automated + cross-check |
+
+### Pneumatics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Vacuum Gripper Sizing (Cups, Diameter, Holding and Evacuation Time)** `vacuum-gripper-sizing` | GRIPPER ADEQUATE | Holding; Evacuation time; Leakage; Model and application | 3032–3041 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Wind Load on a Sign or Panel Post (Force, Base Moment, Stress, Deflection)** `wind-load-on-post` | POST ADEQUATE | Stress; Deflection; Base; Model and application | 3028, 257–277 | Automated + cross-check |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Noise Exposure Check (Combined Sources, Distance, Dose)** `noise-exposure-check` | EXPOSURE WITHIN LIMIT | Dose; Measurement; Model and application | 3455–3456 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Process Capability Check (σ from R̄, Cp, Cpk, Rejects, Limits)** `process-capability-check` | PROCESS CAPABLE | Cpk; Centring; Stability; Model and application | 128–133 | Automated + cross-check |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Corrosion Remaining Life and Inspection Interval** `corrosion-remaining-life` | LIFE ADEQUATE | Thickness; Life; Localised corrosion; Model and application | 1500–1516, 290–294 | Automated + cross-check |
