@@ -2321,3 +2321,51 @@ A twenty-ninth round of 9 integrated design checks in batch handbook54: a tank h
 |---|---|---|---|---|
 | **Column Formula Comparison (Rankine, Euler and Classic Safe Load)** `column-formula-compare` | COLUMN ADEQUATE | Rankine factor; Classic safe load; Current code; Model and application | 281–287 | Automated + cross-check |
 | **Hollow Shaft Conversion (Brittle Material, Size, Weight, Twist)** `hollow-shaft-conversion` | HOLLOW SHAFT WORKS | Fits; Wall; Twist; Model and application | 295–303 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, thirty-ninth pass: integrated design checks, thirtieth round (added 27 October 2026)
+
+A thirtieth round of 9 integrated design checks in batch handbook55: a ring blank plan (rolled ring or cut from plate, mass and cost), a thread rolling set-up (blank diameter, roll size, starts), a shear legs (A-frame) check (geometry, leg force, foot thrust, buckling), a stock removal plan (bar volume, chips, machining time, power), a pump speed control plan (speed for target flow, power, saving over throttling), lot acceptance from process capability (fraction defective, sampling plan risk), a sump or pit pump-out plan (Simpson section area, volume, time), an outdoor cabinet or machine wind tipping and sliding check, and a segmented flange ring plan (segment size, plate fit, yield, welds). Tests cross-check against the Pappus surface and volume, metric thread, threading roll size, triangle solver, column buckling, solid volume, turning power, pump operating point, pump affinity, parts out of tolerance, sampling plan operating characteristic, Simpson’s rule area, wind pressure, machine tipping stability and plane area tools. WORKOS now holds 729 tools.
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Ring Blank Plan (Rolled Ring or Cut from Plate, Mass and Cost)** `ring-blank-make-plan` | ROLLED RING CHEAPER | Budget; Lead time; Model and application | 66–67 | Automated + cross-check |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Thread Rolling Set-up (Blank Diameter, Roll Size, Starts)** `thread-rolling-setup` | ROLLS FIT THE MACHINE | Roll size; Blank size; Model and application | 2050–2051, 1867–1890 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Shear Legs (A-Frame) Check (Geometry, Leg Force, Foot Thrust, Buckling)** `shear-legs-check` | SHEAR LEGS ADEQUATE | Leg buckling; Foot tie; Back guys; Model and application | 95–102, 281–287 | Automated + cross-check |
+| **Outdoor Cabinet or Machine Wind Tipping and Sliding Check** `outdoor-cabinet-wind-tipping` | STABLE IN WIND | Tipping; Sliding; Site wind speed; Model and application | 3028, 167–168 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Stock Removal Plan (Bar Volume, Chips, Machining Time, Power)** `stock-removal-plan` | PLAN WORKABLE | Spindle power; Material yield; Model and application | 82–88, 1084–1101 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Pump Speed Control Plan (Speed for Target Flow, Power, Saving over Throttling)** `pump-speed-control-plan` | SPEED CONTROL SAVES | Target reachable; Least speed; Saving; Model and application | 3021–3027 | Automated + cross-check |
+| **Sump or Pit Pump-Out Plan (Simpson Section Area, Volume, Time)** `sump-pumpout-plan` | EMPTIES IN TIME | Time; Pump head; Model and application | 67–68 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Lot Acceptance from Process Capability (Fraction Defective, Sampling Plan Risk)** `lot-acceptance-from-capability` | LOTS WILL PASS | Acceptance; Centring; Model and application | 128–133 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Segmented Flange Ring Plan (Segment Size, Plate Fit, Yield, Welds)** `segmented-flange-plan` | SEGMENT PLAN OK | Plate fit; Yield; Weld procedure; Model and application | 66–81 | Automated + cross-check |
