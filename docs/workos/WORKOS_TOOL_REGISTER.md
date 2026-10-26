@@ -2240,3 +2240,46 @@ A twenty-seventh round of 9 integrated design checks in batch handbook52: a push
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Equipment Finance Plan (Loan Payment, Depreciation, Tax, Yearly Cash Flow)** `equipment-finance-plan` | PAYS ITS WAY EVERY YEAR | Yearly cash flow; Tax rules; Model and application | 134–140 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, thirty-seventh pass: integrated design checks, twenty-eighth round (added 26 October 2026)
+
+A twenty-eighth round of 9 integrated design checks in batch handbook53: a Porter governor check (heights, sleeve travel, ball radius, centrifugal force), an overhang beam with tip load (uplift, anchor bolts, tip deflection), a beam drop impact check (I-section properties, impact factor, dynamic stress), a silent chain drive check (sprocket diameters, chain length, speed, wrap), a jaw clutch milling set-up (dividing-head angle and indexing), a snatch block and anchor load check (rope angle, resultant, ratings), a crossed flat belt drive check (length, wrap, tensions, speed), a square versus round wire spring comparison (rate, load, stress, solid length) and a crossed helical gear drive check (proportions, sliding velocity, forces). Tests cross-check against the fly-ball governor, centrifugal force, overhanging beam, section properties, impact load on a beam, silent chain sprocket, chain length, clutch teeth dividing-head, simple indexing, resultant of concurrent forces, crossed belt length, belt friction, square-wire spring, compression spring and crossed helical gears tools. WORKOS now holds 711 tools.
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Porter Governor Check (Heights, Sleeve Travel, Ball Radius, Centrifugal Force)** `porter-governor-check` | GOVERNOR SUITABLE | Sleeve travel; Speed variation; Friction; Model and application | 3453–3455, 187–190 | Automated + cross-check |
+| **Snatch Block and Anchor Load Check (Rope Angle, Resultant, Ratings)** `snatch-block-load-check` | RIGGING ADEQUATE | Block; Anchor; Rope; Exclusion zone; Model and application | 153–163 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Overhang Beam with Tip Load (Uplift, Anchor Bolts, Tip Deflection)** `overhang-beam-uplift-check` | OVERHANG ADEQUATE | Bending stress; Anchor bolts; Front support; Tip deflection; Model and application | 257–262 | Automated + cross-check |
+| **Beam Drop Impact Check (I-Section Properties, Impact Factor, Dynamic Stress)** `beam-drop-impact-check` | BEAM SURVIVES THE DROP | Dynamic stress; Dynamic deflection; Local effects; Model and application | 278, 234–246 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Silent Chain Drive Check (Sprocket Diameters, Chain Length, Speed, Wrap)** `silent-chain-drive-check` | DRIVE LAYOUT OK | Chain speed; Small sprocket teeth; Wrap; Power rating; Model and application | 3457–3460, 2537–2560 | Automated + cross-check |
+| **Crossed Flat Belt Drive Check (Length, Wrap, Tensions, Speed)** `crossed-belt-drive-check` | BELT DRIVE ADEQUATE | Belt tension; Belt speed; Belt rubbing; Model and application | 2473–2490, 165–168 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Jaw Clutch Milling Set-up (Dividing-Head Angle and Indexing)** `jaw-clutch-milling-setup` | SET-UP FOUND | Indexing; Mating clutch; Model and application | 2452–2454, 2107–2121 | Automated + cross-check |
+
+### Springs
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Square versus Round Wire Spring Comparison (Rate, Load, Stress, Solid Length)** `square-round-spring-compare` | SQUARE WIRE MEETS THE NEED | Square wire; Round wire; Keystone effect; Model and application | 304–324 | Automated + cross-check |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Crossed Helical Gear Drive Check (Proportions, Sliding Velocity, Forces)** `crossed-helical-drive-check` | SLIDING WITHIN LIMIT | Sliding velocity; Hand of helix; Load capacity; Model and application | 2195–2203 | Automated + cross-check |
