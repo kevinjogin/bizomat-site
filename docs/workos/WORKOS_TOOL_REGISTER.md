@@ -2369,3 +2369,51 @@ A thirtieth round of 9 integrated design checks in batch handbook55: a ring blan
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Segmented Flange Ring Plan (Segment Size, Plate Fit, Yield, Welds)** `segmented-flange-plan` | SEGMENT PLAN OK | Plate fit; Yield; Weld procedure; Model and application | 66–81 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, fortieth pass: integrated design checks, thirty-first round (added 27 October 2026)
+
+A thirty-first round of 9 integrated design checks in batch handbook56: a three-leg sling load share (3D leg geometry, tensions, angles), an instrument calibration check (errors, accuracy class, interpolated correction), an NPT tapped port check (thread length, depth, boss wall), an interference fit at operating temperature for different materials, a compression spring fatigue check (working stroke, Goodman factor), a cam follower return spring check (inertia force, jump speed), an angular cutter or taper reamer fluting set-up (head angle and indexing), a gearbox oil temperature and grade check (heat balance, viscosity hot) and a small tool substitution check (stiffness change, deflection, feed to hold tolerance). Tests cross-check against the cylindrical and spherical coordinates, simultaneous equations, linear interpolation, NPT pipe thread, press and shrink fit, compression spring, Goodman fatigue, cam follower motion, angular cutter fluting, simple indexing, gearbox heat balance, oil viscosity–temperature and small cutter stiffness tools. WORKOS now holds 738 tools.
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Three-Leg Sling Load Share (3D Leg Geometry, Tensions, Angles)** `three-leg-sling-check` | SLING ADEQUATE | All legs loaded; Leg load; Leg angle; Model and application | 43–45, 122–127, 153–163 | Automated + cross-check |
+| **Cam Follower Return Spring Check (Inertia Force, Jump Speed)** `cam-return-spring-check` | FOLLOWER STAYS IN CONTACT | Contact margin; Spring rating; Motion law; Model and application | 2284–2309, 304–320 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Instrument Calibration Check (Errors, Accuracy Class, Interpolated Correction)** `instrument-calibration-check` | WITHIN ACCURACY CLASS | Accuracy class; Service reading; Reference uncertainty; Model and application | 121, 709–735 | Automated + cross-check |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **NPT Tapped Port Check (Thread Length, Depth, Boss Wall)** `npt-port-check` | PORT ADEQUATE | Depth; Boss wall; Gauging; Model and application | 1952–1975 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Interference Fit at Operating Temperature (Different Materials)** `fit-at-temperature-check` | FIT HOLDS AT TEMPERATURE | Grip at the weaker condition; Hub at the tighter condition; Interference hot; Model and application | 631–634, 375–376 | Automated + cross-check |
+
+### Springs
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Compression Spring Fatigue Check (Working Stroke, Goodman Factor)** `spring-fatigue-check` | INFINITE LIFE EXPECTED | Fatigue (Goodman); First-cycle yield; Surge; Model and application | 304–324, 200–211 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Angular Cutter or Taper Reamer Fluting Set-up (Head Angle and Indexing)** `angular-cutter-fluting-setup` | SET-UP FOUND | Indexing; Cutter position; Model and application | 833–834, 2107–2121 | Automated + cross-check |
+| **Small Tool Substitution Check (Stiffness Change, Deflection, Feed to Hold Tolerance)** `small-tool-substitution-check` | DEFLECTION WITHIN LIMIT | Deflection; Holder and runout; Model and application | 1093–1094 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Gearbox Oil Temperature and Grade Check (Heat Balance, Viscosity Hot)** `gearbox-oil-temperature-check` | TEMPERATURE AND GRADE OK | Oil temperature; Viscosity; Oil life; Model and application | 3339–3340, 2430–2436, 2329–2337 | Automated + cross-check |
