@@ -2417,3 +2417,41 @@ A thirty-first round of 9 integrated design checks in batch handbook56: a three-
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Gearbox Oil Temperature and Grade Check (Heat Balance, Viscosity Hot)** `gearbox-oil-temperature-check` | TEMPERATURE AND GRADE OK | Oil temperature; Viscosity; Oil life; Model and application | 3339–3340, 2430–2436, 2329–2337 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, forty-first pass: integrated design checks, thirty-second round (added 27 October 2026)
+
+A thirty-second round of 9 integrated design checks in batch handbook57, built mainly on single tools not chained before: a trapezoidal lead screw check (thread size, torque, root stress, nut pressure), an overhung gear shaft sizing (gear forces, bending, diameter, stress), a face milling power plan (teeth, chip thickness, kc, spindle power), a ball screw life over a duty cycle, a turn-of-nut preload and bolt fatigue check, Unified thread over-wire limits, a change-gear threading set-up (gear train, pitch error, depth, passes), a panel material substitution (equal stiffness and strength thickness, mass, cost) and a cone clutch engagement check (torque, engaging force, slip time, heat). Tests cross-check against the Acme and trapezoidal thread, power screw torque, gear forces, shaft diameter, combined shaft stress, milling cutter teeth, chip thickness and kc, milling power, bearing duty cycle, ball screw life, turn-of-nut preload, bolted joint fatigue, Unified thread limits, three-wire measurement, change gears, metric thread, equivalent stiffness thickness, cone clutch and torque to accelerate a rotating load tools. WORKOS now holds 747 tools.
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Trapezoidal Lead Screw Check (Thread Size, Torque, Root Stress, Nut Pressure)** `acme-lead-screw-check` | LEAD SCREW ADEQUATE | Self-locking; Root stress; Nut pressure; Model and application | 1921–1946 | Automated + cross-check |
+| **Unified Thread Over-Wire Limits (Pitch Diameter Limits, Wire Readings, Accept)** `unified-thread-wire-limits` | ACCEPT | Pitch diameter; Wire size; Measuring force; Model and application | 1813–1866, 1990–2003 | Automated + cross-check |
+| **Change-Gear Threading Set-up (Gear Train, Pitch Error, Thread Depth, Passes)** `change-gear-threading-setup` | GEAR TRAIN FOUND | Pitch error; Gear fit; Thread chasing; Model and application | 2043–2049, 1867–1890 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Overhung Gear Shaft Sizing (Gear Forces, Bending, Shaft Diameter, Stress)** `gear-shaft-sizing` | SHAFT ADEQUATE | Diameter; Combined stress; Deflection and bearings; Model and application | 2131–2160, 2195–2200, 295–303, 212–218 | Automated + cross-check |
+| **Ball Screw Life over a Duty Cycle (Mean Load, Mean Speed, Life)** `ballscrew-duty-life` | LIFE ADEQUATE | Life; Time shares; Static and buckling; Model and application | 2400–2420, 2561–2568 | Automated + cross-check |
+| **Cone Clutch Engagement Check (Torque, Engaging Force, Slip Time, Heat)** `cone-clutch-engagement` | CLUTCH ADEQUATE | Torque; Heat per start; Starts per hour; Model and application | 2446–2449, 176–181 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Face Milling Power Plan (Teeth, Chip Thickness, kc, Spindle Power)** `face-milling-power-plan` | WITHIN SPINDLE POWER | Spindle power; Teeth in cut; Spindle torque at low speed; Model and application | 808–809, 1084–1101 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Turn-of-Nut Preload and Bolt Fatigue Check** `turn-of-nut-fatigue-check` | JOINT ADEQUATE | Preload; Fatigue; Snug point; Model and application | 1521–1535 | Automated + cross-check |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Panel Material Substitution (Equal Stiffness and Strength Thickness, Mass, Cost)** `panel-material-substitution` | SUBSTITUTION SAVES WEIGHT | Stock; Weight; Cost; Model and application | 575–580 | Automated + cross-check |
