@@ -1899,3 +1899,61 @@ A twentieth round of 9 integrated design checks in batch handbook45: compressed-
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Restrained Bar Heating (Thermal Stress, Yield and Buckling)** `restrained-bar-thermal-check` | BAR ADEQUATE | Yield; Buckling; Model and application | 375–376, 281–287 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, thirtieth pass: integrated design checks, twenty-first round (added 26 October 2026)
+
+A twenty-first round of 9 integrated design checks in batch handbook46: a horizontal tank calibration chart with dished heads, a guillotine shear check (force, energy, power, thickest sheet), a machine axis error budget (positioning, repeatability, Abbe, thermal, fixture; worst case and RSS), a plastic gear drive check (power rating and backlash at temperature and moisture), set-screw hub retention, a tank wall panel under liquid pressure, a crane wheel on rail (Hertz contact, mean wheel pressure, travel force), a bar stock plan (bars, yield, material cost, machine time) and a stockpile haulage plan (mass, truck loads, loader passes, ground pressure). Tests cross-check against the tank volume, vessel head volume, shearing blade force, Abbe error, thermal growth, plastic gear power, plastic thermal mismatch, set-screw holding, hydrostatic force, rectangular plate, Hertz contact, rolling resistance, screw machine stock and stockpile weight tools. WORKOS now holds 648 tools.
+
+### Geometry
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Horizontal Tank Calibration Chart (Shell and Heads, Volume by Depth)** `tank-calibration-chart` | CALCULATED | Tank level; Model and application | 68–69, 82–87 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Guillotine Shear Check (Cutting Force, Energy, Power, Thickest Sheet)** `guillotine-shear-check` | SHEAR CAN CUT IT | Force; Power; Width; Blade clearance; Model and application | 1336–1338 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Machine Axis Error Budget (Positioning, Abbe, Thermal, Fixture)** `machine-axis-error-budget` | CAPABLE WORST CASE | RSS; Worst case; Model and application | 709–735, 375–376 | Automated + cross-check |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Plastic Gear Drive Check (Power Rating and Backlash at Temperature)** `plastic-gear-drive-check` | DRIVE ADEQUATE | Power rating; Backlash; Model and application | 604–606, 578–580 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Set-Screw Hub Retention (Torque, Axial Hold, Screws Needed)** `set-screw-hub-check` | SET SCREWS HOLD | Torque; Axial; Retention method; Model and application | 1699–1700 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Tank Wall Panel under Liquid Pressure (Force, Plate Stress, Deflection)** `tank-wall-panel-check` | PANEL ADEQUATE | Stress; Deflection; Large deflection; Model and application | 3024–3027, 288–290 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Crane or Trolley Wheel on Rail (Contact Stress, Wheel Pressure, Travel Force)** `crane-wheel-rail-check` | WHEEL ADEQUATE | Contact pressure; Mean wheel pressure; Hardened depth; Model and application | 2301–2309, 165–167 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Bar Stock Plan for Bar-Fed Parts (Bars, Yield, Material Cost, Machine Time)** `bar-stock-plan` | PLAN READY | Material yield; Set-up parts; Model and application | 1175–1176 | Automated + cross-check |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Stockpile Haulage Plan (Pile Mass, Truck Loads, Loading Time, Ground Pressure)** `stockpile-haulage-plan` | GROUND ADEQUATE | Ground pressure; Survey; Model and application | 382–383 | Automated + cross-check |
