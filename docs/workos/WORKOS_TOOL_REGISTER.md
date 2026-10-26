@@ -2187,3 +2187,56 @@ A twenty-sixth round of 9 integrated design checks in batch handbook51: a C-fram
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Limit Gauge Plan (IT Tolerance, Go and No-Go Sizes, Makeability)** `plug-gauge-plan` | GAUGES MAKEABLE | Gauge tolerance; Gauge form; Model and application | 661–663, 705–708, 635–668 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, thirty-sixth pass: integrated design checks, twenty-seventh round (added 26 October 2026)
+
+A twenty-seventh round of 9 integrated design checks in batch handbook52: a pusher or transfer move check (motion profile, force, hard-stop impact), a lid counterbalance with torsion springs (balance, handle force, spring stress), a triaxial stress check (principal stresses, von Mises, Tresca, strains), a machine noise acceptance test (background correction, distance, limit), a melt charge blend (two materials to a target content, batch masses, cost), an angle ring cut plan (cut length, bars, joints, waste, mass), a two-span stringer check (continuous beam, deflection, support reactions), an inch spur gear pair check (diametral pitch proportions, pinion bending) and an equipment finance plan (loan payment, depreciation, tax, yearly cash flow). Tests cross-check against the uniformly accelerated motion, impulse and momentum, helical torsion spring, three-dimensional principal stress, elastic constants, machinery noise, mixture value and blending, length of angle bent to a ring, continuous beam over two spans, spur gear dimensions by diametral pitch, Lewis bending, interest and equivalence factors and depreciation schedule tools. WORKOS now holds 702 tools.
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Pusher or Transfer Move Check (Motion Profile, Force, Stop Impact)** `pusher-move-check` | MOVE ACHIEVABLE | Actuator force; Hard-stop load; Cushioning; Model and application | 175–186 | Automated + cross-check |
+
+### Springs
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Lid Counterbalance with Torsion Springs (Balance, Handle Force, Spring Stress)** `lid-counterbalance-spring` | LID BALANCED | Handle force; Spring stress; Stays open; Stays shut; Model and application | 333–343 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Triaxial Stress Check (Principal Stresses, von Mises, Tresca, Strains)** `triaxial-stress-check` | WITHIN YIELD MARGIN | von Mises; Tresca; Model and application | 212–218, 369–380 | Automated + cross-check |
+| **Two-Span Stringer Check (Continuous Beam, Deflection, Support Reactions)** `two-span-stringer-check` | STRINGER ADEQUATE | Bending stress; Deflection; Supports; Model and application | 264–267 | Automated + cross-check |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Machine Noise Acceptance Test (Background Correction, Distance, Limit)** `machine-noise-acceptance` | MACHINE MEETS LIMIT | Background; Limit; Instrument; Model and application | 3455–3456 | Automated + cross-check |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Melt Charge Blend (Two Materials to a Target Content, Batch Masses, Cost)** `melt-charge-blend` | BLEND WITHIN COST | Cost; Other elements; Model and application | 384 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Angle Ring Cut Plan (Cut Length, Bars, Joints, Waste, Mass)** `angle-ring-cut-plan` | CUT PLAN OK | Waste; Trial ring; Model and application | 2593 | Automated + cross-check |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Inch Spur Gear Pair Check (Diametral Pitch Proportions, Pinion Bending)** `inch-spur-gear-check` | GEAR PAIR ADEQUATE | Pinion bending; Pinion teeth; Surface durability; Model and application | 2131–2160, 2249–2251 | Automated + cross-check |
+
+### Money
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Equipment Finance Plan (Loan Payment, Depreciation, Tax, Yearly Cash Flow)** `equipment-finance-plan` | PAYS ITS WAY EVERY YEAR | Yearly cash flow; Tax rules; Model and application | 134–140 | Automated + cross-check |
