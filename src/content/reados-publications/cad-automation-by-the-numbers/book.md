@@ -45,6 +45,8 @@ references:
 related:
   - title: "Automating CAD with macros and APIs"
     href: "/reados/collections/cad-modelling-and-design-intent/automating-cad-with-macros-and-apis/"
+  - title: "CAD Automation That Pays"
+    href: "/reados/publications/cad-automation-that-pays/"
   - title: "CAD Standards That Stick"
     href: "/reados/publications/cad-standards-that-stick/"
   - title: "CAD Data You Can Trust"
