@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -88,9 +88,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 585 tools with unique ids and every previously published id kept', () => {
+test('register: 594 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 585);
+  assert.equal(ids.length, 594);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -835,16 +835,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 470 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 479 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 470);
+  assert.equal(ids.length, 479);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -2259,5 +2259,73 @@ test('fourteenth-round design checks: verdicts and guards', () => {
   assert.equal(engine.run('sheet-metal-flat-pattern', { rMin: 2 }).text, 'CHECK FLANGES OR RADIUS');
   assert.equal(engine.run('ball-nose-finishing-plan', { step: 0.5 }).text, 'SCALLOP TOO HIGH');
   const cases: Array<[string, Inputs]> = [['internal-taper-inspection', { d2: 8 }], ['thread-milling-plan', { dc: 25 }], ['accumulator-circuit-sizing', { p0: 120 }], ['cylinder-speed-control', { F: 40 }], ['cylinder-speed-control', { rod: 70 }], ['pipe-insulation-design', { Ti: 10 }], ['sheet-metal-flat-pattern', { L1: 3 }], ['ball-nose-finishing-plan', { ap: 6 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Twenty-fourth handbook pass (handbook40): fifteenth round of integrated design checks.
+const HB24_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['drop-impact-design', {}, { Feq: 20 * 9.80665 * (1 + Math.sqrt(1 + 200 / (20 * 9.80665 * 2000 ** 3 / (48 * 200000 * 8e6)))) }],
+  ['centerless-grinding-plan', {}, { passes: 4, pph: 1561.973428688577 / 85 * 60 / 4 }, 1e-6],
+  ['sawing-plan', {}, { ppb: 23, bars: 9, blades: 200 * 25 * Math.PI / 5000, changes: 3 }],
+  ['motor-load-assessment', {}, { ns: 1500, load: 62.5, Pout: 11 * 0.625 }],
+  ['bolted-joint-temperature', { dT: 0 }, { dF: 0 }, 1e-9],
+  ['bolted-joint-temperature', { am: 11.5 }, { dF: 0 }, 1e-9],
+  ['bolt-circle-layout', {}, { step: 90, lig: 100 * Math.SQRT1_2 - 11, eOut: 14.5, eIn: 14.5, nMax: 12 }],
+  ['tapping-plan', { drillHave: 0 }, { pctHave: 75, drill: 10 - 0.01299 * 75 * 1.5 }],
+  ['machine-tipping-stability', {}, { sf: 0.4 / (0.3 * 1.2), aTip: 0.4 / 1.2, Ta: (1.5 * 2000 * 9.80665 * 0.36 - 2000 * 9.80665 * 0.4) / 1.6 }],
+  ['rope-winch-drum', {}, { ratio: Math.exp(0.25 * 6 * Math.PI), T: 480, sf: 6 }],
+];
+for (const [id, over, expected, tol] of HB24_CASES) test(`design check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('fifteenth-round design checks agree with the tools they chain', () => {
+  const di = engine.run('drop-impact-design').values, bi = engine.run('beam-impact').values;
+  for (const k of ['dst', 'sst', 'k', 'dd', 'sd']) near(di[k], bi[k], 1e-12, `impact ${k}`);
+  near(di.E, engine.run('impact-load', { mode: 'drop', mass: 20, height: 100, speed: 1.5, stop: di.dd }).values.E, 1e-9, 'energy absorbed');
+  near(engine.run('drop-impact-design', { h: di.hAllow }).values.sd, 250, 1e-6, 'safe drop height reaches the allowable');
+  const cg = engine.run('centerless-grinding-plan').values, cf = engine.run('centerless-feed').values;
+  for (const k of ['feed', 'nw', 'ppm']) near(cg[k], cf[k], 1e-9, `centerless ${k}`);
+  near(engine.run('centerless-grinding-plan', { angle: cg.angReq }).values.pph, 250, 1e-6, 'inclination for the target gives the target');
+  const sp = engine.run('sawing-plan').values, bt = engine.run('bandsaw-time', { shape: 'round', a: 100, b: 50, rate: 40, handle: 30 }).values;
+  for (const k of ['area', 'tcut', 'perHour']) near(sp[k], bt[k], 1e-9, `sawing ${k}`);
+  const ml = engine.run('motor-load-assessment').values, mp = engine.run('motor-power', { mode: 'current', V: 415, kW: 11, I: 20, pf: 0.85, eff: 91, rpm: 1460 }).values, ms = engine.run('motor-slip', { f: 50, poles: '4', n: 1475, nRated: 1460 }).values;
+  near(ml.Ir, mp.I, 1e-9, 'rated current'); near(ml.Tr, mp.T, 1e-6, 'rated torque');
+  for (const k of ['ns', 'slip', 'sr', 'load']) near(ml[k], ms[k], 1e-9, `motor ${k}`);
+  const bj = engine.run('bolted-joint-temperature').values, bd = engine.run('bolted-joint-design-check', { d: 12, P: 1.75, Sp: 600, Sut: 830, Se: 129, Eb: 207, grip: 30, Lt: 10, Em: 70, pct: 70, K: 0.2, sc: 25, Pext: 10, req: 1.5 }).values;
+  near(bj.kb, bd.kb, 1e-6, 'bolt stiffness'); near(bj.km, bd.km, 1e-6, 'member stiffness'); near(bj.Fi, bd.Fi, 1e-9, 'assembly preload');
+  const bc = engine.run('bolt-circle-layout').values, bo = engine.run('bolt-circle', { diameter: 100, holes: 4, angle: 45, x: 0, y: 0, direction: 'ccw' }).values;
+  near(bc.chord, bo.chord, 1e-12, 'chord'); near(bc.step, bo.step, 1e-12, 'step'); near(bc.x1, bo.coordinates[0].x, 1e-12, 'first hole x'); near(bc.y1, bo.coordinates[0].y, 1e-12, 'first hole y');
+  const tp = engine.run('tapping-plan').values, td = engine.run('tap-drill', { system: 'metric', D: 10, pitch: 1.5, tpi: 13, pct: 75, tap: 'cut' }).values, tf = engine.run('tapping-feed', { pitch: 1.5, starts: 1, rpm: tp.n, depth: 15 }).values;
+  near(tp.drill, td.drill, 1e-12, 'tap drill'); near(tp.minor, td.minor, 1e-12, 'minor diameter'); near(tp.feed, tf.feed, 1e-9, 'synchronous feed'); near(tp.tF, tf.seconds, 1e-9, 'forward time');
+  near(engine.run('machine-tipping-stability', { aH: 0.4 / 1.2 }).values.sf, 1, 1e-9, 'tipping acceleration gives a factor of one');
+  near(engine.run('machine-tipping-stability', { req: 0.4 / 0.36 }).values.Ta, 0, 1e-6, 'no anchor force at the existing factor');
+  const rw = engine.run('rope-winch-drum').values, bf = engine.run('belt-friction', { slack: 200, mu: 0.25, wrap: 1080, groove: 0 }).values;
+  near(rw.ratio, bf.ratio, 1e-9, 'tension ratio'); near(rw.Fmax, bf.T1, 1e-9, 'load held');
+  near(engine.run('rope-winch-drum', { wraps: rw.need }).values.Fmax, 5000, 1e-6, 'turns needed hold the load');
+});
+
+test('fifteenth-round design checks: verdicts and guards', () => {
+  assert.equal(engine.run('drop-impact-design', { h: 2000 }).text, 'BEAM OVERLOADED');
+  assert.equal(engine.run('drop-impact-design', { dMax: 1 }).text, 'BEAM OVERLOADED');
+  assert.equal(engine.run('centerless-grinding-plan', { target: 400 }).text, 'OUTPUT TOO LOW');
+  assert.equal(engine.run('sawing-plan', { avail: 8 }).text, 'BATCH OVERRUNS');
+  assert.equal(engine.run('motor-load-assessment', { n: 1450 }).text, 'MOTOR OVERLOADED');
+  assert.equal(engine.run('motor-load-assessment', { n: 1490 }).text, 'MOTOR OVERSIZED');
+  assert.equal(engine.run('bolted-joint-temperature', { dT: -150 }).text, 'PRELOAD OUT OF RANGE');
+  assert.equal(engine.run('bolted-joint-temperature', { dT: 150 }).text, 'PRELOAD OUT OF RANGE');
+  assert.equal(engine.run('bolt-circle-layout', { n: 14 }).text, 'LAYOUT NOT ADEQUATE');
+  assert.equal(engine.run('bolt-circle-layout', { OD: 115 }).text, 'LAYOUT NOT ADEQUATE');
+  assert.equal(engine.run('tapping-plan', { drillHave: 8.8 }).text, 'DRILL ACCEPTABLE');
+  assert.equal(engine.run('tapping-plan', { drillHave: 9 }).text, 'DRILL OUT OF RANGE');
+  assert.equal(engine.run('tapping-plan', { drillHave: 8.4 }).text, 'DRILL OUT OF RANGE');
+  assert.equal(engine.run('machine-tipping-stability', { aH: 0.1 }).text, 'STABLE');
+  assert.equal(engine.run('machine-tipping-stability', { cap: 1 }).text, 'UNSTABLE');
+  assert.equal(engine.run('machine-tipping-stability', { nA: 0 }).text, 'UNSTABLE');
+  assert.equal(engine.run('rope-winch-drum', { wraps: 1 }).text, 'WINCH NOT ADEQUATE');
+  assert.equal(engine.run('rope-winch-drum', { MBL: 20 }).text, 'WINCH NOT ADEQUATE');
+  const cases: Array<[string, Inputs]> = [['sawing-plan', { piece: 7000 }], ['sawing-plan', { shape: 'tube', b: 60 }], ['motor-load-assessment', { n: 1500 }], ['bolted-joint-temperature', { Lt: 40 }], ['bolt-circle-layout', { OD: 90 }], ['tapping-plan', { pMin: 90, pMax: 80 }], ['machine-tipping-stability', { tilt: 30 }], ['machine-tipping-stability', { aH: 0 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
