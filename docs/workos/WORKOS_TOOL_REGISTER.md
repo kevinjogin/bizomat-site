@@ -1732,3 +1732,46 @@ A sixteenth round of 9 integrated design checks in batch handbook41: a casting p
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Corrosion Remaining Life and Inspection Interval** `corrosion-remaining-life` | LIFE ADEQUATE | Thickness; Life; Localised corrosion; Model and application | 1500–1516, 290–294 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, twenty-sixth pass: integrated design checks, seventeenth round (added 26 October 2026)
+
+A seventeenth round of 9 integrated design checks in batch handbook42: hydraulic filter selection (beta ratios to the ISO 4406 code, element pressure drop), submerged tank flotation with the concrete ballast needed, cable span design (catenary tension, reactions, clearance, stretch), system reliability from Weibull blocks with redundancy and MTTF, a learning-curve quote (hours, unit cost, price, offered margin), acceptance sampling plan design (n and c for producer and consumer risk, AOQL), a measurement uncertainty budget (combined and expanded uncertainty, test ratio, guard band), furnace wall design with surface convection and radiation, and fastener position tolerance (floating or fixed) with a part check. Tests cross-check against the ISO cleanliness code, filter beta ratio, buoyancy, catenary cable, Weibull reliability, learning curve, sampling OC, Abbe error, wall heat loss, radiant heat and true position tools. WORKOS now holds 612 tools.
+
+### Maintenance
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Hydraulic Filter Selection (Beta Ratios, Cleanliness Code, Pressure Drop)** `hydraulic-filter-selection` | FILTER SUITABLE | Cleanliness; Pressure drop; Ingression; Model and application | 2439–2442 | Automated + cross-check |
+| **System Reliability from Weibull Components (Series and Redundancy)** `system-reliability` | TARGET MET | Reliability; Common cause; Model and application | 128–133 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Buried or Submerged Tank Flotation Check (Uplift and Ballast)** `submerged-tank-flotation` | TANK HELD DOWN | Flotation; Hold-down straps; Model and application | 3027 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Cable Span Design (Catenary Sag, Tension, Clearance and Stretch)** `cable-span-design` | SPAN ADEQUATE | Cable strength; Clearance; Temperature and creep; Model and application | 2999 | Automated + cross-check |
+
+### Money
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Learning-Curve Quote (Batch Hours, Cost and Price per Unit)** `learning-curve-quote` | OFFER ACCEPTABLE | Margin; Learning rate; Model and application | 146, 134–146 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Acceptance Sampling Plan (n and c for Producer and Consumer Risk)** `acceptance-sampling-plan` | PLAN PROTECTS BOTH | Producer’s risk; Consumer’s risk; Model and application | 128–133 | Automated + cross-check |
+| **Measurement Uncertainty Budget (Combined, Expanded, Test Ratio)** `measurement-uncertainty-budget` | MEASUREMENT CAPABLE | Test uncertainty ratio; Guard band; Model and application | 709–735 | Automated + cross-check |
+| **Fastener Position Tolerance (Floating or Fixed) and Part Check** `fastener-position-tolerance` | ACCEPT | Position; Size; Projected zone; Model and application | 615–627 | Automated + cross-check |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Furnace Wall Design (Layers, Convection and Radiation from the Surface)** `furnace-wall-design` | WALL ADEQUATE | Surface temperature; Insulation service limit; Conductivity data; Model and application | 371–378 | Automated + cross-check |
