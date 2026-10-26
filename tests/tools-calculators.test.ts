@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -88,9 +88,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 648 tools with unique ids and every previously published id kept', () => {
+test('register: 657 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 648);
+  assert.equal(ids.length, 657);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -835,16 +835,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 533 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 542 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 533);
+  assert.equal(ids.length, 542);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -2732,5 +2732,79 @@ test('twenty-first-round design checks: verdicts and guards', () => {
   assert.equal(engine.run('bar-stock-plan', { rem: 1000 }).text, 'YIELD TOO LOW');
   assert.equal(engine.run('stockpile-haulage-plan', { qAllow: 50 }).text, 'GROUND OVERLOADED');
   const cases: Array<[string, Inputs]> = [['tank-calibration-chart', { h: 1300 }], ['plastic-gear-drive-check', { type: 'bevel', C: 5 }], ['tank-wall-panel-check', { l: 1200 }], ['bar-stock-plan', { bar: 120 }], ['stockpile-haulage-plan', { shape: 'rect', A: 30 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Thirty-first handbook pass (handbook47): twenty-second round of integrated design checks.
+const HB31_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['melt-furnace-batch-plan', {}, { Q: 500 * (0.9 * 640 + 397 + 1.18 * 60), melts: 6, perShift: 3000 }],
+  ['vickers-test-check', {}, { d: 0.301, HV: 1.8544 * 10 / 0.301 ** 2, tmin: 0.4515 }],
+  ['gear-mesh-interference-check', {}, { db1: 20 * Math.cos(Math.PI / 9), db2: 40 * Math.cos(Math.PI / 9) }],
+  ['finish-turning-setup', {}, { Ra: 1.6, n: 250000 / (Math.PI * 50) }],
+  ['coolant-tank-maintenance', {}, { conc: 6.4, cm: 7 * 5 / 15, month: 15 * 7 / 3 / 100 * 22 }],
+  ['compound-angle-sine-setup', { A: 0 }, { Bp: 30, H1: 0, H2: 100 }],
+  ['dovetail-inspection', {}, { k: 1 + Math.sqrt(3), contact: 7.5 }],
+  ['gear-tooth-caliper-setting', { jnMin: 0, jnMax: 0 }, { sHi: 3 * Math.PI / 2, sLo: 3 * Math.PI / 2 }],
+  ['perforated-plate-design', {}, { lig: 3, Fhit: 20 * Math.PI * 5 * 1.5 * 300 * 1.2 }],
+];
+for (const [id, over, expected, tol] of HB31_CASES) test(`design check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('twenty-second-round design checks agree with the tools they chain', () => {
+  const mf = engine.run('melt-furnace-batch-plan').values, me = engine.run('melting-energy', { mass: 500, T0: 20, Tm: 660, Tp: 720, cs: 0.9, L: 397, cl: 1.18, P: 250, eff: 60, price: 0.25 }).values;
+  for (const k of ['Q', 'kWh', 'drawn', 'hours']) near(mf[k], me[k], 1e-9, `melting ${k}`);
+  const vt = engine.run('vickers-test-check').values, vk = engine.run('vickers-knoop-hardness', { type: 'hv', F: 10, d: 0.301 }).values;
+  near(vt.HV, vk.H, 1e-9, 'Vickers hardness'); near(vt.depth, vk.depth, 1e-12, 'indentation depth'); near(vt.tmin, vk.tmin, 1e-12, 'least thickness');
+  const gm = engine.run('gear-mesh-interference-check').values, sc = engine.run('spur-contact-diameters').values;
+  near(gm.dc1, sc.dc1, 1e-9, 'pinion contact start'); near(gm.dc2, sc.dc2, 1e-9, 'gear contact start');
+  near(gm.eps, engine.run('contact-ratio', { m: 1, z1: 20, z2: 40, alpha: 20, x1: 0, x2: 0 }).values.eps, 1e-9, 'contact ratio');
+  const ft = engine.run('finish-turning-setup').values, ff = engine.run('feed-for-finish', { mode: 'feed', R: 0.8, Ra: 1.6 }).values, nr = engine.run('nose-radius-compensation', { r: 0.8, angle: 45 }).values;
+  near(ft.fDes, ff.f, 1e-12, 'feed for the finish'); near(ft.Rt, ff.Rt, 1e-9, 'peak-to-valley height');
+  for (const k of ['dz', 'dx', 'err']) near(ft[k], nr[k], 1e-12, `nose radius ${k}`);
+  near(ft.t, engine.run('turning-time', { rpm: ft.n, feed: ft.f, length: 82, passes: 1, diameter: 50 }).values.minutes, 1e-12, 'finishing time');
+  const ct = engine.run('coolant-tank-maintenance').values, rc = engine.run('refractometer-concentration', { brix: 4, factor: 1.6, target: 7, volume: 400 }).values;
+  near(ct.conc, rc.conc, 1e-12, 'concentration'); near(ct.add, rc.add, 1e-9, 'concentrate to add');
+  const cs = engine.run('compound-angle-sine-setup').values, ca = engine.run('compound-angle', { angleA: 20, angleB: 30 }).values;
+  near(cs.compound, ca.compound, 1e-9, 'compound angle'); near(cs.direction, ca.direction, 1e-9, 'direction');
+  near(cs.H1, engine.run('sine-bar', { length: 200, angle: 20 }).values.height, 1e-9, 'lower plate stack');
+  near(cs.H2, engine.run('sine-bar', { length: 200, angle: cs.Bp }).values.height, 1e-9, 'upper plate stack');
+  const dv = engine.run('dovetail-inspection').values, dm = engine.run('dovetail-measurement', { type: 'male', angle: 60, width: 50, rod: 10, depth: 12 }).values;
+  near(dv.M, dm.reading, 1e-9, 'reading at nominal'); near(dv.k, dm.factor, 1e-12, 'rod factor'); near(dv.contact, dm.contact, 1e-12, 'rod contact');
+  near(engine.run('dovetail-inspection', { Mmeas: dv.Mhi }).values.wMeas, 50.05, 1e-9, 'upper reading gives the upper width');
+  near(engine.run('dovetail-inspection', { type: 'female', Mmeas: engine.run('dovetail-measurement', { type: 'female', angle: 60, width: 50, rod: 10, depth: 12 }).values.reading }).values.wMeas, 50, 1e-9, 'female reading gives the width');
+  const gc = engine.run('gear-tooth-caliper-setting', { jnMin: 0, jnMax: 0 }).values, ch = engine.run('chordal-tooth', { m: 3, z: 30, a: 3 }).values;
+  near(gc.tcHi, ch.tc, 1e-9, 'chordal thickness without backlash'); near(gc.acHi, ch.ac, 1e-9, 'chordal addendum');
+  near(engine.run('gear-tooth-caliper-setting').values.sHi, 3 * Math.PI / 2 - 0.5 * 0.08 / Math.cos(Math.PI / 9), 1e-12, 'thinning for the least backlash');
+  near(engine.run('gear-tooth-caliper-setting', { tipMeas: 96.2 }).values.tipCorr, 0.1, 1e-12, 'tip correction');
+  const pp = engine.run('perforated-plate-design').values, po = engine.run('perforated-open-area', { pattern: 'stag60', d: 5, p: 8, A: 2, t: 1.5, rho: 7850 }).values;
+  for (const k of ['OA', 'perM2', 'mass']) near(pp[k], po[k], 1e-9, `perforated ${k}`);
+  near(pp.Fhit, 20 * engine.run('punching-force', { perimeter: Math.PI * 5, thickness: 1.5, strength: 300, factor: 1.2 }).values.adjusted, 1e-6, 'force per hit');
+  near(engine.run('perforated-plate-design', { d: pp.dReq }).values.OA, 35, 1e-9, 'hole for the target gives the open area');
+});
+
+test('twenty-second-round design checks: verdicts and guards', () => {
+  assert.equal(engine.run('melt-furnace-batch-plan').text, 'DEMAND MET');
+  assert.equal(engine.run('melt-furnace-batch-plan', { demand: 4000 }).text, 'DEMAND NOT MET');
+  assert.equal(engine.run('vickers-test-check').text, 'WITHIN SPECIFICATION');
+  assert.equal(engine.run('vickers-test-check', { thick: 0.4 }).text, 'TEST NOT VALID');
+  assert.equal(engine.run('vickers-test-check', { space: 0.8 }).text, 'TEST NOT VALID');
+  assert.equal(engine.run('vickers-test-check', { d2: 0.33 }).text, 'TEST NOT VALID');
+  assert.equal(engine.run('vickers-test-check', { d1: 0.25, d2: 0.25 }).text, 'OUT OF SPECIFICATION');
+  assert.equal(engine.run('gear-mesh-interference-check', { tif1: 19 }).text, 'MESH PROBLEM');
+  assert.equal(engine.run('gear-mesh-interference-check', { epsMin: 1.7 }).text, 'MESH PROBLEM');
+  assert.equal(engine.run('finish-turning-setup', { fCh: 0.3 }).text, 'FEED TOO COARSE');
+  assert.equal(engine.run('coolant-tank-maintenance', { brix: 3 }).text, 'ADJUST CONCENTRATION');
+  assert.equal(engine.run('coolant-tank-maintenance', { brix: 5 }).text, 'ADJUST CONCENTRATION');
+  assert.equal(engine.run('compound-angle-sine-setup', { A: 50 }).text, 'ANGLE BEYOND PLATE LIMIT');
+  assert.equal(engine.run('dovetail-inspection').text, 'ACCEPT');
+  assert.equal(engine.run('dovetail-inspection', { Mmeas: 77.45 }).text, 'REJECT');
+  assert.equal(engine.run('dovetail-inspection', { rod: 20 }).text, 'ROD SIZE UNSUITABLE');
+  assert.equal(engine.run('gear-tooth-caliper-setting', { tcMeas: 4.7 }).text, 'REJECT');
+  assert.equal(engine.run('perforated-plate-design', { nHit: 40 }).text, 'DESIGN NOT FEASIBLE');
+  assert.equal(engine.run('perforated-plate-design', { p: 6 }).text, 'DESIGN NOT FEASIBLE');
+  const cases: Array<[string, Inputs]> = [['melt-furnace-batch-plan', { Tp: 600 }], ['vickers-test-check', { hvMax: 150 }], ['gear-mesh-interference-check', { do1: 18 }], ['dovetail-inspection', { tolU: -0.1 }], ['gear-tooth-caliper-setting', { jnMax: 0.05 }], ['perforated-plate-design', { d: 9 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
