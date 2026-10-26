@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -88,9 +88,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 720 tools with unique ids and every previously published id kept', () => {
+test('register: 729 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 720);
+  assert.equal(ids.length, 729);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -835,16 +835,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 605 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 614 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 605);
+  assert.equal(ids.length, 614);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -3412,5 +3412,81 @@ test('twenty-ninth-round design checks: verdicts and guards', () => {
   assert.equal(engine.run('hollow-shaft-conversion', { k: 0.9 }).text, 'HOLLOW SHAFT DOES NOT WORK');
   assert.equal(engine.run('hollow-shaft-conversion', { twMax: 0.5 }).text, 'HOLLOW SHAFT DOES NOT WORK');
   const cases: Array<[string, Inputs]> = [['heating-coil-plan', { t: 13 }], ['polygon-milling-setup', { stock: 20 }], ['bolt-circle-inspection', { x1: 0, x2: 0, y2: 0, x3: 0, y3: -50 }], ['bent-bracket-plan', { L1: 3 }], ['bent-bracket-plan', { R: 10, YS: 1500, E: 10 }], ['rotary-axis-feed-plan', { mode: 'linear', dist: 0 }], ['column-formula-compare', { L: 6000 }], ['hollow-shaft-conversion', { M: 0, T: 0 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Thirty-ninth handbook pass (handbook55): thirtieth round of integrated design checks.
+const HB39_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['ring-blank-make-plan', {}, { Vpl: 416 * 416 * 56 }],
+  ['thread-rolling-setup', {}, { d2: 12 - 0.649519053 * 1.75, lead: 17.5, nsMin: 8, nsMax: 17 }],
+  ['shear-legs-check', {}, { hgt: Math.sqrt(4000 ** 2 - 1200 ** 2), Fleg: 10000 / (2 * Math.cos(Math.asin(0.3))), Hf: 10000 * Math.tan(Math.asin(0.3)) / 2 }],
+  ['stock-removal-plan', {}, { Q: 180, Pm: 7.5 }],
+  ['pump-speed-control-plan', {}, { a: 10 / 160000, H: 30, Hthr: 50 - 10 / 160000 * 90000 }],
+  ['lot-acceptance-from-capability', {}, { Cpk: 0.08 / 0.09 }],
+  ['sump-pumpout-plan', {}, { A: 500 / 3 * 25400, net: 500 }],
+  ['outdoor-cabinet-wind-tipping', {}, { q: 135, F: 351 }],
+  ['segmented-flange-plan', {}, { len: 1510, weld: 1200 }],
+];
+for (const [id, over, expected, tol] of HB39_CASES) test(`design check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('thirtieth-round design checks agree with the tools they chain', () => {
+  const rb = engine.run('ring-blank-make-plan').values;
+  near(rb.Vp, engine.run('pappus-revolution', { shape: 'custom', d: 3, Dp: 10, L: 0, A: 2500, rL: 0, rA: 175, ang: 360 }).values.V, 1e-6, 'finished ring volume');
+  near(rb.Vr, engine.run('pappus-revolution', { shape: 'custom', d: 3, Dp: 10, L: 0, A: 56 * 56, rL: 0, rA: 175, ang: 360 }).values.V, 1e-6, 'rolled blank volume');
+  const tr = engine.run('thread-rolling-setup').values, mt = engine.run('metric-thread', { d: 12, P: 1.75, starts: 1, Sp: 0 }).values;
+  near(tr.d2, mt.d2, 1e-12, 'pitch diameter'); near(tr.d3, mt.d3, 1e-12, 'root diameter'); near(tr.As, mt.As, 1e-9, 'stress area');
+  near(tr.D, engine.run('thread-roll-diameter', { d: tr.d2, T: tr.h3, Ns: 10, P: 1.75 }).values.D, 1e-9, 'roll pitch diameter');
+  assert.ok(engine.run('thread-rolling-setup', { Ns: tr.nsMax }).values.D <= 180 && engine.run('thread-rolling-setup', { Ns: tr.nsMin }).values.D >= 80, 'start range fits the machine');
+  const sl = engine.run('shear-legs-check').values, cb = engine.run('column-buckling', { E: 200, Sy: 250, A: sl.A, I: sl.I, L: 4000, K: 1, P: sl.Fleg, req: 3 }).values;
+  near(sl.C, engine.run('triangle-solver', { mode: 'sss', a: 4000, b: 4000, c: 2400, A: 40, B: 60, C: 90 }).values.C, 1e-9, 'apex angle');
+  near(sl.lam, cb.lambda, 1e-9, 'leg slenderness'); near(sl.Pcr, cb.Pcr, 1e-6, 'leg buckling load'); near(sl.n, cb.n, 1e-9, 'buckling factor');
+  const sr = engine.run('stock-removal-plan').values, tp = engine.run('turning-power', { vc: 200, f: 0.3, ap: 3, D: 60, kc: 2000, eta: 80, Pavail: 15 }).values, sv = engine.run('solid-volume', { shape: 'cylinder', A: 60, B: 0, C: 100, angle: 90, rho: 7850 }).values;
+  near(sr.Vstock, sv.V, 1e-6, 'stock volume'); near(sr.mStock, sv.mass, 1e-9, 'stock mass');
+  near(sr.Q, tp.Q, 1e-12, 'removal rate'); near(sr.Pc, tp.Pc, 1e-12, 'cutting power'); near(sr.Pm, tp.Pm, 1e-12, 'motor power');
+  const ps = engine.run('pump-speed-control-plan').values, po = engine.run('pump-operating-point').values;
+  near(ps.s, po.s, 1e-12, 'speed ratio'); near(ps.nt, po.nt, 1e-9, 'speed for the target flow');
+  near(engine.run('pump-affinity', { Q1: 24, H1: 40, P1: 7, n1: 1450, n2: ps.nt, D1: 200, D2: 200 }).values.H2, ps.s * ps.s * 50 - ps.a * (400 * ps.s) ** 2, 1e-9, 'affinity scaling of the best-efficiency head');
+  const la = engine.run('lot-acceptance-from-capability').values, no = engine.run('normal-out-of-spec', { mean: 10.02, sd: 0.03, lsl: 9.9, usl: 10.1, qty: 10000 }).values;
+  near(la.ppm, no.ppm, 1e-9, 'parts per million'); near(la.zl, no.zl, 1e-12, 'lower z'); near(la.zu, no.zu, 1e-12, 'upper z');
+  near(la.Pa, engine.run('sampling-oc', { n: 50, c: 1, p: la.p * 100 }).values.Pa, 1e-12, 'probability of acceptance');
+  const sp = engine.run('sump-pumpout-plan').values, sa = engine.run('simpson-area', { W: 500, Ns: 8, V0: 0, V1: 800, V2: 1200, V3: 1400, V4: 1500, V5: 1400, V6: 1200, V7: 800, V8: 0, V9: 0, V10: 0 }).values;
+  near(sp.A, sa.A, 1e-9, 'Simpson area'); near(sp.At, sa.At, 1e-9, 'trapezoidal area');
+  const wt = engine.run('outdoor-cabinet-wind-tipping', { V: 25, mu: 0.6 }).values, wp = engine.run('wind-pressure', { V: 25, rho: 1.2, Cd: 1.3, A: 2, h: 1 }).values, ms = engine.run('machine-tipping-stability', { mass: 300, hcg: 900, b: 300, aH: 0, Fh: wp.F, hF: 1000, tilt: 0, req: 1.5, nA: 2, La: 600, cap: 5 }).values;
+  near(wt.F, wp.F, 1e-12, 'wind force'); near(wt.Mo, wp.M, 1e-9, 'overturning moment');
+  near(wt.Mr, ms.Mr, 1e-9, 'restoring moment'); near(wt.sf, ms.sf, 1e-12, 'tipping factor'); near(wt.Ta, ms.Ta, 1e-9, 'anchor tension');
+  near(engine.run('segmented-flange-plan').values.area, engine.run('plane-area', { shape: 'ringsector', A: 1500, B: 1300, C: 0, angle: 60 }).values.area, 1e-9, 'segment area');
+});
+
+test('thirtieth-round design checks: verdicts and guards', () => {
+  assert.equal(engine.run('ring-blank-make-plan').text, 'ROLLED RING CHEAPER');
+  assert.equal(engine.run('ring-blank-make-plan', { OD: 200, ID: 40 }).text, 'PLATE BLANK CHEAPER');
+  assert.equal(engine.run('ring-blank-make-plan', { budget: 80 }).text, 'OVER BUDGET');
+  assert.equal(engine.run('thread-rolling-setup').text, 'ROLLS FIT THE MACHINE');
+  assert.equal(engine.run('thread-rolling-setup', { Ns: 5 }).text, 'ROLL SIZE OUT OF RANGE');
+  assert.equal(engine.run('shear-legs-check').text, 'SHEAR LEGS ADEQUATE');
+  assert.equal(engine.run('shear-legs-check', { W: 80 }).text, 'SHEAR LEGS NOT ADEQUATE');
+  assert.equal(engine.run('shear-legs-check', { tie: 1 }).text, 'SHEAR LEGS NOT ADEQUATE');
+  assert.equal(engine.run('stock-removal-plan').text, 'PLAN WORKABLE');
+  assert.equal(engine.run('stock-removal-plan', { ap: 8 }).text, 'NOT ENOUGH POWER');
+  assert.equal(engine.run('stock-removal-plan', { Vf: 50 }).text, 'YIELD TOO LOW');
+  assert.equal(engine.run('pump-speed-control-plan').text, 'SPEED CONTROL SAVES');
+  assert.equal(engine.run('pump-speed-control-plan', { Qt: 500 }).text, 'TARGET NOT REACHABLE');
+  assert.equal(engine.run('pump-speed-control-plan', { Qt: 100, sMin: 70 }).text, 'SPEED CONTROL NOT SUITABLE');
+  assert.equal(engine.run('lot-acceptance-from-capability').text, 'LOTS WILL PASS');
+  assert.equal(engine.run('lot-acceptance-from-capability', { sd: 0.05 }).text, 'LOTS AT RISK OF REJECTION');
+  assert.equal(engine.run('sump-pumpout-plan').text, 'EMPTIES IN TIME');
+  assert.equal(engine.run('sump-pumpout-plan', { pump: 400 }).text, 'TOO SLOW');
+  assert.equal(engine.run('outdoor-cabinet-wind-tipping').text, 'STABLE IN WIND');
+  assert.equal(engine.run('outdoor-cabinet-wind-tipping', { V: 25 }).text, 'WILL SLIDE');
+  assert.equal(engine.run('outdoor-cabinet-wind-tipping', { V: 25, mu: 0.6 }).text, 'ANCHORS NEEDED');
+  assert.equal(engine.run('outdoor-cabinet-wind-tipping', { V: 25, mu: 0.6, cap: 0.3 }).text, 'UNSTABLE IN WIND');
+  assert.equal(engine.run('segmented-flange-plan').text, 'SEGMENT PLAN OK');
+  assert.equal(engine.run('segmented-flange-plan', { yMin: 60 }).text, 'YIELD TOO LOW');
+  assert.equal(engine.run('segmented-flange-plan', { n: 4, pl: 2000, pw: 1000 }).text, 'SEGMENT DOES NOT FIT THE PLATE');
+  const cases: Array<[string, Inputs]> = [['ring-blank-make-plan', { ID: 500 }], ['thread-rolling-setup', { P: 15 }], ['thread-rolling-setup', { Dmax: 50 }], ['shear-legs-check', { s: 9000 }], ['shear-legs-check', { t: 40 }], ['stock-removal-plan', { Vf: 400 }], ['pump-speed-control-plan', { Hb: 60 }], ['lot-acceptance-from-capability', { c: 60 }], ['sump-pumpout-plan', { Ns: 7 }], ['sump-pumpout-plan', { pump: 90 }], ['segmented-flange-plan', { ID: 3200 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
