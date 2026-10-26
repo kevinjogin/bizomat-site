@@ -1957,3 +1957,46 @@ A twenty-first round of 9 integrated design checks in batch handbook46: a horizo
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Stockpile Haulage Plan (Pile Mass, Truck Loads, Loading Time, Ground Pressure)** `stockpile-haulage-plan` | GROUND ADEQUATE | Ground pressure; Survey; Model and application | 382–383 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, thirty-first pass: integrated design checks, twenty-second round (added 26 October 2026)
+
+A twenty-second round of 9 integrated design checks in batch handbook47: a melting furnace batch plan (energy, melt time, melts and metal per shift, cost per kilogram), a Vickers hardness test check (hardness, thickness, spacing, edge distance and diagonal validity, specification), a spur gear mesh interference check (contact start diameters against the true involute form diameters, contact ratio), a finish turning set-up (feed for finish, nose-radius compensation, finishing time), coolant tank maintenance (concentration, correction, make-up mix, monthly use), a compound-angle sine plate set-up (true angle, plate angles, stacks), dovetail inspection over rods (reading limits, accept or reject), gear tooth caliper settings for backlash (chordal thickness limits, depth setting) and a perforated plate design (hole for open area, punching force, ligament). Tests cross-check against the melting energy, Vickers–Knoop hardness, spur contact diameters, contact ratio, feed for finish, nose radius compensation, turning time, refractometer concentration, compound angle, sine bar, dovetail measurement, chordal tooth, perforated open area and punching force tools. WORKOS now holds 657 tools.
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Melting Furnace Batch Plan (Energy, Melt Time, Melts per Shift, Cost)** `melt-furnace-batch-plan` | DEMAND MET | Output; Material data; Model and application | 371–374, 1404–1420 | Automated + cross-check |
+| **Vickers Hardness Test Check (Hardness, Validity, Specification)** `vickers-test-check` | WITHIN SPECIFICATION | Thickness; Edge distance; Spacing; Diagonals; Specification; Model and application | 1406–1412 | Automated + cross-check |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Spur Gear Mesh Interference Check (Contact Start Diameters and Contact Ratio)** `gear-mesh-interference-check` | NO INTERFERENCE | Pinion; Gear; Contact ratio; Model and application | 2155–2157, 2131–2160 | Automated + cross-check |
+| **Gear Tooth Caliper Setting for Backlash (Chordal Thickness Limits)** `gear-tooth-caliper-setting` | ACCEPT | Chordal thickness; Tip diameter; Model and application | 2145, 2238–2240 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Finish Turning Set-up (Feed for Finish, Nose-Radius Compensation, Time)** `finish-turning-setup` | FINISH ACHIEVABLE | Surface finish; Nose-radius compensation; Model and application | 1125–1131, 782–790 | Automated + cross-check |
+
+### Maintenance
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Coolant Tank Maintenance (Concentration, Correction, Make-Up Mix, Usage)** `coolant-tank-maintenance` | CONCENTRATION OK | Concentration; Tramp oil; Model and application | 1176–1181 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Compound-Angle Sine Plate Set-up (True Angle and Stack Heights)** `compound-angle-sine-setup` | SET-UP POSSIBLE | Lower plate; Upper plate; Plate order; Model and application | 119–121, 676–682 | Automated + cross-check |
+| **Dovetail Inspection over Rods (Reading Limits, Accept or Reject)** `dovetail-inspection` | ACCEPT | Width; Rod contact; Model and application | 682 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Perforated Plate Design (Hole Size for Open Area, Punching Force, Ligament)** `perforated-plate-design` | DESIGN FEASIBLE | Press; Ligament; Hole size; Open area; Model and application | 2607–2608, 1338–1346 | Automated + cross-check |
