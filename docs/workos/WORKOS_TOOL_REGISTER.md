@@ -2000,3 +2000,46 @@ A twenty-second round of 9 integrated design checks in batch handbook47: a melti
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Perforated Plate Design (Hole Size for Open Area, Punching Force, Ligament)** `perforated-plate-design` | DESIGN FEASIBLE | Press; Ligament; Hole size; Open area; Model and application | 2607–2608, 1338–1346 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, thirty-second pass: integrated design checks, twenty-third round (added 26 October 2026)
+
+A twenty-third round of 9 integrated design checks in batch handbook48: a water supply line check (velocity, friction loss, outlet pressure, valve closure surge), a pipe run thermal expansion check (growth, loop leg, anchor force), a pivot pin and retaining ring check (clevis stresses and axial retention), a preventive replacement interval plan (Weibull reliability and cost per hour), a process change trial (sample size, Welch t-test, improvement decision), a timber order plan (board feet, cost, moisture, weight, deliveries), a hydraulic orifice restrictor design (drill size, flow, heat), a machine levelling wedge check (drive force, self-locking, travel) and a ramp winch pull check (pull, holding force, power). Tests cross-check against the pipe friction, valve closure surge, pipe size for velocity, pipe expansion loop, thermal stress, clevis pin joint, retaining ring thrust, Weibull reliability, two-sample t-test, sample size for a mean, lumber board feet, wood moisture and density, orifice flow, wedge force, inclined plane and rolling resistance tools. WORKOS now holds 666 tools.
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Water Supply Line Check (Velocity, Friction Loss, Outlet Pressure, Valve Surge)** `water-line-design-check` | LINE ADEQUATE | Velocity; Outlet pressure; Surge; Flow regime; Model and application | 3024–3027 | Automated + cross-check |
+| **Pipe Run Thermal Expansion Check (Growth, Loop Leg, Anchor Force)** `pipe-run-expansion-check` | LOOP ADEQUATE | Leg stress; Anchor force; Piping code; Model and application | 375–378, 3401–3402 | Automated + cross-check |
+| **Hydraulic Orifice Restrictor Design (Drill Size, Flow, Heat)** `orifice-restrictor-design` | RESTRICTOR SUITABLE | Flow; Clogging; Temperature rise; Discharge coefficient; Model and application | 3024–3027, 352–368 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Pivot Pin and Retaining Ring Check (Clevis Stresses and Axial Retention)** `pivot-pin-retention-check` | PIN ASSEMBLY ADEQUATE | Clevis; Retaining ring; Pin projection; Model and application | 1535, 1720–1735, 1763–1789 | Automated + cross-check |
+
+### Maintenance
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Preventive Replacement Interval Plan (Weibull Reliability and Cost per Hour)** `maintenance-interval-plan` | PLANNED REPLACEMENT PAYS | Cost; Reliability; Failure pattern; Model and application | 128–133 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Process Change Trial (Sample Size, Welch t-Test, Improvement Decision)** `process-change-trial` | IMPROVEMENT CONFIRMED | Significance; Sample size; Practical size; Model and application | 130–133 | Automated + cross-check |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Timber Order Plan (Board Feet, Cost, Moisture, Weight, Deliveries)** `timber-order-plan` | TIMBER READY TO USE | Moisture content; Fibre saturation; Sampling; Model and application | 386–387, 3018–3019 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Machine Levelling Wedge Check (Drive Force, Self-Locking, Travel)** `machine-levelling-wedge-check` | WEDGES ADEQUATE | Drive force; Self-locking; Travel; Model and application | 169–171 | Automated + cross-check |
+| **Ramp Winch Pull Check (Pull, Holding Force, Power)** `ramp-winch-pull-check` | WINCH ADEQUATE | Rated pull; Motor power; Holding; Breakaway; Model and application | 165–171 | Automated + cross-check |
