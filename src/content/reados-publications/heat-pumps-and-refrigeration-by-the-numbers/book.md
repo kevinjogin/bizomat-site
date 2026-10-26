@@ -53,6 +53,8 @@ related:
     href: "/reados/collections/fluids-hvac-and-building-services/hvac-for-commercial-and-industrial-buildings/"
   - title: "Steam Systems by the Numbers"
     href: "/reados/publications/steam-systems-by-the-numbers/"
+  - title: "Process Chillers by the Numbers"
+    href: "/reados/publications/process-chillers-by-the-numbers/"
 ---
 
 ## About this book
