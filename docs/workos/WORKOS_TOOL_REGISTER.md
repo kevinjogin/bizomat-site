@@ -2455,3 +2455,56 @@ A thirty-second round of 9 integrated design checks in batch handbook57, built m
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Panel Material Substitution (Equal Stiffness and Strength Thickness, Mass, Cost)** `panel-material-substitution` | SUBSTITUTION SAVES WEIGHT | Stock; Weight; Cost; Model and application | 575–580 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, forty-second pass: integrated design checks, thirty-third round (added 27 October 2026)
+
+A thirty-third round of 9 integrated design checks in batch handbook58, again built mainly on single tools not chained before: an eccentric bracket bolt check (bolt group forces, shear and bearing stress), an overhung pulley shaft bush check (belt pull, bush loads, P, V and PV), a torque tube and end weld check (shear, twist, weld throat stress), a CNC arc segmentation and feed check (chord tolerance, block rate, achievable feed), an involute spline design check (proportions, root and tooth stresses), a single-plane balance correction check (unbalance, correction mass, residual, grade), a sheet and plate bend feasibility check (radius limits, springback, press force), a Whitworth thread wire inspection (pitch diameter, wire readings, lead-angle correction) and a casting pattern plan (machining allowance, shrinkage, casting and pour weight). Tests cross-check against the eccentric bolt group, bolt shear and bearing, plain bearing PV, thin-walled tube torsion, fillet weld strength, CNC chord error, involute spline, spline torque capacity, plane balancing, balance grade, bend radius limits, bending springback, press brake force, Whitworth thread, three-wire measurement, three-wire lead angle and pattern shrinkage tools. WORKOS now holds 756 tools.
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Eccentric Bracket Bolt Check (Bolt Group Forces, Shear and Bearing Stress)** `eccentric-bracket-bolt-check` | BOLTS ADEQUATE | Bolt shear; Plate bearing; Edge distance; Model and application | 1535, 1720–1735 | Automated + cross-check |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Overhung Pulley Shaft Bush Check (Belt Pull, Bush Loads, P, V and PV)** `pulley-shaft-bush-check` | BUSHES ADEQUATE | Pressure; Sliding speed; PV; Model and application | 2314–2337, 2473–2490 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Torque Tube and End Weld Check (Shear, Twist, Weld Throat Stress)** `torque-tube-end-weld-check` | TUBE AND WELD ADEQUATE | Tube shear; Twist; End weld; Model and application | 295–303, 1476–1486 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **CNC Arc Segmentation and Feed Check (Chord Tolerance, Block Rate, Achievable Feed)** `arc-segmentation-feed-check` | FEED WITHIN BLOCK RATE | Block rate; Arc output; Model and application | 1279–1300, 77–80 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Involute Spline Design Check (Proportions, Root and Tooth Stresses)** `involute-spline-design` | SPLINE ADEQUATE | Shear; Compression; Fit and tolerance; Model and application | 2255–2282 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Single-Plane Balance Correction Check (Unbalance, Correction Mass, Residual, Grade)** `balance-correction-check` | BALANCE GRADE REACHED | Before correction; After correction; Check run; Model and application | 191–196 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Sheet and Plate Bend Feasibility (Radius Limits, Springback, Press Force)** `bend-feasibility-check` | BEND FEASIBLE | Radius; Press capacity; Die opening; Model and application | 1346–1353 | Automated + cross-check |
+| **Casting Pattern Plan (Machining Allowance, Shrinkage, Casting and Pour Weight)** `casting-pattern-plan` | POUR WITHIN CAPACITY | Capacity; Draft and fillets; Model and application | 1414, 1419 | Automated + cross-check |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Whitworth Thread Wire Inspection (Pitch Diameter, Wire Readings, Lead-Angle Correction)** `whitworth-wire-inspection` | ACCEPT | Pitch diameter; Lead angle; Model and application | 1980–1989, 1990–2003 | Automated + cross-check |
