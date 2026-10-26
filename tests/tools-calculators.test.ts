@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -88,9 +88,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 594 tools with unique ids and every previously published id kept', () => {
+test('register: 603 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 594);
+  assert.equal(ids.length, 603);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -835,16 +835,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 479 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 488 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 479);
+  assert.equal(ids.length, 488);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -2327,5 +2327,73 @@ test('fifteenth-round design checks: verdicts and guards', () => {
   assert.equal(engine.run('rope-winch-drum', { wraps: 1 }).text, 'WINCH NOT ADEQUATE');
   assert.equal(engine.run('rope-winch-drum', { MBL: 20 }).text, 'WINCH NOT ADEQUATE');
   const cases: Array<[string, Inputs]> = [['sawing-plan', { piece: 7000 }], ['sawing-plan', { shape: 'tube', b: 60 }], ['motor-load-assessment', { n: 1500 }], ['bolted-joint-temperature', { Lt: 40 }], ['bolt-circle-layout', { OD: 90 }], ['tapping-plan', { pMin: 90, pMax: 80 }], ['machine-tipping-stability', { tilt: 30 }], ['machine-tipping-stability', { aH: 0 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Twenty-fifth handbook pass (handbook41): sixteenth round of integrated design checks.
+const HB25_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['casting-pour-plan', {}, { mc: 14, feedNeed: 2000 * 5 / 15, mr: Math.PI * 169 * 16 / 4 * 7 / 1000 }],
+  ['coating-job-estimate', {}, { qtyTot: 2 * 50 / 5.2, wft: 75 * 100 / 60 * 1.1, labH: 5 }],
+  ['valve-closure-surge', {}, { ptot: 6 + 7.984 }, 1e-6],
+  ['control-valve-sizing', {}, { auth: 0.5, Qopen: Math.sqrt(1 / (1 / 256 + 0.5 / 100)) }],
+  ['vacuum-gripper-sizing', {}, { nReq: 2, tEv: 0.5 / 100 * 60 * Math.log(101.325 / 41.325) }],
+  ['wind-load-on-post', {}, { I: Math.PI * (114.3 ** 4 - 106.3 ** 4) / 64, dMax: 30 }],
+  ['noise-exposure-check', { r2: 1, LB: 0 }, { Lop: 10 * Math.log10(10 ** 9 + 10 ** 8.5) }],
+  ['process-capability-check', {}, { sigma: 0.03 / 2.326, Cp: 0.12 / (6 * 0.03 / 2.326) }],
+  ['corrosion-remaining-life', { mode: 'thick' }, { rate: 0.1, life: 35, next: 5 }],
+];
+for (const [id, over, expected, tol] of HB25_CASES) test(`design check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('sixteenth-round design checks agree with the tools they chain', () => {
+  const cp = engine.run('casting-pour-plan').values, cs = engine.run('casting-solidification', { Vc: 2000, Ac: 900, Dr: 130, Hr: 160, B: 2, ratio: 1.2, part: 250, shrink: 1 }).values;
+  for (const k of ['Mc', 'Mr', 'tc', 'tr', 'ratio', 'pattern']) near(cp[k], cs[k], 1e-9, `casting ${k}`);
+  const gc = engine.run('gating-choke-area', { W: cp.W, rho: 7000, h: 200, t: 12, Cd: 0.8, runner: 2, gate: 2 }).values;
+  near(cp.A, gc.A, 1e-9, 'choke area'); near(cp.vel, gc.vel, 1e-12, 'choke velocity');
+  const cj = engine.run('coating-job-estimate').values, cc = engine.run('coating-coverage').values;
+  for (const k of ['theo', 'prac', 'qty', 'cost']) near(cj[k], cc[k], 1e-9, `coating ${k}`);
+  const vs = engine.run('valve-closure-surge').values, wh = engine.run('water-hammer').values;
+  near(vs.a, wh.a, 1e-9, 'wave speed'); near(vs.tcrit, wh.tcrit, 1e-12, 'critical time'); near(vs.dpJ, wh.dpJ / 1e5, 1e-9, 'Joukowsky surge'); near(vs.dp, wh.dp / 1e5, 1e-9, 'surge');
+  near(engine.run('valve-closure-surge', { tc: vs.tNeed }).values.ptot, 16, 1e-9, 'closing time needed meets the rating');
+  const cv = engine.run('control-valve-sizing').values, vk = engine.run('valve-flow-coefficient', { mode: 'kv', Q: 10, dp: 0.5, Kv: 20, sg: 1 }).values;
+  near(cv.Kv, vk.Kv, 1e-12, 'Kv'); near(cv.Cv, vk.Cv, 1e-12, 'Cv');
+  near(engine.run('valve-flow-coefficient', { mode: 'flow', Q: 10, dp: cv.dpOpen, Kv: 16, sg: 1 }).values.Q, cv.Qopen, 1e-9, 'flow through the open valve');
+  const vg = engine.run('vacuum-gripper-sizing').values, vc = engine.run('vacuum-cup').values;
+  for (const k of ['per', 'Fh', 'req']) near(vg[k], vc[k], 1e-9, `vacuum ${k}`);
+  const vd = engine.run('vacuum-gripper-sizing', { D: vg.Dreq }).values; near(vd.Fh, vd.req, 1e-6, 'cup diameter needed gives the force needed');
+  const wl = engine.run('wind-load-on-post').values, wp = engine.run('wind-pressure', { V: 20, rho: 1.2, Cd: 1.2, A: 2, h: 3 }).values;
+  for (const k of ['q', 'p', 'F', 'M']) near(wl[k], wp[k], 1e-9, `wind ${k}`);
+  const ne = engine.run('noise-exposure-check').values;
+  near(ne.Ls, engine.run('sound-level', { mode: 'sum', L1: 90, L2: 85, L3: 0, L4: 0 }).values.L, 1e-6, 'combined level');
+  near(ne.Ld, engine.run('sound-level', { mode: 'distance', Lr: ne.Ls, r1: 1, r2: 3 }).values.L, 1e-9, 'level at distance');
+  const pc = engine.run('process-capability-check').values, xr = engine.run('xbar-r-limits', { xbar: 25.01, rbar: 0.03, n: '5' }).values;
+  for (const k of ['ucl', 'lcl', 'rucl', 'rlcl', 'sigma']) near(pc[k], xr[k], 1e-9, `control ${k}`);
+  near(pc.ppm, engine.run('normal-out-of-spec', { mean: 25.01, sd: pc.sigma, lsl: 24.95, usl: 25.07, qty: 10000 }).values.ppm, 1e-6, 'predicted ppm');
+  near(engine.run('corrosion-remaining-life').values.rate, engine.run('corrosion-rate', { W: 120, A: 20, hours: 720, rho: 7.86, allowance: 1.5 }).values.mmy, 1e-12, 'coupon corrosion rate');
+});
+
+test('sixteenth-round design checks: verdicts and guards', () => {
+  assert.equal(engine.run('casting-pour-plan', { ladle: 25 }).text, 'REVISE THE PLAN');
+  assert.equal(engine.run('casting-pour-plan', { Dr: 100, Hr: 120 }).text, 'REVISE THE PLAN');
+  assert.equal(engine.run('casting-pour-plan', { shrinkV: 10, effR: 5 }).text, 'REVISE THE PLAN');
+  assert.equal(engine.run('coating-job-estimate', { dft: 120 }).text, 'WET FILM TOO THICK');
+  assert.equal(engine.run('valve-closure-surge', { tc: 0.5 }).text, 'SURGE EXCEEDS RATING');
+  assert.equal(engine.run('valve-closure-surge', { rating: 10 }).text, 'SURGE EXCEEDS RATING');
+  assert.equal(engine.run('control-valve-sizing', { Kvs: 12 }).text, 'VALVE NOT SUITABLE');
+  assert.equal(engine.run('control-valve-sizing', { Kvs: 63 }).text, 'VALVE NOT SUITABLE');
+  assert.equal(engine.run('control-valve-sizing', { dps: 1 }).text, 'VALVE NOT SUITABLE');
+  assert.equal(engine.run('vacuum-gripper-sizing', { mass: 15 }).text, 'GRIPPER NOT ADEQUATE');
+  assert.equal(engine.run('vacuum-gripper-sizing', { Qp: 10 }).text, 'GRIPPER NOT ADEQUATE');
+  assert.equal(engine.run('wind-load-on-post', { V: 40 }).text, 'POST NOT ADEQUATE');
+  assert.equal(engine.run('wind-load-on-post', { OD: 60.3, t: 3 }).text, 'POST NOT ADEQUATE');
+  assert.equal(engine.run('noise-exposure-check', { r2: 1.5 }).text, 'EXPOSURE OVER LIMIT');
+  assert.equal(engine.run('process-capability-check', { xbar: 25.05 }).text, 'PROCESS NOT CAPABLE');
+  assert.equal(engine.run('process-capability-check', { rbar: 0.06 }).text, 'PROCESS NOT CAPABLE');
+  assert.equal(engine.run('corrosion-remaining-life', { tNow: 2 }).text, 'BELOW MINIMUM THICKNESS');
+  assert.equal(engine.run('corrosion-remaining-life', { lifeReq: 50 }).text, 'LIFE SHORTER THAN REQUIRED');
+  const cases: Array<[string, Inputs]> = [['valve-closure-surge', { rating: 5 }], ['control-valve-sizing', { openMin: 0.9, openMax: 0.5 }], ['wind-load-on-post', { t: 60 }], ['noise-exposure-check', { L1: 0, L2: 0 }], ['process-capability-check', { usl: 24 }], ['corrosion-remaining-life', { mode: 'thick', t1: 5 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
