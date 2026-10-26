@@ -49,6 +49,8 @@ related:
     href: "/reados/collections/fluids-hvac-and-building-services/heating-systems-boilers-burners-and-controls/"
   - title: "Cutting energy use in business premises"
     href: "/reados/collections/lean-and-continuous-improvement/cutting-energy-use-in-business-premises/"
+  - title: "Shape Memory Alloys by the Numbers"
+    href: "/reados/publications/shape-memory-alloys-by-the-numbers/"
 ---
 
 ## About this book

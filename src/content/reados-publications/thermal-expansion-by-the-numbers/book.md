@@ -56,6 +56,10 @@ related:
     href: "/reados/publications/fits-that-work/"
   - title: "Choosing and using measuring instruments"
     href: "/reados/collections/machining-and-metal-parts/choosing-and-using-measuring-instruments/"
+  - title: "Rubber Parts by the Numbers"
+    href: "/reados/publications/rubber-parts-by-the-numbers/"
+  - title: "Shape Memory Alloys by the Numbers"
+    href: "/reados/publications/shape-memory-alloys-by-the-numbers/"
 ---
 
 ## About this book

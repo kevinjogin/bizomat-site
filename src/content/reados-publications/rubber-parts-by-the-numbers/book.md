@@ -56,6 +56,8 @@ related:
     href: "/reados/publications/vibrating-machine-elements-by-the-numbers/"
   - title: "Plastic Parts by the Numbers"
     href: "/reados/publications/plastic-parts-by-the-numbers/"
+  - title: "Shape Memory Alloys by the Numbers"
+    href: "/reados/publications/shape-memory-alloys-by-the-numbers/"
 ---
 
 ## About this book

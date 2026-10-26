@@ -18,7 +18,7 @@ Rubber is a network of very long, flexible polymer chains, tied together at inte
 Three engineering consequences follow from that picture.
 
 1. **Large reversible stretch.** A chain can be straightened a long way before its bonds themselves are loaded, so rubber reaches several times its original length before breaking. Typical natural rubber compounds stretch to between five and eight times their length at break, depending on the recipe.
-2. **Stiffness that rises with temperature.** If stiffness comes from thermal motion, more thermal motion means more stiffness. For an ideal rubber, the shear modulus is proportional to absolute temperature. Chapter 7 puts numbers on it and on the related thermoelastic effect, the warming of rubber when it is stretched quickly.
+2. **Stiffness that rises with temperature.** If stiffness comes from thermal motion, more thermal motion means more stiffness. For an ideal rubber, the shear modulus is proportional to absolute temperature. Chapter 7 puts numbers on it and on the related thermoelastic effect, the warming of rubber when it is stretched quickly. Nickel-titanium, the other common material that recovers strains of several per cent, does so for a quite different reason, a reversible change of crystal structure, set out in [Shape Memory Alloys by the Numbers](/reados/publications/shape-memory-alloys-by-the-numbers/two-kinds-of-memory/).
 3. **Strain stiffening.** As chains approach full extension, the network stiffens sharply. That upturn in the stress–stretch curve, which Chapter 3 models, is what eventually stops an inflated rubber part from growing without limit, often only just before it bursts.
 
 ## Volume does not change

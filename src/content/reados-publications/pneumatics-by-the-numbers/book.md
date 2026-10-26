@@ -56,6 +56,8 @@ related:
     href: "/reados/collections/machine-elements-and-mechanical-design/pressure-vessels-and-thin-walled-cylinders/"
   - title: "Fixtures That Repeat"
     href: "/reados/publications/fixtures-that-repeat/"
+  - title: "Shape Memory Alloys by the Numbers"
+    href: "/reados/publications/shape-memory-alloys-by-the-numbers/"
 ---
 
 ## About this book

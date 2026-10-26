@@ -36,7 +36,7 @@ The transformations do not happen at a single temperature. On cooling, martensit
 
 Above Af, with no load, the alloy is austenite. Load it, and at a high enough stress the austenite transforms to martensite anyway, in the variants that the stress favours. The result is a long, nearly flat plateau in the stress–strain curve over several per cent of strain. Unload it, and because martensite is not stable at that temperature without stress, it transforms back, on a lower plateau, and the part returns to its original shape. That is superelasticity.
 
-A superelastic wire therefore behaves like a spring with an enormous elastic range but an odd shape: steep at first, then nearly flat for several per cent, then steep again, with a lower path on unloading. The stress at which the plateau occurs depends strongly on temperature, which Chapter 9 makes the centre of superelastic design.
+A superelastic wire therefore behaves like a spring with an enormous elastic range but an odd shape: steep at first, then nearly flat for several per cent, then steep again, with a lower path on unloading. The stress at which the plateau occurs depends strongly on temperature, which Chapter 9 makes the centre of superelastic design. Rubber also recovers very large strains, by an entirely different mechanism, the entropy of its long molecules; [Rubber Parts by the Numbers](/reados/publications/rubber-parts-by-the-numbers/what-rubber-does-differently/) explains it, and the contrast is useful when choosing between a rubber part and a superelastic one.
 
 ### A phase change under load
 

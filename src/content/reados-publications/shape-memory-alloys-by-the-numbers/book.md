@@ -54,6 +54,8 @@ related:
     href: "/reados/publications/thermal-expansion-by-the-numbers/"
   - title: "Pneumatics by the Numbers"
     href: "/reados/publications/pneumatics-by-the-numbers/"
+  - title: "Rubber Parts by the Numbers"
+    href: "/reados/publications/rubber-parts-by-the-numbers/"
 ---
 
 ## About this book

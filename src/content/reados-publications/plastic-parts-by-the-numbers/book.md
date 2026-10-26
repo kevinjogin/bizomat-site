@@ -55,6 +55,8 @@ related:
     href: "/reados/collections/product-development-and-launch/"
   - title: "Drawings That Make Parts"
     href: "/reados/publications/drawings-that-make-parts/"
+  - title: "Rubber Parts by the Numbers"
+    href: "/reados/publications/rubber-parts-by-the-numbers/"
 ---
 
 ## About this book

@@ -65,6 +65,8 @@ related:
     href: "/reados/publications/electronics-packaging-by-the-numbers/mount-the-board-for-vibration/"
   - title: "Machine Elements and Mechanical Design"
     href: "/reados/collections/machine-elements-and-mechanical-design/"
+  - title: "Rubber Parts by the Numbers"
+    href: "/reados/publications/rubber-parts-by-the-numbers/"
 ---
 
 ## About this book
