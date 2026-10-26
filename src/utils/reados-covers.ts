@@ -179,6 +179,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'power-presses-by-the-numbers': { motif: 'factory', tone: 'graphite' },
   'roof-lights-by-the-numbers': { motif: 'triangle', tone: 'graphite' },
   'louvres-and-ventilators-by-the-numbers': { motif: 'gates', tone: 'ember' },
+  'fine-particles-by-the-numbers': { motif: 'bubbles', tone: 'carbon' },
+  'random-error-and-drift-by-the-numbers': { motif: 'streak', tone: 'paper' },
   'vibrating-machine-elements-by-the-numbers': { motif: 'cycle', tone: 'carbon' },
   'water-hammer-by-the-numbers': { motif: 'waterwheel', tone: 'graphite' },
   'transitional-elbows-by-the-numbers': { motif: 'triangle', tone: 'paper' },
