@@ -1593,3 +1593,46 @@ A thirteenth round of 9 integrated design checks in batch handbook38: a rotor ba
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Bracket Bolts in Tension and Shear (Moment on a Bolted Flange)** `bracket-bolt-tension` | BOLTS ADEQUATE | Tension; Shear; Combined; Prying; Model and application | 1521–1535, 1720–1735 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, twenty-third pass: integrated design checks, fourteenth round (added 26 October 2026)
+
+A fourteenth round of 9 integrated design checks in batch handbook39: a sine-bar set-up (stack height, rounding and total angle error against the tolerance), internal taper inspection with two balls (angle and top diameter, accept or reject), a thread milling plan (speed, programmed centre feed, radial passes, batch time), a gear hobbing plan (time, sharpening and hob cost per gear, batch cost), accumulator circuit sizing (pump deficit, gas volume, recharge time), meter-out cylinder speed control (rod-side pressure, orifice diameter, heat), pipe insulation design (thickness for surface temperature and loss, saving and payback), a sheet-metal flat pattern for up to four bends, and a ball-nose finishing plan (stepover for the scallop, effective diameter, speed, feed and time). Tests cross-check against the sine bar, gauge block stack, taper balls, thread milling path, hobbing time, accumulator size, orifice flow, insulated pipe, bend allowance, scallop height and ball nose diameter tools. WORKOS now holds 585 tools.
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Sine-Bar Set-up (Stack Height, Rounding and Angle Error)** `sine-bar-setup` | SET-UP ADEQUATE | Angle error; Angle range; Stack; Model and application | 676–682, 705–708 | Automated + cross-check |
+| **Internal Taper Inspection with Two Balls (Accept or Reject)** `internal-taper-inspection` | ACCEPT | Angle; Top diameter; Model and application | 682–691 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Thread Milling Plan (Speed, Feeds, Radial Passes and Batch Time)** `thread-milling-plan` | PLAN FEASIBLE | Cutter size; Spindle speed; Model and application | 2058–2070, 1292–1300 | Automated + cross-check |
+| **Ball-Nose Finishing Plan (Stepover, Speed, Feed and Time)** `ball-nose-finishing-plan` | FINISH MEETS TARGET | Scallop; Spindle speed; Model and application | 1039–1058, 1279–1300 | Automated + cross-check |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Gear Hobbing Plan (Time, Hob Life and Cost per Gear)** `gear-hobbing-plan` | PLAN FEASIBLE | Hob speed; Hob life; Model and application | 3347–3349 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Accumulator Circuit Sizing (Pump Deficit, Gas Volume, Recharge)** `accumulator-circuit-sizing` | ACCUMULATOR ADEQUATE | Size; Recharge; Precharge; Model and application | 352–368 | Automated + cross-check |
+| **Cylinder Meter-Out Speed Control (Orifice, Intensification, Heat)** `cylinder-speed-control` | CONTROL ADEQUATE | Pump flow; Rod-side pressure; Heat; Model and application | 3024–3027, 352–368 | Automated + cross-check |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Pipe Insulation Design (Thickness for Surface Temperature and Loss, Payback)** `pipe-insulation-design` | INSULATION ADEQUATE | Surface temperature; Heat loss; Jacketing; Model and application | 371–378 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Sheet-Metal Flat Pattern (Up to Four Bends)** `sheet-metal-flat-pattern` | PATTERN FEASIBLE | Flanges; Inside radius; Model and application | 1346–1353 | Automated + cross-check |
