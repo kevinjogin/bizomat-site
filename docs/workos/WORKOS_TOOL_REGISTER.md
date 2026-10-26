@@ -2043,3 +2043,51 @@ A twenty-third round of 9 integrated design checks in batch handbook48: a water 
 |---|---|---|---|---|
 | **Machine Levelling Wedge Check (Drive Force, Self-Locking, Travel)** `machine-levelling-wedge-check` | WEDGES ADEQUATE | Drive force; Self-locking; Travel; Model and application | 169–171 | Automated + cross-check |
 | **Ramp Winch Pull Check (Pull, Holding Force, Power)** `ramp-winch-pull-check` | WINCH ADEQUATE | Rated pull; Motor power; Holding; Breakaway; Model and application | 165–171 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, thirty-third pass: integrated design checks, twenty-fourth round (added 26 October 2026)
+
+A twenty-fourth round of 9 integrated design checks in batch handbook49: a pump suction line check (friction loss, NPSH available, lowest liquid level), a shoe brake stop check (stopping torque, lever force, lining pressure, drum heat), a drive shaft torsional check (natural frequency, resonance margins by order, stress, twist), a flange coupling design (design torque, bolts, friction drive, key), a spur gear milling set-up (simple indexing, cutter number, blank and depth, chordal tooth check), a lubricant viscosity check (operating and cold-start viscosity), a rolled plate plan (roll-to radius for springback, blank length, radius inspection over rolls), a hopper and bin design (capacity, wall angle, plate mass) and a knurling set-up (tracking blank diameter, speed, time). Tests cross-check against the pipe friction, NPSH available, shoe brake, torque to accelerate a rotating load, torsional vibration, flange coupling bolts, key stress, simple indexing, gear cutter number, chordal tooth, oil viscosity–temperature, viscosity units, bending springback, arc radius from rolls, frustum volume and knurling blank diameter tools. WORKOS now holds 675 tools.
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Pump Suction Line Check (Friction Loss, NPSH Available, Lowest Liquid Level)** `pump-suction-check` | SUCTION ADEQUATE | NPSH margin; Suction velocity; Submergence; Model and application | 3024–3027 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Shoe Brake Stop Check (Stopping Torque, Lever Force, Lining Pressure, Heat)** `shoe-brake-stop-check` | BRAKE ADEQUATE | Self-locking; Lever force; Lining pressure; Drum heating; Model and application | 2455–2459, 176–181 | Automated + cross-check |
+| **Drive Shaft Torsional Check (Natural Frequency, Resonance Margins, Stress, Twist)** `drive-torsional-check` | NO TORSIONAL PROBLEM | Resonance; Shaft stress; Other flexibilities; Model and application | 3412–3413, 296–302 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Flange Coupling Design (Design Torque, Bolts, Friction Drive, Key)** `flange-coupling-design` | COUPLING ADEQUATE | Bolt shear; Friction drive; Key shear; Key crushing; Key length; Model and application | 2441–2450, 2460–2486, 301–302 | Automated + cross-check |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Spur Gear Milling Set-up (Indexing, Cutter Number, Depth, Tooth Check)** `gear-milling-setup` | SET-UP FOUND | Indexing; Sector arms; Backlash; Model and application | 2107–2121, 2148–2150, 2145, 2238–2240 | Automated + cross-check |
+
+### Maintenance
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Lubricant Viscosity Check (Operating and Cold-Start Viscosity)** `lubricant-viscosity-check` | GRADE SUITABLE | Operating viscosity; Cold start; Extrapolation; Model and application | 2329–2337, 2425–2426 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Rolled Plate Plan (Roll-To Radius for Springback, Blank Length, Radius Inspection)** `rolled-plate-plan` | RADIUS WITHIN TOLERANCE | Radius; Gauge geometry; Material data; Model and application | 1351–1352, 687–688 | Automated + cross-check |
+| **Hopper and Bin Design (Capacity, Wall Angle, Plate Mass)** `hopper-bin-design` | HOPPER ADEQUATE | Capacity; Wall angle; Structure; Model and application | 82–87, 66 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Knurling Set-up (Tracking Blank Diameter, Speed, Time)** `knurling-setup` | BLANK TRACKS | Tracking; Knurl condition; Model and application | 991–997 | Automated + cross-check |
