@@ -1636,3 +1636,51 @@ A fourteenth round of 9 integrated design checks in batch handbook39: a sine-bar
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Sheet-Metal Flat Pattern (Up to Four Bends)** `sheet-metal-flat-pattern` | PATTERN FEASIBLE | Flanges; Inside radius; Model and application | 1346–1353 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, twenty-fourth pass: integrated design checks, fifteenth round (added 26 October 2026)
+
+A fifteenth round of 9 integrated design checks in batch handbook40: drop impact on a beam (impact factor, dynamic stress and deflection, energy, safe drop height), a through-feed centerless grinding plan (feed, passes, parts per hour, inclination for a target), a bandsaw cutting plan (time, bars, blades, cost per cut), an induction motor load assessment (current, slip, estimated load, torque, energy cost), a bolted joint at temperature (preload change from differential expansion), a bolt circle layout (coordinates, ligament, edge distance, wrench clearance), a tapping plan (tap drill, thread percentage, speed, batch time), machine tipping stability with anchor uplift, and a rope winch drum (tension ratio, turns, torque, power, rope factor). Tests cross-check against the beam impact, impact load, centerless feed, bandsaw time, motor power, motor slip, bolted joint design check, bolt circle, tap drill, tapping feed and belt friction tools. WORKOS now holds 594 tools.
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Drop Impact on a Beam (Impact Factor, Stress and Safe Drop Height)** `drop-impact-design` | BEAM SURVIVES THE DROP | Dynamic stress; Dynamic deflection; Contact; Model and application | 278, 179–186 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Through-Feed Centerless Grinding Plan (Feed, Passes, Output, Angle)** `centerless-grinding-plan` | OUTPUT REACHED | Output; Inclination for the target; Model and application | 1259–1261 | Automated + cross-check |
+| **Bandsaw Cutting Plan (Time, Bars, Blades and Cost per Cut)** `sawing-plan` | BATCH FITS THE TIME | Time; Material; Model and application | 1182–1192 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Induction Motor Load Assessment (Current, Slip, Load, Energy)** `motor-load-assessment` | MOTOR LOAD NORMAL | Overload; Light load; Measurement; Model and application | 2569–2580 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Bolted Joint at Temperature (Preload Change from Differential Expansion)** `bolted-joint-temperature` | PRELOAD HOLDS | Clamp; Proof load; Other extreme; Model and application | 1521–1536, 371–378 | Automated + cross-check |
+
+### Geometry
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Bolt Circle Layout (Coordinates, Ligament, Edge and Wrench Clearance)** `bolt-circle-layout` | LAYOUT ADEQUATE | Ligament; Edge distance; Wrench clearance; Model and application | 686 | Automated + cross-check |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Tapping Plan (Tap Drill, Thread Percentage, Speed and Cycle Time)** `tapping-plan` | DRILL ACCEPTABLE | Thread percentage; Tap type; Model and application | 2029–2036 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Machine Tipping Stability (Overturning, Safety Factor, Anchors)** `machine-tipping-stability` | ANCHORS NEEDED | Tipping; Anchors; Sliding; Model and application | 167–168, 221–227 | Automated + cross-check |
+| **Rope Winch Drum and Capstan (Wraps, Holding Pull, Torque, Power)** `rope-winch-drum` | WINCH ADEQUATE | Holding; Rope; Wet rope; Model and application | 165–168 | Automated + cross-check |
