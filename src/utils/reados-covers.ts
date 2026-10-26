@@ -182,7 +182,7 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'fine-particles-by-the-numbers': { motif: 'bubbles', tone: 'carbon' },
   'random-error-and-drift-by-the-numbers': { motif: 'streak', tone: 'paper' },
   'vibrating-machine-elements-by-the-numbers': { motif: 'cycle', tone: 'carbon' },
-  'entropy-by-the-numbers': { motif: 'cycle', tone: 'paper' },
+  'entropy-by-the-numbers': { motif: 'orbit', tone: 'graphite' },
   'water-hammer-by-the-numbers': { motif: 'waterwheel', tone: 'graphite' },
   'compressed-air-plant-by-the-numbers': { motif: 'expansion', tone: 'graphite' },
   'transitional-elbows-by-the-numbers': { motif: 'triangle', tone: 'paper' },

@@ -97,7 +97,7 @@ Equipment ratings are expressed in several ways, and comparing them needs care.
 - **EER**, an energy efficiency ratio, is used for cooling equipment. In Australia and in many international standards it is a ratio of watts to watts, the same as a cooling COP. In the United States it is often quoted in Btu per hour per watt, and an EER on that basis is 3.412 times the equivalent COP, because one watt is 3.412 Btu per hour.
 - **Seasonal** figures average performance over a defined climate and load pattern. They are better than single-point ratings for estimating annual energy, but only if the defined climate resembles the plant's.
 
-Whichever is quoted, the conditions decide the number. A rating without its source and sink temperatures cannot be checked against the Carnot limit and cannot be used to predict a bill.
+Whichever is quoted, the conditions decide the number. A rating without its source and sink temperatures cannot be checked against the Carnot limit and cannot be used to predict a bill. [Heat Pumps and Refrigeration by the Numbers](/reados/publications/heat-pumps-and-refrigeration-by-the-numbers/) follows the vapour-compression cycle, cold room loads and refrigerant rules in more depth than this chapter, which keeps to the second-law limits.
 
 ## The wash-water heat pump
 

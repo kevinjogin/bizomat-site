@@ -55,6 +55,12 @@ references:
     url: "https://www.safeworkaustralia.gov.au/doc/model-code-practice-managing-risks-plant-workplace"
     note: "Cited for the duty to manage the risks of boilers, compressors, pressure equipment and refrigeration plant discussed in the running case. The book does not cover plant safety; this code, the plant's own procedures and licensed trades do."
 related:
+  - title: "Heat Pumps and Refrigeration by the Numbers"
+    href: "/reados/publications/heat-pumps-and-refrigeration-by-the-numbers/"
+  - title: "Steam Systems by the Numbers"
+    href: "/reados/publications/steam-systems-by-the-numbers/"
+  - title: "Heat Exchangers by the Numbers"
+    href: "/reados/publications/heat-exchangers-by-the-numbers/"
   - title: "Heat Transfer by the Numbers"
     href: "/reados/publications/heat-transfer-by-the-numbers/"
   - title: "Thermal Expansion by the Numbers"
