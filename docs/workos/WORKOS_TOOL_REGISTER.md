@@ -2091,3 +2091,51 @@ A twenty-fourth round of 9 integrated design checks in batch handbook49: a pump 
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Knurling Set-up (Tracking Blank Diameter, Speed, Time)** `knurling-setup` | BLANK TRACKS | Tracking; Knurl condition; Model and application | 991–997 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, thirty-fourth pass: integrated design checks, twenty-fifth round (added 26 October 2026)
+
+A twenty-fifth round of 9 integrated design checks in batch handbook50: a shaft alignment plan (rim and face corrections with thermal growth), a helical gear milling set-up (lead, change gears, cutter number, indexing), a machine rate quote check (hour rate, job cost, margin, least price), a crane load swing check (pendulum period, swing, rope tension, speed limit), a nested compression spring check (load share, stresses, solid length, clearance), a shear spun cone plan (blank, reduction, roller force, power, time), an injection moulded part cost (clamp, cycle, machine, plastic, mould), a brake dynamometer test and cooling plan (power, water flow, water use) and an internal gear drive check (proportions, tooth difference, pinion bending). Tests cross-check against the rim and face alignment, thermal growth for hot alignment, helical milling, gear cutter number, simple indexing, machine hour rate, pendulum period, compression spring, springs in series or parallel, shear spinning, injection moulding estimate, prony brake, coolant flow for a heat load, internal gear proportions and Lewis bending tools. WORKOS now holds 684 tools.
+
+### Maintenance
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Shaft Alignment Plan (Rim and Face Corrections with Thermal Growth)** `shaft-alignment-plan` | ALIGNMENT OK WHEN HOT | Running offset; Angularity; Soft foot; Model and application | 2645–2650, 375–376 | Automated + cross-check |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Helical Gear Milling Set-up (Lead, Change Gears, Cutter, Indexing)** `helical-gear-milling-setup` | SET-UP FOUND | Lead error; Indexing; Cutter range; Gear fit and hand; Model and application | 2060–2062, 2205, 2107–2121, 2148–2150 | Automated + cross-check |
+| **Internal Gear Drive Check (Proportions, Tooth Difference, Pinion Bending)** `internal-gear-drive-check` | DRIVE ADEQUATE | Tooth-number difference; Pinion bending; Pinion size; Surface durability; Model and application | 2170–2171, 2131–2160 | Automated + cross-check |
+
+### Money
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Machine Rate Quote Check (Hour Rate, Job Cost, Margin)** `machine-rate-quote-check` | QUOTE COVERS COST | Margin; Utilisation; Model and application | 134–146, 1153–1160 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Crane Load Swing Check (Pendulum Period, Swing, Rope Tension)** `crane-load-swing-check` | SWING WITHIN LIMITS | Clearance; Rope load; Tag lines; Model and application | 173–174 | Automated + cross-check |
+| **Brake Dynamometer Test and Cooling Plan (Power, Water Flow, Water Use)** `dynamometer-cooling-plan` | TEST SET-UP ADEQUATE | Brake rating; Water supply; Outlet temperature; Model and application | 2998–2999, 371–374 | Automated + cross-check |
+
+### Springs
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Nested Compression Spring Check (Load Share, Stresses, Solid Length, Clearance)** `nested-spring-check` | SPRING SET ADEQUATE | Outer stress; Inner stress; Load; Radial clearance; Coil hand; Model and application | 304–324 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Shear Spun Cone Plan (Blank, Reduction, Roller Force, Power, Time)** `spun-cone-plan` | SPINNING FEASIBLE | Reduction; Power; Roller and mandrel; Model and application | 1362–1364 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Injection Moulded Part Cost (Clamp, Cycle, Machine, Material, Mould)** `moulded-part-cost` | COST WITHIN TARGET | Clamp force; Shot size; Cost; Model and application | 584–592, 134–146 | Automated + cross-check |
