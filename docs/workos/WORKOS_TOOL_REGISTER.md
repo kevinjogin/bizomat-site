@@ -2508,3 +2508,46 @@ A thirty-third round of 9 integrated design checks in batch handbook58, again bu
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Whitworth Thread Wire Inspection (Pitch Diameter, Wire Readings, Lead-Angle Correction)** `whitworth-wire-inspection` | ACCEPT | Pitch diameter; Lead angle; Model and application | 1980–1989, 1990–2003 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, forty-third pass: integrated design checks, thirty-fourth round (added 27 October 2026)
+
+A thirty-fourth round of 9 integrated design checks in batch handbook59, again built mainly on single tools not chained before: a buttress thread wire inspection (7°/45° form, wire size, readings, pitch diameter), a Unified tapped hole check (tap drill, thread percentage, length of engagement), a weldment cost estimate (weld metal, arc time, labour, filler and gas by run), a brazed sleeve joint plan (overlap, joint and tube capacity, clearance, filler), a gear train output check (ratio, output speed and torque, output shaft stress), a linear move drive check (move profile, screw torque, RMS torque, cycle time), a plate lift plan (shape area, mass, centre of gravity, two-point lift loads), a tapered pad footing check (prismoidal volume, self-weight, bearing pressure, concrete order) and a bolt circle pin check (pitch circle from plugs, readings at the limits, decision). Tests cross-check against the buttress thread, taper and buttress three-wire, Unified thread, tap drill, thread engagement, weld cost, lap joint length, gear train, move profile, polygon area, prismoidal volume and bolt circle over plugs tools. WORKOS now holds 765 tools.
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Buttress Thread Wire Inspection (7°/45° Form, Wire Size, Readings, Pitch Diameter)** `buttress-thread-inspection` | ACCEPT | Pitch diameter; Wire size; Load flank; Model and application | 1945–1952, 2005–2007 | Automated + cross-check |
+| **Unified Tapped Hole Check (Tap Drill, Thread Percentage, Length of Engagement)** `unified-tapped-hole-check` | ENGAGEMENT ADEQUATE | Length of engagement; Thread percentage; Hole depth; Model and application | 1806–1866, 2029–2036, 1586–1590 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Weldment Cost Estimate (Weld Metal, Arc Time, Labour, Filler and Gas by Run)** `weldment-cost-estimate` | WITHIN QUOTE | Quote; Leg sizes; Model and application | 1438–1441 | Automated + cross-check |
+| **Brazed Sleeve Joint Plan (Overlap, Joint and Tube Capacity, Clearance, Filler)** `brazed-sleeve-joint-plan` | JOINT ADEQUATE | Overlap; Joint capacity; Tube capacity; Clearance; Model and application | 1423–1430 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Gear Train Output Check (Ratio, Output Speed and Torque, Output Shaft Stress)** `gear-train-output-check` | TRAIN MEETS DUTY | Output speed; Output torque; Output shaft; Model and application | 2122–2160, 299–304 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Linear Move Drive Check (Move Profile, Screw Torque, RMS Torque, Cycle Time)** `linear-move-drive-check` | DRIVE ADEQUATE | Motor speed; Peak torque; RMS torque; Cycle time; Model and application | 175–180, 155–162 | Automated + cross-check |
+| **Plate Lift Plan (Shape Area, Mass, Centre of Gravity, Two-Point Lift Loads)** `plate-lift-plan` | LIFT POINTS ADEQUATE | CG between the lift points; Lift point A; Lift point B; Hang; Model and application | 40–48, 66–76, 221–227 | Automated + cross-check |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Tapered Pad Footing Check (Prismoidal Volume, Self-Weight, Bearing Pressure, Concrete Order)** `tapered-pad-footing-check` | BEARING ADEQUATE | Bearing pressure; Structural design; Model and application | 66 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Bolt Circle Pin Check (Pitch Circle from Plugs, Readings at the Limits, Decision)** `bolt-circle-pin-check` | ACCEPT | Pitch circle; Plug fit; Model and application | 686 | Automated + cross-check |
