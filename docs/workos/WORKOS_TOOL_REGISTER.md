@@ -1818,3 +1818,46 @@ An eighteenth round of 9 integrated design checks in batch handbook43: equipment
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Spherical Pressure Vessel Design (Thickness, Stress, Capacity, Hydrotest)** `spherical-vessel-design` | SPHERE ADEQUATE | Safety factor; Hydrotest; Code; Model and application | 290–294 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, twenty-eighth pass: integrated design checks, nineteenth round (added 26 October 2026)
+
+A nineteenth round of 9 integrated design checks in batch handbook44: gyroscopic bearing load on a turning rotor, centrifugal load on a bolted attachment (overspeed stress and limiting speed), ratchet and pawl design (pitch, tooth force, face bearing, pawl pin), torsion member comparison (solid bar, tube, rectangle), gear ratio for inertia matching (optimum and usable ratio, motor torque), bolt preload verification from measured stretch (preload, deviation, nut factor, turn angle), spindle speed range design (step ratio, preferred series, speed loss), a tube or shell under external pressure (collapse factor and wall needed) and a journal bearing oil check (viscosity at temperature, Sommerfeld number, friction). Tests cross-check against the gyroscope precession, centrifugal force, ratchet wheel pitch, shaft torsion, rectangular bar torsion, reflected inertia, bolt stretch, bolt torque–preload, speed series, tube collapse, oil viscosity–temperature and Petroff tools. WORKOS now holds 630 tools.
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Gyroscopic Bearing Load on a Turning Rotor** `gyroscopic-bearing-load` | BEARINGS ADEQUATE | Bearing load; Load reversal; Model and application | 2998 | Automated + cross-check |
+| **Centrifugal Load on a Bolted Attachment (Overspeed and Bolt Stress)** `centrifugal-attachment-check` | ATTACHMENT ADEQUATE | Overspeed stress; Trip setting; Locking; Model and application | 187–190, 1521–1535 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Ratchet and Pawl Design (Pitch, Tooth Force, Bearing and Pin)** `ratchet-pawl-design` | RATCHET ADEQUATE | Tooth face bearing; Pawl pin; Engagement; Model and application | 2215–2217, 1535 | Automated + cross-check |
+| **Gear Ratio for Inertia Matching (Optimum Ratio and Motor Torque)** `inertia-matching-ratio` | RATIO SUITABLE | Motor speed; Peak torque; Inertia ratio; Model and application | 180–186, 2569–2580 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Torsion Member Comparison (Solid Bar, Tube or Rectangle)** `torsion-member-comparison` | SECTION ADEQUATE | Stress; Twist; Model and application | 295–303 | Automated + cross-check |
+| **Tube or Shell under External Pressure (Collapse Thickness and Factor)** `vacuum-tube-design` | WALL ADEQUATE | Collapse factor; Roundness; Model and application | 293–294 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Bolt Preload Verification from Measured Stretch (and Nut Factor)** `bolt-preload-verification` | PRELOAD VERIFIED | Preload; Proof load; Nut factor; Model and application | 1521–1535 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Machine Spindle Speed Range Design (Geometric Series and Speed Loss)** `spindle-speed-range-design` | SPEED RANGE ADEQUATE | Speed loss; Low-speed torque; Model and application | 37–39 | Automated + cross-check |
+
+### Maintenance
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Journal Bearing Oil Check (Viscosity at Temperature, Film and Friction)** `journal-bearing-oil-check` | OIL SUITABLE | Viscosity; Film; Extrapolation; Model and application | 2326–2345 | Automated + cross-check |
