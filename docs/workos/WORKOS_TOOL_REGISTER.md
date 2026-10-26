@@ -2139,3 +2139,51 @@ A twenty-fifth round of 9 integrated design checks in batch handbook50: a shaft 
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Injection Moulded Part Cost (Clamp, Cycle, Machine, Material, Mould)** `moulded-part-cost` | COST WITHIN TARGET | Clamp force; Shot size; Cost; Model and application | 584–592, 134–146 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, thirty-fifth pass: integrated design checks, twenty-sixth round (added 26 October 2026)
+
+A twenty-sixth round of 9 integrated design checks in batch handbook51: a C-frame throat check (curved-beam stress, straight-beam comparison, depth needed), a bolt pattern hole plan (layout, clearance holes, position tolerance), an interference fit limits check (IT grades, least and most interference, holding torque, hub stress), a pontoon float check (draft, freeboard, reserve buoyancy), a spade drilling plan (speed, power, thrust, time), a thrust pad bearing check (unit load, PV, friction loss, oil flow), a tube post with eccentric load (section, secant formula, load factor), a hot surface insulation check (bare and insulated loss, touch temperature, payback) and a limit gauge plan (IT tolerance, go and no-go sizes, makeability). Tests cross-check against the curved beam, combined axial and bending stress, bolt circle layout, fastener position tolerance, ISO tolerance grade, press and shrink fit, buoyancy, circular segment, spade drilling power, thrust bearing pad, coolant flow for a heat load, eccentrically loaded column, radiant heat loss, layered wall heat flow and go and no-go gauge tools. WORKOS now holds 693 tools.
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **C-Frame Throat Check (Curved-Beam Stress, Straight-Beam Comparison, Depth Needed)** `c-frame-throat-check` | THROAT ADEQUATE | Inner fibre; Outer fibre; Fatigue and deflection; Model and application | 212–218, 257–260 | Automated + cross-check |
+| **Interference Fit Limits Check (IT Grades, Least and Most Interference, Torque, Stress)** `interference-fit-limits-check` | FIT WORKS OVER ITS LIMITS | Interference; Grip at least interference; Hub at most interference; Model and application | 631–634, 635–668 | Automated + cross-check |
+| **Tube Post with Eccentric Load (Section, Secant Formula, Load Factor)** `tube-post-eccentric-check` | POST ADEQUATE | Load factor; Slenderness; Base and connection; Model and application | 281–287, 234–246 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Bolt Pattern Hole Plan (Layout, Clearance Holes, Position Tolerance)** `bolt-pattern-hole-plan` | PATTERN WORKS | Ligament; Edge distance; Wrench clearance; Position tolerance; Model and application | 686, 615–627 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Pontoon Float Check (Draft, Freeboard, Reserve Buoyancy)** `pontoon-float-check` | FLOAT ADEQUATE | Freeboard; Reserve buoyancy; Stability; Model and application | 3027, 77–80 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Spade Drilling Plan (Speed, Power, Thrust, Time)** `spade-drilling-plan` | MACHINE CAN DRILL IT | Power; Thrust; Chip removal; Model and application | 1077–1079 | Automated + cross-check |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Thrust Pad Bearing Check (Unit Load, PV, Friction Loss, Oil Flow)** `thrust-pad-bearing-check` | BEARING ADEQUATE | Unit load; PV; Oil supply; Model and application | 2338–2356, 371–374 | Automated + cross-check |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Hot Surface Insulation Check (Bare Loss, Insulated Loss, Touch Temperature, Payback)** `hot-surface-insulation-check` | INSULATION ADEQUATE | Touch temperature; Payback; Insulation rating; Model and application | 371–378 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Limit Gauge Plan (IT Tolerance, Go and No-Go Sizes, Makeability)** `plug-gauge-plan` | GAUGES MAKEABLE | Gauge tolerance; Gauge form; Model and application | 661–663, 705–708, 635–668 | Automated + cross-check |
