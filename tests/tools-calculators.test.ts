@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -88,9 +88,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 603 tools with unique ids and every previously published id kept', () => {
+test('register: 612 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 603);
+  assert.equal(ids.length, 612);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -835,16 +835,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 488 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 497 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 488);
+  assert.equal(ids.length, 497);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -2395,5 +2395,69 @@ test('sixteenth-round design checks: verdicts and guards', () => {
   assert.equal(engine.run('corrosion-remaining-life', { tNow: 2 }).text, 'BELOW MINIMUM THICKNESS');
   assert.equal(engine.run('corrosion-remaining-life', { lifeReq: 50 }).text, 'LIFE SHORTER THAN REQUIRED');
   const cases: Array<[string, Inputs]> = [['valve-closure-surge', { rating: 5 }], ['control-valve-sizing', { openMin: 0.9, openMax: 0.5 }], ['wind-load-on-post', { t: 60 }], ['noise-exposure-check', { L1: 0, L2: 0 }], ['process-capability-check', { usl: 24 }], ['corrosion-remaining-life', { mode: 'thick', t1: 5 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Twenty-sixth handbook pass (handbook42): seventeenth round of integrated design checks.
+const HB26_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['hydraulic-filter-selection', {}, { d4: 1500, d6: 40, d14: 5, R4: 18, R6: 12, R14: 9, dp: 0.2 * 0.8 * 46 / 32 }],
+  ['submerged-tank-flotation', {}, { Fb: 98066.5, Ws: 43200, Wb: 12000 * 9.80665 * (1 - 1000 / 2400) }],
+  ['cable-span-design', {}, { clearance: 7 }],
+  ['system-reliability', {}, { Rs: Math.exp(-0.04) * Math.exp(-(0.1 ** 1.5)) * (1 - (1 - Math.exp(-0.04)) ** 2), weak: 1 }],
+  ['learning-curve-quote', {}, { unit: ((255.131114563279 + 6) * 105 + 2000) * 1.15 / 50 }, 1e-6],
+  ['acceptance-sampling-plan', {}, { n: 132, c: 3 }],
+  ['measurement-uncertainty-budget', {}, { temp: 0.5 * 11.5 * 0.5, U: 2 * Math.sqrt(1 + 1 / 12 + 2.25 + (30 * Math.tan(Math.PI / 180 / 180) * 1000) ** 2 / 3 + 2.875 ** 2 / 3) }],
+  ['furnace-wall-design', {}, { R: 0.115 / 1.2 + 0.23 / 0.15 + 0.006 / 50 }],
+  ['fastener-position-tolerance', {}, { tot: 1, Thole: 1, Tthread: 1 }],
+  ['fastener-position-tolerance', { mode: 'fixed', share: 60 }, { Thole: 0.6, Tthread: 0.4 }],
+];
+for (const [id, over, expected, tol] of HB26_CASES) test(`design check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('seventeenth-round design checks agree with the tools they chain', () => {
+  const hf = engine.run('hydraulic-filter-selection').values, ic = engine.run('iso-cleanliness-code', { vol: 1, c4: 1500, c6: 40, c14: 5, t4: 18, t6: 16, t14: 13 }).values, fb = engine.run('filter-beta-ratio', { mode: 'rating', up: 15000, down: 25, beta: 10 }).values;
+  assert.equal(hf.codeOut, ic.code); near(hf.d4, fb.down, 1e-9, 'downstream count'); near(hf.e4, fb.eff, 1e-9, 'efficiency');
+  const st = engine.run('submerged-tank-flotation').values;
+  near(st.Fb, engine.run('buoyancy', { V: 10000, mass: 1500, rho: 1000 }).values.Fb, 1e-9, 'uplift');
+  near(engine.run('submerged-tank-flotation', { mB: st.mBreq }).values.sf, 1.25, 1e-9, 'ballast needed gives the factor');
+  const cs = engine.run('cable-span-design').values, cc = engine.run('catenary-cable').values;
+  for (const k of ['a', 'H', 'Tmax', 'L', 'ang']) near(cs[k], cc[k], 1e-9, `cable ${k}`);
+  const sr = engine.run('system-reliability', { e2: 0, e3: 0 }).values, wr = engine.run('weibull-reliability').values;
+  near(sr.Rs, wr.R, 1e-12, 'single-block reliability'); near(sr.mttf, wr.mttf, wr.mttf * 1e-4, 'single-block MTTF');
+  const lq = engine.run('learning-curve-quote').values, lc = engine.run('learning-curve', { T1: 10, rate: 85, n: 50, cost: 80 }).values;
+  for (const k of ['Tn', 'cum', 'avg', 'b']) near(lq[k], lc[k], 1e-12, `learning ${k}`);
+  const sp = engine.run('acceptance-sampling-plan').values;
+  near(sp.paA, engine.run('sampling-oc', { n: 132, c: 3, p: 1 }).values.Pa, 1e-12, 'acceptance at AQL');
+  near(sp.paR, engine.run('sampling-oc', { n: 132, c: 3, p: 5 }).values.Pa, 1e-12, 'acceptance at RQL');
+  const smaller = engine.run('acceptance-sampling-plan', { nU: 131, cU: 3 }).values; assert.ok(smaller.paR > 0.1, 'one fewer sample breaks the consumer risk');
+  near(engine.run('measurement-uncertainty-budget').values.abbe, engine.run('abbe-error', { offset: 30, tilt: 20, tolerance: 0.05 }).values.error * 1000, 1e-12, 'Abbe error');
+  const fw = engine.run('furnace-wall-design').values, wh = engine.run('wall-heat-loss', { Thot: 900, Tcold: 25, area: 10, hin: 0, hout: fw.hcomb, t1: 115, k1: 1.2, t2: 230, k2: 0.15, t3: 6, k3: 50 }).values;
+  near(fw.flux, wh.qf, 1e-6, 'flux through the wall'); near(fw.Ts, wh.Tsurf, 1e-6, 'surface temperature');
+  near(fw.qrad, engine.run('radiant-heat', { area: 10, eps: 0.8, Ts: fw.Ts, Ta: 25 }).values.flux, 1e-9, 'radiation from the surface');
+  const fp = engine.run('fastener-position-tolerance').values, tp = engine.run('true-position', { feature: 'hole', mod: 'mmc', dx: 0.3, dy: 0.4, tol: 1, size: 11.1, lower: 11, upper: 11.3 }).values;
+  for (const k of ['pos', 'bonus', 'allowed']) near(fp[k], tp[k], 1e-12, `position ${k}`);
+});
+
+test('seventeenth-round design checks: verdicts and guards', () => {
+  assert.equal(engine.run('hydraulic-filter-selection', { b4: 2 }).text, 'FILTER NOT SUITABLE');
+  assert.equal(engine.run('hydraulic-filter-selection', { nu: 300 }).text, 'FILTER NOT SUITABLE');
+  assert.equal(engine.run('submerged-tank-flotation', { mB: 3000 }).text, 'TANK WILL FLOAT');
+  assert.equal(engine.run('cable-span-design', { d: 1 }).text, 'SPAN NOT ADEQUATE');
+  assert.equal(engine.run('cable-span-design', { hSup: 10 }).text, 'SPAN NOT ADEQUATE');
+  assert.equal(engine.run('system-reliability', { target: 95 }).text, 'TARGET NOT MET');
+  assert.equal(engine.run('system-reliability', { k3: 1 }).text, 'TARGET NOT MET');
+  assert.equal(engine.run('learning-curve-quote', { offer: 800 }).text, 'OFFER BELOW TARGET');
+  assert.equal(engine.run('acceptance-sampling-plan', { nU: 50, cU: 1 }).text, 'PLAN DOES NOT PROTECT BOTH');
+  assert.equal(engine.run('measurement-uncertainty-budget', { dT: 1 }).text, 'MEASUREMENT NOT CAPABLE');
+  assert.equal(engine.run('measurement-uncertainty-budget', { tol: 0.01 }).text, 'MEASUREMENT NOT CAPABLE');
+  assert.equal(engine.run('furnace-wall-design', { t2: 115 }).text, 'WALL NOT ADEQUATE');
+  assert.equal(engine.run('furnace-wall-design', { T12Max: 800 }).text, 'WALL NOT ADEQUATE');
+  assert.equal(engine.run('fastener-position-tolerance', { dx: 0.4 }).text, 'REJECT');
+  assert.equal(engine.run('fastener-position-tolerance', { size: 11.4 }).text, 'REJECT');
+  assert.equal(engine.run('fastener-position-tolerance', { mode: 'fixed' }).text, 'REJECT');
+  const cases: Array<[string, Inputs]> = [['hydraulic-filter-selection', { c6: 20000 }], ['cable-span-design', { d: 200 }], ['system-reliability', { e1: 0, e2: 0, e3: 0 }], ['acceptance-sampling-plan', { rql: 0.5 }], ['acceptance-sampling-plan', { nU: 5, cU: 5 }], ['furnace-wall-design', { Thot: 20 }], ['fastener-position-tolerance', { H: 9 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
