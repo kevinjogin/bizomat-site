@@ -1775,3 +1775,46 @@ A seventeenth round of 9 integrated design checks in batch handbook42: hydraulic
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Furnace Wall Design (Layers, Convection and Radiation from the Surface)** `furnace-wall-design` | WALL ADEQUATE | Surface temperature; Insulation service limit; Conductivity data; Model and application | 371–378 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, twenty-seventh pass: integrated design checks, eighteenth round (added 26 October 2026)
+
+An eighteenth round of 9 integrated design checks in batch handbook43: equipment investment appraisal (NPV, IRR, simple and discounted payback, benefit–cost ratio, EUAC), a compressed-air leak audit (leak flow by size, share of capacity, cost, repair payback), a two-point lift with an off-centre load (centre of gravity, point loads, leg angles and tensions), rotor run-up time with start energy, tensile test evaluation (yield, tensile, elongation, reduction of area, modulus, true fracture), a Brinell test validity check, a compressor staging check (one or two stages, power and discharge temperature), spherical vessel design and a motor efficiency test with a Prony brake. Tests cross-check against the IRR, benefit–cost ratio, interest factors, air leak cost, combined centre of gravity, sling tension, mass moment of inertia, angular acceleration torque, true stress–strain, Brinell hardness, compressor power, gas compression process, spherical shell, Prony brake and motor power tools. WORKOS now holds 621 tools.
+
+### Money
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Equipment Investment Appraisal (NPV, IRR, Payback, B/C, EUAC)** `investment-appraisal` | INVESTMENT JUSTIFIED | NPV at the hurdle rate; Payback; Sensitivity; Model and application | 139–146 | Automated + cross-check |
+
+### Pneumatics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Compressed-Air Leak Audit (Leak Flow, Power, Cost and Repair Payback)** `air-leak-audit` | LEAKAGE ACCEPTABLE | Leakage share; Measurement; Model and application | 3032–3041 | Automated + cross-check |
+| **Air Compressor Staging Check (Power and Discharge Temperature)** `compressor-staging-check` | DISCHARGE TEMPERATURE OK | Discharge temperature; Intercooler; Model and application | 3032–3041 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Two-Point Lift with an Off-Centre Load (Centre of Gravity, Leg Loads, Angles)** `two-point-lift-plan` | LIFT RIGGING ADEQUATE | Leg loads; Leg angles; Lift plan; Model and application | 2613–2650, 221–227 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Rotor Run-Up Time (Inertia, Acceleration Time, Start Energy)** `rotor-run-up-time` | START ACCEPTABLE | Start time; Starts per hour; Supply; Model and application | 228–240, 2569–2580 | Automated + cross-check |
+| **Motor Efficiency Test with a Prony Brake (Torque, Output, Efficiency)** `motor-efficiency-test` | EFFICIENCY AS RATED | Efficiency; Load; Model and application | 2998–2999, 2569–2580 | Automated + cross-check |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Tensile Test Evaluation (Yield, UTS, Elongation, Reduction of Area, True Fracture)** `tensile-test-evaluation` | MEETS SPECIFICATION | Yield; Tensile; Elongation; Fracture position; Model and application | 1331–1334 | Automated + cross-check |
+| **Brinell Hardness Test Check (Hardness, Validity Rules, Specification)** `brinell-test-check` | WITHIN SPECIFICATION | Indentation ratio; Specimen thickness; Edge distance; Spacing; Specification; Model and application | 1406–1412 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Spherical Pressure Vessel Design (Thickness, Stress, Capacity, Hydrotest)** `spherical-vessel-design` | SPHERE ADEQUATE | Safety factor; Hydrotest; Code; Model and application | 290–294 | Automated + cross-check |
