@@ -1,5 +1,5 @@
 ---
-book: steam-systems-by-the-numbers
+book: process-steam-by-the-numbers
 chapterSlug: steam-traps
 order: 6
 title: "Steam traps"
@@ -16,14 +16,13 @@ This chapter covers SV-8's traps. It describes the main types and what each suit
 A trap has three jobs. It must **discharge condensate** as fast as it forms, including the large flows at start-up. It must **discharge air and other non-condensable gases**, especially when equipment starts cold, as Chapter 3 showed. And it must **hold back steam**, so that the steam stays in the equipment until it has given up its latent heat. Each trap type does these jobs by a different mechanism and suits different duties.
 
 ```figure
-type: compare
-title: Common steam trap types and where SV-8 uses them
-cols: How it tells steam from water | Strengths | Used on SV-8 for
-caption: This is an illustration of general characteristics. Trap makers' data govern selection for a particular duty and pressure.
-- Float and thermostatic | a float rises with condensate level and opens the valve; a thermostatic element vents air | discharges condensate continuously as it forms; handles varying loads; vents air well | kettle jackets and the cleaning water heater
-- Inverted bucket | a bucket floats on steam and sinks on condensate | robust; tolerates water hammer and dirt | not used
-- Thermodynamic disc | a disc snaps shut on flashing condensate's velocity | compact, robust, cheap | main drain pockets
-- Thermostatic, balanced pressure | an element closes when it senses steam temperature | good air venting; holds back condensate until it cools slightly | air vents on mains
+type: decision
+title: Matching the trap type to the job on SV-8
+question: What is the trap draining?
+caption: This is an illustration of general characteristics. Trap makers' data govern selection for a particular duty and pressure; the right type for the job matters more than the brand.
+- *Process equipment with varying loads, such as the kettle jackets | float and thermostatic | discharges condensate as it forms and vents air at start-up
+- Drain pockets on the steam main | thermodynamic | compact and robust against the main's dirt and occasional water hammer
+- The ends of mains, where air must escape | balanced pressure thermostatic | opens to cool air at start-up and closes as steam arrives
 ```
 
 Each kettle has a **float and thermostatic** trap at the bottom of its jacket, because it discharges condensate as soon as it forms, keeping the whole jacket surface available for condensing steam, and its thermostatic element vents air at start-up. The main's drain pockets use **thermodynamic** traps, which are compact and cope well with the main's dirt and occasional water hammer. Balanced pressure thermostatic traps serve as the automatic air vents at the ends of the main, where they open to cool air at start-up and close as steam reaches them. Using the right type for each job matters more than the brand.
@@ -36,21 +35,19 @@ The **condensate load** is the steam flow condensing in the equipment. For a ket
 
 The **differential pressure** is the pressure in the jacket minus the pressure in the condensate line the trap discharges into, not the jacket's pressure alone. SV-8's kettle traps discharge into a condensate collecting line that runs to a vented receiver and pump; with the line's friction and the lift into the receiver, the back pressure at the trap outlet is taken as about **150 kPa absolute**. With the jacket at 400 kPa absolute, the differential is about **250 kPa**. The trap's capacity is read from its maker's chart at that differential.
 
-```figure
-type: formula
-title: Sizing a kettle's trap
-formula: design capacity = start-up condensate load × safety factor, at the differential pressure available
-caption: This is an illustration. The safety factor and back pressure are teaching values; the trap's capacity at the differential comes from its maker's chart.
-- Start-up jacket duty | about 148 kW
-- Condensate at start-up | 148 ÷ 2,133 × 3,600 ≈ 250 kg/h
-- Safety factor | 2
-step: design capacity ≈ 500 kg/h
-step: differential ≈ 400 − 150 = 250 kPa, read on the maker's chart for the chosen trap
-```
-
 ## Stall: when the jacket cannot drain
 
 A kettle's temperature is controlled by a valve on its steam supply, as Chapter 3 explained. As the product approaches its set temperature, the valve throttles and the jacket's pressure falls. If it falls below the back pressure at the trap's outlet, here about 150 kPa absolute, there is no differential to push condensate through the trap. Condensate backs up and floods the jacket, even though the trap is perfectly healthy. This is **stall**.
+
+```figure
+type: compare
+title: Why a throttled kettle jacket stops draining
+cols: Steam temperature in the jacket | Differential across the trap | What the condensate does
+caption: This is an illustration with the trap discharging against about 150 kPa absolute of back pressure. Saturation temperatures are published table values. Below the back pressure, a healthy trap cannot pass condensate.
+- Jacket at 400 kPa absolute, start of a batch | 143.1 °C | about 250 kPa | drains freely through the trap
+- Jacket throttled to 190 kPa absolute | 118.6 °C | about 40 kPa | drains slowly; capacity falls
+- *Jacket throttled to 150 kPa absolute or below | between 100 and 118.6 °C | none | backs up and floods the jacket: stall
+```
 
 The published table shows the size of the effect: at 190 kPa absolute steam condenses at 118.6 °C, and at atmospheric pressure at 100 °C. A jacket throttled to about 150 kPa absolute, while holding product at 90 °C, is entirely plausible near the end of a batch. Stall causes erratic temperature control, as the flooded jacket loses capacity and the valve opens further to compensate, and water hammer, as steam meets the pooled condensate. It also accelerates corrosion, because the trapped condensate absorbs carbon dioxide.
 
@@ -67,6 +64,17 @@ It is tempting to save money by connecting several jackets or coils to a single 
 ## The trap register
 
 Every trap on SV-8 carries a numbered tag, and the trap register lists, for each number, its location, its type and size, the equipment it drains, its normal pressure and condensate load, and the result of each survey with the date and the action taken. The register turns trap maintenance from occasional firefighting into a routine. It shows which traps fail repeatedly, often a sign of the wrong type, dirt or water hammer upstream; it gives the cost of failures found each year, which justifies the survey; and when a trap is replaced, it records exactly what was fitted, so the next replacement matches it.
+
+```figure
+type: cycle
+title: SV-8's six-monthly trap routine
+caption: This is an illustration. The register closes the loop: traps that fail repeatedly point to the wrong type, dirt or water hammer upstream, and the cost of failures found justifies the next survey.
+- Survey all 14 traps with ultrasound and a thermal camera
+- Record each result against the trap's tag number in the register
+- *Repair failed traps under isolation, fitting the type the register lists
+- Re-test repaired traps once the equipment is back in service
+- Review repeat failures and the year's cost of steam lost
+```
 
 ## Testing traps
 
@@ -89,19 +97,6 @@ Trap testing is done on live equipment, and steam and hot condensate burn instan
 A trap that has **failed open** passes live steam continuously into the condensate system. How much depends on the trap's size, its failure and the pressure; an illustration is about **10 kg/h** through a failed kettle trap at 400 kPa. Over 4,000 hours that is **40 tonnes** of steam a year, at about **A$63** a tonne, about **A$2,500** a year, from one small trap. Some of its heat reaches the condensate return, but much is vented as flash steam at the receiver.
 
 A trap that has **failed closed** wastes no steam, but floods its equipment, slowing it or stopping it, and invites water hammer and corrosion. Its cost is in production and damage rather than gas.
-
-```figure
-type: bars
-title: SV-8's trap survey results, two surveys a year apart
-unit: traps
-max: 14
-caption: This is an illustration. The first survey was the first ever; the second, a year later, followed six-monthly testing. Each failed-open trap was costing about A$2,500 a year.
-- Working, first survey | 9
-- Failed open, first survey | 3
-- Failed closed, first survey | 2
-- *Working, second survey | 13
-- Failed open, second survey | 1
-```
 
 ## A failure case: the trap that passed steam for months
 

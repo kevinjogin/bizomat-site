@@ -1,5 +1,5 @@
 ---
-book: steam-systems-by-the-numbers
+book: process-steam-by-the-numbers
 chapterSlug: pressure-reduction-and-distribution
 order: 4
 title: "Pressure reduction and distribution"
@@ -15,18 +15,19 @@ This chapter follows SV-8's steam from the boiler along the 60 m main to the red
 
 SV-8's main is **60 m** of steel pipe, 76.1 mm in outside diameter, carrying steam at **800 kPa absolute**, **170.4 °C**. Insulated with **50 mm** of mineral wool and calculated by the method of *Heat Transfer by the Numbers*, using a conductivity of 0.04 W/m·K and an outside coefficient of 9 W/m²·K, it loses about **42.5 W per metre**, about **2.55 kW** for the whole main. Real insulation's conductivity is somewhat higher at steam temperatures, so the actual loss will be a little more.
 
-That heat comes from condensing steam. At 800 kPa, each kilogram condensing gives up 2,047 kJ, so the main condenses about **2.55 ÷ 2,047 × 3,600 ≈ 4.5 kg/h** of steam into water, which must be drained from the main, as Chapter 5 explains. Over 4,000 hours, the loss costs about **A$950** a year.
-
 ```figure
-type: compare
-title: Heat loss from SV-8's 60 m steam main at 170.4 °C
-cols: Heat loss | Condensate formed | Cost a year
-caption: This is an illustration. Insulated figures use k = 0.04 W/m·K and h = 9 W/m²·K; the bare figure uses still-air convection and an emissivity of 0.85. Costs at about A$0.093 per kWh over 4,000 hours.
-- Bare pipe | about 32.4 kW | about 57 kg/h | about A$12,100
-- 40 mm insulation | about 2.92 kW | about 5.1 kg/h | about A$1,090
-- *50 mm insulation | about 2.55 kW | about 4.5 kg/h | about A$950
-- 65 mm insulation | about 2.18 kW | about 3.8 kg/h | about A$810
+type: formula
+title: Condensate formed in SV-8's 60 m main
+formula: condensate formed = heat lost from the main ÷ h_fg at the main's pressure
+caption: This is an illustration at 800 kPa absolute, where h_fg = 2,047 kJ/kg. Every kilogram of this condensate must be drained from the main by traps, and its latent heat is lost.
+- Main | 60 m, 76.1 mm outside diameter, 170.4 °C
+- Heat lost, 50 mm insulation | about 2.55 kW
+- Heat lost, bare | about 32.4 kW
+step: insulated: 2.55 ÷ 2,047 × 3,600 ≈ 4.5 kg/h
+step: bare: 32.4 ÷ 2,047 × 3,600 ≈ 57 kg/h, about a third of one kettle's steam
 ```
+
+That heat comes from condensing steam. At 800 kPa, each kilogram condensing gives up 2,047 kJ, so the main condenses about **2.55 ÷ 2,047 × 3,600 ≈ 4.5 kg/h** of steam into water, which must be drained from the main, as Chapter 5 explains. Over 4,000 hours, the loss costs about **A$950** a year.
 
 A bare main would lose about **32 kW**, condensing about **57 kg/h**, more than a third of one kettle's steam, and cost about **A$12,000** a year. On steam, insulating every pipe, valve and flange pays back in months.
 
@@ -34,20 +35,19 @@ A bare main would lose about **32 kW**, condensing about **57 kg/h**, more than 
 
 A pressure reducing valve throttles the steam: it passes through a narrow opening and emerges at lower pressure. No heat is added or removed, no work is done, and the change in the steam's speed is small, so the steam's **enthalpy stays the same** across the valve. That one fact, from the first law for a steady flow through a device, tells us what happens to the steam.
 
+```figure
+type: compare
+title: Steam before and after SV-8's reducing valve
+cols: At 800 kPa absolute | Enthalpy, unchanged by the valve | At 400 kPa absolute
+caption: Published steam table values: h_f 720.9 and h_fg 2,047 kJ/kg at 800 kPa; h_f 604.7, h_fg 2,133 and h_g 2,738 kJ/kg at 400 kPa. The 0.96 row is the chapter's exercise.
+- Dry saturated | 2,768 kJ/kg | about 30 kJ/kg above saturation, slightly superheated
+- *Dryness 0.98 | about 2,727 kJ/kg | dryness about 0.995
+- Dryness 0.96 | about 2,686 kJ/kg | dryness about 0.976
+```
+
 **Dry steam becomes slightly superheated.** Dry saturated steam at 800 kPa has an enthalpy of **2,768 kJ/kg**. At 400 kPa, dry saturated steam has only **2,738 kJ/kg**. The steam leaving the valve keeps its 2,768 kJ/kg, about **30 kJ/kg** more than saturated steam at its new pressure needs, so it emerges with a little superheat. In a short length of pipe, that small superheat is lost to the pipe wall and the steam is saturated again by the time it reaches the kettles.
 
 **Wet steam becomes drier.** Steam at 800 kPa with a dryness of **0.98** has an enthalpy of **720.9 + 0.98 × 2,047 ≈ 2,727 kJ/kg**. After the valve, at 400 kPa, the same enthalpy corresponds to a dryness of **(2,727 − 604.7) ÷ 2,133 ≈ 0.995**. Throttling has evaporated most of the water droplets, using the heat they released as the pressure fell.
-
-```figure
-type: formula
-title: Dryness after throttling from 800 to 400 kPa absolute
-formula: h before = h after        x after = (h before − h_f at the lower pressure) ÷ h_fg at the lower pressure
-caption: This is an illustration using published steam table values. Throttling keeps enthalpy constant, so steam leaves drier than it arrived.
-- Before, 800 kPa, x = 0.98 | h = 720.9 + 0.98 × 2,047 ≈ 2,727 kJ/kg
-- After, 400 kPa | h_f = 604.7, h_fg = 2,133 kJ/kg
-step: x after = (2,727 − 604.7) ÷ 2,133 ≈ 0.995
-step: from x = 0.96 before, x after ≈ (2,686 − 604.7) ÷ 2,133 ≈ 0.976
-```
 
 Distribution at high pressure with reduction near the point of use therefore delivers drier steam to the process, one more reason for the arrangement.
 
@@ -56,17 +56,44 @@ Distribution at high pressure with reduction near the point of use therefore del
 A pressure reducing station is more than a valve. SV-8's has, in order of flow:
 
 ```figure
-type: steps
+type: svg
 title: SV-8's pressure reducing station, in order of flow
-caption: This is an illustration of a typical arrangement. The safety valve on the low-pressure side is the component that protects the kettles if everything else fails.
-- Isolating valve | to shut the station for maintenance
-- Separator with trap | removes water droplets from the main before the valve
-- Strainer | catches scale and debris that would wear or jam the valve's seat
-- Pressure gauge, high side | shows the incoming pressure
-- Pressure reducing valve | holds the downstream pressure at 400 kPa absolute
-- Pressure gauge, low side | shows the reduced pressure
-- *Safety valve, low side | set at or below the kettles' maximum allowable pressure, sized to pass the full flow the reducing valve could pass if it failed fully open
-- Isolating valve | downstream, for maintenance
+alt: A schematic of a steam pipe running left to right. In order of flow: an isolating valve, a separator with a trap below it, a strainer, a pressure gauge reading 800 kPa absolute, the pressure reducing valve with its actuator, a pressure gauge reading 400 kPa absolute, a safety valve on the low-pressure side with a discharge pipe running up to a safe place above the roof, and a second isolating valve.
+caption: This is an illustration of a typical arrangement. The separator and strainer protect the reducing valve's seat; the low-side safety valve, set at or below the kettles' maximum allowable pressure and sized for the full flow of a failed-open reducing valve, protects everything downstream.
+viewbox: 0 0 640 300
+body:
+<path class="ln" d="M20 150H620"/>
+<path class="la flow" d="M20 150H620"/>
+<path class="bx" d="M48 140L72 160V140L48 160Z"/>
+<text class="tx txs" x="60" y="190" text-anchor="middle">isolating valve</text>
+<rect class="bx" x="118" y="132" width="24" height="36" rx="4"/>
+<path class="ln" d="M130 168V200"/>
+<rect class="bx" x="121" y="200" width="18" height="12" rx="2"/>
+<text class="tx txs" x="130" y="232" text-anchor="middle">separator and trap</text>
+<rect class="bx" x="190" y="140" width="22" height="20" rx="2"/>
+<path class="lf" d="M190 160L212 140"/>
+<text class="tx txs" x="201" y="190" text-anchor="middle">strainer</text>
+<path class="ln" d="M250 150V115"/>
+<circle class="bx" cx="250" cy="103" r="12"/>
+<text class="tx txs" x="250" y="76" text-anchor="middle">800 kPa abs</text>
+<path class="bxa" d="M314 136L346 164V136L314 164Z"/>
+<path class="ln" d="M330 136V112"/>
+<rect class="bxa" x="316" y="98" width="28" height="14" rx="2"/>
+<text class="txa txs" x="330" y="76" text-anchor="middle">reducing valve</text>
+<text class="tx txs" x="330" y="190" text-anchor="middle">holds 400 kPa abs</text>
+<path class="ln" d="M410 150V115"/>
+<circle class="bx" cx="410" cy="103" r="12"/>
+<text class="tx txs" x="410" y="76" text-anchor="middle">400 kPa abs</text>
+<path class="ln" d="M480 150V110"/>
+<rect class="bxa" x="470" y="96" width="20" height="14" rx="2"/>
+<path class="la dsh" d="M480 96V40H600"/>
+<circle class="fa pulse" cx="600" cy="40" r="4"/>
+<text class="tx txs" x="404" y="26">discharge to a safe place above the roof</text>
+<text class="txa txs" x="480" y="190" text-anchor="middle">safety valve</text>
+<path class="bx" d="M558 140L582 160V140L558 160Z"/>
+<text class="tx txs" x="570" y="190" text-anchor="middle">isolating valve</text>
+<text class="tx txs" x="20" y="272">high-pressure side, 800 kPa abs</text>
+<text class="tx txs" x="352" y="272">low-pressure side, 400 kPa abs, larger pipe</text>
 ```
 
 The separator and strainer protect the valve: water droplets travelling at high speed erode its seat, and a fragment of scale lodged under the seat stops it closing. A reducing valve that cannot close fully lets pressure creep up on the low side whenever demand falls.

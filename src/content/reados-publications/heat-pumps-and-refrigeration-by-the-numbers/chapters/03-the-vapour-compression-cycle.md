@@ -13,7 +13,7 @@ This chapter follows the refrigerant around CS-1's plant. It describes the four 
 
 ## Boiling at a temperature set by pressure
 
-A refrigerant is chosen because it boils at a useful temperature at a manageable pressure. Like water in *Steam Systems by the Numbers*, each refrigerant has a saturation temperature for each pressure, published in its pressure-temperature table. At the low pressure in CS-1's evaporator, the refrigerant boils at about **−8 °C**; at the high pressure in its condenser, it condenses at about **40 °C**. A technician with a pressure gauge and the refrigerant's table can read the evaporating and condensing temperatures directly, just as a steam engineer reads a boiler's temperature from its gauge.
+A refrigerant is chosen because it boils at a useful temperature at a manageable pressure. Like water in *Process Steam by the Numbers*, each refrigerant has a saturation temperature for each pressure, published in its pressure-temperature table. At the low pressure in CS-1's evaporator, the refrigerant boils at about **−8 °C**; at the high pressure in its condenser, it condenses at about **40 °C**. A technician with a pressure gauge and the refrigerant's table can read the evaporating and condensing temperatures directly, just as a steam engineer reads a boiler's temperature from its gauge.
 
 ## The four stages
 
@@ -34,7 +34,7 @@ caption: This is an illustration. Heat enters at the evaporator and leaves at th
 
 **Condenser.** The hot, high-pressure vapour flows through the condenser coil outside. Fans blow outside air across it. The vapour first cools to its condensing temperature, then condenses at 40 °C, giving up its latent heat, then cools a little further as liquid. All the heat removed from the room, plus the compressor's work, leaves here.
 
-**Expansion valve.** The warm, high-pressure liquid passes through an expansion valve into the low-pressure side. As in the steam reducing valve and the flash steam of *Steam Systems by the Numbers*, throttling keeps the enthalpy constant: the liquid cannot stay liquid at the low pressure at its present temperature, so part of it flashes to vapour, and the cooling effect of that flash chills the whole mixture to −8 °C. The cold mixture enters the evaporator, and the cycle repeats.
+**Expansion valve.** The warm, high-pressure liquid passes through an expansion valve into the low-pressure side. As in the steam reducing valve and the flash steam of *Process Steam by the Numbers*, throttling keeps the enthalpy constant: the liquid cannot stay liquid at the low pressure at its present temperature, so part of it flashes to vapour, and the cooling effect of that flash chills the whole mixture to −8 °C. The cold mixture enters the evaporator, and the cycle repeats.
 
 ## The energy balance
 

@@ -1,5 +1,5 @@
 ---
-book: steam-systems-by-the-numbers
+book: process-steam-by-the-numbers
 chapterSlug: steam-for-a-process
 order: 3
 title: "Steam for a process"
@@ -15,22 +15,27 @@ This chapter works through one of SV-8's jacketed cooking kettles. It turns duty
 
 When steam condenses in a jacket, each kilogram gives up its latent heat. The steam flow needed for a heating duty is therefore the duty divided by the latent heat at the jacket's pressure.
 
-```figure
-type: formula
-title: Steam flow for a heating duty
-formula: steam flow = duty ÷ h_fg
-caption: This is an illustration for a duty of 100 kW at 400 kPa absolute, where the latent heat is 2,133 kJ/kg. Steam reduced from a higher pressure carries slightly more heat, as Chapter 4 shows; the difference is small.
-- Duty | 100 kW = 100 kJ/s
-- Latent heat at 400 kPa | 2,133 kJ/kg
-step: steam flow = 100 ÷ 2,133 ≈ 0.0469 kg/s
-step: ≈ 0.0469 × 3,600 ≈ 169 kg/h
-```
-
 The same division works for any steady process: a water heater, a dryer, a space heating coil. For SV-8's four kettles at 100 kW each, the total is about **675 kg/h**, as Chapter 2 found.
 
 ## Heating a batch through a jacket
 
 A kettle is a heat exchanger: steam condenses on one side of a stainless steel wall, and product is heated on the other. The heat flow at any moment is the jacket's overall coefficient **U** times its area **A** times the difference between the steam's saturation temperature and the product's temperature. As the product warms, the difference shrinks, and so does the heat flow.
+
+```figure
+type: line
+title: Heat flow through the kettle's jacket during one batch
+x: Minutes from start
+y: Jacket heat flow, kW
+ymin: 0
+ymax: 160
+mark: 21 | 90 °C reached, about 64 kW
+caption: This is an illustration from the lumped model, with steam at 143.1 °C, UA of 1,200 W/K, a 500 kg batch and a time constant of 1,500 s. The heat flow falls as the sauce warms, so the steam supply must meet about 148 kW at the start to average 100 kW over the batch.
+- 0 | 147.7
+- 5 | 120.9
+- 10 | 99.0
+- 15 | 81.1
+- 21 | 63.8
+```
 
 Each SV-8 kettle heats a **500 kg** batch of sauce from **20 °C** to **90 °C**. The jacket has an area of **2.0 m²**, and with the product stirred, its overall coefficient is about **600 W/m²·K**. The sauce's specific heat is taken as **3.6 kJ/kg·K**. These three values are an illustration; real values come from the kettle's maker, measurements and the product's data.
 
@@ -40,38 +45,11 @@ The heat-up follows the lumped model from *Heat Transfer by the Numbers*: the pr
 
 **1,500 × ln((143.1 − 20) ÷ (143.1 − 90)) ≈ 1,500 × 0.841 ≈ 1,260 s, about 21 minutes.**
 
-```figure
-type: line
-title: Sauce temperature in a kettle heated by steam at 400 kPa
-x: Minutes from start
-y: Product temperature, °C
-ymin: 0
-ymax: 150
-mark: 21 | 90 °C reached
-caption: This is an illustration from the lumped model, with steam at 143.1 °C, UA of 1,200 W/K and a 500 kg batch. The product heats quickly at first and more slowly as it approaches the steam's temperature.
-- 0 | 20.0
-- 5 | 42.3
-- 10 | 60.6
-- 15 | 75.5
-- 20 | 87.8
-- 21 | 90.0
-```
-
 At the start, with the sauce at 20 °C and the steam at 143.1 °C, the jacket passes about **1,200 × 123 ≈ 148 kW**. By the end, with the sauce at 90 °C, only about **64 kW**. Averaged over the 21 minutes, the 126,000 kJ is delivered at about **100 kW**, which is how the kettle's rating is derived. The steam supply must be able to deliver the peak at the start of each batch, which is why staggering start-ups, Chapter 2, matters.
 
 ## Steam pressure sets the pace
 
 Raising the steam pressure raises its temperature and shortens the heat-up; lowering it does the reverse.
-
-```figure
-type: compare
-title: Heating the 500 kg batch at three steam pressures
-cols: Steam temperature | Jacket heat flow at start and end | Time to 90 °C
-caption: This is an illustration with UA = 1,200 W/K. Saturation temperatures are published values at 190, 400 and 800 kPa absolute.
-- 190 kPa absolute | 118.6 °C | about 118 kW falling to 34 kW | about 31 minutes
-- *400 kPa absolute | 143.1 °C | about 148 kW falling to 64 kW | about 21 minutes
-- 800 kPa absolute | 170.4 °C | about 181 kW falling to 97 kW | about 16 minutes
-```
 
 Higher pressure is faster, but it has costs. A hotter jacket wall scorches sauce that touches it, especially at low stirring speeds or with thick, sugary products. The kettle's jacket is rated for a maximum pressure, which the operating pressure must not exceed. And the peak steam demand at the start of each batch rises, loading the boiler. SV-8's 400 kPa was chosen as the balance between batch time and product quality, after trials with the production team tasting and inspecting each trial batch, and is recorded in the kettle's operating instructions with the reasons, so that nobody raises it later simply to save time.
 
@@ -84,6 +62,15 @@ The steam per batch does not depend on the pressure chosen, because the product 
 ## Continuous duties
 
 Not every steam user works in batches. SV-8 also heats water for its cleaning-in-place system in a steam-to-water plate heat exchanger, warming **2 m³/h** of water from 15 °C to 80 °C whenever cleaning runs. The duty is **(2,000 ÷ 3,600) × 4.19 × 65 ≈ 151 kW**, and the steam flow about **151 ÷ 2,133 × 3,600 ≈ 255 kg/h**. That is a large share of the boiler's output, and it often coincides with the end of a production run, when kettles are also being cleaned with hot water. Listing every steam user with its duty, its steam flow and when it runs is the only reliable way to see the plant's real peak, and SV-8's steam users list is kept with the boiler log.
+
+```figure
+type: compare
+title: SV-8's steam users list
+cols: Duty | Steam at 400 kPa absolute | When it runs
+caption: This is an illustration. Steam flow is the duty divided by h_fg = 2,133 kJ/kg. Listing when each user runs, not just how much it needs, shows that the cleaning heater and the kettles can overlap at the end of a run.
+- Kettles 1 to 4, each | 100 kW average, about 148 kW at a cold start | 169 kg/h each, 675 kg/h together | batch heat-ups, staggered by 15 minutes
+- *Cleaning water heater | 151 kW, 2 m³/h from 15 to 80 °C | 255 kg/h | cleaning-in-place at the end of production runs
+```
 
 ## Controlling the temperature
 
@@ -100,6 +87,38 @@ Steam per batch can be measured without a steam meter, by weighing the condensat
 ## What slows a jacket
 
 The calculation assumes the jacket's inside surface is covered only by condensing steam, with condensate draining away freely. Two things commonly spoil that.
+
+```figure
+type: svg
+title: What has to happen inside SV-8's kettle jacket
+alt: A cross-section of a jacketed kettle. Steam at 400 kPa absolute enters the jacket on the left. Air is pushed to the far, right-hand side of the jacket, where an automatic air vent lets it out. Condensate drains to the bottom of the jacket and leaves through a trap. The sauce inside the vessel is heated through the stainless steel wall.
+caption: This is an illustration. Steam enters on one side; air must leave by the vent at the far side, and condensate must leave by the trap at the bottom. Air left in the jacket lowers its temperature, and condensate left in it covers heating surface with water.
+viewbox: 0 0 640 320
+body:
+<path class="fs" d="M200 110V200Q200 260 320 260Q440 260 440 200V110Z"/>
+<path class="li" d="M200 60V200Q200 260 320 260Q440 260 440 200V60"/>
+<path class="ln" d="M180 90V205Q180 285 320 285Q460 285 460 205V90M180 90H200M440 90H460"/>
+<text class="txb" x="320" y="178" text-anchor="middle">sauce, 500 kg</text>
+<text class="tx txs" x="320" y="198" text-anchor="middle">20 °C to 90 °C</text>
+<path class="la flow" d="M60 110H170"/>
+<path class="ah" d="M168 104l12 6-12 6z"/>
+<text class="txa" x="40" y="94">steam in</text>
+<text class="tx txs" x="40" y="132">400 kPa abs, 143.1 °C</text>
+<circle class="fa pulse" cx="450" cy="118" r="4"/>
+<circle class="fa pulse" cx="450" cy="140" r="4"/>
+<path class="ln" d="M460 104H500"/>
+<rect class="bxa" x="500" y="92" width="24" height="24" rx="3"/>
+<text class="tx txs" x="534" y="102">air vent</text>
+<text class="tx txs" x="534" y="120">air pushed</text>
+<text class="tx txs" x="534" y="136">to the far end</text>
+<path class="la dsh" d="M214 246Q320 282 426 246"/>
+<text class="tx txs" x="40" y="240">condensate film</text>
+<text class="tx txs" x="40" y="256">drains to the bottom</text>
+<path class="ln" d="M320 285V302H372"/>
+<rect class="bx" x="372" y="292" width="26" height="20" rx="3"/>
+<text class="tx txs" x="408" y="306">trap: lets condensate out, holds steam in</text>
+<text class="tx txs" x="200" y="40">UA ≈ 2.0 m² × 600 W/m²·K = 1,200 W/K</text>
+```
 
 **Air.** When the jacket is cold, it is full of air. Steam entering pushes air towards the far end, where it must be vented. Air that stays behind mixes with the steam, and the mixture's temperature is lower than pure steam's at the same pressure, because the steam's share of the pressure, its partial pressure, is lower. Air also collects as a film on the heating surface, insulating it. A jacket's automatic air vent, at the point furthest from the steam inlet, lets air out at start-up and closes when steam arrives.
 

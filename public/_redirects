@@ -854,6 +854,17 @@
 /reados/collections/tooling-and-fixtures/storing-machine-and-sensor-data-in-manufacturing/ /reados/collections/manufacturing-operations-and-design-for-manufacture/storing-machine-and-sensor-data-in-manufacturing/ 301
 /reados/collections/tooling-and-fixtures/welded-joints-for-fabricators/ /reados/collections/manufacturing-operations-and-design-for-manufacture/welded-joints-for-fabricators/ 301
 
+# Steam Systems by the Numbers renamed Process Steam by the Numbers (27 October 2026).
+/reados/publications/steam-systems-by-the-numbers/ /reados/publications/process-steam-by-the-numbers/ 301
+/reados/publications/steam-systems-by-the-numbers/reading-the-steam-table/ /reados/publications/process-steam-by-the-numbers/reading-the-steam-table/ 301
+/reados/publications/steam-systems-by-the-numbers/the-boiler-and-the-cost-of-steam/ /reados/publications/process-steam-by-the-numbers/the-boiler-and-the-cost-of-steam/ 301
+/reados/publications/steam-systems-by-the-numbers/steam-for-a-process/ /reados/publications/process-steam-by-the-numbers/steam-for-a-process/ 301
+/reados/publications/steam-systems-by-the-numbers/pressure-reduction-and-distribution/ /reados/publications/process-steam-by-the-numbers/pressure-reduction-and-distribution/ 301
+/reados/publications/steam-systems-by-the-numbers/pipes-drainage-and-water-hammer/ /reados/publications/process-steam-by-the-numbers/pipes-drainage-and-water-hammer/ 301
+/reados/publications/steam-systems-by-the-numbers/steam-traps/ /reados/publications/process-steam-by-the-numbers/steam-traps/ 301
+/reados/publications/steam-systems-by-the-numbers/flash-steam-and-condensate-return/ /reados/publications/process-steam-by-the-numbers/flash-steam-and-condensate-return/ 301
+/reados/publications/steam-systems-by-the-numbers/safety-inspection-and-the-savings/ /reados/publications/process-steam-by-the-numbers/safety-inspection-and-the-savings/ 301
+
 # Retired KEVOS Insights section (17 October 2026). Every article moved, unchanged, into an edited READOS book;
 # each old article URL points straight at its chapter there. Categories open the matching READOS section.
 /insights/ /reados/ 301

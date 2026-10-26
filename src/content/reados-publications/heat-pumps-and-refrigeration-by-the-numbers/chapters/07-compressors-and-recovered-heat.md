@@ -99,7 +99,7 @@ The usual method is an oil-to-water heat exchanger, fitted by the compressor's m
 
 ## Matching recovered heat to a use
 
-Recovered heat is only worth something if it displaces heat the factory would otherwise buy. The compressor's heat is available whenever it runs loaded, which in the food factory means both production shifts. The best matches are loads that run at the same time and need water at the temperatures heat recovery can give: preheating the boiler's make-up water, which flows whenever steam is used; preheating the wash-down system's cold feed, which runs during and after production; or warming a workshop in winter. The factory's plan connects the compressor's heat recovery exchanger to the boiler feed tank's make-up line, because make-up flows steadily through the shifts and every degree it is preheated is a degree the boiler does not have to supply, as *Steam Systems by the Numbers* showed.
+Recovered heat is only worth something if it displaces heat the factory would otherwise buy. The compressor's heat is available whenever it runs loaded, which in the food factory means both production shifts. The best matches are loads that run at the same time and need water at the temperatures heat recovery can give: preheating the boiler's make-up water, which flows whenever steam is used; preheating the wash-down system's cold feed, which runs during and after production; or warming a workshop in winter. The factory's plan connects the compressor's heat recovery exchanger to the boiler feed tank's make-up line, because make-up flows steadily through the shifts and every degree it is preheated is a degree the boiler does not have to supply, as *Process Steam by the Numbers* showed.
 
 ## A failure case: the overheating compressor room
 

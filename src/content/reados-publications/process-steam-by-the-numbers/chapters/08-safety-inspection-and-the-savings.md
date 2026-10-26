@@ -1,5 +1,5 @@
 ---
-book: steam-systems-by-the-numbers
+book: process-steam-by-the-numbers
 chapterSlug: safety-inspection-and-the-savings
 order: 8
 title: "Safety, inspection and the savings"
@@ -21,20 +21,6 @@ Under Australia's work health and safety laws, boilers and pressure vessels are 
 
 A boiler's most important protection is against **low water**. If the water level falls too far, the heating surfaces are exposed, overheat and can fail. Boilers are fitted with low-water controls that cut out the burner, and their correct operation is tested regularly, as the maker and the applicable requirements specify, by draining the control's chamber and confirming that the burner trips.
 
-```figure
-type: checklist
-title: Routine boiler safety checks on SV-8
-caption: This is an illustration of the kind of checks in SV-8's procedures. The actual checks and their frequency come from the boiler maker's instructions, the applicable standards and the site's competent person.
-- Water level gauge glass blown down and level confirmed | each shift
-- Low-water cut-out tested by draining its chamber and confirming burner trip | at the interval the maker and procedures require
-- Safety valve easing lever operated or valve tested, as permitted | at the interval required
-- Pressure gauge reading consistent with the boiler's controls | each shift
-- Feed pump and feed tank level and temperature | each shift
-- Flue, burner flame and combustion air supply checked for change | each shift
-- ? Annual in-service inspection by a competent inspector | booked and recorded
-- x Bypassing or jumpering a safety control to keep the boiler running | never
-```
-
 The **safety valves** on the boiler and on the low-pressure side of the reducing station, Chapter 4, are the last line of defence against overpressure. They are tested, overhauled and reset by competent people at the intervals required, and their discharge pipes are kept clear and drained.
 
 ## In-service inspection
@@ -45,20 +31,44 @@ Boilers and pressure vessels are inspected in service at intervals set by the ap
 
 Maintenance on steam systems is done only with the equipment isolated from every source of steam, depressurised, drained, cooled and proved safe, under the site's isolation procedure, with locks and tags. On SV-8, steam isolations to equipment that people will open use two valves in series with a vent between them, so that a valve passing steam is detected at the vent rather than inside the equipment. Condensate lines are isolated too, because condensate can back-flow from the return system.
 
-Burns are the commonest steam injury. Live steam is invisible close to a leak; condensate at 143 °C flashes and sprays when a fitting is loosened, even with the steam isolated, as Chapter 6 noted for traps. SV-8's procedures require face protection and gloves for any work on hot steam or condensate fittings, insulation on every pipe within reach, and warning signs at safety valve discharge points.
-
 ```figure
-type: steps
-title: Isolating a SV-8 kettle's steam supply for maintenance
-caption: This is an illustration of the sequence in the site's procedure. Each step is signed off, and the isolation is not removed until the work is complete and everyone is clear.
-- Plan | identify every steam, condensate and air connection to the kettle
-- Shut and lock | close both steam isolating valves and the condensate isolating valve; fit personal locks and tags
-- Vent and drain | open the vent between the two steam valves and drain the jacket to a safe point
-- Prove | confirm zero pressure on the jacket's gauge and that the vent shows no steam
-- Cool | allow the jacket and fittings to cool before touching them
-- *Work | carry out the maintenance with locks in place
-- Restore | close vents and drains, remove locks, open valves slowly and warm the jacket gradually
+type: svg
+title: Isolating a SV-8 kettle with two valves and a vent
+alt: A steam supply pipe runs from the left to a kettle jacket on the right. Two isolating valves sit in series on the pipe, both closed, locked and tagged. Between them, a vent pipe rises to an open vent valve, so steam passing the first valve escapes there instead of reaching the kettle. The kettle's condensate line is also isolated with a closed, locked valve.
+caption: This is an illustration of the arrangement in the site's procedure. A valve that passes steam is detected at the open vent rather than inside the equipment, and the condensate side is isolated too, because condensate can flow back from the return system.
+viewbox: 0 0 640 260
+body:
+<path class="ln" d="M30 130H560"/>
+<path class="la flow" d="M30 130H116"/>
+<text class="txa txs" x="30" y="114">steam supply</text>
+<path class="bx" d="M116 118L144 142V118L116 142Z"/>
+<rect class="bxa" x="122" y="88" width="16" height="12" rx="2"/>
+<path class="ln" d="M125 88v-5a5 5 0 0 1 10 0v5"/>
+<text class="tx txs" x="130" y="170" text-anchor="middle">valve 1</text>
+<text class="tx txs" x="130" y="186" text-anchor="middle">closed, locked</text>
+<path class="ln" d="M250 130V84"/>
+<rect class="bxa" x="242" y="72" width="16" height="12" rx="2"/>
+<path class="la dsh" d="M250 72V58"/>
+<circle class="fa pulse" cx="250" cy="54" r="4"/>
+<text class="txa" x="250" y="30" text-anchor="middle">vent between, left open</text>
+<text class="tx txs" x="250" y="170" text-anchor="middle">passing steam</text>
+<text class="tx txs" x="250" y="186" text-anchor="middle">shows here</text>
+<path class="bx" d="M356 118L384 142V118L356 142Z"/>
+<rect class="bxa" x="362" y="88" width="16" height="12" rx="2"/>
+<path class="ln" d="M365 88v-5a5 5 0 0 1 10 0v5"/>
+<text class="tx txs" x="370" y="170" text-anchor="middle">valve 2</text>
+<text class="tx txs" x="370" y="186" text-anchor="middle">closed, locked</text>
+<rect class="bx" x="560" y="96" width="64" height="68" rx="6"/>
+<text class="tx txs" x="592" y="86" text-anchor="middle">kettle jacket</text>
+<path class="ln" d="M592 164V222H446"/>
+<path class="bx" d="M418 210L446 234V210L418 234Z"/>
+<rect class="bxa" x="424" y="180" width="16" height="12" rx="2"/>
+<path class="ln" d="M427 180v-5a5 5 0 0 1 10 0v5"/>
+<path class="ln" d="M418 222H360"/>
+<text class="tx txs" x="352" y="238" text-anchor="end">condensate line isolated too</text>
 ```
+
+Burns are the commonest steam injury. Live steam is invisible close to a leak; condensate at 143 °C flashes and sprays when a fitting is loosened, even with the steam isolated, as Chapter 6 noted for traps. SV-8's procedures require face protection and gloves for any work on hot steam or condensate fittings, insulation on every pipe within reach, and warning signs at safety valve discharge points.
 
 ## Competence and training
 
@@ -85,11 +95,10 @@ A plant engineer can do much of the work in this book: the calculations, the sur
 The earlier chapters each put a value on a measure. Together they show how much of a steam system's running cost is within the plant's control.
 
 ```figure
-type: bars
-title: Annual savings from this book's measures on SV-8
+type: stack
+title: How SV-8's steam savings add up to about A$32,500 a year
 unit: A$ a year
-max: 12000
-caption: This is an illustration from Chapters 2, 4, 6 and 7, excluding GST. Insulation is the saving against a bare main; trap repairs are from the first survey; flash recovery assumes a matched low-pressure user. Together, about A$32,500 a year, about a fifth of SV-8's gas bill.
+caption: This is an illustration from Chapters 2, 4, 6 and 7, excluding GST. Insulation is the saving against a bare main; trap repairs are from the first survey; flash recovery assumes a matched low-pressure user. The total is about 21.5% of SV-8's gas bill of about A$151,000.
 - Insulating the 60 m main, against bare | 11143
 - Repairing three failed-open traps | 7560
 - Holding boiler efficiency at 85% rather than 82% | 5529
@@ -102,6 +111,17 @@ The total, about **A$32,500** a year, is about **21%** of SV-8's annual gas cost
 ## Keeping the savings
 
 Savings in steam systems decay. Insulation is removed for repairs and not replaced; traps fail; boiler efficiency drifts as burners go out of adjustment and heating surfaces scale; condensate lines corrode and leak. SV-8 keeps its savings with four routines already described: the daily boiler log with its gas, steam and make-up meters; the six-monthly trap survey and register; the annual thermal survey of insulation; and the regular burner service with flue gas analysis. Each takes little time; together they are the difference between a steam system that stays efficient and one that slowly returns to where it started. The maintenance engineer reports the steam system's cost per tonne, return rate and trap failures each quarter alongside the plant's other performance figures, so the savings stay visible to the people who fund the work. When the numbers slip, the report shows where to look first.
+
+```figure
+type: compare
+title: The four routines that keep SV-8's savings
+cols: How often | What it catches
+caption: This is an illustration of SV-8's routines. Each takes little time; the quarterly report of cost per tonne, return rate and trap failures keeps the results in front of the people who fund the work.
+- Boiler log with gas, steam and make-up meters | every shift, reviewed weekly | falling efficiency, rising make-up, a cooling feed tank
+- *Trap survey and register | every six months | traps failed open or closed, repeat failures
+- Thermal survey of insulation | every year | jackets and lagging removed for repairs and not replaced
+- Burner service with flue gas analysis | at the service interval | burners out of adjustment, scaled heating surfaces
+```
 
 ## A failure case: the silted cut-out
 

@@ -1,5 +1,5 @@
 ---
-book: steam-systems-by-the-numbers
+book: process-steam-by-the-numbers
 chapterSlug: the-boiler-and-the-cost-of-steam
 order: 2
 title: "The boiler and the cost of steam"
@@ -15,38 +15,27 @@ This chapter calculates SV-8's boiler output and fuel input, explains where the 
 
 The boiler takes in feedwater and delivers saturated steam. The heat it adds to each kilogram is the steam's enthalpy minus the feedwater's. SV-8's boiler makes steam at 800 kPa absolute, with an enthalpy of **2,768 kJ/kg**. Its feedwater, a mixture of returned condensate and treated make-up water from the feed tank, enters at **80 °C**, with an enthalpy of about **4.19 × 80 ≈ 335 kJ/kg**, using water's specific heat as an approximation.
 
-```figure
-type: formula
-title: SV-8 boiler's heat output and gas input at full output
-formula: heat output = steam flow × (h_g − h_feed)        fuel input = heat output ÷ efficiency
-caption: This is an illustration at 1,000 kg/h of steam at 800 kPa absolute, feedwater at 80 °C and an assumed boiler efficiency of 85%.
-- Steam enthalpy h_g at 800 kPa | 2,768 kJ/kg
-- Feedwater enthalpy at 80 °C | about 335 kJ/kg
-step: heat per kilogram ≈ 2,768 − 335 ≈ 2,433 kJ/kg
-step: heat output ≈ 1,000 × 2,433 ÷ 3,600 ≈ 676 kW
-step: gas input ≈ 676 ÷ 0.85 ≈ 795 kW
-```
-
 At full output, SV-8's boiler puts about **676 kW** into the steam and burns gas at about **795 kW**.
 
 ## Where the rest goes
 
 The other 119 kW or so of the gas's energy leaves elsewhere. Most goes up the flue as hot exhaust gas; some is radiated and convected from the boiler's shell; some leaves with blowdown water; and some is lost each time the burner cycles on and off, as the boiler is purged and its casing heats and cools. The **efficiency**, steam heat out divided by fuel energy in, combines all of them. SV-8's assumed 85% is an illustration. A boiler's actual efficiency is measured, at least roughly, by comparing its metered gas with its metered steam and the feedwater temperature, and flue gas analysis during a burner service shows how much is lost up the flue.
 
+```figure
+type: stack
+title: Where SV-8's 795 kW of gas goes at full output
+unit: kW
+caption: This is an illustration at an assumed 85% efficiency, with blowdown at 30 kg/h. The split between flue, shell and cycling losses varies with load and burner tuning; only a flue gas analysis and metered gas and steam pin it down.
+- Heat into the steam | 676
+- Flue gas, shell and burner cycling | 115.8
+- Blowdown water | 3.2
+```
+
 Efficiency falls at low loads, where cycling losses and the shell's fixed loss become a larger share of a smaller output. A boiler sized for a peak it rarely reaches spends much of its life at low, inefficient loads, which is one reason oversized boilers cost more to run than their nameplate efficiency suggests.
 
 ## Feedwater temperature matters
 
 The colder the feedwater, the more heat the boiler must add per kilogram. If SV-8's feed tank were at **15 °C** instead of 80 °C, each kilogram would need about **2,768 − 63 ≈ 2,705 kJ**, about **11%** more. For the same burner input, the boiler would make only about **899 kg/h** instead of 1,000.
-
-```figure
-type: compare
-title: Effect of feedwater temperature on SV-8's boiler
-cols: Feedwater enthalpy | Heat per kg of steam | Steam at 676 kW of heat
-caption: This is an illustration at 800 kPa absolute. Warm feedwater, mainly from returned condensate, lets the same boiler make more steam from the same gas.
-- *80 °C, with condensate return | about 335 kJ/kg | about 2,433 kJ/kg | 1,000 kg/h
-- 15 °C, cold make-up only | about 63 kJ/kg | about 2,705 kJ/kg | about 899 kg/h
-```
 
 That is why the feed tank is kept hot, why returned condensate is so valuable, and why so much attention goes to getting condensate back. Chapters 6 and 7 count it in detail.
 
@@ -64,23 +53,24 @@ From the heat per kilogram, the efficiency and the gas price, the cost of steam 
 - Gas per tonne at 85% efficiency: **2,433 ÷ 0.85 ≈ 2,862 MJ ≈ 2.86 GJ**.
 - Cost per tonne at A$22 per gigajoule: **2.86 × 22 ≈ A$63**.
 
-```figure
-type: bars
-title: Cost of a tonne of SV-8's steam under different conditions
-unit: A$ a tonne
-max: 85
-caption: This is an illustration at 800 kPa absolute, excluding GST. Each change is applied on its own to the base case of 80 °C feedwater, 85% efficiency and A$22 per gigajoule.
-- *Base case | 63
-- Efficiency falls to 80% | 67
-- Gas rises to A$28 per GJ | 80
-- Feedwater at 15 °C, cold make-up only | 70
-```
-
 SV-8's average steam use is about **600 kg/h** over 4,000 hours, about **2,400 tonnes** a year, costing about **A$151,000** a year in gas. That number, and the cost per tonne behind it, is the yardstick for every saving in the rest of the book. Many sites find it useful to add water, treatment chemicals and maintenance to get a full cost per tonne, which is higher still.
 
 ## Sizing the boiler for the load
 
 A boiler must meet the plant's peak demand, not its average. SV-8's four kettles, each rated at 100 kW, need about **4 × 100 ÷ 2,133 × 3,600 ≈ 675 kg/h** of steam when all are heating at once, before allowing for the heat lost from the main and the steam used by the cleaning hoses. The boiler's 1,000 kg/h gives margin for those, for the higher demand when a cold kettle first comes up to temperature, and for the slower recovery when feedwater is cooler than normal, as the failure case below shows.
+
+```figure
+type: bars
+title: SV-8's steam demand against the boiler's rating
+unit: kg/h
+max: 1000
+caption: This is an illustration. Kettle demands use 100 kW each at 400 kPa absolute, where h_fg = 2,133 kJ/kg, before main losses and hose use. Staggered start-ups keep demand near the two-kettle level.
+- One kettle heating | 169
+- Two kettles heating together | 338
+- Average demand over a shift | 600
+- All four kettles heating at once | 675
+- *Boiler rating | 1000
+```
 
 The average demand, about 600 kg/h, is well below the peak, and for much of the day it is lower still. A boiler that is much larger than its peak spends most of its time at low fire or cycling, where its efficiency falls. Staggering the kettles' start times, so that no more than two heat at once, cuts the peak sharply and lets the boiler run steadily. SV-8's production plan staggers start-ups by fifteen minutes for that reason, a free change that improved both steam pressure and efficiency.
 
@@ -107,6 +97,17 @@ A daily boiler log is the cheapest monitoring there is. SV-8's operator records,
 ## A failure case: the boiler that could not keep up
 
 This is an illustration. On a busy Monday morning, all four kettles were heating batches at once, and the steam pressure at the kettles, normally a steady 400 kPa absolute, sagged well below it. The kettles slowed, and the boiler's burner was at full fire continuously.
+
+```figure
+type: timeline
+title: How a tripped condensate pump starved SV-8's boiler
+caption: This is an illustration. The fault began on Friday but showed only on Monday, when demand peaked; the feed tank's temperature pointed straight to the cause.
+- Friday afternoon | The kitchen condensate pump trips; condensate starts running to drain
+- Weekend | The feed tank refills with cold make-up water and cools to about 25 °C
+- Monday, first batches | All four kettles heat at once; each kilogram of steam needs about 9% more heat
+- * Monday, mid-morning | Pressure at the kettles sags below 400 kPa absolute with the burner at full fire
+- Monday, same day | Pump reset and repaired; feed tank temperature and pump status alarms added
+```
 
 The boiler operator checked the feed tank's thermometer: it read about **25 °C**, not its usual 80 °C. The condensate return pump in the kitchen had tripped on Friday afternoon, and over the weekend and into Monday all the condensate had run to drain through its overflow, while the feed tank filled with cold make-up water. With feedwater at 25 °C instead of 80 °C, the boiler needed about 9% more heat for every kilogram of steam, and at full fire it could no longer supply four kettles at once.
 

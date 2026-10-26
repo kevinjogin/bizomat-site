@@ -1,5 +1,5 @@
 ---
-book: steam-systems-by-the-numbers
+book: process-steam-by-the-numbers
 chapterSlug: reading-the-steam-table
 order: 1
 title: "Reading the steam table"
@@ -15,6 +15,23 @@ This chapter reads the table for SV-8's three pressures: atmospheric, the 400 kP
 
 Water boils when the pressure of its vapour equals the pressure around it. At atmospheric pressure, about 101.3 kPa absolute, that happens at **100 °C**. At higher pressure, water must be hotter before it boils: at **400 kPa** absolute, it boils at **143.1 °C**, and at **800 kPa** absolute, at **170.4 °C**. Water and steam together at a given pressure are always at that pressure's **saturation temperature**; adding heat makes more steam, not hotter water.
 
+```figure
+type: line
+title: Saturation temperature rises with absolute pressure
+x: Absolute pressure, kPa
+y: Saturation temperature, °C
+ymin: 90
+ymax: 180
+mark: 400 | kettle supply, 143.1 °C
+caption: Published saturated steam table values at 101.3, 190, 280, 320, 400 and 800 kPa absolute. The curve flattens as pressure rises: the first 89 kPa above atmospheric add 18.6 °C, while the 400 kPa from the kettle supply to the boiler add 27.3 °C.
+- 101.3 | 100.0
+- 190 | 118.6
+- 280 | 131.2
+- 320 | 135.8
+- 400 | 143.1
+- 800 | 170.4
+```
+
 That one-to-one link between pressure and temperature is what makes steam controllable. To heat a kettle's jacket to a steady 143 °C, hold its steam at 400 kPa absolute. Change the pressure, and the temperature follows.
 
 ## Absolute and gauge pressure
@@ -27,20 +44,19 @@ Reading a table at the gauge pressure, as though it were absolute, picks the wro
 
 For each pressure, a saturated steam table gives, per kilogram:
 
+```figure
+type: stack
+title: Where the heat sits in a kilogram of dry steam at 400 kPa absolute
+unit: kJ/kg
+caption: Published steam table values. Together they make h_g, about 2,738 kJ/kg. The latent part, nearly four-fifths of the total, is released only when the steam condenses, at a steady 143.1 °C.
+- Heat in the boiling water, h_f | 604.7
+- Latent heat of evaporation, h_fg | 2133
+```
+
 - **h_f**, the enthalpy of saturated liquid: the heat in water at its boiling point, measured from a reference near 0 °C;
 - **h_fg**, the enthalpy of evaporation, or latent heat: the extra heat to turn that water entirely into steam at the same temperature;
 - **h_g**, the enthalpy of saturated steam: h_f plus h_fg, the total heat in dry steam;
 - **v_g**, the specific volume of the steam: how many cubic metres a kilogram occupies.
-
-```figure
-type: compare
-title: Saturated steam at SV-8's three pressures
-cols: Saturation temperature | Liquid h_f, kJ/kg | Latent h_fg, kJ/kg | Steam h_g, kJ/kg | Steam volume, m³/kg
-caption: Values as published in a saturated steam table at absolute pressures. Higher pressure means hotter steam, less latent heat per kilogram and much smaller volume.
-- 101.3 kPa, atmospheric | 100.0 °C | 419.1 | 2,257 | 2,676 | 1.67
-- *400 kPa, kettle supply | 143.1 °C | 604.7 | 2,133 | 2,738 | 0.462
-- 800 kPa, boiler | 170.4 °C | 720.9 | 2,047 | 2,768 | 0.240
-```
 
 Two things stand out. The total heat in steam, h_g, barely changes with pressure: 2,676 to 2,768 kJ/kg across the range. And most of it is latent heat, released only when the steam condenses.
 
@@ -56,33 +72,11 @@ Steam's volume changes greatly with pressure. A kilogram at 800 kPa occupies **0
 
 That gives the usual pattern of steam systems: **distribute at high pressure, use at low pressure**. High pressure keeps the main small and cheap and its heat loss low; reducing the pressure near the point of use gives the lower temperature the process needs and slightly more latent heat per kilogram. SV-8 raises steam at 800 kPa, carries it 60 m in a small main, and reduces it to 400 kPa at the kettles.
 
-```figure
-type: bars
-title: Latent heat per kilogram at SV-8's pressures
-unit: kJ/kg
-max: 2400
-caption: Published values. Lower pressure steam releases slightly more latent heat per kilogram, at a lower temperature; higher pressure steam occupies less volume.
-- 101.3 kPa, 100 °C | 2257
-- *400 kPa, 143.1 °C | 2133
-- 800 kPa, 170.4 °C | 2047
-```
-
 ## Wet steam and dryness fraction
 
 The table describes **dry saturated steam**: steam with no liquid water in it. Steam leaving a boiler often carries droplets of water, and steam travelling through a pipe loses heat and condenses a little. Such **wet steam** is described by its **dryness fraction x**, the proportion by mass that is actually steam. Steam at x = 0.95 is 95% steam and 5% water.
 
 Wet steam carries less heat. Its enthalpy is **h_f + x × h_fg**, and the heat it releases on condensing is only **x × h_fg**. The water droplets also form a film on heating surfaces that slows heat transfer further, and they erode valves and fittings.
-
-```figure
-type: formula
-title: Heat released by wet steam at 400 kPa
-formula: heat released on condensing = x × h_fg        steam needed = duty ÷ (x × h_fg)
-caption: This is an illustration for one 100 kW kettle at 400 kPa absolute, where h_fg = 2,133 kJ/kg.
-- Dry steam, x = 1.00 | 2,133 kJ/kg, so 100 ÷ 2,133 ≈ 0.0469 kg/s ≈ 169 kg/h
-- Wet steam, x = 0.92 | 0.92 × 2,133 ≈ 1,962 kJ/kg
-step: steam needed ≈ 100 ÷ 1,962 ≈ 0.051 kg/s ≈ 183 kg/h, about 8.7% more
-step: and the water film on the jacket slows heating further
-```
 
 Good practice keeps steam dry: a boiler operated within its rated output and water level, a separator after the boiler, a main that falls in the direction of flow with drain points and traps, and insulation to limit condensation.
 
@@ -101,6 +95,16 @@ When the steam has condensed, the kilogram of water leaving the kettle's jacket 
 ## Checking how dry steam is
 
 Dryness cannot be seen from outside a pipe. Three practical approaches give an idea of it. The first is a **heat balance**: measure the steam flow to a process and the heat its product actually gains, and compare the heat per kilogram with the table's latent heat, as in the failure case below. The second is a **throttling calorimeter**: a small sample of steam is bled through a valve into a chamber at atmospheric pressure, where, if the original steam was nearly dry, it becomes slightly superheated; the measured temperature then gives the original dryness from the table, because throttling keeps the enthalpy constant, as Chapter 4 explains. The third is simply watching for symptoms: water hammer, wet discharges from traps and vents, slow heating and erosion of valve seats all point to wet steam. On SV-8, the heat balance was the method used, because the kettles already had product temperature probes and a portable steam flow meter was available.
+
+```figure
+type: decision
+title: Choosing a way to judge how dry the steam is
+question: What can you measure at the point of use?
+caption: Methods described in this chapter. A heat balance needs a steam flow meter and a product temperature; a throttling calorimeter needs a sampling point and works only on nearly dry steam.
+- *Steam flow and the heat the product gains | heat balance | heat per kilogram ÷ the table's h_fg gives the dryness fraction
+- A sample of steam bled to atmospheric pressure | throttling calorimeter | measured superheat and constant enthalpy give the original dryness
+- Only what you can see and hear | symptoms | water hammer, wet trap discharges, slow heating and eroded seats point to wet steam
+```
 
 ## Superheated steam
 

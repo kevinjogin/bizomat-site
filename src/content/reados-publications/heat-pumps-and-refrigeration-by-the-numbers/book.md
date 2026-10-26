@@ -51,8 +51,8 @@ related:
     href: "/reados/publications/pneumatics-by-the-numbers/"
   - title: "HVAC for commercial and industrial buildings"
     href: "/reados/collections/fluids-hvac-and-building-services/hvac-for-commercial-and-industrial-buildings/"
-  - title: "Steam Systems by the Numbers"
-    href: "/reados/publications/steam-systems-by-the-numbers/"
+  - title: "Process Steam by the Numbers"
+    href: "/reados/publications/process-steam-by-the-numbers/"
   - title: "Process Chillers by the Numbers"
     href: "/reados/publications/process-chillers-by-the-numbers/"
 ---
@@ -65,7 +65,7 @@ This book works these machines through by numbers. It starts with the second law
 
 ## The running case
 
-The book follows two pieces of plant at a fictional **food factory**, the same factory whose hot water and steam systems appear in *Heat Transfer by the Numbers* and *Steam Systems by the Numbers*. The first is a proposal to supply part of the wash-down hot water system's heat, about **150,000 kWh** a year at up to 85 °C, from a heat pump instead of gas. The second is **CS-1**, a chilled store held at **2 °C**, 6 m by 5 m by 3 m, receiving about **2,000 kg** of product a day.
+The book follows two pieces of plant at a fictional **food factory**, the same factory whose hot water and steam systems appear in *Heat Transfer by the Numbers* and *Process Steam by the Numbers*. The first is a proposal to supply part of the wash-down hot water system's heat, about **150,000 kWh** a year at up to 85 °C, from a heat pump instead of gas. The second is **CS-1**, a chilled store held at **2 °C**, 6 m by 5 m by 3 m, receiving about **2,000 kg** of product a day.
 
 All quantities, prices and results are invented for teaching. This is an illustration. None of it describes a KEVOS® client, supplier or project. Heat from gas is costed at about **A$0.093** per kWh delivered, as in the companion books, and electricity at an assumed **A$0.25** per kWh. Money is in Australian dollars, excluding GST. Real machines' performance comes from their makers' data at the actual operating conditions; this book's ratio of real to ideal performance, 0.5, is a teaching value.
 

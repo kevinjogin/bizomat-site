@@ -1,5 +1,5 @@
 ---
-book: steam-systems-by-the-numbers
+book: process-steam-by-the-numbers
 chapterSlug: pipes-drainage-and-water-hammer
 order: 5
 title: "Pipes, drainage and water hammer"
@@ -15,35 +15,11 @@ This chapter sizes SV-8's pipework by velocity, at both pressures, explains why 
 
 The volume of steam flowing each second is its mass flow times its specific volume, from the steam table. Dividing by the pipe's bore area gives the velocity. Designers keep steam velocities within limits that balance pipe cost against noise, pressure drop and erosion; this book uses **25 m/s** as a teaching limit for saturated steam, a value within commonly used ranges. A real design uses the designer's or the pipe maker's guidance and checks the pressure drop as well.
 
-```figure
-type: formula
-title: Steam velocity in SV-8's main at full boiler output
-formula: velocity = mass flow × specific volume ÷ bore area
-caption: This is an illustration at 1,000 kg/h of steam at 800 kPa absolute, where the published specific volume is 0.240 m³/kg. Bores are illustrative for medium-weight steel pipe.
-- Volume flow | 1,000 ÷ 3,600 × 0.240 ≈ 0.0667 m³/s
-- DN50, bore about 52.5 mm | area about 0.00216 m²
-- DN65, bore about 68.9 mm | area about 0.00373 m²
-step: DN50: velocity ≈ 0.0667 ÷ 0.00216 ≈ 30.8 m/s, too fast
-step: DN65: velocity ≈ 0.0667 ÷ 0.00373 ≈ 17.9 m/s, chosen
-```
-
 SV-8's 60 m main is **DN65**, 76.1 mm outside diameter, carrying the boiler's full output at about **18 m/s**, within the teaching limit with room for growth.
 
 ## Low-pressure pipes are larger
 
 After the reducing station, the steam's specific volume nearly doubles, to **0.462 m³/kg** at 400 kPa absolute. The same mass flow needs nearly twice the area for the same velocity.
-
-```figure
-type: compare
-title: Velocities in SV-8's pipework by size
-cols: Flow and pressure | Pipe | Velocity
-caption: This is an illustration with published specific volumes and illustrative bores. The low-pressure header carries less steam than the main but needs a larger pipe.
-- Main | 1,000 kg/h at 800 kPa | DN65 | about 17.9 m/s
-- Low-pressure header, option | 675 kg/h at 400 kPa | DN65 | about 23.2 m/s, close to the limit
-- *Low-pressure header, chosen | 675 kg/h at 400 kPa | DN80 | about 16.9 m/s
-- Kettle branch, option | 169 kg/h at 400 kPa | DN25 | about 37.3 m/s, too fast
-- *Kettle branch, chosen | 169 kg/h at 400 kPa | DN32 | about 22.4 m/s
-```
 
 The low-pressure header to the four kettles carries only about **675 kg/h**, two thirds of the main's capacity, yet it is a size larger, **DN80**, because the steam is at half the pressure. Each kettle branch is **DN32**. A pipe that is too small on the low-pressure side shows itself as a supply pressure that sags at the far kettles when all four are heating, which defeats the purpose of reducing the pressure carefully at the station.
 
@@ -54,6 +30,39 @@ Velocity is a proxy for pressure drop, which is what actually matters to the pro
 ## Laying mains to fall and drain
 
 Condensate forms all along a steam main, from heat lost through its insulation: about **4.5 kg/h** in SV-8's insulated main at full temperature, as Chapter 4 calculated. Steam flowing at 18 m/s carries water droplets with it, but water on the bottom of the pipe must be collected and removed, or it accumulates.
+
+```figure
+type: svg
+title: How SV-8's main falls, drains and feeds its branches
+alt: A steam main drawn as a pipe falling gently from left to right in the direction of steam flow, with condensate running along its bottom. Three full-bore drain pockets point down from the bottom of the main: after the boiler, at the midpoint and at the end before the reducing station. Each has a trap taken off its side above the bottom of the pocket, where dirt settles. A branch leaves from the top of the main, rises and turns towards a user.
+caption: This is an illustration, not to scale. Condensate runs with the steam to full-bore pockets; traps are taken off the side of each pocket so dirt settles below them. Branches leave from the top, where the steam is driest.
+viewbox: 0 0 640 280
+body:
+<path class="ln" d="M30 70L610 100M30 90L610 120"/>
+<path class="la flow" d="M30 80L600 109.5"/>
+<path class="ah" d="M598 103l14 7-14 6z"/>
+<path class="la dsh" d="M30 87L610 117"/>
+<text class="tx txs" x="330" y="62">steam main, falling in the direction of flow</text>
+<path class="ln" d="M200 79V36H262"/>
+<text class="tx txs" x="270" y="40">branch from the top</text>
+<rect class="bx" x="50" y="92" width="20" height="52" rx="2"/>
+<rect class="fs" x="52" y="132" width="16" height="10"/>
+<path class="ln" d="M70 124H96"/>
+<rect class="bxa" x="96" y="117" width="16" height="14" rx="2"/>
+<text class="tx txs" x="60" y="172" text-anchor="middle">after the boiler</text>
+<rect class="bx" x="310" y="105" width="20" height="52" rx="2"/>
+<rect class="fs" x="312" y="145" width="16" height="10"/>
+<path class="ln" d="M330 137H356"/>
+<rect class="bxa" x="356" y="130" width="16" height="14" rx="2"/>
+<text class="tx txs" x="320" y="185" text-anchor="middle">midpoint</text>
+<rect class="bx" x="580" y="119" width="20" height="52" rx="2"/>
+<rect class="fs" x="582" y="159" width="16" height="10"/>
+<path class="ln" d="M580 151H554"/>
+<rect class="bxa" x="538" y="144" width="16" height="14" rx="2"/>
+<text class="tx txs" x="625" y="200" text-anchor="end">before the reducing station</text>
+<text class="txa" x="30" y="236">drain pocket: full bore, pointing down</text>
+<text class="tx txs" x="30" y="258">trap taken off the side, above the bottom, so dirt settles in the pocket</text>
+```
 
 The main is therefore laid with a steady **fall in the direction of steam flow**, so that condensate runs along the bottom with the steam towards collection points. At intervals along the main, at every low point, before every rise and at the end of the main, a **drain pocket** is formed: a short, full-bore tee pointing down from the bottom of the main, with a trap taken off its side above the bottom so that dirt settles in the pocket rather than reaching the trap. A small pipe tapped into the bottom of the main would not work; condensate travelling at steam velocity shoots straight past it. SV-8's main has drain pockets with traps at its start after the boiler, at its midpoint and at its end before the reducing station.
 
@@ -69,6 +78,17 @@ A cold main is full of air. As steam enters, it pushes the air ahead of it towar
 
 A steam main heats from room temperature to the steam's temperature every time the plant starts. SV-8's 60 m steel main, warming by about **150 °C**, grows by about **12 × 10⁻⁶ × 60,000 × 150 ≈ 108 mm**. That growth must be absorbed by bends, loops or expansion joints between anchors, exactly as *Thermal Expansion by the Numbers* describes for hot water pipes, and the drain pockets, branches and supports must all allow for the main sliding past them. A drain pocket's trap, piped rigidly to a fixed condensate line, can be torn off as the main grows; its connection needs flexibility too, usually a short loop or bend in the small trap piping.
 
+```figure
+type: formula
+title: How far SV-8's main grows when it warms up
+formula: growth = expansion coefficient × length × temperature rise
+caption: This is an illustration with a typical coefficient for steel. Bends, loops or expansion joints between anchors must absorb the growth, and drain pocket traps need flexible connections as the main slides past them.
+- Expansion coefficient of steel | about 12 × 10⁻⁶ per K
+- Length of the main | 60 m = 60,000 mm
+- Temperature rise | about 150 K, from room temperature to 170.4 °C
+step: growth ≈ 12 × 10⁻⁶ × 60,000 × 150 ≈ 108 mm
+```
+
 ## Redundant pipework
 
 Factories change, and steam pipework is often left behind: a branch to equipment that has gone, a main extended to a building no longer used. Redundant pipework still at steam pressure loses heat, forms condensate, needs working traps and can harbour water hammer, all for no purpose. SV-8's survey when the kettles were installed found a 12 m branch, still live and partly uninsulated, to a cooker removed years earlier. It was isolated and cut back to the main, with a blank flange and its own drain, and its removal saved more each year than the survey cost. A walk along every steam line, asking what each branch now feeds, is worth doing whenever a plant changes.
@@ -79,21 +99,20 @@ The condensate formed while a main is hot and running is modest. The condensate 
 
 SV-8's main weighs about **6.4 kg** of steel per metre, about **386 kg** over 60 m. Heating it from 20 °C to 170.4 °C, with steel's specific heat taken as about **0.5 kJ/kg·K**, a typical value, takes about **386 × 0.5 × 150.4 ≈ 29,000 kJ**. That heat comes from condensing steam at 2,047 kJ/kg, about **14.2 kg** of condensate, on top of the heat lost through the insulation. If the main is brought up to temperature over **15 minutes**, condensate forms at about **57 kg/h** during warm-up, more than twelve times the running rate of 4.5 kg/h.
 
-```figure
-type: bars
-title: Condensate formed in SV-8's 60 m main
-unit: kg/h
-max: 65
-caption: This is an illustration. During a 15-minute warm-up, heating the steel produces condensate many times faster than the insulated main's running loss. Drain traps must be sized for the warm-up, not just for running.
-- Running, insulated | 4.5
-- *Warm-up over 15 minutes | 57
-```
-
 The traps on the main's drain pockets are therefore sized for the warm-up load, with a margin, and the boiler's operating procedure brings steam into a cold main slowly, opening the main's steam valve a little at first so the steel warms gradually and the traps can keep up.
 
 ## Water hammer
 
 When condensate collects in a steam pipe, two things can happen, both called water hammer.
+
+```figure
+type: compare
+title: The two kinds of water hammer in steam pipes
+cols: What happens | Where it starts | What prevents it
+caption: Both kinds come from water left in steam pipework. They are prevented by the same practices and should never be accepted as normal noise.
+- *Slugs driven by steam | flowing steam picks up pooled water and fires it into a bend, valve or closed end | a sag, an undrained low point, a pipe laid against its fall | steady falls, sound supports, drain pockets with working traps
+- Collapsing steam pockets | a pocket of steam condenses suddenly and the water rushes in to fill it | flooded lines, cold condensate, pipework warmed too fast | traps sized for warm-up, slow warm-up of cold pipework
+```
 
 **Slugs driven by steam.** Water lying in a sag, an undrained low point or a pipe laid against its fall builds up until the flowing steam picks it up as a solid slug and drives it along the pipe at close to steam velocity. When the slug meets a bend, a valve or a closed end, its momentum is stopped almost instantly, with a bang that can be heard across a factory and a force that can crack fittings, burst valve bodies and break pipe supports.
 

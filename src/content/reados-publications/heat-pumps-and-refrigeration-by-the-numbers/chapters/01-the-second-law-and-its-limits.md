@@ -84,7 +84,7 @@ caption: This is an illustration. Electricity and fuel are high quality; low-tem
 Every real process creates entropy, but some create far more than others, and they are where the second law's waste is greatest. In a typical food factory:
 
 - **Burning fuel to heat water.** The flame is at well over a thousand degrees, the water at 85 °C. The heat crosses an enormous temperature difference, creating a great deal of entropy, even though the boiler's first-law efficiency looks good.
-- **Throttling.** Steam reduced in pressure through a valve, as in *Steam Systems by the Numbers*, keeps its energy but loses some of its ability to do work.
+- **Throttling.** Steam reduced in pressure through a valve, as in *Process Steam by the Numbers*, keeps its energy but loses some of its ability to do work.
 - **Mixing.** Hot water mixed with cold to make warm water, or hot and cold streams mixed in a drain, destroys the temperature difference that could have driven a heat exchanger.
 - **Electric resistance heating.** A kilowatt-hour of electricity, the highest-quality energy, turned into a kilowatt-hour of low-temperature heat.
 

@@ -1,5 +1,5 @@
 ---
-book: steam-systems-by-the-numbers
+book: process-steam-by-the-numbers
 chapterSlug: flash-steam-and-condensate-return
 order: 7
 title: "Flash steam and condensate return"
@@ -16,15 +16,16 @@ This chapter calculates flash steam with the steam table, works out what venting
 When saturated water at a higher pressure is released to a lower pressure, its enthalpy stays the same, as with the throttling in Chapter 4. The water's enthalpy at the higher pressure, h_f, is more than saturated water at the lower pressure can hold. The fraction that flashes to steam is that surplus divided by the latent heat at the lower pressure.
 
 ```figure
-type: formula
-title: Flash steam from SV-8's kettle condensate
-formula: flash fraction = (h_f at the high pressure − h_f at the low pressure) ÷ h_fg at the low pressure
-caption: Published steam table values. Condensate at 400 kPa absolute released to atmospheric pressure in a vented receiver.
-- h_f at 400 kPa | 604.7 kJ/kg
-- h_f at 101.3 kPa | 419.1 kJ/kg
-- h_fg at 101.3 kPa | 2,257 kJ/kg
-step: flash fraction = (604.7 − 419.1) ÷ 2,257 ≈ 0.0822, about 8.2%
-step: from 800 kPa to atmospheric, (720.9 − 419.1) ÷ 2,257 ≈ 13.4%
+type: bars
+title: Share of condensate that flashes for each pressure drop
+unit: %
+max: 15
+caption: Published steam table values: flash fraction = (h_f at the higher pressure − h_f at the lower) ÷ h_fg at the lower. The bigger the drop, the more flashes; condensate from the 800 kPa boiler loses most.
+- 800 to 400 kPa absolute | 5.4
+- 400 to 190 kPa absolute | 4.8
+- 800 to 190 kPa absolute | 10.1
+- *400 kPa to atmospheric, SV-8's kettle condensate | 8.2
+- 800 kPa to atmospheric, blowdown | 13.4
 ```
 
 About **8.2%** of the kettles' condensate becomes steam the moment it reaches the vented receiver. By mass it looks small. By volume it is not: a kilogram of steam at atmospheric pressure occupies **1.67 m³**, so flash steam makes a large, visible plume from a modest mass. And by heat it is large: each kilogram of flash steam carries its latent heat, 2,257 kJ, away.
@@ -32,16 +33,6 @@ About **8.2%** of the kettles' condensate becomes steam the moment it reaches th
 ## What venting costs SV-8
 
 On average, about **420 kg/h** of condensate returns to SV-8's vented receiver, 70% of the 600 kg/h of steam used, most of it from the 400 kPa kettles. About **420 × 0.0822 ≈ 34.5 kg/h** flashes off and leaves through the receiver's vent, about **58 m³/h** of steam. Its heat is about **34.5 × 2,257 ÷ 3,600 ≈ 21.7 kW**, and over 4,000 hours, about **A$8,100** a year at about A$0.093 per kWh, before counting the lost water.
-
-```figure
-type: bars
-title: Where the heat in SV-8's returning condensate goes, average flows
-unit: kW
-max: 35
-caption: This is an illustration at 420 kg/h of condensate from 400 kPa. Flash steam vented at the receiver is the largest loss after the heat already used in the kettles; the rest returns to the feed tank as hot water.
-- Flash steam vented at the receiver | 21.7
-- *Hot condensate returned to the feed tank, above 15 °C make-up | 31.8
-```
 
 ## Recovering flash steam
 
@@ -61,17 +52,18 @@ Returned condensate is valuable three ways.
 
 **Treatment.** Condensate is distilled water, nearly free of dissolved solids, so it needs little treatment and reduces the blowdown the boiler needs. Make-up water must be softened and dosed, and every kilogram of it brings in solids that must later be blown down.
 
-```figure
-type: compare
-title: Raising SV-8's condensate return from 70% to 85%
-cols: Extra condensate | Heat saved a year | Water saved a year
-caption: This is an illustration over 4,000 hours, with heat at about A$0.093 per kWh and water and its treatment at an assumed A$3 per kilolitre, excluding GST.
-- *Extra 15% of 600 kg/h | about 90 kg/h | about 6.8 kW, about A$2,540 | about 360 kL, about A$1,080
-```
-
 ## Condensate lines carry steam too
 
 Flash does not wait for the receiver. It begins as soon as the condensate passes the trap, so the line from the trap to the receiver carries a mixture of water and flash steam. By mass it is mostly water; by volume it is mostly steam. At SV-8's average flows, about **420 kg/h** of water occupies only about **0.42 m³/h**, while the **34.5 kg/h** of flash steam occupies about **58 m³/h**, more than a hundred times as much. Condensate lines after traps are therefore sized for the flash steam's volume, not the water's, and are much larger than a water pipe for the same mass would be. An undersized line raises the back pressure at the traps, which reduces their capacity and brings on the stall described in Chapter 6.
+
+```figure
+type: compare
+title: What the line from SV-8's kettle traps carries, by mass and by volume
+cols: Mass flow | Volume flow
+caption: This is an illustration at average flows, with 420 kg/h of condensate from 400 kPa absolute flashing to atmospheric pressure, and published specific volumes. By mass the line carries mostly water; by volume, mostly steam, so it is sized for the steam.
+- Water left after flashing | about 386 kg/h | about 0.4 m³/h
+- *Flash steam | about 34.5 kg/h | about 58 m³/h
+```
 
 The receiver's vent must likewise be large enough to pass the flash steam without pressurising the receiver, and it must discharge somewhere safe and visible, as SV-8's does, above the roof.
 
@@ -86,6 +78,18 @@ Condensate is pure water, which sounds benign, but it absorbs carbon dioxide rel
 ## Measuring the return rate
 
 The return rate is simply the share of steam produced that comes back as condensate. With a steam meter and a make-up water meter, it is about **one minus the make-up divided by the steam**, after allowing for the water discharged as blowdown, which must also be made up. SV-8 records both meters daily in the boiler log; a falling return rate is the first sign of a new loss, such as a trap discharging to drain, a leak or a diverting valve stuck open.
+
+```figure
+type: formula
+title: Condensate return rate from two meters
+formula: return rate = 1 − (make-up water − blowdown) ÷ steam produced
+caption: This is an illustration at SV-8's average steam flow with an illustrative 30 kg/h of blowdown. Make-up replaces both the condensate lost and the water blown down, so blowdown is taken off before dividing.
+- Steam produced | 600 kg/h
+- Blowdown | 30 kg/h
+- Make-up water metered | 210 kg/h
+step: return rate = 1 − (210 − 30) ÷ 600 = 0.70, the 70% used in this book
+step: in the failure case, make-up of about 300 kg/h gave 1 − 270 ÷ 600 ≈ 0.55
+```
 
 ## When condensate cannot come back
 

@@ -191,7 +191,7 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'branched-fittings-by-the-numbers': { motif: 'network', tone: 'graphite' },
   'machine-noise-control-by-the-numbers': { motif: 'shield', tone: 'graphite' },
   'product-acoustics-by-the-numbers': { motif: 'megaphone', tone: 'ember' },
-  'steam-systems-by-the-numbers': { motif: 'factory', tone: 'ember' },
+  'process-steam-by-the-numbers': { motif: 'bubbles', tone: 'ember' },
   'heat-pumps-and-refrigeration-by-the-numbers': { motif: 'cycle', tone: 'paper' },
   'pipe-flow-by-the-numbers': { motif: 'funnel', tone: 'paper' },
   'centrifugal-pumps-by-the-numbers': { motif: 'waterwheel', tone: 'paper' },
