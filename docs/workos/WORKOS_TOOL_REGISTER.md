@@ -1861,3 +1861,41 @@ A nineteenth round of 9 integrated design checks in batch handbook44: gyroscopic
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Journal Bearing Oil Check (Viscosity at Temperature, Film and Friction)** `journal-bearing-oil-check` | OIL SUITABLE | Viscosity; Film; Extrapolation; Model and application | 2326–2345 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, twenty-ninth pass: integrated design checks, twentieth round (added 26 October 2026)
+
+A twentieth round of 9 integrated design checks in batch handbook45: compressed-air main sizing (pressure drop, velocity, smallest standard bore, receiver), an anodizing plan (720 rule time, rectifier, bath heat, cost per part), repair or replace (defender EUAC with a cost gradient against the challenger), make or buy (break-even quantity and saving), a block and tackle check (reeving efficiency, pull, rope factor, hand pull), restrained bar heating (thermal stress, yield and buckling temperatures), buffer stop design (energy, peak force, deceleration, stroke needed), a closed gas vessel temperature check (pressure rise and fill limit) and blow-off nozzle consumption and cost. Tests cross-check against the compressed-air pipe drop, air receiver, anodizing time, EUAC comparison, interest factors, process break-even, hoist mechanical advantage, thermal stress, column buckling, impact load, gas law and escaping air velocity tools. WORKOS now holds 639 tools.
+
+### Pneumatics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Compressed-Air Main Sizing (Bore, Pressure Drop, Velocity, Receiver)** `air-main-sizing` | MAIN ADEQUATE | Pressure drop; Velocity; Drainage; Model and application | 3036–3041, 3024–3027 | Automated + cross-check |
+| **Closed Gas Vessel Temperature Check (Pressure Rise, Contents, Fill Limit)** `gas-vessel-temperature-check` | WITHIN RATING | Hot pressure; Relief; Model and application | 3032–3041 | Automated + cross-check |
+| **Compressed-Air Blow-Off Consumption (Nozzles, Air, Power and Cost)** `blow-off-nozzle-cost` | WITHIN COMPRESSOR CAPACITY | Capacity; Safety; Model and application | 3037–3038, 3032–3041 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Anodizing Plan (Time, Current, Tank Heat, Loads and Cost per Part)** `anodizing-plan` | PLAN FEASIBLE | Rectifier; Bath cooling; Thickness; Model and application | 1500–1516 | Automated + cross-check |
+
+### Money
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Repair or Replace (Defender and Challenger Equivalent Annual Cost)** `repair-or-replace` | REPLACE THE MACHINE | Decision; Non-cost factors; Model and application | 134–146 | Automated + cross-check |
+| **Make or Buy (In-House Cost against a Supplier Price, Break-Even)** `make-or-buy` | MAKE IN-HOUSE | Margin over break-even; Capacity; Model and application | 143–146, 1153–1160 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Block and Tackle Check (Pull with Sheave Friction, Rope and Operator)** `block-and-tackle-check` | TACKLE ADEQUATE | Rope; Hand pull; Model and application | 170–171, 2613–2650 | Automated + cross-check |
+| **Buffer Stop Design (Impact Energy, Stroke, Force and Deceleration)** `buffer-stop-design` | BUFFER ADEQUATE | End stop force; Deceleration; Rebound; Model and application | 179–186 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Restrained Bar Heating (Thermal Stress, Yield and Buckling)** `restrained-bar-thermal-check` | BAR ADEQUATE | Yield; Buckling; Model and application | 375–376, 281–287 | Automated + cross-check |
