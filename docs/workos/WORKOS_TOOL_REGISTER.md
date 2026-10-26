@@ -2283,3 +2283,41 @@ A twenty-eighth round of 9 integrated design checks in batch handbook53: a Porte
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Crossed Helical Gear Drive Check (Proportions, Sliding Velocity, Forces)** `crossed-helical-drive-check` | SLIDING WITHIN LIMIT | Sliding velocity; Hand of helix; Load capacity; Model and application | 2195–2203 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, thirty-eighth pass: integrated design checks, twenty-ninth round (added 26 October 2026)
+
+A twenty-ninth round of 9 integrated design checks in batch handbook54: a tank heating or cooling coil plan (area, tube length, turns, pressure drop), a polygon milling set-up (stock size, depth of cut, indexing), a bolt circle inspection from three holes (fitted diameter, centre position), an oval tank capacity and weight (elliptical section, shell plate, full mass), a bent bracket plan (flat blank, bend force, springback), a guard-banded acceptance decision (uncertainty budget; accept, reject or indeterminate), a rotary axis feed plan (inverse-time feed and axis rate limits), a column formula comparison (Rankine, Euler and classic safe load) and a hollow shaft conversion (brittle material, size, weight, twist). Tests cross-check against the helix length, pipe friction, regular polygon, simple indexing, circle through three points, true position, ellipse, sheet-metal flat pattern, press brake force, bending springback, measurement uncertainty budget, inverse time feed, Rankine column, classic column safe stress and brittle and hollow shaft tools. WORKOS now holds 720 tools.
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Tank Heating or Cooling Coil Plan (Area, Tube Length, Turns, Pressure Drop)** `heating-coil-plan` | COIL ADEQUATE | Area; Pressure drop; Coil fits the tank; Model and application | 2060–2062, 3024–3027, 371–378 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Polygon Milling Set-up (Stock Size, Depth of Cut, Indexing)** `polygon-milling-setup` | SET-UP FOUND | Stock size; Indexing; Opposite flats; Model and application | 76, 81–82, 2107–2121 | Automated + cross-check |
+| **Rotary Axis Feed Plan (Inverse-Time Feed and Axis Rate Limits)** `rotary-axis-feed-plan` | FEED ACHIEVABLE | Rotary rate; Linear rate; Control mode; Model and application | 1288–1289 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Bolt Circle Inspection from Three Holes (Fitted Diameter, Centre Position)** `bolt-circle-inspection` | CONFORMS | Diameter; Centre position; Point spread; Model and application | 40–48, 615–627 | Automated + cross-check |
+| **Guard-Banded Acceptance Decision (Uncertainty Budget, Accept, Reject or Indeterminate)** `guard-band-acceptance` | ACCEPT | Decision; Test uncertainty ratio; Model and application | 709–735 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Oval Tank Capacity and Weight (Elliptical Section, Shell Plate, Full Mass)** `oval-tank-capacity` | TANK ADEQUATE | Capacity; Supports; Stiffening; Model and application | 48–50, 70–75 | Automated + cross-check |
+| **Bent Bracket Plan (Flat Blank, Bend Force, Springback)** `bent-bracket-plan` | BRACKET CAN BE MADE | Press capacity; End flanges; Inside radius; Die opening; Model and application | 1346–1353 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Column Formula Comparison (Rankine, Euler and Classic Safe Load)** `column-formula-compare` | COLUMN ADEQUATE | Rankine factor; Classic safe load; Current code; Model and application | 281–287 | Automated + cross-check |
+| **Hollow Shaft Conversion (Brittle Material, Size, Weight, Twist)** `hollow-shaft-conversion` | HOLLOW SHAFT WORKS | Fits; Wall; Twist; Model and application | 295–303 | Automated + cross-check |
