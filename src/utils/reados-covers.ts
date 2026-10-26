@@ -183,6 +183,7 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'random-error-and-drift-by-the-numbers': { motif: 'streak', tone: 'paper' },
   'vibrating-machine-elements-by-the-numbers': { motif: 'cycle', tone: 'carbon' },
   'water-hammer-by-the-numbers': { motif: 'waterwheel', tone: 'graphite' },
+  'compressed-air-plant-by-the-numbers': { motif: 'expansion', tone: 'graphite' },
   'transitional-elbows-by-the-numbers': { motif: 'triangle', tone: 'paper' },
   'branched-fittings-by-the-numbers': { motif: 'network', tone: 'graphite' },
   'machine-noise-control-by-the-numbers': { motif: 'shield', tone: 'graphite' },
