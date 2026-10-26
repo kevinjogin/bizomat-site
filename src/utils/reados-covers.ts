@@ -169,6 +169,7 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'roof-drainage-by-the-numbers': { motif: 'waterwheel', tone: 'carbon' },
   'architectural-sheet-metal-by-the-numbers': { motif: 'contour', tone: 'paper' },
   'oval-sheet-metal-work-by-the-numbers': { motif: 'orbit', tone: 'paper' },
+  'deep-drawing-and-spinning-by-the-numbers': { motif: 'lathe', tone: 'ember' },
 };
 
 const hash = (s: string) => [...s].reduce((a, c) => (Math.imul(a, 33) + c.charCodeAt(0)) >>> 0, 5381);
