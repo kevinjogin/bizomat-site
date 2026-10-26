@@ -1540,3 +1540,56 @@ A twelfth round of 9 integrated design checks in batch handbook37: a fatigue des
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Flywheel Rim Design (Inertia for Speed Fluctuation, Size and Stress)** `flywheel-rim-design` | FLYWHEEL ADEQUATE | Rotating stress; Rim speed; Guarding; Model and application | 3000–3010, 179–190 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, twenty-second pass: integrated design checks, thirteenth round (added 26 October 2026)
+
+A thirteenth round of 9 integrated design checks in batch handbook38: a rotor balancing check (permissible unbalance from the grade, plane unbalance, correction masses and bearing force), gear tooth measurement for backlash (span and over-pins limits), thread pitch diameter by three wires with accept or reject, torsion bar design (diameter for stress and twist, rate, tip travel), a tube bending plan (developed length, wall thinning, strain, bend radius ratio, overbend), shaft deflection and bearing slope under up to three loads, an electroplating plan (time, current, loads, energy and cost per part), bracket bolts in tension and shear with the combined check, and a spur gear pair designed to a given centre distance (profile shifts, tip shortening, contact ratio, undercut). Tests cross-check against the balance grade, two-plane balance, span measurement, gear over pins, three-wire, metric thread limits, torsion bar, tube bend length, tube bend thinning, beam cases, electroplating thickness, bolt and pin shear, profile shift and contact ratio tools. WORKOS now holds 576 tools.
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Rotor Balancing Check (Grade, Plane Unbalance and Corrections)** `rotor-balancing-check` | CORRECT AND RE-CHECK | Plane A; Plane B; Correction size; Model and application | 191–195 | Automated + cross-check |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Gear Tooth Measurement for Backlash (Span and Over Pins)** `gear-tooth-measurement` | MEASUREMENT SET | Anvils fit across the face; Backlash share; Model and application | 2236–2248 | Automated + cross-check |
+| **Gear Pair for a Given Centre Distance (Profile Shift, Tips, Contact Ratio)** `gear-centre-distance-design` | GEAR PAIR FEASIBLE | Pinion undercut; Gear undercut; Contact ratio; Tip thickness; Model and application | 2141–2160 | Automated + cross-check |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Thread Pitch Diameter by Three Wires (Accept or Reject)** `thread-wire-inspection` | ACCEPT | Pitch diameter; Wire size; Model and application | 1990–2003, 1867–1912 | Automated + cross-check |
+
+### Springs
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Torsion Bar Spring Design (Diameter for Stress and Twist)** `torsion-bar-design` | BAR ADEQUATE | Shear stress; Twist; Ends; Model and application | 295–303, 344 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Tube Bending Plan (Length, Wall Thinning, Strain and Overbend)** `tube-bending-plan` | BEND FEASIBLE | Outer wall; Bend radius; Strain; Mandrel; Model and application | 1382–1386 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Shaft Deflection and Bearing Slope (Up to Three Loads)** `shaft-deflection-check` | SHAFT STIFF ENOUGH | Deflection at the loads; Bearing slope; Bending stress; Model and application | 257–277, 295–303 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Electroplating Plan (Time, Current, Loads and Cost per Part)** `electroplating-plan` | PLAN FEASIBLE | Rectifier; Current density; Thickness distribution; Model and application | 1467, 1500–1516 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Bracket Bolts in Tension and Shear (Moment on a Bolted Flange)** `bracket-bolt-tension` | BOLTS ADEQUATE | Tension; Shear; Combined; Prying; Model and application | 1521–1535, 1720–1735 | Automated + cross-check |
