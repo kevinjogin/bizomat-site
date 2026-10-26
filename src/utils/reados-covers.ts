@@ -164,6 +164,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'pneumatics-by-the-numbers': { motif: 'pump', tone: 'carbon' },
   'rectangular-duct-fittings-by-the-numbers': { motif: 'pump', tone: 'graphite' },
   'sheet-metal-production-runs-by-the-numbers': { motif: 'production', tone: 'paper' },
+  'sheet-metal-joints-by-the-numbers': { motif: 'join', tone: 'carbon' },
+  'quoting-sheet-metal-work-by-the-numbers': { motif: 'estimate', tone: 'carbon' },
 };
 
 const hash = (s: string) => [...s].reduce((a, c) => (Math.imul(a, 33) + c.charCodeAt(0)) >>> 0, 5381);
