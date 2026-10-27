@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -88,9 +88,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 810 tools with unique ids and every previously published id kept', () => {
+test('register: 819 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 810);
+  assert.equal(ids.length, 819);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -835,16 +835,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 695 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 704 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 695);
+  assert.equal(ids.length, 704);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -4255,10 +4255,83 @@ test('thirty-ninth-round design checks: verdicts and guards', () => {
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
 
-// Thread engagement: internal thread shear area per the handbook (no extra thread-count factor).
+// Forty-ninth handbook pass (handbook65): fortieth round of integrated design checks.
+const HB49_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['sluice-gate-lift-check', {}, { F: 1000 * 9.80665 * 1.2 * 4 / 2, y: 2 / 3 }],
+  ['ball-detent-check', {}, { k: 79300 / (8 * 216 * 8), P: 79300 / (8 * 216 * 8) * 3 }],
+  ['expansion-vessel-sizing', {}, { Ve: 500 * 0.00041 * 70, af: 1.5 / 3.513 }],
+  ['torque-arm-reaction-check', {}, { T: 9549.2966 * 4 / 50 * 1.5, Fr: 9549.2966 * 4 / 50 * 1.5 / 300 }],
+  ['traction-hoist-check', {}, { mcw: 850, unb: 250 }],
+  ['shear-pin-overload-design', {}, { Tbreak: 1000, tau: 400 }],
+  ['portable-gantry-check', {}, { M: 2e7, Fc: 10000 }],
+  ['press-tie-rod-check', {}, { F: 20 * Math.PI * 1e4, Frod: 5 * Math.PI * 1e4 }],
+  ['centrifuge-bowl-check', {}, { sSelf: 7850 * (2000 * Math.PI / 30 * 0.253) ** 2 / 1e6 }],
+];
+for (const [id, over, expected, tol] of HB49_CASES) test(`design check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
 test('thread engagement uses the handbook shear areas for both threads', () => {
   const d = 10, P = 1.5, n = 1 / P, d2 = d - 0.649519 * P, D1 = d - 1.082532 * P, ext = Math.PI * D1 * (0.5 + 0.57735 * n * (d2 - D1)), int = Math.PI * d * (0.5 + 0.57735 * n * (d - d2));
   const te = engine.run('thread-engagement', { d, P, Knmax: 0, Esmin: 0, Dsmin: 0, Enmax: 0, Sub: 800, Sun: 310 }).values;
   near(te.J, ext * 800 / (int * 310), 1e-12, 'strength ratio from the external and internal shear areas');
   near(engine.run('tapped-hole-design').values.Lreq, te.Lreq, 1e-9, 'tapped hole design uses the same engagement');
+});
+
+test('fortieth-round design checks agree with the tools they chain', () => {
+  const sg = engine.run('sluice-gate-lift-check').values, hf = engine.run('hydrostatic-force', { h: 2, rho: 1000, w: 1.2, floor: 0, ps: 0 }).values, ps = engine.run('power-screw-torque', { F: sg.Flift, dm: 30, lead: 6, flank: '15', mu: 0.12, dc: 45, muc: 0.12 }).values;
+  near(sg.F, hf.F, 1e-9, 'water force'); near(sg.y, hf.y, 1e-12, 'centre of pressure'); near(sg.Tr, ps.Tr, 1e-12, 'spindle torque'); near(sg.locks, ps.locks ? 1 : 0, 0, 'self-locking');
+  near(sg.effort, sg.Tr * 1000 / 300, 1e-12, 'handwheel effort');
+  const sp = { d: 1, D: 6, Na: 8, ends: 'cg', G: 79.3, L0: 15, allow: 700, rho: 7850 }, bd = engine.run('ball-detent-check').values, c1 = engine.run('compression-spring', { ...sp, Lw: 12 }).values, c2 = engine.run('compression-spring', { ...sp, Lw: 11 }).values;
+  near(bd.k, c1.k, 1e-12, 'spring rate'); near(bd.P, c1.F, 1e-12, 'preload'); near(bd.tau, c1.tau, 1e-12, 'preload stress'); near(bd.Prise, c2.F, 1e-12, 'load at full rise'); near(bd.tauRise, c2.tau, 1e-12, 'stress at full rise'); near(bd.Ls, c1.Ls, 1e-12, 'solid length');
+  near(bd.Frel, engine.run('wedge-force', { W: bd.P, angle: 45, mu: Math.tan(Math.atan(0.15) / 2) }).values.drive, 1e-9, 'release force from the wedge tool');
+  const ev = engine.run('expansion-vessel-sizing').values, gl = engine.run('gas-law', { V1: ev.Vneed, p1: 1, T1: 20, p2: 2.5, T2: 20, patm: 1.013 }).values;
+  near(ev.Vneed - gl.V2, ev.Ve, 1e-9, 'vessel accepts the expansion between the pressures');
+  const ta = engine.run('torque-arm-reaction-check').values, cp = engine.run('clevis-pin-joint', { F: ta.Fr, d: 12, a: 12, bf: 8, g: 1, R: 20, sbA: 250, tpA: 120, bA: 200, stA: 150, tA: 90 }).values;
+  for (const k of ['M', 'sb', 'tau', 'be', 'bfk', 'st', 'tt', 'umax']) near(ta[k], cp[k], 1e-9, `pin joint ${k}`);
+  const th = engine.run('traction-hoist-check').values, bf = engine.run('belt-friction', { slack: 1, mu: 0.1, wrap: 180, groove: 40 }).values;
+  near(th.trac, bf.ratio, 1e-12, 'traction available'); near(th.mue, bf.mue, 1e-12, 'groove friction');
+  near(th.rFull, 1100 / 850 * (9.80665 + 0.5) / (9.80665 - 0.5), 1e-12, 'full car ratio');
+  const sh = engine.run('shear-pin-overload-design').values, bs = engine.run('bolt-shear-bearing', { F: sh.FbCh, n: 1, planes: '1', d: 7.5, t: 10, tauAllow: 400, bAllow: 300 }).values;
+  near(sh.tau, bs.tau, 1e-9, 'pin shear at break'); near(sh.sb, bs.sb, 1e-9, 'bearing at break');
+  near(engine.run('bolt-shear-bearing', { F: sh.Fb, n: 1, planes: '1', d: sh.dReq, t: 10, tauAllow: 400, bAllow: 300 }).values.us, 1, 1e-9, 'pin needed shears at the break torque');
+  const pg = engine.run('portable-gantry-check').values, ss = engine.run('section-shapes', { shape: 'I', H: 300, B: 150, tf: 10.7, tw: 7.1, rho: 7850 }).values, bm = engine.run('beam-cases', { case: 'ss-offset', load: 20000, L: 4000, a: 2000, E: 200, I: ss.Ix, c: 150, allow: 160 }).values, cb = engine.run('column-buckling', { E: 200, Sy: 250, A: pg.Al, I: pg.Il, L: pg.Lleg, K: 1, P: pg.Pleg, req: 3 }).values;
+  near(pg.A, ss.A, 1e-9, 'beam area'); near(pg.Ix, ss.Ix, 1e-6, 'beam I'); near(pg.Zx, ss.Zx, 1e-6, 'beam Z');
+  near(pg.M, bm.M, 1e-9, 'beam moment'); near(pg.defl, bm.defl, 1e-9, 'beam deflection'); near(pg.sb, bm.stress, 1e-9, 'beam stress');
+  near(pg.lambda, cb.lambda, 1e-9, 'leg slenderness'); near(pg.Pcr, cb.Pcr, 1e-6, 'leg buckling load'); near(pg.nLeg, cb.n, 1e-9, 'leg safety factor');
+  const pt = engine.run('press-tie-rod-check').values, mt = engine.run('metric-thread', { d: 42, P: 4.5, starts: 1, Sp: 0 }).values, te = engine.run('thread-engagement', { d: 42, P: 4.5, Knmax: 0, Esmin: 0, Dsmin: 0, Enmax: 0, Sub: 800, Sun: 800 }).values;
+  near(pt.As, mt.As, 1e-9, 'tensile stress area'); near(pt.Le, te.Le, 1e-9, 'engagement for the rod'); near(pt.J, te.J, 1e-12, 'strength ratio'); near(pt.Lreq, te.Lreq, 1e-9, 'engagement needed');
+  near(engine.run('hydraulic-cylinder-sizing', { Fpush: pt.F / 1000, p: 200, bore: 0 }).values.Dmin, 200, 1e-9, 'bore for the press force');
+  const cf = engine.run('centrifuge-bowl-check').values, cfg = engine.run('centrifugal-force', { mass: 1, radius: 250, rpm: 2000 }).values, pc = engine.run('pressure-cylinder', { di: 500, t: 6, p: cf.p, ends: 'open', Sy: 355, req: 2 }).values;
+  near(cf.gLevel, cfg.g, 1e-9, 'g at the wall'); near(cf.sLiq, pc.thin, 1e-9, 'liquid hoop stress');
+  near(engine.run('centrifuge-bowl-check', { rpm: cf.nMax }).values.sTot, 100, 1e-9, 'speed limit reaches the allowable');
+});
+
+test('fortieth-round design checks: verdicts and guards', () => {
+  assert.equal(engine.run('sluice-gate-lift-check').text, 'EFFORT ACCEPTABLE');
+  assert.equal(engine.run('sluice-gate-lift-check', { h: 3 }).text, 'EFFORT TOO HIGH');
+  assert.equal(engine.run('ball-detent-check').text, 'DETENT FORCE IN RANGE');
+  assert.equal(engine.run('ball-detent-check', { alpha: 60 }).text, 'DETENT FORCE OUT OF RANGE');
+  assert.equal(engine.run('ball-detent-check', { allow: 400 }).text, 'SPRING OVERSTRESSED');
+  assert.equal(engine.run('expansion-vessel-sizing').text, 'VESSEL ADEQUATE');
+  assert.equal(engine.run('expansion-vessel-sizing', { Vv: 30 }).text, 'VESSEL TOO SMALL');
+  assert.equal(engine.run('torque-arm-reaction-check').text, 'TORQUE ARM ADEQUATE');
+  assert.equal(engine.run('torque-arm-reaction-check', { L: 100 }).text, 'TORQUE ARM NOT ADEQUATE');
+  assert.equal(engine.run('traction-hoist-check').text, 'TRACTION AND POWER ADEQUATE');
+  assert.equal(engine.run('traction-hoist-check', { mu: 0.04 }).text, 'ROPES MAY SLIP');
+  assert.equal(engine.run('traction-hoist-check', { Pfit: 3 }).text, 'MOTOR TOO SMALL');
+  assert.equal(engine.run('shear-pin-overload-design').text, 'SHEAR PIN SUITABLE');
+  assert.equal(engine.run('shear-pin-overload-design', { dCh: 6 }).text, 'BREAKS TOO EARLY');
+  assert.equal(engine.run('shear-pin-overload-design', { dCh: 9 }).text, 'BREAKS TOO LATE');
+  assert.equal(engine.run('shear-pin-overload-design', { bA: 200 }).text, 'HUB BEARING TOO HIGH');
+  assert.equal(engine.run('portable-gantry-check').text, 'GANTRY ADEQUATE');
+  for (const over of [{ W: 50000 }, { legOD: 42.4, legT: 2.6 }, { castor: 8000 }, { dlim: 2500 }] as Inputs[]) assert.equal(engine.run('portable-gantry-check', over).text, 'GANTRY NOT ADEQUATE', JSON.stringify(over));
+  assert.equal(engine.run('press-tie-rod-check').text, 'TIE RODS ADEQUATE');
+  for (const over of [{ p: 300 }, { dMax: 0.5 }, { mNut: 20 }] as Inputs[]) assert.equal(engine.run('press-tie-rod-check', over).text, 'TIE RODS NOT ADEQUATE', JSON.stringify(over));
+  assert.equal(engine.run('centrifuge-bowl-check').text, 'BOWL ADEQUATE');
+  assert.equal(engine.run('centrifuge-bowl-check', { rpm: 3000 }).text, 'BOWL OVERSTRESSED');
+  const cases: Array<[string, Inputs]> = [['ball-detent-check', { Lw: 16 }], ['ball-detent-check', { rise: 3 }], ['ball-detent-check', { alpha: 80, muB: 0.9 }], ['expansion-vessel-sizing', { T2: 5 }], ['expansion-vessel-sizing', { pf: 0.5 }], ['torque-arm-reaction-check', { R: 5 }], ['shear-pin-overload-design', { fMin: 3 }], ['portable-gantry-check', { tf: 200 }], ['press-tie-rod-check', { d: 4, P: 4.5 }], ['centrifuge-bowl-check', { r0: 300 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
