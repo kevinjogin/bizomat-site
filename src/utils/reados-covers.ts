@@ -141,6 +141,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'drawings-that-make-parts': { motif: 'drawing', tone: 'ember' },
   'surfaces-that-make-parts': { motif: 'contour', tone: 'graphite' },
   'inspecting-to-the-drawing': { motif: 'gauge', tone: 'paper' },
+  'real-gases-by-the-numbers': { motif: 'bubbles', tone: 'paper' },
+  'infrared-temperature-measurement-by-the-numbers': { motif: 'lens', tone: 'ember' },
   'printed-mechanisms-that-run': { motif: 'geartrain', tone: 'carbon' },
   'design-simulation-by-the-numbers': { motif: 'beam', tone: 'paper' },
   'plastic-parts-by-the-numbers': { motif: 'exploded', tone: 'ember' },
