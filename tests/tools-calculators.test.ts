@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -88,9 +88,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 774 tools with unique ids and every previously published id kept', () => {
+test('register: 783 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 774);
+  assert.equal(ids.length, 783);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -835,16 +835,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 659 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 668 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 659);
+  assert.equal(ids.length, 668);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -3909,5 +3909,102 @@ test('thirty-fifth-round design checks: verdicts and guards', () => {
   assert.equal(engine.run('pressure-tube-torsion-check').text, 'TUBE ADEQUATE');
   assert.equal(engine.run('pressure-tube-torsion-check', { T: 8000 }).text, 'TUBE OVERSTRESSED');
   const cases: Array<[string, Inputs]> = [['sprocket-bore-key-plan', { D: 80 }], ['sprocket-bore-key-plan', { w: 40 }], ['pinned-hub-drive-check', { dp: 30 }], ['press-flywheel-check', { tcut: 3 }], ['press-flywheel-check', { emode: 'energy', E: 0 }], ['drop-hammer-forging-plan', { sf: 1 }], ['v-belt-motor-load-check', { C: 50 }], ['conveyor-drive-train-check', { Hl: -50 }], ['vessel-shell-plan', { tUse: 1 }], ['vessel-shell-plan', { p: 80, S: 50 }], ['pressure-tube-torsion-check', { t: 50 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Forty-fifth handbook pass (handbook61): thirty-sixth round of integrated design checks.
+const HB45_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['inch-milling-setup-check', {}, { rpm: 9600 / Math.PI, sfmUse: 400 }],
+  ['index-table-drive-check', {}, { J: 7.35, hold: 1000, holdBrake: 1250 }],
+  ['hand-lever-design-check', {}, { F: 80000 / 600, R: 80000 / 600 + 800, Mmax: 80000, sb: 6 * 80000 / 9000 }],
+  ['plate-shear-capacity-check', {}, { use: 0.8 * 0.8 * 450 * 0.4 * 36 / Math.tan(2 * Math.PI / 180) / 500000 }],
+  ['vee-groove-pin-inspection', {}, { depth: 5, centre: 3 * Math.SQRT2 }],
+  ['special-section-beam-check', {}, { c: 30, M: 2.4e6, dAllow: 8 }],
+  ['force-group-support-check', {}, { RAy: 1900, RBy: 1100, RAx: 0 }],
+  ['grain-size-acceptance', {}, { avg: 63.6, G: 1 + Math.log2(63.6) }],
+  ['polar-hole-position-check', {}, { worst: 2 * Math.hypot(0.01, 0.03) / 0.07 }],
+];
+for (const [id, over, expected, tol] of HB45_CASES) test(`design check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('thirty-sixth-round design checks agree with the tools they chain', () => {
+  const im = engine.run('inch-milling-setup-check').values, sf = engine.run('inch-speeds-feeds', { sfm: 400, D: 0.5, teeth: 4, ipt: 0.002 }).values;
+  near(im.rpm, sf.rpm, 1e-12, 'spindle speed'); near(im.ipm, sf.ipm, 1e-12, 'table feed');
+  near(im.hpNeed, 0.25 * 0.5 * sf.ipm * 1 / 0.8, 1e-12, 'spindle power');
+  const ic = engine.run('inch-milling-setup-check', { nMax: 2000 }).values;
+  near(ic.ipm, 2000 * 4 * 0.002, 1e-12, 'feed at the capped speed'); near(ic.sfmUse, 2000 * Math.PI * 0.5 / 12, 1e-9, 'surface speed at the capped speed');
+  const it = engine.run('index-table-drive-check').values, ri = engine.run('rotary-index-table-sizing').values;
+  for (const k of ['J', 'th', 'wmax', 'al', 'Ttab', 'Tmot', 'nmot', 'dwell', 'hold', 'ratio']) near(it[k], ri[k], 1e-12, `index ${k}`);
+  const itt = engine.run('index-table-drive-check', { law: 'trap' }).values, rit = engine.run('rotary-index-table-sizing', { law: 'trap' }).values;
+  near(itt.Tmot, rit.Tmot, 1e-12, 'trapezoidal motor torque'); near(itt.nmot, rit.nmot, 1e-12, 'trapezoidal motor speed');
+  const lv = engine.run('hand-lever-design-check').values, lf = engine.run('lever-force').values;
+  for (const k of ['F', 'x', 'MA', 'R']) near(lv[k], lf[k], 1e-12, `lever ${k}`);
+  const l2 = engine.run('hand-lever-design-check', { type: 'second' }).values, lf2 = engine.run('lever-force', { type: 'second' }).values;
+  near(l2.R, lf2.R, 1e-12, 'second-class reaction'); near(l2.Mmax, lf2.R * 100, 1e-9, 'second-class moment under the load');
+  const la = engine.run('hand-lever-design-check', { mode: 'arm', F: 160 }).values, lfa = engine.run('lever-force', { mode: 'arm', F: 160 }).values;
+  near(la.x, lfa.x, 1e-12, 'arm for a given effort'); near(la.Mmax, 80000, 1e-9, 'moment at the fulcrum in arm mode');
+  near(lv.tau, 2 * lv.R / (Math.PI * 100), 1e-12, 'pin double shear');
+  const ps = engine.run('plate-shear-capacity-check').values, sh = engine.run('shear-force', { blades: 'inclined', t: 6, b: 1200, uts: 450, ratio: 0.8, rake: 2, pen: 0.4, n: 0.8, cap: 500 }).values;
+  for (const k of ['F', 'Fm', 'use']) near(ps[k], sh[k], 1e-12, `shear ${k}`);
+  near(engine.run('plate-shear-capacity-check', { t: ps.tMax }).values.use, 1, 1e-9, 'largest thickness uses the full capacity');
+  const pp = engine.run('plate-shear-capacity-check', { blades: 'parallel', b: 100 }).values;
+  near(engine.run('plate-shear-capacity-check', { blades: 'parallel', b: 100, t: pp.tMax }).values.use, 1, 1e-9, 'parallel blade largest thickness');
+  const vg = engine.run('vee-groove-pin-inspection').values, vp = engine.run('v-groove-pin', { angle: 90, width: 10, pin: 6 }).values;
+  for (const k of ['above', 'centre', 'depth', 'contact']) near(vg[k], vp[k], 1e-12, `groove ${k}`);
+  near(engine.run('v-groove-pin', { angle: 90, width: vg.wMeas, pin: 6 }).values.above, 2.25, 1e-9, 'width from the reading gives the reading');
+  near(vg.hLow, engine.run('v-groove-pin', { angle: 90, width: 10.05, pin: 6 }).values.above, 1e-12, 'height at the widest limit');
+  for (const [shape, c] of [['hex', 30], ['tri', 80 / 3], ['half', 30 - 40 / Math.PI], ['ellipse', 20], ['cirhex', 30], ['cirsq', 30], ['hellipse', 20]] as Array<[string, number]>) {
+    const sb = engine.run('special-section-beam-check', { shape }).values, ss = engine.run('section-shapes-more', { shape, A: 60, B: 40, C: 20, D: 10 }).values;
+    near(sb.area, ss.area, 1e-9, `${shape} area`); near(sb.Ix, ss.Ix, 1e-6, `${shape} Ix`); near(sb.c, c, 1e-9, `${shape} extreme fibre`);
+    const bc = engine.run('beam-cases-more', { case: 'ss-two', load: 4000, L: 2000, a: 600, cl: 800, E: 200, I: ss.Ix, c, allow: 150 }).values;
+    for (const k of ['R1', 'R2', 'M', 'd', 'stress']) near(sb[k], bc[k], 1e-9, `${shape} beam ${k}`);
+  }
+  for (const kase of ['ff-offset', 'guided-point', 'guided-udl', 'prop-point']) {
+    const sb = engine.run('special-section-beam-check', { case: kase }).values, bc = engine.run('beam-cases-more', { case: kase, load: 4000, L: 2000, a: 600, cl: 800, E: 200, I: sb.Ix, c: 30, allow: 150 }).values;
+    for (const k of ['R1', 'R2', 'M', 'd', 'stress']) near(sb[k], bc[k], 1e-9, `${kase} ${k}`);
+  }
+  const fg = engine.run('force-group-support-check').values, fs = engine.run('force-system').values;
+  for (const k of ['Rx', 'Ry', 'R', 'M', 'x0']) near(fg[k], fs[k], 1e-12, `forces ${k}`);
+  near(fg.RAy + fg.RBy, -fg.Ry, 1e-9, 'vertical equilibrium'); near(fg.RBy * 1000, fs.R * fs.x0, 1e-6, 'moment equilibrium about A');
+  const gs = engine.run('grain-size-acceptance').values, gz = engine.run('grain-size', { mode: 'n100', value: 63.6 }).values;
+  for (const k of ['G', 'NA', 'n100', 'lbar']) near(gs[k], gz[k], 1e-12, `grain ${k}`);
+  near(gs.Gfine, engine.run('grain-size', { mode: 'n100', value: 70 }).values.G, 1e-12, 'finest field'); near(gs.Gcoarse, engine.run('grain-size', { mode: 'n100', value: 58 }).values.G, 1e-12, 'coarsest field');
+  const gl = engine.run('grain-size-acceptance', { mode: 'lbar', v1: 30, v2: 40, v3: 0, v4: 0, v5: 0, Gmin: 1, Gmax: 12 }).values;
+  near(gl.G, engine.run('grain-size', { mode: 'lbar', value: 35 }).values.G, 1e-12, 'intercept mode average');
+  const pc = engine.run('polar-coordinates', { mode: 'toxy', radius: 50, angle: 270, x: 0, y: 0 }).values, td = engine.run('two-point-distance', { x1: pc.x, y1: pc.y, z1: 0, x2: 0.01, y2: -50.03, z2: 0 }).values;
+  near(engine.run('polar-hole-position-check').values.worst, 2 * td.dist / (0.05 + 0.02), 1e-9, 'worst hole from the polar and distance tools');
+  near(engine.run('polar-hole-position-check', { n: 1 }).values.worst, 2 * Math.hypot(0.02, 0.01) / 0.1, 1e-9, 'single hole with bonus');
+});
+
+test('thirty-sixth-round design checks: verdicts and guards', () => {
+  assert.equal(engine.run('inch-milling-setup-check').text, 'SETUP WITHIN MACHINE');
+  assert.equal(engine.run('inch-milling-setup-check', { nMax: 2000 }).text, 'SETUP WITHIN MACHINE');
+  assert.equal(engine.run('inch-milling-setup-check', { hp: 3 }).text, 'SETUP EXCEEDS MACHINE POWER');
+  assert.equal(engine.run('inch-milling-setup-check', { woc: 0.6 }).text, 'WIDTH EXCEEDS CUTTER');
+  assert.equal(engine.run('index-table-drive-check').text, 'DRIVE ADEQUATE');
+  for (const over of [{ TmPk: 3 }, { nMaxM: 1500 }, { ratioMax: 5 }, { Tb: 15 }] as Inputs[]) assert.equal(engine.run('index-table-drive-check', over).text, 'DRIVE NOT ADEQUATE', JSON.stringify(over));
+  assert.equal(engine.run('hand-lever-design-check').text, 'LEVER ADEQUATE');
+  for (const over of [{ h: 15 }, { tauA: 5 }, { pA: 5 }] as Inputs[]) assert.equal(engine.run('hand-lever-design-check', over).text, 'LEVER NOT ADEQUATE', JSON.stringify(over));
+  assert.equal(engine.run('plate-shear-capacity-check').text, 'CUT WITHIN SHEAR');
+  for (const over of [{ cap: 100 }, { b: 3000 }, { blades: 'parallel' }] as Inputs[]) assert.equal(engine.run('plate-shear-capacity-check', over).text, 'CUT EXCEEDS SHEAR', JSON.stringify(over));
+  assert.equal(engine.run('vee-groove-pin-inspection').text, 'ACCEPT');
+  assert.equal(engine.run('vee-groove-pin-inspection', { hm: 2.3 }).text, 'REJECT');
+  assert.equal(engine.run('vee-groove-pin-inspection', { hm: 2.2 }).text, 'REJECT');
+  assert.equal(engine.run('special-section-beam-check').text, 'BEAM ADEQUATE');
+  assert.equal(engine.run('special-section-beam-check', { load: 6000 }).text, 'DEFLECTION EXCEEDED');
+  assert.equal(engine.run('special-section-beam-check', { allow: 80 }).text, 'OVERSTRESSED');
+  assert.equal(engine.run('force-group-support-check').text, 'SUPPORTS ADEQUATE');
+  assert.equal(engine.run('force-group-support-check', { capA: 1500 }).text, 'SUPPORT OVERLOADED');
+  assert.equal(engine.run('force-group-support-check', { xB: 300 }).text, 'UPLIFT AT A SUPPORT');
+  assert.equal(engine.run('grain-size-acceptance').text, 'ACCEPT');
+  assert.equal(engine.run('grain-size-acceptance', { Gmin: 7.5 }).text, 'REJECT');
+  assert.equal(engine.run('grain-size-acceptance', { Gmax: 6 }).text, 'REJECT');
+  assert.equal(engine.run('polar-hole-position-check').text, 'ACCEPT');
+  assert.equal(engine.run('polar-hole-position-check', { md4: 10 }).text, 'REJECT');
+  assert.equal(engine.run('polar-hole-position-check', { md1: 9.99 }).text, 'REJECT');
+  const cases: Array<[string, Inputs]> = [['index-table-drive-check', { tc: 0.5 }], ['hand-lever-design-check', { W1: 0 }], ['vee-groove-pin-inspection', { pin: 20 }], ['special-section-beam-check', { shape: 'cirsq', C: 50 }], ['special-section-beam-check', { case: 'ff-offset', a: 0 }], ['force-group-support-check', { xB: 0 }], ['force-group-support-check', { F1: 0, F2: 0, F3: 0 }], ['grain-size-acceptance', { Gmin: 9 }], ['grain-size-acceptance', { v1: 0, v2: 0, v3: 0, v4: 0, v5: 0 }], ['polar-hole-position-check', { dLMC: 9 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
