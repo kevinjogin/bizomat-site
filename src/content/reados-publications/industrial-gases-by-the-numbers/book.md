@@ -77,6 +77,8 @@ related:
     href: "/reados/publications/arc-welding-by-the-numbers/"
   - title: "Industrial Electric Heating by the Numbers"
     href: "/reados/publications/industrial-electric-heating-by-the-numbers/"
+  - title: "Real Gases by the Numbers"
+    href: "/reados/publications/real-gases-by-the-numbers/"
 ---
 
 ## About this book

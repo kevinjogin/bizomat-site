@@ -63,6 +63,8 @@ related:
     href: "/reados/publications/compressed-air-plant-by-the-numbers/"
   - title: "Vacuum by the Numbers"
     href: "/reados/publications/vacuum-by-the-numbers/"
+  - title: "Infrared Temperature Measurement by the Numbers"
+    href: "/reados/publications/infrared-temperature-measurement-by-the-numbers/"
 ---
 
 ## About this book

@@ -79,6 +79,8 @@ related:
     href: "/reados/publications/weld-repairs-that-hold/"
   - title: "Machining by the Numbers"
     href: "/reados/publications/machining-by-the-numbers/"
+  - title: "Real Gases by the Numbers"
+    href: "/reados/publications/real-gases-by-the-numbers/"
 ---
 
 ## About this book
