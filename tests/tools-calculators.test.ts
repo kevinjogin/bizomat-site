@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -88,9 +88,9 @@ test('the tools page loads exactly the category files that exist, in data → gu
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 783 tools with unique ids and every previously published id kept', () => {
+test('register: 792 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 783);
+  assert.equal(ids.length, 792);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -835,16 +835,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 668 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 677 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 668);
+  assert.equal(ids.length, 677);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -4006,5 +4006,93 @@ test('thirty-sixth-round design checks: verdicts and guards', () => {
   assert.equal(engine.run('polar-hole-position-check', { md4: 10 }).text, 'REJECT');
   assert.equal(engine.run('polar-hole-position-check', { md1: 9.99 }).text, 'REJECT');
   const cases: Array<[string, Inputs]> = [['index-table-drive-check', { tc: 0.5 }], ['hand-lever-design-check', { W1: 0 }], ['vee-groove-pin-inspection', { pin: 20 }], ['special-section-beam-check', { shape: 'cirsq', C: 50 }], ['special-section-beam-check', { case: 'ff-offset', a: 0 }], ['force-group-support-check', { xB: 0 }], ['force-group-support-check', { F1: 0, F2: 0, F3: 0 }], ['grain-size-acceptance', { Gmin: 9 }], ['grain-size-acceptance', { v1: 0, v2: 0, v3: 0, v4: 0, v5: 0 }], ['polar-hole-position-check', { dLMC: 9 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Forty-sixth handbook pass (handbook62): thirty-seventh round of integrated design checks.
+const HB46_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['intermittent-fillet-weld-plan', {}, { nI: 4, LI: 200, pitch: 550 / 3, gap: 550 / 3 - 50 }],
+  ['acme-nut-bore-inspection', {}, { min: 0.8, max: 0.81, drill64: 51 / 64 }],
+  ['form-tool-profile-plan', {}, { deep: 8 * Math.cos(15 * Math.PI / 180), steps: 3 }],
+  ['taper-disc-gauge-check', {}, { Cm: 8.005, Mnom: 0.25 * Math.sqrt(1 + (0.75 / 24) ** 2) / (0.75 / 24) + 1.25 }],
+  ['composite-rotor-inertia', {}, { J1: 10 * (0.04 + 0.75 * 0.03 ** 2), J2: 5 * 0.05 ** 2, J3: 0.3 * 2 * 0.075 ** 2, mass: 17 }],
+  ['preferred-size-selection', {}, { distinct: 5, worst: (1000 / 900 - 1) * 100 }],
+  ['stacked-solid-cg', {}, { height: 1800, zg: 800 + (Math.PI * 0.25 * 0.6 / 3 * 450 + Math.PI * 0.25 * 1.2 * 1200) / (Math.PI * 0.25 * 0.6 / 3 + Math.PI * 0.25 * 1.2) }],
+  ['three-point-support-loads', {}, { W: 7000, xg: 3100000 / 7000, yg: 1900000 / 7000 }],
+  ['sine-bar-dms-setup', {}, { decv: 12 + 30 / 60 + 15 / 3600 }],
+];
+for (const [id, over, expected, tol] of HB46_CASES) test(`design check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('thirty-seventh-round design checks agree with the tools they chain', () => {
+  const fw = { F: 60, tau: 120, amin: 5, t: 10, excess: 10, rho: 7850, dep: 3, of: 40, eff: 90, rate: 80, wire: 4 };
+  const iw = engine.run('intermittent-fillet-weld-plan').values, wc = engine.run('fillet-weld-joint-design', { ...fw, L: 600 }).values, wi = engine.run('fillet-weld-joint-design', { ...fw, L: 200 }).values;
+  near(iw.throatC, wc.throat, 1e-12, 'continuous throat'); near(iw.legC, wc.leg, 0, 'continuous leg'); near(iw.costC, wc.cost, 1e-12, 'continuous cost');
+  near(iw.legI, wi.leg, 0, 'intermittent leg'); near(iw.costI, wi.cost, 1e-12, 'intermittent cost'); near(iw.saving, (1 - wi.cost / wc.cost) * 100, 1e-9, 'saving');
+  const ab = engine.run('acme-nut-bore-inspection').values, at = engine.run('acme-tap-drill', { D: 1, tpi: 5, cls: 'G', over: 0.0046 }).values;
+  for (const k of ['min', 'max', 'dmin', 'dmax']) near(ab[k], at[k], 1e-12, `acme ${k}`);
+  for (const cls of ['C24', 'C56']) { const a2 = engine.run('acme-nut-bore-inspection', { cls }).values, t2 = engine.run('acme-tap-drill', { D: 1, tpi: 5, cls, over: 0.0046 }).values; near(a2.min, t2.min, 1e-12, `${cls} minimum`); near(a2.max, t2.max, 1e-12, `${cls} maximum`); }
+  const fd = { R: 16, r: 10, F: 10, E: 15, Rt: 38.1, off: 6.35 };
+  near(engine.run('form-tool-profile-plan').values.deep, engine.run('forming-tool-depth', { ...fd, mode: 'flat', D: 8, C: 15, A: 60 }).values.depth, 1e-12, 'flat tool deepest step');
+  const fc = engine.run('form-tool-profile-plan', { mode: 'circular' }).values, fcs = engine.run('forming-tool-depth', { ...fd, mode: 'circular', D: 8, C: 15, A: 45 }).values;
+  near(fc.rSmall, fcs.rr, 1e-12, 'circular tool radius'); near(fc.k, fcs.k, 1e-12, 'circular k');
+  const td = engine.run('taper-disc-gauge-check').values, tc = engine.run('taper-discs', { mode: 'cTaper', D: 1.5, d: 1, C: 5, angle: 20, T: 0.75 }).values, ta = engine.run('taper-discs', { mode: 'angle', D: 1.5, d: 1, C: td.Cm, angle: 20, T: 0.75 }).values;
+  near(td.C, tc.C, 1e-12, 'centre distance for the taper'); near(td.angleNom, tc.angleOut, 1e-12, 'nominal angle');
+  near(td.Tm, ta.Tc, 1e-12, 'taper from the setting'); near(td.angle, ta.angleOut, 1e-12, 'angle from the setting');
+  near(engine.run('taper-disc-gauge-check', { Mm: td.Mnom }).values.Tm, 0.75, 1e-9, 'nominal reading gives the nominal taper');
+  near(engine.run('taper-disc-gauge-check', { Mm: td.Mlo }).values.Tm, 0.752, 1e-9, 'reading at the steep limit');
+  const cr = engine.run('composite-rotor-inertia').values, mi = (shape: string, mass: number, A: number, B: number, offset = 0) => engine.run('mass-inertia-more', { shape, mass, A, B, C: 0, offset }).values.J;
+  near(cr.J1, mi('torus', 10, 400, 60), 1e-12, 'body 1'); near(cr.J2, mi('tube', 5, 100, 0), 1e-12, 'body 2'); near(cr.J3, mi('cone', 2, 150, 0), 1e-12, 'body 3');
+  near(engine.run('composite-rotor-inertia', { o2: 120 }).values.J2, mi('tube', 5, 100, 0, 120), 1e-12, 'offset body');
+  near(engine.run('composite-rotor-inertia', { Ereq: cr.dE }).values.Jneed, cr.J, 1e-9, 'inertia needed at the released energy');
+  for (const [r, over] of [[12, 1], [47, 2], [150, 3], [300, 4], [900, 5]] as Array<[number, number]>) {
+    const first = engine.run('preferred-numbers', { series: '10', min: r, max: r * 10 }).values.first, one = engine.run('preferred-size-selection', { r1: r, r2: 0, r3: 0, r4: 0, r5: 0 }).values;
+    near(one.worst, (first / r - 1) * 100, 1e-9, `requirement ${over}`);
+  }
+  near(engine.run('preferred-size-selection').values.ratio, engine.run('preferred-numbers', { series: '10', min: 1, max: 10 }).values.ratio, 1e-12, 'series ratio');
+  const cone = engine.run('centroid-shapes', { shape: 'cone', A: 1000, B: 0, C: 600, angle: 90 }).values, fr = engine.run('centroid-shapes', { shape: 'frustum', A: 1000, B: 600, C: 500, angle: 90 }).values;
+  const one = (o: Inputs) => engine.run('stacked-solid-cg', { type2: 'none', z0: 0, rho1: 1000, ...o }).values;
+  near(one({ type1: 'coneUp' }).zs, cone.cg, 1e-9, 'cone point up'); near(one({ type1: 'coneDown' }).zs, 600 - cone.cg, 1e-9, 'cone point down');
+  const fu = one({ type1: 'frustum', Da1: 1000, Db1: 600, h1: 500 }), fdn = one({ type1: 'frustum', Da1: 600, Db1: 1000, h1: 500 });
+  near(fu.zs, fr.cg, 1e-9, 'frustum large end down'); near(fdn.zs, 500 - fr.cg, 1e-9, 'frustum large end up'); near(fu.mass, fr.size / 1e9 * 1000, 1e-9, 'frustum volume');
+  const hm = engine.run('centroid-shapes', { shape: 'hemisphere', A: 500, B: 0, C: 0, angle: 90 }).values;
+  near(one({ type1: 'hemiUp' }).zs, hm.cg, 1e-9, 'hemisphere flat down'); near(one({ type1: 'hemiUp' }).mass, hm.size / 1e9 * 1000, 1e-9, 'hemisphere volume');
+  const tp = engine.run('three-point-support-loads').values, mx = engine.run('matrix-3x3', { a11: 1, a12: 1, a13: 1, a21: 0, a22: 1000, a23: 500, a31: 0, a32: 0, a33: 800 }).values;
+  const b = [7000, 3100000, 1900000];
+  near(tp.R1, mx.i11 * b[0] + mx.i12 * b[1] + mx.i13 * b[2], 1e-6, 'support 1'); near(tp.R2, mx.i21 * b[0] + mx.i22 * b[1] + mx.i23 * b[2], 1e-6, 'support 2'); near(tp.R3, mx.i31 * b[0] + mx.i32 * b[1] + mx.i33 * b[2], 1e-6, 'support 3');
+  near(tp.det, mx.det, 1e-9, 'determinant'); near(tp.R1 + tp.R2 + tp.R3, 7000, 1e-9, 'reactions add to the load');
+  const sd = engine.run('sine-bar-dms-setup').values, dm = engine.run('dms-converter', { mode: 'dms', d: 12, mi: 30, s: 15, dec: 0, r: 0 }).values, sb = engine.run('sine-bar-setup', { L: 200, angle: dm.decv, res: 0.0005, tolS: 0.25, angTol: 10 }).values;
+  near(sd.decv, dm.decv, 1e-12, 'decimal degrees'); near(sd.radv, dm.radv, 1e-12, 'radians');
+  for (const k of ['height', 'stack', 'angSet', 'errR', 'perUm', 'errTot']) near(sd[k], sb[k], 1e-12, `sine bar ${k}`);
+  near(engine.run('sine-bar-dms-setup', { Hm: sd.stack }).values.angM, sd.angSet, 1e-12, 'angle from the measured stack');
+});
+
+test('thirty-seventh-round design checks: verdicts and guards', () => {
+  assert.equal(engine.run('intermittent-fillet-weld-plan').text, 'INTERMITTENT WELD FEASIBLE');
+  assert.equal(engine.run('intermittent-fillet-weld-plan', { F: 300 }).text, 'CONTINUOUS WELD NEEDED');
+  assert.equal(engine.run('intermittent-fillet-weld-plan', { t: 4 }).text, 'JOINT TOO SHORT');
+  assert.equal(engine.run('acme-nut-bore-inspection').text, 'ACCEPT');
+  assert.equal(engine.run('acme-nut-bore-inspection', { Bm: 0.815 }).text, 'REJECT');
+  assert.equal(engine.run('acme-nut-bore-inspection', { Bm: 0.79 }).text, 'REJECT');
+  assert.equal(engine.run('form-tool-profile-plan').text, 'PROFILE FEASIBLE');
+  assert.equal(engine.run('form-tool-profile-plan', { hMax: 7 }).text, 'PROFILE TOO DEEP');
+  assert.equal(engine.run('form-tool-profile-plan', { mode: 'circular', rMin: 31 }).text, 'PROFILE TOO DEEP');
+  assert.equal(engine.run('taper-disc-gauge-check').text, 'ACCEPT');
+  assert.equal(engine.run('taper-disc-gauge-check', { Mm: 9.3 }).text, 'REJECT');
+  assert.equal(engine.run('composite-rotor-inertia').text, 'ENERGY ADEQUATE');
+  assert.equal(engine.run('composite-rotor-inertia', { Ereq: 1200 }).text, 'ENERGY SHORT');
+  assert.equal(engine.run('preferred-size-selection').text, 'SIZES SELECTED');
+  assert.equal(engine.run('preferred-size-selection', { r4: 330 }).text, 'OVERSIZE TOO LARGE');
+  assert.equal(engine.run('stacked-solid-cg').text, 'STABLE');
+  assert.equal(engine.run('stacked-solid-cg', { thMin: 20 }).text, 'TIPS TOO EASILY');
+  assert.equal(engine.run('three-point-support-loads').text, 'SUPPORTS ADEQUATE');
+  assert.equal(engine.run('three-point-support-loads', { wx1: 2000 }).text, 'SUPPORT LIFTS OFF');
+  assert.equal(engine.run('three-point-support-loads', { cap: 2500 }).text, 'SUPPORT OVERLOADED');
+  assert.equal(engine.run('sine-bar-dms-setup').text, 'SET-UP ADEQUATE');
+  assert.equal(engine.run('sine-bar-dms-setup', { angTol: 0.2 }).text, 'SET-UP TOO COARSE');
+  const cases: Array<[string, Inputs]> = [['intermittent-fillet-weld-plan', { ls: 700 }], ['acme-nut-bore-inspection', { D: 0.1 }], ['form-tool-profile-plan', { D1: 0, D2: 0, D3: 0 }], ['form-tool-profile-plan', { mode: 'circular', off: 40 }], ['form-tool-profile-plan', { mode: 'circular', D3: 40 }], ['taper-disc-gauge-check', { D: 1 }], ['taper-disc-gauge-check', { Mm: 1 }], ['composite-rotor-inertia', { m1: 0, m2: 0, m3: 0 }], ['composite-rotor-inertia', { shape1: 'hsphere', B1: 400 }], ['preferred-size-selection', { r1: 0, r2: 0, r3: 0, r4: 0, r5: 0 }], ['stacked-solid-cg', { type1: 'none', type2: 'none' }], ['stacked-solid-cg', { h2: 0 }], ['three-point-support-loads', { sy3: 0 }], ['three-point-support-loads', { W1: 0, W2: 0 }], ['sine-bar-dms-setup', { d: 0, mi: 0, s: 0 }], ['sine-bar-dms-setup', { Hm: 300 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
