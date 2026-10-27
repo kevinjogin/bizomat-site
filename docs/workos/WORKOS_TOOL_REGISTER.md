@@ -2627,3 +2627,46 @@ A thirty-sixth round of 9 integrated design checks in batch handbook61, again bu
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Grain Size Acceptance (Field Readings, Average ASTM Grain Size, Spread, Specification)** `grain-size-acceptance` | ACCEPT | Average grain size; Spread between fields; Model and application | 369–380 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, forty-sixth pass: integrated design checks, thirty-seventh round (added 27 October 2026)
+
+A thirty-seventh round of 9 integrated design checks in batch handbook62, built mainly on the last engineering single tools not chained before: an intermittent fillet weld plan (continuous leg, segment count and pitch, cost saving), an Acme nut bore inspection (minor diameter limits, drill choice, measured bore), a form tool profile plan (step depths and angles on a flat or circular tool), a taper disc gauge check (centre distance for a taper, taper from the measured setting), a composite rotor inertia and energy check (up to three shapes, offsets, stored and released energy), a preferred size selection (Renard series size for each requirement, oversize, distinct sizes), a stacked solid centre of gravity (cylinders, frustums, cones, hemispheres, tipping angle), a three-point support loads check (reaction at each support, uplift, capacity) and a sine bar set-up from degrees, minutes and seconds (gauge stack, set angle, error). Tests cross-check against the fillet weld joint design, Acme tap drill, forming tool depth, taper discs, more mass moments of inertia, preferred numbers, centroid of shapes, 3 × 3 matrix, degrees, minutes and seconds, and sine bar set-up tools. WORKOS now holds 792 tools.
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Intermittent Fillet Weld Plan (Continuous Leg, Segment Count and Pitch, Cost Saving)** `intermittent-fillet-weld-plan` | INTERMITTENT WELD FEASIBLE | Leg against plate; Gap between segments; Service; Model and application | 1433–1486 | Automated + cross-check |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Acme Nut Bore Inspection (Minor Diameter Limits, Drill Choice, Measured Bore)** `acme-nut-bore-inspection` | ACCEPT | Bore; Drill choice; Model and application | 944–947, 1921–1946 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Form Tool Profile Plan (Step Depths and Angles on a Flat or Circular Tool)** `form-tool-profile-plan` | PROFILE FEASIBLE | Profile depth; Model and application | 797–801 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Taper Disc Gauge Check (Centre Distance for a Taper, Taper from the Measured Setting)** `taper-disc-gauge-check` | ACCEPT | Taper; Discs; Model and application | 684–685 | Automated + cross-check |
+| **Sine Bar Set-Up from Degrees, Minutes and Seconds (Gauge Stack, Set Angle, Error)** `sine-bar-dms-setup` | SET-UP ADEQUATE | Angle error; Angle range; Stack; Model and application | 103–104, 676–682, 705–708 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Composite Rotor Inertia and Energy (Up to Three Shapes, Offsets, Stored and Released Energy)** `composite-rotor-inertia` | ENERGY ADEQUATE | Energy per cycle; Rim speed; Model and application | 228–240, 182–186 | Automated + cross-check |
+| **Stacked Solid Centre of Gravity (Cylinders, Frustums, Cones, Hemispheres, Tipping Angle)** `stacked-solid-cg` | STABLE | Tipping angle; Empty and part-full; Model and application | 221–227, 66–76 | Automated + cross-check |
+| **Three-Point Support Loads (Reaction at Each Support, Uplift, Capacity)** `three-point-support-loads` | SUPPORTS ADEQUATE | Uplift; Capacity; Model and application | 122–125, 153–163 | Automated + cross-check |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Preferred Size Selection (Renard Series Size for Each Requirement, Oversize, Distinct Sizes)** `preferred-size-selection` | SIZES SELECTED | Oversize; Model and application | 672 | Automated + cross-check |
