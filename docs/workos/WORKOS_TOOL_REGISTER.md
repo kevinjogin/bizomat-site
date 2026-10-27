@@ -2551,3 +2551,36 @@ A thirty-fourth round of 9 integrated design checks in batch handbook59, again b
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Bolt Circle Pin Check (Pitch Circle from Plugs, Readings at the Limits, Decision)** `bolt-circle-pin-check` | ACCEPT | Pitch circle; Plug fit; Model and application | 686 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, forty-fourth pass: integrated design checks, thirty-fifth round (added 27 October 2026)
+
+A thirty-fifth round of 9 integrated design checks in batch handbook60, again built mainly on single tools not chained before: a sprocket bore and key plan (sprocket diameters, shaft keyseat readings, wall under the teeth), a pinned hub drive check (cross pin size, pin shear, shaft bearing and torsion), a press flywheel and motor check (stroke energy, rim mass, rim stress, motor power), a drop hammer forging plan (force needed, set per blow, number of blows), a V-belt drive motor load check (belts, driven speed, shaft load on the motor), a conveyor drive train check (belt pull, motor power, reducer ratio, gearbox torque), a pressure vessel shell plan (required thickness, plate chosen, MAWP, test water), a turning cut power check (equivalent chip thickness, cutting forces, power, speed limit) and a pressurised tube under torsion check (hoop, axial and shear stress, principal stresses, yield). Tests cross-check against the sprocket diameters, keyseat depth, taper pin torque, press flywheel sizing, drop hammer blow, V-belt drive design, conveyor drive sizing, pressure vessel thickness, equivalent chip thickness cutting forces, full-power cutting speed and principal stress tools. WORKOS now holds 774 tools.
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Sprocket Bore and Key Plan (Sprocket Diameters, Shaft Keyseat Readings, Wall Under the Teeth)** `sprocket-bore-key-plan` | BLANK FEASIBLE | Wall under the teeth; Key size; Model and application | 2537–2550, 2460–2486 | Automated + cross-check |
+| **V-Belt Drive Motor Load Check (Belts, Driven Speed, Shaft Load on the Motor)** `v-belt-motor-load-check` | DRIVE SUITS MOTOR | Grooves; Motor shaft load; Driven speed; Model and application | 2487–2536 | Automated + cross-check |
+| **Conveyor Drive Train Check (Belt Pull, Motor Power, Reducer Ratio, Gearbox Torque)** `conveyor-drive-train-check` | DRIVE TRAIN ADEQUATE | Belt speed; Motor power; Gearbox torque; Belt slip; Model and application | 2487–2512, 2122–2160 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Pinned Hub Drive Check (Cross Pin Size, Pin Shear, Shaft Bearing and Torsion)** `pinned-hub-drive-check` | PIN DRIVE ADEQUATE | Pin shear; Bearing on the shaft; Shaft at the cross hole; Pin size; Model and application | 220, 1714–1720 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Press Flywheel and Motor Check (Stroke Energy, Rim Mass, Rim Stress, Motor Power)** `press-flywheel-check` | FLYWHEEL AND MOTOR ADEQUATE | Rim mass; Rim stress; Motor power; Model and application | 3004–3006, 182–186 | Automated + cross-check |
+| **Drop Hammer Forging Plan (Force Needed, Set per Blow, Number of Blows)** `drop-hammer-forging-plan` | PLAN FEASIBLE | Blows per heat; Flow stress; Model and application | 183–184 | Automated + cross-check |
+| **Turning Cut Power Check (Equivalent Chip Thickness, Cutting Forces, Power, Speed Limit)** `turning-cut-power-check` | CUT WITHIN LATHE | Power; Spindle speed; Tool speed limit; Model and application | 1132–1141, 1084–1101 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Pressure Vessel Shell Plan (Required Thickness, Plate Chosen, MAWP, Test Water)** `vessel-shell-plan` | PLATE ADEQUATE | Shell; Heads; Code rules; Model and application | 290–294 | Automated + cross-check |
+| **Pressurised Tube Under Torsion Check (Hoop, Axial and Shear Stress, Principal Stresses, Yield)** `pressure-tube-torsion-check` | TUBE ADEQUATE | Safety factor; Thin-wall theory; Model and application | 212–218, 290–294 | Automated + cross-check |
