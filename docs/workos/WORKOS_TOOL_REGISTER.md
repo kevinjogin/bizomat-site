@@ -2584,3 +2584,46 @@ A thirty-fifth round of 9 integrated design checks in batch handbook60, again bu
 |---|---|---|---|---|
 | **Pressure Vessel Shell Plan (Required Thickness, Plate Chosen, MAWP, Test Water)** `vessel-shell-plan` | PLATE ADEQUATE | Shell; Heads; Code rules; Model and application | 290–294 | Automated + cross-check |
 | **Pressurised Tube Under Torsion Check (Hoop, Axial and Shear Stress, Principal Stresses, Yield)** `pressure-tube-torsion-check` | TUBE ADEQUATE | Safety factor; Thin-wall theory; Model and application | 212–218, 290–294 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, forty-fifth pass: integrated design checks, thirty-sixth round (added 27 October 2026)
+
+A thirty-sixth round of 9 integrated design checks in batch handbook61, again built mainly on single tools not chained before: an inch milling setup check (speed, feed, removal rate, spindle power), a rotary index table drive check (table inertia, motor torque and speed, inertia ratio, holding), a hand lever design check (effort, fulcrum reaction, arm bending, fulcrum pin), a plate shear capacity check (shearing force, largest thickness, knife length), a vee groove pin inspection (pin height at nominal and limits, groove width from the reading), a special section beam check (section properties, beam case, stress, deflection limit), a force group support check (resultant, line of action, support reactions, uplift), a grain size acceptance (field readings, average ASTM grain size, spread, specification) and a polar hole position check (nominal X–Y from radius and angle, position error, bonus tolerance). Tests cross-check against the inch speeds and feeds, rotary index table sizing, lever force, shearing force, vee groove pin, more section shapes, more beam cases, force system, grain size, polar coordinates and distance between two points tools. WORKOS now holds 783 tools.
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Inch Milling Setup Check (Speed, Feed, Removal Rate, Spindle Power)** `inch-milling-setup-check` | SETUP WITHIN MACHINE | Spindle power; Spindle speed; Width of cut; Model and application | 1013–1017, 1084–1101 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Rotary Index Table Drive Check (Table Inertia, Motor Torque and Speed, Inertia Ratio, Holding)** `index-table-drive-check` | DRIVE ADEQUATE | Motor torque; Motor speed; Inertia ratio; Holding; Model and application | 171, 2284–2290 | Automated + cross-check |
+| **Force Group Support Check (Resultant, Line of Action, Support Reactions, Uplift)** `force-group-support-check` | SUPPORTS ADEQUATE | Uplift; Support A; Support B; Model and application | 153–163 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Hand Lever Design Check (Effort, Fulcrum Reaction, Arm Bending, Fulcrum Pin)** `hand-lever-design-check` | LEVER ADEQUATE | Arm bending; Pin shear; Pin bearing; Effort; Model and application | 167–168, 257–270 | Automated + cross-check |
+| **Special Section Beam Check (Section Properties, Beam Case, Stress, Deflection Limit)** `special-section-beam-check` | BEAM ADEQUATE | Bending stress; Deflection; End fixity; Model and application | 234–246, 257–270 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Plate Shear Capacity Check (Shearing Force, Largest Thickness, Knife Length)** `plate-shear-capacity-check` | CUT WITHIN SHEAR | Force; Cut length; Blade clearance; Model and application | 1336–1339 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Vee Groove Pin Inspection (Pin Height at Nominal and Limits, Groove Width from the Reading)** `vee-groove-pin-inspection` | ACCEPT | Groove width; Pin contact; Groove angle; Model and application | 682–691 | Automated + cross-check |
+| **Polar Hole Position Check (Nominal X–Y from Radius and Angle, Position Error, Bonus Tolerance)** `polar-hole-position-check` | ACCEPT | Position; Hole size; Datums; Model and application | 40–45, 615–627, 692–694 | Automated + cross-check |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Grain Size Acceptance (Field Readings, Average ASTM Grain Size, Spread, Specification)** `grain-size-acceptance` | ACCEPT | Average grain size; Spread between fields; Model and application | 369–380 | Automated + cross-check |
