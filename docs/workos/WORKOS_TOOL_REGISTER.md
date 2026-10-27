@@ -2670,3 +2670,51 @@ A thirty-seventh round of 9 integrated design checks in batch handbook62, built 
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Preferred Size Selection (Renard Series Size for Each Requirement, Oversize, Distinct Sizes)** `preferred-size-selection` | SIZES SELECTED | Oversize; Model and application | 672 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, forty-seventh pass: integrated design checks, thirty-eighth round (added 28 October 2026)
+
+A thirty-eighth round of 9 integrated design checks in batch handbook63, combining single tools already in the set into checks not covered before: a gear tooth top land and undercut check (involute function, pointed radius, profile shift), a relief valve spring check (cracking pressure, full-lift pressure, overpressure, spring stress), a pipe support span check (pipe and contents weight, bending stress, sag, longest span), a cart push force check (rolling resistance, slope, starting force, wheel load), a taper turning set-up (taper per foot, half angle, tailstock offset, compound setting), a wall jib crane check (tie tension, beam bending and axial stress, deflection, wall bolts), a step cone pulley design (geometric speed steps, step diameters, crossed belt length), a hydraulic hand jack check (handle leverage, pump pressure, lifting force, strokes to lift) and a capstan and bollard rope turns check (holding force, turns needed, rope load). Tests cross-check against the trigonometric functions, compression spring, beam cases, rolling resistance, inclined plane, section shapes, progression, crossed belt length, lever force and belt friction tools. WORKOS now holds 801 tools.
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Gear Tooth Top Land and Undercut Check (Involute Function, Pointed Radius, Profile Shift)** `gear-tooth-top-land-check` | TOOTH FORM ADEQUATE | Undercut; Top land; Mating gear; Model and application | 95–114, 2141–2160 | Automated + cross-check |
+
+### Springs
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Relief Valve Spring Check (Cracking Pressure, Full-Lift Pressure, Overpressure, Spring Stress)** `relief-valve-spring-check` | VALVE SPRING ADEQUATE | Set pressure; Overpressure; Spring stress; Solid length; Model and application | 304–324 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Pipe Support Span Check (Pipe and Contents Weight, Bending Stress, Sag, Longest Span)** `pipe-support-span-check` | SPAN ADEQUATE | Bending stress; Sag; Point loads; Model and application | 234–246, 257–277 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Cart Push Force Check (Rolling Resistance, Slope, Starting Force, Wheel Load)** `cart-push-force-check` | PUSH FORCE ACCEPTABLE | Starting push; Keep-moving push; Wheel load; Stopping; Model and application | 165–171 | Automated + cross-check |
+| **Wall Jib Crane Check (Tie Tension, Beam Bending and Axial Stress, Deflection, Wall Bolts)** `wall-jib-crane-check` | JIB ADEQUATE | Jib stress; Deflection; Tie rod; Wall bolts; Buckling and flange; Model and application | 234–246, 257–277, 153–163 | Automated + cross-check |
+| **Capstan and Bollard Rope Turns Check (Holding Force, Turns Needed, Rope Load)** `capstan-rope-turns-check` | HOLD ADEQUATE | Holding force; Rope; Post; Model and application | 165–168, 2473–2490 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Taper Turning Set-Up (Taper per Foot, Half Angle, Tailstock Offset, Compound Setting)** `taper-turning-setup` | OFFSET METHOD SUITABLE | Tailstock offset; Tool height; Model and application | 95–114, 682–691 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Step Cone Pulley Design (Geometric Speed Steps, Step Diameters, Crossed Belt Length)** `step-cone-pulley-design` | STEPS FEASIBLE | Smallest pulley; Belt; Model and application | 37–39, 2473–2490 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Hydraulic Hand Jack Check (Handle Leverage, Pump Pressure, Lifting Force, Strokes to Lift)** `hydraulic-hand-jack-check` | JACK ADEQUATE | Lifting force; Pressure rating; Strokes; Load safety; Model and application | 167–168, 3024–3027 | Automated + cross-check |
