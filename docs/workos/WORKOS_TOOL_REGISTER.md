@@ -2761,3 +2761,53 @@ A thirty-ninth round of 9 integrated design checks in batch handbook64, combinin
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Forklift Load Centre Check (Load Centre of Gravity, Derated Capacity, Side Offset)** `forklift-load-centre-check` | WITHIN CAPACITY | Capacity; Sideways offset; Capacity plate; Model and application | 221–227, 153–163 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, forty-ninth pass: integrated design checks, fortieth round (added 28 October 2026)
+
+A fortieth round of 9 integrated design checks in batch handbook65, combining single tools already in the set into checks not covered before: a sluice gate lift check (water force, seal friction, screw torque, handwheel effort), a ball detent check (spring preload, release force, spring stress at full rise), an expansion vessel sizing (liquid expansion, pre-charge and final pressure, vessel volume), a torque arm reaction check (output torque, arm reaction, anchor pin joint), a traction hoist check (counterweight, rope tension ratio, sheave traction, motor power), a shear pin overload design (pin size for a break torque, break factor, hub bearing), a portable gantry crane check (beam stress and deflection, A-frame leg buckling, castor load), a press tie rod check (cylinder force, rod thread stress, stretch, nut engagement) and a centrifuge bowl check (self hoop stress, liquid ring pressure, total hoop stress, speed limit). Tests cross-check against the hydrostatic force, power screw torque, compression spring, wedge force, gas law, clevis pin joint, belt friction, bolt shear and bearing, section shapes, beam cases, column buckling, metric thread, thread engagement, hydraulic cylinder sizing, centrifugal force and thick cylinder tools. WORKOS now holds 819 tools.
+
+Correction in this pass: the internal (nut) thread shear area in the thread engagement, tapped hole design and Unified tapped hole check tools carried an extra threads-per-length factor, which inflated the strength ratio J by the pitch and overstated the engagement needed. They now use π D_s (½ + 0.57735 n (D_s − E_n)) per unit length, as in the handbook; for example, M10 × 1.5 into 310 MPa material now needs about 10.9 mm of engagement rather than 16.3 mm. A regression test covers the formula.
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Sluice Gate Lift Check (Water Force, Seal Friction, Screw Torque, Handwheel Effort)** `sluice-gate-lift-check` | EFFORT ACCEPTABLE | Handwheel effort; Self-locking; Spindle buckling; Model and application | 3024–3027, 1921–1928 | Automated + cross-check |
+
+### Springs
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Ball Detent Check (Spring Preload, Release Force, Spring Stress at Full Rise)** `ball-detent-check` | DETENT FORCE IN RANGE | Release force; Spring stress at full rise; Wear; Model and application | 304–324, 169–171 | Automated + cross-check |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Expansion Vessel Sizing (Liquid Expansion, Pre-Charge and Final Pressure, Vessel Volume)** `expansion-vessel-sizing` | VESSEL ADEQUATE | Vessel volume; Relief valve; Model and application | 3032–3041 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Torque Arm Reaction Check (Output Torque, Arm Reaction, Anchor Pin Joint)** `torque-arm-reaction-check` | TORQUE ARM ADEQUATE | Pin bending; Pin shear; Eye bearing; Fork bearing; Eye net tension; Eye tear-out; Anchor bracket; Model and application | 1535, 1720–1735, 2122–2160 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Traction Hoist Check (Counterweight, Rope Tension Ratio, Sheave Traction, Motor Power)** `traction-hoist-check` | TRACTION AND POWER ADEQUATE | Traction, car full; Traction, car empty; Motor power; Lift regulations; Model and application | 165–168, 2473–2490 | Automated + cross-check |
+| **Portable Gantry Crane Check (Beam Stress and Deflection, A-Frame Leg Buckling, Wheel Load)** `portable-gantry-check` | GANTRY ADEQUATE | Beam stress; Beam deflection; Leg buckling; Castors; Moving loaded; Model and application | 234–246, 257–277, 281–287 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Shear Pin Overload Design (Pin Size for a Break Torque, Break Factor, Hub Bearing)** `shear-pin-overload-design` | SHEAR PIN SUITABLE | Break factor; Hub bearing; Spares; Model and application | 1535, 1720–1735 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Press Tie Rod Check (Cylinder Force, Rod Thread Stress, Stretch, Nut Engagement)** `press-tie-rod-check` | TIE RODS ADEQUATE | Thread stress; Stretch; Nut engagement; Fatigue; Model and application | 281–286, 1867–1890, 1586–1590 | Automated + cross-check |
+| **Centrifuge Bowl Check (Self Hoop Stress, Liquid Ring Pressure, Total Hoop Stress, Speed Limit)** `centrifuge-bowl-check` | BOWL ADEQUATE | Hoop stress; Overspeed protection; Model and application | 187–190, 290–294 | Automated + cross-check |
