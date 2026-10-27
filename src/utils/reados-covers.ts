@@ -174,6 +174,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'oval-sheet-metal-work-by-the-numbers': { motif: 'orbit', tone: 'paper' },
   'deep-drawing-and-spinning-by-the-numbers': { motif: 'lathe', tone: 'ember' },
   'heat-transfer-by-the-numbers': { motif: 'gauge', tone: 'graphite' },
+  'contact-temperature-sensors-by-the-numbers': { motif: 'lens', tone: 'carbon' },
+  'accelerated-life-testing-by-the-numbers': { motif: 'specsheet', tone: 'paper' },
   'thermal-expansion-by-the-numbers': { motif: 'expansion', tone: 'carbon' },
   'stiffening-sheet-metal-by-the-numbers': { motif: 'cube', tone: 'graphite' },
   'vacuum-by-the-numbers': { motif: 'orbit', tone: 'graphite' },
