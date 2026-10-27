@@ -184,6 +184,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'fine-particles-by-the-numbers': { motif: 'bubbles', tone: 'carbon' },
   'random-error-and-drift-by-the-numbers': { motif: 'streak', tone: 'paper' },
   'diffusion-by-the-numbers': { motif: 'solid', tone: 'carbon' },
+  'heating-and-cooling-times-by-the-numbers': { motif: 'streak', tone: 'carbon' },
+  'fins-and-heat-sinks-by-the-numbers': { motif: 'interface', tone: 'carbon' },
   'housings-that-rebuild': { motif: 'drawing', tone: 'carbon' },
   'vibrating-machine-elements-by-the-numbers': { motif: 'cycle', tone: 'carbon' },
   'entropy-by-the-numbers': { motif: 'leaf', tone: 'carbon' },
