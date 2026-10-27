@@ -2718,3 +2718,46 @@ A thirty-eighth round of 9 integrated design checks in batch handbook63, combini
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Hydraulic Hand Jack Check (Handle Leverage, Pump Pressure, Lifting Force, Strokes to Lift)** `hydraulic-hand-jack-check` | JACK ADEQUATE | Lifting force; Pressure rating; Strokes; Load safety; Model and application | 167–168, 3024–3027 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, forty-eighth pass: integrated design checks, thirty-ninth round (added 28 October 2026)
+
+A thirty-ninth round of 9 integrated design checks in batch handbook64, combining single tools already in the set into checks not covered before: a hinged flap cylinder check (force through the swing, stroke, cylinder size), a tank stand leg check (full tank weight, load per leg, leg buckling), a nozzle manifold check (flow per nozzle, total flow, feed pipe loss, supply pressure), a drilling fixture clamp check (drill torque, clamp force to stop rotation, strap clamp screw), a conveyor gravity take-up plan (slack side tension, sag tension, counterweight, travel), a forklift load centre check (load centre of gravity, derated capacity, side offset), a cylinder air consumption check (atmospheric air per cycle, total demand, compressor power), a winch drum brake check (load torque at the brake, stop time, holding factor, brake energy) and a tank drain time check (volume drained, initial outflow, time through an orifice). Tests cross-check against the pneumatic cylinder force, tank volume, column buckling, orifice flow, pipe friction, drilling power, fixture clamp force, conveyor drive sizing, combined centre of gravity, compressor power and holding brake sizing tools. WORKOS now holds 810 tools.
+
+### Pneumatics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Hinged Flap Cylinder Check (Force Through the Swing, Stroke, Cylinder Size)** `hinged-flap-cylinder-check` | CYLINDER ADEQUATE | Load ratio; Stroke; End of swing; Model and application | 3032–3041, 153–163 | Automated + cross-check |
+| **Cylinder Air Consumption Check (Atmospheric Air per Cycle, Total Demand, Compressor Power)** `cylinder-air-consumption-check` | SUPPLY ADEQUATE | Compressor capacity; Peak demand; Model and application | 3032–3041 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Tank Stand Leg Check (Full Tank Weight, Load per Leg, Leg Buckling)** `tank-stand-leg-check` | LEGS ADEQUATE | Buckling; Lateral loads; Model and application | 68–69, 281–287 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Nozzle Manifold Check (Flow per Nozzle, Total Flow, Feed Pipe Loss, Supply Pressure)** `nozzle-manifold-check` | SUPPLY ADEQUATE | Supply pressure; Pipe velocity; Pump curve; Model and application | 3024–3027, 352–368 | Automated + cross-check |
+| **Tank Drain Time Check (Volume Drained, Initial Outflow, Time Through an Orifice)** `tank-drain-time-check` | DRAINS IN TIME | Drain time; Vent; Model and application | 68–69, 3024–3027 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Drilling Fixture Clamp Check (Drill Torque, Clamp Force to Stop Rotation, Strap Clamp Screw)** `drilling-fixture-clamp-check` | CLAMPING ADEQUATE | Machine power; Clamp screw; Rotation stop; Model and application | 1089–1093, 3131–3134, 1522–1532 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Conveyor Gravity Take-Up Plan (Slack Side Tension, Sag Tension, Counterweight, Travel)** `conveyor-takeup-plan` | TAKE-UP ADEQUATE | Travel; Belt rating; Model and application | 2487–2512, 3024–3027 | Automated + cross-check |
+| **Winch Drum Brake Check (Load Torque at the Brake, Stop Time, Holding Factor, Brake Energy)** `winch-drum-brake-check` | BRAKE ADEQUATE | Stop time; Holding; Energy per stop; Energy per hour; Model and application | 2455–2459, 165–168 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Forklift Load Centre Check (Load Centre of Gravity, Derated Capacity, Side Offset)** `forklift-load-centre-check` | WITHIN CAPACITY | Capacity; Sideways offset; Capacity plate; Model and application | 221–227, 153–163 | Automated + cross-check |
