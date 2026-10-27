@@ -77,7 +77,7 @@ window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
       "At = π/4 (d − 0.938194P)² (or π(Es min/2 − 0.16238P)² above 1240 MPa).",
       "External thread: Le = 2At ÷ [π Kn max (½ + 0.57735 n (Es min − Kn max))], with n = 1/P.",
       "Internal thread shear area per unit length: π n Ds min [½ + 0.57735 n (Ds min − En max)]; J = (As external × Su screw) ÷ (As internal × Su tapped); required length = J × Le when J > 1.",
-      "Example: M10 × 1.5 (8.8) into 310 MPa material needs about 16.332 mm (1.6332 × d) of engagement."
+      "Example: M10 × 1.5 (8.8) into 310 MPa material needs about 10.888 mm (1.0888 × d) of engagement."
     ],
     "limitations": [
       "Basic dimensions (inputs left at 0) overstate the shear areas slightly; use the limits for your thread class for a design check.",

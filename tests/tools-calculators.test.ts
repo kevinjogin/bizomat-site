@@ -3809,7 +3809,7 @@ test('thirty-fourth-round design checks: verdicts and guards', () => {
   assert.equal(engine.run('buttress-thread-inspection', { Mmeas: 52.72 }).text, 'REJECT');
   assert.equal(engine.run('buttress-thread-inspection', { Mmeas: 52.55 }).text, 'REJECT');
   assert.equal(engine.run('unified-tapped-hole-check').text, 'ENGAGEMENT ADEQUATE');
-  assert.equal(engine.run('unified-tapped-hole-check', { L: 0.75 }).text, 'ENGAGEMENT TOO SHORT');
+  assert.equal(engine.run('unified-tapped-hole-check', { L: 0.5 }).text, 'ENGAGEMENT TOO SHORT');
   assert.equal(engine.run('weldment-cost-estimate').text, 'WITHIN QUOTE');
   assert.equal(engine.run('weldment-cost-estimate', { quote: 200 }).text, 'OVER QUOTE');
   assert.equal(engine.run('brazed-sleeve-joint-plan').text, 'JOINT ADEQUATE');
@@ -4253,4 +4253,12 @@ test('thirty-ninth-round design checks: verdicts and guards', () => {
   assert.equal(engine.run('tank-drain-time-check', { tMax: 20 }).text, 'DRAINS TOO SLOWLY');
   const cases: Array<[string, Inputs]> = [['hinged-flap-cylinder-check', { bx: -100, by: 0 }], ['hinged-flap-cylinder-check', { rod: 70 }], ['tank-stand-leg-check', { legT: 40 }], ['drilling-fixture-clamp-check', { rf: 8 }], ['conveyor-takeup-plan', { Hl: -50 }], ['forklift-load-centre-check', { m1: 0, m2: 0 }], ['cylinder-air-consumption-check', { rod: 60 }], ['winch-drum-brake-check', { Tb: 15 }], ['winch-drum-brake-check', { treq: 0.04 }], ['tank-drain-time-check', { H2: 1600 }], ['tank-drain-time-check', { d: 1500 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Thread engagement: internal thread shear area per the handbook (no extra thread-count factor).
+test('thread engagement uses the handbook shear areas for both threads', () => {
+  const d = 10, P = 1.5, n = 1 / P, d2 = d - 0.649519 * P, D1 = d - 1.082532 * P, ext = Math.PI * D1 * (0.5 + 0.57735 * n * (d2 - D1)), int = Math.PI * d * (0.5 + 0.57735 * n * (d - d2));
+  const te = engine.run('thread-engagement', { d, P, Knmax: 0, Esmin: 0, Dsmin: 0, Enmax: 0, Sub: 800, Sun: 310 }).values;
+  near(te.J, ext * 800 / (int * 310), 1e-12, 'strength ratio from the external and internal shear areas');
+  near(engine.run('tapped-hole-design').values.Lreq, te.Lreq, 1e-9, 'tapped hole design uses the same engagement');
 });

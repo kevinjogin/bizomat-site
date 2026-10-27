@@ -119,7 +119,7 @@
     "tapped-hole-design": (v) => {
       const k = v.tap === 'cut' ? 0.01299 : 0.0068, drill = v.D - k * v.pct * v.P; if (drill <= 0) return invalid('The pitch is too coarse for this diameter.');
       const n = 1 / v.P, d2 = v.D - 0.649519 * v.P, D1 = v.D - 1.082532 * v.P, At = v.Sub > 1240 ? PI * (d2 / 2 - 0.16238 * v.P) ** 2 : PI / 4 * (v.D - 0.938194 * v.P) ** 2;
-      const ext = PI * D1 * (0.5 + 0.57735 * n * (d2 - D1)), int = PI * n * v.D * (0.5 + 0.57735 * n * (v.D - d2)), Le = 2 * At / ext, J = ext * v.Sub / (int * v.Sun), Lreq = J > 1 ? J * Le : Le;
+      const ext = PI * D1 * (0.5 + 0.57735 * n * (d2 - D1)), int = PI * v.D * (0.5 + 0.57735 * n * (v.D - d2)), Le = 2 * At / ext, J = ext * v.Sub / (int * v.Sun), Lreq = J > 1 ? J * Le : Le;
       const thread = Lreq + v.chamfer * v.P, pointLen = drill / (2 * Math.tan(rad(v.point / 2))), drillDepth = thread + v.extra + pointLen, ratio = Lreq / v.D;
       return output({ drill, Le, J, Lreq, thread, drillDepth }, 'Engagement needed (mm)', Lreq,
         [m('Tap drill', q(drill, 'mm', 3)), m('Engagement for the screw thread', q(Le, 'mm', 2)), m('Strength ratio J', q(J, '', 3)), m('Engagement needed', `${q(Lreq, 'mm', 2)} (${q(ratio, '', 2)} × D)`), m('Full-thread depth', q(thread, 'mm', 2)), m('Drill depth (to the point)', q(drillDepth, 'mm', 2))],

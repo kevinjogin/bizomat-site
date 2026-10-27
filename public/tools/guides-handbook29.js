@@ -236,7 +236,7 @@ window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
       "Tap drill = D − k × % thread × P, with k = 0.01299 for cutting and 0.0068 for forming taps (as the tap drill tool).",
       "Engagement L_e = 2 A_t ÷ {π K_n [½ + 0.57735 n (E_s − K_n)]} at basic diameters; multiplied by J = (external shear area × S_ub) ÷ (internal shear area × S_un) when the internal thread is weaker (as the thread engagement tool).",
       "Full-thread depth = engagement + chamfer allowance; drill depth = thread depth + extra + drill point length.",
-      "Example: M10 × 1.5 into 310 MPa material needs 16.332 mm of engagement and a 25.397 mm deep 8.5386 mm hole."
+      "Example: M10 × 1.5 into 310 MPa material needs 10.888 mm of engagement and a 19.953 mm deep 8.5386 mm hole."
     ],
     "limitations": [
       "Basic thread diameters; tolerance class and actual percentage of thread change the shear areas.",

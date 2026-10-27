@@ -8,6 +8,7 @@
   const area = (d) => PI * d * d / 4;
   const ATM = 1.01325; // standard atmosphere, bar
   const q = (value, unit, digits = 4) => {
+    if (value === 0) value = 0; // no negative zero
     const formatted = value !== 0 && Math.abs(value) < 10 ** -digits
       ? fmtPrimary('engineering', value) : num(value, digits);
     return `${formatted}${unit ? ` ${unit}` : ''}`;
@@ -75,7 +76,7 @@
       const n = 1 / v.P, d2 = v.d - 0.649519 * v.P, D1 = v.d - 1.082532 * v.P;
       const Kn = v.Knmax || D1, Es = v.Esmin || d2, Ds = v.Dsmin || v.d, En = v.Enmax || d2;
       const At = v.Sub > 1240 ? PI * (Es / 2 - 0.16238 * v.P) ** 2 : PI / 4 * (v.d - 0.938194 * v.P) ** 2;
-      const extShear = PI * Kn * (0.5 + 0.57735 * n * (Es - Kn)), intShear = PI * n * Ds * (0.5 + 0.57735 * n * (Ds - En));
+      const extShear = PI * Kn * (0.5 + 0.57735 * n * (Es - Kn)), intShear = PI * Ds * (0.5 + 0.57735 * n * (Ds - En));
       if (extShear <= 0 || intShear <= 0) return invalid('The entered thread limits give no thread overlap; check the diameters.');
       const Le = 2 * At / extShear, J = (extShear * v.Sub) / (intShear * v.Sun), Lreq = J > 1 ? J * Le : Le;
       return output({ At, Le, J, Lreq }, 'Required engagement (mm)', Lreq,

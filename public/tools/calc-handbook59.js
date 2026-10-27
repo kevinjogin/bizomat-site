@@ -77,7 +77,7 @@
       const p = 1 / v.n, E = v.D - 0.649519 * p, minor = v.D - 1.082532 * p, At = 0.7854 * (v.D - 0.9743 * p) ** 2, kd = v.tap === 'cut' ? 0.01299 : 0.0068, drill = v.D - kd * v.pct * p;
       if (minor <= 0 || drill <= 0) return invalid('Too few threads per inch for this diameter.');
       const d = v.D * 25.4, P = 25.4 / v.n, nn = 1 / P, d2 = d - 0.649519 * P, D1 = d - 1.082532 * P, Atm = v.Sub > 1240 ? PI * (d2 / 2 - 0.16238 * P) ** 2 : PI / 4 * (d - 0.938194 * P) ** 2;
-      const extShear = PI * D1 * (0.5 + 0.57735 * nn * (d2 - D1)), intShear = PI * nn * d * (0.5 + 0.57735 * nn * (d - d2)), Le = 2 * Atm / extShear, J = (extShear * v.Sub) / (intShear * v.Sun), Lreq = J > 1 ? J * Le : Le, LreqIn = Lreq / 25.4;
+      const extShear = PI * D1 * (0.5 + 0.57735 * nn * (d2 - D1)), intShear = PI * d * (0.5 + 0.57735 * nn * (d - d2)), Le = 2 * Atm / extShear, J = (extShear * v.Sub) / (intShear * v.Sun), Lreq = J > 1 ? J * Le : Le, LreqIn = Lreq / 25.4;
       const ok = v.L >= LreqIn - 1e-12, pctOk = v.pct >= 55 && v.pct <= 85;
       return output({ p, E, minor, At, drill, drillMm: drill * 25.4, Atm, Le, J, Lreq, LreqIn, ratio: LreqIn / v.D }, 'Engagement needed (in)', LreqIn,
         [m('Pitch / basic pitch diameter', `${q(p, '', 5)} / ${q(E, 'in', 4)}`), m('Basic minor diameter', q(minor, 'in', 4)), m('Tensile stress area', q(At, 'in²', 4)), m('Tap drill', `${q(drill, 'in', 4)} (${q(drill * 25.4, 'mm', 2)})`), m('Strength ratio J', q(J, '', 3)), m('Engagement needed', `${q(LreqIn, 'in', 3)} (${q(LreqIn / v.D, '× D', 2)})`)],

@@ -73,7 +73,7 @@ window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
       "p = 1 ÷ n; E = D − 0.649519p; minor = D − 1.082532p; A_t = 0.7854 (D − 0.9743p)² (as the Unified thread tool).",
       "Drill = D − k × % thread × p with k 0.01299 for cutting and 0.0068 for forming taps (as the tap drill tool).",
       "L_e = 2A_t ÷ [πK_n(½ + 0.57735n(E_s − K_n))]; J = A_s S_ue ÷ (A_n S_un); required = J L_e when J > 1 (as the thread engagement tool, at basic diameters).",
-      "Example: drill 0.42506 in for 75% thread; 1.0943 in of engagement needed (strength ratio 3.7372)."
+      "Example: drill 0.42506 in for 75% thread; 0.56008 in of engagement needed (strength ratio 1.9127)."
     ],
     "limitations": [
       "Basic diameters; the thread class limits lengthen the engagement needed slightly.",
