@@ -2811,3 +2811,46 @@ Correction in this pass: the internal (nut) thread shear area in the thread enga
 |---|---|---|---|---|
 | **Press Tie Rod Check (Cylinder Force, Rod Thread Stress, Stretch, Nut Engagement)** `press-tie-rod-check` | TIE RODS ADEQUATE | Thread stress; Stretch; Nut engagement; Fatigue; Model and application | 281–286, 1867–1890, 1586–1590 | Automated + cross-check |
 | **Centrifuge Bowl Check (Self Hoop Stress, Liquid Ring Pressure, Total Hoop Stress, Speed Limit)** `centrifuge-bowl-check` | BOWL ADEQUATE | Hoop stress; Overspeed protection; Model and application | 187–190, 290–294 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, fiftieth pass: integrated design checks, forty-first round (added 28 October 2026)
+
+A forty-first round of 9 integrated design checks in batch handbook66, combining single tools already in the set into checks not covered before: a screw clamp force check (handle torque, clamping force, screw stress), a scissor lift screw drive check (actuator force through the lift, screw torque, lift time, power), a rope drum and fleet angle check (fleet angle, rope capacity by layer, D/d ratio, drum torque), an enclosure cooling airflow check (heat load, wall losses, fan airflow needed), a ramp traction check (axle loads on a slope, tractive force needed, grip, tipping), a two-pump arrangement check (parallel or series operating point, flow gain, each pump’s duty), a cantilever rack arm check (arm section, bending stress, tip deflection, column bolts), a centrifugal clutch check (engagement speed, torque at running speed, idle clearance) and an expansion gap plan (movement over the temperature range, gap at installation, restrained stress). Tests cross-check against the power screw torque, rope winch drum, heating energy, rolling resistance, inclined plane, pump operating point, section shapes, beam cases, centrifugal force and thermal stress tools. WORKOS now holds 828 tools.
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Screw Clamp Force Check (Handle Torque, Clamping Force, Screw Stress)** `screw-clamp-force-check` | CLAMP FORCE ADEQUATE | Clamping force; Screw stress; Self-locking; Model and application | 1921–1928, 2561–2568 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Scissor Lift Screw Drive Check (Actuator Force Through the Lift, Screw Torque, Lift Time, Power)** `scissor-lift-screw-check` | DRIVE ADEQUATE | Screw torque; Lift time; Lowering; Model and application | 153–163, 1921–1928 | Automated + cross-check |
+| **Rope Drum and Fleet Angle Check (Fleet Angle, Rope Capacity by Layer, D/d Ratio, Drum Torque)** `rope-drum-fleet-angle-check` | DRUM ARRANGEMENT ADEQUATE | Fleet angle; D/d ratio; Layers; Model and application | 165–168, 2455–2459 | Automated + cross-check |
+| **Ramp Traction Check (Axle Loads on a Slope, Tractive Force Needed, Grip, Tipping)** `ramp-traction-check` | TRACTION ADEQUATE | Grip; Uphill axle load; Braking downhill; Model and application | 165–171 | Automated + cross-check |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Enclosure Cooling Airflow (Heat Load, Wall Losses, Fan Airflow Needed)** `enclosure-cooling-airflow` | FAN ADEQUATE | Fan airflow; Filters; Model and application | 371–374, 2683 | Automated + cross-check |
+| **Expansion Gap Plan (Movement over the Temperature Range, Gap at Installation, Restrained Stress)** `expansion-gap-plan` | GAP PLAN WORKS | Gap range; If the gap closes; Model and application | 375–376, 578 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Two-Pump Arrangement Check (Parallel or Series Operating Point, Flow Gain, Each Pump’s Duty)** `two-pump-arrangement-check` | FLOW MET | Flow; Pump duty point; One pump running; Model and application | 3021–3026 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Cantilever Rack Arm Check (Arm Section, Bending Stress, Tip Deflection, Column Bolts)** `cantilever-rack-arm-check` | ARM ADEQUATE | Bending stress; Tip deflection; Column bolts; Column; Model and application | 234–246, 257–277, 1535 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Centrifugal Clutch Check (Engagement Speed, Torque at Running Speed, Idle Clearance)** `centrifugal-clutch-check` | CLUTCH ADEQUATE | Idle clearance; Torque; Lining heat; Model and application | 187–190, 2433–2446 | Automated + cross-check |
