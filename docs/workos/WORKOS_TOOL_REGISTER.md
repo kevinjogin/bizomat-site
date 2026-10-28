@@ -2854,3 +2854,46 @@ A forty-first round of 9 integrated design checks in batch handbook66, combining
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Centrifugal Clutch Check (Engagement Speed, Torque at Running Speed, Idle Clearance)** `centrifugal-clutch-check` | CLUTCH ADEQUATE | Idle clearance; Torque; Lining heat; Model and application | 187–190, 2433–2446 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, fifty-first pass: integrated design checks, forty-second round (added 28 October 2026)
+
+A forty-second round of 9 integrated design checks in batch handbook67, combining single tools already in the set into checks not covered before: a cylinder cushion check (kinetic energy, deceleration, cushion pressure, largest speed), a pipe bend thrust check (pressure and momentum force, resultant, thrust block bearing), a jet impact force check (nozzle flow and velocity, reaction, force on a plate), a spring clamp hydraulic release check (clamp force, release pressure, spring stress), an extraction duct check (total airflow, duct velocity, friction loss, fan pressure), a gravity chute check (sliding acceleration, exit speed, impact energy, least angle), a torque wrench adapter check (extension correction, actual torque, bolt preload), a friction wheel drive check (tangential force, normal force needed, contact stress, speed ratio) and a taper bush grip check (screw preload, wedge normal force, torque capacity). Tests cross-check against the uniform acceleration, pipe friction, orifice flow, compression spring, inclined plane, bolt torque and preload, and Hertz contact stress tools. WORKOS now holds 837 tools.
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Cylinder Cushion Check (Kinetic Energy, Deceleration, Cushion Pressure, Largest Speed)** `cylinder-cushion-check` | CUSHION ADEQUATE | Cushion pressure; Speed reduction; Model and application | 175–181, 281–286 | Automated + cross-check |
+| **Pipe Bend Thrust Check (Pressure and Momentum Force, Resultant, Thrust Block Bearing)** `pipe-bend-thrust-check` | THRUST BLOCK ADEQUATE | Ground bearing; Undisturbed ground; Model and application | 3024–3027 | Automated + cross-check |
+| **Jet Impact Force Check (Nozzle Flow and Velocity, Reaction, Force on a Plate)** `jet-impact-force-check` | REACTION ACCEPTABLE | Nozzle reaction; Injury risk; Model and application | 3024–3027, 352–368 | Automated + cross-check |
+
+### Springs
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Spring Clamp Hydraulic Release Check (Clamp Force, Release Pressure, Spring Stress)** `spring-clamp-hydraulic-release` | CLAMP ADEQUATE | Clamping force; Release pressure; Spring stress at release; Wear; Model and application | 304–324, 281–286 | Automated + cross-check |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Extraction Duct Check (Total Airflow, Duct Velocity, Friction Loss, Fan Pressure)** `extraction-duct-check` | EXTRACTION ADEQUATE | Transport velocity; Fan pressure; Capture; Model and application | 3024–3027 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Gravity Chute Check (Sliding Acceleration, Exit Speed, Impact Energy, Least Angle)** `gravity-chute-check` | CHUTE WORKS | Sliding; Exit speed; Model and application | 165–171, 175–181 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Torque Wrench Adapter Check (Extension Correction, Actual Torque, Bolt Preload)** `torque-wrench-adapter-check` | CORRECT SETTING | Preload; Nut factor; Model and application | 1521–1535 | Automated + cross-check |
+| **Taper Bush Grip Check (Screw Preload, Wedge Normal Force, Torque Capacity)** `taper-bush-grip-check` | GRIP ADEQUATE | Grip; Screw preload; Key; Model and application | 1521–1535, 169–171 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Friction Wheel Drive Check (Tangential Force, Normal Force Needed, Contact Stress, Speed Ratio)** `friction-wheel-drive-check` | DRIVE ADEQUATE | Contact pressure; Bearings; Model and application | 2301–2309, 165–168 | Automated + cross-check |
