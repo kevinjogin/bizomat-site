@@ -49,6 +49,8 @@ references:
     year: "edition as called up"
     note: "Named in Chapter 7 by number and scope as one reference for safe work near live electrical equipment during thermal surveys. No values are quoted from it."
 related:
+  - title: "Contact Temperature Sensors by the Numbers"
+    href: "/reados/publications/contact-temperature-sensors-by-the-numbers/"
   - title: "Heat Transfer by the Numbers"
     href: "/reados/publications/heat-transfer-by-the-numbers/"
   - title: "Heating and Cooling Times by the Numbers"
