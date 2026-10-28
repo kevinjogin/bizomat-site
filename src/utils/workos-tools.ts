@@ -1,5 +1,5 @@
 // WORKOS tool registry, read at build time from the same browser scripts the tools page runs
-// (public/tools/data-*.js and guides-*.js), so static pages and the live calculators never drift apart.
+// (public/tools/data-*.js, guides-*.js and the input guides in inputs-*.js), so static pages and the live calculators never drift apart.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { runInNewContext } from 'node:vm';
@@ -13,15 +13,22 @@ export interface ToolGuide {
   method?: string[]; limitations?: string[]; interpret?: string[]; refs?: string[]; verify?: string[];
 }
 
-let cache: { tools: Tool[]; guides: Record<string, ToolGuide> } | null = null;
+/** One field's entry in public/tools/inputs-*.js: the words behind its "What this means" panel. */
+export interface InputEntry { what?: string; tip?: string; effect?: string; fig?: string; sym?: string; unclear?: string }
+/** The renderer in public/tools/input-guides.js, shared by the live calculator and the static tool pages. */
+export interface InputGuideRenderer {
+  fieldGuide(tool: Tool, field: ToolField, entry: InputEntry | undefined, opts?: { prefix?: string; inputId?: string | null; value?: unknown; example?: boolean }): string;
+}
 
-export function loadWorkosTools(): { tools: Tool[]; guides: Record<string, ToolGuide> } {
+let cache: { tools: Tool[]; guides: Record<string, ToolGuide>; inputs: Record<string, Record<string, InputEntry>>; inputGuide: InputGuideRenderer } | null = null;
+
+export function loadWorkosTools() {
   if (cache) return cache;
   const sandbox: { window: Record<string, any> } = { window: {} };
-  for (const kind of ['data', 'guides']) {
-    for (const f of TOOL_FILES) runInNewContext(readFileSync(join(process.cwd(), 'public', 'tools', `${kind}-${f}.js`), 'utf8'), sandbox);
-  }
-  cache = { tools: sandbox.window.GOCORE_TOOLS, guides: sandbox.window.WORKOS_GUIDES };
+  const run = (name: string) => runInNewContext(readFileSync(join(process.cwd(), 'public', 'tools', name), 'utf8'), sandbox, { filename: name });
+  for (const kind of ['data', 'guides', 'inputs']) for (const f of TOOL_FILES) run(`${kind}-${f}.js`);
+  run('input-guides.js');
+  cache = { tools: sandbox.window.GOCORE_TOOLS as Tool[], guides: sandbox.window.WORKOS_GUIDES as Record<string, ToolGuide>, inputs: sandbox.window.WORKOS_INPUTS ?? {}, inputGuide: sandbox.window.WORKOS_INPUT_GUIDE as InputGuideRenderer };
   return cache;
 }
 

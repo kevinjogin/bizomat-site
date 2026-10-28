@@ -85,6 +85,8 @@ const description =
   <div class="print-report" id="print-report" hidden></div>
   {FILES.map((f) => <script is:inline src={`/tools/data-${f}.js`}></script>)}
   {FILES.map((f) => <script is:inline src={`/tools/guides-${f}.js`}></script>)}
+  <script is:inline src="/tools/input-guides.js"></script>
+  {FILES.map((f) => <script is:inline src={`/tools/inputs-${f}.js`}></script>)}
   <script is:inline src="/tools/core.js"></script>
   {FILES.map((f) => <script is:inline src={`/tools/calc-${f}.js`}></script>)}
   <script is:inline src="/tools/ui.js"></script>
