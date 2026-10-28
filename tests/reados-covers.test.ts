@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { CATEGORY_COVERS, COVER_MOTIFS, TOPIC_COVERS, coverArt, coverLayout, coverSpec, type Shape } from '../src/utils/reados-covers.ts';
 
 const read = (path: string) => readFileSync(path, 'utf8');
@@ -43,6 +43,21 @@ test('no two covers in the catalogue are the same', () => {
     assert.ok(!seen.has(key), `${book.slug} duplicates ${seen.get(key)}`);
     seen.set(key, book.slug);
   }
+});
+
+test('no two published authored books share an illustration and colourway', () => {
+  const dir = 'src/content/reados-publications';
+  const seen = new Map<string, string>();
+  for (const slug of readdirSync(dir)) {
+    const meta = read(`${dir}/${slug}/book.md`).split('---')[1];
+    if (!/^status: published$/m.test(meta)) continue;
+    const field = (k: string) => new RegExp(`^${k}: "?(.+?)"?$`, 'm').exec(meta)?.[1] ?? '';
+    const spec = coverSpec({ slug, title: field('title'), category: field('category'), motif: field('coverVariant') || undefined });
+    const key = `${spec.motif}:${spec.tone}`;
+    assert.ok(!seen.has(key), `${slug} has the same ${key} cover as ${seen.get(key)}`);
+    seen.set(key, slug);
+  }
+  assert.ok(seen.size >= 100, 'published books are read from reados-publications');
 });
 
 test('parts of a series keep their illustration but change colourway', () => {
