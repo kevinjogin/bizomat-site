@@ -95,7 +95,7 @@ references:
     creator: "Safe Work Australia"
     year: "current edition"
     url: "https://www.safeworkaustralia.gov.au/doc/model-code-practice-work-health-and-safety-consultation-co-operation-and-co-ordination"
-    note: "Named in Chapters 1 and 9 for the duty of businesses that share responsibility for the same health and safety matter to consult, cooperate and coordinate with each other. A model code has legal effect only where a jurisdiction has approved it; check with the local regulator."
+    note: "Named in Chapters 1 and 9 for the duty of businesses that share responsibility for the same health and safety matter to consult, cooperate and coordinate with each other. A model code has legal effect only where a jurisdiction has approved it; check with the local regulator. Victoria, where the running case is set, has not adopted the model WHS laws; it regulates under its own Occupational Health and Safety Act 2004, administered by WorkSafe Victoria."
 related:
   - title: "Project Delivery, Procurement and Governance"
     href: "/reados/collections/project-delivery-procurement-and-governance/"

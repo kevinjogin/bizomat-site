@@ -87,7 +87,7 @@ references:
     creator: "Safe Work Australia"
     year: "November 2024"
     url: "https://safeworkaustralia.gov.au/sites/default/files/2024-11/model_code_of_practice-construction_work-nov24.pdf"
-    note: "Named as the national model guidance for principal contractors and others carrying out construction work, including work health and safety management plans. Check with the local regulator whether it has legal effect in a given state or territory. No clauses are quoted."
+    note: "Named as the national model guidance for principal contractors and others carrying out construction work, including work health and safety management plans. Check with the local regulator whether it has legal effect in a given state or territory. No clauses are quoted. Victoria, where the running case is set, has not adopted the model WHS laws; it regulates under its own Occupational Health and Safety Act 2004, administered by WorkSafe Victoria."
 related:
   - title: "Reference Class Forecasting by the Numbers"
     href: "/reados/publications/reference-class-forecasting-by-the-numbers/"
