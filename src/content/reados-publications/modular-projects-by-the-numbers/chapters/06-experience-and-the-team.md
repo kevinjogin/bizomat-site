@@ -4,7 +4,7 @@ chapterSlug: experience-and-the-team
 order: 6
 title: "Experience, proven technology and keeping the team"
 description: "Proven machines versus first-of-a-kind integration, borrowed cost ratios of 1.046 and 1.496 at P80, choosing an integrator, and the 346 hours a crew change cost."
-draft: true
+draft: false
 ---
 
 Chapter 5 showed the assembly hours for the end-of-line cell falling with each unit built, from 1,640 hours for the pilot to 1,030 hours for the sixth cell. That fall is experience expressed as a number. This chapter asks where the experience is held and how it is lost. Some of it is frozen into the equipment, in machines their makers have built hundreds of times. Some is held by the integrator as a firm, in its standard designs, test scripts and purchasing. A large part lives in one crew's hands and habits, and that part can leave the workshop on a Friday afternoon without anyone signing for it.

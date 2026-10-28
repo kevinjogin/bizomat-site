@@ -4,7 +4,7 @@ chapterSlug: forecasting-by-component
 order: 8
 title: "Forecasting by component: simulation and correlation"
 description: "Bay 4 forecast part by part: component shares, a 10,000-run bootstrap giving P80 A$2.958m, a fully correlated A$3.027m, and why neither simply replaces the A$3.379m."
-draft: true
+draft: false
 ---
 
 The whole-class forecast of Chapters 4 and 5 treats Bay 4 as a typical member of the business's 24 past projects and reads its P80 at A$3.379m. That is the right starting point, and its great strength is that it needs no model: it is simply what happened to similar projects. But Bay 4 is not a typical member. It is heavy in machines, the thinnest-tailed work the business does, and light in software, the fattest. This chapter forecasts Bay 4 component by component, combines the components with a simple resampling simulation, shows how much the answer depends on whether the components go wrong together, and sets out which result to use for what.

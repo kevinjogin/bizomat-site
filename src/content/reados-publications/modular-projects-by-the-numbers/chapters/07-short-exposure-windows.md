@@ -4,7 +4,7 @@ chapterSlug: short-exposure-windows
 order: 7
 title: "Short exposure windows: installing in days, not weeks"
 description: "Disruption risk grows with days on site: 69.9% over 15 days against 21.3% over 3, A$228,000 against A$58,600 of site-related cost per cell, and a permit day nobody planned."
-draft: true
+draft: false
 ---
 
 A production line that has been stopped and opened up for an installation is at its most vulnerable. The product is not flowing, the guarding is off, contractors are working beside people who run the next line, and the plan depends on parts, permits, people and services all arriving when the schedule says they will. Every day the line stays open is another day for something to go wrong. The bespoke option in the running case keeps each line open for about three weeks; the modular option for about three working days. This chapter puts numbers on what that difference is worth.

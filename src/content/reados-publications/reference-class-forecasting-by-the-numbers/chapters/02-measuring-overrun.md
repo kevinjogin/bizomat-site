@@ -4,7 +4,7 @@ chapterSlug: measuring-overrun
 order: 2
 title: "Measuring overrun: baselines, real dollars and scope"
 description: "Measure overrun as final cost over the budget approved at the decision to proceed, in 2026 dollars, scope changes included. P05 reads 2.60, not the 1.30 first reported."
-draft: true
+draft: false
 ---
 
 A reference class is only as good as the numbers in it, and the same project can produce very different overrun figures depending on how it is measured. Compare the final cost with the first rough estimate and the overrun looks enormous. Compare it with the budget as it stood after the last top-up and the project looks nearly on target. Mix 2011 dollars with 2025 dollars and ordinary inflation masquerades as overrun. Leave out the projects whose scope grew and the class quietly loses its worst outcomes.

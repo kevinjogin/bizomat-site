@@ -4,7 +4,7 @@ chapterSlug: the-inside-view
 order: 1
 title: "The inside view and the plan on the table"
 description: "How Bay 4's A$2.40m estimate was built, why inside-view estimates run optimistic, and a first look at 24 past projects: 20 over budget, median ratio 1.14."
-draft: true
+draft: false
 ---
 
 An estimate is usually built by looking hard at the project in front of you: what has to be bought, built, installed and commissioned, what each item will cost, how long each step will take and what might go wrong. That way of seeing a project is called the **inside view**, and it is indispensable. Nobody can order a machine, sign a building contract or plan a shutdown without it. It also has a well-documented weakness. Estimates built this way, however careful, tend to come in low and short, and they do so in a consistent direction rather than at random.

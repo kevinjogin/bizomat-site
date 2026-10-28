@@ -4,7 +4,7 @@ chapterSlug: rollout-rhythm
 order: 8
 title: "Rollout rhythm: cadence, line of balance and batch size"
 description: "A cell every two weeks from a ten-week pipeline: five cells in progress, A$38,077 for each week the rollout slips, and why ordering all 11 cells early risked A$165,000 a change."
-draft: true
+draft: false
 ---
 
 Once the pilot has proved the design, the question becomes how fast, and in what batches, to roll out the other eleven cells. Too slow, and benefit is lost at A$3,461.54 for every cell-week of waiting. Too fast, and money and hardware are committed before the design has finished teaching its lessons, the integrator's crew is pushed beyond its learning, and sites are asked to receive cells faster than they can prepare for them. The rollout's rhythm is a decision with numbers on both sides.

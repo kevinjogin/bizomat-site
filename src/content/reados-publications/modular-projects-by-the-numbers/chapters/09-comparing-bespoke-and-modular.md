@@ -4,7 +4,7 @@ chapterSlug: comparing-bespoke-and-modular
 order: 9
 title: "Comparing bespoke and modular: cost, time and risk"
 description: "A$10.32m against A$8,446,131, break-even at the fourth cell, the last cell in week 92 or 68, borrowed cost ratios for the risk, and a comparison that left out A$520,000."
-draft: true
+draft: false
 ---
 
 The earlier chapters have each looked at one part of the choice between a bespoke and a modular programme: the outcome, the module, the pilot, learning, people, exposure on site and the rhythm of the rollout. This chapter puts the parts together into one comparison on cost, time and risk, and asks where the difference really comes from. The answer is not quite the one most people expect.

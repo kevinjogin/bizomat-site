@@ -4,7 +4,7 @@ chapterSlug: learning-curves
 order: 5
 title: "Learning curves: unit and cumulative-average models"
 description: "Compare the unit and cumulative-average learning curves for twelve cells (13,191 h against 10,722 h), fit an 84.0% curve from six builds and forecast 870 h for cell 12."
-draft: true
+draft: false
 ---
 
 The second cell of a design takes less time to build than the first, and the twelfth less than the second. Anyone who has built the same thing repeatedly knows that, and it is one of the main reasons a modular programme is cheaper than a bespoke one. To plan with it, the effect has to be a number: how fast the hours fall, what the next cell will take, and what the whole programme's assembly will cost.

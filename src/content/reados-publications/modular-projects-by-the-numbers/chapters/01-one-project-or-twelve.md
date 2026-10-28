@@ -4,7 +4,7 @@ chapterSlug: one-project-or-twelve
 order: 1
 title: "One project or twelve: starting from the outcome"
 description: "Define twelve packing cells by their outcome: 10 cases a minute, a pallet every 6 minutes, 36 positions and A$2.16m a year, then sketch bespoke against modular delivery."
-draft: true
+draft: false
 ---
 
 A request to automate twelve packing stations usually arrives as a request for twelve machines. That is a description of a deliverable, and it hides the question that decides almost everything else: what must be different when the work is finished? This chapter starts from that question. It sets out the outcome the running case must deliver, turns it into numbers that any proposed design can be checked against, and only then works back to the equipment.

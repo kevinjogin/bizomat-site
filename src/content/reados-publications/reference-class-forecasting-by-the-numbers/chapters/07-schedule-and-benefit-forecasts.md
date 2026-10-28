@@ -4,7 +4,7 @@ chapterSlug: schedule-and-benefit-forecasts
 order: 7
 title: "Schedule, benefits and the cost of delay"
 description: "Schedule ratios put Bay 4 at 44.7 weeks at P50 and 54.7 at P80 against a 36-week plan; with A$45k a week of contribution, the P80 delay costs about A$839k."
-draft: true
+draft: false
 ---
 
 The chapters so far have corrected Bay 4's cost. A business case also rests on two other forecasts made from the inside: when the new capacity starts earning, and how much it earns once it does. Both are open to the same optimism as the cost estimate, and both can be checked against the business's own records in the same way. This chapter applies the reference class to the schedule, shows that time and cost overruns in the class travel together, prices the delay, and builds a small reference class for the benefit that justifies Bay 4: unattended overnight machining hours.

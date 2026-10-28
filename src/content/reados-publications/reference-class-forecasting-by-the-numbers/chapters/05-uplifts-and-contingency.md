@@ -4,7 +4,7 @@ chapterSlug: uplifts-and-contingency
 order: 5
 title: "Uplifts and contingency: from a percentile to a budget"
 description: "Turn a percentile into an uplift, a budget and a contingency: Bay 4 at P50 A$2.736m and P80 A$3.379m, who holds which money, and an uplift applied to the wrong base."
-draft: true
+draft: false
 ---
 
 A percentile is a statement about a distribution. A budget is a commitment of money, with someone accountable for it. Between the two sit three steps: convert the chosen percentile into an **uplift**, apply it to the right base, and decide who holds the difference between the estimate and the budget. Each step is simple, and each has a characteristic mistake.

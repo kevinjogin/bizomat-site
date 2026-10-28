@@ -4,7 +4,7 @@ chapterSlug: drawing-the-module-boundary
 order: 2
 title: "Drawing the module boundary: interfaces and variants"
 description: "Decide what goes inside a standard packing cell, write a five-part interface specification, handle two case formats by settings, and measure 94% parts commonality."
-draft: true
+draft: false
 ---
 
 A module is only as standard as its boundary. Draw the line too wide and the module swallows parts of each site that differ, so every unit becomes a redesign. Draw it too narrow and the sites are left to build the difficult parts themselves, twelve different ways. This chapter draws the boundary for the running case's end-of-line cell: what goes inside the module, what stays with each site, and the interface specification that joins the two.

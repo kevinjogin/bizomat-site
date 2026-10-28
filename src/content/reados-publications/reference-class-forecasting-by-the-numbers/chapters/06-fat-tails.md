@@ -4,7 +4,7 @@ chapterSlug: fat-tails
 order: 6
 title: "Fat tails: when the average misleads"
 description: "Tail measures for the 24-project class, why a normal curve misreads it, how tails differ by project type, and why Bay 4's A$140k software line carries its tail."
-draft: true
+draft: false
 ---
 
 Chapter 4 read the reference class through its percentiles, and Chapter 5 turned a chosen percentile into a budget. Both treat the class as a single distribution and ask where a given share of outcomes falls. This chapter looks at the distribution's shape, and in particular at its upper end, where a few projects finished at one and a half to two and a half times their approved budgets. That end decides whether an average means anything, whether a normal curve can stand in for the record, and where in a project the real exposure sits.

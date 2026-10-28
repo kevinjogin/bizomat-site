@@ -4,7 +4,7 @@ chapterSlug: keeping-the-standard
 order: 10
 title: "Keeping the standard: change control and closing the programme"
 description: "Baselines and change requests, A$15,120 per site deviation, a benefit review at 98.3% of A$2.16m, a cost ratio of 1.030, and a local change copied from cell 5 into cell 9."
-draft: true
+draft: false
 ---
 
 Every benefit of the modular programme depends on the cells being the same. The design was paid for once because it is used twelve times; the crew's hours fell because it built the same cell again; the installation took three days because every interface had been proved before; the spares and training are shared because the parts and screens match. A standard that drifts loses those benefits one small change at a time, usually for good local reasons and usually without anyone deciding to give them up.

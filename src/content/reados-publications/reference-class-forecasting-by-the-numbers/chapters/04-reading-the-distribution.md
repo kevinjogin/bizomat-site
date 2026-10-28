@@ -4,7 +4,7 @@ chapterSlug: reading-the-distribution
 order: 4
 title: "Reading the distribution: medians, percentiles and P-values"
 description: "Read 24 cost ratios as a distribution: mean 1.267 against median 1.140, PERCENTILE.INC step by step to P80 1.408 and P90 1.632, what a P-value means, and small-sample limits."
-draft: true
+draft: false
 ---
 
 A reference class is a list of outcomes. To forecast from it, the list has to be read as a distribution: where the middle is, how far it spreads, and how likely a given overrun is. The tools are few and simple, a sorted list, a median and a handful of percentiles, but each has conventions that change the answer, and a small class has limits that the arithmetic does not announce.

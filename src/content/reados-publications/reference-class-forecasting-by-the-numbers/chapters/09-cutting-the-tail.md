@@ -4,7 +4,7 @@ chapterSlug: cutting-the-tail
 order: 9
 title: "Cutting the tail before approval"
 description: "Where Bay 4's tail comes from, actions that shrink it before approval, staging the software to cut the P90 exposure from A$3.917m to A$3.371m, and an affordability test."
-draft: true
+draft: false
 ---
 
 The earlier chapters measured Bay 4's exposure; this one tries to reduce it. A reference class forecast describes what happens to projects run the way the business has run them. It is not a fixed fate. The tail of the distribution comes from particular kinds of work and particular failures, and many of them can be found, priced or fenced off before the money is committed, when doing so is cheapest. The aim is not to make the forecast look better. It is to change the project so that the forecast honestly gets better, and to check, before approval, that the business can survive the outcomes that remain.

@@ -4,7 +4,7 @@ chapterSlug: choosing-the-reference-class
 order: 3
 title: "Choosing the reference class"
 description: "Balance similarity against sample size across 24 projects in four types, cross-check with published base rates, and see why dropping P05 and P21 cut the P80 to 1.302."
-draft: true
+draft: false
 ---
 
 A forecast from a reference class can only be as relevant as the class. Choose projects too unlike the new one and the forecast describes someone else's risks. Choose too few and the percentiles rest on two or three numbers. Choose them by looking at the outcomes first and the class becomes whatever the team hoped it would be.

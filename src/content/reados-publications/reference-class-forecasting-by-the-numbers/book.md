@@ -7,7 +7,7 @@ tags: [projects, finance, strategy, operations]
 author: KEVOS®
 publisher: KEVOS® READOS
 language: en-AU
-status: draft
+status: published
 publishDate: 2026-10-28
 referencesChecked: 2026-10-28
 edition: "1"

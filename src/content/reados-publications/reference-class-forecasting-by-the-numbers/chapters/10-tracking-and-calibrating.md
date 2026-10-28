@@ -4,7 +4,7 @@ chapterSlug: tracking-and-calibrating
 order: 10
 title: "Deciding, tracking and calibrating the forecast"
 description: "Bay 4's decision paper and funding of A$3.379m, a forecast register, a back-test where 9 of 12 P80s held, a Brier score, and the class updated with Bay 4's 1.19 outcome."
-draft: true
+draft: false
 ---
 
 A forecast is useful once, when the decision is made, and again afterwards, when its outcome shows whether the method can be trusted. Most businesses use it only the first time. The estimate goes into the approval paper, the project runs, the final account is paid, and nobody goes back to ask whether the forecast's P80 meant anything. Without that step, the reference class never grows, the percentiles are never tested, and the next project starts from the same records as this one.

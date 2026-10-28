@@ -4,7 +4,7 @@ chapterSlug: iterating-the-plan
 order: 3
 title: "Iterating the plan: models, mock-ups and the cost of change"
 description: "Find faults while they cost A$1,500, not A$31,000: an emulation model, a mock-up and a pilot cut the cost of 23 issues from A$713,000 to A$156,000, with one case-size miss."
-draft: true
+draft: false
 ---
 
 Every new design has faults. The question is not whether they will be found but where, because the cost of fixing one rises steeply the further the design has travelled towards a working production line. A fault found in a model costs an engineer's afternoon. The same fault found on an installed line costs rework, lost production and, in a modular programme, possibly a retrofit to every cell already built. Planning well means planning the places where faults will be found, and making those places cheap.

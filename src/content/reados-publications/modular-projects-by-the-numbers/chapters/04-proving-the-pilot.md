@@ -4,7 +4,7 @@ chapterSlug: proving-the-pilot
 order: 4
 title: "Proving the pilot: acceptance tests and run length"
 description: "Plan FAT, SAT and SIT for a packing cell, test 10 cases a minute and a pallet every 6 minutes, and size the run by the rule of three: 24 hours to show 1 stoppage in 8."
-draft: true
+draft: false
 ---
 
 A pilot is built to be tested, and the test decides whether eleven more cells are built to the same design. That makes the acceptance test the most consequential few days in a modular programme. A test that is too short, or measures the wrong things, can pass a design that will stop every two hours on a working line, and that design will then be copied eleven times.
