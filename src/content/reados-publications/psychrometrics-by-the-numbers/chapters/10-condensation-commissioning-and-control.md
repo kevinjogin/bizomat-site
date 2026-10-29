@@ -33,6 +33,12 @@ The paper reels are an operational problem. Chapter 1 showed why a reel at 8 °C
 
 The supply duct in the hall is borderline. At a 2.49 K margin it will stay dry most of the time, but local humidity near people and the inaccuracy of the room sensor are enough to wet it on a bad day. Thin insulation removes the doubt.
 
+### Monday morning
+
+The margins above assume the hall is at its design state. After a humid summer weekend with the plant off, it is not. This is an illustration. If the closed hall has drifted to 27 °C and 65%, its dew point is 19.86 °C, and the surface check gives a margin of −6.26 K for the 13.6 °C supply duct and its diffusers. When the plant starts, the cold supply air chills the diffusers and the uninsulated duct well before the coil has dried the hall, and they drip onto whatever is beneath them.
+
+Two measures avoid it. The plant can start with the cooling coil dehumidifying and the supply temperature held higher for the first hour or so, so that the hall's dew point falls before the supply air reaches its design temperature; and diffusers and ducts over presses and paper stacks can be insulated or placed so that a drip lands on the floor. Starting earlier on a Monday costs less energy than it seems, because the moisture has to be removed either way.
+
 ## A duct in a humid ceiling space
 
 The worse duct is the one that leaves the hall. This is an illustration. A branch duct carrying 13.6 °C supply air runs through a ceiling space above the offices that is ventilated to outdoors. On the humid design day that space is at about 29 °C and 70%, with a dew point of **22.97 °C**. The surface check gives a margin of −9.37 K for the bare duct: it will run with water and drip through the ceiling.
