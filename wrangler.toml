@@ -37,8 +37,9 @@ binding = "AI"
 [previews.ai]
 binding = "AI"
 
+# Workers Logs are off, matching the setting chosen in the Cloudflare dashboard (29 Oct 2026).
 [observability]
-enabled = true
+enabled = false
 
 # Per-IP burst limits at the edge (Workers Rate Limiting API; no KV or paid plan needed).
 # Keys are "<scope>:<client IP>" inside src/worker.ts; a request over the limit gets HTTP 429.
