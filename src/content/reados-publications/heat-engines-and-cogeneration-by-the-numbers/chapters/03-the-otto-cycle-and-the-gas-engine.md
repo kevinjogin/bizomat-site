@@ -37,11 +37,11 @@ body:
 <text class="txb" x="92" y="154">2</text>
 <text class="txb" x="448" y="248">4</text>
 <text class="txb" x="448" y="296">1</text>
-<text class="txa" x="122" y="108">heat in</text>
+<text class="txa" x="130" y="108">heat in</text>
 <text class="txs" x="452" y="270">heat out</text>
 <text class="txb" x="230" y="226">net work</text>
 <text class="txs" x="66" y="16">pressure p</text>
-<text class="txs" x="420" y="312">volume V</text>
+<text class="txs" x="250" y="312">volume V</text>
 <path class="lf dsh" d="M110 290V280"/>
 <text class="txs" x="96" y="312">V₂</text>
 <text class="txs" x="434" y="312">V₁ = r × V₂</text>

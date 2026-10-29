@@ -88,7 +88,7 @@ body:
 <text class="txa" x="250" y="100">mixed air 24.59 °C, 11.70 g/kg</text>
 <text class="txs" x="150" y="258">coil leaving 11.0 °C, 7.75 g/kg</text>
 <text class="txs" x="222" y="238">supply 13.58 °C</text>
-<text class="txs" x="300" y="228">room 22 °C, 8.23 g/kg</text>
+<text class="txs" x="326" y="228">room 22 °C, 8.23 g/kg</text>
 <text class="txs" x="66" y="236">ADP 9.21 °C</text>
 <text class="txs" x="90" y="150">saturation curve</text>
 <text class="txs" x="360" y="310">dry-bulb temperature</text>

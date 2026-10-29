@@ -122,7 +122,7 @@ body:
 <text class="txb" x="416" y="66">O</text>
 <text class="txb" x="363" y="144">M</text>
 <text class="txb" x="176" y="194">C</text>
-<text class="txb" x="226" y="222">S</text>
+<text class="txb" x="217" y="187">S</text>
 <text class="txs" x="104" y="262">W</text>
 <text class="txs" x="246" y="232">MW</text>
 <text class="txs" x="280" y="184">H</text>

@@ -37,7 +37,7 @@ body:
 <text class="txb" x="166" y="54">3</text>
 <text class="txb" x="448" y="252">4</text>
 <text class="txb" x="448" y="296">1</text>
-<text class="txa" x="96" y="44">heat in at constant p</text>
+<text class="txa" x="186" y="62">heat in at constant p</text>
 <text class="txs" x="452" y="272">heat out</text>
 <text class="txb" x="230" y="230">net work</text>
 <path class="lf dsh" d="M90 60V290M160 60V290"/>
