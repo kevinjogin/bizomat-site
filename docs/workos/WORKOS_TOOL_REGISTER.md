@@ -2986,7 +2986,7 @@ Six tools in batch polymers that apply the methods set out in V. J. Klenin’s T
 
 ## Thermodynamics first principles after Bryan (added 29 October 2026)
 
-Three tools in batch bryanthermo that apply results from G. H. Bryan’s Thermodynamics (Teubner, 1907; public domain) to plant problems, with every property, rating and limit entered by the user: a liquid adiabatic compression check (temperature rise, c_p − c_v, adiabatic bulk modulus, wave speed), a gas mixture property calculator (Dalton’s law, mixture R, c_p, γ, density, partial pressures, mixing entropy) and a thermoelectric cooler check (module constants from the datasheet, heat pumped, power, COP, hot-side heat). Tests cross-check against Bryan’s own forms of the results. WORKOS now holds 859 tools.
+Three tools in batch bryanthermo that apply results from G. H. Bryan’s Thermodynamics (Teubner, 1907; public domain) to plant problems, with every property, rating and limit entered by the user: a liquid adiabatic compression check (temperature rise, c_p − c_v, adiabatic bulk modulus, wave speed), a gas mixture property calculator (Dalton’s law, mixture R, c_p, γ, density, partial pressures, mixing entropy) and a thermoelectric cooler check (module constants from the datasheet, heat pumped, power, COP, hot-side heat). Tests cross-check against Bryan’s own forms of the results. WORKOS then held 859 tools. Two more were added later the same day, taking WORKOS to 925 tools: a heat engine Carnot limit check (ideal efficiency, second-law efficiency, most work, least heat rejected, entropy generated) and a least-work-to-chill check (second-law minimum power to cool a product below ambient, ideal COP, chiller claim check).
 
 ### Hydraulics
 
@@ -3005,6 +3005,8 @@ Three tools in batch bryanthermo that apply results from G. H. Bryan’s Thermod
 | Tool | Result with example inputs | Checks | Bryan sections | Tested |
 |---|---|---|---|---|
 | **Thermoelectric Cooler Check (TEC Module Constants from the Datasheet, Heat Pumped, Power, COP, Hot-Side Heat)** `thermoelectric-cooler-check` | MODULES PUMP THE HEAT LOAD | Heat pumped against the load; Current rating; Voltage rating; Hot-side heat sink; Model and application | §§164–166 | Automated + cross-check |
+| **Heat Engine Carnot Limit Check (Ideal Efficiency, Second-Law Efficiency, Most Work, Least Heat Rejected)** `heat-engine-carnot-limit` | INSIDE THE CARNOT LIMIT | Stated efficiency against the Carnot limit; Second-law efficiency; Reservoir temperatures; Model and application | §§61–65, 74, 77 | Automated + cross-check |
+| **Least Work to Chill a Product Below Ambient (Second-Law Minimum Power, Ideal COP, Chiller Claim Check)** `chilling-least-work-check` | INSIDE THE SECOND-LAW LIMIT | Stated power against the least work; Second-law efficiency; Phase change; Model and application | §§90, 93 | Automated + cross-check |
 
 ## Thermodynamics tools from Çengel and Boles, batch handbook72 (added 29 October 2026)
 

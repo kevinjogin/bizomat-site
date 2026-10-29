@@ -1,10 +1,10 @@
 {
  "generated": "2026-10-29",
- "base": "http://127.0.0.1:4391",
- "tools": 923,
- "passed": 923,
- "inputs": 7910,
- "figures": 7910,
+ "base": "http://127.0.0.1:47193",
+ "tools": 925,
+ "passed": 925,
+ "inputs": 7923,
+ "figures": 7923,
  "sample": [
   {
    "id": "make-buy",
@@ -112,7 +112,7 @@
    "reducedMotionAnimations": 0
   },
   {
-   "id": "boiling-point-at-pressure",
+   "id": "blocked-in-liquid-pressure-check",
    "keyboardOpens": true,
    "keyboardCloses": true,
    "mobileOverflow": false,
@@ -5274,6 +5274,18 @@
    "ok": true,
    "inputs": 9,
    "figures": 9
+  },
+  {
+   "id": "heat-engine-carnot-limit",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "chilling-least-work-check",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
   },
   {
    "id": "otto-diesel-cycle-check",
