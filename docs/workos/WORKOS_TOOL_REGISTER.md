@@ -3062,3 +3062,50 @@ Seven tools in batch handbook71 that apply the methods of E. A. Guggenheim, *The
 |---|---|---|---|---|
 | **Gas Throttling Temperature Check (Joule–Thomson Cooling, Regulator Outlet, Preheat)** `gas-throttling-temperature-check` | PREHEAT NEEDED | Outlet temperature; Gas model; Moisture and hydrates; Model and application | 3.11, 3.20–3.22 | Automated + cross-check |
 | **Gas Separation Energy Check (Ideal Mixing, Least Work, Nitrogen Generator Efficiency)** `gas-separation-energy-check` | WITHIN TARGET ENERGY | Specific energy; Purity set point; Energy boundary; Model and application | 4.18–4.20 | Automated + cross-check |
+
+## Project, business, operations, maintenance, quality and machining tools, batch handbook73 (added 29 October 2026)
+
+Eight tools in batch handbook73 from public, checkable sources and Machinery’s Handbook topics, with every rate, limit and benchmark entered by the user: an earned value check (cost and schedule variance, CPI, SPI, estimate at completion, TCPI; GAO-20-195G), a PERT schedule check (three-point estimates, expected duration, chance of meeting the deadline; Malcolm et al. 1959), an early payment discount check (implied and effective annual rate; handbook pp. 134–136), an economic production quantity check (batch size with a finite production rate; Silver, Pyke and Thomas), a WIP and lead time check (Little’s law, flow efficiency, WIP limit), a critical spares plan (Poisson failures over the lead time; NIST e-Handbook), a capability confidence check (lower confidence bounds on Cp and Cpk; NIST e-Handbook 6.1.6) and a parting-off plan (spindle speed limit, cutting force and power, parting time; handbook pp. 1084–1101). The page column gives Machinery’s Handbook pages where a tool cites them. WORKOS now holds 882 tools.
+
+### Projects
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Earned Value Check (Cost and Schedule Variance, CPI, SPI, Estimate at Completion, TCPI)** `earned-value-check` | PROJECT ON TRACK | Cost performance; Schedule performance; Efficiency needed to finish on budget; Earned value measurement; Model and application |  | Automated + cross-check |
+| **PERT Schedule Check (Three-Point Estimates, Expected Duration, Chance of Meeting the Deadline)** `pert-schedule-check` | DEADLINE ACHIEVABLE | Chance of meeting the deadline; Other paths; Model and application | 128–133 | Automated + cross-check |
+
+### Money
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Early Payment Discount Check (Implied Interest Rate, Effective Annual Rate, Take or Pay Net)** `early-payment-discount-check` | TAKE THE DISCOUNT | Discount against your cost of funds; Cash available; Model and application | 134–136 | Automated + cross-check |
+
+### Inventory
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Economic Production Quantity Check (Batch Size, Run Length, Peak Stock, Cost against Current Batch)** `economic-production-quantity` | BATCH SIZE CLOSE TO OPTIMAL | Current batch size; Capacity; Model and application |  | Automated + cross-check |
+
+### Operations
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **WIP and Lead Time Check (Little’s Law, Flow Efficiency, WIP Limit for a Target Lead Time)** `wip-lead-time-check` | LEAD TIME WITHIN TARGET | Lead time; Stable system; Model and application |  | Automated + cross-check |
+
+### Maintenance
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Critical Spares Plan (Poisson Failures over the Lead Time, Spares for a Service Level)** `critical-spares-poisson-plan` | SPARES ENOUGH | Spares held; Failure pattern; Model and application | 128–133 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Capability Confidence Check (Cp, Cpk and Their Lower Confidence Bounds, Sample Size)** `capability-confidence-check` | CAPABILITY PROVEN | Cpk lower bound; Sample size; Stability and normality; Model and application | 128–133 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Parting-Off Plan (Spindle Speed Limit, Cutting Force and Power, Parting Time)** `parting-off-plan` | PARTING PLAN WORKS | Spindle power; Parting time; Centre of a solid bar; Model and application | 1084–1101 | Automated + cross-check |
