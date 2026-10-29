@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 874 tools with unique ids and every previously published id kept', () => {
+test('register: 882 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 874);
+  assert.equal(ids.length, 882);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -4880,5 +4880,60 @@ test('thermodynamics checks: verdicts and guards', () => {
   assert.equal(engine.run('gas-separation-energy-check').text, 'WITHIN TARGET ENERGY');
   assert.equal(engine.run('gas-separation-energy-check', { Eact: 0.35 }).text, 'ABOVE TARGET ENERGY');
   const cases: Array<[string, Inputs]> = [['trapped-liquid-pressure-check', { nu: 0.6 }], ['ro-concentrate-pressure-check', { rec: 99 }], ['ph-electrode-calibration-check', { pH2: 6.8 }], ['ph-electrode-calibration-check', { sMin: 105, sMax: 100 }], ['clausius-boiling-margin-check', { H: 1, pop: 200 }], ['gas-throttling-temperature-check', { p2: 80 }], ['gas-throttling-temperature-check', { model: 'mu', mu: 5, p1: 1000, p2: 1 }], ['filter-bubble-point-check', { k: 2 }], ['gas-separation-energy-check', { xP: 70 }], ['gas-separation-energy-check', { AF: 1.2 }], ['gas-separation-energy-check', { Eact: 0.001 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Batch handbook73: project, business, operations, maintenance, quality and machining tools. Expected values are independent
+// hand calculations (closed forms, Simpson integration of the normal and chi-square densities, direct Poisson sums and a
+// numerical integration of the parting time).
+const PB_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['earned-value-check', {}, { CPI: 0.975, SPI: 0.975, EAC1: 512820.5128205128, EAC2: 520841.5516107824, VAC: -12820.512820512813, TCPI: 305000 / 300000, durF: 12 / 0.975 }, 1e-6],
+  ['pert-schedule-check', {}, { T: 109 / 3, sd: 2.8771127502720115, P: 89.87437200004945, Tc: 39.315269053053534 }, 1e-6],
+  ['early-payment-discount-check', {}, { nom: 37.24489795918367, eff: 44.585292731248515, save: 220 }, 1e-9],
+  ['economic-production-quantity', {}, { Qs: 3394.1125496954282, Cs: 6363.961030678927, Cn: 6847.5, extra: 7.598081870552997, peak: 2545.584412271571 }, 1e-8],
+  ['wip-lead-time-check', {}, { LT: 5, fe: 0.9375, wipLim: 720 }, 1e-12],
+  ['critical-spares-poisson-plan', {}, { lam: 1.08, s: 3, cov: 97.57095636978082 }, 1e-9],
+  ['critical-spares-poisson-plan', { held: 1 }, { cov: 70.63586933414734 }, 1e-9],
+  ['capability-confidence-check', {}, { Cp: 0.1 / 0.048, Cpk: 0.046 / 0.024, chi: 33.93030561852787, cpL: 1.7336227932193007, cpkL: 1.5888986779221228 }, 1e-6],
+  ['parting-off-plan', {}, { dlim: 15.915494309189535, F: 480, Pm: 1.5, Tq: 14.4, tsec: 15.131885335435372 }, 1e-6],
+  ['parting-off-plan', { di: 20 }, { tsec: Math.PI * (900 - 100) / 12000 * 60 }, 1e-9],
+];
+for (const [id, over, expected, tol] of PB_CASES) test(`business and operations: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('business and operations tools: identities', () => {
+  const epq = engine.run('economic-production-quantity').values;
+  near(epq.Cs, Math.sqrt(2 * 24000 * 450 * 2.5 * 0.75), 1e-9, 'minimum cost in closed form');
+  near(engine.run('economic-production-quantity', { Qnow: epq.Qs }).values.extra, 0, 1e-9, 'running at the optimum costs nothing extra');
+  near(engine.run('pert-schedule-check', { dl: 109 / 3 }).values.P, 50, 1e-6, 'deadline at the expected duration is a coin toss');
+  near(engine.run('wip-lead-time-check', { wip: 720 }).values.LT, 6, 1e-12, 'WIP limit gives the target lead time');
+  const cc = engine.run('capability-confidence-check', { n: 100000 }).values;
+  near(cc.cpkL, 0.046 / 0.024 - 1.6448536269514722 * Math.sqrt(1 / 900000 + (0.046 / 0.024) ** 2 / 199998), 1e-9, 'a very large sample has a bound close to the sample Cpk');
+  near(engine.run('early-payment-discount-check', { d: 2, nd: 0, N: 365 }).values.eff, 2 / 98 * 100, 1e-9, 'one period a year: effective equals nominal');
+});
+
+test('business and operations tools: verdicts and guards', () => {
+  assert.equal(engine.run('earned-value-check').text, 'PROJECT ON TRACK');
+  assert.equal(engine.run('earned-value-check', { AC: 230000 }).text, 'RECOVERY NEEDED');
+  assert.equal(engine.run('earned-value-check', { AC: 520000 }).text, 'RECOVERY NEEDED');
+  assert.equal(engine.run('pert-schedule-check').text, 'DEADLINE ACHIEVABLE');
+  assert.equal(engine.run('pert-schedule-check', { dl: 36 }).text, 'DEADLINE AT RISK');
+  assert.equal(engine.run('early-payment-discount-check').text, 'TAKE THE DISCOUNT');
+  assert.equal(engine.run('early-payment-discount-check', { i: 50 }).text, 'PAY ON NET TERMS');
+  assert.equal(engine.run('economic-production-quantity').text, 'BATCH SIZE CLOSE TO OPTIMAL');
+  assert.equal(engine.run('economic-production-quantity', { Qnow: 10000 }).text, 'BATCH SIZE COSTLY');
+  assert.equal(engine.run('wip-lead-time-check').text, 'LEAD TIME WITHIN TARGET');
+  assert.equal(engine.run('wip-lead-time-check', { target: 4 }).text, 'LEAD TIME TOO LONG');
+  assert.equal(engine.run('critical-spares-poisson-plan').text, 'SPARES ENOUGH');
+  assert.equal(engine.run('critical-spares-poisson-plan', { held: 1 }).text, 'SPARES SHORT');
+  assert.equal(engine.run('capability-confidence-check').text, 'CAPABILITY PROVEN');
+  assert.equal(engine.run('capability-confidence-check', { s: 0.0115 }).text, 'NOT YET PROVEN: MORE DATA NEEDED');
+  assert.equal(engine.run('capability-confidence-check', { s: 0.013 }).text, 'NOT CAPABLE');
+  assert.equal(engine.run('parting-off-plan').text, 'PARTING PLAN WORKS');
+  for (const over of [{ Pav: 1 }, { tMax: 10 }] as Inputs[]) assert.equal(engine.run('parting-off-plan', over).text, 'PARTING PLAN NOT ADEQUATE', JSON.stringify(over));
+  const cases: Array<[string, Inputs]> = [['earned-value-check', { EV: 600000 }], ['earned-value-check', { cpiMin: 3 }], ['pert-schedule-check', { m1: 20 }], ['pert-schedule-check', { conf: 100 }], ['early-payment-discount-check', { nd: 30 }], ['early-payment-discount-check', { d: 60 }], ['economic-production-quantity', { p: 90 }], ['economic-production-quantity', { wd: 0 }], ['wip-lead-time-check', { hpd: 30 }], ['critical-spares-poisson-plan', { Nu: 0 }], ['capability-confidence-check', { USL: 9.9 }], ['capability-confidence-check', { n: 4 }], ['parting-off-plan', { di: 70 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });

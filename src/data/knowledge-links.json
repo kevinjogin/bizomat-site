@@ -2915,6 +2915,186 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: word match on waste and recovery only; the article is about waste streams and materials recovery, not gas separation energy."
+  },
+  {
+   "reados": "collection/project-estimates-schedules-and-costs",
+   "chapter": "earned-value-what-it-shows-and-what-it-cannot",
+   "tool": "earned-value-check",
+   "type": "applies",
+   "note": "Calculates the CPI, SPI and estimates at completion this chapter explains, plus the TCPI needed to finish on budget.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter defines CPI = EV ÷ AC, SPI = EV ÷ PV and estimate at completion as budget ÷ CPI; tool computes these with a second EAC and TCPI."
+  },
+  {
+   "reados": "collection/project-planning-and-control",
+   "chapter": "schedule-compression-and-recovery",
+   "tool": "earned-value-check",
+   "type": "complements",
+   "note": "Measures the schedule and cost trend with SPI and CPI, the signal this chapter uses to size a recovery.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter says earned value measures such as SPI show the trend when sizing a schedule gap; tool computes SPI, CPI and forecasts."
+  },
+  {
+   "reados": "collection/project-estimates-schedules-and-costs",
+   "chapter": "how-confident-is-that-finish-date",
+   "tool": "pert-schedule-check",
+   "type": "explains",
+   "note": "Turns three-point estimates on a path into an expected finish, its spread and the chance of meeting a deadline, as this chapter describes.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains three-point estimates, finish dates as ranges and why parallel streams lower the odds; tool computes PERT path probability and states the merge-bias limit."
+  },
+  {
+   "reados": "collection/project-planning-and-control",
+   "chapter": "critical-path-scheduling-explained",
+   "tool": "pert-schedule-check",
+   "type": "complements",
+   "note": "Adds a probability of meeting the deadline to the critical path this chapter shows how to find.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter builds the network and finds the critical path; tool takes the critical path activities and adds PERT duration uncertainty."
+  },
+  {
+   "reados": "publication/front-end-planning-by-the-numbers",
+   "chapter": "the-harvest-deadline",
+   "tool": "pert-schedule-check",
+   "type": "complements",
+   "note": "Estimates the chance of finishing by a fixed deadline from three-point estimates, the question this chapter’s step-cost deadline raises.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter shows that with a step cost the probability of being late dominates and models delivery duration; tool gives the probability of meeting a deadline."
+  },
+  {
+   "reados": "collection/starting-funding-and-structuring-a-business",
+   "chapter": "when-customers-fund-the-business",
+   "tool": "early-payment-discount-check",
+   "type": "applies",
+   "note": "Works out the annual cost of an early-payment discount, the calculation this chapter shows, with the effective rate and a take-or-pay-net decision.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter gives annual cost ≈ discount ÷ (100 − discount) × 365 ÷ days earlier; tool computes this nominal rate and the compounded effective rate."
+  },
+  {
+   "reados": "collection/procurement-and-tendering",
+   "chapter": "pay-for-accepted-value-not-activity",
+   "tool": "early-payment-discount-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter is about paying suppliers early against milestones, not about discounts for prompt payment."
+  },
+  {
+   "reados": "collection/booms-bubbles-and-business-cycles",
+   "chapter": "credit-the-fuel-behind-bubbles",
+   "tool": "early-payment-discount-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter discusses credit in economic history; no payment-term arithmetic."
+  },
+  {
+   "reados": "collection/reading-financial-statements",
+   "chapter": "the-equity-bond",
+   "tool": "early-payment-discount-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter is about valuing equity like a bond; unrelated to trade credit."
+  },
+  {
+   "reados": "collection/records-business-data-and-learning",
+   "chapter": "managing-pricing-data-in-business-systems",
+   "tool": "early-payment-discount-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers price data management, not the cost of payment terms."
+  },
+  {
+   "reados": "collection/manufacturing-operations-and-design-for-manufacture",
+   "chapter": "cutting-lead-time-with-flow-and-pull",
+   "tool": "wip-lead-time-check",
+   "type": "explains",
+   "note": "Applies the Little’s law relation this chapter explains to find lead time, flow efficiency and the WIP limit for a target.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter has a section on Little’s law relating work in progress to lead time and on flow efficiency; tool computes lead time = WIP ÷ throughput and a WIP limit."
+  },
+  {
+   "reados": "collection/manufacturing-operations-and-design-for-manufacture",
+   "chapter": "cutting-lead-time-with-flow-and-pull",
+   "tool": "economic-production-quantity",
+   "type": "complements",
+   "note": "Shows the set-up and holding cost of a batch size, the trade-off behind this chapter’s case for smaller batches.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter argues batch size drives lead time and WIP; tool quantifies the cost side of batch size so set-up reduction can be justified."
+  },
+  {
+   "reados": "publication/machining-by-the-numbers",
+   "chapter": "quoting-a-machined-part",
+   "tool": "economic-production-quantity",
+   "type": "complements",
+   "note": "Finds the batch size that balances set-up against holding cost, the batch-size effect this chapter shows in a quote.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter charges set-up once per batch and shows the effect of batch size on unit cost; tool finds the batch with the lowest set-up plus holding cost."
+  },
+  {
+   "reados": "collection/lean-and-continuous-improvement",
+   "chapter": "maintenance-that-prevents-breakdowns",
+   "tool": "critical-spares-poisson-plan",
+   "type": "complements",
+   "note": "Puts a number on the critical spares this chapter recommends: how many to hold for a chosen chance of not running out over the lead time.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter section on keeping the right spares stresses parts that stop the machine and take time to get; tool sizes them from MTBF and lead time."
+  },
+  {
+   "reados": "collection/product-development-and-launch",
+   "chapter": "proving-a-process-is-ready-for-production",
+   "tool": "capability-confidence-check",
+   "type": "explains",
+   "note": "Tests whether a capability study proves the required Cpk at a confidence level, the evidence this chapter says good samples alone do not give.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains why good samples do not prove readiness and uses capability indices as evidence; tool adds confidence bounds and the sample size needed."
+  },
+  {
+   "reados": "publication/first-of-a-kind-technology-by-the-numbers",
+   "chapter": "qualification-testing",
+   "tool": "capability-confidence-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers qualification testing of new technology, not process capability indices."
+  },
+  {
+   "reados": "collection/project-delivery-procurement-and-governance",
+   "chapter": "practical-completion-and-defects-liability",
+   "tool": "earned-value-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter is about contractual completion and defects; it has no earned value measures."
+  },
+  {
+   "reados": "collection/records-business-data-and-learning",
+   "chapter": "keeping-the-record-of-what-you-promised",
+   "tool": "earned-value-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter is about records of commitments, not cost and schedule performance."
   }
  ]
 }
