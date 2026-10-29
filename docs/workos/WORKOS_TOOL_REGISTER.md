@@ -3172,3 +3172,20 @@ Five integrated design checks in batch handbook75, built from Machinery’s Hand
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Eyebolt Lift Check (Unequal Leg Tensions, Angled Capacity, Thread Engagement)** `eyebolt-lift-check` | EYEBOLTS ADEQUATE | Eyebolt 1; Eyebolt 2; Thread engagement; Seating and alignment; Model and application | 2613–2650, 3450 | Automated + cross-check |
+
+## Forty-sixth round of design checks, batch handbook77 (added 29 October 2026)
+
+Three integrated design checks in batch handbook77, built from Machinery’s Handbook topics and chaining existing tools, with every rating, factor, property and limit entered by the user: a countershaft bearing check (spur gear forces by mesh angle, bearing loads in two planes, L10 life, static factor, shaft stress), a carburizing case depth plan (total case for a ground effective case, time at temperature, cost, case against the section) and an induction hardening plan (reference depth at the generator frequency, frequency for the case, heating energy and power). WORKOS now holds 908 tools.
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Countershaft Bearing Check (Gear Forces, Bearing Loads in Two Planes, L10 Life, Shaft Stress)** `countershaft-bearing-check` | SHAFT AND BEARINGS ADEQUATE | Bearing life; Static safety; Shaft stress; Fatigue and stress raisers; Model and application | 2131–2160, 2404–2412, 257–277 | Automated + cross-check |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Carburizing Case Depth Plan (Total Case for a Ground Effective Case, Time at Temperature, Furnace Cost)** `carburizing-case-depth-plan` | CASE PLAN SUITS THE SECTION | Case against the section; Case depth factor; Drawing callout; Model and application | 467–470, 484–487 | Automated + cross-check |
+| **Induction Hardening Plan (Reference Depth, Frequency for the Case, Heating Energy and Power)** `induction-hardening-plan` | FREQUENCY TOO LOW FOR THE CASE | Depth for the case; Bar size; Process trial; Model and application | 487–489, 467–470 | Automated + cross-check |
