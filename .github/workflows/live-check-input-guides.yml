@@ -8,34 +8,41 @@ permissions:
 jobs:
   live:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
+      - name: Raw HTML
+        shell: bash
+        run: |
+          note() { echo "::notice title=$1::$2"; }
+          for u in /reados/publications/printed-mechanisms-that-run/ /reados/publications/printed-mechanisms-that-run/design-printed-gears-that-mesh/ /reados/collections/investment-appraisal-and-business-cases/ /tools/bend-allowance/ /tools/welding-heat-input/; do
+            out=$(curl -sS -o /tmp/p -w '%{http_code} %{time_total}s %{size_download}B' "https://kevos.com$u")
+            note "html $u" "$out | Apply This in Practice: $(grep -c 'Apply This in Practice' /tmp/p) | Learn the Concepts: $(grep -c 'Learn the Concepts Behind This Tool' /tmp/p) | pathway: $(grep -c 'Learning pathway' /tmp/p) | tool cards: $(grep -o 'class=\"ka__card' /tmp/p | wc -l) | reading cards: $(grep -o 'class=\"kl__card' /tmp/p | wc -l)"
+          done
+          j=$(curl -sS -w ' %{http_code}' https://kevos.com/tools/knowledge.json); note "knowledge.json" "HTTP ${j##* } tools $(echo "${j% *}" | python3 -c 'import json,sys; print(len(json.load(sys.stdin)))')"
       - name: Install browsers
-        run: npm i --no-save --no-package-lock playwright@1.48.2 && npx playwright install --with-deps webkit
-      - name: Check live pages
+        run: npm i --no-save --no-package-lock playwright@1.48.2 && npx playwright install --with-deps webkit chromium
+      - name: Browser timing
         shell: bash
         run: |
           cat > check.mjs <<'JS'
-          import { webkit, devices } from 'playwright';
+          import { webkit, chromium, devices } from 'playwright';
           const note = (t, m) => console.log(`::notice title=${t}::${String(m).slice(0, 900)}`);
-          const b = await webkit.launch(); const ctx = await b.newContext(devices['iPhone 13']); const p = await ctx.newPage();
-          const pages = [
-            ['/reados/publications/printed-mechanisms-that-run/', 'section.ka'],
-            ['/reados/publications/printed-mechanisms-that-run/design-printed-gears-that-mesh/', 'section.ka'],
-            ['/reados/collections/investment-appraisal-and-business-cases/', 'section.ka, section.kp'],
-            ['/tools/bend-allowance/', 'section.kl, section.kp'],
-            ['/tools/welding-heat-input/', 'section.kl'],
-          ];
-          for (const [u, sel] of pages) {
-            const r = await p.goto('https://kevos.com' + u + '?v=' + Date.now(), { waitUntil: 'domcontentloaded', timeout: 60000 });
-            const s = await p.evaluate((sel) => [...document.querySelectorAll(sel)].map((el) => `${el.querySelector('h2')?.textContent} (${el.querySelectorAll('li').length} items)`).join(' + '), sel);
-            note(`live ${u}`, `HTTP ${r.status()} | ${s || 'SECTION MISSING'}`);
+          for (const [name, type] of [['chromium', chromium], ['webkit', webkit]]) {
+            const b = await type.launch(); const p = await (await b.newContext(devices['iPhone 13'])).newPage();
+            for (const u of ['/reados/publications/printed-mechanisms-that-run/', '/tools/bend-allowance/']) {
+              const t0 = Date.now();
+              try {
+                await p.goto('https://kevos.com' + u, { waitUntil: 'commit', timeout: 60000 });
+                await p.waitForSelector('footer, .site-footer', { state: 'attached', timeout: 60000 });
+                note(`${name} ${u}`, `ready after ${Date.now() - t0} ms; sections: ${await p.evaluate(() => [...document.querySelectorAll('section.ka h2, section.kl h2, section.kp h2')].map((h) => h.textContent).join(' | '))}`);
+              } catch (e) { note(`${name} ${u}`, `FAILED after ${Date.now() - t0} ms: ${e.message.split('\n')[0]}`); }
+            }
+            if (name === 'webkit') {
+              await p.goto('https://kevos.com/tools/?tool=investment-appraisal', { waitUntil: 'commit', timeout: 60000 }).catch(() => {});
+              let html = ''; for (let i = 0; i < 80 && !html; i++) { await p.waitForTimeout(250); html = await p.evaluate(() => document.querySelector('#tool-learn')?.textContent || '').catch(() => ''); }
+              note('webkit calculator investment-appraisal', html ? html.slice(0, 160) : 'NO LEARN SECTION');
+            }
+            await b.close();
           }
-          await p.goto('https://kevos.com/tools/?tool=investment-appraisal', { waitUntil: 'domcontentloaded', timeout: 60000 });
-          let html = ''; for (let i = 0; i < 40 && !html; i++) { await p.waitForTimeout(250); html = await p.evaluate(() => document.querySelector('#tool-learn')?.textContent || ''); }
-          note('live calculator investment-appraisal', html ? html.slice(0, 200) : 'NO LEARN SECTION');
-          const j = await p.goto('https://kevos.com/tools/knowledge.json', { waitUntil: 'domcontentloaded', timeout: 60000 });
-          note('live knowledge.json', `HTTP ${j.status()} tools ${Object.keys(JSON.parse(await p.evaluate(() => document.body.innerText))).length}`);
-          await b.close();
           JS
           node check.mjs
