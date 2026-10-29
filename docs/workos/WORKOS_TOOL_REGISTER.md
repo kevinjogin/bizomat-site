@@ -2938,3 +2938,28 @@ A forty-third round of 7 integrated design checks in batch handbook68, aimed at 
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Gauge Repeatability and Bias Check (Type 1 Study: Cg, Cgk, Bias t-Test)** `gauge-repeatability-bias-check` | GAUGE CAPABLE | Repeatability (Cg); Repeatability with bias (Cgk); Resolution; Bias significance; Master value; Model and application | 128–129 | Automated + cross-check |
+
+## Thermodynamics tools from Fermi’s Thermodynamics, batch handbook69 (added 29 October 2026)
+
+Six tools in batch handbook69 that apply the laws set out in Enrico Fermi’s Thermodynamics (Dover, 1956; first published 1937) to plant problems, with every property, rating and limit entered by the user: a vapour pressure and boiling check (Clausius–Clapeyron, boiling point at pressure, margin), a real gas cylinder contents check (van der Waals, compressibility, ideal-gas error), a reverse osmosis pressure check (osmotic pressure, net driving pressure, permeate flow), a battery pack heat check (irreversible and reversible heat, temperature rise, cooling), a heat pump and chiller COP check (Carnot limit, second-law efficiency, running cost) and a waste heat recovery limit check (heat released, exergy, claimed power against the second-law limit). The page column below gives pages in Fermi, not Machinery’s Handbook. WORKOS now holds 850 tools.
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Fermi pages | Tested |
+|---|---|---|---|---|
+| **Vapour Pressure and Boiling Check (Clausius–Clapeyron, Boiling Point at Pressure, Margin)** `vapour-pressure-boiling-check` | LIQUID STAYS BELOW BOILING | Margin to boiling; Distance from the reference point; Model and application | 63–68 | Automated + cross-check |
+| **Reverse Osmosis Pressure Check (Osmotic Pressure, Net Driving Pressure, Permeate Flow)** `ro-pressure-check` | PRESSURE ADEQUATE | Concentrate-end driving pressure; Permeate flow; Scaling and membrane limits; Model and application | 118–122 | Automated + cross-check |
+
+### Pneumatics
+
+| Tool | Result with example inputs | Checks | Fermi pages | Tested |
+|---|---|---|---|---|
+| **Real Gas Cylinder Contents Check (Van der Waals, Compressibility, Ideal-Gas Error)** `real-gas-cylinder-contents` | CONTENTS SUFFICIENT | Mass held; Critical temperature; Pressure equipment; Model and application | 69–76 | Automated + cross-check |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Fermi pages | Tested |
+|---|---|---|---|---|
+| **Battery Pack Heat Check (Irreversible and Reversible Heat, Temperature Rise, Cooling)** `battery-heat-check` | TEMPERATURE RISE ACCEPTABLE | Temperature rise; Hot spots and limits; Model and application | 94–97 | Automated + cross-check |
+| **Heat Pump and Chiller COP Check (Carnot Limit, Second-Law Efficiency, Running Cost)** `heat-pump-cop-check` | COP PLAUSIBLE | Second law; Efficiency against your benchmark; Rating condition; Model and application | 31–45 | Automated + cross-check |
+| **Waste Heat Recovery Limit Check (Heat Released, Exergy, Claimed Power against the Second-Law Limit)** `waste-heat-recovery-limit` | CLAIM PLAUSIBLE | Second law; Realistic share; Net power; Model and application | 44, 48–58 | Automated + cross-check |

@@ -2,7 +2,7 @@
 
 Generated 2026-10-29 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 212 relationships (144 from links authors wrote in the books, 68 from editorial review). Rejected: 15. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 226 relationships (144 from links authors wrote in the books, 82 from editorial review). Rejected: 21. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -78,6 +78,20 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Machining and Metal Parts | Workholding and toolholding: vices, chucks, zero-point systems, tapers and holders | Vacuum Table Workholding Check (Holding Force, Milling Force, Sliding Safety Factor) | complements | Chapter lists vacuum fixtures for thin flat parts and says clamping must resist cutting forces; tool checks vacuum hold against milling force. |
 | Investment Appraisal and Business Cases | NPV, IRR and payback answer different questions: reading investment measures when they disagree | Machine Economic Life Check (Year-by-Year EUAC, Minimum-Cost Life, Keep or Replace) | complements | Chapter advises converting options of different lives to equivalent annual amounts; tool computes EUAC for each life of a machine and the keep-or-replace test. |
 | Investment Appraisal and Business Cases | Before you buy: challenge the need, then judge the whole-life commitment | Machine Economic Life Check (Year-by-Year EUAC, Minimum-Cost Life, Keep or Replace) | complements | Chapter recommends comparing options of different lives by equivalent annual cost with the time value of money; tool computes that cost year by year. |
+| Heat Pumps and Refrigeration by the Numbers | COP and the Carnot limit | Heat Pump and Chiller COP Check (Carnot Limit, Second-Law Efficiency, Running Cost) | applies | Chapter defines heating and cooling COP, derives the Carnot limit and estimates real COP as a fraction of it; tool computes the same limit and the second-law efficiency. |
+| Entropy by the Numbers | Heat pumps and refrigerators against the limit | Heat Pump and Chiller COP Check (Carnot Limit, Second-Law Efficiency, Running Cost) | applies | Chapter derives Carnot limits for cooling and heating COP and shows how to spot an impossible COP; tool flags COPs above the limit. |
+| Process Chillers by the Numbers | Temperature lift and approach | Heat Pump and Chiller COP Check (Carnot Limit, Second-Law Efficiency, Running Cost) | explains | Chapter explains evaporating and condensing temperatures and approach temperatures and how lift drives COP; tool takes approaches as inputs to find the refrigerant temperatures. |
+| Entropy by the Numbers | Lost work and exergy | Waste Heat Recovery Limit Check (Heat Released, Exergy, Claimed Power against the Second-Law Limit) | explains | Chapter defines exergy of heat and of flowing streams relative to a dead state; tool computes stream exergy from ṁ c_p [(T₁ − T₂) − T₀ ln(T₁/T₂)]. |
+| Entropy by the Numbers | Absolute temperature and the Carnot limit | Waste Heat Recovery Limit Check (Heat Released, Exergy, Claimed Power against the Second-Law Limit) | complements | Chapter derives the Carnot limit for an engine between two temperatures; tool applies that limit element by element over the stream’s cooling. |
+| Real Gases by the Numbers | Size and attraction: the van der Waals picture | Real Gas Cylinder Contents Check (Van der Waals, Compressibility, Ideal-Gas Error) | explains | Chapter sets out van der Waals constants a and b and applies them to a cylinder contents check; tool solves the same equation for contents and Z. |
+| Real Gases by the Numbers | Contents, temperature and the gauge | Real Gas Cylinder Contents Check (Van der Waals, Compressibility, Ideal-Gas Error) | applies | Chapter explains why gauge pressure is not contents and corrects contents for temperature with real-gas behaviour; tool gives real-gas contents at a pressure and temperature. |
+| Real Gases by the Numbers | Liquefied gases, vapour pressure and the critical point | Vapour Pressure and Boiling Check (Clausius–Clapeyron, Boiling Point at Pressure, Margin) | explains | Chapter explains vapour pressure, Clausius–Clapeyron and the critical point; tool integrates Clausius–Clapeyron from a reference point. |
+| Real Gases by the Numbers | Liquefied gases, vapour pressure and the critical point | Real Gas Cylinder Contents Check (Van der Waals, Compressibility, Ideal-Gas Error) | complements | Chapter shows gases below the critical temperature (carbon dioxide) liquefy in the cylinder; tool computes the critical temperature from a and b and warns below it. |
+| Vacuum by the Numbers | Vapour, outgassing and gas loads | Vapour Pressure and Boiling Check (Clausius–Clapeyron, Boiling Point at Pressure, Margin) | explains | Chapter uses the Clausius–Clapeyron relation to explain vapour pressure and its steep rise with temperature under vacuum; tool applies the same relation. |
+| Process Chillers by the Numbers | Saturation pressure and temperature | Vapour Pressure and Boiling Check (Clausius–Clapeyron, Boiling Point at Pressure, Margin) | explains | Chapter derives the Clapeyron equation and shows the Clausius–Clapeyron simplification misses refrigerant data by over 10 %; tool uses that simplification and states the limit. |
+| Condensation Control by the Numbers | Water in air: vapour pressure, humidity and dew point | Vapour Pressure and Boiling Check (Clausius–Clapeyron, Boiling Point at Pressure, Margin) | complements | Chapter explains vapour pressure and that it depends only on temperature; tool estimates vapour pressure at a temperature by Clausius–Clapeyron. |
+| Centrifugal Pumps by the Numbers | NPSH and cavitation | Vapour Pressure and Boiling Check (Clausius–Clapeyron, Boiling Point at Pressure, Margin) | complements | Chapter computes NPSH available using the liquid vapour pressure from property data; tool estimates that vapour pressure for liquids without a table. |
+| How Engineering Shaped Industry: From Aqueducts to the Grid | Clean water as an engineered system: barriers, gravity and supply security, and lessons for operations | Reverse Osmosis Pressure Check (Osmotic Pressure, Net Driving Pressure, Permeate Flow) | complements | Chapter describes reverse osmosis plants and seawater osmotic pressure; tool screens osmotic pressure, net driving pressure and permeate flow by van ’t Hoff’s law. |
 
 ## 2. Rejected
 
@@ -98,6 +112,12 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Vacuum by the Numbers | Safety and the vacuum specification | Vacuum Table Workholding Check (Holding Force, Milling Force, Sliding Safety Factor) | Rejected: chapter covers vacuum chamber loads, implosion energy and vacuum lifting; the tool checks sliding of a part on a vacuum table during milling. |
 | Process Chillers by the Numbers | Running cost and heat recovery | Machine Economic Life Check (Year-by-Year EUAC, Minimum-Cost Life, Keep or Replace) | Rejected: chapter covers chiller running cost and heat recovery; it does not discuss replacement timing or equivalent annual cost. |
 | Machine Part Repairs by the Numbers | Repair or replace | Machine Economic Life Check (Year-by-Year EUAC, Minimum-Cost Life, Keep or Replace) | Rejected: chapter decides repair or replacement of a broken part by expected cost; the tool finds a machine’s economic life by EUAC, a different decision. |
+| Heat Pumps and Refrigeration by the Numbers | COP and the Carnot limit | Waste Heat Recovery Limit Check (Heat Released, Exergy, Claimed Power against the Second-Law Limit) | Rejected: chapter is about heat pump COP; the heat pump COP check is the matching tool. |
+| Combustion by the Numbers | Water in the flue gas and condensing heat recovery | Waste Heat Recovery Limit Check (Heat Released, Exergy, Claimed Power against the Second-Law Limit) | Rejected: chapter is about condensing recovery of flue gas latent heat, which the tool explicitly leaves out (constant specific heat, no phase change). |
+| Sustainability and Environmental Management | Turning waste into a resource: why recovery is a process design problem | Waste Heat Recovery Limit Check (Heat Released, Exergy, Claimed Power against the Second-Law Limit) | Rejected: chapter covers material waste and recycling; it does not discuss waste heat or the second-law limit. |
+| Cooling Towers by the Numbers | What a cooling tower does | Heat Pump and Chiller COP Check (Carnot Limit, Second-Law Efficiency, Running Cost) | Rejected: chapter covers evaporative heat rejection; it has no COP or Carnot limit for the tool to apply. |
+| Process Steam by the Numbers | Reading the steam table | Vapour Pressure and Boiling Check (Clausius–Clapeyron, Boiling Point at Pressure, Margin) | Rejected: chapter teaches the steam tables, which are more accurate for water than the tool’s constant-latent-heat approximation. |
+| Connected Products by the Numbers | Budget the battery | Battery Pack Heat Check (Irreversible and Reversible Heat, Temperature Rise, Cooling) | Rejected: chapter budgets battery energy and life for a device; it does not cover heat generation or temperature rise. |
 
 ## 3. Published READOS books with no approved connection
 
@@ -122,7 +142,6 @@ Their pages show a WORKOS topic to browse where the category maps to one, and no
 | CAD Automation That Pays | publication | Engineering | Engineering & Design |
 | CAD Drafting and Drawing Standards | collection | technology | nothing |
 | Careers, Confidence and Personal Effectiveness | collection | business | Business & Commercial |
-| Centrifugal Pumps by the Numbers | publication | Engineering | Engineering & Design |
 | Checking Drawings by the Numbers | publication | Engineering | Engineering & Design |
 | Commercial Law, Contracts and Disputes | collection | business | Business & Commercial |
 | Commissioning Custom Software | publication | Projects | Projects & Improvement |
@@ -142,7 +161,6 @@ Their pages show a WORKOS topic to browse where the category maps to one, and no
 | Electroplating by the Numbers | publication | Manufacturing | Manufacturing & Production |
 | Engineering Design Practice | collection | engineering | Engineering & Design |
 | Engineering Tools People Use | publication | Technology | nothing |
-| Entropy by the Numbers | publication | Engineering | Engineering & Design |
 | Fine Particles by the Numbers | publication | Engineering | Engineering & Design |
 | Fins and Heat Sinks by the Numbers | publication | Engineering | Engineering & Design |
 | Fits That Work | publication | Engineering | Engineering & Design |
@@ -153,10 +171,8 @@ Their pages show a WORKOS topic to browse where the category maps to one, and no
 | Growth, Business Models and New Markets | collection | business | Business & Commercial |
 | Hardfacing and Surfacing by the Numbers | publication | Manufacturing | Manufacturing & Production |
 | Heat Exchangers by the Numbers | publication | Engineering | Engineering & Design |
-| Heat Pumps and Refrigeration by the Numbers | publication | Engineering | Engineering & Design |
 | Heating and Cooling Times by the Numbers | publication | Manufacturing | Manufacturing & Production |
 | Housings That Rebuild | publication | Engineering | Engineering & Design |
-| How Engineering Shaped Industry: From Aqueducts to the Grid | collection | ideas | nothing |
 | How Engineering Shaped Industry: Power, Networks and the Modern Era | collection | ideas | nothing |
 | Industrial Electric Heating by the Numbers | publication | Engineering | Engineering & Design |
 | Industrial Gases by the Numbers | publication | Manufacturing | Manufacturing & Production |
@@ -181,7 +197,6 @@ Their pages show a WORKOS topic to browse where the category maps to one, and no
 | Railway Clearances by the Numbers | publication | Engineering | Engineering & Design |
 | Railway Track Geometry by the Numbers | publication | Engineering | Engineering & Design |
 | Random Error and Drift by the Numbers | publication | Engineering | Engineering & Design |
-| Real Gases by the Numbers | publication | Engineering | Engineering & Design |
 | Records, Business Data and Learning from Results | collection | business | Business & Commercial |
 | Rectangular Duct Fittings by the Numbers | publication | Manufacturing | Manufacturing & Production |
 | Reporting, History and Analytical Data | collection | technology | nothing |
