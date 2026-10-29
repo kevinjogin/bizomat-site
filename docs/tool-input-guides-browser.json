@@ -1,10 +1,10 @@
 {
  "generated": "2026-10-29",
- "base": "http://127.0.0.1:4372",
- "tools": 893,
- "passed": 893,
- "inputs": 7597,
- "figures": 7597,
+ "base": "http://127.0.0.1:47391",
+ "tools": 905,
+ "passed": 905,
+ "inputs": 7717,
+ "figures": 7717,
  "sample": [
   {
    "id": "make-buy",
@@ -106,6 +106,13 @@
   },
   {
    "id": "bearing-fleet-spares-plan",
+   "keyboardOpens": true,
+   "keyboardCloses": true,
+   "mobileOverflow": false,
+   "reducedMotionAnimations": 0
+  },
+  {
+   "id": "boiling-point-at-pressure",
    "keyboardOpens": true,
    "keyboardCloses": true,
    "mobileOverflow": false,
@@ -5468,6 +5475,78 @@
   },
   {
    "id": "heating-humidification-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "trepanning-plan",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "grinding-wheel-cost-plan",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "drill-bushing-position-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "woodruff-key-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "eyebolt-lift-check",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "blocked-in-liquid-pressure-check",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "gas-cylinder-real-gas-duration",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "boiling-point-at-pressure",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "carnot-limit-check",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "compressed-gas-stored-energy",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "gas-generator-energy-check",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "quench-tank-temperature-check",
    "ok": true,
    "inputs": 10,
    "figures": 10

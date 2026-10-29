@@ -24,7 +24,7 @@ Overlap with batch handbook69 (published earlier the same day): `boiling-point-a
 - `node scripts/tools/input-guides.mjs check --file greiner`: 7 tools, 64 inputs, 0 problems. Inventory: 905 tools, 7,717 inputs, all covered.
 - `npm run verify` on origin/main 5643416 plus this batch: astro check 0 errors; 1,152/1,152 tests; 3,731 pages verified by the post-build checks.
 - `npm run knowledge:check`: valid. `npm run seo:validate`: passed.
-- Browser sweep (`scripts/tools/input-guides-browser.mjs`, Playwright Chromium on the built site): run again on the published commit (see the follow-up docs commit); before publication it passed 894/894 tools, every one also on a 360 px phone screen, on b638cd1 plus this batch.
+- Browser sweep (`scripts/tools/input-guides-browser.mjs`, Playwright Chromium) on the published build (7f839d8): 905/905 tools passed, 7,717 figures, including every tool on a 360 px phone screen; it also passed 894/894 on b638cd1 plus this batch before publication.
 
 ## Limits stated in the tools
 
