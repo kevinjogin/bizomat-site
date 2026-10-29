@@ -4125,6 +4125,56 @@
    "status": "approved",
    "evidence": "review",
    "reason": "Chapter covers bearing failure causes and adds vibration readings to monthly inspections; tool identifies bearing defect frequencies in those readings."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "edm-and-micromachining",
+   "tool": "edm-sinker-plan",
+   "type": "applies",
+   "note": "Plans a sinker EDM cavity: roughing current, roughing and finishing time, how many roughing electrodes wear out, electrode undersize and cost.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains sinker EDM electrodes wear so roughing and finishing electrodes are used, and the recast layer; tool sizes the electrodes, counts them from wear and checks finishing stock covers the damaged layer."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "edm-and-micromachining",
+   "tool": "wire-edm-cut-plan",
+   "type": "applies",
+   "note": "Works out the kerf, the smallest inside corner the wire can leave, cutting and skim time, wire use and cost for a wire EDM profile.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter states the minimum internal corner radius is the wire radius plus the spark gap and that internal profiles need a start hole; tool calculates that radius, start-hole time and cutting time."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "choosing-a-cutting-process-for-plate-and-sheet",
+   "tool": "laser-cutting-plan",
+   "type": "complements",
+   "note": "Puts numbers on a laser cut once laser is chosen: focused spot, power density, depth of focus, speed by thickness and cost per part.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter compares laser with other cutting processes and says laser cost rises with thickness; tool estimates laser speed falling with thickness and the time and cost per part."
+  },
+  {
+   "reados": "publication/cutting-and-gouging-by-the-numbers",
+   "chapter": "laser-cutting",
+   "tool": "laser-cutting-plan",
+   "type": "applies",
+   "note": "Calculates the focused spot and power density the chapter describes, the depth of focus against sheet height, and speed and cost per part.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains the beam is focused to a spot about 0.15 mm across giving enormous power density, and that focus height matters; tool calculates spot size, power density and depth of focus."
+  },
+  {
+   "reados": "collection/engineering-history-modern-era",
+   "chapter": "lasers-from-theory-to-tool",
+   "tool": "laser-cutting-plan",
+   "type": "complements",
+   "note": "Shows how wavelength, beam quality and focusing set the spot and power density that made laser cutting practical.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter says laser cutting focuses a high-power beam to a small spot and that results depend on power, speed, focus position and spot size; tool calculates those from the optics."
   }
  ]
 }

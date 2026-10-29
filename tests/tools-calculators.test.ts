@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 920 tools with unique ids and every previously published id kept', () => {
+test('register: 923 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 920);
+  assert.equal(ids.length, 923);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 742 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 745 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 742);
+  assert.equal(ids.length, 745);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -5358,5 +5358,46 @@ test('quality and reliability tools: verdicts and guards', () => {
   assert.equal(engine.run('sheet-nesting-yield').text, 'LAYOUT ACCEPTABLE');
   assert.equal(engine.run('sheet-nesting-yield', { umin: 90 }).text, 'UTILISATION TOO LOW');
   const cases: Array<[string, Inputs]> = [['bearing-defect-frequency-check', { nb: 2 }], ['bearing-defect-frequency-check', { d: 50 }], ['individuals-chart-check', { k: 2 }], ['p-chart-check', { k: 1 }], ['p-chart-check', { d1: 300 }], ['reliability-demonstration-test', { conf: 40 }], ['queue-wait-check', { c: 0 }], ['queue-wait-check', { lam: 10 }], ['sheet-nesting-yield', { umin: 0 }], ['sheet-nesting-yield', { edge: 700 }], ['sheet-nesting-yield', { pl: 3000, pw: 3000 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Fifty-eighth handbook pass (handbook78): forty-seventh round of integrated design checks.
+// Expected values are independent hand calculations (cavity volumes and electrode wear, kerf and wire mass, Gaussian spot and depth of focus).
+const HB58_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['edm-sinker-plan', {}, { I: 48, duty: 0.4, freq: 10, Vc: 9, Vf: 0.42, Vr: 8.58, tR: 1.43, tF: 0.42, tT: 1.85, endR: 0.74, nR: 2, eachR: 0.37, uR: 0.45, uF: 0.05, cost: 616.5 }, 1e-9],
+  ['wire-edm-cut-plan', {}, { kerf: 0.31, offset: 0.155, rCorner: 0.135, feed: 4, tMain: 60, tSkim: 40, tTot: 104, wireL: 800, wireM: 333.79421944391555, wireC: 8.34485548609789, Fb: 44.178646691106465, u: 0.3395305452627101, vol: 2232, cost: 147.01152215276457 }, 1e-9],
+  ['wire-edm-cut-plan', { skims: 0 }, { rCorner: 0.155, tSkim: 0, tTot: 64 }, 1e-9],
+  ['laser-cutting-plan', {}, { d0: 0.1285526306341857, Fn: 6.35, H: 15409132.081866648, zR: 0.8163092045270792, dof: 0.522692925274687, v: 3, tCut: 30, tPierce: 3, tPart: 33, cost: 1.375 }, 1e-6],
+  ['laser-cutting-plan', { P: 1000 }, { H: 7704566.040933324, v: 1.5, tCut: 60 }, 1e-6],
+];
+for (const [id, over, expected, tol] of HB58_CASES) test(`design check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('forty-seventh-round design checks follow their scaling laws', () => {
+  const base = engine.run('laser-cutting-plan').values, short = engine.run('laser-cutting-plan', { fl: 63.5 }).values;
+  near(short.d0, base.d0 / 2, 1e-12, 'half the focal length halves the spot');
+  near(short.H, base.H * 4, 1e-3, 'and quadruples the power density');
+  near(short.dof, base.dof / 4, 1e-12, 'and quarters the depth of focus');
+  near(engine.run('laser-cutting-plan', { lam: 1.06 }).values.d0, base.d0 / 10, 1e-12, 'a tenth of the wavelength gives a tenth of the spot');
+  near(engine.run('wire-edm-cut-plan', { t: 60 }).values.tMain, 120, 1e-9, 'twice the thickness doubles the main-cut time');
+  near(engine.run('edm-sinker-plan', { endMax: 0.2 }).values.nR, 4, 0, 'a smaller wear allowance needs more roughing electrodes');
+});
+
+test('forty-seventh-round design checks give pass and fail verdicts', () => {
+  assert.equal(engine.run('edm-sinker-plan').text, 'EDM PLAN WORKABLE');
+  assert.equal(engine.run('edm-sinker-plan', { J: 12 }).text, 'CURRENT ABOVE MACHINE LIMIT');
+  assert.equal(engine.run('edm-sinker-plan', { fin: 0.05 }).text, 'FINISHING STOCK TOO SMALL');
+  assert.equal(engine.run('wire-edm-cut-plan').text, 'WIRE AND SETTINGS SUIT THE CUT');
+  assert.equal(engine.run('wire-edm-cut-plan', { rMin: 0.1 }).text, 'WIRE TOO LARGE FOR THE CORNERS');
+  assert.equal(engine.run('wire-edm-cut-plan', { Tw: 30 }).text, 'WIRE TENSION TOO HIGH');
+  assert.equal(engine.run('laser-cutting-plan').text, 'BEAM SUITS THE CUT');
+  assert.equal(engine.run('laser-cutting-plan', { Hreq: 2e7 }).text, 'POWER DENSITY TOO LOW');
+  assert.equal(engine.run('laser-cutting-plan', { flat: 1 }).text, 'DEPTH OF FOCUS TOO SHORT');
+  const cases: Array<[string, Inputs]> = [
+    ['edm-sinker-plan', { fin: 15 }], ['edm-sinker-plan', { perim: 10000, fin: 1 }], ['wire-edm-cut-plan', { dw: 0 }], ['laser-cutting-plan', { M2: 0.5 }],
+  ];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
