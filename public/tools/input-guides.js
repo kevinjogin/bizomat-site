@@ -54,6 +54,15 @@
     return `<rect x="${x}" y="${y}" width="${w}" height="${h}" class="ig-body"/>${s}`;
   };
   const sym = (o, fallback) => o.sym || fallback;
+  // Range ends such as ±10¹² (fields with no practical limit) are written as powers of ten so they fit the drawing.
+  const SUP = { '-': '⁻', 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
+  function short(n) {
+    const v = Number(n);
+    if (!Number.isFinite(v) || Math.abs(v) < 1e6) return String(n);
+    const e = Math.floor(Math.log10(Math.abs(v))), m = r1(v / 10 ** e);
+    const pow = `10${String(e).replace(/./g, (c) => SUP[c])}`;
+    return Math.abs(m) === 1 ? `${m < 0 ? '−' : ''}${pow}` : `${m} × ${pow}`;
+  }
   const name = (o) => clip(o.label, 46);
 
   const angleOf = (v) => { const n = Number(v); return Number.isFinite(n) ? Math.min(180, Math.max(0, n)) : 40; };
@@ -79,7 +88,7 @@
     },
     thickness: {
       desc: (o) => `The cross-section of a plate or wall with a dimension across its thickness, marking ${o.label}.`,
-      svg: (o) => `${hatch(40, 62, 200, 22)}${ln(246, 62, 270, 62)}${ln(246, 84, 270, 84)}<g class="ig-draw">${arrow(262, 40, 262, 61)}${arrow(262, 106, 262, 85)}</g>${t(282, 77, sym(o, 't'), 'ig-sym', 'start')}${t(140, 50, 'section through the material', 'ig-m')}`,
+      svg: (o) => `${hatch(40, 62, 200, 22)}${ln(246, 62, 270, 62)}${ln(246, 84, 270, 84)}<g class="ig-draw">${arrow(262, 40, 262, 61)}${arrow(262, 106, 262, 85)}</g>${t(254, 36, sym(o, 't'), 'ig-sym', 'end')}${t(140, 50, 'section through the material', 'ig-m')}`,
     },
     depth: {
       desc: (o) => `A surface with a step cut into it and a dimension from the original surface down to the bottom of the step, marking ${o.label}.`,
@@ -281,12 +290,12 @@
     },
     score: {
       desc: (o) => `A scale from the lowest to the highest score with a marker at the chosen score for ${o.label}. The marker follows the slider.`,
-      svg: (o) => `${ln(40, 74, 280, 74, 'ig-ground')}${[0, 1, 2, 3, 4].map((i) => ln(40 + i * 60, 66, 40 + i * 60, 82)).join('')}${t(40, 102, String(o.min ?? 1), 'ig-m')}${t(280, 102, String(o.max ?? 5), 'ig-m')}${t(40, 116, 'low', 'ig-m')}${t(280, 116, 'high', 'ig-m')}<g data-ig-mark="40 240" transform="translate(${r1(40 + o.fr * 240)} 0)"><circle cx="0" cy="74" r="9" class="ig-fill-a"/></g>`,
+      svg: (o) => `${ln(40, 74, 280, 74, 'ig-ground')}${[0, 1, 2, 3, 4].map((i) => ln(40 + i * 60, 66, 40 + i * 60, 82)).join('')}${t(40, 102, short(o.min ?? 1), 'ig-m')}${t(280, 102, short(o.max ?? 5), 'ig-m')}${t(40, 116, 'low', 'ig-m')}${t(280, 116, 'high', 'ig-m')}<g data-ig-mark="40 240" transform="translate(${r1(40 + o.fr * 240)} 0)"><circle cx="0" cy="74" r="9" class="ig-fill-a"/></g>`,
       mark: true,
     },
     number: {
       desc: (o) => `A number line with a marker at the value of ${o.label}, between its lowest and highest accepted values.`,
-      svg: (o) => `${ln(40, 74, 280, 74, 'ig-ground')}${t(40, 100, o.min == null ? '' : String(o.min), 'ig-m')}${t(280, 100, o.max == null ? '' : String(o.max), 'ig-m')}<g data-ig-mark="40 240" transform="translate(${r1(40 + o.fr * 240)} 0)"><path d="M0 64 L-7 52 H7 Z" class="ig-fill-a"/></g>${t(160, 44, sym(o, ''), 'ig-sym')}`,
+      svg: (o) => `${ln(40, 74, 280, 74, 'ig-ground')}${t(40, 100, o.min == null ? '' : short(o.min), 'ig-m')}${t(280, 100, o.max == null ? '' : short(o.max), 'ig-m')}<g data-ig-mark="40 240" transform="translate(${r1(40 + o.fr * 240)} 0)"><path d="M0 64 L-7 52 H7 Z" class="ig-fill-a"/></g>${t(160, 44, sym(o, ''), 'ig-sym')}`,
       mark: true,
     },
     choice: {
@@ -337,9 +346,13 @@
     if (f.type === 'range') return `Move the slider to a score from ${f.min} (low) to ${f.max} (high)${f.step && f.step !== 1 ? ` in steps of ${f.step}` : ''}.`;
     const parts = [];
     parts.push(f.unit ? `Enter a number in ${f.unit}: ${unitName(f.unit)}.` : 'Enter a plain number with no unit.');
-    const lo = f.min != null && f.min !== '', hi = f.max != null && f.max !== '';
+    // Bounds of a billion or more only stop runaway numbers; they are not limits worth stating.
+    const lo = f.min != null && f.min !== '' && Number(f.min) > -1e9, hi = f.max != null && f.max !== '' && Number(f.max) < 1e9;
+    const negative = f.min != null && Number(f.min) < 0;
     if (lo && hi) parts.push(`The form accepts ${fmtVal(f.min, f)} to ${fmtVal(f.max, f)}.`);
     else if (lo) parts.push(`The form accepts ${fmtVal(f.min, f)} or more.`);
+    else if (hi) parts.push(`The form accepts values up to ${fmtVal(f.max, f)}${negative ? ', including negative values' : ''}.`);
+    else if (negative) parts.push('Negative values are accepted.');
     if (f.integer || (f.step === 1 && Number.isInteger(Number(f.default)) && /count|number of|teeth|coils|stations|bolts|passes|starts/i.test(`${f.label} ${f.unit || ''}`))) parts.push('Use a whole number.');
     if (tool.collection === 'MAKEOS') parts.push('Required: the tool does not calculate until every input is valid.');
     return parts.join(' ');
