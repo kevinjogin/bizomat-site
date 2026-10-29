@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 867 tools with unique ids and every previously published id kept', () => {
+test('register: 874 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 867);
+  assert.equal(ids.length, 874);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -4815,5 +4815,70 @@ test('callen liquid throttling: verdicts and guards', () => {
     ['liquid-throttling-temperature-rise', { T: -300 }], ['liquid-throttling-temperature-rise', { rho: 0 }],
     ['liquid-throttling-temperature-rise', { dp: 0 }], ['liquid-throttling-temperature-rise', { cp: 100 }], ['liquid-throttling-temperature-rise', { beta: -1 }],
   ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Fifty-fifth handbook pass (handbook71): classical thermodynamics checks after Guggenheim’s methods.
+// Expected values are independent hand calculations (closed forms; the throttling case by fourth-order Runge–Kutta integration of dT/dp).
+const HB71_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['trapped-liquid-pressure-check', {}, { rate: 3.2990933303428744, dp: 9.897279991028624, pf: 14.897279991028624, dTa: 3.3342494129612184, V: 43.295073757284335, relief: 0 }, 1e-9],
+  ['trapped-liquid-pressure-check', { dT: 20 }, { pf: 70.9818666068575, relief: 123.38417805156563, sigma: 7.09818666068575 * 52.5 / (2 * 3.91) }, 1e-8],
+  ['trapped-liquid-pressure-check', { wall: 'rigid' }, { rate: 207e-6 * 2200 * 10, pf: 5 + 3 * 4.554 }, 1e-9],
+  ['ro-concentrate-pressure-check', {}, { cf: 35000 / 58.44, Pif: 27.317733180423303, Pic: 49.556851419576994, Pip: 0.13658866590211666, ndpIn: 32.318855485478814, ndpOut: 8.579737246325124, pmin: 54.420262753674876 }, 1e-8],
+  ['ph-electrode-calibration-check', {}, { Sth: 59.159349684782335, S: 171 / 2.99, pct: 96.67218412006355, off: -3, pHz: 7 - 3 / (171 / 2.99), pHs: 6.07327485380117 }, 1e-9],
+  ['ph-electrode-calibration-check', { Ts: 40 }, { Ss: 171 / 2.99 * 313.15 / 298.15, pHs: 6.115152660244469 }, 1e-9],
+  ['clausius-boiling-margin-check', {}, { pv: 21.006285197667232, Tbo: 68.28950253936489, margin: 8.28950253936489 }, 1e-9],
+  ['gas-throttling-temperature-check', {}, { mu1: 0.41779303722704747, Tinv: 1012.173590085374, T2: -13.048203651068434, T1r: 26.520077998604563, n: 11.747928716432623, heat: 4.831532868332002 }, 1e-6],
+  ['gas-throttling-temperature-check', { model: 'mu' }, { T2: 15 - 0.45 * 63, T1r: 0.45 * 63 }, 1e-9],
+  ['filter-bubble-point-check', {}, { pmt: 3.2, margin: 100 * (3.45 / 3.2 - 1), d: 4 * 0.072 / 345000 * 1e6, dmin: 4 * 0.072 / 320000 * 1e6 }, 1e-9],
+  ['filter-bubble-point-check', { gt: 21.7 }, { pmt: 3.2 * 21.7 / 72 }, 1e-12],
+  ['gas-separation-energy-check', {}, { xW: 69, rec: 100 * 0.99 / (3 * 0.79), W: 603.6601228909326, Emin: 0.007481199041202577, Wlim: 470.3422586911442, eff: 2.992479616481031, kWh: 100000, cost: 25000 }, 1e-8],
+];
+for (const [id, over, expected, tol] of HB71_CASES) test(`thermodynamics check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('thermodynamics checks agree with their limiting cases', () => {
+  const tl = engine.run('trapped-liquid-pressure-check').values;
+  near(engine.run('trapped-liquid-pressure-check', { dT: tl.dTa }).values.pf, 16, 1e-9, 'the largest rise reaches the design pressure exactly');
+  near(engine.run('trapped-liquid-pressure-check', { dT: 20, pd: 5 }).values.relief, tl.V * 1000 * (207e-6 - 36e-6) * 20, 1e-6, 'relief volume equals the free expansion when no rise is allowed');
+  const ro = engine.run('ro-concentrate-pressure-check').values;
+  near(engine.run('ro-concentrate-pressure-check', { pf: ro.pmin }).values.ndpOut, 3, 1e-9, 'the least feed pressure leaves exactly the required driving pressure');
+  near(engine.run('ro-concentrate-pressure-check', { rej: 100 }).values.Pic, ro.Pif / 0.55, 1e-9, 'full rejection concentrates by 1 ÷ (1 − recovery)');
+  near(engine.run('ph-electrode-calibration-check', { Tc: 0 }).values.Sth, Math.LN10 * 8.31446261815324 * 273.15 / 96485.33212331002 * 1000, 1e-9, 'ideal slope at 0 °C');
+  near(engine.run('ph-electrode-calibration-check', { Es: 168 }).values.pHs, 4.01, 1e-12, 'a sample reading like the second buffer reads its pH');
+  const vp = engine.run('clausius-boiling-margin-check').values;
+  near(engine.run('clausius-boiling-margin-check', { pop: vp.pReq }).values.margin, 5, 1e-9, 'the pressure for the margin gives the margin');
+  near(engine.run('clausius-boiling-margin-check', { Top: 100 }).values.pv, 101.325, 1e-9, 'the known point is reproduced');
+  const jt = engine.run('gas-throttling-temperature-check', { p2: 69.999 }).values;
+  near(jt.dT, -jt.mu1 * 0.001, 1e-8, 'a small drop cools by the coefficient times the drop');
+  const h2 = engine.run('gas-throttling-temperature-check', { a: 0.02452, b: 26.61, Cp: 28.8, Tmin: 30 }).values; // a gas above its model inversion temperature (−51.5 °C)
+  near(h2.T2, 16.35379173214119, 1e-6, 'it warms on throttling (hand RK4 integration)'); near(h2.T1r, 28.44608417914924, 1e-6, 'inlet temperature for the lowest outlet lies below it');
+  near(engine.run('gas-separation-energy-check', { AF: 1000 }).values.W, 470.6363220564003, 1e-6, 'a very large feed ratio approaches the least work for the purity');
+  near(engine.run('gas-separation-energy-check', { T: 40 }).values.W, 603.6601228909326 * 313.15 / 293.15, 1e-9, 'least work scales with absolute temperature');
+});
+
+test('thermodynamics checks: verdicts and guards', () => {
+  assert.equal(engine.run('trapped-liquid-pressure-check').text, 'PRESSURE WITHIN DESIGN');
+  assert.equal(engine.run('trapped-liquid-pressure-check', { dT: 20 }).text, 'THERMAL RELIEF NEEDED');
+  assert.equal(engine.run('trapped-liquid-pressure-check', { wall: 'rigid' }).text, 'THERMAL RELIEF NEEDED');
+  assert.equal(engine.run('ro-concentrate-pressure-check').text, 'FEED PRESSURE ADEQUATE');
+  assert.equal(engine.run('ro-concentrate-pressure-check', { pf: 50 }).text, 'FEED PRESSURE TOO LOW');
+  assert.equal(engine.run('ph-electrode-calibration-check').text, 'ELECTRODE IN LIMITS');
+  for (const over of [{ E2: 150 }, { E1: -40, E2: 131 }, { E1: 168, E2: -3 }] as Inputs[]) assert.equal(engine.run('ph-electrode-calibration-check', over).text, 'ELECTRODE OUT OF LIMITS', JSON.stringify(over));
+  assert.equal(engine.run('clausius-boiling-margin-check').text, 'NO BOILING EXPECTED');
+  assert.equal(engine.run('clausius-boiling-margin-check', { pop: 25 }).text, 'BOILING MARGIN TOO SMALL');
+  assert.equal(engine.run('clausius-boiling-margin-check', { pop: 20 }).text, 'LIQUID WILL BOIL OR FLASH');
+  assert.equal(engine.run('clausius-boiling-margin-check', { goal: 'boil' }).text, 'BOILING NOT ASSURED');
+  assert.equal(engine.run('clausius-boiling-margin-check', { goal: 'boil', pop: 15 }).text, 'BOILING ASSURED');
+  assert.equal(engine.run('gas-throttling-temperature-check').text, 'PREHEAT NEEDED');
+  assert.equal(engine.run('gas-throttling-temperature-check', { Tmin: -20 }).text, 'OUTLET TEMPERATURE ACCEPTABLE');
+  assert.equal(engine.run('filter-bubble-point-check').text, 'INTEGRITY TEST PASSED');
+  assert.equal(engine.run('filter-bubble-point-check', { pb: 3 }).text, 'INTEGRITY TEST FAILED');
+  assert.equal(engine.run('gas-separation-energy-check').text, 'WITHIN TARGET ENERGY');
+  assert.equal(engine.run('gas-separation-energy-check', { Eact: 0.35 }).text, 'ABOVE TARGET ENERGY');
+  const cases: Array<[string, Inputs]> = [['trapped-liquid-pressure-check', { nu: 0.6 }], ['ro-concentrate-pressure-check', { rec: 99 }], ['ph-electrode-calibration-check', { pH2: 6.8 }], ['ph-electrode-calibration-check', { sMin: 105, sMax: 100 }], ['clausius-boiling-margin-check', { H: 1, pop: 200 }], ['gas-throttling-temperature-check', { p2: 80 }], ['gas-throttling-temperature-check', { model: 'mu', mu: 5, p1: 1000, p2: 1 }], ['filter-bubble-point-check', { k: 2 }], ['gas-separation-energy-check', { xP: 70 }], ['gas-separation-energy-check', { AF: 1.2 }], ['gas-separation-energy-check', { Eact: 0.001 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
