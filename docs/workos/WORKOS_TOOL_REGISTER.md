@@ -3005,3 +3005,19 @@ Three tools in batch bryanthermo that apply results from G. H. Bryan’s Thermod
 | Tool | Result with example inputs | Checks | Bryan sections | Tested |
 |---|---|---|---|---|
 | **Thermoelectric Cooler Check (TEC Module Constants from the Datasheet, Heat Pumped, Power, COP, Hot-Side Heat)** `thermoelectric-cooler-check` | MODULES PUMP THE HEAT LOAD | Heat pumped against the load; Current rating; Voltage rating; Hot-side heat sink; Model and application | §§164–166 | Automated + cross-check |
+
+## Thermodynamics tools from Çengel and Boles, batch handbook72 (added 29 October 2026)
+
+Seven tools in batch handbook72 that apply the methods of Çengel and Boles, Thermodynamics: An Engineering Approach (5th edition, McGraw-Hill, 2006), with every gas property, refrigerant enthalpy, rating and limit entered by the user: an air-standard Otto and Diesel cycle check, a gas turbine (Brayton) cycle check with regenerator, a vapour-compression refrigeration or heat pump cycle check from state enthalpies, a moist air dew point and surface condensation check, a cooling coil load with dehumidification, a hydrocarbon combustion air and flue gas check, and a gas compressor or turbine isentropic efficiency check from measured temperatures. Saturation pressure of water uses the Hyland–Wexler equations (ASHRAE Handbook—Fundamentals, chapter 1). The section column below gives sections in Çengel and Boles, not Machinery’s Handbook. WORKOS now holds 866 tools.
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Çengel and Boles sections | Tested |
+|---|---|---|---|---|
+| **Air-Standard Otto and Diesel Cycle Check (Efficiency, Net Work, Mean Effective Pressure, Peak Pressure)** `otto-diesel-cycle-check` | PEAK PRESSURE WITHIN LIMIT | Peak cylinder pressure; Efficiency below the Carnot limit; Peak temperature; Model and application | 9-3 to 9-6 | Automated + cross-check |
+| **Gas Turbine (Brayton) Cycle Check with Regenerator (Net Power, Back-Work Ratio, Efficiency)** `brayton-regenerator-check` | NET POWER MEETS DEMAND | Net work; Power against demand; Regenerator; Model and application | 7-12, 9-8, 9-9 | Automated + cross-check |
+| **Vapour-Compression Refrigeration or Heat Pump Cycle Check (COP from State Enthalpies, Carnot Limit)** `vapour-compression-cycle-check` | COP MEETS TARGET | Second law; COP against target; Model and application | 6-12, 11-1 to 11-4 | Automated + cross-check |
+| **Moist Air Dew Point and Surface Condensation Check (Humidity Ratio, Enthalpy, Dew-Point Margin)** `surface-dew-point-check` | SURFACE STAYS DRY | Surface against the dew point; Model and application | 14-1 to 14-3 | Automated + cross-check |
+| **Cooling Coil Load with Dehumidification (Psychrometric Balance, Condensate, Sensible Heat Ratio)** `cooling-coil-dehumidification-check` | COIL CAN MEET THE LOAD | Coil capacity; Condensation; Coil surface; Model and application | 14-2, 14-7 | Automated + cross-check |
+| **Hydrocarbon Combustion Air and Flue Gas Check (Air–Fuel Ratio, Flue Analysis, Water Dew Point)** `combustion-air-flue-gas-check` | FLUE ABOVE DEW POINT | Lowest surface against the dew point; Excess air; Acid dew point; Model and application | 15-1, 15-2 | Automated + cross-check |
+| **Gas Compressor or Turbine Isentropic Efficiency from Measured Temperatures (Power, Entropy Generation)** `compressor-turbine-efficiency-check` | EFFICIENCY ACCEPTABLE | Physical limit; Efficiency against minimum; Model and application | 7-9, 7-12 | Automated + cross-check |
