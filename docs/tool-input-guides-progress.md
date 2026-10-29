@@ -94,7 +94,7 @@ Many tools ignore some inputs in some modes by design. The guide entries say whi
 
 ## Known limitations
 
-- **Page weight:** the 78 inputs files add 2.0 MB (496 KB gzipped) and the renderer 43 KB (14 KB gzipped) to `/tools/`. That page already loads 6.1 MB (1.26 MB gzipped) of tool scripts up front, so this is about 40 % more transfer. They load up front because basic explanations must not need a network request. The alternative is to load a tool's inputs file when the tool opens: one cached request of about 25 KB.
+- **Page weight (changed 29 October 2026):** `/tools/` no longer loads every tool's scripts. It loads `core.js`, `input-guides.js`, `ui.js` and a map of tool id to file (about 26 KB gzipped of script). Opening a tool then fetches that tool's `data-`, `guides-`, `inputs-` and `calc-<file>.js` in parallel (for example about 32 KB gzipped for Axial Stress), instead of all 312 files (about 1.8 MB gzipped, 8 MB of script) before any calculator could open. This fixed calculator links that showed the tool directory on iPhones while every tool's scripts downloaded. Calculator links hide the directory before any script runs and show "Loading the calculator…"; a failed download shows a message with Try again instead of the directory. Every tool was checked to calculate identically with only its own file loaded (`tests/tools-on-demand.test.ts`).
 - **Figures are parametrised primitives:** 55 kinds, each labelled with the field's own name, symbol and value; they are not 7,049 bespoke drawings. The select inputs (352) show the option list, and 172 plain numbers (statistical means, equation coefficients) show a number line.
 - **Browsers tested:** the browser sweep ran in Chromium only.
 - **Release:** published by merging to `main` (Cloudflare GitHub integration), not by a manual `wrangler deploy`. The public check of the live tool pages is recorded in the release notes of the pull request.
@@ -102,6 +102,6 @@ Many tools ignore some inputs in some modes by design. The guide entries say whi
 ## Next steps
 
 1. Owner review of the tool issues above, especially items 1 to 3, which can produce wrong inputs or answers.
-2. Decide whether to keep up-front loading or switch to loading per tool.
+2. Done: tool files now load per tool (see Known limitations, page weight).
 3. Optional: a second-opinion review of the files from the 15 batches written without a final agent report, focused on tool issues.
 4. Merge to `main` through a pull request, let Cloudflare deploy, then check `/tools/`, several `/tools/?tool=…` links and several `/tools/<id>/` pages on kevos.com.
