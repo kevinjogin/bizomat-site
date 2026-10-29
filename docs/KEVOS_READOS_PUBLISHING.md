@@ -53,6 +53,7 @@ draft: false
 - Never expose confidential employer, client or supplier information. Never name the founder.
 - Avoid "dive in", "game changer", "unlock", "leverage" (verb), "in today's fast-paced world", "revolutionary" and question headings. At most one quote under 15 words.
 - Check every calculation in examples.
+- A link to a WORKOS tool (`[Bend allowance](/tools/bend-allowance/)`) needs a matching `book-link` entry in `src/data/knowledge-links.json` (see `docs/knowledge-links.md`); `npm run verify` fails until it is added. Describe only what the tool actually calculates.
 
 ## Pre-release checklist
 

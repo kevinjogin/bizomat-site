@@ -47,8 +47,12 @@ public/brand/   approved KEVOS logos and icons (plus legacy gocore-* files that 
 scripts/        build-kevos-icons.mjs (icons, runs in every build), postbuild.mjs (quality gate),
                 reading-time.mjs, prepare-brand.mjs (KEVOS shim), brand/ (retired GoCore generators)
 tests/          brand-wordmark, chat, contact, heading-font, reados-chapters, motion-scenes,
-                tools-calculators, tool-input-guides, worker
+                tools-calculators, tool-input-guides, tools-on-demand, knowledge-links, worker
 ```
+
+### READOS ↔ WORKOS connections
+
+One relationship file, `src/data/knowledge-links.json`, connects READOS books and chapters with WORKOS tools in both directions: "Apply This in Practice" on READOS pages, "Learn the Concepts Behind This Tool" on tool pages and in the calculator (`/tools/knowledge.json`), plus learning pathways (`src/data/learning-pathways.json`). Only `approved` links between published pages are shown; the build stops on invalid ids. Suggestions (`npm run knowledge:suggest`) are never published. Maintenance: `docs/knowledge-links.md`; review list: `docs/knowledge-links-review.md`.
 
 ### WORKOS input guides
 
