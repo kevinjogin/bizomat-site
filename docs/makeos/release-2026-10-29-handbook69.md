@@ -19,7 +19,7 @@ Knowledge connections: 14 approved and 6 rejected relationships, each with the c
 
 - Every tool has independent hand-calculated reference values (closed forms, a bisection solution of the van der Waals cubic, Simpson integration of the Carnot efficiency for exergy), identity checks (a = b = 0 gives the ideal gas; heating COP = cooling COP + 1; boiling at the vapour pressure returns the liquid temperature), pass and fail verdicts, and out-of-range inputs that return CHECK INPUTS.
 - `node scripts/tools/input-guides.mjs check --file handbook69`: 6 tools, 56 inputs, 0 problems. Inventory: 850 tools, 7,199 inputs, all covered.
-- `npm run verify`: VERIFY_RESULT
+- `npm run verify` (after rebasing on 9380a40): astro check 0 errors and 0 warnings; 1,057/1,057 tests; 3,676 pages verified by the post-build checks.
 - `npm run knowledge:check`: valid. `npm run seo:validate`: passed.
 - Browser sweep (`scripts/tools/input-guides-browser.mjs`, Playwright Chromium 130 on the built site): 850/850 tools passed, 7,199 figures, including every tool on a 360 px phone screen.
 
