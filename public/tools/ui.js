@@ -27,16 +27,29 @@
   function sourceHint(t, f) {
     const src = guides[t.id]?.inputs?.[f.key];
     const parts = [f.hint, src ? `Source: ${src}` : ''].filter(Boolean);
-    return parts.length ? `<div class="hint">${parts.map(esc).join(' ')}</div>` : '';
+    return parts.length ? `<div class="hint" id="h-${esc(f.key)}">${parts.map(esc).join(' ')}</div>` : '';
   }
+  // Input guides (input-guides.js + inputs-*.js): a "What this means" panel under each field with a small figure.
+  const inputGuide = window.WORKOS_INPUT_GUIDE;
+  const inputEntries = window.WORKOS_INPUTS || {};
+  const guideEntry = (t, f) => (inputGuide ? inputEntries[t.id]?.[f.key] : undefined);
+  /** The field's hint and the guide's definition, read by screen readers when the input takes focus. */
+  function describedBy(t, f) {
+    const ids = [];
+    if (f.hint || guides[t.id]?.inputs?.[f.key]) ids.push(`h-${f.key}`);
+    if (guideEntry(t, f)) ids.push(`ig-${f.key}-what`);
+    return ids.length ? ` aria-describedby="${esc(ids.join(' '))}"` : '';
+  }
+  const fieldGuide = (t, f) => (guideEntry(t, f) ? inputGuide.fieldGuide(t, f, guideEntry(t, f)) : '');
   function fieldHtml(t, f) {
     if (f.type === 'heading') return `<h3 class="field-heading">${esc(f.label)}</h3>${f.hint ? `<p class="hint field-heading__hint">${esc(f.hint)}</p>` : ''}`;
     const id = `f-${f.key}`;
+    const aria = describedBy(t, f);
     if (f.type === 'range')
-      return `<div class="field"><label for="${id}">${esc(f.label)}</label><div class="range-line"><input id="${id}" name="${esc(f.key)}" type="range" min="${f.min}" max="${f.max}" step="${f.step ?? 1}" value="${f.default}"><span class="range-value" data-range="${esc(f.key)}">${f.default}</span></div>${sourceHint(t, f)}</div>`;
+      return `<div class="field"><label for="${id}">${esc(f.label)}</label><div class="range-line"><input id="${id}" name="${esc(f.key)}" type="range" min="${f.min}" max="${f.max}" step="${f.step ?? 1}" value="${f.default}"${aria}><span class="range-value" data-range="${esc(f.key)}">${f.default}</span></div>${sourceHint(t, f)}${fieldGuide(t, f)}</div>`;
     if (f.type === 'select')
-      return `<div class="field"><label for="${id}">${esc(f.label)}</label><select id="${id}" name="${esc(f.key)}">${f.options.map((o) => `<option value="${esc(o[0])}"${o[0] === f.default ? ' selected' : ''}>${esc(o[1])}</option>`).join('')}</select>${sourceHint(t, f)}</div>`;
-    return `<div class="field"><label for="${id}">${esc(f.label)}</label><div class="input-wrap"><input id="${id}" name="${esc(f.key)}" type="number" ${t.collection === 'MAKEOS' ? 'required' : ''} value="${f.default}" min="${f.min ?? ''}" max="${f.max ?? ''}" step="${f.step ?? 'any'}" inputmode="decimal">${f.unit ? `<span class="unit">${esc(f.unit)}</span>` : ''}</div>${sourceHint(t, f)}</div>`;
+      return `<div class="field"><label for="${id}">${esc(f.label)}</label><select id="${id}"${aria} name="${esc(f.key)}">${f.options.map((o) => `<option value="${esc(o[0])}"${o[0] === f.default ? ' selected' : ''}>${esc(o[1])}</option>`).join('')}</select>${sourceHint(t, f)}${fieldGuide(t, f)}</div>`;
+    return `<div class="field"><label for="${id}">${esc(f.label)}</label><div class="input-wrap"><input id="${id}" name="${esc(f.key)}" type="number" ${t.collection === 'MAKEOS' ? 'required' : ''} value="${f.default}" min="${f.min ?? ''}" max="${f.max ?? ''}" step="${f.step ?? 'any'}" inputmode="decimal"${aria}>${f.unit ? `<span class="unit">${esc(f.unit)}</span>` : ''}</div>${sourceHint(t, f)}${fieldGuide(t, f)}</div>`;
   }
   const inputFields = (t) => t.fields.filter((f) => f.type !== 'heading');
   /** Input fields grouped under the form headings that precede them ({ heading: {label: ''} } when there are none). */
@@ -230,6 +243,7 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
     const form = $('#tool-form');
     form.innerHTML = `${t.fields.map((f) => fieldHtml(t, f)).join('')}<div class="form-actions"><button class="btn" type="submit">Analyse</button><button class="btn secondary" type="button" id="reset">Reset to examples</button></div><div class="privacy-note">Your inputs stay in this browser. KEVOS® does not send these calculations to a server. The example values are illustrations, not recommendations.</div>`;
     applyParams(t);
+    const syncGuides = inputGuide ? inputGuide.bind(form, t) : () => {};
     form.onsubmit = (e) => {
       e.preventDefault();
       analyse(t);
@@ -254,6 +268,7 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
         const o = document.querySelector(`[data-range="${f.key}"]`);
         if (o) o.textContent = f.default;
       }
+      syncGuides();
       analyse(t);
     };
     $('#copy-result').onclick = async () => {

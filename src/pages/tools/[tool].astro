@@ -14,7 +14,7 @@ export function getStaticPaths() {
 }
 
 const { tool } = Astro.props as { tool: Tool };
-const { tools, guides } = loadWorkosTools();
+const { tools, guides, inputs, inputGuide } = loadWorkosTools();
 const g = guides[tool.id]!;
 const collection = tool.collection || 'WORKOS';
 const kind = /calculator/i.test(tool.name) ? '' : collection === 'MAKEOS' || tool.category === 'Engineering' ? ' calculator' : ' tool';
@@ -31,6 +31,8 @@ for (const f of tool.fields) {
   if (f.type === 'heading') groups.push({ heading: f.label, fields: [] });
   else groups[groups.length - 1].fields.push(f);
 }
+// The same "What this means" panels as the calculator (public/tools/input-guides.js), rendered here without the form.
+const inputGuideHtml = (f: ToolField) => inputGuide.fieldGuide(tool, f, inputs[tool.id]?.[f.key], { prefix: 'p-', inputId: null });
 const unitOf = (f: ToolField) => f.unit || (f.type === 'range' ? `${f.min}–${f.max} score` : f.type === 'select' ? 'choice' : '');
 const related = tools
   .filter((t) => t.id !== tool.id && t.category === tool.category && hasStandaloneGuide(guides[t.id]))
@@ -74,6 +76,14 @@ const sections: [string, string[] | undefined][] = [
               {heading && <tr class="an-group"><th scope="rowgroup" colspan="3">{heading}</th></tr>}
               {fields.map((f) => <tr><th scope="row">{f.label}</th><td>{unitOf(f)}</td><td>{g.inputs?.[f.key] ?? ''}</td></tr>)}
             </>)}</tbody></table></div>
+        </section>
+        <section class="guide-card guide-card--wide">
+          <h3>What each input means</h3>
+          <p class="ig-intro">Open an input to see what it is, its units, the worked example and the common mistakes, with a small diagram.</p>
+          {groups.filter((x) => x.fields.length).map(({ heading, fields }) => <>
+            {heading && <h4 class="ig-group">{heading}</h4>}
+            <div class="ig-list">{fields.map((f) => <Fragment set:html={inputGuideHtml(f)} />)}</div>
+          </>)}
         </section>
         <section class="guide-card guide-card--wide"><h3>Method and formulas</h3><ol class="guide-method">{(g.method ?? []).map((m) => <li>{m}</li>)}</ol></section>
         <section class="guide-card"><h3>Limitations</h3><ul>{(g.limitations ?? []).map((m) => <li>{m}</li>)}</ul></section>

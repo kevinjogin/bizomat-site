@@ -1,0 +1,5133 @@
+{
+ "generated": "2026-10-29",
+ "base": "http://127.0.0.1:4330",
+ "tools": 837,
+ "passed": 837,
+ "inputs": 7049,
+ "figures": 7049,
+ "sample": [
+  {
+   "id": "make-buy",
+   "keyboardOpens": true,
+   "keyboardCloses": true,
+   "mobileOverflow": false,
+   "reducedMotionAnimations": 0
+  },
+  {
+   "id": "buy-lease",
+   "keyboardOpens": true,
+   "keyboardCloses": true,
+   "mobileOverflow": false,
+   "reducedMotionAnimations": 0
+  },
+  {
+   "id": "ellipse",
+   "keyboardOpens": true,
+   "keyboardCloses": true,
+   "mobileOverflow": false,
+   "reducedMotionAnimations": 0
+  },
+  {
+   "id": "helical-gear",
+   "keyboardOpens": true,
+   "keyboardCloses": true,
+   "mobileOverflow": false,
+   "reducedMotionAnimations": 0
+  },
+  {
+   "id": "circle-three-points",
+   "keyboardOpens": true,
+   "keyboardCloses": true,
+   "mobileOverflow": false,
+   "reducedMotionAnimations": 0
+  },
+  {
+   "id": "lmtd-exchanger",
+   "keyboardOpens": true,
+   "keyboardCloses": true,
+   "mobileOverflow": false,
+   "reducedMotionAnimations": 0
+  },
+  {
+   "id": "snap-fit",
+   "keyboardOpens": true,
+   "keyboardCloses": true,
+   "mobileOverflow": false,
+   "reducedMotionAnimations": 0
+  },
+  {
+   "id": "preferred-numbers",
+   "keyboardOpens": true,
+   "keyboardCloses": true,
+   "mobileOverflow": false,
+   "reducedMotionAnimations": 0
+  },
+  {
+   "id": "fixture-clamp-force",
+   "keyboardOpens": true,
+   "keyboardCloses": true,
+   "mobileOverflow": false,
+   "reducedMotionAnimations": 0
+  },
+  {
+   "id": "torsion-spring-designer",
+   "keyboardOpens": true,
+   "keyboardCloses": true,
+   "mobileOverflow": false,
+   "reducedMotionAnimations": 0
+  },
+  {
+   "id": "noise-exposure-check",
+   "keyboardOpens": true,
+   "keyboardCloses": true,
+   "mobileOverflow": false,
+   "reducedMotionAnimations": 0
+  },
+  {
+   "id": "maintenance-interval-plan",
+   "keyboardOpens": true,
+   "keyboardCloses": true,
+   "mobileOverflow": false,
+   "reducedMotionAnimations": 0
+  },
+  {
+   "id": "ring-blank-make-plan",
+   "keyboardOpens": true,
+   "keyboardCloses": true,
+   "mobileOverflow": false,
+   "reducedMotionAnimations": 0
+  },
+  {
+   "id": "force-group-support-check",
+   "keyboardOpens": true,
+   "keyboardCloses": true,
+   "mobileOverflow": false,
+   "reducedMotionAnimations": 0
+  }
+ ],
+ "failures": [],
+ "results": [
+  {
+   "id": "make-buy",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "project-gate",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "priority",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "option-compare",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "change-impact",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "risk-score",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "make-vs-buy-pro",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "roi",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "break-even",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "margin",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "true-cost",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "investment-check",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "savings-check",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "project-health",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "project-size",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "resource-fit",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "schedule-risk",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "contingency",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "business-case",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "capacity",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "bottleneck",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "takt-time",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "oee",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "cycle-time",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "staffing-need",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "shift-output",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "oee-downtime-pro",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "batch-fit",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "machine-load",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "scrap-impact",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "setup-worth",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "tooling-payback",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "downtime-cost",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "yield-check",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "retention-selector",
+   "ok": true,
+   "inputs": 36,
+   "figures": 36
+  },
+  {
+   "id": "quote-check",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "price-builder",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "labour-quote",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "job-cost",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "supplier-compare",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "moq-check",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "manufacturing-quote",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "reorder-point",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "safety-stock",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "inventory-cost",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "stock-days",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "order-quantity",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "improvement-value",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "waste-check",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "before-after",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "automation-check",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "process-score",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "jig-fixture-roi",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "demand-capacity",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "deadline-check",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "workload",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "what-if",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "capacity-planner-pro",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "hire-outsource",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "subscription-value",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "buy-lease",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "process-or-software",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "build-buy-software",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "cutting-speed",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "milling-feed-time",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "turning-time",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "drilling-time",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "tapping-feed",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "bolt-circle",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "taper-geometry",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "sine-bar",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "fit-clearance",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "thermal-growth",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "beam-deflection",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "shaft-torsion",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "torque-power",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "gear-pair",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "belt-drive",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "hydraulic-cylinder",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "hydraulic-power",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "pipe-flow",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "pneumatic-consumption",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "stock-mass",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "bend-allowance",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "punching-force",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "process-capability",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "maintenance-availability",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "signed-tolerance-stack",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "measurement-uncertainty",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "section-properties",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "countersink-depth",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "turning-cusp",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "radial-chip-thinning",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "ball-nose-diameter",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "circular-interpolation-feed",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "coolant-blend",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "coolant-topup",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "stock-cut-plan",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "fillet-weld-quantity",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "welding-heat-input",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "tube-bend-length",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "thermal-fit",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "axial-stress",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "bearing-l10-life",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "bearing-static-ratio",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "chain-linear-speed",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "pulley-speed-ratio",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "leadscrew-speed",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "leadscrew-torque",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "pipe-flow-velocity",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "darcy-pipe-drop",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "pump-shaft-power",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "shaft-angular-offset",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "differential-expansion",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "cylinder-swept-volume",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "circular-segment",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "regular-polygon",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "triangle-solver",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "tank-volume",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "frustum-volume",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "ellipse",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "compound-angle",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "polar-coordinates",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "dovetail-measurement",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "v-groove-pin",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "gauge-block-stack",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "abbe-error",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "rss-tolerance-stack",
+   "ok": true,
+   "inputs": 18,
+   "figures": 18
+  },
+  {
+   "id": "it-tolerance-grade",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "length-converter",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "force-converter",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "pressure-converter",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "torque-converter",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "power-converter",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "energy-converter",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "flow-converter",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "mass-converter",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "velocity-converter",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "angle-converter",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "temperature-converter",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "decimal-fraction",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "force-resultant",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "inclined-plane",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "flywheel-energy",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "centrifugal-force",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "balance-grade",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "impact-load",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "move-profile",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "sling-tension",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "combined-cg",
+   "ok": true,
+   "inputs": 20,
+   "figures": 20
+  },
+  {
+   "id": "mass-moment-inertia",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "belt-friction",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "column-buckling",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "principal-stress",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "pressure-cylinder",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "goodman-fatigue",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "beam-cases",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "shaft-diameter",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "critical-speed",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "circular-plate",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "press-fit",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "thermal-stress",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "hertz-contact",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "compression-spring",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "extension-spring",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "torsion-spring",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "spring-combination",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "disc-spring",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "bolt-torque-preload",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "thread-engagement",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "bolted-joint",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "bolt-shear-bearing",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "riveted-joint",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "tap-drill",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "metric-thread",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "unified-thread",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "three-wire",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "screw-efficiency",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "simple-indexing",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "change-gears",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "helical-gear",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "gear-forces",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "lewis-bending",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "worm-gear",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "bevel-gear",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "chordal-tooth",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "span-measurement",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "gear-over-pins",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "gear-train",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "cam-motion",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "belt-drive-tensions",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "chain-length",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "reflected-inertia",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "ballscrew-limits",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "clutch-torque",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "motor-power",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "key-stress",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "bearing-life-adjusted",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "journal-bearing-pv",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "o-ring-gland",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "turning-power",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "milling-power",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "drilling-power",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "scallop-height",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "taylor-tool-life",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "grinding-wheel",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "broach-pitch",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "boring-bar-deflection",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "electroplating-thickness",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "shear-force",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "press-brake-force",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "shell-blank",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "fillet-weld-strength",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "carbon-equivalent",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "casting-solidification",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "brinell-hardness",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "wall-heat-loss",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "heating-energy",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "orifice-flow",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "accumulator-size",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "pipe-friction",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "pump-affinity",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "npsh-available",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "hydraulic-motor",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "pipe-size-velocity",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "hydrostatic-force",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "compressor-power",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "air-leak-cost",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "air-receiver",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "gas-law",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "depreciation-schedule",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "euac-compare",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "irr-uneven",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "interest-factors",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "normal-out-of-spec",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "sample-size-mean",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "two-sample-t",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "helix-length",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "vessel-head-volume",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "linear-interpolation",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "circle-three-points",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "true-position",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "taper-balls",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "go-nogo-gauge",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "toggle-joint",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "wedge-force",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "power-screw-torque",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "band-brake",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "shoe-brake",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "cone-clutch",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "wire-rope-reeving",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "rect-bar-torsion",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "curved-beam",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "tube-collapse",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "eccentric-column",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "beam-impact",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "section-shapes",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "thin-tube-torsion",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "rotating-disc",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "axial-bending-stress",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "leaf-spring",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "torsion-bar",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "grain-size",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "corrosion-rate",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "bolt-stretch",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "bolt-group-eccentric",
+   "ok": true,
+   "inputs": 18,
+   "figures": 18
+  },
+  {
+   "id": "acme-thread",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "npt-thread",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "differential-indexing",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "helical-milling",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "thread-infeed",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "planetary-gear",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "profile-shift",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "contact-ratio",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "dp-spur-gear",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "sprocket-diameters",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "nose-radius-compensation",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "feed-for-finish",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "inch-speeds-feeds",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "knurl-blank",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "bandsaw-time",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "centerless-feed",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "refractometer-concentration",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "bending-springback",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "tube-bend-thinning",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "weld-cost",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "lap-joint-length",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "coating-coverage",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "bearing-friction",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "oil-viscosity-temperature",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "rim-face-alignment",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "motor-slip",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "water-hammer",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "coolant-flow-heat",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "air-pipe-drop",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "pneumatic-cylinder-force",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "vacuum-cup",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "valve-flow-coefficient",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "radiant-heat",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "insulated-pipe",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "lmtd-exchanger",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "process-breakeven",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "learning-curve",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "xbar-r-limits",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "sampling-oc",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "weibull-reliability",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "plane-area",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "polygon-area",
+   "ok": true,
+   "inputs": 17,
+   "figures": 17
+  },
+  {
+   "id": "solid-volume",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "centroid-shapes",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "complex-number",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "coordinates-3d",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "two-point-distance",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "equation-solver",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "linear-system",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "combinations",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "trig-functions",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "dms-converter",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "triangle-ssa",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "circle-packing",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "density-converter",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "wind-chill",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "overhanging-beam",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "two-span-beam",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "beam-cases-more",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "shaft-combined-stress",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "principal-stress-3d",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "rankine-column",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "section-shapes-more",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "mass-inertia-more",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "force-system",
+   "ok": true,
+   "inputs": 16,
+   "figures": 16
+  },
+  {
+   "id": "square-wire-spring",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "journal-bearing-petroff",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "thrust-bearing-pads",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "gas-compression-process",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "unified-thread-limits",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "metric-thread-limits",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "whitworth-thread",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "three-wire-lead-angle",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "involute-spline",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "gear-cutter-number",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "crossed-helical-gears",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "keyseat-depth",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "arc-radius-rolls",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "bolt-circle-pins",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "taper-discs",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "drill-size-lookup",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "full-power-cutting-speed",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "belt-length-crossed-three",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "rectangular-plate",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "spherical-shell",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "shaft-brittle-hollow",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "flange-coupling-bolts",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "taper-pin-torque",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "universal-joint",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "fatigue-notch-factor",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "sn-fatigue-life",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "vickers-knoop-hardness",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "elastic-constants",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "melting-energy",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "snap-fit",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "gear-contact-stress",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "cam-pressure-angle",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "bearing-duty-cycle",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "rms-torque",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "ball-screw-life",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "timing-belt",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "alignment-thermal-growth",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "bend-radius-limits",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "anodizing-time",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "gating-choke-area",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "cnc-chord-error",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "chip-thickness-kc",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "grinding-geometry",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "thread-milling-path",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "angular-indexing",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "bolted-joint-fatigue",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "machine-hour-rate",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "benefit-cost-ratio",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "speed-series",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "factors-gcd",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "rack-pinion",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "uniform-acceleration",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "angular-acceleration-torque",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "impulse-momentum",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "pendulum-period",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "flyball-governor",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "geneva-mechanism",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "gyroscope-precession",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "prony-brake",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "catenary-cable",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "rolling-resistance",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "rotating-balance-plane",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "two-plane-balance",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
+  },
+  {
+   "id": "torsional-vibration",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "buoyancy",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "wind-pressure",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "escaping-air-velocity",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "ratchet-wheel-pitch",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "lever-force",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "hoist-advantage",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "agma-bending-stress",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "spline-torque-capacity",
+   "ok": true,
+   "inputs": 16,
+   "figures": 16
+  },
+  {
+   "id": "internal-gear",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "film-thickness-ratio",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "turn-of-nut-preload",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "deep-draw-force",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "thread-roll-diameter",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "hobbing-time",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "angle-ring-length",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "perforated-open-area",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "sound-level",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "equivalent-stiffness-thickness",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "matrix-3x3",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "wood-moisture-density",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "prismoidal-volume",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "pappus-revolution",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "simpson-area",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "spherical-triangle",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "progression",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "preferred-numbers",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "line-intersection",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "drop-hammer-blow",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "mixture-cost",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "column-safe-stress-classic",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "retaining-ring-thrust",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "iso-cleanliness-code",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "filter-beta-ratio",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "inverse-time-feed",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "screw-machine-stock",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "shearing-blade-force",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "agma-pitting-power",
+   "ok": true,
+   "inputs": 20,
+   "figures": 20
+  },
+  {
+   "id": "grinding-cycle-time",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
+  },
+  {
+   "id": "pattern-shrinkage",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "spur-contact-diameters",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "clutch-teeth-dividing-head",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "silent-chain-sprocket",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "microtool-stiffness",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "stockpile-weight",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "lumber-board-feet",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "bolt-working-strength-packed",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "press-flywheel-sizing",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "ect-cutting-forces",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "draw-reductions",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "plastic-gear-power",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "plastic-thermal-mismatch",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "set-screw-holding",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "forming-tool-depth",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "spade-drill-power",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "true-stress-strain",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "viscosity-units",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "buttress-thread",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "three-wire-taper-buttress",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "multi-start-threading",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "shear-spinning",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "machine-positioning-accuracy",
+   "ok": true,
+   "inputs": 22,
+   "figures": 22
+  },
+  {
+   "id": "acme-tap-drill",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "milling-cutter-teeth",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "angular-cutter-setting",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "spur-gear-set-design",
+   "ok": true,
+   "inputs": 17,
+   "figures": 17
+  },
+  {
+   "id": "compression-spring-designer",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "shrink-fit-design",
+   "ok": true,
+   "inputs": 16,
+   "figures": 16
+  },
+  {
+   "id": "bolted-joint-design-check",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "turning-cost-per-part",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "press-die-tonnage",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "hydraulic-cylinder-sizing",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "shaft-design-check",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "milling-cut-planner",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "ballscrew-axis-sizing",
+   "ok": true,
+   "inputs": 20,
+   "figures": 20
+  },
+  {
+   "id": "v-belt-drive-design",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "roller-chain-drive-design",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "bearing-selection-check",
+   "ok": true,
+   "inputs": 16,
+   "figures": 16
+  },
+  {
+   "id": "fillet-weld-joint-design",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "cam-follower-design",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "clutch-engagement-design",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "screw-jack-design",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
+  },
+  {
+   "id": "pump-system-design",
+   "ok": true,
+   "inputs": 17,
+   "figures": 17
+  },
+  {
+   "id": "keyed-hub-design",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "band-brake-stop-design",
+   "ok": true,
+   "inputs": 17,
+   "figures": 17
+  },
+  {
+   "id": "conveyor-drive-sizing",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "fixture-clamp-force",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "lifting-beam-design",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "beam-sizing",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "compressed-air-system-sizing",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
+  },
+  {
+   "id": "vibration-isolator-selection",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "motor-gearbox-selection",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "gear-train-ratio-planner",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "gearbox-heat-balance",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "tool-deflection-cut-limit",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "sheet-metal-part-cost",
+   "ok": true,
+   "inputs": 21,
+   "figures": 21
+  },
+  {
+   "id": "tapped-hole-design",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "pneumatic-cylinder-sizing",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "disc-spring-stack-design",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "drilling-cycle-planner",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "hydraulic-motor-drive",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "chuck-grip-force",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "coolant-system-sizing",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "rotary-index-table-sizing",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "rack-pinion-axis-sizing",
+   "ok": true,
+   "inputs": 16,
+   "figures": 16
+  },
+  {
+   "id": "hoist-drive-sizing",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "furnace-heat-treat-plan",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "crank-press-capacity",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "pipe-expansion-loop",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "gear-backlash-temperature",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "pump-operating-point",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "fan-drive-sizing",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "machine-foundation-block",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "measurement-temperature-error",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "pressure-vessel-thickness",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "fixture-locating-error",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "flange-bolt-load-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "chain-conveyor-sizing",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "travel-drive-sizing",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "bearing-fit-clearance",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "overhung-load-check",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "injection-moulding-estimate",
+   "ok": true,
+   "inputs": 16,
+   "figures": 16
+  },
+  {
+   "id": "bearing-friction-oil-flow",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "press-brake-setup",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "gearbox-selection-check",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "riveted-joint-design",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "storage-tank-shell",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "milling-cost-per-part",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "spline-joint-design",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "ballscrew-axis-stiffness",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
+  },
+  {
+   "id": "tank-heater-sizing",
+   "ok": true,
+   "inputs": 16,
+   "figures": 16
+  },
+  {
+   "id": "hydraulic-line-sizing",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "holding-brake-sizing",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "weld-preheat-check",
+   "ok": true,
+   "inputs": 20,
+   "figures": 20
+  },
+  {
+   "id": "snap-fit-joint-design",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "worm-gear-drive-design",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "lifting-lug-design",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "helical-gear-set-design",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "bevel-gear-set-design",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "journal-bearing-design",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "extension-spring-designer",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "motor-duty-cycle-check",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "timing-belt-drive-design",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "heat-exchanger-sizing",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "surface-grinding-planner",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "compression-strut-sizing",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "torsion-spring-designer",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "planetary-gear-set-design",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "turning-cut-planner",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "flat-belt-drive-design",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "disc-brake-design",
+   "ok": true,
+   "inputs": 16,
+   "figures": 16
+  },
+  {
+   "id": "cover-plate-design",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "hydraulic-power-unit-sizing",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "linear-guide-selection",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
+  },
+  {
+   "id": "hydraulic-cylinder-structure",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "deep-drawing-plan",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "broaching-plan",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "shaft-critical-speed-check",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "geneva-drive-design",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "friction-grip-joint",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "flexible-coupling-selection",
+   "ok": true,
+   "inputs": 20,
+   "figures": 20
+  },
+  {
+   "id": "punching-operation-plan",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "toggle-clamp-design",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "cylindrical-grinding-planner",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "fatigue-design-check",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "crane-hook-design",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "universal-joint-drive",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "tolerance-stack-design",
+   "ok": true,
+   "inputs": 23,
+   "figures": 23
+  },
+  {
+   "id": "leaf-spring-design",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "lathe-threading-plan",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "clevis-pin-joint",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "o-ring-groove-design",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "flywheel-rim-design",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "rotor-balancing-check",
+   "ok": true,
+   "inputs": 19,
+   "figures": 19
+  },
+  {
+   "id": "gear-tooth-measurement",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "thread-wire-inspection",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "torsion-bar-design",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "tube-bending-plan",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "shaft-deflection-check",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "electroplating-plan",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
+  },
+  {
+   "id": "bracket-bolt-tension",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "gear-centre-distance-design",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "sine-bar-setup",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "internal-taper-inspection",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "thread-milling-plan",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "gear-hobbing-plan",
+   "ok": true,
+   "inputs": 19,
+   "figures": 19
+  },
+  {
+   "id": "accumulator-circuit-sizing",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "cylinder-speed-control",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "pipe-insulation-design",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "sheet-metal-flat-pattern",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "ball-nose-finishing-plan",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "drop-impact-design",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "centerless-grinding-plan",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "sawing-plan",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
+  },
+  {
+   "id": "motor-load-assessment",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "bolted-joint-temperature",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "bolt-circle-layout",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "tapping-plan",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "machine-tipping-stability",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "rope-winch-drum",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "casting-pour-plan",
+   "ok": true,
+   "inputs": 18,
+   "figures": 18
+  },
+  {
+   "id": "coating-job-estimate",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "valve-closure-surge",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "control-valve-sizing",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "vacuum-gripper-sizing",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "wind-load-on-post",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "noise-exposure-check",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "process-capability-check",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "corrosion-remaining-life",
+   "ok": true,
+   "inputs": 16,
+   "figures": 16
+  },
+  {
+   "id": "hydraulic-filter-selection",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
+  },
+  {
+   "id": "submerged-tank-flotation",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "cable-span-design",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "system-reliability",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "learning-curve-quote",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "acceptance-sampling-plan",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "measurement-uncertainty-budget",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "furnace-wall-design",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
+  },
+  {
+   "id": "fastener-position-tolerance",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "investment-appraisal",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "air-leak-audit",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
+  },
+  {
+   "id": "two-point-lift-plan",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "rotor-run-up-time",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "tensile-test-evaluation",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "brinell-test-check",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "compressor-staging-check",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "spherical-vessel-design",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "motor-efficiency-test",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "gyroscopic-bearing-load",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "centrifugal-attachment-check",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "ratchet-pawl-design",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "torsion-member-comparison",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "inertia-matching-ratio",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "bolt-preload-verification",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "spindle-speed-range-design",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "vacuum-tube-design",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "journal-bearing-oil-check",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "air-main-sizing",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "anodizing-plan",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "repair-or-replace",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "make-or-buy",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "block-and-tackle-check",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "restrained-bar-thermal-check",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "buffer-stop-design",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "gas-vessel-temperature-check",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "blow-off-nozzle-cost",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "tank-calibration-chart",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "guillotine-shear-check",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "machine-axis-error-budget",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "plastic-gear-drive-check",
+   "ok": true,
+   "inputs": 18,
+   "figures": 18
+  },
+  {
+   "id": "set-screw-hub-check",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "tank-wall-panel-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "crane-wheel-rail-check",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "bar-stock-plan",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "stockpile-haulage-plan",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "melt-furnace-batch-plan",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "vickers-test-check",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "gear-mesh-interference-check",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "finish-turning-setup",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "coolant-tank-maintenance",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "compound-angle-sine-setup",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "dovetail-inspection",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "gear-tooth-caliper-setting",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "perforated-plate-design",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "water-line-design-check",
+   "ok": true,
+   "inputs": 16,
+   "figures": 16
+  },
+  {
+   "id": "pipe-run-expansion-check",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "pivot-pin-retention-check",
+   "ok": true,
+   "inputs": 21,
+   "figures": 21
+  },
+  {
+   "id": "maintenance-interval-plan",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "process-change-trial",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "timber-order-plan",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "orifice-restrictor-design",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "machine-levelling-wedge-check",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "ramp-winch-pull-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "pump-suction-check",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "shoe-brake-stop-check",
+   "ok": true,
+   "inputs": 16,
+   "figures": 16
+  },
+  {
+   "id": "drive-torsional-check",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "flange-coupling-design",
+   "ok": true,
+   "inputs": 16,
+   "figures": 16
+  },
+  {
+   "id": "gear-milling-setup",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "lubricant-viscosity-check",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "rolled-plate-plan",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "hopper-bin-design",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "knurling-setup",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "shaft-alignment-plan",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "helical-gear-milling-setup",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "machine-rate-quote-check",
+   "ok": true,
+   "inputs": 17,
+   "figures": 17
+  },
+  {
+   "id": "crane-load-swing-check",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "nested-spring-check",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "spun-cone-plan",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "moulded-part-cost",
+   "ok": true,
+   "inputs": 22,
+   "figures": 22
+  },
+  {
+   "id": "dynamometer-cooling-plan",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "internal-gear-drive-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "c-frame-throat-check",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "bolt-pattern-hole-plan",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "interference-fit-limits-check",
+   "ok": true,
+   "inputs": 18,
+   "figures": 18
+  },
+  {
+   "id": "pontoon-float-check",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "spade-drilling-plan",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "thrust-pad-bearing-check",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "tube-post-eccentric-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "hot-surface-insulation-check",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "plug-gauge-plan",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "pusher-move-check",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "lid-counterbalance-spring",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "triaxial-stress-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "machine-noise-acceptance",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "melt-charge-blend",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "angle-ring-cut-plan",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "two-span-stringer-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "inch-spur-gear-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "equipment-finance-plan",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "porter-governor-check",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "overhang-beam-uplift-check",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "beam-drop-impact-check",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "silent-chain-drive-check",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "jaw-clutch-milling-setup",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "snatch-block-load-check",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "crossed-belt-drive-check",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "square-round-spring-compare",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "crossed-helical-drive-check",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "heating-coil-plan",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
+  },
+  {
+   "id": "polygon-milling-setup",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "bolt-circle-inspection",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "oval-tank-capacity",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "bent-bracket-plan",
+   "ok": true,
+   "inputs": 18,
+   "figures": 18
+  },
+  {
+   "id": "guard-band-acceptance",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "rotary-axis-feed-plan",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "column-formula-compare",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "hollow-shaft-conversion",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "ring-blank-make-plan",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "thread-rolling-setup",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "shear-legs-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "stock-removal-plan",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "pump-speed-control-plan",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "lot-acceptance-from-capability",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "sump-pumpout-plan",
+   "ok": true,
+   "inputs": 17,
+   "figures": 17
+  },
+  {
+   "id": "outdoor-cabinet-wind-tipping",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "segmented-flange-plan",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "three-leg-sling-check",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "instrument-calibration-check",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "npt-port-check",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "fit-at-temperature-check",
+   "ok": true,
+   "inputs": 18,
+   "figures": 18
+  },
+  {
+   "id": "spring-fatigue-check",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "cam-return-spring-check",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "angular-cutter-fluting-setup",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "gearbox-oil-temperature-check",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "small-tool-substitution-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "acme-lead-screw-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "gear-shaft-sizing",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "face-milling-power-plan",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "ballscrew-duty-life",
+   "ok": true,
+   "inputs": 16,
+   "figures": 16
+  },
+  {
+   "id": "turn-of-nut-fatigue-check",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "unified-thread-wire-limits",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "change-gear-threading-setup",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "panel-material-substitution",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "cone-clutch-engagement",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "eccentric-bracket-bolt-check",
+   "ok": true,
+   "inputs": 22,
+   "figures": 22
+  },
+  {
+   "id": "pulley-shaft-bush-check",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "torque-tube-end-weld-check",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "arc-segmentation-feed-check",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "involute-spline-design",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "balance-correction-check",
+   "ok": true,
+   "inputs": 18,
+   "figures": 18
+  },
+  {
+   "id": "bend-feasibility-check",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "whitworth-wire-inspection",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "casting-pattern-plan",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "buttress-thread-inspection",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "unified-tapped-hole-check",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "weldment-cost-estimate",
+   "ok": true,
+   "inputs": 20,
+   "figures": 20
+  },
+  {
+   "id": "brazed-sleeve-joint-plan",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "gear-train-output-check",
+   "ok": true,
+   "inputs": 16,
+   "figures": 16
+  },
+  {
+   "id": "linear-move-drive-check",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "plate-lift-plan",
+   "ok": true,
+   "inputs": 24,
+   "figures": 24
+  },
+  {
+   "id": "tapered-pad-footing-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "bolt-circle-pin-check",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "sprocket-bore-key-plan",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "pinned-hub-drive-check",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "press-flywheel-check",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
+  },
+  {
+   "id": "drop-hammer-forging-plan",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "v-belt-motor-load-check",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "conveyor-drive-train-check",
+   "ok": true,
+   "inputs": 17,
+   "figures": 17
+  },
+  {
+   "id": "vessel-shell-plan",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "turning-cut-power-check",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "pressure-tube-torsion-check",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "inch-milling-setup-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "index-table-drive-check",
+   "ok": true,
+   "inputs": 18,
+   "figures": 18
+  },
+  {
+   "id": "hand-lever-design-check",
+   "ok": true,
+   "inputs": 16,
+   "figures": 16
+  },
+  {
+   "id": "plate-shear-capacity-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "vee-groove-pin-inspection",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "special-section-beam-check",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "force-group-support-check",
+   "ok": true,
+   "inputs": 20,
+   "figures": 20
+  },
+  {
+   "id": "grain-size-acceptance",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "polar-hole-position-check",
+   "ok": true,
+   "inputs": 24,
+   "figures": 24
+  },
+  {
+   "id": "intermittent-fillet-weld-plan",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "acme-nut-bore-inspection",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "form-tool-profile-plan",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "taper-disc-gauge-check",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "composite-rotor-inertia",
+   "ok": true,
+   "inputs": 21,
+   "figures": 21
+  },
+  {
+   "id": "preferred-size-selection",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "stacked-solid-cg",
+   "ok": true,
+   "inputs": 18,
+   "figures": 18
+  },
+  {
+   "id": "three-point-support-loads",
+   "ok": true,
+   "inputs": 16,
+   "figures": 16
+  },
+  {
+   "id": "sine-bar-dms-setup",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "gear-tooth-top-land-check",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "relief-valve-spring-check",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "pipe-support-span-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "cart-push-force-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "taper-turning-setup",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "wall-jib-crane-check",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "step-cone-pulley-design",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "hydraulic-hand-jack-check",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "capstan-rope-turns-check",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "hinged-flap-cylinder-check",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "tank-stand-leg-check",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "nozzle-manifold-check",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "drilling-fixture-clamp-check",
+   "ok": true,
+   "inputs": 18,
+   "figures": 18
+  },
+  {
+   "id": "conveyor-takeup-plan",
+   "ok": true,
+   "inputs": 17,
+   "figures": 17
+  },
+  {
+   "id": "forklift-load-centre-check",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "cylinder-air-consumption-check",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "winch-drum-brake-check",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "tank-drain-time-check",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "sluice-gate-lift-check",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
+  },
+  {
+   "id": "ball-detent-check",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "expansion-vessel-sizing",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "torque-arm-reaction-check",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "traction-hoist-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "shear-pin-overload-design",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "portable-gantry-check",
+   "ok": true,
+   "inputs": 17,
+   "figures": 17
+  },
+  {
+   "id": "press-tie-rod-check",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "centrifuge-bowl-check",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "screw-clamp-force-check",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "scissor-lift-screw-check",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "rope-drum-fleet-angle-check",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "enclosure-cooling-airflow",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "ramp-traction-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "two-pump-arrangement-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "cantilever-rack-arm-check",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "centrifugal-clutch-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "expansion-gap-plan",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "cylinder-cushion-check",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "pipe-bend-thrust-check",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "jet-impact-force-check",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "spring-clamp-hydraulic-release",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
+  },
+  {
+   "id": "extraction-duct-check",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "gravity-chute-check",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "torque-wrench-adapter-check",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "friction-wheel-drive-check",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "taper-bush-grip-check",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  }
+ ]
+}
