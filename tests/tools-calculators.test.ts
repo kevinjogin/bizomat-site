@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 887 tools with unique ids and every previously published id kept', () => {
+test('register: 893 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 887);
+  assert.equal(ids.length, 893);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -4990,5 +4990,63 @@ test('forty-fourth-round design checks give pass and fail verdicts', () => {
     ['dowel-pin-joint-check', { pinLo: 20 }], ['dowel-pin-joint-check', { holeLo: 20 }],
     ['taper-shank-holding-check', { Le: 1000 }], ['slender-work-turning-check', { rr: 0 }], ['boring-bar-overhang-check', { rr: 0 }],
   ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Engineering thermodynamics, second Çengel batch (cengel2): steam cycle, steam dryness, CHP and air processes.
+// Expected values are independent hand calculations: closed forms, and Hyland–Wexler states with a secant wet-bulb solution.
+const CG2_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['rankine-cycle-check', {}, { eta: 29.069619249225802, mdot: 5.888954275526295, HR: 12384.06313180685, x4: 0.8660549308139293, Qb: 17200.08768306507, wp: 0.00101 * 2990 / 0.85 }, 1e-8],
+  ['steam-dryness-throttling-check', {}, { x: (2776.6 - 762.51) / 2014.6, sup: 50.39 }, 1e-9],
+  ['steam-dryness-throttling-check', { h2: 2700 }, { x: 0.9617244117939046 }, 1e-12],
+  ['cogeneration-saving-check', {}, { u: 80, Fsep: 900 / 0.4 + 1100 / 0.85, PES: 29.460580912863065, PHR: 900 / 1100 }, 1e-9],
+  ['cogeneration-saving-check', { Qh: 0 }, { PES: -100 / 9, PHR: 0 }, 1e-9],
+  ['air-stream-mixing-check', {}, { T3: 17.56067018944977, RH3: 57.732898813536316, w3: 0.0071984915235847454, share: 26.249035534777327 }, 1e-8],
+  ['air-stream-mixing-check', { T1: 0, RH1: 100, V1: 1, T2: 30, RH2: 95, V2: 1 }, { T3: 14.251004361637719, RH3: 137.4475155415736 }, 1e-8],
+  ['evaporative-cooler-check', {}, { Twb: 20.761082968498428, T2: 24.208866374798742, w2: 0.013972250576503862, mw: 69.20846565707711 / 3600, Qs: 47.257439930669854 }, 1e-6],
+  ['heating-humidification-check', {}, { Q: 20.805942563464097, Mh: 23.87446944060214, w1: 0.002149764974893166, w3: 0.007392694301167118 }, 1e-8],
+  ['heating-humidification-check', { kind: 'spray', hw: 62.7 }, { Q: 38.13018604115437 }, 1e-8],
+];
+for (const [id, over, expected, tol] of CG2_CASES) test(`thermodynamics (cengel2): ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('thermodynamics (cengel2): balances and limiting cases', () => {
+  const rk = engine.run('rankine-cycle-check').values;
+  near(rk.qin, rk.wnet + rk.qout, 1e-9, 'heat added = net work + heat rejected');
+  near(engine.run('rankine-cycle-check', { etat: 100, etap: 100 }).values.wt, 3116.1 - 2136.1, 1e-9, 'ideal turbine work is the isentropic drop');
+  const ev = engine.run('evaporative-cooler-check', { eps: 100 }).values;
+  near(ev.T2, ev.Twb, 1e-12, 'a perfect cooler reaches the wet-bulb');
+  near(ev.RH2, 100, 1e-6, 'and leaves the air saturated');
+  const mx = engine.run('air-stream-mixing-check', { V1: 0 }).values;
+  near(mx.T3, 22, 1e-9, 'one stream alone keeps its temperature');
+  near(mx.RH3, 50, 1e-9, 'and its humidity');
+  near(engine.run('heating-humidification-check', { kind: 'spray', hw: 62.7 }).values.Mh, 23.87446944060214, 1e-8, 'water added is unchanged by the humidifier type');
+  near(engine.run('cogeneration-saving-check', { etaE: 80, etaH: 80 }).values.PES, 0, 1e-9, 'separate production as efficient as the CHP utilisation factor gives no saving');
+});
+
+test('thermodynamics (cengel2): verdicts and guards', () => {
+  assert.equal(engine.run('rankine-cycle-check').text, 'EXHAUST DRY ENOUGH');
+  assert.equal(engine.run('rankine-cycle-check', { xmin: 0.9 }).text, 'EXHAUST TOO WET');
+  assert.equal(engine.run('steam-dryness-throttling-check').text, 'STEAM DRY ENOUGH');
+  assert.equal(engine.run('steam-dryness-throttling-check', { h2: 2700 }).text, 'STEAM TOO WET');
+  assert.equal(engine.run('steam-dryness-throttling-check', { T2: 102 }).text, 'READING NOT VALID');
+  assert.equal(engine.run('cogeneration-saving-check').text, 'CHP SAVES PRIMARY ENERGY');
+  assert.equal(engine.run('cogeneration-saving-check', { pesReq: 30 }).text, 'SAVING BELOW TARGET');
+  assert.ok(engine.run('cogeneration-saving-check', { Qf: 1500 }).checks.some((c: any) => c.label === 'Energy balance' && c.status === 'warn'), 'outputs above the fuel input are flagged');
+  assert.equal(engine.run('air-stream-mixing-check').text, 'MIXED AIR CLEAR');
+  assert.equal(engine.run('air-stream-mixing-check', { rhMax: 50 }).text, 'MIXED AIR NEAR SATURATION');
+  assert.equal(engine.run('air-stream-mixing-check', { T1: 0, RH1: 100, V1: 1, T2: 30, RH2: 95, V2: 1 }).text, 'FOG FORMS');
+  assert.equal(engine.run('evaporative-cooler-check').text, 'COOLER REACHES TARGET');
+  assert.equal(engine.run('evaporative-cooler-check', { Treq: 22 }).text, 'COOLER CANNOT REACH TARGET');
+  assert.ok(engine.run('evaporative-cooler-check', { Treq: 20 }).checks.some((c: any) => c.label === 'Target against the wet-bulb' && c.status === 'fail'), 'a target below the wet-bulb is unreachable');
+  assert.equal(engine.run('heating-humidification-check').text, 'EQUIPMENT MEETS THE DUTY');
+  assert.equal(engine.run('heating-humidification-check', { Qcap: 20 }).text, 'HEATER UNDERSIZED');
+  assert.equal(engine.run('heating-humidification-check', { Mcap: 20 }).text, 'HUMIDIFIER UNDERSIZED');
+  assert.equal(engine.run('heating-humidification-check', { Qcap: 20, Mcap: 20 }).text, 'HEATER AND HUMIDIFIER UNDERSIZED');
+  assert.ok(engine.run('heating-humidification-check', { kind: 'spray' }).checks.some((c: any) => c.label === 'Humidifier enthalpy' && c.status === 'warn'), 'steam enthalpy with a spray humidifier is flagged');
+  const cases: Array<[string, Inputs]> = [['rankine-cycle-check', { Pb: 5 }], ['rankine-cycle-check', { h4s: 3200 }], ['rankine-cycle-check', { h4s: 150 }], ['rankine-cycle-check', { etat: 10 }], ['steam-dryness-throttling-check', { P2: 1000 }], ['steam-dryness-throttling-check', { T2: 90 }], ['cogeneration-saving-check', { We: 0, Qh: 0 }], ['cogeneration-saving-check', { etaE: 0 }], ['air-stream-mixing-check', { V1: 0, V2: 0 }], ['air-stream-mixing-check', { T1: -5 }], ['evaporative-cooler-check', { T1: 2, RH1: 5 }], ['evaporative-cooler-check', { eps: 0 }], ['heating-humidification-check', { T3: 4 }], ['heating-humidification-check', { RH3: 10 }], ['heating-humidification-check', { kind: 'mist' }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });

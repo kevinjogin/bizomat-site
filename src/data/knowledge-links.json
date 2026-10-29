@@ -3175,6 +3175,186 @@
    "status": "approved",
    "evidence": "review",
    "reason": "Chapter says reamed H7 holes are common for dowel pins; tool checks the dowel joint and the fit given by the pin and hole limits."
+  },
+  {
+   "reados": "publication/process-steam-by-the-numbers",
+   "chapter": "reading-the-steam-table",
+   "tool": "steam-dryness-throttling-check",
+   "type": "applies",
+   "note": "Works out the dryness fraction of wet steam from a throttling calorimeter reading, one of the measurement methods this chapter describes.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter defines dryness fraction and lists the throttling calorimeter (constant enthalpy, measured superheat) as a way to measure it; tool does that calculation with a validity check."
+  },
+  {
+   "reados": "publication/process-steam-by-the-numbers",
+   "chapter": "pressure-reduction-and-distribution",
+   "tool": "steam-dryness-throttling-check",
+   "type": "explains",
+   "note": "Applies the constant-enthalpy throttling this chapter explains to find the dryness of the steam before the throttle.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter shows throttling keeps enthalpy constant so wet steam becomes drier at lower pressure; tool uses the same balance to infer the upstream dryness."
+  },
+  {
+   "reados": "publication/process-steam-by-the-numbers",
+   "chapter": "the-boiler-and-the-cost-of-steam",
+   "tool": "rankine-cycle-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter covers boiler efficiency and the cost of process steam, not power generation with a turbine."
+  },
+  {
+   "reados": "collection/engineering-history-modern-era",
+   "chapter": "engines-after-steam-matching-technology-to-duty",
+   "tool": "rankine-cycle-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter is about internal combustion engines and gas turbines; it does not work a steam turbine cycle."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "energy-has-a-quality",
+   "tool": "cogeneration-saving-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter introduces exergy and energy quality but does not discuss combined heat and power or primary energy saving."
+  },
+  {
+   "reados": "collection/fluids-hvac-and-building-services",
+   "chapter": "psychrometrics-for-hvac",
+   "tool": "air-stream-mixing-check",
+   "type": "applies",
+   "note": "Calculates the mixed state of two air streams, which this chapter shows lying on the straight line between them on the chart.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter lists mixing of air streams as a chart process (mixed state on the line between, nearer the larger stream); tool does the mass and energy balance and checks for fog."
+  },
+  {
+   "reados": "collection/fluids-hvac-and-building-services",
+   "chapter": "psychrometrics-for-hvac",
+   "tool": "evaporative-cooler-check",
+   "type": "applies",
+   "note": "Calculates the leaving state of a direct evaporative cooler along the constant wet-bulb line the chapter describes.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter describes evaporative cooling as temperature falling and moisture rising at roughly constant wet-bulb; tool computes the wet-bulb and the leaving state from pad effectiveness."
+  },
+  {
+   "reados": "collection/fluids-hvac-and-building-services",
+   "chapter": "psychrometrics-for-hvac",
+   "tool": "heating-humidification-check",
+   "type": "applies",
+   "note": "Sizes the heater and humidifier for the heating-and-humidification process on the chart.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter lists heating and humidification as a chart process; tool calculates the heater load and water added for it."
+  },
+  {
+   "reados": "collection/fluids-hvac-and-building-services",
+   "chapter": "passive-and-low-energy-cooling",
+   "tool": "evaporative-cooler-check",
+   "type": "applies",
+   "note": "Shows how far direct evaporative cooling can cool outdoor air and how much water it uses on a design day.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter recommends direct evaporative cooling for hot, dry climates; tool calculates the leaving temperature, water use and capacity for a given climate."
+  },
+  {
+   "reados": "collection/fluids-hvac-and-building-services",
+   "chapter": "hvac-for-commercial-and-industrial-buildings",
+   "tool": "evaporative-cooler-check",
+   "type": "complements",
+   "note": "Checks whether evaporative cooling, one of the systems this chapter compares, can reach the supply temperature you need.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter lists evaporative cooling for dry inland climates, warehouses and workshops; tool checks the leaving temperature against a target."
+  },
+  {
+   "reados": "publication/cooling-towers-by-the-numbers",
+   "chapter": "moist-air-and-the-wet-bulb",
+   "tool": "evaporative-cooler-check",
+   "type": "explains",
+   "note": "Uses the wet-bulb temperature this chapter calculates as the limit of a direct evaporative cooler.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains the wet-bulb as the adiabatic saturation temperature; tool solves the same balance for the wet-bulb and cools the air towards it."
+  },
+  {
+   "reados": "publication/cooling-towers-by-the-numbers",
+   "chapter": "moist-air-and-the-wet-bulb",
+   "tool": "air-stream-mixing-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter covers moist-air properties for tower air; it does not discuss mixing air streams."
+  },
+  {
+   "reados": "publication/cooling-towers-by-the-numbers",
+   "chapter": "moist-air-and-the-wet-bulb",
+   "tool": "heating-humidification-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter covers tower air and wet-bulb, not heating and humidifying supply air."
+  },
+  {
+   "reados": "publication/condensation-control-by-the-numbers",
+   "chapter": "water-in-air-vapour-pressure-and-dew-point",
+   "tool": "air-stream-mixing-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter is about dew point in enclosures; the dew point tool is linked there instead."
+  },
+  {
+   "reados": "publication/condensation-control-by-the-numbers",
+   "chapter": "water-in-air-vapour-pressure-and-dew-point",
+   "tool": "evaporative-cooler-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter is about dew point and condensation, not evaporative cooling."
+  },
+  {
+   "reados": "publication/process-chillers-by-the-numbers",
+   "chapter": "saturation-pressure-and-temperature",
+   "tool": "evaporative-cooler-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: refrigerant saturation pressure and temperature; matched only on the word saturation."
+  },
+  {
+   "reados": "publication/process-steam-by-the-numbers",
+   "chapter": "steam-for-a-process",
+   "tool": "heating-humidification-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter sizes steam for process heating; it does not cover humidifying air."
+  },
+  {
+   "reados": "publication/process-steam-by-the-numbers",
+   "chapter": "pressure-reduction-and-distribution",
+   "tool": "rankine-cycle-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: steam distribution and pressure reduction, not a power cycle."
   }
  ]
 }
