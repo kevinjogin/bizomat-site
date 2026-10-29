@@ -93,7 +93,7 @@ Per-page titles, descriptions and canonical URLs on `https://kevos.com`; Open Gr
 
 ## 8. Deployment and CI
 
-- `wrangler.toml`: Worker `throbbing-block-6c61`, `main = "src/worker.ts"`, assets from `./dist` (binding `ASSETS`, 404 page), `[ai]` binding, observability on, route `kevos.com/*` in zone `kevos.com`.
+- `wrangler.toml`: Worker `throbbing-block-6c61`, `main = "src/worker.ts"`, assets from `./dist` (binding `ASSETS`, 404 page), `[ai]` binding, observability (Workers Logs) off since 29 Oct 2026 to match the dashboard, route `kevos.com/*` in zone `kevos.com`.
 - A Workers custom domain `kevos.com → throbbing-block-6c61` also exists (seen 8 Oct 2026). It points to the same Worker.
 - GitHub Actions: `verify.yml` (npm ci, npm run verify, KEVOS homepage branding checks that fail on GoCore titles) and `verify-site.yml` (npm ci, npm run verify). Neither deploys.
 - Production deploys come from Cloudflare's GitHub build integration on pushes to `main`, or manually with `npm run deploy`. See `CLAUDE.md` for the rule on manual deploys and the 8 Oct 2026 incident.
