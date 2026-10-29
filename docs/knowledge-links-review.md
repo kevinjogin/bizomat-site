@@ -2,7 +2,7 @@
 
 Generated 2026-10-29 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 323 relationships (144 from links authors wrote in the books, 179 from editorial review). Rejected: 70. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 335 relationships (144 from links authors wrote in the books, 191 from editorial review). Rejected: 74. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -189,6 +189,18 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Industrial Electric Heating by the Numbers | Induction and infrared heating | Induction Hardening Plan (Reference Depth, Frequency for the Case, Heating Energy and Power) | applies | Chapter chooses induction frequency from the depth of penetration and sizes heating power; tool calculates the reference depth, suitable frequency and power for surface hardening. |
 | Machine Elements and Mechanical Design | Heat treatment and surface hardening explained for designers and buyers | Induction Hardening Plan (Reference Depth, Frequency for the Case, Heating Energy and Power) | complements | Chapter explains induction hardening heats only the surface layer; tool calculates the reference depth, frequency and power for a case depth. |
 | Machine Elements and Mechanical Design | Selecting bearings and lubrication for reliable machines: types, life, fits, sealing and failure causes | Countershaft Bearing Check (Gear Forces, Bearing Loads in Two Planes, L10 Life, Shaft Stress) | applies | Chapter gives L10 life = (C ÷ P)³ for ball bearings and (C ÷ P)^(10/3) for rollers; tool finds the bearing loads from gear forces and applies that life equation. |
+| Entropy by the Numbers | Absolute temperature and the Carnot limit | Heat Engine and Heat Pump Second-Law Check (Carnot Limit, Entropy Generated, Lost Work) | explains | Chapter derives 1 − Tc/Th in kelvin and rejects a heat-to-power claim against it; the tool computes that limit and flags claims above it. |
+| Heat Pumps and Refrigeration by the Numbers | COP and the Carnot limit | Heat Engine and Heat Pump Second-Law Check (Carnot Limit, Entropy Generated, Lost Work) | applies | Chapter defines COP_cooling and COP_heating and their Carnot limits Tc/(Th − Tc) and Th/(Th − Tc); the tool uses exactly these and the share of the limit. |
+| Heat Pumps and Refrigeration by the Numbers | The second law and its limits | Heat Engine and Heat Pump Second-Law Check (Carnot Limit, Entropy Generated, Lost Work) | explains | Chapter explains entropy created, lost work as surroundings temperature times entropy, the Carnot limit and checking claims; the tool computes each of these. |
+| Process Chillers by the Numbers | The process chiller and its limit | Heat Engine and Heat Pump Second-Law Check (Carnot Limit, Entropy Generated, Lost Work) | applies | Chapter applies COP_max = Tc/(Th − Tc) to CH-30 and a supplier figure that broke the second law; the tool’s refrigerator mode does this check. |
+| Real Gases by the Numbers | Throttling: the Joule–Thomson effect at the regulator | Gas Pressure Reduction Cooling Check (Joule–Thomson Temperature Drop, Outlet Temperature, Preheat) | explains | Chapter explains regulator cooling by constant enthalpy, the van der Waals reason, the inversion temperature and reheating; the tool computes the outlet temperature, inversion temperature and preheat. |
+| Entropy by the Numbers | Throttling, mixing and friction | Hot and Cold Water Blending Check (Flow Split, Hot Supply, Entropy Generated, Lost Work) | explains | Chapter calculates the entropy generated and lost work of a tempering valve mixing 60 °C and 20 °C water; the tool computes the same for any blend. |
+| Entropy by the Numbers | Throttling, mixing and friction | Gas Pressure Reduction Cooling Check (Joule–Thomson Temperature Drop, Outlet Temperature, Preheat) | complements | Chapter treats throttling loss for an ideal gas and notes the small Joule–Thomson change; the tool computes that temperature change, not the entropy loss, so it complements. |
+| Entropy by the Numbers | Lost work and exergy | Hot and Cold Water Blending Check (Flow Split, Hot Supply, Entropy Generated, Lost Work) | explains | Chapter states the lost-work theorem, lost work = T0 × entropy generated, and the need to state the dead state; the tool applies it with a user-set T0. |
+| Vacuum by the Numbers | Vapour, outgassing and gas loads | Boiling Point Under Vacuum (Clausius–Clapeyron Boiling Temperature, Pressure for a Temperature Limit) | explains | Chapter sets out ln(p2/p1) = (L/R)(1/T1 − 1/T2) with molar L and checks it against water data; the tool uses the same relation for boiling temperature and pressure. |
+| Real Gases by the Numbers | Liquefied gases, vapour pressure and the critical point | Boiling Point Under Vacuum (Clausius–Clapeyron Boiling Temperature, Pressure for a Temperature Limit) | complements | Chapter presents vapour pressure and Clausius–Clapeyron for liquefied gases; the tool solves the same equation for boiling temperature, below the critical point only. |
+| Welding Health and Safety by the Numbers | Fire, gases and confined spaces | Solvent Vapour Headspace Check (Raoult’s Law Partial Pressure, Saturated Concentration, Share of LEL) | complements | Chapter warns that solvent residue and vapour in drums and tanks explode and requires gas testing; the tool screens the saturated headspace against the LEL as a planning aid. |
+| How Engineering Shaped Industry: From Aqueducts to the Grid | Clean water as an engineered system: barriers, gravity and supply security, and lessons for operations | Reverse Osmosis Pressure Check (van ’t Hoff Osmotic Pressure, Concentrate End, Net Driving Pressure) | complements | Chapter describes reverse osmosis pumping seawater against its osmotic pressure; the tool computes osmotic pressure by van ’t Hoff and the pressure margin of a stage. |
 
 ## 2. Rejected
 
@@ -264,6 +276,10 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Industrial Gases by the Numbers | Purity and purification | Nitrogen or Oxygen Generator Energy Check (Minimum Separation Work, Second-Law Efficiency, Running Cost) | Rejected: chapter traces impurities in acetylene, oxygen and shielding gases and their cost in cutting; it does not cover separation energy. |
 | Sustainability and Environmental Management | Turning waste into a resource: why recovery is a process design problem | Nitrogen or Oxygen Generator Energy Check (Minimum Separation Work, Second-Law Efficiency, Running Cost) | Rejected: chapter is about waste recovery; the match was on general words, not on gas separation. |
 | Cutting and Gouging by the Numbers | Laser cutting | Nitrogen or Oxygen Generator Energy Check (Minimum Separation Work, Second-Law Efficiency, Running Cost) | Rejected: chapter covers laser cutting and its assist gases, not the energy to make nitrogen or oxygen on site. |
+| Process Chillers by the Numbers | Saturation pressure and temperature | Boiling Point Under Vacuum (Clausius–Clapeyron Boiling Temperature, Pressure for a Temperature Limit) | Rejected: chapter shows the Clausius–Clapeyron form misses by more than 10% for R-134a and uses the full Clapeyron equation with NIST data; the tool’s constant-enthalpy form is not the method it recommends. |
+| Process Chillers by the Numbers | Throttling and flash gas | Gas Pressure Reduction Cooling Check (Joule–Thomson Temperature Drop, Outlet Temperature, Preheat) | Rejected: chapter is about two-phase flashing of liquid refrigerant at an expansion valve; the tool models single-phase gas cooling only. |
+| Process Steam by the Numbers | Pressure reduction and distribution | Gas Pressure Reduction Cooling Check (Joule–Thomson Temperature Drop, Outlet Temperature, Preheat) | Rejected: chapter throttles wet steam using steam-table enthalpy and dryness; the tool’s Joule–Thomson coefficient does not model steam or wet steam. |
+| Combustion by the Numbers | Carbon monoxide, purging and approvals | Solvent Vapour Headspace Check (Raoult’s Law Partial Pressure, Saturated Concentration, Share of LEL) | Rejected: chapter covers fuel gas leaks and purge dilution of a combustion chamber; the tool finds vapour above a liquid solvent, a different source. |
 
 ## 3. Published READOS books with no approved connection
 
@@ -353,7 +369,6 @@ Their pages show a WORKOS topic to browse where the category maps to one, and no
 | Weld Repairs That Hold | publication | Manufacturing | Manufacturing & Production |
 | Weldability by the Numbers | publication | Manufacturing | Manufacturing & Production |
 | Welder Training by the Numbers | publication | Manufacturing | Manufacturing & Production |
-| Welding Health and Safety by the Numbers | publication | Operations | Manufacturing & Production |
 | Win Work You Can Deliver | publication | Business | Business & Commercial |
 | Work Habits That Stick | collection | business | Business & Commercial |
 

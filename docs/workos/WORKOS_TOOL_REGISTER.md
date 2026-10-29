@@ -3189,3 +3189,28 @@ Three integrated design checks in batch handbook77, built from Machinery’s Han
 |---|---|---|---|---|
 | **Carburizing Case Depth Plan (Total Case for a Ground Effective Case, Time at Temperature, Furnace Cost)** `carburizing-case-depth-plan` | CASE PLAN SUITS THE SECTION | Case against the section; Case depth factor; Drawing callout; Model and application | 467–470, 484–487 | Automated + cross-check |
 | **Induction Hardening Plan (Reference Depth, Frequency for the Case, Heating Energy and Power)** `induction-hardening-plan` | FREQUENCY TOO LOW FOR THE CASE | Depth for the case; Bar size; Process trial; Model and application | 487–489, 467–470 | Automated + cross-check |
+
+## Thermodynamics tools after Linder, batch handbook70 (added 29 October 2026)
+
+Six tools in batch handbook70 that apply methods from Bruno Linder’s Thermodynamics and Introductory Statistical Mechanics (Wiley-Interscience, 2004), cited by section and printed page, with every property, rating and limit entered by the user: a heat engine and heat pump second-law check (Carnot limit, entropy generated, lost work), a gas pressure reduction cooling check (Joule–Thomson, van der Waals estimate, preheat), a boiling point under vacuum (Clausius–Clapeyron), a solvent vapour headspace check against the LEL (Raoult’s law), a reverse osmosis pressure check (van ’t Hoff with an osmotic coefficient and salt passage) and a hot and cold water blending check (mixing entropy, lost work). The owner approved all six knowing that four overlap tools already published (vapour-pressure-boiling-check, clausius-boiling-margin-check, ro-pressure-check, ro-concentrate-pressure-check, gas-throttling-temperature-check, heat-pump-cop-check, waste-heat-recovery-limit).
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Linder pages | Tested |
+|---|---|---|---|---|
+| **Heat Engine and Heat Pump Second-Law Check (Carnot Limit, Entropy Generated, Lost Work)** `heat-engine-second-law-check` | CLAIM WITHIN THE LIMIT | Second law; Credibility; Temperatures; Model and application | 32–41, 48 | Automated + cross-check |
+| **Boiling Point Under Vacuum (Clausius–Clapeyron Boiling Temperature, Pressure for a Temperature Limit)** `vacuum-boiling-point` | BOILS BELOW THE LIMIT | Temperature limit; Extrapolation; Liquid depth and solutes; Model and application | 96–97 | Automated + cross-check |
+| **Solvent Vapour Headspace Check (Raoult’s Law Partial Pressure, Saturated Concentration, Share of LEL)** `solvent-headspace-lel-check` | FLAMMABLE HEADSPACE POSSIBLE | Share of LEL; Screening only; Model and application | 97, 104–105 | Automated + cross-check |
+
+### Pneumatics
+
+| Tool | Result with example inputs | Checks | Linder pages | Tested |
+|---|---|---|---|---|
+| **Gas Pressure Reduction Cooling Check (Joule–Thomson Temperature Drop, Outlet Temperature, Preheat)** `gas-throttling-cooling-check` | PREHEAT NEEDED | Outlet temperature; Condensation and hydrates; Model range; Model and application | 29–31 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Linder pages | Tested |
+|---|---|---|---|---|
+| **Reverse Osmosis Pressure Check (van ’t Hoff Osmotic Pressure, Concentrate End, Net Driving Pressure)** `ro-osmotic-pressure-check` | FEED PRESSURE ENOUGH | Concentrate end; Scaling and fouling; Model and application | 112–113 | Automated + cross-check |
+| **Hot and Cold Water Blending Check (Flow Split, Hot Supply, Entropy Generated, Lost Work)** `hot-cold-water-blend-check` | HOT SUPPLY ENOUGH | Hot supply; Outlet temperature rules; Model and application | 48–51, 91–93 | Automated + cross-check |
