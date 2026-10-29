@@ -1,6 +1,6 @@
 # WORKOS input guides: progress and implementation report
 
-Status on 29 October 2026, branch `claude/loving-mccarthy-oubwh2` (not merged to `main`, not deployed).
+Status on 29 October 2026, branch `claude/loving-mccarthy-oubwh2`, merged with `main` at `f4c5399` and released to `main` for the Cloudflare build.
 
 Every input of every WORKOS tool now has a "What this means" panel under it, with a small animated SVG figure. The figure shows the field's own label, its symbol and the value typed in the input, and follows that value while the user types.
 
@@ -38,7 +38,7 @@ Field-level detail for every tool is in `docs/tool-input-guides-inventory.json`.
 | Inventory | `node scripts/tools/input-guides.mjs inventory` | writes `docs/tool-input-guides-inventory.json` |
 | Unit tests | `node --test tests/tool-input-guides.test.ts` | 11/11 pass. They check that every guide renders and names its input; titles and descriptions exist; SVG markup is well formed with no inline style; every figure kind renders; units, range and example text; figures follow the value; results are byte-identical for all 837 tools with and without the guides; the form integration; and the reduced-motion and print rules |
 | Full verification | `npm run verify` | astro check 0 errors and 0 warnings; 1,018/1,018 tests; 3,566 pages built and verified by the postbuild checks |
-| Browser sweep (needs a static server on `dist/`, for example `cd dist && python3 -m http.server 4322`) | `node scripts/tools/input-guides-browser.mjs http://127.0.0.1:4322` | 837/837 tools: every input has its guide and definition; all 7,049 figures draw inside their box; each figure follows a typed value; every tool still shows a result; no console errors. On 14 sampled tools, Enter opens and closes the guide, a 360 px screen has no sideways scroll, and reduced motion stops all figure animation |
+| Browser sweep (needs a static server on `dist/`, for example `cd dist && python3 -m http.server 4322`) | `node scripts/tools/input-guides-browser.mjs http://127.0.0.1:4322` | 837/837 tools: every input has its guide and definition; all 7,049 figures draw inside their box; each figure follows a typed value; every tool still shows a result; no console errors. All 837 again on a 360 px phone screen with every guide open: no sideways scroll, every panel and figure inside the screen, guide controls at least 24 px tall. On 14 sampled tools, Enter opens and closes the guide and reduced motion stops all figure animation |
 
 Three existing tests needed nothing more than markup order and wording. `aria-describedby` sits before `name` on selects, and five tips no longer begin with "Free air", because an existing test keeps tier wording out of `public/tools/`. No existing test was weakened.
 
@@ -97,7 +97,7 @@ Many tools ignore some inputs in some modes by design. The guide entries say whi
 - **Page weight:** the 78 inputs files add 2.0 MB (496 KB gzipped) and the renderer 43 KB (14 KB gzipped) to `/tools/`. That page already loads 6.1 MB (1.26 MB gzipped) of tool scripts up front, so this is about 40 % more transfer. They load up front because basic explanations must not need a network request. The alternative is to load a tool's inputs file when the tool opens: one cached request of about 25 KB.
 - **Figures are parametrised primitives:** 55 kinds, each labelled with the field's own name, symbol and value; they are not 7,049 bespoke drawings. The select inputs (352) show the option list, and 172 plain numbers (statistical means, equation coefficients) show a number line.
 - **Browsers tested:** the browser sweep ran in Chromium only.
-- **Not live:** nothing is merged or deployed. Per `CLAUDE.md`, publish by merging a verified commit to `main`, then check the public tool pages.
+- **Release:** published by merging to `main` (Cloudflare GitHub integration), not by a manual `wrangler deploy`. The public check of the live tool pages is recorded in the release notes of the pull request.
 
 ## Next steps
 
