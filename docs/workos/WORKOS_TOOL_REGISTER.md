@@ -3109,3 +3109,22 @@ Eight tools in batch handbook73 from public, checkable sources and Machinery’s
 | Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
 |---|---|---|---|---|
 | **Parting-Off Plan (Spindle Speed Limit, Cutting Force and Power, Parting Time)** `parting-off-plan` | PARTING PLAN WORKS | Spindle power; Parting time; Centre of a solid bar; Model and application | 1084–1101 | Automated + cross-check |
+
+## Forty-fourth round of design checks, batch handbook74 (added 29 October 2026)
+
+Five integrated design checks in batch handbook74, built from Machinery’s Handbook topics and chaining existing tools, with every material property, allowable and limit entered by the user: a boring bar overhang check (deflection, diameter error, natural frequency, longest overhang, steel against carbide), a slender work turning check (work deflection between centres or in a chuck, steady rests needed), a reaming plan (pilot drill from the allowance, stock window, speeds, cycle time, holes per reamer), a dowel pin joint check (pin shear, bearing, fit from the limits, engagement) and a taper shank holding check (drilling torque against taper friction torque, self-holding condition). WORKOS now holds 887 tools.
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Boring Bar Overhang Check (Deflection, Diameter Error, Natural Frequency, Longest Overhang)** `boring-bar-overhang-check` | OVERHANG ACCEPTABLE | Diameter error; Overhang ratio; Chatter; Model and application | 197, 302, 762–790 | Automated + cross-check |
+| **Slender Work Turning Check (Work Deflection, Diameter Error, Steady Rest Spacing)** `slender-work-turning-check` | SUPPORT OR LIGHTER CUT NEEDED | Diameter error; Shape of the error; Chatter and heat; Model and application | 232–244, 762, 1093–1094 | Automated + cross-check |
+| **Reaming Plan (Drilled Size, Stock, Speeds, Cycle Time, Holes per Reamer)** `reaming-plan` | REAMING PLAN FEASIBLE | Stock for the reamer; Spindle speed; Pilot drill; Model and application | 853, 1059, 1084–1092 | Automated + cross-check |
+| **Taper Shank Holding Check (Drilling Torque, Thrust, Taper Friction Torque, Self-Holding)** `taper-shank-holding-check` | TANG OR DRAWBAR NEEDED | Holding torque; Self-holding; Condition of the taper; Model and application | 948–959, 1084–1092 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Dowel Pin Joint Check (Pin Shear, Bearing, Fit Interference, Engagement)** `dowel-pin-joint-check` | DOWELS ADEQUATE | Pin shear; Bearing in the softer part; Engagement; Fit; Model and application | 631–668, 1720–1735, 1747–1748 | Automated + cross-check |
