@@ -2405,6 +2405,56 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter controls resin drying by time and a moisture limit; it does not use dilute-solution viscosity to check molar mass."
+  },
+  {
+   "reados": "publication/water-hammer-by-the-numbers",
+   "chapter": "wave-speed-in-a-pipe",
+   "tool": "liquid-adiabatic-compression",
+   "type": "complements",
+   "note": "Gives the adiabatic bulk modulus and the wave speed √(K ÷ ρ) in the liquid alone, the starting point before this chapter adds the pipe wall and air.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter starts from a₀ = √(K ÷ ρ) for water alone, then adds wall stiffness and air; the tool gives the adiabatic K from the isothermal value and the free-liquid wave speed only, so it complements rather than applies."
+  },
+  {
+   "reados": "publication/industrial-gases-by-the-numbers",
+   "chapter": "shielding-and-purging-gases",
+   "tool": "gas-mixture-properties",
+   "type": "complements",
+   "note": "Works out the density, gas constant, γ and partial pressures of an argon–carbon dioxide or other shielding gas blend from its composition.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter compares argon, helium, CO₂ and their mixtures and costs a workshop’s mixture use; it does not calculate mixture properties, which the tool supplies from Dalton’s law."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "compression-and-expansion",
+   "tool": "liquid-adiabatic-compression",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers the work of compressing air and intercooling; the tool covers the heating and bulk modulus of a compressed liquid."
+  },
+  {
+   "reados": "publication/industrial-gases-by-the-numbers",
+   "chapter": "storage-cylinders-and-bulk-liquid",
+   "tool": "liquid-adiabatic-compression",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter compares cylinders and bulk liquid storage; matched only on the words bulk and liquid."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "heat-pumps-and-refrigerators-against-the-limit",
+   "tool": "thermoelectric-cooler-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter treats vapour-compression COP against the Carnot limit; the tool computes thermoelectric module performance and does not compare it with the Carnot limit."
   }
  ]
 }

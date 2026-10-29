@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 856 tools with unique ids and every previously published id kept', () => {
+test('register: 859 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 856);
+  assert.equal(ids.length, 859);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -4675,3 +4675,52 @@ test('polymer tools: verdicts and guards', () => {
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
 const sw0 = () => engine.run('rubber-swelling-crosslink-density').values.nu;
+
+// Thermodynamics first principles (bryanthermo), after Bryan, Thermodynamics (1907).
+// Expected values are independent closed forms; the Bryan cross-checks use his own forms of the same results.
+const BT_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['liquid-adiabatic-compression', {}, { dT: 313.15 * (Math.exp(700e-6 * 35e6 / (870 * 1900)) - 1), dTlin: 313.15 * 700e-6 * 35e6 / (870 * 1900), dcv: 313.15 * 4.9e-7 * 1.6e9 / 870, g: 1900 / (1900 - 313.15 * 4.9e-7 * 1.6e9 / 870) }],
+  ['gas-mixture-properties', {}, { Mm: 0.82 * 39.948 + 0.18 * 44.01, R: 8.314462618 / 40.67916, pc: 18.2385, ds: -(8.314462618 / 40.67916) * (0.82 * Math.log(0.82) + 0.18 * Math.log(0.18)) }],
+  ['thermoelectric-cooler-check', {}, { S: 15.4 / 300.15, R: 232.15 * 15.4 / (300.15 * 6), K: 232.15 * 15.4 * 6 / (2 * 300.15 * 68), Qc: 22.923306034891056, P: 29.705756843800323, V: 8.487359098228664 }, 1e-9],
+];
+for (const [id, over, expected, tol] of BT_CASES) test(`thermodynamics check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('thermodynamics checks agree with Bryan’s own forms', () => {
+  // (179) and (166): Bryan’s mixing constant and mixture gas constant in mass-fraction form.
+  const g = engine.run('gas-mixture-properties').values, R1 = 8.314462618 / 39.948, R2 = 8.314462618 / 44.01;
+  near(g.ds, g.x1 * R1 * Math.log(g.R / (g.x1 * R1)) + g.x2 * R2 * Math.log(g.R / (g.x2 * R2)), 1e-12, 'mixing entropy as Bryan (179)');
+  near(g.R, g.x1 * R1 + g.x2 * R2, 1e-12, 'gas constant as Bryan (166)');
+  const pure = engine.run('gas-mixture-properties', { y1: 100, y2: 0 }).values;
+  assert.equal(pure.ds, 0); near(pure.g, 0.5203 / (0.5203 - R1), 1e-12, 'pure argon γ');
+  near(pure.rho, engine.run('gas-mixture-properties', { y1: 100, y2: 0, p: 202.65 }).values.rho / 2, 1e-12, 'density proportional to pressure');
+  // (35): adiabatic and isothermal moduli are in the ratio of the specific heats; α = 0 gives no heating and γ = 1.
+  const lq = engine.run('liquid-adiabatic-compression').values; near(lq.Ks / 1600, lq.g, 1e-12, 'K_s ÷ K_T = γ');
+  const flat = engine.run('liquid-adiabatic-compression', { alpha: 0 }).values; assert.equal(flat.dT, 0); assert.equal(flat.g, 1);
+  near(engine.run('liquid-adiabatic-compression', { alpha: -60 }).values.dT, 313.15 * (Math.exp(-60e-6 * 35e6 / (870 * 1900)) - 1), 1e-12, 'negative expansion cools');
+  // Thermoelectric module fit: at the rated point (hot side at rating, ΔT = ΔT_max, I = I_max) no heat is pumped and V = V_max.
+  const rated = engine.run('thermoelectric-cooler-check', { Th: 27, Tc: 27 - 68, I: 6 }).values;
+  near(rated.Qc, 0, 1e-9, 'zero heat at the rated maximum'); near(rated.V, 15.4, 1e-9, 'rated voltage');
+  near(engine.run('thermoelectric-cooler-check', { I: engine.run('thermoelectric-cooler-check').values.Iopt }).values.Qc, engine.run('thermoelectric-cooler-check').values.QcMax, 1e-9, 'heat at the optimum current');
+});
+
+test('thermodynamics checks: verdicts and guards', () => {
+  assert.equal(engine.run('liquid-adiabatic-compression').text, 'TEMPERATURE RISE WITHIN LIMIT');
+  assert.equal(engine.run('liquid-adiabatic-compression', { Tmax: 44 }).text, 'TEMPERATURE LIMIT EXCEEDED');
+  assert.equal(engine.run('gas-mixture-properties').text, 'PARTIAL PRESSURE WITHIN LIMIT');
+  assert.equal(engine.run('gas-mixture-properties', { lim: 15 }).text, 'PARTIAL PRESSURE OUTSIDE LIMIT');
+  assert.equal(engine.run('gas-mixture-properties', { kind: 'min' }).text, 'PARTIAL PRESSURE OUTSIDE LIMIT');
+  assert.equal(engine.run('thermoelectric-cooler-check').text, 'MODULES PUMP THE HEAT LOAD');
+  assert.equal(engine.run('thermoelectric-cooler-check', { Qreq: 60 }).text, 'MODULES TOO SMALL FOR THE LOAD');
+  assert.equal(engine.run('thermoelectric-cooler-check', { Th: 90 }).text, 'NO NET COOLING AT THIS TEMPERATURE DIFFERENCE');
+  assert.equal(engine.run('thermoelectric-cooler-check', { I: 6.5, Qreq: 10 }).text, 'OUTSIDE THE MODULE RATINGS');
+  const cases: Array<[string, Inputs]> = [
+    ['liquid-adiabatic-compression', { rho: 0 }], ['liquid-adiabatic-compression', { alpha: 20000, KT: 1000000 }],
+    ['gas-mixture-properties', { y1: 90, y2: 20 }], ['gas-mixture-properties', { cp1: 0.1, y1: 100, y2: 0 }],
+    ['thermoelectric-cooler-check', { Tc: 50 }], ['thermoelectric-cooler-check', { Thr: -100, dTmax: 200 }], ['thermoelectric-cooler-check', { n: 2.5 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
