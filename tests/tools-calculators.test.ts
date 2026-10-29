@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 859 tools with unique ids and every previously published id kept', () => {
+test('register: 866 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 859);
+  assert.equal(ids.length, 866);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -4722,5 +4722,76 @@ test('thermodynamics checks: verdicts and guards', () => {
     ['gas-mixture-properties', { y1: 90, y2: 20 }], ['gas-mixture-properties', { cp1: 0.1, y1: 100, y2: 0 }],
     ['thermoelectric-cooler-check', { Tc: 50 }], ['thermoelectric-cooler-check', { Thr: -100, dTmax: 200 }], ['thermoelectric-cooler-check', { n: 2.5 }],
   ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Engineering thermodynamics (handbook72): cycles, second-law limits, moist air, combustion and machine efficiency.
+// Expected values are independent hand calculations: closed forms, and Hyland–Wexler saturation pressures solved separately.
+const TH72 = 273.15;
+const TH72_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['otto-diesel-cycle-check', {}, { eta: 100 * (1 - 10 ** -0.4), P3: 9867.865837065985, wnet: 963.0285271144043, MEP: 1229.8642382668195 }, 1e-8],
+  ['otto-diesel-cycle-check', { cycle: 'diesel', r: 18, rc: 2 }, { eta: 100 * (1 - (2 ** 1.4 - 1) / (1.4 * 18 ** 0.4)), qin: 967.6460222919304, P3: 100 * 18 ** 1.4, MEP: 743.7505528745002 }, 1e-8],
+  ['brayton-regenerator-check', {}, { P: 1341.6360673018862, eta: 42.43040641949687, eta0: 34.69714333392603, rbw: 54.164324404357416, T5: 470.7525458047538 + TH72 }, 1e-8],
+  ['brayton-regenerator-check', { eps: 0 }, { eta: 34.69714333392603 }, 1e-8],
+  ['vapour-compression-cycle-check', {}, { COPR: 3.5, COPHP: 4.5, W: 20 / 7, mdot: 1 / 14, eta2: 3.5 / (263.15 / 50) * 100 }, 1e-9],
+  ['vapour-compression-cycle-check', { mode: 'heat' }, { mdot: 10 / 180, W: 10 / 180 * 40, eta2: 71.85055085422321 }, 1e-9],
+  ['surface-dew-point-check', {}, { Td: 16.701131854536442, w: 0.011896100440418013, h: 55.417230161480425, gap: 22 - 16.701131854536442 }, 1e-6],
+  ['surface-dew-point-check', { T: 5, RH: 50, Ts: -10 }, { Td: -4.033231092521106 }, 1e-6],
+  ['cooling-coil-dehumidification-check', {}, { Q: 37.21505750809022, mw: 0.0074675042911664935, SHR: 0.5048037978715498, w1: 0.016042321199132754, w2: 0.009464872956121062 }, 1e-9],
+  ['combustion-air-flue-gas-check', {}, { AFRs: 4.76 * 2 * 28.97 / 16.043, AFR: 1.15 * 4.76 * 2 * 28.97 / 16.043, O2d: 0.3 / 9.948 * 100, CO2d: 1 / 9.948 * 100, Td: 56.54141862056926 }, 1e-6],
+  ['combustion-air-flue-gas-check', { x: 3, y: 8, ex: 0 }, { AFRs: 15.63566682540762, O2d: 0 }, 1e-9],
+  ['compressor-turbine-efficiency-check', {}, { eta: 83.80542697676256, W: 85.425, Ws: 71.59078599489943, Sgen: 0.03079443067913218 }, 1e-9],
+  ['compressor-turbine-efficiency-check', { machine: 'turb', P1: 500, T1: 400, P2: 100, T2: 200 }, { eta: 80.60188220278407, W: 100.5 }, 1e-9],
+];
+for (const [id, over, expected, tol] of TH72_CASES) test(`thermodynamics check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('thermodynamics checks agree with closed forms and energy balances', () => {
+  const ot = engine.run('otto-diesel-cycle-check').values;
+  near(ot.eta, ot.etaClosed, 1e-9, 'Otto efficiency from the energy balance equals 1 − r^(1−k)');
+  const di = engine.run('otto-diesel-cycle-check', { cycle: 'diesel', r: 18, rc: 2 }).values;
+  near(di.eta, di.etaClosed, 1e-9, 'Diesel efficiency from the energy balance equals the closed form');
+  const vc = engine.run('vapour-compression-cycle-check').values;
+  near(vc.COPHP, vc.COPR + 1, 1e-12, 'heat-pump COP is the refrigerator COP plus one');
+  near(vc.QH, vc.QL + vc.W, 1e-12, 'heat rejected = heat absorbed + compressor power');
+  const cc = engine.run('cooling-coil-dehumidification-check').values;
+  near(cc.Q, cc.Qs + cc.Ql, 1e-12, 'sensible + latent = total');
+  const dp = engine.run('surface-dew-point-check').values;
+  near(engine.run('surface-dew-point-check', { T: dp.Td, RH: 100 }).values.Td, dp.Td, 1e-6, 'saturated air at the dew point has the same dew point');
+  const comb = engine.run('combustion-air-flue-gas-check').values;
+  near(comb.xCO2 + comb.xH2O + comb.xO2 + comb.xN2, 1, 1e-12, 'flue mole fractions sum to one');
+  near(comb.mflue, 10 * (1 + comb.AFR), 1e-9, 'flue gas = fuel + air');
+  const cp = engine.run('compressor-turbine-efficiency-check').values;
+  near(engine.run('compressor-turbine-efficiency-check', { T2: cp.T2s - TH72 }).values.eta, 100, 1e-9, 'an isentropic outlet temperature gives 100 %');
+  near(engine.run('compressor-turbine-efficiency-check', { T2: cp.T2s - TH72 }).values.ds, 0, 1e-12, 'and no entropy change');
+});
+
+test('thermodynamics checks: verdicts and guards', () => {
+  assert.equal(engine.run('otto-diesel-cycle-check').text, 'PEAK PRESSURE WITHIN LIMIT');
+  assert.equal(engine.run('otto-diesel-cycle-check', { Pmax: 9000 }).text, 'PEAK PRESSURE OVER LIMIT');
+  assert.equal(engine.run('brayton-regenerator-check').text, 'NET POWER MEETS DEMAND');
+  assert.equal(engine.run('brayton-regenerator-check', { Preq: 1500 }).text, 'NET POWER SHORT OF DEMAND');
+  const hi = engine.run('brayton-regenerator-check', { rp: 30 });
+  assert.ok(hi.checks.some((c: any) => c.label === 'Regenerator' && c.status === 'warn'), 'a regenerator that would cool the air is left out');
+  near(hi.values.eta, hi.values.eta0, 1e-12, 'no regenerator gain when the exhaust is colder than the compressed air');
+  assert.equal(engine.run('vapour-compression-cycle-check').text, 'COP MEETS TARGET');
+  assert.equal(engine.run('vapour-compression-cycle-check', { COPreq: 4 }).text, 'COP BELOW TARGET');
+  assert.equal(engine.run('vapour-compression-cycle-check', { Tc: 70 }).text, 'INPUTS EXCEED THE CARNOT LIMIT');
+  assert.equal(engine.run('surface-dew-point-check').text, 'SURFACE STAYS DRY');
+  assert.equal(engine.run('surface-dew-point-check', { Ts: 18 }).text, 'MARGIN TOO SMALL');
+  assert.equal(engine.run('surface-dew-point-check', { Ts: 12 }).text, 'SURFACE WILL SWEAT');
+  assert.equal(engine.run('surface-dew-point-check', { T: 5, RH: 50, Ts: -10 }).text, 'FROST WILL FORM');
+  assert.equal(engine.run('cooling-coil-dehumidification-check').text, 'COIL CAN MEET THE LOAD');
+  assert.equal(engine.run('cooling-coil-dehumidification-check', { Qcoil: 30 }).text, 'COIL UNDERSIZED');
+  assert.equal(engine.run('combustion-air-flue-gas-check').text, 'FLUE ABOVE DEW POINT');
+  assert.equal(engine.run('combustion-air-flue-gas-check', { Ts: 60 }).text, 'MARGIN TOO SMALL');
+  assert.equal(engine.run('combustion-air-flue-gas-check', { Ts: 50 }).text, 'CONDENSATE WILL FORM');
+  assert.equal(engine.run('compressor-turbine-efficiency-check').text, 'EFFICIENCY ACCEPTABLE');
+  assert.equal(engine.run('compressor-turbine-efficiency-check', { etamin: 90 }).text, 'EFFICIENCY BELOW MINIMUM');
+  assert.equal(engine.run('compressor-turbine-efficiency-check', { T2: 150 }).text, 'CHECK THE MEASUREMENTS');
+  const cases: Array<[string, Inputs]> = [['otto-diesel-cycle-check', { r: 40 }], ['otto-diesel-cycle-check', { cycle: 'diesel', r: 5, rc: 6 }], ['otto-diesel-cycle-check', { cycle: 'stirling' }], ['brayton-regenerator-check', { T3: 200 }], ['brayton-regenerator-check', { etac: 0 }], ['vapour-compression-cycle-check', { h3: 400 }], ['vapour-compression-cycle-check', { h2s: 390 }], ['vapour-compression-cycle-check', { Tc: -20 }], ['surface-dew-point-check', { RH: 0 }], ['surface-dew-point-check', { T: -5 }], ['cooling-coil-dehumidification-check', { T2: 35 }], ['cooling-coil-dehumidification-check', { T2: 25, RH2: 100 }], ['combustion-air-flue-gas-check', { y: 0 }], ['combustion-air-flue-gas-check', { ex: -5 }], ['compressor-turbine-efficiency-check', { P2: 50 }], ['compressor-turbine-efficiency-check', { machine: 'turb' }], ['compressor-turbine-efficiency-check', { mdot: 'abc' }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });

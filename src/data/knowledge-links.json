@@ -2455,6 +2455,276 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter treats vapour-compression COP against the Carnot limit; the tool computes thermoelectric module performance and does not compare it with the Carnot limit."
+  },
+  {
+   "reados": "publication/combustion-by-the-numbers",
+   "chapter": "fuel-air-and-the-reaction",
+   "tool": "combustion-air-flue-gas-check",
+   "type": "explains",
+   "note": "Balances the combustion of any CₓHᵧ fuel with air and gives the stoichiometric and actual air–fuel ratio, the reaction this chapter sets out for methane.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter balances CH₄ + 2(O₂ + 3.773 N₂) and introduces excess air; tool balances CₓHᵧ with (1 + e) theoretical air and reports the air–fuel ratio by mass. Tool uses 3.76 N₂ per O₂, so results differ slightly."
+  },
+  {
+   "reados": "publication/combustion-by-the-numbers",
+   "chapter": "excess-air-and-the-flue-gas-analyser",
+   "tool": "combustion-air-flue-gas-check",
+   "type": "applies",
+   "note": "Predicts the dry-basis O₂ and CO₂ a flue gas analyser should read for a fuel and excess air, to compare with the instrument.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains dry-basis analyser readings and the O₂–excess air–CO₂ relation for methane; tool computes dry O₂ and CO₂ for the excess air entered (3.02 % O₂ and 10.05 % CO₂ at 15 %, against the chapter’s 3.0 % and 10.0 %)."
+  },
+  {
+   "reados": "publication/combustion-by-the-numbers",
+   "chapter": "flue-gas-dew-point-and-condensing-heat-recovery",
+   "tool": "combustion-air-flue-gas-check",
+   "type": "applies",
+   "note": "Calculates the water dew point of the flue gas from the fuel and excess air and checks the coldest flue or exchanger surface against it.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter finds the flue dew point from the water partial pressure (56.4 °C for methane at 15 % excess air) and warns about flues not built to be wet; tool does the same calculation (56.5 °C) with a surface margin check."
+  },
+  {
+   "reados": "publication/condensation-control-by-the-numbers",
+   "chapter": "water-in-air-vapour-pressure-and-dew-point",
+   "tool": "combustion-air-flue-gas-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter covers the dew point of room and enclosure air; the combustion tool is about flue gas and is linked from the combustion book instead."
+  },
+  {
+   "reados": "publication/condensation-control-by-the-numbers",
+   "chapter": "water-in-air-vapour-pressure-and-dew-point",
+   "tool": "surface-dew-point-check",
+   "type": "explains",
+   "note": "Works out the dew point, humidity ratio and vapour pressure from temperature and humidity and checks a surface against the dew point with a margin.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter defines vapour pressure, relative humidity, dew point and the surface margin (Magnus formula); tool computes the same quantities (Hyland–Wexler) and checks surface temperature minus dew point against a margin."
+  },
+  {
+   "reados": "publication/condensation-control-by-the-numbers",
+   "chapter": "cold-pipes-sweating-and-insulation",
+   "tool": "surface-dew-point-check",
+   "type": "applies",
+   "note": "Checks whether a pipe or insulation surface temperature stays above the room’s dew point with the margin you set.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter sizes insulation so the outer surface stays above the dew point with a margin; tool takes a surface temperature and reports the margin over the dew point (surface temperature itself comes from the insulation tools)."
+  },
+  {
+   "reados": "publication/roof-lights-by-the-numbers",
+   "chapter": "condensation-and-its-gutters",
+   "tool": "surface-dew-point-check",
+   "type": "applies",
+   "note": "Gives the room’s dew point and checks an inner glass or frame surface temperature against it.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter calculates the room dew point and compares inner surface temperatures of glass and bars with it; tool does the dew point and the surface comparison."
+  },
+  {
+   "reados": "publication/cooling-towers-by-the-numbers",
+   "chapter": "moist-air-and-the-wet-bulb",
+   "tool": "surface-dew-point-check",
+   "type": "applies",
+   "note": "Works out humidity ratio, enthalpy and dew point of air from temperature and relative humidity (not the wet-bulb).",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter gives W = 0.622 pv ÷ (p − pv), moist-air enthalpy and dew point; tool computes the same properties (Çengel’s constants). It does not compute wet-bulb, so the note says so."
+  },
+  {
+   "reados": "collection/fluids-hvac-and-building-services",
+   "chapter": "psychrometrics-for-hvac",
+   "tool": "surface-dew-point-check",
+   "type": "explains",
+   "note": "Calculates the moist-air properties this chapter reads from the psychrometric chart and checks a surface against the dew point.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter defines dew point, humidity ratio and enthalpy and says surfaces below the dew point condense; tool calculates these properties and the surface margin."
+  },
+  {
+   "reados": "collection/fluids-hvac-and-building-services",
+   "chapter": "psychrometrics-for-hvac",
+   "tool": "cooling-coil-dehumidification-check",
+   "type": "applies",
+   "note": "Calculates a cooling and dehumidifying coil’s total, sensible and latent load, condensate and sensible heat ratio from the air in and out.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter describes cooling and dehumidification, sensible and latent loads and the sensible heat ratio; tool does the mass and energy balance for those quantities."
+  },
+  {
+   "reados": "publication/condensation-control-by-the-numbers",
+   "chapter": "water-in-air-vapour-pressure-and-dew-point",
+   "tool": "cooling-coil-dehumidification-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter is about dew point in enclosures, not coil loads; the dew point tool is the matching tool."
+  },
+  {
+   "reados": "publication/cooling-towers-by-the-numbers",
+   "chapter": "moist-air-and-the-wet-bulb",
+   "tool": "cooling-coil-dehumidification-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter covers tower air, wet-bulb and enthalpy driving force; it does not discuss a cooling coil balance."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "heat-pumps-and-refrigerators-against-the-limit",
+   "tool": "vapour-compression-cycle-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter compares measured COPs with the Carnot limit from two temperatures; it does not work a cycle from refrigerant enthalpies, which is what this tool does."
+  },
+  {
+   "reados": "publication/process-chillers-by-the-numbers",
+   "chapter": "the-vapour-compression-cycle",
+   "tool": "vapour-compression-cycle-check",
+   "type": "applies",
+   "note": "Works the cycle from the four enthalpies: refrigerant flow, compressor power, condenser heat and COP, against the Carnot limit.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter finds CH-30’s states from NIST R-134a data and calculates flow, power, condenser heat and COP from the enthalpies; tool does the same from h₁, h₂ₛ, h₃ and the isentropic efficiency."
+  },
+  {
+   "reados": "publication/process-chillers-by-the-numbers",
+   "chapter": "compressor-work-and-discharge-temperature",
+   "tool": "vapour-compression-cycle-check",
+   "type": "applies",
+   "note": "Turns an isentropic discharge enthalpy and compressor efficiency into the real compressor work, discharge enthalpy and COP.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter defines isentropic efficiency on refrigerant enthalpies (h₂ = h₁ + (h₂ₛ − h₁) ÷ η); tool uses exactly this step."
+  },
+  {
+   "reados": "publication/heat-pumps-and-refrigeration-by-the-numbers",
+   "chapter": "the-vapour-compression-cycle",
+   "tool": "vapour-compression-cycle-check",
+   "type": "applies",
+   "note": "Calculates the cycle’s energy balance: heat absorbed, compressor work, heat rejected and COP, from refrigerant enthalpies.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter describes the four stages and the balance Q_condenser = Q_evaporator + W; tool computes these from state enthalpies."
+  },
+  {
+   "reados": "publication/heat-pumps-and-refrigeration-by-the-numbers",
+   "chapter": "cop-and-the-carnot-limit",
+   "tool": "vapour-compression-cycle-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter is about COP limits from two temperatures; the cycle tool is linked from the chapter that works the cycle."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "compression-and-expansion",
+   "tool": "compressor-turbine-efficiency-check",
+   "type": "explains",
+   "note": "Finds an uncooled compressor’s or turbine’s isentropic efficiency from measured temperatures, against the isentropic benchmark this chapter explains.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains the isentropic benchmark and isentropic efficiency of compression; tool computes T₂ₛ and the efficiency from measured temperatures with the entropy generated."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "calculating-entropy-changes",
+   "tool": "compressor-turbine-efficiency-check",
+   "type": "example",
+   "note": "Calculates the ideal-gas entropy change cp ln(T₂ ÷ T₁) − R ln(p₂ ÷ p₁) across a compressor or turbine from measured readings.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter gives the ideal-gas formula Δs = c_p ln(T₂ ÷ T₁) − R ln(p₂ ÷ p₁); tool evaluates it for the machine and multiplies by the flow."
+  },
+  {
+   "reados": "publication/compressed-air-plant-by-the-numbers",
+   "chapter": "discharge-temperature-and-staging",
+   "tool": "compressor-turbine-efficiency-check",
+   "type": "complements",
+   "note": "Gives the isentropic discharge temperature for a pressure ratio and, for uncooled machines only, the efficiency from a measured outlet temperature.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter calculates the isentropic temperature rise and explains why oil-injected screws run cool; tool computes the same T₂ₛ and states that oil-injected machines cannot be tested by temperature."
+  },
+  {
+   "reados": "publication/compressed-air-plant-by-the-numbers",
+   "chapter": "the-work-of-compression",
+   "tool": "compressor-turbine-efficiency-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter finds an oil-injected screw element’s efficiency from shaft power; the tool’s temperature method does not apply to oil-injected machines."
+  },
+  {
+   "reados": "publication/process-chillers-by-the-numbers",
+   "chapter": "compressor-work-and-discharge-temperature",
+   "tool": "compressor-turbine-efficiency-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter works refrigerant compression from NIST enthalpies; the tool assumes an ideal gas. The vapour-compression tool is linked instead."
+  },
+  {
+   "reados": "collection/engineering-history-modern-era",
+   "chapter": "engines-after-steam-matching-technology-to-duty",
+   "tool": "otto-diesel-cycle-check",
+   "type": "example",
+   "note": "Puts numbers on why engine efficiency rises with compression ratio and why higher ratios mean higher peak pressures and stronger engines.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains that efficiency rises with compression ratio, knock limits petrol engines and diesel pressures need heavier engines; tool calculates ideal Otto and Diesel efficiency and peak pressure for a ratio."
+  },
+  {
+   "reados": "collection/engineering-history-modern-era",
+   "chapter": "engines-after-steam-matching-technology-to-duty",
+   "tool": "brayton-regenerator-check",
+   "type": "example",
+   "note": "Works out a gas turbine’s net power and efficiency from pressure ratio, turbine inlet temperature and component efficiencies.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter describes the gas turbine’s continuous cycle and says hotter turbine inlets raise efficiency; tool shows this with the Brayton cycle."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "absolute-temperature-and-the-carnot-limit",
+   "tool": "otto-diesel-cycle-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter is about the Carnot limit for any engine; the Otto/Diesel tool shows the Carnot figure only as a side comparison."
+  },
+  {
+   "reados": "publication/process-chillers-by-the-numbers",
+   "chapter": "compressor-work-and-discharge-temperature",
+   "tool": "otto-diesel-cycle-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: refrigerant compressor work, not engine cycles; matched only on the words isentropic and compression."
+  },
+  {
+   "reados": "publication/process-chillers-by-the-numbers",
+   "chapter": "compressor-work-and-discharge-temperature",
+   "tool": "brayton-regenerator-check",
+   "type": "complements",
+   "note": "Examined and not linked; see the reason recorded with this pair.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: refrigerant compressor work, not gas-turbine cycles; matched only on compressor and isentropic."
   }
  ]
 }

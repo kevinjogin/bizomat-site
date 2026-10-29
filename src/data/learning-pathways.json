@@ -31,6 +31,14 @@
    "learn": { "reados": "publication/compressed-air-plant-by-the-numbers", "chapter": "set-the-pressure-and-stop-waste" },
    "apply": { "tool": "air-leak-audit" },
    "next": { "reados": "publication/compressed-air-plant-by-the-numbers", "chapter": "assess-the-system" }
+  },
+  {
+   "id": "surface-condensation",
+   "title": "Check whether a cold surface will sweat",
+   "summary": "Learn how vapour pressure sets the dew point, then check your own surface against it with a margin.",
+   "learn": { "reados": "publication/condensation-control-by-the-numbers", "chapter": "water-in-air-vapour-pressure-and-dew-point" },
+   "apply": { "tool": "surface-dew-point-check" },
+   "next": { "reados": "publication/condensation-control-by-the-numbers", "chapter": "cold-pipes-sweating-and-insulation" }
   }
  ]
 }
