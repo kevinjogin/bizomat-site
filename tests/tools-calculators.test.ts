@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 905 tools with unique ids and every previously published id kept', () => {
+test('register: 908 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 905);
+  assert.equal(ids.length, 908);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 739 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 742 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 739);
+  assert.equal(ids.length, 742);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -5180,5 +5180,46 @@ test('thermodynamics tools: verdicts and guards', () => {
   assert.equal(engine.run('quench-tank-temperature-check', { cool: 30 }).text, 'COOLER TOO SMALL FOR THE LOAD RATE');
   assert.equal(engine.run('quench-tank-temperature-check', { Vq: 500 }).text, 'ONE LOAD OVERHEATS THE BATH');
   const cases: Array<[string, Inputs]> = [['blocked-in-liquid-pressure-check', { p0: 20 }], ['blocked-in-liquid-pressure-check', { nu: 0.6 }], ['blocked-in-liquid-pressure-check', { beta: 30 }], ['gas-cylinder-real-gas-duration', { Tc: 300 }], ['gas-cylinder-real-gas-duration', { pMin: 250 }], ['gas-cylinder-real-gas-duration', { pFull: 2000 }], ['boiling-point-at-pressure', { p: 1e6 }], ['boiling-point-at-pressure', { p0: 0.001, p: 1000 }], ['carnot-limit-check', { Tc: 60 }], ['carnot-limit-check', { mode: 'en' }], ['carnot-limit-check', { Tc: -300 }], ['compressed-gas-stored-energy', { k: 2 }], ['gas-generator-energy-check', { AF: 1.1 }], ['gas-generator-energy-check', { xP: 20.95 }], ['quench-tank-temperature-check', { Tmax: 50 }], ['quench-tank-temperature-check', { Tl: 40 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Fifty-seventh handbook pass (handbook77): forty-sixth round of integrated design checks.
+// Expected values are independent hand calculations (two-plane reactions, rating life, parabolic case growth, reference depth).
+const HB57_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['countershaft-bearing-check', {}, { Ft1: 1500, Ft2: 3750, PA: 2063.6287337392832, PB: 3308.661371420991, LA: 102411.28383121315, LB: 24847.662881538523, s0A: 7.753332631208373, s0B: 4.835792546859633, Mmax: 165.43306857104957, vm: 49.97108141964413 }, 1e-6],
+  ['carburizing-case-depth-plan', {}, { removed: 0.15, before: 0.95, total: 1.3571428571428574, t: 5.11621315192744, cycle: 8.11621315192744, cpp: 5.748984315948603, share: 0.22619047619047625, t10: 6.190617913832204 }, 1e-9],
+  ['induction-hardening-plan', {}, { delta: 5.278654932840373, ratio: 2.6393274664201867, fT: 30.96021988888889, Dd: 7.577687973340689, mass: 0.27374267587054657, E: 144.5361328596486, Pw: 36.13403321491215, Pg: 51.620047449874505, dens: 0.2875455 }, 1e-6],
+  ['induction-hardening-plan', { f: 30 }, { delta: 3.047632846434535, ratio: 1.5238164232172675 }, 1e-9],
+];
+for (const [id, over, expected, tol] of HB57_CASES) test(`design check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('forty-sixth-round design checks agree with the tools they chain', () => {
+  const cs = engine.run('countershaft-bearing-check').values, kW = 150 * 500 / 9549.2966;
+  near(cs.Ft1, engine.run('gear-forces', { kW, rpm: 500, d: 200, alphan: 20, beta: 0 }).values.Ft, 1e-6, 'driven gear force as the gear forces tool');
+  near(cs.Fr2, engine.run('gear-forces', { kW, rpm: 500, d: 80, alphan: 20, beta: 0 }).values.Fr, 1e-6, 'driving gear radial force as the gear forces tool');
+  near(cs.LB, engine.run('bearing-l10-life', { type: 'ball', C: 30, P: cs.PB / 1000, rpm: 500 }).values.hours, 1e-6, 'life as the bearing L10 tool');
+  near(cs.s0B, engine.run('bearing-static-ratio', { C0: 16, P0: cs.PB / 1000 }).values.s0, 1e-12, 'static factor as the bearing static ratio tool');
+  const same = engine.run('countershaft-bearing-check', { th2: 0 }).values;
+  assert.ok(same.PB < cs.PB, 'meshes on the same side partly cancel at bearing B');
+});
+
+test('forty-sixth-round design checks give pass and fail verdicts', () => {
+  assert.equal(engine.run('countershaft-bearing-check').text, 'SHAFT AND BEARINGS ADEQUATE');
+  assert.equal(engine.run('countershaft-bearing-check', { C: 20 }).text, 'BEARING LIFE TOO SHORT');
+  assert.equal(engine.run('countershaft-bearing-check', { C0: 6 }).text, 'STATIC LOAD TOO HIGH');
+  assert.equal(engine.run('countershaft-bearing-check', { ds: 20 }).text, 'SHAFT OVERSTRESSED');
+  assert.equal(engine.run('carburizing-case-depth-plan').text, 'CASE PLAN SUITS THE SECTION');
+  assert.equal(engine.run('carburizing-case-depth-plan', { sect: 8 }).text, 'CASE TOO DEEP FOR THE SECTION');
+  assert.equal(engine.run('induction-hardening-plan').text, 'FREQUENCY TOO LOW FOR THE CASE');
+  assert.equal(engine.run('induction-hardening-plan', { f: 30 }).text, 'FREQUENCY SUITS THE CASE');
+  assert.equal(engine.run('induction-hardening-plan', { f: 500 }).text, 'FREQUENCY TOO HIGH FOR THE CASE');
+  assert.equal(engine.run('induction-hardening-plan', { f: 30, D: 10, case: 1, hf: 1.2, rMax: 4 }).text, 'BAR TOO SMALL FOR THE FREQUENCY');
+  const cases: Array<[string, Inputs]> = [
+    ['countershaft-bearing-check', { x1: 0, x2: 0 }], ['induction-hardening-plan', { rMin: 3, rMax: 2 }], ['induction-hardening-plan', { case: 10, hf: 2 }], ['induction-hardening-plan', { T1: 10 }],
+  ];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });

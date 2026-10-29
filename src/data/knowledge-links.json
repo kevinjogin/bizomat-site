@@ -3725,6 +3725,56 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter covers laser cutting and its assist gases, not the energy to make nitrogen or oxygen on site."
+  },
+  {
+   "reados": "publication/diffusion-by-the-numbers",
+   "chapter": "carburising-the-shaft",
+   "tool": "carburizing-case-depth-plan",
+   "type": "applies",
+   "note": "Applies the square-root growth of case depth to a production job: total case for a ground effective case, time at temperature and furnace cost.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter derives carburised case depth growing with the square root of time from diffusion; tool uses that law to plan case depth, time and cost."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "heat-treatment-and-surface-hardening-explained",
+   "tool": "carburizing-case-depth-plan",
+   "type": "applies",
+   "note": "Plans the carburised case for a part that is ground after hardening: total case, time at temperature, cost and the case against the section.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter describes carburising and notes carburised parts are often ground afterwards; tool calculates the case needed after grinding and the time at temperature."
+  },
+  {
+   "reados": "publication/industrial-electric-heating-by-the-numbers",
+   "chapter": "induction-and-infrared",
+   "tool": "induction-hardening-plan",
+   "type": "applies",
+   "note": "Chooses an induction frequency from the reference depth for a case and sizes the power to heat the surface layer in a set time.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter chooses induction frequency from the depth of penetration and sizes heating power; tool calculates the reference depth, suitable frequency and power for surface hardening."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "heat-treatment-and-surface-hardening-explained",
+   "tool": "induction-hardening-plan",
+   "type": "complements",
+   "note": "Puts numbers on induction hardening: reference depth at the generator frequency, the frequency for a case depth and the heating power.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains induction hardening heats only the surface layer; tool calculates the reference depth, frequency and power for a case depth."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "selecting-bearings-and-lubrication-for-reliable-machines",
+   "tool": "countershaft-bearing-check",
+   "type": "applies",
+   "note": "Works out bearing loads on a two-gear shaft from the tooth forces and mesh positions, then each bearing's L10 life and static safety factor.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter gives L10 life = (C ÷ P)³ for ball bearings and (C ÷ P)^(10/3) for rollers; tool finds the bearing loads from gear forces and applies that life equation."
   }
  ]
 }
