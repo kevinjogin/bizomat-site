@@ -3214,3 +3214,33 @@ Six tools in batch handbook70 that apply methods from Bruno Linder’s Thermodyn
 |---|---|---|---|---|
 | **Reverse Osmosis Pressure Check (van ’t Hoff Osmotic Pressure, Concentrate End, Net Driving Pressure)** `ro-osmotic-pressure-check` | FEED PRESSURE ENOUGH | Concentrate end; Scaling and fouling; Model and application | 112–113 | Automated + cross-check |
 | **Hot and Cold Water Blending Check (Flow Split, Hot Supply, Entropy Generated, Lost Work)** `hot-cold-water-blend-check` | HOT SUPPLY ENOUGH | Hot supply; Outlet temperature rules; Model and application | 48–51, 91–93 | Automated + cross-check |
+
+## Quality, reliability, maintenance, operations and fabrication tools, batch handbook76 (added 30 October 2026)
+
+Six tools in batch handbook76 from public, checkable sources, with every limit, target and price entered by the user: a bearing defect frequency check (BPFO, BPFI, ball spin and cage frequencies and their harmonics matched to a measured peak; MathWorks, Randall and Antoni 2011), an individuals control chart check (limits from the average moving range; NIST e-Handbook 6.3.2.2), a p-chart check (fraction defective limits for equal samples; NIST e-Handbook 6.3.3.2), a reliability demonstration test plan (chi-square test length for an MTBF objective; NIST e-Handbook 8.3.1.1), a queue wait check (M/M/c Erlang C and Little’s law; Kleinrock 1975, Little 1961) and a sheet nesting yield check (straight and two-block layouts, utilisation, sheets and cost per blank; Machinery’s Handbook pp. 1338–1339). The page column gives Machinery’s Handbook pages where a tool cites them. WORKOS now holds 920 tools.
+
+### Maintenance
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Bearing Defect Frequency Check (BPFO, BPFI, Ball Spin, Cage, Match to a Measured Peak)** `bearing-defect-frequency-check` | PEAK MATCHES OUTER RACE DEFECT | Measured peak; Confirmation; Model and application |  | Automated + cross-check |
+| **Reliability Demonstration Test Plan (MTBF Objective, Confidence, Allowed Failures, Test Length)** `reliability-demonstration-test` | TEST FITS THE TIME AVAILABLE | Calendar time; Failure model; Model and application |  | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Individuals Control Chart Check (Moving Range, Control Limits, Points Out of Control)** `individuals-chart-check` | PROCESS IN CONTROL | Points beyond the limits; Number of readings; Model and application |  | Automated + cross-check |
+| **p-Chart Check (Fraction Defective, Control Limits, Samples Out of Control)** `p-chart-check` | PROCESS IN CONTROL | Samples beyond the limits; Lower limit; Model and application |  | Automated + cross-check |
+
+### Operations
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Queue Wait Check (Utilisation, Chance of Waiting, Average Wait and Queue, Servers Needed)** `queue-wait-check` | WAIT WITHIN TARGET | Average wait; Utilisation; Arrival pattern; Model and application |  | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Sheet Nesting Yield Check (Parts per Sheet, Material Utilisation, Sheets and Cost per Part)** `sheet-nesting-yield` | LAYOUT ACCEPTABLE | Material utilisation; Shape and process; Model and application | 1338–1339 | Automated + cross-check |

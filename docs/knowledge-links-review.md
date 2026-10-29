@@ -2,7 +2,7 @@
 
 Generated 2026-10-29 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 335 relationships (144 from links authors wrote in the books, 191 from editorial review). Rejected: 74. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 347 relationships (144 from links authors wrote in the books, 203 from editorial review). Rejected: 81. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -201,6 +201,18 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Real Gases by the Numbers | Liquefied gases, vapour pressure and the critical point | Boiling Point Under Vacuum (Clausius–Clapeyron Boiling Temperature, Pressure for a Temperature Limit) | complements | Chapter presents vapour pressure and Clausius–Clapeyron for liquefied gases; the tool solves the same equation for boiling temperature, below the critical point only. |
 | Welding Health and Safety by the Numbers | Fire, gases and confined spaces | Solvent Vapour Headspace Check (Raoult’s Law Partial Pressure, Saturated Concentration, Share of LEL) | complements | Chapter warns that solvent residue and vapour in drums and tanks explode and requires gas testing; the tool screens the saturated headspace against the LEL as a planning aid. |
 | How Engineering Shaped Industry: From Aqueducts to the Grid | Clean water as an engineered system: barriers, gravity and supply security, and lessons for operations | Reverse Osmosis Pressure Check (van ’t Hoff Osmotic Pressure, Concentrate End, Net Driving Pressure) | complements | Chapter describes reverse osmosis pumping seawater against its osmotic pressure; the tool computes osmotic pressure by van ’t Hoff and the pressure margin of a stage. |
+| Manufacturing Quality | Statistical process control on the shop floor: control charts, real signals and when to leave a process alone | Individuals Control Chart Check (Moving Range, Control Limits, Points Out of Control) | applies | Chapter gives individuals chart limits as the average ± 2.66 × average moving range (= 3 ÷ 1.128); tool computes the same limits and flags points. |
+| Manufacturing Quality | Statistical process control on the shop floor: control charts, real signals and when to leave a process alone | p-Chart Check (Fraction Defective, Control Limits, Samples Out of Control) | applies | Chapter recommends the p chart for proportions defective; tool computes p̄ ± 3√(p̄(1 − p̄)/n) for equal samples and states that limitation. |
+| First-of-a-Kind Technology by the Numbers | Qualification testing: run length, feed envelope and yield basis | Reliability Demonstration Test Plan (MTBF Objective, Confidence, Allowed Failures, Test Length) | applies | Chapter sizes a qualification run with chi-square bounds (1,500 h for MTBF 500 h at 80 %); tool gives factor 2.99 for one failure at 80 %, i.e. about 1,497 h. |
+| Accelerated Life Testing by the Numbers | How many units, and for how long | Reliability Demonstration Test Plan (MTBF Objective, Confidence, Allowed Failures, Test Length) | complements | Chapter derives zero-failure success-run tests and Weibull trade-offs; tool plans the exponential chi-square test, a complementary case. |
+| Prototypes and Simulation by the Numbers | Queues in the test lab: utilisation, waiting and Little's law | Queue Wait Check (Utilisation, Chance of Waiting, Average Wait and Queue, Servers Needed) | explains | Chapter treats a climatic chamber as an M/M/1 queue with Little’s law and the utilisation curve; tool computes the M/M/c (Erlang C) case, equal to M/M/1 with one server. |
+| Quoting Sheet Metal Work by the Numbers | Material, blanks and nesting | Sheet Nesting Yield Check (Parts per Sheet, Material Utilisation, Sheets and Cost per Part) | applies | Chapter prices material from blanks nested on whole sheets with gaps and edges, by sheet price and yield; tool computes blanks per sheet, utilisation, sheets and cost per blank. |
+| Sheet Metal Production Runs by the Numbers | Nesting the blanks and material yield | Sheet Nesting Yield Check (Parts per Sheet, Material Utilisation, Sheets and Cost per Part) | applies | Chapter nests 500 tray blanks on 2,400 × 1,200 sheets and discusses yield and sheet size; tool does the same for rectangular blanks. |
+| Blanking and Piercing Dies by the Numbers | Strip layout and material yield | Sheet Nesting Yield Check (Parts per Sheet, Material Utilisation, Sheets and Cost per Part) | complements | Chapter sets edge margins, bridges and orientation for strip yield; tool applies the same margins and gaps to sheet nesting. |
+| Oval Sheet Metal Work by the Numbers | Material, nesting and mass | Sheet Nesting Yield Check (Parts per Sheet, Material Utilisation, Sheets and Cost per Part) | complements | Chapter turns patterns into rectangles on 2,400 × 1,200 sheets and finds the yield; tool counts rectangles per sheet and utilisation. |
+| Sheet Metal Patterns by the Numbers | Checking, nesting and keeping patterns | Sheet Nesting Yield Check (Parts per Sheet, Material Utilisation, Sheets and Cost per Part) | complements | Chapter nests the job’s blanks on 2,400 × 1,200 sheets; tool gives blanks per sheet and utilisation for rectangular blanks. |
+| Lean, Maintenance and Continuous Improvement | Maintenance that prevents breakdowns: choosing a strategy for each machine in a small factory | Bearing Defect Frequency Check (BPFO, BPFI, Ball Spin, Cage, Match to a Measured Peak) | complements | Chapter recommends predictive maintenance using vibration trends; tool computes bearing defect frequencies and matches a measured peak. |
+| Machine Elements and Mechanical Design | Selecting bearings and lubrication for reliable machines: types, life, fits, sealing and failure causes | Bearing Defect Frequency Check (BPFO, BPFI, Ball Spin, Cage, Match to a Measured Peak) | complements | Chapter covers bearing failure causes and adds vibration readings to monthly inspections; tool identifies bearing defect frequencies in those readings. |
 
 ## 2. Rejected
 
@@ -280,6 +292,13 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Process Chillers by the Numbers | Throttling and flash gas | Gas Pressure Reduction Cooling Check (Joule–Thomson Temperature Drop, Outlet Temperature, Preheat) | Rejected: chapter is about two-phase flashing of liquid refrigerant at an expansion valve; the tool models single-phase gas cooling only. |
 | Process Steam by the Numbers | Pressure reduction and distribution | Gas Pressure Reduction Cooling Check (Joule–Thomson Temperature Drop, Outlet Temperature, Preheat) | Rejected: chapter throttles wet steam using steam-table enthalpy and dryness; the tool’s Joule–Thomson coefficient does not model steam or wet steam. |
 | Combustion by the Numbers | Carbon monoxide, purging and approvals | Solvent Vapour Headspace Check (Raoult’s Law Partial Pressure, Saturated Concentration, Share of LEL) | Rejected: chapter covers fuel gas leaks and purge dilution of a combustion chamber; the tool finds vapour above a liquid solvent, a different source. |
+| Reporting, History and Analytical Data | When aggregate reports reveal individual records | Individuals Control Chart Check (Moving Range, Control Limits, Points Out of Control) | Rejected: chapter is about privacy in aggregate reports; “individual” is a word match only. |
+| Teams, Incentives and Performance | What your people measures are really measuring: individuals, systems and honest records | Individuals Control Chart Check (Moving Range, Control Limits, Points Out of Control) | Rejected: chapter discusses people metrics, not control charts. |
+| Prototypes and Simulation by the Numbers | Pass-fail tests: what a small sample can and cannot show | p-Chart Check (Fraction Defective, Control Limits, Samples Out of Control) | Rejected: chapter sizes pass/fail test samples with binomial confidence; it does not chart a process over time. |
+| Random Error and Drift by the Numbers | Allan deviation: one chart for every time scale | p-Chart Check (Fraction Defective, Control Limits, Samples Out of Control) | Rejected: chapter covers Allan deviation of instrument noise; no attribute charts. |
+| Modular Projects by the Numbers | Proving the pilot: acceptance tests and run length | Reliability Demonstration Test Plan (MTBF Objective, Confidence, Allowed Failures, Test Length) | Rejected: chapter is about piloting a project rollout, not reliability testing. |
+| Stage Gates and Stopping Rules by the Numbers | Waiting, testing or proceeding: simple real options | Queue Wait Check (Utilisation, Chance of Waiting, Average Wait and Queue, Servers Needed) | Rejected: chapter is about the value of waiting for information at a stage gate, not queueing. |
+| Cutting and Gouging by the Numbers | Laser cutting | Sheet Nesting Yield Check (Parts per Sheet, Material Utilisation, Sheets and Cost per Part) | Rejected: chapter explains the laser process and kerf; it does not cover nesting yield. |
 
 ## 3. Published READOS books with no approved connection
 
@@ -288,7 +307,6 @@ Their pages show a WORKOS topic to browse where the category maps to one, and no
 | READOS book | Kind | Category | Shown instead |
 |---|---|---|---|
 | 3D CAD Modelling and Design Intent | collection | technology | nothing |
-| Accelerated Life Testing by the Numbers | publication | Products | nothing |
 | Acquisitions, Groups and Investment Accounting | collection | business | Business & Commercial |
 | AI in Business Practice | collection | technology | nothing |
 | Architectural Sheet Metal by the Numbers | publication | Manufacturing | Manufacturing & Production |
@@ -337,12 +355,10 @@ Their pages show a WORKOS topic to browse where the category maps to one, and no
 | Louvres and Ventilators by the Numbers | publication | Engineering | Engineering & Design |
 | Machine Part Repairs by the Numbers | publication | Engineering | Engineering & Design |
 | Marketing, Brands and Customer Experience | collection | business | Business & Commercial |
-| Oval Sheet Metal Work by the Numbers | publication | Manufacturing | Manufacturing & Production |
 | Performance Solutions by the Numbers | publication | Engineering | Engineering & Design |
 | Pipe Flow by the Numbers | publication | Engineering | Engineering & Design |
 | Product Acoustics by the Numbers | publication | Products | nothing |
 | Project Sponsors, Governance and Decisions | collection | business | Business & Commercial |
-| Quoting Sheet Metal Work by the Numbers | publication | Manufacturing | Manufacturing & Production |
 | Railway Clearances by the Numbers | publication | Engineering | Engineering & Design |
 | Railway Track Geometry by the Numbers | publication | Engineering | Engineering & Design |
 | Random Error and Drift by the Numbers | publication | Engineering | Engineering & Design |
