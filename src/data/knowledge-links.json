@@ -3415,6 +3415,316 @@
    "status": "approved",
    "evidence": "review",
    "reason": "Chapter derives cutting force, power and torque from specific cutting force; tool applies the same unit-power method to trepanning and solid drilling."
+  },
+  {
+   "reados": "publication/thermal-expansion-by-the-numbers",
+   "chapter": "liquids-in-closed-systems",
+   "tool": "blocked-in-liquid-pressure-check",
+   "type": "explains",
+   "note": "Puts a number on this chapter’s trapped-liquid warning: the pressure rise per kelvin in an isolated, liquid-full section and the warming that reaches its limit.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains that water is nearly incompressible and that an isolated, heated liquid-full section needs draining, venting or its own relief valve; the tool calculates that pressure rise from β, K and the pipe wall."
+  },
+  {
+   "reados": "publication/water-hammer-by-the-numbers",
+   "chapter": "wave-speed-in-a-pipe",
+   "tool": "blocked-in-liquid-pressure-check",
+   "type": "complements",
+   "note": "Uses the same liquid bulk modulus and pipe-wall stretch, D ÷ (E e) with a restraint factor, to find how fast a blocked-in liquid’s pressure rises as it warms.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter softens the liquid’s bulk modulus with the pipe wall term (K ÷ E)(D ÷ e)c₁; the tool uses the same wall compliance, with volumetric restraint factors, for a static trapped-liquid pressure rise."
+  },
+  {
+   "reados": "publication/real-gases-by-the-numbers",
+   "chapter": "size-and-attraction",
+   "tool": "gas-cylinder-real-gas-duration",
+   "type": "explains",
+   "note": "Finds a cylinder’s contents with the van der Waals constants from the critical point, as this chapter does, beside Peng–Robinson and the ideal gas law.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter derives a = 27R²T꜀² ÷ 64p꜀ and b = RT꜀ ÷ 8p꜀ for nitrogen and shows a contents check van der Waals gets wrong; the tool uses those constants and shows Peng–Robinson and ideal figures alongside."
+  },
+  {
+   "reados": "publication/real-gases-by-the-numbers",
+   "chapter": "contents-temperature-and-the-gauge",
+   "tool": "gas-cylinder-real-gas-duration",
+   "type": "applies",
+   "note": "Turns a gauge reading, temperature and water capacity into real-gas contents, usable gas and running time, using absolute pressure as this chapter insists.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter shows the gauge measures pressure, not contents, and that every equation of state needs absolute pressure and the temperature; the tool computes contents from gauge pressure, atmosphere and temperature."
+  },
+  {
+   "reados": "publication/real-gases-by-the-numbers",
+   "chapter": "corresponding-states",
+   "tool": "gas-cylinder-real-gas-duration",
+   "type": "complements",
+   "note": "Scales a cubic equation of state to each gas by its critical temperature and pressure, the same reduced-property idea this chapter tests on nitrogen, argon and oxygen.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains reduced pressure and temperature and why argon holds more than ideal; the tool’s Z comes from equations scaled by T꜀, p꜀ (and the acentric factor the chapter mentions)."
+  },
+  {
+   "reados": "publication/industrial-gases-by-the-numbers",
+   "chapter": "storage-cylinders-and-bulk-liquid",
+   "tool": "gas-cylinder-real-gas-duration",
+   "type": "complements",
+   "note": "Checks how long a compressed-gas cylinder lasts at a use rate, allowing for the real-gas departure from the 50 L × 200 bar estimate this chapter describes.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter states cylinder contents as gas at a reference temperature, notes real gases depart from ideal at cylinder pressures and that supplier figures govern; the tool estimates real-gas contents and duration."
+  },
+  {
+   "reados": "publication/real-gases-by-the-numbers",
+   "chapter": "liquefied-gases-and-the-critical-point",
+   "tool": "boiling-point-at-pressure",
+   "type": "explains",
+   "note": "Applies the integrated Clausius–Clapeyron equation from this chapter to find a liquid’s boiling point at another pressure and its vapour pressure at a temperature.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter sets out ln(p₂ ÷ p₁) = (L M ÷ R)(1/T₁ − 1/T₂) and its accuracy against NIST for nitrogen; the tool uses the same equation from a reference boiling point."
+  },
+  {
+   "reados": "publication/vacuum-by-the-numbers",
+   "chapter": "vapour-outgassing-and-gas-loads",
+   "tool": "boiling-point-at-pressure",
+   "type": "explains",
+   "note": "Estimates at what temperature a liquid boils under a given vacuum, and its vapour pressure, with the Clausius–Clapeyron relation this chapter checks against NIST.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter uses Clausius–Clapeyron to explain why vapour pressure rises steeply with temperature in a vacuum chamber; the tool gives boiling point and vapour pressure at the operating pressure."
+  },
+  {
+   "reados": "publication/process-chillers-by-the-numbers",
+   "chapter": "saturation-pressure-and-temperature",
+   "tool": "boiling-point-at-pressure",
+   "type": "complements",
+   "note": "Estimates boiling point from pressure with the simple Clausius–Clapeyron form; this chapter shows why refrigerants need the full Clapeyron equation or NIST data instead.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter checks the Clapeyron equation against R-134a data and warns the Clausius–Clapeyron form misses by over 10 % for a refrigerant; the tool is that simple form, so the chapter sets its limits."
+  },
+  {
+   "reados": "publication/process-steam-by-the-numbers",
+   "chapter": "reading-the-steam-table",
+   "tool": "boiling-point-at-pressure",
+   "type": "complements",
+   "note": "Estimates the boiling point of water or another liquid at any pressure; for water this chapter’s steam table gives the exact figures to check it against.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains that boiling depends on absolute pressure and reads saturation temperatures from the steam table; the tool estimates the same from one reference point, and names steam tables for accuracy."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "absolute-temperature-and-the-carnot-limit",
+   "tool": "carnot-limit-check",
+   "type": "explains",
+   "note": "Applies the 1 − T꜀ ÷ Tₕ limit from this chapter to test a heat-engine, heat pump or chiller claim and give its second-law efficiency.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter derives the Carnot limit with absolute temperatures and shows how to reject a heat-to-power claim; the tool’s engine mode does exactly that and adds the heat pump and chiller limits."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "heat-pumps-and-refrigerators-against-the-limit",
+   "tool": "carnot-limit-check",
+   "type": "explains",
+   "note": "Checks a heating or cooling COP against the Carnot limit for its two temperatures and flags one that is impossible, as this chapter shows.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter derives the Carnot limits on cooling and heating COP and how to spot an impossible COP; the tool computes both limits and the second-law efficiency of a claimed COP."
+  },
+  {
+   "reados": "publication/heat-pumps-and-refrigeration-by-the-numbers",
+   "chapter": "cop-and-the-carnot-limit",
+   "tool": "carnot-limit-check",
+   "type": "explains",
+   "note": "Calculates the Carnot COP for heating or cooling from two temperatures, the actual COP from output and input, and their ratio.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter defines COP for cooling and heating, the Carnot limit from two temperatures and realistic COPs as a fraction of it; the tool calculates all three from the user’s figures."
+  },
+  {
+   "reados": "publication/process-chillers-by-the-numbers",
+   "chapter": "the-chiller-and-its-limit",
+   "tool": "carnot-limit-check",
+   "type": "applies",
+   "note": "Tests a chiller’s quoted COP against the second law’s limit between its water and air (or refrigerant) temperatures, as this chapter does for CH-30.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter applies COP_max = T꜀ ÷ (Tₕ − T꜀) to CH-30 and shows a quoted figure that broke the second law; the tool’s chiller mode makes that check."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "lost-work-and-exergy",
+   "tool": "compressed-gas-stored-energy",
+   "type": "explains",
+   "note": "Calculates the exergy held in a receiver of compressed gas, the reversible isothermal work of letting it down to atmosphere less the work against the atmosphere.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter defines the exergy of compressed air as the reversible isothermal expansion work R T₀ ln(p ÷ p₀); the tool applies it to a fixed vessel, deducting the (p − p₀)V pushed against the atmosphere."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "compression-and-expansion",
+   "tool": "compressed-gas-stored-energy",
+   "type": "complements",
+   "note": "Compares the useful energy stored in a filled vessel with the compressor energy used to fill it, the isothermal benchmark this chapter starts from.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter gives the reversible isothermal work as the least work to compress air and compares real compressors with it; the tool shows how much of the fill energy remains as stored exergy."
+  },
+  {
+   "reados": "publication/compressed-air-plant-by-the-numbers",
+   "chapter": "the-work-of-compression",
+   "tool": "compressed-gas-stored-energy",
+   "type": "complements",
+   "note": "Uses the compressor’s specific power from this chapter to price the energy of filling a receiver, against the energy the full receiver holds.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter calculates isothermal and isentropic compression work and defines specific power; the tool takes specific power as an input for the fill energy and reports the isothermal and isentropic energies."
+  },
+  {
+   "reados": "publication/compressed-air-plant-by-the-numbers",
+   "chapter": "receivers-and-compressor-control",
+   "tool": "compressed-gas-stored-energy",
+   "type": "complements",
+   "note": "Quantifies the “considerable amount of energy” this chapter says a receiver releases if it fails, and checks pressure × volume against your classification limit.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter notes a receiver stores considerable energy released violently on failure and names AS 1210 and AS 4343 hazard levels; the tool gives exergy, isentropic and Brode energies and the pV product."
+  },
+  {
+   "reados": "publication/industrial-gases-by-the-numbers",
+   "chapter": "making-oxygen",
+   "tool": "gas-generator-energy-check",
+   "type": "explains",
+   "note": "Extends this chapter’s minimum work of taking oxygen from air, RT ln(1 ÷ 0.209), to any purity and air factor, and compares it with a generator’s real energy use.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter gives the thermodynamic minimum for oxygen from air as RT ln(1 ÷ 0.209), about 0.044 kWh/m³ at 15 °C; the tool’s complete-recovery minimum reduces to exactly this for pure oxygen."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "entropy-generated-by-heat-transfer",
+   "tool": "quench-tank-temperature-check",
+   "type": "explains",
+   "note": "Applies this chapter’s m c ln(T_out ÷ T_in) sum to a hot load quenched into a bath, giving the bath temperature, the heat released and the entropy generated per load.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter calculates entropy generated when heat crosses a temperature difference by summing m c ln(T_out ÷ T_in) for each body; the tool does this for the load and bath after an equilibrium heat balance."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "throttling-mixing-and-friction",
+   "tool": "quench-tank-temperature-check",
+   "type": "complements",
+   "note": "A quench is a mixing of a hot load into a cooler bath; the tool shows the resulting temperature and entropy generated, the loss this chapter finds in mixing streams.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter shows mixing at different temperatures generates entropy like heat transfer across a difference; the tool’s quench heat balance and entropy figure are the same calculation for a load and a bath."
+  },
+  {
+   "reados": "publication/heating-and-cooling-times-by-the-numbers",
+   "chapter": "the-surface-condition",
+   "tool": "quench-tank-temperature-check",
+   "type": "complements",
+   "note": "Checks the oil bath side of the quench this chapter describes: how far one load warms the bath and whether the cooler keeps up with the load rate.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers the oil quench’s surface coefficient with oil at 60 °C; the tool covers the bath’s heat balance, temperature rise per load and cooler duty, which the chapter does not."
+  },
+  {
+   "reados": "publication/industrial-gases-by-the-numbers",
+   "chapter": "storage-cylinders-and-bulk-liquid",
+   "tool": "blocked-in-liquid-pressure-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers gas cylinders and cryogenic liquid storage, not liquid-full pipe sections; the pairing matched on “pressure” and “liquid” only."
+  },
+  {
+   "reados": "publication/pipe-welding-by-the-numbers",
+   "chapter": "sizes-walls-and-pressure",
+   "tool": "blocked-in-liquid-pressure-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter sizes pipe walls for pressure and hot-line expansion; it does not discuss trapped liquid, and the tool’s hoop stress is only a by-product."
+  },
+  {
+   "reados": "publication/condensation-control-by-the-numbers",
+   "chapter": "water-in-air-vapour-pressure-and-dew-point",
+   "tool": "boiling-point-at-pressure",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter applies vapour pressure to humidity and dew point in air; the tool finds the boiling point of a liquid at a pressure, a different question."
+  },
+  {
+   "reados": "publication/cooling-towers-by-the-numbers",
+   "chapter": "heat-loads-flow-and-range",
+   "tool": "carnot-limit-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter sizes cooling-tower heat loads and water flow; it does not apply the Carnot limit."
+  },
+  {
+   "reados": "collection/engineering-history-modern-era",
+   "chapter": "engines-after-steam-matching-technology-to-duty",
+   "tool": "carnot-limit-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: history chapter on matching engines to duty; it does not calculate Carnot limits or second-law efficiency."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "calculating-entropy-changes",
+   "tool": "gas-generator-energy-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter calculates entropy changes of heated water, steam and compressed air; it does not cover the mixing entropy of gases the tool uses."
+  },
+  {
+   "reados": "publication/industrial-gases-by-the-numbers",
+   "chapter": "purity-and-purification",
+   "tool": "gas-generator-energy-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter traces impurities in acetylene, oxygen and shielding gases and their cost in cutting; it does not cover separation energy."
+  },
+  {
+   "reados": "collection/sustainability-and-environmental-management",
+   "chapter": "turning-waste-into-a-resource",
+   "tool": "gas-generator-energy-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter is about waste recovery; the match was on general words, not on gas separation."
+  },
+  {
+   "reados": "publication/cutting-and-gouging-by-the-numbers",
+   "chapter": "laser-cutting",
+   "tool": "gas-generator-energy-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers laser cutting and its assist gases, not the energy to make nitrogen or oxygen on site."
   }
  ]
 }

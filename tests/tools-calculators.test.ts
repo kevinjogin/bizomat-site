@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 898 tools with unique ids and every previously published id kept', () => {
+test('register: 905 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 898);
+  assert.equal(ids.length, 905);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -5098,5 +5098,87 @@ test('forty-fifth-round design checks give pass and fail verdicts', () => {
     ['drill-bushing-position-check', { bushUp: -40 }], ['drill-bushing-position-check', { gMin: 2, gMax: 1 }],
     ['woodruff-key-check', { t1: 10 }], ['woodruff-key-check', { d: 12, t1: 7 }], ['eyebolt-lift-check', { a1: 0, a2: 0 }], ['eyebolt-lift-check', { s1: 0 }],
   ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// ---------------------------------------------------------------- Thermodynamics topic tools (greiner)
+// Greiner, Neise and Stöcker, Thermodynamics and Statistical Mechanics: expected values are independent hand calculations.
+
+const RGAS = 8.314462618;
+/** Largest real root of z³ + a2 z² + a1 z + a0 = 0 by Cardano (independent of the tools' Newton iteration). */
+const largestRoot = (a2: number, a1: number, a0: number) => {
+  const Q = (3 * a1 - a2 * a2) / 9, Rr = (9 * a2 * a1 - 27 * a0 - 2 * a2 ** 3) / 54, D = Q ** 3 + Rr ** 2;
+  if (D >= 0) return Math.cbrt(Rr + Math.sqrt(D)) + Math.cbrt(Rr - Math.sqrt(D)) - a2 / 3;
+  const th = Math.acos(Rr / Math.sqrt(-(Q ** 3)));
+  return Math.max(...[0, 1, 2].map((k) => 2 * Math.sqrt(-Q) * Math.cos((th + 2 * Math.PI * k) / 3) - a2 / 3));
+};
+const zVdw = (p: number, T: number, Tc: number, pc: number) => {
+  const a = 27 * RGAS ** 2 * Tc ** 2 / (64 * pc), b = RGAS * Tc / (8 * pc), A = a * p / (RGAS * T) ** 2, B = b * p / (RGAS * T);
+  return largestRoot(-(1 + B), A, -A * B);
+};
+const zPr = (p: number, T: number, Tc: number, pc: number, w: number) => {
+  const k = 0.37464 + 1.54226 * w - 0.26992 * w * w, a = 0.45724 * RGAS ** 2 * Tc ** 2 / pc * (1 + k * (1 - Math.sqrt(T / Tc))) ** 2, b = 0.0778 * RGAS * Tc / pc;
+  const A = a * p / (RGAS * T) ** 2, B = b * p / (RGAS * T);
+  return largestRoot(-(1 - B), A - 3 * B * B - 2 * B, -(A * B - B * B - B ** 3));
+};
+
+test('thermodynamics tools match independent hand calculations', () => {
+  // Blocked-in water in DN50 steel pipe, anchored: (210 − 36)×10⁻⁶ ÷ (1/2200 + 0.91 × 52.5 ÷ (200000 × 3.91)) MPa/K
+  const bl = engine.run('blocked-in-liquid-pressure-check').values;
+  near(bl.rate, 3.3744551, 1e-6, 'pressure rise per kelvin, bar/K'); near(bl.pF, 38.744551, 1e-5, 'final pressure'); near(bl.dTa, 3.2597855, 1e-6, 'warming to the limit'); near(bl.hoop, 26.011367, 1e-5, 'hoop stress');
+  near(engine.run('blocked-in-liquid-pressure-check', { wall: 'rigid' }).values.rate, 174e-6 * 2200 * 10, 1e-9, 'rigid container: (β − 3αₛ) K');
+  near(engine.run('blocked-in-liquid-pressure-check', { wall: 'joint' }).values.rate, 174e-6 / (1 / 2200 + 0.85 * 52.5 / (200000 * 3.91)) * 10, 1e-9, 'expansion joints: c₁ = 1 − ν/2');
+  near(engine.run('blocked-in-liquid-pressure-check', { wall: 'free' }).values.rate, 174e-6 / (1 / 2200 + 0.95 * 52.5 / (200000 * 3.91)) * 10, 1e-9, 'closed ends free: c₁ = 5/4 − ν');
+  // Nitrogen in a 50 L cylinder at 200 bar g and 20 °C, Peng–Robinson and van der Waals against Cardano roots
+  const T = 293.15, pF = 200e5 + 101325, pM = 10e5 + 101325, zf = zPr(pF, T, 126.2, 33.98e5, 0.037), zm = zPr(pM, T, 126.2, 33.98e5, 0.037);
+  const gc = engine.run('gas-cylinder-real-gas-duration').values, nUse = pF * 0.05 / (zf * RGAS * T) - pM * 0.05 / (zm * RGAS * T);
+  near(gc.zF, zf, 1e-9, 'Peng–Robinson Z at 200 bar g'); near(gc.zF, 1.0228, 5e-4, 'nitrogen Z by Peng–Robinson');
+  near(gc.mass, pF * 0.05 / (zf * RGAS * T) * 28.014 / 1000, 1e-9, 'contents now'); near(gc.massId, pF * 0.05 / (RGAS * T) * 28.014 / 1000, 1e-9, 'ideal contents');
+  near(gc.Vstd, nUse * RGAS * 288.15 / 101325 * 1000, 1e-6, 'usable standard litres at 15 °C'); near(gc.hours, nUse * RGAS * 288.15 / 101325 * 1000 / 15 / 60, 1e-9, 'running time');
+  near(engine.run('gas-cylinder-real-gas-duration', { eos: 'vdw' }).values.zF, zVdw(pF, T, 126.2, 33.98e5), 1e-9, 'van der Waals Z');
+  near(engine.run('gas-cylinder-real-gas-duration', { pFull: 1, pMin: 0 }).values.zF, 1, 2e-3, 'near-ideal at low pressure');
+  // Water: 100 °C at 101.325 kPa, 2257 kJ/kg, 18.015 g/mol → boils at 58.89 °C at 20 kPa abs (steam tables 60.06 °C)
+  const bp = engine.run('boiling-point-at-pressure').values;
+  near(bp.TbC, 58.889457, 1e-5, 'boiling point at 20 kPa'); near(bp.pv, 13.337571, 1e-5, 'vapour pressure at 50 °C'); near(bp.mg, 8.889457, 1e-5, 'margin');
+  near(engine.run('boiling-point-at-pressure', { p: 101.325 }).values.TbC, 100, 1e-9, 'reference point returned');
+  // Heat pump 12 kW from 3.5 kW between 7 °C and 55 °C: COP 3.4286 against 328.15 ÷ 48 = 6.8365
+  const cl = engine.run('carnot-limit-check').values;
+  near(cl.lim, 328.15 / 48, 1e-9, 'Carnot heating COP'); near(cl.eta2, 50.151281, 1e-5, 'second-law efficiency'); near(cl.cost, 2100, 1e-9, 'yearly cost'); near(cl.save, 5100, 1e-9, 'saving over resistance heating');
+  near(engine.run('carnot-limit-check', { mode: 'ch' }).values.lim, 280.15 / 48, 1e-9, 'Carnot cooling COP');
+  near(engine.run('carnot-limit-check', { mode: 'en', Th: 500, Tc: 30, out: 30, inp: 100 }).values.eta2, 0.3 / (1 - 303.15 / 773.15) * 100, 1e-9, 'engine second-law efficiency');
+  // 500 L receiver at 10 bar g: pV ln(p/p0) − (p − p0)V, isentropic and Brode energies
+  const se = engine.run('compressed-gas-stored-energy').values;
+  near(se.Xkj, 813.84554, 1e-4, 'exergy'); near(se.Eskj, 680.40067, 1e-4, 'isentropic energy'); near(se.Ebkj, 1250, 1e-9, 'Brode energy'); near(se.share, 42.288666, 1e-5, 'share kept'); near(se.pV, 500, 1e-9, 'pV product');
+  // Nitrogen generator, 1 % O₂ product at air factor 3 from 20.95 % O₂ air, 20 °C
+  const gs = engine.run('gas-generator-energy-check').values;
+  near(gs.xW, 0.30925, 1e-12, 'waste oxygen'); near(gs.Wmin, 0.0074574312, 1e-9, 'minimum work, kWh/m³'); near(gs.eta2, 2.4858104, 1e-6, 'second-law efficiency'); near(gs.cost, 15000, 1e-9, 'yearly cost');
+  near(gs.WminInf, 468.87362 * 101325 / (RGAS * 273.15) / 3.6e6, 1e-9, 'complete-recovery minimum');
+  // Pure oxygen, complete recovery: RT ln(1 ÷ 0.2095) per mole, as in Industrial Gases by the Numbers
+  near(engine.run('gas-generator-energy-check', { xP: 99.999, AF: 1000, T: 15, Tref: 15 }).values.WminInf, RGAS * 288.15 * Math.log(1 / 0.2095) * 101325 / (RGAS * 288.15) / 3.6e6, 2e-5, 'oxygen minimum');
+  near(engine.run('gas-generator-energy-check', { xP: 93, AF: 6 }).values.rec, 0.93 / (6 * 0.2095) * 100, 1e-9, 'oxygen recovery');
+  // Quench: 150 kg at 600 J/kg·K from 850 °C into 3000 L of oil (870 kg/m³, 2000 J/kg·K) at 60 °C
+  const qt = engine.run('quench-tank-temperature-check').values;
+  near(qt.Tf, 73.389831, 1e-5, 'mixture temperature'); near(qt.QMJ, 69.894915, 1e-5, 'heat per load'); near(qt.P, 38.830508, 1e-5, 'average heat input'); near(qt.dS, 99.863175, 1e-5, 'entropy generated, kJ/K'); assert.equal(qt.n, 1);
+});
+
+test('thermodynamics tools: verdicts and guards', () => {
+  assert.equal(engine.run('blocked-in-liquid-pressure-check').text, 'EXCEEDS THE LIMIT: PROVIDE THERMAL RELIEF');
+  assert.equal(engine.run('blocked-in-liquid-pressure-check', { dT: 2 }).text, 'WITHIN THE LIMIT');
+  assert.equal(engine.run('gas-cylinder-real-gas-duration').text, 'LASTS THE REQUIRED TIME');
+  assert.equal(engine.run('gas-cylinder-real-gas-duration', { need: 12 }).text, 'RUNS OUT TOO SOON');
+  assert.equal(engine.run('boiling-point-at-pressure').text, 'BELOW BOILING WITH MARGIN');
+  assert.equal(engine.run('boiling-point-at-pressure', { Tl: 56 }).text, 'MARGIN TOO SMALL');
+  assert.equal(engine.run('boiling-point-at-pressure', { Tl: 65 }).text, 'LIQUID WILL BOIL OR FLASH');
+  assert.equal(engine.run('carnot-limit-check').text, 'WITHIN THE LIMIT AND ACCEPTABLE');
+  assert.equal(engine.run('carnot-limit-check', { out: 30 }).text, 'CLAIM EXCEEDS THE CARNOT LIMIT');
+  assert.equal(engine.run('carnot-limit-check', { etaMin: 60 }).text, 'BELOW YOUR ACCEPTANCE LEVEL');
+  assert.equal(engine.run('compressed-gas-stored-energy').text, 'WITHIN YOUR pV LIMIT');
+  assert.equal(engine.run('compressed-gas-stored-energy', { pVlim: 400 }).text, 'ABOVE YOUR pV LIMIT');
+  assert.equal(engine.run('gas-generator-energy-check').text, 'ABOVE THE THERMODYNAMIC MINIMUM');
+  assert.equal(engine.run('gas-generator-energy-check', { SE: 0.005 }).text, 'BELOW THE THERMODYNAMIC MINIMUM: CLAIM NOT POSSIBLE');
+  assert.equal(engine.run('quench-tank-temperature-check').text, 'BATH STAYS WITHIN ITS LIMIT');
+  assert.equal(engine.run('quench-tank-temperature-check', { cool: 30 }).text, 'COOLER TOO SMALL FOR THE LOAD RATE');
+  assert.equal(engine.run('quench-tank-temperature-check', { Vq: 500 }).text, 'ONE LOAD OVERHEATS THE BATH');
+  const cases: Array<[string, Inputs]> = [['blocked-in-liquid-pressure-check', { p0: 20 }], ['blocked-in-liquid-pressure-check', { nu: 0.6 }], ['blocked-in-liquid-pressure-check', { beta: 30 }], ['gas-cylinder-real-gas-duration', { Tc: 300 }], ['gas-cylinder-real-gas-duration', { pMin: 250 }], ['gas-cylinder-real-gas-duration', { pFull: 2000 }], ['boiling-point-at-pressure', { p: 1e6 }], ['boiling-point-at-pressure', { p0: 0.001, p: 1000 }], ['carnot-limit-check', { Tc: 60 }], ['carnot-limit-check', { mode: 'en' }], ['carnot-limit-check', { Tc: -300 }], ['compressed-gas-stored-energy', { k: 2 }], ['gas-generator-energy-check', { AF: 1.1 }], ['gas-generator-energy-check', { xP: 20.95 }], ['quench-tank-temperature-check', { Tmax: 50 }], ['quench-tank-temperature-check', { Tl: 40 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
