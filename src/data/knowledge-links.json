@@ -2115,6 +2115,206 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter decides repair or replacement of a broken part by expected cost; the tool finds a machine’s economic life by EUAC, a different decision."
+  },
+  {
+   "reados": "publication/heat-pumps-and-refrigeration-by-the-numbers",
+   "chapter": "cop-and-the-carnot-limit",
+   "tool": "heat-pump-cop-check",
+   "type": "applies",
+   "note": "Calculates the Carnot COP for heating or cooling from the evaporating and condensing temperatures and compares a rated or measured COP with it.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter defines heating and cooling COP, derives the Carnot limit and estimates real COP as a fraction of it; tool computes the same limit and the second-law efficiency."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "heat-pumps-and-refrigerators-against-the-limit",
+   "tool": "heat-pump-cop-check",
+   "type": "applies",
+   "note": "Tests a COP against the Carnot limit and flags an impossible claim, the check this chapter teaches.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter derives Carnot limits for cooling and heating COP and shows how to spot an impossible COP; tool flags COPs above the limit."
+  },
+  {
+   "reados": "publication/process-chillers-by-the-numbers",
+   "chapter": "temperature-lift-and-approach",
+   "tool": "heat-pump-cop-check",
+   "type": "explains",
+   "note": "Uses the approach temperatures this chapter explains to set the evaporating and condensing temperatures behind a chiller’s Carnot COP.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains evaporating and condensing temperatures and approach temperatures and how lift drives COP; tool takes approaches as inputs to find the refrigerant temperatures."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "lost-work-and-exergy",
+   "tool": "waste-heat-recovery-limit",
+   "type": "explains",
+   "note": "Calculates the exergy of a cooling waste stream and compares a heat recovery unit’s claimed power with it.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter defines exergy of heat and of flowing streams relative to a dead state; tool computes stream exergy from ṁ c_p [(T₁ − T₂) − T₀ ln(T₁/T₂)]."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "absolute-temperature-and-the-carnot-limit",
+   "tool": "waste-heat-recovery-limit",
+   "type": "complements",
+   "note": "Integrates the Carnot efficiency over a cooling stream to find the most power any machine could recover from it.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter derives the Carnot limit for an engine between two temperatures; tool applies that limit element by element over the stream’s cooling."
+  },
+  {
+   "reados": "publication/heat-pumps-and-refrigeration-by-the-numbers",
+   "chapter": "cop-and-the-carnot-limit",
+   "tool": "waste-heat-recovery-limit",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter is about heat pump COP; the heat pump COP check is the matching tool."
+  },
+  {
+   "reados": "publication/combustion-by-the-numbers",
+   "chapter": "flue-gas-dew-point-and-condensing-heat-recovery",
+   "tool": "waste-heat-recovery-limit",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter is about condensing recovery of flue gas latent heat, which the tool explicitly leaves out (constant specific heat, no phase change)."
+  },
+  {
+   "reados": "collection/sustainability-and-environmental-management",
+   "chapter": "turning-waste-into-a-resource",
+   "tool": "waste-heat-recovery-limit",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers material waste and recycling; it does not discuss waste heat or the second-law limit."
+  },
+  {
+   "reados": "publication/cooling-towers-by-the-numbers",
+   "chapter": "what-a-cooling-tower-does",
+   "tool": "heat-pump-cop-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers evaporative heat rejection; it has no COP or Carnot limit for the tool to apply."
+  },
+  {
+   "reados": "publication/real-gases-by-the-numbers",
+   "chapter": "size-and-attraction",
+   "tool": "real-gas-cylinder-contents",
+   "type": "explains",
+   "note": "Solves the van der Waals equation this chapter sets out for a cylinder’s molar volume, contents and compressibility factor.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter sets out van der Waals constants a and b and applies them to a cylinder contents check; tool solves the same equation for contents and Z."
+  },
+  {
+   "reados": "publication/real-gases-by-the-numbers",
+   "chapter": "contents-temperature-and-the-gauge",
+   "tool": "real-gas-cylinder-contents",
+   "type": "applies",
+   "note": "Works out the contents of a cylinder from its gauge pressure and temperature with a real-gas correction, as this chapter does for a nitrogen pack.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains why gauge pressure is not contents and corrects contents for temperature with real-gas behaviour; tool gives real-gas contents at a pressure and temperature."
+  },
+  {
+   "reados": "publication/real-gases-by-the-numbers",
+   "chapter": "liquefied-gases-and-the-critical-point",
+   "tool": "vapour-pressure-boiling-check",
+   "type": "explains",
+   "note": "Applies the Clausius–Clapeyron relation this chapter explains to find vapour pressure and boiling temperature from one known point.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains vapour pressure, Clausius–Clapeyron and the critical point; tool integrates Clausius–Clapeyron from a reference point."
+  },
+  {
+   "reados": "publication/real-gases-by-the-numbers",
+   "chapter": "liquefied-gases-and-the-critical-point",
+   "tool": "real-gas-cylinder-contents",
+   "type": "complements",
+   "note": "Warns when a gas is below the critical temperature of its constants, where this chapter shows a cylinder can hold liquid.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter shows gases below the critical temperature (carbon dioxide) liquefy in the cylinder; tool computes the critical temperature from a and b and warns below it."
+  },
+  {
+   "reados": "publication/vacuum-by-the-numbers",
+   "chapter": "vapour-outgassing-and-gas-loads",
+   "tool": "vapour-pressure-boiling-check",
+   "type": "explains",
+   "note": "Finds the vapour pressure of a liquid at the chamber temperature and the temperature at which it boils at the chamber pressure.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter uses the Clausius–Clapeyron relation to explain vapour pressure and its steep rise with temperature under vacuum; tool applies the same relation."
+  },
+  {
+   "reados": "publication/process-chillers-by-the-numbers",
+   "chapter": "saturation-pressure-and-temperature",
+   "tool": "vapour-pressure-boiling-check",
+   "type": "explains",
+   "note": "Applies the Clausius–Clapeyron form this chapter compares with refrigerant data; the chapter shows why it can miss by over 10 % for refrigerants.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter derives the Clapeyron equation and shows the Clausius–Clapeyron simplification misses refrigerant data by over 10 %; tool uses that simplification and states the limit."
+  },
+  {
+   "reados": "publication/condensation-control-by-the-numbers",
+   "chapter": "water-in-air-vapour-pressure-and-dew-point",
+   "tool": "vapour-pressure-boiling-check",
+   "type": "complements",
+   "note": "Gives the vapour pressure of water or another liquid at any temperature from one known point, the quantity this chapter builds humidity on.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains vapour pressure and that it depends only on temperature; tool estimates vapour pressure at a temperature by Clausius–Clapeyron."
+  },
+  {
+   "reados": "publication/centrifugal-pumps-by-the-numbers",
+   "chapter": "npsh-and-cavitation",
+   "tool": "vapour-pressure-boiling-check",
+   "type": "complements",
+   "note": "Estimates the liquid’s vapour pressure at its temperature, the value the NPSH available calculation in this chapter needs.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter computes NPSH available using the liquid vapour pressure from property data; tool estimates that vapour pressure for liquids without a table."
+  },
+  {
+   "reados": "publication/process-steam-by-the-numbers",
+   "chapter": "reading-the-steam-table",
+   "tool": "vapour-pressure-boiling-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter teaches the steam tables, which are more accurate for water than the tool’s constant-latent-heat approximation."
+  },
+  {
+   "reados": "collection/engineering-history",
+   "chapter": "clean-water-as-an-engineered-system",
+   "tool": "ro-pressure-check",
+   "type": "complements",
+   "note": "Estimates the osmotic and net driving pressure of a reverse osmosis unit like those this chapter describes; for seawater use measured osmotic data.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter describes reverse osmosis plants and seawater osmotic pressure; tool screens osmotic pressure, net driving pressure and permeate flow by van ’t Hoff’s law."
+  },
+  {
+   "reados": "publication/connected-products-by-the-numbers",
+   "chapter": "budget-the-battery",
+   "tool": "battery-heat-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter budgets battery energy and life for a device; it does not cover heat generation or temperature rise."
   }
  ]
 }

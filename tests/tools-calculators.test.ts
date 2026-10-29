@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 844 tools with unique ids and every previously published id kept', () => {
+test('register: 850 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 844);
+  assert.equal(ids.length, 850);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -4550,5 +4550,60 @@ test('forty-third-round design checks: verdicts and guards', () => {
   assert.equal(engine.run('gauge-repeatability-bias-check').text, 'GAUGE CAPABLE');
   for (const over of [{ s: 0.001 }, { res: 0.01 }] as Inputs[]) assert.equal(engine.run('gauge-repeatability-bias-check', over).text, 'GAUGE NOT CAPABLE', JSON.stringify(over));
   const cases: Array<[string, Inputs]> = [['machine-economic-life', { MV1: 40000 }], ['machine-economic-life', { s1: 150 }], ['groove-weld-cost-check', { c: 20 }], ['groove-weld-cost-check', { t: 500 }], ['groove-weld-cost-check', { prep: 'sb', ang: 85 }], ['insert-consumption-reorder-plan', { V: 1000 }], ['insert-consumption-reorder-plan', { use: 0 }], ['bearing-fleet-spares-plan', { P: 40 }], ['bearing-fleet-spares-plan', { tgt: 100 }], ['hydraulic-press-cycle-check', { rod: 120 }], ['vacuum-table-workholding-check', { ae: 60 }], ['vacuum-table-workholding-check', { vac: 150 }], ['gauge-repeatability-bias-check', { USL: 9.97 }], ['gauge-repeatability-bias-check', { n: 2 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Batch handbook69: thermodynamics tools from Fermi's Thermodynamics. Expected values are independent hand calculations
+// (closed forms, a bisection solution of the van der Waals cubic and a Simpson integral of the Carnot efficiency).
+const TD_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['vapour-pressure-boiling-check', {}, { TbC: 58.8894570347307, pv: 10.514502532437835, slope: 0.5079915816397658, mar: 13.889457034730697 }, 1e-9],
+  ['real-gas-cylinder-contents', {}, { x: 0.00011928810112447864, mass: 11.742160255685116, Z: 1.000850018956593, mIdeal: 11.752141314493798, Tc: 126.15417851397955, pc: 3387933.466921776 }, 1e-8],
+  ['ro-pressure-check', {}, { pif: 1.527078252293655, CF: Math.log(4) / 0.75, NDP: 10.92736003980865, tail: 6.89168699082538, Qp: 7.277621786512562, Pneed: 10.078645966197355 }, 1e-9],
+  ['battery-heat-check', {}, { qcell: 5.4 - 60 * 298.15 * 0.0001, Q: 361.11, dT: 2.89998 }, 1e-9],
+  ['battery-heat-check', { mode: 'chg' }, { Q: 718.89 }, 1e-9],
+  ['heat-pump-cop-check', {}, { COPc: 323.15 / 48, COP: 50 / 15, eta2: 49.51261024292125, cost: 9000, Pmin: 18.567228841095467 }, 1e-9],
+  ['heat-pump-cop-check', { mode: 'cool' }, { COPc: 275.15 / 48 }, 1e-12],
+  ['waste-heat-recovery-limit', {}, { Q: 313.5, Ex: 41.22284650758613, ofEx: 36.38758909392536, value: 22500 }, 1e-6],
+];
+for (const [id, over, expected, tol] of TD_CASES) test(`thermodynamics: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('thermodynamics tools: identities and links to existing tools', () => {
+  const vp = engine.run('vapour-pressure-boiling-check').values;
+  near(engine.run('vapour-pressure-boiling-check', { p: vp.pv }).values.TbC, 45, 1e-9, 'boiling at the vapour pressure returns the liquid temperature');
+  near(engine.run('vapour-pressure-boiling-check', { p: 101.325 }).values.TbC, 100, 1e-9, 'reference point reproduced');
+  const ideal = engine.run('real-gas-cylinder-contents', { a: 0, b: 0 }).values;
+  near(ideal.mass, ideal.mIdeal, 1e-9, 'a = b = 0 reduces to the ideal gas'); near(ideal.Z, 1, 1e-12, 'ideal compressibility');
+  const co2 = engine.run('real-gas-cylinder-contents', { M: 44.01, a: 0.364, b: 42.67, pg: 40 });
+  assert.equal(co2.checks.find((c: any) => c.label === 'Critical temperature').status, 'warn', 'carbon dioxide at 15 °C is below its critical temperature');
+  const hp = engine.run('heat-pump-cop-check').values, hpc = engine.run('heat-pump-cop-check', { mode: 'cool' }).values;
+  near(hp.COPc - hpc.COPc, 1, 1e-12, 'heating Carnot COP is one more than cooling');
+  near(engine.run('heat-pump-cop-check', { P: 50 / hp.COPc }).values.eta2, 100, 1e-9, 'COP at the Carnot limit is 100 % efficient');
+  near(engine.run('waste-heat-recovery-limit', { T2: 89.999 }).values.etaC, (1 - 293.15 / 363.15) * 100, 1e-3, 'mean Carnot efficiency tends to the point value');
+  near(engine.run('ro-pressure-check', { Pf: engine.run('ro-pressure-check').values.Pneed }).values.Qp, 4, 1e-9, 'feed pressure needed gives the flow wanted');
+});
+
+test('thermodynamics tools: verdicts and guards', () => {
+  assert.equal(engine.run('vapour-pressure-boiling-check').text, 'LIQUID STAYS BELOW BOILING');
+  assert.equal(engine.run('vapour-pressure-boiling-check', { Tw: 55 }).text, 'MARGIN TOO SMALL');
+  assert.equal(engine.run('vapour-pressure-boiling-check', { Tw: 65 }).text, 'LIQUID WILL BOIL');
+  assert.equal(engine.run('real-gas-cylinder-contents').text, 'CONTENTS SUFFICIENT');
+  assert.equal(engine.run('real-gas-cylinder-contents', { mreq: 20 }).text, 'CONTENTS SHORT');
+  assert.equal(engine.run('ro-pressure-check').text, 'PRESSURE ADEQUATE');
+  assert.equal(engine.run('ro-pressure-check', { Qreq: 10 }).text, 'PERMEATE FLOW SHORT');
+  assert.equal(engine.run('ro-pressure-check', { rec: 95 }).text, 'CONCENTRATE END STOPS PRODUCING');
+  assert.equal(engine.run('battery-heat-check').text, 'TEMPERATURE RISE ACCEPTABLE');
+  assert.equal(engine.run('battery-heat-check', { I: 100 }).text, 'PACK RUNS TOO HOT');
+  near(engine.run('battery-heat-check', { I: 100 }).values.dT, (100 * (15 - 100 * 298.15 * 0.0001) - 200) * 1800 / 100000, 1e-9, 'temperature rise at 100 A');
+  assert.equal(engine.run('heat-pump-cop-check').text, 'COP PLAUSIBLE');
+  assert.equal(engine.run('heat-pump-cop-check', { P: 5 }).text, 'COP EXCEEDS THE CARNOT LIMIT');
+  assert.equal(engine.run('heat-pump-cop-check', { P: 25 }).text, 'COP BELOW EXPECTATION');
+  assert.equal(engine.run('waste-heat-recovery-limit').text, 'CLAIM PLAUSIBLE');
+  assert.equal(engine.run('waste-heat-recovery-limit', { W: 25 }).text, 'CLAIM OPTIMISTIC');
+  assert.equal(engine.run('waste-heat-recovery-limit', { W: 50 }).text, 'EXCEEDS THE SECOND-LAW LIMIT');
+  const cases: Array<[string, Inputs]> = [['vapour-pressure-boiling-check', { M: 0.5 }], ['vapour-pressure-boiling-check', { p1: 0.001, p: 100000 }], ['real-gas-cylinder-contents', { pg: 2000 }], ['ro-pressure-check', { rec: 100 }], ['battery-heat-check', { Nc: 0 }], ['heat-pump-cop-check', { Tsrc: 50, Tsink: 40 }], ['heat-pump-cop-check', { etaMin: 0 }], ['waste-heat-recovery-limit', { T2: 10 }], ['waste-heat-recovery-limit', { T2: 95 }], ['waste-heat-recovery-limit', { share: 0 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });

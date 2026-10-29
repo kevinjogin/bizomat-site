@@ -53,9 +53,9 @@ test('the tools page loads the renderer before ui.js, and every tool file has it
   for (const f of FILES) assert.doesNotThrow(() => new Function(read(`inputs-${f}.js`)), `inputs-${f}.js parses`);
 });
 
-test('coverage: all 844 tools and every input field have a usable, field-specific explanation', () => {
+test('coverage: all 850 tools and every input field have a usable, field-specific explanation', () => {
   const { rows, problems } = audit();
-  assert.equal(rows.length, 844, 'every tool is audited');
+  assert.equal(rows.length, 850, 'every tool is audited');
   assert.deepEqual(problems, [], 'no field is missing, generic, duplicated or malformed');
   const inputs = rows.reduce((n: number, r: any) => n + r.inputs, 0);
   const done = rows.reduce((n: number, r: any) => n + r.covered + r.exceptions, 0);
