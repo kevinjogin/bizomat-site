@@ -3375,6 +3375,46 @@
    "status": "approved",
    "evidence": "review",
    "reason": "Chapter explains that a steam turbine must reject heat to its condenser and gives the Carnot ceiling for steam from the boiler; tool calculates a real Rankine cycle efficiency and condenser duty."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "grinding-honing-and-lapping",
+   "tool": "grinding-wheel-cost-plan",
+   "type": "applies",
+   "note": "Puts numbers on wheel use: wear from the grinding ratio, wheel lost to dressing, parts per wheel and grinding cost per part.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains grinding wheel specification, truing and dressing; tool calculates wheel wear, dressing loss, parts per wheel and cost per part."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "broaching-knurling-and-indexing",
+   "tool": "woodruff-key-check",
+   "type": "complements",
+   "note": "Checks the Woodruff key a keyseat cutter makes the seat for: key shear, hub and shaft bearing and the weakened shaft in torsion.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter says a Woodruff cutter makes the semicircular keyseat for Woodruff keys; tool checks the key and the shaft at that keyseat."
+  },
+  {
+   "reados": "collection/manufacturing-operations-and-design-for-manufacture",
+   "chapter": "designing-jigs-and-fixtures-that-pay",
+   "tool": "drill-bushing-position-check",
+   "type": "complements",
+   "note": "Finds how far a drill guided by a jig bushing can start off position from the bushing clearance, length and chip gap.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter defines a jig as guiding the tool, as a drill jig guides a drill through hardened bushes; tool calculates the hole position error that bushing clearance allows."
+  },
+  {
+   "reados": "publication/machining-by-the-numbers",
+   "chapter": "cutting-force-power-and-torque",
+   "tool": "trepanning-plan",
+   "type": "complements",
+   "note": "Applies specific cutting force to a trepanned ring and a solid drill, comparing their power, torque and time for a large hole.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter derives cutting force, power and torque from specific cutting force; tool applies the same unit-power method to trepanning and solid drilling."
   }
  ]
 }
