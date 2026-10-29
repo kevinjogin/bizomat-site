@@ -1915,6 +1915,206 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: shares statistical vocabulary only; the tool evaluates machine-tool positioning runs, not general data description."
+  },
+  {
+   "reados": "publication/designing-welded-joints-by-the-numbers",
+   "chapter": "butt-welds",
+   "tool": "groove-weld-cost-check",
+   "type": "applies",
+   "note": "Works out the groove area of a single-V, double-V, bevel or square butt weld with its caps, then the weld metal, arc time and cost for your rates.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter calculates single-V groove area for 60° and 90° included angles and shows a double-V halving the metal; tool computes the same groove areas plus caps, weld metal and cost."
+  },
+  {
+   "reados": "publication/designing-welded-joints-by-the-numbers",
+   "chapter": "weld-volume-cost-and-distortion",
+   "tool": "groove-weld-cost-check",
+   "type": "complements",
+   "note": "Applies the chapter’s weld metal, deposition rate and operator factor costing to butt welds, priced against a quote.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter costs fillet weld metal from deposition rate and operator factor; tool uses the same costing for groove (butt) welds, so it extends the chapter rather than repeating it."
+  },
+  {
+   "reados": "publication/pipe-welding-by-the-numbers",
+   "chapter": "preparation-and-fit-up",
+   "tool": "groove-weld-cost-check",
+   "type": "applies",
+   "note": "Calculates the groove area, weld metal and cost of a single-V joint; enter twice the pipe bevel as the included angle and the circumference as the length.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter gives area ≈ (wall − root face)² tan(bevel) + gap × wall + reinforcement for a pipe butt; tool’s single-V formula is identical with included angle = 2 × bevel, plus cost."
+  },
+  {
+   "reados": "publication/cutting-and-gouging-by-the-numbers",
+   "chapter": "air-carbon-arc-gouging",
+   "tool": "groove-weld-cost-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter is about removing metal by gouging; the tool calculates weld metal deposited in a groove."
+  },
+  {
+   "reados": "publication/resistance-welding-by-the-numbers",
+   "chapter": "butt-and-flash-welding",
+   "tool": "groove-weld-cost-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: resistance butt and flash welds use no groove or filler metal; the tool prices arc-welded groove joints."
+  },
+  {
+   "reados": "publication/welding-distortion-by-the-numbers",
+   "chapter": "transverse-shrinkage",
+   "tool": "groove-weld-cost-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter relates groove size to shrinkage; the tool calculates weld metal and cost, not distortion."
+  },
+  {
+   "reados": "publication/power-presses-by-the-numbers",
+   "chapter": "hydraulic-and-servo-presses",
+   "tool": "hydraulic-press-cycle-check",
+   "type": "applies",
+   "note": "Checks a hydraulic press’s force at relief, approach, pressing and return speeds, cycle time and motor power, with a standard or regenerative approach.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter sizes a press from F = p A, v = Q ÷ A, power = p Q and works out cycle time with a fast approach; tool performs these steps and checks them against targets."
+  },
+  {
+   "reados": "collection/manufacturing-quality",
+   "chapter": "measurement-system-analysis-for-manufacturers",
+   "tool": "gauge-repeatability-bias-check",
+   "type": "explains",
+   "note": "Runs the bias and repeatability check this chapter describes, from repeated readings of a master: Cg, Cgk, a bias t-test and resolution against the tolerance.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter defines resolution, bias and repeatability and says to check bias by repeatedly measuring a calibrated master; tool evaluates exactly that study (type 1)."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "selecting-bearings-and-lubrication-for-reliable-machines",
+   "tool": "bearing-fleet-spares-plan",
+   "type": "explains",
+   "note": "Turns the L10 rating life this chapter explains into expected failures across a group of bearings and the spares to hold.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains statistical bearing life and L10 = (C ÷ P)^p; tool uses that L10 with a Weibull slope to estimate failures and spares."
+  },
+  {
+   "reados": "collection/lean-and-continuous-improvement",
+   "chapter": "maintenance-that-prevents-breakdowns",
+   "tool": "bearing-fleet-spares-plan",
+   "type": "complements",
+   "note": "Puts a number on the chapter’s advice to keep critical spares: how many bearings a group needs for a chosen chance of not running out.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter section “Keep the right spares” discusses balancing spares held; tool calculates the spares needed for a service level from bearing life."
+  },
+  {
+   "reados": "collection/investment-appraisal-and-business-cases",
+   "chapter": "buying-for-the-whole-life-of-equipment",
+   "tool": "bearing-fleet-spares-plan",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers spares and supplier support at purchase in general terms; it has no failure-rate method for the tool to apply."
+  },
+  {
+   "reados": "publication/connected-products-by-the-numbers",
+   "chapter": "verify-with-a-pilot-fleet",
+   "tool": "bearing-fleet-spares-plan",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: a pilot fleet of connected products shares the word fleet only; the tool plans bearing spares."
+  },
+  {
+   "reados": "collection/manufacturing-operations-and-design-for-manufacture",
+   "chapter": "demand-forecasting-for-small-manufacturers",
+   "tool": "insert-consumption-reorder-plan",
+   "type": "applies",
+   "note": "Uses the chapter’s safety stock formula, z × σ × √lead time, to set a reorder point for cutting inserts from their tool life and parts made.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter gives safety stock = z × standard deviation of daily demand × √lead time and reorder points; tool applies the same formula to insert use derived from Taylor life."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "cutting-tool-materials-and-coatings",
+   "tool": "insert-consumption-reorder-plan",
+   "type": "complements",
+   "note": "Shows how the chapter’s point that tool life falls steeply with speed changes insert use, cost per part and stock.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains Taylor’s tool life equation and choosing tools on cost per part; tool computes insert cost per part and monthly use from Taylor life."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "workholding-and-toolholding",
+   "tool": "vacuum-table-workholding-check",
+   "type": "complements",
+   "note": "Checks whether a vacuum fixture, which the chapter lists for thin flat parts, holds against the milling force with your safety factor.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter lists vacuum fixtures for thin flat parts and says clamping must resist cutting forces; tool checks vacuum hold against milling force."
+  },
+  {
+   "reados": "publication/vacuum-by-the-numbers",
+   "chapter": "safety-and-the-specification",
+   "tool": "vacuum-table-workholding-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers vacuum chamber loads, implosion energy and vacuum lifting; the tool checks sliding of a part on a vacuum table during milling."
+  },
+  {
+   "reados": "collection/investment-appraisal-and-business-cases",
+   "chapter": "npv-irr-and-payback-answer-different-questions",
+   "tool": "machine-economic-life",
+   "type": "complements",
+   "note": "Applies the chapter’s equivalent annual amount to a machine’s own life, finding the life with the lowest annual cost and when to replace.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter advises converting options of different lives to equivalent annual amounts; tool computes EUAC for each life of a machine and the keep-or-replace test."
+  },
+  {
+   "reados": "collection/investment-appraisal-and-business-cases",
+   "chapter": "before-you-buy-challenge-the-need",
+   "tool": "machine-economic-life",
+   "type": "complements",
+   "note": "Calculates the equivalent annual cost the chapter recommends for comparing options with different lives, for every life of a new machine.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter recommends comparing options of different lives by equivalent annual cost with the time value of money; tool computes that cost year by year."
+  },
+  {
+   "reados": "publication/process-chillers-by-the-numbers",
+   "chapter": "running-cost-and-heat-recovery",
+   "tool": "machine-economic-life",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers chiller running cost and heat recovery; it does not discuss replacement timing or equivalent annual cost."
+  },
+  {
+   "reados": "publication/machine-part-repairs-by-the-numbers",
+   "chapter": "repair-or-replace",
+   "tool": "machine-economic-life",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter decides repair or replacement of a broken part by expected cost; the tool finds a machine’s economic life by EUAC, a different decision."
   }
  ]
 }
