@@ -27,14 +27,14 @@ jobs:
             ['/tools/welding-heat-input/', 'section.kl'],
           ];
           for (const [u, sel] of pages) {
-            const r = await p.goto('https://kevos.com' + u + '?v=' + Date.now(), { waitUntil: 'load' });
+            const r = await p.goto('https://kevos.com' + u + '?v=' + Date.now(), { waitUntil: 'domcontentloaded', timeout: 60000 });
             const s = await p.evaluate((sel) => [...document.querySelectorAll(sel)].map((el) => `${el.querySelector('h2')?.textContent} (${el.querySelectorAll('li').length} items)`).join(' + '), sel);
             note(`live ${u}`, `HTTP ${r.status()} | ${s || 'SECTION MISSING'}`);
           }
-          await p.goto('https://kevos.com/tools/?tool=investment-appraisal', { waitUntil: 'load' });
+          await p.goto('https://kevos.com/tools/?tool=investment-appraisal', { waitUntil: 'domcontentloaded', timeout: 60000 });
           let html = ''; for (let i = 0; i < 40 && !html; i++) { await p.waitForTimeout(250); html = await p.evaluate(() => document.querySelector('#tool-learn')?.textContent || ''); }
           note('live calculator investment-appraisal', html ? html.slice(0, 200) : 'NO LEARN SECTION');
-          const j = await p.goto('https://kevos.com/tools/knowledge.json', { waitUntil: 'load' });
+          const j = await p.goto('https://kevos.com/tools/knowledge.json', { waitUntil: 'domcontentloaded', timeout: 60000 });
           note('live knowledge.json', `HTTP ${j.status()} tools ${Object.keys(JSON.parse(await p.evaluate(() => document.body.innerText))).length}`);
           await b.close();
           JS
