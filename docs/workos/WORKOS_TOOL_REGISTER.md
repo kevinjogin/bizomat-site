@@ -3031,3 +3031,34 @@ One tool in batch callen applying the Joule–Thomson relation from Herbert B. C
 | Tool | Result with example inputs | Checks | Callen sections | Tested |
 |---|---|---|---|---|
 | **Liquid Throttling Temperature Rise (Valve and Orifice Heating, Joule–Thomson for Liquids)** `liquid-throttling-temperature-rise` | VALVE HEATING ABOVE LIMIT | Throttling heating; Expansion term; Vapour pressure; Model and application | 3.9, 6.3 (pp. 84–86, 160–165) | Automated + cross-check |
+
+## Thermodynamics tools from Guggenheim’s Thermodynamics, batch handbook71 (added 29 October 2026)
+
+Seven tools in batch handbook71 that apply the methods of E. A. Guggenheim, *Thermodynamics: An Advanced Treatment for Chemists and Physicists* (5th revised edition, North-Holland, 1967), cited by section only, with every property, rating and limit entered by the user. Two of them sit beside tools from batch handbook69 with a similar subject: `clausius-boiling-margin-check` (beside `vapour-pressure-boiling-check`) and `ro-concentrate-pressure-check` (beside `ro-pressure-check`); the owner approved both under their own ids.
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Guggenheim sections | Tested |
+|---|---|---|---|---|
+| **Trapped Liquid Thermal Pressure Check (Blocked-In Line Heating, Pipe Stretch, Relief Need)** `trapped-liquid-pressure-check` | PRESSURE WITHIN DESIGN | Final pressure; Wall model; Gas pockets; Model and application | 1.46 | Automated + cross-check |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Guggenheim sections | Tested |
+|---|---|---|---|---|
+| **Reverse Osmosis Concentrate-End Check (Osmotic Coefficient, Concentrate Osmotic Pressure, Least Feed Pressure)** `ro-concentrate-pressure-check` | FEED PRESSURE ADEQUATE | Concentrate end; Concentration polarisation; Scaling; Model and application | 5.10, 5.16, 5.28, 7.06–7.08 | Automated + cross-check |
+| **Boiling Margin Check (Clausius–Clapeyron Vapour Pressure, Keep Liquid or Make It Boil)** `clausius-boiling-margin-check` | NO BOILING EXPECTED | Margin to boiling; Temperature range; Local pressure; Model and application | 3.37–3.39 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Guggenheim sections | Tested |
+|---|---|---|---|---|
+| **pH Electrode Two-Buffer Calibration Check (Nernst Slope, Offset, Sample pH)** `ph-electrode-calibration-check` | ELECTRODE IN LIMITS | Slope; Offset; Sample within the buffers; Buffer values; Model and application | ch. 8 (8.03, 8.11, 8.12) | Automated + cross-check |
+| **Filter Membrane Bubble Point Check (Integrity Test, Largest Pore, Other Wetting Liquid)** `filter-bubble-point-check` | INTEGRITY TEST PASSED | Bubble point; Wetting; Surface tension; Model and application | 1.60, 1.61 | Automated + cross-check |
+
+### Pneumatics
+
+| Tool | Result with example inputs | Checks | Guggenheim sections | Tested |
+|---|---|---|---|---|
+| **Gas Throttling Temperature Check (Joule–Thomson Cooling, Regulator Outlet, Preheat)** `gas-throttling-temperature-check` | PREHEAT NEEDED | Outlet temperature; Gas model; Moisture and hydrates; Model and application | 3.11, 3.20–3.22 | Automated + cross-check |
+| **Gas Separation Energy Check (Ideal Mixing, Least Work, Nitrogen Generator Efficiency)** `gas-separation-energy-check` | WITHIN TARGET ENERGY | Specific energy; Purity set point; Energy boundary; Model and application | 4.18–4.20 | Automated + cross-check |

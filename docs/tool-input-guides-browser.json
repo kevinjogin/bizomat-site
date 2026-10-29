@@ -1,10 +1,10 @@
 {
  "generated": "2026-10-29",
- "base": "http://127.0.0.1:4787",
- "tools": 867,
- "passed": 867,
- "inputs": 7356,
- "figures": 7356,
+ "base": "http://127.0.0.1:4371",
+ "tools": 874,
+ "passed": 874,
+ "inputs": 7420,
+ "figures": 7420,
  "sample": [
   {
    "id": "make-buy",
@@ -5315,6 +5315,48 @@
    "ok": true,
    "inputs": 6,
    "figures": 6
+  },
+  {
+   "id": "trapped-liquid-pressure-check",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "ro-concentrate-pressure-check",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "ph-electrode-calibration-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "clausius-boiling-margin-check",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "gas-throttling-temperature-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "filter-bubble-point-check",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "gas-separation-energy-check",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
   }
  ]
 }
