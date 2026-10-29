@@ -82,6 +82,87 @@
    "evidence": "book-link"
   },
   {
+   "reados": "publication/combustion-by-the-numbers",
+   "chapter": "available-heat-and-the-furnace-load",
+   "tool": "furnace-wall-design",
+   "type": "applies",
+   "note": "Finds a furnace wall's outside surface temperature and heat loss with convection and radiation from the surface; used for the gas furnace's standing loss.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/combustion-by-the-numbers",
+   "chapter": "available-heat-and-the-furnace-load",
+   "tool": "radiant-heat",
+   "type": "example",
+   "note": "Gives net radiation from a surface to large surroundings; with an emissivity of 1 it shows the heat a hot furnace loses through its open door.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/combustion-by-the-numbers",
+   "chapter": "available-heat-and-the-furnace-load",
+   "tool": "furnace-heat-treat-plan",
+   "type": "applies",
+   "note": "Plans a furnace load's heat, heat-up time, energy and cost; for a gas furnace, enter the available heat less standing loss as the share reaching the load.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/combustion-by-the-numbers",
+   "chapter": "flame-temperature-and-preheated-air",
+   "tool": "investment-appraisal",
+   "type": "applies",
+   "note": "Appraises an equipment purchase with yearly savings: NPV, IRR, payback and annual cost; used to test whether a recuperator pays on a small batch furnace.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/combustion-by-the-numbers",
+   "chapter": "metering-gas-and-checking-firing-rate",
+   "tool": "gas-law",
+   "type": "applies",
+   "note": "Converts a gas volume or flow between pressures and temperatures, which corrects a meter reading at line pressure to standard conditions.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/combustion-by-the-numbers",
+   "chapter": "burners-turndown-and-air-fuel-ratio-control",
+   "tool": "fan-drive-sizing",
+   "type": "applies",
+   "note": "Gives fan air and shaft power from flow, pressure and efficiency, and applies the fan laws; used to size a burner's combustion air fan.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/combustion-by-the-numbers",
+   "chapter": "flue-gas-dew-point-and-condensing-heat-recovery",
+   "tool": "heating-energy",
+   "type": "applies",
+   "note": "Gives the energy to heat a mass through a temperature range; used for the daily heat a parts washer's make-up water needs.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/combustion-by-the-numbers",
+   "chapter": "flue-gas-dew-point-and-condensing-heat-recovery",
+   "tool": "lmtd-exchanger",
+   "type": "applies",
+   "note": "Calculates the log mean temperature difference and the area for a duty and overall coefficient; used to size a flue gas to water heat exchanger.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/combustion-by-the-numbers",
+   "chapter": "cost-emissions-and-gas-or-electric",
+   "tool": "energy-converter",
+   "type": "complements",
+   "note": "Converts energy between kWh, MJ, GJ and other units, the first step in comparing a gas bill with an electricity bill.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
    "reados": "publication/compressed-air-plant-by-the-numbers",
    "chapter": "free-air-pressure-and-mass-flow",
    "tool": "pneumatic-cylinder-sizing",
@@ -159,6 +240,60 @@
    "tool": "air-pipe-drop",
    "type": "applies",
    "note": "Works out pressure drop in a compressed-air pipe for other sizes and flows.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/condensation-control-by-the-numbers",
+   "chapter": "cold-surfaces-and-the-night-sky",
+   "tool": "radiant-heat",
+   "type": "example",
+   "note": "Gives the net radiant exchange between a surface and large surroundings; with the sky's effective temperature as the surroundings, it shows how much an enclosure roof radiates on a clear night.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/condensation-control-by-the-numbers",
+   "chapter": "breathing-and-air-paths",
+   "tool": "gas-law",
+   "type": "applies",
+   "note": "Converts a gas volume between temperatures at constant pressure, which gives the air an enclosure draws in each time it cools.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/condensation-control-by-the-numbers",
+   "chapter": "seal-vent-ventilate-or-heat",
+   "tool": "enclosure-cooling-airflow",
+   "type": "applies",
+   "note": "Sizes an enclosure's ventilation fan from its heat load, wall losses and allowed temperature rise; its wall-loss term is also the first step of heater sizing.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/condensation-control-by-the-numbers",
+   "chapter": "cold-pipes-sweating-and-insulation",
+   "tool": "insulated-pipe",
+   "type": "applies",
+   "note": "Gives the outer surface temperature and heat flow of an insulated pipe; entered with a cold pipe, the surface temperature is compared with the room's dew point.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/condensation-control-by-the-numbers",
+   "chapter": "corrosion-salts-and-the-humidity-that-matters",
+   "tool": "corrosion-rate",
+   "type": "applies",
+   "note": "Turns a corrosion coupon's mass loss, area, exposure time and density into a rate in mm a year, the measurement used to compare environments.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/condensation-control-by-the-numbers",
+   "chapter": "measuring-humidity-and-proving-the-fix",
+   "tool": "instrument-calibration-check",
+   "type": "applies",
+   "note": "Checks an instrument's errors at five reference points against an accuracy class and corrects an in-service reading; used here for a humidity transmitter against salt cells.",
    "status": "approved",
    "evidence": "book-link"
   },

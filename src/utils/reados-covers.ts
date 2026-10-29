@@ -205,6 +205,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'centrifugal-pumps-by-the-numbers': { motif: 'waterwheel', tone: 'paper' },
   'heat-exchangers-by-the-numbers': { motif: 'exploded', tone: 'paper' },
   'cooling-towers-by-the-numbers': { motif: 'funnel', tone: 'carbon' },
+  'condensation-control-by-the-numbers': { motif: 'shield', tone: 'carbon' },
+  'combustion-by-the-numbers': { motif: 'production', tone: 'ember' },
   'rubber-parts-by-the-numbers': { motif: 'orbit', tone: 'ember' },
   'shape-memory-alloys-by-the-numbers': { motif: 'experiment', tone: 'graphite' },
   'reference-class-forecasting-by-the-numbers': { motif: 'estimate', tone: 'graphite' },
