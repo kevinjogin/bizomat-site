@@ -2897,3 +2897,44 @@ A forty-second round of 9 integrated design checks in batch handbook67, combinin
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Friction Wheel Drive Check (Tangential Force, Normal Force Needed, Contact Stress, Speed Ratio)** `friction-wheel-drive-check` | DRIVE ADEQUATE | Contact pressure; Bearings; Model and application | 2301–2309, 165–168 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, fifty-second pass: integrated design checks, forty-third round (added 29 October 2026)
+
+A forty-third round of 7 integrated design checks in batch handbook68, aimed at engineering business, fabrication, machining, maintenance, fluid power and quality: a machine economic life check (year-by-year EUAC, minimum-cost life, keep or replace), a butt weld quantity and cost check (groove area, weld metal, arc time, cost against quote), a cutting insert consumption and reorder plan (tool life, parts per edge, monthly use, reorder point), a bearing fleet spares plan (rating life, Weibull failures, spares for a service level), a hydraulic press cycle check (regenerative approach, pressing force, return, cycle time, motor power), a vacuum table workholding check (holding force, milling force, sliding safety factor) and a gauge repeatability and bias check (type 1 study: Cg, Cgk, bias t-test). Tests cross-check against the interest factors, EUAC comparison, weld cost, Taylor tool life, bearing life, Weibull reliability, hydraulic cylinder, hydraulic power, milling power and vacuum cup tools. WORKOS now holds 844 tools.
+
+### Money
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Machine Economic Life Check (Year-by-Year EUAC, Minimum-Cost Life, Keep or Replace)** `machine-economic-life` | KEEP FOR ANOTHER YEAR | Existing machine against the new one; Range examined; Model and application | 134–143 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Butt Weld Quantity and Cost Check (Groove Area, Weld Metal, Arc Time, Cost against Quote)** `groove-weld-cost-check` | QUOTE COVERS THE WELDING | Cost against quote; Preparation; Model and application | 1438–1441, 1476–1484 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Cutting Insert Consumption and Reorder Plan (Tool Life, Parts per Edge, Monthly Use, Reorder Point)** `insert-consumption-reorder-plan` | STOCK ABOVE REORDER POINT | Stock on hand; Parts per edge; Model and application | 1102–1106, 1132–1140 | Automated + cross-check |
+| **Vacuum Table Workholding Check (Holding Force, Milling Force, Sliding Safety Factor)** `vacuum-table-workholding-check` | PART HELD | Sliding; Lift-off and seal; Model and application | 1084–1101, 3032–3041 | Automated + cross-check |
+
+### Maintenance
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Bearing Fleet Spares Plan (Rating Life, Weibull Failures, Spares for a Service Level)** `bearing-fleet-spares-plan` | SPARES ENOUGH | Spares held; Chance of failure per bearing; Model and application | 2403–2415, 128–133 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Hydraulic Press Cycle Check (Regenerative Approach, Pressing Force, Return, Cycle Time, Motor Power)** `hydraulic-press-cycle-check` | PRESS CYCLE ADEQUATE | Pressing force; Approach pressure; Cycle time; Motor power; Stall at relief; Model and application | 365–368 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Gauge Repeatability and Bias Check (Type 1 Study: Cg, Cgk, Bias t-Test)** `gauge-repeatability-bias-check` | GAUGE CAPABLE | Repeatability (Cg); Repeatability with bias (Cgk); Resolution; Bias significance; Master value; Model and application | 128–129 | Automated + cross-check |
