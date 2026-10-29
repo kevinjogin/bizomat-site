@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 914 tools with unique ids and every previously published id kept', () => {
+test('register: 920 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 914);
+  assert.equal(ids.length, 920);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -5311,5 +5311,52 @@ test('thermodynamics checks: verdicts and guards', () => {
     ['ro-osmotic-pressure-check', { r: 100 }], ['ro-osmotic-pressure-check', { dp: 15 }], ['ro-osmotic-pressure-check', { c: 500 }],
     ['hot-cold-water-blend-check', { Tt: 70 }], ['hot-cold-water-blend-check', { Tt: 15 }], ['hot-cold-water-blend-check', { Th: 100 }], ['hot-cold-water-blend-check', { Q: 0 }],
   ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Batch handbook76: quality charts, reliability demonstration, bearing frequencies, queueing and nesting. Expected values are
+// independent hand calculations (closed forms, a Poisson-identity chi-square CDF, birth–death state probabilities for the
+// queue, a separate two-block count) and NIST's published reliability test examples.
+const QR_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['bearing-defect-frequency-check', {}, { bpfo: 88.42469262295081, bpfi: 133.5753073770492, ftf: 9.824965846994536, bsf: 58.13311026345129, err: 0.14101561368442167, match: 1 }, 1e-9],
+  ['individuals-chart-check', {}, { mean: 10.015, mrbar: 0.04454545454545424, ucl: 10.133471953578336, lcl: 9.896528046421665, nOut: 0 }, 1e-9],
+  ['p-chart-check', {}, { pbar: 0.025, ucl: 0.058119103248729424, lcl: 0, thr: 12, nOut: 0 }, 1e-12],
+  ['reliability-demonstration-test', {}, { factor: 7.9935895860526305, T: 1598.7179172105261, daysNeed: 49.95993491282894, more: 9.274673893351622, fewer: 6.680783068255863 }, 1e-6],
+  ['reliability-demonstration-test', { r: 0 }, { factor: Math.log(10) }, 1e-9], // NIST example: factor 2.3 for no failures at 90 %
+  ['reliability-demonstration-test', { M: 400, conf: 80, r: 1 }, { factor: 2.9943083470021215 }, 1e-6], // NIST example: 2.99 at 80 % with one failure
+  ['queue-wait-check', {}, { Pw: 0.2997601918465228, WqMin: 4.496402877697842, Lq: 0.3747002398081535, cNeed: 3 }, 1e-9],
+  ['queue-wait-check', { c: 2 }, { WqMin: 45.45454545454544 }, 1e-9],
+  ['sheet-nesting-yield', {}, { A: 42, B: 36, best: 45, util: 87.1875, sheets: 12, cpp: 4.32 }, 1e-9],
+];
+for (const [id, over, expected, tol] of QR_CASES) test(`quality and reliability: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('quality and reliability tools: identities', () => {
+  const b = engine.run('bearing-defect-frequency-check').values;
+  near(b.bpfo + b.bpfi, 9 * 1480 / 60, 1e-9, 'BPFO + BPFI = elements × shaft frequency');
+  near(b.ftf, b.bpfo / 9, 1e-12, 'cage frequency = BPFO ÷ elements');
+  assert.equal(engine.run('bearing-defect-frequency-check', { fm: 2 * b.bpfo }).text, 'PEAK MATCHES OUTER RACE DEFECT', 'second harmonic matched');
+  near(engine.run('reliability-demonstration-test', { units: 1 }).values.perUnit, engine.run('reliability-demonstration-test').values.T, 1e-9, 'one unit runs every hour');
+  near(engine.run('queue-wait-check', { c: 1, lam: 2, ts: 20 }).values.WqMin, (2 / 3) / (3 - 2) * 60, 1e-9, 'M/M/1: Wq = ρ ÷ (μ − λ)');
+});
+
+test('quality and reliability tools: verdicts and guards', () => {
+  assert.equal(engine.run('bearing-defect-frequency-check').text, 'PEAK MATCHES OUTER RACE DEFECT');
+  assert.equal(engine.run('bearing-defect-frequency-check', { fm: 133.5 }).text, 'PEAK MATCHES INNER RACE DEFECT');
+  assert.equal(engine.run('bearing-defect-frequency-check', { fm: 70 }).text, 'NO BEARING FREQUENCY MATCH');
+  assert.equal(engine.run('individuals-chart-check').text, 'PROCESS IN CONTROL');
+  assert.equal(engine.run('individuals-chart-check', { x5: 10.5 }).text, 'POINT OUT OF CONTROL');
+  assert.equal(engine.run('p-chart-check').text, 'PROCESS IN CONTROL');
+  assert.equal(engine.run('p-chart-check', { d10: 15 }).text, 'SAMPLE OUT OF CONTROL');
+  assert.equal(engine.run('reliability-demonstration-test').text, 'TEST FITS THE TIME AVAILABLE');
+  assert.equal(engine.run('reliability-demonstration-test', { days: 30 }).text, 'TEST TOO LONG FOR THE TIME AVAILABLE');
+  assert.equal(engine.run('queue-wait-check').text, 'WAIT WITHIN TARGET');
+  assert.equal(engine.run('queue-wait-check', { c: 2 }).text, 'WAIT TOO LONG');
+  assert.equal(engine.run('sheet-nesting-yield').text, 'LAYOUT ACCEPTABLE');
+  assert.equal(engine.run('sheet-nesting-yield', { umin: 90 }).text, 'UTILISATION TOO LOW');
+  const cases: Array<[string, Inputs]> = [['bearing-defect-frequency-check', { nb: 2 }], ['bearing-defect-frequency-check', { d: 50 }], ['individuals-chart-check', { k: 2 }], ['p-chart-check', { k: 1 }], ['p-chart-check', { d1: 300 }], ['reliability-demonstration-test', { conf: 40 }], ['queue-wait-check', { c: 0 }], ['queue-wait-check', { lam: 10 }], ['sheet-nesting-yield', { umin: 0 }], ['sheet-nesting-yield', { edge: 700 }], ['sheet-nesting-yield', { pl: 3000, pw: 3000 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });

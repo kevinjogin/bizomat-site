@@ -3935,6 +3935,196 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter covers fuel gas leaks and purge dilution of a combustion chamber; the tool finds vapour above a liquid solvent, a different source."
+  },
+  {
+   "reados": "collection/manufacturing-quality",
+   "chapter": "statistical-process-control-on-the-shop-floor",
+   "tool": "individuals-chart-check",
+   "type": "applies",
+   "note": "Builds the individuals chart this chapter describes from your readings: moving ranges, control limits and any point outside them.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter gives individuals chart limits as the average ± 2.66 × average moving range (= 3 ÷ 1.128); tool computes the same limits and flags points."
+  },
+  {
+   "reados": "collection/manufacturing-quality",
+   "chapter": "statistical-process-control-on-the-shop-floor",
+   "tool": "p-chart-check",
+   "type": "applies",
+   "note": "Builds a p chart for pass or fail inspection, as this chapter recommends, from equal-size samples; varying sizes need limits per sample.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter recommends the p chart for proportions defective; tool computes p̄ ± 3√(p̄(1 − p̄)/n) for equal samples and states that limitation."
+  },
+  {
+   "reados": "collection/reporting-history-and-analytical-data",
+   "chapter": "when-aggregate-reports-reveal-individual-records",
+   "tool": "individuals-chart-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter is about privacy in aggregate reports; “individual” is a word match only."
+  },
+  {
+   "reados": "collection/teams-incentives-and-performance",
+   "chapter": "what-your-people-measures-are-really-measuring",
+   "tool": "individuals-chart-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter discusses people metrics, not control charts."
+  },
+  {
+   "reados": "publication/prototypes-and-simulation-by-the-numbers",
+   "chapter": "pass-fail-tests-and-small-samples",
+   "tool": "p-chart-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter sizes pass/fail test samples with binomial confidence; it does not chart a process over time."
+  },
+  {
+   "reados": "publication/random-error-and-drift-by-the-numbers",
+   "chapter": "allan-deviation",
+   "tool": "p-chart-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers Allan deviation of instrument noise; no attribute charts."
+  },
+  {
+   "reados": "publication/first-of-a-kind-technology-by-the-numbers",
+   "chapter": "qualification-testing",
+   "tool": "reliability-demonstration-test",
+   "type": "applies",
+   "note": "Sizes a reliability demonstration run with the same chi-square bound this chapter uses (about 1,500 h for MTBF 500 h at 80 % with one failure allowed).",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter sizes a qualification run with chi-square bounds (1,500 h for MTBF 500 h at 80 %); tool gives factor 2.99 for one failure at 80 %, i.e. about 1,497 h."
+  },
+  {
+   "reados": "publication/accelerated-life-testing-by-the-numbers",
+   "chapter": "how-many-units-and-how-long",
+   "tool": "reliability-demonstration-test",
+   "type": "complements",
+   "note": "Plans a constant-failure-rate MTBF test; this chapter’s success-run and Weibull plans cover components that wear out.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter derives zero-failure success-run tests and Weibull trade-offs; tool plans the exponential chi-square test, a complementary case."
+  },
+  {
+   "reados": "publication/modular-projects-by-the-numbers",
+   "chapter": "proving-the-pilot",
+   "tool": "reliability-demonstration-test",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter is about piloting a project rollout, not reliability testing."
+  },
+  {
+   "reados": "publication/prototypes-and-simulation-by-the-numbers",
+   "chapter": "queues-in-the-test-lab",
+   "tool": "queue-wait-check",
+   "type": "explains",
+   "note": "Extends this chapter’s M/M/1 test-lab queue to several servers: utilisation, chance of waiting, average wait and the servers needed.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter treats a climatic chamber as an M/M/1 queue with Little’s law and the utilisation curve; tool computes the M/M/c (Erlang C) case, equal to M/M/1 with one server."
+  },
+  {
+   "reados": "publication/stage-gates-and-stopping-rules-by-the-numbers",
+   "chapter": "waiting-testing-or-proceeding",
+   "tool": "queue-wait-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter is about the value of waiting for information at a stage gate, not queueing."
+  },
+  {
+   "reados": "publication/quoting-sheet-metal-work-by-the-numbers",
+   "chapter": "material-blanks-and-nesting",
+   "tool": "sheet-nesting-yield",
+   "type": "applies",
+   "note": "Counts rectangular blanks per sheet with gaps and edge margins, the yield and the sheets to buy, the material pricing this chapter teaches.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter prices material from blanks nested on whole sheets with gaps and edges, by sheet price and yield; tool computes blanks per sheet, utilisation, sheets and cost per blank."
+  },
+  {
+   "reados": "publication/sheet-metal-production-runs-by-the-numbers",
+   "chapter": "nesting-and-material-yield",
+   "tool": "sheet-nesting-yield",
+   "type": "applies",
+   "note": "Works out blanks per sheet, yield and sheets for a batch; for shaped blanks like this chapter’s trays, enter the bounding rectangle.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter nests 500 tray blanks on 2,400 × 1,200 sheets and discusses yield and sheet size; tool does the same for rectangular blanks."
+  },
+  {
+   "reados": "publication/blanking-and-piercing-dies-by-the-numbers",
+   "chapter": "strip-layout-and-material-yield",
+   "tool": "sheet-nesting-yield",
+   "type": "complements",
+   "note": "Gives the yield of rectangular blanks on a sheet; this chapter covers the equivalent strip layout for a progressive or blanking die.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter sets edge margins, bridges and orientation for strip yield; tool applies the same margins and gaps to sheet nesting."
+  },
+  {
+   "reados": "publication/oval-sheet-metal-work-by-the-numbers",
+   "chapter": "material-nesting-and-mass",
+   "tool": "sheet-nesting-yield",
+   "type": "complements",
+   "note": "Checks the yield of the pattern rectangles on standard sheets, as this chapter does for the trough’s patterns.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter turns patterns into rectangles on 2,400 × 1,200 sheets and finds the yield; tool counts rectangles per sheet and utilisation."
+  },
+  {
+   "reados": "publication/sheet-metal-patterns-by-the-numbers",
+   "chapter": "checking-nesting-and-keeping-patterns",
+   "tool": "sheet-nesting-yield",
+   "type": "complements",
+   "note": "Counts rectangular blanks per standard sheet and the yield, the nesting step this chapter adds to the pattern checks.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter nests the job’s blanks on 2,400 × 1,200 sheets; tool gives blanks per sheet and utilisation for rectangular blanks."
+  },
+  {
+   "reados": "publication/cutting-and-gouging-by-the-numbers",
+   "chapter": "laser-cutting",
+   "tool": "sheet-nesting-yield",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter explains the laser process and kerf; it does not cover nesting yield."
+  },
+  {
+   "reados": "collection/lean-and-continuous-improvement",
+   "chapter": "maintenance-that-prevents-breakdowns",
+   "tool": "bearing-defect-frequency-check",
+   "type": "complements",
+   "note": "Helps interpret the vibration trends this chapter recommends for predictive maintenance by naming the bearing defect a spectrum peak points to.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter recommends predictive maintenance using vibration trends; tool computes bearing defect frequencies and matches a measured peak."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "selecting-bearings-and-lubrication-for-reliable-machines",
+   "tool": "bearing-defect-frequency-check",
+   "type": "complements",
+   "note": "Adds a check on vibration readings this chapter suggests adding to inspections: which bearing defect a spectrum peak matches.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers bearing failure causes and adds vibration readings to monthly inspections; tool identifies bearing defect frequencies in those readings."
   }
  ]
 }
