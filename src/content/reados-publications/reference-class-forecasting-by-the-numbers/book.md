@@ -81,10 +81,24 @@ references:
     url: "https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/producer-price-indexes-australia"
     note: "Named as a source of construction and manufacturing price indexes for converting past project costs to current dollars. The index values in Chapter 2 are illustrative, not ABS figures."
 related:
-  - title: "Project Estimates, Schedules and Costs"
-    href: "/reados/collections/project-estimates-schedules-and-costs/"
   - title: "Modular Projects by the Numbers"
     href: "/reados/publications/modular-projects-by-the-numbers/"
+  - title: "Front-End Planning by the Numbers"
+    href: "/reados/publications/front-end-planning-by-the-numbers/"
+  - title: "Stage Gates and Stopping Rules by the Numbers"
+    href: "/reados/publications/stage-gates-and-stopping-rules-by-the-numbers/"
+  - title: "Outcome-First Projects by the Numbers"
+    href: "/reados/publications/outcome-first-projects-by-the-numbers/"
+  - title: "Prototypes and Simulation by the Numbers"
+    href: "/reados/publications/prototypes-and-simulation-by-the-numbers/"
+  - title: "First-of-a-Kind Technology by the Numbers"
+    href: "/reados/publications/first-of-a-kind-technology-by-the-numbers/"
+  - title: "Demand and Benefit Forecasts by the Numbers"
+    href: "/reados/publications/demand-and-benefit-forecasts-by-the-numbers/"
+  - title: "Project Teams and Contracts by the Numbers"
+    href: "/reados/publications/project-teams-and-contracts-by-the-numbers/"
+  - title: "Project Estimates, Schedules and Costs"
+    href: "/reados/collections/project-estimates-schedules-and-costs/"
   - title: "Random Error and Drift by the Numbers"
     href: "/reados/publications/random-error-and-drift-by-the-numbers/"
   - title: "Building Approval for Factory Projects"
@@ -110,6 +124,8 @@ The business, its projects, its records and its numbers are invented. None descr
 ## How to use the book
 
 Read Chapters 1 and 2 first: the inside view and a consistent measure of overrun underlie everything else. Chapters 3 to 5 build the reference class and turn it into a budget, and should be read in order. Chapter 6 on fat tails, Chapter 7 on schedule and benefits, and Chapter 8 on component simulation can be read in any order after Chapter 5. Chapters 9 and 10 cover the decision itself and what happens after it. Every calculation in the book was checked by running it, and the spreadsheet functions named in the text reproduce the results.
+
+The book is one of a series of nine KEVOS® READOS books on planning and delivering projects, written to be read together. *Front-End Planning by the Numbers* covers the definition work that turns an early estimate into a decision-grade one, and *Stage Gates and Stopping Rules by the Numbers* the decisions made at each gate, including when to stop. *Demand and Benefit Forecasts by the Numbers* applies the outside view to volumes and benefits rather than costs, and *First-of-a-Kind Technology by the Numbers* shows why a novel process needs a wider allowance than any reference class of proven plant suggests. *Modular Projects by the Numbers*, *Outcome-First Projects by the Numbers*, *Prototypes and Simulation by the Numbers* and *Project Teams and Contracts by the Numbers* complete the series.
 
 ## Source limits and professional responsibility
 

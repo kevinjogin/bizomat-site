@@ -144,6 +144,9 @@ The overrun was found early because the business's engineer received the integra
 
 The correction had three parts. The first crew's lead fitter returned for cells 8 and 9 to work beside the new crew. The build book was brought up to date with the lessons from cells 4 to 7. The contract was varied to name the lead fitter and supervisor as key personnel, to require four weeks' notice of any change, and to require an overlap of one complete cell for any replacement. Had the new crew relearned from the unit-2 position through all six remaining cells instead, the loss would have been about **1,225 hours, A$146,947**, more than three times the cost of the first cell's lesson.
 
+
+A standard module is the opposite of a first-of-a-kind plant, and the difference can be priced. *First-of-a-Kind Technology by the Numbers* compares a proven line with a novel process in [The price of being first: a proven line against a novel process](/reados/publications/first-of-a-kind-technology-by-the-numbers/the-price-of-being-first/).
+
 ## Exercise: a pause between builds
 
 The integrator proposes to pause the programme for six weeks between cells 8 and 9 to fit in another job, keeping the same crew. Assume the crew forgets enough that cell 9 takes the hours of unit 5 on the planning curve, and that cells 10, 11 and 12 follow on as units 6, 7 and 8. Every cell from 9 onward also starts its benefit six weeks later, at A$180,000 a year per cell. What does the pause cost, and which part of the cost is larger?

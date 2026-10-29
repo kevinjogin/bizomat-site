@@ -67,6 +67,20 @@ references:
 related:
   - title: "Reference Class Forecasting by the Numbers"
     href: "/reados/publications/reference-class-forecasting-by-the-numbers/"
+  - title: "Front-End Planning by the Numbers"
+    href: "/reados/publications/front-end-planning-by-the-numbers/"
+  - title: "Stage Gates and Stopping Rules by the Numbers"
+    href: "/reados/publications/stage-gates-and-stopping-rules-by-the-numbers/"
+  - title: "Outcome-First Projects by the Numbers"
+    href: "/reados/publications/outcome-first-projects-by-the-numbers/"
+  - title: "Prototypes and Simulation by the Numbers"
+    href: "/reados/publications/prototypes-and-simulation-by-the-numbers/"
+  - title: "First-of-a-Kind Technology by the Numbers"
+    href: "/reados/publications/first-of-a-kind-technology-by-the-numbers/"
+  - title: "Demand and Benefit Forecasts by the Numbers"
+    href: "/reados/publications/demand-and-benefit-forecasts-by-the-numbers/"
+  - title: "Project Teams and Contracts by the Numbers"
+    href: "/reados/publications/project-teams-and-contracts-by-the-numbers/"
   - title: "Sheet Metal Production Runs by the Numbers"
     href: "/reados/publications/sheet-metal-production-runs-by-the-numbers/"
   - title: "Welder Training by the Numbers"
@@ -94,6 +108,8 @@ The business, its sites, its lines and every number in the case are invented. No
 ## How to use the book
 
 Read Chapter 1 first, because the outcome it defines is the yardstick for every later decision. Chapters 2 to 4 cover design and proving, Chapters 5 and 6 learning and people, Chapters 7 and 8 the rollout, and Chapters 9 and 10 the comparison and the long-run discipline. Every calculation was checked by running it, and the WORKOS tools linked in the chapters reproduce the learning-curve and cost arithmetic.
+
+The book is one of a series of nine KEVOS® READOS books on planning and delivering projects, written to be read together. *Reference Class Forecasting by the Numbers* supplies the outside view used here to judge each option's risk, and *Prototypes and Simulation by the Numbers* goes further into models, prototypes and test sizes. *First-of-a-Kind Technology by the Numbers* covers the cost of being first, which a standard module avoids, and *Project Teams and Contracts by the Numbers* the contracts and teams that deliver a rollout. *Front-End Planning by the Numbers*, *Stage Gates and Stopping Rules by the Numbers*, *Outcome-First Projects by the Numbers* and *Demand and Benefit Forecasts by the Numbers* complete the series.
 
 ## Source limits and professional responsibility
 

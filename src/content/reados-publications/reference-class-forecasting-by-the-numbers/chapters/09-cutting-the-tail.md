@@ -139,6 +139,9 @@ caption: This is an illustration. A real mitigation changes the work, the scope,
 
 The contingency was restored, the register entry was deleted, and the team adopted a rule: a reduction in the forecast must name the change in the project that justifies it.
 
+
+Cutting the tail is easier when the points at which a project will stop are agreed before the evidence arrives. *Stage Gates and Stopping Rules by the Numbers* works this through in [Stopping rules and kill criteria written before the evidence](/reados/publications/stage-gates-and-stopping-rules-by-the-numbers/kill-criteria-before-the-evidence/).
+
 ## Exercise: the software gate
 
 This is an illustration. At the software gate, Stage 1 is 60% complete and its re-forecast P90 is A$2,950k. The pilot passed its acceptance criteria and cost A$52k, a ratio of 1.41 on its A$36.8k share. The rollout's share of the approved budget is the remaining A$110.5k. Using the software subclass P90 of 2.405 for the rollout, what is the total commitment at P90 if the rollout is approved, and does it pass the A$3.5m affordability test?

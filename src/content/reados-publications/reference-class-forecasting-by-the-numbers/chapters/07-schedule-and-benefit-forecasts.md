@@ -127,6 +127,9 @@ caption: This is an illustration. Lodging the network application at approval gi
 
 The correction was to make the network application the first activity after approval, using P08's actual duration rather than its plan. That restored the 36-week date on paper, but at a price that the schedule now shows: two independent paths, the machines and the power supply, must both be ready in week 26. [How confident is that finish date?](/reados/collections/project-estimates-schedules-and-costs/how-confident-is-that-finish-date/) calls this a merge point. If each path has, say, a 70% chance of being ready on time and the two are independent, the chance that both are ready is 0.7 × 0.7 = 49%. The team also asked the integrator whether the machines could be commissioned on temporary supply, which would remove the merge point for the first weeks, and added the network application to the list of tail items in Chapter 9.
 
+
+Benefits need the same outside view as costs and dates. *Demand and Benefit Forecasts by the Numbers* builds a volume forecast from its drivers, tests it against base rates and tracks it after approval, beginning with [The Hiding Hand and the evidence on optimistic forecasts](/reados/publications/demand-and-benefit-forecasts-by-the-numbers/hiding-hand-and-the-evidence/).
+
 ## Exercise: a customer promise at week 40
 
 The sales manager wants to tell a major customer that Bay 4's capacity will be available from week 40 after approval. Using the class's schedule ratios, what share of past projects would have met that date? What date has the same confidence as the P70 cost, and what contribution would be lost against the 36-week plan if Bay 4 starts at that date?

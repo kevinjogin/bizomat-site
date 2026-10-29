@@ -209,6 +209,13 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'shape-memory-alloys-by-the-numbers': { motif: 'experiment', tone: 'graphite' },
   'reference-class-forecasting-by-the-numbers': { motif: 'estimate', tone: 'graphite' },
   'modular-projects-by-the-numbers': { motif: 'gantt', tone: 'ember' },
+  'front-end-planning-by-the-numbers': { motif: 'pathway', tone: 'paper' },
+  'stage-gates-and-stopping-rules-by-the-numbers': { motif: 'gates', tone: 'graphite' },
+  'outcome-first-projects-by-the-numbers': { motif: 'handover', tone: 'carbon' },
+  'prototypes-and-simulation-by-the-numbers': { motif: 'launch', tone: 'graphite' },
+  'first-of-a-kind-technology-by-the-numbers': { motif: 'ladder', tone: 'graphite' },
+  'demand-and-benefit-forecasts-by-the-numbers': { motif: 'cashflow', tone: 'graphite' },
+  'project-teams-and-contracts-by-the-numbers': { motif: 'team', tone: 'graphite' },
 };
 
 const hash = (s: string) => [...s].reduce((a, c) => (Math.imul(a, 33) + c.charCodeAt(0)) >>> 0, 5381);

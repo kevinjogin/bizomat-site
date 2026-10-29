@@ -144,6 +144,9 @@ caption: The open question is this chapter's error. A model fed with nominal inp
 - ? Which inputs have a recorded spread, and where it came from | listed for every input before sign-off
 ```
 
+
+Deciding which model, mock-up or test is worth paying for is a question of the value of information. *Prototypes and Simulation by the Numbers* puts a number on it in [The value of a test: buying information before committing](/reados/publications/prototypes-and-simulation-by-the-numbers/the-value-of-a-test/).
+
 ## Exercise: a second round of modelling
 
 After the pilot, the integrator proposes a second round of emulation for the next design change, a new pallet pattern, at a cost of **A$12,000**, excluding GST. The team's judgement, from the issue log, is that the round would find three issues that would otherwise be found on the next pilot run in the workshop. Is the round worth doing, and how many issues would it need to find to break even?
