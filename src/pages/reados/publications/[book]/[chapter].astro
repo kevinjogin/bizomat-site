@@ -5,12 +5,15 @@ import ReadOSChapterReader from '../../../../components/ReadOSChapterReader.astr
 import { getPublications, publicationHref, publicationChapterHref } from '../../../../utils/publications.ts';
 import { readingTime } from '../../../../utils/content.ts';
 import { SITE } from '../../../../config/site.ts';
+import ApplyInPractice from '../../../../components/knowledge/ApplyInPractice.astro';
+import { knowledgeGraph } from '../../../../utils/knowledge.ts';
 export async function getStaticPaths() {
   return (await getPublications()).flatMap(({book,chapters})=>chapters.map((chapter,index)=>({params:{book:book.id,chapter:chapter.data.chapterSlug},props:{book,chapters,chapter,index}})));
 }
 const {book,chapters,chapter,index}=Astro.props;
 const {Content}=await render(chapter);
 const href=publicationChapterHref(book.id,chapter.data.chapterSlug);
+const tools=knowledgeGraph().toolsFor(`publication/${book.id}`,chapter.data.chapterSlug);
 ---
 <BaseLayout title={`${chapter.data.title} (${book.data.title})`} description={chapter.data.description} canonical={href}
  breadcrumbs={[{label:'READOS',href:'/reados/'},{label:book.data.title,href:publicationHref(book.id)},{label:chapter.data.title,href}]}
@@ -22,5 +25,6 @@ const href=publicationChapterHref(book.id,chapter.data.chapterSlug);
   searchable filter={`category:${book.data.category}`}
   finish={{href:publicationHref(book.id)+'#references',label:'References and further reading',small:'Book completed →'}}>
   <Content />
+  <ApplyInPractice slot="after" items={tools} />
  </ReadOSChapterReader>
 </BaseLayout>

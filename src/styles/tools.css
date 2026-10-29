@@ -212,13 +212,30 @@
 .guide-card ul, .guide-card ol { padding-left:1.1rem; }
 .guide-card li { margin-bottom:.35rem; }
 .guide-method li { font-variant-numeric:tabular-nums; }
+/* Long reference URLs and identifiers wrap instead of widening the page on phones. */
+.guide-card li, .guide-card p { overflow-wrap:anywhere; }
+
+/* ---------- READOS readings in the calculator (ui.js renderLearn) ---------- */
+.tool-learn { margin-top:clamp(2rem,4vw,3rem); }
+.tool-learn:empty { display:none; }
+.learn-lead { margin:0 0 1.25rem; color:var(--ink-2); font-size:.95rem; max-width:46rem; }
+.learn-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,19rem),1fr)); gap:1rem; margin:0; padding:0; list-style:none; }
+.learn-card { padding:1.1rem 1.2rem; border:1px solid var(--line); border-radius:10px; background:var(--paper-2); }
+.learn-label { margin:0 0 .35rem; color:var(--muted); font-size:.72rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.learn-card h3 { margin:0 0 .3rem; font-size:1.02rem; line-height:1.3; }
+.learn-card h3 a { color:var(--ink); text-decoration:none; }
+.learn-card h3 a:hover, .learn-card h3 a:focus-visible { color:var(--accent); text-decoration:underline; text-underline-offset:3px; }
+.learn-book { margin:0 0 .5rem; color:var(--muted); font-size:.84rem; }
+.learn-book a { color:var(--ink-2); }
+.learn-what { margin:0; color:var(--ink-2); font-size:.9rem; line-height:1.5; }
+.learn-what strong { color:var(--ink); font-weight:600; }
 
 /* ---------- Decision report (print) ---------- */
 .print-report { display:none; }
 @media (max-width:900px) { .tool-analysis { grid-template-columns:1fr; } .guide-grid { grid-template-columns:1fr 1fr; } }
 @media (max-width:620px) { .guide-grid { grid-template-columns:1fr; } .check-pill { min-width:4rem; } .an-table { font-size:.84rem; } .an-table th, .an-table td { padding:.5rem .4rem; } }
 @media print {
-  .site-header, .site-footer, .chat-widget, .tools-intro, .back-button, .tool-actions, .form-actions, .custom-cta, .tool-flash, .ig { display:none !important; }
+  .site-header, .site-footer, .chat-widget, .tools-intro, .back-button, .tool-actions, .form-actions, .custom-cta, .tool-flash, .ig, .tool-learn { display:none !important; }
   .workspace { display:block !important; }
   .tool-layout { grid-template-columns:1fr; }
   .panel { border:0; padding:0; }
