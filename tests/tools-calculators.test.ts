@@ -67,21 +67,25 @@ test('every WORKOS browser script parses', () => {
   }
 });
 
-test('the tools page loads exactly the category files that exist, in data → guides → core → calc → ui order', () => {
+test('the tools page loads its engine up front and each tool\'s data, guide, inputs and calc files on demand', () => {
   const page = readFileSync(join(process.cwd(), 'src', 'pages', 'tools', 'index.astro'), 'utf8');
   // The file list lives in the shared loader used by the tools page and the tool pages.
   const loader = readFileSync(join(process.cwd(), 'src', 'utils', 'workos-tools.ts'), 'utf8');
-  assert.match(page, /TOOL_FILES as FILES/);
   const listed = /export const TOOL_FILES = \[([^\]]+)\]/.exec(loader)?.[1].match(/'([a-z0-9]+)'/g)?.map((s) => s.slice(1, -1));
   assert.deepEqual(listed, FILES);
-  for (const kind of ['data', 'guides', 'calc']) {
+  for (const kind of ['data', 'guides', 'inputs', 'calc']) {
     const onDisk = readdirSync(DIR).filter((n) => n.startsWith(`${kind}-`)).map((n) => n.slice(kind.length + 1, -3)).sort();
     assert.deepEqual(onDisk, [...FILES].sort(), `${kind}-*.js files match the page list`);
   }
   for (let i = 1; i <= 7; i++) assert.ok(!existsSync(join(DIR, `data-${i}.js`)) && !existsSync(join(DIR, `calc-${i}.js`)), `old bundle ${i} removed`);
-  const order = ['/tools/data-${f}.js', '/tools/guides-${f}.js', '/tools/core.js', '/tools/calc-${f}.js', '/tools/ui.js'].map((s) => page.indexOf(s));
-  assert.ok(order.every((p) => p > 0), 'all script groups are loaded');
-  assert.deepEqual([...order].sort((a, b) => a - b), order, 'scripts load in dependency order');
+  // The page loads only the engine; ui.js fetches data-, guides-, inputs- and calc-<file>.js for the tool that opens.
+  const order = ['id="workos-tool-files"', '/tools/core.js', '/tools/input-guides.js', '/tools/ui.js'].map((s) => page.indexOf(s));
+  assert.ok(order.every((p) => p > 0), 'the file map and engine scripts are on the page');
+  assert.deepEqual([...order].sort((a, b) => a - b), order, 'map, core, input guides, then ui');
+  assert.doesNotMatch(page, /\/tools\/(data|guides|inputs|calc)-\$\{f\}\.js/, 'tool files are not all loaded up front');
+  assert.match(page, /set:html=\{JSON\.stringify\(fileOf\)\}/, 'the map comes from the shared loader');
+  const ui = read('ui.js');
+  for (const kind of ['data', 'guides', 'inputs', 'calc']) assert.ok(ui.includes(`'${kind}'`), `ui.js loads ${kind}-<file>.js`);
   assert.match(page, /<ToolCard id=\{t\.id\} href=\{cardHref\(t\.id\)\}/, 'directory cards are rendered at build time and link to their tool');
   assert.match(readFileSync(join(process.cwd(), 'src', 'components', 'library', 'ToolCard.astro'), 'utf8'), /<a class="lib-card" href=\{href\}[^>]*data-tool-id=\{id\}/, 'cards carry the id ui.js opens');
   // A tool's own page where its guide stands alone, otherwise the calculator itself.

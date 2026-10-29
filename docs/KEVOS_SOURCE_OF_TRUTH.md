@@ -54,6 +54,8 @@ tests/          brand-wordmark, chat, contact, heading-font, reados-chapters, mo
 
 Every WORKOS input has a "What this means" panel with an SVG figure: renderer `public/tools/input-guides.js`, words per field in `public/tools/inputs-<file>.js` (one per tool file), rendered by `ui.js` and on the static `/tools/<id>/` pages. Check coverage with `node scripts/tools/input-guides.mjs check`; a new tool or field fails `tests/tool-input-guides.test.ts` until its entry is written. Report, inventory and open tool issues: `docs/tool-input-guides-progress.md`.
 
+The `/tools/` page loads only `core.js`, `input-guides.js`, `ui.js` and a tool-to-file map (`#workos-tool-files`); `ui.js` fetches a tool's `data-`, `guides-`, `inputs-` and `calc-<file>.js` when it opens. A new tool file needs no page change: it is listed in `TOOL_FILES` and the map is built from it. `tests/tools-on-demand.test.ts` checks every tool calculates the same with only its own file loaded.
+
 ### Navigation (src/config/site.ts)
 
 Header: KEVOS® (home), WORKOS (`/tools/`) and READOS (`/reados/`), plus the **REACHOS** call to action → `/contact/`. Footer adds service anchors, the assessment, Factory Fix, WORKOS, the READOS RSS feed, and Privacy, Terms, Disclaimer.
