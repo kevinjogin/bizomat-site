@@ -3021,3 +3021,13 @@ Seven tools in batch handbook72 that apply the methods of Çengel and Boles, The
 | **Cooling Coil Load with Dehumidification (Psychrometric Balance, Condensate, Sensible Heat Ratio)** `cooling-coil-dehumidification-check` | COIL CAN MEET THE LOAD | Coil capacity; Condensation; Coil surface; Model and application | 14-2, 14-7 | Automated + cross-check |
 | **Hydrocarbon Combustion Air and Flue Gas Check (Air–Fuel Ratio, Flue Analysis, Water Dew Point)** `combustion-air-flue-gas-check` | FLUE ABOVE DEW POINT | Lowest surface against the dew point; Excess air; Acid dew point; Model and application | 15-1, 15-2 | Automated + cross-check |
 | **Gas Compressor or Turbine Isentropic Efficiency from Measured Temperatures (Power, Entropy Generation)** `compressor-turbine-efficiency-check` | EFFICIENCY ACCEPTABLE | Physical limit; Efficiency against minimum; Model and application | 7-9, 7-12 | Automated + cross-check |
+
+## Thermodynamics tool from Callen’s Thermodynamics, batch callen (added 29 October 2026)
+
+One tool in batch callen applying the Joule–Thomson relation from Herbert B. Callen’s *Thermodynamics and an Introduction to Thermostatistics* (2nd edition, Wiley, 1985) to liquids: the temperature rise of oil, water or another liquid throttled across a relief valve, flow control, orifice or partly closed valve, with every property and limit entered by the user. Seven other tools built from the same source were withdrawn before release as duplicates of tools that are live or in progress elsewhere.
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Callen sections | Tested |
+|---|---|---|---|---|
+| **Liquid Throttling Temperature Rise (Valve and Orifice Heating, Joule–Thomson for Liquids)** `liquid-throttling-temperature-rise` | VALVE HEATING ABOVE LIMIT | Throttling heating; Expansion term; Vapour pressure; Model and application | 3.9, 6.3 (pp. 84–86, 160–165) | Automated + cross-check |

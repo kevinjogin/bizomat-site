@@ -2,7 +2,7 @@
 
 Generated 2026-10-29 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 251 relationships (144 from links authors wrote in the books, 107 from editorial review). Rejected: 37. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 253 relationships (144 from links authors wrote in the books, 109 from editorial review). Rejected: 39. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -117,6 +117,8 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Compressed Air Plant by the Numbers | Discharge temperature, staging and cooling | Gas Compressor or Turbine Isentropic Efficiency from Measured Temperatures (Power, Entropy Generation) | complements | Chapter calculates the isentropic temperature rise and explains why oil-injected screws run cool; tool computes the same T₂ₛ and states that oil-injected machines cannot be tested by temperature. |
 | How Engineering Shaped Industry: Power, Networks and the Modern Era | Engines after steam: internal combustion, diesel, gas turbines and matching technology to the duty | Air-Standard Otto and Diesel Cycle Check (Efficiency, Net Work, Mean Effective Pressure, Peak Pressure) | example | Chapter explains that efficiency rises with compression ratio, knock limits petrol engines and diesel pressures need heavier engines; tool calculates ideal Otto and Diesel efficiency and peak pressure for a ratio. |
 | How Engineering Shaped Industry: Power, Networks and the Modern Era | Engines after steam: internal combustion, diesel, gas turbines and matching technology to the duty | Gas Turbine (Brayton) Cycle Check with Regenerator (Net Power, Back-Work Ratio, Efficiency) | example | Chapter describes the gas turbine’s continuous cycle and says hotter turbine inlets raise efficiency; tool shows this with the Brayton cycle. |
+| Real Gases by the Numbers | Throttling: the Joule–Thomson effect at the regulator | Liquid Throttling Temperature Rise (Valve and Orifice Heating, Joule–Thomson for Liquids) | complements | Chapter defines the Joule–Thomson coefficient for gases at a regulator; the tool applies the general Joule–Thomson relation (Callen eq. 6.41) to liquids, a related case. |
+| Entropy by the Numbers | Throttling, mixing and friction | Liquid Throttling Temperature Rise (Valve and Orifice Heating, Joule–Thomson for Liquids) | complements | Chapter shows valve friction in a liquid turning pressure into a small temperature rise (dissipation = volume flow × pressure drop); the tool gives that rise, v(1 − Tβ)Δp ÷ cp, per kilogram. |
 
 ## 2. Rejected
 
@@ -159,6 +161,8 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Entropy by the Numbers | Absolute temperature and the Carnot limit | Air-Standard Otto and Diesel Cycle Check (Efficiency, Net Work, Mean Effective Pressure, Peak Pressure) | Rejected: the chapter is about the Carnot limit for any engine; the Otto/Diesel tool shows the Carnot figure only as a side comparison. |
 | Process Chillers by the Numbers | Compressor work and discharge temperature | Air-Standard Otto and Diesel Cycle Check (Efficiency, Net Work, Mean Effective Pressure, Peak Pressure) | Rejected: refrigerant compressor work, not engine cycles; matched only on the words isentropic and compression. |
 | Process Chillers by the Numbers | Compressor work and discharge temperature | Gas Turbine (Brayton) Cycle Check with Regenerator (Net Power, Back-Work Ratio, Efficiency) | Rejected: refrigerant compressor work, not gas-turbine cycles; matched only on compressor and isentropic. |
+| Process Chillers by the Numbers | Throttling and flash gas | Liquid Throttling Temperature Rise (Valve and Orifice Heating, Joule–Thomson for Liquids) | Rejected: chapter throttles a refrigerant into two phases and calculates flash gas; the tool is for a single-phase liquid that stays liquid. |
+| Process Steam by the Numbers | Pressure reduction and distribution | Liquid Throttling Temperature Rise (Valve and Orifice Heating, Joule–Thomson for Liquids) | Rejected: chapter throttles steam and tracks its dryness; the tool is for a single-phase liquid, not a vapour. |
 
 ## 3. Published READOS books with no approved connection
 

@@ -1,10 +1,10 @@
 {
  "generated": "2026-10-29",
- "base": "http://127.0.0.1:4372",
- "tools": 866,
- "passed": 866,
- "inputs": 7350,
- "figures": 7350,
+ "base": "http://127.0.0.1:4787",
+ "tools": 867,
+ "passed": 867,
+ "inputs": 7356,
+ "figures": 7356,
  "sample": [
   {
    "id": "make-buy",
@@ -5309,6 +5309,12 @@
    "ok": true,
    "inputs": 9,
    "figures": 9
+  },
+  {
+   "id": "liquid-throttling-temperature-rise",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
   }
  ]
 }
