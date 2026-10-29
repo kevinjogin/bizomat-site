@@ -9,6 +9,7 @@ import { audit } from '../scripts/tools/input-guides.mjs';
 // public/tools/input-guides.js as an accessible <details> panel with an SVG figure that follows the typed value.
 
 const DIR = join(process.cwd(), 'public', 'tools');
+const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 const loader = readFileSync(join(process.cwd(), 'src', 'utils', 'workos-tools.ts'), 'utf8');
 const FILES = /export const TOOL_FILES = \[([^\]]+)\]/.exec(loader)![1].match(/'([a-z0-9]+)'/g)!.map((s) => s.slice(1, -1));
@@ -84,7 +85,9 @@ test('every guide renders with its input association, accessible figure and no b
       const e = all.entries[t.id]?.[f.key];
       const html: string = all.ig.fieldGuide(t, f, e);
       const where = `${t.id}.${f.key}`;
-      assert.doesNotMatch(html, /undefined|NaN|\[object/, `${where} renders cleanly`);
+      // The entry's own words may say "undefined" (a line through one point is undefined); the generated parts may not.
+      const generated = [e.what, e.tip, e.effect, e.unclear].filter(Boolean).reduce((h: string, w: string) => h.split(esc(w)).join(''), html);
+      assert.doesNotMatch(generated, /undefined|NaN|\[object/, `${where} renders cleanly`);
       assert.ok(html.includes(`id="ig-${f.key}-what"`), `${where} has the definition the input describes itself with`);
       if (e.unclear) continue;
       assert.ok(html.includes(`data-ig-for="f-${f.key}"`), `${where} names its input`);

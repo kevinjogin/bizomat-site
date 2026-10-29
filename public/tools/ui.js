@@ -48,7 +48,7 @@
     if (f.type === 'range')
       return `<div class="field"><label for="${id}">${esc(f.label)}</label><div class="range-line"><input id="${id}" name="${esc(f.key)}" type="range" min="${f.min}" max="${f.max}" step="${f.step ?? 1}" value="${f.default}"${aria}><span class="range-value" data-range="${esc(f.key)}">${f.default}</span></div>${sourceHint(t, f)}${fieldGuide(t, f)}</div>`;
     if (f.type === 'select')
-      return `<div class="field"><label for="${id}">${esc(f.label)}</label><select id="${id}" name="${esc(f.key)}"${aria}>${f.options.map((o) => `<option value="${esc(o[0])}"${o[0] === f.default ? ' selected' : ''}>${esc(o[1])}</option>`).join('')}</select>${sourceHint(t, f)}${fieldGuide(t, f)}</div>`;
+      return `<div class="field"><label for="${id}">${esc(f.label)}</label><select id="${id}"${aria} name="${esc(f.key)}">${f.options.map((o) => `<option value="${esc(o[0])}"${o[0] === f.default ? ' selected' : ''}>${esc(o[1])}</option>`).join('')}</select>${sourceHint(t, f)}${fieldGuide(t, f)}</div>`;
     return `<div class="field"><label for="${id}">${esc(f.label)}</label><div class="input-wrap"><input id="${id}" name="${esc(f.key)}" type="number" ${t.collection === 'MAKEOS' ? 'required' : ''} value="${f.default}" min="${f.min ?? ''}" max="${f.max ?? ''}" step="${f.step ?? 'any'}" inputmode="decimal"${aria}>${f.unit ? `<span class="unit">${esc(f.unit)}</span>` : ''}</div>${sourceHint(t, f)}${fieldGuide(t, f)}</div>`;
   }
   const inputFields = (t) => t.fields.filter((f) => f.type !== 'heading');

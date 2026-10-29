@@ -2,7 +2,7 @@
 // Read with public/tools/input-guides.js; units, accepted ranges and examples come from data-handbook45.js.
 window.WORKOS_INPUTS = Object.assign(window.WORKOS_INPUTS || {}, {
   'air-main-sizing': {
-    Q: { what: 'The peak air consumption this main carries, expressed as free air at atmospheric conditions, the way compressor output and tool consumption are quoted.', tip: 'Free air, not the compressed volume at line pressure.', effect: 'Air velocity in the main rises in direct proportion to flow.', fig: 'flow', sym: 'Q' },
+    Q: { what: 'The peak air consumption this main carries, expressed as free air at atmospheric conditions, the way compressor output and tool consumption are quoted.', tip: 'Use free air, not the compressed volume at line pressure.', effect: 'Air velocity in the main rises in direct proportion to flow.', fig: 'flow', sym: 'Q' },
     p: { what: 'The gauge pressure at the start of the main. It sets how far the free air is compressed, and so its actual velocity and density in the pipe.', tip: 'Gauge pressure; the tool adds atmospheric pressure itself.', effect: 'For the same free-air flow, higher pressure lowers the actual velocity and the pressure drop.', fig: 'pressure', sym: 'p' },
     T: { what: 'The temperature of the compressed air in the main, used for its density and actual volume flow.', fig: 'temperature', sym: 'T' },
     L: { what: 'The straight pipe length of the main plus the equivalent length of its bends, tees and valves, taken from fitting tables or the pipe supplier.', tip: 'Leaving out the fittings underestimates the pressure drop.', effect: 'Pressure drop is directly proportional to the equivalent length.', fig: 'length', sym: 'L' },

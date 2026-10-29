@@ -87,7 +87,7 @@ window.WORKOS_INPUTS = Object.assign(window.WORKOS_INPUTS || {}, {
     hbMax: { what: 'The highest Brinell hardness the drawing or material specification allows.', fig: 'number' },
   },
   'compressor-staging-check': {
-    Q: { what: 'The air the compressor delivers, expressed as free air at inlet conditions.', tip: 'Free air delivery, not the compressed volume at discharge pressure.', effect: 'Shaft power rises in direct proportion.', fig: 'flow', sym: 'Q' },
+    Q: { what: 'The air the compressor delivers, expressed as free air at inlet conditions.', tip: 'Use free air delivery, not the compressed volume at discharge pressure.', effect: 'Shaft power rises in direct proportion.', fig: 'flow', sym: 'Q' },
     p1: { what: 'The absolute pressure of the air at the compressor inlet.', tip: 'Absolute pressure: standard atmosphere is 1.01325 bar, not zero.', fig: 'pressure', sym: 'p₁' },
     p2: { what: 'The pressure the compressor delivers, as read on a gauge at the discharge.', tip: 'Gauge pressure; the tool adds standard atmosphere to get absolute.', fig: 'pressure', sym: 'p₂' },
     T1: { what: 'The air temperature entering the first stage. The tool assumes the intercooler returns the air to this same temperature.', fig: 'temperature', sym: 'T₁' },
