@@ -75,6 +75,31 @@ for (const id of ids) {
   results.push(r);
 }
 
+// Every tool again on a 360 px phone screen with all guides open: no sideways scroll, every panel and figure
+// inside the screen, and tap targets of at least 24 px (WCAG 2.2 target size).
+const phone = await browser.newPage({ viewport: { width: 360, height: 780 }, isMobile: true, hasTouch: true });
+await phone.goto(`${base}/tools/`, { waitUntil: 'load' });
+for (const r of results) {
+  const issues = await phone.evaluate((id) => {
+    history.pushState({}, '', `?tool=${id}`);
+    dispatchEvent(new PopStateEvent('popstate'));
+    const out = [];
+    const form = document.querySelector('#tool-form');
+    form.querySelectorAll('details.ig').forEach((d) => (d.open = true));
+    if (document.documentElement.scrollWidth > innerWidth + 1) out.push(`phone: page scrolls sideways (${document.documentElement.scrollWidth} px)`);
+    for (const el of form.querySelectorAll('.ig-panel, .ig-fig')) {
+      const b = el.getBoundingClientRect();
+      if (b.left < -1 || b.right > innerWidth + 1) { out.push(`phone: ${el.className} leaves the screen`); break; }
+    }
+    for (const sm of form.querySelectorAll('summary.ig-sum')) {
+      if (sm.getBoundingClientRect().height < 24) { out.push('phone: guide control shorter than 24 px'); break; }
+    }
+    return out;
+  }, r.id);
+  if (issues.length) { r.issues.push(...issues); r.ok = false; }
+}
+await phone.close();
+
 // Keyboard, narrow screen and reduced motion on a sample spread across the collection.
 const sample = ids.filter((_, i) => i % 60 === 0);
 const extra = [];
