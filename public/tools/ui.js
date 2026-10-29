@@ -1,8 +1,20 @@
 // KEVOS® WORKOS interface: directory, search, workspace, results, analysis, guide and decision reports.
 // Every tool is part of one KEVOS® WORKOS collection with the same features. Calculations run in the browser only.
 (function () {
-  const tools = window.GOCORE_TOOLS || [];
-  const guides = window.WORKOS_GUIDES || {};
+  // Tool files load on demand. The page carries a map of tool id → file name (#workos-tool-files) and a tool's
+  // data-, guides-, inputs- and calc-<file>.js are fetched the first time it opens, so a phone downloads one
+  // tool's scripts rather than all 837. Files already on the page (as in the tests) are used as they are.
+  const toolList = () => window.GOCORE_TOOLS || [];
+  const findTool = (id) => toolList().find((x) => x.id === id);
+  const guides = (window.WORKOS_GUIDES = window.WORKOS_GUIDES || {});
+  window.WORKOS_INPUTS = window.WORKOS_INPUTS || {};
+  const fileMap = (() => {
+    try {
+      return JSON.parse(document.getElementById?.('workos-tool-files')?.textContent || '{}');
+    } catch {
+      return {};
+    }
+  })();
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   function refsHtml(refs) {
     return `<ul>${refs.map((ref) => {
@@ -297,9 +309,48 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
     $('#tool-guide').innerHTML = guideHtml(t);
     analyse(t);
   }
+  // ---------- Loading tool files ----------
+  const loadedFiles = new Map(); // file name → Promise for its four scripts
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = false; // fetched in parallel, run in the order added: data → guides → inputs → calc
+      s.onload = resolve;
+      s.onerror = () => reject(new Error(`${src} did not load`));
+      document.body.append(s);
+    });
+  }
+  function loadFile(file) {
+    if (!loadedFiles.has(file)) {
+      const done = Promise.all(['data', 'guides', 'inputs', 'calc'].map((k) => loadScript(`/tools/${k}-${file}.js`)));
+      loadedFiles.set(file, done.catch((e) => {
+        loadedFiles.delete(file); // a later attempt starts again
+        throw e;
+      }));
+    }
+    return loadedFiles.get(file);
+  }
+  /** Workspace in its loading or failed state, in place of the directory, while a tool's files arrive. */
+  function showLoading(failed = false) {
+    directory.hidden = true;
+    if (intro) intro.hidden = true;
+    workspace.hidden = false;
+    workspace.classList.add('is-loading');
+    if (loadingMsg) loadingMsg.hidden = failed;
+    if (loadingFail) loadingFail.hidden = !failed;
+  }
+  function doneLoading() {
+    workspace.classList.remove('is-loading');
+    if (loadingMsg) loadingMsg.hidden = true;
+    if (loadingFail) loadingFail.hidden = true;
+  }
+  const loadingMsg = $('#tool-loading');
+  const loadingFail = $('#tool-loading-failed');
+  let pending = '';
+
   function openTool(id, push = true) {
-    const t = tools.find((x) => x.id === id);
-    if (!t) return;
+    if (!findTool(id) && !fileMap[id]) return;
     if (push) {
       if (workspace.hidden) {
         openedInPage = true;
@@ -310,6 +361,18 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
       u.searchParams.set('tool', id);
       history.pushState({ tool: id }, '', u);
     }
+    pending = id;
+    const ready = findTool(id);
+    if (ready) return showTool(ready);
+    showLoading();
+    workspace.scrollIntoView?.({ block: 'start' });
+    loadFile(fileMap[id]).then(
+      () => pending === id && (findTool(id) ? showTool(findTool(id)) : showLoading(true)),
+      () => pending === id && showLoading(true),
+    );
+  }
+  function showTool(t) {
+    doneLoading();
     buildTool(t);
     directory.hidden = true;
     if (intro) intro.hidden = true;
@@ -318,6 +381,8 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
     workspace.scrollIntoView({ block: 'start' });
   }
   function closeTool(push = true) {
+    pending = '';
+    doneLoading();
     workspace.hidden = true;
     directory.hidden = false;
     if (intro) intro.hidden = false;
@@ -340,6 +405,7 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
   });
   // Step back through history when the tool was opened here, so the directory's topic and search come back with it.
   $('#back-tools').addEventListener('click', () => (openedInPage ? history.back() : closeTool()));
+  $('#tool-loading-retry')?.addEventListener('click', () => pending && openTool(pending, false));
   window.addEventListener('popstate', () => {
     const id = new URLSearchParams(location.search).get('tool');
     if (id) openTool(id, false);
@@ -349,4 +415,6 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
   window.WORKOS_UI = { reportBody, shareUrl, summaryText, guideHtml, analysisHtml, state: () => current };
   const initial = new URLSearchParams(location.search).get('tool');
   if (initial) openTool(initial, false);
+  // The page hid the directory before this script ran (a ?tool= link); from here the workspace state decides.
+  document.documentElement?.classList.remove('workos-tool-link');
 })();

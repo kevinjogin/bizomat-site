@@ -45,10 +45,10 @@ function balanced(svg: string) {
   return stack.length === 0;
 }
 
-test('the tools page loads the renderer and one inputs file per tool file, after the guides and before the engine', () => {
+test('the tools page loads the renderer before ui.js, and every tool file has its inputs file', () => {
   const page = readFileSync(join(process.cwd(), 'src', 'pages', 'tools', 'index.astro'), 'utf8');
-  const order = ['/tools/guides-${f}.js', '/tools/input-guides.js', '/tools/inputs-${f}.js', '/tools/core.js', '/tools/ui.js'].map((s) => page.indexOf(s));
-  assert.ok(order.every((p) => p > 0), 'all script groups are loaded');
+  const order = ['/tools/core.js', '/tools/input-guides.js', '/tools/ui.js'].map((s) => page.indexOf(s));
+  assert.ok(order.every((p) => p > 0), 'engine scripts are loaded');
   assert.deepEqual([...order].sort((a, b) => a - b), order, 'scripts load in dependency order');
   for (const f of FILES) assert.doesNotThrow(() => new Function(read(`inputs-${f}.js`)), `inputs-${f}.js parses`);
 });
@@ -154,7 +154,7 @@ test('the calculator form renders a guide under every input and describes each i
   // ui.js with a minimal document: enough to build a form and read back its markup.
   const els = new Map<string, any>();
   const element = (sel: string) => {
-    if (!els.has(sel)) els.set(sel, { sel, innerHTML: '', textContent: '', hidden: false, dataset: {}, listeners: {} as Record<string, unknown>, addEventListener(type: string, fn: unknown) { this.listeners[type] = fn; }, querySelector: () => null, querySelectorAll: () => [], getBoundingClientRect: () => ({ top: 0, bottom: 0 }), scrollIntoView() {} });
+    if (!els.has(sel)) els.set(sel, { sel, innerHTML: '', textContent: '', hidden: false, dataset: {}, classList: { add() {}, remove() {} }, listeners: {} as Record<string, unknown>, addEventListener(type: string, fn: unknown) { this.listeners[type] = fn; }, querySelector: () => null, querySelectorAll: () => [], getBoundingClientRect: () => ({ top: 0, bottom: 0 }), scrollIntoView() {} });
     return els.get(sel);
   };
   const location = { href: 'https://kevos.com/tools/?tool=spring-combination', search: '?tool=spring-combination' };

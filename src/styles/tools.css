@@ -55,6 +55,17 @@
 .field-heading + .field, .field-heading__hint + .field { margin-top:.8rem; }
 .field-heading__hint { margin:.25rem 0 0; }
 
+/* ---------- Loading a tool (ui.js fetches its files on demand) ---------- */
+.tool-loading { margin:0; padding:clamp(1.5rem,4vw,2.5rem) 0; color:var(--ink-2); font-size:1rem; }
+.tool-loading--failed p { margin:0 0 1rem; }
+#tool-workspace:not(.is-loading) .tool-loading { display:none; }
+#tool-workspace.is-loading > :not(.tool-loading) { display:none; }
+/* Before ui.js runs on a ?tool= link: the workspace in its loading state instead of the directory. */
+.workos-tool-link #tool-directory, .workos-tool-link [data-library-intro] { display:none !important; }
+.workos-tool-link #tool-workspace { display:block !important; }
+.workos-tool-link #tool-workspace > :not(#tool-loading) { display:none; }
+.workos-tool-link #tool-workspace #tool-loading { display:block; }
+
 /* ---------- Input guides (public/tools/input-guides.js) ---------- */
 .ig { margin-top:.35rem; container-type:inline-size; }
 .ig-sum { display:inline-flex; align-items:center; gap:.45rem; min-height:36px; padding:.2rem .1rem; color:var(--accent); font-size:.84rem; font-weight:600; cursor:pointer; list-style:none; border-radius:6px; }

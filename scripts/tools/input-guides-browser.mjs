@@ -22,15 +22,22 @@ let errors = [];
 page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
 page.on('pageerror', (e) => errors.push(String(e)));
 await page.goto(`${base}/tools/`, { waitUntil: 'load' });
-const ids = await page.evaluate(() => window.GOCORE_TOOLS.map((t) => t.id));
+// Tool files load on demand; the page's map lists every tool id.
+const ids = await page.evaluate(() => Object.keys(JSON.parse(document.getElementById('workos-tool-files').textContent)));
+/** Opens a tool in place and waits until its files have loaded and it has calculated (at most 15 s). */
+const openIn = (p, id) => p.evaluate(async (id) => {
+  history.pushState({}, '', `?tool=${id}`);
+  dispatchEvent(new PopStateEvent('popstate'));
+  for (let i = 0; i < 300 && window.WORKOS_UI.state()?.t.id !== id; i++) await new Promise((r) => setTimeout(r, 50));
+}, id);
 
 const results = [];
 for (const id of ids) {
   errors = [];
+  await openIn(page, id);
   const r = await page.evaluate(async (id) => {
-    history.pushState({}, '', `?tool=${id}`);
-    dispatchEvent(new PopStateEvent('popstate'));
-    const t = window.GOCORE_TOOLS.find((x) => x.id === id);
+    const t = (window.GOCORE_TOOLS || []).find((x) => x.id === id);
+    if (!t || window.WORKOS_UI.state()?.t.id !== id) return { id, inputs: 0, figures: 0, issues: ['tool did not open within 15 s'] };
     const fields = t.fields.filter((f) => f.type !== 'heading');
     const form = document.querySelector('#tool-form');
     const issues = [];
@@ -80,9 +87,8 @@ for (const id of ids) {
 const phone = await browser.newPage({ viewport: { width: 360, height: 780 }, isMobile: true, hasTouch: true });
 await phone.goto(`${base}/tools/`, { waitUntil: 'load' });
 for (const r of results) {
+  await openIn(phone, r.id);
   const issues = await phone.evaluate((id) => {
-    history.pushState({}, '', `?tool=${id}`);
-    dispatchEvent(new PopStateEvent('popstate'));
     const out = [];
     const form = document.querySelector('#tool-form');
     form.querySelectorAll('details.ig').forEach((d) => (d.open = true));
