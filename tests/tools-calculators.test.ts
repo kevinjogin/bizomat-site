@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 908 tools with unique ids and every previously published id kept', () => {
+test('register: 914 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 908);
+  assert.equal(ids.length, 914);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -5220,6 +5220,96 @@ test('forty-sixth-round design checks give pass and fail verdicts', () => {
   assert.equal(engine.run('induction-hardening-plan', { f: 30, D: 10, case: 1, hf: 1.2, rMax: 4 }).text, 'BAR TOO SMALL FOR THE FREQUENCY');
   const cases: Array<[string, Inputs]> = [
     ['countershaft-bearing-check', { x1: 0, x2: 0 }], ['induction-hardening-plan', { rMin: 3, rMax: 2 }], ['induction-hardening-plan', { case: 10, hf: 2 }], ['induction-hardening-plan', { T1: 10 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Thermodynamics pass (handbook70): Carnot limits, Joule–Thomson throttling, Clausius–Clapeyron, Raoult’s law, van ’t Hoff and mixing entropy.
+// Expected values are independent closed forms; the van der Waals throttling case uses the exact separable integral, not the tool’s Runge–Kutta steps.
+{
+  const RG = 8.314462618, K0 = 273.15;
+  // dP = Cp T dT ÷ (A − bT), A = 2a ÷ R, integrated exactly; solved for the outlet temperature by bisection.
+  const vdwOutlet = (T1: number, P1: number, P2: number, a: number, b: number, Cp: number) => {
+    const A = 2 * a / RG, F = (T2: number) => Cp * (-(T2 - T1) / b - A / (b * b) * Math.log((A - b * T2) / (A - b * T1))) - (P2 - P1);
+    let lo = 1, hi = T1; for (let k = 0; k < 200; k++) { const mid = (lo + hi) / 2; if (F(mid) > 0) hi = mid; else lo = mid; } return (lo + hi) / 2;
+  };
+  const T2v = vdwOutlet(288.15, 70e5, 7e5, 0.1408, 0.03913e-3, 29.1);
+  let lo = 288.15, hi = 388.15; for (let k = 0; k < 200; k++) { const mid = (lo + hi) / 2; if (vdwOutlet(mid, 70e5, 7e5, 0.1408, 0.03913e-3, 29.1) < 273.15) lo = mid; else hi = mid; }
+  const Tneed = (lo + hi) / 2, ndot = 100 / 3600 / 0.028014;
+  const osm = (c: number) => 2 * c / 58.44 * 1000 * RG * 298.15 / 1e5, ccRO = (3 - 0.75 * 0.06) / 0.25;
+  const Pst = 3.8 * Math.exp(-38000 / RG * (1 / 308.15 - 1 / 298.15)), yHead = 100 * Pst / 101.325;
+  const Sblend = 4.18 * (0.25 * Math.log(313.15 / 338.15) + 0.25 * Math.log(313.15 / 288.15));
+  const HB70_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+    ['heat-engine-second-law-check', {}, { eff: 4, carnot: 318.15 / 40, share: 400 * 40 / 318.15, Qo: 7.5, Sgen: (10 / 318.15 - 7.5 / 278.15) * 1000, Wrev: 400 / 318.15, lost: 2.5 - 400 / 318.15 }],
+    ['heat-engine-second-law-check', { mode: 'engine', Q: 100, W: 30, Th: 400, Tc: 30 }, { carnot: 1 - 303.15 / 673.15, Qo: 70, Sgen: (70 / 303.15 - 100 / 673.15) * 1000, lost: 100 * (1 - 303.15 / 673.15) - 30 }],
+    ['heat-engine-second-law-check', { mode: 'fridge', Q: 50, W: 12, Th: 35, Tc: 7 }, { eff: 50 / 12, carnot: 280.15 / 28, Qo: 62, Sgen: (62 / 308.15 - 50 / 280.15) * 1000, lost: 12 - 50 * 28 / 280.15 }],
+    ['gas-throttling-cooling-check', {}, { muIn: (2 * 0.1408 / (RG * 288.15) - 0.03913e-3) / 29.1 * 1e5, drop: 288.15 - T2v, T2C: T2v - K0, TneedC: Tneed - K0, Qpre: ndot * 29.1 * (Tneed - 288.15) / 1000, TinvC: 2 * 0.1408 / (RG * 0.03913e-3) - K0 }, 1e-7],
+    ['gas-throttling-cooling-check', { model: 'mu' }, { T2C: 15 - 0.25 * 63, TneedC: 0.25 * 63, Qpre: ndot * 29.1 * (0.25 * 63 - 15) / 1000 }, 1e-9],
+    ['vacuum-boiling-point', {}, { TbC: 1 / (1 / 373.15 - RG * Math.log(20 / 101.325) / 40656) - K0, Pneed: 101.325 * Math.exp(-40656 / RG * (1 / 338.15 - 1 / 373.15)) }],
+    ['solvent-headspace-lel-check', {}, { Pstar: Pst, y: yHead, shareLEL: 100 * yHead / 1.1, TlimC: 1 / (1 / 298.15 - RG * Math.log(0.25 * 0.011 * 101.325 / 3.8) / 38000) - K0, TLELC: 1 / (1 / 298.15 - RG * Math.log(0.011 * 101.325 / 3.8) / 38000) - K0 }],
+    ['solvent-headspace-lel-check', { x: 0.1, T: 0 }, { Pi: 0.38 * Math.exp(-38000 / RG * (1 / 273.15 - 1 / 298.15)) }],
+    ['ro-osmotic-pressure-check', {}, { cp: 0.06, cc: ccRO, piF: osm(3), piC: osm(ccRO), piP: osm(0.06), ndpFeed: 14.5 - osm(3) + osm(0.06), ndpTail: 12.5 - osm(ccRO) + osm(0.06), pfMin: 3.5 + osm(ccRO) - osm(0.06) }],
+    ['hot-cold-water-blend-check', {}, { f: 50, Qh: 15, Qc: 15, P: 52.25, Sgen: Sblend * 1000, lost: 288.15 * Sblend }],
+  ];
+  for (const [id, over, expected, tol] of HB70_CASES) test(`thermodynamics check: ${id} ${JSON.stringify(over)}`, () => {
+    const r = engine.run(id, over);
+    assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+    for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-9), `${id}/${key}`);
+  });
+}
+
+test('thermodynamics checks agree with their sources and with each other', () => {
+  // Linder’s nitrogen constants (1.390 L²·atm/mol², 0.03913 L/mol) give an inversion temperature 2a ÷ Rb of about 866 K.
+  near(engine.run('gas-throttling-cooling-check', { a: 1.390 * 1.01325 }).values.TinvC + 273.15, 2 * 1.390 / (0.082057366 * 0.03913), 1e-3, 'van der Waals inversion temperature');
+  // An entered coefficient equal to the van der Waals value at the inlet gives the same drop for a small pressure step.
+  const vdw = engine.run('gas-throttling-cooling-check', { P1: 7.01 }).values, mu = engine.run('gas-throttling-cooling-check', { model: 'mu', mu: vdw.muIn, P1: 7.01 }).values;
+  near(vdw.drop, mu.drop, 1e-5, 'small step matches the coefficient');
+  // Lost work equals T × S_gen: the cold reservoir for a heat pump, the hot reservoir for a refrigerator.
+  const hp = engine.run('heat-engine-second-law-check').values, fr = engine.run('heat-engine-second-law-check', { mode: 'fridge', Q: 50, W: 12, Th: 35, Tc: 7 }).values;
+  near(hp.lost, 278.15 * hp.Sgen / 1000, 1e-12, 'heat pump lost work'); near(fr.lost, 308.15 * fr.Sgen / 1000, 1e-12, 'refrigerator lost work');
+  // At exactly the Carnot COP no entropy is generated.
+  near(engine.run('heat-engine-second-law-check', { W: 10 * 40 / 318.15 }).values.Sgen, 0, 1e-9, 'reversible heat pump');
+  // The pressure for the temperature limit gives back that limit as the boiling point; the headspace limit temperature gives back the limit.
+  const vb = engine.run('vacuum-boiling-point').values;
+  near(engine.run('vacuum-boiling-point', { P: vb.Pneed }).values.TbC, 65, 1e-9, 'Clausius–Clapeyron round trip');
+  const sh = engine.run('solvent-headspace-lel-check').values;
+  near(engine.run('solvent-headspace-lel-check', { T: sh.TlimC }).values.shareLEL, 25, 1e-9, 'temperature at the limit');
+  near(engine.run('solvent-headspace-lel-check', { T: 25 }).values.y, 100 * 3.8 / 101.325, 1e-12, 'Raoult at the reference temperature');
+  // The least feed pressure gives exactly the required tail pressure; a seawater-strength ideal feed follows van ’t Hoff.
+  const ro = engine.run('ro-osmotic-pressure-check').values;
+  near(engine.run('ro-osmotic-pressure-check', { pf: ro.pfMin }).values.ndpTail, 1, 1e-9, 'least feed pressure');
+  near(engine.run('ro-osmotic-pressure-check', { c: 35, pf: 80 }).values.piF, 2 * 35 / 58.44 * 1000 * 8.314462618 * 298.15 / 1e5, 1e-9, 'van ’t Hoff seawater strength');
+  // Blending: the energy balance closes and mixing always generates entropy.
+  const bl = engine.run('hot-cold-water-blend-check').values;
+  near(bl.Qh * 65 + bl.Qc * 15, 30 * 40, 1e-9, 'energy balance');
+  assert.ok(engine.run('hot-cold-water-blend-check', { Th: 40.001, Tt: 40 }).values.Sgen > 0, 'mixing always generates entropy');
+});
+
+test('thermodynamics checks: verdicts and guards', () => {
+  assert.equal(engine.run('heat-engine-second-law-check').text, 'CLAIM WITHIN THE LIMIT');
+  assert.equal(engine.run('heat-engine-second-law-check', { W: 1.6 }).text, 'CLAIM CLOSE TO THE CARNOT LIMIT');
+  assert.equal(engine.run('heat-engine-second-law-check', { W: 1 }).text, 'CLAIM BREAKS THE SECOND LAW');
+  assert.equal(engine.run('heat-engine-second-law-check', { mode: 'engine', Q: 100, W: 60, Th: 400, Tc: 30 }).text, 'CLAIM BREAKS THE SECOND LAW');
+  assert.equal(engine.run('gas-throttling-cooling-check', { P1: 30 }).text, 'OUTLET ABOVE THE LIMIT');
+  assert.equal(engine.run('gas-throttling-cooling-check').text, 'PREHEAT NEEDED');
+  assert.ok(engine.run('gas-throttling-cooling-check', { model: 'mu', mu: -0.05 }).values.drop < 0, 'a negative coefficient warms the gas');
+  assert.equal(engine.run('vacuum-boiling-point').text, 'BOILS BELOW THE LIMIT');
+  assert.equal(engine.run('vacuum-boiling-point', { P: 30 }).text, 'PRESSURE TOO HIGH');
+  assert.equal(engine.run('solvent-headspace-lel-check', { x: 0.001 }).text, 'BELOW THE LIMIT');
+  assert.equal(engine.run('solvent-headspace-lel-check', { x: 0.1 }).text, 'ABOVE THE LIMIT');
+  assert.equal(engine.run('solvent-headspace-lel-check').text, 'FLAMMABLE HEADSPACE POSSIBLE');
+  assert.equal(engine.run('solvent-headspace-lel-check', { T: 120 }).text, 'LIQUID BOILING');
+  assert.equal(engine.run('ro-osmotic-pressure-check').text, 'FEED PRESSURE ENOUGH');
+  assert.equal(engine.run('ro-osmotic-pressure-check', { r: 90 }).text, 'CONCENTRATE END STARVED');
+  assert.equal(engine.run('hot-cold-water-blend-check').text, 'HOT SUPPLY ENOUGH');
+  assert.equal(engine.run('hot-cold-water-blend-check', { hotCap: 10 }).text, 'HOT SUPPLY SHORT');
+  const cases: Array<[string, Inputs]> = [
+    ['heat-engine-second-law-check', { share: 101 }], ['heat-engine-second-law-check', { Q: 0 }], ['heat-engine-second-law-check', { Th: 5, Tc: 45 }], ['heat-engine-second-law-check', { W: 12 }], ['heat-engine-second-law-check', { mode: 'cooler' }],
+    ['gas-throttling-cooling-check', { mu: 6 }], ['gas-throttling-cooling-check', { P2: 80 }], ['gas-throttling-cooling-check', { T1: 700 }], ['gas-throttling-cooling-check', { model: 'mu', mu: 5, P1: 1000, P2: 1, T1: -150 }],
+    ['vacuum-boiling-point', { P: 0 }], ['vacuum-boiling-point', { dH: 0.05 }],
+    ['solvent-headspace-lel-check', { x: 0 }], ['solvent-headspace-lel-check', { x: 1.5 }], ['solvent-headspace-lel-check', { LEL: 0 }],
+    ['ro-osmotic-pressure-check', { r: 100 }], ['ro-osmotic-pressure-check', { dp: 15 }], ['ro-osmotic-pressure-check', { c: 500 }],
+    ['hot-cold-water-blend-check', { Tt: 70 }], ['hot-cold-water-blend-check', { Tt: 15 }], ['hot-cold-water-blend-check', { Th: 100 }], ['hot-cold-water-blend-check', { Q: 0 }],
   ];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
