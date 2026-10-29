@@ -2,7 +2,7 @@
 
 Generated 2026-10-29 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 347 relationships (144 from links authors wrote in the books, 203 from editorial review). Rejected: 81. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 352 relationships (144 from links authors wrote in the books, 208 from editorial review). Rejected: 81. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -213,6 +213,11 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Sheet Metal Patterns by the Numbers | Checking, nesting and keeping patterns | Sheet Nesting Yield Check (Parts per Sheet, Material Utilisation, Sheets and Cost per Part) | complements | Chapter nests the job’s blanks on 2,400 × 1,200 sheets; tool gives blanks per sheet and utilisation for rectangular blanks. |
 | Lean, Maintenance and Continuous Improvement | Maintenance that prevents breakdowns: choosing a strategy for each machine in a small factory | Bearing Defect Frequency Check (BPFO, BPFI, Ball Spin, Cage, Match to a Measured Peak) | complements | Chapter recommends predictive maintenance using vibration trends; tool computes bearing defect frequencies and matches a measured peak. |
 | Machine Elements and Mechanical Design | Selecting bearings and lubrication for reliable machines: types, life, fits, sealing and failure causes | Bearing Defect Frequency Check (BPFO, BPFI, Ball Spin, Cage, Match to a Measured Peak) | complements | Chapter covers bearing failure causes and adds vibration readings to monthly inspections; tool identifies bearing defect frequencies in those readings. |
+| Machining and Metal Parts | EDM, micromachining and other non-traditional processes: when cutting tools are not the answer | EDM Sinker Plan (Current for the Electrode, Duty Cycle, Roughing and Finishing Time, Electrode Wear and Sizes) | applies | Chapter explains sinker EDM electrodes wear so roughing and finishing electrodes are used, and the recast layer; tool sizes the electrodes, counts them from wear and checks finishing stock covers the damaged layer. |
+| Machining and Metal Parts | EDM, micromachining and other non-traditional processes: when cutting tools are not the answer | Wire EDM Cut Plan (Kerf, Wire Offset and Corner Radius, Cutting and Skim Time, Wire Use, Tension, Cost) | applies | Chapter states the minimum internal corner radius is the wire radius plus the spark gap and that internal profiles need a start hole; tool calculates that radius, start-hole time and cutting time. |
+| Machining and Metal Parts | Choosing a cutting process for plate and sheet: laser, plasma, oxy-fuel, waterjet, sawing and punching | Laser Cutting Plan (Focused Spot, Power Density, Depth of Focus, Cutting Speed by Power and Thickness, Time and Cost) | complements | Chapter compares laser with other cutting processes and says laser cost rises with thickness; tool estimates laser speed falling with thickness and the time and cost per part. |
+| Cutting and Gouging by the Numbers | Laser cutting | Laser Cutting Plan (Focused Spot, Power Density, Depth of Focus, Cutting Speed by Power and Thickness, Time and Cost) | applies | Chapter explains the beam is focused to a spot about 0.15 mm across giving enormous power density, and that focus height matters; tool calculates spot size, power density and depth of focus. |
+| How Engineering Shaped Industry: Power, Networks and the Modern Era | Lasers from theory to tool: how a laboratory curiosity became indispensable to industry | Laser Cutting Plan (Focused Spot, Power Density, Depth of Focus, Cutting Speed by Power and Thickness, Time and Cost) | complements | Chapter says laser cutting focuses a high-power beam to a small spot and that results depend on power, speed, focus position and spot size; tool calculates those from the optics. |
 
 ## 2. Rejected
 
@@ -329,7 +334,6 @@ Their pages show a WORKOS topic to browse where the category maps to one, and no
 | Competitive Strategy and Positioning | collection | business | Business & Commercial |
 | Configure, Price, Quote by the Numbers | publication | Products | nothing |
 | Contact Temperature Sensors by the Numbers | publication | Manufacturing | Manufacturing & Production |
-| Cutting and Gouging by the Numbers | publication | Manufacturing | Manufacturing & Production |
 | Database Foundations for Business | collection | technology | nothing |
 | Database Performance, Concurrency and Safe Change | collection | technology | nothing |
 | Decision-Making Machines | collection | technology | nothing |

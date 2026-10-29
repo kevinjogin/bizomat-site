@@ -3244,3 +3244,15 @@ Six tools in batch handbook76 from public, checkable sources, with every limit, 
 | Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
 |---|---|---|---|---|
 | **Sheet Nesting Yield Check (Parts per Sheet, Material Utilisation, Sheets and Cost per Part)** `sheet-nesting-yield` | LAYOUT ACCEPTABLE | Material utilisation; Shape and process; Model and application | 1338–1339 | Automated + cross-check |
+
+## Forty-seventh round of design checks, batch handbook78 (added 30 October 2026)
+
+Three integrated design checks in batch handbook78, built from the electrical discharge machining and laser sections of Machinery’s Handbook, with every removal rate, gap, wear figure, beam property and limit entered by the user: an EDM sinker plan (roughing current, duty cycle, roughing and finishing time, electrode wear and count, electrode undersize, cost), a wire EDM cut plan (kerf, smallest inside corner, cutting and skim time, wire use, tension, cost) and a laser cutting plan (focused spot, power density, depth of focus, speed scaled by power and thickness, time and cost). WORKOS now holds 923 tools.
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **EDM Sinker Plan (Current for the Electrode, Duty Cycle, Roughing and Finishing Time, Electrode Wear and Sizes)** `edm-sinker-plan` | EDM PLAN WORKABLE | Machine current; Finishing stock; Settings; Model and application | 1394–1399 | Automated + cross-check |
+| **Wire EDM Cut Plan (Kerf, Wire Offset and Corner Radius, Cutting and Skim Time, Wire Use, Tension, Cost)** `wire-edm-cut-plan` | WIRE AND SETTINGS SUIT THE CUT | Inside corners; Wire tension; Settings; Model and application | 1394–1403 | Automated + cross-check |
+| **Laser Cutting Plan (Focused Spot, Power Density, Depth of Focus, Cutting Speed by Power and Thickness, Time and Cost)** `laser-cutting-plan` | BEAM SUITS THE CUT | Power density; Depth of focus; Cutting speed; Model and application | 1487–1494 | Automated + cross-check |
