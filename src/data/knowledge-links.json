@@ -3095,6 +3095,86 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter is about records of commitments, not cost and schedule performance."
+  },
+  {
+   "reados": "publication/machining-by-the-numbers",
+   "chapter": "deflection-rigidity-and-chatter",
+   "tool": "boring-bar-overhang-check",
+   "type": "applies",
+   "note": "Applies the cantilever deflection of this chapter to a boring bar: diameter error, overhang ratio, natural frequency, and the longest overhang and feed for a tolerance.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter derives tool deflection δ = F L³ ÷ 3EI and why overhang and diameter dominate; tool calculates boring bar deflection, diameter error and longest overhang from the same formula."
+  },
+  {
+   "reados": "publication/machining-by-the-numbers",
+   "chapter": "deflection-rigidity-and-chatter",
+   "tool": "slender-work-turning-check",
+   "type": "applies",
+   "note": "Applies beam deflection to a slender part turned between centres or in a chuck: diameter error, longest unsupported span and steady rests needed.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter says workpieces behave as beams and come out tapered or oversize; tool calculates work deflection between centres or in a chuck and the steady rests needed."
+  },
+  {
+   "reados": "publication/machining-by-the-numbers",
+   "chapter": "drilling-reaming-and-tapping",
+   "tool": "reaming-plan",
+   "type": "applies",
+   "note": "Plans a drill-and-ream operation: pilot drill from the reaming allowance, stock per side, speeds, time per hole and reamer use.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers drilling feed length and reaming a small allowance to H7; tool calculates the pilot drill, stock, drilling and reaming times and reamer use."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "drilling-reaming-and-tapping-holes",
+   "tool": "reaming-plan",
+   "type": "applies",
+   "note": "Turns the reaming allowance advice into numbers: pilot drill size, stock per side against a range, speeds, cycle time and holes per reamer.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains reaming allowance (too little rubs, too much chatters); tool checks the stock per side against a range and plans the drilling and reaming times."
+  },
+  {
+   "reados": "publication/fixtures-that-repeat",
+   "chapter": "draw-the-load-path-before-sizing-the-clamp",
+   "tool": "dowel-pin-joint-check",
+   "type": "applies",
+   "note": "Checks dowels that carry a sideways load in shear: pin shear, bearing in the softer part, the fit from pin and hole limits and the engagement.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter has dowel pins in reamed holes carry the stop's sideways force in shear while bolts clamp; tool calculates dowel shear, bearing, fit and engagement."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "workholding-and-toolholding",
+   "tool": "taper-shank-holding-check",
+   "type": "explains",
+   "note": "Calculates whether a self-holding taper shank carries the drilling torque by friction from the thrust, or needs its tang or a drawbar.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter describes Morse tapers as self-holding tapers for drills and tailstocks; tool calculates the taper's friction torque, drilling torque and the self-holding condition."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "workholding-and-toolholding",
+   "tool": "slender-work-turning-check",
+   "type": "complements",
+   "note": "Finds how many steady rests a long, slender part needs to hold its diameter tolerance while it is turned.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter lists steady rests and tailstocks for shafts with a high length-to-diameter ratio; tool calculates work deflection and the steady rests needed."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "drilling-reaming-and-tapping-holes",
+   "tool": "dowel-pin-joint-check",
+   "type": "complements",
+   "note": "Checks the dowel pins that reamed H7 holes are made for: shear, bearing, the fit from the limits and the engagement in each part.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter says reamed H7 holes are common for dowel pins; tool checks the dowel joint and the fit given by the pin and hole limits."
   }
  ]
 }
