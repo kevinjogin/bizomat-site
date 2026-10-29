@@ -2,7 +2,7 @@
 
 Generated 2026-10-29 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 232 relationships (144 from links authors wrote in the books, 88 from editorial review). Rejected: 24. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 234 relationships (144 from links authors wrote in the books, 90 from editorial review). Rejected: 27. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -98,6 +98,8 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Plastic Parts by the Numbers | First-off trials, defects and approval | Solvent Attack and Swelling Screen for Plastics and Elastomers (Hansen Distance Ra and RED) | complements | Approval record lists chemical resistance to site cleaning products as an open item; the tool gives a screening RED per liquid and points to ISO 175 immersion testing. |
 | Heat Exchangers by the Numbers | Plate or shell-and-tube | Solvent Attack and Swelling Screen for Plastics and Elastomers (Hansen Distance Ra and RED) | complements | Chapter warns that a gasket suited to water may swell in some oils and that the elastomer is chosen for both fluids; the tool screens swelling by Hansen distance. |
 | Fine Particles by the Numbers | Brownian diffusion: Einstein's relation at work | Particle and Polymer Coil Size from Dynamic Light Scattering (Decay Rate, Diffusion Coefficient, Stokes–Einstein) | applies | Chapter derives D = kT ÷ (6πηr) and says liquid-sizing instruments invert it from Brownian motion; the tool does exactly that from a DLS decay rate (no slip correction, liquids only). |
+| Water Hammer by the Numbers | Wave speed in a pipe: water, wall and air | Liquid Adiabatic Compression (Temperature Rise, cp − cv, Adiabatic Bulk Modulus, Wave Speed) | complements | Chapter starts from a₀ = √(K ÷ ρ) for water alone, then adds wall stiffness and air; the tool gives the adiabatic K from the isothermal value and the free-liquid wave speed only, so it complements rather than applies. |
+| Industrial Gases by the Numbers | Shielding and purging gases | Gas Mixture Properties (Dalton: Molar Mass, Gas Constant, Specific Heats, Density, Partial Pressures, Mixing Entropy) | complements | Chapter compares argon, helium, CO₂ and their mixtures and costs a workshop’s mixture use; it does not calculate mixture properties, which the tool supplies from Dalton’s law. |
 
 ## 2. Rejected
 
@@ -127,6 +129,9 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Rubber Parts by the Numbers | Testing and acceptance | Rubber Swelling Test: Crosslink Density, Chain Molar Mass and Network Modulus (Flory–Rehner) | Rejected: chapter’s batch tests are hardness and an inflation curve on finished sleeves; a laboratory swelling test is not part of its acceptance method. |
 | Diffusion by the Numbers | Diffusion is a random walk of atoms | Particle and Polymer Coil Size from Dynamic Light Scattering (Decay Rate, Diffusion Coefficient, Stokes–Einstein) | Rejected: chapter is about atoms diffusing in steel and mentions Einstein’s spread relation only in passing; it does not cover particle sizing. |
 | Plastic Parts by the Numbers | First-off trials, defects and approval | Polymer Intrinsic Viscosity and Molar Mass from One Viscometer Reading (Single-Point [η], Mark–Houwink) | Rejected: chapter controls resin drying by time and a moisture limit; it does not use dilute-solution viscosity to check molar mass. |
+| Entropy by the Numbers | Compression and expansion | Liquid Adiabatic Compression (Temperature Rise, cp − cv, Adiabatic Bulk Modulus, Wave Speed) | Rejected: chapter covers the work of compressing air and intercooling; the tool covers the heating and bulk modulus of a compressed liquid. |
+| Industrial Gases by the Numbers | Storage: cylinders and bulk liquid | Liquid Adiabatic Compression (Temperature Rise, cp − cv, Adiabatic Bulk Modulus, Wave Speed) | Rejected: chapter compares cylinders and bulk liquid storage; matched only on the words bulk and liquid. |
+| Entropy by the Numbers | Heat pumps and refrigerators against the limit | Thermoelectric Cooler Check (TEC Module Constants from the Datasheet, Heat Pumped, Power, COP, Hot-Side Heat) | Rejected: chapter treats vapour-compression COP against the Carnot limit; the tool computes thermoelectric module performance and does not compare it with the Carnot limit. |
 
 ## 3. Published READOS books with no approved connection
 
@@ -182,7 +187,6 @@ Their pages show a WORKOS topic to browse where the category maps to one, and no
 | Housings That Rebuild | publication | Engineering | Engineering & Design |
 | How Engineering Shaped Industry: Power, Networks and the Modern Era | collection | ideas | nothing |
 | Industrial Electric Heating by the Numbers | publication | Engineering | Engineering & Design |
-| Industrial Gases by the Numbers | publication | Manufacturing | Manufacturing & Production |
 | Infrared Temperature Measurement by the Numbers | publication | Manufacturing | Manufacturing & Production |
 | Inspecting to the Drawing | publication | Manufacturing | Manufacturing & Production |
 | Judgement, Markets and Learning | collection | ideas | nothing |

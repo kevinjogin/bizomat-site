@@ -1,10 +1,10 @@
 {
  "generated": "2026-10-29",
- "base": "http://127.0.0.1:4391",
- "tools": 856,
- "passed": 856,
- "inputs": 7265,
- "figures": 7265,
+ "base": "http://127.0.0.1:4387",
+ "tools": 859,
+ "passed": 859,
+ "inputs": 7294,
+ "figures": 7294,
  "sample": [
   {
    "id": "make-buy",
@@ -5246,6 +5246,24 @@
   },
   {
    "id": "dls-particle-size",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "liquid-adiabatic-compression",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "gas-mixture-properties",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "thermoelectric-cooler-check",
    "ok": true,
    "inputs": 9,
    "figures": 9

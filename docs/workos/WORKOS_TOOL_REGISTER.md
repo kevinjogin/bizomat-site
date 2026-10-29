@@ -2983,3 +2983,25 @@ Six tools in batch polymers that apply the methods set out in V. J. Klenin’s T
 | **Rubber Swelling Test: Crosslink Density, Chain Molar Mass and Network Modulus (Flory–Rehner)** `rubber-swelling-crosslink-density` | CROSSLINK DENSITY IN RANGE | Crosslink density against the range; Filler; Sensitivity to χ; Swelling equilibrium; Model and application | 3.5.1–3.5.2 | Automated + cross-check |
 | **Polymer Intrinsic Viscosity and Molar Mass from One Viscometer Reading (Single-Point [η], Mark–Houwink)** `polymer-intrinsic-viscosity` | IV WITHIN SPECIFICATION | Intrinsic viscosity against the specification; Agreement of the single-point relations; Mark–Houwink constants; Viscometer practice; Model and application | 5.3, chapter 4 | Automated + cross-check |
 | **Particle and Polymer Coil Size from Dynamic Light Scattering (Decay Rate, Diffusion Coefficient, Stokes–Einstein)** `dls-particle-size` | SIZE IN RANGE | Diameter against the specification; Internal motion (qRh); Viscosity and temperature; Polydispersity and concentration; Model and application | 3.3.2 | Automated + cross-check |
+
+## Thermodynamics first principles after Bryan (added 29 October 2026)
+
+Three tools in batch bryanthermo that apply results from G. H. Bryan’s Thermodynamics (Teubner, 1907; public domain) to plant problems, with every property, rating and limit entered by the user: a liquid adiabatic compression check (temperature rise, c_p − c_v, adiabatic bulk modulus, wave speed), a gas mixture property calculator (Dalton’s law, mixture R, c_p, γ, density, partial pressures, mixing entropy) and a thermoelectric cooler check (module constants from the datasheet, heat pumped, power, COP, hot-side heat). Tests cross-check against Bryan’s own forms of the results. WORKOS now holds 859 tools.
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Bryan sections | Tested |
+|---|---|---|---|---|
+| **Liquid Adiabatic Compression (Temperature Rise, cp − cv, Adiabatic Bulk Modulus, Wave Speed)** `liquid-adiabatic-compression` | TEMPERATURE RISE WITHIN LIMIT | Final temperature; Bulk modulus basis; Model and application | §33, §§113–116, §121 | Automated + cross-check |
+
+### Pneumatics
+
+| Tool | Result with example inputs | Checks | Bryan sections | Tested |
+|---|---|---|---|---|
+| **Gas Mixture Properties (Dalton: Molar Mass, Gas Constant, Specific Heats, Density, Partial Pressures, Mixing Entropy)** `gas-mixture-properties` | PARTIAL PRESSURE WITHIN LIMIT | Partial pressure of the checked gas; Perfect-gas behaviour; Model and application | §§121, 124–128 | Automated + cross-check |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Bryan sections | Tested |
+|---|---|---|---|---|
+| **Thermoelectric Cooler Check (TEC Module Constants from the Datasheet, Heat Pumped, Power, COP, Hot-Side Heat)** `thermoelectric-cooler-check` | MODULES PUMP THE HEAT LOAD | Heat pumped against the load; Current rating; Voltage rating; Hot-side heat sink; Model and application | §§164–166 | Automated + cross-check |
