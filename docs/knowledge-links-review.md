@@ -2,7 +2,7 @@
 
 Generated 2026-10-29 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 197 relationships (129 from links authors wrote in the books, 68 from editorial review). Rejected: 15. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 212 relationships (144 from links authors wrote in the books, 68 from editorial review). Rejected: 15. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 

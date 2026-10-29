@@ -21,7 +21,7 @@ Knowledge connections: 12 approved and 8 rejected relationships, each with the c
 - Every tool has independent hand-calculated reference values (closed forms, binomial sums and a Simpson integral of the t density, computed separately in Node), cross-checks against the existing tools it chains, pass and fail verdicts, and out-of-range inputs that return CHECK INPUTS.
 - `node scripts/tools/input-guides.mjs check --file handbook68`: 7 tools, 94 inputs, 0 problems. Inventory: 844 tools, 7,143 inputs, all covered.
 - `npm run verify`: astro check 0 errors and 0 warnings; 1,047/1,047 tests; 3,650 pages verified by the post-build checks.
-- `npm run knowledge:check`: valid, 212 relationships (197 approved). `npm run seo:validate`: passed.
+- `npm run knowledge:check`: valid, 227 relationships (212 approved) after rebasing on f9bf96c. `npm run seo:validate`: passed.
 - Browser sweep (`scripts/tools/input-guides-browser.mjs`, Playwright Chromium 130 on the built site): 844/844 tools passed, 7,143 figures, including the 360 px phone check.
 
 ## Limits stated in the tools
