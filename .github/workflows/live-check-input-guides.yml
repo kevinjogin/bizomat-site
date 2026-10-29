@@ -1,0 +1,41 @@
+# Temporary diagnostic: READOS ↔ WORKOS connections on the live kevos.com. Removed after use.
+name: Live check (knowledge connections)
+on:
+  push:
+    branches: [claude/loving-mccarthy-oubwh2]
+permissions:
+  contents: read
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Install browsers
+        run: npm i --no-save --no-package-lock playwright@1.48.2 && npx playwright install --with-deps webkit
+      - name: Check live pages
+        shell: bash
+        run: |
+          cat > check.mjs <<'JS'
+          import { webkit, devices } from 'playwright';
+          const note = (t, m) => console.log(`::notice title=${t}::${String(m).slice(0, 900)}`);
+          const b = await webkit.launch(); const ctx = await b.newContext(devices['iPhone 13']); const p = await ctx.newPage();
+          const pages = [
+            ['/reados/publications/printed-mechanisms-that-run/', 'section.ka'],
+            ['/reados/publications/printed-mechanisms-that-run/design-printed-gears-that-mesh/', 'section.ka'],
+            ['/reados/collections/investment-appraisal-and-business-cases/', 'section.ka, section.kp'],
+            ['/tools/bend-allowance/', 'section.kl, section.kp'],
+            ['/tools/welding-heat-input/', 'section.kl'],
+          ];
+          for (const [u, sel] of pages) {
+            const r = await p.goto('https://kevos.com' + u + '?v=' + Date.now(), { waitUntil: 'load' });
+            const s = await p.evaluate((sel) => [...document.querySelectorAll(sel)].map((el) => `${el.querySelector('h2')?.textContent} (${el.querySelectorAll('li').length} items)`).join(' + '), sel);
+            note(`live ${u}`, `HTTP ${r.status()} | ${s || 'SECTION MISSING'}`);
+          }
+          await p.goto('https://kevos.com/tools/?tool=investment-appraisal', { waitUntil: 'load' });
+          let html = ''; for (let i = 0; i < 40 && !html; i++) { await p.waitForTimeout(250); html = await p.evaluate(() => document.querySelector('#tool-learn')?.textContent || ''); }
+          note('live calculator investment-appraisal', html ? html.slice(0, 200) : 'NO LEARN SECTION');
+          const j = await p.goto('https://kevos.com/tools/knowledge.json', { waitUntil: 'load' });
+          note('live knowledge.json', `HTTP ${j.status()} tools ${Object.keys(JSON.parse(await p.evaluate(() => document.body.innerText))).length}`);
+          await b.close();
+          JS
+          node check.mjs
