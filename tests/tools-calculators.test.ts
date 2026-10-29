@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 850 tools with unique ids and every previously published id kept', () => {
+test('register: 856 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 850);
+  assert.equal(ids.length, 856);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -4607,3 +4607,71 @@ test('thermodynamics tools: verdicts and guards', () => {
   const cases: Array<[string, Inputs]> = [['vapour-pressure-boiling-check', { M: 0.5 }], ['vapour-pressure-boiling-check', { p1: 0.001, p: 100000 }], ['real-gas-cylinder-contents', { pg: 2000 }], ['ro-pressure-check', { rec: 100 }], ['battery-heat-check', { Nc: 0 }], ['heat-pump-cop-check', { Tsrc: 50, Tsink: 40 }], ['heat-pump-cop-check', { etaMin: 0 }], ['waste-heat-recovery-limit', { T2: 10 }], ['waste-heat-recovery-limit', { T2: 95 }], ['waste-heat-recovery-limit', { share: 0 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
+
+// Polymer thermodynamics (batch polymers): Flory–Huggins, Hansen, Flory–Rehner, single-point viscosity, Flory melting and DLS.
+// Expected values are independent hand calculations in node: closed forms, the exact regular-solution binodal and equal chemical potentials.
+const RG = 8.31446261815324;
+const POLY_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['polymer-solution-phase-check', {}, { Nw: (200000 / 1.05) / (92 / 0.87), chi: 0.34 + (92 / 0.87) * 4 / (RG * 298.15), chis: 0.5 * (1 / (1801.2422360248447 * 0.05) + 1 / 0.95), pc: 0.028048156150781343, chic: 0.5243255507299315, chib: 0.5273276043686248, Tb: -1.5732405913831826 }, 1e-7],
+  ['polymer-solution-phase-check', { M1: 100, rho1: 1, M2: 100, rho2: 1, PDz: 1, phi: 10 }, { Nw: 1, pc: 0.5, chic: 2, chib: Math.log(1 / 9) / (2 * 0.1 - 1), chis: 0.5 * (1 / 0.1 + 1 / 0.9) }, 1e-9], // regular solution
+  ['hansen-solvent-compatibility', {}, { Ra: Math.sqrt(4 * 9 + 4.5 ** 2 + 16.1 ** 2), RED: Math.sqrt(4 * 9 + 4.5 ** 2 + 16.1 ** 2) / 8.6, best: 337.45 / 370.25 }],
+  ['hansen-solvent-compatibility', { xB: 100 }, { Ra: Math.sqrt(4 * 0.25 + 9 + 0.81), dD: 18, dH: 2 }],
+  ['hansen-solvent-compatibility', { xB: 50 }, { dD: 16.75, dP: 5.25, dH: 10.5, Ra: Math.sqrt(4 * 1.75 ** 2 + 0.75 ** 2 + 7.6 ** 2) }],
+  ['rubber-swelling-crosslink-density', {}, { v2: (1.95 * 0.6 / 0.92) / (1.95 * 0.6 / 0.92 + 4.25 / 0.867), nu: 156.68428196613112, Mc: 5871.6802250711235, G: 156.68428196613112 * RG * 296.15, dV: 272.0098039215687, dm: 210, ext: 2.5 }, 1e-6],
+  ['rubber-swelling-crosslink-density', { f: 3 }, { nu: 168.55236405801892 }, 1e-6],
+  ['polymer-intrinsic-viscosity', {}, { er: 1.35, sc: Math.sqrt(2 * (0.35 - Math.log(1.35))) / 0.5, bm: 0.25 * (0.35 + 3 * Math.log(1.35)) / 0.5, hg: (Math.sqrt(1 + 4 * 0.35 * 0.35) - 1) / (2 * 0.35 * 0.5), Mv: (Math.sqrt(2 * (0.35 - Math.log(1.35))) / 0.5 / 5e-4) ** (1 / 0.7) }],
+  ['polymer-intrinsic-viscosity', { method: 'bm' }, { iv: 0.6251568886755072 }],
+  ['polymer-melting-point-depression', {}, { phi1: 17 / 35, Tm: 1 / (1 / 413.15 + RG / 8000 * 33 / 150 * (17 / 35 - 0.3 * (17 / 35) ** 2)) - 273.15, dT: 15.583618577018228 }, 1e-7],
+  ['polymer-melting-point-depression', { w1: 0 }, { phi1: 0, Tm: 140 }, 1e-9],
+  ['dls-particle-size', {}, { q: 4 * Math.PI * 1.332 * Math.SQRT1_2 / 632.8e-9, G1: 3000, D: 8.575432121651589e-12, d: 57.22699592593687, qR: 0.5351845574327894 }],
+  ['dls-particle-size', { corr: 'g1' }, { G1: 6000, d: 57.22699592593687 / 2 }],
+];
+for (const [id, over, expected, tol] of POLY_CASES) test(`polymer tool: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('polymer tools: the binodal has equal chemical potentials and the boundaries are ordered', () => {
+  for (const phi of [1, 5, 30]) {
+    const v = engine.run('polymer-solution-phase-check', { phi }).values, N = v.Nw, a = phi / 100, b = v.phib, c = v.chib;
+    const mu1 = (p: number) => Math.log1p(-p) + (1 - 1 / N) * p + c * p * p, mu2 = (p: number) => Math.log(p) - (N - 1) * (1 - p) + N * c * (1 - p) ** 2;
+    near(mu1(a) - mu1(b), 0, 1e-12, `solvent potential at ${phi} %`); near(mu2(a) - mu2(b), 0, 1e-9, `polymer potential at ${phi} %`);
+    assert.ok(v.chib <= v.chis + 1e-12 && v.Ts < v.Tb, `binodal before spinodal at ${phi} %`);
+  }
+  const mono = engine.run('polymer-solution-phase-check', { PDz: 1, phi: 100 / (1 + Math.sqrt(1801.2422360248447)) }).values;
+  near(mono.chib, mono.chic, 1e-9, 'binodal meets the critical point'); near(mono.chis, mono.chic, 1e-9, 'spinodal meets the critical point');
+  const sw = engine.run('rubber-swelling-crosslink-density').values;
+  near(sw.E, 3 * sw.G, 1e-6, 'E = 3G');
+});
+
+test('polymer tools: verdicts and guards', () => {
+  assert.equal(engine.run('polymer-solution-phase-check').text, 'ONE PHASE');
+  assert.equal(engine.run('polymer-solution-phase-check', { T: 0 }).text, 'ONE PHASE, SMALL MARGIN');
+  assert.equal(engine.run('polymer-solution-phase-check', { T: -5 }).text, 'METASTABLE: CAN SEPARATE');
+  assert.equal(engine.run('polymer-solution-phase-check', { T: -10 }).text, 'UNSTABLE: SEPARATES SPONTANEOUSLY');
+  assert.equal(engine.run('polymer-solution-phase-check', { d1: 19 }).text, 'ONE PHASE', 'equal solubility parameters: χ = χS at every temperature');
+  assert.equal(engine.run('hansen-solvent-compatibility').text, 'LIKELY TO RESIST');
+  assert.equal(engine.run('hansen-solvent-compatibility', { xB: 100 }).text, 'LIKELY TO DISSOLVE OR SWELL THE PART');
+  assert.equal(engine.run('hansen-solvent-compatibility', { R0: 17 }).text, 'BORDERLINE: TEST IT');
+  assert.equal(engine.run('hansen-solvent-compatibility', { purpose: 'dissolve', xB: 100 }).text, 'LIKELY TO DISSOLVE THE POLYMER');
+  assert.equal(engine.run('hansen-solvent-compatibility', { purpose: 'dissolve' }).text, 'UNLIKELY TO DISSOLVE THE POLYMER');
+  assert.equal(engine.run('rubber-swelling-crosslink-density').text, 'CROSSLINK DENSITY IN RANGE');
+  assert.equal(engine.run('rubber-swelling-crosslink-density', { numin: 200 }).text, 'CROSSLINK DENSITY BELOW RANGE');
+  assert.equal(engine.run('rubber-swelling-crosslink-density', { numax: 100 }).text, 'CROSSLINK DENSITY ABOVE RANGE');
+  assert.ok(engine.run('rubber-swelling-crosslink-density', { chi: 0.44 }).values.nu < sw0(), 'a higher χ gives a lower crosslink density');
+  assert.equal(engine.run('polymer-intrinsic-viscosity').text, 'IV WITHIN SPECIFICATION');
+  assert.equal(engine.run('polymer-intrinsic-viscosity', { t: 120 }).text, 'IV OUTSIDE SPECIFICATION');
+  assert.equal(engine.run('polymer-melting-point-depression').text, 'CRYSTALS MELT AT THIS TEMPERATURE');
+  assert.equal(engine.run('polymer-melting-point-depression', { Tp: 127 }).text, 'MELTS, SMALL MARGIN');
+  assert.equal(engine.run('polymer-melting-point-depression', { Tp: 115 }).text, 'CRYSTALS DO NOT MELT');
+  assert.equal(engine.run('polymer-melting-point-depression', { purpose: 'keep', Tp: 100 }).text, 'CRYSTALS SURVIVE AT THIS TEMPERATURE');
+  assert.equal(engine.run('polymer-melting-point-depression', { purpose: 'keep', Tp: 130 }).text, 'CRYSTALS MELT');
+  assert.ok(engine.run('polymer-melting-point-depression', { chi: 0.6 }).checks.some((c: any) => c.label === 'Liquid–liquid separation' && c.status === 'warn'));
+  assert.equal(engine.run('dls-particle-size').text, 'SIZE IN RANGE');
+  assert.equal(engine.run('dls-particle-size', { Gm: 2000 }).text, 'SIZE OUT OF RANGE');
+  assert.ok(engine.run('dls-particle-size', { Gm: 2000 }).checks.some((c: any) => c.label === 'Internal motion (qRh)' && c.status === 'warn'));
+  const cases: Array<[string, Inputs]> = [['polymer-solution-phase-check', { M1: 1, rho1: 25, M2: 100000000, rho2: 0.1 }], ['polymer-solution-phase-check', { phi: 100 }], ['hansen-solvent-compatibility', { band: 1 }], ['rubber-swelling-crosslink-density', { ms: 1.9 }], ['rubber-swelling-crosslink-density', { md: 2.1 }], ['rubber-swelling-crosslink-density', { chi: 1.2 }], ['rubber-swelling-crosslink-density', { numin: 400 }], ['polymer-intrinsic-viscosity', { t: 90 }], ['polymer-intrinsic-viscosity', { IVmin: 0.8 }], ['polymer-melting-point-depression', { w1: 100 }], ['dls-particle-size', { dmin: 90 }], ['dls-particle-size', { theta: 180 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+const sw0 = () => engine.run('rubber-swelling-crosslink-density').values.nu;

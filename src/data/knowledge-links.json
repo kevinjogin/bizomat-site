@@ -2315,6 +2315,96 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter budgets battery energy and life for a device; it does not cover heat generation or temperature rise."
+  },
+  {
+   "reados": "publication/rubber-parts-by-the-numbers",
+   "chapter": "temperature-and-the-thermoelastic-effect",
+   "tool": "rubber-swelling-crosslink-density",
+   "type": "explains",
+   "note": "Works G = NkT backwards from a swelling test: it finds the network chain density by the Flory–Rehner equation and reports the shear modulus that density implies.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter gives the ideal-network shear modulus G = NkT with N chains per volume; the tool computes ν from swelling and G = νRT, the same relation per mole."
+  },
+  {
+   "reados": "publication/rubber-parts-by-the-numbers",
+   "chapter": "relaxation-set-ageing-and-ozone",
+   "tool": "rubber-swelling-crosslink-density",
+   "type": "complements",
+   "note": "Measures crosslink density by a swelling test, so specimens before and after heat ageing show whether the network has broken down or cross-linked further.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains that ageing breaks some networks down and cross-links others further; the tool measures crosslink density, which tracks that change. It does not predict ageing."
+  },
+  {
+   "reados": "publication/rubber-parts-by-the-numbers",
+   "chapter": "testing-and-acceptance",
+   "tool": "rubber-swelling-crosslink-density",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter’s batch tests are hardness and an inflation curve on finished sleeves; a laboratory swelling test is not part of its acceptance method."
+  },
+  {
+   "reados": "publication/plastic-parts-by-the-numbers",
+   "chapter": "define-the-part-before-the-mould",
+   "tool": "hansen-solvent-compatibility",
+   "type": "complements",
+   "note": "Screens whether cleaning products or other liquids are likely to dissolve or swell the chosen plastic before the open chemical check is closed with the supplier; it does not predict stress cracking.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter leaves chemical resistance open and notes stress cracking from some chemicals; the tool screens solvent attack by Hansen distance and states that stress cracking is outside it."
+  },
+  {
+   "reados": "publication/plastic-parts-by-the-numbers",
+   "chapter": "first-off-approval-and-defects",
+   "tool": "hansen-solvent-compatibility",
+   "type": "complements",
+   "note": "A first screen for the open chemical-resistance item on the approval record: Hansen distance from each site cleaning product to the part’s plastic, before supplier confirmation and immersion tests.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Approval record lists chemical resistance to site cleaning products as an open item; the tool gives a screening RED per liquid and points to ISO 175 immersion testing."
+  },
+  {
+   "reados": "publication/heat-exchangers-by-the-numbers",
+   "chapter": "plate-or-shell-and-tube",
+   "tool": "hansen-solvent-compatibility",
+   "type": "complements",
+   "note": "Screens whether a process fluid is likely to swell a plate-exchanger gasket elastomer, given Hansen parameters for both; the gasket maker’s fluid list still governs.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter warns that a gasket suited to water may swell in some oils and that the elastomer is chosen for both fluids; the tool screens swelling by Hansen distance."
+  },
+  {
+   "reados": "publication/fine-particles-by-the-numbers",
+   "chapter": "brownian-diffusion",
+   "tool": "dls-particle-size",
+   "type": "applies",
+   "note": "Uses Einstein’s relation in reverse, as the chapter describes for instruments that size particles in liquids: decay rate to diffusion coefficient to hydrodynamic diameter.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter derives D = kT ÷ (6πηr) and says liquid-sizing instruments invert it from Brownian motion; the tool does exactly that from a DLS decay rate (no slip correction, liquids only)."
+  },
+  {
+   "reados": "publication/diffusion-by-the-numbers",
+   "chapter": "diffusion-is-a-random-walk",
+   "tool": "dls-particle-size",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter is about atoms diffusing in steel and mentions Einstein’s spread relation only in passing; it does not cover particle sizing."
+  },
+  {
+   "reados": "publication/plastic-parts-by-the-numbers",
+   "chapter": "first-off-approval-and-defects",
+   "tool": "polymer-intrinsic-viscosity",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter controls resin drying by time and a moisture limit; it does not use dilute-solution viscosity to check molar mass."
   }
  ]
 }
