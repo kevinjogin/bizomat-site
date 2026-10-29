@@ -1,0 +1,12 @@
+// KEVOS® WORKOS input guides: callen. What each input means, how to get it right and which figure explains it.
+// Read with public/tools/input-guides.js; units, accepted ranges and examples come from data-callen.js.
+window.WORKOS_INPUTS = Object.assign(window.WORKOS_INPUTS || {}, {
+  'liquid-throttling-temperature-rise': {
+    rho: { what: 'The mass of one cubic metre of the liquid at the temperature and pressure where it reaches the restriction.', tip: 'Mineral hydraulic oils are about 850–890 kg/m³; take the value at the working temperature from the data sheet.', effect: 'A denser liquid has a smaller specific volume, so it warms less for the same pressure drop.', fig: 'density', sym: 'ρ' },
+    beta: { what: 'How much the liquid’s volume grows for each kelvin it warms at constant pressure, as a fraction of its volume; it sets how much of the pressure energy is not turned into a temperature rise.', tip: 'Use the volumetric, not the linear, coefficient; mineral oils are several times more expansive than water.', effect: 'A larger value slightly lowers the temperature rise.', fig: 'expansion', sym: 'β' },
+    cp: { what: 'The heat needed to warm one kilogram of the liquid by one kelvin at constant pressure.', tip: 'Mineral oils are near 1.9–2.1 kJ/(kg·K) and water near 4.18; a low value gives a larger temperature rise.', effect: 'The temperature rise falls in inverse proportion to it.', fig: 'heat', sym: 'c_p' },
+    T: { what: 'The temperature of the liquid as it arrives at the valve, orifice or other restriction.', tip: 'The absolute temperature enters the expansion term, so use the real liquid temperature, not a design ambient.', effect: 'A hotter liquid has a slightly smaller rise, because the expansion term T β grows; the outlet temperature rises with it.', fig: 'temperature', sym: 'T' },
+    dp: { what: 'The pressure lost across the restriction without doing useful work: upstream pressure minus downstream pressure.', tip: 'For a relief valve passing flow back to tank, this is the full set pressure above the tank pressure.', effect: 'The temperature rise is in proportion to it.', fig: 'pressure', sym: 'Δp' },
+    limit: { what: 'The largest temperature rise you can accept across this restriction, set by the fluid, seals, process or downstream equipment.', tip: 'This is your own limit for the pass or fail line, not a fluid rating.', effect: 'Moves only the pass or fail line; the calculated rise does not change.', fig: 'temperature' },
+  },
+});

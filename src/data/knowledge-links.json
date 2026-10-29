@@ -2725,6 +2725,46 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: refrigerant compressor work, not gas-turbine cycles; matched only on compressor and isentropic."
+  },
+  {
+   "reados": "publication/real-gases-by-the-numbers",
+   "chapter": "throttling-and-the-joule-thomson-effect",
+   "tool": "liquid-throttling-temperature-rise",
+   "type": "complements",
+   "note": "Applies the same constant-enthalpy throttling relation to a liquid, where it gives heating: dT = v(1 − Tβ)dp/cp across a valve or orifice.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter defines the Joule–Thomson coefficient for gases at a regulator; the tool applies the general Joule–Thomson relation (Callen eq. 6.41) to liquids, a related case."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "throttling-mixing-and-friction",
+   "tool": "liquid-throttling-temperature-rise",
+   "type": "complements",
+   "note": "Gives the temperature rise when a liquid’s pressure is dropped across a valve, the small heating this chapter’s liquid friction produces.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter shows valve friction in a liquid turning pressure into a small temperature rise (dissipation = volume flow × pressure drop); the tool gives that rise, v(1 − Tβ)Δp ÷ cp, per kilogram."
+  },
+  {
+   "reados": "publication/process-chillers-by-the-numbers",
+   "chapter": "throttling-and-flash-gas",
+   "tool": "liquid-throttling-temperature-rise",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter throttles a refrigerant into two phases and calculates flash gas; the tool is for a single-phase liquid that stays liquid."
+  },
+  {
+   "reados": "publication/process-steam-by-the-numbers",
+   "chapter": "pressure-reduction-and-distribution",
+   "tool": "liquid-throttling-temperature-rise",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter throttles steam and tracks its dryness; the tool is for a single-phase liquid, not a vapour."
   }
  ]
 }

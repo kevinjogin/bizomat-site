@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 866 tools with unique ids and every previously published id kept', () => {
+test('register: 867 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 866);
+  assert.equal(ids.length, 867);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -4793,5 +4793,27 @@ test('thermodynamics checks: verdicts and guards', () => {
   assert.equal(engine.run('compressor-turbine-efficiency-check', { etamin: 90 }).text, 'EFFICIENCY BELOW MINIMUM');
   assert.equal(engine.run('compressor-turbine-efficiency-check', { T2: 150 }).text, 'CHECK THE MEASUREMENTS');
   const cases: Array<[string, Inputs]> = [['otto-diesel-cycle-check', { r: 40 }], ['otto-diesel-cycle-check', { cycle: 'diesel', r: 5, rc: 6 }], ['otto-diesel-cycle-check', { cycle: 'stirling' }], ['brayton-regenerator-check', { T3: 200 }], ['brayton-regenerator-check', { etac: 0 }], ['vapour-compression-cycle-check', { h3: 400 }], ['vapour-compression-cycle-check', { h2s: 390 }], ['vapour-compression-cycle-check', { Tc: -20 }], ['surface-dew-point-check', { RH: 0 }], ['surface-dew-point-check', { T: -5 }], ['cooling-coil-dehumidification-check', { T2: 35 }], ['cooling-coil-dehumidification-check', { T2: 25, RH2: 100 }], ['combustion-air-flue-gas-check', { y: 0 }], ['combustion-air-flue-gas-check', { ex: -5 }], ['compressor-turbine-efficiency-check', { P2: 50 }], ['compressor-turbine-efficiency-check', { machine: 'turb' }], ['compressor-turbine-efficiency-check', { mdot: 'abc' }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// ---------------------------------------------------------------- Thermodynamics tool from Callen (batch callen)
+// Expected values come from an independent hand calculation (kelvin = °C + 273.15), not from the tool.
+
+test('callen liquid throttling: hand-calculated values', () => {
+  const lt = engine.run('liquid-throttling-temperature-rise').values; // oil 870 kg/m³, β 700e-6/K, cp 1.9 kJ/(kg·K), 40 °C, 300 bar dropped
+  near(lt.dT, 14.170508167, 1e-8, 'v (1 − T β) Δp ÷ cp (Callen eq. 6.41)');
+  near(lt.dTsimple, 18.1488203267, 1e-9, 'v Δp ÷ cp ignoring expansion'); near(lt.work, 34.4827586207, 1e-9, 'v Δp in kJ/kg');
+  near(lt.share, 21.9205, 1e-9, 'T β = 313.15 × 0.0007'); near(lt.Tout, 54.170508167, 1e-8, 'outlet temperature');
+  near(engine.run('liquid-throttling-temperature-rise', { rho: 998.2, beta: 207, cp: 4.182, T: 20, dp: 10 }).values.dT, 0.225014770729, 1e-11, 'water: about 0.23 K per 10 bar');
+  near(engine.run('liquid-throttling-temperature-rise', { beta: 0 }).values.dT, 300e5 / 870 / 1900, 1e-9, 'with no expansion the rise is Δp ÷ (ρ cp)');
+});
+
+test('callen liquid throttling: verdicts and guards', () => {
+  assert.equal(engine.run('liquid-throttling-temperature-rise', { limit: 15 }).text, 'VALVE HEATING WITHIN LIMIT');
+  assert.equal(engine.run('liquid-throttling-temperature-rise').text, 'VALVE HEATING ABOVE LIMIT');
+  const cases: Array<[string, Inputs]> = [
+    ['liquid-throttling-temperature-rise', { T: -300 }], ['liquid-throttling-temperature-rise', { rho: 0 }],
+    ['liquid-throttling-temperature-rise', { dp: 0 }], ['liquid-throttling-temperature-rise', { cp: 100 }], ['liquid-throttling-temperature-rise', { beta: -1 }],
+  ];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
