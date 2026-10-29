@@ -4,7 +4,7 @@ chapterSlug: where-the-gap-comes-from
 order: 6
 title: "Working back from the gap to its causes"
 description: "A Pareto of 412 failed deliveries and a capacity check on effective rates: ironers and dispatch cause 83%, the ironers are 20% short on peak days, and the washers are not the constraint."
-draft: true
+draft: false
 ---
 
 The first five chapters turned a request for a new plant into four measures, a baseline for each and a target derived from the purpose. Together they define a gap: the distance, in the units of each target, between where the laundry is and where the tender and the price require it to be. This chapter works back from that gap to its causes. It uses two tools that every operations manager already has: a Pareto analysis of the failures that have actually happened, and a capacity check that compares what each stage of the process can do with what it is asked to do on its worst days.

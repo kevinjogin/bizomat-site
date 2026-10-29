@@ -4,7 +4,7 @@ chapterSlug: pass-fail-tests-and-small-samples
 order: 5
 title: "Pass-fail tests: what a small sample can and cannot show"
 description: "Success-run sample sizes (22 for R 0.90 at C 0.90), exact binomial bounds, why 3 of 3 passes shows only R above 0.368, and a A$18,100 specimen drop test in place of A$209,000 of units."
-draft: true
+draft: false
 ---
 
 Many development tests have only two outcomes. The unit survives the drop or it does not; the inverter starts the saw or it trips; the RCD trips within its time or it does not. Results like these are easy to record and easy to misread. "Passed, 3 of 3" sounds like evidence that the design is sound. It is evidence of something, but much less than it sounds, and the honest way to report it is to say how low the true pass rate could still be.

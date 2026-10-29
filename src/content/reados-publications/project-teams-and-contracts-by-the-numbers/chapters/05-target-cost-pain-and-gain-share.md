@@ -4,7 +4,7 @@ chapterSlug: target-cost-pain-and-gain-share
 order: 5
 title: "Target cost with pain and gain share: worked share calculations"
 description: "A A$13.50m target with a 50% share inside ±10% bands, payments from 85% to 120% of target, break-even at 113.8%, a fat target, and a A$0.62m change left out of the target."
-draft: true
+draft: false
 ---
 
 A target-cost contract sits between the lump sum and cost-plus. The owner reimburses the contractor's actual cost and pays a fee, as under the cost-plus contracts of [Cost-plus and open book](/reados/publications/project-teams-and-contracts-by-the-numbers/cost-plus-and-open-book/), but the parties also agree a **target** for that cost. If the outturn is below the target, the saving is shared; if above, the overrun is shared. The contractor keeps some of the incentive of a fixed price, the owner keeps some of the flexibility of cost-plus, and both have a reason to find savings together.

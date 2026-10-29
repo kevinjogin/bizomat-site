@@ -4,7 +4,7 @@ chapterSlug: forecast-error-and-base-rates
 order: 5
 title: "Measuring forecast error and reading base rates"
 description: "Bias, MAE, MAPE and RMSE on the 2023 budget (all 12 months over, MAPE 9.7%), naive benchmarks that beat it, six annual ratios as a base rate, and a −8.9% error reported as −1.0%."
-draft: true
+draft: false
 ---
 
 A business that wants to know how far to trust its next forecast has to know how far its past forecasts missed. That sounds simple, and it is easy to get wrong. The same miss can be reported as small or large depending on the measure, the denominator, the benchmark and, above all, which forecast is compared with the outcome. A business that measures its forecasts loosely will conclude that they are better than they are, and will carry that confidence into its next business case.

@@ -4,7 +4,7 @@ chapterSlug: pivot-stop-or-switch
 order: 9
 title: "Pivot, stop or switch to the competing investment"
 description: "Five Gate 5 options under a A$1.8m capital limit: full launch A$116.8k, waiting a season A$650.2k, and a pivot to the retrofit kit with the welding cell funded now, A$893.7k."
-draft: true
+draft: false
 ---
 
 A gate that stops a course of action has not finished its work. Once the full product is ruled out, the money and people it would have used are free, and the gate has to decide what to do with them. The options are rarely just "launch" or "stop". There may be a smaller product that uses what was learned, a reason to wait for more evidence, and, in most businesses, another project that has been waiting for the same capital. A stop decision taken without looking at those alternatives can be as costly as a launch taken without looking at the evidence.

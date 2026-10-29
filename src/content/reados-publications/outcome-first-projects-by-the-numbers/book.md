@@ -7,8 +7,8 @@ tags: [projects, strategy, operations, finance]
 author: KEVOS®
 publisher: KEVOS® READOS
 language: en-AU
-status: draft
-publishDate: 2026-10-28
+status: published
+publishDate: 2026-10-29
 referencesChecked: 2026-10-28
 edition: "1"
 level: "Intermediate project definition, benefits and business case practice"
@@ -105,16 +105,28 @@ references:
     year: "2021"
     note: "Former Amazon executives' account of writing a press release and frequently asked questions for a proposed product before building it. Mentioned in Chapter 1 as one practitioner form of working backwards; no passages are reproduced."
 related:
+  - title: "Reference Class Forecasting by the Numbers"
+    href: "/reados/publications/reference-class-forecasting-by-the-numbers/"
+  - title: "Modular Projects by the Numbers"
+    href: "/reados/publications/modular-projects-by-the-numbers/"
+  - title: "Front-End Planning by the Numbers"
+    href: "/reados/publications/front-end-planning-by-the-numbers/"
+  - title: "Stage Gates and Stopping Rules by the Numbers"
+    href: "/reados/publications/stage-gates-and-stopping-rules-by-the-numbers/"
+  - title: "Prototypes and Simulation by the Numbers"
+    href: "/reados/publications/prototypes-and-simulation-by-the-numbers/"
+  - title: "First-of-a-Kind Technology by the Numbers"
+    href: "/reados/publications/first-of-a-kind-technology-by-the-numbers/"
+  - title: "Demand and Benefit Forecasts by the Numbers"
+    href: "/reados/publications/demand-and-benefit-forecasts-by-the-numbers/"
+  - title: "Project Teams and Contracts by the Numbers"
+    href: "/reados/publications/project-teams-and-contracts-by-the-numbers/"
   - title: "From Approval to Benefits"
     href: "/reados/collections/from-approval-to-benefits/"
   - title: "Investment Appraisal and Business Cases"
     href: "/reados/collections/investment-appraisal-and-business-cases/"
   - title: "Project Planning and Control"
     href: "/reados/collections/project-planning-and-control/"
-  - title: "Reference Class Forecasting by the Numbers"
-    href: "/reados/publications/reference-class-forecasting-by-the-numbers/"
-  - title: "Modular Projects by the Numbers"
-    href: "/reados/publications/modular-projects-by-the-numbers/"
 ---
 
 ## About this book

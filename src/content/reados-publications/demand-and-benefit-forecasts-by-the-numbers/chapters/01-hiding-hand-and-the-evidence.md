@@ -4,7 +4,7 @@ chapterSlug: hiding-hand-and-the-evidence
 order: 1
 title: "The Hiding Hand and the evidence on optimistic forecasts"
 description: "A canning plant forecast at 25.32m cans and an NPV of A$6.08m, Hirschman's Hiding Hand, what the published tests found, and a board paper that cited one good year."
-draft: true
+draft: false
 ---
 
 Every business case for new capacity rests on a forecast of how much the capacity will be used and what that use will earn. The cost of the plant can be quoted, the lease can be read and the crew can be priced, but the volume is a judgement about customers who have not yet bought anything. That judgement is usually made by the person who most wants the project to go ahead, and it is usually too high. There is also a respectable argument that this does not matter, because the people who underestimate the difficulties of a venture also underestimate their own ability to overcome them.

@@ -4,7 +4,7 @@ chapterSlug: reviewing-and-scaling-the-front-end
 order: 10
 title: "Reviewing the outturn and scaling the front end"
 description: "Ready on 17 January 2028 after 41 weeks against 36, A$6,720k against a A$6,428k Class 3 point, A$292k of A$520k contingency drawn, and a scaled front end for a A$380k project."
-draft: true
+draft: false
 ---
 
 A project that finishes on time and under its funding invites a short close-out: thank the team, file the final account, move on. That wastes the one moment when the business can check its methods against what actually happened. The estimate, the definition score, the contingency and the schedule model were all forecasts. The outturn is the evidence, and a review that reads it carefully is how the next project starts from a better place than this one did.

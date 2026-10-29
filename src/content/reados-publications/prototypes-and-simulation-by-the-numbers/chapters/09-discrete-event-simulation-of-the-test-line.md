@@ -4,7 +4,7 @@ chapterSlug: discrete-event-simulation-of-the-test-line
 order: 9
 title: "Discrete-event simulation: sizing the end-of-line test"
 description: "An average-load sum said 2 test bays; a 12-week discrete-event model with day-shift loading shows 2 bays pass 5.4 units a day against 10 built, and 4 bays keep up."
-draft: true
+draft: false
 ---
 
 Every BPU-5 leaving the factory is charged, discharged at full load and recharged to a shipping level in an end-of-line test bay. The number of bays is a production decision taken late in development, often from a simple sum of hours. That sum assumes the bays can be loaded whenever a test finishes. In the case, they cannot: the operator who loads and unloads them works one shift, and a bay that finishes at 19:00 holds its unit until morning.

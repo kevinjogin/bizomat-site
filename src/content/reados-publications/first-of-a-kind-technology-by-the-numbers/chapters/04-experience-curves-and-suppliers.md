@@ -4,7 +4,7 @@ chapterSlug: experience-curves-and-suppliers
 order: 4
 title: "Experience curves, supplier track records and the operating team"
 description: "A builder's 41st line against a first unit on a 90% curve, the novel package on an 85% curve from A$9.33m, who pays for learning, and a sorter scored on borrowed experience."
-draft: true
+draft: false
 ---
 
 Chapters 2 and 3 measured novelty in the technology. Experience is the other side of the same coin: the learning that a supplier, a technology and an operating team have accumulated before this plant, and the learning they still have to do on it. This chapter uses the experience curve to place each supplier's offer on the path from first unit to mature product, asks who pays for the learning still to come, reads each supplier's track record for the duty that matters, and looks at the team that will run the plant. It ends with a sorter that was rated on experience it did not have.

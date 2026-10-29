@@ -4,7 +4,7 @@ chapterSlug: how-many-loops
 order: 4
 title: "How many loops: diminishing returns and the speed of iteration"
 description: "Loop values of A$48,600 falling to A$2,446 on BPU-5's thermal subsystem, the stopping point for A$7,500, A$19,000 and A$57,500 loops, and a zero-find loop run at the wrong temperature."
-draft: true
+draft: false
 ---
 
 Iteration is the engine of development: build something, test it, learn from the result, change the design, and go round again. Each round finds problems, and the first rounds find the most, because the obvious problems are found first. Later rounds find fewer, while each still costs about the same. At some point another round is not worth its cost, and the team should stop and move on. Where that point lies depends on what a round costs, how long it takes, and whether its time counts against the release date.

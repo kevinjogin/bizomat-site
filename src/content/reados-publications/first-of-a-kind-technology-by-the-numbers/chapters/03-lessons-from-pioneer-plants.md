@@ -4,7 +4,7 @@ chapterSlug: lessons-from-pioneer-plants
 order: 3
 title: "Pioneer plants: where cost growth and performance shortfalls come from"
 description: "What RAND's pioneer-plant studies found drives cost growth and start-up shortfalls, applied to a 40% novelty fraction, open effluent scope, a recycle loop and wet fines."
-draft: true
+draft: false
 ---
 
 Chapter 2 measured how ready Option B's elements are. It did not say what happens to a plant built before its elements are ready, or by how much. For process plants, the best published answer comes from a series of studies made at the RAND Corporation between 1979 and 1986, which followed pioneer plants, the first commercial plants of their kind, from estimate to operation. This chapter summarises what those studies measured and found, applies each finding to the recycler's two options, and closes with an estimate that left out part of the plant because the team believed it could not exist.

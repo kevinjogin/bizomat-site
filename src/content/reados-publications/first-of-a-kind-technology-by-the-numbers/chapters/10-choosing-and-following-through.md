@@ -4,7 +4,7 @@ chapterSlug: choosing-and-following-through
 order: 10
 title: "Choosing between proven and novel, and following the choice through"
 description: "The risk-adjusted choice of the proven line now and a fines module later, ramp-up tracked against its curve, and a module pass criterion that a two-week clean-bale trial nearly bypassed."
-draft: true
+draft: false
 ---
 
 The board now has what it lacked in March 2024: each input with its evidence, each element with its readiness, a qualification standard, ramp-up curves, allowances graded by novelty and four strategies valued in one model. This chapter puts them side by side, traces how the novel process's paper lead disappeared step by step, and records the decision and what would have changed it.

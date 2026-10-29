@@ -4,7 +4,7 @@ chapterSlug: scale-up-from-pilot-to-production
 order: 5
 title: "Scale-up from pilot to production: what changes with size"
 description: "From a 0.30 t/h pilot to a 3.0 t/h plant: numbering-up ten cyclones, sorter loading up 2.5 times, and a water loop whose pilot never saw the plant's 3,000 mg/L."
-draft: true
+draft: false
 ---
 
 A pilot plant is built to answer questions cheaply, and it answers the questions it was built to answer. The trouble at scale-up comes from the questions it was not built to answer, usually because nobody thought to ask them. This chapter compares Option B's 0.30 t/h pilot with the 3.0 t/h plant it is meant to prove, quantity by quantity. It shows that one scale factor hides several, that some equipment can be multiplied rather than enlarged, that a sorter four times wider is not four pilots side by side, and that a water loop is a system that changes with time as well as size. It ends with the comparison that found the most important gap in the pilot evidence.

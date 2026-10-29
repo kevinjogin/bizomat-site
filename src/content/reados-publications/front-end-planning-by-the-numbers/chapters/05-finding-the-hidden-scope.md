@@ -4,7 +4,7 @@ chapterSlug: finding-the-hidden-scope
 order: 5
 title: "Finding the hidden scope before approval"
 description: "Five items worth A$990k found for A$46k of investigations, against A$1,425k and weeks of delay if found on site, and a borehole plan that missed the plant room pad."
-draft: true
+draft: false
 ---
 
 Every concept estimate has scope missing from it. That is not a criticism of whoever prepared it. A concept describes what the owner wants: four rooms, a new plant, a grader. It does not describe what everything around the project will require in return: the electricity network, the ground under the slab, the building surveyor, the fire engineer, the old plant that the new one must work with. Those requirements exist whether or not anyone has asked about them, and they will be paid for either way. The only choice is whether they are found while they are still lines in an estimate, or while they are holes in a site.

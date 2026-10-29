@@ -4,7 +4,7 @@ chapterSlug: waiting-testing-or-proceeding
 order: 5
 title: "Waiting, testing or proceeding: simple real options"
 description: "Waiting a year at Gate 3 to watch a competitor: A$214.8k against A$323.1k for staging now, a close call that turns on lost High-market sales, and a naive wait of A$643.9k."
-draft: true
+draft: false
 ---
 
 A gate has more than two answers. Besides going on and stopping, the business can wait: hold the programme where it is, keep the money, and decide later when more is known. Waiting is sometimes the best answer, and an ordinary net present value calculation cannot show when, because it compares investing now with never investing and leaves out investing later. Treating the timing of an investment as an option repairs that, at the cost of having to say how much the business learns by waiting and what it loses while it waits.

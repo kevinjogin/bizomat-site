@@ -4,7 +4,7 @@ chapterSlug: the-exposure-window
 order: 7
 title: "The exposure window: delivering quickly once committed"
 description: "Delivery as an exposure window: 36 planned weeks against 52, holding cost of A$301.7k against A$355.8k before the harvest, and a slab poured early that cost A$130k."
-draft: true
+draft: false
 ---
 
 Once the major money is committed, a project is exposed. Contracts are signed, equipment is on order, the site is open, and every week that passes adds cost that cannot be taken back: site overheads, the owner's team, interest on money that is not yet earning, and the chance that something goes wrong while the work is half done. The time from that commitment to the day the asset is ready is the **exposure window**. The case for planning slowly is, in large part, a case for making that window short and predictable.

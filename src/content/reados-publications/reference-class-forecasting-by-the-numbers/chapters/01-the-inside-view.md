@@ -152,6 +152,9 @@ Taking the outside view does not mean abandoning the estimate. The base cost of 
 
 It also does not excuse a poor estimate. A reference class records what happened to projects estimated in a particular way by a particular business. If the business changes how it estimates, for instance by obtaining full tenders instead of budget prices, the class may overstate future overruns for a while. That is a reason to record how each estimate was made, which Chapter 3 covers, not a reason to discard the record.
 
+
+An outside view corrects an estimate after it is built; definition work improves it before approval. *Front-End Planning by the Numbers* measures how much of a project's exposure can be removed in the front end, starting with [Plan slowly, deliver quickly: where a project's money is exposed](/reados/publications/front-end-planning-by-the-numbers/plan-slowly-deliver-quickly/).
+
 ## Exercise: what a 5% contingency would have covered
 
 Suppose that each of the 24 past projects had carried an extra 5% contingency on top of its approved budget. How many of them would have finished within that enlarged budget? How many with an extra 10%? What uplift on Bay 4's approved budget would match the median past project, and what total budget does that give?

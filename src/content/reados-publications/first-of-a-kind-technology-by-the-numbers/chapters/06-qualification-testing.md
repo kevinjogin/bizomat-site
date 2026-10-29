@@ -4,7 +4,7 @@ chapterSlug: qualification-testing
 order: 6
 title: "Qualification testing: run length, feed envelope and yield basis"
 description: "Size a qualification run with chi-square bounds (1,500 h for MTBF 500 h at 80%), test across a 5–13% contamination envelope, and correct a claimed 84% yield to 78.9%."
-draft: true
+draft: false
 ---
 
 A pilot shows that a process can work. A qualification run shows that it works well enough, for long enough, on the owner's feed, measured the owner's way. The difference matters most for a first-of-a-kind plant, because the pilot is usually the only physical evidence there is, and it was normally designed, fed and operated by the people who want to sell the technology. [Chapter 5](/reados/publications/first-of-a-kind-technology-by-the-numbers/scale-up-from-pilot-to-production/) found that the novel process's pilot never saw the water-loop concentration the full plant would run at, and the loop was retested at the full-scale bleed ratio. This chapter asks what else the evidence must show before the board can rely on the novel process.

@@ -4,7 +4,7 @@ chapterSlug: reviewing-decisions-not-outcomes
 order: 10
 title: "Reviewing the decisions, not the outcomes"
 description: "SB36's October 2026 review: the gate log, regret of A$392.3k against A$1,131.4k, spend stopped at 42.9% of plan, and a Brier score of 0.3534 that exposes overconfident schedules."
-draft: true
+draft: false
 ---
 
 Six months after a stop or a pivot, someone will look at what happened and say whether it was right. If the market turned out well, the stop will look timid; if it turned out badly, it will look wise. Neither verdict says much about the decision, because a decision is made with the information available at the time and an outcome arrives with information that was not. A review that judges decisions by their outcomes teaches the business to copy its lucky choices and abandon its unlucky ones, which is close to learning nothing.

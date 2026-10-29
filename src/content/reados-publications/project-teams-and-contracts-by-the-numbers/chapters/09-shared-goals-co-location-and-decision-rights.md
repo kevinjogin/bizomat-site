@@ -4,7 +4,7 @@ chapterSlug: shared-goals-co-location-and-decision-rights
 order: 9
 title: "Shared goals, co-location and decision rights"
 description: "One scorecard for six organisations, decision limits for 262 decisions, decision latency priced at A$320k against A$96k, and a joint site office that netted A$264k once limits were delegated."
-draft: true
+draft: false
 ---
 
 A contract can share the money, and a team structure can shorten the paths, but neither makes decisions. On the distribution centre, several hundred decisions have to be made by somebody between award and handover: approvals of shop drawings, answers to requests for information, variations, access plans, test results. Each one waits until someone with authority makes it, and the waiting is where much of a project's time goes. The speed of decisions depends on three things: whether the parties are aiming at the same result, whether the person in front of the problem is allowed to decide it, and how far apart the people who must agree are sitting.
@@ -13,7 +13,7 @@ This chapter maps Hackman's conditions for effective teams to the case, sets out
 
 ## Hackman's conditions in the case
 
-Hackman (2002) argued that the conditions around a team matter more than its members' personalities or a leader's style. Chapter 7 used the first of his five conditions, a real team with clear and stable membership, to size the coordination group. The other four apply just as directly to the DC.
+Hackman (2002) argued that the conditions around a team matter more than its members' personalities or a leader's style. Chapter 7 used the first of Hackman's five conditions, a real team with clear and stable membership, to size the coordination group. The other four apply just as directly to the DC.
 
 ```figure
 type: steps

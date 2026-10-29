@@ -4,7 +4,7 @@ chapterSlug: design-reviews-and-release
 order: 10
 title: "Design reviews and the release decision"
 description: "Five BPU-5 reviews at A$3,640 each, 42 issues against the plan's 42.3, a fan swap approved without a re-test that cost A$85,000, release criteria for R1 to R3, and the outturn."
-draft: true
+draft: false
 ---
 
 Every chapter so far has produced evidence: a capture rate, a prototype result, a test with its bound, a measured mean with its interval, a simulated probability, a queue length. A design review is where that evidence meets a decision. Done well, a review asks whether the evidence supports the design as it now stands, and finds the gaps while they are still cheap. Done badly, it reviews slides about the evidence and approves changes that quietly make the evidence out of date.

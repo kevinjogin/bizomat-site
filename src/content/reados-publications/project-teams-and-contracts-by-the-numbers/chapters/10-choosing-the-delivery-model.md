@@ -4,7 +4,7 @@ chapterSlug: choosing-the-delivery-model
 order: 10
 title: "Choosing the delivery model: comparing contracts by simulation"
 description: "A seeded 20,000-run comparison of six contract models for the DC: target cost averages A$15.485m with P80 A$15.938m, an alliance needs a 2.15% cost edge, and admin costs change the answer."
-draft: true
+draft: false
 ---
 
 Chapters 3 to 6 worked each contract model at a handful of chosen outturns, and Chapters 7 to 9 priced the team practices that make any of them work better. The owner now has to choose. A choice made on one outturn, usually the estimate, flatters whichever model looks best at that point and hides what happens when the cost lands somewhere else. The fair comparison runs every model through the same range of outcomes, includes what each costs the owner to administer, and reads the results as a distribution, not a single number.

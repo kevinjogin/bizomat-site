@@ -4,7 +4,7 @@ chapterSlug: how-much-front-end-is-enough
 order: 6
 title: "How much front-end planning is enough"
 description: "Diminishing returns on front-end spend: an illustrative optimum of A$256.9k against A$248k spent, and a three-week gate slip that would have lifted P(miss) from 5.3% to 24.1%."
-draft: true
+draft: false
 ---
 
 The chapters so far have made the case for the front end: it is cheap per week, it raises the definition score, it matures the estimate, and it finds scope that would cost far more on site. None of that means more is always better. Each study finds less than the one before, because the large problems tend to show up first, and every week spent studying is a week taken from somewhere. On a project with a fixed deadline, that somewhere is delivery float.

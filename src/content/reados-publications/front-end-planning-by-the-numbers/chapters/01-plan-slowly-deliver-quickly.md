@@ -4,7 +4,7 @@ chapterSlug: plan-slowly-deliver-quickly
 order: 1
 title: "Plan slowly, deliver quickly: where a project's money is exposed"
 description: "Northbank's upgrade on two paths: A$11.3k a week in the front end against A$171.7k in delivery, money spent against money committed, and a cost of waiting priced wrongly."
-draft: true
+draft: false
 ---
 
 A capital project has two phases that feel alike on a calendar and are nothing alike in a bank account. In the **front end**, a small team defines what is to be built, compares options, investigates the site and the services, prices the work and decides whether to go ahead. In **delivery**, contractors and suppliers build, install and commission what was defined. A week in the front end costs the salary of a few people and some studies. A week in delivery costs a site full of trades, equipment on order and money that cannot be taken back. The argument of this book is that weeks in the first phase are cheap, weeks in the second are dear, and a business that spends the cheap weeks well needs fewer of the dear ones.

@@ -4,7 +4,7 @@ chapterSlug: monte-carlo-for-the-working-day
 order: 7
 title: "Monte Carlo in a spreadsheet: will the unit last the day"
 description: "A seeded 10,000-run model of site demand, capacity, cold and ageing finds an 8.22% chance of running out at 2 years, against a 55% margin from averages, and sizes the cell change."
-draft: true
+draft: false
 ---
 
 Requirement R1 says the BPU-5 must last a full site day, 7:00 to 15:30, on at least 95% of days on a typical residential site through its first two years. That is a statement about the bad days, not the average day. A calculation that compares average energy available with average energy used cannot answer it, however carefully it is done, because the days that matter are the ones where demand is high, the morning is cold and the pack is old.

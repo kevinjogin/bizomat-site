@@ -4,7 +4,7 @@ chapterSlug: scoring-project-definition
 order: 3
 title: "Scoring project definition with a weighted checklist"
 description: "A PDRI-style index of 20 weighted elements: 807 at concept, 507.5 at Gate 2, and an independent rescore that moves 185.5 to 254.5 before targeted work brings it to 202."
-draft: true
+draft: false
 ---
 
 "Is the project ready to approve?" is a question that invites a confident yes. The team has worked on the project for months, knows it well and wants to get on with it. What the question needs is something more specific: which parts of the project are defined, how well, on what evidence, and which of the poorly defined parts matter most. A weighted checklist turns that into a number that can be tracked from stage to stage, compared with a threshold set in advance and, most usefully, taken apart to show where the remaining work should go.

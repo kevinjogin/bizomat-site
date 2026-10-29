@@ -4,7 +4,7 @@ chapterSlug: buying-down-technology-risk
 order: 9
 title: "Buying down technology risk: qualification, guarantees and separable modules"
 description: "Qualifying first (expected NPV A$11.35m), a yield guarantee whose damages cover 6.8% of the shortfall, and a separable fines module worth A$856,924 as an option, valued against doing nothing."
-draft: true
+draft: false
 ---
 
 By the end of Chapter 8 the novel process's lead had gone. Its yield had been corrected to 78.9%, its ramp-up stretched to nearly two years, and its capital cost graded up by novelty to a P80 of A$22.9 million excluding GST. The simulation put its mean net present value at A$8,760,870 against A$12,676,871 for the proven line. A board in that position need not simply choose the proven line and walk away from the better technology. It can try to buy the risk down.

@@ -4,7 +4,7 @@ chapterSlug: what-the-right-to-stop-is-worth
 order: 3
 title: "What the right to stop is worth"
 description: "Staged against all-in approval of the SB36: A$323.1k against −A$81.5k, a right to stop worth A$404.6k, the risk profile of each, and gates that never said no."
-draft: true
+draft: false
 ---
 
 A gate is usually described as a checkpoint, a place where a project is inspected. It is more useful to see it as an option: the right, but not the obligation, to spend the next stage's money. An option has value because its holder can decline to exercise it when the news is bad. A programme approved in stages carries a string of such options; a programme approved all at once has given them up. The difference between the two is the value of the right to stop, and it can be calculated from the same decision tree that values the programme.

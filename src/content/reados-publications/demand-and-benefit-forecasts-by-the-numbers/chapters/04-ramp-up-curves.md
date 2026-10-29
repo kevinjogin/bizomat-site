@@ -4,7 +4,7 @@ chapterSlug: ramp-up-curves
 order: 4
 title: "Ramp-up curves: how fast the volume arrives"
 description: "Customer onboarding and line learning as two ramps, a logistic S-curve fitted to rig 2 (midpoint 8.80 months), and a flat 70% first year that the line could not have filled."
-draft: true
+draft: false
 ---
 
 A forecast of steady-state volume says how much a plant will fill once it is established. A business case also has to say how quickly it gets there, because the early years are discounted least and carry the fixed costs in full. The canning plant's business case answered that question with two percentages: 70% of the steady volume in the first year and 95% in the second. Those two numbers are as much a forecast as the 25.32m cans, and they can be tested in the same way, against the business's own record and against the physical limits of the line.

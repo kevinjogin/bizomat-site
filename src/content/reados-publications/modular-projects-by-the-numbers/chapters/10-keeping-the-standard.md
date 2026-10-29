@@ -140,6 +140,9 @@ The fault investigation compared cell 9's controller program with the baseline a
 
 The correction treated the change as a request after the event. The shorter gap had cured a site-side problem at site A, where the in-feed's own speed control let cases bunch, so the proper fix was on site A's in-feed, and both cells were returned to the baseline timer. The business adopted three rules: programs are loaded only from the release repository; checksums are compared with the configuration record at every preventive maintenance visit; and site engineers can adjust only recipe values within locked limits. Had the edited timer been part of a safety function, the same unrecorded copy would have put an unvalidated safety change into a second cell, which is why the controls now make that impossible without authorised access.
 
+
+Who carries the cost of a deviation depends on the contract as much as on the change process. *Project Teams and Contracts by the Numbers* compares lump sum, cost-plus, target cost and alliance models in [Choosing the delivery model: comparing contracts by simulation](/reados/publications/project-teams-and-contracts-by-the-numbers/choosing-the-delivery-model/).
+
 ## Exercise: a faster palletiser
 
 Site B's maintenance lead proposes removing a 4-second pause the robot makes after placing each layer of format A, which would cut the robot's time per layer from 52 seconds to 48. The line delivers 10 cases a minute in format A, 10 cases to a layer. The in-feed can hold about 50 cases while the palletiser is stopped. Should the change be made, and if so, as which kind of change? A fleet change would cost about A$3,840 for the software plus 4 hours at A$160 to load and test each of the twelve cells.

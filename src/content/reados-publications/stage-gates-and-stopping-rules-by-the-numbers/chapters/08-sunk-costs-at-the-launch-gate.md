@@ -4,7 +4,7 @@ chapterSlug: sunk-costs-at-the-launch-gate
 order: 8
 title: "Sunk costs at the launch gate"
 description: "SB36 has spent A$1,245k by Gate 5. A note that set stopping's sunk loss against launching's forward value made launch look A$983.8k better; on one basis, stopping beats launching by A$351.2k."
-draft: true
+draft: false
 ---
 
 By the launch gate, a development programme has usually spent a lot of money, and everyone in the room knows the figure. It is the one number that cannot be changed by anything the gate decides, and it is often the number that dominates the discussion. "We have put A$1.2 million into this" sounds like an argument for launching. It is not an argument for anything. It describes the past, and a gate chooses between futures.

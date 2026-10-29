@@ -4,7 +4,7 @@ chapterSlug: technology-readiness-levels
 order: 2
 title: "Technology readiness levels and critical technology elements"
 description: "The nine readiness levels in plain words, critical technology elements, Option B's ratings of 6, 5 and 7, and why system readiness is TRL 5, not the 7.85 average."
-draft: true
+draft: false
 ---
 
 Chapter 1 found that Option B's inputs rest on thinner evidence than Option A's, but "thinner" is not a measurement. This chapter introduces the scale most widely used to measure how far a technology has travelled from an idea to a working plant, the technology readiness level, and the assessment method that goes with it: find the elements the system depends on that are new, rate each against the evidence, and let the least mature one set the readiness of the whole. It then rates Option B element by element and corrects a first assessment that averaged its way to a reassuring answer.

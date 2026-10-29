@@ -4,7 +4,7 @@ chapterSlug: cost-plus-and-open-book
 order: 4
 title: "Cost-plus and open book: paying for cost and checking it"
 description: "Percentage fee against fixed fee on A$13.50m of direct cost, defining reimbursable cost, an open-book audit that recovered A$207k, and a guaranteed maximum price of A$15.4m."
-draft: true
+draft: false
 ---
 
 Under a cost-plus contract, the owner pays the contractor's actual cost of doing the work, plus a fee for overhead and profit. The owner gives up a fixed price and takes on the whole risk of cost, in return for a contract that can absorb change without renegotiation and a price that contains no premium for risks that may never occur. It is the opposite end of the sharing rule from the lump sum, and it needs a different kind of owner: one prepared to define cost precisely, read cost reports every month and audit them.

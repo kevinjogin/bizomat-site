@@ -4,7 +4,7 @@ chapterSlug: team-size-and-communication-paths
 order: 7
 title: "Team size and communication paths: how big the core team should be"
 description: "Twenty people make 190 paths; a hub of seven leads makes 34. Meeting redesign saves A$127,400 a year, and a 34-name notice list costs A$114,240 yet still misses the racking supplier."
-draft: true
+draft: false
 ---
 
 Chapters 2 to 6 dealt with how money moves between the organisations. This chapter turns to the people who have to make the chosen contract work. The distribution centre's core team is twenty people from six organisations, and every one of them needs information from others to do their job. The number of possible conversations grows much faster than the number of people, and that growth, not any one person's competence, is what makes a large team slow.

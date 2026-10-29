@@ -4,7 +4,7 @@ chapterSlug: many-organisations-one-project
 order: 1
 title: "Many organisations, one project: mapping the team and its interfaces"
 description: "Six organisations and 20 people on an A$18.0m distribution centre: 190 communication paths, 38 interfaces, shared safety duties and a racking change that cost A$660k."
-draft: true
+draft: false
 ---
 
 A project team is rarely one organisation. The people who design, build, supply and commission a capital project work for different businesses, each with its own managers, cash flow, margin and idea of a good result. They are brought together for a year or two by contracts, and they separate again when the work is done. Whether they behave as one team for that time decides much of what the project costs and when it finishes.

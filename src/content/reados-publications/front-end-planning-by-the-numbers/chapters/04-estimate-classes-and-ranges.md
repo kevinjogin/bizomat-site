@@ -4,7 +4,7 @@ chapterSlug: estimate-classes-and-ranges
 order: 4
 title: "Estimate classes: reading a number by how much is defined"
 description: "Northbank's Class 5, 4 and 3 estimates of A$5.41m, A$5.96m and A$6.43m, their ranges, why the point rose 18.8% as definition grew, and a loan sized on the wrong class."
-draft: true
+draft: false
 ---
 
 An estimate travels further than the conditions it was made under. A figure written on a concept sketch in November is quoted in a board paper in December, a bank's credit submission in January and a conversation with a supplier in March, and by then nobody remembers that it was a sketch. The cure is to attach two things to every estimate wherever it goes: its **class**, which says how much of the project was defined when it was made, and its **range**, which says how far the outcome could reasonably fall from it.

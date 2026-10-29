@@ -4,7 +4,7 @@ chapterSlug: lump-sum-contracts
 order: 3
 title: "Lump sum contracts: price certainty and what it costs"
 description: "Build a fair lump sum of A$15.120m, price variations at 15%, see the contractor's margin at five cost outcomes, and normalise three tenders whose order changes once exclusions are priced."
-draft: true
+draft: false
 ---
 
 A lump sum is the contract most owners reach for first. The contractor agrees to deliver a defined scope for a fixed price, and the owner knows at award what the works will cost. For a small business with a fixed approval and a board that dislikes surprises, that certainty is valuable. It is not free, and it is not as fixed as it looks.

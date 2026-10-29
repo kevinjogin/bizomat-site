@@ -4,7 +4,7 @@ chapterSlug: options-derived-from-the-outcome
 order: 8
 title: "Options derived from the outcome, and why the choice changed"
 description: "Business as usual, do-minimum, the A$6.12m new plant, the A$2.44m outcome-derived option and a staged option scored on all four targets and on time: only one passes."
-draft: true
+draft: false
 ---
 
 A request for a new plant offers one option and asks for a yes. An outcome-first project assembles several options from the changes that would close the gap, and scores each against every target. This chapter does that for the laundry. It builds a longlist from the benefits dependency network of Chapter 7, reduces it to a shortlist that includes doing nothing different and doing the least that could work, and scores all of them on the four measures and on one constraint that the original request never mentioned: whether the option can produce its evidence before the tender closes.

@@ -4,7 +4,7 @@ chapterSlug: measured-performance-and-sample-size
 order: 6
 title: "Measured performance: sample sizes for means and comparisons"
 description: "A 95% interval for the BPU-5's usable energy from 12 DVT units, sample sizes for a mean and for a supplier comparison, and a 3-pack test that nearly cost A$85,000 a year."
-draft: true
+draft: false
 ---
 
 A pass-fail test records one bit per unit: it passed or it did not. Many of the things a development programme needs to know are quantities, such as how much energy the battery delivers, how hot the hottest cell gets or how long a charge takes, and a measured value carries far more information per unit tested than a pass mark. This chapter shows how to use that information: how to put a confidence interval on a measured mean, how many units are needed to estimate a mean to a stated precision, and how many are needed to compare two options fairly.

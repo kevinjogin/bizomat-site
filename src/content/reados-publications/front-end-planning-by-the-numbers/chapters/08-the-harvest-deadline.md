@@ -4,7 +4,7 @@ chapterSlug: the-harvest-deadline
 order: 8
 title: "A fixed deadline: the cost of delay as a cliff"
 description: "A step cost of delay at 31 January 2028, A$630k plus A$41k a week, and a seeded simulation: a 44.2% chance of missing on the rush path against 5.3% on the planned path."
-draft: true
+draft: false
 ---
 
 Most projects lose a little for each week they are late: a week's lost production, a week's extra rent, a week's interest. Northbank's upgrade is different. If the new rooms and grader are ready on Monday 31 January 2028, the 2028 harvest goes through them. If they are ready a day later, the grader cannot be used that season at all, because the packing line runs from intake in February until stored fruit runs out in late October. The cost of delay is not a slope. It is a cliff, and the question that matters is not how late the project might be but how likely it is to be late at all.

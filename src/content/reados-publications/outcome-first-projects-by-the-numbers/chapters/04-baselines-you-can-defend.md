@@ -4,7 +4,7 @@ chapterSlug: baselines-you-can-defend
 order: 4
 title: "Baselines you can defend"
 description: "26 weeks of signed dockets give 91.2% OTIF, not the 95.6% the dispatch system showed; a p-chart, the A$1.711/kg cost baseline, 14.0 L/kg, 6.00 MJ/kg and their seasons."
-draft: true
+draft: false
 ---
 
 A baseline is the number every later claim is measured from. If it is too kind, the project looks unnecessary or its benefits look small; if it is too harsh, the benefits look large and the project is credited with improvements it did not cause. Either way, the first person to check it will find the weakness, and once one baseline is doubted, every benefit built on it is doubted too. A baseline worth having is one that can be defended: measured in the defined measure, from a source the customer would accept, over a stated period, with its variation known.

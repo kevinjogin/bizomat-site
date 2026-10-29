@@ -4,7 +4,7 @@ chapterSlug: finding-problems-while-they-are-cheap
 order: 1
 title: "Finding problems while they are cheap: the cost of change by stage"
 description: "Cost to fix a design issue from A$1,000 at concept to A$120,000 in the field, capture rates from the LT-4 record, and a plan that cuts BPU-5's expected fixing cost to A$637,625."
-draft: true
+draft: false
 ---
 
 Every new design carries problems that nobody has found yet: a fan that is too small for the air it must move, a bracket that cracks on the third drop, a charger that does not slow down when the battery is hot. The development plan cannot remove them, because nobody knows what they are. What the plan decides is where they will be found, and that decides what they cost. Found in a calculation, a problem costs an engineer's afternoon. Found in a customer's unit on a building site, the same problem costs field repairs, travel, replacement parts and goodwill.

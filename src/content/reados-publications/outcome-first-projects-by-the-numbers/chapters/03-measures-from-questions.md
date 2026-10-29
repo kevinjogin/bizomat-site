@@ -4,7 +4,7 @@ chapterSlug: measures-from-questions
 order: 3
 title: "Measures from questions: goal, question, metric"
 description: "Goal–question–metric turns the laundry's outcome into four tight measures: OTIF per delivery, cost per clean kg, L/kg and MJ/kg, with a 6.1% denominator error and an absolute-gas trap."
-draft: true
+draft: false
 ---
 
 A measure that is named but not defined will drift. "On-time delivery" can mean the van left on time or the customer signed on time; "cost per kilogram" can be divided by soiled weight or by clean weight; "energy" can mean the gas bill or the gas bill plus electricity. Each version gives a different number, and the differences are often larger than the improvement a project is meant to achieve. This chapter turns the four measures named in Chapter 1 into definitions tight enough that two people with the same records would get the same answer.

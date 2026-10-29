@@ -4,7 +4,7 @@ chapterSlug: how-contracts-shape-behaviour
 order: 2
 title: "How contracts shape behaviour: who keeps a dollar saved"
 description: "Who keeps a A$100k saving under five contract models, incentive against flexibility, a four-risk register priced at 1.6 times expected value, and overtime paid at cost plus 8%."
-draft: true
+draft: false
 ---
 
 Every construction contract contains a rule for dividing money that nobody has yet spent. When the work costs less than expected, someone keeps the saving; when it costs more, someone pays the overrun. The rule is rarely written as a single clause, but it is there in the pricing method, the fee, the share terms and the variation provisions, and every party to the contract can work out where it leaves them.

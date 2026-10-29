@@ -4,7 +4,7 @@ chapterSlug: ramp-up-to-nameplate
 order: 7
 title: "Ramp-up: from first flake to nameplate output"
 description: "Exponential ramp-up curves for a proven and a novel line (2.8 against 21.9 months to 90%), Duane reliability growth, and a linear ramp that overstated contribution by A$3.46 million."
-draft: true
+draft: false
 ---
 
 A plant that passes its qualification run does not produce its nameplate output in its first month. It starts below design rate, stops more often than it will later, and climbs as operators, maintainers and engineers find and fix what the drawings did not show. For a proven line that climb takes weeks, because most of the lessons have already been learnt on earlier plants. For a first-of-a-kind plant it can take years, and it is often where the largest part of the difference between paper and outcome is lost.

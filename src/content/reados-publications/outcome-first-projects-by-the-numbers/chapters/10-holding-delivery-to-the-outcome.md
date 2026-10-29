@@ -4,7 +4,7 @@ chapterSlug: holding-delivery-to-the-outcome
 order: 10
 title: "Holding acceptance and benefit tracking to the outcome"
 description: "Acceptance tests from requirements, monthly tracking of 93 failures in 4,680 deliveries (98.01%), a seasonal energy claim corrected from 1.38 to 1.154 MJ/kg, and the tunnel gate."
-draft: true
+draft: false
 ---
 
 Approval is the point at which an outcome-first project is most at risk of becoming a deliverables project again. The equipment arrives, the installers want a signature, the managers have other work, and the measures that justified the decision quietly give way to "it's in and running". This chapter carries the four measures through to the end: into the acceptance of the new ironer line, into monthly tracking during the 26 weeks that decide the tender, into the comparison of energy across seasons, and into the gate that will decide, years from now, whether the laundry needs a tunnel washer after all.

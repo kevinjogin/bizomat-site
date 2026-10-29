@@ -7,8 +7,8 @@ tags: [product-development, prototyping, experimentation, validation, projects]
 author: KEVOS®
 publisher: KEVOS® READOS
 language: en-AU
-status: draft
-publishDate: 2026-10-28
+status: published
+publishDate: 2026-10-29
 referencesChecked: 2026-10-28
 edition: "1"
 level: "Intermediate product development and engineering decision practice"
@@ -101,8 +101,22 @@ references:
     year: "current revised edition"
     note: "Named as the set of tests lithium cells and batteries must pass before they are transported. No test parameters are quoted."
 related:
+  - title: "Reference Class Forecasting by the Numbers"
+    href: "/reados/publications/reference-class-forecasting-by-the-numbers/"
   - title: "Modular Projects by the Numbers"
     href: "/reados/publications/modular-projects-by-the-numbers/"
+  - title: "Front-End Planning by the Numbers"
+    href: "/reados/publications/front-end-planning-by-the-numbers/"
+  - title: "Stage Gates and Stopping Rules by the Numbers"
+    href: "/reados/publications/stage-gates-and-stopping-rules-by-the-numbers/"
+  - title: "Outcome-First Projects by the Numbers"
+    href: "/reados/publications/outcome-first-projects-by-the-numbers/"
+  - title: "First-of-a-Kind Technology by the Numbers"
+    href: "/reados/publications/first-of-a-kind-technology-by-the-numbers/"
+  - title: "Demand and Benefit Forecasts by the Numbers"
+    href: "/reados/publications/demand-and-benefit-forecasts-by-the-numbers/"
+  - title: "Project Teams and Contracts by the Numbers"
+    href: "/reados/publications/project-teams-and-contracts-by-the-numbers/"
   - title: "Accelerated Life Testing by the Numbers"
     href: "/reados/publications/accelerated-life-testing-by-the-numbers/"
   - title: "Design Simulation by the Numbers"

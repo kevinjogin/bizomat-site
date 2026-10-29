@@ -4,7 +4,7 @@ chapterSlug: alliances-and-collaborative-contracts
 order: 6
 title: "Alliances and collaborative contracts: one agreement, shared results"
 description: "The DC as an alliance: three limbs on a A$13.50m target, painshare capped at A$1.080m so the owner carries overruns past A$15.66m, four KRAs and a schedule KRA that paid A$60.3k."
-draft: true
+draft: false
 ---
 
 Chapters 3 to 5 moved the commercial result of the works step by step from the contractor alone towards the owner and contractor together. Under a lump sum the builder keeps every dollar saved and pays every dollar lost; under the target-cost contract of Chapter 5 the two share each dollar inside the bands. An alliance takes the last step. The owner and its key designers, contractors and suppliers sign one agreement, are paid their costs on open book, share the result against a jointly developed target, and make the project's decisions together in a leadership group in which every member has a voice.

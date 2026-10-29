@@ -4,7 +4,7 @@ chapterSlug: demand-from-drivers
 order: 2
 title: "Building a demand forecast from its drivers"
 description: "The plant's 25.32m cans split into customers, runs and run sizes, converted to 3,680 line hours (92.0%) and contribution per hour, and eight 'new' customers who were not new."
-draft: true
+draft: false
 ---
 
 A forecast of 25.32m cans a year is one number, and one number cannot be tested. Nobody can say whether it is too high without knowing what it is made of: how many customers, how often they fill, how many cans each time, what each can earns and how long the line takes to fill them. Those are the forecast's **drivers**. Written out, each driver can be compared with a record, a contract or a physical limit, and the forecast stops being a matter of confidence and becomes a set of claims that can each be checked.

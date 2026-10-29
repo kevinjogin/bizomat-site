@@ -4,7 +4,7 @@ chapterSlug: scope-and-requirements-that-trace
 order: 9
 title: "Tracing every scope item and requirement to a target"
 description: "Each scope item priced in A$ a year and failures removed; RFID and amenities trace to nothing; five requirements derived from targets; the ironer rate checked on the customer's mix."
-draft: true
+draft: false
 ---
 
 An option that passes all four targets as a package can still carry items that do nothing for them, and items whose contribution depends on a number nobody has checked. This chapter takes the options apart. It traces every scope item to the targets it moves, in dollars a year, failures removed, litres and megajoules per kilogram, and finds that two items in the owners' original request trace to nothing at all. It then derives the requirements that the chosen option's suppliers must meet from the same targets, and follows one of them back to where its key number came from, which is where the most expensive mistake in the project was waiting.

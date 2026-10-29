@@ -7,8 +7,8 @@ tags: [projects, people, leadership, finance, operations]
 author: KEVOS®
 publisher: KEVOS® READOS
 language: en-AU
-status: draft
-publishDate: 2026-10-28
+status: published
+publishDate: 2026-10-29
 referencesChecked: 2026-10-28
 edition: "1"
 level: "Intermediate project delivery, procurement and team leadership practice"
@@ -97,14 +97,26 @@ references:
     url: "https://www.safeworkaustralia.gov.au/doc/model-code-practice-work-health-and-safety-consultation-co-operation-and-co-ordination"
     note: "Named in Chapters 1 and 9 for the duty of businesses that share responsibility for the same health and safety matter to consult, cooperate and coordinate with each other. A model code has legal effect only where a jurisdiction has approved it; check with the local regulator. Victoria, where the running case is set, has not adopted the model WHS laws; it regulates under its own Occupational Health and Safety Act 2004, administered by WorkSafe Victoria."
 related:
-  - title: "Project Delivery, Procurement and Governance"
-    href: "/reados/collections/project-delivery-procurement-and-governance/"
-  - title: "Project Sponsors, Governance and Decisions"
-    href: "/reados/collections/project-sponsors-governance-and-decisions/"
   - title: "Reference Class Forecasting by the Numbers"
     href: "/reados/publications/reference-class-forecasting-by-the-numbers/"
   - title: "Modular Projects by the Numbers"
     href: "/reados/publications/modular-projects-by-the-numbers/"
+  - title: "Front-End Planning by the Numbers"
+    href: "/reados/publications/front-end-planning-by-the-numbers/"
+  - title: "Stage Gates and Stopping Rules by the Numbers"
+    href: "/reados/publications/stage-gates-and-stopping-rules-by-the-numbers/"
+  - title: "Outcome-First Projects by the Numbers"
+    href: "/reados/publications/outcome-first-projects-by-the-numbers/"
+  - title: "Prototypes and Simulation by the Numbers"
+    href: "/reados/publications/prototypes-and-simulation-by-the-numbers/"
+  - title: "First-of-a-Kind Technology by the Numbers"
+    href: "/reados/publications/first-of-a-kind-technology-by-the-numbers/"
+  - title: "Demand and Benefit Forecasts by the Numbers"
+    href: "/reados/publications/demand-and-benefit-forecasts-by-the-numbers/"
+  - title: "Project Delivery, Procurement and Governance"
+    href: "/reados/collections/project-delivery-procurement-and-governance/"
+  - title: "Project Sponsors, Governance and Decisions"
+    href: "/reados/collections/project-sponsors-governance-and-decisions/"
 ---
 
 ## About this book

@@ -4,7 +4,7 @@ chapterSlug: testing-the-drivers
 order: 3
 title: "Testing each driver against the record"
 description: "Letters of intent converted at 70.8% and other prospects at 25.0%, volumes realised at 0.800: tested driver by driver, the plant's 25.32m cans become 15.367m, 60.7% of plan."
-draft: true
+draft: false
 ---
 
 A driver tree shows what a forecast claims. It does not show whether the claims are likely. For that, each driver has to be set beside a record of what happened the last time similar claims were made. Most businesses that have launched anything before hold such a record without having looked at it: a list of the letters of intent they collected, the customers who actually signed, and what those customers actually bought in their first year.

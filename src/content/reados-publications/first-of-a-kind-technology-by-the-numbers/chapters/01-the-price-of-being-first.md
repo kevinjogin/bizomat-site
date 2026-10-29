@@ -4,7 +4,7 @@ chapterSlug: the-price-of-being-first
 order: 1
 title: "The price of being first: a proven line against a novel process"
 description: "A recycler's proven A$16.0m washing line against a novel A$17.5m process: paybacks of 3.39 and 2.45 years, a A$13.8m paper NPV lead, and why that lead is still only a claim."
-draft: true
+draft: false
 ---
 
 A new process usually arrives with a better number attached: higher yield, lower energy, less waste. The number is often honest, in the sense that someone measured it somewhere. What it rarely carries is a statement of where, for how long, on what feed and at what size. This chapter sets out the decision that runs through the book, puts the two options side by side exactly as the first board paper did, and explains why a large lead on paper is a claim to be tested rather than a result to be banked. It also defines the two terms the book depends on, first of a kind and nth of a kind, and summarises what the published evidence says about the difference between them.

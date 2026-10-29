@@ -4,7 +4,7 @@ chapterSlug: choosing-prototype-fidelity
 order: 2
 title: "Choosing prototype fidelity: the cheapest build that answers the question"
 description: "Analytical or physical, focused or comprehensive: BPU-5's five questions answered by a A$20,500 set of focused prototypes before a A$88,000 EVT build, and a thermal rig built without its lid."
-draft: true
+draft: false
 ---
 
 A prototype is bought to answer a question. The question might be whether an inverter can start a drop saw, whether a person can wheel an 82 kg unit across a muddy site, or whether a battery stays cool enough on a hot afternoon. A prototype that answers its question cheaply and quickly is good value, however crude it looks. A polished prototype that answers nothing in particular is an expensive model for the brochure.

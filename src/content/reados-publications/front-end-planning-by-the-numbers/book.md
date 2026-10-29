@@ -7,8 +7,8 @@ tags: [projects, operations, finance, strategy]
 author: KEVOS®
 publisher: KEVOS® READOS
 language: en-AU
-status: draft
-publishDate: 2026-10-28
+status: published
+publishDate: 2026-10-29
 referencesChecked: 2026-10-28
 edition: "1"
 level: "Intermediate project planning and capital decision practice"
@@ -93,6 +93,18 @@ related:
     href: "/reados/publications/reference-class-forecasting-by-the-numbers/"
   - title: "Modular Projects by the Numbers"
     href: "/reados/publications/modular-projects-by-the-numbers/"
+  - title: "Stage Gates and Stopping Rules by the Numbers"
+    href: "/reados/publications/stage-gates-and-stopping-rules-by-the-numbers/"
+  - title: "Outcome-First Projects by the Numbers"
+    href: "/reados/publications/outcome-first-projects-by-the-numbers/"
+  - title: "Prototypes and Simulation by the Numbers"
+    href: "/reados/publications/prototypes-and-simulation-by-the-numbers/"
+  - title: "First-of-a-Kind Technology by the Numbers"
+    href: "/reados/publications/first-of-a-kind-technology-by-the-numbers/"
+  - title: "Demand and Benefit Forecasts by the Numbers"
+    href: "/reados/publications/demand-and-benefit-forecasts-by-the-numbers/"
+  - title: "Project Teams and Contracts by the Numbers"
+    href: "/reados/publications/project-teams-and-contracts-by-the-numbers/"
   - title: "Project Estimates, Schedules and Costs"
     href: "/reados/collections/project-estimates-schedules-and-costs/"
   - title: "Project Delivery, Procurement and Governance"

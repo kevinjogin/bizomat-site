@@ -4,7 +4,7 @@ chapterSlug: queues-in-the-test-lab
 order: 8
 title: "Queues in the test lab: utilisation, waiting and Little's law"
 description: "One climatic chamber at 79% utilisation: M/M/1 and Kingman waits, the utilisation curve, a peak checked by simulation, Little's law on the lab log, and a week lost to a queue."
-draft: true
+draft: false
 ---
 
 Development plans usually show a test as a bar of fixed length that starts when the prototype is ready. In a test lab shared by many jobs, that is rarely what happens. The prototype arrives, joins a queue, and waits for the one piece of equipment it needs. The wait does not appear on the plan, but it lengthens every build-test-learn loop that passes through the lab, and on the critical path it delays release week for week.

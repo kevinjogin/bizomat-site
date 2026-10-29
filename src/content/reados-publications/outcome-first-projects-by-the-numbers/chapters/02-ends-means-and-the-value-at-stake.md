@@ -4,7 +4,7 @@ chapterSlug: ends-means-and-the-value-at-stake
 order: 2
 title: "Ends, means and the value at stake"
 description: "Sort the laundry's aims into fundamental and means objectives, place the new plant as one means, and value the hospital contract at about A$1.41m a year of contribution."
-draft: true
+draft: false
 ---
 
 Chapter 1 restated a request for new plant as an outcome: keep the hospital contract through a tender at a lower price, shown in four measures. This chapter asks two further questions before any option is considered. The first is how the owners' aims fit together: which of them matter for their own sake, which matter only because they lead to something else, and where the requested plant sits among them. The second is how much the central aim is worth in dollars, because that number sets the scale for every option, every target and every argument about cost that follows.

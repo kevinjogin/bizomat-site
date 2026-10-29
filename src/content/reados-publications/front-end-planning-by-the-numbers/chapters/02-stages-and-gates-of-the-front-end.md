@@ -4,7 +4,7 @@ chapterSlug: stages-and-gates-of-the-front-end
 order: 2
 title: "Stages and gates: organising the front end"
 description: "FEL 1, 2 and 3 as stages with gate deliverables, Northbank's A$96k and A$152k stage budgets, and three options compared at Gate 2 on capital, payback and NPV."
-draft: true
+draft: false
 ---
 
 Twenty-two weeks of front-end work is not one long study. Left unstructured, it drifts: design starts before the option is chosen, studies are commissioned because someone thought of them, and the estimate is refreshed whenever a board meeting approaches. Structured, it is a short sequence of stages, each with a question to answer, a budget, a list of things it must produce and a gate at which someone decides, on that evidence, whether to spend the next stage's money.

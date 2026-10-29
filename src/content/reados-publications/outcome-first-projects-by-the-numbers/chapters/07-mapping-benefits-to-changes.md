@@ -4,7 +4,7 @@ chapterSlug: mapping-benefits-to-changes
 order: 7
 title: "Mapping benefits back to business changes and enablers"
 description: "A benefits dependency network links each target to business changes, enablers, owners and dis-benefits; a zero-capex customer agreement takes OTIF from 97.8% to 98.2%."
-draft: true
+draft: false
 ---
 
 Chapter 6 found where the gap comes from: the ironers and dispatch for delivery and much of the cost, the wash room for water and energy. Knowing the causes is not yet a plan. Between a cause and a closed gap sit two kinds of change. Some are changes in how the business works: when vans are loaded, in what order linen is ironed, when customers hand over soiled linen. Others are the equipment, systems and contracts that make those working changes possible. Benefits come from the first kind. The second kind only makes them possible.

@@ -4,7 +4,7 @@ chapterSlug: targets-from-the-purpose
 order: 5
 title: "Targets derived from the purpose, not from the baseline"
 description: "Targets from the tender and the price: 98% OTIF (at most 93 failures in 26 weeks), A$1.66/kg, 10.0 L/kg and 5.0 MJ/kg, with periods, dates and a stretch, against arbitrary round numbers."
-draft: true
+draft: false
 ---
 
 Once a baseline is known, the easiest target to write is the baseline improved by a round number: five points better, ten per cent cheaper, a fifth less water. Targets like that look ambitious and are easy to remember, but they have no connection to what the business needs. Some will be too weak, so the project can meet them and still fail its purpose. Others will be too strict, so a good option is rejected for missing a number nobody needed. A target should answer one question: what level must this measure reach, by when, for the fundamental objectives to be met?

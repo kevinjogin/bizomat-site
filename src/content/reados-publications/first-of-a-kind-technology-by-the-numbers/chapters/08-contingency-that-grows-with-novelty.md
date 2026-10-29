@@ -4,7 +4,7 @@ chapterSlug: contingency-that-grows-with-novelty
 order: 8
 title: "Contingency and schedule allowances that grow with novelty"
 description: "Cost and schedule allowances graded by readiness: element P50s and P80s, a 10,000-run simulation giving B a P80 of A$22.9m, and the errors of a flat 10% and of adding P80s."
-draft: true
+draft: false
 ---
 
 The earlier chapters measured the novel process's novelty element by element: three critical elements at TRL 6, 5 and 7, 40% of the capital cost in plant that has never run at full scale, a pilot that ran a tenth of the size, and a start-up expected to take nearly two years. This chapter turns those findings into the two allowances a board funds: money above the estimate, and months beyond the plan.

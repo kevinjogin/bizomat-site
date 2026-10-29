@@ -4,7 +4,7 @@ chapterSlug: paying-for-information
 order: 4
 title: "Paying for information: perfect, sample and useless"
 description: "EVPI of A$471.5k for the SB36 market, EVSI of three market tests (A$0k, A$149.5k, A$304.4k), and a A$140k third prototype that could not change any decision."
-draft: true
+draft: false
 ---
 
 Every stage before a launch buys information, and information is worth paying for only if it might change what the business does. A test whose every possible result leads to the same decision is worth nothing, however interesting its results, and however much the people proposing it want to know the answer. The useful questions are how much a test could change the expected value of the decision, and whether that is more than the test costs.

@@ -4,7 +4,7 @@ chapterSlug: escalation-in-small-steps
 order: 6
 title: "Escalation in small steps"
 description: "SB36's development stage grows from A$560k to A$705k through three top-ups under A$75k; the forward test each time, the missed re-gate at 115% and the rule that fixed it."
-draft: true
+draft: false
 ---
 
 The first five chapters were about valuing flexibility: the right to stop at a gate, the right to buy information and the right to wait. All of them assume that the business will use those rights when the numbers say so. This chapter turns to the force that works against them. Projects rarely stop because of one large decision to continue. They grow through a series of small ones, each reasonable on its own, none of them seen as a decision about the whole project.

@@ -4,7 +4,7 @@ chapterSlug: committing-before-you-know
 order: 1
 title: "Committing before you know: spending, committing and the gate plan"
 description: "Spent versus committed, a maker's record of 4 failed products in 8, the SB36 gate plan to A$2.9m, and a A$600k tooling order placed ten days after Gate 3."
-draft: true
+draft: false
 ---
 
 Most of the money a development programme loses is not lost on the day it is spent. It is lost on the day it is committed: when a purchase order is signed, a supplier's slot is booked, a product is announced to dealers, or a launch date is promised. After that day, stopping still saves the unspent cash only if the commitment can be undone, and the terms for undoing it usually get worse every week. A gate process exists to keep commitments in step with knowledge, so that the business commits to each stage only when it knows enough to judge it.

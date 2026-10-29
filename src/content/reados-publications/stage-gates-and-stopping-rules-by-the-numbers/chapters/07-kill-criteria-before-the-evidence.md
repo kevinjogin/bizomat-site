@@ -4,7 +4,7 @@ chapterSlug: kill-criteria-before-the-evidence
 order: 7
 title: "Stopping rules and kill criteria written before the evidence"
 description: "A break-even P(High) of 0.0980 becomes field and dealer-deposit criteria signed at Gate 4; the field season returns 89% detection and 6 deposits, and a draft paper tries to move the goalposts."
-draft: true
+draft: false
 ---
 
 A gate can stop a project only if the people at it agree, before they see the evidence, what evidence would stop it. Once the results are on the table, everyone in the room can see which threshold would give which answer, and the threshold tends to move towards the answer the room prefers. A kill criterion written in advance takes that choice away. It is a promise made while the business could still think about the decision without knowing how it would turn out.

@@ -4,7 +4,7 @@ chapterSlug: staffing-ramp-up-and-turnover
 order: 8
 title: "Staffing ramp-up, late additions and the cost of turnover"
 description: "The DC core team's 194.6 FTE-months peaking at 16.2 in month 15, a leaver costed at 3 FTE-months (A$66k), turnover at 18% against 10%, and Brooks's law in a commissioning crunch."
-draft: true
+draft: false
 ---
 
 Chapter 7 sized the core team as if its twenty people were all present from the first day to the last. They are not. The designers are busiest before the works are awarded, the builder's team builds up as the slab goes in, and the racking, conveyor and software people arrive late and leave last. People also leave part way through, for other jobs, promotions or personal reasons, and every departure takes knowledge with it that the project has to rebuild.
@@ -102,7 +102,7 @@ caption: The question-marked item is the gap this chapter's error exposed: no na
 
 ## Adding people late: Brooks's law
 
-Brooks (1975) put the risk of late additions in one sentence: "Adding manpower to a late software project makes it later." He presented it as an outrageous simplification, and it is not a law of nature. It describes a mechanism: newcomers are not productive at once, the people who must train them stop doing their own work, and each newcomer adds communication paths. Whether adding people helps depends on how much work is left, how divisible it is, and how long the newcomers take to become useful.
+Brooks (1975) put the risk of late additions in one sentence: "Adding manpower to a late software project makes it later." Brooks presented it as an outrageous simplification, and it is not a law of nature. It describes a mechanism: newcomers are not productive at once, the people who must train them stop doing their own work, and each newcomer adds communication paths. Whether adding people helps depends on how much work is left, how divisible it is, and how long the newcomers take to become useful.
 
 This is an illustration. In month 17, the conveyor and controls integrator's three experienced commissioning engineers have **960 engineer-hours** of commissioning left on **4 conveyor zones**, and every week of delay to the DC costs the owner **A$80k**. The model behind the numbers below is a teaching model, not research. Each engineer works 38 hours a week and is 85% on task; each spends 1 hour a week per communication path; newcomers are 25% productive in weeks 1 and 2 and 60% in weeks 3 and 4, then fully productive; each newcomer costs 6 hours a week of experienced engineers' time in weeks 1 to 4; and because there are only 4 zones, engineers beyond 4 add only 30% of their output. An engineer costs A$5,320 a week (38 hours at A$140).
 

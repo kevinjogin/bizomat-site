@@ -4,7 +4,7 @@ chapterSlug: the-decision-tree-at-the-gate
 order: 2
 title: "Expected value and the decision tree at the development gate"
 description: "Three market states, Bayes' rule for a field signal and a rolled-back tree that values Gate 3 at A$323.1k, against a single-scenario paper that said stop at −A$868.2k."
-draft: true
+draft: false
 ---
 
 A gate decides whether to spend the next stage's money. To decide well, it needs to know what the programme is worth if the money is spent, and that worth depends on things nobody knows yet: whether the prototypes will work, what the field trial will show, and how many units the market will buy. A single "most likely" forecast hides all of that. A decision tree lays it out: the decisions the business will make later, the uncertain events between them, the probabilities and the payoffs, and then works backwards to a value for the decision being made today.

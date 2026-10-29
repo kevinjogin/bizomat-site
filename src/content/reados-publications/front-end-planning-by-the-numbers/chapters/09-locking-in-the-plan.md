@@ -4,7 +4,7 @@ chapterSlug: locking-in-the-plan
 order: 9
 title: "Locking in the plan: long-lead orders, readiness and change after approval"
 description: "What Gate 3 commits (A$3,200k, 51.8%), long-lead dates and the critical path, a ready-for-delivery check, and a fifth cold room at week 30 that would lift P(miss) to 39.1%."
-draft: true
+draft: false
 ---
 
 Approval is the moment the front end's work turns into commitments. Before Gate 3, Northbank could change its mind for the price of some studies. After it, the business has signed fixed-price packages, placed orders with lead times of half a year, accepted a connection offer and set a builder to work. The plan's value now depends on two things: that the commitments made at approval are the right ones, made on time, and that the plan is not quietly unpicked by changes that each look reasonable on their own.

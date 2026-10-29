@@ -4,7 +4,7 @@ chapterSlug: the-value-of-a-test
 order: 3
 title: "The value of a test: buying information before committing"
 description: "Expected value of perfect and sample information for a drop test before a A$65,000 rotomould tool: EVPI A$55,800, EVSI A$43,800, and why the test pays only if run in parallel."
-draft: true
+draft: false
 ---
 
 A test costs money and often time. What it buys is information, and information is worth something only if it might change what you do. A test whose result would not change any decision is worth nothing, however thorough it is. A test that could stop the business from committing to an expensive mistake can be worth a great deal, even if it is crude and sometimes wrong. The value of a test can be calculated before it is run, and the calculation often gives a surprising answer.

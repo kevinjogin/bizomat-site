@@ -4,7 +4,7 @@ chapterSlug: from-request-to-outcome
 order: 1
 title: "From a request for new plant to the outcome behind it"
 description: "A A$6.12m request for new laundry plant set against the outcome behind it: outputs, outcomes and benefits, four measures, and why perfect washing fixes 37 of 412 failures."
-draft: true
+draft: false
 ---
 
 Most projects arrive as a request for a thing: a machine, a building, a system, a refit. The request is usually sincere and often well researched, and it carries an unstated claim that the thing, once delivered, will cause something the business needs. This chapter separates the thing from what it is meant to cause. It takes one request for new plant, asks what must be different when the work is finished, names that outcome in four measures, and then makes a first, cheap test of whether the requested plant could deliver the outcome at all.
