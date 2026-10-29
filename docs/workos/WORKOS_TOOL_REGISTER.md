@@ -3143,3 +3143,32 @@ Six more tools applying the methods of Çengel and Boles, Thermodynamics: An Eng
 | **Adiabatic Mixing of Two Air Streams (Mixed Temperature, Humidity, Dew Point, Fog Risk)** `air-stream-mixing-check` | MIXED AIR CLEAR | Mixed relative humidity; Mixing calculation; Model and application | 14-2, 14-7 | Automated + cross-check |
 | **Direct Evaporative Cooler Check (Wet-Bulb, Supply Temperature, Water Use, Cooling Capacity)** `evaporative-cooler-check` | COOLER REACHES TARGET | Supply temperature; Target against the wet-bulb; Water and hygiene; Model and application | 14-4, 14-7 | Automated + cross-check |
 | **Heating with Humidification (Heater Load, Water or Steam Needed, Equipment Check)** `heating-humidification-check` | EQUIPMENT MEETS THE DUTY | Heater capacity; Humidifier capacity; Humidifier enthalpy; Model and application | 14-7 | Automated + cross-check |
+
+## Forty-fifth round of design checks, batch handbook75 (added 29 October 2026)
+
+Five integrated design checks in batch handbook75, built from Machinery’s Handbook topics and chaining existing tools, with every material property, allowable, rating and limit entered by the user: a trepanning plan (ring cut power, torque and time, core recovered, against a solid drill), a grinding wheel cost plan (wear from the grinding ratio, dressing loss, parts per wheel, cost per part), a drill bushing position check (clearance, drill tilt, hole position error, chip gap), a Woodruff key check (key shear, hub and shaft bearing, shaft torsion at the keyseat) and an eyebolt lift check (unequal leg tensions, capacity at the angle, thread engagement). WORKOS now holds 898 tools.
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Trepanning Plan (Ring Cut Power, Torque, Time and Core against Solid Drilling)** `trepanning-plan` | TREPANNING FEASIBLE | Spindle power, trepanning; Spindle power, solid drill; Starting and chips; Model and application | 1077–1081, 1084–1092 | Automated + cross-check |
+| **Grinding Wheel Cost Plan (Wear from G-Ratio, Dressing, Parts per Wheel, Cost per Part)** `grinding-wheel-cost-plan` | WITHIN TARGET COST | Cost per part; Dressing share; Grinding ratio; Model and application | 1196–1199, 1199–1268 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Drill Bushing Position Check (Clearance, Drill Tilt, Hole Position Error, Chip Gap)** `drill-bushing-position-check` | BUSHING HOLDS POSITION | Hole position; Chip gap; Jig accuracy; Model and application | 3121–3125, 3131–3134 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Woodruff Key Check (Key Shear, Hub and Shaft Bearing, Weakened Shaft Torsion)** `woodruff-key-check` | KEY AND SHAFT ADEQUATE | Key shear; Bearing; Shaft at the keyseat; Model and application | 2460–2486, 301 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Eyebolt Lift Check (Unequal Leg Tensions, Angled Capacity, Thread Engagement)** `eyebolt-lift-check` | EYEBOLTS ADEQUATE | Eyebolt 1; Eyebolt 2; Thread engagement; Seating and alignment; Model and application | 2613–2650, 3450 | Automated + cross-check |
