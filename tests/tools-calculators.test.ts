@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 923 tools with unique ids and every previously published id kept', () => {
+test('register: 925 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 923);
+  assert.equal(ids.length, 925);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -5398,6 +5398,50 @@ test('forty-seventh-round design checks give pass and fail verdicts', () => {
   assert.equal(engine.run('laser-cutting-plan', { flat: 1 }).text, 'DEPTH OF FOCUS TOO SHORT');
   const cases: Array<[string, Inputs]> = [
     ['edm-sinker-plan', { fin: 15 }], ['edm-sinker-plan', { perim: 10000, fin: 1 }], ['wire-edm-cut-plan', { dw: 0 }], ['laser-cutting-plan', { M2: 0.5 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Heat engine Carnot limit and least work to chill (bryanthermo), after Bryan, Thermodynamics (1907) §§63–65, 74, 77, 90 and 93.
+// Expected values are independent closed forms; the cross-checks integrate Bryan’s element of work dQ (T₀ ÷ T − 1) numerically.
+const BT2_CASES: Array<[string, Inputs, Record<string, number>]> = [
+  ['heat-engine-carnot-limit', {}, { etaC: 100 * 420 / 723.15, eta2: 35 / (100 * 420 / 723.15) * 100, Wmax: 1000 * 420 / 723.15, QrMin: 1000 * 303.15 / 723.15, W: 350, Qr: 650, Sgen: 650 / 303.15 - 1000 / 723.15 }],
+  ['chilling-least-work-check', {}, { Q: 54.6, Qa: 9.75, W: 1.95 * (298.15 * Math.log(298.15 / 275.15) - 23), cop: 2.73, Ew: 4000 * 1.95 * (298.15 * Math.log(298.15 / 275.15) - 23), Ep: 80000 }],
+  ['chilling-least-work-check', { T1: 10 }, { Q: 15.6, Qa: 0, W: 1.95 * (298.15 * Math.log(283.15 / 275.15) - 8) }],
+];
+for (const [id, over, expected] of BT2_CASES) test(`Carnot and chilling limit: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, Math.max(1e-9, Math.abs(value) * 1e-9), `${id}/${key}`);
+});
+
+test('Carnot and chilling limits agree with Bryan’s reversible-cycle forms', () => {
+  // Work lost equals T_C × entropy generated and equals the most work less the stated work; at the Carnot efficiency nothing is lost.
+  const e = engine.run('heat-engine-carnot-limit').values;
+  near(e.lost, e.Wmax - e.W, 1e-9, 'Gouy–Stodola: work lost'); near(e.Wmax + e.QrMin, 1000, 1e-9, 'first law at the limit');
+  const atLimit = engine.run('heat-engine-carnot-limit', { eff: e.etaC }).values;
+  near(atLimit.Sgen, 0, 1e-12, 'reversible engine generates no entropy'); near(atLimit.eta2, 100, 1e-9, 'second-law efficiency 100 %');
+  // Least work to chill: sum dQ (T₀ ÷ T − 1) over the cooling below ambient (Bryan §§90, 93) by the midpoint rule.
+  const c = engine.run('chilling-least-work-check').values, C = 0.5 * 3.9, n = 20000, a = 275.15, b = 298.15;
+  let sum = 0; for (let i = 0; i < n; i++) { const T = a + (i + 0.5) * (b - a) / n; sum += C * (b - a) / n * (298.15 / T - 1); }
+  near(c.W, sum, 1e-6, 'integral of the Carnot work'); near(c.copId, c.Q / c.W, 1e-12, 'ideal COP'); near(c.eta2, c.W / 20 * 100, 1e-12, 'second-law efficiency');
+  // A narrow chilling range near T matches the fixed-temperature Carnot refrigerator: W ≈ Q (T₀ − T) ÷ T.
+  const thin = engine.run('chilling-least-work-check', { T1: 5.001, T2: 4.999 }).values;
+  near(thin.W, thin.Q * (25 - 5) / 278.15, 1e-9, 'narrow range is a Carnot refrigerator');
+  // Starting above ambient adds heat but no work.
+  near(engine.run('chilling-least-work-check', { T1: 60 }).values.W, c.W, 1e-12, 'heat above ambient needs no work');
+});
+
+test('Carnot and chilling limits: verdicts and guards', () => {
+  assert.equal(engine.run('heat-engine-carnot-limit').text, 'INSIDE THE CARNOT LIMIT');
+  assert.equal(engine.run('heat-engine-carnot-limit', { eff: 50 }).text, 'INSIDE THE LIMIT: ASK FOR TEST EVIDENCE');
+  assert.equal(engine.run('heat-engine-carnot-limit', { eff: 60 }).text, 'IMPOSSIBLE: ABOVE THE CARNOT LIMIT');
+  assert.equal(engine.run('chilling-least-work-check').text, 'INSIDE THE SECOND-LAW LIMIT');
+  assert.equal(engine.run('chilling-least-work-check', { P: 2.5 }).text, 'INSIDE THE LIMIT: ASK FOR TEST EVIDENCE');
+  assert.equal(engine.run('chilling-least-work-check', { P: 1.8 }).text, 'IMPOSSIBLE: BELOW THE LEAST WORK');
+  const cases: Array<[string, Inputs]> = [
+    ['heat-engine-carnot-limit', { Th: 30 }], ['heat-engine-carnot-limit', { Th: 20 }], ['heat-engine-carnot-limit', { Tc: -274, Th: 100 }], ['heat-engine-carnot-limit', { eff: 0 }],
+    ['chilling-least-work-check', { T2: 30 }], ['chilling-least-work-check', { T2: 25 }], ['chilling-least-work-check', { T2: 40, T1: 50 }], ['chilling-least-work-check', { P: 0 }],
   ];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });

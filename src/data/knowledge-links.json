@@ -4175,6 +4175,86 @@
    "status": "approved",
    "evidence": "review",
    "reason": "Chapter says laser cutting focuses a high-power beam to a small spot and that results depend on power, speed, focus position and spot size; tool calculates those from the optics."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "absolute-temperature-and-the-carnot-limit",
+   "tool": "heat-engine-carnot-limit",
+   "type": "applies",
+   "note": "Works out the Carnot efficiency 1 − T_c ÷ T_h for your source and sink, the second-law efficiency of a stated figure and the most work from your heat supply.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter derives the reversible engine’s limit η_max = 1 − T_c ÷ T_h on the absolute scale and shows how to reject a heat-to-power claim against it; the tool computes the same limit, the claim’s share of it and a verdict."
+  },
+  {
+   "reados": "publication/heat-pumps-and-refrigeration-by-the-numbers",
+   "chapter": "the-second-law-and-its-limits",
+   "tool": "heat-engine-carnot-limit",
+   "type": "applies",
+   "note": "Checks a heat engine or heat-to-power claim against the Carnot efficiency this chapter derives, and shows the work and heat rejected it implies.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter sets out the Carnot efficiency 1 − T_cold ÷ T_hot on engines and uses the limit to screen claims; the tool applies that formula with a second-law efficiency and claim verdict."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "lost-work-and-exergy",
+   "tool": "chilling-least-work-check",
+   "type": "applies",
+   "note": "Sums the exergy of cold, Q × (T₀ ÷ T − 1), over a product cooled from its start temperature to below the surroundings, giving the least power to chill it.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter defines the exergy of cold X = Q × (T₀ ÷ T − 1) and stream exergy against a dead state; the tool integrates that cold formula over a stream cooled through a range and compares a chiller’s power with it."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "heat-pumps-and-refrigerators-against-the-limit",
+   "tool": "chilling-least-work-check",
+   "type": "complements",
+   "note": "Gives the least work for cooling a product through a temperature range, the cooling counterpart of this chapter’s limit for water heated as it flows.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter gives the minimum work for a cool room held at one temperature and a separate limit for water heated through a range; the tool supplies the matching limit for a product chilled through a range, so it complements rather than applies."
+  },
+  {
+   "reados": "publication/process-chillers-by-the-numbers",
+   "chapter": "the-chiller-and-its-limit",
+   "tool": "chilling-least-work-check",
+   "type": "complements",
+   "note": "Finds the least power to chill a water or product stream through its whole temperature range and checks a chiller’s power against it.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter applies the Carnot COP between the leaving water and the air and compares a real chiller with it; the tool sums the limit over the stream’s cooling range, a slightly lower limit, so it complements the chapter’s fixed-temperature figure."
+  },
+  {
+   "reados": "collection/engineering-history-modern-era",
+   "chapter": "engines-after-steam-matching-technology-to-duty",
+   "tool": "heat-engine-carnot-limit",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter is a history of engine types and their duties; it does not set out the Carnot limit."
+  },
+  {
+   "reados": "publication/heat-pumps-and-refrigeration-by-the-numbers",
+   "chapter": "cop-and-the-carnot-limit",
+   "tool": "chilling-least-work-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter works the Carnot COP for heat taken at one evaporating temperature and a realistic-COP rule; it does not treat a product cooled through a range, which Entropy by the Numbers covers and is linked instead."
+  },
+  {
+   "reados": "publication/cooling-towers-by-the-numbers",
+   "chapter": "heat-loads-flow-and-range",
+   "tool": "chilling-least-work-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter sizes cooling towers, which cool water towards the wet-bulb by rejecting heat without refrigeration work; the tool covers chilling below the surroundings."
   }
  ]
 }

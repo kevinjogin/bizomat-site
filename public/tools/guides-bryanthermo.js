@@ -169,5 +169,112 @@ window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
     "verify": [
       "Compare the result with the module maker’s performance curves at your hot-side temperature."
     ]
+  },
+  "heat-engine-carnot-limit": {
+    "purpose": "The Carnot limit for a heat engine working between a hot source and a cold sink at fixed temperatures: the ideal efficiency 1 − T_C ÷ T_H from the two absolute temperatures, the stated efficiency as a share of that limit (the second-law efficiency), the most work and the least heat rejected for the heat supplied, the work, rejected heat, entropy generated and work lost at the stated efficiency, and a verdict on whether the figure breaks the limit or needs test evidence.",
+    "uses": [
+      "Screen a heat engine, power cycle or heat-to-power proposal before it goes into a business case",
+      "Find the most work any engine could make from a heat supply between two temperatures",
+      "Compare engines on second-law efficiency rather than raw thermal efficiency"
+    ],
+    "users": [
+      "Mechanical and energy engineers",
+      "Power and process plant engineers",
+      "Engineering managers reviewing supplier proposals"
+    ],
+    "inputs": {
+      "Th": "Temperature at which the engine takes in heat: the steam, hot gas or hot fluid it is driven by, held fixed while the heat is supplied.",
+      "Tc": "Temperature at which the engine rejects heat: the condenser, cooling water or ambient air it finally gives its waste heat to.",
+      "eff": "Thermal efficiency stated by the supplier or measured: net work out ÷ heat supplied, in per cent.",
+      "Q": "Heat supplied to the engine per second at the operating point, from a fuel or heat balance.",
+      "cred": "Your own screening threshold: the second-law efficiency above which you ask for independent test results before accepting a claim."
+    },
+    "outputs": [
+      "Carnot efficiency between the two temperatures",
+      "Second-law efficiency of the stated figure",
+      "Most work and least heat rejected for the heat supplied",
+      "Work, heat rejected, entropy generated and work lost at the stated efficiency",
+      "Verdict: inside the limit, needs evidence, or impossible"
+    ],
+    "method": [
+      "Absolute temperatures T_H = θ_H + 273.15 K and T_C = θ_C + 273.15 K; the source must be hotter than the sink.",
+      "For a reversible (Carnot) cycle the heats exchanged with the two reservoirs satisfy Q_H ÷ T_H = Q_C ÷ T_C (Bryan §§63–65, §74), so the ideal efficiency is η_C = 1 − T_C ÷ T_H.",
+      "Second-law efficiency = stated efficiency ÷ η_C; above 100 % the figure is impossible, above your threshold it needs test evidence.",
+      "Most work = Q × η_C and least heat rejected = Q × T_C ÷ T_H; at the stated efficiency the work is Q × η and the heat rejected Q × (1 − η).",
+      "Entropy generated per second = heat rejected ÷ T_C − Q ÷ T_H, and the work lost = T_C × entropy generated, equal to the most work less the stated work (Bryan §77 relates it to energy made unavailable).",
+      "Example: an engine taking heat at 450 °C and rejecting it at 30 °C has a Carnot efficiency of 58.08 %; a stated 35 % is a second-law efficiency of 60.26 %, and 1000 kW of heat gives at most 580.8 kW of work against 350 kW at the stated efficiency."
+    ],
+    "limitations": [
+      "Reservoirs at fixed temperatures: where the heat comes from a stream that cools as it gives up heat, the limit is lower (the waste heat recovery limit tool integrates over a changing temperature).",
+      "The limit is only as good as the temperatures entered: use the temperatures of the source and sink the engine actually serves, not a flame or adiabatic temperature it never receives heat at.",
+      "Part-load, auxiliary power, generator and gearbox losses and standard rating conditions are not modelled; enter efficiencies on the same basis (net or gross, shaft or electrical).",
+      "Example values are illustrations. Replace them with values for your actual task."
+    ],
+    "interpret": [
+      "Real engines reach well under the Carnot efficiency, so a second-law efficiency close to 100 % is a sign of a mistaken temperature, a different efficiency basis or an unsupported claim.",
+      "Raising the source temperature or lowering the sink temperature raises the limit; a low-temperature heat source gives a low limit however good the machine."
+    ],
+    "refs": [
+      "Bryan G. H., Thermodynamics: An Introductory Treatise Dealing Mainly with First Principles and Their Direct Applications (B. G. Teubner, Leipzig, 1907), Chapter VI §§61–65 (Second Law, Carnot’s cycle, absolute temperature) and Chapter VII §§74, 77 (reversible cycles, entropy and unavailable energy), pp. 50–54, 62–67. Public-domain source; the method is restated in original words and no text, tables or figures are reproduced.",
+      "Çengel Y. A. and Boles M. A., Thermodynamics: An Engineering Approach (McGraw-Hill): the second law and Carnot heat engines."
+    ],
+    "verify": [
+      "Confirm the efficiency basis and the conditions behind any stated figure before comparing engines."
+    ]
+  },
+  "chilling-least-work-check": {
+    "purpose": "Second-law minimum power to cool a steady stream with a constant specific heat from its start temperature to a final temperature below the surroundings, with the heat finally rejected to surroundings at a third temperature: the heat removed, the part of it above the surroundings temperature that needs no work, the least power from summing the Carnot work over the cooling, the ideal overall COP, the chiller power you enter as a COP and a second-law efficiency, a verdict on whether it is possible, and the heat, least and stated energy over a year of running.",
+    "uses": [
+      "Find the least power a product chiller, process cooler or glycol plant could ever need for a duty",
+      "Check a quoted chiller power or COP for a product cooling duty against the second law",
+      "Rank chilling duties by the work they need rather than by heat alone"
+    ],
+    "users": [
+      "Process and refrigeration engineers",
+      "Food, beverage and plant engineers",
+      "Energy engineers and managers reviewing supplier proposals"
+    ],
+    "inputs": {
+      "mdot": "Mass flow of the product, water, glycol or air being chilled, from the process design or a flow meter.",
+      "cp": "Mean specific heat at constant pressure over the temperature range, from property data for the product or the supplier.",
+      "T1": "Temperature of the product entering the chilling step.",
+      "T2": "Temperature the product must leave at, below the surroundings temperature.",
+      "T0": "Temperature of the surroundings that finally receive the heat: ambient air for an air-cooled plant or the cooling water for a water-cooled one.",
+      "P": "Electrical or shaft power the chiller plant draws for this duty, quoted or measured.",
+      "cred": "Your own screening threshold: the second-law efficiency above which you ask for independent test results before accepting a claim.",
+      "hours": "Hours per year the chilling runs at this condition; used only for the yearly energy figures."
+    },
+    "outputs": [
+      "Heat removed and the part above ambient that needs no work",
+      "Least power to chill the product",
+      "Ideal and stated COP",
+      "Second-law efficiency of the stated power and a verdict",
+      "Heat, least and stated energy per year"
+    ],
+    "method": [
+      "Absolute temperatures in kelvin; heat removed Q = ṁ c_p (T₁ − T₂). The final temperature must be below both the start temperature and the surroundings.",
+      "Heat removed above the surroundings temperature can be rejected to the surroundings directly and needs no work; that part is ṁ c_p (T₁ − T₀) when the product starts above ambient.",
+      "Below the surroundings each element of heat dQ taken from the product at temperature T needs at least dQ (T₀ ÷ T − 1) of work (Bryan §90), and summing over the cooling (Bryan §93) gives the least power W = ṁ c_p [T₀ ln(T_s ÷ T₂) − (T_s − T₂)], with T_s the lower of the start and surroundings temperatures.",
+      "Ideal overall COP = Q ÷ W; stated COP = Q ÷ P; second-law efficiency = W ÷ P. A chiller drawing less than W is impossible; above your threshold the figure needs test evidence.",
+      "Example: 0.5 kg/s of product at 3.9 kJ/(kg·K) chilled from 30 °C to 2 °C with surroundings at 25 °C gives up 54.6 kW, of which 9.75 kW is above ambient; the least power is 1.824 kW (ideal COP 29.9), so a chiller drawing 20 kW has a second-law efficiency of 9.12 %."
+    ],
+    "limitations": [
+      "Constant specific heat, constant pressure and no phase change: freezing a product or condensing moisture from air needs its latent heat treated separately.",
+      "The least power assumes reversible machines at every temperature of the product; a real chiller works from one evaporating temperature below the final product temperature, so even a perfect single-temperature machine needs more power than this limit.",
+      "Pump, fan and heat-gain loads outside the product duty are not included; enter the chiller power on the same basis as the duty.",
+      "Example values are illustrations. Replace them with values for your actual task."
+    ],
+    "interpret": [
+      "Most of the least work is spent on the coldest part of the cooling, so each further degree below ambient costs more work per kilowatt of heat removed than the one before.",
+      "Precooling with ambient air or cooling water before the chiller removes the heat above ambient without refrigeration work."
+    ],
+    "refs": [
+      "Bryan G. H., Thermodynamics: An Introductory Treatise Dealing Mainly with First Principles and Their Direct Applications (B. G. Teubner, Leipzig, 1907), Chapter VIII §§90, 93 (available energy of a system in a medium of temperature T₀; available energy of a hot or cold body), pp. 82–87. Public-domain source; the method is restated in original words and no text, tables or figures are reproduced.",
+      "Kotas T. J., The Exergy Method of Thermal Plant Analysis (Butterworths): physical exergy of a stream and exergetic efficiency.",
+      "NIST Chemistry WebBook, https://webbook.nist.gov/chemistry/: thermophysical property data for specific heats."
+    ],
+    "verify": [
+      "Measure the product flow and temperatures and the chiller power on the running plant before relying on the comparison."
+    ]
   }
 });

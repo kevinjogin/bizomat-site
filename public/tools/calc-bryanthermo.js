@@ -106,6 +106,38 @@
           checks: [check('Heat pumped against the load', okQ ? 'pass' : 'fail', cools ? `${q(Qct, 'W', 2)} against ${q(v.Qreq, 'W', 2)} needed.` : 'The modules pump no heat at this current and temperature difference: lower the hot side, raise the cold side or change the current.'), check('Current rating', okI ? 'pass' : 'fail', `${q(I, 'A', 3)} against ${q(v.Imax, 'A', 3)} maximum.`), check('Voltage rating', okV ? 'pass' : 'fail', `${q(V, 'V', 3)} against ${q(v.Vmax, 'V', 3)} maximum.`), check('Hot-side heat sink', 'verify', `The heat sink must reject ${q(Qht, 'W', 1)} while holding the hot side at ${q(v.Th, '°C', 1)}.`)],
         });
     },
+    "heat-engine-carnot-limit": (v) => {
+      const Th = v.Th + ABS, Tc = v.Tc + ABS;
+      if (Tc <= 0) return invalid('The cold sink must be above absolute zero (−273.15 °C).');
+      if (Th <= Tc) return invalid('The hot source must be hotter than the cold sink.');
+      const etaC = 1 - Tc / Th, eta = v.eff / 100, eta2 = eta / etaC * 100, Wmax = v.Q * etaC, QrMin = v.Q * Tc / Th;
+      const W = v.Q * eta, Qr = v.Q - W, Sgen = Qr / Tc - v.Q / Th, lost = Tc * Sgen;
+      const possible = eta <= etaC + 1e-12, credible = eta2 <= v.cred + 1e-9;
+      const text = !possible ? 'IMPOSSIBLE: ABOVE THE CARNOT LIMIT' : credible ? 'INSIDE THE CARNOT LIMIT' : 'INSIDE THE LIMIT: ASK FOR TEST EVIDENCE';
+      return output({ etaC: etaC * 100, eta2, Wmax, QrMin, W, Qr, Sgen, lost }, 'Carnot efficiency (%)', etaC * 100,
+        [m('Carnot efficiency 1 − T_C ÷ T_H', q(etaC * 100, '%', 2)), m('Second-law efficiency of the stated figure', q(eta2, '%', 2)), m('Most work / least heat rejected', `${q(Wmax, '', 2)} / ${q(QrMin, 'kW', 2)}`), m('Work / heat rejected at the stated efficiency', `${q(W, '', 2)} / ${q(Qr, 'kW', 2)}`), m('Entropy generated / work lost', `${q(Sgen, 'kW/K', 4)} / ${q(lost, 'kW', 2)}`)],
+        'Heat engine Carnot limit.', 'Reversible engine between two reservoirs at fixed temperatures.', {
+          text, tone: !possible ? 'bad' : credible ? 'good' : 'warn',
+          checks: [check('Stated efficiency against the Carnot limit', possible ? 'pass' : 'fail', `${q(v.eff, '%', 2)} against a limit of ${q(etaC * 100, '%', 2)}.`), check('Second-law efficiency', credible ? 'pass' : 'verify', `${q(eta2, '%', 2)} against your threshold of ${q(v.cred, '%', 1)} for accepting a figure without test evidence.`), check('Reservoir temperatures', 'verify', 'Use the temperatures at which the engine actually takes in and rejects heat; a source that cools as it gives up heat gives a lower limit.')],
+        });
+    },
+    "chilling-least-work-check": (v) => {
+      const T1 = v.T1 + ABS, T2 = v.T2 + ABS, T0 = v.T0 + ABS;
+      if (T2 <= 0) return invalid('The final temperature must be above absolute zero (−273.15 °C).');
+      if (T2 >= T1) return invalid('The final temperature must be below the start temperature.');
+      if (T2 >= T0) return invalid('The final temperature must be below the surroundings: cooling that ends above them needs no work in principle.');
+      const C = v.mdot * v.cp, Ts = Math.min(T1, T0), Q = C * (T1 - T2), Qa = C * (T1 - Ts), W = C * (T0 * Math.log(Ts / T2) - (Ts - T2));
+      const copId = Q / W, cop = Q / v.P, eta2 = W / v.P * 100, lost = v.P - W;
+      const Eq = Q * v.hours, Ew = W * v.hours, Ep = v.P * v.hours;
+      const possible = v.P >= W - 1e-12, credible = eta2 <= v.cred + 1e-9;
+      const text = !possible ? 'IMPOSSIBLE: BELOW THE LEAST WORK' : credible ? 'INSIDE THE SECOND-LAW LIMIT' : 'INSIDE THE LIMIT: ASK FOR TEST EVIDENCE';
+      return output({ Q, Qa, W, copId, cop, eta2, lost, Eq, Ew, Ep }, 'Least power to chill (kW)', W,
+        [m('Heat removed / above ambient (no work needed)', `${q(Q, '', 2)} / ${q(Qa, 'kW', 2)}`), m('Least power to chill', q(W, 'kW', 3)), m('COP: ideal / stated', `${q(copId, '', 2)} / ${q(cop, '', 2)}`), m('Second-law efficiency of the stated power', q(eta2, '%', 2)), m('Power above the least work', q(lost, 'kW', 2)), m('Per year: heat / least / stated energy', `${q(Eq, '', 0)} / ${q(Ew, '', 0)} / ${q(Ep, 'kWh', 0)}`)],
+        'Least work to chill a product.', 'Constant specific heat, constant pressure, no phase change; reversible machines at every product temperature.', {
+          text, tone: !possible ? 'bad' : credible ? 'good' : 'warn',
+          checks: [check('Stated power against the least work', possible ? 'pass' : 'fail', `${q(v.P, 'kW', 2)} against a least power of ${q(W, 'kW', 3)}.`), check('Second-law efficiency', credible ? 'pass' : 'verify', `${q(eta2, '%', 2)} against your threshold of ${q(v.cred, '%', 1)} for accepting a figure without test evidence.`), check('Phase change', 'verify', 'Freezing the product or condensing moisture adds latent heat that this check leaves out.')],
+        });
+    },
   };
   window.GOCORE_CALC_PARTS = window.GOCORE_CALC_PARTS || [];
   window.GOCORE_CALC_PARTS.push((id) => {

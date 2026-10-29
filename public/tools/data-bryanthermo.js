@@ -455,5 +455,205 @@ window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
         "sens": true
       }
     ]
+  },
+  {
+    "id": "heat-engine-carnot-limit",
+    "name": "Heat Engine Carnot Limit Check (Ideal Efficiency, Second-Law Efficiency, Most Work, Least Heat Rejected)",
+    "category": "Engineering",
+    "collection": "MAKEOS",
+    "question": "Is the efficiency claimed or measured for this heat engine possible between its hot source and cold sink, how close is it to the Carnot limit, and what work and rejected heat does it imply?",
+    "description": "The Carnot limit for a heat engine working between a hot source and a cold sink at fixed temperatures: the ideal efficiency 1 − T_C ÷ T_H from the two absolute temperatures, the stated efficiency as a share of that limit (the second-law efficiency), the most work and the least heat rejected for the heat supplied, the work, rejected heat, entropy generated and work lost at the stated efficiency, and a verdict on whether the figure breaks the limit or needs test evidence.",
+    "keywords": [
+      "MAKEOS",
+      "Carnot",
+      "heat engine",
+      "thermal efficiency",
+      "Carnot efficiency",
+      "second law",
+      "second-law efficiency",
+      "entropy generation",
+      "heat rejection",
+      "efficiency claim"
+    ],
+    "fields": [
+      {
+        "key": "Th",
+        "label": "Hot source temperature",
+        "type": "number",
+        "default": 450,
+        "unit": "°C",
+        "min": -270,
+        "max": 3000,
+        "step": "any",
+        "integer": false,
+        "sens": true
+      },
+      {
+        "key": "Tc",
+        "label": "Cold sink temperature",
+        "type": "number",
+        "default": 30,
+        "unit": "°C",
+        "min": -270,
+        "max": 3000,
+        "step": "any",
+        "integer": false,
+        "sens": true
+      },
+      {
+        "key": "eff",
+        "label": "Stated engine efficiency",
+        "type": "number",
+        "default": 35,
+        "unit": "%",
+        "min": 0.001,
+        "max": 100,
+        "step": "any",
+        "integer": false,
+        "sens": true
+      },
+      {
+        "key": "Q",
+        "label": "Heat supplied to the engine",
+        "type": "number",
+        "default": 1000,
+        "unit": "kW",
+        "min": 0.000001,
+        "max": 1000000000,
+        "step": "any",
+        "integer": false,
+        "sens": true
+      },
+      {
+        "key": "cred",
+        "label": "Highest second-law efficiency accepted without test evidence",
+        "type": "number",
+        "default": 75,
+        "unit": "%",
+        "min": 1,
+        "max": 100,
+        "step": "any",
+        "integer": false,
+        "sens": false
+      }
+    ]
+  },
+  {
+    "id": "chilling-least-work-check",
+    "name": "Least Work to Chill a Product Below Ambient (Second-Law Minimum Power, Ideal COP, Chiller Claim Check)",
+    "category": "Engineering",
+    "collection": "MAKEOS",
+    "question": "What is the least power any machine could need to chill this product stream from its start temperature to below the surroundings, and is the chiller power quoted or measured for the duty possible?",
+    "description": "Second-law minimum power to cool a steady stream with a constant specific heat from its start temperature to a final temperature below the surroundings, with the heat finally rejected to surroundings at a third temperature: the heat removed, the part of it above the surroundings temperature that needs no work, the least power from summing the Carnot work over the cooling, the ideal overall COP, the chiller power you enter as a COP and a second-law efficiency, a verdict on whether it is possible, and the heat, least and stated energy over a year of running.",
+    "keywords": [
+      "MAKEOS",
+      "minimum work",
+      "least work",
+      "chilling",
+      "product cooling",
+      "exergy",
+      "available energy",
+      "second law",
+      "second-law efficiency",
+      "chiller claim"
+    ],
+    "fields": [
+      {
+        "key": "mdot",
+        "label": "Mass flow of the product or stream",
+        "type": "number",
+        "default": 0.5,
+        "unit": "kg/s",
+        "min": 0.000001,
+        "max": 1000000,
+        "step": "any",
+        "integer": false,
+        "sens": true
+      },
+      {
+        "key": "cp",
+        "label": "Specific heat of the product at constant pressure",
+        "type": "number",
+        "default": 3.9,
+        "unit": "kJ/(kg·K)",
+        "min": 0.001,
+        "max": 100,
+        "step": "any",
+        "integer": false,
+        "sens": true
+      },
+      {
+        "key": "T1",
+        "label": "Product temperature at the start",
+        "type": "number",
+        "default": 30,
+        "unit": "°C",
+        "min": -270,
+        "max": 3000,
+        "step": "any",
+        "integer": false,
+        "sens": true
+      },
+      {
+        "key": "T2",
+        "label": "Final chilled temperature",
+        "type": "number",
+        "default": 2,
+        "unit": "°C",
+        "min": -270,
+        "max": 3000,
+        "step": "any",
+        "integer": false,
+        "sens": true
+      },
+      {
+        "key": "T0",
+        "label": "Temperature of the surroundings that receive the heat",
+        "type": "number",
+        "default": 25,
+        "unit": "°C",
+        "min": -100,
+        "max": 100,
+        "step": "any",
+        "integer": false,
+        "sens": true
+      },
+      {
+        "key": "P",
+        "label": "Chiller power drawn for this duty",
+        "type": "number",
+        "default": 20,
+        "unit": "kW",
+        "min": 0.000001,
+        "max": 1000000000,
+        "step": "any",
+        "integer": false,
+        "sens": true
+      },
+      {
+        "key": "cred",
+        "label": "Highest second-law efficiency accepted without test evidence",
+        "type": "number",
+        "default": 60,
+        "unit": "%",
+        "min": 1,
+        "max": 100,
+        "step": "any",
+        "integer": false,
+        "sens": false
+      },
+      {
+        "key": "hours",
+        "label": "Running hours per year",
+        "type": "number",
+        "default": 4000,
+        "unit": "h/year",
+        "min": 0,
+        "max": 8784,
+        "step": "any",
+        "integer": false,
+        "sens": false
+      }
+    ]
   }
 ]);
