@@ -1,0 +1,33 @@
+# Temporary diagnostic: checks which version of the WORKOS tools kevos.com is serving. Removed after use.
+name: Live check (input guides)
+on:
+  push:
+    branches: [claude/loving-mccarthy-oubwh2]
+permissions:
+  contents: read
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Fetch kevos.com
+        shell: bash
+        run: |
+          set -u
+          note() { echo "::notice title=$1::$2"; echo "$1: $2"; }
+          b="https://kevos.com"; q="nocache=$(date +%s)"
+          page=$(curl -sS -L "$b/tools/?$q" -D /tmp/h1)
+          note "tools page" "$(head -1 /tmp/h1 | tr -d '\r') | input-guides.js tag: $(grep -c 'input-guides.js' <<<"$page") | inputs-*.js tags: $(grep -o 'inputs-[a-z0-9]*\.js' <<<"$page" | wc -l) | data-*.js tags: $(grep -o 'data-[a-z0-9]*\.js' <<<"$page" | wc -l)"
+          note "tools page headers" "$(grep -iE '^(cf-cache-status|age|cache-control|last-modified|etag|server):' /tmp/h1 | tr -d '\r' | tr '\n' ' ')"
+          for f in input-guides.js inputs-money.js inputs-handbook67.js ui.js; do
+            code=$(curl -sS -o /tmp/f -w '%{http_code}' "$b/tools/$f?$q"); size=$(wc -c </tmp/f)
+            note "$f" "HTTP $code, $size bytes, WORKOS_INPUT_GUIDE mentions: $(grep -c WORKOS_INPUT_GUIDE /tmp/f)"
+          done
+          curl -sS -o /tmp/u -D /tmp/h2 "$b/tools/ui.js"
+          note "ui.js without query" "inputGuide refs: $(grep -c inputGuide /tmp/u) | $(grep -iE '^(cf-cache-status|age|cache-control|etag):' /tmp/h2 | tr -d '\r' | tr '\n' ' ')"
+          sp=$(curl -sS "$b/tools/extension-spring/?$q")
+          note "static tool page" "What each input means: $(grep -c 'What each input means' <<<"$sp") | figures: $(grep -o 'ig-svg--' <<<"$sp" | wc -l)"
+          home=$(curl -sS "$b/?$q")
+          note "home" "KEVOS wordmark: $(grep -c kevos-wordmark-orange <<<"$home") | GoCore title: $(grep -ci '<title>GoCore' <<<"$home")"
+          rd=$(curl -sS "$b/reados/?$q")
+          note "newest READOS book" "front-end-planning links: $(grep -c 'front-end-planning-by-the-numbers' <<<"$rd")"
