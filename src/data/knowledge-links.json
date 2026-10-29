@@ -1,0 +1,1785 @@
+{
+ "links": [
+  {
+   "reados": "publication/arc-welding-by-the-numbers",
+   "chapter": "the-arc-as-a-heat-source",
+   "tool": "welding-heat-input",
+   "type": "applies",
+   "note": "Calculates arc energy and heat input, the calculation this chapter works by hand.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/arc-welding-by-the-numbers",
+   "chapter": "weld-metal-in-fillet-welds",
+   "tool": "fillet-weld-quantity",
+   "type": "applies",
+   "note": "Works out fillet weld metal quantity, with the profile factor and deposition efficiency as inputs.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/arc-welding-by-the-numbers",
+   "chapter": "weld-metal-in-fillet-welds",
+   "tool": "fillet-weld-strength",
+   "type": "applies",
+   "note": "Relates fillet weld throat, length and an allowable shear stress you enter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/blanking-and-piercing-dies-by-the-numbers",
+   "chapter": "cutting-force-from-the-perimeter",
+   "tool": "punching-force",
+   "type": "applies",
+   "note": "Calculates the punching force for a hole or blank from its cut perimeter, thickness and shear strength, the relationship this chapter starts from.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/blanking-and-piercing-dies-by-the-numbers",
+   "chapter": "cutting-force-from-the-perimeter",
+   "tool": "shearing-blade-force",
+   "type": "applies",
+   "note": "Estimates the cutting force on a raked shearing blade, the effect of blade rake discussed in this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/blanking-and-piercing-dies-by-the-numbers",
+   "chapter": "small-holes-and-punch-strength",
+   "tool": "column-buckling",
+   "type": "applies",
+   "note": "Works out Euler buckling loads for other end conditions, the check applied here to small punches.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/blanking-and-piercing-dies-by-the-numbers",
+   "chapter": "stripping-and-stripper-springs",
+   "tool": "compression-spring",
+   "type": "applies",
+   "note": "Checks a compression spring’s rate and stress from its dimensions, as used to size stripper springs in this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/cad-data-you-can-trust",
+   "chapter": "backups-you-have-restored",
+   "tool": "downtime-cost",
+   "type": "complements",
+   "note": "Helps frame the cost of lost time for other systems, where downtime rather than lost data is the main cost.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/cad-standards-that-stick",
+   "chapter": "checking-compliance-without-policing",
+   "tool": "automation-check",
+   "type": "complements",
+   "note": "Helps frame the business case for automating other repetitive tasks, the comparison this chapter makes for compliance checking.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/compressed-air-plant-by-the-numbers",
+   "chapter": "free-air-pressure-and-mass-flow",
+   "tool": "pneumatic-cylinder-sizing",
+   "type": "applies",
+   "note": "Converts a cylinder’s stroke volume to free air, the pneumatics side of the conversion in this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/compressed-air-plant-by-the-numbers",
+   "chapter": "free-air-pressure-and-mass-flow",
+   "tool": "compressed-air-system-sizing",
+   "type": "applies",
+   "note": "Converts each user’s air demand to free air for sizing a compressed-air system.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/compressed-air-plant-by-the-numbers",
+   "chapter": "the-work-of-compression",
+   "tool": "gas-compression-process",
+   "type": "applies",
+   "note": "Calculates compression work and final temperature for any polytropic exponent.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/compressed-air-plant-by-the-numbers",
+   "chapter": "discharge-temperature-and-staging",
+   "tool": "compressor-staging-check",
+   "type": "applies",
+   "note": "Repeats this chapter’s discharge-temperature and staging calculations for other pressure ratios and stage numbers.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/compressed-air-plant-by-the-numbers",
+   "chapter": "set-the-pressure-and-stop-waste",
+   "tool": "escaping-air-velocity",
+   "type": "applies",
+   "note": "Shows the choked flow through an orifice, the way air escapes from a leak at line pressure.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/compressed-air-plant-by-the-numbers",
+   "chapter": "set-the-pressure-and-stop-waste",
+   "tool": "air-leak-audit",
+   "type": "applies",
+   "note": "Converts measured or estimated leaks into power and cost.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/compressed-air-plant-by-the-numbers",
+   "chapter": "set-the-pressure-and-stop-waste",
+   "tool": "blow-off-nozzle-cost",
+   "type": "applies",
+   "note": "Prices blow-off nozzles from their size, pressure and running hours.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/compressed-air-plant-by-the-numbers",
+   "chapter": "receivers-and-compressor-control",
+   "tool": "air-main-sizing",
+   "type": "applies",
+   "note": "Sizes a compressed-air main and includes a receiver estimate on the same basis as this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/compressed-air-plant-by-the-numbers",
+   "chapter": "size-the-mains",
+   "tool": "air-pipe-drop",
+   "type": "applies",
+   "note": "Works out pressure drop in a compressed-air pipe for other sizes and flows.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/connected-products-by-the-numbers",
+   "chapter": "service-supply-and-end-of-life",
+   "tool": "subscription-value",
+   "type": "applies",
+   "note": "Tests subscription value under other assumptions.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/connected-products-by-the-numbers",
+   "chapter": "service-supply-and-end-of-life",
+   "tool": "make-buy",
+   "type": "applies",
+   "note": "Covers the general make-or-buy arithmetic.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/demand-and-benefit-forecasts-by-the-numbers",
+   "chapter": "demand-from-drivers",
+   "tool": "capacity",
+   "type": "applies",
+   "note": "Converts working time, cycle time and efficiency into output and utilisation, the comparison of demand with available hours in this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-simulation-by-the-numbers",
+   "chapter": "bound-the-answer-by-hand",
+   "tool": "thin-tube-torsion",
+   "type": "applies",
+   "note": "Works out torsional stress and twist in thin-walled tubes, the hand bounds this chapter calculates.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-simulation-by-the-numbers",
+   "chapter": "bound-the-answer-by-hand",
+   "tool": "section-properties",
+   "type": "applies",
+   "note": "Calculates section properties, used in this chapter to bound simulation results by hand.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-simulation-by-the-numbers",
+   "chapter": "apply-loads-and-restraints-honestly",
+   "tool": "bolt-torque-preload",
+   "type": "applies",
+   "note": "Relates tightening torque to bolt preload, the clamping force this chapter compares with the applied loads.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-simulation-by-the-numbers",
+   "chapter": "read-stress-results-correctly",
+   "tool": "principal-stress",
+   "type": "applies",
+   "note": "Reproduces the principal stress figures worked in this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-simulation-by-the-numbers",
+   "chapter": "check-stiffness-frequency-and-buckling",
+   "tool": "column-buckling",
+   "type": "applies",
+   "note": "Gives the Euler buckling load for common end conditions.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-simulation-by-the-numbers",
+   "chapter": "motion-thermal-and-flow-studies",
+   "tool": "thermal-stress",
+   "type": "applies",
+   "note": "Gives thermal stress for other materials and temperature changes.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-simulation-by-the-numbers",
+   "chapter": "motion-thermal-and-flow-studies",
+   "tool": "thermal-growth",
+   "type": "applies",
+   "note": "Gives thermal growth for other materials and temperature changes.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/designing-welded-joints-by-the-numbers",
+   "chapter": "fillet-welds",
+   "tool": "fillet-weld-strength",
+   "type": "applies",
+   "note": "Relates fillet weld throat, length and an allowable shear stress you enter, the design check in this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/designing-welded-joints-by-the-numbers",
+   "chapter": "fillet-welds",
+   "tool": "fillet-weld-quantity",
+   "type": "complements",
+   "note": "Works out the weld metal in fillet welds, a companion to the joint design in this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/designing-welded-joints-by-the-numbers",
+   "chapter": "direction-and-size-limits",
+   "tool": "welding-heat-input",
+   "type": "applies",
+   "note": "Calculates welding heat input, the figure this chapter limits.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/drafting-geometry-by-the-numbers",
+   "chapter": "absolute-relative-and-polar-points",
+   "tool": "polar-coordinates",
+   "type": "applies",
+   "note": "Converts between polar and Cartesian coordinates in both directions, a quick independent check.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/drafting-geometry-by-the-numbers",
+   "chapter": "solving-triangles-for-hidden-points",
+   "tool": "triangle-solver",
+   "type": "applies",
+   "note": "Solves any triangle, including the ambiguous case, a second route for checking a hand solution.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/drafting-geometry-by-the-numbers",
+   "chapter": "bolt-circles-arrays-and-arc-slots",
+   "tool": "bolt-circle",
+   "type": "applies",
+   "note": "Lists every hole coordinate from the pitch circle, hole count and start angle.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/drafting-geometry-by-the-numbers",
+   "chapter": "polygons-ellipses-and-inclined-views",
+   "tool": "regular-polygon",
+   "type": "applies",
+   "note": "Gives regular polygon relationships for any number of sides.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/drafting-geometry-by-the-numbers",
+   "chapter": "polygons-ellipses-and-inclined-views",
+   "tool": "ellipse",
+   "type": "applies",
+   "note": "Gives an ellipse’s perimeter and area from its two axes.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/drafting-geometry-by-the-numbers",
+   "chapter": "areas-centroids-and-mass",
+   "tool": "polygon-area",
+   "type": "applies",
+   "note": "Applies the polygon area formula to a list of corner coordinates.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/drafting-geometry-by-the-numbers",
+   "chapter": "profiles-that-cut-cleanly",
+   "tool": "cnc-chord-error",
+   "type": "applies",
+   "note": "Gives the chord error when a toolpath approximates an arc with straight moves.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/electronics-packaging-by-the-numbers",
+   "chapter": "follow-the-heat-out",
+   "tool": "gearbox-heat-balance",
+   "type": "complements",
+   "note": "Estimates how hot a gearbox or hydraulic unit runs, a companion when the question is the machine’s own temperature rather than the enclosure’s.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/electronics-packaging-by-the-numbers",
+   "chapter": "seal-and-vent-the-enclosure",
+   "tool": "plastic-thermal-mismatch",
+   "type": "applies",
+   "note": "Checks thermal stress and movement in plastic–metal assemblies for other materials and lengths.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/engineering-software-you-can-sell",
+   "chapter": "choose-a-licensing-model",
+   "tool": "subscription-value",
+   "type": "applies",
+   "note": "Tests renewal and subscription assumptions quickly.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/first-of-a-kind-technology-by-the-numbers",
+   "chapter": "experience-curves-and-suppliers",
+   "tool": "learning-curve",
+   "type": "applies",
+   "note": "Works out unit and cumulative learning-curve times and costs, the unit form of the curves discussed in this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/first-of-a-kind-technology-by-the-numbers",
+   "chapter": "contingency-that-grows-with-novelty",
+   "tool": "schedule-risk",
+   "type": "applies",
+   "note": "Compares remaining work with productive capacity before a deadline, a simple check on a programme.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/first-of-a-kind-technology-by-the-numbers",
+   "chapter": "contingency-that-grows-with-novelty",
+   "tool": "contingency",
+   "type": "complements",
+   "note": "Estimates a screening contingency from ratings of uncertainty, complexity and risk, a quick check alongside the percentile method in this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/front-end-planning-by-the-numbers",
+   "chapter": "scoring-project-definition",
+   "tool": "project-gate",
+   "type": "complements",
+   "note": "Records a gate’s wider judgement on value, fit, urgency, risk and readiness. It does not score project definition, so it complements this chapter’s scoring.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/hand-forming-sheet-metal-by-the-numbers",
+   "chapter": "counting-strain-and-thickness",
+   "tool": "true-stress-strain",
+   "type": "applies",
+   "note": "Converts between engineering and true stress and strain.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/hand-forming-sheet-metal-by-the-numbers",
+   "chapter": "sizing-the-blank-for-a-dome",
+   "tool": "pappus-revolution",
+   "type": "applies",
+   "note": "Works out surface areas and volumes of revolution for simple shapes, as used here to size a blank.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/hand-forming-sheet-metal-by-the-numbers",
+   "chapter": "shrinking-and-stretching-flanges",
+   "tool": "bend-allowance",
+   "type": "applies",
+   "note": "Gives a fold’s share of the blank length from a bend allowance, as used here to cut the strip for a flanged band.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/hand-forming-sheet-metal-by-the-numbers",
+   "chapter": "checking-noise-and-the-job-record",
+   "tool": "noise-exposure-check",
+   "type": "applies",
+   "note": "Works out daily noise exposure for any mix of sources and times.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/heat-transfer-by-the-numbers",
+   "tool": "insulated-pipe",
+   "type": "applies",
+   "note": "Works out heat loss from an insulated pipe, one of the steps in this book.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/heat-transfer-by-the-numbers",
+   "tool": "radiant-heat",
+   "type": "applies",
+   "note": "Works out radiant heat exchange between surfaces, one of the steps in this book.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/heat-transfer-by-the-numbers",
+   "tool": "lmtd-exchanger",
+   "type": "applies",
+   "note": "Sizes a heat exchanger by the log mean temperature difference, one of the steps in this book.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/heat-transfer-by-the-numbers",
+   "chapter": "economic-insulation-thickness",
+   "tool": "pipe-insulation-design",
+   "type": "applies",
+   "note": "Compares insulation thicknesses for other pipe sizes, temperatures and prices.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/machine-noise-control-by-the-numbers",
+   "chapter": "decibels-and-how-they-combine",
+   "tool": "sound-level",
+   "type": "applies",
+   "note": "Combines noise levels from several sources, or subtracts a background.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/machine-noise-control-by-the-numbers",
+   "chapter": "daily-exposure-and-the-duty-to-control",
+   "tool": "noise-exposure-check",
+   "type": "applies",
+   "note": "Combines sources and works out a daily noise dose from levels and times.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/machine-noise-control-by-the-numbers",
+   "chapter": "vibration-isolation-and-structure-borne-noise",
+   "tool": "vibration-isolator-selection",
+   "type": "applies",
+   "note": "Works the isolator relationships for a target isolation and damping.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/marking-out-by-the-numbers",
+   "chapter": "polygons-on-the-bench",
+   "tool": "regular-polygon",
+   "type": "applies",
+   "note": "Gives the sizes of regular polygons and hexagons for any number of sides, a quick check on marking out.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/marking-out-by-the-numbers",
+   "chapter": "large-arcs-ellipses-and-curves-by-points",
+   "tool": "circular-segment",
+   "type": "applies",
+   "note": "Solves circular segment and arc relationships, a quick check of a hand calculation.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/modular-projects-by-the-numbers",
+   "chapter": "proving-the-pilot",
+   "tool": "oee-downtime-pro",
+   "type": "applies",
+   "note": "Works out OEE and downtime for any production period.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/modular-projects-by-the-numbers",
+   "chapter": "learning-curves",
+   "tool": "learning-curve",
+   "type": "applies",
+   "note": "Uses the unit learning-curve form, Tₙ = T₁ n^b, and reports unit, cumulative and average hours, matching the planning curve in this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/modular-projects-by-the-numbers",
+   "chapter": "short-exposure-windows",
+   "tool": "downtime-cost",
+   "type": "applies",
+   "note": "Adds lost contribution and the other costs of downtime, a check on the daily figure used in this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/modular-projects-by-the-numbers",
+   "chapter": "comparing-bespoke-and-modular",
+   "tool": "benefit-cost-ratio",
+   "type": "applies",
+   "note": "Compares the present value of benefits and costs from annual figures and a discount rate, which makes the timing of two options visible.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/outcome-first-projects-by-the-numbers",
+   "chapter": "where-the-gap-comes-from",
+   "tool": "oee-downtime-pro",
+   "type": "applies",
+   "note": "Works through availability, performance and quality losses from a downtime log.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/outcome-first-projects-by-the-numbers",
+   "chapter": "where-the-gap-comes-from",
+   "tool": "capacity",
+   "type": "applies",
+   "note": "Converts working time, cycle time and efficiency into output and utilisation.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/outcome-first-projects-by-the-numbers",
+   "chapter": "options-derived-from-the-outcome",
+   "tool": "option-compare",
+   "type": "applies",
+   "note": "Sets two options side by side on value, cost, delivery time and risk.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/oxy-fuel-by-the-numbers",
+   "chapter": "the-cost-of-a-metre-of-cut",
+   "tool": "job-cost",
+   "type": "applies",
+   "note": "Sets out a whole job’s cost from separate lines, the structure this chapter uses for the cost of a metre of cut.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plastic-parts-by-the-numbers",
+   "chapter": "shrinkage-warpage-and-tolerances",
+   "tool": "plastic-thermal-mismatch",
+   "type": "applies",
+   "note": "Repeats this chapter’s plastic–metal thermal mismatch calculation for other materials and lengths.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plate-work-by-the-numbers",
+   "chapter": "flat-sided-hoppers-and-corner-angles",
+   "tool": "prismoidal-volume",
+   "type": "applies",
+   "note": "Calculates the volume of a prismoidal shape from its end areas and mid-section, as used here to confirm a hopper’s capacity.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plate-work-by-the-numbers",
+   "chapter": "rings-stiffeners-and-flanges",
+   "tool": "section-properties",
+   "type": "applies",
+   "note": "Gives the centroid and properties of a built-up section.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plate-work-by-the-numbers",
+   "chapter": "rings-stiffeners-and-flanges",
+   "tool": "angle-ring-length",
+   "type": "applies",
+   "note": "Works out ring lengths for angle or bar for other sections and radii, a check before any section is cut.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plate-work-by-the-numbers",
+   "chapter": "rings-stiffeners-and-flanges",
+   "tool": "bolt-circle",
+   "type": "applies",
+   "note": "Lists the coordinates of every hole on a bolt circle, as used here to set out flange holes.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plate-work-by-the-numbers",
+   "chapter": "plate-list-mass-and-lifting",
+   "tool": "lifting-lug-design",
+   "type": "applies",
+   "note": "Checks a lifting lug design. A real lift plan adds dynamic and sharing factors and the rigging’s rated capacities, as this chapter explains.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/pneumatics-by-the-numbers",
+   "tool": "pneumatic-cylinder-force",
+   "type": "applies",
+   "note": "Works out pneumatic cylinder force, one of the steps in this book.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/pneumatics-by-the-numbers",
+   "tool": "pneumatic-consumption",
+   "type": "applies",
+   "note": "Works out the air demand of a double-acting pneumatic cylinder, one of the steps in this book.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/pneumatics-by-the-numbers",
+   "tool": "air-leak-cost",
+   "type": "applies",
+   "note": "Puts a cost on compressed-air leaks, one of the steps in this book.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/pneumatics-by-the-numbers",
+   "chapter": "count-the-air-and-what-it-costs",
+   "tool": "vacuum-gripper-sizing",
+   "type": "applies",
+   "note": "Sizes vacuum cups for a holding force, the check made on the gripper in this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/pneumatics-by-the-numbers",
+   "chapter": "supply-clean-dry-air-at-the-right-pressure",
+   "tool": "air-pipe-drop",
+   "type": "applies",
+   "note": "Works out pressure drop in a compressed-air pipe for a measured flow, as used here to size a larger branch.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/pneumatics-by-the-numbers",
+   "chapter": "supply-clean-dry-air-at-the-right-pressure",
+   "tool": "air-receiver",
+   "type": "applies",
+   "note": "Gives the receiver volume needed for a stated shortfall and time.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/power-presses-by-the-numbers",
+   "chapter": "the-crank-press-force-curve",
+   "tool": "crank-press-capacity",
+   "type": "applies",
+   "note": "Works out a crank press’s force curve from the crank’s dimensions and its rating.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/power-presses-by-the-numbers",
+   "chapter": "flywheel-energy-and-slowdown",
+   "tool": "flywheel-energy",
+   "type": "applies",
+   "note": "Calculates a flywheel’s inertia and the energy it releases between its maximum and minimum speeds.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/power-presses-by-the-numbers",
+   "chapter": "flywheel-energy-and-slowdown",
+   "tool": "press-flywheel-sizing",
+   "type": "applies",
+   "note": "Sizes a flywheel and motor for punches and shears from the energy each stroke takes.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/printed-mechanisms-that-run",
+   "chapter": "set-fits-from-measured-coupons",
+   "tool": "rss-tolerance-stack",
+   "type": "applies",
+   "note": "Runs worst-case and root-sum-square tolerance stacks of up to five dimensions.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/printed-mechanisms-that-run",
+   "chapter": "design-printed-gears-that-mesh",
+   "tool": "planetary-gear",
+   "type": "applies",
+   "note": "Checks planetary gear ratios and assembly conditions for other tooth counts.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/printed-mechanisms-that-run",
+   "chapter": "design-printed-gears-that-mesh",
+   "tool": "lewis-bending",
+   "type": "applies",
+   "note": "Runs a Lewis bending check for other gear cases.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/printed-mechanisms-that-run",
+   "chapter": "design-printed-gears-that-mesh",
+   "tool": "plastic-gear-power",
+   "type": "applies",
+   "note": "Checks power capacity of plastic gears for other cases.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/printed-mechanisms-that-run",
+   "chapter": "index-with-a-geneva-drive",
+   "tool": "geneva-mechanism",
+   "type": "applies",
+   "note": "Computes Geneva mechanism geometry for other slot counts and centre distances.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/printed-mechanisms-that-run",
+   "chapter": "join-parts-without-stripping-them",
+   "tool": "snap-fit",
+   "type": "applies",
+   "note": "Runs snap-fit calculations for other geometries.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/process-chillers-by-the-numbers",
+   "chapter": "compressor-work-and-discharge-temperature",
+   "tool": "gas-compression-process",
+   "type": "applies",
+   "note": "Works the ideal-gas compression process for air.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/process-chillers-by-the-numbers",
+   "chapter": "compressor-work-and-discharge-temperature",
+   "tool": "compressor-power",
+   "type": "applies",
+   "note": "Works out ideal-gas compressor power for air.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/project-teams-and-contracts-by-the-numbers",
+   "chapter": "staffing-ramp-up-and-turnover",
+   "tool": "staffing-need",
+   "type": "applies",
+   "note": "Converts workload and productive time into a practical staffing requirement.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/prototypes-and-simulation-by-the-numbers",
+   "chapter": "measured-performance-and-sample-size",
+   "tool": "sample-size-mean",
+   "type": "applies",
+   "note": "Works out the sample size needed to estimate a mean for any precision and confidence.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/prototypes-and-simulation-by-the-numbers",
+   "chapter": "measured-performance-and-sample-size",
+   "tool": "process-change-trial",
+   "type": "applies",
+   "note": "Works out the sample size per group for the smallest worthwhile difference, and runs the Welch test on the results.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/reference-class-forecasting-by-the-numbers",
+   "chapter": "uplifts-and-contingency",
+   "tool": "contingency",
+   "type": "complements",
+   "note": "Gives a screening contingency from ratings of estimate uncertainty, complexity and risk. It is a heuristic, not a quantified risk analysis, so it complements the reference class method in this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/reference-class-forecasting-by-the-numbers",
+   "chapter": "cutting-the-tail",
+   "tool": "project-gate",
+   "type": "applies",
+   "note": "Balances value, fit, urgency, risk and readiness into a transparent gate score, one way to make a gate’s reasoning visible.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/sheet-metal-parts-by-the-numbers",
+   "chapter": "bend-radius-and-what-limits-it",
+   "tool": "bend-radius-limits",
+   "type": "applies",
+   "note": "Applies the bend radius limit relationship from this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/sheet-metal-parts-by-the-numbers",
+   "chapter": "neutral-axis-k-factor-and-bend-allowance",
+   "tool": "bend-allowance",
+   "type": "applies",
+   "note": "Gives bend allowance, setback and deduction for any bend from a K-factor you supply.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/sheet-metal-parts-by-the-numbers",
+   "chapter": "springback-and-overbending",
+   "tool": "bending-springback",
+   "type": "applies",
+   "note": "Estimates springback and overbending.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/sheet-metal-parts-by-the-numbers",
+   "chapter": "press-brake-and-punching-force",
+   "tool": "press-brake-force",
+   "type": "applies",
+   "note": "Calculates press brake bending force. It uses a constant of 1.33 by default and lets you change it, as this chapter discusses.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/sheet-metal-parts-by-the-numbers",
+   "chapter": "press-brake-and-punching-force",
+   "tool": "punching-force",
+   "type": "applies",
+   "note": "Applies the punching force relationship from this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/sheet-metal-patterns-by-the-numbers",
+   "chapter": "every-pattern-starts-with-a-solid",
+   "tool": "triangle-solver",
+   "type": "applies",
+   "note": "Solves any triangle, including the true-length triangles that patterns rely on.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/sheet-metal-patterns-by-the-numbers",
+   "chapter": "cones-and-reducers-by-radial-lines",
+   "tool": "pappus-revolution",
+   "type": "applies",
+   "note": "Gives the area of a surface of revolution from the generating outline and its centroid, an independent check.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/sheet-metal-production-runs-by-the-numbers",
+   "chapter": "capacity-of-a-flared-tray",
+   "tool": "prismoidal-volume",
+   "type": "applies",
+   "note": "Gives the exact volume of a prismoidal shape from its three areas and height.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/stage-gates-and-stopping-rules-by-the-numbers",
+   "chapter": "committing-before-you-know",
+   "tool": "project-gate",
+   "type": "applies",
+   "note": "Scores a project at a gate on value, fit, urgency, risk and readiness.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/stage-gates-and-stopping-rules-by-the-numbers",
+   "chapter": "pivot-stop-or-switch",
+   "tool": "investment-appraisal",
+   "type": "applies",
+   "note": "Calculates NPV, IRR and payback for an equipment purchase.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/stiffening-sheet-metal-by-the-numbers",
+   "chapter": "deflection-and-stress-of-a-flat-panel",
+   "tool": "rectangular-plate",
+   "type": "applies",
+   "note": "Calculates deflection and stress in a rectangular plate with handbook flat-plate formulas, which are fitted approximations rather than the series coefficients used in this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/surfaces-that-make-parts",
+   "chapter": "extruded-revolved-and-swept-surfaces",
+   "tool": "pappus-revolution",
+   "type": "applies",
+   "note": "Calculates surfaces and volumes of revolution for other profiles.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/surfaces-that-make-parts",
+   "chapter": "lofts-and-transitions-between-sections",
+   "tool": "prismoidal-volume",
+   "type": "applies",
+   "note": "Calculates prismoidal volumes, the same calculation as this chapter’s lofts.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/surfaces-that-make-parts",
+   "chapter": "draft-splits-and-releasing-the-model",
+   "tool": "cnc-chord-error",
+   "type": "applies",
+   "note": "Works out the chord error when a toolpath approximates arcs with straight moves.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/thermal-expansion-by-the-numbers",
+   "tool": "thermal-growth",
+   "type": "applies",
+   "note": "Works out thermal growth of a part, one of the steps in this book.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/thermal-expansion-by-the-numbers",
+   "tool": "thermal-stress",
+   "type": "applies",
+   "note": "Works out thermal stress when growth is restrained, one of the steps in this book.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/thermal-expansion-by-the-numbers",
+   "tool": "pipe-expansion-loop",
+   "type": "applies",
+   "note": "Sizes a pipe expansion loop, one of the steps in this book.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/thermal-expansion-by-the-numbers",
+   "tool": "shrink-fit-design",
+   "type": "applies",
+   "note": "Designs a shrink fit, one of the steps in this book.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/thermal-expansion-by-the-numbers",
+   "chapter": "designing-machines-for-movement",
+   "tool": "alignment-thermal-growth",
+   "type": "applies",
+   "note": "Works out alignment offsets from thermal growth. Pump makers’ stated thermal rise is better than an estimate where it is available.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/vacuum-by-the-numbers",
+   "chapter": "pressure-and-how-much-gas-is-left",
+   "tool": "pressure-converter",
+   "type": "applies",
+   "note": "Converts between pressure units, as this chapter does.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/vacuum-by-the-numbers",
+   "chapter": "pressure-and-how-much-gas-is-left",
+   "tool": "vacuum-cup",
+   "type": "applies",
+   "note": "Applies the pressure-times-area relationship to vacuum lifting.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/vibrating-machine-elements-by-the-numbers",
+   "chapter": "set-belt-tension-by-frequency",
+   "tool": "v-belt-drive-design",
+   "type": "applies",
+   "note": "Works through the main steps of a V-belt drive design. Belt makers publish the methods and tables for tension.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/vibrating-machine-elements-by-the-numbers",
+   "chapter": "keep-running-belt-spans-out-of-resonance",
+   "tool": "rim-face-alignment",
+   "type": "complements",
+   "note": "Covers alignment arithmetic for coupled shafts. Belt drives are usually aligned with a straightedge or laser instead, as this chapter notes.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/vibrating-machine-elements-by-the-numbers",
+   "chapter": "tune-guy-ropes-and-cables",
+   "tool": "catenary-cable",
+   "type": "applies",
+   "note": "Gives the sag and end tensions of a cable where the sag is large.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/vibrating-machine-elements-by-the-numbers",
+   "chapter": "stress-waves-impedance-and-reflection",
+   "tool": "shaft-design-check",
+   "type": "complements",
+   "note": "Checks a shaft design, including the effects of bearing positions and overhung masses that a simple wave speed does not capture.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/vibrating-machine-elements-by-the-numbers",
+   "chapter": "torsional-modes-of-the-fan-drive",
+   "tool": "torsional-vibration",
+   "type": "applies",
+   "note": "Solves torsional natural frequencies of shaft and inertia chains.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/vibrating-machine-elements-by-the-numbers",
+   "chapter": "isolate-the-fan-on-springs",
+   "tool": "vibration-isolator-selection",
+   "type": "applies",
+   "note": "Selects vibration isolators for other loads and speeds.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/vibrating-machine-elements-by-the-numbers",
+   "chapter": "find-the-surge-inside-a-spring",
+   "tool": "compression-spring-designer",
+   "type": "applies",
+   "note": "Designs compression springs with end types, solid height and stress.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/vibrating-machine-elements-by-the-numbers",
+   "chapter": "find-the-surge-inside-a-spring",
+   "tool": "cam-follower-design",
+   "type": "complements",
+   "note": "Covers cam follower spring sizing. Spring surge needs the separate check in this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/water-hammer-by-the-numbers",
+   "chapter": "what-a-pressure-surge-is",
+   "tool": "water-hammer",
+   "type": "applies",
+   "note": "Gives a first screening value for a water hammer pressure surge.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/water-hammer-by-the-numbers",
+   "chapter": "column-separation-and-the-profile",
+   "tool": "tube-collapse",
+   "type": "complements",
+   "note": "Gives a first check for a plain tube under external pressure. Buried flexible pipes are designed to AS/NZS 2566.1, which accounts for the soil.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/water-hammer-by-the-numbers",
+   "chapter": "model-it-and-write-the-surge-study",
+   "tool": "pump-system-design",
+   "type": "complements",
+   "note": "Helps assemble the steady-state data a surge brief needs: heads, flows, power and suction conditions.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/welding-automation-by-the-numbers",
+   "chapter": "the-self-regulating-arc",
+   "tool": "fillet-weld-quantity",
+   "type": "applies",
+   "note": "Works out the weld metal in fillet welds.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/welding-automation-by-the-numbers",
+   "chapter": "travel-speed-and-heat-input",
+   "tool": "welding-heat-input",
+   "type": "applies",
+   "note": "Calculates welding heat input for any set of parameters.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/welding-distortion-by-the-numbers",
+   "chapter": "why-welds-distort",
+   "tool": "welding-heat-input",
+   "type": "applies",
+   "note": "Calculates welding heat input for any set of parameters.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "collection/fluids-hvac-and-building-services",
+   "chapter": "fans-and-ductwork-for-ventilation",
+   "tool": "extraction-duct-check",
+   "type": "applies",
+   "note": "Checks an extraction duct: total airflow from the hoods, duct velocity, friction loss and fan pressure, the design steps this chapter describes.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers capture and duct velocity, extraction and pressure loss; tool calculates airflow, duct velocity, friction loss and fan pressure."
+  },
+  {
+   "reados": "collection/fluids-hvac-and-building-services",
+   "chapter": "pipe-flow-pressure-drop-and-pumps",
+   "tool": "darcy-pipe-drop",
+   "type": "applies",
+   "note": "Calculates Darcy–Weisbach friction pressure drop and head loss in a straight pipe.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains friction factor and pressure drop (Darcy named); tool calculates Darcy–Weisbach drop and head loss."
+  },
+  {
+   "reados": "collection/fluids-hvac-and-building-services",
+   "chapter": "pipe-flow-pressure-drop-and-pumps",
+   "tool": "pump-operating-point",
+   "type": "applies",
+   "note": "Finds where a pump curve meets the system curve, the operating point this chapter explains.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter discusses the operating point 11 times with pump and system curves; tool finds the operating point on the system curve."
+  },
+  {
+   "reados": "collection/fluids-hvac-and-building-services",
+   "chapter": "pipe-flow-pressure-drop-and-pumps",
+   "tool": "pump-system-design",
+   "type": "applies",
+   "note": "Works through a simple pumping system: velocity, friction, total head, power and NPSH.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers head, friction, pump and system curves and NPSH; tool designs a simple pumping system with head, power and NPSH."
+  },
+  {
+   "reados": "collection/fluids-hvac-and-building-services",
+   "chapter": "pipe-flow-pressure-drop-and-pumps",
+   "tool": "pump-suction-check",
+   "type": "applies",
+   "note": "Checks a pump suction line for friction loss and NPSH available, the cavitation risk this chapter explains.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains NPSH (7 mentions) and cavitation (5); tool checks suction friction loss and NPSH available."
+  },
+  {
+   "reados": "collection/fluids-hvac-and-building-services",
+   "chapter": "pipe-flow-pressure-drop-and-pumps",
+   "tool": "pump-shaft-power",
+   "type": "applies",
+   "note": "Calculates hydraulic and shaft power from flow, head, density and pump efficiency.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers head, power and pump efficiency (15 mentions each of power and efficiency); tool calculates hydraulic and shaft power."
+  },
+  {
+   "reados": "collection/investment-appraisal-and-business-cases",
+   "chapter": "npv-irr-and-payback-answer-different-questions",
+   "tool": "investment-appraisal",
+   "type": "applies",
+   "note": "Calculates NPV, IRR and payback together for an equipment purchase, the three measures this chapter teaches you to read side by side.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter is about reading NPV, IRR and payback together (each mentioned 34 times); tool reports NPV, IRR and payback."
+  },
+  {
+   "reados": "collection/investment-appraisal-and-business-cases",
+   "chapter": "npv-irr-and-payback-answer-different-questions",
+   "tool": "irr-uneven",
+   "type": "applies",
+   "note": "Finds the IRR, NPV and payback of uneven yearly cash flows.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains IRR, NPV and payback and their conflicts; tool calculates IRR, NPV at a hurdle rate and payback for uneven cash flows."
+  },
+  {
+   "reados": "collection/investment-appraisal-and-business-cases",
+   "chapter": "npv-irr-and-payback-answer-different-questions",
+   "tool": "roi",
+   "type": "applies",
+   "note": "Calculates ROI, NPV and simple payback from a level annual benefit.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter compares return percentage, payback and NPV; tool calculates ROI, NPV and payback."
+  },
+  {
+   "reados": "collection/investment-appraisal-and-business-cases",
+   "chapter": "sensitivity-and-scenario-analysis",
+   "tool": "what-if",
+   "type": "complements",
+   "note": "Runs a simple profit what-if against your baseline, a quick way to try one scenario before the fuller sensitivity analysis this chapter describes.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers one-at-a-time sensitivity, tornado charts and scenarios; tool runs a simple profit sensitivity scenario. Simpler than the chapter, so complements."
+  },
+  {
+   "reados": "collection/investment-appraisal-and-business-cases",
+   "chapter": "cost-benefit-analysis-for-business-decisions",
+   "tool": "benefit-cost-ratio",
+   "type": "applies",
+   "note": "Calculates the present value of benefits and costs and the benefit–cost ratio at a discount rate.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter compares costs and benefits and tests them with NPV and present value; tool calculates present values and the benefit–cost ratio."
+  },
+  {
+   "reados": "collection/lean-and-continuous-improvement",
+   "chapter": "measuring-productivity-and-equipment-effectiveness",
+   "tool": "oee",
+   "type": "applies",
+   "note": "Calculates OEE from availability, performance and quality, as in this chapter’s worked example.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter includes an OEE worked example (OEE 12 mentions, availability, performance and quality 10+ each); tool calculates OEE from the three factors."
+  },
+  {
+   "reados": "collection/lean-and-continuous-improvement",
+   "chapter": "measuring-productivity-and-equipment-effectiveness",
+   "tool": "oee-downtime-pro",
+   "type": "applies",
+   "note": "Works out availability, performance, quality and OEE for one production period.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains OEE and its losses; tool calculates OEE and its components for a production period."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "retaining-rings-and-circlips",
+   "tool": "retaining-ring-thrust",
+   "type": "applies",
+   "note": "Checks the allowable thrust on a retaining ring and the groove edge margin.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers grooves (57 mentions), thrust (9) and load; tool calculates allowable ring thrust and groove edge margin."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "pressure-vessels-and-thin-walled-cylinders",
+   "tool": "pressure-cylinder",
+   "type": "applies",
+   "note": "Calculates hoop, radial and longitudinal wall stresses in a cylinder under internal pressure.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains hoop (14) and longitudinal (11) stress; tool calculates hoop, radial and longitudinal stresses (thin and thick wall)."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "bolted-joints-that-stay-tight",
+   "tool": "bolted-joint-design-check",
+   "type": "applies",
+   "note": "Checks a preloaded joint for separation, proof load and fatigue from the bolt and member stiffness.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers preload (39 mentions), torque and fatigue; tool checks preload, separation, proof and fatigue."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "bolted-joints-that-stay-tight",
+   "tool": "bolted-joint-fatigue",
+   "type": "applies",
+   "note": "Works out alternating and mean bolt stress under a cycling load and the fatigue safety factor.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains resisting fatigue (12 mentions) in preloaded joints; tool checks bolt fatigue in a preloaded joint."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "power-screws-and-linear-motion",
+   "tool": "ballscrew-limits",
+   "type": "applies",
+   "note": "Checks a ball or lead screw’s critical (whirling) speed and buckling load from its root diameter, length and end fixing.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter discusses critical speed (8 mentions), whip and buckling (7) of ball screws; tool calculates critical speed and Euler buckling."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "power-screws-and-linear-motion",
+   "tool": "ballscrew-axis-sizing",
+   "type": "complements",
+   "note": "Sizes a ball-screw axis over a move cycle: screw speed, axial forces and motor torque.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter sizes leadscrews and ball screws (ball screw 19 mentions, torque 18); tool sizes a ball-screw axis over a move cycle."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "o-rings-and-static-seals",
+   "tool": "o-ring-gland",
+   "type": "applies",
+   "note": "Calculates O-ring squeeze, stretch and gland fill, the groove sizing this chapter explains.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter sizes grooves for squeeze (15 mentions) and fill (9); tool calculates squeeze, stretch and gland fill."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "shafts-couplings-and-alignment",
+   "tool": "flexible-coupling-selection",
+   "type": "applies",
+   "note": "Checks a flexible coupling for torque with a service factor, speed, misalignment and bore.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers choosing couplings (38 mentions) and misalignment (19); tool checks coupling torque, speed, misalignment and bore."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "press-tools-and-dies",
+   "tool": "press-die-tonnage",
+   "type": "applies",
+   "note": "Adds up the press load for a compound or progressive die stage from its blanking, piercing and notching forces.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers estimating press force for single, compound and progressive dies (force 28 mentions); tool sums forces for compound or progressive die stages."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "press-tools-and-dies",
+   "tool": "punching-operation-plan",
+   "type": "applies",
+   "note": "Plans a piercing or blanking operation: cutting force, stripping force, punch stress and clearance.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers punch and die clearance (14 mentions), punching and stripping; tool plans force, stripping, punch stress and clearance."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "designing-parts-for-casting",
+   "tool": "casting-pattern-plan",
+   "type": "applies",
+   "note": "Plans a casting pattern with machining allowance and shrinkage, and estimates casting and pour weight.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers machining allowances (5), shrinkage (9) and patterns (8); tool applies machining allowance and shrinkage to a pattern."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "designing-parts-for-casting",
+   "tool": "pattern-shrinkage",
+   "type": "applies",
+   "note": "Gives a pattern dimension from the finished size, machining allowance and the metal’s shrinkage.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers shrinkage and machining allowances; tool calculates pattern size from them."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "designing-parts-for-casting",
+   "tool": "casting-solidification",
+   "type": "complements",
+   "note": "Puts numbers on solidification with Chvorinov’s rule and checks a riser, alongside this chapter’s design rules for how castings solidify.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains how solidification shapes design (7 mentions) without Chvorinov’s rule; tool calculates solidification time and riser modulus. Quantifies the chapter, so complements."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "milling-cutters-and-milling-strategies",
+   "tool": "milling-cut-planner",
+   "type": "applies",
+   "note": "Plans a milling cut: spindle speed, chip-thinned feed per tooth, power and torque.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains calculating speed and feed and chip thinning (10 mentions); tool calculates speed, thinned feed, power and torque."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "milling-cutters-and-milling-strategies",
+   "tool": "face-milling-power-plan",
+   "type": "applies",
+   "note": "Plans a face milling cut: teeth in the cut, chip thickness, specific cutting force and spindle power.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers chip thickness (10 mentions) and feed per tooth (9); tool plans teeth, chip thickness and power for face milling."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "drilling-reaming-and-tapping-holes",
+   "tool": "tapped-hole-design",
+   "type": "applies",
+   "note": "Designs a blind tapped hole: tap drill for the thread percentage, engagement length and depth.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers tap drills (8 mentions) and thread engagement (5); tool designs tap drill, engagement and depth for metric threads."
+  },
+  {
+   "reados": "collection/manufacturing-operations-and-design-for-manufacture",
+   "chapter": "make-or-buy-in-house-manufacturing-or-outsourcing",
+   "tool": "make-buy",
+   "type": "applies",
+   "note": "Compares total in-house and supplier cost and shows the volume where the decision changes.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter frames make-or-buy around volume (15 mentions) and fixed cost; tool compares costs and finds the crossover volume."
+  },
+  {
+   "reados": "collection/manufacturing-operations-and-design-for-manufacture",
+   "chapter": "make-or-buy-in-house-manufacturing-or-outsourcing",
+   "tool": "make-or-buy",
+   "type": "applies",
+   "note": "Compares in-house unit cost at your machine-hour rate with a supplier price and finds the break-even quantity.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers volume, utilisation and cost in make-or-buy; tool compares in-house cost with supplier price and break-even."
+  },
+  {
+   "reados": "collection/manufacturing-operations-and-design-for-manufacture",
+   "chapter": "demand-forecasting-for-small-manufacturers",
+   "tool": "reorder-point",
+   "type": "applies",
+   "note": "Calculates a reorder point from average demand, lead time and safety stock.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers reorder points (8 mentions), safety stock (15) and lead time (19); tool calculates the reorder point."
+  },
+  {
+   "reados": "collection/manufacturing-operations-and-design-for-manufacture",
+   "chapter": "demand-forecasting-for-small-manufacturers",
+   "tool": "safety-stock",
+   "type": "applies",
+   "note": "Estimates a simple safety stock from demand and lead-time variation.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers safety stock (15 mentions) and demand variation; tool estimates safety stock."
+  },
+  {
+   "reados": "collection/manufacturing-operations-and-design-for-manufacture",
+   "chapter": "designing-sheet-metal-parts-for-manufacture",
+   "tool": "sheet-metal-flat-pattern",
+   "type": "applies",
+   "note": "Develops the flat pattern of a formed part with up to four bends from the bend allowance.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers flat patterns (10 mentions), bend allowance (12) and K-factor; tool develops flat patterns with bend allowance."
+  },
+  {
+   "reados": "collection/manufacturing-operations-and-design-for-manufacture",
+   "chapter": "designing-sheet-metal-parts-for-manufacture",
+   "tool": "bent-bracket-plan",
+   "type": "applies",
+   "note": "Plans a press-braked bracket: bend allowances, flat blank length, bend force and springback.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers flat patterns and the press brake (bend 86 mentions); tool plans flat blank, bend force and springback."
+  },
+  {
+   "reados": "collection/manufacturing-operations-and-design-for-manufacture",
+   "chapter": "designing-jigs-and-fixtures-that-pay",
+   "tool": "jig-fixture-roi",
+   "type": "complements",
+   "note": "Estimates the labour and scrap savings, payback and first-year return of a proposed jig or fixture.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter is about fixtures that pay their way (cost and saving discussed); tool estimates the fixture’s savings and payback. The chapter focuses on design, so complements."
+  },
+  {
+   "reados": "collection/manufacturing-operations-and-design-for-manufacture",
+   "chapter": "designing-plastic-parts-for-injection-moulding",
+   "tool": "moulded-part-cost",
+   "type": "complements",
+   "note": "Estimates the cost of a moulded part from clamp force, cycle time, machine rate, material and mould.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers cost (17 mentions), cavities (12) and cycle time in moulding design; tool estimates moulded part cost."
+  },
+  {
+   "reados": "collection/manufacturing-quality",
+   "chapter": "statistical-process-control-on-the-shop-floor",
+   "tool": "xbar-r-limits",
+   "type": "applies",
+   "note": "Calculates centre lines and control limits for X-bar and range charts.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers setting control limits (9 mentions) and range charts (5); tool calculates X-bar and R limits."
+  },
+  {
+   "reados": "collection/manufacturing-quality",
+   "chapter": "statistical-process-control-on-the-shop-floor",
+   "tool": "process-capability-check",
+   "type": "complements",
+   "note": "Checks process capability (Cp, Cpk and expected rejects) once a control chart shows the process is stable.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter discusses capability (18 mentions) and Cpk (6) after control; tool checks capability from an X-bar–R chart."
+  },
+  {
+   "reados": "collection/product-development-and-launch",
+   "chapter": "proving-a-process-is-ready-for-production",
+   "tool": "process-capability-check",
+   "type": "applies",
+   "note": "Calculates capability indices and expected rejects, part of the evidence this chapter asks for before scaling.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers control charts and capability indices (capability 28, Cpk 6 mentions); tool calculates Cp, Cpk and rejects."
+  },
+  {
+   "reados": "collection/operational-data-records-and-controls",
+   "chapter": "timesheet-and-labour-data-for-job-costing",
+   "tool": "job-cost",
+   "type": "applies",
+   "note": "Combines material, labour, equipment, overhead and contingency into a job cost estimate.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers job costing (10 mentions) with labour and overhead; tool builds a job cost estimate."
+  },
+  {
+   "reados": "collection/operational-data-records-and-controls",
+   "chapter": "timesheet-and-labour-data-for-job-costing",
+   "tool": "labour-quote",
+   "type": "applies",
+   "note": "Prices labour from a loaded rate with an on-cost allowance and target margin.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains calculating loaded labour rates (rate 38, hours 36 mentions); tool applies a loaded rate and margin to a labour quote."
+  },
+  {
+   "reados": "collection/practical-mathematics-for-engineering",
+   "chapter": "circles-arcs-chords-and-bolt-circles",
+   "tool": "circular-segment",
+   "type": "applies",
+   "note": "Solves a circular segment from radius and height, or finds an arc’s radius from a chord and sagitta.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter solves chords (21 mentions) and sagitta (11); tool solves segment and radius from chord and height."
+  },
+  {
+   "reados": "collection/practical-mathematics-for-engineering",
+   "chapter": "circles-arcs-chords-and-bolt-circles",
+   "tool": "bolt-circle",
+   "type": "applies",
+   "note": "Lists the coordinates of every hole on an equally spaced bolt circle.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers bolt-circle hole coordinates (coordinate 8, pitch circle 4 mentions); tool lists bolt circle coordinates."
+  },
+  {
+   "reados": "collection/practical-mathematics-for-engineering",
+   "chapter": "areas-volumes-and-masses-for-the-workshop",
+   "tool": "stock-mass",
+   "type": "applies",
+   "note": "Estimates the mass of plate, bar and tube stock from dimensions and a supplied density.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter calculates masses (44 mentions) of plates, bars and tubes with densities; tool estimates stock mass from dimensions and density."
+  },
+  {
+   "reados": "collection/practical-mathematics-for-engineering",
+   "chapter": "simultaneous-equations-and-matrices-in-practice",
+   "tool": "linear-system",
+   "type": "applies",
+   "note": "Solves two or three simultaneous equations and gives the determinant, inverse and transpose.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers simultaneous equations (8 mentions), matrices (7) and determinants (6); tool solves 2 or 3 equations with matrix results."
+  },
+  {
+   "reados": "collection/pricing-margins-and-profitability",
+   "chapter": "gross-margin-and-pricing-power",
+   "tool": "margin",
+   "type": "applies",
+   "note": "Shows gross profit, margin and markup from cost and selling price.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains gross margin (34 mentions) and markup (18); tool calculates margin and markup."
+  },
+  {
+   "reados": "collection/pricing-margins-and-profitability",
+   "chapter": "two-breakeven-numbers-every-owner-should-know",
+   "tool": "break-even",
+   "type": "applies",
+   "note": "Calculates contribution per unit and the break-even volume and revenue.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains fixed costs divided by contribution margin (contribution 14, fixed cost 17 mentions); tool calculates break-even from contribution."
+  },
+  {
+   "reados": "collection/project-delivery-procurement-and-governance",
+   "chapter": "stage-gates-that-make-real-decisions",
+   "tool": "project-gate",
+   "type": "applies",
+   "note": "Scores a project at a gate on value, fit, urgency, risk and readiness against clear criteria.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter is about gate decisions with clear criteria (gate 98, criteria 15 mentions); tool scores a project at a gate."
+  },
+  {
+   "reados": "collection/reading-financial-statements",
+   "chapter": "depreciation-and-capital-intensity",
+   "tool": "depreciation-schedule",
+   "type": "complements",
+   "note": "Works out year-by-year depreciation and book value by straight-line and other methods.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains depreciation (28 mentions, straight-line 4) as a sign of capital intensity; tool calculates depreciation schedules."
+  },
+  {
+   "reados": "collection/research-and-evidence-for-better-decisions",
+   "chapter": "sampling-and-how-many-responses-you-need",
+   "tool": "sample-size-mean",
+   "type": "applies",
+   "note": "Works out the sample size needed to estimate a mean within a margin of error at a confidence level.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers margins of error (9), confidence (8) and sample sizes (11); tool calculates sample size for a mean."
+  },
+  {
+   "reados": "collection/risk-controls-and-assurance",
+   "chapter": "what-a-risk-score-cannot-tell-you",
+   "tool": "risk-score",
+   "type": "explains",
+   "note": "Rates a risk on a 5 × 5 likelihood and consequence matrix. This chapter explains what such a score cannot tell you.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter examines likelihood × consequence scoring (likelihood 16, consequence 11 mentions) and its limits; tool is a 5 × 5 likelihood × consequence rating."
+  },
+  {
+   "reados": "collection/suppliers-contractors-and-government-work",
+   "chapter": "not-every-supplier-is-a-partner",
+   "tool": "supplier-compare",
+   "type": "complements",
+   "note": "Compares suppliers on price, lead time, quality and reliability instead of price alone.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter segments suppliers by price, reliability and capability; tool compares price, lead time, quality and reliability."
+  },
+  {
+   "reados": "collection/valuing-time-delay-and-uncertainty",
+   "chapter": "putting-a-dollar-value-on-equipment-losses",
+   "tool": "oee-downtime-pro",
+   "type": "applies",
+   "note": "Breaks a production period into availability, performance and quality losses, the starting point for valuing them.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter values OEE losses (OEE 24 mentions); tool calculates OEE and its losses for a production period."
+  },
+  {
+   "reados": "collection/valuing-time-delay-and-uncertainty",
+   "chapter": "putting-a-dollar-value-on-equipment-losses",
+   "tool": "downtime-cost",
+   "type": "applies",
+   "note": "Puts a cost on downtime: lost contribution plus idle labour and restart cost.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter values downtime in money using contribution; tool estimates lost contribution, idle labour and restart cost."
+  },
+  {
+   "reados": "collection/valuing-time-delay-and-uncertainty",
+   "chapter": "models-rank-options-people-decide-value",
+   "tool": "option-compare",
+   "type": "complements",
+   "note": "Sets two options side by side on value, cost, delivery time and risk.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter discusses scoring options and seeing trade-offs (option 47, weight 29 mentions); tool compares two options across four criteria."
+  },
+  {
+   "reados": "collection/lean-and-continuous-improvement",
+   "chapter": "small-frequent-improvement-on-the-shop-floor",
+   "tool": "improvement-value",
+   "type": "complements",
+   "note": "Improvement Value tool for the small, frequent improvement chapter.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter is about observing work and local improvement cycles; it barely discusses savings or annual value (saving mentioned once)."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "bolted-joints-that-stay-tight",
+   "tool": "bolted-joint-temperature",
+   "type": "complements",
+   "note": "Bolted joint at temperature tool for the bolted joints chapter.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter does not discuss differential thermal expansion (no mentions of thermal or expansion), which is what the tool calculates."
+  },
+  {
+   "reados": "collection/pricing-margins-and-profitability",
+   "chapter": "overheads-research-and-the-cost-of-standing-still",
+   "tool": "true-cost",
+   "type": "complements",
+   "note": "True Unit Cost tool for the overheads and research chapter.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter uses overheads and research spending as a sign of a business’s economics, not unit costing; it does not allocate costs to units."
+  },
+  {
+   "reados": "collection/work-habits-that-stick",
+   "chapter": "planning-a-work-week-that-fits-real-capacity",
+   "tool": "workload",
+   "type": "complements",
+   "note": "Team Workload tool for the personal work-week planning chapter.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the chapter plans one person’s week; the tool compares a team’s planned hours with team capacity."
+  },
+  {
+   "reados": "collection/project-delivery-procurement-and-governance",
+   "chapter": "letters-of-intent-and-early-works",
+   "tool": "drill-size-lookup",
+   "type": "complements",
+   "note": "Drill size lookup for the letters of intent chapter.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: a false word match on “letter”; letter drill sizes have nothing to do with letters of intent."
+  },
+  {
+   "reados": "collection/teams-incentives-and-performance",
+   "chapter": "team-bonus-or-individual-bonus",
+   "tool": "true-position",
+   "type": "complements",
+   "note": "True position tool for the team bonus chapter.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: a false word match (“bonus tolerance” in geometric tolerancing against staff bonuses)."
+  },
+  {
+   "reados": "collection/research-and-evidence-for-better-decisions",
+   "chapter": "describing-data-centre-spread-and-shape",
+   "tool": "machine-positioning-accuracy",
+   "type": "complements",
+   "note": "Machine positioning accuracy tool for the describing data chapter.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: shares statistical vocabulary only; the tool evaluates machine-tool positioning runs, not general data description."
+  }
+ ]
+}

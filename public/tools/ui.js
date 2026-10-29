@@ -307,8 +307,27 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
       }
     };
     $('#tool-guide').innerHTML = guideHtml(t);
+    renderLearn(t);
     analyse(t);
   }
+  // ---------- READOS readings for the open tool ----------
+  // /tools/knowledge.json is built from src/data/knowledge-links.json (approved links only) and fetched once.
+  let knowledge = null;
+  const loadKnowledge = () => knowledge || (knowledge = fetch('/tools/knowledge.json').then((r) => (r.ok ? r.json() : {})).catch(() => ({})));
+  function renderLearn(t) {
+    const box = $('#tool-learn');
+    if (!box) return;
+    box.innerHTML = '';
+    if (typeof fetch !== 'function') return; // no network (scripted runs): schedule nothing
+    loadKnowledge().then((map) => {
+      const items = (map && map[t.id]) || [];
+      if (current?.t.id !== t.id || !items.length) return; // another tool was opened meanwhile, or nothing to show
+      box.innerHTML = `<h2 class="guide-title">Learn the Concepts Behind This Tool</h2><p class="learn-lead">These KEVOS® READOS readings explain the method this tool uses, with worked examples.</p><ul class="learn-list">${items
+        .map((x) => `<li class="learn-card"><p class="learn-label">${esc(x.label)} · ${esc(x.kind)}</p><h3><a href="${esc(x.href)}">${esc(x.title)}</a></h3>${x.href !== x.bookHref ? `<p class="learn-book">In <a href="${esc(x.bookHref)}">${esc(x.book)}</a></p>` : ''}<p class="learn-what"><strong>What it covers:</strong> ${esc(x.learn)}</p></li>`)
+        .join('')}</ul>`;
+    });
+  }
+
   // ---------- Loading tool files ----------
   const loadedFiles = new Map(); // file name → Promise for its four scripts
   function loadScript(src) {

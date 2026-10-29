@@ -7,6 +7,9 @@ import Container from '../../components/Container.astro';
 import '../../styles/tools.css';
 import { SITE } from '../../config/site.ts';
 import { loadWorkosTools, hasStandaloneGuide, toolPageHref, toolAppHref, type Tool, type ToolField } from '../../utils/workos-tools.ts';
+import LearnConcepts from '../../components/knowledge/LearnConcepts.astro';
+import LearningPathway from '../../components/knowledge/LearningPathway.astro';
+import { knowledgeGraph, pathwaysForTool } from '../../utils/knowledge.ts';
 
 export function getStaticPaths() {
   const { tools, guides } = loadWorkosTools();
@@ -24,6 +27,9 @@ const description = (() => {
   return base.length <= 200 ? base : `${tool.description.slice(0, 196 - 3).replace(/\s+\S*$/, '')}…`;
 })();
 const href = toolPageHref(tool.id);
+// READOS readings connected to this tool (src/data/knowledge-links.json) and pathways that apply it.
+const readings = knowledgeGraph().readingsFor(tool.id);
+const pathways = pathwaysForTool(tool.id);
 
 // Inputs grouped under the form's own headings, as in the live tool.
 const groups: { heading: string; fields: ToolField[] }[] = [{ heading: '', fields: [] }];
@@ -90,6 +96,9 @@ const sections: [string, string[] | undefined][] = [
         {sections.filter(([, items]) => items?.length).map(([heading, items]) => <section class="guide-card"><h3>{heading}</h3><ul>{items!.map((m) => <li>{m}</li>)}</ul></section>)}
         {g.refs?.length ? <section class="guide-card guide-card--wide"><h3>References</h3><ul>{g.refs.map((m) => <li>{m}</li>)}</ul></section> : null}
       </div>
+
+      <LearnConcepts items={readings} />
+      {pathways.map((p) => <LearningPathway pathway={p} />)}
 
       <p class="formula-note">WORKOS tools are screening and decision-support utilities. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p>
       <p class="tool-page__open"><a class="btn" href={toolAppHref(tool.id)}>Open the {tool.name} calculator</a></p>

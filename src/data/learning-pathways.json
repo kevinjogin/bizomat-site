@@ -1,0 +1,36 @@
+{
+ "pathways": [
+  {
+   "id": "equipment-investment",
+   "title": "Appraise an equipment investment",
+   "summary": "Learn what NPV, IRR and payback each answer, then appraise a purchase with your own figures.",
+   "learn": { "reados": "collection/investment-appraisal-and-business-cases", "chapter": "npv-irr-and-payback-answer-different-questions" },
+   "apply": { "tool": "investment-appraisal" },
+   "next": { "reados": "collection/investment-appraisal-and-business-cases", "chapter": "sensitivity-and-scenario-analysis" }
+  },
+  {
+   "id": "bend-allowance",
+   "title": "Develop a flat blank for a bent part",
+   "summary": "Learn how the neutral axis and K-factor set bend allowance, then size the blank for your own bend.",
+   "learn": { "reados": "publication/sheet-metal-parts-by-the-numbers", "chapter": "neutral-axis-k-factor-and-bend-allowance" },
+   "apply": { "tool": "bend-allowance" },
+   "next": { "reados": "publication/sheet-metal-parts-by-the-numbers", "chapter": "springback-and-overbending" }
+  },
+  {
+   "id": "equipment-losses",
+   "title": "Measure and value equipment losses",
+   "summary": "Learn how OEE separates availability, performance and quality losses, then analyse a production period of your own.",
+   "learn": { "reados": "collection/lean-and-continuous-improvement", "chapter": "measuring-productivity-and-equipment-effectiveness" },
+   "apply": { "tool": "oee-downtime-pro" },
+   "next": { "reados": "collection/valuing-time-delay-and-uncertainty", "chapter": "putting-a-dollar-value-on-equipment-losses" }
+  },
+  {
+   "id": "compressed-air-leaks",
+   "title": "Find what compressed-air leaks cost",
+   "summary": "Learn how pressure setting and leaks waste compressor energy, then audit the leaks in your own system.",
+   "learn": { "reados": "publication/compressed-air-plant-by-the-numbers", "chapter": "set-the-pressure-and-stop-waste" },
+   "apply": { "tool": "air-leak-audit" },
+   "next": { "reados": "publication/compressed-air-plant-by-the-numbers", "chapter": "assess-the-system" }
+  }
+ ]
+}

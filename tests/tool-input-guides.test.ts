@@ -184,7 +184,7 @@ test('guide motion is decorative and switched off for reduced motion', () => {
   const motion = /@media \(prefers-reduced-motion:no-preference\) \{([\s\S]*?)\n\}/.exec(block)![1];
   const outside = block.replace(motion, '');
   assert.doesNotMatch(outside, /animation:/, 'every animation sits inside the no-preference block');
-  assert.match(css, /\.ig \{ display:none !important; \}|\.tool-flash, \.ig \{ display:none !important; \}/, 'guides are left out of printed results');
+  assert.match(css, /\.tool-flash, \.ig(, [^{]+)? \{ display:none !important; \}/, 'guides are left out of printed results');
 });
 
 test('static tool pages render the same guides without the form', () => {
