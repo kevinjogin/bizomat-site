@@ -3204,7 +3204,7 @@
    "note": "Examined and not linked; see the reason recorded with this pair.",
    "status": "rejected",
    "evidence": "review",
-   "reason": "Rejected: the chapter covers boiler efficiency and the cost of process steam, not power generation with a turbine."
+   "reason": "Re-checked: the chapter covers boiler efficiency and the cost of process steam per tonne and per kWh of heat; it has no turbine, power output or condenser."
   },
   {
    "reados": "collection/engineering-history-modern-era",
@@ -3214,7 +3214,7 @@
    "note": "Examined and not linked; see the reason recorded with this pair.",
    "status": "rejected",
    "evidence": "review",
-   "reason": "Rejected: the chapter is about internal combustion engines and gas turbines; it does not work a steam turbine cycle."
+   "reason": "Re-checked: the chapter covers petrol, diesel and gas-turbine engines; steam appears only in the historical introduction, with no steam turbine cycle."
   },
   {
    "reados": "publication/entropy-by-the-numbers",
@@ -3224,7 +3224,7 @@
    "note": "Examined and not linked; see the reason recorded with this pair.",
    "status": "rejected",
    "evidence": "review",
-   "reason": "Rejected: the chapter introduces exergy and energy quality but does not discuss combined heat and power or primary energy saving."
+   "reason": "Re-checked: the chapter compares a boiler, an electric heater and a heat pump for one heating duty using exergy; it does not discuss combined heat and power. Entropy chapter 6 is linked instead."
   },
   {
    "reados": "collection/fluids-hvac-and-building-services",
@@ -3290,11 +3290,11 @@
    "reados": "publication/cooling-towers-by-the-numbers",
    "chapter": "moist-air-and-the-wet-bulb",
    "tool": "air-stream-mixing-check",
-   "type": "complements",
-   "note": "Examined and not linked; see the reason recorded with this pair.",
-   "status": "rejected",
+   "type": "example",
+   "note": "Shows when two air streams make fog as they mix, as warm saturated tower exhaust does with cooler outside air to form the plume this chapter describes.",
+   "status": "approved",
    "evidence": "review",
-   "reason": "Rejected: the chapter covers moist-air properties for tower air; it does not discuss mixing air streams."
+   "reason": "Re-checked: the chapter explains the plume as saturated exhaust air mixing with cooler outside air until its vapour condenses into fog; the tool computes the mixed state of two streams and flags fog when it is supersaturated."
   },
   {
    "reados": "publication/cooling-towers-by-the-numbers",
@@ -3304,7 +3304,7 @@
    "note": "Examined and not linked; see the reason recorded with this pair.",
    "status": "rejected",
    "evidence": "review",
-   "reason": "Rejected: the chapter covers tower air and wet-bulb, not heating and humidifying supply air."
+   "reason": "Re-checked: the chapter covers tower air, wet-bulb and enthalpy as a tower’s driving force; it does not cover heating or humidifying supply air."
   },
   {
    "reados": "publication/condensation-control-by-the-numbers",
@@ -3314,7 +3314,7 @@
    "note": "Examined and not linked; see the reason recorded with this pair.",
    "status": "rejected",
    "evidence": "review",
-   "reason": "Rejected: the chapter is about dew point in enclosures; the dew point tool is linked there instead."
+   "reason": "Re-checked: the chapter’s “mixing ratio” is the humidity ratio, not the mixing of two streams; it covers dew point and trapped air in enclosures."
   },
   {
    "reados": "publication/condensation-control-by-the-numbers",
@@ -3324,7 +3324,7 @@
    "note": "Examined and not linked; see the reason recorded with this pair.",
    "status": "rejected",
    "evidence": "review",
-   "reason": "Rejected: the chapter is about dew point and condensation, not evaporative cooling."
+   "reason": "Re-checked: the chapter covers vapour pressure, dew point and condensation in enclosures; it does not discuss evaporative cooling or the wet-bulb."
   },
   {
    "reados": "publication/process-chillers-by-the-numbers",
@@ -3334,7 +3334,7 @@
    "note": "Examined and not linked; see the reason recorded with this pair.",
    "status": "rejected",
    "evidence": "review",
-   "reason": "Rejected: refrigerant saturation pressure and temperature; matched only on the word saturation."
+   "reason": "Re-checked: the chapter covers refrigerant saturation curves, gauges, superheat and subcooling; no moist air or evaporative cooling."
   },
   {
    "reados": "publication/process-steam-by-the-numbers",
@@ -3344,7 +3344,7 @@
    "note": "Examined and not linked; see the reason recorded with this pair.",
    "status": "rejected",
    "evidence": "review",
-   "reason": "Rejected: the chapter sizes steam for process heating; it does not cover humidifying air."
+   "reason": "Re-checked: the chapter’s direct steam injection heats product, not air; it does not cover humidifying an airstream."
   },
   {
    "reados": "publication/process-steam-by-the-numbers",
@@ -3354,7 +3354,27 @@
    "note": "Examined and not linked; see the reason recorded with this pair.",
    "status": "rejected",
    "evidence": "review",
-   "reason": "Rejected: steam distribution and pressure reduction, not a power cycle."
+   "reason": "Re-checked: the chapter covers steam mains, reducing valves and heat loss; it has no turbine, power output or condenser."
+  },
+  {
+   "reados": "publication/entropy-by-the-numbers",
+   "chapter": "entropy-generated-by-heat-transfer",
+   "tool": "cogeneration-saving-check",
+   "type": "explains",
+   "note": "Puts numbers on the cogeneration logic this chapter explains: utilisation factor and the primary energy saved against separate power and heat.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains putting high-temperature heat to work first in an engine and using its exhaust and cooling water for heating, the logic of cogeneration; tool calculates the utilisation factor and primary energy saving of such a plant."
+  },
+  {
+   "reados": "publication/heat-pumps-and-refrigeration-by-the-numbers",
+   "chapter": "the-second-law-and-its-limits",
+   "tool": "rankine-cycle-check",
+   "type": "complements",
+   "note": "Works a real steam cycle: its efficiency, condenser duty and steam flow, well below the Carnot ceiling this chapter sets for steam.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains that a steam turbine must reject heat to its condenser and gives the Carnot ceiling for steam from the boiler; tool calculates a real Rankine cycle efficiency and condenser duty."
   }
  ]
 }
