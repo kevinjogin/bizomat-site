@@ -2,7 +2,7 @@
 
 Generated 2026-10-29 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 281 relationships (144 from links authors wrote in the books, 137 from editorial review). Rejected: 52. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 289 relationships (144 from links authors wrote in the books, 145 from editorial review). Rejected: 62. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -147,6 +147,14 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Machining and Metal Parts | Workholding and toolholding: vices, chucks, zero-point systems, tapers and holders | Taper Shank Holding Check (Drilling Torque, Thrust, Taper Friction Torque, Self-Holding) | explains | Chapter describes Morse tapers as self-holding tapers for drills and tailstocks; tool calculates the taper's friction torque, drilling torque and the self-holding condition. |
 | Machining and Metal Parts | Workholding and toolholding: vices, chucks, zero-point systems, tapers and holders | Slender Work Turning Check (Work Deflection, Diameter Error, Steady Rest Spacing) | complements | Chapter lists steady rests and tailstocks for shafts with a high length-to-diameter ratio; tool calculates work deflection and the steady rests needed. |
 | Machining and Metal Parts | Drilling, reaming and tapping: making holes that are the right size, in the right place | Dowel Pin Joint Check (Pin Shear, Bearing, Fit Interference, Engagement) | complements | Chapter says reamed H7 holes are common for dowel pins; tool checks the dowel joint and the fit given by the pin and hole limits. |
+| Process Steam by the Numbers | Reading the steam table | Wet Steam Dryness by Throttling Calorimeter (Dryness Fraction, Calorimeter Validity) | applies | Chapter defines dryness fraction and lists the throttling calorimeter (constant enthalpy, measured superheat) as a way to measure it; tool does that calculation with a validity check. |
+| Process Steam by the Numbers | Pressure reduction and distribution | Wet Steam Dryness by Throttling Calorimeter (Dryness Fraction, Calorimeter Validity) | explains | Chapter shows throttling keeps enthalpy constant so wet steam becomes drier at lower pressure; tool uses the same balance to infer the upstream dryness. |
+| Fluids, HVAC and Building Services | Psychrometrics for HVAC and process air: humidity, dew point and the loads you cannot feel | Adiabatic Mixing of Two Air Streams (Mixed Temperature, Humidity, Dew Point, Fog Risk) | applies | Chapter lists mixing of air streams as a chart process (mixed state on the line between, nearer the larger stream); tool does the mass and energy balance and checks for fog. |
+| Fluids, HVAC and Building Services | Psychrometrics for HVAC and process air: humidity, dew point and the loads you cannot feel | Direct Evaporative Cooler Check (Wet-Bulb, Supply Temperature, Water Use, Cooling Capacity) | applies | Chapter describes evaporative cooling as temperature falling and moisture rising at roughly constant wet-bulb; tool computes the wet-bulb and the leaving state from pad effectiveness. |
+| Fluids, HVAC and Building Services | Psychrometrics for HVAC and process air: humidity, dew point and the loads you cannot feel | Heating with Humidification (Heater Load, Water or Steam Needed, Equipment Check) | applies | Chapter lists heating and humidification as a chart process; tool calculates the heater load and water added for it. |
+| Fluids, HVAC and Building Services | Passive and low-energy cooling for Australian workplaces: reduce the heat before you buy the cooling | Direct Evaporative Cooler Check (Wet-Bulb, Supply Temperature, Water Use, Cooling Capacity) | applies | Chapter recommends direct evaporative cooling for hot, dry climates; tool calculates the leaving temperature, water use and capacity for a given climate. |
+| Fluids, HVAC and Building Services | HVAC for commercial and industrial buildings: loads, system choices, efficiency, controls and maintenance | Direct Evaporative Cooler Check (Wet-Bulb, Supply Temperature, Water Use, Cooling Capacity) | complements | Chapter lists evaporative cooling for dry inland climates, warehouses and workshops; tool checks the leaving temperature against a target. |
+| Cooling Towers by the Numbers | Moist air and the wet-bulb temperature | Direct Evaporative Cooler Check (Wet-Bulb, Supply Temperature, Water Use, Cooling Capacity) | explains | Chapter explains the wet-bulb as the adiabatic saturation temperature; tool solves the same balance for the wet-bulb and cools the air towards it. |
 
 ## 2. Rejected
 
@@ -204,6 +212,16 @@ These were approved by reading the chapter text and the tool definition (the rea
 | First-of-a-Kind Technology by the Numbers | Qualification testing: run length, feed envelope and yield basis | Capability Confidence Check (Cp, Cpk and Their Lower Confidence Bounds, Sample Size) | Rejected: chapter covers qualification testing of new technology, not process capability indices. |
 | Project Delivery, Procurement and Governance | Practical completion and the defects liability period: what really changes at the finish line | Earned Value Check (Cost and Schedule Variance, CPI, SPI, Estimate at Completion, TCPI) | Rejected: chapter is about contractual completion and defects; it has no earned value measures. |
 | Records, Business Data and Learning from Results | Keeping the record of what you promised: complete plans, consistent forecasts and re-planning without losing history | Earned Value Check (Cost and Schedule Variance, CPI, SPI, Estimate at Completion, TCPI) | Rejected: chapter is about records of commitments, not cost and schedule performance. |
+| Process Steam by the Numbers | The boiler and the cost of steam | Steam Rankine Cycle Check (Efficiency, Steam Flow, Heat Rate, Turbine Exhaust Dryness) | Rejected: the chapter covers boiler efficiency and the cost of process steam, not power generation with a turbine. |
+| How Engineering Shaped Industry: Power, Networks and the Modern Era | Engines after steam: internal combustion, diesel, gas turbines and matching technology to the duty | Steam Rankine Cycle Check (Efficiency, Steam Flow, Heat Rate, Turbine Exhaust Dryness) | Rejected: the chapter is about internal combustion engines and gas turbines; it does not work a steam turbine cycle. |
+| Entropy by the Numbers | Energy has a quality | Cogeneration (CHP) Utilisation and Primary Energy Saving Check | Rejected: the chapter introduces exergy and energy quality but does not discuss combined heat and power or primary energy saving. |
+| Cooling Towers by the Numbers | Moist air and the wet-bulb temperature | Adiabatic Mixing of Two Air Streams (Mixed Temperature, Humidity, Dew Point, Fog Risk) | Rejected: the chapter covers moist-air properties for tower air; it does not discuss mixing air streams. |
+| Cooling Towers by the Numbers | Moist air and the wet-bulb temperature | Heating with Humidification (Heater Load, Water or Steam Needed, Equipment Check) | Rejected: the chapter covers tower air and wet-bulb, not heating and humidifying supply air. |
+| Condensation Control by the Numbers | Water in air: vapour pressure, humidity and dew point | Adiabatic Mixing of Two Air Streams (Mixed Temperature, Humidity, Dew Point, Fog Risk) | Rejected: the chapter is about dew point in enclosures; the dew point tool is linked there instead. |
+| Condensation Control by the Numbers | Water in air: vapour pressure, humidity and dew point | Direct Evaporative Cooler Check (Wet-Bulb, Supply Temperature, Water Use, Cooling Capacity) | Rejected: the chapter is about dew point and condensation, not evaporative cooling. |
+| Process Chillers by the Numbers | Saturation pressure and temperature | Direct Evaporative Cooler Check (Wet-Bulb, Supply Temperature, Water Use, Cooling Capacity) | Rejected: refrigerant saturation pressure and temperature; matched only on the word saturation. |
+| Process Steam by the Numbers | Steam for a process | Heating with Humidification (Heater Load, Water or Steam Needed, Equipment Check) | Rejected: the chapter sizes steam for process heating; it does not cover humidifying air. |
+| Process Steam by the Numbers | Pressure reduction and distribution | Steam Rankine Cycle Check (Efficiency, Steam Flow, Heat Rate, Turbine Exhaust Dryness) | Rejected: steam distribution and pressure reduction, not a power cycle. |
 
 ## 3. Published READOS books with no approved connection
 
@@ -267,7 +285,6 @@ Their pages show a WORKOS topic to browse where the category maps to one, and no
 | Oval Sheet Metal Work by the Numbers | publication | Manufacturing | Manufacturing & Production |
 | Performance Solutions by the Numbers | publication | Engineering | Engineering & Design |
 | Pipe Flow by the Numbers | publication | Engineering | Engineering & Design |
-| Process Steam by the Numbers | publication | Engineering | Engineering & Design |
 | Product Acoustics by the Numbers | publication | Products | nothing |
 | Project Sponsors, Governance and Decisions | collection | business | Business & Commercial |
 | Quoting Sheet Metal Work by the Numbers | publication | Manufacturing | Manufacturing & Production |

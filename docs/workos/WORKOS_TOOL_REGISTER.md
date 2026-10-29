@@ -3128,3 +3128,18 @@ Five integrated design checks in batch handbook74, built from Machinery’s Hand
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Dowel Pin Joint Check (Pin Shear, Bearing, Fit Interference, Engagement)** `dowel-pin-joint-check` | DOWELS ADEQUATE | Pin shear; Bearing in the softer part; Engagement; Fit; Model and application | 631–668, 1720–1735, 1747–1748 | Automated + cross-check |
+
+## Thermodynamics tools from Çengel and Boles, second batch cengel2 (added 29 October 2026)
+
+Six more tools applying the methods of Çengel and Boles, Thermodynamics: An Engineering Approach (5th edition, McGraw-Hill, 2006), with every steam-table value, efficiency, capacity and target entered by the user: a steam Rankine cycle check, wet steam dryness by throttling calorimeter, a cogeneration (CHP) utilisation and primary energy saving check, adiabatic mixing of two air streams, a direct evaporative cooler check, and heating with humidification. Moist-air saturation pressure uses the Hyland–Wexler equations (ASHRAE Handbook—Fundamentals, chapter 1); the primary energy saving follows the method of Directive 2012/27/EU, Annex II, with user-entered reference efficiencies. The section column gives sections in Çengel and Boles. WORKOS now holds 893 tools.
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Çengel and Boles sections | Tested |
+|---|---|---|---|---|
+| **Steam Rankine Cycle Check (Efficiency, Steam Flow, Heat Rate, Turbine Exhaust Dryness)** `rankine-cycle-check` | EXHAUST DRY ENOUGH | Turbine exhaust dryness; Energy balance; Model and application | 10-2 to 10-4 | Automated + cross-check |
+| **Wet Steam Dryness by Throttling Calorimeter (Dryness Fraction, Calorimeter Validity)** `steam-dryness-throttling-check` | STEAM DRY ENOUGH | Calorimeter superheat; Dryness against requirement; Model and application | 3-5, 5-4 | Automated + cross-check |
+| **Cogeneration (CHP) Utilisation and Primary Energy Saving Check** `cogeneration-saving-check` | CHP SAVES PRIMARY ENERGY | Primary energy saving; Energy balance; Useful heat; Model and application | 10-8 | Automated + cross-check |
+| **Adiabatic Mixing of Two Air Streams (Mixed Temperature, Humidity, Dew Point, Fog Risk)** `air-stream-mixing-check` | MIXED AIR CLEAR | Mixed relative humidity; Mixing calculation; Model and application | 14-2, 14-7 | Automated + cross-check |
+| **Direct Evaporative Cooler Check (Wet-Bulb, Supply Temperature, Water Use, Cooling Capacity)** `evaporative-cooler-check` | COOLER REACHES TARGET | Supply temperature; Target against the wet-bulb; Water and hygiene; Model and application | 14-4, 14-7 | Automated + cross-check |
+| **Heating with Humidification (Heater Load, Water or Steam Needed, Equipment Check)** `heating-humidification-check` | EQUIPMENT MEETS THE DUTY | Heater capacity; Humidifier capacity; Humidifier enthalpy; Model and application | 14-7 | Automated + cross-check |
