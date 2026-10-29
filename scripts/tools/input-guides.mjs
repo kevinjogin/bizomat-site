@@ -127,7 +127,9 @@ if (isMain) {
       summary: s,
       tools: rows,
     };
-    writeFileSync(join(ROOT, 'docs', 'tool-input-guides-inventory.json'), `${JSON.stringify(out, null, 1)}\n`);
+    // One tool per line keeps the file diffable without pretty-printing every field.
+    const head = JSON.stringify({ ...out, tools: [] }, null, 1).replace(/"tools": \[\]\n\}$/, '"tools": [');
+    writeFileSync(join(ROOT, 'docs', 'tool-input-guides-inventory.json'), `${head}\n${rows.map((r) => JSON.stringify(r)).join(',\n')}\n]}\n`);
   }
   console.log(`tools ${s.tools} (complete ${s.toolsComplete}) · inputs ${s.inputs} · covered ${s.covered} · exceptions ${s.exceptions} · illustrated ${s.illustrated} · problems ${problems.length}`);
   for (const p of problems.slice(0, 200)) console.log(`  ${p}`);
