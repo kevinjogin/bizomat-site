@@ -3,7 +3,7 @@ book: psychrometrics-by-the-numbers
 chapterSlug: room-loads-and-the-supply-air-state
 order: 4
 title: "Room loads and the supply air state"
-description: "How a room's sensible and latent loads fix the temperature and moisture of the air supplied to it, why the airflow is set by the sensible load, and the errors of fan heat and volume at the wrong state."
+description: "How a room's sensible and latent loads fix the temperature and moisture of its supply air, why the sensible load sets the airflow, and the errors of fan heat and volume at the wrong state."
 draft: true
 ---
 

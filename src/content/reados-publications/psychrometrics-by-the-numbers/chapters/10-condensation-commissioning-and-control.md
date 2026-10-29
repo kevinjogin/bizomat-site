@@ -3,7 +3,7 @@ book: psychrometrics-by-the-numbers
 chapterSlug: condensation-commissioning-and-control
 order: 10
 title: "Condensation, commissioning and seasonal checks"
-description: "Check pipes, ducts and cold reels against the dew point, insulate ducts in humid spaces, commission an air-handling unit by measurement, and keep it right with trend logs, calibration and seasonal checks."
+description: "Check pipes, ducts and cold reels against the dew point, insulate ducts in humid spaces, commission an air-handling unit by measurement, and keep it right with trend logs and seasonal checks."
 draft: true
 ---
 

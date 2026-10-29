@@ -3,7 +3,7 @@ book: psychrometrics-by-the-numbers
 chapterSlug: cooling-coils-and-dehumidification
 order: 7
 title: "Cooling coils and dehumidification"
-description: "Calculate a cooling coil's total, sensible and latent load and condensate, find its apparatus dew point and contact factor, compare coil and room sensible heat ratios, and avoid sizing on sensible load."
+description: "Calculate a cooling coil's total, sensible and latent load and condensate, find its apparatus dew point and contact factor, compare coil and room sensible heat ratios, and avoid sensible-only sizing."
 draft: true
 ---
 

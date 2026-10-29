@@ -3,7 +3,7 @@ book: heat-engines-and-cogeneration-by-the-numbers
 chapterSlug: the-otto-cycle-and-the-gas-engine
 order: 3
 title: "The Otto cycle and the gas engine"
-description: "The air-standard Otto cycle step by step: compression ratio, efficiency, net work, mean effective pressure and peak pressure, why the ideal overstates a real gas engine, and how knock and lean burn set limits."
+description: "The air-standard Otto cycle step by step: compression ratio, efficiency, net work, mean effective and peak pressure, why the ideal overstates a gas engine, and how knock and lean burn set limits."
 draft: true
 ---
 
