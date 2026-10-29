@@ -46,8 +46,13 @@ jobs:
             let reqs = 0; q.on('request', () => reqs++);
             const t0 = Date.now();
             await q.goto('https://kevos.com/tools/?tool=axial-stress', { waitUntil: 'commit' });
-            const dir = await q.waitForFunction(() => { const d = document.querySelector('#tool-directory'); return d && getComputedStyle(d).display !== 'none' && d.getBoundingClientRect().height > 0; }, null, { timeout: 4000, polling: 50 }).then(() => true).catch(() => false);
-            await q.waitForFunction(() => window.WORKOS_UI?.state()?.t.id === 'axial-stress', null, { timeout: 120000, polling: 100 });
+            // Poll from Node: the site's CSP (no unsafe-eval) blocks Playwright's in-page polling.
+            let dir = false, open = false;
+            while (Date.now() - t0 < 120000 && !open) {
+              const st = await q.evaluate(() => { const d = document.querySelector('#tool-directory'); return { dir: !!d && getComputedStyle(d).display !== 'none' && d.getBoundingClientRect().height > 0, open: window.WORKOS_UI?.state()?.t.id === 'axial-stress' }; }).catch(() => ({ dir: false, open: false }));
+              dir = dir || st.dir; open = st.open;
+              if (!open) await new Promise((r) => setTimeout(r, 100));
+            }
             note(`timing ${name}`, `calculator after ${((Date.now() - t0) / 1000).toFixed(1)} s, ${reqs} requests, directory shown: ${dir}`);
             await x.close();
           } } catch (e) { note('timing error', e.message.slice(0, 600)); }
