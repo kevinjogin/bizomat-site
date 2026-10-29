@@ -47,8 +47,12 @@ public/brand/   approved KEVOS logos and icons (plus legacy gocore-* files that 
 scripts/        build-kevos-icons.mjs (icons, runs in every build), postbuild.mjs (quality gate),
                 reading-time.mjs, prepare-brand.mjs (KEVOS shim), brand/ (retired GoCore generators)
 tests/          brand-wordmark, chat, contact, heading-font, reados-chapters, motion-scenes,
-                tools-calculators, worker
+                tools-calculators, tool-input-guides, worker
 ```
+
+### WORKOS input guides
+
+Every WORKOS input has a "What this means" panel with an SVG figure: renderer `public/tools/input-guides.js`, words per field in `public/tools/inputs-<file>.js` (one per tool file), rendered by `ui.js` and on the static `/tools/<id>/` pages. Check coverage with `node scripts/tools/input-guides.mjs check`; a new tool or field fails `tests/tool-input-guides.test.ts` until its entry is written. Report, inventory and open tool issues: `docs/tool-input-guides-progress.md`.
 
 ### Navigation (src/config/site.ts)
 
