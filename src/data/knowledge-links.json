@@ -4255,6 +4255,123 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter sizes cooling towers, which cool water towards the wet-bulb by rejecting heat without refrigeration work; the tool covers chilling below the surroundings."
+  },
+  {
+   "reados": "publication/heat-engines-and-cogeneration-by-the-numbers",
+   "chapter": "heat-into-work",
+   "tool": "heat-engine-carnot-limit",
+   "type": "applies",
+   "note": "Gives the Carnot efficiency between a hot source and cold sink, the second-law efficiency of a stated figure, the most work, work lost and a verdict on any heat-to-power claim.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/heat-engines-and-cogeneration-by-the-numbers",
+   "chapter": "compressors-and-turbines-in-steady-flow",
+   "tool": "compressor-turbine-efficiency-check",
+   "type": "applies",
+   "note": "Finds a compressor or turbine’s isentropic efficiency, gas power and entropy generation from measured inlet and outlet pressures and temperatures, as in the turbocharger test.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/heat-engines-and-cogeneration-by-the-numbers",
+   "chapter": "the-otto-cycle-and-the-gas-engine",
+   "tool": "otto-diesel-cycle-check",
+   "type": "applies",
+   "note": "Works the air-standard Otto or Diesel cycle: state temperatures and pressures, net work, thermal efficiency, mean effective pressure and peak pressure against a limit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/heat-engines-and-cogeneration-by-the-numbers",
+   "chapter": "real-engines-fuel-heat-rate-and-the-energy-balance",
+   "tool": "combustion-air-flue-gas-check",
+   "type": "complements",
+   "note": "Gives the air–fuel ratio, air and exhaust mass flows, dry O₂ and CO₂ and the water dew point for a hydrocarbon fuel at a stated excess air, used for the engine exhaust.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/heat-engines-and-cogeneration-by-the-numbers",
+   "chapter": "gas-turbines-and-the-brayton-cycle",
+   "tool": "brayton-regenerator-check",
+   "type": "applies",
+   "note": "Works the cold-air-standard Brayton cycle with component efficiencies and an optional regenerator: exit temperatures, back-work ratio, efficiency, exhaust temperature and net power.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/heat-engines-and-cogeneration-by-the-numbers",
+   "chapter": "steam-turbines-condensing-and-back-pressure",
+   "tool": "rankine-cycle-check",
+   "type": "applies",
+   "note": "Calculates a simple Rankine cycle from entered steam enthalpies: pump and turbine work, efficiency, heat rate, steam flow, boiler and condenser duties and exhaust dryness.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/heat-engines-and-cogeneration-by-the-numbers",
+   "chapter": "recovering-engine-heat",
+   "tool": "waste-heat-recovery-limit",
+   "type": "applies",
+   "note": "Gives the heat released and the exergy of a stream cooled between two temperatures, and tests a claimed recovered power against that second-law limit and a realistic share.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/heat-engines-and-cogeneration-by-the-numbers",
+   "chapter": "cogeneration-and-the-business-case",
+   "tool": "cogeneration-saving-check",
+   "type": "applies",
+   "note": "Calculates a CHP plant’s electrical and heat efficiencies, utilisation, power-to-heat ratio and primary energy saving against stated reference efficiencies, with yearly energy.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/psychrometrics-by-the-numbers",
+   "chapter": "moist-air-in-numbers",
+   "tool": "surface-dew-point-check",
+   "type": "applies",
+   "note": "Gives humidity ratio, enthalpy, specific volume and dew point from temperature and humidity, and checks a surface temperature against the dew point plus a margin.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/psychrometrics-by-the-numbers",
+   "chapter": "mixing-outdoor-and-return-air",
+   "tool": "air-stream-mixing-check",
+   "type": "applies",
+   "note": "Mixes two moist-air streams by dry-air mass: mixed temperature, humidity ratio, enthalpy, relative humidity, dew point, outdoor-air share and a fog check.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/psychrometrics-by-the-numbers",
+   "chapter": "heating-and-humidifying",
+   "tool": "heating-humidification-check",
+   "type": "applies",
+   "note": "Balances heating with steam or spray humidification: water to add, energy it brings, heater load left, and both against the heater and humidifier capacities.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/psychrometrics-by-the-numbers",
+   "chapter": "cooling-coils-and-dehumidification",
+   "tool": "cooling-coil-dehumidification-check",
+   "type": "applies",
+   "note": "Balances a cooling coil that dehumidifies: total, sensible and latent load, sensible heat ratio, condensate, and the inlet and outlet humidity and dew point against coil capacity.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/psychrometrics-by-the-numbers",
+   "chapter": "evaporative-cooling",
+   "tool": "evaporative-cooler-check",
+   "type": "applies",
+   "note": "Models a direct evaporative cooler: wet-bulb limit, leaving temperature and humidity at the pad effectiveness, water evaporated and sensible cooling against a target.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }

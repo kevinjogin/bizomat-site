@@ -118,6 +118,20 @@ caption: This is an illustration, excluding GST, one change at a time, capital A
 
 A gas price rise hurts less than its size suggests, because the heat credit rises with it. The electricity price is the decisive variable, and it must be the price the laundry would actually avoid. Most business tariffs combine energy charges, network charges that may depend on peak demand, and fixed daily charges. The engine avoids the energy charges and some network charges, but an engine that trips during the month's peak can leave the demand charge unchanged. The avoided price should be worked out from the tariff, item by item, with the retailer and network tariff documents in hand.
 
+## Availability: the hours that count
+
+The base case assumes the engine runs every one of the laundry's 4,800 operating hours. Real engines stop for servicing, for faults and for the occasional day when the laundry runs short. Every item in the business case scales with running hours, so lost hours come straight off the saving.
+
+This is an illustration. If the engine is available for 95% of the operating hours, it runs 4,560 hours and the net saving falls in proportion, to about A$152,600 a year, lengthening the payback from 6.85 to 7.21 years. Hours lost at the wrong time can cost more than this simple scaling suggests. On a tariff with a monthly demand charge, one unplanned stop during the month's busiest afternoon can set the demand charge as if the engine had never been installed.
+
+Three practical measures protect the hours. Plan routine servicing for days when the laundry is quiet or closed. Ask suppliers for an availability figure in the maintenance contract, defined in a way that can be measured from the engine's own run-hour and fault logs. And keep the boiler sized to carry the full heat load alone, so that an engine stop costs money but never stops the laundry.
+
+## Gas use and emissions
+
+CHP shifts energy use from the grid to the site's gas meter. With the engine running, the laundry burns 1,555.1 kW of gas, against 1,097.6 kW today, a rise of 41.7%, while buying 390 kW less electricity. Over 4,800 hours the site's gas use rises from 5,268 MWh to 7,465 MWh on the gross heating value, and its grid purchases fall by 1,872 MWh.
+
+Whether that lowers or raises the laundry's total greenhouse gas emissions depends on the emissions intensity of the grid electricity it displaces, which varies between states and falls as more renewable generation is connected. The Australian Government publishes emission factors for fuels and for each state's grid electricity each year in its National Greenhouse Accounts Factors, and those, not a rule of thumb, should be used for the comparison, at the factors expected over the engine's life rather than this year's. A site with a target to reduce its own direct emissions should also note that CHP raises them, even where it lowers the total. These questions sit beside the primary energy saving, not inside it, and an owner may weigh them differently from the financial case.
+
 ## The error: the average price on the bill
 
 This is an illustration. The laundry's first business case valued every kilowatt-hour from the engine at A$0.26, the result of dividing a year's electricity bills by the kilowatt-hours bought. It showed a net saving of A$272,953 and a payback of 4.03 years, and the case went to the owner on those figures.
