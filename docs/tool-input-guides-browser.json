@@ -1,10 +1,10 @@
 {
  "generated": "2026-10-29",
- "base": "http://127.0.0.1:4323",
- "tools": 850,
- "passed": 850,
- "inputs": 7199,
- "figures": 7199,
+ "base": "http://127.0.0.1:4391",
+ "tools": 856,
+ "passed": 856,
+ "inputs": 7265,
+ "figures": 7265,
  "sample": [
   {
    "id": "make-buy",
@@ -5210,6 +5210,42 @@
   },
   {
    "id": "waste-heat-recovery-limit",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "polymer-solution-phase-check",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "hansen-solvent-compatibility",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "rubber-swelling-crosslink-density",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "polymer-intrinsic-viscosity",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "polymer-melting-point-depression",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "dls-particle-size",
    "ok": true,
    "inputs": 9,
    "figures": 9

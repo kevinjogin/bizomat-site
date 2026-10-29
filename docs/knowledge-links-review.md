@@ -2,7 +2,7 @@
 
 Generated 2026-10-29 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 226 relationships (144 from links authors wrote in the books, 82 from editorial review). Rejected: 21. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 232 relationships (144 from links authors wrote in the books, 88 from editorial review). Rejected: 24. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -92,6 +92,12 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Condensation Control by the Numbers | Water in air: vapour pressure, humidity and dew point | Vapour Pressure and Boiling Check (Clausius–Clapeyron, Boiling Point at Pressure, Margin) | complements | Chapter explains vapour pressure and that it depends only on temperature; tool estimates vapour pressure at a temperature by Clausius–Clapeyron. |
 | Centrifugal Pumps by the Numbers | NPSH and cavitation | Vapour Pressure and Boiling Check (Clausius–Clapeyron, Boiling Point at Pressure, Margin) | complements | Chapter computes NPSH available using the liquid vapour pressure from property data; tool estimates that vapour pressure for liquids without a table. |
 | How Engineering Shaped Industry: From Aqueducts to the Grid | Clean water as an engineered system: barriers, gravity and supply security, and lessons for operations | Reverse Osmosis Pressure Check (Osmotic Pressure, Net Driving Pressure, Permeate Flow) | complements | Chapter describes reverse osmosis plants and seawater osmotic pressure; tool screens osmotic pressure, net driving pressure and permeate flow by van ’t Hoff’s law. |
+| Rubber Parts by the Numbers | Temperature and the thermoelastic effect | Rubber Swelling Test: Crosslink Density, Chain Molar Mass and Network Modulus (Flory–Rehner) | explains | Chapter gives the ideal-network shear modulus G = NkT with N chains per volume; the tool computes ν from swelling and G = νRT, the same relation per mole. |
+| Rubber Parts by the Numbers | Relaxation, set, ageing and ozone | Rubber Swelling Test: Crosslink Density, Chain Molar Mass and Network Modulus (Flory–Rehner) | complements | Chapter explains that ageing breaks some networks down and cross-links others further; the tool measures crosslink density, which tracks that change. It does not predict ageing. |
+| Plastic Parts by the Numbers | Define the part before you draw the mould | Solvent Attack and Swelling Screen for Plastics and Elastomers (Hansen Distance Ra and RED) | complements | Chapter leaves chemical resistance open and notes stress cracking from some chemicals; the tool screens solvent attack by Hansen distance and states that stress cracking is outside it. |
+| Plastic Parts by the Numbers | First-off trials, defects and approval | Solvent Attack and Swelling Screen for Plastics and Elastomers (Hansen Distance Ra and RED) | complements | Approval record lists chemical resistance to site cleaning products as an open item; the tool gives a screening RED per liquid and points to ISO 175 immersion testing. |
+| Heat Exchangers by the Numbers | Plate or shell-and-tube | Solvent Attack and Swelling Screen for Plastics and Elastomers (Hansen Distance Ra and RED) | complements | Chapter warns that a gasket suited to water may swell in some oils and that the elastomer is chosen for both fluids; the tool screens swelling by Hansen distance. |
+| Fine Particles by the Numbers | Brownian diffusion: Einstein's relation at work | Particle and Polymer Coil Size from Dynamic Light Scattering (Decay Rate, Diffusion Coefficient, Stokes–Einstein) | applies | Chapter derives D = kT ÷ (6πηr) and says liquid-sizing instruments invert it from Brownian motion; the tool does exactly that from a DLS decay rate (no slip correction, liquids only). |
 
 ## 2. Rejected
 
@@ -118,6 +124,9 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Cooling Towers by the Numbers | What a cooling tower does | Heat Pump and Chiller COP Check (Carnot Limit, Second-Law Efficiency, Running Cost) | Rejected: chapter covers evaporative heat rejection; it has no COP or Carnot limit for the tool to apply. |
 | Process Steam by the Numbers | Reading the steam table | Vapour Pressure and Boiling Check (Clausius–Clapeyron, Boiling Point at Pressure, Margin) | Rejected: chapter teaches the steam tables, which are more accurate for water than the tool’s constant-latent-heat approximation. |
 | Connected Products by the Numbers | Budget the battery | Battery Pack Heat Check (Irreversible and Reversible Heat, Temperature Rise, Cooling) | Rejected: chapter budgets battery energy and life for a device; it does not cover heat generation or temperature rise. |
+| Rubber Parts by the Numbers | Testing and acceptance | Rubber Swelling Test: Crosslink Density, Chain Molar Mass and Network Modulus (Flory–Rehner) | Rejected: chapter’s batch tests are hardness and an inflation curve on finished sleeves; a laboratory swelling test is not part of its acceptance method. |
+| Diffusion by the Numbers | Diffusion is a random walk of atoms | Particle and Polymer Coil Size from Dynamic Light Scattering (Decay Rate, Diffusion Coefficient, Stokes–Einstein) | Rejected: chapter is about atoms diffusing in steel and mentions Einstein’s spread relation only in passing; it does not cover particle sizing. |
+| Plastic Parts by the Numbers | First-off trials, defects and approval | Polymer Intrinsic Viscosity and Molar Mass from One Viscometer Reading (Single-Point [η], Mark–Houwink) | Rejected: chapter controls resin drying by time and a moisture limit; it does not use dilute-solution viscosity to check molar mass. |
 
 ## 3. Published READOS books with no approved connection
 
@@ -161,7 +170,6 @@ Their pages show a WORKOS topic to browse where the category maps to one, and no
 | Electroplating by the Numbers | publication | Manufacturing | Manufacturing & Production |
 | Engineering Design Practice | collection | engineering | Engineering & Design |
 | Engineering Tools People Use | publication | Technology | nothing |
-| Fine Particles by the Numbers | publication | Engineering | Engineering & Design |
 | Fins and Heat Sinks by the Numbers | publication | Engineering | Engineering & Design |
 | Fits That Work | publication | Engineering | Engineering & Design |
 | Fixtures That Repeat | publication | Manufacturing | Manufacturing & Production |
@@ -170,7 +178,6 @@ Their pages show a WORKOS topic to browse where the category maps to one, and no
 | Gears by the Numbers | publication | Engineering | Engineering & Design |
 | Growth, Business Models and New Markets | collection | business | Business & Commercial |
 | Hardfacing and Surfacing by the Numbers | publication | Manufacturing | Manufacturing & Production |
-| Heat Exchangers by the Numbers | publication | Engineering | Engineering & Design |
 | Heating and Cooling Times by the Numbers | publication | Manufacturing | Manufacturing & Production |
 | Housings That Rebuild | publication | Engineering | Engineering & Design |
 | How Engineering Shaped Industry: Power, Networks and the Modern Era | collection | ideas | nothing |
@@ -203,7 +210,6 @@ Their pages show a WORKOS topic to browse where the category maps to one, and no
 | Resistance Welding by the Numbers | publication | Manufacturing | Manufacturing & Production |
 | Roof Drainage by the Numbers | publication | Engineering | Engineering & Design |
 | Roof Lights by the Numbers | publication | Engineering | Engineering & Design |
-| Rubber Parts by the Numbers | publication | Engineering | Engineering & Design |
 | Selling and Business Development | collection | business | Business & Commercial |
 | Setting Up a Welding Shop by the Numbers | publication | Business | Business & Commercial |
 | Shape Memory Alloys by the Numbers | publication | Engineering | Engineering & Design |

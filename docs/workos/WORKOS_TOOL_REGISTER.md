@@ -2963,3 +2963,23 @@ Six tools in batch handbook69 that apply the laws set out in Enrico Fermi’s Th
 | **Battery Pack Heat Check (Irreversible and Reversible Heat, Temperature Rise, Cooling)** `battery-heat-check` | TEMPERATURE RISE ACCEPTABLE | Temperature rise; Hot spots and limits; Model and application | 94–97 | Automated + cross-check |
 | **Heat Pump and Chiller COP Check (Carnot Limit, Second-Law Efficiency, Running Cost)** `heat-pump-cop-check` | COP PLAUSIBLE | Second law; Efficiency against your benchmark; Rating condition; Model and application | 31–45 | Automated + cross-check |
 | **Waste Heat Recovery Limit Check (Heat Released, Exergy, Claimed Power against the Second-Law Limit)** `waste-heat-recovery-limit` | CLAIM PLAUSIBLE | Second law; Realistic share; Net power; Model and application | 44, 48–58 | Automated + cross-check |
+
+## Polymer thermodynamics tools from Klenin, batch polymers (added 29 October 2026)
+
+Six tools in batch polymers that apply the methods set out in V. J. Klenin’s Thermodynamics of Systems Containing Flexible-Chain Polymers (Elsevier, 1999) and the original papers it cites, with every property, interaction parameter, constant and limit entered by the user: a Flory–Huggins phase check for polymer solutions and blends, a Hansen solvent attack and swelling screen, a Flory–Rehner rubber swelling test, a single-point intrinsic viscosity check with Mark–Houwink molar mass, a Flory melting-point depression check and a dynamic light scattering size check. The section column gives Klenin’s sections, not Machinery’s Handbook pages. WORKOS now holds 856 tools.
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Klenin sections | Tested |
+|---|---|---|---|---|
+| **Polymer Solution and Blend Phase Check (Flory–Huggins χ, Spinodal, Critical Point, Cloud Temperature)** `polymer-solution-phase-check` | ONE PHASE | Against the binodal (cloud point); Against the spinodal; Temperature margin; Polydispersity; Interaction parameter; Model and application | 3.1, 3.2.1 | Automated + cross-check |
+| **Solvent Attack and Swelling Screen for Plastics and Elastomers (Hansen Distance Ra and RED)** `hansen-solvent-compatibility` | LIKELY TO RESIST | Position against the solubility sphere; Blend of A and B; Immersion test; Stress cracking and crystallinity; Model and application | 3.1.1 | Automated + cross-check |
+| **Polymer Melting or Dissolution Temperature with a Diluent (Flory Melting-Point Depression)** `polymer-melting-point-depression` | CRYSTALS MELT AT THIS TEMPERATURE | Process temperature against the melting temperature; Liquid–liquid separation; Equilibrium melting point; Model and application | 6.1, 6.3 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Klenin sections | Tested |
+|---|---|---|---|---|
+| **Rubber Swelling Test: Crosslink Density, Chain Molar Mass and Network Modulus (Flory–Rehner)** `rubber-swelling-crosslink-density` | CROSSLINK DENSITY IN RANGE | Crosslink density against the range; Filler; Sensitivity to χ; Swelling equilibrium; Model and application | 3.5.1–3.5.2 | Automated + cross-check |
+| **Polymer Intrinsic Viscosity and Molar Mass from One Viscometer Reading (Single-Point [η], Mark–Houwink)** `polymer-intrinsic-viscosity` | IV WITHIN SPECIFICATION | Intrinsic viscosity against the specification; Agreement of the single-point relations; Mark–Houwink constants; Viscometer practice; Model and application | 5.3, chapter 4 | Automated + cross-check |
+| **Particle and Polymer Coil Size from Dynamic Light Scattering (Decay Rate, Diffusion Coefficient, Stokes–Einstein)** `dls-particle-size` | SIZE IN RANGE | Diameter against the specification; Internal motion (qRh); Viscosity and temperature; Polydispersity and concentration; Model and application | 3.3.2 | Automated + cross-check |
