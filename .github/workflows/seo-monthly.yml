@@ -62,4 +62,6 @@ jobs:
           name: seo-monthly-${{ github.run_id }}
           path: .seo-data/
           retention-days: 90
+          # .seo-data/ is a dot-directory: upload-artifact v4.4+ skips hidden paths unless told otherwise.
+          include-hidden-files: true
           if-no-files-found: ignore
