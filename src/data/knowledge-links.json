@@ -4552,6 +4552,132 @@
    "status": "approved",
    "evidence": "review",
    "reason": "Chapter checks a humidity sensor at low and high saturated-salt fixed points because two points give the offset and the slope; tool fits that line by least squares, tests a = 0 and b = 1 and gives calibration limits."
+  },
+  {
+   "reados": "publication/reverse-osmosis-by-the-numbers",
+   "chapter": "osmotic-pressure-the-pressure-to-beat",
+   "tool": "ro-concentrate-pressure-check",
+   "type": "applies",
+   "note": "Calculates feed, permeate and concentrate osmotic pressure with an osmotic coefficient, the driving pressure at both ends of a stage and the least feed pressure.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/reverse-osmosis-by-the-numbers",
+   "chapter": "recovery-and-the-concentrate",
+   "tool": "ro-osmotic-pressure-check",
+   "type": "applies",
+   "note": "Finds the concentrate strength from a solute balance at the recovery and salt passage entered, its osmotic pressure and the driving pressure left at the concentrate end.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/reverse-osmosis-by-the-numbers",
+   "chapter": "flux-permeability-and-net-driving-pressure",
+   "tool": "ro-pressure-check",
+   "type": "applies",
+   "note": "Gives the mean osmotic pressure from the log-mean concentration factor, the average net driving pressure, permeate flow from permeability and area, and the feed pressure for a target flow.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/reverse-osmosis-by-the-numbers",
+   "chapter": "pumps-energy-and-the-least-work",
+   "tool": "pump-shaft-power",
+   "type": "applies",
+   "note": "Calculates the high-pressure pump’s hydraulic and shaft power from flow, head, density and efficiency; motor and drive losses are added separately in the chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/breakdowns-and-buffers-by-the-numbers",
+   "chapter": "up-and-down-the-two-state-model",
+   "tool": "maintenance-availability",
+   "type": "applies",
+   "note": "Turns operating time, corrective downtime and the number of failures into observed availability, operating-time MTBF and mean downtime per failure.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/breakdowns-and-buffers-by-the-numbers",
+   "chapter": "are-stops-random",
+   "tool": "c-chart-check",
+   "type": "applies",
+   "note": "Sets Poisson control limits for stops per shift of equal running time and flags the shifts whose counts point to a special cause.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/breakdowns-and-buffers-by-the-numbers",
+   "chapter": "are-stops-random",
+   "tool": "weibull-reliability",
+   "type": "complements",
+   "note": "Gives reliability, hazard rate, B10 and mean life for a wear-out part, the kind of failure a constant-rate Markov model should leave out.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/breakdowns-and-buffers-by-the-numbers",
+   "chapter": "more-states-and-the-balance-equations",
+   "tool": "oee-downtime-pro",
+   "type": "complements",
+   "note": "Calculates availability, performance, quality and OEE for one production period; the chapter’s Markov model predicts the availability factor.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/breakdowns-and-buffers-by-the-numbers",
+   "chapter": "buffers-between-machines",
+   "tool": "wip-lead-time-check",
+   "type": "complements",
+   "note": "Applies Little’s law to give the average time product spends in a buffer from its average contents and the line’s throughput.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/breakdowns-and-buffers-by-the-numbers",
+   "chapter": "sizing-the-maintenance-crew",
+   "tool": "queue-wait-check",
+   "type": "applies",
+   "note": "Calculates utilisation, the Erlang C chance of waiting, the average wait and the fewest servers for a target wait: the quick screen for crew size.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/breakdowns-and-buffers-by-the-numbers",
+   "chapter": "spares-and-the-repair-pipeline",
+   "tool": "critical-spares-poisson-plan",
+   "type": "applies",
+   "note": "Finds the expected failures over the repair lead time and the spares whose Poisson cover meets a service level, for parts that fail at random.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/breakdowns-and-buffers-by-the-numbers",
+   "chapter": "redundancy-and-the-time-to-first-failure",
+   "tool": "system-reliability",
+   "type": "complements",
+   "note": "Calculates the reliability and mean time to failure of redundant Weibull blocks without repair, the comparison that shows what repair adds.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/breakdowns-and-buffers-by-the-numbers",
+   "chapter": "from-model-to-decision",
+   "tool": "downtime-cost",
+   "type": "applies",
+   "note": "Adds lost contribution, idle labour and restart cost to price an hour of line downtime, with a warning against double counting labour.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/breakdowns-and-buffers-by-the-numbers",
+   "chapter": "from-model-to-decision",
+   "tool": "maintenance-interval-plan",
+   "type": "applies",
+   "note": "Finds the lowest-cost age-replacement interval for a wear-out part from its Weibull shape and life and the costs of planned and failure replacement.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
