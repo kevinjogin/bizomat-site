@@ -3258,3 +3258,23 @@ Three integrated design checks in batch handbook78, built from the electrical di
 | **EDM Sinker Plan (Current for the Electrode, Duty Cycle, Roughing and Finishing Time, Electrode Wear and Sizes)** `edm-sinker-plan` | EDM PLAN WORKABLE | Machine current; Finishing stock; Settings; Model and application | 1394–1399 | Automated + cross-check |
 | **Wire EDM Cut Plan (Kerf, Wire Offset and Corner Radius, Cutting and Skim Time, Wire Use, Tension, Cost)** `wire-edm-cut-plan` | WIRE AND SETTINGS SUIT THE CUT | Inside corners; Wire tension; Settings; Model and application | 1394–1403 | Automated + cross-check |
 | **Laser Cutting Plan (Focused Spot, Power Density, Depth of Focus, Cutting Speed by Power and Thickness, Time and Cost)** `laser-cutting-plan` | BEAM SUITS THE CUT | Power density; Depth of focus; Cutting speed; Model and application | 1487–1494 | Automated + cross-check |
+
+## Quality statistics and forecasting tools, batch handbook80 (added 30 October 2026)
+
+Six tools in batch handbook80 from the NIST/SEMATECH e-Handbook of Statistical Methods, with every target, limit and tolerance entered by the user: an EWMA control chart check (weighted moving average and steady-state limits; 6.3.2.4), a CUSUM control chart check (tabular upper and lower sums against a decision interval; 6.3.2.3), a c-chart check (Poisson limits for defects per unit; 6.3.3.1), a Grubbs outlier check (G statistic and t-based critical value; 1.3.5.17), a linear calibration check (least-squares line, offset and gain tests, inverse prediction and calibration limits; 2.3.6.6, 4.5.2.1, 4.5.1.2) and an exponential smoothing forecast (next-period forecast, MSE and best smoothing constant; 6.4.3.1–6.4.3.2). Each tool reproduces the NIST worked example where one is printed. No tool cites Machinery’s Handbook. WORKOS now holds 931 tools.
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **EWMA Control Chart Check (Weighted Moving Average, Control Limits, Small Shifts)** `ewma-chart-check` | PROCESS IN CONTROL | EWMA beyond the limits; Historical data; Model and application |  | Automated + cross-check |
+| **CUSUM Control Chart Check (Tabular Upper and Lower Sums, Decision Interval, First Signal)** `cusum-chart-check` | UPWARD SHIFT SIGNALLED | Sums against the decision interval; Chart design; Model and application |  | Automated + cross-check |
+| **c-Chart Check (Defects per Unit, Poisson Control Limits, Counts Out of Control)** `c-chart-check` | PROCESS IN CONTROL | Units beyond the limits; Lower limit; Model and application |  | Automated + cross-check |
+| **Grubbs Outlier Check (Suspect Value, G Statistic, Critical Value, Significance)** `grubbs-outlier-check` | OUTLIER DETECTED | Suspect value; Normality; Model and application |  | Automated + cross-check |
+| **Linear Calibration Check (Straight-Line Fit, Calibrated Value, Calibration Interval)** `linear-calibration-check` | CALIBRATION INTERVAL WITHIN TOLERANCE | Calibration interval; Offset and gain; Straight line; Model and application |  | Automated + cross-check |
+
+### Planning
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Exponential Smoothing Forecast (Next-Period Demand, Forecast Error, Best Smoothing Constant)** `exponential-smoothing-forecast` | FORECAST ERROR WITHIN TARGET | Forecast error; Smoothing constant; Trend and season; Model and application |  | Automated + cross-check |

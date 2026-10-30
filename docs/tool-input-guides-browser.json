@@ -1,10 +1,10 @@
 {
- "generated": "2026-10-29",
- "base": "http://127.0.0.1:47193",
- "tools": 925,
- "passed": 925,
- "inputs": 7923,
- "figures": 7923,
+ "generated": "2026-10-30",
+ "base": "http://127.0.0.1:8799",
+ "tools": 931,
+ "passed": 931,
+ "inputs": 8037,
+ "figures": 8037,
  "sample": [
   {
    "id": "make-buy",
@@ -5670,6 +5670,42 @@
    "ok": true,
    "inputs": 16,
    "figures": 16
+  },
+  {
+   "id": "ewma-chart-check",
+   "ok": true,
+   "inputs": 25,
+   "figures": 25
+  },
+  {
+   "id": "cusum-chart-check",
+   "ok": true,
+   "inputs": 25,
+   "figures": 25
+  },
+  {
+   "id": "c-chart-check",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "grubbs-outlier-check",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
+  },
+  {
+   "id": "linear-calibration-check",
+   "ok": true,
+   "inputs": 20,
+   "figures": 20
+  },
+  {
+   "id": "exponential-smoothing-forecast",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
   }
  ]
 }
