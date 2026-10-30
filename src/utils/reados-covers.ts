@@ -163,6 +163,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'cad-automation-that-pays': { motif: 'code', tone: 'carbon' },
   'bills-of-materials-by-the-numbers': { motif: 'exploded', tone: 'carbon' },
   'tanks-and-hoppers-by-the-numbers': { motif: 'funnel', tone: 'ember' },
+  'bulk-solids-flow-by-the-numbers': { motif: 'funnel', tone: 'graphite' },
+  'blending-bulk-solids-by-the-numbers': { motif: 'bubbles', tone: 'graphite' },
   'ductwork-by-the-numbers': { motif: 'pathway', tone: 'carbon' },
   'sheet-metal-patterns-by-the-numbers': { motif: 'geometry', tone: 'graphite' },
   'marking-out-by-the-numbers': { motif: 'triangle', tone: 'carbon' },

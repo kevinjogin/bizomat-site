@@ -5217,6 +5217,159 @@
    "reason": "Chapter tests whether stops form a Poisson stream with exponential intervals; tool’s chi-square MTBF bounds assume exactly that constant rate."
   },
   {
+   "reados": "publication/bulk-solids-flow-by-the-numbers",
+   "chapter": "bulk-solids-are-not-liquids",
+   "tool": "hopper-bin-design",
+   "type": "applies",
+   "note": "Gives the volume, mass held at a fill level and bulk density, and the cone wall angle against the least angle needed; used for the pellet silo and filler bin capacities and the mass-flow wall angle checks.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bulk-solids-flow-by-the-numbers",
+   "chapter": "bulk-solids-are-not-liquids",
+   "tool": "tank-drain-time-check",
+   "type": "complements",
+   "note": "Calculates how a liquid-filled tank drains through a bottom outlet as the head falls; used as the liquid comparison that shows why a bulk solid discharges at a rate independent of the head.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bulk-solids-flow-by-the-numbers",
+   "chapter": "angle-of-repose-heaps-and-avalanches",
+   "tool": "stockpile-weight",
+   "type": "applies",
+   "note": "Gives the height, volume and weight of a natural pile at its angle of repose on a circular or rectangular base; used for the heap in the pellet silo and the regrind bay.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bulk-solids-flow-by-the-numbers",
+   "chapter": "internal-and-wall-friction",
+   "tool": "inclined-plane",
+   "type": "example",
+   "note": "Gives the force to raise, hold or lower a load on a slope with sliding friction and whether it is self-locking; used to read a wall friction tilt test at the sliding angle.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bulk-solids-flow-by-the-numbers",
+   "chapter": "pressures-in-a-silo",
+   "tool": "tank-stand-leg-check",
+   "type": "applies",
+   "note": "Gives the full mass of a vertical tank or bin, the load per leg and each leg’s buckling safety factor; used to show the legs carry the whole contents however wall friction shares the load.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bulk-solids-flow-by-the-numbers",
+   "chapter": "ratholes-flow-aids-and-vibration",
+   "tool": "compressed-gas-stored-energy",
+   "type": "applies",
+   "note": "Gives the expansion energy, Brode upper bound and pressure × volume of compressed gas in a rigid vessel; used for the energy stored in an air cannon on a bin.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bulk-solids-flow-by-the-numbers",
+   "chapter": "discharge-rate-and-the-hourglass-law",
+   "tool": "gravity-chute-check",
+   "type": "applies",
+   "note": "Checks a part sliding down a chute with constant friction: least angle, exit speed, time and impact energy; used for pellet chutes, and to show why it does not capture cohesive powder build-up.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bulk-solids-flow-by-the-numbers",
+   "chapter": "segregation-in-storage",
+   "tool": "sample-size-mean",
+   "type": "applies",
+   "note": "Gives the number of samples needed to estimate a mean within a margin at a confidence level; used to plan fines sampling at each stage of the pellet route.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bulk-solids-flow-by-the-numbers",
+   "chapter": "running-a-silo-safely",
+   "tool": "extraction-duct-check",
+   "type": "applies",
+   "note": "Checks a dust extraction duct: total hood airflow, duct velocity against the transport velocity, friction loss and fan pressure needed; used for the filler bag station duct size.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/blending-bulk-solids-by-the-numbers",
+   "chapter": "what-well-mixed-means",
+   "tool": "mixture-cost",
+   "type": "applies",
+   "note": "Gives the proportions of two ingredients that blend to a target value by alligation, and a blend’s cost or property as a weighted average; used for the masterbatch let-down and the tracer concentrate in the masterbatch.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/blending-bulk-solids-by-the-numbers",
+   "chapter": "the-random-mixture-limit",
+   "tool": "p-chart-check",
+   "type": "applies",
+   "note": "Gives the fraction defective per sample, the binomial control limits and samples outside them; used to show the shade rejects were a stable rate matching the random-mixture prediction.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/blending-bulk-solids-by-the-numbers",
+   "chapter": "measuring-mixedness",
+   "tool": "two-variance-f-test",
+   "type": "applies",
+   "note": "Compares two sample standard deviations with an F test, p-value and a confidence interval for their ratio; used to decide whether a longer blend time reduces the scatter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/blending-bulk-solids-by-the-numbers",
+   "chapter": "mixing-as-a-random-walk",
+   "tool": "linear-calibration-check",
+   "type": "applies",
+   "note": "A least-squares straight-line fit with standard errors and inverse prediction, built for instrument calibration; used here to fit the log of excess blend variance against time and predict a blend time.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/blending-bulk-solids-by-the-numbers",
+   "chapter": "after-the-blender",
+   "tool": "process-change-trial",
+   "type": "applies",
+   "note": "Plans the sample size for a before-and-after trial and evaluates it with a Welch t-test and confidence interval; used to prove that a premix packaging change fixed the stabiliser shortfall.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/blending-bulk-solids-by-the-numbers",
+   "chapter": "feeders-and-back-mixing",
+   "tool": "capability-confidence-check",
+   "type": "applies",
+   "note": "Gives Cp and Cpk with their lower confidence bounds and the sample size to prove a required Cpk; used for the compound’s filler content before and after the feeder refill changes.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/blending-bulk-solids-by-the-numbers",
+   "chapter": "sampling-without-fooling-yourself",
+   "tool": "sample-size-mean",
+   "type": "applies",
+   "note": "Gives the number of results needed to estimate a mean within a margin at a confidence level; used to plan how many filler and premix tests a decision needs.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/blending-bulk-solids-by-the-numbers",
+   "chapter": "proving-a-blend",
+   "tool": "ewma-chart-check",
+   "type": "applies",
+   "note": "Calculates an EWMA chart from up to twenty readings with control limits and the first signal; used to catch a small sustained drift in filler content that Shewhart limits missed.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
    "reados": "publication/first-of-a-kind-technology-by-the-numbers",
    "chapter": "ramp-up-to-nameplate",
    "tool": "reliability-growth-check",
