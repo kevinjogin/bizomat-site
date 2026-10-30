@@ -45,6 +45,10 @@ jobs:
           name: seo-build-${{ github.run_id }}
           path: .seo-build/
           retention-days: 30
+          # .seo-build/ is a dot-directory: upload-artifact v4.4+ skips hidden paths by default and would
+          # upload nothing, so the indexnow job could not download the manifest. Fail loudly if it is empty.
+          include-hidden-files: true
+          if-no-files-found: error
 
   # After a push to main: tell IndexNow about canonical pages whose content changed, once production serves
   # the new build. Shares the AutoSEO lock with the scheduled jobs. The first run records a baseline only.
