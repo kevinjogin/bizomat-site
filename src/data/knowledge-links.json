@@ -5588,6 +5588,66 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter sets drop and impact requirements for a product enclosure; beam and spring shock formulas do not model a product drop."
+  },
+  {
+   "reados": "publication/machining-by-the-numbers",
+   "chapter": "milling-feed-and-chip-thinning",
+   "tool": "slot-vs-high-speed-milling-cost",
+   "type": "complements",
+   "note": "Turns the raised feed per tooth this chapter allows at light radial engagement, and its warning that slotting is the hardest case, into a cost per part for slotting against high-speed milling.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter corrects feed per tooth for radial chip thinning and treats full slotting as the hardest case; tool compares cost per part of slot and light-radial high-speed end milling from feed rate, tool life and tooling cost."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "milling-cutters-and-milling-strategies",
+   "tool": "slot-vs-high-speed-milling-cost",
+   "type": "complements",
+   "note": "Puts a cost per part on the choice this chapter describes between full-width slotting and adaptive or trochoidal toolpaths at light radial engagement.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains adaptive, trochoidal and high-efficiency toolpaths that avoid full-width engagement; tool computes the handbook total cost per part of slot against high-speed end milling."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "choosing-gearboxes-and-geared-motors",
+   "tool": "industrial-worm-gearing-design",
+   "type": "complements",
+   "note": "Shows why worm efficiency falls as the ratio rises and when a worm set back-drives, from the lead angle and friction, for the worm units this chapter compares with helical gearboxes.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter notes worm efficiency falls as ratio rises and self-locking depends on ratio and efficiency; tool computes worm and wormgear driving efficiency from lead angle and friction, plus the empirical ratio rules."
+  },
+  {
+   "reados": "publication/machining-by-the-numbers",
+   "chapter": "drilling-reaming-and-tapping",
+   "tool": "metric-tap-thread-limits",
+   "type": "complements",
+   "note": "Checks the tap itself against its pitch and major diameter limits, so a worn or wrong-limit tap is found before the go and no-go gauges this chapter uses reject the holes.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter checks tapped M8 holes with go and no-go thread gauges to catch tap wear; tool gives the ASME B94.9 pitch and major diameter limits of a metric ground tap and checks a measured tap."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "broaching-knurling-and-indexing",
+   "tool": "worm-hob-design",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter mentions hobbing only as a generating process for splines and gears; hob diameters, sharpening allowance and flutes are not discussed."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "drilling-reaming-and-tapping-holes",
+   "tool": "metric-tap-thread-limits",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter chooses tap drills and specifies 6H tapped holes; the tap’s own pitch diameter limits are not discussed."
   }
  ]
 }

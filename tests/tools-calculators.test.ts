@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 945 tools with unique ids and every previously published id kept', () => {
+test('register: 951 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 945);
+  assert.equal(ids.length, 951);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 751 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 757 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 751);
+  assert.equal(ids.length, 757);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -5711,6 +5711,180 @@ test('fifty-ninth-pass tools give pass and fail verdicts and reject bad inputs',
     ['gear-pitting-geometry-factor', { n1: 60 }], ['gear-pitting-geometry-factor', { Cr: 100 }], ['gear-pitting-geometry-factor', { do1: 86 }], ['gear-pitting-geometry-factor', { do1: 110, do2: 245 }],
     ['fine-pitch-worm-design', { dmin: 60 }], ['internal-gear-pin-measurement', { eMin: 0.2 }], ['internal-gear-pin-measurement', { Di: 125 }], ['internal-gear-pin-measurement', { dp: 20 }],
     ['wire-rope-sheave-drum-check', { Hf: 400 }], ['shock-stress-check', { load: 'move', vel: 0 }], ['shock-stress-check', { member: 'round', dw: 60 }], ['thin-ring-load-check', { d: 250 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Sixtieth handbook pass (handbook83): tools from the page ledger's candidate pages.
+// Expected values are the handbook's own worked examples (worm Example 3, the industrial worm examples and commercial 29/4 series,
+// the tap marking examples, the slot and high-speed milling costs) and independent closed forms.
+const IN83 = 25.4;
+const D2R83 = Math.PI / 180;
+
+test('worm cutter profile correction reproduces the handbook Example 3 (2 in cutter, 20 in wheel)', () => {
+  // Worm of Example 1: r = 0.4410 in, λ = 30°, φn = 20°, 10 threads, addendum 0.0441 in.
+  const v = engine.run('worm-cutter-profile-correction', { d: 0.882 * IN83, a: 0.0441 * IN83, Dc: 2 * IN83, Dw: 20 * IN83 }).values;
+  near(v.rni / IN83, 0.6033, 0.00006, 'ρ_ni = 0.6033 in');
+  near(v.rnC / IN83, 0.9581, 0.0001, 'ρ_n cutter = 0.9581 in');
+  near(v.rnW / IN83, 0.6387, 0.0001, 'ρ_n wheel = 0.6387 in');
+  near(v.dphiC, 24.99, 0.01, 'Δφ cutter = 24.99 minutes');
+  near(v.dphiW, 3.749, 0.001, 'Δφ wheel = 3.749 minutes');
+  near(v.q / IN83, 0.0469, 0.00005, 'q = 0.0469 in');
+  near(v.yC / IN83, 0.00115, 0.000005, 'y cutter = 0.00115 in');
+  near(v.yW / IN83, 0.00172, 0.000005, 'y wheel = 0.00172 in');
+  near(v.sC / IN83, 0.000682, 0.000002, 's cutter = 0.000682 in');
+  near(v.sW / IN83, 0.000102, 0.000001, 's wheel = 0.000102 in');
+  near(v.dy / IN83, 0.00057, 0.000006, 'Δy = 0.00057 in');
+  near(v.ds / IN83, 0.00058, 0.000003, 'Δs = 0.000580 in');
+  // Lengths scale: Δφ is dimensionless and y, s grow with the scale.
+  const k = engine.run('worm-cutter-profile-correction', { d: 2 * 0.882 * IN83, a: 2 * 0.0441 * IN83, Dc: 4 * IN83, Dw: 40 * IN83 }).values;
+  near(k.dphiC, v.dphiC, 1e-9, 'pressure angle change is scale-free');
+  near(k.dy, 2 * v.dy, 1e-12, 'profile correction scales with size');
+  near(0.000582, 2 * Math.tan(Math.PI / 10800), 3e-7, '0.000582 is twice tan 1′');
+});
+
+test('industrial worm gearing reproduces the handbook examples and the commercial 29/4 series', () => {
+  const r = (over: Inputs) => engine.run('industrial-worm-gearing-design', over).values;
+  const fixed = r({ P: 0.5 * IN83, t: 6, T: 36, C: 3.6 * IN83 });
+  near(fixed.D / IN83, 5.729, 0.0006, '36/6 at 0.5 in: D = 5.729 in');
+  near(fixed.d / IN83, 1.471, 0.0007, 'd = 1.471 in');
+  near(fixed.lamDeg, 33, 0.05, 'lead angle about 33°');
+  // Commercial series, ratio 7¼ (29 teeth, 4 threads): C, P → d, D, lead angle (degrees and minutes).
+  const series: Array<[number, number, number, number, number]> = [[4, 0.6875, 1.654, 6.346, 27 + 54 / 60], [5, 0.875, 1.923, 8.077, 30 + 5 / 60], [6, 1.0625, 2.192, 9.808, 31 + 41 / 60], [7, 1.25, 2.461, 11.539, 32 + 53 / 60], [8.25, 1.4687, 2.942, 13.558, 32 + 27 / 60]];
+  for (const [C, P, d, D, lam] of series) {
+    const x = r({ P: P * IN83, t: 4, T: 29, C: C * IN83 });
+    near(x.d / IN83, d, 0.0006, `C ${C}: d`);
+    near(x.D / IN83, D, 0.0006, `C ${C}: D`);
+    near(x.lamDeg, lam, 1.2 / 60, `C ${C}: lead angle`);
+  }
+  // Choosing the worm instead gives C = (D + d) ÷ 2.
+  const chosen = r({ mode: 'd', dw: 40 });
+  near(chosen.C, (chosen.D + 40) / 2, 1e-12, 'centre distance from the chosen worm');
+  // AGMA proportions on axial pitch, single and double thread; dedendum and clearance.
+  const two = r({ t: 2, T: 41, depth: 'axial', mode: 'd', dw: 50 });
+  near(two.a, 0.318 * 12.7, 1e-12, 'a = 0.318 P');
+  near(two.W, 0.686 * 12.7, 1e-12, 'W = 0.686 P');
+  near(two.c, two.W - 2 * two.a, 1e-12, 'clearance');
+  near(two.F, 2.38 * 12.7 + 0.25 * IN83, 1e-9, 'face width 2.38 P + 0.25 in');
+  near(two.D0thr, two.Dt + 0.4775 * 12.7, 1e-9, 'D0 = Dt + 0.4775 P');
+  near(two.G, 12.7 * (4.5 + 0.02 * 41), 1e-9, 'thread length');
+  near(fixed.a, 0.286 * fixed.Pn, 1e-12, 'triple-and-over addendum on the normal pitch');
+  const integ = r({ mount: 'integral' });
+  near(integ.F / IN83, 3.6 ** 0.875 / 3, 1e-9, 'integral worm face width C^0.875 ÷ 3');
+  near(fixed.dEmp / IN83, 3.6 ** 0.75 + 2.2, 1e-9, 'empirical worm diameter');
+  // Rubbing speed against 0.262 d n sec λ ft/min; efficiency formulas.
+  near(fixed.V, 0.262 * (fixed.d / IN83) * 1450 / Math.cos(fixed.lamDeg * D2R83) * 0.3048 / 60, 0.002 * fixed.V, 'rubbing speed');
+  const lam = fixed.lamDeg * D2R83, pf = Math.atan(0.05);
+  near(fixed.Ew, 100 * Math.tan(lam) / Math.tan(lam + pf), 1e-9, 'worm driving efficiency');
+  near(fixed.Eg, 100 * Math.tan(lam - pf) / Math.tan(lam), 1e-9, 'wormgear driving efficiency');
+  near(fixed.EwEmp, 97, 1e-12, '100 − R ÷ 2');
+  near(fixed.EgEmp, 88, 1e-12, '100 − 2R');
+  assert.equal(r({ t: 1, T: 60, mode: 'd', dw: 80, f: 0.1 }).Eg, 0, 'self-locking at a lead angle below the friction angle');
+});
+
+test('worm hob design solves the AGMA sharpening allowance with the diameters and the flute rules', () => {
+  const v = engine.run('worm-hob-design').values, L = 2 * 12.7;
+  near(v.O, 50.8 + 2 * 4.04 + 2 * 0.84 + v.S, 1e-9, 'O = D + 2A + 2C + S');
+  near(v.Dh, v.O - 2 * 4.04 - 2 * 0.84, 1e-9, 'D_h = O − (2A + 2C)');
+  near(v.root, 50.8 - 2 * 4.04, 1e-12, 'root = D − 2A');
+  const H = Math.atan(Math.PI * v.Dh / L) / D2R83, h = Math.atan(Math.PI * v.O / L) / D2R83;
+  near(v.S, 0.075 * v.Pn * (16 - (h - H)) / 16 + 0.010 * IN83, 1e-9, 'S satisfies the AGMA formula at its own diameters');
+  near(v.setDeg, Math.atan(L / (Math.PI * 50.8)) / D2R83 - Math.atan(L / (Math.PI * v.Dh)) / D2R83, 1e-9, 'setting angle = worm − hob lead angle');
+  assert.ok(v.setDeg > 0, 'an over-size hob has a smaller lead angle');
+  near(v.Frule, 3 * v.O / (2 * 12.7), 1e-12, 'flutes ≈ 3 × diameter ÷ (2 × pitch)');
+  near(v.gash, 0.4 * Math.PI * v.O / 9, 1e-9, 'gash width 0.4 × flute pitch');
+  // Helical flutes: N = F ÷ cos² α (F = 7, α = 35° gives 10.432) and the modified flute lead L F ÷ (N − F).
+  near(7 / Math.cos(35 * D2R83) ** 2, 10.432, 0.0005, 'handbook N for F = 7, α = 35°');
+  const hel = engine.run('worm-hob-design', { Fl: 7, fl: 'helical', Nrel: 10 }).values;
+  near(hel.Nex, 7 / Math.cos(hel.lamHdeg * D2R83) ** 2, 1e-9, 'teeth per turn along the thread');
+  near(hel.Lf, L * 7 / 3, 1e-9, 'flute lead = hob lead × 7 ÷ 3 for N = 10');
+  near(engine.run('worm-hob-design', { Fl: 7, fl: 'helical', Nrel: 10.5 }).values.Lf, L * 7 / 3.5, 1e-9, 'flute lead for N = 10½');
+  near(hel.angF, Math.atan(Math.PI * hel.Dh / hel.Lf) / D2R83, 1e-9, 'flute angle from the axis');
+  // Common factors: 2 threads with 8 flutes, and 3 threads with 36 teeth (the handbook prefers 5 threads there).
+  const bad = engine.run('worm-hob-design', { Fl: 8 });
+  assert.equal(bad.text, 'CHANGE THE FLUTES OR THREADS');
+  assert.equal(bad.values.Fsug, 7, 'suggested flutes nearest the rule with no common factor');
+  assert.equal(engine.run('worm-hob-design', { t: 3, Tg: 36, Fl: 7 }).text, 'CHANGE THE FLUTES OR THREADS');
+  assert.equal(engine.run('worm-hob-design', { t: 3, Tg: 28, Fl: 7 }).text, 'HOB LAYOUT FOLLOWS THE HANDBOOK RULES');
+});
+
+test('metric and Unified tap thread limits reproduce the handbook marking examples', () => {
+  // M1.6 × 0.35 HS G D3: maximum 1.412, minimum 1.397 (Z = 0.015); M6 × 1 DU4: minimum 5.298, maximum 5.323 (Z = 0.025).
+  const d3 = engine.run('metric-tap-thread-limits', { D: 1.6, P: 0.35, lim: 'D', num: 3, X: 0.025, Y: 0.039, Z: 0.015, PDm: 1.405, Mm: 1.64 }).values;
+  near(d3.bPD, 1.3727, 0.00005, 'basic PD 1.3727');
+  near(d3.maxPD, 1.412, 0.0005, 'maximum tap PD');
+  near(d3.minPD, 1.397, 0.0005, 'minimum tap PD');
+  near(d3.limNo, 3, 1e-9, 'D3');
+  near(d3.minMaj, 1.6 + 0.08 * 0.35, 1e-8, 'standard-size tap: minimum major = basic + W');
+  const du4 = engine.run('metric-tap-thread-limits', { lim: 'DU', num: 4 }).values;
+  near(du4.minPD, 5.298, 0.0005, 'DU4 minimum');
+  near(du4.maxPD, 5.323, 0.0005, 'DU4 maximum');
+  const std = engine.run('metric-tap-thread-limits').values;
+  near(std.maxPD - std.bPD, 0.065, 1e-12, 'standard maximum = basic + Y');
+  near(std.limNo, 5, 1e-9, 'Y = 0.065 is D5');
+  near(std.maxMaj - std.minMaj, 0.041, 1e-12, 'major tolerance X');
+  const over = engine.run('metric-tap-thread-limits', { lim: 'D', num: 7 }).values;
+  near(over.minMaj - std.minMaj, 0.026, 1e-9, 'an oversize tap carries a larger major diameter');
+  // 3/8-16 NC HS H1: maximum 0.3349, minimum 0.3344; L2: minimum 0.3334, maximum 0.3339 (D = 0.0005).
+  const u = (o: Inputs) => engine.run('unified-tap-thread-limits', o).values;
+  const h1 = u({ lim: 'H', num: 1 });
+  near(h1.bPD, 0.3344, 0.00005, 'basic PD 0.3344');
+  near(h1.maxPD, 0.3349, 0.00005, 'H1 maximum');
+  near(h1.minPD, 0.3344, 0.00005, 'H1 minimum');
+  const l2 = u({ lim: 'L', num: 2 });
+  near(l2.minPD, 0.3334, 0.00005, 'L2 minimum');
+  near(l2.maxPD, 0.3339, 0.00005, 'L2 maximum');
+  near(l2.limNo, 2, 1e-9, 'L2 number');
+  const plus = u({ D: 7 / 16, n: 14, C: 0.0017 });
+  near(plus.minPD - plus.bPD, 0.0017, 1e-12, '7/16-14 plus 0.0017: minimum = basic + 0.0017');
+  near(plus.maxPD - plus.minPD, 0.0005, 1e-12, 'maximum = minimum + 0.0005');
+  // Table 2 constants by formula: A = 0.130 P, B by threads per inch.
+  for (const [n, A, B] of [[80, 0.0016, 0.0011], [48, 0.0027, 0.0018], [40, 0.0032, 0.0019], [16, 0.0081, 0.0041], [12, 0.0108, 0.0054], [4, 0.0325, 0.0162]]) {
+    const x = u({ n, D: 1, PDm: 0.9, Mm: 1 });
+    near(x.A, A, 0.00006, `A at ${n} TPI`);
+    near(x.B, B, 0.00006, `B at ${n} TPI`);
+  }
+  const s = u({});
+  near(s.maxMaj, 0.375 + 0.13 / 16, 1e-8, 'standard tap: maximum major = basic + A');
+});
+
+test('slot against high-speed milling reproduces the handbook cost examples', () => {
+  // HR = $50, Dist = 1000 mm, T = 45 min; T_V = 14 min (6 teeth) and 6 min (2 teeth).
+  const speed = (FR: number, z: number, fz: number) => FR * Math.PI * 25 / (1000 * z * fz);
+  const cost = (FR: number, z: number, fz: number, TV: number) => engine.run('slot-vs-high-speed-milling-cost', { VS: speed(FR, z, fz), zS: z, fzS: fz, trS: TV, ceS: 0 }).values;
+  near(cost(3230, 6, 0.17, 14).cS, 0.338, 0.0005, 'slot, 6 teeth, FR 3230');
+  near(cost(1480, 2, 0.17, 6).cS, 0.638, 0.0005, 'slot, 2 teeth, FR 1480');
+  const hs = (FR: number, z: number, TV: number) => engine.run('slot-vs-high-speed-milling-cost', { VH: speed(FR, z, 0.628), zH: z, trH: TV, ceH: 0 }).values.cH;
+  near(hs(18000, 6, 14), 0.0607, 0.0002, 'high-speed, 6 teeth, FR 18000 (printed 0.0606)');
+  near(hs(5250, 2, 6), 0.180, 0.0005, 'high-speed, 2 teeth, FR 5250');
+  const v = engine.run('slot-vs-high-speed-milling-cost').values;
+  near(v.TVS, 2 + 60 * 10 / 50, 1e-12, 'T_V = T_RPL + 60 C_E ÷ HR');
+  near(v.rpmH, 1000 * 375 / (Math.PI * 25), 1e-9, 'rpm = 1000 V ÷ (π D)');
+  near(v.FRH, 6 * 0.628 * v.rpmH, 1e-9, 'FR = z f_z rpm');
+  near(v.saveBatch, 100 * (v.cS - v.cH), 1e-9, 'saving per batch');
+  near(engine.run('slot-vs-high-speed-milling-cost', { pH: 4 }).values.cH, 4 * v.cH, 1e-12, 'cost grows with passes');
+});
+
+test('sixtieth-pass tools give pass and fail verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('worm-cutter-profile-correction').text, 'CORRECT THE CUTTER OR WHEEL');
+  assert.equal(engine.run('worm-cutter-profile-correction', { tolY: 0.02, tolS: 0.02 }).text, 'WORMS ALIKE WITHIN TOLERANCE');
+  assert.equal(engine.run('industrial-worm-gearing-design').text, 'WORM SET FOLLOWS THE HANDBOOK RULES');
+  assert.equal(engine.run('industrial-worm-gearing-design', { phi: 14.5 }).text, 'REVIEW THE WORM SET PROPORTIONS');
+  assert.equal(engine.run('industrial-worm-gearing-design', { depth: 'axial' }).text, 'REVIEW THE WORM SET PROPORTIONS');
+  assert.equal(engine.run('industrial-worm-gearing-design', { T: 30, t: 5 }).text, 'REVIEW THE WORM SET PROPORTIONS');
+  assert.equal(engine.run('worm-hob-design').text, 'HOB LAYOUT FOLLOWS THE HANDBOOK RULES');
+  assert.equal(engine.run('metric-tap-thread-limits').text, 'TAP WITHIN ITS LIMITS');
+  assert.equal(engine.run('metric-tap-thread-limits', { PDm: 5.42 }).text, 'TAP OUTSIDE ITS LIMITS');
+  assert.equal(engine.run('metric-tap-thread-limits', { Mm: 6.2 }).text, 'TAP OUTSIDE ITS LIMITS');
+  assert.equal(engine.run('unified-tap-thread-limits').text, 'TAP WITHIN ITS LIMITS');
+  assert.equal(engine.run('unified-tap-thread-limits', { PDm: 0.334 }).text, 'TAP OUTSIDE ITS LIMITS');
+  assert.equal(engine.run('slot-vs-high-speed-milling-cost').text, 'HIGH-SPEED MILLING COSTS LESS');
+  assert.equal(engine.run('slot-vs-high-speed-milling-cost', { pH: 10 }).text, 'SLOT MILLING COSTS LESS');
+  const slow = engine.run('slot-vs-high-speed-milling-cost', { nmax: 4000 });
+  assert.equal(slow.tone, 'bad');
+  assert.ok(slow.checks.some((c: { status: string }) => c.status === 'fail'), 'spindle speed above the machine fails');
+  const cases: Array<[string, Inputs]> = [
+    ['worm-cutter-profile-correction', { Dw: 40 }], ['industrial-worm-gearing-design', { C: 50 }], ['worm-hob-design', { A: 30 }], ['worm-hob-design', { fl: 'helical', Nrel: 9 }],
   ];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
