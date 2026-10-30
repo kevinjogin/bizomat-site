@@ -1,10 +1,10 @@
 {
  "generated": "2026-10-30",
- "base": "http://127.0.0.1:8781",
- "tools": 939,
- "passed": 939,
- "inputs": 8132,
- "figures": 8132,
+ "base": "http://127.0.0.1:8782",
+ "tools": 945,
+ "passed": 945,
+ "inputs": 8197,
+ "figures": 8197,
  "sample": [
   {
    "id": "make-buy",
@@ -5754,6 +5754,42 @@
    "ok": true,
    "inputs": 19,
    "figures": 19
+  },
+  {
+   "id": "gear-pitting-geometry-factor",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "fine-pitch-worm-design",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "internal-gear-pin-measurement",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "wire-rope-sheave-drum-check",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
+  },
+  {
+   "id": "shock-stress-check",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "thin-ring-load-check",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
   }
  ]
 }

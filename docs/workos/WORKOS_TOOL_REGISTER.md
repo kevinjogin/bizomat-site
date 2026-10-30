@@ -3305,3 +3305,28 @@ Eight tools in batch handbook81 from the NIST/SEMATECH e-Handbook of Statistical
 | **Arrhenius Acceleration Check (Temperature Acceleration Factor, Equivalent Hours, Test Length)** `arrhenius-acceleration-check` | TEST COVERS TARGET LIFE | Test length; Activation energy; Same failure mechanism; Model and application |  | Automated + cross-check |
 | **MTBF Confidence Bounds (Field or Test Failures, Chi-Square Limits, Requirement Check)** `mtbf-confidence-bounds` | MTBF REQUIREMENT DEMONSTRATED | Lower bound against requirement; Constant failure rate; Model and application |  | Automated + cross-check |
 | **Reliability Growth Check (Duane Power-Law Model, Growth Slope, MTBF at End of Test)** `reliability-growth-check` | MTBF GOAL DEMONSTRATED | Lower limit against goal; Reliability growth; Model fit; Model and application |  | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook82 (added 31 October 2026)
+
+Six tools in batch handbook82 from Machinery’s Handbook pages that no earlier tool cited, found by the page-by-page ledger (`mh-ledger.mjs` in the generator folder): a gear pitting geometry factor I for external spur and helical gears by the AGMA 908-B89 equations (pp. 3286–3289, checked against the I tables on pp. 3295–3300), fine-pitch worm and wormgear proportions to ANSI B6.9 (pp. 3321–3325, Examples 1 and 2), internal gear measurement between pins (pp. 2226–2230, Van Keuren tables), wire rope on sheaves and drums (pp. 3432–3435), shock stress in beams and springs (pp. 278–280) and a thin ring loaded across a diameter (pp. 219–220). Allowable stresses and pressures, rope constants and limits are entered by the user. WORKOS now holds 945 tools.
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Gear Pitting Geometry Factor I (Spur and Helical, Contact Ratios, Load Sharing)** `gear-pitting-geometry-factor` | GEOMETRY FACTOR SUPPORTS THE RATING | I against the rating; Contact ratio; Bending factor J; Model and application | 3286–3289, 3295–3300 | Automated + cross-check |
+| **Fine-Pitch Worm and Wormgear Design (ANSI B6.9 Proportions, Centre Distance, Face Width, Thread Length)** `fine-pitch-worm-design` | WORM SET MEETS THE CENTRE DISTANCE | Centre distance; Worm pitch diameter; Pressure angle; Model and application | 3321–3325 | Automated + cross-check |
+| **Internal Gear Measurement Between Pins (Even or Odd Teeth, Backlash Allowance, Space Width from a Reading)** `internal-gear-pin-measurement` | READING WITHIN LIMITS | Reading; Pin contact; Pin size; Model and application | 2226–2230 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Wire Rope on Sheaves and Drums (Radial Pressure, Bending Stress and Load, Drum Capacity)** `wire-rope-sheave-drum-check` | ROPE, SHEAVE AND DRUM SUIT THE DUTY | Sheave pressure; Factor against breaking; Drum capacity; Rope data; Model and application | 3432–3435 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Shock Stress in Beams and Springs (Dropped Weight or Moving Body, Impact Factor, Allowable)** `shock-stress-check` | SHOCK STRESS WITHIN ALLOWABLE | Peak stress; Energy absorbed; Model and application | 278–280 | Automated + cross-check |
+| **Thin Ring Loaded Across a Diameter (Bending Stress, Diameter Changes, Safe Load)** `thin-ring-load-check` | RING WITHIN LIMITS | Bending stress; Diameter change; Thin ring; Model and application | 219–220 | Automated + cross-check |

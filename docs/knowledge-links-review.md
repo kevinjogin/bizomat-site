@@ -2,7 +2,7 @@
 
 Generated 2026-10-30 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 409 relationships (171 from links authors wrote in the books, 238 from editorial review). Rejected: 96. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 453 relationships (210 from links authors wrote in the books, 243 from editorial review). Rejected: 100. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -248,6 +248,11 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Manufacturing Operations and Design for Manufacture | Demand forecasting for small manufacturers: matching supply with demand without drowning in stock | Holt Trend Forecast (Double Exponential Smoothing, Level and Trend, Forecast Error) | complements | Chapter recommends exponential smoothing and measuring forecast error; tool applies double exponential smoothing (NIST 6.4.3.3–6.4.3.4), which follows a trend single smoothing lags. |
 | Random Error and Drift by the Numbers | Averaging and the square-root rule | Standard Deviation Chi-Square Check (Process Spread Against a Target Sigma, Confidence Interval) | complements | Chapter compares a predicted 0.035 g with an observed 0.092 g from twenty readings; tool tests a sample standard deviation against a target σ₀ with confidence limits (NIST 1.3.5.8). |
 | Random Error and Drift by the Numbers | Averaging and the square-root rule | Two-Variance F Test (Compare the Spread of Two Machines, Batches or Methods) | complements | Chapter compares check-reading standard deviations before and after an upgrade (0.092 g and 0.087 g, twenty readings each); tool applies the F test for two variances (NIST 1.3.5.9). |
+| Gears by the Numbers | Surface contact stress | Gear Pitting Geometry Factor I (Spur and Helical, Contact Ratios, Load Sharing) | complements | Chapter estimates contact stress by Hertz with the involute radii of curvature at the pitch point; tool computes AGMA 908-B89 I from the curvature at the LPSTC (or mean radius) and the load sharing ratio. |
+| Gears by the Numbers | Helical gears and axial thrust | Gear Pitting Geometry Factor I (Spur and Helical, Contact Ratios, Load Sharing) | complements | Chapter calculates transverse and overlap (face) contact ratios for a helical pair; tool uses the same ratios for L_min, m_N, the helical overlap factor and I. |
+| Gears by the Numbers | Centre distance and contact ratio | Gear Pitting Geometry Factor I (Spur and Helical, Contact Ratios, Load Sharing) | complements | Chapter calculates centre distance and transverse contact ratio from tip and base radii; tool computes the same contact ratio along the line of action (C1 to C6) at the operating centre distance. |
+| Gears by the Numbers | Measuring and specifying a gear | Internal Gear Measurement Between Pins (Even or Odd Teeth, Backlash Allowance, Space Width from a Reading) | complements | Chapter specifies tooth thickness by span or measurement over pins and notes pins suit internal gears; tool computes the between-pins dimension for internal spur gears by the involute function. |
+| Designing Welded Joints by the Numbers | Load paths: what a weld must carry | Shock Stress in Beams and Springs (Dropped Weight or Moving Body, Impact Factor, Allowable) | complements | Chapter classes loads as static, impact or fatigue and notes an impact load can be several times the static load; tool computes the impact factor and peak stress for a dropped weight or moving body. |
 
 ## 2. Rejected
 
@@ -349,6 +354,10 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Lean, Maintenance and Continuous Improvement | Total productive maintenance: operators, maintainers and managers sharing responsibility for equipment | MTBF Confidence Bounds (Field or Test Failures, Chi-Square Limits, Requirement Check) | Rejected: MTBF appears only in a list of maintenance measures; the chapter does not estimate it from data. |
 | Research and Evidence for Better Decisions | Testing a hypothesis without fooling yourself: predictions, p-values, power and honest comparisons | Two-Variance F Test (Compare the Spread of Two Machines, Batches or Methods) | Rejected: chapter covers tests of means and proportions; comparing spreads is not discussed. |
 | Demand and Benefit Forecasts by the Numbers | Ramp-up curves: how fast the volume arrives | Holt Trend Forecast (Double Exponential Smoothing, Level and Trend, Forecast Error) | Rejected: chapter fits logistic ramp-up curves to a new product, not smoothing of a demand history. |
+| Machine Elements and Mechanical Design | Gears and gearboxes: choosing reducers and geared motors that last | Fine-Pitch Worm and Wormgear Design (ANSI B6.9 Proportions, Centre Distance, Face Width, Thread Length) | Rejected: chapter selects industrial worm reducers by power, efficiency and thermal rating; fine-pitch worm proportions are not discussed. |
+| Forge Welding by the Numbers | Rings, links and chain | Thin Ring Loaded Across a Diameter (Bending Stress, Diameter Changes, Safe Load) | Rejected: chapter covers stock length for rings and links, chain weight and tyre shrinkage, not the stress in a ring under load. |
+| Vibrating Machine Elements by the Numbers | Tune guy ropes and cables away from the machine | Wire Rope on Sheaves and Drums (Radial Pressure, Bending Stress and Load, Drum Capacity) | Rejected: chapter tunes the vibration of guy ropes by tension; sheaves and drums are not discussed. |
+| Electronics Packaging by the Numbers | Write the packaging brief | Shock Stress in Beams and Springs (Dropped Weight or Moving Body, Impact Factor, Allowable) | Rejected: chapter sets drop and impact requirements for a product enclosure; beam and spring shock formulas do not model a product drop. |
 
 ## 3. Published READOS books with no approved connection
 
@@ -392,7 +401,6 @@ Their pages show a WORKOS topic to browse where the category maps to one, and no
 | Fits That Work | publication | Engineering | Engineering & Design |
 | Forge Welding by the Numbers | publication | Manufacturing | Manufacturing & Production |
 | From Approval to Benefits | collection | business | Business & Commercial |
-| Gears by the Numbers | publication | Engineering | Engineering & Design |
 | Growth, Business Models and New Markets | collection | business | Business & Commercial |
 | Hardfacing and Surfacing by the Numbers | publication | Manufacturing | Manufacturing & Production |
 | Housings That Rebuild | publication | Engineering | Engineering & Design |
