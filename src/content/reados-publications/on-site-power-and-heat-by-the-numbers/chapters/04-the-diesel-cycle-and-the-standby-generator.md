@@ -1,10 +1,10 @@
 ---
-book: heat-engines-and-cogeneration-by-the-numbers
+book: on-site-power-and-heat-by-the-numbers
 chapterSlug: the-diesel-cycle-and-the-standby-generator
 order: 4
 title: "The Diesel cycle and the standby generator"
 description: "The air-standard Diesel cycle with its cutoff ratio, how it compares with the Otto cycle at equal and at real compression ratios, peak pressure, and what the model says about a standby set."
-draft: true
+draft: false
 ---
 
 A diesel engine compresses air alone, so hard that the air becomes hot enough to ignite fuel sprayed into it. No spark is needed and there is no mixture to knock, which lets diesels use much higher compression ratios than spark-ignition engines. The fuel burns as it is injected, while the piston is already moving down, so combustion happens over part of the stroke rather than at a point. The air-standard model of this is the Diesel cycle, in which heat is added at constant pressure instead of constant volume.

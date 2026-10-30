@@ -1,10 +1,10 @@
 ---
-book: heat-engines-and-cogeneration-by-the-numbers
+book: on-site-power-and-heat-by-the-numbers
 chapterSlug: compressors-and-turbines-in-steady-flow
 order: 2
 title: "Compressors and turbines in steady flow"
 description: "The steady-flow energy equation for compressors, turbines, nozzles and throttles, isentropic efficiency from measured temperatures, and a turbocharger test that checks its own power balance."
-draft: true
+draft: false
 ---
 
 Most of the machines in a power plant are open systems: gas or steam flows in, something happens to it, and it flows out. A compressor, a turbine, a nozzle, a valve and a heat exchanger each change the state of a flowing fluid, and each is analysed with the same equation, the steady-flow form of the first law. With that equation and a thermometer at each end, an engineer can find how much power a machine absorbs or delivers and how close it comes to the ideal.

@@ -1,10 +1,10 @@
 ---
-book: psychrometrics-by-the-numbers
+book: humidity-control-by-the-numbers
 chapterSlug: mixing-outdoor-and-return-air
 order: 5
 title: "Mixing outdoor and return air"
 description: "The mass, water and energy balances for mixing outdoor and return air, outdoor-air share by mass, the straight-line rule, fog when cold and humid streams meet, minimum outdoor air and economy cycles."
-draft: true
+draft: false
 ---
 
 Nearly every air-handling unit starts with a mixing box, where outdoor air meets air returned from the space. Recirculating return air saves energy, because it has already been heated, cooled and humidified; outdoor air is needed for the people in the space, to replace air that is exhausted and to keep the building slightly pressurised. The proportions are set by dampers, and the state of the mixture they produce is the starting point for every coil and humidifier downstream.

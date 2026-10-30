@@ -1,10 +1,10 @@
 ---
-book: psychrometrics-by-the-numbers
+book: humidity-control-by-the-numbers
 chapterSlug: heating-and-humidifying
 order: 6
 title: "Heating and humidifying in winter"
 description: "Size the winter heater and humidifier from a mass and energy balance, compare steam injection with water spray, see where the energy goes, and check absorption, water quality and frosty mornings."
-draft: true
+draft: false
 ---
 
 In winter the print hall's problem is not warmth. The presses make more heat than the building loses, so the air-handling unit mostly has to stop the hall drying out. Outdoor air at 5 °C holds little water, and once it is warmed to room temperature its relative humidity collapses. Paper and board in that air give up moisture, shrink and curl, and static builds on the sheets. The humidifier is therefore the most important winter component in the plant, and the heater is sized around the way the humidifier adds its water.

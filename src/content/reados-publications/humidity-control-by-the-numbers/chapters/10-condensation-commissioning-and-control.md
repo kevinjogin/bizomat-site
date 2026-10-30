@@ -1,10 +1,10 @@
 ---
-book: psychrometrics-by-the-numbers
+book: humidity-control-by-the-numbers
 chapterSlug: condensation-commissioning-and-control
 order: 10
 title: "Condensation, commissioning and seasonal checks"
 description: "Check pipes, ducts and cold reels against the dew point, insulate ducts in humid spaces, commission an air-handling unit by measurement, and keep it right with trend logs and seasonal checks."
-draft: true
+draft: false
 ---
 
 A plant that holds a room at 22 °C and 50% has created a dew point of 11.11 °C, and every surface in the room colder than that will collect water. The coldest surfaces in the print hall are the ones the plant itself brings in: chilled-water pipes, supply ducts and, in winter, paper reels delivered from a cold truck. The same plant also sends cold air through spaces it does not control, where the dew point may be far higher. Condensation is therefore the first thing to check when an air-handling design is finished, and the first thing to look for when it is commissioned.

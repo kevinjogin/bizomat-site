@@ -1,10 +1,10 @@
 ---
-book: heat-engines-and-cogeneration-by-the-numbers
+book: on-site-power-and-heat-by-the-numbers
 chapterSlug: gas-turbines-and-the-brayton-cycle
 order: 6
 title: "Gas turbines and the Brayton cycle"
 description: "How a gas turbine turns fuel into shaft power: the Brayton cycle, pressure ratio, turbine inlet temperature, the back-work ratio, component efficiencies and why hot days cut output."
-draft: true
+draft: false
 ---
 
 A gas turbine does in one continuous stream what a piston engine does in a cylinder, one charge at a time. Air is compressed, heated by burning fuel in it, and expanded through a turbine that drives both the compressor and a generator. Because nothing reciprocates, a gas turbine is light, smooth and quick to maintain, and its exhaust leaves hot enough to raise steam. Those qualities make small gas turbines, sold as microturbines, a candidate for the laundry's energy plant.

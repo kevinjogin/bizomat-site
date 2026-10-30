@@ -1,10 +1,10 @@
 ---
-book: psychrometrics-by-the-numbers
+book: humidity-control-by-the-numbers
 chapterSlug: moist-air-in-numbers
 order: 1
 title: "Moist air in numbers"
 description: "The properties an air-handling engineer works with: humidity ratio, enthalpy, specific volume, dew point and relative humidity, on a dry-air basis, from temperature, humidity and pressure."
-draft: true
+draft: false
 ---
 
 An air-handling unit does four things to air: it mixes it, heats it, cools it and changes how much water it carries. Every one of those jobs is a mass and energy balance, and a balance needs quantities that add up. Temperature and relative humidity, the two numbers on every wall display, do not add up. Two air streams at 50% relative humidity can mix to make fog, and air heated without any change in its water content can fall from 80% to 26% relative humidity. The engineer needs a different set of numbers, and this chapter sets them out.

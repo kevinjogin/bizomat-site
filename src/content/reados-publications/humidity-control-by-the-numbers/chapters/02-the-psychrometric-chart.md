@@ -1,10 +1,10 @@
 ---
-book: psychrometrics-by-the-numbers
+book: humidity-control-by-the-numbers
 chapterSlug: the-psychrometric-chart
 order: 2
 title: "Reading and drawing on the psychrometric chart"
 description: "How the psychrometric chart is built, the six air processes as directions on it, mixing lines, sensible heat ratio and the room ratio line, plotting a real design day, and chart pressure."
-draft: true
+draft: false
 ---
 
 The psychrometric chart is the map of moist air. Every state from Chapter 1 is a point on it, every process in an air-handling unit is a line between two points, and the direction of the line says what the process is doing to the air. Engineers who could calculate every property from the equations still draw the chart, because it shows at a glance what a calculation only implies: whether a coil can reach the state asked of it, whether a mixed stream will fog, and how much of a load is sensible heat and how much is water.

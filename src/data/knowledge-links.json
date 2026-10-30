@@ -4257,7 +4257,7 @@
    "reason": "Rejected: chapter sizes cooling towers, which cool water towards the wet-bulb by rejecting heat without refrigeration work; the tool covers chilling below the surroundings."
   },
   {
-   "reados": "publication/heat-engines-and-cogeneration-by-the-numbers",
+   "reados": "publication/on-site-power-and-heat-by-the-numbers",
    "chapter": "heat-into-work",
    "tool": "heat-engine-carnot-limit",
    "type": "applies",
@@ -4266,7 +4266,7 @@
    "evidence": "book-link"
   },
   {
-   "reados": "publication/heat-engines-and-cogeneration-by-the-numbers",
+   "reados": "publication/on-site-power-and-heat-by-the-numbers",
    "chapter": "compressors-and-turbines-in-steady-flow",
    "tool": "compressor-turbine-efficiency-check",
    "type": "applies",
@@ -4275,7 +4275,7 @@
    "evidence": "book-link"
   },
   {
-   "reados": "publication/heat-engines-and-cogeneration-by-the-numbers",
+   "reados": "publication/on-site-power-and-heat-by-the-numbers",
    "chapter": "the-otto-cycle-and-the-gas-engine",
    "tool": "otto-diesel-cycle-check",
    "type": "applies",
@@ -4284,7 +4284,7 @@
    "evidence": "book-link"
   },
   {
-   "reados": "publication/heat-engines-and-cogeneration-by-the-numbers",
+   "reados": "publication/on-site-power-and-heat-by-the-numbers",
    "chapter": "real-engines-fuel-heat-rate-and-the-energy-balance",
    "tool": "combustion-air-flue-gas-check",
    "type": "complements",
@@ -4293,7 +4293,7 @@
    "evidence": "book-link"
   },
   {
-   "reados": "publication/heat-engines-and-cogeneration-by-the-numbers",
+   "reados": "publication/on-site-power-and-heat-by-the-numbers",
    "chapter": "gas-turbines-and-the-brayton-cycle",
    "tool": "brayton-regenerator-check",
    "type": "applies",
@@ -4302,7 +4302,7 @@
    "evidence": "book-link"
   },
   {
-   "reados": "publication/heat-engines-and-cogeneration-by-the-numbers",
+   "reados": "publication/on-site-power-and-heat-by-the-numbers",
    "chapter": "steam-turbines-condensing-and-back-pressure",
    "tool": "rankine-cycle-check",
    "type": "applies",
@@ -4311,7 +4311,7 @@
    "evidence": "book-link"
   },
   {
-   "reados": "publication/heat-engines-and-cogeneration-by-the-numbers",
+   "reados": "publication/on-site-power-and-heat-by-the-numbers",
    "chapter": "recovering-engine-heat",
    "tool": "waste-heat-recovery-limit",
    "type": "applies",
@@ -4320,7 +4320,7 @@
    "evidence": "book-link"
   },
   {
-   "reados": "publication/heat-engines-and-cogeneration-by-the-numbers",
+   "reados": "publication/on-site-power-and-heat-by-the-numbers",
    "chapter": "cogeneration-and-the-business-case",
    "tool": "cogeneration-saving-check",
    "type": "applies",
@@ -4329,7 +4329,7 @@
    "evidence": "book-link"
   },
   {
-   "reados": "publication/psychrometrics-by-the-numbers",
+   "reados": "publication/humidity-control-by-the-numbers",
    "chapter": "moist-air-in-numbers",
    "tool": "surface-dew-point-check",
    "type": "applies",
@@ -4338,7 +4338,7 @@
    "evidence": "book-link"
   },
   {
-   "reados": "publication/psychrometrics-by-the-numbers",
+   "reados": "publication/humidity-control-by-the-numbers",
    "chapter": "mixing-outdoor-and-return-air",
    "tool": "air-stream-mixing-check",
    "type": "applies",
@@ -4347,7 +4347,7 @@
    "evidence": "book-link"
   },
   {
-   "reados": "publication/psychrometrics-by-the-numbers",
+   "reados": "publication/humidity-control-by-the-numbers",
    "chapter": "heating-and-humidifying",
    "tool": "heating-humidification-check",
    "type": "applies",
@@ -4356,7 +4356,7 @@
    "evidence": "book-link"
   },
   {
-   "reados": "publication/psychrometrics-by-the-numbers",
+   "reados": "publication/humidity-control-by-the-numbers",
    "chapter": "cooling-coils-and-dehumidification",
    "tool": "cooling-coil-dehumidification-check",
    "type": "applies",
@@ -4365,7 +4365,7 @@
    "evidence": "book-link"
   },
   {
-   "reados": "publication/psychrometrics-by-the-numbers",
+   "reados": "publication/humidity-control-by-the-numbers",
    "chapter": "evaporative-cooling",
    "tool": "evaporative-cooler-check",
    "type": "applies",

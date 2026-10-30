@@ -1,10 +1,10 @@
 ---
-book: psychrometrics-by-the-numbers
+book: humidity-control-by-the-numbers
 chapterSlug: reheat-and-humidity-control
 order: 8
 title: "Reheat, overcooling and humidity control"
 description: "Why a dehumidifying coil must over-cool and what the reheat costs at full and part load, how dew-point control sequences work, ways to recover reheat energy, and how a drifting sensor wastes both."
-draft: true
+draft: false
 ---
 
 A plant that controls humidity as well as temperature has to answer one question at every moment: which of the two is setting the cooling coil? When the room needs cooling more than drying, the coil follows temperature and the humidity looks after itself. When the room needs drying more than cooling, the coil must run colder than the temperature alone requires, and the air it delivers is then too cold for the room and has to be warmed again. That second warming is reheat. It is the price of holding humidity, and it is often the largest avoidable energy use in a humidity-controlled space.

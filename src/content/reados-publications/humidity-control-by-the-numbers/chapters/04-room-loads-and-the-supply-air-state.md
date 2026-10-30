@@ -1,10 +1,10 @@
 ---
-book: psychrometrics-by-the-numbers
+book: humidity-control-by-the-numbers
 chapterSlug: room-loads-and-the-supply-air-state
 order: 4
 title: "Room loads and the supply air state"
 description: "How a room's sensible and latent loads fix the temperature and moisture of its supply air, why the sensible load sets the airflow, and the errors of fan heat and volume at the wrong state."
-draft: true
+draft: false
 ---
 
 An air-handling unit exists to deliver air in a particular state, and that state is not chosen; it is calculated. The room gains heat and moisture from people, machines, lights, sun and leaking outdoor air. The supply air must arrive cool enough and dry enough to absorb exactly those gains and leave at the room's design state. Two balances, one for heat and one for water, give the supply temperature and the supply humidity ratio for any airflow, and every component upstream, the mixing box, the coils, the humidifier and the fan, is then sized to produce that state.

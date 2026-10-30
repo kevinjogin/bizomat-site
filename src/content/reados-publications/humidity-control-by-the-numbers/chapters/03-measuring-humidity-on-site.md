@@ -1,10 +1,10 @@
 ---
-book: psychrometrics-by-the-numbers
+book: humidity-control-by-the-numbers
 chapterSlug: measuring-humidity-on-site
 order: 3
 title: "Measuring humidity on site: wet bulb, dew point and sensors"
 description: "How wet-bulb psychrometers, chilled-mirror hygrometers and capacitive humidity sensors work, how to calibrate them with saturated salts, and where to put them so they read the space and not a press."
-draft: true
+draft: false
 ---
 
 Every psychrometric calculation starts from a measurement, and humidity is one of the hardest everyday quantities to measure well. A temperature sensor that is half a kelvin out is a minor nuisance; a humidity sensor that is three percentage points out can send a humidifier chasing a target that does not exist. Worse, a perfectly good sensor can give a misleading reading because of where it is, since relative humidity changes with the local temperature even when the air's water content does not.

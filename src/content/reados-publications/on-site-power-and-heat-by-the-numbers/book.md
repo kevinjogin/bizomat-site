@@ -1,5 +1,5 @@
 ---
-title: "Heat Engines and Cogeneration by the Numbers"
+title: "On-Site Power and Heat by the Numbers"
 subtitle: "Carnot limits, engine and turbine cycles, steam turbines, waste heat and combined heat and power, worked through one laundry's energy plant"
 description: "Judge on-site power and heat with engineering thermodynamics: Carnot limits, Otto, Diesel, Brayton and Rankine cycles, turbochargers, waste heat recovery and the cogeneration business case."
 category: Engineering
@@ -7,7 +7,7 @@ tags: [design, systems, operations, process-improvement]
 author: KEVOS®
 publisher: KEVOS® READOS
 language: en-AU
-status: draft
+status: published
 publishDate: 2026-10-30
 referencesChecked: 2026-10-30
 edition: "1"

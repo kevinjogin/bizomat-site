@@ -1,10 +1,10 @@
 ---
-book: psychrometrics-by-the-numbers
+book: humidity-control-by-the-numbers
 chapterSlug: cooling-coils-and-dehumidification
 order: 7
 title: "Cooling coils and dehumidification"
 description: "Calculate a cooling coil's total, sensible and latent load and condensate, find its apparatus dew point and contact factor, compare coil and room sensible heat ratios, and avoid sensible-only sizing."
-draft: true
+draft: false
 ---
 
 A chilled-water coil in summer does two jobs at once. It cools the air, and wherever its fins are colder than the air's dew point it condenses water out of it. In a print hall the second job matters as much as the first, because a hall that is cool but damp still swells the board and jams the presses. The coil's total load, the split between cooling and drying, and the temperature at which it must leave the air all follow from the same mass and energy balance used for winter in Chapter 6, run in the other direction.

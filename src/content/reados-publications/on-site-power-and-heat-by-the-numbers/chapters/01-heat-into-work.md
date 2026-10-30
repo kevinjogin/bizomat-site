@@ -1,10 +1,10 @@
 ---
-book: heat-engines-and-cogeneration-by-the-numbers
+book: on-site-power-and-heat-by-the-numbers
 chapterSlug: heat-into-work
 order: 1
 title: "Heat into work: the first law and the Carnot ceiling"
 description: "How the first law accounts for every kilowatt of fuel, what efficiency and heat rate mean, and how the Carnot limit at real temperatures tests any claim to turn heat into power."
-draft: true
+draft: false
 ---
 
 Every engine, turbine and power-from-heat box sold to a plant does the same thing: it takes heat at a high temperature, turns part of it into shaft work and throws the rest away at a lower temperature. Two laws govern how well it can do that. The first law keeps the books, so every kilowatt of fuel must turn up somewhere as work, useful heat or loss. The second law sets a ceiling on the share that can become work, and that ceiling depends only on the temperatures involved.

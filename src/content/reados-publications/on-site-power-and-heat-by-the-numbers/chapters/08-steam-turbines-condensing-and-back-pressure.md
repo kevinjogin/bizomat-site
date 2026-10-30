@@ -1,10 +1,10 @@
 ---
-book: heat-engines-and-cogeneration-by-the-numbers
+book: on-site-power-and-heat-by-the-numbers
 chapterSlug: steam-turbines-condensing-and-back-pressure
 order: 8
 title: "Steam turbines: condensing and back-pressure"
 description: "The Rankine cycle from steam-table enthalpies: condensing plant for scale, a back-pressure turbine in place of a pressure-reducing valve, exhaust dryness, heat rate and fuel chargeable to power."
-draft: true
+draft: false
 ---
 
 The steam turbine is the oldest of the engines in this book and still the one that makes most of the world's electricity from heat. It differs from the gas engine and the gas turbine in a way that matters for any site with a boiler: its working fluid is condensed back to liquid and pumped, so it needs almost no work to raise its pressure, and the heat it rejects can be taken at whatever pressure the turbine exhausts to. A steam turbine can therefore be a power station that throws most of its heat into a river, or a pressure-reducing valve that makes electricity on the side.

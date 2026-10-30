@@ -1,10 +1,10 @@
 ---
-book: heat-engines-and-cogeneration-by-the-numbers
+book: on-site-power-and-heat-by-the-numbers
 chapterSlug: recovering-engine-heat
 order: 9
 title: "Recovering engine heat: exhaust, jacket water and the exergy limit"
 description: "Where an engine's rejected heat goes, the exergy of a stream that cools as it gives up heat, matching each stream to a demand at the right temperature, and testing a heat-to-power claim."
-draft: true
+draft: false
 ---
 
 A gas engine that turns 40% of its fuel into electricity rejects the other 60% as heat, and cogeneration stands or falls on how much of that heat a site can use. The heat does not come in one lump. It leaves in streams at very different temperatures: exhaust gas at several hundred degrees, jacket water at about 90 °C, and water vapour in the exhaust that gives up its latent heat only below its dew point. Each stream suits some duties and not others.

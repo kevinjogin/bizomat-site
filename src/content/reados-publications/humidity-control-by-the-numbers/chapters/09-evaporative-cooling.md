@@ -1,10 +1,10 @@
 ---
-book: psychrometrics-by-the-numbers
+book: humidity-control-by-the-numbers
 chapterSlug: evaporative-cooling
 order: 9
 title: "Evaporative cooling for the warehouse"
 description: "Size direct evaporative coolers from the wet-bulb limit and pad effectiveness, find their water use and real cooling to the room, see why humid days defeat them, and keep them hygienic."
-draft: true
+draft: false
 ---
 
 Next to the print hall is the finished-goods warehouse, where cartons wait on pallets for dispatch. It needs to be bearable for the people who work there and not so hot that stacked board softens or glue lines suffer, but it does not need the hall's close control. The printer cools it in summer with direct evaporative coolers on the roof: fans draw outdoor air through wetted pads, water evaporates into the air, and the air leaves cooler and wetter. No refrigeration plant is involved, so the running cost is mainly fan power and water.

@@ -1,5 +1,5 @@
 ---
-title: "Psychrometrics by the Numbers"
+title: "Humidity Control by the Numbers"
 subtitle: "Moist air for air-handling plant: properties, the chart, loads, mixing, humidifying, cooling coils, reheat and evaporative cooling, in one print hall"
 description: "Size and check air-handling processes with moist-air balances: properties, the chart, room loads, mixing, heating and humidifying, cooling coils, reheat, evaporative cooling and condensation."
 category: Engineering
@@ -7,7 +7,7 @@ tags: [design, operations, quality, validation]
 author: KEVOS®
 publisher: KEVOS® READOS
 language: en-AU
-status: draft
+status: published
 publishDate: 2026-10-30
 referencesChecked: 2026-10-30
 edition: "1"

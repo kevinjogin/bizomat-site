@@ -1,10 +1,10 @@
 ---
-book: heat-engines-and-cogeneration-by-the-numbers
+book: on-site-power-and-heat-by-the-numbers
 chapterSlug: cogeneration-and-the-business-case
 order: 10
 title: "Cogeneration: utilisation, primary energy saving and the business case"
 description: "Judge a cogeneration plant by utilisation, power-to-heat ratio and primary energy saving, size it to the heat demand, and build and stress-test the A$ business case for one site."
-draft: true
+draft: false
 ---
 
 Cogeneration, or combined heat and power (CHP), makes electricity on site and uses the heat that a power station would throw away. The previous chapters supplied its parts: an engine and its energy balance, the alternatives of gas turbines and steam turbines, and the streams of heat that can be recovered. This chapter puts them together for the laundry and asks the two questions an owner will ask. Does the plant save energy compared with buying electricity and burning gas in a boiler? And does it save money?

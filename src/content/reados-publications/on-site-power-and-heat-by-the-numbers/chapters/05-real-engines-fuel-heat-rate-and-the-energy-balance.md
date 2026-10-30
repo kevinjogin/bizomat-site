@@ -1,10 +1,10 @@
 ---
-book: heat-engines-and-cogeneration-by-the-numbers
+book: on-site-power-and-heat-by-the-numbers
 chapterSlug: real-engines-fuel-heat-rate-and-the-energy-balance
 order: 5
 title: "Real engines: fuel, heat rate and the energy balance"
 description: "Gross and net heating values, heat rate at full and part load, ratings and ambient conditions, the full energy balance of a gas engine, and exhaust flow and dew point from the air–fuel ratio."
-draft: true
+draft: false
 ---
 
 The cycles of Chapters 3 and 4 explain how engines behave. To decide whether one is worth buying, an engineer needs the maker's numbers: fuel used, power out, heat recoverable and exhaust conditions, at the loads and ambient conditions the site will actually see. Those numbers come on a datasheet, and the datasheet is easy to misread. The commonest mistake is not in the engineering but in the units: engine fuel figures and gas bills are usually on different bases, and the difference is about 10%.

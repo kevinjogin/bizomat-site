@@ -1,10 +1,10 @@
 ---
-book: heat-engines-and-cogeneration-by-the-numbers
+book: on-site-power-and-heat-by-the-numbers
 chapterSlug: microturbines-and-the-recuperator
 order: 7
 title: "Microturbines and the recuperator"
 description: "How a recuperator lifts a microturbine's efficiency, how effectiveness, size and pressure ratio interact, and why a cooler exhaust can leave a steam-using site worse off."
-draft: true
+draft: false
 ---
 
 Chapter 6 found that a simple-cycle microturbine turns only about a fifth of its fuel into power and sends the rest out of the exhaust at 622 °C, hotter than the air leaving its own compressor. A recuperator puts that difference to work. It is a heat exchanger that passes heat from the turbine exhaust to the compressed air on its way to the combustor, so the burner has less heating to do and the same shaft power costs less fuel. Nearly every microturbine sold for power generation has one.

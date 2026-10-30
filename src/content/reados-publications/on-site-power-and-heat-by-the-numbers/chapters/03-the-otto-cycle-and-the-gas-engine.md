@@ -1,10 +1,10 @@
 ---
-book: heat-engines-and-cogeneration-by-the-numbers
+book: on-site-power-and-heat-by-the-numbers
 chapterSlug: the-otto-cycle-and-the-gas-engine
 order: 3
 title: "The Otto cycle and the gas engine"
 description: "The air-standard Otto cycle step by step: compression ratio, efficiency, net work, mean effective and peak pressure, why the ideal overstates a gas engine, and how knock and lean burn set limits."
-draft: true
+draft: false
 ---
 
 A spark-ignition gas engine draws in a mixture of air and gas, compresses it, ignites it with a spark near the top of the stroke and lets the hot gas push the piston down. Real combustion is fast but not instant, the gas is not air, and heat leaks to the cylinder walls throughout. Even so, a simple model that replaces all of this with air heated at constant volume, the air-standard Otto cycle, explains the most important fact about these engines: their efficiency depends mainly on the compression ratio.
