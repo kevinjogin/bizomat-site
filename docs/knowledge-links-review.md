@@ -2,7 +2,7 @@
 
 Generated 2026-10-30 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 453 relationships (210 from links authors wrote in the books, 243 from editorial review). Rejected: 100. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 488 relationships (241 from links authors wrote in the books, 247 from editorial review). Rejected: 102. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -253,6 +253,10 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Gears by the Numbers | Centre distance and contact ratio | Gear Pitting Geometry Factor I (Spur and Helical, Contact Ratios, Load Sharing) | complements | Chapter calculates centre distance and transverse contact ratio from tip and base radii; tool computes the same contact ratio along the line of action (C1 to C6) at the operating centre distance. |
 | Gears by the Numbers | Measuring and specifying a gear | Internal Gear Measurement Between Pins (Even or Odd Teeth, Backlash Allowance, Space Width from a Reading) | complements | Chapter specifies tooth thickness by span or measurement over pins and notes pins suit internal gears; tool computes the between-pins dimension for internal spur gears by the involute function. |
 | Designing Welded Joints by the Numbers | Load paths: what a weld must carry | Shock Stress in Beams and Springs (Dropped Weight or Moving Body, Impact Factor, Allowable) | complements | Chapter classes loads as static, impact or fatigue and notes an impact load can be several times the static load; tool computes the impact factor and peak stress for a dropped weight or moving body. |
+| Machining by the Numbers | Milling: feed per tooth, chip thinning and feed rate | Slot Milling against High-Speed End Milling (Feed Rate, Equivalent Tooling Time, Cost per Part) | complements | Chapter corrects feed per tooth for radial chip thinning and treats full slotting as the hardest case; tool compares cost per part of slot and light-radial high-speed end milling from feed rate, tool life and tooling cost. |
+| Machining and Metal Parts | Milling cutters and milling strategies: speeds, feeds, chip thickness and parts that are easy to mill | Slot Milling against High-Speed End Milling (Feed Rate, Equivalent Tooling Time, Cost per Part) | complements | Chapter explains adaptive, trochoidal and high-efficiency toolpaths that avoid full-width engagement; tool computes the handbook total cost per part of slot against high-speed end milling. |
+| Machine Elements and Mechanical Design | Gears and gearboxes: choosing reducers and geared motors that last | Industrial Worm Gearing Proportions (Coarse Pitch: Diameters, Lead Angle, Face Width, Thread Length, Efficiency) | complements | Chapter notes worm efficiency falls as ratio rises and self-locking depends on ratio and efficiency; tool computes worm and wormgear driving efficiency from lead angle and friction, plus the empirical ratio rules. |
+| Machining by the Numbers | Drilling, reaming and tapping calculations | Metric Ground Thread Tap Limits (M Profile: Pitch and Major Diameter, D and DU Limit Numbers) | complements | Chapter checks tapped M8 holes with go and no-go thread gauges to catch tap wear; tool gives the ASME B94.9 pitch and major diameter limits of a metric ground tap and checks a measured tap. |
 
 ## 2. Rejected
 
@@ -358,6 +362,8 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Forge Welding by the Numbers | Rings, links and chain | Thin Ring Loaded Across a Diameter (Bending Stress, Diameter Changes, Safe Load) | Rejected: chapter covers stock length for rings and links, chain weight and tyre shrinkage, not the stress in a ring under load. |
 | Vibrating Machine Elements by the Numbers | Tune guy ropes and cables away from the machine | Wire Rope on Sheaves and Drums (Radial Pressure, Bending Stress and Load, Drum Capacity) | Rejected: chapter tunes the vibration of guy ropes by tension; sheaves and drums are not discussed. |
 | Electronics Packaging by the Numbers | Write the packaging brief | Shock Stress in Beams and Springs (Dropped Weight or Moving Body, Impact Factor, Allowable) | Rejected: chapter sets drop and impact requirements for a product enclosure; beam and spring shock formulas do not model a product drop. |
+| Machining and Metal Parts | Specialised machining operations: broaching, keyways, splines, knurling and indexing | Wormgear Hob Design (Over-Size Diameters, Sharpening Allowance, Setting Angle, Flutes) | Rejected: chapter mentions hobbing only as a generating process for splines and gears; hob diameters, sharpening allowance and flutes are not discussed. |
+| Machining and Metal Parts | Drilling, reaming and tapping: making holes that are the right size, in the right place | Metric Ground Thread Tap Limits (M Profile: Pitch and Major Diameter, D and DU Limit Numbers) | Rejected: chapter chooses tap drills and specifies 6H tapped holes; the tap’s own pitch diameter limits are not discussed. |
 
 ## 3. Published READOS books with no approved connection
 

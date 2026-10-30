@@ -1,10 +1,10 @@
 {
  "generated": "2026-10-30",
- "base": "http://127.0.0.1:8782",
- "tools": 945,
- "passed": 945,
- "inputs": 8197,
- "figures": 8197,
+ "base": "http://127.0.0.1:8784",
+ "tools": 951,
+ "passed": 951,
+ "inputs": 8262,
+ "figures": 8262,
  "sample": [
   {
    "id": "make-buy",
@@ -5790,6 +5790,42 @@
    "ok": true,
    "inputs": 9,
    "figures": 9
+  },
+  {
+   "id": "worm-cutter-profile-correction",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "industrial-worm-gearing-design",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "worm-hob-design",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "metric-tap-thread-limits",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "unified-tap-thread-limits",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "slot-vs-high-speed-milling-cost",
+   "ok": true,
+   "inputs": 19,
+   "figures": 19
   }
  ]
 }

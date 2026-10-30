@@ -3330,3 +3330,28 @@ Six tools in batch handbook82 from Machinery’s Handbook pages that no earlier 
 |---|---|---|---|---|
 | **Shock Stress in Beams and Springs (Dropped Weight or Moving Body, Impact Factor, Allowable)** `shock-stress-check` | SHOCK STRESS WITHIN ALLOWABLE | Peak stress; Energy absorbed; Model and application | 278–280 | Automated + cross-check |
 | **Thin Ring Loaded Across a Diameter (Bending Stress, Diameter Changes, Safe Load)** `thin-ring-load-check` | RING WITHIN LIMITS | Bending stress; Diameter change; Thin ring; Model and application | 219–220 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook83 (added 31 October 2026)
+
+Six tools in batch handbook83 from pages the page-by-page ledger had marked as candidates: the worm profile change with cutter or grinding wheel size (pp. 3329–3330, Example 3), industrial coarse-pitch worm gearing proportions (pp. 3331–3338, 3344), wormgear hob diameters, sharpening allowance and flutes (pp. 3345–3346), metric and Unified inch ground thread tap limits (pp. 904, 906–907, 909, 911–912) and the cost of slot against high-speed end milling (pp. 1167–1169). Friction coefficients, tap table allowances, tolerances, cutting data and costs are entered by the user. WORKOS now holds 951 tools.
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Worm Profile Change with Cutter or Grinding Wheel Size (Profile Deviation and Pressure Angle Correction)** `worm-cutter-profile-correction` | CORRECT THE CUTTER OR WHEEL | Profile curvature; Pressure angle; Wormgear hob; Model and application | 3329–3330 | Automated + cross-check |
+| **Industrial Worm Gearing Proportions (Coarse Pitch: Diameters, Lead Angle, Face Width, Thread Length, Efficiency)** `industrial-worm-gearing-design` | WORM SET FOLLOWS THE HANDBOOK RULES | Teeth plus threads; Pressure angle; Tooth depth basis; Hunting tooth; Worm diameter; Self-locking; Ratings; Model and application | 3331–3338, 3344 | Automated + cross-check |
+| **Wormgear Hob Design (Over-Size Diameters, Sharpening Allowance, Setting Angle, Flutes)** `worm-hob-design` | HOB LAYOUT FOLLOWS THE HANDBOOK RULES | Flutes and threads; Threads and wormgear teeth; Number of flutes; Model and application | 3345–3346 | Automated + cross-check |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Metric Ground Thread Tap Limits (M Profile: Pitch and Major Diameter, D and DU Limit Numbers)** `metric-tap-thread-limits` | TAP WITHIN ITS LIMITS | Pitch diameter; Major diameter; Table allowances; Lead and angle; Model and application | 904, 911–912 | Automated |
+| **Unified Inch Ground Thread Tap Limits (Pitch and Major Diameter, H and L Limit Numbers)** `unified-tap-thread-limits` | TAP WITHIN ITS LIMITS | Pitch diameter; Major diameter; Table allowances; Lead and angle; Model and application | 904, 906–907, 909 | Automated |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Slot Milling against High-Speed End Milling (Feed Rate, Equivalent Tooling Time, Cost per Part)** `slot-vs-high-speed-milling-cost` | HIGH-SPEED MILLING COSTS LESS | Cost per part; Spindle speed (slot); Spindle speed (high-speed); Passes; Cutting data; Model and application | 1167–1169 | Automated |
