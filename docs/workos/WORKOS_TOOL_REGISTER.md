@@ -3278,3 +3278,30 @@ Six tools in batch handbook80 from the NIST/SEMATECH e-Handbook of Statistical M
 | Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
 |---|---|---|---|---|
 | **Exponential Smoothing Forecast (Next-Period Demand, Forecast Error, Best Smoothing Constant)** `exponential-smoothing-forecast` | FORECAST ERROR WITHIN TARGET | Forecast error; Smoothing constant; Trend and season; Model and application |  | Automated + cross-check |
+
+## Statistics, forecasting and reliability tools, batch handbook81 (added 30 October 2026)
+
+Eight tools in batch handbook81 from the NIST/SEMATECH e-Handbook of Statistical Methods, with every specification, target, activation energy and requirement entered by the user: a normal tolerance interval check (Howe two-sided factor, exact non-central t one-sided factor, Natrella approximation; 7.2.6.3), a one-way ANOVA check (F test of group means; 7.4.3.3–7.4.3.4), a two-variance F test (1.3.5.9), a standard deviation chi-square check with a confidence interval for sigma (1.3.5.8), a Holt trend forecast (double exponential smoothing; 6.4.3.3–6.4.3.4), an Arrhenius acceleration check (8.1.5.1), MTBF confidence bounds for a constant failure rate (8.4.5.1) and a reliability growth check with the power-law (Duane) model (8.4.5.2). Each tool reproduces the NIST worked example. No tool cites Machinery’s Handbook. WORKOS now holds 939 tools.
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Normal Tolerance Interval Check (Coverage, Confidence, Tolerance Factor, Against Specification)** `normal-tolerance-interval-check` | TOLERANCE INTERVAL WITHIN SPEC | Interval against specification; Normal distribution; Model and application |  | Automated + cross-check |
+| **One-Way ANOVA Check (Group Means, F Test, Machines, Suppliers or Settings)** `one-way-anova-check` | GROUP MEANS DIFFER | Difference between group means; Equal spread and normality; Model and application |  | Automated + cross-check |
+| **Two-Variance F Test (Compare the Spread of Two Machines, Batches or Methods)** `two-variance-f-test` | NO EVIDENCE SPREADS DIFFER | Variance ratio; Normal data; Model and application |  | Automated + cross-check |
+| **Standard Deviation Chi-Square Check (Process Spread Against a Target Sigma, Confidence Interval)** `standard-deviation-chi-square-check` | SPREAD DIFFERS FROM TARGET | Spread against target; Normal data; Model and application |  | Automated + cross-check |
+
+### Planning
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Holt Trend Forecast (Double Exponential Smoothing, Level and Trend, Forecast Error)** `holt-trend-forecast` | FORECAST ERROR WITHIN TARGET | Forecast error; Smoothing constants; Trend and season; Model and application |  | Automated + cross-check |
+
+### Maintenance
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Arrhenius Acceleration Check (Temperature Acceleration Factor, Equivalent Hours, Test Length)** `arrhenius-acceleration-check` | TEST COVERS TARGET LIFE | Test length; Activation energy; Same failure mechanism; Model and application |  | Automated + cross-check |
+| **MTBF Confidence Bounds (Field or Test Failures, Chi-Square Limits, Requirement Check)** `mtbf-confidence-bounds` | MTBF REQUIREMENT DEMONSTRATED | Lower bound against requirement; Constant failure rate; Model and application |  | Automated + cross-check |
+| **Reliability Growth Check (Duane Power-Law Model, Growth Slope, MTBF at End of Test)** `reliability-growth-check` | MTBF GOAL DEMONSTRATED | Lower limit against goal; Reliability growth; Model fit; Model and application |  | Automated + cross-check |

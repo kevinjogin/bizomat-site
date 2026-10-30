@@ -1,10 +1,10 @@
 {
  "generated": "2026-10-30",
- "base": "http://127.0.0.1:8799",
- "tools": 931,
- "passed": 931,
- "inputs": 8037,
- "figures": 8037,
+ "base": "http://127.0.0.1:8781",
+ "tools": 939,
+ "passed": 939,
+ "inputs": 8132,
+ "figures": 8132,
  "sample": [
   {
    "id": "make-buy",
@@ -5706,6 +5706,54 @@
    "ok": true,
    "inputs": 15,
    "figures": 15
+  },
+  {
+   "id": "normal-tolerance-interval-check",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "one-way-anova-check",
+   "ok": true,
+   "inputs": 30,
+   "figures": 30
+  },
+  {
+   "id": "two-variance-f-test",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "standard-deviation-chi-square-check",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "holt-trend-forecast",
+   "ok": true,
+   "inputs": 18,
+   "figures": 18
+  },
+  {
+   "id": "arrhenius-acceleration-check",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "mtbf-confidence-bounds",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "reliability-growth-check",
+   "ok": true,
+   "inputs": 19,
+   "figures": 19
   }
  ]
 }
