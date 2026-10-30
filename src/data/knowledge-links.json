@@ -1807,6 +1807,141 @@
    "reason": "Chapter examines likelihood × consequence scoring (likelihood 16, consequence 11 mentions) and its limits; tool is a 5 × 5 likelihood × consequence rating."
   },
   {
+   "reados": "publication/shop-floor-optimisation-by-the-numbers",
+   "chapter": "loading-several-machines",
+   "tool": "capacity",
+   "type": "applies",
+   "note": "Estimates practical output for a period from available hours, parallel stations, cycle time and efficiency, and compares it with demand: the weekly check behind the chapter's loading.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/shop-floor-optimisation-by-the-numbers",
+   "chapter": "balancing-an-assembly-line",
+   "tool": "takt-time",
+   "type": "applies",
+   "note": "Calculates takt time and the required hourly rate from net available production time and required output, the pace the chapter balances the assembly line to.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/shop-floor-optimisation-by-the-numbers",
+   "chapter": "balancing-an-assembly-line",
+   "tool": "bottleneck",
+   "type": "applies",
+   "note": "Finds the constraint among up to three steps against takt, with its load, the line's daily capacity and balance efficiency, used to check the chapter's station balances.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/shop-floor-optimisation-by-the-numbers",
+   "chapter": "balancing-an-assembly-line",
+   "tool": "cycle-time",
+   "type": "applies",
+   "note": "Compares a line's actual cycle time with the cycle demand requires, reporting headroom and output at the actual cycle, as the chapter checks its balanced line.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/shop-floor-optimisation-by-the-numbers",
+   "chapter": "choosing-within-a-budget",
+   "tool": "setup-worth",
+   "type": "applies",
+   "note": "Values a set-up reduction project from current and target set-up times, changeovers a year, hourly cost and investment: hours released, annual value and payback.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/shop-floor-optimisation-by-the-numbers",
+   "chapter": "cutting-bars-with-least-waste",
+   "tool": "stock-cut-plan",
+   "type": "applies",
+   "note": "Plans cutting up to three piece lengths from stock bars by first-fit decreasing with kerf and end trim, and proves the bar count minimal when it meets the material bound.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/shop-floor-optimisation-by-the-numbers",
+   "chapter": "nesting-blanks-on-sheets",
+   "tool": "sheet-nesting-yield",
+   "type": "applies",
+   "note": "Finds the best grid or two-block layout of rectangular blanks on a sheet, with utilisation, sheets for an order and material cost per blank, as the chapter compares sheet sizes.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/accept-or-reject-by-the-numbers",
+   "chapter": "inspection-as-inference",
+   "tool": "normal-out-of-spec",
+   "type": "applies",
+   "note": "Calculates the fraction and parts per million outside each specification limit for a normal process: the base rate that this chapter's inspection decisions start from.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/accept-or-reject-by-the-numbers",
+   "chapter": "readings-near-the-limits",
+   "tool": "measurement-uncertainty-budget",
+   "type": "applies",
+   "note": "Builds a dimensional uncertainty budget from calibration, resolution, repeatability, Abbe and temperature terms, with expanded uncertainty, test ratio and guard-banded limits.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/accept-or-reject-by-the-numbers",
+   "chapter": "guard-bands-and-the-cost-of-errors",
+   "tool": "guard-band-acceptance",
+   "type": "applies",
+   "note": "Decides accept, reject or indeterminate for a reading against a tolerance guard-banded by the gauge budget's expanded uncertainty, the rule the chapter compares with cost-based limits.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/accept-or-reject-by-the-numbers",
+   "chapter": "how-good-is-the-gauge",
+   "tool": "gauge-repeatability-bias-check",
+   "type": "applies",
+   "note": "Runs a Type 1 gauge study from repeated readings of a master: bias, Cg, Cgk, share of tolerance used and a t-test of the bias, the study worked in this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/accept-or-reject-by-the-numbers",
+   "chapter": "learning-the-defect-rate",
+   "tool": "p-chart-check",
+   "type": "applies",
+   "note": "Charts the fraction defective in up to ten equal samples with binomial control limits and flags samples out of control, used to screen each day's audit before the rate is updated.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/accept-or-reject-by-the-numbers",
+   "chapter": "accepting-or-rejecting-a-lot",
+   "tool": "acceptance-sampling-plan",
+   "type": "applies",
+   "note": "Designs the smallest single sampling plan meeting a producer's risk at the AQL and a consumer's risk at the RQL, with its AOQL, and checks a plan the user enters.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/accept-or-reject-by-the-numbers",
+   "chapter": "accepting-or-rejecting-a-lot",
+   "tool": "sampling-oc",
+   "type": "applies",
+   "note": "Gives a single sampling plan's probability of accepting a lot at a stated fraction defective, its average outgoing quality and the operating characteristic table the chapter reads.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/accept-or-reject-by-the-numbers",
+   "chapter": "accepting-or-rejecting-a-lot",
+   "tool": "lot-acceptance-from-capability",
+   "type": "applies",
+   "note": "Links capability to lot acceptance: the fraction out of tolerance for a normal process and the chance a sampling plan accepts such lots, as the chapter shows for BU-25.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
    "reados": "collection/suppliers-contractors-and-government-work",
    "chapter": "not-every-supplier-is-a-partner",
    "tool": "supplier-compare",

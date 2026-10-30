@@ -201,6 +201,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'heating-and-cooling-times-by-the-numbers': { motif: 'streak', tone: 'carbon' },
   'fins-and-heat-sinks-by-the-numbers': { motif: 'interface', tone: 'carbon' },
   'housings-that-rebuild': { motif: 'drawing', tone: 'carbon' },
+  'shop-floor-optimisation-by-the-numbers': { motif: 'gantt', tone: 'carbon' },
+  'accept-or-reject-by-the-numbers': { motif: 'decision', tone: 'ember' },
   'vibrating-machine-elements-by-the-numbers': { motif: 'cycle', tone: 'carbon' },
   'entropy-by-the-numbers': { motif: 'leaf', tone: 'carbon' },
   'scale-models-by-the-numbers': { motif: 'pump', tone: 'paper' },
