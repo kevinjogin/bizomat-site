@@ -4777,6 +4777,123 @@
    "note": "Gives cycles to failure on a Basquin S–N line between 10³ cycles and the corrected endurance limit, used here for each stress band of a random response.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/cryogenic-liquids-by-the-numbers",
+   "chapter": "pressure-and-the-boiling-point",
+   "tool": "boiling-point-at-pressure",
+   "type": "applies",
+   "note": "Estimates the boiling point of liquid nitrogen at a cylinder pressure by Clausius–Clapeyron from its normal boiling point and latent heat, checked here against NIST data.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/cryogenic-liquids-by-the-numbers",
+   "chapter": "heat-leak-and-boil-off",
+   "tool": "wall-heat-loss",
+   "type": "applies",
+   "note": "Gives the heat flow through a foam-insulated bath wall when given the foam conductivity averaged over the cryogenic temperature range, and the outside surface temperature.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/cryogenic-liquids-by-the-numbers",
+   "chapter": "heat-leak-and-boil-off",
+   "tool": "radiant-heat",
+   "type": "applies",
+   "note": "Calculates the radiant heat a liquid nitrogen surface gains from a warm room by Stefan–Boltzmann, used here as the upper bound on an open bath lid.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/cryogenic-liquids-by-the-numbers",
+   "chapter": "the-nitrogen-a-part-needs",
+   "tool": "heating-energy",
+   "type": "applies",
+   "note": "Gives the sensible heat m × c × ΔT between two temperatures; with the mean specific heat from NIST data it matches the heat a part gives up in the bath.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/cryogenic-liquids-by-the-numbers",
+   "chapter": "shrink-fitting-with-liquid-nitrogen",
+   "tool": "shrink-fit-design",
+   "type": "complements",
+   "note": "Finds the interference, interface pressure and hub stresses a shrink fit needs for its torque; the chapter then cools the shaft instead of heating the hub.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/cryogenic-liquids-by-the-numbers",
+   "chapter": "shrink-fitting-with-liquid-nitrogen",
+   "tool": "thermal-growth",
+   "type": "applies",
+   "note": "Gives the change in length for a constant coefficient; with the mean coefficient from NIST contraction data it gives a shaft’s real shrinkage in liquid nitrogen.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/cryogenic-liquids-by-the-numbers",
+   "chapter": "transfer-hoses-and-lines",
+   "tool": "insulated-pipe",
+   "type": "applies",
+   "note": "Calculates radial heat flow through pipe insulation and surface convection; for a liquid nitrogen hose the negative result is the heat it gains per metre.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/cryogenic-design-by-the-numbers",
+   "chapter": "heat-capacity-and-cooldown",
+   "tool": "heating-energy",
+   "type": "applies",
+   "note": "Gives the energy and time to warm a cryostat’s cold mass with a heater, using the mean specific heat integrated from NIST data over the temperature range.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/cryogenic-design-by-the-numbers",
+   "chapter": "thermal-contraction-in-assemblies",
+   "tool": "thermal-growth",
+   "type": "applies",
+   "note": "Gives the change in length for a constant coefficient; with a mean coefficient from NIST contraction data it gives a part’s shrinkage from room temperature to 40 K.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/cryogenic-design-by-the-numbers",
+   "chapter": "thermal-contraction-in-assemblies",
+   "tool": "differential-expansion",
+   "type": "applies",
+   "note": "Calculates the change in clearance between a bore and a shaft of different materials; with mean coefficients it shows a spigot fit opening up at cryogenic temperature.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/cryogenic-design-by-the-numbers",
+   "chapter": "conduction-through-supports",
+   "tool": "wall-heat-loss",
+   "type": "applies",
+   "note": "Calculates one-dimensional conduction through a layer; with a support’s section, length and mean conductivity from its conductivity integral it gives the support’s heat leak.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/cryogenic-design-by-the-numbers",
+   "chapter": "radiation-and-multilayer-insulation",
+   "tool": "radiant-heat",
+   "type": "applies",
+   "note": "Gives the net Stefan–Boltzmann exchange between a surface and its surroundings; with the effective emissivity of the enclosed pair it gives radiation onto a cold mass.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/cryogenic-design-by-the-numbers",
+   "chapter": "cryocoolers-and-the-heat-budget",
+   "tool": "carnot-limit-check",
+   "type": "applies",
+   "note": "Checks a cryocooler’s rated cooling and input power against the Carnot limit, giving its second-law efficiency and showing when a quoted capacity is impossible.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
