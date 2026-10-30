@@ -4678,6 +4678,105 @@
    "note": "Finds the lowest-cost age-replacement interval for a wear-out part from its Weibull shape and life and the costs of planned and failure replacement.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/control-charts-by-the-numbers",
+   "chapter": "variation-is-a-random-variable",
+   "tool": "normal-out-of-spec",
+   "type": "applies",
+   "note": "Gives the z value to each limit, parts per million out of tolerance, expected count and yield for a normal characteristic from its mean and standard deviation.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/control-charts-by-the-numbers",
+   "chapter": "shewhart-xbar-and-r-charts",
+   "tool": "xbar-r-limits",
+   "type": "applies",
+   "note": "Calculates X̄ and R chart centre lines and control limits from the grand average, average range and subgroup size, with the estimated process σ.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/control-charts-by-the-numbers",
+   "chapter": "individuals-and-moving-ranges",
+   "tool": "individuals-chart-check",
+   "type": "applies",
+   "note": "Sets individuals chart limits from the average moving range for up to twelve readings and flags readings outside them.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/control-charts-by-the-numbers",
+   "chapter": "cusum-a-random-walk-that-remembers",
+   "tool": "cusum-chart-check",
+   "type": "applies",
+   "note": "Runs the tabular CUSUM on up to twenty values: reference value, upper and lower sums, first signal and where the shift probably began.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/control-charts-by-the-numbers",
+   "chapter": "ewma-a-chart-with-a-fading-memory",
+   "tool": "ewma-chart-check",
+   "type": "applies",
+   "note": "Calculates the EWMA from the target, its steady-state limits for a chosen λ and width, and the first reading at which it leaves them.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/control-charts-by-the-numbers",
+   "chapter": "charts-for-counts-and-proportions",
+   "tool": "p-chart-check",
+   "type": "applies",
+   "note": "Sets binomial p-chart limits for samples of equal size, lists samples outside them and the defectives per sample that would signal.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/control-charts-by-the-numbers",
+   "chapter": "charts-for-counts-and-proportions",
+   "tool": "c-chart-check",
+   "type": "applies",
+   "note": "Sets Poisson c-chart limits for equal inspection units, the count that would signal and which units fall outside the limits.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/control-charts-by-the-numbers",
+   "chapter": "capability-from-a-stable-process",
+   "tool": "process-capability-check",
+   "type": "applies",
+   "note": "Estimates σ from R̄, gives X̄ and R limits, Cp, Cpk and predicted parts per million, checked against a required Cpk.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/control-charts-by-the-numbers",
+   "chapter": "capability-from-a-stable-process",
+   "tool": "capability-confidence-check",
+   "type": "applies",
+   "note": "Gives Cp and Cpk with their lower confidence bounds and the number of parts needed to prove a required Cpk.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/random-vibration-by-the-numbers",
+   "chapter": "isolating-the-enclosure",
+   "tool": "vibration-isolator-selection",
+   "type": "applies",
+   "note": "Finds the natural frequency, static deflection and mount stiffness for a target isolation of a forcing frequency, and checks chosen mounts for resonance.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/random-vibration-by-the-numbers",
+   "chapter": "fatigue-under-random-loading",
+   "tool": "sn-fatigue-life",
+   "type": "applies",
+   "note": "Gives cycles to failure on a Basquin S–N line between 10³ cycles and the corrected endurance limit, used here for each stress band of a random response.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }

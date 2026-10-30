@@ -153,6 +153,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'checking-drawings-by-the-numbers': { motif: 'specsheet', tone: 'carbon' },
   'reverse-osmosis-by-the-numbers': { motif: 'leaf', tone: 'ember' },
   'breakdowns-and-buffers-by-the-numbers': { motif: 'search', tone: 'ember' },
+  'control-charts-by-the-numbers': { motif: 'mind', tone: 'paper' },
+  'random-vibration-by-the-numbers': { motif: 'fixture', tone: 'paper' },
   'sheet-metal-parts-by-the-numbers': { motif: 'cube', tone: 'paper' },
   'cad-automation-by-the-numbers': { motif: 'code', tone: 'ember' },
   'engineering-software-you-can-sell': { motif: 'launch', tone: 'carbon' },
