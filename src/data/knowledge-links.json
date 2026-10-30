@@ -5219,6 +5219,96 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter fits logistic ramp-up curves to a new product, not smoothing of a demand history."
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "surface-contact-stress",
+   "tool": "gear-pitting-geometry-factor",
+   "type": "complements",
+   "note": "Calculates the AGMA geometry factor I, which takes the tooth curvature at the lowest point of single tooth contact and load sharing in place of this chapter’s pitch-point cylinders.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter estimates contact stress by Hertz with the involute radii of curvature at the pitch point; tool computes AGMA 908-B89 I from the curvature at the LPSTC (or mean radius) and the load sharing ratio."
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "helical-gears-and-axial-thrust",
+   "tool": "gear-pitting-geometry-factor",
+   "type": "complements",
+   "note": "Carries this chapter’s transverse and face contact ratios on to the minimum contact line length, load sharing ratio and pitting geometry factor I for a helical pair.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter calculates transverse and overlap (face) contact ratios for a helical pair; tool uses the same ratios for L_min, m_N, the helical overlap factor and I."
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "centre-distance-and-contact-ratio",
+   "tool": "gear-pitting-geometry-factor",
+   "type": "complements",
+   "note": "Gives the transverse contact ratio this chapter calculates, at the operating centre distance and actual tip diameters, and carries it on to the geometry factor I.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter calculates centre distance and transverse contact ratio from tip and base radii; tool computes the same contact ratio along the line of action (C1 to C6) at the operating centre distance."
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "measuring-and-specifying-a-gear",
+   "tool": "internal-gear-pin-measurement",
+   "type": "complements",
+   "note": "Calculates the measurement between pins for an internal gear, the method this chapter says suits internal gears where span anvils will not fit.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter specifies tooth thickness by span or measurement over pins and notes pins suit internal gears; tool computes the between-pins dimension for internal spur gears by the involute function."
+  },
+  {
+   "reados": "publication/designing-welded-joints-by-the-numbers",
+   "chapter": "load-paths",
+   "tool": "shock-stress-check",
+   "type": "complements",
+   "note": "Puts a number on the impact loads this chapter warns about: the stress when a weight drops onto a beam or a body runs into it, and how many times the static stress that is.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter classes loads as static, impact or fatigue and notes an impact load can be several times the static load; tool computes the impact factor and peak stress for a dropped weight or moving body."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "choosing-gearboxes-and-geared-motors",
+   "tool": "fine-pitch-worm-design",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter selects industrial worm reducers by power, efficiency and thermal rating; fine-pitch worm proportions are not discussed."
+  },
+  {
+   "reados": "publication/forge-welding-by-the-numbers",
+   "chapter": "rings-links-and-chain",
+   "tool": "thin-ring-load-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers stock length for rings and links, chain weight and tyre shrinkage, not the stress in a ring under load."
+  },
+  {
+   "reados": "publication/vibrating-machine-elements-by-the-numbers",
+   "chapter": "tune-guy-ropes-and-cables",
+   "tool": "wire-rope-sheave-drum-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter tunes the vibration of guy ropes by tension; sheaves and drums are not discussed."
+  },
+  {
+   "reados": "publication/electronics-packaging-by-the-numbers",
+   "chapter": "write-the-packaging-brief",
+   "tool": "shock-stress-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter sets drop and impact requirements for a product enclosure; beam and spring shock formulas do not model a product drop."
   }
  ]
 }

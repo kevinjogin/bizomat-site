@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 939 tools with unique ids and every previously published id kept', () => {
+test('register: 945 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 939);
+  assert.equal(ids.length, 945);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 745 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 751 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 745);
+  assert.equal(ids.length, 751);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -5567,5 +5567,150 @@ test('reliability statistics tools: verdicts and guards', () => {
   assert.equal(engine.run('reliability-growth-check').text, 'MTBF GOAL DEMONSTRATED');
   assert.equal(engine.run('reliability-growth-check', { goal: 200 }).text, 'MTBF GOAL NOT DEMONSTRATED');
   const cases: Array<[string, Inputs]> = [['one-way-anova-check', { k: 2, n1: 1, n2: 1 }], ['one-way-anova-check', { k: 2, n1: 2, n2: 2, g1x1: 5, g1x2: 5, g2x1: 7, g2x2: 7 }], ['holt-trend-forecast', { n: 4, y1: 0, y2: 0, y3: 0, y4: 0 }], ['arrhenius-acceleration-check', { ts: 20 }], ['reliability-growth-check', { t3: 30 }], ['reliability-growth-check', { T: 1400 }], ['reliability-growth-check', { r: 2, T: 40, t1: 40, t2: 40 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Fifty-ninth handbook pass (handbook82): tools from pages no earlier tool cited, found with the page ledger.
+// Expected values are the handbook's own tables and worked examples (AGMA I factors, ANSI B6.9 worm Examples 1 and 2, Van Keuren
+// internal-gear measurements, the rope bending and drum capacity examples) and independent closed forms and integrations.
+const IN82 = 25.4;
+const gearI = (n1: number, n2: number, phin: number, over: Inputs = {}) => engine.run('gear-pitting-geometry-factor', { mn: 1, n1, n2, phin, psi: 0, F: 10, Cr: (n1 + n2) / 2, do1: n1 + 2, do2: n2 + 2, Iused: 0.01, ...over });
+
+test('gear pitting geometry factor reproduces the handbook I tables (25°, equal addendum)', () => {
+  // Tables 6 and 7: rows are gear teeth, columns pinion teeth 14, 17, 21, 26, 35, 55, 135; printed to three decimals.
+  const P = [14, 17, 21, 26, 35, 55, 135];
+  const T25: Record<number, number[]> = { 14: [0.086], 17: [0.091, 0.090], 21: [0.095, 0.096, 0.092], 26: [0.100, 0.101, 0.099, 0.094], 35: [0.106, 0.109, 0.108, 0.104, 0.095], 55: [0.113, 0.119, 0.121, 0.119, 0.112, 0.095], 135: [0.123, 0.132, 0.139, 0.142, 0.141, 0.131, 0.096] };
+  let cells = 0;
+  for (const [g, row] of Object.entries(T25)) row.forEach((I, i) => { near(gearI(P[i], Number(g), 25).values.I, I, 0.0006, `I ${P[i]}/${g}`); cells++; });
+  assert.equal(cells, 28);
+  // Hand check of 14/14 by the handbook equations: C6 = 14 sin 25°, C2 = √(8² − 7² cos² 25°) − 2π·7 cos 25° ÷ 14, ρ2 = C6 − C2.
+  const rb = 7 * Math.cos(25 * Math.PI / 180), c2 = Math.sqrt(64 - rb * rb) - 2 * Math.PI * rb / 14, c6 = 14 * Math.sin(25 * Math.PI / 180);
+  near(gearI(14, 14, 25).values.I, Math.cos(25 * Math.PI / 180) / ((1 / c2 + 1 / (c6 - c2)) * 14), 1e-12, '14/14 by hand');
+});
+
+test('gear pitting geometry factor: module independence, helical load sharing and continuity with spur', () => {
+  const base = engine.run('gear-pitting-geometry-factor').values;
+  near(base.I, 0.121, 0.0006, 'default 21/55 at 25° is the table value');
+  near(engine.run('gear-pitting-geometry-factor', { mn: 8, F: 80, Cr: 304, do1: 184, do2: 456 }).values.I, base.I, 1e-12, 'doubling every length keeps I');
+  // Independent re-implementation of AGMA 908-B89 eqs (1)–(39) (scratch proto82.cjs): 21/55, 20°, 15° helix.
+  const h = (F: number) => gearI(21, 55, 20, { psi: 15, F, Cr: 76 / (2 * Math.cos(15 * Math.PI / 180)), do1: 21 / Math.cos(15 * Math.PI / 180) + 2, do2: 55 / Math.cos(15 * Math.PI / 180) + 2 }).values;
+  const lacr = h(3), conv = h(30);
+  near(lacr.mF, 3 * Math.sin(15 * Math.PI / 180) / Math.PI, 1e-12, 'axial contact ratio F sin ψ ÷ π');
+  near(lacr.mN, 1, 0, 'low axial contact ratio helicals have m_N = 1');
+  near(lacr.I, 0.12597581394939325, 1e-9, 'LACR helical I');
+  assert.ok(conv.mF > 1 && conv.mN < 1, 'conventional helical shares load');
+  const na = conv.mF % 1, nr = conv.mp % 1, px = Math.PI / Math.sin(15 * Math.PI / 180), cb = Math.cos(conv.psib * Math.PI / 180);
+  near(conv.Lmin, (na <= 1 - nr ? conv.mp * 30 - na * nr * px : conv.mp * 30 - (1 - na) * (1 - nr) * px) / cb, 1e-9, 'minimum contact length, case I or II');
+  near(conv.mN, 30 / conv.Lmin, 1e-12, 'm_N = F ÷ L_min');
+  near(gearI(21, 55, 20, { psi: 1e-6, F: 10 }).values.I, gearI(21, 55, 20).values.I, 1e-6, 'a vanishing helix angle gives the spur I');
+});
+
+test('fine-pitch worm design reproduces the handbook Examples 1 and 2 (ANSI B6.9)', () => {
+  const e1 = engine.run('fine-pitch-worm-design').values; // Px 0.160 in, 30°, 10 threads, 100 teeth, C ≈ 3 in
+  near(e1.l, 1.6 * IN82, 1e-9, 'lead 1.600 in');
+  near(e1.d, 0.8821 * IN82, 0.00006 * IN82, 'd = 0.8821 in');
+  near(e1.D, 5.0930 * IN82, 0.0001 * IN82, 'D = 5.0930 in');
+  near(e1.C, 2.9876 * IN82, 0.0001 * IN82, 'C = 2.9876 in');
+  near(e1.Pn, 0.1386 * IN82, 0.00006 * IN82, 'Pn = 0.1386 in');
+  near(e1.a, 0.0441 * IN82, 0.00006 * IN82, 'a = 0.0441 in');
+  near(e1.dO, 0.9703 * IN82, 0.0001 * IN82, 'do = 0.9703 in');
+  near(e1.FG, 0.6689 * IN82, 0.0005 * IN82, 'FG = 0.6689 in (handbook works from rounded dimensions)');
+  near(e1.FW, 0.9525 * IN82, 0.001 * IN82, 'FW = 0.9525 in');
+  near(e1.nEst, 2 * Math.PI * 3 / (0.16 * (Math.sqrt(3) + 10)), 1e-6, 'threads for 3 in: 10.04');
+  const e2 = engine.run('fine-pitch-worm-design', { Px: 0.05 * IN82, lam: 3, n: 1, N: 50, Ct: 0.55 * IN82, dmin: 1 }).values;
+  near(e2.d, 0.3037 * IN82, 0.0001 * IN82, 'd = 0.3037 in');
+  near(e2.D, 0.7958 * IN82, 0.0001 * IN82, 'D = 0.7958 in');
+  near(e2.C, 0.5498 * IN82, 0.0001 * IN82, 'C = 0.5498 in');
+  near(e2.FG, 0.2405 * IN82, 0.0003 * IN82, 'FG = 0.2405 in');
+  near(e2.FW, 0.2276 * IN82, 0.0005 * IN82, 'FW = 0.2276 in');
+  near(e2.lamT, Math.atan(1 / (2 * Math.PI * 0.55 / 0.05 - 50)) * 180 / Math.PI, 1e-9, 'cot λ = 19.1152');
+});
+
+test('internal gear measurement between pins reproduces the Van Keuren tables (1.44 pins)', () => {
+  // Tables 3 (even) and 4 (odd), measurements for 1 diametral pitch, which equal module-1 values in consistent units.
+  const rows: Array<[number, number, number]> = [[10, 20, 8.6617], [10, 14.5, 8.8337], [12, 17.5, 10.7404], [50, 25, 48.5212], [94, 14.5, 92.8749], [94, 30, 92.4003],
+    [7, 20, 5.4823], [21, 14.5, 19.7945], [45, 17.5, 43.7217], [61, 25, 59.5010], [111, 30, 109.3893]];
+  for (const [z, phi, M] of rows) near(engine.run('internal-gear-pin-measurement', { m: 1, z, phi, dp: 1.44, Di: z - 2, Dr: z + 2.5, eMin: 0, eMax: 0.1, Mmeas: z }).values.M0, M, 0.00011, `z ${z} at ${phi}°`);
+  const v = engine.run('internal-gear-pin-measurement').values;
+  near(v.M0, 2 * 58.6648, 0.0002, 'module 2 doubles the 60-tooth 20° table value');
+  // A reading made at a limit returns that limit's space-width increase.
+  near(engine.run('internal-gear-pin-measurement', { Mmeas: v.Mhi }).values.esM, 0.1, 1e-9, 'reading at the upper limit');
+  near(engine.run('internal-gear-pin-measurement', { Mmeas: v.M0 }).values.esM, 0, 1e-9, 'reading at the standard space');
+});
+
+test('wire rope sheave and drum check reproduces the handbook bending and drum examples', () => {
+  const PSI = 0.00689475729; // MPa per psi
+  const b = engine.run('wire-rope-sheave-drum-check', { d: 0.5 * IN82, Ds: 24 * IN82, E: 12e6 * PSI }).values; // 1/2 in 6 × 19 FC over a 24 in sheave
+  near(b.dw, 0.0315 * IN82, 1e-12, 'dw = 0.0315 in');
+  near(b.sb, 15750 * PSI, 1e-9, 'sb = 15 750 psi');
+  near(b.A, 0.10125 * IN82 * IN82, 1e-9, 'A = 0.101 in²');
+  near(b.Pb, 15750 * 0.10125 * 4.4482216152605, 1e-3, 'Pb ≈ 1 590 lb (7 094 N)');
+  const v = engine.run('wire-rope-sheave-drum-check').values; // drum B 24, D 18, H 30 in with K 0.741
+  near(v.L, (6 + 18) * 6 * 24 * 0.741 * 0.3048, 1e-9, 'L = (A + D) A B K = 2 560 ft');
+  near(v.p, 2 * 12000 / (609.6 * 14.2875), 1e-12, 'p = 2T ÷ (D d)');
+  near(v.SF, 150000 / (12000 + v.Pb), 1e-12, 'factor on tension plus bending load');
+  near(engine.run('wire-rope-sheave-drum-check', { Y: 25.4 }).values.depth, 127, 1e-9, 'unfilled depth comes off the winding depth');
+});
+
+test('shock stress check follows the handbook beam and spring formulas', () => {
+  const Q = 20 * 9.81, s = engine.run('shock-stress-check').values;
+  near(s.ps, Q * 50 * 1000 / (4 * 8.33e6), 1e-12, 'static stress QaL ÷ 4I');
+  near(s.y, Q * 1000 ** 3 / (48 * 200000 * 8.33e6), 1e-12, 'static deflection QL³ ÷ 48EI');
+  near(s.p, s.ps * (1 + Math.sqrt(1 + 2 * 50 / s.y)), 1e-9, 'p = ps(1 + √(1 + 2h ÷ y))');
+  near(s.approx, 50 * Math.sqrt(6 * Q * 50 * 200000 / (1000 * 8.33e6)), 1e-9, 'approximation a√(6QhE ÷ LI)');
+  near(engine.run('shock-stress-check', { h: 0 }).values.factor, 2, 1e-12, 'a sudden load doubles the static stress');
+  for (const member of ['cant', 'fixed']) {
+    const r = engine.run('shock-stress-check', { member, h: 1e6 }).values;
+    near(r.p / r.approx, 1, 0.01, `${member}: the approximation holds for a large drop`);
+  }
+  near(engine.run('shock-stress-check', { member: 'cant' }).values.y, Q * 1e9 / (3 * 200000 * 8.33e6), 1e-12, 'cantilever deflection QL³ ÷ 3EI');
+  near(engine.run('shock-stress-check', { member: 'fixed' }).values.y, Q * 1e9 / (192 * 200000 * 8.33e6), 1e-12, 'fixed-ended deflection QL³ ÷ 192EI');
+  const r = engine.run('shock-stress-check', { member: 'round' }).values, fsr = 8 * Q * 50 / (Math.PI * 216);
+  near(r.ps, fsr, 1e-12, 'round wire 8QD ÷ πd³');
+  near(r.p, fsr * (1 + Math.sqrt(1 + 79300 * 50 * 6 ** 4 / (4 * Q * 50 ** 3 * 8))), 1e-9, 'round wire table formula');
+  const sq = engine.run('shock-stress-check', { member: 'square' }).values;
+  near(sq.p, 9 * Q * 50 / (4 * 216) * (1 + Math.sqrt(1 + 79300 * 50 * 6 ** 4 / (0.9 * Math.PI * Q * 50 ** 3 * 8))), 1e-9, 'square wire table formula');
+  near(r.approx / (r.ps * Math.sqrt(2 * 50 / r.y)), 1.27 * Math.PI / 4, 1e-12, 'round spring: the approximation is f_s √(2h ÷ y) with 4 ÷ π printed as 1.27');
+  const mv = engine.run('shock-stress-check', { load: 'move', M: 20, vel: 2 }).values;
+  near(mv.E0, 0.5 * 20 * 4, 1e-12, 'kinetic energy ½Mv²');
+  near(mv.peak, 50 * Math.sqrt(6 * 40000 * 200000 / (1000 * 8.33e6)), 1e-9, 'moving body: ½Mv² in place of Qh');
+});
+
+test('thin ring check matches the handbook constants and a direct energy integration', () => {
+  const v = engine.run('thin-ring-load-check').values, P = 3000, D = 200, d = 20, E = 200000, I = Math.PI * d ** 4 / 64;
+  near(v.S, 1.621 * P * D / d ** 3, 0.0002 * v.S, 'S = 1.621 PD ÷ d³ for a round bar');
+  near(v.Pallow, 0.617 * 150 * d ** 3 / D, 0.001 * v.Pallow, 'P = 0.617 S d³ ÷ D');
+  near(v.dv, 0.0186 * P * D ** 3 / (E * I), 0.0003 * v.dv, 'increase = 0.0186 PD³ ÷ EI');
+  near(v.dh / v.dv, 0.92, 0.002, 'decrease about 92 % of the increase');
+  // Castigliano on a quarter ring: M(θ) = PR(1/π − sin θ ÷ 2); δ = 4 ∫ M (∂M/∂P) R dθ ÷ EI, by Simpson's rule.
+  const R = D / 2, n = 2000, h = Math.PI / 2 / n; let s = 0;
+  for (let i = 0; i <= n; i++) { const t = i * h, M = P * R * (1 / Math.PI - Math.sin(t) / 2); s += M * M / P * R * (i === 0 || i === n ? 1 : i % 2 ? 4 : 2); }
+  near(v.dv, 4 * s * h / 3 / (E * I), 1e-9, 'vertical diameter change by integration');
+  near(engine.run('thin-ring-load-check', { sec: 'rect', b: 10 }).values.I, 10 * 20 ** 3 / 12, 1e-9, 'rectangular section b d³ ÷ 12');
+  near(engine.run('thin-ring-load-check', { sec: 'user', Iu: I }).values.S, v.S, 1e-12, 'other section with the same I gives the same stress');
+});
+
+test('fifty-ninth-pass tools give pass and fail verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('gear-pitting-geometry-factor').text, 'GEOMETRY FACTOR SUPPORTS THE RATING');
+  assert.equal(engine.run('gear-pitting-geometry-factor', { Iused: 0.13 }).text, 'GEOMETRY FACTOR BELOW THE VALUE USED');
+  assert.equal(engine.run('fine-pitch-worm-design').text, 'WORM SET MEETS THE CENTRE DISTANCE');
+  assert.equal(engine.run('fine-pitch-worm-design', { Ct: 80 }).text, 'CENTRE DISTANCE OFF TARGET');
+  assert.equal(engine.run('fine-pitch-worm-design', { dmax: 20 }).text, 'WORM DIAMETER OUTSIDE RANGE');
+  assert.equal(engine.run('internal-gear-pin-measurement').text, 'READING WITHIN LIMITS');
+  assert.equal(engine.run('internal-gear-pin-measurement', { Mmeas: 117.3 }).text, 'READING OUTSIDE LIMITS');
+  assert.equal(engine.run('wire-rope-sheave-drum-check').text, 'ROPE, SHEAVE AND DRUM SUIT THE DUTY');
+  assert.equal(engine.run('wire-rope-sheave-drum-check', { pAllow: 2 }).text, 'SHEAVE PRESSURE TOO HIGH');
+  assert.equal(engine.run('wire-rope-sheave-drum-check', { SFreq: 8 }).text, 'ROPE FACTOR TOO LOW WITH BENDING');
+  assert.equal(engine.run('wire-rope-sheave-drum-check', { Lreq: 900 }).text, 'DRUM TOO SMALL FOR THE ROPE');
+  assert.equal(engine.run('shock-stress-check').text, 'SHOCK STRESS WITHIN ALLOWABLE');
+  assert.equal(engine.run('shock-stress-check', { h: 2000 }).text, 'SHOCK STRESS ABOVE ALLOWABLE');
+  assert.equal(engine.run('thin-ring-load-check').text, 'RING WITHIN LIMITS');
+  assert.equal(engine.run('thin-ring-load-check', { P: 4000 }).text, 'RING OVERSTRESSED');
+  assert.equal(engine.run('thin-ring-load-check', { dMax: 0.1 }).text, 'RING DEFLECTS TOO MUCH');
+  const cases: Array<[string, Inputs]> = [
+    ['gear-pitting-geometry-factor', { n1: 60 }], ['gear-pitting-geometry-factor', { Cr: 100 }], ['gear-pitting-geometry-factor', { do1: 86 }], ['gear-pitting-geometry-factor', { do1: 110, do2: 245 }],
+    ['fine-pitch-worm-design', { dmin: 60 }], ['internal-gear-pin-measurement', { eMin: 0.2 }], ['internal-gear-pin-measurement', { Di: 125 }], ['internal-gear-pin-measurement', { dp: 20 }],
+    ['wire-rope-sheave-drum-check', { Hf: 400 }], ['shock-stress-check', { load: 'move', vel: 0 }], ['shock-stress-check', { member: 'round', dw: 60 }], ['thin-ring-load-check', { d: 250 }],
+  ];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
