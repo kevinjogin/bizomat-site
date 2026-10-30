@@ -199,6 +199,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'housings-that-rebuild': { motif: 'drawing', tone: 'carbon' },
   'vibrating-machine-elements-by-the-numbers': { motif: 'cycle', tone: 'carbon' },
   'entropy-by-the-numbers': { motif: 'leaf', tone: 'carbon' },
+  'scale-models-by-the-numbers': { motif: 'pump', tone: 'paper' },
+  'polymer-chains-by-the-numbers': { motif: 'neural', tone: 'paper' },
   'water-hammer-by-the-numbers': { motif: 'waterwheel', tone: 'graphite' },
   'compressed-air-plant-by-the-numbers': { motif: 'expansion', tone: 'graphite' },
   'transitional-elbows-by-the-numbers': { motif: 'triangle', tone: 'paper' },

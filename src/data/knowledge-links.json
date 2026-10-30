@@ -2347,6 +2347,69 @@
    "reason": "Rejected: chapter’s batch tests are hardness and an inflation curve on finished sleeves; a laboratory swelling test is not part of its acceptance method."
   },
   {
+   "reados": "publication/polymer-chains-by-the-numbers",
+   "chapter": "molar-mass-averages-and-regrind",
+   "tool": "mixture-cost",
+   "type": "applies",
+   "note": "Gives the mass-weighted average of a mixture and the two-ingredient share for a target; used for the weight-average molar mass of regrind blends, which mixes linearly (Mn does not).",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/polymer-chains-by-the-numbers",
+   "chapter": "intrinsic-viscosity-and-resin-checks",
+   "tool": "polymer-intrinsic-viscosity",
+   "type": "applies",
+   "note": "Gives intrinsic viscosity from viscometer flow times by three single-point relations and a viscosity-average molar mass from Mark–Houwink constants, against specification limits.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/polymer-chains-by-the-numbers",
+   "chapter": "overlap-and-cement-viscosity",
+   "tool": "linear-calibration-check",
+   "type": "applies",
+   "note": "Fits a least-squares line with standard errors; with logarithms of concentration and viscosity entered it gives the cement power-law exponent and the concentration for a target viscosity.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/polymer-chains-by-the-numbers",
+   "chapter": "flory-huggins-and-cloud-points",
+   "tool": "polymer-solution-phase-check",
+   "type": "applies",
+   "note": "Applies Flory–Huggins theory to give χ, the binodal, spinodal and critical values, the cloud temperature and the margin above it; used to check the cement for cold storage.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/polymer-chains-by-the-numbers",
+   "chapter": "hansen-parameters-cements-and-cleaners",
+   "tool": "hansen-solvent-compatibility",
+   "type": "applies",
+   "note": "Gives the Hansen distance and RED of a liquid or a two-liquid blend against a polymer, with a resist or dissolve verdict; used to choose cement solvents and safe cleaners.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/polymer-chains-by-the-numbers",
+   "chapter": "crystals-diluents-and-melting",
+   "tool": "polymer-melting-point-depression",
+   "type": "applies",
+   "note": "Applies Flory's equation to give the melting or dissolution temperature of a semicrystalline polymer with a diluent and the margin to a service or process temperature.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/polymer-chains-by-the-numbers",
+   "chapter": "measuring-chains-and-the-incoming-check",
+   "tool": "dls-particle-size",
+   "type": "applies",
+   "note": "Reduces a light-scattering decay rate to a diffusion coefficient and hydrodynamic size by Stokes–Einstein, with a qRh check; used to size dissolved polystyrene coils.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
    "reados": "publication/plastic-parts-by-the-numbers",
    "chapter": "define-the-part-before-the-mould",
    "tool": "hansen-solvent-compatibility",
@@ -2495,6 +2558,78 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: the chapter covers the dew point of room and enclosure air; the combustion tool is about flue gas and is linked from the combustion book instead."
+  },
+  {
+   "reados": "publication/scale-models-by-the-numbers",
+   "chapter": "dimensions-and-the-homogeneity-check",
+   "tool": "orifice-flow",
+   "type": "applies",
+   "note": "Gives the flow through a sharp-edged orifice from its diameter, discharge coefficient, pressure difference and density; used for the storage tank outlet at full size and at 1:6 scale.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/scale-models-by-the-numbers",
+   "chapter": "froude-scaling",
+   "tool": "tank-drain-time-check",
+   "type": "applies",
+   "note": "Integrates the falling head through a bottom outlet to give drain time, volume drained and starting outflow; used to show drain time scaling as the square root of the length ratio.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/scale-models-by-the-numbers",
+   "chapter": "reynolds-number-and-viscous-scale-effects",
+   "tool": "pipe-flow",
+   "type": "applies",
+   "note": "Gives the mean velocity and Reynolds number of a full pipe from its bore, the flow and the kinematic viscosity; used for the model suction pipe at different water temperatures.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/scale-models-by-the-numbers",
+   "chapter": "power-laws-from-test-data",
+   "tool": "linear-calibration-check",
+   "type": "applies",
+   "note": "Fits a least-squares line with slope and intercept standard errors; with logarithms entered it fits the orifice-plate calibration as a power law and inverts it for the design flow.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/scale-models-by-the-numbers",
+   "chapter": "regimes-and-crossovers",
+   "tool": "pipe-friction",
+   "type": "applies",
+   "note": "Gives the Reynolds number, Darcy friction factor (64/Re or Colebrook–White) and head loss of a straight pipe; used to compare the model and prototype suction pipes.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/scale-models-by-the-numbers",
+   "chapter": "pumps-fans-and-specific-speed",
+   "tool": "pump-affinity",
+   "type": "applies",
+   "note": "Applies the affinity laws to give flow, head and power at a new speed or impeller diameter; used for the duty pumps slowed to 1,300 rpm, before checking against static head.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/scale-models-by-the-numbers",
+   "chapter": "pumps-fans-and-specific-speed",
+   "tool": "fan-drive-sizing",
+   "type": "applies",
+   "note": "Gives fan air and shaft power, the speed, pressure and power for a new flow by the fan laws, and the motor rating and pulley; used for the station ventilation fan.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/scale-models-by-the-numbers",
+   "chapter": "planning-and-reporting-a-model-test",
+   "tool": "sample-size-mean",
+   "type": "applies",
+   "note": "Gives the number of independent readings needed to estimate a mean within a chosen margin and confidence; used to set the swirl readings taken in each model run.",
+   "status": "approved",
+   "evidence": "book-link"
   },
   {
    "reados": "publication/condensation-control-by-the-numbers",
