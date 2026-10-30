@@ -2550,6 +2550,132 @@
    "reason": "Chapter finds the flue dew point from the water partial pressure (56.4 °C for methane at 15 % excess air) and warns about flues not built to be wet; tool does the same calculation (56.5 °C) with a surface margin check."
   },
   {
+   "reados": "publication/viscosity-by-the-numbers",
+   "chapter": "what-viscosity-measures",
+   "tool": "viscosity-units",
+   "type": "applies",
+   "note": "Converts an oil viscosity between centistokes, centipoise, pascal-seconds, reyns and Saybolt seconds from its specific gravity, the conversions this chapter explains.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/viscosity-by-the-numbers",
+   "chapter": "temperature-and-the-walther-relation",
+   "tool": "oil-viscosity-temperature",
+   "type": "applies",
+   "note": "Fits the ASTM D341 (Walther) relation through two data sheet viscosities and gives the kinematic viscosity at any operating temperature, as the chapter does by hand.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/viscosity-by-the-numbers",
+   "chapter": "choosing-a-viscosity-grade",
+   "tool": "lubricant-viscosity-check",
+   "type": "applies",
+   "note": "Checks an oil grade against a machine: viscosity at the operating and cold-start temperatures, its ratio to the least needed, and the cold-start limit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/viscosity-by-the-numbers",
+   "chapter": "flow-in-lines-and-hoses",
+   "tool": "hydraulic-line-sizing",
+   "type": "applies",
+   "note": "Checks a hydraulic line: velocity, Reynolds number, laminar or turbulent friction, pressure drop and heat at the oil viscosity entered, and Barlow tube rating.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/viscosity-by-the-numbers",
+   "chapter": "leakage-through-clearances",
+   "tool": "hydraulic-power-unit-sizing",
+   "type": "applies",
+   "note": "Sizes a pump displacement from the flow, speed and volumetric efficiency, with shaft power, reservoir, heat load and cooler capacity; used here for hot-oil efficiency.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/viscosity-by-the-numbers",
+   "chapter": "viscous-heating",
+   "tool": "liquid-throttling-temperature-rise",
+   "type": "applies",
+   "note": "Calculates the temperature rise of oil throttled across a relief valve or orifice from its density, expansion coefficient, specific heat and pressure drop.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plain-bearings-by-the-numbers",
+   "chapter": "unit-load-speed-and-pv",
+   "tool": "journal-bearing-pv",
+   "type": "applies",
+   "note": "Calculates a bush or sleeve bearing's projected pressure, sliding velocity and PV and compares each with the material limits entered, the screening check of this chapter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plain-bearings-by-the-numbers",
+   "chapter": "petroff-friction",
+   "tool": "journal-bearing-petroff",
+   "type": "applies",
+   "note": "Calculates a journal bearing's unit load, Petroff friction torque, friction coefficient, power loss and Sommerfeld number for a centred journal.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plain-bearings-by-the-numbers",
+   "chapter": "sommerfeld-number-and-film-thickness",
+   "tool": "journal-bearing-design",
+   "type": "applies",
+   "note": "First design of a journal bearing: unit load, L/D, surface speed, Sommerfeld number, Petroff friction and the oil flow to carry its heat, checked against limits.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plain-bearings-by-the-numbers",
+   "chapter": "oil-temperature-and-the-heat-balance",
+   "tool": "journal-bearing-oil-check",
+   "type": "applies",
+   "note": "Evaluates an oil in a journal bearing at a running temperature: ASTM D341 viscosity, unit load, Sommerfeld number and Petroff friction, with viscosity and film checks.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plain-bearings-by-the-numbers",
+   "chapter": "thrust-bearings",
+   "tool": "thrust-bearing-pads",
+   "type": "applies",
+   "note": "Calculates a thrust face's pad area, unit load, mean sliding velocity and PV from its diameters, pad coverage, thrust and speed, against allowable values.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plain-bearings-by-the-numbers",
+   "chapter": "thrust-bearings",
+   "tool": "thrust-pad-bearing-check",
+   "type": "applies",
+   "note": "Checks a thrust pad bearing's unit load and PV, its friction loss from an entered coefficient, and the oil flow needed to carry that heat against the supply.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plain-bearings-by-the-numbers",
+   "chapter": "starts-stops-and-materials",
+   "tool": "film-thickness-ratio",
+   "type": "complements",
+   "note": "Divides a film thickness by the composite roughness of two surfaces and reports the regime; the chapter supplies the film from the short-bearing solution.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plain-bearings-by-the-numbers",
+   "chapter": "plain-or-rolling-and-failure-diagnosis",
+   "tool": "bearing-friction",
+   "type": "complements",
+   "note": "Estimates rolling bearing friction torque, power loss and heat from load, bore and a friction coefficient, for the chapter's comparison with sleeve bearings.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
    "reados": "publication/condensation-control-by-the-numbers",
    "chapter": "water-in-air-vapour-pressure-and-dew-point",
    "tool": "combustion-air-flue-gas-check",

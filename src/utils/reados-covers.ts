@@ -169,6 +169,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'plate-work-by-the-numbers': { motif: 'cube', tone: 'carbon' },
   'configure-price-quote-by-the-numbers': { motif: 'estimate', tone: 'ember' },
   'engineering-tools-people-use': { motif: 'interface', tone: 'paper' },
+  'viscosity-by-the-numbers': { motif: 'lens', tone: 'paper' },
+  'plain-bearings-by-the-numbers': { motif: 'scales', tone: 'graphite' },
   'commissioning-custom-software': { motif: 'handover', tone: 'graphite' },
   'pneumatics-by-the-numbers': { motif: 'pump', tone: 'carbon' },
   'rectangular-duct-fittings-by-the-numbers': { motif: 'pump', tone: 'graphite' },
