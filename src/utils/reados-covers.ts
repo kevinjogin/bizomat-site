@@ -165,6 +165,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'tanks-and-hoppers-by-the-numbers': { motif: 'funnel', tone: 'ember' },
   'bulk-solids-flow-by-the-numbers': { motif: 'funnel', tone: 'graphite' },
   'blending-bulk-solids-by-the-numbers': { motif: 'bubbles', tone: 'graphite' },
+  'microstructures-by-the-numbers': { motif: 'lens', tone: 'graphite' },
+  'defect-maps-by-the-numbers': { motif: 'search', tone: 'paper' },
   'ductwork-by-the-numbers': { motif: 'pathway', tone: 'carbon' },
   'sheet-metal-patterns-by-the-numbers': { motif: 'geometry', tone: 'graphite' },
   'marking-out-by-the-numbers': { motif: 'triangle', tone: 'carbon' },

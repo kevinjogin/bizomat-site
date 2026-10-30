@@ -5505,6 +5505,150 @@
    "evidence": "book-link"
   },
   {
+   "reados": "publication/microstructures-by-the-numbers",
+   "chapter": "phase-fractions-by-point-counting",
+   "tool": "sample-size-mean",
+   "type": "applies",
+   "note": "Gives the number of measurements needed to estimate a mean within a margin at a confidence level; used for the number of microscope fields needed to pin down a pearlite fraction.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/microstructures-by-the-numbers",
+   "chapter": "grain-size-by-counts-and-intercepts",
+   "tool": "grain-size",
+   "type": "applies",
+   "note": "Converts grains per square inch at 100×, grains per mm² or the mean lineal intercept into the ASTM grain size number G and the equivalent values; used for the planimetric and intercept counts.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/microstructures-by-the-numbers",
+   "chapter": "grain-size-acceptance-and-spread",
+   "tool": "grain-size-acceptance",
+   "type": "applies",
+   "note": "Averages up to five field readings into an ASTM grain size, gives each field’s G and the spread, and checks both against limits; used to accept a shaft and to flag a duplex structure.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/microstructures-by-the-numbers",
+   "chapter": "graphite-shape-and-nodularity",
+   "tool": "brinell-test-check",
+   "type": "applies",
+   "note": "Evaluates a Brinell test from two diameters: hardness, validity against thickness, edge and spacing rules, and the specification range; used for casting hardness on machined and skin faces.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/microstructures-by-the-numbers",
+   "chapter": "porosity-in-sections",
+   "tool": "casting-solidification",
+   "type": "complements",
+   "note": "Compares casting and riser moduli and solidification times by Chvorinov’s rule; used to trace shrinkage porosity at a boss to a riser that froze before the section it fed.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/microstructures-by-the-numbers",
+   "chapter": "inclusions-and-the-largest-one",
+   "tool": "tensile-test-evaluation",
+   "type": "complements",
+   "note": "Evaluates a round tensile test: yield, tensile strength, elongation, reduction of area and true fracture stress; used to compare longitudinal and transverse ductility affected by inclusions.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/microstructures-by-the-numbers",
+   "chapter": "hardness-traverses-and-microhardness",
+   "tool": "vickers-knoop-hardness",
+   "type": "applies",
+   "note": "Calculates Vickers or Knoop hardness from test force and diagonal, with indentation depth and least layer thickness; used for microhardness readings across a hardened case.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/microstructures-by-the-numbers",
+   "chapter": "hardness-traverses-and-microhardness",
+   "tool": "vickers-test-check",
+   "type": "applies",
+   "note": "Evaluates a Vickers test from two diagonals and checks thickness, edge distance, spacing and diagonal difference against set rules; used to keep traverse indentations valid.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/microstructures-by-the-numbers",
+   "chapter": "hardness-traverses-and-microhardness",
+   "tool": "measurement-uncertainty-budget",
+   "type": "complements",
+   "note": "Combines calibration, resolution, repeatability, Abbe and temperature terms into an expanded uncertainty and test ratio; used for the uncertainty of measuring a microhardness diagonal.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/microstructures-by-the-numbers",
+   "chapter": "from-microstructure-to-decision",
+   "tool": "two-sample-t",
+   "type": "applies",
+   "note": "Performs Welch’s two-sample t-test from means, standard deviations and sizes; used to compare two laboratories’ nodule counts and pearlite before and after a supplier change.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/defect-maps-by-the-numbers",
+   "chapter": "why-defect-locations-matter",
+   "tool": "scrap-impact",
+   "type": "applies",
+   "note": "Estimates units and direct cost lost from units produced, cost per unit and scrap rate; used with the rework cost per door to cost a rise in the coating rework rate.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/defect-maps-by-the-numbers",
+   "chapter": "defect-density-and-the-poisson-count",
+   "tool": "yield-check",
+   "type": "applies",
+   "note": "Calculates final yield, first-pass yield, units lost and units reworked from starts, good units and good-first-time units; used for the first-pass yield of the mapped doors.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/defect-maps-by-the-numbers",
+   "chapter": "charting-and-sampling-defect-counts",
+   "tool": "c-chart-check",
+   "type": "applies",
+   "note": "Calculates the average count, Poisson control limits and the units out of control for defect counts on equal inspection units; used for the daily 20-door defect chart.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/defect-maps-by-the-numbers",
+   "chapter": "charting-and-sampling-defect-counts",
+   "tool": "acceptance-sampling-plan",
+   "type": "applies",
+   "note": "Designs a single attributes sampling plan, n and c, from AQL, RQL and the producer’s and consumer’s risks, with its AOQL; used for the customer’s audit of door deliveries.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/defect-maps-by-the-numbers",
+   "chapter": "charting-and-sampling-defect-counts",
+   "tool": "sampling-oc",
+   "type": "applies",
+   "note": "Gives the probability a sampling plan accepts a lot at a stated fraction defective, with the average outgoing quality; used to forecast lot rejections at the plant’s escape rate.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/defect-maps-by-the-numbers",
+   "chapter": "from-map-to-cause-and-proof",
+   "tool": "process-change-trial",
+   "type": "applies",
+   "note": "Plans the parts needed per group to detect a worthwhile difference and evaluates a before-and-after trial with Welch’s t-test; used to prove the drop in defects per door.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
    "reados": "publication/first-of-a-kind-technology-by-the-numbers",
    "chapter": "ramp-up-to-nameplate",
    "tool": "reliability-growth-check",
