@@ -4372,6 +4372,186 @@
    "note": "Models a direct evaporative cooler: wet-bulb limit, leaving temperature and humidity at the pad effectiveness, water evaporated and sensible cooling against a target.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "collection/manufacturing-quality",
+   "chapter": "statistical-process-control-on-the-shop-floor",
+   "tool": "c-chart-check",
+   "type": "applies",
+   "note": "Builds the c chart this chapter recommends for counts of defects per unit, such as blemishes per panel, with Poisson limits and the count that signals.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter’s chart-selection table names the c or u chart for defects per unit or area; tool computes c̄ ± 3√c̄ (NIST 6.3.3.1) and flags units outside."
+  },
+  {
+   "reados": "collection/manufacturing-quality",
+   "chapter": "statistical-process-control-on-the-shop-floor",
+   "tool": "ewma-chart-check",
+   "type": "complements",
+   "note": "Charts an exponentially weighted moving average, which shows the small sustained shifts and drifts this chapter’s run rules look for sooner than a Shewhart chart.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter applies Shewhart limits plus run rules for trends and shifts such as tool wear; tool gives the EWMA chart (NIST 6.3.2.4), designed for small shifts."
+  },
+  {
+   "reados": "collection/manufacturing-quality",
+   "chapter": "statistical-process-control-on-the-shop-floor",
+   "tool": "cusum-chart-check",
+   "type": "complements",
+   "note": "Runs a tabular CUSUM, an alternative to this chapter’s run rules for catching a small, sustained shift in the process mean early.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter uses run rules on Shewhart charts to detect shifts; tool computes the tabular CUSUM (NIST 6.3.2.3) with a decision interval, a complementary detector."
+  },
+  {
+   "reados": "publication/random-error-and-drift-by-the-numbers",
+   "chapter": "drift-checks-and-the-uncertainty-budget",
+   "tool": "ewma-chart-check",
+   "type": "applies",
+   "note": "Builds the exponentially weighted moving average chart this chapter names as more sensitive to slow drift, for the averages of your check readings.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter charts check-weight averages with 3-sigma limits and cites the NIST EWMA chart as more sensitive to slow drifts; tool implements that chart."
+  },
+  {
+   "reados": "publication/random-error-and-drift-by-the-numbers",
+   "chapter": "drift-checks-and-the-uncertainty-budget",
+   "tool": "cusum-chart-check",
+   "type": "complements",
+   "note": "Applies a tabular CUSUM to a series of check results, another way to catch the slow drift this chapter charts before it reaches a limit.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter watches for drift and long runs on one side of the centre line; tool’s tabular CUSUM accumulates small one-sided departures until they exceed h."
+  },
+  {
+   "reados": "collection/research-and-evidence-for-better-decisions",
+   "chapter": "screening-and-cleaning-data-before-analysis",
+   "tool": "grubbs-outlier-check",
+   "type": "complements",
+   "note": "Gives a statistical test for one suspect value in roughly normal data, to support this chapter’s advice to investigate each outlier rather than delete it.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter says to investigate outliers against source records and keep genuine ones; tool applies the Grubbs test (NIST 1.3.5.17) and states an outlier is a reason to investigate."
+  },
+  {
+   "reados": "collection/research-and-evidence-for-better-decisions",
+   "chapter": "describing-data-centre-spread-and-shape",
+   "tool": "grubbs-outlier-check",
+   "type": "complements",
+   "note": "Tests whether an extreme value of the kind this chapter shows pulling the mean is a statistical outlier, for roughly normal data.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains how extreme values distort the mean and how box plots mark outliers; tool tests a single extreme value with the Grubbs statistic."
+  },
+  {
+   "reados": "collection/practical-mathematics-for-engineering",
+   "chapter": "straight-line-relationships-and-estimating-models",
+   "tool": "linear-calibration-check",
+   "type": "applies",
+   "note": "Fits the calibration line this chapter describes through several standards, then converts a new reading and gives the uncertainty of the result.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers calibration lines, two-point calibration and fitting a line to data; tool fits a least-squares line, inverts it and gives NIST calibration limits."
+  },
+  {
+   "reados": "collection/manufacturing-quality",
+   "chapter": "measurement-system-analysis-for-manufacturers",
+   "tool": "linear-calibration-check",
+   "type": "complements",
+   "note": "Fits a calibration line against reference standards and tests offset and gain, the calibration side this chapter separates from MSA.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter distinguishes calibration against standards from MSA and checks bias and linearity; tool fits the line and tests zero intercept and unit slope (NIST 2.3.6.6)."
+  },
+  {
+   "reados": "collection/manufacturing-operations-and-design-for-manufacture",
+   "chapter": "demand-forecasting-for-small-manufacturers",
+   "tool": "exponential-smoothing-forecast",
+   "type": "applies",
+   "note": "Works the exponential smoothing forecast this chapter recommends: next-period forecast, its error on your history and the best smoothing constant.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter recommends exponential smoothing and measuring forecast error monthly; tool computes single exponential smoothing (NIST 6.4.3.1) with MSE and the best α."
+  },
+  {
+   "reados": "publication/demand-and-benefit-forecasts-by-the-numbers",
+   "chapter": "forecast-error-and-base-rates",
+   "tool": "exponential-smoothing-forecast",
+   "type": "complements",
+   "note": "Measures the RMSE of a smoothing forecast on your history; a best constant of 1 is the naive forecast this chapter uses as a benchmark.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter defines RMSE and compares forecasts with naive benchmarks; tool reports RMSE and the best α, where α = 1 reproduces the naive last-value forecast."
+  },
+  {
+   "reados": "publication/contact-temperature-sensors-by-the-numbers",
+   "chapter": "calibration-and-the-uncertainty-budget",
+   "tool": "linear-calibration-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter builds a traceability chain and uncertainty budget from certificate values; it does not fit a calibration line."
+  },
+  {
+   "reados": "publication/demand-and-benefit-forecasts-by-the-numbers",
+   "chapter": "ramp-up-curves",
+   "tool": "linear-calibration-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter fits a logistic ramp-up curve by least squares; no instrument calibration."
+  },
+  {
+   "reados": "collection/fluids-hvac-and-building-services",
+   "chapter": "psychrometrics-for-hvac",
+   "tool": "c-chart-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: “psychrometric chart” is a word match only."
+  },
+  {
+   "reados": "collection/practical-mathematics-for-engineering",
+   "chapter": "growth-decay-and-logarithms",
+   "tool": "c-chart-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers exponential growth and decay, not defect counts."
+  },
+  {
+   "reados": "collection/research-and-evidence-for-better-decisions",
+   "chapter": "correlation-causation-and-natural-experiments",
+   "tool": "grubbs-outlier-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter mentions outliers only as a reason to plot a correlation; no single-sample outlier testing."
+  },
+  {
+   "reados": "collection/reporting-history-and-analytical-data",
+   "chapter": "nearest-neighbour-search-and-meaningful-similarity",
+   "tool": "grubbs-outlier-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter is about similarity search in data systems; outliers are mentioned in passing."
+  },
+  {
+   "reados": "publication/humidity-control-by-the-numbers",
+   "chapter": "measuring-humidity-on-site",
+   "tool": "linear-calibration-check",
+   "type": "complements",
+   "note": "Fits a calibration line through readings at several saturated-salt fixed points, giving the offset and slope this chapter’s check looks for and the uncertainty of corrected readings.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter checks a humidity sensor at low and high saturated-salt fixed points because two points give the offset and the slope; tool fits that line by least squares, tests a = 0 and b = 1 and gives calibration limits."
   }
  ]
 }

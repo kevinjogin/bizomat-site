@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 925 tools with unique ids and every previously published id kept', () => {
+test('register: 931 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 925);
+  assert.equal(ids.length, 931);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -5443,5 +5443,55 @@ test('Carnot and chilling limits: verdicts and guards', () => {
     ['heat-engine-carnot-limit', { Th: 30 }], ['heat-engine-carnot-limit', { Th: 20 }], ['heat-engine-carnot-limit', { Tc: -274, Th: 100 }], ['heat-engine-carnot-limit', { eff: 0 }],
     ['chilling-least-work-check', { T2: 30 }], ['chilling-least-work-check', { T2: 25 }], ['chilling-least-work-check', { T2: 40, T1: 50 }], ['chilling-least-work-check', { P: 0 }],
   ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Batch handbook80: EWMA, CUSUM and c charts, Grubbs outlier test, linear calibration and exponential smoothing. Expected
+// values are independent hand calculations (explicit EWMA weights, the max-of-partial-sums CUSUM identity, a t quantile from
+// Simpson integration of the density, normal equations with bisection of the calibration limits, explicit smoothing
+// weights) and NIST e-Handbook worked examples.
+const SQ_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['ewma-chart-check', {}, { sd: 0.8628105793755388, ucl: 52.588431738126616, lcl: 47.411568261873384, last: 51.988243258644616, nOut: 0 }, 1e-9],
+  ['cusum-chart-check', {}, { k: 0.3175, shi: 19.06, slo: 0, first: 14, start: 13 }, 1e-9],
+  ['c-chart-check', {}, { cbar: 16, ucl: 28, lcl: 4, thr: 29, nOut: 0 }, 1e-12],
+  ['grubbs-outlier-check', {}, { mean: 206.43375, s: 15.852564404987783, G: 2.468764611212452, t: 4.115170117554614, Gcrit: 2.126645087189912, out: 1 }, 1e-6],
+  ['grubbs-outlier-check', { test: 'max' }, { G: 2.468764611212452, Gcrit: 2.031652001546452 }, 1e-6], // NIST example: G 2.4687 against 2.032
+  ['linear-calibration-check', {}, { a: 0.3238095238095238, b: 1.0078571428571428, s: 0.24299715851758263, t: 2.7764451051922983, ta: 1.8412032276511978, tb: 2.7052815726087784, xstar: 49.288920387432086, lo: 48.56578537417677, hi: 50.01196435474368 }, 1e-6],
+  ['exponential-smoothing-forecast', {}, { mse: 16.49652420390736, rmse: 4.06159133886059, fc: 72.40185546875, bestA: 1, bestMse: 12.636363636363637, bestFc: 70 }, 1e-9],
+  ['exponential-smoothing-forecast', { alpha: 0.1 }, { mse: 18.98349179142248 }, 1e-9], // NIST example: MSE 19.0 at α = 0.1
+];
+for (const [id, over, expected, tol] of SQ_CASES) test(`quality statistics: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('quality statistics tools: NIST examples and identities', () => {
+  near(engine.run('cusum-chart-check').values.shi, 19.04, 0.03, 'NIST CUSUM table: upper sum 19.04 at group 20 (NIST used unrounded means)');
+  const c = engine.run('c-chart-check', { k: 2, c1: 12, c2: 20 }).values;
+  near(c.ucl, 28, 1e-12, 'NIST wafer example: UCL 28'); near(c.lcl, 4, 1e-12, 'NIST wafer example: LCL 4');
+  const e1 = engine.run('ewma-chart-check', { lam: 1 }).values;
+  near(e1.last, 52.1, 1e-12, 'λ = 1: EWMA is the last reading'); near(e1.sd, 2.0539, 1e-12, 'λ = 1: EWMA spread is s');
+  const cal = engine.run('linear-calibration-check').values;
+  near(cal.a + cal.b * cal.xstar, 50, 1e-9, 'calibrated value maps back to the reading');
+  assert.ok(cal.lo < cal.xstar && cal.xstar < cal.hi, 'calibrated value lies inside its interval');
+  near(engine.run('exponential-smoothing-forecast', { alpha: 1 }).values.fc, 70, 1e-12, 'α = 1: forecast is the last demand');
+});
+
+test('quality statistics tools: verdicts and guards', () => {
+  assert.equal(engine.run('ewma-chart-check').text, 'PROCESS IN CONTROL');
+  assert.equal(engine.run('ewma-chart-check', { s: 1 }).text, 'EWMA OUT OF CONTROL');
+  assert.equal(engine.run('cusum-chart-check').text, 'UPWARD SHIFT SIGNALLED');
+  assert.equal(engine.run('cusum-chart-check', { n: 12 }).text, 'PROCESS IN CONTROL');
+  assert.equal(engine.run('cusum-chart-check', { n: 12, mu0: 328 }).text, 'DOWNWARD SHIFT SIGNALLED');
+  assert.equal(engine.run('c-chart-check').text, 'PROCESS IN CONTROL');
+  assert.equal(engine.run('c-chart-check', { c5: 30 }).text, 'COUNT OUT OF CONTROL');
+  assert.equal(engine.run('grubbs-outlier-check').text, 'OUTLIER DETECTED');
+  assert.equal(engine.run('grubbs-outlier-check', { n: 7 }).text, 'NO OUTLIER DETECTED');
+  assert.equal(engine.run('linear-calibration-check').text, 'CALIBRATION INTERVAL WITHIN TOLERANCE');
+  assert.equal(engine.run('linear-calibration-check', { tol: 0.5 }).text, 'CALIBRATION INTERVAL TOO WIDE');
+  assert.equal(engine.run('exponential-smoothing-forecast').text, 'FORECAST ERROR WITHIN TARGET');
+  assert.equal(engine.run('exponential-smoothing-forecast', { target: 5 }).text, 'FORECAST ERROR TOO HIGH');
+  const cases: Array<[string, Inputs]> = [['ewma-chart-check', { n: 2 }], ['ewma-chart-check', { lam: 0 }], ['cusum-chart-check', { n: 2 }], ['cusum-chart-check', { h: 0 }], ['c-chart-check', { k: 2, c1: 0, c2: 0 }], ['grubbs-outlier-check', { n: 2 }], ['grubbs-outlier-check', { n: 3, x1: 5, x2: 5, x3: 5 }], ['linear-calibration-check', { n: 2 }], ['linear-calibration-check', { n: 3, r1: 10, r2: 10, r3: 10 }], ['linear-calibration-check', { n: 3, r1: 0, r2: 1, r3: 2, y1: 0, y2: 1, y3: 2 }], ['exponential-smoothing-forecast', { n: 2 }], ['exponential-smoothing-forecast', { n: 3, y1: 0, y2: 0, y3: 0 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });
