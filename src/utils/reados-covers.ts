@@ -218,6 +218,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'first-of-a-kind-technology-by-the-numbers': { motif: 'ladder', tone: 'graphite' },
   'demand-and-benefit-forecasts-by-the-numbers': { motif: 'cashflow', tone: 'graphite' },
   'project-teams-and-contracts-by-the-numbers': { motif: 'team', tone: 'graphite' },
+  'on-site-power-and-heat-by-the-numbers': { motif: 'pylon', tone: 'carbon' },
+  'humidity-control-by-the-numbers': { motif: 'leaf', tone: 'graphite' },
 };
 
 const hash = (s: string) => [...s].reduce((a, c) => (Math.imul(a, 33) + c.charCodeAt(0)) >>> 0, 5381);
