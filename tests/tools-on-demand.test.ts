@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { createContext, runInContext } from 'node:vm';
 
 // WORKOS loads each tool's data-, guides-, inputs- and calc-<file>.js only when the tool opens, so a phone downloads
-// one tool's scripts instead of all 931 before a calculator link shows anything (see public/tools/ui.js).
+// one tool's scripts instead of all 939 before a calculator link shows anything (see public/tools/ui.js).
 
 const DIR = join(process.cwd(), 'public', 'tools');
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
@@ -39,7 +39,7 @@ test('every tool calculates the same with only its own file loaded as with all 7
       n++;
     }
   }
-  assert.equal(n, 931);
+  assert.equal(n, 939);
 });
 
 /** ui.js on a minimal page: scripts it adds are run from public/tools (or fail when listed in `missing`). */

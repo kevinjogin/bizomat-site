@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 931 tools with unique ids and every previously published id kept', () => {
+test('register: 939 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 931);
+  assert.equal(ids.length, 939);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -5493,5 +5493,79 @@ test('quality statistics tools: verdicts and guards', () => {
   assert.equal(engine.run('exponential-smoothing-forecast').text, 'FORECAST ERROR WITHIN TARGET');
   assert.equal(engine.run('exponential-smoothing-forecast', { target: 5 }).text, 'FORECAST ERROR TOO HIGH');
   const cases: Array<[string, Inputs]> = [['ewma-chart-check', { n: 2 }], ['ewma-chart-check', { lam: 0 }], ['cusum-chart-check', { n: 2 }], ['cusum-chart-check', { h: 0 }], ['c-chart-check', { k: 2, c1: 0, c2: 0 }], ['grubbs-outlier-check', { n: 2 }], ['grubbs-outlier-check', { n: 3, x1: 5, x2: 5, x3: 5 }], ['linear-calibration-check', { n: 2 }], ['linear-calibration-check', { n: 3, r1: 10, r2: 10, r3: 10 }], ['linear-calibration-check', { n: 3, r1: 0, r2: 1, r3: 2, y1: 0, y2: 1, y3: 2 }], ['exponential-smoothing-forecast', { n: 2 }], ['exponential-smoothing-forecast', { n: 3, y1: 0, y2: 0, y3: 0 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Batch handbook81: tolerance intervals, one-way ANOVA, F and chi-square tests of spread, Holt trend forecast, Arrhenius
+// acceleration, MTBF confidence bounds and power-law reliability growth. Expected values are independent hand calculations
+// (closed-form chi-square tails for integer degrees of freedom, the closed-form F tail for 2 numerator degrees of freedom,
+// Simpson integration of the F and normal densities, raw-sum ANOVA, the MTBF as 1 ÷ m(T)) and NIST e-Handbook worked examples.
+const RS_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['normal-tolerance-interval-check', {}, { chi: 23.650094677826175, k2: 2.21731589665361, k1: 1.8739536058512567, k1nat: 1.8751895812770476, lo: 95.56536820669278, hi: 104.43463179330722 }, 1e-6],
+  ['normal-tolerance-interval-check', { side: 'lower', n: 6 }, { k1: 4.411080572399033 }, 1e-6], // NIST: 4.4111 (non-central t)
+  ['one-way-anova-check', {}, { sstot: 45.34933333333345, sst: 27.89733333333345, sse: 17.452, F: 9.591107036442855, Fcrit: 3.8852938346523933, p: 0.0032482226008592506 }, 1e-9],
+  ['two-variance-f-test', {}, { F: 1.1230374607443194, lo: 0.7755639034053803, hi: 1.2893844022516303, p: 0.3703831598772964 }, 1e-6],
+  ['standard-deviation-chi-square-check', {}, { T: 0.392931, lo: 73.36108019128417, hi: 128.42198864384108, ciLo: 0.005531443126044369, ciHi: 0.007318554108356088 }, 1e-6],
+  ['holt-trend-forecast', {}, { S: 22.815058506216722, b: 2.956837242775862, fc: 37.59924472009603, fc1: 25.771895748992584, mse: 3.674309454248838, rmse: 1.9168488344803922, b1: 0.8 }, 1e-9],
+  ['arrhenius-acceleration-check', {}, { AF: 132.6646146803523 }, 1e-6],
+  ['arrhenius-acceleration-check', { ea: 1 }, { AF: 17599.899988286343 }, 1e-4],
+  ['mtbf-confidence-bounds', {}, { mtbf: 400, lower: 127.06896827442839, upper: 2251.2286106257047, zero: 267.04656055626725 }, 1e-6],
+  ['reliability-growth-check', {}, { L: 18.61404074174158, b: 0.483505979430769, beta: 0.516494020569231, a: 0.2913002685663814, mtbf: 310.23401236235964, ML: 157.71383403939075, MU: 548.5565977314178, cum: 150 }, 1e-9],
+];
+for (const [id, over, expected, tol] of RS_CASES) test(`reliability statistics: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('reliability statistics tools: NIST worked examples', () => {
+  const t = engine.run('normal-tolerance-interval-check').values;
+  near(t.chi, 23.650, 5e-4, 'NIST: chi-square 23.650'); near(t.k2, 2.217, 5e-4, 'NIST: k2 = 2.217'); near(t.k1, 1.8740, 5e-5, 'NIST: k1 = 1.8740 (non-central t)'); near(t.k1nat, 1.8752, 5e-5, 'NIST: k1 = 1.8752 (Natrella)');
+  near(engine.run('normal-tolerance-interval-check', { side: 'lower', n: 6 }).values.k1nat, 5.2808, 5e-5, 'NIST: Natrella k1 = 5.2808 for N = 6');
+  const a = engine.run('one-way-anova-check').values;
+  near(a.sst, 27.897, 5e-4, 'NIST: SST 27.897'); near(a.sse, 17.452, 5e-4, 'NIST: SSE 17.452'); near(a.F, 9.59, 5e-3, 'NIST: F 9.59'); near(a.Fcrit, 3.89, 5e-3, 'NIST: F(0.05; 2, 12) = 3.89');
+  const f = engine.run('two-variance-f-test').values;
+  near(f.F, 1.123037, 5e-7, 'NIST: F = 1.123037'); near(f.lo, 0.7756, 5e-5, 'NIST: lower critical 0.7756'); near(f.hi, 1.2894, 5e-5, 'NIST: upper critical 1.2894');
+  const c = engine.run('standard-deviation-chi-square-check').values;
+  near(c.lo, 73.361, 5e-4, 'NIST: 73.361'); near(c.hi, 128.422, 5e-4, 'NIST: 128.422');
+  const h = engine.run('holt-trend-forecast').values;
+  [25.8, 28.7, 31.7, 34.6, 37.6].forEach((x, k) => near(h.S + (k + 1) * h.b, x, 0.05, `NIST: Holt forecast for period ${11 + k} = ${x}`));
+  const g = engine.run('holt-trend-forecast', { alpha: 0.977, gamma: 0.01 }).values; assert.ok(Number.isFinite(g.mse));
+  near(engine.run('arrhenius-acceleration-check').values.AF, 133, 0.5, 'NIST: AF 133 from 25 to 125 °C at 0.5 eV');
+  near(engine.run('arrhenius-acceleration-check', { ea: 1 }).values.AF, 17597, 0.0005 * 17597, 'NIST: AF 17,597 at 1.0 eV (NIST uses 11605 and 273.16)');
+  const mt = engine.run('mtbf-confidence-bounds').values;
+  near(mt.lower, 127, 0.5, 'NIST: lower 127'); near(mt.upper, 2251, 0.5, 'NIST: upper 2251'); near(mt.zero, 267, 0.5, 'NIST: zero-failure bound 267');
+  near(engine.run('mtbf-confidence-bounds', { r: 0 }).values.lower, mt.zero, 1e-9, 'no failures: 2T ÷ χ²(C; 2) = T ÷ (−ln(1 − C))');
+  const gr = engine.run('reliability-growth-check').values;
+  near(gr.beta, 0.5165, 5e-5, 'NIST: β 0.5165'); near(gr.a, 0.2913, 5e-5, 'NIST: a 0.2913'); near(gr.mtbf, 310.234, 5e-4, 'NIST: MTBF 310.234'); near(gr.ML, 157.7139, 5e-4, 'NIST: 157.7139'); near(gr.MU, 548.5565, 5e-3, 'NIST: 548.5565');
+  near(gr.mtbf, 1 / (gr.a * gr.b * Math.pow(1500, gr.b - 1)), 1e-9, 'MTBF = 1 ÷ m(T)');
+});
+
+test('reliability statistics tools: verdicts and guards', () => {
+  assert.equal(engine.run('normal-tolerance-interval-check').text, 'TOLERANCE INTERVAL WITHIN SPEC');
+  assert.equal(engine.run('normal-tolerance-interval-check', { n: 6 }).text, 'TOLERANCE INTERVAL OUTSIDE SPEC');
+  assert.equal(engine.run('normal-tolerance-interval-check', { side: 'upper', usl: 103 }).text, 'TOLERANCE INTERVAL OUTSIDE SPEC');
+  assert.equal(engine.run('normal-tolerance-interval-check', { side: 'lower', usl: 101 }).text, 'TOLERANCE INTERVAL WITHIN SPEC');
+  assert.equal(engine.run('one-way-anova-check').text, 'GROUP MEANS DIFFER');
+  assert.equal(engine.run('one-way-anova-check', { k: 2, g2x1: 5.3, g2x2: 6.1, g2x3: 5.0, g2x4: 4.9, g2x5: 5.6 }).text, 'NO SIGNIFICANT DIFFERENCE');
+  assert.equal(engine.run('two-variance-f-test').text, 'NO EVIDENCE SPREADS DIFFER');
+  assert.equal(engine.run('two-variance-f-test', { s1: 80 }).text, 'SPREADS DIFFER');
+  assert.equal(engine.run('two-variance-f-test', { test: 'greater', s1: 80 }).text, 'SAMPLE 1 SPREAD LARGER');
+  assert.equal(engine.run('two-variance-f-test', { test: 'less', s1: 50 }).text, 'SAMPLE 1 SPREAD SMALLER');
+  assert.equal(engine.run('standard-deviation-chi-square-check').text, 'SPREAD DIFFERS FROM TARGET');
+  assert.equal(engine.run('standard-deviation-chi-square-check', { test: 'upper', s: 0.12 }).text, 'SPREAD ABOVE TARGET');
+  assert.equal(engine.run('standard-deviation-chi-square-check', { test: 'lower' }).text, 'SPREAD BELOW TARGET');
+  assert.equal(engine.run('standard-deviation-chi-square-check', { test: 'lower', s: 0.1 }).text, 'SPREAD NOT SHOWN BELOW TARGET');
+  assert.equal(engine.run('standard-deviation-chi-square-check', { s: 0.1 }).text, 'SPREAD CONSISTENT WITH TARGET');
+  assert.equal(engine.run('holt-trend-forecast').text, 'FORECAST ERROR WITHIN TARGET');
+  assert.equal(engine.run('holt-trend-forecast', { target: 5 }).text, 'FORECAST ERROR TOO HIGH');
+  assert.equal(engine.run('arrhenius-acceleration-check').text, 'TEST COVERS TARGET LIFE');
+  assert.equal(engine.run('arrhenius-acceleration-check', { th: 500 }).text, 'TEST TOO SHORT FOR TARGET LIFE');
+  assert.equal(engine.run('mtbf-confidence-bounds').text, 'MTBF REQUIREMENT DEMONSTRATED');
+  assert.equal(engine.run('mtbf-confidence-bounds', { req: 200 }).text, 'MTBF REQUIREMENT NOT DEMONSTRATED');
+  near(engine.run('mtbf-confidence-bounds', { T: 800 + engine.run('mtbf-confidence-bounds', { req: 200 }).values.more, req: 200 }).values.lower, 200, 1e-6, 'further hours bring the lower bound to the requirement');
+  assert.equal(engine.run('reliability-growth-check').text, 'MTBF GOAL DEMONSTRATED');
+  assert.equal(engine.run('reliability-growth-check', { goal: 200 }).text, 'MTBF GOAL NOT DEMONSTRATED');
+  const cases: Array<[string, Inputs]> = [['one-way-anova-check', { k: 2, n1: 1, n2: 1 }], ['one-way-anova-check', { k: 2, n1: 2, n2: 2, g1x1: 5, g1x2: 5, g2x1: 7, g2x2: 7 }], ['holt-trend-forecast', { n: 4, y1: 0, y2: 0, y3: 0, y4: 0 }], ['arrhenius-acceleration-check', { ts: 20 }], ['reliability-growth-check', { t3: 30 }], ['reliability-growth-check', { T: 1400 }], ['reliability-growth-check', { r: 2, T: 40, t1: 40, t2: 40 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });

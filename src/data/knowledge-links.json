@@ -4894,6 +4894,196 @@
    "note": "Checks a cryocooler’s rated cooling and input power against the Carnot limit, giving its second-law efficiency and showing when a quoted capacity is impossible.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/accelerated-life-testing-by-the-numbers",
+   "chapter": "the-arrhenius-model",
+   "tool": "arrhenius-acceleration-check",
+   "type": "applies",
+   "note": "Calculates the Arrhenius acceleration factor this chapter derives, the service hours a test represents and how the factor moves with the activation energy.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter derives the Arrhenius acceleration factor and stresses its sensitivity to activation energy; tool computes AF = exp[(Ea/k)(1/T_use − 1/T_test)] (NIST 8.1.5.1) with a ±0.2 eV sensitivity table."
+  },
+  {
+   "reados": "publication/accelerated-life-testing-by-the-numbers",
+   "chapter": "compressing-time",
+   "tool": "arrhenius-acceleration-check",
+   "type": "complements",
+   "note": "Checks whether a test temperature gives the acceleration factor this chapter shows a life target needs, and the test hours that covers.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter introduces the acceleration factor and its rules and finds a factor of about 20 is needed; tool gives the Arrhenius factor and test hours for a target life."
+  },
+  {
+   "reados": "publication/first-of-a-kind-technology-by-the-numbers",
+   "chapter": "qualification-testing",
+   "tool": "mtbf-confidence-bounds",
+   "type": "applies",
+   "note": "Gives the chi-square lower bound on MTBF this chapter uses to size and read a qualification run, and the further failure-free hours to show the target.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter uses MTBF lower bound = 2T ÷ χ²(C, 2r + 2) and T = target × χ² ÷ 2; tool computes the same bounds (NIST 8.4.5.1) and the further hours needed."
+  },
+  {
+   "reados": "publication/connected-products-by-the-numbers",
+   "chapter": "verify-with-a-pilot-fleet",
+   "tool": "mtbf-confidence-bounds",
+   "type": "applies",
+   "note": "Puts the chi-square confidence bounds this chapter describes on MTBF and failure rate from a pilot fleet’s operating hours and failures.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter bounds a constant failure rate from fixed operating time with the NIST chi-square method (2(r + 1) degrees of freedom); tool gives those bounds as MTBF."
+  },
+  {
+   "reados": "publication/breakdowns-and-buffers-by-the-numbers",
+   "chapter": "up-and-down-the-two-state-model",
+   "tool": "mtbf-confidence-bounds",
+   "type": "complements",
+   "note": "Adds confidence bounds to the MTBF this chapter reads from a stoppage log, showing how far a short log can be trusted.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter estimates failure rate and MTBF from a stoppage log for a constant-rate model; tool gives chi-square confidence bounds on that MTBF."
+  },
+  {
+   "reados": "publication/breakdowns-and-buffers-by-the-numbers",
+   "chapter": "are-stops-random",
+   "tool": "mtbf-confidence-bounds",
+   "type": "complements",
+   "note": "Once this chapter’s tests show stops arrive at a constant rate, gives confidence bounds on the MTBF from the running hours and stops.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter tests whether stops form a Poisson stream with exponential intervals; tool’s chi-square MTBF bounds assume exactly that constant rate."
+  },
+  {
+   "reados": "publication/first-of-a-kind-technology-by-the-numbers",
+   "chapter": "ramp-up-to-nameplate",
+   "tool": "reliability-growth-check",
+   "type": "complements",
+   "note": "Estimates the Duane growth slope and the MTBF reached from actual failure times, in place of the assumed growth rate this chapter illustrates.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter models reliability growth with Duane’s cumulative MTBF line and an assumed α = 0.4; tool fits the power-law model to failure times (NIST 8.4.5.2) and projects hours to a goal."
+  },
+  {
+   "reados": "publication/testing-welded-joints-by-the-numbers",
+   "chapter": "variation-and-how-many-specimens",
+   "tool": "normal-tolerance-interval-check",
+   "type": "applies",
+   "note": "Calculates the statistical tolerance limit this chapter says allows for a small sample, a low value that a stated share of welds exceeds with confidence.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter estimates a low value from mean and standard deviation and notes statistical tolerance limits push it lower for small samples; tool computes one-sided k₁ exactly (NIST 7.2.6.3)."
+  },
+  {
+   "reados": "collection/product-development-and-launch",
+   "chapter": "proving-a-process-is-ready-for-production",
+   "tool": "normal-tolerance-interval-check",
+   "type": "complements",
+   "note": "Turns a capability sample’s mean and standard deviation into limits that contain a stated share of parts with confidence, alongside this chapter’s Cpk.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter judges readiness by Cp and Cpk from a sample mean and standard deviation; tool adds a normal tolerance interval that allows for sample size, against the same limits."
+  },
+  {
+   "reados": "collection/product-development-and-launch",
+   "chapter": "designed-experiments-before-standardising",
+   "tool": "one-way-anova-check",
+   "type": "complements",
+   "note": "Tests whether results at different settings in this chapter’s kind of trial differ by more than the scatter between repeat runs.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter warns the best single result may be a lucky run and compares settings by average response; tool’s one-way ANOVA tests whether differences between settings exceed run-to-run scatter."
+  },
+  {
+   "reados": "collection/manufacturing-operations-and-design-for-manufacture",
+   "chapter": "demand-forecasting-for-small-manufacturers",
+   "tool": "holt-trend-forecast",
+   "type": "complements",
+   "note": "Extends the exponential smoothing this chapter recommends with a trend term, for items whose demand is rising or falling steadily.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter recommends exponential smoothing and measuring forecast error; tool applies double exponential smoothing (NIST 6.4.3.3–6.4.3.4), which follows a trend single smoothing lags."
+  },
+  {
+   "reados": "publication/random-error-and-drift-by-the-numbers",
+   "chapter": "averaging-and-the-square-root-rule",
+   "tool": "standard-deviation-chi-square-check",
+   "type": "complements",
+   "note": "Tests whether an observed scatter of check readings, like this chapter’s twenty-reading checks, is larger than the standard deviation a noise model predicts.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter compares a predicted 0.035 g with an observed 0.092 g from twenty readings; tool tests a sample standard deviation against a target σ₀ with confidence limits (NIST 1.3.5.8)."
+  },
+  {
+   "reados": "publication/random-error-and-drift-by-the-numbers",
+   "chapter": "averaging-and-the-square-root-rule",
+   "tool": "two-variance-f-test",
+   "type": "complements",
+   "note": "Tests whether two spreads, such as the twenty-reading checks before and after this chapter’s converter upgrade, differ by more than sampling scatter.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter compares check-reading standard deviations before and after an upgrade (0.092 g and 0.087 g, twenty readings each); tool applies the F test for two variances (NIST 1.3.5.9)."
+  },
+  {
+   "reados": "publication/accelerated-life-testing-by-the-numbers",
+   "chapter": "how-many-units-and-how-long",
+   "tool": "mtbf-confidence-bounds",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter sizes zero-failure tests with the binomial success-run formula and Weibull shape, not exponential chi-square MTBF bounds."
+  },
+  {
+   "reados": "publication/accelerated-life-testing-by-the-numbers",
+   "chapter": "planning-and-reading-the-test",
+   "tool": "arrhenius-acceleration-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter plans the whole test programme and reports a measured activation energy; the Arrhenius factor itself is linked at Chapter 2."
+  },
+  {
+   "reados": "collection/manufacturing-quality",
+   "chapter": "measurement-system-analysis-for-manufacturers",
+   "tool": "one-way-anova-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: the gauge R&R ANOVA method is a crossed two-factor analysis; the one-way tool cannot separate repeatability and reproducibility."
+  },
+  {
+   "reados": "collection/lean-and-continuous-improvement",
+   "chapter": "total-productive-maintenance",
+   "tool": "mtbf-confidence-bounds",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: MTBF appears only in a list of maintenance measures; the chapter does not estimate it from data."
+  },
+  {
+   "reados": "collection/research-and-evidence-for-better-decisions",
+   "chapter": "testing-a-hypothesis-without-fooling-yourself",
+   "tool": "two-variance-f-test",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers tests of means and proportions; comparing spreads is not discussed."
+  },
+  {
+   "reados": "publication/demand-and-benefit-forecasts-by-the-numbers",
+   "chapter": "ramp-up-curves",
+   "tool": "holt-trend-forecast",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter fits logistic ramp-up curves to a new product, not smoothing of a demand history."
   }
  ]
 }
