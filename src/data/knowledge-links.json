@@ -6976,6 +6976,36 @@
    "note": "Calculates Cp, Cpk and the one-sided indices from specification limits, process mean and within-process standard deviation, flagging unconfirmed assumptions.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "choosing-fasteners-and-threads",
+   "tool": "bolt-grip-thread-length",
+   "type": "complements",
+   "note": "Checks that a chosen screw length leaves the thread engagement this chapter recommends beyond the joint, and that full thread starts within the clamped parts.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter recommends tapped-hole engagement of about 1 to 1.5 diameters in steel and 2 in softer metals; tool computes grip, body and thread lengths by the handbook rules and checks the length beyond the joint against the engagement entered."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "bolted-joints-that-stay-tight",
+   "tool": "bolt-grip-thread-length",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers preload, torque, fatigue and locking; grip gauging and body lengths of bolts are not discussed."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "drilling-reaming-and-tapping-holes",
+   "tool": "bolt-grip-thread-length",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter specifies tapped hole depths and drill depths; the length and thread length of the screw are not discussed."
   }
  ]
 }
