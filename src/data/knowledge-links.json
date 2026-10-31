@@ -7298,6 +7298,36 @@
    "note": "Checks a bar held at both ends while heated: thermal stress and force, yield factor, Euler or Johnson buckling load and the temperature rises at buckling and yield.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plain-bearings-by-the-numbers",
+   "chapter": "supplying-the-oil",
+   "tool": "journal-bearing-lubrication-analysis",
+   "type": "complements",
+   "note": "Adds the pressure-fed case: the hydrodynamic and pressure flows a fed journal bearing passes and the temperature rise they give, alongside the side flow and oil supply this chapter works out.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter calculates the side flow a journal bearing film loses and how the oil is supplied; tool applies the handbook analysis with hydrodynamic flow N l cd q d ÷ 294 and pressure flow from the supply pressure."
+  },
+  {
+   "reados": "publication/plain-bearings-by-the-numbers",
+   "chapter": "oil-temperature-and-the-heat-balance",
+   "tool": "journal-bearing-lubrication-analysis",
+   "type": "complements",
+   "note": "Iterates the oil temperature rise of a pressure-fed bearing the handbook way, the counterpart of this chapter’s heat balance for oil-ring bearings.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter finds a bearing’s running temperature from the balance of heat made and shed; tool repeats the handbook assumed-versus-actual temperature rise until they agree within 5 °F."
+  },
+  {
+   "reados": "publication/plain-bearings-by-the-numbers",
+   "chapter": "thrust-bearings",
+   "tool": "flat-plate-thrust-bearing-design",
+   "type": "complements",
+   "note": "Lays out a flat plate thrust face pad by pad with its friction loss, oil flow and feed chamfers, the simplest thrust bearing this chapter compares with tapered lands and tilting pads.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter checks a thrust face’s unit load and PV and explains why flat faces need pads and a wedge; tool applies the handbook flat plate design: pad layout, unit load, friction from the M chart, oil flow and chamfer depth."
   }
  ]
 }

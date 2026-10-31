@@ -123,7 +123,7 @@ if (isMain) {
     const out = {
       generated: new Date().toISOString().slice(0, 10),
       generator: 'node scripts/tools/input-guides.mjs inventory',
-      expectedTools: 981,
+      expectedTools: 983,
       summary: s,
       tools: rows,
     };
