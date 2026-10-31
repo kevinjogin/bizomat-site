@@ -6477,6 +6477,249 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter mentions the four-centre approximation in one sentence and refers to the oval book for it."
+  },
+  {
+   "reados": "publication/buckling-by-the-numbers",
+   "chapter": "why-straight-members-go-sideways",
+   "tool": "column-buckling",
+   "type": "applies",
+   "note": "Gives a straight, centrally loaded column's slenderness, Euler or Johnson critical stress and load, and its factor against your applied load.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/buckling-by-the-numbers",
+   "chapter": "ends-bracing-and-effective-length",
+   "tool": "tank-stand-leg-check",
+   "type": "applies",
+   "note": "Works out a full tank's weight and load per leg, then each tubular leg's slenderness, Euler or Johnson buckling load and factor for the K you choose.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/buckling-by-the-numbers",
+   "chapter": "slenderness-and-section-shape",
+   "tool": "section-shapes",
+   "type": "applies",
+   "note": "Gives area, principal second moments and the least radius of gyration of I, T, channel and angle sections built from rectangles.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/buckling-by-the-numbers",
+   "chapter": "slenderness-and-section-shape",
+   "tool": "section-properties",
+   "type": "complements",
+   "note": "Supplies area, second moments and radii of gyration of rectangles, circles and tubes for use in the buckling checks; it gives no load capacity.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/buckling-by-the-numbers",
+   "chapter": "when-yield-meets-buckling",
+   "tool": "rankine-column",
+   "type": "applies",
+   "note": "Calculates a column's crippling load by the Rankine–Gordon formula, with the theoretical or an empirical constant, and the factor on your load.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/buckling-by-the-numbers",
+   "chapter": "when-yield-meets-buckling",
+   "tool": "column-formula-compare",
+   "type": "applies",
+   "note": "Puts the Euler load, Rankine–Gordon crippling load and the classic working-stress safe load side by side for one concentric strut.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/buckling-by-the-numbers",
+   "chapter": "crooked-members-and-offset-loads",
+   "tool": "eccentric-column",
+   "type": "applies",
+   "note": "Finds the peak stress in a column with an offset load by the secant formula, its Euler load, and the load factor at which it first yields.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/buckling-by-the-numbers",
+   "chapter": "bracing-how-stiff-and-how-strong",
+   "tool": "compression-strut-sizing",
+   "type": "applies",
+   "note": "Sizes a round bar or tube strut for a load and length: the least diameter for your factor, then the chosen size's slenderness, mode and factor.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/buckling-by-the-numbers",
+   "chapter": "rods-in-machines",
+   "tool": "hydraulic-cylinder-sizing",
+   "type": "applies",
+   "note": "Sizes a cylinder from its duty, including the least rod diameter for Euler buckling at the extended length and mounting factor you enter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/buckling-by-the-numbers",
+   "chapter": "rods-in-machines",
+   "tool": "hydraulic-cylinder-structure",
+   "type": "applies",
+   "note": "Checks the barrel, end cap and fully extended rod of a cylinder, with rod buckling checked against the full push at the working pressure.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/buckling-by-the-numbers",
+   "chapter": "rods-in-machines",
+   "tool": "ballscrew-limits",
+   "type": "applies",
+   "note": "Gives a screw's Euler buckling load and critical speed from its root diameter, unsupported length and end mounting, against your load and speed.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/buckling-by-the-numbers",
+   "chapter": "heat-restraint-and-buckling",
+   "tool": "restrained-bar-thermal-check",
+   "type": "complements",
+   "note": "For a solid round bar heated between restraints: thermal stress and force, yield and buckling factors, and the temperature rise at which each is reached.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/buckling-by-the-numbers",
+   "chapter": "thin-walls-and-shells-under-vacuum",
+   "tool": "vacuum-tube-design",
+   "type": "applies",
+   "note": "Gives the elastic collapse and yield-limited pressures of a long, unstiffened tube under external pressure, the governing mode and the wall needed.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/buckling-by-the-numbers",
+   "chapter": "temporary-frames-and-shear-legs",
+   "tool": "shear-legs-check",
+   "type": "applies",
+   "note": "Works out shear-leg geometry, the force in each leg, the thrust at each foot and each tube leg's buckling factor, with the foot tie checked.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/whirling-shafts-by-the-numbers",
+   "chapter": "what-whirling-is",
+   "tool": "critical-speed",
+   "type": "applies",
+   "note": "Gives the first critical speed of a uniform shaft, alone and with one disc combined by Dunkerley, for simple, overhung or fixed supports, against running speed.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/whirling-shafts-by-the-numbers",
+   "chapter": "critical-speeds-of-real-shafts",
+   "tool": "shaft-critical-speed-check",
+   "type": "applies",
+   "note": "Estimates a simply supported shaft's first critical speed with up to three masses by Dunkerley's method, with a masses-only Rayleigh value for comparison.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/whirling-shafts-by-the-numbers",
+   "chapter": "sizing-a-shaft-for-strength-twist-and-whirl",
+   "tool": "shaft-design-check",
+   "type": "applies",
+   "note": "Sizes a shaft for combined bending and torsion with shock factors, for a twist limit, and for a critical speed ratio, and says which criterion governs.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/whirling-shafts-by-the-numbers",
+   "chapter": "unbalance-and-balance-grades",
+   "tool": "balance-grade",
+   "type": "applies",
+   "note": "Turns a rigid rotor's mass, speed and balance grade into its permissible residual unbalance, per plane, and checks a measured residual against it.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/whirling-shafts-by-the-numbers",
+   "chapter": "balancing-in-one-plane",
+   "tool": "balance-correction-check",
+   "type": "applies",
+   "note": "Adds known unbalances as vectors, sizes and places a single-plane correction, and checks the residual left by weight steps and angle error against the grade.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/whirling-shafts-by-the-numbers",
+   "chapter": "balancing-long-rotors-in-two-planes",
+   "tool": "two-plane-balance",
+   "type": "applies",
+   "note": "Resolves up to three unbalance masses along a rotor into correction masses and angles in two chosen planes by taking moments.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/whirling-shafts-by-the-numbers",
+   "chapter": "balancing-long-rotors-in-two-planes",
+   "tool": "rotor-balancing-check",
+   "type": "applies",
+   "note": "Checks each correction plane's unbalance against the grade, gives the corrections and the rotating bearing forces, and checks the weights fit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/whirling-shafts-by-the-numbers",
+   "chapter": "centrifugal-loads-on-discs-and-hammers",
+   "tool": "centrifugal-force",
+   "type": "applies",
+   "note": "Gives the centrifugal force, acceleration in g and tangential speed of a mass rotating at a radius, such as a hammer on its pin.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/whirling-shafts-by-the-numbers",
+   "chapter": "centrifugal-loads-on-discs-and-hammers",
+   "tool": "rotating-disc",
+   "type": "applies",
+   "note": "Gives the maximum centrifugal stress in a flat solid or bored disc, its rim speed, factor against yield and the speed at which it would yield.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/whirling-shafts-by-the-numbers",
+   "chapter": "gyroscopic-loads",
+   "tool": "gyroscopic-bearing-load",
+   "type": "applies",
+   "note": "Works out a turning rotor's angular momentum, gyroscopic couple and bearing reactions, adds its weight, and flags a bearing load that reverses.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/whirling-shafts-by-the-numbers",
+   "chapter": "starting-stopping-and-torsion",
+   "tool": "rotor-run-up-time",
+   "type": "applies",
+   "note": "Gives a rotor's inertia, run-up time, revolutions and stored energy, and the heat a direct-on-line start puts into the motor per start and per hour.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/whirling-shafts-by-the-numbers",
+   "chapter": "starting-stopping-and-torsion",
+   "tool": "drive-torsional-check",
+   "type": "complements",
+   "note": "Finds the torsional natural frequency of a two-inertia drive joined by a shaft and checks it against running-speed orders; coupling stiffness is added by hand.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/whirling-shafts-by-the-numbers",
+   "chapter": "vibration-checks-in-service",
+   "tool": "bearing-defect-frequency-check",
+   "type": "applies",
+   "note": "Calculates a rolling bearing's outer race, inner race, roller spin and cage defect frequencies and matches a measured spectrum peak to them.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
