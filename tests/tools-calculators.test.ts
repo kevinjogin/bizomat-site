@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 958 tools with unique ids and every previously published id kept', () => {
+test('register: 965 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 958);
+  assert.equal(ids.length, 965);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 764 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 771 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 764);
+  assert.equal(ids.length, 771);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -6070,6 +6070,108 @@ test('sixty-first-pass tools give pass and fail verdicts and reject bad inputs',
     ['compound-indexing', { mode: 'check', a: 47 }], ['compound-indexing', { mode: 'check', a: 0, b: 2, sign: 'minus' }],
     ['unified-thread-gauge-limits', { ePDmin: 0.22 }], ['unified-thread-gauge-limits', { iMinMax: 0.22 }],
     ['forging-hammer-efficiency', { H1: 80 }], ['helical-gear-helix-for-centre-distance', { C: 96 }], ['helical-gear-helix-for-centre-distance', { psiMin: 50 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+// Sixty-second handbook pass (handbook85): tools from open and candidate pages of the page ledger.
+// Expected values are the handbook's own tables and examples (cutter grinding offset Tables and indicator drop Tables 3 and 4,
+// the top knurling example, ASME B94.9 Table 3 constant C) and independent closed forms.
+const IN85 = 25.4;
+
+test('cutter clearance grinding reproduces the handbook offset and indicator drop tables', () => {
+  const r = (over: Inputs) => engine.run('cutter-clearance-grinding-setup', over).values;
+  const above: Array<[number, number[]]> = [[3, [0.026, 0.052, 0.079, 0.105, 0.131, 0.157, 0.183, 0.209, 0.235, 0.26, 0.286, 0.312]], [10, [0.087, 0.175, 0.262, 0.349, 0.436, 0.523, 0.609, 0.696, 0.782, 0.868, 0.954, 1.04]]];
+  for (const [w, row] of above) row.forEach((o, i) => near(r({ Dw: w * IN85, cl: i + 1 }).offAbove / IN85, o, 0.0006, `wheel ${w} in above centre, ${i + 1}°`));
+  const below = [0.017, 0.035, 0.052, 0.07, 0.087, 0.105, 0.122, 0.139, 0.156, 0.174, 0.191, 0.208];
+  below.forEach((o, i) => near(r({ Dc: 2 * IN85, cl: i + 1, d: 1 }).offBelow / IN85, o, 0.0006, `cutter 2 in below centre, ${i + 1}°`));
+  const x = r({ Dc: 4 * IN85, Dw: 6 * IN85, cl: 6 });
+  near(x.offInline, (6 * IN85) * (4 * IN85) * Math.sin(3 * Math.PI / 180) / (10 * IN85), 1e-12, 'in-line: wheel × cutter × sin(½ clearance) ÷ (wheel + cutter)');
+  near(x.offCup, x.offBelow, 1e-12, 'cup wheel: same as the wheel-below table');
+  // Table 4 (face rake) and Table 3 (side and end relief): drop = distance × tan(angle).
+  const rake: Array<[number, number, number]> = [[1, 0.125, 0.0022], [10, 0.031, 0.0055], [15, 0.094, 0.0252], [20, 0.125, 0.0455], [12, 0.062, 0.0132]];
+  for (const [a, dist, drop] of rake) near(r({ rake: a, dist: dist * IN85 }).dropRake / IN85, drop, 0.00006, `Table 4: ${a}° over ${dist} in`);
+  const relief: Array<[number, number, number]> = [[1, 0.005, 0.00009], [1, 0.015, 0.00026], [9, 0.005, 0.0008], [9, 0.015, 0.0024]];
+  for (const [a, dist, drop] of relief) near(r({ cl: a, dist: dist * IN85 }).dropRelief / IN85, drop, 0.00005, `Table 3: ${a}° over ${dist} in`);
+  // Clearance needed, closed form in inches.
+  const D = 4, B = 200, L = 1 / 32, F = 0.04, d = 0.125;
+  near(r({ Dc: D * IN85, B, L: L * IN85, F: F * IN85, d: d * IN85 }).Cneed, 45860 / (D * B) * (1.5 * L + F / (Math.PI * D) * Math.sqrt(d * (D - d))), 1e-9, 'C = 45860 ÷ DB (1.5L + F ÷ πD √(d(D − d)))');
+});
+
+test('spline shaft milling cutter follows the handbook formulas', () => {
+  const v = engine.run('spline-shaft-milling-cutter', { Ns: 10, W: 5, d: 42 }).values;
+  const A = Math.asin(5 / 42);
+  near(v.Bdeg, 36, 1e-12, 'B = 360° ÷ N');
+  near(v.A, A * 180 / Math.PI, 1e-9, 'sin A = W ÷ d');
+  near(v.C, 42 * Math.sin(Math.PI / 10 - A), 1e-9, 'C = d sin(180°/N − A)');
+  // The chord plus the spline widths' chords add up around the root circle: N (C-arc + W-arc) = π d in angle.
+  near(10 * (2 * Math.asin(v.C / 42) + 2 * A), 2 * Math.PI, 1e-9, 'angles close around the root circle');
+});
+
+test('top knurling reproduces the handbook screw machine example', () => {
+  // 5/16 in brass stock, 0.3125 in knurl radius, 32 pitch 90° knurl (depth 0.0156 in), feed 0.005 and 0.008 in/rev.
+  const v = engine.run('top-knurling-cam-rise', { Dst: 0.3125 * IN85, Dk: 0.625 * IN85, pc: 0.03125 * IN85, ang: 90, f: 0.005 * IN85 }).values;
+  near(v.depth / IN85, 0.0156, 0.00005, 'depth 0.0156 in');
+  near(v.c / IN85, 0.12, 0.0005, 'cam rise 0.120 in');
+  near(v.revs, 24, 0.1, '24 revolutions at 0.005 in');
+  near(engine.run('top-knurling-cam-rise', { Dst: 0.3125 * IN85, Dk: 0.625 * IN85, pc: 0.03125 * IN85, ang: 90, f: 0.008 * IN85 }).values.revs, 15, 0.05, '15 revolutions at 0.008 in');
+  const g = engine.run('top-knurling-cam-rise', { depthFrom: 'given', dg: 0.5 }).values;
+  near(g.c, Math.sqrt((7.9375 / 2 + 15.875 / 2) ** 2 - (7.9375 / 2 + 15.875 / 2 - 0.5) ** 2), 1e-12, 'c = √((R + r)² − (R + r − d)²)');
+});
+
+test('rubber pad pressure matches the handbook inch formula', () => {
+  // 1000 tons on 400 sq in: p = 1000 × 2000 ÷ 400 = 5000 psi.
+  const v = engine.run('rubber-pad-forming-pressure', { F: 1000 * 8.896443, A: 400 * IN85 * IN85 }).values;
+  near(v.ppsi, 5000, 0.5, 'p = F × 2000 ÷ A');
+  near(engine.run('rubber-pad-forming-pressure').values.ratio, 3, 1e-12, 'pad thickness ÷ block height');
+});
+
+test('angular backlash follows the handbook formulas', () => {
+  const v = engine.run('gear-angular-backlash', { Bk: 0.004 * IN85, D: 8 * IN85, d: 2 * IN85, dC: 0, phi: 20 }).values;
+  near(v.thD, 6875 * 0.004 / 8, 1e-9, 'θ_D = 6875 B ÷ D');
+  near(v.thd, 6875 * 0.004 / 2, 1e-9, 'θ_d = 6875 B ÷ d');
+  near(6875, 2 * 180 * 60 / Math.PI, 0.5, '6875 ≈ 2 × 180 × 60 ÷ π');
+  near(engine.run('gear-angular-backlash', { dC: 0.05, phi: 20 }).values.dB, 2 * 0.05 * Math.tan(20 * Math.PI / 180), 1e-12, 'Δ backlash = 2 Δc tan φ');
+});
+
+test('Unified cut thread tap limits reproduce the ASME B94.9 Table 3 constant C', () => {
+  const C: Array<[number, number]> = [[2, 0.0217], [2.5, 0.0173], [3, 0.0144], [3.5, 0.0124], [4, 0.0108], [4.5, 0.0096], [5, 0.0087], [5.5, 0.0079], [7, 0.0077], [8, 0.0068], [9, 0.006], [10, 0.0054], [11, 0.0049], [12, 0.0045], [13, 0.0042], [14, 0.0039], [16, 0.0034], [18, 0.003], [20, 0.0027], [22, 0.0025], [24, 0.0023], [26, 0.0021], [27, 0.002], [28, 0.0019], [30, 0.0018], [32, 0.0017], [36, 0.0015], [40, 0.0014], [48, 0.0011], [50, 0.0011], [56, 0.001], [60, 0.0009], [64, 0.0008], [72, 0.0008], [80, 0.0007]];
+  for (const [n, c] of C) near(engine.run('unified-cut-thread-tap-limits', { n, Dn: 3 }).values.C, c, 0.00006, `C at ${n} TPI`);
+  // The table prints 0.0078 at 6 TPI; 25 % of the truncation gives 0.0090.
+  near(engine.run('unified-cut-thread-tap-limits', { n: 6, Dn: 3 }).values.C, 0.25 * 0.216506 / 6, 1e-12, '6 TPI by the formula');
+  const v = engine.run('unified-cut-thread-tap-limits').values; // 1/4-20, A 0.0025, B 0.0005, D 0.0020
+  near(v.PDb, 0.25 - 0.649519 / 20, 1e-12, 'basic PD');
+  near(v.Mmin, 0.25 + 0.0005 + 0.25 * 0.216506 / 20, 1e-12, 'min major = basic + B + C');
+  near(v.Mmax, v.Mmin + 0.0025, 1e-12, 'max major = min major + A');
+  near(v.PDmin, v.PDb + 0.0005, 1e-12, 'min PD = basic PD + B');
+  near(v.PDmax, v.PDmin + 0.002, 1e-12, 'max PD = min PD + D');
+});
+
+test('silent chain width follows the handbook capacity rules', () => {
+  const v = engine.run('silent-chain-width').values;
+  near(v.capIn, 9 / 1.4, 1e-12, 'capacity per inch = rating ÷ service factor');
+  near(v.wNeed / IN85, 30 * 1.4 / 9, 1e-12, 'width = power × SF ÷ rating per inch');
+  near(v.capChosen, 127 / IN85 * 9 / 1.4, 1e-12, 'capacity of the chosen width');
+});
+
+test('sixty-second-pass tools give pass and fail verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('cutter-clearance-grinding-setup').text, 'CLEARANCE SUITS THE CUT');
+  assert.equal(engine.run('cutter-clearance-grinding-setup', { cl: 2 }).text, 'GRIND MORE CLEARANCE');
+  assert.equal(engine.run('spline-shaft-milling-cutter').text, 'CUTTER PROPORTIONS SET');
+  assert.equal(engine.run('top-knurling-cam-rise').text, 'KNURLING CAM SET');
+  assert.equal(engine.run('rubber-pad-forming-pressure').text, 'PAD FORMS THE PART');
+  assert.equal(engine.run('rubber-pad-forming-pressure', { preq: 12 }).text, 'CHANGE THE PRESS, PAD OR PART');
+  assert.equal(engine.run('rubber-pad-forming-pressure', { t: 60 }).text, 'CHANGE THE PRESS, PAD OR PART');
+  assert.equal(engine.run('rubber-pad-forming-pressure', { t: 100 }).tone, 'warn');
+  assert.equal(engine.run('gear-angular-backlash').text, 'ANGULAR PLAY ACCEPTED');
+  assert.equal(engine.run('gear-angular-backlash', { maxSmall: 10 }).text, 'ANGULAR PLAY TOO LARGE');
+  assert.equal(engine.run('unified-cut-thread-tap-limits').text, 'TAP WITHIN ITS LIMITS');
+  assert.equal(engine.run('unified-cut-thread-tap-limits', { PDm: 0.2175 }).text, 'TAP OUTSIDE ITS LIMITS');
+  assert.equal(engine.run('silent-chain-width').text, 'CHAIN WIDTH CARRIES THE POWER');
+  assert.equal(engine.run('silent-chain-width', { wChosen: 101.6 }).text, 'WIDEN THE CHAIN OR IMPROVE LUBRICATION');
+  assert.equal(engine.run('silent-chain-width', { lubeHave: 'I' }).text, 'WIDEN THE CHAIN OR IMPROVE LUBRICATION');
+  const cases: Array<[string, Inputs]> = [
+    ['cutter-clearance-grinding-setup', { d: 120 }], ['spline-shaft-milling-cutter', { W: 30 }], ['spline-shaft-milling-cutter', { Ns: 12, W: 10 }],
+    ['top-knurling-cam-rise', { depthFrom: 'given', dg: 5 }], ['gear-angular-backlash', { D: 40 }], ['gear-angular-backlash', { dC: -0.5 }],
   ];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });

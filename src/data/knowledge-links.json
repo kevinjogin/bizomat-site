@@ -6357,6 +6357,66 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter plans instruments for a metric part with plain GO and NO-GO bore plugs; thread gauges are only named as a kind of attribute gauge and Unified thread gauge sizes are not discussed."
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "backlash-and-tooth-thickness",
+   "tool": "gear-angular-backlash",
+   "type": "complements",
+   "note": "Turns the circumferential backlash this chapter builds from tooth thinning and centre distance (jt ≈ 2 Δa tan α) into the angle each gear can rock while the other is held.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter defines circumferential backlash and derives backlash from tooth thinning and centre distance changes; tool gives the handbook angular backlash 6875 B ÷ D minutes and the 2 Δc tan φ change."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "broaching-knurling-and-indexing",
+   "tool": "spline-shaft-milling-cutter",
+   "type": "complements",
+   "note": "Gives the cutter angle and chordal width of the form cutter for milling straight-sided splines, the small-quantity method this chapter lists beside hobbing, shaping and broaching.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter lists milling with form cutters among spline manufacturing methods for small quantities; tool computes the handbook spline-shaft milling cutter angle and chordal width at the root."
+  },
+  {
+   "reados": "publication/deep-drawing-and-spinning-by-the-numbers",
+   "chapter": "draw-spin-or-something-else",
+   "tool": "rubber-pad-forming-pressure",
+   "type": "complements",
+   "note": "Checks the pad pressure and pad thickness for the rubber-pad forming alternative this chapter weighs against drawing and spinning for moderate quantities.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter names hydroforming or rubber-pad forming as a lower tooling cost alternative; tool gives the handbook pad pressure F × 2000 ÷ A and the pad thickness rules for the Guerin process."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "grinding-honing-and-lapping",
+   "tool": "cutter-clearance-grinding-setup",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter names tool and cutter grinding in one line among grinding processes; clearance angles, wheel offsets and tooth rest settings are not discussed."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "broaching-knurling-and-indexing",
+   "tool": "top-knurling-cam-rise",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter explains form and cut knurling and matching the pitch to the diameter; cross-slide knurling cam rise and revolutions on screw machines are not discussed."
+  },
+  {
+   "reados": "publication/machining-by-the-numbers",
+   "chapter": "drilling-reaming-and-tapping",
+   "tool": "unified-cut-thread-tap-limits",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter taps metric M8 holes and checks them with gauges; Unified inch cut thread tap limits are not discussed."
   }
  ]
 }
