@@ -3497,3 +3497,20 @@ One tool in batch handbook88, from the last buildable candidate of the page-by-p
 | Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
 |---|---|---|---|---|
 | **Bolt and Screw Grip Length Check (Grip Gauging Length, Body Length, Full Thread in the Joint)** `bolt-grip-thread-length` | LENGTH SUITS THE JOINT | Full thread within the joint; Thread engagement; Table values; Model and application | 1572–1573, 1593–1594, 1682, 1696 | Automated |
+
+## Machinery’s Handbook ledger tools, batch handbook89 (added 31 October 2026)
+
+Three tools in batch handbook89 from a deeper audit of pages that live tools cite only within wide page ranges: grinding wheel life and removal rate by the Taylor lines at a chosen equivalent chip thickness with shop calibration (pp. 1205–1214), relief and nose angles of single-point thread cutting tools (pp. 2040–2041), and mean and equivalent chip thickness in end and face milling (pp. 1162–1166). Taylor constants, wheel ratings, effective relief and target chip thickness are always user inputs. WORKOS now holds 981 tools.
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Grinding Wheel Life and Removal Rate Plan (Taylor Line at an Equivalent Chip Thickness, Shop Calibration)** `grinding-wheel-life-plan` | WHEEL SPEED WITHIN THE WHEEL RATING | Wheel rating; Chip thickness; Calibration; Model and application | 1205–1214 | Automated |
+| **Milling Mean Chip Thickness and Equivalent Chip Thickness (Feed per Tooth for Light Radial Cuts)** `milling-chip-thickness-ect` | CHIP THICK ENOUGH | Mean chip thickness; Cutter limits; Model and application | 1162–1166 | Automated + cross-check |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Single-Point Thread Cutting Tool Relief and Nose Angles (Leading and Trailing Flanks)** `thread-tool-relief-angles` | TOOL ANGLES SET | Trailing relief; Effective relief; Model and application | 2040–2041 | Automated + cross-check |

@@ -2,7 +2,7 @@
 
 Generated 2026-10-31 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 623 relationships (363 from links authors wrote in the books, 260 from editorial review). Rejected: 115. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 626 relationships (363 from links authors wrote in the books, 263 from editorial review). Rejected: 116. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -270,6 +270,9 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Hand Forming Sheet Metal by the Numbers | Sizing the blank for a dome | Spherical Sections: Areas and Volumes (Hollow Sphere, Sector, Segment, Zone, Ring) | applies | Chapter sizes dome blanks from the spherical cap area and sphere radius found from rim radius and height; tool returns the handbook segment area π(F² + E²/4) and sphere radius from the same two dimensions. |
 | Combustion by the Numbers | Fuel, air and the reaction | Fuel Oil Heating Value from Baumé Gravity (Specific Gravity, Heat per kg and per Litre, Fuel Use) | complements | Chapter defines higher and lower heating values and why the rating basis matters; tool gives the handbook gross heating value of fuel oil from its Baumé gravity and the oil burned at an efficiency, noting the gross basis. |
 | Machine Elements and Mechanical Design | Choosing fasteners and threads: thread systems, grades, screws for sheet and plastics, inserts and pins | Bolt and Screw Grip Length Check (Grip Gauging Length, Body Length, Full Thread in the Joint) | complements | Chapter recommends tapped-hole engagement of about 1 to 1.5 diameters in steel and 2 in softer metals; tool computes grip, body and thread lengths by the handbook rules and checks the length beyond the joint against the engagement entered. |
+| Machining by the Numbers | Milling: feed per tooth, chip thinning and feed rate | Milling Mean Chip Thickness and Equivalent Chip Thickness (Feed per Tooth for Light Radial Cuts) | complements | Chapter corrects feed per tooth for radial chip thinning at light engagement; tool computes the engagement angle, mean chip thickness, ECT and the feed for a target chip by the handbook end and face milling relations. |
+| Machining and Metal Parts | Milling cutters and milling strategies: speeds, feeds, chip thickness and parts that are easy to mill | Milling Mean Chip Thickness and Equivalent Chip Thickness (Feed per Tooth for Light Radial Cuts) | complements | Chapter explains radial chip thinning below half-diameter engagement; tool gives the mean chip thickness and the feed per tooth needed for a chosen chip from the radial depth, cutter diameter and teeth. |
+| Machining and Metal Parts | Grinding, honing and lapping: finishing hard parts to tight tolerances | Grinding Wheel Life and Removal Rate Plan (Taylor Line at an Equivalent Chip Thickness, Shop Calibration) | complements | Chapter covers wheel life, dressing and setting the dressing interval from a trial; tool applies the handbook Taylor lines V T^0.26 = C at constant ECT with a shop calibration to give wheel speed, removal rate and work speed. |
 
 ## 2. Rejected
 
@@ -390,6 +393,7 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Arc Welding by the Numbers | Duty cycle, supply and cables | Area Converter | Rejected: chapter sizes welding cables in mm² only; circular mils and other area units are not discussed. |
 | Machine Elements and Mechanical Design | Bolted joints that stay tight: preload, torque, fatigue and locking | Bolt and Screw Grip Length Check (Grip Gauging Length, Body Length, Full Thread in the Joint) | Rejected: chapter covers preload, torque, fatigue and locking; grip gauging and body lengths of bolts are not discussed. |
 | Machining and Metal Parts | Drilling, reaming and tapping: making holes that are the right size, in the right place | Bolt and Screw Grip Length Check (Grip Gauging Length, Body Length, Full Thread in the Joint) | Rejected: chapter specifies tapped hole depths and drill depths; the length and thread length of the screw are not discussed. |
+| Magnetic Workholding by the Numbers | Grinding on a magnetic chuck | Grinding Wheel Life and Removal Rate Plan (Taylor Line at an Equivalent Chip Thickness, Shop Calibration) | Rejected: chapter covers holding work on a magnetic chuck against grinding forces; wheel life and Taylor constants are not discussed. |
 
 ## 3. Published READOS books with no approved connection
 
